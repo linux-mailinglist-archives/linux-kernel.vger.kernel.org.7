@@ -1,603 +1,392 @@
-Return-Path: <linux-kernel+bounces-627055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C8BAA4AA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:09:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6BDAA4AA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B27317B7A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267BE1C0739B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8919259CA9;
-	Wed, 30 Apr 2025 12:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2021120C00C;
+	Wed, 30 Apr 2025 12:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="VqT+q747";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="T0LOk/CI"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eotCkBgf"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B536E25A331;
-	Wed, 30 Apr 2025 12:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD87725A2CF
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746014794; cv=none; b=WtEgH6OWd8xm9R17wGXW9TrAcm2iqNJljlG5WAtF7QtbPbtxeE/TkFo4bpvYGFhym7hUSv8aCotRW+l/fu2QtjPGDDWiOrwohHROckrv3BEeD806Bse0DvnfLL8K6CMSLCrSXKcSTZ9SnoRkSTrgaE4d79IymI++/sGYszkx/Ug=
+	t=1746014784; cv=none; b=XxUEiDcgXHWXiMnjTRGgaXN+jVC+rusfNsps18vIXjM56oQhyXo9OS4dB/q2oQWQbPQBTEdI7A7RixRUywwFL752W0tQjyJgYw5o1EtNWjLYegUHCLpQpzfNntpyf38770g896wrNZqmTqlCTubt/Sz4cMuupgXMbaHjeKZePZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746014794; c=relaxed/simple;
-	bh=8sY32Ocai8UTD6nKl/Ayid+R66WMQ0S7xjPYvjjWZx4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b3yDfv29ZwC8LZNevFhGJZyMHbDOAr294Wx0LmMMgh5hcTWdSDZG5agOLLM8IUJmx+/BnUZMOH4F9ncL8YasHtmTfsQmvGa8r2LZxwL2rDEouJcp3UW++hum0mIqFgsXEdDuSL7H2lv7txYR0XW/PJQCpUp8BVUQhVE+wWQ9u8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=VqT+q747; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=T0LOk/CI reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1746014784; c=relaxed/simple;
+	bh=a6RinYcb/aD0Hpy2iqfdEdvnwNQuxx/phQ3MZMM9Zyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SUAz8jAEiovlfBODojkHJDXw7MkV1Run38rR4oKm7vT5O0DwATGpEeKdi/Wvdqqxom0EqDAwaPkcMEacvGqDnQF24JCrleuZtrw3i+gdoE01RgjkfP8bAC+jv88aLHOFdKuer11SwEQAca+gby/JiB+zrEs5qnUdbIoEwpC3cjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eotCkBgf; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac7bd86f637so163582066b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1746014792; x=1777550792;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Xa3mNEfdhrIDOlxo7TVXevfB9pnUglXcunIlDPViRFQ=;
-  b=VqT+q747xOndpuEg2Nariue+xoO97VUF68A2JvsTN7vScPEywkk+aSGx
-   x1WnX2LQfQKpTcSxr6CRbfuzdigEJD40/LRuLTxTUFGUThbLEXZDf8m34
-   +ey+VYs7RHYPZdCklQi/YJNcdEB/dPyV26lbo8cbl8kNt+mZvpIcNsGCz
-   0fc6gzifPfYn1KjChB8M/ARqj3pskwI6/sh385iEl+KsUl5s6rkYA4uJB
-   crDWmtKzub75vWbtxzFN/vxnElf/ZtuZv8P5bJD8GCftRK9OVwxnUttyO
-   nBb1T13tBoXEo7Pp6QnlPI738Q8PhTHQGAB+UKPcSAP7R0YVa2idE2Mvn
-   A==;
-X-CSE-ConnectionGUID: b8CHd4I3STOBD7Z2EViVTQ==
-X-CSE-MsgGUID: y4pJW1tYR4mIp2PMliHZyA==
-X-IronPort-AV: E=Sophos;i="6.15,251,1739833200"; 
-   d="scan'208";a="43809745"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 30 Apr 2025 14:06:30 +0200
-X-CheckPoint: {68121246-2E-BF62DDF1-CB8BF55F}
-X-MAIL-CPID: 49C9A6B57520DDF90CE7DD2646D8985E_1
-X-Control-Analysis: str=0001.0A006398.68121253.0066,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 34550168F21;
-	Wed, 30 Apr 2025 14:06:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1746014786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xa3mNEfdhrIDOlxo7TVXevfB9pnUglXcunIlDPViRFQ=;
-	b=T0LOk/CInLTFG0ltpa8iyTWHKIda8dEXfX/MklxH+aH6NJOXu2d1patAplzSHE329bRmoa
-	r6gHrcxIPcLh+hYqEH7VYamb0yavToPWJqCgye5jL2tAv5aiEhdNcLf4XYxL+/6t2gt20t
-	9iXRjmlM3RvDa9RAq7dlb7wiVy/USu4VggVaKuUcUGAv6kynjELBOX1BJO01JAH3cPIzkd
-	q34dVvw9IePBA6zrwKcKnXuP0famOMPkm89v4cCXNYENTNp6xarxBhHsuThZmBlSqV76tG
-	Hvscl7xlgmdKllIWHgg8pIMBQaej6Z3guLjbD26H6MWvsELQCKwRGug7GhRkzA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Matthias Schiffer <matthias.schiffer@tq-group.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux@ew.tq-group.com,
-	Max Merchel <Max.Merchel@tq-group.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH v2 2/2] arm64: dts: ls1012a: add DTS for TQMLS1012al module with MBLS1012AL board
-Date: Wed, 30 Apr 2025 14:06:01 +0200
-Message-ID: <20250430120605.2068102-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250430120605.2068102-1-alexander.stein@ew.tq-group.com>
-References: <20250430120605.2068102-1-alexander.stein@ew.tq-group.com>
+        d=suse.com; s=google; t=1746014779; x=1746619579; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ums389MIjLkJpJBvQUZ9Jlb75Ou3ktiWaf0gQqUjK+I=;
+        b=eotCkBgflW9wYI552R0y4BGlY5QsGS7RIx8qnCXQKJt5MffKV7cWkIe/HU9Dt7yt+r
+         XUlgXBZFN4tws+XJWiJ+t0MW9bsmh+eTT36a9WYuqo3uwwUtlcEkKPQKhOR9B30bEb+n
+         d0EfSoXEiJR/J+Icmjzq4KxlIP3MVbVxXY3ziw7/tqOV/JkYbuA/UrpkMTeHjzQD9k5z
+         irQIbD86CAXT7DJJkgu5LINXdeBLC1fkFpUNKLWxDO5s8GCQeKzlHrO/+sC8K+gW+7Oo
+         PH7QbF0Ukj+dvSWRIpmTrRgPNoHkqizcJQI30+0En76JNrjyCOorj+UHevpHT5DlEckc
+         drlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746014779; x=1746619579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ums389MIjLkJpJBvQUZ9Jlb75Ou3ktiWaf0gQqUjK+I=;
+        b=wmLZhM4PYvW2H4OSKmqqFVelnpRK6ZcR589mAUWv+cn5dASBPgF2qAgX6GqTSi+A4W
+         yxjRQ6qJzRWjf8yy42gyAGkhtYJwCLu9pC+6Upg29zmKVq1YSZ35vfG4fBCuslTFABvR
+         tKEuQMEfoRKlC8SJZeYbJ+ONFyKVWECI1GZObrgAAXD21djoHo5UiLgeehlFvyancRtA
+         aOtQwq0TrVcQrctVjNw3QY18DPa3HLZ+cYaIxAfI+pOXODMvKPbqX7nim8JS5GjmBUtd
+         nJl6QgyLDnm/pLY4sUO/rXDpuW9O8y8p32b9nSESOvfOynkGBPN1pYNmC0Rbl1aF/bqY
+         Jc+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUZq8XABli2C6qbm8Tlwui95jo/p9BQPGnY1o73B2/HdYuDfsCxdhIs/k4cdddgPiUVVzdfsw4UPYgBjwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMVCHAbbOnhHqqlbFLbnT0SEqUVHSOSKGokhPvfr0G8gkBxyUa
+	rRp+BSMpUigl0jQ8cnvuaVYkni1LUNNpLPjBS98V9a70oNI0OsU/mJK1j5Q8PDlkbSLY31ffzER
+	tifQFfdLI2YXFkrB4Uv1Tee4qd05Jpcx/8ig50w==
+X-Gm-Gg: ASbGncsjiv5uWx7yHm91VNt5aciAhJK6Pq0cUi8jQ/Xgrd0Tc0MkPS0SzlGTACGK4Z/
+	/28HgaejgWVSj3NrEIdVpEUuyvmQbXIgW5xUc9yKCU7iEfACS7ciVjsfVoJ5PCHUm+YT8yxIRyJ
+	ZWA2Zs6Fqv13WV0/Tvo1LI
+X-Google-Smtp-Source: AGHT+IEU8jqT3+j4wcj73QsVqGpumC0aUkMyJjurYEs8WmO5pZ+5hdq1DauwbWHj7632d0ufaYcJqLu9SP4Vnh+/Ozw=
+X-Received: by 2002:a17:906:6a1e:b0:ace:8176:9870 with SMTP id
+ a640c23a62f3a-acedf68d357mr233700766b.9.1746014778858; Wed, 30 Apr 2025
+ 05:06:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250429151800.649010-1-neelx@suse.com> <CAL3q7H7WPE+26v1uCKa5C=BwcGpUN3OjnaPUkexPGD=mpJbkSA@mail.gmail.com>
+ <CAPjX3FevwHRzyHzgLjcZ8reHtJ3isw3eREYrMvNCPLMDR=NJ4g@mail.gmail.com>
+ <CAL3q7H56LC5ro+oshGaVVCV9Gvxfnz4dLaq6bwVW=t0P=tLUCg@mail.gmail.com>
+ <CAPjX3Fe3BZ8OB2ZVMn58pY5E9k9j=uNAmuqM4R1tO=sPvx7-pA@mail.gmail.com> <CAL3q7H5Bzvew9kGXBRLJNtZm+0_eMOyrgUvC1ZK544DunAPEsA@mail.gmail.com>
+In-Reply-To: <CAL3q7H5Bzvew9kGXBRLJNtZm+0_eMOyrgUvC1ZK544DunAPEsA@mail.gmail.com>
+From: Daniel Vacek <neelx@suse.com>
+Date: Wed, 30 Apr 2025 14:06:04 +0200
+X-Gm-Features: ATxdqUGwuekFqy3-4xLqyC_YqBdOWD-45QVgTcFSy-apTOtK6oLj6F5Vcwyy1Y0
+Message-ID: <CAPjX3FcDrr7D7nwh3=fyyOCxnp0iv+jeyPcGRX+gpw9zGHJ3vA@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: remove extent buffer's redundant `len` member field
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Matthias Schiffer <matthias.schiffer@tq-group.com>
+On Wed, 30 Apr 2025 at 12:26, Filipe Manana <fdmanana@kernel.org> wrote:
+>
+> On Wed, Apr 30, 2025 at 9:50=E2=80=AFAM Daniel Vacek <neelx@suse.com> wro=
+te:
+> >
+> > On Wed, 30 Apr 2025 at 10:34, Filipe Manana <fdmanana@kernel.org> wrote=
+:
+> > >
+> > > On Wed, Apr 30, 2025 at 9:26=E2=80=AFAM Daniel Vacek <neelx@suse.com>=
+ wrote:
+> > > >
+> > > > On Wed, 30 Apr 2025 at 10:06, Filipe Manana <fdmanana@kernel.org> w=
+rote:
+> > > > >
+> > > > > On Tue, Apr 29, 2025 at 4:19=E2=80=AFPM Daniel Vacek <neelx@suse.=
+com> wrote:
+> > > > > >
+> > > > > > Even super block nowadays uses nodesize for eb->len. This is si=
+nce commits
+> > > > > >
+> > > > > > 551561c34663 ("btrfs: don't pass nodesize to __alloc_extent_buf=
+fer()")
+> > > > > > da17066c4047 ("btrfs: pull node/sector/stripe sizes out of root=
+ and into fs_info")
+> > > > > > ce3e69847e3e ("btrfs: sink parameter len to alloc_extent_buffer=
+")
+> > > > > > a83fffb75d09 ("btrfs: sink blocksize parameter to btrfs_find_cr=
+eate_tree_block")
+> > > > > >
+> > > > > > With these the eb->len is not really useful anymore. Let's use =
+the nodesize
+> > > > > > directly where applicable.
+> > > > > >
+> > > > > > Signed-off-by: Daniel Vacek <neelx@suse.com>
+> > > > > > ---
+> > > > > > [RFC]
+> > > > > >  * Shall the eb_len() helper better be called eb_nodesize()? Or=
+ even rather
+> > > > > >    opencoded and not used at all?
+...
+> > > > > > +static inline u32 eb_len(const struct extent_buffer *eb)
+> > > > > > +{
+> > > > > > +       return eb->fs_info->nodesize;
+> > > > > > +}
+> > > > >
+> > > > > Please always add a "btrfs_" prefix to the name of exported funct=
+ions.
+> > > >
+> > > > It's static inline, not exported. But I'm happy just opencoding it
+> > > > instead. Thanks.
+> > >
+> > > Exported in the sense that it's in a header and visible to any C file=
+s
+> > > that include it, not in the sense of being exported with
+> > > EXPORT_SYMBOL_GPL() for example.
+> > > This is our coding style convention:
+> > >
+> > > https://btrfs.readthedocs.io/en/latest/dev/Development-notes.html#fun=
+ction-declarations
+> > >
+> > > static functions inside a C file can omit the prefix.
+> >
+> > Nah, thanks again. I was not aware of that. Will keep it in mind.
+> >
+> > Still, it doesn't make sense to me to be honest. I mean specifically
+> > with this example. The header file is also private to btrfs, no public
+> > API. Personally I wouldn't differentiate if it's a source or a header
+> > file. The code can be freely moved around. And with the prefix the
+> > code would end up more bloated and less readable, IMO. But let's not
+> > start any flamewars here.
+>
+> I'd disagree about less readability. Reading code that calls a
+> function with the btrfs prefix makes it clear it's a btrfs specific
+> function.
+> Looking at ext4 and xfs, functions declared or defined in their
+> headers have a "ext4_", "ext_" or "xfs_" prefix.
 
-Add initial support for TQMLS1012AL module mounted on MBLS1012AL.
-It supports UART1 for console, PCIe, I2C, USB, µSD card (default), SATA
-and QSPI.
-There is an alternative ordering option which provides an eMMC instead of
-an SD card. This uses a different DT instead.
-Due missing Packet Forwarding Engine (PFE) driver support, there is no
-support for Ethernet so far.
+I see. Makes sense.
+Does this also apply to preprocessor macros? I don't see them
+mentioned in the development notes.
+I'm asking as I did consider using a macro which would look a bit
+cleaner perhaps, just one line instead of four. But it would also miss
+the type checking.
+So I guess the naming convention should also apply to macros, right?
 
-Signed-off-by: Max Merchel <Max.Merchel@tq-group.com>
-Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v2:
-* Be a bit more specific with lm75 compatible
-* Remove m25p,fast-read from spi-nor flash
+Finally quickly checking I see a lot of functions like eg.
+free_extent_buffer(), free_extent_buffer_stale() and many others
+violating the rule. I guess we should also clean up and rename them,
+right?
 
- arch/arm64/boot/dts/freescale/Makefile        |   2 +
- ...sl-ls1012a-tqmls1012al-mbls1012al-emmc.dts |  21 ++
- .../fsl-ls1012a-tqmls1012al-mbls1012al.dts    | 346 ++++++++++++++++++
- .../freescale/fsl-ls1012a-tqmls1012al.dtsi    |  73 ++++
- 4 files changed, 442 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al-mbls1012al-emmc.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al-mbls1012al.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al.dtsi
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index bf575395d7d5b..f6b8686ed3cfe 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -5,6 +5,8 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-frwy.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-oxalis.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-qds.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-rdb.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-tqmls1012al-mbls1012al.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-tqmls1012al-mbls1012al-emmc.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-kontron-kbox-a-230-ls.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-kontron-sl28.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-kontron-sl28-var1.dtb
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al-mbls1012al-emmc.dts b/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al-mbls1012al-emmc.dts
-new file mode 100644
-index 0000000000000..82dc0a7c7d535
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al-mbls1012al-emmc.dts
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+/*
-+ * Copyright (c) 2018-2025 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * D-82229 Seefeld, Germany.
-+ * Author: Matthias Schiffer
-+ * Author: Max Merchel
-+ */
-+
-+#include "fsl-ls1012a-tqmls1012al-mbls1012al.dts"
-+
-+&esdhc0 {
-+	vqmmc-supply = <&reg_1p8v>;
-+	/delete-property/ no-mmc;
-+	disable-wp;
-+	mmc-ddr-1_8v;
-+	mmc-hs200-1_8v;
-+	no-sdio;
-+	no-sd;
-+	voltage-ranges = <1800 1800>;
-+	non-removable;
-+};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al-mbls1012al.dts b/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al-mbls1012al.dts
-new file mode 100644
-index 0000000000000..147c7ca130c44
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al-mbls1012al.dts
-@@ -0,0 +1,346 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+/*
-+ * Copyright (c) 2018-2025 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * D-82229 Seefeld, Germany.
-+ * Author: Matthias Schiffer
-+ * Author: Max Merchel
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/net/ti-dp83867.h>
-+#include "fsl-ls1012a-tqmls1012al.dtsi"
-+
-+/ {
-+	model = "TQ-Systems TQMLS1012AL on MBLS1012AL";
-+	compatible = "tq,ls1012a-tqmls1012al-mbls1012al", "tq,ls1012a-tqmls1012al", "fsl,ls1012a";
-+	chassis-type = "embedded";
-+
-+	aliases {
-+		serial0 = &duart0;
-+		/* use MAC from U-Boot environment */
-+		/* TODO: PFE */
-+		ethernet2 = &swport0;
-+		ethernet3 = &swport1;
-+		ethernet4 = &swport2;
-+		ethernet5 = &swport3;
-+		spi0 = &qspi;
-+	};
-+
-+	chosen {
-+		stdout-path = &duart0;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		autorepeat;
-+
-+		switch-1 {
-+			label = "S2";
-+			linux,code = <BTN_0>;
-+			gpios = <&gpio_exp_3p3v 13 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		switch-2 {
-+			label = "X15";
-+			linux,code = <BTN_1>;
-+			gpios = <&gpio_exp_1p8v 5 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		switch-3 {
-+			label = "X16";
-+			linux,code = <BTN_2>;
-+			gpios = <&gpio_exp_1p8v 4 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+
-+		led-0 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_HEARTBEAT;
-+			gpios = <&gpio_exp_3p3v 14 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led-1 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio_exp_3p3v 15 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "default-on";
-+		};
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/* global autoconfigured region for contiguous allocations */
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			reusable;
-+			/* 64 MiB */
-+			size = <0 0x04000000>;
-+			/*  512 - 128 MiB, our minimum RAM config will be 512 MiB */
-+			alloc-ranges = <0 0x80000000 0 0x98000000>;
-+			linux,cma-default;
-+		};
-+	};
-+
-+	reg_1p5v: regulator-1p5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P5V";
-+		regulator-min-microvolt = <1500000>;
-+		regulator-max-microvolt = <1500000>;
-+		regulator-always-on;
-+	};
-+
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+};
-+
-+&duart0 {
-+	status = "okay";
-+};
-+
-+&esdhc0 {
-+	vmmc-supply = <&reg_3p3v>;
-+	no-mmc;
-+	no-sdio;
-+	disable-wp;
-+	sd-uhs-sdr104;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr12;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	lm75_48: temperature-sensor@48 {
-+		compatible = "national,lm75a";
-+		reg = <0x48>;
-+		vs-supply = <&reg_3p3v>;
-+	};
-+
-+	gpio_exp_3p3v: gpio-expander@20 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		vcc-supply = <&reg_3p3v>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <24 IRQ_TYPE_EDGE_FALLING>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-line-names = "", "", "GPIO_3V3_3", "",
-+				  "", "", "", "",
-+				  "", "GPIO_3V3_1", "GPIO_3V3_2", "",
-+				  "", "", "", "";
-+
-+		wlan-disable-hog {
-+			gpio-hog;
-+			gpios = <0 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "WLAN_DISABLE#";
-+		};
-+
-+		vcc-pcie-en-3v3-hog {
-+			gpio-hog;
-+			gpios = <1 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "VCC_PCIE_EN_3V3";
-+		};
-+
-+		vcc-wlan-en-3v3-hog {
-+			gpio-hog;
-+			gpios = <3 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "VCC_WLAN_EN_3V3";
-+		};
-+
-+		pcie-rst-hog {
-+			gpio-hog;
-+			gpios = <4 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "PCIE_RST#";
-+		};
-+
-+		wlan-rst-hog {
-+			gpio-hog;
-+			gpios = <5 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "WLAN_RST#";
-+		};
-+
-+		pcie-dis-hog {
-+			gpio-hog;
-+			gpios = <11 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "PCIE_DIS#";
-+		};
-+
-+		pcie-wake-hog {
-+			gpio-hog;
-+			gpios = <12 GPIO_ACTIVE_HIGH>;
-+			input;
-+			line-name = "PCIE_WAKE#";
-+		};
-+	};
-+
-+	gpio_exp_1p8v: gpio-expander@70 {
-+		compatible = "nxp,pca9538";
-+		reg = <0x70>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		vcc-supply = <&reg_1p8v>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-line-names = "PCIE_CLK_PD#", "PMIC_INT#", "ETH_SW_INT#", "",
-+				  "", "", "", "",
-+				  "", "GPIO_3V3_1", "GPIO_3V3_2", "",
-+				  "", "", "", "";
-+
-+		/* do not change PCIE_CLK_PD */
-+		pcie-clk-pd-hog {
-+			gpio-hog;
-+			gpios = <0 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "PCIE_CLK_PD#";
-+		};
-+
-+		pmic-int-hog {
-+			gpio-hog;
-+			gpios = <1 GPIO_ACTIVE_HIGH>;
-+			input;
-+			line-name = "PMIC_INT#";
-+		};
-+
-+		eth-sw-int-hog {
-+			gpio-hog;
-+			gpios = <2 GPIO_ACTIVE_HIGH>;
-+			input;
-+			line-name = "ETH_SW_INT#";
-+		};
-+
-+		eth-link-pwrdwn-hog {
-+			gpio-hog;
-+			gpios = <3 GPIO_ACTIVE_HIGH>;
-+			input;
-+			line-name = "ETH_LINK_PWRDWN#";
-+		};
-+
-+		vcc-wlan-en-1v5-hog {
-+			gpio-hog;
-+			gpios = <6 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "VCC_WLAN_EN_1V5";
-+		};
-+
-+		vcc-pcie-en-1v5-hog {
-+			gpio-hog;
-+			gpios = <7 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "VCC_PCIE_EN_1V5";
-+		};
-+	};
-+
-+	switch@5f {
-+		compatible = "microchip,ksz9897";
-+		reg = <0x5f>;
-+		reset-gpios = <&gpio_exp_3p3v 7 GPIO_ACTIVE_LOW>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			swport0: port@0 {
-+				reg = <0>;
-+				label = "swp0";
-+				phy-mode = "internal";
-+			};
-+
-+			swport1: port@1 {
-+				reg = <1>;
-+				label = "swp1";
-+				phy-mode = "internal";
-+			};
-+
-+			swport2: port@2 {
-+				reg = <2>;
-+				label = "swp2";
-+				phy-mode = "internal";
-+			};
-+
-+			swport3: port@3 {
-+				reg = <3>;
-+				label = "swp3";
-+				phy-mode = "internal";
-+			};
-+
-+			port@6 {
-+				reg = <6>;
-+				label = "cpu";
-+				/* TODO: PFE */
-+				phy-mode = "rgmii-id";
-+				rx-internal-delay-ps = <1500>;
-+				tx-internal-delay-ps = <1500>;
-+
-+				fixed-link {
-+					speed = <1000>;
-+					full-duplex;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&pcie1 {
-+	status = "okay";
-+};
-+
-+/* TODO: PFE */
-+
-+&sata {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	hub_2_0: hub@1 {
-+		compatible = "usb451,8142";
-+		reg = <1>;
-+		peer-hub = <&hub_3_0>;
-+		reset-gpios = <&gpio_exp_3p3v 6 GPIO_ACTIVE_LOW>;
-+		vdd-supply = <&reg_vcc_3v3>;
-+	};
-+
-+	hub_3_0: hub@2 {
-+		compatible = "usb451,8140";
-+		reg = <2>;
-+		peer-hub = <&hub_2_0>;
-+		reset-gpios = <&gpio_exp_3p3v 6 GPIO_ACTIVE_LOW>;
-+		vdd-supply = <&reg_vcc_3v3>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al.dtsi
-new file mode 100644
-index 0000000000000..5f6ee8fd4094b
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-tqmls1012al.dtsi
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+/*
-+ * Copyright (c) 2018-2025 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * D-82229 Seefeld, Germany.
-+ * Author: Matthias Schiffer
-+ * Author: Max Merchel
-+ */
-+
-+#include "fsl-ls1012a.dtsi"
-+
-+/ {
-+	compatible = "tq,ls1012a-tqmls1012al", "fsl,ls1012a";
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		/*  our minimum RAM config will be 512 MiB */
-+		reg = <0x00000000 0x80000000 0 0x20000000>;
-+	};
-+
-+	reg_vcc_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	jc42_19: temperature-sensor@19 {
-+		compatible = "nxp,se97b", "jedec,jc-42.4-temp";
-+		reg = <0x19>;
-+	};
-+
-+	m24c64_50: eeprom@50 {
-+		compatible = "atmel,24c64";
-+		reg = <0x50>;
-+		pagesize = <32>;
-+		vcc-supply = <&reg_vcc_3v3>;
-+	};
-+
-+	m24c02_51: eeprom@51 {
-+		compatible = "nxp,se97b", "atmel,24c02";
-+		reg = <0x51>;
-+		pagesize = <16>;
-+		read-only;
-+		vcc-supply = <&reg_vcc_3v3>;
-+	};
-+
-+	rtc1: rtc@68 {
-+		compatible = "dallas,ds1339";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&qspi {
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <39000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <1>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+		};
-+	};
-+};
--- 
-2.43.0
-
+> > > > > In this case I don't think adding this helper adds any value.
+> > > > > We can just do eb->fs_info->nodesize everywhere and in some place=
+s we
+> > > > > already have fs_info in a local variable and can just do
+> > > > > fs_info->nodesize.
+> > > > >
+> > > > > Thanks.
+> > > > >
+> > > > > > +
+> > > > > >  /* Note: this can be used in for loops without caching the val=
+ue in a variable. */
+> > > > > >  static inline int __pure num_extent_pages(const struct extent_=
+buffer *eb)
+> > > > > >  {
+> > > > > >         /*
+> > > > > >          * For sectorsize =3D=3D PAGE_SIZE case, since nodesize=
+ is always aligned to
+> > > > > > -        * sectorsize, it's just eb->len >> PAGE_SHIFT.
+> > > > > > +        * sectorsize, it's just nodesize >> PAGE_SHIFT.
+> > > > > >          *
+> > > > > >          * For sectorsize < PAGE_SIZE case, we could have nodes=
+ize < PAGE_SIZE,
+> > > > > >          * thus have to ensure we get at least one page.
+> > > > > >          */
+> > > > > > -       return (eb->len >> PAGE_SHIFT) ?: 1;
+> > > > > > +       return (eb_len(eb) >> PAGE_SHIFT) ?: 1;
+> > > > > >  }
+> > > > > >
+> > > > > >  /*
+> > > > > > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> > > > > > index 68fac77fb95d1..6be2d56d44917 100644
+> > > > > > --- a/fs/btrfs/ioctl.c
+> > > > > > +++ b/fs/btrfs/ioctl.c
+> > > > > > @@ -598,7 +598,7 @@ static noinline int create_subvol(struct mn=
+t_idmap *idmap,
+> > > > > >         btrfs_set_root_generation(root_item, trans->transid);
+> > > > > >         btrfs_set_root_level(root_item, 0);
+> > > > > >         btrfs_set_root_refs(root_item, 1);
+> > > > > > -       btrfs_set_root_used(root_item, leaf->len);
+> > > > > > +       btrfs_set_root_used(root_item, fs_info->nodesize);
+> > > > > >         btrfs_set_root_last_snapshot(root_item, 0);
+> > > > > >
+> > > > > >         btrfs_set_root_generation_v2(root_item,
+> > > > > > diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
+> > > > > > index 6287e71ebad5f..5086485a4ae21 100644
+> > > > > > --- a/fs/btrfs/relocation.c
+> > > > > > +++ b/fs/btrfs/relocation.c
+> > > > > > @@ -4352,7 +4352,7 @@ int btrfs_reloc_cow_block(struct btrfs_tr=
+ans_handle *trans,
+> > > > > >                         mark_block_processed(rc, node);
+> > > > > >
+> > > > > >                 if (first_cow && level > 0)
+> > > > > > -                       rc->nodes_relocated +=3D buf->len;
+> > > > > > +                       rc->nodes_relocated +=3D fs_info->nodes=
+ize;
+> > > > > >         }
+> > > > > >
+> > > > > >         if (level =3D=3D 0 && first_cow && rc->stage =3D=3D UPD=
+ATE_DATA_PTRS)
+> > > > > > diff --git a/fs/btrfs/subpage.c b/fs/btrfs/subpage.c
+> > > > > > index d4f0192334936..711792f32e9ce 100644
+> > > > > > --- a/fs/btrfs/subpage.c
+> > > > > > +++ b/fs/btrfs/subpage.c
+> > > > > > @@ -631,7 +631,7 @@ void btrfs_meta_folio_set_##name(struct fol=
+io *folio, const struct extent_buffer
+> > > > > >                 folio_set_func(folio);                         =
+         \
+> > > > > >                 return;                                        =
+         \
+> > > > > >         }                                                      =
+         \
+> > > > > > -       btrfs_subpage_set_##name(eb->fs_info, folio, eb->start,=
+ eb->len); \
+> > > > > > +       btrfs_subpage_set_##name(eb->fs_info, folio, eb->start,=
+ eb_len(eb)); \
+> > > > > >  }                                                             =
+         \
+> > > > > >  void btrfs_meta_folio_clear_##name(struct folio *folio, const =
+struct extent_buffer *eb) \
+> > > > > >  {                                                             =
+         \
+> > > > > > @@ -639,13 +639,13 @@ void btrfs_meta_folio_clear_##name(struct=
+ folio *folio, const struct extent_buff
+> > > > > >                 folio_clear_func(folio);                       =
+         \
+> > > > > >                 return;                                        =
+         \
+> > > > > >         }                                                      =
+         \
+> > > > > > -       btrfs_subpage_clear_##name(eb->fs_info, folio, eb->star=
+t, eb->len); \
+> > > > > > +       btrfs_subpage_clear_##name(eb->fs_info, folio, eb->star=
+t, eb_len(eb)); \
+> > > > > >  }                                                             =
+         \
+> > > > > >  bool btrfs_meta_folio_test_##name(struct folio *folio, const s=
+truct extent_buffer *eb) \
+> > > > > >  {                                                             =
+         \
+> > > > > >         if (!btrfs_meta_is_subpage(eb->fs_info))               =
+         \
+> > > > > >                 return folio_test_func(folio);                 =
+         \
+> > > > > > -       return btrfs_subpage_test_##name(eb->fs_info, folio, eb=
+->start, eb->len); \
+> > > > > > +       return btrfs_subpage_test_##name(eb->fs_info, folio, eb=
+->start, eb_len(eb)); \
+> > > > > >  }
+> > > > > >  IMPLEMENT_BTRFS_PAGE_OPS(uptodate, folio_mark_uptodate, folio_=
+clear_uptodate,
+> > > > > >                          folio_test_uptodate);
+> > > > > > @@ -765,7 +765,7 @@ bool btrfs_meta_folio_clear_and_test_dirty(=
+struct folio *folio, const struct ext
+> > > > > >                 return true;
+> > > > > >         }
+> > > > > >
+> > > > > > -       last =3D btrfs_subpage_clear_and_test_dirty(eb->fs_info=
+, folio, eb->start, eb->len);
+> > > > > > +       last =3D btrfs_subpage_clear_and_test_dirty(eb->fs_info=
+, folio, eb->start, eb_len(eb));
+> > > > > >         if (last) {
+> > > > > >                 folio_clear_dirty_for_io(folio);
+> > > > > >                 return true;
+> > > > > > diff --git a/fs/btrfs/tests/extent-io-tests.c b/fs/btrfs/tests/=
+extent-io-tests.c
+> > > > > > index 00da54f0164c9..657f8f1d9263e 100644
+> > > > > > --- a/fs/btrfs/tests/extent-io-tests.c
+> > > > > > +++ b/fs/btrfs/tests/extent-io-tests.c
+> > > > > > @@ -342,7 +342,7 @@ static int check_eb_bitmap(unsigned long *b=
+itmap, struct extent_buffer *eb)
+> > > > > >  {
+> > > > > >         unsigned long i;
+> > > > > >
+> > > > > > -       for (i =3D 0; i < eb->len * BITS_PER_BYTE; i++) {
+> > > > > > +       for (i =3D 0; i < eb_len(eb) * BITS_PER_BYTE; i++) {
+> > > > > >                 int bit, bit1;
+> > > > > >
+> > > > > >                 bit =3D !!test_bit(i, bitmap);
+> > > > > > @@ -411,7 +411,7 @@ static int test_bitmap_clear(const char *na=
+me, unsigned long *bitmap,
+> > > > > >  static int __test_eb_bitmaps(unsigned long *bitmap, struct ext=
+ent_buffer *eb)
+> > > > > >  {
+> > > > > >         unsigned long i, j;
+> > > > > > -       unsigned long byte_len =3D eb->len;
+> > > > > > +       unsigned long byte_len =3D eb_len(eb);
+> > > > > >         u32 x;
+> > > > > >         int ret;
+> > > > > >
+> > > > > > @@ -670,7 +670,7 @@ static int test_find_first_clear_extent_bit=
+(void)
+> > > > > >  static void dump_eb_and_memory_contents(struct extent_buffer *=
+eb, void *memory,
+> > > > > >                                         const char *test_name)
+> > > > > >  {
+> > > > > > -       for (int i =3D 0; i < eb->len; i++) {
+> > > > > > +       for (int i =3D 0; i < eb_len(eb); i++) {
+> > > > > >                 struct page *page =3D folio_page(eb->folios[i >=
+> PAGE_SHIFT], 0);
+> > > > > >                 void *addr =3D page_address(page) + offset_in_p=
+age(i);
+> > > > > >
+> > > > > > @@ -686,7 +686,7 @@ static void dump_eb_and_memory_contents(str=
+uct extent_buffer *eb, void *memory,
+> > > > > >  static int verify_eb_and_memory(struct extent_buffer *eb, void=
+ *memory,
+> > > > > >                                 const char *test_name)
+> > > > > >  {
+> > > > > > -       for (int i =3D 0; i < (eb->len >> PAGE_SHIFT); i++) {
+> > > > > > +       for (int i =3D 0; i < (eb_len(eb) >> PAGE_SHIFT); i++) =
+{
+> > > > > >                 void *eb_addr =3D folio_address(eb->folios[i]);
+> > > > > >
+> > > > > >                 if (memcmp(memory + (i << PAGE_SHIFT), eb_addr,=
+ PAGE_SIZE) !=3D 0) {
+> > > > > > @@ -703,8 +703,8 @@ static int verify_eb_and_memory(struct exte=
+nt_buffer *eb, void *memory,
+> > > > > >   */
+> > > > > >  static void init_eb_and_memory(struct extent_buffer *eb, void =
+*memory)
+> > > > > >  {
+> > > > > > -       get_random_bytes(memory, eb->len);
+> > > > > > -       write_extent_buffer(eb, memory, 0, eb->len);
+> > > > > > +       get_random_bytes(memory, eb_len(eb));
+> > > > > > +       write_extent_buffer(eb, memory, 0, eb_len(eb));
+> > > > > >  }
+> > > > > >
+> > > > > >  static int test_eb_mem_ops(u32 sectorsize, u32 nodesize)
+> > > > > > diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> > > > > > index 9d42bf2bfd746..c7a8cdd87c509 100644
+> > > > > > --- a/fs/btrfs/zoned.c
+> > > > > > +++ b/fs/btrfs/zoned.c
+> > > > > > @@ -2422,7 +2422,7 @@ void btrfs_schedule_zone_finish_bg(struct=
+ btrfs_block_group *bg,
+> > > > > >                                    struct extent_buffer *eb)
+> > > > > >  {
+> > > > > >         if (!test_bit(BLOCK_GROUP_FLAG_SEQUENTIAL_ZONE, &bg->ru=
+ntime_flags) ||
+> > > > > > -           eb->start + eb->len * 2 <=3D bg->start + bg->zone_c=
+apacity)
+> > > > > > +           eb->start + eb_len(eb) * 2 <=3D bg->start + bg->zon=
+e_capacity)
+> > > > > >                 return;
+> > > > > >
+> > > > > >         if (WARN_ON(bg->zone_finish_work.func =3D=3D btrfs_zone=
+_finish_endio_workfn)) {
+> > > > > > --
+> > > > > > 2.47.2
+> > > > > >
+> > > > > >
 
