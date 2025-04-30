@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-627204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E82AAA4D1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C32AA4D31
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 625027B28E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:14:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4CF1188E5A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754C725C80B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F32F25A344;
 	Wed, 30 Apr 2025 13:15:35 +0000 (UTC)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36672DC791
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E676231852
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746018935; cv=none; b=PKxIab3/lUtVG/YSnOoYSGFUXahlPAWR+XAWnPcL7Ntrs3TwM2kILK5qOsxI8d4AfluLKJDiTUrrnSyrpYfNqtZXVq7fOOyECHulyrEX1pne5OPbYkvEzFgUrWCirl069mXPElUjDZhLqF0dnD2tC5nCldcXf/xqv6/A4KfJGHw=
+	t=1746018934; cv=none; b=P0mApEyRzJr+ztwxUUgHxxqPoWqsrgNOGALYl8FR3wQPPeMgPsmTbpPrb5pTBpZP/f08+YnrvM5qam/UdoEFzF/2YtWhgcGK26MxaAhHknz10adW/9wVDICCpAgjrJWfcURVTOE6Ieyjh9/IPXt9rGeaFb7PA2aaxpfhMP8w3KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746018935; c=relaxed/simple;
-	bh=EPWddZZeioNjTQ5Ffl6LTJ8Xs2kRN8UbXBOyzb+sLvk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n+GDWEUsdqr63cqSeKsfCy+p4HogNy1eySUK7KgDvpM2grttCm/LAZtkzqIJNmxdJepcS1ek5qviXY+Z/oI0adbHuPiwES5moSBdlfOp+m0Zjzqz4Ypd/+9k9joqdjPppDw7cN0k8QTqnGBwby8OiBYfYT+Xahj7AQCHqjk0r78=
+	s=arc-20240116; t=1746018934; c=relaxed/simple;
+	bh=qMaPiivrJGKurpBtp3ZnjDdCqgUn5cm1guoT0Yoe4+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iNBfprjsg8WZRH09135lM1o/r2SuL1UoGvmkl0dX9JXNWL8GtDM/do65GEoHiIPifr8r4Lrhh5gOyvqj5jWAwWhEg3yYWyB0JPQH49Dzoeee/417Z7OPCmsthLlxjt7NeGQxZhYv/ZDuC9Bbm4k1YUK1Ng9CxL9wJvQYX8yL0LE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxIK9qIhJoHDnLAA--.6168S3;
-	Wed, 30 Apr 2025 21:15:22 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____8DxdWlrIhJoHznLAA--.8674S3;
+	Wed, 30 Apr 2025 21:15:23 +0800 (CST)
 Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCx_cZmIhJoqoKgAA--.14402S2;
-	Wed, 30 Apr 2025 21:15:19 +0800 (CST)
+	by front1 (Coremail) with SMTP id qMiowMCx_cZmIhJoqoKgAA--.14402S3;
+	Wed, 30 Apr 2025 21:15:22 +0800 (CST)
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 To: Huacai Chen <chenhuacai@kernel.org>
 Cc: loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] Enable some configs in loongson3_defconfig
-Date: Wed, 30 Apr 2025 21:15:11 +0800
-Message-ID: <20250430131516.24287-1-yangtiezhu@loongson.cn>
+Subject: [PATCH 1/5] LoongArch: Clean up loongson3_defconfig
+Date: Wed, 30 Apr 2025 21:15:12 +0800
+Message-ID: <20250430131516.24287-2-yangtiezhu@loongson.cn>
 X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20250430131516.24287-1-yangtiezhu@loongson.cn>
+References: <20250430131516.24287-1-yangtiezhu@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,100 +49,258 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCx_cZmIhJoqoKgAA--.14402S2
+X-CM-TRANSID:qMiowMCx_cZmIhJoqoKgAA--.14402S3
 X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxAFWxurWfXr4rKryUJrW7WrX_yoW5XF4UpF
-	sI9a13trWrJrsagayDZ3ykWa40qrsxC34DJr4UtrWUZr4Dtryqq3WxtaySyay7X3s3Kr1F
-	qry8G3yUCFsrXagCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+X-Coremail-Antispam: 1Uk129KBj93XoWxtF4DJFy7Xr1fXFy7ArW3XFc_yoWxAFWDpF
+	yfXrs7JF4kAr1jyrW7Cr4DGrZ5tFnrJFy7uF1UJr15Aw18Jw4UJr10gryUGF4DXa9rXr4r
+	XFn3Jr13AFy5JwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
 	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
 	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
 	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
 	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
 	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
 	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
 	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
 	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
 	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7
 	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
 	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8j-e5UUUUU==
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UUUUU==
 
-This is a small patchset based on 6.15-rc4, each patch is a
-single logical change to better describe the problem and make
-it easier to review.
+There are many unnecessary configs in loongson3_defconfig, clean up it
+with the following steps:
 
-If the changes make sense, all of them can be squashed into one
-single patch, I think that would be fine as well, let us see if
-other people have concern about it.
+  make defconfig
+  make savedefconfig
+  cp defconfig arch/loongarch/configs/loongson3_defconfig
 
-By the way, I received many compile-time error reports about tools,
-most are related with configs, this is the motivation of this series.
+Then we can get a clear diff if the defconfig is changed.
 
-Additionally, I also received one run-time bug report about uprobe,
-but it works fine on my test environment. If somebody can reproduce
-it, please let me know, maybe I am missing something.
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ arch/loongarch/configs/loongson3_defconfig | 56 +---------------------
+ 1 file changed, 1 insertion(+), 55 deletions(-)
 
-1. How to reproduce
-
-(1) Compile and install Tongsuo
-
-git clone https://github.com/Tongsuo-Project/Tongsuo.git
-cd Tongsuo && ./config --prefix=/opt/tongsuo -Wl,-rpath,/opt/tongsuo/lib
-make && sudo make install
-
-https://www.tongsuo.net/docs/compilation/source-compilation
-
-(2) Compile and update kernel
-
-Apply this series based on 6.15-rc4, then use the loongson3_defconfig,
-CONFIG_UPROBE_EVENTS is already set.
-
-(3) Probe "openssl speed sm2"
-
-cd tools/perf && make
-sudo ./perf probe -x /usr/lib64/libcrypto.so BN_mod_mul_montgomery
-sudo ./perf stat -e probe_libcrypto:BN_mod_mul_montgomery /opt/tongsuo/bin/openssl speed sm2
-
-2. My test results
-
-fedora@linux:~/uprobe.git/tools/perf$ sudo ./perf probe -x /usr/lib64/libcrypto.so BN_mod_mul_montgomery
-Added new event:
-  probe_libcrypto:BN_mod_mul_montgomery (on BN_mod_mul_montgomery in /usr/lib64/libcrypto.so.3.2.2)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_libcrypto:BN_mod_mul_montgomery -aR sleep 1
-
-fedora@linux:~/uprobe.git/tools/perf$ sudo ./perf stat -e probe_libcrypto:BN_mod_mul_montgomery /opt/tongsuo/bin/openssl speed sm2
-Doing 256 bits sign CurveSM2's for 10s: 7463 256 bits CurveSM2 signs in 10.00s 
-Doing 256 bits verify CurveSM2's for 10s: 9681 256 bits CurveSM2 verify in 9.98s
-...
-                              sign    verify    sign/s verify/s
- 256 bits SM2 (CurveSM2)   0.0013s   0.0010s    746.3    970.0
-
- Performance counter stats for '/opt/tongsuo/bin/openssl speed sm2':
-
-                 0      probe_libcrypto:BN_mod_mul_montgomery                                      
-
-      20.007539877 seconds time elapsed
-
-      19.990010000 seconds user
-       0.000000000 seconds sys
-
-Thanks,
-Tiezhu
-
-Tiezhu Yang (5):
-  LoongArch: Clean up loongson3_defconfig
-  LoongArch: Enable tracing infrastructure in defconfig
-  LoongArch: Enable tracing syscalls in defconfig
-  LoongArch: Enable debug information in defconfig
-  LoongArch: Enable kprobe and ftrace in defconfig
-
- arch/loongarch/configs/loongson3_defconfig | 74 +++++-----------------
- 1 file changed, 16 insertions(+), 58 deletions(-)
-
+diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
+index 90f21dfe22b1..a3c9d189a627 100644
+--- a/arch/loongarch/configs/loongson3_defconfig
++++ b/arch/loongarch/configs/loongson3_defconfig
+@@ -45,30 +45,16 @@ CONFIG_EXPERT=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_PERF_EVENTS=y
+ CONFIG_KEXEC=y
+-CONFIG_CRASH_DUMP=y
+-CONFIG_LOONGARCH=y
+-CONFIG_64BIT=y
+-CONFIG_MACH_LOONGSON64=y
+-CONFIG_PAGE_SIZE_16KB=y
+-CONFIG_HZ_250=y
+-CONFIG_DMI=y
+-CONFIG_EFI=y
+-CONFIG_SMP=y
+-CONFIG_HOTPLUG_CPU=y
+ CONFIG_NR_CPUS=256
+ CONFIG_NUMA=y
+-CONFIG_CPU_HAS_FPU=y
+ CONFIG_CPU_HAS_LSX=y
+ CONFIG_CPU_HAS_LASX=y
+ CONFIG_RANDOMIZE_BASE=y
+-CONFIG_SUSPEND=y
+ CONFIG_HIBERNATION=y
+-CONFIG_ACPI=y
+ CONFIG_ACPI_SPCR_TABLE=y
+ CONFIG_ACPI_TAD=y
+ CONFIG_ACPI_DOCK=y
+ CONFIG_ACPI_IPMI=m
+-CONFIG_ACPI_HOTPLUG_CPU=y
+ CONFIG_ACPI_PCI_SLOT=y
+ CONFIG_ACPI_HOTPLUG_MEMORY=y
+ CONFIG_ACPI_BGRT=y
+@@ -81,7 +67,6 @@ CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
+ CONFIG_LOONGSON3_CPUFREQ=m
+ CONFIG_VIRTUALIZATION=y
+ CONFIG_KVM=m
+-CONFIG_JUMP_LABEL=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_FORCE_LOAD=y
+ CONFIG_MODULE_UNLOAD=y
+@@ -104,18 +89,12 @@ CONFIG_BSD_DISKLABEL=y
+ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_CMDLINE_PARTITION=y
+ CONFIG_IOSCHED_BFQ=y
+-CONFIG_BFQ_GROUP_IOSCHED=y
+ CONFIG_BINFMT_MISC=m
+-CONFIG_ZPOOL=y
+ CONFIG_ZSWAP=y
+ CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD=y
+-CONFIG_ZSMALLOC=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_MEMORY_HOTPLUG=y
+-# CONFIG_MHP_DEFAULT_ONLINE_TYPE_OFFLINE is not set
+ CONFIG_MHP_DEFAULT_ONLINE_TYPE_ONLINE_AUTO=y
+-# CONFIG_MHP_DEFAULT_ONLINE_TYPE_ONLINE_KERNEL is not set
+-# CONFIG_MHP_DEFAULT_ONLINE_TYPE_ONLINE_MOVABLE is not set
+ CONFIG_MEMORY_HOTREMOVE=y
+ CONFIG_KSM=y
+ CONFIG_TRANSPARENT_HUGEPAGE=y
+@@ -124,13 +103,11 @@ CONFIG_CMA_SYSFS=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+-CONFIG_UNIX=y
+ CONFIG_TLS=m
+ CONFIG_TLS_DEVICE=y
+ CONFIG_XFRM_USER=y
+ CONFIG_NET_KEY=y
+ CONFIG_XDP_SOCKETS=y
+-CONFIG_INET=y
+ CONFIG_IP_MULTICAST=y
+ CONFIG_IP_ADVANCED_ROUTER=y
+ CONFIG_IP_MULTIPLE_TABLES=y
+@@ -265,7 +242,6 @@ CONFIG_IP_VS_PROTO_SCTP=y
+ CONFIG_IP_VS_RR=m
+ CONFIG_IP_VS_WRR=m
+ CONFIG_IP_VS_NFCT=y
+-CONFIG_NF_TABLES_IPV4=y
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+ CONFIG_NF_TABLES_ARP=y
+@@ -286,10 +262,8 @@ CONFIG_IP_NF_TARGET_ECN=m
+ CONFIG_IP_NF_TARGET_TTL=m
+ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_SECURITY=m
+-CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_TABLES_IPV6=y
+ CONFIG_NFT_FIB_IPV6=m
+ CONFIG_IP6_NF_IPTABLES=y
+ CONFIG_IP6_NF_MATCH_AH=m
+@@ -319,7 +293,6 @@ CONFIG_BRIDGE_EBT_T_NAT=m
+ CONFIG_BRIDGE_EBT_ARP=m
+ CONFIG_BRIDGE_EBT_IP=m
+ CONFIG_BRIDGE_EBT_IP6=m
+-CONFIG_IP_SCTP=m
+ CONFIG_RDS=y
+ CONFIG_L2TP=m
+ CONFIG_L2TP_V3=y
+@@ -361,7 +334,6 @@ CONFIG_BT_BNEP=m
+ CONFIG_BT_BNEP_MC_FILTER=y
+ CONFIG_BT_BNEP_PROTO_FILTER=y
+ CONFIG_BT_HIDP=m
+-CONFIG_BT_HS=y
+ CONFIG_BT_HCIBTUSB=m
+ CONFIG_BT_HCIBTUSB_AUTOSUSPEND=y
+ CONFIG_BT_HCIBTUSB_MTK=y
+@@ -387,13 +359,9 @@ CONFIG_RFKILL=m
+ CONFIG_RFKILL_INPUT=y
+ CONFIG_NET_9P=y
+ CONFIG_NET_9P_VIRTIO=y
+-CONFIG_CEPH_LIB=m
+-CONFIG_PCIEPORTBUS=y
+-CONFIG_HOTPLUG_PCI_PCIE=y
+ CONFIG_PCIEAER=y
+ # CONFIG_PCIEASPM is not set
+ CONFIG_PCI_IOV=y
+-CONFIG_HOTPLUG_PCI=y
+ CONFIG_HOTPLUG_PCI_SHPC=y
+ CONFIG_PCI_HOST_GENERIC=y
+ CONFIG_PCCARD=m
+@@ -497,11 +465,6 @@ CONFIG_AHCI_DWC=y
+ CONFIG_PATA_ATIIXP=y
+ CONFIG_PATA_PCMCIA=m
+ CONFIG_MD=y
+-CONFIG_BLK_DEV_MD=m
+-CONFIG_MD_RAID0=m
+-CONFIG_MD_RAID1=m
+-CONFIG_MD_RAID10=m
+-CONFIG_MD_RAID456=m
+ CONFIG_BCACHE=m
+ CONFIG_BLK_DEV_DM=y
+ CONFIG_DM_CRYPT=m
+@@ -720,7 +683,6 @@ CONFIG_SPI_LOONGSON_PLATFORM=m
+ CONFIG_PINCTRL=y
+ CONFIG_PINCTRL_LOONGSON2=y
+ CONFIG_GPIO_SYSFS=y
+-CONFIG_GPIO_LOONGSON=y
+ CONFIG_GPIO_LOONGSON_64BIT=y
+ CONFIG_POWER_RESET=y
+ CONFIG_POWER_RESET_RESTART=y
+@@ -769,8 +731,6 @@ CONFIG_FB_RADEON=y
+ CONFIG_FIRMWARE_EDID=y
+ CONFIG_LCD_CLASS_DEVICE=y
+ CONFIG_LCD_PLATFORM=m
+-# CONFIG_VGA_CONSOLE is not set
+-CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+ CONFIG_LOGO=y
+ CONFIG_SOUND=y
+@@ -806,19 +766,14 @@ CONFIG_UHID=m
+ CONFIG_HID_A4TECH=m
+ CONFIG_HID_CHERRY=m
+ CONFIG_HID_ELAN=m
+-CONFIG_HID_LOGITECH=m
+-CONFIG_HID_LOGITECH_DJ=m
+-CONFIG_LOGITECH_FF=y
+-CONFIG_LOGIRUMBLEPAD2_FF=y
+-CONFIG_LOGIG940_FF=y
+ CONFIG_HID_MICROSOFT=m
+ CONFIG_HID_MULTITOUCH=m
+ CONFIG_HID_SUNPLUS=m
+ CONFIG_HID_WACOM=m
+-CONFIG_USB_HIDDEV=y
+ CONFIG_I2C_HID_ACPI=m
+ CONFIG_I2C_HID_OF=m
+ CONFIG_I2C_HID_OF_ELAN=m
++CONFIG_USB_HIDDEV=y
+ CONFIG_USB=y
+ CONFIG_USB_OTG=y
+ CONFIG_USB_MON=y
+@@ -938,8 +893,6 @@ CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+ CONFIG_FS_VERITY=y
+ CONFIG_FANOTIFY=y
+ CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
+-CONFIG_QUOTA=y
+-# CONFIG_PRINT_QUOTA_WARNING is not set
+ CONFIG_QFMT_V1=m
+ CONFIG_QFMT_V2=m
+ CONFIG_AUTOFS_FS=y
+@@ -950,8 +903,6 @@ CONFIG_OVERLAY_FS=y
+ CONFIG_OVERLAY_FS_INDEX=y
+ CONFIG_OVERLAY_FS_XINO_AUTO=y
+ CONFIG_OVERLAY_FS_METACOPY=y
+-CONFIG_FSCACHE=y
+-CONFIG_CACHEFILES=m
+ CONFIG_ISO9660_FS=y
+ CONFIG_JOLIET=y
+ CONFIG_ZISOFS=y
+@@ -988,7 +939,6 @@ CONFIG_SQUASHFS_ZSTD=y
+ CONFIG_MINIX_FS=m
+ CONFIG_ROMFS_FS=m
+ CONFIG_PSTORE=m
+-CONFIG_PSTORE_COMPRESS=y
+ CONFIG_UFS_FS=m
+ CONFIG_EROFS_FS=m
+ CONFIG_EROFS_FS_ZIP_LZMA=y
+@@ -1040,8 +990,6 @@ CONFIG_CRYPTO_TEA=m
+ CONFIG_CRYPTO_TWOFISH=m
+ CONFIG_CRYPTO_CHACHA20POLY1305=m
+ CONFIG_CRYPTO_WP512=m
+-CONFIG_CRYPTO_DEFLATE=m
+-CONFIG_CRYPTO_LZO=m
+ CONFIG_CRYPTO_842=m
+ CONFIG_CRYPTO_LZ4=m
+ CONFIG_CRYPTO_LZ4HC=m
+@@ -1057,8 +1005,6 @@ CONFIG_PRINTK_TIME=y
+ CONFIG_STRIP_ASM_SYMS=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_FS=y
+-# CONFIG_SCHED_DEBUG is not set
+ CONFIG_SCHEDSTATS=y
+-# CONFIG_DEBUG_PREEMPT is not set
+ # CONFIG_FTRACE is not set
+ CONFIG_UNWINDER_ORC=y
 -- 
 2.42.0
 
