@@ -1,175 +1,243 @@
-Return-Path: <linux-kernel+bounces-628315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8ECAA5C21
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 10:25:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEC1AA5C18
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 10:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B77A9C1854
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 08:24:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 569427A983D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 08:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AF91E2845;
-	Thu,  1 May 2025 08:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D58210F44;
+	Thu,  1 May 2025 08:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f3n6399/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O97L3cnM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3DA212B0C;
-	Thu,  1 May 2025 08:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3221E8855;
+	Thu,  1 May 2025 08:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746087874; cv=none; b=AFdkslGgpWSAD+983hui0aZcdHkyrEb7BWg3SUiS0UMIMt0MF9VVAeL+8UHlvqxxBvixeKzNuvvAokeVCVwzrzS6TXAtd4e3/j7rq755BWO/KqxJ41dyI5jFYwzRumMLKej1dH5EXrwYt1ArmmluoB5waP6X1Zwdbe5FtWeSWQc=
+	t=1746087856; cv=none; b=YEtsyNoUYHe2j+ONm4jHpckNl/6Zxv5pjIqF68N9Oc3PC+fxaNCraUlJknCGzhrYf1/pE/gdfPfOazRrN8OuMhAjPpXDzon8xHRkZbCKP8D6DsFpDMHLxrXfY/QiIK5IGDmFoseHSXRzd6eRCn8X6loG+xUDOen9/UqhmzFps8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746087874; c=relaxed/simple;
-	bh=3ABLzi/lLQ26rQL8HDrPKItTlwAYim7PvtzNE2gnkZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W/hD9ts4o/wo72qmxIN6NWbt80osmoXeOcW9SV5022ytEjcmYr88qJpwUZ5SfL775gUbDVwpcYSyTzJ7/dHXQf8WXdgkXpckdJej88nzWPlcL0HUP5XTubVJxFXF4ln2rSCxhUAzsrETwwNkWR1e2mz8A4wbBEENg5RPPQi1kWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f3n6399/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UH0g0f032419;
-	Thu, 1 May 2025 08:24:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sH+t6MzbalCm27yOzAfAIpTNjVM7JE7AXjL8HMtWmpQ=; b=f3n6399/NtavcLt/
-	y1IrBYKijc4k9srOTL+NCSPZubEMVxiQcIifJr2LcxzzS8w026xS/sfPdg9BDQC0
-	0dBe2N+CpOlY81sRGPtDqMNpOY/1e/TXFaVdG1aJ6Er6ViJNcjiliDc8C7ytwPHd
-	Gb4mFb5leceeZ4tCgYnUGixJQ4utqETD6UnVJ3c0q6VM2vxoGAGqrRqDH5UIJ4Mq
-	N4Eo+WZN48dd37BTiGLRFzUF2CNwfB515NirARxxkmYjX4ZF3z3yRRRFGn6xNKoN
-	Ptpk/YKjakLNxK0x9PQ0ap8Y7zZoiyx76Crmi/zmEEXCvb1gUtfU30vIL9BJIrqh
-	zqK9ug==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u2csew-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 May 2025 08:24:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5418OFiZ011215
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 May 2025 08:24:15 GMT
-Received: from [10.216.32.231] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 May 2025
- 01:24:05 -0700
-Message-ID: <b56384b8-952a-4831-a004-527739240266@quicinc.com>
-Date: Thu, 1 May 2025 13:54:02 +0530
+	s=arc-20240116; t=1746087856; c=relaxed/simple;
+	bh=FUtw7sDZdVXOm9Nv2svOTgxrCByJlvpP+UTjvuTtS1I=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FM5I6CuVokmwmn/0v6xlE1o9sRRAcUmFStDsfNdyl67edvRYmFkxVVYjytUydOZqqENx0prmVZ6NkDU1Rc44p1kMGKO+pjoJMmpzJB9Oz9I/orxdoym5n2VVihFBMsj/4FsGMW0ZTlChDnk9Ve1zF1l7oi0KfudCa/kU8iHRn90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O97L3cnM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60251C4CEE3;
+	Thu,  1 May 2025 08:24:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746087855;
+	bh=FUtw7sDZdVXOm9Nv2svOTgxrCByJlvpP+UTjvuTtS1I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O97L3cnMvunZjO/0b3AD7mX6YsWjOA1AairfrKios6nfa+PekJx8V9jm72WccaYLD
+	 MFg2U9+xORpdBstItLdTn2jDJ/KEsIRT04HWQvHyQCbyTtG0ClRI3D/X2CD6XM+FOj
+	 /tz1rvNkqLQslwyHEIsvRxeQEF7oPqOkIM7OE5yCyUmforniQ2Wdg+RNlnV8cmfd9X
+	 16HjICyqst700kZfBgn5lDQrvldBI/haW5J2/qj7rZP5/M2+H5tq4/MkVCxXr+bLok
+	 BPs+unjgpwBK9BDZKgsuXLVUjyyxhBLmEvRC18HDlHZbiqF5SS0uUSHzhHrhH/LVHG
+	 92LXRRsmolgow==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uAPDI-00AWZy-KR;
+	Thu, 01 May 2025 09:24:12 +0100
+Date: Thu, 01 May 2025 09:24:11 +0100
+Message-ID: <864iy4ivro.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Kunkun Jiang <jiangkunkun@huawei.com>,
+	Waiman Long <longman@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Potapenko <glider@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Andre Przywara <andre.przywara@arm.com>,
+	x86@kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	kvm-riscv@lists.infradead.org,
+	Atish Patra <atishp@atishpatra.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jing Zhang <jingzhangos@google.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	kvmarm@lists.linux.dev,
+	Will Deacon <will@kernel.org>,
+	Keisuke Nishimura <keisuke.nishimura@inria.fr>,
+	Sebastian Ott <sebott@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Shusen Li <lishusen2@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v4 2/5] arm64: KVM: use mutex_trylock_nest_lock when locking all vCPUs
+In-Reply-To: <20250430203013.366479-3-mlevitsk@redhat.com>
+References: <20250430203013.366479-1-mlevitsk@redhat.com>
+	<20250430203013.366479-3-mlevitsk@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] arm64: dts: qcom: qcs8300: Add gpu and gmu nodes
-To: Rob Clark <robdclark@gmail.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-CC: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Sean Paul
-	<sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Jie Zhang
-	<quic_jiezh@quicinc.com>,
-        Rob Clark <robdclark@chromium.org>
-References: <20250228-a623-gpu-support-v2-0-aea654ecc1d3@quicinc.com>
- <20250228-a623-gpu-support-v2-5-aea654ecc1d3@quicinc.com>
- <e22daaae-57fc-4523-b594-87d202d255f3@oss.qualcomm.com>
- <aa8ebd50-683b-4043-9494-5675a2d9a01e@quicinc.com>
- <41df5398-79f6-484a-8ad3-f3488eb1b71c@oss.qualcomm.com>
- <hpfqpvkex3dtj6ieosce4phukodnoidh55vxpujyekoehhotqn@l434nae5gzdi>
- <f1fcf9fb-3be2-4097-a372-a76bfba6043e@oss.qualcomm.com>
- <CAF6AEGvGEshZbSmmLZMXGiCjRdDJLa7EKN-gviw4oxcapMKN+Q@mail.gmail.com>
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <CAF6AEGvGEshZbSmmLZMXGiCjRdDJLa7EKN-gviw4oxcapMKN+Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XTGYoI7GyN-kac9E-BB3tqq3wu2kIjxA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAxMDA2MyBTYWx0ZWRfXxp6+ELivpQnm jQmQh4TKW6E+tfhyJQoAOMJ6MwGJw7zvEGS7iysUNFnJf9b10JRn+rs72hXRDmSTGNYeQro8iZi mZZu6qu65uIV3YiMwG78hN8xCYr+alQe9RVB5/fpqoczcKi/l3JYXjqX74pAbm+aW1Yma2raJIT
- FH94A/NNOy7Iot5rbUkfv6UftlmJ8rRQey42cpNWSLtzBzhjDxdEUrI6440W2gr8WNFPH28+12a NbqnRJ5RBvri2AJajrUrYk3v3kf8oR36GgOYZTuKg95wnjGX0k6RArqukbYoNyCD5CQKRwFMJYF huLKuj0Wqx0Oh33voLc/hv8DYCRNSTkCckezA1sPIHVIURrThnBzZn6yKbCPbTGIsNyyf6T6G6k
- WcsEYF3cL89A9jidcwsXgBVQy1jgo799PXXpjcwjjuSyJtwinrQV/R+IwzVTSVfkCq7cC04U
-X-Authority-Analysis: v=2.4 cv=b5qy4sGx c=1 sm=1 tr=0 ts=68132fb0 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=FmNOPqEYIOC0Gsmc1zEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: XTGYoI7GyN-kac9E-BB3tqq3wu2kIjxA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-01_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=986 phishscore=0
- mlxscore=0 impostorscore=0 malwarescore=0 spamscore=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 bulkscore=0 priorityscore=1501
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505010063
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: mlevitsk@redhat.com, kvm@vger.kernel.org, linux-riscv@lists.infradead.org, jiangkunkun@huawei.com, longman@redhat.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, bhelgaas@google.com, boqun.feng@gmail.com, bp@alien8.de, aou@eecs.berkeley.edu, anup@brainfault.org, paul.walmsley@sifive.com, suzuki.poulose@arm.com, palmer@dabbelt.com, alex@ghiti.fr, glider@google.com, oliver.upton@linux.dev, andre.przywara@arm.com, x86@kernel.org, joey.gouly@arm.com, tglx@linutronix.de, kvm-riscv@lists.infradead.org, atishp@atishpatra.org, mingo@redhat.com, jingzhangos@google.com, hpa@zytor.com, dave.hansen@linux.intel.com, kvmarm@lists.linux.dev, will@kernel.org, keisuke.nishimura@inria.fr, sebott@redhat.com, peterz@infradead.org, lishusen2@huawei.com, pbonzini@redhat.com, rdunlap@infradead.org, seanjc@google.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 5/1/2025 12:10 AM, Rob Clark wrote:
-> On Wed, Apr 30, 2025 at 3:39 AM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 4/29/25 2:17 PM, Dmitry Baryshkov wrote:
->>> On Mon, Apr 28, 2025 at 11:19:32PM +0200, Konrad Dybcio wrote:
->>>> On 4/28/25 12:44 PM, Akhil P Oommen wrote:
->>>>> On 4/14/2025 4:31 PM, Konrad Dybcio wrote:
->>>>>> On 2/27/25 9:07 PM, Akhil P Oommen wrote:
->>>>>>> From: Jie Zhang <quic_jiezh@quicinc.com>
->>>>>>>
->>>>>>> Add gpu and gmu nodes for qcs8300 chipset.
->>>>>>>
->>>>>>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
->>>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>>>>> ---
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>> +         gmu: gmu@3d6a000 {
->>>>>>> +                 compatible = "qcom,adreno-gmu-623.0", "qcom,adreno-gmu";
->>>>>>> +                 reg = <0x0 0x03d6a000 0x0 0x34000>,
->>>>>>
->>>>>> size = 0x26000 so that it doesn't leak into GPU_CC
->>>>>
->>>>> We dump GPUCC regs into snapshot!
->>>>
->>>> Right, that's bad.. the dt heuristics are such that each region
->>>> is mapped by a single device that it belongs to, with some rare
->>>> exceptions..
->>>
->>> It has been like this for most (all?) GMU / GPUCC generations.
->>
->> Eeeeh fine, let's keep it here and fix it the next time (tm)
-> 
-> Maybe it would be reasonable to add a comment about this _somewhere_?
-> (Bindings doc?)  I feel like this confusion has come up before.  Maybe
-> it is a bit "ugly" but since gmu is directly banging on gpucc, it
-> doesn't seem completely inappropriate.
+nit: in keeping with the existing arm64 patches, please write the
+subject as "KVM: arm64: Use ..."
 
-That's right. This is a shared region between Linux clk driver and GMU
-firmware's clock driver.
+On Wed, 30 Apr 2025 21:30:10 +0100,
+Maxim Levitsky <mlevitsk@redhat.com> wrote:
 
--Akhil.
+[...]
 
 > 
-> BR,
-> -R
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 68fec8c95fee..d31f42a71bdc 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -1914,49 +1914,6 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+>  	}
+>  }
+>  
+> -/* unlocks vcpus from @vcpu_lock_idx and smaller */
+> -static void unlock_vcpus(struct kvm *kvm, int vcpu_lock_idx)
+> -{
+> -	struct kvm_vcpu *tmp_vcpu;
+> -
+> -	for (; vcpu_lock_idx >= 0; vcpu_lock_idx--) {
+> -		tmp_vcpu = kvm_get_vcpu(kvm, vcpu_lock_idx);
+> -		mutex_unlock(&tmp_vcpu->mutex);
+> -	}
+> -}
+> -
+> -void unlock_all_vcpus(struct kvm *kvm)
+> -{
+> -	lockdep_assert_held(&kvm->lock);
 
+Note this assertion...
+
+> -
+> -	unlock_vcpus(kvm, atomic_read(&kvm->online_vcpus) - 1);
+> -}
+> -
+> -/* Returns true if all vcpus were locked, false otherwise */
+> -bool lock_all_vcpus(struct kvm *kvm)
+> -{
+> -	struct kvm_vcpu *tmp_vcpu;
+> -	unsigned long c;
+> -
+> -	lockdep_assert_held(&kvm->lock);
+
+and this one...
+
+> -
+> -	/*
+> -	 * Any time a vcpu is in an ioctl (including running), the
+> -	 * core KVM code tries to grab the vcpu->mutex.
+> -	 *
+> -	 * By grabbing the vcpu->mutex of all VCPUs we ensure that no
+> -	 * other VCPUs can fiddle with the state while we access it.
+> -	 */
+> -	kvm_for_each_vcpu(c, tmp_vcpu, kvm) {
+> -		if (!mutex_trylock(&tmp_vcpu->mutex)) {
+> -			unlock_vcpus(kvm, c - 1);
+> -			return false;
+> -		}
+> -	}
+> -
+> -	return true;
+> -}
+> -
+>  static unsigned long nvhe_percpu_size(void)
+>  {
+>  	return (unsigned long)CHOOSE_NVHE_SYM(__per_cpu_end) -
+
+[...]
+
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 69782df3617f..834f08dfa24c 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1368,6 +1368,40 @@ static int kvm_vm_release(struct inode *inode, struct file *filp)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Try to lock all of the VM's vCPUs.
+> + * Assumes that the kvm->lock is held.
+
+Assuming is not enough. These assertions have caught a number of bugs,
+and I'm not prepared to drop them.
+
+> + */
+> +int kvm_trylock_all_vcpus(struct kvm *kvm)
+> +{
+> +	struct kvm_vcpu *vcpu;
+> +	unsigned long i, j;
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm)
+> +		if (!mutex_trylock_nest_lock(&vcpu->mutex, &kvm->lock))
+> +			goto out_unlock;
+> +	return 0;
+> +
+> +out_unlock:
+> +	kvm_for_each_vcpu(j, vcpu, kvm) {
+> +		if (i == j)
+> +			break;
+> +		mutex_unlock(&vcpu->mutex);
+> +	}
+> +	return -EINTR;
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_trylock_all_vcpus);
+> +
+> +void kvm_unlock_all_vcpus(struct kvm *kvm)
+> +{
+> +	struct kvm_vcpu *vcpu;
+> +	unsigned long i;
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm)
+> +		mutex_unlock(&vcpu->mutex);
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_unlock_all_vcpus);
+
+I don't mind you not including the assertions in these helpers, but
+then the existing primitives have to stay and call into the new stuff.
+Which, from a simple patch volume, would be far preferable and help
+with managing backports.
+
+I'd also expect the introduction of these new helpers to be done in
+its own patch, so that we don't get cross architecture dependencies if
+something needs to be backported for a reason or another.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
