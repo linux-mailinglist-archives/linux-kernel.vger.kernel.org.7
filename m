@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-628801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D4EAA627C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 19:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 724CDAA6284
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 19:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7A31B6766A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 17:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11911BA75A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 17:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7217921B9F2;
-	Thu,  1 May 2025 17:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B998421A94F;
+	Thu,  1 May 2025 17:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPo9a+GX"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kOagf3Kd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6521A1D6DBC;
-	Thu,  1 May 2025 17:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852D720CCE3
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 17:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746121544; cv=none; b=WmM1Z6O/2bQDdKRHqB3y6ToIHvqQge03kpUpFlTdTz0W+uTMHyt4AvOk/rVDPxpNTp+P62bPUALedqwlp7Ffu1Afu8AbYJ6opQPfYuPt7F7xqPCrRnIaZ7BsuIcoo5cPrrETXpTDf1+LaK14IpNnek4SZiP0nxQjgtp0i/PCupk=
+	t=1746121867; cv=none; b=shQUHzGnVeCLOV/i5V7Ho1HaeqtJk0IjwUH9zl1UFWU7jyfHjU6GLavgycefHNg5vWm3xnKZ7gL7AkUfhZnqMiaRMzurDgjpMUwoiurWhbMi4vgaJ332w4uvD/5rWhVyD6fdr8rqm+Ym/P4k1zZzFY/v8BoyvxLY+aS78CoGk6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746121544; c=relaxed/simple;
-	bh=pqCUl1E1e2DoAqjUx3nS868gkprr/kaVWJsax4Gih78=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ogmu4WZpWwxsNLJoGxglyEhfJpX6dYYecsFJZB1rmKiejvYIigmvxHheNyXX5b8i/ui416dCNzvMF/xNujgOfnpbNrGBYnrY5D1zC6KovtCjNiK0WqcHjusOfpiX7v26Xfz4XMoyxoXMVj0LyIBGhMWBizD74Va2dlXxrVapfu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPo9a+GX; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-30549dacd53so1157830a91.1;
-        Thu, 01 May 2025 10:45:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746121542; x=1746726342; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pqCUl1E1e2DoAqjUx3nS868gkprr/kaVWJsax4Gih78=;
-        b=DPo9a+GXtAONEcTPT1+cVmgmZrOHCPwbsQyFKmsOQ7F0DCaCf07SCfkkoD3jkda9Ch
-         5HTaDjdOqIeskfdb5G03TXckO66/RhAOLOJtYeCKgQfJcP++ihHRtLLba4Hjau2KO7mS
-         J4J/pgjwSMxb+6QITPwGGoqQObg6D1aCd9LFwy1mDcVPJ+tOXxHBmuEE3O+Wa2BBCRQs
-         3W6kDFllGnTVIKpWc6tIKjlGAzbDCpcUfG4RJHxy9Io17aM1sinvWGWKazKO+vJvP6am
-         2I2/LxFuemi1HWk8sDls0tJVKXIuqgB2aiGGWC5AInpx6bQeh9DMf3Wh1/1I6mJ5pR8x
-         Hdmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746121542; x=1746726342;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pqCUl1E1e2DoAqjUx3nS868gkprr/kaVWJsax4Gih78=;
-        b=jM74WRsSZIujjt0+nrErjOgy42Y9CCKDbWj5rlziZ4xtF4Mi8PvlApPelRDkQLMB66
-         12Z38mAutFcjwZOEmPlKlhQlnfoJgfJ9zKTeED6b+Pi9XQDNraEsPdl9c7E3PjHDywum
-         lLrSPwhqox/anwrsazSCQlwhMzkWrF8nMLZRt8Rb5NaBCob60banRqBbj/VpowuHrab/
-         dj8MnYbAsGA8UdhWxhltWKcvb//PFc5eOgJUHA3wht8qTyTMpiPAOmVjeeqIeeVQsfIt
-         Odsr4ADg3R7jDMEMPNFgSqMRVQ+sG2Y5bResjz2cs58TpiTpTClGEPMH/SZEIPB/6hGC
-         iG2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwEskAkFllbprR5hBOgcfOv++Uhc7NBqP6GVvi1Mg9bVVKSuR8ojEF368GUFy6V/lVu2Vk6Q18vAf9Kn5kp2ea@vger.kernel.org, AJvYcCXAeO53qsb8lW8WHl0aNRlBCqmjTOpdhQSIG1DdqcWLc2KskCgrq0Cn+3FeNXzmsU/kCmQ=@vger.kernel.org, AJvYcCXAvw6Tod++Xt8mDzn2XbH04B9LbtALVSO3q5kzzanFa9GXOsOJvCb+sQHhx3tDTwI6JNXaAw1E6GGsMQ/S@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV2FOzdnGGgH+4Ap1Wxzl4CRlDJCXQ9pasFZEU1YAVU/OtUK6i
-	FVZgFhfdg6NLb/iW1keOk2pWRyyUBFnd6h1Gnxy2YVZMFY4OLlUW
-X-Gm-Gg: ASbGncscrIem21CfveQgJLmLMb/5reNGNEk6NxBChhqdJh1p5D24OnxiJRoDSKGB7Pp
-	I/mS9/iTYEzdNLEnzFGit3FvFZwE9YEvF1F5Gw4T0AO+WmCCGPBWdmuWr+t+J+pkqoEMTJ/9wAh
-	vTqDTrxhmh6j/Se2d0OHslh3snk0DpSbfO1gEHsZP3t4ik4HdiMPWHSCOcQrllGSxNEiwIvATsJ
-	/SQ4hH7L8GwwDCvv90z7Jz2w7gH+c/ffgleiq0o4odkavL0Lr3PXVhjKk8CROGe5lcxqxP7RF2Y
-	q/JP2brCvIfNHN/ezaBenMFwZpkiE+/3hzsE45Xv+S1lLA8=
-X-Google-Smtp-Source: AGHT+IG1DZt+WbEs1H1vBv8On6YGa9H+fvBwkfvRfEpQp1ZKcph5zdItji4Y36KqTtQ8K03Lzl8Kow==
-X-Received: by 2002:a17:90b:3bce:b0:2ee:5c9b:35c0 with SMTP id 98e67ed59e1d1-30a4e1e6a93mr175707a91.9.1746121542286;
-        Thu, 01 May 2025 10:45:42 -0700 (PDT)
-Received: from [192.168.0.56] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a244bd4e2sm4706976a91.0.2025.05.01.10.45.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 10:45:41 -0700 (PDT)
-Message-ID: <13fc0801bf4fd8e561cb35773a4c5f3f22d9d51f.camel@gmail.com>
-Subject: Re: [PATCH bpf-next v3 01/11] selftests/bpf: Fix caps for
- __xlated/jited_unpriv
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Luis Gerhorst <luis.gerhorst@fau.de>, Alexei Starovoitov
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,  Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend	
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev	 <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>,  Puranjay Mohan <puranjay@kernel.org>, Xu Kuohai
- <xukuohai@huaweicloud.com>, Catalin Marinas	 <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Hari Bathini	 <hbathini@linux.ibm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,  Naveen N Rao
- <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael
- Ellerman	 <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Mykola
- Lysenko	 <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Henriette Herzog	
- <henriette.herzog@rub.de>, Saket Kumar Bhaskar <skb99@linux.ibm.com>, 
- Cupertino Miranda <cupertino.miranda@oracle.com>, Jiayuan Chen
- <mrpre@163.com>, Matan Shachnai <m.shachnai@gmail.com>,  Dimitar Kanaliev
- <dimitar.kanaliev@siteground.com>, Shung-Hsi Yu <shung-hsi.yu@suse.com>,
- Daniel Xu <dxu@dxuuu.xyz>, 	bpf@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, 	linux-kselftest@vger.kernel.org
-Date: Thu, 01 May 2025 10:45:39 -0700
-In-Reply-To: <20250501073603.1402960-2-luis.gerhorst@fau.de>
-References: <20250501073603.1402960-1-luis.gerhorst@fau.de>
-	 <20250501073603.1402960-2-luis.gerhorst@fau.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1746121867; c=relaxed/simple;
+	bh=wyx9LuFLmRr/KpJH2cSuuH5H5luZ70m61Hsbna1NbVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ifws8235r0rmLwaNGIN4fkeXu1vaoV0+8Cxw00tdTkICEtPNp/g+AGSJEchOtEW3msineYt78T9qz6P3obLshfptGPiA+wKSfdJiQbhqoOGJNYDVJZsy1/WS9+PEyF9ghRnG7IsiXupBGcIWmbFW0yqi3fC7SypyWTfMcLZrUSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kOagf3Kd; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746121866; x=1777657866;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wyx9LuFLmRr/KpJH2cSuuH5H5luZ70m61Hsbna1NbVE=;
+  b=kOagf3KdMrrQgJiiqr2JRGyeJpgmJSgjBETeQGgsaibBwsWJ1FH3jaVT
+   91RdenFQr7w2kysWL+VDRUbCZG6pzcCUVSJl9dG3YjlYA2+tA7flsw+Qi
+   jZ9WhEIryTFhdGpJoUFF+E+q4c1z46JUe0ReixGK9eogJ0HIYPIb6Zwdp
+   NKyeh+0PZWuukHTOBO7YkuSyp29r/7P5puJo65LYGpYwk7lIZUAsVJVe/
+   JocVBb7Jsv3ftv16RmM3ydpEi1G6jKrkgzLAbEE0PXao57xdqbDl6kuka
+   33B7OlblAr5A4XUiDcCL02IqomGHPPU0AUuwbwWUJNyormq4Ut2En3Wbp
+   g==;
+X-CSE-ConnectionGUID: 58MNeXjTRae98S9D46KnyQ==
+X-CSE-MsgGUID: bi/AHWE+Q8KoKzJKRQPGPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="47813003"
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="47813003"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 10:51:02 -0700
+X-CSE-ConnectionGUID: wZ2WwlwVRXKpT5ZdiSfHRw==
+X-CSE-MsgGUID: 55UKEPIuRQKn4NsZeoK4bQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="139577756"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.220.24]) ([10.124.220.24])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 10:50:59 -0700
+Message-ID: <14b13fe4-7a0d-4ddb-92e9-bbe557b5bc15@intel.com>
+Date: Thu, 1 May 2025 10:50:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/5] x86/tdx: Add tdx_mcall_extend_rtmr() interface
+To: Cedric Xing <cedric.xing@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+ Dionna Amalie Glaze <dionnaglaze@google.com>,
+ Guorui Yu <guorui.yu@linux.alibaba.com>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ Dan Middleton <dan.middleton@linux.intel.com>,
+ Mikko Ylinen <mikko.ylinen@linux.intel.com>,
+ Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20250424-tdx-rtmr-v5-0-4fe28ddf85d4@intel.com>
+ <20250424-tdx-rtmr-v5-3-4fe28ddf85d4@intel.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20250424-tdx-rtmr-v5-3-4fe28ddf85d4@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-05-01 at 09:35 +0200, Luis Gerhorst wrote:
-> Currently, __xlated_unpriv and __jited_unpriv do not work because the
-> BPF syscall will overwrite info.jited_prog_len and info.xlated_prog_len
-> with 0 if the process is not bpf_capable(). This bug was not noticed
-> before, because there is no test that actually uses
-> __xlated_unpriv/__jited_unpriv.
->=20
-> To resolve this, simply restore the capabilities earlier (but still
-> after loading the program). Adding this here unconditionally is fine
-> because the function first checks that the capabilities were initialized
-> before attempting to restore them.
->=20
-> This will be important later when we add tests that check whether a
-> speculation barrier was inserted in the correct location.
->=20
-> Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-> Fixes: 9c9f73391310 ("selftests/bpf: allow checking xlated programs in ve=
-rifier_* tests")
-> Fixes: 7d743e4c759c ("selftests/bpf: __jited test tag to check disassembl=
-y after jit")
-> ---
+On 4/24/25 13:12, Cedric Xing wrote:
+> +	ret = __tdcall(TDG_MR_RTMR_EXTEND, &args);
+> +	if (ret) {
+> +		if (TDCALL_RETURN_CODE(ret) == TDCALL_INVALID_OPERAND)
+> +			return -ENXIO;
+> +		if (TDCALL_RETURN_CODE(ret) == TDCALL_OPERAND_BUSY)
+> +			return -EBUSY;
+> +		return -EIO;
+> +	}
+This a pretty ugly switch statement. ;)
 
-My bad, thank you for fixing this omission.
+I assume there are more of these around, but it would be _nice_ if these
+could eventually look like:
 
-Tested-by: Eduard Zingerman <eddyz87@gmail.com>
+	...
+	err = __tdcall(...);
+
+	return tdx_err_to_errno(err);
+
 
 
