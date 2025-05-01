@@ -1,236 +1,285 @@
-Return-Path: <linux-kernel+bounces-628752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501D0AA6202
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 19:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFA7AA6207
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 19:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CA7616AEE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 17:04:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A5517510F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 17:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928AA11185;
-	Thu,  1 May 2025 17:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B0121CFEA;
+	Thu,  1 May 2025 17:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="jklqky9l"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nag1dddS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079201DC1AB
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 17:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746118983; cv=none; b=dPumT28cbGWwdXTUnwHiJHL0Rs75zFYJnLO+Lp5a4fnqWQgVW9m5aJkw0I53ZQluz3ilop6wpjVJgdNDG1JUwLkTEVtW+q1XZZsoK/2tDR+Q6vjIojD2moPZ1bDm8o/gq8aPeFqJDxU+PzUc2ZZ4IP2+f6NFblAg0DN/0zSRg9s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746118983; c=relaxed/simple;
-	bh=dSiDMd+puSYJs9M8bjAAeKiONSkB2Z55opOgZxMzSVc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=beCwXvm9Qokp3PsDxo/nSll3Gd9TRykZAGGkOYh64zlXNpOZOksrbOHLOOvz2KYy9eqbJifKdECRA1LYbShaut5HzxoYxRqDDMKTssamp01Y8ko00yNmCbvZLgaCPypesg+bDnheiKMxXzQxTFpgpIi8KtGhvW1v3hu2WqhRsiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=jklqky9l; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c5a88b34a6so118140585a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 10:03:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1746118981; x=1746723781; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AnmKRR26C0Aot9dN/CEjPuuqw6IsSEUnG0n8Vnz6PHk=;
-        b=jklqky9loAaWH7kxu5bR6gu8UFIUxD4t5PQ+RgMKjtK8XYjYTaXPulNdLWldKsqUqn
-         1Byt7Xbkx74OZZe1CG4XorioXG2CHdr7grQ5miS56WyXN4dlnd7u4tL6H9vOSl4x6SuY
-         EDZRKEfmvMxE4RCIdjwNEk5cXzZmQPVdPvCc9kZseK0E4zQR6kpthQRcpblOqQYxC4Us
-         Xw9fAGeuOkiA9j/cMvKwagkVLOIMZzlJl76sA9VIJ2d3IFMY3+7aM7XbinvWgC2VjtpF
-         DFnMT0y7J+ACHA5ZDKzwv9GH4BO/FCDp2mO0PP1W6/f03ZArGaTcIz3lpEbM/GrtkCP/
-         LR/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746118981; x=1746723781;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AnmKRR26C0Aot9dN/CEjPuuqw6IsSEUnG0n8Vnz6PHk=;
-        b=nlSUIlVho6G8I8CiAo1HQaLokSm81Bd7CFAfvlJloUVt8/bXh/utPhK6BEsMQrqBMU
-         YTRa/wu7I/PrCJ1YwvFnhr7RZch3/Kk4YBVPvJUt72uxJ3Ss6HkP1NyMq+7/wxiar6k7
-         nG1c3wsdfRScxU5J+WtZg7IlVoavW1BRzYIWuhhRz4xozZ3GPDyOWAEkBxpvPQvJFHrb
-         spOAD1QIHsO1dcsiKpLAT0hycH/9VkY2vKA7GiqNfjqbnZh0qEv3uRGncflqbHI9PeeN
-         N85ttL8tGDmlXV5oTtdEHoO9aMSSvI8pK8ROi6Ii2SFvXp2+cQkr5xUMJgHfsAE5ppMX
-         PzYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV97GP01xeXukOcAA22e6it3MFrb438LtTPLtr6mft8Y7f0KB/rbmUQrfzauk6HcBvBZuVlpM1i3ukK6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygPckcSSpeZgKltTgGNY3i0Edo744KAg+bZjgenOX9F9Ykh1Wf
-	CJfhZsjsORO+GHTKcqki1K8Kwu+1t8DZJVScn4JQLYxvuVN8rlx+GMfOcZy2NCU=
-X-Gm-Gg: ASbGncsGINcArWc4a+uEQ30nwvX7UTU4gh0AKOhnpyj6AUrOzY/a6i1KgBIHk6H4PVt
-	d7g7Ctu6V1zBZ0KmR991xsTCE263ELE1zzmMeMfOBA9Mty1PBrM0xnDzm/nJ5VrrX0gZMZ1TJNR
-	R9tikwI/Yrj172PcuSfM+KMFkt5V5gUI0PCB8FGlHt9gf9TKUjWADbYpCITCD7lSNo+WDvNY88E
-	zOTUmhkl05MUtocTWLRUUVnQ5bKvALVahHaCmEPjgaLImLXjt54NF2kSsVxCqI9F7y/t2arbPuS
-	3pwdJgQTb9N+77VaKDjt/VrSKrbJ45Y78s4pxcV29QcRFQ==
-X-Google-Smtp-Source: AGHT+IEWhy01ShAhWfub+iOOfu/TJN+6Qalpa374amdQx7s9VHC4cwQvXlZq/+brCm8fEf5wo6mH0Q==
-X-Received: by 2002:a05:620a:4694:b0:7c5:4788:a14e with SMTP id af79cd13be357-7cac7e97b3cmr976977585a.39.1746118980731;
-        Thu, 01 May 2025 10:03:00 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:8242::5ac? ([2606:6d00:17:8242::5ac])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cad23d1c99sm68552885a.63.2025.05.01.10.02.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 10:03:00 -0700 (PDT)
-Message-ID: <c9981a1e01281153748a1edd4096f4ce1aaae576.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: imx-jpeg: Account for data_offset when getting
- image address
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: ming.qian@oss.nxp.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl, 
-	mirela.rabulea@oss.nxp.com
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, xiahong.bao@nxp.com, eagle.zhou@nxp.com,
- linux-imx@nxp.com, 	imx@lists.linux.dev, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org
-Date: Thu, 01 May 2025 13:02:59 -0400
-In-Reply-To: <20250430053928.214-1-ming.qian@oss.nxp.com>
-References: <20250430053928.214-1-ming.qian@oss.nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D205C21C9E1
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 17:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746119012; cv=fail; b=lv18CVGnzd9krc0d6DTHDv69CTISlqpl22vmUKMgZjsXkpSkKAr6yQapMG2G+I82RGRcC9thhWOQqbaSBsDAv9aSm+mXa1iBx00iAt76lp5ntbzAL8cJkSY+9jRCc8eDaDoGV7unMKbDdJLCnJa0xsAr/2WF4G71GitWCkDpgTY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746119012; c=relaxed/simple;
+	bh=8kGCv+LaFaVUHxs6s1h4KQdNHHOruCkmVu/N7xdWFg4=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NveDxdPuDvei5YJ6PGYqc+pPruZ91K8tHDKQXRUqQXrPropT+fdWFj5D2av0/3Lw+z2bcM4WrQAx8ErOljQ57OEzDuOnwclTrLWvfQZExGZR/IzsqvuH7yYk7XQkuvB1nbUgUiLLKsKkMcMi2w5GDwrjJZBqX5Svqv+Y2SIlZ90=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nag1dddS; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746119011; x=1777655011;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=8kGCv+LaFaVUHxs6s1h4KQdNHHOruCkmVu/N7xdWFg4=;
+  b=Nag1dddS7hXoGGJfpNZY2iDzEeeFM3r7mtb4Jyh6vt9d50b2N40hkUB+
+   iqCRIHkjKH1nKQCOAGE1pwvmh3bBE/PFrMdprp0jbO7FxbvVBobrYo2cG
+   pR/eoycwRcKljk78g0wbHfsxGoSjbacFeKtOLmcwrKkhGe2Zp72BIpACn
+   3/Csl1sfjntcChNDfQyvKVsPED5AvAxcWKn4PLTZhnn2Sfr2SFqfTHDFN
+   5VOjZ8IkTHSHIuSRUIyjzmYrYmuBPvt5BHdEtNUujTgteNU5rGygTsK3r
+   phB3qZudYgUd3Xw4KRFLCYLpewq/Hemkvov8C/HVmVlBkqBphR9QSCh8b
+   Q==;
+X-CSE-ConnectionGUID: isuwNl6/RZiNhTeKihdH7Q==
+X-CSE-MsgGUID: MiWQB41CStmVjNJ08V1jtg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="58460418"
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="58460418"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 10:03:30 -0700
+X-CSE-ConnectionGUID: hl+Hso7aQYyNasdDPk0o7A==
+X-CSE-MsgGUID: zORiWT+ISlm+RW0tzlegsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="134936371"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 10:03:29 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 1 May 2025 10:03:27 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 1 May 2025 10:03:27 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.45) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 1 May 2025 10:03:26 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mAx8tN8Y1PQUVvtZh93p60LFUfSgPtMe7KfbtXDma5UUB/fCN9j/fiS/pS+p4kW5zdurR8BHU5/UHxAJpo1Luayutt6OBbar822i1JwjUohN8YdIp4KnZ/5ZavHRldoJ5hHWHncaRYDn2azqnolJhhJtdhQPRMUtkQCj3MibzC3YVd1vwdm2ANYYOREUJeSzPYFwZCnIh9yUaRt+koZ/rajmVOVev7hyOxT6nJOFs45e8SV3+iquA6P1K+sTDxjs7utYGYEgO/JcI77K0C+wWGhcZ51wCkCzRl860aABGLWSznIidT4zl64J+CekLDkD3zqnTcDOD5i+yUPN8Uo9Vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zl4wYvbF/uj0dXIteM3m4fmcUoiG7sSSbXTT+WKcDB0=;
+ b=bC7j6/8mfgFHP5PoYzxq56YY3zlmyo/8IQTRjQHDOUpYPzlkGsIckJQJeJg1twrK3k2jBu2YvEwVkITMBrg9OQosHO8ZgJC92zAX6/CtIXMEDzLt63sxP8CsaRMMuuaZzRxU7O7yDQfbwjMTTAStYVl2Q7D3t0OFmHdV2bbrDl/bbCo9KRytX4gN42TGFA3X42iI6RReM8p8auxyjdBP0XazYlU2G7MNTO5/tsKAl7Moz5CUtIiXFG4mOVj8CWVV1AvLCqS3QQtmWx4ieslUnSnimAUCjkG+fJKZQcrqq7Ey8exISueaffkO3NaZ2UqlxNxxm2Vah2DoZctXFTXw+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DM3PPFE50071912.namprd11.prod.outlook.com (2603:10b6:f:fc00::f57) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.22; Thu, 1 May
+ 2025 17:03:24 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.8699.022; Thu, 1 May 2025
+ 17:03:23 +0000
+Message-ID: <669c32d0-384a-4224-87db-f8af551fd6d3@intel.com>
+Date: Thu, 1 May 2025 10:03:20 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 04/27] x86/resctrl: resctrl_exit() teardown resctrl but
+ leave the mount point
+To: James Morse <james.morse@arm.com>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>, Babu Moger
+	<Babu.Moger@amd.com>, <shameerali.kolothum.thodi@huawei.com>, "D Scott
+ Phillips OS" <scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+	"Dave Martin" <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker
+ Donthineni <sdonthineni@nvidia.com>, <fenghuay@nvidia.com>, Shaopeng Tan
+	<tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
+References: <20250425173809.5529-1-james.morse@arm.com>
+ <20250425173809.5529-5-james.morse@arm.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250425173809.5529-5-james.morse@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW3PR06CA0014.namprd06.prod.outlook.com
+ (2603:10b6:303:2a::19) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DM3PPFE50071912:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9ca2e0b9-062d-4851-9dbe-08dd88d2150f
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Q3pGajNreXhNTS92ZmlxakZuNzF5VkQ0ZGhqN3hIdGVzVkRpMlRaOURlTEdm?=
+ =?utf-8?B?NFRsTithcU8rTmpoSXg5QkVtN3g5bDU3ak9zTjZNd1E3RytzOXVWQ2RWUVBV?=
+ =?utf-8?B?TExFNDBZUVpxODZUczYwT3JZbXhpcDQxVlZHYjhTeWVLTGpiTnJnTVhnOWdq?=
+ =?utf-8?B?S0hNNXA5S3M1bDM0TDZSUmlPdTJXbi9aK2hMYmVsRGVBLzdWZ0xrWGlSRG5k?=
+ =?utf-8?B?am1nN0NiNkROeGJna0M5aVdpOWV4ck5rYmxBZEwwZ3dwbzQ1UzEranJCYUVO?=
+ =?utf-8?B?Ym9GbWRQWDhzc2NwZVROWU5CTTRnVi9qVTZhVE9mdDhlTmFxd2xGYVJ3Tk9Y?=
+ =?utf-8?B?ZURWdm04OTFFVFJFZCsyVkY0bkxSNkQyMVdvMFhlRU5maWRuVjN0SG9WYkx0?=
+ =?utf-8?B?a082U3JrVUZrOHQzYTVzRFc3VnV3TWhjdlRLLytNU1lhZUZkbXdndTFCL1Uz?=
+ =?utf-8?B?SUJKdjJtVk1paHFVVHNUVGNmMGZjcjFVSzIySHJ6Y1J0UHFkTlZrQWsvVzcz?=
+ =?utf-8?B?UGFsa1N3WGkvTzZLN241aytkdmptZEh0SmtkdC90T1VpSXpsOXNIalArMjg2?=
+ =?utf-8?B?bFBMeWhHU3dLOHNuRlZiREQ2cS9WcXJEWEdCWElWVWV6azFscHU4SmM1TmMx?=
+ =?utf-8?B?aVNoUFo0K0VWd2J1Rk9iQXNsbzE5YmptNDFOb2wrMW1qWnhLWk4ra2hNaHRj?=
+ =?utf-8?B?RWJab0hoRWNlQS9sUUdSWmU5VFQ4V2l2THNrNGNqSUdod1BMTnNMbHlWK0h3?=
+ =?utf-8?B?RlZweFV1M2ZOaTFMNk5HYU9ld0lndXRpamFqRFdCdlpzZ1h4M2Q0OEI3blFF?=
+ =?utf-8?B?cTNKMVcyQUlSSnpVVys3UlhUbDEvL0hVOFpOZjR1cTJWNy84cU03K3BTTDZH?=
+ =?utf-8?B?TytweDByYlVlQXZmNGdXUEZJQVp0aDEwQi80VTVOS0s4ODN3ZXZka2tYTW1R?=
+ =?utf-8?B?RzVDTmRtcjM0V0RXQzU3TmZtSm5wS0plZVQrZmwyemMxMTk3WGFYUzk2RlR5?=
+ =?utf-8?B?dmwyUHBZUEdDaGVKVkNjaCt1S3Z4dHY4R3RBemd3K3EzVUd4ZUFEZlI2dGVv?=
+ =?utf-8?B?UUg5ZUtiK3JXWjZTSWsvbVlkOTRzZXRyMXczeHI3NnB6b2E4Tlg5YVM4bEFv?=
+ =?utf-8?B?cE1SYVN1ME1ISENhSmFJQlk4bWQzYVBjU0xnUGk0UEJwVzRIckdYYVI1eEpz?=
+ =?utf-8?B?UVEvazB6WndvOFlZcFh6bGN6OE9QS1YzTXp6YUdRbE1EOWErUTNnRFdUUUlk?=
+ =?utf-8?B?SWRORGw4eXdycFNHL1Jnc3RWc3ZNU3pDakJGTEdvRTBkR093T2dGdG5XdmZL?=
+ =?utf-8?B?OXRZZDltRFBPS2tON0pmVVV2bEgvcHRuVkoyTC90UTZqTjVFQ2lhckxzQ3Uy?=
+ =?utf-8?B?UjlnU1dqRjNRcGo1SkNNckV3YTlMK0JCcmdLWksxb3ZxV0pOUG1ORXJ2QTlu?=
+ =?utf-8?B?aStOOWQzMlJVTVZ2eC9nbngrZS92RGdQeDl6YmZRUXUzKy96UlJVcDltVTZO?=
+ =?utf-8?B?dnlhSDFIVVY5WHdVTWJCaDZzMklZbSt5bXRUMStleCtCbDNGUDFJZ2FsYVRP?=
+ =?utf-8?B?L3Z2c3dDemNidWF2MzFkSDAvN3FFaWQyd3kvNDVOZk9YYnUySEU3NVRoTEJq?=
+ =?utf-8?B?SFpuYy9HeDJNRG9IbXdQMGM3cGlGQ21xaXl2Nkg2U0g2ck9CZWluVVovejdL?=
+ =?utf-8?B?TWZsTVhjSS9QTU5RK3dNOVZ0MStkVlRBbVBOdHFNaG9lSDlkYXZvSUhwRytZ?=
+ =?utf-8?B?TEdwQ2QyTC8weG5VVnRUUmp0SnNZZ3JBdUViZ0llMkdIVmt0K1ZlN25rRG0y?=
+ =?utf-8?B?VEdrOElZL1hvR3BHaEhFckxBZklwbkY3M3FzNG56SVF3V1hWdmRQUDM0cHcr?=
+ =?utf-8?B?bHdINnBncHhBL0Rhc1BweWltUTQyZXNESlB6a1JzL1V5VlE9PQ==?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UTcySFF6Wk5kM045cVZCQ20vUzZpRURxUXRIYnhsa0tQQ2hUeFFyanUyeEky?=
+ =?utf-8?B?TVNyQkY5VmlLczRsWjNpZGJwa0hKQTRFVkQ5SDU5Nk1hZ3FHNC9FSnZsUTFF?=
+ =?utf-8?B?ZXgvRStrdzM4S0RTNFowOTNFWFl3azVPb2VyanZES1Y3RTFJNVgrYkt3RkVJ?=
+ =?utf-8?B?SWR0ZDBuTGtqZ3BUMlcxN2gvaTBWZGtIa1B2OEM4YlQ1amhtVEYrZ1NILy9r?=
+ =?utf-8?B?Wm1tYUhLMFAzYlRGSG9JZnI0ZzBBSUkzSXZ1M3dZcFE4RmFRNUVDbVRrcXhF?=
+ =?utf-8?B?SW5nV21kTUQwV1pJV3ZQdEF3U2dDQ1l0a1MyakZqcGR2eEZVc1E4QnNQekdR?=
+ =?utf-8?B?Zjc4Sm9XTlJCcmRZNEFpbnVSVDJYOUw0SmVucWxlbERWelozbTJ6czRRcStO?=
+ =?utf-8?B?MTc3dnRPMzVXS2hYa1k0dmlOVUpyK1dubWtKVk9HbXJiYU5TYWs1QlpOd0tu?=
+ =?utf-8?B?dUh4anZLdmw4OENaWEF4b3NpdlpIU1Y5ZzlTMXJJNU14WFl3N0dET3l3dWxl?=
+ =?utf-8?B?VEZIZllFMVVYWWdVMHRUVUJMNDlaRk1sYjdGWkVMajZ5UzlrZjFJRlJLM1N1?=
+ =?utf-8?B?VU96WGM5b3A2OUdyd01MMXhRd0V6OTdkUE5ITnpxdnBHWVM4R3V0MDBoNElD?=
+ =?utf-8?B?US9Mcjk2RlRvTE5YRUx2REQ1RW9rcTBzcXRwL3pmVXB6bi9rQTlkM0ZYZ1R4?=
+ =?utf-8?B?UndtMGV4eE5wK2h1YTA1Q3N1OTFHbVR4VGtMYnhNRWFXdzFVTUg5YXhCWmpx?=
+ =?utf-8?B?Z2VMclo4eHNVWUVXVEVXcU0xcGlhUHRkVk1OZlBmY2dUdWJxUUtSZmU3SXIw?=
+ =?utf-8?B?NnhJazdCbXFhcDFkTGZYSnNzaGlhcExzdlVLWE9oaHRqSndJblIwMlZLcWo2?=
+ =?utf-8?B?TVFzVzFUVGkvM1dSd0hjcURCQnpac2tCVW5IaDhWMWFDc29DZUdTdTdKWk81?=
+ =?utf-8?B?RkdrWHY0NGFaVzBFanRJWFErM2lqNDA0TVRpTEh2TTgyU3dpTm9qUmZIUXlW?=
+ =?utf-8?B?YmhweldhWktVTGlDcVRyTjNQTDczVDVHbXI4TGgrWjQxZkplMXRmOU5RaFdx?=
+ =?utf-8?B?TVpmWUZpb1RwNWVJUXlPdTVPWVNiek41YkF3a3BUalpuOVFFdTJxOFkySGJk?=
+ =?utf-8?B?QXVoWEVqYnh3VUduQUFqTVdBaU8rOVh6a2JrTHlWL05vZ1AwVFYrRUk3bmkr?=
+ =?utf-8?B?TE1pZ0FMZmhnZXZ4SmNSMnhFNTRHSVcrSm9OTXJvRlZ5WGhEc21WUTdCQ3pK?=
+ =?utf-8?B?SE1FZndwZzJEbXFEM1BlVXBENi9rT2lVYUtUeTZsNVhMcmJEM2VZdFdXbDVG?=
+ =?utf-8?B?WHBQQm5kVUVudWlnZDhSb2ZETTF3TDVSb2xLT1hYbUpPbmtXSlVyU2VLU1BV?=
+ =?utf-8?B?SUo3bFZlK3BsQzgrWmtuUDczTGJGMnVlVm5hWEZNUjI1bFZ5azdKdUE2eXVZ?=
+ =?utf-8?B?ai9ROFVjbm13Zm9HWlVLWFdOTkFFdGdBSHYzTDNVL2VLUXdxcXJPRUhXVUpp?=
+ =?utf-8?B?T3dRNnZib0RKNDhCRTJnZjhUN0JEZzVMYmxtNFhncmdPSk1GTGNONVhPSmxV?=
+ =?utf-8?B?dWRocVI3RlptL0RLbjdJUHdVa3BJbzZFZ25PTGJoUUI5emZjKzlWOUlCRGcw?=
+ =?utf-8?B?MVJZMmRwaVEyNFgxUjB1U055R04rQnZuMndGTmRpUzFmWk43alI4WHk5RzBI?=
+ =?utf-8?B?RWUyak9ObVdZdWdSaU9vMkcvcVdPR2hkdEQ3U3lSRUt4cEMwZnVZMnh1V3hl?=
+ =?utf-8?B?V3BqS2xyVjRQRjBoUTh1V3ZjZ015QUhNNWVTK2x1QmNvNHM4RE9KVVFBN1pt?=
+ =?utf-8?B?RlJjZ0pyekxDc0Zqa2U2aFBoRXVSSnp0MklUakY5RCs4N0svRkYycTk1Qkp2?=
+ =?utf-8?B?MHR0RmJBMTNyb2srY0VjbkFvNjN6U0lzYmhyY0FHU3dXT3N1K0hSUVgxV3BE?=
+ =?utf-8?B?dnN0UHpqTC9BNXF1eklJRUUydGYwV2M4RHZLWXh0NFp5bnEzc3RHb2pLdTZQ?=
+ =?utf-8?B?bWRsSE1LRndBWnlGL0QxemNMUTUyR0ozQnlQL1Ztb2JwZzl6Ty9zRlhXdHpF?=
+ =?utf-8?B?RDg0bUpEdW51cmJJSTV2c1pzaGRoaHYveXpyelVtQS9BWDkrMWdab0FGZ1J3?=
+ =?utf-8?B?eWZmN0RJa3VwOFJaQTZsMXA5UmdISm5SYVJpaC9XQXNUd2F5a0EyZTduQnpD?=
+ =?utf-8?B?K0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ca2e0b9-062d-4851-9dbe-08dd88d2150f
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2025 17:03:23.5678
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jm6agRkE+sR1tZp3vYvJaIcDj2uFe9OOWijMoVTjXEXxvufnUsoi/QzKNPDxOBlyt3jLjK9feLILt18trNG2Yb3k2jzmhcnyxGlbPsPodE8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFE50071912
+X-OriginatorOrg: intel.com
 
-Le mercredi 30 avril 2025 =C3=A0 13:39 +0800, ming.qian@oss.nxp.com a =C3=
-=A9crit=C2=A0:
-> From: Ming Qian <ming.qian@nxp.com>
->=20
-> Applications may set data_offset when it refers to an output queue. So
-> driver need to account for it when getting the start address of input
-> image in the plane.
->=20
-> Meanwhile data_offset is included in bytesused. So the data_offset
-> should be subtracted from the payload of input image.
+Hi James,
 
-I think you should revisit this commit message a little in the next version=
-.
-While the overall patch looks good, I believe you forgot to add code to ver=
-ify
-that addr + data_offset still falls within the HW needed alignment. I don't
-have the HW documentation for that chip, but I have never seen HW capapble =
-of
-handlign random alignment.
+On 4/25/25 10:37 AM, James Morse wrote:
+> @@ -4432,23 +4445,42 @@ static bool __exit resctrl_online_domains_exist(void)
+>  	return false;
+>  }
+>  
+> -/*
+> +/**
 
-Without the data_offset, the data is always page align, so we don't usually
-have to validate that.
+Why make the switch to kernel-doc now? The benefit is not clear considering
+resctrl_init() is not using kernel-doc.
 
-regards,
-Nicolas
+>   * resctrl_exit() - Remove the resctrl filesystem and free resources.
+>   *
+> + * Called by the architecture code in response to a fatal error.
+> + * Removes resctrl files and structures from kernfs to prevent further
+> + * configuration.
+> + *
+>   * When called by the architecture code, all CPUs and resctrl domains must be
+>   * offline. This ensures the limbo and overflow handlers are not scheduled to
+>   * run, meaning the data structures they access can be freed by
+>   * resctrl_mon_resource_exit().
+> + *
+> + * After this function has returned, the architecture code should return an
 
->=20
-> Signed-off-by: Ming Qian <ming.qian@nxp.com>
-> ---
-> =C2=A0.../media/platform/nxp/imx-jpeg/mxc-jpeg.c=C2=A0=C2=A0=C2=A0 | 42 +=
-+++++++++++++-----
-> =C2=A01 file changed, 31 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c b/drivers/med=
-ia/platform/nxp/imx-jpeg/mxc-jpeg.c
-> index 1221b309a916..035368d65913 100644
-> --- a/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-> +++ b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-> @@ -587,6 +587,27 @@ static void _bswap16(u16 *a)
-> =C2=A0	*a =3D ((*a & 0x00FF) << 8) | ((*a & 0xFF00) >> 8);
-> =C2=A0}
-> =C2=A0
-> +static dma_addr_t mxc_jpeg_get_plane_dma_addr(struct vb2_buffer *buf, un=
-signed int plane_no)
-> +{
-> +	if (plane_no >=3D buf->num_planes)
-> +		return 0;
-> +	return vb2_dma_contig_plane_dma_addr(buf, plane_no) + buf->planes[plane=
-_no].data_offset;
-> +}
+nit: "After this function has returned," -> "After resctrl_exit() returns, "
+
+"should return an" -> "should return an error"?
+
+> + * from all resctrl_arch_ functions that can do this.
+> + * resctrl_arch_get_resource() must continue to return struct rdt_resources
+> + * with the correct rid field to ensure the filesystem can be unmounted.
+
+Is this to get through set_mba_sc() and the for_each_alloc_capable_rdt_resource(r)
+loop in rdt_kill_sb() or is there something more subtle?
+
+>   */
+>  void __exit resctrl_exit(void)
+>  {
+>  	cpus_read_lock();
+>  	WARN_ON_ONCE(resctrl_online_domains_exist());
 > +
-> +static void *mxc_jpeg_get_plane_vaddr(struct vb2_buffer *buf, unsigned i=
-nt plane_no)
-> +{
-> +	if (plane_no >=3D buf->num_planes)
-> +		return NULL;
-> +	return vb2_plane_vaddr(buf, plane_no) + buf->planes[plane_no].data_offs=
-et;
-> +}
+> +	mutex_lock(&rdtgroup_mutex);
+> +	resctrl_fs_teardown();
+> +	mutex_unlock(&rdtgroup_mutex);
 > +
-> +static unsigned long mxc_jpeg_get_plane_payload(struct vb2_buffer *buf, =
-unsigned int plane_no)
-> +{
-> +	if (plane_no >=3D buf->num_planes)
-> +		return 0;
-> +	return vb2_get_plane_payload(buf, plane_no) - buf->planes[plane_no].dat=
-a_offset;
-> +}
+>  	cpus_read_unlock();
+>  
+>  	debugfs_remove_recursive(debugfs_resctrl);
+> +	debugfs_resctrl = NULL;
+>  	unregister_filesystem(&rdt_fs_type);
+> -	sysfs_remove_mount_point(fs_kobj, "resctrl");
 > +
-> =C2=A0static void print_mxc_buf(struct mxc_jpeg_dev *jpeg, struct vb2_buf=
-fer *buf,
-> =C2=A0			=C2=A0 unsigned long len)
-> =C2=A0{
-> @@ -599,11 +620,11 @@ static void print_mxc_buf(struct mxc_jpeg_dev *jpeg=
-, struct vb2_buffer *buf,
-> =C2=A0		return;
-> =C2=A0
-> =C2=A0	for (plane_no =3D 0; plane_no < buf->num_planes; plane_no++) {
-> -		payload =3D vb2_get_plane_payload(buf, plane_no);
-> +		payload =3D mxc_jpeg_get_plane_payload(buf, plane_no);
-> =C2=A0		if (len =3D=3D 0)
-> =C2=A0			len =3D payload;
-> -		dma_addr =3D vb2_dma_contig_plane_dma_addr(buf, plane_no);
-> -		vaddr =3D vb2_plane_vaddr(buf, plane_no);
-> +		dma_addr =3D mxc_jpeg_get_plane_dma_addr(buf, plane_no);
-> +		vaddr =3D mxc_jpeg_get_plane_vaddr(buf, plane_no);
-> =C2=A0		v4l2_dbg(3, debug, &jpeg->v4l2_dev,
-> =C2=A0			 "plane %d (vaddr=3D%p dma_addr=3D%x payload=3D%ld):",
-> =C2=A0			=C2=A0 plane_no, vaddr, dma_addr, payload);
-> @@ -701,16 +722,15 @@ static void mxc_jpeg_addrs(struct mxc_jpeg_desc *de=
-sc,
-> =C2=A0	struct mxc_jpeg_q_data *q_data;
-> =C2=A0
-> =C2=A0	q_data =3D mxc_jpeg_get_q_data(ctx, raw_buf->type);
-> -	desc->buf_base0 =3D vb2_dma_contig_plane_dma_addr(raw_buf, 0);
-> +	desc->buf_base0 =3D mxc_jpeg_get_plane_dma_addr(raw_buf, 0);
-> =C2=A0	desc->buf_base1 =3D 0;
-> =C2=A0	if (img_fmt =3D=3D STM_CTRL_IMAGE_FORMAT(MXC_JPEG_YUV420)) {
-> =C2=A0		if (raw_buf->num_planes =3D=3D 2)
-> -			desc->buf_base1 =3D vb2_dma_contig_plane_dma_addr(raw_buf, 1);
-> +			desc->buf_base1 =3D mxc_jpeg_get_plane_dma_addr(raw_buf, 1);
-> =C2=A0		else
-> =C2=A0			desc->buf_base1 =3D desc->buf_base0 + q_data->sizeimage[0];
-> =C2=A0	}
-> -	desc->stm_bufbase =3D vb2_dma_contig_plane_dma_addr(jpeg_buf, 0) +
-> -		offset;
-> +	desc->stm_bufbase =3D mxc_jpeg_get_plane_dma_addr(jpeg_buf, 0) + offset=
-;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static bool mxc_jpeg_is_extended_sequential(const struct mxc_jpeg_f=
-mt *fmt)
-> @@ -967,8 +987,8 @@ static irqreturn_t mxc_jpeg_dec_irq(int irq, void *pr=
-iv)
-> =C2=A0			vb2_set_plane_payload(&dst_buf->vb2_buf, 1, payload);
-> =C2=A0		}
-> =C2=A0		dev_dbg(dev, "Decoding finished, payload size: %ld + %ld\n",
-> -			vb2_get_plane_payload(&dst_buf->vb2_buf, 0),
-> -			vb2_get_plane_payload(&dst_buf->vb2_buf, 1));
-> +			mxc_jpeg_get_plane_payload(&dst_buf->vb2_buf, 0),
-> +			mxc_jpeg_get_plane_payload(&dst_buf->vb2_buf, 1));
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	/* short preview of the results */
-> @@ -1827,8 +1847,8 @@ static int mxc_jpeg_parse(struct mxc_jpeg_ctx *ctx,=
- struct vb2_buffer *vb)
-> =C2=A0	struct mxc_jpeg_sof *psof =3D NULL;
-> =C2=A0	struct mxc_jpeg_sos *psos =3D NULL;
-> =C2=A0	struct mxc_jpeg_src_buf *jpeg_src_buf =3D vb2_to_mxc_buf(vb);
-> -	u8 *src_addr =3D (u8 *)vb2_plane_vaddr(vb, 0);
-> -	u32 size =3D vb2_get_plane_payload(vb, 0);
-> +	u8 *src_addr =3D (u8 *)mxc_jpeg_get_plane_vaddr(vb, 0);
-> +	u32 size =3D mxc_jpeg_get_plane_payload(vb, 0);
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	memset(&header, 0, sizeof(header));
->=20
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> prerequisite-patch-id: 0000000000000000000000000000000000000000
+> +	/*
+> +	 * Do not remove the sysfs mount point added by resctrl_init() so that
+> +	 * it can be used to umount resctrl.
+> +	 */
+>  
+>  	resctrl_mon_resource_exit();
+>  }
+
+Looks good to me.
+
+Thank you.
+
+Reinette
 
