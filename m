@@ -1,247 +1,209 @@
-Return-Path: <linux-kernel+bounces-628985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 665BBAA65B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7E1AA65BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12CD89A23DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44BC11BA7586
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72D32641D8;
-	Thu,  1 May 2025 21:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73072257449;
+	Thu,  1 May 2025 21:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IT3hvlaE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IPuEJX8F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17016262FE0;
-	Thu,  1 May 2025 21:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2CD1F3FE8
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 21:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746135720; cv=none; b=BKePd4tHHXYmTwYEB3mo9H/Cv6GySu1xd2g4dSZFW9h/E4JoW2bRO1qQ3oX8+smoZdO7sivaIchgbuO8wtQkqtd+xvWKq9W4jh2s0eyoWWlYKERpzV+Zw1mhqIgxhPsS2/0jZg8U3OnRHATAR8sr3EN0jUhnZQpJFBirLMJytPc=
+	t=1746135898; cv=none; b=d6K2J2a+n6WJYtLc0okMa79qDBZFjWcQ3KXyLRaAG6X7mVgR2qr/iPK0T+09lE2CKlQcLoFPDNbGqT8lyQti/VKanus0Svnphg42jrpdKBJEd5anxsvHkoY2aaMjBTQQmujCUbrSgRe3jEwPzJH3c6OxPXDmnST8Rh/gORqgXTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746135720; c=relaxed/simple;
-	bh=eXtg+nlLZ5QQgTmyAO/7UOrtplNXnw9zciPmPYfJNGU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q/yvL0NKeMCvzjt62VyRGCmaKRvWuGK28M73/FNzjQ7iydkDmGJixskn1aAg8z9Lz07xM3Ccby0Q1Ze9LpYeFwX0RZqaTO08VsuFRor7Cc/KNLJ+TOaQiz1mu3xIqu/1RkQI8dDzojzvaEGmYgvftDJ5EnLO3arUUwz/k57KFCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IT3hvlaE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57AD8C4CEE3;
-	Thu,  1 May 2025 21:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746135719;
-	bh=eXtg+nlLZ5QQgTmyAO/7UOrtplNXnw9zciPmPYfJNGU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IT3hvlaEW1C2T6qrFAIz4OqRQisUOvw44sbkjvO6HfJS9b8gcSoQo7GcQT7A81roZ
-	 1nqepx5yNtJztOA3MuGWrpwWxd1xNopiO86qkv3rZRssBLwaY6/NZDbfYwf1oHhxQH
-	 8u1vSLEd8SNI1YbLbI0ErWa4oP7bAJFNU76Vb2c+BDr7cmcuwEZWtYNgUkD2zYY20C
-	 RcQzzGPencRwvHix/1JgrKXWz2wUFMgu+DlvJtAWeZMBTRbt5OLeEcdNfnuO5m9qm1
-	 SkpGIGKwUFKcPvRGL9h33VpmybCxIqErd/qd93cjRzJtuk0q8EoiQRBZHYYIZTO5YZ
-	 tPciEla1NT3nQ==
-From: Mario Limonciello <superm1@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 2/2] x86/CPU/AMD: Print the reason for the last reset
-Date: Thu,  1 May 2025 16:41:47 -0500
-Message-ID: <20250501214147.2488164-3-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250501214147.2488164-1-superm1@kernel.org>
-References: <20250501214147.2488164-1-superm1@kernel.org>
+	s=arc-20240116; t=1746135898; c=relaxed/simple;
+	bh=yGjshj8wxW0jivMiKqB0gosdGnwo02IqG2xpbGt+hrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MEj+hrceo/2XtNqzMcM1GRHvNrPcG4ZhRDvcLajrTrrFoZHcZ6aVMRz0RG66VAdb0vNc5vIb+m7PkY5pXIRPVrMxkv6MdaKUhqps6z6aOabZ5x8teIR/RQqNUNBJ+fV8GxPgc1ZLd6KBhtAtETAYpZunWVya3ibXOKNx+eL2bt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IPuEJX8F; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746135896; x=1777671896;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=yGjshj8wxW0jivMiKqB0gosdGnwo02IqG2xpbGt+hrs=;
+  b=IPuEJX8Fte7QD5f12PO7v12Uc6TJ4Xc2mjHoMWC5RsX5FBJAMhc2H7wu
+   Y5HfrS6vcZ/iHD6kye3DbkR8F2Mep9zn5NJDtzKwTNMF0ZCZ6XBQzby4i
+   +ixZRLQqNakocowAcpCnqRrgIvrxto5C2KwyCEh6U++txsC3W4DMaRsrj
+   PADNoWhMoum4oEAz13V9ZYvjQBqx7Cj60aKbYxC8zGVFEe+6FrrzR+Oys
+   lxOJutgXdpeqCxztX2ilFYnDi6DM16qvwndTwiNlQ89sORJ+JshA933YR
+   bj6tNdpTC5xKAMj8bzNElADDwedxKYAoJKmSePs25mSWVvDj3kni9Hmz0
+   Q==;
+X-CSE-ConnectionGUID: Kupdga1NQjK8P3z71fQMFg==
+X-CSE-MsgGUID: K4O7L3ndSJ26avc9hEkOkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="47701591"
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="47701591"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 14:44:55 -0700
+X-CSE-ConnectionGUID: nwMQFfcgSAKbFKDHCojJSA==
+X-CSE-MsgGUID: Zx0zoC+xRjaQSUEOOWnhGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="139631294"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 01 May 2025 14:44:54 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uAbi7-0004PJ-26;
+	Thu, 01 May 2025 21:44:51 +0000
+Date: Fri, 2 May 2025 05:44:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Sam Protsenko <semen.protsenko@linaro.org>
+Subject: drivers/tty/serial/samsung_tty.c:1391:48: warning: '%d' directive
+ writing between 1 and 3 bytes into a region of size 2
+Message-ID: <202505020532.1swRDgpF-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+Hi Tudor,
 
-The following register contains bits that indicate the cause for the
-previous reset.
+FYI, the error/warning still remains.
 
-        PMx000000C0 (FCH::PM::S5_RESET_STATUS)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ebd297a2affadb6f6f4d2e5d975c1eda18ac762d
+commit: 6e1e48b6ef2613ff4c28a34f7a57c29a4367ad87 tty: serial: samsung: shrink the clock selection to 8 clocks
+date:   1 year, 3 months ago
+config: csky-randconfig-r053-20231127 (https://download.01.org/0day-ci/archive/20250502/202505020532.1swRDgpF-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250502/202505020532.1swRDgpF-lkp@intel.com/reproduce)
 
-This is useful for debug. The reasons for reset are broken into 6 high
-level categories. Decode it by category and print during boot.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505020532.1swRDgpF-lkp@intel.com/
 
-Specifics within a category are split off into debugging documentation.
+All warnings (new ones prefixed by >>):
 
-The register is accessed indirectly through a "PM" port in the FCH. Use
-MMIO access in order to avoid restrictions with legacy port access.
+   drivers/tty/serial/samsung_tty.c: In function 's3c24xx_serial_set_termios':
+>> drivers/tty/serial/samsung_tty.c:1391:48: warning: '%d' directive writing between 1 and 3 bytes into a region of size 2 [-Wformat-overflow=]
+    1391 |                 sprintf(clkname, "clk_uart_baud%d", cnt);
+         |                                                ^~
+   In function 's3c24xx_serial_getclk',
+       inlined from 's3c24xx_serial_set_termios' at drivers/tty/serial/samsung_tty.c:1492:9:
+   drivers/tty/serial/samsung_tty.c:1391:34: note: directive argument in the range [0, 254]
+    1391 |                 sprintf(clkname, "clk_uart_baud%d", cnt);
+         |                                  ^~~~~~~~~~~~~~~~~
+   drivers/tty/serial/samsung_tty.c:1391:17: note: 'sprintf' output between 15 and 17 bytes into a destination of size 15
+    1391 |                 sprintf(clkname, "clk_uart_baud%d", cnt);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/tty/serial/samsung_tty.c: In function 's3c24xx_serial_init_port':
+   drivers/tty/serial/samsung_tty.c:1789:49: warning: '%d' directive writing between 1 and 3 bytes into a region of size 2 [-Wformat-overflow=]
+    1789 |                 sprintf(clk_name, "clk_uart_baud%d", clk_num);
+         |                                                 ^~
+   In function 's3c24xx_serial_enable_baudclk',
+       inlined from 's3c24xx_serial_init_port' at drivers/tty/serial/samsung_tty.c:1895:8:
+   drivers/tty/serial/samsung_tty.c:1789:35: note: directive argument in the range [0, 254]
+    1789 |                 sprintf(clk_name, "clk_uart_baud%d", clk_num);
+         |                                   ^~~~~~~~~~~~~~~~~
+   drivers/tty/serial/samsung_tty.c:1789:17: note: 'sprintf' output between 15 and 17 bytes into a destination of size 15
+    1789 |                 sprintf(clk_name, "clk_uart_baud%d", clk_num);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Use a late_initcall() to ensure that MMIO has been set up before trying
-to access the register.
 
-This register was introduced with AMD Family 17h, so avoid access on
-older families. There is no CPUID feature bit for this register.
+vim +1391 drivers/tty/serial/samsung_tty.c
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-v6:
- * Use Boris' suggestion to not print unknown message and not rely
-   upon find_next_bit
-v4:
- * Use loop that can output multiple reasons
- * Drop "Unknown" condition and have dedicated message
-v3:
- * Align strings in the CSV and code.
- * Switch to an array of strings
- * Switch to looking up bit of first value
- * Re-order message to have number first (makes grepping easier)
- * Add x86/amd prefix to message
-v2:
- * Add string for each reason, but still include value in case multiple
-   values are set.
----
- Documentation/arch/x86/amd-debugging.rst | 41 ++++++++++++++++++
- arch/x86/include/asm/amd/fch.h           |  1 +
- arch/x86/kernel/cpu/amd.c                | 53 ++++++++++++++++++++++++
- 3 files changed, 95 insertions(+)
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1372  
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1373  static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1374  			unsigned int req_baud, struct clk **best_clk,
+6e1e48b6ef2613 drivers/tty/serial/samsung_tty.c Tudor Ambarus       2024-01-19  1375  			u8 *clk_num)
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1376  {
+97a6cfe8115b04 drivers/tty/serial/samsung_tty.c Krzysztof Kozlowski 2022-03-08  1377  	const struct s3c24xx_uart_info *info = ourport->info;
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1378  	struct clk *clk;
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1379  	unsigned long rate;
+6e1e48b6ef2613 drivers/tty/serial/samsung_tty.c Tudor Ambarus       2024-01-19  1380  	unsigned int baud, quot, best_quot = 0;
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1381  	char clkname[MAX_CLK_NAME_LENGTH];
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1382  	int calc_deviation, deviation = (1 << 30) - 1;
+6e1e48b6ef2613 drivers/tty/serial/samsung_tty.c Tudor Ambarus       2024-01-19  1383  	u8 cnt;
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1384  
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1385  	for (cnt = 0; cnt < info->num_clks; cnt++) {
+7d31676a8d91dd drivers/tty/serial/samsung_tty.c Jonathan Bakker     2020-05-08  1386  		/* Keep selected clock if provided */
+7d31676a8d91dd drivers/tty/serial/samsung_tty.c Jonathan Bakker     2020-05-08  1387  		if (ourport->cfg->clk_sel &&
+7d31676a8d91dd drivers/tty/serial/samsung_tty.c Jonathan Bakker     2020-05-08  1388  			!(ourport->cfg->clk_sel & (1 << cnt)))
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1389  			continue;
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1390  
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24 @1391  		sprintf(clkname, "clk_uart_baud%d", cnt);
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1392  		clk = clk_get(ourport->port.dev, clkname);
+7cd88831feb03c drivers/tty/serial/samsung.c     Kyoungil Kim        2012-05-20  1393  		if (IS_ERR(clk))
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1394  			continue;
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1395  
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1396  		rate = clk_get_rate(clk);
+a9c09546e903f1 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1397  		if (!rate) {
+a9c09546e903f1 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1398  			dev_err(ourport->port.dev,
+a9c09546e903f1 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1399  				"Failed to get clock rate for %s.\n", clkname);
+a9c09546e903f1 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1400  			clk_put(clk);
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1401  			continue;
+a9c09546e903f1 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1402  		}
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1403  
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1404  		if (ourport->info->has_divslot) {
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1405  			unsigned long div = rate / req_baud;
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1406  
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1407  			/* The UDIVSLOT register on the newer UARTs allows us to
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1408  			 * get a divisor adjustment of 1/16th on the baud clock.
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1409  			 *
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1410  			 * We don't keep the UDIVSLOT value (the 16ths we
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1411  			 * calculated by not multiplying the baud by 16) as it
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1412  			 * is easy enough to recalculate.
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1413  			 */
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1414  
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1415  			quot = div / 16;
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1416  			baud = rate / div;
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1417  		} else {
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1418  			quot = (rate + (8 * req_baud)) / (16 * req_baud);
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1419  			baud = rate / (quot * 16);
+090f848da00008 drivers/serial/samsung.c         Ben Dooks           2008-12-12  1420  		}
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1421  		quot--;
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1422  
+f3710f5e9e1a68 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1423  		calc_deviation = abs(req_baud - baud);
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1424  
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1425  		if (calc_deviation < deviation) {
+832e231cff4761 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1426  			/*
+832e231cff4761 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1427  			 * If we find a better clk, release the previous one, if
+832e231cff4761 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1428  			 * any.
+832e231cff4761 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1429  			 */
+832e231cff4761 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1430  			if (!IS_ERR(*best_clk))
+832e231cff4761 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1431  				clk_put(*best_clk);
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1432  			*best_clk = clk;
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1433  			best_quot = quot;
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1434  			*clk_num = cnt;
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1435  			deviation = calc_deviation;
+832e231cff4761 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1436  		} else {
+832e231cff4761 drivers/tty/serial/samsung_tty.c Christophe JAILLET  2023-06-10  1437  			clk_put(clk);
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1438  		}
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1439  	}
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1440  
+5f5a7a5578c588 drivers/tty/serial/samsung.c     Thomas Abraham      2011-10-24  1441  	return best_quot;
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1442  }
+b497549a035c2a drivers/serial/samsung.c         Ben Dooks           2008-07-03  1443  
 
-diff --git a/Documentation/arch/x86/amd-debugging.rst b/Documentation/arch/x86/amd-debugging.rst
-index 9bfc852606c51..d557312a35bee 100644
---- a/Documentation/arch/x86/amd-debugging.rst
-+++ b/Documentation/arch/x86/amd-debugging.rst
-@@ -319,3 +319,44 @@ messages.  To help with this, a tool has been created at
- `amd-debug-tools <https://git.kernel.org/pub/scm/linux/kernel/git/superm1/amd-debug-tools.git/about/>`_
- to help parse the messages.
- 
-+Random reboot issues
-+====================
-+When a random reboot occurs, the high-level reason for the reboot is stored
-+in a register that will persist onto the next boot.
-+
-+There are 6 classes of reasons for the reboot:
-+ * Software induced
-+ * Power state transition
-+ * Pin induced
-+ * Hardware induced
-+ * Remote reset
-+ * Internal CPU event
-+
-+.. csv-table::
-+   :header: "Bit", "Type", "Reason"
-+   :align: left
-+
-+   "0",  "Pin",      "thermal pin BP_THERMTRIP_L was tripped"
-+   "1",  "Pin",      "power button was pressed for 4 seconds"
-+   "2",  "Pin",      "shutdown pin was shorted"
-+   "4",  "Remote",   "remote ASF power off command was received"
-+   "9",  "Internal", "internal CPU thermal limit was tripped"
-+   "16", "Pin",      "system reset pin BP_SYS_RST_L was tripped"
-+   "17", "Software", "software issued PCI reset"
-+   "18", "Software", "software wrote 0x4 to reset control register 0xCF9"
-+   "19", "Software", "software wrote 0x6 to reset control register 0xCF9"
-+   "20", "Software", "software wrote 0xE to reset control register 0xCF9"
-+   "21", "Sleep",    "ACPI power state transition occurred"
-+   "22", "Pin",      "keyboard reset pin KB_RST_L was asserted"
-+   "23", "Internal", "internal CPU shutdown event occurred"
-+   "24", "Hardware", "system failed to boot before failed boot timer expired"
-+   "25", "Hardware", "hardware watchdog timer expired"
-+   "26", "Remote",   "remote ASF reset command was received"
-+   "27", "Internal", "an uncorrected error caused a data fabric sync flood event"
-+   "29", "Internal", "FCH and MP1 failed warm reset handshake"
-+   "30", "Internal", "a parity error occurred"
-+   "31", "Internal", "a software sync flood event occurred"
-+
-+This information is read by the kernel at bootup and is saved into the
-+kernel ring buffer. When a random reboot occurs this message can be helpful
-+to determine the next component to debug such an issue.
-diff --git a/arch/x86/include/asm/amd/fch.h b/arch/x86/include/asm/amd/fch.h
-index 9b32e8a03193e..4a6e1e3b685a4 100644
---- a/arch/x86/include/asm/amd/fch.h
-+++ b/arch/x86/include/asm/amd/fch.h
-@@ -9,5 +9,6 @@
- #define FCH_PM_DECODEEN			0x00
- #define FCH_PM_DECODEEN_SMBUS0SEL	GENMASK(20, 19)
- #define FCH_PM_SCRATCH			0x80
-+#define FCH_PM_S5_RESET_STATUS		0xC0
- 
- #endif
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 2b36379ff675d..9a8c590456d07 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -9,6 +9,7 @@
- #include <linux/sched/clock.h>
- #include <linux/random.h>
- #include <linux/topology.h>
-+#include <asm/amd/fch.h>
- #include <asm/processor.h>
- #include <asm/apic.h>
- #include <asm/cacheinfo.h>
-@@ -1237,3 +1238,55 @@ void amd_check_microcode(void)
- 	if (cpu_feature_enabled(X86_FEATURE_ZEN2))
- 		on_each_cpu(zenbleed_check_cpu, NULL, 1);
- }
-+
-+static const char * const s5_reset_reason_txt[] = {
-+	[0] = "thermal pin BP_THERMTRIP_L was tripped",
-+	[1] = "power button was pressed for 4 seconds",
-+	[2] = "shutdown pin was shorted",
-+	[4] = "remote ASF power off command was received",
-+	[9] = "internal CPU thermal limit was tripped",
-+	[16] = "system reset pin BP_SYS_RST_L was tripped",
-+	[17] = "software issued PCI reset",
-+	[18] = "software wrote 0x4 to reset control register 0xCF9",
-+	[19] = "software wrote 0x6 to reset control register 0xCF9",
-+	[20] = "software wrote 0xE to reset control register 0xCF9",
-+	[21] = "ACPI power state transition occurred",
-+	[22] = "keyboard reset pin KB_RST_L was asserted",
-+	[23] = "internal CPU shutdown event occurred",
-+	[24] = "system failed to boot before failed boot timer expired",
-+	[25] = "hardware watchdog timer expired",
-+	[26] = "remote ASF reset command was received",
-+	[27] = "an uncorrected error caused a data fabric sync flood event",
-+	[29] = "FCH and MP1 failed warm reset handshake",
-+	[30] = "a parity error occurred",
-+	[31] = "a software sync flood event occurred",
-+};
-+
-+static __init int print_s5_reset_status_mmio(void)
-+{
-+	unsigned long value;
-+	void __iomem *addr;
-+	int i;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_ZEN))
-+		return 0;
-+
-+	addr = ioremap(FCH_PM_BASE + FCH_PM_S5_RESET_STATUS, sizeof(value));
-+	if (!addr)
-+		return 0;
-+
-+	value = ioread32(addr);
-+	iounmap(addr);
-+
-+	for (i = 0; i <= ARRAY_SIZE(s5_reset_reason_txt); i++) {
-+		if (!(value & BIT(i)))
-+			continue;
-+
-+		if (s5_reset_reason_txt[i])
-+			pr_info("x86/amd: Previous system reset reason [0x%08lx]: %s\n",
-+				value, s5_reset_reason_txt[i]);
-+	}
-+
-+	return 0;
-+}
-+late_initcall(print_s5_reset_status_mmio);
+:::::: The code at line 1391 was first introduced by commit
+:::::: 5f5a7a5578c5885201cf9c85856f023fe8b81765 serial: samsung: switch to clkdev based clock lookup
+
+:::::: TO: Thomas Abraham <thomas.abraham@linaro.org>
+:::::: CC: Kukjin Kim <kgene.kim@samsung.com>
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
