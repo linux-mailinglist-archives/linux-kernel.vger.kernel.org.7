@@ -1,463 +1,288 @@
-Return-Path: <linux-kernel+bounces-628522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A598AA5EF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:04:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7B7AA5EF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9771A3B85C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:02:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C2D41B60B16
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0F527978B;
-	Thu,  1 May 2025 12:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCF713D8B2;
+	Thu,  1 May 2025 13:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5kZtoeQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SCA5q0i0";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GyiFxotf"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C99827814C;
-	Thu,  1 May 2025 12:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746104391; cv=none; b=DTDRMPuGz6+AygMQUKlp8uOkjb33GFFiDeyTLCbsM1tb+uNmg3J8Y8gXNhOu4vW9uNjEHl/iKgla5B6rBiLYeHymZKvQD/x+gUImLUmn/6K43St68Tp+8UUnUou1y5zgU/i21zLDBsk2C01QoK4NZzL25nsMWVX/WWECcw5HjFM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746104391; c=relaxed/simple;
-	bh=LkvWrEo5B39cVkpRV7s6Z1Rq1/YJBkmZGbMIUQAxJ4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GFXkn0a2UkFb1hJCgAHzqxSNEZSa3mw33OS0YbtakpknnF02hP1Kk0vIOvPokOjaJYJvXPah34aDeYB/Ww3WTYNGp0tw5UZJrJMcJDzciQioyuPssXVSEgKoXvZR1ytKo7fQ7IM0Zk+Nl4xJoNfuC5Zx2Ssk1IER5Xc78dZX7cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5kZtoeQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A2E8C4CEF0;
-	Thu,  1 May 2025 12:59:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746104390;
-	bh=LkvWrEo5B39cVkpRV7s6Z1Rq1/YJBkmZGbMIUQAxJ4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j5kZtoeQ2bSFg4yaD6Y+JOXzeVK6UvpZAwxGH2nS9brn9+2EEOhFQF7f6qMEF4Jw0
-	 LZ1XTja2hskseyTqKSN/xaFRj58O/mg4EqtUnzFY9BHYPH4D4H7TWxL0EYmLfk1Nkd
-	 i9x3PkxuYWHd2qOYzSaCk6XAefnsmUk5RKdWx82HPrd8Tdh+MxLn6Kd6mKoyK05Sxj
-	 djGY3yzl+qlj662W4WzApxEJPat1nUI20ElrcHyypSKO+TmQKI9CUi25R/DxDeX/nv
-	 MTL7MQ9jGarXqrbWF20oWUu7gu/nKwJC4HXmmSsKI4hNN3Dso3XFOfM6GE75S0zSFl
-	 2uHLyFokAFGvQ==
-Date: Thu, 1 May 2025 13:59:43 +0100
-From: Lee Jones <lee@kernel.org>
-To: mathieu.dubois-briand@bootlin.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	andriy.shevchenko@intel.com,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v7 02/11] mfd: Add max7360 support
-Message-ID: <20250501125943.GN1567507@google.com>
-References: <20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com>
- <20250428-mdb-max7360-support-v7-2-4e0608d0a7ff@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8693597B;
+	Thu,  1 May 2025 13:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746104428; cv=fail; b=SGCgcZIgQxRQLrFGH83S3Nh/cmWcjcdIwvjunigjABw35NazcJhdX1QTo/QVhg+439GA8j/iGVIDhuSphm7bwJ7rGUl2+Uhtdm2MjqIRZYfJHcgdijzlIq//XxjlFsRzQMmauP8/ELKrSE/5r2OA7timlaiuhJgXYAG4O13kYdk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746104428; c=relaxed/simple;
+	bh=ZOi49/KAp49vGfTFBMWoEKV7Tm6zVxRkNKLN7oXBWDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XaFd7hw1W/+e7sQOse8oMnuBe+qRKjTJe6ojL+i7sqruMMmtFpj1h5rrbGO1R4plr7r1vY4xw3KQ1lTAxVC8l3SZDBXYjmGlu9FQkIDcx6IYFhqbjcrMuy1vZeZA3gHSGFKcZ2HkrQCd0DPC5gDSEfd2KLdW++7Fgg1Z1WhrFYc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SCA5q0i0; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GyiFxotf; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5418fwRt001867;
+	Thu, 1 May 2025 13:00:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=ZOi49/KAp49vGfTFBM
+	WoEKV7Tm6zVxRkNKLN7oXBWDk=; b=SCA5q0i0qVJVyTLwOS8rJs5gx2Rj6AVQbC
+	bacrmCZkFpagna3RVf8gurTXhUk99ktwfyI3weCkIZXfFa0wBT8UnUk2DpdQcDY0
+	VzYe9xONzToPO3aGKYcWtZvKBCMkBV9xZ6dV3y/NapvkyyHrM6wvdbqNuxu0ZRjJ
+	N5CgL1oCLa519XneKH2tJPp4XU3Nl60YqeD2YJMl8BLV2o8RzDKoOwD8YRX4+eeu
+	3/foIa/Odrh18e1CAcVi7vr26GU17U2uylIj5414yjf3CwOl2mg5M9anHM1LjyF/
+	7Qwh3rqBigzkAIvFS9bdLYMs1SvWMl6sYohqjhC+pZcz7BNeM8Jw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46b6utayq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 01 May 2025 13:00:07 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 541CBJ2V023735;
+	Thu, 1 May 2025 13:00:06 GMT
+Received: from cy4pr02cu008.outbound.protection.outlook.com (mail-westcentralusazlp17011028.outbound.protection.outlook.com [40.93.6.28])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 468nxjrnpr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 01 May 2025 13:00:05 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XujvKnoNe/Tc/Ahwxbv3YbZFqERt3N9EaAJ/gGkCZdWDzwNtBsF14LQ74h/inWFtCflLCm962uE6JhzpJFipso7e7pQDeh7uAItcExY3ueq5pcXcmOE67D3oVB1LUqjN67el6bolTDn3cUhLQr73MeGcQEjpUr1OeUYsjcfIXtKOTsNZglMR5yQYqfmmoIAnh27huLbklaHvS5DLGB+UM3PV55/L6tqj5n9XnaUiYddjaXJ6/bAzBlk5BBWAjlgZE5f5PynkGeekR4PDUqZa7gpMgGF10j0u2LTvU/Jr7ltMgDrvjHcAoxypk37ACWVzRqRsgjMDTnrc/YivtFpXKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZOi49/KAp49vGfTFBMWoEKV7Tm6zVxRkNKLN7oXBWDk=;
+ b=dSoIi4+gT40sHnUjQTgxuRMV5+0tCfCcdFbS+9BpUDxkvKMLAWV0jei6MYGYY1Gci4u96MZ7beC1Spt4Cq62+nRKRPnP3wrAQe80VjNVWw6FTuGduvrCCsJikmCAGpJYqjgS6wQeiBU/Z1qWSECdthZbPn1Y08bofiGjqE6zJjd+1conOwGWxmQgAdEh15T5FIgaOhDRXoz8oHPTeQBW6mjIysP4wz2R5PQxmXhMMZLt/psrz1NgARBh2Wa5wf6dBBT2x0G8AogF3PwFrd//DjoS2sl2sqh9AUKSP+Zh1nGoVXbXq051CUgTxnSLEum8AzHiqLfrCdzSKTW+6+WEsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZOi49/KAp49vGfTFBMWoEKV7Tm6zVxRkNKLN7oXBWDk=;
+ b=GyiFxotfdLu3iSeZNhphqRoiaLLgPhq85WrLnVImMPRXgcF2NsWUBIfy9qNtpC9E7oCyxKDwGyeb9tkdH02dS+YsGqnc1AfHCgKl0ltiZogWOU67Bb5NPJ7YJPDk83oJz/oIIjSeneIDFd9J/WJ5zahrAvPv492iW629s7OdAKk=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ5PPF2BC420A1B.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::797) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.21; Thu, 1 May
+ 2025 13:00:02 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8699.022; Thu, 1 May 2025
+ 13:00:02 +0000
+Date: Thu, 1 May 2025 14:00:00 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [RFC PATCH 1/3] mm: introduce new .mmap_proto() f_op callback
+Message-ID: <e505a8d2-2407-441d-8225-b7f94bc2b953@lucifer.local>
+References: <cover.1746040540.git.lorenzo.stoakes@oracle.com>
+ <f1bf4b452cc10281ef831c5e38ce16f09923f8c5.1746040540.git.lorenzo.stoakes@oracle.com>
+ <7ab1743b-8826-44e8-ac11-283731ef51e1@redhat.com>
+ <982acf21-6551-472d-8f4d-4b273b4c2485@lucifer.local>
+ <aBNmQ2YVS-3Axxyh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBNmQ2YVS-3Axxyh@kernel.org>
+X-ClientProxiedBy: LO2P265CA0132.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9f::24) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250428-mdb-max7360-support-v7-2-4e0608d0a7ff@bootlin.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ5PPF2BC420A1B:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82ad1ff7-6523-415a-8a5e-08dd88b0164b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kJvKR3nRRkiBvDq51z5EeTSE38AEje2pldFEP1EbZZCoVJ5pCJC+vwYnqFpG?=
+ =?us-ascii?Q?5rntycn2qmDSu0B6toIeBNmA0iALUVGlWkFI0DCXBO3shYugZNsHukCV97dx?=
+ =?us-ascii?Q?nJl+jg8HrRy9tgROUxIj2ThMLw7J588Xxxh/kkf1tJgtkjs1MsjV/DMMF5OY?=
+ =?us-ascii?Q?lho4TLMJqX7bEt0ddH782I1SuzNiVn08BNgyAqKd1HWuNBTwXaAfkf2fOGkd?=
+ =?us-ascii?Q?cKssRl1QKUAYk/rCaWzX2mG26Gmp72jauxiAom50F5kW5YGKuaBr1XHAbRm9?=
+ =?us-ascii?Q?Dmpd0vgwLhS1LEVRvZK/ckXgCfdJQxHTHK2TuTKwI3Ejke/kRsT8/6O7EMLy?=
+ =?us-ascii?Q?fN52kLFRmQ1XwTGHjMyCyRaCMAdUt/Daq81vUW+aDh83XLc6Gx+xyMEAbGfL?=
+ =?us-ascii?Q?lDwVxCtDKOqgvlHH65noEdB8aRVQsZZSwVEhivw1iUXLDn6rIOS995VQMoCw?=
+ =?us-ascii?Q?6tQfv9UG69bC/DT/sSza0JNUSkC2Q7gSlA9gbilQHZgxskblVS20EKK1Ytpn?=
+ =?us-ascii?Q?hoY12NeV2cF9x1FgfXkTu+8LgP2gl29XFSPF0y9wTyUZaaTc2V1AUU7oi7Sb?=
+ =?us-ascii?Q?MRUXysb5lYAQ2GpBv5N2OfTwkIU1vkhBJviPV+eQovVucpzkfai3UPc3/SRI?=
+ =?us-ascii?Q?okfZCmJlmp/VNGTMLRbzhuL1P37UI/Drh+GQo9UgzU8r9zF8BtK6Amf7FwPU?=
+ =?us-ascii?Q?YNvh2hP8BzOSWW+kjnrfvfeL3r0WMoTfn8Of3WsKcHycFbtwZLrXieZcLslG?=
+ =?us-ascii?Q?cq1AC4/eFofhmbVDO43afUNCTZvlIRYkQah80oVhh1fLUI4T47ST14c7NPA7?=
+ =?us-ascii?Q?Vf3ZpClDnI/EPKgzKO7mSYaRIYAvT6+kBADEWNL3C+zDCBIfnBdychUdvXhS?=
+ =?us-ascii?Q?kCIouLGY/aQ4KkYIDYYyGbidIL2msY4QVz/DEDLPKpMjv117nk9mTigNEKuO?=
+ =?us-ascii?Q?k08KeYN5X4lwFig+A26uvxGBfveOwfO3BNH0ppkU+kGC80ekNMFiKo/BGgCa?=
+ =?us-ascii?Q?BeNoc0dG/RLZY/szGQ6CSpeda1c8Pi1QC8ErLKrvDfUg8dXf7gQIPiJxxPtW?=
+ =?us-ascii?Q?fByPUIlHRYupnZ+5qVVBctReONnrzLfbcFLc87FReJB9lwua2cJu5I0XofNP?=
+ =?us-ascii?Q?89hm/3cDlGBxvbSfBgNrDDhj84l8SkKhQOIFuSCSh1WAEkKEGR+9663Aj0ct?=
+ =?us-ascii?Q?4LppgbckU5M5/FUUbyLKyrkZcVizWHMaqy7FhUwN8yfN4T/6heeD/37TyhCJ?=
+ =?us-ascii?Q?YfFX36ORFtyva4QeXc6wOAmOJ8DXDmwVaEFBCKU4ESMmsEIE2ShxoRp3y591?=
+ =?us-ascii?Q?8gkOMsys1abo737pICITeA6UQi5OIXW9SlvgSsy+SaaVgDhyBXBFcrb3mxYm?=
+ =?us-ascii?Q?w1CwjjrAvyL0atLElsIg23gnqDsbDlZ783fknHxyb4njdveseMkc32nO8qV0?=
+ =?us-ascii?Q?qj1iSlZuIhQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4xzSdWhv7rB6y2Gmsvrhp7DzU7NPcIIf6W1T2Eqg5D2ukopb6nyARJwwWafE?=
+ =?us-ascii?Q?kXgkqtCaZUbihbHJQGOATRlTTvZciAe/7ARV7rIoJEX/Pn+3NtJWo3WUUoAe?=
+ =?us-ascii?Q?KXI8MIvkvLn7GZGJrOHdzgex/11Xuf7i1dEkBuTxH7/NMMq/zZWXyRGLV4Od?=
+ =?us-ascii?Q?jxGx0Y+InJk4B7caUirz8DulC6dZv+tnekYAvmjyeUn+/llbqX7w52FSGR3R?=
+ =?us-ascii?Q?r1j4hRRaE6QOfKF1sZlzcp+fcJy9/+9sn9lGZpVZ/8/p/W3SzccaXXKeI/5r?=
+ =?us-ascii?Q?1HKLydxZsdNqNEQ5x80cTFz9vGfb41uI1665j0s5XLXLKKwhQyd6zp+nZbDg?=
+ =?us-ascii?Q?/bqOOOMUKvyrGdQFEDef0+DevoLXmri6bOvzdc7qEds+B+Mnv/mn6ikZMhty?=
+ =?us-ascii?Q?UBotMSBU5oBxtg5iIeC82cVCYLWU8ufNvu78lOpULAhOKOq2/t2mPxtA0WL/?=
+ =?us-ascii?Q?bZUqf3wbruSHpOnnZyoqVN8IS0bpv96dxbrlfIMMADCm7PEN4Eo9+pvY6ehi?=
+ =?us-ascii?Q?oWgXvbBIWrB+ilHsNSYE3OGPeEtkmIVldn1itXDFe8RC1gOao2+eNUSSQ9Y8?=
+ =?us-ascii?Q?J5RBJC1kf7HqG6CklpIRadSLDSTJpEg6cDhCzrylotirnJrw6Ns5SETqWQrV?=
+ =?us-ascii?Q?bx5O9rlG7bvs0QXPRR/l4WnUAmeLazlpvLRUvG8ZSUfIGBk7qDNNNZ6KFfWN?=
+ =?us-ascii?Q?vBeOpUOIfeM1wPGSlpFi7m7qUGakGfDC2x3okZ+rB0DU2ErwVRoxVsYWILNF?=
+ =?us-ascii?Q?c7zf+lrXjnF3y1k7jfazv9Ms6LXz3T6FjC8KAgbFDVvL9B21MdWt7Axd1NhH?=
+ =?us-ascii?Q?4vHMerw7ci7Tu7oxayF46UIP70TMhkj1+9UTFrEOx12LaaGJoEcgmmO2pEm2?=
+ =?us-ascii?Q?qDLjp56LsXlLjXX/nbwGrMNsI0m9CrqeMGnatFs4/NAPi4HcLE2v/XwO2utY?=
+ =?us-ascii?Q?VhqD3bG9EgbFuIKgF6SVe1t9x/8MX5en5fXi9CV/zHurbV5qmXdbp9K1Vxph?=
+ =?us-ascii?Q?4nfd8VYx3v45lg2TvWL2TQEHD+3MHumgwadBgOzgdRoosmNAmcwd2imsnh/x?=
+ =?us-ascii?Q?00I7joFfr5ULrAjO1+4DBcO6M0ke6DOQS+ZgVIZ27nrLpyR4rCIdqYBUwxRF?=
+ =?us-ascii?Q?e+/c7tw1y9q74WD3ULbDrKgdJqO+XQptYjBRPkTKh1kz4kxdgVozLYeOJdEK?=
+ =?us-ascii?Q?FXV4sY1+pUmlt/P46g/VoNqMmig60H5xxlA+YAMq9DomF8Xuh5/kB7dkfSUw?=
+ =?us-ascii?Q?y8ImEKYu1ghilOM5mUdMBx5yXl/eYATEGDMe4LWOCgBO95+a9sbu0ia3R2G4?=
+ =?us-ascii?Q?Cv1z0JMMYq3tl9ZYsIHxPWezDTLx3NJIawNkgfTER264SMBWwkfuMb56620E?=
+ =?us-ascii?Q?UwMhgbnE+EqeKVf7HMvH70RU8IH6eVNgEgOqQzvGrfzXOOhI0mychbzKCV8m?=
+ =?us-ascii?Q?Se5Eul3LzLEtQtOUOoCGk4hD2lTrJzeUzw7azT45TZaSmylPtgycWKlucnxP?=
+ =?us-ascii?Q?/t0IOufzn2r9quV1bnNDkNpVbeiKGin5lBMYWAnSEbPIu76Gql5Gz0eVg2U0?=
+ =?us-ascii?Q?2faAzYgugMfQ2BqrQCcazNjaHXKYE+eZdBtVTxpNz2Xt1f1DaDVTLr8+zRtQ?=
+ =?us-ascii?Q?ZQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	C2oGDVYhygtZqRXBkmGuMnAKZkuIRYLVAzlmlTmrFytXzPeE5sm0qiZ5tedIoShuCzcAadROU7U1CZHGlHNXnZbZF1uBi2eT/TkhzHwXWFpqDZnimFv3YY+a7apwRw7mhxJrCVV8OD/+PX0c5fCo6eCWZbnGaO46z4Jvq9fdUY29pQW3fKjxpZbI+hkn79g1VvfNXrkLCXmeWdKoXEtPKhRHotdSPHesTRokS5EKMnEIGA839I7sjZEZA1JkttIjTUT+A4XVb/mmXrRn4hECy6pmeWEd5LbUUmy0IdHGjsBZjSY2jcY8qGe1P/QM7sXk7h6W0r+0E29F940rJA3Ot9c9iPVr9DG3CVORVDaz+nV/lN4LjDDZY29nxRweGiFEYvofCUy+p0dA9zBI5gSY5r8wEO+i2hTSEq0jVNgxpHqaAB1tah9fXZRg1cmdwT0Ki6SkSM/UTIYJthFHqBt9HKVs9ve4vYKriKR5pELYpDW8gdsSH/G/wXmip4Xm8yz9TDHuklEgEqqJo+APXlluxRD7uLycDxx9qLJsZ3SNAo9a0MkyznO1Yr8nzTejQ8gt56Eb8uquBsDT2WEg0kGlm56KaclGBkHfnpHWdDN8mtw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82ad1ff7-6523-415a-8a5e-08dd88b0164b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2025 13:00:02.7199
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +c+k2OGUVugDZwg6Cj9NkupQuhmD0YNsv6r+HvmXs920BlIsICArOhLw8wQFFmVq2z2fact2xbeB1y2yRFWKvoR4ZTWm/+knxu21Fca3K1M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF2BC420A1B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-01_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 spamscore=0 adultscore=0 mlxscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2505010097
+X-Proofpoint-GUID: mhEJDtmfXBOZ8bDLJBtPApTljXXHa5PA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAxMDA5NyBTYWx0ZWRfXzn9CimiseBsE u2R7j2VWesFJhX6PqvCs/L+DBCAjYW5usWmt298/BEV4aIaHVwbOo3rPHiUKw4xgfi9JG4/QSsv mveMwxX7PM/z+y4krXPwbTmrmmzOFS8lNhUik9yO2SBpueKnEBPGIgSGug3MO4OLeOg0/f4h8YY
+ 7vp1YuVo0FJt4EAZruzKblezUZi/mERKC6by40ZsfeROtI12/LH9N1WLjuCQivYfin0TP3gdpt4 r7ydTvwlxXBDy32W/3EvcutTO311IeCrvVN4IYtAImWxEjCwIIe75m55ZDEMc4AJoAVwCeAOENF uN57Rk36mmEMhE32ZqtsCeFoIak9W/Ycml8pjNn2gaHGUbqnFGCHMo5uvjrYjQpcpGYqfgB3GXr
+ FiCOm7E73ivPlVyKLc/gE/bilIk4H2L8mybhc7ttLWLQNWbP4K0QAchxTWnSwlRsCe1ZkUS4
+X-Authority-Analysis: v=2.4 cv=ZuHtK87G c=1 sm=1 tr=0 ts=68137057 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=o5jfhA_OkbfByLcLUc0A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13130
+X-Proofpoint-ORIG-GUID: mhEJDtmfXBOZ8bDLJBtPApTljXXHa5PA
 
-On Mon, 28 Apr 2025, mathieu.dubois-briand@bootlin.com wrote:
+On Thu, May 01, 2025 at 03:17:07PM +0300, Mike Rapoport wrote:
+> On Thu, May 01, 2025 at 11:23:32AM +0100, Lorenzo Stoakes wrote:
+> > On Wed, Apr 30, 2025 at 11:58:14PM +0200, David Hildenbrand wrote:
+> > > On 30.04.25 21:54, Lorenzo Stoakes wrote:
+> > > > Provide a means by which drivers can specify which fields of those
+> > > > permitted to be changed should be altered to prior to mmap()'ing a
+> > > > range (which may either result from a merge or from mapping an entirely new
+> > > > VMA).
+> > > >
+> > > > Doing so is substantially safer than the existing .mmap() calback which
+> > > > provides unrestricted access to the part-constructed VMA and permits
+> > > > drivers and file systems to do 'creative' things which makes it hard to
+> > > > reason about the state of the VMA after the function returns.
+> > > >
+> > > > The existing .mmap() callback's freedom has caused a great deal of issues,
+> > > > especially in error handling, as unwinding the mmap() state has proven to
+> > > > be non-trivial and caused significant issues in the past, for instance
+> > > > those addressed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
+> > > > error path behaviour").
+> > > >
+> > > > It also necessitates a second attempt at merge once the .mmap() callback
+> > > > has completed, which has caused issues in the past, is awkward, adds
+> > > > overhead and is difficult to reason about.
+> > > >
+> > > > The .mmap_proto() callback eliminates this requirement, as we can update
+> > > > fields prior to even attempting the first merge. It is safer, as we heavily
+> > > > restrict what can actually be modified, and being invoked very early in the
+> > > > mmap() process, error handling can be performed safely with very little
+> > > > unwinding of state required.
+> > > >
+> > > > Update vma userland test stubs to account for changes.
+> > > >
+> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > >
+> > >
+> > > I really don't like the "proto" terminology. :)
+> > >
+> > > [yes, David and his naming :P ]
+> > >
+> > > No, the problem is that it is fairly unintuitive what is happening here.
+> > >
+> > > Coming from a different direction, the callback is trigger after
+> > > __mmap_prepare() ... could we call it "->mmap_prepare" or something like
+> > > that? (mmap_setup, whatever)
+> > >
+> > > Maybe mmap_setup and vma_setup_param? Just a thought ...
+> >
+> > Haha that's fine, I'm not sure I love 'proto' either to be honest, naming is
+> > hard...
+> >
+> > I would rather not refer to VMA's at all to be honest, if I had my way, no
+> > driver would ever have access to a VMA at all...
+> >
+> > But mmap_setup() or mmap_prepare() sound good!
+>
+> +1
+>
+> and struct vm_area_desc maybe?
 
-> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> 
-> Add core driver to support MAX7360 i2c chip, multi function device
-> with keypad, GPIO, PWM, GPO and rotary encoder submodules.
-> 
-> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> Co-developed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> ---
->  drivers/mfd/Kconfig         |  14 ++++
->  drivers/mfd/Makefile        |   1 +
->  drivers/mfd/max7360.c       | 184 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/max7360.h | 109 ++++++++++++++++++++++++++
->  4 files changed, 308 insertions(+)
+That's nice actually thanks, will do!
 
-Getting there.  Couple of nits.  Last push!
+>
+> > >
+> > >
+> > > In general (although it's late in Germany), it does sound like an
+> > > interesting approach.
+> >
+> > Thanks! Appreciate it :) I really want to attack this, as I _hate_ how we
+> > effectively allow drivers to do _anything_ with VMAs like this.
+> >
+> > Yes, hate-driven development...
+>
+> Just move vm_area_struct to mm/internal.h and let them cope :-D
 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 22b936310039..c2998c6ce54c 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -2422,5 +2422,19 @@ config MFD_UPBOARD_FPGA
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called upboard-fpga.
->  
-> +config MFD_MAX7360
-> +	tristate "Maxim MAX7360 I2C IO Expander"
-> +	depends on I2C
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	select REGMAP_IRQ
-> +	help
-> +	  Say yes here to add support for Maxim MAX7360 device, embedding
-> +	  keypad, rotary encoder, PWM and GPIO features.
-> +
-> +	  This driver provides common support for accessing the device;
-> +	  additional drivers must be enabled in order to use the functionality
-> +	  of the device.
-> +
->  endmenu
->  endif
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 948cbdf42a18..add9ff58eb25 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -162,6 +162,7 @@ obj-$(CONFIG_MFD_DA9063)	+= da9063.o
->  obj-$(CONFIG_MFD_DA9150)	+= da9150-core.o
->  
->  obj-$(CONFIG_MFD_MAX14577)	+= max14577.o
-> +obj-$(CONFIG_MFD_MAX7360)	+= max7360.o
->  obj-$(CONFIG_MFD_MAX77541)	+= max77541.o
->  obj-$(CONFIG_MFD_MAX77620)	+= max77620.o
->  obj-$(CONFIG_MFD_MAX77650)	+= max77650.o
-> diff --git a/drivers/mfd/max7360.c b/drivers/mfd/max7360.c
-> new file mode 100644
-> index 000000000000..9a223a9b409d
-> --- /dev/null
-> +++ b/drivers/mfd/max7360.c
-> @@ -0,0 +1,184 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Maxim MAX7360 Core Driver
-> + *
-> + * Copyright 2025 Bootlin
-> + *
-> + * Author: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> + * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> + */
-> +
-> +#include <linux/array_size.h>
-> +#include <linux/bits.h>
-> +#include <linux/delay.h>
-> +#include <linux/device/devres.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/max7360.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/types.h>
-> +
-> +static const struct mfd_cell max7360_cells[] = {
-> +	{
-> +		.name           = "max7360-pinctrl",
-> +	},
+Haha oh man the dream. Though it'd be vma.h of course :P
 
-All of these single line entries should be placed on a single line.
+>
+> --
+> Sincerely yours,
+> Mike.
 
-	{ .name = "max7360-pinctrl" },
-	{ .name = "max7360-pwm" },
-
-If ordering is not important.  Please group them.
-
-> +	{
-> +		.name           = "max7360-pwm",
-> +	},
-> +	{
-> +		.name           = "max7360-gpo",
-> +		.of_compatible	= "maxim,max7360-gpo",
-> +	},
-> +	{
-> +		.name           = "max7360-gpio",
-> +		.of_compatible	= "maxim,max7360-gpio",
-> +	},
-> +	{
-> +		.name           = "max7360-keypad",
-> +	},
-> +	{
-> +		.name           = "max7360-rotary",
-> +	},
-> +};
-> +
-> +static const struct regmap_range max7360_volatile_ranges[] = {
-> +	{
-> +		.range_min = MAX7360_REG_KEYFIFO,
-> +		.range_max = MAX7360_REG_KEYFIFO,
-> +	}, {
-> +		.range_min = MAX7360_REG_I2C_TIMEOUT,
-> +		.range_max = MAX7360_REG_RTR_CNT,
-> +	},
-> +};
-
-Use regmap_reg_range()
-
-> +static const struct regmap_access_table max7360_volatile_table = {
-> +	.yes_ranges = max7360_volatile_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(max7360_volatile_ranges),
-> +};
-> +
-> +static const struct regmap_config max7360_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = MAX7360_REG_PWMCFG(MAX7360_PORT_PWM_COUNT - 1),
-> +	.volatile_table = &max7360_volatile_table,
-> +	.cache_type = REGCACHE_MAPLE,
-> +};
-> +
-> +static int max7360_mask_irqs(struct regmap *regmap)
-> +{
-> +	struct device *dev = regmap_get_device(regmap);
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	/*
-> +	 * GPIO/PWM interrupts are not masked on reset: as the MAX7360 "INTI"
-> +	 * interrupt line is shared between GPIOs and rotary encoder, this could
-> +	 * result in repeated spurious interrupts on the rotary encoder driver
-> +	 * if the GPIO driver is not loaded. Mask them now to avoid this
-> +	 * situation.
-> +	 */
-> +	for (unsigned int i = 0; i < MAX7360_PORT_PWM_COUNT; i++) {
-> +		ret = regmap_write_bits(regmap, MAX7360_REG_PWMCFG(i),
-> +					MAX7360_PORT_CFG_INTERRUPT_MASK,
-> +					MAX7360_PORT_CFG_INTERRUPT_MASK);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to write max7360 port configuration");
-
-MAX7360
-
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	/* Read GPIO in register, to ACK any pending IRQ. */
-> +	ret = regmap_read(regmap, MAX7360_REG_GPIOIN, &val);
-> +	if (ret)
-> +		dev_err(dev, "Failed to read gpio values: %d\n", ret);
-
-GPIO
-
-> +
-> +	return ret;
-> +}
-> +
-> +static int max7360_reset(struct regmap *regmap)
-> +{
-> +	struct device *dev = regmap_get_device(regmap);
-> +	int ret;
-> +
-> +	ret = regmap_write(regmap, MAX7360_REG_GPIOCFG, MAX7360_GPIO_CFG_GPIO_RST);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to reset GPIO configuration: %x\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = regcache_drop_region(regmap, MAX7360_REG_GPIOCFG, MAX7360_REG_GPIO_LAST);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to drop regmap cache: %x\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_write(regmap, MAX7360_REG_SLEEP, 0);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to reset autosleep configuration: %x\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_write(regmap, MAX7360_REG_DEBOUNCE, 0);
-> +	if (ret)
-> +		dev_err(dev, "Failed to reset GPO port count: %x\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int max7360_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	regmap = devm_regmap_init_i2c(client, &max7360_regmap_config);
-> +	if (IS_ERR(regmap))
-> +		return dev_err_probe(dev, PTR_ERR(regmap), "Failed to initialise regmap\n");
-
-dev_err_ptr_probe()
-
-> +
-> +	ret = max7360_reset(regmap);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to reset device\n");
-> +
-> +	/* Get the device out of shutdown mode. */
-> +	ret = regmap_write_bits(regmap, MAX7360_REG_GPIOCFG,
-> +				MAX7360_GPIO_CFG_GPIO_EN,
-> +				MAX7360_GPIO_CFG_GPIO_EN);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable GPIO and PWM module\n");
-> +
-> +	ret = max7360_mask_irqs(regmap);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Could not mask interrupts\n");
-> +
-> +	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-> +				   max7360_cells, ARRAY_SIZE(max7360_cells),
-> +				   NULL, 0, NULL);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to register child devices\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id max7360_dt_match[] = {
-> +	{ .compatible = "maxim,max7360" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, max7360_dt_match);
-> +
-> +static struct i2c_driver max7360_driver = {
-> +	.driver = {
-> +		.name = "max7360",
-> +		.of_match_table = max7360_dt_match,
-> +	},
-> +	.probe = max7360_probe,
-> +};
-> +module_i2c_driver(max7360_driver);
-> +
-> +MODULE_DESCRIPTION("Maxim MAX7360 I2C IO Expander core driver");
-> +MODULE_AUTHOR("Kamel Bouhara <kamel.bouhara@bootlin.com>");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mfd/max7360.h b/include/linux/mfd/max7360.h
-> new file mode 100644
-> index 000000000000..b1d4cbee2385
-> --- /dev/null
-> +++ b/include/linux/mfd/max7360.h
-> @@ -0,0 +1,109 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +
-> +#ifndef __LINUX_MFD_MAX7360_H
-> +#define __LINUX_MFD_MAX7360_H
-> +
-> +#include <linux/bits.h>
-> +
-> +#define MAX7360_MAX_KEY_ROWS		8
-> +#define MAX7360_MAX_KEY_COLS		8
-> +#define MAX7360_MAX_KEY_NUM		(MAX7360_MAX_KEY_ROWS * MAX7360_MAX_KEY_COLS)
-> +#define MAX7360_ROW_SHIFT		3
-> +
-> +#define MAX7360_MAX_GPIO		8
-> +#define MAX7360_MAX_GPO			6
-> +#define MAX7360_PORT_PWM_COUNT		8
-> +#define MAX7360_PORT_RTR_PIN		(MAX7360_PORT_PWM_COUNT - 1)
-> +
-> +/*
-> + * MAX7360 registers
-> + */
-> +#define MAX7360_REG_KEYFIFO		0x00
-> +#define MAX7360_REG_CONFIG		0x01
-> +#define MAX7360_REG_DEBOUNCE		0x02
-> +#define MAX7360_REG_INTERRUPT		0x03
-> +#define MAX7360_REG_PORTS		0x04
-> +#define MAX7360_REG_KEYREP		0x05
-> +#define MAX7360_REG_SLEEP		0x06
-> +
-> +/*
-> + * MAX7360 GPIO registers
-> + *
-> + * All these registers are reset together when writing bit 3 of
-> + * MAX7360_REG_GPIOCFG.
-> + */
-> +#define MAX7360_REG_GPIOCFG		0x40
-> +#define MAX7360_REG_GPIOCTRL		0x41
-> +#define MAX7360_REG_GPIODEB		0x42
-> +#define MAX7360_REG_GPIOCURR		0x43
-> +#define MAX7360_REG_GPIOOUTM		0x44
-> +#define MAX7360_REG_PWMCOM		0x45
-> +#define MAX7360_REG_RTRCFG		0x46
-> +#define MAX7360_REG_I2C_TIMEOUT		0x48
-> +#define MAX7360_REG_GPIOIN		0x49
-> +#define MAX7360_REG_RTR_CNT		0x4A
-> +#define MAX7360_REG_PWMBASE		0x50
-> +#define MAX7360_REG_PWMCFGBASE		0x58
-> +
-> +#define MAX7360_REG_GPIO_LAST		0x5F
-> +
-> +#define MAX7360_REG_PWM(x)		(MAX7360_REG_PWMBASE + (x))
-> +#define MAX7360_REG_PWMCFG(x)		(MAX7360_REG_PWMCFGBASE + (x))
-> +
-> +/*
-> + * Configuration register bits
-> + */
-> +#define MAX7360_FIFO_EMPTY		0x3f
-> +#define MAX7360_FIFO_OVERFLOW		0x7f
-> +#define MAX7360_FIFO_RELEASE		BIT(6)
-> +#define MAX7360_FIFO_COL		GENMASK(5, 3)
-> +#define MAX7360_FIFO_ROW		GENMASK(2, 0)
-> +
-> +#define MAX7360_CFG_SLEEP		BIT(7)
-> +#define MAX7360_CFG_INTERRUPT		BIT(5)
-> +#define MAX7360_CFG_KEY_RELEASE		BIT(3)
-> +#define MAX7360_CFG_WAKEUP		BIT(1)
-> +#define MAX7360_CFG_TIMEOUT		BIT(0)
-> +
-> +#define MAX7360_DEBOUNCE		GENMASK(4, 0)
-> +#define MAX7360_DEBOUNCE_MIN		9
-> +#define MAX7360_DEBOUNCE_MAX		40
-> +#define MAX7360_PORTS			GENMASK(8, 5)
-> +
-> +#define MAX7360_INTERRUPT_TIME_MASK	GENMASK(4, 0)
-> +#define MAX7360_INTERRUPT_FIFO_MASK	GENMASK(7, 5)
-> +
-> +#define MAX7360_PORT_CFG_INTERRUPT_MASK		BIT(7)
-> +#define MAX7360_PORT_CFG_INTERRUPT_EDGES	BIT(6)
-> +#define MAX7360_PORT_CFG_COMMON_PWM		BIT(5)
-> +
-> +/*
-> + * Autosleep register values
-> + */
-> +#define MAX7360_AUTOSLEEP_8192MS	0x01
-> +#define MAX7360_AUTOSLEEP_4096MS	0x02
-> +#define MAX7360_AUTOSLEEP_2048MS	0x03
-> +#define MAX7360_AUTOSLEEP_1024MS	0x04
-> +#define MAX7360_AUTOSLEEP_512MS		0x05
-> +#define MAX7360_AUTOSLEEP_256MS		0x06
-> +
-> +#define MAX7360_GPIO_CFG_RTR_EN		BIT(7)
-> +#define MAX7360_GPIO_CFG_GPIO_EN	BIT(4)
-> +#define MAX7360_GPIO_CFG_GPIO_RST	BIT(3)
-> +
-> +#define MAX7360_ROT_DEBOUNCE		GENMASK(3, 0)
-> +#define MAX7360_ROT_DEBOUNCE_MIN	0
-> +#define MAX7360_ROT_DEBOUNCE_MAX	15
-> +#define MAX7360_ROT_INTCNT		GENMASK(6, 4)
-> +#define MAX7360_ROT_INTCNT_DLY		BIT(7)
-> +
-> +#define MAX7360_INT_INTI		0
-> +#define MAX7360_INT_INTK		1
-> +
-> +#define MAX7360_INT_GPIO		0
-> +#define MAX7360_INT_KEYPAD		1
-> +#define MAX7360_INT_ROTARY		2
-> +
-> +#define MAX7360_NR_INTERNAL_IRQS	3
-> +
-> +#endif
-> 
-> -- 
-> 2.39.5
-> 
-
--- 
-Lee Jones [李琼斯]
+Cheers, Lorenzo
 
