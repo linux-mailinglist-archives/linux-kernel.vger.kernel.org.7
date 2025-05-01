@@ -1,474 +1,312 @@
-Return-Path: <linux-kernel+bounces-628979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400ACAA65A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:33:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419B1AA65A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF11D7B8784
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:32:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55BD917045B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2614C213E94;
-	Thu,  1 May 2025 21:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6E9257AC3;
+	Thu,  1 May 2025 21:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOK4eB0R"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B5ly+rZ0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C2420EB
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 21:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22BC1F151C;
+	Thu,  1 May 2025 21:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746135185; cv=none; b=KCQ11tUDtaPKnEq/SoSZj5rmNyRZNveKuJ70OgkCKbhf9JorYGmC/kLIQyymKCsEZR1+OfmT9CUMa+L+Otj4Ymj2f1DW4pWyhoZkOoERDxcQUiDmhUz3a7L/ud4vbYXxO7tNUN22TteFlwCU1a5F3Uf9JLsDeOTEeQaSS/GaB/Y=
+	t=1746135240; cv=none; b=YtVeuIVtoE8RkfemephhZjQjaHliTrZdV7GKP4p0TyHCGP9gSEFuIaHYyZYAJd3Vvt8HyKB7KqAKvqNL27R1viaJLAZZfjGLphAntI25sBGgEhaKxKeeKvJ5+1PjextdrcmexlNgSIIkpkr9i/cpgJ9LAkXRA+6Oypjf1r7Gy1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746135185; c=relaxed/simple;
-	bh=IMD18miDWQMtdvHT2EbxlL8J/8bAFJw+fYkibmWAbng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C23Lea9amyBqnIgEGRgocq0YvWrn0z26KRMJMGtMzGePpBJte3CXvP2DjS8mcAsaSk+lGrUOtlmOfnJSVrCM3ww+t/Cydc6WzwnmAs3f/CHbQXl/tTjRW/2n36ZUtBKAaQ8NkzGB3uPvkFQB/4gRdNWTK0ha0+29R6eGNk4eVbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOK4eB0R; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-52413efd0d3so414475e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 14:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746135182; x=1746739982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kxIgFWy+yrmsk9YhRhq0BcJ6oJeEkEMeJw8ONYuruhU=;
-        b=LOK4eB0R9WM1q69DP97RSF0dnriixW5wntjQqJMySiTu0zb6WP0hQb9Ze3Ie3nXm6f
-         zjZhnvfLKNg0rrSRo5Y7haZ6YkQ3mU52sDl7Dvt/4C7mpUcgDzEO4BknCGq0TTaDGLkv
-         9FDywOCbRnJu2/xSZTD+tEWjqZODkQ2IwEkX+1eTe0n5x2EvUxsHg60LawRHdf4Iq3sg
-         SRw5+LPNP/A6C1mEflvvdD7JxxCoDiAO7j6Ei3cgav3fHHkd1pCEI5x0HIZPM++7BJBt
-         JK68EVHtLt02InofEuKvonQdXOJJrmODMUy2x4+cfdibXC216g9oSWuYwr0MjDWZUNCL
-         Zy1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746135182; x=1746739982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kxIgFWy+yrmsk9YhRhq0BcJ6oJeEkEMeJw8ONYuruhU=;
-        b=PC92hKrb6lZuVe1Up3UhoLc7dn/LSioywNiofjOQiUIJsWvTsUpkPp/QnqS3DMSzj4
-         rFmLjWTFynNkZ4b84PP8tsyTjtvm0qaJGKBLCIjd9iFaI63deyazcp54RMobjJ6XoOnz
-         EpCyUGxsGNM9PigO8Y/ho8l1hhzGQtYeW41MlZKFnowRPe8d6uDgT8kkbY/pjtbTbqI4
-         eLE4+H8xebynxlJSXwTGcQzzyUfwKHW/NMZjM0VAROhzEBzHQR6Cm0kCfRIIcPAS8DsD
-         c1269RhGR3C3LHV/qgvmWKsGSAz4pCA/im1UuSa9yq4pPxsqsF1CndsL3NS50AnUyS/N
-         KBtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaYe68T7KiBKKRWEF9aSMvFyykGlCO+bi45+Z+EF0sg8kGuF+JWvTiDTgjiGJ4JwbEV+vOEgehr9n7e6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoPGnTGwMQyRhwOz01Z9p4Fv7fZJzRXTUGHSwCVRLrddUJqIsY
-	iYUicxZecWRIJZ4eKmOJV/oYCCnc0rJDwya4F3MBLC5eO7kjAMSlW6nrJxLFgOAykHlK02DCqHO
-	PNEQnvO+bY9qmSw+hH2BsUdTSu9M=
-X-Gm-Gg: ASbGncsB4gDi6LDpZI7IqUNIli6tK2Ekg0ATfwDcFLl4jkqRDKFYVSn2Vs+r1jM1Rnw
-	EQ1wZRBnLDYU8p6KQuLXfnelPpWADA8kMrSJqxU1Go9UHyLreG3MgGCWQ8VDp3FB84vBWrERa4G
-	jkgLQXuS/OKzHDHNDWdxObeA==
-X-Google-Smtp-Source: AGHT+IF7H0Zp5xStnLQJzdNsJXX35CjKGZcK4ZL3R8hFZUDHyktaSLjDoLuE3KIXWfG83mUEVXlC6rXmoFAmaW/sWEg=
-X-Received: by 2002:a05:6122:3d07:b0:524:2fe2:46ba with SMTP id
- 71dfb90a1353d-52aed809264mr472952e0c.11.1746135182205; Thu, 01 May 2025
- 14:33:02 -0700 (PDT)
+	s=arc-20240116; t=1746135240; c=relaxed/simple;
+	bh=MJ41/j8bpvaKo0HV0EhEkS4sZ3w9r/QdKBwub0mVVWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJMfOZh3aR0Hs1gXQx0I+9lozCqx7eNyaXGOs++mmEpGupLDXbWRK61Jya7U9kx2Pr7bJnlQZ9BTfBoQDYQ6YnkJ1b3LIyiIQqYvpbDkQibL18oe9zx09HXUZWN9cuoaMCxsG7V1O/G9/HCqbYFRS+yXr45WFxPH5/+QNSAZ1Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B5ly+rZ0; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746135238; x=1777671238;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=MJ41/j8bpvaKo0HV0EhEkS4sZ3w9r/QdKBwub0mVVWk=;
+  b=B5ly+rZ0YTyngXW1M/ysLpmMuGqX3NaDMozyrafNqDQrxb+hyurAfR+m
+   IWRApiCOS0l/pJ/jVnuPl7jTg+Oqb12oyGqGwe8tolka8St/of9B0l6TQ
+   /eNJlxInujdLc9YIiVHZ8hKyMJ5TCZU4/AfiAzTb00+5cXi1tP6NVHLZt
+   rqpTASuxP+QnC6wo8h2jh4O4FbrVJ8NXE/0ZwCqvGsRZxXjbcrzGKDoC2
+   QjgUqTIeX6kiNYp/3S2W4POD8TalADtVg3IkVc1MEJ585h+fTFCM9eQEs
+   NgGE03Km6CBzLf6mfzVdL2SXJF0vbS95X6Wdo+R2UEXSvZAewI9c6Cpi4
+   A==;
+X-CSE-ConnectionGUID: p2d5SUSJS5ej0/0hARmM5w==
+X-CSE-MsgGUID: /OJKUs81T8yTajIegb5QtQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="47829707"
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="47829707"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 14:33:57 -0700
+X-CSE-ConnectionGUID: F8wQRuLNTAWrT0Ov51Y8Eg==
+X-CSE-MsgGUID: /qhBleJETD2qEdsgvLYhCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="135462245"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 01 May 2025 14:33:52 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uAbXS-0004Oz-1u;
+	Thu, 01 May 2025 21:33:50 +0000
+Date: Fri, 2 May 2025 05:33:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: oushixiong1025@163.com, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dave Airlie <airlied@redhat.com>, Sean Paul <sean@poorly.run>,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: Re: [PATCH 1/3] dma-buf: add flags to skip map_dma_buf() for some
+ drivers
+Message-ID: <202505020434.7EfUIAjh-lkp@intel.com>
+References: <20250430085658.540746-1-oushixiong1025@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f0e109c7-6bb2-4218-bc76-c5de39184064@arm.com> <20250415082205.2249918-1-xavier_qy@163.com>
- <20250415082205.2249918-2-xavier_qy@163.com> <eba7a8fa-0b85-4b30-ab3e-9c0a65b7dc80@arm.com>
- <3d338f91.8c71.1965cd8b1b8.Coremail.xavier_qy@163.com> <CAGsJ_4yGuH4vOFSZM2o3-Nev4DnZmzWKUh7CRXxA2U-FT2W0xA@mail.gmail.com>
- <1a8020d3.1f27.1968bdc27d8.Coremail.xavier_qy@163.com> <CAGsJ_4zKFiCEUnFjb3qThoM2FG4XCsmeU=JeTLDXjMU2KONu-Q@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zKFiCEUnFjb3qThoM2FG4XCsmeU=JeTLDXjMU2KONu-Q@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 2 May 2025 09:32:50 +1200
-X-Gm-Features: ATxdqUGv4h71dZvaOaQKIpzZwZ_TQdQvHLNNS5sR6O3OWhaupbo0UqWtYfzT_LU
-Message-ID: <CAGsJ_4xVFDioe4G9wtjfRCKZMLBu94GaFG1z5j0YrHs3j1PkAw@mail.gmail.com>
-Subject: Re: [mm/contpte v3 1/1] mm/contpte: Optimize loop to reduce redundant operations
-To: Xavier <xavier_qy@163.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, dev.jain@arm.com, ioworker0@gmail.com, 
-	akpm@linux-foundation.org, catalin.marinas@arm.com, david@redhat.com, 
-	gshan@redhat.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, will@kernel.org, willy@infradead.org, 
-	ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250430085658.540746-1-oushixiong1025@163.com>
 
-On Fri, May 2, 2025 at 9:19=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> On Fri, May 2, 2025 at 12:41=E2=80=AFAM Xavier <xavier_qy@163.com> wrote:
-> >
-> >
-> >
-> > Hi Barry,
-> >
-> >
-> > At 2025-05-01 07:17:36, "Barry Song" <21cnbao@gmail.com> wrote:
-> > >On Tue, Apr 22, 2025 at 9:34=E2=80=AFPM Xavier <xavier_qy@163.com> wro=
-te:
-> > >>
-> > >>
-> > >> Hi all,
-> > >>
-> > >>
-> > >> At 2025-04-16 20:54:47, "Ryan Roberts" <ryan.roberts@arm.com> wrote:
-> > >> >On 15/04/2025 09:22, Xavier wrote:
-> > >> >> This commit optimizes the contpte_ptep_get function by adding ear=
-ly
-> > >> >>  termination logic. It checks if the dirty and young bits of orig=
-_pte
-> > >> >>  are already set and skips redundant bit-setting operations durin=
-g
-> > >> >>  the loop. This reduces unnecessary iterations and improves perfo=
-rmance.
-> > >> >>
-> > >> >> Signed-off-by: Xavier <xavier_qy@163.com>
-> > >> >> ---
-> > >> >>  arch/arm64/mm/contpte.c | 20 ++++++++++++++++++--
-> > >> >>  1 file changed, 18 insertions(+), 2 deletions(-)
-> > >> >>
-> > >> >> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> > >> >> index bcac4f55f9c1..0acfee604947 100644
-> > >> >> --- a/arch/arm64/mm/contpte.c
-> > >> >> +++ b/arch/arm64/mm/contpte.c
-> > >> >> @@ -152,6 +152,16 @@ void __contpte_try_unfold(struct mm_struct *=
-mm, unsigned long addr,
-> > >> >>  }
-> > >> >>  EXPORT_SYMBOL_GPL(__contpte_try_unfold);
-> > >> >>
-> > >> >> +/* Note: in order to improve efficiency, using this macro will m=
-odify the
-> > >> >> + * passed-in parameters.*/
-> > >> >> +#define CHECK_CONTPTE_FLAG(start, ptep, orig_pte, flag) \
-> > >> >> +    for (; (start) < CONT_PTES; (start)++, (ptep)++) { \
-> > >> >> +            if (pte_##flag(__ptep_get(ptep))) { \
-> > >> >> +                            orig_pte =3D pte_mk##flag(orig_pte);=
- \
-> > >> >> +                            break; \
-> > >> >> +            } \
-> > >> >> +    }
-> > >> >
-> > >> >I'm really not a fan of this macro, it just obfuscates what is goin=
-g on. I'd
-> > >> >personally prefer to see the 2 extra loops open coded below.
-> > >> >
-> > >> >Or even better, could you provide results comparing this 3 loop ver=
-sion to the
-> > >> >simpler approach I suggested previously? If the performance is simi=
-lar (which I
-> > >> >expect it will be, especially given Barry's point that your test al=
-ways ensures
-> > >> >the first PTE is both young and dirty) then I'd prefer to go with t=
-he simpler code.
-> > >> >
-> > >>
-> > >> Based on the discussions in the previous email, two modifications we=
-re adopted
-> > >> and tested, and the results are as follows:
-> > >>
-> > >> Modification 1
-> > >>
-> > >> pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
-> > >> {
-> > >>         pte_t pte;
-> > >>         int i;
-> > >>
-> > >>         ptep =3D contpte_align_down(ptep);
-> > >>
-> > >>         for (i =3D 0; i < CONT_PTES; i++, ptep++) {
-> > >>                 pte =3D __ptep_get(ptep);
-> > >>
-> > >>                 if (pte_dirty(pte)) {
-> > >>                         orig_pte =3D pte_mkdirty(orig_pte);
-> > >>                         if (pte_young(orig_pte))
-> > >>                                 break;
-> > >>                 }
-> > >>
-> > >>                 if (pte_young(pte)) {
-> > >>                         orig_pte =3D pte_mkyoung(orig_pte);
-> > >>                         if (pte_dirty(orig_pte))
-> > >>                                 break;
-> > >>                 }
-> > >>         }
-> > >>
-> > >>         return orig_pte;
-> > >> }
-> > >>
-> > >> Modification 2
-> > >>
-> > >> pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
-> > >> {
-> > >>         pte_t pte;
-> > >>         int i;
-> > >>
-> > >>         ptep =3D contpte_align_down(ptep);
-> > >>
-> > >>         for (i =3D 0; i < CONT_PTES; i++, ptep++) {
-> > >>                 pte =3D __ptep_get(ptep);
-> > >>
-> > >>                 if (pte_dirty(pte)) {
-> > >>                         orig_pte =3D pte_mkdirty(orig_pte);
-> > >>                         for (; i < CONT_PTES; i++, ptep++) {
-> > >>                                 pte =3D __ptep_get(ptep);
-> > >>                                 if (pte_young(pte)) {
-> > >>                                         orig_pte =3D pte_mkyoung(ori=
-g_pte);
-> > >>                                         break;
-> > >>                                 }
-> > >>                         }
-> > >>                         break;
-> > >>                 }
-> > >>
-> > >>                 if (pte_young(pte)) {
-> > >>                         orig_pte =3D pte_mkyoung(orig_pte);
-> > >>                         i++;
-> > >>                         ptep++;
-> > >>                         for (; i < CONT_PTES; i++, ptep++) {
-> > >>                                 pte =3D __ptep_get(ptep);
-> > >>                                 if (pte_dirty(pte)) {
-> > >>                                         orig_pte =3D pte_mkdirty(ori=
-g_pte);
-> > >>                                         break;
-> > >>                                 }
-> > >>                         }
-> > >>                         break;
-> > >>                 }
-> > >>         }
-> > >>
-> > >>         return orig_pte;
-> > >> }
-> > >>
-> > >> Test Code:
-> > >>
-> > >> #define PAGE_SIZE 4096
-> > >> #define CONT_PTES 16
-> > >> #define TEST_SIZE (4096* CONT_PTES * PAGE_SIZE)
-> > >> #define YOUNG_BIT 8
-> > >> void rwdata(char *buf)
-> > >> {
-> > >>         for (size_t i =3D 0; i < TEST_SIZE; i +=3D PAGE_SIZE) {
-> > >>                 buf[i] =3D 'a';
-> > >>                 volatile char c =3D buf[i];
-> > >>         }
-> > >> }
-> > >> void clear_young_dirty(char *buf)
-> > >> {
-> > >>         if (madvise(buf, TEST_SIZE, MADV_FREE) =3D=3D -1) {
-> > >>                 perror("madvise free failed");
-> > >>                 free(buf);
-> > >>                 exit(EXIT_FAILURE);
-> > >>         }
-> > >>         if (madvise(buf, TEST_SIZE, MADV_COLD) =3D=3D -1) {
-> > >>                 perror("madvise free failed");
-> > >>                 free(buf);
-> > >>                 exit(EXIT_FAILURE);
-> > >>         }
-> > >> }
-> > >> void set_one_young(char *buf)
-> > >> {
-> > >>         for (size_t i =3D 0; i < TEST_SIZE; i +=3D CONT_PTES * PAGE_=
-SIZE) {
-> > >>                 volatile char c =3D buf[i + YOUNG_BIT * PAGE_SIZE];
-> > >>         }
-> > >> }
-> > >>
-> > >> void test_contpte_perf() {
-> > >>         char *buf;
-> > >>         int ret =3D posix_memalign((void **)&buf, CONT_PTES * PAGE_S=
-IZE, TEST_SIZE);
-> > >>         if ((ret !=3D 0) || ((unsigned long)buf % CONT_PTES * PAGE_S=
-IZE)) {
-> > >>                 perror("posix_memalign failed");
-> > >>                 exit(EXIT_FAILURE);
-> > >>         }
-> > >>
-> > >>         rwdata(buf);
-> > >> #if TEST_CASE2 || TEST_CASE3
-> > >>         clear_young_dirty(buf);
-> > >> #endif
-> > >> #if TEST_CASE2
-> > >>         set_one_young(buf);
-> > >> #endif
-> > >>
-> > >>         for (int j =3D 0; j < 500; j++) {
-> > >>                 mlock(buf, TEST_SIZE);
-> > >>
-> > >>                 munlock(buf, TEST_SIZE);
-> > >>         }
-> > >>         free(buf);
-> > >> }
-> > >> ---
-> > >>
-> > >> Descriptions of three test scenarios
-> > >>
-> > >> Scenario 1
-> > >> The data of all 16 PTEs are both dirty and young.
-> > >> #define TEST_CASE2 0
-> > >> #define TEST_CASE3 0
-> > >>
-> > >> Scenario 2
-> > >> Among the 16 PTEs, only the 8th one is young, and there are no dirty=
- ones.
-> > >> #define TEST_CASE2 1
-> > >> #define TEST_CASE3 0
-> > >>
-> > >> Scenario 3
-> > >> Among the 16 PTEs, there are neither young nor dirty ones.
-> > >> #define TEST_CASE2 0
-> > >> #define TEST_CASE3 1
-> > >>
-> > >>
-> > >> Test results
-> > >>
-> > >> |Scenario 1         |       Original|  Modification 1|  Modification=
- 2|
-> > >> |-------------------|---------------|----------------|--------------=
---|
-> > >> |instructions       |    37912436160|     18303833386|     187315800=
-31|
-> > >> |test time          |         4.2797|          2.2687|          2.29=
-49|
-> > >> |overhead of        |               |                |              =
-  |
-> > >> |contpte_ptep_get() |         21.31%|           4.72%|           4.8=
-0%|
-> > >>
-> > >> |Scenario 2         |       Original|  Modification 1|  Modification=
- 2|
-> > >> |-------------------|---------------|----------------|--------------=
---|
-> > >> |instructions       |    36701270862|     38729716276|     361157900=
-86|
-> > >> |test time          |         3.2335|          3.5732|          3.08=
-74|
-> > >> |Overhead of        |               |                |              =
-  |
-> > >> |contpte_ptep_get() |         32.26%|          41.35%|          33.5=
-7%|
-> > >>
-> > >> |Scenario 3         |       Original|  Modification 1|  Modification=
- 2|
-> > >> |-------------------|---------------|----------------|--------------=
---|
-> > >> |instructions       |    36706279735|     38305241759|     367508818=
-78|
-> > >> |test time          |         3.2008|          3.5389|          3.12=
-49|
-> > >> |Overhead of        |               |                |              =
-  |
-> > >> |contpte_ptep_get() |         31.94%|          41.30%|          34.5=
-9%|
-> > >>
-> > >>
-> > >> For Scenario 1, Modification 1 can achieve an instruction count bene=
-fit of
-> > >> 51.72% and a time benefit of 46.99%. Modification 2 can achieve an i=
-nstruction
-> > >> benefit of 50.59% and a time benefit of 46.38%.
-> > >>
-> > >> For Scenarios 2, Modification 2 can achieve an instruction count ben=
-efit of
-> > >> 1.6% and a time benefit of 4.5%. while Modification 1 significantly =
-increases
-> > >> the instructions and time due to additional conditional checks.
-> > >>
-> > >> For Scenario 3, since all the PTEs have neither the young nor the di=
-rty flag,
-> > >> the branches taken by Modification 1 and Modification 2 should be th=
-e same as
-> > >> those of the original code. In fact, the test results of Modificatio=
-n 2 seem
-> > >> to be closer to those of the original code. I don't know why there i=
-s a
-> > >> performance regression in Modification 1.
-> > >>
-> > >> Therefore, I believe modifying the code according to Modification 2 =
-can bring
-> > >> maximum benefits. Everyone can discuss whether this approach is acce=
-ptable,
-> > >> and if so, I will send Patch V4 to proceed with submitting this modi=
-fication.
-> > >>
-> > >
-> > >modification 2 is not correct. if pte0~pte14 are all young and no one
-> > >is dirty, we are
-> > >having lots of useless "for (; i < CONT_PTES; i++, ptep++)"
-> > >
-> > >                 if (pte_young(pte)) {
-> > >                         orig_pte =3D pte_mkyoung(orig_pte);
-> > >                         i++;
-> > >                         ptep++;
-> > >                         for (; i < CONT_PTES; i++, ptep++) {
-> > >                                 pte =3D __ptep_get(ptep);
-> > >                                 if (pte_dirty(pte)) {
-> > >                                         orig_pte =3D pte_mkdirty(orig=
-_pte);
-> > >                                         break;
-> > >                                 }
-> > >                         }
-> > >                         break;
-> > >                 }
-> > >
-> >
-> > I didn't understand which part you referred to when you said there were=
- a lot of
-> > useless loops. According to the scenario you mentioned, "if pte0~pte14 =
-are all
-> > young and no one is dirty", Modification 2 will enter the following bra=
-nch when
-> > judging pte0:
-> >
-> > if (pte_young(pte)) {
-> >         orig_pte =3D pte_mkyoung(orig_pte);
-> >         // The dirty status of pte0 has already been checked, skip it.
-> >         i++;
-> >         ptep++;
-> >         // Then we only need to check whether pte1~pte15 are dirty.
-> >         for (; i < CONT_PTES; i++, ptep++) {
-> >                 pte =3D __ptep_get(ptep);
-> >                 if (pte_dirty(pte)) {
-> >                         // Exit as soon as a dirty entry is found.
-> >                         orig_pte =3D pte_mkdirty(orig_pte);
-> >                         break;
-> >                 }
-> >         }
-> >         // Exit directly here without going through the outer loop agai=
-n.
-> >         break;
-> > }
-> >
-> > In this scenario, the total number of judgments in Modification 2 is ne=
-arly half less
-> > than that of the original code. I should have understood it correctly, =
-right?
->
-> You're right=E2=80=94I missed the part where you're also taking a break, =
-even though
-> no one is dirty. Based on your data, modification 2 seems to be good.
->
-> But I don't quite understand why you are doing
->          i++;
->          ptep++;
-> before for (; i < CONT_PTES; i++, ptep++).
->
-> it seems to be wrong. if i=3D=3D15, you will get i=3D16. you are skipping
-> the pte_dirty
-> check for i=3D=3D15. it is also true for any value between 0 and 15. My
-> point is that
-> you should drop it and re-test.
+Hi,
 
-Sorry, I missed that you already checked pte_dirty(pte) before calling
-pte_young(). So please ignore my comment. The code's a bit hard to
-follow now. :-)
+kernel test robot noticed the following build warnings:
 
->
-> >
-> >
-> > --
-> >
-> > Thanks,
-> > Xavier
->
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus usb/usb-testing usb/usb-next usb/usb-linus xen-tip/linux-next linus/master v6.15-rc4]
+[cannot apply to tegra/for-next drm-xe/drm-xe-next rmk-arm/drm-armada-devel rmk-arm/drm-armada-fixes next-20250430]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks
-barry
+url:    https://github.com/intel-lab-lkp/linux/commits/oushixiong1025-163-com/drm-prime-Support-importing-DMA-BUF-without-sg_table/20250430-170136
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250430085658.540746-1-oushixiong1025%40163.com
+patch subject: [PATCH 1/3] dma-buf: add flags to skip map_dma_buf() for some drivers
+config: arc-randconfig-002-20250501 (https://download.01.org/0day-ci/archive/20250502/202505020434.7EfUIAjh-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250502/202505020434.7EfUIAjh-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505020434.7EfUIAjh-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/dma-buf/dma-buf.c:908: warning: Function parameter or struct member 'skip_map' not described in 'dma_buf_dynamic_attach'
+>> drivers/dma-buf/dma-buf.c:996: warning: Function parameter or struct member 'skip_map' not described in 'dma_buf_attach'
+
+
+vim +908 drivers/dma-buf/dma-buf.c
+
+84335675f2223c drivers/dma-buf/dma-buf.c Simona Vetter    2021-01-15   817  
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   818  /**
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   819   * DOC: locking convention
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   820   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   821   * In order to avoid deadlock situations between dma-buf exports and importers,
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   822   * all dma-buf API users must follow the common dma-buf locking convention.
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   823   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   824   * Convention for importers
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   825   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   826   * 1. Importers must hold the dma-buf reservation lock when calling these
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   827   *    functions:
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   828   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   829   *     - dma_buf_pin()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   830   *     - dma_buf_unpin()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   831   *     - dma_buf_map_attachment()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   832   *     - dma_buf_unmap_attachment()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   833   *     - dma_buf_vmap()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   834   *     - dma_buf_vunmap()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   835   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   836   * 2. Importers must not hold the dma-buf reservation lock when calling these
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   837   *    functions:
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   838   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   839   *     - dma_buf_attach()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   840   *     - dma_buf_dynamic_attach()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   841   *     - dma_buf_detach()
+e3ecbd21776f1f drivers/dma-buf/dma-buf.c Maíra Canal      2023-02-23   842   *     - dma_buf_export()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   843   *     - dma_buf_fd()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   844   *     - dma_buf_get()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   845   *     - dma_buf_put()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   846   *     - dma_buf_mmap()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   847   *     - dma_buf_begin_cpu_access()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   848   *     - dma_buf_end_cpu_access()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   849   *     - dma_buf_map_attachment_unlocked()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   850   *     - dma_buf_unmap_attachment_unlocked()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   851   *     - dma_buf_vmap_unlocked()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   852   *     - dma_buf_vunmap_unlocked()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   853   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   854   * Convention for exporters
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   855   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   856   * 1. These &dma_buf_ops callbacks are invoked with unlocked dma-buf
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   857   *    reservation and exporter can take the lock:
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   858   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   859   *     - &dma_buf_ops.attach()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   860   *     - &dma_buf_ops.detach()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   861   *     - &dma_buf_ops.release()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   862   *     - &dma_buf_ops.begin_cpu_access()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   863   *     - &dma_buf_ops.end_cpu_access()
+8021fa16b7ec0a drivers/dma-buf/dma-buf.c Dmitry Osipenko  2023-05-30   864   *     - &dma_buf_ops.mmap()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   865   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   866   * 2. These &dma_buf_ops callbacks are invoked with locked dma-buf
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   867   *    reservation and exporter can't take the lock:
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   868   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   869   *     - &dma_buf_ops.pin()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   870   *     - &dma_buf_ops.unpin()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   871   *     - &dma_buf_ops.map_dma_buf()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   872   *     - &dma_buf_ops.unmap_dma_buf()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   873   *     - &dma_buf_ops.vmap()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   874   *     - &dma_buf_ops.vunmap()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   875   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   876   * 3. Exporters must hold the dma-buf reservation lock when calling these
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   877   *    functions:
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   878   *
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   879   *     - dma_buf_move_notify()
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   880   */
+ae2e7f28a170c0 drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   881  
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   882  /**
+85804b70cca68d drivers/dma-buf/dma-buf.c Simona Vetter    2020-12-11   883   * dma_buf_dynamic_attach - Add the device to dma_buf's attachments list
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   884   * @dmabuf:		[in]	buffer to attach device to.
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   885   * @dev:		[in]	device to be attached.
+6f49c2515e2258 drivers/dma-buf/dma-buf.c Randy Dunlap     2020-04-07   886   * @importer_ops:	[in]	importer operations for the attachment
+6f49c2515e2258 drivers/dma-buf/dma-buf.c Randy Dunlap     2020-04-07   887   * @importer_priv:	[in]	importer private pointer for the attachment
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   888   *
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   889   * Returns struct dma_buf_attachment pointer for this attachment. Attachments
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   890   * must be cleaned up by calling dma_buf_detach().
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   891   *
+85804b70cca68d drivers/dma-buf/dma-buf.c Simona Vetter    2020-12-11   892   * Optionally this calls &dma_buf_ops.attach to allow device-specific attach
+85804b70cca68d drivers/dma-buf/dma-buf.c Simona Vetter    2020-12-11   893   * functionality.
+85804b70cca68d drivers/dma-buf/dma-buf.c Simona Vetter    2020-12-11   894   *
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   895   * Returns:
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   896   *
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   897   * A pointer to newly created &dma_buf_attachment on success, or a negative
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   898   * error code wrapped into a pointer on failure.
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   899   *
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   900   * Note that this can fail if the backing storage of @dmabuf is in a place not
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   901   * accessible to @dev, and cannot be moved to a more suitable place. This is
+2904a8c1311f02 drivers/dma-buf/dma-buf.c Simona Vetter    2016-12-09   902   * indicated with the error code -EBUSY.
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   903   */
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   904  struct dma_buf_attachment *
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   905  dma_buf_dynamic_attach(struct dma_buf *dmabuf, struct device *dev,
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   906  		       const struct dma_buf_attach_ops *importer_ops,
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   907  		       void *importer_priv, bool skip_map)
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26  @908  {
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   909  	struct dma_buf_attachment *attach;
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   910  	int ret;
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   911  
+d1aa06a1eaf5f7 drivers/base/dma-buf.c    Laurent Pinchart 2012-01-26   912  	if (WARN_ON(!dmabuf || !dev))
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   913  		return ERR_PTR(-EINVAL);
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   914  
+4981cdb063e3e9 drivers/dma-buf/dma-buf.c Christian König  2020-02-19   915  	if (WARN_ON(importer_ops && !importer_ops->move_notify))
+4981cdb063e3e9 drivers/dma-buf/dma-buf.c Christian König  2020-02-19   916  		return ERR_PTR(-EINVAL);
+4981cdb063e3e9 drivers/dma-buf/dma-buf.c Christian König  2020-02-19   917  
+db7942b6292306 drivers/dma-buf/dma-buf.c Markus Elfring   2017-05-08   918  	attach = kzalloc(sizeof(*attach), GFP_KERNEL);
+34d84ec4881d13 drivers/dma-buf/dma-buf.c Markus Elfring   2017-05-08   919  	if (!attach)
+a9fbc3b73127ef drivers/base/dma-buf.c    Laurent Pinchart 2012-01-26   920  		return ERR_PTR(-ENOMEM);
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   921  
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   922  	attach->dev = dev;
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   923  	attach->dmabuf = dmabuf;
+09606b5446c25b drivers/dma-buf/dma-buf.c Christian König  2018-03-22   924  	if (importer_ops)
+09606b5446c25b drivers/dma-buf/dma-buf.c Christian König  2018-03-22   925  		attach->peer2peer = importer_ops->allow_peer2peer;
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   926  	attach->importer_ops = importer_ops;
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   927  	attach->importer_priv = importer_priv;
+2ed9201bdd9a8e drivers/base/dma-buf.c    Laurent Pinchart 2012-01-26   928  
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   929  	if (dmabuf->ops->attach) {
+a19741e5e5a9f1 drivers/dma-buf/dma-buf.c Christian König  2018-05-28   930  		ret = dmabuf->ops->attach(dmabuf, attach);
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   931  		if (ret)
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   932  			goto err_attach;
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   933  	}
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   934  	dma_resv_lock(dmabuf->resv, NULL);
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   935  	list_add(&attach->node, &dmabuf->attachments);
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   936  	dma_resv_unlock(dmabuf->resv);
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   937  
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   938  	/* When either the importer or the exporter can't handle dynamic
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   939  	 * mappings we cache the mapping here to avoid issues with the
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   940  	 * reservation object lock.
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   941  	 */
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   942  	if (dma_buf_attachment_is_dynamic(attach) !=
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   943  	    dma_buf_is_dynamic(dmabuf)) {
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   944  		dma_resv_lock(attach->dmabuf->resv, NULL);
+809d9c72c2f83e drivers/dma-buf/dma-buf.c Dmitry Osipenko  2022-10-17   945  		if (dma_buf_is_dynamic(attach->dmabuf)) {
+7e008b02557cce drivers/dma-buf/dma-buf.c Christian König  2021-05-17   946  			ret = dmabuf->ops->pin(attach);
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   947  			if (ret)
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   948  				goto err_unlock;
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   949  		}
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   950  
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   951  		if (!skip_map) {
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   952  			struct sg_table *sgt;
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   953  
+84335675f2223c drivers/dma-buf/dma-buf.c Simona Vetter    2021-01-15   954  			sgt = __map_dma_buf(attach, DMA_BIDIRECTIONAL);
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   955  			if (!sgt)
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   956  				sgt = ERR_PTR(-ENOMEM);
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   957  			if (IS_ERR(sgt)) {
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   958  				ret = PTR_ERR(sgt);
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   959  				goto err_unpin;
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   960  			}
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   961  			attach->sgt = sgt;
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   962  			attach->dir = DMA_BIDIRECTIONAL;
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   963  		}
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   964  		dma_resv_unlock(attach->dmabuf->resv);
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   965  	}
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   966  
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   967  	return attach;
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   968  
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   969  err_attach:
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   970  	kfree(attach);
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   971  	return ERR_PTR(ret);
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   972  
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   973  err_unpin:
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   974  	if (dma_buf_is_dynamic(attach->dmabuf))
+7e008b02557cce drivers/dma-buf/dma-buf.c Christian König  2021-05-17   975  		dmabuf->ops->unpin(attach);
+bb42df4662a447 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   976  
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   977  err_unlock:
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   978  	dma_resv_unlock(attach->dmabuf->resv);
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   979  
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   980  	dma_buf_detach(dmabuf, attach);
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   981  	return ERR_PTR(ret);
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   982  }
+cdd30ebb1b9f36 drivers/dma-buf/dma-buf.c Peter Zijlstra   2024-12-02   983  EXPORT_SYMBOL_NS_GPL(dma_buf_dynamic_attach, "DMA_BUF");
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   984  
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   985  /**
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   986   * dma_buf_attach - Wrapper for dma_buf_dynamic_attach
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   987   * @dmabuf:	[in]	buffer to attach device to.
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   988   * @dev:	[in]	device to be attached.
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   989   *
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   990   * Wrapper to call dma_buf_dynamic_attach() for drivers which still use a static
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   991   * mapping.
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   992   */
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03   993  struct dma_buf_attachment *dma_buf_attach(struct dma_buf *dmabuf,
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   994  					  struct device *dev,
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   995  					  bool skip_map)
+15fd552d186cb0 drivers/dma-buf/dma-buf.c Christian König  2018-07-03  @996  {
+8935ae05eee351 drivers/dma-buf/dma-buf.c Shixiong Ou      2025-04-30   997  	return dma_buf_dynamic_attach(dmabuf, dev, NULL, NULL, skip_map);
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26   998  }
+cdd30ebb1b9f36 drivers/dma-buf/dma-buf.c Peter Zijlstra   2024-12-02   999  EXPORT_SYMBOL_NS_GPL(dma_buf_attach, "DMA_BUF");
+d15bd7ee445d07 drivers/base/dma-buf.c    Sumit Semwal     2011-12-26  1000  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
