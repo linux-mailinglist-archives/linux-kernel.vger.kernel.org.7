@@ -1,82 +1,97 @@
-Return-Path: <linux-kernel+bounces-629009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24DF9AA6626
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:22:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C42BAA662C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89811468225
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:22:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE8227A3C9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F80265629;
-	Thu,  1 May 2025 22:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF10266B43;
+	Thu,  1 May 2025 22:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B4Qv1sf9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbVxY5yC"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B820B1EE7C6;
-	Thu,  1 May 2025 22:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63263265CCB;
+	Thu,  1 May 2025 22:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746138167; cv=none; b=JZsoLo2wgwQRMts5iRWsFh8gChkYzKroXUIKOV0VWsrMPe/QEBUaBjHeTdg7YqEEC6V3GETQIE1vCNymdpZsDUlPcWPNc5wQPw1ctuiwqMSEkdnQ52sC0oCZS5sfp+qS+qmog4SrsKQJH0l1TlvqX1MijbE/boxhQFq1ZrOGSng=
+	t=1746138237; cv=none; b=R3yRodIr3aHsCN/5sD453spLDxwN9MJPZ4Y2g4nG66cFXf1tAtgchsd8v9Gugyy7c7sB+J9kGdDzD0l2P0JuttnPiojMiYxhMXusHkKGreLP/961zk0QC8d/Lk6+bzQrlKaP04b+SCBMZK+oI1jTkheTgZongJFEZX1Z2EdEAk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746138167; c=relaxed/simple;
-	bh=2YXTvxMGZk1lisOGsqds3YqGmxDhLckCB/W09PFMeLQ=;
+	s=arc-20240116; t=1746138237; c=relaxed/simple;
+	bh=AdvIjQi/4aXBUrayVTQs3uaVb4+2LoBxWLRuzajDxIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVhuj4ke8Z39HMbHYWwy6+DqkM0wJAZTKZLv9xQcFeNp7gSb0Q8VaZRKjo7o7FOqn4maJgfHVyabWticmcGwHGPG62FbAjQTCxoDs0S7ZwChHFMDSw46etmlrZ3vG+se3G6L3aVdQ7fDMCKUd9OiFE5VclLOLmBhxA5tOoH7QEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B4Qv1sf9; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746138166; x=1777674166;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2YXTvxMGZk1lisOGsqds3YqGmxDhLckCB/W09PFMeLQ=;
-  b=B4Qv1sf9FcpJutjvHiTCg56gC+Mrr3mgUt8OTC7e4Ba1O6Kz6YeHGiXr
-   RSDR3YYZNzCgd3PsatWT0g/VUOnZHZfqAkmtcL4z3HJLd7B+2ZOA+RnTc
-   39MvY8cozjbCb8n1sdNtbQkk4lEDx/a2MvoX6v4HxTy725lLK9XclZ169
-   CAoMndPu4gTEjN3rvORcJdNoTA3VBYTnUBEUw5z8bDa13cQoYjQiHPgab
-   43H2gzEJ3R8a3CILnC6chO2xif9jhGvx/omApvQ5y93p+hqOLJlQj1uQV
-   oZwhKg+XQW4ZQy1qKvlYvHhKx2VwoM2/abjSuUbFAE2njjejdkYsrTuyl
-   w==;
-X-CSE-ConnectionGUID: Z/z3hKBpTPqsUPSRLDpHww==
-X-CSE-MsgGUID: Le5+7lDuRkeKu1cJdvnrdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="47961696"
-X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
-   d="scan'208";a="47961696"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 15:22:45 -0700
-X-CSE-ConnectionGUID: SDiP3pCTSluK4NK1nF/8Hg==
-X-CSE-MsgGUID: uTwuIFoGST6W8VMg8Sa8Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
-   d="scan'208";a="134238131"
-Received: from ettammin-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.38])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 15:22:42 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 9C68511F96E;
-	Fri,  2 May 2025 01:22:38 +0300 (EEST)
-Date: Thu, 1 May 2025 22:22:38 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 8/9] media: i2c: ov9282: add strobe_duration v4l2
- control
-Message-ID: <aBP0Lioy6Qi0Iw66@kekkonen.localdomain>
-References: <20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev>
- <20250429-ov9282-flash-strobe-v3-8-2105ce179952@linux.dev>
- <aBHe-55_U3bYTXyG@kekkonen.localdomain>
- <t7lnqmhufsyf5ygfkfyllvxpm4h2qdxotgi2lcfoxlhxjpejjd@mf2poxik2zje>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQluXFNjNtiqNuvDBnqwrX7w3pUM4H6gpygKv281bPYidHZsRWvGMLMOfGqtWGk+FNrIICsseyrvoOjS+CWrvxJFmn8OwQN1XIhmNC2vz3VxSfaak8+qwUUszKX4jtYbdL75+YNGegsIXYOd8UcBQNgrZfMrVWkxns9Uy4QXBto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BbVxY5yC; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c5aecec8f3so249908985a.1;
+        Thu, 01 May 2025 15:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746138234; x=1746743034; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ALJpzUTq/FKpZ6ZIbBrWjDg3p3NoIlcuclCH+vNu1Do=;
+        b=BbVxY5yChRomengW5ik4eK1mTYKt1daNuxmjXtFa5Yiuv4E33l19O4P23X1kQgpcvw
+         qkxSDYBbH0yLriYJieCa70cUKz7vLn0+lQbtPGJldJ/BYu40kKjzMguQA/nnzRc12eEr
+         pGF0/Sq0Au4ZTucLWzgi7yl241k/XiV2MexsBRlpRt7HbaXDY6Dn1B8kahykGzPuZowM
+         195jRofAhNVHimnz0M7DB3b55iUwzotwB3hI5O25laStIkIwWwnlPGC+Ly64SNrmw0J7
+         +m4pe2CDGhj+fWJZ+cHdQZO9Zs1Z0UAfol4tqF8/YGPSHMQ1cuZc54Hq+bGAacRpCqso
+         s37g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746138234; x=1746743034;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ALJpzUTq/FKpZ6ZIbBrWjDg3p3NoIlcuclCH+vNu1Do=;
+        b=R1rOqNPV530mzNd1dZqAiK+m6XlvNzv3qhb/5wfAs5gpqgIS8ZAFanrlV2Lifz5ogP
+         dOQEGWgkNNKIy3586iTOayXAx62mtx+qgvF7A0hZ8zgiR085wOjK19l+8AZ5Io45Ypwd
+         gaZbJvZb7HDeOp4CD/+YUNCmoKsGmaXLFzQRxNK7Fc1JCNobk+SCN08HmoGXs/4LsGQr
+         kbzd6D4f1UeyTY5qhKBP1PyIE6o32KpCenza4BGP3WiVE9PSXLqkMsuz1FhjQUh+3lzV
+         kSdlza67wCfYtg+KtjJNJA1hxVpyIfOkmGhxjt1F+dPGWWkOkncDi9pFlnbFwZNF1j1R
+         k4bA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyjEHuesNc5EkeMQ3KVLC44XhaUB3aEdYKM3X9Y4cl8TxgabN1RHuCLmpgN65k8+X3SqvZFISqxqqLUA3O@vger.kernel.org, AJvYcCX0HtVFukeFBYYBfmMzPrzyJy36MD8HzB8kkZabMAa32WxeyD2aJC54J0aN6eMNqSixshR1umyj7Omr@vger.kernel.org, AJvYcCXRPLYkOi0IIryM5L5iXuz7b+mXQAHBVFrQSbsWLADnTFO74P03nxlztBWTn4HCpJlGDKsMSDnzqfMo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/0w8d26PqlKmiV+fSLsZivR8py+miiRzOkfadzmea+7C+s55s
+	vEvAdI+kmBVNVOoKAfHOf8lrJ1LyTf2lsDTnBdp+dkj3NHL5Ubxu
+X-Gm-Gg: ASbGncvChqJT54LZgtgOFly9sH0Urr26N3zwBt/BlKlCEaDxHu4ulL36DHi46KYZG8Q
+	aqbH8CcqKtEeu6dYL9mgj2Ql6D4+wRkacrbVfXUWUqWPK4ijYNED4tG2i3ODd1x9cgc7WHjlQFP
+	NzyhGUmBcEUXdNzwU7Jdxx3iCQsUOu+F539oJo/ba6uxNaudokE8ngutVIujHobkVvPKRkA0KDB
+	W6/CrxV7bi8+hnjUy/76/jlDisK53K2hI4d6AokMBBwngPf5UMKr4QYRXuZmsMgIK1kX3bt2eXP
+	JUs/yI9iYmGjYHKG
+X-Google-Smtp-Source: AGHT+IHSSsKyi9FGAPd9UU71QhjqJiaS5ihLbJsB2KEjxOY2dmC2E2E/lDqi0usoLmyGcynJlgTLAw==
+X-Received: by 2002:a05:620a:460d:b0:7c5:4adb:781b with SMTP id af79cd13be357-7cad5b2392bmr136857685a.7.1746138234183;
+        Thu, 01 May 2025 15:23:54 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cad23c3ed3sm100036785a.44.2025.05.01.15.23.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 15:23:53 -0700 (PDT)
+Date: Fri, 2 May 2025 06:23:35 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, sophgo@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 2/3] clk: sophgo: Add support for newly added precise
+ compatible
+Message-ID: <ocbvvu7hmeh372dfvyokwy5saa3l3atjfxwd7i5prif57r3wan@mizv37xwg3k5>
+References: <20250430020932.307198-1-inochiama@gmail.com>
+ <20250430020932.307198-3-inochiama@gmail.com>
+ <20250430-radiance-rebuilt-2caa906d5e6f@spud>
+ <20250430-snort-raider-dbf10d14993f@spud>
+ <otuaro3xh2ut3kurcomrq5j3guyyj7uhhwgngqdqqrrcpvlk6t@4wqbxy3m3tq7>
+ <20250501-shrubs-unmixable-a2a8a9bedd01@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,30 +100,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <t7lnqmhufsyf5ygfkfyllvxpm4h2qdxotgi2lcfoxlhxjpejjd@mf2poxik2zje>
+In-Reply-To: <20250501-shrubs-unmixable-a2a8a9bedd01@spud>
 
-Hi Richard,
-
-On Wed, Apr 30, 2025 at 11:09:30AM +0200, Richard Leitner wrote:
-> Hi Sakari,
-> 
-> thanks for the review!
-
-You're welcome.
-
-> > > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+On Thu, May 01, 2025 at 03:22:17PM +0100, Conor Dooley wrote:
+> On Thu, May 01, 2025 at 06:43:07AM +0800, Inochi Amaoto wrote:
+> > On Wed, Apr 30, 2025 at 04:37:01PM +0100, Conor Dooley wrote:
+> > > On Wed, Apr 30, 2025 at 04:33:39PM +0100, Conor Dooley wrote:
+> > > > On Wed, Apr 30, 2025 at 10:09:30AM +0800, Inochi Amaoto wrote:
+> > > > > Add of device id definition for newly added precise compatible.
+> > > > > 
+> > > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > > > ---
+> > > > >  drivers/clk/sophgo/clk-cv1800.c | 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/clk-cv1800.c
+> > > > > index e0c4dc347579..e10221df6385 100644
+> > > > > --- a/drivers/clk/sophgo/clk-cv1800.c
+> > > > > +++ b/drivers/clk/sophgo/clk-cv1800.c
+> > > > > @@ -1519,8 +1519,11 @@ static int cv1800_clk_probe(struct platform_device *pdev)
+> > > > >  
+> > > > >  static const struct of_device_id cv1800_clk_ids[] = {
+> > > > >  	{ .compatible = "sophgo,cv1800-clk", .data = &cv1800_desc },
+> > > > > +	{ .compatible = "sophgo,cv1800b-clk", .data = &cv1800_desc },
+> > > > 
+> > > > Given the same data is used here, should there not be fallbacks in the
+> > > > dt for some of these? For example, 1812 to 1800? Or is that not okay,
+> > > > because 1800 is not a real device id?
+> > > > 
+> > > > >  	{ .compatible = "sophgo,cv1810-clk", .data = &cv1810_desc },
+> > > > > +	{ .compatible = "sophgo,cv1812h-clk", .data = &cv1800_desc },
+> > > > >  	{ .compatible = "sophgo,sg2000-clk", .data = &sg2000_desc },
+> > > > > +	{ .compatible = "sophgo,sg2002-clk", .data = &sg2000_desc },
+> > > 
+> > > Actually, this one is a better example. sg2000 is not marked deprecated.
+> > > sg2002 uses the same match data. Why is no fallback to sg2000 used for
+> > > the sg2002 case?
 > > 
-> > Should the number of controls in the handler be updated?
+> > Yeah, It is a good idea. I will take it, thanks,
 > 
-> What do you mean by "number of controls in the handler" exactly? Which
-> handler?
+> Can you point out the difference in the dt-binding patch when you do,
+> between the sg2000 being a real device and the others not?
 
-A number of buckets allocated in control handler's initialisation is based
-on the number of controls given to the init function. You should update
-that number when adding controls.
+I will, thanks for the reminder.
 
--- 
 Regards,
-
-Sakari Ailus
+Inochi
 
