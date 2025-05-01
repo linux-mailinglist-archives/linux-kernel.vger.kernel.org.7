@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-628976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD69AA658D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:31:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B375AA6591
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3171B1BC31C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 632C14C6169
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985B32673B5;
-	Thu,  1 May 2025 21:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F038E26B2CE;
+	Thu,  1 May 2025 21:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2NeYrJS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFEH2IUq"
 Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228A6261594
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 21:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02391264A7A
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 21:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746135046; cv=none; b=IER06iqs/+ymoDo0j/WLgsR3HS5dCc+11X4NnJ5BJewmflUpwNejby5zdbF5ElC+oOgmgzk7K4Uilwvg0XWwqKK+BhU1TVYVZvCa59MB9DvcxSy5siTq2k5tHvuVsEiTiwZ+pm+8xCao6n1VrmjJpwkwjEde/uiuGhGqkVmyItM=
+	t=1746135047; cv=none; b=NN/sIAFZkdxUehgwUqymA5VDXEKZW5JA/3ikvH3f+oumEumTfPmtYCQBPaT1GOpdK1KiLhhMai/ydtZHmoosI97TE8zCrTdFBb/GmR+GozALRRRSDXgPkdnVnZ7L98uqifmO4tcAgRTimsxllHgQEEDZ8afct60eFs2yvGHRdRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746135046; c=relaxed/simple;
-	bh=gOapckKc/P6PZfyll16dMvfDX1mJ/ZFGM/QRiaIG5MM=;
+	s=arc-20240116; t=1746135047; c=relaxed/simple;
+	bh=pogysvredQamG9rVEP3tCTR6wWcpeR/5OVLS1DDkQPI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=byJOh8RsKv57AZi3elSPWtmJiEjTx5c+bm92CxUlPmMaePzzdqpNi0k61SOmKe/+KdKTe29Tqq94kZmMqNV0i+hcZP9g5BQC97HqW4uFW+vdT6XZ9hc7UvCSElH/azHodQpLjt/MV24tZ4MIzOSqdGXpPE5zlY1AdTywytRiG1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2NeYrJS; arc=none smtp.client-ip=209.85.218.47
+	 MIME-Version; b=S5Y0otsYUpbLd3OebasqNh6ZZqVJgayWJ27KTNaiCCUVz9UrtF7TOlb56YkaKnCUkPM3XFzvSFqQtSMU9NflconRM16/II8q510sFbt8QhVIGitkQAWo3b3M6yFzlrb2lnE9rZSfj+VQppNyxAZxmKa2E1/FQehPTzzsWkdVzUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFEH2IUq; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac7bd86f637so456902766b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 14:30:44 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so245297266b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 14:30:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746135043; x=1746739843; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746135044; x=1746739844; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Rrcl/JpeQTu+NIHhF4Pb+87UlDs4MN4JYFVInV4UtgY=;
-        b=F2NeYrJSW/Hzl1wnXlhGHYYwaQXsGWR98+HacZo1JiqgWb1ALOvc1wJkNJs2AVyRxL
-         OCE/S5kRQtUyUvZjpWakYl1NopnknZUyYoJHZykjonk1ZIURg5lPp2IVSI3jDRCsGvqh
-         uzrKlbL4lWyGHpXME9EAdXY7+Ax1pFvt6usIprwnvNvNNuS81GXXkpxeKw3ncFht832V
-         6b7jDD10Wd3i8vLwkVVW+Y00QJjz91a/6tYYgxkIp/gPdlw206rJ4eVE+x1ISHCDo81o
-         lpSuQlhON1MGo7ghnihyTaUbMVBlWhY7WMNuk2b7g+QFrDjxfTj6x8jHtU5Bnm2KNf6a
-         9XKg==
+        bh=5qQvcKW3MgXdsbNtDQHwk4JjoHG+iRWbqwu2h6X/MKw=;
+        b=EFEH2IUqQ9aMSxWAGCbLUyrvi0ovrvkn/mbF9369xAJojjVxS85h7g+GMhJh92JLvF
+         zXrRhUid/swS20gtqkNTzgyzCFWQblwtNilJipJcnPIymHNxa1/eYQlm5DNanfhF66UO
+         X77KuCudXej+XnPPzB6KjMEvxAYEx5WTttLPZtnySFmg2nCKc04+t2fcKSiz8QAkRKna
+         IZwjJwVDWFKc9v11SKBrX3Jg7hdnOJ4L5zs23oH2saggvUuxJGS5RN85oYOWPi55ZQxJ
+         Zfy47RGm37Rkq6Ba9+0mjFvhqqS0aNXKP89e1H1ncfKd+lGr40aA/7zGcEqBq4BVJAtj
+         OSGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746135043; x=1746739843;
+        d=1e100.net; s=20230601; t=1746135044; x=1746739844;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rrcl/JpeQTu+NIHhF4Pb+87UlDs4MN4JYFVInV4UtgY=;
-        b=AXyqLitXery75u5P8LqqiKA+e9Rq64AZ4AO+nqK4/pLZLTrQY8VCRhihl7Etih40rX
-         Qu54kE0O9iQnoLMeI8HkImUnLTk2sce4W1xrnweqIYSYM1tOoiTTT7jMSaGscMNHrG+G
-         RiJozDQvuLJNwdvyWqwOGqC2KJRmt41WGpkKoX8/VmOTN29zpirsRmjRTBHWZd9TBGWz
-         jf2RPg3U67m56BjADqddK+I3ahAh4GTawg2klLv/f6tbzX6zuL1ln0ulFHNZLHnXoBYy
-         SlJDFe9seyoCzTeKflVtahnMSxpMbTtN+8S1uDgVOsKQVKiMXg6ICy4BjlCu5R6j1/ny
-         gEWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWVBL2BlVXroeHkJGWiR5Wyw3YfcAisJJvSENHYxnAYRqoSBbiYqXLrS5bA1E7X1rb6rovyqTAbu5KXGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhSR67AvzvMTfMJmlAnFnJrGTzw8o3vEgySSLQBxIIRf0jLgUt
-	iEE80KnLztlrQ6C+VFmDZTINPzyJFOwNVc1b4d0MkEF28CiuJGSN
-X-Gm-Gg: ASbGncva7af/gH+f51D6L8WzUBxQk2IMi+wJSLW2ND/Idn+/B46cFHvLDIRaCNGcZH7
-	gkPB8vy6oK8bY5krR0m+DtCJgS0p0BxAyO24Hr47BZglNCzfCCltiFahE7UyFj5qt62x0AKyW4S
-	Wb3Ljs6+woGDd9iwvGgh4m1dx8JOQ9iurPdR8GLu1XWIuwrMP8byjsfyVKHxFnE+7NybMYVHqNw
-	WFuLF8MM8At2Xej01FIkNiPNXi22ncnOCcFV2ZCmN6D43slcDupuMwjEVwcJDurPkAzkMf519YW
-	iF1IIKxg9qpERPTFv1QAeprBKUOIpkdWEi24e+ERT5VIn5W3tvuFE6eNkYbdVTGkCRLUq6HZ/kB
-	JowXuuPnCCX61RmPVALfQJUIy8cH3+PvDQjLJ4cRB4uvn9ZkdkEpRBnX5DLTbjF9P6flpkg4aSR
-	XRPQ==
-X-Google-Smtp-Source: AGHT+IEYu91JG9uDqTUFxmBZwv6866gZbhwuIT22bemmqPxLeyzNfO6CuJoLuTH/Vh7aEJacJErv/Q==
-X-Received: by 2002:a17:907:a42:b0:aca:c6d5:1dde with SMTP id a640c23a62f3a-acefed69a43mr341279166b.8.1746135043207;
-        Thu, 01 May 2025 14:30:43 -0700 (PDT)
+        bh=5qQvcKW3MgXdsbNtDQHwk4JjoHG+iRWbqwu2h6X/MKw=;
+        b=sMz9r5v3BwdcXfEVYc8/0Bla0MmT6jm0Q0nZaF+r+sd+4cpbhi+PZu05pJK5oOEwvc
+         QksH6D9CfVmCwdDnG79j2Il5co7FMVK9CCWJjBDbvXivfCN2NMB92m6HgvoLpT6+Yc7h
+         odrKM3n2C/U8AJDjXKXIqCNEf1f96RRTHgJILrueiUCOXbru9IOJVAje4vcoYtF5QPz1
+         iHzomPwdXdRhU02kt04s/Kns/SYZx7xdXIbOSqYuXVnKGE5ulK+EaxSw72QK8/M6XDVR
+         YuA0p2BpAcVKJiD9fM8fOogXnL/mGzNV5l+RSEExk3lt9Nt41vsbQs7dcmNd6CBof56p
+         TBZA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7bOspcX5KiASxKIw3DHXYQLcVfu8iZw9EwLBcWsTzFtxev9V+Tts6ReT8vvvjAAhuV93oIDJ5JPcm7oQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQWOWrd1fDLQ0Ovui27qY5rbYL8kb897PP3RggonjBNdJN9fzf
+	JAaRGQ6hWHiLxjL5B/UNBiplyC5kGi0qj6qezCxMkCAnxdABYCn91QO5+w4jPCgq4TzW
+X-Gm-Gg: ASbGncvJUpt0qi8y/AvZhaXiX8ZKYHpH+ZYMqcDNzMWphKS90O3wqGt9SWKymeQJVGf
+	g0qk/fp8XM7uDOkXRqhIqpLW6r7Ebn73FR4hUh8md1g78MfWrNTzCwXxFh3TWYqyWLvrx4ysyDe
+	1KyEdCj4975WpheBgA5tEpnPlMiyf0KBNlgSTKwqJqvmx6hE15wzYdmI6unJl7+N6xcXL/9H8U8
+	4do6m3FusGpndssOs4tsQL1S2Tg4nW6NymULaxKEFtqAQkq5XA2m6irPSFXe8f2SkzJtLR7WQIa
+	32bYBwE8+YOIZM8ZOqTGhG+CXR/ofb0p/om/5HtQ80+SMaJsIbP+H+LM3+HOAn/+PX9I74jaBj3
+	vyzP74INIqHmuavuu5gN8a/TFjpShXXxMBKMfJXDBNZZad5RzxugwBMvVo8QS1KBMu4jTzZ9A8/
+	p/rw==
+X-Google-Smtp-Source: AGHT+IFTKXpGcruR1rtk8NfAptc3Ldio3+MGfuUDD2uU4ON1l/n52FUtzrr9PqitPyGSCwYkrEy4bw==
+X-Received: by 2002:a17:907:971a:b0:ace:3a27:9414 with SMTP id a640c23a62f3a-ad17aefb21cmr59437566b.44.1746135044072;
+        Thu, 01 May 2025 14:30:44 -0700 (PDT)
 Received: from chimera.arnhem.chello.nl (2001-1c08-0706-8b00-41fd-2957-14cb-eff7.cable.dynamic.v6.ziggo.nl. [2001:1c08:706:8b00:41fd:2957:14cb:eff7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad0da560a63sm96466866b.139.2025.05.01.14.30.42
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad0da560a63sm96466866b.139.2025.05.01.14.30.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 01 May 2025 14:30:43 -0700 (PDT)
 From: Thomas Andreatta <thomasandreatta2000@gmail.com>
@@ -80,9 +80,9 @@ Cc: gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-staging@lists.linux.dev,
 	Thomas Andreatta <thomas.andreatta2000@gmail.com>
-Subject: [PATCH 7/8] Staging: gpib: `request_system_control` error handling in resume
-Date: Thu,  1 May 2025 23:30:36 +0200
-Message-Id: <87afefe2ba2fca9f09ffd66fb8ba8e1e5c3c1404.1746133676.git.thomas.andreatta2000@gmail.com>
+Subject: [PATCH 8/8] Staging: gpib: Optimize error handling in agilent_82357a_driver_resume
+Date: Thu,  1 May 2025 23:30:37 +0200
+Message-Id: <4f560559491207b85cd1997d9e351e417f048068.1746133676.git.thomas.andreatta2000@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1746133676.git.thomas.andreatta2000@gmail.com>
 References: <cover.1746133676.git.thomas.andreatta2000@gmail.com>
@@ -94,34 +94,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Function `agilent_82357a_driver_resume` now handles the return value of
-`agilent_82357a_request_system_control` unlocking and returning error in case
-of failure.
+Refactor the agilent_82357a_driver_resume function to consistently use
+the resume_exit label for all error paths. Initialize retval to 0 at the
+beginning of the function and return it at the end, ensuring the mutex is
+always properly unlocked regardless of the execution path.
+
+Simplifies error handling and fixes potential mutex lock leaks by
+ensuring all code paths go through the same cleanup code.
 
 Signed-off-by: Thomas Andreatta <thomas.andreatta2000@gmail.com>
 ---
- drivers/staging/gpib/agilent_82357a/agilent_82357a.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ .../staging/gpib/agilent_82357a/agilent_82357a.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/staging/gpib/agilent_82357a/agilent_82357a.c b/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
-index ce2d3850ba31..4fdf6d42f63e 100644
+index 4fdf6d42f63e..92bbdd57083f 100644
 --- a/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
 +++ b/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
-@@ -1625,7 +1625,13 @@ static int agilent_82357a_driver_resume(struct usb_interface *interface)
- 			return retval;
+@@ -1590,7 +1590,7 @@ static int agilent_82357a_driver_resume(struct usb_interface *interface)
+ {
+ 	struct usb_device *usb_dev = interface_to_usbdev(interface);
+ 	struct gpib_board *board;
+-	int i, retval;
++	int i, retval = 0;
+ 
+ 	mutex_lock(&agilent_82357a_hotplug_lock);
+ 
+@@ -1614,23 +1614,19 @@ static int agilent_82357a_driver_resume(struct usb_interface *interface)
+ 				dev_err(&usb_dev->dev, "failed to resubmit interrupt urb in resume, retval=%i\n",
+ 					retval);
+ 				mutex_unlock(&a_priv->interrupt_alloc_lock);
+-				mutex_unlock(&agilent_82357a_hotplug_lock);
+-				return retval;
++				goto resume_exit;
+ 			}
+ 			mutex_unlock(&a_priv->interrupt_alloc_lock);
  		}
+ 		retval = agilent_82357a_init(board);
+-		if (retval < 0) {
+-			mutex_unlock(&agilent_82357a_hotplug_lock);
+-			return retval;
+-		}
++		if (retval < 0)
++			goto resume_exit;
  		// set/unset system controller
--		agilent_82357a_request_system_control(board, board->master);
-+		retval = agilent_82357a_request_system_control(board, board->master);
-+		if (retval) {
-+			dev_err(&usb_dev->dev, "failed to request system control in resume, retval=%i\n",
-+				retval);
-+			mutex_unlock(&agilent_82357a_hotplug_lock);
-+			return retval;
-+		}
+ 		retval = agilent_82357a_request_system_control(board, board->master);
+ 		if (retval) {
+ 			dev_err(&usb_dev->dev, "failed to request system control in resume, retval=%i\n",
+ 				retval);
+-			mutex_unlock(&agilent_82357a_hotplug_lock);
+-			return retval;
++			goto resume_exit;
+ 		}
  		// toggle ifc if master
  		if (board->master) {
- 			agilent_82357a_interface_clear(board, 1);
+@@ -1649,7 +1645,7 @@ static int agilent_82357a_driver_resume(struct usb_interface *interface)
+ resume_exit:
+ 	mutex_unlock(&agilent_82357a_hotplug_lock);
+ 
+-	return 0;
++	return retval;
+ }
+ 
+ static struct usb_driver agilent_82357a_bus_driver = {
 -- 
 2.34.1
 
