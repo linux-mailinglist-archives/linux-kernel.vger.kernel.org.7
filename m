@@ -1,83 +1,192 @@
-Return-Path: <linux-kernel+bounces-628437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEB4AA5DBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:20:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F888AA5DC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E084C3703
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:20:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA630467B8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79567221FA9;
-	Thu,  1 May 2025 11:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6912222D1;
+	Thu,  1 May 2025 11:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVWj9gL+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qCiLuN/X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF27EC5
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 11:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE78A81ACA;
+	Thu,  1 May 2025 11:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746098396; cv=none; b=M8cdfRw1Jo7pjrTR2CP9iUNWwJKeKWTGYzAPZln9Bz1NP47j2vN15FQ2039g0bisjqL7PXal15ZgFpmX17XesEnSosSVefIfPj2V0zC4VbyWMtbnhMxAKKnAmUZFEKm0tHckzoZTXM4CwVo5v65I2haHcO7EKx/3m8EofRzDaJw=
+	t=1746099026; cv=none; b=q/phHaoLVi+ArPW73KBj2hlFHfkB8It3P+9+Y9q+UK3VaLZBdRlqu7ECrFEav6SeT5Y8guc6hrrwFb4k4yivjKqobBXzRiGUT+UXgfhOBa2F5Rh04bgxB7md+Df22Nprq50nEDiXzp90W0PxhkXz/yILhe3pJVnwzURXNYQ2uhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746098396; c=relaxed/simple;
-	bh=VWrPNBfHhg9wD68gOl+G+XtNQrLgb/BS81MyvDrmVkg=;
+	s=arc-20240116; t=1746099026; c=relaxed/simple;
+	bh=4Ds19eHlJOGqn/h+KCCqyUDgAqgoR57GRgX2HX9SGBU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K9MKmTrrFCLAoc2hyLasgnVY3Oh5Fb9oEEFlemqIEna2DU2uleK+XMBt5GDd+J/BjXr+i2Onp7nO7Av5l3d35ilozGK9uh8fQ1rq8utlolPZXNTN1SeXzLWcCQlX1RLwgsu4W4oz/+SGH8XzzBylDUpbUtC2faN4bf74hCWFcOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVWj9gL+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B816C4CEE3;
-	Thu,  1 May 2025 11:19:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PA3mqfPUc7sDWo/QSyNzxsW91w17N8X4SGsdviosY+d4LRjpm0DMoIQiuadamuzX1H7cyxyzeCoEG9SLkpt48jaK6pZWRVQiemAQrgQ30YyDAsZywenLaNVqMIyDH88x5ULYwW5S0+28OfyzE5HxWzcIB6e2tPslSdkqCYAY1+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qCiLuN/X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57C89C4CEE3;
+	Thu,  1 May 2025 11:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746098396;
-	bh=VWrPNBfHhg9wD68gOl+G+XtNQrLgb/BS81MyvDrmVkg=;
+	s=k20201202; t=1746099024;
+	bh=4Ds19eHlJOGqn/h+KCCqyUDgAqgoR57GRgX2HX9SGBU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VVWj9gL+oi75yY2yMuZJvAw0bsu2XGPDYyOEnCVO8NBWt4x2vi1zxnd18xDxyWE19
-	 7VC+a0cZxFxWjX1jXe4V+nTP7eC3zHIfunWZJsHxSE2KVHdsKavoqp8Ux4NeoiqQLT
-	 rHMnU04RqYbp3SR5I45E6IZpzTYHebj3/2lp7V2TOcaImbA7r1xWcMcpY9sdeyaT7y
-	 ngY8HPVu6S7olz5I8UVbh3GUFw32wH7EVzXwTsZ2CFApVciU0JEmxF2dJMfxCsOlF3
-	 37ntf/2tlyNUy+aNXDxb7+GApfSHXWkF2o8vk0emx1LXboIfu3jWRKxkbKjaMkaxyx
-	 UVCm2iYs8H0dg==
-Date: Thu, 1 May 2025 12:19:52 +0100
-From: Lee Jones <lee@kernel.org>
-To: "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: mfd: adp5585: add support for key events
-Message-ID: <20250501111952.GG1567507@google.com>
-References: <7a6d0a8a-aa14-488e-9072-0bbafaa84e5e@gmail.com>
+	b=qCiLuN/X5b/t9vQjE+BPMTfWeVTVNWppPRGWMXGz1QYWfVei4ruxhBCKgxlkEsIXH
+	 WeuV0UIwCoYczwrt4ff3Ot2ahwCB+WNP4hqa8HKv1jJt/3SckhuXAaoCkOZA0zUdVO
+	 /JvHpUij4J8XG1bJOzMYQlKCdzk+ZRXD1ugP5SQSfyZ5zl5vL/MD3nCsTZeq8dIgp6
+	 EuReO/HKqSxD2WNjwrD3ycryCDXdPbBxJO0t95NJr/AFGC8d9ZN9wYTkTBCUwD1qOy
+	 Y56psZYV18q9z7h/X/f0EXgHZmM2f6rXfTblPz6mXFDNw2Pl549HbFTmQM6TkzJaM/
+	 seYzFMlq0dqOQ==
+Date: Thu, 1 May 2025 13:30:20 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 5/7] rust: alloc: add Vec::retain
+Message-ID: <aBNbTL2dIOFQq8yG@pollux>
+References: <20250429-vec-methods-v4-0-dad4436ff82d@google.com>
+ <20250429-vec-methods-v4-5-dad4436ff82d@google.com>
+ <aBJPHUDYBGyAgUNf@pollux>
+ <aBNWlC6uSOiFrQDL@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7a6d0a8a-aa14-488e-9072-0bbafaa84e5e@gmail.com>
+In-Reply-To: <aBNWlC6uSOiFrQDL@google.com>
 
-On Thu, 01 May 2025, Colin King (gmail) wrote:
+On Thu, May 01, 2025 at 11:10:12AM +0000, Alice Ryhl wrote:
+> On Wed, Apr 30, 2025 at 06:26:05PM +0200, Danilo Krummrich wrote:
+> > On Tue, Apr 29, 2025 at 02:44:25PM +0000, Alice Ryhl wrote:
+> > > This adds a common Vec method called `retain` that removes all elements
+> > > that don't match a certain condition. Rust Binder uses it to find all
+> > > processes that match a given pid.
+> > >
+> > > The stdlib retain method takes &T rather than &mut T and has a separate
+> > > retain_mut for the &mut T case. However, this is considered an API
+> > > mistake that can't be fixed now due to backwards compatibility. There's
+> > > no reason for us to repeat that mistake.
+> > >
+> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > > ---
+> > >  rust/kernel/alloc/kvec.rs | 72 +++++++++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 72 insertions(+)
+> > >
+> > > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> > > index 72bc743ec88bf7b91a0a1ffd9f830cfe4f983ffd..357f5a37c7b1d15b709a10c162292841eed0e376 100644
+> > > --- a/rust/kernel/alloc/kvec.rs
+> > > +++ b/rust/kernel/alloc/kvec.rs
+> > > @@ -608,6 +608,29 @@ pub fn drain_all(&mut self) -> DrainAll<'_, T> {
+> > >              elements: elems.iter_mut(),
+> > >          }
+> > >      }
+> > > +
+> > > +    /// Removes all elements that don't match the provided closure.
+> > > +    ///
+> > > +    /// # Examples
+> > > +    ///
+> > > +    /// ```
+> > > +    /// let mut v = kernel::kvec![1, 2, 3, 4]?;
+> > > +    /// v.retain(|i| *i % 2 == 0);
+> >
+> > NIT: What about making this `v.retain(|&mut i| i % 2 == 0)`?
+> >
+> > > +    /// assert_eq!(v, [2, 4]);
+> > > +    /// # Ok::<(), Error>(())
+> > > +    /// ```
+> > > +    pub fn retain(&mut self, mut f: impl FnMut(&mut T) -> bool) {
+> > > +        let mut num_kept = 0;
+> > > +        let mut next_to_check = 0;
+> > > +        while let Some(to_check) = self.get_mut(next_to_check) {
+> > > +            if f(to_check) {
+> > > +                self.swap(num_kept, next_to_check);
+> > > +                num_kept += 1;
+> > > +            }
+> > > +            next_to_check += 1;
+> > > +        }
+> > > +        self.truncate(num_kept);
+> > > +    }
+> > >  }
+> > >
+> > >  impl<T: Clone, A: Allocator> Vec<T, A> {
+> > > @@ -1130,3 +1153,52 @@ fn drop(&mut self) {
+> > >          }
+> > >      }
+> > >  }
+> > > +
+> > > +#[macros::kunit_tests(rust_kvec_kunit)]
+> > > +mod tests {
+> > > +    use super::*;
+> > > +    use crate::prelude::*;
+> > > +
+> > > +    #[test]
+> > > +    fn test_kvec_retain() {
+> >
+> > Can we have this return a Result, like doctests can do?
+> 
+> I get warning when I try that:
+> 
+> warning: unused `core::result::Result` that must be used
+>     --> rust/kernel/alloc/kvec.rs:1232:1
+>      |
+> 1232 | #[macros::kunit_tests(rust_kvec_kunit)]
+>      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>      |
+>      = note: this `Result` may be an `Err` variant, which should be handled
+>      = note: `#[warn(unused_must_use)]` on by default
+>      = note: this warning originates in the attribute macro `macros::kunit_tests`
+>              (in Nightly builds, run with -Z macro-backtrace for more info)
 
-> Hi,
-> 
-> I noticed that there is an issue with the naming of device tree property in
-> the commit:
-> 
-> commit f674cea99d03199a4fc9a96c68149b8804053f80
-> Author: Nuno Sá <nuno.sa@analog.com>
-> Date:   Tue Apr 15 15:49:26 2025 +0100
-> 
->     mfd: adp5585: add support for key events
-> 
-> 
-> There is a property named "rst-passtrough-enable", should that be in fact
-> "rst-passthrough-enable"? (an h is missing)
+Yes, I'm aware, I tried playing with that myself. I really meant the question as
+I wrote, not as "Can you please change that?". :-) Sorry for the confusion.
 
-Why not send a patch like you usually do?
+> > > +        /// Verify correctness for one specific function.
+> > > +        #[expect(clippy::needless_range_loop)]
+> > > +        fn verify(c: &[bool]) {
+> > > +            let mut vec1: KVec<usize> = KVec::with_capacity(c.len(), GFP_KERNEL).unwrap();
+> > > +            let mut vec2: KVec<usize> = KVec::with_capacity(c.len(), GFP_KERNEL).unwrap();
+> > > +
+> > > +            for i in 0..c.len() {
+> > > +                vec1.push_within_capacity(i).unwrap();
+> > > +                if c[i] {
+> > > +                    vec2.push_within_capacity(i).unwrap();
+> > > +                }
+> > > +            }
+> > > +
+> > > +            vec1.retain(|i| c[*i]);
+> > > +
+> > > +            assert_eq!(vec1, vec2);
+> >
+> > Don't we have macros around kunit_assert!() and kunit_assert_eq() outside of
+> > doctests (i.e. dedicated kunit tests)?
+> >
+> > I much prefer their output over the kernel panic we get with the "normal"
+> > asserts, unwraps, etc.
+> >
+> > Consistently sticking to the same output on failure makes it easier to catch and
+> > easier to setup CI environments.
+> 
+> The documentation for those macros says "Public but hidden since it
+> should only be used from generated tests." so I don't think I'm supposed
+> to use them.
 
--- 
-Lee Jones [李琼斯]
+Same here, that's more a fundamental question, rather than something for you to
+change right away.
+
+I really like the way doctests implement the assert macros and how they appear
+in the kernel log compared to panics through the "real" assert ones, unwraps,
+etc.
+
+I also think that avoiding things that directly panic in doctests (i.e. example
+code) is the correct thing to do. For KUnit tests it's probably less important,
+since they don't directly serve as sample code.
+
+So, I wonder what's our take on that. Do we want to have KUnit and doctests
+aligned? I think that'd be a good thing.
 
