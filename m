@@ -1,145 +1,113 @@
-Return-Path: <linux-kernel+bounces-628472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41248AA5E48
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:19:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B777AA5E4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FC401BC71F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:18:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B7D57A6556
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4473622578E;
-	Thu,  1 May 2025 12:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F191E2248AE;
+	Thu,  1 May 2025 12:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CM259zVu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XOY8vm+d"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3E61EB189;
-	Thu,  1 May 2025 12:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B132A19A297;
+	Thu,  1 May 2025 12:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746101838; cv=none; b=P9Hzwfxow5BTFYtkY6O5d/aAIA6/iwsHW4wFx6HQJKxXLW+FRoso6Zy9XbNnk2RZwv87NOzOAsWe+s8JHl+IKstg3qt4KWRB6uGhmF/EMMyHiP24PbX2xThkrjI4HwySB9ViYWh0ab0IfbvDhszeWqHqaJKVDXyXuVLKzmbWXa0=
+	t=1746102006; cv=none; b=uwZgTAHwb4oRq6auk21UojxrrfaSjvZ0IzrCpp7t8zM0XJBSOPXgNj0AGEbO5MSGdb0JzsTD1iCPtumV46IUFXKL2shn46fX03nnz6jLf8YwmPoYyNw9knzuWiELh+Y/HbmNC69FLrS9LDGQApPfyt+sw+mlEZ4Q53tHF3/o/R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746101838; c=relaxed/simple;
-	bh=a7VyWzbLsXgj9plmo5+OkoEU6S32yqKBmnsZ5ada3EQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RoEyf91fajG6p0SxN5ehhIc4o92WXwFWPhpFPHK9n8U951Ug1+dfKOi49kDZ1oOTyGrVUH0CAqEH92aSAvBAnJONUB2NI/vw2tWYsttxhjFsPbkFWQabxVlMjqJWvjm2NCKAitbHODYDeaH4PvuoaTmOFxLHIvWRRa/72kkmVbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CM259zVu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05545C4CEE3;
-	Thu,  1 May 2025 12:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746101836;
-	bh=a7VyWzbLsXgj9plmo5+OkoEU6S32yqKBmnsZ5ada3EQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CM259zVuI12c6B8yJGt4xuuGFcwl7G3oFP2FnevTmzXZE1hgPB3RimiTtjCaRNvgV
-	 WMSBQuB365NPgNaQE9ZjZs97E0QlPE96jb486tK2LX3jixJvNPkI4KauF6YytT/BNy
-	 hVFbfifO1VKeCrKzJp7R1fx3BvwtAzRKMHtG5s0SuIa87xufoQgXErQdzmDtjDM/We
-	 NXWlWzCP6VO83HZbjWjwvtmWtiM1QHaFeqEMLY4U6uKvn+Kl+nnEmaVeRgxtSQ/S2Q
-	 zaqF4RRkeyOaysQDk4KNdDogoQmTAEtihGYHmGjedJ8GORArrbBfGTl6HDJbO/IR+F
-	 jmL32GVyCxwUA==
-Date: Thu, 1 May 2025 15:17:07 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@kernel.org>
-Subject: Re: [RFC PATCH 1/3] mm: introduce new .mmap_proto() f_op callback
-Message-ID: <aBNmQ2YVS-3Axxyh@kernel.org>
-References: <cover.1746040540.git.lorenzo.stoakes@oracle.com>
- <f1bf4b452cc10281ef831c5e38ce16f09923f8c5.1746040540.git.lorenzo.stoakes@oracle.com>
- <7ab1743b-8826-44e8-ac11-283731ef51e1@redhat.com>
- <982acf21-6551-472d-8f4d-4b273b4c2485@lucifer.local>
+	s=arc-20240116; t=1746102006; c=relaxed/simple;
+	bh=60c+pQ6r6f+Wq3lh6SDLNhyioqjLH3NhDUCZ1hf7iWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gifkncxb0rhmqnswzZ2l8WWAUvxDK68urU90viJ/fKb08qAKk9uQrzMkvdcOF+/9yOZYcgaMKHtck2ZlSqK1k5cX56Hpymwq8adtPC9IndR5ZXJR6wRi2aBM+dDkffYwIVsC9RZyRa+8sPZebaSeGuJUPbrKEX/uP5adurHxvvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XOY8vm+d; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1746102000;
+	bh=60c+pQ6r6f+Wq3lh6SDLNhyioqjLH3NhDUCZ1hf7iWc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XOY8vm+daAKgPc7R8RM86F5vBOBMVuRmS+1dRHDNZDu4wfZ0ln9VlSm0xAEyYfLcL
+	 bCJvMMXvtHhZbtzK3RUUPQ4JNeiWxassAJL28BQJ9Q+uinOGLkiFjiilzXI4VxEyKZ
+	 oRA91fg0FbHSrbIKgUHG8BoDlE0wlwW73C/2nIbSYsl+6XPr7fPz0HOutx7xFOFEuf
+	 R31LTw9MDmCPzOd3p6wsxN8Pcggpfr3+3vtfYjEUh6ND5rMP4mGEIi6bLhh774ie+v
+	 gIIVxMGnp8OKR5gxVRah8qrX008bCTz3piAinaxkRC3MsdBxkzVKvjoKUygt1kecin
+	 xRrdN4RmpW2/Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZpCmc0Sh4z4wbX;
+	Thu,  1 May 2025 22:20:00 +1000 (AEST)
+Date: Thu, 1 May 2025 22:19:58 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Tamir Duberstein
+ <tamird@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the rust-xarray tree
+Message-ID: <20250501221958.00788306@canb.auug.org.au>
+In-Reply-To: <CAKohponC_E9Ah4wXNNg0YVSo0UuRn+hNq+hxjrccbjeNKWH6Rw@mail.gmail.com>
+References: <20250430202315.62bb1c1b@canb.auug.org.au>
+	<2xUHqc3nyQdHW2SNbAQvQwy1mR4qz-vdR0UF8fVwFvm-rDtaJmhOUqJJvNWkneTh1XD58UlvoBT3umKbMjNlYw==@protonmail.internalid>
+	<20250430104234.dmwnn5ih232kfk4z@vireshk-i7>
+	<87selo1xdh.fsf@kernel.org>
+	<CAKohponC_E9Ah4wXNNg0YVSo0UuRn+hNq+hxjrccbjeNKWH6Rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <982acf21-6551-472d-8f4d-4b273b4c2485@lucifer.local>
+Content-Type: multipart/signed; boundary="Sig_/5y3UajIK3eaGjWOkZUeL+M=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, May 01, 2025 at 11:23:32AM +0100, Lorenzo Stoakes wrote:
-> On Wed, Apr 30, 2025 at 11:58:14PM +0200, David Hildenbrand wrote:
-> > On 30.04.25 21:54, Lorenzo Stoakes wrote:
-> > > Provide a means by which drivers can specify which fields of those
-> > > permitted to be changed should be altered to prior to mmap()'ing a
-> > > range (which may either result from a merge or from mapping an entirely new
-> > > VMA).
-> > >
-> > > Doing so is substantially safer than the existing .mmap() calback which
-> > > provides unrestricted access to the part-constructed VMA and permits
-> > > drivers and file systems to do 'creative' things which makes it hard to
-> > > reason about the state of the VMA after the function returns.
-> > >
-> > > The existing .mmap() callback's freedom has caused a great deal of issues,
-> > > especially in error handling, as unwinding the mmap() state has proven to
-> > > be non-trivial and caused significant issues in the past, for instance
-> > > those addressed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
-> > > error path behaviour").
-> > >
-> > > It also necessitates a second attempt at merge once the .mmap() callback
-> > > has completed, which has caused issues in the past, is awkward, adds
-> > > overhead and is difficult to reason about.
-> > >
-> > > The .mmap_proto() callback eliminates this requirement, as we can update
-> > > fields prior to even attempting the first merge. It is safer, as we heavily
-> > > restrict what can actually be modified, and being invoked very early in the
-> > > mmap() process, error handling can be performed safely with very little
-> > > unwinding of state required.
-> > >
-> > > Update vma userland test stubs to account for changes.
-> > >
-> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >
-> >
-> > I really don't like the "proto" terminology. :)
-> >
-> > [yes, David and his naming :P ]
-> >
-> > No, the problem is that it is fairly unintuitive what is happening here.
-> >
-> > Coming from a different direction, the callback is trigger after
-> > __mmap_prepare() ... could we call it "->mmap_prepare" or something like
-> > that? (mmap_setup, whatever)
-> >
-> > Maybe mmap_setup and vma_setup_param? Just a thought ...
-> 
-> Haha that's fine, I'm not sure I love 'proto' either to be honest, naming is
-> hard...
-> 
-> I would rather not refer to VMA's at all to be honest, if I had my way, no
-> driver would ever have access to a VMA at all...
-> 
-> But mmap_setup() or mmap_prepare() sound good!
+--Sig_/5y3UajIK3eaGjWOkZUeL+M=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-+1
+Hi Viresh,
 
-and struct vm_area_desc maybe? 
+On Thu, 1 May 2025 15:54:01 +0530 Viresh Kumar <viresh.kumar@linaro.org> wr=
+ote:
+>
+> On Thu, 1 May 2025 at 15:45, Andreas Hindborg <a.hindborg@kernel.org> wro=
+te:
+>=20
+> > I might add tags. =20
+>=20
+> That won't change the SHA for the commits, so I can safely rebase over
+> your patches.
 
-> >
-> >
-> > In general (although it's late in Germany), it does sound like an
-> > interesting approach.
-> 
-> Thanks! Appreciate it :) I really want to attack this, as I _hate_ how we
-> effectively allow drivers to do _anything_ with VMAs like this.
-> 
-> Yes, hate-driven development...
+Tags like "Acked-by" etc in the commit message will change the SHA.
 
-Just move vm_area_struct to mm/internal.h and let them cope :-D
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-Sincerely yours,
-Mike.
+--Sig_/5y3UajIK3eaGjWOkZUeL+M=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgTZu4ACgkQAVBC80lX
+0GzFFwf8DpM34EgWwCJB1MFelIO0FKsEAK/Tg1l3KYlCdWirgKD/Azzbzmd9drJ2
+5765PqvnH1yoGL4sRuuVu6Sr1tBFCr+9xTKbHcEFqw6oHNwRFwID1ey6cXuKZ+YC
+YtTLflRKFcULZclwl8p8VUiY66uZnhTiz0T0l9SvRHvmZAU7i8B93lRzjWR7Rf10
+eWK7JkLq/2tWq+wWLbFPu/eF+5Q8Ztq/5Afkox9ofnZjt6iK6YpyVqx7r4Da5n5k
+M5+Z4j1LQ9cpkMjKK+t6cbcGvff34Tdi3iAdqBSddxY0Bwv/ix8sdZHjuGn1HnU/
+OhOYyueXyEHoI0sYoZuvUHYk1sEjEw==
+=+2Iz
+-----END PGP SIGNATURE-----
+
+--Sig_/5y3UajIK3eaGjWOkZUeL+M=--
 
