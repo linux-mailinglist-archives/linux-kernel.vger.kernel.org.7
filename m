@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-628530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4BEAA5F02
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:07:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C83CAA5F04
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E0C79C77BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:04:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13370165042
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E381494A8;
-	Thu,  1 May 2025 13:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FF914A4DB;
+	Thu,  1 May 2025 13:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2V50OzX"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YY10mrd/"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4C913AD1C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 13:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BCD13AD1C;
+	Thu,  1 May 2025 13:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746104641; cv=none; b=isXA2HgEztLexIE/uMvTiVfLOp8QqQzY5oKEjj4rj9B4xq/pzM/ZbmrZQIkbAYMFh9yoMVIqhw9WT+HzyW3GUOtcPSKgODJ0+gbknk4O13c2IP8g+ThNADHFiThVevZXAkd7a4CbZnlG7yqxObxp373gsJ+eafAtD1LcbKKURWs=
+	t=1746104855; cv=none; b=aCSqFXLLtCsQsrRfPAq8b1/lg0isompfO+Lkw9TDOtbIhKVygCCUArRWFrNWGOTL9dvc03XMMU/4g3eIDxgfRkqg4+zPD7NTTl/uoidHD3hM0/3yp1dwA6/BRhCJzdhYbFyIb1sT8T3/xp4EIl9aNSq2/6UB5AyzECsoR/NMLzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746104641; c=relaxed/simple;
-	bh=nKVLqKLmJJfRIGBCWAGgjHCyy4TQubGRwOKP7zHGUHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sC6vqT4ZZquB9MB0viHBlDiCLBrGhBqjl325Mv+0PV9GHTwKHHq5GgNx+URVjzIcjXa/Vl0IIa6PojIq08PLdeUIocW/4g3cyIPTYSI9WwXgxDxtsQzMbn1Vcxzx30OFURUsQWBERW7qXfqex7vDLoclP3SbKobP1338+2zskU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2V50OzX; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1746104855; c=relaxed/simple;
+	bh=iciWH3TQMvTgRZbyKyAeQWMA85KUlGrMImI+Vn2Ayck=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=agI/r2CuSkbPPAWTSC1/CqsMF6ft1KEOjqUOOkmwa9KiGwR5BLHp0swmS0EUVDMou8/tdXp7igBKvKTJToUo6MdQc5aHP5M/DTJMYzlzqWuevlS8MmY/GxiYW7oVjT6GMWc9Z2f4iWnQxQc/NAct0apbpEiNXjvPabfm4XiTBqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YY10mrd/; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-391342fc0b5so421253f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 06:03:59 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3031354f134so757243a91.3;
+        Thu, 01 May 2025 06:07:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746104638; x=1746709438; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tLp6G69AjGMZh/i0hYBrG+us2tPn51T4tZ/hDIBrtE4=;
-        b=R2V50OzX6qetgzRMcNePRoJUiTSj/GBKCHlscgzIL8M9Zzcmwe7tWYAqGUWtx7WOZW
-         XQuvAjRaxDCINvPUVUay9HdGr72j7rTDV81Blx5nRjxwhE97UC5XZVCzrLWl5MhKRQGI
-         sabrhc0MjFwNnmHWuX/aCaFLV6HzANPKZOYdX88BjF1Y6MRyZsG9XV8Tk1YPZC+CqQ+y
-         d156yw1Tt0+3DTnZdR19NxDnUOLln+2/a9LkfJp7qo9Nt1KfvQS5RhWybvEz2T6RgOdA
-         zfgusgej/MfOWfsTL2UqW6t4c+URbWr2RevCA0zhezV3fReT6VzlaabEvhVKlCqq3IEe
-         Dzzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746104638; x=1746709438;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1746104853; x=1746709653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tLp6G69AjGMZh/i0hYBrG+us2tPn51T4tZ/hDIBrtE4=;
-        b=X+c07A8lEK7M5fTzrpVcCRzr1RYOGiEyLnoqN+SORhcVPbov/p2+T37iOF+YO4jX7m
-         C/Slvwp6k3/4BBvYOSNQMH1PJZ9i+WoQH3MvHwIW9Wzj6/GwWxsrSskjCSISl3jGOPVo
-         Hw5jo1IfdkfIr8r0xXJGPXSjXU3t8+wLEahnRvHGAQ9FT8l1fXcNvyhhTOYF4L8eSLHm
-         fV+A7XpdjnB66XYspIjZXVmrHjOgCE2y4m24CDV8K5/x+iNJQmq+sFcsYZ7+dZGd0m2U
-         ShRgt2mO3aVQ1g/GfG8Aj1fPfLCc4UpHNpow493YTk7zqmrbdhpT6kRO+Zuy7LmkqFCf
-         5dQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyhklqK5HtCxxVpsoHI/OJFuDLlcwiBEEmwqOl88Vgbr/XR0lPuoKkytvSi3ueK+cnDacG5RlITxUMEOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxhfjVBCLvN9DuVjIV6FEWIHUGL3L3Irs1pj4BaqcYowj00bhp
-	Y0F1xp+jX55yEgsqTC00yDwGKrToZg0jILqSrbiiaAFwMa34xLk+jVg6LGem
-X-Gm-Gg: ASbGncvtTOhZ6ao6ZBsq43vF2dNifQCWpmsIIo51dyA6+8a19qBvdPm/QmCR372eirw
-	V9e/M1rCDdqGrlK5z3MSyUX3pf4IacvOFH0ZTFe6rxZdsZbHmNOYuiDoxJ6QhRQ6GyvNUm8kUqV
-	ahLDD9YwIZHmxHk69aRb6LhfPTB4f51QYbbMSUgcQgdUsU7J9ah/670lfRQIcgEKZw3Ho93mWZH
-	ZR7DOE8+PbztztIcH+l4V5G7zzXDj9E1OJkzYVe76tV5kINkUXhbwWjBJKefRH1e/J/rA0+tyn/
-	pr7kVfwk8D4TW/EPhtsnjScujwS30Kn4SMF0NukIqpjGIKVWSuPPoCQzQ7bq
-X-Google-Smtp-Source: AGHT+IHN0m78X3MUvAMXKykuMAkM3TbruwNqjk1r7kAdw4UWFKm3it44VrZLXWxJYGsg9ZIawYZjxA==
-X-Received: by 2002:a05:6000:310f:b0:391:3f4f:a172 with SMTP id ffacd0b85a97d-3a08ff4fca9mr5109558f8f.49.1746104637846;
-        Thu, 01 May 2025 06:03:57 -0700 (PDT)
-Received: from localhost.localdomain ([37.72.3.43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a095a3e04asm830880f8f.18.2025.05.01.06.03.57
+        bh=ce1OY74HS/lf973Ll6R+BYLFB5N2IGJiNhqpPO8uVdg=;
+        b=YY10mrd/ggK201PZd2RfrbOmm3fd4Bkkag524h41Irq4Vat7OMp6t9Vrt5HD4iO60D
+         7BeBIGjyC+EPVvGskEntPs7u7Ih2aZdB+3v1ZDn6McX9epvGv8zJfLxyUzr2VwsqTb4X
+         WLfP+xuK7hjN8U4UCMq40fDvwfUVLmTJvGJlskQcA5hEdqAr5hgMloiIJLRKnfQHJEvK
+         uLEHSGaxxqFAELL6ZIcelKlKVUyBrBqSN8qAay3EN9YSocVOG3LxixuQKiBQjms0ePCk
+         HhUjSicxqlCDVqDiew9uM0DfjWr6/XTPVU53Zlx3awt0X61lKw92dhs7pKGyGC+9+EJ7
+         SfvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746104853; x=1746709653;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ce1OY74HS/lf973Ll6R+BYLFB5N2IGJiNhqpPO8uVdg=;
+        b=lQLKvYOHj734+I8eELR2TOhoxug2psfu6cT3WGxtuBJEoz/vwzYDjP739SI1tYzBNN
+         rEbhW9PnwW2KePplUrmhpvwg6/CLYNJmkIwWoXy4Sgk4FYgh+okrzBY4am3PqTg1ptjG
+         DcX5myKA6KUUwcdXLZruUa/Sn4rcR5JktnI2tMjiFmgDohyZYrT8kfWl1Gbt1lGrKDi0
+         /zt7FNMHXNZ+FsS+jlqSOZUweIXRhkd3EwYSOv6MbbWbxPJeAZKSnm5ToveOIOByKF0s
+         eqafj573S8QhkvRcpHjm7DMKyH7MCqxrHfItvIy+r0bhzH4VFAhAG3ThwjgerYtHPtdl
+         x8gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfa1o9S5LKRYCwjVu/9TTP/QPqUbpgvz+NJ56tu+1RQ483SflmKclGaCUzBKXLEpKvCA/QTNzv2dfR+Qk2DI0=@vger.kernel.org, AJvYcCX5lcZXYO0fbJDTIkXOzm0xSPhsoRFd42KNRUwGXn4lBzertr7DGdHaO6Og5Q76LL8Z4RxpolhFHBMdH50=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC5F0BpsU4zkaReYUaEj2PXFQqX6l6WdpMv2PzZnWLMtSkaLoI
+	7ee4bSviY+o9BpQ4xFEsu/6J2DBgslQaw71ryrXPkzInJHfiqe48
+X-Gm-Gg: ASbGnctLpb9B6dhzS1CjDcXHWVJ7vmzwVNlj+uYywnWoRXEbinRryASqlTGCfen++ce
+	dRJut/bRDBYEX+6iTW8ifLUxlkmqQ/1LzFuXIQvY1O/1V0OnH8YRZXm+2kcEaDFb0/vR4h/vIdq
+	e3vuGm4Vuxx/ZSweRw+ZPTIp4Zol3p73IAx3ipxOjP5DJqDbl8SEPiN7+NSIfY4Qsb1WgfAOoiH
+	MdFTxdcLNezHguPuz/pv42SLafchqEIfWTfs74eEuYT87cQB3N4XE/3voGk2zYciGznuuMaBZ4Z
+	TMAmnedSVOglE8ePyDrSFiglYUprhXKKBn0R/jim6zfDyYIO30T6M81loWICT1pTy1fLFlS4fqo
+	a7KikY+nD3tmwv+uIjkX/vz4=
+X-Google-Smtp-Source: AGHT+IHN9rwQjjatNJ/9eX0PfCCsO11jAcWMSBH57N2WIfuTg7rKRcI9v1q84tM6ZUTT4C279BUN7A==
+X-Received: by 2002:a17:90a:e185:b0:301:1c29:a1d9 with SMTP id 98e67ed59e1d1-30a41d45eebmr3813199a91.21.1746104853330;
+        Thu, 01 May 2025 06:07:33 -0700 (PDT)
+Received: from localhost (p4138183-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.129.206.183])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a4745f945sm799307a91.4.2025.05.01.06.07.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 06:03:57 -0700 (PDT)
-From: mikisabate@gmail.com
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	alex@ghiti.fr,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
-Subject: [PATCH] Improve Kconfig help for RISCV_ISA_V_PREEMPTIVE
-Date: Thu,  1 May 2025 15:03:09 +0200
-Message-ID: <20250501130309.14803-1-mikisabate@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Thu, 01 May 2025 06:07:32 -0700 (PDT)
+Date: Thu, 01 May 2025 22:07:17 +0900 (JST)
+Message-Id: <20250501.220717.849589327730222635.fujita.tomonori@gmail.com>
+To: boqun.feng@gmail.com
+Cc: fujita.tomonori@gmail.com, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, a.hindborg@samsung.com, frederic@kernel.org,
+ lyude@redhat.com, tglx@linutronix.de, anna-maria@linutronix.de,
+ jstultz@google.com, sboyd@kernel.org, ojeda@kernel.org,
+ alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, aliceryhl@google.com, tmgross@umich.edu,
+ chrisi.schrefl@gmail.com, arnd@arndb.de, linux@armlinux.org.uk
+Subject: Re: [PATCH v1] rust: time: Avoid 64-bit integer division
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <aBNojspyH5dHsuOm@Mac.home>
+References: <20250501015818.226376-1-fujita.tomonori@gmail.com>
+	<aBNojspyH5dHsuOm@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-From: Miquel Sabaté Solà <mikisabate@gmail.com>
+On Thu, 1 May 2025 05:26:54 -0700
+Boqun Feng <boqun.feng@gmail.com> wrote:
 
-Fix a couple of spelling issues plus some minor details on the grammar.
+> On Thu, May 01, 2025 at 10:58:18AM +0900, FUJITA Tomonori wrote:
+>> Avoid 64-bit integer division that 32-bit architectures don't
+>> implement generally. This uses ktime_to_ms() and ktime_to_us()
+>> instead.
+>> 
+>> The timer abstraction needs i64 / u32 division so C's div_s64() can be
+>> used but ktime_to_ms() and ktime_to_us() provide a simpler solution
+>> for this timer abstraction problem. On some architectures, there is
+>> room to optimize the implementation of them, but such optimization can
+>> be done if and when it becomes necessary.
+>> 
+> 
+> Nacked-by: Boqun Feng <boqun.feng@gmail.com>
+> 
+> As I said a few times, we should rely on compiler's optimization when
+> available, i.e. it's a problem that ARM compiler doesn't have this
+> optimization, don't punish other architecture of no reason.
 
-Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
----
- arch/riscv/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Did you mean that we should do something like the following?
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 1fd197afd2f7..3f40e33bc115 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -664,12 +664,12 @@ config RISCV_ISA_V_PREEMPTIVE
- 	default y
- 	help
- 	  Usually, in-kernel SIMD routines are run with preemption disabled.
--	  Functions which envoke long running SIMD thus must yield core's
-+	  Functions which invoke long running SIMD thus must yield the core's
- 	  vector unit to prevent blocking other tasks for too long.
- 
--	  This config allows kernel to run SIMD without explicitly disable
--	  preemption. Enabling this config will result in higher memory
--	  consumption due to the allocation of per-task's kernel Vector context.
-+	  This config allows the kernel to run SIMD without explicitly disabling
-+	  preemption. Enabling this config will result in higher memory consumption
-+	  due to the allocation of per-task's kernel Vector context.
- 
- config RISCV_ISA_ZAWRS
- 	bool "Zawrs extension support for more efficient busy waiting"
--- 
-2.49.0
-
+pub fn as_millis(self) -> i64 {
+    #[cfg(CONFIG_ARM)]
+    {
+        // SAFETY: It is always safe to call `ktime_to_ms()` with any value.
+        unsafe { bindings::ktime_to_ms(self.nanos) }
+    }
+    #[cfg(not(CONFIG_ARM))]
+    {
+        self.as_nanos() / NSEC_PER_MSEC
+    }
+}
 
