@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-628403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1001DAA5D5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:42:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84DE6AA5D63
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A9A91797FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 10:42:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E7A47AF322
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 10:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E699D21D583;
-	Thu,  1 May 2025 10:42:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F117405A
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 10:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FEB22256F;
+	Thu,  1 May 2025 10:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="wQf5hrLK"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E343721B180;
+	Thu,  1 May 2025 10:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746096145; cv=none; b=Ttn+akES3KzvRu98egDer/pZ8jFdfb2WRZRH5bM0fKibvJAtJBDOhaBXDDYBf9pa+H/1v62MlMkQ21H3gZ5Psk2PDKA6KJ78k9AxQFfdsVYR6PVefEPcc2/hzWs+BRcXd1moyU5bTL8ednjsus8m17Oy9qUfZqNSU/aZ2IJ9t0M=
+	t=1746096156; cv=none; b=b/nl0O9cdBSc6NeSq4bc2h7qXRV2bUE7Ej4GRMPe4C2VtKp2HFL/taZJ4JxK3WSPr2JZxihg26QI97hYF1N8yOZUlngvYiyqXx9Sq6ly7xst221Ie2jJPfcO2FYaPiZ7PXrbBvOl7xjE+FKjWmrLeyf1DeTstjkC60zQpoMJv8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746096145; c=relaxed/simple;
-	bh=mybtwAHUCt1+RJrPHko4tTrPUoyxkIyYXMT7DGOMCWo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qp39fpJqbhOr8moL+iDERlwdOsX8sQyf0QkJIm9VqksBcftV1FBpbwJ9Ydr67ilasphrJVMT5tBIY4xd/1k+a/PJlnPgkXTZsntHkyrPuSA3m6yJ1THPC/A7Xp6WCX1OX4Pm1itujYgSV4oLsk8dVeMdZc+DtHi39Q/0LvvTJXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA08B106F;
-	Thu,  1 May 2025 03:42:15 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E776B3F673;
-	Thu,  1 May 2025 03:42:21 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH] coresight: etm4x: Remove redundant claim register setting
-Date: Thu,  1 May 2025 11:42:16 +0100
-Message-Id: <20250501104216.2375126-1-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746096156; c=relaxed/simple;
+	bh=4cznTst+qMqAAsGv1y6jRbf7QjInPMGR/6V/AHkDLBc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GV2F+UylHRZaRD89Ip/3p4ZAnVMvWmKmAP5MTaltMR/S44orvAjfrJ4RsU8cO7VQ7s8hEYtN0yTlokd/c/eBD+gIUTQ6TBhOFVkWQCAzCUATSsknV8vrz7I9jkigK1ryAiMk8JMP5Scrg6CpMvHtK1UK1uRjKLWNdUNSKGGUt6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=wQf5hrLK; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=4cznTst+qMqAAsGv1y6jRbf7QjInPMGR/6V/AHkDLBc=; b=wQf5hrLKogjFIn7iu54HIj9gVV
+	B8l6U698R3Z1PpmjNHnCOs7AHTHCUQU29vUSVT1KOK/4SLCNUvM8yFwuo+MRLwmVbNNZG/TkjB5MT
+	G8isND8Nw+40ArVtlNxt6e4DJYLxTTagx36EsSSIKtBbCG7aQH42uqyI115Y2my0QErlEeq38/Pyp
+	c8s5d8VYOLpN65Ohk64s17csO+DoGYaG5dm/EX4jKA7109NbUb9i5OqgbIfF+eJh9+FxqIyfSVDfv
+	1Md7ZCJc1guNuhA4XrirQWWs20UzOmpFMOhM+aUiGsLHSrTx13UR/BNtNnzNiR1X7DGkLj04kJ0/D
+	8mGK8paw==;
+Received: from i53875bbc.versanet.de ([83.135.91.188] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uARMx-0007pM-5S; Thu, 01 May 2025 12:42:19 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject:
+ Re: [PATCH v2] dt-bindings: phy: rockchip: Convert RK3399 Type-C PHY to
+ schema
+Date: Thu, 01 May 2025 12:42:17 +0200
+Message-ID: <3149284.mvXUDI8C0e@phil>
+In-Reply-To: <20250416202419.3836688-1-robh@kernel.org>
+References: <20250416202419.3836688-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-The claim register is set twice in the restore flow; remove the
-duplicate operation.
+Am Mittwoch, 16. April 2025, 22:24:17 Mitteleurop=C3=A4ische Sommerzeit sch=
+rieb Rob Herring (Arm):
+> Convert the Rockchip RK3399 Type-C PHY to DT schema format. Add the
+> missing "power-domains" property and "port" and "orientation-switch"
+> properties in the child nodes.
+>=20
+> Omit the previously deprecated properties as they aren't used anywhere.
+>=20
+> Drop the 2nd example which was pretty much identical to the 1st example.
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- drivers/hwtracing/coresight/coresight-etm4x-core.c | 2 --
- 1 file changed, 2 deletions(-)
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 5c20ed4cf4ed..228317991ec2 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -1958,8 +1958,6 @@ static void __etm4_cpu_restore(struct etmv4_drvdata *drvdata)
- 	if (drvdata->numvmidc > 4)
- 		etm4x_relaxed_write32(csa, state->trcvmidcctlr0, TRCVMIDCCTLR1);
- 
--	etm4x_relaxed_write32(csa, state->trcclaimset, TRCCLAIMSET);
--
- 	if (!drvdata->skip_power_up)
- 		etm4x_relaxed_write32(csa, state->trcpdcr, TRCPDCR);
- 
--- 
-2.34.1
 
 
