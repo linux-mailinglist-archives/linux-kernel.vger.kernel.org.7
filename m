@@ -1,108 +1,202 @@
-Return-Path: <linux-kernel+bounces-628177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC60AA59F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 05:32:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB412AA59FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 05:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7D81C02AA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:32:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D09DE7B2E7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D8A22FDE2;
-	Thu,  1 May 2025 03:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC77322D7BF;
+	Thu,  1 May 2025 03:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Cq5CnQfu"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ri9hYZns"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81314C80;
-	Thu,  1 May 2025 03:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996DC4C80
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 03:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746070342; cv=none; b=oUgdpqxUH3w8/Bvp04HZqB2vOWCexAr2mgiH73CXkMu9nwIMQZkuQT2HR0/Qq8rV4mFq4s7ZQfKO9SVDIXWn+0L9v0H0GKY/KvHx9o8n3syRAQeM1bwqfIPLjJ1i5if7OfGU+kYY0lo2r2CaW2dz9YyT3eNoCiOAx3SgxTQSE5E=
+	t=1746070599; cv=none; b=IhDwepECteHgKCSgz+vU+AyZe7nuQkgJqHQcLTNjWeVLsjfLl8teC2kzrIoxTj5eeqmqG8UKBm8ybrL5y7dwp24ILOeUFAZVHS2fhHvFwb/Z6hf3pI+NOFrsB23sum6AW1QMoohWJakamcIyDa5x/XL5Dg5b0b6+lsV2dJWyGbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746070342; c=relaxed/simple;
-	bh=fRMZdEm7fOJ8v4QMbXUj8vea++1ipKTKHFyioNAwYaw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=g6MQ8LVDfaOgm/TSzMNveFKiDlVwGiuQJwcDZwc0NLeS3AAWTA4PNHdOGFlvi+Dsp4jivWgzB3K9+5TTZ3oFfhOetDX89hP7Tv2cfQholjVdcc2TnPavjnqWRMHyXlzAgOF6txjZ0rzOqmxElVXv1Od5PBLaWPXuMiI2ZtQA8CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Cq5CnQfu reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5413W3Ga1206913
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 30 Apr 2025 20:32:04 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5413W3Ga1206913
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1746070325;
-	bh=wZ8hCQkM3wsEnq2HUgkkQULMcmqkfBTaRw1XvFt2KG4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Cq5CnQfumMQgV/QuJlPOpMFFl3/hdCSTtri7CsWNwhcJ78uojh9NbSgAJPCeA5CCi
-	 kzL0HT7n4URyLjbruVPu/4HLsSkEsmpdiSg9gg7H+CQ+Fz8ghHX3WcINt3y3/SnoLz
-	 gzIQZrq/S1ru3Wb+nQMlHk8ynljGXBi2xcchb4uv+UryTVux1VIoziPxS9g/iYt/TS
-	 pxjT+Z7UZeyEWMj84CTHl1ABDIie/2+IGzJFs7topZwUZiCZNzJhqPouYyEfNs65wl
-	 KwqjRGbO6xjeHrbYaTnyLdx7Hl1FdLip3zqj1BSeNJ/koUkur53dJFz6YBdofU2VOD
-	 esZ+xdGZIuyjQ==
-Date: Wed, 30 Apr 2025 20:32:03 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-CC: "Theodore Ts'o" <tytso@mit.edu>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAHk-=wgwuu5Yp0Y-t_U6MoeKmDbJ-Y+0e+MoQi7pkGw2Eu9BzQ@mail.gmail.com>
-References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip> <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com> <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp> <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com> <20250425195910.GA1018738@mit.edu> <d87f7b76-8a53-4023-81e2-5d257c90acc2@zytor.com> <CAHk-=wgwuu5Yp0Y-t_U6MoeKmDbJ-Y+0e+MoQi7pkGw2Eu9BzQ@mail.gmail.com>
-Message-ID: <114E260B-7AC4-4F5D-BBC4-60036CC7188F@zytor.com>
+	s=arc-20240116; t=1746070599; c=relaxed/simple;
+	bh=jOUm0TGjHvVgOeTlX7WUSROohi02FDP2MJVQZDEyK9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lN7YzwO1O7clvnSN5lHKu5azbmXGLT+icPzgA6lYyQXDsUjE5ws/8RBcy84SPEI01ygZNCP2mHB3Odd6pglfdQF+e2rD0TSnSphPM66Fnt0LiCayc+kzsv2NqAPwM8/1+KeVEKja1nr7mrOZIbP0+yy9o35fpDNTvUZlS8txyFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ri9hYZns; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746070596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WTFtgQvUStCLWm58c+Cl1OhMJYhsO+XdoCxoo3JcEgE=;
+	b=Ri9hYZnsRNPVCrOEfP7RpmnPQTJnbE5J0To22oO20KNW6ZgVsvO2eLgCL4WwUz0WNk3jsQ
+	oo5Sg/WmgIbb5jYQt2gEXWzOiLp3K89CuLgzrmLlu+YzEoqye73dhE8wAqcGGZ1UOYy7ok
+	GuBAYEyf5bGEmNnwjh/yRoue2ytXIR0=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-294-v5otuVycN4GLe6oi1ab-gw-1; Wed, 30 Apr 2025 23:36:35 -0400
+X-MC-Unique: v5otuVycN4GLe6oi1ab-gw-1
+X-Mimecast-MFC-AGG-ID: v5otuVycN4GLe6oi1ab-gw_1746070594
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2241ae15dcbso6171355ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 20:36:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746070594; x=1746675394;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WTFtgQvUStCLWm58c+Cl1OhMJYhsO+XdoCxoo3JcEgE=;
+        b=MR7HEGlxiGYqDFCfMtcoGdOPzzzPaYK5gJBcQy6WHAsxz2OlRwXmABromAy5AKLw25
+         Mlx+dKGlTBdPr85TLcDyiTxAxBQiy3ZmJqUjBncTKdr891dWJYetX2lDzl5nyK4z4KuM
+         jXHU8QXRnYdYfDxctG2zEg5aR5RjzcRJhfRFC1/pszs09suJO51BeCnxSsyv2y7V3c9z
+         CzBMMyEYDZlYQkNDQb/XPuJ3HznIFI5S1FEE9EHWy4gVog0ms7H+y4FTvuJn8CCzeQ4/
+         635kO1EdMp6JlI3FD8dkj3Uv5bIZ91zTE3kVEGWbjt8LW2ZzuqSso6n4yQgjqDV7hDUG
+         WXKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw66nwEyKUVOMyYBiFFSiFElAjYaMWea9Ax4Ha55L9U5aCKf80FSErd/B4pAwECh2sOTrhvU+R3cjcymk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysjo7TNCXpbrWMHAsVSDq4rVDA6FwVKakrvy2Ho/ouHu2AJVoS
+	tcE4SSJiP7yiAtU/uwg5LxRYCpC7tSyhUZFW0U5vBvQqtknd0cpdz7hdnEY7rF/PnEJM8Yl+sHP
+	nSb7sEls/LwVQv3WCdePcaC3X22pITPympkLYWDIxPCKzqmTA1AMGFTqse3BPrA==
+X-Gm-Gg: ASbGnct6z0EGkSFfbe4+w+HgLAmx8grfVSx47Sr1C9CzS17rt1qhZp9ZJP/hM+J5FYm
+	HT7SpQqW1DMoLTPjOm8+Y39owXFW9nT2H7Vi2zINhpZQmUHPNgN8UnK7dXDwgYpD5F4CoTUuWKD
+	dyiqys3doRJxPEwxqZQh2zJ+YWf9ZOHfQ6LbpljND4WdsWAugq6bB/FiDKpaJcsxZb+7EnPThOv
+	p4CXTSDwpirHvrNsqJ1iqwiYG3blF25C8UnapOOi1Zdd+DcnO89VAXcyBwVCkRJiqBPA1bPxT6j
+	KZshf4qoURzx
+X-Received: by 2002:a17:902:f689:b0:21f:564:80a4 with SMTP id d9443c01a7336-22df5821f58mr76534835ad.33.1746070594074;
+        Wed, 30 Apr 2025 20:36:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRVQ709s9NlHNG/57ZQ0bX3xBINvQEcZ7cw6X19Wk71uY6m4FTQDBhudqbvsTzqwNROwGOtQ==
+X-Received: by 2002:a17:902:f689:b0:21f:564:80a4 with SMTP id d9443c01a7336-22df5821f58mr76534535ad.33.1746070593712;
+        Wed, 30 Apr 2025 20:36:33 -0700 (PDT)
+Received: from [192.168.68.51] ([180.233.125.65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5101636sm130469695ad.180.2025.04.30.20.36.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Apr 2025 20:36:33 -0700 (PDT)
+Message-ID: <19ec5533-ee10-4670-a9fd-da1345a6946a@redhat.com>
+Date: Thu, 1 May 2025 13:36:24 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 34/43] arm64: RME: Propagate number of breakpoints and
+ watchpoints to userspace
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250416134208.383984-1-steven.price@arm.com>
+ <20250416134208.383984-35-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250416134208.383984-35-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On April 30, 2025 8:12:20 PM PDT, Linus Torvalds <torvalds@linux-foundation=
-=2Eorg> wrote:
->On Wed, 30 Apr 2025 at 19:48, H=2E Peter Anvin <hpa@zytor=2Ecom> wrote:
->>
->> It is worth noting that Microsoft has basically declared their
->> "recommended" case folding (upcase) table to be permanently frozen (for
->> new filesystem instances in the case where they use an on-disk
->> translation table created at format time=2E)  As far as I know they hav=
-e
->> never supported anything other than 1:1 conversion of BMP code points,
->> nor normalization=2E
->
->So no crazy '=C3=9F' matches 'ss' kind of thing? (And yes, afaik that's
->technically wrong even in German, but afaik at least sorts the same in
->some locales)=2E
->
->Because yes, if MS basically does a 1:1 unicode translation with a
->fixed table, that is not only "simpler", I think it's what we should
->strive for=2E
->
->Because I think the *only* valid reason for case insensitive
->filesystems is "backwards compatibility", and given that, it's
->_particularly_ stupid to then do anything more complicated and broken
->than the thing you're trying to be compatible with=2E
->
->I hope to everything holy that nobody ever wants to be compatible with
->the absolute garbage that is the OSX HFS model=2E
->
->Because the whole "let's actively corrupt names into something that is
->almost, but not exactly, NFD" stuff is just some next-level evil
->stuff=2E
->
->            Linus
->
+On 4/16/25 11:41 PM, Steven Price wrote:
+> From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> 
+> The RMM describes the maximum number of BPs/WPs available to the guest
+> in the Feature Register 0. Propagate those numbers into ID_AA64DFR0_EL1,
+> which is visible to userspace. A VMM needs this information in order to
+> set up realm parameters.
+> 
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>   arch/arm64/include/asm/kvm_rme.h |  2 ++
+>   arch/arm64/kvm/rme.c             | 22 ++++++++++++++++++++++
+>   arch/arm64/kvm/sys_regs.c        |  2 +-
+>   3 files changed, 25 insertions(+), 1 deletion(-)
+> 
 
-I suspect the NFD bit in HFS comes from the use of decomposed characters i=
-n the 8-bit character systems of MacOS Classic=2E
+If I don't miss anything, it's not enough to apply the filter on reading and
+resetting path where sanitise_id_aa64dfr0_el1() is called. id_aa64dfr0_el1
+is writable and it's possible that QEMU modifies its value. Afterwards, the
+register is read from guest kernel, which will be trapped to host and the
+modified value is returned, without this filter applied. So I think the same
+filter need to be applied to the write path originated from QEMU.
+
+Thanks,
+Gavin
+
+> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
+> index f786fd978cf6..09cbb61816f3 100644
+> --- a/arch/arm64/include/asm/kvm_rme.h
+> +++ b/arch/arm64/include/asm/kvm_rme.h
+> @@ -94,6 +94,8 @@ void kvm_init_rme(void);
+>   u32 kvm_realm_ipa_limit(void);
+>   u32 kvm_realm_vgic_nr_lr(void);
+>   
+> +u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val);
+> +
+>   bool kvm_rme_supports_sve(void);
+>   
+>   int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap);
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index 297b13ef1729..0c358ce0a7a1 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
+> @@ -87,6 +87,28 @@ u32 kvm_realm_vgic_nr_lr(void)
+>   	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS);
+>   }
+>   
+> +u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val)
+> +{
+> +	u32 bps = u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_NUM_BPS);
+> +	u32 wps = u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_NUM_WPS);
+> +	u32 ctx_cmps;
+> +
+> +	if (!kvm_is_realm(vcpu->kvm))
+> +		return val;
+> +
+> +	/* Ensure CTX_CMPs is still valid */
+> +	ctx_cmps = FIELD_GET(ID_AA64DFR0_EL1_CTX_CMPs, val);
+> +	ctx_cmps = min(bps, ctx_cmps);
+> +
+> +	val &= ~(ID_AA64DFR0_EL1_BRPs_MASK | ID_AA64DFR0_EL1_WRPs_MASK |
+> +		 ID_AA64DFR0_EL1_CTX_CMPs);
+> +	val |= FIELD_PREP(ID_AA64DFR0_EL1_BRPs_MASK, bps) |
+> +	       FIELD_PREP(ID_AA64DFR0_EL1_WRPs_MASK, wps) |
+> +	       FIELD_PREP(ID_AA64DFR0_EL1_CTX_CMPs, ctx_cmps);
+> +
+> +	return val;
+> +}
+> +
+>   static int get_start_level(struct realm *realm)
+>   {
+>   	return 4 - ((realm->ia_bits - 8) / (RMM_PAGE_SHIFT - 3));
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index de7fe024dbff..36e22ed84e7e 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -1844,7 +1844,7 @@ static u64 sanitise_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val)
+>   	/* Hide BRBE from guests */
+>   	val &= ~ID_AA64DFR0_EL1_BRBE_MASK;
+>   
+> -	return val;
+> +	return kvm_realm_reset_id_aa64dfr0_el1(vcpu, val);
+>   }
+>   
+>   static int set_id_aa64dfr0_el1(struct kvm_vcpu *vcpu,
+
 
