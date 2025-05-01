@@ -1,232 +1,203 @@
-Return-Path: <linux-kernel+bounces-628301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B78AA5BF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 10:08:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C3AAA5BF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 10:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258FC3AC6B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 08:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797D83BCC71
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 08:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD4C26988C;
-	Thu,  1 May 2025 08:08:43 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB5426157E;
+	Thu,  1 May 2025 08:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZmgV6rS"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F991E883A
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 08:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738252DC770
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 08:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746086923; cv=none; b=bmM1mn+S6y457RZ0dne/BR0Ef9lbahiR5wojgIKFbxeIXylseEUI4ICOczT0Eni+AGlk2vU8dZBb2Nm1gukT3ab9KqqUqewcl7sRnIbtwf1eXa20vsXI0GFUvvXQkJ5SyZvAh0sycBHmnrf0AwPoL2R1lSTX2cork7g3h3j62YU=
+	t=1746087129; cv=none; b=AFFp2SzzOOfA3g1tAfvWuDsPsci2crygzrhVRV3ks3niI1bgT8CKM0SeyNFkH1RgFGiVXLrcP34w5VSFdVY6G+NdJTeI5QzDylv4hKEAVeBBwRs42NlOmMSPwQ3mn070cuS50T2/sHLsWYi8T3jPGzTlKHSn+lZyCZ/BbgO8F0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746086923; c=relaxed/simple;
-	bh=6CS+mD6fzts1P1fSlYpcm7I0+NU8n7R08zNCC7Fs5SY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H2qiBUt6kJnFehep2DPKidig8IGAb1nIYlQesvOFWlUTEunoG51ygeawNXBBGJJ1ZW7Plpc/Rj7uW/vZELbVzCKzjG7Dwo6ujgxoxPMwoh5CLd3NraphwPJaLyTsC5mCGr8Lz2Sjbmk/2EFxOVwHSmWsQ08l8jaUYPAzmL/Z1Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85e15e32379so61458439f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 01:08:41 -0700 (PDT)
+	s=arc-20240116; t=1746087129; c=relaxed/simple;
+	bh=IxS62K99bE/tXZV+pK9TrCIkzaA+cl/dtwsRmmVy2uM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+bUNCmUyjb03r2SLrMANjvsmV/QyDKDcPb2bNM4CfJW7/zKtLvGGHbWs6+8mfOJIfCp/rEsdfbgKsFkqBXS5xSoKaT9Z/gQHEaJHCNF/kP3+V2HrKhk6niKqbonoszHVLmuv8hGNCp1UKIoKsw32fwVLBNKOgEvkUlBPuvtNdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZmgV6rS; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so439492f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 01:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746087125; x=1746691925; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dFcXTX8spCHSXrXH6Pgc6qh5jLURBCENnqr3E6Qi8BA=;
+        b=FZmgV6rSHl0WlM0YHdW/cqr5w+rPE2LGvcCMcCEWPRyI0ELjafUem7Xp8neBZwg1Vg
+         ns+hrDeNZa4LI8ZcfrxBRSJcvLnEEkZzUb0+dEUJ+fpKdzEY5oFDsg7beCQC5hr1Yv9T
+         xFiZZhIT6yiT5ibuBTVB8GYlh0XaQBx/GikFLXEgNiFWwaZM/97zd8Zg9fxCKJIXsFrw
+         ImuVbI4qmm1E6g/+OKBNAkPCqvj2HMOWniaw2VOFP7uMHMtP426tIt5/rxg4R39w+5sH
+         REn1tDKoKgdDK6OQyJv+9mK6QU0QTDTQyHip1pcRsELAAf1C9Pjg+b5THfFiBi7dA8Oh
+         Qnsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746086920; x=1746691720;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ql6YYBERpJOsbTEQcpqxxcK3lPb1peFfvwvGY2f/FNg=;
-        b=fLIwvx+F1pkkscu2+5dYl1Y8SwN64PeHbuknFJud/E5tDvq9Zgj05jMX7yZRghMd4W
-         QwbA5KMoZJeWO0wCtijSaxe22giHQAjHSuEEsrMvpYoTk6TrLLR6ezZssmYcoVo05v56
-         tLxrtDgldkCJyS4En4eQdRaoTap3yZQ7jpJhJEe/Yn5Wj8kx6m4d/WJEyszkDn88tObR
-         OPeBIhk9sZ3hA622p46WNJ1kSWbXrLmUmFHKpL7Sj+t3YrHbCWE96a4F9UiBTx1lNyRH
-         aF2KiJeEcQ1CbwYveuFwNlw/9TSZCvfbezpoBj0wS8Us8GYtdC2ugr1LTrimrwI+6kp2
-         nlOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXljp97DL1RGKdRjOjxFHlUWaAJB4S5qZRkS4bLQAifmh1Vyk+1qNYVKgMJCBAanzrepNRtPdp+XRfSofw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbh34fOvtTV5hNA8VICkOuMEbmikvLusBSdMrG3vHqBLYauCAi
-	P+MbZrmQILBa1EwfyHKo/DRToURmh46s6olXGAT5T34LObOhVg+AADASnLk41mj7iXjOJHKMOJ3
-	IsmIiq+26VR7j65v32vRWuyfyR9TMRCymqP0PfuWcHW8LnDqXyqYcb00=
-X-Google-Smtp-Source: AGHT+IH8lE3jRxC6jxsU8/g0jLpBmYKNJ8KGjxoa0WYAUZ+FEIPCW0sZxUjTbQ0WnSamP6a8kdSvn0FU1t+ddlOVRJigbAhhmlDa
+        d=1e100.net; s=20230601; t=1746087125; x=1746691925;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dFcXTX8spCHSXrXH6Pgc6qh5jLURBCENnqr3E6Qi8BA=;
+        b=ivKQKXAH7bPRgYoFod3QEyEX9ldO3Ce5s9M3SbBqGbIagwyYDpMofFZHHqfiFzqpfH
+         OagX2kvxGdOMO/dVtFV9or0URvsYsmXRlNakaKkDRIZHFEaydyK6hoc6nSC3bjLjJ4zv
+         X/pW0n3dN78pmecq4W5utoUSnohsIhmMsIEADTYutwv1AR3bV5/YdjmwteOxisPwNdM/
+         rkmh7AIC/KvhldZXyleljd34V76gZrD99sE7Fo1ZdMGOvcQvbHPZvFMxDEnG6cwWRMID
+         SpcoqtMhv/8tR6zXOPYn+6rpyuGo1spkZSY9nzCynpY86Yn1d00ZtU6BXIHoRKn6w9At
+         e0Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWq9uaGiZd6qCEaEE78C3zHI1ZRcKCZ82BR54Q0erQYlWHpxFiBmSEZ6t5amGKzgzLY770lDfC1gN++0vs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa8BLDp5Gjxr+laUaBYSEpy4ZVmG1cVDUnFEs1OBr/4FQodzb9
+	KHTMNmUXqDFyn/LGOnLeQc9RIYHk4BVsGjnIzdObnrvZcGbhXEq1
+X-Gm-Gg: ASbGnctD9nZfF2x3s61VLnLP+24GvfBdRNs19unKX/s80zhpVefe1r06f/KyzrBRzgI
+	Vy96aHiveDx3ZH6mnv3xXcd0gZ9g12kBzw4GuJQ0fYqEd9MqHfhg3PIuQQW2TkeMZ351rKQsq9Z
+	4KjRfFgdqjM3L3nH0f88AtFwpvNzB4EfuEVYUYd6NXl+z3g46yiGvVs9YUCdb0x8xBZ6ZaId0dz
+	MDfOYzArjHE5IQmoh/2YvAj51fzO56dX/wJYD69jbQgWOeuwHP3Ptv8UfXmGmQBqeBvzZGL0kiQ
+	YUBOj+E/yh8GujVJ0D1qowz9SGTJ4hke2NxBdNwyC+/28opa9BV7gD0BYXBW+WYhgNMSMUV+6g=
+	=
+X-Google-Smtp-Source: AGHT+IEmZq7EmvWiYmlEHOv6ulsRLrFfVbnN+gN6GVBc96hwKOkN1xpjR8St45L1drCZHHDFEjh/6w==
+X-Received: by 2002:a5d:47c5:0:b0:3a0:8acc:1df4 with SMTP id ffacd0b85a97d-3a094044aa7mr1306480f8f.7.1746087124562;
+        Thu, 01 May 2025 01:12:04 -0700 (PDT)
+Received: from toolbox (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a095a4c1basm187938f8f.59.2025.05.01.01.12.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 01:12:04 -0700 (PDT)
+Date: Thu, 1 May 2025 10:12:02 +0200
+From: Max Krummenacher <max.oss.09@gmail.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: "Kumar, Udit" <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com,
+	dri-devel@lists.freedesktop.org, tomi.valkeinen@ideasonboard.com,
+	jonas@kwiboo.se, jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] drm/bridge: ti-sn65dsi86: Enable HPD functionality
+Message-ID: <aBMs0ubSip7MAtMQ@toolbox>
+References: <20250424105432.255309-1-j-choudhary@ti.com>
+ <3f44ec0b-216c-4534-a6de-7b17929cb9e1@ti.com>
+ <CAD=FV=WytPZCF-jcWFgXoAOoXOV61bw2_ftJbdbWZviHQqap5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:274b:b0:864:68b0:60b3 with SMTP id
- ca18e2360f4ac-8649805684bmr700099839f.12.1746086920444; Thu, 01 May 2025
- 01:08:40 -0700 (PDT)
-Date: Thu, 01 May 2025 01:08:40 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68132c08.050a0220.14dd7d.0007.GAE@google.com>
-Subject: [syzbot] [netfs?] INFO: task hung in anon_pipe_write
-From: syzbot <syzbot+ef2c1c404cbcbcc66453@syzkaller.appspotmail.com>
-To: brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
-	idryomov@gmail.com, jack@suse.cz, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, netfs@lists.linux.dev, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=WytPZCF-jcWFgXoAOoXOV61bw2_ftJbdbWZviHQqap5w@mail.gmail.com>
 
-Hello,
+On Mon, Apr 28, 2025 at 02:15:12PM -0700, Doug Anderson wrote:
+Hello Jayesh,
 
-syzbot found the following issue on:
+> Hi,
+> 
+> On Thu, Apr 24, 2025 at 6:32 PM Kumar, Udit <u-kumar1@ti.com> wrote:
+> >
+> > Hello Jayesh,
+> >
+> > On 4/24/2025 4:24 PM, Jayesh Choudhary wrote:
+> > > For TI SoC J784S4, the display pipeline looks like:
+> > > TIDSS -> CDNS-DSI -> SN65DSI86 -> DisplayConnector -> DisplaySink
+> > > This requires HPD to detect connection form the connector.
+> > > By default, the HPD is disabled for eDP. So enable it conditionally
+> > > based on a new flag 'keep-hpd' as mentioned in the comments in the
+> > > driver.
+> > >
+> > > Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> > > ---
+> > >
+> > > Hello All,
+> > >
+> > > Sending this RFC patch to get some thoughts on hpd for sn65dsi86.
+> > >
+> > > Now that we have a usecase for hpd in sn65dsi86, I wanted to get
+> > > some comments on this approach to "NOT DISABLE" hpd in the bridge.
+> > > As the driver considers the eDP case, it disables hpd by default.
+> > > So I have added another property in the binding for keeping hpd
+> > > functionality (the name used is still debatable) and used it in
+> > > the driver.
+> > >
+> > > Is this approach okay?
+> > > Also should this have a "Fixes" tag?
+> >
+> > >
+> > >   .../bindings/display/bridge/ti,sn65dsi86.yaml      |  6 ++++++
+> > >   drivers/gpu/drm/bridge/ti-sn65dsi86.c              | 14 +++++++++-----
+> > >   2 files changed, 15 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
+> > > index c93878b6d718..5948be612849 100644
+> > > --- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
+> > > +++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
+> > > @@ -34,6 +34,12 @@ properties:
+> > >         Set if the HPD line on the bridge isn't hooked up to anything or is
+> > >         otherwise unusable.
+> > >
+> > > +  keep-hpd:
+> > > +    type: boolean
+> > > +    description:
+> > > +      HPD is disabled in the bridge by default. Set it if HPD line makes
+> > > +      sense and is used.
+> > > +
+> >
+> > Here are my suggestions
+> >
+> > 1) use interrupt in binding as optional instead of keep-hpd
+> >
+> > 2) use interrupt field (if present to enable of disable HPD functions in
+> > driver)
+> 
+> Officially we've already got a "no-hpd" specified in the device tree.
+> You're supposed to be specifying this if HPD isn't hooked up. It would
+> be best if we could use that property if possible. If we think that
+> using the lack of "no-hpd" will break someone then we should be
+> explicit about that.
+> 
+> I'd also note that unless you've figured out a way to turn off the
+> awful debouncing that ti-sn65dsi86 does on HPD that using HPD (at
+> least for initial panel power on) only really makes sense for when
+> we're using ti-sn65dsi86 in "DP" mode. For initial eDP panel poweron
+> it was almost always faster to just wait the maximum delay of the
+> panel than to wait for ti-sn65dsi86 to finally report that HPD was
+> asserted.
+> 
+> I could also note that it's possible to use the ti-sn65dsi86's "HPD"
+> detection even if the interrupt isn't hooked up, so I don't totally
+> agree with Udit's suggestion.
+> 
+> I guess the summary of my thoughts then: If you want to enable HPD for
+> eDP, please explain why in the commit message. Are you using this to
+> detect "panel interrupt"? Somehow using it for PSR? Using it during
+> panel power on? If using it for panel power on, have you confirmed
+> that this has a benefit compared to using the panel's maximum delay?
+> 
+> -Doug
 
-HEAD commit:    5bc1018675ec Merge tag 'pci-v6.15-fixes-3' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a01270580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f5bd2a76d9d0b4e
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef2c1c404cbcbcc66453
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a130d4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12944374580000
+I'm working on a similar issue where the bridge is used to provide a
+connector to a display port monitor and hot pluging would be needed.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/33f182866e0b/disk-5bc10186.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/103760a3e862/vmlinux-5bc10186.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9954dc25ed1d/bzImage-5bc10186.xz
+Related, but not the issue here: We have two display outputs and the
+reported connected display without an actual monitor to report a
+video mode then confuses the system to also not use the second display.
 
-The issue was bisected to:
+As I already have a solution which fixes my issue, hopefully not
+affecting the eDP use case a proposed that here:
 
-commit 7ba167c4c73ed96eb002c98a9d7d49317dfb0191
-Author: David Howells <dhowells@redhat.com>
-Date:   Mon Mar 18 16:57:31 2024 +0000
+https://lore.kernel.org/all/20250501074805.3069311-1-max.oss.09@gmail.com/
 
-    netfs: Switch to using unsigned long long rather than loff_t
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=112ba374580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=132ba374580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=152ba374580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ef2c1c404cbcbcc66453@syzkaller.appspotmail.com
-Fixes: 7ba167c4c73e ("netfs: Switch to using unsigned long long rather than loff_t")
-
-INFO: task kworker/0:0:9 blocked for more than 143 seconds.
-      Not tainted 6.15.0-rc3-syzkaller-00342-g5bc1018675ec #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:0     state:D stack:28184 pid:9     tgid:9     ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: events p9_write_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x116f/0x5de0 kernel/sched/core.c:6767
- __schedule_loop kernel/sched/core.c:6845 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6860
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6917
- __mutex_lock_common kernel/locking/mutex.c:678 [inline]
- __mutex_lock+0x6c7/0xb90 kernel/locking/mutex.c:746
- anon_pipe_write+0x15d/0x1a70 fs/pipe.c:459
- __kernel_write_iter+0x317/0xa90 fs/read_write.c:617
- __kernel_write fs/read_write.c:637 [inline]
- kernel_write fs/read_write.c:658 [inline]
- kernel_write+0x1f4/0x6c0 fs/read_write.c:648
- p9_fd_write net/9p/trans_fd.c:434 [inline]
- p9_write_work+0x258/0xc10 net/9p/trans_fd.c:485
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Showing all locks held in the system:
-3 locks held by kworker/0:0/9:
- #0: ffff88801b478d48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x12a2/0x1b70 kernel/workqueue.c:3213
- #1: ffffc900000e7d18 ((work_completion)(&m->wq)){+.+.}-{0:0}, at: process_one_work+0x929/0x1b70 kernel/workqueue.c:3214
- #2: ffff888021730068 (&pipe->mutex){+.+.}-{4:4}, at: anon_pipe_write+0x15d/0x1a70 fs/pipe.c:459
-1 lock held by khungtaskd/31:
- #0: ffffffff8e3bf5c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e3bf5c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e3bf5c0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6764
-2 locks held by getty/5571:
- #0: ffff8880323de0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000333b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
-2 locks held by syz-executor149/5821:
- #0: ffff888021730068 (&pipe->mutex){+.+.}-{4:4}, at: anon_pipe_write+0x15d/0x1a70 fs/pipe.c:459
- #1: ffff88807f568958 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:922 [inline]
- #1: ffff88807f568958 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_fault+0x625/0x2740 mm/filemap.c:3410
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.15.0-rc3-syzkaller-00342-g5bc1018675ec #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:274 [inline]
- watchdog+0xf70/0x12c0 kernel/hung_task.c:437
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.15.0-rc3-syzkaller-00342-g5bc1018675ec #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
-RIP: 0010:hlock_class+0x13/0x70 kernel/locking/lockdep.c:233
-Code: 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f b7 47 20 66 25 ff 1f 0f b7 c0 48 0f a3 05 3d cd 12 14 <73> 15 48 8d 04 80 48 8d 04 80 48 8d 04 c5 60 6f aa 95 c3 cc cc cc
-RSP: 0018:ffffc90000197a30 EFLAGS: 00000003
-RAX: 000000000000006d RBX: ffff88801dad2f30 RCX: 0000000000000000
-RDX: 0000000000040000 RSI: 0000000000000000 RDI: ffff88801dad2f30
-RBP: ffff88801dad2f30 R08: 0000000000080000 R09: 0000000000000001
-R10: 0000000000000000 R11: ffff8880b8527858 R12: 0000000000000001
-R13: 0000000000000002 R14: ffff88801dad2440 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888124ae4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005650ce575028 CR3: 000000000e180000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- check_wait_context kernel/locking/lockdep.c:4856 [inline]
- __lock_acquire+0x1f9/0x1ba0 kernel/locking/lockdep.c:5185
- lock_acquire kernel/locking/lockdep.c:5866 [inline]
- lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5823
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x3a/0x60 kernel/locking/spinlock.c:162
- hrtimer_get_next_event+0x5f/0x260 kernel/time/hrtimer.c:1530
- cmp_next_hrtimer_event kernel/time/timer.c:1976 [inline]
- __get_next_timer_interrupt+0x43e/0x810 kernel/time/timer.c:2318
- tick_nohz_next_event+0x309/0x400 kernel/time/tick-sched.c:922
- tick_nohz_idle_stop_tick+0x7d3/0xef0 kernel/time/tick-sched.c:1218
- cpuidle_idle_call kernel/sched/idle.c:183 [inline]
- do_idle+0x38c/0x510 kernel/sched/idle.c:325
- cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:423
- start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
- common_startup_64+0x13e/0x148
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Regards,
+Max
 
