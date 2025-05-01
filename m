@@ -1,139 +1,242 @@
-Return-Path: <linux-kernel+bounces-628432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E87AA5DAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FEDAA5DB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E83F7B479D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:15:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B6B64C0F46
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F6B22425C;
-	Thu,  1 May 2025 11:16:40 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E9C222591;
+	Thu,  1 May 2025 11:17:33 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400982E401
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 11:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243BC1E2602
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 11:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746098199; cv=none; b=NEnPxkc+CCvCkS6PKCa5+YchP/BynPnf8pzerGv9mvLCBKu5ks75FrWdW+rB1PtKk0F6OlareJSKuSvF5WusunE30nHAXc/IIr3TxRwE/k0bQDvsXWyxyZIgAdUiAvSO2Wo5pTnmhmsn2unQ8YFno6XSex3fTwLYOmKNofxTjf4=
+	t=1746098252; cv=none; b=EEbCxVrO8eLTEIqLUvgxFKO2ZB3W+GSpBc1JivAfz/LJ68ZPfmOIaU1BnRT4mzyniBIj6ovagEGatUvZi+Jl4SpCqIp6vHqASvXMV66GD6bFUd838KKGrkQiYjqjUESM6Exx0AcoEyBa0khqVVHHhv1qR6/SxbcUSs+TS2WvdXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746098199; c=relaxed/simple;
-	bh=I++a0t3+Rl8fUzdoS3SV+0OrrhVGilPTQlRtbES/Mrs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=o9Hgw/ZGPjcrlELnhdUgoJ+7FONt8cPNkdr2EoSiD9XGYE0tOuA3vnTYNhPNAKz4Xx1155UZ6U+nzHgS2POv1uaYLwjEdtgMi30u/2oIBkox1FsBgSNwc5qP4RJ2ZbeL9DG5D7+qei2rzyg+032XPTJFaNKl2TpJajESXel8C20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	s=arc-20240116; t=1746098252; c=relaxed/simple;
+	bh=wGOiGyhkiz9Ye/2FJ6DNBeT0LNLI3OjcbeoKmsMkFNg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ovrfZ7k0v2dvMGdhlfD97nB/2S0Cqbef1/lm5K+Anm0/1fggVgkwpdtQJDZ+A/dNjAttzlCq21HjFXiG6Sj+6novk7DyKYPHRTHXf65PUbvkVSIwJGqcoA1DrHRecy6rq4TLGAdCPCaWTegtdkNEesARjbLPFL8YjAs2SelmDT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d43541a706so7330025ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 04:16:37 -0700 (PDT)
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d961b98140so18047425ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 04:17:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746098197; x=1746702997;
+        d=1e100.net; s=20230601; t=1746098250; x=1746703050;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WJLGUG4iLInQ/D3odsfbaIKpUryuvWoS3MpipcaoHQE=;
-        b=fqcJXXpPiQDeyECJzp47rfCMua/SvU1JT84xztSqTZ1NjVVDD1BnTUo8Z+2P8+GXMs
-         i3ePd3bTHsxbnfzsYoPGDHVntgdIZ5o4nUJN3h19KBZ+DnEqTLpALJrpxOGPou0RsYDv
-         vVFckZE4JKnfq2tN/8KBtfGhbkmZEw/v9sXwHQzHCbBv/wgpqACL6WxkIFyGXYmC57TY
-         bq2DYxhly1dTpbG3Zpe4+qo2B1UTb6uYtXIZB8KzvEAtXLEl5noF1zPYv03kE4bHDS59
-         BJDbb467brQC/6iiW9BqEOpm5ZBJE4ZPZlrirfy1MrfQL3uV3qSTPXn0ZBlA1NZIjAxx
-         rNhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwVxVqDt16XHx1xGJQvAhb8j5/yKAna0FCmZ/2tzTWBUspdivn0V40taHSX5OQwmz79LVCz4NwYYpyRNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmwKYNU4yTkfuI9babCiCQen8298eOVpjnkUUPrjOlLdHSiaE0
-	I0dT/CYAYTUdKgIPxgawWsaNkSOJjeB7kaqY+DPiL4mU+dZz626Z71wS8Xs8M3EBa0empbuqzHr
-	U5q87O5EIlPwSCODD+UmB+1hRFKgBaONZOI9pG4nr2s1a+Ct5VUdsSXM=
-X-Google-Smtp-Source: AGHT+IG9K8WOrkufEOH9DrP8lMVAsJtn15VEV17W8fw+GqqGRMkAx/TAFYzoI9XWkt66axHeeciyGXYjbrh8oKDpRa1GaMLE4IpO
+        bh=xImHD0yfyXrdoMc79mLP5OX1O47Lcz17EVKu4gMvCcg=;
+        b=XdCiL7cIcPKTonigO+IwdJMSh4EiEAxV/yYMG8y0aS+kAvmGptC3nE4rq5tr+EPeza
+         fiM2goSyr+gSx5ic54FygvA+imzEsL13aAwdzYBPfNENKNqkzBHiale8gksWb5KGK7hw
+         E/jizMPV5AyoNxgJEtg3cWkAlP3003kzJMm0p2qIzgtVgJMXDDx71B1dEwU42TOshxHN
+         SRUAe5fOVt1KiSP5/aghGEgKOCZTB5/iWwqmMysir6++fyHAEy/rXsZTUOW1dvx+giuQ
+         qUemnH+8Qfnuz9/qUEXdEQtnpcsA1sBjfOYYSAEyz10KlPlS3IlrTCv9oOa4GueCFMDA
+         0nsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXV5W7ZVEmnE7M8XitLTNCmktxFM2EHmBOaehJfrRSc8GVacuXPyEBo0JZiNac4PtYoNCjP7IiBnINjoBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0h1ieyuHJpzaK9lWi3nUswd6iGP3yqSFgfu6JmX4uK1kw6a5A
+	sc9mnKejk0Co58Dzom9Ys325qBK2DF2fjnR888ddCPP+oOyPZ7M3lkDuUfPSy+9Kh9OG337cmQ6
+	juNeNl0Xnli4im+0tyF15RR4QZkgaLYH0LUxg5hcFTTBk9tW3h8l5P0E=
+X-Google-Smtp-Source: AGHT+IFlrUU4y60HWx+K7KsuUp2nROsQin3fLSsqcUJYSnCaUvqRmrvOH7RdTq5XzGlnR6GgXwOYog21+mEjJ8HWDGVE8O51SEGx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2206:b0:3d2:aa73:7b7a with SMTP id
- e9e14a558f8ab-3d9701e4da5mr24991275ab.12.1746098197408; Thu, 01 May 2025
- 04:16:37 -0700 (PDT)
-Date: Thu, 01 May 2025 04:16:37 -0700
+X-Received: by 2002:a05:6e02:1fc5:b0:3d9:4785:3dd5 with SMTP id
+ e9e14a558f8ab-3d96771bbdfmr77663665ab.15.1746098250298; Thu, 01 May 2025
+ 04:17:30 -0700 (PDT)
+Date: Thu, 01 May 2025 04:17:30 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68135815.050a0220.3a872c.000e.GAE@google.com>
-Subject: [syzbot] [net?] upstream test error: KMSAN: uninit-value in mctp_dump_addrinfo
-From: syzbot <syzbot+e76d52dadc089b9d197f@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jk@codeconstruct.com.au, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	matt@codeconstruct.com.au, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <6813584a.050a0220.3a872c.0011.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: suspicious RCU usage in __fib6_update_sernum_upto_root
+From: syzbot <syzbot+8dd1a8ebe4c3793f5aca@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    b4432656b36e Linux 6.15-rc4
+HEAD commit:    b6ea1680d0ac Merge tag 'v6.15-p6' of git://git.kernel.org/..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=173ea374580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f944a52db88df992
-dashboard link: https://syzkaller.appspot.com/bug?extid=e76d52dadc089b9d197f
+console output: https://syzkaller.appspot.com/x/log.txt?x=1457502f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a42a9d552788177b
+dashboard link: https://syzkaller.appspot.com/bug?extid=8dd1a8ebe4c3793f5aca
 compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
 
+Unfortunately, I don't have any reproducer for this issue yet.
+
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/26fcd648d1b5/disk-b4432656.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/25ce9039317e/vmlinux-b4432656.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/387f0baa5e6e/bzImage-b4432656.xz
+disk image: https://storage.googleapis.com/syzbot-assets/8b0865e8a7ea/disk-b6ea1680.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fab387b8c42a/vmlinux-b6ea1680.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bfb50db06aa1/bzImage-b6ea1680.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e76d52dadc089b9d197f@syzkaller.appspotmail.com
+Reported-by: syzbot+8dd1a8ebe4c3793f5aca@syzkaller.appspotmail.com
 
-=====================================================
-BUG: KMSAN: uninit-value in mctp_dump_addrinfo+0x208/0xac0 net/mctp/device.c:128
- mctp_dump_addrinfo+0x208/0xac0 net/mctp/device.c:128
- rtnl_dump_all+0x3ec/0x5b0 net/core/rtnetlink.c:4380
- rtnl_dumpit+0xd5/0x2f0 net/core/rtnetlink.c:6824
- netlink_dump+0x97b/0x1690 net/netlink/af_netlink.c:2309
- __netlink_dump_start+0x716/0xd60 net/netlink/af_netlink.c:2424
- netlink_dump_start include/linux/netlink.h:340 [inline]
- rtnetlink_dump_start net/core/rtnetlink.c:6853 [inline]
- rtnetlink_rcv_msg+0x1262/0x14b0 net/core/rtnetlink.c:6920
- netlink_rcv_skb+0x54a/0x680 net/netlink/af_netlink.c:2534
- rtnetlink_rcv+0x35/0x40 net/core/rtnetlink.c:6982
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0xed5/0x1290 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x330/0x3d0 net/socket.c:727
- __sys_sendto+0x590/0x710 net/socket.c:2180
- __do_sys_sendto net/socket.c:2187 [inline]
- __se_sys_sendto net/socket.c:2183 [inline]
- __x64_sys_sendto+0x130/0x200 net/socket.c:2183
- x64_sys_call+0x3c0b/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+=============================
+WARNING: suspicious RCU usage
+6.15.0-rc4-syzkaller-00042-gb6ea1680d0ac #0 Not tainted
+-----------------------------
+net/ipv6/ip6_fib.c:1351 suspicious rcu_dereference_protected() usage!
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4167 [inline]
- slab_alloc_node mm/slub.c:4210 [inline]
- kmem_cache_alloc_node_noprof+0x818/0xf00 mm/slub.c:4262
- kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:577
- __alloc_skb+0x347/0x7d0 net/core/skbuff.c:668
- alloc_skb include/linux/skbuff.h:1340 [inline]
- netlink_alloc_large_skb+0xa5/0x280 net/netlink/af_netlink.c:1187
- netlink_sendmsg+0xaea/0x1250 net/netlink/af_netlink.c:1858
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x330/0x3d0 net/socket.c:727
- __sys_sendto+0x590/0x710 net/socket.c:2180
- __do_sys_sendto net/socket.c:2187 [inline]
- __se_sys_sendto net/socket.c:2183 [inline]
- __x64_sys_sendto+0x130/0x200 net/socket.c:2183
- x64_sys_call+0x3c0b/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+other info that might help us debug this:
 
-CPU: 0 UID: 0 PID: 5447 Comm: dhcpcd Not tainted 6.15.0-rc4-syzkaller #0 PREEMPT(undef) 
+
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by syz.0.6334/23457:
+ #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+ #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+ #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4064
+ #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: __fib6_clean_all+0x9b/0x380 net/ipv6/ip6_fib.c:2263
+ #2: ffff88807b4a5830 (&tb->tb6_lock){+.-.}-{3:3}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ #2: ffff88807b4a5830 (&tb->tb6_lock){+.-.}-{3:3}, at: __fib6_clean_all+0x1ce/0x380 net/ipv6/ip6_fib.c:2267
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 23457 Comm: syz.0.6334 Not tainted 6.15.0-rc4-syzkaller-00042-gb6ea1680d0ac #0 PREEMPT(full) 
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
-=====================================================
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ lockdep_rcu_suspicious+0x140/0x1d0 kernel/locking/lockdep.c:6865
+ __fib6_update_sernum_upto_root+0x223/0x230 net/ipv6/ip6_fib.c:1350
+ fib6_update_sernum_upto_root+0x125/0x190 net/ipv6/ip6_fib.c:1364
+ fib6_ifup+0x142/0x180 net/ipv6/route.c:4818
+ fib6_clean_node+0x24a/0x590 net/ipv6/ip6_fib.c:2199
+ fib6_walk_continue+0x678/0x910 net/ipv6/ip6_fib.c:2124
+ fib6_walk+0x149/0x290 net/ipv6/ip6_fib.c:2172
+ fib6_clean_tree net/ipv6/ip6_fib.c:2252 [inline]
+ __fib6_clean_all+0x234/0x380 net/ipv6/ip6_fib.c:2268
+ rt6_sync_up+0x128/0x160 net/ipv6/route.c:4837
+ addrconf_notify+0xd55/0x1010 net/ipv6/addrconf.c:3729
+ notifier_call_chain+0x1b3/0x3e0 kernel/notifier.c:85
+ netif_state_change+0x284/0x3a0 net/core/dev.c:1530
+ do_setlink+0x2eb6/0x40d0 net/core/rtnetlink.c:3399
+ rtnl_group_changelink net/core/rtnetlink.c:3783 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3937 [inline]
+ rtnl_newlink+0x149f/0x1c70 net/core/rtnetlink.c:4065
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6955
+ netlink_rcv_skb+0x219/0x490 net/netlink/af_netlink.c:2534
+ netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+ netlink_unicast+0x758/0x8d0 net/netlink/af_netlink.c:1339
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f093758e969
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0938453038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f09377b5fa0 RCX: 00007f093758e969
+RDX: 0000000000000000 RSI: 0000200000000280 RDI: 0000000000000004
+RBP: 00007f0937610ab1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f09377b5fa0 R15: 00007ffeeca2ddc8
+ </TASK>
+
+=============================
+WARNING: suspicious RCU usage
+6.15.0-rc4-syzkaller-00042-gb6ea1680d0ac #0 Not tainted
+-----------------------------
+net/ipv6/ip6_fib.c:1358 suspicious rcu_dereference_protected() usage!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by syz.0.6334/23457:
+ #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+ #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+ #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4064
+ #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: __fib6_clean_all+0x9b/0x380 net/ipv6/ip6_fib.c:2263
+ #2: ffff88807b4a5830 (&tb->tb6_lock){+.-.}-{3:3}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ #2: ffff88807b4a5830 (&tb->tb6_lock){+.-.}-{3:3}, at: __fib6_clean_all+0x1ce/0x380 net/ipv6/ip6_fib.c:2267
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 23457 Comm: syz.0.6334 Not tainted 6.15.0-rc4-syzkaller-00042-gb6ea1680d0ac #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ lockdep_rcu_suspicious+0x140/0x1d0 kernel/locking/lockdep.c:6865
+ __fib6_update_sernum_upto_root+0x18e/0x230 net/ipv6/ip6_fib.c:1357
+ fib6_update_sernum_upto_root+0x125/0x190 net/ipv6/ip6_fib.c:1364
+ fib6_ifup+0x142/0x180 net/ipv6/route.c:4818
+ fib6_clean_node+0x24a/0x590 net/ipv6/ip6_fib.c:2199
+ fib6_walk_continue+0x678/0x910 net/ipv6/ip6_fib.c:2124
+ fib6_walk+0x149/0x290 net/ipv6/ip6_fib.c:2172
+ fib6_clean_tree net/ipv6/ip6_fib.c:2252 [inline]
+ __fib6_clean_all+0x234/0x380 net/ipv6/ip6_fib.c:2268
+ rt6_sync_up+0x128/0x160 net/ipv6/route.c:4837
+ addrconf_notify+0xd55/0x1010 net/ipv6/addrconf.c:3729
+ notifier_call_chain+0x1b3/0x3e0 kernel/notifier.c:85
+ netif_state_change+0x284/0x3a0 net/core/dev.c:1530
+ do_setlink+0x2eb6/0x40d0 net/core/rtnetlink.c:3399
+ rtnl_group_changelink net/core/rtnetlink.c:3783 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3937 [inline]
+ rtnl_newlink+0x149f/0x1c70 net/core/rtnetlink.c:4065
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6955
+ netlink_rcv_skb+0x219/0x490 net/netlink/af_netlink.c:2534
+ netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+ netlink_unicast+0x758/0x8d0 net/netlink/af_netlink.c:1339
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f093758e969
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0938453038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f09377b5fa0 RCX: 00007f093758e969
+RDX: 0000000000000000 RSI: 0000200000000280 RDI: 0000000000000004
+RBP: 00007f0937610ab1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f09377b5fa0 R15: 00007ffeeca2ddc8
+ </TASK>
+bridge_slave_0: left allmulticast mode
+bridge_slave_0: left promiscuous mode
+bridge0: port 1(bridge_slave_0) entered disabled state
+bridge_slave_1: left allmulticast mode
+bridge_slave_1: left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bond0: (slave bond_slave_0): Releasing backup interface
+bond0: (slave bond_slave_1): Releasing backup interface
+team0: Port device team_slave_0 removed
+team0: Port device team_slave_1 removed
+batman_adv: batadv0: Interface deactivated: batadv_slave_0
+batman_adv: batadv0: Removing interface: batadv_slave_0
+batman_adv: batadv0: Interface deactivated: batadv_slave_1
+batman_adv: batadv0: Removing interface: batadv_slave_1
 
 
 ---
