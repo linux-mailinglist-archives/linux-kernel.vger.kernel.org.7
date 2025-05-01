@@ -1,221 +1,128 @@
-Return-Path: <linux-kernel+bounces-628080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC37AA58E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 02:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE3EAA58E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 02:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC4007AF394
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:00:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7BC9E6CC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B722AF1E;
-	Thu,  1 May 2025 00:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5413D6A;
+	Thu,  1 May 2025 00:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b="O3pPO1pp"
-Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ht4eA7/4"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43EB20EB;
-	Thu,  1 May 2025 00:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B18184;
+	Thu,  1 May 2025 00:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746057698; cv=none; b=Vu0XDhmh9CuHrInfWP3wA7PWdCzwk9mehXxVV4zBxkjOatA2WkDy0xdhwAb0Oa0wryQxLmAmRHgw5el7jyXexF7kNiw83Z1PDKwW1eIBMFOyLDnoFtwM6AJY60M/xoIagHoSc52EwNdezpll3mlFhGYokAzkOO7epjSbzWyNOis=
+	t=1746057826; cv=none; b=tfRVLpc2FGEPBFGGTu+aPtrghW3xG2S39hPJhEIEwTukt5phi8TVVO8gUtGhq2vacuPQE5MpICqMzmYuizW9FGjQh7QOAiuA7+L7nwDlPtAsxBRANFIGATg8tkFb3KfRCqcP2POTIbWpBxmRAyepPbmF0Qas32id738gkRbupwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746057698; c=relaxed/simple;
-	bh=6DutjieBTw1k9nX95zPq4+lTgdnVF+22GvaEAgrv4nw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nzbov/36pINczUrKzsbSa+GV07LGwqCdRr1OU14l2cwmNAhRWpEwvwn4oX+KePS7KF2EDi5PYYEHJny5t9eoG5VN9g6KI74hLb0fxw9GYZxX14Pxip4AQTU1ZW11fuI+3TdyYee9n9icoWF/ScYYb9J/bWJW9uTAZq8ik3oTQtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie; spf=pass smtp.mailfrom=nxsw.ie; dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b=O3pPO1pp; arc=none smtp.client-ip=79.135.106.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxsw.ie
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxsw.ie;
-	s=protonmail2; t=1746057685; x=1746316885;
-	bh=R6uit6FwYVHi8jDba0Uckfj3WNxEuuaM6Qop+tdviJM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=O3pPO1ppr7BeXWj4cs1+XQ5+pWMcduoTpy35QXvKjT234I1w8yXUqYDAWzytRksk0
-	 0feTtvlbtbYxMtj1mkbp4H7rrKqUqoKdl1uA1iBASgJZSGkSQ1EjsBBk/GJs0kwjWd
-	 Y7f5qzOnqcdojik0xMZoEdvfjMiJb94spQiCoYi0NF7/GE+640vuU5tQtb3oLZURuO
-	 MKk8DrpVDxayEffi87TekBfpu/Xye7ozNj3+OKcy0w2NytjEyNGo4UAwsf2XJ0cIvu
-	 lJIUTMX/RqwkwGlf68KkVSkzM+4bnzqZmnjRqvL3kDdSvtQtvqdQlE0//bG3OHxTbj
-	 IXhX+txTiv5LA==
-Date: Thu, 01 May 2025 00:01:21 +0000
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, Rajendra Nayak <quic_rjendra@quicinc.com>
-From: Bryan O'Donoghue <bod.linux@nxsw.ie>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] watchdog: qcom: add support to read the restart reason from IMEM
-Message-ID: <ebd4790b-e7aa-45b1-b7d7-9d1b331ee842@nxsw.ie>
-In-Reply-To: <20250416-wdt_reset_reason-v2-5-c65bba312914@oss.qualcomm.com>
-References: <20250416-wdt_reset_reason-v2-0-c65bba312914@oss.qualcomm.com> <20250416-wdt_reset_reason-v2-5-c65bba312914@oss.qualcomm.com>
-Feedback-ID: 136405006:user:proton
-X-Pm-Message-ID: cbd4046600d18c5333c1cc2f748723c9886f437b
+	s=arc-20240116; t=1746057826; c=relaxed/simple;
+	bh=HSvs1bnyg4BC3jbDRswxpJ+Je2fR1xo06Chn7aYglKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PC7uTjtT+OXSAlkzK3AbyMVgSABCDKrkB6WOKxKEGZmiSp033MECFdTh+kvX+UT2JnuikJLLh+c4jrqf+NoCASYsRuUET+3MTHmnA0z3HcMUiYNs6hcMaGU4LxzCFhbd2esKMLiNH9dLh6O1P/FB4LT6u91M5cnY9no54dI5ak0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ht4eA7/4; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=gmIYo8lOgmwsi+UAiYPxPn0BlIBBZzW9tyR+fod3Ez0=; b=ht4eA7/4Q/LfFI9U
+	D+dt4gYnwBBqdS5nJ3X59JIP3nK0paHNCizwcOFFQx03M+gM9D6/n+F2O3z2vyeuXPY44Wk8mOXaU
+	E2jI0OmVUf/toi1ssOVN4H6kwvqsETIvWwzs2y23T6+JSZE2VGtUq2SykUSC9piO0O3Sd5t17/tog
+	77+DKTKC/Qi6WSTZF97m2mmd9jTmNpFU7tCkLzaMdG9YAFcPp60mO0MYS2outXlX160gYur1G1M1Y
+	m48bvghLWjTQPKIyxSW0szMElQ8ZTnnf3hmaeRgta2LeOBPuljSB5vdPWAFw2/hlgY4PbGPH79cg9
+	MKD2jXRlPIICO9Kuhg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1uAHOk-000oU3-20;
+	Thu, 01 May 2025 00:03:30 +0000
+Date: Thu, 1 May 2025 00:03:30 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: lgirdwood@gmail.com, linux-doc@vger.kernel.org, corbet@lwn.net,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] Regulator deadcode cleanups
+Message-ID: <aBK6UqZDx3tWnBcm@gallifrey>
+References: <20250426175143.128086-1-linux@treblig.org>
+ <aA5Ad6bXfH5jPiss@finisterre.sirena.org.uk>
+ <aA5F-_kJO0jFgKpQ@gallifrey>
+ <aBKvw3KEikfdQbn7@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <aBKvw3KEikfdQbn7@finisterre.sirena.org.uk>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 23:34:31 up 3 days,  7:48,  1 user,  load average: 0.02, 0.01, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 16/04/2025 09:29, Kathiravan Thirumoorthy wrote:
-> When the system boots up after a watchdog reset, the EXPIRED_STATUS bit
-> in the WDT_STS register is cleared. To identify if the system was restart=
-ed
-> due to WDT expiry, bootloaders update the information in the IMEM region.
-> Update the driver to read the restart reason from IMEM and populate the
-> bootstatus accordingly.
+* Mark Brown (broonie@kernel.org) wrote:
+> On Sun, Apr 27, 2025 at 02:58:03PM +0000, Dr. David Alan Gilbert wrote:
+> > * Mark Brown (broonie@kernel.org) wrote:
+> 
+> > > Please do some analysis as to why the functions are there, don't just
+> > > blindly delete things.
+> 
+> > I'd appreciate some more idea of what you're after;  each patch
+> > shows where and when the function was added or last used.  Some have
+> 
+> Something that indicates that this is a patch written by a human rather
+> than some automated noise, that considers things like API usability and
+> coherence, or what people might do if the API is not available when they
+> need it, rather than just mechanically churning something out.  None of
+> your commit logs consider what the code you're deleting does at all.
 
-Which bootloaders ?
+I do manually write each patch, but I don't have that global feel of the
+API; but I do use my judgement to avoid some things:
+   * I tend not to remove one side of an obvious pair of functions
+     (e.g. a set/clear or an alloc/free)
 
-Do you mean bootrom or one of the subsequent phase bootloaders ?
+   * I avoid things that look like a function for every firmware interface
+     where the functions are almost documenting the interface.
 
-Please be specific about which bootloader populates this data i.e. if I=20
-switch my bootloader to u-boot do I loose the added flag ?
+   * I only bother deleting one line functions if it's part of a set.
 
-> For backward compatibility, keep the EXPIRED_STATUS bit check. Add a new
-> function qcom_wdt_get_restart_reason() to read the restart reason from
-> IMEM.
->=20
-> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualc=
-omm.com>
-What I'd really love to see here is an example of reading out the data=20
-from sysfs.
+and some others.  It's not automatic, but I don't claim to understand
+the whole interface.  I will try and follow a thread if I end up deleting
+something which then makes it look like something else isn't needed.
+I do have _some_ feel - so have spotted some bugs where a function
+should have been called.
 
-How do I as a user/consumer of this new functionality parse the new data=20
-it provides ?
+> > comments saying things like the devm_ version is being used (so it
+> > seemed reasonable to me to delete the plain version if no one uses it).
+> 
+> Deleting the plain version of something where a devm version exists is
+> an obvious example of making the API less coherent and hard to use,
+> managed resources aren't universally appropriate and so you should
+> generally be able to do the same thing with manual resource management.
 
-Ideally do this in the commit log and recommend doing it in the cover=20
-letter to, as people don't always read both when commenting on patches.
+OK, that's something I hadn't expected - I'd thought if one style was
+used for many years, that the other was redundant.
 
-> ---
-> Changes in v2:
-> =09- Use the syscon API to access the IMEM region
-> =09- Handle the error cases returned by qcom_wdt_get_restart_reason
-> =09- Define device specific data to retrieve the IMEM compatible,
-> =09  offset and the value for non secure WDT, which allows to
-> =09  extend the support for other SoCs
-> ---
->   drivers/watchdog/qcom-wdt.c | 47 ++++++++++++++++++++++++++++++++++++++=
-+++++--
->   1 file changed, 45 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-> index 006f9c61aa64fd2b4ee9db493aeb54c8fafac818..94ba9ec9907a19854cd45a94f=
-8da17d6e6eb33bc 100644
-> --- a/drivers/watchdog/qcom-wdt.c
-> +++ b/drivers/watchdog/qcom-wdt.c
-> @@ -7,9 +7,11 @@
->   #include <linux/interrupt.h>
->   #include <linux/io.h>
->   #include <linux/kernel.h>
-> +#include <linux/mfd/syscon.h>
->   #include <linux/module.h>
->   #include <linux/of.h>
->   #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->   #include <linux/watchdog.h>
->=20
->   enum wdt_reg {
-> @@ -39,6 +41,9 @@ static const u32 reg_offset_data_kpss[] =3D {
->   };
->=20
->   struct qcom_wdt_match_data {
-> +=09const char *compatible;
-> +=09unsigned int restart_reason_offset;
-> +=09unsigned int non_secure_wdt_val;
->   =09const u32 *offset;
->   =09bool pretimeout;
->   =09u32 max_tick_count;
-> @@ -175,6 +180,15 @@ static const struct watchdog_info qcom_wdt_pt_info =
-=3D {
->   =09.identity=09=3D KBUILD_MODNAME,
->   };
->=20
-> +static const struct qcom_wdt_match_data match_data_ipq5424 =3D {
-> +=09.compatible =3D "qcom,ipq5424-imem",
-> +=09.restart_reason_offset =3D 0x7b0,
-> +=09.non_secure_wdt_val =3D 0x5,
-> +=09.offset =3D reg_offset_data_kpss,
-> +=09.pretimeout =3D true,
-> +=09.max_tick_count =3D 0xFFFFFU,
-> +};
-> +
-You should separate the addition of your compatibles and their=20
-descriptor tables from generic functional extensions.
+It can be quite tricky to see why functions have ended up not being
+used for years (or decades), some is making a nice API, but sometimes
+it's people blindly copying another API or who had a set of patches
+which used the function but those patches got abandoned.
 
-i.e. add the compat string and the above table in a subsequent patch.
+It also varies a lot between maintainer - some really prefer not
+to have unused functions at all.
 
->   static const struct qcom_wdt_match_data match_data_apcs_tmr =3D {
->   =09.offset =3D reg_offset_data_apcs_tmr,
->   =09.pretimeout =3D false,
-> @@ -187,6 +201,29 @@ static const struct qcom_wdt_match_data match_data_k=
-pss =3D {
->   =09.max_tick_count =3D 0xFFFFFU,
->   };
->=20
-> +static int  qcom_wdt_get_restart_reason(struct qcom_wdt *wdt,
-> +=09=09=09=09=09const struct qcom_wdt_match_data *data)
-> +{
-> +=09struct regmap *imem;
-> +=09unsigned int val;
-> +=09int ret;
-> +
-> +=09imem =3D syscon_regmap_lookup_by_compatible(data->compatible);
-> +=09if (IS_ERR(imem))
-> +=09=09return PTR_ERR(imem);
-> +
-> +=09ret =3D regmap_read(imem, data->restart_reason_offset, &val);
-> +=09if (ret) {
-> +=09=09dev_err(wdt->wdd.parent, "failed to read the restart reason info\n=
-");
-> +=09=09return ret;
-> +=09}
-> +
-> +=09if (val =3D=3D data->non_secure_wdt_val)
-> +=09=09wdt->wdd.bootstatus =3D WDIOF_CARDRESET;
-> +
-> +=09return 0;
-> +}
-> +
->   static int qcom_wdt_probe(struct platform_device *pdev)
->   {
->   =09struct device *dev =3D &pdev->dev;
-> @@ -267,8 +304,13 @@ static int qcom_wdt_probe(struct platform_device *pd=
-ev)
->   =09wdt->wdd.parent =3D dev;
->   =09wdt->layout =3D data->offset;
->=20
-> -=09if (readl(wdt_addr(wdt, WDT_STS)) & 1)
-> -=09=09wdt->wdd.bootstatus =3D WDIOF_CARDRESET;
-> +=09ret =3D qcom_wdt_get_restart_reason(wdt, data);
-> +=09if (ret =3D=3D -ENODEV) {
-> +=09=09if (readl(wdt_addr(wdt, WDT_STS)) & 1)
-> +=09=09=09wdt->wdd.bootstatus =3D WDIOF_CARDRESET;
-> +=09} else if (ret) {
-> +=09=09return ret;
-> +=09}
->=20
->   =09/*
->   =09 * If 'timeout-sec' unspecified in devicetree, assume a 30 second
-> @@ -322,6 +364,7 @@ static const struct dev_pm_ops qcom_wdt_pm_ops =3D {
->   };
->=20
->   static const struct of_device_id qcom_wdt_of_table[] =3D {
-> +=09{ .compatible =3D "qcom,apss-wdt-ipq5424", .data =3D &match_data_ipq5=
-424 },
->   =09{ .compatible =3D "qcom,kpss-timer", .data =3D &match_data_apcs_tmr =
-},
->   =09{ .compatible =3D "qcom,scss-timer", .data =3D &match_data_apcs_tmr =
-},
->   =09{ .compatible =3D "qcom,kpss-wdt", .data =3D &match_data_kpss },
->=20
-> --
-> 2.34.1
->=20
->=20
+Dave
 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
