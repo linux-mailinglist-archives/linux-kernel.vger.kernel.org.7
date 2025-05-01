@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-628559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD55AA5F77
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:48:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FFBAA5F80
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BD01BA7DA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:48:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 233C23B1941
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79771ACECE;
-	Thu,  1 May 2025 13:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AA019F101;
+	Thu,  1 May 2025 13:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJLemkXX"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vgnU+EcW"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA0D2DC797;
-	Thu,  1 May 2025 13:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F17919D06B
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 13:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746107313; cv=none; b=Yez7ijsKeFcTiR4DWl3WCFBJWZKgHIuLAQK/q+H71AR/Vql9facfgspEwakl6oFsWjonPoYqDjjzJpgQSz0Lfj0wBRvrZBHM4qFlJvzKy0VFoWnbMj/MhwhSwKimVZisBu6euQ6OdwXiFQOnM67mqBHO06NWBYwC8rZcyXY8IEg=
+	t=1746107460; cv=none; b=aI6RbERW+Sqy88f8n1GgqwZo+qVLc6H/94hMH/UeoDZGGMbdtKuHvhzuos2Tsd937ji4uE1IMI08PvwfOQhuuuHnbrubfcv5mq0RLVt378szRffYzzV9fbpKhDBOTVRZenqmkyIio6J43cOaMQu30IapNcjNl/CZqgt9M6x69l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746107313; c=relaxed/simple;
-	bh=R48o6InsWBzLg3/gHZhEhR7WnY27CmLaFxbrPQ7yoic=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=bVUtI/iA0poTPtXDLQ/FCe7E5RZuyakBJ7X7Zytclx/2b8uyrQkTb75uvN+aehnXOhK/VX43ca/0qQhxInIS5/jNGrto3OINUEJ2Tf6HW2NUvFevYJPocsM0BAnLpnTetEe3DIYqNlfjElPxqvfxhhcj/mYupc64jBekIYNDesk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJLemkXX; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-224191d92e4so8995045ad.3;
-        Thu, 01 May 2025 06:48:31 -0700 (PDT)
+	s=arc-20240116; t=1746107460; c=relaxed/simple;
+	bh=3S2ZpOURBmPgdkON47FakSSexpUR54q6fL0CBQ8Af3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQgDaDJm1tMFIMDuL1KB2yMbwg0y79TlL6zX1pdGR2MzHkqCesKrddEQV4VFRU1LQ3U/HMuXiyMSsryumRPJbAA5gihcKIK9S07yo0YAh2zSMS8Tf/iUyvf3t7KFMewkMSZcFfxbaR4ldxA+rN7zKAnrXr5R9NimbjigF8rqXf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vgnU+EcW; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so3553295e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 06:50:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746107311; x=1746712111; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R48o6InsWBzLg3/gHZhEhR7WnY27CmLaFxbrPQ7yoic=;
-        b=EJLemkXXdii3qDuRUZqfHf9WDZk3TvboLeBXeRZg6zsENUNgD16ewtDIQOjXuQbJ28
-         pKdnaTVKTmffl4MxFevuV1XsUPArFO4C2wVaILnlTam4b0EJtQKssKj70QuP0FIeku5I
-         9Beuh6kvYbMrsf0xh0g3YV2frbbXnUbyqk0T+23Hcm75khrFcyMKQHUj32OVKEVI3Uve
-         JUmb9nT9HUc1HMtAgPewa2XNU7rb1Myydx41TlN/8qo51sWQPc6VCY3n/eEtWrsixOXL
-         mNrK+4t/6HxhJCw8VwMQC4jW/AxEyAg2o7O2Zz/bJFFGgthi5zbFzM9Hlh3hkV68aTgJ
-         1HJQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746107456; x=1746712256; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zruKVRDRscyVarFUye9F0wOJCzPUiyyhJYtA+dpYCeQ=;
+        b=vgnU+EcW5tJK8ImxTmCLn3xRp9ZKyW1CpdkXojWMYnrCILvRhitmJYOOTW5iPw1Cw1
+         qkW8BUwAwQpOPK0wdlTiCefJd2ntpe4ilWDXDD9HTKbcZavyJqEPazltzpqdzp68xH2I
+         Fqd9SnFS8EOCSeR+/1VUKz+QTFBje2aAJfu6601D3lZSDYfS0nw6vligl87G+bs6cAIO
+         Q2mpBf4sAdivzTHn8lFBCafLzH+vJWOlxBcrGpw86sNc/1w6AaI8+ieS1y5btPKBWd/O
+         0Lw/FUZCqLkmDwXmj4T3aXN+Rn9O7QvTYBa8WWOdBOKfANAKPqRbAa2AjgNeZQUrgin7
+         TFOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746107311; x=1746712111;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=R48o6InsWBzLg3/gHZhEhR7WnY27CmLaFxbrPQ7yoic=;
-        b=lQKMrx0wpODrBjW78O9yVg8flio4e4cmuzaIryn8vVs6TTwtiHW+ImIhW1G6EvE8Eu
-         UvZM9GgVMkXN9MQPrxct/x9YPc2Gj7Ahoudbx4R68SAbKZbeIgt9JDhvKMkKT5lxgJFQ
-         5xV5Vf5nsVPjXBLv0I6ZFjB6yGA0zQWi8mBq7cuSTBxb8dSTExA8IAXbAd2ir3NOpari
-         SBXBC6uJYWEIqDPVIvWt8sOHWv2DwvkvS26FWvFNOpDf8k6ug4XVz3Tp5/mTfnuGZ2oh
-         hopJFQfTIVvIqSFPqqXrikXSvfqVbc/MCZmitjf6iTOKhIpUKNiQ9kaSo7aF+8bCYHGv
-         Xbew==
-X-Forwarded-Encrypted: i=1; AJvYcCV9J6K0t7SVn2iOZjp5l8mBfgrRn2ABzc5qhRwa8+R5bUrvDG6O2/lh4zCIh1o+S8oLRbxWOXdT4wF/vXNU1n8=@vger.kernel.org, AJvYcCWa5CAv3kSWEnNFqTNIgxpiE8sGOZ10xLMuIQ+fgs5ejc3ffOWZa5MA5rRFSldgHRRjNn2SGEEKGRbY0aU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDhzCZC/Q/Le29mFG0t4X9upu7zAEjNBwG3BAIwWCjcOSqOqpI
-	m+lbE5acAr5mekQK5cb2nw2vmueEGcKu4weKVleTB90iu1ZbtDvp
-X-Gm-Gg: ASbGnctnMk+ne0hg34pWexOtCsSE4Dtz393ZrKtc4QcFkAZBXkDBNc/nV70pmoHrm/5
-	DiNFvIRSZeDje+IFq4EXTfi/+pkOfHSy6z6YfrgyviqOU9eH4EsR19fhFLX+jnEvPMepfdvdvFX
-	W676KV6jWrJtENtukG7IphiIVQ2UazToXhfGuDrmoe4ZUdZ5zDpQlkK2+WtDhiqdenKzv06QL8Q
-	vTnCcOcYLvsI28SllXDK2rssP9Ok3UD0H7ALH3cTjyUkUH3g7yD9KIylg5UiykPoFfx0CEznYUH
-	Cg/ZTnUHb+3m3CgNMUvx8I2PaAvlR0EKA7y5+Ai2ceFB+djFf9JjhHKVcniyJe4lqCWdZAZIgwp
-	y81rklcY3sRnxathZeo/0C5E=
-X-Google-Smtp-Source: AGHT+IHD6FHplSlj+pposMi4tXExEB+p1rqckTm7xQAXIQisRcsjAh2vlhK2tDw6V5JuAKLnpQD4bw==
-X-Received: by 2002:a17:903:2f82:b0:21f:45d:21fb with SMTP id d9443c01a7336-22df5764477mr96937625ad.3.1746107311076;
-        Thu, 01 May 2025 06:48:31 -0700 (PDT)
-Received: from localhost (p4138183-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.129.206.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e0bb0f39csm6597495ad.96.2025.05.01.06.48.26
+        d=1e100.net; s=20230601; t=1746107456; x=1746712256;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zruKVRDRscyVarFUye9F0wOJCzPUiyyhJYtA+dpYCeQ=;
+        b=ScgZED/mj+ZoeYKxzupCihTZwS0xu70muTSJqiz8Me3WAl1P7TL35jKtnIPJ2ScJaD
+         b9dBzmfchbH9AMhkFvJdXnlaz2m9SF8G5VVEnwXg/Y/hGZUlri12c2OpirC4Nb5kw6mG
+         ZhnQRd2rVUbrMQBA7cvC+e5fRboiPtyYcld+0ku0QkazrfWFkE0xKT/QRZn2rz7Z3MNf
+         i2YP9nc0ZSUAuC7PviHoW6i17nr5O6qMhz/kw51KIPd5OzfBWR9hFqst5PsrrMXMUA3Z
+         nsbNneOWnG2xuKku39XXQRAI3wI2cd3P5jelnio6nxEiT57p+KxiUPlLPqDfJ1ggSoHN
+         IDDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzl9KuL7oIu/Dow+rhJeySJz5uu77+9H503dV3wQnJOVsPl+JoON/3VOKCqDMX8RRCh/JYWI4xctSTjxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+HSkksC1vFRtdnt38l2H6a/qQ66qG9yGm/eqeTyR0VmpZXIql
+	a+aTd3s+Wq/TCCM6wUsSLfSjRskCvrBvrAWqa3O1YiIPnlQnFP2kGcARWJEAE8w=
+X-Gm-Gg: ASbGncsTJB1jKn1B7Pbd07Ejg9Tz6L4OT9ZXaJNHkv1DfdkMbos41vMjnIbZRjsFGjB
+	pZzArJAAqIcU36mykFFV2VhdqEOfrt/s968zHkU7bBeujadKh70HyYB+t9lQ6dpY1SlusOaa4Xq
+	8TvnQW1fmRelMiK8lF7MY49GsMQfYLz9uPe6DJcLMOEAmg07Ardp5cOzsS1zvxPTwoGxLqL/WRZ
+	Pt+gpy+qLrEDRh/TK28TkQajU8iidkRSwvBWZgb/QcG5oqECcg9JQ8BVcfzzlZkCD5tghenXaqi
+	vx3u+N6wEz9zsrY0losHR40pp7tKkJYUqnOYxMi9fwM3mAggux8flUkh6GGmnng0NJAFwN8Win4
+	4spS5JG4=
+X-Google-Smtp-Source: AGHT+IHupedOPMOM0/qcAF0IPZeZXqgUOFSKpReFgbOJMXAFwMjiMXlEwXf+hlUk6b7Aa4h8TEFLmQ==
+X-Received: by 2002:a05:600c:502a:b0:43d:609:b305 with SMTP id 5b1f17b1804b1-441b6500698mr29167515e9.17.1746107456371;
+        Thu, 01 May 2025 06:50:56 -0700 (PDT)
+Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441ad8149afsm48670895e9.0.2025.05.01.06.50.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 06:48:30 -0700 (PDT)
-Date: Thu, 01 May 2025 22:48:15 +0900 (JST)
-Message-Id: <20250501.224815.1854649062185419020.fujita.tomonori@gmail.com>
-To: boqun.feng@gmail.com, arnd@arndb.de
-Cc: fujita.tomonori@gmail.com, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, a.hindborg@samsung.com, frederic@kernel.org,
- lyude@redhat.com, tglx@linutronix.de, anna-maria@linutronix.de,
- jstultz@google.com, sboyd@kernel.org, ojeda@kernel.org,
- alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, aliceryhl@google.com, tmgross@umich.edu,
- chrisi.schrefl@gmail.com, linux@armlinux.org.uk
-Subject: Re: [PATCH v1] rust: time: Avoid 64-bit integer division
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <aBNrJgLFpswcgOEK@Mac.home>
-References: <20250501015818.226376-1-fujita.tomonori@gmail.com>
-	<aBNojspyH5dHsuOm@Mac.home>
-	<aBNrJgLFpswcgOEK@Mac.home>
+        Thu, 01 May 2025 06:50:54 -0700 (PDT)
+Date: Thu, 1 May 2025 15:49:44 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 5/5] iio: adc: ad7606: add gain calibration support
+Message-ID: <okavvmsyg6jpdleye5e5oxg2cwwgkr42f6wlq2dlsswrzxkpnq@66apz7uva5eg>
+References: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
+ <20250429-wip-bl-ad7606-calibration-v1-5-eb4d4821b172@baylibre.com>
+ <CAHp75VfBrodRH0gW8teULNSt3f_uJA0Ze+P+YOTKLhtec84-3Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VfBrodRH0gW8teULNSt3f_uJA0Ze+P+YOTKLhtec84-3Q@mail.gmail.com>
 
-On Thu, 1 May 2025 05:37:58 -0700
-Boqun Feng <boqun.feng@gmail.com> wrote:
+On 30.04.2025 01:34, Andy Shevchenko wrote:
+> On Tue, Apr 29, 2025 at 4:08 PM Angelo Dureghello
+> <adureghello@baylibre.com> wrote:
+> >
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> >
+> > Add gain calibration support, using resistor values set on devicetree,
+> > values to be set accordingly with ADC external RFilter, as explained in
+> > the ad7606c-16 datasheet, rev0, page 37.
+> >
+> > Usage example in the fdt yaml documentation.
+> 
+> ...
+> 
+> > +#define AD7606_CALIB_GAIN_MIN  0
+> > +#define AD7606_CALIB_GAIN_STEP 1024
+> > +#define AD7606_CALIB_GAIN_MAX  65536
+>
+Hi Andy,
+ 
+> Are those values in decimal in the datasheet?
+> It looks to me something like
+> 
+> _MAX = (64 * _STEP)
+> 
+> but is it for real? Usually values are limited by the amount of bits
+> in the HW, here it spans over 65 steps, i.e. 7 bits would be needed...
+> Confusing.
+>
 
-> Btw, I think you're missing the Suggested-by tag from Arnd, of course if
-> Arnd is not against it.
+true, thanks,
+there must be a typo in the datasheet that says 0 to 65536 with a
+step of 1024 with 6 bits. Only 0 to 63 are possbile here.
 
-I'll submit v2 tomorrow, including Suggested-by tag from you and Arnd.
+step 0 = 0
+step 63 = 64512
+ 
+Will fix that.
 
-Please let me know if you're not okay with being included in the tag.
+Regards,
+angelo
+
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 
