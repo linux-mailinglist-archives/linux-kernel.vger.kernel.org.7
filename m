@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-629041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8184AA66B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:59:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102EFAA66BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD479C7550
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01A13AFD2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061DF27C14E;
-	Thu,  1 May 2025 22:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF23A27CB1A;
+	Thu,  1 May 2025 22:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9VMGYcQ"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A5RM8FDl"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974DA27B4F9
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 22:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C0D27C842
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 22:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746140135; cv=none; b=uQfTssMIiRH0OLClkHOs7GlNmHHfM4yP1mwqs3+BRcL5I03FOhL7AEaceGNr44iK6q1Vq+bUgTlDqWoO6O6DZwDxqSvS5YZQULtyEJyH2YLrl4HTXOtFTow4ZBiLtWYlTgeF+l5UjU6DbpMFSAusp74ef0cL0p/7mMrZzu4peFs=
+	t=1746140140; cv=none; b=YJYA0ADH6hIOtvAR1BSNIc5nBuCy74rqtBBUDferSXcMjin3ulYo9qDgvQiEgjSaak4rjT0oMiRqgX2LjSczubpnqIolXSKPll/6uG1Q273tyrlMdRBeaTUCCipWBhUt2h9zfkvLWogCdtWSDYxboNoznE/8cNhKg+A/wQMRNRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746140135; c=relaxed/simple;
-	bh=PaLfE0KGkwI52BlQLrLnMotEIhpaYfWU7b3RwfZ52E8=;
+	s=arc-20240116; t=1746140140; c=relaxed/simple;
+	bh=6CEelcqc7Be/Y9b2UjlHA3na6nY4HZwgqtUvYQYDtKo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=THIA0aPkEqiuiGuf98fVDMPnHBrTeKLb9szO+L3XIw5vpOivYDzhRklJRz3fB8v30gK0LWMTXOQ+rFr9kDtQNGVmjeCADGBLH0fsPWXJ4NwrPjVPiQ7ewi5ohescXFyAcyzJw9TQm129Y1f0RwBFWTHcpcOBCHoti+cPV8yFOHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B9VMGYcQ; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=RzKafCm9g9STARUQG+QxH8KJqRqnXxDscIIZiry8wZba+EVQUvwzSgnNQ02UsjM4IwBRiQ1EwHGiS3Jcc8M6d3TVmRTeeXXZdKYYgTd/XLnHp3Xzz8xQFsw7jo0ifGuQxHKu0F/ZC5yIz2tfND3mz3/LcXtH6VImb09ArG67L/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A5RM8FDl; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b115fb801bcso1549946a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 15:55:33 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2254e500a73so9748805ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 15:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746140133; x=1746744933; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1746140135; x=1746744935; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9tR6KSaINrSgKjMPUX02kTLoAnxRQKWJgAy6kmPfqzc=;
-        b=B9VMGYcQJb0pixPHZoxJ2uaRekbso0hIqPanbG+FEXJIHql61mHEFQEv7ZwAdN1RLV
-         Sq0EyNVBMxOHrtdIKdrO1nd/ZPIWzyBH77VcoLdWTTDSujVHSqymJ/+0QvaONedpHE5x
-         y8SpWdaIccNHpgsMtfDNPSJgDHNUeXTeX6CBoqa0ozu+Ap7xX3gFn6tVB8YfbuCAQVLk
-         D5rWJXqcZualaMIOvk7p66nEjUhPzymWMc3CVRBGsBo9IbWvjfuvpMATOX+HTT6qjDXm
-         vGv/ynPqx2tz/XMYBgxwp39u0PVK8ry4orG3LUxDdY5s1ysCqWi9yIuTN1knR+GarSb6
-         lQ7A==
+        bh=VphvviRpGC2WLkYAjqaiyvIFs0ocuEHMIPdUSqAExnk=;
+        b=A5RM8FDl+nKqfru7yReozhz/uubVGexmO4Rov958BxdhagnKWgWRCACnKB+xqHdKIX
+         JlzaDsZPGrVNh8uaQZ/AvVDGdZ6ziPVYnxgJqT0QH7GVHnwk7nJ2kqM/F5U3qEACOBW6
+         K+jRmVwxlJNSw+1LE3st9Nt+L0b7oqhQfwtXGiW5RXwb5nCjqO/hZIEx1/sJzQgVhXLx
+         EInpALKRAuOWA/Bzd108o+Dw0SqXMt8semtrUFHUlNWN3Kav9Wk2Cq0Se4v7cbHqGB7A
+         wrdI3wUben7D+JlHPrgvTI+lWXMfl652Aqtv1gT8OO3j6vG8dU97EH+MtzSsh/rp1ESH
+         +4ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746140133; x=1746744933;
+        d=1e100.net; s=20230601; t=1746140135; x=1746744935;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9tR6KSaINrSgKjMPUX02kTLoAnxRQKWJgAy6kmPfqzc=;
-        b=VcbI0pSioQGJTACkXLKp/UH2n5kiUjtngSLTPL+BHAVZKb6qH56Z2rDWYtl6g25sbl
-         /oHCSTwsxzxU1UBmjdomD9DooGvrBQunckZIBmMmt8uXCWw32lOlHbCeV+jAaSO+OP0W
-         O3AoLLXdcsykR3oz1AsCPWqfShU0nK6QCZolzKmrIm7yivlwxEt0dHTPHAJp4DjiDkzk
-         I26u5+qZ6uFogNRmVgnvpQMlJt3s+KZ3yKe1DmIIGZ2FQXyQotFGbFwOwIxAE+pFZFOy
-         eVkOtFQ5uWHKtEY+kXsOcCbMTv6m5scUyDMH3/0egC7jkPMdgwHvf84GoIZ5EgeKhph/
-         bYfA==
-X-Gm-Message-State: AOJu0YwKdj/xszRaO0UWMYEGzgHg5B8bZ5MIdlA/dpCVIlgJEkreeEWK
-	1WeFKxFVkSoyTEkVJLXbosdc5y4UTxSEEvlyDv95zGPxq00qa8q+XlCxMDIz0+TjE7EkmaDuZ81
-	IXZ10ecO1fCx1mQuL1uyJdBGXy73TKGoDtga8SHzeA6OBzYLF9zXJwCBVh3LOplNgv/sM0MWv0O
-	8vPAfXQ5JDJotwtsM7DUTA/v6gvPH3lz0OK7GCK64g4OEmgFxr1qvj3RnvQTweYQ==
-X-Google-Smtp-Source: AGHT+IErNLm5q49Y+gF9KR931i043ZTBU+yktXpy37UrZ25yAfY7bgNNHH0I0TSqRbLeXIHGP0OK8nPcEJ7Tt5BA
-X-Received: from pfbim4.prod.google.com ([2002:a05:6a00:8d84:b0:732:2279:bc82])
+        bh=VphvviRpGC2WLkYAjqaiyvIFs0ocuEHMIPdUSqAExnk=;
+        b=JZqc6LFQF3rJnQNNjo8oedNzDtxz/jq8m4EizG1eMYZGBWX+TnkctvNOFMLFAhBMhO
+         67RHY4PFKHGGV8T03V7U70QoYppsaYUXjDyqsMmt2oHvT3h3Q/jkZmyBYK6RHZ0MqDpJ
+         QBBjxaCkxFZEPzYzC1RP2qI2jz77WW5x+JPKAepbfucwudvTCgzAfAFEcXe5FoeC1SFW
+         W6xFjJ+zOLmCoiqTqpTBhabmr02XQ2gAHV9IKc/g8htxHNFk3O5bJws/38v5ELMy9f4l
+         uZew8v1+BYfnHsNQJMcehzwW4DkDtKDWC418nhNZfQpixi0ZYeuA/MLkcXz8sz2FIrHx
+         MFJw==
+X-Gm-Message-State: AOJu0YzSM5Ufo16nHKLIkjui4c0ZGhALsPqkrgDdNLYBcWjWCnZGnzq3
+	UdHGPWflAHyQVf/SCrqaMlIL8zIUb99lmFpja3P+tqzxD51n0ox+eG5W+27i/twztVbxaonYG+d
+	aGJ5k2uJ8burjGFfak+NGKWv/pbFNkH0kMBKNkFbB79UPGIx/va4axeNBWYp4xtOv1AvObTY0hD
+	xDp+1RdKbOfTppIcRtWy0WtfdLFon57ctK3eLOV9AQwlhqi+rtvWLclCSdTAWTQQ==
+X-Google-Smtp-Source: AGHT+IEUBELohUIuBjZuX1t4KvZ63Sn972imtSEYrAK4n9xeHQS/vygxbNUhLnD35SKxrJi1vU9ISpeHFRO3BtsZ
+X-Received: from plou8.prod.google.com ([2002:a17:903:1ae8:b0:220:da6b:5d08])
  (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:350d:b0:1f5:a05b:c741 with SMTP id adf61e73a8af0-20cde75bf29mr1013805637.18.1746140132864;
- Thu, 01 May 2025 15:55:32 -0700 (PDT)
-Date: Thu,  1 May 2025 15:54:19 -0700
+ 2002:a17:903:1ab0:b0:224:24d3:60f4 with SMTP id d9443c01a7336-22e102d05f6mr12139545ad.15.1746140134934;
+ Thu, 01 May 2025 15:55:34 -0700 (PDT)
+Date: Thu,  1 May 2025 15:54:20 -0700
 In-Reply-To: <20250501225425.635167-1-changyuanl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250501225425.635167-1-changyuanl@google.com>
 X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
-Message-ID: <20250501225425.635167-13-changyuanl@google.com>
-Subject: [PATCH v7 12/18] x86/kexec: add support for passing kexec handover
- (KHO) data
+Message-ID: <20250501225425.635167-14-changyuanl@google.com>
+Subject: [PATCH v7 13/18] x86/e820: temporarily enable KHO scratch for memory
+ below 1M
 From: Changyuan Lyu <changyuanl@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: changyuanl@google.com, akpm@linux-foundation.org, 
@@ -94,19 +94,15 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Alexander Graf <graf@amazon.com>
 
-kexec handover (KHO) creates a metadata that the kernels pass between each
-other during kexec. This metadata is stored in memory and kexec image
-contains a (physical) pointer to that memory.
+KHO kernels are special and use only scratch memory for memblock
+allocations, but memory below 1M is ignored by kernel after early boot
+and cannot be naturally marked as scratch.
 
-In addition, KHO keeps "scratch regions" available for kexec: physically
-contiguous memory regions that are guaranteed to not have any memory that
-KHO would preserve. The new kernel bootstraps itself using the scratch
-regions and sets all handed over memory as in use. When subsystems that
-support KHO initialize, they introspect the KHO metadata, restore preserved
-memory regions, and retrieve their state stored in the preserved memory.
+To allow allocation of the real-mode trampoline and a few (if any) other
+very early allocations from below 1M forcibly mark the memory below 1M
+as scratch.
 
-Enlighten x86 kexec-file and boot path about the KHO metadata and make sure
-it gets passed along to the next kernel.
+After real mode trampoline is allocated, clear that scratch marking.
 
 Signed-off-by: Alexander Graf <graf@amazon.com>
 Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
@@ -114,162 +110,52 @@ Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 Co-developed-by: Changyuan Lyu <changyuanl@google.com>
 Signed-off-by: Changyuan Lyu <changyuanl@google.com>
 ---
- arch/x86/include/asm/setup.h           |  2 ++
- arch/x86/include/uapi/asm/setup_data.h | 13 ++++++++-
- arch/x86/kernel/kexec-bzimage64.c      | 37 ++++++++++++++++++++++++++
- arch/x86/kernel/setup.c                | 26 ++++++++++++++++++
- 4 files changed, 77 insertions(+), 1 deletion(-)
+ arch/x86/kernel/e820.c   | 18 ++++++++++++++++++
+ arch/x86/realmode/init.c |  2 ++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index ad9212df0ec0c..3b37571911f4c 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -67,6 +67,8 @@ extern void x86_ce4100_early_setup(void);
- static inline void x86_ce4100_early_setup(void) { }
- #endif
- 
-+#include <linux/kexec_handover.h>
-+
- #ifndef _SETUP
- 
- #include <asm/espfix.h>
-diff --git a/arch/x86/include/uapi/asm/setup_data.h b/arch/x86/include/uapi/asm/setup_data.h
-index 50c45ead4e7c9..2671c4e1b3a0b 100644
---- a/arch/x86/include/uapi/asm/setup_data.h
-+++ b/arch/x86/include/uapi/asm/setup_data.h
-@@ -13,7 +13,8 @@
- #define SETUP_CC_BLOB			7
- #define SETUP_IMA			8
- #define SETUP_RNG_SEED			9
--#define SETUP_ENUM_MAX			SETUP_RNG_SEED
-+#define SETUP_KEXEC_KHO			10
-+#define SETUP_ENUM_MAX			SETUP_KEXEC_KHO
- 
- #define SETUP_INDIRECT			(1<<31)
- #define SETUP_TYPE_MAX			(SETUP_ENUM_MAX | SETUP_INDIRECT)
-@@ -78,6 +79,16 @@ struct ima_setup_data {
- 	__u64 size;
- } __attribute__((packed));
- 
-+/*
-+ * Locations of kexec handover metadata
-+ */
-+struct kho_data {
-+	__u64 fdt_addr;
-+	__u64 fdt_size;
-+	__u64 scratch_addr;
-+	__u64 scratch_size;
-+} __attribute__((packed));
-+
- #endif /* __ASSEMBLER__ */
- 
- #endif /* _UAPI_ASM_X86_SETUP_DATA_H */
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 68530fad05f74..dad174e3bed0d 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -233,6 +233,32 @@ setup_ima_state(const struct kimage *image, struct boot_params *params,
- #endif /* CONFIG_IMA_KEXEC */
- }
- 
-+static void setup_kho(const struct kimage *image, struct boot_params *params,
-+		      unsigned long params_load_addr,
-+		      unsigned int setup_data_offset)
-+{
-+	struct setup_data *sd = (void *)params + setup_data_offset;
-+	struct kho_data *kho = (void *)sd + sizeof(*sd);
-+
-+	if (!IS_ENABLED(CONFIG_KEXEC_HANDOVER))
-+		return;
-+
-+	sd->type = SETUP_KEXEC_KHO;
-+	sd->len = sizeof(struct kho_data);
-+
-+	/* Only add if we have all KHO images in place */
-+	if (!image->kho.fdt || !image->kho.scratch)
-+		return;
-+
-+	/* Add setup data */
-+	kho->fdt_addr = image->kho.fdt;
-+	kho->fdt_size = PAGE_SIZE;
-+	kho->scratch_addr = image->kho.scratch->mem;
-+	kho->scratch_size = image->kho.scratch->bufsz;
-+	sd->next = params->hdr.setup_data;
-+	params->hdr.setup_data = params_load_addr + setup_data_offset;
-+}
-+
- static int
- setup_boot_parameters(struct kimage *image, struct boot_params *params,
- 		      unsigned long params_load_addr,
-@@ -312,6 +338,13 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
- 				     sizeof(struct ima_setup_data);
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 9920122018a0b..c3acbd26408ba 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1299,6 +1299,24 @@ void __init e820__memblock_setup(void)
+ 		memblock_add(entry->addr, entry->size);
  	}
  
-+	if (IS_ENABLED(CONFIG_KEXEC_HANDOVER)) {
-+		/* Setup space to store preservation metadata */
-+		setup_kho(image, params, params_load_addr, setup_data_offset);
-+		setup_data_offset += sizeof(struct setup_data) +
-+				     sizeof(struct kho_data);
-+	}
++	/*
++	 * At this point memblock is only allowed to allocate from memory
++	 * below 1M (aka ISA_END_ADDRESS) up until direct map is completely set
++	 * up in init_mem_mapping().
++	 *
++	 * KHO kernels are special and use only scratch memory for memblock
++	 * allocations, but memory below 1M is ignored by kernel after early
++	 * boot and cannot be naturally marked as scratch.
++	 *
++	 * To allow allocation of the real-mode trampoline and a few (if any)
++	 * other very early allocations from below 1M forcibly mark the memory
++	 * below 1M as scratch.
++	 *
++	 * After real mode trampoline is allocated, we clear that scratch
++	 * marking.
++	 */
++	memblock_mark_kho_scratch(0, SZ_1M);
 +
- 	/* Setup RNG seed */
- 	setup_rng_seed(params, params_load_addr, setup_data_offset);
- 
-@@ -479,6 +512,10 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
- 		kbuf.bufsz += sizeof(struct setup_data) +
- 			      sizeof(struct ima_setup_data);
- 
-+	if (IS_ENABLED(CONFIG_KEXEC_HANDOVER))
-+		kbuf.bufsz += sizeof(struct setup_data) +
-+			      sizeof(struct kho_data);
+ 	/*
+ 	 * 32-bit systems are limited to 4BG of memory even with HIGHMEM and
+ 	 * to even less without it.
+diff --git a/arch/x86/realmode/init.c b/arch/x86/realmode/init.c
+index f9bc444a3064d..9b9f4534086d2 100644
+--- a/arch/x86/realmode/init.c
++++ b/arch/x86/realmode/init.c
+@@ -65,6 +65,8 @@ void __init reserve_real_mode(void)
+ 	 * setup_arch().
+ 	 */
+ 	memblock_reserve(0, SZ_1M);
 +
- 	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
- 	if (!params)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 766176c4f5ee8..664cd21b85329 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -451,6 +451,29 @@ int __init ima_get_kexec_buffer(void **addr, size_t *size)
++	memblock_clear_kho_scratch(0, SZ_1M);
  }
- #endif
  
-+static void __init add_kho(u64 phys_addr, u32 data_len)
-+{
-+	struct kho_data *kho;
-+	u64 addr = phys_addr + sizeof(struct setup_data);
-+	u64 size = data_len - sizeof(struct setup_data);
-+
-+	if (!IS_ENABLED(CONFIG_KEXEC_HANDOVER)) {
-+		pr_warn("Passed KHO data, but CONFIG_KEXEC_HANDOVER not set. Ignoring.\n");
-+		return;
-+	}
-+
-+	kho = early_memremap(addr, size);
-+	if (!kho) {
-+		pr_warn("setup: failed to memremap kho data (0x%llx, 0x%llx)\n",
-+			addr, size);
-+		return;
-+	}
-+
-+	kho_populate(kho->fdt_addr, kho->fdt_size, kho->scratch_addr, kho->scratch_size);
-+
-+	early_memunmap(kho, size);
-+}
-+
- static void __init parse_setup_data(void)
- {
- 	struct setup_data *data;
-@@ -479,6 +502,9 @@ static void __init parse_setup_data(void)
- 		case SETUP_IMA:
- 			add_early_ima_buffer(pa_data);
- 			break;
-+		case SETUP_KEXEC_KHO:
-+			add_kho(pa_data, data_len);
-+			break;
- 		case SETUP_RNG_SEED:
- 			data = early_memremap(pa_data, data_len);
- 			add_bootloader_randomness(data->data, data->len);
+ static void __init sme_sev_setup_real_mode(struct trampoline_header *th)
 -- 
 2.49.0.906.g1f30a19c02-goog
 
