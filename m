@@ -1,172 +1,120 @@
-Return-Path: <linux-kernel+bounces-628354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7607AAA5CB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9C8AA5CB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A0D7B33D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377EB980789
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D5F22D4F1;
-	Thu,  1 May 2025 09:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A2F25EF9C;
+	Thu,  1 May 2025 09:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RK2iU0jp"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aK1Q1Mcd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A65822D4F0;
-	Thu,  1 May 2025 09:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B09522D7BD;
+	Thu,  1 May 2025 09:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746092255; cv=none; b=dYjzWyomLcZu9uYnjrNjUAXwx6J8jMlH30tH4zlZc1KxtXGEx6Zpj6RPziQP/XfbbWZ6wHAFLGfORF/rpHnRX056YXsAOLGmbAYd4cFH5+tU8qn/YGgmP/NrA8cuTDTdixOLMdVpwt7FJQHzyTSyUFgwJXNIKUt9wuxZGftsV84=
+	t=1746092239; cv=none; b=hQOoE92H3irXgd2sAqpwt11VhZcscDpF3/Md/keR+2wmKJaFSs/JBzKF3q51fhF1bURA0usRldPolZEb0pE9upOs9DsX3fS0kK/KHHInCg51UlMWYHFDgjvgHj+zw79lzd3tgjXxRyT27yKXfGCQeaE19anGcrpjz5jc0QD/9nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746092255; c=relaxed/simple;
-	bh=hc7NgoslmUG4t3a9ZjQNuHyS58KdErQYl4ZgInZTw4A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DD1ohpy1aGvk9jxwXgqpULJhrbNLJeg5TS4iIEEeOjXxLoBU31/24TN9rmvDw7xdeGabP61LrmsFgXzc7Wu5Gyq85Atxb9cH++CoinBPGRozZwHR7wM+qoUMkezQeiVCc1v8anAxp+T9MJUXQKjEH6UrMJFtCBhASSewoWfYyyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RK2iU0jp; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UL3EHd021977;
-	Thu, 1 May 2025 09:37:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=AquKFxP8l67OoaM9Z
-	z0xrfQap9EJ2IiwDoc+9rWGBDo=; b=RK2iU0jp/lWTs9uSJrZgOyHwhAmVvPwNS
-	hHzICziJ43LfzZ9u9APfbhBwMFJ+z8nRZOp4WOHGkVVleQb28L0S71uJNzB4n/Zo
-	9gv3Kss7p+Y/ai1mugpJ8ROeR6cZchy59lrS5fw2b/HlEoODr+L0kWoiFwXdRPp9
-	Q6vTcB15Bgr62ANYgEpVyEEJQaeLmJfMnaxbFGGz9a6fPlkQbJA/pBjXZgD1hmx6
-	RHK2QPVp0J/ankLG22q35kGuQXWKHSPAmHP3WSsUnJiri7oFxbytIDarGWuE8K3a
-	61ULi1cdJ/0TInphvP//YRzu3AOdTz0uBdzgM2OrSZg9/JVPOuDcQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46buekjbk9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 May 2025 09:37:25 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5419bOhb005184;
-	Thu, 1 May 2025 09:37:24 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46buekjbk5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 May 2025 09:37:24 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5419EBFk016145;
-	Thu, 1 May 2025 09:37:23 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 469a70mbrn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 May 2025 09:37:23 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5419bJaw21954850
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 1 May 2025 09:37:19 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7B51220043;
-	Thu,  1 May 2025 09:37:19 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1DAF320040;
-	Thu,  1 May 2025 09:37:16 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com.com (unknown [9.124.221.47])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  1 May 2025 09:37:15 +0000 (GMT)
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, maddy@linux.ibm.com
-Subject: [PATCH 4/4] perf python: Add counting.py as example for counting perf events
-Date: Thu,  1 May 2025 15:06:30 +0530
-Message-ID: <20250501093633.578010-5-gautam@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250501093633.578010-1-gautam@linux.ibm.com>
-References: <20250501093633.578010-1-gautam@linux.ibm.com>
+	s=arc-20240116; t=1746092239; c=relaxed/simple;
+	bh=7HkpmBy4uOXtgP/kfZ+4ul+zjnVdkK+uvMav1IDO7GE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLcrIVq3PvnWwrGrFc09nwjNlAguwnfROoxw1U2zBY7qUDfPx6E9b+oif/H4tP8HQ9Z2lpJIokYI43b85shqLKG4R/WGwBIz2IpvFijIPEJaOkHtpfcfKHOEQsGpaem9G83JPmr6td9+IybErO1D75DcbweTycKDcXc0N2wh7gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aK1Q1Mcd; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746092236; x=1777628236;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7HkpmBy4uOXtgP/kfZ+4ul+zjnVdkK+uvMav1IDO7GE=;
+  b=aK1Q1Mcdw884lCDiNc5dnvs39bceZSH/pIXSeAX5EjYBX8TJ04i7nVqp
+   45FfuQ99lBBoPiPZPITb4a7mHskWyY+YeA0Rbrk6ddPMuWUc+EWX6lSnX
+   dLIFxmbxoFEn+on6nJd8L5uMhN44miPaXAofKI+pQl48OCA8LXEAip4PP
+   QiqQcVHrtxkmB4tk0vlSIPjzOkb+m+/pN7T8shpVAou4zpl78ff6qufJY
+   19/10b5pFl75JpxJjX/iloPT4ylGuiudFx/sK/Yc/URbBKxRDSCOat7SG
+   p/B1TonittlYSln2Lvw7WHrDtKJAJoK4fMlqn7oEkL3M+uOAnIOAxV2/9
+   w==;
+X-CSE-ConnectionGUID: StTCXCWHSuaQWuHRbs+4OQ==
+X-CSE-MsgGUID: gpI9amrDSzKFPoDR7/2FMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="47672299"
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="47672299"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 02:37:15 -0700
+X-CSE-ConnectionGUID: +oETbooFSmyuPuIsABmWhA==
+X-CSE-MsgGUID: A8hsURclRcGMFwsZ1uWTrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="171577908"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 01 May 2025 02:37:14 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uAQLv-00045B-1z;
+	Thu, 01 May 2025 09:37:11 +0000
+Date: Thu, 1 May 2025 17:37:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexey Charkov <alchark@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Alexey Charkov <alchark@gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: i2c: i2c-wmt: Convert to YAML
+Message-ID: <202505011756.SZDFqCew-lkp@intel.com>
+References: <20250430-vt8500-i2c-binding-v2-1-0cf22d0c2d42@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAxMDA3MiBTYWx0ZWRfX4ep+RS1nkGDH iQwwqG7jrir52dpfBhi2LBia4vZ2jGBSiF+B0fyNFECfwjm3JYrceivvkLS6OXVts0m0LZODuH6 r5MCMCGRA6sj1NOj9outZjj1tMKChCf28lm/jIPbfNL0TecblMR6Qy7wSP+uQFNKkRPssbLWbr/
- 6gBXzoGdSD7fGwwYxpSseb2vDBObCTxIbjXQyoPvZNCYCAyJph8CO5m9nu/gtC75ER6Jx2zgv7u N/XKfXOBzQymSNjk/1VxV4in+zePqoID11SOB77uHcDpp1ETG+rHCJvltfAHnpLaeJUjbe9kKt5 bgrDBnIDqYHYElGP8RA8kmYL9as5KVwrH+37bJQowT7JplzA+USzdJ4aMhpSUqGegJT4M2GHlUy
- 5VJl2IiHvYr7OKZBd5fCCOlxV1tHdMn1omm0JJsmiGU1RqLy7lOdxex+CaPYQyrBL4ybQ8Qh
-X-Authority-Analysis: v=2.4 cv=Io0ecK/g c=1 sm=1 tr=0 ts=681340d5 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=YI06EguIVAnxD8KhfcAA:9
-X-Proofpoint-ORIG-GUID: HZXWosbrsR__hhjxEQHClb4BplyKzekZ
-X-Proofpoint-GUID: Awrz7UgddSuikCZ4ScTR0SFfKhng096F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-01_03,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 malwarescore=0 suspectscore=0 mlxlogscore=999
- impostorscore=0 mlxscore=0 adultscore=0 bulkscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505010072
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430-vt8500-i2c-binding-v2-1-0cf22d0c2d42@gmail.com>
 
-Add counting.py - a python version of counting.c to demonstrate
-measuring and reading of counts for given perf events.
+Hi Alexey,
 
-Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
----
- tools/perf/python/counting.py | 41 +++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100755 tools/perf/python/counting.py
+kernel test robot noticed the following build warnings:
 
-diff --git a/tools/perf/python/counting.py b/tools/perf/python/counting.py
-new file mode 100755
-index 000000000000..0c58907bd8bf
---- /dev/null
-+++ b/tools/perf/python/counting.py
-@@ -0,0 +1,41 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+# -*- python -*-
-+# -*- coding: utf-8 -*-
-+
-+import perf
-+
-+def main():
-+        cpus = perf.cpu_map()
-+        thread_map = perf.thread_map(-1)
-+        evlist = perf.evlist(cpus, thread_map)
-+
-+        evsel1 = perf.evsel(type = perf.TYPE_SOFTWARE,
-+                 config = perf.COUNT_SW_CPU_CLOCK,
-+                 read_format = perf.FORMAT_TOTAL_TIME_ENABLED | perf.FORMAT_TOTAL_TIME_RUNNING,
-+                 disabled=1)
-+        evlist.add(evsel1)
-+
-+        evsel2 = perf.evsel(type = perf.TYPE_SOFTWARE,
-+                 config = perf.COUNT_SW_TASK_CLOCK,
-+                 read_format = perf.FORMAT_TOTAL_TIME_ENABLED | perf.FORMAT_TOTAL_TIME_RUNNING,
-+                 disabled=1)
-+        evlist.add(evsel2)
-+
-+        evlist.open()
-+        evlist.enable()
-+
-+        count = 100000
-+        while count > 0:
-+            count -= 1
-+
-+        evlist.disable()
-+        evsel = evlist.next(None)
-+        while evsel != None:
-+            counts = evsel.read(0, 0)
-+            print(counts.val, counts.ena, counts.run)
-+            evsel = evlist.next(evsel)
-+        evlist.close()
-+
-+if __name__ == '__main__':
-+    main()
+[auto build test WARNING on 0af2f6be1b4281385b618cb86ad946eded089ac8]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Charkov/dt-bindings-i2c-i2c-wmt-Convert-to-YAML/20250430-183538
+base:   0af2f6be1b4281385b618cb86ad946eded089ac8
+patch link:    https://lore.kernel.org/r/20250430-vt8500-i2c-binding-v2-1-0cf22d0c2d42%40gmail.com
+patch subject: [PATCH v2] dt-bindings: i2c: i2c-wmt: Convert to YAML
+reproduce: (https://download.01.org/0day-ci/archive/20250501/202505011756.SZDFqCew-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505011756.SZDFqCew-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/i2c/i2c-wmt.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/backlight/ti,lp8864.yaml
+   Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 984.
+   make[2]: *** [Documentation/Makefile:121: htmldocs] Error 255
+   make[1]: *** [Makefile:1801: htmldocs] Error 2
+   make: *** [Makefile:248: __sub-make] Error 2
+
 -- 
-2.49.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
