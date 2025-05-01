@@ -1,133 +1,188 @@
-Return-Path: <linux-kernel+bounces-628631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1B8AA6037
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 16:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90470AA603C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 16:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8F11BC59AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1863D1B621D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5391F8AD3;
-	Thu,  1 May 2025 14:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0065A1FC0E2;
+	Thu,  1 May 2025 14:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="USFeTrTP"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ea9v+iHW"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01591F426C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 14:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF041F76C2
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 14:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746110965; cv=none; b=cOhuElVwFFN0BeV6xLpIyfiH5BFoNVxubJVx9GLDUN7hZulanlHTNUsKsOnGEE2wGWneJWI+CkY0tZFDLQu2ARgmfx4WRTpLIcH4FL9HK4HmT3IQ4i5nXuqqagX3P+4NVUSyNP0vnkzJ4EgKJjL22WPxKFl2tE4nKIlZdBrCrJ4=
+	t=1746111148; cv=none; b=Q5NETItS4RmWOPJC2NOwVZZj2JZ0sZKasxHge4doHqY9YrUQRkGCayXpY9cmLiVRyBsjM1DjRQkKyqs/k5xthaX+Bw3+SdeFdQGLWTmoJ1bTzkWFZV4HaNKM+WMc5hYLwzuxyC5xccZYU567BFyIkJO0+qf/wOpVuqssW6D3Ed4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746110965; c=relaxed/simple;
-	bh=Nj+Buzt0el1DKRoyQF913fIBNhoC13kudc2w1c3kB2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=McoHn258IMkDkKzwcaoQmXjTtKBYcgt9DZlleaDqcDPG4ujBjRBL7HqQRhk0ndmhmGiHDUJCJ2wXJ94zC6/8Dk6euQs5z6TbdLuVY/ar/O1whTVGAxD4NM+tBXOu3RGgylSN7+dZwEIOX96QyrZ1J1DW+azZBLEhr9S5wnjyMLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=USFeTrTP; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2d060c62b61so971949fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 07:49:23 -0700 (PDT)
+	s=arc-20240116; t=1746111148; c=relaxed/simple;
+	bh=4vBN19AAg9T2It+spbWtSmKK8svHb3xb1Lx24a45eNI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HDTaX5GGCkfOLGqRrsamRmEHYnHVF7Lt5kDZVCW9/BtFnbZlQ6j+YEkpT/KXaF95/x87BUE/JG/oCSwIpykgwy9wB83dd97Fr7ZrdHuBgFmNzFqGwcab8dIhi1Yy0d8Y8pgj25ogas9zXL2/wAyDa/Dxo41NAlAJnnD0U7yYfms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ea9v+iHW; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfe99f2a7so1716405e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 07:52:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746110962; x=1746715762; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fEs6umMySeLBJDEE1y2srlfEtA4e3pHxcXG4IeDmkZQ=;
-        b=USFeTrTPkhdXxAd7WkSfn4OAjwOwVD2HAJO4uaUBIfotv1a6ORmVRaLKq+mHTPpNjb
-         AEoz2Iy/2+FlFZXl8pYrchfyi8QWR7JjbZsWqApOcHQe/NXQP3UnvsC03s/DaLpMXTmz
-         Og1MbSNTocB0ycEPs7zsE3FESJ6nlhlener3/Wvm8aexLwJln7ZfF0lgRI1VWscoTb4Q
-         3VsKXbtDykX428vUQkQMViv0RSrRPQ5gCypp0qP7oNL/QXnwIuYtswelxcJ/BxXte+l9
-         txJ3ch8m57nUbeQZ58OpnNwWCxLfp54wILc0ros1izps2laTAgrkK4nFlKdvGbwcDn15
-         fr+g==
+        d=linaro.org; s=google; t=1746111145; x=1746715945; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lJYIuRkvXgvyjv2IxF0maY1wel8nlqpI4PAniXDkr/Q=;
+        b=Ea9v+iHW6PbFFrFeC7r2je5IwDvTAzoUQVrWWiSNKFapGV2IDFvr5rLolc5VDezTiw
+         MZTkYiHYfusKl9F+1JmZ5gK/yh6DGFYtD6Vf3M7Ap9itQQiaTHVfHtpNzfo/qHxEBCW0
+         GuqOdoxGAYuIJSYXE11zCoOg7ayElwuiIJjqLInC3zyZbKlBEzA4VjUEzYvWDRMQ/DNN
+         bGWRIJExmz8XiCcbTsXgdm/117RL6vKit/sNXAih6ZFtdyeTaAep9zS6WZLx8fFJJ0Ty
+         EgPbB0PYBHzfXYMlczbJ3lG1l/3SzptGIm8A53c5rE9T6CAsZ1Fye2aZAVoFR4ryA+97
+         fvJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746110963; x=1746715763;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fEs6umMySeLBJDEE1y2srlfEtA4e3pHxcXG4IeDmkZQ=;
-        b=RGXYxnVPmN/8h3yleDdBsYmYAUoWpfNB3SQ6oglRuM3qdnHuF8ufNOXzB+BVPSgPqE
-         n8DvL5tvCx3EiZdUXdwoxZhpUjNz0E8tIaR4NewEgpg6gevRSW8AERcB2zQ31MK26kPx
-         3ZUwreYNtxNhH7ojWufYITLtGbSCyFcLqmyInVK58jDqs5fQ3epoMo6Qsx2F9zBsDAGK
-         sTkzt77KkK8lqmscKYR1IZmTpYBEgEUWkKAwYV7UVHdrEkGdVQAtJRyCJr+7iFhTjCwd
-         +T8GyY2Nd54WosBJww+i533BlQqzoAZY3WNiwEHMgLnyNQXLO+kV+ip7Cvdsl62TJFEa
-         wtbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFswFuAtj7LoHVJh3Ag+0YdL4+ziF78eqQzgTwNhSfDudLCh5goqs9/FZLrurpEGFCnsQBlDuMEPMRmp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGzeRpl3WUD9wxx3T9DfeOqfnKDsK1z/vP31nBhFjkatwKHCPa
-	f2m87iP5WBLWzgWVT8jKuCR70B7bHgLcFetivtX9OZeMcrukuaUaW/yRlla1X/Y=
-X-Gm-Gg: ASbGncu63XF3ezNHvpguOV4QwewvO7ivHDGR4T3sb+anokuV+EB5+9wisCI/s1jV9+e
-	BnKjqieRo2nxdfZcwvtbI+AGdQ0JwOVu5JG6hZRCpKvz3w0SM6qkA1i3nXoY8/NOiqX7UiggMe5
-	rJ9DldXymMi0IMTfXTJeBI+1EgeyeFxvNO1fCJbhhRQPPajrEtkAXwAdQ04gHDhezYunScjeMEl
-	4gqvq54z9YNkMruelpn1hbEW9hXQ5jYakUWXYy3NrWVM7Y/zEqjYlVvEqFdlTHjzD2ZfScBBrxn
-	sgqwP/z40kJc8YPruu4rLMxAGkJlB6YOsVwDaKIBxYRCpuCewIZ0c+NWylL6VcUGp+xCWnwrViX
-	NTFXVTWz6UjwNeIS19rDKrAh5KRHO
-X-Google-Smtp-Source: AGHT+IG/sAO6ZHkviN2Ne0zUJ5m6cW80bEv+JtsGzgP47IWE2BU/C39yiIzIqJ5ZMSvTiqGOzJM5KQ==
-X-Received: by 2002:a05:6870:47a3:b0:29e:65ed:5c70 with SMTP id 586e51a60fabf-2da6d167ea9mr3635683fac.30.1746110962642;
-        Thu, 01 May 2025 07:49:22 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:b1ed:e5d7:8ea6:40e0? ([2600:8803:e7e4:1d00:b1ed:e5d7:8ea6:40e0])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2daa126b723sm147495fac.49.2025.05.01.07.49.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 May 2025 07:49:21 -0700 (PDT)
-Message-ID: <df11dff4-7641-46f8-a604-8727918629c3@baylibre.com>
-Date: Thu, 1 May 2025 09:49:20 -0500
+        d=1e100.net; s=20230601; t=1746111145; x=1746715945;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lJYIuRkvXgvyjv2IxF0maY1wel8nlqpI4PAniXDkr/Q=;
+        b=LZU9gdmjTHHsZGxGwMjawHdx6gfewKzOhfVV4eiv97mhat7C9RyBYvFQqEWVoiSqs9
+         vcTB8GT9u996FZIQ8quK8I3KmWOGVsP5RNqhuQx0GSrVLq8e/nllS5htptKAP4Bo6JWM
+         R+6p+6XUQ9evIDe0HlUtVDkF/iY+3LdZleSC7ICnGLb7uFSBGJa+0dbkv7BkweQOwgZm
+         RKDzRI3INm5r0bUgHEU5HfsC3vfi4K8qBMMgEVLOGM4+1QxAj2xArs7ceJQkfp2sLT8P
+         SNlEuXNn1AtgAx8m+3fGX6ermCF4LoTgqHykmu3ukOIZtPIpMwKI1Rc4J3XMXpyhNXFV
+         wXxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1Ii3HkjFSKmHCGsK4u9rSappfZw5UaJeqj42NlAHyyyLwnMTns35FoayYoYOq2scE1oZttyu4DT8Fz1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR1kwxPY2Z1hUshIEQvcjHMsYh33thqr+lhECm7W2F3vUginfV
+	u0FelDW8S6LhJK65OhCgTOGXf13ElJiO11iODNCP3A8FBBO1ONTnXURZsnLuK38=
+X-Gm-Gg: ASbGncu2qwTMp2Cpx0YlQCKxfIyfcEqlvbKdeCnDsCj/8i+4+93EgRfPAQvc3B2nEcU
+	E2A75nEuqyAjMC5XNrNieVuPG0swV+IvXwZhfGcc2wDEYTjwvzFay/ccLzMig8YpOEjxCeZhDhG
+	+wIY0sgvnNsCfC3Cw1msNEm1lX9p15gV8u/5CZMqKzGO4Jq/XcU3QjlrE99J7099nKP7x3F+YMk
+	CXRcisI4sg/2HbU5S6SkUVSOTCARzjb+Lj06xX7ylmMdW3VelCBvrUucTkC5A4T+Sxtv7B4YDSy
+	4RIUY4NI7okxh6taBsyQPjfRi8o/IrU0Vj0hXQuqYiKMwBj3wQ==
+X-Google-Smtp-Source: AGHT+IEscX5IahyoV/eRtQh77jTXcANYfmic7ETf5PGiDochYM6dDXqHCgY2w9TfMWBhu1Fc9dpY5A==
+X-Received: by 2002:a05:600c:4f8e:b0:439:9fde:da76 with SMTP id 5b1f17b1804b1-441b740c97fmr6862565e9.0.1746111144682;
+        Thu, 01 May 2025 07:52:24 -0700 (PDT)
+Received: from kuoka.. ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b89d15dasm14558175e9.16.2025.05.01.07.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 07:52:23 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Colin Foster <colin.foster@in-advantage.com>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jeff LaBundy <jeff@labundy.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/2] dt-bindings: mfd: Drop unrelated nodes from DTS example
+Date: Thu,  1 May 2025 16:51:26 +0200
+Message-ID: <20250501145125.59952-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] iio: adc: ad7192: Refactor filter config
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Alisa-Dariana Roman <alisadariana@gmail.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Alisa-Dariana Roman <alisa.roman@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>
-References: <20250425132051.6154-1-alisa.roman@analog.com>
- <20250425132051.6154-2-alisa.roman@analog.com>
- <6d0ff620-ec1a-4b17-9b5d-b9c48078271a@baylibre.com>
- <20250426133241.7d14c776@jic23-huawei>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250426133241.7d14c776@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2572; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=4vBN19AAg9T2It+spbWtSmKK8svHb3xb1Lx24a45eNI=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoE4ptulClJmxd6R/zFbeEq5+2oIrFLOFC/OsgF
+ Eg7qxfabImJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBOKbQAKCRDBN2bmhouD
+ 13VyD/9mmygI3FArCUXOD4f6QaOXP7dD5Fsgyiy2iRtSSwwySLD3Eesa1LzWAQ/TGmj/aJyw9fG
+ DaYo9NoeywhAaeLW0WiLRFO2k1kjtddAc68IqPFohTHpgx4VcDi4fMcvvFyYbkpwit5SJp48sgi
+ +LCuw7oS9K5Ohmyqf1NAIan/guJfvKY21AgAD1nm0qU27Vdh/mHKeejNP/PXv3y2dInBCMAiUMw
+ yNewJrcoNeS0RRVFu35bjLUoo28vLof3ZrTBp/xZMXMFRNhVvpny7sIAdBRhQ6YiVP4fhOff9R0
+ mH8FUbY1NUr5d7vM3GoSyhSTbJkJoWzt8druiwrzJMrIueQdsb2PnTXnlygcXFfXuQHFtoGAnda
+ 9bSmOVsxc22KuzIl7SrhX4Q/ZpqlmKsyLEH47JLIwSW+jWYpEezBZToVUlG1e3Jz/NBZErXq55r
+ H8AclkEQLS2reCTfmSXi/ENGdXy9AVDxw5sN3JycBuqfADNGl52aYtT7oYMnt84aclDBLlHMcfd
+ quFI1oTHupbzyamJlnPwfAtMVnoPBB/haC3VR4w97JOsD85+eH4rj85Gm2zmhHol0aaXIiBy/Mf
+ lRAAMgvFGwwYovncTDj/UYqejjABZ1wt7jfh5x249XFIPS+7vDd1lBofEJzBCOI2TcEXJto2CO6 w18oNZQkiq7aUYQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On 4/26/25 7:32 AM, Jonathan Cameron wrote:
-> On Fri, 25 Apr 2025 10:43:29 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
->> On 4/25/25 8:20 AM, Alisa-Dariana Roman wrote:
+Binding example should not contain other nodes, e.g. consumers of
+resource providers, because this is completely redundant and adds
+unnecessary bloat.
 
-...
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->>> +static const char *const ad7192_filter_modes_str[] = {
->>> +	[AD7192_FILTER_SINC4] =			"sinc4",
->>> +	[AD7192_FILTER_SINC3] =			"sinc3",
->>> +	[AD7192_FILTER_SINC4_CHOP] =		"sinc4+chop",
-> 
-> Is chop really a filter? I had to look it up and to me at least it
-> seems like it isn't even though one thing it does is remove
-> some types of noise.  It also removes linear offsets (some types
-> of filter kind of do that, but the affect of chop smells more like
-> a calibration tweak than a filter)  
-> 
-> Maybe we need a separate control for chop, rather than trying to
-> force it through our already complex filter type attributes?
-> 
+---
 
+Changes in v2:
+1. Move pwm-leds removal hunk in iqs62x.yaml from next patch to here
+   (Geert)
+---
+ Documentation/devicetree/bindings/mfd/iqs62x.yaml     |  9 ---------
+ .../devicetree/bindings/mfd/mscc,ocelot.yaml          |  6 ------
+ .../devicetree/bindings/mfd/netronix,ntxec.yaml       | 11 -----------
+ 3 files changed, 26 deletions(-)
 
-I was looking at the datasheet for another ADC that popped up on the mailing
-list today. https://www.ti.com/lit/ds/symlink/ads1262.pdf
+diff --git a/Documentation/devicetree/bindings/mfd/iqs62x.yaml b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+index e79ce447a800..3fc758664614 100644
+--- a/Documentation/devicetree/bindings/mfd/iqs62x.yaml
++++ b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+@@ -90,15 +90,6 @@ examples:
+             };
+     };
+ 
+-    pwmleds {
+-            compatible = "pwm-leds";
+-
+-            led-1 {
+-                    pwms = <&iqs620a_pwm 0 1000000>;
+-                    max-brightness = <255>;
+-            };
+-    };
+-
+   - |
+     /* Single inductive button with bipolar dock/tablet-mode switch. */
+     #include <dt-bindings/input/input.h>
+diff --git a/Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml b/Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml
+index 8bd1abfc44d9..b613da83dca4 100644
+--- a/Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml
++++ b/Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml
+@@ -76,12 +76,6 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    ocelot_clock: ocelot-clock {
+-          compatible = "fixed-clock";
+-          #clock-cells = <0>;
+-          clock-frequency = <125000000>;
+-      };
+-
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/mfd/netronix,ntxec.yaml b/Documentation/devicetree/bindings/mfd/netronix,ntxec.yaml
+index 59a630025f52..06bada577acb 100644
+--- a/Documentation/devicetree/bindings/mfd/netronix,ntxec.yaml
++++ b/Documentation/devicetree/bindings/mfd/netronix,ntxec.yaml
+@@ -63,14 +63,3 @@ examples:
+                     #pwm-cells = <2>;
+             };
+     };
+-
+-    backlight {
+-            compatible = "pwm-backlight";
+-            pwms = <&ec 0 50000>;
+-            power-supply = <&backlight_regulator>;
+-    };
+-
+-    backlight_regulator: regulator-dummy {
+-            compatible = "regulator-fixed";
+-            regulator-name = "backlight";
+-    };
+-- 
+2.45.2
 
-It also has a chop mode and filters very similar to this one. So perhaps another
-reason to make chop a separate bool attribute that could considered a "standard"
-attribute.
 
