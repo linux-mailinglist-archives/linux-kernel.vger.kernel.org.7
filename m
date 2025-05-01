@@ -1,125 +1,137 @@
-Return-Path: <linux-kernel+bounces-628171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71656AA59DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 05:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B664DAA59EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 05:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E45B9C5D91
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:06:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A1D463D9C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D19B22F749;
-	Thu,  1 May 2025 03:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFC1226CE1;
+	Thu,  1 May 2025 03:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h8qZTEyT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Cqyp6Kiv"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBC570805
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 03:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDE0322A;
+	Thu,  1 May 2025 03:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746068777; cv=none; b=mDqn5d3+/23MF5BWpfsF4jx0VaR2tYDlbNIrLwS3JQj4j/SZUZwUeH6tTEhN7+mAEwqNWj1j6BTXFkvNLZlcnrhTcOOy9Tacv+X4PSfSgxs0gaIZubmdH3UEYWYfNgfgr/nLpYkRJn9UFc8sfJGU9EnBb3swH2GJWvar9B/Tnxw=
+	t=1746069561; cv=none; b=H7nh6yhqySeBrJc0OtrNbJTP2f6JP1pp/yO3zcCr5qaZFGSN8o0hatoxn0SqLI3ySoxUlqWm3ANwvJC9/LlNO/6lEWNbPQsPS/RC4WIOe2eyoN6/4LM4ucSmZ+C610ugKcI34FdTZ70zHcYe70SWD+PkGgm21bIoiQrQ/jSBsUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746068777; c=relaxed/simple;
-	bh=X/XhkrFmWidZvhk9MnMyADxxQYnJ6LlWfI1v/DRQrcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jLcwrhL6aI7dqKsRUcPQYbBIsNS/RdInstn0IVNY/PQ1GYehec5uyfW8KUiGJ0O97FgNlJPYZ0dRiqoBCL0gdJmDboT9bgq/KM2NGmU0nVz7MidOAiFya0YwwbJ4SZDSkPw27U692zZqtNEjOiWB9V9EQBJdaKvdoR2plG3l3sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h8qZTEyT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746068775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBUyB0Q8zMsFcB5UcneuetEe4xDQ4aVw4JfTOnTTULU=;
-	b=h8qZTEyTzTw+YYY8eslPvuH5rrC4cuty3NrDHRkshHBZBJBjUG7jD3bCtB1m0Aliqn1rrf
-	5xyqgjAbf0ueyuOSAj4RHJr2rnI2Aiinv3Zq9aUs6IWGmMzvtfbE//qbyw1AhclVMw0Zid
-	ZLcvkCni2fczSvp2ee5tOjwBNGC4pOM=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-279-d8_LgUopMbKE3h7E-b2wKA-1; Wed, 30 Apr 2025 23:06:13 -0400
-X-MC-Unique: d8_LgUopMbKE3h7E-b2wKA-1
-X-Mimecast-MFC-AGG-ID: d8_LgUopMbKE3h7E-b2wKA_1746068772
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7391d68617cso1609908b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 20:06:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746068772; x=1746673572;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zBUyB0Q8zMsFcB5UcneuetEe4xDQ4aVw4JfTOnTTULU=;
-        b=jxqEzOw+nJyxX+BcKDo0iZBEh9/e2qS+oHw/MTFV/F6xY6WNsR3o9iYiGtdz+hOXog
-         GiE/ABvf835pnm1o+0vo690OnxL3tYUKMExkn+piFP06+mc1rAcD9D64ffO+B1romXir
-         YCNE+kXIEHNQT1ITpNefmQUaVlydo5O3oYRQGA4SctgPNLziUbafFTvzaOB5lmV1aSGu
-         lNEAyS09OiaUQbxvg17PuU6Cotm7Iw1VrIgrqTMKWLxKfboUnaLjspJekLBv+au3dQtu
-         whpTxlHIbAKZ5tiFZQHEtDp2lAyiQJ/0IN2TQjqTTqsXXMJ2/oX7hUmgcR9sGNhEhNDe
-         GH9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkfglDVHMfEzQdCqeYKJF3qUZXhqA5qqNCTSUgycaszwKoTt2965VZMC/fdbmeG8yob3zw18aP3iUWqZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2gC+xdN5M01gx8Qm5+zUWhNHCL3hDMSf9dQ+7CHIzptey1Xng
-	Znn/YFDyBIB1ZMpX+q3GHrmNhTXV4ZbRi+zZl0vMC1IrKHDFHtWovkQ+LIGpGFtmEE5oCiZZc4b
-	Z3nvl9s5dRnxAYSxH74R+RZzjr6t7QePQpXn4Kz+R8UfG5XQJbN+eTExeeHq2EA==
-X-Gm-Gg: ASbGncuaCGcYAdP3i4mtWQZ7a3zwYUwgT8kP9Z+TkjMe/c3fMOP5Z6JoFd2ltgiEmu9
-	TOtiazwn2IyaQJjNOV5wurhmFa2UC8xuin8+g1o6dEn26EKFJrV/hoFa9DgbpN57It9uEbuujzZ
-	iho9JOqChg0nkhJimVsSlbfsJ/tdpbydmZ6MrbloBLJCrJtY/zB2OfnhYX6A6NRyvMjNoN0pnlo
-	8mByXJYY6PK9d0PF2GM40WQLQXLBH86LBVK+dq7y6tJuUaM9ONwe2rUcanz0pwL1PGeUT1jKSlo
-	DjH72vLD6CBH
-X-Received: by 2002:a05:6a00:35c8:b0:736:bced:f4cf with SMTP id d2e1a72fcca58-7404927930fmr1444815b3a.0.1746068772426;
-        Wed, 30 Apr 2025 20:06:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqFyaQqRxd5YG/d2aF2wgTwFAOyBR0cwvIicbDZqnls7TSQ0mJMT278uEe4KH0+EWzXzgDGQ==
-X-Received: by 2002:a05:6a00:35c8:b0:736:bced:f4cf with SMTP id d2e1a72fcca58-7404927930fmr1444772b3a.0.1746068772121;
-        Wed, 30 Apr 2025 20:06:12 -0700 (PDT)
-Received: from [192.168.68.51] ([180.233.125.65])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039a600a7sm2560107b3a.130.2025.04.30.20.06.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 20:06:11 -0700 (PDT)
-Message-ID: <8a21a392-5ae6-4d55-905a-0956f48853ba@redhat.com>
-Date: Thu, 1 May 2025 13:06:02 +1000
+	s=arc-20240116; t=1746069561; c=relaxed/simple;
+	bh=RnGo3eVZ8Wcd8RXMAWNDmmrSdcERCG1DiTmcD2L68Os=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D/gvgQXYbrLz5sJyHgUZ3YruwjrFbnpNhZxMd/Oe4fcADDYm5pzbK1LlgS4sBYbvUXAw18GUkf91BvcGNkrj4XVHe+DroGFq7caJgttFP1BCqryMOMb/M5py6u7jpmFTqrzqQ5xsUsOPR6d4jdD1+JgeCcYfhJgd6Zfw+wRP5rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Cqyp6Kiv; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1746069560; x=1777605560;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=0jfy50eL43x6RabkD0VNeUvZqkKb2RUgwxKYds+fE2o=;
+  b=Cqyp6KivDJ+pmMUd2ft+oMZ52BdtZL0VEFvVah+gK0M1AWjL9MMIoUP8
+   EZkgqd1n7uJo8epW9ZmkYWlWgH0MX1FZLSAeNJ6gm4M/dRv+Eqp09+7ig
+   62jxYl9JcbvD/sqZpGopgUV5TLGSNLwe1Hf102l1xtbN1olgJ6M3vBr+M
+   4=;
+X-IronPort-AV: E=Sophos;i="6.15,253,1739836800"; 
+   d="scan'208";a="494284256"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 03:19:15 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:56266]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.92:2525] with esmtp (Farcaster)
+ id 6a9c4c01-a4bf-4386-a275-e61fc1e6a511; Thu, 1 May 2025 03:19:13 +0000 (UTC)
+X-Farcaster-Flow-ID: 6a9c4c01-a4bf-4386-a275-e61fc1e6a511
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 1 May 2025 03:19:13 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.171.60) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 1 May 2025 03:19:08 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <jlayton@kernel.org>
+CC: <airlied@gmail.com>, <akpm@linux-foundation.org>, <andrew@lunn.ch>,
+	<davem@davemloft.net>, <dri-devel@lists.freedesktop.org>,
+	<edumazet@google.com>, <horms@kernel.org>, <intel-gfx@lists.freedesktop.org>,
+	<jani.nikula@linux.intel.com>, <joonas.lahtinen@linux.intel.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<nathan@kernel.org>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<qasdev00@gmail.com>, <rodrigo.vivi@intel.com>, <simona@ffwll.ch>,
+	<tursulin@ursulin.net>, <tzimmermann@suse.de>
+Subject: Re: [PATCH v6 08/10] net: add symlinks to ref_tracker_dir for netns
+Date: Wed, 30 Apr 2025 20:07:56 -0700
+Message-ID: <20250501031900.71399-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <c0ccfad35ce8b990fc691814bb3d830b66845ded.camel@kernel.org>
+References: <c0ccfad35ce8b990fc691814bb3d830b66845ded.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 43/43] KVM: arm64: Allow activating realms
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250416134208.383984-1-steven.price@arm.com>
- <20250416134208.383984-44-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250416134208.383984-44-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D040UWB004.ant.amazon.com (10.13.138.91) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 4/16/25 11:42 PM, Steven Price wrote:
-> Add the ioctl to activate a realm and set the static branch to enable
-> access to the realm functionality if the RMM is detected.
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 30 Apr 2025 19:59:23 -0700
+> On Wed, 2025-04-30 at 14:29 -0700, Kuniyuki Iwashima wrote:
+> > From: Jeff Layton <jlayton@kernel.org>
+> > Date: Wed, 30 Apr 2025 08:06:54 -0700
+> > > After assigning the inode number to the namespace, use it to create a
+> > > unique name for each netns refcount tracker with the ns.inum value in
+> > > it, and register a symlink to the debugfs file for it.
+> > > 
+> > > init_net is registered before the ref_tracker dir is created, so add a
+> > > late_initcall() to register its files and symlinks.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  net/core/net_namespace.c | 28 +++++++++++++++++++++++++++-
+> > >  1 file changed, 27 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+> > > index 008de9675ea98fa8c18628b2f1c3aee7f3ebc9c6..6cbc8eabb8e56c847fc34fa8ec9994e8b275b0af 100644
+> > > --- a/net/core/net_namespace.c
+> > > +++ b/net/core/net_namespace.c
+> > > @@ -763,12 +763,38 @@ struct net *get_net_ns_by_pid(pid_t pid)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(get_net_ns_by_pid);
+> > >  
+> > > +#ifdef CONFIG_NET_NS_REFCNT_TRACKER
+> > > +static void net_ns_net_debugfs(struct net *net)
+> > > +{
+> > > +	ref_tracker_dir_symlink(&net->refcnt_tracker, "netns-%u-refcnt", net->ns.inum);
+> > > +	ref_tracker_dir_symlink(&net->notrefcnt_tracker, "netns-%u-notrefcnt", net->ns.inum);
+> > 
+> > Could you use net->net_cookie ?
+> > 
+> > net->ns.inum is always 1 when CONFIG_PROC_FS=n.
 > 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->   arch/arm64/kvm/rme.c | 19 ++++++++++++++++++-
->   1 file changed, 18 insertions(+), 1 deletion(-)
+> My main use-case for this is to be able to match the inode number in
+> the /proc/<pid>/ns/net symlink with the correct ref_tracker debugfs
+> file. Is there a way to use the net_cookie to make that association?
+
+It's roundabout, but  net_cookie can be retrieved by creating a
+random socket in the netns and calling setsockopt(SO_NETNS_COOKIE).
+
+Ido proposed a handy ip-netns subcommand here, and I guess it will
+be implemented soon(?)
+https://lore.kernel.org/netdev/1d99d7ccfc3a7a18840948ab6ba1c0b5fad90901.camel@fejes.dev/
+
+
 > 
-
-Reviewed-by: Gavin Shan <gshan@redhat.com>
-
+> If there isn't, and ns.inum is always 1 with procfs is disabled, we
+> could just skip adding the symlink when CONFIG_PROC_FS=n.
 
