@@ -1,119 +1,312 @@
-Return-Path: <linux-kernel+bounces-628110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE1EAA593F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 677A1AA58EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 02:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDA03BD6B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346149E27FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B5B1EB5DC;
-	Thu,  1 May 2025 01:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9542A3D6A;
+	Thu,  1 May 2025 00:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b="Vf9Yo0s1"
-Received: from 10.mo581.mail-out.ovh.net (10.mo581.mail-out.ovh.net [178.33.250.56])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l6P9+3bH"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60561211C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 01:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.33.250.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746061909; cv=none; b=HDR1DcwyZ8uB638Q+5RJs4F6ryA6mOwifSZsFESAJ90iw5T7pXpTfIwbHLULrCuMmjONVChFW3HIMxCN+9VWBzhgXqex6/neQMCP7sAzsU9KnUhlkMUDKdozU9l03D5yBPKWZyzrpe5oE5/q4Eyuk1Ype4bi34F5NU9BCT7xxyE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746061909; c=relaxed/simple;
-	bh=KVl87mxGkMT3rFt2okoJ89BYbEAONsppjlmmv96ipo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MCjrK8r0gZs6/Gc8e2qtNvAU9y/JwV0ElxMAUr/pVmtJN1kobcx+QklMk0kkNzOFRs7eCkDzktu32YO6WgZTBx6adzfSNsC4EniOmi+lqaeRsqzZgRUJQKpQXsnG3VPMN/3KoVzjeikiv4NMbZ1+TvIdBwDY1lr083jGqDDA6jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com; spf=pass smtp.mailfrom=3mdeb.com; dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b=Vf9Yo0s1; arc=none smtp.client-ip=178.33.250.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3mdeb.com
-Received: from director11.ghost.mail-out.ovh.net (unknown [10.108.17.147])
-	by mo581.mail-out.ovh.net (Postfix) with ESMTP id 4Znshh0Xw6z1MGP
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:45:24 +0000 (UTC)
-Received: from ghost-submission-5b5ff79f4f-bggcb (unknown [10.111.182.166])
-	by director11.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 9C97E1FE1E;
-	Wed, 30 Apr 2025 22:45:23 +0000 (UTC)
-Received: from 3mdeb.com ([37.59.142.110])
-	by ghost-submission-5b5ff79f4f-bggcb with ESMTPSA
-	id yhGnFgOoEmix+wgAhAnCLA
-	(envelope-from <sergii.dmytruk@3mdeb.com>); Wed, 30 Apr 2025 22:45:23 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-110S004d3d77194-a22f-47ee-abc9-6b3f4bb4fce5,
-                    7FFE21389DDF989CCD6FB7268846A7FDE11993D7) smtp.auth=sergii.dmytruk@3mdeb.com
-X-OVh-ClientIp:176.111.181.178
-From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
-To: linux-kernel@vger.kernel.org
-Cc: trenchboot-devel@googlegroups.com,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: [RFC PATCH v2 8/9] x86: AMD changes for EFI stub DRTM launch support
-Date: Thu,  1 May 2025 01:44:50 +0300
-Message-ID: <5c4d5adaa40fc5d5d1bcfef813713040e4df13a4.1746037489.git.sergii.dmytruk@3mdeb.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1746037489.git.sergii.dmytruk@3mdeb.com>
-References: <cover.1746037489.git.sergii.dmytruk@3mdeb.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDE1184;
+	Thu,  1 May 2025 00:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746058177; cv=fail; b=gdOkbAWEcmxjmXq8pdzMIMwjCWfKPyrQidiUf6aZiQNEfhwrvkVteS93BqyKvk7uJnFY8qVjoTVFbRp8YDBxFjsxZx7TgztbiLdGf5q/s1zaKPHBs/VFGqA/026bad8cdOPdWXoabXkFf7CtLfEtpW2ZfV4HV3ti1Er7LqR1IkM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746058177; c=relaxed/simple;
+	bh=YZqdLO/1yCf5sEjfHjKQVGXVlNAWBq3hIvD0BJXPzis=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=lthFW6xgId3mAhRbBbPC/IaG/k/Rh0jBqtnbOMkkqaWQgq+deHrN9VDIN7Tia2VMUVWtYGa7+kaP4ufjaM7S8d2sxrfnXF4pIiEr1otjdE/YSWe4Klp1B6CW5by3Q6cfvrW/lGw9bz2o26Ls3k+nQ+U+uF7x+pf3IHFrO2Y1I58=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l6P9+3bH; arc=fail smtp.client-ip=40.107.93.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T2C/Oao1Dz5JkTFmE5Ct181uO2P/lJQpWZnzFDwh1b6arrEL3iF357b+dH/d5XEOrMJ9GENHONAlRv+8G63Ojm4DGbjtuZ2lF8CeZSYTfSLKdEa7YYaT6ocDDJRyFtklNw7i3+V9BgvGJqGue8vVEOVZHiouE2/tDnJkB+m9fQ4I1LGjysthMUiI9IKI8wJWtTtHpBrl/tFQ5FtOzeNYjHPCsDLuhLr5QVdf+uKJwbWdqp0GFWudvuufaC6BN22rAOHsfDDgBzZno+tWcPpx4cpDiXL1mNQm/3W7qpHy54J4xH59UPWw/c5H5xU0vURJ8Xvmm+XyhczXOHJVrZ8T+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s4NNHt7SNaUDpZw/J7NbUy14hBGG9zwzz9JhQiXgHvU=;
+ b=YGm662Sr4zTAVYXCklg7U61e3981eA6p3Z6wAkDVKO3rEHXnrbWqxzzbzfRKAgzRFLHMj5+s8YML3QISWW+8fuSNQuGUo5UYLt6gYVTdydFNUqSCmdS/CJ8X7D8tLqXDjnO2j3LOr3Rn37c9rCSaDVJNvqNfHaL27XIXvKx8007Fi8tyVIDnlAR5AeI4Fo7KsJGcGL6icBJCHqdtujBcwh1n7ptN+YVEtk7bYsiZ8hu7dMsGVkYFhyrpln7QzAeVUGUnTeniT4xHZItjDhaDj7u7E/kM0YNPnwyOOMstLWq59zE09ZF4i1teIQpF3mPv29i7zGgnfwZoR81APwqCCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s4NNHt7SNaUDpZw/J7NbUy14hBGG9zwzz9JhQiXgHvU=;
+ b=l6P9+3bHr5LTJ9lA48DDFFXk/dskjkW4p0XLKyrRIuDqbqtpKnOTvqCA0lMSNlXrcOYXQLUyZo3/Iv+byat7rEOrju2Z8bI9MawjaluHQyMvHHSZbsTGQVCPJQxO8ZPOnD8lDb8llPvhjsn42I7OYp+f0bNgQ8yewvMobhINwuOLdeaAV6Ko0Hv1+9hfMdQOFCAHCaCB1ugzc4uAoVrDmo4hUY+DIKhSOmOgLbf4vC4gDHHKMZ5AKLBLiMAVnzLBoLQkrc+Xvdtggd79Drr2tkqyycgiF/PvId6dnZh6DfTODBNbtiKyxLbdmgwDCSU03eho22g0dyuJ2RJNP/V9Dw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by DS0PR12MB9725.namprd12.prod.outlook.com (2603:10b6:8:226::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.22; Thu, 1 May
+ 2025 00:09:32 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8699.012; Thu, 1 May 2025
+ 00:09:32 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 01 May 2025 09:09:28 +0900
+Message-Id: <D9KDYOVU0EG3.2TA8UJHMW66Q6@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Jonathan Corbet"
+ <corbet@lwn.net>, "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs"
+ <bskeggs@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH 11/16] gpu: nova-core: add falcon register definitions
+ and base code
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
+ <20250420-nova-frts-v1-11-ecd1cca23963@nvidia.com>
+ <aAerWF9j5d01pQv0@cassiopeiae> <D9K09AU4KTQJ.3TVVZPMDB0H7I@nvidia.com>
+ <9977ad2e-ce2d-48b5-a222-f74a821abfeb@nvidia.com> <aBJo9qNDn8xDEwlk@pollux>
+In-Reply-To: <aBJo9qNDn8xDEwlk@pollux>
+X-ClientProxiedBy: TY4PR01CA0032.jpnprd01.prod.outlook.com
+ (2603:1096:405:2bd::13) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 12106801701031425260
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieejleefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgvrhhgihhiucffmhihthhruhhkuceoshgvrhhgihhirdgumhihthhruhhkseefmhguvggsrdgtohhmqeenucggtffrrghtthgvrhhnpefhheefheduieelieekfffgfffgfedutdevleevvdfhfffgledvgfdtuddtheefieenucfkphepuddvjedrtddrtddruddpudejiedrudduuddrudekuddrudejkedpfeejrdehledrudegvddruddutdenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepshgvrhhgihhirdgumhihthhruhhkseefmhguvggsrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehkedumgdpmhhouggvpehsmhhtphhouhht
-DKIM-Signature: a=rsa-sha256; bh=AxO8+pqA5ngI1PtQlcwGIyLcYBmP10KryNrbaqciCQI=;
- c=relaxed/relaxed; d=3mdeb.com; h=From; s=ovhmo3617313-selector1;
- t=1746053124; v=1;
- b=Vf9Yo0s1C2KgoG9AQQiXV+B9NTnATlsGzRTi6WZWPrqeZoMcGQD0Fu2Xlq+d5W/RmV90Llkf
- jtzaUah7zMT9LJQSU2/RqQY977e2hoBILMcpGOZD3Ey4Q+znbwSbUSspfx2Qanni7gzdTkFkfCg
- 3RgR7Vo/2wBdVLl22m8DLQI3wILOQxY99Sc+/6NfAR/EfHE7FeoSiJODKzN9jz9WgBCo4eEuCE5
- dAu2Xf8FkjVBddfWGqA/DfM9ohy66REskpY6Q7QLI0Y3ngpeI2GktcQudQWnYLKv39tLpcuDFQ6
- 5U9KqaxSKj12G6LvoC7K7dlqB5RvN3ykry4in9qFfbRqw==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB9725:EE_
+X-MS-Office365-Filtering-Correlation-Id: e113f8ee-c78c-414e-e6ce-08dd88447278
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OW9iZGVSTi8vcmVGeVVKVHE3OGR1ZEhMeHU4bmxEU1liU0xqdkNqdDVFbkt3?=
+ =?utf-8?B?OEtqY21nNkFFUEROMnFhL1hMbjc4eTBQUUlUMGFSUkczdE8zNWxXei9IYUJq?=
+ =?utf-8?B?dXQ1RzdiRHJ5TU81LzRpbFlZbjY1cUxVbjhoREtQQVpSMldoaGxSVVVVWVo1?=
+ =?utf-8?B?MGgrK2xPaXZob0Z0b09QTEF4TG1EMnpLRFZlVU9nYUt0eXJoWEZLYnZmMWFB?=
+ =?utf-8?B?ZXg3bU9JMnFxUWs4S3dCNXdGNjR3MTBGL1lxU1ZnbHVuS3RuVk1nVDRnTjBw?=
+ =?utf-8?B?Rk1kZUZHMnZZWXh6dGMvbnMxSjlRaWowbVE5emV4RzBXMU9BRGNucENSSXZ4?=
+ =?utf-8?B?NkhWSm1PZUZrNzllVGRQZk9Eb0NoMDljakxIaHpFRHpHQ0U2VHFtL2dUZWp5?=
+ =?utf-8?B?Q1Yva2VZZ3N2REgwWTAyYjRIZXhDdnJZMlRvYjduMXNEM3MvZ1gvSVQrd01X?=
+ =?utf-8?B?VzAwUXBGVlVaL1NabFhTejFURThxVkF2RWo0TENlRkdrT3RJV3A2bTJJM3pH?=
+ =?utf-8?B?eGhSS0txS3hBejVFbnUxSkUvY21RUHA0NDYrT0lZZUZNUzJUdzZRa2wzbVlE?=
+ =?utf-8?B?MEI2YXpzWHpXMVM0aDFtZjNZQTM5VDdFUmhSSEI2aktCc0xUSDdISjVqWGNH?=
+ =?utf-8?B?VXc2bHJKaTdqajNraUFOY29UcWppSDZFZXdZSGd5Wmp6aW5PSWFaRG1iK2JL?=
+ =?utf-8?B?WkVGN1owc0todWY0L0JPSkFKRm92OVJpeUhJSzI5YUlvU0lucFc4NlJtU2U4?=
+ =?utf-8?B?L2dwOU1iOUdLQ0tENHpnbm1RTllHOUJsdFNjUndkTE4wZFV0RC90eUpnalFZ?=
+ =?utf-8?B?QmlxZndxZnlYaHB0MjQ0OUpZWnVUclJvaisweDdiQVA5aTlQd3RIaURKYkxz?=
+ =?utf-8?B?SEh1VmJXWmhmSElSS2h4RjVJb0h5WE5SOGRXYXY0akdjWUIxZFRraVk1TnZ5?=
+ =?utf-8?B?YUJ4KzAyNUozRGpSMThwZm5jV2Q4MjIvTTNiMVF4TzdDYVdMbldUU2o2N0FF?=
+ =?utf-8?B?L0Y1MVA1VkUrWStTRW1jN0VFeG9IMlp5YjNFUFVaSG1XZHFKSkhDSk9FZk5K?=
+ =?utf-8?B?dlJyU3FWdTFqU3huTytnanZ3MW8rT2Zjay8xbjcwaG41em96WWNvaTJycnBS?=
+ =?utf-8?B?cnJyU0I5OS9DSEhOZkFOSFNjczlKdVFUa3oxTVMwQmVqbU9PSnhWdzdhVHpZ?=
+ =?utf-8?B?RWlGNmZoNVVWOEJ3YU5obW0wZVBXUU9RTHU0d3hwTjR1aUlGVEJrM01NcEp1?=
+ =?utf-8?B?Nm80MzVpdGdPc1JWNGgzOUdpMnlXYThBQ09kSy9WVkNDcURwZlB2WlczK0xO?=
+ =?utf-8?B?K1lGdktZb3cyNWVkbVNoMHIwdE5iUldvWE5PK3BGMG5TMkdDQnpaVmp3ejhO?=
+ =?utf-8?B?Zi83VlNkcFZDenVxbUNXL1M2SzBCVy9ZOEFjQnFhSlJadTQ2VEhmaEdnWFZW?=
+ =?utf-8?B?bWhEQnJuMndvZmUyK0lUY3dyM0hWcUd3MWxSSVczMlIwZ08xcFQ5eGlZcy8z?=
+ =?utf-8?B?Qk5IUGt6bFh4ZU9PSHB2Mm9FMzhMVCt0SytNTEFNbnptVEhjd2VhWmcwT1gy?=
+ =?utf-8?B?aUkvOCtYWitsMU9zbDlCOHczdHVwUVp1RGlySEJML2d3MW0xQWJadGxZTSs3?=
+ =?utf-8?B?bjN2YmZUQ1lsUjZiSHgxWjVlZU91R2E3czFOQ0VBQStqam5yOUMyWnc3NVh5?=
+ =?utf-8?B?d2lLRTU5RjRLeW5BeTVPNkNqQmRudmJadnU1ei9oWVJLM3F0UGZESDN4cVBK?=
+ =?utf-8?B?ZmNMd0JRSktKVnJVcWhGUHgyWmhIS25JYjBVUjZYVVJEWktXSUozR0tZanFP?=
+ =?utf-8?B?Q3gwb2U0ajI2ZTFySC8rTjZmbmJkVTFuMnJySVdBK2dneFNueGdPWVpuYTF4?=
+ =?utf-8?B?a1BrRXVQUTc4UC82L2haRnlldkVORXhVd21sSmlXT01KT2pVVkhVM0dUZFR6?=
+ =?utf-8?Q?K9ppAurNaBA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eHVWQUZ4S1MzV3Y5ZElSSW5xc2QxdE1DRHpOYmhkWHJSRFM2YTU2VGl2eG5X?=
+ =?utf-8?B?RjdadFFEM1RKN3VQbldVaUtqdWtEZmpzOGkyQlU5OStuNjd3Nk1VaVBTRFEz?=
+ =?utf-8?B?cFJ5ZzlscWJIU05OUjBWTXpXNGxNWUZ2UGFiNnl6ZFJyOGhpMXppeHNvR0tV?=
+ =?utf-8?B?U2JKM1h4OVVpL3kxUWg2bGs0anVKeG1nOUZLaVcxc2VqZWlGVWIrYkt2MElx?=
+ =?utf-8?B?QWF2ZERkNUR5OURzTGZJOUJNcVkwTndudjl2MjF5Y241VGVZcDZ0c1ZpYUdS?=
+ =?utf-8?B?dU9xMmdFcStPSUNvYU9nTkRieUJMV3lMN2tnN0wzTUlwTWViVmFQNFlRa0do?=
+ =?utf-8?B?djBzR0N3TUJJeHdnWXNtSytpSDFCN3JIa1Q1M3Zvd0pHMlQzQkdyRU5GVU80?=
+ =?utf-8?B?YUE3SHU1TlBoT3lSTy9ZT1FTN3BmVUJSS2thazRSLzF1bUQ0QmhncVdjNjJz?=
+ =?utf-8?B?bzBqTllVVFFKWG9FckFaaFgvUkFpQ2dBbUpaQ2drbk9rRXZneWN6QmZCVVdY?=
+ =?utf-8?B?M2RSSXd5b1IycTJhN0lsRlpkcHRicU9FTFVJYXk5OVZlV2RSODBUYTRqV1RD?=
+ =?utf-8?B?RXRKQ2RJNitnbVNNY3RsRlRRS0RLVE53WE4rZHllZnduMzFpblA3QVA2T0x3?=
+ =?utf-8?B?YUx2UFBuNDFVT1NlYm1iVFkvcHhVbkNkNHo0S1l4cUJPT2kyNWJKTGY2aTZi?=
+ =?utf-8?B?ZVFGSWJqb3ZnT1doakw4ZFQ5YlM5RWsxQmFpSnB3clhBWWUvR2RaenIxcXNl?=
+ =?utf-8?B?ejkrb2c0eEV4TUlRZG4zNnRsYUdMOEk4RHdNaGZJeWFYQlNvM0t1dDN5UTRn?=
+ =?utf-8?B?d1pmbDdBZm1oU1FmWG1obkFTVmdsVlNyTUxWdCtSRmVyTGtzTU05VEVjTUcy?=
+ =?utf-8?B?ZFV1dndPdUdsTFYwbzNwN2kxcGJwb0FVVUZ0S3l1U3ZMbk1ybE5UdEhnMmR0?=
+ =?utf-8?B?SVhNZW5VNURyQm0xUTRVVlQzbmVaalBXUXRWTC92aVNZbVU0RWZDZ2QzbDJt?=
+ =?utf-8?B?S3lsYjRvNzdRT3FWSjFaaExaV3FYajZuNHV3VVY2RTkvS3N5SGxKK2ZhUlJM?=
+ =?utf-8?B?ZERDNi9nS2tUSGNBemlZdi9ZYjgraHpOL091RGlrZ2dQWEtvQk9Xa2g2Zjl0?=
+ =?utf-8?B?WmVvZWhGaDNHUHNrOXlySU85U2Iwb1R5eDlCVkZqRWM1Y0I2SnIxM3VEWDRl?=
+ =?utf-8?B?OGZSeitMNStlK0JydEVRKzllbHNOajZ3bWszOEcrVUMzNEs3TW5jNVhoaXJK?=
+ =?utf-8?B?ejFDUUdzUVY0dFNybVVpZVAya0t6b2RDaUVwR1gzcTJ2MVM1RnMrckljamtE?=
+ =?utf-8?B?TEk0NDFmWm4vazFRZ0xTMFRnV0E0OHBvMjRpYzc1cG1RRmM3U3dkeW96RXRx?=
+ =?utf-8?B?d0FpaUVBdlR4TDFmWGxjcTBPLys0ZUJrc1RnbExKR0ZLK0VwRkhYUWhHdU9W?=
+ =?utf-8?B?Mjg1TWR3MDJGdkx2TXQrMEd1b3ZyRytFazg2Z1AxTDd0MkZONFVYNUNXaEl4?=
+ =?utf-8?B?Z3FRc2FnekhMbUN4NzVEdFdjYU9ZR01QdTJoTGJDelJoZXN1T01JTFVxUm9y?=
+ =?utf-8?B?RGkxNFFQd3BlaE40bFBIZFp0TW9JZnlkWlR3ZSttTFhmZ2VQOHl4TU9MVElj?=
+ =?utf-8?B?NDhxdXVMT2pZQk8rc3RublJWNTJUVXVnVUp1R1lCSkhyTGJWUFpYWlNoWkk2?=
+ =?utf-8?B?TFNqcFA5cXp5UWszTVlneWNaTWQ2UFZLaDk2dFpZNVR6dnh6d3JWTWhJNEs0?=
+ =?utf-8?B?MEoySmJxcUQ5MWc4WGJ1aDMxUHpaR1lneFQxOVJqUTJzcndSU3JCTHkybFVx?=
+ =?utf-8?B?Rkk5ZFl1QmUrMzE5aHhDZkZBUmFCZmZqSEVDTUZvN1JURmJ0L1FYZ3NHUjV6?=
+ =?utf-8?B?K0FFNGZaeExjTzk0T0k0Mi9LbTZHOTc5L1hoS3U1UWwzL1lzejRWTEpFdCtl?=
+ =?utf-8?B?YjZOQ2U5S1h0UXRaRnBDRWlGZmtWWGJnbWEyaEZBMDM4cytLRzVwK3dHWWYz?=
+ =?utf-8?B?b1VSQ2luQVBpdmIzWE9NcE9ON2NRS0dtc2Z1VDIyV05Ya0NLREh4akVLam5u?=
+ =?utf-8?B?dG9PZGdES0VURS9QWk9VNnA4THByRWFHdzlSaEVyMFJhQjNjZThETXRZdjZK?=
+ =?utf-8?B?b0d4amdsbE9rY3FRWWMzRm1IMDBVSUZLcXNpWFFFR2tScTllZ0ZYaXZCOFQ0?=
+ =?utf-8?Q?RVveTqrAqE7qDrca5/MWUfchR6lo0B5EOc0Y+pa8LcSx?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e113f8ee-c78c-414e-e6ce-08dd88447278
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2025 00:09:32.2869
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KXnnsYxgT4W/IS0ghc1IqyCNItRzVKCp674wyY0QmVr75C/RBBAQgzDTZfdo/T5R10FsDEDRbcWctNDV6I4xEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9725
 
-From: Ross Philipson <ross.philipson@oracle.com>
+On Thu May 1, 2025 at 3:16 AM JST, Danilo Krummrich wrote:
+> On Wed, Apr 30, 2025 at 10:38:11AM -0400, Joel Fernandes wrote:
+>> On 4/30/2025 9:25 AM, Alexandre Courbot wrote:
+>> > On Tue Apr 22, 2025 at 11:44 PM JST, Danilo Krummrich wrote:
+>>=20
+>> >>> +/// Returns a boxed falcon HAL adequate for the passed `chipset`.
+>> >>> +///
+>> >>> +/// We use this function and a heap-allocated trait object instead =
+of statically defined trait
+>> >>> +/// objects because of the two-dimensional (Chipset, Engine) lookup=
+ required to return the
+>> >>> +/// requested HAL.
+>> >>
+>> >> Do we really need the dynamic dispatch? AFAICS, there's only E::BASE =
+that is
+>> >> relevant to FalconHal impls?
+>> >>
+>> >> Can't we do something like I do in the following example [1]?
+>> >>
+>> >> [1] https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=
+=3D2024&gist=3Dbf7035a07e79a4047fb6834eac03a9f2
+>> >=20
+>> > So are you have noticed there are two dimensions from which the falcon=
+s
+>> > can be instantiated:
+>> >=20
+>> > - The engine, which determines its register BASE,
+>> > - The HAL, which is determined by the chipset.
+>> >=20
+>> > For the engine, I want to keep things static for the main reason that =
+if
+>> > BASE was dynamic, we would have to do all our IO using
+>> > try_read()/try_write() and check for an out-of-bounds error at each
+>> > register access. The cost of monomorphization is limited as there are
+>> > only a handful of engines.
+>> >=20
+>> > But the HAL introduces a second dimension to this, and if we support N
+>> > engines then the amount of monomorphized code would then increase by N
+>> > for each new HAL we add. Chipsets are released at a good cadence, so
+>> > this is the dimension that risks growing the most.
+>
+> I agree, avoiding the dynamic dispatch is probably not worth in this case
+> considering the long term. However, I wanted to point out an alternative =
+with
+> [2].
+>
+>> > It is also the one that makes use of methods to abstract things (vs.
+>> > fixed parameters), so it is a natural candidate for using virtual
+>> > methods. I am not a fan of having ever-growing boilerplate match
+>> > statements for each method that needs to be abstracted, especially sin=
+ce
+>> > this is that virtual methods do without requiring extra code, and for =
+a
+>> > runtime penalty that is completely negligible in our context and IMHO
+>> > completely balanced by the smaller binary size that results from their
+>> > use.
+>>
+>> Adding to what Alex said, note that the runtime cost is still there even=
+ without
+>> using dyn. Because at runtime, the match conditionals need to route func=
+tion
+>> calls to the right place.
+>
+> Honestly, I don't know how dynamic dispatch scales compared to static dis=
+patch
+> with conditionals.
+>
+> OOC, I briefly looked for a benchmark and found [3], which doesn't look
+> unreasonable at a first glance.
+>
+> I modified it real quick to have more than 2 actions. [4]
+>
+> 2 Actions
+> ---------
+> Dynamic Dispatch: time:   [2.0679 ns 2.0825 ns 2.0945 ns]
+>  Static Dispatch: time:   [850.29 ps 851.05 ps 852.36 ps]
+>
+> 20 Actions
+> ----------
+> Dynamic Dispatch: time:   [21.368 ns 21.827 ns 22.284 ns]
+>  Static Dispatch: time:   [1.3623 ns 1.3703 ns 1.3793 ns]
+>
+> 100 Actions
+> -----------
+> Dynamic Dispatch: time:   [103.72 ns 104.33 ns 105.13 ns]
+>  Static Dispatch: time:   [4.5905 ns 4.6311 ns 4.6775 ns]
+>
+> Absolutely take it with a grain of salt, I neither spend a lot of brain p=
+ower
+> nor time on this, which usually is not a great combination with benchmark=
+ing
+> things. :)
+>
+> However, I think it's probably not too important here. Hence, feel free t=
+o go
+> with dynamic dispatch for this.
 
-* Only do the TXT setup steps if this is a TXT launch not an SKINIT one.
-* Initialize boot params address for SKINIT.
+Indeed, it looks like the cost of dispatch will be completely shadowed
+by the IO behind it anyway. And these HAL calls are like a few here and
+there anyway, it's not like they are on a critical path.
 
-Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
----
- drivers/firmware/efi/libstub/x86-stub.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+>
+>> I am just not seeing the benefits of not using dyn for
+>> this use case and only drawbacks. IMHO, we should try to not be doing th=
+e
+>> compiler's job.
+>>=20
+>> Maybe the only benefit is you don't need an Arc or Kbox wrapper?
+>
+> That's not a huge concern for me, it's only one single allocation per Eng=
+ine,
+> correct?
 
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-index bfa36466a79c..0453be1ba58d 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -798,15 +798,21 @@ static bool efi_secure_launch_update_boot_params(struct slr_table *slrt,
- 						 struct boot_params *boot_params)
- {
- 	struct slr_entry_intel_info *txt_info;
-+	struct slr_entry_amd_info *skinit_info;
- 	struct slr_entry_policy *policy;
- 	bool updated = false;
- 	int i;
- 
- 	txt_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_INTEL_INFO);
--	if (!txt_info)
--		return false;
-+	if (txt_info)
-+		txt_info->boot_params_addr = (u64)boot_params;
-+
-+	skinit_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_AMD_INFO);
-+	if (skinit_info)
-+		skinit_info->boot_params_addr = (u64)boot_params;
- 
--	txt_info->boot_params_addr = (u64)boot_params;
-+	if (!txt_info && !skinit_info)
-+		return false;
- 
- 	policy = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_ENTRY_POLICY);
- 	if (!policy)
--- 
-2.49.0
+Correct. Note that for other engines we will be able to store the HALs as
+static singletons instead of building them on the heap like I am
+currently doing. The reason for doing this on falcon is that the
+dual-dimension of the instances makes it more complex to build and look
+them up.
 
+... or maybe I could just use a macro? Let me try that and see whether
+it works.
 
