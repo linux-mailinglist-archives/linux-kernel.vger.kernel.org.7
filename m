@@ -1,217 +1,175 @@
-Return-Path: <linux-kernel+bounces-628550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B659BAA5F40
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B245AA5F47
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17231467D61
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67006467EBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642F41BD9F0;
-	Thu,  1 May 2025 13:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E521B21B4;
+	Thu,  1 May 2025 13:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jh3PkeLf"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2056.outbound.protection.outlook.com [40.107.92.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k9WLwoj8"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D79F1A314A;
-	Thu,  1 May 2025 13:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746106534; cv=fail; b=uwMT5a7Gg9fdShW2B464Mv8N5Rw0cgvomjrBpLnQ5Dz/8bDgkVQ+pC7cPJxHXq6fEpeVmPM2353/J8Ls/BL6BBRAwNe+ixFqZA8ss0ZpgHvWSONPNs+oUxmhiDOoEpc9FKJ/MrZymgFDE6GZ8Ukchyi/JBGj2orMOJdocq6tcE8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746106534; c=relaxed/simple;
-	bh=IBpNFoTaLLvHUJ3PztuJAJnBhccmYeFtZGBXi3aApU8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JMCqV8AohfUGQhbabNuyykyz61z+CAbjEq2kftqtwojHLM4cYlfZWC9cO+ouH51ImhE0IdpcGo8Q3JpgaFF4VYrV/Pv5ggD/eClJ8b3Xh2aZEvI8OlKlsKVGZckLoaRnDlMgRFsOSeXiiSE8HlnQIEzDW1rwSCZStynfvmLUEmU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jh3PkeLf; arc=fail smtp.client-ip=40.107.92.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o2PuLlKk2ZIQmYWVdwTXVHqmav4y1uzeY4pQ1a+BLZMMxOXAQ3AefbzkSbAQEM2TjaWMLx9UJkUz1pLHcdVwuW3y/7F+iasZUoqsMwmfIlcPNZz1FRiLor+vdbMt+zaAIflb93ltxojKfsxhWgUOpKrYEzIfTZjsKKeIJciFY03H5DzYt1KpwLQkENq6Sf1wpksu6HCwPaOq+BwsChUupZikNDF/NF8fdUD+ChaSuQi04njdhZZmLAsUbm+YPeKv6t4cg6HFCJ30RoIjJYwc/ZHc0RWSlFRJSWQr6DDJNaGTX+KpDjTeIDV4tv7ulu9/CylMoch8n4jKzh4Xyu2URg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IBpNFoTaLLvHUJ3PztuJAJnBhccmYeFtZGBXi3aApU8=;
- b=atKyW7b/MNHrXDWKlwytfKnHHMvqvT6kOYAqPdi9auJ6ojAnmAZE/B2TFtkd70EjhLWET8WLYZi2brvutXpspYAb7n0UTnN3dWure0bRW4hW5DMMenJPXba4lHiNI4xJp8nShvjXgD/g8Cky1QE2jlG+mEcm0Wkhfxct0FbUcdX6RkJ9QQp288mYzk+LKXKzesLas09z5fra9anpyQZ4Mpjd/DiJY3XxtrJhlDAXbB2tEdA08HfsmyIhf/e8OC3RpWITiM0ZtVY8hIndG6FzPBIZK7+VC8LrdmuC47+anR5y3UiTwEscBFITTN5o2ZNUKGKDxXbX5gxsMX94vYPi1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IBpNFoTaLLvHUJ3PztuJAJnBhccmYeFtZGBXi3aApU8=;
- b=jh3PkeLfWjstXYQjQiI+M3hk4oiACM8maYUx94kBkjCEHBnodI9yX7qhLdijwy3Ebk87/G896cqn12kRcHY3h/D92YeVGIpDaSn9AXYKDJ2uyGR1+Ay/J6FJ3dN0mBgWzQIiUzgVztxAzXNfo5GeoNOcMwz70YnAlrIvPgTbPz7/HZQUvPcsYH7zaRkNzZmTzhK/JbG+y7jyrriV+q9eRKSgHFcXH6hVIqPa7zxu72/2RrAak7dbDn+LARk5dNa6tvkZWHLIS+AuXfsjDu3Ls430rkDbS/GXHv7KVvWLtYqmNHcC753mmkY+1Cr/w5qJokj3uTlpiFJje8XR43R4ow==
-Received: from SJ2PR11MB8369.namprd11.prod.outlook.com (2603:10b6:a03:53d::16)
- by SA1PR11MB6992.namprd11.prod.outlook.com (2603:10b6:806:2b6::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Thu, 1 May
- 2025 13:35:28 +0000
-Received: from SJ2PR11MB8369.namprd11.prod.outlook.com
- ([fe80::4db1:768a:9a46:3628]) by SJ2PR11MB8369.namprd11.prod.outlook.com
- ([fe80::4db1:768a:9a46:3628%7]) with mapi id 15.20.8699.012; Thu, 1 May 2025
- 13:35:28 +0000
-From: <Don.Brace@microchip.com>
-To: <dan.carpenter@linaro.org>, <yi.zhang@redhat.com>
-CC: <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-	<storagedev@microchip.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] scsi: smartpqi: Delete a stray tab in
- pqi_is_parity_write_stream()
-Thread-Topic: [PATCH] scsi: smartpqi: Delete a stray tab in
- pqi_is_parity_write_stream()
-Thread-Index: AQHbuacxzx8dFyy6P0CS3+3iv209/7O9x+H4
-Date: Thu, 1 May 2025 13:35:28 +0000
-Message-ID:
- <SJ2PR11MB8369F6648B1B4407735D64C4E1822@SJ2PR11MB8369.namprd11.prod.outlook.com>
-References: <aBHarJ601XTGsyOX@stanley.mountain>
-In-Reply-To: <aBHarJ601XTGsyOX@stanley.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ2PR11MB8369:EE_|SA1PR11MB6992:EE_
-x-ms-office365-filtering-correlation-id: d44cccf5-1cef-4c10-2486-08dd88b50949
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?YqEtgMIDi/8XO73lwz02GbIaKmZpcJTY8mNaYVujyxFuinTT+hIrsxjIhD?=
- =?iso-8859-1?Q?ZnZN/GbGoUeqVjRp5b1JBxz0AGP1AFD254EFw1LWODZggX3GM0H9guufLU?=
- =?iso-8859-1?Q?qa0mxHSikamTYPjVi/WWXLfo2Xra1odOHWAcPl6Z7bSFqSJ3iXeNLI3U8B?=
- =?iso-8859-1?Q?n7mDL+JH7lXJBJF3GtRmjauuoYHtO5N6SRMn50YPYYtvn9kxCMgtUC8N+E?=
- =?iso-8859-1?Q?z4WEI/3OI4gygzEywpWeSfSjg2C6PjJZ0ovhajWsQw8LyTbHJtLugNdkuM?=
- =?iso-8859-1?Q?q9QgbCcmzxA8D2YHBXaLB7Ee3pyLa1lb8a1YziqvUje9qX8nsySTA+99M/?=
- =?iso-8859-1?Q?Rl/kH2zjdomeNXWyd53L/2R/dWZSpN/mEv+96UcDhq0idIzHqsD2CNuBWp?=
- =?iso-8859-1?Q?9xGIpaBGfwxCIBVmmH/UbLp0X1TTICmWGi4QUTMaURAlpdHOQJLVIV2+9/?=
- =?iso-8859-1?Q?R7HIwpYh2EE7yyTpqyt4rWpqGRoqefaz2H8MoAwxvyZXGkw4B2c3E6vpi4?=
- =?iso-8859-1?Q?7gdLT/807xb3eVZ/22QqRoObs8YIUOiLcZaxCiPjSUkrmAXLR8cW2crzpi?=
- =?iso-8859-1?Q?zWKMdJ+PY8Uq/LqowRU04F3vEGYtL0GG4VmqbI0rJwW6SVopbXnZEKLSlq?=
- =?iso-8859-1?Q?l6UnUgJFXvrcuJblCl6KT8KYElPw9qxmYxmKIMUF8sKuAiIM7AQNnw7VQG?=
- =?iso-8859-1?Q?v0P66kad64GmRPEO2YNfsIOVVIYEH4bSBAYhaZlF0kmgPJXIqD3U0xi4Uu?=
- =?iso-8859-1?Q?lHE1FHOZg5JUI6l7icqlQM7RgqJscSdTNBDtVy74uiyPJQP3bXOItMlKmw?=
- =?iso-8859-1?Q?6H/isk+c8i81R1gtRgUpf38s/qvhwNCSzixnCbrgQ9VO8nTQQDgyGDu1sn?=
- =?iso-8859-1?Q?Klji4xsY3GrAzRWwGp1zPnQnvVX7X2U3+yz1PMQ7Zmg5nQP5ZsjFZcCajq?=
- =?iso-8859-1?Q?OYedWlTHIryMhVzZV86USp2H5hFoa2gLozrEdqtzPtWm2t2N2PSCqjw/kQ?=
- =?iso-8859-1?Q?KzewHOs/5DJ8JOW/U4iA945aGOlAmyC6R05lGwXWlnO8DI4G7NKPnG7CYh?=
- =?iso-8859-1?Q?BIvlvp8m+y9AdNQkEgx8HTDfb7m+inVixQsbrJkDwx3B4fNC7a5aKvwJ+S?=
- =?iso-8859-1?Q?0uL1Hr7JgmDh3otbYWVXEcBA8kln6S1HnmblQQoh1qTqkb5JEVtMF8AJS0?=
- =?iso-8859-1?Q?Tx4tM0EH4ZXgiBouZol01UmQuh6hGdOdtuCBV6WP6e/PksG5tsGhOrk5BR?=
- =?iso-8859-1?Q?XyxXT9S9InWUaVj0E0QqDP0ORd+CVA72a5BMrcXsf1PXou0xTmQHW6mihT?=
- =?iso-8859-1?Q?gHZivEViqBK9pArQ3tEVePWQFz2xwUYj2YPzfbzuv+s7Ua0CZMWgRtM5mg?=
- =?iso-8859-1?Q?mtILL7hbRFzNMgoWFjDjKFeFGHYu7W/kA8xu6o07nXsyzC0FuS94MqpGXU?=
- =?iso-8859-1?Q?ikTjvrSaT43lBSu6u5IoGLvkmWuTJ2pWdE/UWCp6ZUiLtzSqhRo/NPZU0f?=
- =?iso-8859-1?Q?0orp9tfxs0oIcNpM4FQIddsyzqj/9yTavt1N6UdDU7gg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB8369.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?MtobPTc5G58ivRwPcPdy6lMW8p//gUIViUOU/L3/kOP4hvwUy0FO7fezex?=
- =?iso-8859-1?Q?TpFNyxKc+OfUlyuxCGe5CVw8IlEpgEnl0CoXB9c7Hi448qKX4PBomsK2tW?=
- =?iso-8859-1?Q?TbSLoJ4Odn9/oHStx61nzV+l/2JlOtpo/HPTjHH2Jis3qgrRAQKtezEYI8?=
- =?iso-8859-1?Q?pPPOyGhrGhsq5HC2d2K6Um4R2hkpJs66zaZEBeeMmtXzA+Ej78/mVuXq15?=
- =?iso-8859-1?Q?09XVkWfapD58z4hL24F0acsbEHg5MnyNqQyfNT3bLCc6OR35ix/k8oTVzc?=
- =?iso-8859-1?Q?nkz0lXTr5e1Euw21KiPztLSgZvBSUEth4J40YMIoXQ3vQzSDdJyEhSR+2n?=
- =?iso-8859-1?Q?25K6NzfKkEvQJiFwR/h2X7EdHSoD6ZnFk3mx1jLosJ0xvwhFYLD7gh3sUg?=
- =?iso-8859-1?Q?pSOJxFErfYZ89C0Ratref1zhwrBNX7CLnZiimeylDp1aZ6JkYGfePaGnUs?=
- =?iso-8859-1?Q?6cWcFqQ32H2pbKVuZDNybOBx2UJlFpTcEBIEZ5n7cZfdzd77DdgV0cfLGg?=
- =?iso-8859-1?Q?bii8LlVWJnx0agbJX3gdCOTPeAlVLj/D5KZFrODICg4pUmFkTSg0IaDucm?=
- =?iso-8859-1?Q?pvsw2STWBYeUnqX8DvRg7K87DSPCKtxQrJ1rJzze5iVeHKU/ZxuyH4doL7?=
- =?iso-8859-1?Q?hqnYGaTt0DeMq+Mpq7OMNNXL1HveOFWtnslIDq285aKLy2c2Sg/aYMvsH8?=
- =?iso-8859-1?Q?j57nIpgBGtisPZq9Uhtg3iudUo8Do6PAuMsawSJ15xQMZioNYuVep/v0DV?=
- =?iso-8859-1?Q?7vvnXaW7jzDo6GuNriuY/9+R8MT/a271pdHedJwOrzKcGUlTzTxtlnGflT?=
- =?iso-8859-1?Q?G1oPTw288m+RA0uym/XLwfaviGekdhDsh9ZIdQawqsQ/eRSUNYbfpzWiy5?=
- =?iso-8859-1?Q?VfLeLyvtlgDVF46OGujdiN22sHAPV6INw0902xBNIlA9eV3jZ+QW59W6C4?=
- =?iso-8859-1?Q?lWW3i7PPP0orCRF7803a5W/8/uZ70lCcBdxUsuenDfUXPU6E0Y2e1MyTjQ?=
- =?iso-8859-1?Q?xUC8JXN2U9Jq8jin4cwpTfLCs1ercifIm0y+Yie4W0QVZ4H7BBXMdbZvaR?=
- =?iso-8859-1?Q?L88/osp6ynZHusONCPx3zn6+vtoMGOPqZcmAowZTqsbHsD90iaFvBdE26E?=
- =?iso-8859-1?Q?iNBKAhPPCESU4KP0eCkR4Mdh/Uw3Q5bJWTqetAQFfy8w/gMCsJJwci37Ug?=
- =?iso-8859-1?Q?N7umz/4XigQPJZArjkRSQp7XZZlmJFO26GN9LUTN0R9zy/jLyr8NbKCyVP?=
- =?iso-8859-1?Q?OkkLTDlhL3kPyuI809IzyNe/n6Mci8ErD5Eh75QCQJtHu2l9m4NgzGSNNP?=
- =?iso-8859-1?Q?JEhsVff6BoTN3tUtYtxXhrfCNafddexDsS7UkXZmDput+HdFuGhNr5ns5T?=
- =?iso-8859-1?Q?ENB5RoyOeOceJxogaVK4jg+9ntSk4m/dqjJsP/WyAwSsD82mRoeGblkqLt?=
- =?iso-8859-1?Q?6ikpFRhkSRpQvK0tkxLbWF1MKIbGWsip7h2QujkDfC//nRK2tRvUNi0fA0?=
- =?iso-8859-1?Q?3arb8ICe5kukCXi6sYOpjg3Kpben+wP4vTl+ECLDdgMukDbEe3P9NyGKzr?=
- =?iso-8859-1?Q?rjCJMFnNFCzwD020hqpcpidOwb3jFOwPD43hZufPtolTlmT3URjfokLDBG?=
- =?iso-8859-1?Q?G++lcJmqMGoV3mAcycKkcs3OhEy2zcDRaP?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC09B19F101
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 13:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746106628; cv=none; b=YKQdXTWP2d3ByZi70bkepI4ACNMuIkQ1cfg6ZwSxpUg26Ik97pdBtdDxKCiaUS7kS23eZBhSOC3UJ/OHqFm1VKpTwuc4+0N7q8JxEfPjxyzAFnwk26YevABUoYh+YJC4+lX2zrzeHynmZfp8dA7DBYfDJk1IPgFvQWo2sHDGEkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746106628; c=relaxed/simple;
+	bh=9MNpS1gJG0qyHRf2FJfHx17kDP9N8N1hNQWavkpaHFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S4t7aeR0aKkbpKOfhqFGdmnDZPjMnKcffC/LjiO13XHaKi/txn1+Mc0N32NXatjhAgHU/C39W17ZA5LuuM2p+eRvH+7Z8b2FtBV1YVUMVy0JTCGP3Myl9MXNiM5emIudexSvcNf0hXMUt+P9Jcsh20U7R8xQATMGn8YYdRBiIjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k9WLwoj8; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39bf44be22fso664513f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 06:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746106624; x=1746711424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IVJu0wRzEXe69H/pIntKvn73bqLsL3OYyEuqMHp/wd0=;
+        b=k9WLwoj8R6Lwcqz8gF+6ASnsAu/MSALdgx9WrG7GAztAPHAXuifA36BrtNaEqwNeVx
+         jOq98QYeOogpKM+RxgPfn6qEvZj1ONay/gPPMjP2Pd4oSoF1RH2zXRObgZ+zxxlIWphv
+         p52Zi/mNOV8CU6hsCN/AA745wOP9JhcFPWv275wbTTtim9xK/Bi2RN6wnDEDxDGUZ877
+         n30rzLFy3iik00p05fObBKweioObXk51GzGOc0yM5bYb20wVUVilW289iEorJhrK+YWa
+         gKOe9rxYja73bfLTAtoPU84KWztj33O+8pUtdRxz4XXDtWu829kwto1QwN3Eyhy3Naex
+         9U6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746106624; x=1746711424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IVJu0wRzEXe69H/pIntKvn73bqLsL3OYyEuqMHp/wd0=;
+        b=kxy+/p9wnDoapAo69SQ8oYoj4Yt8mDasSm75BzMjZBdSTZ4qatMH8E5RrwEVAWpLuf
+         O8znr+ucy74C/0t2FA7NXp/57XMmkFQZ/iVjxfAzOEPmVnkAXLve708A3fEjSUmDw02s
+         ERmQvh95z3uNxUvYK8eEnjgaD9X8HsVEwHIWgCfmp0dnW8Sul/z8+uU0YTSW9bRlUGAk
+         Kmds5aVnz6jymfjDZ9FCfPVZMpUC7ywgjWw/zasNsk/CzguIGexbT5/0NMw+gxXwVOTf
+         msqfkzGeH0vLIIyJlP4JaRCpipmkj38/szBLNMq2nDOkwpXaLCgQFD5RIGZ025L/6tHz
+         KA6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUxSrlmj7tcUEOf49n9OnA7m2z12CGQvBP08BwDLWBvp6Yj45VbJ/Xc8IVdWEOjmVSSAVfG9gayhAFrTxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylhmEPR8247ypYktd+A/6ZvvItALJPqyPGbbIUcUi5SroXL4XM
+	MokdJBCcHyywBZbgudVxZ247Oz6OqBXHxohT50EehodksVqQyPc3wP9j+TcfDAA=
+X-Gm-Gg: ASbGncvAMj38IENRZX/pR7lAfwjTgd2romCUIEM/+1p1S3sb+h9WKzF0MeqA8vrPP7s
+	U1jVeLOsa7GebNBYMgXUmDJM+zvl64D9lKRy1kGa4H19NxFjk6M8J2XGmkoFRhV9HVDiUmZumu0
+	Bsq+zvQw4H9wHPMo3q3qDaizCccRnSHHpXVLz0rqj4jNqAqkpETzXFonyMhOsPDLV6lj8sSLogJ
+	3Yl7aJUc/UDNpfwY90b56zZ75ErMOcAUHc6HJ3IpRl5oC0MIPu4b8W83u+tL8vYBNkeGIL0SDHW
+	6IfX8+3u5pprTr15XxcXFVx7Om7BfKzD2udqnHxlC4gn5rQCiOWKBB6FJdHy84Aviq/2V+KtE1z
+	NqBWcnfY=
+X-Google-Smtp-Source: AGHT+IGdPBuoaPeINXPNqsaOhchsX0XkfzRa1+uOWIy0i9ZUyGPNCW3n5dd65l40+aOPl7d3QgDt+g==
+X-Received: by 2002:a5d:5f44:0:b0:3a0:8465:43 with SMTP id ffacd0b85a97d-3a093073423mr2527425f8f.43.1746106624153;
+        Thu, 01 May 2025 06:37:04 -0700 (PDT)
+Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a095a88250sm843781f8f.80.2025.05.01.06.37.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 06:37:03 -0700 (PDT)
+Date: Thu, 1 May 2025 15:35:52 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 5/5] iio: adc: ad7606: add gain calibration support
+Message-ID: <y6hss7bo25hiwzzplbbhmdodpmqbgpkarqvemn3tn3fig26tb2@753sxtygndaz>
+References: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
+ <20250429-wip-bl-ad7606-calibration-v1-5-eb4d4821b172@baylibre.com>
+ <0677db3c-9c36-4f34-93c0-5c53d702c4bd@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB8369.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d44cccf5-1cef-4c10-2486-08dd88b50949
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 May 2025 13:35:28.2141
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hAlT5zCoLGR7RktqzbR5CF8GpnhD0TIgTw888966q6xA4QUHYzN8sYyaBNt3FDNWLPoqB3YThKEjNsN7GLg8bA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6992
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0677db3c-9c36-4f34-93c0-5c53d702c4bd@baylibre.com>
 
-=0A=
-________________________________________=0A=
-From:=A0Dan Carpenter <dan.carpenter@linaro.org>=0A=
-Sent:=A0Wednesday, April 30, 2025 3:09 AM=0A=
-To:=A0Yi Zhang <yi.zhang@redhat.com>=0A=
-Cc:=A0Don Brace - C33706 <Don.Brace@microchip.com>; James E.J. Bottomley <J=
-ames.Bottomley@hansenpartnership.com>; Martin K. Petersen <martin.petersen@=
-oracle.com>; storagedev <storagedev@microchip.com>; linux-scsi@vger.kernel.=
-org <linux-scsi@vger.kernel.org>; linux-kernel@vger.kernel.org <linux-kerne=
-l@vger.kernel.org>; kernel-janitors@vger.kernel.org <kernel-janitors@vger.k=
-ernel.org>=0A=
-Subject:=A0[PATCH] scsi: smartpqi: Delete a stray tab in pqi_is_parity_writ=
-e_stream()=0A=
-=A0=0A=
-EXTERNAL EMAIL: Do not click links or open attachments unless you know the =
-content is safe=0A=
-=0A=
-We accidentally intended this line an extra tab.=A0 Delete the tab.=0A=
-=0A=
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>=0A=
-=0A=
-Thank you for doing this Dan.=0A=
-Don=0A=
-=0A=
-=0A=
----=0A=
-=A0drivers/scsi/smartpqi/smartpqi_init.c | 2 +-=0A=
-=A01 file changed, 1 insertion(+), 1 deletion(-)=0A=
-=0A=
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/=
-smartpqi_init.c=0A=
-index 93e6c777a01e..1d784ee7671c 100644=0A=
---- a/drivers/scsi/smartpqi/smartpqi_init.c=0A=
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c=0A=
-@@ -6004,7 +6004,7 @@ static bool pqi_is_parity_write_stream(struct pqi_ctr=
-l_info *ctrl_info,=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 pqi_s=
-tream_data->next_lba =3D rmd.first_block +=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0 rmd.block_cnt;=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 pqi_s=
-tream_data->last_accessed =3D jiffies;=0A=
--=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0 per_cpu_ptr(device->raid_io_stats, raw_smp_processor_id(=
-))->write_stream_cnt++;=0A=
-+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 per_cpu=
-_ptr(device->raid_io_stats, raw_smp_processor_id())->write_stream_cnt++;=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 retur=
-n true;=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 }=0A=
-=0A=
---=0A=
-2.47.2=0A=
+On 29.04.2025 17:46, David Lechner wrote:
+> On 4/29/25 8:06 AM, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> 
+> ...
+> 
+> > +static int ad7606_chan_calib_gain_setup(struct iio_dev *indio_dev,
+> > +					struct iio_chan_spec *chan)
+> > +{
+> > +	struct ad7606_state *st = iio_priv(indio_dev);
+> > +	unsigned int num_channels = st->chip_info->num_adc_channels;
+> > +	struct device *dev = st->dev;
+> > +	int ret;
+> > +
+> > +	device_for_each_child_node_scoped(dev, child) {
+> > +		int reg, r_gain;
+> > +
+> > +		ret = fwnode_property_read_u32(child, "reg", &reg);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		/* channel number (here) is from 1 to num_channels */
+> > +		if (reg < 1 || reg > num_channels) {
+> > +			dev_warn(dev, "invalid ch number (ignoring): %d\n", reg);
+> > +			continue;
+> > +		}
+> > +
+> > +		ret = fwnode_property_read_u32(child, "adi,rfilter-ohms",
+> > +					       &r_gain);
+> 
+> Instead of...
+> 
+> > +		if (ret)
+> > +			return ret;
+> 
+> ... we need:
+> 
+> 		if (ret == -EINVAL)
+> 			r_gain = 0;
+> 		else if (ret)
+> 			return ret;
+> 
+> Otherwise driver fails to probe if adi,rfilter-ohms is missing.
+>
+
+Correct, i changed this before sending and could not catch it.
+But not totally sure of applying a 0.
+We are here after chip reset. So conceptually, would not apply any default,
+ince it is already set after reset. What about:
+
+		if (ret == -EINVAL)
+			contnue;
+		else if (ret)
+			return ret;
+ 
+> > +
+> > +		if (r_gain < AD7606_CALIB_GAIN_MIN ||
+> > +		    r_gain > AD7606_CALIB_GAIN_MAX)
+> > +			return -EINVAL;
+> > +
+> 
+> Also, return dev_err_probe() on the returns above would have made debugging
+> easier.
+> 
+ack
+
+> > +		/* Chan reg is 1-based index. */
+> > +		ret = st->bops->reg_write(st, AD7606_CALIB_GAIN(reg - 1),
+> > +					  r_gain / AD7606_CALIB_GAIN_STEP);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
 
