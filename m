@@ -1,208 +1,143 @@
-Return-Path: <linux-kernel+bounces-628836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFADAA62F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 20:38:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06BBAA62DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 20:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9F51178867
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 18:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C821B6571A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 18:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899A22370F;
-	Thu,  1 May 2025 18:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5EF2236F7;
+	Thu,  1 May 2025 18:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SUiPDmGf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g/DQatTt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C15122371F
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 18:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CF32144CF
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 18:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746124688; cv=none; b=so3NYubDD/vxKkuft68yGXZ0OoJk+cQMGE/klCCLFBZEWNKqwjP696YobIUnEr4vl/XpwWQhKfZzQ/20fUdI+UaB5x5CLseCC5ZQJb/dwsbtuaT7Q3Znx3I7smhp5FcNe1iL2THvVImvc7gnZKZwv94I3bBo/Vc4S888f8r+Cik=
+	t=1746124455; cv=none; b=W7mv/9TJuz9T0f1D5SoDbAO8KMMceKsVVoGZg+pvYuNAxVRG5g7+rM7Yk+6pEFPRUEbZrrp/ei8sKyC39IeAD3tbO8kd4nHjgsBInQimbaHQwgXz9lWdPtOZuQDUz1dHFYvO7nxVlhvcvLIPdKB10xcE4Lw86aVmwk8n8UCzPL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746124688; c=relaxed/simple;
-	bh=DxnFwbyrPKOcqAtYcepj6/QO3dHzr/O5vFh2+K3OJCQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W5ELBmuh9KAAH8rhbAHfFuH2zCPTbFnVWD/YNC3Uywt3dytOReBP882JM1vuJYfbynwoyMYZlTPPht23GTMxPjI4rYgVAvY4ThnJHRBRLa/rB9bicxVV0e+TGDsrG5vmy9axcQZMTmKXr2lilfbE3GfHyohaP58KI7C2wM7iEaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SUiPDmGf; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1746124455; c=relaxed/simple;
+	bh=+DAZETPgGKlVNaxrjII/8WTA3PntLOU1NMdtZAGUhfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uH5AueksKp4/XdSOzOZzQMwXFfkbmtfqfr9c/tihcoSxBCqfkUY921FuPw4BngYNUicovBzWn9j1mfAsOH3ttbQ6oaMKClztW2T6F54frhf4YPR1A/JHK6eaGVX1itmd2DQxSLlXCZmq6U9XoN3+lLVIJoCotbEJPNYXB1CXji8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g/DQatTt; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746124685;
+	s=mimecast20190719; t=1746124451;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1DK3REbEj1TGDhbQ2B+tFzyd7w0GXeJQ4DMYyVW608g=;
-	b=SUiPDmGfjhrt9/NTwPd6SitTgNGq4IoK0tgAMLYoGr9al7NIVSy9zYskVCS8MMOvTbBHbs
-	jusIAVlt+g6pzP1oyHCaf9SNCGDQNCO8O8oTJlyMxwX6FdOc5e673LtBMZAgdbV+AIxBu2
-	Qwp3rNoT/BSHNSrQco1/AEb2GjKr/lE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-116-JMktBwGQPSmXujas70seOQ-1; Thu,
- 01 May 2025 14:38:01 -0400
-X-MC-Unique: JMktBwGQPSmXujas70seOQ-1
-X-Mimecast-MFC-AGG-ID: JMktBwGQPSmXujas70seOQ_1746124675
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C1B219560AF;
-	Thu,  1 May 2025 18:37:55 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.88.132])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1E60C1800365;
-	Thu,  1 May 2025 18:37:51 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Asahi Lina <lina@asahilina.net>
-Subject: [PATCH 4/4] rust: drm: gem: Implement AlwaysRefCounted for all gem objects automatically
-Date: Thu,  1 May 2025 14:33:19 -0400
-Message-ID: <20250501183717.2058109-5-lyude@redhat.com>
-In-Reply-To: <20250501183717.2058109-1-lyude@redhat.com>
-References: <20250501183717.2058109-1-lyude@redhat.com>
+	bh=0qKIEW/lhMjwEMGxy/raOMlbK5hykaujRDE/weD2Tms=;
+	b=g/DQatTtN+vBNTuQaMKc7EzIeicYNSSyR+oQ3L+4X9EcyTNg9YyzEHKA0q3eayI8/zgnkG
+	2wiu1jl21E88IdSup3E/7YDcta3Z2ggHeVMeenLSQaTz4hkjs4nCOf1mtDHU/dbfnUyp6+
+	DCqmLTyQSKcKU4ECoMerZfsxcBBydFA=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-493-pul7Smg6Mo6BD0dO5PU0fg-1; Thu, 01 May 2025 14:34:10 -0400
+X-MC-Unique: pul7Smg6Mo6BD0dO5PU0fg-1
+X-Mimecast-MFC-AGG-ID: pul7Smg6Mo6BD0dO5PU0fg_1746124449
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a07a7b4298so518268f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 11:34:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746124449; x=1746729249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0qKIEW/lhMjwEMGxy/raOMlbK5hykaujRDE/weD2Tms=;
+        b=djfQn2sww1uwBxQb0J3HGvF1D4faVl/V6M/qi0aPzRBgssHUfoDU2KLuesxcYuIZwp
+         qzObihSzo/Mgy54g+kg/x+5jXaMkZ4KNIZXd7rKa2Fg6lYxKdBC/VYGGFA2YkCtjelZy
+         W5uBKvNGvfhibfV29ATFWwNFBSrv6Q8+27N6l/yu0+CiZiiDRfTid7a+bGV1c3HNUZRv
+         t2JndOX8GMk68DXYD017HSBC/3biyAwfLvfnuLLw5cANgTqawAhR0JgaTslyGWePvAZR
+         IbeuPOINt+j1QPN4RXeoSaWhQPE5YwKd9lc58kYUKPVBFQXhEpEe4s8EZu7qHtpjX//h
+         3Isg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSAAH0EehiqmHaFJ95+d2p2xKc9eYKDP5TKu2OcHANbUgL3PDWQhHm0XBBlsvbK+/eK4gdRPt0wu2BZUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9XoUTnFC3E8RX45ZMxU8fyoHZzFR1brOY515hAUYYN901f3/0
+	9WzNbzztsRYf7Y+u4B6Se64fYfMGRvkSS9D8BaYheGlmMJ3kp3CzRolcDKBjKaPHRmoZr+TRCDJ
+	HcxIgsug1Zeca2F8CBQk77bQUXU59Uh9OJOMM6IsJKtI/NtlzzA1EXCIxDR+RsjOc2aF1aW8rG4
+	4u3F6WPHcGW4mTNHZM/5pDGWtyitiQ9FX5bQ1o
+X-Gm-Gg: ASbGncsRty7edFPNPKSrOGlf+D/jUi57kL9XqUjQ9eD/U2bBGopdchh2QsxnZJ1/gL4
+	qhhJapZJL8WhTnCpzCMPRT9hXzxemtGnDNgZ4tT23l2w7q761PrsEDJd7iLQOmZ2EFcO0
+X-Received: by 2002:a05:6000:2cb:b0:38f:28dc:ec23 with SMTP id ffacd0b85a97d-3a08f761e95mr6926090f8f.19.1746124449427;
+        Thu, 01 May 2025 11:34:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8pyZZxNLsDKgK+s6EiT/5Z0RvhAJbHB3j6sE0QEEuK4GrGOmkb5NB8jNyV3jUBy2M6Ty7WMK3PucatHbyoBs=
+X-Received: by 2002:a05:6000:2cb:b0:38f:28dc:ec23 with SMTP id
+ ffacd0b85a97d-3a08f761e95mr6926061f8f.19.1746124449084; Thu, 01 May 2025
+ 11:34:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250430110734.392235199@infradead.org>
+In-Reply-To: <20250430110734.392235199@infradead.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Thu, 1 May 2025 20:33:57 +0200
+X-Gm-Features: ATxdqUGj_DEOILwA7gJmdwUbmKq2o1Nt9LtM9RStnzYMraMRgnH01086KHJWMt8
+Message-ID: <CABgObfZQ2n6PB0i4Uc6k4Rm9bVESt0aafOcdLzW4hwX3sN-ExA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/13] objtool: Detect and warn about indirect calls in
+ __nocfi functions
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, 
+	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com, 
+	ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	gregkh@linuxfoundation.org, jpoimboe@kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-efi@vger.kernel.org, 
+	samitolvanen@google.com, ojeda@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently we are requiring AlwaysRefCounted in most trait bounds for gem
-objects, and implementing it by hand for our only current type of gem
-object. However, all gem objects use the same functions for reference
-counting - and all gem objects support reference counting.
+On Wed, Apr 30, 2025 at 1:26=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+> Notably the KVM fastop emulation stuff -- which I've completely rewritten=
+ for
+> this version -- the generated code doesn't look horrific, but is slightly=
+ more
+> verbose. I'm running on the assumption that instruction emulation is not =
+super
+> performance critical these days of zero VM-exit VMs etc.
 
-We're planning on adding support for shmem gem objects, let's move this
-around a bit by instead making IntoGEMObject require AlwaysRefCounted as a
-trait bound, and then provide a blanket AlwaysRefCounted implementation for
-any object that implements IntoGEMObject so all gem object types can use
-the same AlwaysRefCounted implementation. This also makes things less
-verbose by making the AlwaysRefCounted trait bound implicit for any
-IntoGEMObject bound.
+It's definitely going to be slower, but I guess it's okay these days.
+It's really only somewhat hot with really old processors
+(pre-Westmere) and only when running big real mode code.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/drm/gem/mod.rs | 47 +++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+Paolo
 
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index 55b2f1d056c39..929f6c9718362 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -10,7 +10,7 @@
-     drm::driver::{AllocImpl, AllocOps},
-     error::{to_result, Result},
-     prelude::*,
--    types::{ARef, Opaque},
-+    types::{ARef, AlwaysRefCounted, Opaque},
- };
- use core::{mem, ops::Deref, ptr, ptr::NonNull};
- 
-@@ -36,7 +36,7 @@ fn close(
- }
- 
- /// Trait that represents a GEM object subtype
--pub trait IntoGEMObject: Sized + super::private::Sealed {
-+pub trait IntoGEMObject: Sized + super::private::Sealed + AlwaysRefCounted {
-     /// Owning driver for this type
-     type Driver: drm::Driver;
- 
-@@ -52,6 +52,26 @@ pub trait IntoGEMObject: Sized + super::private::Sealed {
-     unsafe fn as_ref<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self;
- }
- 
-+// SAFETY: All gem objects are refcounted.
-+unsafe impl<T: IntoGEMObject> AlwaysRefCounted for T {
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-+        unsafe { bindings::drm_gem_object_get(self.as_gem_obj()) };
-+    }
-+
-+    unsafe fn dec_ref(obj: NonNull<Self>) {
-+        // SAFETY: We either hold the only refcount on `obj`, or one of many - meaning that no one
-+        // else could possibly hold a mutable reference to `obj` and thus this immutable reference
-+        // is safe.
-+        let obj = unsafe { obj.as_ref() }.as_gem_obj();
-+
-+        // SAFETY:
-+        // - The safety requirements guarantee that the refcount is non-zero.
-+        // - We hold no references to `obj` now, making it safe for us to potentially deallocate it.
-+        unsafe { bindings::drm_gem_object_put(obj) };
-+    }
-+}
-+
- /// Trait which must be implemented by drivers using base GEM objects.
- pub trait DriverObject: BaseDriverObject<Object<Self>> {
-     /// Parent `Driver` for this object.
-@@ -110,10 +130,7 @@ unsafe fn as_ref<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self {
- }
- 
- /// Base operations shared by all GEM object classes
--pub trait BaseObject
--where
--    Self: crate::types::AlwaysRefCounted + IntoGEMObject,
--{
-+pub trait BaseObject: IntoGEMObject {
-     /// Returns the size of the object in bytes.
-     fn size(&self) -> usize {
-         // SAFETY: `self.into_gem_obj()` is guaranteed to be a pointer to a valid `struct
-@@ -175,7 +192,7 @@ fn create_mmap_offset(&self) -> Result<u64> {
-     }
- }
- 
--impl<T> BaseObject for T where Self: crate::types::AlwaysRefCounted + IntoGEMObject {}
-+impl<T: IntoGEMObject> BaseObject for T {}
- 
- /// A base GEM object.
- ///
-@@ -269,22 +286,6 @@ extern "C" fn free_callback(obj: *mut bindings::drm_gem_object) {
-     }
- }
- 
--// SAFETY: Instances of `Object<T>` are always reference-counted.
--unsafe impl<T: DriverObject> crate::types::AlwaysRefCounted for Object<T> {
--    fn inc_ref(&self) {
--        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
--        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
--    }
--
--    unsafe fn dec_ref(obj: NonNull<Self>) {
--        // SAFETY: `obj` is a valid pointer to an `Object<T>`.
--        let obj = unsafe { obj.as_ref() };
--
--        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
--        unsafe { bindings::drm_gem_object_put(obj.as_raw()) }
--    }
--}
--
- impl<T: DriverObject> super::private::Sealed for Object<T> {}
- 
- impl<T: DriverObject> Deref for Object<T> {
--- 
-2.48.1
+> KVM has another; the VMX interrupt injection stuff calls the IDT handler
+> directly.  Is there an alternative? Can we keep a table of Linux function=
+s
+> slighly higher up the call stack (asm_\cfunc ?) and add CFI to those?
+>
+> HyperV hypercall page stuff, which I've previously suggested use direct c=
+alls,
+> and which I've now converted (after getting properly annoyed with that co=
+de).
+>
+> Also available at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git x86/core
+>
+> Changes since v1:
+>
+>  - complete rewrite of the fastop stuff
+>  - HyperV tweaks (Michael)
+>  - objtool changes (Josh)
+>
+>
+> [1] https://lkml.kernel.org/r/20250410154556.GB9003@noisy.programming.kic=
+ks-ass.net
+> [2] https://lkml.kernel.org/r/20250410194334.GA3248459@google.com
+>
 
 
