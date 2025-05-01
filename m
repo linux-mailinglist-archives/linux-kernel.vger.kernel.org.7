@@ -1,496 +1,455 @@
-Return-Path: <linux-kernel+bounces-629026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6AEAA6668
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:53:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AFDAA6693
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE5959A1B4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2515F1BC6ED7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495DE25333F;
-	Thu,  1 May 2025 22:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AAA2528EF;
+	Thu,  1 May 2025 22:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5/Guegb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M9J2hdIa"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD211F0990;
-	Thu,  1 May 2025 22:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7A12528F7
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 22:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746140019; cv=none; b=bR0LrZEjhASux5j2FhTGD4hG4ZOVwLVUmGWIQtdBmu/pzbDHhiQPqW/1GrbBniUp+bG3YJSDYWNzEIE/iKaipnWK6yzW/l/7myHMV2ZdmowBEh0M8kMrV7zsN18f6M1yg1GkJ8CzKUQRuUmE1Y63KbUgcb6i4GLhv82G7pk4G6g=
+	t=1746140111; cv=none; b=cXiDsYKr1sn+9GyKnRDKHyWnV9AZj9NgUwhsEqo7JSWvr9f7NbJ2TnsPwHrJJDPhJRKGE0ZdCO3t53TsUt7r/qHul9GH5gYBVV5clmrFsI/yUAGc7YKcOThcB3eNlqKDGV5BdZA3yWMw8bH22Bo4RdrEuAM70CvD5uFS3tvb3mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746140019; c=relaxed/simple;
-	bh=YdG+crROlfIYXjtOnNn9BxIcBkzTZdpY/njpp4zMggY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LxqdIpjwaLU5kNyr3B7ur5+oBu3Q7B+76cN5EgLT8C5jBq9vY9+uW2Pbi5WJw3D21vAgXk97nypRjiseUUodjUt/Y7YYY0OMWGt3+mopCWvHPTmudAENh7Mbymhi1AuUT5LU4aEQXESQTOfBqe11K7HceOYb65WwI2zJArLhHXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5/Guegb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB00C4CEED;
-	Thu,  1 May 2025 22:53:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746140018;
-	bh=YdG+crROlfIYXjtOnNn9BxIcBkzTZdpY/njpp4zMggY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=t5/Guegbjym/Hwj+y+fdEErwiQTb7z3bAczBlr9dpIpGbjxN+koKk0+DfhSk+v2pk
-	 M2anURJRol8gIzxcCJ19Ve5eQvsiQSa6GofK1NRolnpahzmnn8abyYtknxON18ugp1
-	 /sycGlHSXPhzrAveei8PSIM981s4260x3i9sZ6mpca8XUw5E4l9GK/VGVV5WmCrTTb
-	 zK+FivQmRlgoI5UAPV+kOoPe3wmOQWbzc6i9pnvXecCeyWmr+hDEY9i/mDoR9g70ZM
-	 ds6q/UzXELg3wgIkmoKPUd/gFedujE8dgh0cJ5YfYSrEk+2mWHmhwOuR91nFc9Q9it
-	 X8n9bu0L0OtfQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH] perf trace: Support --summary-mode=cgroup
-Date: Thu,  1 May 2025 15:53:37 -0700
-Message-ID: <20250501225337.928470-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
+	s=arc-20240116; t=1746140111; c=relaxed/simple;
+	bh=IcgTfbTfybJ3PZL795SXryUEui9SncnEt4xQFYbwfrw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=urzfAX8mzNqUUdIPLtQ/O3OtmE2yu659mRPDjVRJNf/ClP6cisYDApqbovSX3lOnxK4hY4ddx4dGkmMt1SfHyg/ZsE3t/eBye1xJcfTjXdZaep4AnU+1hu5XSVoaJmK8PhUAJOHuWjx8Ns8MsxYWpjo7cbMhrJ1TweUUxdm0xe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M9J2hdIa; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-225ab228a37so10648705ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 15:55:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746140108; x=1746744908; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VNCJTv4QrQ4B3OaOPUv7KzHf9QRM+3nfyGYGMjnG7a4=;
+        b=M9J2hdIawLkpYNokBI0x/xj9eOS/vrT50fBRyL+tcVX+fdpQwF3r5v0ZVdkV4Pl/tv
+         v0ucEEDEoFO5vlgXUMbx/y9KInt9g0QOM0pA9dc1J8fqijPSOiJ9EVaFgDVAfT8u+n2j
+         RcKBfYGHSJqiX+wR4XuLZWort9WepWpUd7lZMC8JfgnVKvHsyUSkKHZ7YawWG/oWYCUy
+         Azn3kbfs/TJP0MkpR6YnxHrJfHpAVCky2wlMjTg+no5hD1qcyyXNkyBwIDBQV0ihpPfK
+         zygyq4RlMcfRf366yryO9gwpwwYOLL4g+f342oldtEe0vP+VvYZe9tA7cQvk5LNEQIJC
+         gE0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746140108; x=1746744908;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VNCJTv4QrQ4B3OaOPUv7KzHf9QRM+3nfyGYGMjnG7a4=;
+        b=LBEp5Uc9ehAMjaCyU4flAeVTejd0hScBjb4lfGwLOLajdv3THLQNaGscwydZJPkwZA
+         EWKN0F/qcHz/l5B6iZGFQt6v7UiD26MBnEjyzYoVefp6t1aQH5D00r5qcsVct924GJoK
+         0wzAGEuqDrsiXWRydm1v31kDbcGSqSCyhe5cl824VnciSUSP2rMcVjCm0gS0BJnmKlKf
+         5PI36uF2qcQ+xwSP0fR4DvI8/jZ588yf2+Lq3hUFpCA7WnuUYAsmxnL8oF8uHyoIi2o4
+         UXKeRuw+R/mWUoUOuATeyFU4jfxzhXSoCBNjJP+aAyrtvHeOst7Sb7Nigggki/aJ22jR
+         702A==
+X-Gm-Message-State: AOJu0YzBmY51k37MKOOxkc9YG4vdwZCKInVRnjgcGi4GwoGFzjxeK+JZ
+	3RFlj9N8pmzy2hI53+AazRUpJMLWIbJJQpd2gpfozB7O/U4O9mPai7Q/PWpFCrZdZNNcHH89ijg
+	guVA/uwa88+DxZFoKc6BTPmHC2uJobZkkquAWvd3XN+F7WBMplz5ifS6tk7s4eongl25V+8rorC
+	PUkq9Zc1ps4BRHjVXHDLXgBgLhqKa91AoDnfkv14XXqIaC9O7/wOiCfPeufX/t6A==
+X-Google-Smtp-Source: AGHT+IFePvYLQ7V/eNV1P0Df7Ad2UiG5bDddcjGCSvEDCx2UtHLEg2L60VhGmHjpnGQSrNOz/HnaGeMSNQbxH4SP
+X-Received: from pllw8.prod.google.com ([2002:a17:902:7b88:b0:22d:a5a9:8117])
+ (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:eccb:b0:224:c76:5e56 with SMTP id d9443c01a7336-22e10305acemr11904165ad.27.1746140108428;
+ Thu, 01 May 2025 15:55:08 -0700 (PDT)
+Date: Thu,  1 May 2025 15:54:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
+Message-ID: <20250501225425.635167-1-changyuanl@google.com>
+Subject: [PATCH v7 00/18] kexec: introduce Kexec HandOver (KHO)
+From: Changyuan Lyu <changyuanl@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: changyuanl@google.com, akpm@linux-foundation.org, 
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com, 
+	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com, 
+	corbet@lwn.net, dave.hansen@linux.intel.com, devicetree@vger.kernel.org, 
+	dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com, hpa@zytor.com, 
+	jgowans@amazon.com, kexec@lists.infradead.org, krzk@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, luto@kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
+	pasha.tatashin@soleen.com, pbonzini@redhat.com, peterz@infradead.org, 
+	ptyadav@amazon.de, robh@kernel.org, rostedt@goodmis.org, rppt@kernel.org, 
+	saravanak@google.com, skinsburskii@linux.microsoft.com, tglx@linutronix.de, 
+	thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add a new summary mode to collect stats for each cgroup.
+Hi,
 
-  $ sudo ./perf trace -as --bpf-summary --summary-mode=cgroup -- sleep 1
+This is the version 7 of "kexec: introduce Kexec HandOver (KHO)" series
+(https://lore.kernel.org/lkml/20250411053745.1817356-1-changyuanl@google.com/)
+form Alexander Graf, Mike Rapoport, and Changyuan Lyu.
 
-   Summary of events:
+The patches are also available in git:
+https://github.com/googleprodkernel/linux-liveupdate/tree/kho/v7.
 
-   cgroup /user.slice/user-657345.slice/user@657345.service/session.slice/org.gnome.Shell@x11.service, 535 events
+Section "How to Use" below includes steps for you to try KHO.
 
-     syscall            calls  errors  total       min       avg       max       stddev
-                                       (msec)    (msec)    (msec)    (msec)        (%)
-     --------------- --------  ------ -------- --------- --------- ---------     ------
-     ppoll                 15      0   373.600     0.004    24.907   197.491     55.26%
-     poll                  15      0     1.325     0.001     0.088     0.369     38.76%
-     close                 66      0     0.567     0.007     0.009     0.026      3.55%
-     write                150      0     0.471     0.001     0.003     0.010      3.29%
-     recvmsg               94     83     0.290     0.000     0.003     0.037     16.39%
-     ioctl                 26      0     0.237     0.001     0.009     0.096     50.13%
-     timerfd_create        66      0     0.236     0.003     0.004     0.024      8.92%
-     timerfd_settime       70      0     0.160     0.001     0.002     0.012      7.66%
-     writev                10      0     0.118     0.001     0.012     0.019     18.17%
-     read                   9      0     0.021     0.001     0.002     0.004     14.07%
-     getpid                14      0     0.019     0.000     0.001     0.004     20.28%
+v6 -> v7:
+  - Remove `struct kho_serialization *` from kho_preserve_phys() and
+    kho_preserve_folio() parameter list, which allows KHO users to
+    preserve memory anytime before KHO finalization, not only just in
+    notifier callbacks (v6).
+  - Include the change [1] suggested by [2]
+  - Split "x86: add KHO support" into small patches suggested by [3]
+  - Include asm/early_ioremap.h [4]
+  - Make KHO depend on 64BIT on x86 [5]
+  - KHO fields (16 bytes) are defined in struct kimage unconditionally [5],
+    replace a few #ifdef with IS_ENABLED().
+  - Rebase the patchset to v6.15-rc4 such that tests in
+    tools/testing/memblock can pass.
 
-   cgroup /system.slice/polkit.service, 94 events
+[1] https://lore.kernel.org/lkml/20250424083258.2228122-1-changyuanl@google.com/
+[2] https://lore.kernel.org/lkml/aAeaJ2iqkrv_ffhT@kernel.org/
+[3] https://lore.kernel.org/lkml/35c58191-f774-40cf-8d66-d1e2aaf11a62@intel.com/
+[4] https://lore.kernel.org/lkml/20250424093302.3894961-1-arnd@kernel.org/
+[5] https://lore.kernel.org/lkml/e90b81a4-a912-4174-b6e9-46a6ddd92ee3@intel.com/
 
-     syscall            calls  errors  total       min       avg       max       stddev
-                                       (msec)    (msec)    (msec)    (msec)        (%)
-     --------------- --------  ------ -------- --------- --------- ---------     ------
-     ppoll                 22      0    19.811     0.000     0.900     9.273     63.88%
-     write                 30      0     0.040     0.001     0.001     0.003     12.09%
-     recvmsg               12      0     0.018     0.001     0.002     0.006     28.15%
-     read                  18      0     0.013     0.000     0.001     0.003     21.99%
-     poll                  12      0     0.006     0.000     0.001     0.001      4.48%
+Best,
+Changyuan
 
-   cgroup /user.slice/user-657345.slice/user@657345.service/app.slice/app-org.gnome.Terminal.slice/gnome-terminal-server.service, 21 events
+= Original cover letter =
 
-     syscall            calls  errors  total       min       avg       max       stddev
-                                       (msec)    (msec)    (msec)    (msec)        (%)
-     --------------- --------  ------ -------- --------- --------- ---------     ------
-     ppoll                  4      0    17.476     0.003     4.369    13.298     69.65%
-     recvmsg               15     12     0.068     0.002     0.005     0.014     26.53%
-     writev                 1      0     0.033     0.033     0.033     0.033      0.00%
-     poll                   1      0     0.005     0.005     0.005     0.005      0.00%
+Kexec today considers itself purely a boot loader: When we enter the new
+kernel, any state the previous kernel left behind is irrelevant and the
+new kernel reinitializes the system.
 
-   ...
+However, there are use cases where this mode of operation is not what we
+actually want. In virtualization hosts for example, we want to use kexec
+to update the host kernel while virtual machine memory stays untouched.
+When we add device assignment to the mix, we also need to ensure that
+IOMMU and VFIO states are untouched. If we add PCIe peer to peer DMA, we
+need to do the same for the PCI subsystem. If we want to kexec while an
+SEV-SNP enabled virtual machine is running, we need to preserve the VM
+context pages and physical memory. See "pkernfs: Persisting guest memory
+and kernel/device state safely across kexec" Linux Plumbers
+Conference 2023 presentation for details:
 
-It works only for --bpf-summary for now.
+  https://lpc.events/event/17/contributions/1485/
 
-Cc: Howard Chu <howardchu95@gmail.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-trace.txt       |   3 +-
- tools/perf/builtin-trace.c                    |  10 +-
- tools/perf/util/bpf-trace-summary.c           | 123 +++++++++++++++++-
- .../perf/util/bpf_skel/syscall_summary.bpf.c  |  43 +++++-
- tools/perf/util/bpf_skel/syscall_summary.h    |   2 +
- tools/perf/util/trace.h                       |   1 +
- 6 files changed, 170 insertions(+), 12 deletions(-)
+To start us on the journey to support all the use cases above, this patch
+implements basic infrastructure to allow hand over of kernel state across
+kexec (Kexec HandOver, aka KHO). As a really simple example target, we use
+memblock's reserve_mem.
+With this patch set applied, memory that was reserved using "reserve_mem"
+command line options remains intact after kexec and it is guaranteed to
+reside at the same physical address.
 
-diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
-index a8a0d8c33438fef7..c1fb6056a0d36dda 100644
---- a/tools/perf/Documentation/perf-trace.txt
-+++ b/tools/perf/Documentation/perf-trace.txt
-@@ -152,7 +152,8 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
- 
- --summary-mode=mode::
- 	To be used with -s or -S, to select how to show summary.  By default it'll
--	show the syscall summary by thread.  Possible values are: thread, total.
-+	show the syscall summary by thread.  Possible values are: thread, total,
-+	cgroup.
- 
- --tool_stats::
- 	Show tool stats such as number of times fd->pathname was discovered thru
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index b2c5a9b765ab5d33..83c62c30d914306c 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -5301,6 +5301,8 @@ static int trace__parse_summary_mode(const struct option *opt, const char *str,
- 		trace->summary_mode = SUMMARY__BY_THREAD;
- 	} else if (!strcmp(str, "total")) {
- 		trace->summary_mode = SUMMARY__BY_TOTAL;
-+	} else if (!strcmp(str, "cgroup")) {
-+		trace->summary_mode = SUMMARY__BY_CGROUP;
- 	} else {
- 		pr_err("Unknown summary mode: %s\n", str);
- 		return -1;
-@@ -5460,7 +5462,7 @@ int cmd_trace(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "errno-summary", &trace.errno_summary,
- 		    "Show errno stats per syscall, use with -s or -S"),
- 	OPT_CALLBACK(0, "summary-mode", &trace, "mode",
--		     "How to show summary: select thread (default) or total",
-+		     "How to show summary: select thread (default), total or cgroup",
- 		     trace__parse_summary_mode),
- 	OPT_CALLBACK_DEFAULT('F', "pf", &trace.trace_pgfaults, "all|maj|min",
- 		     "Trace pagefaults", parse_pagefaults, "maj"),
-@@ -5774,6 +5776,12 @@ int cmd_trace(int argc, const char **argv)
- 		symbol_conf.keep_exited_threads = true;
- 		if (trace.summary_mode == SUMMARY__NONE)
- 			trace.summary_mode = SUMMARY__BY_THREAD;
-+
-+		if (!trace.summary_bpf && trace.summary_mode == SUMMARY__BY_CGROUP) {
-+			pr_err("Error: --summary-mode=cgroup only works with --bpf-summary\n");
-+			err = -EINVAL;
-+			goto out;
-+		}
- 	}
- 
- 	if (output_name != NULL) {
-diff --git a/tools/perf/util/bpf-trace-summary.c b/tools/perf/util/bpf-trace-summary.c
-index 114d8d9ed9b2d3f3..69fb165da206b01f 100644
---- a/tools/perf/util/bpf-trace-summary.c
-+++ b/tools/perf/util/bpf-trace-summary.c
-@@ -6,10 +6,12 @@
- 
- #include "dwarf-regs.h" /* for EM_HOST */
- #include "syscalltbl.h"
-+#include "util/cgroup.h"
- #include "util/hashmap.h"
- #include "util/trace.h"
- #include "util/util.h"
- #include <bpf/bpf.h>
-+#include <linux/rbtree.h>
- #include <linux/time64.h>
- #include <tools/libc_compat.h> /* reallocarray */
- 
-@@ -18,6 +20,7 @@
- 
- 
- static struct syscall_summary_bpf *skel;
-+static struct rb_root cgroups = RB_ROOT;
- 
- int trace_prepare_bpf_summary(enum trace_summary_mode mode)
- {
-@@ -29,9 +32,14 @@ int trace_prepare_bpf_summary(enum trace_summary_mode mode)
- 
- 	if (mode == SUMMARY__BY_THREAD)
- 		skel->rodata->aggr_mode = SYSCALL_AGGR_THREAD;
-+	else if (mode == SUMMARY__BY_CGROUP)
-+		skel->rodata->aggr_mode = SYSCALL_AGGR_CGROUP;
- 	else
- 		skel->rodata->aggr_mode = SYSCALL_AGGR_CPU;
- 
-+	if (cgroup_is_v2("perf_event") > 0)
-+		skel->rodata->use_cgroup_v2 = 1;
-+
- 	if (syscall_summary_bpf__load(skel) < 0) {
- 		fprintf(stderr, "failed to load syscall summary bpf skeleton\n");
- 		return -1;
-@@ -42,6 +50,9 @@ int trace_prepare_bpf_summary(enum trace_summary_mode mode)
- 		return -1;
- 	}
- 
-+	if (mode == SUMMARY__BY_CGROUP)
-+		read_all_cgroups(&cgroups);
-+
- 	return 0;
- }
- 
-@@ -88,9 +99,13 @@ static double rel_stddev(struct syscall_stats *stat)
-  * per-cpu analysis so it's keyed by the syscall number to combine stats
-  * from different CPUs.  And syscall_data always has a syscall_node so
-  * it can effectively work as flat hierarchy.
-+ *
-+ * For per-cgroup stats, it uses two-level data structure like thread
-+ * syscall_data is keyed by CGROUP and has an array of node which
-+ * represents each syscall for the cgroup.
-  */
- struct syscall_data {
--	int key; /* tid if AGGR_THREAD, syscall-nr if AGGR_CPU */
-+	u64 key; /* tid if AGGR_THREAD, syscall-nr if AGGR_CPU, cgroup if AGGR_CGROUP */
- 	int nr_events;
- 	int nr_nodes;
- 	u64 total_time;
-@@ -191,7 +206,7 @@ static int print_thread_stat(struct syscall_data *data, FILE *fp)
- 
- 	qsort(data->nodes, data->nr_nodes, sizeof(*data->nodes), nodecmp);
- 
--	printed += fprintf(fp, " thread (%d), ", data->key);
-+	printed += fprintf(fp, " thread (%d), ", (int)data->key);
- 	printed += fprintf(fp, "%d events\n\n", data->nr_events);
- 
- 	printed += fprintf(fp, "   syscall            calls  errors  total       min       avg       max       stddev\n");
-@@ -283,6 +298,75 @@ static int print_total_stats(struct syscall_data **data, int nr_data, FILE *fp)
- 	return printed;
- }
- 
-+static int update_cgroup_stats(struct hashmap *hash, struct syscall_key *map_key,
-+			       struct syscall_stats *map_data)
-+{
-+	struct syscall_data *data;
-+	struct syscall_node *nodes;
-+
-+	if (!hashmap__find(hash, map_key->cgroup, &data)) {
-+		data = zalloc(sizeof(*data));
-+		if (data == NULL)
-+			return -ENOMEM;
-+
-+		data->key = map_key->cgroup;
-+		if (hashmap__add(hash, data->key, data) < 0) {
-+			free(data);
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	/* update thread total stats */
-+	data->nr_events += map_data->count;
-+	data->total_time += map_data->total_time;
-+
-+	nodes = reallocarray(data->nodes, data->nr_nodes + 1, sizeof(*nodes));
-+	if (nodes == NULL)
-+		return -ENOMEM;
-+
-+	data->nodes = nodes;
-+	nodes = &data->nodes[data->nr_nodes++];
-+	nodes->syscall_nr = map_key->nr;
-+
-+	/* each thread has an entry for each syscall, just use the stat */
-+	memcpy(&nodes->stats, map_data, sizeof(*map_data));
-+	return 0;
-+}
-+
-+static int print_cgroup_stat(struct syscall_data *data, FILE *fp)
-+{
-+	int printed = 0;
-+	struct cgroup *cgrp = __cgroup__find(&cgroups, data->key);
-+
-+	qsort(data->nodes, data->nr_nodes, sizeof(*data->nodes), nodecmp);
-+
-+	if (cgrp)
-+		printed += fprintf(fp, " cgroup %s,", cgrp->name);
-+	else
-+		printed += fprintf(fp, " cgroup id:%lu,", (unsigned long)data->key);
-+
-+	printed += fprintf(fp, " %d events\n\n", data->nr_events);
-+
-+	printed += fprintf(fp, "   syscall            calls  errors  total       min       avg       max       stddev\n");
-+	printed += fprintf(fp, "                                     (msec)    (msec)    (msec)    (msec)        (%%)\n");
-+	printed += fprintf(fp, "   --------------- --------  ------ -------- --------- --------- ---------     ------\n");
-+
-+	printed += print_common_stats(data, fp);
-+	printed += fprintf(fp, "\n\n");
-+
-+	return printed;
-+}
-+
-+static int print_cgroup_stats(struct syscall_data **data, int nr_data, FILE *fp)
-+{
-+	int printed = 0;
-+
-+	for (int i = 0; i < nr_data; i++)
-+		printed += print_cgroup_stat(data[i], fp);
-+
-+	return printed;
-+}
-+
- int trace_print_bpf_summary(FILE *fp)
- {
- 	struct bpf_map *map = skel->maps.syscall_stats_map;
-@@ -305,10 +389,19 @@ int trace_print_bpf_summary(FILE *fp)
- 		struct syscall_stats stat;
- 
- 		if (!bpf_map__lookup_elem(map, &key, sizeof(key), &stat, sizeof(stat), 0)) {
--			if (skel->rodata->aggr_mode == SYSCALL_AGGR_THREAD)
-+			switch (skel->rodata->aggr_mode) {
-+			case SYSCALL_AGGR_THREAD:
- 				update_thread_stats(&schash, &key, &stat);
--			else
-+				break;
-+			case SYSCALL_AGGR_CPU:
- 				update_total_stats(&schash, &key, &stat);
-+				break;
-+			case SYSCALL_AGGR_CGROUP:
-+				update_cgroup_stats(&schash, &key, &stat);
-+				break;
-+			default:
-+				break;
-+			}
- 		}
- 
- 		prev_key = &key;
-@@ -325,10 +418,19 @@ int trace_print_bpf_summary(FILE *fp)
- 
- 	qsort(data, nr_data, sizeof(*data), datacmp);
- 
--	if (skel->rodata->aggr_mode == SYSCALL_AGGR_THREAD)
-+	switch (skel->rodata->aggr_mode) {
-+	case SYSCALL_AGGR_THREAD:
- 		printed += print_thread_stats(data, nr_data, fp);
--	else
-+		break;
-+	case SYSCALL_AGGR_CPU:
- 		printed += print_total_stats(data, nr_data, fp);
-+		break;
-+	case SYSCALL_AGGR_CGROUP:
-+		printed += print_cgroup_stats(data, nr_data, fp);
-+		break;
-+	default:
-+		break;
-+	}
- 
- 	for (i = 0; i < nr_data && data; i++) {
- 		free(data[i]->nodes);
-@@ -343,5 +445,14 @@ int trace_print_bpf_summary(FILE *fp)
- 
- void trace_cleanup_bpf_summary(void)
- {
-+	if (!RB_EMPTY_ROOT(&cgroups)) {
-+		struct cgroup *cgrp, *tmp;
-+
-+		rbtree_postorder_for_each_entry_safe(cgrp, tmp, &cgroups, node)
-+			cgroup__put(cgrp);
-+
-+		cgroups = RB_ROOT;
-+	}
-+
- 	syscall_summary_bpf__destroy(skel);
- }
-diff --git a/tools/perf/util/bpf_skel/syscall_summary.bpf.c b/tools/perf/util/bpf_skel/syscall_summary.bpf.c
-index b25f53b3c1351392..1bcd066a5199a476 100644
---- a/tools/perf/util/bpf_skel/syscall_summary.bpf.c
-+++ b/tools/perf/util/bpf_skel/syscall_summary.bpf.c
-@@ -8,6 +8,7 @@
- 
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
- 
- /* This is to calculate a delta between sys-enter and sys-exit for each thread */
- struct syscall_trace {
-@@ -35,10 +36,41 @@ struct syscall_stats_map {
- int enabled; /* controlled from userspace */
- 
- const volatile enum syscall_aggr_mode aggr_mode;
-+const volatile int use_cgroup_v2;
- 
--static void update_stats(int cpu_or_tid, int nr, s64 duration, long ret)
-+int perf_subsys_id = -1;
-+
-+static inline __u64 get_current_cgroup_id(void)
-+{
-+	struct task_struct *task;
-+	struct cgroup *cgrp;
-+
-+	if (use_cgroup_v2)
-+		return bpf_get_current_cgroup_id();
-+
-+	task = bpf_get_current_task_btf();
-+
-+	if (perf_subsys_id == -1) {
-+#if __has_builtin(__builtin_preserve_enum_value)
-+		perf_subsys_id = bpf_core_enum_value(enum cgroup_subsys_id,
-+						     perf_event_cgrp_id);
-+#else
-+		perf_subsys_id = perf_event_cgrp_id;
-+#endif
-+	}
-+
-+	cgrp = BPF_CORE_READ(task, cgroups, subsys[perf_subsys_id], cgroup);
-+	return BPF_CORE_READ(cgrp, kn, id);
-+}
-+
-+static void update_stats(int cpu_or_tid, u64 cgroup_id, int nr, s64 duration,
-+			 long ret)
- {
--	struct syscall_key key = { .cpu_or_tid = cpu_or_tid, .nr = nr, };
-+	struct syscall_key key = {
-+		.cpu_or_tid = cpu_or_tid,
-+		.cgroup = cgroup_id,
-+		.nr = nr,
-+	};
- 	struct syscall_stats *stats;
- 
- 	stats = bpf_map_lookup_elem(&syscall_stats_map, &key);
-@@ -90,7 +122,8 @@ SEC("tp_btf/sys_exit")
- int sys_exit(u64 *ctx)
- {
- 	int tid;
--	int key;
-+	int key = 0;
-+	u64 cgroup = 0;
- 	long ret = ctx[1]; /* return value of the syscall */
- 	struct syscall_trace *st;
- 	s64 delta;
-@@ -105,11 +138,13 @@ int sys_exit(u64 *ctx)
- 
- 	if (aggr_mode == SYSCALL_AGGR_THREAD)
- 		key = tid;
-+	else if (aggr_mode == SYSCALL_AGGR_CGROUP)
-+		cgroup = get_current_cgroup_id();
- 	else
- 		key = bpf_get_smp_processor_id();
- 
- 	delta = bpf_ktime_get_ns() - st->timestamp;
--	update_stats(key, st->nr, delta, ret);
-+	update_stats(key, cgroup, st->nr, delta, ret);
- 
- 	bpf_map_delete_elem(&syscall_trace_map, &tid);
- 	return 0;
-diff --git a/tools/perf/util/bpf_skel/syscall_summary.h b/tools/perf/util/bpf_skel/syscall_summary.h
-index 17f9ecba657088aa..72ccccb45925cd10 100644
---- a/tools/perf/util/bpf_skel/syscall_summary.h
-+++ b/tools/perf/util/bpf_skel/syscall_summary.h
-@@ -6,9 +6,11 @@
- enum syscall_aggr_mode {
- 	SYSCALL_AGGR_THREAD,
- 	SYSCALL_AGGR_CPU,
-+	SYSCALL_AGGR_CGROUP,
- };
- 
- struct syscall_key {
-+	u64 cgroup;
- 	int cpu_or_tid;
- 	int nr;
- };
-diff --git a/tools/perf/util/trace.h b/tools/perf/util/trace.h
-index ef8361ed12c4edc1..fa8d480527a22cef 100644
---- a/tools/perf/util/trace.h
-+++ b/tools/perf/util/trace.h
-@@ -8,6 +8,7 @@ enum trace_summary_mode {
- 	SUMMARY__NONE = 0,
- 	SUMMARY__BY_TOTAL,
- 	SUMMARY__BY_THREAD,
-+	SUMMARY__BY_CGROUP,
- };
- 
- #ifdef HAVE_BPF_SKEL
--- 
+== Alternatives ==
+
+There are alternative approaches to (parts of) the problems above:
+
+  * Memory Pools [1] - preallocated persistent memory region + allocator
+  * PRMEM [2] - resizable persistent memory regions with fixed metadata
+                pointer on the kernel command line + allocator
+  * Pkernfs [3] - preallocated file system for in-kernel data with fixed
+                  address location on the kernel command line
+  * PKRAM [4] - handover of user space pages using a fixed metadata page
+                specified via command line
+
+All of the approaches above fundamentally have the same problem: They
+require the administrator to explicitly carve out a physical memory
+location because they have no mechanism outside of the kernel command
+line to pass data (including memory reservations) between kexec'ing
+kernels.
+
+KHO provides that base foundation. We will determine later whether we
+still need any of the approaches above for fast bulk memory handover of for
+example IOMMU page tables. But IMHO they would all be users of KHO, with
+KHO providing the foundational primitive to pass metadata and bulk memory
+reservations as well as provide easy versioning for data.
+
+== Overview ==
+
+We introduce a metadata file that the kernels pass between each other. How
+they pass it is architecture specific. The file's format is a Flattened
+Device Tree (fdt) which has a generator and parser already included in
+Linux. KHO is enabled in the kernel command line by `kho=on`. When the root
+user enables KHO through /sys/kernel/debug/kho/out/finalize, the kernel
+invokes callbacks to every KHO users to register preserved memory regions,
+which contain drivers' states.
+
+When the actual kexec happens, the fdt is part of the image
+set that we boot into. In addition, we keep "scratch regions" available
+for kexec: physically contiguous memory regions that are guaranteed to
+not have any memory that KHO would preserve.  The new kernel bootstraps
+itself using the scratch regions and sets all handed over memory as in use.
+When drivers initialize that support KHO, they introspect the fdt, restore
+preserved memory regions, and retrieve their states stored in the preserved
+memory.
+
+== Limitations ==
+
+Currently KHO is only implemented for file based kexec. The kernel
+interfaces in the patch set are already in place to support user space
+kexec as well, but it is still not implemented it yet inside kexec tools.
+
+== How to Use ==
+
+To use the code, please boot the kernel with the "kho=on" command line
+parameter. KHO will automatically create scratch regions. If you want to set
+the scratch size explicitly you can use "kho_scratch=" command line parameter.
+For instance, "kho_scratch=16M,512M,256M" will reserve a 16 MiB low
+memory scratch area, a 512 MiB global scratch region, and 256 MiB
+per NUMA node scratch regions on boot.
+
+Make sure to have a reserved memory range requested with reserv_mem
+command line option, for example, "reserve_mem=64m:4k:n1".
+
+Then before you invoke file based "kexec -l", finalize
+KHO FDT:
+
+  # echo 1 > /sys/kernel/debug/kho/out/finalize
+
+You can preview the generated FDT using `dtc`,
+
+  # dtc /sys/kernel/debug/kho/out/fdt
+  # dtc /sys/kernel/debug/kho/out/sub_fdts/memblock
+
+`dtc` is available on ubuntu by `sudo apt-get install device-tree-compiler`.
+
+Now kexec into the new kernel,
+
+  # kexec -l Image --initrd=initrd -s
+  # kexec -e
+
+(The order of KHO finalization and "kexec -l" does not matter.)
+
+The new kernel will boot up and contain the previous kernel's reserve_mem
+contents at the same physical address as the first kernel.
+
+You can also review the FDT passed from the old kernel,
+
+  # dtc /sys/kernel/debug/kho/in/fdt
+  # dtc /sys/kernel/debug/kho/in/sub_fdts/memblock
+
+== Changelog ==
+
+v5 -> v6:
+  - Rebase the patchset on v6.15-rc1.
+  - Revert hashtable-based API introduced in V5.
+  - In kho_parse_scratch_size(), replace simple_strtoul() with kstrtouint().
+  - Make KHO focus on memory preservation. Subsystem's metadata is not
+    saved into KHO root tree, instead Subsystems allocate and create their
+    own FDT and use KHO to preserve the FDT's underlying folios, suggested
+    by [6].
+  - Subsystem's own FDT is presented at debugfs kho/(in|out)/sub_fdts/$name.
+  - Remove `fdt_max`, limit KHO root FDT to 1 page [6].
+  - Move linked pages of bitmaps of preserved memory from
+    /preserved-memory.metadata to preserved-memory-map of KHO root FDT
+    as suggested in [1].
+  - Add struct kho_serialization to hold the root FDT and struct
+    kho_mem_track, and pass it through notifiers, as suggested in [2].
+  - Update the KHO example of memblock. memblock now prepares its own FDT
+    early. In the notifier callback, it only preserves the memory and saves
+    its own FDT blob address to KHO root tree.
+  - Add the doc of KHO property in node 'chosen' to
+    github.com/devicetree-org/dt-schema [3] as requested in [4].
+  - Add back YAML files to describe KHO and memblock FDT bindings as requested
+    in [2]
+  - Remove kho_restore_phys().
+  - Move documentations to Documentation/admin-guide/kho.rst and
+    Documentation/core-api/kho as requested in [5].
+  - Split KHO from kexec in MAINTAINERS.
+  - kho_restore_folio() refuses to create folios larger than
+    MAX_PAGE_ORDER [7].
+  - Fix the bug on arm64 reported in [8].
+  - Fix the bug in kho_preserve_phys() reported in [9].
+  - Check KHO root node "compatible" in kho_populate().
+
+Since the discussion of the data format for serializing preserved memory [10] is
+still going on, this version goes with the original xarray+bitmap approach
+and save the optimization for future versions/patches.
+
+[1] https://lore.kernel.org/all/20250212152336.GA3848889@nvidia.com/
+[2] https://lore.kernel.org/all/20250321134629.GA252045@nvidia.com/
+[3] https://github.com/devicetree-org/dt-schema/pull/158
+[4] https://lore.kernel.org/all/55a5e3f3-1b3f-469b-bde0-69abfff826e4@kernel.org/
+[5] https://lore.kernel.org/all/87wmcj69sg.fsf@trenco.lwn.net/
+[6] https://lore.kernel.org/all/Z+GIRecXeYXiPrYv@nvidia.com/
+[7] https://lore.kernel.org/all/mafs05xjmqsqc.fsf@amazon.de/
+[8] https://lore.kernel.org/all/20250411034748.1781232-1-changyuanl@google.com/
+[9] https://lore.kernel.org/all/20250411040207.1785245-1-changyuanl@google.com/
+[10] https://lore.kernel.org/all/20250320015551.2157511-10-changyuanl@google.com/
+
+v4 -> v5:
+  - New: Preserve folios and address ranges in bitmaps [1]. Removed the
+    `mem` property.
+  - New: Hash table based API for manipulating the KHO state tree.
+  - Change the concept of "active phase" to "finalization phase". KHO
+    users can add/remove data into/from KHO DT anytime before the
+    finalization phase.
+  - Decouple kexec_file_load and KHO FDT creation. kexec_file_load can be
+    done before KHO FDT is created.
+  - Update the example usecase (reserve_mem) using the new KHO API,
+    replace underscores with dashes in reserve-mem fdt generation.
+  - Drop the YAMLs for now and add a brief description of KHO FDT before
+    KHO schema is stable.
+  - Move all sysfs interfaces to debugfs.
+  - Fixed the memblock test reported in [2].
+  - Incorporate fix for kho_locate_mem_hole() with !CONFIG_KEXEC_HANDOVER
+    [3] into "kexec: Add KHO support to kexec file loads".
+
+[1] https://lore.kernel.org/all/20250212152336.GA3848889@nvidia.com/
+[2] https://lore.kernel.org/all/20250217040448.56xejbvsr2a73h4c@master/
+[3] https://lore.kernel.org/all/20250214125402.90709-1-sourabhjain@linux.ibm.com/
+
+v3 -> v4:
+  - Major rework of scrach management. Rather than force scratch memory
+    allocations only very early in boot now we rely on scratch for all
+    memblock allocations.
+  - Use simple example usecase (reserv_mem instead of ftrace)
+  - merge all KHO functionality into a single kernel/kexec_handover.c file
+  - rename CONFIG_KEXEC_KHO to CONFIG_KEXEC_HANDOVER
+
+v2 -> v3:
+  - Fix make dt_binding_check
+  - Add descriptions for each object
+  - s/trace_flags/trace-flags/
+  - s/global_trace/global-trace/
+  - Make all additionalProperties false
+  - Change subject to reflect subsysten (dt-bindings)
+  - Fix indentation
+  - Remove superfluous examples
+  - Convert to 64bit syntax
+  - Move to kho directory
+  - s/"global_trace"/"global-trace"/
+  - s/"global_trace"/"global-trace"/
+  - s/"trace_flags"/"trace-flags"/
+  - Fix wording
+  - Add Documentation to MAINTAINERS file
+  - Remove kho reference on read error
+  - Move handover_dt unmap up
+  - s/reserve_scratch_mem/mark_phys_as_cma/
+  - Remove ifdeffery
+  - Remove superfluous comment
+
+v1 -> v2:
+  - Removed: tracing: Introduce names for ring buffers
+  - Removed: tracing: Introduce names for events
+  - New: kexec: Add config option for KHO
+  - New: kexec: Add documentation for KHO
+  - New: tracing: Initialize fields before registering
+  - New: devicetree: Add bindings for ftrace KHO
+  - test bot warning fixes
+  - Change kconfig option to ARCH_SUPPORTS_KEXEC_KHO
+  - s/kho_reserve_mem/kho_reserve_previous_mem/g
+  - s/kho_reserve/kho_reserve_scratch/g
+  - Remove / reduce ifdefs
+  - Select crc32
+  - Leave anything that requires a name in trace.c to keep buffers
+    unnamed entities
+  - Put events as array into a property, use fingerprint instead of
+    names to identify them
+  - Reduce footprint without CONFIG_FTRACE_KHO
+  - s/kho_reserve_mem/kho_reserve_previous_mem/g
+  - make kho_get_fdt() const
+  - Add stubs for return_mem and claim_mem
+  - make kho_get_fdt() const
+  - Get events as array from a property, use fingerprint instead of
+    names to identify events
+  - Change kconfig option to ARCH_SUPPORTS_KEXEC_KHO
+  - s/kho_reserve_mem/kho_reserve_previous_mem/g
+  - s/kho_reserve/kho_reserve_scratch/g
+  - Leave the node generation code that needs to know the name in
+    trace.c so that ring buffers can stay anonymous
+  - s/kho_reserve/kho_reserve_scratch/g
+  - Move kho enums out of ifdef
+  - Move from names to fdt offsets. That way, trace.c can find the trace
+    array offset and then the ring buffer code only needs to read out
+    its per-CPU data. That way it can stay oblivient to its name.
+  - Make kho_get_fdt() const
+
+Alexander Graf (12):
+  memblock: Add support for scratch memory
+  kexec: add Kexec HandOver (KHO) generation helpers
+  kexec: add KHO parsing support
+  kexec: add KHO support to kexec file loads
+  kexec: add config option for KHO
+  arm64: add KHO support
+  x86/kexec: add support for passing kexec handover (KHO) data
+  x86/e820: temporarily enable KHO scratch for memory below 1M
+  x86/boot: make sure KASLR does not step over KHO preserved memory
+  x86/Kconfig: enable kexec handover for 64 bits
+  memblock: add KHO support for reserve_mem
+  Documentation: add documentation for KHO
+
+Arnd Bergmann (1):
+  kexec: include asm/early_ioremap.h
+
+Mike Rapoport (Microsoft) (5):
+  memblock: add MEMBLOCK_RSRV_KERN flag
+  memblock: introduce memmap_init_kho_scratch()
+  kexec: enable KHO support for memory preservation
+  x86/setup: use memblock_reserve_kern for memory used by kernel
+  Documentation: KHO: Add memblock bindings
+
+ .../admin-guide/kernel-parameters.txt         |   25 +
+ Documentation/admin-guide/mm/index.rst        |    1 +
+ Documentation/admin-guide/mm/kho.rst          |  120 ++
+ Documentation/core-api/index.rst              |    1 +
+ Documentation/core-api/kho/bindings/kho.yaml  |   43 +
+ .../kho/bindings/memblock/memblock.yaml       |   39 +
+ .../kho/bindings/memblock/reserve-mem.yaml    |   40 +
+ .../core-api/kho/bindings/sub-fdt.yaml        |   27 +
+ Documentation/core-api/kho/concepts.rst       |   74 +
+ Documentation/core-api/kho/fdt.rst            |   80 ++
+ Documentation/core-api/kho/index.rst          |   13 +
+ MAINTAINERS                                   |   12 +
+ arch/arm64/Kconfig                            |    3 +
+ arch/x86/Kconfig                              |    3 +
+ arch/x86/boot/compressed/kaslr.c              |   52 +-
+ arch/x86/include/asm/setup.h                  |    2 +
+ arch/x86/include/uapi/asm/setup_data.h        |   13 +-
+ arch/x86/kernel/e820.c                        |   18 +
+ arch/x86/kernel/kexec-bzimage64.c             |   37 +
+ arch/x86/kernel/setup.c                       |   42 +-
+ arch/x86/realmode/init.c                      |    2 +
+ drivers/of/fdt.c                              |   34 +
+ drivers/of/kexec.c                            |   42 +
+ include/linux/kexec.h                         |    5 +
+ include/linux/kexec_handover.h                |  109 ++
+ include/linux/memblock.h                      |   41 +-
+ kernel/Kconfig.kexec                          |   14 +
+ kernel/Makefile                               |    1 +
+ kernel/kexec_file.c                           |   13 +
+ kernel/kexec_handover.c                       | 1261 +++++++++++++++++
+ kernel/kexec_internal.h                       |   16 +
+ mm/Kconfig                                    |    4 +
+ mm/internal.h                                 |    2 +
+ mm/memblock.c                                 |  324 ++++-
+ mm/mm_init.c                                  |   19 +-
+ tools/testing/memblock/tests/alloc_api.c      |   22 +-
+ .../memblock/tests/alloc_helpers_api.c        |    4 +-
+ tools/testing/memblock/tests/alloc_nid_api.c  |   20 +-
+ 38 files changed, 2533 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/admin-guide/mm/kho.rst
+ create mode 100644 Documentation/core-api/kho/bindings/kho.yaml
+ create mode 100644 Documentation/core-api/kho/bindings/memblock/memblock.yaml
+ create mode 100644 Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml
+ create mode 100644 Documentation/core-api/kho/bindings/sub-fdt.yaml
+ create mode 100644 Documentation/core-api/kho/concepts.rst
+ create mode 100644 Documentation/core-api/kho/fdt.rst
+ create mode 100644 Documentation/core-api/kho/index.rst
+ create mode 100644 include/linux/kexec_handover.h
+ create mode 100644 kernel/kexec_handover.c
+
+
+base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+--
 2.49.0.906.g1f30a19c02-goog
-
 
