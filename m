@@ -1,81 +1,63 @@
-Return-Path: <linux-kernel+bounces-628560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D7AAA5F7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:50:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87C9AA5F85
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC71F465EFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 270CE3B17E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD631A01B0;
-	Thu,  1 May 2025 13:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1711E1C860B;
+	Thu,  1 May 2025 13:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rZmlaKlx"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GppSX8kX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A41F125DF
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 13:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03D91922F6
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 13:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746107437; cv=none; b=qVxnbnAZKy9KwwZSxggxT2nZOVj9a/gZMEkQ6nBAmxYMh3nyHVrytXMM44ywc+DA4SVNcweshnZMLkXsfxtEtXDd6yvJKVLkh64ORcFLtJclCD8ewMLCNikmuViO9fqRNrFVe8ZafDNqceyGdEZL72jBnkTJBRw78yviNjA3QnA=
+	t=1746107529; cv=none; b=uGxoIbhIRx7VDA8ILUkxTiuOtlc8C0eKGhKzvZLrAv+7QPgO+Ue21KJxezcYYjlWQmcAG5fZ4aBam5+CGncpm+WG8O5jwD1NBw6GfV1j5ONgkWpbP262Xf1czRBZTuBL/ymEOjUv7JTKf0/pNleqNTWpVist+8JyJeZSdYjWW4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746107437; c=relaxed/simple;
-	bh=ZlHULZ+NCsoXsmseXOQbIkLIvisxgSdKvWPo53A7XPc=;
+	s=arc-20240116; t=1746107529; c=relaxed/simple;
+	bh=TBF9cHqvsBBjMo+hOAdT/xXFYkhNbU6400lnc2ENgSA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TcTvR6X4YafS6RdiBOIlOiBpHwXS9oqokYw5c4X3tKTVxZSahsEVhdu7+5+zyiCOzy2m/XnT6K67CZ8a4FuReODSZRsVw6bVldnn+2kCnCdoALBOUs57cSuWOXdlrRy2F+OM+ZleGN/6wU6KwUtW4GoGJDk6eKGS7ycPciFQZ2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rZmlaKlx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 541BpWQb012535;
-	Thu, 1 May 2025 13:50:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=dW7yXo
-	tJ5JJMgbND4WWIFNhnLrNHj8Z10JnYgPaxEgA=; b=rZmlaKlxgGgROfTZGs1rdu
-	y1+1/ewiSFxRsWV7fdt9JF7LcSpdF2r8R/BmIlz6fvRMTNMOpGia2vCOHhN7c+BD
-	CnP8Mf+YKtwxSy7gok7rzSVC7uaHpMbH5KRMmaHbrS/Dz38AMA3QoBjYk0h2dWh8
-	dYXUsEdtseyfLoQ8E9DVcy4BZ0y8cc2XSuJaiezuCTxS3IkH1dksbmxlwM2wup7V
-	8WsjuIR/adj98coV1VEGFtE0FEnzDdFMxEKLTi8qz1rXJWAmEujfVxXKwaqohwj6
-	GQr8C5AuMbKbuIN4Y4SUBvUEccS+J9o+sLzCoIZB7kdiX5Ef+ipXpPhdzdkK1hhA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46c7ds8xdn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 May 2025 13:50:07 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 541DgKPb029465;
-	Thu, 1 May 2025 13:50:07 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46c7ds8xde-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 May 2025 13:50:07 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 541DJPUM031677;
-	Thu, 1 May 2025 13:50:06 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4699tudev6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 May 2025 13:50:06 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 541Do5Mv31654464
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 1 May 2025 13:50:05 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8364158059;
-	Thu,  1 May 2025 13:50:05 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 06BA558057;
-	Thu,  1 May 2025 13:50:01 +0000 (GMT)
-Received: from [9.39.16.182] (unknown [9.39.16.182])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  1 May 2025 13:50:00 +0000 (GMT)
-Message-ID: <3abcf12a-af48-4f38-815e-ec03c2c87c60@linux.ibm.com>
-Date: Thu, 1 May 2025 19:19:59 +0530
+	 In-Reply-To:Content-Type; b=HIAlBfWPOgC1UnWl7d7apCCyFQB6UD1bn0igWKxB/x8QPLRpY+sRZK9dOuTFE0DKjBznzhqQBogWH7sNJK54VwvcgfflkXu+4UOMt1Ele0/3/HjuGjSUhHZvNyY8xFOnKu/zWNzyY4OMQwVvzLIUcueaUKvuggUlWfPjv5BTBeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GppSX8kX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746107526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D7Og0tNFd6K52qkvPJcrj4sxsIAm+zhBLcJjT2wd0Ho=;
+	b=GppSX8kXXxs+5J4Ad2Wp3MkWDI2xGvrLiWU42kum0uABmEmh4UWwn6Kz2ZSMDnPYcCdTdp
+	AyVDFdufoVcjuoKrCbQwaxUJlmu2XcA1Rxmrm94rIlZ/ZMSqTxKWJr98+0F1znkaCsZbc6
+	aY0LulqoRygPin2kUtL32D9XWgVrNnY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-nJJNEWtTOJa3lZu8ag0sgA-1; Thu,
+ 01 May 2025 09:52:04 -0400
+X-MC-Unique: nJJNEWtTOJa3lZu8ag0sgA-1
+X-Mimecast-MFC-AGG-ID: nJJNEWtTOJa3lZu8ag0sgA_1746107522
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4CC541800990;
+	Thu,  1 May 2025 13:52:02 +0000 (UTC)
+Received: from [10.44.32.102] (unknown [10.44.32.102])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7DF311956094;
+	Thu,  1 May 2025 13:51:55 +0000 (UTC)
+Message-ID: <5eefb009-f920-4954-9ef9-4a00791e3129@redhat.com>
+Date: Thu, 1 May 2025 15:51:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,87 +65,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] driver/base: Remove unused functions
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, rafael@kernel.org,
-        Danilo Krummrich <dakr@kernel.org>,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom@linux.ibm.com>
- <273649393600cb33ac3eec0e9a523c2d1853a47c.1745852397.git.donettom@linux.ibm.com>
- <aBHVsd21j45c2tjA@localhost.localdomain>
+Subject: Re: [PATCH net-next v6 8/8] mfd: zl3073x: Register DPLL sub-device
+ during init
+To: Lee Jones <lee@kernel.org>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Michal Schmidt <mschmidt@redhat.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250430101126.83708-1-ivecera@redhat.com>
+ <20250430101126.83708-9-ivecera@redhat.com>
+ <20250501132201.GP1567507@google.com>
 Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <aBHVsd21j45c2tjA@localhost.localdomain>
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20250501132201.GP1567507@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=afZhnQot c=1 sm=1 tr=0 ts=68137c0f cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=tsmrSC5bzuhJV2bgmnUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: Xf_VxRrExIGKcAJQo60jGH5LABgjDN6l
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAxMDEwMyBTYWx0ZWRfX6lVWDbXxmGVN LO5lamxApDlLVFnjaQ5OFf5P7lfbRiA1MagywDb2CcWSxzAzoI433BzhHREaePXk+zki1c8dEHG vqtVTqIraj2KM7KeqBFzgMAHD75nGjgs5Ktc3CkqsFrrPCAgBOoXHUS5nXsDkjPC+cEASlUM8OQ
- 3aYJDkY5QejVcl4r5zvN1iHdIapEh5sxn4UxD9iovg/zPPVmxx83yb52SY6ytNeYy8ajyf5wRV3 3OJriLnZawGKKUp7b2TtL83ZcqIe62Y3XlSYO/lK7MW46VT64PXBJm8OFtfnpwof4yvnpPDLsfA rAdS2yM850rf+Wn+RRKnu8CzVaOJE+kB76Phq+AmDuwxpdaOAyYCv8yWgPy8j+NzsjL10EJyRUC
- Kyz9tlE+w8vRYb9TKV5OBlEqi1OgdiS3Yhil4tk/ze/mi5sRbYp1kPEyI5XJvd2YcqrWdtnA
-X-Proofpoint-GUID: 0rUkFalVoEIpUnNt1zUxojPQJ_VwUgzt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-01_05,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 phishscore=0 adultscore=0 mlxscore=0
- mlxlogscore=806 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505010103
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
 
-On 4/30/25 1:18 PM, Oscar Salvador wrote:
-> On Mon, Apr 28, 2025 at 10:33:47PM +0530, Donet Tom wrote:
->> The functions register_mem_block_under_node_early and get_nid_for_pfn
->> are not used, as register_memory_blocks_under_node_early is now used
->> to register memory blocks during early boot. Therefore, these unused
->> functions have been removed.
+On 01. 05. 25 3:22 odp., Lee Jones wrote:
+> On Wed, 30 Apr 2025, Ivan Vecera wrote:
+> 
+>> Register DPLL sub-devices to expose the functionality provided
+>> by ZL3073x chip family. Each sub-device represents one of
+>> the available DPLL channels.
 >>
->> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
 >> ---
->>   drivers/base/node.c | 54 +--------------------------------------------
->>   1 file changed, 1 insertion(+), 53 deletions(-)
-> ...
->
->> @@ -895,10 +846,7 @@ void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
->>   {
->>   	walk_memory_blocks_func_t func;
+>> v4->v6:
+>> * no change
+>> v3->v4:
+>> * use static mfd cells
+>> ---
+>>   drivers/mfd/zl3073x-core.c | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
+>> index 050dc57c90c3..3e665cdf228f 100644
+>> --- a/drivers/mfd/zl3073x-core.c
+>> +++ b/drivers/mfd/zl3073x-core.c
+>> @@ -7,6 +7,7 @@
+>>   #include <linux/device.h>
+>>   #include <linux/export.h>
+>>   #include <linux/math64.h>
+>> +#include <linux/mfd/core.h>
+>>   #include <linux/mfd/zl3073x.h>
+>>   #include <linux/module.h>
+>>   #include <linux/netlink.h>
+>> @@ -755,6 +756,14 @@ static void zl3073x_devlink_unregister(void *ptr)
+>>   	devlink_unregister(ptr);
+>>   }
 >>   
->> -	if (context == MEMINIT_HOTPLUG)
->> -		func = register_mem_block_under_node_hotplug;
->> -	else
->> -		func = register_mem_block_under_node_early;
->> +	func = register_mem_block_under_node_hotplug;
->>   
->>   	walk_memory_blocks(PFN_PHYS(start_pfn), PFN_PHYS(end_pfn - start_pfn),
->>   			   (void *)&nid, func);
-> So we have now:
->
-> register_memory_blocks_under_node - wrt. hotplug
-> register_memory_blocks_under_node_early - wrt. boot
->
-> AFAICS, we can drop the 'context' parameter from this function because
-> we do not need it anymore, right? The functions that get called
-> eventually, register_mem_block_under_node_hotplug() and
-> register_mem_block_under_node_early(), already know its context and pass
-> it on to do_register_memory_block_under_node().
+>> +static const struct mfd_cell zl3073x_dpll_cells[] = {
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 0),
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 1),
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 2),
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 3),
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 4),
+>> +};
+> 
+> What other devices / subsystems will be involved when this is finished?
+> 
+PHC/PTP driver and in future GPIO controller.
 
-Hi Oscar
+I'm adding here only DPLL for now as it is finished and ready
+(part2)... PTP driver is now in progress and GPIO is in planning phase.
 
-Yes we can drop 'context' parameter.  I will add this change in next version.
+Ivan
 
-Thanks
-Donet
-
-
->
->
 
