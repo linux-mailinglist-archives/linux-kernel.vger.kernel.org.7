@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-628974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1514AA6584
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72116AA6593
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76FAA1BC38C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E2E1B65F10
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228B2264A95;
-	Thu,  1 May 2025 21:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62B326B2B3;
+	Thu,  1 May 2025 21:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7Bj6Dvc"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhRH8g4f"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF8322687C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 21:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E63D264F99
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 21:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746135045; cv=none; b=c9vmTpSwo5qPG7c+It3MjX+2NPjdLe+BaSWw43bAtYuk3kFDy5Sk8qULEVkss2xLpFiO2wAnrKBFf+UPC13C4WBb2c9BpiUKxAXktfGXp5sUUVBYL/T+3oZ6rlvGaOdFgiIsDpbESeUuZw0fresIeCHQkTOER/+VPq3Ih8YD4/A=
+	t=1746135048; cv=none; b=t7RJgs9aq/WjHOSccUknUHmY/1NB9th/Yo1ljKUkBXaujGJvaSS0k15niiPQmgQerG/V0rM0NN6ji2+npZLELnVE6X1p0HH3Zf6M1iy5qeGBp6l6YLhh5otnpd/7u79oP87+BHrW7z2wPIWzafw7zWETB2wuzPz6ql6MfXs8S5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746135045; c=relaxed/simple;
-	bh=WRHPFkMvhTVOHzTeZ4uUE9Rh7DS+jKs9WFZFam3kfBk=;
+	s=arc-20240116; t=1746135048; c=relaxed/simple;
+	bh=PIRMpgNUFY1ik0z+6dnUMY6vtFlnqbFG//tKiGZLUfY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gdf7Z55up3EAsjJK3I3ppJt1EYABGA+SgEvd36AOt1i3XF1vMQL2+b4eqH3losFp9k9h9Qp9o2y4o74aMOlKCwSPf/iM8djhtNn2wmYbaFGEmV2xvF8BdsOCoSsVAFSRfKj96dehDGz2f5yGYkyClxTWmn3iHsYueB6AVzYPMhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7Bj6Dvc; arc=none smtp.client-ip=209.85.218.44
+	 MIME-Version; b=WazWGMjWNR+ZHCHriOXVUfgyEE5+VwD/2UMO4fl2phN9V3ltmjd1/gch0VM8u2nM1d1VN1Bj6le7vtlBwGOuQpE1T/wa/N8qKq3NeL6/oOscqZgqRQTRNnNrUuHUwbsNr0jM5sneZhhlb78Lnugvxlkxbr2YZn7Ru+N/zeL+d+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JhRH8g4f; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-acb2faa9f55so167184566b.3
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2aeada833so268888266b.0
         for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 14:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1746135042; x=1746739842; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dKyg0ozNzm7//cxSIfxO1lKoXW2Qa2IHKu5mo6o02A4=;
-        b=f7Bj6Dvc9P0VugjbyOtkTRFMrDcuGdEYyat8YQlvhuXhbignZeSRcP25PQd6mKfWaW
-         e2GTEWHWBk26PW06icW0BAUbrbgJShEeEyX8Bh0obJVsAwbHmtMljK8q6UoftXNq0N4O
-         ipSU8xfOlQfzZuse15Qkn32Qyvdec+M8V79fnwL0LErJAlXw0em3GUPR1oOi/V0lEtOP
-         8BqPMKnkxs9Cuv2+sFirlfZFrby2Xy70mS1Y+pz0eoGq79IbYadhCs5bO9n4kodtk0K/
-         B3attceD4uONLaMZcdK2NU+feiNjjzxV3MZMqZFhlPQAqfj1KHizoAeEatd2IR90ZNUk
-         ZBeA==
+        bh=vx2BnNbw+H6yRd92Qc87LVyrq8/WbAmAtW8W0e6klY4=;
+        b=JhRH8g4figt7IXiRCwbQHbt413wnNO8vMzyBW0zA8tO+mHanQGmTfwIDF5i6kyKY7O
+         J6mehj/VbzyaEFw/A8cP9LHPckfjnud5RiaerXWzxeZ+9uasArQaZrJ6vJQnp4YY0b5G
+         eQZ6OO5xh5DudgIvcWztQwi3HWnuM/6mB1EM5ohzE520BrEU5xebwtt2mDGB6zIMBmEy
+         HIM//0A1z20lEwqRisJCUv1Pm2sqpTvoHxj0JBgc7+/ky9lrDD4TCx8PqgCBVZ5eDdU+
+         dKDpEwOsJ1vK1h1jxGozu1HytNvdCWjLGWaKgLf1ahDYuGP3rtxTFVTWScazGmVkesPa
+         LMCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1746135042; x=1746739842;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dKyg0ozNzm7//cxSIfxO1lKoXW2Qa2IHKu5mo6o02A4=;
-        b=PXPpxNLGmyRXOhr5lCmrXp8q5DjyhxizSRuPxTKgY8Fo3TNGnFIWZRiRjZ6qIHWGFv
-         +rppGX4D2PxlhArxbDS6rsx+XTu8GUrK6z4v1v7Kqb5EDSPeYPlvPXMmlGZqwzF4r4A1
-         uAtBB1iE+fl6HWPxAHJuWAem90HvffPcbOk8D1Yp7p1KUUerKVoa6vZ6q4anO2mS0heN
-         nb16CL/Nen5EBgAYVAX6VFuDKSbSxL2NLuXmAxqf/7LB/DAe9eNmgd8Jyzts61L92jU6
-         JfM9aZY9+/htL1E97JYzdaIHVEl/wo1TszSB3BYHvZOWiPwKVLZ+gHjwn7gGJgNkc2QU
-         CdiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLmNKEgWpYxLrmGiSVKfjb03jPq0JuWtTwNgtpX7dGKCLHy0d12NiVWzC21+YO62axbHIJ/Ga97DbeSpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdD38Y9kfYL3QQB26DE2gSpz1oHQ9kMNxlOgRrOIWfOW9g8yv/
-	HHsYAI8vyAaObx3wWDkQQQqYFbd2FV6avHMIoQYTpfbIexUB6/vh
-X-Gm-Gg: ASbGncu006XT96HixvUqmKHjagNZFyPMJqsd8vgxvjlhWSlGaN8l45MvD21aPMcd0FM
-	NHFGracyou+54vhvPTIsNTu9pjowmv9jKiCHAsjVP1QYprfaz2KxY6XsAZx5pfkCSDp6o/ROezL
-	LR5J6wXhq0vweH0GEgsYBEbDQiN5uD72kl0Lb/kwpc0drPy0YaNHi02kxPqvmrW/tqJ+Kq1JyRo
-	sTfdHQGLu48AQ4vrqpxv/9Q5E9NcQ4r1VSkSRjbxkuUpwm3Sn9c61lQHJHKP44OO/L2abVPH+M4
-	9lIjCDav/h1ahA8FglmOSIAujaq4vm7GP3FHacM4GCp+yfsyuo0JQEVbFC9ixwngBkWe8TJ0oLC
-	hhh0XFJx3NdXMc+S8aXQpxJAHNVA1Jafa810z9r6ssRxaouvHJgkKBZKyA3L8VmjFFZS6/cSWhN
-	bXZA==
-X-Google-Smtp-Source: AGHT+IExT/aJg9WflitW+HrLoVfCe6NetKKbdMQo2X2dLvCty6EdFqJWUP+btRX5BimHTUasCsz8rg==
-X-Received: by 2002:a17:907:9719:b0:ac6:b811:e65b with SMTP id a640c23a62f3a-ad17adf4cf2mr59008166b.36.1746135041895;
-        Thu, 01 May 2025 14:30:41 -0700 (PDT)
+        bh=vx2BnNbw+H6yRd92Qc87LVyrq8/WbAmAtW8W0e6klY4=;
+        b=KFdRKbe6QKqPTlaUOfp6SFnYKLxq50ytVkbMFPw2PPA8NOpxO5KF3suWTEA2KToTGW
+         eYum4ge+mbdaUhtceB672ppXAvELDDVw05xCY6Ekl82QgTnh6UXX6Y9nRgKu3BJklzdT
+         H84JfQZ0tnPMK+qSMq9qg/7WJ/ssg2H3bv1FCCELD17X2FMw41quhfJaRcC0OwYyr9v+
+         gm1qqce42RBMReW2ttEPg5URTJnnzA04cL62Yl35ucii9OEKknoiXxByD7qJ+Bgx6wRi
+         Pw/uQIyppxz86V516qilont//autaKRpwCwB3L1PMfmgE9jth8mUc2ob0CXHvDnBfM9T
+         Ze2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVYoahGCIyIfaY46WBhW7pznZAo5LxLPwvh60Pbx8zQASJdjfYGQD9YF6Nd5NRYUXlHkGQv5+nu6ij5IqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSKC+LpB0aowrLcdxf5sw2QKaJpU5Ewlact+YfypaWu02zD9d5
+	sRaJDptD/Su9PjCWedyIU7xCGLsoTMWSgMmtDmWEcliK/FiHKfOj
+X-Gm-Gg: ASbGncs+evNxzN2kKLGoRyCMx8S2w2wp34zf2VSREOkqX6hUdzxLT3U/PkMsqVIbA8I
+	Bnr5LOZPkcJVK7DDaRhwlP02ptR8Q2b5qBMwzmWLGpWZsAKaJnm1/Gncj8SDiF8S1pNu68um7pY
+	wd0DTpfEYDkdGeY/OtlmFLO0jMGNXlSyS5Us4M8FODQGQbZwNDaaBJ8N2PdYhdXKFwTcuMFdZ1H
+	NwBOqrK5O/Q8NLNBbZbJprO8ZlIJdr0bUdehmaOlznNiMN3QIGfdBG3qnXtaaWYu25qXaPb9GyD
+	qC89HOvfnFm+x397dTTNlru45R7ZGK80fBPmV3WHGXbO/Dpx8vuPNxKgXiwIwG1IiLHeDIDt27G
+	Qf/DEuF+aw5Wi/oY2V1FTo6Ax5WycYkru68Oj2wC6VNLrU3YpV8VIWOX2djinCHkDHcCVAHA0OH
+	avXw==
+X-Google-Smtp-Source: AGHT+IFUJ5z+Wf6tRCevsNbth9+n/iTFmf2xbNXBAm07ufdrNRRQKVTPwyzOkjqVkNpgNVJZHDRMRQ==
+X-Received: by 2002:a17:907:1c0d:b0:abf:174b:8ca6 with SMTP id a640c23a62f3a-aceff056cd2mr321833866b.27.1746135042337;
+        Thu, 01 May 2025 14:30:42 -0700 (PDT)
 Received: from chimera.arnhem.chello.nl (2001-1c08-0706-8b00-41fd-2957-14cb-eff7.cable.dynamic.v6.ziggo.nl. [2001:1c08:706:8b00:41fd:2957:14cb:eff7])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad0da560a63sm96466866b.139.2025.05.01.14.30.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 14:30:41 -0700 (PDT)
+        Thu, 01 May 2025 14:30:42 -0700 (PDT)
 From: Thomas Andreatta <thomasandreatta2000@gmail.com>
 X-Google-Original-From: Thomas Andreatta <thomas.andreatta2000@gmail.com>
 To: dpenkler@gmail.com
@@ -80,9 +80,9 @@ Cc: gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-staging@lists.linux.dev,
 	Thomas Andreatta <thomas.andreatta2000@gmail.com>
-Subject: [PATCH 4/8] Staging: gpib: Updated return type `ines_request_system_control`
-Date: Thu,  1 May 2025 23:30:33 +0200
-Message-Id: <9639f86fd160a5ea49f12d4f18da2c599d59e701.1746133676.git.thomas.andreatta2000@gmail.com>
+Subject: [PATCH 5/8] Staging: gpib: Updated return type for `ines_request_system_control`
+Date: Thu,  1 May 2025 23:30:34 +0200
+Message-Id: <226a7f00f7a5a332808aa4d058b000deb5b20c92.1746133676.git.thomas.andreatta2000@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1746133676.git.thomas.andreatta2000@gmail.com>
 References: <cover.1746133676.git.thomas.andreatta2000@gmail.com>
@@ -94,26 +94,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update `ines_request_system_control` type from void to int.
+Updated the functions used by ines_request_system_control to return int.
+Currently there's no possible return errors in the functions due to them
+being former void function, for this reason they all return success (0).
 
 Signed-off-by: Thomas Andreatta <thomas.andreatta2000@gmail.com>
 ---
- drivers/staging/gpib/ines/ines.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gpib/ines/ines_gpib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/gpib/ines/ines.h b/drivers/staging/gpib/ines/ines.h
-index ff27f055a0ff..a82b9cd93129 100644
---- a/drivers/staging/gpib/ines/ines.h
-+++ b/drivers/staging/gpib/ines/ines.h
-@@ -46,7 +46,7 @@ int ines_accel_write(struct gpib_board *board, uint8_t *buffer, size_t length,
- int ines_command(struct gpib_board *board, uint8_t *buffer, size_t length, size_t *bytes_written);
- int ines_take_control(struct gpib_board *board, int synchronous);
- int ines_go_to_standby(struct gpib_board *board);
--void ines_request_system_control(struct gpib_board *board, int request_control);
-+int ines_request_system_control(struct gpib_board *board, int request_control);
- void ines_interface_clear(struct gpib_board *board, int assert);
- void ines_remote_enable(struct gpib_board *board, int enable);
- int ines_enable_eos(struct gpib_board *board, uint8_t eos_byte, int compare_8_bits);
+diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
+index d93eb05dab90..2ca1b8659ab4 100644
+--- a/drivers/staging/gpib/ines/ines_gpib.c
++++ b/drivers/staging/gpib/ines/ines_gpib.c
+@@ -441,11 +441,12 @@ int ines_go_to_standby(struct gpib_board *board)
+ 	return nec7210_go_to_standby(board, &priv->nec7210_priv);
+ }
+ 
+-void ines_request_system_control(struct gpib_board *board, int request_control)
++int ines_request_system_control(struct gpib_board *board, int request_control)
+ {
+ 	struct ines_priv *priv = board->private_data;
+ 
+ 	nec7210_request_system_control(board, &priv->nec7210_priv, request_control);
++	return 0;
+ }
+ 
+ void ines_interface_clear(struct gpib_board *board, int assert)
 -- 
 2.34.1
 
