@@ -1,481 +1,356 @@
-Return-Path: <linux-kernel+bounces-628127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84E2AA5971
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C43EAA5967
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0650D4A83C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD824A71BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAA020B7FB;
-	Thu,  1 May 2025 01:35:04 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A8C1EFFB3;
+	Thu,  1 May 2025 01:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c292zasy"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991141F874F;
-	Thu,  1 May 2025 01:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA42158A09;
+	Thu,  1 May 2025 01:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746063302; cv=none; b=uTe7PxBMFJ9TZEPn3Jlx5sJZ445kD7+elPVnR9mWmA6agd40L1nNOtOH2+uL83UAxkIWem+QKJXQZ5mFhquDXW9zw1E7UH6jTt7kFajf7GZl3aBNryvGt8Ja8aNO4+SYg09UuxLAWwi+i2w7As397lKxwTEeycy7PMhNU3Vr/QQ=
+	t=1746063290; cv=none; b=HhkTOqUPCRtaNP7BnMSA3LzWfo4U6UaAUmz1gMCTtftEPHYNCaJ3Pmhm4aTY4X2Mm2J5ZiL5K3NPXnv1C+LWc5eCNpBibUfx8YbPEDDUJr5d4wwcCumw61Kki2xuvrARJgqWpICEU7fFy6NUq1QKlm3lp9AOHfhZR1ObUMcDHNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746063302; c=relaxed/simple;
-	bh=V6E0H/tkXfslGAVHsyBZMc6uFcxVbaHjDyMb7rHFldE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Qps+zxPaJBt4kwb4J3Q+0AYlMA2UX8U1BPIEZKgesMhXYc2OkzwR9xnLVe16YCYfES7HNInM2iY+MqsB9uoLIJg5zZ5oc8GBQM/i3TT5Iq4ZNzUEd0x1POQoD/fXGISKBiEQnGjkMfKmTUjh7C/jN0lG1Psm44xI73ye9AHq32M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E220C4CEEB;
-	Thu,  1 May 2025 01:35:02 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uAIpO-00000001onA-3lzK;
-	Wed, 30 Apr 2025 21:35:06 -0400
-Message-ID: <20250501013506.751321323@goodmis.org>
-User-Agent: quilt/0.68
-Date: Wed, 30 Apr 2025 21:32:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- x86@kernel.org,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org,
- Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org,
- Jordan Rome <jordalgo@meta.com>,
- Sam James <sam@gentoo.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Florian Weimer <fweimer@redhat.com>,
- Andy Lutomirski <luto@kernel.org>,
- Weinan Liu <wnliu@google.com>,
- Blake Jones <blakejones@google.com>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Alexander Aring <aahringo@redhat.com>
-Subject: [PATCH v6 5/5] perf: Support deferred user callchains for per CPU events
-References: <20250501013202.997535180@goodmis.org>
+	s=arc-20240116; t=1746063290; c=relaxed/simple;
+	bh=K4FK1SksihiDRwHS9IOcnoEUnF35eZSZx4EEULu2AdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QATbmVEIHLf7y1gfMRg7DymvGa50zVD5+elhfWWNKPxcD4b+0/mPRpApOf8fwegS0Uan0B8MwH9DtIAf9CZufsEaJGkXtZkLRdnq81g89qKmVVclmm2Rmi1gKjtLYPqY/ebp2ijp6YwoRt9v7R8MkFce8R589IiTJghwFtkDOk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c292zasy; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-73bf5aa95e7so487126b3a.1;
+        Wed, 30 Apr 2025 18:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746063288; x=1746668088; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1EJVZoGVPtB0ls/jqlR50tgBETOk68yBgDdBhLsXmyY=;
+        b=c292zasyoHycEyFE281T5gs3nCO9GDVejwhA0Ug1ctdbEbsJKAL4QbVdeGd+L0kIoo
+         qcPR5n7XKIstVPXpvcH8d+3WTQ5f5+AberzYrDSAIwbwr7tGeHPfzq1NtS1YpAIfyf6k
+         kBnfp0MF8v9n5XmISMKLaWRCR/M6lpRbnLXLBygmHf5sutl5909RzakbDcnNORnNweWB
+         Ae+5o34/6TootdTIBQRM5uzH/kVZcCXLe/GuDWYB2Di2Keep4S6OybSh2BrM3j8um3Kx
+         NjFoj07GSXmHfy3zbtxHOdSu9TzZYVFb6rUMG8+BmrWASzFQS1vcpt7G1nRz+czk+akl
+         yItg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746063288; x=1746668088;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1EJVZoGVPtB0ls/jqlR50tgBETOk68yBgDdBhLsXmyY=;
+        b=M6JHLeR10ui1+WOACBYfgTjkJfdhzQMbzQ0k+K+L8+X31BSvyL+5FubcYsqzmXTd+j
+         4S/194hevBUaVeeJw4acbYPdCd3KVTTd4DzXHHy9mgphI65Qv4Q21oDH9I6hzQ7wu4MW
+         XD9HpQ1zUKw50IRlcwxPq+zJQJTaUvxKe6M61mrLxb0H9/tQDQmTBg7DoN95toEhKtw6
+         A+2F9RoRCIx/JNNvxytIx/BWsMUKJEmfqoAoH9V5Ywwy9Q/4X6Efk1Pv9TQ/YXbYMP4m
+         X2DXGto3Fb8WV3tHMp9LXQANtL30HIwMzq/SN4hSFyOEy3vJTtXSeMaCLy5k9TdW/for
+         J0hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVh2DxNDeH+fE65uch4xdsK3MwdGdvi/gbIWKFH/w4nGD+gLulimeLtCcOvkucIyUtK4NPSy83k@vger.kernel.org, AJvYcCX07fMyPVpygUCexBbp6aVuVgu7q78sbgX1CEQHp7JQm67ObYT+s3lvFcR3eObhu2eT5UkYmewLeZ8qHm9C@vger.kernel.org, AJvYcCX4sZNT3O2eExFBX08irUWxQR5CrT1bJ8+bAsV5k9rlfkDkuZVi9G/Ks6G2EJYwfI9884k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA5jIP4rqPviOhqvW58uPPSBQD9BG4he4hkTwf6fgJBSsA5tLD
+	rE47pZBa10IoKJ76aDOiOWWqw4sG2nMDeDC7Eeas1KEp+B7k8jg=
+X-Gm-Gg: ASbGncveXfirXJsBjaibhwL0PM0sDmDLk3pnkmJpx3l0k0e5VW2Pb2QwPWDON+yCjNB
+	RxZ78GDM+vZz8lWiOVMNM4oIIEAkwC09tkKPb5C8OQTugfHdHYQckI+MG3E/ujgv3gJuefJfrlk
+	Abn99i8ZkUpeNHCDYC526j/4LIHTKhJaDiY5PtbmnordTtkhALRYElt2mqpoFGvX4HEC8bF26sv
+	zDdyCtP+8EMl8M9z84tY+20KtsDSsH7T/XecJpSL0y87QVotvER2mIVLy5vgQSDCmJPBJjQMK0v
+	dqQNihu9k4Y+IFkvXf5t4RWIGYIxkBns2Smti/v+xy3gND++tdbydH5NQmpnA4XkwfE3YFhtdAq
+	mK9+e36OpLw==
+X-Google-Smtp-Source: AGHT+IFNsKs/G+y5JObZ9injpFGWoGxzqspTFfuUyi/an9Y5CFE+Wct757N+xfdnPxt028yFjJSkPw==
+X-Received: by 2002:a05:6a20:3d8c:b0:204:2936:bce with SMTP id adf61e73a8af0-20bd804a2a9mr1094153637.31.1746063287773;
+        Wed, 30 Apr 2025 18:34:47 -0700 (PDT)
+Received: from localhost (c-73-170-40-124.hsd1.ca.comcast.net. [73.170.40.124])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b15f7ec0bb2sm11293329a12.18.2025.04.30.18.34.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 18:34:47 -0700 (PDT)
+Date: Wed, 30 Apr 2025 18:34:46 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next v2] xdp: Add helpers for head length, headroom,
+ and metadata length
+Message-ID: <aBLPtszlDe74yTlk@mini-arch>
+References: <20250430201120.1794658-1-jon@nutanix.com>
+ <aBKReJUy2Z-JQwr4@mini-arch>
+ <32FB9CF5-E5BB-4912-B76D-53971C6B6F98@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <32FB9CF5-E5BB-4912-B76D-53971C6B6F98@nutanix.com>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On 05/01, Jon Kohler wrote:
+> 
+> 
+> > On Apr 30, 2025, at 5:09 PM, Stanislav Fomichev <stfomichev@gmail.com> wrote:
+> > 
+> > !-------------------------------------------------------------------|
+> >  CAUTION: External Email
+> > 
+> > |-------------------------------------------------------------------!
+> > 
+> > On 04/30, Jon Kohler wrote:
+> >> Introduce new XDP helpers:
+> >> - xdp_headlen: Similar to skb_headlen
+> >> - xdp_headroom: Similar to skb_headroom
+> >> - xdp_metadata_len: Similar to skb_metadata_len
+> >> 
+> >> Integrate these helpers into tap, tun, and XDP implementation to start.
+> >> 
+> >> No functional changes introduced.
+> >> 
+> >> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> >> ---
+> >> v1->v2: Integrate feedback from Willem
+> >> https://urldefense.proofpoint.com/v2/url?u=https-3A__patchwork.kernel.org_project_netdevbpf_patch_20250430182921.1704021-2D1-2Djon-40nutanix.com_&d=DwIBaQ&c=s883GpUCOChKOHiocYtGcg&r=NGPRGGo37mQiSXgHKm5rCQ&m=9pdxzQszX_M0K3gEPeYOyMZZYSkRR8IMvxslS8320Eoctk58y-ELCdZ5iaryF2GH&s=J-ILB7E9VQ_plo0hyjEtzGzjy6G0_o4MMMmmE_z8vvc&e= 
+> >> 
+> >> drivers/net/tap.c |  6 +++---
+> >> drivers/net/tun.c | 12 +++++------
+> >> include/net/xdp.h | 54 +++++++++++++++++++++++++++++++++++++++++++----
+> >> net/core/xdp.c    | 12 +++++------
+> >> 4 files changed, 65 insertions(+), 19 deletions(-)
+> >> 
+> >> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+> >> index d4ece538f1b2..a62fbca4b08f 100644
+> >> --- a/drivers/net/tap.c
+> >> +++ b/drivers/net/tap.c
+> >> @@ -1048,7 +1048,7 @@ static int tap_get_user_xdp(struct tap_queue *q, struct xdp_buff *xdp)
+> >> struct sk_buff *skb;
+> >> int err, depth;
+> >> 
+> >> - if (unlikely(xdp->data_end - xdp->data < ETH_HLEN)) {
+> >> + if (unlikely(xdp_headlen(xdp) < ETH_HLEN)) {
+> >> err = -EINVAL;
+> >> goto err;
+> >> }
+> >> @@ -1062,8 +1062,8 @@ static int tap_get_user_xdp(struct tap_queue *q, struct xdp_buff *xdp)
+> >> goto err;
+> >> }
+> >> 
+> >> - skb_reserve(skb, xdp->data - xdp->data_hard_start);
+> >> - skb_put(skb, xdp->data_end - xdp->data);
+> >> + skb_reserve(skb, xdp_headroom(xdp));
+> >> + skb_put(skb, xdp_headlen(xdp));
+> >> 
+> >> skb_set_network_header(skb, ETH_HLEN);
+> >> skb_reset_mac_header(skb);
+> >> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> >> index 7babd1e9a378..4c47eed71986 100644
+> >> --- a/drivers/net/tun.c
+> >> +++ b/drivers/net/tun.c
+> >> @@ -1567,7 +1567,7 @@ static int tun_xdp_act(struct tun_struct *tun, struct bpf_prog *xdp_prog,
+> >> dev_core_stats_rx_dropped_inc(tun->dev);
+> >> return err;
+> >> }
+> >> - dev_sw_netstats_rx_add(tun->dev, xdp->data_end - xdp->data);
+> >> + dev_sw_netstats_rx_add(tun->dev, xdp_headlen(xdp));
+> >> break;
+> >> case XDP_TX:
+> >> err = tun_xdp_tx(tun->dev, xdp);
+> >> @@ -1575,7 +1575,7 @@ static int tun_xdp_act(struct tun_struct *tun, struct bpf_prog *xdp_prog,
+> >> dev_core_stats_rx_dropped_inc(tun->dev);
+> >> return err;
+> >> }
+> >> - dev_sw_netstats_rx_add(tun->dev, xdp->data_end - xdp->data);
+> >> + dev_sw_netstats_rx_add(tun->dev, xdp_headlen(xdp));
+> >> break;
+> >> case XDP_PASS:
+> >> break;
+> >> @@ -2355,7 +2355,7 @@ static int tun_xdp_one(struct tun_struct *tun,
+> >>       struct xdp_buff *xdp, int *flush,
+> >>       struct tun_page *tpage)
+> >> {
+> >> - unsigned int datasize = xdp->data_end - xdp->data;
+> >> + unsigned int datasize = xdp_headlen(xdp);
+> >> struct tun_xdp_hdr *hdr = xdp->data_hard_start;
+> >> struct virtio_net_hdr *gso = &hdr->gso;
+> >> struct bpf_prog *xdp_prog;
+> >> @@ -2415,14 +2415,14 @@ static int tun_xdp_one(struct tun_struct *tun,
+> >> goto out;
+> >> }
+> >> 
+> >> - skb_reserve(skb, xdp->data - xdp->data_hard_start);
+> >> - skb_put(skb, xdp->data_end - xdp->data);
+> >> + skb_reserve(skb, xdp_headroom(xdp));
+> >> + skb_put(skb, xdp_headlen(xdp));
+> >> 
+> >> /* The externally provided xdp_buff may have no metadata support, which
+> >> * is marked by xdp->data_meta being xdp->data + 1. This will lead to a
+> >> * metasize of -1 and is the reason why the condition checks for > 0.
+> >> */
+> >> - metasize = xdp->data - xdp->data_meta;
+> >> + metasize = xdp_metadata_len(xdp);
+> >> if (metasize > 0)
+> >> skb_metadata_set(skb, metasize);
+> >> 
+> >> diff --git a/include/net/xdp.h b/include/net/xdp.h
+> >> index 48efacbaa35d..044345b18305 100644
+> >> --- a/include/net/xdp.h
+> >> +++ b/include/net/xdp.h
+> >> @@ -151,10 +151,56 @@ xdp_get_shared_info_from_buff(const struct xdp_buff *xdp)
+> >> return (struct skb_shared_info *)xdp_data_hard_end(xdp);
+> >> }
+> >> 
+> >> +/**
+> >> + * xdp_headlen - Calculate the length of the data in an XDP buffer
+> >> + * @xdp: Pointer to the XDP buffer structure
+> >> + *
+> >> + * Compute the length of the data contained in the XDP buffer. Does not
+> >> + * include frags, use xdp_get_buff_len() for that instead.
+> >> + *
+> >> + * Analogous to skb_headlen().
+> >> + *
+> >> + * Return: The length of the data in the XDP buffer in bytes.
+> >> + */
+> >> +static inline unsigned int xdp_headlen(const struct xdp_buff *xdp)
+> >> +{
+> >> + return xdp->data_end - xdp->data;
+> >> +}
+> >> +
+> >> +/**
+> >> + * xdp_headroom - Calculate the headroom available in an XDP buffer
+> >> + * @xdp: Pointer to the XDP buffer structure
+> >> + *
+> >> + * Compute the headroom in an XDP buffer.
+> >> + *
+> >> + * Analogous to the skb_headroom().
+> >> + *
+> >> + * Return: The size of the headroom in bytes.
+> >> + */
+> >> +static inline unsigned int xdp_headroom(const struct xdp_buff *xdp)
+> >> +{
+> >> + return xdp->data - xdp->data_hard_start;
+> >> +}
+> >> +
+> >> +/**
+> >> + * xdp_metadata_len - Calculate the length of metadata in an XDP buffer
+> >> + * @xdp: Pointer to the XDP buffer structure
+> >> + *
+> >> + * Compute the length of the metadata region in an XDP buffer.
+> >> + *
+> >> + * Analogous to skb_metadata_len().
+> >> + *
+> >> + * Return: The length of the metadata in bytes.
+> >> + */
+> >> +static inline unsigned int xdp_metadata_len(const struct xdp_buff *xdp)
+> > 
+> > I believe this has to return int, not unsigned int. There are places
+> > where we do data_meta = data + 1, and the callers check whether
+> > the result is signed or sunsigned.
+> 
+> The existing SKB APIs are the exact same return type (I copied them 1:1),
+> but I have a feeling that we’re never intending these values to either A) be
+> negative and/or B) wrap in strange ways?
+> 
+> > 
+> >> +{
+> >> + return xdp->data - xdp->data_meta;
+> >> +}
+> >> +
+> >> static __always_inline unsigned int
+> >> xdp_get_buff_len(const struct xdp_buff *xdp)
+> >> {
+> >> - unsigned int len = xdp->data_end - xdp->data;
+> >> + unsigned int len = xdp_headlen(xdp);
+> >> const struct skb_shared_info *sinfo;
+> >> 
+> >> if (likely(!xdp_buff_has_frags(xdp)))
+> >> @@ -364,8 +410,8 @@ int xdp_update_frame_from_buff(const struct xdp_buff *xdp,
+> >> int metasize, headroom;
+> 
+> Said another way, perhaps this should be unsigned?
+> 
+> >> 
+> >> /* Assure headroom is available for storing info */
+> >> - headroom = xdp->data - xdp->data_hard_start;
+> >> - metasize = xdp->data - xdp->data_meta;
+> >> + headroom = xdp_headroom(xdp);
+> >> + metasize = xdp_metadata_len(xdp);
+> >> metasize = metasize > 0 ? metasize : 0;
+> > 
+> > ^^ like here
+> 
+> Look across the tree, seems like more are unsigned than signed
 
-The deferred unwinder works fine for task events (events that trace only a
-specific task), as it can use a task_work from an interrupt or NMI and
-when the task goes back to user space it will call the event's callback to
-do the deferred unwinding.
+The ones that are unsigned are either calling xdp_data_meta_unsupported
+explicitly (and it does > to check for this condition, not signed math)
+or are running in the drivers that are guaranteed to have metadata
+support (and, hence, always have data_meta <= data).
 
-But for per CPU events things are not so simple. When a per CPU event
-wants a deferred unwinding to occur, it can not simply use a task_work as
-there's a many to many relationship. If the task migrates and another task
-is scheduled in where the per CPU event wants a deferred unwinding to
-occur on that task as well, and the task that migrated to another CPU has
-that CPU's event want to unwind it too, each CPU may need unwinding from
-more than one task, and each task may has requests from many CPUs.
+> These ones use unsigned:
+> xdp_convert_zc_to_xdp_frame
 
-To solve this, when a per CPU event is created that has defer_callchain
-attribute set, it will do a lookup from a global list
-(unwind_deferred_list), for a perf_unwind_deferred descriptor that has the
-id that matches the PID of the current task's group_leader.
+This uses xdp_data_meta_unsupported
 
-If it is not found, then it will create one and add it to the global list.
-This descriptor contains an array of all possible CPUs, where each element
-is a perf_unwind_cpu descriptor.
+> veth_xdp_rcv_skb
+> xsk_construct_skb
+> bnxt_copy_xdp
+> i40e_build_skb
+> i40e_construct_skb_zc
+> ice_build_skb (this is u8)
+> ice_construct_skb_zc
+> igb_build_skb
+> igb_construct_skb_zc
+> igc_build_skb
+> igc_construct_skb
+> igc_construct_skb_zc
+> ixgbe_build_skb
+> ixgbe_construct_skb_zc
+> ixgbevf_build_skb
+> mvneta_swbm_build_skb
+> mlx5e_xsk_construct_skb
+> mana_build_skb
+> stmmac_construct_skb_zc
+> bpf_prog_run_generic_xdp
 
-The perf_unwind_cpu descriptor has a list of all the per CPU events that
-is tracing the matching CPU that corresponds to its index in the array,
-where the events belong to a task that has the same group_leader.
-It also has a processing bit and rcuwait to handle removal.
+These run in the drivers that support metadata (data_meta <= data)
 
-For each occupied perf_unwind_cpu descriptor in the array, the
-perf_deferred_unwind descriptor increments its nr_cpu_events. When a
-perf_unwind_cpu descriptor is empty, the nr_cpu_events is decremented.
-This is used to know when to free the perf_deferred_unwind descriptor, as
-when it become empty, it is no longer referenced.
+> xdp_get_metalen
 
-Finally, the perf_deferred_unwind descriptor has an id that holds the PID
-of the group_leader for the tasks that the events were created by.
+This uses xdp_data_meta_unsupported
 
-When a second (or more) per CPU event is created where the
-perf_deferred_unwind descriptor is already created, it just adds itself to
-the perf_unwind_cpu array of that descriptor. Updating the necessary
-counter.
+> These ones are regular int:
+> xdp_build_skb_from_buff
+> xdp_build_skb_from_zc
+> xdp_update_frame_from_buff
+> tun_xdp_one
+> build_skb_from_xdp_buff
 
-Each of these perf_deferred_unwind descriptors have a unwind_work that
-registers with the deferred unwind infrastructure via
-unwind_deferred_init(), where it also registers a callback to
-perf_event_deferred_cpu().
+These can be called from the drivers that support and don't support 
+the metadata, so have to (correctly) use int.
 
-Now when a per CPU event requests a deferred unwinding, it calls
-unwind_deferred_request() with the associated perf_deferred_unwind
-descriptor. It is expected that the program that uses this has events on
-all CPUs, as the deferred trace may not be called on the CPU event that
-requested it. That is, the task may migrate and its user stack trace will
-be recorded on the CPU event of the CPU that it exits back to user space
-on.
+> Perhaps a separate patch to convert the regulars to unsigned,
+> thoughts?
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/linux/perf_event.h |   5 +
- kernel/events/core.c       | 226 +++++++++++++++++++++++++++++++++----
- 2 files changed, 206 insertions(+), 25 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 10603a8344d3..c12b4894c4e1 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -683,6 +683,7 @@ struct swevent_hlist {
- struct bpf_prog;
- struct perf_cgroup;
- struct perf_buffer;
-+struct perf_unwind_deferred;
- 
- struct pmu_event_list {
- 	raw_spinlock_t		lock;
-@@ -835,6 +836,9 @@ struct perf_event {
- 	struct callback_head		pending_unwind_work;
- 	struct rcuwait			pending_unwind_wait;
- 
-+	struct perf_unwind_deferred	*unwind_deferred;
-+	struct list_head		unwind_list;
-+
- 	atomic_t			event_limit;
- 
- 	/* address range filters */
-@@ -875,6 +879,7 @@ struct perf_event {
- #ifdef CONFIG_SECURITY
- 	void *security;
- #endif
-+
- 	struct list_head		sb_list;
- 	struct list_head		pmu_list;
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index a5d9c6220589..f0c3b8878276 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5537,10 +5537,128 @@ static bool exclusive_event_installable(struct perf_event *event,
- 	return true;
- }
- 
-+/* Holds a list of per CPU events that registered for deferred unwinding */
-+struct perf_unwind_cpu {
-+	struct list_head	list;
-+	struct rcuwait		pending_unwind_wait;
-+	int			processing;
-+};
-+
-+struct perf_unwind_deferred {
-+	struct list_head	list;
-+	struct unwind_work	unwind_work;
-+	struct perf_unwind_cpu	*cpu_events;
-+	int			nr_cpu_events;
-+	int			id;
-+};
-+
-+static DEFINE_MUTEX(unwind_deferred_mutex);
-+static LIST_HEAD(unwind_deferred_list);
-+
-+static void perf_event_deferred_cpu(struct unwind_work *work,
-+				    struct unwind_stacktrace *trace, u64 cookie);
-+
-+static int perf_add_unwind_deferred(struct perf_event *event)
-+{
-+	struct perf_unwind_deferred *defer;
-+	int id = current->group_leader->pid;
-+	bool found = false;
-+	int ret = 0;
-+
-+	if (event->cpu < 0)
-+		return -EINVAL;
-+
-+	guard(mutex)(&unwind_deferred_mutex);
-+
-+	list_for_each_entry(defer, &unwind_deferred_list, list) {
-+		if (defer->id == id) {
-+			found = true;
-+			break;
-+		}
-+	}
-+
-+	if (!found) {
-+		defer = kzalloc(sizeof(*defer), GFP_KERNEL);
-+		if (!defer)
-+			return -ENOMEM;
-+		list_add(&defer->list, &unwind_deferred_list);
-+		defer->id = id;
-+	}
-+
-+	if (!defer->nr_cpu_events) {
-+		defer->cpu_events = kcalloc(num_possible_cpus(),
-+					    sizeof(*defer->cpu_events),
-+					    GFP_KERNEL);
-+		if (!defer->cpu_events) {
-+			ret = -ENOMEM;
-+			goto free;
-+		}
-+		for (int cpu = 0; cpu < num_possible_cpus(); cpu++) {
-+			rcuwait_init(&defer->cpu_events[cpu].pending_unwind_wait);
-+			INIT_LIST_HEAD(&defer->cpu_events[cpu].list);
-+		}
-+
-+		ret = unwind_deferred_init(&defer->unwind_work,
-+					   perf_event_deferred_cpu);
-+		if (ret)
-+			goto free;
-+	}
-+
-+	if (list_empty(&defer->cpu_events[event->cpu].list))
-+		defer->nr_cpu_events++;
-+	list_add_tail_rcu(&event->unwind_list, &defer->cpu_events[event->cpu].list);
-+
-+	event->unwind_deferred = defer;
-+	return 0;
-+free:
-+	if (found)
-+		return ret;
-+
-+	list_del(&defer->list);
-+	kfree(defer->cpu_events);
-+	kfree(defer);
-+	return ret;
-+}
-+
-+static void perf_remove_unwind_deferred(struct perf_event *event)
-+{
-+	struct perf_unwind_deferred *defer = event->unwind_deferred;
-+	struct perf_unwind_cpu *cpu_unwind;
-+
-+	if (!defer)
-+		return;
-+
-+	guard(mutex)(&unwind_deferred_mutex);
-+	list_del_rcu(&event->unwind_list);
-+
-+	cpu_unwind = &defer->cpu_events[event->cpu];
-+
-+	if (list_empty(&cpu_unwind->list)) {
-+		defer->nr_cpu_events--;
-+		if (!defer->nr_cpu_events)
-+			unwind_deferred_cancel(&defer->unwind_work);
-+	}
-+	/* Make sure perf_event_deferred_cpu() is done with this event */
-+	rcuwait_wait_event(&cpu_unwind->pending_unwind_wait,
-+				   !cpu_unwind->processing, TASK_UNINTERRUPTIBLE);
-+
-+	event->unwind_deferred = NULL;
-+
-+	/* Is this still being used by other per CPU events? */
-+	if (defer->nr_cpu_events)
-+		return;
-+
-+	list_del(&defer->list);
-+	kfree(defer->cpu_events);
-+	kfree(defer);
-+}
-+
- static void perf_pending_unwind_sync(struct perf_event *event)
- {
- 	might_sleep();
- 
-+	perf_remove_unwind_deferred(event);
-+
- 	if (!event->pending_unwind_callback)
- 		return;
- 
-@@ -5568,33 +5686,19 @@ struct perf_callchain_deferred_event {
- 	u64				ips[];
- };
- 
--static void perf_event_callchain_deferred(struct callback_head *work)
-+static void perf_event_callchain_deferred(struct perf_event *event,
-+					  struct unwind_stacktrace *trace)
- {
--	struct perf_event *event = container_of(work, struct perf_event, pending_unwind_work);
- 	struct perf_callchain_deferred_event deferred_event;
- 	u64 callchain_context = PERF_CONTEXT_USER;
--	struct unwind_stacktrace trace;
- 	struct perf_output_handle handle;
- 	struct perf_sample_data data;
- 	u64 nr;
- 
--	if (!event->pending_unwind_callback)
--		return;
--
--	if (unwind_deferred_trace(&trace) < 0)
--		goto out;
--
--	/*
--	 * All accesses to the event must belong to the same implicit RCU
--	 * read-side critical section as the ->pending_unwind_callback reset.
--	 * See comment in perf_pending_unwind_sync().
--	 */
--	guard(rcu)();
--
- 	if (current->flags & PF_KTHREAD)
--		goto out;
-+		return;
- 
--	nr = trace.nr + 1 ; /* '+1' == callchain_context */
-+	nr = trace->nr + 1 ; /* '+1' == callchain_context */
- 
- 	deferred_event.header.type = PERF_RECORD_CALLCHAIN_DEFERRED;
- 	deferred_event.header.misc = PERF_RECORD_MISC_USER;
-@@ -5605,21 +5709,74 @@ static void perf_event_callchain_deferred(struct callback_head *work)
- 	perf_event_header__init_id(&deferred_event.header, &data, event);
- 
- 	if (perf_output_begin(&handle, &data, event, deferred_event.header.size))
--		goto out;
-+		return;
- 
- 	perf_output_put(&handle, deferred_event);
- 	perf_output_put(&handle, callchain_context);
--	perf_output_copy(&handle, trace.entries, trace.nr * sizeof(u64));
-+	perf_output_copy(&handle, trace->entries, trace->nr * sizeof(u64));
- 	perf_event__output_id_sample(event, &handle, &data);
- 
- 	perf_output_end(&handle);
-+}
-+
-+/* Deferred unwinding callback for task specific events */
-+static void perf_event_deferred_task(struct callback_head *work)
-+{
-+	struct perf_event *event = container_of(work, struct perf_event, pending_unwind_work);
-+	struct unwind_stacktrace trace;
-+
-+	if (!event->pending_unwind_callback)
-+		return;
-+
-+	if (unwind_deferred_trace(&trace) >= 0) {
-+
-+		/*
-+		 * All accesses to the event must belong to the same implicit RCU
-+		 * read-side critical section as the ->pending_unwind_callback reset.
-+		 * See comment in perf_pending_unwind_sync().
-+		 */
-+		guard(rcu)();
-+		perf_event_callchain_deferred(event, &trace);
-+	}
- 
--out:
- 	event->pending_unwind_callback = 0;
- 	local_dec(&event->ctx->nr_no_switch_fast);
- 	rcuwait_wake_up(&event->pending_unwind_wait);
- }
- 
-+/* Deferred unwinding callback for per CPU events */
-+static void perf_event_deferred_cpu(struct unwind_work *work,
-+				    struct unwind_stacktrace *trace, u64 cookie)
-+{
-+	struct perf_unwind_deferred *defer =
-+		container_of(work, struct perf_unwind_deferred, unwind_work);
-+	struct perf_unwind_cpu *cpu_unwind;
-+	struct perf_event *event;
-+	int cpu;
-+
-+	guard(rcu)();
-+	guard(preempt)();
-+
-+	cpu = smp_processor_id();
-+	cpu_unwind = &defer->cpu_events[cpu];
-+
-+	WRITE_ONCE(cpu_unwind->processing, 1);
-+	/*
-+	 * Make sure the above is seen for the rcuwait in
-+	 * perf_remove_unwind_deferred() before iterating the loop.
-+	 */
-+	smp_mb();
-+
-+	list_for_each_entry_rcu(event, &cpu_unwind->list, unwind_list) {
-+		perf_event_callchain_deferred(event, trace);
-+		/* Only the first CPU event gets the trace */
-+		break;
-+	}
-+
-+	WRITE_ONCE(cpu_unwind->processing, 0);
-+	rcuwait_wake_up(&cpu_unwind->pending_unwind_wait);
-+}
-+
- static void perf_free_addr_filters(struct perf_event *event);
- 
- /* vs perf_event_alloc() error */
-@@ -8198,6 +8355,15 @@ static int deferred_request_nmi(struct perf_event *event)
- 	return 0;
- }
- 
-+static int deferred_unwind_request(struct perf_unwind_deferred *defer)
-+{
-+	u64 cookie;
-+	int ret;
-+
-+	ret = unwind_deferred_request(&defer->unwind_work, &cookie);
-+	return ret < 0 ? ret : 0;
-+}
-+
- /*
-  * Returns:
- *     > 0 : if already queued.
-@@ -8210,11 +8376,14 @@ static int deferred_request(struct perf_event *event)
- 	int pending;
- 	int ret;
- 
--	/* Only defer for task events */
--	if (!event->ctx->task)
-+	if ((current->flags & PF_KTHREAD) || !user_mode(task_pt_regs(current)))
- 		return -EINVAL;
- 
--	if ((current->flags & PF_KTHREAD) || !user_mode(task_pt_regs(current)))
-+	if (event->unwind_deferred)
-+		return deferred_unwind_request(event->unwind_deferred);
-+
-+	/* Per CPU events should have had unwind_deferred set! */
-+	if (WARN_ON_ONCE(!event->ctx->task))
- 		return -EINVAL;
- 
- 	if (in_nmi())
-@@ -13100,13 +13269,20 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 		}
- 	}
- 
-+	/* Setup unwind deferring for per CPU events */
-+	if (event->attr.defer_callchain && !task) {
-+		err = perf_add_unwind_deferred(event);
-+		if (err)
-+			return ERR_PTR(err);
-+	}
-+
- 	err = security_perf_event_alloc(event);
- 	if (err)
- 		return ERR_PTR(err);
- 
- 	if (event->attr.defer_callchain)
- 		init_task_work(&event->pending_unwind_work,
--			       perf_event_callchain_deferred);
-+			       perf_event_deferred_task);
- 
- 	/* symmetric to unaccount_event() in _free_event() */
- 	account_event(event);
--- 
-2.47.2
-
-
+Take a look at xdp_set_data_meta_invalid and xdp_data_meta_unsupported.
+There are cases where xdp->data - xdp->data_meta is -1 (and the callers
+check for this condition), we can't use unsigned unconditionally
+(unless we use xdp_data_meta_unsupported).
 
