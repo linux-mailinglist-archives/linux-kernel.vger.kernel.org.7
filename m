@@ -1,442 +1,282 @@
-Return-Path: <linux-kernel+bounces-628266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB039AA5B71
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64013AA5B84
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929813B08DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 07:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 207C59C0B97
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 07:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C5C26A098;
-	Thu,  1 May 2025 07:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D1927703C;
+	Thu,  1 May 2025 07:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEC4kl9T"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="ATedqVIn"
+Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCF72AEE9;
-	Thu,  1 May 2025 07:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6BE2309B0;
+	Thu,  1 May 2025 07:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746084969; cv=none; b=sJjgf3pBvyfBbZyNwPaXijn2P4XUhGF2LgbDdsimZthz60zuzALgDJmmosCEcmGwalxkVZ5C/vHekKJeQMEgr7v91P7ga7xn/Ov9zmNcdzMq2i8BWmsKAywCiWss8wfpPs57o+S34LyxepZbpiWGQJDRMWf0iaqEh6IY45MZOBY=
+	t=1746085526; cv=none; b=CY0WeDP64LsQQ3Hu9xdbpQdMwTHN2Tj3p0BbH8K91Q4pXWeCK2xPoiWDmZOLbTCwcwZdjKAyGXS+Gb20wUPj0IL0bEe5GkMObfl8yv6PRkRj/lWkr3y9v9n4eKJjoCn3bVE2sg84SzWNjPgDgiGvBFqie09HrRA455MLPJU74L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746084969; c=relaxed/simple;
-	bh=25/37cUMVVXu84cpKe5hjhMfPKL8k229o9wf+HT7AEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mXqFBXpSyHBXcTjmC9HIpBvyc/a1bJVQ9FBEWxawdOMYDResOqgxisH2J91JTYOII3rFoMGMapYEjt+cGcfgHGNeVU3eunW83dlIZ0BbruTByu9xPdgpweRelhv1o4je0PNhO0B0XQi5/R6BS26IgLQLPMc0XHuFzQ0gLvS/5JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEC4kl9T; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-7086bc9eabfso226187b3.0;
-        Thu, 01 May 2025 00:36:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746084966; x=1746689766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6R33smmm7Plxhn+ZOVLOBVrXisntvRS5S1y6+uLYR5E=;
-        b=jEC4kl9T6nRNgSfKLdfnqDsIO/FBUnLQzbbqY2mqbwqQ557p5T57SnaJHeng8t+LXg
-         F0s9XKO25QC9Q2+U0fQUop4nvjZKQLITO8ospFrtS8UgO5Jj9fqaVy/fvr4zrwhh1M2O
-         FT2WgaDATd0y0coDhxQzJCjZrnL/cOA04niJSj88KIaKNlNc3II50zPdMSwv/vNsFt5X
-         jjayKQZx+pl/X/nvH9c7/bd04H+2gGkaqDp1Uu+WOaxbHNtZ8tHuDHeizHxifN1JwKHD
-         Rz8oLqud+fk1I5Cg7IKP9JKms/RH6UDowLNfej4fMyluyAcs0U5tOBJdq1Cw1uXfDIRn
-         ioPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746084966; x=1746689766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6R33smmm7Plxhn+ZOVLOBVrXisntvRS5S1y6+uLYR5E=;
-        b=raLl4HRD7yM8GBrgUvDo9hZuB8WCRxEiwlqTZgwfJR8zkO1nnO/vcZRDy8LO06yI39
-         xnAVSFkVug3heFPvDLRYze0sOLGuWx8P2kl02pTqzRZD7JNSyGIxgKM0sj8t6eFnuutq
-         rH3mh+aYJxMnqAlfdiJWn0Z23zmIsFovVKNDMNylMkYJEHb/+TlUpFVy34oSRvYu8YYU
-         /J2F3NOv9YNCuzqGT5WLhs6qaxPFwDRS9t7NO3P/gdKatHdh8moOXsgjdQTXnfnbc0xI
-         ogfdhQn0oEyo33OHYVXmeVoB7diu97mEbSmAysz1qEo2r39oPfdnmEjm0MeBoF0Nmnpt
-         aSFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMM4SjRRSANaURTmYGQyUebT8gUK2HAwaW6P4uc/rf1L09/BiNZfI8mbfiUQhANwXuSbMYdnLGPvM=@vger.kernel.org, AJvYcCVYlbS4vBzR87AsDJ6SKUSNnB/PVQ4TfuBJWRcXrA7QAVjnUcow4P7ceg9hsRmwfzu+LOM2I+lhFXyowVWf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+J10Ry3be8FYQnoLRLHmTvygLUChy8pIHjtyrjsikkz9ySGtd
-	Au3FZ9mxTJw0UDfP99STFQ+vgGzc6ZU1BDryDqqJfVTO7UgR77utXvMXliZAGBVWaXVtr9aWLwZ
-	r5he2WEbRy6cEuK+b4z+xNu2e/xT+10DL
-X-Gm-Gg: ASbGnctRL4neDBURkS15VvCQYRhsTBv6UxKQn04/hBVhHudKJIELbk99C9WYR1zKW0z
-	bHAJZc7CE7KiZ/L7+Dilk34fQwTlTIsvdbFqcawsOEPUsBcDnfAw7Wy/2wBHRJNThGStiy9jmnX
-	ZGexPbBj8xuNRm0lEuWSYhig==
-X-Google-Smtp-Source: AGHT+IG3Kk+Gf08jmpYy1fAwdKSYnl0NOMb9effMKmmhuUmJ2bY0meQ1Zb4nuLc1a+LC+uUfKFoUVkW15E138wVFVao=
-X-Received: by 2002:a05:690c:4:b0:6fd:a226:fb48 with SMTP id
- 00721157ae682-708aefdff00mr32416527b3.5.1746084966190; Thu, 01 May 2025
- 00:36:06 -0700 (PDT)
+	s=arc-20240116; t=1746085526; c=relaxed/simple;
+	bh=QTZ6U4fX9AbDc+bELt/R+cP87pvKLSXb27NFr9gyQlo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tP+id1KZeMtzhEQyiiTQ41CarQqZZn9KP1rGpIncE9zfUmKja8UAhLkDJcf21XCl3evapEKvzO9Uy8fW8mso3/eFqHQizH1hvJfv40sRyOIgTUuRXnwa4z/FWswruf9k/6zWXHHT5ZOH9LT9N4suTpstt72znoAzzgpy46Jz0XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=ATedqVIn; arc=none smtp.client-ip=131.188.11.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1746084968; bh=K7OHVYuZmHwzYYcyOkPMzX9Wbq0G6D2Zkg8HtjOYyi8=;
+	h=From:To:Subject:Date:From:To:CC:Subject;
+	b=ATedqVInRFreujHp4X2BHGTHkAKbtKurgYKV4vepneqBRNjUGLXDNJPPgcwaSf4YZ
+	 hbY08gJ2vjaoNjkuPiY1m3uwCZD0wE2dqRCV9/cwmMIyGuOCs83aJnOc7y0AauIe19
+	 03hNgRHKd/GbaN2np8Mx1NA6uHWVda7HlnctARMufcCwJFKtJLGazE1OOcrmUkHEel
+	 F2T0+KD94afn2c3I8Xq7zvNwKGuY6UpcrbGI3/4frfxU9g3rOMRDRoJH/jImee33ld
+	 68NtNNih5WHt8inQFfJhHk1BnnbKVBlbtbqeeNZF6/T0irnKiaEmdgfE9g7HZhzEWP
+	 buWFgfW1C5CWA==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Zp5T35jYlz8sls;
+	Thu,  1 May 2025 09:36:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:9e8:3636:a700:12b2:e53f:6cbc:f48c
+Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3636:a700:12b2:e53f:6cbc:f48c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX19pL7WFieYRy5yG8NPdAYH8gSfQgMR0Cx4=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Zp5Sz4y7kz8sqL;
+	Thu,  1 May 2025 09:36:03 +0200 (CEST)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Luis Gerhorst <luis.gerhorst@fau.de>,
+	Henriette Herzog <henriette.herzog@rub.de>,
+	Saket Kumar Bhaskar <skb99@linux.ibm.com>,
+	Cupertino Miranda <cupertino.miranda@oracle.com>,
+	Jiayuan Chen <mrpre@163.com>,
+	Matan Shachnai <m.shachnai@gmail.com>,
+	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next v3 00/11] bpf: Mitigate Spectre v1 using barriers
+Date: Thu,  1 May 2025 09:35:51 +0200
+Message-ID: <20250501073603.1402960-1-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250421220641.105567-1-l.rubusch@gmail.com> <20250421220641.105567-11-l.rubusch@gmail.com>
- <20250427140032.3112f51b@jic23-huawei>
-In-Reply-To: <20250427140032.3112f51b@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Thu, 1 May 2025 09:35:29 +0200
-X-Gm-Features: ATxdqUFtk85pPDPe84VudTc9sg7nZgezROhz7M7eXepHhipu7wDZGxo06xL9OrY
-Message-ID: <CAFXKEHZ60bREfFmi33XSyrUNigyuQv+by4vh+uoUErni_UEcnw@mail.gmail.com>
-Subject: Re: [PATCH v7 10/11] iio: accel: adxl345: add coupling detection for activity/inactivity
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 27, 2025 at 3:00=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Mon, 21 Apr 2025 22:06:40 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Add coupling activity/inactivity detection by the AC/DC bit. This is an
-> > addititional enhancement for the detection of activity states and
-> > completes the activity / inactivity feature of the ADXL345.
-> >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
->
-> I've dragged the table from the earlier patch into this one that actually=
- uses it.
-> However I'm a little unsure on exactly how we present this feature.
->
-> So until those questions are resolved I've dropped the patch (you'll need
-> to rebase on my testing branch and fix up missing table for v8).
->
-> The bit that made me not apply this series (with some tweaks) was that
-> I'd expect enabling AC events to be visible as disabling of DC ones.
->
+This improves the expressiveness of unprivileged BPF by inserting
+speculation barriers instead of rejecting the programs.
 
-There are no AC events, nor DC ones.
+The approach was previously presented at LPC'24 [1] and RAID'24 [2].
 
-Think of AC- or DC-coupled detection as modes of operating the
-ACTIVITY/INACTIVITY
-detection. The events are ACTIVITY or INACTIVITY. It has effect on how
-the sensor detects
-if it needs to trigger an (IN)/ACTIVITY event. DC is just going by the
-configured thresholds,
-where AC is supposed to apply some more elaborate way of declaring ACTIVITY=
- or
-INACTIVITY.
+To mitigate the Spectre v1 (PHT) vulnerability, the kernel rejects
+potentially-dangerous unprivileged BPF programs as of
+commit 9183671af6db ("bpf: Fix leakage under speculation on mispredicted
+branches"). In [2], we have analyzed 364 object files from open source
+projects (Linux Samples and Selftests, BCC, Loxilb, Cilium, libbpf
+Examples, Parca, and Prevail) and found that this affects 31% to 54% of
+programs.
 
-The fact that you imply on this means to me, at least I explained it
-wrong, or need to clarify
-better.
+To resolve this in the majority of cases this patchset adds a fall-back
+for mitigating Spectre v1 using speculation barriers. The kernel still
+optimistically attempts to verify all speculative paths but uses
+speculation barriers against v1 when unsafe behavior is detected. This
+allows for more programs to be accepted without disabling the BPF
+Spectre mitigations (e.g., by setting cpu_mitigations_off()).
 
-> Also, I just noticed you aren't pushing the new event types.
->
-> These controls need to look like a separate event detector hardware block
-> with it's own controls + its own event codes.  The fact only this or
-> the DC version can be enabled at any time should only be exposed in the
-> reported state, not apparent via what files we expose etc.  On some
-> other device they may be independent hardware blocks.
->
-> Note I'd also expect to see value controls for these new events. You may
-> need to cache the values and update on event change if the meaning is
-> very different.   That's because the expectation would be an event
-> setup sequence from userspace is:
->
-> 1) Set value of threshold
-> 2) Enable event
->
-> On a change of event (due to shared hardware) The value set may scramble
-> the event already enabled.
->
-> So write the values into a cache and update to the right one when changin=
-g
-> event.
->
+For this, it relies on the fact that speculation barriers prevent all
+later instructions if the speculation was not correct:
 
-Might be that I got you wrong here, but I assume the above does
-actually not apply.
+* On x86_64, lfence acts as full speculation barrier, not only as a
+  load fence [3]:
 
-Best,
-L
+    An LFENCE instruction or a serializing instruction will ensure that
+    no later instructions execute, even speculatively, until all prior
+    instructions complete locally. [...] Inserting an LFENCE instruction
+    after a bounds check prevents later operations from executing before
+    the bound check completes.
 
-> > ---
-> >  drivers/iio/accel/adxl345_core.c | 162 ++++++++++++++++++++++++++++++-
-> >  1 file changed, 159 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
-45_core.c
-> > index b25efcad069b..c07ad5774c8a 100644
-> > --- a/drivers/iio/accel/adxl345_core.c
-> > +++ b/drivers/iio/accel/adxl345_core.c
-> > @@ -37,7 +37,9 @@
-> >  #define ADXL345_REG_TAP_SUPPRESS_MSK BIT(3)
-> >  #define ADXL345_REG_TAP_SUPPRESS     BIT(3)
-> >  #define ADXL345_REG_ACT_AXIS_MSK     GENMASK(6, 4)
-> > +#define ADXL345_REG_ACT_ACDC_MSK     BIT(7)
-> >  #define ADXL345_REG_INACT_AXIS_MSK   GENMASK(2, 0)
-> > +#define ADXL345_REG_INACT_ACDC_MSK   BIT(3)
-> >  #define ADXL345_POWER_CTL_INACT_MSK  (ADXL345_POWER_CTL_AUTO_SLEEP | A=
-DXL345_POWER_CTL_LINK)
-> >
-> >  #define ADXL345_TAP_Z_EN             BIT(0)
-> > @@ -91,6 +93,11 @@ static const unsigned int adxl345_act_thresh_reg[] =
-=3D {
-> >       [ADXL345_INACTIVITY] =3D ADXL345_REG_THRESH_INACT,
-> >  };
-> >
-> > +static const unsigned int adxl345_act_acdc_msk[] =3D {
-> > +     [ADXL345_ACTIVITY] =3D ADXL345_REG_ACT_ACDC_MSK,
-> > +     [ADXL345_INACTIVITY] =3D ADXL345_REG_INACT_ACDC_MSK,
-> > +};
-> > +
-> >  enum adxl345_odr {
-> >       ADXL345_ODR_0P10HZ =3D 0,
-> >       ADXL345_ODR_0P20HZ,
-> > @@ -204,6 +211,18 @@ static struct iio_event_spec adxl345_events[] =3D =
-{
-> >                       BIT(IIO_EV_INFO_RESET_TIMEOUT) |
-> >                       BIT(IIO_EV_INFO_TAP2_MIN_DELAY),
-> >       },
-> > +     {
-> > +             /* activity, activity - ac bit */
-> Comment says activity and inactivity but channel type wise this
-> is just activity (as rising)
->
-> > +             .type =3D IIO_EV_TYPE_MAG_REFERENCED,
-> > +             .dir =3D IIO_EV_DIR_RISING,
-> > +             .mask_shared_by_type =3D BIT(IIO_EV_INFO_ENABLE),
-> > +     },
-> > +     {
-> > +             /* activity, inactivity - ac bit */
->
-> Likewise this seems to be inactivity.  Should this be in the x&y&z
-> channel, not this one?
->
-> > +             .type =3D IIO_EV_TYPE_MAG_REFERENCED,
-> > +             .dir =3D IIO_EV_DIR_FALLING,
-> > +             .mask_shared_by_type =3D BIT(IIO_EV_INFO_ENABLE),
-> > +     },
-> >  };
-> >
-> >  #define ADXL345_CHANNEL(index, reg, axis) {                           =
-       \
-> > @@ -320,6 +339,69 @@ static int adxl345_set_measure_en(struct adxl345_s=
-tate *st, bool en)
-> >
-> >  /* act/inact */
-> >
-> > +static int adxl345_is_act_inact_ac(struct adxl345_state *st,
-> > +                                enum adxl345_activity_type type, bool =
-*ac)
-> > +{
-> > +     unsigned int regval;
-> > +     int ret;
-> > +
-> > +     ret =3D regmap_read(st->regmap, ADXL345_REG_ACT_INACT_CTRL, &regv=
-al);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     if (type =3D=3D ADXL345_ACTIVITY)
-> > +             *ac =3D FIELD_GET(ADXL345_REG_ACT_ACDC_MSK, regval);
-> > +     else
-> > +             *ac =3D FIELD_GET(ADXL345_REG_INACT_ACDC_MSK, regval);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int adxl345_set_act_inact_ac(struct adxl345_state *st,
-> > +                                 enum adxl345_activity_type type, bool=
- ac)
-> > +{
-> > +     unsigned int act_inact_ac =3D ac ? 0xff : 0x00;
-> > +
-> > +     /*
-> > +      * A setting of false selects dc-coupled operation, and a setting=
- of
-> > +      * true enables ac-coupled operation. In dc-coupled operation, th=
-e
-> > +      * current acceleration magnitude is compared directly with
-> > +      * ADXL345_REG_THRESH_ACT and ADXL345_REG_THRESH_INACT to determi=
-ne
-> > +      * whether activity or inactivity is detected.
-> > +      *
-> > +      * In ac-coupled operation for activity detection, the accelerati=
-on
-> > +      * value at the start of activity detection is taken as a referen=
-ce
-> > +      * value. New samples of acceleration are then compared to this
-> > +      * reference value, and if the magnitude of the difference exceed=
-s the
-> > +      * ADXL345_REG_THRESH_ACT value, the device triggers an activity
-> > +      * interrupt.
-> > +      *
-> > +      * Similarly, in ac-coupled operation for inactivity detection, a
-> > +      * reference value is used for comparison and is updated whenever=
- the
-> > +      * device exceeds the inactivity threshold. After the reference v=
-alue
-> > +      * is selected, the device compares the magnitude of the differen=
-ce
-> > +      * between the reference value and the current acceleration with
-> > +      * ADXL345_REG_THRESH_INACT. If the difference is less than the v=
-alue in
-> > +      * ADXL345_REG_THRESH_INACT for the time in ADXL345_REG_TIME_INAC=
-T, the
-> > +      * device is considered inactive and the inactivity interrupt is
-> > +      * triggered. [quoted from p. 24, ADXL345 datasheet Rev. G]
-> > +      *
-> > +      * In a conclusion, the first acceleration snapshot sample which =
-hit the
-> > +      * threshold in a particular direction is always taken as acceler=
-ation
-> > +      * reference value to that direction. Since for the hardware acti=
-vity
-> > +      * and inactivity depend on the x/y/z axis, so do ac and dc coupl=
-ing.
-> > +      * Note, this sw driver always enables or disables all three x/y/=
-z axis
-> > +      * for detection via act_axis_ctrl and inact_axis_ctrl, respectiv=
-ely.
-> > +      * Where in dc-coupling samples are compared against the threshol=
-ds, in
-> > +      * ac-coupling measurement difference to the first acceleration
-> > +      * reference value are compared against the threshold. So, ac-cou=
-pling
-> > +      * allows for a bit more dynamic compensation depending on the in=
-itial
-> > +      * sample.
-> > +      */
-> > +     return regmap_update_bits(st->regmap, ADXL345_REG_ACT_INACT_CTRL,
-> > +                              adxl345_act_acdc_msk[type], act_inact_ac=
-);
-> > +}
->
-> >  static int adxl345_find_range(struct adxl345_state *st, int val, int v=
-al2,
-> > @@ -797,9 +886,51 @@ static int adxl345_find_range(struct adxl345_state=
- *st, int val, int val2,
-> >
-> >  static int adxl345_set_range(struct adxl345_state *st, enum adxl345_ra=
-nge range)
-> >  {
-> > -     return regmap_update_bits(st->regmap, ADXL345_REG_DATA_FORMAT,
-> > +     unsigned int act_threshold, inact_threshold;
-> > +     unsigned int range_old;
-> > +     unsigned int regval;
-> > +     int ret;
-> > +
-> > +     ret =3D regmap_read(st->regmap, ADXL345_REG_DATA_FORMAT, &regval)=
-;
-> > +     if (ret)
-> > +             return ret;
-> > +     range_old =3D FIELD_GET(ADXL345_DATA_FORMAT_RANGE, regval);
-> > +
-> > +     ret =3D regmap_read(st->regmap,
-> > +                       adxl345_act_thresh_reg[ADXL345_ACTIVITY],
-> > +                       &act_threshold);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_read(st->regmap,
-> > +                       adxl345_act_thresh_reg[ADXL345_INACTIVITY],
-> > +                       &inact_threshold);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_update_bits(st->regmap, ADXL345_REG_DATA_FORMAT,
-> >                                ADXL345_DATA_FORMAT_RANGE,
-> >                                FIELD_PREP(ADXL345_DATA_FORMAT_RANGE, ra=
-nge));
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     act_threshold =3D act_threshold
-> > +             * adxl345_range_factor_tbl[range_old]
-> > +             / adxl345_range_factor_tbl[range];
-> > +     act_threshold =3D min(255, max(1, inact_threshold));
-> > +
-> This is first use of the range table. So introduce that in this patch.
->
-> > +     inact_threshold =3D inact_threshold
-> > +             * adxl345_range_factor_tbl[range_old]
-> > +             / adxl345_range_factor_tbl[range];
-> > +     inact_threshold =3D min(255, max(1, inact_threshold));
-> > +
-> > +     ret =3D regmap_write(st->regmap, adxl345_act_thresh_reg[ADXL345_A=
-CTIVITY],
-> > +                        act_threshold);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     return regmap_write(st->regmap, adxl345_act_thresh_reg[ADXL345_IN=
-ACTIVITY],
-> > +                        inact_threshold);
-> >  }
-> >
-> >  static int adxl345_read_avail(struct iio_dev *indio_dev,
-> > @@ -938,7 +1069,7 @@ static int adxl345_read_event_config(struct iio_de=
-v *indio_dev,
-> >                                    enum iio_event_direction dir)
-> >  {
-> >       struct adxl345_state *st =3D iio_priv(indio_dev);
-> > -     bool int_en;
-> > +     bool int_en, act_ac, inact_ac;
-> >       int ret;
-> >
-> >       switch (type) {
-> > @@ -983,6 +1114,21 @@ static int adxl345_read_event_config(struct iio_d=
-ev *indio_dev,
-> >               if (ret)
-> >                       return ret;
-> >               return int_en;
-> > +     case IIO_EV_TYPE_MAG_REFERENCED:
-> > +             switch (dir) {
-> > +             case IIO_EV_DIR_RISING:
-> > +                     ret =3D adxl345_is_act_inact_ac(st, ADXL345_ACTIV=
-ITY, &act_ac);
->
-> Do we not need a check in the enabling of the DC events as well?  If we h=
-ave enabled
-> AC the DC one should report disabled (and if we enable that again then we=
- should
-> update this.
->
-> > +                     if (ret)
-> > +                             return ret;
-> > +                     return act_ac;
-> > +             case IIO_EV_DIR_FALLING:
-> > +                     ret =3D adxl345_is_act_inact_ac(st, ADXL345_INACT=
-IVITY, &inact_ac);
-> > +                     if (ret)
-> > +                             return ret;
-> > +                     return inact_ac;
-> > +             default:
-> > +                     return -EINVAL;
-> > +             }
-> >       default:
-> >               return -EINVAL;
-> >       }
-> > @@ -1019,6 +1165,16 @@ static int adxl345_write_event_config(struct iio=
-_dev *indio_dev,
-> >               }
-> >       case IIO_EV_TYPE_MAG:
-> >               return adxl345_set_ff_en(st, state);
-> > +     case IIO_EV_TYPE_MAG_REFERENCED:
-> > +             switch (dir) {
-> > +             case IIO_EV_DIR_RISING:
-> > +                     return adxl345_set_act_inact_ac(st, ADXL345_ACTIV=
-ITY, state);
->
-> Similar to read path.  The DC events should be affected by this as well a=
-s the AC ones.
->
-> > +             case IIO_EV_DIR_FALLING:
-> > +                     return adxl345_set_act_inact_ac(st, ADXL345_INACT=
-IVITY, state);
-> > +             default:
-> > +                     return -EINVAL;
-> > +             }
-> > +
-> >       default:
-> >               return -EINVAL;
-> >       }
->
+  This was experimentally confirmed in [4].
+
+* ARM's SB speculation barrier instruction also affects "any instruction
+  that appears later in the program order than the barrier" [5].
+
+In [1] we have measured the overhead of this approach relative to having
+mitigations off and including the upstream Spectre v4 mitigations. For
+event tracing and stack-sampling profilers, we found that mitigations
+increase BPF program execution time by 0% to 62%. For the Loxilb network
+load balancer, we have measured a 14% slowdown in SCTP performance but
+no significant slowdown for TCP. This overhead only applies to programs
+that were previously rejected.
+
+I reran the expressiveness-evaluation with v6.14 and made sure the main
+results still match those from [1] and [2] (which used v6.5).
+
+Main design decisions are:
+
+* Do not use separate bytecode insns for v1 and v4 barriers (inspired by
+  Daniel Borkmann's question at LPC). This simplifies the verifier
+  significantly and has the only downside that performance on PowerPC is
+  not as high as it could be.
+
+* Allow archs to still disable v1/v4 mitigations separately by setting
+  bpf_jit_bypass_spec_v1/v4(). This has the benefit that archs can
+  benefit from improved BPF expressiveness / performance if they are not
+  vulnerable (e.g., ARM64 for v4 in the kernel).
+
+* Do not remove the empty BPF_NOSPEC implementation for backends for
+  which it is unknown whether they are vulnerable to Spectre v1.
+
+[1] https://lpc.events/event/18/contributions/1954/ ("Mitigating
+    Spectre-PHT using Speculation Barriers in Linux eBPF")
+[2] https://arxiv.org/pdf/2405.00078 ("VeriFence: Lightweight and
+    Precise Spectre Defenses for Untrusted Linux Kernel Extensions")
+[3] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/runtime-speculative-side-channel-mitigations.html
+    ("Managed Runtime Speculative Execution Side Channel Mitigations")
+[4] https://dl.acm.org/doi/pdf/10.1145/3359789.3359837 ("Speculator: a
+    tool to analyze speculative execution attacks and mitigations" -
+    Section 4.6 "Stopping Speculative Execution")
+[5] https://developer.arm.com/documentation/ddi0597/2020-12/Base-Instructions/SB--Speculation-Barrier-
+    ("SB - Speculation Barrier - Arm Armv8-A A32/T32 Instruction Set Architecture (2020-12)")
+
+Changes:
+
+* v2 -> v3:
+  - Fix
+    https://lore.kernel.org/oe-kbuild-all/202504212030.IF1SLhz6-lkp@intel.com/
+    and similar by moving the bpf_jit_bypass_spec_v1/v4() prototypes out
+    of the #ifdef CONFIG_BPF_SYSCALL. Decided not to move them to
+    filter.h (where similar bpf_jit_*() prototypes live) as they would
+    still have to be duplicated in bpf.h to be usable to
+    bpf_bypass_spec_v1/v4() (unless including filter.h in bpf.h is an
+    option).
+  - Fix
+    https://lore.kernel.org/oe-kbuild-all/202504220035.SoGveGpj-lkp@intel.com/
+    by moving the variable declarations out of the switch-case.
+  - Build touched C files with W=2 and bpf config on x86 to check that
+    there are no other warnings introduced.
+  - Found 3 more checkpatch warnings that can be fixed without degrading
+    readability.
+  - Rebase to bpf-next 2025-05-01
+  - Link to v2: https://lore.kernel.org/bpf/20250421091802.3234859-1-luis.gerhorst@fau.de/
+
+* v1 -> v2:
+  - Drop former commits 9 ("bpf: Return PTR_ERR from push_stack()") and 11
+    ("bpf: Fall back to nospec for spec path verification") as suggested
+    by Alexei. This series therefore no longer changes push_stack() to
+    return PTR_ERR.
+  - Add detailed explanation of how lfence works internally and how it
+    affects the algorithm.
+  - Add tests checking that nospec instructions are inserted in expected
+    locations using __xlated_unpriv as suggested by Eduard (also,
+    include a fix for __xlated_unpriv)
+  - Add a test for the mitigations from the description of
+    commit 9183671af6db ("bpf: Fix leakage under speculation on
+    mispredicted branches")
+  - Remove unused variables from do_check[_insn]() as suggested by
+    Eduard.
+  - Remove INSN_IDX_MODIFIED to improve readability as suggested by
+    Eduard. This also causes the nospec_result-check to run (and fail)
+    for jumping-ops. Add a warning to assert that this check must never
+    succeed in that case.
+  - Add details on the safety of patch 10 ("bpf: Allow nospec-protected
+    var-offset stack access") based on the feedback on v1.
+  - Rebase to bpf-next-250420
+  - Link to v1: https://lore.kernel.org/all/20250313172127.1098195-1-luis.gerhorst@fau.de/
+
+* RFC -> v1:
+  - rebase to bpf-next-250313
+  - tests: mark expected successes/new errors
+  - add bpt_jit_bypass_spec_v1/v4() to avoid #ifdef in
+    bpf_bypass_spec_v1/v4()
+  - ensure that nospec with v1-support is implemented for archs for
+    which GCC supports speculation barriers, except for MIPS
+  - arm64: emit speculation barrier
+  - powerpc: change nospec to include v1 barrier
+  - discuss potential security (archs that do not impl. BPF nospec) and
+    performance (only PowerPC) regressions
+  - Link to RFC: https://lore.kernel.org/bpf/20250224203619.594724-1-luis.gerhorst@fau.de/
+
+Luis Gerhorst (11):
+  selftests/bpf: Fix caps for __xlated/jited_unpriv
+  bpf: Move insn if/else into do_check_insn()
+  bpf: Return -EFAULT on misconfigurations
+  bpf: Return -EFAULT on internal errors
+  bpf, arm64, powerpc: Add bpf_jit_bypass_spec_v1/v4()
+  bpf, arm64, powerpc: Change nospec to include v1 barrier
+  bpf: Rename sanitize_stack_spill to nospec_result
+  bpf: Fall back to nospec for Spectre v1
+  selftests/bpf: Add test for Spectre v1 mitigation
+  bpf: Allow nospec-protected var-offset stack access
+  bpf: Fall back to nospec for sanitization-failures
+
+ arch/arm64/net/bpf_jit.h                      |   5 +
+ arch/arm64/net/bpf_jit_comp.c                 |  28 +-
+ arch/powerpc/net/bpf_jit_comp64.c             |  80 ++-
+ include/linux/bpf.h                           |  11 +-
+ include/linux/bpf_verifier.h                  |   3 +-
+ include/linux/filter.h                        |   2 +-
+ kernel/bpf/core.c                             |  32 +-
+ kernel/bpf/verifier.c                         | 653 ++++++++++--------
+ tools/testing/selftests/bpf/progs/bpf_misc.h  |   4 +
+ .../selftests/bpf/progs/verifier_and.c        |   8 +-
+ .../selftests/bpf/progs/verifier_bounds.c     |  66 +-
+ .../bpf/progs/verifier_bounds_deduction.c     |  45 +-
+ .../selftests/bpf/progs/verifier_map_ptr.c    |  20 +-
+ .../selftests/bpf/progs/verifier_movsx.c      |  16 +-
+ .../selftests/bpf/progs/verifier_unpriv.c     |  65 +-
+ .../bpf/progs/verifier_value_ptr_arith.c      | 101 ++-
+ tools/testing/selftests/bpf/test_loader.c     |  14 +-
+ .../selftests/bpf/verifier/dead_code.c        |   3 +-
+ tools/testing/selftests/bpf/verifier/jmp32.c  |  33 +-
+ tools/testing/selftests/bpf/verifier/jset.c   |  10 +-
+ 20 files changed, 771 insertions(+), 428 deletions(-)
+
+
+base-commit: 358b1c0f56ebb6996fcec7dcdcf6bae5dcbc8b6c
+-- 
+2.49.0
+
 
