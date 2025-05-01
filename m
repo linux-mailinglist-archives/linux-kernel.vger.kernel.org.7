@@ -1,91 +1,62 @@
-Return-Path: <linux-kernel+bounces-628494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A596DAA5E93
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B270AA5E87
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBEE39C27F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:38:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E9DD1B66A54
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F19C2253A4;
-	Thu,  1 May 2025 12:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEC3227E97;
+	Thu,  1 May 2025 12:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O50tyarb"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MFYKE2Cy"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B8B224B15
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 12:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC4F226D00
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 12:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746103126; cv=none; b=IRlcFQfvHsdiL1H4pxOMIsFZ0NU712R46J4sehlnEmFjvdnDCgKVO8rhoKvjimLim5skGA27yZg1Ecv8ko8A1s+JsABvvd/V9qRmNk5UJ9I048lx+d3vkos6Vq3uipp0K60v+SDrWNhfP57+2I2edsRsI8yZ8eVnFbUG8nRuVWg=
+	t=1746103071; cv=none; b=FNtYPsHpJswDboISEEqw2xKdw/sU0SEwvb5SnsqniMlJ4WbgufpNXxfOredxcPBu6EBWvrxKb1a2kHEXQVhHihtDga/cX5ehbkiGbGi2b73NzBWN4+WLHsTKR+oSD0w0SZ23qlfhp+5shWvDl+5wF3cVCu6Kc3J6yONyS8i6wDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746103126; c=relaxed/simple;
-	bh=4sxWwKfM9MM7i7HEgmm3EuU9czAYD4Fqqroj1jSsAKc=;
+	s=arc-20240116; t=1746103071; c=relaxed/simple;
+	bh=Xjt+QXWCzdgawzUfwnzPfQshx6+qjUN1px4VexEIgK0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P33Swxqd+qE7U7Q2aSx84rm3dyR6ohCuXz3uiwVG8Xk5l5TefIA9I5JrvFOCMaHpFXe4kypbeHTn/C7bZzMaTrSlvmq1B4BAU2u4l7mr/IF4LPKWVDckUxEk8Is6Q+lGur/1R4DBWyFE+5RvBxxzdCRwgw99Csz0mszEmuSim4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O50tyarb; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so5250975e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 05:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746103123; x=1746707923; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sm7fH/v8m0Z+i39l/2fi4Am/T5LmhFAbr6DYK3zAgKE=;
-        b=O50tyarbKm4Fll1hfAb+tLrCDMjkqWTQcVRKgk7+TSsC4HMRyt4ZgGVGhWExYEjYvR
-         EKYVfZuUJ6SQxoqLiy+3tzLaIJ5/fYBL8MbNwzUTd6E/eBGyvZQQ/MzXhB27dmdxZBUx
-         gu7mQm5vQ7ECFFOA4p8VY8XK20IdHMYCLXF6ZtD3kb+rHmhJsaGkBr2Z+49ERKaBWHly
-         zWTDZTrGDFwvpcTxRxEYVUQYsHherSqvj/u8eTg+D7ASJ5/FmYzaJepZPxjDT4Wq7TLn
-         OJJ/14CyoRgLKtVLb0YO5GGer2NNbDM39ylzoe1AK3l49YYvCEbW7DmuM5ii8jCHpTfP
-         AOLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746103123; x=1746707923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sm7fH/v8m0Z+i39l/2fi4Am/T5LmhFAbr6DYK3zAgKE=;
-        b=I/D2KPVBWz5f1N4YZ+9PHQuo4+Q2oCL1O5pGOqEbNdfRfajlKMI/BiM5yyedmqqqWq
-         MgQMTjV3mK2OVyd90jVZI1X4ZFY5+8LrRpW2zZH3wsW00PshdlEYrTpS4ifXjN17Lpvr
-         IpN0rukn9uaSMLhMXXZGo+cGDHktAaYq+h6Pi9CXvDyHWRIh0OaM124cuLNf1IuPa2Y+
-         HrL1hJzdxPIfAJ4glqnQxnz26AlIBLuMlc4GkQxUEVnD5plctYRlNEfckKL/5rKw094S
-         bMxfNtZqlrU8a/E0GBxUjUy1zInammU/7VvdQLeXQjG4jNxilCt20EM172QIHxRPKkZk
-         P+Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUn7h8NqOvRSiOE4fNIyFjSYnofefT+tY2vEt8bbKVBAP9gi86uY5+GgaTmyNYG9wwmfkyuGb7UGkntrYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx/tgO5RRo47bc7BzdmE4VdL0MEXHLcq0JTC+LAt6r+qunGcgg
-	vkZ1b6H8mzth9AK+awk5r4N1Pfg6NuOqgk6/7OqrkoKuUGims1Zxxhvr1/DaWfo=
-X-Gm-Gg: ASbGncug54MUcb1HgBCOirHTjOEDFRtcKfZoPPrMeg37IJJA3A1kpGQtPH2BOkM3g9L
-	SyBANk+gTr/bj4f6iLNEtkzeNziH/JQlhV8+aXgHg70bFocGcCo27vRcROR84kGaRqY0ZK6rHik
-	y3XpI7GV6xiDVpI7pNRFCfGGl48zKmH3NbHcBsGs85chvh4e8PV0gzCWHgOU/VCqdzNeJVS5hmr
-	QmoQyiGA/mCoB0ig0+fn+gmXXw+TeeSjfZRNCbeCjaiSZuIJJW0HYDpWsc1kZ/OXWMgjP3JoUjh
-	VQUqQoYdZlHkvVDyF5OHtPkmLjWkuZ2WoiF+uzGdBZo2EtkFU5cf7Qxq5BF+70mFA1SX2tapXdg
-	q/Km4znU=
-X-Google-Smtp-Source: AGHT+IH/kEW2qU0NPr09x71pmesuZI0svNhYFSmpO2QEjZI5N9EoSoHJzC02SedbPOuY7Q2caEVC+g==
-X-Received: by 2002:a05:600c:1c1c:b0:43d:54a:221c with SMTP id 5b1f17b1804b1-441b7009073mr21364735e9.18.1746103123359;
-        Thu, 01 May 2025 05:38:43 -0700 (PDT)
-Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b8a286b9sm10834395e9.28.2025.05.01.05.38.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 05:38:41 -0700 (PDT)
-Date: Thu, 1 May 2025 14:37:31 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/5] iio: adc: ad7606: add offset and phase calibration
- support
-Message-ID: <hrpkszwhww7zftp45ipbadwqmx36rrrnvdbfphj7xkbtnfegth@arou2htn22ec>
-References: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
- <20250429-wip-bl-ad7606-calibration-v1-3-eb4d4821b172@baylibre.com>
- <aBIcgxcUHXRpd882@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RxRAcJn3ix3ABvESBmo1xOzsvzPqYOWdNFbiMV7/FcLazsTS8ibexfLtwRAbMuE9lEk263RcF6GIN8hz51GEWaDnnUTx6nj28n6pQ4Rg/50wwtDkUEFg4zSGk6qAZzT24uEr+7WNSJdh5FeyhJYvOYLTYnnDSVSOZTab0p51HcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MFYKE2Cy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RFLqDtj9WCiupbjGiNWaG8bfOzw+8VuthN4hxWe4ohQ=; b=MFYKE2Cy1elX/LO4cC4GfixDVb
+	OlHXACoCCTjMoHcesJOM8eF3EJzCk0A15yU10fk15ENOtzDU/tUru352e6GF7m/3pjUtGvpXH7UQk
+	zL/nTr8eE4H/+HOTVMlhdHeYzrzsPbm9Hmp2jvyzfbfJMln6I7VCy8DCyBK00UZxdK76E/tYl4gyU
+	S9Al7vkK9bi6hMQWMQJ1FDy0MX9YV8vwADfONwGE+yv9pxe3qp/CRTRZ7InEKRqB/U2+akWw++7DU
+	N48LvKM8REOwZSCb4jN6fzXukEHN1dcYiJhvqUqKL25R9o8FXuVia7S2TF3SnKmnDMFVf2e4+aOjy
+	Ys4XltNw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uATAX-00000000BZe-21Y2;
+	Thu, 01 May 2025 12:37:37 +0000
+Date: Thu, 1 May 2025 13:37:37 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shivank Garg <shivankg@amd.com>, shaggy@kernel.org, david@redhat.com,
+	wangkefeng.wang@huawei.com, jane.chu@oracle.com, ziy@nvidia.com,
+	donettom@linux.ibm.com, apopple@nvidia.com,
+	jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
+Subject: Re: [PATCH V5 0/2]  JFS: Implement migrate_folio for
+ jfs_metapage_aops
+Message-ID: <aBNrEbVkpLHkK7eF@casper.infradead.org>
+References: <20250430100150.279751-1-shivankg@amd.com>
+ <20250430142135.099ecfa33963f0895b0f2c1d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,35 +65,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aBIcgxcUHXRpd882@smile.fi.intel.com>
+In-Reply-To: <20250430142135.099ecfa33963f0895b0f2c1d@linux-foundation.org>
 
-On 30.04.2025 15:50, Andy Shevchenko wrote:
-> On Tue, Apr 29, 2025 at 03:06:47PM +0200, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > Add support for offset and phase calibration, only for
-> > devices that support software mode, that are:
-> > 
-> > ad7606b
-> > ad7606c-16
-> > ad7606c-18
+On Wed, Apr 30, 2025 at 02:21:35PM -0700, Andrew Morton wrote:
+> On Wed, 30 Apr 2025 10:01:49 +0000 Shivank Garg <shivankg@amd.com> wrote:
+> > This patch addresses a warning that occurs during memory compaction due
+> > to JFS's missing migrate_folio operation. The warning was introduced by
+> > commit 7ee3647243e5 ("migrate: Remove call to ->writepage") which added
+> > explicit warnings when filesystem don't implement migrate_folio.
 > 
-> ...
+> Do we think these patches should be backported into -stable kernels?
 > 
-> > +	if (val2 < start_ns || val2 > stop_ns)
-> > +			return -EINVAL;
-> 
-> Wrong indentation.
->
+> Or maybe we should simply remove the warning from -stable kernels then
+> re-add it when we're confident that all in-tree filesystems are good?
 
-code is correct, i checked it since also checkpatch claims for bad
-indentation, but i just have 1 tab after the "if".
-
-Quite strange, where could be the issue here ?
- 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+7ee3647243e5 is not yet in Linus' tree, let alone in -stable.
 
