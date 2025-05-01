@@ -1,78 +1,130 @@
-Return-Path: <linux-kernel+bounces-628502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B12AA5EAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCA2AA5F00
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 15:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82AD97AB6B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:52:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590234A3C17
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBE754673;
-	Thu,  1 May 2025 12:53:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180E0335C7;
-	Thu,  1 May 2025 12:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF0715990C;
+	Thu,  1 May 2025 13:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="iWXRWv1e"
+Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C2828382;
+	Thu,  1 May 2025 13:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746104037; cv=none; b=ptA4ZqjjMKmVI3P40W5iX/PQlrqxHKADdg46SSmPMkOmBy6+t/jplho3DmDhG68jTRyLuYAdF7T6F21wigojuGZPnCrnQQ1ODNAP3jt91fPp05euKlKQpw5abb4YX5LnY/x9A4jn1bTf8yUu8AtmXu9jFyBCTv7hi9tUl+dlbgk=
+	t=1746104670; cv=none; b=KAdehKBOWdXojxSkJtUzoTIVrhTUocL65ffxxhyFfwb8BbhRQpvd3XtHKmaGa+6bRxSpMYS6mGmn+y4qEkexKZH0+Vx4SvVk8ssp9h3C3HAmaR1sjsxMCoBGVgyVolaP0nKEcf9Y9kSEx8M+vIlC71jizxHHnN3HiYGCgkASul4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746104037; c=relaxed/simple;
-	bh=j4mQGHPu+EJqfKmthc8Fj5mnKlwjtgRblyz40oB5vhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFtCrfOzcluhsnMCOW1dqQnRJBdMiEb+4wNANZxK1SFz2a09ldhh1RhpM1lwmjE777OpoueFBlvbm6hhPmmkkSaX2IiCR+f8M0HpO53tMJ7F+Fkp8vcvNu6FcK9s4u4uhz3Yp7RYq63Q61R4KV+50kpLjb/hxHHmsxLXMlgyCvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6022168F;
-	Thu,  1 May 2025 05:53:47 -0700 (PDT)
-Received: from bogus (unknown [10.57.20.139])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D5533F5A1;
-	Thu,  1 May 2025 05:53:53 -0700 (PDT)
-Date: Thu, 1 May 2025 13:53:50 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] ACPI: APEI: EINJ: Fix probe error message
-Message-ID: <20250501-gay-bull-of-flowers-6edebf@sudeepholla>
-References: <20250501124621.1251450-1-jonathanh@nvidia.com>
+	s=arc-20240116; t=1746104670; c=relaxed/simple;
+	bh=MgJzVTP/cmGsc8FpUL9vgTr7SZhBLDFjvlBJd4Hi6Ok=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=axPgIggrPRznc/BjHhGdW19Ga8nClTTbsLviZcLm+bf4q5JHSw6DnGSjiniXYBhEyXyOXPSO+1a5ojJDEbEAtWnsWutFw6Cha1llNe53Q6dAbePtE+4pymTXEFwICvnBxifT2mE0GehUAmV7EaRR0zsI6nNBcEzqRi4HXFn6kqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=iWXRWv1e; arc=none smtp.client-ip=134.0.28.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
+	by mxout3.routing.net (Postfix) with ESMTP id DDC836047C;
+	Thu,  1 May 2025 12:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1746104242;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NnoUbMfttFzwRrbX8cLNmCp9Iqdu1NA79G+j70FEH9Y=;
+	b=iWXRWv1eeaVcFFtQWWjrMohgOyUY6glLempu1AWxYbDqZ0zfcmH6k+H/xjEsKgFBTTKU8I
+	guqoMJkRD5pV/BrwkReJMVWQZjXfX9601Ngplj8RKXIgC8+7UEB6WjmV3rcNd/qXfyaPCK
+	Bw6hf2KJsL6csJxH9y+3ZijsFzA5gHw=
+Received: from frank-u24.. (fttx-pool-157.180.225.138.bambit.de [157.180.225.138])
+	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id A245D10010F;
+	Thu,  1 May 2025 12:57:20 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	SkyLake Huang <SkyLake.Huang@mediatek.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [RFC,net-next v1] net: phy: mediatek: do not require syscon compatible for pio property
+Date: Thu,  1 May 2025 14:57:02 +0200
+Message-ID: <20250501125703.55224-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250501124621.1251450-1-jonathanh@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 7d9196f7-2e8a-481a-ba32-0e3d88cab2b5
 
-On Thu, May 01, 2025 at 01:46:21PM +0100, Jon Hunter wrote:
-> Commit 6cb9441bfe8d ("ACPI: APEI: EINJ: Transition to the faux device
-> interface") updated the APEI error injection driver to use the faux
-> device interface and now for devices that don't support ACPI, the
-> following error message is seen on boot:
-> 
->  ERR KERN faux acpi-einj: probe did not succeed, tearing down the device
-> 
-> The APEI error injection driver returns -ENODEV in the probe function
-> if ACPI is not supported and so after transitioning the driver to the
-> faux device interface, the error returned from the probe now causes the
-> above error message to be displayed.
-> 
-> Fix this by moving the code that detects if ACPI is supported to the
-> einj_init() function to fix the false error message displayed for
-> devices that don't support ACPI.
-> 
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Good catch, it was silently passing error before.
+Current implementation requires syscon compatible for pio property
+which is used for driving the switch leds on mt7988.
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Replace syscon_regmap_lookup_by_phandle with of_parse_phandle and
+device_node_to_regmap to get the regmap already assigned by pinctrl
+driver.
 
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ drivers/net/phy/mediatek/mtk-ge-soc.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/mediatek/mtk-ge-soc.c b/drivers/net/phy/mediatek/mtk-ge-soc.c
+index 175cf5239bba..21975ef946d5 100644
+--- a/drivers/net/phy/mediatek/mtk-ge-soc.c
++++ b/drivers/net/phy/mediatek/mtk-ge-soc.c
+@@ -7,6 +7,7 @@
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/phy.h>
+ #include <linux/regmap.h>
++#include <linux/of.h>
+ 
+ #include "../phylib.h"
+ #include "mtk.h"
+@@ -1319,6 +1320,7 @@ static int mt7988_phy_probe_shared(struct phy_device *phydev)
+ {
+ 	struct device_node *np = dev_of_node(&phydev->mdio.bus->dev);
+ 	struct mtk_socphy_shared *shared = phy_package_get_priv(phydev);
++	struct device_node *pio_np;
+ 	struct regmap *regmap;
+ 	u32 reg;
+ 	int ret;
+@@ -1336,7 +1338,13 @@ static int mt7988_phy_probe_shared(struct phy_device *phydev)
+ 	 * The 4 bits in TPBANK0 are kept as package shared data and are used to
+ 	 * set LED polarity for each of the LED0.
+ 	 */
+-	regmap = syscon_regmap_lookup_by_phandle(np, "mediatek,pio");
++	pio_np = of_parse_phandle(np, "mediatek,pio", 0);
++	if (!pio_np)
++		return -ENODEV;
++
++	regmap = device_node_to_regmap(pio_np);
++	of_node_put(pio_np);
++
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
 -- 
-Regards,
-Sudeep
+2.43.0
+
 
