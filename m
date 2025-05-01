@@ -1,135 +1,228 @@
-Return-Path: <linux-kernel+bounces-628173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD0CAA59E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 05:12:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8051AAA59EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 05:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780DD1C02E5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:13:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB014E332A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 03:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA68C1EEA28;
-	Thu,  1 May 2025 03:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D202139B6;
+	Thu,  1 May 2025 03:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JB+kOAwP"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jr23s1vv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D3D1E9B03
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 03:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAF7322A
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 03:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746069163; cv=none; b=lBNj5UyrORrUYJiv9Q/2VahisYxOrZn7//+sHAG2KA4gC8DBpWGbac2bQjs8fpk074ysPNHu0T5mkqGcoJDAkBj456d1tM1WIUz0ttn/jXlI3YGfvtDKe2M/S92Ua/BRE+AFbJDEKdTld5xWKrKOl12rJaXJ3xmkgKSCqq+BdhU=
+	t=1746069602; cv=none; b=r406dulemYfxG6Vqc1kxz1/o5GeYV8mzdGvVjSXzXkI6xjStUdQ4TeSKG8Y1dYgoPEwgvGKMHsN1dqCtO2OCGkVfB7RbRjk5N9wpM1KgPkkkQNle5cn2f2S+SxQbWPRYqrIDmHRvj3KNezBowBWNXkOBZPdFULMO8MMXaQOf2a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746069163; c=relaxed/simple;
-	bh=3Qs+LMUQu4ZZ9m3bGStlH/F2gPjLzRKPh3ITFdqZ4EU=;
+	s=arc-20240116; t=1746069602; c=relaxed/simple;
+	bh=rNZdiJjKxu84kSTnNRG+40N/y18b49cbWcQi5Jqh2cY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aqftmgZjF/gLP+Mf0XmijRwWw9B1ij1sFnIgy8TiQri8qzJms9nmaHd/lpCXbYmVAHiIVGjrVERnLsIF6WkIM/2RIZm9UGIqb9cj7mWWFmX/qt093hLWidFGPT5+CsxJF3nuOSOUeRiggVjxV9FWotcoC8j3x49XIRp7PGIAvAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JB+kOAwP; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5f6c3f7b0b0so1167386a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 20:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1746069159; x=1746673959; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OC1oQVKn70KzlSasLkTsE0MQR+OTmhnwfBz3Xe1R3C4=;
-        b=JB+kOAwPDAKGzyPwVTQShbQfE8XqYM7PYy7O/m66J6KzjjK2/hXtupvmny5oyjqHHT
-         uxm3vhmVpfZXZduvvAhOLv0FXEiIxNetwvRikaxB+lCHUTg5qWnX2BF6KuULw77567dP
-         qGrlidxQRMo9PBy+fhljulSyqXlF1+2sdnKbQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746069159; x=1746673959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OC1oQVKn70KzlSasLkTsE0MQR+OTmhnwfBz3Xe1R3C4=;
-        b=qiqbEAr6eMhPgZGRGc9lpB60qleCWhpIz+cErDH4+qC3Q3XhdCpswANvsijXw8IIPp
-         UTzeKRexh5zjJRc4eJrD+J3HByaCbrhgOXNhfhQnuY+OACnEu5kFltADOvjZJnZKwPM8
-         pVh21NxrOf8BjSOfpN0X0yCS/T4S2rEAqsgyEk8oFNNoR0Da291maxsfRi+CFp4rAZc5
-         PzdSd3rXjHaetwKDw3znj4/RiImUxn/fOIzs5aR4QCzCMD9x97KWISXJJztiXWXGuk10
-         wul7BGua9kDMy6PXiWHHDYn8Q2O3vrgL2X6FXjFeV4bsbbn3N93EdL+CubUsIBrWZMXq
-         BiKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXJdevfIR5h4AwVQoJFSQEkeJ3jE+N9LZfIJzYEEiIZa7iaZ3vxHDJpnby2i3If8qzWIgKuwLe2PNWvvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweKE5OEAsaR1xLFUZO23eVP6I965m1gx5625pn334VT0WAo6q+
-	EyFGS1Fb9R3731It6s2SCNgKiUIuIKoaxzfNmt9SmYgDe5tryb/iEZBXFkH0kf16PhBf4zyJRgc
-	YHDQ=
-X-Gm-Gg: ASbGnct7moeLk0+joYOZet3s9VJGI15SzmynL8UpcnoXTNzqqWv3T0nvHUUZkm9I7No
-	PQRmUNriuS8HlQxePV7EmQD7/HOxAFxw8duf0y0SQcenqSS/24PyDWVH0p5bh3B1BV5VvwOLdQ+
-	A0/5GalwqlWBNTMaAZjo1BOXzakLtNkmbk6bvZaGmCPdt0QMCuzGY2GT25pWiwPgD0tQMizZ/kM
-	nCoevNVU78bFLrmJ6JzbmJr/D0eYD8eJ73E4rfZuRW7TUihao9JOTGgpVF5NP3ST5/AhwO/8eWb
-	jvV7c+uAY+K1RrqMhmliezOdZunjRk0SN+5vxh/dAcjjQD5A639Qot9JiYK3BT+ctCJ4iSiqG0v
-	tXV8L9pSzrWX1nL8=
-X-Google-Smtp-Source: AGHT+IGv+08tPm0jVAj8Q0RS+TWOKdaNrBr5lmsrvQPzkV4e6u5gHVmFzk4hrPRxFYL0N0XIXziF5g==
-X-Received: by 2002:a17:907:948e:b0:ace:d166:8fbd with SMTP id a640c23a62f3a-aceff566a9cmr67135966b.59.1746069158903;
-        Wed, 30 Apr 2025 20:12:38 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e59668fsm998881366b.83.2025.04.30.20.12.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 20:12:37 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso78179166b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 20:12:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVbm8XMi4vohuVu/ybQmZQvDLgBzdfffxBDMj2GHH34dmS54mimAt+fEtrUuMRcG4WCjWJds9EBIGiZLmU=@vger.kernel.org
-X-Received: by 2002:a17:907:968a:b0:ace:d650:853e with SMTP id
- a640c23a62f3a-aceff41a4d7mr74472666b.15.1746069156852; Wed, 30 Apr 2025
- 20:12:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=KC0qn0dBxM9Nq/3fJt84GWyr8nrjdMm2PmWaiFmgkWcwYhZwpvThX4Y04dlijuf/aNmG24qB7GSzGxBu28ATE4nAOUtk+P7WpmcGX+qvSAbXkxw21oclSeB2FE+VwD0bEsx2v5nYEzij3u1kbFXRsEOFVmLf8RnnshYfJJqbgnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jr23s1vv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61176C4CEEE
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 03:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746069602;
+	bh=rNZdiJjKxu84kSTnNRG+40N/y18b49cbWcQi5Jqh2cY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jr23s1vvkPRLCDizbc/ovUZQ309MVDdNSx/TOwKB6I/r1CWL2CUXRC/h9jDuxTFxx
+	 fai0cYvd3haAcdNYm4n4mv/4Ej703a5Ovnb5JUbenJy5JaHz/FU9Q2H63MS9VgMo+s
+	 BjqgRxGYbweoZbvC/yuZF/dod4pBDtRWHN5zBojXkfRD2nmZBzv7z6+wZc3vCL1Bjk
+	 iPZ7+zlkbxeFf24bD++LXhEQ/tUw41LhS6bqIzCJk6NYcoT0PRl398010B4s7sviGY
+	 ALrBVQu3ld9h8V3hSP/mm1h2VBAzMgPedVgFfqxMD1Mr03oLJ0LU6XAgYz0MvXvobg
+	 Q7ANbddqURqnQ==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso3032253a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 20:20:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVa7mJNxBKXczHfd/v3pBaU4S5lw9iKaA9tkVUAljMqHOOSoRZuyn3K3XIcQ2/iFIxF70lJpUyOmrJwsik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUyoO5SRKEtrBaIoXlNSB5890evrbz/R64RcryxmXvQTOoyDUB
+	9yKrQWId3yEhnDU7zktvgSct4gyG2LvS/ZWHFEkckF/7d5IFB/BjpCn8eKJmLLt6APymGoZzqce
+	SEZML9UjgvTc0/1/oEA7MxOfJQAY=
+X-Google-Smtp-Source: AGHT+IEbIuXTioJc9AKI2HGu8HCXXj65872Ny6SvDbzCaRnxnK4JjETLTLYJ6jhqyCVXoW1C77G0g8eHSTYHyadllRI=
+X-Received: by 2002:a05:6402:5216:b0:5f6:22ca:8aae with SMTP id
+ 4fb4d7f45d1cf-5f919836912mr690952a12.2.1746069600974; Wed, 30 Apr 2025
+ 20:20:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
- <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
- <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
- <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
- <20250425195910.GA1018738@mit.edu> <d87f7b76-8a53-4023-81e2-5d257c90acc2@zytor.com>
-In-Reply-To: <d87f7b76-8a53-4023-81e2-5d257c90acc2@zytor.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 30 Apr 2025 20:12:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgwuu5Yp0Y-t_U6MoeKmDbJ-Y+0e+MoQi7pkGw2Eu9BzQ@mail.gmail.com>
-X-Gm-Features: ATxdqUHanefpUI8GyxvaKB734S5zjy2OepCny55RpmWEo-qYF6q5WHIuuXBquxk
-Message-ID: <CAHk-=wgwuu5Yp0Y-t_U6MoeKmDbJ-Y+0e+MoQi7pkGw2Eu9BzQ@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+References: <20250430131516.24287-1-yangtiezhu@loongson.cn>
+ <CAAhV-H4VpYVEhwnhh4s083FuNsfEhGwrYxtceFDKD_imnBBrjw@mail.gmail.com> <CAK3+h2xQbw=4s8qRK9WDGmzDhsWC2WhqkYWuwKUXdJFwLaL2Pg@mail.gmail.com>
+In-Reply-To: <CAK3+h2xQbw=4s8qRK9WDGmzDhsWC2WhqkYWuwKUXdJFwLaL2Pg@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 1 May 2025 11:19:49 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5V8YFK59KOTUqsoEq_JYgdZRiazggoGZO5gTG7oJN8Uw@mail.gmail.com>
+X-Gm-Features: ATxdqUGJW4t7VFCABxkJD2b-FGOjkjojqrk3V44BX6A4Zy-owiuDIT2yHdlMgk0
+Message-ID: <CAAhV-H5V8YFK59KOTUqsoEq_JYgdZRiazggoGZO5gTG7oJN8Uw@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Enable some configs in loongson3_defconfig
+To: Vincent Li <vincent.mc.li@gmail.com>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, loongarch@lists.linux.dev, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Apr 2025 at 19:48, H. Peter Anvin <hpa@zytor.com> wrote:
+Hi, Vincent,
+
+On Thu, May 1, 2025 at 9:38=E2=80=AFAM Vincent Li <vincent.mc.li@gmail.com>=
+ wrote:
 >
-> It is worth noting that Microsoft has basically declared their
-> "recommended" case folding (upcase) table to be permanently frozen (for
-> new filesystem instances in the case where they use an on-disk
-> translation table created at format time.)  As far as I know they have
-> never supported anything other than 1:1 conversion of BMP code points,
-> nor normalization.
+> Hi Tiezhu,
+>
+> On Wed, Apr 30, 2025 at 6:41=E2=80=AFAM Huacai Chen <chenhuacai@kernel.or=
+g> wrote:
+> >
+> > Hi, Tiezhu,
+> >
+> > When I enable these options:
+> > CONFIG_FTRACE=3Dy
+> > CONFIG_FUNCTION_TRACER=3Dy
+> > CONFIG_FUNCTION_GRAPH_TRACER=3Dy
+> > CONFIG_DYNAMIC_FTRACE=3Dy
+> > CONFIG_DYNAMIC_FTRACE_WITH_REGS=3Dy
+> > CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS=3Dy
+> > CONFIG_DYNAMIC_FTRACE_WITH_ARGS=3Dy
+> > CONFIG_KPROBES=3Dy
+> > CONFIG_UPROBES=3Dy
+> > CONFIG_KPROBE_EVENTS=3Dy
+> > CONFIG_UPROBE_EVENTS=3Dy
+> >
+> > Then your above commands will hang (or get a SIGTRAP), which options I
+> > am missing?
+> >
+> > I haven't tried your patches, maybe it works, but I want to know the
+> > exactly needed options.
+> >
+> > Huacai
+> >
+> >
+> > On Wed, Apr 30, 2025 at 9:15=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongso=
+n.cn> wrote:
+> > >
+> > > This is a small patchset based on 6.15-rc4, each patch is a
+> > > single logical change to better describe the problem and make
+> > > it easier to review.
+> > >
+> > > If the changes make sense, all of them can be squashed into one
+> > > single patch, I think that would be fine as well, let us see if
+> > > other people have concern about it.
+> > >
+> > > By the way, I received many compile-time error reports about tools,
+> > > most are related with configs, this is the motivation of this series.
+> > >
+> > > Additionally, I also received one run-time bug report about uprobe,
+> > > but it works fine on my test environment. If somebody can reproduce
+> > > it, please let me know, maybe I am missing something.
+> > >
+> > > 1. How to reproduce
+> > >
+> > > (1) Compile and install Tongsuo
+> > >
+> > > git clone https://github.com/Tongsuo-Project/Tongsuo.git
+> > > cd Tongsuo && ./config --prefix=3D/opt/tongsuo -Wl,-rpath,/opt/tongsu=
+o/lib
+> > > make && sudo make install
+> > >
+> > > https://www.tongsuo.net/docs/compilation/source-compilation
+> > >
+> > > (2) Compile and update kernel
+> > >
+> > > Apply this series based on 6.15-rc4, then use the loongson3_defconfig=
+,
+> > > CONFIG_UPROBE_EVENTS is already set.
+> > >
+> > > (3) Probe "openssl speed sm2"
+> > >
+> > > cd tools/perf && make
+> > > sudo ./perf probe -x /usr/lib64/libcrypto.so BN_mod_mul_montgomery
+> > > sudo ./perf stat -e probe_libcrypto:BN_mod_mul_montgomery /opt/tongsu=
+o/bin/openssl speed sm2
+> > >
+> > > 2. My test results
+> > >
+> > > fedora@linux:~/uprobe.git/tools/perf$ sudo ./perf probe -x /usr/lib64=
+/libcrypto.so BN_mod_mul_montgomery
+> > > Added new event:
+> > >   probe_libcrypto:BN_mod_mul_montgomery (on BN_mod_mul_montgomery in =
+/usr/lib64/libcrypto.so.3.2.2)
+> > >
+> > > You can now use it in all perf tools, such as:
+> > >
+> > >         perf record -e probe_libcrypto:BN_mod_mul_montgomery -aR slee=
+p 1
+> > >
+> > > fedora@linux:~/uprobe.git/tools/perf$ sudo ./perf stat -e probe_libcr=
+ypto:BN_mod_mul_montgomery /opt/tongsuo/bin/openssl speed sm2
+> > > Doing 256 bits sign CurveSM2's for 10s: 7463 256 bits CurveSM2 signs =
+in 10.00s
+> > > Doing 256 bits verify CurveSM2's for 10s: 9681 256 bits CurveSM2 veri=
+fy in 9.98s
+> > > ...
+> > >                               sign    verify    sign/s verify/s
+> > >  256 bits SM2 (CurveSM2)   0.0013s   0.0010s    746.3    970.0
+> > >
+> > >  Performance counter stats for '/opt/tongsuo/bin/openssl speed sm2':
+> > >
+> > >                  0      probe_libcrypto:BN_mod_mul_montgomery
+> > >
+> > >       20.007539877 seconds time elapsed
+> > >
+> > >       19.990010000 seconds user
+> > >        0.000000000 seconds sys
+> > >
+> > > Thanks,
+> > > Tiezhu
+> > >
+> > > Tiezhu Yang (5):
+> > >   LoongArch: Clean up loongson3_defconfig
+> > >   LoongArch: Enable tracing infrastructure in defconfig
+> > >   LoongArch: Enable tracing syscalls in defconfig
+> > >   LoongArch: Enable debug information in defconfig
+> > >   LoongArch: Enable kprobe and ftrace in defconfig
+> > >
+> > >  arch/loongarch/configs/loongson3_defconfig | 74 +++++---------------=
+--
+> > >  1 file changed, 16 insertions(+), 58 deletions(-)
+>
+> I recommend putting all the config changes in one patch so it is
+> easier to review change and test, I have to look through each patch to
+> see what config changed.
+This series is probably a RFC and I will not apply.
+1) The motivation of this series is to solve an uprobes hang issue,
+but as I mentioned above I still don't know why it hangs. Maybe due to
+config options but I'm not sure.
+2) Don't mix the kernel defconfig and distribution config. A
+distribution config tries to enable as many features as possible, and
+different distributions have different preferences. The kernel
+defconfig is probably a bootable config, plus some widely used
+features. Take x86 as an example, it doesn't even enable NUMA
+Balancing, THP and BPF which are already widely used in morden
+systems, let alone a large set of tracers.
+3) About the cleanup, as I explained before (but not in this thread),
+though CONFIG_LOONGARCH, CONFIG_64BIT, CONFIG_MACH_LOONGSON64,
+CONFIG_PAGE_SIZE_16KB=3Dy, CONFIG_HZ_250=3Dy, CONFIG_DMI=3Dy, CONFIG_EFI=3D=
+y,
+CONFIG_SMP=3Dy, CONFIG_ACPI=3Dy and some other similar options are
+implicitly selected so they will disappear during "make
+savedefconfig". I still want to keep them in the defconfig, just
+because I hope we can easily know what is fundamentally needed by
+LoongArch via reading the defconfig file.
 
-So no crazy '=C3=9F' matches 'ss' kind of thing? (And yes, afaik that's
-technically wrong even in German, but afaik at least sorts the same in
-some locales).
+Huacai
 
-Because yes, if MS basically does a 1:1 unicode translation with a
-fixed table, that is not only "simpler", I think it's what we should
-strive for.
-
-Because I think the *only* valid reason for case insensitive
-filesystems is "backwards compatibility", and given that, it's
-_particularly_ stupid to then do anything more complicated and broken
-than the thing you're trying to be compatible with.
-
-I hope to everything holy that nobody ever wants to be compatible with
-the absolute garbage that is the OSX HFS model.
-
-Because the whole "let's actively corrupt names into something that is
-almost, but not exactly, NFD" stuff is just some next-level evil
-stuff.
-
-            Linus
+>
+> > >
+> > > --
+> > > 2.42.0
+> > >
+> >
 
