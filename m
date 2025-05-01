@@ -1,140 +1,181 @@
-Return-Path: <linux-kernel+bounces-628953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9974AA650B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:02:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D3FAA64B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D0504A65CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 21:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718121B686EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 20:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CA725FA1D;
-	Thu,  1 May 2025 21:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E572522A4;
+	Thu,  1 May 2025 20:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="jRmf07uf"
-Received: from sonic313-47.consmr.mail.gq1.yahoo.com (sonic313-47.consmr.mail.gq1.yahoo.com [98.137.65.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+JSyxNC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86DF25F98D
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 21:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058C46FB9;
+	Thu,  1 May 2025 20:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746133332; cv=none; b=i3ZRUeTo3CLnzK799ENGkNLTWhwXjh0dl4bk1nMVfnYjuPTHocOMi4HcT+3mUWO+v7F2uaOxJUsxHOUJ+swwqVvvcmCK89xwX+iK2jz6QV8p75NkbdgfASF5RC4YiGuIYAqUKiAZLbI675l21deAXRT0laHE9OX5e7U61AXj4ak=
+	t=1746131130; cv=none; b=TEOMWqpsjrMeZiowg5e2Y0ilbTX2cD7iSpiacRbaoLEwNrfiBu2R0Ng3OtgTaY9pTmXpkFXZuo5kO0HGQxMJsUA5oD/WOXHCWTWg3z4xD2YNf93Ygj2nSiwqEhALZcCIDauVHzDh1wOAltWOEJMoVavwaJUdUyi3qi8tXdRuGgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746133332; c=relaxed/simple;
-	bh=8BQgMnOPLzJcsHZKQXjtera8wmGFTGQ4Ws6OqMUcXpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=QWKeON+VycQSL2hDnWE/UhbDEsF75Op/WN8CrjrWWaF0oN8snu8X7eXIWY8UERE7FvEHze0U1aWXvlY/ZFvA4mmMaihFg4wB2KSeFnYMfk/BPj4d/mv3SQmYBAEyI+rJvwILYtNTrm65Ze7aXxWD0X1UUAov360r5/aOHCWn/Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=jRmf07uf; arc=none smtp.client-ip=98.137.65.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1746133330; bh=tgdHuHwBD1KjujCVAxrOeOpzFBWKO2iH4yol6NkKnIg=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=jRmf07ufCLFTJazdCOQUJaMXe3vVR/BqzZAL+tOUZCybZhT/ybYJZmMUKb9PrnL9LS7y8ax2IpDq2Big+OHoGir9+zMo9m4w0GfYEE76uHglbLOdKg+BQkYa/URoAQCJyXXCZWS0omaN2c/Q90pgKaML3roArQqqvyswjCprAOFQP8TY89WCdEWJFHcq+AnYcmeoNeQPfNBQilmFQNmH8zxgppe1Op+HgvVgp3aY+F6UojxAKCmg3BXQ1JNOmByqeE55jE9LjumnI/PXOg1bX58O43/U/mPv4rebnfdpHpQ7iuzf59SXbbmOtfHvKXqNt46zzEsLMcbBqT8+wlIAuA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746133330; bh=jURYFUP1G7TZH+xM81ojL1JKNBxv0NvvHU7POJsqc1S=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=JF2ci1Rcu9E/U2NeEWFbks6Lz51e9Qh8ZNqgm8W/afTfZVWfMXi5d2pSWTJAPzcpB4ib5gUJ0QQ2A22PDEww1D+jwaQYRZd2d4lzTyYv671uniT9joFI0mFlcSlyUd+MBSkQiMXDqAGbwDH4ZbikRvnNHgu68vzs4xfYJ9FAP2JfKMycR+JwruGREY7YylETQfxzRoc+ZHeyXePIOqbkG4dAXO39/SSMe4FYsV6dr/tKznbjJrEvIsMOUwqqCaIBUbYcVQK/DSuo41zMGxQnT3Ltnn9EtetazKPP/twJAf2+mazyMt6HFi4KhLBCIeCkrz4CbxLQKXbzJCupkt1qtg==
-X-YMail-OSG: eZfxIRsVM1lXAgLGQpmlCbW_.QROo59wChths4C6DXV3OjF07XdBejwAZFOXZmo
- dQ.Hmkhi4JyNagM0AKQpRyx6uzC1UpDCTKaFbrduyWA.kZGaGNQz8pvuK2p0vBXobiQtJ8S4T66c
- 8M6I4bdhqTZosm8PwrusYlm1hR98J63KHHRgsiDBwIOXW0Rij6tMEHHWObNP1rWuWXt3QnnMTYIi
- tEZ6STew08LCvQ878yY9YS2k378L_EfJnCt3LQIP3s99behB85PuS1BlwF3FaErA7rK22UcJeCus
- dlXuf3dIyVDxbBCBmo.ExNlkPZbUR5Q.kAjxEU8r8IvtQozfZFidhfA7qvLDtk5rlIKX2v8W78eN
- 9aeXdNx4gkrVfgb0uXfaWceMhIRop6a2VGJtcyod1LBujFCs.gaBUB05C9Orb_yrPxcBoS.eQyWO
- e4Jr9qPTgIS97WRzQHpPdxtiAG6YD4Z7zfjQOi9X_Q5_SLTS.78xr87GJSjSnn_DPRInasSUUVf3
- KCZjP_FuXWwnn377kRraqYElTyccnxaseFTzMzM8TKGgBr_Y33_maSFiF3PsIwhGFpEECKJ_Kmx0
- QWs6Cu8uKf2mSKby3F76b0NWJG3NdsqvvMTqq0.HiOXIfmZx.xgFdPFLA8TlK6zNU7bSqZ4geMyr
- FwodcCO0xZDoAi79lS_lhE6v5bEvPnzVxNlibB215utlnTRdHoUOeBJsWRyadPzUslDsMwbTyq8f
- egX63o9irnCMiHjPA3jjmNUlJw5DCqUlC92hl3ccvuSRjFZz.NHNEYbTWkTG2wC6FDq4Ejq5XB3j
- hgC9euKUcvbuqVd1axGrCHkJZ5zaBZvixQycQfIKsmslbeU5S__iZtkVW2NVH6hOmV4wzAapEJPB
- _v4ASmhhDDpcI6bI3DVaz6sQIX1p7TtZLQXdsmadnf.oK9His3vejdbLvZsJBL_Y5yKxbsh9KTTW
- ZHZ7VN5.3fy2Z80Xu7EMHshdRgeu5TPxzOB74ecC2VezVnqdsu85H0IGHf0U9oinlkoVy.Pqzzg5
- 86lsAyCK8KvFiQBfRwycPesj5YJfoQSiCosTNvASIdrHX7nF2JoaUu17zqvh76fcpSN1LmdY4iZg
- PEwt_MBmZIbCCzFeEw0SKbR9e8OP8Gkxh_ERtlo.reoaL1XWW.UgwOWh.UjkC_AUjz5Iuyme2ZGI
- 7ARyBmJHASgTf.BFh4I6UMzutKKILFoGSgJtv3vb3GREgv9HZa.KxwquwUBtuGt05rU2eqBGg01V
- pA9LfMj17JItkWITRHPic3GDBv_8agcQg8sS76mltWm6YxC.lpYoNFME852FKbHkqPG0tQ6B8tog
- DcgP.qNzhKbSyVWFkehn.CSYAn9i67eRPRlD0bC_4R2Ytuh3Ef29HoRfCd_Qa1RyuWFo_t1ug.Si
- MqsUpahnwKhU9Nu2WHe7cjVT3EAdKsiC1ktbHSTHSV0mqoiYIenA65jO62YfNM4IZB4hTeF8ne1e
- gIqw3APgWN5pxSYAfBtSvpRvdFj2hwQj7oUbfTyU.er.RePjI4xpQWRa_wfl16S7.VwzNpfHTSnp
- P0MCDNqQXFohAhQxBGhaP3sVtFNFWtq26o9FnyF9AjGy_EK8D6E.DOfJ4YGi_IZ.MQTl.SReKASz
- VJUpaiIxDw9FOQViJmCjc0HfXb8vhqWlsC8Fazoe4ryX6V20Ue6341W0br7HqD9zLMcgIfvNiKb6
- FV0LhKtczzHvcIR_L2xLofadGVtgdPfYbGXoNLc1x7p._qbMbqcXrcez3lFBp5jYhx2H6dxC_4G.
- e50Vmo9rnvRdrXHkxr9wHNRRZR4HpqBMIJZQC8Wdu_ljX1sYSgcbBEKsHsMZFFjryxCS31WMS52f
- zZeX.sMdmTxdVNmb.hClmxAaKZWMeAVzJvMZhgDkgCvSskLW4bEbUXqHwqbEtl9EUldmOqhDPb11
- z15wUr9XXWRhhvTArVtI7Y6yoaI4en_IHB_7t6al1QO7N_.HbitvlHmeeGYoUfHKlvHTGw5w.yX9
- S3CnnLeq8du1YXcAQr2z8uWcacJVPIbum0Dc2QOSzGJ5T4YjlasEon7IgFEXCSU5HXF5FmbJCnhy
- FITWLfqI48OeDd4RYj40cTPNR6V3nxRbfCjR9RK9ZxKXRjPrpkVD.WACG30Q56VgkM_Tiyha73Ya
- VkE9Pi4uTYObo7YLpqQb73eynsWt1yls36soWTHO5uHALCuGF2WpFlOEfmVAXklPacq4bHWMKmjM
- 9v_G52xB61VRYCsFX0Qnn.2alnjqUPLhDwUoqUnAf8uo84kl.gsV2Rh4EWMWXIICjU55bVHEDZEb
- 4b7mHY1ZEAuOpfELQEcLptf1oHiTIr8YeONFqAwhCUx8_K_Vdron8CFWYe3c-
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: 5795e362-1f95-4e80-8c6d-965873ffca1e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Thu, 1 May 2025 21:02:10 +0000
-Received: by hermes--production-ir2-858bd4ff7b-vtq9f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5a27a9df395be0c8f98fb626c99e5270;
-          Thu, 01 May 2025 20:29:47 +0000 (UTC)
-From: Ruben Wauters <rubenru09@aol.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Ruben Wauters <rubenru09@aol.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 net-next] ipv4: ip_tunnel: Replace strcpy use with strscpy
-Date: Thu,  1 May 2025 21:23:55 +0100
-Message-ID: <20250501202935.46318-1-rubenru09@aol.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1746131130; c=relaxed/simple;
+	bh=zTV8Qd3ZZkNI2Id5bjuty6/SAjsFzxHH0uQilyi7Hjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BG2plbjmMucHiGMrxYDSZpXWsSdCpQh6Q+c/YFhO9yj0Pot5NPgqY6UnQFfSPHFJY2EWTawCqPf21BjFk1TAQ2jfWdVxUICAH1v20TFgceYoDsSgGGbOgGaZb81O7fu8K1FYyZKJ/BnBORBd+v4U1j20xOheuEvW1v5MyFlTPTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+JSyxNC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094B7C4CEE3;
+	Thu,  1 May 2025 20:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746131129;
+	bh=zTV8Qd3ZZkNI2Id5bjuty6/SAjsFzxHH0uQilyi7Hjo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L+JSyxNCDKDUrtg4O5ORnZVVqR8Y5xoLaZ0RZnk9C4RZrxxAbnQ1rQ5fHAPlzWKUs
+	 +EuCT2nELk7u0IIDOLAgMnLaYtDiw42Cqp+1GYVvEvS0d/aOg+m9CTp0OI8nP9t+bv
+	 0QVnGmLY56np8Hpz2HAYQDJGH7e21zZK3C+pIYT0EOq+G+mM0igUCHjesZ54p1+6mc
+	 CHKVwlsdlo8FyjOO/QW3MfvYybX+tJW0DOodAhQBhfvYfNZUdQqeljf9tdGBeF5Mbi
+	 ItDANSRjlMiRPsKHe/s3jnRE3d0YvPfzftDzQXVXfCRybR+6oKUhcWQBII+OHf9LTk
+	 IBgbDtc9MZbfw==
+Date: Thu, 1 May 2025 13:25:27 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf symbol-minimal: Fix double free in
+ filename__read_build_id
+Message-ID: <aBPYt1G3VpLI5qBa@google.com>
+References: <20250501070003.22251-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20250501202935.46318-1-rubenru09.ref@aol.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250501070003.22251-1-irogers@google.com>
 
-Use of strcpy is decpreated, replaces the use of strcpy with strscpy as
-recommended.
+Hi Ian,
 
-strscpy was chosen as it requires a NUL terminated non-padded string,
-which is the case here.
+On Thu, May 01, 2025 at 12:00:03AM -0700, Ian Rogers wrote:
+> Running the "perf script task-analyzer tests" with address sanitizer
+> showed a double free:
+> ```
+> FAIL: "test_csv_extended_times" Error message: "Failed to find required string:'Out-Out;'."
+> =================================================================
+> ==19190==ERROR: AddressSanitizer: attempting double-free on 0x50b000017b10 in thread T0:
+>     #0 0x55da9601c78a in free (perf+0x26078a) (BuildId: e7ef50e08970f017a96fde6101c5e2491acc674a)
+>     #1 0x55da96640c63 in filename__read_build_id tools/perf/util/symbol-minimal.c:221:2
+> 
+> 0x50b000017b10 is located 0 bytes inside of 112-byte region [0x50b000017b10,0x50b000017b80)
+> freed by thread T0 here:
+>     #0 0x55da9601ce40 in realloc (perf+0x260e40) (BuildId: e7ef50e08970f017a96fde6101c5e2491acc674a)
+>     #1 0x55da96640ad6 in filename__read_build_id tools/perf/util/symbol-minimal.c:204:10
+> 
+> previously allocated by thread T0 here:
+>     #0 0x55da9601ca23 in malloc (perf+0x260a23) (BuildId: e7ef50e08970f017a96fde6101c5e2491acc674a)
+>     #1 0x55da966407e7 in filename__read_build_id tools/perf/util/symbol-minimal.c:181:9
+> 
+> SUMMARY: AddressSanitizer: double-free (perf+0x26078a) (BuildId: e7ef50e08970f017a96fde6101c5e2491acc674a) in free
+> ==19190==ABORTING
+> FAIL: "invocation of perf script report task-analyzer --csv-summary csvsummary --summary-extended command failed" Error message: ""
+> FAIL: "test_csvsummary_extended" Error message: "Failed to find required string:'Out-Out;'."
+> ---- end(-1) ----
+> 132: perf script task-analyzer tests                                 : FAILED!
+> ```
+> 
+> The buf_size if always set to phdr->p_filesz, but that may be 0
+> causing a free and realloc to return NULL. This is treated in
+> filename__read_build_id like a failure and the buffer is freed again.
+> 
+> To avoid this problem only grow buf, meaning the buf_size will never
+> be 0. This also reduces the number of memory (re)allocations.
 
-I am aware there is an explicit bounds check above the second instance,
-however using strscpy protects against buffer overflows in any future
-code, and there is no good reason I can see to not use it.
+Thanks for fixing this!
 
-I have also replaced the scrscpy above that had 3 params with the
-version using 2 params. These are functionally equivalent, but it is
-cleaner to have both using 2 params.
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-Changes since v1:
-Replace existing 3 parameter strscpy with 2 parameter scrscpy
-Edit commit message adding justification for scrscpy and for added
-changes
----
- net/ipv4/ip_tunnel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
+Namhyung
 
-diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
-index 3913ec89ad20..678b8f96e3e9 100644
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -243,11 +243,11 @@ static struct net_device *__ip_tunnel_create(struct net *net,
- 	if (parms->name[0]) {
- 		if (!dev_valid_name(parms->name))
- 			goto failed;
--		strscpy(name, parms->name, IFNAMSIZ);
-+		strscpy(name, parms->name);
- 	} else {
- 		if (strlen(ops->kind) > (IFNAMSIZ - 3))
- 			goto failed;
--		strcpy(name, ops->kind);
-+		strscpy(name, ops->kind);
- 		strcat(name, "%d");
- 	}
- 
--- 
-2.48.1
-
+> 
+> Fixes: b691f64360ec ("perf symbols: Implement poor man's ELF parser")
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/symbol-minimal.c | 34 +++++++++++++++++---------------
+>  1 file changed, 18 insertions(+), 16 deletions(-)
+> 
+> diff --git a/tools/perf/util/symbol-minimal.c b/tools/perf/util/symbol-minimal.c
+> index c6f369b5d893..d8da3da01fe6 100644
+> --- a/tools/perf/util/symbol-minimal.c
+> +++ b/tools/perf/util/symbol-minimal.c
+> @@ -147,18 +147,19 @@ int filename__read_build_id(const char *filename, struct build_id *bid)
+>  			if (phdr->p_type != PT_NOTE)
+>  				continue;
+>  
+> -			buf_size = phdr->p_filesz;
+>  			offset = phdr->p_offset;
+> -			tmp = realloc(buf, buf_size);
+> -			if (tmp == NULL)
+> -				goto out_free;
+> -
+> -			buf = tmp;
+> +			if (phdr->p_filesz > buf_size) {
+> +				buf_size = phdr->p_filesz;
+> +				tmp = realloc(buf, buf_size);
+> +				if (tmp == NULL)
+> +					goto out_free;
+> +				buf = tmp;
+> +			}
+>  			fseek(fp, offset, SEEK_SET);
+> -			if (fread(buf, buf_size, 1, fp) != 1)
+> +			if (fread(buf, phdr->p_filesz, 1, fp) != 1)
+>  				goto out_free;
+>  
+> -			ret = read_build_id(buf, buf_size, bid, need_swap);
+> +			ret = read_build_id(buf, phdr->p_filesz, bid, need_swap);
+>  			if (ret == 0) {
+>  				ret = bid->size;
+>  				break;
+> @@ -199,18 +200,19 @@ int filename__read_build_id(const char *filename, struct build_id *bid)
+>  			if (phdr->p_type != PT_NOTE)
+>  				continue;
+>  
+> -			buf_size = phdr->p_filesz;
+>  			offset = phdr->p_offset;
+> -			tmp = realloc(buf, buf_size);
+> -			if (tmp == NULL)
+> -				goto out_free;
+> -
+> -			buf = tmp;
+> +			if (phdr->p_filesz > buf_size) {
+> +				buf_size = phdr->p_filesz;
+> +				tmp = realloc(buf, buf_size);
+> +				if (tmp == NULL)
+> +					goto out_free;
+> +				buf = tmp;
+> +			}
+>  			fseek(fp, offset, SEEK_SET);
+> -			if (fread(buf, buf_size, 1, fp) != 1)
+> +			if (fread(buf, phdr->p_filesz, 1, fp) != 1)
+>  				goto out_free;
+>  
+> -			ret = read_build_id(buf, buf_size, bid, need_swap);
+> +			ret = read_build_id(buf, phdr->p_filesz, bid, need_swap);
+>  			if (ret == 0) {
+>  				ret = bid->size;
+>  				break;
+> -- 
+> 2.49.0.967.g6a0df3ecc3-goog
+> 
 
