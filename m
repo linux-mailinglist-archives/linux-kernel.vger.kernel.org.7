@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-628088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26EFAA5902
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 02:25:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAA4AA590E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 02:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4183A7B018B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB12463EA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C2729408;
-	Thu,  1 May 2025 00:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA89F1AB6DE;
+	Thu,  1 May 2025 00:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xu5SlSW2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="o0aguuBk"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B42827702;
-	Thu,  1 May 2025 00:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43CE19F421;
+	Thu,  1 May 2025 00:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746059100; cv=none; b=iGg+zPw+owk4p1ZU03VDCwWcLCcSRy/tQXpIhbIuwYyOWaPPLvQEk4eRfstBQpCWav93sy+XYptYFsG6RYTUrbYI2T3aVNGXUEMGzgqGEAzdvykiVEKkKAq0ue/4hBhdvk57SymwOEKAm1yQqgJmnRv6QBLjsrJouiMzD6fGGR0=
+	t=1746059465; cv=none; b=qQMr2z4ww06CptxGAXDZxWQpH/g0uaJ11g5+mvVrNQoHhc9DzyWhOa5X8EC7JxA3AC30jhb8mV+R1T5DDtl598tnfglHcMiyFxX5yEVTYdYlaCqeNmjzzP1ryl+jfPfwb1hesQvVhPeqf3tnpDQiReB8EKFDgBABJRpcNx8dPxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746059100; c=relaxed/simple;
-	bh=xJ2UDrd4cgIKttYhNbDkYA5wTDZhtVAJ278Aj0uJS1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d3ABojNdYB2/NFrnNACm/IcEAr+rYXm9z11Y0anYstYjrGRplN1JZ8lBjtY/jlz7mo81Z9+9HPe4TTKx3PMp6JRax0ExgXkfAHCw9kgUsgyIASlcvnsGgYtE+SjsFnGjp3oCBhQ119Kw0qtAygkZSYENc4LRK/LSRjlmkkQPAcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xu5SlSW2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UGkGoE032198;
-	Thu, 1 May 2025 00:24:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fQVcRy3VD1YE8fp20UK6HgnnUXx/XDq5SUQiHFy6HAs=; b=Xu5SlSW2uFtzbjd+
-	1MMkHgcQVZ+x/3citZrY/idaAKlTD/dXPQ/DZxAGCoNWeXUQPGC3cN9AZOVbbIB3
-	zjS7tS8Ue0K4yG5cGpFxBnNwx3gBKi6LIESFKKevcn7u74t5H6mijRn2dIbaJUAI
-	zvM60P1M+CZ1xWn6uw/YQ14/sHvWIdjxUKpmtHelAbnXhm0k8H7VY/cTI3diUFmj
-	fK6NQzaKWlZdLz+MqBjleFuAeC0LzdqVSjPiqHWXGUKE8OWrjTn0jWCKhSdoS20/
-	zHIGmI3YqHzoTsYAtMRxF9ySpCnl2xM/C4o1yAg2mazsJrPdHUem/PMhOLv4oPwK
-	U7frPg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u74207-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 May 2025 00:24:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5410Ogd5000437
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 May 2025 00:24:42 GMT
-Received: from [10.71.110.123] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Apr
- 2025 17:24:41 -0700
-Message-ID: <8a5970fd-8ebb-4ed2-8276-7b5ad4ec2f9f@quicinc.com>
-Date: Wed, 30 Apr 2025 17:24:40 -0700
+	s=arc-20240116; t=1746059465; c=relaxed/simple;
+	bh=Ci0DwSkdku8GewOdySf7cTEu3of/g50Vqk+aMKizZGk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QE0NxB8BdtXS7WbJOwPwNvt8/H1hgRl5gN2h5ZIg38KAWvJ+bCASbJL9Y3Kh6TpHzuhxbYWE0rXR8pM4xDTXPAjZnyoFXyPYczDZLLzc/SVjQmpPEPzhqgHsK6DVxshHjmkKBA5EzZg64emitLfwbKpFUssYfoJrj7L/YpQ/fOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=o0aguuBk; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1746059463; x=1777595463;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9S7Rq8JOZsTFJ9lLP4FliEFT/hASyEX4dw+STGpWrg4=;
+  b=o0aguuBkifPhu0e+YKdkVC23huP9c2CT+g5XqR2uW4azrUcP9cx58+W3
+   ng8gquh3tgJOac24dT/6j15pyrh2OqfEHz7Ei+myBvnVQQL9kHArQ2tc4
+   wfi3Zj7c3hHe0Dm75bFau/VxCW6vuKbkz1cqg9Cbuf4Cyeg4s9jfbK1rP
+   g=;
+X-IronPort-AV: E=Sophos;i="6.15,253,1739836800"; 
+   d="scan'208";a="196066862"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 00:31:01 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:64656]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.59.114:2525] with esmtp (Farcaster)
+ id 0c9374d3-d797-4853-a843-2daf2ecffefa; Thu, 1 May 2025 00:31:01 +0000 (UTC)
+X-Farcaster-Flow-ID: 0c9374d3-d797-4853-a843-2daf2ecffefa
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 1 May 2025 00:31:01 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.171.60) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 1 May 2025 00:30:56 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <brauner@kernel.org>
+CC: <bluca@debian.org>, <daan.j.demeyer@gmail.com>, <davem@davemloft.net>,
+	<david@readahead.eu>, <edumazet@google.com>, <horms@kernel.org>,
+	<jack@suse.cz>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <me@yhndnzj.com>, <netdev@vger.kernel.org>,
+	<oleg@redhat.com>, <pabeni@redhat.com>, <viro@zeniv.linux.org.uk>,
+	<zbyszek@in.waw.pl>
+Subject: Re: [PATCH RFC 3/3] coredump: support AF_UNIX sockets
+Date: Wed, 30 Apr 2025 17:25:19 -0700
+Message-ID: <20250501003048.49502-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250430-work-coredump-socket-v1-3-2faf027dbb47@kernel.org>
+References: <20250430-work-coredump-socket-v1-3-2faf027dbb47@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] drm/msm/dp: Fix support of LTTPR initialization
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-        Dmitry Baryshkov
-	<lumag@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        <laurentiu.tudor1@dell.com>, <abel.vesa@linaro.org>,
-        <johan@kernel.org>, Johan Hovold
-	<johan+linaro@kernel.org>
-References: <20250430001330.265970-1-alex.vinarskis@gmail.com>
- <20250430001330.265970-2-alex.vinarskis@gmail.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20250430001330.265970-2-alex.vinarskis@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAxMDAwMSBTYWx0ZWRfX29+DyCd2ybxL FAuUHkGoyITGT8DOdJ0NzNpCf2qq/1obdZEQdx19EO36nnaxgugXgC6fFV0ytbUvB/VZCaJFeL/ EUbUTCaDWsZaY+IhcmjW4ntd+TmzZz3si1uIH42YrVtSU6V/FzXlIsRg6NCM+dnGAlDs4cs3gMP
- ZETFjT16vvRG6Jem3lT5EyapDRETnXj8sBRYg8+c+FXH2J5qTIr8hpzNKoTdAd3LsGge45VMjWf qT+FwLPfa2zjDSSj/qNmzE8XSdPTlTRwfeKLWXWg3hu5Ruhi9X9k9tBhFUb/9E6+QcZwqfhgnQj +GVcm9OHBADAJYxGe2zQosMdDtaKrpfNMwg7Oio0gO5A7ou2Iw61ZcFNRNM462qnV9raotkG58+
- YpJS4kC6883qI+e2S/oA3y8/pZ7GwVaAs85Z1vMebexix6DYrni6aHGA6vxEQ1VOHskdpNic
-X-Proofpoint-GUID: -VhTn66j5ouY_oBGADkIN8tq23UU_MP9
-X-Authority-Analysis: v=2.4 cv=W404VQWk c=1 sm=1 tr=0 ts=6812bf4b cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=3OsKONUXKRe0ri03xkEA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: -VhTn66j5ouY_oBGADkIN8tq23UU_MP9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-30_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 spamscore=0
- clxscore=1011 phishscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505010001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D038UWB003.ant.amazon.com (10.13.139.157) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
+From: Christian Brauner <brauner@kernel.org>
+Date: Wed, 30 Apr 2025 13:05:03 +0200
+> @@ -801,6 +837,49 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  		}
+>  		break;
+>  	}
+> +	case COREDUMP_SOCK: {
+> +		struct file *file __free(fput) = NULL;
+> +		struct sockaddr_un unix_addr = {
+> +			.sun_family = AF_UNIX,
+> +		};
+> +		struct sockaddr_storage *addr;
+> +
+> +		retval = strscpy(unix_addr.sun_path, cn.corename, sizeof(unix_addr.sun_path));
+> +		if (retval < 0)
+> +			goto close_fail;
+> +
+> +		file = __sys_socket_file(AF_UNIX, SOCK_STREAM, 0);
+> +		if (IS_ERR(file))
+> +			goto close_fail;
+> +
+> +		/*
+> +		 * It is possible that the userspace process which is
+> +		 * supposed to handle the coredump and is listening on
+> +		 * the AF_UNIX socket coredumps. This should be fine
+> +		 * though. If this was the only process which was
+> +		 * listen()ing on the AF_UNIX socket for coredumps it
+> +		 * obviously won't be listen()ing anymore by the time it
+> +		 * gets here. So the __sys_connect_file() call will
+> +		 * often fail with ECONNREFUSED and the coredump.
+> +		 *
+> +		 * In general though, userspace should just mark itself
+> +		 * non dumpable and not do any of this nonsense. We
+> +		 * shouldn't work around this.
+> +		 */
+> +		addr = (struct sockaddr_storage *)(&unix_addr);
+> +		retval = __sys_connect_file(file, addr, sizeof(unix_addr), O_CLOEXEC);
 
+The 3rd argument should be offsetof(struct sockaddr_un, sun_path)
++ retval of strscpy() above ?
 
-On 4/29/2025 5:09 PM, Aleksandrs Vinarskis wrote:
-> Initialize LTTPR before msm_dp_panel_read_sink_caps, as DPTX shall
-> (re)read DPRX caps after LTTPR detection, as required by DP 2.1,
-> Section 3.6.7.6.1.
-> 
-
-Thanks for the patch.
-
-Small correction: this is section 3.6.7.6.1 of DP 2.1a not DP 2.1
-
-
-> Fixes: 72d0af4accd9 ("drm/msm/dp: Add support for LTTPR handling")
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> Tested-by: Rob Clark <robdclark@gmail.com>
-> ---
->   drivers/gpu/drm/msm/dp/dp_display.c | 13 +++++++++----
->   1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-
-No need to resend for this, I can even fix it up while applying,
-
-With that addressed,
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+I guess you could see an unexpected error when
+CONFIG_INIT_STACK_NONE=y and cn.corename has garbage at tail.
 
