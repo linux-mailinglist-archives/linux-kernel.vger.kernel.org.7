@@ -1,143 +1,90 @@
-Return-Path: <linux-kernel+bounces-628831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06BBAA62DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 20:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCCBAA62F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 20:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C821B6571A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 18:34:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5E11BC201E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 18:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5EF2236F7;
-	Thu,  1 May 2025 18:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065CB21C198;
+	Thu,  1 May 2025 18:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g/DQatTt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Dzu19DB+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CF32144CF
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 18:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8418211C
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 18:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746124455; cv=none; b=W7mv/9TJuz9T0f1D5SoDbAO8KMMceKsVVoGZg+pvYuNAxVRG5g7+rM7Yk+6pEFPRUEbZrrp/ei8sKyC39IeAD3tbO8kd4nHjgsBInQimbaHQwgXz9lWdPtOZuQDUz1dHFYvO7nxVlhvcvLIPdKB10xcE4Lw86aVmwk8n8UCzPL8=
+	t=1746124747; cv=none; b=MSKufKo5hVMFG5ubc7DqcI1wu6Oizqo3BqDqRkaElWLySE4VQQ7QEE5rWYqWa8G9bo/gufmzESNfFI81z679uKN9C5Gn3zO8pul4O/JMB1yjRAdcQgov5P5tFEIkHO/kii2248/u+HZF+7ELwaZu4tmhNyH8DvN3ytXo2KjD6t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746124455; c=relaxed/simple;
-	bh=+DAZETPgGKlVNaxrjII/8WTA3PntLOU1NMdtZAGUhfM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uH5AueksKp4/XdSOzOZzQMwXFfkbmtfqfr9c/tihcoSxBCqfkUY921FuPw4BngYNUicovBzWn9j1mfAsOH3ttbQ6oaMKClztW2T6F54frhf4YPR1A/JHK6eaGVX1itmd2DQxSLlXCZmq6U9XoN3+lLVIJoCotbEJPNYXB1CXji8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g/DQatTt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746124451;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0qKIEW/lhMjwEMGxy/raOMlbK5hykaujRDE/weD2Tms=;
-	b=g/DQatTtN+vBNTuQaMKc7EzIeicYNSSyR+oQ3L+4X9EcyTNg9YyzEHKA0q3eayI8/zgnkG
-	2wiu1jl21E88IdSup3E/7YDcta3Z2ggHeVMeenLSQaTz4hkjs4nCOf1mtDHU/dbfnUyp6+
-	DCqmLTyQSKcKU4ECoMerZfsxcBBydFA=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-493-pul7Smg6Mo6BD0dO5PU0fg-1; Thu, 01 May 2025 14:34:10 -0400
-X-MC-Unique: pul7Smg6Mo6BD0dO5PU0fg-1
-X-Mimecast-MFC-AGG-ID: pul7Smg6Mo6BD0dO5PU0fg_1746124449
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a07a7b4298so518268f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 11:34:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746124449; x=1746729249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0qKIEW/lhMjwEMGxy/raOMlbK5hykaujRDE/weD2Tms=;
-        b=djfQn2sww1uwBxQb0J3HGvF1D4faVl/V6M/qi0aPzRBgssHUfoDU2KLuesxcYuIZwp
-         qzObihSzo/Mgy54g+kg/x+5jXaMkZ4KNIZXd7rKa2Fg6lYxKdBC/VYGGFA2YkCtjelZy
-         W5uBKvNGvfhibfV29ATFWwNFBSrv6Q8+27N6l/yu0+CiZiiDRfTid7a+bGV1c3HNUZRv
-         t2JndOX8GMk68DXYD017HSBC/3biyAwfLvfnuLLw5cANgTqawAhR0JgaTslyGWePvAZR
-         IbeuPOINt+j1QPN4RXeoSaWhQPE5YwKd9lc58kYUKPVBFQXhEpEe4s8EZu7qHtpjX//h
-         3Isg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSAAH0EehiqmHaFJ95+d2p2xKc9eYKDP5TKu2OcHANbUgL3PDWQhHm0XBBlsvbK+/eK4gdRPt0wu2BZUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9XoUTnFC3E8RX45ZMxU8fyoHZzFR1brOY515hAUYYN901f3/0
-	9WzNbzztsRYf7Y+u4B6Se64fYfMGRvkSS9D8BaYheGlmMJ3kp3CzRolcDKBjKaPHRmoZr+TRCDJ
-	HcxIgsug1Zeca2F8CBQk77bQUXU59Uh9OJOMM6IsJKtI/NtlzzA1EXCIxDR+RsjOc2aF1aW8rG4
-	4u3F6WPHcGW4mTNHZM/5pDGWtyitiQ9FX5bQ1o
-X-Gm-Gg: ASbGncsRty7edFPNPKSrOGlf+D/jUi57kL9XqUjQ9eD/U2bBGopdchh2QsxnZJ1/gL4
-	qhhJapZJL8WhTnCpzCMPRT9hXzxemtGnDNgZ4tT23l2w7q761PrsEDJd7iLQOmZ2EFcO0
-X-Received: by 2002:a05:6000:2cb:b0:38f:28dc:ec23 with SMTP id ffacd0b85a97d-3a08f761e95mr6926090f8f.19.1746124449427;
-        Thu, 01 May 2025 11:34:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8pyZZxNLsDKgK+s6EiT/5Z0RvhAJbHB3j6sE0QEEuK4GrGOmkb5NB8jNyV3jUBy2M6Ty7WMK3PucatHbyoBs=
-X-Received: by 2002:a05:6000:2cb:b0:38f:28dc:ec23 with SMTP id
- ffacd0b85a97d-3a08f761e95mr6926061f8f.19.1746124449084; Thu, 01 May 2025
- 11:34:09 -0700 (PDT)
+	s=arc-20240116; t=1746124747; c=relaxed/simple;
+	bh=Goye1x/HyHip0UrVYbT2JZFfKNXpUJQqQJ9Ln9SeZ7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=foBPF53z4ojDI6+7QNjqXjcOTaw3uQfoj0tYMXMPL0MpUw+jkMAGlArEgrpuuSkWXlO6nFsXevcQZY+phxaI/WPyLCz0DSJ/38PYGmE8zdF9xl67Ywfh91PL+U7n/tT2cIcC+LWt0KwBoiP0nWm2cFrsdYFD6H9nDepIgxuTeJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Dzu19DB+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZRGNnZIibSpQ4Mgi891kL5PuMPNjxsoIayZPZFiUSA8=; b=Dzu19DB+UuRCz7HSqaOtKYImi+
+	6UyQ7BtWPDSVCV8lRzh6nOrPbePI3MqXWkp7bsr186yx15qq8g11qR7f0JORQ6dxlSRLz4HHHzf66
+	AD4spY2/bSYSrm6kpGq2lY+YakjNlmFIS/UufZ2IkPvych1wzKDkyhL1XTQIe4yUNgLkMDJHw6m2N
+	dWRRf/7tdpSifsKT8ugr6/csSeT3MVkYwrKrtUKsGqVQ+fA++/YzG+LZWhjTajISfHME8suR1jS8+
+	6Jna9s7jnqgd1RYIxR9cB4EcAXDEAEidGbBn3zkboyWsK6s5P6J1zd7Nw75M4FgMznKDBzi+GGYRI
+	r/iicqWg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAYnV-00000005ULO-3bFC;
+	Thu, 01 May 2025 18:38:13 +0000
+Date: Thu, 1 May 2025 19:38:13 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Juan Yescas <jyescas@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, tjmercier@google.com, isaacmanjarres@google.com,
+	surenb@google.com, kaleshsingh@google.com,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>, Zi Yan <ziy@nvidia.com>,
+	Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH] mm: Add ARCH_FORCE_PAGE_BLOCK_ORDER to select page block
+ order
+Message-ID: <aBO_laRsZDYgjEfL@casper.infradead.org>
+References: <20250501052532.1903125-1-jyescas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430110734.392235199@infradead.org>
-In-Reply-To: <20250430110734.392235199@infradead.org>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 1 May 2025 20:33:57 +0200
-X-Gm-Features: ATxdqUGj_DEOILwA7gJmdwUbmKq2o1Nt9LtM9RStnzYMraMRgnH01086KHJWMt8
-Message-ID: <CABgObfZQ2n6PB0i4Uc6k4Rm9bVESt0aafOcdLzW4hwX3sN-ExA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/13] objtool: Detect and warn about indirect calls in
- __nocfi functions
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, 
-	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com, 
-	ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	gregkh@linuxfoundation.org, jpoimboe@kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-efi@vger.kernel.org, 
-	samitolvanen@google.com, ojeda@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250501052532.1903125-1-jyescas@google.com>
 
-On Wed, Apr 30, 2025 at 1:26=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
-> Notably the KVM fastop emulation stuff -- which I've completely rewritten=
- for
-> this version -- the generated code doesn't look horrific, but is slightly=
- more
-> verbose. I'm running on the assumption that instruction emulation is not =
-super
-> performance critical these days of zero VM-exit VMs etc.
+On Wed, Apr 30, 2025 at 10:25:11PM -0700, Juan Yescas wrote:
+> Problem: On large page size configurations (16KiB, 64KiB), the CMA
+> alignment requirement (CMA_MIN_ALIGNMENT_BYTES) increases considerably,
+> and this causes the CMA reservations to be larger than necessary.
+> This means that system will have less available MIGRATE_UNMOVABLE and
+> MIGRATE_RECLAIMABLE page blocks since MIGRATE_CMA can't fallback to them.
+> 
+> The CMA_MIN_ALIGNMENT_BYTES increases because it depends on
+> MAX_PAGE_ORDER which depends on ARCH_FORCE_MAX_ORDER. The value of
+> ARCH_FORCE_MAX_ORDER increases on 16k and 64k kernels.
 
-It's definitely going to be slower, but I guess it's okay these days.
-It's really only somewhat hot with really old processors
-(pre-Westmere) and only when running big real mode code.
-
-Paolo
-
-> KVM has another; the VMX interrupt injection stuff calls the IDT handler
-> directly.  Is there an alternative? Can we keep a table of Linux function=
-s
-> slighly higher up the call stack (asm_\cfunc ?) and add CFI to those?
->
-> HyperV hypercall page stuff, which I've previously suggested use direct c=
-alls,
-> and which I've now converted (after getting properly annoyed with that co=
-de).
->
-> Also available at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git x86/core
->
-> Changes since v1:
->
->  - complete rewrite of the fastop stuff
->  - HyperV tweaks (Michael)
->  - objtool changes (Josh)
->
->
-> [1] https://lkml.kernel.org/r/20250410154556.GB9003@noisy.programming.kic=
-ks-ass.net
-> [2] https://lkml.kernel.org/r/20250410194334.GA3248459@google.com
->
-
+Sure, but why would any architecture *NOT* want to set this?
+This seems like you're making each architecture bump into the problem
+by itself, when the real problem is that the CMA people never thought
+about this and should have come up with better defaults.
 
