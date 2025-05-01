@@ -1,172 +1,99 @@
-Return-Path: <linux-kernel+bounces-628334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCDBAA5C79
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:05:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B26DAA5C80
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA8964677D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:05:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D7197A6D87
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C521F098E;
-	Thu,  1 May 2025 09:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC58214221;
+	Thu,  1 May 2025 09:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="APt5907U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7nrNs3t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AFB2EB1D;
-	Thu,  1 May 2025 09:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E0179C0;
+	Thu,  1 May 2025 09:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746090316; cv=none; b=F8HYPHz8fmBeUDldxDX8m9Q+LMsOOT8Oznk/tK5rQLzlxxN0ceDJkYglHIDJ1RfsffLfUuUHLAc/20EqXzQJguc5zT2WZi9jGWeTwW76PlI0sWA7BX7K873AgdAIxLgCOs3D3qFfxdLbMI8Z9dNW5R6gx6l4peGLacpxZYDEjeY=
+	t=1746090559; cv=none; b=pHDdpmSo9nNv+Z+iiwTvELfYGa48uKldKQiKdI1QEpj5zXiQmoR4lhzs1Cg8poQ5TPQ3ekGbq0u1AZJLiEe2I3TdNuBroH66pHhtdQ8o+l6MEOiTC8K1F3wgb00FSsgAKGxa6wiy6f2nKmGLZePa9PLpVYeDkjXOeJnVNjXb83w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746090316; c=relaxed/simple;
-	bh=LjqUK+jqYawxWebdEPFZWRtE1SPOMFDCEpd1NdX3gDs=;
+	s=arc-20240116; t=1746090559; c=relaxed/simple;
+	bh=Ab2Fh2ilzC5IU7gqXpYNCm4x+QzBsCpAZEaO3S+BdKc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tjXA9jjnVlqbc3bIhVf5p2xZHIWzaFjHeBq545TWewIAj0WEkENU2kSYrBvb3Ma1C0moDXuITlyc9qZVanlpRSrySmV2ZnbxgsBsLFHqO+sEyBavKad5kIZhYC1gb9ZgjqXsgd/NTNpica6F08ysZpEW96wdyj1pJ3P9DpcFvjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=APt5907U; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746090314; x=1777626314;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LjqUK+jqYawxWebdEPFZWRtE1SPOMFDCEpd1NdX3gDs=;
-  b=APt5907U8Ov7TK0W6z9q1NmLJlfxii9VMqZZpK5v51oVS3ou2SrexZI2
-   J0feAa7j8StIAa97ymVkfjV3VRjNWx1709b2MAHlgwO4/eF31VhBk8bR3
-   gE5UJvf5FIugnmPCzOm/zQgRA67E/Wx/UrjdmtB2d4lb8DXXdOaoYhYd6
-   bAnG3Ac70wD/bIWD+KRxZIVrQJbuzJVsBaMU+3c+2oh6Dfdf3c8lgX/rN
-   M+l0s9eRzJEyJkh36xQj7z0ZaYXpgxweflQd4u5luJWEzxfNZyfp+ayRB
-   swETySXZyjEqoDbkSqH/dQsLdJoE9fnbpbisYlsm4Kosv5609GvaYEyMP
-   A==;
-X-CSE-ConnectionGUID: yzETTaRTQE6UTO1gCyYFMw==
-X-CSE-MsgGUID: GCHKUpT1QGKzZ+6Zg0e0mg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="58423467"
-X-IronPort-AV: E=Sophos;i="6.15,253,1739865600"; 
-   d="scan'208";a="58423467"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 02:05:13 -0700
-X-CSE-ConnectionGUID: AQZpm5eZTuOAKYj8W4GChA==
-X-CSE-MsgGUID: eCKoVHzCQjq4j/jvm5gZaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,253,1739865600"; 
-   d="scan'208";a="139527385"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 01 May 2025 02:05:10 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uAPqt-00044N-1D;
-	Thu, 01 May 2025 09:05:07 +0000
-Date: Thu, 1 May 2025 17:04:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Daniel Axtens <dja@axtens.net>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-s390@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] kasan: Avoid sleepable page allocation from
- atomic context
-Message-ID: <202505011646.eHmKdH9T-lkp@intel.com>
-References: <573a823565734e1eac3aa128fb9d3506ec918a72.1745940843.git.agordeev@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hxrxpmHXjK/xkXNH3X5ghYJtr5aNeqU1O658Wnh/zxqkdr0dob+29pYOsF8CNosP2h3niT1MBO+5C9/6WnaiWPMnVChV6C5N0ypWmn+o4lLa4b8rA7pWt6F3cvqv42An0pIMcIf4FH5TOtsabMATExrEy/0FOIce+REBcpVLSLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7nrNs3t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ABDAC4CEE3;
+	Thu,  1 May 2025 09:09:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746090558;
+	bh=Ab2Fh2ilzC5IU7gqXpYNCm4x+QzBsCpAZEaO3S+BdKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c7nrNs3tbpCki4FheEGOTdohY/wkrwSqL6TUMrwd6jLLdStbV/3RqErns4Qty6Db+
+	 8ltaB7n1dTK76PYbri3Po9ZVUUWfxy7aVTcLD6pNP4nlsPJqrQf9+Uhvm4B/Y3yRS4
+	 joDuG+WxWAMiMrYsYpPhGtYhljYOvfAEynKiWFU7RTBgkIThwIQBd34M10YkrPLib5
+	 YDsy1DzajSoztuICNrtqPuSRT8HBbwV0Yrq10aKuV4jTQMM1aZBr9o18p7jRt6rA7F
+	 1rp9oCXCbkfoj4UAZe+0blotSyTjenvL2BroaVTd11+IDgRjowDAd5PKrrb4AdvPI0
+	 WJD0rkLb5QADQ==
+Date: Thu, 1 May 2025 10:09:13 +0100
+From: Lee Jones <lee@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] firmware: exynos-acpm: clients (PMIC, clocks, etc.)
+ will become children
+Message-ID: <20250501090913.GA3627101@google.com>
+References: <20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org>
+ <174530898122.9276.5071475909293812602.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <573a823565734e1eac3aa128fb9d3506ec918a72.1745940843.git.agordeev@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <174530898122.9276.5071475909293812602.b4-ty@linaro.org>
 
-Hi Alexander,
+On Tue, 22 Apr 2025, Krzysztof Kozlowski wrote:
 
-kernel test robot noticed the following build errors:
+> 
+> On Thu, 27 Mar 2025 12:54:26 +0000, André Draszik wrote:
+> > ACPM clients (PMIC, clocks, etc.) will be modeled as children of the
+> > ACPM interface.
+> > 
+> > This necessitates two changes in this driver:
+> > * child platform_devices from device tree need to be populated here
+> > * child drivers will need to be able to get the ACPM handle via a
+> >   struct device_node, not via a DT property name
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [1/2] firmware: exynos-acpm: populate devices from device tree data
+>       https://git.kernel.org/krzk/linux/c/636baba9489a634c956d6f02076af6bc1725c132
+> [2/2] firmware: exynos-acpm: introduce devm_acpm_get_by_node()
+>       https://git.kernel.org/krzk/linux/c/a8dc26a0ec43fd416ca781a8030807e65f71cfc5
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.15-rc4 next-20250430]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Can this be made available for other subsystems to pull from please?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Gordeev/kasan-Avoid-sleepable-page-allocation-from-atomic-context/20250430-001020
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/573a823565734e1eac3aa128fb9d3506ec918a72.1745940843.git.agordeev%40linux.ibm.com
-patch subject: [PATCH v3 1/1] kasan: Avoid sleepable page allocation from atomic context
-config: x86_64-buildonly-randconfig-002-20250501 (https://download.01.org/0day-ci/archive/20250501/202505011646.eHmKdH9T-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250501/202505011646.eHmKdH9T-lkp@intel.com/reproduce)
+Without it MFD is currently broken.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505011646.eHmKdH9T-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/kasan/shadow.c: In function 'kasan_populate_vmalloc_pte':
->> mm/kasan/shadow.c:313:18: error: implicit declaration of function 'pfn_to_virt'; did you mean 'fix_to_virt'? [-Werror=implicit-function-declaration]
-     313 |         __memset(pfn_to_virt(pfn), KASAN_VMALLOC_INVALID, PAGE_SIZE);
-         |                  ^~~~~~~~~~~
-         |                  fix_to_virt
-   mm/kasan/shadow.c:313:18: warning: passing argument 1 of '__memset' makes pointer from integer without a cast [-Wint-conversion]
-     313 |         __memset(pfn_to_virt(pfn), KASAN_VMALLOC_INVALID, PAGE_SIZE);
-         |                  ^~~~~~~~~~~~~~~~
-         |                  |
-         |                  int
-   In file included from arch/x86/include/asm/string.h:5,
-                    from arch/x86/include/asm/cpuid/api.h:10,
-                    from arch/x86/include/asm/cpuid.h:6,
-                    from arch/x86/include/asm/processor.h:19,
-                    from arch/x86/include/asm/cpufeature.h:5,
-                    from arch/x86/include/asm/thread_info.h:59,
-                    from include/linux/thread_info.h:60,
-                    from include/linux/spinlock.h:60,
-                    from arch/x86/include/asm/pgtable.h:19,
-                    from include/linux/pgtable.h:6,
-                    from include/linux/kasan.h:37,
-                    from mm/kasan/shadow.c:14:
-   arch/x86/include/asm/string_64.h:23:22: note: expected 'void *' but argument is of type 'int'
-      23 | void *__memset(void *s, int c, size_t n);
-         |                ~~~~~~^
-   cc1: some warnings being treated as errors
-
-
-vim +313 mm/kasan/shadow.c
-
-   299	
-   300	static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
-   301					      void *_data)
-   302	{
-   303		struct vmalloc_populate_data *data = _data;
-   304		struct page *page;
-   305		unsigned long pfn;
-   306		pte_t pte;
-   307	
-   308		if (likely(!pte_none(ptep_get(ptep))))
-   309			return 0;
-   310	
-   311		page = data->pages[PFN_DOWN(addr - data->start)];
-   312		pfn = page_to_pfn(page);
- > 313		__memset(pfn_to_virt(pfn), KASAN_VMALLOC_INVALID, PAGE_SIZE);
-   314		pte = pfn_pte(pfn, PAGE_KERNEL);
-   315	
-   316		spin_lock(&init_mm.page_table_lock);
-   317		if (likely(pte_none(ptep_get(ptep))))
-   318			set_pte_at(&init_mm, addr, ptep, pte);
-   319		spin_unlock(&init_mm.page_table_lock);
-   320	
-   321		return 0;
-   322	}
-   323	
+Ref: https://lore.kernel.org/all/fd11ee67a3d51aef6305c477b140d911da0b2af4.camel@linaro.org/
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Lee Jones [李琼斯]
 
