@@ -1,108 +1,189 @@
-Return-Path: <linux-kernel+bounces-628332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089DEAA5C70
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:02:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2016AA5C7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5B09C3A81
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:02:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8511E1B67ACD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7538321129D;
-	Thu,  1 May 2025 09:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F06722B598;
+	Thu,  1 May 2025 09:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nnbXBwOM"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0skiOdA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913F8288DA;
-	Thu,  1 May 2025 09:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE07211713;
+	Thu,  1 May 2025 09:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746090162; cv=none; b=ukugDtMKYmpz6zFpOF3Wj/WUnA2x4CkIK8vTMwT/jPGNYRgHsk4N7MKerIazVzNuubMdBgbJwwL6eGhHN/kU3QUAeT0wb4qZvKyfthnvf+tf2nuRgFF7jmrirZ4zS2+NFVw71j8P5IE5UXlY0zENjo2avVoOLF95UFgogAi437o=
+	t=1746090317; cv=none; b=uL4fyFDikDfeBHhO6X3/fDq2iLdZicRSf1wNj9EGoVhCn0lQspt5RK2EIbSVy9neXEMNIP14W8kXj9Z8moNdsyeFXFq23XnT3vVdC3d3J4Dz0IxmyAUYB0h2ZSLBZCB6AsbvvTolYhoxnRzqcdQMlcUzN6WjoRWQ60a2kMxkr48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746090162; c=relaxed/simple;
-	bh=aikn57OcPfZo0b/VC1/rLCnMcVQbWV+5P1/sP6OfPMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nSZ0mXzlSebT3ClZN/y89embbYU/5wrInqoCl7+GPcQycxz3XERkb+LCGu47/MZyb6DdGd6hVeKGn9P8YhhObdijfy+D0/LEuCprAZLyBwcJKXNIGzf9pGhzEeoLBosaWC2ke+Ocj02Whn7v5qi26qfkjvfE+3CmoMEiX3kSEzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nnbXBwOM; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3087a70557bso103655a91.2;
-        Thu, 01 May 2025 02:02:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746090161; x=1746694961; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aikn57OcPfZo0b/VC1/rLCnMcVQbWV+5P1/sP6OfPMI=;
-        b=nnbXBwOMhXMrEXrBeNTISwAS6ST4BnjV2QAvaOVYCQq+f+4eJCi7H/binaLrD2/vgR
-         bXV6amjZP7Lv/T3JCNQ20y5zukDL+ea/awojUR/DmC1/83mEWTauXnUpKlfPdQwttt1m
-         mpRLTyF1odkmK1Um0/+BIwp+vQ8HiEshYhQN7P7v77AgfAvz67HQKONeUW1TpKPoYIK9
-         T9TSRlLdWTU05SaJyiikS+WSWB5eVfNrLxU5H5iO0ljCHES5B52XkSCxgb4p/+bhvPSm
-         gSDYXctIWCNr/iis8wnbqj5cH4gx5Tuk9fjipNs/mGCplBjA5DqAUQVsLmTizqeg+wnm
-         57dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746090161; x=1746694961;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aikn57OcPfZo0b/VC1/rLCnMcVQbWV+5P1/sP6OfPMI=;
-        b=JsjAKR2Bf2Vg7E9AMytnkv0JcxFGxJeOn6QVieuwHvjHjYqUTKGZIpx8d/4cYnDtj/
-         sIyBOt7SobA3GsiqXL6ZEXNqDSeSmvzrpEaNkIsWmyHn7G/ndm96Vjg+lpRYoBv/Odse
-         0zNpTwjeZrdn9wnnx9/Y+QRRlsnZ1TzFB1TWRI9GvRpU6hHtFaU8WjfW0Vrty7t5xhBe
-         zQoZF9w1HqeKYVgjg+N4v94JKZaoUbUQSa2miyI5PVUZxnvHAYJddrW4HkrZLXQcyFUN
-         kxesY0CRuhgdw3CgUoXkscyg9BKyU5QVTOM04DI+azJ8DM5zPnsK0vxsDPDDgw1Oz3AT
-         8O4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtccOdG2MHrp7S7hOn4jGk74NmzB6Vkj6RunaupGPB1oDj3THOLw01XZ/k+eI8zSenInOrGo+AIV+TiQ==@vger.kernel.org, AJvYcCWy5fDWOl/WH9hDvOrOjWUxoUiaFBZ4m2+3f/g+tpnZNtSqel+PJunZlo1qL3Q24PV/vetCJLqWF9jkN4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaPBk+DFRErQVUh9rmklzPZy7qCz9m7xVu07o1HLUCNCrd0KsS
-	JdbZpqK+IRGpWU2ICkcGttRpdMB5LaOYrNxIbN/u38f/XxbNstSUIbrOKY2lfD6o5ChAbxOlXWj
-	+j24wNxyEE49Wqrs2VFtYmyalB69Ajl9L
-X-Gm-Gg: ASbGncsIQAnJy0HUK+fT5edl6T66itacfYEwbrdh/7Mxsn6fWc3oHYemXzl8LkqNR5L
-	RPfjlIPpw22F3qW6kbWTvOK05peQ5h2yZAAJP+av8jNqNc0uyp4hCI0PvbeyrmgQz0S1vRM2oDo
-	o32lKgtp5q/uKxW/yzZv4BLA==
-X-Google-Smtp-Source: AGHT+IEynVgXqKj5wZVHQcpTrOK/PaP7IjU+M8WWkEwyezewAJ/95tFY/SF3e+V0ZQ4tVFSzEQucR66JpGlNyr2Ib+U=
-X-Received: by 2002:a17:90b:3e8b:b0:2fe:7f51:d2ec with SMTP id
- 98e67ed59e1d1-30a348d7896mr3408670a91.0.1746090160627; Thu, 01 May 2025
- 02:02:40 -0700 (PDT)
+	s=arc-20240116; t=1746090317; c=relaxed/simple;
+	bh=jJ3F4gM4YJZadTUvKQftbhu43Hg+dCEKGKNWFuxIVJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dvG8hCqJ+CLWDzOl9B3IGjlEvSl2BBNrRSOGo5qh/DTN+Uyv7E6OSSIcjSjSb7ySXAywk2OmOrCT6MIGSx9AQEm1GM+c8sAlDlKhXBoO58ylSPk7kzlPf/hA4OigKCm9jSvEKBNkUlOYsvlTBQ5GCsmdvzyylrbkJSuZjHkLQIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0skiOdA; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746090316; x=1777626316;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jJ3F4gM4YJZadTUvKQftbhu43Hg+dCEKGKNWFuxIVJU=;
+  b=B0skiOdAjMX9JKECX0CdC2Bj61sPxHDs2MXagK47m3i9oIYVj7/OkvNu
+   2sd++yWqRyKCuuKkLGeXy2XLNZarxyF0+kr+1g0M3mC1rc4PB1ku8+5Dn
+   AwcAv4hogm0XVFQgG6UzV0BLnQxX7nVoBnHswW6R1EO+h/HIzCEhxg936
+   hc1awL4Mq/bJ4kbAW4WKWmK4SUAjGYQrxjuXgKoKJhpGkoN7lEhCRQcwa
+   xmNW7aJgd0Y46OzejR+g6RYWRuCo/YqWbWnAZLattS2mFRjzaDbo9CQaN
+   rXuOOm9IZt04CZidi8QOa/BHnlcRkGGpAK4WyNJT7AF6TP6MGVEQa7Oyh
+   g==;
+X-CSE-ConnectionGUID: 0fCQxZh/TKuZIzQOOP5x/Q==
+X-CSE-MsgGUID: rh7Lx0uGRp+A8tl0rw77hw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="58423471"
+X-IronPort-AV: E=Sophos;i="6.15,253,1739865600"; 
+   d="scan'208";a="58423471"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 02:05:15 -0700
+X-CSE-ConnectionGUID: TG3uqsBdTgCIgGcs/DsKGg==
+X-CSE-MsgGUID: 4Vk331fnQHG4Glg4EM+ahQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,253,1739865600"; 
+   d="scan'208";a="139527386"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 01 May 2025 02:05:10 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uAPqt-00044L-19;
+	Thu, 01 May 2025 09:05:07 +0000
+Date: Thu, 1 May 2025 17:04:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: oushixiong1025@163.com, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dave Airlie <airlied@redhat.com>, Sean Paul <sean@poorly.run>,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: Re: [PATCH 2/3] drm/prime: Support importing DMA-BUF without sg_table
+Message-ID: <202505011655.qTmh4UA7-lkp@intel.com>
+References: <20250430085658.540746-2-oushixiong1025@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tAJ0jyptJ0jLaRp9siDw8y2iw3S7GeuC05Uncum-qihlIKfCfEVhQbGNuTengQ0kWpnNp7OoTITxbEdf6nDTCw==@protonmail.internalid>
- <20250428203943.51dd39d5@canb.auug.org.au> <877c344gmp.fsf@kernel.org>
- <20250429174451.42a368af@canb.auug.org.au> <CANiq72kSReDcMU=eezmgsREL5+1FSnq9_VuEd-8AtU86W6UoNA@mail.gmail.com>
- <20250501183210.639f9abf@canb.auug.org.au>
-In-Reply-To: <20250501183210.639f9abf@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 1 May 2025 11:02:27 +0200
-X-Gm-Features: ATxdqUHvvEUmhRCQrVIDL7rvOu76D-SwIoD7BSOceuJajlu_iOzhimfMuCLMWks
-Message-ID: <CANiq72kgPJvGpgUuXE3owxMc5zFuK=wXgmSM5nyKZf8u8+jtEw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the rust-xarray tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430085658.540746-2-oushixiong1025@163.com>
 
-On Thu, May 1, 2025 at 10:32=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> I will try to remember to run 'make rustfmtcheck' whenever I do a merge
-> fix up on rust code.
->
-> (hmmm, no leading tab characters - who knew :-))
+Hi,
 
-Thanks! :)
+kernel test robot noticed the following build warnings:
 
-(If you run `make rustfmt`, i.e. without the `check` at the end, it
-will apply the changes directly).
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus usb/usb-testing usb/usb-next usb/usb-linus xen-tip/linux-next linus/master v6.15-rc4]
+[cannot apply to tegra/for-next drm-xe/drm-xe-next rmk-arm/drm-armada-devel rmk-arm/drm-armada-fixes next-20250430]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Cheers,
-Miguel
+url:    https://github.com/intel-lab-lkp/linux/commits/oushixiong1025-163-com/drm-prime-Support-importing-DMA-BUF-without-sg_table/20250430-170136
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250430085658.540746-2-oushixiong1025%40163.com
+patch subject: [PATCH 2/3] drm/prime: Support importing DMA-BUF without sg_table
+config: arm64-randconfig-003-20250501 (https://download.01.org/0day-ci/archive/20250501/202505011655.qTmh4UA7-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250501/202505011655.qTmh4UA7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505011655.qTmh4UA7-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpu/drm/drm_prime.c:925:24: warning: no previous prototype for function 'drm_gem_prime_import_dev_skip_map' [-Wmissing-prototypes]
+     925 | struct drm_gem_object *drm_gem_prime_import_dev_skip_map(struct drm_device *dev,
+         |                        ^
+   drivers/gpu/drm/drm_prime.c:925:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     925 | struct drm_gem_object *drm_gem_prime_import_dev_skip_map(struct drm_device *dev,
+         | ^
+         | static 
+   1 warning generated.
+
+
+vim +/drm_gem_prime_import_dev_skip_map +925 drivers/gpu/drm/drm_prime.c
+
+   913	
+   914	/**
+   915	 * drm_gem_prime_import_dev_skip_map - core implementation of the import callback
+   916	 * @dev: drm_device to import into
+   917	 * @dma_buf: dma-buf object to import
+   918	 * @attach_dev: struct device to dma_buf attach
+   919	 *
+   920	 * This function exports a dma-buf without get it's scatter/gather table.
+   921	 *
+   922	 * Drivers who need to get an scatter/gather table for objects need to call
+   923	 * drm_gem_prime_import_dev() instead.
+   924	 */
+ > 925	struct drm_gem_object *drm_gem_prime_import_dev_skip_map(struct drm_device *dev,
+   926								 struct dma_buf *dma_buf,
+   927								 struct device *attach_dev)
+   928	{
+   929		struct dma_buf_attachment *attach;
+   930		struct drm_gem_object *obj;
+   931		int ret;
+   932	
+   933		if (dma_buf->ops == &drm_gem_prime_dmabuf_ops) {
+   934			obj = dma_buf->priv;
+   935			if (obj->dev == dev) {
+   936				/*
+   937				 * Importing dmabuf exported from our own gem increases
+   938				 * refcount on gem itself instead of f_count of dmabuf.
+   939				 */
+   940				drm_gem_object_get(obj);
+   941				return obj;
+   942			}
+   943		}
+   944	
+   945		attach = dma_buf_attach(dma_buf, attach_dev, true);
+   946		if (IS_ERR(attach))
+   947			return ERR_CAST(attach);
+   948	
+   949		get_dma_buf(dma_buf);
+   950	
+   951		obj = dev->driver->gem_prime_import_attachment(dev, attach);
+   952		if (IS_ERR(obj)) {
+   953			ret = PTR_ERR(obj);
+   954			goto fail_detach;
+   955		}
+   956	
+   957		obj->import_attach = attach;
+   958		obj->resv = dma_buf->resv;
+   959	
+   960		return obj;
+   961	
+   962	fail_detach:
+   963		dma_buf_detach(dma_buf, attach);
+   964		dma_buf_put(dma_buf);
+   965	
+   966		return ERR_PTR(ret);
+   967	}
+   968	EXPORT_SYMBOL(drm_gem_prime_import_dev_skip_map);
+   969	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
