@@ -1,132 +1,190 @@
-Return-Path: <linux-kernel+bounces-628470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87606AA5E30
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:17:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E43AA5E3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925671897E2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F879A5756
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E71F224B15;
-	Thu,  1 May 2025 12:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464831EFFA3;
+	Thu,  1 May 2025 12:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhnFY0HT"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cS+5bh1g"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4356F1A38E1;
-	Thu,  1 May 2025 12:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1A94315E
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 12:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746101795; cv=none; b=UQ5gpUoxCkXyVzUlJR0Foa8jE0dP9PcooYq7mLh0npYNqlJRphm/LTQz428PlG8+TBcTwYGsIFoWf8Jv1c9oK4b1+ZVjpyyKVcnojiOAHm7no6Edx8016R7Lzit8C/hEdFA5i+Zf1zovpmpzR9owFJ1wIfF5CQz/eS6RJlnWhh8=
+	t=1746101891; cv=none; b=Qpdwun8P3O6cKvZJvmbq6E4gIIC8IGODPj0G9M6bULL4dMdp43JTC+IL+7Dq8Bw3e42Fj3DjY/BHY4OwkZetbnu/YnNQ0TZj1BM8F4FQkjDJlgqzEmkn1HfC1HPRgWWNg31/eiQ/wRSyjJepZF/X5Cna3d66vXQmNw04cMYRpNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746101795; c=relaxed/simple;
-	bh=nOeBrM8FmttskUBqLj5xGML9i1vcyPvUiiaVhZiRmRg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eqAdqVSi+8MLaLXoAMB8AvuS/54nBd0NN5wceGoGuMJDz3nacAKaLxu6u/Xveov7JntCO/ukA9WuN4Mc1mcRC6oIXWeQ/PC2oQpxuMUtZy/fF3CzRvghT70EPib3TiScsnBaqBjjgEL0Q4JwUIwufFhRf+is+XxwZ2lShh64Fsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhnFY0HT; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22e033a3a07so7967725ad.0;
-        Thu, 01 May 2025 05:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746101793; x=1746706593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vXOGQ5mao4U1U8Oq+MKZTKTuI5WoBPPajlDwPtE7mdw=;
-        b=AhnFY0HTNHRZQwhUZ+PGX4acGR3uUvvtmPMH4Txj/sH3o9c2NUwsDvMjff2q6UYQN2
-         USfVQfGV5dspM1rF+Dk3xeS7CLvoUkisdNXbl1OByak75yVEyyq3viBsJIMnwd4ivuOo
-         xWjYrAQp/VxJM4EWzHFwGVmXwKibXMJGmpI1V7OJR8TBKbcZepOtjh0VkMvDNmY0gwLm
-         bIsTftVjEyyoOPbrYgcUNr6hrrHp7d+sVO/UPeWpVaWSblecy+qLay5zrQzUODP6on6W
-         4Cwl/YMAqzXUTKk517I550hZJxtp6odJKeYNyVNJo7hB3LAfIhGgmCQ7usUYLEVM4IWy
-         VpCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746101793; x=1746706593;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vXOGQ5mao4U1U8Oq+MKZTKTuI5WoBPPajlDwPtE7mdw=;
-        b=ZApT6v+AP34T9k3dgF/PYK5IYWnase4LeHFznwBThK1DYZ92vv7Vwz4bIyVAwbsbXe
-         v435YWj1NtGFkT1zRlGn8H77mcB6eH6kW/5myJZS8Z3Fl7DE7yDBeuTOrxJ+Mtvj1rXZ
-         /6s5PhYrxxjmnsH8WKGGkKGjmmpi5EWt3ZwcN5ZCoxqDH+xxbyPff4Eh7uhBKAplX0un
-         xytKUvMQeQ671MGVBtg5MlxIs4Nu2nkF5MAkj+S7Y3d2dA/99m5fvLASrGIcfMimz/3v
-         JCPFv60e4fhiCFHlh3rKtYJU6U0mfKK9xIGb3MDMHpm5NAN0Zsf0x5JaWjOSgoiQsti9
-         oP/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUS92eu0HxeEI82lPR2j1JpndBnJNcvrEXmdxVkYrlTWqz8hNpSecL54tRgRNSztRxkqnoaJV8s0k8=@vger.kernel.org, AJvYcCWT5uDxALJCp92i4YLX9g91qoat6dvqqt8A5mLW4LfRycBly/bLjJTHTTRYBHM0dntWAHaycbap42XWt+Q=@vger.kernel.org, AJvYcCWqrM7I7o1rPfB6u6YLs77fu43rTgZhUMumygsGIOxNcck0GXwSHxGjMI7+/6ZSAd7gHr5+4lSNumKNCtZa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJaF64cMwf2ESitKQvw9wpRt36HUJYRXFLHNHKdHnuJPKotMDc
-	DVEvRiXv4/yPpKjnodSu5VcugV2xEH2Slz9/O3wvv4ipi57BObAj8KFOjunGwKk=
-X-Gm-Gg: ASbGncsTVutkmJBa6SpZ0FQs1mOrDTNwFep3Nvmj/iYLDjIuXWPfqV59RxOeC/6OppC
-	UCaprz1Pz44LmZV3QK/aVqrVrkSxYxVnOI1kQOnwnQcWcMAC+/4Ighii40GAtJomc+Y6010DWi1
-	s9Cs+a7Vrjp6Gn7VjhNu2OhO6IkScmK8GYDMsfMHnMaf4N3b+ZUJHNgTn4KZf6xPljsMWsIcOU7
-	u6qYxngQCykPEtAYz1BdiVSFef4Zv4mpq2LYHG+X76MtncuF4u+vaH4R6b5z02rXVFrDKmIaIs7
-	oBNTxUpIQ7yDRNaEqOyNpP/yOQYAhpvAkn85QXlR9GZOxTJCnKZMs5NXXd4AD1UppRDJ6A==
-X-Google-Smtp-Source: AGHT+IHVFJcUukBU7XlZBWMyMG2pgWT90EdhHWZsX3L93Yi9JAbCmmkasjMLmCVV4UzjIa/Ixi2+Cw==
-X-Received: by 2002:a17:903:198d:b0:227:e980:919d with SMTP id d9443c01a7336-22df35bf45amr100956735ad.47.1746101793257;
-        Thu, 01 May 2025 05:16:33 -0700 (PDT)
-Received: from localhost.localdomain ([103.77.0.13])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-22e0bc6d44dsm5082965ad.153.2025.05.01.05.16.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 05:16:32 -0700 (PDT)
-From: Ankit Chauhan <ankitchauhan2065@gmail.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: corbet@lwn.net,
-	linux-input@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ankit Chauhan <ankitchauhan2065@gmail.com>
-Subject: [PATCH v2] docs: fix spelling mistakes in HID documentation
-Date: Thu,  1 May 2025 17:46:25 +0530
-Message-Id: <20250501121625.224659-1-ankitchauhan2065@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746101891; c=relaxed/simple;
+	bh=UEYdsGxiWN4LlxdLdoU7WEPousnF+dJgvSTjgk7Vx+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZWl4n/NmmkJeWkncmIQo4Pco+YX2r0fzHGg+pvl4JzcP+ORotbo+m/w36NaP9PSqLvSsYtDFKq/wLqmjn2d7/CbIOamzSTCz9Oa+dhvHd27izSxED7i/KDU90SZ8OFFQEEIuK3f7+ZmzebpKF5w4UNCwj07e+DdYP65JFzUt+EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cS+5bh1g; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746101889; x=1777637889;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=UEYdsGxiWN4LlxdLdoU7WEPousnF+dJgvSTjgk7Vx+I=;
+  b=cS+5bh1g9145EpUlPhFFi5ECOfeaX1cXdXN/zikS98mPcc3z+0prrd/U
+   GYoCWXqdTdpcZkl6D+kC+7SL6xR2DGPzZEqBl/eWpPRdasktjFu7iSnd0
+   t7MUGpL3ZqRafU8iD+sJ1lY/kMC8WOJICRc2ShZZXHM+QshjGawKb0J4b
+   2MAZopZfTFMdN9n/UgAEQdOt34h8FrTBBo1KbrW9CdUMKq7S3A6sLYx/T
+   UvLgJXUNhUpjm6N8qZdVn1voNK02WK+UMdUBYcAEUpLFDJfUwa3iTsiSN
+   35IP0eZN/St9BwTz2gvmf8R/JP4NiWdxIZek4i4bn0kshbcHILVFQYdxW
+   A==;
+X-CSE-ConnectionGUID: +GYHOwjYSgWfyrzeGSSyhw==
+X-CSE-MsgGUID: pxLUhaXZSJuZwrsmdmI0ig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="59137252"
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="59137252"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 05:18:08 -0700
+X-CSE-ConnectionGUID: D78MVgKRQGW2mre1auBXsQ==
+X-CSE-MsgGUID: ArCDsaRoQUqUcIMyXw67BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="134870409"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 01 May 2025 05:18:06 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uASrc-00048h-1g;
+	Thu, 01 May 2025 12:18:04 +0000
+Date: Thu, 1 May 2025 20:17:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: fs/bcachefs/io_write.c:1570: warning: Function parameter or struct
+ member 'bch2_write' not described in 'CLOSURE_CALLBACK'
+Message-ID: <202505012019.YvVwRBHJ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fix spelling mistakes in the HID documentation:
+Hi Kent,
 
-- 'triggerred' is corrected to 'triggered' in multiple places.
+FYI, the error/warning still remains.
 
-Signed-off-by: Ankit Chauhan <ankitchauhan2065@gmail.com>
----
-Changes in v2:
- - Corrected change log to use imperative mood as per review feedback.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   4f79eaa2ceac86a0e0f304b0bab556cca5bf4f30
+commit: d4e3b928ab487a8aecd1f6a140b40ac365116cfb closures: CLOSURE_CALLBACK() to fix type punning
+date:   1 year, 5 months ago
+config: csky-randconfig-r053-20231127 (https://download.01.org/0day-ci/archive/20250501/202505012019.YvVwRBHJ-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250501/202505012019.YvVwRBHJ-lkp@intel.com/reproduce)
 
- Documentation/hid/intel-thc-hid.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505012019.YvVwRBHJ-lkp@intel.com/
 
-diff --git a/Documentation/hid/intel-thc-hid.rst b/Documentation/hid/intel-thc-hid.rst
-index 6c417205ac6a..5e0dc51c8d20 100644
---- a/Documentation/hid/intel-thc-hid.rst
-+++ b/Documentation/hid/intel-thc-hid.rst
-@@ -182,7 +182,7 @@ value and use PIO write (by setting SubIP write opcode) to do a write operation.
- 
- THC also includes two GPIO pins, one for interrupt and the other for device reset control.
- 
--Interrupt line can be configured to either level triggerred or edge triggerred by setting MMIO
-+Interrupt line can be configured to either level triggered or edge triggered by setting MMIO
- Control register.
- 
- Reset line is controlled by BIOS (or EFI) through ACPI _RST method, driver needs to call this
-@@ -302,9 +302,9 @@ waiting for interrupt ready then read out the data from system memory.
- 3.3.2 Software DMA channel
- ~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--THC supports a software triggerred RxDMA mode to read the touch data from touch IC. This SW RxDMA
-+THC supports a software triggered RxDMA mode to read the touch data from touch IC. This SW RxDMA
- is the 3rd THC RxDMA engine with the similar functionalities as the existing two RxDMAs, the only
--difference is this SW RxDMA is triggerred by software, and RxDMA2 is triggerred by external Touch IC
-+difference is this SW RxDMA is triggered by software, and RxDMA2 is triggered by external Touch IC
- interrupt. It gives a flexiblity to software driver to use RxDMA read Touch IC data in any time.
- 
- Before software starts a SW RxDMA, it shall stop the 1st and 2nd RxDMA, clear PRD read/write pointer
+All warnings (new ones prefixed by >>):
+
+>> fs/bcachefs/io_write.c:1570: warning: Function parameter or struct member 'bch2_write' not described in 'CLOSURE_CALLBACK'
+>> fs/bcachefs/io_write.c:1570: warning: expecting prototype for bch2_write(). Prototype was for CLOSURE_CALLBACK() instead
+
+
+vim +1570 fs/bcachefs/io_write.c
+
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1551  
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1552  /**
+96dea3d599dbc3 fs/bcachefs/io_write.c Kent Overstreet 2023-09-12  1553   * bch2_write() - handle a write to a cache device or flash only volume
+96dea3d599dbc3 fs/bcachefs/io_write.c Kent Overstreet 2023-09-12  1554   * @cl:		&bch_write_op->cl
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1555   *
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1556   * This is the starting point for any data to end up in a cache device; it could
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1557   * be from a normal write, or a writeback write, or a write to a flash only
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1558   * volume - it's also used by the moving garbage collector to compact data in
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1559   * mostly empty buckets.
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1560   *
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1561   * It first writes the data to the cache, creating a list of keys to be inserted
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1562   * (if the data won't fit in a single open bucket, there will be multiple keys);
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1563   * after the data is written it calls bch_journal, and after the keys have been
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1564   * added to the next journal write they're inserted into the btree.
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1565   *
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1566   * If op->discard is true, instead of inserting the data it invalidates the
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1567   * region of the cache represented by op->bio and op->inode.
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1568   */
+d4e3b928ab487a fs/bcachefs/io_write.c Kent Overstreet 2023-11-17  1569  CLOSURE_CALLBACK(bch2_write)
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16 @1570  {
+d4e3b928ab487a fs/bcachefs/io_write.c Kent Overstreet 2023-11-17  1571  	closure_type(op, struct bch_write_op, cl);
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1572  	struct bio *bio = &op->wbio.bio;
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1573  	struct bch_fs *c = op->c;
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1574  	unsigned data_len;
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1575  
+b17d3cec14b487 fs/bcachefs/io.c       Kent Overstreet 2022-10-31  1576  	EBUG_ON(op->cl.parent);
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1577  	BUG_ON(!op->nr_replicas);
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1578  	BUG_ON(!op->write_point.v);
+e88a75ebe86c1d fs/bcachefs/io.c       Kent Overstreet 2022-11-24  1579  	BUG_ON(bkey_eq(op->pos, POS_MAX));
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1580  
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1581  	op->start_time = local_clock();
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1582  	bch2_keylist_init(&op->insert_keys, op->inline_keys);
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1583  	wbio_init(bio)->put_bio = false;
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1584  
+8244f3209b5b49 fs/bcachefs/io.c       Kent Overstreet 2021-12-14  1585  	if (bio->bi_iter.bi_size & (c->opts.block_size - 1)) {
+7fec8266af12b6 fs/bcachefs/io.c       Kent Overstreet 2022-11-15  1586  		bch_err_inum_offset_ratelimited(c,
+7fec8266af12b6 fs/bcachefs/io.c       Kent Overstreet 2022-11-15  1587  			op->pos.inode,
+7fec8266af12b6 fs/bcachefs/io.c       Kent Overstreet 2022-11-15  1588  			op->pos.offset << 9,
+0fefe8d8ef7402 fs/bcachefs/io.c       Kent Overstreet 2020-12-03  1589  			"misaligned write");
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1590  		op->error = -EIO;
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1591  		goto err;
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1592  	}
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1593  
+b40901b0f71825 fs/bcachefs/io.c       Kent Overstreet 2023-03-13  1594  	if (c->opts.nochanges) {
+b40901b0f71825 fs/bcachefs/io.c       Kent Overstreet 2023-03-13  1595  		op->error = -BCH_ERR_erofs_no_writes;
+b40901b0f71825 fs/bcachefs/io.c       Kent Overstreet 2023-03-13  1596  		goto err;
+b40901b0f71825 fs/bcachefs/io.c       Kent Overstreet 2023-03-13  1597  	}
+b40901b0f71825 fs/bcachefs/io.c       Kent Overstreet 2023-03-13  1598  
+b40901b0f71825 fs/bcachefs/io.c       Kent Overstreet 2023-03-13  1599  	if (!(op->flags & BCH_WRITE_MOVE) &&
+d94189ad568f6c fs/bcachefs/io.c       Kent Overstreet 2023-02-09  1600  	    !bch2_write_ref_tryget(c, BCH_WRITE_REF_write)) {
+858536c7cea8bb fs/bcachefs/io.c       Kent Overstreet 2022-12-11  1601  		op->error = -BCH_ERR_erofs_no_writes;
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1602  		goto err;
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1603  	}
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1604  
+104c69745fdf7e fs/bcachefs/io.c       Daniel Hill     2022-03-15  1605  	this_cpu_add(c->counters[BCH_COUNTER_io_write], bio_sectors(bio));
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1606  	bch2_increment_clock(c, bio_sectors(bio), WRITE);
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1607  
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1608  	data_len = min_t(u64, bio->bi_iter.bi_size,
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1609  			 op->new_i_size - (op->pos.offset << 9));
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1610  
+07358a82bb36ff fs/bcachefs/io.c       Kent Overstreet 2019-11-29  1611  	if (c->opts.inline_data &&
+07358a82bb36ff fs/bcachefs/io.c       Kent Overstreet 2019-11-29  1612  	    data_len <= min(block_bytes(c) / 2, 1024U)) {
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1613  		bch2_write_data_inline(op, data_len);
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1614  		return;
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1615  	}
+4be1a412ea3492 fs/bcachefs/io.c       Kent Overstreet 2019-11-09  1616  
+b17d3cec14b487 fs/bcachefs/io.c       Kent Overstreet 2022-10-31  1617  	__bch2_write(op);
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1618  	return;
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1619  err:
+4b0a66d508d7bf fs/bcachefs/io.c       Kent Overstreet 2019-08-21  1620  	bch2_disk_reservation_put(c, &op->res);
+46e4bb1c378248 fs/bcachefs/io.c       Kent Overstreet 2019-12-27  1621  
+b17d3cec14b487 fs/bcachefs/io.c       Kent Overstreet 2022-10-31  1622  	closure_debug_destroy(&op->cl);
+b17d3cec14b487 fs/bcachefs/io.c       Kent Overstreet 2022-10-31  1623  	if (op->end_io)
+c32bd3ad1fe595 fs/bcachefs/io.c       Kent Overstreet 2019-11-11  1624  		op->end_io(op);
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1625  }
+1c6fdbd8f2465d fs/bcachefs/io.c       Kent Overstreet 2017-03-16  1626  
+
+:::::: The code at line 1570 was first introduced by commit
+:::::: 1c6fdbd8f2465ddfb73a01ec620cbf3d14044e1a bcachefs: Initial commit
+
+:::::: TO: Kent Overstreet <kent.overstreet@gmail.com>
+:::::: CC: Kent Overstreet <kent.overstreet@linux.dev>
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
