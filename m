@@ -1,140 +1,128 @@
-Return-Path: <linux-kernel+bounces-628490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C905AA5E82
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A596DAA5E93
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECFB1B626F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBEE39C27F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CC322CBD9;
-	Thu,  1 May 2025 12:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F19C2253A4;
+	Thu,  1 May 2025 12:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmwzTU+9"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O50tyarb"
 Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7147224AFC;
-	Thu,  1 May 2025 12:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B8B224B15
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 12:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746103042; cv=none; b=RK1id9o9NQc1tLyRQ8GTdb6cc31B+AP5T+eVvp0J99oLysuWyaqT95AoX2X/BMkZu4RWSdpsxvlnWoGUdHKGJSvRenYpzCwVCbvGp3YynX5KKXYMqlUU4FObHQCOdBedUGe3/1U/nAyy+pbsX3snAu/XtbumyD1zZk6jthk11eM=
+	t=1746103126; cv=none; b=IRlcFQfvHsdiL1H4pxOMIsFZ0NU712R46J4sehlnEmFjvdnDCgKVO8rhoKvjimLim5skGA27yZg1Ecv8ko8A1s+JsABvvd/V9qRmNk5UJ9I048lx+d3vkos6Vq3uipp0K60v+SDrWNhfP57+2I2edsRsI8yZ8eVnFbUG8nRuVWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746103042; c=relaxed/simple;
-	bh=Jt/bhCUtQhRuKq/brWUKsM1yeV7e41XOn5vG6Q3Rv9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cW7P7l1LLlnLjkpz+FXvyzGFFRNfimqIWrfmUc+Yx8FaeT7ASDXnSG1Ep5v/CvTMficK70FZ4DIVJCKN+21wCTkTSEY+EKUENwla9WzQYW8+9uGdZSj03+VgmMNz2fcEVTvnK5EP0zFlFxxK319QRe9qc9PAXaTokmdmqKSX6r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FmwzTU+9; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso3170845e9.0;
-        Thu, 01 May 2025 05:37:20 -0700 (PDT)
+	s=arc-20240116; t=1746103126; c=relaxed/simple;
+	bh=4sxWwKfM9MM7i7HEgmm3EuU9czAYD4Fqqroj1jSsAKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P33Swxqd+qE7U7Q2aSx84rm3dyR6ohCuXz3uiwVG8Xk5l5TefIA9I5JrvFOCMaHpFXe4kypbeHTn/C7bZzMaTrSlvmq1B4BAU2u4l7mr/IF4LPKWVDckUxEk8Is6Q+lGur/1R4DBWyFE+5RvBxxzdCRwgw99Csz0mszEmuSim4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O50tyarb; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so5250975e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 05:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746103039; x=1746707839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TgNFNroZGE50So2AWpgZdGIy0x5cNaOcuHUkn58CMQw=;
-        b=FmwzTU+96RuYh0Q4haG5h4VSn68r+GiEgDtXby+ZeIIPCkpd/GFFqg6xG/SXD4cl+z
-         em2NgxF5ITRvd1s/li+jyR0acs8/R/t1R2bbj4xWmcu5l8ayCFALiSOn84P36wKQ2oIO
-         pGvxHkvYBuypcYyxkQBHsvbprISQEN/AilSFnsSQSVyL9JBKkoIa4YvveaehWyrIfDZh
-         /uy/KZHkeqU94TkqzSj/Pz4veZOG11I9E9Zdy2qgWghJwnWFeTviUyQo6Qs0vGdWPWH8
-         81SNXZpj8JQgtaMU9020G/dFEByqDxsBkCSChhuO7/cMZGd2LZqrO41Ur8/spZJsSaTp
-         6hnQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746103123; x=1746707923; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sm7fH/v8m0Z+i39l/2fi4Am/T5LmhFAbr6DYK3zAgKE=;
+        b=O50tyarbKm4Fll1hfAb+tLrCDMjkqWTQcVRKgk7+TSsC4HMRyt4ZgGVGhWExYEjYvR
+         EKYVfZuUJ6SQxoqLiy+3tzLaIJ5/fYBL8MbNwzUTd6E/eBGyvZQQ/MzXhB27dmdxZBUx
+         gu7mQm5vQ7ECFFOA4p8VY8XK20IdHMYCLXF6ZtD3kb+rHmhJsaGkBr2Z+49ERKaBWHly
+         zWTDZTrGDFwvpcTxRxEYVUQYsHherSqvj/u8eTg+D7ASJ5/FmYzaJepZPxjDT4Wq7TLn
+         OJJ/14CyoRgLKtVLb0YO5GGer2NNbDM39ylzoe1AK3l49YYvCEbW7DmuM5ii8jCHpTfP
+         AOLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746103039; x=1746707839;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TgNFNroZGE50So2AWpgZdGIy0x5cNaOcuHUkn58CMQw=;
-        b=C0vGjng0+jfwCRz6jwk09iJDEA9Bt0aoITHtY+DcsCibZoXjPjkHgn91vtmjG6/YPs
-         SoUa3TBnFoEfGkR5G68AX7x/7Vx8ERhzQfVzM/3BGceo9eghbaB9IkzC4+OVklLVctA+
-         tqqALNqFyubNOvwD0Hrf208R/R6u3iMMYlL6UmAt3jrjWg1zwPCdCwEIRVZvGpucoqTd
-         theTCQShmgGmf0Xaj34VU0Voir5SGr6R+MqoSVMc7HQ/CW4MGYvpDuqgox93tWRz4puZ
-         jrCVTzqRwuDzR5a6ykWUldnWZLmMoy7Dj3WA4eZRjKZXeI5YCrvkug08RF37sI+ZUZop
-         n1mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqdVN0+Hx7/UvwBgap99g53KkGsXK3O3ltRDVXwzNECpIkEUECpJbBiExsr7h9kcs+pUQG9zpqamVEGLV43h1ytSo=@vger.kernel.org, AJvYcCWYa6YjSAGLJxt2t5G0xJLHCTEmAxWxOrIe3mMq4rbZqZw4YnP1pYcstyllf/0BF0fcQcuMRjPR0jdl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNH/gG7ADJsHsTJWi4Mj/qCpp1nWU2geeAOZHUxSz13heRhvhr
-	KfoRlFU3sWzvnTyO/FMFx4uFrs1OvPPpW9wLO74rvbFI3Jzx+2PP
-X-Gm-Gg: ASbGncvmZni+dEJeG+9cF4WGP/CA6vagk5iJ7xPw2jRGD37mTTuIJyFhbwtMHOU1n7/
-	69nuLR/k7zB7QgzxG0WSpeyPfV6PUyfFW7VV2LS0s0G6bykVczwaD02P7PwA75FXHwgszLKcvCx
-	LkajSykUjgDw/R3ceKc1bHcP+g7yVDcQL3KhkZ/JxaqDzsvORbzST2kLAFEM4uFOZha4iuNsF1o
-	pUdiX8Zv+baUaqiWFjQWrOjytTpaXUyeAWEaIRZQhUW5p+ZG7TFVbqzDCHiHJvjz2TXnitvSXH5
-	ls/3CKBIfEDIyLZ1Eqo1b1tk2/XlgHKbc58E2bWYFRBAvIOyNIDeWAJ7UU3stbmRGrwCREsQ5DM
-	=
-X-Google-Smtp-Source: AGHT+IGZmSJD1oy0UDx7tiBsVyBgeklEmdSHp8LD1zMwNv+uQkPtE63Em2e0OxJJDKeaXfUi9AR2yw==
-X-Received: by 2002:a05:600c:5128:b0:43c:e6d1:efe7 with SMTP id 5b1f17b1804b1-441b705a882mr13841645e9.26.1746103039065;
-        Thu, 01 May 2025 05:37:19 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:f0e:4490:d947:2c92])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b89cc469sm11144765e9.6.2025.05.01.05.37.18
+        d=1e100.net; s=20230601; t=1746103123; x=1746707923;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sm7fH/v8m0Z+i39l/2fi4Am/T5LmhFAbr6DYK3zAgKE=;
+        b=I/D2KPVBWz5f1N4YZ+9PHQuo4+Q2oCL1O5pGOqEbNdfRfajlKMI/BiM5yyedmqqqWq
+         MgQMTjV3mK2OVyd90jVZI1X4ZFY5+8LrRpW2zZH3wsW00PshdlEYrTpS4ifXjN17Lpvr
+         IpN0rukn9uaSMLhMXXZGo+cGDHktAaYq+h6Pi9CXvDyHWRIh0OaM124cuLNf1IuPa2Y+
+         HrL1hJzdxPIfAJ4glqnQxnz26AlIBLuMlc4GkQxUEVnD5plctYRlNEfckKL/5rKw094S
+         bMxfNtZqlrU8a/E0GBxUjUy1zInammU/7VvdQLeXQjG4jNxilCt20EM172QIHxRPKkZk
+         P+Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUn7h8NqOvRSiOE4fNIyFjSYnofefT+tY2vEt8bbKVBAP9gi86uY5+GgaTmyNYG9wwmfkyuGb7UGkntrYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx/tgO5RRo47bc7BzdmE4VdL0MEXHLcq0JTC+LAt6r+qunGcgg
+	vkZ1b6H8mzth9AK+awk5r4N1Pfg6NuOqgk6/7OqrkoKuUGims1Zxxhvr1/DaWfo=
+X-Gm-Gg: ASbGncug54MUcb1HgBCOirHTjOEDFRtcKfZoPPrMeg37IJJA3A1kpGQtPH2BOkM3g9L
+	SyBANk+gTr/bj4f6iLNEtkzeNziH/JQlhV8+aXgHg70bFocGcCo27vRcROR84kGaRqY0ZK6rHik
+	y3XpI7GV6xiDVpI7pNRFCfGGl48zKmH3NbHcBsGs85chvh4e8PV0gzCWHgOU/VCqdzNeJVS5hmr
+	QmoQyiGA/mCoB0ig0+fn+gmXXw+TeeSjfZRNCbeCjaiSZuIJJW0HYDpWsc1kZ/OXWMgjP3JoUjh
+	VQUqQoYdZlHkvVDyF5OHtPkmLjWkuZ2WoiF+uzGdBZo2EtkFU5cf7Qxq5BF+70mFA1SX2tapXdg
+	q/Km4znU=
+X-Google-Smtp-Source: AGHT+IH/kEW2qU0NPr09x71pmesuZI0svNhYFSmpO2QEjZI5N9EoSoHJzC02SedbPOuY7Q2caEVC+g==
+X-Received: by 2002:a05:600c:1c1c:b0:43d:54a:221c with SMTP id 5b1f17b1804b1-441b7009073mr21364735e9.18.1746103123359;
+        Thu, 01 May 2025 05:38:43 -0700 (PDT)
+Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b8a286b9sm10834395e9.28.2025.05.01.05.38.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 05:37:18 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Chris Brandt <chris.brandt@renesas.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] clocksource/drivers/renesas-ostm: Enable OSTM reprobe for RZ/V2N SoC
-Date: Thu,  1 May 2025 13:37:09 +0100
-Message-ID: <20250501123709.56513-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250501123709.56513-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250501123709.56513-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Thu, 01 May 2025 05:38:41 -0700 (PDT)
+Date: Thu, 1 May 2025 14:37:31 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/5] iio: adc: ad7606: add offset and phase calibration
+ support
+Message-ID: <hrpkszwhww7zftp45ipbadwqmx36rrrnvdbfphj7xkbtnfegth@arou2htn22ec>
+References: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
+ <20250429-wip-bl-ad7606-calibration-v1-3-eb4d4821b172@baylibre.com>
+ <aBIcgxcUHXRpd882@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBIcgxcUHXRpd882@smile.fi.intel.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 30.04.2025 15:50, Andy Shevchenko wrote:
+> On Tue, Apr 29, 2025 at 03:06:47PM +0200, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Add support for offset and phase calibration, only for
+> > devices that support software mode, that are:
+> > 
+> > ad7606b
+> > ad7606c-16
+> > ad7606c-18
+> 
+> ...
+> 
+> > +	if (val2 < start_ns || val2 > stop_ns)
+> > +			return -EINVAL;
+> 
+> Wrong indentation.
+>
 
-Add CONFIG_ARCH_R9A09G056 to the probe condition in renesas-ostm.c so that
-the OSTM platform driver can reprobe for the RZ/V2N (R9A09G056) SoC. Like
-RZ/G2L and RZ/V2H(P), the RZ/V2N contains the Generic Timer Module (OSTM)
-which requires its reset to be deasserted before any register access.
-Enabling the platform_device probe path ensures the driver defers until
-resets are available.
+code is correct, i checked it since also checkpatch claims for bad
+indentation, but i just have 1 tab after the "if".
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clocksource/renesas-ostm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
-index 3fcbd02b2483..c9919811542e 100644
---- a/drivers/clocksource/renesas-ostm.c
-+++ b/drivers/clocksource/renesas-ostm.c
-@@ -225,7 +225,7 @@ static int __init ostm_init(struct device_node *np)
+Quite strange, where could be the issue here ?
  
- TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
- 
--#if defined(CONFIG_ARCH_RZG2L) || defined(CONFIG_ARCH_R9A09G057)
-+#if defined(CONFIG_ARCH_RZG2L) || defined(CONFIG_ARCH_R9A09G057) || defined(CONFIG_ARCH_R9A09G056)
- static int __init ostm_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--- 
-2.49.0
-
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
