@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-628713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2BCAA6175
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 18:37:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D01AA6176
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 18:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C249C495A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 16:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402F84A7AFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 16:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38342153C1;
-	Thu,  1 May 2025 16:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E491219EA5;
+	Thu,  1 May 2025 16:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HR80fJPs"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hph63/L9"
 Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7397920DD51
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 16:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6752144B4
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 16:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746117443; cv=none; b=KEHCmk5PwU/z8mPeXprjiZ+93b3KhbM6kDkQRVTCDVPr9DL2u8rm6K3qYrXyttrqT4qB0UBxSYjJgupxjq3q/FVGnnQBzwPEs/INfiJ7ECqRktN8tk9ZQJXsyx50oPbx+0PY6JdHO62MUQIqonPS+KffAbV1gPZc7nUU57bsnxY=
+	t=1746117444; cv=none; b=hVkCaH62TxTJvdagB1gL7k1NtU1wOMFDtmNBsfUM+KkyP71Ml1N9agUrdPf0a2nqSE+pjwXnEYM9DJi4dO+gXWTuvkzTBHp3Wozmj6vzcjQldg8r3UVt0a+qj1qfh8nQML35bQZFfPqJ/P5eSm5w1wgAB8+uln8JpT2evSxVuUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746117443; c=relaxed/simple;
-	bh=wSaZtA4bRYZs1G8waYvshbkAD9TzfZ9GbMZQt0pldJQ=;
+	s=arc-20240116; t=1746117444; c=relaxed/simple;
+	bh=br7GZJo/Y+jEEdWoRzjynfLSYE2qWMF71yGrpCFWlfM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iKhDtG9tXqrNffD9xW3Z7WJIQRgEk8r24PM8T0deXLiMhOck4S/XCMd/mO4dEKwQ6LrMUqdAbXVZdadj3H/h+SoO2YJj5HdHmw/BGzuU3OiRMHQ9SRtpzHJTXCrTqlGHpeKEllN3hrpCmAKrLb2M6fPmRYq9mbPScDS0ziddXT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HR80fJPs; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:To:Cc; b=SKG0A6xZeQvDKQp0Lb7GU9CHxOadCNwvcuZpTiRamNngMBZ26CI2dQbPGc+7lB85/tNJtSNS0Wa9cwB6jdVXSbHzOXiyExi03c8fEdviYUP5jptnfZR7Ss7HALBOPwz/qoXKqe3faKQw2f5Td9Xcp1j3uQh7o/EFdlfER2qgEXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hph63/L9; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf89f81c5so1443195e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 09:37:21 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ce4e47a85so1641495e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 09:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746117440; x=1746722240; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746117441; x=1746722241; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9P1m7Y3z4d9rNoWAl6MknfdebV+lwfWdrXlwW8WNKhI=;
-        b=HR80fJPsyFPKEUQRwbA00bCr+qB95bBuFSLflfSJbO6paKVShE0VmL9AhgFRoQoCZ7
-         +u9+8MbyA6Pr5KiR7/cOkoz8v6VGurjKqCBmC8+twY5j9xlNoYsQqDApRaKKZcSGx5Ed
-         ceGnTaM3zsLtO0iZ0OF0iMMd1jjPj8MR/LWfHd6yfHtTNBzV6GbT72E0aqiV6T7T1clB
-         n6crbVUNb3NQxgRoqGBOFfxuj+FYYVO4e/Agk6aWLB9UMyUh4mofMxRrCpK9C6iKJfe7
-         Lgn8f0EW37YgFlVtM9QnDm1rRlmG4zmv3R+yLkxZqSZpuOMk0ccU2GkEchp0Q9SWi3yw
-         ZNSA==
+        bh=+72BTk3p7hLtQaCti3cuxoq+C9cJepOLj5FSJpxepws=;
+        b=Hph63/L9K/0eZ4ctbNXJnIlTmAHRyCgAFf8dWpy+icmnvFcT4DweeYiffQ9NKwFMTd
+         /QkQK/ds+3yQQdESWVFbFRYq1F1crmEM6HW5msLFPT5cCyVbWRm99Ert3KLLxThcTNmn
+         pF1AqcKdb41xNjXBpNzpVvi4m5fHwlCXvR07txFHAkqretCQZYTlvtrVTrcWANAHTEHx
+         Cjvntc3iTt25sZxECNoon20SuJYx4OgW1H4LKEidw5TFy7XUS4Knvxbf1WjIXHcY8zBK
+         8/8RbKGhrX9WxoxQJ24bAiRG/zMRbfrqqukrZRh5PBSEAuVkmtyUFGDHj82aitdQPRQh
+         P4TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746117440; x=1746722240;
+        d=1e100.net; s=20230601; t=1746117441; x=1746722241;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9P1m7Y3z4d9rNoWAl6MknfdebV+lwfWdrXlwW8WNKhI=;
-        b=sDryqGG+GmKQtoahunP1C+IFoVtH5M4PJurt2/0DM/mOADCqq5gXAq6I/8yqwe4Ih4
-         NhxtEcxO5/JnJSZar6q8kf493X+shRAZhSwt2ucfg02xvg1iq6D4kep1aBLaLGgZ3qPh
-         Hh1hhW2NYKZuC7G47sAD0Utqp/Woiu7IDFh6+IJ/BsvMJ5drIP/FzbEBYlQOLr/94op0
-         ilx8iRILcKeE8ftJy7yGeQgVi3gVCFfcS1pEcN9PJznCfGnZiyV1qGQa52Tyg2byvjfF
-         g8CiB6wHgnht3DgfD0MLLjwReHwnIkQh/nQQrfDg4iP0UokEBRFcMn+MLOQFzqFeIxlg
-         F6aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZX6nNDoLg4/n+Isx1lkDj3p9jsKt5WcTHOZUX/mY7HwslCh3SosMUicl26JPsBuB+sI42zlx5aK3dcw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKFsXW6nmcNhPApLXx5UIOD5VOAERDu6rbIi3mhi//r7SCjouV
-	QMlsSYekr2UAIBAxpPcVHXMeJEvlmahtwmy+BaFefomqEPXB0+FeP1D5WT93hqM=
-X-Gm-Gg: ASbGnctBqY+IO+TXupp8jMHWBle2CDuHDDFbABOwMI1ahSxhqs+VfrEyVEAe1AVXkca
-	7qHRiu4n7UQBREHTFbR+jLjXBtTCtPUWii6OqCp3vZYags/7nmBxMhmjB9NlvhvayjR3JUtjdK2
-	f4oVgzhO+uP6XDCBn40e6OsN7nh8JpbG66GIGPNzokyhY76ADhvibZ70xGUIxe4/9Xtg+14WZ6B
-	7Fv8BsZ6a7aUUEgVUdx4dX8UnvK4Qbryuv8k/W8FcS8LNpU7EF4K1jNjPrTxJsxB++81HMUPFa5
-	APSl0oAczCyXHrEwy+GpU1jqjkg9tM7YoI02op/0MsZbsoRL4kVWvg8/HNc=
-X-Google-Smtp-Source: AGHT+IGPpDqg1uqE8LFEWwLX435f56VDxCANn/R7sh63I65f2yRV/LXQryCMvr0tRZXQRAMZb4Q3cA==
-X-Received: by 2002:a05:600c:1da0:b0:43d:fa5e:50e6 with SMTP id 5b1f17b1804b1-441b2dfce81mr23814815e9.9.1746117439733;
-        Thu, 01 May 2025 09:37:19 -0700 (PDT)
+        bh=+72BTk3p7hLtQaCti3cuxoq+C9cJepOLj5FSJpxepws=;
+        b=MUwXkHH2UG2fOSvE1kNSXK2LTotEHzgllpBAtNH3bD0eNbafugfdEc92pYDsOatd2G
+         RN3QEDNDgUY4SDw1iLGY54D4LCgrOgutkRIyGLUB+Pa/b9B0YpCFEbsEOHpWUAE4k3D6
+         RWEUHMcrkWzucIgGtHDXYCmQzLd2dZcqDPG/4RjrdHMi+y1J4RXLOY81PCsnk3+QxrW6
+         c657/UU1++33pull2/9SIJ8O4RobZWqD7GcTOZoG9Oc0ewhDR30EwvFyutv/y38rrUU9
+         XfepC4aSJtYz0FO/lcUwMAqQ8eBjcr9vpPYP94PxmNxk/FWVg/28hinTELnoSNqT7FoU
+         s0SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmlW375lgIw1WqnrWo6ND41RD7ZCJfyZZq7sZE5RRLssnFycYlTVWs8X49HO8xKlnN0mp7cJA6kx+B9+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3pgOJTJijOOiEiVXo1DTsKAL2YVzrtAAwRXdikOGnknoNjnv3
+	nsS0Qc+uV2I1UL36H/p7gZfqLU+BhVoq71iJvASOPgG3laS8rWbyOpWBn6CGhKpgYHB0lRWMF0/
+	y
+X-Gm-Gg: ASbGnctSgESzJAR7/rCDXMWYQr80cU6fVLlTc7wPjrWQAPeBZqOTxv9JpX3wz+AL8Ej
+	eyB+3HCS0dPtJtRyjVI+SfgAeOpBQI13giokEH6aMREb8YgQfYcsRdCSExSxqfYzQxrN895C5GF
+	VnmOCcovLa9i+bVDchOeOsNMt8I2eZmKaCXvplqybCOtyvttLkOxyGSoSQtWIPQVIp0Keohwp4i
+	9c79eN5bZBl02OThGHuFc6O44zSRcvnd6n1BrVUQYZU0vAjdSklNQbkZ2OV1C4xkU6BOkIrWmuO
+	qQQWWN3Hra0PKtXGbTGUaVIEQI3F+s0LcJw42INTQhgJH+COnCXzP3IGeP2t4MkuXQlBnQ==
+X-Google-Smtp-Source: AGHT+IFZ4wq/YC5Z8Q1DORspcfBal0TXZZSb4qQ5i2LX5qoWo7ODXYSBY0H6naDeevzu7XX1zCwGJA==
+X-Received: by 2002:a05:600c:8712:b0:43b:c962:ad29 with SMTP id 5b1f17b1804b1-441b2c6fe2cmr22011025e9.1.1746117441032;
+        Thu, 01 May 2025 09:37:21 -0700 (PDT)
 Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b8a288f0sm17166175e9.27.2025.05.01.09.37.18
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b8a288f0sm17166175e9.27.2025.05.01.09.37.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 09:37:19 -0700 (PDT)
+        Thu, 01 May 2025 09:37:20 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Thu, 01 May 2025 18:36:56 +0200
-Subject: [PATCH RESEND v2 2/3] iommu: omap: Use
- syscon_regmap_lookup_by_phandle_args
+Date: Thu, 01 May 2025 18:36:57 +0200
+Subject: [PATCH RESEND v2 3/3] iommu: mtk_iommu_v1: Simplify by dropping
+ local 'mtk_mapping' variable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250501-syscon-phandle-args-iommu-v2-2-5a3cab296972@linaro.org>
+Message-Id: <20250501-syscon-phandle-args-iommu-v2-3-5a3cab296972@linaro.org>
 References: <20250501-syscon-phandle-args-iommu-v2-0-5a3cab296972@linaro.org>
 In-Reply-To: <20250501-syscon-phandle-args-iommu-v2-0-5a3cab296972@linaro.org>
 To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
@@ -94,65 +95,66 @@ Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
  linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1817;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1469;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=wSaZtA4bRYZs1G8waYvshbkAD9TzfZ9GbMZQt0pldJQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoE6M3dTz73g1hTqWpvm/RlUFFBhL88fh777FAU
- nRWt/u50OyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBOjNwAKCRDBN2bmhouD
- 14/1D/9qJJTAa6KNC4lnTB/UEBpK84vmumCpWTc11C3ByO2evXS29s7m1n4ZeLfrGzcrMmdIgev
- SlymAyZt1pL0HRWKb2lPzosqnhTpPMroFJltOQ9ZFiF89RGR+52847bWlrO2T3QhduCvBENWNcy
- gJucPsQ8IV8FsulSEYNSyk7wZwOD/zeCQrJg48ra6dJp5RBwKVfeVxMUKVb5BQ2U02MJZXCzvRO
- LJCgJhHs0cGBC8XRiTjCH0pc3PDZTlbUt7WyCDORjp1UzLrN7p3y2+rACVlW3Fr7gmGIDq/tRv7
- h6De2LgeQeZ/Jk4wRgQauPk+kOxC70aMXic7LzQ9zoe+FxBirV+x7veEsey+NsrDVCcUbNJQzlr
- w0FaKE6Tht0oesmD+iI4sETbNNt55JdQ8i0l3MkG0PAmKwSnFWT3sfCl7+ZBowY0j8b84fZQF/f
- P2fhWwsYBcxldooG/RmK9pSJYh0zCpTf7gRLFpoGELfB2PTRsXnjbqJFKDI2GfKxaRcNl4vPFcW
- 6T60C0sLDvFfESa810o+xYVTroMqojApfAcU661dCx5WcdE/EO2UtOnX1HVCENEXYpM6GxArbJS
- r1ta56HmrhLEoAqeIamYOzHSQIRL05dpIQPQJWm2Nlc3B4sySF5cuV6D30iUdELbH/fX2yQedfG
- 3ZTINBZ555xaPXw==
+ bh=br7GZJo/Y+jEEdWoRzjynfLSYE2qWMF71yGrpCFWlfM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoE6M4CJameWdIEbaKrhQD0ut81+1BXWRWUnwFO
+ 97Wgb7lxumJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBOjOAAKCRDBN2bmhouD
+ 14SOD/45uy0MY8VGk4ZvKE/H0R7CNE2ft3oLP9XOQRzm6XJHx2Z9QXmTT/RSuKn7rZ+bMTOw+Ir
+ GPQ0iGcxYbbvzawOd5YGQVIPk0Zb1+shoVoyBFJqmuoRll36W3jRmfIN3GL0YaUjZhpnA1jcZAy
+ TTuqnfYHXInALgDOecbSNWc79Uy8+ClQ3E4L+KOy4pdGjft7nSX7JXTtTXy37QxGkhpekH0JM5e
+ Ny0iwkeJTtgXi7Exa1K2spOHRlROyoBC4SbhIwSnR1ht7QkzuV/dDELMLU+rjhbANXDRvhLD3Vu
+ jzqfOzDuiChfqmVO8WAS80b7a7MORPmXVhl/foe3JeyXchF2/AdA0IG31LiCwkryPkD2k75l3rn
+ CEazjbiTy4jsN8ZLcGWs8/1s6FpePznAdTmg4Xwg85K+Un2AibmOI8+XJXVQYQflmXwe2cvAcxq
+ dYBhTZwXoJ+HdUEjmJpq+DC1veARGn0blUPddRTXMqveUNQP6ieZY53tCYDKJH3dsXH3cU+rmSn
+ 2touTUB0YumibIzZdFmfF4BKTwSMHWDE0A4ZrLuaeQ2PdEdjI39x0BCE2NLbYI+Ra1JtWEZ7mgq
+ vVTfWQER71C4Hc8d4JZLENH1I4xL8uQFlnxuZ0maHo0+4z4H03ObcnJNhOE7y1NWCKkOEVpBT7F
+ DmneETwpwZMjFiw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use syscon_regmap_lookup_by_phandle_args() which is a wrapper over
-syscon_regmap_lookup_by_phandle() combined with getting the syscon
-argument.  Except simpler code this annotates within one line that given
-phandle has arguments, so grepping for code would be easier.
+Storing 'data->mapping' in local variable in
+mtk_iommu_v1_probe_finalize() does not make the code easier to read.
+Use the 'data->mapping' directly.
 
-There is also no real benefit in printing errors on missing syscon
-argument, because this is done just too late: runtime check on
-static/build-time data.  Dtschema and Devicetree bindings offer the
-static/build-time check for this already.
+ARM64 W=1 builds also complain with:
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+  mtk_iommu_v1.c:512:28: error: variable 'mtk_mapping' set but not used [-Werror,-Wunused-but-set-variable]
+
+but this is not being fixed here and 'data' still won't be used in such
+compile test.
+
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/iommu/omap-iommu.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-index 4448c0a512137c79195112eea25d762266c77bc3..30fdbabbc9c652990e6cd31d3c0a1a06633df9e6 100644
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -1127,18 +1127,12 @@ static int omap_iommu_dra7_get_dsp_system_cfg(struct platform_device *pdev,
- 	if (!of_device_is_compatible(np, "ti,dra7-dsp-iommu"))
- 		return 0;
+---
+
+Old warning is change now to:
+
+  error: variable 'data' set but not used [-Werror,-Wunused-but-set-variable]
+---
+ drivers/iommu/mtk_iommu_v1.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index 66824982e05fbfdda224276ad41b90f9d5f9ca4e..bbe3e9d901c69ac6405d9549a4481fc80f1adb80 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -509,14 +509,12 @@ static struct iommu_device *mtk_iommu_v1_probe_device(struct device *dev)
  
--	obj->syscfg =
--		syscon_regmap_lookup_by_phandle(np, "ti,syscon-mmuconfig");
-+	obj->syscfg = syscon_regmap_lookup_by_phandle_args(np, "ti,syscon-mmuconfig",
-+							   1, &obj->id);
- 	if (IS_ERR(obj->syscfg))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(obj->syscfg),
- 				     "ti,syscon-mmuconfig property is missing\n");
+ static void mtk_iommu_v1_probe_finalize(struct device *dev)
+ {
+-	struct dma_iommu_mapping *mtk_mapping;
+ 	struct mtk_iommu_v1_data *data;
+ 	int err;
  
--	if (of_property_read_u32_index(np, "ti,syscon-mmuconfig", 1,
--				       &obj->id)) {
--		dev_err(&pdev->dev, "couldn't get the IOMMU instance id within subsystem\n");
--		return -EINVAL;
--	}
--
- 	if (obj->id != 0 && obj->id != 1) {
- 		dev_err(&pdev->dev, "invalid IOMMU instance id\n");
- 		return -EINVAL;
+ 	data        = dev_iommu_priv_get(dev);
+-	mtk_mapping = data->mapping;
+ 
+-	err = arm_iommu_attach_device(dev, mtk_mapping);
++	err = arm_iommu_attach_device(dev, data->mapping);
+ 	if (err)
+ 		dev_err(dev, "Can't create IOMMU mapping - DMA-OPS will not work\n");
+ }
 
 -- 
 2.45.2
