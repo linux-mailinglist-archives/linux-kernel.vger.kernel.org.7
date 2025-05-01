@@ -1,169 +1,94 @@
-Return-Path: <linux-kernel+bounces-629096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A35CAA6788
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 01:49:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CFDAA678B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 01:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28D19A6E38
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:49:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A32A1BA6386
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 23:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819DF3D6A;
-	Thu,  1 May 2025 23:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF01270EB8;
+	Thu,  1 May 2025 23:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UVoIgBBl"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dsr2AkHa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A12126ACD
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 23:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2BD26FD8B;
+	Thu,  1 May 2025 23:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746143353; cv=none; b=CKc2Sm8yceBF7y6X9WMh8XfJwB3L+9Z+0peGoUKSNiGlm2RWr0gf2H3ZSK6WRkEb6sg6n3ei0f0kcJ+qAP22VqpSidSA8baUtrEiks0n2mDK1Zy5zIW9Kks2qnV2R8ApHXAYj8fMktHzAFP42skCkq3mM7mMEbp+whTYIQ3MK6U=
+	t=1746143358; cv=none; b=nrBqlnmY76hVrmCFURosC08U5xAWqy0BET03N7aS6J2SN9HDI1zDqHzEaYQFJS0aHI0s4nORKIx6yXODivwxJGOMxCPHHE9iV6H4exwgD1NzXB9GnE++t8LHEbJYaz/vbUb/2VVDr/Hkg5MqRtyM+RnhuaZ+DwhC+/fQI0Dou7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746143353; c=relaxed/simple;
-	bh=jZU0SIz9MHtQqTLeIgHVwcXNw/09LKRPJ7/yrnh4F0c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AN748uMfazxh3qea/Rp8SF4cumT1UZpyPqXYCdnmehfzLwz7K/Cm6KmpGuHdB0eYEOxMnxEaIF+dEjhB7ZxllaBy+4k5N2mwTV2/wEIoOV9PV2SX4+0HsJGA8eeUrRllvY79/R62MHNmD0VS2j+z7WLRFl1DYMByIqASsYKYoYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UVoIgBBl; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b115383fcecso902079a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 16:49:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746143351; x=1746748151; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7YjaeVkecBE4pjAvNhqi1+CbQbpda08FZsnIbLNG4co=;
-        b=UVoIgBBlFX7Rx4e17DLrEqxpx4Yz9um0jPUCqPIw4rS6MnTGksEHmrMqG9SU7hQryV
-         VWDQYSTzNn7Y+PATA5f3tUh3U2R2d4MZ4Vhjt5kaNJXmfh8Zvnm4CGmDNuhSob9Bt9Dw
-         nDhWzabWaUFUjpu5Q8bU13gQxBsPOSZV5FPnr1TWf6GqRzxRqvQsASIfQfx8qf2qbGZD
-         vD7K3iSGTjoCZkUMUefNPHtCuNsHztw6RN/iFuoRv0FhvOv8XV17Y9fmv6vE4mkl6AlO
-         dPdUnaS/5dyktgriGxCMdimBPY1HfRSTIUbc8yeqOgOaSpxc+PG+uIdA1ATqGMA0ZXJg
-         ybQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746143351; x=1746748151;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7YjaeVkecBE4pjAvNhqi1+CbQbpda08FZsnIbLNG4co=;
-        b=JoQkR9gwaR5Q2IR31fRYfYy1D89v6aCt/slPB8kZ3VJBfLjuBZz6nYPeODkpwrCEXN
-         MGD1Ad/oDG9V/kGSDMAjutDu47xYb7aWFlrCRnh6+sI/Y0aDP+yCaKcSbHSCnPD1KKzw
-         B3RaVHvGvYYsWkI+eY43x+kxwQb7nplphcjmcslWH92U2dO5tCvLhKGIxZakzA9vhUfx
-         qJbkuE5JK3J5Adxg8z4hT2NydatBT/cSKnUznsuo0DZzuV7A1/C/6UNs+R4p+0KIvvY7
-         4C7kJpoWc8oUfdEdJqOv/DWsUNxHsZm2PHDnx90vNB2JwG15QK3KGwFbXw8OcLG1ay+h
-         OYsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvvc76v6IFSZr8PZ0Je0nyXm28NN4T/s1W3gqNfwOhUApeDZH8TEKeC5k2tUGKspNnU9i+OuFyCPf42zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxz1NwWetmwnamM512XiyK9oVyUdSDM6AOdcVWFcYr0ETim0jo
-	zx0Vh7X1H2Jl7a1LGr5laSXYCkCjIn0wXQbUYPRD16H4lIGsn3atfWRUlaFC+b7/aWbkLzzTzG3
-	7NQ==
-X-Google-Smtp-Source: AGHT+IFpk4LLtbCzk2o8pzjb4TQk7dvH4GDNA8trq7RtjjE6BSA0YG95We3X0NAUVh3kC6UoEPUU8DD0QKc=
-X-Received: from pjee15.prod.google.com ([2002:a17:90b:578f:b0:308:65f7:9f24])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2541:b0:305:5f55:899
- with SMTP id 98e67ed59e1d1-30a4e5a579cmr1510514a91.11.1746143350753; Thu, 01
- May 2025 16:49:10 -0700 (PDT)
-Date: Thu, 1 May 2025 16:49:09 -0700
-In-Reply-To: <aAcfcB8ZyBuz7t7J@google.com>
+	s=arc-20240116; t=1746143358; c=relaxed/simple;
+	bh=oBb30km4rgKn4We1YO6LEEYryPCsN9axqOjf65m6cV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxG2Hn4MQZgOxfr1eVGdkX7HgtfP3wHOEFXHlLcTU5Dr0IriLPn9Mq07NOTZTHeM+L6VR45Nz/+C67O8BSlj4R2D4AwC2smUi6xIBCgtvxyZnMPVdY+xaT11hb6vdRD+Z897xHDByw8BnJYSWfgp16A42uqNvhL+ksffKQB4s5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dsr2AkHa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83409C4CEED;
+	Thu,  1 May 2025 23:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746143354;
+	bh=oBb30km4rgKn4We1YO6LEEYryPCsN9axqOjf65m6cV4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dsr2AkHaUNLtlqO3Grbv5Rh/u8s8h80+GON71LhmZjrpojXzovUSv4b4g+w6lBWkV
+	 55V3QLUfZD2fcFYSza2TxHUFzJ5A0SiDS3j68+vyr7hh/Al3+z8sEDZunMNkdUghLQ
+	 qdOgeTd8+w+aYvUthj9TTfBI/jE/cxMtZie9HgTeubAuC5FLsKZGVROANb6xuslCQ3
+	 hF3qNtD65MwY5yAjZZOLaNo8PmRIsibLgWNLSeehpU43q10qbvTZHYT9qgnsfHTdsl
+	 vajS7mk/6OjI4Ln5khTAIc9AXi9JwbuH04ztxwA97YFuaXbHv8Y5Egk0gyxxkpYCsN
+	 c2iWSCDrsS60A==
+Date: Thu, 1 May 2025 16:49:11 -0700
+From: Kees Cook <kees@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ali Saidi <alisaidi@amazon.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] binfmt_elf: Move brk for static PIE even if ASLR disabled
+Message-ID: <202505011633.82A962A7@keescook>
+References: <20250425224502.work.520-kees@kernel.org>
+ <ad6b492c-cf5e-42ec-b772-52e74238483b@arm.com>
+ <202504301207.BCE7A96@keescook>
+ <a6696d0f-3c5a-46a8-8d38-321292dac83d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250325041350.1728373-1-suleiman@google.com> <20250325041350.1728373-2-suleiman@google.com>
- <aAcfcB8ZyBuz7t7J@google.com>
-Message-ID: <aBQIdcOB5ORNFzx2@google.com>
-Subject: Re: [PATCH v5 1/2] KVM: x86: Advance guest TSC after deep suspend.
-From: Sean Christopherson <seanjc@google.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Suleiman Souhlal <suleiman@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ssouhlal@freebsd.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6696d0f-3c5a-46a8-8d38-321292dac83d@arm.com>
 
-On Tue, Apr 22, 2025, Tzung-Bi Shih wrote:
-> On Tue, Mar 25, 2025 at 01:13:49PM +0900, Suleiman Souhlal wrote:
-> > Advance guest TSC to current time after suspend when the host
-> > TSCs went backwards.
-> > 
-> > This makes the behavior consistent between suspends where host TSC
-> > resets and suspends where it doesn't, such as suspend-to-idle, where
-> > in the former case if the host TSC resets, the guests' would
-> > previously be "frozen" due to KVM's backwards TSC prevention, while
-> > in the latter case they would advance.
-> > 
-> > Suggested-by: Sean Christopherson <seanjc@google.com>
-> > Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> 
-> Tested with comparing `date` before and after suspend-to-RAM[1]:
->   echo deep >/sys/power/mem_sleep
->   echo $(date '+%s' -d '+3 minutes') >/sys/class/rtc/rtc0/wakealarm
->   echo mem >/sys/power/state
-> 
-> Without the patch, the guest's `date` is slower (~3 mins) than the host's
-> after resuming.
-> 
-> Tested-by: Tzung-Bi Shih <tzungbi@kernel.org>
-> 
-> [1]: https://www.kernel.org/doc/Documentation/power/states.txt
-> 
-> Some non-functional comments inline below.
-> 
-> > @@ -4971,7 +4971,37 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
-> >  
-> >  	/* Apply any externally detected TSC adjustments (due to suspend) */
-> >  	if (unlikely(vcpu->arch.tsc_offset_adjustment)) {
-> > -		adjust_tsc_offset_host(vcpu, vcpu->arch.tsc_offset_adjustment);
-> > +		unsigned long flags;
-> > +		struct kvm *kvm;
-> > +		bool advance;
-> > +		u64 kernel_ns, l1_tsc, offset, tsc_now;
-> > +
-> > +		kvm = vcpu->kvm;
-> 
-> It will be more clear (at least to me) if moving the statement to its declaration:
->   struct kvm *kvm = vcpu->kvm;
-> 
-> Other than that, the following code should better utilitize the local
-> variable, e.g. s/vcpu->kvm/kvm/g.
-> 
-> > +		advance = kvm_get_time_and_clockread(&kernel_ns,
-> > +		    &tsc_now);
+On Thu, May 01, 2025 at 12:03:32PM +0100, Ryan Roberts wrote:
+> I agree, as long as COMPAT_BRK is not set (which is the common case IFAICT).
+> When COMPAT_BRK is enabled, I think you are breaking the purpose of that
+> Kconfig? Perhaps it's not a real-world problem though...
 
-In addition to Tzung-Bi's feedback...
+When you turned off ASLR, what mechanism did you use? Personality or
+randomize_va_space=0?
 
-Please don't wrap at weird points, and align when you do wrap.  The 80 char limit
-isn't a super hard limit, and many of these wraps are well below that anyways.
+> > It's possible it could break running the loader directly against some
+> > libc5-based binaries. If this turns out to be a real-world issue, we can
+> > find a better solution (perhaps pre-allocating a large brk).
+> 
+> But how large is large enough...
 
-		advance = kvm_get_time_and_clockread(&kernel_ns, &tsc_now);
-		raw_spin_lock_irqsave(&kvm->arch.tsc_write_lock, flags);
-		/*
-		 * Advance the guest's TSC to current time instead of only
-		 * preventing it from going backwards, while making sure
-		 * all the vCPUs use the same offset.
-		 */
-		if (kvm->arch.host_was_suspended && advance) {
-			l1_tsc = nsec_to_cycles(vcpu,
-						vcpu->kvm->arch.kvmclock_offset + kernel_ns);
-			offset = kvm_compute_l1_tsc_offset(vcpu, l1_tsc);
-			kvm->arch.cur_tsc_offset = offset;
-			kvm_vcpu_write_tsc_offset(vcpu, offset);
-		} else if (advance) {
-			kvm_vcpu_write_tsc_offset(vcpu, vcpu->kvm->arch.cur_tsc_offset);
-		} else {
-			adjust_tsc_offset_host(vcpu, vcpu->arch.tsc_offset_adjustment);
-		}
-		kvm->arch.host_was_suspended = 0;
-		raw_spin_unlock_irqrestore(&kvm->arch.tsc_write_lock, flags);
+Right -- Chrome has a 500MB brk on my laptop. :P Or with randomization
+off, it could allocate to the top of the mmap space just to keep
+"future" mmap allocations from landing in any holes...
 
+> Perhaps it is safer to only move the brk if !IS_ENABLED(CONFIG_COMPAT_BRK) ?
+> Then wait to see if there are any real-world COMPAT_BRK users that hit the issue?
 
-As for the correctness of this code with respect to masterclock and TSC
-synchronization, I'm definitely going to have to stare even more, and probably
-bring in at least Paolo for a consult, because KVM's TSC code is all kinds of
-brittle and complex.
+Yeah, that might be the best middle-ground.
+
+-- 
+Kees Cook
 
