@@ -1,138 +1,143 @@
-Return-Path: <linux-kernel+bounces-628578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F5EAA5FB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 16:12:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30FCFAA5FD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 16:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F325188E24E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:13:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 944874C4D0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC691E47A3;
-	Thu,  1 May 2025 14:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD2F1F461D;
+	Thu,  1 May 2025 14:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxdndoi6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="qh/QxvR/"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21350E567;
-	Thu,  1 May 2025 14:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DA3198E6F;
+	Thu,  1 May 2025 14:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746108770; cv=none; b=BvRtmRhz5jsvZ0+5owT/gJNl9u5p2ao8CsOE5Hk2ZOAbbnTMaQQMKDGfj24/UbcKeYtdFLx3QkVUH2lhijAPn+kAyfRmHRscZSdTYxS0TogsADa9DHMmcQbHHK2U3Tt/2AqBWZWhqJTdGe174HK1o0LmsDRASvnO67j5JHLzE3A=
+	t=1746109248; cv=none; b=pBHHDBKHKgfDtZGjGC+UkVRRaD4h1Jm/EazXX+I1QMW5tzU+liPlGnWqxZVGoHDCdWJ6kBVKtgVXGkwqJEI4w4caxcFjGXpO+kmRdbASUl9gNRdcu93+gb4p2AUpL/vfc5cIgwHJedtkqnXiPIa2+rcjGletGOk31NSDDLl2Y/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746108770; c=relaxed/simple;
-	bh=DEPcQcNUqqfyXHzvoouqtlLOOHaet4oIue0IxVF3xow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=frNLrZx2bQ4ll76AcYQq/WXGTVaQvh5is4fQ31CATXiHwO/PPRBgyn4HaQBZuc3pQJj5AM4IA7mrMYzHSRWp+g2HuPQrKpPlltSDu1QnLxA9gtQNK1KWSK6pt4d3+34tPNyYOEShUj4rg7sL+mXSI3P9Fw8x5YpLru44ZHMv3Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxdndoi6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1EA9C4CEE3;
-	Thu,  1 May 2025 14:12:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746108769;
-	bh=DEPcQcNUqqfyXHzvoouqtlLOOHaet4oIue0IxVF3xow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fxdndoi6v3fBeOpXL8s1FwksY10j+nobeBSZ1z1mZL0Kvx3brEL//+GC4Y6ju3W1B
-	 grTGJ1q2j2Bv/08NvFOuIQKbnuSoifBcpu+a2Fxr2vAet3vX9nguYJhjT3vwaohacY
-	 4zk05FxgOJ3gWNYmYUJTiXVaBJhm4LhIl6sEJFsbtr7pVNiQqYj2NSqePXJiDkgL6a
-	 1CeP9MzESz+LLiT5+sMCpXgedUZRuhWBKAA5UOrnt7mYhLr1xcbO+1p9s6YnsbvtBP
-	 1Vwch/A366jTpFSCpqdySHYfTFnN9v6zF69MUARbkYDMEJIuiLbb65PQGpvcamQz5r
-	 WJ4hOxzLzAShw==
-Date: Thu, 1 May 2025 07:12:49 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Carlos Maiolino <cem@kernel.org>
-Cc: Charalampos Mitrodimas <charmitro@posteo.net>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: Verify DA node btree hash order
-Message-ID: <20250501141249.GA25675@frogsfrogsfrogs>
-References: <6Fo_nCBU7RijxC1Kg6qD573hCAQBTcddQlb7i0E9C7tbpPIycSQ8Vt3BeW-1DqdayPO9EzyJLyNgxpH6rfts4g==@protonmail.internalid>
- <20250412-xfs-hash-check-v1-1-fec1fef5d006@posteo.net>
- <dyo3cdnqg3zocge2ygspovdlrjjo2dbwefbvq6w5mcbjgs3bdj@diwkyidcrpjg>
+	s=arc-20240116; t=1746109248; c=relaxed/simple;
+	bh=1UwSOIDlD3ic60nJ1mkNJNnPI8CaGS+D6mHUgFP9Qv8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=oB7tly0UcMqx06+JmA4KrZt2/j0l0UyVEUNur6BGdemLd4JuUumWlfnAmaUB+YzHXKa+EiC4xplf49TXiObtUvzOPfcmK/G5+ZWOcz89O6W0i8AsL+3AVU4A5WObRW+zRTNMRqfSSjrDTnUcpQuQZUrXuLzzglF4i0VuVn4zyHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=qh/QxvR/; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1746108822; bh=1UwSOIDlD3ic60nJ1mkNJNnPI8CaGS+D6mHUgFP9Qv8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References;
+	b=qh/QxvR/kNaj8aKiL4KL/ex5wocOuIwxzTh6HinxhAs7xsP4QRghKdlxZ42jy/bwL
+	 CvbOpsuFKspfmy3D/UJFLo9wG867z8CoY2lL8RwkwZHnG8XeDEz7aB95BW0X6eHVvx
+	 F0bHsjE7uX4qKhU6hKcdXQ0upwKUE7ig5cUb2bhQ=
+Date: Thu, 01 May 2025 16:13:40 +0200
+From: Luca Weiss <luca@lucaweiss.eu>
+To: ~postmarketos/upstreaming@lists.sr.ht, Srinivas Kandagatla <srini@kernel.org>,
+ Luca Weiss <luca.weiss@fairphone.com>
+CC: Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, phone-devel@vger.kernel.org,
+ alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/5=5D_ASoC=3A_qcom=3A_sm8250?=
+ =?US-ASCII?Q?=3A_set_card_driver_name_from_match_data?=
+In-Reply-To: <aBNdCRk_fP2q1vxQ@srini-hackbase>
+References: <20250425-fp5-dp-sound-v3-0-7cb45180091b@fairphone.com> <20250425-fp5-dp-sound-v3-2-7cb45180091b@fairphone.com> <aBNdCRk_fP2q1vxQ@srini-hackbase>
+Message-ID: <91110CA9-6E83-4811-AA04-C0312B99B95E@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dyo3cdnqg3zocge2ygspovdlrjjo2dbwefbvq6w5mcbjgs3bdj@diwkyidcrpjg>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 30, 2025 at 11:23:57AM +0200, Carlos Maiolino wrote:
-> On Sat, Apr 12, 2025 at 08:03:57PM +0000, Charalampos Mitrodimas wrote:
-> > The xfs_da3_node_verify() function checks the integrity of directory
-> > and attribute B-tree node blocks. However, it was missing a check to
-> > ensure that the hash values of the btree entries within the node are
-> > strictly increasing, as required by the B-tree structure.
-> > 
-> > Add a loop to iterate through the btree entries and verify that each
-> > entry's hash value is greater than the previous one. If an
-> > out-of-order hash value is detected, return failure to indicate
-> > corruption.
-> > 
-> > This addresses the "XXX: hash order check?" comment and improves
-> > corruption detection for DA node blocks.
-> > 
-> > Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
-> > ---
-> >  fs/xfs/libxfs/xfs_da_btree.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/xfs/libxfs/xfs_da_btree.c b/fs/xfs/libxfs/xfs_da_btree.c
-> > index 17d9e6154f1978ce5a5cb82176eea4d6b9cd768d..6c748911e54619c3ceae9b81f55cf61da6735f01 100644
-> > --- a/fs/xfs/libxfs/xfs_da_btree.c
-> > +++ b/fs/xfs/libxfs/xfs_da_btree.c
-> > @@ -247,7 +247,16 @@ xfs_da3_node_verify(
-> >  	    ichdr.count > mp->m_attr_geo->node_ents)
-> >  		return __this_address;
-> > 
-> > -	/* XXX: hash order check? */
-> > +	/* Check hash order */
-> > +	uint32_t prev_hash = be32_to_cpu(ichdr.btree[0].hashval);
-> > +
-> > +	for (int i = 1; i < ichdr.count; i++) {
-> > +		uint32_t curr_hash = be32_to_cpu(ichdr.btree[i].hashval);
-> > +
-> > +		if (curr_hash <= prev_hash)
-> > +			return __this_address;
-> > +		prev_hash = curr_hash;
-> > +	}
-> 
-> Hmmm. Do you have any numbers related to the performance impact of this patch?
-> 
-> IIRC for very populated directories we can end up having many entries here. It's
-> not uncommon to have filesystems with millions of entries in a single directory.
-> Now we'll be looping over all those entries here during verification, which could
-> scale to many interactions on this loop.
-> I'm not sure if I'm right here, but this seems to add a big performance penalty
-> for directory writes, so I'm curious about the performance implications of this
-> patch.
+Hi Srini,
 
-It's only a single dabtree block, which will likely be warm in cache
-due to the crc32c validation.
+Srinivas Kandagatla <srini@kernel=2Eorg> schreef op 1 mei 2025 13:37:45 CE=
+ST:
+>On Fri, Apr 25, 2025 at 10:07:26AM +0200, Luca Weiss wrote:
+>> Sound machine drivers for Qualcomm SoCs can be reused across multiple
+>> SoCs=2E But user space ALSA UCM files depend on the card driver name wh=
+ich
+>> should be set per board/SoC=2E
+>>=20
+>> Allow such customization by using driver match data as sound card drive=
+r
+>> name=2E
+>>=20
+>> Also while we're already touching these lines, sort the compatibles
+>> alphabetically=2E
+>>=20
+>> Reviewed-by: Dmitry Baryshkov <dmitry=2Ebaryshkov@oss=2Equalcomm=2Ecom>
+>> Reviewed-by: Neil Armstrong <neil=2Earmstrong@linaro=2Eorg>
+>> Signed-off-by: Luca Weiss <luca=2Eweiss@fairphone=2Ecom>
+>> ---
+>>  sound/soc/qcom/sm8250=2Ec | 9 ++++-----
+>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>=20
+>> diff --git a/sound/soc/qcom/sm8250=2Ec b/sound/soc/qcom/sm8250=2Ec
+>> index b70b2a5031dfbf69024666f8a1049c263efcde0a=2E=2Ee920b413b762c803cfc=
+c4049f35deba828275478 100644
+>> --- a/sound/soc/qcom/sm8250=2Ec
+>> +++ b/sound/soc/qcom/sm8250=2Ec
+>> @@ -16,7 +16,6 @@
+>>  #include "usb_offload_utils=2Eh"
+>>  #include "sdw=2Eh"
+>> =20
+>> -#define DRIVER_NAME		"sm8250"
+>>  #define MI2S_BCLK_RATE		1536000
+>> =20
+>>  struct sm8250_snd_data {
+>> @@ -200,15 +199,15 @@ static int sm8250_platform_probe(struct platform_=
+device *pdev)
+>>  	if (ret)
+>>  		return ret;
+>> =20
+>> -	card->driver_name =3D DRIVER_NAME;
+>> +	card->driver_name =3D of_device_get_match_data(dev);
+>>  	sm8250_add_be_ops(card);
+>>  	return devm_snd_soc_register_card(dev, card);
+>>  }
+>> =20
+>>  static const struct of_device_id snd_sm8250_dt_match[] =3D {
+>> -	{=2Ecompatible =3D "qcom,sm8250-sndcard"},
+>> -	{=2Ecompatible =3D "qcom,qrb4210-rb2-sndcard"},
+>> -	{=2Ecompatible =3D "qcom,qrb5165-rb5-sndcard"},
+>> +	{ =2Ecompatible =3D "qcom,qrb4210-rb2-sndcard", =2Edata =3D "sm8250" =
+},
+>
+>sm4250 for rb2?
 
-But if memory serves, one can create a large enough dir (or xattr)
-structure such that a dabtree node gets written out with a bunch of
-entries with the same hashval.  That was the subject of the correction
-made in commit b7b81f336ac02f ("xfs_repair: fix incorrect dabtree
-hashval comparison") so I've been wondering if this passes the xfs/599
-test?  Or am I just being dumb?
+Since this name is visible to user space and used for picking the UCM conf=
+ig, I don't think it's a good idea to change it=2E
 
---D
+Regards
+Luca
 
-> > 
-> >  	return NULL;
-> >  }
-> > 
-> > ---
-> > base-commit: ecd5d67ad602c2c12e8709762717112ef0958767
-> > change-id: 20250412-xfs-hash-check-be7397881a2c
-> > 
-> > Best regards,
-> > --
-> > Charalampos Mitrodimas <charmitro@posteo.net>
-> > 
-> 
+>
+>> +	{ =2Ecompatible =3D "qcom,qrb5165-rb5-sndcard", =2Edata =3D "sm8250" =
+},
+>> +	{ =2Ecompatible =3D "qcom,sm8250-sndcard", =2Edata =3D "sm8250" },
+>>  	{}
+>>  };
+>> =20
+>>=20
+>> --=20
+>> 2=2E49=2E0
+>>=20
 
