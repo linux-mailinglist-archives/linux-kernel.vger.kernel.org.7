@@ -1,95 +1,116 @@
-Return-Path: <linux-kernel+bounces-628707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D59AA6167
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 18:30:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EF3AA614F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 18:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30361BC29FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 16:30:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF719A2537
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 16:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72732210F58;
-	Thu,  1 May 2025 16:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88688212B18;
+	Thu,  1 May 2025 16:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="li1W4gmN"
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoeNHc6M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686E420D516;
-	Thu,  1 May 2025 16:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B793820297D;
+	Thu,  1 May 2025 16:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746117006; cv=none; b=H4rXIA7DcSPOTw8ysKzPz5w4Ri/jUADDDutqRwq219pyYkNJS5CNJm8nCPAvniA7pvm+2l04lc+ld/DmOkty1h2ft1uruY+I0pgZtWdv8akB4JkeOVsZIVx6k442jpf4Kp7yffXBVIZJC2aeyZy9daFfrEw5DK2VvNejP9kzueg=
+	t=1746116537; cv=none; b=pCUN9hpDO6Lym3cgQLnECFUZSr7ZNC9eauGAkqfSsOCBqZ0nJrx9VJjMgxZQztmt+I3zsObaapbIqatu7Mjw+L2k/f8Dvs7uimR1pixtLGC1192u02PT9wii76Rz4WbXT32h/3JgAxArehDR+PmLTESqAkxJVInKPlVq6ahDh6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746117006; c=relaxed/simple;
-	bh=hNZfYFFtAr2xHt90ZdfXgjZK8UcYhDMKV8t3YTODBWo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RwrrpE9Uyic7QzEGpBLGqfHgwBULSBM+99G7d1jqHYS52Zjv9nfMWZd7yFK/ay9+J55c+5pmKiGRbhbbzjPxbIjz09PZEwW/P12D6dGWjY0CHatiXHhms5KCEmoF1Of4UB9815+DCNKmSReHg9mgmDwg4x5tv9L77VUzYYXrf/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=li1W4gmN; arc=none smtp.client-ip=45.145.95.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1746116442; bh=hNZfYFFtAr2xHt90ZdfXgjZK8UcYhDMKV8t3YTODBWo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=li1W4gmNEOZXw7qZPbl2GyNKGbS7Qt01EHKXqgUDAT0g1m6WiRfIzmzbwQnNRUgnO
-	 t6tN8jHiS7NQ00RkQ6XLGB/JOtWjEjxcCVvtBPFqaUvnCemFSxepf/irq7jcRThJs9
-	 Ng6kVmubrp0bDAA83PkBWjXpF6hl7+zHtTgw7hqFvgE1zqXF05DX5/UuPExNUs6rXh
-	 T9bSHtXSGDCsaNYfdD5YjHdG0uvRkExq/VmKB1M5bLsLYmxJIJBAAH0bknRkq0kwIm
-	 tv34LbQrRoYJC7LRbAlekYfx6RXKcH3ls+boB65JrNVkK0KegLESdL/tvEVHwNEw/9
-	 xP+B9YzpY6y/A==
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2] wifi: ath9k: ahb: do ioremap resource in one step
-In-Reply-To: <CAKxU2N_3mcv7e2i8Z_b0+oQUXxMmpKH1eGvEZiwcRxx8HKYDwg@mail.gmail.com>
-References: <20250421040044.44887-1-rosenp@gmail.com>
- <87ldrsjrvp.fsf@toke.dk>
- <CAKxU2N_3mcv7e2i8Z_b0+oQUXxMmpKH1eGvEZiwcRxx8HKYDwg@mail.gmail.com>
-Date: Thu, 01 May 2025 18:20:42 +0200
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87o6wc5mlh.fsf@toke.dk>
+	s=arc-20240116; t=1746116537; c=relaxed/simple;
+	bh=7mGDLReut9Z4ueLGijvozal54uog/fy6GCv7gOrGGLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PsyL1xlLNuc3lfhW9ZtZCmKL358BzBdMOjxJcE789wupC456B+NQognS7ooRBtjISn/HGTmCnMZyaRvc1UC4JHwpwEOk0ywuarn0ZUKjmOTtHcB0bZ+eo3bTEOesHTHT4xV3V7pHYLdb2HSI9a1bjqriyuFLRSTD4WlE4cSQVAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NoeNHc6M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2F8C4CEE3;
+	Thu,  1 May 2025 16:22:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746116537;
+	bh=7mGDLReut9Z4ueLGijvozal54uog/fy6GCv7gOrGGLQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NoeNHc6MRswVTdN4Sxr8t/6h602Ehbvkb5m0zKRHq+vu/rv0dzFvu9R2VsSyH59h5
+	 kAXaY8Es7LBTkaasyfrUV0D9HPSmdIn8O3riyEC6jdDMOaboz9x2GhWwQj8h6fOoiX
+	 L2/l88SAMUXEK8O5PUg0SYuOeCQWF8vmZYU6sJ5Kg/1RaVOtgqdSIBhbCBBNhaSkto
+	 /2Orx3ST25iaQ4+zt9zG4EvAziJ08IsOUvGOJBRDnTYPKwdF62YUOg2pnOx6MntBsZ
+	 FXLaMDb0ojHFIUGRbInCeQqMFSohD1L+u8nNHydWai1d0qbaMPC2ODItM5zPsFXMmo
+	 znP8R4oRtF2hA==
+Date: Thu, 1 May 2025 09:22:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v9 05/15] xfs: ignore HW which cannot atomic write a
+ single block
+Message-ID: <20250501162216.GB25675@frogsfrogsfrogs>
+References: <20250425164504.3263637-1-john.g.garry@oracle.com>
+ <20250425164504.3263637-6-john.g.garry@oracle.com>
+ <20250429122105.GA12603@lst.de>
+ <20250429144446.GD25655@frogsfrogsfrogs>
+ <20250430125906.GB834@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430125906.GB834@lst.de>
 
-Rosen Penev <rosenp@gmail.com> writes:
+On Wed, Apr 30, 2025 at 02:59:06PM +0200, Christoph Hellwig wrote:
+> On Tue, Apr 29, 2025 at 07:44:46AM -0700, Darrick J. Wong wrote:
+> > > So this can't be merged into xfs_setsize_buftarg as suggeted last round
+> > > instead of needing yet another per-device call into the buftarg code?
+> > 
+> > Oh, heh, I forgot that xfs_setsize_buftarg is called a second time by
+> > xfs_setup_devices at the end of fill_super.
+> 
+> That's actually the real call.  The first is just a dummy to have
+> bt_meta_sectorsize/bt_meta_sectormask initialized because if we didn't
+> do that some assert in the block layer triggered.  We should probably
+> remove that call and open code the two assignments..
+> 
+> > I don't like the idea of merging the hw atomic write detection into
+> > xfs_setsize_buftarg itself because (a) it gets called for the data
+> > device before we've read the fs blocksize so the validation is
+> > meaningless and (b) that makes xfs_setsize_buftarg's purpose less
+> > cohesive.
+> 
+> As explained last round this came up I'd of course rename it if
+> we did that.  But I can do that later.
 
-> On Tue, Apr 22, 2025 at 5:35=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen =
-<toke@toke.dk> wrote:
->>
->> Rosen Penev <rosenp@gmail.com> writes:
->>
->> > Simplifies probe slightly and adds extra error codes.
->> >
->> > Switching from devm_ioremap to the platform variant ends up calling
->> > devm_request_mem_region, which reserves the memory region for the
->> > various wmacs. Per board, there is only one wmac and after some fairly
->> > thorough analysis, there are no overlapping memory regions between wma=
-cs
->> > and other devices on the ahb.
->> >
->> > Tested on a TP-Link Archer C7v2.
->> >
->> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
->> > ---
->> >  v2: remove wrong devm irq conversion.
->> >  drivers/net/wireless/ath/ath9k/ahb.c | 13 +++----------
->> >  1 file changed, 3 insertions(+), 10 deletions(-)
->>
->> Is there any benefit from this other than code simplification? Because,
->> TBH, I'm not sure saving 7 lines of code is worth the risk of changing
->> something we know works already...
-> It's the same API calls fundamentally. This change has already been
-> done treewide across various drivers.
+<nod> Would you be willing to review this patch as it is now and either
+you or me can just tack a new cleanup patch on the end?  I tried writing
+a patch to clean this up, but ran into questions:
 
-Hmm, alright, let's give it a shot...
+At first I thought that the xfs_setsize_buftarg call in
+xfs_alloc_buftarg could be replaced by open-coding the bt_meta_sector*
+assignment, checking that bdev_validate_blocksize is ok, and dropping
+the sync_blockdev.
 
--Toke
+Once we get to xfs_setup_devices, we can call xfs_setsize_buftarg on the
+three buftargs, and xfs_setsize_buftarg will configure the atomic writes
+geometry.
+
+But then as I was reading the patch, it occurred to me that at least for
+the data device, we actually /do/ want that sync_blockdev call so that
+any dirty pagecache for the superblock actually get written to disk.
+Maybe that can go at the end of xfs_open_devices?  But would it be
+preferable to sync all the devices prior to trying to read the primary
+sb?  I don't think there's a need, but maybe someone else has a
+different viewpoint?
+
+--D
 
