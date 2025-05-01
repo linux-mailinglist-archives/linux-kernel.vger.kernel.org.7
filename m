@@ -1,128 +1,181 @@
-Return-Path: <linux-kernel+bounces-629027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4D6AA666A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:53:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85B1AA666D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A819A1978
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69C3E1BC6840
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 22:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C8A264F90;
-	Thu,  1 May 2025 22:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E3A2609F6;
+	Thu,  1 May 2025 22:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kM7YWd1j"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rzr9WJ31"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B5419F12D;
-	Thu,  1 May 2025 22:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5989251790
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 22:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746140020; cv=none; b=bXDnW1AxXI5kwODRcPeEpk5iSLLXSAarvPnMeQSv9kH8ew2GvFo4rz3t/7M8tGSPkE+bElmNyGaLif+dsi4CufNBxTSLSObhvb8OcdrIFtYhtorOzpZh/NDsAhRTNG7hfDizGJx7LlJkCK0N4R4BK3220utxoLI4pXEcLwndy/A=
+	t=1746140045; cv=none; b=rjOg3ttUy8kIHK58Zs4kFlGU8sZB/tw9TUz8uJPoR19Cs/uTEkIkDmJhI52qqOiMEZyQ4IU/LIKPFmAjVUhqt60SPpKv6h1goy9HwXOhbfeQHu6iTL/GkklseNNbOHrVSp4LVolpcyN6sH3tIU9vPS+20bMIICAr7PdUyUdJCKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746140020; c=relaxed/simple;
-	bh=LzpyyA9nvJ9KfgxcnFn2gIppzdEF/Hh1NEPWOMyIHEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aelyaTKYWKs3xOTLCO/2aCKTEJJ+HWJlrxLLqUr/URZQ4nqiQstW9Nl6SOUdaHWeNOv0MTDXY/wTefioL/BddxLyDyYn65QKi3Bq71GItcRfikfudvS7cBtRBw67mya3b63Osvv/3J4daTSeK3O3o1T2PGlq9l7cPIzuMJuLSzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kM7YWd1j; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1746140013;
-	bh=yKt6ttpV4oy7zty/L39csJcuo6k1Taa5k2LUEtFks4o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kM7YWd1jykwTAE8+F/+uAm/u95etcv+QRtTXxcEvipYIo0KpyC5+KHAqyFtCEHvs9
-	 GxGP1LJdKHTFWP9plZSwryASW+nkYqy8qrL9+ugvJ/231Hqr0md2C6CVk/XUVhYIn7
-	 WVNtdDF5UeJ1OlHFk4kZWrg/VJrhzJD8o3C5Ld2BydpyHBFZupiZDpun2nUdmSoWc5
-	 GdS29Y1ctPU+nM4UnI0jrXU9jz6BAoc78RK9WDcwKyBx4ROHgCS2YLpJvQeK9mDIED
-	 wYuJJC83xfb+YN1i2BZnm92AbIU2xByI+oMsUdqyy5fLg+PSJRwbEB+0Wg5Kue382h
-	 uu7rSdUgVekOA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZpTqb5pmlz4x2g;
-	Fri,  2 May 2025 08:53:29 +1000 (AEST)
-Date: Fri, 2 May 2025 08:53:27 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>
-Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <skhan@linuxfoundation.org>, "Paul
- E. McKenney" <paulmck@kernel.org>, linux-next@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: linux-next: Addition of the nolibc tree
-Message-ID: <20250502085327.2e5be3f8@canb.auug.org.au>
-In-Reply-To: <6d906909-99ae-4934-901b-983ad7d3cbda@t-8ch.de>
-References: <6d906909-99ae-4934-901b-983ad7d3cbda@t-8ch.de>
+	s=arc-20240116; t=1746140045; c=relaxed/simple;
+	bh=7EqN3p0cTkX1ZI/wbSjgHj4rbRQELoTOTq2bsNwW5k8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UTJnov0f0mE60HnOcZdiyZEglGvNVebmu3lAk11BjGoqrqUZa1YH7Is1Y3kFkO55GZlw69X0WevhA/JhdfxzrmHf0lh7JSoQqMbghn/WXl09jxBDGp3xiPdkmN5rYl6ZmaECTNwNA8ceQ21pRNsSjdbvdni3aWeRPWzi14Sl2Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rzr9WJ31; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746140042;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KtLg0B1vrzZBeuo/C7fy1HGxDtxIeRaGRM5T8fcaxh0=;
+	b=Rzr9WJ31vCRyHJCBM9qqcQM3QQui2ALwJSkGfjuo7N6g5l+SZ8ZMr+LDwejWoD0TZrL1FF
+	G3Q2vUzExePy0TvBt6PIVSzHlkCmeixiTze4B1vdpcxA0nEJGZXk1UWoXm5rBuv22EJqQL
+	GKMOOsj5RM9Su03HrX9hkmilip+iYVw=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-510-NALQys4eN2SmVhOqhGZSFA-1; Thu, 01 May 2025 18:54:01 -0400
+X-MC-Unique: NALQys4eN2SmVhOqhGZSFA-1
+X-Mimecast-MFC-AGG-ID: NALQys4eN2SmVhOqhGZSFA_1746140041
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-6ff0be1cedfso15069947b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 15:54:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746140041; x=1746744841;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KtLg0B1vrzZBeuo/C7fy1HGxDtxIeRaGRM5T8fcaxh0=;
+        b=rT9mk+oUOIS7u2EJNc3U14ssWrdJ2xtbEwU3Q84YtuteC7j5v9KIHsgyx1DTGrQwG7
+         D8RP6DOboyB1QrwvSJecYebvLiPNVW7fmosEEUESHqS5XUVjHHBEPPiPtvvl7RNkLiSU
+         kEkuY/gnWkeznGNuWFweZ6hQNo/DPNIfHRMpTCwYyQ+SfAeZPt3+dXIwRthtkgBkPyEx
+         0epGM1DR8IZV6Bf+sAvoHqBIcbREnAl/OoWqVHP1tCQWWt6hu0BwiDrztjRKzdONWx87
+         I5QJiwGGzQj/Wvoi2JOwiWLEU30eJnAnzpnkQhwWy80awKqsuancW4ObFTBSBa5xLU31
+         XVpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuYQWe1U1QCvshfyhGR8JuzqaH+6AsDsN3L2CWQr9Jv3cNsj2ZHUgTucAGTy88p5b/JP89WHQbzy+JdlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnl5nVi8TNAr5aTmNixni9uzwFVQTImDc3l2wHf6uNyyVoDquR
+	Os4wBGhPK7lDomXs2dciH1aJHGlooiCxwJgVzZCUni8UVoGNoi4vrtekOer/1o4II8SnO9PN+t/
+	Ou4uTPix1pzk/lNP/GdjNxzAGvWVTUxAnvvP3DUjRUzB07hAtjAtwh6sXYuM/FdzvK14k2qmglE
+	n2DpXJKj09hj14AyLv3YA7vwKE4HBZRH4LNRPD
+X-Gm-Gg: ASbGncsz+7h5+H+RzfEJeehInCwp+WRkzLrtMPGpy2rPUFqT4n8ZznFR+SV96AOIQfX
+	VNeWx2VuF9PZs9xngSMKkBtJmn6zJZnUSU7gBHb3L69uKm5hGyDy5X0RHdjnkiVVLtE2/7XP2V3
+	E/kKbY43U=
+X-Received: by 2002:a05:690c:6892:b0:708:15dd:712 with SMTP id 00721157ae682-708cee0d4e0mr15576537b3.32.1746140040872;
+        Thu, 01 May 2025 15:54:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGPElw1UZQRMg/NB24PlPPnaQvolOetsYL1qWqN2H/DAHnfrkNvMouRvuxZDqL6cOU1L++ooR/hLBGonde+Go=
+X-Received: by 2002:a05:690c:6892:b0:708:15dd:712 with SMTP id
+ 00721157ae682-708cee0d4e0mr15576337b3.32.1746140040523; Thu, 01 May 2025
+ 15:54:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/eJNUadBoRgNz=uMn8j/5u4=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/eJNUadBoRgNz=uMn8j/5u4=
-Content-Type: text/plain; charset=UTF-8
+References: <20250428182904.93989-1-npache@redhat.com> <20250428182904.93989-4-npache@redhat.com>
+ <BE08D7F9-716B-4EE8-AC4E-2D9F4C5D4A05@nvidia.com>
+In-Reply-To: <BE08D7F9-716B-4EE8-AC4E-2D9F4C5D4A05@nvidia.com>
+From: Nico Pache <npache@redhat.com>
+Date: Thu, 1 May 2025 16:53:34 -0600
+X-Gm-Features: ATxdqUG3EUSAuZQcIBHamAtOStWW2NfUYwlhaLO5OYc6mM0jjaysT4fqAsR4EYU
+Message-ID: <CAA1CXcBM5210TqVn_bE0yAxo0SR=_g4GAgZoopwSDbyFYL+pqw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] khugepaged: add defer option to mTHP options
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com, 
+	baohua@kernel.org, baolin.wang@linux.alibaba.com, ryan.roberts@arm.com, 
+	willy@infradead.org, peterx@redhat.com, shuah@kernel.org, 
+	wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com, 
+	vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com, 
+	yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com, 
+	aarcange@redhat.com, raquini@redhat.com, dev.jain@arm.com, 
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, 
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thomas,
-
-On Thu, 1 May 2025 18:30:14 +0200 Thomas Wei=C3=9Fschuh <linux@weissschuh.n=
-et> wrote:
+On Wed, Apr 30, 2025 at 2:34=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
 >
-> Hi Stephen,
->=20
-> could you add the nolibc tree to linux-next?
-> git://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git#for=
--next
->=20
-> It replaces the nolibc tree from Shuah.
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git#n=
-olibc
+> On 28 Apr 2025, at 14:29, Nico Pache wrote:
+>
+> > Now that we have defer to globally disable THPs at fault time, lets add
+> > a defer setting to the mTHP options. This will allow khugepaged to
+> > operate at that order, while avoiding it at PF time.
+> >
+> > Signed-off-by: Nico Pache <npache@redhat.com>
+> > ---
+> >  include/linux/huge_mm.h |  5 +++++
+> >  mm/huge_memory.c        | 38 +++++++++++++++++++++++++++++++++-----
+> >  mm/khugepaged.c         |  8 ++++----
+> >  3 files changed, 42 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index 57e6c962afb1..a877c59bea67 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> > @@ -96,6 +96,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_at=
+tr;
+> >  #define TVA_SMAPS            (1 << 0)        /* Will be used for procf=
+s */
+> >  #define TVA_IN_PF            (1 << 1)        /* Page fault handler */
+> >  #define TVA_ENFORCE_SYSFS    (1 << 2)        /* Obey sysfs configurati=
+on */
+> > +#define TVA_IN_KHUGEPAGE     ((1 << 2) | (1 << 3)) /* Khugepaged defer=
+ support */
+>
+> Why is TVA_IN_KHUGEPAGE a superset of TVA_ENFORCE_SYSFS? Because khugepag=
+ed
+> also obeys sysfs configuration?
+Correct! The need for a TVA_IN_KHUGEPAGED is to isolate the "deferred"
+mTHPs from being "allowed" unless we are in khugepaged.
+>
+> I wonder if explicitly coding the behavior is better. For example,
+> in __thp_vma_allowable_orders(), enforce_sysfs =3D tva_flags & (TVA_ENFOR=
+CE_SYSFS | TVA_IN_KHUGEPAGE).
+I'm rather indifferent about either approach. If you (or any others)
+have a strong preference for an explicit (none-supersetted) TVA flag I
+can make the change.
+>
+> >
+> >  #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
+> >       (!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order))=
+)
+> > @@ -182,6 +183,7 @@ extern unsigned long transparent_hugepage_flags;
+> >  extern unsigned long huge_anon_orders_always;
+> >  extern unsigned long huge_anon_orders_madvise;
+> >  extern unsigned long huge_anon_orders_inherit;
+> > +extern unsigned long huge_anon_orders_defer;
+> >
+> >  static inline bool hugepage_global_enabled(void)
+> >  {
+> > @@ -306,6 +308,9 @@ unsigned long thp_vma_allowable_orders(struct vm_ar=
+ea_struct *vma,
+> >       /* Optimization to check if required orders are enabled early. */
+> >       if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
+>
+> And code here becomes tva_flags & (TVA_ENFORCE_SYSFS | TVA_IN_KHUGEPAGE).
+or just (enforce_sysfs & vma_is_anon)  like you mentioned. Then we
+check for the TVA_IN_KHUGEPAGED before appending the defer bits.
+>
+> Otherwise, LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+Thanks !
+>
+> --
+> Best Regards,
+> Yan, Zi
+>
 
-Done from today.  I have kept the same contacts.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/eJNUadBoRgNz=uMn8j/5u4=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgT+2cACgkQAVBC80lX
-0Gy5iQgAkYtioycNfPW/4x6p8PCtefFSjMMykJXpZt5M+kBkvoEJ0HjpBDRhHjo5
-bszbMFnOC9mo6YNJb3Gwid4FdHSryiKBfN6vt/OGKPKgj8Fu9fj8Tts7/hsyvKSu
-UdLUU4X7eLtofTdcaYwEUkJ8QnjEUzWZ9hUHqmFygGF7iTA9BskTnnIx/HzMJWmC
-3pjTVB5KT4qtNLcCsjypapr9Vke1SkhT0A66QyEiWoOO6sRSRiTp3iJJ5R/MLH2a
-7yjZ9DsNF7DrjSlhWHGc3D4c1kna6xf0xEcOsiMXhRju9Xq7zlZgVtg17IEMtCmB
-sD0mru5+t4QqL1jdTdoLOJChjAfGRg==
-=EWzO
------END PGP SIGNATURE-----
-
---Sig_/eJNUadBoRgNz=uMn8j/5u4=--
 
