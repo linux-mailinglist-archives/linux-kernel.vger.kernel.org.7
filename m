@@ -1,726 +1,419 @@
-Return-Path: <linux-kernel+bounces-628448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90652AA5DD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:35:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63849AA5DC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ACCC7B610C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0C49C3DA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A8F2253A4;
-	Thu,  1 May 2025 11:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HwzfYKG/"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E83223316;
-	Thu,  1 May 2025 11:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3004820F060;
+	Thu,  1 May 2025 11:33:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6788A2222D1
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 11:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746099260; cv=none; b=V0HTufWeVGncaIwPdv58Lm/qAOfp7XJ2zysnQXbTY+5Ick8RbFgI9KF3b211K1Zs0KCMWq5cuFDfjjE2DDg9h6b5upa7ousPNBCGQ5lIe9bV934b8KPYNa/iNBtCT0BB7kMrHtq8fEyvMye/N8EMF2uX+HlcQ9yCxWX6KIE/kSA=
+	t=1746099217; cv=none; b=KxWijJ3cUpwQ/VP1Oz+D1mHMOdAe3EfY7LPbx1S8mS7fEAkOAjHFgAIgkIIlWwdyBv1RNikHGI+yzn2nhkVTQZh13DFLDtz/S07yuyA88uksOU05tHmRKrHMtVDp35+i8NFvF4rBbGW131gj8aL41Ewwniu9ZHd4Vwm1QRXqv7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746099260; c=relaxed/simple;
-	bh=0xdQgWGpucEmNW6QHmfAFFGbYNB9SR/QOfkgqZm1ENk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GFFIKMSOT9NMSOe/c2ohWmCKU+i4oexU3VqGMrgQcApmENuqJFOU9ShVS32eqpVrNH7Jzt2Ac2XHcWtuTGopyR4m5M6cQMwc1JoGBgFrBBtmv2DJFzN2S5JEQAIon4tMp6ldNytpr4Ev3Vuf4KFKBxQE2X2pPBeUsPtSsID4UpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HwzfYKG/; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E0EEF20240;
-	Thu,  1 May 2025 13:34:16 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id rx7wPzFTh7b6; Thu,  1 May 2025 13:34:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746099255; bh=0xdQgWGpucEmNW6QHmfAFFGbYNB9SR/QOfkgqZm1ENk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=HwzfYKG/quUnjxTTB7pcDRdjgtud9FSruN4PU7I+ih64k2tExEIoECZFGRPlmieBS
-	 SWRQWATiqCkGtVN0RP7Wx2mFhgaYtvYnpiIVrjQzuX1kmI7HVW+8zWQIF/XZwntmHg
-	 fE6XA7rJpeClo3hVCGFNVUqtEB4TrSn1lD8exWiYs2fN6l44g3OT/fyIz/6JD0xxc0
-	 lC4N0hMueyrJY9m7Naybh5R5i8zA6HphAefYG33DBV24ngDVO1Lr+yNQNJrKCPlHdI
-	 kk7dZvpW6z+aNClKjWrXGn7RRZx/aa+z+o1gvOV2zSL8t0OMA6stBKg4Y4nGFwpkeX
-	 OPkZTB0/yCV2w==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Thu, 01 May 2025 17:03:01 +0530
-Subject: [PATCH v7 5/5] arm64: dts: exynos: add initial support for Samsung
- Galaxy J6
+	s=arc-20240116; t=1746099217; c=relaxed/simple;
+	bh=e0gHge12y0hlX81sR3O7asdQjjkNR6zO0H3EY1feMAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zf2OZhvw7Nu6Xkq8saFGWR4MFxibyQEhOOeYwaQJMIvcJXhGza7/skxoAIV5T1rrfp9SevM3toAPOiYfOad/F1D3sr9yWjtK0w2lsGnXX5TPr/VRFaPxdE2nhcrInrYm070wTTV0lErD5A0dr/LaHYYZFWsNnvF3lQbCBtOK32A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 306FA106F;
+	Thu,  1 May 2025 04:33:27 -0700 (PDT)
+Received: from [10.1.28.150] (XHFQ2J9959.cambridge.arm.com [10.1.28.150])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B35B53F5A1;
+	Thu,  1 May 2025 04:33:31 -0700 (PDT)
+Message-ID: <76cac3c0-2a52-4ff6-b7df-7a316983d197@arm.com>
+Date: Thu, 1 May 2025 12:33:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] mm: Add batched versions of
+ ptep_modify_prot_start/commit
+Content-Language: en-GB
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
+ willy@infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, jannh@google.com, anshuman.khandual@arm.com,
+ peterx@redhat.com, joey.gouly@arm.com, ioworker0@gmail.com,
+ baohua@kernel.org, kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, namit@vmware.com, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250429052336.18912-1-dev.jain@arm.com>
+ <20250429052336.18912-4-dev.jain@arm.com>
+ <8780e63d-22c1-4133-a800-dec50fd1b5fa@lucifer.local>
+ <f561dab6-c70e-485c-a3f7-2c5198fcf8c6@arm.com>
+ <9a2129ce-55b6-47e7-a879-00e7982c8ec4@lucifer.local>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <9a2129ce-55b6-47e7-a879-00e7982c8ec4@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250501-exynos7870-v7-5-bb579a27e5eb@disroot.org>
-References: <20250501-exynos7870-v7-0-bb579a27e5eb@disroot.org>
-In-Reply-To: <20250501-exynos7870-v7-0-bb579a27e5eb@disroot.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746099219; l=16218;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=0xdQgWGpucEmNW6QHmfAFFGbYNB9SR/QOfkgqZm1ENk=;
- b=VllHM+/43jWy9BliO1fQogKW9xAVTY1QhOakZKccANZHUPax04HdPl5hUOf/OwgdXuDO01fZH
- nAwu/5SJOKeBeP0QDVOWiHQLDdLXtKepvUr7RnJOZl6Cpp5ZFFilGn7
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Add initial devicetree support for Samsung Galaxy J6 (codename: j6lte),
-an Exynos7870 device.
+On 30/04/2025 15:34, Lorenzo Stoakes wrote:
+> On Wed, Apr 30, 2025 at 03:09:50PM +0100, Ryan Roberts wrote:
+>> On 29/04/2025 14:52, Lorenzo Stoakes wrote:
+>>> On Tue, Apr 29, 2025 at 10:53:32AM +0530, Dev Jain wrote:
+>>>> Batch ptep_modify_prot_start/commit in preparation for optimizing mprotect.
+>>>> Architecture can override these helpers.
+>>>>
+>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>> ---
+>>>>  include/linux/pgtable.h | 38 ++++++++++++++++++++++++++++++++++++++
+>>>>  1 file changed, 38 insertions(+)
+>>>>
+>>>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>>>> index b50447ef1c92..ed287289335f 100644
+>>>> --- a/include/linux/pgtable.h
+>>>> +++ b/include/linux/pgtable.h
+>>>> @@ -891,6 +891,44 @@ static inline void wrprotect_ptes(struct mm_struct *mm, unsigned long addr,
+>>>>  }
+>>>>  #endif
+>>>>
+>>>> +/* See the comment for ptep_modify_prot_start */
+>>>
+>>> I feel like you really should add a little more here, perhaps point out
+>>> that it's batched etc.
+>>>
+>>>> +#ifndef modify_prot_start_ptes
+>>>> +static inline pte_t modify_prot_start_ptes(struct vm_area_struct *vma,
+>>>> +		unsigned long addr, pte_t *ptep, unsigned int nr)
+>>>
+>>> This name is a bit confusing,
+>>
+>> On naming, the existing (modern) convention for single-pte helpers is to start
+>> the function name with ptep_. When we started adding batched versions, we took
+>> the approach of adding _ptes as a suffix. For example:
+>>
+>> set_pte_at()
+>> ptep_get_and_clear_full()
+>> ptep_set_wrprotect()
+>>
+>> set_ptes()
+>> get_and_clear_full_ptes()
+>> wrprotect_ptes()
+>>
+>> In this case, we already have ptep_modify_prot_start() and
+>> ptep_modify_prot_commit() for the existing single-pte helper versions. So
+>> according to the convention (or at least how I interpret the convention), the
+>> proposed names seem reasonable.
+>>
+> 
+> Right, I'm fine with following convention (we should), I just find 'ptes'
+> really ambiguous. It's not just a -set of PTE entries- it's very explicitly
+> for a large folio. I'd interpret some 'ptes' case to mean 'any number of
+> pte entries', though I suppose it'd not in practice be any different if
+> that were the intended use.
+> 
+> However, the proposed use case is large folio 'sub' PTEs and it'd be useful
+> in callers to know this is explicitly what you're doing.
+> 
+> I feel like '_batched_ptes' makes it clear it's a _specific_ set of PTE
+> entriess you're after (not just in effect multiple PTE entries).
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- arch/arm64/boot/dts/exynos/Makefile             |   1 +
- arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts | 614 ++++++++++++++++++++++++
- 2 files changed, 615 insertions(+)
+I don't mind _batched_ptes. _pte_batch would be shorter though - what do you think?
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index e0da4c4972c7344cf957e00ef701d6405a16bdcb..89c90564c3d86a268ea46492b67d72fa69ad3e95 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos5433-tm2e.dtb		\
- 	exynos7-espresso.dtb		\
- 	exynos7870-a2corelte.dtb	\
-+	exynos7870-j6lte.dtb		\
- 	exynos7870-on7xelte.dtb		\
- 	exynos7885-jackpotlte.dtb	\
- 	exynos850-e850-96.dtb		\
-diff --git a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..24c9722f7a596f320e19b615f6306e3c2a89d7a4
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-@@ -0,0 +1,614 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Samsung Galaxy J6 (j6lte) device tree source
-+ *
-+ * Copyright (c) 2018 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2025 Kaustabh Chakraborty <kauschluss@disroot.org>
-+ */
-+
-+/dts-v1/;
-+#include "exynos7870.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "Samsung Galaxy J6";
-+	compatible = "samsung,j6lte", "samsung,exynos7870";
-+	chassis-type = "handset";
-+
-+	aliases {
-+		mmc0 = &mmc0;
-+		mmc1 = &mmc1;
-+		mmc2 = &mmc2;
-+		serial0 = &serial0;
-+		serial1 = &serial1;
-+		serial2 = &serial2;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		stdout-path = &serial2;
-+
-+		framebuffer@67000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
-+			width = <720>;
-+			height = <1480>;
-+			stride = <(720 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	gpio-hall-effect-sensor {
-+		compatible = "gpio-keys";
-+		label = "GPIO Hall Effect Sensor";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hall_irq>;
-+
-+		event-hall-effect-sensor {
-+			label = "Hall Effect Sensor";
-+			gpios = <&gpa1 3 GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_LID>;
-+			linux,can-disable;
-+			wakeup-source;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		label = "GPIO Keys";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-+
-+		key-power {
-+			label = "Power Key";
-+			gpios = <&gpa0 0 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+		};
-+
-+		key-voldown {
-+			label = "Volume Down Key";
-+			gpios = <&gpa2 1 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
-+
-+
-+		key-volup {
-+			label = "Volume Up Key";
-+			gpios = <&gpa2 0 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x3d800000>,
-+		      <0x0 0x80000000 0x7d800000>;
-+	};
-+
-+	pwrseq_mmc1: pwrseq-mmc1 {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpd3 6 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	/* mmc2: vmmc */
-+	vdd_fixed_mmc2: regulator-fixed-mmc2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_fixed_mmc2";
-+		regulator-max-microvolt = <2800000>;
-+		regulator-min-microvolt = <2800000>;
-+		gpio = <&gpc0 0 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ramoops@46e00000 {
-+			compatible = "ramoops";
-+			reg = <0x0 0x46e00000 0x8000>;
-+			console-size = <0x4000>;
-+			pmsg-size = <0x4000>;
-+		};
-+
-+		framebuffer@67000000 {
-+			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
-+			no-map;
-+		};
-+	};
-+
-+	vibrator {
-+		compatible = "regulator-haptic";
-+		haptic-supply = <&vdd_ldo32>;
-+		min-microvolt = <3300000>;
-+		max-microvolt = <3300000>;
-+	};
-+};
-+
-+&gpu {
-+	status = "okay";
-+};
-+
-+&hsi2c0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	status = "okay";
-+
-+	pmic@66 {
-+		compatible = "samsung,s2mpu05-pmic";
-+		reg = <0x66>;
-+		interrupt-parent = <&gpa0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_irq>;
-+
-+		regulators {
-+			vdd_buck1: buck1 {
-+				regulator-name = "vdd_buck1";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_buck2: buck2 {
-+				regulator-name = "vdd_buck2";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_buck3: buck3 {
-+				regulator-name = "vdd_buck3";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_buck4: buck4 {
-+				regulator-name = "vdd_buck4";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_buck5: buck5 {
-+				regulator-name = "vdd_buck5";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2100000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo1: ldo1 {
-+				regulator-name = "vdd_ldo1";
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* mmc2: vqmmc */
-+			vdd_ldo2: ldo2 {
-+				regulator-name = "vdd_ldo2";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			vdd_ldo3: ldo3 {
-+				regulator-name = "vdd_ldo3";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo4: ldo4 {
-+				regulator-name = "vdd_ldo4";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo5: ldo5 {
-+				regulator-name = "vdd_ldo5";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo6: ldo6 {
-+				regulator-name = "vdd_ldo6";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo7: ldo7 {
-+				regulator-name = "vdd_ldo7";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* usbdrd: vdd33 */
-+			vdd_ldo8: ldo8 {
-+				regulator-name = "vdd_ldo8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3375000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			vdd_ldo9: ldo9 {
-+				regulator-name = "vdd_ldo9";
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo10: ldo10 {
-+				regulator-name = "vdd_ldo10";
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo25: ldo25 {
-+				regulator-name = "vdd_ldo25";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* mmc0: vmmc */
-+			vdd_ldo26: ldo26 {
-+				regulator-name = "vdd_ldo26";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3375000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			/* mmc0: vqmmc */
-+			vdd_ldo27: ldo27 {
-+				regulator-name = "vdd_ldo27";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			vdd_ldo29: ldo29 {
-+				regulator-name = "vdd_ldo29";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo30: ldo30 {
-+				regulator-name = "vdd_ldo30";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdd_ldo31: ldo31 {
-+				regulator-name = "vdd_ldo31";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* vibrator: haptic */
-+			vdd_ldo32: ldo32 {
-+				regulator-name = "vdd_ldo32";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			vdd_ldo33: ldo33 {
-+				regulator-name = "vdd_ldo33";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			/* touchscreen: vdd */
-+			vdd_ldo34: ldo34 {
-+				regulator-name = "vdd_ldo34";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			vdd_ldo35: ldo35 {
-+				regulator-name = "vdd_ldo35";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c5 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	samsung,i2c-sda-delay = <100>;
-+	samsung,i2c-max-bus-freq = <400000>;
-+
-+	status = "okay";
-+
-+	accelerometer@1d {
-+		compatible = "st,lis2ds12";
-+		reg = <0x1d>;
-+		interrupt-parent = <&gpa2>;
-+		interrupts = <3 IRQ_TYPE_EDGE_RISING>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&accel_irq>;
-+
-+		mount-matrix = "-1", "0",  "0",
-+				"0", "1",  "0",
-+				"0", "0", "-1";
-+
-+		st,drdy-int-pin = <1>;
-+	};
-+};
-+
-+&i2c6 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	samsung,i2c-sda-delay = <100>;
-+	samsung,i2c-max-bus-freq = <400000>;
-+
-+	status = "okay";
-+
-+	touchscreen@20 {
-+		compatible = "zinitix,bt532";
-+		reg = <0x20>;
-+		interrupt-parent = <&gpa0>;
-+		interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&touch_irq>;
-+
-+		touchscreen-size-x = <720>;
-+		touchscreen-size-y = <1480>;
-+
-+		vdd-supply = <&vdd_ldo34>;
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_rdqs &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-+
-+	vmmc-supply = <&vdd_ldo26>;
-+	vqmmc-supply = <&vdd_ldo27>;
-+
-+	fifo-depth = <64>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <2 4>;
-+	non-removable;
-+
-+	status = "okay";
-+};
-+
-+&mmc1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd1_clk &sd1_cmd &sd1_bus1 &sd1_bus4>;
-+
-+	mmc-pwrseq = <&pwrseq_mmc1>;
-+
-+	bus-width = <4>;
-+	fifo-depth = <64>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 3>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	non-removable;
-+	cap-sd-highspeed;
-+	cap-sdio-irq;
-+
-+	status = "okay";
-+
-+	wifi@1 {
-+		compatible = "brcm,bcm43430a1-fmac", "brcm,bcm4329-fmac";
-+		reg = <0x1>;
-+		interrupt-names = "host-wake";
-+		interrupt-parent = <&gpa2>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+		reset-gpios = <&gpd3 6 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4 &dwmmc2_irq>;
-+
-+	vmmc-supply = <&vdd_fixed_mmc2>;
-+	vqmmc-supply = <&vdd_ldo2>;
-+
-+	bus-width = <4>;
-+	card-detect-delay = <200>;
-+	fifo-depth = <64>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 3>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	broken-cd;
-+	disable-wp;
-+
-+	status = "okay";
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	accel_irq: accel-irq-pins {
-+		samsung,pins = "gpa2-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	dwmmc2_irq: dwmmc2-irq-pins {
-+		samsung,pins = "gpa0-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	fuel_irq: fuel-irq-pins {
-+		samsung,pins = "gpa0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	hall_irq: hall-irq-pins {
-+		samsung,pins = "gpa1-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	key_power: key-power-pins {
-+		samsung,pins = "gpa0-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa2-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa2-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	pmic_irq: pmic-irq-pins {
-+		samsung,pins = "gpa0-2";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR4>;
-+	};
-+
-+	touch_irq: touch-irq-pins {
-+		samsung,pins = "gpa0-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+	};
-+
-+	wlan_hostwake: wlan-hostwake-pins {
-+		samsung,pins = "gpa2-2";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+	};
-+};
-+
-+&pinctrl_top {
-+	bt_enable: bt-enable-pins {
-+		samsung,pins = "gpd4-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_PREV>;
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+	};
-+
-+	wlan_enable: wlan-enable-pins {
-+		samsung,pins = "gpd3-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_PREV>;
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR4>;
-+		samsung,pin-val = <0>;
-+	};
-+};
-+
-+&serial1 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm43430a1-bt";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_btwake &bt_hostwake &bt_enable>;
-+
-+		device-wakeup-gpios = <&gpa1 2 GPIO_ACTIVE_HIGH>;
-+		host-wakeup-gpios = <&gpa1 6 GPIO_ACTIVE_HIGH>;
-+		shutdown-gpios = <&gpd4 0 GPIO_ACTIVE_HIGH>;
-+
-+		max-speed = <3000000>;
-+	};
-+};
-+
-+&serial2 {
-+	status = "okay";
-+};
-+
-+&usbdrd {
-+	vdd33-supply = <&vdd_ldo8>;
-+
-+	status = "okay";
-+};
+But if we go with one of these, then we should consistently apply it to all the
+existing helpers IMHO - perhaps with a preparatory patch at the start of the series.
 
--- 
-2.49.0
+> 
+> However, I'm less insistent on this with a comment that explains what's
+> going on.
+
+That would still get my vote :)
+
+> 
+> I don't want to hold this up with trivialities around naming...
+
+There are TWO hard things in computer science; cache invalidation, naming, and
+off-by-one errors :)
+
+> 
+> ASIDE: I continue to absolutely HATE the ambiguity between 'PxD/PTE' and
+> 'PxD/PTE entries' and the fact we use both as a short-hand for each
+> other. But that's not related to this series, just a pet peeve... :)
+
+I assume you are referring to the ambiguity between the *table* and the *entry*
+(which just goes to show how ambiguous it is I guess)... I also hate this and
+still trip over it all the time...
+
+> 
+>>> it's not any ptes, it's those pte entries
+>>> belonging to a large folio capped to the PTE table right that you are
+>>> batching right?
+>>
+>> Yes, but again by convention, that is captured in the kerneldoc comment for the
+>> functions. We are operating on a batch of *ptes* not on a folio or batch of
+>> folios. But it is a requirement of the function that the batch of ptes all lie
+>> within a single large folio (i.e. the pfns are sequential).
+> 
+> Ack, yeah don't love this nr stuff but fine if it's convention...
+> 
+>>  > Perhaps modify_prot_start_large_folio() ? Or something with 'batched' in
+>>> the name?
+>>>
+>>> We definitely need to mention in comment or name or _somewhere_ the intent
+>>> and motivation for this.
+>>
+>> Agreed!
+> 
+> ...and luckily we are aligned on this :)
+> 
+>>
+>>>
+>>>> +{
+>>>> +	pte_t pte, tmp_pte;
+>>>> +
+>>>
+>>> are we not validating what 'nr' is? Even with debug asserts? I'm not sure I
+>>> love this interface, where you require the user to know the number of
+>>> remaining PTE entries in a PTE table.
+>>
+>> For better or worse, that's the established convention. See part of comment for
+>> set_ptes() for example:
+>>
+>> """
+>>  * Context: The caller holds the page table lock.  The pages all belong
+>>  * to the same folio.  The PTEs are all in the same PMD.
+>> """
+>>
+>>>
+>>>> +	pte = ptep_modify_prot_start(vma, addr, ptep);
+>>>> +	while (--nr) {
+>>>
+>>> This loop is a bit horrible. It seems needlessly confusing and you're in
+>>> _dire_ need of comments to explain what's going on.
+>>>
+>>> So my understanding is, you have the user figure out:
+>>>
+>>> nr = min(nr_pte_entries_in_pte, nr_pgs_in_folio)
+>>>
+>>> Then, you want to return the pte entry belonging to the start of the large
+>>> folio batch, but you want to adjust that pte value to propagate dirty and
+>>> young page table flags if any page table entries within the range contain
+>>> those page table flags, having called ptep_modify_prot_start() on all of
+>>> them?
+>>>
+>>> This is quite a bit to a. put in a header like this and b. not
+>>> comment/explain.
+>>
+>> This style is copied from get_and_clear_full_ptes(), which has this comment,
+>> which explains all this complexity. My vote would be to have a simple comment
+
+Oops; I meant "similar" when my fingers somehow typed "simple"... This is not
+simple :)
+
+>> for this function:
+>>
+>> /**
+>>  * get_and_clear_full_ptes - Clear present PTEs that map consecutive pages of
+>>  *			     the same folio, collecting dirty/accessed bits.
+>>  * @mm: Address space the pages are mapped into.
+>>  * @addr: Address the first page is mapped at.
+>>  * @ptep: Page table pointer for the first entry.
+>>  * @nr: Number of entries to clear.
+>>  * @full: Whether we are clearing a full mm.
+>>  *
+>>  * May be overridden by the architecture; otherwise, implemented as a simple
+>>  * loop over ptep_get_and_clear_full(), merging dirty/accessed bits into the
+>>  * returned PTE.
+>>  *
+>>  * Note that PTE bits in the PTE range besides the PFN can differ. For example,
+>>  * some PTEs might be write-protected.
+>>  *
+>>  * Context: The caller holds the page table lock.  The PTEs map consecutive
+>>  * pages that belong to the same folio.  The PTEs are all in the same PMD.
+>>  */
+>>
+> 
+> OK I think the key bit here is 'consecutive pages of the same folio'.
+> 
+> I'd like at least a paragraph about implementation, yes the original
+> function doesn't have that (and should imo), something like:
+> 
+> 	We perform the operation on the first PTE, then if any others
+> 	follow, we invoke the ptep_modify_prot_start() for each and
+> 	aggregate A/D bits.
+> 
+> Something like this.
+> 
+> Point taken on consistency though!
+> 
+>>>
+>>> So maybe something like:
+>>>
+>>> pte = ptep_modify_prot_start(vma, addr, ptep);
+>>>
+>>> /* Iterate through large folio tail PTEs. */
+>>> for (pg = 1; pg < nr; pg++) {
+>>> 	pte_t inner_pte;
+>>>
+>>> 	ptep++;
+>>> 	addr += PAGE_SIZE;
+>>>
+>>> 	inner_pte = ptep_modify_prot_start(vma, addr, ptep);
+>>>
+>>> 	/* We must propagate A/D state from tail PTEs. */
+>>> 	if (pte_dirty(inner_pte))
+>>> 		pte = pte_mkdirty(pte);
+>>> 	if (pte_young(inner_pte))
+>>> 		pte = pte_mkyoung(pte);
+>>> }
+>>>
+>>> Would work better?
+>>>
+>>>
+>>>
+>>>> +		ptep++;
+>>>> +		addr += PAGE_SIZE;
+>>>> +		tmp_pte = ptep_modify_prot_start(vma, addr, ptep);
+>>>
+>>>
+>>>
+>>>> +		if (pte_dirty(tmp_pte))
+>>>> +			pte = pte_mkdirty(pte);
+>>>> +		if (pte_young(tmp_pte))
+>>>> +			pte = pte_mkyoung(pte);
+>>>
+>>> Why are you propagating these?
+>>>
+>>>> +	}
+>>>> +	return pte;
+>>>> +}
+>>>> +#endif
+>>>> +
+>>>> +/* See the comment for ptep_modify_prot_commit */
+>>>
+>>> Same comments as above, needs more meat on the bones!
+>>>
+>>>> +#ifndef modify_prot_commit_ptes
+>>>> +static inline void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
+>>>
+>>> Again need to reference large folio, batched or something relevant here,
+>>> 'ptes' is super vague.
+>>>
+>>>> +		pte_t *ptep, pte_t old_pte, pte_t pte, unsigned int nr)
+>>>
+>>> Nit, but you put 'p' suffix on ptep but not on 'old_pte'?
+>>>
+>>> I'm even more concerned about the 'nr' API here now.
+>>>
+>>> So this is now a user-calculated:
+>>>
+>>> min3(large_folio_pages, number of pte entries left in ptep,
+>>> 	number of pte entries left in old_pte)
+>>>
+>>> It really feels like something that should be calculated here, or at least
+>>> be broken out more clearly.
+>>>
+>>> You definitely _at the very least_ need to document it in a comment.
+>>>
+>>>> +{
+>>>> +	for (;;) {
+>>>> +		ptep_modify_prot_commit(vma, addr, ptep, old_pte, pte);
+>>>> +		if (--nr == 0)
+>>>> +			break;
+>>>
+>>> Why are you doing an infinite loop here with a break like this? Again feels
+>>> needlessly confusing.
+>>
+>> I agree it's not pretty to look at. But apparently it's the most efficient. This
+>> is Willy's commit that started it all: Commit bcc6cc832573 ("mm: add default
+>> definition of set_ptes()").
+>>
+>> For the record, I think all your comments make good sense, Lorenzo. But there is
+>> an established style, and personally I think at this point is it more confusing
+>> to break from that style.
+> 
+> This isn't _quite_ style, I'd say it's implementation, we're kind of
+> crossing over into something a little more I'd say :) but I mean I get your
+> point, sure.
+> 
+> I mean, fine, if (I presume you're referring _only_ to the for (;;) case
+> above) you are absolutely certain it is more performant in practice I
+> wouldn't want to stand in the way of that.
+
+No I'm not certain at all... I'm just saying that's been the argument in the
+past. I vaguely recall I even tried changing the loop style in batched helpers I
+implemented in the past and David asked me to stick with the established style.
+
+> 
+> I would at least like a comment in the commit message about propagating an
+> odd loop for performance though to explain the 'qualities'... :)
+
+Just to make it clear, I'm just trying to provide some historical context, I'm
+not arguing that all those decisions were perfect. How about we take these
+concrete steps:
+
+  - Stick with the _ptes naming convention
+  - Add kerneldoc comments for the 2 new functions that are very clear about
+    what the function does and the requirements on the batch of ptes (just like
+    the other batched helpers)
+  - Rework the looping styles in the 2 new functions to be more "standard";
+    let's not micro-optimize unless we have real evidence that it is useful.
+  - Merge this patch with the one that uses these new functions
+
+How does that sound as a way forwards?
+
+Thanks,
+Ryan
+
+> 
+>>
+>> Thanks,
+>> Ryan
+>>
+>>
+>>>
+>>> I think it's ok to duplicate this single line for the sake of clarity,
+>>> also.
+>>>
+>>> Which gives us:
+>>>
+>>> unsigned long pg;
+>>>
+>>> ptep_modify_prot_commit(vma, addr, ptep, old_pte, pte);
+>>> for (pg = 1; pg < nr; pg++) {
+>>> 	ptep++;
+>>> 	addr += PAGE_SIZE;
+>>> 	old_pte = pte_next_pfn(old_pte);
+>>> 	pte = pte_next_pfn(pte);
+>>>
+>>> 	ptep_modify_prot_commit(vma, addr, ptep, old_pte, pte);
+>>> }
+>>>
+>>> There are alternative approaches, but I think doing an infinite loop that
+>>> breaks and especially the confusing 'if (--foo) break;' stuff is much
+>>> harder to parse than a super simple ranged loop.
+>>>
+>>>> +		ptep++;
+>>>> +		addr += PAGE_SIZE;
+>>>> +		old_pte = pte_next_pfn(old_pte);
+>>>> +		pte = pte_next_pfn(pte);
+>>>> +	}
+>>>> +}
+>>>> +#endif
+>>>> +
+>>>>  /*
+>>>>   * On some architectures hardware does not set page access bit when accessing
+>>>>   * memory page, it is responsibility of software setting this bit. It brings
+>>>> --
+>>>> 2.30.2
+>>>>
+>>
 
 
