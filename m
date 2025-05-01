@@ -1,78 +1,61 @@
-Return-Path: <linux-kernel+bounces-628351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9C8AA5CB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:37:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5DEAA5CB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377EB980789
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:37:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450844A3DF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 09:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A2F25EF9C;
-	Thu,  1 May 2025 09:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aK1Q1Mcd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B09522D7BD;
-	Thu,  1 May 2025 09:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD26E20D4FF;
+	Thu,  1 May 2025 09:45:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0FA18B47E;
+	Thu,  1 May 2025 09:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746092239; cv=none; b=hQOoE92H3irXgd2sAqpwt11VhZcscDpF3/Md/keR+2wmKJaFSs/JBzKF3q51fhF1bURA0usRldPolZEb0pE9upOs9DsX3fS0kK/KHHInCg51UlMWYHFDgjvgHj+zw79lzd3tgjXxRyT27yKXfGCQeaE19anGcrpjz5jc0QD/9nM=
+	t=1746092715; cv=none; b=eue3Dx7WScvBP2DinSYAPWjw7LmpAaD8VUB5beD/5OJrh+WOhYg0U/veBXKZZvtU0bT/Q+HDLBJnhzo2f2ffFif7qocIosf2ehormIT0CvCP13oeHnT92oJdv/0uQefi/HrlF0QSbLp2ODunJTw/nP8VcC5Vkgfz0Uv34/vQ830=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746092239; c=relaxed/simple;
-	bh=7HkpmBy4uOXtgP/kfZ+4ul+zjnVdkK+uvMav1IDO7GE=;
+	s=arc-20240116; t=1746092715; c=relaxed/simple;
+	bh=HwiSZZP3z5YW+8jqIp7u4iGROE5AIzJs4qblsKHBT4Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLcrIVq3PvnWwrGrFc09nwjNlAguwnfROoxw1U2zBY7qUDfPx6E9b+oif/H4tP8HQ9Z2lpJIokYI43b85shqLKG4R/WGwBIz2IpvFijIPEJaOkHtpfcfKHOEQsGpaem9G83JPmr6td9+IybErO1D75DcbweTycKDcXc0N2wh7gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aK1Q1Mcd; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746092236; x=1777628236;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7HkpmBy4uOXtgP/kfZ+4ul+zjnVdkK+uvMav1IDO7GE=;
-  b=aK1Q1Mcdw884lCDiNc5dnvs39bceZSH/pIXSeAX5EjYBX8TJ04i7nVqp
-   45FfuQ99lBBoPiPZPITb4a7mHskWyY+YeA0Rbrk6ddPMuWUc+EWX6lSnX
-   dLIFxmbxoFEn+on6nJd8L5uMhN44miPaXAofKI+pQl48OCA8LXEAip4PP
-   QiqQcVHrtxkmB4tk0vlSIPjzOkb+m+/pN7T8shpVAou4zpl78ff6qufJY
-   19/10b5pFl75JpxJjX/iloPT4ylGuiudFx/sK/Yc/URbBKxRDSCOat7SG
-   p/B1TonittlYSln2Lvw7WHrDtKJAJoK4fMlqn7oEkL3M+uOAnIOAxV2/9
-   w==;
-X-CSE-ConnectionGUID: StTCXCWHSuaQWuHRbs+4OQ==
-X-CSE-MsgGUID: gpI9amrDSzKFPoDR7/2FMw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="47672299"
-X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
-   d="scan'208";a="47672299"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 02:37:15 -0700
-X-CSE-ConnectionGUID: +oETbooFSmyuPuIsABmWhA==
-X-CSE-MsgGUID: A8hsURclRcGMFwsZ1uWTrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
-   d="scan'208";a="171577908"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 01 May 2025 02:37:14 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uAQLv-00045B-1z;
-	Thu, 01 May 2025 09:37:11 +0000
-Date: Thu, 1 May 2025 17:37:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexey Charkov <alchark@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Alexey Charkov <alchark@gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: i2c: i2c-wmt: Convert to YAML
-Message-ID: <202505011756.SZDFqCew-lkp@intel.com>
-References: <20250430-vt8500-i2c-binding-v2-1-0cf22d0c2d42@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMbfYiBkuNyPAWGOXdFnMt6wpU3ZgwUZOCvl1EknkG8OdqpP2OxH21YQRgN/mwjNQY73w4Eejt5WQeu2ctiMpxuoMaMhjTLnP0C1BlsMAEgudlgQWsYwOGfB1RBzFqTX5/auNc8bvv935UKELta+gXqY/h1/TZRegwkpofRbOLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98FA0106F;
+	Thu,  1 May 2025 02:45:04 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E1BC3F5A1;
+	Thu,  1 May 2025 02:45:09 -0700 (PDT)
+Date: Thu, 1 May 2025 10:45:00 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org,
+	Jim Quinlan <james.quinlan@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>, peng.fan@oss.nxp.com,
+	Michal Simek <michal.simek@amd.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Johan Hovold <johan@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH v3 2/3] firmware: arm_scmi: Add Quirks framework
+Message-ID: <aBNCnO6nGjkMXFba@pluto>
+References: <20250429141108.406045-1-cristian.marussi@arm.com>
+ <20250429141108.406045-3-cristian.marussi@arm.com>
+ <aBHXHnXA95TwJths@pluto>
+ <868qnhj2yf.wl-maz@kernel.org>
+ <aBIbC15NiqUseZc7@pluto>
+ <20250430-efficient-spider-of-criticism-e857bf@sudeepholla>
+ <94e94c5f-210b-43b8-99bc-e7ad7da2588d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,40 +64,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430-vt8500-i2c-binding-v2-1-0cf22d0c2d42@gmail.com>
+In-Reply-To: <94e94c5f-210b-43b8-99bc-e7ad7da2588d@app.fastmail.com>
 
-Hi Alexey,
+On Wed, Apr 30, 2025 at 10:03:42PM +0200, Arnd Bergmann wrote:
+> On Wed, Apr 30, 2025, at 17:26, Sudeep Holla wrote:
+> >
+> > Arnd,
+> >
+> > I don't see much discussions on 20250407094116.1339199-1-arnd@kernel.org
+> > to conclude if you plan to get this for v6.16
+> >
+> > We probably can wait to push this $subject after your changes land. But
+> > it would be good to know your opinion here especially if you are not
+> > pushing your patches for v6.16
+> 
+> I've pushed my branch to the asm-generic tree now, so it should 
+> show up in the next linux-next.
+> 
+> Cristian, I think you can keep the __VA_OPT__, as the build bots
+> should stop testing with older gcc versions once my series is in
+> linux-next.
+> 
 
-kernel test robot noticed the following build warnings:
+Great, I'll keep an eye on linux-next.
+Thanks for the feedback.
 
-[auto build test WARNING on 0af2f6be1b4281385b618cb86ad946eded089ac8]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Charkov/dt-bindings-i2c-i2c-wmt-Convert-to-YAML/20250430-183538
-base:   0af2f6be1b4281385b618cb86ad946eded089ac8
-patch link:    https://lore.kernel.org/r/20250430-vt8500-i2c-binding-v2-1-0cf22d0c2d42%40gmail.com
-patch subject: [PATCH v2] dt-bindings: i2c: i2c-wmt: Convert to YAML
-reproduce: (https://download.01.org/0day-ci/archive/20250501/202505011756.SZDFqCew-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505011756.SZDFqCew-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
-   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
-   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
-   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/i2c/i2c-wmt.txt
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/backlight/ti,lp8864.yaml
-   Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 984.
-   make[2]: *** [Documentation/Makefile:121: htmldocs] Error 255
-   make[1]: *** [Makefile:1801: htmldocs] Error 2
-   make: *** [Makefile:248: __sub-make] Error 2
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Cristian
 
