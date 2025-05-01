@@ -1,95 +1,161 @@
-Return-Path: <linux-kernel+bounces-628485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0396DAA5E6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:30:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A5CAA5E72
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 14:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273741BC48C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:31:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FCDD7B1968
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 12:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3EE20E717;
-	Thu,  1 May 2025 12:30:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE0B1DA53;
-	Thu,  1 May 2025 12:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4870A20E026;
+	Thu,  1 May 2025 12:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ihA8sECS"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FAE1EFFA3
+	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 12:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746102638; cv=none; b=REC2bBwZHNlcHhYW91osgKpIP04eCZAUhBV0ayYdg2bNGAwpBG7wEY1MkJGVZvYYPOvj2agcat36Yp0NnUXW9rHPRlK3DwnPBHK6hcp0vA6kzEQcGxTlF2u5bc9rTE8c3YYOoasRkeFY3QcTjBId300prCwSUdPmBn9jvK8vXJU=
+	t=1746102898; cv=none; b=mN3FQajQF7c40PAj9R9rHvDODCvvkwuCqkpav939nHHp2NUw4RRpchY7yqEIJp1e4FtymWtlDJeEN+1IZfsJjLDIkSGA/g/gOuyutgbVyu3BWkQ9He6H7fu8dG7GdEI97V/VGNXLckMcJkOksByafEDhMZfAYPsY+S1HBzDpHpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746102638; c=relaxed/simple;
-	bh=KnQE95qVoJVNX8ZCH72+8W7tHrtRe/I3nmQ2e0u34lQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cz0ZbfEtHjapFZ9/S03SUzQ8ggz+rNVNvpdNSSt47Gm3ktM+gkaMdAxVBDBgN/kbRWK0A3R5oDvGyF1tYinaxjpH/Y3Yakm16z7wN8eapwjOl0bGVmfOyGkmxK4JJhvrrxf2OgAZwhklTqp2GrE40i9Zp4sIvS4lBWPUP+6Wvfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BC3A1D14;
-	Thu,  1 May 2025 05:30:29 -0700 (PDT)
-Received: from [192.168.178.25] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C10A3F673;
-	Thu,  1 May 2025 05:30:34 -0700 (PDT)
-Message-ID: <c8ea80f0-66ee-4c13-ae52-eefab161faf4@arm.com>
-Date: Thu, 1 May 2025 14:30:32 +0200
+	s=arc-20240116; t=1746102898; c=relaxed/simple;
+	bh=G/RoUkwRiQOXSxv59xARYxUagM8QnADLC3A1IwKkiow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5AjDaJ4NAXX5dbi/p0YVPLda0iu7ioHQaVH7Mh7Mmu6ZGmkKGxuWoqsiUQxLIphztoBW4Rkb2Pnb3N+QbUJe2uzc1MMmHWhC1IX8yDdCGLd7goqtDMlG4PeMmg6x7Hdea3WZ/QboomGGmb44SHG6Kcx0K1Oll9Se8szinpXcMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ihA8sECS; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39ee57c0b8cso714306f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 05:34:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746102894; x=1746707694; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YPiLjAi9V3LXrkyU6HTBrDXuzWqvSmJyUjh3f1X0IeI=;
+        b=ihA8sECSaXXezSez7u0E8+0uPxU4bItflTyv6QgSsrgJpN3mkLtAQHnL+jBRsSXjfD
+         sjCuQpAIdU7Tw+pI3jkNwrfEK0W5KiUit10FIKdIbAqpudCg8tsl1RxxAH3kemupXR7u
+         BKGaN8a/yvyWBrio22dYuUmhEOkwDEGMjgfVkxZmiFkdnc1A6UmodzLNRBErAzbGZXAF
+         bStJ6lKgo0/5zFH+o2CxCy/OqgQbCLnx44a7kI21jOUTB1UfJBJR863O97xa7R1xG8MI
+         Akkiuu3Nw+UQkaAku9GpN4a4+IohP4pVKHTV8H/Cd995YTkzX9RXcmYpPmVY4FCcReUj
+         soNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746102894; x=1746707694;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YPiLjAi9V3LXrkyU6HTBrDXuzWqvSmJyUjh3f1X0IeI=;
+        b=BTH8WN34ImcABv17ec4AwiaAZ4lVF9kb9XKTXAmqNr09WFBI7enNmJ74bdHbza5gk4
+         MpeF5duT7GC2BLzC3aaKc0KUz5iF0rXQ45WCFXACZUotmANO6Xuz+FdlGQsNtOnk5lBX
+         RIn02KBKnq6gbz9Dd6oEPXp1I6IPb4UL7nla6XlYhnpLQ9gh0Y6HZKlxleV51OzP3CpD
+         a566vltfphycDmZIDtW4dBpTQ5xYorP9YDODkLLML0bDOmcQmWXtsyxuj/ImSDrnvmPQ
+         4V28GqAPSOhCEeFoXD9mAC7g/n4ebNArVJq+i8a0pp3Xm5M8RIvrb9m1rTt4VGF6hmDE
+         n0OA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyvIaE+1J3BEgu9OVNQGmPle/dnYj/WI2LbN8GqXJp59KWG9T8X+ih5G4d6wdeLcYtg6LBPnZZNRcDJaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypQ944whFw1XjZrjweAPzPTJSFrvnmuBHMcDZGedMcfpuuJeR0
+	H4dYrIvwq3BgoorId3Rfks2B/VEn9EXYlD0OBVBXoQ54NqcfnKCjQbYhJazxU6g=
+X-Gm-Gg: ASbGncuoDXJ6/X8IuUPWizqNPf1Z4oikqVTa9DXBqAGEiw3uYxGy63DmP3GWr16iqj1
+	OF6DyqEN5s7hWVQIfhbqD3sUVjst5Gp6pDRQ+b5mimmZf1Ge8JFu6PBVFmXRJSMqrLaaBAOpCke
+	v1cM9CX3WxjVnffLIi/6Ri3YO1NDdI2C+hamuDygey9TZBDxBW3X+8LwdpYnqqw51DFe2+rANCF
+	CUvZ2RSf+Kgd0ZfFNWa/jXRp5Dqyin9KLTi+cMLTw+9PJNSaBkPdBM+BSL5vs9bm71EutfWC3OZ
+	uBRTGEzrSfItOT67sXLN0BIcIQFEp9pkMDjbytloeK3tQNHKAz2aUf63uJEgQ00bXhi8A/0wYrR
+	TvDJTMvM=
+X-Google-Smtp-Source: AGHT+IEIbbf/OZuD+Zj46a1YVLMU7rprN2/0xvSeZWv1bKsLNfcqHiG2P4WlaJMEjA6SHfzilU5zzQ==
+X-Received: by 2002:a5d:598c:0:b0:39c:dfa:d33e with SMTP id ffacd0b85a97d-3a09404c7e8mr1529963f8f.23.1746102894180;
+        Thu, 01 May 2025 05:34:54 -0700 (PDT)
+Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a095a3df91sm745593f8f.9.2025.05.01.05.34.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 05:34:53 -0700 (PDT)
+Date: Thu, 1 May 2025 14:33:42 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Andy Shevchenko <andy@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/5] Documentation: ABI: IIO: add calibphase_delay
+ documentation
+Message-ID: <jvhwdzmruov3je7qvsncn4naxg2cbbset27vr6tfjl3fumw7es@v3ho7m6iwaqp>
+References: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
+ <20250429-wip-bl-ad7606-calibration-v1-1-eb4d4821b172@baylibre.com>
+ <4645ae3e0c3bb1ada9d4cadce77b64fe5e651596.camel@gmail.com>
+ <070b269c-c536-49c5-a11d-7e23653613f9@baylibre.com>
+ <aBI3eUPirZEXpZgG@smile.fi.intel.com>
+ <896023ae-c279-4201-a7a8-dfd9b33fe0e5@baylibre.com>
+ <7fe18625-3a25-40c8-bfb7-a7a22a3eccff@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT][PATCH v1 7/8] cpufreq: intel_pstate: Align perf domains
- with L2 cache
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Christian Loehle <christian.loehle@arm.com>,
- Tim Chen <tim.c.chen@linux.intel.com>
-References: <3344336.aeNJFYEL58@rjwysocki.net>
- <1964444.taCxCBeP46@rjwysocki.net>
- <a8f11abd-758e-4e5e-bf78-419b95100918@arm.com>
- <CAJZ5v0g+pRw4H39-BNKKD9KhtRm78y9Q9a3K+yjjK1jskcbJnw@mail.gmail.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <CAJZ5v0g+pRw4H39-BNKKD9KhtRm78y9Q9a3K+yjjK1jskcbJnw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7fe18625-3a25-40c8-bfb7-a7a22a3eccff@baylibre.com>
 
-On 30/04/2025 21:29, Rafael J. Wysocki wrote:
-> On Sun, Apr 27, 2025 at 6:23â€¯PM Dietmar Eggemann
-> <dietmar.eggemann@arm.com> wrote:
->>
->> On 16/04/2025 20:10, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-[...]
-
->> There seems to be an issue with late CPU-hotplug-in and this alignment
->> on L2 cache boundaries.
-
-[...]
-
-> I see.
+On 30.04.2025 10:04, David Lechner wrote:
+> On 4/30/25 9:56 AM, David Lechner wrote:
+> > On 4/30/25 9:45 AM, Andy Shevchenko wrote:
+> >> On Wed, Apr 30, 2025 at 09:21:28AM -0500, David Lechner wrote:
+> >>> On 4/30/25 12:40 AM, Nuno Sá wrote:
+> >>>> On Tue, 2025-04-29 at 15:06 +0200, Angelo Dureghello wrote:
+> >>>>> From: Angelo Dureghello <adureghello@baylibre.com>
+> >>>>>
+> >>>>> Add new IIO calibphase_delay documentation.
+> >>>>>
+> >>>>> The delay suffix is added to specify that the phase, generally in
+> >>>>> radiants, is for this case (needed from ad7606) in nanoseconds.
+> >>
+> >> ...
+> >>
+> >>>>> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_calibphase_delay
+> >>>>
+> >>>> Not sure if I'm too convinced on the _delay suffix
+> >>>>
+> >>> Phase is measured in radians, not seconds, so it seems wrong to use it here.
+> >>>
+> >>> https://en.wikipedia.org/wiki/Phase_(waves)
+> >>>
+> >>> And the delay here is with respect to individual samples in a simultaneous
+> >>> conversion without regard for a sampling frequency, so I don't see how we could
+> >>> convert the time to radians in any meaningful way.
+> >>
+> >> And how this delay is aplicable to the phase in the hardware? Sounds to me that
+> >> HW has some meaningful way of such a conversion?
+> >>
+> > 
+> > It is a calibration to account for a phase difference between two input signals.
+> > This is a simultaneous sampling ADC, so all channels normally sample at exactly
+> > the same time. This phase delay calibration factor can introduce a small delay
+> > on an individual channel so that it starts it's conversion some microseconds
+> > after the others.
+> > 
+> > There is a nice diagram here:
+> > 
+> > https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-18.pdf#%5B%7B%22num%22%3A113%2C%22gen%22%3A0%7D%2C%7B%22name%22%3A%22XYZ%22%7D%2C34%2C594%2C0%5D
+> > 
+> > To convert the phase delay to a phase angle and back would require also knowing
+> > the frequency of the input voltage signals.
 > 
-> What happens is that cpu_cacheinfo hides information on offline CPUs,
-> so when CPU20 goes online, it doesn't see any other CPUs sharing the
-> L2 with it.  Accordingly, a PD is created just for itself.
-> 
-> When CPU21 goes online, it sees that CPU20 shares the L2 with it, so
-> the code attempts to create a PD for them both which fails.
-> 
-> This could be addressed, but the code would need to be a bit more
-> complex and the current hardware seems to do better with a PD per CPU,
-> so I'll drop the $subject patch for now.
+> Maybe calling it "conversion delay" would make more sense? Since the phase part
+> of it is really referring to the application rather than to what we are actually
+> adjusting.
 
-Ah OK, thanks!
+Are there examples of a phase calibration in iio ? Becouse apply a radians 
+calibration seems complicated and maybe non approrpiate for non-periodic 
+signals as often used in real world applications.
+
+So another viable idea could be to use a IIO_CHAN_INFO_CALIBDELAY instead.
+
+Regards,
+angelo
 
