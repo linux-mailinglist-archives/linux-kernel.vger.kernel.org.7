@@ -1,158 +1,203 @@
-Return-Path: <linux-kernel+bounces-628428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD7BAA5DA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:15:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F225AA5DAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 13:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0EB61BC4080
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:16:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2719C5E55
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 11:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A31222572;
-	Thu,  1 May 2025 11:15:37 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CF12222DF;
+	Thu,  1 May 2025 11:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T9/U85yA"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0C1EC5
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 11:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBAE2E401;
+	Thu,  1 May 2025 11:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746098136; cv=none; b=Jl2a3JHctlgEyXchbRZR27fXfhQnuZCqMbmoetMxil7XicjpeqYwxeCESCbfUE20K4M5XatJSRpYn04/BcV33XfmBTeIvgt20lg/of3l+qhGzjGqWrXHFlZ1ru803feN0NWy3EZlNNhSb+LzJYOXSH1600Y0t3MpgWC+lSriHts=
+	t=1746098175; cv=none; b=IUf00eHMg5l4SBJgRlxUDQjYrrpxuzk90jpDPUzj0I6zuL8oCPlqlWb8YJCE0btHk7WqIh82gfeP1Kvxj7ZBPjJAI2bd30GHQgKF2uLmKoGXdp3divG0v9AWKiZQGF0etG8YY0rRhIxEoMaaWaxYTZLjegzOkTJ5+39PSDAHSp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746098136; c=relaxed/simple;
-	bh=HfYmV26FgnTt04PVF4jjki/yie5n1YWzt+JcQ2Pae7U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ciNT0rGwThKBx97p5DrmLoDWQ+0QrF4B4kPb4OmbHQ8VdvIIFeJkfZ+Zi5KCngrvJfVaM6NYXRDm0BW9OAqYRVqyutLaGt2zJKDcCt5YdK+SUg4MdyS2t1B82Aw3ML5c9RitfebgE1Slz8eMM+BXgfH5WQTVjaDGRr3mSr11pu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d8dd0c9143so13446705ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 04:15:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746098134; x=1746702934;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2V0s1pgtJHSE9wqQW/OwlUPcwO/vYFoDmb+3YSftYxg=;
-        b=xQBdyyu5mHiGdU+wJYpfPztveRRwQE/5yF5uYN+B53WEAIONUqumgjootL5fdRwTRj
-         EaZ98nLREzyrnGGXkPlMv7hTx3w3Ij6f2PHMu6ELY9FsciLydoCE+z4hZqDDkfmK+FiL
-         46PlnzN2qai8yEFADZ8wjeaDGEXdygzg02XUpLKRZxjtdR9pquseZPneK1797GBid9ax
-         4i5N9WpazgrqwjYU9MVlzkBbJX4b9UBjpC0Miw4mPGuIbThjCLaqjZ/3Tw5dCPUENdtq
-         7Jk7MmML6/n5TGjsV6laIvtpsWogYmOTra/mtfUhYSKXJMYaIJOsBIeZcgpcJ9r4FZa5
-         lofw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjqTezz2jxNUE2r6s9ez7b3cBnrT1Uzi2s3M5jtnS1ZxMVeLnTMD0T6WzwSCeWP0n8a3dxnNpg6FUHsZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhNG0OVkowqUV7RYToZms0Oekp8tMKv/3JHhP2/Nk0lahaq8cw
-	FssL6TgKXruwr7HO9cHvqRkHEXV1KKxcv86GZdrcquERDxRvYC35myobjIJTxCtiGrUqaQvNYzz
-	CxWPiWyJ1WHMAcemviJYwnEZfArzC0tBF4mKj36nK22tPJHML7aoEsm8=
-X-Google-Smtp-Source: AGHT+IHonOfHpP5MZOdlqgVcIeE9FlZO4d6JZ3BDdp5KDONBJLJOF/2fNqWptp6KT9+D+KJRwpCgnNsmohPvx8dpVolIwtg1osug
+	s=arc-20240116; t=1746098175; c=relaxed/simple;
+	bh=SwSSX+bWsYo0Krc0eYqwPhxxTVgwr3IwX+8zNKHF+tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NHYbCJTXS8KKa0jhJLdXzAwBn5VPubrGK/TIsKEr1baqSDq+LF+SaY8qC8LOmkIUNu4PCH0r7vT1wE7v2HPCoSHV5Qfr7X2e9BVMOEVutvxBjVo6SFI04yW2J1KLfuLQmBfczBiWbw7eY3hekbJlUZo5tPU3g4AfM7xg28teebo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T9/U85yA; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fDTwHpsnK1HXZhn01AWF6PLmK/DHwvlEcCJKIgKSjwU=; b=T9/U85yA6hIvoLlv4HtdStuKjP
+	k6a+M4OL1L8OrIa901hPNKwtI82kA7+N0hMBR4zoBE4E7d8nz+08o7P3Hqnf+luSVJtZHm26QDQeL
+	coxvHFky9Ql49FikfAU1SxOAuXLIYDOauM3z0FBIQq3Tir7getueoC3bLogxKBsh1TJEEzkYqaO8h
+	09XEiOWi3RGIS1ZNaoLTFMCQegpfBzn1q8vB4AjvsBn0X+A1YyCqSj+RKU0GwXh7padrqDdihLm6T
+	B92bH9jqwkkHgnw/yI9KSsUvXa44Jpy90QMruIl10CIFHO3WayAfe9wLnVOvJZd0v+25QAZwAnm2U
+	0sx7Dndw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uARtR-0000000HaXn-0gzL;
+	Thu, 01 May 2025 11:15:53 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A2CD8300230; Thu,  1 May 2025 13:15:52 +0200 (CEST)
+Date: Thu, 1 May 2025 13:15:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Kunkun Jiang <jiangkunkun@huawei.com>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Borislav Petkov <bp@alien8.de>,
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Potapenko <glider@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Andre Przywara <andre.przywara@arm.com>, x86@kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>, kvm-riscv@lists.infradead.org,
+	Atish Patra <atishp@atishpatra.org>, Ingo Molnar <mingo@redhat.com>,
+	Jing Zhang <jingzhangos@google.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, kvmarm@lists.linux.dev,
+	Will Deacon <will@kernel.org>,
+	Keisuke Nishimura <keisuke.nishimura@inria.fr>,
+	Sebastian Ott <sebott@redhat.com>, Shusen Li <lishusen2@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v4 2/5] arm64: KVM: use mutex_trylock_nest_lock when
+ locking all vCPUs
+Message-ID: <20250501111552.GO4198@noisy.programming.kicks-ass.net>
+References: <20250430203013.366479-1-mlevitsk@redhat.com>
+ <20250430203013.366479-3-mlevitsk@redhat.com>
+ <864iy4ivro.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d91:b0:3d9:666f:486d with SMTP id
- e9e14a558f8ab-3d9702672eemr25892835ab.15.1746098134220; Thu, 01 May 2025
- 04:15:34 -0700 (PDT)
-Date: Thu, 01 May 2025 04:15:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <681357d6.050a0220.14dd7d.000b.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in ipv6_addr_prefix
-From: syzbot <syzbot+9596c1b9df18e0ae7261@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <864iy4ivro.wl-maz@kernel.org>
 
-Hello,
+On Thu, May 01, 2025 at 09:24:11AM +0100, Marc Zyngier wrote:
+> nit: in keeping with the existing arm64 patches, please write the
+> subject as "KVM: arm64: Use ..."
+> 
+> On Wed, 30 Apr 2025 21:30:10 +0100,
+> Maxim Levitsky <mlevitsk@redhat.com> wrote:
+> 
+> [...]
+> 
+> > 
+> > diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> > index 68fec8c95fee..d31f42a71bdc 100644
+> > --- a/arch/arm64/kvm/arm.c
+> > +++ b/arch/arm64/kvm/arm.c
+> > @@ -1914,49 +1914,6 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+> >  	}
+> >  }
+> >  
+> > -/* unlocks vcpus from @vcpu_lock_idx and smaller */
+> > -static void unlock_vcpus(struct kvm *kvm, int vcpu_lock_idx)
+> > -{
+> > -	struct kvm_vcpu *tmp_vcpu;
+> > -
+> > -	for (; vcpu_lock_idx >= 0; vcpu_lock_idx--) {
+> > -		tmp_vcpu = kvm_get_vcpu(kvm, vcpu_lock_idx);
+> > -		mutex_unlock(&tmp_vcpu->mutex);
+> > -	}
+> > -}
+> > -
+> > -void unlock_all_vcpus(struct kvm *kvm)
+> > -{
+> > -	lockdep_assert_held(&kvm->lock);
+> 
+> Note this assertion...
+> 
+> > -
+> > -	unlock_vcpus(kvm, atomic_read(&kvm->online_vcpus) - 1);
+> > -}
+> > -
+> > -/* Returns true if all vcpus were locked, false otherwise */
+> > -bool lock_all_vcpus(struct kvm *kvm)
+> > -{
+> > -	struct kvm_vcpu *tmp_vcpu;
+> > -	unsigned long c;
+> > -
+> > -	lockdep_assert_held(&kvm->lock);
+> 
+> and this one...
+> 
+> > -
+> > -	/*
+> > -	 * Any time a vcpu is in an ioctl (including running), the
+> > -	 * core KVM code tries to grab the vcpu->mutex.
+> > -	 *
+> > -	 * By grabbing the vcpu->mutex of all VCPUs we ensure that no
+> > -	 * other VCPUs can fiddle with the state while we access it.
+> > -	 */
+> > -	kvm_for_each_vcpu(c, tmp_vcpu, kvm) {
+> > -		if (!mutex_trylock(&tmp_vcpu->mutex)) {
+> > -			unlock_vcpus(kvm, c - 1);
+> > -			return false;
+> > -		}
+> > -	}
+> > -
+> > -	return true;
+> > -}
+> > -
+> >  static unsigned long nvhe_percpu_size(void)
+> >  {
+> >  	return (unsigned long)CHOOSE_NVHE_SYM(__per_cpu_end) -
+> 
+> [...]
+> 
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index 69782df3617f..834f08dfa24c 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -1368,6 +1368,40 @@ static int kvm_vm_release(struct inode *inode, struct file *filp)
+> >  	return 0;
+> >  }
+> >  
+> > +/*
+> > + * Try to lock all of the VM's vCPUs.
+> > + * Assumes that the kvm->lock is held.
+> 
+> Assuming is not enough. These assertions have caught a number of bugs,
+> and I'm not prepared to drop them.
+> 
+> > + */
+> > +int kvm_trylock_all_vcpus(struct kvm *kvm)
+> > +{
+> > +	struct kvm_vcpu *vcpu;
+> > +	unsigned long i, j;
+> > +
+> > +	kvm_for_each_vcpu(i, vcpu, kvm)
+> > +		if (!mutex_trylock_nest_lock(&vcpu->mutex, &kvm->lock))
 
-syzbot found the following issue on:
+This one includes an assertion that kvm->lock is actually held.
 
-HEAD commit:    5565acd1e6c4 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1178cecc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e3745cb659ef5d9
-dashboard link: https://syzkaller.appspot.com/bug?extid=9596c1b9df18e0ae7261
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122efd9b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15e99574580000
+That said, I'm not at all sure what the purpose of all this trylock
+stuff is here.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/80798769614c/disk-5565acd1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/435ecb0f1371/vmlinux-5565acd1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7790d5f923b6/bzImage-5565acd1.xz
+Can someone explain? Last time I asked someone said something about
+multiple VMs, but I don't know enough about kvm to know what that means.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9596c1b9df18e0ae7261@syzkaller.appspotmail.com
-
-UDPLite6: UDP-Lite is deprecated and scheduled to be removed in 2025, please contact the netdev mailing list
-------------[ cut here ]------------
-memcpy: detected field-spanning write (size 898) of single field "pfx->in6_u.u6_addr8" at ./include/net/ipv6.h:614 (size 16)
-WARNING: CPU: 0 PID: 5838 at ./include/net/ipv6.h:614 ipv6_addr_prefix+0x124/0x1d0 include/net/ipv6.h:614
-Modules linked in:
-CPU: 0 UID: 0 PID: 5838 Comm: syz-executor414 Not tainted 6.15.0-rc3-syzkaller-00557-g5565acd1e6c4 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:ipv6_addr_prefix+0x124/0x1d0 include/net/ipv6.h:614
-Code: cc e8 70 eb af f7 c6 05 b8 a8 59 05 01 90 b9 10 00 00 00 48 c7 c7 a0 86 7d 8c 4c 89 fe 48 c7 c2 c0 8d 7d 8c e8 4d 4a 74 f7 90 <0f> 0b 90 90 e9 33 ff ff ff e8 3e eb af f7 44 89 e6 48 c7 c7 c0 53
-RSP: 0018:ffffc90003eb7920 EFLAGS: 00010246
-RAX: 8f8f704687b6a900 RBX: ffff8880337f5c50 RCX: ffff88803326da00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: 0000000000000000 R08: ffffc90003eb7607 R09: 1ffff920007d6ec0
-R10: dffffc0000000000 R11: fffff520007d6ec1 R12: 0000000000000382
-R13: 1ffff920007d6f4e R14: ffffc90003eb7a84 R15: 0000000000000382
-FS:  0000555594768380(0000) GS:ffff8881260b2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d1681c9000 CR3: 0000000078e3e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ip6_route_info_create+0x5cc/0xa70 net/ipv6/route.c:3810
- ip6_route_add+0x29/0x2f0 net/ipv6/route.c:3902
- ipv6_route_ioctl+0x35c/0x480 net/ipv6/route.c:4539
- inet6_ioctl+0x219/0x280 net/ipv6/af_inet6.c:577
- sock_do_ioctl+0xd9/0x300 net/socket.c:1190
- sock_ioctl+0x576/0x790 net/socket.c:1311
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa5ecea7369
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff70ec1b18 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fff70ec1ce8 RCX: 00007fa5ecea7369
-RDX: 0000200000000340 RSI: 000000000000890b RDI: 0000000000000003
-RBP: 00007fa5ecf1a610 R08: 0000000000000000 R09: 00007fff70ec1ce8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff70ec1cd8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Are those vcpu->mutex another class for other VMs? Or what gives?
 
