@@ -1,152 +1,250 @@
-Return-Path: <linux-kernel+bounces-630218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749ABAA770B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:18:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA121AA76DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D3F83BDD0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:16:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07D0178923
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888A92609EF;
-	Fri,  2 May 2025 16:16:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2DD25D549;
+	Fri,  2 May 2025 16:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UG/poEc7"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC76A25FA2E;
-	Fri,  2 May 2025 16:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931972580EA
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746202590; cv=none; b=nF0wyGG0DB9aC+Lh9rSethhZnSqgGrjn9TTS5czVOuSCeirjfR+K3hLegcYJnO+slsvLSFrT5/vZ0nDZNEY2Xx5si5QfxaI8p0ISu6uF/0lOwtxTuZv9q4DbdC8UsZRU/C7ia8M+PpoqsqqARnTkKxj74W5PVRu4tQZBC6si0NY=
+	t=1746202452; cv=none; b=eAZqlHVOgwvo1v6+iJ8TgiuZa9gy/hxbJW5Jrb8aT7bcJwWLCvkRLjDl25RUwTACHQuXg7KU3XMu1QhLK92+v60X+ZHWkEr9Iq9fOpu5nSqPpP2aUgotGRZi84IurwDaAdXKP2vyBzpa2fo1FOYihWFSQsk6ZrIk0b2qgLFK9wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746202590; c=relaxed/simple;
-	bh=wKgdDF5WGHH+zvGwPArrdCnDJDg+Q1t+PYb1hHVZCxU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LhJn/E5+Sv67P952GPnzoFeOhuu6vg3IhKkNV3MJZXV9lNrTtKAVMV2Zqei135KyM6ogGZ9ykLrK1SmE5t3ug+IQCVl2/Dchm2jHgV7jfvho+OpoQwx9RT7cRL8EjAexPCGepmnU+/fp8/5jy+CZ+NLVLhAe5qLp/eaGoCFuIU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Zpwst4H8jz6M4Wn;
-	Sat,  3 May 2025 00:12:02 +0800 (CST)
-Received: from frapeml500003.china.huawei.com (unknown [7.182.85.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id CB5CE140370;
-	Sat,  3 May 2025 00:16:25 +0800 (CST)
-Received: from a2303103017.china.huawei.com (10.47.77.180) by
- frapeml500003.china.huawei.com (7.182.85.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 2 May 2025 18:16:24 +0200
-From: Alireza Sanaee <alireza.sanaee@huawei.com>
-To: <devicetree@vger.kernel.org>
-CC: <robh@kernel.org>, <jonathan.cameron@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <mark.rutland@arm.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: [PATCH v2 6/6] of: of_cpu_phandle_to_id to support SMT threads
-Date: Fri, 2 May 2025 17:13:00 +0100
-Message-ID: <20250502161300.1411-7-alireza.sanaee@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250502161300.1411-1-alireza.sanaee@huawei.com>
-References: <20250502161300.1411-1-alireza.sanaee@huawei.com>
+	s=arc-20240116; t=1746202452; c=relaxed/simple;
+	bh=wd5NJqEBXG8kbhJKG845Wcw6QO3aud7KmNkF6CHiQYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CE6bw2hwzNmNX6VlteJYWOH6HnKCLx8kZjglc9SgOtOY4vB/9M/5lGDqIGzPXjuMRJ+v1KJc4HgVHnhrlzI4nd6cceSr48VW2m+fgjwa4QQQFExAmjJuh3EEhHpI/kGTNpt97/74tT7GT1mRBM4SmcdI5UIbwYz5ejhmG2Jgi8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UG/poEc7; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f88f236167so11922a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 09:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746202449; x=1746807249; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fAKrz6MzSHZjea4snUZwUs0TMb2y7bZD+SefbW7WoH4=;
+        b=UG/poEc7VXnK4E8VU/x7trErdjQmzw4EHm9g+EKjRjpL6MkynrEdycSdWh5zz72xy3
+         qT6PlpU9IkGtLdupNSPHyNEgR8T/geqfOdGdfsV18dFv9tekq0kYWS4bae4oboIKyk2j
+         Lxfjx5KMdicbaVprn3gSx58mmYKDI0VCWViN+ums9rJAnrW8WnaBgmKOo+3ypwfeVqLz
+         xHkoObJhLKUV1xwic4BQComL/18+tYG3wQZ2gb18usrBPLEH5avJv4mMoZmKmkRXQrCI
+         vCrEvIthr1DspzpChLSgZ+soQJUDpwVq5x5m1fimt/S6dKE04/Vl/oM7UoNlswzH5MFx
+         yRCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746202449; x=1746807249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fAKrz6MzSHZjea4snUZwUs0TMb2y7bZD+SefbW7WoH4=;
+        b=XzdPsDbuFPW0l0/QVn2D0NYqBrXklXMvrJX/BcF1loNIubGgmvYZgQU40joEYV98yp
+         6IqnnffhndFYDZq9cDCjor9QVUpYEJM9inguTZvskmHObHFTcZHmXeG7ej4Nwl/QVXOp
+         SZkOakBoVefDDEKHqlMqtSFjljZHKSmbsG4A/LHXlnAunFkVaSMYqcEtUrYPaKMP9PZz
+         FHr2IQnhNJ5J4WRN97VnXiQ7XeJGAfGIsUyjajZs3jEtQcB1B2BomYgSoqjv7+XGjrho
+         heFGLyjYdVs60uhdQiEWWektffnT5RsTJQ8qMZvuxpHyOvTMUs+b1YjhZbSizq66rMwR
+         HyAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVN6eoeZLsKPernDIZ7/0gYqlcNu1LE4fd138Qae8pzrPugUyGkxeigSOl61xnONy2ZVShLdxAoHcENHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1ajoR8UialGF6RDGz4MFmVN/6kJbWValzYYrHqbTgaB//XlHO
+	EtLWxhbOjfmE+ZxRxl7uH/5zqEl1+KgdmkWCiwrmuEuTsJ11eOk1UwS5B/zclUNI8/kTJmRfJE3
+	0eDG2hS/UoHDuKdtGLNCjSB41wJNPr/OEDHwa
+X-Gm-Gg: ASbGncsA5h9ygMJS0gVZnh2FDlhHVcl8MD+ycg+Q0hIvPXIXjeZTBV1cApad9z5lo4x
+	CAMPXDVaTVRDoOzFp5D76+zxv7MJAi4oVxdgQmPmWS1Sec0/W/eTkcJkYffvlBNLs4RhSTbDadV
+	7r6x/eJDhyQO03jr8tQ9A7OuiwNZbyxcFiS8mKbIvvcFxlsV+0/fm7KE+Qa4kKSto=
+X-Google-Smtp-Source: AGHT+IFi+7MV41xClVGr6/UvyV7JjW+2uR5FlCwcaTogmqu5ReKaulioApT3B8FXWgxBll8d1BEr3KWs6Fgt3fGw1R0=
+X-Received: by 2002:aa7:d759:0:b0:5dc:5ae8:7e1 with SMTP id
+ 4fb4d7f45d1cf-5f9146f7d6dmr212014a12.6.1746202448549; Fri, 02 May 2025
+ 09:14:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- frapeml500003.china.huawei.com (7.182.85.28)
+References: <20250501-debugfs-rust-v3-0-850869fab672@google.com>
+ <20250501-debugfs-rust-v3-1-850869fab672@google.com> <aBRoNKjB063QhGZo@pollux>
+ <2025050230-browsing-backstab-8de9@gregkh> <aBRutTMBtq-uCnii@pollux>
+ <2025050205-reassign-entire-4078@gregkh> <aBR1O6d6YBszgVlU@pollux> <2025050208-jot-evolve-89b6@gregkh>
+In-Reply-To: <2025050208-jot-evolve-89b6@gregkh>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Fri, 2 May 2025 09:13:56 -0700
+X-Gm-Features: ATxdqUEe1plSV-F0cIzBM7X6Aaw1uhdlDf1jIDZFSFwV4-fGyKmhMPdcOL53ieQ
+Message-ID: <CAGSQo00GPnpkzY12udM8QNZpA+Nh+OrNJDH7zd1nVZPrQfOb4A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] rust: debugfs: Bind DebugFS directory creation
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enhance the API to support SMT threads, this will allow sharing resources among
-multiple SMT threads.
+On Fri, May 2, 2025 at 4:55=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, May 02, 2025 at 09:33:15AM +0200, Danilo Krummrich wrote:
+> > On Fri, May 02, 2025 at 09:11:37AM +0200, Greg Kroah-Hartman wrote:
+> > > On Fri, May 02, 2025 at 09:05:25AM +0200, Danilo Krummrich wrote:
+> > > > On Fri, May 02, 2025 at 09:00:07AM +0200, Greg Kroah-Hartman wrote:
+> > > > > On Fri, May 02, 2025 at 08:37:40AM +0200, Danilo Krummrich wrote:
+> > > > > > On Thu, May 01, 2025 at 10:47:41PM +0000, Matthew Maurer wrote:
+> > > > > > > +/// Handle to a DebugFS directory that will stay alive after=
+ leaving scope.
+> > > > > > > +#[repr(transparent)]
+> > > > > > > +pub struct SubDir(ManuallyDrop<Dir>);
+> > > > > >
+> > > > > > I think it's not very intuitive if the default is that a SubDir=
+ still exists
+> > > > > > after it has been dropped. I think your first approach being ex=
+plicit about this
+> > > > > > with keep() consuming the SubDir was much better; please keep t=
+his approach.
+> > > > >
+> > > > > Wait, let's step back.  Why do we care about the difference betwe=
+en a
+> > > > > "subdir" and a "dir"?  They both are the same thing, and how do y=
+ou
+> > > > > describe a subdir of a subdir?  :)
+> > > >
+> > > > We care about the difference, because Dir originally had keep() whi=
+ch drops the
+> > > > Dir instance without actually removing it. For subdirs this is fine=
+, since
+> > > > they'll be cleaned up when the parent is removed.
+> > >
+> > > But does that mean a subdir can not be cleaned up without dropping th=
+e
+> > > parent first?  For many subsystems, they make a "root" debugfs
+> > > directory, and then add/remove subdirs all the time within that.
+> >
+> > In the following I will call the first top level directory created by a=
+ module /
+> > driver "root".
+> >
+> > The logic I propose is that "root" is of type Dir, which means there is=
+ no
+> > keep() and if dropped the whole tree under root is removed.
+> >
+> > A subdir created under a Dir is of type SubDir and has the keep() metho=
+d and if
+> > called consumes the type instance and subsequently can only ever be rem=
+oved by
+> > dropping root.
+> >
+> > Alternatively a SubDir can be converted into a Dir, and hence don't has=
+ keep()
+> > anymore and if dropped will be removed.
+> >
+> > So, the result is that we still can add / remove subdirs as we want.
+> >
+> > The advantage is that we don't have keep() for root, which would be a d=
+edicated
+> > API for driver / modules to create bugs. If a driver / module would cal=
+l keep()
+> > on the root, it would not only mean that we leak the root directory, bu=
+t also
+> > all subdirs and files that we called keep() on.
+> >
+> > This becomes even more problematic if we start attaching data to files.=
+ Think of
+> > an Arc that is attached to a file, which keeps driver data alive just b=
+ecause we
+> > leaked the root.
+>
+> Ok, fair enough, let's try it this way, without keep()
+>
+> > > > However, we don't want users to be able to call keep() on the direc=
+tory that has
+> > > > been created first, since if that's done we loose our root anchor t=
+o ever free
+> > > > the tree, which almost always would be a bug.
+> > >
+> > > Then do a call to debugfs_lookup_and_remove() which is what I really
+> > > recommend doing for any C user anyway.  That way no dentry is ever
+> > > "stored" anywhere.
+> > >
+> > > Anyway, if Dir always has an implicit keep() call in it, then I guess
+> > > this is ok.  Let's see how this shakes out with some real-world users=
+.
+> > > We can always change it over time if it gets unwieldy.
+> >
+> > I really advise against it, Rust allows us to model such subtile differ=
+ences
+> > properly (and easily) with the type system to avoid bugs. Let's take ad=
+vantage
+> > of that.
+> >
+> > Using debugfs_lookup_and_remove() wouldn't change anything, since we wa=
+nt to
+> > attach the lifetime of a directory to a corresponding object.
+> >
+> > (Otherwise we're back to where we are with C, i.e. the user has to reme=
+mber to
+> > call the correct thing at the correct time, rather than letting the typ=
+e system
+> > take care instead.)
+> >
+> > So, instead of debugfs_remove() we'd call debugfs_lookup_and_remove() f=
+rom
+> > Dir::drop(), which only changes what we store in Dir, i.e. struct dentr=
+y pointer
+> > vs. CString.
+>
+> Ok, that's fine, and it gives me an idea of how I can fix up the C api
+> over time to get rid of exporting the dentry entirely :)
 
-Enabled the sharing of resources, such as L1 Cache and clocks, between SMT
-threads. It introduces a fix that uses thread IDs to match each CPU thread in
-the register array within the cpu-node. This ensures that the cpu-map or any
-driver relying on this API is fine even when SMT threads share resources.
+I've figured out that the SubDir API (and indeed, all patchsets after
+v1) have a flaw in them, so I'm wondering if your rework will resolve
+this.
 
-Additionally, I have tested this for CPU based on the discussions in [1], I
-adopted the new cpu-map layout, where the first parameter is a phandle and the
-second is the local thread index, as shown below:
+If I do:
+```
+let dir =3D Dir::new(c_str!("foo"));
+let subdir =3D dir.subdir(c_str!("bar"));
+drop(dir);
+// This next line will Oops because subdir is already removed
+drop(Dir::from(subdir));
+```
 
-In the CPU map, there are two cases that only one occurs at at time.
-    1) "cpu" = <phandle>
-    2) "cpus" = <phandle> <index>
+Simply removing `Dir::from` from the API won't resolve this - as long
+as `SubDir` has any method, accessing it after its parent has been
+cleaned up with `remove` will result in an oops.
 
-The first case addresses non-SMTs and the second case addresses SMTs
-that the variable must be cpu(s) with an index where we later look up
-the reg array with that.
-
-    core0 {
-      thread0 {
-        cpus = <&cpu0 0>;
-      };
-      thread1 {
-        cpus = <&cpu0 1>;
-      };
-    };
-
-[1] https://lore.kernel.org/devicetree-spec/CAL_JsqK1yqRLD9B+G7UUp=D8K++mXHq0Rmv=1i6DL_jXyZwXAw@mail.gmail.com/
-
-Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
----
- drivers/of/cpu.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/of/cpu.c b/drivers/of/cpu.c
-index 1e8d1fa04d3c..fbd3f6d4a87f 100644
---- a/drivers/of/cpu.c
-+++ b/drivers/of/cpu.c
-@@ -186,14 +186,41 @@ EXPORT_SYMBOL(of_cpu_node_to_id);
- int of_cpu_phandle_to_id(const struct device_node *node,
- 			 struct device_node **cpu_np)
- {
-+	int cpu, ret;
-+	bool found = false;
-+	uint32_t local_thread, thread_index;
-+	struct device_node *np;
-+	struct of_phandle_args args;
-+
- 	if (!node)
- 		return -1;
- 
-+	/*
-+	 * Two cases which only one occurs at a time:
-+	 * 1) cpu = <phandle>
-+	 * 2) cpus = <phandle> <thread_index>
-+	 */
- 	*cpu_np = of_parse_phandle(node, "cpu", 0);
--	if (!cpu_np)
--		return -ENODEV;
-+	if (!*cpu_np) {
-+		ret = of_parse_phandle_with_fixed_args(node, "cpus", 1, 0,
-+						       &args);
-+		if (ret < 0)
-+			return ret;
-+
-+		*cpu_np = args.np;
-+		thread_index = args.args[0];
-+		for_each_possible_cpu(cpu) {
-+			np = of_get_cpu_node(cpu, &local_thread);
-+			found = (*cpu_np == np) && (local_thread == thread_index);
-+			of_node_put(np);
-+			if (found)
-+				return cpu;
-+		}
- 
--	return of_cpu_node_to_id(*cpu_np);
-+		return -ENODEV;
-+	} else {
-+		return of_cpu_node_to_id(*cpu_np);
-+	}
- }
- EXPORT_SYMBOL(of_cpu_phandle_to_id);
- 
--- 
-2.34.1
-
+The options I can see given the existing API are:
+A. SubDir needs to be inherently limited to a borrow of another Dir or
+SubDir. This will still break if someone uses
+`debugfs_lookup_and_remove()` in an antisocial fashion, but we haven't
+bound this in Rust, and we don't need to be robust against bad
+behavior from C. If we do this, the promotability of subdirectories
+back to directories would go away entirely,
+B. I can leverage `dget`/`dput` to make it so that the directory I get
+back from the APIs are actually owning, and so the dentry will not be
+released while the Dir/SubDir exists. I understand this to be
+undesired, but putting it out there, since it'd make things safe even
+to `debugfs_lookup_and_remove()`.
+C. I can limit use of `debugfs_remove` to the builder API (exists in
+V1, no longer exists in this version, will be a separate patch soon
+for reference). This is the behavior that I had written in V1 before I
+started trying to adapt to requests. This means that the subdirectory
+handles will remain valid because the non-builder handles will be
+`dput` rather than recursively removed. Builder handles can't be
+smuggled out due to an existential lifetime. Again, I understand this
+is not desired, I'm just trying to lay out all ways to prevent this
+class of error.
 
