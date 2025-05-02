@@ -1,151 +1,205 @@
-Return-Path: <linux-kernel+bounces-629727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCB3AA70A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:33:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C125AAA70AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54EB4C3917
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:33:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6000D1B67028
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F2123E355;
-	Fri,  2 May 2025 11:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0CA23FC41;
+	Fri,  2 May 2025 11:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lTCliXWO"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n4dykVL0"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A3F1BEF77
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 11:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D59221721;
+	Fri,  2 May 2025 11:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746185580; cv=none; b=H0Rl2jx1uKcV+aumkm4L2DeRsRl5pB4NqjjVlCHhPbCpjtK8zsvoNsmYP4Kn1adyf0LPI+P7VKEorudsrfYxCId4McCTbHrZiKgF0xw0awOH8aKEZbevz3xU3k/wJOUEEy5zRd0PMJxwZHOjfTGbB+/229R6bx0zI2uo1C4IOq0=
+	t=1746185667; cv=none; b=AgVE5Rrmsq/ERefuugvx+ve8pXYxPpvKmguqSLg2AIzZTzLKHQqb5TpHd3E6wjHOimT9sXQFshXnKmqyRU1yZEA4g0SuOPm9V4FSwFxiD9iNdcIn7orUSsWPCrhlKLkouNN1SoxMnHKJ8eprpekRYBqx6GELHmCxfgrziIYmrtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746185580; c=relaxed/simple;
-	bh=7A1HSBrvNQWxj/2gNm3WkF5r1onxQz5OycCMNYENKLk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C15+QwPlVNJ5QsHdpcMmGxeoW5hDTJ6uJJQcSkHSZTyvYulJzEy0Sfb1prxJKUm5HPgHFVO9c1DqfNuNlzQ1b8mH8yMleyeTZIKzXRGxOElZi2QvWGW4CwXQ0SZo4boat7Ay2YCOA8mXbph0DgTNiI1UEQtW4oqrbPRjvOetebM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lTCliXWO; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43ceb011ea5so9534085e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 04:32:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746185573; x=1746790373; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ehdcrv2mT2VKoMiW5G3gmtm0EefPx2m3GmPmUMuFdMY=;
-        b=lTCliXWOi2e1WQXt8r929+0SvTVRGxfKCo+4niifv9Ra6CrTQm1sU92lkE+DZEh0lr
-         TPiQ9bgbyobl9foTBNH9+FhGqzZVcjLdZoWYIbIaVEcf8UchA/f9VOxNRGCTmTk6bUWv
-         UeIoXZrD9ORyUkxzblrlmSuAsJHhKjpO1AJ7LMEMM/MLlzagFVgvixY6pYAHCl+pimDb
-         /WXzQaAKuVzf+FkONh5lwj3dlvPRzKTOZK4s+ijC+rpdUBxTae4bPWJx+abA74J4PfhZ
-         +KzTdrIF1e/PspGmM8v13UQqYpOyJ/sfpMUEpERqJjDV5VRqP846MlbBiqhzHxWDuThY
-         4shQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746185573; x=1746790373;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ehdcrv2mT2VKoMiW5G3gmtm0EefPx2m3GmPmUMuFdMY=;
-        b=wI0AZbd94+lHbchyPfkJFqsv1eLv/hjwOVndNBGIx0MB7jb5l1RSrAAXo2id2HwBal
-         1Zgciy+yEFy2gw81vMuBkEbB/+v/TSPhk8itLx4Lf5sw+6Dd2J32IyZAxqRKn8g7IVOD
-         akngy/hog4izpNPrmFxky9cH1jCdYV2/9QdP36/YH15VUk9GG5HoD4itswdHAO2NVx0e
-         Ul076ssP/uzTSHRX4K5pvnSdlbcBW+J/0hhOJiPojGt7YQZuJzUkB8FMBcK+4Yb6zimp
-         7aIxWYx5o4LZ1iF1qOTCDtGS05tDUB+QtUP4GRyE9k7pRk6EabnV7F5Zo4ZGnCqfyGJ7
-         9ckQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8xPQp2OCIDXSpc6vz0d4wpr3ypzGuMgWhak3YURCaF5J+REFBQ88UqGjeVXlZhO6fStRqzTlB0I54UQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk0jpAQbf+wV3YJQjQyYNOnJ3iAduqUOiDPv4e67Hw7CTZFM5V
-	kMI9cIwvAmStfztNl53BI3yniU2D4Wv4kg47QxFXocRZ3LI4IvaKy+Vt9h61Uuf1bvrmJU2WLx/
-	VKWcMOGPsdaSN4Q==
-X-Google-Smtp-Source: AGHT+IGTFJg1P18OgzK6caFU87y4YhrHM/eoMM1Nq1UEWOnC7eYMyFOfE3yruvrd/4zA8FAvrqLG7/6uMPFF5xQ=
-X-Received: from wmbfl26.prod.google.com ([2002:a05:600c:b9a:b0:43d:55a1:bffc])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5247:b0:43d:ea:51d2 with SMTP id 5b1f17b1804b1-441bbeb0f11mr18023905e9.14.1746185573652;
- Fri, 02 May 2025 04:32:53 -0700 (PDT)
-Date: Fri, 2 May 2025 11:32:51 +0000
-In-Reply-To: <20250502-unique-ref-v10-2-25de64c0307f@pm.me>
+	s=arc-20240116; t=1746185667; c=relaxed/simple;
+	bh=7w60J+FKjVS3g5Z95mqPgSc2nzysE8E6h9d60GXPWus=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kQqklomM5Ul+OK0P3z9vJwsiBEpJWGTnR0Y4YxNhRVTjU5ToLdjqFSolBLa/JIhX6hHuypHqc0ZTfbXa6srljSz3hFiOTD69uym5eNdMFufbcuv+mNSyTO+DJndNZ7/8meH9teWv26AXsbpBxusYz9vHgwaBgjghw1LRM6sZJ1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n4dykVL0; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 541LgHKV005395;
+	Fri, 2 May 2025 11:33:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=U/RCjn
+	+HqnJhle1+I403uhVDGs5SD7lY0aQbaeLHTRw=; b=n4dykVL0IQcNXPaKnLq7cG
+	3gtrD5EZzBrZum0CwK3YW1Qvr14ruooORvgAA/9uATxdkeGGekpcKHn2n8cnBGzy
+	0YbG/PLkTKal/1VA7bwz0jmIU03yPeP/XrYjESIfaNwPlrigeiErhbYf00BE5vib
+	y8Zq1X3hN7/mF+bmtfHY70IgjOenuGLDL/xG5gyMDjG0YR9Vmf9TFhe4AfvD7/6S
+	vEup76zsqUCmiz0UcaSATsg1LfT8gpRik/3W1VC1mqiOdSDZTW0bn2Py5/tScBty
+	VL56+v9D0XQ59K+k+I7AkaWpQioIA+Fe4W9diIdsCr7Wt24fS3ogA3kIlHOFZJNg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ch3vtntx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 May 2025 11:33:55 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 542BG6hF001791;
+	Fri, 2 May 2025 11:33:55 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 469ban1hac-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 May 2025 11:33:55 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 542BXsxm25690550
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 11:33:54 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5ED9E5805E;
+	Fri,  2 May 2025 11:33:54 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DED9958052;
+	Fri,  2 May 2025 11:33:51 +0000 (GMT)
+Received: from [9.61.121.210] (unknown [9.61.121.210])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  2 May 2025 11:33:51 +0000 (GMT)
+Message-ID: <70e065c7-8129-4c78-a7a8-72718ceea334@linux.ibm.com>
+Date: Fri, 2 May 2025 13:33:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me> <20250502-unique-ref-v10-2-25de64c0307f@pm.me>
-Message-ID: <aBStYylT7wy9JiDx@google.com>
-Subject: Re: [PATCH v10 2/5] rust: Rename AlwaysRefCounted to RefCounted
-From: Alice Ryhl <aliceryhl@google.com>
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] kbuild: make all file references relative to source
+ root
+To: Matthieu Baerts <matttbe@kernel.org>,
+        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+        Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+        Nicolas Schier <nicolas@fjasle.eu>, Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Ben Hutchings <ben@decadent.org.uk>,
+        MPTCP Linux <mptcp@lists.linux.dev>
+References: <20250315-kbuild-prefix-map-v2-1-00e1983b2a23@weissschuh.net>
+ <edc50aa7-0740-4942-8c15-96f12f2acc7e@kernel.org>
+Content-Language: en-US
+From: Peter Oberparleiter <oberpar@linux.ibm.com>
+In-Reply-To: <edc50aa7-0740-4942-8c15-96f12f2acc7e@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Z+XsHGRA c=1 sm=1 tr=0 ts=6814ada3 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=8T59DR07AAAA:8 a=VTue-mJiAAAA:8 a=hfMpdXb5uliVZ7BdCgcA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=nH4QB3FtVBqZfhiODIJV:22 a=S9YjYK_EKPFYWS37g-LV:22
+X-Proofpoint-ORIG-GUID: VvdH58BCApXO3aiQkWqM4QgzlyDnRmvp
+X-Proofpoint-GUID: VvdH58BCApXO3aiQkWqM4QgzlyDnRmvp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDA4NyBTYWx0ZWRfX1f1a7KAI0ak7 na6p83njbnyNC+VVxVng+drrrGEzhU5EMR1YixM06UFLGYdQhKF7UKeqD3co0hkUUbMigxkDdVB AhYRz8LCPI5dAsW7NDQ3TPicAkSmvejTnkhh8BJivZRMFVGiMjL7r/9run5wTAZqw9vF8TeYvd2
+ e6cy6qrS70N3sw9aUq5I2HnHtNPutfmZt8XLSPUeohvixNlgyZU+Lt8KnwpagFVB1emdAAAiFCM mwojYIEDizFOKDi8P8h0DSCVru9bficPcX9h3j03FDYQKqFwABBGZSW94EWZlWjP2dopXYUltoR BtXiSrEGzaxjNO2uZ72ObBQiziKMdBWKcJGoqFvPAaD4tk4k9QNKRUVqc0C88Ny0Nrjlxy2fAg5
+ DNPsGQjAK23Q8/z4/keto4Q3lVgbAZ42xQrkh7na7vz8p/mJYkXAgjLwwn0APIDhOf7Gis3h
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-02_01,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 impostorscore=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505020087
 
-On Fri, May 02, 2025 at 09:02:37AM +0000, Oliver Mangold wrote:
-> AlwaysRefCounted will become a marker trait to indicate that it is allowed
-> to obtain an ARef<T> from a `&T`, which cannot be allowed for types which
-> are also Ownable.
+On 29.04.2025 18:12, Matthieu Baerts wrote:
+> On 15/03/2025 14:20, Thomas Weißschuh wrote:
+>> -fmacro-prefix-map only affects __FILE__ and __BASE_FILE__.
+>> Other references, for example in debug information, are not affected.
+>> This makes handling of file references in the compiler outputs harder to
+>> use and creates problems for reproducible builds.
+>>
+>> Switch to -ffile-prefix map which affects all references.
+>>
+>> Also drop the documentation section advising manual specification of
+>> -fdebug-prefix-map for reproducible builds, as it is not necessary
+>> anymore.
+>>
+>> Suggested-by: Ben Hutchings <ben@decadent.org.uk>
+>> Link: https://lore.kernel.org/lkml/c49cc967294f9a3a4a34f69b6a8727a6d3959ed8.camel@decadent.org.uk/
+>> Acked-by: Borislav Petkov (AMD) <bp@alien8.de> # arch/x86/
+>> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 > 
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Thank you for having worked on that!
+> 
+> (...)
+> 
+>> diff --git a/Makefile b/Makefile
+>> index 5c333682dc9142b1aacfe454a5c77f5923554b7d..4f920187cee658ae4d1b807fca365f6994274828 100644
+>> --- a/Makefile
+>> +++ b/Makefile
+>> @@ -1067,7 +1067,7 @@ endif
+>>  
+>>  # change __FILE__ to the relative path to the source directory
+>>  ifdef building_out_of_srctree
+>> -KBUILD_CPPFLAGS += $(call cc-option,-fmacro-prefix-map=$(srcroot)/=)
+>> +KBUILD_CPPFLAGS += $(call cc-option,-ffile-prefix-map=$(srcroot)/=)
+>>  KBUILD_RUSTFLAGS += --remap-path-prefix=$(srcroot)/=
+>>  endif
+> 
+> Today, I noticed that my CI for the MPTCP subsystem couldn't produce
+> code coverage files like before: the source files are not found. A 'git
+> bisect' pointed me to this patch. Reverting it seems to fix the issue.
+> 
+> 
+> My CI is building the kernel out of the source tree, in ".virtme/build".
+> Before and after this patch, GCOV seems to do its job properly.
+> Capturing GCOV data with this lcov command seems OK too:
+> 
+>   lcov --capture --keep-going -j "${INPUT_CPUS}" \
+>      --rc geninfo_unexecuted_blocks=1 \
+>      --include '/net/mptcp/' \
+>      --function-coverage --branch-coverage \
+>      -b "${PWD}/.virtme/build" -o kernel.lcov
+> 
+> But after this patch, lcov complains some files are not found, e.g.
+> 
+>   ERROR: (source) unable to open
+> ${WORKDIR}/.virtme/build/net/mptcp/ctrl.c: No such file or directory
 
->  // SAFETY: All instances of `Request<T>` are reference counted. This
-> -// implementation of `AlwaysRefCounted` ensure that increments to the ref count
-> +// implementation of `RefCounted` ensure that increments to the ref count
->  // keeps the object alive in memory at least until a matching reference count
->  // decrement is executed.
+I can confirm that the subject kernel commit breaks gcov-kernel for
+out-of-srctree builds by making it impossible for a consumer of GCOV
+data to determine the actual location of a source file without manually
+specifying it.
 
-It looks like "keeps" now fits on the previous line. I would reflow all
-text in this patch.
+Sample .gcno file content changes as seen with gcov-dump:
 
-> -/// Types that are _always_ reference counted.
-> +/// Types that are internally reference counted.
->  ///
->  /// It allows such types to define their own custom ref increment and decrement functions.
-> -/// Additionally, it allows users to convert from a shared reference `&T` to an owned reference
-> -/// [`ARef<T>`].
->  ///
->  /// This is usually implemented by wrappers to existing structures on the C side of the code. For
->  /// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to create reference-counted
-> @@ -410,9 +408,8 @@ pub const fn raw_get(this: *const Self) -> *mut T {
->  /// at least until matching decrements are performed.
->  ///
->  /// Implementers must also ensure that all instances are reference-counted. (Otherwise they
-> -/// won't be able to honour the requirement that [`AlwaysRefCounted::inc_ref`] keep the object
-> -/// alive.)
-> -pub unsafe trait AlwaysRefCounted {
-> +/// won't be able to honour the requirement that [`RefCounted::inc_ref`] keep the object alive.)
-> +pub unsafe trait RefCounted {
->      /// Increments the reference count on the object.
->      fn inc_ref(&self);
->  
-> @@ -425,11 +422,21 @@ pub unsafe trait AlwaysRefCounted {
->      /// Callers must ensure that there was a previous matching increment to the reference count,
->      /// and that the object is no longer used after its reference count is decremented (as it may
->      /// result in the object being freed), unless the caller owns another increment on the refcount
-> -    /// (e.g., it calls [`AlwaysRefCounted::inc_ref`] twice, then calls
-> -    /// [`AlwaysRefCounted::dec_ref`] once).
-> +    /// (e.g., it calls [`RefCounted::inc_ref`] twice, then calls [`RefCounted::dec_ref`] once).
->      unsafe fn dec_ref(obj: NonNull<Self>);
->  }
->  
-> +/// An extension to RefCounted, which declares that it is allowed to convert
-> +/// from a shared reference `&T` to an owned reference [`ARef<T>`].
-> +///
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that no safety invariants are violated by upgrading an `&T`
-> +/// to an [`ARef<T>`]. In particular that implies [`AlwaysRefCounted`] and [`Ownable`]
-> +/// cannot be implemented for the same type, as this would allow to violate the uniqueness
-> +/// guarantee of [`Owned<T>`] by derefencing it into an `&T` and obtaining an [`ARef`] from that.
-> +pub unsafe trait AlwaysRefCounted: RefCounted {}
+- cwd: /home/.../build
+- /home/.../linux/kernel/workqueue.c:8049:19-8057:1
++ cwd: /home/.../build
++ kernel/workqueue.c:8049:19-8057:1
 
-Adding a new trait should not happen in a commit called "rename X to Y".
-Consider renaming this patch to "split AlwaysRefCounted into two traits"
-or similar.
+> The output file is different: the path to the source file is wrong
+> because it points to the build dir. Instead of ...
+> 
+>   SF:${WORKDIR}/net/mptcp/ctrl.c
+> 
+> ... now I have ...
+> 
+>   SF:${WORKDIR}/.virtme/build/net/mptcp/ctrl.c
+> 
+> 
+> Are there modifications needed on GCOV side to adapt to the behaviour
+> change introduced by this patch? Or something else needed on the
+> userspace side?
 
-Alice
+I don't see how this could be fixed by changes in userspace nor
+gcov-kernel - the source tree directory information is missing from the
+relevant data files.
+
+-- 
+Peter Oberparleiter
+Linux on IBM Z Development - IBM Germany R&D
 
