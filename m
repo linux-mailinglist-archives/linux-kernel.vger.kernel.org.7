@@ -1,139 +1,159 @@
-Return-Path: <linux-kernel+bounces-629754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E026CAA7101
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29EA6AA710D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EF6171E0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8575218836E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E53246769;
-	Fri,  2 May 2025 11:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C95248F41;
+	Fri,  2 May 2025 12:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGa1Ng9Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ge4+Zjp2"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C43224B04;
-	Fri,  2 May 2025 11:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F39424336D;
+	Fri,  2 May 2025 12:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746187142; cv=none; b=ECZLyGd7oREry9lB8ieMxdYbkFJU5mIocI+f0HtB+pnwgAWut/UbdTIhTzX9Xei0SCA+1tovtXDpCKV8nSS8DUkbirC7wU3e8qTkphpN1vHI1Lviq3hhxGApysuTKwrHx7k9/AU/pUquqE5UrsnkNo/bQQv263bdHew6pfLQEd0=
+	t=1746187282; cv=none; b=AcijA3pxAgMhiyDqyNDGcer92Cslkd7J8QVrejSzhA9Cge2KglT3CmRiV4JGlLmiGDveRvRn9ygQQole67wMe9w1pgJP4xNd3lOXkAtw3hNKp5PjZ6yMHthzUD5zgskbmTdSoMHrpRbOro3+Kh6TcUSx5khzNtG79n4IGuziSFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746187142; c=relaxed/simple;
-	bh=RwgCDnQ37EObTe/l83jABDwxgXSvAaJZEbvdls3xVr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tWLk3vxUMVeLI8IFKPDS/y1XTOFhvqA+K/f8xFvKJLta1bOsKkuWvi0VzPC9H1kVuNpDZUozmR07285HntIyq6wjEsmVi3LZpYo4I5/t50tg/laU2fdj6MWy2M+j0SQD36fJDfrRCFbLuqMK8G+lwUB3OZNyMzcLEVxACTon+08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGa1Ng9Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B625C4CEE4;
-	Fri,  2 May 2025 11:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746187141;
-	bh=RwgCDnQ37EObTe/l83jABDwxgXSvAaJZEbvdls3xVr8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gGa1Ng9QOwviHBkEzyjbOGYNSiaM+mQvYc/nKz5Qq0XA5Ed2TF+IDD3zAle2bWPdU
-	 FCUJ+eO6qbLOQPVmSkan8UqqI/iL2k480/lmex0DBsLSvkSRxWjVSBZtGpWBAr5qHD
-	 xxVDPLnci9qhq1FMTuzQSdcwb2MdxiLNTJb1XLjqiwfPXVMkQ4A5rSfxvLcOfld3td
-	 mWCIPO8LhRD9al7AiChjH4W7mEdhaBf3pWzJ7zMWmVs9uq+p9xDiyHsr4/bRXvpeQK
-	 nNrBe5h6EgaivhdZqPTBRRrZBEGe44BQDC2NQhVoAbhV9xdnxFAsnfzPj5aYGpx+NT
-	 npmxlfiAvqsEA==
-Date: Fri, 2 May 2025 13:58:58 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/4] perf: Fix irq work dereferencing garbage
-Message-ID: <aBSzgrz9zTaFW5dj@pavilion.home>
-References: <20250424161128.29176-1-frederic@kernel.org>
- <20250424161128.29176-3-frederic@kernel.org>
- <20250424163024.GC18306@noisy.programming.kicks-ass.net>
- <aA9ic6m6WAcmVBAw@pavilion.home>
- <20250502102918.GW4198@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1746187282; c=relaxed/simple;
+	bh=UuyWXAGYwLupVFl0Jw/0S8lcFgnwm6t8H5z0/IBbjCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ph5Mxs42GH7U/oyWUrhFD2upAmD+lbPUciHU1G6ydAxeYEIRx1CTV7jCzGHRd0AISJNY6iqkvPJh+OacubKhXsFox7WDe9e4SFK8wlRMumyqiXgUCWg5U5QSCh1j7+63IndxbZtqtn+qVaNsNA9ORRF8ZWJ1D5dpUj1T8kLKhDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ge4+Zjp2; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 542A4HVc030671;
+	Fri, 2 May 2025 12:00:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=l4BVd6
+	xWzagMIbyTPyk7pywmsK+BN7JPzeovOab1+vc=; b=ge4+Zjp23TatX3wRNkGPkb
+	MDzHaLcJmry525VNzVZKhGEPXlKb7YZHyFYHHv2Zc+9CRqnvmVU4Zf66XGgW21Go
+	o8TlpG9rOFsH+RsE4ruhsqT0kc9Gmc08uYlFP8X2ekEdzlTaek9EB/RfjVFhJWP0
+	/YUqvgidjH+UUX2/QwysqN88a7rIDu3L5U8hzq4INroJjbtFPCBZU4SlBmPokvuG
+	kqP+o+RRWwyleKEvVdxBtaDd3qLdYTETtfkK24IQ8exl3HjKx0uT30Cb4FHaEmSy
+	ITBOCG3QDBqtk7/KCd8lezTpCWDCG1lWgVSVi0yge+nXUImCZiTS6Nz+WN8QoiHA
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46cuyk8dac-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 May 2025 12:00:38 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 542B1bdJ031662;
+	Fri, 2 May 2025 12:00:32 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4699tuhugc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 May 2025 12:00:32 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 542C0UMv22675856
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 12:00:30 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9DCF15805F;
+	Fri,  2 May 2025 12:00:30 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CA79C5805D;
+	Fri,  2 May 2025 12:00:26 +0000 (GMT)
+Received: from [9.61.251.128] (unknown [9.61.251.128])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  2 May 2025 12:00:26 +0000 (GMT)
+Message-ID: <90953737-7c8c-4868-984d-30430b5aefaa@linux.ibm.com>
+Date: Fri, 2 May 2025 17:30:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250502102918.GW4198@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] watchdog: Fix the SOFTLOCKUP_DETECTOR=n case
+Content-Language: en-GB
+To: "Nysal Jan K.A." <nysal@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: luogengkun@huaweicloud.com, dianders@chromium.org,
+        joel.granados@kernel.org, song@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
+References: <20250430205503.4a316f48@canb.auug.org.au>
+ <20250502111120.282690-1-nysal@linux.ibm.com>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <20250502111120.282690-1-nysal@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8ox7mOuU3l5-sahkWNn9UsousUuKWDTb
+X-Proofpoint-ORIG-GUID: 8ox7mOuU3l5-sahkWNn9UsousUuKWDTb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDA5MSBTYWx0ZWRfX37nvVsHaLAet Na6/O9mXd2MP60p/4O1BffAQrP+1E5wyrO7ceDQ70/8glHEUWPAB7WgMl5P1qc584XndXNE+3Jb zAfv4eroRfMMBk/TNM42FK5ZjGp6nrJ1wF8B1TC4drPEAVSTHQ3KrT1kXq6ldcfosdQrSWwNBzZ
+ HT/6X52bZDBrAvDif6I4sP5xmx4yKbtdcsk/FCeQ548LvZH6yskncD3gYthJdYvV21hQ95+iOR1 xLHHlN65k9/2RByUxnynXnH+VhW2ftn0lrCoz19H1Uyl8LBfftx/rKE6OoCFLTGYkte58Z1bLn3 ybdjGGDqAyHLlml16hoOXJJHLgx+fipJXgEjYD3eNPxKpBmOQh/zOOSy5jAqMrWfYB8PJ3AzO0k
+ Ptqjk0vZxoY1CY4bls3GVIjudfO2t1+ZwWxCXwvNTNx9gEJjXhur39PVD8uHaVc9S1SeCyzG
+X-Authority-Analysis: v=2.4 cv=KYTSsRYD c=1 sm=1 tr=0 ts=6814b3e6 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=Oh3Zmkm9Fq4tdngPZlYA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-02_01,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ phishscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505020091
 
-Le Fri, May 02, 2025 at 12:29:18PM +0200, Peter Zijlstra a écrit :
-> > @@ -13951,18 +13943,25 @@ perf_event_exit_event(struct perf_event *event,
-> >  	/*
-> >  	 * Child events can be freed.
-> >  	 */
-> > -	if (is_child) {
-> > -		if (parent_event) {
-> > -			mutex_unlock(&parent_event->child_mutex);
-> > -			/*
-> > -			 * Kick perf_poll() for is_event_hup();
-> > -			 */
-> > -			perf_event_wakeup(parent_event);
-> > +	if (parent_event) {
-> > +		mutex_unlock(&parent_event->child_mutex);
-> > +		/*
-> > +		 * Kick perf_poll() for is_event_hup();
-> > +		 */
-> > +		perf_event_wakeup(parent_event);
-> 
-> Should not this perf_event_wakeup() be inside the next if() as well?
-> doing anything on parent_event when !ATTACH_CHILD seems dodgy.
 
-Good point!
+On 02/05/25 4:41 pm, Nysal Jan K.A. wrote:
+> Update watchdog_thresh when SOFTLOCKUP_DETECTOR=n.
+> Additionally fix a build failure in this case as well.
+>
+> Fixes: 0bff3dababb07 ("watchdog: fix watchdog may detect false positive of softlockup")
+> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> Closes: https://lore.kernel.org/all/339e2b3e-c7ee-418f-a84c-9c6360dc570b@linux.ibm.com
+> Signed-off-by: Nysal Jan K.A. <nysal@linux.ibm.com>
+> ---
+> The "Fixes:" SHA1 points to the commit in mm-nonmm-unstable and will need updating
+>
+>   kernel/watchdog.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+> index 80d1a1dae27..2d283e92be5 100644
+> --- a/kernel/watchdog.c
+> +++ b/kernel/watchdog.c
+> @@ -923,10 +923,12 @@ static __init void lockup_detector_setup(void)
+>   }
+>   
+>   #else /* CONFIG_SOFTLOCKUP_DETECTOR */
+> -static void __lockup_detector_reconfigure(void)
+> +static void __lockup_detector_reconfigure(bool thresh_changed)
+>   {
+>   	cpus_read_lock();
+>   	watchdog_hardlockup_stop();
+> +	if (thresh_changed)
+> +		watchdog_thresh = READ_ONCE(watchdog_thresh_next);
+>   	lockup_detector_update_enable();
+>   	watchdog_hardlockup_start();
+>   	cpus_read_unlock();
 
-> 
-> > +
-> > +		/*
-> > +		 * Match the refcount initialization. Make sure it doesn't happen
-> > +		 * twice if pmu_detach_event() calls it on an already exited task.
-> > +		 */
-> > +		if (attach_state & PERF_ATTACH_CHILD) {
-> >  			/*
-> >  			 * pmu_detach_event() will have an extra refcount.
-> > +			 * perf_pending_task() might have one too.
-> >  			 */
-> >  			put_event(event);
-> >  		}
-> > +
-> >  		return;
-> >  	}
-> 
-> This is a *much* saner patch, thank you!
-> 
-> So the thing I worried about... which is why I chose for the TOMBSTONE
-> thing, is that this second invocation will now dereference parent_event,
-> even though we've already released our reference count on it. 
-> 
-> This is essentially a use-after-free.
-> 
-> The thing that makes it work is RCU. And I think we're good, since the
-> fail case is two perf_event_exit_event() invocations on the same event,
-> separated by an RCU grace period, and I don't think this can happen.
-> 
-> But its a shame we can't reliably detect that.. Oh well.
 
-It's not RCU but the reference count of the child that protects it.
-In a second invocation, pmu_unregister() still holds a reference to
-the child and that protects the parent as well because the reference
-to the parent is only dropped once the child has dropped its own.
+Tested this patch, and with this, build is successful. Hence,
 
-Hopefully that is one less opportunity for a headache :-)
 
--- 
-Frederic Weisbecker
-SUSE Labs
+Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+
+
+Regards,
+
+Venkat.
+
 
