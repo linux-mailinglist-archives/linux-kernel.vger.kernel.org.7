@@ -1,190 +1,131 @@
-Return-Path: <linux-kernel+bounces-629876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8624AA72C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D6BEAA7354
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7846A3BC5E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3BF43AC8E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0321A2389;
-	Fri,  2 May 2025 13:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/8cW97i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DE842049;
-	Fri,  2 May 2025 13:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CFC25525C;
+	Fri,  2 May 2025 13:20:37 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC21DDAB;
+	Fri,  2 May 2025 13:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746190899; cv=none; b=ue5kzNaS0CHImdfBBciP29T2GbpGKkN6Oaupbp13lARupnX8isKxCwyH7p5POWTppNTLOvBaS1d7U0W5GzmFv7HMgYFnlPB5oG6vxj9N/dT5AXRHUx0jOaVSh1T9DhvnTIfxp4DrDuFrDf2+vT8fsO7i2+B/YRzwPIym1b8PTUM=
+	t=1746192037; cv=none; b=TCIKa0A5L/J5smoDpGhmxJLIGuDMopDvjdh7Rs8Oihc7bJ1RwQ4LgL79ESjhBC6mgImeHReM3ufUiqVwhMZvcBaNP9R8Dm8Ia0kMIl6IqDS14c9wEC++OOfA3/c1NIMNAKugtgKH29zcx54VcpCoQ5QdUP369IQP+1qeJvB1ojc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746190899; c=relaxed/simple;
-	bh=dMQRuuNDPo6UB5iEmIqTKZGQgECmuzmTPgEY/2ndJx4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NdMftpRPw1wjTorkdo8Gytx+EsVEcuiHhQtOMzVeIzipTtw36Bm1GfR/FnGDII2CkJABU0FiIwfT6UZ8wsgzjMG6Mtsqsjqbbs7uxSnOkSAHC+2+UCRWgcKYLwZErbcJbZdSeqsobhD9yH8f3E4TO9biucjWlvwsiSJXX3IAEYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/8cW97i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741B3C4CEEB;
-	Fri,  2 May 2025 13:01:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746190899;
-	bh=dMQRuuNDPo6UB5iEmIqTKZGQgECmuzmTPgEY/2ndJx4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=g/8cW97ifPJ5oIRMGfXy5zxvylC1XHkhb/p1gWvPVy2iXR7mJNCGMKQyjsWG/FMfC
-	 bG04ILg6eNnBgb4Zqe9lKHHV4DDios+SlJtWffQymUyjckv6NPhWj6aiN9ReSyTbQ2
-	 zGm69Y2HC3wR6nA5umAHD05gTjZk3B7ZwWbOE0e19ToC8NC5kOaNgxoxkbPNhb2Iif
-	 HA0HsBqkhi8pA+pn6buNpDHvjdr6lSok2jEFyQzdpvKLfarEUikDwxjt6GCszZyM9t
-	 sQkawU1Il76QBZcmL/N3D3gC6ViqliiAn57cHWbU/G6D9ZcNpUDcIFOjWfrFoxfOMx
-	 SXUrBkqrj5O1w==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30db1bd3bddso17947211fa.3;
-        Fri, 02 May 2025 06:01:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXAmWXOmDEiammz6LDSxYXUs2EZbMaal+nQNJr1Aj+r6ARwQDjZu490RtK9WD0c/qtjzfluCYBWkhXFNt10@vger.kernel.org, AJvYcCXnt8QBUCTBLkZ8Ouj11br1a1SciY0GBvWPp6A6PmKBTUezk/k1VBrgUrBp0p8CiDNZVMH9tKjYvnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5WxIvBJk+E+jAjCVwyq9bZP+CfYs9uzYuqWWnIW0z7BkkKQsx
-	7whjfmjgCyauGAuYqMZA5lcwvn+y6PHMQHTC4Hh5oZS8WiZCCvMXDj5bYF17Thw1/eiFa/JBxnM
-	MhDxmng+17WpADihfCY9FhdhpXuo=
-X-Google-Smtp-Source: AGHT+IFP2K1rVw27ZyLOosH08KKIQzCBLDHk9BWOU30jtDuPDDbzP6LOh48YChtZ0T4xHjqDNJTeyg60xD8QdUr+fuA=
-X-Received: by 2002:a05:651c:50a:b0:30c:50ff:1a4e with SMTP id
- 38308e7fff4ca-320c44e5ef9mr6919641fa.18.1746190897850; Fri, 02 May 2025
- 06:01:37 -0700 (PDT)
+	s=arc-20240116; t=1746192037; c=relaxed/simple;
+	bh=U6urzpE91xdUZF2TxiVY8gAIcNB1QAGPhG01RWYs0Mg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OqxvLa1DW/mJoio8qJg/PtyGTcUj7eBSUREF9bPBnp+5vyXGMADYlUFN2RbUFFh5p7QhFOlqSih7sbZasf96OxSGVchuhFMDrT2MWKM8TE7SJ1vBT/uE3IN97BXQNNi3f138emHP5F6RZqMIQxAhxpX/EgeKTU6U19PZXR5b0vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4Zprfq673lz9s36;
+	Fri,  2 May 2025 15:02:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Bu1Itk0akfuE; Fri,  2 May 2025 15:02:11 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4Zprfq5Q81z9s2l;
+	Fri,  2 May 2025 15:02:11 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B27598B765;
+	Fri,  2 May 2025 15:02:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id ifS9dlAYK1bu; Fri,  2 May 2025 15:02:11 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0C68E8B763;
+	Fri,  2 May 2025 15:02:11 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Leo Yan <leo.yan@arm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH] perf: Completely remove possibility to override MAX_NR_CPUS
+Date: Fri,  2 May 2025 15:02:02 +0200
+Message-ID: <bfa19c0a3a40d10a053a2c7d3219eee2098e3b38.1746190831.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424080950.289864-1-vkuznets@redhat.com> <20250424080950.289864-3-vkuznets@redhat.com>
- <CAMj1kXFMmhROmaDZ0gsw+ozG5iSkMvSXb15qexToUSAFyBn5hQ@mail.gmail.com>
- <87ldrka6w6.fsf@redhat.com> <CAMj1kXE0WcenLEB+60=+oc+aKfbqZkwYZf-TrOyDY=ShXQ2pYw@mail.gmail.com>
- <87a57v9pt4.fsf@redhat.com>
-In-Reply-To: <87a57v9pt4.fsf@redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 2 May 2025 15:01:26 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFkFCOqU2jvG_o97DzrhpXKyUd=WxPhHFA-_0ddPSvs0g@mail.gmail.com>
-X-Gm-Features: ATxdqUGjrWPLVf8RNWg3y0yNbuxamdltX9gNRtUdxjVBvn7ezePbPeljUcggMvc
-Message-ID: <CAMj1kXFkFCOqU2jvG_o97DzrhpXKyUd=WxPhHFA-_0ddPSvs0g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] x86/efi: Implement support for embedding SBAT data
- for x86
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: x86@kernel.org, linux-efi@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Jones <pjones@redhat.com>, Daniel Berrange <berrange@redhat.com>, 
-	Emanuele Giuseppe Esposito <eesposit@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, Luca Boccassi <bluca@debian.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746190923; l=1837; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=U6urzpE91xdUZF2TxiVY8gAIcNB1QAGPhG01RWYs0Mg=; b=AbOUqnFYBy/JIKaV6NPiEHKBx4D/iZtblMJLv+s4PQBQBiCEaWHpczStEz79pf2M6XeENOMBg H7RI8hx/LgpAV7EYtjQqjWWCiORDG/TzKjvtEYyDAqv87WdkNM5buYN
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2 May 2025 at 14:10, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> Ard Biesheuvel <ardb@kernel.org> writes:
->
-> > On Mon, 28 Apr 2025 at 12:59, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> >>
-> >> Ard Biesheuvel <ardb@kernel.org> writes:
-> >>
-> >> > On Thu, 24 Apr 2025 at 10:10, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> ...
->
-> >> >>  $(obj)/vmlinux: $(vmlinux-objs-y) $(vmlinux-libs-y) FORCE
-> >> >>         $(call if_changed,ld)
-> >> >>
-> >> >> diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
-> >> >> index 3b2bc61c9408..d0a27905de90 100644
-> >> >> --- a/arch/x86/boot/compressed/vmlinux.lds.S
-> >> >> +++ b/arch/x86/boot/compressed/vmlinux.lds.S
-> >> >> @@ -49,9 +49,22 @@ SECTIONS
-> >> >>                 *(.data.*)
-> >> >>
-> >> >>                 /* Add 4 bytes of extra space for the obsolete CRC-32 checksum */
-> >> >> +#ifndef CONFIG_EFI_SBAT
-> >> >>                 . = ALIGN(. + 4, 0x200);
-> >> >> +#else
-> >> >> +               /* Avoid gap between '.data' and '.sbat' */
-> >> >> +               . = ALIGN(. + 4, 0x1000);
-> >> >> +#endif
-> >> >>                 _edata = . ;
-> >> >>         }
-> >> >> +#ifdef CONFIG_EFI_SBAT
-> >> >> +       .sbat : ALIGN(0x1000) {
-> >> >> +               _sbat = . ;
-> >> >> +               *(.sbat)
-> >> >> +               _esbat = ALIGN(0x200);
-> >> >> +               . = _esbat;
-> >> >> +       }
-> >> >> +#endif
-> >> >>         . = ALIGN(L1_CACHE_BYTES);
-> >> >>         .bss : {
-> >> >>                 _bss = . ;
-> >> >
-> >> > This looks a bit odd - see below
-> >> >
-> >> >> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-> >> >> index b5c79f43359b..ab851490ef74 100644
-> >> >> --- a/arch/x86/boot/header.S
-> >> >> +++ b/arch/x86/boot/header.S
-> >> >> @@ -207,6 +207,19 @@ pecompat_fstart:
-> >> >>                 IMAGE_SCN_MEM_READ              | \
-> >> >>                 IMAGE_SCN_MEM_WRITE             # Characteristics
-> >> >>
-> >> >> +#ifdef CONFIG_EFI_SBAT
-> >> >> +       .ascii ".sbat\0\0\0"
-> >> >> +       .long   ZO__esbat - ZO__sbat            # VirtualSize
-> >> >> +       .long   setup_size + ZO__sbat           # VirtualAddress
-> >> >> +       .long   ZO__esbat - ZO__sbat            # SizeOfRawData
-> >> >> +       .long   setup_size + ZO__sbat           # PointerToRawData
-> >> >> +
-> >> >> +       .long   0, 0, 0
-> >> >> +       .long   IMAGE_SCN_CNT_INITIALIZED_DATA  | \
-> >> >> +               IMAGE_SCN_MEM_READ              | \
-> >> >> +               IMAGE_SCN_MEM_DISCARDABLE       # Characteristics
-> >> >> +#endif
-> >> >> +
-> >> >
-> >> > This puts the .sbat section at the very end of the file. However, the
-> >> > virtual size of .data is 'ZO__end - ZO__data' not 'ZO__edata -
-> >> > ZO__data', and so the .sbat section will overlap with .bss in the
-> >> > memory view of the image.
-> >>
-> >> Missed that, will fix, thanks! A stupid question though: does this
-> >> matter in practice for SBAT? I don't think anyone needs SBAT data after
-> >> kernel starts booting so we can consider it 'discarded'. BSS data can
-> >> then do whatever it wants.
-> >>
-> >
-> > It violates the PE/COFF spec, and some PE loaders and signing tools
-> > are very pedantic about the layout.
->
-> Turns out it the problem is slightly harder to address then I initially
-> thought.
+Commit 21b8732eb447 ("perf tools: Allow overriding MAX_NR_CPUS at
+compile time") added the capability to override MAX_NR_CPUS. At
+that time it was necessary to reduce the huge amount of RAM used
+by static stats variables.
 
-Yeah I was afraid this was going to be tricky.
+But this has been unnecessary since commit 6a1e2c5c2673 ("perf stat:
+Remove a set of shadow stats static variables"), and
+commit e8399d34d568 ("libperf cpumap: Hide/reduce scope of
+MAX_NR_CPUS") broke the build in that case because it failed to
+add the guard around the new definition of MAX_NR_CPUS.
 
-...
+So cleanup things and remove guards completely to officialise it
+is not necessary anymore to override MAX_NR_CPUS.
 
-> The problem is similar for zboot.
+Link: https://lore.kernel.org/all/8c8553387ebf904a9e5a93eaf643cb01164d9fb3.1736188471.git.christophe.leroy@csgroup.eu/
+Fixes: e8399d34d568 ("libperf cpumap: Hide/reduce scope of MAX_NR_CPUS")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ tools/perf/perf.h                        | 2 --
+ tools/perf/util/bpf_skel/kwork_top.bpf.c | 2 --
+ 2 files changed, 4 deletions(-)
 
-How so?
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 3cb40965549f..e004178472d9 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -2,9 +2,7 @@
+ #ifndef _PERF_PERF_H
+ #define _PERF_PERF_H
+ 
+-#ifndef MAX_NR_CPUS
+ #define MAX_NR_CPUS			4096
+-#endif
+ 
+ enum perf_affinity {
+ 	PERF_AFFINITY_SYS = 0,
+diff --git a/tools/perf/util/bpf_skel/kwork_top.bpf.c b/tools/perf/util/bpf_skel/kwork_top.bpf.c
+index 73e32e063030..6673386302e2 100644
+--- a/tools/perf/util/bpf_skel/kwork_top.bpf.c
++++ b/tools/perf/util/bpf_skel/kwork_top.bpf.c
+@@ -18,9 +18,7 @@ enum kwork_class_type {
+ };
+ 
+ #define MAX_ENTRIES     102400
+-#ifndef MAX_NR_CPUS
+ #define MAX_NR_CPUS     4096
+-#endif
+ #define PF_KTHREAD      0x00200000
+ #define MAX_COMMAND_LEN 16
+ 
+-- 
+2.47.0
 
-> I have two ideas:
-> 1) Get back to the idea of putting '.sbat' between '.text' and '.data'
-> (was in my RFC).
->
-
-This is what zboot does, no?
-
-> 2) Introduce a separate '.bss' section to the PE binary, basically:
->
-
-I'd like .sbat to be as unintrusive as we can make it, so this is my
-least preferred option.
 
