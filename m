@@ -1,143 +1,142 @@
-Return-Path: <linux-kernel+bounces-630086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62F7AA754F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:48:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3603AA7553
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86FD01C05BAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476773A796E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ACF2561C8;
-	Fri,  2 May 2025 14:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18232566C4;
+	Fri,  2 May 2025 14:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VSwMCIy5"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YINDoVXX"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F06C156C63
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F20A156C63;
+	Fri,  2 May 2025 14:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746197298; cv=none; b=dYpoYFkUhcATeFt8cmJktfYmiBkMFR3fVasuIFgNpsbbHBvxn473x7r246nZvmLONT+rEKZWWJaKjiRBooRqwNTtXFFw75LErAUVH0zS7Omk+b75jpjdWzGAnP1ZnYpw4F3JPfp+lb9uANkpF4d+ZGf37Ops6yezRd8EI534SZc=
+	t=1746197390; cv=none; b=DJvEpaFqAI6VOyJf9hUNr4fA0DHzqFR9heFWlr1Hox89O4k1b/R0bOA7Yp8DK+sOcW8zptUV55Kb9dFpoWqftF5YYMR13ERbMdAg2PRvaGHhG5X52DiuzWP9O8Nn0p3lEpqxq9tDj9DImcCmQLEgMGYnbvgWWxTuB1/F2zM146Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746197298; c=relaxed/simple;
-	bh=13Pg5ikX2JJEvpW5syZwxR8oHWGY0WQZqtGLTmAUjKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkvOeNuH22uwZTtSL7oIm+5ZPI7b27ARbornuT2Z0GcqCvJ6QQcKPoUzD1G+LZRu5G0dOgfheZGj0iQ6Vnt7Wof777+HCoALypF0OJh8Vvejhux5IK84kZ/0OiBSQtgiT/6tWRNthLQWFDFLEhKeatD5RJwYanro4xahoXQPUlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VSwMCIy5; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acb2faa9f55so266163966b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 07:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746197294; x=1746802094; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pnD2QgwV5GhvcqcEpVEKPNi1cezGAg3bSSiDo9kEBMQ=;
-        b=VSwMCIy58BbIgRG+MRhXF96IPa4Tnr8G5DK77K1NRK8ikWmgZJ/imlAcHEjSIUfCMP
-         5u36dk3mzPezwx9YzxMEBodeXDgq2c7oAa6r3uO5VW63yvT4Jp5Ldoqc/XUG5J1lkcnM
-         RzOvsOzH4vsm3EW/lEx6RHz+Pw/u/VmmOxHGEnIb2UzpmD5OODp2EjDbsOSA+/wQ1icr
-         m+FaBQGhIXY3NTenJDNzkMD5c0mZPl4fgPL6JKQL4DHLI8XKIOpEGlg3ACuUpT2OQdpE
-         +LDNAx8sswNP7pbjqqwNRDSY8ciGHJSzXrROkPSJjyGYCGgyPuP05sEVqNZW4molgTDK
-         6+aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746197294; x=1746802094;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pnD2QgwV5GhvcqcEpVEKPNi1cezGAg3bSSiDo9kEBMQ=;
-        b=QPlxT5V81/tSKAN9Cvw4UozB6s5vg1zzGXyzvn1h+ANjTznRsPgDa8EVfJDNh3i7Gu
-         rs6pnDGo6TQXyqbJ1lukeMj0eRDrZROb8JF10ATlc9AUwl1ygQawrYbWUBhf8vPPJPQE
-         ijZJsLpDmKbs7RI95m2LvtqdW00xuhykMRXOQqVfscAgc5aSTf+vFys66C6ZOExP5EZW
-         PDxVsZkrswTBXbZV3aGrnu9mTyA9ZT+VXMUq9NRsdpmig+56eqnq/FL+4FtzCjd33/Tj
-         +85fU2whBNOYtClT6HrzMP0y/fjqN5DdAc0SF550ZKMIQUtwOJz+colhK95BY7SHEde4
-         sstA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTRbpvWJUdwgfWnQqhXBL7kFXLL6J/w3plb8GaT8ZsjTx0p0eUGixlV9TRTYrwUbym31HEGHLtZY3p5pA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdb2bug/eULnbAwqnzcDQfuFWhtjD5abGKB1sNNcC3MdpZClOQ
-	JpLuE8SxQZsdiOD6iDwKvnBNv/M2DNoPk0La3xEq0E0HT6DFAc+xk66SAyViHRmAJMfyMIFkvFK
-	q
-X-Gm-Gg: ASbGncujGhJlZCN2uH1tAPPHfkBXzYHLviIhLFM6mwB/HI4oMZNAQP3bP5v7cT6M/oQ
-	YC5BSAWwwgm4mXnTp554dMvAzGhIKfJV3PZxLB7QktpM8L4+1qqQ5+t2jPnIieQgJX8tOunXieX
-	0XGSHSVllVGMtr8DKqkxT2nyf7Tdl3rfCJB6V/EnE7X37MlZiYo8dA1qukU62w8Ipi8/1hTx6A1
-	607SfeFp88E4ZRVYenhCwk78vlCc5eLLTazSHx2wmWUO7MMWAKz1vm1Dih0ho4yVH9DwVjGZ0qx
-	uTjVPavDJ/91uV/t2BwfQGwDLjR+IojPhhrd/nAvOSw=
-X-Google-Smtp-Source: AGHT+IEwVRCPWUe4R8INqTEd9yswuQOQv2KIQnaLFYPMCSbtQeuwiEoJkiUYJi7tG1t1kW8uBiSgdA==
-X-Received: by 2002:a17:907:1c0d:b0:ace:da0a:2882 with SMTP id a640c23a62f3a-ad17aff7e39mr323110166b.54.1746197294371;
-        Fri, 02 May 2025 07:48:14 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1894c01f2sm57995466b.119.2025.05.02.07.48.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 07:48:13 -0700 (PDT)
-Date: Fri, 2 May 2025 16:48:12 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Frederic Weisbecker <fweisbecker@suse.com>
-Subject: Re: [PATCH v2 10/10] sched: Add deprecation warning for users of
- RT_GROUP_SCHED
-Message-ID: <pgbl3anqsqo7a3of7lyml4ynzf5jbpmgm23uokiw77x6qf3jc5@bhh5lvbnndkp>
-References: <20250310170442.504716-1-mkoutny@suse.com>
- <20250310170442.504716-11-mkoutny@suse.com>
- <3sfn3j2l7wmsstzmtkxa7cyz4w3hmkdqya7nhdwrqlvfosoixv@q5wu2xluuwxf>
+	s=arc-20240116; t=1746197390; c=relaxed/simple;
+	bh=WdSkY0SFbzKaDrAB0hKsDpkwOWOA9GGQwzYI390I1AI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O6sShvNBnFTvXvzzhKl45u3q5EpLldejTAHCo+hz/xxZmKLPDkvlyywDJkz+aLVw8nxBhi3FEA7v0vgEQmSc+nTf4nLRiBA1y8bGOjPD/TMzhgy9iEX5mCTbneBXlkofigxEAOAYj3TZv3CtlZqhraY34klS/ZVxp59j0nKK6Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YINDoVXX; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542EnZlG253461
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 09:49:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746197375;
+	bh=i4/jusf2Aa0zeSOt4O3iLnwmJBt0CRJJuL2eBj1uMhU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=YINDoVXXjJDbV7erQnWP0Gty7XaKwMtMNJ94QIn2McScwhf7BP2GRa57kfacI13DO
+	 eBYLoRDgRqzEigr7YH4WULQroKOHjtNR0LQscKx4Bqa3u1L3jkOX1KlCVRGJUgK8H3
+	 b038iefF/rnE2UtIwTagAUce/CG3rNoEMcq1ZWTk=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542EnZ3a064657
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 May 2025 09:49:35 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ May 2025 09:49:34 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 May 2025 09:49:34 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542EnYM0003137;
+	Fri, 2 May 2025 09:49:34 -0500
+Date: Fri, 2 May 2025 09:49:34 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Daniel Schultz <d.schultz@phytec.de>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62a: Set Critical Temp. to 105C
+Message-ID: <20250502144934.t6hjiwp2f64ovb34@deeply>
+References: <20250502142606.2840508-1-d.schultz@phytec.de>
+ <20250502142606.2840508-2-d.schultz@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="selnpx3dp6vmsctb"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <3sfn3j2l7wmsstzmtkxa7cyz4w3hmkdqya7nhdwrqlvfosoixv@q5wu2xluuwxf>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250502142606.2840508-2-d.schultz@phytec.de>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On 07:26-20250502, Daniel Schultz wrote:
+> The AM62Ax SoC supports two temperature ranges:
+> * A: -40 to 105C - Extended Industrial
+> * I: -40 to 125C - Automotive
+> 
+> By default, use the lower limit (105 °C) so that any AM62A running
+> in Extended Industrial mode will shut down safely before overheating.
+> 
+> If the bootloader detects an Automotive-grade device, it should
+> override this and raise the critical trip point to 125 °C.
+> 
+> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+> ---
+>  arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
+> index 39ff9118b6c4..40dcb9bab965 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
 
---selnpx3dp6vmsctb
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 10/10] sched: Add deprecation warning for users of
- RT_GROUP_SCHED
-MIME-Version: 1.0
+Why not create a separate header for industrial grade and rename this as
+automotive grade and let the board file pick the right grade used on the
+board?
 
-Hello Peter.
+> @@ -19,7 +19,7 @@ main0_alert: main0-alert {
+>  			};
+>  
+>  			main0_crit: main0-crit {
+> -				temperature = <125000>;	/* milliCelsius */
+> +				temperature = <105000>;	/* milliCelsius */
+>  				hysteresis = <2000>;	/* milliCelsius */
+>  				type = "critical";
+>  			};
+> @@ -50,7 +50,7 @@ main1_alert: main1-alert {
+>  			};
+>  
+>  			main1_crit: main1-crit {
+> -				temperature = <125000>;	/* milliCelsius */
+> +				temperature = <105000>;	/* milliCelsius */
+>  				hysteresis = <2000>;	/* milliCelsius */
+>  				type = "critical";
+>  			};
+> @@ -81,7 +81,7 @@ main2_alert: main2-alert {
+>  			};
+>  
+>  			main2_crit: main2-crit {
+> -				temperature = <125000>;	/* milliCelsius */
+> +				temperature = <105000>;	/* milliCelsius */
+>  				hysteresis = <2000>;	/* milliCelsius */
+>  				type = "critical";
+>  			};
+> -- 
+> 2.25.1
+> 
 
-On Thu, Apr 17, 2025 at 02:13:25PM +0200, Michal Koutn=FD <mkoutny@suse.com=
-> wrote:
-> On Mon, Mar 10, 2025 at 06:04:42PM +0100, Michal Koutn=FD <mkoutny@suse.c=
-om> wrote:
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> ...
-> >  static int cpu_rt_runtime_write(struct cgroup_subsys_state *css,
-> >                                 struct cftype *cft, s64 val)
-> > {
-> > +	pr_warn_once("RT_GROUP throttling is deprecated, use global sched_rt_=
-runtime_us and deadline tasks.\n");
->=20
-> I just noticed that this patch isn't picked together with the rest of
-> the series in tip/sched/core.
-> Did it slip through the cracks (as the last one) or is that intentional
-> for some reason?
-
-I'm still wondering about this so that the users get right (or no)
-message.
-
---selnpx3dp6vmsctb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCaBTbKQAKCRAt3Wney77B
-SfFcAP9Ha+Ou8wzGxxXme3GgPN3QQ59RnSaOEtZZDkkYaCmBcQEAyAVifVY4lhW8
-EH6E+WC4HT4DeiymGFiKCbfV4ZJ7TAY=
-=zMPU
------END PGP SIGNATURE-----
-
---selnpx3dp6vmsctb--
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
