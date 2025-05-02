@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-629656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA51CAA6FC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:35:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A0DAA6FCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E17116C39E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2DED7B2DF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6564725484D;
-	Fri,  2 May 2025 10:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A23B254AF7;
+	Fri,  2 May 2025 10:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jK9kw13w";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H42OieW6"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HdL5pGyG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1AKKLqPp"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92F824678B;
-	Fri,  2 May 2025 10:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D5A24E4BF;
+	Fri,  2 May 2025 10:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746182016; cv=none; b=dA2Pd1v26e1GOOd1Pl6CzPpvE5+H3GnPt3sjChBB7Ii9skExRSHifDNrNYFjfxHNR2CzI9W7PA8au1FCSbGsLkoXQAXZUG/HeHdNS5Sgzt/nsWXyUJuDmaSKlrjy5wjWKSJwHJtXj99mAgiY734d0coTkvueWq5GXYeUYhehj3E=
+	t=1746182017; cv=none; b=W2+jxZQz+khoMS8/tCNv8SWevdlFZ7olrI8Jz0UnvxPHstXQ+0u7ZnxgFreIZV2mIRLXSrUs/fGWsZ82oGy6opLl7XOn7zOLH7HbLS6TbRfdcQqRdZ3ntxfCirIL2sbVm1+PXIwOuXK3q0nyyYqZZc/JZZDYEam5nCcluCFWOGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746182016; c=relaxed/simple;
-	bh=vGoU8qHnSqRCWdGYW+Ycijb2GkJgNdKApjIbQrD7y84=;
+	s=arc-20240116; t=1746182017; c=relaxed/simple;
+	bh=L4vC9bWNxL+S4chDJmWcHY1drPGjay9g2ojtPOyRcfQ=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FF/Q7GqDydG+T1zujUIvjgfL2dJqhqffFr7KZ6P6pAFLScPOsjxxileLQfMynr4mE7s+0q6VWThJWdWDkjGJ6ffHCT43IFeV2wWrxuCknYalHRgEGwsr44ZjU5/vrttvUaX7IoRoT+MWFSOsaVyTH9jhCcuonlbzl3oPdbzzRCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jK9kw13w; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H42OieW6; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=KZblP+wnkTCBahYF0GKyWGqoDRXY3RjD85sulwn6Q0aRX91Np/5D1YAVuRkvIKz/qfPFSlVPH8XTEyUVK9csWMg+ndKbaXKeT3SGGhzIgEoPH6Nwvbp/0z2NdVDQfZSqgvJMu7LkJwDCWjqmcOhqghPS8PZX3uiJ3GW5wKV2aDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HdL5pGyG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1AKKLqPp; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 02 May 2025 10:33:32 -0000
+Date: Fri, 02 May 2025 10:33:33 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1746182013;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sNetqPL9WWXk6yXWBsNonmQatkbzS40GiZ7fH+ZUov0=;
-	b=jK9kw13wQVNKSLhTYDo4p5TAtHEgySCMgVYMCrWWSiRsqTF21D8j7hu0FXzFGo92+fr+j/
-	577zt+WIMfmZMGn/6FWxBvpUgVeYdv357Afh6iSySQ6oIcvaaMcHQAbloFsERZHGht9YWw
-	hF1z1hc2lAjXLO8hnyihFBoDC9SezxyTxfLxkGp9DfQdm3+gKcVzImVzzpkHlyGXQt1GOl
-	i9DE/pzNlDn884tPgIIryGLUQcFPPiekIzzknM8KoSmvQLSZXU6zi6NGw0rYk3CMQyd0t/
-	//3GSR01vQWoYpLjFXB4FXG1HY8wxg7nGzo786Z/Ee+chUe1jwqFglaeaVPwww==
+	bh=MdFLoYUsFQz1Se0Ol21mGCf4ZBJB49bZB1eMmYbd7kc=;
+	b=HdL5pGyGbYeGeezsrSfw6tXuEGamJX7JFNdE0flLIPrQdLFBuKzw0ZWzXqKFuyxvsgtpa3
+	nLgp+8HTM1rKy4SiK0OH56W9cmhABmvqOUT+XetIZs8kd105Wc3um7KEC7MYDPgDaNTgAK
+	XeftSdjAy/ZmXG21CCJ88AiH+vyY+KpyrT98IUe7RY47uleodTYQ/4qpkFk+CnnIFmu1Co
+	m9dDhPEM+21XwBgErewTvaB+4NYzLArmWeybxbbRvHnmkfrVRqj55v/AljJOK4ryErNa1y
+	eeUUu5U6JU5UwWWROnH/TJqNA/Uz3wk48c0Mx++oI8gRvn1lZInZNNR2Vz0dLA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1746182013;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,26 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sNetqPL9WWXk6yXWBsNonmQatkbzS40GiZ7fH+ZUov0=;
-	b=H42OieW6/s4VcHuZGkwIVsRBDfj3DgjSRF8ls+S0i/Qw0qKtUCTko8wvlBrOCYYy7a53Ka
-	oQxZNEUcYvzWoxDQ==
+	bh=MdFLoYUsFQz1Se0Ol21mGCf4ZBJB49bZB1eMmYbd7kc=;
+	b=1AKKLqPp3uQGZgfbdnKRSdkkqtY4PwNNVyTDQ60Is8lvu/X61gY4rXTUoXlj3NXa9lmDyl
+	j4iUKi7GqiQkxdDQ==
 From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/bugs] x86/bugs: Restructure MMIO mitigation
+Subject: [tip: x86/bugs] x86/bugs: Restructure TAA mitigation
 Cc: David Kaplan <david.kaplan@amd.com>,
  "Borislav Petkov (AMD)" <bp@alien8.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250418161721.1855190-4-david.kaplan@amd.com>
-References: <20250418161721.1855190-4-david.kaplan@amd.com>
+In-Reply-To: <20250418161721.1855190-3-david.kaplan@amd.com>
+References: <20250418161721.1855190-3-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174618201243.22196.15533937205535867214.tip-bot2@tip-bot2>
+Message-ID: <174618201306.22196.13862047472534777814.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,158 +81,174 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/bugs branch of tip:
 
-Commit-ID:     4a5a04e61d7f8f26472f93287f6dcb669f0cf22f
-Gitweb:        https://git.kernel.org/tip/4a5a04e61d7f8f26472f93287f6dcb669f0cf22f
+Commit-ID:     bdd7fce7a8168cebd400926d6352d2fbc1ac9f79
+Gitweb:        https://git.kernel.org/tip/bdd7fce7a8168cebd400926d6352d2fbc1ac9f79
 Author:        David Kaplan <david.kaplan@amd.com>
-AuthorDate:    Fri, 18 Apr 2025 11:17:08 -05:00
+AuthorDate:    Fri, 18 Apr 2025 11:17:07 -05:00
 Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 28 Apr 2025 13:22:24 +02:00
+CommitterDate: Mon, 28 Apr 2025 13:02:04 +02:00
 
-x86/bugs: Restructure MMIO mitigation
+x86/bugs: Restructure TAA mitigation
 
-Restructure MMIO mitigation to use select/update/apply functions to
+Restructure TAA mitigation to use select/update/apply functions to
 create consistent vulnerability handling.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 Reviewed-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Link: https://lore.kernel.org/20250418161721.1855190-4-david.kaplan@amd.com
+Link: https://lore.kernel.org/20250418161721.1855190-3-david.kaplan@amd.com
 ---
- arch/x86/kernel/cpu/bugs.c | 74 +++++++++++++++++++++++++------------
- 1 file changed, 50 insertions(+), 24 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 94 +++++++++++++++++++++++--------------
+ 1 file changed, 59 insertions(+), 35 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 5db21d2..bc74c22 100644
+index f697e6b..5db21d2 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -68,6 +68,8 @@ static void __init taa_select_mitigation(void);
- static void __init taa_update_mitigation(void);
- static void __init taa_apply_mitigation(void);
+@@ -65,6 +65,8 @@ static void __init mds_apply_mitigation(void);
+ static void __init md_clear_update_mitigation(void);
+ static void __init md_clear_select_mitigation(void);
+ static void __init taa_select_mitigation(void);
++static void __init taa_update_mitigation(void);
++static void __init taa_apply_mitigation(void);
  static void __init mmio_select_mitigation(void);
-+static void __init mmio_update_mitigation(void);
-+static void __init mmio_apply_mitigation(void);
  static void __init srbds_select_mitigation(void);
  static void __init l1d_flush_select_mitigation(void);
- static void __init srso_select_mitigation(void);
-@@ -197,6 +199,7 @@ void __init cpu_select_mitigations(void)
+@@ -194,6 +196,7 @@ void __init cpu_select_mitigations(void)
+ 	ssb_select_mitigation();
  	l1tf_select_mitigation();
  	mds_select_mitigation();
- 	taa_select_mitigation();
-+	mmio_select_mitigation();
++	taa_select_mitigation();
  	md_clear_select_mitigation();
  	srbds_select_mitigation();
  	l1d_flush_select_mitigation();
-@@ -214,9 +217,11 @@ void __init cpu_select_mitigations(void)
+@@ -210,8 +213,10 @@ void __init cpu_select_mitigations(void)
+ 	 * choices.
  	 */
  	mds_update_mitigation();
- 	taa_update_mitigation();
-+	mmio_update_mitigation();
++	taa_update_mitigation();
  
  	mds_apply_mitigation();
- 	taa_apply_mitigation();
-+	mmio_apply_mitigation();
++	taa_apply_mitigation();
  }
  
  /*
-@@ -520,25 +525,62 @@ static void __init mmio_select_mitigation(void)
+@@ -397,6 +402,11 @@ static const char * const taa_strings[] = {
+ 	[TAA_MITIGATION_TSX_DISABLED]	= "Mitigation: TSX disabled",
+ };
+ 
++static bool __init taa_vulnerable(void)
++{
++	return boot_cpu_has_bug(X86_BUG_TAA) && boot_cpu_has(X86_FEATURE_RTM);
++}
++
+ static void __init taa_select_mitigation(void)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_TAA)) {
+@@ -410,48 +420,63 @@ static void __init taa_select_mitigation(void)
  		return;
  	}
  
-+	/* Microcode will be checked in mmio_update_mitigation(). */
-+	if (mmio_mitigation == MMIO_MITIGATION_AUTO)
-+		mmio_mitigation = MMIO_MITIGATION_VERW;
-+
- 	if (mmio_mitigation == MMIO_MITIGATION_OFF)
- 		return;
+-	if (cpu_mitigations_off()) {
++	if (cpu_mitigations_off())
+ 		taa_mitigation = TAA_MITIGATION_OFF;
+-		return;
+-	}
  
- 	/*
- 	 * Enable CPU buffer clear mitigation for host and VMM, if also affected
--	 * by MDS or TAA. Otherwise, enable mitigation for VMM only.
-+	 * by MDS or TAA.
- 	 */
--	if (boot_cpu_has_bug(X86_BUG_MDS) || (boot_cpu_has_bug(X86_BUG_TAA) &&
--					      boot_cpu_has(X86_FEATURE_RTM)))
--		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
-+	if (boot_cpu_has_bug(X86_BUG_MDS) || taa_vulnerable())
+-	/*
+-	 * TAA mitigation via VERW is turned off if both
+-	 * tsx_async_abort=off and mds=off are specified.
+-	 */
+-	if (taa_mitigation == TAA_MITIGATION_OFF &&
+-	    mds_mitigation == MDS_MITIGATION_OFF)
++	/* Microcode will be checked in taa_update_mitigation(). */
++	if (taa_mitigation == TAA_MITIGATION_AUTO)
++		taa_mitigation = TAA_MITIGATION_VERW;
++
++	if (taa_mitigation != TAA_MITIGATION_OFF)
 +		verw_clear_cpu_buf_mitigation_selected = true;
 +}
 +
-+static void __init mmio_update_mitigation(void)
++static void __init taa_update_mitigation(void)
 +{
-+	if (!boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA) || cpu_mitigations_off())
-+		return;
-+
++	if (!taa_vulnerable() || cpu_mitigations_off())
+ 		return;
+ 
+-	if (boot_cpu_has(X86_FEATURE_MD_CLEAR))
 +	if (verw_clear_cpu_buf_mitigation_selected)
-+		mmio_mitigation = MMIO_MITIGATION_VERW;
-+
-+	if (mmio_mitigation == MMIO_MITIGATION_VERW) {
-+		/*
-+		 * Check if the system has the right microcode.
-+		 *
-+		 * CPU Fill buffer clear mitigation is enumerated by either an explicit
-+		 * FB_CLEAR or by the presence of both MD_CLEAR and L1D_FLUSH on MDS
-+		 * affected systems.
-+		 */
-+		if (!((x86_arch_cap_msr & ARCH_CAP_FB_CLEAR) ||
-+		      (boot_cpu_has(X86_FEATURE_MD_CLEAR) &&
-+		       boot_cpu_has(X86_FEATURE_FLUSH_L1D) &&
-+		     !(x86_arch_cap_msr & ARCH_CAP_MDS_NO))))
-+			mmio_mitigation = MMIO_MITIGATION_UCODE_NEEDED;
-+	}
-+
-+	pr_info("%s\n", mmio_strings[mmio_mitigation]);
-+}
-+
-+static void __init mmio_apply_mitigation(void)
-+{
-+	if (mmio_mitigation == MMIO_MITIGATION_OFF)
-+		return;
- 
- 	/*
--	 * X86_FEATURE_CLEAR_CPU_BUF could be enabled by other VERW based
--	 * mitigations, disable KVM-only mitigation in that case.
-+	 * Only enable the VMM mitigation if the CPU buffer clear mitigation is
-+	 * not being used.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_CLEAR_CPU_BUF))
-+	if (verw_clear_cpu_buf_mitigation_selected) {
-+		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
- 		static_branch_disable(&cpu_buf_vm_clear);
+ 		taa_mitigation = TAA_MITIGATION_VERW;
 -	else
-+	} else {
- 		static_branch_enable(&cpu_buf_vm_clear);
-+	}
- 
- 	/*
- 	 * If Processor-MMIO-Stale-Data bug is present and Fill Buffer data can
-@@ -548,21 +590,6 @@ static void __init mmio_select_mitigation(void)
- 	if (!(x86_arch_cap_msr & ARCH_CAP_FBSDP_NO))
- 		static_branch_enable(&mds_idle_clear);
+-		taa_mitigation = TAA_MITIGATION_UCODE_NEEDED;
  
 -	/*
--	 * Check if the system has the right microcode.
+-	 * VERW doesn't clear the CPU buffers when MD_CLEAR=1 and MDS_NO=1.
+-	 * A microcode update fixes this behavior to clear CPU buffers. It also
+-	 * adds support for MSR_IA32_TSX_CTRL which is enumerated by the
+-	 * ARCH_CAP_TSX_CTRL_MSR bit.
 -	 *
--	 * CPU Fill buffer clear mitigation is enumerated by either an explicit
--	 * FB_CLEAR or by the presence of both MD_CLEAR and L1D_FLUSH on MDS
--	 * affected systems.
+-	 * On MDS_NO=1 CPUs if ARCH_CAP_TSX_CTRL_MSR is not set, microcode
+-	 * update is required.
 -	 */
--	if ((x86_arch_cap_msr & ARCH_CAP_FB_CLEAR) ||
--	    (boot_cpu_has(X86_FEATURE_MD_CLEAR) &&
--	     boot_cpu_has(X86_FEATURE_FLUSH_L1D) &&
--	     !(x86_arch_cap_msr & ARCH_CAP_MDS_NO)))
--		mmio_mitigation = MMIO_MITIGATION_VERW;
--	else
--		mmio_mitigation = MMIO_MITIGATION_UCODE_NEEDED;
--
- 	if (mmio_nosmt || cpu_mitigations_auto_nosmt())
- 		cpu_smt_disable(false);
+-	if ( (x86_arch_cap_msr & ARCH_CAP_MDS_NO) &&
+-	    !(x86_arch_cap_msr & ARCH_CAP_TSX_CTRL_MSR))
+-		taa_mitigation = TAA_MITIGATION_UCODE_NEEDED;
++	if (taa_mitigation == TAA_MITIGATION_VERW) {
++		/* Check if the requisite ucode is available. */
++		if (!boot_cpu_has(X86_FEATURE_MD_CLEAR))
++			taa_mitigation = TAA_MITIGATION_UCODE_NEEDED;
+ 
+-	/*
+-	 * TSX is enabled, select alternate mitigation for TAA which is
+-	 * the same as MDS. Enable MDS static branch to clear CPU buffers.
+-	 *
+-	 * For guests that can't determine whether the correct microcode is
+-	 * present on host, enable the mitigation for UCODE_NEEDED as well.
+-	 */
+-	setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
++		/*
++		 * VERW doesn't clear the CPU buffers when MD_CLEAR=1 and MDS_NO=1.
++		 * A microcode update fixes this behavior to clear CPU buffers. It also
++		 * adds support for MSR_IA32_TSX_CTRL which is enumerated by the
++		 * ARCH_CAP_TSX_CTRL_MSR bit.
++		 *
++		 * On MDS_NO=1 CPUs if ARCH_CAP_TSX_CTRL_MSR is not set, microcode
++		 * update is required.
++		 */
++		if ((x86_arch_cap_msr & ARCH_CAP_MDS_NO) &&
++		   !(x86_arch_cap_msr & ARCH_CAP_TSX_CTRL_MSR))
++			taa_mitigation = TAA_MITIGATION_UCODE_NEEDED;
++	}
+ 
+-	if (taa_nosmt || cpu_mitigations_auto_nosmt())
+-		cpu_smt_disable(false);
++	pr_info("%s\n", taa_strings[taa_mitigation]);
++}
++
++static void __init taa_apply_mitigation(void)
++{
++	if (taa_mitigation == TAA_MITIGATION_VERW ||
++	    taa_mitigation == TAA_MITIGATION_UCODE_NEEDED) {
++		/*
++		 * TSX is enabled, select alternate mitigation for TAA which is
++		 * the same as MDS. Enable MDS static branch to clear CPU buffers.
++		 *
++		 * For guests that can't determine whether the correct microcode is
++		 * present on host, enable the mitigation for UCODE_NEEDED as well.
++		 */
++		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
++
++		if (taa_nosmt || cpu_mitigations_auto_nosmt())
++			cpu_smt_disable(false);
++	}
  }
-@@ -685,7 +712,6 @@ out:
+ 
+ static int __init tsx_async_abort_parse_cmdline(char *str)
+@@ -660,7 +685,6 @@ out:
  
  static void __init md_clear_select_mitigation(void)
  {
--	mmio_select_mitigation();
+-	taa_select_mitigation();
+ 	mmio_select_mitigation();
  	rfds_select_mitigation();
  
- 	/*
 
