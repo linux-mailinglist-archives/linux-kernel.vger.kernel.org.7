@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-630506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BEBAA7B1B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15403AA7B1A
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D071B66C0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED991B678EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848BB21A43C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838CD21A435;
 	Fri,  2 May 2025 20:53:51 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EA220D4F8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ECD20B804;
 	Fri,  2 May 2025 20:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746219230; cv=none; b=ql4mbb7gKSaGDzj7yl7j6Mla+5dMXe+Oov+r3x4Iohcd2eX0d1TVXPnk8W8iNYxH3TyVqSrhOpRZAI9cMkrd5rdy6l3f6buHXxdyR6zWiE07+bSwpj3y0QruHLFgYY+gK1AWvht1EYF+hvE2DFTm6oM9WvX0jKVH1/aXzLtmiNQ=
+	t=1746219229; cv=none; b=KhxPPqNM/7LIRyPzO9UZuPlCF+QCANB/zn3P7UHf1JSd/lNXPuB3FQsE/kOKBongY6s1MEYBTFb/LCbHgvWzscF2x2swi5RdbKQC5znjz2l2ozxfmaaO+B/bjNiHd79fpNEWvGahy9DhALT80ICR71BJSDiPd+C+oqKOtP66tbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746219230; c=relaxed/simple;
-	bh=KBSu9SzGK7jFP/cW6FtoJKxk4mpVMjFrcGbCGflAdck=;
+	s=arc-20240116; t=1746219229; c=relaxed/simple;
+	bh=pId5/Jcxvem2yAo/sd/QFa3MIyaShk8NSYQziKIW174=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=CWtYh/90Twytbr5J2yEkmTcvY/0VWu2keyKAYwiEE1RT3/SVCWcgq1R9DJMEzrbGfttQEHG6EuJuOLHFivsQUlgopUcuweEP90ym9rgtLZYCtpa1CcAzMxAo57QZx3nRoJ6dwSIupdknneD8/ynDzVDuZyN9ntBHxB6/ZideEm4=
+	 Content-Type; b=cNdyLm4KCFbPuZEpboHZkV0Imh4IDTq5WUKpx2l3GKasrsRRodjeIsvHjkQWN/SevmvHVnDkEz/42L9MgRawpgt8LeJoyQ0yP8RnlspAqGRin05PrxHe+0L021owznw/LPXsvCk0d7cb+wUTJ06RGvCVPv2/WE1+knzENq7nDHU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 617B9C4CEE4;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F5D6C4AF0C;
 	Fri,  2 May 2025 20:53:49 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uAxOH-000000006Ca-0Tst;
+	id 1uAxOH-000000006D4-1AFQ;
 	Fri, 02 May 2025 16:53:49 -0400
-Message-ID: <20250502205348.972501388@goodmis.org>
+Message-ID: <20250502205349.134949967@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 02 May 2025 16:51:54 -0400
+Date: Fri, 02 May 2025 16:51:55 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -42,7 +42,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 07/12] tracing: Do not use per CPU array_buffer.data->disabled for cpumask
+Subject: [PATCH 08/12] ring-buffer: Add ring_buffer_record_is_on_cpu()
 References: <20250502205147.283272733@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,40 +54,86 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The per CPU "disabled" value was the original way to disable tracing when
-the tracing subsystem was first created. Today, the ring buffer
-infrastructure has its own way to disable tracing. In fact, things have
-changed so much since 2008 that many things ignore the disable flag.
+Add the function ring_buffer_record_is_on_cpu() that returns true if the
+ring buffer for a give CPU is writable and false otherwise.
 
-Do not bother setting the per CPU disabled flag of the array_buffer data
-to use to determine what CPUs can write to the buffer and only rely on the
-ring buffer code itself to disabled it.
+Also add tracer_tracing_is_on_cpu() to return if the ring buffer for a
+given CPU is writeable for a given trace_array.
 
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 2 --
- 1 file changed, 2 deletions(-)
+ include/linux/ring_buffer.h |  1 +
+ kernel/trace/ring_buffer.c  | 18 ++++++++++++++++++
+ kernel/trace/trace.h        | 15 +++++++++++++++
+ 3 files changed, 34 insertions(+)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index bae32778b292..8cee71683fe3 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5048,7 +5048,6 @@ int tracing_set_cpumask(struct trace_array *tr,
- 		 */
- 		if (cpumask_test_cpu(cpu, tr->tracing_cpumask) &&
- 				!cpumask_test_cpu(cpu, tracing_cpumask_new)) {
--			atomic_inc(&per_cpu_ptr(tr->array_buffer.data, cpu)->disabled);
- 			ring_buffer_record_disable_cpu(tr->array_buffer.buffer, cpu);
- #ifdef CONFIG_TRACER_MAX_TRACE
- 			ring_buffer_record_disable_cpu(tr->max_buffer.buffer, cpu);
-@@ -5056,7 +5055,6 @@ int tracing_set_cpumask(struct trace_array *tr,
- 		}
- 		if (!cpumask_test_cpu(cpu, tr->tracing_cpumask) &&
- 				cpumask_test_cpu(cpu, tracing_cpumask_new)) {
--			atomic_dec(&per_cpu_ptr(tr->array_buffer.data, cpu)->disabled);
- 			ring_buffer_record_enable_cpu(tr->array_buffer.buffer, cpu);
- #ifdef CONFIG_TRACER_MAX_TRACE
- 			ring_buffer_record_enable_cpu(tr->max_buffer.buffer, cpu);
+diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
+index 56e27263acf8..cd7f0ae26615 100644
+--- a/include/linux/ring_buffer.h
++++ b/include/linux/ring_buffer.h
+@@ -192,6 +192,7 @@ void ring_buffer_record_off(struct trace_buffer *buffer);
+ void ring_buffer_record_on(struct trace_buffer *buffer);
+ bool ring_buffer_record_is_on(struct trace_buffer *buffer);
+ bool ring_buffer_record_is_set_on(struct trace_buffer *buffer);
++bool ring_buffer_record_is_on_cpu(struct trace_buffer *buffer, int cpu);
+ void ring_buffer_record_disable_cpu(struct trace_buffer *buffer, int cpu);
+ void ring_buffer_record_enable_cpu(struct trace_buffer *buffer, int cpu);
+ 
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index c0f877d39a24..1ca482955dae 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -4882,6 +4882,24 @@ bool ring_buffer_record_is_set_on(struct trace_buffer *buffer)
+ 	return !(atomic_read(&buffer->record_disabled) & RB_BUFFER_OFF);
+ }
+ 
++/**
++ * ring_buffer_record_is_on_cpu - return true if the ring buffer can write
++ * @buffer: The ring buffer to see if write is enabled
++ * @cpu: The CPU to test if the ring buffer can write too
++ *
++ * Returns true if the ring buffer is in a state that it accepts writes
++ *   for a particular CPU.
++ */
++bool ring_buffer_record_is_on_cpu(struct trace_buffer *buffer, int cpu)
++{
++	struct ring_buffer_per_cpu *cpu_buffer;
++
++	cpu_buffer = buffer->buffers[cpu];
++
++	return ring_buffer_record_is_set_on(buffer) &&
++		!atomic_read(&cpu_buffer->record_disabled);
++}
++
+ /**
+  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
+  * @buffer: The ring buffer to stop writes to.
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 79be1995db44..294d92179a02 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -671,6 +671,21 @@ struct dentry *trace_create_file(const char *name,
+ 				 void *data,
+ 				 const struct file_operations *fops);
+ 
++
++/**
++ * tracer_tracing_is_on_cpu - show real state of ring buffer enabled on for a cpu
++ * @tr : the trace array to know if ring buffer is enabled
++ * @cpu: The cpu buffer to check if enabled
++ *
++ * Shows real state of the per CPU buffer if it is enabled or not.
++ */
++static inline bool tracer_tracing_is_on_cpu(struct trace_array *tr, int cpu)
++{
++	if (tr->array_buffer.buffer)
++		return ring_buffer_record_is_on_cpu(tr->array_buffer.buffer, cpu);
++	return false;
++}
++
+ int tracing_init_dentry(void);
+ 
+ struct ring_buffer_event;
 -- 
 2.47.2
 
