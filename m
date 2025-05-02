@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-629702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900E2AA7055
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:07:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44985AA702F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9353BE3AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:06:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F054A454E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D048246786;
-	Fri,  2 May 2025 11:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DFB23C507;
+	Fri,  2 May 2025 11:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="bq85T9is"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FV9eo+oQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E55246778;
-	Fri,  2 May 2025 11:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746183890; cv=pass; b=ILMSeBH5K1oRYzGw5GkS9UTbhZ7Cwo338hON/sgP8o9XhbQHnW0sJBa9K6AX3dfWazSfVz91NkftjdD3MkzeitUPQ/gAncGYTz4VwpWcu3kfvL+XUPaVO0LE+u6joI4gmJa1VxPJrSJq/q46vozwN/leWSPc+Qc16WwYLQkm05M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746183890; c=relaxed/simple;
-	bh=DNIEX85llbbRvV3jpLZSs97cRffhaICOiNmG87Pq39I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ehWCr3x85OXFD9wgDSi3mpLAJUncs49e5ylqKi4XEONH3RHxdUtUOb1yDGD99WhGQzlKRPWel73Miwvk557vgwf24l3qbcOYSF1F8JT+bCOMZh6LiSyawcspEXIhS3+EuFHWyVv29aQR/ENNJdpqa4sH7XXVKYCPuEAK81gVCI4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=bq85T9is; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1746183861; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NP8FsQcwINkSxw6/CUFQapTYNkShGd0Ac6MGV0gjXA9IOF2Wb7A3hMq73jlOLG98AUUeBTXTmk0+ks6uGEfoYWQGQuVMdhv9RePHeKxA5VzbI5T8kyaEH2GtHwJey6BPto9hZTf0vmM1miPt5+FCrj4PYV11p+ytAzmMX3EUBso=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1746183861; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ItXzRTAe3YAJR53TnqVWBnr45kYQeMi5ih4t4wpy8QU=; 
-	b=WTyjjxAQuJpbK+Dcp52/Sn95QSTsIUORwU1wsFWLOX2dIc00HI9iRvGQtIOX6gYfd7Zs9Wipb18JLU+sRDHWHop2FDRmzQqH/rGoICiJMBFmNC7lnEO/nPD5oT6K//5ZahbWIDgtQAuEBdYUA+WXFy+C7lOCJbHWMbPKJSQo944=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746183861;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=ItXzRTAe3YAJR53TnqVWBnr45kYQeMi5ih4t4wpy8QU=;
-	b=bq85T9isiSUlBqT9xniDJo1kW//3+PY1xkRAGNrTjFytqnXN8rmzpAatF/+aC8Rs
-	30rIU4rHJgiCEjsiPTnwgbTmX+es8qf5eJV/y2/BUTLAXBhRgQPSKOvMXIvHzhaaJXN
-	A0gNu6rI5Srdwnj3iT55MHuH4GvFLqpytNvQff+8=
-Received: by mx.zohomail.com with SMTPS id 174618385945376.26367891615416;
-	Fri, 2 May 2025 04:04:19 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Fri, 02 May 2025 13:03:16 +0200
-Subject: [PATCH v3 10/10] arm64: defconfig: enable ES8328 and ES8328_I2C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A77B231825;
+	Fri,  2 May 2025 11:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746183812; cv=none; b=ix2+AtEbQ4zH0G1nAWFf205VFcJmkkzH3xNv2ZYSzuqOKKypGBCouaI7XexoUr6y6SQ7LuQppjSI8Wa7fKn6RoG1XzdxwbCboXFoK2Vumg9unJ1rQT2PI8C2mtf06vqn5USqyHYwmdcqmCLMaWQCkqw6XwAdM5S/nlf7wONoMn0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746183812; c=relaxed/simple;
+	bh=7B/Fs9f12a/EfZazo7rvvUt2On0lD//L6IQUV+aiOCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QxenjAmOG1OAIcACNMMrdPWxfSeYLcqgAmG3IF7ZhiWJsHAxmCTMP4CtZjXCsmqzv5W5TR9CcypkrFu6Qf8eKJV5qQt1pbucN3HY2nqYzOVJ7xw2EYsjJpPWwNIUJrpCrA/NupITzzfD9g2scrGaMrJ08PqjEzj5ThFTK0LlBIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FV9eo+oQ; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746183811; x=1777719811;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7B/Fs9f12a/EfZazo7rvvUt2On0lD//L6IQUV+aiOCk=;
+  b=FV9eo+oQE2Xa9oDwfi6fD+YZDZVvdmmtBfDzuJSM5CPHoyitjYBB3x8A
+   I0Tp0Wqwmm9+hyPW8ufpO4juuVyW7vRpdlCrGSQ4x3yeoZwsWDlXoXH8D
+   uo0VXzqgLSqc/tfCN7HfTsYsvRpZxXYg7CZBv50ecbo3Nueha9riA37tM
+   VwSVo5Q9+ZeyggAVGF+pKXVUit3yd4gsfmBm+BqasiM9oeT7IYxkm/mp5
+   o7qRv2yqUtPTyeuhF34PTG+jGjRwLzgi3DC0kM69Pl1mRGOIwS7Yvp3dF
+   Zkc/jxMwR2xd8sjhaYBqQTPLOxwVo2rMlir6he8B5/r/pkFTdY3E9zYso
+   g==;
+X-CSE-ConnectionGUID: QIbEIllLS3y4t14Wc08lhQ==
+X-CSE-MsgGUID: 2iNDd2yAR8WwY68DbJOsOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="51680488"
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
+   d="scan'208";a="51680488"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 04:03:30 -0700
+X-CSE-ConnectionGUID: Q7u3S9JzQ/qGa9N64ULX0w==
+X-CSE-MsgGUID: AH+Hw+WDRuyKN+bf962HHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
+   d="scan'208";a="165540944"
+Received: from mylly.fi.intel.com (HELO [10.237.72.50]) ([10.237.72.50])
+  by orviesa002.jf.intel.com with ESMTP; 02 May 2025 04:03:27 -0700
+Message-ID: <6a3b756f-6fbd-4ee5-b511-c5a32e4a6a34@linux.intel.com>
+Date: Fri, 2 May 2025 14:03:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [1/1] i2c: designware: Ensure runtime suspend is invoked during
+ rapid slave unregistration and registration
+To: EnDe Tan <ende.tan@starfivetech.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Cc: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+ "jsd@semihalf.com" <jsd@semihalf.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+ "endeneer@gmail.com" <endeneer@gmail.com>
+References: <20250412023303.378600-1-ende.tan@starfivetech.com>
+ <6e155241-3403-49df-8f0d-5aa63e2e74ab@linux.intel.com>
+ <NTZPR01MB10182E9F6E50D679A6EAC3B4F8B92@NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <NTZPR01MB10182E9F6E50D679A6EAC3B4F8B92@NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250502-rk3576-sai-v3-10-376cef19dd7c@collabora.com>
-References: <20250502-rk3576-sai-v3-0-376cef19dd7c@collabora.com>
-In-Reply-To: <20250502-rk3576-sai-v3-0-376cef19dd7c@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Sugar Zhang <sugar.zhang@rock-chips.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
 
-The ArmSoM Sige5 board, which is supported in mainline, uses the ES8328
-audio driver for audio output on its ES8388 codec controlled through I2C.
+Hi
 
-Enable them as a module.
+Sorry the delay. Comment below.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 22cf6fb2774aef18c54c2435e4b3ff1b94c1a6b1..c5a3d35e6196029560da4f39a5298c532756a670 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1048,6 +1048,8 @@ CONFIG_SND_SOC_DA7213=m
- CONFIG_SND_SOC_ES7134=m
- CONFIG_SND_SOC_ES7241=m
- CONFIG_SND_SOC_ES8316=m
-+CONFIG_SND_SOC_ES8328=m
-+CONFIG_SND_SOC_ES8328_I2C=m
- CONFIG_SND_SOC_GTM601=m
- CONFIG_SND_SOC_MSM8916_WCD_ANALOG=m
- CONFIG_SND_SOC_MSM8916_WCD_DIGITAL=m
-
--- 
-2.49.0
-
+On 4/20/25 6:31 AM, EnDe Tan wrote:
+> It appears that when performing a rapid sequence of `delete_device -> new_device -> delete_device -> new_device`, the `dw_i2c_plat_runtime_suspend` is not invoked for the second `delete_device`.
+> 
+> This seems to happen because when `i2c_dw_unreg_slave` is about to trigger suspend during the second `delete_device`, the second `new_device` operation cancels the suspend. As a result, `dw_i2c_plat_runtime_resume` is not called (since there was no suspend), which means `i_dev->init` (i.e., `i2c_dw_init_slave`) is skipped.
+> 
+> Because `i2c_dw_init_slave` is skipped, `i2c_dw_configure_fifo_slave` is not invoked, which leaves `DW_IC_INTR_MASK` unconfigured.
+> If we inspect the interrupt mask register using devmem, it will show as zero.
+> 
+> Here's an example shell script to reproduce the issue:
+> ```
+> #!/bin/sh
+> 
+> SLAVE_LADDR=0x1010
+> SLAVE_BUS=13
+> NEW_DEVICE=/sys/bus/i2c/devices/i2c-$SLAVE_BUS/new_device
+> DELETE_DEVICE=/sys/bus/i2c/devices/i2c-$SLAVE_BUS/delete_device
+> 
+> # Create initial device
+> echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
+> sleep 2
+> 
+> # Rapid sequence of delete_device -> new_device -> delete_device -> new_device
+> echo $SLAVE_LADDR > $DELETE_DEVICE
+> echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
+> echo $SLAVE_LADDR > $DELETE_DEVICE
+> echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
+> 
+> # If we use devmem to inspect IC_INTR_MASK, it will show as zero
+> ```
+> 
+Good explanation and could you add it the commit log together with the 
+example?
 
