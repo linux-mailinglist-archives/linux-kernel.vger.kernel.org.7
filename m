@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-630406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D52AA79C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:02:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F5FAA79BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23BE99A121A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:01:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6474C7EE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F6C1EB5EB;
-	Fri,  2 May 2025 19:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8281F2C45;
+	Fri,  2 May 2025 19:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eyDPLfTN"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1hAeUd3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2D51AA1DB
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 19:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188A817A31D;
+	Fri,  2 May 2025 19:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746212481; cv=none; b=Q8BzH4QC37XMqM54Vi9HncsqJQnSP0JsM3DVVk3BMjG2l9/VPp/wFoymWU4qgfZeQGzAhQKdBF1lDfCz6er/WO7eS9QQxMqj2sBcA/4XwA0OvU7WAnx496iP430sKaOUxPBNEVa880uSCgyiw1NYJ/ctsXXIDqT2jo/cnKzwY6Y=
+	t=1746212445; cv=none; b=DthoJ4zZZehktimG5ITOBNa+qOoyZ6nVWjs3yd1kwRxo8uwpTjSe2NBFW1AYkB3Z5gewdmQkjQz7JfQo+aF3YuutWNESYE32TTDN0PdnPQr45KuwYwAlCkWnHVINf4PVKo06axMZr8vepSl1noK7sIDdrzcwrIJgflDLri7/U48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746212481; c=relaxed/simple;
-	bh=0DJRj/roTx2TlUPmbcSX3CMHGsoBIXB/OFsCbOGjL7s=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=fXgKM1HcPVlmkgstgkIxCb/uWiWSnnt0jg8l93yzI9NvukM3992h6g/LcqFp0aLCYaPVzURAp72b7e90XNnuzQWU0GWzoEi1035Czi/N087fZu6seyVx7o2Mh3P830fCivLwqLR05nSlb0U+H0SztoPhVrIbLzon4uRijTbfUEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eyDPLfTN; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 542IttTN008675;
-	Fri, 2 May 2025 19:01:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=jxcag99Lf5vM47fPYCnfh7DS4x/qq
-	Pn4W6mmCiyQxxc=; b=eyDPLfTNIg/lGMSU8Ehg9wn6GcdCmuIj338tcdrkafRSP
-	WKxGQHVnHEtyQchpZd1iJGpsmUDQUm1kX/dTrqFRt+Qj/TnjMuiLEGpoKESOkd7f
-	Bbho+T8GA3B0bb0coYgzmYN04ksVyD34o458Q6y+M/DwyIwHRNL9fDq62dM/g+El
-	sLqe0rFxCLmfMn8ChDc3yEpyudM3s3VbtcDcMolqGA/hWkprWN1MogANaMQrj6ne
-	GX0ELfp/M2VwnyxAi7MHGU1+IpKdyXj7EST4fdLj3y2QM57zR2Gq3dxffLH+eIVg
-	5bTEVW2snIGVwHcAQ3hpKDDyy1bfc2NAyGHC5JWLw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46b6uqnw80-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 02 May 2025 19:01:04 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 542IFENI023804;
-	Fri, 2 May 2025 19:01:03 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 468nxmc18f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 02 May 2025 19:01:03 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 542J12rF022528;
-	Fri, 2 May 2025 19:01:02 GMT
-Received: from chyser-vm6.osdevelopmeniad.oraclevcn.com (chyser-vm6.appad3iad.osdevelopmeniad.oraclevcn.com [100.100.242.35])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 468nxmc184-1;
-	Fri, 02 May 2025 19:01:02 +0000
-From: chris hyser <chris.hyser@oracle.com>
-To: "Chris Hyser" <chris.hyser@oracle.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Mel Gorman" <mgorman@suse.de>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Jonathan Corbet" <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [Patch v2 0/2] sched/numa, mm/numa: Soft Affinity via numa_preferred_nid.
-Date: Fri,  2 May 2025 14:59:40 -0400
-Message-ID: <20250502190059.4121320-1-chris.hyser@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1746212445; c=relaxed/simple;
+	bh=so9xiW1S4t/puW+TSopXdW0I81Cxz+S5s0PV6OPTll8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FO3qJ5vZlPgxpfoHQubaLgxLZT7SXCpPFLeJpdwdQvEarACAJPS1GGbJbP5NjnTKngVeZfbtEvMHb6vjCYxdhF7oUhdz6hAvdY7etSEnjCbB6dI+xlziwA9hVfmgKvbmEd0s1P7TTgsaSDaO7QdN/I7H/HN/DI9/0flQ4xELgOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1hAeUd3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 89DCCC4CEE4;
+	Fri,  2 May 2025 19:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746212444;
+	bh=so9xiW1S4t/puW+TSopXdW0I81Cxz+S5s0PV6OPTll8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=A1hAeUd3OZWDQZh+v+j/tLjigeBAAgfsVPmHdHY8EDt3JMMfApOESVmoaFjjwuR1Z
+	 oUQRB+lpXb/XiHVCa+UaVm501Fsk7kbCxg6KM48AyKJ26LDsUH8juSc4fprdJBkVSr
+	 YPP3svc3Zc0g+ZAq91TGh7B+kNObQm/Rhu5ax2nt/LyV7giLDTI+Idae5kK5/B7J75
+	 0w/2JNPBtYAOEMCey9k+fcxhDjLFgNgliCHXvj74TR/F7+nMOXrug6fgM3cz0MxxpS
+	 3Kly3J4rTlgKG/JG6n8aKigpHbJbJQiOYbvFbVJ1yQ6WQ5Hx0W3m9E8oP14JqJjETe
+	 te8B7/BBa2v8Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC20C3ABAC;
+	Fri,  2 May 2025 19:00:44 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v3 0/4] PCI: tegra: Allow building as a module
+Date: Fri, 02 May 2025 14:00:28 -0500
+Message-Id: <20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-02_04,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=955 phishscore=0
- suspectscore=0 spamscore=0 adultscore=0 mlxscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2504070000 definitions=main-2505020153
-X-Proofpoint-ORIG-GUID: 0GzJGuw9mQ521sNWC0uU3TYK8B001jDO
-X-Authority-Analysis: v=2.4 cv=Vq8jA/2n c=1 sm=1 tr=0 ts=68151670 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=WsHKUha7AAAA:8 a=glSDMOvTweIbZLxOEDYA:9 a=H4LAKuo8djmI0KOkngUh:22 cc=ntf
- awl=host:13130
-X-Proofpoint-GUID: 0GzJGuw9mQ521sNWC0uU3TYK8B001jDO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDE1MiBTYWx0ZWRfX3O7D82ma882B YnNjwCc/FExxz+YSUq0Kfid0Oj+NrU4whetDv1sGfLVwGapkRzfBek5k54rPNyUARU4H2PBFwvN nh/8ltZgo/Qyo0IRWXLlu5P3778Ia8BVyHdi/D5Z2uViPDHk6DvR3IyPAXN11ctgQHQ1EOfvaLR
- 09gYi/B8GVlmMUI33OMCm/2qKU03UpOKzkiV3HkKRBkbNnMjduzKl07WFnCsZrmrmChRzxCM+EO /Jxm8U2OWgDz5Vx410sozW8JMBIunezPY4iXlkzgNrJMCSwYAYT0HJPBkE//gDlZv4Bsvyqt/dR xH7ICnWAaT44BS7SHaqmro2aztMQvZYb7lRpmoGEZQaSIpmJGAcUoIgm55qcG2X00II0XZK+74x
- 0xOZjBmrIY4+SpGBY7sXAQUI2Rz3zxxl7NAFk/cNzX6FfQsW1GFTg9mF9O/JkrgekLN17LYF
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEwWFWgC/23NQQ6CMBCF4auQrq3plCLIynsYF6UMMAlQ0mKjI
+ dzdghsSXf6TzPcW5tERelYmC3MYyJMdY6SnhJlOjy1yqmMzKWQmUkj5ZIjP2DrNB1s/e+S5qWo
+ wGeZCNyy+TQ4beu3k/RG7Iz9b994XAmzXL6ak+MUCcMGN0NAUcSxT+tYOmvqzsQPbsCCPQPEHk
+ BsAoFV1BanU5Qis6/oBPXKM7PEAAAA=
+X-Change-ID: 20250313-pci-tegra-module-7cbd1c5e70af
+To: Thomas Gleixner <tglx@linutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746212443; l=1155;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=so9xiW1S4t/puW+TSopXdW0I81Cxz+S5s0PV6OPTll8=;
+ b=jzbeQQRcoQ48RuQVHs8LZsVlZt97xOuoIiLY7mWldxO2XwgDv7bAYx6iCFKObhSCmBYyE5M51
+ sYUM+fvmnBcAY+OCeefnCILMrYh42bVKd5IoTmfeBmEnRt7bSZRAahy
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Soft Affinity (value of hard affinity with graceful handling of overload) as a
-concept has been around for years. The original implementation was rejected
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v3:
+- Add patch to drop remove callback, per request
+- Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-0-c11a4b912446@gmail.com
 
-https://lore.kernel.org/lkml/20190702172851.GA3436@hirez.programming.kicks-ass.net/
+Changes in v2:
+- Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
+  building pci-tegra as a module for arm
+- Drop module exit to prevent module unloading, as requested
+- Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com
 
-with an alternative, using numa_preferred_nid, suggested by Peter Zijlstra.
+---
+Aaron Kling (4):
+      irqdomain: Export irq_domain_free_irqs
+      cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
+      PCI: tegra: Allow building as a module
+      PCI: tegra: Drop unused remove callback
 
-This is a simple implementation with most of the changes associated with a
-prctl() to set/get the value. It does not modify the scheduler's behavior but
-simply exploits the current NUMA balancing behavior.
+ drivers/cpuidle/cpuidle-tegra.c    |  1 +
+ drivers/pci/controller/Kconfig     |  2 +-
+ drivers/pci/controller/pci-tegra.c | 24 ++++++------------------
+ kernel/irq/irqdomain.c             |  1 +
+ 4 files changed, 9 insertions(+), 19 deletions(-)
+---
+base-commit: 18352e73612d60b81790d2437845276ae499b64a
+change-id: 20250313-pci-tegra-module-7cbd1c5e70af
 
-The intent is to provide a mechanism whereby a knowledgble user, system admin,
-or importantly, a NUMA aware application can force Auto NUMA Balancing to prefer
-the "correct" node, for example pinned memory like RDMA buffers or other
-scenarios where heavily accessed memory ranges are pinned and not subject to
-NUMA hint faults.
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-[PATCH v2 1/2] sched/numa: Add ability to override task's numa_preferred_nid.
- include/linux/sched.h |  1 +
- init/init_task.c      |  1 +
- kernel/sched/core.c   |  5 ++++-
- kernel/sched/debug.c  |  1 +
- kernel/sched/fair.c   | 15 +++++++++++++--
- 5 files changed, 20 insertions(+), 3 deletions(-)
 
-[PATCH v2 2/2] sched/numa: prctl to set/override task's numa_preferred_nid
- Documentation/scheduler/sched-preferred-node.rst | 67 ++++++++++++++++++++++++++++++++
- include/linux/sched.h                            |  9 +++++
- include/uapi/linux/prctl.h                       |  8 ++++
- kernel/sched/fair.c                              | 64 ++++++++++++++++++++++++++++++
- kernel/sys.c                                     |  5 +++
- tools/include/uapi/linux/prctl.h                 |  6 +++
- 6 files changed, 159 insertions(+)
 
