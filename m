@@ -1,133 +1,150 @@
-Return-Path: <linux-kernel+bounces-629488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA76EAA6D5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB83AA6D66
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340A146479A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:01:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F8F467B67
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B10223C4EA;
-	Fri,  2 May 2025 08:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECF722DF8A;
+	Fri,  2 May 2025 08:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="VNkm+lt0"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FSFQali2"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E26222FF4C;
-	Fri,  2 May 2025 08:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0140242D7B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746176385; cv=none; b=qUDHzmKf84w9Tr7f8euoq2jgTFCthmKpWrAb99QLc8rT3bmr7h27ElID2jwtoSKtPxT9v1ZBxDyAHuau1Y3yDhCO23UcZCu3S+i3IVjAuevEJeRoSrlBKF5oA/PChg4KcWa6HYmeSlRga3djBW88QSfhK3CLKAg334kipetGdeU=
+	t=1746176394; cv=none; b=tLBs4anNCgtnvGxPIKOiTH0LGxqpLXnDbQQD9zQmaIusLTDsqhMY53kf7/XiOzrAuIVPNvV2vZmbR5prJXrpUe7G+/UnJwhMdspSG8Uz0UQ9Wf80vFKaBJicfJXkVf0b0O2yqz34qHavcMFaWdlm3Yg44FjNyWojLA3v8PmmJaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746176385; c=relaxed/simple;
-	bh=J/wcDT6qZyY5vPNBfpk3pjfrmURCBKSmkchRCipnz2U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OBHn8YCzAPafpNfD7zZkXeBzJhiyKnQJOdLO/8NGSiYBtRjm5ifFvD2/l6gywLP2M18TovJ1u85rm2wNJa4lwfjVKVTzUQDfvFG1w9yOtVWe3+2ONW9vgOaRVEAJfG06xWvDwZoorEJxjZo+3BF10Yn6nISz27waJEOshLlz4QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=VNkm+lt0; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5426ZsNq030668;
-	Fri, 2 May 2025 04:59:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=RSI4p
-	duHjkvPzIQQUDZW5Kd3nXOFACdk0nUJaWx4USU=; b=VNkm+lt0kfAEp6i4/nfk4
-	65LZgZALUNm32DclUnHasTNKLRR0lDxsB8aaTXQmVwwQwR1P6ZHqxjdf7YvULSVu
-	vwK5uTykJe6GRwksTyY2SjrLVjE+cc7R5SNtSxZ2fvDDm3IBd9PVUkG4lMIfDo2G
-	qtnnBQYBU5ulYnPx2mKaz7vkm8pb2WRtHsQNEYTrqUl5Q5TeXPuk2bMY42pj2x9U
-	J+Zjn7w2fMDM/4Ib8ubPhuPuyB0mbKpCNDVpazpenWMIxLu78LKpSwMcONVtlmU6
-	8l9hxe340iQZQB1v2e4FOvFNBEUKU+ppedj7PTBYBwmVTMa6FOlzUE8SenM22ruh
-	g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 46b6tr3xqb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 May 2025 04:59:42 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 5428xeLv058985
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 2 May 2025 04:59:40 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 2 May 2025
- 04:59:40 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 2 May 2025 04:59:40 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.211])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 5428xL7T015723;
-	Fri, 2 May 2025 04:59:37 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH v4 10/10] Documetation: ABI: add sinc1 and sinc5+pf1 filter
-Date: Fri, 2 May 2025 11:59:05 +0300
-Message-ID: <20250502085905.24926-11-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250502085905.24926-1-antoniu.miclaus@analog.com>
-References: <20250502085905.24926-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1746176394; c=relaxed/simple;
+	bh=5mkPquEYhHhuaHDlP2FWJwcbCha2j8346u44CjTk/b8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qa/G4IZzGg69W5tkJWjh9Yh1D8dXvWXDGiDPAwo70odba3F26txTC0lQD6UA7VnEB6nk6CM0KpvTuGzRAM1BgkIFYYyggSOImjB+0cIBw5+XwBdadufzZN9DXMgPm+rYPQF1EnBEf5vmxheW0gjCK6muIdJTmQOX13Zilh1pyfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FSFQali2; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39ee682e0ddso1038122f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 01:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746176391; x=1746781191; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rOqsO31HLSQBn8sCWbcbFta882rLl4DDI6mWD+gWFc=;
+        b=FSFQali2X9HuW2FDwiWRnoBRNGLYWf7QhdA5eBmedJJGniwpOYrpSMwuHuNJ8Mi+W/
+         hMKb314gC8NDzwp1Pql2yfxMnT/EZXGkJbqmamsAV09hJNQe3cp/z1mrBxlz7kptO8Uu
+         +7lvYb1n7Yu27XRV6I6KavAHQltgAnNF3jj9TH9MrHtLcu0gReLtjWzqZPPOJuNYRPt1
+         j5Ind3h8XKMDChEh0OTWfceu9DNDnVqKdukbr7xrEKC4DoyuBzAgLBcqhvwb+LhIRDdZ
+         EDgPmx1EYQ2K9czk+rwS2YZbQkZjghwAcFqDJR2mglyOeB4OphZ+rGgM+WANmIOu78uK
+         XdhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746176391; x=1746781191;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1rOqsO31HLSQBn8sCWbcbFta882rLl4DDI6mWD+gWFc=;
+        b=eKgjf90nuEv6nyJ5bf9IvCANxumGK8/B/+xr14tkF0zp7qO8w7jzYBWpJYT1Lqgbmj
+         q/cjuuPdl4xMG3uROodZ74FLfMwMYKZPRRBDDkRMrUsse7TqA5gpDiNVzahjtUqxKKKQ
+         yLcCcFuVAhlvUPJxYXrhYhryuD/075WD4WWR7moJBWR077+tYMcHQFCP+5wybZEBGRHu
+         MOD7tBDNvKZBbC5g9fSxTzLt+t/v5LC1AOQrOHuSg1H7AiHykbXDv2YniwIHOdA4nP72
+         wYfjyzpfCx4VEIPA92U9qW0n2fGXNIm3orqYV/tiPidbViuSQCMSSOocaR1WkEkDCK0w
+         XLcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW6NSww3fCuX2HEEfdV1Dzf69juQERdyWC2tbBOynqAV1mKVpO2Zqx2r/qaqmJpQGcGXshjuUnsTki364=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbaRNDBx1C8eD7A/9idr0j6Ip9aAjxlveOUM4kUPz3SjCinIYy
+	9QqiTbMWQTMLEBVDUlZwxVGY7rjHtQZcDvDnrzNBpWDharqwn3ngkPufJs0pUEs=
+X-Gm-Gg: ASbGncuOT06qltZco/VreUBdDv5AU/c7IrkSkLU33S7ltB3k+6AVvGthw5JyLDYhtKW
+	VSqBdzC2BxazFY2HiiKhRMhD/l+HXXyNfRnTpDolGjQCPXmP6Jtg55WBNYMh1sKFWJVfnleKwoT
+	azeg+31d1KtI+PS0Zj9jb/zTYWcLdAhZpydMZddsYsxj6jbXjZa6uY/Uvk3VFXg5MuSjV4x+lwF
+	zOU44/28LCvm6SQsYKoP6oJgGY9PrXUtjDV6+6O5maHfegEOQqOlvPtrNwPuBpuOE67hGzE0YOU
+	zhgwWoZub6Si8p5LRpcEswyhIGqezAhCoxM=
+X-Google-Smtp-Source: AGHT+IGkAmj0QTn7U0/RzbLyZFE3GXCS35eKh83HE+zzPG33Ol9TAe6eJSEee/o7TqoMVcjZZmYXFw==
+X-Received: by 2002:a05:6000:2501:b0:391:3b11:d604 with SMTP id ffacd0b85a97d-3a099af0f94mr1403321f8f.54.1746176390895;
+        Fri, 02 May 2025 01:59:50 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:f280:a08c:3f15:ae3e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b17017sm1552055f8f.92.2025.05.02.01.59.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 01:59:50 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/5] powerpc: convert board-file GPIO chips to using new
+ value setters
+Date: Fri, 02 May 2025 10:59:46 +0200
+Message-Id: <20250502-gpiochip-set-rv-powerpc-v2-0-488e43e325bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: H9BvGm4BH8ZpqtPKsUtA_lG3LuGRFl9k
-X-Authority-Analysis: v=2.4 cv=TpTmhCXh c=1 sm=1 tr=0 ts=6814897e cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=dt9VzEwgFbYA:10 a=gAnH3GRIAAAA:8 a=Jj58fO0nKZ7HuPVzIAUA:9 a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19
-X-Proofpoint-ORIG-GUID: H9BvGm4BH8ZpqtPKsUtA_lG3LuGRFl9k
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDA2OSBTYWx0ZWRfX4pnh5kI+U0+r 86i3i4hO5eXzIbZmrd75SqDUuaWJRw6geSIdjrul8tOG9qsPJ9wMupU6PgpDJtjux8Htl6VoIDm JAgj9i5WyNR/XOKWUEfntMCDLcNwyRBQn+QZR2OYjgTW1YijIkqMCn2Smwj78L/H2tjd01Q8sL3
- Vq6cxSjfnnNfj+A7mCg7UCw1ZOnCOYtVR9rcskiSEAvwQT4SA6C542iWEvn4pt1bON6w4mtNN8d PyoeVy6v/CNqKZMxzajDWKoXo9rggsDtTHL43YINgBWqlX/BJ3GsCoo2PZQfDdKFP/46BYT0Glg XyWDbomg10dAjvwhL+twhyXrruI4PuLIDbqQ0o13yWzoCmCWri2G99SzlZn5wnyrK9zmSI49ER4
- jIjsMBuTS7dokzZaNRILxPKtlPyPGk+U2ckGuY8mfOUZzRrO5VC2fIMxaq+pcx21eXSPByCF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-01_06,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=945 spamscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505020069
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIKJFGgC/3WNQQ6CMBBFr0K6dkw7KKIr72FY1DLAJIY2U1I1p
+ He34trle8l/f1WRhCmqS7UqocSR/VwAd5Vyk51HAu4LK9R41DU2MAb2buIAkRaQBME/SYIDQ+e
+ 2xxYRrVVlHYQGfm3lW1d44rh4eW9HyXztr3nQ7d9mMqDhVPfO0N01NJjrg2crfu9lVF3O+QNbQ
+ tBBvwAAAA==
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Anatolij Gustschin <agust@denx.de>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1469;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=5mkPquEYhHhuaHDlP2FWJwcbCha2j8346u44CjTk/b8=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoFImEk8IL2kl18zA8xLaZV5UpuGvSQ0944hzDl
+ +MCaHC/g5qJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaBSJhAAKCRARpy6gFHHX
+ ctyvD/0QuzQl8wwUQP5TkXhU0j7o76hnUPg9igcQd/mlb+GN+T5YJ7enSR4IgmeJkZVbUmRH+BV
+ Hve2ufGgwDdIv07zwz2sc4sI2TWM3P3McMJIqlcBt2hfBtRvoJkic85ly65NV0rqScnJkrTQCOa
+ Kt9pci1vAm3TX2K9j6b9Y6YUsMXkPpnBxJ7Bgfub+lBlDr128sdvgGUhkdFsd4+AP0EshgJ/R/J
+ k/8Ga/IVA6Ze2en6raVViv1FiW+hN/4Ddg5hGdq4yzD3rqBJ93+1Wtg0VKthkwew43D1ucROH6a
+ 7wKorwf4SPc7ByLaJ3lrYuH1036ZpeJqPm97EEMD0DRHYa6sJxey4YyVx6o5rrgoTtGO8dn/nU8
+ VE8hCMvzhdVGXaOpoFQ1312JoE+Z/Cn8/xxa9Vd0bSLIPDh/rlzmRO7PBKAKvoGH2rnC6eJl8rT
+ 653e8AqEn3aqaDBJJWhR+GHXSw942if2lOPnPyBzfU8MbB3VxBWlrmuzZAvsdtqQ6sKk4I82LS2
+ WzBX3jKtN0qxJmwErJz/ZRA692Sf5gSIJh7sqCt0+A0m0XyuwpTEeDRhThbk6462Ct7+ht4syCU
+ JN1r4TU0Yqi/FyFaI5d/eg01SodTxDrEsSOZVWKdEIOWomBY5DSmt5wqXgGIki8mmiyRnbGahnt
+ Lyx4jfzgnRhTnIg==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add sinc1 and sinc5+pf1 filter types used for ad4080 device.
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. We're in the process of 
+converting all GPIO drivers to using the new API. This series converts 
+all powerpc board-file level controllers.
 
-Add these two options into the filter_type available attribute.
-
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- Documentation/ABI/testing/sysfs-bus-iio | 3 +++
- 1 file changed, 3 insertions(+)
+Changes in v2:
+- propagate the return value of i2c_smbus_write_byte_data() in
+  mcu_gpio_set() (Christophe Leroy)
+- Link to v1: https://lore.kernel.org/r/20250408-gpiochip-set-rv-powerpc-v1-0-73dc1ebc6ef1@linaro.org
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index b8838cb92d38..2dfb74b5a990 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -2275,6 +2275,8 @@ Description:
- 		Reading returns a list with the possible filter modes. Options
- 		for the attribute:
- 
-+		* "sinc1" - The digital sinc1 filter. Fast 1st
-+		  conversion time. Poor noise performance.
- 		* "sinc3" - The digital sinc3 filter. Moderate 1st
- 		  conversion time. Good noise performance.
- 		* "sinc4" - Sinc 4. Excellent noise performance. Long
-@@ -2290,6 +2292,7 @@ Description:
- 		* "sinc3+pf2" - Sinc3 + device specific Post Filter 2.
- 		* "sinc3+pf3" - Sinc3 + device specific Post Filter 3.
- 		* "sinc3+pf4" - Sinc3 + device specific Post Filter 4.
-+		* "sinc5+pf1" - Sinc5 + device specific Post Filter 1.
- 
- What:		/sys/bus/iio/devices/iio:deviceX/filter_type
- What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_filter_type
+---
+Bartosz Golaszewski (5):
+      powerpc: sysdev/gpio: use new line value setter callbacks
+      powerpc: 83xx/gpio: use new line value setter callbacks
+      powerpc: 44x/gpio: use new line value setter callbacks
+      powerpc: 52xx/gpio: use new line value setter callbacks
+      powerpc: 8xx/gpio: use new line value setter callbacks
+
+ arch/powerpc/platforms/44x/gpio.c              |  7 ++++---
+ arch/powerpc/platforms/52xx/mpc52xx_gpt.c      |  6 ++++--
+ arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c | 13 ++++++++-----
+ arch/powerpc/platforms/8xx/cpm1.c              | 12 ++++++++----
+ arch/powerpc/sysdev/cpm_common.c               |  6 ++++--
+ 5 files changed, 28 insertions(+), 16 deletions(-)
+---
+base-commit: 8a2d53ce3c5f82683ad3df9a9a55822816fe64e7
+change-id: 20250326-gpiochip-set-rv-powerpc-1e98d28222aa
+
+Best regards,
 -- 
-2.49.0
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
