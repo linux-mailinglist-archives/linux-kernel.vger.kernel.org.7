@@ -1,143 +1,180 @@
-Return-Path: <linux-kernel+bounces-630364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFEFAA7914
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1B4AA7916
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600BF1C00A61
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:03:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFF351C01F99
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5324B2690C4;
-	Fri,  2 May 2025 18:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2EE42A87;
+	Fri,  2 May 2025 18:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="VOCJ0eCC"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j586PUgR"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0A3215789;
-	Fri,  2 May 2025 18:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AA63D6F
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 18:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746208956; cv=none; b=rIs0uSs3FACSGiNimeDJfYkJ93SdkEQeuXsHUAC/AekYtg1XXshdsgTbDfN0u1NJKAVmDbDNFoPiohlI0kEE+wcooIW9WSakjirgMQQeZCtxSiSDMnhWk4JaibgFjDj9aGzBhMvZCAjSnvod0KtW86vbDZQsujuWh8e5z1Dv3p8=
+	t=1746209017; cv=none; b=LiJ3YCRo9mlzt3znI/S6XqUriaQpFQLcBWrXEjjYne7Wz+pdO2CC/jFAJWpsF6cezm2eYhsXXYOc0oti/Sm4nzdBbXHj+pBrGJxKv/hInseHqrFqTGI/AKvdnoCknJMoj5q99/rRyAbI+leM5LtGqPDK5mkGtXQAG6eIWaTTOs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746208956; c=relaxed/simple;
-	bh=P09igpDPPUN4W2AMrznc4R4gg1j+zk9bYVIjtPmI5Qo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQ76FQJCFM9LckDwwL1T58tTrgCg3yHLSmlnscJU1toMfC4Dn0slv0cVxGPrgpK8PjkHKvUfbX2RaQSR3nlGWE7nOxeuQLQDZwqUCtYExdXrH4jr4HvnqPch52warVOWwNh6G4Gp+NVb+vMvm1yKcsMHDl8IZo1PbuGL0GtePro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=VOCJ0eCC; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 542I1mpa2105495
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 2 May 2025 11:01:48 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 542I1mpa2105495
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1746208911;
-	bh=YB94RPwo0LiI+lMqmkXijW8cqAbUGVDkYACiu4rhJOk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VOCJ0eCCKEI1R2ioFr5ehcvkLYBzIHaFZ7pM8wyOLShTf+o7l9PFmGhWDbsdpLxQW
-	 rcoCbdc89fjuUFgfp7bB1gHXoCLu9YHYUOC9OAcpCU56iXWZ2OKCrPGpjrEMLxkE2d
-	 n/S+MTkFrGLR3Rf9GG0B/ASRUKucjVEKTIdvAyOPgijN7QnsACq5Y2axwtq96cdTCl
-	 5+6d46fXskfc2RwEpwu2heXdygLklUe6dzhmSFhZ15wH2HmKiCsM+42OPweeJlvkgL
-	 waa4XMFGYhcr5mQd3ciW2VlgRbYtUdo8/6h8/XYwibFp0MRNe2QxHohkamu9kpC1+h
-	 ynCS6u6OzyyAw==
-Message-ID: <3a88480e-c705-4914-ac18-9764b799a36c@zytor.com>
-Date: Fri, 2 May 2025 11:01:47 -0700
+	s=arc-20240116; t=1746209017; c=relaxed/simple;
+	bh=AJDNpzw3NdJGP69xXtuBevmL3yyHJPVj2D5j+/V5UUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2IaBMm3VdlpnL/wIufhRZtMWWIAU0J1JbB/HKsf0FlIaXjYav1SkLke6uxRUKH/8wzJgGOXCmgrj03SuGYsk5+f3zegaCiDaCUrY9h0tVI/tvhQXZkgNmQu4NXE9OdPvUKTiD5jJMM+oifkPegdzy55rby/5mWj8REFj4G1TNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j586PUgR; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dZGoOCcIvLVxbGi5BQAlsaUxjo3U40CWkuJXwGWx0IY=; b=j586PUgRgF57d/bi0wYp+B1+Ai
+	r11ReXh+AK2wBZRmui6MBGitwBzrR3b2KcOL2S1EGabC2LIzKp91vIFhCalNW8aB/RIUuXkvG6RM+
+	IhQX5kuqIwLJZj3fNINGNTLShTGekMLkUzQfIJVuaFl26CU1MOBV2DhxTREeZOTQL3BoE0HaxlVfa
+	l59/tca7BaqJ2IVnbSMV6F3zoVF1j3ouughJFWwPJtAEwVwxQTrXmf+urOKUASA2Fv9QevgxNkdtC
+	pMzozXTc5A8jRrF3hgxVTZQ2/QlXBSPQeIirYgTW+30PVlZLoDBSleHSw+RDC7tM/I7uiPopX6luI
+	WsliKOZQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAui7-00000008thY-1fB9;
+	Fri, 02 May 2025 18:02:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8FE1F30057C; Fri,  2 May 2025 20:01:54 +0200 (CEST)
+Date: Fri, 2 May 2025 20:01:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: Re: [PATCH v12 15/21] futex: Allow to make the private hash immutable
+Message-ID: <20250502180154.GY4439@noisy.programming.kicks-ass.net>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416162921.513656-16-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/15] x86/msr: Move rdtsc{,_ordered}() to <asm/tsc.h>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
-        linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
-        peterz@infradead.org, namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        wei.liu@kernel.org, ajay.kaher@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
-        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
-        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
-        haiyangz@microsoft.com, decui@microsoft.com,
-        dapeng1.mi@linux.intel.com, ilpo.jarvinen@linux.intel.com
-References: <20250427092027.1598740-1-xin@zytor.com>
- <20250427092027.1598740-3-xin@zytor.com> <aBR_1oQN-gKCREBD@gmail.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <aBR_1oQN-gKCREBD@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416162921.513656-16-bigeasy@linutronix.de>
 
-On 5/2/2025 1:18 AM, Ingo Molnar wrote:
+On Wed, Apr 16, 2025 at 06:29:15PM +0200, Sebastian Andrzej Siewior wrote:
+> My initial testing showed that
+> 	perf bench futex hash
 > 
-> * Xin Li (Intel) <xin@zytor.com> wrote:
+> reported less operations/sec with private hash. After using the same
+> amount of buckets in the private hash as used by the global hash then
+> the operations/sec were about the same.
 > 
->> For some reason, there are some TSC-related functions in the MSR
->    ^^^^^^^^^^^^^^^
->> header even though there is a tsc.h header.
-> 
-> The real reason is that the rdtsc{,_ordered}() methods use the
-> EAX_EDX_*() macros to optimize their EDX/EAX assembly accessors, which
-> is why these methods were in <asm/msr.h>.
-> 
-> Your followup patch tacitly acknowledges this by silently creating
-> duplicate copies of these facilities in both headers ...
-> 
-> I've cleaned it all up in tip:x86/msr via these preparatory patches:
-> 
->    x86/msr: Improve the comments of the DECLARE_ARGS()/EAX_EDX_VAL()/EAX_EDX_RET() facility
->    x86/msr: Rename DECLARE_ARGS() to EAX_EDX_DECLARE_ARGS
->    x86/msr: Move the EAX_EDX_*() methods from <asm/msr.h> to <asm/asm.h>
-> 
+> This changed once the private hash became resizable. This feature added
+> a RCU section and reference counting via atomic inc+dec operation into
+> the hot path.
+> The reference counting can be avoided if the private hash is made
+> immutable.
+> Extend PR_FUTEX_HASH_SET_SLOTS by a fourth argument which denotes if the
+> private should be made immutable. Once set (to true) the a further
+> resize is not allowed (same if set to global hash).
+> Add PR_FUTEX_HASH_GET_IMMUTABLE which returns true if the hash can not
+> be changed.
+> Update "perf bench" suite.
 
-Brilliant!
+Does the below make sense? This changes arg4 into a flags field and uses
+bit0 for immutable.
+
+(the point where I got upset is where arg4==2 was accepted :-)
+
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -367,6 +367,7 @@ struct prctl_mm_map {
+ /* FUTEX hash management */
+ #define PR_FUTEX_HASH			78
+ # define PR_FUTEX_HASH_SET_SLOTS	1
++# define FH_FLAG_IMMUTABLE		(1ULL << 0)
+ # define PR_FUTEX_HASH_GET_SLOTS	2
+ # define PR_FUTEX_HASH_GET_IMMUTABLE	3
+ 
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -1440,7 +1440,10 @@ static bool futex_hash_less(struct futex
+ 	return false; /* equal */
+ }
+ 
+-static int futex_hash_allocate(unsigned int hash_slots, unsigned int immutable, bool custom)
++#define FH_CUSTOM	0x01
++#define FH_IMMUTABLE	0x02
++
++static int futex_hash_allocate(unsigned int hash_slots, unsigned int flags)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct futex_private_hash *fph;
+@@ -1448,8 +1451,6 @@ static int futex_hash_allocate(unsigned
+ 
+ 	if (hash_slots && (hash_slots == 1 || !is_power_of_2(hash_slots)))
+ 		return -EINVAL;
+-	if (immutable > 2)
+-		return -EINVAL;
+ 
+ 	/*
+ 	 * Once we've disabled the global hash there is no way back.
+@@ -1469,8 +1470,8 @@ static int futex_hash_allocate(unsigned
+ 
+ 	rcuref_init(&fph->users, 1);
+ 	fph->hash_mask = hash_slots ? hash_slots - 1 : 0;
+-	fph->custom = custom;
+-	fph->immutable = !!immutable;
++	fph->custom = !!(flags & FH_CUSTOM);
++	fph->immutable = !!(flags & FH_IMMUTABLE);
+ 	fph->mm = mm;
+ 
+ 	for (i = 0; i < hash_slots; i++)
+@@ -1563,7 +1564,7 @@ int futex_hash_allocate_default(void)
+ 	if (current_buckets >= buckets)
+ 		return 0;
+ 
+-	return futex_hash_allocate(buckets, 0, false);
++	return futex_hash_allocate(buckets, 0);
+ }
+ 
+ static int futex_hash_get_slots(void)
+@@ -1592,7 +1593,7 @@ static int futex_hash_get_immutable(void
+ 
+ #else
+ 
+-static int futex_hash_allocate(unsigned int hash_slots, unsigned int immutable, bool custom)
++static int futex_hash_allocate(unsigned int hash_slots, unsigned int flags)
+ {
+ 	return -EINVAL;
+ }
+@@ -1610,11 +1611,16 @@ static int futex_hash_get_immutable(void
+ 
+ int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long arg4)
+ {
++	unsigned int flags = FH_CUSTOM;
+ 	int ret;
+ 
+ 	switch (arg2) {
+ 	case PR_FUTEX_HASH_SET_SLOTS:
+-		ret = futex_hash_allocate(arg3, arg4, true);
++		if (arg4 & ~FH_FLAG_IMMUTABLE)
++			return -EINVAL;
++		if (arg4 & FH_FLAG_IMMUTABLE)
++			flags |= FH_IMMUTABLE;
++		ret = futex_hash_allocate(arg3, flags);
+ 		break;
+ 
+ 	case PR_FUTEX_HASH_GET_SLOTS:
 
