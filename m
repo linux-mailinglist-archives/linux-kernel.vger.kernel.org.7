@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-629900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD021AA7306
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:13:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62281AA7308
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08AE1C02E02
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E595B985987
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FC4255F44;
-	Fri,  2 May 2025 13:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dvvj9G7B"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C0F254AF4;
-	Fri,  2 May 2025 13:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31371255251;
+	Fri,  2 May 2025 13:11:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591CE25485F;
+	Fri,  2 May 2025 13:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746191509; cv=none; b=DliW9dUK45breA7GxxXk99U+2x5Llymq61LZfMu4RowLKcTwDWrXIrNBa3kwheqnjSNU03sovvdjw+sD905AE9KRWrAMYCCYAsZqQYHE4Q9bEehF1W9wGANbpLCH2oPC43tFpHckXSvJacqbmHlWHqV7qUglIKG29NedpPMRZWI=
+	t=1746191493; cv=none; b=HQEy7FPtb2lBDbdYXlRt1oevxrdbPCztSLAXmxcatKSelrgrwUc3HKZOLdxmsy3oay8Lamxkl+G/zYuQMPjyETbE+r188m//DwFuVL+U+QBQZD93UT7gac8XCMEk3790IFJUEYRA4b23QH+Qj7M+D27w9RaqgzwSXhHrWEgPEIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746191509; c=relaxed/simple;
-	bh=gAku/UUdkrfNmTL5pUiPcG4b39togD+Cvk0XAshVFL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pye04SThItV7GTiacEVkG47TOruivy0ZHxuXiqj/W+w8gQbSlfmicWnRJU9gFRknMtoYhmPprk7/adUi4DgLZDvP8sQUVqSFRb20LSQ8EdTSiDpujFn3BQ23/xhjf2A5pwrrQAq8xaK20JyFqhaVsaymPN/MMRyWhxBnYON0q/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dvvj9G7B; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=01W2LkNAMIJC1dllmER/rR/orJv/5PmpGshgzCgJhHg=; b=dvvj9G7BoGlTMeSEFEM1n9o27+
-	gge0jzljxxVcxRMiOn/AvpJNzliQsWMfMfuBc7Xow4qbjGjsAdwr7eH+f3XabplpOklUa3PtSGly3
-	N2fUvB98GlLHRmEqgao5fANQ+Pss+F6k+6bE1UvFU8xyKKQLToTY4K1EP91oHICkif+0OVxihfLwD
-	T5oYVlvtSKbfFepkRvgIlzOPy8prpc02RWqnI4UnZm3d/Gn7ZVeDXuIauSRcxB7qqlOhKUucxSdzT
-	LYHRuW76N7nNYUD/+uWCgI0bsmC769YV7+HrQtM/WoShbA5pthczHOdEdEM5X/p3c+xTMXi2d8BUM
-	bvkHfTLA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAqAc-00000000g9e-3eIC;
-	Fri, 02 May 2025 13:11:15 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4065230057C; Fri,  2 May 2025 15:10:53 +0200 (CEST)
-Date: Fri, 2 May 2025 15:10:53 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, nathan@kernel.org,
-	nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	hch@infradead.org, gregkh@linuxfoundation.org
-Subject: Re: [PATCH -v2 5/7] module: Extend the MODULE_ namespace parsing
-Message-ID: <20250502131053.GB4198@noisy.programming.kicks-ass.net>
-References: <20241202145946.108093528@infradead.org>
- <20241202150810.496784892@infradead.org>
- <CAK7LNASVq=2K25vy8o=Lni2PGoHpyYogwt6E5CeNSnxXFpeduA@mail.gmail.com>
+	s=arc-20240116; t=1746191493; c=relaxed/simple;
+	bh=TWNx/9PXkgLLuyLmpT398Pb4C9LdkncPESDk5m9mSzs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RZf+nVTIZBhdxHo3qJavy8pF5kDbiUuF00zNl1lGaudmTqvlJE3OvTIk5DkP/XpBI9FRtfhAWDRM8vzojTbvfD1jR1CENQ3APYD150XV0QOCwRXOFfObxL7fQWPbrQlOg/eA7CM0KtLfN8RxsYhVGLtNNaAKGXViin4Ot37G3pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 013131688;
+	Fri,  2 May 2025 06:11:22 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2A5333F66E;
+	Fri,  2 May 2025 06:11:25 -0700 (PDT)
+Message-ID: <43e85d6a-ef99-4d61-910e-1d62814fd9ed@arm.com>
+Date: Fri, 2 May 2025 14:11:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNASVq=2K25vy8o=Lni2PGoHpyYogwt6E5CeNSnxXFpeduA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 10/14] dma-contiguous: export
+ dma_contiguous_default_area
+To: Jens Wiklander <jens.wiklander@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Olivier Masse <olivier.masse@nxp.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T . J . Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Sumit Garg <sumit.garg@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
+ Daniel Stone <daniel@fooishbar.org>,
+ Rouven Czerwinski <rouven.czerwinski@linaro.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux.dev
+References: <20250502100049.1746335-1-jens.wiklander@linaro.org>
+ <20250502100049.1746335-11-jens.wiklander@linaro.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250502100049.1746335-11-jens.wiklander@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 07, 2025 at 05:41:54PM +0900, Masahiro Yamada wrote:
+On 02/05/2025 10:59 am, Jens Wiklander wrote:
+> Export the global variable dma_contiguous_default_area so
+> dev_get_cma_area() can be called a module.
 
-> > +static bool verify_module_namespace(const char *namespace, const char *modname)
-> > +{
-> > +       size_t len, modlen = strlen(modname);
-> > +       const char *sep;
-> > +       bool glob;
-> > +
-> > +       if (strncmp(namespace, "MODULE_", 7) != 0)
-> > +               return false;
-> > +
-> > +       for (namespace += 7; *namespace; namespace = sep) {
-> > +               sep = strchrnul(namespace, ',');
-> > +               len = sep - namespace;
-> > +
-> > +               glob = false;
-> > +               if (sep[-1] == '*') {
-> > +                       len--;
-> > +                       glob = true;
-> > +               }
+What dma_map_ops implementation is in a module? Without any other 
+context, I can't help thinking this smells of something sketchy.
+
+Thanks,
+Robin.
+
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: iommu@lists.linux.dev
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> ---
+>   kernel/dma/contiguous.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> 
-> Why only limited to the trailing wildcard?
-
-Because its simple and easy.
-
-> Did you consider using glob_match()?
-
-I had not, because I didn't know we had that in-kernel. Looking at that,
-using it is a bit of a pain, since it needs the pattern as a C string,
-which means I need to strdup() the thing because I can't modify the
-original.
-
-That in turn means we need to deal with malloc failure.
-
-Is that all worth it?
-
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index 8df0dfaaca18..eb361794a9c5 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -53,6 +53,7 @@
+>   #endif
+>   
+>   struct cma *dma_contiguous_default_area;
+> +EXPORT_SYMBOL(dma_contiguous_default_area);
+>   
+>   /*
+>    * Default global CMA area size can be defined in kernel's .config.
 
