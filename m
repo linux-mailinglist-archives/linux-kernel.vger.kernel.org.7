@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-630115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A93AA75A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:09:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E007AA759C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D52729C00B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F023BE631
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546DC25D549;
-	Fri,  2 May 2025 15:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBD525B669;
+	Fri,  2 May 2025 15:07:12 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C00025B1F2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA9125A63D
 	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 15:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746198434; cv=none; b=lCQ4uo6M31XE2Zhk9N0fi5GiNIjmoyAb6uBh0KaUyI5TguTFbPnw+c7tH9JkahjHSn0cEYDRM48LZRV9GYrUZKEUSKc+ypRgoJwpinf6yJgTpqtkcodnScWKaO1iUi+LzyGWxFQf22sSMwn8BsAjW4zt+n4lnTK04lkbmgu3AQ4=
+	t=1746198431; cv=none; b=JfwpcTPU9NAchXXkSWo3QmQwEJfJH5xe08T9VyS5+d/COv8Lz7aNdsT1x2W5HFdhoM7cPAZ4i7KzA3WilT2sOyUxOOUsRV36R4UxWK/V/ezqAr906xDWk7cd75Qk845lPVSYPASktZkjvganMNCycHKRrElMKnrPfPNWtOczmLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746198434; c=relaxed/simple;
-	bh=RAkGMzKbn6mk2SJYfXIberr3YST6hI2SDNjwETTbY+o=;
+	s=arc-20240116; t=1746198431; c=relaxed/simple;
+	bh=C/bY5yF/nN6J79ZtAT+oJKuULGGt3tVAogRCy21zHtw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NJ0uEExHB6uOSk66r+F03aypbkdMgSz6EJhGWRZrWBVvRXGNA5TUD+G4mFmZ+9iRcV60VUCFANbfYgOqRYHODOrHdffq6jgwYga0tq/+XoiVSRYm1JCd2h3u87fPMiqfyfmKUVJOw0hfTT4EoO4cx93Hj69t6Jww72OdflGHj2k=
+	 MIME-Version; b=o44t0e1nx6dc9y8n9AsHMTl5nMVTajScWCgLNbYERtvskK0qVP+SCk2R5q6N88IPOeWO4gmKiVG11dJOPIK4NOIs/d6BSDX2hsyIhq3LH98hQQ8oHYqKIYtj5eD5zWm/s9HqN1ihqV/1Y7NTvnRcD3eEXQkcKyHq++Isg+ETFIM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <m.felsch@pengutronix.de>)
-	id 1uArya-0004HG-D5; Fri, 02 May 2025 17:06:56 +0200
+	id 1uAryb-0004HG-HC; Fri, 02 May 2025 17:06:57 +0200
 From: Marco Felsch <m.felsch@pengutronix.de>
 To: nicolas.dufresne@collabora.com,
 	benjamin.gaignard@collabora.com,
@@ -55,9 +55,9 @@ Cc: linux-kernel@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org
-Subject: [RFC PATCH 08/11] media: hantro: use hantro_decoded_buffer only for dst_vq
-Date: Fri,  2 May 2025 17:05:11 +0200
-Message-Id: <20250502150513.4169098-9-m.felsch@pengutronix.de>
+Subject: [RFC PATCH 09/11] media: verisilicon: add H264 encoder support
+Date: Fri,  2 May 2025 17:05:12 +0200
+Message-Id: <20250502150513.4169098-10-m.felsch@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250502150513.4169098-1-m.felsch@pengutronix.de>
 References: <20250502150513.4169098-1-m.felsch@pengutronix.de>
@@ -73,31 +73,34 @@ X-SA-Exim-Mail-From: m.felsch@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The dst_vq buffer size for encoders should not use the size of the
-'hantro_decoded_buffer'. Make use of 'v4l2_m2m_buffer' instead till some
-encoder requires pre buffer extra data.
+Add the required HANTRO_MODE_H264_ENC enum to handle Hantro H264
+stateless encoders.
 
 Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 ---
- drivers/media/platform/verisilicon/hantro_drv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/platform/verisilicon/hantro.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/platform/verisilicon/hantro_drv.c b/drivers/media/platform/verisilicon/hantro_drv.c
-index 8542238e0fb1..e4850ae4e8b8 100644
---- a/drivers/media/platform/verisilicon/hantro_drv.c
-+++ b/drivers/media/platform/verisilicon/hantro_drv.c
-@@ -244,7 +244,10 @@ queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq)
- 	dst_vq->io_modes = VB2_MMAP | VB2_DMABUF;
- 	dst_vq->drv_priv = ctx;
- 	dst_vq->ops = &hantro_queue_ops;
--	dst_vq->buf_struct_size = sizeof(struct hantro_decoded_buffer);
-+	if (ctx->is_encoder)
-+		dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
-+	else
-+		dst_vq->buf_struct_size = sizeof(struct hantro_decoded_buffer);
- 	dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
- 	dst_vq->lock = &ctx->dev->vpu_mutex;
- 	dst_vq->dev = ctx->dev->v4l2_dev.dev;
+diff --git a/drivers/media/platform/verisilicon/hantro.h b/drivers/media/platform/verisilicon/hantro.h
+index edc217eed293..e464bec47b11 100644
+--- a/drivers/media/platform/verisilicon/hantro.h
++++ b/drivers/media/platform/verisilicon/hantro.h
+@@ -107,6 +107,7 @@ struct hantro_variant {
+  * enum hantro_codec_mode - codec operating mode.
+  * @HANTRO_MODE_NONE:  No operating mode. Used for RAW video formats.
+  * @HANTRO_MODE_JPEG_ENC: JPEG encoder.
++ * @HANTRO_MODE_H264_ENC: H264 encoder.
+  * @HANTRO_MODE_H264_DEC: H264 decoder.
+  * @HANTRO_MODE_MPEG2_DEC: MPEG-2 decoder.
+  * @HANTRO_MODE_VP8_DEC: VP8 decoder.
+@@ -117,6 +118,7 @@ struct hantro_variant {
+ enum hantro_codec_mode {
+ 	HANTRO_MODE_NONE = -1,
+ 	HANTRO_MODE_JPEG_ENC,
++	HANTRO_MODE_H264_ENC,
+ 	HANTRO_MODE_H264_DEC,
+ 	HANTRO_MODE_MPEG2_DEC,
+ 	HANTRO_MODE_VP8_DEC,
 -- 
 2.39.5
 
