@@ -1,51 +1,55 @@
-Return-Path: <linux-kernel+bounces-629906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C313AA7326
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:16:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8843AA732F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 330511C0351C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3263B1283
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71F825522F;
-	Fri,  2 May 2025 13:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68782550A6;
+	Fri,  2 May 2025 13:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUb1uSA4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hCDXlrcm"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4891D254AF6;
-	Fri,  2 May 2025 13:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5391632F2;
+	Fri,  2 May 2025 13:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746191769; cv=none; b=JYR2UugXTAqUtsMPOsoM6uujPqshoycnH+lWEX5gnc9wLNALYHxTANcxiLpMbgJ/vEIHNtXe/NBo3IXm52HjQcYwJEFfENgfus2fbpntEJk7flrBwfYgKJmjgfR6+TgwEE133tJ2VeDmbyHCKbrUlQ+SKTqtq2W0Qk5Sb5TIUmQ=
+	t=1746191859; cv=none; b=UqrwedvJcd2pgTt71JQ0600CcPjU36KCFrW6wtAi4f0UOsJqWP0E8ZbFQ2dOR7hPhKy0yQP4GVSD8cUiNWN0s8W81/OTkGB0bjanICqiLoevZ0UmdHpFsrz390P4qSHRaAfl+V7v0oI2Q/oqheyPBe89sv3kzN9aGgoQO1lO/VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746191769; c=relaxed/simple;
-	bh=TNGKJsHFD9W/hweRfsyrGNZ62fbkiaEiQ9aAoscBr08=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b8oDh74LFFeeGa6RXO7UW6ZS6/BaqsTdw6ZHXdZ9gTVJ9dRltZNqInXbmu/nRX2+9SFZ79baxCTX1/hbaNJ8iMHyx/b/d35hGGpl7Kya5Sgs5y55fuIcxyiKFF9Vq5Qz/PcV93U8lq6g6/E9VPyWQerpIzPRxuQBwqSz+vjUu5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUb1uSA4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D2021C4CEEB;
-	Fri,  2 May 2025 13:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746191768;
-	bh=TNGKJsHFD9W/hweRfsyrGNZ62fbkiaEiQ9aAoscBr08=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JUb1uSA4Xftxk0q+8kdYpdMf/nINyybwvVRTvy8qexEEgDRpTi1S3Gw2tgLhzQbeL
-	 GztTkyacQn7AdQHYfSjMr2GKqWv3IO7N+mT+kE3RLfmbnM9tjv0BnuZEbKrPveugy5
-	 kVdpnOhYN+ExEOwdrM1cYbelTmBguSzkijEEwNvEdxXdfu+vHuDtoRLMXF/GNdKnme
-	 7v4W3KuLbmGx1Knz1HFE7pfdKx4J7aNjCfHBmg9JPVh5K6CoPWtIZ2GKtsboLrhA6t
-	 CuJpJoayuAbqT5ryB3tTASG+UZB5UP3cs8bJPFv6l6C9NyYEMcPzSPlnS+r9M6u5TN
-	 ut8Ez0zE0YIzg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C621BC3ABAA;
-	Fri,  2 May 2025 13:16:08 +0000 (UTC)
-From: Paul Cacheux via B4 Relay <devnull+paulcacheux.gmail.com@kernel.org>
-Date: Fri, 02 May 2025 15:15:53 +0200
-Subject: [PATCH v2 2/2] tracing: protect trace_probe_log with mutex
+	s=arc-20240116; t=1746191859; c=relaxed/simple;
+	bh=Zz5tEQSp2nyOEYwbhv7kdI9iSPvJ55sNnhWZna4qC2w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P8MkEBaLgMLr+vEjtIArxBfijir4UNR0idK8EA/Ehk1+UXWYVb9wyA061AP5vQqk3CU8vaOMQyI+rrB1vWkvMXlLLY1X6zx6yc9hvmdtJYILXP+AlVENXRaqo55ctC+nOP39TuYqi2q5yONxhuU+9anq8PLTS5MBAKeDpUXh8lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hCDXlrcm; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1746191854;
+	bh=Zz5tEQSp2nyOEYwbhv7kdI9iSPvJ55sNnhWZna4qC2w=;
+	h=From:Date:Subject:To:Cc:From;
+	b=hCDXlrcmQCqkshuy5FbnW+qRrOFZcVDu6heaJSZluW0SfEA6nVRnwRupgEfTwLdvR
+	 RiEMt3lZ6jBB2kN4j2PEuWn+FRBPmf7r/iGqbGWVn6/paZ2GGQDUo9jhzG/n4L9SCp
+	 CsVXjrI5qNc4EOWAAZoI1mRA1PXLD9r0TCiI2abgvunQte40Wr7+bYB5sco/REv2gR
+	 RkI3RGB0syVPa3SvjGVHiCZ3Oh50yjscHWJAoUDTnVFOtSw6Yj1YoCniYHeAFrj/zS
+	 CR19i3tuKEJragLwX3lH/eBEE4NNqSO4Of1J7PVIKJ+A0uKopB6ki28Lxx1YOc/dtI
+	 bOmSmt/IrjbMA==
+Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laeyraud)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4D16117E05D9;
+	Fri,  2 May 2025 15:17:33 +0200 (CEST)
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Date: Fri, 02 May 2025 15:17:19 +0200
+Subject: [PATCH v2] arm64: dts: mediatek: mt8390-genio-common: Set ssusb2
+ default dual role mode to host
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,87 +58,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250502-fix-trace-probe-log-race-v2-2-511ecc1521ec@gmail.com>
-References: <20250502-fix-trace-probe-log-race-v2-0-511ecc1521ec@gmail.com>
-In-Reply-To: <20250502-fix-trace-probe-log-race-v2-0-511ecc1521ec@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- Paul Cacheux <paulcacheux@gmail.com>
+Message-Id: <20250502-mtk-genio-510-700-fix-bt-detection-v2-1-870aa2145480@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAN7FFGgC/42OTQ6CMBCFr0Jm7Zj+QDCuvIdh0ZYBGoFqWwmGc
+ HdruYDLN5nvfW+DQN5SgGuxgafFBuvmFMSpADOouSe0bcogmKiYFBec4gN7mq3DijOsGcPOrqg
+ jthTJxISjqDk32mgtqIRU9PSUfrLk3hzZ0+udXPE4glaB0LhpsvFazLRGzL6KCfgBgw3R+U8eu
+ fBMHHsk/2fPwpGjLEkJ03FZd/Jm3Dgq7bw6Jyk0+75/AbbVXZsJAQAA
+X-Change-ID: 20250328-mtk-genio-510-700-fix-bt-detection-2711cbcbb2e4
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746191767; l=1822;
- i=paulcacheux@gmail.com; s=20250422; h=from:subject:message-id;
- bh=JoafqU4uAGl3ydwos4FNrWPAGaAC2MqNPKDgQHWMZCs=;
- b=KcHSfL163DKlJ1NliuUUMQWzwqr+MsVP+H2ve6fE7oWXWJIIhlwtWCk5QHPT/9rTaAJKOXtz9
- bdzZoYkn6hnDJpyf2/hgWq0lNlOdrSgxB9BIXHG4TaBqtYSIu27wspw
-X-Developer-Key: i=paulcacheux@gmail.com; a=ed25519;
- pk=8UguSecyECHKHp0YLS7hTEDob0ctFMr3ygBTeAmrFHs=
-X-Endpoint-Received: by B4 Relay for paulcacheux@gmail.com/20250422 with
- auth_id=386
-X-Original-From: Paul Cacheux <paulcacheux@gmail.com>
-Reply-To: paulcacheux@gmail.com
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746191853; l=3055;
+ i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
+ bh=Zz5tEQSp2nyOEYwbhv7kdI9iSPvJ55sNnhWZna4qC2w=;
+ b=qvb9qzrAn2vsXJAvQj69b8+UXVaTVio8Hm708kWHhI+mQMfO873wEv5CANPz4boCtv+vMqzJe
+ NQj6VshybcQBcF7urOCeUk+8teXSTkam9xVVHVUA68fS/MkMnCa3y7e
+X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
+ pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
-From: Paul Cacheux <paulcacheux@gmail.com>
+On the Mediatek Genio 510-EVK and 700-EVK boards, ssusb2 controller is
+one but has two ports: one is routed to the M.2 slot, the other is on
+the RPi header who does support full OTG.
+Since Mediatek Genio 700-EVK USB support was added, dual role mode
+property is set to otg for ssusb2. This config prevents the M.2
+Wifi/Bluetooth module, present on those boards and exposing Bluetooth
+as an USB device to be properly detected at startup as the default role
+is device.
+To keep the OTG functionality and make the M.2 module be detected at
+the same time, add role-switch-default-mode property set to host and
+also fix the polarity of GPIO associated to the USB connector, so the
+ssusb2 controller role is properly set to host when the other port is
+unused.
 
-The shared trace_probe_log variable can be accessed and modified
-by multiple processes using tracefs at the same time, this new
-mutex will guarantee it's always in a coherent state.
-
-There is no guarantee that multiple errors happening at the same
-time will each have the correct error message, but at least this
-won't crash.
-
-Fixes: ab105a4fb894 ("tracing: Use tracing error_log with probe events")
-
-Signed-off-by: Paul Cacheux <paulcacheux@gmail.com>
+Fixes: 1afaeca17238 ("arm64: dts: mediatek: mt8390-genio-700: Add USB, TypeC Controller, MUX")
+Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 ---
- kernel/trace/trace_probe.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+I've tested this patch on Mediatek Genio 510-EVK board with a kernel
+based on linux-next (tag: next-20250502).
+---
+Changes in v2:
+- Remove dr_mode property change and add role-switch-default-mode one
+  instead, as suggested by AngeloGioacchino Del Regno
+- Fix USB connector GPIO polarity
+- Reword comment in ssusb2 node to match v2 fix
+- Reword commit message and title
+- Rebase on linux-next (tag: next-20250502)
+- Link to v1: https://lore.kernel.org/r/20250331-mtk-genio-510-700-fix-bt-detection-v1-1-34ea2cf137f3@collabora.com
+---
+ arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 2eeecb6c95eea55502b83af6775b7b6f0cc5ab94..14a7a0b59cd20a8bc43e3e7c653e986081f924c8 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -154,9 +154,11 @@ static const struct fetch_type *find_fetch_type(const char *type, unsigned long
- }
+diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
+index 127764c4d6be81767ef534a7cb228989f471b3bd..aa8dd12a84ea9d8e0e879067c45f59563455b077 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
+@@ -1333,8 +1333,18 @@ xhci_ss_ep: endpoint {
+ };
  
- static struct trace_probe_log trace_probe_log;
-+static DEFINE_MUTEX(trace_probe_log_lock);
- 
- void trace_probe_log_init(const char *subsystem, int argc, const char **argv)
- {
-+	guard(mutex)(&trace_probe_log_lock);
- 	trace_probe_log.subsystem = subsystem;
- 	trace_probe_log.argc = argc;
- 	trace_probe_log.argv = argv;
-@@ -165,11 +167,13 @@ void trace_probe_log_init(const char *subsystem, int argc, const char **argv)
- 
- void trace_probe_log_clear(void)
- {
-+	guard(mutex)(&trace_probe_log_lock);
- 	memset(&trace_probe_log, 0, sizeof(trace_probe_log));
- }
- 
- void trace_probe_log_set_index(int index)
- {
-+	guard(mutex)(&trace_probe_log_lock);
- 	trace_probe_log.index = index;
- }
- 
-@@ -178,6 +182,8 @@ void __trace_probe_log_err(int offset, int err_type)
- 	char *command, *p;
- 	int i, len = 0, pos = 0;
- 
-+	guard(mutex)(&trace_probe_log_lock);
-+
- 	if (!trace_probe_log.argv)
- 		return;
- 
+ &ssusb2 {
++	/*
++	 * the ssusb2 controller is one but we got two ports : one is routed
++	 * to the M.2 slot, the other is on the RPi header who does support
++	 * full OTG.
++	 * As the controller is shared between them, the role switch default
++	 * mode is set to host to make any peripheral inserted in the M.2
++	 * slot (i.e BT/WIFI module) be detected when the other port is
++	 * unused.
++	 */
+ 	dr_mode = "otg";
+ 	maximum-speed = "high-speed";
++	role-switch-default-mode = "host";
+ 	usb-role-switch;
+ 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ 	wakeup-source;
+@@ -1345,7 +1355,7 @@ &ssusb2 {
+ 	connector {
+ 		compatible = "gpio-usb-b-connector", "usb-b-connector";
+ 		type = "micro";
+-		id-gpios = <&pio 89 GPIO_ACTIVE_HIGH>;
++		id-gpios = <&pio 89 GPIO_ACTIVE_LOW>;
+ 		vbus-supply = <&usb_p2_vbus>;
+ 	};
+ };
 
+---
+base-commit: 1c51b1ba38c07e4f999802eb708bf798dd5f5d1b
+change-id: 20250328-mtk-genio-510-700-fix-bt-detection-2711cbcbb2e4
+
+Best regards,
 -- 
-2.49.0
-
+Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
 
