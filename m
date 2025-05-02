@@ -1,154 +1,104 @@
-Return-Path: <linux-kernel+bounces-630285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3E6AA77CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2EDAA77F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A8EC1C2009A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:54:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8AC318815E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3020B2690F4;
-	Fri,  2 May 2025 16:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2551A3A80;
+	Fri,  2 May 2025 17:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOgNXoes"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b="BOAVdmnX"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CC7268C48;
-	Fri,  2 May 2025 16:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5321A2630
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 17:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746204789; cv=none; b=jKkkByB0+GncdLn4+1OQIzECEP/MbgBTan4QEQVWS4DrOlhGvQTMrI0rSiwJ5WuOdtPvxksRK7ZWZbF8oRLvTc6Yq4hD61PMo6ZYCXw++y6V6yJ1SixUZuAzVP3eIwTuqFHXnjiuUam6dojHbyGOqoMqLBjgcSQW5ZXCZOjPYGw=
+	t=1746205299; cv=none; b=R4DL3aAiM9gIBrrfReLucTn2TDkW409fEc6rTC51aCJVjNkVNCQCn9MmvdHApuxwOJN+QyBDPqCvL3qE+yRwzTAqQIGwlQ3CH5leFWn93RrH6yl5A4395P2LTG68s5Ne83JoK1SPyWlMRxvYiDc5s0E2ba/cQizGRQA5s5Wld8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746204789; c=relaxed/simple;
-	bh=g4VUCjRthehjpe2xs+A0+SCTnyPwxFun1Jy7XN11WVI=;
+	s=arc-20240116; t=1746205299; c=relaxed/simple;
+	bh=BFtyWDFTN1QrKrJxpIvshxuClJ86Y3W8VsyPYHB3IwI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oc3gdVhSlHMCvDCqzweePL9pMqe9wg9OvQjR3nprWDRomw119LGCnHr4Aq3kRKR7jAwZ5DyFzQ38wvRMFao7HNRVC62j3EnUjbnA5jy5jc4g5Ob6c5mapep0IA+D4io5FzdqNqGFwQfNtr+tBxpI3VkNj5cEE9kXbcc6/qL/3OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOgNXoes; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-30820167b47so2379962a91.0;
-        Fri, 02 May 2025 09:53:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=dbervhPrdDcr2ssqI9ZnXvNp8Lq5wTdbHIBFJ64gbjz/J6hDY5gGXRHl0uLRrPsphJ3cNYDvJGLalq44ue5l2AICN4RCdTc2MS8kbbkkALLwpD0bZUegnBYjNb0mzWFi6524F1lpnVYYvsMy6KaTis2Bv1W5mpjlzbzfNmjtLrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=isovalent.com; spf=pass smtp.mailfrom=isovalent.com; dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b=BOAVdmnX; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=isovalent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isovalent.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f62ef3c383so4056069a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 10:01:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746204787; x=1746809587; darn=vger.kernel.org;
+        d=isovalent.com; s=google; t=1746205296; x=1746810096; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n7UI2Y6MBJpdKB31fdutcaWyVKKdFp08Cn0ReKUGIo8=;
-        b=dOgNXoesIB7QCjUEDBpYQWErykfMD1g+l+5wlV8mz5rwY07rXOdkWQupPxvqpmDtKZ
-         QgPL3uBMQ/b+tuFTeSh+X8uWHJZoeX4F69JTQ9FCzhBs4HykOo+TtdQwqRsjatYFw6LJ
-         oCL5QVoIJTUF/pA61gYKzw3pCbAShLl24kppM+29Rnp4oWdSS1xMdP8z8/YF6QEiJy0O
-         zKGAHN+dSvX2hk07RYy7jqo12DeJiTUL3ZciGex2dO1wFm6zFwHNn1hyLvfW7CmEYoW8
-         N5353EAokrXt0t/kmrXCCC+oY2JySDtJGnDq7KWU8L/9Sos6DQP0cdBhhV9mEyxhYLqn
-         tskg==
+        bh=BFtyWDFTN1QrKrJxpIvshxuClJ86Y3W8VsyPYHB3IwI=;
+        b=BOAVdmnXJDta2bWmJmyXLuQhiUNwzMGnxt8izmUyAPJnor4WJSH9GfzSD1B8jJuDGe
+         4YI7oQS33bVziyf2IZ1xna4tzmkygTzRmnAn/xnrys8YucolLboIOMdRc8SE1EhRRdog
+         xX+d3oKLxBDF4Q/010173dkiyFbXuX8LwGdNa8oXeV6fQF0gC+Sfto6DdeUt8tyYLfdN
+         kZcm7bw5kITiHajMfWxTFkbG5r6ZNlfXidNZWkL1sNzCEe9Dvx+LAZIT4n5R+GRUzoai
+         59Y28KF0cTWXt7Sp9HREB3TSEkTajsGPWKDKZWTjHhFzxdgMCRq3AYLzD/ZO9y4E5a2j
+         ki8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746204787; x=1746809587;
+        d=1e100.net; s=20230601; t=1746205296; x=1746810096;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n7UI2Y6MBJpdKB31fdutcaWyVKKdFp08Cn0ReKUGIo8=;
-        b=Tx+8MJkQAaE1RVnle+xe8NSyi8jBdQJyZaMEq0G8hh4iAPFEXVsGYrGrQX/K7i1CRi
-         u9+9d6vEKfIOeN1hf15EG1XGMH7Kxn6/i2f2nwx6oaaGXnd5Bfw5xNeke1FeCzBiBem9
-         EGz0QmMfF4Gnp72hwRWkyJf97cs5uL7cqIPmgqK+k9tdLGKmsyDNiuZvppZaOgXXL2W1
-         Le18q4jZbhw3MPWcjcnQHsqe3A1o5bj6khUW9Fcwu//RuEknPgtA3kE3TW+Qiy0nP46e
-         s8xQtuk7ny0bPd76Blm+EZScVu2B1p2SorGWiAvgmsvlD/pPropz8b7IIIv0qMqmU6Oz
-         b1FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqNMEPC2HX4byDJ9hlLwTyl5Pd/AxndIlz2fqyO1yLn2suXz2hz1IVo7DWtAm7gyAlWVxQAPlAK3C7GRc=@vger.kernel.org, AJvYcCWvgfmQr4u1KisA8EUUlfdd1FzcMxQDSuQY7ERGUX+h0nrc6D+QgZBA8fcJYJ3wmt0GQdDAnJgjObvp@vger.kernel.org, AJvYcCXnwHVj9emEcuX6eoQ8eAmupTCEWdh+A/FgU70TbL0ukUAOST159qm1U3iUEhT7lBK3BmJ41QLgsJdZt2Hg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF53Glky94WkKAFS3rc5sejXOl4WG85HVWGXCfFIT1n1eKbQgP
-	+wNXwoIdX1SrGsWRP1EJMgijNAs+yezhcZ+lTwOfX9S9zbgOyzVyexPgbeB1wMf3gJ5SzdHk/R5
-	LMRXyYyKUVK/R0UWWnXhDgIidJlroNLDATQ0=
-X-Gm-Gg: ASbGncsW5RuElAGMECInupXQRnTEBKa+hl2x1kk4Dedyc3dPAieaX12hIVtZMQKAaEr
-	/jCQoRlt/+Xe0z/jv4j5Cn+N4tYnwvw2oe2WxEPq1hvaniXaay+oVt0Pkb5XJ4iKa7sltQIKrKb
-	Fpu5FfRzVLXTIdbEgDzkPY/g==
-X-Google-Smtp-Source: AGHT+IHGTYOtyWFxjXS9Ul06M6JVtewP0QqLDSWygChMn5nReUMS9WxVTU7k4hPxbBaUObqwnTWe5V/cpuVhKJnX2Y4=
-X-Received: by 2002:a17:90b:254d:b0:302:fc48:4f0a with SMTP id
- 98e67ed59e1d1-30a4e04c98dmr5766332a91.0.1746204787157; Fri, 02 May 2025
- 09:53:07 -0700 (PDT)
+        bh=BFtyWDFTN1QrKrJxpIvshxuClJ86Y3W8VsyPYHB3IwI=;
+        b=HOwuJT0iKLIUOU5HbmCf48ZUMIIcCzWfZgr2BEVvfV44H7Ma87tS3ZAOQm/zlMCOcv
+         5BRZdthNTFE6VVYuixX/CQYwpfWPzOxzSa3G27Iv5yvwe8zUFdqFzuutUOmt+lhFJFLS
+         qhe5mecYHpMU9kkYJl2OP02MbTG6YOTeXRILwnT0/lBwUb3VhavAA816POa0SHoc4Rbw
+         D3JECIE8Vnd2hVvf2+p7X1xKnYMwLXAKPpN1H4kAV9J9p9ABM44i95juoF4ni1ZNuEQ2
+         H9ALj/6IHPLyzsluS6b3HQZy/MCo+2Fx310h/Hp1ejJqHtUrOjAngbP53RueNpLR/+S/
+         iXAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4nduT+VPnj6dv1IxKuMQ7BHuPpE4gQjJfj6zou1txKDjapto+Ya62UCzBSp8L8svor8F9LPX0pJTNxAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkRl8AxObWO/8nmrR/tms7FSMeVdL4DjF5orYy3y4V97yewTid
+	hiAS3X9C4dM2QYK06WnGoylwVWx91nv8jGiMis+sHR4vn7M/9k6Ggohkj16WBxVLTFnR91Ih4Lp
+	2L5HvuIAABPfN12w4GyTz1BzVMBuD51t+YUyWuGI4QgdNi07q
+X-Gm-Gg: ASbGncvn6pixpZ1SaZ6f+9GKjXlCqxwYqjhXHoUm0yCx6K5fwElySyPvngopJUIX/T6
+	jfiaHYRfUqgNkW1dQuCQCoGVWI7ZfHi/I68hwmXQjaAu0cJVN2NhwFd5jqr+gc2+eBBtzd4k28Z
+	Zm9sA4K9NsQR5WXWdzY7iocR9ZlREbogrTaIk=
+X-Google-Smtp-Source: AGHT+IFtImagR6Lqfgo7XIZ1wWl2+tLkZnQp/pTB1oR1k0UzDInmGHhqpcROEep6B+1QLhfQbASn6A2YAzPAFuoWbdA=
+X-Received: by 2002:a05:6000:402b:b0:39c:e0e:b27a with SMTP id
+ ffacd0b85a97d-3a099ad70dfmr2371455f8f.23.1746204815370; Fri, 02 May 2025
+ 09:53:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502150513.4169098-1-m.felsch@pengutronix.de> <20250502150513.4169098-8-m.felsch@pengutronix.de>
-In-Reply-To: <20250502150513.4169098-8-m.felsch@pengutronix.de>
-From: Adam Ford <aford173@gmail.com>
-Date: Fri, 2 May 2025 11:52:55 -0500
-X-Gm-Features: ATxdqUE-GbFHdhVzbDY9mw-AkKfv1gk9sfEHekiKJv7IfKQ5yld-yg7UXiz-NTw
-Message-ID: <CAHCN7x+Lu9momgX3Vwp+Yu+Tet5Q=k2vCL83SMLuad24SDchEg@mail.gmail.com>
-Subject: Re: [RFC PATCH 07/11] arm64: dts: imx8mp: fix VPU_BUS clock setting
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: nicolas.dufresne@collabora.com, benjamin.gaignard@collabora.com, 
-	p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org, 
-	Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de, festevam@gmail.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, paulk@sys-base.io, 
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, 
-	sebastian.fricke@collabora.com, ming.qian@nxp.com, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <20250502-vmlinux-mmap-v2-0-95c271434519@isovalent.com> <20250502-vmlinux-mmap-v2-1-95c271434519@isovalent.com>
+In-Reply-To: <20250502-vmlinux-mmap-v2-1-95c271434519@isovalent.com>
+From: Lorenz Bauer <lmb@isovalent.com>
+Date: Fri, 2 May 2025 17:53:24 +0100
+X-Gm-Features: ATxdqUEmdXYDqO_tQ1hPoaj8fCjwznGA5fXIlAwLRODgYtT6LMxPzFPPx9AIs8I
+Message-ID: <CAN+4W8i0CB+gYcBNyWUxAA+=89Q+nMFopxKUF3nt1+y5ATaNyg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 1/3] btf: allow mmap of vmlinux btf
+To: Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 2, 2025 at 10:10=E2=80=AFAM Marco Felsch <m.felsch@pengutronix.=
-de> wrote:
+On Fri, May 2, 2025 at 11:20=E2=80=AFAM Lorenz Bauer <lmb@isovalent.com> wr=
+ote:
 >
-> The VPU_PLL clock must be set before the VPU_BUS clock which is derived
-> from the VPU_PLL clock else the VPU_BUS clock is 300MHz and not 600MHz.
->
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8mp.dtsi
-> index 97b09b647ec7..7f4bdefb3480 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -2289,8 +2289,8 @@ vpumix_blk_ctrl: blk-ctrl@38330000 {
->                                  <&clk IMX8MP_CLK_VPU_G2_ROOT>,
->                                  <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
->                         clock-names =3D "g1", "g2", "vc8000e";
-> -                       assigned-clocks =3D <&clk IMX8MP_CLK_VPU_BUS>, <&=
-clk IMX8MP_VPU_PLL>;
-> -                       assigned-clock-parents =3D <&clk IMX8MP_VPU_PLL_O=
-UT>;
-> +                       assigned-clocks =3D <&clk IMX8MP_VPU_PLL>, <&clk =
-IMX8MP_CLK_VPU_BUS>;
-> +                       assigned-clock-parents =3D <0>, <&clk IMX8MP_VPU_=
-PLL_OUT>;
->                         assigned-clock-rates =3D <600000000>, <600000000>=
-;
+> User space needs access to kernel BTF for many modern features of BPF.
+> Right now each process needs to read the BTF blob either in pieces or
+> as a whole. Allow mmaping the sysfs file so that processes can directly
+> access the memory allocated for it in the kernel.
 
-I think there was a move to make the default be overdrive [1]  and [2]
-and use a 'nominal' device tree for those who are not in overdrive
-mode.  According to the TRM, the VPU_BUS_CLK_ROOT, the nominal is
-600MHz and the overdrive is 800MHz.  Based on that, I wonder if the
-values here should be 800MHz and if we should add the nominal values
-of 600MHz to the imx8m-nominal.dtsi file.
-
-adam
-
->                         interconnects =3D <&noc IMX8MP_ICM_VPU_G1 &noc IM=
-X8MP_ICN_VIDEO>,
->                                         <&noc IMX8MP_ICM_VPU_G2 &noc IMX8=
-MP_ICN_VIDEO>,
-
-
-[1] - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c=
-ommit/arch/arm64/boot/dts/freescale/imx8mp.dtsi?h=3Dnext-20250502&id=3D9f75=
-95b3e5ae0ead20a74a5f2a8f0434b3254ac5
-
-[2] - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c=
-ommit/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi?h=3Dnext-20250502&i=
-d=3D4b98bf3bff7353d94824c4d874ff2d7f38acc49a
-
-> --
-> 2.39.5
->
->
+I just realised that there is also code which exposes module BTF via
+sysfs, which my code currently doesn't handle. I'll send a v3.
 
