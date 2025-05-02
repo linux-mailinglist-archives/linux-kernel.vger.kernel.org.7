@@ -1,107 +1,57 @@
-Return-Path: <linux-kernel+bounces-629610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AECDAA6ED1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:05:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A377AA6ED6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32CA11B6028B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:04:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A86427B49A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0B7255E2A;
-	Fri,  2 May 2025 10:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028F6238C33;
+	Fri,  2 May 2025 10:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sblha9Uu"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="RvVqmUAp"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EE0246790
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 10:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A35C22688C
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 10:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746180084; cv=none; b=L38GDCBGI89qJRxc1cJPSomT6ry5YX5bmVn9yTE7tZyK+bxZiIuCJaFUbXEIldAr9T/emKA/5ONcFehZbMzBVt3Bn8JqRVTMW7N1xwJ6ClH3S1cQeEgg9pVeGum13Q+vB1K7MA2tjs7/oT03SQZ1DBUMDyVl5xw/ITxb468sKx8=
+	t=1746180248; cv=none; b=JwdzPELnu1QxNycY3xntMMNYqzwFc2eDI/AcrFhFbJtiWTjLGnzO/vI4VO+lWcg6ib7xE4t81JhGs3xmM5yjsrXt35oIvWpK7V9DwhYFQ5McqtRiumPg44+XF9fW6l6oTfGqI8Jw2mR4kzSfypEAkSPmxcDzONy0Sl/MGrToibU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746180084; c=relaxed/simple;
-	bh=ZUwd027OBe08q9YquZgjzVa7y9MBnIPHNh4bwe/oj4A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YPB3P7aR5BXnI3yQSHPMbrxiXqWP7rm/KUMZUWerV1k+3kBVQM4kE69tp7DnH4I4HnLDboTmxz0tbqx2Bs2Rbz/1OkEFZ4EuYNB8UhSqtvjxcBfFQXH8+VwjotpHACgxIb67nRRHwQt9GfWpbU/+yiU4iGlpUEFZ90dEM0VLkaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sblha9Uu; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-acbb48bad09so323450866b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 03:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746180080; x=1746784880; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OlmCXINH+dafzBgYNqgq0wXLz20MQsNU7TGuhsodLww=;
-        b=Sblha9UuBFwGdLzFIysbFAxi7PT4Gcn5iwHs4hWXknwgdomnQh++J+gnfryQU+WWEC
-         OTWXj5RjZNVScIH4MJLgs1FsrgizetRO2RNyUxyrQsngYbGTpHycD6Zj2YlpDLExYhqF
-         Y8fOnm9qfwy21vRD91URaydv+h1AW1g33vxt/gY+DTlM95R3Q7odqJAVjk4V8cl9zG+Z
-         FVQI0IMlDneVsNp6CHT6OAF+6Sndg+BE+63mESheBK53WDrzKcGMO+4w6ZF9t9Nzlwi5
-         qH8AO9Qzn29RSVsUrRX/FyjbiQMZw2jBLPtFA5hs1/j5naudVWdtiwlxq0FdzjxaZCvl
-         A2YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746180080; x=1746784880;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OlmCXINH+dafzBgYNqgq0wXLz20MQsNU7TGuhsodLww=;
-        b=if4jjRLCCtw/ckjmZjvX/bDOWmtmUo9YXW/2GS8/X+XKNtsCdRvsxLZPMs2oeAeaDI
-         x0rfETsvv8O5apTd0OhZDlOEeDKkVvlifi3GdvjO7idC7UZCkIzAQ+j0Rz0ceF6YvOnB
-         jJHnYxrHNzWBJ/sti51aiVbwwPGTjR01/eZBKr11P8mvkeZhxm8w+7xfu/xamgiDHm1B
-         2zbjVifTc8FAa3cE/quG8gtbds2z9Se5CUfxgMCTooTqZnNR3GyTIvdX+E2P8NOMXkZS
-         dxqezUdXzl3WlPSa9xB6EWH15dPmw6dQB9YNS0Mt7o3hNjx83hA0EBSAKnH1tqd6tEoT
-         iw5A==
-X-Gm-Message-State: AOJu0YwkC9cIzMS4BbZRCShTJnHB0sq/Tg1BNKspNGihOxKPV1nPNssJ
-	YdTIuZfGrztc6TujUNTxcyRDK8Zn7mZmNnIxdaps18DMexSYYWr92X50J4eIZT8g+/tED/Fy1oW
-	7ie8=
-X-Gm-Gg: ASbGnctvsLOpYViu6rcU74PWS3yGUeOpIPSoJSEjeDjyFQHIIRCmQordE4d4WQaz04C
-	TVdOYY0G6/AkR99uE62GK8z5Z7wD7ekD/OJioHGom8eP0A05xBN/0ewn3E2OA6K43go+C+KjOzO
-	y6YBiJOSdqfqqrn3aOEnicLiKRqMGImO9Vp3TgLV+Ano3XVMXDFMwusw6JDUgxfe4Uczp2ssTmk
-	Nm1mi3sop+0jPQ7/VPN8JPDQ1Q+BnOpW1lhO73hy8e5GxwUmtiWPGYM6JYqZohj9whoePHJ9pu1
-	wDuX+xnpfC47U6Vioay/4RvTsI6jc9LZyqSjfWOKfYi4nluybZfjdihU4qQIXitrFC+YMwXG4bl
-	S1a1psm0GoG+tfoop2A==
-X-Google-Smtp-Source: AGHT+IEYfv3P+wsN6CjsHEtvD+7RxYmI0A0Zuh0sF27ecW7PLXPxnJ4H/XpyhrWak3QZy6czVPn/hg==
-X-Received: by 2002:a17:907:728a:b0:ace:5461:81dd with SMTP id a640c23a62f3a-ad17acfda03mr249587766b.3.1746180079442;
-        Fri, 02 May 2025 03:01:19 -0700 (PDT)
-Received: from rayden.urgonet (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891473a1sm26030566b.4.2025.05.02.03.01.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 03:01:18 -0700 (PDT)
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Olivier Masse <olivier.masse@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	azarrabi@qti.qualcomm.com,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH v8 14/14] optee: smc abi: dynamic protected memory allocation
-Date: Fri,  2 May 2025 11:59:28 +0200
-Message-ID: <20250502100049.1746335-15-jens.wiklander@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250502100049.1746335-1-jens.wiklander@linaro.org>
-References: <20250502100049.1746335-1-jens.wiklander@linaro.org>
+	s=arc-20240116; t=1746180248; c=relaxed/simple;
+	bh=a+4NTP7GAXZxu26Q7gR9o+DTZj2sBGxCE8Et4DTkVLQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qqCDBV72bb/f+2jD+FoOm/s/Ku4LqxxzyuFO3U84AB/EWHQtN/mj/QFBQ7eObT84piHsWcyVnUweY5syKC64CmdO86uGSJU3y8ax+zOPhyZ1zubAH3LBi0G9/MpPANbszC/l96UAZ6l7HEqx/7vmA7BcBmBYHrNLL/EslD41ySA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=RvVqmUAp; arc=none smtp.client-ip=212.77.101.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 24179 invoked from network); 2 May 2025 12:03:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1746180234; bh=JxgIDUsaIMgLK10xPZb5AYDJC+rfdHR+oalBdnFri1g=;
+          h=From:To:Cc:Subject;
+          b=RvVqmUAp6CEBPtUFED5hYrTeu3I5G82Vg3yfqgG5xYD4C06+YWv4JEZ4t2ORlTzsi
+           abcepRhyyFjJ2Yy+QOOljw3/PdK0/lMaHnoZL0XYD7ONDbSzDJTwavsu7MY4wy1eti
+           /XD7OFUQnQjJgRTzifZ0ctzCVa/QpB168biXAJrvyyO/rsqSMY4F8nHhA9/cTOl9Dt
+           G2IYTt1hiJeSJt8WvOLApEiTgdp1HJ0TXQAiVwVE+WHocBO1BNLMFrC1HFJVRJKHo9
+           QcHUubUqFoMujfDsEx5Y0HWQ6UgqvUOU5SBgOryUuWpzy6mUsMhbU5MSijzl7XMJxb
+           kI0JNKuLLgAkg==
+Received: from 83.5.150.21.ipv4.supernova.orange.pl (HELO laptop-olek.home) (olek2@wp.pl@[83.5.150.21])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <johannes.berg@intel.com>; 2 May 2025 12:03:54 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: johannes.berg@intel.com,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Aleksander Jan Bajkowski <olek2@wp.pl>
+Subject: [PATCH iw] iw: scan: Add printing of EHT Operation Element
+Date: Fri,  2 May 2025 12:03:53 +0200
+Message-Id: <20250502100353.3149470-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,167 +59,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-WP-DKIM-Status: good (id: wp.pl)                                                      
+X-WP-MailID: 728dea30b0664b2579c9c2915b3f293e
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [YYN0]                               
 
-Add support in the OP-TEE backend driver for dynamic protected memory
-allocation using the SMC ABI.
+Add ability to print out EHT capabilities from AP beacons.
 
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 ---
- drivers/tee/optee/smc_abi.c | 103 +++++++++++++++++++++++++++++-------
- 1 file changed, 85 insertions(+), 18 deletions(-)
+ ieee80211.h |  1 +
+ iw.h        |  1 +
+ scan.c      |  8 +++++++
+ util.c      | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 72 insertions(+)
 
-diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
-index 7acb43852c4b..766e7f5a3953 100644
---- a/drivers/tee/optee/smc_abi.c
-+++ b/drivers/tee/optee/smc_abi.c
-@@ -1001,6 +1001,70 @@ static int optee_smc_do_call_with_arg(struct tee_context *ctx,
- 	return rc;
- }
- 
-+static int optee_smc_lend_protmem(struct optee *optee, struct tee_shm *protmem,
-+				  u16 *end_points, unsigned int ep_count,
-+				  u32 use_case)
-+{
-+	struct optee_shm_arg_entry *entry;
-+	struct optee_msg_arg *msg_arg;
-+	struct tee_shm *shm;
-+	u_int offs;
-+	int rc;
-+
-+	msg_arg = optee_get_msg_arg(optee->ctx, 2, &entry, &shm, &offs);
-+	if (IS_ERR(msg_arg))
-+		return PTR_ERR(msg_arg);
-+
-+	msg_arg->cmd = OPTEE_MSG_CMD_LEND_PROTMEM;
-+	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_VALUE_INPUT;
-+	msg_arg->params[0].u.value.a = use_case;
-+	msg_arg->params[1].attr = OPTEE_MSG_ATTR_TYPE_TMEM_INPUT;
-+	msg_arg->params[1].u.tmem.buf_ptr = protmem->paddr;
-+	msg_arg->params[1].u.tmem.size = protmem->size;
-+	msg_arg->params[1].u.tmem.shm_ref = (u_long)protmem;
-+
-+	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
-+	if (rc)
-+		goto out;
-+	if (msg_arg->ret != TEEC_SUCCESS) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+	protmem->sec_world_id = (u_long)protmem;
-+
-+out:
-+	optee_free_msg_arg(optee->ctx, entry, offs);
-+	return rc;
-+}
-+
-+static int optee_smc_reclaim_protmem(struct optee *optee,
-+				     struct tee_shm *protmem)
-+{
-+	struct optee_shm_arg_entry *entry;
-+	struct optee_msg_arg *msg_arg;
-+	struct tee_shm *shm;
-+	u_int offs;
-+	int rc;
-+
-+	msg_arg = optee_get_msg_arg(optee->ctx, 1, &entry, &shm, &offs);
-+	if (IS_ERR(msg_arg))
-+		return PTR_ERR(msg_arg);
-+
-+	msg_arg->cmd = OPTEE_MSG_CMD_RECLAIM_PROTMEM;
-+	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_RMEM_INPUT;
-+	msg_arg->params[0].u.rmem.shm_ref = (u_long)protmem;
-+
-+	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
-+	if (rc)
-+		goto out;
-+	if (msg_arg->ret != TEEC_SUCCESS)
-+		rc = -EINVAL;
-+
-+out:
-+	optee_free_msg_arg(optee->ctx, entry, offs);
-+	return rc;
-+}
-+
- /*
-  * 5. Asynchronous notification
-  */
-@@ -1252,6 +1316,8 @@ static const struct optee_ops optee_ops = {
- 	.do_call_with_arg = optee_smc_do_call_with_arg,
- 	.to_msg_param = optee_to_msg_param,
- 	.from_msg_param = optee_from_msg_param,
-+	.lend_protmem = optee_smc_lend_protmem,
-+	.reclaim_protmem = optee_smc_reclaim_protmem,
+diff --git a/ieee80211.h b/ieee80211.h
+index 1e29371..c31041e 100644
+--- a/ieee80211.h
++++ b/ieee80211.h
+@@ -99,6 +99,7 @@ enum elem_id {
+ enum elem_id_ext {
+ 	EID_EXT_HE_CAPABILITY		= 35,
+ 	EID_EXT_HE_OPERATION		= 36,
++	EID_EXT_EHT_OPERATION		= 106,
+ 	EID_EXT_EHT_CAPABILITY		= 108,
  };
  
- static int enable_async_notif(optee_invoke_fn *invoke_fn)
-@@ -1622,11 +1688,14 @@ static inline int optee_load_fw(struct platform_device *pdev,
+diff --git a/iw.h b/iw.h
+index b8caccd..a423431 100644
+--- a/iw.h
++++ b/iw.h
+@@ -247,6 +247,7 @@ void print_he_operation(const uint8_t *ie, int len);
+ void print_he_info(struct nlattr *nl_iftype);
+ void print_eht_capability(const uint8_t *ie, int len, const uint8_t *he_cap,
+ 			  bool from_ap);
++void print_eht_operation(const uint8_t *ie, int len);
+ void print_eht_info(struct nlattr *nl_iftype, int band);
+ void print_s1g_capability(const uint8_t *caps);
  
- static int optee_protmem_pool_init(struct optee *optee)
- {
-+	bool protm = optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_PROTMEM;
-+	bool dyn_protm = optee->smc.sec_caps &
-+			 OPTEE_SMC_SEC_CAP_DYNAMIC_PROTMEM;
- 	enum tee_dma_heap_id heap_id = TEE_DMA_HEAP_SECURE_VIDEO_PLAY;
--	struct tee_protmem_pool *pool;
--	int rc;
-+	struct tee_protmem_pool *pool = ERR_PTR(-EINVAL);
-+	int rc = -EINVAL;
- 
--	if (optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_PROTMEM) {
-+	if (protm) {
- 		union {
- 			struct arm_smccc_res smccc;
- 			struct optee_smc_get_protmem_config_result result;
-@@ -1634,25 +1703,24 @@ static int optee_protmem_pool_init(struct optee *optee)
- 
- 		optee->smc.invoke_fn(OPTEE_SMC_GET_PROTMEM_CONFIG, 0, 0, 0, 0,
- 				     0, 0, 0, &res.smccc);
--		if (res.result.status != OPTEE_SMC_RETURN_OK) {
--			pr_err("Secure Data Path service not available\n");
--			return 0;
--		}
-+		if (res.result.status == OPTEE_SMC_RETURN_OK)
-+			pool = tee_protmem_static_pool_alloc(res.result.start,
-+							     res.result.size);
-+	}
- 
--		pool = tee_protmem_static_pool_alloc(res.result.start,
--						     res.result.size);
--		if (IS_ERR(pool))
--			return PTR_ERR(pool);
-+	if (dyn_protm && IS_ERR(pool))
-+		pool = optee_protmem_alloc_cma_pool(optee, heap_id);
- 
-+	if (!IS_ERR(pool)) {
- 		rc = tee_device_register_dma_heap(optee->teedev, heap_id, pool);
- 		if (rc)
--			goto err;
-+			pool->ops->destroy_pool(pool);
- 	}
- 
-+	if (protm || dyn_protm)
-+		return rc;
-+
- 	return 0;
--err:
--	pool->ops->destroy_pool(pool);
--	return rc;
+diff --git a/scan.c b/scan.c
+index 748ead1..263d2e3 100644
+--- a/scan.c
++++ b/scan.c
+@@ -2426,10 +2426,18 @@ static void print_eht_capa(const uint8_t type, uint8_t len,
+ 	print_eht_capability(data, len, ctx->he_cap, ctx->from_ap);
  }
  
- static int optee_probe(struct platform_device *pdev)
-@@ -1823,9 +1891,8 @@ static int optee_probe(struct platform_device *pdev)
- 		pr_info("Asynchronous notifications enabled\n");
++static void print_eht_oper(const uint8_t type, uint8_t len, const uint8_t *data,
++			   const struct ie_context *ctx)
++{
++	printf("\n");
++	print_eht_operation(data, len);
++}
++
+ static const struct ie_print ext_printers[] = {
+ 	[EID_EXT_HE_CAPABILITY] = { "HE capabilities", print_he_capa, 21, 54, BIT(PRINT_SCAN), },
+ 	[EID_EXT_HE_OPERATION] = { "HE Operation", print_he_oper, 6, 15, BIT(PRINT_SCAN), },
+ 	[EID_EXT_EHT_CAPABILITY] = { "EHT capabilities", print_eht_capa, 13, 30, BIT(PRINT_SCAN), },
++	[EID_EXT_EHT_OPERATION] = { "EHT Operation", print_eht_oper, 5, 10, BIT(PRINT_SCAN), },
+ };
+ 
+ static void print_extension(unsigned char len, unsigned char *ie,
+diff --git a/util.c b/util.c
+index c6d5974..e285e20 100644
+--- a/util.c
++++ b/util.c
+@@ -1924,6 +1924,68 @@ void print_he_operation(const uint8_t *ie, int len)
  	}
+ }
  
--	rc = optee_protmem_pool_init(optee);
--	if (rc)
--		goto err_notif_uninit;
-+	if (optee_protmem_pool_init(optee))
-+		pr_info("Protected memory service not available\n");
- 
- 	/*
- 	 * Ensure that there are no pre-existing shm objects before enabling
++void print_eht_operation(const uint8_t *ie, int len)
++{
++	uint8_t oper_parameters = ie[0];
++	uint8_t disabled_subchannel_info_present = oper_parameters & 0x02;
++	uint8_t eht_operation_info_present = oper_parameters & 0x01;
++
++	printf("\t\tEHT Operation Parameters: (0x%02x)\n",
++	       oper_parameters);
++
++	if (oper_parameters & 0x04)
++		printf("\t\t\tEHT Default PE Duration\n");
++
++	if (oper_parameters & 0x08)
++		printf("\t\t\tGroup Addressed BU Indication Limit\n");
++
++	printf("\t\t\tGroup Addressed BU Indication Exponent: 0x%01x\n",
++	       (oper_parameters >> 4 & 3));
++
++	printf("\t\tBasic EHT-MCS And Nss Set: 0x");
++	for (uint8_t i = 0; i < 4; i++)
++		printf("%02x", ie[1 + i]);
++
++	printf("\n");
++
++	if (eht_operation_info_present) {
++		uint8_t offset = 5;
++		const uint8_t control = ie[offset];
++		uint8_t eht_operation_info_len = 3;
++
++		if (disabled_subchannel_info_present)
++			eht_operation_info_len += 2;
++
++		if (len - offset < eht_operation_info_len) {
++			printf("\t\tEHT Operation Info: Invalid\n");
++			return;
++		}
++
++		printf("\t\tEHT Operation Info: 0x");
++		for (uint8_t i = 0; i < eht_operation_info_len; i++)
++			printf("%02x", ie[offset + i]);
++
++		printf("\n");
++		printf("\t\t\tChannel Width: ");
++		switch (control & 0x7) {
++		case 0: printf("20 MHz\n"); break;
++		case 1: printf("40 MHz\n"); break;
++		case 2: printf("80 MHz\n"); break;
++		case 3: printf("160 MHz\n"); break;
++		case 4: printf("320 MHz\n"); break;
++		}
++
++		printf("\t\t\tCenter Frequency Segment 0: %hhu\n",
++		       ie[offset + 1]);
++		printf("\t\t\tCenter Frequency Segment 1: %hhu\n",
++		       ie[offset + 2]);
++
++		if (disabled_subchannel_info_present)
++			printf("\t\t\tDisabled Subchannel Bitmap: 0x%02x%02x\n",
++			       ie[offset + 3], ie[offset + 4]);
++	}
++}
++
+ void iw_hexdump(const char *prefix, const __u8 *buf, size_t size)
+ {
+ 	size_t i;
 -- 
-2.43.0
+2.39.5
 
 
