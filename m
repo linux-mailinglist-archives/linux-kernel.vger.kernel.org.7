@@ -1,207 +1,126 @@
-Return-Path: <linux-kernel+bounces-629618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774D5AA6F2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:15:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E51CAA6F40
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED09B7B0AAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:14:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC164C138F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B47923BCE4;
-	Fri,  2 May 2025 10:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A1B24169A;
+	Fri,  2 May 2025 10:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i0AIXthV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6OUgtrU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60177227E96;
-	Fri,  2 May 2025 10:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B8022E3F1;
+	Fri,  2 May 2025 10:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746180918; cv=none; b=n3WNhPg+3/NlkQRqdoLC14624ArWerl+0fSk4mTKH51icYW4EHVjLv9dJknRyO5FjEG8tbFPozCMy5CL2Gq1R1mXSY6HdZhsrVoMCbNbBQcU7Hb49fg+W90+h/krcMylvCn9aZ2E7LGdK30RgIMzzKTtEX370knTr+6BLVgOttI=
+	t=1746180949; cv=none; b=l6bR9wIP1Wpcvl+mW/QVtHJauHBSaEgyMFaEF/MphMfix9hUNoCEpr2yS7eCbBJH8pA639gHHg8H8s0YmZ/n/Ls8e2CGFesnqV5Kg39+WfSmJajASuEAVW+a9DDCLpgFAWnqmkYqCOFzWXHbl2z7V4yHWb4AOFFGQcbFut5v7gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746180918; c=relaxed/simple;
-	bh=fML3RdU0/3C8b9eeo8fTm+7OW1jR7eALOGHJP2ObctU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYXbLGdGYn9P13ULjrEasLwL+jUIR1sMGb/qU0FCyn5Xq7Tx+pL0mWsgCb5vBdTFO86hg3tfm2oxl+WdY9S5Ttqjq6WtVxYnEGjqBS5nJoC69/uegb5Q99tnNNPw6/kBEqlvAn64wymu2vZ3tTVj5tvHqJb2/kKiG4mgo3CDA9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i0AIXthV; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746180916; x=1777716916;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fML3RdU0/3C8b9eeo8fTm+7OW1jR7eALOGHJP2ObctU=;
-  b=i0AIXthVsaJ6ugwOggIvfDiw2AwpZdpUViMK/mzdnhzldMLJXTT1ISz5
-   9/We1XhqQiXnPUYMm57XFI5AVC/3SbMKu/ayPDp7MooxIW+97Nb5qUjC5
-   sesCm66MDNtP8NHS+BaDLEW0M+RL5IyzlU0E3ZN2ed7ReJOfzFXE0KxON
-   oShN6B5t0RTXMfHjEpiyzSDHIKP7qzq9ONr5ngCSBYn/7adBUdhEq/cUB
-   +fxSIx8shUGPW82AhrILkDq7NoZLsTIPn/nYw29d64q3qrJsfhymCwu2T
-   9OIkHSHKyEh1C7nSbXygHFz7NG46n+FtxofBVzYQbiRicOJgP1p91S1Xw
-   A==;
-X-CSE-ConnectionGUID: SzGeOeAWSbevSn6sNf/Wgg==
-X-CSE-MsgGUID: j6qzbZcqQaqajqcoeU4hhg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="47750183"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="47750183"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 03:15:15 -0700
-X-CSE-ConnectionGUID: +x65xRrlTlKjfpCXWCIyZg==
-X-CSE-MsgGUID: 7parAngqThKBuIxq46GmnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="157839775"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 03:15:11 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uAnQC-000000029mm-0PII;
-	Fri, 02 May 2025 13:15:08 +0300
-Date: Fri, 2 May 2025 13:15:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v7 03/11] pinctrl: Add MAX7360 pinctrl driver
-Message-ID: <aBSbKwmao-K-e1k8@smile.fi.intel.com>
-References: <20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com>
- <20250428-mdb-max7360-support-v7-3-4e0608d0a7ff@bootlin.com>
+	s=arc-20240116; t=1746180949; c=relaxed/simple;
+	bh=3c3+5z27CJFct2aKCPDEIOAcWESjT7K/nmpBVR7j1XA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Hr8FKn051iuw+2JAfNshyBGfbgNCpfF7WfXYjQqfc7gPhVy1LH9lxV9XJc2GI10RUU6oK96jnc9s636mBj/F38avm3mhGiGPm7F5trbV67L+AvJCwfztwob8KscPi+cP3LL1RKemya7rIpvC7ntcWb4VVNoLzdEZoS1NE4BgorU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6OUgtrU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E36E5C4CEE4;
+	Fri,  2 May 2025 10:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746180949;
+	bh=3c3+5z27CJFct2aKCPDEIOAcWESjT7K/nmpBVR7j1XA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=M6OUgtrUlHVua3jtsjavMsPBHBhayoY9AEcU5jKX5fWPK3EEa7jKlDE9Uf160GV97
+	 B39HpHULYqA1acYVn5g0P/2fUr6VC/jFn2k/WozJ1qhplc//mC/onm1vy/UXHj4H/F
+	 2c6q5aesy7ox299X2b58BnChFO01FsRqDSs9sI7/fRXkbjFTtvz+QBTjykPuKQP4lI
+	 L4619phjP4zvgf+BOv5ZlTbHG1C5vk60nAgPLIv6Tv3knf3zfd/5sSlsuCxME8oiR8
+	 aRgfuR7j+xIUuzJ7/aTNoDLm5sqviDkZ36gSaMZ1DS+INXHohPXg++GfR0BKu9MJ30
+	 ILdiri8OjhxLA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF73AC3ABAA;
+	Fri,  2 May 2025 10:15:48 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH 0/6] Add CMN PLL clock controller support for IPQ5018
+Date: Fri, 02 May 2025 14:15:42 +0400
+Message-Id: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428-mdb-max7360-support-v7-3-4e0608d0a7ff@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE6bFGgC/02OXQqDMBAGryL73EB+jK5epYikyaYNqNVopSDev
+ VFf+rTMwjfMBjPFQDPU2QaR1jCH95BA3DKwLzM8iQWXGCSXmmsuWBindJDZfmBj1zEkLUpHWCq
+ PkFZjJB++p/HeXBxp+iTxcj3hYWZi9t33YakzNNJpZUlZ7VEWqIxTzlemMlqjlCgKT0VOJfwH1
+ dmZkwvBpiRqj6Zc5m1qOpKqghv0uiq5UvUqodn3H/kC1FroAAAA
+X-Change-ID: 20250501-ipq5018-cmn-pll-8e517de873f8
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, 
+ Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746180945; l=1972;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=3c3+5z27CJFct2aKCPDEIOAcWESjT7K/nmpBVR7j1XA=;
+ b=4vvd5Svjyxb5OLpkhk7VVUVphoiGh7arQX79G3tzygL39SN53iPp0e+3DY/IKAX/+oN2XMX94
+ tommmv5sfSDB2awRhaeCYC55VYwNSQN/DLfIO8IgljvxL9sa5tfb7Di
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On Mon, Apr 28, 2025 at 01:57:21PM +0200, Mathieu Dubois-Briand wrote:
-> Add driver for Maxim Integrated MAX7360 pinctrl on the PORT pins. Pins
-> can be used either for GPIO, PWM or rotary encoder functionalities.
+The CMN PLL block of IPQ5018 supplies output clocks for XO at 24 MHZ,
+sleep at 32KHZ, and the ethernet block at 50MHZ.
 
-...
+This patch series extends the CMN PLL driver to support IPQ5018.
+It also adds the SoC specific header file to export the CMN PLL
+output clock specifiers for IPQ5018. The new table of output
+clocks is added for the CMN PLL of IPQ5018, which is acquired
+from the device according to the compatible.
 
-> +#include <linux/array_size.h>
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+George Moussalem (6):
+      dt-bindings: clock: qcom: Add CMN PLL support for IPQ5018 SoC
+      clk: qcom: ipq5018: mark XO clock as critical
+      clk: qcom: ipq-cmn-pll: Add IPQ5018 SoC support
+      dt-bindings: mfd: qcom,tcsr: Add compatible for IPQ5018
+      arm64: dts: ipq5018: Add CMN PLL node
+      arm64: dts: qcom: Update IPQ5018 xo_board_clk to use fixed factor clock
 
-> +#include <linux/dev_printk.h>
-> +#include <linux/device.h>
-> +#include <linux/device/devres.h>
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 11 +++-
+ .../devicetree/bindings/mfd/qcom,tcsr.yaml         |  1 +
+ arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  3 +-
+ .../dts/qcom/ipq5018-tplink-archer-ax55-v1.dts     |  3 +-
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 40 +++++++++++-
+ drivers/clk/qcom/gcc-ipq5018.c                     |  2 +-
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 72 ++++++++++++++++++----
+ include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h   | 16 +++++
+ 8 files changed, 129 insertions(+), 19 deletions(-)
+---
+base-commit: 8a2d53ce3c5f82683ad3df9a9a55822816fe64e7
+change-id: 20250501-ipq5018-cmn-pll-8e517de873f8
+prerequisite-change-id: 20250411-qcom_ipq5424_cmnpll-960a8f597033:v2
+prerequisite-patch-id: dc3949e10baf58f8c28d24bb3ffd347a78a1a2ee
+prerequisite-patch-id: da645619780de3186a3cccf25beedd4fefab36df
+prerequisite-patch-id: 4b5d81954f1f43d450a775bcabc1a18429933aaa
+prerequisite-patch-id: 541f835fb279f83e6eb2405c531bd7da9aacf4bd
 
-Since device.h is included the other two are not strictly needed, but it's fine
-to leave them explicitly included.
-
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/mfd/max7360.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-
-> +#include <linux/slab.h>
-
-Is it used?
-
-...
-
-> +struct max7360_pinctrl {
-> +	struct pinctrl_dev *pctldev;
-> +	struct pinctrl_desc pinctrl_desc;
-
-Does`pahole` agree with your choice of layout?
-
-> +};
-
-...
-
-> +static int max7360_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
-> +			   unsigned int group)
-> +{
-> +	struct regmap *regmap;
-> +	int val;
-> +
-> +	/*
-> +	 * GPIO and PWM functions are the same: we only need to handle the
-> +	 * rotary encoder function, on pins 6 and 7.
-> +	 */
-> +	if (max7360_groups[group].pins[0] >= 6) {
-> +		if (selector == MAX7360_PINCTRL_FN_ROTARY)
-> +			val = MAX7360_GPIO_CFG_RTR_EN;
-> +		else
-> +			val = 0;
-
-> +		regmap = dev_get_regmap(pctldev->dev->parent, NULL);
-
-This assignment can be unified with the definition above.
-
-> +		return regmap_write_bits(regmap, MAX7360_REG_GPIOCFG, MAX7360_GPIO_CFG_RTR_EN, val);
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int max7360_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +	struct pinctrl_desc *pd;
-> +	struct max7360_pinctrl *chip;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	regmap = dev_get_regmap(dev->parent, NULL);
-> +	if (!regmap)
-> +		dev_err_probe(dev, -ENODEV, "Could not get parent regmap\n");
-
-Missing 'return'. Or...?
-
-> +	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-> +	if (!chip)
-> +		return -ENOMEM;
-> +
-> +	pd = &chip->pinctrl_desc;
-> +
-> +	pd->pctlops = &max7360_pinctrl_ops;
-> +	pd->pmxops = &max7360_pmxops;
-> +	pd->name = dev_name(dev);
-> +	pd->pins = max7360_pins;
-> +	pd->npins = MAX7360_MAX_GPIO;
-> +	pd->owner = THIS_MODULE;
-> +
-> +	device_set_of_node_from_dev(dev, dev->parent);
-
-I don't like this, but I have no better idea right now. Perhaps add a comment
-on top to explain this call?
-
-> +	chip->pctldev = devm_pinctrl_register(dev, pd, chip);
-> +	if (IS_ERR(chip->pctldev))
-> +		return dev_err_probe(dev, PTR_ERR(chip->pctldev), "can't register controller\n");
-> +
-> +	return 0;
-> +}
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
+George Moussalem <george.moussalem@outlook.com>
 
 
 
