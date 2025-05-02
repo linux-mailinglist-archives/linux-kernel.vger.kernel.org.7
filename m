@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-629945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B9D9AA73A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:31:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A946AA739A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB161899361
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:28:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97979C0164
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C09925524A;
-	Fri,  2 May 2025 13:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0C419E97B;
+	Fri,  2 May 2025 13:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Cl9tbAis"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LA/kn8JS"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A7C22DF92
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 13:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3BC25485B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 13:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746192500; cv=none; b=RBBXETRZpXKIqyY+3uH5pfRLwNVXyrKRmVwYziK0Nr5FFKSZrvE6njGDii9SpNZ4olQchGM0OtmELnrt62rLDtcgp+GLoOcKQlfMWLTJRDd2dPyYDRsXK5cP9IFbtO6zZoJXfXgfGDAK8KU8TTSqeNJIBKt0tlBgz5qokhsNW74=
+	t=1746192502; cv=none; b=ZsgJ5nzirXnfIvADatIzukNtQ5okGCtgXwOZnu6KsxFpnok+V+aOqmQiAWD/97ngDvC9GUxeMXRHJhihMOAiqp/9ugI2zcBZEc7WiNzR91zAVh3K+dIT1LAqa1FWyxY2MpWaQBsi7D69jlO9OQTLyeMkurh3P9F/WnIaNXB1rsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746192500; c=relaxed/simple;
-	bh=9EK0Atp8rHdpu+X+rVm01GkzEyZtG4aZwO22eC6200s=;
+	s=arc-20240116; t=1746192502; c=relaxed/simple;
+	bh=TQqLWy53nCViEnaTWQFWmvMZdao7mPG4VBPe7jY2JnM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L09UA2DK/wOiYVULUnXQt86NQpTNDoiErd7Cb97nOsrXZXbDE03oa8BDEiZ48UYBDyA/+i1LvtagO7vgr5p4QSQpPEbyE4BgyxAh0JPGvJUViP1qqdZHU6AsTo07Er3q/mg6skUQzyh+v2dWaZUXGl/LxCZXV/mD/U3A+WgISoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Cl9tbAis; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:To:Cc; b=IW2VcebP6sIA9aX/I5N0qO4h5h3EIpQ+5LjUQQt2bMePos6mKoUB40xTgC/AjD/chQ3uHKmtkzHybTCZaJUf1keueELVWZ5Y7PoR5t3xjfV8Ljp4a9DUKeglF5y7lYHPWetu02YnL4S4s18ZdLLlEC/0AL7m7V/P5mQTLBj0gPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LA/kn8JS; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so11913805e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 06:28:18 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so14892365e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 06:28:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746192497; x=1746797297; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746192498; x=1746797298; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RtntWz6cXKALzOhF2uJU1XcNxPBVH+VawQkBo5EZDg8=;
-        b=Cl9tbAisCZ7CF6Omk9KfjX88GX8DuNq8qM6K4S2UAjQho5tXwOzShv6ZcYyd26kxKp
-         k79lQaCy+wBogvwhPNRRyR4wUwEUTFP7uMk57hIyF7rUA3p6Okgrwj/AIFuZ6wZhiZtZ
-         KZLrKMjYVUkoF+zY28k/7BYp25d4RdWR6tE38s+RpTDSvymnVysxn4KnxwLYmn1rw0to
-         pCVRTupo37T4TaBdJkzMAVHzYhcVj12RfGubb6xtbWon6JNg5X4UdD4hOd1iLH75bBWo
-         JPIZtNC2zUZTie4kx3/ZIij33F96QUZMmz17bP5j8D1U50O9VawJqXR5Q8Z/m2bOaQa2
-         xoYg==
+        bh=PuRbnqMan3w9A4V02ED54xhlqh03UYeyGh90bRtECvU=;
+        b=LA/kn8JSHPyd7j+pcfeP1thP2XoDfVBvl3lkd9JfzVuwT+ZFV+YgatosI7yPuGdlqS
+         1D1osmh7/IbT/6t4kAEpcpWTQfOABXcmjsw14UCe+RjbZT8m5bAGqCgzf+WvKfHB6//H
+         Dfc3I1zF63PahgZ0lMCA/MUNBMtz2w2Uht36wnkZY7STdHJ0x4x1AcLYw59A0T/SZCre
+         L7AGS3zVWLRY4vB75/LSB/lBctz9jLrrSVYcdNag9ddo/3h4CWO/h/7We4y0RPHs2tcD
+         e56WrqTnY+mQ8lVI6GX4V3nAtZJPu0GgK9UEatwQ+uWHGCBUvgHpG4jBI3PSK61tSDry
+         nnjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746192497; x=1746797297;
+        d=1e100.net; s=20230601; t=1746192498; x=1746797298;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RtntWz6cXKALzOhF2uJU1XcNxPBVH+VawQkBo5EZDg8=;
-        b=ZgsIeAp3JXszw8Zbl7+6rPlZr3YWCpEMjRU/Ch+R6Gi2RpreMf+jfTN8Gb8JdDjgKL
-         +e9Yxe9sJRJ+hVu3OeLls6kBQ2kT7pvoxGZBqArZxPZPSwITxCnTjoQhalxkMFFkyd7D
-         PnFP5UrMifVzn6RgbQwsYCt7kXrIFQ0mzwASLiakc5+IErsSHwfMA6AoMksCAd9hfNU2
-         9qqN7TIKkr6QgG4c2wT94vbaSn08z5VsJ60+e5ppPyk8CHmFjTLaFGzODsESn3MTH0wI
-         E82aoMrou2TlwjKmRLKH75K1plU07W7oU37aRj2K67FCxmiJ1AZAAahRqOhEZtABriL3
-         0N3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWK8s6gTk0gbQmCgiXmCU+6PXBD1588itUAIomLI/Pj6KApeN+ksz3RtX1P9qAe+vd39JUXT8sOmrAyEBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkyOJotD1Lwwf+jdurNZNjCbWbFTyghBOXH2u+8J2I3U2wvDtm
-	9mnsRp5JfcD4msAtZ//VGxfsrmRqm5s8dvt7QpZ35cN3PErabFzMj7qMlyzkz0A=
-X-Gm-Gg: ASbGnctB46zu/MDQL/N4xleZgE6OBVmUfXdT8Mom5BMvgb7hbw7i16dgyKF30tVvOEt
-	DjIoN8MQ3s++ABlQl9xjxIYO4LyQWbf3G2dNNuj2wg/PUVm4FlBEdYj7lpchYUV7tsh/slpd2Zj
-	L40iV7uw+wWkZ/ch6ysKO1O3XX9G/nz9+meER6FWZ1Xe2ipNKkCch+G1PMt/HOz7KUkeUnHwoeH
-	iGcWL2aM0KRHoBIN+Jhf/vJOJgOzisI5sP9obNR3Tl6zTr6KDu1fWb8TaAsl8RM+N0W9qUyuRzV
-	mCuKz7GwGxJaTBB0DR10QrPHwyknXacuiDScKAPcS0+t
-X-Google-Smtp-Source: AGHT+IHvcHbDPsyxb9la/dnjRvBkv8xkLYMqVH8JAhaqEDZzXIAl/dQSOfxdGlQyySBEP7xgydCKdA==
-X-Received: by 2002:a05:600c:628b:b0:43b:c592:7e16 with SMTP id 5b1f17b1804b1-441b72b10f2mr62622585e9.3.1746192497181;
-        Fri, 02 May 2025 06:28:17 -0700 (PDT)
+        bh=PuRbnqMan3w9A4V02ED54xhlqh03UYeyGh90bRtECvU=;
+        b=NdNuNmJx9VEHJ5xdEuWoKv8Wt1g09JMb+gzOlc+iy50VKgndcgm/DCPYm6aNVfScjN
+         rXewQB8xC/iLMkb1TGe/B6Duv8+AvOpW2n/BjEolyfqPTrc+oF//QcSV1Xh6lMFFRwfC
+         wxPGbaNOleXO6voVaGdT7D1thAi2wdYWNPVTZyuMOtHUUZkzzeag+nF+kMmJw2xYJ/b6
+         OI4Tq5usNGruzjVBVZX1SA/Z0IUClp0Z43c1ymY+HNYVLSiSq7T8fKV8gmqE+L+s0RrT
+         RWvJG/OpJ5Lg2bJ66HR+OvFde3h/GjQSp85rGvrF5wytL8MsuGjtXouCpPJ0vMpfwaj2
+         vknA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPbN0A+YDe8MZwUAahfugBsVePJInB0XAG45qx6Te6xYUH3sBGnOzw2IX8eimwZlLFOrfX9zSc1n5b5bE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxscpfji/wq+T5WA7/LJB+Ni/yIeO2c7VvkSjzHUKRZ0G35VL7q
+	r/srSkNGJncdnclay2X/FvpkCq9yGdsa30m+fr+/x0ZukXEHHavdwlro3iGiWVg=
+X-Gm-Gg: ASbGnct0dp4DnothPYLKsgDckjTRyEsQ0DT620lZTmbBY2AdJorcqmLHymYt6amMhCv
+	RY3d/ap/mLSz5J9TU/m72JQy+JtuYAAxiL4uJLd4f0w/1QO00cxcuL/TF+ihVwzrISdcG2fdc6p
+	2LTr6nSu3vwHdhjs9baMIyeUBli3tNfgTonQ8hfWaU6/kOYQpX7n/N8EKXLOxJx11X8riRZZCpb
+	GbwUek4ULT2UIUCBynNLoKIsZZJnraVlRoofdNsHSXBU1kPDMqlrnZXkQxjr519rWZIk7+dICiU
+	NdsSqQL7q32oT3c6tIhrfLn3wZKmwcR/Z5vDCWIH47O2
+X-Google-Smtp-Source: AGHT+IFQANgfE3IS1tRpNJM0Ecgeq6HCN0uHkEtPuAM+ff5mCDruJROS/5GCJdPHvUbt9Mw624sPjg==
+X-Received: by 2002:a05:600c:c86:b0:43d:47b7:b32d with SMTP id 5b1f17b1804b1-441bbf2cda5mr22225065e9.25.1746192498501;
+        Fri, 02 May 2025 06:28:18 -0700 (PDT)
 Received: from [192.168.0.2] ([87.8.31.78])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b89cc50esm45761065e9.8.2025.05.02.06.28.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b89cc50esm45761065e9.8.2025.05.02.06.28.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 06:28:16 -0700 (PDT)
+        Fri, 02 May 2025 06:28:18 -0700 (PDT)
 From: Angelo Dureghello <adureghello@baylibre.com>
 X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Fri, 02 May 2025 15:26:58 +0200
-Subject: [PATCH v2 1/5] Documentation: ABI: IIO: add calibconv_delay
- documentation
+Date: Fri, 02 May 2025 15:26:59 +0200
+Subject: [PATCH v2 2/5] iio: core: add ADC delay calibration definition
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250502-wip-bl-ad7606-calibration-v2-1-174bd0af081b@baylibre.com>
+Message-Id: <20250502-wip-bl-ad7606-calibration-v2-2-174bd0af081b@baylibre.com>
 References: <20250502-wip-bl-ad7606-calibration-v2-0-174bd0af081b@baylibre.com>
 In-Reply-To: <20250502-wip-bl-ad7606-calibration-v2-0-174bd0af081b@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>, 
@@ -98,59 +97,51 @@ Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
  Michael Hennerich <michael.hennerich@analog.com>, 
  devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1694;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1321;
  i=adureghello@baylibre.com; h=from:subject:message-id;
- bh=vb/6wvniAJeAs3RXPvCaUldK2+XHWqS8d1UiRHckMTI=;
- b=owGbwMvMwCXGf3bn1e/btlsznlZLYsgQOaEu92fjy4WvJ6i+WvtB+vefQvkn91iMJ04SkPAp/
- iwdvlBLpaOUhUGMi0FWTJGlLjHCJPR2qJTyAsbZMHNYmUCGMHBxCsBEHq9lZHg5/+5PK6Ndsq//
- T9rMHcI767huytKE/SG+YtkdiibFMa8ZGfbznYxesN3kjHXf6nWF73ZutXnMoX3G+aH+yWXmN9O
- 2SXICAA==
+ bh=aRzAUIAqWC4TDqtCS6Lh/5C89FaJdMlDTJtPJeTuUxw=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYsgQOaGe4Prlx7WUc/4Pp9hOCv5cc/iEkqbfoeg6N+Ws3
+ kae33tMOkpZGMS4GGTFFFnqEiNMQm+HSikvYJwNM4eVCWQIAxenAExEvozhD0+DQLZwyjMe9YyD
+ 5x88/vjr0Km8p526nJ/q/4sw6Um4bmT4X3w9U2pGx7bNC+yf3OM8UyzpcVIyxS/OcU2BnMo025D
+ bTAA=
 X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
  fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
 From: Angelo Dureghello <adureghello@baylibre.com>
 
-Add new IIO calibconv_delay documentation.
-
-The ad7606 implements a phase calibation feature, in nanoseconds.
-Being this a time delay, using the conv_delay suffix.
+ADCs as ad7606 implement a phase calibration as a delay.
+Add such definition, needed for ad7606.
 
 Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
- Documentation/ABI/testing/sysfs-bus-iio | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/iio/industrialio-core.c | 1 +
+ include/linux/iio/types.h       | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 33c09c4ac60a4feec82308461643134f5ba84b66..56eb42f88999660b5f93f2311b7d57e0303b0647 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -559,6 +559,26 @@ Description:
- 		- a small discrete set of values like "0 2 4 6 8"
- 		- a range specified as "[min step max]"
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 178e99b111debc59a247fcc3a6037e429db3bebf..45ce8603959e6d0985904b7feb79872bffde1126 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -188,6 +188,7 @@ static const char * const iio_chan_info_postfix[] = {
+ 	[IIO_CHAN_INFO_CALIBAMBIENT] = "calibambient",
+ 	[IIO_CHAN_INFO_ZEROPOINT] = "zeropoint",
+ 	[IIO_CHAN_INFO_TROUGH] = "trough_raw",
++	[IIO_CHAN_INFO_CALIBCONV_DELAY] = "calibconv_delay",
+ };
+ /**
+  * iio_device_id() - query the unique ID for the device
+diff --git a/include/linux/iio/types.h b/include/linux/iio/types.h
+index d89982c98368cf72c0fc30fa66ab001e48af4e8b..d1137180a8b0bf2e34cb4186dceddad4978ca766 100644
+--- a/include/linux/iio/types.h
++++ b/include/linux/iio/types.h
+@@ -69,6 +69,7 @@ enum iio_chan_info_enum {
+ 	IIO_CHAN_INFO_CALIBAMBIENT,
+ 	IIO_CHAN_INFO_ZEROPOINT,
+ 	IIO_CHAN_INFO_TROUGH,
++	IIO_CHAN_INFO_CALIBCONV_DELAY,
+ };
  
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_calibconv_delay
-+KernelVersion:  6.16
-+Contact:        linux-iio@vger.kernel.org
-+Description:
-+		Hardware applied calbiration delay (assumed to fix errors that are
-+		introduced from external circuitry).
-+		For the ad7606 ADC series, this value is intended as a time delay,
-+		as an integer plus nanoseconds.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_calibconv_delay_available
-+KernelVersion:	6.16
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Available values of calibconv_delay. Maybe expressed as:
-+
-+		- a range specified as "[min step max]"
-+
-+		If shared across all channels, <type>_calibconv_delay_available
-+		is used.
-+
- What:		/sys/bus/iio/devices/iio:deviceX/in_accel_x_calibscale
- What:		/sys/bus/iio/devices/iio:deviceX/in_accel_y_calibscale
- What:		/sys/bus/iio/devices/iio:deviceX/in_accel_z_calibscale
+ #endif /* _IIO_TYPES_H_ */
 
 -- 
 2.49.0
