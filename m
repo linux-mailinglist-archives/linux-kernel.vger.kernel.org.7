@@ -1,175 +1,154 @@
-Return-Path: <linux-kernel+bounces-630197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3294AAA76AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:05:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31DFAA76B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C827618949F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:05:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883F44C5F1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19CB25D526;
-	Fri,  2 May 2025 16:04:54 +0000 (UTC)
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023105.outbound.protection.outlook.com [52.101.127.105])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A255225D20C;
+	Fri,  2 May 2025 16:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BAtiocXK"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC5C146A68;
-	Fri,  2 May 2025 16:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746201894; cv=fail; b=iwJ032swpseElgdoEJDy/v3fti+IL3mol9gp2CuMvtaukn2AYrtrnYWMELJCEpdyRxFOSi6tLO+Xmqd5G8JKDND+i3mnn2Hla6HolJW78sFF8y8J4/xc3BHop6zlSiqiKRPjfa7nLxNNFJnmbc5822NamA4F47JY7nl0FTMGwAk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746201894; c=relaxed/simple;
-	bh=d8SmpxsOY9AbQyF+IjkG5LOZRslocnj6goryQAEDm58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KYz9ZrgyvnOWZ9UCwoxa/fDsYytioAxt3mA7Pb2runNqRfoI83z3K0SBHTypo/LGCaGw7sMHOzoWKdoCoEFI2/0ohiNAetcas0IwnD6rEjPJ/RfRFSMVb3VVkIJfzkalD91mALZjLPvSoQK7KrS9qssOGr8dbhTl3cpO+h1gkbs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wKOUErx+RfJPsjaTgBCTdMzlkd/VJ7gPGiRl1nl8A4JgP5nAM2dnMD0TXwGngkTAiuAP3EpsES5xv0eZKDH84hTHx6EbFahAZ2/7BQ0qekd4QRxjP7KSkKzBULYMDFTGFKuYESDekyYmSjKgbHXgeIpQTgCRySik092KTdBwlK15W1a7WZcPDRixC5DPMiX/XmVGzBIv4aGO1QzIb/YUzimrsFBf856/5shbNR/5tc6/Y+uuhZi8szboEtby/cMMVW6nHYwYLu4khNDrCoLED9Md6PXdZLEpR0uofMzmNznrLrcyi/frgJkWEFK8j6uj0Yz9QW5x9TIBWc8jGUh32g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mVd/Wmr9f709MYLpm+vtOoBhQg0rDtu6lXhVFlb+QTY=;
- b=Gui3jkaMwJo7ZvySeUap0UavS/yLUTBBmzb3B781fwKscnkKTy7QvqlkljARNS4MNIcNiS2CoHdYpF2pNG4lJvCTMltMdl+uQADQeYm51PzTTcFQwAylu/KcfoyqXdpaCEds2JhE0MSR8i/1Ib/ErUM7e9uXWw8cE8BMGyFLwEHPcqmUn+0rZB8M4iypeg9HCrG+mNsyVJC7vOHbDgS+/K/fdr10IaBs5kcxWn1Xn09Jiau0fVTdIy1/0s9Hblq1nQ979W8EDOy2CPTnHZtXVSbOyk+yVVf3TT7StZtj/1WuCU2cC6h+btJcPu6cOzB/zagdCyE34p+trutZ4y1jNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=grimberg.me smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TYAPR01CA0205.jpnprd01.prod.outlook.com (2603:1096:404:29::25)
- by KL1PR06MB6649.apcprd06.prod.outlook.com (2603:1096:820:fc::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Fri, 2 May
- 2025 16:04:48 +0000
-Received: from OSA0EPF000000CC.apcprd02.prod.outlook.com
- (2603:1096:404:29:cafe::99) by TYAPR01CA0205.outlook.office365.com
- (2603:1096:404:29::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.42 via Frontend Transport; Fri,
- 2 May 2025 16:04:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- OSA0EPF000000CC.mail.protection.outlook.com (10.167.240.58) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8699.20 via Frontend Transport; Fri, 2 May 2025 16:04:47 +0000
-Received: from [172.16.64.208] (unknown [172.16.64.208])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 1324240A5A01;
-	Sat,  3 May 2025 00:04:46 +0800 (CST)
-Message-ID: <87820fb9-cfd4-4b7c-b015-9626d5253a5f@cixtech.com>
-Date: Sat, 3 May 2025 00:04:43 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490FD146A68;
+	Fri,  2 May 2025 16:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746201950; cv=none; b=oGLyl39CS/kjh3T1gj7GjbQHIKCMyJwjEm5qCsrXnnh7Wj1Wn2BfFphtpHTOgQa1qBIAQhRWvN2su6jKMK3ItGlXDL1S/dT2927eaCMVJhZQsUpkPLcZqHifXjxiV0RLFJ/7UkGJ4cxjN89to5EB54zLGF1U9IdxLL2r6DrrpI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746201950; c=relaxed/simple;
+	bh=CW6howZuFs3OlyeVpRliyRH+sBNaJRlS2y4cpHK+3rk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPj1S9zFPbb5bT1Kw/KHlaJdtfcHAQmeIVaEqfWtgrPXMdTdNrcHXuZFxckjwK3MKLei7NFGDa/7otsX+KC1OXKrVFDLm38Oq6B9WV/Y5Kv25c7zdeAG8ZZ5BA9ywycgDZIBHtSIkze0tL44k7tzVvCHoE4dUA+XCBMqiLwSrHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BAtiocXK; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542G5fEZ3900136
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 11:05:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746201942;
+	bh=aIIlIfkYSdL5Az0Twy2pxwPEBxkLM4iI1QPUDLeCG60=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=BAtiocXKCBJG7TvNW41q6P3Nk4zNUXGQ/cFhwRZqIOI0LqSqloen/q91Q3sr9EwB7
+	 2+wwQ+TeI5Qbk2o1lHvYC+H/rx7Q1W4SR0B4ZT7gPraKSBTKpncTqhvw3hNxmnMuMo
+	 Kbo5u1nfSeX3MHuc0W2eXI68BNL5NfdNAua8SjZc=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542G5fbl084000
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 May 2025 11:05:41 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ May 2025 11:05:41 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 May 2025 11:05:41 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542G5fc0090643;
+	Fri, 2 May 2025 11:05:41 -0500
+Date: Fri, 2 May 2025 11:05:41 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Paresh Bhagat <p-bhagat@ti.com>
+CC: <vigneshr@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
+        <afd@ti.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for AM62D2 SoC
+Message-ID: <20250502160541.azhzbnmghrkory7h@cleaver>
+References: <20250502153915.734932-1-p-bhagat@ti.com>
+ <20250502153915.734932-2-p-bhagat@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme-pci: Fix system hang when ASPM L1 is enabled during
- suspend
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20250502032051.920990-1-hans.zhang@cixtech.com>
- <zbjd6ee22eqdu2caajq5gcwfqmq3vzz4down5jhxx7tsryu2at@ywng3qn5bbas>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <zbjd6ee22eqdu2caajq5gcwfqmq3vzz4down5jhxx7tsryu2at@ywng3qn5bbas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000CC:EE_|KL1PR06MB6649:EE_
-X-MS-Office365-Filtering-Correlation-Id: f45371ba-8cee-4c25-1f47-08dd89930fcf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aURHTFNpM3ZYT09PS0J4WHBRRFRibGwrL1hRMTVKMG9oTHpaT21rTnYzTFgz?=
- =?utf-8?B?cWVUejJqd2svZ0NPYjMzaFhTQmxqR0gyUmRyTnUvazNuNVZyc0hYRjgxNmwx?=
- =?utf-8?B?NjZJRVpyUFJ1UXdwcHhmVGFmaUVRdWlvUllQMVQyTHNpTXlyNTVxWDdVVmF3?=
- =?utf-8?B?ZUxTU29FVnErZEJpeUgxbDhQNm5icVRUdkswR1RVWDRDbG1SMmdmbTlDbkhJ?=
- =?utf-8?B?YloxTXN2di9WaS9hUERsVGJ0VkwzV00zMXIrMlROM09IVDVXbU51MjIvbVhr?=
- =?utf-8?B?d3dYYlV3SUhqOGNtNmd0NVN0K0p0UTF4NzdESURTUnVsUGFvVEhTRHVsa0dI?=
- =?utf-8?B?UDRQVEN2aXpkSVpoR0RCNXNKVWpRZDJEcklYdzY5RWJoTXF2dHhIaElsY2FC?=
- =?utf-8?B?cFZCQzE0ZWRrcWtyUVpHNkZPRHc4Si85MnFxcjFncXNOOFBBVkVGYzgwWEgr?=
- =?utf-8?B?UkUvdFRxVThVTkFaTnNoTGR2MTdzd2hoTS84WFJyNEprSS9GNm5CZUdTT1kw?=
- =?utf-8?B?UkxReWNvdkdueTZ5REtsTTVBdnBSOGVIVXhybzFnSk56TEFzYS9jQ3FHeTRp?=
- =?utf-8?B?RmFaK3dIRTJ0VHpIS2NsSWZFL0VGQUVGT0dRcGpCTG5iOUxHNnVGWk1LbEFH?=
- =?utf-8?B?QXl1emdNbVByWi9tRE5qY1RBaHNCeUNnbENGWUhPanlwZHBWS2FNNnl5NDhJ?=
- =?utf-8?B?amNqNEhybEhEU21ONmYzYlF4Y1JHS3BodkNEbHAwQlZUTUtnbkRmaHBNTHVG?=
- =?utf-8?B?MUFjL1hTanhYcS80azFVTHRKWm9GVWZvbXNSZmlwVDlDNkMxMktxamlHU3cy?=
- =?utf-8?B?ZlgxYkhpOHhJSnNhUUswV2NyZ293OTlwVUdPdmh4dzhQQjdWdm01Rmp5MlRu?=
- =?utf-8?B?LzFnbmZHZWhpeSsrNHVOVldEMDR6cFNad1ZSbTVnY3ROMTlldDJNaXBnV21Y?=
- =?utf-8?B?bUdOMEpqd0EzYlFNRkdZcDhFejZXNStyRFZFNDhUbjRtODRDcWJuOWZJUFhq?=
- =?utf-8?B?Mi9rNENRQXAxUmNjVmc4MEI5Si9rZHowNytMR3lqUFFvK0M4K2tWK2liQ3Zz?=
- =?utf-8?B?VjkvVVBmeUV5ejdVVUlLcDk5UkN2TTJ2b1B3SVFGQnFGYVZyMGlweXJQVU1P?=
- =?utf-8?B?M2ZpK1ZOZ1NIM2lSLy9QanpTbXNEQXVkbkFCd0RvOUtnTEUxaGxrWCs0K21s?=
- =?utf-8?B?bUxYVEZWaDBmckgwNVQ2SXdMUW8xTEVyMTUrOXNkdVdYVHVHb2RQWm9VRVgx?=
- =?utf-8?B?a2Uvd1psTzhET0UrczVNVTIwMEZPdGhkS3RtWFZWZlIzNmRzSitaZDlFYjE0?=
- =?utf-8?B?RFplZDArdWlYazFQVDB2bnRMNzlyV093S3d6cFRkc24zV2xKMmM2MVAwbDVP?=
- =?utf-8?B?VmtaMEZmWGVKakt2TE1BV2JOTGtlUWlJNU5FYTNmTkYwNzlNL1lkdnk4dEo2?=
- =?utf-8?B?bkQ2bTVCV25uTHNGakU5TG93WC9EaExCQmllbnhOTXBFMm1mcTQ3clRtc1Fa?=
- =?utf-8?B?Q2JaZGpyNnBWYU9DeEdQRHowL3VwZkFSZjVXeUpiZnZESnFrSE5xQWxOR1dq?=
- =?utf-8?B?MmhDRjZaNGJQQlNlU25SdzdndEc0QXNNdWxNbDd6eEZFdGJlRGtySWVGbFlz?=
- =?utf-8?B?ZGx2eGltMXBHY3RjTmwxdk85TjZmckhXNWpHOTJNM0tpSFdBbGpaNTZKZ0hR?=
- =?utf-8?B?b0hOOTRxZ3N3OTd0b0xsc1cyaUdxd1NlTTc4YWdVL0Y5SU9aaUkyU1gzVlhW?=
- =?utf-8?B?UWh0S1c5d1h1N3RLNkgraDhqY2dKNWg1V1lJdzdhK2pwUlRMdGZ4eENveWp0?=
- =?utf-8?B?Z0gwT0JzOGNBL3U1Tm9GVmZhTmFIYzNtMlBiR3V1RGhMNnF5MU9JeGFIbmh3?=
- =?utf-8?B?RUNpY013SklaaU5NQUFvYUcwQzIrNlJVZ2ROb1Z2SlQ4N3grQ3JORlFpTTdx?=
- =?utf-8?B?ZVJnNzg4WW1jWlR3b3VsdzlvdlhiTWVoTmloK3E2K1dWOE9xblQxT3pqdkVZ?=
- =?utf-8?B?RkVyMnZWZDBwbVo0Y0pESUI1SW4vNzdEZ1kweFA3M2J5LzkyNnJ0T2lBbVVE?=
- =?utf-8?Q?WgRuUj?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2025 16:04:47.0678
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f45371ba-8cee-4c25-1f47-08dd89930fcf
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: OSA0EPF000000CC.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6649
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250502153915.734932-2-p-bhagat@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On 21:09-20250502, Paresh Bhagat wrote:
+> The AM62D2 SoC belongs to the K3 Multicore SoC architecture with DSP core
+> targeted for applications needing high-performance Digital Signal
+> Processing. It is used in applications like automotive audio systems,
+> professional sound equipment, radar and radio for aerospace, sonar in
+> marine devices, and ultrasound in medical imaging. It also supports
+> precise signal analysis in test and measurement tools.
+> 
+> Some highlights of AM62D2 SoC are:
+> 
+> * Quad-Cortex-A53s (running up to 1.4GHz) in a single cluster. Dual/Single
+>   core variants are provided in the same package to allow HW compatible
+>   designs.
+> * One Device manager Cortex-R5F for system power and resource management,
+>   and one Cortex-R5F for Functional Safety or general-purpose usage.
+> * DSP with Matrix Multiplication Accelerator(MMA) (up to 2 TOPS) based on
+>   single core C7x.
+> * 3x Multichannel Audio Serial Ports (McASP) Up to 4/6/16 Serial Data Pins
+>   which can Transmit and Receive Clocks up to 50MHz, with multi-channel I2S
+>   and TDM Audio inputs and outputs.
+> * Integrated Giga-bit Ethernet switch supporting up to a total of two
+>   external ports with TSN capable to enable audio networking features such
+>   as, Ethernet Audio Video Bridging (eAVB) and Dante.
+> * 9xUARTs, 5xSPI, 6xI2C, 2xUSB2, 3xCAN-FD, 3x eMMC and SD, OSPI memory
+>   controller, 1x CSI-RX-4L for Camera, eCAP/eQEP, ePWM, among other
+>   peripherals.
+> * Dedicated Centralized Hardware Security Module with support for secure
+>   boot, debug security and crypto acceleration and trusted execution
+>   environment.
+> * One 32 bit DDR Subsystem that supports LPDDR4, DDR4 memory types.
+> * Low power mode support: Partial IO support for CAN/GPIO/UART wakeup.
+> 
+> This adds dt bindings for TI's AM62D2 family of devices.
+> 
+> More details about the SoCs can be found in the Technical Reference Manual:
+> https://www.ti.com/lit/pdf/sprujd4
+> 
+> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
 
+Looking at the board patch in the series, this is am62p5 ? what is the
+difference? If there is a difference, why is there no dtsi
+file for am62d?
 
-On 2025/5/2 23:45, Manivannan Sadhasivam wrote:
-> On Fri, May 02, 2025 at 11:20:51AM +0800,hans.zhang@cixtech.com  wrote:
->> From: Hans Zhang<hans.zhang@cixtech.com>
->>
->> When PCIe ASPM L1 is enabled (CONFIG_PCIEASPM_POWERSAVE=y), certain
->> NVMe controllers fail to release LPI MSI-X interrupts during system
->> suspend, leading to a system hang. This occurs because the driver's
->> existing power management path does not fully disable the device
->> when ASPM is active.
->>
-> Why can't you add quirks for those NVMe devices instead?
+> ---
+>  Documentation/devicetree/bindings/arm/ti/k3.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> index a6d9fd0bcaba..bac821d63cf1 100644
+> --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> @@ -31,6 +31,12 @@ properties:
+>            - const: phytec,am62a-phycore-som
+>            - const: ti,am62a7
+>  
+> +      - description: K3 AM62D2 SoC and Boards
+> +        items:
+> +          - enum:
+> +              - ti,am62d2-evm
+> +          - const: ti,am62d2
+> +
+>        - description: K3 AM62P5 SoC and Boards
+>          items:
+>            - enum:
+> -- 
+> 2.34.1
 > 
 
-Dear Mani,
-
-static int nvme_init_identify(struct nvme_ctrl *ctrl)
-   if (!ctrl->identified) {
-     for (i = 0; i < ARRAY_SIZE(core_quirks); i++) {
-	if (quirk_matches(id, &core_quirks[i]))
-	  ctrl->quirks |= core_quirks[i].quirks;
-	}
-
-
-quirk_matches needs to match the vid of each NVMe SSD. At present, I 
-have added all the vid available on the market to the quirks table, 
-which seems very unreasonable.
-
-Best regards,
-Hans
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
