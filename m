@@ -1,189 +1,462 @@
-Return-Path: <linux-kernel+bounces-629300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87AD4AA6A8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:10:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A2EAA6A96
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2997D3BF9C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:09:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223623AD062
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B3D1F4625;
-	Fri,  2 May 2025 06:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AiVEFlUu"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279C31E51E3;
-	Fri,  2 May 2025 06:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D341EB5E7;
+	Fri,  2 May 2025 06:10:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79E21EB5C2
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 06:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746166092; cv=none; b=Mu7S7ernV6ip37iU5KZ5t9o1kEg/0bGLMOydjeVZLqEjtXKdVQ0V7medHtGYEzV1hxuXvX2nOdXlNKTCZLLklXK2JQdZ/bJcNCyn2w4kooG5JwnGEEwMaBIdl80VLN6dR9kDpdy/u54CJD1eTZqxIpECYCO7dtCZMFjDbPd8gVI=
+	t=1746166244; cv=none; b=oG/23xufkn7Pc5BlAtXuTU7oV4NNcKveiZvAAikgYslOUuHMxLlFkelsRdRxcmNuWM5cl5SWq0EO5LZBK8qiQ26a9BwSCjC5DJx9qGX0Q1K4vMJaKWkMff5Oos5hnWFZA4m+xhkJz/kxhnWluYMJ/Q60v6RoxaBGVEaASdvYslQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746166092; c=relaxed/simple;
-	bh=Vx2THve1rmsHzjpjDKRkcdp0KoxQt1d23ap0dGDJAX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5V2fI9jIUoDSI1cSx/LCAaFDbH26DF5lmja4l7HfM9WrfRX+aEx8VaiEEMFghxqzvkglnCiH+lXPeNvbLSQY9JUDe3cYlHvlmL2nayTBMY7GvNhkBPm6UxtRitexvTddlt83kuljimMueOhjVz0szZwTMECGIulaTjkWPsOsuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AiVEFlUu; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 789102020964; Thu,  1 May 2025 23:08:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 789102020964
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1746166089;
-	bh=9+r69ZddY1UZkHR3/FwhIdCjqmNBZaadDjUSZVoYSAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AiVEFlUu8IfyCCGNVGXAeB65x7LTHiBsP3cyaB05BdyktmMQdrW7BvdxLv00u1I+K
-	 r1g0rPMQqAsJ3B7qyaA52zhAQgAZXeGda+rIgFQ4eUeNd7kZJ40alPQW5JDCrpituU
-	 tCG1qe5CmLcW70KOfqLSp6O8Dh//y+Ae1fadP70w=
-Date: Thu, 1 May 2025 23:08:09 -0700
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Yury Norov <yury.norov@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Kevin Tian <kevin.tian@intel.com>, Long Li <longli@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Wilczy?ski <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Simon Horman <horms@kernel.org>, Leon Romanovsky <leon@kernel.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	Paul Rosswurm <paulros@microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH v2 3/3] net: mana: Allocate MSI-X vectors dynamically as
- required
-Message-ID: <20250502060809.GA10704@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1745578407-14689-1-git-send-email-shradhagupta@linux.microsoft.com>
- <1745578478-15195-1-git-send-email-shradhagupta@linux.microsoft.com>
- <SN6PR02MB4157FF2CA8E37298FC634491D4822@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20250501142354.GA6208@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SN6PR02MB4157EAC71A53E152EE684A4DD4822@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1746166244; c=relaxed/simple;
+	bh=zn52pCbrQViBUBJs2UGRGkFO+xTr8W4XeCripHZwxEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cvf2QEosugKyx+wgQWgu7DAzk5ueo7c2Bc2rcONEbLbRDlDlUMira4HmzF2vAlWd7sv+4pF/Ius0rsy3sC0mLNcOslz9sXLdFccno/SNmy/6Z+3rnYLdQ/06JrE+7L6HKejVwaxoMKKlnfw6cxOKD6jxxbX3TR1n5vIpSILckhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCDB51063;
+	Thu,  1 May 2025 23:10:31 -0700 (PDT)
+Received: from [10.163.80.122] (unknown [10.163.80.122])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F7D83F66E;
+	Thu,  1 May 2025 23:10:35 -0700 (PDT)
+Message-ID: <f56a73a4-ae63-4a46-a493-322c4806b3a2@arm.com>
+Date: Fri, 2 May 2025 11:40:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157EAC71A53E152EE684A4DD4822@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/9] coresight: Disable programming clock properly
+To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250423151726.372561-1-leo.yan@arm.com>
+ <20250423151726.372561-5-leo.yan@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250423151726.372561-5-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 01, 2025 at 03:56:48PM +0000, Michael Kelley wrote:
-> From: Shradha Gupta <shradhagupta@linux.microsoft.com> Sent: Thursday, May 1, 2025 7:24 AM
-> > 
-> > On Thu, May 01, 2025 at 05:27:49AM +0000, Michael Kelley wrote:
-> > > From: Shradha Gupta <shradhagupta@linux.microsoft.com> Sent: Friday, April 25,
-> > 2025 3:55 AM
-> > > >
-> > > > Currently, the MANA driver allocates MSI-X vectors statically based on
-> > > > MANA_MAX_NUM_QUEUES and num_online_cpus() values and in some cases ends
-> > > > up allocating more vectors than it needs. This is because, by this time
-> > > > we do not have a HW channel and do not know how many IRQs should be
-> > > > allocated.
-> > > >
-> > > > To avoid this, we allocate 1 MSI-X vector during the creation of HWC and
-> > > > after getting the value supported by hardware, dynamically add the
-> > > > remaining MSI-X vectors.
-> > >
-> > > I have a top-level thought about the data structures used to manage a
-> > > dynamic number of MSI-X vectors. The current code allocates a fixed size
-> > > array of struct gdma_irq_context, with one entry in the array for each
-> > > MSI-X vector. To find the entry for a particular msi_index, the code can
-> > > just index into the array, which is nice and simple.
-> > >
-> > > The new code uses a linked list of struct gdma_irq_context entries, with
-> > > one entry in the list for each MSI-X vector.  In the dynamic case, you can
-> > > start with one entry in the list, and then add to the list however many
-> > > additional entries the hardware will support.
-> > >
-> > > But this additional linked list adds significant complexity to the code
-> > > because it must be linearly searched to find the entry for a particular
-> > > msi_index, and there's the messiness of putting entries onto the list
-> > > and taking them off.  A spin lock is required.  Etc., etc.
-> > >
-> > > Here's an intermediate approach that would be simpler. Allocate a fixed
-> > > size array of pointers to struct gdma_irq_context. The fixed size is the
-> > > maximum number of possible MSI-X vectors for the device, which I
-> > > think is MANA_MAX_NUM_QUEUES, or 64 (correct me if I'm wrong
-> > > about that). Allocate a new struct gdma_irq_context when needed,
-> > > but store the address in the array rather than adding it onto a list.
-> > > Code can then directly index into the array to access the entry.
-> > >
-> > > Some entries in the array will be unused (and "wasted") if the device
-> > > uses fewer MSI-X vector, but each unused entry is only 8 bytes. The
-> > > max space unused is fewer than 512 bytes (assuming 64 entries in
-> > > the array), which is neglible in the grand scheme of things. With the
-> > > simpler code, and not having the additional list entry embedded in
-> > > each struct gmda_irq_context, you'll get some of that space back
-> > > anyway.
-> > >
-> > > Maybe there's a reason for the list that I missed in my initial
-> > > review of the code. But if not, it sure seems like the code could
-> > > be simpler, and having some unused 8 bytes entries in the array
-> > > is worth the tradeoff for the simplicity.
-> > >
-> > > Michael
-> > 
-> > Hey  Michael,
-> > 
-> > Thanks for your inputs. We did think of this approach and in fact that
-> > was how this patch was implemented(fixed size array) in the v1 of our
-> > internal reviews.
-> > 
-> > However, it came up in those reviews that we want to move away
-> > from the 64(MANA_MAX_NUM_QUEUES) as a hard limit for some new
-> > requirements, atleast for the dynamic IRQ allocation path. And now the
-> > new limit for all hardening purposes would be num_online_cpus().
-> > 
-> > Using this limit and the fixed array size approach creates problems,
-> > especially in machines with high number of vCPUs. It would lead to
-> > quite a bit of memory/resource wastage.
-> > 
-> > Hence, we decided to go ahead with this design.
-> > 
-> > Regards,
-> > Shradha.
-> 
-> One other thought:  Did you look at using an xarray? See
-> https://www.kernel.org/doc/html/latest/core-api/xarray.html.
-> It has most of or all the properties you need to deal with
-> a variable number of entries, while handling all the locking
-> automatically. Entries can be accessed with just a simple
-> index value.
-> 
-> I don't have first-hand experience writing code using xarrays,
-> so I can't be sure that it would simplify things for MANA IRQ
-> allocation, but it seems to be a very appropriate abstraction
-> for this use case.
-> 
-> Michael
->
-Thanks Michael,
+Even though this might seem to be being bike shedding, the subject
+line above could be re-organized something like the following for
+better clarity.
 
-This does look promising for our usecase. I will try it with this patch,
-update the thread and then send out the next version as required.
+ coresight: Properly/Appropriately disable programming clocks
 
-Regards,
-Shradha.
+On 4/23/25 20:47, Leo Yan wrote:
+> Some CoreSight components have programming clocks (pclk) and are enabled
+> using clk_get() and clk_prepare_enable().  However, in many cases, these
+> clocks are not disabled when modules exit and only released by clk_put().
+
+That is correct, it would be definitely better to disable these clocks
+rather than doing a clk_put() that is prevalent for the pclk clocks in
+context.
+
+> 
+> To fix the issue, this commit refactors coresight_get_enable_apb_pclk()
+> by replacing clk_get() and clk_prepare_enable() with
+> devm_clk_get_enabled() for enabling APB clock.  Callers are updated
+> to reuse the returned error value.
+> 
+> With the change, programming clocks are managed as resources in driver
+> model layer, allowing clock cleanup to be handled automatically.  As a
+> result, manual cleanup operations are no longer needed and are removed
+> from the Coresight drivers.
+
+Looks correct. Although emphasizing the fact that devm_clk_get_enabled()
+is the function which gets apb and apb_pclk clocks managed in the driver
+model layer there after, might be better.
+
+> 
+> Fixes: 73d779a03a76 ("coresight: etm4x: Change etm4_platform_driver driver for MMIO devices")
+
+Seems right to classify this patch as a "Fixes: " as the clocks were not
+handled properly earlier. The commit ID is also correct as it introduced
+coresight_get_enable_apb_pclk() function.
+
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-catu.c       |  9 ++-------
+>  drivers/hwtracing/coresight/coresight-cpu-debug.c  |  6 +-----
+>  drivers/hwtracing/coresight/coresight-ctcu-core.c  | 10 ++--------
+>  drivers/hwtracing/coresight/coresight-etm4x-core.c |  9 ++-------
+>  drivers/hwtracing/coresight/coresight-funnel.c     |  6 +-----
+>  drivers/hwtracing/coresight/coresight-replicator.c |  6 +-----
+>  drivers/hwtracing/coresight/coresight-stm.c        |  4 +---
+>  drivers/hwtracing/coresight/coresight-tmc-core.c   |  4 +---
+>  drivers/hwtracing/coresight/coresight-tpiu.c       |  4 +---
+
+All call sites have been changed.
+
+>  include/linux/coresight.h                          | 16 +++-------------
+>  10 files changed, 15 insertions(+), 59 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+> index 9fcda5e49253..c0a51ab0312c 100644
+> --- a/drivers/hwtracing/coresight/coresight-catu.c
+> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+> @@ -627,7 +627,7 @@ static int catu_platform_probe(struct platform_device *pdev)
+>  
+>  	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
+>  	if (IS_ERR(drvdata->pclk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->pclk);
+
+Returning PTR_ERR() on the clock after detecting a problem via IS_ERR() is correct.
+
+>  
+>  	pm_runtime_get_noresume(&pdev->dev);
+>  	pm_runtime_set_active(&pdev->dev);
+> @@ -636,11 +636,8 @@ static int catu_platform_probe(struct platform_device *pdev)
+>  	dev_set_drvdata(&pdev->dev, drvdata);
+>  	ret = __catu_probe(&pdev->dev, res);
+>  	pm_runtime_put(&pdev->dev);
+> -	if (ret) {
+> +	if (ret)
+>  		pm_runtime_disable(&pdev->dev);
+> -		if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -			clk_put(drvdata->pclk);
+> -	}
+>  
+>  	return ret;
+>  }
+> @@ -654,8 +651,6 @@ static void catu_platform_remove(struct platform_device *pdev)
+>  
+>  	__catu_remove(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_put(drvdata->pclk);
+
+This kind of error handling is not required any more as it would be
+handled in the driver model layer here after.
+
+>  }
+>  
+>  #ifdef CONFIG_PM
+> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> index 342c3aaf414d..744b6f9b065e 100644
+> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> @@ -699,7 +699,7 @@ static int debug_platform_probe(struct platform_device *pdev)
+>  
+>  	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
+>  	if (IS_ERR(drvdata->pclk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->pclk);
+>  
+>  	dev_set_drvdata(&pdev->dev, drvdata);
+>  	pm_runtime_get_noresume(&pdev->dev);
+> @@ -710,8 +710,6 @@ static int debug_platform_probe(struct platform_device *pdev)
+>  	if (ret) {
+>  		pm_runtime_put_noidle(&pdev->dev);
+>  		pm_runtime_disable(&pdev->dev);
+> -		if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -			clk_put(drvdata->pclk);
+>  	}
+>  	return ret;
+>  }
+> @@ -725,8 +723,6 @@ static void debug_platform_remove(struct platform_device *pdev)
+>  
+>  	__debug_remove(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_put(drvdata->pclk);
+>  }
+Should not these IS_ERR_OR_NULL() here be changed to IS_ERR() ?
+Because now there could not be a NULL return value.
+
+drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev)
+
+#ifdef CONFIG_PM
+static int debug_runtime_suspend(struct device *dev)
+{
+        struct debug_drvdata *drvdata = dev_get_drvdata(dev);
+
+        if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+                clk_disable_unprepare(drvdata->pclk);
+        return 0;
+}
+
+static int debug_runtime_resume(struct device *dev)
+{
+        struct debug_drvdata *drvdata = dev_get_drvdata(dev);
+
+        if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+                clk_prepare_enable(drvdata->pclk);
+        return 0;
+}
+#endif
+
+There might more instances like these as well.
+	
+git grep IS_ERR_OR_NULL drivers/hwtracing/coresight/ | grep "drvdata->pclk"
+drivers/hwtracing/coresight/coresight-cpu-debug.c:      if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-cpu-debug.c:      if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-funnel.c: if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-funnel.c: if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-replicator.c:     if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-replicator.c:     if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-stm.c:    if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-stm.c:    if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-tpiu.c:   if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+drivers/hwtracing/coresight/coresight-tpiu.c:   if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+
+>  
+>  #ifdef CONFIG_ACPI
+> diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> index c6bafc96db96..de279efe3405 100644
+> --- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> @@ -209,7 +209,7 @@ static int ctcu_probe(struct platform_device *pdev)
+>  
+>  	drvdata->apb_clk = coresight_get_enable_apb_pclk(dev);
+>  	if (IS_ERR(drvdata->apb_clk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->apb_clk);
+>  
+>  	cfgs = of_device_get_match_data(dev);
+>  	if (cfgs) {
+> @@ -233,12 +233,8 @@ static int ctcu_probe(struct platform_device *pdev)
+>  	desc.access = CSDEV_ACCESS_IOMEM(base);
+>  
+>  	drvdata->csdev = coresight_register(&desc);
+> -	if (IS_ERR(drvdata->csdev)) {
+> -		if (!IS_ERR_OR_NULL(drvdata->apb_clk))
+> -			clk_put(drvdata->apb_clk);
+> -
+> +	if (IS_ERR(drvdata->csdev))
+>  		return PTR_ERR(drvdata->csdev);
+> -	}
+>  
+>  	return 0;
+>  }
+> @@ -275,8 +271,6 @@ static void ctcu_platform_remove(struct platform_device *pdev)
+>  
+>  	ctcu_remove(pdev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!IS_ERR_OR_NULL(drvdata->apb_clk))
+> -		clk_put(drvdata->apb_clk);
+>  }
+>  
+>  #ifdef CONFIG_PM
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index 537d57006a25..ff4ac4b686c4 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -2237,14 +2237,12 @@ static int etm4_probe_platform_dev(struct platform_device *pdev)
+>  
+>  	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
+>  	if (IS_ERR(drvdata->pclk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->pclk);
+>  
+>  	if (res) {
+>  		drvdata->base = devm_ioremap_resource(&pdev->dev, res);
+> -		if (IS_ERR(drvdata->base)) {
+> -			clk_put(drvdata->pclk);
+> +		if (IS_ERR(drvdata->base))
+>  			return PTR_ERR(drvdata->base);
+> -		}
+>  	}
+>  
+>  	dev_set_drvdata(&pdev->dev, drvdata);
+> @@ -2351,9 +2349,6 @@ static void etm4_remove_platform_dev(struct platform_device *pdev)
+>  	if (drvdata)
+>  		etm4_remove_dev(drvdata);
+>  	pm_runtime_disable(&pdev->dev);
+> -
+> -	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_put(drvdata->pclk);
+>  }
+>  
+>  static const struct amba_id etm4_ids[] = {
+> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+> index 0541712b2bcb..3fb9d0a37d55 100644
+> --- a/drivers/hwtracing/coresight/coresight-funnel.c
+> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
+> @@ -240,7 +240,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
+>  
+>  	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
+>  	if (IS_ERR(drvdata->pclk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->pclk);
+>  
+>  	/*
+>  	 * Map the device base for dynamic-funnel, which has been
+> @@ -283,8 +283,6 @@ static int funnel_probe(struct device *dev, struct resource *res)
+>  out_disable_clk:
+>  	if (ret && !IS_ERR_OR_NULL(drvdata->atclk))
+>  		clk_disable_unprepare(drvdata->atclk);
+> -	if (ret && !IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_disable_unprepare(drvdata->pclk);
+>  	return ret;
+>  }
+>  
+> @@ -354,8 +352,6 @@ static void funnel_platform_remove(struct platform_device *pdev)
+>  
+>  	funnel_remove(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_put(drvdata->pclk);
+>  }
+>  
+>  static const struct of_device_id funnel_match[] = {
+> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+> index ee7ee79f6cf7..87346617b852 100644
+> --- a/drivers/hwtracing/coresight/coresight-replicator.c
+> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
+> @@ -247,7 +247,7 @@ static int replicator_probe(struct device *dev, struct resource *res)
+>  
+>  	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
+>  	if (IS_ERR(drvdata->pclk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->pclk);
+>  
+>  	/*
+>  	 * Map the device base for dynamic-replicator, which has been
+> @@ -295,8 +295,6 @@ static int replicator_probe(struct device *dev, struct resource *res)
+>  out_disable_clk:
+>  	if (ret && !IS_ERR_OR_NULL(drvdata->atclk))
+>  		clk_disable_unprepare(drvdata->atclk);
+> -	if (ret && !IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_disable_unprepare(drvdata->pclk);
+>  	return ret;
+>  }
+>  
+> @@ -334,8 +332,6 @@ static void replicator_platform_remove(struct platform_device *pdev)
+>  
+>  	replicator_remove(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_put(drvdata->pclk);
+>  }
+>  
+>  #ifdef CONFIG_PM
+> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+> index 26f9339f38b9..c32d0bd92f30 100644
+> --- a/drivers/hwtracing/coresight/coresight-stm.c
+> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+> @@ -851,7 +851,7 @@ static int __stm_probe(struct device *dev, struct resource *res)
+>  
+>  	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
+>  	if (IS_ERR(drvdata->pclk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->pclk);
+>  	dev_set_drvdata(dev, drvdata);
+>  
+>  	base = devm_ioremap_resource(dev, res);
+> @@ -1033,8 +1033,6 @@ static void stm_platform_remove(struct platform_device *pdev)
+>  
+>  	__stm_remove(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_put(drvdata->pclk);
+>  }
+>  
+>  #ifdef CONFIG_ACPI
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> index ddca5ddf4ed2..517850d39a0e 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> @@ -990,7 +990,7 @@ static int tmc_platform_probe(struct platform_device *pdev)
+>  
+>  	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
+>  	if (IS_ERR(drvdata->pclk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->pclk);
+>  
+>  	dev_set_drvdata(&pdev->dev, drvdata);
+>  	pm_runtime_get_noresume(&pdev->dev);
+> @@ -1014,8 +1014,6 @@ static void tmc_platform_remove(struct platform_device *pdev)
+>  
+>  	__tmc_remove(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_put(drvdata->pclk);
+>  }
+>  
+>  #ifdef CONFIG_PM
+> diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
+> index 97ef36f03ec2..4b9634941752 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpiu.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+> @@ -153,7 +153,7 @@ static int __tpiu_probe(struct device *dev, struct resource *res)
+>  
+>  	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
+>  	if (IS_ERR(drvdata->pclk))
+> -		return -ENODEV;
+> +		return PTR_ERR(drvdata->pclk);
+>  	dev_set_drvdata(dev, drvdata);
+>  
+>  	/* Validity for the resource is already checked by the AMBA core */
+> @@ -293,8 +293,6 @@ static void tpiu_platform_remove(struct platform_device *pdev)
+>  
+>  	__tpiu_remove(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!IS_ERR_OR_NULL(drvdata->pclk))
+> -		clk_put(drvdata->pclk);
+>  }
+>  
+>  #ifdef CONFIG_ACPI
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index d79a242b271d..b888f6ed59b2 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -476,26 +476,16 @@ static inline bool is_coresight_device(void __iomem *base)
+>   * Returns:
+>   *
+>   * clk   - Clock is found and enabled
+> - * NULL  - clock is not found
+
+NULL is not a return value any more.
+
+>   * ERROR - Clock is found but failed to enable
+>   */
+>  static inline struct clk *coresight_get_enable_apb_pclk(struct device *dev)
+>  {
+>  	struct clk *pclk;
+> -	int ret;
+>  
+> -	pclk = clk_get(dev, "apb_pclk");
+> -	if (IS_ERR(pclk)) {
+> -		pclk = clk_get(dev, "apb");
+> -		if (IS_ERR(pclk))
+> -			return NULL;
+> -	}
+> +	pclk = devm_clk_get_enabled(dev, "apb_pclk");
+> +	if (IS_ERR(pclk))
+> +		pclk = devm_clk_get_enabled(dev, "apb");
+>  
+> -	ret = clk_prepare_enable(pclk);
+> -	if (ret) {
+> -		clk_put(pclk);
+> -		return ERR_PTR(ret);
+> -	}
+>  	return pclk;
+>  }
+>  
+Updated coresight_get_enable_apb_pclk() LGTM. IS_ERR() on the returned
+pclk value can indicate, if there was a problem in finding or enabling
+apb/apb_pclk clock.
 
