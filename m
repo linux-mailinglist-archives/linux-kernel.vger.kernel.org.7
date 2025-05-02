@@ -1,130 +1,160 @@
-Return-Path: <linux-kernel+bounces-630091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC825AA755D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E70EAA74FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9748F174AB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:54:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1838517EB15
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E8D2571D8;
-	Fri,  2 May 2025 14:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7199D256C64;
+	Fri,  2 May 2025 14:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="ZchOEboc"
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zk/y2DpQ"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00A12561B9;
-	Fri,  2 May 2025 14:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BED8254AFB;
+	Fri,  2 May 2025 14:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746197629; cv=none; b=MKMiJ4dStGxmwXaOcbiMsUi0fpLadU8elFKMXxqu3TomDmCspT+OsaQwbkwDz4dOR0TcynPBI2eGyA862ZoaqrSEmpq+Uu91Vv5e7zdqseu2+L4YS02WMSBVJxUBZrew1eE3/53Ks5agYGpEDEAXEDLvoCH2gFjEmZCnwAa8Ehg=
+	t=1746196161; cv=none; b=eIbDg52+47qlPy7SYDSHGO07echS8CLBGnwfgxHfn/Htbfj2c9Kmgt4x7Am5jvz9AIET/49RgaTqhfBlr+7e2mJwzaIjv6T3+2qnttWqEual1EtTtknlZC8ChMlXQ7VhG6xXkdGogOvcTPkkwDt3c/WiRZ5hCLane3DsnbgZ2is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746197629; c=relaxed/simple;
-	bh=j7pcQFJL7OUxmz0B8y6Bt9940twOZpQzdCtFeh/VAoo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n9jhJViY0u/Yg5mVyqOCRKQPjnMjFsTXYzrXX/2dFedPv63C6K25TYKIwSX3d0VkM++sktYcd+KkjqCrZ9USuyXlCyT/M03fYLP9PsqjUDtPRuL6tH4R/cR3zBWI+s9mdNuIYN++VHDC7aGLY4WLVmzSRYr8H++uErTaX9Qds78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=ZchOEboc; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=j7pcQFJL7OUxmz0B8y6Bt9940twOZpQzdCtFeh/VAoo=; b=ZchOEbocSQvTr75lkoncKvSA5N
-	5bVOp6uB3zaqsgYicgUyZn3sGgxz7SzV+4Luye0Y8DuazoXGX/N27NzseBsCV19FIdwk6GXIacOQ5
-	lrN4CnvxrKymbAUXUfzFLaYzR8wNATe+Phs53PYkAelSgh2TiKo/Vr1p78B8/WRhBkT2UtCCZj+Iz
-	lsl7qWfsZf1PzGLrtmkOkx39VLhXzIfESMVpZrcln1+eV8AeB4sVh/vWmOu1rhSme1bXbN5aV/Gdm
-	nXollf85kadF1H2E8QWhYvPmiW1MTbqzpceVv7YVvp6wATUeB+iSniluNSJUkcywqjUcwnur9huwV
-	+gZe2L+w==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1uArLG-000LDQ-0l;
-	Fri, 02 May 2025 16:26:18 +0200
-Received: from [92.206.190.59] (helo=[192.168.1.141])
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1uArLG-000Mtf-04;
-	Fri, 02 May 2025 16:26:18 +0200
-Message-ID: <cb3f684beec0dfd3c06e68fe57ffee9e7efc81dd.camel@apitzsch.eu>
-Subject: Re: [PATCH 0/4] media: i2c: imx214: Add support for more clock
- frequencies
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Ricardo Ribalda Delgado <ribalda@kernel.org>, Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 02 May 2025 16:26:16 +0200
-In-Reply-To: <CAPybu_0VwOTNOgLg3967fzBArg6tPTdWvHFMo6xBjjdnmx_+dQ@mail.gmail.com>
-References: <20250415-imx214_ccs_pll-v1-0-d3d7748e5fbd@apitzsch.eu>
-	 <CAPybu_0VwOTNOgLg3967fzBArg6tPTdWvHFMo6xBjjdnmx_+dQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1746196161; c=relaxed/simple;
+	bh=glgP2H8iltkXz/0itYKcwN3X2MmC22mzZto+Unw1AGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ly9s3utAtXa8gd6A1UBxC2avSlhjXQMSTVHCmZ+u6ua62zLBgJCmUud77HbnlTsBnIkATo6PJFEuLPMWi8jg4a0Hh+wx4Z5mTzMF41XhSSmufUcsq8yizpoUmCiYL6AjTxX+vndWL76gXhrZTVWVECXjeG7H5KRMNBEdunlsXqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zk/y2DpQ; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-309d2e8c20cso2837113a91.0;
+        Fri, 02 May 2025 07:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746196157; x=1746800957; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uv62vQqp6Wg2reIArK9ykz+gkyvcDoUeNoaYwXskcxk=;
+        b=Zk/y2DpQ3084WO1fnma3F35iHrHxRUA4l8H+6zd1SGzujCppfg4xAL7jOOx3GcCVLh
+         dfGfTbFi9KkM83m5+8YKG3tbBCb49ryfhlepuAvLnVfK0343cjPVek6VajLcb2VmSYi8
+         yvQa4b0YCst1mjFwzr5j+3Nd1nTfo14MFg2JlJ+lCkXJ6DrNP08LXzqhbNURTQ1QNsqr
+         qLtADPFlR2rJ6+NhFbTmbFVRJsw312oJeDr4r+X55C9Qdc8m+mQoDRKZUiPMHEGKm8Bv
+         MM9PaEb5YSza6UbLqoHT7Dvdwq8Y3nhId+KENFhz0ZNUAQhXVTw337vovrfJ9rN9aCDZ
+         eCbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746196157; x=1746800957;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uv62vQqp6Wg2reIArK9ykz+gkyvcDoUeNoaYwXskcxk=;
+        b=obkj4Ig7C8V1TMeVv2pUHeKK4RZqbDdQ6MdyhzvlgaHg6VuJhgrkhtbP6sd3YyFyGh
+         yJ3owsp4zL4emzqI2/5g3Fj5kS2oR3mZFCtm1fQv9/g2Om0bCKOijSzhkuDzq99+ZjGk
+         5NlpFiktl+3evY0IgMS3wj4z8dNgBDJzlG3LVAx0fFRXrzu6KEfGIPHNs4YYkC0NXgyw
+         xnlqtXyn7qMekCfWczuTpuJ4JkbE8O11ng3RRZ/x9f9raqzNZqw4IgQW9aMS76ljIoW7
+         eX6lYD+hlKB/150mlXLT9VZzjdFtfsCDp5A6u5WFYKtynqp58w70SUKNZTTve7yrO/Ff
+         PBKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYnAKUODEfmAxPwyRs4KfErhebiky5dqPIxiGrUwnhT81vrTxd4DN5oSc/TodRx52bee3fDLhZV6vmXw==@vger.kernel.org, AJvYcCUut1lmQsUVK+fyiG7LNkl0E///WkEhvh9e5VsevGd/OyR09TY/xS1HVd3/dEc8vGUT50psIoaaqeYA@vger.kernel.org, AJvYcCX20ldXsh86z/Y58jTC+fXhYydEuqGhB80ACUxx21KI2tv2jqqGE5ykENgoHuCxecS57IZ/h7y4TxIbkz5j@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrOG2tFPSnxKTioYLjABPqQFdwsCesGTMfrypoqt68xj9UPWYE
+	OqO4eCBMpbKgk24jBfZshy/mlnSl3bNoPXNWoS5jIjsDiprhgZ9R
+X-Gm-Gg: ASbGncsA/SrvWqIkjabaSS6pBEI2kOO3N/w092k6S8GmDd+cPy6tWUypRaYbnZgE3Aa
+	ysTewtmXS7M3T9csaXg5YWlt3VRu0ibQDJW59LMTsE3tXNPauqmkwCRvtWtcLusECrxAFmIldh8
+	/QCNtCzvQ1v0xmEKWBeXJSnGT7KrV90lIMhnKrmfeDFCyA1AErQzL3L6FMphEshjk2qBbkaOT2I
+	PlutP+brzPfo4UFthmMfKsBnN9089HnUftwAKofE/ddGzEWwcMGGi+bSlDZsOXTKNcvTRcRTqUn
+	jng3iq4/b4fCO12smArGpIvjat4dHSuAVTf3XHj5gdsF7queSxMSMD1gTHSF
+X-Google-Smtp-Source: AGHT+IGcxrpY5FwVcx8yrFraaIa7JOCgeuZA4gWlDNgGNkVeXC5Z1ByWUsBuDYSZ9H3EEoZMid1q1w==
+X-Received: by 2002:a17:90b:55d0:b0:2fe:b907:562f with SMTP id 98e67ed59e1d1-30a4e5ab679mr5576244a91.14.1746196157465;
+        Fri, 02 May 2025 07:29:17 -0700 (PDT)
+Received: from localhost ([2804:30c:4024:1700:8e03:72a4:b895:b221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22e1659f8b8sm4747735ad.14.2025.05.02.07.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 07:29:16 -0700 (PDT)
+Date: Fri, 2 May 2025 11:30:34 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	andy@kernel.org, nuno.sa@analog.com, Michael.Hennerich@analog.com,
+	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
+	brgl@bgdev.pl, lgirdwood@gmail.com, broonie@kernel.org,
+	jonath4nns@gmail.com, dlechner@baylibre.com,
+	David Lechner <dlechner@baylire.com>
+Subject: Re: [PATCH v6 07/11] iio: adc: ad7768-1: add multiple scan types to
+ support 16-bits mode
+Message-ID: <aBTXCi0HINcrvXay@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1745605382.git.Jonathan.Santos@analog.com>
+ <0a214d5dfacc3976db71af8a80f9dcf2887fe6cc.1745605382.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authenticated-Sender: andre@apitzsch.eu
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27626/Fri May  2 10:32:14 2025)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a214d5dfacc3976db71af8a80f9dcf2887fe6cc.1745605382.git.Jonathan.Santos@analog.com>
 
-Hi Sakari,
+Hi Jonathan,
 
-Am Donnerstag, dem 24.04.2025 um 08:28 +0800 schrieb Ricardo Ribalda
-Delgado:
-> On Wed, Apr 16, 2025 at 5:22=E2=80=AFAM Andr=C3=A9 Apitzsch via B4 Relay
-> <devnull+git.apitzsch.eu@kernel.org> wrote:
-> >=20
-> > The imx214 driver currently supports only a 24 MHz external clock.
-> > But
-> > there are devices, like Qualcomm-MSM8916-based phones, which cannot
-> > provide this frequency. To make the sensor usable by those devices,
-> > add
-> > support for additional clock frequencies.
-> >=20
-> > This series supersedes
-> > https://lore.kernel.org/linux-media/20250308-imx214_clk_freq-v1-0-467a4=
-c083c35@apitzsch.eu/
-> >=20
-> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> Acked-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> > Andr=C3=A9 Apitzsch (4):
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Reorder imx214_parse=
-_fwnode call
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Prepare for variable=
- clock frequency
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Make use of CCS PLL =
-calculator
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Read clock frequency=
- from device tree
-> >=20
-> > =C2=A0drivers/media/i2c/Kconfig=C2=A0 |=C2=A0=C2=A0 1 +
-> > =C2=A0drivers/media/i2c/imx214.c | 262
-> > +++++++++++++++++++++++++++++++++++----------
-> > =C2=A02 files changed, 205 insertions(+), 58 deletions(-)
-> > ---
-> > base-commit: 5b37f7bfff3b1582c34be8fb23968b226db71ebd
-> > change-id: 20250406-imx214_ccs_pll-e4aed0e9e532
-> >=20
-> > Best regards,
-> > --
-> > Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> >=20
-> >=20
+The new adjustable sample rate / precision patch looks good to me.
+My only concern is about one error handling path in the trigger handler function.
+With that sorted out
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
-Any chance, this can be applied for the next merge window?
+On 04/27, Jonathan Santos wrote:
+> When the device is configured to decimation x8, only possible in the
+> sinc5 filter, output data is reduced to 16-bits in order to support
+> 1 MHz of sampling frequency due to clock limitation.
+> 
+> Use multiple scan types feature to enable the driver to switch
+> scan type in runtime, making possible to support both 24-bit and
+> 16-bit resolution.
+> 
+> Reviewed-by: David Lechner <dlechner@baylire.com>
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+...
+> +enum ad7768_scan_type {
+> +	AD7768_SCAN_TYPE_NORMAL,
+> +	AD7768_SCAN_TYPE_HIGH_SPEED,
+> +};
+> +
+> +static const int ad7768_mclk_div_rates[4] = {
+I think we can omit the 4 constant here
+static const int ad7768_mclk_div_rates[] = {
+
+Probably not a reason for a v7 if the other parts of the series are good.
+> +	16, 8, 4, 2,
+> +};
+> +
+...
+>  
+> @@ -674,9 +722,15 @@ static irqreturn_t ad7768_trigger_handler(int irq, void *p)
+>  	struct iio_poll_func *pf = p;
+>  	struct iio_dev *indio_dev = pf->indio_dev;
+>  	struct ad7768_state *st = iio_priv(indio_dev);
+> +	const struct iio_scan_type *scan_type;
+>  	int ret;
+>  
+> -	ret = spi_read(st->spi, &st->data.scan.chan, 3);
+> +	scan_type = iio_get_current_scan_type(indio_dev, &indio_dev->channels[0]);
+> +	if (IS_ERR(scan_type))
+> +		return PTR_ERR(scan_type);
+
+The IRQ never gets handled if we get an error from iio_get_current_scan_type()?
+Maybe make it jump to out?
+	if (IS_ERR(scan_type))
+		goto out;
+
+> +
+> +	ret = spi_read(st->spi, &st->data.scan.chan,
+> +		       BITS_TO_BYTES(scan_type->realbits));
+>  	if (ret < 0)
+>  		goto out;
+>  
 
 Best regards,
-Andr=C3=A9
+Marcelo
 
