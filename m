@@ -1,145 +1,111 @@
-Return-Path: <linux-kernel+bounces-629821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D57AA71E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D762AA71EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3381A4A47F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A624C76C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6120E254AE5;
-	Fri,  2 May 2025 12:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC272550D5;
+	Fri,  2 May 2025 12:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5Aq20Um"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K54sUJUw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC37D2566D4;
-	Fri,  2 May 2025 12:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DD2253B65
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746188996; cv=none; b=l/HY/LNeAVoNnYuUdXD3tio0+7m3fO9rA1qPrgMcrymPJfRsFslm1oKqfMp/R3btnE+2MGTGpPgbin5dErECcK5IILhXJBiFtiRYq9MqQI7GbJrZfa3lp7TmwjvC0UnqIce3icpX1Bf5Vs3CcIqBfHFN7ORO1J5RxFwV9tlkZwE=
+	t=1746189117; cv=none; b=cVZ0ZeOAmxo405ilsBDwAecpPBPjejaQ6a26FpLtTzdGlWCglae0Am3U4yhm6kz8/eJRGUsSA3SdQxFMv0lwI2X68gQw5e5UtYS0QO+PlyP0x+ikO3nllFaBSBKiNpDpm6smWGGKRga7ea+MYM7+aFdxnba39ACWcrudiiUNvHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746188996; c=relaxed/simple;
-	bh=DGcYu+3DqZNwUOU60M33ZGmzLjkivOhGbY2ClBN8f/4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jphPvsfU8ZX9qR/bvHcCwtb4BLo+AsAyh4nUyaetN2AMuOOOGNManzlQ6KU54SDOXAWnlcahHrKNiTHLq+CIoqTHmsnxJlnI31yuZfZ3Zoz/+3uFxToOa9hVcA8BhArzubnYzTiUFuEDsGVJpXUguHYkaTyIDmXbs4SgtTImgjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5Aq20Um; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5614C4CEEF;
-	Fri,  2 May 2025 12:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746188996;
-	bh=DGcYu+3DqZNwUOU60M33ZGmzLjkivOhGbY2ClBN8f/4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=A5Aq20UmZw/n8JuSJthdNPcL2VufHRnX86P9N5/lDJDQ1Nl3rYcA59uYY/tHf7Eqy
-	 20yeBrxIabqqt93vElvDVvAyQqY2N8wWbX79hyCq3b9e4N4zjzMy3/byNpHlAL5yAh
-	 DQpMs3dacjTe84NqvpFxzc8NxHhycI5HaqJVDtMWKS1N/sy1JScmUWxCCZuxrBRpps
-	 DlT2947AWIfX/T6O1edUogJ4erzQ2TyPagA/1ITxwpg/XR/CsmxdK26jGoi/IozjK0
-	 1CpV15GX7WDp3Yu8vk9AHPsAH7cRgry4JOTIw+o07lj+rQeZY4PE+9Dyh9jSJuMae0
-	 3mYLlaeqq09VA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 02 May 2025 14:29:27 +0200
-Subject: [PATCH net-next 7/7] selftests: mptcp: add chk_sublfow in diag.sh
+	s=arc-20240116; t=1746189117; c=relaxed/simple;
+	bh=GkXiLNgzW9mmgGjaUY3tIVBfD72D6XNB+kAGB4cYukg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FvoeJBdVFpfnEJ0AeT0yTRl4uwPxP+8lCC+Ue+g/eHEoOqXFMQdakZC+iihGkugkL53eClhrZDsjSp6JdKftHrzKzJ9BtXTUOjFlCNi935uBazHKojhpbjjDrA+/vgrUwSQch/Amga6ohUcv0fMC7/sJCDB9V7DHYhmC35Cd7+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K54sUJUw; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746189116; x=1777725116;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GkXiLNgzW9mmgGjaUY3tIVBfD72D6XNB+kAGB4cYukg=;
+  b=K54sUJUwg8FnuS1RjpwkDfDMlPFd7J1Eshpd3Z/PVo+CxASDi068uXJJ
+   Hk+9fKO1gQJcCAxbuWm9p5xEZIHaHaqCGNfi+9diETSCHmH0QRjH5/H5h
+   nweD7U5BtWNYe0L2AE5Pdf6XDtFuK/0PV2q6R9N4d+0VrwAloeJ3lG7XS
+   eL4ar1UM/lXMp5A8DVu9ygxaAM//0Wyr8zl6pC05JbQrysVPkFufC7L2E
+   H7lvh1LHIse02M9JlQFKLHwvyxckxQuAohsujojDwQ+0riMV1dWPnmzo1
+   gTPjSXJn6PSAhIWCURZOBKI7q2KVQ7x2qBWDUL3L//PndQO+sp9Uwb3Me
+   Q==;
+X-CSE-ConnectionGUID: 0UIkHLssTv+352pEdx/6dw==
+X-CSE-MsgGUID: aUEmNInFRzu30cSeNOWSkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="47955293"
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
+   d="scan'208";a="47955293"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 05:31:52 -0700
+X-CSE-ConnectionGUID: fEDrHztITBqrs7z5ZuNUEQ==
+X-CSE-MsgGUID: vvB4fXKhRdGMltDoUWVaAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
+   d="scan'208";a="135592035"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 02 May 2025 05:31:50 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id DE3EC1A1; Fri, 02 May 2025 15:31:47 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Denis Mukhin <dmukhin@ford.com>
+Subject: [PATCH v1 0/6] x86/boot: Enable earlyprintk on MMIO (8-bit)
+Date: Fri,  2 May 2025 15:29:36 +0300
+Message-ID: <20250502123145.4066635-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250502-net-next-mptcp-sft-inc-cover-v1-7-68eec95898fb@kernel.org>
-References: <20250502-net-next-mptcp-sft-inc-cover-v1-0-68eec95898fb@kernel.org>
-In-Reply-To: <20250502-net-next-mptcp-sft-inc-cover-v1-0-68eec95898fb@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- Gang Yan <yangang@kylinos.cn>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1984; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=JQOWlruNPp9QEkq2WeaRRQQFmYLUfEbcF8gyDviCmTk=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDJEdq2Naprr8HbH2oIpBw1DDmc9O66+ZMbL2eW/Sxarx
- gi4XdFO7ChlYRDjYpAVU2SRbovMn/m8irfEy88CZg4rE8gQBi5OAZjIknqGv2KBIuqsYbM0713X
- SJbXXm3n7VzL17fv+tTJn/mv3Yk9fYSR4X4Qg6TNhiwRyXtMXcYbb8xYXnR256/ZaZP4e3mEjWZ
- t4wEA
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Transfer-Encoding: 8bit
 
-From: Gang Yan <yangang@kylinos.cn>
+Some of the platforms may have no legacy COM ports and only provide
+an MMIO accessible UART. Add support for such to earlyprintk for the
+boot phase of the kernel.
 
-This patch aims to add chk_dump_subflow in diag.sh. The subflow's
-info can be obtained through "ss -tin", then use the 'mptcp_diag'
-to verify the token in subflow_info.
+Andy Shevchenko (6):
+  x86/boot: Convert early_serial_base to unsigned long
+  x86/boot: Introduce helpers for serial I/O
+  x86/boot: Split out parse_serial_port() helper for earlyprintk
+  x86/boot: Allow longer parameter list for earlyprintk
+  x86/boot: Also share MMIO accessors
+  x86/boot: Introduce MMIO accessors and their support in earlyprintk
 
-Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/524
-Co-developed-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Gang Yan <yangang@kylinos.cn>
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/diag.sh | 32 +++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/tools/testing/selftests/net/mptcp/diag.sh b/tools/testing/selftests/net/mptcp/diag.sh
-index e7a75341f0f32304ff4e58c9b2500d405124dc74..7a3cb4c09e450f0ae570015c4724ec268c6dc19f 100755
---- a/tools/testing/selftests/net/mptcp/diag.sh
-+++ b/tools/testing/selftests/net/mptcp/diag.sh
-@@ -225,6 +225,37 @@ chk_dump_one()
- 	fi
- }
- 
-+chk_dump_subflow()
-+{
-+	local inet_diag_token
-+	local subflow_line
-+	local ss_output
-+	local ss_token
-+	local msg
-+
-+	ss_output=$(ss -tniN $ns)
-+
-+	subflow_line=$(echo "$ss_output" | \
-+		       grep -m1 -Eo '[0-9.]+:[0-9].+ +[0-9.]+:[0-9.]+')
-+
-+	ss_token=$(echo "$ss_output" | grep -m1 -Eo 'token:[^ ]+')
-+
-+	inet_diag_token=$(ip netns exec $ns ./mptcp_diag -s "$subflow_line" | \
-+			  grep -Eo 'token:[^ ]+')
-+
-+	msg="....chk dump_subflow"
-+
-+	mptcp_lib_print_title "$msg"
-+	if [ -n "$ss_token" ] && [ "$ss_token" = "$inet_diag_token" ]; then
-+		mptcp_lib_pr_ok
-+		mptcp_lib_result_pass "${msg}"
-+	else
-+		mptcp_lib_pr_fail "expected $ss_token found $inet_diag_token"
-+		mptcp_lib_result_fail "${msg}"
-+		ret=${KSFT_FAIL}
-+	fi
-+}
-+
- msk_info_get_value()
- {
- 	local port="${1}"
-@@ -316,6 +347,7 @@ chk_msk_fallback_nr 0 "....chk no fallback"
- chk_msk_inuse 2
- chk_msk_cestab 2
- chk_dump_one
-+chk_dump_subflow
- flush_pids
- 
- chk_msk_inuse 0 "2->0"
+ arch/x86/boot/boot.h                          |   4 +-
+ .../boot/compressed/early_serial_console.c    |   5 +-
+ arch/x86/boot/compressed/misc.c               |   4 +-
+ arch/x86/boot/compressed/misc.h               |   8 +-
+ arch/x86/boot/early_serial_console.c          | 114 ++++++++++++++----
+ arch/x86/boot/tty.c                           |   9 +-
+ arch/x86/include/asm/io.h                     |  65 ----------
+ arch/x86/include/asm/shared/io.h              |  68 +++++++++++
+ 8 files changed, 177 insertions(+), 100 deletions(-)
 
 -- 
-2.48.1
+2.47.2
 
 
