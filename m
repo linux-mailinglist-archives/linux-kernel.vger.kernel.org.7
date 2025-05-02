@@ -1,151 +1,181 @@
-Return-Path: <linux-kernel+bounces-630232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB4BAA773F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:27:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39B4AA7735
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725981B60C69
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838263B0419
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66FE25DAE4;
-	Fri,  2 May 2025 16:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E195525DCE4;
+	Fri,  2 May 2025 16:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wGI3abTR"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3aZWnUC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956A82609F7;
-	Fri,  2 May 2025 16:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F43D3C465;
+	Fri,  2 May 2025 16:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746203178; cv=none; b=movj9e15uMjscOe1VdpYjGnFo8/hyGYL3xfKteF5RJcRFvZ+UxfL/+p34oTTkx61SpPwmM8bfMz0dAnT5cLHO8njNZJl4qjKkz9kbgB8Mq2LLLOB3QAjOEzPxv9yzSSWDP//KkgwCkDlBfd09sGDRWvE0PQXhCWpr/mIIW+P8co=
+	t=1746203147; cv=none; b=qd1oJkhfvMXXL9uqRC/ubZGLTCuyaDIlUrzZdOET8DQ9jXx96aJ2Yt1IyfxGlFl6bq4kZIDVPVb7nnC0c3OjRDSl1Drg0qXpIraoRKqu5RzwY8+bHuRJetFMTgxC2hxsXHj79vRmxY6UK+DdjiuyvMMG1AnmnLzDhvN5FKqAwBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746203178; c=relaxed/simple;
-	bh=4iNIEE4y/RQ1nYh8BrYUSolMwW26mY5tQJXNooGYbEU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FR12OzM0Xp8omOY/Cb1b3xwRbQawkUt7BNXg9riGfPz1aUxD4FFxf488nYp+9JN25++i5DofbrjGCSpCEBRXzn8WR2+tr9px7aNsLbPHuBjRo+ESbUvcbRCB7nuNtHKO3f91QsKGJr8GRSm7enTQ+DMVj6B6WllyYsIL/yIoqCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wGI3abTR; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542GQ6C8448894
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 2 May 2025 11:26:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746203166;
-	bh=Of8g9618ZH89TKBMPSTzOkja8KKZL8ustRn0kzQjYOk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=wGI3abTR6DKUQtt4nY2aOSJN/ERwB1KBUFTS1GQ4km61wcjfW5Z+pY4OnQ5q+RHr5
-	 rFO2X68plwNxfMS1OHCOdr4s+X0xHeHlBuzh1yYjtJxEpLDDiB6NbzejFT3PPtblQb
-	 6K1PWJlN26uLLtEjXeF7GpqE+1l3rx7r16NPQAnc=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542GQ63b031257
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 2 May 2025 11:26:06 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
- May 2025 11:26:05 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 2 May 2025 11:26:05 -0500
-Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [10.24.69.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542GPexA028994;
-	Fri, 2 May 2025 11:26:01 -0500
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <devarsht@ti.com>,
-        <y-abhilashchandra@ti.com>, <s-jain1@ti.com>, <jai.luthra@linux.dev>,
-        <jai.luthra@ideasonboard.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <imx@lists.linux.dev>, <r-donadkar@ti.com>
-Subject: [PATCH v2 4/4] arm64: dts: ti: k3-am62x: Add required voltage supplies for TEVI-OV5640
-Date: Fri, 2 May 2025 21:55:39 +0530
-Message-ID: <20250502162539.322091-5-r-donadkar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250502162539.322091-1-r-donadkar@ti.com>
-References: <20250502162539.322091-1-r-donadkar@ti.com>
+	s=arc-20240116; t=1746203147; c=relaxed/simple;
+	bh=SoYH9fAelyV/OGDhVqF4z37NINCFU2ZaE+FhKzVeIgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GJbWBrs2DhECXLW7VKSDmGzoQo4JMaHXs4hTfTyyVILPJLbMDHoiIaAs2IQ/H1mjbktAWQYRg+VXrMWXCImvk4n1uCcUuBQ/2MS3SBhAzPL16cvgz/5DJYBveDGHlXB2aKa/JVySa/+ZiVsqOc/+6jrf3lmYSZP+2EeQJZpUgss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3aZWnUC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E031EC4CEE4;
+	Fri,  2 May 2025 16:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746203146;
+	bh=SoYH9fAelyV/OGDhVqF4z37NINCFU2ZaE+FhKzVeIgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m3aZWnUC7rLjBGOG9+KQzip5059CX5+9VT5bsv/KBfc4elrFh/gzXzTK3m2E2QQiz
+	 fbjvGUiHQay8r796UJYOfLqaIEbfmV+6ESJDNghy8HQbO2RYxTwyOk98ZDgDaCfUqq
+	 LZXftpF9Bq07uj9d7RLg4yrgtBfhSVyabZU0dW19Kw/+9rLizT5rGAXKj5rVyuyTfF
+	 JbNkDDj082obrn6ccHXC4ghILL+t7IHORhDnE3MK392SNO4IedGTxBgzBMyi3eIqBG
+	 n4E/Q2kn2FAYOvxOI7Oy6ez03U7rxWCbeb5Cu4pBgaivkDzLQYEYwdJQ7ttWIkHfb1
+	 2UDsTPggFuylQ==
+Date: Fri, 2 May 2025 09:25:40 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org,
+	nick.desaulniers+lkml@gmail.com, morbo@google.com,
+	justinstitt@google.com, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, frederic@kernel.org, joey.gouly@arm.com,
+	james.morse@arm.com, hardevsinh.palaniya@siliconsignals.io,
+	shameerali.kolothum.thodi@huawei.com, ardb@kernel.org,
+	ryan.roberts@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arm64/cpufeature: annotate arm64_use_ng_mappings with
+ ro_after_init to prevent wrong idmap generation
+Message-ID: <20250502162540.GB2850065@ax162>
+References: <20250502145755.3751405-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502145755.3751405-1-yeoreum.yun@arm.com>
 
-The device tree overlay for TEVI-OV5640 requires following voltage
-supplies as mentioned in the power section [1]
+Hi Yeoreum,
 
-AVDD-supply: Analog voltage supply, 2.8 volts
-DOVDD-supply: Digital I/O voltage supply, 1.8 volts
-DVDD-supply: Digital core voltage supply, 3.3 volts
+On Fri, May 02, 2025 at 03:57:55PM +0100, Yeoreum Yun wrote:
+> create_init_idmap() could be called before .bss section initialization
+> which is done in early_map_kernel() since data/test_prot could be set
+> wrong for PTE_MAYBE_NG macro.
+> 
+> PTE_MAYBE_NG macro is set according to value of "arm64_use_ng_mappings".
+> and this variable is located in .bss section.
+> 
+>    # llvm-objdump-21 --syms vmlinux-gcc | grep arm64_use_ng_mappings
+>      ffff800082f242a8 g O .bss    0000000000000001 arm64_use_ng_mappings
+> 
+> If .bss section doesn't initialized, "arm64_use_ng_mappings" would be set
+> with garbage value ant then the text_prot or data_prot could be set
+> with garbgae value.
+> 
+> Here is what i saw with kernel compiled via llvm-21
+> 
+>   // create_init_idmap()
+>   ffff80008255c058: d10103ff     	sub	sp, sp, #0x40
+>   ffff80008255c05c: a9017bfd     	stp	x29, x30, [sp, #0x10]
+>   ffff80008255c060: a90257f6     	stp	x22, x21, [sp, #0x20]
+>   ffff80008255c064: a9034ff4     	stp	x20, x19, [sp, #0x30]
+>   ffff80008255c068: 910043fd     	add	x29, sp, #0x10
+>   ffff80008255c06c: 90003fc8     	adrp	x8, 0xffff800082d54000
+>   ffff80008255c070: d280e06a     	mov	x10, #0x703     // =1795
+>   ffff80008255c074: 91400409     	add	x9, x0, #0x1, lsl #12 // =0x1000
+>   ffff80008255c078: 394a4108     	ldrb	w8, [x8, #0x290] ------------- (1)
+>   ffff80008255c07c: f2e00d0a     	movk	x10, #0x68, lsl #48
+>   ffff80008255c080: f90007e9     	str	x9, [sp, #0x8]
+>   ffff80008255c084: aa0103f3     	mov	x19, x1
+>   ffff80008255c088: aa0003f4     	mov	x20, x0
+>   ffff80008255c08c: 14000000     	b	0xffff80008255c08c <__pi_create_init_idmap+0x34>
+>   ffff80008255c090: aa082d56     	orr	x22, x10, x8, lsl #11 -------- (2)
+> 
+> Note (1) is load the arm64_use_ng_mappings value in w8.
+> and (2) is set the text or data prot with the w8 value to set PTE_NG bit.
+> If .bss section doesn't initialized, x8 can include garbage value
+> -- In case of some platform, x8 loaded with 0xcf -- it could generate
+> wrong mapping. (i.e) text_prot is expected with
+> PAGE_KERNEL_ROX(0x0040000000000F83) but
+> with garbage x8 -- 0xcf, it sets with (0x0040000000067F83)
+> and This makes boot failure with translation fault.
+> 
+> This error cannot happen according to code generated by compiler.
+> here is the case of gcc:
+> 
+>    ffff80008260a940 <__pi_create_init_idmap>:
+>    ffff80008260a940: d100c3ff      sub     sp, sp, #0x30
+>    ffff80008260a944: aa0003ed      mov     x13, x0
+>    ffff80008260a948: 91400400      add     x0, x0, #0x1, lsl #12 // =0x1000
+>    ffff80008260a94c: a9017bfd      stp     x29, x30, [sp, #0x10]
+>    ffff80008260a950: 910043fd      add     x29, sp, #0x10
+>    ffff80008260a954: f90017e0      str     x0, [sp, #0x28]
+>    ffff80008260a958: d00048c0      adrp    x0, 0xffff800082f24000 <reset_devices>
+>    ffff80008260a95c: 394aa000      ldrb    w0, [x0, #0x2a8]
+>    ffff80008260a960: 37000640      tbnz    w0, #0x0, 0xffff80008260aa28 <__pi_create_init_idmap+0xe8> ---(3)
+>    ffff80008260a964: d280f060      mov     x0, #0x783      // =1923
+>    ffff80008260a968: d280e062      mov     x2, #0x703      // =1795
+>    ffff80008260a96c: f2e00800      movk    x0, #0x40, lsl #48
+>    ffff80008260a970: f2e00d02      movk    x2, #0x68, lsl #48
+>    ffff80008260a974: aa2103e4      mvn     x4, x1
+>    ffff80008260a978: 8a210049      bic     x9, x2, x1
+>    ...
+>    ffff80008260aa28: d281f060      mov     x0, #0xf83      // =3971
+>    ffff80008260aa2c: d281e062      mov     x2, #0xf03      // =3843
+>    ffff80008260aa30: f2e00800      movk    x0, #0x40, lsl #48
+> 
+> In case of gcc, according to value of arm64_use_ng_mappings (annoated as(3)),
+> it branches to each prot settup code.
 
-Add them in the DT overlay.
+> However this is also problem since it branches according to garbage
+> value too -- idmapping with wrong pgprot.
+> 
+> To resolve this, annotate arm64_use_ng_mappings as ro_after_init.
+> 
+> Fixes: 84b04d3e6bdb ("arm64: kernel: Create initial ID map from C code")
+> Cc: <stable@vger.kernel.org> # 6.9.x
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> ---
 
-Link: https://www.technexion.com/wp-content/uploads/2023/09/product-brief_tevi-ov5640.pdf
-Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
----
- .../dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso  | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
+This appears to resolve the issue that I reported to LLVM upstream:
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-index b6bfdfbbdd984..fe3bc29632fa9 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-@@ -15,6 +15,33 @@ clk_ov5640_fixed: ov5640-xclk {
- 		#clock-cells = <0>;
- 		clock-frequency = <24000000>;
- 	};
-+
-+	reg_2p8v: regulator-2p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "2P8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&vcc_3v3_sys>;
-+		regulator-always-on;
-+	};
-+
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_3v3_sys>;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vcc_3v3_sys>;
-+		regulator-always-on;
-+	};
- };
- 
- &main_i2c2 {
-@@ -40,6 +67,11 @@ ov5640: camera@3c {
- 
- 				clocks = <&clk_ov5640_fixed>;
- 				clock-names = "xclk";
-+
-+				AVDD-supply = <&reg_2p8v>;
-+				DOVDD-supply = <&reg_1p8v>;
-+				DVDD-supply = <&reg_3p3v>;
-+
- 				powerdown-gpios = <&exp1 13 GPIO_ACTIVE_LOW>;
- 
- 				port {
--- 
-2.34.1
+https://github.com/llvm/llvm-project/issues/138019
 
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+
+It does not look like there is anything for the compiler to fix in this
+case, correct?
+
+> ---
+>  arch/arm64/kernel/cpufeature.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index d2104a1e7843..967ffb1cbd52 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -114,7 +114,7 @@ static struct arm64_cpu_capabilities const __ro_after_init *cpucap_ptrs[ARM64_NC
+> 
+>  DECLARE_BITMAP(boot_cpucaps, ARM64_NCAPS);
+> 
+> -bool arm64_use_ng_mappings = false;
+> +bool arm64_use_ng_mappings __ro_after_init = false;
+>  EXPORT_SYMBOL(arm64_use_ng_mappings);
+> 
+>  DEFINE_PER_CPU_READ_MOSTLY(const char *, this_cpu_vector) = vectors;
+> --
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> 
+> 
 
