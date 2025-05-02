@@ -1,267 +1,205 @@
-Return-Path: <linux-kernel+bounces-629127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16439AA6808
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 02:53:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08F3AA6812
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2F31BC0ED4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:53:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BDA37A8F77
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7C47DA82;
-	Fri,  2 May 2025 00:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E3178F36;
+	Fri,  2 May 2025 00:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="haDqlruz"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2072.outbound.protection.outlook.com [40.107.249.72])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="s2iCQGZc"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BD62576;
-	Fri,  2 May 2025 00:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746147213; cv=fail; b=F1/dfPBSWoUbGCgUD1gZp+cZDom7g2eJx9fAj8ysD0zPNSFzZq9zfwIX9OYebzgkH3UGLNH5cMz+sf60H2ntJhoqIbTXmk6dy/sZdAPkFKQVYYaCA5k2g9IjlOOpgb8uE7uciVpVG6uEBQ6o0hxHOvF9t0z4flSh8A58JZp49Zo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746147213; c=relaxed/simple;
-	bh=/4S1YFgckpMKa/fHS+bY/JXLyW31ZdpFrBi3mBS5QK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jG8598jRbXPCRPkVLzCyvOFHwiZ0w6+UbMCszZIVdKQ0lQb5vDdgRV5StxBdW7mGOCp3CmOsxwLLmY/r7ltr/Q4TGarxADBmuq9z+bQH5dV4MeOc1huwL5eELGBEzjGV9GzuE2ctOvcJlxq0uv1+Dj/ZnULEV9GWr5ieBQVTgos=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=haDqlruz; arc=fail smtp.client-ip=40.107.249.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jz/rq4ZApivzun0D75nMy7qrpFuHppCjC9k48DqSkHXvfbtk3Y/jqvI/i/0rkynRkJPOEJywi3etFkiSx4aAkOYwxSIhYtZ7N3VIs0w1lPkVg0HYSQ9kawzBhW6fjummlbHghDchT6IkxtOHepO6n1SFmYnnnDAZuC8Df2qGltqa/0n6t5fyRE4FYsRx6Ot7VFGkIdrPRZKBoK6v9wzcUpAOf59aEac1ATPKJqnu1MKUsXMHyEMXP+YyfE144vt2Ds0tyKkjkAH+5emUgp1c/u/cVm3VHJK7QcsAPHZfaTVXGZLZsQQBMsghUZZO8vXZXXwq4iwWqAMVxEbIkvtSYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QaPAhhYZdAQb+b6bbsjQvDIxS++tUdBdh4ugELOxs1g=;
- b=AFwmV7rbtauJcnyV1omW710+gHXlUMd1jFZc+epX8PnKUcLD/1pIHwCpC5H5b1AyTPZtHRrm/wQePpynrteSe3ui8QSZLRbGe/Sp7rSE//22nbRAp2MMoi84WH6o8WtsPmFQcwzO2m9ffug4OOeycBNqOkVAYD4CPIbd0QeEk4XsI0Dc83jYR1PZQQB73OkSEHFb81wJ/tvCnpRBdnTFa5VOjanu1PvhI058cJrpmWXKMpJC3csTE0E7EyDdpFJQQoobpnrPP2Phx574KrvmvjRJmNh0ryp9kE/4NrwKSbf41Ej9G75svOnGJHw5N61RKSAtEMlMCy5HOIzOi5hNDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QaPAhhYZdAQb+b6bbsjQvDIxS++tUdBdh4ugELOxs1g=;
- b=haDqlruzXP9WS2kAjryo6+mhbhPcO0nNxDLD4Q0rJDGqafYQGZHRl6vtyV6HWu4ZxXoiQ3TMSzUZ98saE2WEI/bZn09tyyrlGuqu6AYqoPgj8OJkJanlnvU4M0OazFCL0hfqW4zkVwSgL5Wt13E2nrBCDvY3CqmuX0HQ/V2N3oHEHg1zevgtBPeAs/o4UPE0Ts97ubynEGSBzNW2TZnbQpTN+BBbRVMatA8p2rSSlhXVnmXRJuF98rs9Ge3aWhe3SxSc9hySeGHQxuDHnLEIdMs9ktmXu2yGftmxSGDDIkkC8TWDOfIBox6mmMUsWqZEUL1dce3SwQVJjBCNG5pSiQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU4PR04MB10574.eurprd04.prod.outlook.com (2603:10a6:10:581::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.22; Fri, 2 May
- 2025 00:53:26 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8699.021; Fri, 2 May 2025
- 00:53:26 +0000
-Date: Thu, 1 May 2025 20:53:17 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Robert Chiras <robert.chiras@nxp.com>,
-	"Guoniu.zhou" <guoniu.zhou@nxp.com>
-Subject: Re: [PATCH v4 03/13] media: nxp: imx8-isi: Remove unused offset in
- mxc_isi_reg and use BIT() macro for mask
-Message-ID: <aBQXfW6dzdyFI1GN@lizhi-Precision-Tower-5810>
-References: <20250408-8qxp_camera-v4-0-ef695f1b47c4@nxp.com>
- <20250408-8qxp_camera-v4-3-ef695f1b47c4@nxp.com>
- <20250421210655.GM17813@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250421210655.GM17813@pendragon.ideasonboard.com>
-X-ClientProxiedBy: PH8PR02CA0029.namprd02.prod.outlook.com
- (2603:10b6:510:2da::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D13433CB;
+	Fri,  2 May 2025 00:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746147590; cv=none; b=jO6lCYqPbRAu0vDN+RTVuGQcLdrep9e2XtxI/juLgaPQOjaMzJTscxE4YxqlzZvI1Le2tXWScYosZCf/zGt0NybzeIhF83/7ur5M664CLpIMZcwWc2hyz5/l9nu+G7GxYfPM5cJqYJy9XSzQhP/yvZuEvqYn9FXp2Dp30tZ/2Q4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746147590; c=relaxed/simple;
+	bh=PVesPbYkqOP+9Z+LGxE1J8BQGqxPkdwWHQylE1/O1P4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JEgqlqM7/unb+15rmgik+OzlS8bMpTfrNSqkHYfJZl6CmMM8wunueXuZBy/9DBEUwnctbVdIuYdrFzNG5ELgBwnKc9FmpZ8V2SwKigxlB+VHvFFI7K4YM17huNqAwnO8R/68pL77npMjfvazIFJjKAVH706afJoBIoZ433tYM0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=s2iCQGZc; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1746147589; x=1777683589;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=QbLsOfDNvR5xLvwrQ+Nl+SRY2k86rF/xQk20R+fkGJc=;
+  b=s2iCQGZctmfSOT8ruC+rn1Nr649T3wmx1POlQZhZd+yElqg2XLvjrb1S
+   VvAHBtBFYcwtg2w5rYMz2+wpzzqJZaxtME/kNXAMwfGriehUlLPwuZwUl
+   6+sJTuFeG9SaxX3PAFOZJhj9a5098TejAAVlNi4u3fy1Gi6sOC+AwEayP
+   E=;
+X-IronPort-AV: E=Sophos;i="6.15,255,1739836800"; 
+   d="scan'208";a="293667840"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 00:59:45 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:20046]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.11.224:2525] with esmtp (Farcaster)
+ id 177bb22e-7fb3-49be-ae3a-09e546e7697f; Fri, 2 May 2025 00:59:44 +0000 (UTC)
+X-Farcaster-Flow-ID: 177bb22e-7fb3-49be-ae3a-09e546e7697f
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 2 May 2025 00:59:43 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.171.41) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 2 May 2025 00:59:41 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <syzbot+8dd1a8ebe4c3793f5aca@syzkaller.appspotmail.com>
+CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<horms@kernel.org>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzkaller-bugs@googlegroups.com>, <kuniyu@amazon.com>
+Subject: Re: [syzbot] [net?] WARNING: suspicious RCU usage in __fib6_update_sernum_upto_root
+Date: Thu, 1 May 2025 17:53:22 -0700
+Message-ID: <20250502005933.64039-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <6813584a.050a0220.3a872c.0011.GAE@google.com>
+References: <6813584a.050a0220.3a872c.0011.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10574:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32259751-d1a9-4d5e-46db-08dd8913bf3d
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?Xlwo0E5d0WAIy8A742avJGPsw6lyH+UnkZfAM6CsKjV3d9pfge0CTQmQlGpX?=
- =?us-ascii?Q?Sd8NBQjL3nrmeM8OzKNssnmpR9oyxLSIlFetJ8dnH66R6yYGlToU/lD4DPS9?=
- =?us-ascii?Q?TREeHGCfkHWoeMz8bW0tBNMWCv7AQrG6NqJ6t/5O0aw8vDTohB8M9UHEi0Ao?=
- =?us-ascii?Q?YQg31bVOAMZXZxUPt2vzpBJ1CSPFcDh6WbHwLOTHpsBkDtw7LQgHeea/76ce?=
- =?us-ascii?Q?v30AxfsfoeuX8JGV/Ta4YDA9j6xA3gE8w7bbbcV+P3b1CNuhzA9X1OJvFm58?=
- =?us-ascii?Q?lpBitxBcotf7ue33Ik8vZegXId8oS3OWmF1ScE3s/6zN3vKjSeMygYMWD3LZ?=
- =?us-ascii?Q?qilJKM3Mw/TjVnY59rXMrepmBdWoOonbP0vv8KhmIO+w8NBMw4en9nWq6raR?=
- =?us-ascii?Q?CeRbUWnfl3DVFeFxB2tNqoq0QSxdwnGIYIg9I0HWDKd5lHkOdFR0ZWcbQDoY?=
- =?us-ascii?Q?xN2sPbuHrDcQw5uPN/7xf04jdVFBac23/QnrGK3tQZ93WqY1C1LOY2jBIG41?=
- =?us-ascii?Q?pI/ukXm+RD0M5m3Y9DRURA0+YU4XQ5ey0+aHe+uJZkthWasaPZvOtk+qusNq?=
- =?us-ascii?Q?MGN33zO1oxgT11dp91+6UQT4lUuw0jDwunKyWLTZk6Doa7giy4DvdjWOy2zn?=
- =?us-ascii?Q?VcXykrEtYo0Cgty2pARMjpbTIm4fkv7Wv5qexNRz34yySHTd52XUdmil/KBp?=
- =?us-ascii?Q?/9afYQVwN+TECCKXseCd3P8bHnNPTI7KxtpbR+57f/NLRb4/5KhjnwMNRlWL?=
- =?us-ascii?Q?jsR6SG+JZUfb2kSKth/YjxCkhxk2WDbxo6hV7wzu8dBkAAfMvh78/eyxwzLV?=
- =?us-ascii?Q?oLjtDx5o3Wkp6SZD0LyQwhvaXB9ITlPVrA6Sxd+OxvrRuCQx8vORhX70t5KZ?=
- =?us-ascii?Q?Bip/ZOYygTZrE91ARiKb0hRAphVsWn/oWHwWr1eAGztOSo8sr5+zn8j3cUFZ?=
- =?us-ascii?Q?QZ1z8cWoMwUHq6Smn3iIoOhB4dbHS/+nYziwR1IXXinBe/5UYmPYikIF9gPi?=
- =?us-ascii?Q?jTWqPrJOUTCKCoUQA9ouFjtZ0UCQhKEDmw3MY8lulXJJt7StntRMiqGvUQRP?=
- =?us-ascii?Q?jkbYuQtIxpfot4qWC9bBqmb51rLao7ds/LbKJzjTTnWYhF2If+AqPIFxl6j1?=
- =?us-ascii?Q?nzExNz3T5eOrFYZm/3KaGpOqjGhMXcLXgM4/SvJ82B2pYaB477TlZwyQ50Fg?=
- =?us-ascii?Q?bqcE63VRQw7491J8dPFuA87tXaUBJt0xLitPZXHxpgKthnf9FlqCyuiQsnu8?=
- =?us-ascii?Q?ozg4Qn4iDYOYp6gdFZ1NURoSz500jLxv3m6gA7H/bO8N5dHYZBcpVhuj8FMy?=
- =?us-ascii?Q?g3YaTF0poBKJR3k9QKkk9juG3Mez9Ne7M020sQAVqoJhhKbD75xr7QBNGTYC?=
- =?us-ascii?Q?9uBGDhf5XtlsDWWtE7WTAdSbxmYYbv3nZmuwr43QYHBoPXNVwyXaN+jKDYQ4?=
- =?us-ascii?Q?NvoX3jextVZKOyOuJXZ81iIARebIrNAVuynr/r+a5e1bCSyw4WSsIQ=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?YlsCJQ9sRQujVgJHf42f9gTRwo9BYbBXqBy+a6ZdWw0lQOBr4LLnPbMfcDWu?=
- =?us-ascii?Q?NUPqrjyVC7HquUKy5Lx/EWGDZfmkuKr+A+0UAvlwu3YOzWPC9T7vbC1eRp6k?=
- =?us-ascii?Q?JryBS3tX0Nm7jYqZqzi0Xs9XNWmfhwK5LjNHfbtjxNkrlgt/zRpLmdthKCSo?=
- =?us-ascii?Q?FGMOsD9jhSkQZSL6r8oBStHTQ0sIZjSnj1BZEB/FKMm0BXL7x6iI6XdknrCL?=
- =?us-ascii?Q?Tsl4wySjW1y6NALSKlzpGPh/a12eqhr79cbWyUdyiMwJ01slL8CjkARxDE7F?=
- =?us-ascii?Q?Gdilx5yVuPnQXxRjYWaJB0Ekgrcmzdieo/X3YJ0QLF758fd/MWxs6fD4OenJ?=
- =?us-ascii?Q?fmKccz4XRvMrRArtmMO7xJeQvn4AWysGGbmI/3oljODtP5JyrQqh3lvRmEJS?=
- =?us-ascii?Q?9uPrqW1+iAA8gH3Xj13XpxxwiLu63cYMFrikxyUKHErQUG+gU22kFX/DtiJ/?=
- =?us-ascii?Q?F6EuLqi3Iiu7UrBp+0QarCdm8ZfZm7kDHaJZs7qVJHFa4YCelZCrIo5Dm/Bh?=
- =?us-ascii?Q?USc9FLZJmXjUbcJEgKjDt3Lt/eS5ghSPSEldC4DPHMGmfEyxyGUgGJ07Qarf?=
- =?us-ascii?Q?Mx2eAd07EY2hsN4bz5QxrW2fSwlaxX5Bf3OIUI/sk6BNyQcoK3uquqSU9xvi?=
- =?us-ascii?Q?t2jodZml3D6dFYkewERQ5XI2PmrrDikkN3cDhfKS2s6u5nuoY+AeJV9xHcaj?=
- =?us-ascii?Q?OnuVf8sPfGuYupqPz+KPqC4hvKkwd8X8DOAGlpndzvJBV5kXAkeqE8/5Gpm8?=
- =?us-ascii?Q?N0lQ/Kx9bG3pXs65iwgrxBoxcWMgl7T1RdqXrd9UC95i4dl0qBPkGPzE2m/o?=
- =?us-ascii?Q?ydlXCHojv9cDQ5hbBxPOcJymVQqMTZtWi2/Yy3uPXDSJcwk9daKLdgNVq3gZ?=
- =?us-ascii?Q?k8EkZut6wn+Kk5mX/yr/RBYr0EacGuFiY3F0ovucrjgYfCLV8woLepYUreNw?=
- =?us-ascii?Q?c74MOs7v6mQh60ln/zDWk3DxZ7XnMaPLqm0h2+NB9aauxBR9oimdVxZxBPju?=
- =?us-ascii?Q?b5/ZgD07O4n3PdXpbCg1FPdzWJBAhJQfeuhcyX+zq/esiANh0dK9IRV+05qm?=
- =?us-ascii?Q?DUTIrqyzE9uqoOvQnVrJAOos9dlA0dbM7vQ0aRi9wVDIROOtG+oHvqrR1Ftb?=
- =?us-ascii?Q?MMEMIX/KuQfyTZrQAZBckFg9+Lb7kvC1zrDl3Ppr+PKAY94HfHncMi3rEYFp?=
- =?us-ascii?Q?IAVEN/WEs9aIP3pugl5t67gAG7uM5V7ylCZw+wPF4QWLDEE7VuYYbaHwgvsy?=
- =?us-ascii?Q?6Fum+AdUOufQro7LQ443IKYW0/KFr6r6eEBczGVDUzkUnl1Fkfl8QJ0xmiO0?=
- =?us-ascii?Q?bNawfD3FqxCmJdxTADlSVvEc3kolTvpfFgqI7kaXkj3Io5CnLF9ATQigCwZZ?=
- =?us-ascii?Q?ZbuTMiEbR1+jcm89CIRiFR1+BTeWg+HbGSNQJ4NvufDUXYIq3gWqPAJMixPj?=
- =?us-ascii?Q?MaJP5BMI1InvnveJyNZ+O7ji342VIvHZGl6cY4UXzHbbr8bQUKlPg/QqOXhL?=
- =?us-ascii?Q?Uta1YIU9GW9FQ9DITjDcSWkMPhrpAl61GkTXi4PeNeGuyi3ybnb36x2giVvE?=
- =?us-ascii?Q?i0zX/aDWm6SVZc/GwE0=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32259751-d1a9-4d5e-46db-08dd8913bf3d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2025 00:53:26.4334
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vwryeYR0iZouu6ZZnj60ghJLmrcyLaEVb6GUarVpAMTvInghUu/zFwpTq0x/E9KnKwvKBHI+kmIZRRFepRq8NA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10574
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D045UWC004.ant.amazon.com (10.13.139.203) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Tue, Apr 22, 2025 at 12:06:55AM +0300, Laurent Pinchart wrote:
-> Hi Frank,
->
-> Thank you for the patch.
->
-> On Tue, Apr 08, 2025 at 05:53:01PM -0400, Frank Li wrote:
-> > Preserve clarity by removing the unused 'offset' field in struct mxc_isi_reg,
-> > as it duplicates information already indicated by the mask and remains unused.
->
-> The commit message line length limit is normally 72 characters. I can
-> reflow when applying if no other change to the series is needed.
+From: syzbot <syzbot+8dd1a8ebe4c3793f5aca@syzkaller.appspotmail.com>
+Date: Thu, 01 May 2025 04:17:30 -0700
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    b6ea1680d0ac Merge tag 'v6.15-p6' of git://git.kernel.org/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1457502f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=a42a9d552788177b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8dd1a8ebe4c3793f5aca
+> compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/8b0865e8a7ea/disk-b6ea1680.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/fab387b8c42a/vmlinux-b6ea1680.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/bfb50db06aa1/bzImage-b6ea1680.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+8dd1a8ebe4c3793f5aca@syzkaller.appspotmail.com
+> 
+> =============================
+> WARNING: suspicious RCU usage
+> 6.15.0-rc4-syzkaller-00042-gb6ea1680d0ac #0 Not tainted
+> -----------------------------
+> net/ipv6/ip6_fib.c:1351 suspicious rcu_dereference_protected() usage!
 
-I remember it is 75 chars. Any document show it is 72. I need correct for
-the other patches also.
+This is
 
-Frank
->
-> >
-> > Improve readability by replacing hex value masks with the BIT() macro.
-> >
-> > No functional change.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> > ---
-> >  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 25 +++++++++++-----------
-> >  .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  1 -
-> >  2 files changed, 13 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> > index 1e79b1211b603..ecfc95882f903 100644
-> > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> > @@ -3,6 +3,7 @@
-> >   * Copyright 2019-2020 NXP
-> >   */
-> >
-> > +#include <linux/bits.h>
-> >  #include <linux/clk.h>
-> >  #include <linux/device.h>
-> >  #include <linux/errno.h>
-> > @@ -247,24 +248,24 @@ static void mxc_isi_v4l2_cleanup(struct mxc_isi_dev *isi)
-> >
-> >  /* For i.MX8QXP C0 and i.MX8MN ISI IER version */
-> >  static const struct mxc_isi_ier_reg mxc_imx8_isi_ier_v1 = {
-> > -	.oflw_y_buf_en = { .offset = 19, .mask = 0x80000  },
-> > -	.oflw_u_buf_en = { .offset = 21, .mask = 0x200000 },
-> > -	.oflw_v_buf_en = { .offset = 23, .mask = 0x800000 },
-> > +	.oflw_y_buf_en = { .mask = BIT(19) },
-> > +	.oflw_u_buf_en = { .mask = BIT(21) },
-> > +	.oflw_v_buf_en = { .mask = BIT(23) },
-> >
-> > -	.panic_y_buf_en = {.offset = 20, .mask = 0x100000  },
-> > -	.panic_u_buf_en = {.offset = 22, .mask = 0x400000  },
-> > -	.panic_v_buf_en = {.offset = 24, .mask = 0x1000000 },
-> > +	.panic_y_buf_en = { .mask = BIT(20) },
-> > +	.panic_u_buf_en = { .mask = BIT(22) },
-> > +	.panic_v_buf_en = { .mask = BIT(24) },
-> >  };
-> >
-> >  /* For i.MX8MP ISI IER version */
-> >  static const struct mxc_isi_ier_reg mxc_imx8_isi_ier_v2 = {
-> > -	.oflw_y_buf_en = { .offset = 18, .mask = 0x40000  },
-> > -	.oflw_u_buf_en = { .offset = 20, .mask = 0x100000 },
-> > -	.oflw_v_buf_en = { .offset = 22, .mask = 0x400000 },
-> > +	.oflw_y_buf_en = { .mask = BIT(18) },
-> > +	.oflw_u_buf_en = { .mask = BIT(20) },
-> > +	.oflw_v_buf_en = { .mask = BIT(22) },
-> >
-> > -	.panic_y_buf_en = {.offset = 19, .mask = 0x80000  },
-> > -	.panic_u_buf_en = {.offset = 21, .mask = 0x200000 },
-> > -	.panic_v_buf_en = {.offset = 23, .mask = 0x800000 },
-> > +	.panic_y_buf_en = { .mask = BIT(19) },
-> > +	.panic_u_buf_en = { .mask = BIT(21) },
-> > +	.panic_v_buf_en = { .mask = BIT(23) },
-> >  };
-> >
-> >  /* Panic will assert when the buffers are 50% full */
-> > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> > index 9c7fe9e5f941f..e7534a80af7b4 100644
-> > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> > @@ -114,7 +114,6 @@ struct mxc_isi_buffer {
-> >  };
-> >
-> >  struct mxc_isi_reg {
-> > -	u32 offset;
-> >  	u32 mask;
-> >  };
-> >
->
-> --
-> Regards,
->
-> Laurent Pinchart
+	struct fib6_node *fn = rcu_dereference_protected(rt->fib6_node,
+				lockdep_is_held(&rt->fib6_table->tb6_lock));
+
+and ...
+
+> 
+> other info that might help us debug this:
+> 
+> 
+> rcu_scheduler_active = 2, debug_locks = 1
+> 3 locks held by syz.0.6334/23457:
+>  #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+>  #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+>  #0: ffffffff8f2e2008 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4064
+>  #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+>  #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+>  #1: ffffffff8df3b860 (rcu_read_lock){....}-{1:3}, at: __fib6_clean_all+0x9b/0x380 net/ipv6/ip6_fib.c:2263
+>  #2: ffff88807b4a5830 (&tb->tb6_lock){+.-.}-{3:3}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+>  #2: ffff88807b4a5830 (&tb->tb6_lock){+.-.}-{3:3}, at: __fib6_clean_all+0x1ce/0x380 net/ipv6/ip6_fib.c:2267
+> 
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 23457 Comm: syz.0.6334 Not tainted 6.15.0-rc4-syzkaller-00042-gb6ea1680d0ac #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  lockdep_rcu_suspicious+0x140/0x1d0 kernel/locking/lockdep.c:6865
+>  __fib6_update_sernum_upto_root+0x223/0x230 net/ipv6/ip6_fib.c:1350
+>  fib6_update_sernum_upto_root+0x125/0x190 net/ipv6/ip6_fib.c:1364
+>  fib6_ifup+0x142/0x180 net/ipv6/route.c:4818
+>  fib6_clean_node+0x24a/0x590 net/ipv6/ip6_fib.c:2199
+>  fib6_walk_continue+0x678/0x910 net/ipv6/ip6_fib.c:2124
+>  fib6_walk+0x149/0x290 net/ipv6/ip6_fib.c:2172
+>  fib6_clean_tree net/ipv6/ip6_fib.c:2252 [inline]
+>  __fib6_clean_all+0x234/0x380 net/ipv6/ip6_fib.c:2268
+
+here we hold rcu_read_lock() and spin_lock_bh(&table->tb6_lock)..
+
+so rt->fib6_table->tb6_lock is different from table->tb6_lock ??
+
+fib6_link_table() is called without lock in fib6_tables_init(),
+but it should be fine unless someone asynchronously triggeres a
+thread that tries to access the main/local route table during
+__net_init and races with fib6_tables_init() ?
+
+In such a case, the possible fix would be
+
+---8<---
+diff --git a/net/ipv6/ip6_fib.c b/net/ipv6/ip6_fib.c
+index 1f860340690c..a26b8e9896f5 100644
+--- a/net/ipv6/ip6_fib.c
++++ b/net/ipv6/ip6_fib.c
+@@ -304,8 +304,10 @@ EXPORT_SYMBOL_GPL(fib6_get_table);
+ 
+ static void __net_init fib6_tables_init(struct net *net)
+ {
++	spin_lock_bh(&net->ipv6.fib_table_hash_lock);
+ 	fib6_link_table(net, net->ipv6.fib6_main_tbl);
+ 	fib6_link_table(net, net->ipv6.fib6_local_tbl);
++	spin_unlock_bh(&net->ipv6.fib_table_hash_lock);
+ }
+ #else
+ 
+---8<---
+
+but I'd like to wait for a repro.
+
+
+>  rt6_sync_up+0x128/0x160 net/ipv6/route.c:4837
+>  addrconf_notify+0xd55/0x1010 net/ipv6/addrconf.c:3729
+>  notifier_call_chain+0x1b3/0x3e0 kernel/notifier.c:85
+>  netif_state_change+0x284/0x3a0 net/core/dev.c:1530
+>  do_setlink+0x2eb6/0x40d0 net/core/rtnetlink.c:3399
+>  rtnl_group_changelink net/core/rtnetlink.c:3783 [inline]
+>  __rtnl_newlink net/core/rtnetlink.c:3937 [inline]
+>  rtnl_newlink+0x149f/0x1c70 net/core/rtnetlink.c:4065
+>  rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6955
+>  netlink_rcv_skb+0x219/0x490 net/netlink/af_netlink.c:2534
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>  netlink_unicast+0x758/0x8d0 net/netlink/af_netlink.c:1339
+>  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
+>  sock_sendmsg_nosec net/socket.c:712 [inline]
+>  __sock_sendmsg+0x219/0x270 net/socket.c:727
+>  ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+>  __sys_sendmsg net/socket.c:2652 [inline]
+>  __do_sys_sendmsg net/socket.c:2657 [inline]
+>  __se_sys_sendmsg net/socket.c:2655 [inline]
+>  __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
