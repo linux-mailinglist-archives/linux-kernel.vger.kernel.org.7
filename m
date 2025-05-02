@@ -1,171 +1,305 @@
-Return-Path: <linux-kernel+bounces-630045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287C2AA74E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:25:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4C1AA74B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1F657B1D7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2389E735C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97ECB256C69;
-	Fri,  2 May 2025 14:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0854078F43;
+	Fri,  2 May 2025 14:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CTTHQzKJ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="M0Rm0Utu"
+Received: from mx10.gouders.net (mx10.gouders.net [202.61.206.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F32623A562;
-	Fri,  2 May 2025 14:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3945170A2B;
+	Fri,  2 May 2025 14:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.206.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746195909; cv=none; b=hRCzvs7pka8R1NZ8XxPsQc1i6JdIUKEz2hHSsKjcyEzRhPnLH8MnAkooRGL7499y+I6tR+mza7h/y16/xt7UbVd9EZ9Lf3dywGint7rL9vZkAA1z/ZzJKd+o82+qBcamZHROUfsSmGf34k/OsxRErL/6NfkLsEh2PqNYvXEaLlo=
+	t=1746195340; cv=none; b=FptQGHcp2p5TY+XX3t7d0rhaHhDUaTmaTOmQUKOnD0SeFiIwiqbjVPNMHMbZE/e5p1Yk1qpt28VRwP5kVaxjnfrKhObTFT6niWFZu79Gtd5+8SBIT0s2d0vEtPfXq4qf5fe33E19msUxK7mOVOBPo3+ARpbG+2blpzmLTFpnVRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746195909; c=relaxed/simple;
-	bh=32/4+qmrGM/xnIFFxa4eHYZW/9RkizeOtr7qMjIWSHk=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=rUGmziZ9Lclw9XQJMqaHkCNdCBG9KPQuL/F/04kI+JYfwqGuEChlru+xPeqRd8nY+rfHStg4CiNFrSncWepqJ+FaZ7sI4l1WPcakWHos11jm8KGNgfavdQ2GlYA8/8RXRWU28Mv6Pbgx8kR4cZn7TcNHPXOTpiM8NQoh3HvjTWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CTTHQzKJ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=WUExRaEQQnsPbw/eE+wP4SXVeUzVT4DYtJ6VYKm6RJk=; b=CTTHQzKJDVw6WuXZTThKx+OeIO
-	eYjbrEQz2JDcu8DFhxMoFGger3VPyg7yimLDQFdspR1RcJD3T0/0NVHn+Jyh5+wMzW0ZqzyLXE4/3
-	yr2/y1fQ5ilUCDjD8cCZu9V1J293H7ZXpAWOscv3Mn9i7nQvM8SDwknMlaf86Dg7xU1H7nabjBR24
-	uy/A7J1wpxMD1bNkTIW9WLGkvPEIAGY0RBC46h9PQZP863sduzYxqydV2O4qCR7F55LSK3KHFrnWy
-	Pi3pCJBrHUmFsEpAkihVG27mAOYsgzPpW2e+lCkPBvGymms6D36yWoD+fEuyt8VWSKc+GTs+s6OUp
-	S/OR9ewg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uArK2-0000000EzDq-0NeD;
-	Fri, 02 May 2025 14:25:02 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 037DD3001AE; Fri,  2 May 2025 16:24:59 +0200 (CEST)
-Message-ID: <20250502141844.369838967@infradead.org>
-User-Agent: quilt/0.66
-Date: Fri, 02 May 2025 16:12:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: mcgrof@kernel.org
-Cc: x86@kernel.org,
- hpa@zytor.com,
- petr.pavlu@suse.com,
- samitolvanen@google.com,
- da.gomez@samsung.com,
- masahiroy@kernel.org,
- nathan@kernel.org,
- nicolas@fjasle.eu,
- linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org,
- hch@infradead.org,
- gregkh@linuxfoundation.org,
- roypat@amazon.co.uk,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH v3 5/5] module: Provide EXPORT_SYMBOL_GPL_FOR_MODULES() helper
-References: <20250502141204.500293812@infradead.org>
+	s=arc-20240116; t=1746195340; c=relaxed/simple;
+	bh=RIfl0KP/59TNe/iVyeBl8pr/SbLz3bMSndMSKx1wQno=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u9NA6TNsm0ixYDwbJwcwYqE3ANgWq3pvxno/aP8LHHx/Oen5lL5aiwYILNL3rDof4IKop37ZtXtXem1HVcT/0BUZSsBtlMqomyITq4zRCJOLYb3mR/VQ3gp8UPpM7wU05dzdA4wWd805u+88Z9HQn6tFG5wzJL8SpE1aOnkJ9cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net; spf=pass smtp.mailfrom=gouders.net; dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b=M0Rm0Utu; arc=none smtp.client-ip=202.61.206.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gouders.net
+Received: from localhost (ip-109-42-178-232.web.vodafone.de [109.42.178.232])
+	(authenticated bits=0)
+	by mx10.gouders.net (8.17.1.9/8.17.1.9) with ESMTPSA id 542ECN3D018135
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Fri, 2 May 2025 16:12:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+	t=1746195150; bh=RIfl0KP/59TNe/iVyeBl8pr/SbLz3bMSndMSKx1wQno=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=M0Rm0Utu/TA2y8kZiW08P3Cgiuaax8JfSfxIwXqqooqPhwOr8Bpi/Jb3TLK7pgqfm
+	 KbQQiTcYThGkvg6sL/020Hd0jaVImhPZpGJISGUu0KVPALipjhyGr1ajO3V3h4L2xW
+	 dc5lu0Qx5QjKk/I9i5VwVAlb/nnSWbZmHoCcezSQ=
+From: Dirk Gouders <dirk@gouders.net>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo
+ <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland
+ <mark.rutland@arm.com>,
+        Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang
+ <kan.liang@linux.intel.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Rasmus
+ Villemoes <linux@rasmusvillemoes.dk>,
+        Thomas Gleixner
+ <tglx@linutronix.de>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr
+ Bueso <dave@stgolabs.net>,
+        =?utf-8?Q?Andr=C3=A9?= Almeida
+ <andrealmeid@igalia.com>,
+        John
+ Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+        James
+ Clark <james.clark@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>, Leo
+ Yan <leo.yan@linux.dev>,
+        Yicong Yang <yangyicong@hisilicon.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Nathan Chancellor
+ <nathan@kernel.org>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt
+ <justinstitt@google.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Al Viro
+ <viro@zeniv.linux.org.uk>, Kyle Meyer <kyle.meyer@hpe.com>,
+        Ben Gainey
+ <ben.gainey@arm.com>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Kajol
+ Jain <kjain@linux.ibm.com>,
+        Aditya Gupta <adityag@linux.ibm.com>,
+        Eder
+ Zulian <ezulian@redhat.com>,
+        Dapeng Mi <dapeng1.mi@linux.intel.com>,
+        Kuan-Wei Chiu <visitorckw@gmail.com>, He Zhe <zhe.he@windriver.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Ravi Bangoria
+ <ravi.bangoria@amd.com>,
+        Howard Chu <howardchu95@gmail.com>,
+        Charlie
+ Jenkins <charlie@rivosinc.com>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jann Horn
+ <jannh@google.com>, Masahiro Yamada <masahiroy@kernel.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Yang Jihong <yangjihong@bytedance.com>,
+        Dmitry
+ Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>,
+        Graham
+ Woodward <graham.woodward@arm.com>,
+        Ilkka Koskinen
+ <ilkka@os.amperecomputing.com>,
+        Anshuman Khandual
+ <anshuman.khandual@arm.com>,
+        Zhongqiu Han <quic_zhonhan@quicinc.com>, Hao Ge <gehao@kylinos.cn>,
+        Tengda Wu <wutengda@huaweicloud.com>,
+        Gabriele Monaco <gmonaco@redhat.com>,
+        Chun-Tse Shao <ctshao@google.com>, Casey Chen <cachen@purestorage.com>,
+        "Dr. David Alan Gilbert"
+ <linux@treblig.org>,
+        Li Huafei <lihuafei1@huawei.com>,
+        "Steinar H.
+ Gunderson" <sesse@google.com>,
+        Levi Yun <yeoreum.yun@arm.com>, Weilin
+ Wang <weilin.wang@intel.com>,
+        Thomas Falcon <thomas.falcon@intel.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Andrew Kreimer
+ <algonell@gmail.com>,
+        Krzysztof =?utf-8?Q?=C5=81opatowski?=
+ <krzysztof.m.lopatowski@gmail.com>,
+        Christophe Leroy
+ <christophe.leroy@csgroup.eu>,
+        Jean-Philippe Romain
+ <jean-philippe.romain@foss.st.com>,
+        Junhao He <hejunhao3@huawei.com>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Xu Yang
+ <xu.yang_2@nxp.com>,
+        Steve Clevenger
+ <scclevenger@os.amperecomputing.com>,
+        Zixian Cai <fzczx123@gmail.com>,
+        Stephen Brennan <stephen.s.brennan@oracle.com>,
+        Yujie Liu
+ <yujie.liu@intel.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        llvm@lists.linux.dev
+Subject: Re: [PATCH v2 04/47] perf bench: Silence -Wshorten-64-to-32 warnings
+In-Reply-To: <20250502130635.0eabb190@pumpkin> (David Laight's message of
+	"Fri, 2 May 2025 13:06:35 +0100")
+References: <20250430175036.184610-1-irogers@google.com>
+	<20250430175036.184610-5-irogers@google.com>
+	<gho6wdh00l.fsf@gouders.net>
+	<CAP-5=fUdpa40MDNu0aDBO7o8H3YMe-cYsg-YfqUUZUY4M4XLeA@mail.gmail.com>
+	<ghecx9guoj.fsf@gouders.net>
+	<CAP-5=fXJpD_f6dUqroVpqe-OX5kyOPc1zpbyOZoQtqvQWBGr=Q@mail.gmail.com>
+	<gha57xgs8b.fsf@gouders.net> <20250502130635.0eabb190@pumpkin>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Date: Fri, 02 May 2025 16:12:17 +0200
+Message-ID: <ghfrhnaypq.fsf@gouders.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Helper macro to more easily limit the export of a symbol to a given
-list of modules.
+David Laight <david.laight.linux@gmail.com> writes:
 
-Eg:
+> On Thu, 01 May 2025 01:11:16 +0200
+> Dirk Gouders <dirk@gouders.net> wrote:
+>
+>> Ian Rogers <irogers@google.com> writes:
+>>=20
+>> > On Wed, Apr 30, 2025 at 3:19=E2=80=AFPM Dirk Gouders <dirk@gouders.net=
+> wrote:=20=20
+>> >>
+>> >> Ian Rogers <irogers@google.com> writes:
+>> >>=20=20
+>> >> > On Wed, Apr 30, 2025 at 1:23=E2=80=AFPM Dirk Gouders <dirk@gouders.=
+net> wrote:=20=20
+>> >> >>
+>> >> >> Hi Ian,
+>> >> >>
+>> >> >> considering so many eyes looking at this, I am probably wrong.
+>> >> >>
+>> >> >> So, this is only a "gauge reply" to see if it's worth I really read
+>> >> >> through all the commits ;-)
+>> >> >>
+>> >> >> Ian Rogers <irogers@google.com> writes:
+>> >> >>
+>> >> >> [SNIP]
+>> >> >>=20=20
+>> >> >> > diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sc=
+hed-pipe.c
+>> >> >> > index 70139036d68f..b847213fd616 100644
+>> >> >> > --- a/tools/perf/bench/sched-pipe.c
+>> >> >> > +++ b/tools/perf/bench/sched-pipe.c
+>> >> >> > @@ -102,7 +102,8 @@ static const char * const bench_sched_pipe_u=
+sage[] =3D {
+>> >> >> >  static int enter_cgroup(int nr)
+>> >> >> >  {
+>> >> >> >       char buf[32];
+>> >> >> > -     int fd, len, ret;
+>> >> >> > +     int fd;
+>> >> >> > +     ssize_t ret, len;
+>> >> >> >       int saved_errno;
+>> >> >> >       struct cgroup *cgrp;
+>> >> >> >       pid_t pid;
+>> >> >> > @@ -118,7 +119,7 @@ static int enter_cgroup(int nr)
+>> >> >> >       cgrp =3D cgrps[nr];
+>> >> >> >
+>> >> >> >       if (threaded)
+>> >> >> > -             pid =3D syscall(__NR_gettid);
+>> >> >> > +             pid =3D (pid_t)syscall(__NR_gettid);
+>> >> >> >       else
+>> >> >> >               pid =3D getpid();
+>> >> >> >
+>> >> >> > @@ -172,23 +173,25 @@ static void exit_cgroup(int nr)
+>> >> >> >
+>> >> >> >  static inline int read_pipe(struct thread_data *td)
+>> >> >> >  {
+>> >> >> > -     int ret, m;
+>> >> >> > +     ssize_t ret;
+>> >> >> > +     int m;
+>> >> >> >  retry:
+>> >> >> >       if (nonblocking) {
+>> >> >> >               ret =3D epoll_wait(td->epoll_fd, &td->epoll_ev, 1,=
+ -1);=20=20
+>> >> >>
+>> >> >> The epoll_wait(), I know of, returns an int and not ssize_t.
+>> >> >>
+>> >> >> That shouldn't show up, because it doesn't cause real problems...=
+=20=20
+>> >> >
+>> >> > So the function is read_pipe so it should probably return a ssize_t=
+. I
+>> >> > stopped short of that but made ret a ssize_t to silence the truncat=
+ion
+>> >> > warning on the read call. Assigning smaller to bigger is of course =
+not
+>> >> > an issue for epoll_wait.=20=20
+>> >>
+>> >> Oh yes, I missed that ret is also used for the result of read().
+>> >>
+>> >> Some lines down there is also a combination of
+>> >>
+>> >> ret =3D enter_cgroup() (which is int)
+>> >>
+>> >> and
+>> >>
+>> >> ret =3D write()
+>> >>
+>> >>
+>> >> Just confusing but yes, because ret is also used for read() and write=
+()
+>> >> in those cases it should be ssize_t.
+>> >>
+>> >> I'm sorry for the noise.=20=20
+>> >
+>> > No worries, I'm appreciative of the eyes. I suspect we'll only pick up
+>> > the first patches in this series to fix what is a bug on ARM. I think
+>> > I'm responsible for too much noise here ;-)=20=20
+>>=20
+>> A final thought (in case this patch will also be picked):
+>>=20
+>> Why not, in case of read_pipe() and worker_thread() just cast
+>> read() and write() to int?  Both get counts of sizeof(int) and
+>> it would clearly show: we know the result fits into an int.
+>
+> This is an obvious case of the entire insanity of these changes.
 
-  EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm");
+You mean, because there is still the -1 case where the sign-lost can
+happen?
 
-will limit the use of said function to kvm.ko, any other module trying
-to use this symbol will refure to load (and get modpost build
-failures).
+I guess your reply is in combination with your replies to another thread
+to this subject.  As far as I understood, Ian also has problems with
+full understanding and I wonder if it helps to talk about a real
+example.  As far as I understood you say that code like this
+(from tools/perf/bench/sched-pipe.c) is simply wrong:
 
-Requested-by: Masahiro Yamada <masahiroy@kernel.org>
-Requested-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- Documentation/core-api/symbol-namespaces.rst |   22 ++++++++++++++++++++++
- include/linux/export.h                       |   12 ++++++++++--
- 2 files changed, 32 insertions(+), 2 deletions(-)
+static inline int read_pipe(struct thread_data *td)
+{
+	int ret, m;
+retry:
+	if (nonblocking) {
+		ret =3D epoll_wait(td->epoll_fd, &td->epoll_ev, 1, -1);
+		if (ret < 0)
+			return ret;
+	}
+	ret =3D read(td->pipe_read, &m, sizeof(int));
+	if (nonblocking && ret < 0 && errno =3D=3D EWOULDBLOCK)
+		goto retry;
+	return ret;
+}
 
---- a/Documentation/core-api/symbol-namespaces.rst
-+++ b/Documentation/core-api/symbol-namespaces.rst
-@@ -28,6 +28,9 @@ kernel. As of today, modules that make u
- are required to import the namespace. Otherwise the kernel will, depending on
- its configuration, reject loading the module or warn about a missing import.
- 
-+Additionally, it is possible to put symbols into a module namespace, strictly
-+limiting which modules are allowed to use these symbols.
-+
- 2. How to define Symbol Namespaces
- ==================================
- 
-@@ -83,6 +86,22 @@ A second option to define the default na
- within the corresponding compilation unit before the #include for
- <linux/export.h>. Typically it's placed before the first #include statement.
- 
-+2.3 Using the EXPORT_SYMBOL_GPL_FOR_MODULES() macro
-+===================================================
-+
-+Symbols exported using this macro are put into a module namespace. This
-+namespace cannot be imported.
-+
-+The macro takes a comma separated list of module names, allowing only those
-+modules to access this symbol. Simple tail-globs are supported.
-+
-+For example:
-+
-+  EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
-+
-+will limit usage of this symbol to modules whoes name matches the given
-+patterns.
-+
- 3. How to use Symbols exported in Namespaces
- ============================================
- 
-@@ -154,3 +173,6 @@ Again, ``make nsdeps`` will eventually a
- You can also run nsdeps for external module builds. A typical usage is::
- 
- 	$ make -C <path_to_kernel_src> M=$PWD nsdeps
-+
-+Note: it will happily generate an import statement for the module namespace;
-+which will not work and generates build and runtime failures.
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -24,11 +24,17 @@
- 	.long sym
- #endif
- 
--#define ___EXPORT_SYMBOL(sym, license, ns)		\
-+/*
-+ * LLVM integrated assembler cam merge adjacent string literals (like
-+ * C and GNU-as) passed to '.ascii', but not to '.asciz' and chokes on:
-+ *
-+ *   .asciz "MODULE_" "kvm" ;
-+ */
-+#define ___EXPORT_SYMBOL(sym, license, ns...)		\
- 	.section ".export_symbol","a"		ASM_NL	\
- 	__export_symbol_##sym:			ASM_NL	\
- 		.asciz license			ASM_NL	\
--		.asciz ns			ASM_NL	\
-+		.ascii ns "\0"			ASM_NL	\
- 		__EXPORT_SYMBOL_REF(sym)	ASM_NL	\
- 	.previous
- 
-@@ -85,4 +91,6 @@
- #define EXPORT_SYMBOL_NS(sym, ns)	__EXPORT_SYMBOL(sym, "", ns)
- #define EXPORT_SYMBOL_NS_GPL(sym, ns)	__EXPORT_SYMBOL(sym, "GPL", ns)
- 
-+#define EXPORT_SYMBOL_GPL_FOR_MODULES(sym, mods) __EXPORT_SYMBOL(sym, "GPL", "module:" mods)
-+
- #endif /* _LINUX_EXPORT_H */
+And from your reply I understand that casting the read() explicitely to
+int is insane.  And now, I wonder what you would suggest -- honestly, I
+am expecting to learn something, here.
 
+Best regards,
 
+Dirk
 
