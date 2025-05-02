@@ -1,81 +1,49 @@
-Return-Path: <linux-kernel+bounces-629135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 476DCAA6823
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:05:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 128E7AA682C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0376C981B68
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 01:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF4D9885BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 01:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C51414B965;
-	Fri,  2 May 2025 01:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACFB13C908;
+	Fri,  2 May 2025 01:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wpx4BESQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwszXV43"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B727A146A68
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 01:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489F24C6C;
+	Fri,  2 May 2025 01:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746147906; cv=none; b=Js4E587BBDmnPkXLupGiRhIS4v6CM9RcnSzGXgBhMKZDLd69mIElg1hIUMv6YmkbZRMo91jijyIb9Pe6hMfso6T7IKF+2j/4Vr6y6wbpP4r5e3baNGcfGLRvi78LvEv5UrA4YRNowfKfZQvWQkt/XsoUDSJvU0XkpkgatngOZvY=
+	t=1746148196; cv=none; b=NUMEi+tIYZHhchY+ofuXy48uEqlI8EL38kiHixMNl6WDSrPodP9KzvwCpy0/nqf2fGPJgCfUnz8hmTU4gMrdwkz/9l24tufsJtR7ujjkWyK6dzhT4N/M0fAypn4d94bxbMIyonO9gRblkAxQfLNfe3hJ5uWmFIdylxKsDmUmxlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746147906; c=relaxed/simple;
-	bh=WuUNHPlcI34OGoe9k9uvk9UDw9MeHqo8z2kKd7VdYWk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ae2ywAbhLXIpczAnwDIeTI3y/wQcpGH+Fr8gmj9vxeB7c7FWtMYajq6waLH3atzhXEZQVph/79eMm8AZzLrKWyBIr7/Yrv5En8MVn4OwUB5Q1PnLzsWyiWatAjr5Ost3uRGmGlEywIl+kFdaqdq2dlFj+erZE6gFtk+8YM9IVSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wpx4BESQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746147903;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=owySU7dSCB78ZpCQgHbvTjigjXxf+YL8mNc7nb45BJM=;
-	b=Wpx4BESQre4vpTMIJbpdAzim47YPovzGZabyggIKCPPuajMjqAS2Ui69N9H5GJh3+Txdf8
-	VziSGReuh7q+/+qYBZoqLE7OQxpU7jVyY21ja7C74mC0kfv/e/OhmkIbYw+szSIahnltek
-	v7qFhfExxahs+EXIQ7IiJyppAkXUA9s=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-KfkMnat2MGqM4eXr5_nv4A-1; Thu,
- 01 May 2025 21:05:02 -0400
-X-MC-Unique: KfkMnat2MGqM4eXr5_nv4A-1
-X-Mimecast-MFC-AGG-ID: KfkMnat2MGqM4eXr5_nv4A_1746147900
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0DC641800264;
-	Fri,  2 May 2025 01:05:00 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.80.189])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5377719560A3;
-	Fri,  2 May 2025 01:04:57 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v8 2/2] selftests: memcg: Increase error tolerance of child memory.current check in test_memcg_protection()
-Date: Thu,  1 May 2025 21:04:43 -0400
-Message-ID: <20250502010443.106022-3-longman@redhat.com>
-In-Reply-To: <20250502010443.106022-1-longman@redhat.com>
-References: <20250502010443.106022-1-longman@redhat.com>
+	s=arc-20240116; t=1746148196; c=relaxed/simple;
+	bh=lleui9YZj1ZPGW2rU3DcmlJmd8ORLV6xd0I6f7lEiZY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=pkK7FXUA/CoCO5Ct88KN3Rv82yTMLfwEzQscLugJz/EGV/qsPU609W5AQmzbADJUt7Qey40hGrQYhQTLblITm3FAwXFk/QAd2/CgnVs+JE9ubl5Cv3ovnMshc4pY0GW0UFA9UMB+5XFjZCwmsdSObpBytSTGgYSFk3D6Nuv/P9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwszXV43; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12E3AC4CEE3;
+	Fri,  2 May 2025 01:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746148196;
+	bh=lleui9YZj1ZPGW2rU3DcmlJmd8ORLV6xd0I6f7lEiZY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jwszXV43n5sTI/lJNUFvmM8lAunWNcPqcuMNwG4asIyPKU7Vura+g1O1N+p+Wup80
+	 F1501QBwu/9u9VRttT20Jns5ySZNAAnRF0oAlfuj1aBfL81VzNPJ4HurgjkrfBGNlT
+	 26wifFgaIubylluwyDNddzZ30ovmRyTUWOeh2312gqbPeQ+W/e28VqUSeeTo1oIChm
+	 CGasaMCTIhy+JSCf2hp6WbN7VN/VQEM01PbK8cU9RU13hwCrzFKTpMsRZwvH2oRpXX
+	 x3Ij7rwtjX/zIoWJb6lNEXXK0KiYnjv3MKgUxC6pjxIsrS2openH1zZWLlJqOCGzJE
+	 /Ogds3RM0Dltw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 635023822D59;
+	Fri,  2 May 2025 01:10:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,86 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Subject: Re: [PATCH v2] dt-bindings: net: via-rhine: Convert to YAML
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174614823526.3123530.12844866461637872055.git-patchwork-notify@kernel.org>
+Date: Fri, 02 May 2025 01:10:35 +0000
+References: <20250430-rhine-binding-v2-1-4290156c0f57@gmail.com>
+In-Reply-To: <20250430-rhine-binding-v2-1-4290156c0f57@gmail.com>
+To: Alexey Charkov <alchark@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-The test_memcg_protection() function is used for the test_memcg_min and
-test_memcg_low sub-tests. This function generates a set of parent/child
-cgroups like:
+Hello:
 
-  parent:  memory.min/low = 50M
-  child 0: memory.min/low = 75M,  memory.current = 50M
-  child 1: memory.min/low = 25M,  memory.current = 50M
-  child 2: memory.min/low = 0,    memory.current = 50M
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-After applying memory pressure, the function expects the following
-actual memory usages.
+On Wed, 30 Apr 2025 14:42:45 +0400 you wrote:
+> Rewrite the textual description for the VIA Rhine platform Ethernet
+> controller as YAML schema, and switch the filename to follow the
+> compatible string. These are used in several VIA/WonderMedia SoCs
+> 
+> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> ---
+> Changes in v2:
+> - Dropped the update to MAINTAINERS for now to reduce merge conflicts
+>   across different trees
+> - Split out the Rhine binding separately from the big series affecting
+>   multiple subsystems unnecessarily (thanks Rob)
+> - Link to v1: https://lore.kernel.org/all/20250416-wmt-updates-v1-4-f9af689cdfc2@gmail.com/
+> 
+> [...]
 
-  parent:  memory.current ~= 50M
-  child 0: memory.current ~= 29M
-  child 1: memory.current ~= 21M
-  child 2: memory.current ~= 0
+Here is the summary with links:
+  - [v2] dt-bindings: net: via-rhine: Convert to YAML
+    https://git.kernel.org/netdev/net-next/c/630cb33ccfcd
 
-In reality, the actual memory usages can differ quite a bit from the
-expected values. It uses an error tolerance of 10% with the values_close()
-helper.
-
-Both the test_memcg_min and test_memcg_low sub-tests can fail
-sporadically because the actual memory usage exceeds the 10% error
-tolerance. Below are a sample of the usage data of the tests runs
-that fail.
-
-  Child   Actual usage    Expected usage    %err
-  -----   ------------    --------------    ----
-    1       16990208         22020096      -12.9%
-    1       17252352         22020096      -12.1%
-    0       37699584         30408704      +10.7%
-    1       14368768         22020096      -21.0%
-    1       16871424         22020096      -13.2%
-
-The current 10% error tolerenace might be right at the time
-test_memcontrol.c was first introduced in v4.18 kernel, but memory
-reclaim have certainly evolved quite a bit since then which may result
-in a bit more run-to-run variation than previously expected.
-
-Increase the error tolerance to 15% for child 0 and 20% for child 1 to
-minimize the chance of this type of failure. The tolerance is bigger
-for child 1 because an upswing in child 0 corresponds to a smaller
-%err than a similar downswing in child 1 due to the way %err is used
-in values_close().
-
-Before this patch, a 100 test runs of test_memcontrol produced the
-following results:
-
-     17 not ok 1 test_memcg_min
-     22 not ok 2 test_memcg_low
-
-After applying this patch, there were no test failure for test_memcg_min
-and test_memcg_low in 100 test runs. However, these tests may still fail
-once in a while if the memory usage goes beyond the newly extended range.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- tools/testing/selftests/cgroup/test_memcontrol.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
-index 58602c1831f1..d6534d7301a2 100644
---- a/tools/testing/selftests/cgroup/test_memcontrol.c
-+++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-@@ -496,10 +496,10 @@ static int test_memcg_protection(const char *root, bool min)
- 	for (i = 0; i < ARRAY_SIZE(children); i++)
- 		c[i] = cg_read_long(children[i], "memory.current");
- 
--	if (!values_close(c[0], MB(29), 10))
-+	if (!values_close(c[0], MB(29), 15))
- 		goto cleanup;
- 
--	if (!values_close(c[1], MB(21), 10))
-+	if (!values_close(c[1], MB(21), 20))
- 		goto cleanup;
- 
- 	if (c[3] != 0)
+You are awesome, thank you!
 -- 
-2.49.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
