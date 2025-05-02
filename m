@@ -1,201 +1,140 @@
-Return-Path: <linux-kernel+bounces-629835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A446AA7231
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:36:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77080AA7238
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDFB57ABB93
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6FE1898834
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1979253B65;
-	Fri,  2 May 2025 12:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33092522A7;
+	Fri,  2 May 2025 12:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o43WR3/X"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f6jeTHPK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B590E243371
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA382343AF;
+	Fri,  2 May 2025 12:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746189374; cv=none; b=nt3WrJ0LslmSQEoS3dyr0A5eRVLBFzz5M8rh/P59sDZ/gDYveF06+itwbI5cQPDGyIvkdsJByy7csf4DuKLHq2PgKdYuXdrDbuxb3xyKH0quKi1/OdeTeGjgVUru7vAqMpkJd5zE07ovpV8Nb0LxZvhaHrUbq8W11OEgj5U0GfA=
+	t=1746189428; cv=none; b=FbBNadpOz1WUZg7rzlFocrp4Rwu/5itXJ5Pp5eGXE7ofNV9t41qJR7Vy2KVwOG/RjgY93mUlWl0baNs4B8sgTjyjnbln6CuqT2ZBOE8TUYSpkpovP+bjeGiH8OdusHQ6Eo+Gd9ZzzOWJ330ehoCldRUbm4Xj2nGBlqCJmrFLuF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746189374; c=relaxed/simple;
-	bh=JT+qr01uZcVOJZP4RQusBZiCCpnCtGRxDlD4tTq126I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=juu45RBeqOMAa6vExwaLnElJVJ9eNpAEbZ7nToqFmB4NF+ULYt3pdIYxKX7dRyXTJpd5CZYDTPeeE8zxETwzBku8qK4L56AjhqDalzZ9cYBCg7FEQRJaBjHFHG7gJ6//17TDtSmulN61VPD+u57Ngb/vh0LA0FGQHgiMoTK1LqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o43WR3/X; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224019ad9edso30609495ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 05:36:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746189372; x=1746794172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2bWVNZpDPjN8he9HssEtQl6bUgAXH/F4pjykOH4GCkk=;
-        b=o43WR3/XeHPk8/UmkM6gW/6FfzBmuagDR81aPWayeJJshkEPsUp/tA1qINlyN25WAV
-         eQ7u6mDW5iQJrKim2+8xXlFvMX6HPgSUOFkTNTMoPuUDOtegMeaimFW2k4lHcHqMqnCT
-         lFQYqe617TE64iM9lRo6jZF6OTHCM2bydxicJsfRLMxzrmY69AKPVScV2yT2eAU/DwZx
-         oXNDu/NOSkHJTMh1lGvpNGAsqhMSZrFwr5fBsY+ubJoSpHEFSELQUy+zqZJKSgZly8iF
-         0UCEft2Xenr7Lp4Z0rDlpI7xT8kqFzS5mluUCmR6+XdIxI+Ytj5KMCYLz50ICesf78X9
-         itwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746189372; x=1746794172;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2bWVNZpDPjN8he9HssEtQl6bUgAXH/F4pjykOH4GCkk=;
-        b=rHV/K9Tt8BcEMUZWrY5oBsup3N4vQfUJpQONJuCavPA+5Za4asiy4AR6sPj5s3UiEB
-         rATXIUnOqWaVOMWpKD/9Wn4jH7NnGe1DWBcYOB77Hg8hkYu+Uv7N9TJbnCdepgC4MV13
-         ntBUZTf0YadDn0tt8RVl4KHxQW7Ph6cIHGNt60UIIrkPlTzK6FOileVaiq5Fz4BStUYV
-         QRwSQpY0AgywVf8YdzJ4J1uwaiVDTlcRYJ3byUC60X9sISLbNHaWCJyGV5vlp4/IGLry
-         elNEzoGdtaHQmRnWLqQNzkAPylYNdzbe5Dm2ivWeW7TpiKVV6p1KMXUMPLUAa4BFus/P
-         bQBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZjNWSJ7hI0xbHVxlzmP6dZGMqmP06wjvtPWRWZErH7+UcmYaGlCUHu+xLcMRtiyWPHLkkltwK+Dmy2Gk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxJf70NQj9UppKh+jNjJk/r2Xq2ZtPM4YlCClXnRzUppTz7D2N
-	YXASn4R6RmPz2O2gY2cTxlloY05BEc5dTbDgzQYb9k2rSTW8vArDff1TSpdFNv+5tPu0VkIcMY6
-	+9c8Cr5LXUa5B5NzMzYl0F118TDC3g1OcVaEB
-X-Gm-Gg: ASbGncuRrifaEusQ6534EWSo44r7GpqckE85Ee+BLB3x3glNC2lFuOZsI9xeg8VzICL
-	QaRFL1nlAMs//OaN973/1Io6dDoA96Ce5MiYVjcSGnINzdZeBYPyPolST4xsPJAGKwroBhkOEP/
-	lUMQUt6PZ14qDUttbw931GFZbEl3QQFlan+ScVM0QGyFeViTSiA0Y=
-X-Google-Smtp-Source: AGHT+IF2hAF0/clS4lwwEOMq806j1cV+S29WAOdC4HnfL8cwFDY1AIdDC0g10UG7zShMqw7pJ2uU170Vz680MxOUfJs=
-X-Received: by 2002:a17:90b:544c:b0:2fe:a79e:f56f with SMTP id
- 98e67ed59e1d1-30a4e5aa034mr3940014a91.13.1746189371395; Fri, 02 May 2025
- 05:36:11 -0700 (PDT)
+	s=arc-20240116; t=1746189428; c=relaxed/simple;
+	bh=3RrRQioMmY9W3U549so7dN6E6HO0z0x4sBheM1e4sgs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Bu9uZ1cl9kQvFmQQM7MrwpQ8bXnSysqDP1awFBSq2ZFS+krc9lP8emH2ZUtt6EeJzlUmoNBAKDmcIWiHy4/+gbU+GRPDfF+itLCoXuIPgb10kRGavBWF6tqM2aokna7ge4KiC9KB5Ilz2l5CUiqcY99ETVqpepj+8JVd6q0xKes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f6jeTHPK; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746189427; x=1777725427;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=3RrRQioMmY9W3U549so7dN6E6HO0z0x4sBheM1e4sgs=;
+  b=f6jeTHPK0LWnujIO9ISmaL7LGXOaICj0G5wObnI2+9ZOJhPZ/50X4F3A
+   xC+10j5SpBJgl2kE1lSejg2rDvNQjkFHbrIQl++NlSqLb3thgyNqMNlWI
+   /W13ydP5tfkaUAtHuyPucz7nSiGxvtx+Mjz3qYicod5bkEwrfr4SkfbaD
+   4FgJVQ4lsjRWS7jxj+0MhsutneO3tUFqGMuL9fyZKXxT2EPZG6DTn+RcA
+   wZMO9BmDGbdteykhJx8/25wbbdLl2MLFXjWxIQWKd/trTN/rLn6z4qWF3
+   STJaozE8tI9Z3FdUVFfJpj/yzo4tN53aAsgk6LTXKefAswWTtgsnwWX3x
+   Q==;
+X-CSE-ConnectionGUID: znjMJG8PSuSw+13tgxOC/g==
+X-CSE-MsgGUID: tIZh7qIQQ0apiqJPZk5CmA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="58078335"
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
+   d="scan'208";a="58078335"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 05:37:05 -0700
+X-CSE-ConnectionGUID: vGEnkxCiQ76ZBLd4Ck/A8Q==
+X-CSE-MsgGUID: GWlg6MNVT0etXQpnNGIIDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
+   d="scan'208";a="134528571"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.135])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 05:37:02 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 2 May 2025 15:36:58 +0300 (EEST)
+To: Randy Dunlap <rdunlap@infradead.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Vadim Pasternak <vadimp@nvidia.com>, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH] platform/mellanox: MLXREG_DPU depends on I2C
+In-Reply-To: <20250502001622.674263-1-rdunlap@infradead.org>
+Message-ID: <150c0b1b-8845-db78-39d3-388d3ca79613@linux.intel.com>
+References: <20250502001622.674263-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250501-rust-kcov-v2-1-b71e83e9779f@google.com>
-In-Reply-To: <20250501-rust-kcov-v2-1-b71e83e9779f@google.com>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Fri, 2 May 2025 14:36:00 +0200
-X-Gm-Features: ATxdqUEo80l6Wmog53pGJlK7MMSvohTGvruUy1uyoixwHojHfstDErpJeGH-R1I
-Message-ID: <CANp29Y41LKZg-kSP+j5hjUKMNeWnPsVd8VvDnOpN8+4WHHjEgQ@mail.gmail.com>
-Subject: Re: [PATCH v2] kcov: rust: add flags for KCOV with Rust
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, kasan-dev@googlegroups.com, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
-	Matthew Maurer <mmaurer@google.com>, Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; BOUNDARY="8323328-1411073070-1746189394=:958"
+Content-ID: <20731f71-4262-d7d5-77e4-e0926c256de4@linux.intel.com>
 
-On Thu, May 1, 2025 at 2:16=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
-> Rust code is currently not instrumented properly when KCOV is enabled.
-> Thus, add the relevant flags to perform instrumentation correctly. This
-> is necessary for efficient fuzzing of Rust code.
->
-> The sanitizer-coverage features of LLVM have existed for long enough
-> that they are available on any LLVM version supported by rustc, so we do
-> not need any Kconfig feature detection. The coverage level is set to 3,
-> as that is the level needed by trace-pc.
->
-> We do not instrument `core` since when we fuzz the kernel, we are
-> looking for bugs in the kernel, not the Rust stdlib.
->
-> Co-developed-by: Matthew Maurer <mmaurer@google.com>
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> Reviewed-by: Alexander Potapenko <glider@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> I did not pick up the Tested-by due to the changes. I verified that it
-> looks right under objdump, but I don't have a syzkaller setup I can try
-> it with.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks for incorporating the core.o change!
-I've tested the v2 patch on my local setup and it works well.
+--8323328-1411073070-1746189394=:958
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <5e401ceb-7dc3-8190-71ca-be626e46298f@linux.intel.com>
 
-Tested-by: Aleksandr Nogikh <nogikh@google.com>
+On Thu, 1 May 2025, Randy Dunlap wrote:
 
+> WARNING: unmet direct dependencies detected for REGMAP_I2C
+>   Depends on [m]: I2C [=3Dm]
+>   Selected by [y]:
+>   - MLXREG_DPU [=3Dy] && MELLANOX_PLATFORM [=3Dy]
+>=20
+> Without the dependency, REGMAP_I2C=3Dy since MLXREG_DPU=3Dy.
+> Since CONFIG_I2C=3Dm, this causes many (> 230) unmet dependency warnings.
+> E.g.:
+>   Selected by [m]:
+>   - EEPROM_AT24 [=3Dm] && I2C [=3Dm] && SYSFS [=3Dy]
+>   - SERIAL_MAX310X [=3Dm] && TTY [=3Dy] && HAS_IOMEM [=3Dy] && SPI_MASTER=
+ [=3Dy] && I2C [=3Dm]
+>   - PINCTRL_AW9523 [=3Dm] && PINCTRL [=3Dy] && OF [=3Dy] && I2C [=3Dm]
+>   - PINCTRL_CY8C95X0 [=3Dm] && PINCTRL [=3Dy] && I2C [=3Dm]
+>   - GPIO_FXL6408 [=3Dm] && GPIOLIB [=3Dy] && I2C [=3Dm]
+>   - GPIO_DS4520 [=3Dm] && GPIOLIB [=3Dy] && I2C [=3Dm]
+>   - GPIO_PCA953X [=3Dm] && GPIOLIB [=3Dy] && I2C [=3Dm]
+>   - IP5XXX_POWER [=3Dm] && POWER_SUPPLY [=3Dy] && I2C [=3Dm]
+>   - BATTERY_CW2015 [=3Dm] && POWER_SUPPLY [=3Dy] && I2C [=3Dm]
+>   - CHARGER_SBS [=3Dm] && POWER_SUPPLY [=3Dy] && I2C [=3Dm]
+>=20
+> Fixes: 3e75f2954116 ("platform/mellanox: mlxreg-dpu: Add initial support =
+for Nvidia DPU")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Vadim Pasternak <vadimp@nvidia.com>
+> Cc: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: platform-driver-x86@vger.kernel.org
 > ---
-> Changes in v2:
-> - Ignore `core` in KCOV.
-> - Link to v1: https://lore.kernel.org/r/20250430-rust-kcov-v1-1-b9ae94148=
-175@google.com
-> ---
->  rust/Makefile         | 1 +
->  scripts/Makefile.kcov | 6 ++++++
->  scripts/Makefile.lib  | 3 +++
->  3 files changed, 10 insertions(+)
->
-> diff --git a/rust/Makefile b/rust/Makefile
-> index 3aca903a7d08cfbf4d4e0f172dab66e9115001e3..80c84749d734842774a3ac2aa=
-bbc944a68d02484 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -492,6 +492,7 @@ $(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs \
->  ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
->  $(obj)/core.o: scripts/target.json
->  endif
-> +KCOV_INSTRUMENT_core.o :=3D n
->
->  $(obj)/compiler_builtins.o: private skip_gendwarfksyms =3D 1
->  $(obj)/compiler_builtins.o: private rustc_objcopy =3D -w -W '__*'
-> diff --git a/scripts/Makefile.kcov b/scripts/Makefile.kcov
-> index 67e8cfe3474b7dcf7552e675cffe356788e6c3a2..ddcc3c6dc513e1988aeaf07b8=
-efa106e8dffa640 100644
-> --- a/scripts/Makefile.kcov
-> +++ b/scripts/Makefile.kcov
-> @@ -3,4 +3,10 @@ kcov-flags-$(CONFIG_CC_HAS_SANCOV_TRACE_PC)    +=3D -fsa=
-nitize-coverage=3Dtrace-pc
->  kcov-flags-$(CONFIG_KCOV_ENABLE_COMPARISONS)   +=3D -fsanitize-coverage=
-=3Dtrace-cmp
->  kcov-flags-$(CONFIG_GCC_PLUGIN_SANCOV)         +=3D -fplugin=3D$(objtree=
-)/scripts/gcc-plugins/sancov_plugin.so
->
-> +kcov-rflags-y                                  +=3D -Cpasses=3Dsancov-mo=
-dule
-> +kcov-rflags-y                                  +=3D -Cllvm-args=3D-sanit=
-izer-coverage-level=3D3
-> +kcov-rflags-y                                  +=3D -Cllvm-args=3D-sanit=
-izer-coverage-trace-pc
-> +kcov-rflags-$(CONFIG_KCOV_ENABLE_COMPARISONS)  +=3D -Cllvm-args=3D-sanit=
-izer-coverage-trace-compares
-> +
->  export CFLAGS_KCOV :=3D $(kcov-flags-y)
-> +export RUSTFLAGS_KCOV :=3D $(kcov-rflags-y)
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 2fe73cda0bddb9dcf709d0a9ae541318d54754d2..520905f19a9b19631394cfb5e=
-129effb8846d5b8 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -169,6 +169,9 @@ ifeq ($(CONFIG_KCOV),y)
->  _c_flags +=3D $(if $(patsubst n%,, \
->         $(KCOV_INSTRUMENT_$(target-stem).o)$(KCOV_INSTRUMENT)$(if $(is-ke=
-rnel-object),$(CONFIG_KCOV_INSTRUMENT_ALL))), \
->         $(CFLAGS_KCOV))
-> +_rust_flags +=3D $(if $(patsubst n%,, \
-> +       $(KCOV_INSTRUMENT_$(target-stem).o)$(KCOV_INSTRUMENT)$(if $(is-ke=
-rnel-object),$(CONFIG_KCOV_INSTRUMENT_ALL))), \
-> +       $(RUSTFLAGS_KCOV))
->  endif
->
->  #
->
-> ---
-> base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
-> change-id: 20250430-rust-kcov-6c74fd0f1f06
->
-> Best regards,
-> --
-> Alice Ryhl <aliceryhl@google.com>
->
+>  drivers/platform/mellanox/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> --- linux-next-20250501.orig/drivers/platform/mellanox/Kconfig
+> +++ linux-next-20250501/drivers/platform/mellanox/Kconfig
+> @@ -29,6 +29,7 @@ config MLX_PLATFORM
+> =20
+>  config MLXREG_DPU
+>  =09tristate "Nvidia Data Processor Unit platform driver support"
+> +=09depends on I2C
+>  =09select REGMAP_I2C
+>  =09help
+>  =09  This driver provides support for the Nvidia BF3 Data Processor Unit=
+s,
+>=20
+
+Thanks for the patch but the review-ilpo-next branch already has this=20
+fixed, just waiting for lkp to build test it until it propagates into=20
+for-next.
+
+--=20
+ i.
+--8323328-1411073070-1746189394=:958--
 
