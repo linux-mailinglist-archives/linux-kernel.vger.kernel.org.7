@@ -1,121 +1,271 @@
-Return-Path: <linux-kernel+bounces-630008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40ADBAA7472
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:05:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064BFAA7475
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 761EA4C6FDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D134C278C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18550255F5B;
-	Fri,  2 May 2025 14:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF65E256C9D;
+	Fri,  2 May 2025 14:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dm4pKEcx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KCfaLU10"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B6219E97B
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAA9255F58
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746194707; cv=none; b=acViGf/XkdNvlyczIDkExWsTvVZJL1btJWyKIe8f2vvFdq49WzFw7+3Vi5IBMibwfp7WBO34TWnFEjtBwdub0+uboD+6QZ3dyzlpCajcuSjieeV9fxQfYpCmc7hp3OvQJm+sgpbqlP+LMwUNmJwcgsaukh7OxIUN2+TRneLiU5M=
+	t=1746194713; cv=none; b=nuItOG/vvMU9kzS7ZmpK1TEVTi/d++3rznt+G0k1+bO0gsudRBzfbvFs5Csw8YxcqPjUmRbre5gVhBRmBs21Nki1JN8LGQ5giJZnrenwLDRs4v/taax59uFh9BAN0dDuLW9uBlDhBmcrLmB3u6jsNn7pc/zY8WQZ6PKCMz+xqqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746194707; c=relaxed/simple;
-	bh=2jBbUmVOB62hHyKFi47tXceA9+6d1vaBcgdLP5N/4fE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SoRmbCLYgpOiEDlUMC1WMW19VP1jo3ivRQlpZfnNTp7mPdrqFASQxJlntmE4irHqObmWQuF1ifv4jOK/d3VpwQgPPuHXEyrbnwC/wHhFWB5ytW9Rr6HtM2fMBgZWFqrnC6n3830oEdCRBQBROkNwglyH/p8j2wzInOnQF8BSBRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dm4pKEcx; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746194707; x=1777730707;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2jBbUmVOB62hHyKFi47tXceA9+6d1vaBcgdLP5N/4fE=;
-  b=dm4pKEcxYyyJps+w1nEOVC89iVNiLTaa/Dv9UvbmNnDKtnYOGYT3Uklt
-   zM5/1D9+RM+WnS4g7jXZIecKKVLuTovJlV/jmvaNmbbeMmhjpC3IA0UHK
-   uRWz6wpqDdAeVDd4iiSC4O8Sxfza8EhyHyV51VZLtaZ5sFOxjwwHzD1KT
-   CeG7E0J/y+fblOprKgmuYl49iQsjS2GAHT9lXSJcU5eY7XbNiL80FRfzW
-   7F7vC6Su+KlXvh3MBbyxuNDmsBNRc1CNHIx3fy/9OGYU2LXR6BUPJlcQO
-   YVgVqsdXkJvyio0K7+jHpQAFtL9v7Koe5kHharOBvzBr/G4H7ItIaY4Qk
-   A==;
-X-CSE-ConnectionGUID: lM+sRtVERbKIAO0tmTzpow==
-X-CSE-MsgGUID: 64gutoeYRGKN7r51AE2gxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="70377083"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="70377083"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:04:39 -0700
-X-CSE-ConnectionGUID: 4pNeTD7QQ82JG1z/2N940Q==
-X-CSE-MsgGUID: Gqq/pudgSIiV3jOC/4Kytg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="139826385"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:04:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uAr0B-00000002Dab-3W5P;
-	Fri, 02 May 2025 17:04:31 +0300
-Date: Fri, 2 May 2025 17:04:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v2 1/1] x86/reboot: KVM: Guard
- nmi_shootdown_cpus_on_restart() with ifdeffery
-Message-ID: <aBTQ7-L-bUwzYbKM@smile.fi.intel.com>
-References: <20241008191555.2336659-1-andriy.shevchenko@linux.intel.com>
- <ZwbazZpTSAn9aAC7@google.com>
- <ZwcT149jx-iOmEfl@surfacebook.localdomain>
- <ZykbvVZ32FKCRT_q@smile.fi.intel.com>
- <Z_UUXOe61BwVkGob@smile.fi.intel.com>
- <f670905f-f14b-4482-83ee-568234647f46@intel.com>
- <Z_U0Vn0V18KYGjkP@smile.fi.intel.com>
- <d40efb68-eb4e-4158-9dc6-5de101adefd1@intel.com>
+	s=arc-20240116; t=1746194713; c=relaxed/simple;
+	bh=u3bCcvNuqwsKSKUwyi8x1R/rJebyJfXEs0GloV4+rzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E4Er+88ITAHeVkCnGeoKsZjtZdWtfYBL8zoxUM6fSnlyMO/i3ZcYUShlmBftiYCTPW4qfJ+22g8nGNxHIufVSKCMJDd1a5PTgp7TeX4iLMyGMtZSNdpUM0+5xzLAvp9v2USF8SCxW5DpwvLEvVpSakpEGKkcABxqCARQh5lqhBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KCfaLU10; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso7751a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 07:05:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746194709; x=1746799509; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AIUkLEuO/0R6FFK/5E6ascv0dB5aqKKlLkCLuO+aNpk=;
+        b=KCfaLU10xRMqbHREUYrJKzO6l9byY3YKXP+U4AwoHmmlI0vY5ifnKznttHivHx0Wir
+         753GXVnkeUG0R+1XkuGj7FSZqwqN9SsHF98L/zYxxE4bfDv9g+wrxmhk8TvUFUqAmH0G
+         fhCQSjQKHkIoymrF9Qv5zVBaSqeweq5P66u+40rpto6Hu2jZOPc78/4+1ERuQvieaaSA
+         NeNt279zwpq0RtSk5VtvdtY3KVGhvVLUm2cbDabfjYAzdhqcrt6+92A2W5ncic1Gyjv8
+         DP2o08WF3wLcgOejsB+rZtuwumUOPLqqdRXhVy8Ep5wuEJcv+GzA9rl809vxhL1URdcf
+         4E9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746194709; x=1746799509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AIUkLEuO/0R6FFK/5E6ascv0dB5aqKKlLkCLuO+aNpk=;
+        b=fxFLbmfUcvrlXdd6WjxusWMLb7LFIRJyQPJp6VGkdS8tK6xqB2wwAAYaAXk2uoDLsn
+         np+AG05P7FmQY4ZYuYzQYZ+w9zoqTyYOQ8uTi8VHGcbLHpHVbH/oq/9uVEcNKbxGJ9QQ
+         Lbj0vhhiFd0v8VFibctFpTVXWnduLHxGldG53pe+Y8wNbJ3QkOmU6eUABph8cq4pNjEY
+         rxTBlFu49gzq9yxuf07uOiBhV9Iq1/sMWCXOcGArJMjsJ8VCnGGY+JxQIhVoms0Dlrq5
+         b8Lrixzeyrrg1NG75oLkcZqId4p2/ANqISgWaX6po4wd6nNTZW3PaPLc3sIKP2MIPDCb
+         PYKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgrcbZ/fD70waBEPv+SOOYedSiDj2hGUYN3JW4mcE+kGvqDgPKRUiPwxp/yFuY/1F5tFw3vmWQ26FrhB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfIzrML+H95b2/AcXvQRnOrq/X57BhlV9xJmVAuzRsHKogfQgR
+	p2FoF2OLEBl3PzqfChnj/7UDU1XGGV7bOz3zxrux6MfjdIskYKg0ZgRorcGbajx5xObPeZ8ncrK
+	RfteaN213CrLUtQS9XoWnfMolqj4DVv3WqD0x
+X-Gm-Gg: ASbGncsIYTlHB3LEoBw9Cm3vo/Cg3+nUSxqhr6rKQEZKPR7c2LqzMMnJsCFSfnmLXuc
+	0Y85I49QWVfF7ENU/aVFrmPZGerZjbfvoR9wnGZNiD9R5l3gTe4GNUdiTxIjHnokMqtyDgMbWCR
+	SJEFp5+xecqEVxyP0QWNjG/IcAAu1Q7YT5nSeUOQkIrfGLSc2+aw==
+X-Google-Smtp-Source: AGHT+IH079h8T97+GdbfLlz4ZTQu0SIeE7/FcxZKXrGaki/lyIvv7PFx+pafXehKr4vx1Hbtav8zz1kPAxAFy1FP/mk=
+X-Received: by 2002:a50:c018:0:b0:5f7:f888:4cb5 with SMTP id
+ 4fb4d7f45d1cf-5f918c08662mr174264a12.1.1746194708830; Fri, 02 May 2025
+ 07:05:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d40efb68-eb4e-4158-9dc6-5de101adefd1@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250502-work-coredump-socket-v2-0-43259042ffc7@kernel.org> <20250502-work-coredump-socket-v2-3-43259042ffc7@kernel.org>
+In-Reply-To: <20250502-work-coredump-socket-v2-3-43259042ffc7@kernel.org>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 2 May 2025 16:04:32 +0200
+X-Gm-Features: ATxdqUHMFraIA12GhTqlpB1U5cC0A5UkJsNTEJvN5fJ5qnYj4W9vpCcDcDr5py4
+Message-ID: <CAG48ez1w+25tbSPPU6=z1rWRm3ZXuGq0ypq4jffhzUva9Bwazw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 3/6] coredump: support AF_UNIX sockets
+To: Christian Brauner <brauner@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 08, 2025 at 07:56:58AM -0700, Dave Hansen wrote:
-> On 4/8/25 07:36, Andy Shevchenko wrote:
-> > On Tue, Apr 08, 2025 at 07:17:51AM -0700, Dave Hansen wrote:
-> >> On 4/8/25 05:19, Andy Shevchenko wrote:
-> >>> Any news here? Build error is still reproducible.
-> >> In the end, adding the #ifdefs leads to worse code, less maintainable
-> >> code. I'll take the occasional actual unused static inline in a .c file
-> >> over a mess of #ifdefs to make the compiler happy.
-> >>
-> >> I really think that warning needs to go away in some way, shape or form.
-> >> Either get rid of it entirely, or kick it out of -Wall somehow. It's a
-> >> super pedantic warning that leads to worse code most of the time.
-> > Does it mean you can take Sean's approach?
-> 
-> It looks fine at first glance.
+On Fri, May 2, 2025 at 2:42=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+> diff --git a/fs/coredump.c b/fs/coredump.c
+[...]
+> @@ -801,6 +841,73 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>                 }
+>                 break;
+>         }
+> +       case COREDUMP_SOCK: {
+> +               struct file *file __free(fput) =3D NULL;
+> +#ifdef CONFIG_UNIX
+> +               ssize_t addr_size;
+> +               struct sockaddr_un unix_addr =3D {
+> +                       .sun_family =3D AF_UNIX,
+> +               };
+> +               struct sockaddr_storage *addr;
+> +
+> +               /*
+> +                * TODO: We need to really support core_pipe_limit to
+> +                * prevent the task from being reaped before userspace
+> +                * had a chance to look at /proc/<pid>.
+> +                *
+> +                * I need help from the networking people (or maybe Oleg
+> +                * also knows?) how to do this.
+> +                *
+> +                * IOW, we need to wait for the other side to shutdown
+> +                * the socket/terminate the connection.
+> +                *
+> +                * We could just read but then userspace could sent us
+> +                * SCM_RIGHTS and we just shouldn't need to deal with
+> +                * any of that.
+> +                */
 
-Can it be applied, please? The problem still persists as of today (v6.15-rc4).
+I don't think userspace can send you SCM_RIGHTS if you don't do a
+recvmsg() with a control data buffer?
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +               if (WARN_ON_ONCE(core_pipe_limit)) {
+> +                       retval =3D -EINVAL;
+> +                       goto close_fail;
+> +               }
+> +
+> +               retval =3D strscpy(unix_addr.sun_path, cn.corename, sizeo=
+f(unix_addr.sun_path));
+> +               if (retval < 0)
+> +                       goto close_fail;
+> +               addr_size =3D offsetof(struct sockaddr_un, sun_path) + re=
+tval + 1,
+> +
+> +               file =3D __sys_socket_file(AF_UNIX, SOCK_STREAM, 0);
+> +               if (IS_ERR(file))
+> +                       goto close_fail;
+> +
+> +               /*
+> +                * It is possible that the userspace process which is
+> +                * supposed to handle the coredump and is listening on
+> +                * the AF_UNIX socket coredumps. This should be fine
+> +                * though. If this was the only process which was
+> +                * listen()ing on the AF_UNIX socket for coredumps it
+> +                * obviously won't be listen()ing anymore by the time it
+> +                * gets here. So the __sys_connect_file() call will
+> +                * often fail with ECONNREFUSED and the coredump.
 
+Why will the server not be listening anymore? Have the task's file
+descriptors already been closed by the time we get here?
 
+(Maybe just get rid of this comment, I agree with the following
+comment saying we should let userspace deal with this.)
+
+> +                * In general though, userspace should just mark itself
+> +                * non dumpable and not do any of this nonsense. We
+> +                * shouldn't work around this.
+> +                */
+> +               addr =3D (struct sockaddr_storage *)(&unix_addr);
+> +               retval =3D __sys_connect_file(file, addr, addr_size, O_CL=
+OEXEC);
+
+Have you made an intentional decision on whether you want to connect
+to a unix domain socket with a path relative to current->fs->root (so
+that containers can do their own core dump handling) or relative to
+the root namespace root (so that core dumps always reach the init
+namespace's core dumping even if a process sandboxes itself with
+namespaces or such)? Also, I think this connection attempt will be
+subject to restrictions imposed by (for example) Landlock or AppArmor,
+I'm not sure if that is desired here (since this is not actually a
+connection that the process in whose context the call happens decided
+to make, it's something the system administrator decided to do, and
+especially with Landlock, policies are controlled by individual
+applications that may not know how core dumps work on the system).
+
+I guess if we keep the current behavior where the socket path is
+namespaced, then we also need to keep the security checks, since an
+unprivileged user could probably set up a namespace and chroot() to a
+place where the socket path (indirectly, through a symlink) refers to
+an arbitrary socket...
+
+An alternative design might be to directly register the server socket
+on the userns/mountns/netns or such in some magic way, and then have
+the core dumping walk up the namespace hierarchy until it finds a
+namespace that has opted in to using its own core dumping socket, and
+connect to that socket bypassing security checks. (A bit like how
+namespaced binfmt_misc works.) Like, maybe userspace with namespaced
+CAP_SYS_ADMIN could bind() to some magic UNIX socket address, or use
+some new setsockopt() on the socket or such, to become the handler of
+core dumps? This would also have the advantage that malicious
+userspace wouldn't be able to send fake bogus core dumps to the
+server, and the server would provide clear consent to being connected
+to without security checks at connection time.
+
+> +               if (retval)
+> +                       goto close_fail;
+> +
+> +               /* The peer isn't supposed to write and we for sure won't=
+ read. */
+> +               retval =3D  __sys_shutdown_sock(sock_from_file(file), SHU=
+T_RD);
+> +               if (retval)
+> +                       goto close_fail;
+> +
+> +               cprm.limit =3D RLIM_INFINITY;
+> +#endif
+> +               cprm.file =3D no_free_ptr(file);
+> +               break;
+> +       }
+>         default:
+>                 WARN_ON_ONCE(true);
+>                 retval =3D -EINVAL;
+> @@ -818,7 +925,10 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>                  * have this set to NULL.
+>                  */
+>                 if (!cprm.file) {
+> -                       coredump_report_failure("Core dump to |%s disable=
+d", cn.corename);
+> +                       if (cn.core_type =3D=3D COREDUMP_PIPE)
+> +                               coredump_report_failure("Core dump to |%s=
+ disabled", cn.corename);
+> +                       else
+> +                               coredump_report_failure("Core dump to :%s=
+ disabled", cn.corename);
+>                         goto close_fail;
+>                 }
+>                 if (!dump_vma_snapshot(&cprm))
+> @@ -839,8 +949,25 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>                 file_end_write(cprm.file);
+>                 free_vma_snapshot(&cprm);
+>         }
+> -       if ((cn.core_type =3D=3D COREDUMP_PIPE) && core_pipe_limit)
+> -               wait_for_dump_helpers(cprm.file);
+> +
+> +       if (core_pipe_limit) {
+> +               switch (cn.core_type) {
+> +               case COREDUMP_PIPE:
+> +                       wait_for_dump_helpers(cprm.file);
+> +                       break;
+> +               case COREDUMP_SOCK: {
+> +                       /*
+> +                        * TODO: Wait for the coredump handler to shut
+> +                        * down the socket so we prevent the task from
+> +                        * being reaped.
+> +                        */
+
+Hmm, I'm no expert but maybe you could poll for the POLLRDHUP event...
+though that might require writing your own helper with a loop that
+does vfs_poll() and waits for a poll wakeup, since I don't think there
+is a kernel helper analogous to a synchronous poll() syscall yet.
+
+> +                       break;
+> +               }
+> +               default:
+> +                       break;
+> +               }
+> +       }
+> +
+>  close_fail:
+>         if (cprm.file)
+>                 filp_close(cprm.file, NULL);
 
