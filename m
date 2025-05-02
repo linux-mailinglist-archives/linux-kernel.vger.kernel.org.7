@@ -1,152 +1,118 @@
-Return-Path: <linux-kernel+bounces-629836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E363AAA7236
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:36:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6796AA7142
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646A11BC118E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:37:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB44E16741C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BF6253938;
-	Fri,  2 May 2025 12:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C3A24E4BF;
+	Fri,  2 May 2025 12:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Woz6aWmH"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lL/xHF60"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EF6182;
-	Fri,  2 May 2025 12:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C63230BD2;
+	Fri,  2 May 2025 12:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746189408; cv=none; b=ffl2XC2+8Mg8FZxLJEMKuKwnJ72eeOXerOX072htrxvSBPO2DuNuKh1GAADb7B//Jp6ajnLGPEFjVEvCqiKE5ScOXgUDqKQg0ClZJalx0MJHPcjg6QQLabDVYjmtvNp6pzrd4na989Q4Q0GCDi7TAm3pT5GfJ+Fgqsi5kBKpi48=
+	t=1746187731; cv=none; b=n+l9Qt2i/ZUXNO4BdUUwyBnHQAUxnSXYSWq0oO4Tl+LpexK9NwcYwTR4FsWFuS0TTgi2tkCB9UKP8yNpyy+uSWf9WuruB0TLhZG+NA35D9GIYP0u7IH40y0+udg7kWQj/reBKbqhgN7r7uWbeuf+md0TiSCh33uNUPa58lCVaRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746189408; c=relaxed/simple;
-	bh=jt4cu7JoAcja/i7vDiI5Eo9ijTBc3g0OQvyp48ZU9nA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=AAvfddAGWsMir+uNYhnS2NGIucvT1+hG9AO2V2+vi2gQtk7FlF3FFeO2M0I4cysVPunvD+pHnWTfw+BFL73za5CvQ2baPrGo5TWIQBnoCpIxcSC0DRhu+IZ/5yXWkXkBckyUKm1bTpPkNWK63tWB2dz9G+MPZZncYkcdvPjYgnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Woz6aWmH; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id A9458580015;
-	Fri,  2 May 2025 12:08:09 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6597343978;
-	Fri,  2 May 2025 12:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746187681;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6J//V8N/2FPUCK55/Rt0fc9X9pPfCrpuRCbgqXf8ghE=;
-	b=Woz6aWmHiSZ+6qQs+TFI8SsnPc7vh+aL//JQCRYBsQv9PNjJm1tuEBka1eaDwc+XaORNvC
-	V8xicpuheO41nEXYkMBVvLHPv5BE6kj81YuBfeC1LUbu4IMy5SPOEFLtv0H3vhA2478BFv
-	Ey9dHSyzrozhk9A9EJrtoW8bJ0QraiHWL0M1R5L2hXmra7k99iD83BHmjyDPVUpPhrse3Z
-	PKxXddTxsr8Y4eIKvjxyNHkqTAk+kDlTS5vh/lHkdf1mbQ0WYdfcUylhyTmWcov136Rekp
-	MiulJXV0CVcuTQmv5Mz7NDAc+hwHMMiQ64Xx6mEBkA9mbdoxwxjwvxHNIHNfbQ==
+	s=arc-20240116; t=1746187731; c=relaxed/simple;
+	bh=RZEn4O/5y4HX5EifU5+rLuX25Zd/HYiXN9myaTASpS0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TAUbK1mOea9jVf/+p0qFbSXy1qL5lZOgwzZjRco4WhSFBntWqf1M6nKTSPKFb1Zfj8mizSzMgcRC6Y+PjLmbUi5a5CPXF+1QjnbG500rBzuVhhtjs6ETXgKH7CdpxPLPupJO+jlyKGAH/f24V4MnS9ggBKPICF7aZBa5iYI2yOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lL/xHF60; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D218C4CEE4;
+	Fri,  2 May 2025 12:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746187730;
+	bh=RZEn4O/5y4HX5EifU5+rLuX25Zd/HYiXN9myaTASpS0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=lL/xHF60eFNkc5d2C01tO1Br6wP8mGe3IIVJlv5fM0t5m/tj6GUGX+wZwRF0ePBtX
+	 4pxb5MVsFTBUfvAeGy+nMLW8MYAGzZzxJwcyo5FcLkta/9t5BIbWzpKRY0sPlFWaOt
+	 IlDRn1ttudc7X82IEn/9QfV2G17C/upypXeKTY048EYMW6ddXAmZ1yxS3LMAfSGgOA
+	 kaMzJiZQms+kVIsC9x0+VZ4BB8ps/P7wrai+vjhr0tPD+Om72dCwM4E6jGEzCEgXIG
+	 PtSSJRsHwqKhPmra3hvWCHBnxzJh29rOx9KC6P2Me0RxX4k+gEt1L2xi3kR92Zh7aS
+	 fnUEmsYzAL+AA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
+ <nathan@kernel.org>,  "Luis Chamberlain" <mcgrof@kernel.org>,  "Danilo
+ Krummrich" <dakr@kernel.org>,  "Nicolas Schier"
+ <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,  "Adam
+ Bratschi-Kaye" <ark.email@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>,  "Petr
+ Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,  "Fiona
+ Behrens" <me@kloenk.dev>,  "Daniel Almeida"
+ <daniel.almeida@collabora.com>,  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v10 1/3] rust: str: add radix prefixed integer parsing
+ functions
+In-Reply-To: <CANiq72=_gheZdZmgwoB2q6HSssoXLk4TRkJVagJKjmFTd+LDcQ@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Thu, 01 May 2025 11:47:19 +0200")
+References: <20250501-module-params-v3-v10-0-4da485d343d5@kernel.org>
+	<20250501-module-params-v3-v10-1-4da485d343d5@kernel.org>
+	<GV-3iFXmYRNq0drIsxo5B7gSpLXpEb4FH6lqd_TVr7tcpFcHLuersTVISYWomKIeV3xSZ0P1HFbRBNzD_ZSXFg==@protonmail.internalid>
+	<CANiq72=_gheZdZmgwoB2q6HSssoXLk4TRkJVagJKjmFTd+LDcQ@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Fri, 02 May 2025 14:08:38 +0200
+Message-ID: <87v7qjxlix.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 02 May 2025 14:07:59 +0200
-Message-Id: <D9LNVDTBPE6Q.3KOYKLIH8PPZ7@bootlin.com>
-Subject: Re: [PATCH v7 03/11] pinctrl: Add MAX7360 pinctrl driver
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com>
- <20250428-mdb-max7360-support-v7-3-4e0608d0a7ff@bootlin.com>
- <aBSbKwmao-K-e1k8@smile.fi.intel.com>
-In-Reply-To: <aBSbKwmao-K-e1k8@smile.fi.intel.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedvgeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlr
- dhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Fri May 2, 2025 at 12:15 PM CEST, Andy Shevchenko wrote:
-> On Mon, Apr 28, 2025 at 01:57:21PM +0200, Mathieu Dubois-Briand wrote:
->> Add driver for Maxim Integrated MAX7360 pinctrl on the PORT pins. Pins
->> can be used either for GPIO, PWM or rotary encoder functionalities.
->
->> +struct max7360_pinctrl {
->> +	struct pinctrl_dev *pctldev;
->> +	struct pinctrl_desc pinctrl_desc;
->
-> Does`pahole` agree with your choice of layout?
->
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
 
-I believe so. `pahole drivers/pinctrl/pinctrl-max7360.ko` says:
-struct max7360_pinctrl {
-        struct pinctrl_dev *       pctldev;              /*     0     4 */
-        struct pinctrl_desc        pinctrl_desc;         /*     4    44 */
-
-        /* XXX last struct has 3 bytes of padding */
-
-        /* size: 48, cachelines: 1, members: 2 */
-        /* paddings: 1, sum paddings: 3 */
-        /* last cacheline: 48 bytes */
-};
-
->> +	chip =3D devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
->> +	if (!chip)
->> +		return -ENOMEM;
+> On Thu, May 1, 2025 at 9:55=E2=80=AFAM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
+>>
+>> +pub mod parse_int {
 >> +
->> +	pd =3D &chip->pinctrl_desc;
->> +
->> +	pd->pctlops =3D &max7360_pinctrl_ops;
->> +	pd->pmxops =3D &max7360_pmxops;
->> +	pd->name =3D dev_name(dev);
->> +	pd->pins =3D max7360_pins;
->> +	pd->npins =3D MAX7360_MAX_GPIO;
->> +	pd->owner =3D THIS_MODULE;
->> +
->> +	device_set_of_node_from_dev(dev, dev->parent);
+>> +    use crate::prelude::*;
 >
-> I don't like this, but I have no better idea right now. Perhaps add a com=
-ment
-> on top to explain this call?
+> Spurious newline.
 >
+>> +    use crate::str::BStr;
+>> +    use core::ops::Deref;
+>
+>> +    /// # Examples
+>> +    /// ```
+>
+> Missing newline.
+>
+>> +                    // integer. We choose u64 as sufficiently large.
+>
+> `u64`
+>
+> (These were all in the range-diff :)
 
-I'm adding this comment here, and a similar one in the PWM driver.
+Well, range-diffs do not apply, so some manual interaction was required.
+And I don't have the same built-in linter in my mind as you have =F0=9F=98=
+=85
 
-/*
- * This MFD sub-device does not have any associated device tree node:
- * properties are stored in the device node of the parent (MFD) device
- * and this same node is used in phandles of client devices.
- * Reuse this device tree node here, as otherwise the pinctrl subsystem
- * would be confused by this topology.
- */
+I will respin now.
 
-OK for all other comments.
 
-Thanks for your review.
-Mathieu
+Best regards,
+Andreas Hindborg
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
 
