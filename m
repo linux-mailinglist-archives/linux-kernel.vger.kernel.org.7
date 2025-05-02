@@ -1,104 +1,143 @@
-Return-Path: <linux-kernel+bounces-630295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2EDAA77F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:01:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48115AA77D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8AC318815E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:01:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690E7982F53
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2551A3A80;
-	Fri,  2 May 2025 17:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b="BOAVdmnX"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F1A2609D7;
+	Fri,  2 May 2025 16:54:23 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5321A2630
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 17:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564B425A2DA
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746205299; cv=none; b=R4DL3aAiM9gIBrrfReLucTn2TDkW409fEc6rTC51aCJVjNkVNCQCn9MmvdHApuxwOJN+QyBDPqCvL3qE+yRwzTAqQIGwlQ3CH5leFWn93RrH6yl5A4395P2LTG68s5Ne83JoK1SPyWlMRxvYiDc5s0E2ba/cQizGRQA5s5Wld8U=
+	t=1746204863; cv=none; b=hzyLm7EeVldpzClJpDT1CaxkTTVzxxi1yd8B6XS+C42L70r67S+TAfQ3qc3WbpLinzipGfvSfHNuwBrOL/b8eWi94WEF4ghYE2mdxFBCznrEuOrZPZkFQb97lYIxBWZouTN8nJuYO2J6yMqHjLEqhw4F2GC7lVuBAtC4f/I0KDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746205299; c=relaxed/simple;
-	bh=BFtyWDFTN1QrKrJxpIvshxuClJ86Y3W8VsyPYHB3IwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dbervhPrdDcr2ssqI9ZnXvNp8Lq5wTdbHIBFJ64gbjz/J6hDY5gGXRHl0uLRrPsphJ3cNYDvJGLalq44ue5l2AICN4RCdTc2MS8kbbkkALLwpD0bZUegnBYjNb0mzWFi6524F1lpnVYYvsMy6KaTis2Bv1W5mpjlzbzfNmjtLrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=isovalent.com; spf=pass smtp.mailfrom=isovalent.com; dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b=BOAVdmnX; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=isovalent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isovalent.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f62ef3c383so4056069a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 10:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=isovalent.com; s=google; t=1746205296; x=1746810096; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BFtyWDFTN1QrKrJxpIvshxuClJ86Y3W8VsyPYHB3IwI=;
-        b=BOAVdmnXJDta2bWmJmyXLuQhiUNwzMGnxt8izmUyAPJnor4WJSH9GfzSD1B8jJuDGe
-         4YI7oQS33bVziyf2IZ1xna4tzmkygTzRmnAn/xnrys8YucolLboIOMdRc8SE1EhRRdog
-         xX+d3oKLxBDF4Q/010173dkiyFbXuX8LwGdNa8oXeV6fQF0gC+Sfto6DdeUt8tyYLfdN
-         kZcm7bw5kITiHajMfWxTFkbG5r6ZNlfXidNZWkL1sNzCEe9Dvx+LAZIT4n5R+GRUzoai
-         59Y28KF0cTWXt7Sp9HREB3TSEkTajsGPWKDKZWTjHhFzxdgMCRq3AYLzD/ZO9y4E5a2j
-         ki8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746205296; x=1746810096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BFtyWDFTN1QrKrJxpIvshxuClJ86Y3W8VsyPYHB3IwI=;
-        b=HOwuJT0iKLIUOU5HbmCf48ZUMIIcCzWfZgr2BEVvfV44H7Ma87tS3ZAOQm/zlMCOcv
-         5BRZdthNTFE6VVYuixX/CQYwpfWPzOxzSa3G27Iv5yvwe8zUFdqFzuutUOmt+lhFJFLS
-         qhe5mecYHpMU9kkYJl2OP02MbTG6YOTeXRILwnT0/lBwUb3VhavAA816POa0SHoc4Rbw
-         D3JECIE8Vnd2hVvf2+p7X1xKnYMwLXAKPpN1H4kAV9J9p9ABM44i95juoF4ni1ZNuEQ2
-         H9ALj/6IHPLyzsluS6b3HQZy/MCo+2Fx310h/Hp1ejJqHtUrOjAngbP53RueNpLR/+S/
-         iXAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4nduT+VPnj6dv1IxKuMQ7BHuPpE4gQjJfj6zou1txKDjapto+Ya62UCzBSp8L8svor8F9LPX0pJTNxAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkRl8AxObWO/8nmrR/tms7FSMeVdL4DjF5orYy3y4V97yewTid
-	hiAS3X9C4dM2QYK06WnGoylwVWx91nv8jGiMis+sHR4vn7M/9k6Ggohkj16WBxVLTFnR91Ih4Lp
-	2L5HvuIAABPfN12w4GyTz1BzVMBuD51t+YUyWuGI4QgdNi07q
-X-Gm-Gg: ASbGncvn6pixpZ1SaZ6f+9GKjXlCqxwYqjhXHoUm0yCx6K5fwElySyPvngopJUIX/T6
-	jfiaHYRfUqgNkW1dQuCQCoGVWI7ZfHi/I68hwmXQjaAu0cJVN2NhwFd5jqr+gc2+eBBtzd4k28Z
-	Zm9sA4K9NsQR5WXWdzY7iocR9ZlREbogrTaIk=
-X-Google-Smtp-Source: AGHT+IFtImagR6Lqfgo7XIZ1wWl2+tLkZnQp/pTB1oR1k0UzDInmGHhqpcROEep6B+1QLhfQbASn6A2YAzPAFuoWbdA=
-X-Received: by 2002:a05:6000:402b:b0:39c:e0e:b27a with SMTP id
- ffacd0b85a97d-3a099ad70dfmr2371455f8f.23.1746204815370; Fri, 02 May 2025
- 09:53:35 -0700 (PDT)
+	s=arc-20240116; t=1746204863; c=relaxed/simple;
+	bh=3M12KVAiXepaMce8WCfsepjU54GrGCHwMIvFLVFLQ2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uuULbq7vIIx75VHQaUoRagZekZQqQYGI3H2HKxdMOy1Jy0vp3j1Gxo517aAdnfaK5ErSAYWU8uogoNWa/Jx+1q/w5fqxX3/tqU0vgPXWm59lCePHf9yggfkCOutwbVE5UGmd+FyzleVRtZ4a5X6PdfT4Pme+jJP4RGG2FXeryFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uAteA-00065d-2h; Fri, 02 May 2025 18:53:58 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uAte9-000mLr-0c;
+	Fri, 02 May 2025 18:53:57 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uAte9-00GahR-07;
+	Fri, 02 May 2025 18:53:57 +0200
+Date: Fri, 2 May 2025 18:53:57 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Adam Ford <aford173@gmail.com>
+Cc: nicolas.dufresne@collabora.com, benjamin.gaignard@collabora.com,
+	p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org,
+	Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+	festevam@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, paulk@sys-base.io, hverkuil@xs4all.nl,
+	laurent.pinchart@ideasonboard.com, sebastian.fricke@collabora.com,
+	ming.qian@nxp.com, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 05/11] arm64: dts: imx8mp: drop gpcv2 vpu
+ power-domains and clocks
+Message-ID: <20250502165357.ncuve25xwvydhxz3@pengutronix.de>
+References: <20250502150513.4169098-1-m.felsch@pengutronix.de>
+ <20250502150513.4169098-6-m.felsch@pengutronix.de>
+ <CAHCN7xJ5p+dwJD7i7caqwhmrz8+gZDVeqfdWA_=He-H+aTJgRg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502-vmlinux-mmap-v2-0-95c271434519@isovalent.com> <20250502-vmlinux-mmap-v2-1-95c271434519@isovalent.com>
-In-Reply-To: <20250502-vmlinux-mmap-v2-1-95c271434519@isovalent.com>
-From: Lorenz Bauer <lmb@isovalent.com>
-Date: Fri, 2 May 2025 17:53:24 +0100
-X-Gm-Features: ATxdqUEmdXYDqO_tQ1hPoaj8fCjwznGA5fXIlAwLRODgYtT6LMxPzFPPx9AIs8I
-Message-ID: <CAN+4W8i0CB+gYcBNyWUxAA+=89Q+nMFopxKUF3nt1+y5ATaNyg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 1/3] btf: allow mmap of vmlinux btf
-To: Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCN7xJ5p+dwJD7i7caqwhmrz8+gZDVeqfdWA_=He-H+aTJgRg@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, May 2, 2025 at 11:20=E2=80=AFAM Lorenz Bauer <lmb@isovalent.com> wr=
-ote:
->
-> User space needs access to kernel BTF for many modern features of BPF.
-> Right now each process needs to read the BTF blob either in pieces or
-> as a whole. Allow mmaping the sysfs file so that processes can directly
-> access the memory allocated for it in the kernel.
+On 25-05-02, Adam Ford wrote:
+> On Fri, May 2, 2025 at 10:10 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
+> >
+> > The GPCv2 G1, G2 and VC8000E power-domain don't need to reference the
+> > VPUMIX power-domain nor their module clocks since the power and reset
+> > handling is done by the VPUMIX blkctrl driver.
+> >
+> It was my understanding that having this dependency ensures the order
+> of the bring-up, but maybe I am wrong.  Do you know if the 8MP
 
-I just realised that there is also code which exposes module BTF via
-sysfs, which my code currently doesn't handle. I'll send a v3.
+If that is true, the 8MM should be broken.
+
+> suspend-resume works properly?
+
+No I didn't test suspend/resume.
+
+> Should this get a fixes tag?
+
+It's just a cleanup, therefore I didn't add the fixes-tag.
+
+Regards,
+  Marco
+
+
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 7 -------
+> >  1 file changed, 7 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > index e0d3b8cba221..cf9b6c487bd5 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > @@ -879,24 +879,17 @@ pgc_mediamix: power-domain@10 {
+> >
+> >                                         pgc_vpu_g1: power-domain@11 {
+> >                                                 #power-domain-cells = <0>;
+> > -                                               power-domains = <&pgc_vpumix>;
+> >                                                 reg = <IMX8MP_POWER_DOMAIN_VPU_G1>;
+> > -                                               clocks = <&clk IMX8MP_CLK_VPU_G1_ROOT>;
+> >                                         };
+> >
+> >                                         pgc_vpu_g2: power-domain@12 {
+> >                                                 #power-domain-cells = <0>;
+> > -                                               power-domains = <&pgc_vpumix>;
+> >                                                 reg = <IMX8MP_POWER_DOMAIN_VPU_G2>;
+> > -                                               clocks = <&clk IMX8MP_CLK_VPU_G2_ROOT>;
+> > -
+> >                                         };
+> >
+> >                                         pgc_vpu_vc8000e: power-domain@13 {
+> >                                                 #power-domain-cells = <0>;
+> > -                                               power-domains = <&pgc_vpumix>;
+> >                                                 reg = <IMX8MP_POWER_DOMAIN_VPU_VC8000E>;
+> > -                                               clocks = <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
+> >                                         };
+> >
+> >                                         pgc_hdmimix: power-domain@14 {
+> > --
+> > 2.39.5
+> >
+> >
+> 
 
