@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-630414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E75AA7A00
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:05:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B307AA7A0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64AF3B4B9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2DCE4E2516
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2951E1F1511;
-	Fri,  2 May 2025 19:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13271F1301;
+	Fri,  2 May 2025 19:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="p4qqZM6h"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tLKGNqPs"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7B01EB5E6;
-	Fri,  2 May 2025 19:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3551C1EFFBB
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 19:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746212694; cv=none; b=ETn/vh4T20dnHZ+dm+M7xWR/j65YzQMdLw9TRJLh7uckIJMLDv60h6x4TIOI43yMRYWowtLDDePBGL4Y4bQkesS3LorkDSIIT5duiGPCSQ3ePq7y3Cc3u2uh+vPfDs+ylmH4aEoF2VA5s28JePZrqoQ8auOB1fFDtabaEGGxjk8=
+	t=1746212996; cv=none; b=hSTldVN2hgWGb/7v7EX1JKFDBMs5lVl7iop8htQc6d7gNCtXhasCyu8sm9jpvSrf0sXBdMhSbjULVrYjF/EsTiPWNzwojjMFnQdRFQ1YlCbZjOq4KdKpQHSrMSDeYENrSktJJrRz950He/PodnkRq0UeVq6gvzuTqUNDlnFKzIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746212694; c=relaxed/simple;
-	bh=p7XIGW72I/91fLazyIlExCv1uQr/qO433Ug1xE3MvsU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=C8PQEPUk7xvW2zcKJXpvEC9TymtQg1kcizbU0eAi84WE+zorQTO1MEdP22BUSYZ0p9BOSIKITbSTvBqBomX5dW3iBwFVQtERcxK0cx+vNVF5pCtLvv0wFcpTc7AwFPh1VIfq5yPVKBdOOKniJNBPe+hMU9XTktRJeo8DdgL3TsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=p4qqZM6h; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from localhost (web.docker-mailserver_default [172.18.0.2])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 71034BBAC4;
-	Fri,  2 May 2025 19:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1746212684;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qM7bXBHe1bXroHuK8JaLfF5A62uJE4FV4UFgd1YY7Z4=;
-	b=p4qqZM6hk7CsMYNc6A9L8oCFEPGgrrln3MTHLjBn5mo9Gn59CYx++5icdw48Q0QaIFEBOq
-	PmTfTckQgiXuEWVWwLo99fCwoVmRNDeIx0TqYfT9zyvxGX16hiZXip562t8NQkXAHCA0O3
-	03CWY4qHkYXKWd4x10AY+TpFjqHG0VsG9hdaPPXMGSb7scb0Ee4rJ/Ak3K7bEI8T6lF00Q
-	JJvqN9tl6F71Y5bP0EDfK7VFuYiu1b3pewx94S9+gPV4wARKwvMyGT1QQbmZLDijA3D9+s
-	i4GEwXZMRHF/3sdmaQIGlB9Dd9tw5/gKjIFeCYZc3M8gpnhMQObe7f3HJOyzOQ==
+	s=arc-20240116; t=1746212996; c=relaxed/simple;
+	bh=GJ2pIjBchyImO+6fT+NNHDZxYbsmpgk+t2LIWLflrk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GVzPtMkTXSM48HvseG0JBMziAVcR6IYTWupU5yzPmx3tZTtntzjJmlFPO50I1cSZVo5A8Lp3WzoBOGx+KdIYthIe9fERIvrx+oAGdUz1BVw1ZruUIwxh7sCGv9OK3FpvsZQk1LIes/R4jQNTOAgXsRVM3Q+8OcwQtU/gJ5qFLwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tLKGNqPs; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pqT1CsyDucN3pt8NP7y+prQ7/LGXACbbn0G9sn9Egp0=; b=tLKGNqPsFgqT2Qjcsyz63JrvoT
+	pvPJ2lsbTZ2Snh6b6qeZBmtN8L2aSm01cloc4ublKiUU8My7d1S44jBfpESszgYddAOi7+Oq13bg5
+	PgHFLZvZcNWDUQVUUYw4/FmnYMaJx5/cw4VT/qbKo8sG2uWAkZvulcJL9KRSFE1lBjfznV8doUJ6z
+	cqN2fbjSwTaPnEM31xx/OinJO7ZPMQjwCi/ua8WngSOsZ82S3Atcxv3PbvgXOY3W3J6swbJcMlRrH
+	7l3KZKTsUDEatCsqRWRCgwagAFhyX5K4PACfvN4zwoi6C4gp6gCOVB4QZv74jWaeUzBC6PA7+W7O9
+	uebq4YbA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAvkp-0000000AtAh-1eng;
+	Fri, 02 May 2025 19:09:02 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 99217300321; Fri,  2 May 2025 21:08:38 +0200 (CEST)
+Date: Fri, 2 May 2025 21:08:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v12 21/21] selftests/futex: Add futex_numa_mpol
+Message-ID: <20250502190838.GB24078@noisy.programming.kicks-ass.net>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416162921.513656-22-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 02 May 2025 21:04:44 +0200
-From: barnabas.czeman@mainlining.org
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, Linus Walleij
- <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Joerg Roedel
- <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
- <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, Rob Clark
- <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Dmitry
- Baryshkov <lumag@kernel.org>, Adam Skladowski <a_skl39@protonmail.com>,
- Sireesh Kodali <sireeshkodali@protonmail.com>, Srinivas Kandagatla
- <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, Dang Huynh
- <danct12@riseup.net>
-Subject: Re: [PATCH v5 3/5] arm64: dts: qcom: Add initial support for MSM8937
-In-Reply-To: <656da4e9-b609-43f4-9afd-006698a2c7d6@oss.qualcomm.com>
-References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
- <20250421-msm8937-v5-3-bf9879ef14d9@mainlining.org>
- <2e3d94a4-d9e1-429e-9f65-d004c80180e5@oss.qualcomm.com>
- <790a0b7537e0b82b70bc4b32612ecee6@mainlining.org>
- <70635d75-03f9-49ea-8098-57cb144fda94@oss.qualcomm.com>
- <5ccb39f9393b44761127717096a38a46@mainlining.org>
- <68e2c0ee-d5e2-40fd-9ca0-262ed3270628@oss.qualcomm.com>
- <31559417a92d1e1ff17d0f3add9a1ba0@mainlining.org>
- <656da4e9-b609-43f4-9afd-006698a2c7d6@oss.qualcomm.com>
-Message-ID: <c7d9f42017f10bac303b483127859c18@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416162921.513656-22-bigeasy@linutronix.de>
 
-On 2025-04-25 23:02, Konrad Dybcio wrote:
-> On 4/25/25 10:22 PM, barnabas.czeman@mainlining.org wrote:
->> On 2025-04-25 21:26, Konrad Dybcio wrote:
->>> On 4/25/25 5:13 PM, barnabas.czeman@mainlining.org wrote:
->>>> On 2025-04-25 11:57, Konrad Dybcio wrote:
->>>>> On 4/23/25 4:46 PM, barnabas.czeman@mainlining.org wrote:
->>>>>> On 2025-04-23 16:03, Konrad Dybcio wrote:
->>>>>>> On 4/21/25 10:18 PM, Barnabás Czémán wrote:
->>>>>>>> From: Dang Huynh <danct12@riseup.net>
->>>>>>>> 
->>>>>>>> Add initial support for MSM8937 SoC.
->>>>>>>> 
->>>>>>>> Signed-off-by: Dang Huynh <danct12@riseup.net>
->>>>>>>> Co-developed-by: Barnabás Czémán 
->>>>>>>> <barnabas.czeman@mainlining.org>
->>>>>>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->>>>>>>> ---
->>>>> 
->>>>> [...]
->>>>> 
->>>>>>>> +            gpu_opp_table: opp-table {
->>>>>>>> +                compatible = "operating-points-v2";
->>>>>>>> +
->>>>>>>> +                opp-19200000 {
->>>>>>>> +                    opp-hz = /bits/ 64 <19200000>;
->>>>>>>> +                    opp-supported-hw = <0xff>;
->>>>>>> 
->>>>>>> The comment from the previous revision still stands
->>>>>> If i remove opp-supported-hw i will got -22 EINVAL messages and 
->>>>>> the opp will be not fine.
->>>>> 
->>>>> Right, I have a series pending to improve this situation a bit..
->>>>> 
->>>>> In the meantime, you should be able to define the nvmem cell and
->>>>> fill in meaningful values for this platform
->>>> As I wrote in the previous revision there is no nvmem for GPU on 
->>>> msm8937 only on msm8940.
->>> 
->>> This seems not to be the case
->>> 
->>> https://github.com/penglezos/android_kernel_xiaomi_msm8953/blob/pie/arch/arm/boot/dts/qcom/msm8937.dtsi#L2046-L2191
->>> 
->> These are on msm-4.9 was moved to msm8940.dtsi
->> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8937-gpu.dtsi#L162
->> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8940.dtsi#L600
->> 475 MHz and 500 MHz is for msm8940 at least based on 4.9
+On Wed, Apr 16, 2025 at 06:29:21PM +0200, Sebastian Andrzej Siewior wrote:
+> diff --git a/tools/testing/selftests/futex/include/futex2test.h b/tools/testing/selftests/futex/include/futex2test.h
+> index 9d305520e849b..b664e8f92bfd7 100644
+> --- a/tools/testing/selftests/futex/include/futex2test.h
+> +++ b/tools/testing/selftests/futex/include/futex2test.h
+> @@ -8,6 +8,11 @@
+>  
+>  #define u64_to_ptr(x) ((void *)(uintptr_t)(x))
+>  
+> +struct futex32_numa {
+> +	futex_t futex;
+> +	futex_t numa;
+> +};
+> +
+>  /**
+>   * futex_waitv - Wait at multiple futexes, wake on any
+>   * @waiters:    Array of waiters
+> @@ -20,3 +25,32 @@ static inline int futex_waitv(volatile struct futex_waitv *waiters, unsigned lon
+>  {
+>  	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
+>  }
+> +
+> +static inline int futex2_wait(volatile struct futex_waitv *waiters, unsigned long nr_waiters,
+> +			      unsigned long flags, struct timespec *timo, clockid_t clockid)
+> +{
+> +	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
+
+I'm confused, sure this should be __NR_futex_wait
+
+> +}
+> +
+> +/*
+> + * futex_wait2() - block on uaddr with optional timeout
+> + * @val:	Expected value
+> + * @flags:	FUTEX2 flags
+> + * @timeout:	Relative timeout
+> + * @clockid:	Clock id for the timeout
+> + */
+> +static inline int futex2_wait2(void *uaddr, long val, unsigned int flags,
+> +			      struct timespec *timeout, clockid_t clockid)
+
+And this should be futex2_wait().
+
+
+> +{
+> +	return syscall(__NR_futex_wait, uaddr, val, 1, flags, timeout, clockid);
+> +}
+> +
+> +/*
+> + * futex2_wake() - Wake a number of futexes
+> + * @nr:		Number of threads to wake at most
+> + * @flags:	FUTEX2 flags
+> + */
+> +static inline int futex2_wake(void *uaddr, int nr, unsigned int flags)
+> +{
+> +	return syscall(__NR_futex_wake, uaddr, 1, nr, flags);
+> +}
+> -- 
+> 2.49.0
 > 
-> I'll try to get a more conclusive answer internally
-Any information? I am thinking about define nvmem cells based on 3.18
-> 
-> Konrad
 
