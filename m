@@ -1,170 +1,253 @@
-Return-Path: <linux-kernel+bounces-629639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1692AA6F91
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:28:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C7CAA6FA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23B4B1BC5439
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:28:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F7BF4A6245
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5784823C517;
-	Fri,  2 May 2025 10:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624B623E346;
+	Fri,  2 May 2025 10:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H64ScWfx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TaBqGMnl"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CC9205AB9
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 10:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A7E205AB9;
+	Fri,  2 May 2025 10:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746181704; cv=none; b=EKVulkc72xsVkVGaktx7TAkaVsMcgmvg9x5/cvIN1noyKZBb//8Ly1yESIhK2S/Ev3wUM1MyvN40gfgEyU66qzr0thFoWARFNHsLx7NKRFlLewm7cXY3D8gWhpM8TNevI6r/1kvBapTt4qYh99tJ7GmeZ8+BYwbOW3RBBRkwaEA=
+	t=1746181825; cv=none; b=MnnfxOBdN+UNldrwyssrAw5tvEevjmf+VY5F+y1nKX0oLEF1CCIb73T8DBQdTbOPnoPZ/GQv/JmyaPC9bHnlmJprSyiCxMsIcjVNRnAdHbER+GCKuBHWwT2KNkiFT2UaI0WlElYDKnRI+WYR8q+5FckZooP+qAuxn5jhcjPtc5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746181704; c=relaxed/simple;
-	bh=SEU8CqxPdXWm5kBs+itfyCdnnlLFQ0gV+s9EvH0h3a4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cca699BrTE+1x2Jw1FEDiWFNFNg8azaI5irhJAm1SIlTJYMIqYUoPXrnwX5NiicYF8jFMmL0/PnifzWludqWjD4XuE/wkocDYzg6x88xDTiHaHPOOc1Arb7XnM77KPQkPwV8PuxU7u0z1D9F09ICnsaXzYcu+C/uJthu5Wd/jWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H64ScWfx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746181702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QSbhw2lx3uIU9bt71Ke9bjoVhiyqLGEvU1SMMBHqrLU=;
-	b=H64ScWfxSM7cF+QCqeuldvCfQnV5iv/rxuLuU2M06TyvrdBDVdfvLjxJbiE9I6wZAdZ3Gm
-	mNU2SEC7sst43cb1pSzqdwLWtk5rsocUrVnFYUu6K3GEF6vxlKE76/QLbP29u+y/1+MLZy
-	tlolETy7gRGUeShMloRFcNgvZtlGDko=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-232-JutgP70VMkSzllabD_Zd5A-1; Fri, 02 May 2025 06:28:21 -0400
-X-MC-Unique: JutgP70VMkSzllabD_Zd5A-1
-X-Mimecast-MFC-AGG-ID: JutgP70VMkSzllabD_Zd5A_1746181700
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39ee4b91d1cso1160194f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 03:28:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746181700; x=1746786500;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QSbhw2lx3uIU9bt71Ke9bjoVhiyqLGEvU1SMMBHqrLU=;
-        b=dcvsk+WvwBTFCWXijq8O5WUKqdBW9KH+Jyvf7PK02i+dW81ubtBHtPOU608DCTXYG3
-         rRRlNgdWvw6sCcBk3LjJrsDVWglkyxzztuzJrh8uAJ2eEI57sFN9vqw8mW/VqWUvCZmT
-         HM2IGRx2LhRSiN2DMpG3zELRmzhKPp4Hwe7veobYIhWsULXY9pl9Lc4zxHJMY9+mSYPW
-         OW5tzAve7SssZLwxAJKMyCqEXjvRHoM2XGPEbuWc4rYeGJ5OIef4Fe9cNQv9AYKBbJH+
-         +9F8RB15e3NHWXbT35WYqvoykH8vDrpfus5ybsznwycVrtOxZAxXag8hpQfpKiVU/MBg
-         GyOw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0VyQWCo8M1ZzYWde0/3VCUlhSwUjXTD6XoATFLJ1aLHD69bLx7eSKkT/AlcyahrnmTOiHK7eA/uUhFzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoyyLDEQvP9h4Py6XAWllFjkla+baNt85dl3PbUBhEebRyEwhE
-	e3Lp9tTPkWdupUXq7XWZgEko4PkFi4TGnTuO2F49esznCyvAsKwBRRh8lTQ/7EaVlzvXvhRyVt6
-	dkfR/7L/Ge9mYz0O/c7kKywUxzqKxCcCNOtD3PeNjLvLo2Sz9IbYbVlN8w3RK8A==
-X-Gm-Gg: ASbGncu8RBl+diFN2N+CKXdx8tykiGoOaCLAKN/7OM3ztWUGUhxk6tnBZF7FE/jHOf+
-	+8ntnG5oCp6S4MP2nf6h2yyZQ9Rd8atjhE1niZqo6LJj8oYk+nAyEfQhaWDTvrBmZCh1fQQb9X7
-	nWJswFX/QCce7gWfYA/wNCa1b4OepWGaVBzkB02YN2wH6pdRJDvyaOBmHdcUGaSe8h9hNLT8inx
-	sAat1M0RlGBhhjeB6j+x6rO/TBoqNG9avfq/Hmkwcy7TDteAIKOoLvmuwA/lMQYTkVSpwOsNY70
-	Qmm4uNMpA8ATkGPX6SM=
-X-Received: by 2002:a05:6000:1a85:b0:3a0:8524:b480 with SMTP id ffacd0b85a97d-3a09402cacbmr5066376f8f.2.1746181699723;
-        Fri, 02 May 2025 03:28:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWyOVTRRGEVNWXO/iDfooNor6IST3SO4x3a3xxs7csOvOKwxwfMPv7xS3Tnv2MrR9Li9kpkg==
-X-Received: by 2002:a05:6000:1a85:b0:3a0:8524:b480 with SMTP id ffacd0b85a97d-3a09402cacbmr5066344f8f.2.1746181699348;
-        Fri, 02 May 2025 03:28:19 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:246d:aa10::f39? ([2a0d:3344:246d:aa10::f39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2ad784asm85337125e9.7.2025.05.02.03.28.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 May 2025 03:28:18 -0700 (PDT)
-Message-ID: <74e11512-934b-446c-94cf-93bf97eff9fb@redhat.com>
-Date: Fri, 2 May 2025 12:28:17 +0200
+	s=arc-20240116; t=1746181825; c=relaxed/simple;
+	bh=bKgIZqE60Yc5Ng7cINg5bqiXiAx88WDNx0NxbbmuxJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sPhB8C01LH/w3bXAIOKwNo3RvD7rNVa6LtnujXWvzAVeQd773srtWQUhCm6oK5PVaG3GSo/LroT3ExIbbRztn6VwUPsA3icByuuYXc0kKiP3AXsPFRh7gV7FjOr6gm4ElBpVqgCKpqgle0VoSDLxm2is6EPihsaJOdKJed+as58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TaBqGMnl; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=SN1hpXTp8D/aFRS6lABiopQRF6lYY9KR9gHRTnY5UwY=; b=TaBqGMnlMHaMberg1eWR0Bpk7C
+	cAqtlSQ8oAF/kfWClzM5St1RGCJTeFCogu2EdzZBXPdPKuku9XC4V5dJoCRbUiqVVNoCfJfxP3xK7
+	Q/ORspdHtNoj5CBDjizcPpsKAB+zkicOzPonG1E3x7H8xjsjcjAtWKRlzCyiNaRAhmTjPJtQvXGsi
+	E6uaTPtuk7qIFEM4AJPYocuhkmHWa4+YFdUeXAnyQ6vrhpNqGoDtt2z3bJLrTi2LYdCO2ASsUySeg
+	4qbnDUi63PA1Toi2nqOK5QTKhBxtcA0xwJfEr9u2Upd4mw6MOyd7V0964mK0WV1yJ9z0jzyI/l5pe
+	L/oKUGgA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAne6-0000000Ds04-2eqf;
+	Fri, 02 May 2025 10:29:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A5DC73001D4; Fri,  2 May 2025 12:29:18 +0200 (CEST)
+Date: Fri, 2 May 2025 12:29:18 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 2/4] perf: Fix irq work dereferencing garbage
+Message-ID: <20250502102918.GW4198@noisy.programming.kicks-ass.net>
+References: <20250424161128.29176-1-frederic@kernel.org>
+ <20250424161128.29176-3-frederic@kernel.org>
+ <20250424163024.GC18306@noisy.programming.kicks-ass.net>
+ <aA9ic6m6WAcmVBAw@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3] selftests/vsock: add initial vmtest.sh for
- vsock
-To: Stefano Garzarella <sgarzare@redhat.com>,
- Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Stefan Hajnoczi <stefanha@redhat.com>, Shuah Khan <shuah@kernel.org>,
- kvm@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20250428-vsock-vmtest-v3-1-181af6163f3e@gmail.com>
- <a57wg5kmprrpk2dm3zlzvegb3gzj73ubs5lxeukyinc4edlcsw@itkgfcm44qu2>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <a57wg5kmprrpk2dm3zlzvegb3gzj73ubs5lxeukyinc4edlcsw@itkgfcm44qu2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aA9ic6m6WAcmVBAw@pavilion.home>
 
-On 4/30/25 3:06 PM, Stefano Garzarella wrote:
-> On Mon, Apr 28, 2025 at 04:48:11PM -0700, Bobby Eshleman wrote:
->> This commit introduces a new vmtest.sh runner for vsock.
->>
->> It uses virtme-ng/qemu to run tests in a VM. The tests validate G2H,
->> H2G, and loopback. The testing tools from tools/testing/vsock/ are
->> reused. Currently, only vsock_test is used.
->>
->> VMCI and hyperv support is automatically built, though not used.
->>
->> Only tested on x86.
->>
->> To run:
->>
->>  $ tools/testing/selftests/vsock/vmtest.sh
+On Mon, Apr 28, 2025 at 01:11:47PM +0200, Frederic Weisbecker wrote:
+> Le Thu, Apr 24, 2025 at 06:30:24PM +0200, Peter Zijlstra a écrit :
+> > On Thu, Apr 24, 2025 at 06:11:26PM +0200, Frederic Weisbecker wrote:
+> > > @@ -13940,29 +13941,36 @@ perf_event_exit_event(struct perf_event *event,
+> > >  		 * Do destroy all inherited groups, we don't care about those
+> > >  		 * and being thorough is better.
+> > >  		 */
+> > > -		detach_flags |= DETACH_GROUP | DETACH_CHILD;
+> > > +		prd.detach_flags |= DETACH_GROUP | DETACH_CHILD;
+> > >  		mutex_lock(&parent_event->child_mutex);
+> > >  	}
+> > >  
+> > >  	if (revoke)
+> > > -		detach_flags |= DETACH_GROUP | DETACH_REVOKE;
+> > > +		prd.detach_flags |= DETACH_GROUP | DETACH_REVOKE;
+> > >  
+> > > -	perf_remove_from_context(event, detach_flags);
+> > > +	perf_remove_from_context(event, &prd);
+> > 
+> > Isn't all this waay to complicated?
+> > 
+> > That is, to modify state we need both ctx->mutex and ctx->lock, and this
+> > is what __perf_remove_from_context() has, but because of this, holding
+> > either one of those locks is sufficient to read the state -- it cannot
+> > change.
+> > 
+> > And here we already hold ctx->mutex.
+> > 
+> > So can't we simply do:
+> > 
+> > 	old_state = event->attach_state;
+> > 	perf_remove_from_context(event, detach_flags);
+> > 
+> > 	// do whatever with old_state
 > 
-> I tried and it's working, but I have a lot of these messages in the
-> output:
->      dmesg: read kernel buffer failed: Operation not permitted
+> Right, the locking scenario is just a bit more complicated.
+> Most flags are set on init or with both ctx mutex and lock.
+> But:
 > 
-> I'm on Fedora 41:
-> 
-> $ uname -r
-> 6.14.4-200.fc41.x86_64
+> _ PERF_ATTACH_CHILD is set instead with parent child_mutex and ctx lock.
 
-This sounds like the test tripping on selinux. I think this problem
-should not be handled by the script itself.
+Looks trivial to add ctx->mutex to the mix here. Its not like that's a
+fast path. But let me go read your patch before deciding if that's
+actually needed :-)
 
-[...]
-> ERROR: trailing whitespace
-> #174: FILE: tools/testing/selftests/vsock/vmtest.sh:47:
-> +^Ivm_server_host_client^IRun vsock_test in server mode on the VM and in client mode on the host.^I$
-> 
-> WARNING: line length of 104 exceeds 100 columns
-> #174: FILE: tools/testing/selftests/vsock/vmtest.sh:47:
-> +	vm_server_host_client	Run vsock_test in server mode on the VM and in client mode on the host.	
-> 
-> ERROR: trailing whitespace
-> #175: FILE: tools/testing/selftests/vsock/vmtest.sh:48:
-> +^Ivm_client_host_server^IRun vsock_test in client mode on the VM and in server mode on the host.^I$
-> 
-> WARNING: line length of 104 exceeds 100 columns
-> #175: FILE: tools/testing/selftests/vsock/vmtest.sh:48:
-> +	vm_client_host_server	Run vsock_test in client mode on the VM and in server mode on the host.	
-> 
-> ERROR: trailing whitespace
-> #176: FILE: tools/testing/selftests/vsock/vmtest.sh:49:
-> +^Ivm_loopback^I^IRun vsock_test using the loopback transport in the VM.^I$
-> 
-> ERROR: trailing whitespace
-> #443: FILE: tools/testing/selftests/vsock/vmtest.sh:316:
-> +IFS="^I$
-> 
-> total: 4 errors, 4 warnings, 0 checks, 382 lines checked
-> 
-I almost forgot: I think it's better to avoid the special formatting and
-replies on review for proper updating of the script's help.
+> _ PERF_ATTACH_ITRACE is set from pmu::start(). Thus from the event context
+>   with just interrupt disabled. It's probably enough to synchronize against
+>   initialization and remove_from_context IPIs but perf_event_exit_event() needs
+>   some care.
 
-Thanks,
+Right, that's a little tricky indeed. As stated, we don't care about the
+bit, but the write shouldn't mess things up.
 
-Paolo
+> So we must hold both ctx mutex and child_mutex (although the pmus_srcu thing
+> should make that PERF_ATTACH_CHILD thing visible but let's keep things obvious).
+> And also have WRITE_ONCE() / READ_ONCE() to take care about PERF_ATTACH_ITRACE,
+> which we don't care about anyway.
+> 
+> Now this looks like this:
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 7bcb02ffb93a..7278ca731a55 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -208,7 +208,6 @@ static void perf_ctx_unlock(struct perf_cpu_context *cpuctx,
+>  }
+>  
+>  #define TASK_TOMBSTONE ((void *)-1L)
+> -#define EVENT_TOMBSTONE ((void *)-1L)
+>  
+>  static bool is_kernel_event(struct perf_event *event)
+>  {
+> @@ -2338,12 +2337,6 @@ static void perf_child_detach(struct perf_event *event)
+>  
+>  	sync_child_event(event);
+>  	list_del_init(&event->child_list);
+> -	/*
+> -	 * Cannot set to NULL, as that would confuse the situation vs
+> -	 * not being a child event. See for example unaccount_event().
+> -	 */
+> -	event->parent = EVENT_TOMBSTONE;
+> -	put_event(parent_event);
+>  }
+>  
+>  static bool is_orphaned_event(struct perf_event *event)
+> @@ -5705,7 +5698,7 @@ static void put_event(struct perf_event *event)
+>  	_free_event(event);
+>  
+>  	/* Matches the refcount bump in inherit_event() */
+> -	if (parent && parent != EVENT_TOMBSTONE)
+> +	if (parent)
+>  		put_event(parent);
+>  }
+>  
+> @@ -9998,7 +9991,7 @@ void perf_event_text_poke(const void *addr, const void *old_bytes,
+>  
+>  void perf_event_itrace_started(struct perf_event *event)
+>  {
+> -	event->attach_state |= PERF_ATTACH_ITRACE;
+> +	WRITE_ONCE(event->attach_state, event->attach_state | PERF_ATTACH_ITRACE);
+>  }
+>  
+>  static void perf_log_itrace_start(struct perf_event *event)
+> @@ -13922,10 +13915,7 @@ perf_event_exit_event(struct perf_event *event,
+>  {
+>  	struct perf_event *parent_event = event->parent;
+>  	unsigned long detach_flags = DETACH_EXIT;
+> -	bool is_child = !!parent_event;
+> -
+> -	if (parent_event == EVENT_TOMBSTONE)
+> -		parent_event = NULL;
+> +	unsigned int attach_state;
+>  
+>  	if (parent_event) {
+>  		/*
+> @@ -13942,6 +13932,8 @@ perf_event_exit_event(struct perf_event *event,
+>  		 */
+>  		detach_flags |= DETACH_GROUP | DETACH_CHILD;
+>  		mutex_lock(&parent_event->child_mutex);
+> +		/* PERF_ATTACH_ITRACE might be set concurrently */
+> +		attach_state = READ_ONCE(event->attach_state);
+>  	}
+>  
+>  	if (revoke)
+> @@ -13951,18 +13943,25 @@ perf_event_exit_event(struct perf_event *event,
+>  	/*
+>  	 * Child events can be freed.
+>  	 */
+> -	if (is_child) {
+> -		if (parent_event) {
+> -			mutex_unlock(&parent_event->child_mutex);
+> -			/*
+> -			 * Kick perf_poll() for is_event_hup();
+> -			 */
+> -			perf_event_wakeup(parent_event);
+> +	if (parent_event) {
+> +		mutex_unlock(&parent_event->child_mutex);
+> +		/*
+> +		 * Kick perf_poll() for is_event_hup();
+> +		 */
+> +		perf_event_wakeup(parent_event);
 
+Should not this perf_event_wakeup() be inside the next if() as well?
+doing anything on parent_event when !ATTACH_CHILD seems dodgy.
+
+> +
+> +		/*
+> +		 * Match the refcount initialization. Make sure it doesn't happen
+> +		 * twice if pmu_detach_event() calls it on an already exited task.
+> +		 */
+> +		if (attach_state & PERF_ATTACH_CHILD) {
+>  			/*
+>  			 * pmu_detach_event() will have an extra refcount.
+> +			 * perf_pending_task() might have one too.
+>  			 */
+>  			put_event(event);
+>  		}
+> +
+>  		return;
+>  	}
+
+This is a *much* saner patch, thank you!
+
+So the thing I worried about... which is why I chose for the TOMBSTONE
+thing, is that this second invocation will now dereference parent_event,
+even though we've already released our reference count on it. 
+
+This is essentially a use-after-free.
+
+The thing that makes it work is RCU. And I think we're good, since the
+fail case is two perf_event_exit_event() invocations on the same event,
+separated by an RCU grace period, and I don't think this can happen.
+
+But its a shame we can't reliably detect that.. Oh well.
 
