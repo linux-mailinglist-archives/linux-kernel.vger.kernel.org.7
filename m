@@ -1,250 +1,225 @@
-Return-Path: <linux-kernel+bounces-630210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA121AA76DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D094AA76E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07D0178923
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46551BC0E1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2DD25D549;
-	Fri,  2 May 2025 16:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F49325D910;
+	Fri,  2 May 2025 16:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UG/poEc7"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="tpA9/6dG"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10olkn2015.outbound.protection.outlook.com [40.92.41.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931972580EA
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746202452; cv=none; b=eAZqlHVOgwvo1v6+iJ8TgiuZa9gy/hxbJW5Jrb8aT7bcJwWLCvkRLjDl25RUwTACHQuXg7KU3XMu1QhLK92+v60X+ZHWkEr9Iq9fOpu5nSqPpP2aUgotGRZi84IurwDaAdXKP2vyBzpa2fo1FOYihWFSQsk6ZrIk0b2qgLFK9wQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746202452; c=relaxed/simple;
-	bh=wd5NJqEBXG8kbhJKG845Wcw6QO3aud7KmNkF6CHiQYc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CE6bw2hwzNmNX6VlteJYWOH6HnKCLx8kZjglc9SgOtOY4vB/9M/5lGDqIGzPXjuMRJ+v1KJc4HgVHnhrlzI4nd6cceSr48VW2m+fgjwa4QQQFExAmjJuh3EEhHpI/kGTNpt97/74tT7GT1mRBM4SmcdI5UIbwYz5ejhmG2Jgi8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UG/poEc7; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f88f236167so11922a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 09:14:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746202449; x=1746807249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fAKrz6MzSHZjea4snUZwUs0TMb2y7bZD+SefbW7WoH4=;
-        b=UG/poEc7VXnK4E8VU/x7trErdjQmzw4EHm9g+EKjRjpL6MkynrEdycSdWh5zz72xy3
-         qT6PlpU9IkGtLdupNSPHyNEgR8T/geqfOdGdfsV18dFv9tekq0kYWS4bae4oboIKyk2j
-         Lxfjx5KMdicbaVprn3gSx58mmYKDI0VCWViN+ums9rJAnrW8WnaBgmKOo+3ypwfeVqLz
-         xHkoObJhLKUV1xwic4BQComL/18+tYG3wQZ2gb18usrBPLEH5avJv4mMoZmKmkRXQrCI
-         vCrEvIthr1DspzpChLSgZ+soQJUDpwVq5x5m1fimt/S6dKE04/Vl/oM7UoNlswzH5MFx
-         yRCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746202449; x=1746807249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fAKrz6MzSHZjea4snUZwUs0TMb2y7bZD+SefbW7WoH4=;
-        b=XzdPsDbuFPW0l0/QVn2D0NYqBrXklXMvrJX/BcF1loNIubGgmvYZgQU40joEYV98yp
-         6IqnnffhndFYDZq9cDCjor9QVUpYEJM9inguTZvskmHObHFTcZHmXeG7ej4Nwl/QVXOp
-         SZkOakBoVefDDEKHqlMqtSFjljZHKSmbsG4A/LHXlnAunFkVaSMYqcEtUrYPaKMP9PZz
-         FHr2IQnhNJ5J4WRN97VnXiQ7XeJGAfGIsUyjajZs3jEtQcB1B2BomYgSoqjv7+XGjrho
-         heFGLyjYdVs60uhdQiEWWektffnT5RsTJQ8qMZvuxpHyOvTMUs+b1YjhZbSizq66rMwR
-         HyAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVN6eoeZLsKPernDIZ7/0gYqlcNu1LE4fd138Qae8pzrPugUyGkxeigSOl61xnONy2ZVShLdxAoHcENHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1ajoR8UialGF6RDGz4MFmVN/6kJbWValzYYrHqbTgaB//XlHO
-	EtLWxhbOjfmE+ZxRxl7uH/5zqEl1+KgdmkWCiwrmuEuTsJ11eOk1UwS5B/zclUNI8/kTJmRfJE3
-	0eDG2hS/UoHDuKdtGLNCjSB41wJNPr/OEDHwa
-X-Gm-Gg: ASbGncsA5h9ygMJS0gVZnh2FDlhHVcl8MD+ycg+Q0hIvPXIXjeZTBV1cApad9z5lo4x
-	CAMPXDVaTVRDoOzFp5D76+zxv7MJAi4oVxdgQmPmWS1Sec0/W/eTkcJkYffvlBNLs4RhSTbDadV
-	7r6x/eJDhyQO03jr8tQ9A7OuiwNZbyxcFiS8mKbIvvcFxlsV+0/fm7KE+Qa4kKSto=
-X-Google-Smtp-Source: AGHT+IFi+7MV41xClVGr6/UvyV7JjW+2uR5FlCwcaTogmqu5ReKaulioApT3B8FXWgxBll8d1BEr3KWs6Fgt3fGw1R0=
-X-Received: by 2002:aa7:d759:0:b0:5dc:5ae8:7e1 with SMTP id
- 4fb4d7f45d1cf-5f9146f7d6dmr212014a12.6.1746202448549; Fri, 02 May 2025
- 09:14:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CA425D53A;
+	Fri,  2 May 2025 16:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.41.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746202480; cv=fail; b=YmPyd8G5JTYhNH4o4kD6iex/02RIpcdJBZsVUeElUcj487qs+uAOAHt56szQiFBTA0x7rFoSb8Dj6Nx8JuTBj6l0AtdTsIeaVXUPIOuuNzLl8apfpAl2HPG2smT5BPe1SyIivA3csYkd72mi75Ozpfzzmtki05U7jPyAc/IDtQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746202480; c=relaxed/simple;
+	bh=lIW1keRrT8hkoUBrA2Q1nQNZ/46FVT1KhW/V1hcqzh8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=R8l2Gbidj8o61PeMm4nIrg2wNw4NBMWlEqPw/JlYQPZFVlvoFSSd8+qm6iCsRpoRcQqmVO7Oa2Rdrbz0hmPuRNqIYOHfS+7Lc+kPxfZgQoX2nOmq9w0MiJjeOzYSOUVLFCYSNdkiJQXxE60I/0gISTw89ikqOtKWXAH1PxsNvOQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=tpA9/6dG; arc=fail smtp.client-ip=40.92.41.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mvLAoi5fSZuTeU9poTTwVpxxlklliQC/WqQ4p87C+T+w4WX5fgekiS82dSaazn4SZtUQxQ2gkjUB+JVrXT/0PNRsZUUxPs6mbVAi3b4X5YV/En1w+0j7NABBrOntyarbBXDhUj2dOZ4JaT+nWLoyUTxhDlFm0jn2QwMFK1UkgcM6WGCsWw5BQ6ex6ScXY8ejty/3gWuB04goP5LKw2RnZG3B+Iv2UC1oyvJpL496Sg3n+urpRad48QF0kHubIyHdpg3xnm8+rl8755D60j1mpUuxHxenyP4wR1uHnDhHljNylZ1/onpxtAxhUnTccGKV3eHHX68ZJ3QBssQzuBi+gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Upetl6nSU1V7NevJc4nHYusQXk3GHMAntmSECxNL9wE=;
+ b=FY8iwzvgT3E14Z1xUUFa9Wf2uyIppHEB0TF0wqaUvaX/+JySpKWvOdfvy9rR8Uu5qt/lSoXt8dK33QcBDgwYGSKFjLdaFuKkpSTr+szfcOcsYWoVAe3q4rWBJjTIDzusrp5uNkbnA02fIr57C9/Ixi63/IQ/OWfPOwOMlDxldhltxeFfblaqhe94tYL/p9TtlDhw3qjkj7IZRXY0k2lhGVnjbvXCnaXkuGXfCq2lv9htYbrs114fVByIEMvIuTPFktYaZUnkMTk12raE6DkGvE9PXnnhCiI2ULe/gUicTjWezCfJFF/5ctar2auU5BNJwSTlKt1PILiitT3tHJvdlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Upetl6nSU1V7NevJc4nHYusQXk3GHMAntmSECxNL9wE=;
+ b=tpA9/6dG3pzPRkHhKF6ySrz2CkUZeu0jOUxZVlvTzd2zdfcZiq+vHbS3r3dFLxM84trsJ1ze9rDkE8TTDL7+wrHYsgxBVw7br5dolZeynF6Pbjuq2svopxTIK89WHCv15ethJBVQFWfqV5P8wTvirhTMe0Gcs6SdwDrk1zSJuQMV6nXwfo+/aAi35+eOoEtUbftov6/Nq5AF2yMaDVK8+a1FGzYke6DbkrAI/votoUuVIp72gUff/cYIVo3ZAsjdV6GqP93+2VYCbJ6/FbsCCue2g6Acvw3ZRXsDFJ0GBR0TTUSpita5KiltEixP/8+WL49qTyoahQSCtIagbplIKg==
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com (2603:10b6:8:253::16)
+ by SN7PR19MB6587.namprd19.prod.outlook.com (2603:10b6:806:271::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Fri, 2 May
+ 2025 16:14:35 +0000
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::e0c2:5b31:534:4305]) by DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::e0c2:5b31:534:4305%4]) with mapi id 15.20.8699.021; Fri, 2 May 2025
+ 16:14:35 +0000
+Message-ID:
+ <DS7PR19MB8883AFFD49C5E9EA39B55E7B9D8D2@DS7PR19MB8883.namprd19.prod.outlook.com>
+Date: Fri, 2 May 2025 20:14:25 +0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom: Add CMN PLL support for
+ IPQ5018 SoC
+To: Rob Herring <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
+ Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
+ <20250502-ipq5018-cmn-pll-v1-1-27902c1c4071@outlook.com>
+ <20250502141730.GA1259057-robh@kernel.org>
+Content-Language: en-US
+From: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <20250502141730.GA1259057-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DX1P273CA0035.AREP273.PROD.OUTLOOK.COM
+ (2603:1086:300:20::22) To DS7PR19MB8883.namprd19.prod.outlook.com
+ (2603:10b6:8:253::16)
+X-Microsoft-Original-Message-ID:
+ <017cfcd8-b6ac-486d-ab9d-2a2b086ce227@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250501-debugfs-rust-v3-0-850869fab672@google.com>
- <20250501-debugfs-rust-v3-1-850869fab672@google.com> <aBRoNKjB063QhGZo@pollux>
- <2025050230-browsing-backstab-8de9@gregkh> <aBRutTMBtq-uCnii@pollux>
- <2025050205-reassign-entire-4078@gregkh> <aBR1O6d6YBszgVlU@pollux> <2025050208-jot-evolve-89b6@gregkh>
-In-Reply-To: <2025050208-jot-evolve-89b6@gregkh>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Fri, 2 May 2025 09:13:56 -0700
-X-Gm-Features: ATxdqUEe1plSV-F0cIzBM7X6Aaw1uhdlDf1jIDZFSFwV4-fGyKmhMPdcOL53ieQ
-Message-ID: <CAGSQo00GPnpkzY12udM8QNZpA+Nh+OrNJDH7zd1nVZPrQfOb4A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] rust: debugfs: Bind DebugFS directory creation
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR19MB8883:EE_|SN7PR19MB6587:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c48c398-b0a7-4354-d676-08dd89946db4
+X-MS-Exchange-SLBlob-MailProps:
+	Vs63Iqe4sQlVobdhjoRt/HQUSkoYJhJhf4HU624keHtHHaBvjjYhq4Z3phjCXrpqtnKJcoonekfL0kYYOBNDoX60/b3njTZNgqE4IY90nMj6J3gySbIL8XmuOSU9HUHrHSXD1y6HpIYhn17wgownwgw/dgKTh1n6wT4my06yl2hE46yDBfApCfVsTYMk9ZawxR98Hr7uxQdACwOAO4AMVRMZRxDKQprMw3GDJCmJ1zCMSYR55KcYt79o/+0zy5NZ1JzZNa6p0v7zdhTgaC9jkBvCAbRDSDWgOOrG1kzdscRxceug8Bf0QgOXl5ePM2mlLFKgAdx1ZPtpQVhujOJG9AxDJVms9zPEZT5lxL0DI1r78bkISM4dA12icwkYOeYyMa3d87Md8wN7zLq5a7512JGHnqknTYKCZIT34AUaSFtePM1oRH3dudYcRIGhpRCtyxqXB5XUUB0faYjzbMcRiVWwPwZ8RIxkXY214cunFSF/0KJZ+ZGDRRWGD/LuD7jIA19IOk8MdVmIX5hs3I7aFdXbX3P5rsH+3rHbVTGNv+rjkZFO9CzjZ1D+yp4M286SIV1o6j0fSP0NlphX7K5p9p63miufNTgSH2+kDhzpZJ9eqR8qtW0batnPjaeVOmyXA0RtXW1T723mfNsJWNyPnWB8gVxeAQbspiYTIl6rzoa6woZ+rVYiKTMIwLTF28ZCLk1p6gOtmw0mTxSeICFnY5iMl9++9QrqcRzR+P9PRRs=
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|6090799003|5072599009|461199028|8060799006|19110799003|7092599003|15080799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NTliZXBzR1c4SWZRR3JwWWVRdXhnTUlZRDNCeUMzd3pIMkJ6Q3p5aVhPemtS?=
+ =?utf-8?B?TFVlR2VkdE5GYW1lS0IxRzVDNVUrdXhPdjhkLzJTckQwNlhDSEFGdENKeHky?=
+ =?utf-8?B?ZnlOdGI3VWJxSzhyT3ZkNlZDNFA3SHZxYW5DbVlCS0p0bithVkJxdVA2RXZ1?=
+ =?utf-8?B?ZDBHOVVHQ1Exd1NGRStUYVM2VGRLU3NZbitTa29aNVVIRkVGNHovcjVkSTln?=
+ =?utf-8?B?dW9tSUY1QjE3OWxvazBZbVBqUWZHZDJxMS9OKzVyTVJuTW5KTnFpOWgxSzAr?=
+ =?utf-8?B?N2pSTDVWcDN5SU1HNDZnbnQ4UVBrb1hqV3JFWitOY3hHWjdZcEpSRDZZNjhE?=
+ =?utf-8?B?ejhZZk12bENoZENsY0VrcWZBaTZlV2pjajRYWGFiT3ZhRnc4dFdCcHV6Mmo3?=
+ =?utf-8?B?NWJjMm1BV2Jld0FldmlldVJiMUNOYkp6Z3REUDF6bXZiUnRNZnV5V1lHSlNx?=
+ =?utf-8?B?TGhvdjhtQXZTSjN3VGsvQkpRNjJBdXJ4SW82SDBwdndlUlB2b3hJR01kNDdo?=
+ =?utf-8?B?MHltSTVPRGFsaHpIUEh4OVpBeE5IaVJha2VvY1FYVWpqVEl4VE05dGJDL0Jh?=
+ =?utf-8?B?bU9UVnJneXNSRFpIWE9lTm1HbTc2aXRNM3FyTnE0aHc0WS9BMURZeVJwbXZE?=
+ =?utf-8?B?Ym9LQlFxZWpvVnhUZkcwbmwrQS9zNmtIeWFzMktFRjBFaVp1ZmVpejI0YU8r?=
+ =?utf-8?B?ZmViVmRlSzhySGlsRlFUbFBkUnlGRmIwV2lkSG1Gdi9tM3F0VUJuQVpmanlk?=
+ =?utf-8?B?Y1RLQXBGVzJ4VWx2R0xibHcxVGJScW5yYXdUdE9UbHhLNjQrNFkxa0oyRGU3?=
+ =?utf-8?B?SFJ6bEtyYktpUFJRblNlcmo5bkN3MGZYSlRyNjE1MkZzaVZvRHJyUlBCZHEr?=
+ =?utf-8?B?RGw1Si84L0k2a3VvdDFvTk4yamdNUUFwSHVBOTRzOWlUcUJic2ZHTmtHYjF2?=
+ =?utf-8?B?ZWE3czJqbWlpT0ZjdlY0ZTMyRWlDYUxlbVZycWd0bVhSRDJ5enlObHdtc3Zw?=
+ =?utf-8?B?UWw1MkVlMVVNZlV3bTR2bk5ZaEhwSzh4eitCWjBYd0w0S2N0eWpXcTlNVXo1?=
+ =?utf-8?B?aWkxS1BobGpRbU1YOUtaRjQwdE85ZjdRMDhqWVhnaGFKQjJNSHFvYk1hQ3RQ?=
+ =?utf-8?B?K2tUVHdEWm02Y28wRHI1N1JpOWZnTWNJMFljb0hwL2hHdm5DbVplOHJLZ2cx?=
+ =?utf-8?B?UHdKVTJNZUVNZGxpSU5CbWNtUmd1bTYzbGNEclJXdHowQlZ6K0dQTTFJUmhG?=
+ =?utf-8?B?cnYzUzBRRVJFMXgxSUQ0NVBSaHVkcS9TdERvU0kycDV1YzJieWZOcnRlZElG?=
+ =?utf-8?B?TmxmRUsyZEtveXE3WTFtbGZmekREcnpBWWg3QVY3MDBNVTJESWN3Y2xjY0Fz?=
+ =?utf-8?B?YWdWQnNZVGFVNjlFYXlWN1dLWmlqNUNuNjMrdWp5VE9LRWorTGNOaFQzUC8v?=
+ =?utf-8?B?YzJEQjIyTVc2SzFCTEpxeDg3NFdwMHIvenl2YjhTUWtQbkgwQUVTSzh1ZmJV?=
+ =?utf-8?Q?Refdm3fnrpAO2ETrG3ThqYmuccn?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T2xSMHd1R0x5RDdRQ01xZG5peFNTUmFEUXpMUEloa2dmRGZwUGZBVHVkWGtZ?=
+ =?utf-8?B?VDRVYTExbE5wTXlKbytzcUlFR3ROY21CTm53WGMvcjB3d0x5azlYd0tFaEZu?=
+ =?utf-8?B?NGJTOWhnY2F5c0hKSUhYOWlqRzRRNmxTV3p1aVY4eGJtdXZnamJxam1iY1VZ?=
+ =?utf-8?B?UDJnWEcwWnlCSXBXNmFiMlR5WDV5LzNrR3Bsd0hWYTZnUjFTNXhEaXpYSXgz?=
+ =?utf-8?B?R1VMd2JtWVVLYVgxcDBzZXpXa2FOTUtZdzlBUGFoRXdMc2FZbk1MdVU5Uncy?=
+ =?utf-8?B?SFpjVVVXRUhXNTRsTDZML29scmdXcVJQVEQ4c1NucGtmWDk1WndzU0dYeEtY?=
+ =?utf-8?B?OHFhY3BYV2R4VjhLOXB5bm8rOFhMZ3daMmJ2cHdEK2V1QzAza3BoYVZjcXI3?=
+ =?utf-8?B?dklJeStXS21OZXZEcS8wamFNQUJjME1ROTNHTWFEWkRtN2tUcHpXcThCWFR4?=
+ =?utf-8?B?amVkdElWcndCeU1LY3hNZnZlSExJeG5tZGtDanI1SWk4VFJtaDJOVEdpUFQ5?=
+ =?utf-8?B?QSsxNmUwVmwyV09DK0t3RDRsam1TWEY1U2s0NDBJWWlQVmR1N3pPVGszZGZr?=
+ =?utf-8?B?dXlDaGNqMy8yVUd6ZXpDaFJHdUx1MzVWZW5BR1RRdHhSa2VKMnY2b0NLMUh5?=
+ =?utf-8?B?Zm92RGhNU0JlbFFaWDJSM1ViM3Bid2RGeXY1RnoyV3ZRWFRLVzJNcHZ3U0hF?=
+ =?utf-8?B?aGlCd2c3aW1VT1AvaDNqS2JkOVFOa1VxRVUzSTdKU2dhNW5mK1VHbHE5M1ZI?=
+ =?utf-8?B?YWhjS242RWRyeURQMEdQcnl3a1RscE1mOEkyTm95NkFkM3pmdE96bXgvVzF2?=
+ =?utf-8?B?bG9jb0pqUmprSTZZRzlFdjFwSEl3MHJiZVN6YmlHWW9hODI5SVdmY0YxNXpa?=
+ =?utf-8?B?a3AyWjhsSWZDYWJya0N1RGU3QVVRekpmcnNmUGlzckt1RzhkL21wbm1FWmVk?=
+ =?utf-8?B?VDNVVEZrZlUzL0RkcnlRNzVQRTZSOGRPUzZUMUI0T3FOeXp6bHVtNE5XUzhZ?=
+ =?utf-8?B?T2ZvRm5Tby92U1hkLys4YWlpUFJzR3FxWTEzQjZ3djVNRWIraHV3MlhrTW41?=
+ =?utf-8?B?MGk0MVRTZFM5L1pPVkFlUE1pbGNRM3lVWk5FRmRubUJmR3dENW5HTTYvbUNN?=
+ =?utf-8?B?UUd1ZllYNnR0ZzRnRk9PSVV3eFFmcGpoaXdzWjFSUmZnOUNEaTU2Y0dFaU1W?=
+ =?utf-8?B?UmtXMk1yY0hzVUZEMHFwVnNWbHgrZzJORTlmQ091MWZvWktXNXo1V0d2V1RS?=
+ =?utf-8?B?T2F5dHBycWxEZlhWNkVEUVFvNjJ5SXhQWjBvNG1WLzFOdUcrMmk5Wnd1T2c3?=
+ =?utf-8?B?cEJSUFkvM014c0g2dHk3RjVxVkpNUUVEZGxTYVlsSCtvNUN2QnJZMDFmUE50?=
+ =?utf-8?B?MDRxK0NXSS80YU1CTkxYb05QcUs2dEhUb0NTYjVVbUN1WE1SV0g5Q2RUVXY0?=
+ =?utf-8?B?TWVJbGFPWVliV0IrSzRDZXhYMWl6SDZoQU9sSmdEeWtid3hrMnVna3FEVXZw?=
+ =?utf-8?B?RjNqQmgvZjdqVXBzYmFiZEFubWZ4Vk9WWUJGbVBDaUpuUUpLSjNIY0Zic1d1?=
+ =?utf-8?B?UEJEZFFtU0N4MlZQRHpESldSSy96aHZnVUFnV1c4eSt4eERkVHVPbzRBZ0hW?=
+ =?utf-8?B?RlJtR0FBVzRmcTcvaEFJM2FSZ0RaU3hJOVhvdWcyZmhLWDNGWEdjYWpqUTRZ?=
+ =?utf-8?Q?Q6RAn0b9FggAEN3WbPsw?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c48c398-b0a7-4354-d676-08dd89946db4
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB8883.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2025 16:14:35.1769
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR19MB6587
 
-On Fri, May 2, 2025 at 4:55=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, May 02, 2025 at 09:33:15AM +0200, Danilo Krummrich wrote:
-> > On Fri, May 02, 2025 at 09:11:37AM +0200, Greg Kroah-Hartman wrote:
-> > > On Fri, May 02, 2025 at 09:05:25AM +0200, Danilo Krummrich wrote:
-> > > > On Fri, May 02, 2025 at 09:00:07AM +0200, Greg Kroah-Hartman wrote:
-> > > > > On Fri, May 02, 2025 at 08:37:40AM +0200, Danilo Krummrich wrote:
-> > > > > > On Thu, May 01, 2025 at 10:47:41PM +0000, Matthew Maurer wrote:
-> > > > > > > +/// Handle to a DebugFS directory that will stay alive after=
- leaving scope.
-> > > > > > > +#[repr(transparent)]
-> > > > > > > +pub struct SubDir(ManuallyDrop<Dir>);
-> > > > > >
-> > > > > > I think it's not very intuitive if the default is that a SubDir=
- still exists
-> > > > > > after it has been dropped. I think your first approach being ex=
-plicit about this
-> > > > > > with keep() consuming the SubDir was much better; please keep t=
-his approach.
-> > > > >
-> > > > > Wait, let's step back.  Why do we care about the difference betwe=
-en a
-> > > > > "subdir" and a "dir"?  They both are the same thing, and how do y=
-ou
-> > > > > describe a subdir of a subdir?  :)
-> > > >
-> > > > We care about the difference, because Dir originally had keep() whi=
-ch drops the
-> > > > Dir instance without actually removing it. For subdirs this is fine=
-, since
-> > > > they'll be cleaned up when the parent is removed.
-> > >
-> > > But does that mean a subdir can not be cleaned up without dropping th=
-e
-> > > parent first?  For many subsystems, they make a "root" debugfs
-> > > directory, and then add/remove subdirs all the time within that.
-> >
-> > In the following I will call the first top level directory created by a=
- module /
-> > driver "root".
-> >
-> > The logic I propose is that "root" is of type Dir, which means there is=
- no
-> > keep() and if dropped the whole tree under root is removed.
-> >
-> > A subdir created under a Dir is of type SubDir and has the keep() metho=
-d and if
-> > called consumes the type instance and subsequently can only ever be rem=
-oved by
-> > dropping root.
-> >
-> > Alternatively a SubDir can be converted into a Dir, and hence don't has=
- keep()
-> > anymore and if dropped will be removed.
-> >
-> > So, the result is that we still can add / remove subdirs as we want.
-> >
-> > The advantage is that we don't have keep() for root, which would be a d=
-edicated
-> > API for driver / modules to create bugs. If a driver / module would cal=
-l keep()
-> > on the root, it would not only mean that we leak the root directory, bu=
-t also
-> > all subdirs and files that we called keep() on.
-> >
-> > This becomes even more problematic if we start attaching data to files.=
- Think of
-> > an Arc that is attached to a file, which keeps driver data alive just b=
-ecause we
-> > leaked the root.
->
-> Ok, fair enough, let's try it this way, without keep()
->
-> > > > However, we don't want users to be able to call keep() on the direc=
-tory that has
-> > > > been created first, since if that's done we loose our root anchor t=
-o ever free
-> > > > the tree, which almost always would be a bug.
-> > >
-> > > Then do a call to debugfs_lookup_and_remove() which is what I really
-> > > recommend doing for any C user anyway.  That way no dentry is ever
-> > > "stored" anywhere.
-> > >
-> > > Anyway, if Dir always has an implicit keep() call in it, then I guess
-> > > this is ok.  Let's see how this shakes out with some real-world users=
-.
-> > > We can always change it over time if it gets unwieldy.
-> >
-> > I really advise against it, Rust allows us to model such subtile differ=
-ences
-> > properly (and easily) with the type system to avoid bugs. Let's take ad=
-vantage
-> > of that.
-> >
-> > Using debugfs_lookup_and_remove() wouldn't change anything, since we wa=
-nt to
-> > attach the lifetime of a directory to a corresponding object.
-> >
-> > (Otherwise we're back to where we are with C, i.e. the user has to reme=
-mber to
-> > call the correct thing at the correct time, rather than letting the typ=
-e system
-> > take care instead.)
-> >
-> > So, instead of debugfs_remove() we'd call debugfs_lookup_and_remove() f=
-rom
-> > Dir::drop(), which only changes what we store in Dir, i.e. struct dentr=
-y pointer
-> > vs. CString.
->
-> Ok, that's fine, and it gives me an idea of how I can fix up the C api
-> over time to get rid of exporting the dentry entirely :)
 
-I've figured out that the SubDir API (and indeed, all patchsets after
-v1) have a flaw in them, so I'm wondering if your rework will resolve
-this.
 
-If I do:
-```
-let dir =3D Dir::new(c_str!("foo"));
-let subdir =3D dir.subdir(c_str!("bar"));
-drop(dir);
-// This next line will Oops because subdir is already removed
-drop(Dir::from(subdir));
-```
+On 5/2/25 18:17, Rob Herring wrote:
+> On Fri, May 02, 2025 at 02:15:43PM +0400, George Moussalem wrote:
+>> The CMN PLL block in the IPQ5018 SoC takes 96 MHZ as the reference
+>> input clock. Its output clocks are the XO (24Mhz), sleep (32Khz), and
+>> ethernet (50Mhz) clocks.
+>>
+>> Unlike IPQ9574, the CMN PLL to the ethernet block needs to be enabled
+>> first in IPQ5018. Hence, add optional phandle to TCSR register space
+>> and offset to do so.
+>>
+>> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml  | 11 ++++++++---
+>>   include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h         | 16 ++++++++++++++++
+>>   2 files changed, 24 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+>> index cb6e09f4247f4b25105b25f4ae746c0b3ef47616..25006d65d30e20ef8e1f43537bcf3dca65bae73d 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+>> @@ -24,12 +24,10 @@ description:
+>>   properties:
+>>     compatible:
+>>       enum:
+>> +      - qcom,ipq5018-cmn-pll
+>>         - qcom,ipq5424-cmn-pll
+>>         - qcom,ipq9574-cmn-pll
+>>   
+>> -  reg:
+>> -    maxItems: 1
+>> -
+>>     clocks:
+>>       items:
+>>         - description: The reference clock. The supported clock rates include
+>> @@ -50,6 +48,13 @@ properties:
+>>     "#clock-cells":
+>>       const: 1
+>>   
+>> +  qcom,cmn-pll-eth-enable:
+>> +    description: Register in TCSR to enable CMN PLL to ethernet
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    items:
+>> +        - description: phandle of TCSR syscon
+>> +        - description: offset of TCSR register to enable CMN PLL to ethernet
+> 
+> items:
+>    - items:
+>        - description: phandle of TCSR syscon
+>        - description: offset of TCSR register to enable CMN PLL to ethernet
+> 
+Fixed in next version, and validated by make dt_binding_check 
+DT_SCHEMA_FILES=qcom,ipq9574-cmn-pll.yaml
 
-Simply removing `Dir::from` from the API won't resolve this - as long
-as `SubDir` has any method, accessing it after its parent has been
-cleaned up with `remove` will result in an oops.
+Thanks,
+George
 
-The options I can see given the existing API are:
-A. SubDir needs to be inherently limited to a borrow of another Dir or
-SubDir. This will still break if someone uses
-`debugfs_lookup_and_remove()` in an antisocial fashion, but we haven't
-bound this in Rust, and we don't need to be robust against bad
-behavior from C. If we do this, the promotability of subdirectories
-back to directories would go away entirely,
-B. I can leverage `dget`/`dput` to make it so that the directory I get
-back from the APIs are actually owning, and so the dentry will not be
-released while the Dir/SubDir exists. I understand this to be
-undesired, but putting it out there, since it'd make things safe even
-to `debugfs_lookup_and_remove()`.
-C. I can limit use of `debugfs_remove` to the builder API (exists in
-V1, no longer exists in this version, will be a separate patch soon
-for reference). This is the behavior that I had written in V1 before I
-started trying to adapt to requests. This means that the subdirectory
-handles will remain valid because the non-builder handles will be
-`dput` rather than recursively removed. Builder handles can't be
-smuggled out due to an existential lifetime. Again, I understand this
-is not desired, I'm just trying to lay out all ways to prevent this
-class of error.
 
