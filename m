@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-629584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190E7AA6E74
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:50:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665F5AA6E34
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDF921BC2E9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:50:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF084A14A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112E623182E;
-	Fri,  2 May 2025 09:50:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43C919E82A;
-	Fri,  2 May 2025 09:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8650A22E40F;
+	Fri,  2 May 2025 09:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NGoienxs"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D482AD24
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 09:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746179437; cv=none; b=IeKTZqTVcuOQR37xObNTRxDCL93WF4tyq2xrlPVAndBSQsSx9TWSYt5LcXbeSJMoLnGcMklXEGpROXqTcuTKW/Kx+4PJOKoyyZUk/ayo9vtJ2oMvZYAF7g176sKoC12f0ZpZXij+cX7W0RtCsBoTX9Jw45e+VGX3zAZbT2f54lk=
+	t=1746178484; cv=none; b=g1qxr5000weOkUSdk3T3rLcJXupfQrlHTL8ePvXVm5sxMoHvhjk5fjomGqnTg8rb805OLVuX+RtNQKndYzuIr+DIKU7Ts7fsTj/GkSyFE+f+6XuJDtYcjniDy0YZGOX53ynHAQMHUvBgv0QGzYMalCC4Qq7ewTEQCgqj+WmJACU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746179437; c=relaxed/simple;
-	bh=9hLa0GeXbjLeuJi3uPOxojCfoyiJQ/EkwrIRDRKr1ZU=;
+	s=arc-20240116; t=1746178484; c=relaxed/simple;
+	bh=UPSCyMMfuVANy8PSXUYucve1oVzm165bjFjIAed6SPw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hiPbDuZfR68VRutoSgi/8NYRZPOTklfdqjwvH/sK5c/az/M6ZAKNfDY2CLFzKxEx81l5TT4FrDrXcbXcy1qAPaMqy4dxasRmbD+SduCJwQKqgoCC1rJ9ijUTODs4ByvzOUvsdm3tUXYpAKE/5jtDt//w8BxjOVLHVeUcyP6xs3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4Zpm0p2R7Zz9sVS;
-	Fri,  2 May 2025 11:32:26 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id zcdAzJ89m-7Z; Fri,  2 May 2025 11:32:26 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4Zpm0T386Wz9sYQ;
-	Fri,  2 May 2025 11:32:09 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 670DC8B765;
-	Fri,  2 May 2025 11:32:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id wmcughdSQ2WZ; Fri,  2 May 2025 11:32:09 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DA1DF8B763;
-	Fri,  2 May 2025 11:32:08 +0200 (CEST)
-Message-ID: <4d6de524-82b7-41b3-af67-29dcf6f8c0cf@csgroup.eu>
-Date: Fri, 2 May 2025 11:32:08 +0200
+	 In-Reply-To:Content-Type; b=Lbc7gdc96i9OGVTo5uSG1riP6Id84j1IEVRUsWjjmgFf8eM8WYVSguD7ktVXUCm3DtBm8ZZeZ7BaI1rlTnk/FSemnk/PDZwL2ogUmSPwDxzomWtD8jaXKsMWzy3A6hNOFg0za7Pd6Zi+aCPWFYXdABlWY1V7++scvSO4hbd8u+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NGoienxs; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1746178477;
+	bh=UPSCyMMfuVANy8PSXUYucve1oVzm165bjFjIAed6SPw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NGoienxsBw2Sbv3RD9NHv2tN3toXv6loIQQG5F8HVubwH0xW5dJJDrl5NtWWKy4sj
+	 W8t/9w4tjyHQE/ddFJwZrXfpT82M44VIrwN6U8yjP5Y4FbhNXrmrbqvlV7VcAgCDDX
+	 PxS0ZSm5s030UNRWeVq29D+83NM28maTOPxH00F5cqXV0IlzXTMgszm1hdydKO2yxB
+	 FSqxADI/4tsQ4hZ0iKYngunbkm+FXhdQKaGZqcpPaItj9/xK0SmD08BtmYK9NrUuAS
+	 ayBO4YxSv9fHT15h+SZ9aJtsXcvTWgu7404PminYdzqmvMqe+6zxbQAu0Yg6DW/PSp
+	 3dMPI3+FpQoNw==
+Received: from [IPV6:2a05:1141:1cc:8600:1cd7:9a7e:17d7:cd2c] (unknown [IPv6:2a05:1141:1cc:8600:1cd7:9a7e:17d7:cd2c])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C343F17E0649;
+	Fri,  2 May 2025 11:34:36 +0200 (CEST)
+Message-ID: <3ea152ad-100d-4931-a149-19f24381e463@collabora.com>
+Date: Fri, 2 May 2025 11:34:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,88 +56,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] powerpc: 83xx/gpio: use new line value setter
- callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Anatolij Gustschin <agust@denx.de>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250502-gpiochip-set-rv-powerpc-v2-0-488e43e325bf@linaro.org>
- <20250502-gpiochip-set-rv-powerpc-v2-2-488e43e325bf@linaro.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250502-gpiochip-set-rv-powerpc-v2-2-488e43e325bf@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 0/2] clang-format: format short enums and macro
+ definitions correctly
+To: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+Cc: Collabora Kernel Team <kernel@collabora.com>,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ Michael Riesch <michael.riesch@wolfvision.net>
+References: <20250210-clang-format-fixes-v2-0-37894413bbee@collabora.com>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <20250210-clang-format-fixes-v2-0-37894413bbee@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi all,
 
-
-Le 02/05/2025 à 10:59, Bartosz Golaszewski a écrit :
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 4/10/25 22:58, Michael Riesch via B4 Relay wrote:
+> Habidere,
 > 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
+> These patches set two previously unset clang-format options to
+> (hopefully) sane values.
 > 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
+> Looking forward to your comments!
+> 
+> Best regards,
+> Michael
+> 
+> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 > ---
->   arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c | 13 ++++++++-----
->   1 file changed, 8 insertions(+), 5 deletions(-)
+> Changes in v2:
+> - collected Nathan's Reviewed-by
+> - rebased onto v6.15-rc1
+> - Link to v1: https://lore.kernel.org/r/20250210-clang-format-fixes-v1-0-9bcf43a4b4b2@wolfvision.net
 > 
-> diff --git a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-> index 4d8fa9ed1a678..6e37dfc6c5c9e 100644
-> --- a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-> +++ b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-> @@ -92,10 +92,11 @@ static void mcu_power_off(void)
->   	mutex_unlock(&mcu->lock);
->   }
->   
-> -static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
-> +static int mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->   {
->   	struct mcu *mcu = gpiochip_get_data(gc);
->   	u8 bit = 1 << (4 + gpio);
-> +	int ret;
->   
->   	mutex_lock(&mcu->lock);
->   	if (val)
-> @@ -103,14 +104,16 @@ static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->   	else
->   		mcu->reg_ctrl |= bit;
->   
-> -	i2c_smbus_write_byte_data(mcu->client, MCU_REG_CTRL, mcu->reg_ctrl);
-> +	ret = i2c_smbus_write_byte_data(mcu->client, MCU_REG_CTRL,
-> +					mcu->reg_ctrl);
->   	mutex_unlock(&mcu->lock);
-> +
-> +	return ret;
->   }
->   
->   static int mcu_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
->   {
-> -	mcu_gpio_set(gc, gpio, val);
-> -	return 0;
-> +	return mcu_gpio_set(gc, gpio, val);
->   }
->   
->   static int mcu_gpiochip_add(struct mcu *mcu)
-> @@ -123,7 +126,7 @@ static int mcu_gpiochip_add(struct mcu *mcu)
->   	gc->can_sleep = 1;
->   	gc->ngpio = MCU_NUM_GPIO;
->   	gc->base = -1;
-> -	gc->set = mcu_gpio_set;
-> +	gc->set_rv = mcu_gpio_set;
->   	gc->direction_output = mcu_gpio_dir_out;
->   	gc->parent = dev;
->   
+> ---
+> Michael Riesch (2):
+>       clang-format: do not allow short enums on a single line
+>       clang-format: align consecutive macros
 > 
+>  .clang-format | 2 ++
+>  1 file changed, 2 insertions(+)
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250210-clang-format-fixes-914ded0e682d
+> 
+> Best regards,
+
+Gentle ping.
+
+Can these patches be applied?
+
+Thanks and best regards,
+Michael
 
 
