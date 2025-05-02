@@ -1,158 +1,133 @@
-Return-Path: <linux-kernel+bounces-630264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9483AA77AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:48:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23643AA77D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9209D1BA5116
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6948716D751
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169561A3156;
-	Fri,  2 May 2025 16:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF15266B72;
+	Fri,  2 May 2025 16:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="NjYbUR0V"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBjKyihP"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7706818AFC
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93915264FA5;
+	Fri,  2 May 2025 16:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746204512; cv=none; b=pAbT9ohB+7byoL2TlqQmXC6Yov6OItjgykR+dY4/gG49iywdgGWzWVGUUVZcQxcEZf/6aU4uL+X/fOYK4axDP+dws6fa+0xGrdejsXJCa2umztfILglhwWttW82XgjC1tW7nzJT6cD2AFw9hjxu8kVl+9dUm9qtdRR1nJXkdKqU=
+	t=1746204869; cv=none; b=ebxjM+QeTw/ftPg8GZ08rarXTm1KMJFSGYQPHBvG+4i1PGqtONXr0PIRwVcOegbpuuCYLlkW7UfAudJn2cqjsVtgWVpV9ddVeq3oSUNVHBDJ/mdeyoYMh0NwSiQPYIiLC79zAzRK6S24h1sLBkti2Chx/lx+M7enNhzrmdNp7wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746204512; c=relaxed/simple;
-	bh=7Wtl/0k4edSNeaRM9UF4+BkTFPky3KHUzYFwAT4nyLE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YAGoCh6sIfE82X2u50oC1x16WY6NbiZF1dMawyJdIG2vSKFCKQBJlZhGyRDD+khPha3f1p8isGwMaXEwPJRVE5NFMnxhz6x3jWUBbgoEiMzL+AeP0fkDZdZZxQdZzmgvra3bsjUyrnQ78kDcdtvsBkDukz0ZTXNfChRGU6onYMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=NjYbUR0V; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-309f26c68b8so273248a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 09:48:30 -0700 (PDT)
+	s=arc-20240116; t=1746204869; c=relaxed/simple;
+	bh=amLX7FDEwYM1CydOTz1TzXbPOF2Acs7PuTpiYKs/K6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G9PgFh4Oe568lqLX2kREVHnBvT2qydR8sqDb6LIQykPb2/XkVbwIPFDdwhcY8PxF1PIr2e6L+C8W9tfi20aXa4qCuu5jTzRuC2N/cOdcQ8PcO87CHzsgNs0RP+k8oYy1h3EEU/doLeMpKDiDX5p9hZDIYofpl56y6bGYxOzvtL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBjKyihP; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54af20849bbso2596247e87.0;
+        Fri, 02 May 2025 09:54:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1746204509; x=1746809309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FGKG+bqqtU1mFVGRnDFZ9YvbYaqYm4zslqMRs/wrJK4=;
-        b=NjYbUR0V76zGp24orzLttT4ol5jv/CuOwQfUtUw+NKDYxP5XWpAjIJ6Q7+nZyq8b8l
-         ph1cjRJjjMUmGyQVeHyBcOvNzsy3juFW2kGyxWiipwJQj1gmWLnSU/UGYwuS81f6QDKg
-         pt40XlLsC8ss7r/5ZEOsWagqbY697glPQ/VD/srEmtYavD5lLXqCvqI+Ri+e9jxcYlgz
-         72ghScTAEJHUVXAECiyPXRe1esAludvQgJ5/FkUMwKUApApJAHujEqhvbB4IY84g+hNs
-         6FSF260gwz7q/tM7sewr+JP5tx+Xt5LX2ZsN5EoRy3YZ1ZBPkSsciInbCENfOMLepppn
-         mHmA==
+        d=gmail.com; s=20230601; t=1746204862; x=1746809662; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rhPxxO8YPt82z7DOp+d+tt8ExEv/tDtudEGn21E0idc=;
+        b=aBjKyihPUoic/kZ8U8vQsfSjkvBrYVSbiWIQzHBOoGgPY6cbyHEmWsaPRipdpXeRby
+         dTdKcvG923ZDJT5lXZdnn/uMh+zoWVcOlmDn1Sa7faDWFerxCuww3NKjUegiKJJmLKg4
+         BfrEuuUaj5tS7ImLMb/Ks+1kbzpE/NFT0Qd4rfbmzNayuUV06unLdPrxvmLkW1zZm+Zm
+         su7Cr2zhcc9+qtvHDfPBj1Hc8rDHnZNcwShLOX55cXyutwmV9osUP4ioh1c5U7VGn6gI
+         eooyRQVswHOK+9j1ibLNdiD7NoebWBspUmvGy+qvnyYHD68LvSUwmgvFM8i5jvnvYt39
+         bABg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746204509; x=1746809309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FGKG+bqqtU1mFVGRnDFZ9YvbYaqYm4zslqMRs/wrJK4=;
-        b=Xf6wvlQi8I6H/6DkqtQr02P9AFf4Nh5r4irssyDQ6TARS7KvKZI61luNv87lsW0Zql
-         S4VCP6lHuufvUQGaY+7N37bnZD6vVYe+2IEqV2drYvaVAWBEMyGEPlImk51MlR/UybNK
-         33gQ6oAq1kbVhwfzAiZ+O8PdtEFwtfd/V88ieo4/hAnNwH7vfrjEEvuRdUOrfDuNGUP/
-         Jy2h4tWcX2wSFHzuymkk4dcKMMRcMDPhKXfwfwawdgd8O/vmFQbTP/8cXnibVPvm8/T2
-         0BgFO3qGQ7ctmtH+In+LXpTtT/s7NwZSY53KnmP/Q2hzSOPyhq5mWgBg3ArAkwbgAQ+a
-         Sarw==
-X-Forwarded-Encrypted: i=1; AJvYcCVt+9yM8nJu9wlldr0ZX4KTaQw+EFoOixAENL2RCEm7Ef0c3CtNHCNBidkUCjJe7p7S1bOYFOOGRlEMboA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPwxC4bmjK8Mjl/rNli3dPMFI5h5kyQfWaIoB0gONZ9wHm8HGs
-	awAtU4OP1k6mUpp2kAJDbromppRcAIG4TqhfjUCi2VX2bit8z7nb3hRA7ZJLwZB8ZjBDp3FGK56
-	jaToZHiIefrRdmJQ1YHJ5yVGx/1IaemVvmzCzPQ==
-X-Gm-Gg: ASbGnctJGukJDxQ9nzM61KqCwBYQKOzg9odPAlP0hfkXjhbGtuc41n/xLNEZrPZWekb
-	fPopGVfSJ5W3GNxpaci1Xaeq9g4N/bJ1T2klG0xOe08Cvk30j9+/wbpv8Ape8P7/nAbE76G/KI9
-	OzkQXM65jE4c8/d/xva5Jd
-X-Google-Smtp-Source: AGHT+IEELL9u72c1Fg2kejI58mub1eHMZr6Gpc7Bc6hBIFC204l0EKzL5sGiaFODbZX/MTt3DAVSgDpVZmluKrqjuK4=
-X-Received: by 2002:a17:90b:38c3:b0:305:5f31:6c63 with SMTP id
- 98e67ed59e1d1-30a4e6f7e74mr2199297a91.6.1746204509624; Fri, 02 May 2025
- 09:48:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746204862; x=1746809662;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rhPxxO8YPt82z7DOp+d+tt8ExEv/tDtudEGn21E0idc=;
+        b=Tz8uwTMyePrPZ5Phj3TiFWBb9wlSHeCcuRQyMQhJefIHszxPrCh0k1TnopTSHDIn/1
+         NNUKwcVYnrJjVMFnvXef2vI654ZutTMv+GQIBBP1mdLP4QSxBCYbaUXtzIz8dPCFuEks
+         1G+4TueUZj7fc9AkzP8OOpoOWOjQ/svlAMWx0K4dBWeTeHE5Lpak1wzSGcKe1ladXkqo
+         H8bKBW7Qf0sGxnzMO97MqKSQsqoBnx0f3sLCWTRdpRHpJP4+zmYDrqm6wT7j4uDo4/Of
+         vtrSzLREQ74Uafpx1ZkT0BQ2Au+NbvLcLBghvGVj79mK/2Z5WL/z8ymKts/W4QrSudL7
+         P1hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDO39Q8LJERmAZdCTc9zV54ja77l12yCyqi7ju2hs66n0nM6lzvk9DAHmBnrIJclE9QLSR9AVQ@vger.kernel.org, AJvYcCVnzTFXBmrnuo2hKNKNxQFAGvsZWIPx0xJ6CE9eUuBtVUuKMQuna4EyKeFr/5VK+YesE2nrWIUU7h8MBJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuG2KruIUKJu7tlYV2a19aQG35pzcOrxtJQ71OxuBihQzz7+lc
+	4zamMxPNmfVKaEJ6418Eh3Nts1uE6V/YgAmAgijYCTfYzQhJJYH1MT1KEd7ZHIm5Jg==
+X-Gm-Gg: ASbGnct3Yq5eakD5fhZnz/mGPhQaiAT8H1zUBlOdNAaNnjvgtuq9yDGvt4J+Q4pEwdJ
+	sxhl+JqclFjCak0xjhpEdDEyCuDDmGft6WNZicgSYurL/hMZZuah//nykwl9qfaGnIglZqLMgQ3
+	XFDGjeoOs/8NrPBRHd16MEo49uqpLdClTSfAqHHvyifW6KrtreUMRJRYqiX8WJH1uMo6pX/43n8
+	CQmrkPFZfjw5soqNrKLkEnRyW4q22+SY6UesgKpu7LB76/JCUZjKgrJc0NxY9LXFTWmdbr7et9n
+	ugpm21IqhntjOT/6imyzsd9497dpfzx0qKc4IRhyVWM4qys1l8IymhfXqVWL4A==
+X-Google-Smtp-Source: AGHT+IGbvaDTC9NrNKd+YptZd2762bNPwxplnUaVY985tpKbgOAhcZCYedFWxnpKU5vEqKbeSyCHwQ==
+X-Received: by 2002:a05:6512:239a:b0:549:7145:5d24 with SMTP id 2adb3069b0e04-54eac242b4bmr1023552e87.46.1746204862291;
+        Fri, 02 May 2025 09:54:22 -0700 (PDT)
+Received: from localhost.localdomain ([91.193.179.235])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94f6969sm396685e87.248.2025.05.02.09.54.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 09:54:21 -0700 (PDT)
+From: Andrey Kriulin <kitotavrik.s@gmail.com>
+X-Google-Original-From: Andrey Kriulin <kitotavrik.media@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Andrey Kriulin <kitotavrik.media@gmail.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	NeilBrown <neilb@suse.de>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH] fs: minix: Fix handling of corrupted directories
+Date: Fri,  2 May 2025 19:50:57 +0300
+Message-ID: <20250502165059.63012-1-kitotavrik.media@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250426020636.34355-1-csander@purestorage.com>
-In-Reply-To: <20250426020636.34355-1-csander@purestorage.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 2 May 2025 09:48:17 -0700
-X-Gm-Features: ATxdqUHt_RY6WlfG-cFs204ON7jneR73r_rcAj43sEs6pcYPHQ6F77sRjndgWok
-Message-ID: <CADUfDZr=OWv-bt+rzNQZ7zii9JyNxmkYCJxXCiCNsoHhT5UcYw@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] nvme/pci: PRP list DMA pool partitioning
-To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, linux-nvme@lists.infradead.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi all,
-It seems like there is consensus on this series and all patches have
-multiple reviews. Would it be possible to queue it up for 6.16? The
-NVMe tree seems like it would make sense, though maybe the dmapool
-patch needs to go through the mm tree?
+If the directory is corrupted and the number of nlinks is less than 2 
+(valid nlinks have at least 2), then when the directory is deleted, the
+minix_rmdir will try to reduce the nlinks(unsigned int) to a negative
+value.
 
-Thanks,
-Caleb
+Make nlinks validity check for directory in minix_lookup.
 
-On Fri, Apr 25, 2025 at 7:07=E2=80=AFPM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> NVMe commands with over 8 KB of discontiguous data allocate PRP list
-> pages from the per-nvme_device dma_pool prp_page_pool or prp_small_pool.
-> Each call to dma_pool_alloc() and dma_pool_free() takes the per-dma_pool
-> spinlock. These device-global spinlocks are a significant source of
-> contention when many CPUs are submitting to the same NVMe devices. On a
-> workload issuing 32 KB reads from 16 CPUs (8 hypertwin pairs) across 2
-> NUMA nodes to 23 NVMe devices, we observed 2.4% of CPU time spent in
-> _raw_spin_lock_irqsave called from dma_pool_alloc and dma_pool_free.
->
-> Ideally, the dma_pools would be per-hctx to minimize contention. But
-> that could impose considerable resource costs in a system with many NVMe
-> devices and CPUs.
->
-> As a compromise, allocate per-NUMA-node PRP list DMA pools. Map each
-> nvme_queue to the set of DMA pools corresponding to its device and its
-> hctx's NUMA node. This reduces the _raw_spin_lock_irqsave overhead by
-> about half, to 1.2%. Preventing the sharing of PRP list pages across
-> NUMA nodes also makes them cheaper to initialize.
->
-> Allocating the dmapool structs on the desired NUMA node further reduces
-> the time spent in dma_pool_alloc from 0.87% to 0.50%.
->
-> Caleb Sander Mateos (2):
->   nvme/pci: factor out nvme_init_hctx() helper
->   nvme/pci: make PRP list DMA pools per-NUMA-node
->
-> Keith Busch (1):
->   dmapool: add NUMA affinity support
->
->  drivers/nvme/host/pci.c | 171 +++++++++++++++++++++++-----------------
->  include/linux/dmapool.h |  17 +++-
->  mm/dmapool.c            |  16 ++--
->  3 files changed, 121 insertions(+), 83 deletions(-)
->
-> v6:
-> - Clarify description of when PRP list pages are allocated (Christoph)
-> - Add Reviewed-by tags
->
-> v5:
-> - Allocate dmapool structs on desired NUMA node (Keith)
-> - Add Reviewed-by tags
->
-> v4:
-> - Drop the numa_node < nr_node_ids check (Kanchan)
-> - Add Reviewed-by tags
->
-> v3: simplify nvme_release_prp_pools() (Keith)
->
-> v2:
-> - Initialize admin nvme_queue's nvme_prp_dma_pools (Kanchan)
-> - Shrink nvme_dev's prp_pools array from MAX_NUMNODES to nr_node_ids (Kan=
-chan)
->
-> --
-> 2.45.2
->
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Andrey Kriulin <kitotavrik.media@gmail.com>
+---
+ fs/minix/namei.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/minix/namei.c b/fs/minix/namei.c
+index 8938536d8..5717a56fa 100644
+--- a/fs/minix/namei.c
++++ b/fs/minix/namei.c
+@@ -28,8 +28,13 @@ static struct dentry *minix_lookup(struct inode * dir, struct dentry *dentry, un
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 
+ 	ino = minix_inode_by_name(dentry);
+-	if (ino)
++	if (ino) {
+ 		inode = minix_iget(dir->i_sb, ino);
++		if (S_ISDIR(inode->i_mode) && inode->i_nlink < 2) {
++			iput(inode);
++			return ERR_PTR(-EIO);
++		}
++	}
+ 	return d_splice_alias(inode, dentry);
+ }
+ 
+-- 
+2.47.2
+
 
