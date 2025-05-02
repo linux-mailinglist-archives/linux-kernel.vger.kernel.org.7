@@ -1,266 +1,220 @@
-Return-Path: <linux-kernel+bounces-629777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045A0AA7144
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 128DCAA7150
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994AF3AC584
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519659A2AB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A73A24BBFD;
-	Fri,  2 May 2025 12:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678C2253949;
+	Fri,  2 May 2025 12:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O2qGErEV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="Fj6/0mNv"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571612367AD
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746187807; cv=none; b=UPM8kIJE4ywgBhk305qxaU5smmJGlNnkxZX4+WQ6h6HngXcLcmfgULV4w2D4Wy1rr0lCpeALd9/XwRMbQU61B+EEQScj36/rD1YWQArDZSE6+wK4pJO/reMkyT7D5qebqWOf4p3blFvd/aAzkB7nbQSV9FLhgltSaAy95kzZXIo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746187807; c=relaxed/simple;
-	bh=pOpOvjck0Gt5C7hmD9HobhQXttro+pD0I2xh7VVgCXM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iMmBnavYllPcWOebHTC0mChBEdWkTXfZSPhkb8allToI6PgHOx0OORdTig1IAVttHGLQKpOkpCqWLE/AJVrjk27uT4LqaCWOC4A/LuLDnB7M+UWJflyCXpkhkpoj9Wo+J2uSPQDnf/oU6RBXPs5jAcfSxJme4IeNVuAkKKcgvTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O2qGErEV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746187804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E+x86lQ3eEa6wGjIIl/uJ+Xr71OZD/OsawvdSadvihw=;
-	b=O2qGErEVq0AXq9QZRzWoPcJW67lOj20GS/9wNm5VGA/wYhNpomjohT3yCWGZ7rPRtsDzt3
-	SicoJowuuwcShfCfoCAEkYZXOL/yqlbQdGWl6mDZ+MN+P4+2gHdYLq3BihPWG5RUSkVJ54
-	7V7WcewVnRUzlSRwm1vRNL+7tZpUUmA=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-rXPodJUwPISUUSIvD34SgQ-1; Fri, 02 May 2025 08:10:03 -0400
-X-MC-Unique: rXPodJUwPISUUSIvD34SgQ-1
-X-Mimecast-MFC-AGG-ID: rXPodJUwPISUUSIvD34SgQ_1746187802
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43cec217977so10066745e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 05:10:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746187802; x=1746792602;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+x86lQ3eEa6wGjIIl/uJ+Xr71OZD/OsawvdSadvihw=;
-        b=w2WHZ1wU/4QrtFQEe/fF5BcAhV+cdtZcOBMqw9fevFdwZ93uWEZV1fLHnHXnlR62HE
-         InYN+OfLjNQ0U74Tv046BFj6aCacks/nzMI3F5jBFcnuNEKziZf7Ba23nE49uBDO/upS
-         unGwmwO5FNVatE+dROxvK0zpODAp9/HNNKxqCK/9DY/2Yie6FFiUxm26zeY71ywDTIdC
-         gjJ2CIo8VeQYKLiTD1Fl14LoGSU35UZ3X5CowQ9bWleer46ABTdBq3AhYZv8Ng3jrdU3
-         SRGbfPfdS/uMUbhYar4ELjIK2/62Qh5yO+9iVCcexo7Dl2/UACQ/vwCYFuhFbZwRYavh
-         fJwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAr58Mb1O3AE1SQy8gERozU9QA7lyJ5tqacGUgN+dBKAypqNKd/ntIjAz6ZlUWQ2KHtL2wGubKnKg/ptc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWLTFeM1joQEV8CDlxDTN5AyB9HifVHrO0gaf2Vk5ifeOm/yWQ
-	u/yMV3gpd7ephca2XffuAvA5hPP/8kAN3Py01Gzb1iKVAq7LdzW74/r/p+9Y2zRsWqBMPc45e6t
-	yaDsnz38c6BSDhW1i6XPjX95crtl1xA8X2kGV7Cd38JAVPEkwHrKUHqOhE++Xtji1gZmB3pylLm
-	d4FKBjGjUtr3DDQJIP7+VyfqpM90pgIvxUCJ/OhaLbxRx3/Q==
-X-Gm-Gg: ASbGncuwagNknJkQsnnowNtzx90jodUThEJT2kKNXnbBAJmlH6YQxJ7mCfmnani/56p
-	3xBbZHTwfaQL336E7b7bxokYtaKZCa7Pn0BaP51l8pKPXkP69R7qZ9pR0rMuLNquP8ul2HFHr+b
-	esfURZ2i6zmbf4E9CHf0lb4SH54dIsS2wP2Mc76AFPoXyLzjiBjU+CT/3jJcDUNv5REopD3aJjR
-	5YccZVe2GH+benmEIaAnmCnt13AvrQJZIjx6NZcG71aVfEfnRzs2sD8Ncdxdo1iHUn4y5ISo8Uc
-	VxJ22O8=
-X-Received: by 2002:a05:600c:6612:b0:43d:9d5:474d with SMTP id 5b1f17b1804b1-441bbe25490mr23119755e9.0.1746187801798;
-        Fri, 02 May 2025 05:10:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHb9Keejkp+a+4rvlg26rBiOVIXrfRiZtb/w3Nvum12Eyzo9hqF3GutGJC1S6pljMkzwZdEAA==
-X-Received: by 2002:a05:600c:6612:b0:43d:9d5:474d with SMTP id 5b1f17b1804b1-441bbe25490mr23119155e9.0.1746187801359;
-        Fri, 02 May 2025 05:10:01 -0700 (PDT)
-Received: from fedora (g3.ign.cz. [91.219.240.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2aecc89sm88150895e9.9.2025.05.02.05.09.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 05:10:00 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: x86@kernel.org, linux-efi@vger.kernel.org, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Jones <pjones@redhat.com>, Daniel Berrange <berrange@redhat.com>, Emanuele
- Giuseppe Esposito <eesposit@redhat.com>, Gerd Hoffmann
- <kraxel@redhat.com>, Greg KH <gregkh@linuxfoundation.org>, Luca Boccassi
- <bluca@debian.org>, Peter Zijlstra <peterz@infradead.org>, Matthew Garrett
- <mjg59@srcf.ucam.org>, James Bottomley
- <James.Bottomley@hansenpartnership.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Paolo Bonzini <pbonzini@redhat.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/efi: Implement support for embedding SBAT data
- for x86
-In-Reply-To: <CAMj1kXE0WcenLEB+60=+oc+aKfbqZkwYZf-TrOyDY=ShXQ2pYw@mail.gmail.com>
-References: <20250424080950.289864-1-vkuznets@redhat.com>
- <20250424080950.289864-3-vkuznets@redhat.com>
- <CAMj1kXFMmhROmaDZ0gsw+ozG5iSkMvSXb15qexToUSAFyBn5hQ@mail.gmail.com>
- <87ldrka6w6.fsf@redhat.com>
- <CAMj1kXE0WcenLEB+60=+oc+aKfbqZkwYZf-TrOyDY=ShXQ2pYw@mail.gmail.com>
-Date: Fri, 02 May 2025 14:09:59 +0200
-Message-ID: <87a57v9pt4.fsf@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB46F1DF75C;
+	Fri,  2 May 2025 12:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746188049; cv=pass; b=avz1KktmutRYF4HtWAtTlQ3fiJc/h5tHvUCuzY9PH2S1dBvfP/cGyL4D/4wH5J76+05nAzR1lut+OUBLlGbxnQNGygxdu3fvnJ5ndSSGhjuHpgD4N9Tx84SQgWlObu98OIuY0qjgvGKz/VRHA4Y0W/aomAVd9J2Pex5o3/2jvo8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746188049; c=relaxed/simple;
+	bh=AAXs10Y+D9FMrTQBVnyIpowAABizRcyBZniMr4ggzuA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Yil1/+wTUINR4FCt8U+td4f+DqKUt2DZo26WMt+QF2YDzyJMyi54krEzBPnGINUVpwDQIgSR5jgqDR9UH7hBjVis3se+wXhtmPzPLpA/rbqsGs2bcaLn1BQLfJZb3UeRjMGcADFcqL+G5S5rla/0WT501xG48CsDneeCLqLXaLQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=Fj6/0mNv; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1746188029; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Xup1rjjGkskWuen+LfS8z173/CkhfoAgQ9jB7lZQtn655iAuoyErN6jciiYiCDPHJfIMqY+fE7NXW3hWQPqqGndORw3tuEXslA9spDTuMRmS69QlWASyOyZqw/6H+BwxfSeqzjUBuBvezfL5t/v8hbKtJGWacoGe77y3BhlGe6k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1746188029; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sH1dNx1Lo5zk4iM9N5df3G7uOySVxlRSII1dvHZ4avs=; 
+	b=kdBL/7jonJvrkAs7z+wv2iAN+x37SxSPIW7zj3Kei7b9+OtKpkkmuZC2GlCKRCTVAf/wVG9yWoxmwKkMhA2VqrKHd8zLNXmkBko1xNRMDysD1U6kbtHNr0pj2soa86z/64jHEk+OlxQbSNX8+KL7WQ0yKAc9EldLiV8RnR0UQHw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746188029;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=sH1dNx1Lo5zk4iM9N5df3G7uOySVxlRSII1dvHZ4avs=;
+	b=Fj6/0mNvjWcr1hRUUVoOOe6aFqd/1BfIyjdGipGTn5vhkChv3kB/kyy+UGIbfBjc
+	Hhz6TQ0RBkPceVE1IjkOd1FoqczhVF6fhk2p84TpBBHJs/nvRXnhlGGfETmSzmZqblN
+	uGJHB7twfnkD8zL6ree7AoLkWb32xiqYWLlcuCOg=
+Received: by mx.zohomail.com with SMTPS id 1746188027151311.4298556984256;
+	Fri, 2 May 2025 05:13:47 -0700 (PDT)
+Message-ID: <19160409-948f-4ae6-894a-6cfefcef4d4c@collabora.com>
+Date: Fri, 2 May 2025 17:13:42 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Cc: usama.anjum@collabora.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] selftests/timens: Print TAP headers
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Shuah Khan <shuah@kernel.org>
+References: <20250502-selftests-timens-fixes-v1-0-fb517c76f04d@linutronix.de>
+ <20250502-selftests-timens-fixes-v1-1-fb517c76f04d@linutronix.de>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20250502-selftests-timens-fixes-v1-1-fb517c76f04d@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Ard Biesheuvel <ardb@kernel.org> writes:
+On 5/2/25 5:03 PM, Thomas Weißschuh wrote:
+> The TAP specification requires that the output begins with a header line.
+> These headers lines are missing in the timens tests.
+> 
+> Print such a line.
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-> On Mon, 28 Apr 2025 at 12:59, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->>
->> Ard Biesheuvel <ardb@kernel.org> writes:
->>
->> > On Thu, 24 Apr 2025 at 10:10, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+> ---
+>  tools/testing/selftests/timens/clock_nanosleep.c | 2 ++
+>  tools/testing/selftests/timens/exec.c            | 2 ++
+>  tools/testing/selftests/timens/futex.c           | 2 ++
+>  tools/testing/selftests/timens/gettime_perf.c    | 2 ++
+>  tools/testing/selftests/timens/procfs.c          | 2 ++
+>  tools/testing/selftests/timens/timens.c          | 2 ++
+>  tools/testing/selftests/timens/timer.c           | 2 ++
+>  tools/testing/selftests/timens/timerfd.c         | 2 ++
+>  tools/testing/selftests/timens/vfork_exec.c      | 2 ++
+>  9 files changed, 18 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/timens/clock_nanosleep.c b/tools/testing/selftests/timens/clock_nanosleep.c
+> index 72d41b955fb2263ae74c34b446fb322d1bd50c6a..346bff3d128dfa8c8c743cc2eba74917994bb2f7 100644
+> --- a/tools/testing/selftests/timens/clock_nanosleep.c
+> +++ b/tools/testing/selftests/timens/clock_nanosleep.c
+> @@ -115,6 +115,8 @@ int main(int argc, char *argv[])
+>  {
+>  	int ret, nsfd;
+>  
+> +	ksft_print_header();
+> +
+>  	nscheck();
+>  
+>  	ksft_set_plan(4);
+> diff --git a/tools/testing/selftests/timens/exec.c b/tools/testing/selftests/timens/exec.c
+> index d12ff955de0d8f6665fa957e81438e373af9f92c..a644162d56fdc86827b83a45f83c2597c253aa6a 100644
+> --- a/tools/testing/selftests/timens/exec.c
+> +++ b/tools/testing/selftests/timens/exec.c
+> @@ -36,6 +36,8 @@ int main(int argc, char *argv[])
+>  		return 0;
+>  	}
+>  
+> +	ksft_print_header();
+> +
+>  	nscheck();
+>  
+>  	ksft_set_plan(1);
+> diff --git a/tools/testing/selftests/timens/futex.c b/tools/testing/selftests/timens/futex.c
+> index 6b2b9264e851caed06a628589eda0bf81ff33f16..339633ae037a74d2026ca835ac8600cd0394ae01 100644
+> --- a/tools/testing/selftests/timens/futex.c
+> +++ b/tools/testing/selftests/timens/futex.c
+> @@ -66,6 +66,8 @@ int main(int argc, char *argv[])
+>  	pid_t pid;
+>  	struct timespec mtime_now;
+>  
+> +	ksft_print_header();
+> +
+>  	nscheck();
+>  
+>  	ksft_set_plan(2);
+> diff --git a/tools/testing/selftests/timens/gettime_perf.c b/tools/testing/selftests/timens/gettime_perf.c
+> index 6b13dc277724126a9d2d5e17c805217760df72ad..d6658b7b754877fbf67237d6c22787a2a89066ce 100644
+> --- a/tools/testing/selftests/timens/gettime_perf.c
+> +++ b/tools/testing/selftests/timens/gettime_perf.c
+> @@ -67,6 +67,8 @@ int main(int argc, char *argv[])
+>  	time_t offset = 10;
+>  	int nsfd;
+>  
+> +	ksft_print_header();
+> +
+>  	ksft_set_plan(8);
+>  
+>  	fill_function_pointers();
+> diff --git a/tools/testing/selftests/timens/procfs.c b/tools/testing/selftests/timens/procfs.c
+> index 1833ca97eb247b1b45b7a86f0ca800d4a6e58c74..0a9ff90ee69a9327ed905428f1462fa189ffd830 100644
+> --- a/tools/testing/selftests/timens/procfs.c
+> +++ b/tools/testing/selftests/timens/procfs.c
+> @@ -180,6 +180,8 @@ int main(int argc, char *argv[])
+>  {
+>  	int ret = 0;
+>  
+> +	ksft_print_header();
+> +
+>  	nscheck();
+>  
+>  	ksft_set_plan(2);
+> diff --git a/tools/testing/selftests/timens/timens.c b/tools/testing/selftests/timens/timens.c
+> index 387220791a052e6013bd0fb4162f123d85152183..a9c0534ef8f67184c34882ae163472c179f593e4 100644
+> --- a/tools/testing/selftests/timens/timens.c
+> +++ b/tools/testing/selftests/timens/timens.c
+> @@ -151,6 +151,8 @@ int main(int argc, char *argv[])
+>  	time_t offset;
+>  	int ret = 0;
+>  
+> +	ksft_print_header();
+> +
+>  	nscheck();
+>  
+>  	check_supported_timers();
+> diff --git a/tools/testing/selftests/timens/timer.c b/tools/testing/selftests/timens/timer.c
+> index 5b939f59dfa4d64e4c2e4dc8eb6a644d44211f13..51babe63e233bdaaef35c1cafbcb5b5cc91c021e 100644
+> --- a/tools/testing/selftests/timens/timer.c
+> +++ b/tools/testing/selftests/timens/timer.c
+> @@ -75,6 +75,8 @@ int main(int argc, char *argv[])
+>  	pid_t pid;
+>  	struct timespec btime_now, mtime_now;
+>  
+> +	ksft_print_header();
+> +
+>  	nscheck();
+>  
+>  	check_supported_timers();
+> diff --git a/tools/testing/selftests/timens/timerfd.c b/tools/testing/selftests/timens/timerfd.c
+> index a4196bbd6e33f41b6a3ae346070037aff1cf4087..e58bc8b64ce2738dccb8c2a2c88e592c237b55d5 100644
+> --- a/tools/testing/selftests/timens/timerfd.c
+> +++ b/tools/testing/selftests/timens/timerfd.c
+> @@ -82,6 +82,8 @@ int main(int argc, char *argv[])
+>  	pid_t pid;
+>  	struct timespec btime_now, mtime_now;
+>  
+> +	ksft_print_header();
+> +
+>  	nscheck();
+>  
+>  	check_supported_timers();
+> diff --git a/tools/testing/selftests/timens/vfork_exec.c b/tools/testing/selftests/timens/vfork_exec.c
+> index 5b8907bf451dde3f3e2699f87797c155b9115aab..b957e1a651243adde41ec5cd57bbd12a7cac9eeb 100644
+> --- a/tools/testing/selftests/timens/vfork_exec.c
+> +++ b/tools/testing/selftests/timens/vfork_exec.c
+> @@ -91,6 +91,8 @@ int main(int argc, char *argv[])
+>  		return check("child after exec", &now);
+>  	}
+>  
+> +	ksft_print_header();
+> +
+>  	nscheck();
+>  
+>  	ksft_set_plan(4);
+> 
 
-...
-
->> >>  $(obj)/vmlinux: $(vmlinux-objs-y) $(vmlinux-libs-y) FORCE
->> >>         $(call if_changed,ld)
->> >>
->> >> diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
->> >> index 3b2bc61c9408..d0a27905de90 100644
->> >> --- a/arch/x86/boot/compressed/vmlinux.lds.S
->> >> +++ b/arch/x86/boot/compressed/vmlinux.lds.S
->> >> @@ -49,9 +49,22 @@ SECTIONS
->> >>                 *(.data.*)
->> >>
->> >>                 /* Add 4 bytes of extra space for the obsolete CRC-32 checksum */
->> >> +#ifndef CONFIG_EFI_SBAT
->> >>                 . = ALIGN(. + 4, 0x200);
->> >> +#else
->> >> +               /* Avoid gap between '.data' and '.sbat' */
->> >> +               . = ALIGN(. + 4, 0x1000);
->> >> +#endif
->> >>                 _edata = . ;
->> >>         }
->> >> +#ifdef CONFIG_EFI_SBAT
->> >> +       .sbat : ALIGN(0x1000) {
->> >> +               _sbat = . ;
->> >> +               *(.sbat)
->> >> +               _esbat = ALIGN(0x200);
->> >> +               . = _esbat;
->> >> +       }
->> >> +#endif
->> >>         . = ALIGN(L1_CACHE_BYTES);
->> >>         .bss : {
->> >>                 _bss = . ;
->> >
->> > This looks a bit odd - see below
->> >
->> >> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
->> >> index b5c79f43359b..ab851490ef74 100644
->> >> --- a/arch/x86/boot/header.S
->> >> +++ b/arch/x86/boot/header.S
->> >> @@ -207,6 +207,19 @@ pecompat_fstart:
->> >>                 IMAGE_SCN_MEM_READ              | \
->> >>                 IMAGE_SCN_MEM_WRITE             # Characteristics
->> >>
->> >> +#ifdef CONFIG_EFI_SBAT
->> >> +       .ascii ".sbat\0\0\0"
->> >> +       .long   ZO__esbat - ZO__sbat            # VirtualSize
->> >> +       .long   setup_size + ZO__sbat           # VirtualAddress
->> >> +       .long   ZO__esbat - ZO__sbat            # SizeOfRawData
->> >> +       .long   setup_size + ZO__sbat           # PointerToRawData
->> >> +
->> >> +       .long   0, 0, 0
->> >> +       .long   IMAGE_SCN_CNT_INITIALIZED_DATA  | \
->> >> +               IMAGE_SCN_MEM_READ              | \
->> >> +               IMAGE_SCN_MEM_DISCARDABLE       # Characteristics
->> >> +#endif
->> >> +
->> >
->> > This puts the .sbat section at the very end of the file. However, the
->> > virtual size of .data is 'ZO__end - ZO__data' not 'ZO__edata -
->> > ZO__data', and so the .sbat section will overlap with .bss in the
->> > memory view of the image.
->>
->> Missed that, will fix, thanks! A stupid question though: does this
->> matter in practice for SBAT? I don't think anyone needs SBAT data after
->> kernel starts booting so we can consider it 'discarded'. BSS data can
->> then do whatever it wants.
->>
->
-> It violates the PE/COFF spec, and some PE loaders and signing tools
-> are very pedantic about the layout.
-
-Turns out it the problem is slightly harder to address then I initially
-thought. On x86, arch/x86/boot/bzImage is composed of setup.bin and
-vmlinux.bin and the later is produced from vmlinux with
-
- objcopy -O binary -R .note -R .comment -S arch/x86/boot/compressed/vmlinux arch/x86/boot/vmlinux.bin
-
-"objcopy -O binary" basically dumps memory representation of vmlinux. In
-case we put '.sbat' before '.bss' we get:
-
-Sections:
-Idx Name          Size      VMA               LMA               File off  Algn
-...
-  4 .data         00002000  0000000000aef000  0000000000aef000  00af0000  2**12
-                  CONTENTS, ALLOC, LOAD, DATA
-  5 .sbat         00001000  0000000000af1000  0000000000af1000  00af2000  2**12
-                  CONTENTS, ALLOC, LOAD, READONLY, DATA
-  6 .bss          00023078  0000000000af2000  0000000000af2000  00af3000  2**12
-                  ALLOC
-  7 .pgtable      00021000  0000000000b16000  0000000000b16000  00af3000  2**12
-                  ALLOC
-...
-
-so we can't have a single '.data' section in PE covering both '.data'
-and '.bss'/'.pgtable' as '.sbat' is in the middle and we want it to be a
-separate section. If we try putting '.sbat' after '.bss' we are going to
-get a hole size of '.bss' + '.pgtable' in arch/x86/boot/vmlinux.bin
-because 'objcopy -O binary' is not going to squeeze anything (and it has
-no idea what '.sbat' is and if it can be moved).
-
-The problem is similar for zboot. I have two ideas:
-1) Get back to the idea of putting '.sbat' between '.text' and '.data'
-(was in my RFC). 
-
-2) Introduce a separate '.bss' section to the PE binary, basically:
-
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index b5c79f43359b..dae8202705c4 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -197,7 +197,7 @@ pecompat_fstart:
-                IMAGE_SCN_MEM_EXECUTE           # Characteristics
- 
-        .ascii  ".data\0\0\0"
--       .long   ZO__end - ZO__data              # VirtualSize
-+       .long   ZO__edata - ZO__data            # VirtualSize
-        .long   setup_size + ZO__data           # VirtualAddress
-        .long   ZO__edata - ZO__data            # SizeOfRawData
-        .long   setup_size + ZO__data           # PointerToRawData
-@@ -207,6 +207,17 @@ pecompat_fstart:
-                IMAGE_SCN_MEM_READ              | \
-                IMAGE_SCN_MEM_WRITE             # Characteristics
- 
-+       .ascii  ".bss\0\0\0\0"
-+       .long   ZO__end - ZO__edata             # VirtualSize
-+       .long   setup_size + ZO__edata          # VirtualAddress
-+       .long   0                               # SizeOfRawData
-+       .long   0                               # PointerToRawData
-+
-+       .long   0, 0, 0
-+       .long   IMAGE_SCN_CNT_UNINITIALIZED_DATA| \
-+               IMAGE_SCN_MEM_READ              | \
-+               IMAGE_SCN_MEM_WRITE             # Characteristics
-+
-        .set    section_count, (. - section_table) / 40
- #endif /* CONFIG_EFI_STUB */
-
-This way '.data' doesn't need to be the last meaninful section in
-'vmlinux' and we can then pub '.sbat' right after it. I'm going to give
-it a try but also I'm wondering why do we have '.data' covering '.bss'
-and '.pgtable' in the first place.
 
 -- 
-Vitaly
-
+Regards,
+Usama
 
