@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-629809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25E1AA71BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:28:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2209AA71C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A0334A4D9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:28:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51CBC46005A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAED2522A5;
-	Fri,  2 May 2025 12:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4D1254AE5;
+	Fri,  2 May 2025 12:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lp7N+0rs"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FYL+obIt"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4856C210185
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E480B25484E
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746188906; cv=none; b=jA1+JLjtplqVTPAzbcOZd5Ss3ZswybyVRLKYga6tMEKkiqWpF7Cw1+4I+Y9QhceWj7v1RwfZjpgRv+6FCT/sUVVR2oTd9mZMBddEVGj7HusKChCjpFx+lIP9jDVQiJVLcp3O8twQMbUQbamEyWsQRnyzZ1Orv48SqJpqYcUQNsw=
+	t=1746188941; cv=none; b=T0W0CESl1FYnLtmxz0W9JoOZYlQzM8Ts4Vf0alOtYvEdIlZzp1dsIMbcagGgxpudWXnK7R/ZEpwwJn4ma1bP2JujcKAe2cEm4hqVpC6xyE1qn4HodL1aNZMB3ktvFp2JAtO9t5JxYz5Xm9fk8jkVql9wbJaAghIVX8M5TJ/bHyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746188906; c=relaxed/simple;
-	bh=zmh526Lnl87MPrhQzMnGE+FlZXPEehb2CwuFJUvrAvs=;
+	s=arc-20240116; t=1746188941; c=relaxed/simple;
+	bh=LZ5FaQiluJjVti4wLSM0wjS0i57hJKuyzn8GkILRL/k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YSeap0ADHZnjraJ0fKfIlEYRFgKEygmYsNA6MQYxdc90ZGSkJwnlYdS49LHahdxjsWsOkDRQNdNBbrVKlRAGiLV8doEEDHM9C7LNXmTOj5rG+HBtHUy2+DW1OvHhrkOAEmeDeswkhhBuiJq1ZIkbsiqo1YNgDgEYzHslqAupjoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lp7N+0rs; arc=none smtp.client-ip=209.85.214.170
+	 To:Cc:Content-Type; b=DEwNkhOEi+db6eHooDkixGz2flwNQkz6KGsy6NmBQwEmkGWWPraCPaMdJz7NRTqDO4jr1nayDVua7ALGuCkTwKqubTM/cEQzY5ukBWwD/74DBjqO+CVSlwt5fbep2dlJG/34llZXY/i18OkteID5TQI303Vm7QEb/tI9WrVoo9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FYL+obIt; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2240aad70f2so160285ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 05:28:25 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f632bada3bso6946a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 05:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746188904; x=1746793704; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zmh526Lnl87MPrhQzMnGE+FlZXPEehb2CwuFJUvrAvs=;
-        b=lp7N+0rsEJjdMmBMND9+LIiCOcDNaDq7waS1UyQUrw10mwKcUOl17wdNDMtAvy8L7w
-         tHzI2250VRdlwR4uSZiiDiEAdS865WIEEFFhtc28NBbEzWJqZ2f0BpLLUS+njf9Rp5UW
-         KE+wlopFfK8/uIUq6lvPfMjCWhZYtJi6IzAG7olhyeqMpzh/FbQGl9XrH7gfFnZX+BAs
-         3j+YnDvsyfLiM4X6m+NSVPOgZNeNogM/qZEDd27RWoGt6ci+CKYr7H6YvePRRCFYP2Lw
-         flNR1SsE2UWUqRrvUXZl/34k41G8U6GahkwUl8sGbITStvEjikQU6zz4Cm5+TFZ0MRTB
-         4Rbw==
+        d=google.com; s=20230601; t=1746188938; x=1746793738; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LZ5FaQiluJjVti4wLSM0wjS0i57hJKuyzn8GkILRL/k=;
+        b=FYL+obItbfMfYPmMc/gZS6rn9M807hsIZHlWZEwRhYqVnxAN/1ITaJj/D89A9nAaWw
+         80ELlkq42fUyM8UvPxtbfSFQ6IpCIE8EXHXDMjCnAiWOixQCWOD/QwnmF446DAHCr6+D
+         ltGdSHru6y2I4AE4WLTixKWmd1gT0+wzcCRpcA1owxh2Rf+P0rnPUJKH4JNWJTdNaa36
+         rIYbx3mxZtKXuqI2OtYfDmJxmZUcmu7Ooqnns9uqRZ+qY0TjrObRCpamVYwvleAeDyyp
+         oXCTWMlLeIUsKjtMKP0Y51S15EhiECctZK+tFtNSf/f/yCrBCIEpTBwlI/V3VkquWI2x
+         8FAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746188904; x=1746793704;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zmh526Lnl87MPrhQzMnGE+FlZXPEehb2CwuFJUvrAvs=;
-        b=oZWyIxJkkrOnYoI66ehvTNuteNpcnbldO1CDI9dCLXFKba7i90Yd6pjlIjUgSQab98
-         00nH8Tpq/cav7K+2umR2kppjQ8xq4WnQJn2i7isu/U9QLT8AFYrZWsOBUiTVCqcoXPP3
-         /zXUI7MfysucC/zBv8YocRYzxIVFffY7nvwGG1ZUNVFPNCZh70LsBeZ2jxsKxvvWQc1C
-         9R2XQnkl3KX7yYp1/akH704Nfz+QJb2hplRh4TA+/8TA4E39IezxepcHM26xuSyVhp1F
-         dpakvyPpgC/rUq984Ia3PijzS14kmeFMzjgtADiZsFd4AjeFg2usUm3DZhZTUFS0dzki
-         yJLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUw/ofwvyH8Cf7yKPa76O1RyRETJ2RC1AUMPfaHLu5Ktw47veCXQDdNRXlQfZJlZ3/wY0bj8QPWq2ifylM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB8+F0+2BD12xY5vt0u/8E6rpRRLrwE+WpK7XG0UF4F4p1jHDw
-	mKmq5ePUfhAIgqaOgUNcwvbF2HfLYLs8YZKs6MVWfotTvBviGlmG2eI5GBDy8NfN+REoCFFqYN3
-	QUYPmpUMJyea5sdt8HcXfUcn3D/HqFpyDdK0DHb9VhWNgClRxhyWl
-X-Gm-Gg: ASbGnctokSDMESDM8uNTxM5asaPGnXclI1ZN6ftBgNuP6Mz1SB2k/bxdvhzHv5P3zeg
-	7qXtZfYLnKA0wAe/FKxjaE+/VNC4XcHjXlzPzhbCmjnzJK3bc6QxQ1T+AVsS8jOZxEXInmVQ1Mv
-	8+u9Q7AT02/Gp5WiGBWHo=
-X-Google-Smtp-Source: AGHT+IHV5VcT8qrVNy0hr0jvUhSwI2dzYIiIIPkfLEO6b3DLFwV4/3IH9Q2Vd9a3EkRHSd6EP2O2Joz97r+Cabv47lM=
-X-Received: by 2002:a17:902:f24c:b0:220:ce33:6385 with SMTP id
- d9443c01a7336-22e0797c6c3mr4184255ad.9.1746188904130; Fri, 02 May 2025
- 05:28:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746188938; x=1746793738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LZ5FaQiluJjVti4wLSM0wjS0i57hJKuyzn8GkILRL/k=;
+        b=Ru8u/50P196posj58Xnm9hla2EcjpvWf0LfsjPBLaloXJW+zBtSgGqFtc5U8YEiaD4
+         5weJ6yuQRUwZ8H/4O6uObvLfB5stCZ7QthMARqPUjBEcA1/vq+YN0ismFD031xtFvAJM
+         Wycwv6EEOu6Xa08RybsA+HV99sblQGEkVMx2iFnI3C8/sam2Vi9G5ulD+CqIyRQSk1MR
+         Wb7u8leXZoaosH75rDWvxYJxAeQQjR4yVL0gw7Jc1Hfu3dL6tfErx5itGciIslAe1bew
+         cOLCbXLq/5m90E25zCLHFtI9vbtsAPdbA0OCiYEMpf1BrkW8joGV7YX7bQHzlcxwFbqL
+         S8jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXA5jHxUIIB5iA/YVjso7F6SHkKsyEcNFTXmSLxHqx0iKzRxo26+dvFjhPR0uuutrgA553ngKInUTQqRfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEoXMsSTZGlvsdKSvXhsJI3xHuyaxIfQWgyHtqc+u+JRn/VmTF
+	nBYTSFK2GDa3DOTmZP+9iUj+XQCdeWZmhyZTKLNuLX3V3t4ekfZlevw+Rp1zrCxJXKkq3d2Dtbv
+	DMK6WMS/FSB2NWNlbJJMBdurKlohDRrc4kf/0
+X-Gm-Gg: ASbGncuiAGa1VxIKtLALjD+SCUaxUMWSloBUpNFK2t2wU0+P8ed6NYBe2q0LFTxpySK
+	NOL/DRfO3A8NPf1vtlhaZTd6vSlo8EgK6v9eU9FLi58uM4HdnhQb1rP2q23UayT/+7kxkdFFo3W
+	UJBujTxA47ffSuAojyrG0zuHaFqmrQP+sjFIREqT5d6nJ/iC6JYA==
+X-Google-Smtp-Source: AGHT+IGNygGO9znp1dKmEYz6swuBx/QLlclRDdgG8tFuaCByAEaPQ6EozLi+aH6xuzZRKvwAbTyrzrlgJgAQz50dGjs=
+X-Received: by 2002:aa7:cc12:0:b0:5e4:9ee2:afe1 with SMTP id
+ 4fb4d7f45d1cf-5f9132eb267mr189885a12.2.1746188937859; Fri, 02 May 2025
+ 05:28:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250501163827.2598-1-ujwal.kundur@gmail.com> <20250501163827.2598-2-ujwal.kundur@gmail.com>
- <D9LO1QI65D6K.NLDZ4RK2835Y@google.com>
-In-Reply-To: <D9LO1QI65D6K.NLDZ4RK2835Y@google.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Fri, 2 May 2025 14:28:11 +0200
-X-Gm-Features: ATxdqUGJ69Ia6WcMuCEFCnuGbd5YAV_Udy5i81oo77n73ry6AVBvmtLYMJeu35Q
-Message-ID: <CA+i-1C1x2TenH-WxkUnkx3-5XpkXOMMmZQTCBV3sHDV8WWN=oA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] selftests/mm/uffd: Refactor non-composite global vars
- into struct
-To: Ujwal Kundur <ujwal.kundur@gmail.com>, akpm@linux-foundation.org, peterx@redhat.com, 
-	shuah@kernel.org
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250428-tee-sizecheck-v1-1-5c3c25a2fa79@google.com> <20250501210158.5b2c86a7@pumpkin>
+In-Reply-To: <20250501210158.5b2c86a7@pumpkin>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 2 May 2025 14:28:21 +0200
+X-Gm-Features: ATxdqUGwos--eWIWeWH3S7H7Il3ChdLC4SH-nUgaQGqhNN79bE9tpFWmae02MWQ
+Message-ID: <CAG48ez1DPWhT2dhd1iptFawWjteh_=pZ4M6Yq5KKCq2DTArnqw@mail.gmail.com>
+Subject: Re: [PATCH] tee: Prevent size calculation wraparound on 32-bit kernels
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>, Sumit Garg <sumit.garg@kernel.org>, 
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2 May 2025 at 14:16, Brendan Jackman <jackmanb@google.com> wrote:
-> Little bit of indentation mess here
+On Thu, May 1, 2025 at 10:02=E2=80=AFPM David Laight
+<david.laight.linux@gmail.com> wrote:
 >
-> I don't understand this code but since I was hurt by these global
-> variables I had a look over the diff anyway, it LGTM (aside from the
-> formatting nits), thanks.
+> On Mon, 28 Apr 2025 15:06:43 +0200
+> Jann Horn <jannh@google.com> wrote:
 >
-> Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> > The current code around TEE_IOCTL_PARAM_SIZE() is a bit wrong on
+> > 32-bit kernels: Multiplying a user-provided 32-bit value with the
+> > size of a structure can wrap around on such platforms.
+> >
+> > Fix it by using saturating arithmetic for the size calculation.
+>
+> Why not just add a sanity check on 'num_params' after it is read.
+> Max is 31 (1024-32)/32), but any sane limit will do because of
+> the buf.buf_len test.
 
-Wait sorry, actually, this deletes the global vars before it deletes
-the references to them. That's gonna be a real pain for bisections,
-please can you restructure the series to prevent intervening build
-failures?
-
-(I.e. if I apply just 1/4, the selftests don't compile).
+That would work, too. I don't know which way looks nicer.
 
