@@ -1,113 +1,172 @@
-Return-Path: <linux-kernel+bounces-630648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B684AA7D67
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 01:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA865AA7D86
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 01:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7B31BC2464
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:41:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A8A1B6133C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FBB21518F;
-	Fri,  2 May 2025 23:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381B82701BB;
+	Fri,  2 May 2025 23:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jPF1vZmT"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (4096-bit key) header.d=archlinux.org header.i=@archlinux.org header.b="Qhic4OLm";
+	dkim=permerror (0-bit key) header.d=archlinux.org header.i=@archlinux.org header.b="pWUXN2ba"
+Received: from mail.archlinux.org (mail.archlinux.org [95.216.189.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E4C224B15
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 23:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7665226520;
+	Fri,  2 May 2025 23:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.216.189.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746229281; cv=none; b=ep9WpFlo4V8HQcoX0I7ZaYEwbI4MsWaUKG3hDkYIwP9UNwK3oXzGZz7+pEOFLTSBZSOJH8EfKGuNgTErbMfW2VFkAKr9+E1QRkzrEIwndMckSsm4bRkJwYxbH2gvxKPu7ImBI8cKgU/b2yUMtPfxYzX4qZxMZX6Fpq8pl/C9PW8=
+	t=1746229901; cv=none; b=tayGBmVgxmEcvQBYSEgddNvxkgOhz7zQX6mPf5OthjK3lJCTXivAAlUQZXUILJGcaG338/VuWIzxUSr9bjxuzZPFeqrcTeLxUGhgINGp8oZB25zgZiyYayZ8J7jlOPv9iyk97SngqDClFnTksZ1Lclr6QQcc2AFCOiOv0hIImhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746229281; c=relaxed/simple;
-	bh=czGIM+H4eLlZESV3HJ64VTl1tY7CpAwcyCHYi9ICIxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VxlPTTaWfxCM2xhWas6ked3Yjl4RkNgtjxe4xyqZxSQDHri8NkgR9pqnJ+/G22DsOwooJGWeFDNznKZ7PL0gZ8h9SJgBYegvQj05AJzBAJkW0+9yIaOLsGWkpcCiFa3bpYdLjQY3uIMmcC/8LTf+U7WXGWH+301vlZ9FqX7pupc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jPF1vZmT; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Forwarded-Encrypted: i=1; AJvYcCUwVU6hdotyiTHhbi3/6YWY9Z7Wv+L4aR0RthUhjaLSF/7yBRl+Jo3LYRi/7m2ANGkwNDoSCJB6aPBKIERk@vger.kernel.org, AJvYcCVB7NYAkyDp7jcZpEtIrF3OHd5eHZD50kNzmNLi0Da144oy79cdwaUmVu8HqZFs1j95I0A=@vger.kernel.org, AJvYcCWOevjYC4hMwclEccIMkElfPYiPeREKgc1uZDBWtINbwYli20FK8raB+oRT3bkGNAWLwnTXnF2t1w==@vger.kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746229267;
+	s=arc-20240116; t=1746229901; c=relaxed/simple;
+	bh=njf1WV3cKpBGYTHc6siAE3sCl8ClWU7pG5cQt3nhjw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T5yfz+dguWXDVL5vPL3ljwiaLweUBX/3vwIR5R58fXpsRoD96NG2RdcuL2GudNzOga7AdqtNTBky5/vEx+ifCz24hl1sGuBYdq4sLrDMpeLb++LN4YUkW7Cbq7TAeE0kRQNIP+txtSYERa8xnlApB/pqKxzlTweKYvSnYRwTPGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=archlinux.org; spf=pass smtp.mailfrom=archlinux.org; dkim=pass (4096-bit key) header.d=archlinux.org header.i=@archlinux.org header.b=Qhic4OLm; dkim=permerror (0-bit key) header.d=archlinux.org header.i=@archlinux.org header.b=pWUXN2ba; arc=none smtp.client-ip=95.216.189.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=archlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=archlinux.org
+Message-ID: <bf3f2f1c-1852-449f-993f-71848d190db6@archlinux.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=archlinux.org;
+	s=dkim-rsa; t=1746229390;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1iZ6FskvjswHgkYHQhuRfrsF7UvHUOVUeCTo8/6mqlQ=;
-	b=jPF1vZmTfACmtd03QAwd2HqmDyzdPieZyHRp2pDGTU9xdVhdUNLj3bBdhyEIxEmkzu7bqs
-	VSwTbufFvZZ2ReXtwj0MAfIj4DSeURKtRMUnZfAy4Voqf1ZvMt0B+Fp2TOIrnIiyX2EXOH
-	mHdYKAilmCdUMVawEL2/JeJr47syAyM=
-X-Gm-Message-State: AOJu0YyWuPOIRkFEXs/8BXaVG9TgA8N7u/V3jAApQqPmIjSSPi/v96r6
-	W6naUMg15UWKXSrku/9+8QC00PNLCeufN3NtZ9JWH5qhbOmLCcypQuNCCByYbOIQW9aZnBFVHHm
-	8M4SjMqktWPW5p8Nh7OYiCRgPbIo=
-X-Google-Smtp-Source: AGHT+IFTCZDG1vWbE2TphPGvigDBoOv0TL+ojP/zRtmlOP4pijef2XIcrq7nTs0Tkb1kQWWyHHoL1nsLTn2sZ5lSqAY=
-X-Received: by 2002:a05:6122:4281:b0:523:eb47:2884 with SMTP id
- 71dfb90a1353d-52adedabf74mr6322156e0c.6.1746229264756; Fri, 02 May 2025
- 16:41:04 -0700 (PDT)
+	bh=VputJNPvBl9XACh4x8s207ghVEizyjJrRTUadxhl7W0=;
+	b=Qhic4OLmfnzDZAcpigNu7UrqLK5mWgcMPgKRWpfhdAXeZIqHXIBZVqEkrh8YlxeTSpOAbU
+	tEuR8Hl86L0vi7auXrHzDR7/KmPsUpinbZ6VHAEwk64QsAe3+IL9ANV64KxMfw8/rHMGgA
+	k1oSNM/QKKyilECNEb2JnruO5orD5/JCByNXVkBX1nuiBoTkhgZwex6wBzMz5CRSETtJvX
+	/umQNjYFjOrleljhVtUZ9guk5XJ1MM7kE4yK9nqbZV6g1W4jd+u7mfzQmEYib+v/q0/liU
+	WrAmO2uRMsrM+RRe9W4EYzVK5ED0kYo+jbIvZ4+vcjsRe38jBnBekYZNWY00XPOeplaiIK
+	BvfFWmFZ9L9f7xIdxoz2sbnQEkhHVAFJ2xtZtsi6uLCneWRxBGBxT/ADPT0BOgRfPYAjwB
+	atSK/tKeP4kcfOVS+t9AnSyV7obHcia28DSrHnsRMH7Lv/QJJshLghDJskgLHh3whAbBDd
+	DQCPx6yylwF6AkLygj4FnEbHcMJj5bxz+NgHNKJP+wecgVU15BfLDeH/obVkNIOP3tW5zZ
+	0FVGN0Ypnkope2InCXnrS0Ur0MWb8/RXNPdJHlLzgmkElM21+hmtrbSvl8ve0yGWoyf2sH
+	ah7STOBC/NiCplBj5M1Z4RrvTRTHDEkZh7gcxt9ZubblsWPjOvH+w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=archlinux.org;
+	s=dkim-ed25519; t=1746229390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VputJNPvBl9XACh4x8s207ghVEizyjJrRTUadxhl7W0=;
+	b=pWUXN2baJ+rjBIqdcBKhyMfxHT1Z/KrJMyTIFAemXV1CBDzl8/qFRMzDBOovLcR/C95F5U
+	Iyd1qkopp9pOBkCg==
+Authentication-Results: mail.archlinux.org;
+	auth=pass smtp.auth=kpcyrd smtp.mailfrom=kpcyrd@archlinux.org
+Date: Sat, 3 May 2025 01:43:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502001742.3087558-1-shakeel.butt@linux.dev>
- <20250502001742.3087558-4-shakeel.butt@linux.dev> <CAADnVQJ-XEEwVppk-qY2mmGB4R18_nqH-wdv5nuJf2LST5=Aaw@mail.gmail.com>
- <CAGj-7pWqvtWj2nSOaQwoLbwUrVcLfKc0U2TcmxuSB87dWmZcgQ@mail.gmail.com> <CAADnVQ+dhiuvrmTiKeGCnjDk9=4ygETJXR+E4zQr5H2MzBLBCQ@mail.gmail.com>
-In-Reply-To: <CAADnVQ+dhiuvrmTiKeGCnjDk9=4ygETJXR+E4zQr5H2MzBLBCQ@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-Date: Fri, 2 May 2025 16:40:53 -0700
-X-Gmail-Original-Message-ID: <CAGj-7pXrKBr+LC_Mbj+xyud=tXpR3bCYwzOQTUgM8aSZ0qNnhA@mail.gmail.com>
-X-Gm-Features: ATxdqUFYlzigjs82EjrKHhRoE1vnHFOUKUQOL1fcOT0yG0kjvzFLy9bjym4kI_8
-Message-ID: <CAGj-7pXrKBr+LC_Mbj+xyud=tXpR3bCYwzOQTUgM8aSZ0qNnhA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] memcg: no irq disable for memcg stock lock
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Meta kernel team <kernel-team@meta.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH v3 0/9] module: Introduce hash-based integrity checking
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ =?UTF-8?Q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
+ Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>,
+ Christian Heusel <christian@heusel.eu>, =?UTF-8?Q?C=C3=A2ju_Mihai-Drosi?=
+ <mcaju95@gmail.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-integrity@vger.kernel.org
+References: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net>
+ <f1dca9daa01d0d2432c12ecabede3fa1389b1d29.camel@HansenPartnership.com>
+ <840b0334-71e4-45b1-80b0-e883586ba05c@t-8ch.de>
+ <b586e946c8514cecde65f98de8e19eb276c09703.camel@HansenPartnership.com>
+Content-Language: de-DE, en-US
+From: kpcyrd <kpcyrd@archlinux.org>
+In-Reply-To: <b586e946c8514cecde65f98de8e19eb276c09703.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 2, 2025 at 4:28=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On 5/2/25 3:30 PM, James Bottomley wrote:
+> Under a your interpretation of the above, any signed binary isn't
+> "reproducible" even if the underlying build was, which means any secure
+> boot kernel would never be reproducible because it also has to be a
+> signed binary.  The solution is simple: can you strip the signature and
+> reproduce the build?  If yes, then the build is reproducible and even
+> fits with the "any party can recreate ..." above.   This is the
+> interpretation pretty much everyone else has been using.  It's why
+> people like Intel with source only availability and Intel build only
+> signing tout reproduceability: they only issue signed confidential VM
+> firmware, but you can technically reproduce the build of the firmware
+> minus the signature but you can never sign it.
+
+The secure-boot signature is easier to deal with, I also think there'd 
+be one package that contains just the unsigned kernel+modules (with the 
+modules being pinned by a cryptographic hashset), and a second one that 
+takes the kernel secure-boot signature as a source-code input, that is 
+calculated after the first package was successfully built.
+
+Arch Linux has also considered patching the module-signing-script into 
+some kind of oracle that doesn't use any private key and instead selects 
+the right pre-computed signature for the given content, but:
+
+- that would be terribly annoying to maintain/operate
+- any reproducible builds regression would make the build fail, because 
+the kernel wouldn't be bootable
+
+> You just strip the signatures before verifying reproducibility.
+> 
 [...]
-> > >
-> > > I don't think it works.
-> > > When there is a normal irq and something doing regular GFP_NOWAIT
-> > > allocation gfpflags_allow_spinning() will be true and
-> > > local_lock() will reenter and complain that lock->acquired is
-> > > already set... but only with lockdep on.
-> >
-> > Yes indeed. I dropped the first patch and didn't fix this one
-> > accordingly. I think the fix can be as simple as checking for
-> > in_task() here instead of gfp_mask. That should work for both RT and
-> > non-RT kernels.
->
-> Like:
-> if (in_task())
->   local_lock(...);
-> else if (!local_trylock(...))
->
-> Most of the networking runs in bh, so it will be using
-> local_trylock() path which is probably ok in !PREEMPT_RT,
-> but will cause random performance issues in PREEMP_RT,
-> since rt_spin_trylock() will be randomly failing and taking
-> slow path of charging. It's not going to cause permanent
-> nginx 3x regression :), but unlucky slowdowns will be seen.
-> A task can grab that per-cpu rt_spin_lock and preempted
-> by network processing.
+> 
+> If you take off the appended signature off the module, you can verify
+> reproduceability.
+> 
+[...]
+> 
+> So you think stripping signatures is failure prone?  If that were the
+> case then so would be verifying signatures upon which our whole secure
+> boot and signed module loading is based.
+> 
+[...]
+> 
+> Or you simply ship tools to remove the signature;
+> 
+> sbattach --remove <signed efi variable>
+> 
+> already does this for you ...
 
-Does networking run in bh for PREEMPT_RT as well?
+It reads like you assume somebody sits down and explicitly looks at the 
+linux package manually, but the reproducible builds tooling considers 
+the package content to be fully opaque and doesn't have any 
+special-casing of any package:
 
-I think I should get networking & RT folks opinion on this one. I will
-decouple this irq patch from the decoupling lock patches and start a
-separate discussion thread.
+https://github.com/archlinux/archlinux-repro
+https://salsa.debian.org/debian/devscripts/-/blob/main/scripts/debrebuild.pl?ref_type=heads
+
+I'd rather not deal with the consequences of weakening the comparison 
+and possibly introducing exploitable loop-holes in any of the layers we 
+wouldn't be able to bit-for-bit compare anymore (like e.g. tar).
+
+It would also break the concept of `f(source) -> binary`, "you can 
+deterministically derive the binary packages from the documented build 
+inputs", and instead you'd always need to fuzzy-match against what 
+somebody else built.
+
+cheers,
+kpcyrd
 
