@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-629690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44985AA702F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:03:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134F8AA704A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F054A454E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56E01BA8252
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DFB23C507;
-	Fri,  2 May 2025 11:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FV9eo+oQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A77B231825;
-	Fri,  2 May 2025 11:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0028F2550A2;
+	Fri,  2 May 2025 11:04:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95229243951;
+	Fri,  2 May 2025 11:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746183812; cv=none; b=ix2+AtEbQ4zH0G1nAWFf205VFcJmkkzH3xNv2ZYSzuqOKKypGBCouaI7XexoUr6y6SQ7LuQppjSI8Wa7fKn6RoG1XzdxwbCboXFoK2Vumg9unJ1rQT2PI8C2mtf06vqn5USqyHYwmdcqmCLMaWQCkqw6XwAdM5S/nlf7wONoMn0=
+	t=1746183875; cv=none; b=rmD4tHFTdjjeIWOo06IMK5ii0ne6tldPrmoeLAZZHTba5qyW0whn9tutd+8nK1vBWIFU3CK+vaLjERnqY2omJIcfzWuQZz741nK/o27C8xe5kvi0iMn/O9Wb6f+T/P+wlYuoLGD2wfZ64iqxyfZm8jBab4faIyNTCv8aXQtHe8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746183812; c=relaxed/simple;
-	bh=7B/Fs9f12a/EfZazo7rvvUt2On0lD//L6IQUV+aiOCk=;
+	s=arc-20240116; t=1746183875; c=relaxed/simple;
+	bh=3OTFRZBkrjijZtuyP1PjuHQyBy+WZ2Tuv4lnEulpl30=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QxenjAmOG1OAIcACNMMrdPWxfSeYLcqgAmG3IF7ZhiWJsHAxmCTMP4CtZjXCsmqzv5W5TR9CcypkrFu6Qf8eKJV5qQt1pbucN3HY2nqYzOVJ7xw2EYsjJpPWwNIUJrpCrA/NupITzzfD9g2scrGaMrJ08PqjEzj5ThFTK0LlBIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FV9eo+oQ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746183811; x=1777719811;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7B/Fs9f12a/EfZazo7rvvUt2On0lD//L6IQUV+aiOCk=;
-  b=FV9eo+oQE2Xa9oDwfi6fD+YZDZVvdmmtBfDzuJSM5CPHoyitjYBB3x8A
-   I0Tp0Wqwmm9+hyPW8ufpO4juuVyW7vRpdlCrGSQ4x3yeoZwsWDlXoXH8D
-   uo0VXzqgLSqc/tfCN7HfTsYsvRpZxXYg7CZBv50ecbo3Nueha9riA37tM
-   VwSVo5Q9+ZeyggAVGF+pKXVUit3yd4gsfmBm+BqasiM9oeT7IYxkm/mp5
-   o7qRv2yqUtPTyeuhF34PTG+jGjRwLzgi3DC0kM69Pl1mRGOIwS7Yvp3dF
-   Zkc/jxMwR2xd8sjhaYBqQTPLOxwVo2rMlir6he8B5/r/pkFTdY3E9zYso
-   g==;
-X-CSE-ConnectionGUID: QIbEIllLS3y4t14Wc08lhQ==
-X-CSE-MsgGUID: 2iNDd2yAR8WwY68DbJOsOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="51680488"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="51680488"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 04:03:30 -0700
-X-CSE-ConnectionGUID: Q7u3S9JzQ/qGa9N64ULX0w==
-X-CSE-MsgGUID: AH+Hw+WDRuyKN+bf962HHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="165540944"
-Received: from mylly.fi.intel.com (HELO [10.237.72.50]) ([10.237.72.50])
-  by orviesa002.jf.intel.com with ESMTP; 02 May 2025 04:03:27 -0700
-Message-ID: <6a3b756f-6fbd-4ee5-b511-c5a32e4a6a34@linux.intel.com>
-Date: Fri, 2 May 2025 14:03:25 +0300
+	 In-Reply-To:Content-Type; b=QeUtDEbjwufkSG5XuB+RN5+0dVBsup6Yr6HW9EESolWKuiOOxdOP5JZgsV7XO4c+R45PXJ/HuzN2AbImXG0zCRTNmHMTlotp1qXFAf/6rT6pClwIM0//03Jt0/kPFpGmKJTvJTdGUtPSldWDf6xAE7c1Nlvu/IqE0DG4Sb6XjvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 414501688;
+	Fri,  2 May 2025 04:04:22 -0700 (PDT)
+Received: from [10.57.43.85] (unknown [10.57.43.85])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 645533F66E;
+	Fri,  2 May 2025 04:04:25 -0700 (PDT)
+Message-ID: <bf0b9232-36b0-41c5-89a5-6639719cd09e@arm.com>
+Date: Fri, 2 May 2025 12:04:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +41,269 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [1/1] i2c: designware: Ensure runtime suspend is invoked during
- rapid slave unregistration and registration
-To: EnDe Tan <ende.tan@starfivetech.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Cc: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
- "jsd@semihalf.com" <jsd@semihalf.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Leyfoon Tan <leyfoon.tan@starfivetech.com>,
- "endeneer@gmail.com" <endeneer@gmail.com>
-References: <20250412023303.378600-1-ende.tan@starfivetech.com>
- <6e155241-3403-49df-8f0d-5aa63e2e74ab@linux.intel.com>
- <NTZPR01MB10182E9F6E50D679A6EAC3B4F8B92@NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <NTZPR01MB10182E9F6E50D679A6EAC3B4F8B92@NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn>
+Subject: Re: [PATCH v8 13/43] arm64: RME: Support for the VGIC in realms
+Content-Language: en-GB
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>
+References: <20250416134208.383984-1-steven.price@arm.com>
+ <20250416134208.383984-14-steven.price@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250416134208.383984-14-steven.price@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi
+On 16/04/2025 14:41, Steven Price wrote:
+> The RMM provides emulation of a VGIC to the realm guest but delegates
+> much of the handling to the host. Implement support in KVM for
+> saving/restoring state to/from the REC structure.
+> 
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes from v5:
+>   * Handle RMM providing fewer GIC LRs than the hardware supports.
+> ---
+>   arch/arm64/include/asm/kvm_rme.h |  1 +
+>   arch/arm64/kvm/arm.c             | 16 +++++++++---
+>   arch/arm64/kvm/rme.c             |  5 ++++
+>   arch/arm64/kvm/vgic/vgic-init.c  |  2 +-
+>   arch/arm64/kvm/vgic/vgic-v3.c    |  6 ++++-
+>   arch/arm64/kvm/vgic/vgic.c       | 43 ++++++++++++++++++++++++++++++--
+>   6 files changed, 66 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
+> index f716b890e484..9bcad6ec5dbb 100644
+> --- a/arch/arm64/include/asm/kvm_rme.h
+> +++ b/arch/arm64/include/asm/kvm_rme.h
+> @@ -92,6 +92,7 @@ struct realm_rec {
+>   
+>   void kvm_init_rme(void);
+>   u32 kvm_realm_ipa_limit(void);
+> +u32 kvm_realm_vgic_nr_lr(void);
+>   
+>   int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap);
+>   int kvm_init_realm_vm(struct kvm *kvm);
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index fd83efb667cc..808d7e479571 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -683,19 +683,24 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>   		kvm_call_hyp_nvhe(__pkvm_vcpu_put);
+>   	}
+>   
+> +	kvm_timer_vcpu_put(vcpu);
+> +	kvm_vgic_put(vcpu);
+> +
+> +	vcpu->cpu = -1;
+> +
+> +	if (vcpu_is_rec(vcpu))
+> +		return;
+> +
+>   	kvm_vcpu_put_debug(vcpu);
+>   	kvm_arch_vcpu_put_fp(vcpu);
+>   	if (has_vhe())
+>   		kvm_vcpu_put_vhe(vcpu);
+> -	kvm_timer_vcpu_put(vcpu);
+> -	kvm_vgic_put(vcpu);
+>   	kvm_vcpu_pmu_restore_host(vcpu);
+>   	if (vcpu_has_nv(vcpu))
+>   		kvm_vcpu_put_hw_mmu(vcpu);
+>   	kvm_arm_vmid_clear_active();
+>   
+>   	vcpu_clear_on_unsupported_cpu(vcpu);
+> -	vcpu->cpu = -1;
+>   }
+>   
+>   static void __kvm_arm_vcpu_power_off(struct kvm_vcpu *vcpu)
+> @@ -912,6 +917,11 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+>   			return ret;
+>   	}
+>   
+> +	if (!irqchip_in_kernel(kvm) && kvm_is_realm(vcpu->kvm)) {
+> +		/* Userspace irqchip not yet supported with Realms */
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+>   	mutex_lock(&kvm->arch.config_lock);
+>   	set_bit(KVM_ARCH_FLAG_HAS_RAN_ONCE, &kvm->arch.flags);
+>   	mutex_unlock(&kvm->arch.config_lock);
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index f4923fc3b34e..1239eb07aca6 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
+> @@ -77,6 +77,11 @@ u32 kvm_realm_ipa_limit(void)
+>   	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_S2SZ);
+>   }
+>   
+> +u32 kvm_realm_vgic_nr_lr(void)
+> +{
+> +	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS);
+> +}
+> +
+>   static int get_start_level(struct realm *realm)
+>   {
+>   	return 4 - ((realm->ia_bits - 8) / (RMM_PAGE_SHIFT - 3));
+> diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
+> index 1f33e71c2a73..a81c7f3d1d42 100644
+> --- a/arch/arm64/kvm/vgic/vgic-init.c
+> +++ b/arch/arm64/kvm/vgic/vgic-init.c
+> @@ -81,7 +81,7 @@ int kvm_vgic_create(struct kvm *kvm, u32 type)
+>   	 * the proper checks already.
+>   	 */
+>   	if (type == KVM_DEV_TYPE_ARM_VGIC_V2 &&
+> -		!kvm_vgic_global_state.can_emulate_gicv2)
+> +	    (!kvm_vgic_global_state.can_emulate_gicv2 || kvm_is_realm(kvm)))
+>   		return -ENODEV;
+>   
+>   	/* Must be held to avoid race with vCPU creation */
+> diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
+> index b9ad7c42c5b0..c10ad817030d 100644
+> --- a/arch/arm64/kvm/vgic/vgic-v3.c
+> +++ b/arch/arm64/kvm/vgic/vgic-v3.c
+> @@ -8,9 +8,11 @@
+>   #include <linux/kvm_host.h>
+>   #include <linux/string_choices.h>
+>   #include <kvm/arm_vgic.h>
+> +#include <asm/kvm_emulate.h>
+>   #include <asm/kvm_hyp.h>
+>   #include <asm/kvm_mmu.h>
+>   #include <asm/kvm_asm.h>
+> +#include <asm/rmi_smc.h>
+>   
+>   #include "vgic.h"
+>   
+> @@ -758,7 +760,9 @@ void vgic_v3_put(struct kvm_vcpu *vcpu)
+>   		return;
+>   	}
+>   
+> -	if (likely(!is_protected_kvm_enabled()))
+> +	if (vcpu_is_rec(vcpu))
+> +		cpu_if->vgic_vmcr = vcpu->arch.rec.run->exit.gicv3_vmcr;
+> +	else if (likely(!is_protected_kvm_enabled()))
+>   		kvm_call_hyp(__vgic_v3_save_vmcr_aprs, cpu_if);
+>   	WARN_ON(vgic_v4_put(vcpu));
+>   
+> diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
+> index 8d189ce18ea0..c68a41a29917 100644
+> --- a/arch/arm64/kvm/vgic/vgic.c
+> +++ b/arch/arm64/kvm/vgic/vgic.c
+> @@ -10,7 +10,9 @@
+>   #include <linux/list_sort.h>
+>   #include <linux/nospec.h>
+>   
+> +#include <asm/kvm_emulate.h>
+>   #include <asm/kvm_hyp.h>
+> +#include <asm/kvm_rme.h>
+>   
+>   #include "vgic.h"
+>   
+> @@ -23,6 +25,8 @@ struct vgic_global kvm_vgic_global_state __ro_after_init = {
+>   
+>   static inline int kvm_vcpu_vgic_nr_lr(struct kvm_vcpu *vcpu)
+>   {
+> +	if (unlikely(vcpu_is_rec(vcpu)))
+> +		return kvm_realm_vgic_nr_lr();
+>   	return kvm_vgic_global_state.nr_lr;
+>   }
+>   
+> @@ -864,10 +868,23 @@ static inline bool can_access_vgic_from_kernel(void)
+>   	return !static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif) || has_vhe();
+>   }
+>   
+> +static inline void vgic_rmm_save_state(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
+> +	int i;
+> +
+> +	for (i = 0; i < kvm_vcpu_vgic_nr_lr(vcpu); i++) {
+> +		cpu_if->vgic_lr[i] = vcpu->arch.rec.run->exit.gicv3_lrs[i];
+> +		vcpu->arch.rec.run->enter.gicv3_lrs[i] = 0;
+> +	}
+> +}
 
-Sorry the delay. Comment below.
+We also need to save/restore gicv3_hcr/cpuif->vgic_hcr.
 
-On 4/20/25 6:31 AM, EnDe Tan wrote:
-> It appears that when performing a rapid sequence of `delete_device -> new_device -> delete_device -> new_device`, the `dw_i2c_plat_runtime_suspend` is not invoked for the second `delete_device`.
-> 
-> This seems to happen because when `i2c_dw_unreg_slave` is about to trigger suspend during the second `delete_device`, the second `new_device` operation cancels the suspend. As a result, `dw_i2c_plat_runtime_resume` is not called (since there was no suspend), which means `i_dev->init` (i.e., `i2c_dw_init_slave`) is skipped.
-> 
-> Because `i2c_dw_init_slave` is skipped, `i2c_dw_configure_fifo_slave` is not invoked, which leaves `DW_IC_INTR_MASK` unconfigured.
-> If we inspect the interrupt mask register using devmem, it will show as zero.
-> 
-> Here's an example shell script to reproduce the issue:
-> ```
-> #!/bin/sh
-> 
-> SLAVE_LADDR=0x1010
-> SLAVE_BUS=13
-> NEW_DEVICE=/sys/bus/i2c/devices/i2c-$SLAVE_BUS/new_device
-> DELETE_DEVICE=/sys/bus/i2c/devices/i2c-$SLAVE_BUS/delete_device
-> 
-> # Create initial device
-> echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
-> sleep 2
-> 
-> # Rapid sequence of delete_device -> new_device -> delete_device -> new_device
-> echo $SLAVE_LADDR > $DELETE_DEVICE
-> echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
-> echo $SLAVE_LADDR > $DELETE_DEVICE
-> echo slave-24c02 $SLAVE_LADDR > $NEW_DEVICE
-> 
-> # If we use devmem to inspect IC_INTR_MASK, it will show as zero
-> ```
-> 
-Good explanation and could you add it the commit log together with the 
-example?
+> +
+>   static inline void vgic_save_state(struct kvm_vcpu *vcpu)
+>   {
+>   	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
+>   		vgic_v2_save_state(vcpu);
+> +	else if (vcpu_is_rec(vcpu))
+> +		vgic_rmm_save_state(vcpu);
+>   	else
+>   		__vgic_v3_save_state(&vcpu->arch.vgic_cpu.vgic_v3);
+>   }
+> @@ -903,10 +920,28 @@ void kvm_vgic_sync_hwstate(struct kvm_vcpu *vcpu)
+>   	vgic_prune_ap_list(vcpu);
+>   }
+>   
+> +static inline void vgic_rmm_restore_state(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
+> +	int i;
+> +
+> +	for (i = 0; i < kvm_vcpu_vgic_nr_lr(vcpu); i++) {
+> +		vcpu->arch.rec.run->enter.gicv3_lrs[i] = cpu_if->vgic_lr[i];
+> +		/*
+> +		 * Also populate the rec.run->exit copies so that a late
+> +		 * decision to back out from entering the realm doesn't cause
+> +		 * the state to be lost
+> +		 */
+> +		vcpu->arch.rec.run->exit.gicv3_lrs[i] = cpu_if->vgic_lr[i];
+> +	}
+> +}
+> +
+>   static inline void vgic_restore_state(struct kvm_vcpu *vcpu)
+>   {
+>   	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
+>   		vgic_v2_restore_state(vcpu);
+> +	else if (vcpu_is_rec(vcpu))
+> +		vgic_rmm_restore_state(vcpu);
+>   	else
+>   		__vgic_v3_restore_state(&vcpu->arch.vgic_cpu.vgic_v3);
+>   }
+> @@ -976,7 +1011,9 @@ void kvm_vgic_flush_hwstate(struct kvm_vcpu *vcpu)
+>   
+>   void kvm_vgic_load(struct kvm_vcpu *vcpu)
+>   {
+> -	if (unlikely(!irqchip_in_kernel(vcpu->kvm) || !vgic_initialized(vcpu->kvm))) {
+> +	if (unlikely(!irqchip_in_kernel(vcpu->kvm) ||
+> +		     !vgic_initialized(vcpu->kvm) ||
+> +		     vcpu_is_rec(vcpu))) {
+
+
+>   		if (has_vhe() && static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
+>   			__vgic_v3_activate_traps(&vcpu->arch.vgic_cpu.vgic_v3);
+>   		return;
+> @@ -990,7 +1027,9 @@ void kvm_vgic_load(struct kvm_vcpu *vcpu)
+>   
+>   void kvm_vgic_put(struct kvm_vcpu *vcpu)
+>   {
+> -	if (unlikely(!irqchip_in_kernel(vcpu->kvm) || !vgic_initialized(vcpu->kvm))) {
+> +	if (unlikely(!irqchip_in_kernel(vcpu->kvm) ||
+> +		     !vgic_initialized(vcpu->kvm) ||
+> +		     vcpu_is_rec(vcpu))) {
+>   		if (has_vhe() && static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
+>   			__vgic_v3_deactivate_traps(&vcpu->arch.vgic_cpu.vgic_v3);
+
+We could return early here for rec, and skip the unnecessary trap steps. 
+Similar for the vgic_load case.
+
+Rest looks good to me.
+
+Suzuki
+
+
+>   		return;
+
 
