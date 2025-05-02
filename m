@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-630289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB44AA77DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:55:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9089DAA77E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBCF37B62FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE949E217F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C01261589;
-	Fri,  2 May 2025 16:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iKKYORQj"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C9C25D20C;
+	Fri,  2 May 2025 16:55:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDE82571D5;
-	Fri,  2 May 2025 16:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3C318AFC
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746204922; cv=none; b=O8oLiXbIxiqfZL+7eScS1XkDW7LRwi2aNBIENZd29+Quf0JUfyMeg63T8Z4/4tl9L6oFw1UWvjxJrhG7iOMnSZMTWl7TSaaLyUoFDVwfzu3kKLws0wFc7h/WIwMfQ4tIZKCujzOaE+HD05+2b69CCsexGKQwdHdwdR75Iiz8ZiM=
+	t=1746204957; cv=none; b=AtmvXrbZpiFCRUosAFuTc7tkZgYc3iycNHDmuX8m3nI7AxEqEtzjg3HQvqIuhE0/xBpWxXbjPF1h8kiULOWDuAnEy/n5ocVooHI8E0KIlxPpD94/d5hfolicQj00X1yD5J87TtMMtem6pec0Tld7bl3K0ynjtncBimda9Xrp+Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746204922; c=relaxed/simple;
-	bh=CP3jeZBrPH5Y+i58jheG3yHFPs48exV22tFrSpFI7OY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SOXpj2ZJL9FF0jZKCZS3KauyETX0HIhOm6d5VbH0iJSbuqM4Nuxgj6Rk54b62lnqWNfGmuCQoC1wadtuy2KNi3MD1ZO+lcYlsmm/nUEAyt6ETQmAoPpqiUTFwQCG9OFtdlnhkzo4u6JoobBpW1rlxUWbhwvhkrCQSVzWyrrhJv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iKKYORQj; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542GtCsn271542
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 2 May 2025 11:55:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746204912;
-	bh=k6EziXFSk8NbTx/1V+mCgjnx9+FiwrLm4eimV4AStAs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=iKKYORQjlCx7jiQqyBxRbkSiU80TGKBlXfqTcdVoGJo5z2VMRvsTXstGgLm8b5PqH
-	 /DhhIutb0xc+SUQOloMg8ZvR2oj6OJR258KabN6pP3Ibfc1phfkKMXCDKY6kkwPjwW
-	 dPxwDkGCnS2mBJOxSQwKsZpQhiDHnzK5LOi+jgQI=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542GtCqs109949
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 2 May 2025 11:55:12 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
- May 2025 11:55:12 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 2 May 2025 11:55:12 -0500
-Received: from [10.250.35.60] ([10.250.35.60])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542GtBu7060727;
-	Fri, 2 May 2025 11:55:11 -0500
-Message-ID: <b7fdd7bf-dad9-4b54-9091-f11c89e39c0e@ti.com>
-Date: Fri, 2 May 2025 11:55:11 -0500
+	s=arc-20240116; t=1746204957; c=relaxed/simple;
+	bh=vNqGUwYfp5kGOVOtzGXafZB7iPsvFgYgPqP2eNAkolw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pvBgn+CWrrKYx0CV+tJ0EkMr35bGlKjp2vQb1baxq1CcYMhawgyXCpWuYuZN8BJ3amau0Q4fG8iDSNZGn1M+a4tGNOdiONFtP7/pe3cA4xkcKOUrwsQoeO8ZJoSBcTx7lmR7FF2gehQfjBDo3hCzoqFaB++o3AXKj1yxyU0v4J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uAtfk-0006vQ-DD; Fri, 02 May 2025 18:55:36 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uAtfj-000mM7-2r;
+	Fri, 02 May 2025 18:55:35 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uAtfj-00Gai4-2R;
+	Fri, 02 May 2025 18:55:35 +0200
+Date: Fri, 2 May 2025 18:55:35 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Adam Ford <aford173@gmail.com>
+Cc: nicolas.dufresne@collabora.com, benjamin.gaignard@collabora.com,
+	p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org,
+	Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+	festevam@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, paulk@sys-base.io, hverkuil@xs4all.nl,
+	laurent.pinchart@ideasonboard.com, sebastian.fricke@collabora.com,
+	ming.qian@nxp.com, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 07/11] arm64: dts: imx8mp: fix VPU_BUS clock setting
+Message-ID: <20250502165535.aeb2osq2vnxsudmq@pengutronix.de>
+References: <20250502150513.4169098-1-m.felsch@pengutronix.de>
+ <20250502150513.4169098-8-m.felsch@pengutronix.de>
+ <CAHCN7x+Lu9momgX3Vwp+Yu+Tet5Q=k2vCL83SMLuad24SDchEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Add pinctrl entries for AM62D2
- family of SoCs
-To: Paresh Bhagat <p-bhagat@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <praneeth@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <khasim@ti.com>, <v-singh1@ti.com>
-References: <20250502153915.734932-1-p-bhagat@ti.com>
- <20250502153915.734932-3-p-bhagat@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250502153915.734932-3-p-bhagat@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCN7x+Lu9momgX3Vwp+Yu+Tet5Q=k2vCL83SMLuad24SDchEg@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 5/2/25 10:39 AM, Paresh Bhagat wrote:
-> Update k3-pinctrl file to include pin definitions for AM62D2 family of
-> SoCs.
+On 25-05-02, Adam Ford wrote:
+> On Fri, May 2, 2025 at 10:10 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
+> >
+> > The VPU_PLL clock must be set before the VPU_BUS clock which is derived
+> > from the VPU_PLL clock else the VPU_BUS clock is 300MHz and not 600MHz.
+> >
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > index 97b09b647ec7..7f4bdefb3480 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > @@ -2289,8 +2289,8 @@ vpumix_blk_ctrl: blk-ctrl@38330000 {
+> >                                  <&clk IMX8MP_CLK_VPU_G2_ROOT>,
+> >                                  <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
+> >                         clock-names = "g1", "g2", "vc8000e";
+> > -                       assigned-clocks = <&clk IMX8MP_CLK_VPU_BUS>, <&clk IMX8MP_VPU_PLL>;
+> > -                       assigned-clock-parents = <&clk IMX8MP_VPU_PLL_OUT>;
+> > +                       assigned-clocks = <&clk IMX8MP_VPU_PLL>, <&clk IMX8MP_CLK_VPU_BUS>;
+> > +                       assigned-clock-parents = <0>, <&clk IMX8MP_VPU_PLL_OUT>;
+> >                         assigned-clock-rates = <600000000>, <600000000>;
 > 
-> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-pinctrl.h | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> index cac7cccc1112..0cf57179c974 100644
-> --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> @@ -63,6 +63,9 @@
->   #define AM62AX_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
->   #define AM62AX_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
->   
-> +#define AM62DX_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
-> +#define AM62DX_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
-> +
+> I think there was a move to make the default be overdrive [1]  and [2]
+> and use a 'nominal' device tree for those who are not in overdrive
+> mode.  According to the TRM, the VPU_BUS_CLK_ROOT, the nominal is
+> 600MHz and the overdrive is 800MHz.  Based on that, I wonder if the
+> values here should be 800MHz and if we should add the nominal values
+> of 600MHz to the imx8m-nominal.dtsi file.
 
-Your board DTS file is including k3-am62a.dtsi, so you are using the AM62A pinmux
-controller and should use its macros (AM62AX_*).
+You're right, Ahamd and Lucas did change this. I will adapt it later on.
 
-Andrew
-
->   #define AM62PX_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
->   #define AM62PX_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
->   
+Regards,
+  Marco
 
