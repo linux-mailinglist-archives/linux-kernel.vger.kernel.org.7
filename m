@@ -1,171 +1,145 @@
-Return-Path: <linux-kernel+bounces-629422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91381AA6C40
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5E7AA6C38
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE4D4A1DD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:07:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4F8984046
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5235626981F;
-	Fri,  2 May 2025 08:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98EB267B7C;
+	Fri,  2 May 2025 08:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h8RgWL41"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b="wXbVmrS3"
+Received: from server4.hayhost.am (server4.hayhost.am [2.56.206.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ABD267F59;
-	Fri,  2 May 2025 08:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA38C22A4DA
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=2.56.206.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746173254; cv=none; b=Iau2H6GOVbmcmDP6y4FXs0q7RFwm62hZCrxjFt+Q7B6CgyuHeamiZXT1ucKoF/7c0izw49FHpDvBOVDGy+Qx/Af1qZpl1QWYxZUbkrkS/P7qLuWR4TF29Jf86T9fLdcCJrV8iB2adg+OJJvL/RpMF/N3HJUz4DeEY1vCpaGD9NM=
+	t=1746173243; cv=none; b=cRpvx2zRWEUI119wCY1C7UXYhsfIf8pIYjC71n1MednVL1cDuExBLd+mzADfkz1ccbZfqqCopc3oS7dDZ/EV+a+wSH8PJ/tnd9H0pvnCQDrpwkBrGj8hPkASNsdIN4iLhAJfzaOdCkHiijZP+1mIdczdeSpF7eT4fq5j9Qyrz14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746173254; c=relaxed/simple;
-	bh=RHBtlN76qhQ1cJMVuOCHQA/ajktLGzdxL4P4OVaAcI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G0Gtsuj9AKglYkCbZnAvabk9UFYtUBQvu4N4DLxVBOsApdizanYopIz8Cz1XkqTNxkMY+q2b9B2V64yVZ8O2jiSSrOHmy34PfkaPY1OWBGs6IrCJxBW6imiIgBGUY5vxOlKNkeK+9bPcU+fO/STtaBq+H/eFd9siVjL8vpA0cKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h8RgWL41; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5421NGRV017587;
-	Fri, 2 May 2025 08:07:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RHBtlN76qhQ1cJMVuOCHQA/ajktLGzdxL4P4OVaAcI4=; b=h8RgWL417yrxSQf5
-	Blai1uPAwBR5/XoneOc4QNw9Jk/mjQRBoIbQBc6faqpOpowNwBPkIj3GRgC0KFF/
-	k/WjCC92DxOwNGm+RDCKHysxt7K+b0SSqZYjYhEwspIpUq85gKovrWpOd9kXynhT
-	QDLBQZQuiITt2mwHNW87cihbSou1dKMFkfleZlWBcjnStMzUTdbuUalHl3xpm46X
-	2bDoE+1CkgsSEi/sZX84Hebn7hXCFqPBEYKE/9Q85K389Is5VzbnOdoYvhHRdVDg
-	rmDwtPVXjj44Z6No/e8iO+x2RmgP6vMhoCAq8bmIC9PUuXrvKJBaHG5nCM8kkA6t
-	VEbXwg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u77kgn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 May 2025 08:07:27 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54287Rot015749
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 2 May 2025 08:07:27 GMT
-Received: from [10.216.18.87] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 2 May 2025
- 01:07:19 -0700
-Message-ID: <2e94f13c-3d43-441c-8532-f6149cb33cd3@quicinc.com>
-Date: Fri, 2 May 2025 13:37:16 +0530
+	s=arc-20240116; t=1746173243; c=relaxed/simple;
+	bh=p6gq58eX77BP4a7rUQlS11PJUzySHzbhlRVFL37G/54=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=HYjMNPHcGAmlYAmvq03aw7pCDQnDBx9oqYUT9k5WprAPCfFgpD7/U0BNwMwU+m8sxA4KFAsRFFflvl/SBdynu0toa9/RfY1zJV2qoy/P3dmSBY1FNdOX6R+/yWUPfqkHT6rL9KoIGYbAMLiT8jDtSIU0w+X9TysINkatzOWPNeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am; spf=pass smtp.mailfrom=beldev.am; dkim=pass (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b=wXbVmrS3; arc=none smtp.client-ip=2.56.206.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beldev.am
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=beldev.am;
+	s=default; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
+	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=CzAe5vMF8DS129Xc2GhqJXava5yjYwD2XhZYo1+/ldA=; b=wXbVmrS3cwkVGldE2bVysmhXis
+	0MYUB4PGq+coRIJbrSRA2r/yyfG018voOZiV7ev8rcsWV9zS0zaSKCvOpOfSx5bL1UnnrD/79MeK6
+	G02sIDz2oSee4RtjvXcxZoQK5qF8ZaX9dSdw4zNm2PdVJQ/gbA3wdTutKva5k5wkxla9Y7oRR4WI7
+	QEgSOo0uQslDIwfLqIf5ADC0xVWCaCs6msHWS388FcTui6NN9KQ8MtYY25EXZNU799SUKvjgwAz+P
+	X+TP9FeXKd/umE3SnZGQkygfJ5XtpeA1T44whQIC0oMzmWsp3vdJ9eAG5NowFmXF+YzG1D5lbReRF
+	PeRNsjXw==;
+Received: from [::1] (port=55676 helo=server4.hayhost.am)
+	by server4.hayhost.am with esmtpa (Exim 4.98.1)
+	(envelope-from <igor.b@beldev.am>)
+	id 1uAlQg-00000000AWg-0ZND;
+	Fri, 02 May 2025 12:07:30 +0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/9] dt-bindings: qcom: geni-se: describe SA8255p
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Viresh Kumar
-	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <psodagud@quicinc.com>,
-        <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
-        <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
-        <quic_mnaresh@quicinc.com>, <quic_shazhuss@quicinc.com>,
-        Nikunj Kela <quic_nkela@quicinc.com>
-References: <20250502031018.1292-1-quic_ptalari@quicinc.com>
- <20250502031018.1292-4-quic_ptalari@quicinc.com>
- <20250502-quirky-prudent-beaver-dcebd0@kuoka>
-Content-Language: en-US
-From: Praveen Talari <quic_ptalari@quicinc.com>
-In-Reply-To: <20250502-quirky-prudent-beaver-dcebd0@kuoka>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Date: Fri, 02 May 2025 12:07:27 +0400
+From: Igor Belousov <igor.b@beldev.am>
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, Shakeel Butt
+ <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed
+ <yosry.ahmed@linux.dev>, Minchan Kim <minchan@kernel.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] mm/zblock: use vmalloc for page allocations
+In-Reply-To: <20250502080156.1672957-1-vitaly.wool@konsulko.se>
+References: <20250502080156.1672957-1-vitaly.wool@konsulko.se>
+User-Agent: Roundcube Webmail/1.6.9
+Message-ID: <fddf0457275576c890d16921465cf473@beldev.am>
+X-Sender: igor.b@beldev.am
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDA2MiBTYWx0ZWRfX8U37cO2phlp+ fbyo5GJfCbdeg1fgbvuEO/xaFBNBbGIzHuPI94xcKH4nETWscB+cEjvtFiPA6kQ3Rw6SLW1xxcU 9FaGaIiKGkvGtPztKl01zTWS4jGuQnsh2jZQjcGxOf4WeQHdQ5e9qe36w4rfV+EBY1lp5Tx10CP
- x3Osf21DqLi3THzTVne0lBWJQ+MKGAWLw+uErEewzZ0W2KcLhlMTfoFfnVstmo8FRu3XvLS9x7s J+L2h8+k+r+S+UoPf4TnG/9i+DWfFUBSHylnHfe49/IcfgSzL5aHysC5kyH0KyF+JUFqdl+eNFQ AB19yMJHjhQY7Er4thJHKKRVobYyftfeOQ+Uz6oKhLPZUuHuwlVLiCZvzn2FCJoDXTaX0ndtDeX
- 0Q+LlzjxCXZLPsTVo9OymAcgMw9HSiunXGxhhZu+bMwKySNWlNXBSjGEYlwsyWeoblV0Np2O
-X-Proofpoint-GUID: E_Oz6l5T2okETWPs5r6-6ZW746iwpzUX
-X-Proofpoint-ORIG-GUID: E_Oz6l5T2okETWPs5r6-6ZW746iwpzUX
-X-Authority-Analysis: v=2.4 cv=b6Wy4sGx c=1 sm=1 tr=0 ts=68147d3f cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=D04I9yGVSkTAbIRRv5YA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-01_06,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 bulkscore=0 phishscore=0 spamscore=0
- priorityscore=1501 clxscore=1015 adultscore=0 suspectscore=0 mlxscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505020062
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server4.hayhost.am
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - beldev.am
+X-Get-Message-Sender-Via: server4.hayhost.am: authenticated_id: igor.b@beldev.am
+X-Authenticated-Sender: server4.hayhost.am: igor.b@beldev.am
 
-HI Krzysztof
+On 2025-05-02 12:01, Vitaly Wool wrote:
+> From: Igor Belousov <igor.b@beldev.am>
+> 
+> Use vmalloc for page allocations for zblock blocks to avoid extra
+> pressure on the memmory subsystem with multiple higher order
+> allocations.
+> 
+> While at it, introduce a module parameter to opportunistically
+> allocate pages of lower orders via try_page_alloc() for faster
+> allocations whenever possible.
+> 
+> Since vmalloc works fine with non-power of 2 numbers of pages,
+> rewrite the block size tables to use that opportunity.
+> 
+> Signed-off-by: Igor Belousov <igor.b@beldev.am>
+> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> ---
+> 
+> Tests run on qemu-arm64 (8 CPUs, 1.5G RAM, 4K pages):
+> 1. zblock
+> 43205.38user
+> 7320.53system
+> 2:12:04elapsed
+> zswpin 346127
+> zswpout 1642438
+> 
+> 2. zsmalloc
+> 47194.61user
+> 7978.48system
+> 2:25:03elapsed
+> zswpin 448031
+> zswpout 1810485
+> 
+> So zblock gives a nearly 10% advantage.
+> 
+> Please note that zsmalloc *crashes* on 16K page tests so I couldn't
+> compare performance in that case.
 
-Thank you for review
+Right, and it looks like this:
 
-On 5/2/2025 12:07 PM, Krzysztof Kozlowski wrote:
-> On Fri, May 02, 2025 at 08:40:12AM GMT, Praveen Talari wrote:
->> From: Nikunj Kela <quic_nkela@quicinc.com>
->>
->> SA8255p platform abstracts resources such as clocks, interconnect
->> configuration in Firmware.
->>
->> Add DT bindings for the QUP Wrapper on sa8255p platform.
->>
->> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
->> Co-developed-by: Praveen Talari <quic_ptalari@quicinc.com>
->> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
->>
->> v2 -> v3
->> - reordered required option
->
-> ...
->
->
->> +additionalProperties: false
->> +
->> +required:
-> Which part of "required: block goes after properties and
-> patternproperties." is unclear?
-
-Yup I understood. it is like
-
-properties:
-
--
-
-patternproperties:
-
--
-
-required:
-
+[  762.499278]  bug_handler+0x0/0xa8
+[  762.499433]  die_kernel_fault+0x1c4/0x36c
+[  762.499616]  fault_from_pkey+0x0/0x98
+[  762.499784]  do_translation_fault+0x3c/0x94
+[  762.499969]  do_mem_abort+0x44/0x94
+[  762.500140]  el1_abort+0x40/0x64
+[  762.500306]  el1h_64_sync_handler+0xa4/0x120
+[  762.500502]  el1h_64_sync+0x6c/0x70
+[  762.500718]  __pi_memcpy_generic+0x1e4/0x22c (P)
+[  762.500931]  zs_zpool_obj_write+0x10/0x1c
+[  762.501117]  zpool_obj_write+0x18/0x24
+[  762.501305]  zswap_store+0x490/0x7c4
+[  762.501474]  swap_writepage+0x260/0x448
+[  762.501654]  pageout+0x148/0x340
+[  762.501816]  shrink_folio_list+0xa7c/0xf34
+[  762.502008]  shrink_lruvec+0x6fc/0xbd0
+[  762.502189]  shrink_node+0x52c/0x960
+[  762.502359]  balance_pgdat+0x344/0x738
+[  762.502537]  kswapd+0x210/0x37c
+[  762.502691]  kthread+0x12c/0x204
+[  762.502920]  ret_from_fork+0x10/0x20
 
 Thanks,
-
-Praveen Talari
-
->
-> Look at example schema.
->
-> Best regards,
-> Krzysztof
->
+Igor
 
