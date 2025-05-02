@@ -1,100 +1,115 @@
-Return-Path: <linux-kernel+bounces-629734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3044AA70C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:40:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA2FAA70FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7FA11BA7937
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:40:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFAC9189141C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52196244686;
-	Fri,  2 May 2025 11:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mScyZaNQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954A8242D7C;
+	Fri,  2 May 2025 11:56:12 +0000 (UTC)
+Received: from mail.actia.se (mail.actia.se [212.181.117.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D251BEF77;
-	Fri,  2 May 2025 11:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED1024C664
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 11:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746185997; cv=none; b=AMWm2QiyVHA4TrtycLx2orIOhxb+S9rug/0c/ovf28Jxf8aBNEJFQifxtMo0Xhjs5k/70kLIJUD3TUfRDIyn20yP9YZekF2JoLbWQdP+i9HBYyKhxwGQ0YV0gALHWkTTGS8zkZan/3yUz0VB3qFoOJ4uvaD6qgAzRDco0pO4oag=
+	t=1746186972; cv=none; b=SPc28mr4DiqIYj7Yr4Q7EofF4F7LOp1dke3133ifvjl0t0pWj9YWS9JguolaiPiXOZopZ1/EvkJfHr90A5SC0CSrLGKfhikWMVvrPTrkaHdbRVy6JjPJEV6x4NaMKl0f4eQiuipL67inoWLTD6DMR3ZlAkfkmlqDWSRuLfq5AZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746185997; c=relaxed/simple;
-	bh=gkrh52IbmYbFCbQFLYixSyK3E2Vd7dNScAr7oJkTbvM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SkDsYOImkKJcPFi0aisrpU49I3p0Rug0Y0ROVvoXNU6XNDKQtmLklRaRJ/0R4VUEUfSRrLB27HWtAv7jnkkif+Hav5vPWw7lkABanmDCKE0MdohqbyZEeHjeOu0GE60Q7YHzXtIAEAg2WRBq9TNapGbuIRbopIjbJP6XPZhIt4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mScyZaNQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8400C4CEE4;
-	Fri,  2 May 2025 11:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746185997;
-	bh=gkrh52IbmYbFCbQFLYixSyK3E2Vd7dNScAr7oJkTbvM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mScyZaNQwEWk+HGA5dYW32BLpcQKuHBAHw8BQW22FUzez9Hj/PUcGPagsj6VtSyNB
-	 S0zv0hujMfmnsTVpJq4y/NePfbFWZgnn7qylc9Aghp18g4yQTXuzlOB/iJBa8hQ1IO
-	 BVPpF9as/7+CdHekai++oxkWmN7sZnmE0OiNl8LJGM3KxRxYnJ+6XlYKOvHw+zd42v
-	 mXxFrRDcWwPc6PBs+nggmG8hUNc2celrESSyKClo8hq2fuw1VaAebG7DGMuy+sA/Bk
-	 keT4EPAIgES5bOoMYjn4GeymhTfW9JYzhwI2xu2m66dyrBI3NkrludB7+kylCTgH91
-	 pzCdryIyxVAlA==
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, sadre Alam <quic_mdalam@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- George Moussalem <george.moussalem@outlook.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250501-ipq5018-spi-qpic-snand-v1-0-31e01fbb606f@outlook.com>
-References: <20250501-ipq5018-spi-qpic-snand-v1-0-31e01fbb606f@outlook.com>
-Subject: Re: (subset) [PATCH 0/2] Add QPIC SPI NAND support for IPQ5018
-Message-Id: <174618599396.4075974.7322251763578575960.b4-ty@kernel.org>
-Date: Fri, 02 May 2025 20:39:53 +0900
+	s=arc-20240116; t=1746186972; c=relaxed/simple;
+	bh=4qEqoKqvg+Xasg8DNYrixWeFQHuSwAzHyApDRtQCJ+s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BefWA2ZMR/1/BSBrHNq85BQvOSXrOqmV2+ZNOHth7OJMmJKxUUwSwEQu6s5o/r4opMFSiiwePmHZgRyh2uQc2SoGWiXwydNSnpWEFCqpn7OMfFSWtVJCLhzjWPoEEbV4o/CdU9r+0QnFtfqBVUU+PQttQqM9oc/SDXOLQerHfO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
+Received: from S036ANL.actianordic.se (10.12.31.117) by S035ANL.actianordic.se
+ (10.12.31.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 2 May
+ 2025 13:40:56 +0200
+Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
+ S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%3]) with mapi id
+ 15.01.2507.039; Fri, 2 May 2025 13:40:56 +0200
+From: John Ernberg <john.ernberg@actia.se>
+To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
+	<sstabellini@kernel.org>
+CC: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
+	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, John Ernberg
+	<john.ernberg@actia.se>, "stable@kernel.org" <stable@kernel.org>
+Subject: [PATCH 1/2] xen: swiotlb: Use swiotlb bouncing if kmalloc allocation
+ demands it
+Thread-Topic: [PATCH 1/2] xen: swiotlb: Use swiotlb bouncing if kmalloc
+ allocation demands it
+Thread-Index: AQHbu1cQNcuPrbmRHEK42QDjG7hf6w==
+Date: Fri, 2 May 2025 11:40:55 +0000
+Message-ID: <20250502114043.1968976-2-john.ernberg@actia.se>
+References: <20250502114043.1968976-1-john.ernberg@actia.se>
+In-Reply-To: <20250502114043.1968976-1-john.ernberg@actia.se>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: git-send-email 2.49.0
+x-esetresult: clean, is OK
+x-esetid: 37303A2956B14453667460
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
 
-On Thu, 01 May 2025 13:20:50 +0400, George Moussalem wrote:
-> Add support for the QPIC SPI NAND controller found in IPQ5018 which is
-> the same as the one found in IPQ5018.
-> 
-> 
+Xen swiotlb support was missed when the patch set starting with
+4ab5f8ec7d71 ("mm/slab: decouple ARCH_KMALLOC_MINALIGN from
+ARCH_DMA_MINALIGN") was merged.
 
-Applied to
+When running Xen on iMX8QXP, a SoC without IOMMU, the effect was that USB
+transfers ended up corrupted when there was more than one URB inflight at
+the same time.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Add a call to dma_kmalloc_needs_bounce() to make sure that allocations too
+small for DMA get bounced via swiotlb.
 
-Thanks!
+Closes: https://lore.kernel.org/linux-usb/ab2776f0-b838-4cf6-a12a-c208eb6aa=
+d59@actia.se/
+Fixes: 4ab5f8ec7d71 ("mm/slab: decouple ARCH_KMALLOC_MINALIGN from ARCH_DMA=
+_MINALIGN")
+Cc: stable@kernel.org # v6.5+
+Signed-off-by: John Ernberg <john.ernberg@actia.se>
 
-[1/2] dt-bindings: spi: spi-qpic-snand: Add IPQ5018 compatible
-      commit: 2dbe74c63cb73829be0aab0d0e7e68b87071b5fa
+---
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+It's impossible to pick an exact fixes tag since this driver was missed
+in the flagged patch set. I picked one I felt gave a decent enough picture
+for someone coming across this later.
+---
+ drivers/xen/swiotlb-xen.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index 1f65795cf5d7..ef56a2500ed6 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -217,6 +217,7 @@ static dma_addr_t xen_swiotlb_map_page(struct device *d=
+ev, struct page *page,
+ 	 * buffering it.
+ 	 */
+ 	if (dma_capable(dev, dev_addr, size, true) &&
++	    !dma_kmalloc_needs_bounce(dev, size, dir) &&
+ 	    !range_straddles_page_boundary(phys, size) &&
+ 		!xen_arch_need_swiotlb(dev, phys, dev_addr) &&
+ 		!is_swiotlb_force_bounce(dev))
+--=20
+2.49.0
 
