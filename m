@@ -1,183 +1,124 @@
-Return-Path: <linux-kernel+bounces-629462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451A0AA6CEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:50:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C6AAA6CA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073801BA7769
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:50:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A93B1BA529A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B4E22B5BC;
-	Fri,  2 May 2025 08:50:40 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9EC22A7F8
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7404122ACE7;
+	Fri,  2 May 2025 08:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pgkeSmGo"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDDB8828
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746175840; cv=none; b=SDsojFUnLpp8WfXViJSXE55iloM1+bs6GH2u/yV680dcV2S/V7XKGtYeVYI7+Z83flsRakDILTltzFqcs5imdPOhQ18VgAPixWcxSJ6lz9i+lE6zlUW9mjttPCnjR3oa6RhPgh9Hoxmq2cF1A3YwxsIySkSdL8ZCRF2J1u4BMmU=
+	t=1746175176; cv=none; b=kp4C705VoflZ3GzcNfK14euGL2m2N9ZiVC3QCYYWua9hXPqNR2F9uxTQYEQJwLU4ZFUJK5CiFbAt879WJb8sEqEzAf/5D2Zs/8TWdM9hFdBkCPKyWtzlND09twudUBYeLstRnrds2FU/yC5jgYDOSRemktcQ6EEX1pz0HJqGrK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746175840; c=relaxed/simple;
-	bh=3HZuf3hABWhUbSGWlfLsZ9K0VvtjgygovfJ+zNCxYac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aXR1gm2FGmvCDWvEDaCpE7D3sdV+SlPTQoLfSyN1aiLtVwlzcReJDlrlFeojphZkGZ1JuRcUZKobghUz9br5HZ1vwet4wQMeTYOFhuaI/EnP9k2P/rVGBLeHC+1FSxXcmlmoaIaop9hLiPTf9q8yun0iKqFIKBrSl3t94Xtn8f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4Zpkmt4f6Bz9sHR;
-	Fri,  2 May 2025 10:37:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 7dqorby3kjTm; Fri,  2 May 2025 10:37:02 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4Zpkmt3wB0z9sFT;
-	Fri,  2 May 2025 10:37:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 80DB28B765;
-	Fri,  2 May 2025 10:37:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id irIy3YzPPw7A; Fri,  2 May 2025 10:37:02 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0AAAD8B763;
-	Fri,  2 May 2025 10:37:02 +0200 (CEST)
-Message-ID: <35d38a98-7f5c-413d-9c93-7d9ff783b8a7@csgroup.eu>
-Date: Fri, 2 May 2025 10:37:01 +0200
+	s=arc-20240116; t=1746175176; c=relaxed/simple;
+	bh=Fc6VGyglFbCU4Zg5Mw2hQNZJJof9kthAbyW2Wut9M2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WW0heIobT85dg+lihmjxaamj4PYiWebAvvNkbLH1Pl+seTc0MWEOPXNzMTJUDkFGNIcwZBTSpwahMV7Bzkx7QOHib0OTRpHOVlj+oernY6ju3TsDM7vfjdcEAvojh+a2m7pgyXT3OlwA7LZ63nanr5OOpRsNKWbj2M1ThE/12JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pgkeSmGo; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso1182959f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 01:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746175173; x=1746779973; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YTp1n3CXi4d/IkYoP7iNGIaUGP0jg9QVzJw7i5UhA5Y=;
+        b=pgkeSmGoxGb3NfuIJob4Qla0scUPSMXoTsndHmbdmjevpXYIfbDx4MAZn4oT6YbLOm
+         xw0IrMORmI9j9tflWnq3tb+KApmrfvvNjN5AQhARq+w+0R5nmLM9mnMKFqCS5XJPyHxo
+         ZGy4DKfP0RBUJXBZsDPWD3ETQHuMl8oOD/lLf24/i+dn38TW/79l2ayYffez7wkm2LB6
+         E0vFUMDR1QP3WqhZwGzws5jaC+Bu7ylByJz58gdyGInOUsMUythMtSzs2KESFQncXLsF
+         nIyZ795yXc42yqI0ohwTiiqGI0EFaOaE6ACA90QLsHmK26oLqIN//JN+vcHHfpJhFdED
+         g1UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746175173; x=1746779973;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YTp1n3CXi4d/IkYoP7iNGIaUGP0jg9QVzJw7i5UhA5Y=;
+        b=udq4ywGP8IJYbIxcqzF7JDuOL5F8lhTAOKRKD+YAXpaWfn10kginMHg5I0JxdLlvxF
+         bGAxU4FKAVFilPcFL5k3oFQ2lPkmHqqfKCmzRMVqjYrY1mHe565jan/fwnwdoCfzm4Nf
+         PgYZJyeoph7IZKejf73Gn5jya17zRTIZXQHHepVqhkZzGVgiWzC3k5oXjV+yW5fC8wW5
+         XvM/WtF4hc8RZ7QKDQKdr5NtaIuMKFANOVCUVih9J4hl2OBLnhPZaX67QJkuyS2Xgps3
+         3deXbEDpijXoBsUVrioD+FxrjjKxRva3s6+aKaKlkPkk7oph7SL1KX1nliiBqCy7zdEo
+         3eXw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4vZliHcZy0b3OBdGteVoKW6sF06XD7Sw3T76VHn3XnuytMpLX3VyPKcb9fFbVsCj5AIvmHKWkkiIMLAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV8VlIOP5eVCltzfMAABxY2fqpE1Bk6fhipxx/6dKCJb5f8q8N
+	5nTY/Gts/nROYWAMy1RMCksodCPWJpOYSs8pAagiJSqulcTDc0PnDDP60ayBTqI=
+X-Gm-Gg: ASbGnctgocIiN4hETSrVmEf0OYN3LSWI1RVj+0HxKQ5pOttDdcwEGkWJFYbtMmayVqH
+	Z7H6rcfbNuxjh4oTxCA9ABkpgrR95enPJm7wqaToIkweMIagCDn9GhZ+cIytmsiUqthc1FdFt4B
+	++s6eTZjm8IvKOwlx7BUs3pssrxWCqYpLoV9GOhRAZmQ1f6MPmkQgpZUIh65OUTHR8YZ3UHT9di
+	TdO9eOpgZRyLjcArWZoTab6F8UuA/f7A40JActOBpnoRuUvf6msyQ/bzuxBoVToCPePg3WHYaiT
+	C5ysvaxgrLnu4LeStyS0+qW4MoEsR53VN4D8qRTdmWm6lg==
+X-Google-Smtp-Source: AGHT+IGb74sv8hsGiSyin0BDmnbpMA2IZnPZBnAg8xwnjuUfYCPDX9NlYI/bGPAEUyHsmHQ+F3zSMg==
+X-Received: by 2002:a5d:588b:0:b0:39c:1f10:ba54 with SMTP id ffacd0b85a97d-3a099adeae2mr1444276f8f.35.1746175173327;
+        Fri, 02 May 2025 01:39:33 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099ae0d2csm1473852f8f.2.2025.05.02.01.39.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 01:39:32 -0700 (PDT)
+Date: Fri, 2 May 2025 11:39:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] mtd: rawnand: loongson1: Fix error code in
+ ls1x_nand_dma_transfer()
+Message-ID: <aBSEwag_ducqOwy7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc/powernv: Enable CPU idle state detection for
- POWER11
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Cc: Mahesh Salgaonkar <mahesh@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250421070718.162783-1-aboorvad@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250421070718.162783-1-aboorvad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+The "desc" variable is NULL and PTR_ERR(NULL) is zero/success.  Return
+a negative error code instead.
 
+Fixes: d2d10ede04b1 ("mtd: rawnand: Add Loongson-1 NAND Controller Driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+It's hard to know what the patch prefix should be here.  Ideally when we
+add a new driver we would use the patch prefix for the driver.
 
-Le 21/04/2025 à 09:07, Aboorva Devarajan a écrit :
-> [Vous ne recevez pas souvent de courriers de aboorvad@linux.ibm.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> Extend idle state detection to POWER11 by updating the PVR check.
-> This ensures POWER11 correctly recognizes supported stop states,
-> similar to POWER9 and POWER10.
-> 
-> Reviewed-by: Mahesh Salgaonkar <mahesh@linux.ibm.com>
-> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-> 
-> ---
-> 
-> Without Patch: (Power11 - PowerNV systems)
-> 
-> CPUidle driver: powernv_idle
-> CPUidle governor: menu
-> analyzing CPU 927:
-> 
-> Number of idle states: 1
-> Available idle states: snooze
-> snooze:
-> Flags/Description: snooze
-> Latency: 0
-> Usage: 251631
-> Duration: 207497715900
-> 
-> With Patch: (Power11 - PowerNV systems)
-> 
-> CPUidle driver: powernv_idle
-> CPUidle governor: menu
-> analyzing CPU 959:
-> 
-> Number of idle states: 4
-> Available idle states: snooze stop0_lite stop0 stop3
-> snooze:
-> Flags/Description: snooze
-> Latency: 0
-> Usage: 2
-> Duration: 33
-> stop0_lite:
-> Flags/Description: stop0_lite
-> Latency: 1
-> Usage: 1
-> Duration: 52
-> stop0:
-> Flags/Description: stop0
-> Latency: 10
-> Usage: 13
-> Duration: 1920
-> stop3:
-> Flags/Description: stop3
-> Latency: 45
-> Usage: 381
-> Duration: 21638478
-> 
-> 
->   arch/powerpc/platforms/powernv/idle.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
-> index d98b933e4984..10f4d7d5eb44 100644
-> --- a/arch/powerpc/platforms/powernv/idle.c
-> +++ b/arch/powerpc/platforms/powernv/idle.c
-> @@ -1171,8 +1171,8 @@ static void __init pnv_arch300_idle_init(void)
->          u64 max_residency_ns = 0;
->          int i;
-> 
-> -       /* stop is not really architected, we only have p9,p10 drivers */
-> -       if (!pvr_version_is(PVR_POWER10) && !pvr_version_is(PVR_POWER9))
-> +       /* stop is not really architected, we only have p9,p10 and p11 drivers */
-> +       if (!(PVR_VER(mfspr(SPRN_PVR)) >= PVR_POWER9))
+Tired: subsystem: Add driver XXX
+Wired: subsystem: XXX: Add driver for XXX
 
-Isn't this test too permissive ?
+ drivers/mtd/nand/raw/loongson1-nand-controller.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-#define PVR_POWER9	0x004E
-#define PVR_POWER10	0x0080
-#define PVR_POWER11	0x0082
-#define PVR_BE		0x0070
-#define PVR_PA6T	0x0090
-
-#define PVR_VER_E500V1	0x8020
-#define PVR_VER_E500V2	0x8021
-#define PVR_VER_E500MC	0x8023
-#define PVR_VER_E5500	0x8024
-#define PVR_VER_E6500	0x8040
-#define PVR_VER_7450	0x8000
-#define PVR_VER_7455	0x8001
-#define PVR_VER_7447	0x8002
-#define PVR_VER_7447A	0x8003
-#define PVR_VER_7448	0x8004
-
->                  return;
-> 
->          /*
-> @@ -1189,8 +1189,8 @@ static void __init pnv_arch300_idle_init(void)
->                  struct pnv_idle_states_t *state = &pnv_idle_states[i];
->                  u64 psscr_rl = state->psscr_val & PSSCR_RL_MASK;
-> 
-> -               /* No deep loss driver implemented for POWER10 yet */
-> -               if (pvr_version_is(PVR_POWER10) &&
-> +               /* No deep loss driver implemented for POWER10 and POWER11 yet */
-> +               if ((PVR_VER(mfspr(SPRN_PVR)) >= PVR_POWER10) &&
->                                  state->flags & (OPAL_PM_TIMEBASE_STOP|OPAL_PM_LOSE_FULL_CONTEXT))
->                          continue;
-> 
-> --
-> 2.49.0
-> 
+diff --git a/drivers/mtd/nand/raw/loongson1-nand-controller.c b/drivers/mtd/nand/raw/loongson1-nand-controller.c
+index 6a369b1c7d86..8754bb4f8b56 100644
+--- a/drivers/mtd/nand/raw/loongson1-nand-controller.c
++++ b/drivers/mtd/nand/raw/loongson1-nand-controller.c
+@@ -371,7 +371,7 @@ static int ls1x_nand_dma_transfer(struct ls1x_nand_host *host, struct ls1x_nand_
+ 	desc = dmaengine_prep_slave_single(chan, dma_addr, op->len, xfer_dir, DMA_PREP_INTERRUPT);
+ 	if (!desc) {
+ 		dev_err(dev, "failed to prepare DMA descriptor\n");
+-		ret = PTR_ERR(desc);
++		ret = -ENOMEM;
+ 		goto err;
+ 	}
+ 	desc->callback = ls1x_nand_dma_callback;
+-- 
+2.47.2
 
 
