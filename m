@@ -1,212 +1,201 @@
-Return-Path: <linux-kernel+bounces-629922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48F3AA7351
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:21:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23854AA7356
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58A837B236E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13DA13ACF44
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928DA25524C;
-	Fri,  2 May 2025 13:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9A8255F37;
+	Fri,  2 May 2025 13:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BCrXZ+Yv"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="jwOsbvMa"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226CB256C6A
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 13:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129AB242D82;
+	Fri,  2 May 2025 13:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746191997; cv=none; b=moFmeCIuI2Oa5fFbslNL/9R39oJYJomqBsjqZGryQpWonxtqzjZil6dCPacEmwVoX2dKpOYDb4txmOTTyAufOGrEBGgncSlBnV7z2NhphGAPcN6HFjHa3mTwCHHoVjv5EhartbA+pMNr/21pfgxi1iJhF/S0ad5PW56Oq34oGLc=
+	t=1746192095; cv=none; b=uPm+dnnbXX2pJnBJQAoW2p9SmvoU9U4QYWs0OYQvojrJwQjLxpE6pog8xFN6VnUEx0l6idIu88tOSqGpQ1ez46SD9rE6QO59AqRJia6N0XqMiqCYKLV7JbdjByQfgY3o19Zot6pVgiyOD2eyjmQgrskqWCrzEODUQX4/sY4m7OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746191997; c=relaxed/simple;
-	bh=+9IyxSQyP27/emN3Z7piM0ajFLsCl/Pug5kGGN8P3Pw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HxuMD0XdXwOCVeE6D3KC//bPAKHM0hp9EX9crKkv6vICV7ExxRVjLiV6j7e41nMfBh/F5SEEMCXbma64iTS8OOPdXAPUc1mJFaFxp+XAouq4ts8wQSAGZEa7tU6O58gJt1XMkmd31A2yOp6Z+yz9DNFHpnXXiLISutFqhA5rBUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BCrXZ+Yv; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43f405810b4so9703165e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 06:19:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746191994; x=1746796794; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tgf/dSBfhJF3XyhZfIU4YTUHWPpbhjb3fOqzjou+aqs=;
-        b=BCrXZ+Yv/b38M+1aSMn2fYdQpA8YdVW96o2qRB9/w7g7ynzNxdlCQkHNl3hEExLQKN
-         G6Gc+7qZOKfWQxUUScQP+1NG2swBa/zAgC74I8kk85t5WNpi5zKcU9GCjjYAgZcFqQTg
-         bSl0Rklu0Lc0ZD5/O1yz9G3y7MsnFZCsHuIXkC0vzCbE/s45gZHdpznBWc0t1BP8iydu
-         f5k2YYgf1YrQ9K230nfB4wp3iRBVl3Tk0JIpWZBy2tL3AszscCidaDSyR9OEubxr+J3C
-         tmeT/XmW1RMea+Ev1bcA14lDfB8IJlx+LgjS1V8KLllZQRQJN8lHfDf2MxFCe+BgkM6r
-         GEuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746191994; x=1746796794;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tgf/dSBfhJF3XyhZfIU4YTUHWPpbhjb3fOqzjou+aqs=;
-        b=DeKh2XHCHPsrtRp/9fp966PkjTB6/Wp1xUcTEw9vOKUIsB0ygwC11jsRI+dRRmfv34
-         pq31BvcmS6C7dP6Dz0qpIzPg49CDmucxYD0LisvFmx1K6F68SZ1/JvhWLz9gjUsKnMRu
-         qZ7AyRyCnoQxceNt4DuxvtMJgcscm9nS3Phu0ztli7s+i8D9fBlVMoT5s3EHBMpheQST
-         h8xGlpGKSrghrdPhtLe7yu+pUoEk+EuTrWLOmLBgw2zJiSmRfjQLmdLjmVstfOhENDJm
-         IQcbwq4Vq31/W2jlHzHzWEai2S6Mi444esnhjdTxBgQf2wx2Jy5AfbJTXQSQ0KP/XVdm
-         oCuw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+B1dGm3LyocIcafyC/G1XM8qwpzCmuO5Pj8+0qYpeHxM4uIaS7ngo/GHfFBDf4Ru+0nxoqqTFpgr7lTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaLLHs8EIbtXBEjW5VrUIbI44f9y3BZhw6ocZl/xHL1LSysG8k
-	y+0S2hODvQg29kCzGfvbjd5Vhbm1Mga3JlxcXECKmyWcJXgizn2rVHrMycHRiO2JWFaqhPStcFD
-	GLTgiO0Q1x8KBvw==
-X-Google-Smtp-Source: AGHT+IGBP8X1327QOyf/N5JTak2KzCyZ3u2dbMq6hMfrVCBAcpWg7Vd3dSHLBCRIYSqFJaa16L7xos29pfG9a3c=
-X-Received: from wmbjt7.prod.google.com ([2002:a05:600c:5687:b0:441:bc26:4d3f])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3d0c:b0:440:54ef:dfdc with SMTP id 5b1f17b1804b1-441bbeb36c5mr23309105e9.8.1746191994633;
- Fri, 02 May 2025 06:19:54 -0700 (PDT)
-Date: Fri, 02 May 2025 13:19:35 +0000
-In-Reply-To: <20250502-vec-methods-v5-0-06d20ad9366f@google.com>
+	s=arc-20240116; t=1746192095; c=relaxed/simple;
+	bh=rIAlmlwMtQaUgow1iGT0jE1zo6pYUXceWlqRKjuOQxc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ltm75U9OENk77X5+RiRQiPS5TYKA2XxtgMoH6rw0CIZX84qmVQvY3Of4tTbnVDUhZ0MV345a1UnsYSpza/39/q7dwL7lYpb3IV7IbjM9eplZjlK8USW7OOMwAbSFfvz6UlI9Jt0hZhe5pwSF/z8Lp0hc2jbiwFvMnOgmMP4I2mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=jwOsbvMa; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5428rEtc026238;
+	Fri, 2 May 2025 06:20:51 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=2+wqQXMClAVhXAV0is5Y088
+	yZ6Z5k3S6DIxIe4xuZyg=; b=jwOsbvMa+ohV7liVQjtFOIkxlLgBGgq5VD6fOJB
+	58EAri/83tLKCYdDsWANmYXWmyjraw8h0difekZhpVF/fwod+B4ApPqikJpUQqej
+	YQ+6Vq+aSCFapg9WcCu2fUfGVt7GlTjOQlOu/2zHL1ewcsZxyYR1FARiseMx8iqi
+	d1midvaGa4eA0CcTAVhS9ipHeyiV+OQZZAKSlRk3doXKkZb6VPLlW2/M3C2gpRUI
+	hnxfcnMv5hzwuCcEcrqaxaGQPdtpnJtOxtw7+lOaCcPsUfvS8mALsdHxDSQaamcP
+	IHHekPYrLTbmj6+Z5XN/4BNrT2TWMfftr60f64CF/6GPK9g==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46cjpb97tu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 May 2025 06:20:51 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 2 May 2025 06:20:50 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 2 May 2025 06:20:50 -0700
+Received: from optiplex.marvell.com (unknown [10.28.34.253])
+	by maili.marvell.com (Postfix) with ESMTP id 908765B6921;
+	Fri,  2 May 2025 06:20:38 -0700 (PDT)
+From: Tanmay Jagdale <tanmay@marvell.com>
+To: <bbrezillon@kernel.org>, <arno@natisbad.org>, <schalla@marvell.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <sgoutham@marvell.com>, <lcherian@marvell.com>, <gakula@marvell.com>,
+        <jerinj@marvell.com>, <hkelam@marvell.com>, <sbhatta@marvell.com>,
+        <andrew+netdev@lunn.ch>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <bbhushan2@marvell.com>, <bhelgaas@google.com>,
+        <pstanner@redhat.com>, <gregkh@linuxfoundation.org>,
+        <peterz@infradead.org>, <linux@treblig.org>,
+        <krzysztof.kozlowski@linaro.org>, <giovanni.cabiddu@intel.com>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <rkannoth@marvell.com>, <sumang@marvell.com>,
+        <gcherian@marvell.com>, Tanmay Jagdale <tanmay@marvell.com>
+Subject: [net-next PATCH v1 00/15] Enable Inbound IPsec offload on Marvell CN10K SoC
+Date: Fri, 2 May 2025 18:49:41 +0530
+Message-ID: <20250502132005.611698-1-tanmay@marvell.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250502-vec-methods-v5-0-06d20ad9366f@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4274; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=+9IyxSQyP27/emN3Z7piM0ajFLsCl/Pug5kGGN8P3Pw=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoFMZpYNjX33Q2M4DoOnNQNvAPltogL1FOhVVJs
- ZUXgBheHm2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaBTGaQAKCRAEWL7uWMY5
- RkYsD/wM2urXyc5ZVl+H41WRyHPKUpnzguGEX5AirWP+jwy0PpgupptS8mxUE33Psw7aQvdLn9y
- uXDpQSKFw0sUsb2acfJC7b6hMaQN6NCa5dRqxFfFrBA4Waz+Di8vMK2mCETBmgMDvzx7WmK0rea
- 6vUnKMjZuNaKv1RXEkAuc5DS5Sj+ISVQb+fI+MOUWNs+i1dBLIshBUP2LsWBreV0bCbi/EamEnX
- 7gPodBJuu82aedqM4sj915ccsErzAsJAULzKmhqUzEN3eU53x9SBQ09Z2tt8nm3uxs8xq9bywdC
- T5Xw+2WBW36GUAmmrdqcgN7SNYtAo9fwkyOdvgiQt28QcNQyajJxj9XtrnDYHRG0PNnJiTAuNDd
- yU65QxVQO6BwpsoSTQgGjlNqoF9TgFeqKXLAhvplrJVwHgLEmcdc13Y0YbJ63xzltl4dBTn3J4z
- dIu3o9GQcs2C/N+XTGY1iVACNP/FK27skASha/0p+IjbBkHX1pJigRpNdHfmIjKRPCQiXf7aFlU
- tFt2l1ScjP67S1Hda8XlfAQQ1YxzCSABNX/dVdrYJNxhrjGTszdiShOur+j9+AsKVta1XC9X83c
- UltWl0DN3Y2sGDnPiu6RSoOp8u1Mr6aBLw14Nml4aBGo5us598kVWm5NE1WFpLqJCpzwIG/P88R HcxmH9psjmjekMQ==
-X-Mailer: b4 0.14.2
-Message-ID: <20250502-vec-methods-v5-7-06d20ad9366f@google.com>
-Subject: [PATCH v5 7/7] rust: alloc: add Vec::insert_within_capacity
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: gnSXQwkE1vHbwsI35uWgU8hgqyEOk8wn
+X-Proofpoint-ORIG-GUID: gnSXQwkE1vHbwsI35uWgU8hgqyEOk8wn
+X-Authority-Analysis: v=2.4 cv=Tu/mhCXh c=1 sm=1 tr=0 ts=6814c6b3 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=JobPnVYPRzK78MvRnRwA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDEwNiBTYWx0ZWRfX6bprN3aCERIj 54lRHMrkhAyALYu5vKvQrSiwwmbNd0ySOL46nTi910ZJv6WiDwjMFb0h0D2YP8h56zYMZnrL2vp fgDacnhk23P3/H9S20TdkuqkW3Non9g2+XRh++coKmaLlzXpsmnoH7cJNV1Ztfr9ssclbCFCkS4
+ bOoKpW2PtOrdNGrIc2WHJEvZLKp7m+z1scFTs9zGsgerPl9jr99/FVWptdn0VWmbTJD77ZUH1Rr futKXOqFBNfhw2IICkxoKjmBvDK9bGPsIhMtNX5SitG1eohv7WCK5VrexrjsfELATi1dPhTHJfv QyFGiEqntwozLd/ItLLg4aKCfi07FiWXd9O60DaI8TrCA5zlzxWWxY8ZSJEKHOQYrdstMkEnPJu
+ aIg9NgHquDA6larr6j3zfdrXx+OowAr/NRCnFmzgGhnvTXaSOAsLVzuNxy3lFH1miz9R7v9N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-02_01,2025-04-30_01,2025-02-21_01
 
-This adds a variant of Vec::insert that does not allocate memory. This
-makes it safe to use this function while holding a spinlock. Rust Binder
-uses it for the range allocator fast path.
+This patch series adds support for inbound inline IPsec flows for the
+Marvell CN10K SoC.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/alloc/kvec.rs        | 51 +++++++++++++++++++++++++++++++++++++++-
- rust/kernel/alloc/kvec/errors.rs | 23 ++++++++++++++++++
- 2 files changed, 73 insertions(+), 1 deletion(-)
+The packet flow
+---------------
+An encrypted IPSec packet goes through two passes in the RVU hardware
+before reaching the CPU.
+First Pass:
+  The first pass involves identifying the packet as IPSec, assigning an RQ,
+  allocating a buffer from the Aura pool and then send it to CPT for decryption.
 
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 8845e7694334b672476ff935580f3a9eb94d23fe..d2f3669c5417422dddaebcc7348543d3576b9ba8 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -22,7 +22,7 @@
- };
- 
- mod errors;
--pub use self::errors::{PushError, RemoveError};
-+pub use self::errors::{InsertError, PushError, RemoveError};
- 
- /// Create a [`KVec`] containing the arguments.
- ///
-@@ -358,6 +358,55 @@ pub unsafe fn push_within_capacity_unchecked(&mut self, v: T) {
-         unsafe { self.inc_len(1) };
-     }
- 
-+    /// Inserts an element at the given index in the [`Vec`] instance.
-+    ///
-+    /// Fails if the vector does not have capacity for the new element. Panics if the index is out
-+    /// of bounds.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::alloc::kvec::InsertError;
-+    ///
-+    /// let mut v = KVec::with_capacity(5, GFP_KERNEL)?;
-+    /// for i in 0..5 {
-+    ///     v.insert_within_capacity(0, i)?;
-+    /// }
-+    ///
-+    /// assert!(matches!(v.insert_within_capacity(0, 5), Err(InsertError::OutOfCapacity(_))));
-+    /// assert!(matches!(v.insert_within_capacity(1000, 5), Err(InsertError::IndexOutOfBounds(_))));
-+    /// assert_eq!(v, [4, 3, 2, 1, 0]);
-+    /// # Ok::<(), Error>(())
-+    /// ```
-+    pub fn insert_within_capacity(
-+        &mut self,
-+        index: usize,
-+        element: T,
-+    ) -> Result<(), InsertError<T>> {
-+        let len = self.len();
-+        if index > len {
-+            return Err(InsertError::IndexOutOfBounds(element));
-+        }
-+
-+        if len >= self.capacity() {
-+            return Err(InsertError::OutOfCapacity(element));
-+        }
-+
-+        // SAFETY: This is in bounds since `index <= len < capacity`.
-+        let p = unsafe { self.as_mut_ptr().add(index) };
-+        // INVARIANT: This breaks the Vec invariants by making `index` contain an invalid element,
-+        // but we restore the invariants below.
-+        // SAFETY: Both the src and dst ranges end no later than one element after the length.
-+        // Since the length is less than the capacity, both ranges are in bounds of the allocation.
-+        unsafe { ptr::copy(p, p.add(1), len - index) };
-+        // INVARIANT: This restores the Vec invariants.
-+        // SAFETY: The pointer is in-bounds of the allocation.
-+        unsafe { ptr::write(p, element) };
-+        // SAFETY: Index `len` contains a valid element due to the above copy and write.
-+        unsafe { self.inc_len(1) };
-+        Ok(())
-+    }
-+
-     /// Removes the last element from a vector and returns it, or `None` if it is empty.
-     ///
-     /// # Examples
-diff --git a/rust/kernel/alloc/kvec/errors.rs b/rust/kernel/alloc/kvec/errors.rs
-index 06fe696e8bc6612a5e6aa2f6c28b685033acfa2f..348b8d27e102ca34a0d6194ae9d00b12c11547b4 100644
---- a/rust/kernel/alloc/kvec/errors.rs
-+++ b/rust/kernel/alloc/kvec/errors.rs
-@@ -36,3 +36,26 @@ fn from(_: RemoveError) -> Error {
-         EINVAL
-     }
- }
-+
-+/// Error type for [`Vec::insert_within_capacity`].
-+pub enum InsertError<T> {
-+    /// The value could not be inserted because the index is out of bounds.
-+    IndexOutOfBounds(T),
-+    /// The value could not be inserted because the vector is out of capacity.
-+    OutOfCapacity(T),
-+}
-+
-+impl<T> Debug for InsertError<T> {
-+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-+        match self {
-+            InsertError::IndexOutOfBounds(_) => write!(f, "Index out of bounds"),
-+            InsertError::OutOfCapacity(_) => write!(f, "Not enough capacity"),
-+        }
-+    }
-+}
-+
-+impl<T> From<InsertError<T>> for Error {
-+    fn from(_: InsertError<T>) -> Error {
-+        EINVAL
-+    }
-+}
+Second Pass:
+  After CPT decrypts the packet, it sends a metapacket to NIXRX via the X2P
+  bus. The metapacket contains CPT_PARSE_HDR_S structure and some initial
+  bytes of the decrypted packet which would help NIXRX in classification.
+  CPT also sets BIT(11) of channel number to further help in identifcation.
+  NIXRX allocates a new buffer for this packet and submits it to the CPU.
+
+Once the decrypted metapacket packet is delivered to the CPU, get the WQE
+pointer from CPT_PARSE_HDR_S in the packet buffer. This WQE points to the
+complete decrypted packet. We create an skb using this, set the relevant
+XFRM packet mode flags to indicate successful decryption, and submit it
+to the network stack.
+
+
+Patches are grouped as follows:
+-------------------------------
+1) CPT LF movement from crypto driver to RVU AF
+    0001-crypto-octeontx2-Share-engine-group-info-with-AF-dri.patch
+    0002-octeontx2-af-Configure-crypto-hardware-for-inline-ip.patch
+    0003-octeontx2-af-Setup-Large-Memory-Transaction-for-cryp.patch
+    0004-octeontx2-af-Handle-inbound-inline-ipsec-config-in-A.patch
+    0005-crypto-octeontx2-Remove-inbound-inline-ipsec-config.patch
+
+2) RVU AF Mailbox changes for CPT 2nd pass RQ mask, SPI-to-SA table,
+   NIX-CPT BPID configuration
+    0006-octeontx2-af-Add-support-for-CPT-second-pass.patch
+    0007-octeontx2-af-Add-support-for-SPI-to-SA-index-transla.patch
+    0008-octeontx2-af-Add-mbox-to-alloc-free-BPIDs.patch
+
+3) Inbound Inline IPsec support patches
+    0009-octeontx2-pf-ipsec-Allocate-Ingress-SA-table.patch
+    0010-octeontx2-pf-ipsec-Setup-NIX-HW-resources-for-inboun.patch
+    0011-octeontx2-pf-ipsec-Handle-NPA-threshhold-interrupt.patch
+    0012-octeontx2-pf-ipsec-Initialize-ingress-IPsec.patch
+    0013-octeontx2-pf-ipsec-Manage-NPC-rules-and-SPI-to-SA-ta.patch
+    0014-octeontx2-pf-ipsec-Process-CPT-metapackets.patch
+    0015-octeontx2-pf-ipsec-Add-XFRM-state-and-policy-hooks-f.patch
+
+
+Bharat Bhushan (5):
+  crypto: octeontx2: Share engine group info with AF driver
+  octeontx2-af: Configure crypto hardware for inline ipsec
+  octeontx2-af: Setup Large Memory Transaction for crypto
+  octeontx2-af: Handle inbound inline ipsec config in AF
+  crypto: octeontx2: Remove inbound inline ipsec config
+
+Geetha sowjanya (1):
+  octeontx2-af: Add mbox to alloc/free BPIDs
+
+Kiran Kumar K (1):
+  octeontx2-af: Add support for SPI to SA index translation
+
+Rakesh Kudurumalla (1):
+  octeontx2-af: Add support for CPT second pass
+
+Tanmay Jagdale (7):
+  octeontx2-pf: ipsec: Allocate Ingress SA table
+  octeontx2-pf: ipsec: Setup NIX HW resources for inbound flows
+  octeontx2-pf: ipsec: Handle NPA threshold interrupt
+  octeontx2-pf: ipsec: Initialize ingress IPsec
+  octeontx2-pf: ipsec: Manage NPC rules and SPI-to-SA table entries
+  octeontx2-pf: ipsec: Process CPT metapackets
+  octeontx2-pf: ipsec: Add XFRM state and policy hooks for inbound flows
+
+ .../marvell/octeontx2/otx2_cpt_common.h       |    8 -
+ drivers/crypto/marvell/octeontx2/otx2_cptpf.h |   10 -
+ .../marvell/octeontx2/otx2_cptpf_main.c       |   50 +-
+ .../marvell/octeontx2/otx2_cptpf_mbox.c       |  286 +---
+ .../marvell/octeontx2/otx2_cptpf_ucode.c      |  116 +-
+ .../marvell/octeontx2/otx2_cptpf_ucode.h      |    3 +-
+ .../ethernet/marvell/octeontx2/af/Makefile    |    2 +-
+ .../ethernet/marvell/octeontx2/af/common.h    |    1 +
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  119 +-
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   |    9 +-
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |   71 +
+ .../ethernet/marvell/octeontx2/af/rvu_cn10k.c |   11 +
+ .../ethernet/marvell/octeontx2/af/rvu_cpt.c   |  706 +++++++++-
+ .../ethernet/marvell/octeontx2/af/rvu_cpt.h   |   71 +
+ .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  230 +++-
+ .../marvell/octeontx2/af/rvu_nix_spi.c        |  220 +++
+ .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   16 +
+ .../marvell/octeontx2/af/rvu_struct.h         |    4 +-
+ .../marvell/octeontx2/nic/cn10k_ipsec.c       | 1191 ++++++++++++++++-
+ .../marvell/octeontx2/nic/cn10k_ipsec.h       |  152 +++
+ .../marvell/octeontx2/nic/otx2_common.c       |   23 +-
+ .../marvell/octeontx2/nic/otx2_common.h       |   16 +
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |   17 +
+ .../marvell/octeontx2/nic/otx2_struct.h       |   16 +
+ .../marvell/octeontx2/nic/otx2_txrx.c         |   25 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |    4 +
+ 26 files changed, 2915 insertions(+), 462 deletions(-)
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/rvu_nix_spi.c
 
 -- 
-2.49.0.967.g6a0df3ecc3-goog
+2.43.0
 
 
