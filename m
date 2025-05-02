@@ -1,137 +1,281 @@
-Return-Path: <linux-kernel+bounces-630358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EF6AA78DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:52:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D2BAA78E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C29DA1C0649A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:53:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106743AA026
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40869264FA5;
-	Fri,  2 May 2025 17:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF2C2609D1;
+	Fri,  2 May 2025 17:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Lv0iijAL"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="tUnKdhdP"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A2579D2
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 17:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EC242A87
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 17:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746208362; cv=none; b=hGm8lj2vPlLj4x4yYcDsB8sY7UfqcsKuZqu8ieapqkND4rfilBE7iRYWtXhgdIY9+va5byXL18K3Lfi5H+DTQME6G022NeqFuibGU1ja/lT8drQGVvSPnRDhj9pxWdlQhXHXRQ3CBw6o6rPbUjNuJWOuuGwMSe9BM79sxFb5Vm8=
+	t=1746208567; cv=none; b=d//IJgI2LJiaEy/akt5GdLPiirpWwB/f41AEo9sO1241KjjDsIWWGxSvYBmaIFD09T0B52Lkmoiwb5a9GcxNrnOUa164tL4HvZrxWn80Pz5M+uhqL55MtpvFJeudWNFJowQmfklFCK9IQrk8zf7nX7iQ+sB5VB+N3tCRbzo8yes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746208362; c=relaxed/simple;
-	bh=TMIgcgfI53ASO5LRhBCN9KJj/SKpPkYNOMudWH8eld0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pdjyQow8GfRreSQVgP+0LQzilMV5fhrCYCcacBhlMAXp8qsA1NTKPI3fYnTKjJYYCViHHfA9HP6f5AoUiiv8zNdWpul1D5KFsHnODILL2FkBD4bI1Q71HIGdTv/eyrOQ7MJPhd+VW/AoNlQhRMS5CoM3KpOoTEo68nzmrYdbq8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Lv0iijAL; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so3501462a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 10:52:39 -0700 (PDT)
+	s=arc-20240116; t=1746208567; c=relaxed/simple;
+	bh=KvveWAjwqVFgssku8tGZhCRRyNqTYVRXhVVXsdUCYdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxZTOp3kpF6ippNcpsP0qEJRSKsgBgiswd3PTUbtXzg7UNDgIQmfCZtVyxNWVZcXC132hEYnVhGZL2QsoBNZSQPiiNQSisspTVwKWvZBE/W1PpnmQBlmqxemvHzGa0VIKSo8emYeQzBKazSRPhqcDwwJY0Jo4b2SDGnyejdWTC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=tUnKdhdP; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4768f90bf36so28180921cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 10:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1746208358; x=1746813158; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=L+qzGYQVD+m8VMlSDDggqEimDlE2nd4dP5p1ek457P0=;
-        b=Lv0iijALUiEsl0yZupMiadG456MiMb8IUkqk0Q3Bm7foiz6/PsyYPtTGQkO9KbSao9
-         Se79DbhhLBmrz1p/+4uqzNq81L20O/Eejx1SwNGehot+S6MA5lDJ4+mrxYok6uWGQcYt
-         efUUHmYsUIRp74xuknCzwJoDRG4sAnf0EpY4M=
+        d=rowland.harvard.edu; s=google; t=1746208564; x=1746813364; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8A+uE7zMHwtLlOZkAqNpBHirPhVQLpUhDkZtF/8t/a0=;
+        b=tUnKdhdP9IioN+ReLE/pGUvIKVLlO+p+3gA8GQOfVL6lNM4dsEFkudqXsPjHTJjY+f
+         b44f7X75HTVy7ybAtZ4pWFwjNLg1toLC2qozzrNCP8Jitci2Dx8TCnCOSKhyluYRYWKw
+         /23ZcuYwX4+h3Gi9oHAoTHvSIh8Fm0iIWLevp3tSmVaqSIvJTAmrTwbXR0QLpeGKHMRi
+         ZiWSMG+eP/0LwS1K3AFYOKxD7vqTssi2E/fevEdB7b0LD4aJsnpU1vRHI0opgknU3Wx9
+         Ts+4ibFNCqp7CTqXRgL56W1ENlpOtWSk8/O3WcP23B1ho1adf6KABYZztfwFeAHt5BP/
+         0r1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746208358; x=1746813158;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L+qzGYQVD+m8VMlSDDggqEimDlE2nd4dP5p1ek457P0=;
-        b=OE8xF6V8TM9nfZXGvNonE8eQv1ap9QaEK5ql3u2QbHGKuQmtstb4mzWSBH5oMIp5+D
-         6nlXDLzD5nTxXFI7IKmxlCLDJBzEqKs2kxwBfis804WVmF3wiVVefQSt7MhEBtWXliHd
-         GUDhjZqj6giz/86tOSvnnSfs/Sz5O3XNZpI67bF4IGolf/7giBNLryWuFfUGUu/9oGNy
-         +wzjdIUjEgwR8mec/O5h+sTXfp1WYSQ7izev/uzjk8wom34O1CQ5Lswe/Dq0DEuociJ/
-         G/DQ5/88UsA5UCpyOkM/HFa3QSn64cMiizbfxv9Hs0MZ/sxn0DW63v9sQJJYsx0aGMUN
-         HEkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAt4TqSdblumlW/EJVTYM69SL/Nh52duO+CLii1uNh5yg0i3ZQ3q8qLUh+BeW31I75HmIKQO/tM/15gTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrw96YLwj44b0oz5ycMgT8WGr/hfwBy/XSt/NkSbX+3cY+AW5F
-	o5PBg2ryw0kdA2rVjeaMpVPHBtl0721pj9Zp4uv/8LVgejMQdHkZ1DQto0LGwrcvi9StDHRJBdC
-	l4pU=
-X-Gm-Gg: ASbGncstlJPTtRDw294KuK+TvGmiEHVP8zWGjrfyOYx92hm1WSsjIuvhdxmoXJaCj1E
-	5x8S6sOlshAc/LEJ5L4uvWQaojs+Tkyrrf/mzj8RD0dF4dNMDZBGhHb1M7ATcLtYvCcKy3H0wp9
-	6bgA+AwvrihFqsWeb3r5fPNC/q0xraqTFmb3BkpMOxXI9wYuP/rbsm31/YLP1/np+2WagOJhA7E
-	6GGWR39In+RWtVRM6mvCXpf9ua1bwjYwqJ0Col4n7CR5sclD7fHqyhxMuuLUSJw0MM46rpP+62X
-	t6r4iZEhN6HLGUF6Scz8M6hcBsWXdNDz+r/xuTuV+G7+sU89qH3x1O98g0aWChES6m9tctI+8gJ
-	OxCzId+B5ZFhPlQ4=
-X-Google-Smtp-Source: AGHT+IGM23sLf3wLQ803UemeVVGbbUgwU5vRyURy70VFL+W4kX1OCLxHFSliEZi4iM/4QCILajW9/w==
-X-Received: by 2002:a05:6402:2694:b0:5f8:77e2:b819 with SMTP id 4fb4d7f45d1cf-5fa7891665amr3097544a12.23.1746208357930;
-        Fri, 02 May 2025 10:52:37 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa77b8fbadsm1524684a12.50.2025.05.02.10.52.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 May 2025 10:52:37 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac29fd22163so391688966b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 10:52:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4jtbrIFnoN2tjwfMGgxVIisoAsvPWxD/hjHdv6ntxUZGpyi1oMN9A3Db6lk2JGkGYTM6CIPVW6qbFJNo=@vger.kernel.org
-X-Received: by 2002:a17:907:728a:b0:ac7:d7f3:86c6 with SMTP id
- a640c23a62f3a-ad17ad3a86cmr353817166b.9.1746208356936; Fri, 02 May 2025
- 10:52:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746208564; x=1746813364;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8A+uE7zMHwtLlOZkAqNpBHirPhVQLpUhDkZtF/8t/a0=;
+        b=Msb1K2HSHZgZScnX8pvnwkj2zGC9hwzikp9PgSjP66ylHsr4zcQKHNKz6QOrnV5ram
+         RCX8UMbjDpCsk2ON7wogrYXoHaOwXd9hLr9nN90mDaAxefnUyoMKhFFXeSqtKHpLRlcq
+         rU5aBPslVvI9+MJv0fYwdn6vCgJVX0V/+/HruI2zwShxuLGliKasXnU1C7IB/ETmIiIw
+         GkDRHHAUj1YOd2cBHliOXINT0TMXlVF+bisl3uEnjf03gS5jy3lQM6dxyYRbr1lOIOHW
+         M12Fnms1EJErBJMKH9icoiH2sZ1ShufwXIXZsOrTwoBNRybjH6y0qrc+72e5hsbTrrxv
+         GoUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHnO9LIbeGauySZd2PkviJb1xF2kYEeUlNXrlGGFLyDMB5OaMEuXaF9jrS+3S363BU2amIb5iXTFT1z1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziflaJ3DU5jxl6bF8bYNNhT7Y3lAfqQxxyKRwRLH/NNXhmvq3n
+	CRH9wDBFsgiNZk09vjTVq2kFgmQ8VLCllwG656MvZme9sskzjXyhgMkgOsKLQEPQG7UbvH+aIqo
+	=
+X-Gm-Gg: ASbGncv/MQ8i7YV0iHBitTYtIegoHrijygQRP0HcdIHhC2z5tf05oK7KwtCcedEiNgU
+	2kJTdXjKCS/PL7KKzFbV0RP1QqE90qJqNX7gHuXst/Ck0CEQj7kGyRM4seUE7TZ1DOi2LvYqXFt
+	1RFH8gW+0jHcek8wASYmHP3oLPkYHriFJeYfSVzMBdIXlYgHPY34rZ9KwaBGpPhqWzSuk6Nei4n
+	Il0CRm1Pfhw6w1Z9Y3JlWtvx1cOh7n1g6LAKCjIvaQrxF2PhN18MGY3vM14q3Py0lqqrpxUdc3m
+	fmgct0jUw0jsi7ksLgxjxi5fvy51En5Fsfhq6r4rjZ2/d6eONICIchtpGEsmse3POh3cUYC6JNp
+	DT9W5Gs6Ke7Fqgx/Z7pbIGDoEOs/XxyCWSEr1n7pQYFAj
+X-Google-Smtp-Source: AGHT+IHjImMh9GFj90QT1j8aWcdS/wU5nityrf44gpoeLEocPGs8cm/kHTdPtLX+BT0XeJiGxRlytw==
+X-Received: by 2002:a05:622a:1b2a:b0:477:41e5:cb8d with SMTP id d75a77b69052e-48c32fbf01amr57673411cf.44.1746208563948;
+        Fri, 02 May 2025 10:56:03 -0700 (PDT)
+Received: from rowland.harvard.edu (nat-65-112-8-16.harvard-secure.wrls.harvard.edu. [65.112.8.16])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-48b98d0fed1sm20752941cf.68.2025.05.02.10.56.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 10:56:03 -0700 (PDT)
+Date: Fri, 2 May 2025 13:56:01 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?iso-8859-1?Q?Herv=E9?= Codina <herve.codina@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Subject: Re: DWC2 gadget: unexpected device reenumeration on Rockchip RK3308
+Message-ID: <cc80988c-5941-46f3-8183-f3f9acb7dd5d@rowland.harvard.edu>
+References: <20250414185458.7767aabc@booty>
+ <a96409af-4f82-4b65-b822-dd8c71508212@rowland.harvard.edu>
+ <cf84f5ca-8c7a-b6c6-492c-c9cf6f73130d@synopsys.com>
+ <20250415162825.083f351c@booty>
+ <8c2e18a9-44d1-47b3-8fe4-46bdc5be8d76@rowland.harvard.edu>
+ <20250502155308.11a991d4@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429213817.65651-1-cpru@amazon.com> <20250430100259.GK4439@noisy.programming.kicks-ass.net>
- <B27ECDA1-632D-44CD-AB99-B7A9C27393E4@amazon.com>
-In-Reply-To: <B27ECDA1-632D-44CD-AB99-B7A9C27393E4@amazon.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 2 May 2025 10:52:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgb5WcfMEgsOQg4wzVWuYNgCL-e17YX33ZET_G3-ZCo7g@mail.gmail.com>
-X-Gm-Features: ATxdqUHYMChzuFnxzpibzLtkTrwHUQOJbZWvS4aZuUPZ8wK3AkEbViB7psNkIbY
-Message-ID: <CAHk-=wgb5WcfMEgsOQg4wzVWuYNgCL-e17YX33ZET_G3-ZCo7g@mail.gmail.com>
-Subject: Re: EEVDF regression still exists
-To: "Prundeanu, Cristian" <cpru@amazon.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>, "Saidi, Ali" <alisaidi@amazon.com>, 
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, "Blake, Geoff" <blakgeof@amazon.com>, 
-	"Csoma, Csaba" <csabac@amazon.com>, "Doebel, Bjoern" <doebel@amazon.de>, 
-	Gautham Shenoy <gautham.shenoy@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, 
-	Joseph Salisbury <joseph.salisbury@oracle.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-tip-commits@vger.kernel.org" <linux-tip-commits@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502155308.11a991d4@booty>
 
-On Fri, 2 May 2025 at 10:25, Prundeanu, Cristian <cpru@amazon.com> wrote:
->
-> Another, more recent observation is that 6.15-rc4 has worse performance than
-> rc3 and earlier kernels. Maybe that can help narrow down the cause?
-> I've added the perf reports for rc3 and rc2 in the same location as before.
+On Fri, May 02, 2025 at 03:53:08PM +0200, Luca Ceresoli wrote:
+> Hello Alan,
+> 
+> thanks for your continued support!
+> 
+> On Tue, 15 Apr 2025 12:14:58 -0400
+> Alan Stern <stern@rowland.harvard.edu> wrote:
+> 
+> [...]
+> 
+> > > > > It's quite possible that you're getting messed up by link power
+> > > > > management (LPM).  But that's just a guess.  
+> > > 
+> > > What would be a symptom, if that happened?  
+> > 
+> > The debugging log wouldn't show much unless something went wrong.  You 
+> > could see if there are any files containing "lpm" in their names in the 
+> > /sys/bus/usb/devices/3-3.4/ directory (while the device is connected) 
+> > and what they contain.  Also, there's a way to disable LPM on the host 
+> > by setting a usbcore quirks module parameter:
+> > 
+> > 	echo 1209:0001:k >/sys/module/usbcore/parameters/quirks
+> 
+> Tried this. There is no file with 'lpm' in the name in
+> /sys/bus/usb/devices/3-3.4/, and adding the quirk did not change the
+> result: still a disconnect and reconnect in ~6 seconds.
 
-The only _scheduler_ change that looks relevant is commit bbce3de72be5
-("sched/eevdf: Fix se->slice being set to U64_MAX and resulting
-crash"). Which does affect the slice calculation, although supposedly
-only under special circumstances.
+Okay, so LPM doesn't seem to be the reason.
 
-Of course, it could be something else.
+> > You could also try connecting a usbmon trace for bus 3, showing what 
+> > happens during the initial connection and ensuing disconnection.  Any 
+> > LPM transitions would show up in the trace.
+> 
+> Tried this, and here are the few lines before and after the 5~6 seconds
+> delay.
+> 
+> ffff99621e768840 4009009102 C Bi:1:009:3 0 2 = 696e
+> ffff99621e768840 4009009104 S Bi:1:009:3 -115 256 <
+> ffff99621e768300 4009009115 S Bi:1:009:3 -115 256 <
+> ffff99621e768840 4009009144 C Bi:1:009:3 0 6 = 3a383534 2033
+> ffff99621e768300 4009009155 C Bi:1:009:3 0 1 = 37
+> ffff99621e768840 4009009178 C Bi:1:009:3 0 2 = 0d0a
+> ffff99621e768840 4009009180 S Bi:1:009:3 -115 256 <
+> ffff996080f11900 4009009361 C Ci:1:014:0 0 26 = 1a034300 44004300 20004100 43004d00 20004400 61007400 6100
+> ffff99621e768300 4009009615 C Bi:1:009:3 0 3 = 5b2020
+> ffff99621e768300 4009009624 S Bi:1:009:3 -115 256 <
+> ffff99621e768840 4009009645 C Bi:1:009:3 0 3 = 203233
+> ffff99621e768840 4009009646 S Bi:1:009:3 -115 256 <
+> ffff99621e768300 4009009692 C Bi:1:009:3 0 4 = 2e383738
+> ffff99621e768300 4009009694 S Bi:1:009:3 -115 256 <
+> ffff99621e768840 4009009703 C Bi:1:009:3 0 2 = 3731
+> ffff99621e768840 4009009722 S Bi:1:009:3 -115 256 <
+> ffff99621e768840 4009009933 C Bi:1:009:3 0 2 = 7472
 
-For example, we have a AMD performance regression in general due to
-_another_ CPU leak mitigation issue, but that predates rc3 (happened
-during the merge window), so that one isn't relevant, but maybe
-something else is..
+It looks like device 9 (the lines containing :1:009:3) and device 14 are 
+unrelated to the problem; neither of them is your DWC2 device.
 
-Although honestly, that slice calculation still looks just plain odd.
-It defaults the slice to zero, so if none of the 'break' conditions in
-the first loop happens, it will reset the slice to that zero value and
-then the
+> 
+> <<< 6 seconds delay >>>
+> 
+> ffff9960828e9540 4014796128 C Ii:1:001:1 0:2048 2 = 1000
+> ffff9960828e9540 4014796145 S Ii:1:001:1 -115:2048 4 <
+> ffff996080f11900 4014796162 S Ci:1:001:0 s a3 00 0000 0004 0004 4 <
+> ffff996080f11900 4014796189 C Ci:1:001:0 0 4 = 00010100
 
-        slice = cfs_rq_min_slice(cfs_rq);
+This shows the host system receiving a disconnect notification (for port 
+4) from the hardware.  Which is odd, because earlier you said the device 
+was 3-3.4, indicating that it was plugged into a hub, not directly into 
+the host controller.  But the notification here comes from the host 
+controller.
 
-ion that second loop looks like it might just pick up that zero value again.
+On the other hand, an even earlier email said that the device was 3-2, 
+indicating it _was_ plugged directly into the host controller
 
-I clearly don't understand the code.
+Which means you've been changing your setup while running these tests.  
+Not a good idea.
 
-             Linus
+> ffff996080f11900 4014796201 S Co:1:001:0 s 23 01 0010 0004 0000 0
+> ffff996080f11900 4014796219 C Co:1:001:0 0 0
+> ffff996080f11000 4014799627 S Ci:1:001:0 s a3 00 0000 0004 0004 4 <
+> ffff996080f11000 4014799679 C Ci:1:001:0 0 4 = 00010000
+> ffff996080f11000 4014826132 S Ci:1:001:0 s a3 00 0000 0004 0004 4 <
+> ffff996080f11000 4014826166 C Ci:1:001:0 0 4 = 00010000
+> ffff996080f11000 4014852075 S Ci:1:001:0 s a3 00 0000 0004 0004 4 <
+> ffff996080f11000 4014852122 C Ci:1:001:0 0 4 = 00010000
+> ffff996080f11000 4014878210 S Ci:1:001:0 s a3 00 0000 0004 0004 4 <
+> ffff996080f11000 4014878253 C Ci:1:001:0 0 4 = 00010000
+> ffff996080f11000 4014904049 S Ci:1:001:0 s a3 00 0000 0004 0004 4 <
+> ffff996080f11000 4014904088 C Ci:1:001:0 0 4 = 00010000
+> ffff9960828e9540 4014948427 C Ii:1:001:1 0:2048 2 = 1000
+> ffff9960828e9540 4014948456 S Ii:1:001:1 -115:2048 4 <
+> ffff99621e768300 4014948461 C Bi:1:009:3 0 2 = 5b20
+> ffff99621e768300 4014948472 S Bi:1:009:3 -115 256 <
+> ffff99621e768840 4014948488 C Bi:1:009:3 0 2 = 2020
+> ffff99621e768840 4014948489 S Bi:1:009:3 -115 256 <
+> ffff996080f11000 4014948522 S Ci:1:001:0 s a3 00 0000 0004 0004 4 <
+> ffff99621e768300 4014948545 C Bi:1:009:3 0 58 = 32392e38 31373337 325d203e 3e3e2064 7763325f 68616e64 6c655f63 6f6d6d6f
+> ffff99621e768300 4014948560 S Bi:1:009:3 -115 256 <
+> ffff996080f11000 4014948607 C Ci:1:001:0 0 4 = 01010100
+
+And then about 150 ms later (the second column of the log is a 
+timestamp, in microseconds), a connection notification.  Nothing 
+preceding the disconnect to explain what caused it.
+
+> ffff99621e768840 4014948639 C Bi:1:009:3 0 10 = 37395d20 3e3e3e20 6477
+> ffff99621e768840 4014948644 S Bi:1:009:3 -115 256 <
+> ffff99621e768300 4014948657 C Bi:1:009:3 0 3 = 63325f
+> ffff99621e768300 4014948663 S Bi:1:009:3 -115 256 <
+> ffff99621e768840 4014948689 C Bi:1:009:3 0 5 = 68736f74 67
+> ffff99621e768840 4014948693 S Bi:1:009:3 -115 256 <
+> ffff99621e768300 4014948718 C Bi:1:009:3 0 2 = 5f69
+> ffff99621e768300 4014948720 S Bi:1:009:3 -115 256 <
+> ffff99621e768840 4014948759 C Bi:1:009:3 0 4 = 72713a33
+
+Unrelated material.  Evidently device 9 is running some sort of 
+serial connection, because everything it sends looks like ASCII 
+characters.
+
+> Does this give you any hints?
+
+Afraid not.
+
+> I'm afraid it's going to take time before I'm able to decipher these
+> hieroglyphs. :-|
+> 
+> Full log is available, if needed.
+
+It wouldn't hurt to see exactly what happens when the device is first 
+plugged in.  It's possible, though unlikely, that something at that time 
+causes trouble later on.
+
+> However I suspect using Wireshark to capture the USB traffic should
+> produce the same content. If it is the case, I have available a
+> Wireshark capture as well. The first logged event I see in Wireshark
+> after the delay is a "URB_INTERRUPT in", which is possibly matching the
+> "Ii" in the log above.
+
+Yes; usbmon and Wireshark capture basically the same information.
+
+> However IIUC both the usbmon debugfs interface and Wireshark are unable
+> to capture disconnection events because that's handled by the hardware.
+> Correct?
+
+I'm not quite sure how to answer.  Yes, the hardware handles 
+disconnections -- because the hardware handles _everything_ that happens 
+on the USB bus.  And one of the things the hardware does when handling 
+disconnections is to tell the driver that one occurred; that's why the 
+report shows up in the usbmon (or Wireshark) trace.
+
+A USB analyzer could tell you exactly what's happening on the wire, but 
+they are expensive.  And in this case, I think all it would tell you is 
+what we already know: that a disconnect happened.
+
+The fact that the disconnects don't happen with the vendor kernel 
+indicates that they aren't caused by a hardware problem, such as a bad 
+cable link, but rather by something in the device's software, i.e., the 
+dwc2 driver.
+
+I don't know anything about that driver, though.  Minas is the expert.  
+You really need his advice.
+
+> I hope useful hints can be found here. Otherwise I guess the only way
+> out will be comparing the behaviour of the 4.4 Rockchip kernel (which
+> works correctly) against mainline. I expect this to be a long and
+> painful process, though.
+
+Is there any way to compare directly the driver used by the vendor 
+kernel with the vanilla driver?  Such as porting one of the drivers to 
+run in the other kernel?
+
+Alternatively, can one get additional debugging information from the 
+dwc2 driver in its disconnect pathway?  I don't know what would be 
+expected to show up in the log if the driver deliberately dropped the 
+connection.
+
+Alan Stern
 
