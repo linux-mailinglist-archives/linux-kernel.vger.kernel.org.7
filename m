@@ -1,105 +1,227 @@
-Return-Path: <linux-kernel+bounces-630263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D184AA77AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DBBAA77B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D30B3AE5EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9113A1BA85AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6521AA1E4;
-	Fri,  2 May 2025 16:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP+Y9lSp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8348226AA8D;
+	Fri,  2 May 2025 16:50:11 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F41418AFC;
-	Fri,  2 May 2025 16:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74006264FA5;
+	Fri,  2 May 2025 16:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746204472; cv=none; b=LcuV4zL+0W/Hm7DPXR29tzJ3zgEs+JWvkgOecjKGzPhb5mA2r4P5g44qq+XpOmNvnNxLA0sVx/Q37tYgZOg0dHwIZJ/HZe01RCMpYb+Mnji3hyMKKCSUSpR8EMBve1lEAYz4mJIoinRvdiSmeuA3Gph/ZRXKUMq++Qao5kRCcWc=
+	t=1746204609; cv=none; b=qaoL++E5B5biiTsyNmCjDDwB11N9+0zkEB42Lr2OMPEdGi3BUTcLvQ3G81dOzU+UU+w8nitY9MD4CLSzef7CDO39PBCwyj6LZiejRvGvHgnvMflaqIw6lbzrSoNncI454Tw1RPOaZJ0V7rnXb1KYwYM/KOD6HvH3D0moDhYf6vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746204472; c=relaxed/simple;
-	bh=tUQ4h7QZxsvJ5HB6FNwGgOGWyw/11iybNMFrdWHguKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOgdLyifohsYbv5UgUeGLqCu7GRct3XfN281ua6mwBwXm+zjdjP9VgeDyZMNfumVizYuwcRP5a8z01jxVP/+0un88IenMxHo2U/RjQQ72b/4G+fXvknkk4z6gAbVQeg30dcUa2fT+3tsUf2JY7db12I2b6qKKi5hj3cixRx89Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP+Y9lSp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81660C4CEE4;
-	Fri,  2 May 2025 16:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746204472;
-	bh=tUQ4h7QZxsvJ5HB6FNwGgOGWyw/11iybNMFrdWHguKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FP+Y9lSpgzpsoNdZNxNsvBRLEAnzB1mIfyi3ZQDvqSzkQTkUzQZJe1SIC2+GCE+PK
-	 rL6LpH+t6e6BE4onYn78VtpMbDwZuAFSb3aN3u5H8QcQdtxVC59hH3YoqEwNOnZCoq
-	 PeoTCK2BaKIBqZkKaN0WNjJBw225Fokr5IuPuqDBmkCYCsrBofJ8dll7Tfi6h6GX2S
-	 ZEalc+83CcJEAG5reAqm7FVEfa06sEM+HRVfoGGW8HMFJXGyuCq/RmRdmn7vunxK8Q
-	 BrqVGMVK0XTgeFgLsGHdU6AGEsX3SrMktPHE+ddOsjfsfeq+4fY53eG0D4ZBuLc8Lt
-	 XkwiZKya7hytA==
-Date: Fri, 2 May 2025 18:47:49 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: dimitri.fedrau@liebherr.com
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v9 0/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-Message-ID: <cz5tzcmkpkoi7f6g64opcoq5mclahyom4aqafpjxmhisjidize@uw4uq3pmxou4>
-References: <20250407-mc33xs2410-v9-0-57adcb56a6e4@liebherr.com>
+	s=arc-20240116; t=1746204609; c=relaxed/simple;
+	bh=JTFH4J/aPfmXUm6zG2FJR1h1yEhf4M7031l6ypEpMj0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=LGwECcx6nY5FHlYJyevIXtmmiB4t+OaOn4uajpf2oSsM9cLLGziRER7W18MqoMcts57KaYt2+wmh4TmUbq6t3mlRKvrjF0zEkRY4OTsjlECSCiVDicGmdG0nm3Ms/pneSYtnBHwed85YLj724Tb4ydnJSCP04aaJ+gGhjR1SWHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D21B5C4CEF2;
+	Fri,  2 May 2025 16:50:08 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uAtaS-0000000031E-0rnq;
+	Fri, 02 May 2025 12:50:08 -0400
+Message-ID: <20250502165008.057614236@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 02 May 2025 12:47:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ x86@kernel.org,
+ Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH v7 04/17] perf/x86: Rename and move get_segment_base() and make it global
+References: <20250502164746.178864972@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fb4lyrpuybx6it7v"
-Content-Disposition: inline
-In-Reply-To: <20250407-mc33xs2410-v9-0-57adcb56a6e4@liebherr.com>
+Content-Type: text/plain; charset=UTF-8
+
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+
+get_segment_base() will be used by the unwind_user code, so make it
+global and rename it so it doesn't conflict with a KVM function of the
+same name.
+
+As the function is no longer specific to perf, move it to ptrace.c as that
+seems to be a better location for a generic function like this.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ arch/x86/events/core.c        | 44 ++++-------------------------------
+ arch/x86/include/asm/ptrace.h |  2 ++
+ arch/x86/kernel/ptrace.c      | 38 ++++++++++++++++++++++++++++++
+ 3 files changed, 45 insertions(+), 39 deletions(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 2e10dcf897c5..cc6329235b68 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -43,6 +43,7 @@
+ #include <asm/ldt.h>
+ #include <asm/unwind.h>
+ #include <asm/uprobes.h>
++#include <asm/ptrace.h>
+ #include <asm/ibt.h>
+ 
+ #include "perf_event.h"
+@@ -2809,41 +2810,6 @@ valid_user_frame(const void __user *fp, unsigned long size)
+ 	return __access_ok(fp, size);
+ }
+ 
+-static unsigned long get_segment_base(unsigned int segment)
+-{
+-	struct desc_struct *desc;
+-	unsigned int idx = segment >> 3;
+-
+-	if ((segment & SEGMENT_TI_MASK) == SEGMENT_LDT) {
+-#ifdef CONFIG_MODIFY_LDT_SYSCALL
+-		struct ldt_struct *ldt;
+-
+-		/*
+-		 * If we're not in a valid context with a real (not just lazy)
+-		 * user mm, then don't even try.
+-		 */
+-		if (!nmi_uaccess_okay())
+-			return 0;
+-
+-		/* IRQs are off, so this synchronizes with smp_store_release */
+-		ldt = smp_load_acquire(&current->mm->context.ldt);
+-		if (!ldt || idx >= ldt->nr_entries)
+-			return 0;
+-
+-		desc = &ldt->entries[idx];
+-#else
+-		return 0;
+-#endif
+-	} else {
+-		if (idx >= GDT_ENTRIES)
+-			return 0;
+-
+-		desc = raw_cpu_ptr(gdt_page.gdt) + idx;
+-	}
+-
+-	return get_desc_base(desc);
+-}
+-
+ #ifdef CONFIG_UPROBES
+ /*
+  * Heuristic-based check if uprobe is installed at the function entry.
+@@ -2900,8 +2866,8 @@ perf_callchain_user32(struct pt_regs *regs, struct perf_callchain_entry_ctx *ent
+ 	if (user_64bit_mode(regs))
+ 		return 0;
+ 
+-	cs_base = get_segment_base(regs->cs);
+-	ss_base = get_segment_base(regs->ss);
++	cs_base = segment_base_address(regs->cs);
++	ss_base = segment_base_address(regs->ss);
+ 
+ 	fp = compat_ptr(ss_base + regs->bp);
+ 	pagefault_disable();
+@@ -3020,11 +2986,11 @@ static unsigned long code_segment_base(struct pt_regs *regs)
+ 		return 0x10 * regs->cs;
+ 
+ 	if (user_mode(regs) && regs->cs != __USER_CS)
+-		return get_segment_base(regs->cs);
++		return segment_base_address(regs->cs);
+ #else
+ 	if (user_mode(regs) && !user_64bit_mode(regs) &&
+ 	    regs->cs != __USER32_CS)
+-		return get_segment_base(regs->cs);
++		return segment_base_address(regs->cs);
+ #endif
+ 	return 0;
+ }
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index 50f75467f73d..59357ec98e52 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -314,6 +314,8 @@ static __always_inline bool regs_irqs_disabled(struct pt_regs *regs)
+ 	return !(regs->flags & X86_EFLAGS_IF);
+ }
+ 
++unsigned long segment_base_address(unsigned int segment);
++
+ /* Query offset/name of register from its name/offset */
+ extern int regs_query_register_offset(const char *name);
+ extern const char *regs_query_register_name(unsigned int offset);
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 095f04bdabdc..81353a09701b 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -41,6 +41,7 @@
+ #include <asm/syscall.h>
+ #include <asm/fsgsbase.h>
+ #include <asm/io_bitmap.h>
++#include <asm/mmu_context.h>
+ 
+ #include "tls.h"
+ 
+@@ -339,6 +340,43 @@ static int set_segment_reg(struct task_struct *task,
+ 
+ #endif	/* CONFIG_X86_32 */
+ 
++unsigned long segment_base_address(unsigned int segment)
++{
++	struct desc_struct *desc;
++	unsigned int idx = segment >> 3;
++
++	lockdep_assert_irqs_disabled();
++
++	if ((segment & SEGMENT_TI_MASK) == SEGMENT_LDT) {
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++		struct ldt_struct *ldt;
++
++		/*
++		 * If we're not in a valid context with a real (not just lazy)
++		 * user mm, then don't even try.
++		 */
++		if (!nmi_uaccess_okay())
++			return 0;
++
++		/* IRQs are off, so this synchronizes with smp_store_release */
++		ldt = smp_load_acquire(&current->mm->context.ldt);
++		if (!ldt || idx >= ldt->nr_entries)
++			return 0;
++
++		desc = &ldt->entries[idx];
++#else
++		return 0;
++#endif
++	} else {
++		if (idx >= GDT_ENTRIES)
++			return 0;
++
++		desc = raw_cpu_ptr(gdt_page.gdt) + idx;
++	}
++
++	return get_desc_base(desc);
++}
++
+ static unsigned long get_flags(struct task_struct *task)
+ {
+ 	unsigned long retval = task_pt_regs(task)->flags;
+-- 
+2.47.2
 
 
---fb4lyrpuybx6it7v
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v9 0/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-MIME-Version: 1.0
-
-Hallo Dimitri,
-
-On Mon, Apr 07, 2025 at 01:21:50PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> The MC33XS2410 is a four channel high-side switch. Featuring advanced
-> monitoring and control function, the device is operational from 3.0 V to
-> 60 V. The device is controlled by SPI port for configuration.
-
-Applied to
-
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-next
-
-as v6.16-rc1 material. Thanks for your contribution!
-
-Best regards
-Uwe
-
---fb4lyrpuybx6it7v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgU9zEACgkQj4D7WH0S
-/k7Hnwf/dTP1MMQv9/ToNPc2H4nO5NJTsH2IUJtUlyKlbVaPrTmAilrWZJ6VquA9
-b2UJJ/udGeBwyaDC6pJQmZgw/gTBEbzCM19KdoI2U67j5XjNEApMfth0E4JcTNUI
-qgwQHWKlIsf/r+N8BioHl+7bBOY3oxJ8f8n78ZTI0mnfTHUc5H/TGbXY4/n+sn/l
-cJF/sR1OIlQ8m9orvJA8+XozHaev7jqsCTDnyJXHK5wZXRsyDVO1GXOYzm1GTd/g
-xDpgkXNrm7SLmP/9SIo8McnjFmb1CAcH66LxnQZUBDz1ly1qdeuPSFteK3TYjW5G
-oquesExyfQhOHS7OJ89DAp9yggNJqQ==
-=YH15
------END PGP SIGNATURE-----
-
---fb4lyrpuybx6it7v--
 
