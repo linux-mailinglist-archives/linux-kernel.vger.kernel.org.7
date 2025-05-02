@@ -1,161 +1,273 @@
-Return-Path: <linux-kernel+bounces-629162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A8FAA6867
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:34:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD55AA686D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDAE1B63CA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 01:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549421B68195
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 01:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7276D82D98;
-	Fri,  2 May 2025 01:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6624B1474DA;
+	Fri,  2 May 2025 01:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PT1uvR4E"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOjAeTWe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C70D18E3F
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 01:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAD126AD9;
+	Fri,  2 May 2025 01:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746149647; cv=none; b=A4K7d2F3UgLe6Q98EOWDj+iEQaYy43sU9kDLPNpPgPVZAj5FEKeOa0PLYZR73clgrQHMmq22zfI06XEl/uyueIGooB1LTOWhLAZEPLGOl7a3KOIlwfd1dd9jlgiPihQGU3glpFWFi5pUijdnzW5I8H48LuONbi4WM6Zi5LcwcKI=
+	t=1746149736; cv=none; b=HDF1kDVTn8V5QuuFcVL3Gnp8N6jnU2kohPSPrlwzNm24ULnkKbIpnugKSf3AumlbYr/OKduMBZQmxBWgavOhhVzDvLagKRDqkYm0ANmXpNZgFVVMk8nTkhxcTkVxxrEOvblh+bj219egjD8PAaZv5tPQI0qYJYon90nr93Y8M0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746149647; c=relaxed/simple;
-	bh=VFjD3rX9Q7nIanEsWLWsYCBzpSANUb1jB6SFhJ8JD70=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IMmDl43AxLTV60s2XB8SdIIyApau4zePa3t14PHynFE4juUEf1yHbzRTcix5DcZssL1H/IVDzEDZcrLAgj7texHapNU0hLTHiHJIrvuAi0H2lpyFyLQebrg5+p0vOljjGLPWKOE/HXfSUQpC1LUpjmxsEta3bXIFCWcHIdzMxwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PT1uvR4E; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 1 May 2025 21:33:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746149631;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=KC+mXqTnHbJi8iH4wCBFRFB5qghJEho5DX6blQUzrxc=;
-	b=PT1uvR4EjRmouoTxItV+lh4PXW7hPBZjZcwBY/IkdPOJnyAeDnfTLi7PJZVvrjAs+8EORo
-	cvzdImNSjJM3BIWeiCauNanWtkElANOXjjG0rovOCZ2m0gUaqXCiePt7k+oGXizms+DYEb
-	v1w26vGW4EWIlsz2FrH9D/lVp/jbhhU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	s=arc-20240116; t=1746149736; c=relaxed/simple;
+	bh=0SkwgSNC+NzRjK0mPG6aKMmk51uVSzfevDMeWkjQZnc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MQfJFtI59fz+5sCzQE4FTwP/fN+v0GfxjPiBhDO5izQpf0+JFUXRKRHuDl9BNhB1n44o2dXqhmWxUflpfXYyVbY7KeW+h1ExdQVly6npNDO1ZJilRQp4sSjeYgcpjA75Urd96cGsYhVHR2BhryFbneexWTtBo2/6bw9JX7Hd5GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOjAeTWe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDBD8C4CEE3;
+	Fri,  2 May 2025 01:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746149736;
+	bh=0SkwgSNC+NzRjK0mPG6aKMmk51uVSzfevDMeWkjQZnc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bOjAeTWecv6HKLmT4zeM0W2x1BLOtLJoySF4ckXIDwNm2DsOEC75RLRxXJzmfhHqC
+	 pGTHijfET86PFbATyPImqwDKhJowpOsbuFJ2MnHH4A6F2dzP2gRIYAjfDtQTqqd4GC
+	 ETHqqVV2KX5JweiV5axsG/NZC7mzJl23i1M9lxG9IVutVwZdE16MW2I0HBI5pmAb3z
+	 hVFF10/9zGy+M8OJ+JN0axDGsakAUPJfcamUaLvFHLzr/mcJLDkX4WY6yLZCVegC9o
+	 ZOBhlAjjojKy1iH78HGTEw42RG3IVElNPKm/sONYHp81LMOXyjGvCBq8rEmTAjgOdU
+	 1RE6gaq1CYIsw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for rc5
-Message-ID: <avyfprbtjpphuhxjqekretgco6xs5r23efrlpkqx6uc5lhec7v@igrgjqacgb7i>
+Subject: [PATCH] dt-bindings: PCI: Convert v3,v360epc-pci to DT schema
+Date: Thu,  1 May 2025 20:34:46 -0500
+Message-ID: <20250502013447.3416581-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Every week I keep telling myself "boy, that was a busy week of
-bugfixing, but next week is sure to finally slow down a bit".
+Convert the v3,v360epc-pci binding to DT schema format.
 
-Hah.
+Add "clocks" which was not documented and is required. Drop "syscon"
+which was documented, but is not used.
 
-But it's all pretty small and boring.
+Drop the "v3,v360epc-pci" compatible by itself as this device is only
+used on the Arm Integrator/AP and not likely going to be used anywhere
+else at this point.
 
-A note on repair to users:
---------------------------
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/pci/v3,v360epc-pci.yaml          | 100 ++++++++++++++++++
+ .../bindings/pci/v3-v360epc-pci.txt           |  76 -------------
+ 2 files changed, 100 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/v3,v360epc-pci.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/v3-v360epc-pci.txt
 
-We're continuing to steadily improve on self healing/automatic repair;
-we want to automatically repair and mount no matter what filesystem
-damage has occurred (and I've been seeing some fun ones, we had one this
-week that was from pcie power savings mode gone haywire).
+diff --git a/Documentation/devicetree/bindings/pci/v3,v360epc-pci.yaml b/Documentation/devicetree/bindings/pci/v3,v360epc-pci.yaml
+new file mode 100644
+index 000000000000..38cac88f17bf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/v3,v360epc-pci.yaml
+@@ -0,0 +1,100 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/v3,v360epc-pci.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: V3 Semiconductor V360 EPC PCI bridge
++
++maintainers:
++  - Linus Walleij <linus.walleij@linaro.org>
++
++description:
++  This bridge is found in the ARM Integrator/AP (Application Platform)
++
++allOf:
++  - $ref: /schemas/pci/pci-host-bridge.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: arm,integrator-ap-pci
++      - const: v3,v360epc-pci
++
++  reg:
++    items:
++      - description: V3 host bridge controller
++      - description: Configuration space
++
++  clocks:
++    maxItems: 1
++
++  dma-ranges:
++    maxItems: 2
++    description:
++      The inbound ranges must be aligned to a 1MB boundary, and may be 1MB, 2MB,
++      4MB, 8MB, 16MB, 32MB, 64MB, 128MB, 256MB, 512MB, 1GB or 2GB in size. The
++      memory should be marked as pre-fetchable.
++
++  interrupts:
++    description: Bus Error IRQ
++    maxItems: 1
++
++  ranges:
++    description:
++      The non-prefetchable and prefetchable memory windows must each be exactly
++      256MB (0x10000000) in size. The prefetchable memory window must be
++      immediately adjacent to the non-prefetchable memory window.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - dma-ranges
++  - "#interrupt-cells"
++  - interrupt-map
++  - interrupt-map-mask
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    pci@62000000 {
++        compatible = "arm,integrator-ap-pci", "v3,v360epc-pci";
++        #interrupt-cells = <1>;
++        #size-cells = <2>;
++        #address-cells = <3>;
++        reg = <0x62000000 0x10000>, <0x61000000 0x01000000>;
++        device_type = "pci";
++        interrupt-parent = <&pic>;
++        interrupts = <17>; /* Bus error IRQ */
++        clocks = <&pciclk>;
++        ranges = <0x01000000 0 0x00000000 0x60000000 0 0x01000000>,     /* 16 MiB @ LB 60000000 */
++                 <0x02000000 0 0x40000000 0x40000000 0 0x10000000>,     /* 256 MiB @ LB 40000000 1:1 */
++                 <0x42000000 0 0x50000000 0x50000000 0 0x10000000>;     /* 256 MiB @ LB 50000000 1:1 */
++        dma-ranges = <0x02000000 0 0x20000000 0x20000000 0 0x20000000>, /* EBI: 512 MB @ LB 20000000 1:1 */
++                     <0x02000000 0 0x80000000 0x80000000 0 0x40000000>; /* CM alias: 1GB @ LB 80000000 */
++        interrupt-map-mask = <0xf800 0 0 0x7>;
++        interrupt-map =
++            /* IDSEL 9 */
++            <0x4800 0 0 1 &pic 13>, /* INT A on slot 9 is irq 13 */
++            <0x4800 0 0 2 &pic 14>, /* INT B on slot 9 is irq 14 */
++            <0x4800 0 0 3 &pic 15>, /* INT C on slot 9 is irq 15 */
++            <0x4800 0 0 4 &pic 16>, /* INT D on slot 9 is irq 16 */
++            /* IDSEL 10 */
++            <0x5000 0 0 1 &pic 14>, /* INT A on slot 10 is irq 14 */
++            <0x5000 0 0 2 &pic 15>, /* INT B on slot 10 is irq 15 */
++            <0x5000 0 0 3 &pic 16>, /* INT C on slot 10 is irq 16 */
++            <0x5000 0 0 4 &pic 13>, /* INT D on slot 10 is irq 13 */
++            /* IDSEL 11 */
++            <0x5800 0 0 1 &pic 15>, /* INT A on slot 11 is irq 15 */
++            <0x5800 0 0 2 &pic 16>, /* INT B on slot 11 is irq 16 */
++            <0x5800 0 0 3 &pic 13>, /* INT C on slot 11 is irq 13 */
++            <0x5800 0 0 4 &pic 14>, /* INT D on slot 11 is irq 14 */
++            /* IDSEL 12 */
++            <0x6000 0 0 1 &pic 16>, /* INT A on slot 12 is irq 16 */
++            <0x6000 0 0 2 &pic 13>, /* INT B on slot 12 is irq 13 */
++            <0x6000 0 0 3 &pic 14>, /* INT C on slot 12 is irq 14 */
++            <0x6000 0 0 4 &pic 15>; /* INT D on slot 12 is irq 15 */
++    };
++...
+diff --git a/Documentation/devicetree/bindings/pci/v3-v360epc-pci.txt b/Documentation/devicetree/bindings/pci/v3-v360epc-pci.txt
+deleted file mode 100644
+index 11063293f761..000000000000
+--- a/Documentation/devicetree/bindings/pci/v3-v360epc-pci.txt
++++ /dev/null
+@@ -1,76 +0,0 @@
+-V3 Semiconductor V360 EPC PCI bridge
+-
+-This bridge is found in the ARM Integrator/AP (Application Platform)
+-
+-Required properties:
+-- compatible: should be one of:
+-  "v3,v360epc-pci"
+-  "arm,integrator-ap-pci", "v3,v360epc-pci"
+-- reg: should contain two register areas:
+-  first the base address of the V3 host bridge controller, 64KB
+-  second the configuration area register space, 16MB
+-- interrupts: should contain a reference to the V3 error interrupt
+-  as routed on the system.
+-- bus-range: see pci.txt
+-- ranges: this follows the standard PCI bindings in the IEEE Std
+-  1275-1994 (see pci.txt) with the following restriction:
+-  - The non-prefetchable and prefetchable memory windows must
+-    each be exactly 256MB (0x10000000) in size.
+-  - The prefetchable memory window must be immediately adjacent
+-    to the non-prefetcable memory window
+-- dma-ranges: three ranges for the inbound memory region. The ranges must
+-  be aligned to a 1MB boundary, and may be 1MB, 2MB, 4MB, 8MB, 16MB, 32MB,
+-  64MB, 128MB, 256MB, 512MB, 1GB or 2GB in size. The memory should be marked
+-  as pre-fetchable. Two ranges are supported by the hardware.
+-
+-Integrator-specific required properties:
+-- syscon: should contain a link to the syscon device node, since
+-  on the Integrator, some registers in the syscon are required to
+-  operate the V3 host bridge.
+-
+-Example:
+-
+-pci: pciv3@62000000 {
+-	compatible = "arm,integrator-ap-pci", "v3,v360epc-pci";
+-	#interrupt-cells = <1>;
+-	#size-cells = <2>;
+-	#address-cells = <3>;
+-	reg = <0x62000000 0x10000>, <0x61000000 0x01000000>;
+-	interrupt-parent = <&pic>;
+-	interrupts = <17>; /* Bus error IRQ */
+-	clocks = <&pciclk>;
+-	bus-range = <0x00 0xff>;
+-	ranges = 0x01000000 0 0x00000000 /* I/O space @00000000 */
+-		0x60000000 0 0x01000000 /* 16 MiB @ LB 60000000 */
+-		0x02000000 0 0x40000000 /* non-prefectable memory @40000000 */
+-		0x40000000 0 0x10000000 /* 256 MiB @ LB 40000000 1:1 */
+-		0x42000000 0 0x50000000 /* prefetchable memory @50000000 */
+-		0x50000000 0 0x10000000>; /* 256 MiB @ LB 50000000 1:1 */
+-	dma-ranges = <0x02000000 0 0x20000000 /* EBI memory space */
+-		0x20000000 0 0x20000000 /* 512 MB @ LB 20000000 1:1 */
+-		0x02000000 0 0x80000000 /* Core module alias memory */
+-		0x80000000 0 0x40000000>; /* 1GB @ LB 80000000 */
+-	interrupt-map-mask = <0xf800 0 0 0x7>;
+-	interrupt-map = <
+-	/* IDSEL 9 */
+-	0x4800 0 0 1 &pic 13 /* INT A on slot 9 is irq 13 */
+-	0x4800 0 0 2 &pic 14 /* INT B on slot 9 is irq 14 */
+-	0x4800 0 0 3 &pic 15 /* INT C on slot 9 is irq 15 */
+-	0x4800 0 0 4 &pic 16 /* INT D on slot 9 is irq 16 */
+-	/* IDSEL 10 */
+-	0x5000 0 0 1 &pic 14 /* INT A on slot 10 is irq 14 */
+-	0x5000 0 0 2 &pic 15 /* INT B on slot 10 is irq 15 */
+-	0x5000 0 0 3 &pic 16 /* INT C on slot 10 is irq 16 */
+-	0x5000 0 0 4 &pic 13 /* INT D on slot 10 is irq 13 */
+-	/* IDSEL 11 */
+-	0x5800 0 0 1 &pic 15 /* INT A on slot 11 is irq 15 */
+-	0x5800 0 0 2 &pic 16 /* INT B on slot 11 is irq 16 */
+-	0x5800 0 0 3 &pic 13 /* INT C on slot 11 is irq 13 */
+-	0x5800 0 0 4 &pic 14 /* INT D on slot 11 is irq 14 */
+-	/* IDSEL 12 */
+-	0x6000 0 0 1 &pic 16 /* INT A on slot 12 is irq 16 */
+-	0x6000 0 0 2 &pic 13 /* INT B on slot 12 is irq 13 */
+-	0x6000 0 0 3 &pic 14 /* INT C on slot 12 is irq 14 */
+-	0x6000 0 0 4 &pic 15 /* INT D on slot 12 is irq 15 */
+-	>;
+-};
+-- 
+2.47.2
 
-But we aren't doing this all at once, because repair code is among the
-most fiddly and least well tested: we're steadily adding error paths to
-the whitelist for automatic repair as they come up.
-
-So if you ever run into something where a manual fsck is required, do
-drop me a note and include the output of 'bcachefs show-super -f errors'
-- that'll tell me what to add to the whitelist.
-
-The following changes since commit b4432656b36e5cc1d50a1f2dc15357543add530e:
-
-  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
-
-are available in the Git repository at:
-
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-01
-
-for you to fetch changes up to 6846100b00d97d3d6f05766ae86a0d821d849e78:
-
-  bcachefs: Remove incorrect __counted_by annotation (2025-05-01 16:38:58 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.15-rc5
-
-Lots of assorted small fixes...
-
-- Some repair path fixes, a fix for -ENOMEM when reconstructing lots of
-  alloc info on large filesystems, upgrade for ancient 0.14 filesystems,
-  etc.
-
-- Various assert tweaks; assert -> ERO, ERO -> log the error in the
-  superblock and continue
-
-- casefolding now uses d_ops like on other casefolding filesystems
-
-- fix device label create on device add, fix bucket array resize on
-  filesystem resize
-
-- fix xattrs with FORTIFY_SOURCE builds with gcc-15/clang
-
-----------------------------------------------------------------
-Alan Huang (1):
-      bcachefs: Remove incorrect __counted_by annotation
-
-Kent Overstreet (21):
-      bcachefs: Fix losing return code in next_fiemap_extent()
-      bcachefs: Use generic_set_sb_d_ops for standard casefolding d_ops
-      bcachefs: Emit unicode version message on startup
-      bcachefs: Add missing utf8_unload()
-      bcachefs: Run BCH_RECOVERY_PASS_reconstruct_snapshots on missing subvol -> snapshot
-      bcachefs: Add upgrade table entry from 0.14
-      bcachefs: fix bch2_dev_buckets_resize()
-      bcachefs: Improve bch2_dev_bucket_missing()
-      bcachefs: Don't generate alloc updates to invalid buckets
-      bcachefs: btree_node_data_missing is now autofix
-      bcachefs: btree_root_unreadable_and_scan_found_nothing autofix for non data btrees
-      bcachefs: More informative error message when shutting down due to error
-      bcachefs: Use bch2_kvmalloc() for journal keys array
-      bcachefs: Topology error after insert is now an ERO
-      bcachefs: improve missing journal write device error message
-      bcachefs: readdir fixes
-      bcachefs: Kill ERO in __bch2_i_sectors_acct()
-      bcachefs: check for inode.bi_sectors underflow
-      bcachefs: Kill ERO for i_blocks check in truncate
-      bcachefs: Fix __bch2_dev_group_set()
-      bcachefs: add missing sched_annotate_sleep()
-
- fs/bcachefs/btree_gc.c              | 27 ++++++++++++++++++--
- fs/bcachefs/btree_journal_iter.c    |  2 +-
- fs/bcachefs/btree_update_interior.c | 49 ++++++++++++++++++++++++-------------
- fs/bcachefs/buckets.c               | 15 ++++++++----
- fs/bcachefs/dirent.c                |  4 +--
- fs/bcachefs/disk_groups.c           | 25 +++++++++----------
- fs/bcachefs/ec.c                    |  4 +--
- fs/bcachefs/error.c                 |  4 ++-
- fs/bcachefs/fs-io.c                 | 44 ++++++++++++++++++++++++++-------
- fs/bcachefs/fs.c                    | 15 ++++++++----
- fs/bcachefs/io_write.c              | 21 ++++++++++++++++
- fs/bcachefs/journal_io.c            |  2 +-
- fs/bcachefs/namei.c                 |  3 +++
- fs/bcachefs/sb-downgrade.c          |  4 +++
- fs/bcachefs/sb-errors_format.h      | 13 +++++++---
- fs/bcachefs/sb-members.c            |  6 +++--
- fs/bcachefs/sb-members.h            | 13 ++++++----
- fs/bcachefs/subvolume.c             |  5 ++--
- fs/bcachefs/super.c                 | 46 ++++++++++++++++++++--------------
- fs/bcachefs/xattr_format.h          |  8 +++++-
- 20 files changed, 219 insertions(+), 91 deletions(-)
 
