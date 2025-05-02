@@ -1,127 +1,104 @@
-Return-Path: <linux-kernel+bounces-630539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F078DAA7B97
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:52:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F30AA7BA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 768B69A4256
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:51:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35149E1C9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A27215798;
-	Fri,  2 May 2025 21:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B2D223DC8;
+	Fri,  2 May 2025 21:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kIbEv27K"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="en7quOWS"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C0920F079
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 21:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2411321770B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 21:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746222709; cv=none; b=mwdcil8PHvsm4ARP3q4C6ac0Twv3tJdkyXxsxhMMB1jFSBV7h1Hk4kON70w3xARgaVYMuAM2tvCuymLW7ttH06dcYGhTkpgNbqer73Y7KBk8xKNgKBV3MpEX1ic4cB8xIOUFlvwkpXE5+i3PJIvnYpVLnPdPbPS1/6djRheNaCo=
+	t=1746222723; cv=none; b=NwE/WYBzVsWfEwI61IhZibWuAGPiF1ctPiMfwwRtxTkxBZWoaYDyHbq+F4zfwc+xMOuv4giand7tQyr5M527Jd2vR0VyWcFux//SWTJl7Y/9SXpfFXx1xJXnpTuJFtmk6OVQrljiInU4yPaMq8BcKF3Hp44Z8P2cRpfzgg5FmT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746222709; c=relaxed/simple;
-	bh=cxIvd5OE8zvjpL5lkuZvXfEwGqMAz1/ZxLm947jF3lc=;
+	s=arc-20240116; t=1746222723; c=relaxed/simple;
+	bh=mTw9meZwxQX27VgMX/IkJeu9X1ncOgS+hPnL6MC6iI4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hUxC/TIX5N2mSQRxI4DWdFIpTTSlUeUIIOtRqI+dhdtAsYm1L42jWR0g8E4XRJRFZLtSEfhsEv4FzEPbhqyHLHTyCo+qyQWbJsflIARSCtaC7i/juSe0ZZ3tJVtLDUweZtcxKxKlFW3DJUwbzgRoCxMjaPQl/IAPpLCh0efGA/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kIbEv27K; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=e6Ng96iv8H3yY7LflrNZYYHopSSNcKqj/uM6RW4SuMCgnpHYgwhXMoX7EjTezbSu+AYGKSLPcg/1EccAWd68hoyOKCpP8sxpiEe2GM8ECeRdPrbu3SUq2CB5LW0aM7GceI5pcYv4deww9vRBN6GVF066NlKj8x/4yTdO2E9HBYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=en7quOWS; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30a39fa0765so3661703a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 14:51:47 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff78dd28ecso2714502a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 14:52:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746222707; x=1746827507; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1746222721; x=1746827521; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lqA+OjYWd50BoxBzqsGWFpZpdamv6joRxqjx+f01kFA=;
-        b=kIbEv27KPO83ZtzzUlQkxrD+Lub46YSnTqTBxtvDN5jarttWkxJqxsPX4DveedZK8Z
-         rn1Zmz29fxWgzevQ/v+YHbhFlxNpAPCdQl8Dvq06T1MdaPerDd9+MGH0Qg+DCpzmK0Q9
-         U8UZM4n3O4K/sKWfgONXWgGqk/u8BgSAc/A0U2f/1HOupUhIYaL4tJy+lHZTjIFQz0Zg
-         xcm8UxA/laS/djBPkI0dVTGeB9H/rp4ZZ0nOJ3sFmHupPTkajmFjlIY1GR0pxYC+3eOt
-         MlW3t+0SNVDsZnbEPwboXL2VAa9qWPLUzuR4+9NsfVLo9Vj2wPr4vx+ekYgRNYiewQ3t
-         J3xw==
+        bh=SUERDQgic6jYhSnng0bbK0BO6GHErZXOAhSsWHpvBSw=;
+        b=en7quOWSoB6f9z+BacOtdUOzedlOHnpSL5UMr/oFWktSdme9OutoypOoEyHn4bTH/x
+         3uXqS2kuCOnkr9zI0StLAJJ/uN35ljWwZKUWh54wCPKAuvl8ch/5PP6ZdmynzP6fHced
+         zOBDsN7CWJxLLHKCWVvCsL2DA7PbwKIRgizLfnvgrYaqJY5UI5G3lN6g43QYL2S/d7dP
+         FbCXif0634xYKdGSp5at092xKiGxrOFO3inKoMmOeK9WCTSQc0EjPhqN3+QAkSJseSYV
+         Lj4RDV2+R7SxUe0YHVbxsgGYumt4NJwQP9DdZfjnDnjkcPYAtL1NCFfrx31Ma+IdKc4y
+         cdeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746222707; x=1746827507;
+        d=1e100.net; s=20230601; t=1746222721; x=1746827521;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lqA+OjYWd50BoxBzqsGWFpZpdamv6joRxqjx+f01kFA=;
-        b=P5VXB+9lNqOwBs3n9j6QHcoQSAVN8qkHRl4W2p+58n17LODtt1Jg0W4W+vqZpwcPeL
-         lj0BrMV7pkhBwyaOygpt/GoQxuijdfQeU2l6moaJvjBKlfjLoi8EtOPvFORdc5kaWbiU
-         55p84UH1tEVq1yLcoc7ZgURQRrg1rQMA71uQbJKd4vAO/mTBEH083ku1EToZ1zn+Xx8d
-         K+iSV1b38y7M6DDfVlgC0F1AQa4vuuJu7++wmYaVsCVOHhoG4d6bkAweKNHQmk++7uwO
-         EoORt6ef0RbCo60QLnmNJ1RH2l05SyIkKYXhCj53h6/9CWJUocBzP7g8UaAEYYBviyJr
-         PqFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpt70phE3ZHiW79wvuVKEpcjZor27aCEDjcW8VhvYalPCbhDBotJlAh71J+SJ5D+0qNqcF27aoXZ8pF8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBr6WVpALFIYXImmR3A/a1UBliFiWwt5crYsZGk2uC+yFoSjpH
-	BAYKbI1IJqOkVIENOX3DnMS9rO12xcF4gxROuas4cJBxNDcULPTJ6Kl5IxCQznVhw6CohDPLnQC
-	hMA==
-X-Google-Smtp-Source: AGHT+IF7GVKpEPpszl3Lnl1tx1yBLORLBZNrTCEOJ/q8W/bFUFsYqv0Z3klOw9bVvvU4wrEO3W0JSS7J6lc=
-X-Received: from pjbsc16.prod.google.com ([2002:a17:90b:5110:b0:2ff:5df6:7e03])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e183:b0:2ff:6ac2:c5a5
- with SMTP id 98e67ed59e1d1-30a5aeb6e06mr1083512a91.26.1746222707171; Fri, 02
- May 2025 14:51:47 -0700 (PDT)
-Date: Fri,  2 May 2025 14:50:57 -0700
-In-Reply-To: <20250305230000.231025-1-prsampat@amd.com>
+        bh=SUERDQgic6jYhSnng0bbK0BO6GHErZXOAhSsWHpvBSw=;
+        b=DeKPudiu8v2cGekRkrKV/OvlQVvKvMGLjwMVSMNr/tzk+oGzH/an9DK2X6qoKEesC6
+         7ELHABERQGnMnXoQFME5EMbeiVlwghPAN+E1/b+/CvTy5+rV1st0mRMf83KnlRyj/jlh
+         YcBMwsmVvhd2ugkrpaZ00CB6r+94/y1Ru37R4fobk1k9toG6hFEZpUQ1SUFx+oWopC3b
+         IhVT2Fy5EB9aVIlm2LH4uB6rwlJFDQC3d3OYmhrTDDFV5MIg4b1HkyMgJrixy2SbvSSm
+         65BEFWDRTxcfnKGME8ViasqmrrXTiqkf2UcPRa/LKzA+vDf3memXcO7inVbfBwWzZvF8
+         hBdA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0m5aFCMqmEUOq/V65QpKbQP6mI/rVy/E84F3nGDwd62YWcgGE1Ev2jToG5ZHC1093JfS1ZYH61tQCGAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcIVW5DMKGOM6qfYhXFIukh7+73JJWIEYH5lwNAgkSlmaKJldb
+	0I8hCyX6sn05xZx4noLL0VzfSKlUb5irbG9cM8C2f6PRG69i4h3Tz06V8RR9qJsU3r1QWUiKIFI
+	jYg==
+X-Google-Smtp-Source: AGHT+IEwgH5mk6MVRWNhPp+TSJ2BuOkDoyHYKUScxrQW1rPrL85Vc8OC6M7uCh2JJCo7Vxa6BdY8Sj9gbmA=
+X-Received: from pjbpt18.prod.google.com ([2002:a17:90b:3d12:b0:2fc:11a0:c549])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2747:b0:2f2:a664:df20
+ with SMTP id 98e67ed59e1d1-30a4e579ef4mr7443371a91.7.1746222721474; Fri, 02
+ May 2025 14:52:01 -0700 (PDT)
+Date: Fri,  2 May 2025 14:51:01 -0700
+In-Reply-To: <20250227222411.3490595-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250305230000.231025-1-prsampat@amd.com>
+References: <20250227222411.3490595-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
-Message-ID: <174622216534.881262.8086472919667553138.b4-ty@google.com>
-Subject: Re: [PATCH v8 00/10] Basic SEV-SNP Selftests
+Message-ID: <174622246244.883023.7921101160630129073.b4-ty@google.com>
+Subject: Re: [PATCH v3 0/6] KVM: SVM: Fix DEBUGCTL bugs
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	"Pratik R. Sampat" <prsampat@amd.com>
-Cc: pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, shuah@kernel.org, 
-	pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com, pankaj.gupta@amd.com, 
-	michael.roth@amd.com, sraithal@amd.com
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Xiaoyao Li <xiaoyao.li@intel.com>, rangemachine@gmail.com, 
+	whanos@sergal.fun
 Content-Type: text/plain; charset="utf-8"
 
-On Wed, 05 Mar 2025 16:59:50 -0600, Pratik R. Sampat wrote:
-> This patch series extends the sev_init2 and the sev_smoke test to
-> exercise the SEV-SNP VM launch workflow.
+On Thu, 27 Feb 2025 14:24:05 -0800, Sean Christopherson wrote:
+> Fix a long-lurking bug in SVM where KVM runs the guest with the host's
+> DEBUGCTL if LBR virtualization is disabled.  AMD CPUs rather stupidly
+> context switch DEBUGCTL if and only if LBR virtualization is enabled (not
+> just supported, but fully enabled).
 > 
-> Primarily, it introduces the architectural defines, its support in the
-> SEV library and extends the tests to interact with the SEV-SNP ioctl()
-> wrappers.
+> The bug has gone unnoticed because until recently, the only bits that
+> KVM would leave set were things like BTF, which are guest visible but
+> won't cause functional problems unless guest software is being especially
+> particular about #DBs.
 > 
 > [...]
 
-Applied 2-9 to kvm-x86 selftests.  AIUI, the KVM side of things should already
-be fixed.  If KVM isn't fixed, I want to take that discussion/patch to a
-separate thread.
+Applied patch 6 to kvm-x86 svm (1-5 already went into 6.15).
 
-I made minor changes along the way (some details in the commits' []), please
-holler if you disagree with the end result.
-
-[01/10] KVM: SEV: Disable SEV-SNP support on initialization failure
-        (no commit info)
-[02/10] KVM: selftests: SEV-SNP test for KVM_SEV_INIT2
-        https://github.com/kvm-x86/linux/commit/68ed692e3954
-[03/10] KVM: selftests: Add vmgexit helper
-        https://github.com/kvm-x86/linux/commit/c4e1a848d721
-[04/10] KVM: selftests: Add SMT control state helper
-        https://github.com/kvm-x86/linux/commit/acf064345018
-[05/10] KVM: selftests: Replace assert() with TEST_ASSERT_EQ()
-        https://github.com/kvm-x86/linux/commit/f694f30e81c4
-[06/10] KVM: selftests: Introduce SEV VM type check
-        https://github.com/kvm-x86/linux/commit/4a4e1e8e92eb
-[07/10] KVM: selftests: Add library support for interacting with SNP
-        https://github.com/kvm-x86/linux/commit/3bf3e0a52123
-[08/10] KVM: selftests: Force GUEST_MEMFD flag for SNP VM type
-        https://github.com/kvm-x86/linux/commit/b73a30cd9caa
-[09/10] KVM: selftests: Abstractions for SEV to decouple policy from type
-        https://github.com/kvm-x86/linux/commit/a5d55f783fb7
-[10/10] KVM: selftests: Add a basic SEV-SNP smoke test
-        https://github.com/kvm-x86/linux/commit/ada014f5fc67
+[6/6] KVM: SVM: Treat DEBUGCTL[5:2] as reserved
+      https://github.com/kvm-x86/linux/commit/5ecdb48dd918
 
 --
 https://github.com/kvm-x86/linux/tree/next
