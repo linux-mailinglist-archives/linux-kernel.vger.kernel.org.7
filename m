@@ -1,104 +1,90 @@
-Return-Path: <linux-kernel+bounces-630020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72989AA7490
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:12:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C77AA74DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB2DA17F1DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:12:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AF1462C9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B087E256C65;
-	Fri,  2 May 2025 14:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830C9256C66;
+	Fri,  2 May 2025 14:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZBVRzCkz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kp08Dnjx"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CBB2566D4;
-	Fri,  2 May 2025 14:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6E2F9E6;
+	Fri,  2 May 2025 14:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746195110; cv=none; b=ujz8NX7CpjHrzUNUb348P0zHaD1BoVnpcn/6Ak5bEHf8pg0ygZs3MGe9XgmvGRrhEIheYVMPu0GM2sGiDTcCxtcayehC+VgD1ufN8qz5nBdj1zSJLGdlIQeHbNbNcRHLKT/sRZEgaTQ55m4mTXOa07sZiDGUw8crCS0vnnlLLp4=
+	t=1746195908; cv=none; b=jT+gHsYXGEu0ZLYkvqlnDyGFWFBg82AoB4xglAuAYtY56eKS2Np9rZEg9dq3ScdXSac6kjCaneFrF0Y8ILzrP8lpStXEDTh+5f0tE//JX1u/HCDxHT6iauT0LDrYgfiUycsZsK3IS8dV/JWRp1TIAOlG8KKngokOUI5l5ms5Yck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746195110; c=relaxed/simple;
-	bh=YX5K9W8SlvAErcT4KDiQHr82LNYtHxZsOutAoTNilCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCM3HNJ1cQFdh/8OOHue3s6opImpW4xkxTnBgfas2l2Ym2a/StZNDMfS3wUloFRLykTOneurf2guU+RzpXTtTf53Ite4/GkPtPIfGqqcUYH/OPp6YAFrIKsJRxqQf+Mitl9XwCdgDRyYXXZ6PyDip9bpHks+6r9bAOPiYekEKlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZBVRzCkz; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746195109; x=1777731109;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YX5K9W8SlvAErcT4KDiQHr82LNYtHxZsOutAoTNilCI=;
-  b=ZBVRzCkzXlDK/XxjSxBtpC2Sq9ganRW5vVhiCMva1b2JE2tDUiu3bD+A
-   Tr7gqkLsONFvJJbzxM5EWrtJEWLN3ZDrcD7HhjAonrXrFXleRxCvrTjeH
-   j/Q5S5IvDX0LTiT+kNv0zHFHcoLjs9T4jKBexwGO7llwI0mVJtmyIeaeV
-   bmZbrFARFOQsQ7IF7pWhaYcIryVEtYIJmCqFcl49bAUy+oJKpP0k//beL
-   Gah2Q/wyVHPA+JXDMh0kTBTnznTxRgM6GymKUC4LcbbYGVKyEM+v+dIZg
-   e+qZudpNmjKPyk2XMyNl41IRVI4ZGYnfxmvIxQlKOVzAc7ol30YbUGIVe
-   g==;
-X-CSE-ConnectionGUID: U1OJjRSNTcSN5mMlzNDSxQ==
-X-CSE-MsgGUID: DfFvpW4kSYyN+QiZfznVLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="48019979"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="48019979"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:11:48 -0700
-X-CSE-ConnectionGUID: O2cAMrm+RmStsBngfky0Cg==
-X-CSE-MsgGUID: S5bc+TXhSame8+YbhwCHSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="135608569"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:11:46 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uAr79-00000002Did-0njo;
-	Fri, 02 May 2025 17:11:43 +0300
-Date: Fri, 2 May 2025 17:11:42 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH v1 1/1] media: raspberrypi: rp1-cfe: Remove (explicitly)
- unused header
-Message-ID: <aBTSnv5buH7AZp1X@smile.fi.intel.com>
-References: <20250331072136.3987653-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1746195908; c=relaxed/simple;
+	bh=WvF+xWp2xlZ2zs8LakLzsgpePI0MDRjpdxZLuzR9pzs=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=WaaOE95t6vQFxOSTVlV7oArItr8PViy+GBmYX4vJjww6iiU+W56ake1y9pbsFCxWFHTrmsgAg7KhUMsNASVPoe5xKqhacTJ89jotuKcsdauq6K9Dzf65+PP7ry5MdWnNdxgCJ1ilanidLBfYyOa9azIEDrluOzTgVSc8oRzoPkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kp08Dnjx; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Subject:Cc:To:From:Date:Message-ID:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=WvF+xWp2xlZ2zs8LakLzsgpePI0MDRjpdxZLuzR9pzs=; b=kp08DnjxaLIz8dw101vclixb/1
+	njEFfQLsoASr9dvC2srab8e+AyvpeEdS0vgwtyo+hyxZNoy18YA2R+1ZEkSQjltUc9wl/JPnFdwYJ
+	XHwsWLDsp1G7FLaTQXjToV+vufgxxLWwJjoLXI2UhCeJixLoAh6rKcLRjxCpIC8wXbG/XXEJa5hVK
+	/iGk9oE0dgVgHQLBxauz1mlgFb2YmGQoSHnWFeaL72RZPvBSQJKfmrejbkoe09Tidqc6XT257Ow7O
+	pWOfgG/9Usp7NX92hLj+dyAapRHqqyn51SKYYysLTynD3l1oE12ZkRDUcGgqTx2Rzz2dSKuP9jEdZ
+	fak0AnFQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uArK1-0000000EzDc-12xj;
+	Fri, 02 May 2025 14:25:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id E0F7F30057C; Fri,  2 May 2025 16:24:59 +0200 (CEST)
+Message-ID: <20250502141204.500293812@infradead.org>
+User-Agent: quilt/0.66
+Date: Fri, 02 May 2025 16:12:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: mcgrof@kernel.org
+Cc: x86@kernel.org,
+ hpa@zytor.com,
+ petr.pavlu@suse.com,
+ samitolvanen@google.com,
+ da.gomez@samsung.com,
+ masahiroy@kernel.org,
+ nathan@kernel.org,
+ nicolas@fjasle.eu,
+ linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org,
+ linux-kbuild@vger.kernel.org,
+ hch@infradead.org,
+ gregkh@linuxfoundation.org,
+ roypat@amazon.co.uk
+Subject: [PATCH v3 0/5] module: Strict per-modname namespaces
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250331072136.3987653-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Mar 31, 2025 at 10:21:36AM +0300, Andy Shevchenko wrote:
-> The fwnode.h is not supposed to be used by the drivers as it
-> has the definitions for the core parts for different device
-> property provider implementations. Drop it.
-> 
-> Note, that fwnode API for drivers is provided in property.h
-> which is included here.
+Hi!
 
-Any comments? Can it be applied?
+Implement means for exports to be available to an explicit list of named
+modules. By explicitly limiting the usage of certain exports, the abuse
+potential/risk is greatly reduced.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Changes since v2:
 
+ - switch to "module:" prefix (Masahiro)
+ - removed some patch noise (Masahiro)
+ - strstarts() and strlen() usage for prefixes (Masahiro)
+ - simpler ___EXPORT_SYMBOL() changes (Masahiro)
+
+Not making using of glob_match() / fnmatch(); this would result in more
+complicated code for very little gain.
 
 
