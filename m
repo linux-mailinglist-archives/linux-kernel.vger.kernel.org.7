@@ -1,244 +1,292 @@
-Return-Path: <linux-kernel+bounces-629258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF7CAA69F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:57:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6853FAA69E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320CA987E8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 04:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1121BA5DE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 04:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72D71AA7BF;
-	Fri,  2 May 2025 04:57:28 +0000 (UTC)
-Received: from invmail3.skhynix.com (exvmail3.hynix.com [166.125.252.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB341A3166
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 04:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FE41A3166;
+	Fri,  2 May 2025 04:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lD93qQm0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F091A3156
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 04:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746161848; cv=none; b=de/KB4CbqoG46xP0/N/+Z7WW5uFXKTEImrhBFSlgdCp/8XWmgNADPvnDHXnwdg5tzFkfherp8sumXtUyYqQuKhiQ8/m1blGWWzse+UPOZVQWDfkljiI9Xsqvn2wGnC/LhUpZkk9H6cHcjRu8QHFQntCij20OpQg0xW+lLdKYGB8=
+	t=1746160933; cv=none; b=hU8xNmG4RCQ9qtaj7Ff2qqnqxF8HEyye5G++8sOAGUksDBw76TOfM4qK7Zkb1iBw79fu4X5bN69aNe/i3LwQCKccP2FGKf8kRuFGxwjrH219En/kb5QIdLO2PkBQeQJBxoTyTbF8GnDuFlkoMzz1ZmiCC6/iAgRbbNR3mXeDkQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746161848; c=relaxed/simple;
-	bh=t2mPsg3cNM5tOVeHDbDyZCHdhU9Z6i7g6+yIeQsHgHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=udVpO4KbtxSWi//uk64Lsqdd3elXbgu2+CrmjztzzBI4U92v6Bz/PkkxN7dweLaWlXcCzgYvG5dO+/pOgj0CMi3eHVZhjYlzJWVNCOYF57o7qggKk8kyjry1ndDh5dfVNwkR8nJos9sqz1//WWBb6gQPqfQn85GEuECQavlfM+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc59-057ff7000000aab6-48-68144d21cb0b
-From: "yohan.joung" <yohan.joung@sk.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org,
-	daehojeong@google.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	pilhyun.kim@sk.com,
-	"yohan.joung" <yohan.joung@sk.com>
-Subject: [PATCH v2 2/2] f2fs: add ckpt_valid_blocks to the section entry
-Date: Fri,  2 May 2025 13:41:45 +0900
-Message-ID: <20250502044146.552-2-yohan.joung@sk.com>
-X-Mailer: git-send-email 2.49.0.windows.1
-In-Reply-To: <20250502044146.552-1-yohan.joung@sk.com>
-References: <20250502044146.552-1-yohan.joung@sk.com>
+	s=arc-20240116; t=1746160933; c=relaxed/simple;
+	bh=AS5GCwcO4Mg8AL75Z9J2FHBKkN5+JSl/LX+VBO7oJqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Krb6jFlUmBlMGdijcO9rCSjYTjp5levExNvqvgv9aVApKVhjwr8ejFponGIo/CMSV3jG0SRXGUin4K1qrbkKjPjx4/sWM4ZimwXY4oIzjpyf12PeiOE0RJUKs+I6W4laccyWiBxtCGEYa2nw3SLHC0r4UW4rBr88vlAJVtIXeU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lD93qQm0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5421OAjj018172
+	for <linux-kernel@vger.kernel.org>; Fri, 2 May 2025 04:42:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7j5UxYN6C9Dd6qHXGE97a7YLEYkg4By51iUOqA+ylAQ=; b=lD93qQm0lfGtQu2b
+	Qol+d3LR4qo4+nRMOn5UzV0/SgDWNud83Pb+Tb1RKqYAJjqowwungs3q4s2MUfb6
+	7PXzNa05DwwAk2Rj1KaQsViGT+LbFMTslw56wXt5S4ADZssd0iVNijqc72MCH2l6
+	30Ndlv6aAvcHhBga9oSw6ybxw3mAwHQpEIpS1CiwVdJO29HkpbWoihIBbqjIwyKC
+	UBZ30zVcfnRHVBUtSNVVIBEI6fDQvOe3F6REV3Q6NwDIuRC03LCduxDPZfxwG8Cu
+	n1Int1HTfaIThrO4uv7x/l7f9t2By+WhIdTJpAy3ufJ9pyI+4lyiGiJNNFzybgLG
+	wm+Kow==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u3y5xs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 04:42:10 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-736c1ea954fso979618b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 21:42:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746160929; x=1746765729;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7j5UxYN6C9Dd6qHXGE97a7YLEYkg4By51iUOqA+ylAQ=;
+        b=sfvywepJmRwDqyiipmtEtApC7Rps1JWFrSwHlG1N41BTU+i/XfP+LZbTHAjvo/91IZ
+         jKRcpkqRE6HyBN5YqaKC+PdfMXNIku3rfqBKADKz5E2BTzHmYv0NaM65eHypsxzBp3PI
+         GgwgjBNvrsrgMtVaQ6WjHNATgy0iTXWg2h9T87sILDbzFukV6AuojG9oROg0kHe1jhdf
+         tfgLbsQSS+EKeznWmM8nqP7IxOqWYSss8ANHf74Ssy/8y8gDKiAG4MtkaN+WJJ6zJOof
+         r7YIxTKAvAM2BpP7oP2P9BEQN5M+MhpXHgCO8jH0dS8FIWnz9cNAlcW7IUYrjrXtpDhH
+         i5rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnEkZvZMyC633shLGwU4qaTo5VhEjKmVMPFIROLqUcVvlNV7vHFik6WOyzBr6Kaor+3f6/jdxsEdfBe98=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3s+54QT/BSD3TRDuq/isEmmQteR1FPx+NOh95ratlkMjc++9f
+	zKkoRObXCB4l07rSdpdNR+HHszsNX8Las7aKWGoDEeYNOrQjyUV3LTpPjIT+YBqJ9y3CFswnbwY
+	7gpxhAGk6fcfpOhDnIDWyjPVM5r6dHEe0/gt08q/UqFD+8Q4t/ReFrdxulHD5K/8=
+X-Gm-Gg: ASbGncubOUlud7E81XDT+cxaulm+1GFq01NTqpatfkcS1hY9EzKu/aiHNN8UVG+OwMQ
+	c+HaSdrcFemMP0ofHrZRgcQOqTRgPXdBGdjPyG42FO5CLq0fVKYz82owlJjAlm3lg1ywHnu6WwM
+	xOCKnsMjGXKYWpgIlgFfEGecccYOZYWjDoVkghJUXApw9CNk224VqIUqcTirtbqTGNGFjEJLmbq
+	C+nl9lwaU1KD98EtlrtemE35X4Ow/q4wN5/FbXNeBb8/0AJd7vpJARpNDHCEbZ7+sS4cryQsKhR
+	SQIxaTLk5lcZBN4W6YetDF4beSQiM4E3jq50dCO9OoLdzA50A/21
+X-Received: by 2002:a05:6a00:4294:b0:736:6ecd:8e32 with SMTP id d2e1a72fcca58-74058b23ef3mr1866200b3a.21.1746160928682;
+        Thu, 01 May 2025 21:42:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBQrj67WLhBG3Hq96DBg+5Opa1dABnH/Q1s+TspcF/KflEqOJ5Mrv0bnI/pESCH+hoqmXB/g==
+X-Received: by 2002:a05:6a00:4294:b0:736:6ecd:8e32 with SMTP id d2e1a72fcca58-74058b23ef3mr1866183b3a.21.1746160928305;
+        Thu, 01 May 2025 21:42:08 -0700 (PDT)
+Received: from [10.151.37.217] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74059021483sm590790b3a.93.2025.05.01.21.42.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 May 2025 21:42:07 -0700 (PDT)
+Message-ID: <09579b2c-f312-4c8a-b57a-b240204cd733@oss.qualcomm.com>
+Date: Fri, 2 May 2025 10:12:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsXC9ZZnoa6Sr0iGQbe/xempZ5ksprbvZbR4
-	sn4Ws8WlRe4Wl3fNYXNg9ViwqdRj06pONo/dCz4zeXzeJBfAEsVlk5Kak1mWWqRvl8CVceLF
-	dNaC/zoVn/7cYG9gnKLaxcjJISFgIvHq5z9GGPv/wl8sIDabgIbEn95eZhBbRMBJ4v+NdvYu
-	Ri4OZoE2Ron2o02sIAlhAQ+JQw9/gNksAqoSvz79YgOxeQVMJV5cPcIEMVRTYseX80A2Bwen
-	gJlEzws7kLAQUMmfPy/ZIcoFJU7OfAK2l1lAXqJ562xmkF0SAh1sEvs372OBmCMpcXDFDZYJ
-	jPyzkPTMQtKzgJFpFaNIZl5ZbmJmjrFecXZGZV5mhV5yfu4mRmA4Lqv9E7mD8duF4EOMAhyM
-	Sjy8AQXCGUKsiWXFlbmHGCU4mJVEeGMMgEK8KYmVValF+fFFpTmpxYcYpTlYlMR5jb6VpwgJ
-	pCeWpGanphakFsFkmTg4pRoYTWx9dy6xepx7e0VsqIp32pvsNfuLjs5K2jV3720xhj0sd9MO
-	G5SXzjI557Kl//G1f2bGH1IbL/C+auA9sapxv7J5oaFC8cmDf48YPuL1fST3ekKM+Nw37Q7c
-	3T9/5AVKLP//x2LCHX813+UpE6WdHTYsiz+4/3adjurl+EbvtuWzf99WbZ94UImlOCPRUIu5
-	qDgRAGjytjdDAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFLMWRmVeSWpSXmKPExsXCNUNljq6ir0iGwd1Hhhanp55lspjavpfR
-	4sn6WcwWlxa5W1zeNYfNYsLcq0wW77feY3Rg91iwqdRj06pONo/dCz4zeXy77eHxeZNcAGsU
-	l01Kak5mWWqRvl0CV8aJF9NZC/7rVHz6c4O9gXGKahcjJ4eEgInE/4W/WEBsNgENiT+9vcwg
-	toiAk8T/G+3sXYxcHMwCbYwS7UebWEESwgIeEoce/gCzWQRUJX59+sUGYvMKmEq8uHqECWKo
-	psSOL+eBbA4OTgEziZ4XdiBhIaCSP39eskOUC0qcnPkEbC+zgLxE89bZzBMYeWYhSc1CklrA
-	yLSKUSQzryw3MTPHTK84O6MyL7NCLzk/dxMjMMSW1f6ZtIPx22X3Q4wCHIxKPLwBBcIZQqyJ
-	ZcWVuYcYJTiYlUR4YwyAQrwpiZVVqUX58UWlOanFhxilOViUxHm9wlMThATSE0tSs1NTC1KL
-	YLJMHJxSDYyyOZ+/LayT2fOoL/e0je1ylbtlFaW2uZeumnz6x7jS5cK/UxqbV8pKsRbs2dSz
-	XO6dib/pVA/ddK4e37l6v9tuOp6eyygz88O+wKwvSTc1We6bFW7bdJhFb3Hs7Gv3t7gUL9q8
-	fhGHTNKDiuR9Ky8l/RHc49jlx2E7N/CT0+GowD2NyjYKUQFKLMUZiYZazEXFiQAFdf92LQIA
-	AA==
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] watchdog: qcom: add support to read the restart
+ reason from IMEM
+Content-Language: en-US
+To: Bryan O'Donoghue <bod.linux@nxsw.ie>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck
+ <linux@roeck-us.net>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+References: <20250416-wdt_reset_reason-v2-0-c65bba312914@oss.qualcomm.com>
+ <20250416-wdt_reset_reason-v2-5-c65bba312914@oss.qualcomm.com>
+ <ebd4790b-e7aa-45b1-b7d7-9d1b331ee842@nxsw.ie>
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <ebd4790b-e7aa-45b1-b7d7-9d1b331ee842@nxsw.ie>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Bv6dwZX5 c=1 sm=1 tr=0 ts=68144d22 cx=c_pps a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=Amq28VNnWxlBxfWyqssA:9 a=QEXdDO2ut3YA:10
+ a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: sYPSWLeLJuc5Fi0Isa39HAFqQGEKPcVl
+X-Proofpoint-ORIG-GUID: sYPSWLeLJuc5Fi0Isa39HAFqQGEKPcVl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDAzNCBTYWx0ZWRfX6J4hxEwf2BnW MDkW6wBmxyOY8uTqy/gioCQZJLgA7BAdHKKnxQ6ulgAS62Vf2JlT2s5RuRFoTZz8ywVEPIn7Jwf JGz0NxLBsHrma7ls1ydmCo4r6KePLnyI6bN38FpnB3u4dT/RpicreV3NKXgQwVtzPQj7SMIwd1l
+ u3Rexxgi449whI3UrBssTw7pAVyNCP0rqdEzFot0PUcKfdv43rb+wnV0f7MQrgH7q5rlojK+FFl 1mU95RXeV7nKiad9lStGbwxwvWQN4ipf4aqAJNIBm7cxOYT6kBKFXB2UMGV58ZpqGbymjDRu04F oWE05klJdcZYSU43b/0LDd2D0wY3o6aO+0SehmJf3lkKQKvnK9KVYb6dUABPfjrQRBq2i6+R8cB
+ +MOgeNZ0bf6SJTvZiaiJ7xzJRf0bRMAVe6h8KvD9QWyYwLTNNW1/kVsOlsQM7wrOv2CDemuU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-01_06,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505020034
 
-when performing buffered writes in a large section,
-overhead is incurred due to the iteration through
-ckpt_valid_blocks within the section.
-when SEGS_PER_SEC is 128, this overhead accounts for 20% within
-the f2fs_write_single_data_page routine.
-as the size of the section increases, the overhead also grows.
-to handle this problem ckpt_valid_blocks is
-added within the section entries.
 
-Test
-insmod null_blk.ko nr_devices=1 completion_nsec=1  submit_queues=8
-hw_queue_depth=64 max_sectors=512 bs=4096 memory_backed=1
-make_f2fs /dev/block/nullb0
-make_f2fs -s 128 /dev/block/nullb0
-fio --bs=512k --size=1536M --rw=write --name=1
---filename=/mnt/test_dir/seq_write
---ioengine=io_uring --iodepth=64 --end_fsync=1
+On 5/1/2025 5:31 AM, Bryan O'Donoghue wrote:
+> On 16/04/2025 09:29, Kathiravan Thirumoorthy wrote:
+>> When the system boots up after a watchdog reset, the EXPIRED_STATUS bit
+>> in the WDT_STS register is cleared. To identify if the system was restarted
+>> due to WDT expiry, bootloaders update the information in the IMEM region.
+>> Update the driver to read the restart reason from IMEM and populate the
+>> bootstatus accordingly.
+> Which bootloaders ?
+>
+> Do you mean bootrom or one of the subsequent phase bootloaders ?
 
-before
-SEGS_PER_SEC 1
-2556MiB/s
-SEGS_PER_SEC 128
-2145MiB/s
 
-after
-SEGS_PER_SEC 1
-2556MiB/s
-SEGS_PER_SEC 128
-2556MiB/s
+It is updated by the XBL. I shall mention it explicitly.
 
-Signed-off-by: yohan.joung <yohan.joung@sk.com>
----
- fs/f2fs/segment.c | 29 ++++++++++++++++++++++-------
- fs/f2fs/segment.h | 29 ++++++++++++++++++-----------
- 2 files changed, 40 insertions(+), 18 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 671bc5a8fd4a..09b66a755559 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2447,7 +2447,7 @@ static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr,
-  * that the consecutive input blocks belong to the same segment.
-  */
- static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_entry *se,
--				block_t blkaddr, unsigned int offset, int del)
-+				unsigned int segno, block_t blkaddr, unsigned int offset, int del)
- {
- 	bool exist;
- #ifdef CONFIG_F2FS_CHECK_FS
-@@ -2492,15 +2492,18 @@ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_ent
- 				f2fs_test_and_clear_bit(offset + i, se->discard_map))
- 			sbi->discard_blks++;
- 
--		if (!f2fs_test_bit(offset + i, se->ckpt_valid_map))
-+		if (!f2fs_test_bit(offset + i, se->ckpt_valid_map)) {
- 			se->ckpt_valid_blocks -= 1;
-+			if (__is_large_section(sbi))
-+				get_sec_entry(sbi, segno)->ckpt_valid_blocks -= 1;
-+		}
- 	}
- 
- 	return del;
- }
- 
- static int update_sit_entry_for_alloc(struct f2fs_sb_info *sbi, struct seg_entry *se,
--				block_t blkaddr, unsigned int offset, int del)
-+				unsigned int segno, block_t blkaddr, unsigned int offset, int del)
- {
- 	bool exist;
- #ifdef CONFIG_F2FS_CHECK_FS
-@@ -2533,12 +2536,18 @@ static int update_sit_entry_for_alloc(struct f2fs_sb_info *sbi, struct seg_entry
- 	 * or newly invalidated.
- 	 */
- 	if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
--		if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
-+		if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map)) {
- 			se->ckpt_valid_blocks++;
-+			if (__is_large_section(sbi))
-+				get_sec_entry(sbi, segno)->ckpt_valid_blocks++;
-+		}
- 	}
- 
--	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
-+	if (!f2fs_test_bit(offset, se->ckpt_valid_map)) {
- 		se->ckpt_valid_blocks += del;
-+		if (__is_large_section(sbi))
-+			get_sec_entry(sbi, segno)->ckpt_valid_blocks += del;
-+	}
- 
- 	return del;
- }
-@@ -2569,9 +2578,9 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 
- 	/* Update valid block bitmap */
- 	if (del > 0) {
--		del = update_sit_entry_for_alloc(sbi, se, blkaddr, offset, del);
-+		del = update_sit_entry_for_alloc(sbi, se, segno, blkaddr, offset, del);
- 	} else {
--		del = update_sit_entry_for_release(sbi, se, blkaddr, offset, del);
-+		del = update_sit_entry_for_release(sbi, se, segno, blkaddr, offset, del);
- 	}
- 
- 	__mark_sit_entry_dirty(sbi, segno);
-@@ -5029,6 +5038,12 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 	}
- 	up_read(&curseg->journal_rwsem);
- 
-+	/* update ckpt_ckpt_valid_block */
-+	if (__is_large_section(sbi)) {
-+		for (unsigned int segno = 0; segno < MAIN_SEGS(sbi); segno += SEGS_PER_SEC(sbi))
-+			set_ckpt_valid_blocks(sbi, segno);
-+	}
-+
- 	if (err)
- 		return err;
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 345da052f0e1..cabcec5af1ae 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -209,6 +209,7 @@ struct seg_entry {
- 
- struct sec_entry {
- 	unsigned int valid_blocks;	/* # of valid blocks in a section */
-+	unsigned int ckpt_valid_blocks; /* # of valid blocks last cp in a section */
- };
- 
- #define MAX_SKIP_GC_COUNT			16
-@@ -345,20 +346,26 @@ static inline unsigned int get_valid_blocks(struct f2fs_sb_info *sbi,
- static inline unsigned int get_ckpt_valid_blocks(struct f2fs_sb_info *sbi,
- 				unsigned int segno, bool use_section)
- {
--	if (use_section && __is_large_section(sbi)) {
--		unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
--		unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
--		unsigned int blocks = 0;
--		int i;
-+	if (use_section && __is_large_section(sbi))
-+		return get_sec_entry(sbi, segno)->ckpt_valid_blocks;
-+	else
-+		return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
-+}
-+
-+static inline void set_ckpt_valid_blocks(struct f2fs_sb_info *sbi,
-+		unsigned int segno)
-+{
-+	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
-+	unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
-+	unsigned int blocks = 0;
-+	int i;
- 
--		for (i = 0; i < SEGS_PER_SEC(sbi); i++, start_segno++) {
--			struct seg_entry *se = get_seg_entry(sbi, start_segno);
-+	for (i = 0; i < SEGS_PER_SEC(sbi); i++, start_segno++) {
-+		struct seg_entry *se = get_seg_entry(sbi, start_segno);
- 
--			blocks += se->ckpt_valid_blocks;
--		}
--		return blocks;
-+		blocks += se->ckpt_valid_blocks;
- 	}
--	return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
-+	get_sec_entry(sbi, segno)->ckpt_valid_blocks = blocks;
- }
- 
- static inline void seg_info_from_raw_sit(struct seg_entry *se,
--- 
-2.33.0
+>
+> Please be specific about which bootloader populates this data i.e. if I
+> switch my bootloader to u-boot do I loose the added flag ?
+>
+>> For backward compatibility, keep the EXPIRED_STATUS bit check. Add a new
+>> function qcom_wdt_get_restart_reason() to read the restart reason from
+>> IMEM.
+>>
+>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> What I'd really love to see here is an example of reading out the data
+> from sysfs.
+>
+> How do I as a user/consumer of this new functionality parse the new data
+> it provides ?
+>
+> Ideally do this in the commit log and recommend doing it in the cover
+> letter to, as people don't always read both when commenting on patches.
 
+
+Sure, will mention the sysfs path and its output in the commit log and 
+cover letter.
+
+
+>
+>> ---
+>> Changes in v2:
+>> 	- Use the syscon API to access the IMEM region
+>> 	- Handle the error cases returned by qcom_wdt_get_restart_reason
+>> 	- Define device specific data to retrieve the IMEM compatible,
+>> 	  offset and the value for non secure WDT, which allows to
+>> 	  extend the support for other SoCs
+>> ---
+>>    drivers/watchdog/qcom-wdt.c | 47 +++++++++++++++++++++++++++++++++++++++++++--
+>>    1 file changed, 45 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+>> index 006f9c61aa64fd2b4ee9db493aeb54c8fafac818..94ba9ec9907a19854cd45a94f8da17d6e6eb33bc 100644
+>> --- a/drivers/watchdog/qcom-wdt.c
+>> +++ b/drivers/watchdog/qcom-wdt.c
+>> @@ -7,9 +7,11 @@
+>>    #include <linux/interrupt.h>
+>>    #include <linux/io.h>
+>>    #include <linux/kernel.h>
+>> +#include <linux/mfd/syscon.h>
+>>    #include <linux/module.h>
+>>    #include <linux/of.h>
+>>    #include <linux/platform_device.h>
+>> +#include <linux/regmap.h>
+>>    #include <linux/watchdog.h>
+>>
+>>    enum wdt_reg {
+>> @@ -39,6 +41,9 @@ static const u32 reg_offset_data_kpss[] = {
+>>    };
+>>
+>>    struct qcom_wdt_match_data {
+>> +	const char *compatible;
+>> +	unsigned int restart_reason_offset;
+>> +	unsigned int non_secure_wdt_val;
+>>    	const u32 *offset;
+>>    	bool pretimeout;
+>>    	u32 max_tick_count;
+>> @@ -175,6 +180,15 @@ static const struct watchdog_info qcom_wdt_pt_info = {
+>>    	.identity	= KBUILD_MODNAME,
+>>    };
+>>
+>> +static const struct qcom_wdt_match_data match_data_ipq5424 = {
+>> +	.compatible = "qcom,ipq5424-imem",
+>> +	.restart_reason_offset = 0x7b0,
+>> +	.non_secure_wdt_val = 0x5,
+>> +	.offset = reg_offset_data_kpss,
+>> +	.pretimeout = true,
+>> +	.max_tick_count = 0xFFFFFU,
+>> +};
+>> +
+> You should separate the addition of your compatibles and their
+> descriptor tables from generic functional extensions.
+>
+> i.e. add the compat string and the above table in a subsequent patch.
+
+
+Got it. Will split the patch into 2.
+
+
+>
+>>    static const struct qcom_wdt_match_data match_data_apcs_tmr = {
+>>    	.offset = reg_offset_data_apcs_tmr,
+>>    	.pretimeout = false,
+>> @@ -187,6 +201,29 @@ static const struct qcom_wdt_match_data match_data_kpss = {
+>>    	.max_tick_count = 0xFFFFFU,
+>>    };
+>>
+>> +static int  qcom_wdt_get_restart_reason(struct qcom_wdt *wdt,
+>> +					const struct qcom_wdt_match_data *data)
+>> +{
+>> +	struct regmap *imem;
+>> +	unsigned int val;
+>> +	int ret;
+>> +
+>> +	imem = syscon_regmap_lookup_by_compatible(data->compatible);
+>> +	if (IS_ERR(imem))
+>> +		return PTR_ERR(imem);
+>> +
+>> +	ret = regmap_read(imem, data->restart_reason_offset, &val);
+>> +	if (ret) {
+>> +		dev_err(wdt->wdd.parent, "failed to read the restart reason info\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	if (val == data->non_secure_wdt_val)
+>> +		wdt->wdd.bootstatus = WDIOF_CARDRESET;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>    static int qcom_wdt_probe(struct platform_device *pdev)
+>>    {
+>>    	struct device *dev = &pdev->dev;
+>> @@ -267,8 +304,13 @@ static int qcom_wdt_probe(struct platform_device *pdev)
+>>    	wdt->wdd.parent = dev;
+>>    	wdt->layout = data->offset;
+>>
+>> -	if (readl(wdt_addr(wdt, WDT_STS)) & 1)
+>> -		wdt->wdd.bootstatus = WDIOF_CARDRESET;
+>> +	ret = qcom_wdt_get_restart_reason(wdt, data);
+>> +	if (ret == -ENODEV) {
+>> +		if (readl(wdt_addr(wdt, WDT_STS)) & 1)
+>> +			wdt->wdd.bootstatus = WDIOF_CARDRESET;
+>> +	} else if (ret) {
+>> +		return ret;
+>> +	}
+>>
+>>    	/*
+>>    	 * If 'timeout-sec' unspecified in devicetree, assume a 30 second
+>> @@ -322,6 +364,7 @@ static const struct dev_pm_ops qcom_wdt_pm_ops = {
+>>    };
+>>
+>>    static const struct of_device_id qcom_wdt_of_table[] = {
+>> +	{ .compatible = "qcom,apss-wdt-ipq5424", .data = &match_data_ipq5424 },
+>>    	{ .compatible = "qcom,kpss-timer", .data = &match_data_apcs_tmr },
+>>    	{ .compatible = "qcom,scss-timer", .data = &match_data_apcs_tmr },
+>>    	{ .compatible = "qcom,kpss-wdt", .data = &match_data_kpss },
+>>
+>> --
+>> 2.34.1
+>>
+>>
 
