@@ -1,125 +1,216 @@
-Return-Path: <linux-kernel+bounces-630354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12FDAA78CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:45:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8976AA78D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26CAF4E13DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9F61BA6280
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A763C2609EC;
-	Fri,  2 May 2025 17:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE57266EF9;
+	Fri,  2 May 2025 17:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZfT8qh63"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="f2DvQ9MW"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC701B85CA
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 17:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4590B42A87;
+	Fri,  2 May 2025 17:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746207901; cv=none; b=uRK9bdIryWXqkWEe0Wx9EhW7qMzx+X3gu869J26LN/cQZLrcpgq9qdnT9PxdAKyXLSI2uzmlKpl2KH6ygcHEs8aGqUic1nXf82kKAKiquzmjTqO2gruQ06cHxD9IX0Dc3bjWy5DL4xGOq4Junlm3WHLk7RfpY29dXSCqq3xvbfU=
+	t=1746208264; cv=none; b=ii7v7Y/7ZXI+ekUFGY93kSUnH3EtMwHK0BQOYkoG7UMWOuOoPIOCcvrZpsL/AZl5NacXPTpmaRtil87xDT0+2mJrnPm8mv4XZxYEwRlnojwAHJLcyHwCP9vkWhCwi5Xq4ogBYkWq5Ph7yAqCJpGJo/7tt+P35nrWjXVU2SyaI4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746207901; c=relaxed/simple;
-	bh=XmCGPi5E/4vdLYqfzcEUuIa7Pjd6veLPx7s/gT1s0z0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cmw+646gq0inTQPgEjIROQSFil0VtpsrbuBSDpywgHlfhhQt0sFEE0K0Qsc9HYt/E0gRWR6izkMAtYjYRn4K7uGpkFn0IwdB0wpxZDr2detl0ghwD8XncPrTmU2hYcjPMcs17L5muLIzClreRJxQyEqErEeqEEhAWsLRKo/RyVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZfT8qh63; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-227a8cdd241so30424845ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 10:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746207899; x=1746812699; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dY8M+VLKea8pjpC946v5/t8PrnnUb0Gzxs+7tzVnLLg=;
-        b=ZfT8qh63//vQIKv+aV+pTKMNJSSjvLT94HkI9it5Jn5Lrufb7peCm8wUTuJpnfo/ye
-         UthcD5b7RleAhGAsixdB2GixpqQjAB9+HqsNmWbGlezGFqSx22VFJTJiSvyrox/n6Icf
-         K77bNvG8zu4fY+r/AfpLe6xuF9JCrjvc3chodM/LzqN0ACA8W5wOwNb80cchg+M/n/9W
-         BtopYKzjhNzoz/Mjj1rnJQ/MQ5uZZD+DWG+enEdFTzfQhmWwYc69OTs/2/s4v/guugbZ
-         AO7otwmEVRO+NBtCq0408ZJf3H7uzWZHmPE7A2OvDNw3geQtrYk0HefqjR5gx+4izAzk
-         lwLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746207899; x=1746812699;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dY8M+VLKea8pjpC946v5/t8PrnnUb0Gzxs+7tzVnLLg=;
-        b=e1Kes6uZqj4hCyy2ITHnc2XShaSZ8OzP98ADOo/aZk59a4ZEzYjyti0qRMGSOUsqww
-         Mx8LJ5FmGAkxnEfohyE0+0BY3liVBtXImjBsMGSHoNVkm2Huc3tZnBisJ6JlwR9fMIZK
-         pzv6OzVHg3wKlMFHkqT/yDoG904ZImxUnV9zX9wnRVUsr1QTyQUUYd8E+2vmyrtHw9o3
-         E7irup8wQ06OaGW9KvwANfYp8dNL5lAr7xs0Wgyf80v7DwBB+3058QEakUZwEucYK3ho
-         Wo5R5SnNfIbcY6Ogcm6DEt2P3dMab75J7QZIUzwpFIDPuhY5aoRAsxBnrjFNnAkkCwvx
-         rJnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzSCJTVFqmPnM73SCJPPJsbhZ5NejSIMtPK8JcI1lSFvAk2wcX2iPhEn8MnLN9iwYXksLSJveS2nPiAEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz69kG9XVUxMteABNvHrPSu7Q2meaUnU71fTczHQmw+F1ziLqJ+
-	6bxroV9xAXT0J6u/eKG0jubhtBoRXB+yBXDifYq4YezZkvBIZqej8LvQLrxyhg==
-X-Gm-Gg: ASbGncunpVgi+/Dlz22chKhyyrKFA1PsF/5fmyJocm0WPSCzuaaWgeaK+khaHkMPp0s
-	x3TdHWhRJMYGfAhttW4uNxfDwNqWCbjzwLL9YmptpVK4CRdydn/Coe4aGpku9VggkFPbTXK+cvg
-	r8u5p+cX0tlzsvveGhYaniCQJt5qIymcxrimSWKQZq0jAG/GIVLO6s3pgPyhT8OWNJTBH3p/Pdl
-	uULG+TAe0xkWT6D7uId3A9hR9TqdI6jD9lo3AxudXBVCOrMCfH1hryP8jxsk3Vb/mB+DfcVewiW
-	tLh61iZkmAr6fn636y5/fQ06JKNb+fNz/GrkxpSX9e04kuVFSNqhCRZR
-X-Google-Smtp-Source: AGHT+IHXWlUErao4J1U1mlwJYk9ATwc8DlkGhI6ADj3IGLu/xR9EZ4EkOFgQ2fo9wnmS3hLmuShE4g==
-X-Received: by 2002:a17:903:187:b0:223:517a:d2a3 with SMTP id d9443c01a7336-22e1032f5a2mr56701275ad.17.1746207898939;
-        Fri, 02 May 2025 10:44:58 -0700 (PDT)
-Received: from thinkpad.. ([220.158.156.122])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e150eae99sm10608815ad.19.2025.05.02.10.44.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 10:44:58 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: lpieralisi@kernel.org,
-	Hans Zhang <18255117159@163.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	christophe.jaillet@wanadoo.fr,
-	thierry.reding@gmail.com,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	jonathanh@nvidia.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [v3] PCI: tegra194: Fix debugfs directory creation when CONFIG_PCIEASPM is disabled
-Date: Fri,  2 May 2025 23:14:50 +0530
-Message-ID: <174620787968.116062.4174884576928380234.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250407124331.69459-1-18255117159@163.com>
-References: <20250407124331.69459-1-18255117159@163.com>
+	s=arc-20240116; t=1746208264; c=relaxed/simple;
+	bh=drM8O3toaDkU9WbF5hourjHUHTWTN+EOTGXaXdM7ew0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fTtbVi0q9SuXtCOTWC2oCnNpK2ShXOle7UTawFpb9+m/g2Qn5bORJ8MFeFBJ01Yd+hU5jmYjGBNDDgMZC5I1sHDLSIf3jG6u2ELwMvx9YQFYT/CNJThU+L+TgoQSDmv92oyFQqvuIIAnhl3y0D3C9JtvOMNlfDVqu2DKnRzFXX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=f2DvQ9MW; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 542Ho3nX2101973
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 2 May 2025 10:50:03 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 542Ho3nX2101973
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1746208207;
+	bh=LzR4L+NzvxhTrQ0qnGzytLxrMo2x9HNW2SUoBs+4hnk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f2DvQ9MW8Z0JHknIhUmlaIPnE6PHfIIPe0rpr7QJUvAXpKBCT+qAa2LT23C9nwyHn
+	 /1a1mWwt981CwHC7LEhukO1K0m1bgC3vouAUx32YzUdMpcsCtQbd/jw/0r9+oZFhHH
+	 zWNmyzJlWsf15/gfOAQCHW/PstZJwBaw5PzyA2AIZsvRshoRiosxrgxL3BGNy8GnvI
+	 j1N92z82OgALfPhLkgXq737LFNKZtz9B4b6V3qkfZIO+IB2Ra6RgpyueZDDglkuTjG
+	 iaLXdZxYtCOMzwCegp0RoTN30GI8VbyzguvhXK2x0MgYmhv6FrtA1j3wSshxLcp5ca
+	 a3YLWxbyYWbZw==
+Message-ID: <a2bdcbaf-2a00-4b12-84e9-14c40610d599@zytor.com>
+Date: Fri, 2 May 2025 10:50:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4A 01/15] x86/msr: Add missing includes of <asm/msr.h>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        mingo@redhat.com
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
+        linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
+        tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, acme@kernel.org, jgross@suse.com,
+        andrew.cooper3@citrix.com, peterz@infradead.org, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        kan.liang@linux.intel.com, wei.liu@kernel.org, ajay.kaher@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
+        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
+        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
+        haiyangz@microsoft.com, decui@microsoft.com,
+        dapeng1.mi@linux.intel.com
+References: <a1917b37-e41e-d303-749b-4007cda01605@linux.intel.com>
+ <20250501054241.1245648-1-xin@zytor.com>
+ <a34d7955-aa31-7bef-52cf-65dc4bb7a5c1@linux.intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <a34d7955-aa31-7bef-52cf-65dc4bb7a5c1@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-On Mon, 07 Apr 2025 20:43:31 +0800, Hans Zhang wrote:
-> Previously, the debugfs directory was unconditionally created in
-> tegra_pcie_config_rp() regardless of the CONFIG_PCIEASPM setting.
-> This led to unnecessary directory creation when ASPM support was disabled.
+On 5/2/2025 6:13 AM, Ilpo Järvinen wrote:
+>> diff --git a/arch/x86/kernel/trace_clock.c b/arch/x86/kernel/trace_clock.c
+>> index b8e7abe00b06..708d61743d15 100644
+>> --- a/arch/x86/kernel/trace_clock.c
+>> +++ b/arch/x86/kernel/trace_clock.c
+>> @@ -4,7 +4,7 @@
+>>    */
+>>   #include <asm/trace_clock.h>
+>>   #include <asm/barrier.h>
+>> -#include <asm/msr.h>
+>> +#include <asm/tsc.h>
+> Does this change belong to this patch?
 > 
-> Move the debugfs directory creation into init_debugfs() which is
-> conditionally compiled based on CONFIG_PCIEASPM. This ensures:
-> - The directory is only created when ASPM-related debugfs entries are
->   needed.
-> - Proper error handling for directory creation failures.
-> - Avoids cluttering debugfs with empty directories when ASPM is disabled.
+> It might even cause a build failure until the second patch which moves
+> the tsc related things to the other file (unless there's indirect include
+> path to asm/msr.h).
+
+Ah, you're right as I have separated the relocation of rdtsc_ordered()
+into a following patch.
+
 > 
-> [...]
+>> diff --git a/arch/x86/lib/kaslr.c b/arch/x86/lib/kaslr.c
+>> index a58f451a7dd3..b5893928d55c 100644
+>> --- a/arch/x86/lib/kaslr.c
+>> +++ b/arch/x86/lib/kaslr.c
+>> @@ -8,7 +8,7 @@
+>>    */
+>>   #include <asm/asm.h>
+>>   #include <asm/kaslr.h>
+>> -#include <asm/msr.h>
+>> +#include <asm/tsc.h>
+> Same thing here.
+> 
+>>   #include <asm/archrandom.h>
+>>   #include <asm/e820/api.h>
+>>   #include <asm/shared/io.h>
+>> diff --git a/drivers/accel/habanalabs/common/habanalabs_ioctl.c b/drivers/accel/habanalabs/common/habanalabs_ioctl.c
+>> index 8729a0c57d78..dc80ca921d90 100644
+>> --- a/drivers/accel/habanalabs/common/habanalabs_ioctl.c
+>> +++ b/drivers/accel/habanalabs/common/habanalabs_ioctl.c
+>> @@ -17,8 +17,6 @@
+>>   #include <linux/uaccess.h>
+>>   #include <linux/vmalloc.h>
+>>   
+>> -#include <asm/msr.h>
+>> -
+> I suggested making a separate patch out of these removals. Currently you
+> do them without any clear warning in the changelog which only talks about
+> adding asm/msr.h.
+>
 
-Applied, thanks!
+I didn't want to add an extra patch to the v4 series, but I really
+should have mentioned the removal at least.
 
-[1/1] PCI: tegra194: Fix debugfs directory creation when CONFIG_PCIEASPM is disabled
-      commit: ed798ff1c52f6fe232ce2e24e68fb63f5470ab97
 
-Best regards,
--- 
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+>> index 00d045e5f524..ecd7fe256153 100644
+>> --- a/drivers/acpi/processor_throttling.c
+>> +++ b/drivers/acpi/processor_throttling.c
+>> @@ -18,9 +18,13 @@
+>>   #include <linux/sched.h>
+>>   #include <linux/cpufreq.h>
+>>   #include <linux/acpi.h>
+>> +#include <linux/uaccess.h>
+>>   #include <acpi/processor.h>
+>>   #include <asm/io.h>
+>> -#include <linux/uaccess.h>
+>> +#include <asm/asm.h>
+> ???
+
+Damn me!
+
+Not to find an excuse but I guess I got somewhat tired when doing it.
+
+> 
+>> +#ifdef CONFIG_X86
+>> +#include <asm/msr.h>
+>> +#endif
+> 
+> I really appreciate you took the effort to do this change the correct
+> way! 🙂
+
+Same here for pushing it the right direction!
+
+
+Hi Ingo,
+
+Since you *wisely* didn't remove msr.h from tsc.h, maybe you could just
+zap this patch and I will send an afterwards patch set to replace this
+patch?
+
+Apology for the noise.
+
+Thanks!
+     Xin
 
