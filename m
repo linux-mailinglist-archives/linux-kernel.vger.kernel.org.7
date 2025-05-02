@@ -1,230 +1,79 @@
-Return-Path: <linux-kernel+bounces-630567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CAEAA7BF0
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 00:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F19DAA7BDD
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 00:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158649826F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:04:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD2E9864CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB368212B0C;
-	Fri,  2 May 2025 22:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F7D20D50B;
+	Fri,  2 May 2025 22:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t72z01SG"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hghjGKS9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBCF21B9F2;
-	Fri,  2 May 2025 22:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59BA19DF41
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 22:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746223422; cv=none; b=GQK/06hJizcTjHcvuOhZ+BPACZ2ek6yDh+wCAiDG7PGtpjAwTVHtbQuCBqER6BkRo5xRl9Qcg2AOEsOI30BlHOXCjGzWOhFN4oROkYBDrq5clu6ClexKXMYHMWJ5PRjIsS2BgqQABkxteJcr1NeKEuB6bayZNCvRePhG8Xf4OFQ=
+	t=1746223363; cv=none; b=S7c1kzttyUXAWKTzuA5SyWq9k3vUph1P6/L68baXf/ye9DG8W/l3Rb0Nq0UNAOcoP7TIb8jwJtzJUg0ufFVQGEI+6xthjxz3wcniJpcXpQqPpHt+CEO0dnjic8FxBumtBrGwCuQSWepeLijQqXEfn8cIcqG5KYwdIQxr6hBgR4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746223422; c=relaxed/simple;
-	bh=NXrOmi7wbb5EHW+r/D4di68EhB3YteJOxCuP8addhqg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BSESeXAOw2UWGlQJJmH8L2FCcz0vmRS6Og0JjVVpgttZrDzpESIkPSxixcI7qBPkEUHE1IYl+hhZZsxb6eR1rIeVl2oBKZCTfE9Sl5BrP6opbleVcruZis5BYahNSbaaeCmxdOHUsuVKEIfo3lsG1Cksa9eaf6wFHzDhBQVy3ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=t72z01SG; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542M3QxE3955079
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 2 May 2025 17:03:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746223406;
-	bh=7JbGmScvrI26LyByj51wsxGReLbYQIAatEM1ZL2oTjk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=t72z01SGx0KuZjaYBYCcuIxClmmvt1L0y0AzlsWlyoYd8PJiF/Fc530fAfNqAhEhK
-	 EnCcsLjiKdJIztYZwVNQ3k7QbpAM/3uM4P3lYj4GOHdEOHi3SUHricpYLqwxrUCKJt
-	 O+NsvR1T+LQ/DEljrVzK0Q0tCXrp2jpL1MkqjkNY=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542M3QDk004714
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 2 May 2025 17:03:26 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
- May 2025 17:03:25 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 2 May 2025 17:03:25 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542M3PC0006849;
-	Fri, 2 May 2025 17:03:25 -0500
-From: Judith Mendez <jm@ti.com>
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Hari
- Nagalla <hnagalla@ti.com>,
-        Beleswar Padhi <b-padhi@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>,
-        Andrew Davis <afd@ti.com>, Devarsh
- Thakkar <devarsht@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 06/11] arm64: dts: ti: k3-am62a7-sk: Enable IPC with remote processors
-Date: Fri, 2 May 2025 17:03:20 -0500
-Message-ID: <20250502220325.3230653-7-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250502220325.3230653-1-jm@ti.com>
-References: <20250502220325.3230653-1-jm@ti.com>
+	s=arc-20240116; t=1746223363; c=relaxed/simple;
+	bh=tvSeCPW9J+1MEZEYnoVNTNuF5VlbB3kil8DoNBx1K+U=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Ldm3w2BXJvYwTEip2ZlyJ1ADIBx1xuaEIdMfo92LJ7rQbvvcgugKUwE0AksvPdkl4iCAC2rWXWK+dA2S8uvLLiGiQjGVJiA7b7NF6nSXwUwYJ1gYUonigDzpzsBBFGg+z5VCqrepk4U1AtpD6bd6LMs9/oOX0C8R4krjHiaLTPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hghjGKS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F16C4CEE4;
+	Fri,  2 May 2025 22:02:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746223363;
+	bh=tvSeCPW9J+1MEZEYnoVNTNuF5VlbB3kil8DoNBx1K+U=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=hghjGKS9VVKh5m7PwKtAQz1PXs2Si4Fkc2lKWUSLDiZ8dkOTU5rFZEhLI5NYAR13a
+	 EZuVv8Phv5yi2XJ0jYQaT1nOipxy1MIVmuff64C5SGUpHeWwkG5CP+rKTrWXYKZGl4
+	 abE9vzhVx+IqS4jZBrjguiOxZDHz6ROJ3jzgMLuAzFBAbu4Cc8OkGfFo8B9z/aKK1g
+	 1+fqaOTvfthlGyAYECg8hadkm73F1wzXTkRcQ6q/hgDDZGeQMpUHgnQInZoNk7XRQ7
+	 TJhD/bV08xVXj2ww/lhZG73jdQ66CZVxgO52d6HMlnvEvAMnm+QeZLNYaJaQYGNEbL
+	 IOolxR2HTHViw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFA4380DBE9;
+	Fri,  2 May 2025 22:03:23 +0000 (UTC)
+Subject: Re: [git pull] drm fixes for 6.15-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAPM=9txGv4UObO6mWDtU+RLCaswfHPovigKQwuD3XK3BtqF07A@mail.gmail.com>
+References: <CAPM=9txGv4UObO6mWDtU+RLCaswfHPovigKQwuD3XK3BtqF07A@mail.gmail.com>
+X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
+ <dri-devel.lists.freedesktop.org>
+X-PR-Tracked-Message-Id: <CAPM=9txGv4UObO6mWDtU+RLCaswfHPovigKQwuD3XK3BtqF07A@mail.gmail.com>
+X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-05-03
+X-PR-Tracked-Commit-Id: 4e6de6b8f0d5181fcf546ee98b908372fa3cfc0d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6de6674c66bce543c6ae62f49eb35a1ab9bb7425
+Message-Id: <174622340263.3739591.10860387119656823373.pr-tracker-bot@kernel.org>
+Date: Fri, 02 May 2025 22:03:22 +0000
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Devarsh Thakkar <devarsht@ti.com>
+The pull request you sent on Sat, 3 May 2025 06:13:49 +1000:
 
-For each remote proc, reserve memory for IPC and bind the mailbox
-assignments. Two memory regions are reserved for each remote processor.
-The first region of 1MB of memory is used for Vring shared buffers
-and the second region is used as external memory to the remote processor
-for the resource table and for tracebuffer allocations.
+> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-05-03
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-Signed-off-by: Judith Mendez <jm@ti.com>
-Acked-by: Andrew Davis <afd@ti.com>
-Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 96 +++++++++++++++++++++++--
- 1 file changed, 90 insertions(+), 6 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6de6674c66bce543c6ae62f49eb35a1ab9bb7425
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index a9557ee73b83..9fedbd642679 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -52,6 +52,42 @@ linux,cma {
- 			linux,cma-default;
- 		};
- 
-+		c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x99800000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c7x_0_memory_region: c7x-memory@99900000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x99900000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9b800000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9b900000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9c800000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9c900000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
- 		secure_tfa_ddr: tfa@9e780000 {
- 			reg = <0x00 0x9e780000 0x00 0x80000>;
- 			alignment = <0x1000>;
-@@ -63,12 +99,6 @@ secure_ddr: optee@9e800000 {
- 			alignment = <0x1000>;
- 			no-map;
- 		};
--
--		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
--			compatible = "shared-dma-pool";
--			reg = <0x00 0x9c900000 0x00 0x01e00000>;
--			no-map;
--		};
- 	};
- 
- 	opp-table {
-@@ -781,3 +811,57 @@ &epwm1 {
- 	pinctrl-0 = <&main_epwm1_pins_default>;
- 	status = "okay";
- };
-+
-+&mailbox0_cluster0 {
-+	status = "okay";
-+
-+	mbox_r5_0: mbox-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster1 {
-+	status = "okay";
-+
-+	mbox_c7x_0: mbox-c7x-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster2 {
-+	status = "okay";
-+
-+	mbox_mcu_r5_0: mbox-mcu-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&wkup_r5fss0 {
-+	status = "okay";
-+};
-+
-+&wkup_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
-+	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-+			<&wkup_r5fss0_core0_memory_region>;
-+};
-+
-+&mcu_r5fss0 {
-+	status = "okay";
-+};
-+
-+&mcu_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
-+	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-+			<&mcu_r5fss0_core0_memory_region>;
-+};
-+
-+&c7x_0 {
-+	mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
-+	memory-region = <&c7x_0_dma_memory_region>,
-+			<&c7x_0_memory_region>;
-+	status = "okay";
-+};
+Thank you!
+
 -- 
-2.49.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
