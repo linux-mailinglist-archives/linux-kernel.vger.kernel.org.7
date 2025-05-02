@@ -1,190 +1,352 @@
-Return-Path: <linux-kernel+bounces-630162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2107BAA7650
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:43:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FF9AA7620
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4451C01235
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0EBE9C142A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B942580F4;
-	Fri,  2 May 2025 15:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8547A2580C0;
+	Fri,  2 May 2025 15:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CcbBc+cP"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="WyZhZN1R"
+Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6352571D2;
-	Fri,  2 May 2025 15:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CC8746E;
+	Fri,  2 May 2025 15:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746200592; cv=none; b=Uy8Jwab9ZyM6WZD/MbT+5AWD6nE7Bu/NW6+BgXl7Ko3ej1akM6DMI0aHtKaqqSdgZpe0gfutoNQPoxoXS+2T/kmHRt8pbttgPm+3GQru3klz2ZY7Kd+L+u2FuGbptM63miGdqFBkVSy9kUNadVLZiJpMToxtvV5B1JcZ5p74H9A=
+	t=1746200027; cv=none; b=Pvd6X6yYZO3JpYS7acZwMy1A48RDst4nmsyZ/owVjqI+xjFWFeMihs4rkCpFjspD+DpLPzWwusj7EVsHFgsE1UMpIXqfaVDjik4WYevZ7GPzmBe7dRaZoKAaVkBP9gFseOwAy+mfZPfrwNelCPJE4CniVMUx+7gb7ftEqMPpNUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746200592; c=relaxed/simple;
-	bh=eBAnraOpFs24oa8cyCRi8zE49i9v3WmI83Gfc+9VYrU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Q5eYWRaNjx/ldUN1T99GLa7xLYMG3qBG0fTLz4XV5ARkAPPC4Onx+2MVuS4X/WbFRlQUuQuUcHySQL9vEB5WsmEUd7IveKCW3OoIvJddjDrCbl1A0LK8ibafCSPjrEfQmRgz5ijpi+9ulq8NqTz9pJ/8Fad6GybeRdX9Alh+MKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CcbBc+cP; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746200587;
-	bh=eBAnraOpFs24oa8cyCRi8zE49i9v3WmI83Gfc+9VYrU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=CcbBc+cPJUJUUYJy1zR+8xwwsmi5CT00hhIA4U6hqXH+Jtp2mTuEpDbP5Tz3y0hRY
-	 EMXGwA+s1tLxbLSOqQrjIdLLGYcTtq2o4v4fH3KVMtG5lGTn+Adggtj56bVYD6H8wo
-	 38YMRcsqg1qOltyDqaqGQsbV+cP3q76KsfsYqIw1QO0ON/8a1zft2wHwzENfnLB6to
-	 i12LyVP4O02xuvZ78B9xspba73Kt/iVYLEa4EfJfNw1PgmYUN4ROY8SnmMpjsXf+9Z
-	 28TpGBOpPbpcL+350f0W5w5Ntrr2TBomlOmLHhrvZyGrM7ZNBXuLOMMBTVuIBKOYvP
-	 HUiDSOAHh+mvQ==
-Received: from [192.168.1.63] (unknown [70.107.117.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2727B17E0858;
-	Fri,  2 May 2025 17:43:04 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Fri, 02 May 2025 11:32:10 -0400
-Subject: [PATCH] arm64: dts: mediatek: mt6357: Drop regulator-fixed
- compatibles
+	s=arc-20240116; t=1746200027; c=relaxed/simple;
+	bh=PKGaeTrK4FajdED5Mz4076bIbJwsbvqNOF8fiH7cBUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W4H0EHmLtp10vdfZACCodhYBzsQeU5CVWCxrrnLr7Crxb3tng5QYqlc5gffz2LYP+GARvSS4R40mRS4bNz+G0Ni9LAp5adKo0rGpvEJydHJ/vYCoHgsFWiuvFpRIWNBQ/ln8MzuOofhTvq6ee43KkpHbmizkfHbX+fuWfakB8lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=WyZhZN1R; arc=none smtp.client-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id AsNKucfiRU6wKAsNNuiUsf; Fri, 02 May 2025 17:32:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746199955;
+	bh=+hpk8cr126p7YYLv2U+Rh60U/JKvVKpYQL3YqdP60hg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=WyZhZN1R+jxM5SFehLWOWGPihwRkEGdeRNXJINrq5NSgjMWDa4P5UgurXfxgdi2z2
+	 Rtl18Y4xExXTUZgG8s4mr0S3wVmtyIvbQhz0btegHbAT17FGXRg0BhnHP+FtiFaREY
+	 +wFE5qLhC2AgUlhCp4VKPiv6MTu32slh7VCC6f3loQZ6kg5MWL0gxHNaYrhC4zwQOv
+	 3lqy0Ls5AfdLnovkX3c5YS/EjSzS4ywRpLZDMQOEGkjLPhruy30tCUJTRO+M1hnToF
+	 E8HirI7HQc8Q8pYcFnO/HC+ifTxnFUsBEwTBEKeXmp26lpyeQS1eBQPj96cj5W9fo+
+	 mbezbb54/O+jA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 02 May 2025 17:32:35 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH] pmdomain: amlogic: Constify some structures
+Date: Fri,  2 May 2025 17:32:19 +0200
+Message-ID: <edc560afe2a8763c93341d161daeb8b33ba606c6.1746199917.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250502-mt6357-regulator-fixed-compatibles-removal-v1-1-a582c16743fe@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAHnlFGgC/xWNQQrDIBBFrxJm3QGjGKFXKV2omaYDGsNoQiHk7
- jXLx3/8d0IlYarwHE4QOrhyWTuMjwHi168LIc+dQSttlVUac5uMdSi07Mm3IvjhH80YS95845C
- o9i2XwyccJ2dcMDaGaKAfbkK3fMde7+v6AypRQfJ8AAAA
-X-Change-ID: 20250502-mt6357-regulator-fixed-compatibles-removal-16737b35cbc3
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Alexandre Mergnat <amergnat@baylibre.com>, 
- Fabien Parent <fparent@baylibre.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
 
-Some of the regulators in the MT6357 PMIC dtsi have compatible set to
-regulator-fixed, even though they don't serve any purpose: all those
-regulators are handled as a whole by the mt6357-regulator driver. In
-fact this is the only dtsi in this family of chips where this is the
-case: mt6359 and mt6358 don't have any such compatibles.
+Most structures in this driver are not modified.
 
-A side-effect caused by this is that the DT kselftest, which is supposed
-to identify nodes with compatibles that can be probed, but haven't,
-shows these nodes as failures.
+Constifying these structures moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers. (This is the case for see meson_ee_pwrc_domain_desc)
 
-Remove the useless compatibles to move the dtsi in line with the others
-in its family and fix the DT kselftest failures.
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   8924	   3832	      0	  12756	   31d4	drivers/pmdomain/amlogic/meson-ee-pwrc.o
 
-Fixes: 55749bb478f8 ("arm64: dts: mediatek: add mt6357 device-tree")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  12396	    336	      0	  12732	   31bc	drivers/pmdomain/amlogic/meson-ee-pwrc.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arm64/boot/dts/mediatek/mt6357.dtsi | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt6357.dtsi b/arch/arm64/boot/dts/mediatek/mt6357.dtsi
-index 5fafa842d312f3b01e7d71ddc04ef48ca52bc89d..dca4e5c3d8e210c1e118539153e77e2822066da3 100644
---- a/arch/arm64/boot/dts/mediatek/mt6357.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6357.dtsi
-@@ -60,7 +60,6 @@ mt6357_vpa_reg: buck-vpa {
- 			};
- 
- 			mt6357_vfe28_reg: ldo-vfe28 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vfe28";
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
-@@ -75,7 +74,6 @@ mt6357_vxo22_reg: ldo-vxo22 {
- 			};
- 
- 			mt6357_vrf18_reg: ldo-vrf18 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vrf18";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-@@ -83,7 +81,6 @@ mt6357_vrf18_reg: ldo-vrf18 {
- 			};
- 
- 			mt6357_vrf12_reg: ldo-vrf12 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vrf12";
- 				regulator-min-microvolt = <1200000>;
- 				regulator-max-microvolt = <1200000>;
-@@ -112,7 +109,6 @@ mt6357_vcn33_wifi_reg: ldo-vcn33-wifi {
- 			};
- 
- 			mt6357_vcn28_reg: ldo-vcn28 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vcn28";
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
-@@ -120,7 +116,6 @@ mt6357_vcn28_reg: ldo-vcn28 {
- 			};
- 
- 			mt6357_vcn18_reg: ldo-vcn18 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vcn18";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-@@ -142,7 +137,6 @@ mt6357_vcamd_reg: ldo-vcamd {
- 			};
- 
- 			mt6357_vcamio_reg: ldo-vcamio18 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vcamio";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-@@ -175,7 +169,6 @@ mt6357_vsram_proc_reg: ldo-vsram-proc {
- 			};
- 
- 			mt6357_vaux18_reg: ldo-vaux18 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vaux18";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-@@ -183,7 +176,6 @@ mt6357_vaux18_reg: ldo-vaux18 {
- 			};
- 
- 			mt6357_vaud28_reg: ldo-vaud28 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vaud28";
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
-@@ -191,7 +183,6 @@ mt6357_vaud28_reg: ldo-vaud28 {
- 			};
- 
- 			mt6357_vio28_reg: ldo-vio28 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vio28";
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
-@@ -199,7 +190,6 @@ mt6357_vio28_reg: ldo-vio28 {
- 			};
- 
- 			mt6357_vio18_reg: ldo-vio18 {
--				compatible = "regulator-fixed";
- 				regulator-name = "vio18";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-
+Compile tested-only.
 ---
-base-commit: 37ff6e9a2ce321b7932d3987701757fb4d87b0e6
-change-id: 20250502-mt6357-regulator-fixed-compatibles-removal-16737b35cbc3
+ drivers/pmdomain/amlogic/meson-ee-pwrc.c | 78 ++++++++++++------------
+ 1 file changed, 39 insertions(+), 39 deletions(-)
 
-Best regards,
+diff --git a/drivers/pmdomain/amlogic/meson-ee-pwrc.c b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+index fbb2b4103930..55c8c9f66a1b 100644
+--- a/drivers/pmdomain/amlogic/meson-ee-pwrc.c
++++ b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+@@ -69,27 +69,27 @@ struct meson_ee_pwrc_domain_desc {
+ 	char *name;
+ 	unsigned int reset_names_count;
+ 	unsigned int clk_names_count;
+-	struct meson_ee_pwrc_top_domain *top_pd;
++	const struct meson_ee_pwrc_top_domain *top_pd;
+ 	unsigned int mem_pd_count;
+-	struct meson_ee_pwrc_mem_domain *mem_pd;
++	const struct meson_ee_pwrc_mem_domain *mem_pd;
+ 	bool (*is_powered_off)(struct meson_ee_pwrc_domain *pwrc_domain);
+ };
+ 
+ struct meson_ee_pwrc_domain_data {
+ 	unsigned int count;
+-	struct meson_ee_pwrc_domain_desc *domains;
++	const struct meson_ee_pwrc_domain_desc *domains;
+ };
+ 
+ /* TOP Power Domains */
+ 
+-static struct meson_ee_pwrc_top_domain gx_pwrc_vpu = {
++static const struct meson_ee_pwrc_top_domain gx_pwrc_vpu = {
+ 	.sleep_reg = GX_AO_RTI_GEN_PWR_SLEEP0,
+ 	.sleep_mask = BIT(8),
+ 	.iso_reg = GX_AO_RTI_GEN_PWR_SLEEP0,
+ 	.iso_mask = BIT(9),
+ };
+ 
+-static struct meson_ee_pwrc_top_domain meson8_pwrc_vpu = {
++static const struct meson_ee_pwrc_top_domain meson8_pwrc_vpu = {
+ 	.sleep_reg = MESON8_AO_RTI_GEN_PWR_SLEEP0,
+ 	.sleep_mask = BIT(8),
+ 	.iso_reg = MESON8_AO_RTI_GEN_PWR_SLEEP0,
+@@ -104,20 +104,20 @@ static struct meson_ee_pwrc_top_domain meson8_pwrc_vpu = {
+ 		.iso_mask = BIT(__bit), 			\
+ 	}
+ 
+-static struct meson_ee_pwrc_top_domain sm1_pwrc_vpu = SM1_EE_PD(8);
+-static struct meson_ee_pwrc_top_domain sm1_pwrc_nna = SM1_EE_PD(16);
+-static struct meson_ee_pwrc_top_domain sm1_pwrc_usb = SM1_EE_PD(17);
+-static struct meson_ee_pwrc_top_domain sm1_pwrc_pci = SM1_EE_PD(18);
+-static struct meson_ee_pwrc_top_domain sm1_pwrc_ge2d = SM1_EE_PD(19);
++static const struct meson_ee_pwrc_top_domain sm1_pwrc_vpu = SM1_EE_PD(8);
++static const struct meson_ee_pwrc_top_domain sm1_pwrc_nna = SM1_EE_PD(16);
++static const struct meson_ee_pwrc_top_domain sm1_pwrc_usb = SM1_EE_PD(17);
++static const struct meson_ee_pwrc_top_domain sm1_pwrc_pci = SM1_EE_PD(18);
++static const struct meson_ee_pwrc_top_domain sm1_pwrc_ge2d = SM1_EE_PD(19);
+ 
+-static struct meson_ee_pwrc_top_domain g12a_pwrc_nna = {
++static const struct meson_ee_pwrc_top_domain g12a_pwrc_nna = {
+ 	.sleep_reg = GX_AO_RTI_GEN_PWR_SLEEP0,
+ 	.sleep_mask = BIT(16) | BIT(17),
+ 	.iso_reg = GX_AO_RTI_GEN_PWR_ISO0,
+ 	.iso_mask = BIT(16) | BIT(17),
+ };
+ 
+-static struct meson_ee_pwrc_top_domain g12a_pwrc_isp = {
++static const struct meson_ee_pwrc_top_domain g12a_pwrc_isp = {
+ 	.sleep_reg = GX_AO_RTI_GEN_PWR_SLEEP0,
+ 	.sleep_mask = BIT(18) | BIT(19),
+ 	.iso_reg = GX_AO_RTI_GEN_PWR_ISO0,
+@@ -154,39 +154,39 @@ static struct meson_ee_pwrc_top_domain g12a_pwrc_isp = {
+ 	{ __reg, BIT(14) },					\
+ 	{ __reg, BIT(15) }
+ 
+-static struct meson_ee_pwrc_mem_domain axg_pwrc_mem_vpu[] = {
++static const struct meson_ee_pwrc_mem_domain axg_pwrc_mem_vpu[] = {
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+ 	VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_vpu[] = {
++static const struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_vpu[] = {
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG2),
+ 	VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain gxbb_pwrc_mem_vpu[] = {
++static const struct meson_ee_pwrc_mem_domain gxbb_pwrc_mem_vpu[] = {
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+ 	VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain meson_pwrc_mem_eth[] = {
++static const struct meson_ee_pwrc_mem_domain meson_pwrc_mem_eth[] = {
+ 	{ HHI_MEM_PD_REG0, GENMASK(3, 2) },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain meson8_pwrc_audio_dsp_mem[] = {
++static const struct meson_ee_pwrc_mem_domain meson8_pwrc_audio_dsp_mem[] = {
+ 	{ HHI_MEM_PD_REG0, GENMASK(1, 0) },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain meson8_pwrc_mem_vpu[] = {
++static const struct meson_ee_pwrc_mem_domain meson8_pwrc_mem_vpu[] = {
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+ 	VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_vpu[] = {
++static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_vpu[] = {
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+ 	VPU_MEMPD(HHI_VPU_MEM_PD_REG2),
+@@ -198,28 +198,28 @@ static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_vpu[] = {
+ 	VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_nna[] = {
++static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_nna[] = {
+ 	{ HHI_NANOQ_MEM_PD_REG0, 0xff },
+ 	{ HHI_NANOQ_MEM_PD_REG1, 0xff },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_usb[] = {
++static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_usb[] = {
+ 	{ HHI_MEM_PD_REG0, GENMASK(31, 30) },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_pcie[] = {
++static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_pcie[] = {
+ 	{ HHI_MEM_PD_REG0, GENMASK(29, 26) },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_ge2d[] = {
++static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_ge2d[] = {
+ 	{ HHI_MEM_PD_REG0, GENMASK(25, 18) },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain axg_pwrc_mem_audio[] = {
++static const struct meson_ee_pwrc_mem_domain axg_pwrc_mem_audio[] = {
+ 	{ HHI_MEM_PD_REG0, GENMASK(5, 4) },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_audio[] = {
++static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_audio[] = {
+ 	{ HHI_MEM_PD_REG0, GENMASK(5, 4) },
+ 	{ HHI_AUDIO_MEM_PD_REG0, GENMASK(1, 0) },
+ 	{ HHI_AUDIO_MEM_PD_REG0, GENMASK(3, 2) },
+@@ -235,12 +235,12 @@ static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_audio[] = {
+ 	{ HHI_AUDIO_MEM_PD_REG0, GENMASK(27, 26) },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_nna[] = {
++static const struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_nna[] = {
+ 	{ G12A_HHI_NANOQ_MEM_PD_REG0, GENMASK(31, 0) },
+ 	{ G12A_HHI_NANOQ_MEM_PD_REG1, GENMASK(31, 0) },
+ };
+ 
+-static struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_isp[] = {
++static const struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_isp[] = {
+ 	{ G12A_HHI_ISP_MEM_PD_REG0, GENMASK(31, 0) },
+ 	{ G12A_HHI_ISP_MEM_PD_REG1, GENMASK(31, 0) },
+ };
+@@ -270,14 +270,14 @@ static struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_isp[] = {
+ 
+ static bool pwrc_ee_is_powered_off(struct meson_ee_pwrc_domain *pwrc_domain);
+ 
+-static struct meson_ee_pwrc_domain_desc axg_pwrc_domains[] = {
++static const struct meson_ee_pwrc_domain_desc axg_pwrc_domains[] = {
+ 	[PWRC_AXG_VPU_ID]  = VPU_PD("VPU", &gx_pwrc_vpu, axg_pwrc_mem_vpu,
+ 				     pwrc_ee_is_powered_off, 5, 2),
+ 	[PWRC_AXG_ETHERNET_MEM_ID] = MEM_PD("ETH", meson_pwrc_mem_eth),
+ 	[PWRC_AXG_AUDIO_ID] = MEM_PD("AUDIO", axg_pwrc_mem_audio),
+ };
+ 
+-static struct meson_ee_pwrc_domain_desc g12a_pwrc_domains[] = {
++static const struct meson_ee_pwrc_domain_desc g12a_pwrc_domains[] = {
+ 	[PWRC_G12A_VPU_ID]  = VPU_PD("VPU", &gx_pwrc_vpu, g12a_pwrc_mem_vpu,
+ 				     pwrc_ee_is_powered_off, 11, 2),
+ 	[PWRC_G12A_ETH_ID] = MEM_PD("ETH", meson_pwrc_mem_eth),
+@@ -287,13 +287,13 @@ static struct meson_ee_pwrc_domain_desc g12a_pwrc_domains[] = {
+ 				    pwrc_ee_is_powered_off),
+ };
+ 
+-static struct meson_ee_pwrc_domain_desc gxbb_pwrc_domains[] = {
++static const struct meson_ee_pwrc_domain_desc gxbb_pwrc_domains[] = {
+ 	[PWRC_GXBB_VPU_ID]  = VPU_PD("VPU", &gx_pwrc_vpu, gxbb_pwrc_mem_vpu,
+ 				     pwrc_ee_is_powered_off, 12, 2),
+ 	[PWRC_GXBB_ETHERNET_MEM_ID] = MEM_PD("ETH", meson_pwrc_mem_eth),
+ };
+ 
+-static struct meson_ee_pwrc_domain_desc meson8_pwrc_domains[] = {
++static const struct meson_ee_pwrc_domain_desc meson8_pwrc_domains[] = {
+ 	[PWRC_MESON8_VPU_ID]  = VPU_PD("VPU", &meson8_pwrc_vpu,
+ 				       meson8_pwrc_mem_vpu,
+ 				       pwrc_ee_is_powered_off, 0, 1),
+@@ -303,7 +303,7 @@ static struct meson_ee_pwrc_domain_desc meson8_pwrc_domains[] = {
+ 						meson8_pwrc_audio_dsp_mem),
+ };
+ 
+-static struct meson_ee_pwrc_domain_desc meson8b_pwrc_domains[] = {
++static const struct meson_ee_pwrc_domain_desc meson8b_pwrc_domains[] = {
+ 	[PWRC_MESON8_VPU_ID]  = VPU_PD("VPU", &meson8_pwrc_vpu,
+ 				       meson8_pwrc_mem_vpu,
+ 				       pwrc_ee_is_powered_off, 11, 1),
+@@ -313,7 +313,7 @@ static struct meson_ee_pwrc_domain_desc meson8b_pwrc_domains[] = {
+ 						meson8_pwrc_audio_dsp_mem),
+ };
+ 
+-static struct meson_ee_pwrc_domain_desc sm1_pwrc_domains[] = {
++static const struct meson_ee_pwrc_domain_desc sm1_pwrc_domains[] = {
+ 	[PWRC_SM1_VPU_ID]  = VPU_PD("VPU", &sm1_pwrc_vpu, sm1_pwrc_mem_vpu,
+ 				    pwrc_ee_is_powered_off, 11, 2),
+ 	[PWRC_SM1_NNA_ID]  = TOP_PD("NNA", &sm1_pwrc_nna, sm1_pwrc_mem_nna,
+@@ -576,32 +576,32 @@ static void meson_ee_pwrc_shutdown(struct platform_device *pdev)
+ 	}
+ }
+ 
+-static struct meson_ee_pwrc_domain_data meson_ee_g12a_pwrc_data = {
++static const struct meson_ee_pwrc_domain_data meson_ee_g12a_pwrc_data = {
+ 	.count = ARRAY_SIZE(g12a_pwrc_domains),
+ 	.domains = g12a_pwrc_domains,
+ };
+ 
+-static struct meson_ee_pwrc_domain_data meson_ee_axg_pwrc_data = {
++static const struct meson_ee_pwrc_domain_data meson_ee_axg_pwrc_data = {
+ 	.count = ARRAY_SIZE(axg_pwrc_domains),
+ 	.domains = axg_pwrc_domains,
+ };
+ 
+-static struct meson_ee_pwrc_domain_data meson_ee_gxbb_pwrc_data = {
++static const struct meson_ee_pwrc_domain_data meson_ee_gxbb_pwrc_data = {
+ 	.count = ARRAY_SIZE(gxbb_pwrc_domains),
+ 	.domains = gxbb_pwrc_domains,
+ };
+ 
+-static struct meson_ee_pwrc_domain_data meson_ee_m8_pwrc_data = {
++static const struct meson_ee_pwrc_domain_data meson_ee_m8_pwrc_data = {
+ 	.count = ARRAY_SIZE(meson8_pwrc_domains),
+ 	.domains = meson8_pwrc_domains,
+ };
+ 
+-static struct meson_ee_pwrc_domain_data meson_ee_m8b_pwrc_data = {
++static const struct meson_ee_pwrc_domain_data meson_ee_m8b_pwrc_data = {
+ 	.count = ARRAY_SIZE(meson8b_pwrc_domains),
+ 	.domains = meson8b_pwrc_domains,
+ };
+ 
+-static struct meson_ee_pwrc_domain_data meson_ee_sm1_pwrc_data = {
++static const struct meson_ee_pwrc_domain_data meson_ee_sm1_pwrc_data = {
+ 	.count = ARRAY_SIZE(sm1_pwrc_domains),
+ 	.domains = sm1_pwrc_domains,
+ };
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
+2.49.0
 
 
