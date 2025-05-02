@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-630311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44390AA7846
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21763AA785E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8616982E87
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8125A9E3640
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5E626B955;
-	Fri,  2 May 2025 17:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCDE2586C5;
+	Fri,  2 May 2025 17:12:47 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2BD269833;
-	Fri,  2 May 2025 17:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DA02441A7;
+	Fri,  2 May 2025 17:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746205708; cv=none; b=se27+DpRsozJVN6xyen6hPrGwAYlOJ3uO36QrRtoeU1PJXowj2J1Yt2UZ29sYkmAy4SMgExXz6LZGfUj5W1VgF3/ObwISL/SBgNENc9PoiaL5SdobvPZrfLi3se2YQpDh9NPNXAlVYiBBbcUYLUuZ+p4jgaZPTR1oaegY1wZ21s=
+	t=1746205966; cv=none; b=EM+HSoNXW9qGZ/HlifBmUblubV/ZCvzm8KItL0J8yOV0qsRzczD1oGdPDwo6EarCOS5+IKpbORo8l3IXAydliLkqAjuecLbaOPQIHDtMDqs3Rpcg8bcMvjj3kDx5dqlBsrgBaL1sJeNHGcnTFoVUExRKbClg35TrMOzbAWhL3ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746205708; c=relaxed/simple;
-	bh=MHsz2Fi2k9mv6IeTOC5g4/8EDZf7CKvhbnjjpQI7eu0=;
+	s=arc-20240116; t=1746205966; c=relaxed/simple;
+	bh=fqXQ9jgI/VklvA+2TRXRDHIqkX08QUCBhCzCjmghMVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lt3q6vfMETuZHCzg8dLY7m0IcmFrqPYEFiwxvTOeU7aFK4TNR1SwRkM+rgL+Mn0/PsVBvau+CpPLYO1UEz+Rixhd62v50pMNYKRV2GK8Posn1rrXyk4tbZsuDn3KC9/9h6oZ5fmvv74Ln4Gq+apxY4E4rn6/Sdj7MFjjgiM0L64=
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5Sj1s4kHyiOtxacJbeLGxtKuIaDDghcvY2EKKrwsnqLLmU/ucKCpeWrext/RCUbnq99279TmYJrCwYYz1YEHD3ZHP8fWT7qv028p4vZwC7BHIJb0cbUjwyyrG6N/RU6qChVODJKyRqoSk6u+WM0ziLKH7imcDxtNqWtYrx7xgA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3984C4CEF2;
-	Fri,  2 May 2025 17:08:23 +0000 (UTC)
-Date: Fri, 2 May 2025 18:08:21 +0100
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75993C4CEE4;
+	Fri,  2 May 2025 17:12:42 +0000 (UTC)
+Date: Fri, 2 May 2025 18:12:40 +0100
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>, Peter Collingbourne <pcc@google.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
 Cc: will@kernel.org, broonie@kernel.org, anshuman.khandual@arm.com,
 	joey.gouly@arm.com, yury.khrustalev@arm.com, maz@kernel.org,
 	oliver.upton@linux.dev, frederic@kernel.org,
@@ -38,12 +38,12 @@ Cc: will@kernel.org, broonie@kernel.org, anshuman.khandual@arm.com,
 	mark.rutland@arm.com, huangxiaojia2@huawei.com,
 	akpm@linux-foundation.org, surenb@google.com, robin.murphy@arm.com,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, nd@arm.com
-Subject: Re: [PATCH v3 2/3] arm64/mm/fault: use original FAR_EL1 value when
- ARM64_MTE_FAR is supported
-Message-ID: <aBT8BWqoljvcAU_w@arm.com>
+	linux-doc@vger.kernel.org, nd@arm.com,
+	Peter Collingbourne <pcc@google.com>
+Subject: Re: [PATCH v3 1/3] arm64: add FEAT_MTE_TAGGED_FAR feature
+Message-ID: <aBT9CA7vnlfszTDw@arm.com>
 References: <20250410074721.947380-1-yeoreum.yun@arm.com>
- <20250410074721.947380-3-yeoreum.yun@arm.com>
+ <20250410074721.947380-2-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,51 +52,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250410074721.947380-3-yeoreum.yun@arm.com>
+In-Reply-To: <20250410074721.947380-2-yeoreum.yun@arm.com>
 
-+ Peter Collingbourne as he added the SA_EXPOSE_TAGBITS flag.
-
-On Thu, Apr 10, 2025 at 08:47:20AM +0100, Yeoreum Yun wrote:
-> Use the original FAR_EL1 value when an MTE tag check fault occurs,
-> if ARM64_MTE_FAR is supported.
-> This allows reports to include not only the logical tag (memory tag)
-> but also the address tag information.
+On Thu, Apr 10, 2025 at 08:47:19AM +0100, Yeoreum Yun wrote:
+> Add FEAT_MTE_TAGGED_FAR cpucap which makes FAR_ELx report
+> all non-address bits on a synchronous MTE tag check fault since Armv8.9
 > 
-> Applications that require this information should install a signal handler with
-> the SA_EXPOSE_TAGBITS flag.
-> While this introduces a minor ABI change,
-> most applications do not set this flag and therefore will not be affected.
-
-It is indeed a minor ABI in that a tag check fault resulting in a
-signal will report the bits 63:60 as well, not just 59:56 of the address
-(if the signal handler was registered with SA_EXPOSE_TAGBITS).
-
-I don't think user-space would notice but asking Peter.
-
 > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->  arch/arm64/mm/fault.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index ec0a337891dd..f21d972f99b1 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -837,9 +837,12 @@ static int do_tag_check_fault(unsigned long far, unsigned long esr,
->  	/*
->  	 * The architecture specifies that bits 63:60 of FAR_EL1 are UNKNOWN
->  	 * for tag check faults. Set them to corresponding bits in the untagged
-> -	 * address.
-> +	 * address if ARM64_MTE_FAR isn't supported.
-> +	 * Otherwise, bits 63:60 of FAR_EL1 are KNOWN.
->  	 */
-> -	far = (__untagged_addr(far) & ~MTE_TAG_MASK) | (far & MTE_TAG_MASK);
-> +	if (!cpus_have_cap(ARM64_MTE_FAR))
-> +		far = (__untagged_addr(far) & ~MTE_TAG_MASK) | (far & MTE_TAG_MASK);
-> +
->  	do_bad_area(far, esr, regs);
->  	return 0;
->  }
-> -- 
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> Acked-by: Yury Khrustalev <yury.khrustalev@arm.com>
+[...]
+> @@ -3191,6 +3199,7 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+>  #ifdef CONFIG_ARM64_MTE
+>  	HWCAP_CAP(ID_AA64PFR1_EL1, MTE, MTE2, CAP_HWCAP, KERNEL_HWCAP_MTE),
+>  	HWCAP_CAP(ID_AA64PFR1_EL1, MTE, MTE3, CAP_HWCAP, KERNEL_HWCAP_MTE3),
+> +	HWCAP_CAP(ID_AA64PFR2_EL1, MTEFAR, IMP, CAP_HWCAP, KERNEL_HWCAP_MTE_FAR),
+
+Nitpick: from a theoretical bisectability perspective, I'd move the
+hwcap exposing to the following patch. The rest, feature detection etc
+can stay in this file. Otherwise, one can apply this patch, see the
+hwcap but not get the actual behaviour.
+
+>  #endif /* CONFIG_ARM64_MTE */
+>  	HWCAP_CAP(ID_AA64MMFR0_EL1, ECV, IMP, CAP_HWCAP, KERNEL_HWCAP_ECV),
+>  	HWCAP_CAP(ID_AA64MMFR1_EL1, AFP, IMP, CAP_HWCAP, KERNEL_HWCAP_AFP),
+> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+> index 285d7d538342..e2b13454e38a 100644
+> --- a/arch/arm64/kernel/cpuinfo.c
+> +++ b/arch/arm64/kernel/cpuinfo.c
+> @@ -160,6 +160,7 @@ static const char *const hwcap_str[] = {
+>  	[KERNEL_HWCAP_SME_SFEXPA]	= "smesfexpa",
+>  	[KERNEL_HWCAP_SME_STMOP]	= "smestmop",
+>  	[KERNEL_HWCAP_SME_SMOP4]	= "smesmop4",
+> +	[KERNEL_HWCAP_MTE_FAR]		= "mte_far",
+
+Personal preference: "mtefar" (no underscore), mostly because there's no
+other underscore in the hwcap strings yet ;).
+
+-- 
+Catalin
 
