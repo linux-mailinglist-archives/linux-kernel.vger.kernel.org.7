@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-630657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC20CAA7D89
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 01:52:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4ACEAA7D8F
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 01:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437313B75B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:52:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16EF54C647B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE522270ED5;
-	Fri,  2 May 2025 23:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2848270EA4;
+	Fri,  2 May 2025 23:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PjVfLC62"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHt8jwHY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B64C2701C9;
-	Fri,  2 May 2025 23:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245631EEA4E;
+	Fri,  2 May 2025 23:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746229947; cv=none; b=sy6LxV4veu/yuvoMedcQjfZ8MqdzQhMSxDaXAAQDOoW6mLsR0GoGjmhSEdyvY1zsrLRCVZAC2MwNDWiNKZYIrloPWRdTdZmidr2s+8hoHoPWnj1n+lbYc5bSJD/F+XlkltHVKkpNAaH4ISVM/dq31gpouhtT2NYWZw2TZOjgCYc=
+	t=1746230237; cv=none; b=Et8JxY1YLpVn9uPj/3HSoFLTLp6fIdx2cSQXuwzhYjbYcQhrhNvh5YG7LYQkdxekzKyQBMmAVeCHnBEs75gmnbMu5BN3LruiE8DsyD6h1HuKXEVQegFwizz0tovRF39zS0n8Gu7sRQxtUa4qwU7wK/oGaW34n58omJLOWuGEnTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746229947; c=relaxed/simple;
-	bh=sjGyzx5zYffZUol4Bd+XcAn9dmMJPKnOV5ISlUy/8+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r2yOV0NF/lJ7UnXFpo8rDP0iLpdR2Kyfs0AoDpEL1iRNQuGjraNXv60aK6jgKihOKtSPGDyKPrkNS0RMSat/DrFs6aUx0SLsnYIF7qXQdSk6mILo2Wk498noRowwp94BehL2U3OuTsJ0ImD4modhKGfgmfCce46VFuheAV6dPK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PjVfLC62; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=x2PLJPmdkpGUaXeB0Vpknxa7Gacsdx48KzqeupzvUGQ=; b=PjVfLC62tZRDMJdw
-	eJuHxD/CCzwhbEmysoW0G8LpyNDu8O3DGnpd57lbYEmTioEQBi8RshaoftY4SYbCbMKNZDk2PeMPD
-	I8fx3zRHCZyFLEYXPfmbeZ2gc8g17iZgPYjCiE7jlrDYAzclZpIJYEZawSuWdpNC4s4pRlLVJeFdc
-	rzMU8bAd21ewHoNxORtWC5Kr2A15PS1DPVCkYONHWQh0AjAVCPkYypuALk5b+P+UKEAF6otvgHaYL
-	Gp8SBtVzWIGsRZxsCQ/AqXed6OJrrrNYCwfLr0bNfTGBsDuzWXcoygLhlBgRvfZrRxaLlvy/7qcTz
-	lApCfjR+Rwr+HHlCXQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uB0B5-001BML-0N;
-	Fri, 02 May 2025 23:52:23 +0000
-From: linux@treblig.org
-To: perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 5/5] ALSA: core: Remove unused snd_jack_set_parent
-Date: Sat,  3 May 2025 00:52:19 +0100
-Message-ID: <20250502235219.1000429-6-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250502235219.1000429-1-linux@treblig.org>
-References: <20250502235219.1000429-1-linux@treblig.org>
+	s=arc-20240116; t=1746230237; c=relaxed/simple;
+	bh=PVEABnovuqU+G2Rx4Yj6v3Jpl6rgBdbKjzl1gkywClk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Dq6ewBx1Ed/aBslPoVrcO6UBsUXlEyhjIVmVYeM+S4tdvVp3Nj+WO+4/syB1SLoy4Uv7tGyPGoa5YUAH1qGGW/c9Tni4+vZuqprpmbUsoFiG+RJmkEm2/e/WbaRCluwWqX1rgyhqr2oLeTAV9LiUVUKQOWnZwBbTn3aU5NwvfLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHt8jwHY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 92B75C4CEE4;
+	Fri,  2 May 2025 23:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746230235;
+	bh=PVEABnovuqU+G2Rx4Yj6v3Jpl6rgBdbKjzl1gkywClk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=lHt8jwHY8o1RDFknGkE6SWn5K01bv0JvSow/6z4SJ4fQugGopK1pNXv45Z8KUFXwP
+	 wNPh+81L2+MZFm/AwoPk9IJP4huQEMMRP5s4D7TdJoQm37j7FCiHSPUOXvIEgiJnP0
+	 eGbu9j/pMvO1jhfU5+Rf238N4q4jUx9m9+oIKWN9GDEQiURwfKYS/a1IwHfQMzddE8
+	 O3o5UBinEAD566oa2dqnSeM/q6hwuxnwRcFLXwljlwvEDnRAl7IVUQP1NkmgApB3rK
+	 4v3p5UrZ5QSYDgkYwR4EeEB/VgYSkWMxmPpariOevZv8uyp2HpF8SGaJc1cSkXopJ1
+	 Yj/A485RKUq/A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA2FC3ABAC;
+	Fri,  2 May 2025 23:57:15 +0000 (UTC)
+From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
+Date: Fri, 02 May 2025 16:57:03 -0700
+Subject: [PATCH] usb: typec: tcpm/tcpci_maxim: Fix bounds check in
+ process_rx()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250502-b4-new-fix-pd-rx-count-v1-1-e5711ed09b3d@google.com>
+X-B4-Tracking: v=1; b=H4sIAM5bFWgC/x2MywqAIBAAfyX23EJKJfYr0SFrq71YrD0E6d+Tj
+ gMzkyCQMAXoigRCNwfefQZVFjBto18Jec4MutJNVWuFrkZPDy4c8ZhRIk775U80VlvjxlZZZyD
+ Hh1BW/nE/vO8H7HJeNWgAAAA=
+X-Change-ID: 20250421-b4-new-fix-pd-rx-count-79297ba619b7
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Badhri Jagan Sridharan <badhri@google.com>
+Cc: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, RD Babiera <rdbabiera@google.com>, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Amit Sunil Dhamne <amitsd@google.com>, 
+ Kyle Tso <kyletso@google.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746230235; l=1638;
+ i=amitsd@google.com; s=20241031; h=from:subject:message-id;
+ bh=vGHl5bogQ6MXAcBZGSBqyO6WniDKbsq9TxUanfyP/D0=;
+ b=MQhqKGSoGaDHNV4VW4oJMLEmFrNWzWKJNYBUplKvCqCSZqAVLDl/+35LL0ic7i9TG1NFK70jL
+ E5RET5hCJp+BAT2Miq/9XIT16NDxYi/ks97Ovyj79IDKQYKRsAm9XrE
+X-Developer-Key: i=amitsd@google.com; a=ed25519;
+ pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
+X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
+ auth_id=262
+X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
+Reply-To: amitsd@google.com
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+From: Amit Sunil Dhamne <amitsd@google.com>
 
-snd_jack_set_parent() was added as part of 2008's
-commit e76d8ceaaff9 ("ALSA: Add jack reporting API")
+Register read of TCPC_RX_BYTE_CNT returns the total size consisting of:
 
-but hasn't been used.
+  PD message (pending read) size + 1 Byte for Frame Type (SOP*)
 
-Remove it.
+This is validated against the max PD message (`struct pd_message`) size
+without accounting for the extra byte for the frame type. Note that the
+struct pd_message does not contain a field for the frame_type. This
+results in false negatives when the "PD message (pending read)" is equal
+to the max PD message size.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Fixes: 6f413b559f86 ("usb: typec: tcpci_maxim: Chip level TCPC driver")
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
+Reviewed-by: Kyle Tso <kyletso@google.com>
 ---
- include/sound/jack.h |  6 ------
- sound/core/jack.c    | 19 -------------------
- 2 files changed, 25 deletions(-)
+ drivers/usb/typec/tcpm/tcpci_maxim_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/sound/jack.h b/include/sound/jack.h
-index 1ed90e2109e9..36dc104c1145 100644
---- a/include/sound/jack.h
-+++ b/include/sound/jack.h
-@@ -79,7 +79,6 @@ int snd_jack_new(struct snd_card *card, const char *id, int type,
- 		 struct snd_jack **jack, bool initial_kctl, bool phantom_jack);
- int snd_jack_add_new_kctl(struct snd_jack *jack, const char * name, int mask);
- #ifdef CONFIG_SND_JACK_INPUT_DEV
--void snd_jack_set_parent(struct snd_jack *jack, struct device *parent);
- int snd_jack_set_key(struct snd_jack *jack, enum snd_jack_types type,
- 		     int keytype);
- #endif
-@@ -104,11 +103,6 @@ static inline void snd_jack_report(struct snd_jack *jack, int status)
- #endif
+diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+index fd1b80593367641a6f997da2fb97a2b7238f6982..648311f5e3cf135f23b5cc0668001d2f177b9edd 100644
+--- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
++++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+@@ -166,7 +166,8 @@ static void process_rx(struct max_tcpci_chip *chip, u16 status)
+ 		return;
+ 	}
  
- #if !defined(CONFIG_SND_JACK) || !defined(CONFIG_SND_JACK_INPUT_DEV)
--static inline void snd_jack_set_parent(struct snd_jack *jack,
--				       struct device *parent)
--{
--}
--
- static inline int snd_jack_set_key(struct snd_jack *jack,
- 				   enum snd_jack_types type,
- 				   int keytype)
-diff --git a/sound/core/jack.c b/sound/core/jack.c
-index e4bcecdf89b7..850f82340278 100644
---- a/sound/core/jack.c
-+++ b/sound/core/jack.c
-@@ -574,25 +574,6 @@ int snd_jack_new(struct snd_card *card, const char *id, int type,
- EXPORT_SYMBOL(snd_jack_new);
- 
- #ifdef CONFIG_SND_JACK_INPUT_DEV
--/**
-- * snd_jack_set_parent - Set the parent device for a jack
-- *
-- * @jack:   The jack to configure
-- * @parent: The device to set as parent for the jack.
-- *
-- * Set the parent for the jack devices in the device tree.  This
-- * function is only valid prior to registration of the jack.  If no
-- * parent is configured then the parent device will be the sound card.
-- */
--void snd_jack_set_parent(struct snd_jack *jack, struct device *parent)
--{
--	WARN_ON(jack->registered);
--	guard(mutex)(&jack->input_dev_lock);
--	if (jack->input_dev)
--		jack->input_dev->dev.parent = parent;
--}
--EXPORT_SYMBOL(snd_jack_set_parent);
--
- /**
-  * snd_jack_set_key - Set a key mapping on a jack
-  *
+-	if (count > sizeof(struct pd_message) || count + 1 > TCPC_RECEIVE_BUFFER_LEN) {
++	if (count > sizeof(struct pd_message) + 1 ||
++	    count + 1 > TCPC_RECEIVE_BUFFER_LEN) {
+ 		dev_err(chip->dev, "Invalid TCPC_RX_BYTE_CNT %d\n", count);
+ 		return;
+ 	}
+
+---
+base-commit: ebd297a2affadb6f6f4d2e5d975c1eda18ac762d
+change-id: 20250421-b4-new-fix-pd-rx-count-79297ba619b7
+
+Best regards,
 -- 
-2.49.0
+Amit Sunil Dhamne <amitsd@google.com>
+
 
 
