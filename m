@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-630032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92451AA74B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:16:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5898EAA74BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8B8A4C6F5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624C63A52CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0237C2561DA;
-	Fri,  2 May 2025 14:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADA9255F41;
+	Fri,  2 May 2025 14:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N1B2bHmd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gzNuR9B7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24F4255F5E;
-	Fri,  2 May 2025 14:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD9819E97B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746195262; cv=none; b=Lym4MZe8afKW4IEw0g8IC5vHvaLomUSlFGUv65EMSG7yQfhOPkadI0MGFgPEOqaDOPxurS8BZNaB9yj83eywaMoOMP0NULR0Olm3XUOeLpyyeK3xc+0ZYpmR4q68zUq7twLHogWzBo4w8KLKhXUYlu5h5U19w9tzaWcKfbYMNAs=
+	t=1746195390; cv=none; b=IPKIWvvv6ejSklR0kN/Z2RmrjIbK4zbqy6uaYtspl/PmP3H8sZjTstsfe1QmqBVMmAnIM5ENwINPQIXx014ABkvNm9KtRaEHSISbSJ0i799/mCUrO6JIFWno+S0whDtcfRafwzekKPSq8S0Tjry1mlS1ig+ag9Mhlq3lnvKAAS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746195262; c=relaxed/simple;
-	bh=m6QjeTDmjEFVIOLoBxnDhIcTIAn+T1Yym8af0FkdhUk=;
+	s=arc-20240116; t=1746195390; c=relaxed/simple;
+	bh=6T1876wvbcbG8AOYxOGoCfN3fLqM0OcZr5nT1lQMJr8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogKmMv5bYy32vrmko6cvAViqBoLd3DFuHFe8AN0fF5bz3mR8VJIvY/sRZ4oLE6y/MZSDd2e1eViQPdzoYplT6JpFTZmiANbXK3mUy9V8Yr9WODLgdCiz02HNn1vXVpZB7nTIbQk3Q9Eh+Y45iWz/mzSu9a7y/O5Cx5fgdhKeXRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N1B2bHmd; arc=none smtp.client-ip=192.198.163.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCC6tqZBM20ftkCzOR3UBhteoS2WjS5mIInUSZzYlK0AuIJRqZsLoOepBhJYniUr/rg3xWavqUdXJFhgXNdkHKC8B8rND3p/w9Pm0Ob7OXjQW8/HJJiyAbTfkWIJFHeQvJNHOXEyc9d8i7vftqXdM3svRju1W8pBzUY5miNDVvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gzNuR9B7; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746195261; x=1777731261;
+  t=1746195390; x=1777731390;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=m6QjeTDmjEFVIOLoBxnDhIcTIAn+T1Yym8af0FkdhUk=;
-  b=N1B2bHmdRHYVJxjuLspl4lHNbTlTL0HmVbALhrUTJz6AXEAV1sACu5K3
-   1mSDa0McEc2uqsw0X584Ipka4pwdYQ5sH7RPf4Uo/nr69l4l/nrbtx1FR
-   IUurbqnPhlfHQAAe1PZrAKg+s3JfriPfzGQ9E4EU9HXDh/VYJEkys+Po+
-   ydQLa6Nr6LgcLJjiXhgrsiPU24qhI8Eem7AhtSy8w3o/y2nFQMlUjUvd2
-   ftilepix1tHIe4lrAEkOytUE0JWmkstN3/Gt3GB0pt/Gvg9kLCvKelhO+
-   7XwxXnvJu0j5dOis414pAlRw8/NZwn/YqUYsNjXHRqJFa0rl+vASi/shf
-   Q==;
-X-CSE-ConnectionGUID: biGiGNgYQb+6u1fPyrD96w==
-X-CSE-MsgGUID: 8QhSk6daSyCL3CJF7pMOLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="47135939"
+  bh=6T1876wvbcbG8AOYxOGoCfN3fLqM0OcZr5nT1lQMJr8=;
+  b=gzNuR9B7GSN7XAVNNlGTG5Vs+qsrfgWuzwvQp7bTV5V72N0cCU8GLBnx
+   Vx1uAoertMF7JqRACrPPmRNbJrmBE64wli6LxlAKKSvZ4n0sVAFU1L7O2
+   tki4+Hicgy8rUTZJXJ979EWdD3sfRvsQFvYoEvpYby42EvkOJbu7bLsSX
+   o9/pCIh63NDYUqR+nZAhmQBSn+Pumcs5MrM5iTzq6HsybxwSZ8/cqYvdv
+   daT7UzkBdGRBYsAAsh8fOWnfG9/HDI3ZQfqP3p+fXfmlowq7eXY6CSMdK
+   pGuirBtnbby19Ihv7sXWXVrIOKZwBlvZ+TprVaGaztDJn6NdPDZFMVLOY
+   w==;
+X-CSE-ConnectionGUID: v+DWoPtNST6jn12D8pYlaw==
+X-CSE-MsgGUID: m8EHKzYTQl+X81C5x/CVFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="58085256"
 X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="47135939"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:14:20 -0700
-X-CSE-ConnectionGUID: U6cdrD1BQjy+FzNHh436kw==
-X-CSE-MsgGUID: 6hLzPHLnTRqVpm7t8tnImQ==
+   d="scan'208";a="58085256"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:16:29 -0700
+X-CSE-ConnectionGUID: tmyr955KQceMFFzPjexz3w==
+X-CSE-MsgGUID: CyaFM5uYRxy20T3bcEXejQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="134611673"
+   d="scan'208";a="135161988"
 Received: from smile.fi.intel.com ([10.237.72.55])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:14:19 -0700
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:16:26 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uAr9d-00000002Dla-0SwG;
-	Fri, 02 May 2025 17:14:17 +0300
-Date: Fri, 2 May 2025 17:14:16 +0300
+	id 1uArBf-00000002Dng-3Vxx;
+	Fri, 02 May 2025 17:16:23 +0300
+Date: Fri, 2 May 2025 17:16:23 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v3 1/1] media: v4l2-core: Replace the check for firmware
- registered I2C devices
-Message-ID: <aBTTOLmILq7D-AZy@smile.fi.intel.com>
-References: <20250313113115.359942-1-andriy.shevchenko@linux.intel.com>
- <Z9RkYCJ-ggJl2kn0@smile.fi.intel.com>
- <Z_UT8qKhF6R5VTan@smile.fi.intel.com>
+To: "Avizrat, Yaron" <yaron.avizrat@intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Oded Gabbay <ogabbay@kernel.org>,
+	"Elbaz, Koby" <koby.elbaz@intel.com>,
+	"Sinyuk, Konstantin" <konstantin.sinyuk@intel.com>
+Subject: Re: [PATCH v3 1/1] accel/habanalabs: Switch to use %ptTs
+Message-ID: <aBTTt0It5dopMDNO@smile.fi.intel.com>
+References: <20250305110126.2134307-1-andriy.shevchenko@linux.intel.com>
+ <Z-PM8oBtTPzqv-S2@smile.fi.intel.com>
+ <87zfh86rqi.fsf@intel.com>
+ <81431521-bedf-4361-a222-0e8ec70bea69@intel.com>
+ <Z_zeUAW7u8UgmEOo@smile.fi.intel.com>
+ <deee9bc9-6af0-46fa-af50-866c58ddf7ad@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z_UT8qKhF6R5VTan@smile.fi.intel.com>
+In-Reply-To: <deee9bc9-6af0-46fa-af50-866c58ddf7ad@intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Apr 08, 2025 at 03:17:54PM +0300, Andy Shevchenko wrote:
-> On Fri, Mar 14, 2025 at 07:16:17PM +0200, Andy Shevchenko wrote:
-> > On Thu, Mar 13, 2025 at 01:30:34PM +0200, Andy Shevchenko wrote:
-> > > Replace the check for firmware registered I²C devices as the firmware node
-> > > independently on type should be retrieved via dev_fwnode().
-> > 
-> > Hans, are you okay with this now? Can it be applied?
+On Mon, Apr 14, 2025 at 07:47:26PM +0300, Avizrat, Yaron wrote:
+> On 14/04/2025 13:07, Andy Shevchenko wrote:
+> > On Sun, Mar 30, 2025 at 02:15:50PM +0300, Avizrat, Yaron wrote:
+> >> On 26/03/2025 11:55, Jani Nikula wrote:
+> >>> On Wed, 26 Mar 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >>>> +Cc: Jani (sorry, forgot to add you in the first place).
+> >>>>
+> >>>> Do you think it's applicable now?
+> >>> Cc: Yaron, Koby, and Konstantin who are supposed to be the new
+> >>> maintainers for accel/habanalabs.
+> >>>
+> >> Thanks for the help, Weâ€™ll verify this change in our CI/CD pipeline and update you ASAP.
+> > What's news, please?
 > 
-> Is this fell into cracks? Also, can somebody harvest those pretty much simple
-> one- or so liners that I have sent last week(s)? They all basically in a way
-> about fwnode.
+> Recently acked and merged into our repo. Will also push upstream later on.
+> Appreciate the relevant contribution!
 
-Any comments? Can it be applied?
+I still don't see in in Linux Next.
 
 -- 
 With Best Regards,
