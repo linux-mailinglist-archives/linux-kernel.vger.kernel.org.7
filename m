@@ -1,112 +1,147 @@
-Return-Path: <linux-kernel+bounces-629480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E3FAA6D2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:58:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF160AA6D41
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9A23B1EC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8F58188CDAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA10122B8C8;
-	Fri,  2 May 2025 08:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8B422E3E7;
+	Fri,  2 May 2025 08:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAaE7RbM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="kDV39Dzi"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139C422616C
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B617B22B5BC;
+	Fri,  2 May 2025 08:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746176284; cv=none; b=dQJ/QEnqlPbxeMzNBlbAGzCJjEWf4W1Il+04Au7rjGTQawjKmZKJHppM+YCJ1eZs6E51id+NzBe/ggkx1V/Wsch0WdwdxXUlBOQvxpa6fs7A9/PIdE4R5BEUJa2qWBPMDZIkTMSk3WguVB/hGD7N3N0q2XLqIZZW/kx0lsZDRIE=
+	t=1746176382; cv=none; b=F5Zi5MkAWi6sMMNGIlXGTwLS7aEmHvmiHJC9dLVanYbgqWo13n+11L+jqqOs2bBzvB/gfb3FqFMCJZPWlvU0A1wwzIjyIBMVYXa/14MJMAYgFIl3pJvbZqlRZAj5YFi8myH0Y4Iid0qVnoSkiPqJOPKCKUzPyszyOmFF8kpXJdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746176284; c=relaxed/simple;
-	bh=ZuiskJpGWxLu4eAPDCVIKrsFcyDHCI0/cLWzm/xfpgU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uAztmcdiepuu10LrDJW4BXigB8hbHtBN15AelL3ezTsW8cs301xkM8HPyzdjZCq2N+QDRQJ4w1GuislofkHQT0lxa10CFzNHH7P6ZCqkYftv9LCJs9D/Aq30beSVyQbXofSkS0mgScRdTu2AVAmTEFty6TPc4gt2uQa49MMOdVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAaE7RbM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC55C4CEE4;
-	Fri,  2 May 2025 08:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746176283;
-	bh=ZuiskJpGWxLu4eAPDCVIKrsFcyDHCI0/cLWzm/xfpgU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ZAaE7RbMned7hCMAWLGak6h15MF1eIy0ByRjIOVxbiI7o4WF7/Xh2BVjNdw4/uAVl
-	 7KeN/fKxNky3V92sbLtvWMO6a/G7owtAJIEn5agB/iv0BGjLxas6W8K9rLCD/b49ZF
-	 4ZuuGhvAtvrhvlPk/42PlT2wfU82ptJhIL8oJqSrI88jpVLhDsj6nyrZeOeenTmsbB
-	 B/H92L8clzSteNApaASEUYxC+zTfin61AkB1EvmcT7Pz1utPmqNxacVua2QC46Ni5g
-	 BlX7tFtJpX6VuVSEuQbljGkbaxf7Vzy6FLJnKCDDTv5qTtqX2Kt96FbhJizuEXUZLP
-	 JraEh4uDUEvpw==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Fri, 02 May 2025 10:58:00 +0200
-Subject: [PATCH] nvme: unblock ctrl state transition for firmware update
+	s=arc-20240116; t=1746176382; c=relaxed/simple;
+	bh=o8DGWtf3j/QZNiMhxiHZvikbZyLGBOWmz0ZY1ILiOMY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BSufqHnAyVItHJbjOhwdg3j3B+fEEZO54Kqd1jWOuUjXh3Nw/7zlM0rkUlbWuUYh2IJgmRsNoiaOth4qTtNZDEvDjB7x1wFdfeMMULVnuZyQoQz+P/XNEmONXWYqbQYz6Tk+8O09IZaeiynPBnrzHMXxmJl53e4Hx/04JuuomQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=kDV39Dzi; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54263tvA019299;
+	Fri, 2 May 2025 04:59:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=Et6yvxhJOxhR2wQ54MbbiDYYzv/
+	zTXJFQWtEOb+6oMw=; b=kDV39DziItzaqC1abs80j/bmPVskWWuLrU9IM2Hn2eF
+	GonnDGQb68u1vnJ2AxxsRR8pyKoardFQTYXu5LDhBKw4QAuUisk0xS29vcfw53CL
+	kJBUy4Wuv+eRaJMh1Tq6Vgn282R6JT45TMJDE6tGX4g71MK6NCtAWDzZkCuMmIcf
+	8R+AjjGfYeYkUtgNU+iv2bRUNgPbsqRLlEZpxw1LP8cWhWd+QaxkgUchhue2RU4B
+	nJIhsiX67NzNzY/6ToEIbanTEJialSRV5I3AePK0cSWS7pJTa4YKklFa80piemmF
+	ih8QuXwTo+QXvZ15GmENF1AFsFIJnCDC7tO6Cmyy0UQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 46cm5pskhu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 May 2025 04:59:32 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 5428xUiW058958
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 May 2025 04:59:30 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 2 May 2025 04:59:30 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 2 May 2025 04:59:30 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 2 May 2025 04:59:30 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.211])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 5428xL7J015723;
+	Fri, 2 May 2025 04:59:23 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH v4 00/10] Add support for AD4080 ADC
+Date: Fri, 2 May 2025 11:58:55 +0300
+Message-ID: <20250502085905.24926-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250502-nvme-fix-fw-update-v1-1-cd7a9f3031f7@kernel.org>
-X-B4-Tracking: v=1; b=H4sIABeJFGgC/x2MuwqAMAwAf0UyG2gDdfBXxEFN1AxWaX1B6b9bH
- A/uLkGUoBKhrRIEuTXq7gvYuoJpHfwiqFwYyJAzzhD6exOc9cX5wevg4RS0rhmZDQnTCCU8ghT
- hn3Z9zh+ziGFrZAAAAA==
-X-Change-ID: 20250502-nvme-fix-fw-update-156bdd02ed2b
-To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Guenter Roeck <linux@roeck-us.net>, Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: cA_G--cdEV8p9gDnb3YQiEW69qriaIrg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDA2OSBTYWx0ZWRfX0nyr0WCMVwoR fVTDLbDvGS4funYQrSrKKgIbDOE157rsGrRN23gHXJ7LfTCbIi3TGWJsCPF2v1/VhDHuEgHw8fF Q+H55MzikaCznbgBdrCEwApCayqsN40Us4zv5pyTvVuO0OdwcfC7n0K6sXOhNxcsL+8w2fbm/7z
+ F9sc2K+PPnXglg+Z0k58AKrUSz8CdMJGM9j4WvVrwHneRG8LKpzkbKgoQR0bH9gCr1LegcIt3l7 r6RlLSaBUeycKRBHmAABR41rjXizSS70K+AqEZuyKRvi+omDeVCTq5ORwmiQekf368OUBTJvMba /Te2Wol0jhf7F6ngNLfir+qHKHRR64AAke6ezSC35EbLBWn6PKL35W9Uo+Smk+RT0nNXUxZD6/s
+ iEijHo8Nx+TnjPQ7YDR0RRTsJb3u+ngVfqDmBh7aqHdqf+N7dSAJgRtwmnCJzro7Osd8QVW2
+X-Proofpoint-GUID: cA_G--cdEV8p9gDnb3YQiEW69qriaIrg
+X-Authority-Analysis: v=2.4 cv=RYCQC0tv c=1 sm=1 tr=0 ts=68148974 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=dt9VzEwgFbYA:10 a=HubKl35eoKcbRmig0ccA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-01_06,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 impostorscore=0 priorityscore=1501
+ bulkscore=0 phishscore=0 clxscore=1015 malwarescore=0 suspectscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505020069
 
-The original nvme subsystem design didn't have a CONNECTING state; the
-state machine allowed transitions from RESETTING to LIVE directly.
+The AD4080 is a high-speed, low noise, low distortion, 20-bit, Easy
+Drive, successive approximation register (SAR) analog-to-digital
+converter (ADC). Maintaining high performance (signal-to-noise and
+distortion (SINAD) ratio > 90 dBFS) at signal frequencies in excess
+of 1 MHz enables the AD4080 to service a wide variety of precision,
+wide bandwidth data acquisition applications.
 
-With the introduction of nvme fabrics the CONNECTING state was
-introduce. Over time the nvme-pci started to use the CONNECTING state as
-well.
+This driver aims to be extended in the future to support multiple parts that are
+not released yet:
+    AD4081
+    AD4082
+    AD4083
+    AD4084
+    AD4085
+    AD4086
+    AD4087
+    AD4088
 
-Eventually, a bug fix for the nvme-fc started to depend that the only
-valid transition to LIVE was from CONNECTING. Though this change didn't
-update the firmware update handler which was still depending on
-RESETTING to LIVE transition.
+Antoniu Miclaus (10):
+  iio: backend: add support for filter config
+  iio: backend: add support for data alignment
+  iio: backend: add support for number of lanes
+  dt-bindings: iio: adc: add ad408x axi variant
+  iio: adc: adi-axi-adc: add filter type config
+  iio: adc: adi-axi-adc: add data align process
+  iio: adc: adi-axi-adc: add num lanes support
+  dt-bindings: iio: adc: add ad4080
+  iio: adc: ad4080: add driver support
+  Documetation: ABI: add sinc1 and sinc5+pf1 filter
 
-The simplest way to address it for the time being is to switch into
-CONNECTING state before going to LIVE state.
+ Documentation/ABI/testing/sysfs-bus-iio       |   3 +
+ .../bindings/iio/adc/adi,ad4080.yaml          |  96 +++
+ .../bindings/iio/adc/adi,axi-adc.yaml         |   2 +
+ MAINTAINERS                                   |   8 +
+ drivers/iio/adc/Kconfig                       |  14 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/ad4080.c                      | 569 ++++++++++++++++++
+ drivers/iio/adc/adi-axi-adc.c                 |  90 +++
+ drivers/iio/industrialio-backend.c            |  49 ++
+ include/linux/iio/backend.h                   |  19 +
+ 10 files changed, 851 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4080.yaml
+ create mode 100644 drivers/iio/adc/ad4080.c
 
-Fixes: d2fe192348f9 ("nvme: only allow entering LIVE from CONNECTING state")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/all/0134ea15-8d5f-41f7-9e9a-d7e6d82accaa@roeck-us.net
-Reviewed-by: Keith Busch <kbusch@kernel.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
----
- drivers/nvme/host/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index eb6ea8acb3cca7421d7fb218e51d855f2c056825..ac53629fce68d4c8c12cddc112986289eae79b43 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -4493,7 +4493,8 @@ static void nvme_fw_act_work(struct work_struct *work)
- 		msleep(100);
- 	}
- 
--	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
-+	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING) ||
-+	    !nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
- 		return;
- 
- 	nvme_unquiesce_io_queues(ctrl);
-
----
-base-commit: ebd297a2affadb6f6f4d2e5d975c1eda18ac762d
-change-id: 20250502-nvme-fix-fw-update-156bdd02ed2b
-
-Best regards,
 -- 
-Daniel Wagner <wagi@kernel.org>
+2.49.0
 
 
