@@ -1,278 +1,145 @@
-Return-Path: <linux-kernel+bounces-629773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2803CAA7133
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:06:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF04AA713B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8050F16E4EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050FE9A6707
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4AC248F72;
-	Fri,  2 May 2025 12:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3478251782;
+	Fri,  2 May 2025 12:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvN/dIDp"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsH5tofQ"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9948023C500;
-	Fri,  2 May 2025 12:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9980C24BBFD;
+	Fri,  2 May 2025 12:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746187607; cv=none; b=Xn/n9uW5wQgLlCBPvcA+sG8E8Q9vuhU5gQn1m7iGmxZWiSBmMpj0q5TdemuCXR37+RR02UpfTvNxzEMvbwvHKZYBTGzgDwnuEm3AeSgCrw5sbAo+p4ZQCehrxIEQ4xCJNf+LRVGtjcq79XDQN4g2sfAgnAxYI0AWPSSM1CL4WnQ=
+	t=1746187638; cv=none; b=Fa+uraGb8BzBVV2Lfy7DU8H3ihmn/srZGE9G4JcFzKn2mb8dEGNzzeXnm91T0gvBjNKmVw0J4fh+vWJ4JUGquxTps84EGHIgI6kvtyG41skgLdzXesGq50AqeNUH/Omi7WFMC/NXevZxHajVLHKxZWyyxM0PXC8/LjPRh78szik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746187607; c=relaxed/simple;
-	bh=VIiENbdDB2JwUhcI2xcDSEB/mg732gTkvnNfrNikiAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=feaxZsuFSMcfrdE0tXFQ3T5V16PRyfYiJkgu6Pm6a8P8wbZG8jVdaFUtgjxWaBo0iNBYnWrdjwSGbPsdyZgUIj5T07iFdr7VpDc/uCULxGj0RM5BnnNfC9k7CS0QBje+D716nGTPZ3jRDOtTLKua1NINGoAdqxpqvWMkFH9M2Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvN/dIDp; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1746187638; c=relaxed/simple;
+	bh=M0e2nNsOyisoCgzoHNCzUyhHenfAvi3DA60KqQg27x4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gcun0vKpgKJ9Yids3CR24yww7/dXaJZi4vfwb5ztAnT1S53LIn9pyOCA8bIcIbvbvkWSXmricXqqhudfbLRpFiyCZBGSIZoM5QY6brNL4d49y9tOf46r8BRUcJEs/WaCSQZd2M4l2AJEM1ABUAvGW1tSvETjXCxFjh7v4kHuj08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NsH5tofQ; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-440685d6afcso15430775e9.0;
-        Fri, 02 May 2025 05:06:45 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so21004235e9.1;
+        Fri, 02 May 2025 05:07:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746187604; x=1746792404; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1746187634; x=1746792434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3V73705bvr6jBRGxONET/Lnah1PbBZsX8gJ3s70qtfs=;
-        b=GvN/dIDp+HAOv5C+L1ptLYYlUWwW9l+wdWh6ObC3Ceks8hpg/E+R4tD71/FKqhJuO9
-         jhCRxBz4VItA5WwfppNdgh0uWOqb5LTJtHzdM1WBZ1t2WCWgQPZSsDVOvkP1dzBLe1Yq
-         EtnSEr3jy/esjZLmz67q9cIGjSWqko5S31gbNl84NNAI/X6E92O8mck6sqV+R5HCHHJ4
-         Jt0PXaYOG/7vq8ZTrT7AS+r9Ux5Zsuxj799Rd/Q/BLHJVqHxIzyxjQtZ3iust0lKc5uv
-         E6VFaBzKmB2ykaZN8FNMcJRFxUVWq6nONPZ6z49veBvulxy9weuE8VKPgXdQbcYQmVIw
-         YvaA==
+        bh=/rgNkZ9mACrHBZqehar2nVDjLj65HAeli8fMJrpgfgM=;
+        b=NsH5tofQq0X58/dXNhHCg3aJ82tIaBJWWWoRttLq+9y86mFsvQezPC/dQID+yLwCbQ
+         wIQHoSWnkN+F9XBNsCn+ZzogFBT/0fkb8ptELVZTVNKdusHlLZ++hB0l/tZKdW5paLl5
+         4OpHMJfse72quMLMikQPsLHF3g/kV0CtA3cXTGAZehrbzO1ynXPUA9IDmp10luv1y9Lw
+         UBtXqOk7B+VLmRTF5Nl1+b9SHyk1M8DCmTqM646xtRpY0o/m8mNO5m1P6p6vxHuqHw2z
+         dIM5gVwRj5HzL1Arzy68E94d8Q28d+YcOEXBW7jS4g60fgM+J1eWISOLGmTUJp1ClnbJ
+         RApA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746187604; x=1746792404;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1746187634; x=1746792434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3V73705bvr6jBRGxONET/Lnah1PbBZsX8gJ3s70qtfs=;
-        b=LEh7qsHflNOWGwfJrZdL+DQ19WT8QuO2fYUMKtHBtKx0Z0YtQwjgiEbxFeGpz0yTYb
-         5zxv8hYCFR+/PnQzrmm6DoGIVwZhjxtTdJATaLSH2yRCi2+rRZVgZd1RbHzJl/mA+pQH
-         S9ePhyr3gM+tHLYUUMBfvWtSvpFNs9ak5aG42CUb5nWV7/6mbBAIhBPX0Q3d8Z3fkUgS
-         Px3BZ2+E2iR85qSXkATygsHKRWAFa5iK0CDFWaaCwJClz+SMcGsVMLs4JkKl830YM8dw
-         a3KawJDnlv4Wc6pYm8gUp4OhlE+xoT/j9/ozM+Tph2pSxYb5eaoRAZ2AwHTJx3IiMzVc
-         Es6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDJcf5U6/SxFi58uO9eAw1kcYMlnNw6+Z558AIKLWiAsNmNO+jYPFMHFp0nTtvsMq9c63CgW1qvjjHikA=@vger.kernel.org, AJvYcCX+ZK6N5ehVqMsvA7StrJKLpPwtkuSHaeyiPCm5g2F+m45CdobKAy81W/EuSj40DoERP54HM/hMVmFRg9gHPxkFgw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvo/Yk2CYHvAUJcBmg9uY9dGVl2twLzhNbgJ//ca0uQPYkerTQ
-	/vBWUW9QyKdbZ6vqwu/5QR7DcdYUTeg4iuEs4g+MSdYrDHXMYkDN
-X-Gm-Gg: ASbGncu/YQqRK6uxlbC5+bZFH624P2RidhPpwOdBhffM0a/pCk6Cv+6bJY9eJmE9efC
-	h4UNOvssWCq4wujz2Qxqzy/dv5AFPg5mkZhHW6ac/RjY5dOthwzL3fSRMKrblR2ayCcX8FJy9Sy
-	nyKNPcUzl1KlnEGPcbqJ/6qUDkNl+pxbq1SpRJJHMfF54pawT7J+J0ea6qHzV7TVJNeCTLVAmXN
-	QHKuQWmEeVJ8weY0n8pt/rPPKOzPRdLh+GuFumuMaYFOgtiarqEozqhFke9jycUrNlLNmX2NRbL
-	KrIhb7qqP9IHs5Y36STqqS6m72uWoaNm/u0BQITsqiAmYM9lStJiaSbRcEGnnFt8F/8XUAR/Yaf
-	XEFE=
-X-Google-Smtp-Source: AGHT+IFh2JoJgMUXNCEsxIU7sFr9ZKrk9uzl/gj68SDvvgkmdXJHvwZfMJbNBkXkaIN5STEA3H1Rgg==
-X-Received: by 2002:a05:600c:1c26:b0:440:68db:a013 with SMTP id 5b1f17b1804b1-441bbf2cb29mr17733935e9.25.1746187603660;
-        Fri, 02 May 2025 05:06:43 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b89cc469sm43027435e9.6.2025.05.02.05.06.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 05:06:43 -0700 (PDT)
-Date: Fri, 2 May 2025 13:06:35 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Dirk Gouders <dirk@gouders.net>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
- <kan.liang@linux.intel.com>, Yury Norov <yury.norov@gmail.com>, Rasmus
- Villemoes <linux@rasmusvillemoes.dk>, Thomas Gleixner <tglx@linutronix.de>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, James Clark
- <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, Leo Yan
- <leo.yan@linux.dev>, Yicong Yang <yangyicong@hisilicon.com>, Jonathan
- Cameron <jonathan.cameron@huawei.com>, Nathan Chancellor
- <nathan@kernel.org>, Bill Wendling <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Al Viro
- <viro@zeniv.linux.org.uk>, Kyle Meyer <kyle.meyer@hpe.com>, Ben Gainey
- <ben.gainey@arm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Kajol
- Jain <kjain@linux.ibm.com>, Aditya Gupta <adityag@linux.ibm.com>, Eder
- Zulian <ezulian@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Kuan-Wei Chiu <visitorckw@gmail.com>, He Zhe <zhe.he@windriver.com>, Brian
- Geffon <bgeffon@google.com>, Ravi Bangoria <ravi.bangoria@amd.com>, Howard
- Chu <howardchu95@gmail.com>, Charlie Jenkins <charlie@rivosinc.com>, Colin
- Ian King <colin.i.king@gmail.com>, Dominique Martinet
- <asmadeus@codewreck.org>, Jann Horn <jannh@google.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Yang Jihong
- <yangjihong@bytedance.com>, Dmitry Vyukov <dvyukov@google.com>, Andi Kleen
- <ak@linux.intel.com>, Graham Woodward <graham.woodward@arm.com>, Ilkka
- Koskinen <ilkka@os.amperecomputing.com>, Anshuman Khandual
- <anshuman.khandual@arm.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, Hao
- Ge <gehao@kylinos.cn>, Tengda Wu <wutengda@huaweicloud.com>, Gabriele
- Monaco <gmonaco@redhat.com>, Chun-Tse Shao <ctshao@google.com>, Casey Chen
- <cachen@purestorage.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, Li
- Huafei <lihuafei1@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>,
- Levi Yun <yeoreum.yun@arm.com>, Weilin Wang <weilin.wang@intel.com>, Thomas
- Falcon <thomas.falcon@intel.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Andrew Kreimer <algonell@gmail.com>, Krzysztof =?UTF-8?B?xYFvcGF0b3dza2k=?=
- <krzysztof.m.lopatowski@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Jean-Philippe Romain
- <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Xu Yang
- <xu.yang_2@nxp.com>, Steve Clevenger <scclevenger@os.amperecomputing.com>,
- Zixian Cai <fzczx123@gmail.com>, Stephen Brennan
- <stephen.s.brennan@oracle.com>, Yujie Liu <yujie.liu@intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 04/47] perf bench: Silence -Wshorten-64-to-32
- warnings
-Message-ID: <20250502130635.0eabb190@pumpkin>
-In-Reply-To: <gha57xgs8b.fsf@gouders.net>
-References: <20250430175036.184610-1-irogers@google.com>
-	<20250430175036.184610-5-irogers@google.com>
-	<gho6wdh00l.fsf@gouders.net>
-	<CAP-5=fUdpa40MDNu0aDBO7o8H3YMe-cYsg-YfqUUZUY4M4XLeA@mail.gmail.com>
-	<ghecx9guoj.fsf@gouders.net>
-	<CAP-5=fXJpD_f6dUqroVpqe-OX5kyOPc1zpbyOZoQtqvQWBGr=Q@mail.gmail.com>
-	<gha57xgs8b.fsf@gouders.net>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=/rgNkZ9mACrHBZqehar2nVDjLj65HAeli8fMJrpgfgM=;
+        b=wJa7s4DSxvJsMTFlFUFW4I8clCJgQC0xNPhK45JRHr9wu8aAhB9J/9fHQN57ezKYsT
+         xzQ62dxgfmHns3IdTxSiJcYx4Ok2tjYnk60k92yArO98z8pUKrO8mr6+NBD/R27cJ74i
+         CwsRdViKueUYNVXAzZLyWy+twZfNjD57r9pSku/SOuf/ZWsRTAPk0QI6ZiBsB76KxA84
+         KLlRAv6D6uc5jpm16NmoVDARAzrVP6WRB7w4pkibxXrkk8UVfaEFHtO+8nbbL5uiRdIg
+         hmNfSnToEX8Qv3ITHnRifEkCed3XiF9YXrYSQAs0h6lybGVrYO6oQBqAK2x1Ch5P7+uf
+         JsuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGppVGqnUCpCjdkKGXXpZvcOGfA5pwzds/AU2aNVMR3uTGiw725csk4Ra73KGaN2iOhkLEMqhpGmrE@vger.kernel.org, AJvYcCUdVSX1hNOmx6s0k1IuRTIihSGHPN1T+1/AJblx4Iw8lyvgy8O19MOcJvUhTFNuNUb22fyr5Go+tGhMUkye@vger.kernel.org, AJvYcCWjlY/lxa7IVi92RGpBzJftibNMm89486US0hi2TX1oVqWs2gcqpzmPW92tph/6leUIjzHG1BQNkSxiDAh9a9aa0lk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7XMg5BC2MKnq+jevInp6dwkKAH4eHcH61gRdNWkCDUcm+zFKA
+	cUxuHUdo+A5JrlINDa8reGsgSjI8mv98/DLU8ABn5mrnjILdd5RzDis24lh4Qq6BDhxdxuSLBvm
+	VlP7hs0m7qDnd0dVbDJroAEcDVv0=
+X-Gm-Gg: ASbGnctNoUfgePJq08BUEySotOffPLa7xxWQSvBtKOhyiA+p1/arKY/6+LYPuVxTjMa
+	rglOtgP3CdRF9iVstnQc5Vumk7rT7f+GxTtKGjA4YiNFB8G2YYgZL9iUzs/mQmVMCUMDwE9YX/Y
+	PtQ+nzZgRCtQBG+fbh3Wvo2YM=
+X-Google-Smtp-Source: AGHT+IG7KvwtY+fAyvBOxFwEDzVqGI1LaVcoOaUFi107MbB8iN6ojKgoX5BnPbLTFowGo/R5psaH03J7RqO1MUbSm+0=
+X-Received: by 2002:a05:6000:2289:b0:39e:cbca:74cf with SMTP id
+ ffacd0b85a97d-3a09815877bmr2287432f8f.6.1746187633746; Fri, 02 May 2025
+ 05:07:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250501123709.56513-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250501123709.56513-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUWCEgwQ39f8wN2FobZK+0BoyXNm=eKfmYs50sABwomvA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUWCEgwQ39f8wN2FobZK+0BoyXNm=eKfmYs50sABwomvA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 2 May 2025 13:06:47 +0100
+X-Gm-Features: ATxdqUHUbZrCuHG6LsgfD0KsnguPDclXPpaPdX70W3hLnuLJ0SMY1WBzujOGSiM
+Message-ID: <CA+V-a8unYCmhvcOhz19WbN_OH5BctPLhGH5ofZeMzSk_r9CsfA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clocksource/drivers/renesas-ostm: Enable OSTM reprobe
+ for RZ/V2N SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Chris Brandt <chris.brandt@renesas.com>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 01 May 2025 01:11:16 +0200
-Dirk Gouders <dirk@gouders.net> wrote:
+Hi Geert,
 
-> Ian Rogers <irogers@google.com> writes:
->=20
-> > On Wed, Apr 30, 2025 at 3:19=E2=80=AFPM Dirk Gouders <dirk@gouders.net>=
- wrote: =20
-> >>
-> >> Ian Rogers <irogers@google.com> writes:
-> >> =20
-> >> > On Wed, Apr 30, 2025 at 1:23=E2=80=AFPM Dirk Gouders <dirk@gouders.n=
-et> wrote: =20
-> >> >>
-> >> >> Hi Ian,
-> >> >>
-> >> >> considering so many eyes looking at this, I am probably wrong.
-> >> >>
-> >> >> So, this is only a "gauge reply" to see if it's worth I really read
-> >> >> through all the commits ;-)
-> >> >>
-> >> >> Ian Rogers <irogers@google.com> writes:
-> >> >>
-> >> >> [SNIP]
-> >> >> =20
-> >> >> > diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sch=
-ed-pipe.c
-> >> >> > index 70139036d68f..b847213fd616 100644
-> >> >> > --- a/tools/perf/bench/sched-pipe.c
-> >> >> > +++ b/tools/perf/bench/sched-pipe.c
-> >> >> > @@ -102,7 +102,8 @@ static const char * const bench_sched_pipe_us=
-age[] =3D {
-> >> >> >  static int enter_cgroup(int nr)
-> >> >> >  {
-> >> >> >       char buf[32];
-> >> >> > -     int fd, len, ret;
-> >> >> > +     int fd;
-> >> >> > +     ssize_t ret, len;
-> >> >> >       int saved_errno;
-> >> >> >       struct cgroup *cgrp;
-> >> >> >       pid_t pid;
-> >> >> > @@ -118,7 +119,7 @@ static int enter_cgroup(int nr)
-> >> >> >       cgrp =3D cgrps[nr];
-> >> >> >
-> >> >> >       if (threaded)
-> >> >> > -             pid =3D syscall(__NR_gettid);
-> >> >> > +             pid =3D (pid_t)syscall(__NR_gettid);
-> >> >> >       else
-> >> >> >               pid =3D getpid();
-> >> >> >
-> >> >> > @@ -172,23 +173,25 @@ static void exit_cgroup(int nr)
-> >> >> >
-> >> >> >  static inline int read_pipe(struct thread_data *td)
-> >> >> >  {
-> >> >> > -     int ret, m;
-> >> >> > +     ssize_t ret;
-> >> >> > +     int m;
-> >> >> >  retry:
-> >> >> >       if (nonblocking) {
-> >> >> >               ret =3D epoll_wait(td->epoll_fd, &td->epoll_ev, 1, =
--1); =20
-> >> >>
-> >> >> The epoll_wait(), I know of, returns an int and not ssize_t.
-> >> >>
-> >> >> That shouldn't show up, because it doesn't cause real problems... =
-=20
-> >> >
-> >> > So the function is read_pipe so it should probably return a ssize_t.=
- I
-> >> > stopped short of that but made ret a ssize_t to silence the truncati=
-on
-> >> > warning on the read call. Assigning smaller to bigger is of course n=
-ot
-> >> > an issue for epoll_wait. =20
-> >>
-> >> Oh yes, I missed that ret is also used for the result of read().
-> >>
-> >> Some lines down there is also a combination of
-> >>
-> >> ret =3D enter_cgroup() (which is int)
-> >>
-> >> and
-> >>
-> >> ret =3D write()
-> >>
-> >>
-> >> Just confusing but yes, because ret is also used for read() and write()
-> >> in those cases it should be ssize_t.
-> >>
-> >> I'm sorry for the noise. =20
+Thank you for the review.
+
+On Fri, May 2, 2025 at 1:02=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, 1 May 2025 at 14:37, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > No worries, I'm appreciative of the eyes. I suspect we'll only pick up
-> > the first patches in this series to fix what is a bug on ARM. I think
-> > I'm responsible for too much noise here ;-) =20
->=20
-> A final thought (in case this patch will also be picked):
->=20
-> Why not, in case of read_pipe() and worker_thread() just cast
-> read() and write() to int?  Both get counts of sizeof(int) and
-> it would clearly show: we know the result fits into an int.
+> > Add CONFIG_ARCH_R9A09G056 to the probe condition in renesas-ostm.c so t=
+hat
+> > the OSTM platform driver can reprobe for the RZ/V2N (R9A09G056) SoC. Li=
+ke
+> > RZ/G2L and RZ/V2H(P), the RZ/V2N contains the Generic Timer Module (OST=
+M)
+> > which requires its reset to be deasserted before any register access.
+> > Enabling the platform_device probe path ensures the driver defers until
+> > resets are available.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> > --- a/drivers/clocksource/renesas-ostm.c
+> > +++ b/drivers/clocksource/renesas-ostm.c
+> > @@ -225,7 +225,7 @@ static int __init ostm_init(struct device_node *np)
+> >
+> >  TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
+> >
+> > -#if defined(CONFIG_ARCH_RZG2L) || defined(CONFIG_ARCH_R9A09G057)
+> > +#if defined(CONFIG_ARCH_RZG2L) || defined(CONFIG_ARCH_R9A09G057) || de=
+fined(CONFIG_ARCH_R9A09G056)
+>
+> What about simplifying this to a check for CONFIG_ARM64?
+> The only SoCs which don't want this are RZ/A1 and RZ/A2, because they
+> are Cortex-A9 and thus do not have the architectured timer, which is
+> mandatory on ARM64.
+>
+Agreed I will simplify this to CONFIG_ARM64.
 
-This is an obvious case of the entire insanity of these changes.
-
-	David
-
->=20
-> In case of read_pipe() that would mean to just change one line in
-> contrast to:
->=20
-> @@ -172,23 +173,25 @@ static void exit_cgroup(int nr)
-> =20
->  static inline int read_pipe(struct thread_data *td)
->  {
-> -	int ret, m;
-> +	ssize_t ret;
-> +	int m;
->  retry:
->  	if (nonblocking) {
->  		ret =3D epoll_wait(td->epoll_fd, &td->epoll_ev, 1, -1);
->  		if (ret < 0)
-> -			return ret;
-> +			return (int)ret;
->  	}
->  	ret =3D read(td->pipe_read, &m, sizeof(int));
->  	if (nonblocking && ret < 0 && errno =3D=3D EWOULDBLOCK)
->  		goto retry;
-> -	return ret;
-> +	return (int)ret;
->=20
->=20
-> Best regards,
->=20
-> Dirk
->=20
-
+Cheers,
+Prabhakar
 
