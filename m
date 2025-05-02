@@ -1,90 +1,83 @@
-Return-Path: <linux-kernel+bounces-629710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB48BAA706C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:10:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7005AA7071
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99BB91C00CFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399D94676A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3AF2417C5;
-	Fri,  2 May 2025 11:10:43 +0000 (UTC)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A81F2417C5;
+	Fri,  2 May 2025 11:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UaWPp5Fu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F03230D1E
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 11:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA25E23FC5A
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 11:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746184243; cv=none; b=pNAshep0xKymu8mPRndMMIPKJ4GBjfArRTUF7y9vMfoC+p/ZZ8eQ8FZyX+wJVGzuXruGqL8nn1MCQfgxI5+rlgoPrkGwIXgD//wd/sKpWwwUo4sFlX/cKpjs4Xq5N75M0joCZ48XugZ1MHnBpHYVYwK5sTXGBE1A0GFLjBQ6sUY=
+	t=1746184295; cv=none; b=DMBcuhrIu6EKummQi/ClI+OvBjaQFwGbV1mV5aGw5FlTDY3um93v/1f3/WCtNSKQfmg2jumf+EK3kDXllCTIEne8NL8vKr9dkWJ7BtNNw+k9M4Abnn3Q0ZwLPy1ktzqkRn3Xx8U/tP8gYnAUxrjux8aGXGoutDdqDJop9qee4OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746184243; c=relaxed/simple;
-	bh=uCREbpoXZ/d4qu1maOPKLiBN7nJnfTaIKK/Mi8Y0w+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hruznv5o02F72syBVX3bVnpQ8tE2kTgFUFSp9N219HO37NPzbJITbJYiFuA8nAUwzeHv/GPs8AHDftVtdY98k69RhBFIrELYBY+ebZjoucyF+HHmJOnNOtUka4Vun1HvRnbjjd3Shu4z7KrWMJBz7WQibOdCpgHDaSXSfxj43vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:df64:35e8:502:4ac0])
-	by albert.telenet-ops.be with cmsmtp
-	id kBAf2E00B4sst1106BAfLo; Fri, 02 May 2025 13:10:39 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1uAoHq-00000000Wa9-2zMC;
-	Fri, 02 May 2025 13:10:39 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1uAoHu-00000008ozq-3Cqa;
-	Fri, 02 May 2025 13:10:38 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>,
-	Martin Sperl <kernel@martin.sperl.org>
-Cc: linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: loopback-test: Do not split 1024-byte hexdumps
-Date: Fri,  2 May 2025 13:10:35 +0200
-Message-ID: <37ee1bc90c6554c9347040adabf04188c8f704aa.1746184171.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1746184295; c=relaxed/simple;
+	bh=lxjGHS3cfRSQaQe4SoSD/hzcMZPlcMfBcwBXxPqcwQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uN212A/jIFzcUUQMC3Fg9al/LO/oLLhiTJfp42kOscLlgszzR0zv0AWPfPuQ6Vz3y424evhuhw2eVzeaSCu8Fuu8vFZIRNP4ln7/zaq1O0nNFxnblPiT0q5FH1i4e5rYLlMYSZmdl5ec9PSeJmhRo6/LuVkDB0g4sMkHHEK1VLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UaWPp5Fu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rOcmUHivWm2VyijzsBx2fgbFNnH4PTajNysnSptcXWo=; b=UaWPp5FubR6G8XSifKUH5oHEqv
+	5FWN3MCNRlpz4lbl9v7mMT73rlWRj/zO98rUPFdgD6OiHRLwTJ/hwHqU9M6Zan7Ib1r3QT0UnsvKV
+	aYIK+v8giP1CTbM6AIFa66XQVpmY4PecIoapK50uDsN8ZBKlVy4QyRvR21ei25DAcJx7f38NX9LRy
+	GuCcJbEx+48GPuKUqxzhAtBWiGBbZkqv4Edb4lCiqpahu54sCVjbyk3uZ0kWwUwACengc0v1KC6BD
+	T9Ugjf170jcrK/26huMOjF7lZvJdBXVoA8tMUd9byVJFAo6kEjicaJh77gY+ptGQuKdTF3gWkcr7d
+	f2ni50fw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAoIE-0000000F0w4-1kBh;
+	Fri, 02 May 2025 11:10:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 602C030057C; Fri,  2 May 2025 13:10:44 +0200 (CEST)
+Date: Fri, 2 May 2025 13:10:44 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, tglx@linutronix.de,
+	kprateek.nayak@amd.com
+Subject: Re: [PATCH V3 4/4] Sched: Add tracepoint for sched time slice
+ extension
+Message-ID: <20250502111044.GY4198@noisy.programming.kicks-ass.net>
+References: <20250502015955.3146733-1-prakash.sangappa@oracle.com>
+ <20250502015955.3146733-5-prakash.sangappa@oracle.com>
+ <20250502091434.GV4198@noisy.programming.kicks-ass.net>
+ <20250502110210.rZX1iHcg@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502110210.rZX1iHcg@linutronix.de>
 
-spi_test_print_hex_dump() prints buffers holding less than 1024 bytes in
-full.  Larger buffers are truncated: only the first 512 and the last 512
-bytes are printed, separated by a truncation message.  The latter is
-confusing in case the buffer holds exactly 1024 bytes, as all data is
-printed anyway.
+On Fri, May 02, 2025 at 01:02:10PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-05-02 11:14:34 [+0200], Peter Zijlstra wrote:
+> > This is horrific coding style. But really why do we need this? I'm not,
+> > in general, a fan of tracepoints.
+> 
+> I suggested a tracepoint so that we see why the NEED_RESCHED flag
+> disappeared. The trace would show a wakeup, the need_resched flag would
+> be set and the flag would disappear without an explanation.
 
-Fix this by printing buffers holding up to and including 1024 bytes in
-full.
-
-Fixes: 84e0c4e5e2c4ef42 ("spi: add loopback test driver to allow for spi_master regression tests")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/spi/spi-loopback-test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-loopback-test.c b/drivers/spi/spi-loopback-test.c
-index 31a878d9458d95fd..7740f94847a883f3 100644
---- a/drivers/spi/spi-loopback-test.c
-+++ b/drivers/spi/spi-loopback-test.c
-@@ -420,7 +420,7 @@ MODULE_LICENSE("GPL");
- static void spi_test_print_hex_dump(char *pre, const void *ptr, size_t len)
- {
- 	/* limit the hex_dump */
--	if (len < 1024) {
-+	if (len <= 1024) {
- 		print_hex_dump(KERN_INFO, pre,
- 			       DUMP_PREFIX_OFFSET, 16, 1,
- 			       ptr, len, 0);
--- 
-2.43.0
-
+Would we not see a timer_start event for the hrtick or somesuch?
 
