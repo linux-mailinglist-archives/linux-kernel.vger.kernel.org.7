@@ -1,134 +1,141 @@
-Return-Path: <linux-kernel+bounces-630417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B307AA7A0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 951E8AA7A0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2DCE4E2516
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:10:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E42514A1288
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13271F1301;
-	Fri,  2 May 2025 19:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B48A1F12FF;
+	Fri,  2 May 2025 19:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tLKGNqPs"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kvtf0oRn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/QtCpPtC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3551C1EFFBB
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 19:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3339F1EF372;
+	Fri,  2 May 2025 19:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746212996; cv=none; b=hSTldVN2hgWGb/7v7EX1JKFDBMs5lVl7iop8htQc6d7gNCtXhasCyu8sm9jpvSrf0sXBdMhSbjULVrYjF/EsTiPWNzwojjMFnQdRFQ1YlCbZjOq4KdKpQHSrMSDeYENrSktJJrRz950He/PodnkRq0UeVq6gvzuTqUNDlnFKzIQ=
+	t=1746212975; cv=none; b=dtcvpKp0XuQNU8iHKI6cZFHj/oCc2hgRXQsOCpauRbxPC6AwsA+zdevK/cRED92fQs7sjlR3PA3Pyjcv5WmSlaSWFubLaYCg2e9U9jpiAh7jbWOfP7NZ40wbLZ+OjGq5hZ83oNdW3mo+l2la0beuLsoLWZM2aXjA0bA2KV4P6yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746212996; c=relaxed/simple;
-	bh=GJ2pIjBchyImO+6fT+NNHDZxYbsmpgk+t2LIWLflrk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVzPtMkTXSM48HvseG0JBMziAVcR6IYTWupU5yzPmx3tZTtntzjJmlFPO50I1cSZVo5A8Lp3WzoBOGx+KdIYthIe9fERIvrx+oAGdUz1BVw1ZruUIwxh7sCGv9OK3FpvsZQk1LIes/R4jQNTOAgXsRVM3Q+8OcwQtU/gJ5qFLwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tLKGNqPs; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pqT1CsyDucN3pt8NP7y+prQ7/LGXACbbn0G9sn9Egp0=; b=tLKGNqPsFgqT2Qjcsyz63JrvoT
-	pvPJ2lsbTZ2Snh6b6qeZBmtN8L2aSm01cloc4ublKiUU8My7d1S44jBfpESszgYddAOi7+Oq13bg5
-	PgHFLZvZcNWDUQVUUYw4/FmnYMaJx5/cw4VT/qbKo8sG2uWAkZvulcJL9KRSFE1lBjfznV8doUJ6z
-	cqN2fbjSwTaPnEM31xx/OinJO7ZPMQjwCi/ua8WngSOsZ82S3Atcxv3PbvgXOY3W3J6swbJcMlRrH
-	7l3KZKTsUDEatCsqRWRCgwagAFhyX5K4PACfvN4zwoi6C4gp6gCOVB4QZv74jWaeUzBC6PA7+W7O9
-	uebq4YbA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAvkp-0000000AtAh-1eng;
-	Fri, 02 May 2025 19:09:02 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 99217300321; Fri,  2 May 2025 21:08:38 +0200 (CEST)
-Date: Fri, 2 May 2025 21:08:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v12 21/21] selftests/futex: Add futex_numa_mpol
-Message-ID: <20250502190838.GB24078@noisy.programming.kicks-ass.net>
-References: <20250416162921.513656-1-bigeasy@linutronix.de>
- <20250416162921.513656-22-bigeasy@linutronix.de>
+	s=arc-20240116; t=1746212975; c=relaxed/simple;
+	bh=zg/IEQz7gJw8zrPiVfIWKxHIf9cXnsyiKM4G8wd4zZs=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NcfJ6TCi+bu8VKsktDxamtI3fAy9bjlzfXZ1YqpWMkQzWADanlPXIazX+2vfOPJDOf1FmETnWUH/Y/Mcky2J81Cnu0nxN0QEmSWJknvttX8aDR2LaX4mAdFg2p2+3tLpEgTdF2RqKh0EVENZZo18iIHZMrhrOstmyBtfVkyw1vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kvtf0oRn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/QtCpPtC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 02 May 2025 19:09:26 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746212972;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tEt9mvmL31MTjKxEzdKHB5liGKKvSnwmpLSICWzpJWo=;
+	b=Kvtf0oRnTIsfiEZHMAZHY789oRNnimz67Th8Yq0ZsYzaEsB7EQcjynK9MTY1mf/vnrizx+
+	DH2fUJ8jPy/ifvJlmYGFbwWss1luVDKJzhs8UYnND+rX5bWZfiWeRZA9OiukMZXMgsb/09
+	l5hCTw1i3EBJgVdEy2CFz0wmUfcrvKn3cYYUEifvzi0Uu5bWpUSaqKH5Q7zZZV26xJVrhT
+	+AObP8xOsFd0Y2ty3Lelt+2BZtaTOkZ3FYa7SbMWfAqoUZfF+swoso7757a9Ni+aQgD1Vk
+	zzGRY8upv3gNS2riFjgwwBiyhZNr3Xd7Db4kUd9xTrkqBuaI9rjdTCYz0WRR/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746212972;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tEt9mvmL31MTjKxEzdKHB5liGKKvSnwmpLSICWzpJWo=;
+	b=/QtCpPtCJpU03mzMX2Tw9kfIqL+TXosHs79+hFAoTYtZ0jgZes7Yjpkr4ibMNMkh8RvmFv
+	L+EjSyCaM+IramCw==
+From:
+ tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/urgent] vdso: Reject absolute relocations during build
+Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250430-vdso-absolute-reloc-v2-2-5efcc3bc4b26@linutronix.de>
+References: <20250430-vdso-absolute-reloc-v2-2-5efcc3bc4b26@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416162921.513656-22-bigeasy@linutronix.de>
+Message-ID: <174621296673.22196.7605277890848696857.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 16, 2025 at 06:29:21PM +0200, Sebastian Andrzej Siewior wrote:
-> diff --git a/tools/testing/selftests/futex/include/futex2test.h b/tools/testing/selftests/futex/include/futex2test.h
-> index 9d305520e849b..b664e8f92bfd7 100644
-> --- a/tools/testing/selftests/futex/include/futex2test.h
-> +++ b/tools/testing/selftests/futex/include/futex2test.h
-> @@ -8,6 +8,11 @@
->  
->  #define u64_to_ptr(x) ((void *)(uintptr_t)(x))
->  
-> +struct futex32_numa {
-> +	futex_t futex;
-> +	futex_t numa;
-> +};
-> +
->  /**
->   * futex_waitv - Wait at multiple futexes, wake on any
->   * @waiters:    Array of waiters
-> @@ -20,3 +25,32 @@ static inline int futex_waitv(volatile struct futex_waitv *waiters, unsigned lon
->  {
->  	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
->  }
-> +
-> +static inline int futex2_wait(volatile struct futex_waitv *waiters, unsigned long nr_waiters,
-> +			      unsigned long flags, struct timespec *timo, clockid_t clockid)
-> +{
-> +	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
+The following commit has been merged into the timers/urgent branch of tip:
 
-I'm confused, sure this should be __NR_futex_wait
+Commit-ID:     7aeb1538be5df3efa1d799e5428ac3a0ae802293
+Gitweb:        https://git.kernel.org/tip/7aeb1538be5df3efa1d799e5428ac3a0ae8=
+02293
+Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+AuthorDate:    Wed, 30 Apr 2025 11:20:14 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 02 May 2025 20:57:11 +02:00
 
-> +}
-> +
-> +/*
-> + * futex_wait2() - block on uaddr with optional timeout
-> + * @val:	Expected value
-> + * @flags:	FUTEX2 flags
-> + * @timeout:	Relative timeout
-> + * @clockid:	Clock id for the timeout
-> + */
-> +static inline int futex2_wait2(void *uaddr, long val, unsigned int flags,
-> +			      struct timespec *timeout, clockid_t clockid)
+vdso: Reject absolute relocations during build
 
-And this should be futex2_wait().
+All vDSO code needs to be completely position independent.
+Symbol references are marked as hidden so the compiler emits
+PC-relative relocations. However there are cases where the compiler may
+still emit absolute relocations, as they are valid in regular PIC DSO code.
+These would be resolved by the linker and will break at runtime.
 
+Introduce a build-time check for absolute relocations.
+The check is done on the object files as the relocations will not exist
+anymore in the final DSO. As there is no extension point for the
+compilation of each object file, perform the validation in vdso_check.
 
-> +{
-> +	return syscall(__NR_futex_wait, uaddr, val, 1, flags, timeout, clockid);
-> +}
-> +
-> +/*
-> + * futex2_wake() - Wake a number of futexes
-> + * @nr:		Number of threads to wake at most
-> + * @flags:	FUTEX2 flags
-> + */
-> +static inline int futex2_wake(void *uaddr, int nr, unsigned int flags)
-> +{
-> +	return syscall(__NR_futex_wake, uaddr, 1, nr, flags);
-> +}
-> -- 
-> 2.49.0
-> 
+Debug information can contain legal absolute relocations and readelf can
+not print relocations from the .text section only. Make use of the fact
+that all global vDSO symbols follow the naming pattern "vdso_u_".
+
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250430-vdso-absolute-reloc-v2-2-5efcc3bc4=
+b26@linutronix.de
+Link: https://lore.kernel.org/lkml/aApGPAoctq_eoE2g@t14ultra/
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D120002
+---
+ lib/vdso/Makefile.include | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/lib/vdso/Makefile.include b/lib/vdso/Makefile.include
+index cedbf15..04257d0 100644
+--- a/lib/vdso/Makefile.include
++++ b/lib/vdso/Makefile.include
+@@ -12,7 +12,13 @@ c-getrandom-$(CONFIG_VDSO_GETRANDOM) :=3D $(addprefix $(GE=
+NERIC_VDSO_DIR), getrand
+ #
+ # As a workaround for some GNU ld ports which produce unneeded R_*_NONE
+ # dynamic relocations, ignore R_*_NONE.
++#
++# Also validate that no absolute relocations against global symbols are pres=
+ent
++# in the object files.
+ quiet_cmd_vdso_check =3D VDSOCHK $@
+       cmd_vdso_check =3D if $(READELF) -rW $@ | grep -v _NONE | grep -q " R_=
+\w*_"; \
+ 		       then (echo >&2 "$@: dynamic relocations are not supported"; \
++			     rm -f $@; /bin/false); fi && \
++		       if $(READELF) -rW $(filter %.o, $(real-prereqs)) | grep -q " R_\w*_=
+ABS.*vdso_u_"; \
++		       then (echo >&2 "$@: absolute relocations are not supported"; \
+ 			     rm -f $@; /bin/false); fi
 
