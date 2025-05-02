@@ -1,120 +1,162 @@
-Return-Path: <linux-kernel+bounces-629436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC32AA6C95
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:34:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A339EAA6C97
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4CB1B6762A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:35:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB367B2335
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E026322A80F;
-	Fri,  2 May 2025 08:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353C022ACD4;
+	Fri,  2 May 2025 08:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gk0E1b12"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lHBPwyTa"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BDA8828;
-	Fri,  2 May 2025 08:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAB222A7E5
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746174890; cv=none; b=mULRbjnBn/1D3AeFCKnUfDs/m05sXp4Ho26vgVzp2+yRBlt0Q0v3pvaUAUZTwZ0gB5mZJ6xbVOaDtf0+04KokWeWfKT5RYTRKjw4Ba0m8EdyvqCOB3Gmlf2ie0zCzjrpMvOGlvPfz7jfP3OrMFT6CMsLBVCSF+9Z3SnLkVrZDNY=
+	t=1746174940; cv=none; b=hfO4T5xf0FpAU5NdLJP1vTmvjDtO0ZNHTS9aaIyFpDXH2w40Ss6x5Wpcf4GkyX2GWmguVRRN0cyW3e/O6JmxaalL0PLrL+4RkZuhsL4fKSyKSWMd2qqg0M9xjKvTOe0wFslTzvSjTv8HW290tsATpvULF8DTyjy8ka4rm+3UwvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746174890; c=relaxed/simple;
-	bh=gavfjvHRT5wusZDL+2oOWK7fIEbSI+GHndbQUpjG4qw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oaJ23Fh4bqTBFzi7QuRj2UfWnbR2yayr8f7TX8W0sl3rjsTbx/uIub/Ud3/6oodobt7bOER9WwZ6vkwRhAWo6EbqxZFYxHFs1oufnObrfqBNA3AP1ntLWULy83/0rzPd20PQKKBBLm+nywD2PMkcrssmoaqzirhDp68xBwdecq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gk0E1b12; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F20B6C4CEE4;
-	Fri,  2 May 2025 08:34:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746174889;
-	bh=gavfjvHRT5wusZDL+2oOWK7fIEbSI+GHndbQUpjG4qw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gk0E1b12WMFQI1HXXe5kJMMGbjgnrnVylLLQTKdAUBj7zymfCpmn/Dn8qnPcyNUHe
-	 kcuMiuw1lZa55uGxYbWjFTYuET/yCRLXLi1lnDKpLUdI+BP2mgXxljd6cEaFK4SS3V
-	 Thre+RBYrTSsvadMwwkrQXI92o28IqPv+kQfGU7mvCSZmlH+8S4VJGNLyDheam56m/
-	 nJNYgVrd+EZDf+KS8OFYnvOBP3E0Ut8EhlKD6aUMFqW6izVYE42a5y1GHZBItYqgt6
-	 OVR/ZHuGQsbWbBSI/2ct7f8J9MjymchYcvJhPTfoTCnARcmkx4XCLQN7baoILdL4Xf
-	 Z76g7Ii+1sB1w==
-Message-ID: <6ae54415-aadb-4f26-bdae-63a036bff112@kernel.org>
-Date: Fri, 2 May 2025 10:34:42 +0200
+	s=arc-20240116; t=1746174940; c=relaxed/simple;
+	bh=LUBY75erqJBugAhNu+5GPQ9ZxN0mQ9SsLVRTeLJn3zs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qIl7h0NBCDEme+CeGH+NDaLdzLWpTPbGe0he2G6gP8Vds7hjBEdxtbHxzYjLaoR5IRBdlWnG+h7FXjfE62VqQtBGMYK5bsW/RqBOJUtBFxEWOrnlRQz02+EZ8y/oVWkMu10dC7j1mzWV+lRLQMIycMeFMBLofkDA1t8OonT61cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lHBPwyTa; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d734da1a3so6914595e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 01:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746174937; x=1746779737; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f7r6WR049enygy037lONQ9m9pD13OBTo4e15DUJyoKE=;
+        b=lHBPwyTa1A7MHnIeD2Ba9CUh5JzMIrcQ/qkuTgNmt7BO3hWaSSqfq72FH/WugH21or
+         6pPy6tPulSkQnkogT9oUOKGR5HTQQzyz2bAVrLb/he0sN25DbJK7CNW0ez4bnrvPVAHu
+         tA67e72bjpqltxxwKjuK8yoLR+fIPcGAIge+V7V4Bo8IDEv8R+BlY92KZzMqFDr6vaDL
+         MqCBwbiHrToi202x/zP/2PGogcREm6BsPI+9eYFcPVB7pxe51j0u/mM8GD9uevcHMofq
+         2ELgc0Qv1lm+TPsBsK4r9sY7gEy59pnL80/0Zpcc3Fp0c5Ct8FjlQ+dJnMJupLcVOTLD
+         V82A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746174937; x=1746779737;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f7r6WR049enygy037lONQ9m9pD13OBTo4e15DUJyoKE=;
+        b=ZvxF7CxiwOnIdbIjFuIfyehoPQgjghHLjSIYZYUVIrJS/0045c2/H3XJkOtSJuDVTy
+         eftbw2eRfNWs6YpdwGsRX09JmQYLr2hbejs9JImDVHzkyISw6t7nSj62Evh2vQ7QqF6I
+         2ugD5y1nIVKouadDHUUMKM03EWmxjTZqcARQkIzzDS24w7EZWzFrLezukTzJFHBMJ7Kw
+         D/isOz3a97/m/EGdF2btXgEZ4jB+Af15le0FwTQW/lJ1t0q8Nx02FeDK/qpNVsWtVq3T
+         DkjzIJQgwKCh7c69U6xPPDOOvIJcrxXsgPDnih1NPnCVbMmB0jXV1IgZC2ydqwwogGf1
+         MGPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOCEA77orb7IkyRmO1BAhQCWnb7gRi9R4XhrRHmBdbswZRZg8xc4EaV5NXrKAHBQigtmcZrS24Pwc2ODA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9y8PsRANRx03jHSqUFYTc7dSA63IUpkYd+ZhLfsTzaDvhonty
+	tpwEtaYeGVHKGZ7wns3xCZeu76gSVI1UxJ+2xTaSBT2tYQSPnlHDciilM80ixH5H4Zl98tV26Gp
+	UooDSx3OE1P0AQQ==
+X-Google-Smtp-Source: AGHT+IGJkCdyZwfRFOBv6xVkehjXZ02i6s82Mg6JkS5KgBztkzCNpCn2kt3Ktou857DyL5RBsEPF7VOnppmsNZo=
+X-Received: from wmbjg12.prod.google.com ([2002:a05:600c:a00c:b0:43c:eaf6:525e])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:820d:b0:43c:f8fc:f69a with SMTP id 5b1f17b1804b1-441bbe98fbbmr16071135e9.4.1746174937358;
+ Fri, 02 May 2025 01:35:37 -0700 (PDT)
+Date: Fri, 2 May 2025 08:35:35 +0000
+In-Reply-To: <d5e8e635-08c4-4d3d-99a8-27f3b3a2153b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] dt-bindings: timer: Add EcoNet EN751221 "HPT" CPU
- Timer
-To: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org
-Cc: tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin.larsson@genexis.eu, linux-mediatek@lists.infradead.org
-References: <20250430133433.22222-1-cjd@cjdns.fr>
- <20250430133433.22222-2-cjd@cjdns.fr>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250430133433.22222-2-cjd@cjdns.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com>
+ <20250430-rust_unsafe_pinned-v2-1-fc8617a74024@gmail.com> <D9JVKYI3LL5L.2SFOJMSK91HLA@kernel.org>
+ <d433986a-fdad-4859-b8bf-080a18158189@gmail.com> <D9L1TI5NVKJU.361JFPWMLDWN4@kernel.org>
+ <7bc9f839-a69a-4819-ba6d-36eadd8776b3@gmail.com> <D9L6XO6T7JEU.CK47C5BOQ0NG@kernel.org>
+ <d5e8e635-08c4-4d3d-99a8-27f3b3a2153b@gmail.com>
+Message-ID: <aBSD108aP1pATvrn@google.com>
+Subject: Re: [PATCH v2 1/3] rust: add UnsafePinned type
+From: Alice Ryhl <aliceryhl@google.com>
+To: Christian Schrefl <chrisi.schrefl@gmail.com>
+Cc: Benno Lossin <lossin@kernel.org>, Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, 
+	"Gerald =?utf-8?Q?Wisb=C3=B6ck?=" <gerald.wisboeck@feather.ink>, Ralf Jung <post@ralfj.de>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On 30/04/2025 15:34, Caleb James DeLisle wrote:
-> Add device tree bindings for the so-called high-precision timer (HPT)
-> in the EcoNet EN751221 SoC.
+On Fri, May 02, 2025 at 02:08:13AM +0200, Christian Schrefl wrote:
+> [cc Ralf]
 > 
-> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> On 02.05.25 12:51 AM, Benno Lossin wrote:
+> > On Thu May 1, 2025 at 9:11 PM CEST, Christian Schrefl wrote:
+> >> On 01.05.25 8:51 PM, Benno Lossin wrote:
+> >>> On Wed Apr 30, 2025 at 7:30 PM CEST, Christian Schrefl wrote:
+> >>>> On 30.04.25 11:45 AM, Benno Lossin wrote:
+> >>>>> On Wed Apr 30, 2025 at 10:36 AM CEST, Christian Schrefl wrote:
+> >>>>>> +/// This implementation works because of the "`!Unpin` hack" in rustc, which allows (some kinds of)
+> >>>>>> +/// mutual aliasing of `!Unpin` types. This hack might be removed at some point, after which only
+> >>>>>> +/// the `core::pin::UnsafePinned` type will allow this behavior. In order to simplify the migration
+> >>>>>> +/// to future rust versions only this polyfill of this type should be used when this behavior is
+> >>>>>> +/// required.
+> >>>>>> +///
+> >>>>>> +/// In order to disable niche optimizations this implementation uses [`UnsafeCell`] internally,
+> >>>>>> +/// the upstream version however will not. So the fact that [`UnsafePinned`] contains an
+> >>>>>> +/// [`UnsafeCell`] must not be relied on (Other than the niche blocking).
+> >>>>>
+> >>>>> I would make this last paragraph a normal comment, I don't think we
+> >>>>> should expose it in the docs.
+> >>>>
+> >>>> I added this as docs since I wanted it to be a bit more visible,
+> >>>> but I can replace the comment text (about `UnsafeCell`) with this paragraph
+> >>>> and drop it from the docs if you want.
+> >>>
+> >>> I think we shouldn't talk about these implementation details in the
+> >>> docs.
+> >>
+> >> Alright, what do you think of:
+> >>
+> >> // As opposed to the upstream Rust type this contains a `PhantomPinned`` and `UnsafeCell<T>`
+> > 
+> > There are two '`' after PhantomPinned.
+> > 
+> >> // - `PhantomPinned` to avoid needing a `impl<T> !Unpin for UnsafePinned<T>`
+> > 
+> > s/ a / an /
+> > 
+> > I find the phrasing 'avoid needing <negative impl>' a bit weird, I'd
+> > just say "`PhantomPinned` to ensure the struct always is `!Unpin` and
+> > thus enables the `!Unpin` hack".
+> 
+> Thanks I'll use that.
+> 
+> > 
+> > If you have a link to somewhere that explains that hack, then I'd also
+> > put it there. I forgot if it's written down somewhere.
+> 
+> I haven't found anything that describes the hack in detail.
+> From what I understand its a combination of disabling `noalias`
+> [0] (this PR enables it for `Unpin` types) and disabling 
+> `dereferencable` [1] on `&mut !Unpin` types.
+> Related rust issue about this [2].
+> 
+> Maybe Alice, Ralf or someone else form the rust side can provide
+> a better reference?
+> 
+> [0]: https://github.com/rust-lang/rust/pull/82834
+> [1]: https://github.com/rust-lang/rust/pull/106180
+> [2]: https://github.com/rust-lang/rust/issues/63818
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I wrote this a long time ago:
+https://gist.github.com/Darksonn/1567538f56af1a8038ecc3c664a42462
 
-Best regards,
-Krzysztof
+But it doesn't really take the angle of explaining the !Unpin hack. It's
+more of an early doc arguing for having an UnsafePinned type.
+
+Alice
 
