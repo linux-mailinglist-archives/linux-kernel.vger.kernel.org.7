@@ -1,342 +1,229 @@
-Return-Path: <linux-kernel+bounces-630159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CFAAA7645
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62634AA764B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7D6B7B5626
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:39:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAF9F4C5B20
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C192586C9;
-	Fri,  2 May 2025 15:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2441D259493;
+	Fri,  2 May 2025 15:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2fvPQ8dl"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2053.outbound.protection.outlook.com [40.107.236.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mZwrtYEK"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD3A257427;
-	Fri,  2 May 2025 15:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746200447; cv=fail; b=PoxjuR2as4qWBsZ2SJ/O1nMQiw63frbMTSMwO0frBqir4NW3ewan3Gub+9xjKuwpTiuXydYL/yn4DSqZWyga8W3OeUlQg7ig3ZKaO942cYFbg/ST9oUV5QPuJd9xaqv3meB6FXR0XXcyUxFoxmsFqInCRDqW6drxI6dcK5jJn/w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746200447; c=relaxed/simple;
-	bh=7kq4r68vEvJxvILb4F4P0zjamfHbCSVYvmBCOZyjA90=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=R11O+xDvATnk7BBkzOlomx8N4AY0DgwCfNuqIaeI9cpQM44VpfIduyvkMhVaRyF1T7GfWiC5IaMsanrvDZXbR9QZassTgddVNo34mcwOKtVqOj76wN4J2LVnJvSBWzmRWmfEvRbobuT032T41OgB8mnwK323ZFFMhESmf4TGaEE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2fvPQ8dl; arc=fail smtp.client-ip=40.107.236.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ltBfzVDWzveRH4q84PDlUMM3vmrK5gF0h2/W/Rg2EPMGuWlWoi2Ci8v62Tkw/kWW4x5pkct8qpb8/djGCWUDeGU0vAvpSUlavMb/07WOFcIYNgnWLoFZ0H+FqqpEPTExFz7QDQxFgmx/3iparff2NIPcpl3xQZWKtvLjtHbSpgezAvhflCvF/Y+mX676PJ+XkcVJzP9WVQUEmUOWfNyIEQ1pRgHV5+vjQzwFzBbOuN+eZLEug+SIgzbKBXkzoU7YwPF9nMk27h9ALwpj8nwYHOCsU1baYoe6WLt6WLCXoOcgCM/4xn4UPXAAEyL10yBc+VjHvtzRKMLDsu/Wt7vMyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fDfrqby/neydW5A7T6X4aSdWoITFfK4UaM5gpdalzAg=;
- b=REX2KHefhF4B7SjF00fkdPBFAiJ2VtmpegLUvCGAtEZ4oL/G498nzw+t07xqDGZU6S4p35QJL//ouTTehB6MP9tYnv299vHVVgBj/gCB/jvrYwFbl5iD4W/F32HECC1KBM7Z4aONne5qtKwqtcVuqVKZswwfrfHuA5Hu1c1MLZvu0e5oqBLJNIBCz81WSFwPD7VwJLWCNYoVWlPJToouHZs3P7fZBYProWEdcIG64ZTBv1Ierh5rDUipEXnKh8Xt9DzLsnX1T5OI027lqGn/p3SOGbfAZ/v83zLfYNvDsqhNqZX9o0lQ49Hom/6zRhXO5qltpf4hgFxqrtPOsDQtBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fDfrqby/neydW5A7T6X4aSdWoITFfK4UaM5gpdalzAg=;
- b=2fvPQ8dlb7FKYlY3F5YybUfN1Mxlq1GVdJXZ5KxmSuWqSJ9biQ7w1VFPZux6h9eD0aToYNJ+NZQ4N+GhW6NNLHijAIPc3nTfQx/cK5pWcFQaMHs6TsCVwDzLRybXj6qv/2Ke+lORrfl00ap3OfDfR4Y0ObZzM9mIAp5ct3+6aDI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4956.namprd12.prod.outlook.com (2603:10b6:610:69::11)
- by BN3PR12MB9594.namprd12.prod.outlook.com (2603:10b6:408:2cb::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Fri, 2 May
- 2025 15:40:40 +0000
-Received: from CH2PR12MB4956.namprd12.prod.outlook.com
- ([fe80::fa2c:c4d3:e069:248d]) by CH2PR12MB4956.namprd12.prod.outlook.com
- ([fe80::fa2c:c4d3:e069:248d%3]) with mapi id 15.20.8699.022; Fri, 2 May 2025
- 15:40:40 +0000
-Message-ID: <938c4876-d284-4f11-a4ac-9f3831d3c14d@amd.com>
-Date: Fri, 2 May 2025 10:40:36 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: tanmay.shah@amd.com
-Subject: Re: [PATCH v2 4/4] remoteproc: Use of_reserved_mem_region_* functions
- for "memory-region"
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
- Chen-Yu Tsai <wens@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
- <20250423-dt-memory-region-v2-v2-4-2fbd6ebd3c88@kernel.org>
-Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <20250423-dt-memory-region-v2-v2-4-2fbd6ebd3c88@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0186.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:3c4::18) To CH2PR12MB4956.namprd12.prod.outlook.com
- (2603:10b6:610:69::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4695523B0
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 15:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746200558; cv=none; b=isJ48kryTBZuOO+9qJsQX1r/KF/WFGTjEa6+t9XaFE8xoAhicpAJY3vx0Wj+xC3DxPkthxKNZs5HaE+gXOicVw0xDXR/8725Yj5uCFr7Nt50EXpLSzz1PQ8S/ondDMwhWH3qS7nGQVqUVNr+MAoFIoyuptqcdOBC2SmPib5SNUk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746200558; c=relaxed/simple;
+	bh=QAJSt6rKKZp+7sJ7azwvwLPtYc9N4CHc3g0ulN45n1E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jxagQ5k5+7XThj3mRnF+/0XAWdlg5bNL24JOGcZhhN5rY3dVPg51HOPSp8VR2lSYn689oX+aYyHfo/rSITvcxLKXwsY4D7eJulOzjb7+GHq0Zuhi02etANV6XiGWjx2aPbuAyPiB09bOXtTrlv/NFDXYLxhcf05CVx3KM1Lnrqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mZwrtYEK; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-73044329768so1675556a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 08:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746200554; x=1746805354; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zSUCe1/D8mQxVmxIYOBMFbvuysALwG3zBMpMWpILAzw=;
+        b=mZwrtYEK0cqqk22BGKKQk6/rZhOdvSmvuklFWMuqd+W19cccwsAwp3mWrlU0JNxHfm
+         7a9sEiE+lFUN9SUyESzfnSEkVjuVeDm1qexyxT8CLQQiyBsM8kwWEqCQNtZTuQO3Kztl
+         fATW81Vext5MuIUr61Fm9cOIiUtnqG5FHl+mz1FCBsRZTbZ0DQyDvg+bPD7sYahLhaHL
+         fp/GZ5dqHWCpHhgDAAKiBH92t4E7Nf4C6Ljpb+ImUSvKbxXAzYXwKetsUROKwivBFGeq
+         KTNdVSdafqjpaCYuLrwIIQ2QKk0nxQC0M2w2cy1pB2Q5trVA/Tr1gkNI48tB+cpqU3ue
+         Qpjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746200554; x=1746805354;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zSUCe1/D8mQxVmxIYOBMFbvuysALwG3zBMpMWpILAzw=;
+        b=uguesuVQzyUjbrcQUMS6jEYGkX0gI2R5465s00+BwKSCBzC2AgqvyWYEqIxQmF+IBF
+         BgQPWxvSdhgg0GbBEYKEWG6cxqd83Nnv4cxclH8Avfghwus1Pg1jdlCI0Fb1vQToICcK
+         ncD5way+uq6C6pwZ9UAGnkHG0BlUZRHor4lOwcXZYq79V+SrKUpWAJ7OraJ8WOxbh1Jr
+         DGcKvWy1ujYmroyxLfPcC+/hpwK4vtDsm7yT9JTJswcnMp6qor2yY5ptvnrt8W64lImb
+         DKguoMadVUlcv1QTwWlTd2ljenuHq3D44XG4vtx9MW9s9je7bDGd1H9m5hN3Wxo0rQXn
+         xk3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVFuYygaYqRhT2qKiKarkOexCxpxLVhmOtBMRtAX2CbCUrSFlAD4mFcH21omwklqXXFlLjXqLg+iPRukpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRDCnsaD3fR1SIM4h3BQmcYtOoft31wDFgPTROduPdI/cuMJUf
+	K9iP0eF3Y4y+iuQVDHIEMN+ogYjpE51P0VnbcUHsdINEgOOyx0nqXLpsVXVTLgo=
+X-Gm-Gg: ASbGnctXVl/SHmpzend5jEPlSjpKMVZQcc4KssmZ1zOV3cbktPZRj6ImMEi7SwXECM7
+	y1c5ZQjZn3PaeXwOkDhw4zqO+kkmpTyogu6WiWyZ7a3o7sq4JZHs77Bm8pYFmAj9+QUWV2dZqMM
+	/vC5UV2PVV3DnvoHIaTb7QwOZXVvYdPWLTk/gQCbvfnFEhmfL8hGGc8FERH7eBIqKHdEjL9Orat
+	1+V0hH3TIpGleHs0cNYQpP2mJgjbtsh+YVRkcPQ3Pjxfw6UXI2sS/48E7xux+J7tRM5a1DZL92a
+	XJ+t977bk9B1kq2GLIpdStPpggMqVYvpF/oO4Y1CDlT1T8M=
+X-Google-Smtp-Source: AGHT+IFa7ER/28ouws3j877IMwPaDN8EaWbEoMu5qoYoLPWpIthuQR+VxoPZcZGOZc+4wZgZGTbP6Q==
+X-Received: by 2002:a05:6830:349f:b0:72b:87f8:4935 with SMTP id 46e09a7af769-731da0dbd2bmr1986090a34.4.1746200554243;
+        Fri, 02 May 2025 08:42:34 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4489:d382:ca90:f531])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-731d350a8e1sm520709a34.64.2025.05.02.08.42.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 08:42:33 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Fri, 02 May 2025 10:42:16 -0500
+Subject: [PATCH v2] iio: adc: ad7606_spi: add offload scan mask check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4956:EE_|BN3PR12MB9594:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad3e229c-882d-4b31-e6f5-08dd898fb0e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V0ZqRVhUZm5iTzZOa2lidHJVTUlRUTRMbHBpMXJ2WUE2NUczZ0RFeDdBVTNG?=
- =?utf-8?B?TkI3SEVjazF6NUFIRTQvcmV3Q0o4RDFnZldaaWlVYkYxUjBMaG5Wam43L1Zj?=
- =?utf-8?B?ZlZpeGt4WkN4RGlUV2tVbk12NXpERCs0aDc4QjEvVEtsRTNPL1piaExUdzl5?=
- =?utf-8?B?ckFwamt5V25COUo2ai9CcTY3TkFSR0dNK3FadlE2eXFCcmQxWVZkbDJkMTZn?=
- =?utf-8?B?WmZqZEtqekRrekl0czRZMGUvNzFabE1aV0lOenRzTEZnRmhEWXdMZmVHaWZX?=
- =?utf-8?B?SE1RT0RCeTdPS1BoazBTbHJPcUFlL1I0S3U3QnVlcUZ1Y2ZlT1FORnI4L3Fw?=
- =?utf-8?B?ZlVSc2FVMjIyRytnczY3ZHlzYjBTVklvLzFUU3VmaHJHMGNaU0g1Sk9DL01s?=
- =?utf-8?B?V2VwUkxIU3pibnhXTjRKendXU2U1U0pOSXFMNHBaRm85STRXYU5KVDViemdS?=
- =?utf-8?B?NHVjRGV0aVhIM1FidG94bktHTnlYWjQwVVZQYjZCV1FZbGZ3bDhCcS9aRjJy?=
- =?utf-8?B?U0d2R1Y3MXJ1WjlPSTlLMVp3UG1lM2VobTNxZ1g0TnFQUzhZY0VRcUQvNmVj?=
- =?utf-8?B?eDFrbE5QRHNjcHFzQThpd1dKc1g2Y2dQN1F4Q203RkVPR2oxT1ZEbWJSNmV3?=
- =?utf-8?B?VlpRaTJNVjBIcWFtUUFiQldBQWNCNFZzS0ZMVURaYnJkZGNWbm5iWHRkVG52?=
- =?utf-8?B?aDFINVVPN1NSSWJaYkVwdCtYQlo0TnY2TGRUM0QxR1JBRUVuS00xZVV0MUpC?=
- =?utf-8?B?eHloN01wNDVQTHdTZlI4bmlFM3hEbkNJNVVwNzg1VHU4dWlwc242VUhpZWFL?=
- =?utf-8?B?MEM3QWx1V2Q3NFRTVVk2SGlGbWZoMEZTTVhzVy9ab0Z1VnNiemxkK2o5ZC9X?=
- =?utf-8?B?RCtPQ3NheGZrL3l6OFAzTmJzVjVvaEpNbUJVd2NLUThQc0lMbTdyeC9Oc1pK?=
- =?utf-8?B?NldZWC80eTF4c0VxemVDYUlUdnRxdm9hTndHWmI3aGNIZmQ0L05BMG9XQ21S?=
- =?utf-8?B?TDZhd1BiejFCbEY4b2EwbXdFdUhnbHZ2NVpza2cxK01WcWZyaE5JQ1hLWjJW?=
- =?utf-8?B?MklFOW1odjIydHlIeHFmRTYzZ3NxY1FTbW1ncXJFT1ZFRWFaUmNmajZVeWJx?=
- =?utf-8?B?Nk9aZXdGNzRqaDk1NXQrSDZjVU1mZy9xRlFJVUNXSzBaSzBXdlpXR1NsdDBN?=
- =?utf-8?B?SG1YRmRvYldQZE9uNWFVSEx4Q2Z2RFR6TTJhZ2tGQnRTc3BnRXJtSWZ5MGZU?=
- =?utf-8?B?UzkwOWl5Slp0Z0UvMDZwVTBTcFkxdzRZV21LZlZEZ3c4QkZZUW5OVEpIYXM4?=
- =?utf-8?B?aWxHRlFjZWxxbHd5YmIwYXRmekhCY0o4M2Fab3ZxclJxZTRmbmpNa09ERkFY?=
- =?utf-8?B?VGl3d1hvTFV6dWhUY1hnU293NGl4ZEV6eVhrd1d2K0JRdE9zQlR1SCsvT3Nw?=
- =?utf-8?B?OVBTc0VVMVBnTG1zeWs4TkF4d2s1V2puUVdkandtbFR3VERzdnBLQXRqendM?=
- =?utf-8?B?UXozZzdGWnA1MmhwWWtUazBmamZFaVA0QW1lcmFKbUQzcWcraXZoYUhSVGh3?=
- =?utf-8?B?a1hxS0JPRTd4MXRoMENya0Q3eVlIQ0Z3cG1rQ2VtZUV1UVRhaldvT2Q4T09T?=
- =?utf-8?B?R3ZLNTRqcjFHSHpCVmlWb3hyNmdrZGpSZnkxUE5aMjVHVW5aUGdBc2l6Y2F1?=
- =?utf-8?B?dkx6bnBzNFZaVTVHbDEvb1Fhb3hSa2w1N0pKdTJZWCtRVE1rWDllMDV0RkIw?=
- =?utf-8?B?dDFtekZYR1I5V25UTURBRjJyeFR1UG9QU0lPanFFbVlOMi9VcEtjVldkMFI1?=
- =?utf-8?B?U2QzL3ZpUnl0QkhEY1MvcHNvVjhlTjZyTEcxUkFuZm1GcnJkczl2c0JiNG9F?=
- =?utf-8?B?ZzhqZXpXV215TkFrY0pUTTUxYjBlUno1SzdNWmYxYU5MQkxsakdWOWErQzFu?=
- =?utf-8?B?dllLcFRTY3lWRHMwSnZMOTJFYlczOHhYMzNmWGFCcWdpSC9RS0pRWEgzYzBs?=
- =?utf-8?B?VWJuU1ozSnN3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4956.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SWxuOUV2bTcveGo0amFMRjVqNEpDbFlxSXY5N3lDcjZWMTRaRGhoU1dHdW5U?=
- =?utf-8?B?b3BkaU80UHFlNDRCNlJjWHNwUlVDMTdvVEQxakh5ejE5eGhYOFVacUh6TnZ5?=
- =?utf-8?B?K0ZTZWlKREw5eDZ3R3V1SlhwZlVRNE5GVGdOWUhOLzFzdkgxUGJvcnVoRVB4?=
- =?utf-8?B?S0laTVl2RW9ZVDZMKzlSMllabVdQS1c4ZzZtZ0RJaERSbS9ocDY5Q2dOWXg4?=
- =?utf-8?B?T3ZIUWJQbjh5elFSbjlaajVjc216SjlvYTRtZWIwcmZoZVhxVTUrcHI4Rmx6?=
- =?utf-8?B?aVc2clhmQk5Bbmc5RUM3VmJ1c3c5SnVLaTVMY1pieUdCbmYzRGZLTGRKQlZj?=
- =?utf-8?B?TWlLbTFYNGYvOHhTMGxUZnFDcVZLRVFtMkVxeGJzazF2SjJxNWZ1WUVxMVNL?=
- =?utf-8?B?V0NyeHFmYVZHeVIrWHZBVERZQ0FZWWJXQmFqMzlSZ0t5WkVSdm15bWVFS1Fx?=
- =?utf-8?B?UGF3MFpaSkgwZ1MxY0RBdm9sb296Uk9RZE9hcnhIUlpQaUxWcEpkNUFRT3pN?=
- =?utf-8?B?bnNub3UrNG5rMTlXa2UzWldvYXVtOVAwdktKNVIzZHArZnB0dHh5UFR4MUp2?=
- =?utf-8?B?S3NGS1p1SkZETXorM0RlU1QvUm42K3gzVkphSzhVblBHdUdtYnRWSm84aU15?=
- =?utf-8?B?MENlbVk3eWpESktyS0ROSHpwc2d0Z01HMStyM1JXUzFIQklIN1FvMFU5VWw3?=
- =?utf-8?B?WnVIeXk4WlVzUGh6ZytKeVY2bXk4UU5xR0N4MDZaWHFJTktXaDlGUi9UQWVr?=
- =?utf-8?B?ZUkzYU9TdmZSOGE4NFZYNFRnSisxRm1pRU9UbnFFellmbjB6MUpuNXU4YlpZ?=
- =?utf-8?B?RXZTV01KcjE0WUJRYndRQUJVczZNTHM4SjlDRFhack0zNTg0bkcvWDJleXJw?=
- =?utf-8?B?dmtNaEIvOVVmN2FyTURjY2hsWllKb3RGY2ZYWTQvUjFIY1hQTVN4OGJqYnMy?=
- =?utf-8?B?SHZtL2ZjMTlCWUVZaEZtQzZUVTJzdW1QN0xiRFR3dGZCRkxyMExJcm9WRUVC?=
- =?utf-8?B?cFJVeGV3TTdFZzdXV0ROLzZEZEpXOWg5RjJBcHpRVWdpR3NZL2ZhL2xEMXFX?=
- =?utf-8?B?b2wyYTljNjFYR1R3L1UyZFY4VElXaFlmNnVwT0wzTDJHYW42bHBLOXpCRyt4?=
- =?utf-8?B?UzBZUHliK3FOYit5aUlvTE0wZS9IZG1BUDd6bUE3Q0lSVGF3TjdJb29HNjhH?=
- =?utf-8?B?L1I5V1hRMkczc1hXcjhrTHloMWI2MVgwdlVKV1RiTVVJWGhVR21ldkRFYzdm?=
- =?utf-8?B?MWpXMHBQSjNBOStZSHRReUZrMWwyZzZxYkgza2VQdWdDRCtxb2doaEdybVFx?=
- =?utf-8?B?YjdZRVZvNGdpNVFKZmRvRE5FQi9JU0t2T1kxbGRHYTdiVis4YzgxRzQrTklt?=
- =?utf-8?B?Z1lITU16U1BCYVpWS082TXJPNTBaMmxycHdUU01kYitkM0RDVGprYmh2ai9x?=
- =?utf-8?B?TlJ3dWlNRXZpQUM0V1hxVlpROGU1THhsUDhFcDUzNUl3L1ZSZDRva0kyVTVq?=
- =?utf-8?B?TzJKUGVRYlVhYU8xRjd6cjNVczl3MlhsSUZsdjFiam9mcGxDcXA2US9EMVBB?=
- =?utf-8?B?bVZ3RWlzTGN4QVMrV05aWDk2MUd5RXZqTFp6ZzdpWmtsK2huTlR0UldOa3du?=
- =?utf-8?B?NFFxNkVPZEkzbEN6WXh5NjFTK1BmUGVaTXZNK1BFc1RHdG1mU2hmTUR3UjZR?=
- =?utf-8?B?YlRhQ0hwQzZPMTJpaC83L1lnMlFlcTcvejhzQVgvdUtwRy9VclZ2emlSNmVv?=
- =?utf-8?B?N3B5Q01ueUdnYnBmMHVNUEdreS9tNVg3K054aCtXWUpFYlB0MEp4dzZ3SVBC?=
- =?utf-8?B?Vkt0TXk5WnQ4YWNyOVQ3L1VFOG5nc0ZCR0JwSzZ3UlFuZ2dBSHEyTTk5QzNB?=
- =?utf-8?B?cExET3VDZkl0UmpnS0RpSGdmYy94aitMb3FwUWtEMGtuV3E5L3pqVzVsWjV6?=
- =?utf-8?B?Rm9xejZEbUhVcXFKZzlxMkFNeHF5b1BZSis2SnE1UUd5aUcyb0REVnBLVitF?=
- =?utf-8?B?bGZ1VG9uajRuazVoQTZtMGpjZFN5ZjY2UXkwaEozbExkS3VJQ1hBWFhVN2hy?=
- =?utf-8?B?R2x6S2lJcHZtaGRYQmFzSmg1WHQvVm82b3haWlE3YmwzN1YyV3pmNHFNWGw1?=
- =?utf-8?Q?6KbnnDZxzFJZSkLRt1/s73CT0?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad3e229c-882d-4b31-e6f5-08dd898fb0e5
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4956.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2025 15:40:39.9300
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OLTR5MxRCXed33rS/Xj6r01jzmm7I9mdN5BI7r2dixoD05j/amlsQNWjRBnYKc8T
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR12MB9594
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250502-iio-adc-ad7606_spi-fix-offload-scan-mask-check-v2-1-e70c6d71baa3@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIANfnFGgC/52NSw6DMAxEr4KyriuHT/pZ9R4VqoJjikUhKKlQE
+ eLuTTlCF7N4o9G8VUUOwlFds1UFniWKHxPkh0xRZ8cng7jEKse8wrJAEPFgHaWcDJpHnARa+YB
+ v25e3DiLZEQYbe6COqQftigJLREJdqnQ6BU7zXXivE3cS3z4su3/Wv/Zv1axBw7nRpnIXZwj51
+ tjlJU3gI/lB1du2fQF5SMJP7wAAAA==
+X-Change-ID: 20250430-iio-adc-ad7606_spi-fix-offload-scan-mask-check-1d330400c014
+To: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Angelo Dureghello <adureghello@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4325; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=QAJSt6rKKZp+7sJ7azwvwLPtYc9N4CHc3g0ulN45n1E=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoFOfiRVXRvcNnCImEFkU2BueL0PIMiO/M6+MVB
+ TfmXnM6Kc6JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaBTn4gAKCRDCzCAB/wGP
+ wBHWB/4/Dwsx7aT3gL4Lh9bjJl/h6DZeqHuGrC0LN+5RBvXPez/KW/jw7+8ELm4Iy/uC6QxN3Cx
+ 2RkccxOGK95u5TaqXPQd98NuiFHPW1ZHkEDuHOyI4JaakOcPdOigEduujcUNruogia0JsVLwfww
+ /C6UxiXwsEhZDI70eBMjRrn3qO2r6OANCYmqOcFGniADu5CGrc2DwhcAzwCjCsUFhAxlsAR+560
+ LUq92Zzp9EmHcHpu9GTNL0Grkf3/JaQ5Xcwq9T7GszV8dwh73A/gNI9VBVE6G6Q9Z+/HWE1JiIh
+ 9sftsiG1K6u4peOfFAURQ4ksf1zNcQcpmXiWRBauWOhVlWXC
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
+Validate the scan mask when SPI offloading is being used.
 
-Hello Rob,
+Since this family of ADCs is simultaneous sampling, there isn't a way
+to selectively disable channels when reading sample data. (Technically,
+AD7616 has a sequencer so could have some control, but that is for
+another day).
 
-Thanks for the patch. Please find my comments below.
+For "regular" IIO triggered buffer reads, this isn't a problem and the
+IIO core will demux the data and ignore data from disabled channels.
+However, since SPI offloading is done completely in hardware, we don't
+have a way to do the same. So before this patch, if less than all
+channels were enabled, the data would be misplaced in the buffer.
 
+By adding a check in update_scan_mode, we can fail to enable the buffer
+instead of having bad data returned to userspace.
 
-On 4/23/25 2:42 PM, Rob Herring (Arm) wrote:
-> Use the newly added of_reserved_mem_region_to_resource() and
-> of_reserved_mem_region_count() functions to handle "memory-region"
-> properties.
-> 
-> The error handling is a bit different in some cases. Often
-> "memory-region" is optional, so failed lookup is not an error. But then
-> an error in of_reserved_mem_lookup() is treated as an error. However,
-> that distinction is not really important. Either the region is available
-> and usable or it is not. So now, it is just
-> of_reserved_mem_region_to_resource() which is checked for an error.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> v2:
->   - Use strstarts instead of strcmp for resource names as they include
->     the unit-address.
->   - Drop the unit-address from resource name for imx and st drivers
-> ---
->   drivers/remoteproc/imx_dsp_rproc.c        | 45 ++++++++------------
->   drivers/remoteproc/imx_rproc.c            | 68 ++++++++++++------------------
->   drivers/remoteproc/qcom_q6v5_adsp.c       | 24 ++++-------
->   drivers/remoteproc/qcom_q6v5_mss.c        | 60 +++++++++------------------
->   drivers/remoteproc/qcom_q6v5_pas.c        | 69 +++++++++++--------------------
->   drivers/remoteproc/qcom_q6v5_wcss.c       | 25 +++++------
->   drivers/remoteproc/qcom_wcnss.c           | 23 ++++-------
->   drivers/remoteproc/rcar_rproc.c           | 36 +++++++---------
->   drivers/remoteproc/st_remoteproc.c        | 41 +++++++++---------
->   drivers/remoteproc/stm32_rproc.c          | 44 +++++++++-----------
->   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +++++--------
->   drivers/remoteproc/ti_k3_m4_remoteproc.c  | 28 +++++--------
->   drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +++++--------
->   drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 +++++++++--------------
->   14 files changed, 221 insertions(+), 349 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 90cb1fc13e71..fffae6ff4a5c 100644
+Fixes: e96d35faf357 ("iio: adc: ad7606: add SPI offload support")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+Changes in v2:
+- Use bitmap_weight() instead of bitmap_equal().
+- Link to v1: https://lore.kernel.org/r/20250430-iio-adc-ad7606_spi-fix-offload-scan-mask-check-v1-1-8b165d9d6c0e@baylibre.com
 
-[ ... ]
+And in case it isn't obvious, the patch this fixes is fairly recent, so
+this goes in togreg rather than fixes-togreg.
+---
+ drivers/iio/adc/ad7606_spi.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 5aeedeaf3c41..b73e97074c01 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -460,49 +460,44 @@ static int add_mem_regions_carveout(struct rproc *rproc)
->   {
->   	struct rproc_mem_entry *rproc_mem;
->   	struct zynqmp_r5_core *r5_core;
-> -	struct of_phandle_iterator it;
-> -	struct reserved_mem *rmem;
->   	int i = 0;
->   
->   	r5_core = rproc->priv;
->   
->   	/* Register associated reserved memory regions */
-> -	of_phandle_iterator_init(&it, r5_core->np, "memory-region", NULL, 0);
-> +	while (1) {
-> +		int err;
-> +		struct resource res;
->   
-> -	while (of_phandle_iterator_next(&it) == 0) {
-> -		rmem = of_reserved_mem_lookup(it.node);
-> -		if (!rmem) {
-> -			of_node_put(it.node);
-> -			dev_err(&rproc->dev, "unable to acquire memory-region\n");
-> -			return -EINVAL;
-> -		}
-> +		err = of_reserved_mem_region_to_resource(r5_core->np, i++, &res);
+diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+index 997be483ebb93293481b922e13ece4edb47e940a..5b5b4677273b15956f1da73da41b16c5ee64e818 100644
+--- a/drivers/iio/adc/ad7606_spi.c
++++ b/drivers/iio/adc/ad7606_spi.c
+@@ -5,6 +5,7 @@
+  * Copyright 2011 Analog Devices Inc.
+  */
+ 
++#include <linux/bitmap.h>
+ #include <linux/err.h>
+ #include <linux/math.h>
+ #include <linux/module.h>
+@@ -329,19 +330,44 @@ static int ad7606_spi_offload_probe(struct device *dev,
+ 	return 0;
+ }
+ 
++static int ad7606_spi_update_scan_mode(struct iio_dev *indio_dev,
++				       const unsigned long *scan_mask)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	if (st->offload_en) {
++		unsigned int num_adc_ch = st->chip_info->num_adc_channels;
++
++		/*
++		 * SPI offload requires that all channels are enabled since
++		 * there isn't a way to selectively disable channels that get
++		 * read (this is simultaneous sampling ADC) and the DMA buffer
++		 * has no way of demuxing the data to filter out unwanted
++		 * channels.
++		 */
++		if (bitmap_weight(scan_mask, num_adc_ch) != num_adc_ch)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static const struct ad7606_bus_ops ad7606_spi_bops = {
+ 	.offload_config = ad7606_spi_offload_probe,
+ 	.read_block = ad7606_spi_read_block,
++	.update_scan_mode = ad7606_spi_update_scan_mode,
+ };
+ 
+ static const struct ad7606_bus_ops ad7607_spi_bops = {
+ 	.offload_config = ad7606_spi_offload_probe,
+ 	.read_block = ad7606_spi_read_block14to16,
++	.update_scan_mode = ad7606_spi_update_scan_mode,
+ };
+ 
+ static const struct ad7606_bus_ops ad7608_spi_bops = {
+ 	.offload_config = ad7606_spi_offload_probe,
+ 	.read_block = ad7606_spi_read_block18to32,
++	.update_scan_mode = ad7606_spi_update_scan_mode,
+ };
+ 
+ static const struct ad7606_bus_ops ad7616_spi_bops = {
+@@ -350,6 +376,7 @@ static const struct ad7606_bus_ops ad7616_spi_bops = {
+ 	.reg_read = ad7606_spi_reg_read,
+ 	.reg_write = ad7606_spi_reg_write,
+ 	.rd_wr_cmd = ad7616_spi_rd_wr_cmd,
++	.update_scan_mode = ad7606_spi_update_scan_mode,
+ };
+ 
+ static const struct ad7606_bus_ops ad7606b_spi_bops = {
+@@ -359,6 +386,7 @@ static const struct ad7606_bus_ops ad7606b_spi_bops = {
+ 	.reg_write = ad7606_spi_reg_write,
+ 	.rd_wr_cmd = ad7606b_spi_rd_wr_cmd,
+ 	.sw_mode_config = ad7606b_sw_mode_config,
++	.update_scan_mode = ad7606_spi_update_scan_mode,
+ };
+ 
+ static const struct ad7606_bus_ops ad7606c_18_spi_bops = {
+@@ -368,6 +396,7 @@ static const struct ad7606_bus_ops ad7606c_18_spi_bops = {
+ 	.reg_write = ad7606_spi_reg_write,
+ 	.rd_wr_cmd = ad7606b_spi_rd_wr_cmd,
+ 	.sw_mode_config = ad7606b_sw_mode_config,
++	.update_scan_mode = ad7606_spi_update_scan_mode,
+ };
+ 
+ static const struct ad7606_bus_info ad7605_4_bus_info = {
 
-Here i++ is not needed as it's done at the end of the loop.
-This bug breaks RPMsg communication on zynqmp platform.
+---
+base-commit: a9b169746d2e299159d4dde190552ae620982bbd
+change-id: 20250430-iio-adc-ad7606_spi-fix-offload-scan-mask-check-1d330400c014
 
-Thanks,
-Tanmay
-
-> +		if (err)
-> +			return 0;
->   
-> -		if (!strcmp(it.node->name, "vdev0buffer")) {
-> +		if (strstarts(res.name, "vdev0buffer")) {
->   			/* Init reserved memory for vdev buffer */
->   			rproc_mem = rproc_of_resm_mem_entry_init(&rproc->dev, i,
-> -								 rmem->size,
-> -								 rmem->base,
-> -								 it.node->name);
-> +								 resource_size(&res),
-> +								 res.start,
-> +								 "vdev0buffer");
->   		} else {
->   			/* Register associated reserved memory regions */
->   			rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
-> -							 (dma_addr_t)rmem->base,
-> -							 rmem->size, rmem->base,
-> +							 (dma_addr_t)res.start,
-> +							 resource_size(&res), res.start,
->   							 zynqmp_r5_mem_region_map,
->   							 zynqmp_r5_mem_region_unmap,
-> -							 it.node->name);
-> +							 "%.*s",
-> +							 strchrnul(res.name, '@') - res.name,
-> +							 res.name);
->   		}
->   
-> -		if (!rproc_mem) {
-> -			of_node_put(it.node);
-> +		if (!rproc_mem)
->   			return -ENOMEM;
-> -		}
->   
->   		rproc_add_carveout(rproc, rproc_mem);
-> -		rproc_coredump_add_segment(rproc, rmem->base, rmem->size);
-> +		rproc_coredump_add_segment(rproc, res.start, resource_size(&res));
->   
-> -		dev_dbg(&rproc->dev, "reserved mem carveout %s addr=%llx, size=0x%llx",
-> -			it.node->name, rmem->base, rmem->size);
-> +		dev_dbg(&rproc->dev, "reserved mem carveout %pR\n", &res);
->   		i++;
->   	}
->   
-> @@ -776,7 +771,6 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
->   	struct device *dev = r5_core->dev;
->   	struct rsc_tbl_data *rsc_data_va;
->   	struct resource res_mem;
-> -	struct device_node *np;
->   	int ret;
->   
->   	/*
-> @@ -786,14 +780,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
->   	 * contains that data structure which holds resource table address, size
->   	 * and some magic number to validate correct resource table entry.
->   	 */
-> -	np = of_parse_phandle(r5_core->np, "memory-region", 0);
-> -	if (!np) {
-> -		dev_err(dev, "failed to get memory region dev node\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	ret = of_address_to_resource(np, 0, &res_mem);
-> -	of_node_put(np);
-> +	ret = of_reserved_mem_region_to_resource(r5_core->np, 0, &res_mem);
->   	if (ret) {
->   		dev_err(dev, "failed to get memory-region resource addr\n");
->   		return -EINVAL;
-> 
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
