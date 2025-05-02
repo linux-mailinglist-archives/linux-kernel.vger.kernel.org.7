@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-629110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4A9AA67B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 02:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B225AAA67BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 02:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5003BBBC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AD45A78A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018A88BEC;
-	Fri,  2 May 2025 00:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039657485;
+	Fri,  2 May 2025 00:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0VgkBdpP"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D8tt3RXU"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B391804A;
-	Fri,  2 May 2025 00:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE0A801
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 00:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746144985; cv=none; b=fTZ/z1FB81Wu9u4hUaIxqH6nsT3WxvghWG4+kHeph2m6fHpkPojQIFtpjjwcvPROc8wTwCEXmFLv+Qhhw0K9nASL26K1SriJRLYObYeKQfcwnaiGkevKInS4bs+PHHuIzfcG+OefdDsnB2rbGklyhS/kq2S52njSumZuzmpc26o=
+	t=1746145087; cv=none; b=YbzWdnklcXpTCPJgADqK/Rs4Cz1ukHBlMD+ObcQ1JJz/DdJyJ0XFwYWjr7OBn9aCK1vboEocoEAiQy/DdOLFeZtzNEft39Ep/SHksnW+35bbUHBtn3H7SAsUW3yUN3vko7ktUt34e09kBx2HOHa+UqnBlqiSc4JUB+H7FnK0Wwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746144985; c=relaxed/simple;
-	bh=1RGpA0j2oX5ye/l/RFU4b5p1FYXf54QBn5FZrRlSVgA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LW6VhnjAFNrdaE+t2FQGKQv6Vl+7wyp7CzEHjnjvdGxaRvDsleOZeRmxHyFwfylOMDqE8293p9j73hBgL8z4Kiu7fb4DiaKD0c3LGp0EoVc2doFZpVoGisWyoXRtNghkcVJ+OiAb//dCAYgto36d0z7DIo2BrRBCW6uprwUAGOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0VgkBdpP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=JCvs5Qr4ScspEbBQWpbvqRy6Qod3tPj+N3ahGdJfo/k=; b=0VgkBdpPk9H3eyWhOd1UV9YQeS
-	cwJ/WJMV8zkpAdYf3RdGQnSGBsojlQuIydSzFpdGTpSlpalWALFLuuucD24Zaq5dAigv+qZOlYi/p
-	td4sGBhUT3r1SaFujpfBOl+TubNfAmcklAzzlZIwuSspEQ/fdZdBdbh2jVyjBbgsleHjmUDTARd9i
-	oEqplpFvWGcDYwI44qs0VsPRi8rLXu6Zzzmpx+PrfsFmS+9A/8wi0ggpJzvOmLTLX33Mfy1b5T8u/
-	un721sA7dO9df0ICxwiLTo8m3/drOjXjoNuLCpO3ZgnlifPm83K+h1ubu+jp8AgXlF+/MfFfDoeSO
-	P11MsJvg==;
-Received: from [50.39.124.201] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAe4l-00000000Moo-1IPM;
-	Fri, 02 May 2025 00:16:23 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Vadim Pasternak <vadimp@nvidia.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH] platform/mellanox: MLXREG_DPU depends on I2C
-Date: Thu,  1 May 2025 17:16:20 -0700
-Message-ID: <20250502001622.674263-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746145087; c=relaxed/simple;
+	bh=aIoHjI9HKI+b6DfSq2WbNBqXIXZUgfmVBMRzreKb8N8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h7m7BmAXfkvl+uubK0fsFr7b2BVRxql68DEjwCjP8bUsYf2v/PRxlw89hczklUVqAaIILZnrD7tv3lB5C71MH1ZxI0w6cBRQBOQv7rSWzi8cq69PQ5ulaGvuUiQzC78gv+NN2KaiSyUCg+ox/qOisI13OZZSaVJifOhQUKgj/5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D8tt3RXU; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746145081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FAQQHMseiTFfB73eqU9yeUG42Iz5JnWxEBkUeFyyRhs=;
+	b=D8tt3RXUQ8nh+AvmKFaVtfB8LLsU/KucHvhWR/6JdnA9RGI+k7bI+ghFCtFuO4SU5kueaI
+	YmVJBOLxIf5nbTqCAgYjbXvwCBu2/AT5v+Z8cKmAAG+CYi0S+/P9ujlNNicbhznV9FwTJm
+	I5+Z1oYoYcdDmDOcc/Kz0R0zwTDFbRQ=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH v2 0/3] memcg: decouple memcg and objcg stocks
+Date: Thu,  1 May 2025 17:17:39 -0700
+Message-ID: <20250502001742.3087558-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-WARNING: unmet direct dependencies detected for REGMAP_I2C
-  Depends on [m]: I2C [=m]
-  Selected by [y]:
-  - MLXREG_DPU [=y] && MELLANOX_PLATFORM [=y]
+The per-cpu memcg charge cache and objcg charge cache are coupled in a
+single struct memcg_stock_pcp and a single local lock is used to protect
+both of the caches. This makes memcg charging and objcg charging nmi
+safe challenging. Decoupling memcg and objcg stocks would allow us to
+make them nmi safe and even work without disabling irqs independently.
+This series completely decouples memcg and objcg stocks.
 
-Without the dependency, REGMAP_I2C=y since MLXREG_DPU=y.
-Since CONFIG_I2C=m, this causes many (> 230) unmet dependency warnings.
-E.g.:
-  Selected by [m]:
-  - EEPROM_AT24 [=m] && I2C [=m] && SYSFS [=y]
-  - SERIAL_MAX310X [=m] && TTY [=y] && HAS_IOMEM [=y] && SPI_MASTER [=y] && I2C [=m]
-  - PINCTRL_AW9523 [=m] && PINCTRL [=y] && OF [=y] && I2C [=m]
-  - PINCTRL_CY8C95X0 [=m] && PINCTRL [=y] && I2C [=m]
-  - GPIO_FXL6408 [=m] && GPIOLIB [=y] && I2C [=m]
-  - GPIO_DS4520 [=m] && GPIOLIB [=y] && I2C [=m]
-  - GPIO_PCA953X [=m] && GPIOLIB [=y] && I2C [=m]
-  - IP5XXX_POWER [=m] && POWER_SUPPLY [=y] && I2C [=m]
-  - BATTERY_CW2015 [=m] && POWER_SUPPLY [=y] && I2C [=m]
-  - CHARGER_SBS [=m] && POWER_SUPPLY [=y] && I2C [=m]
+Changes since v1:
+- Drop first patch as requested by Alexei.
+- Remove preempt_disable() usage as suggested by Vlastimil.
 
-Fixes: 3e75f2954116 ("platform/mellanox: mlxreg-dpu: Add initial support for Nvidia DPU")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vadim Pasternak <vadimp@nvidia.com>
-Cc: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: platform-driver-x86@vger.kernel.org
----
- drivers/platform/mellanox/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Shakeel Butt (3):
+  memcg: separate local_trylock for memcg and obj
+  memcg: completely decouple memcg and obj stocks
+  memcg: no irq disable for memcg stock lock
 
---- linux-next-20250501.orig/drivers/platform/mellanox/Kconfig
-+++ linux-next-20250501/drivers/platform/mellanox/Kconfig
-@@ -29,6 +29,7 @@ config MLX_PLATFORM
- 
- config MLXREG_DPU
- 	tristate "Nvidia Data Processor Unit platform driver support"
-+	depends on I2C
- 	select REGMAP_I2C
- 	help
- 	  This driver provides support for the Nvidia BF3 Data Processor Units,
+ mm/memcontrol.c | 159 +++++++++++++++++++++++++++++-------------------
+ 1 file changed, 97 insertions(+), 62 deletions(-)
+
+-- 
+2.47.1
+
 
