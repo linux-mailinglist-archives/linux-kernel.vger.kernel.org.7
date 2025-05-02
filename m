@@ -1,172 +1,82 @@
-Return-Path: <linux-kernel+bounces-630439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F9DAA7A5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:44:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21A7AA7A62
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA331B66DB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:44:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31A5B17ECDA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888481F3FED;
-	Fri,  2 May 2025 19:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FFF1F2B8D;
+	Fri,  2 May 2025 19:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="N/8AKUe6"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pYpdy97q"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3421B1F2BAD
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 19:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A90376
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 19:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746215052; cv=none; b=h9UdwS3sKzHVIH2oAj/KnZyYOGcQjiBMJ/3bNC/dcBuJozXPFYOMYhNPLcrnRwmYvSz4aoZjG0QSHLvz9VQLSkDp7d667dDV6V+sP3NmxdLKMr//B4JF/adqYX7gdnWJq3HKeJMoFqDL2x1IdAgJmJeY8V/4GeRBovky/F7PWW8=
+	t=1746215298; cv=none; b=CxbyDlYw52PYI6Qp8+r7HtqnaDC+Oa7p2Lc9xZVCq66/wIWMScHkfXladXunYeew7G43RJbTdRjiFLaMNeJFxe6fndKzJwLTYk2q3FlRlb0NeViiL3qfrExeLQ8H6smhaPWnC59aPWHsQni2Ul/BX7EAWth5s7QtT8yW1oPMpbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746215052; c=relaxed/simple;
-	bh=u7M8GWj4IaX6mHqj2i5wR0WVsdjlkUXEkduLTA39lkM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=srGMgqALQoT3qNaOCho5C78VbFb8fageoTzDSz9IKjs1yTzGrRkfV0WAtEf2TYtowo+lG+n3KCT4SVSPG7y48eOipGBTzpn8NBDBH/KSN6Uh8b7jRBgVmh/I+Ah/Ba5A4d1W9SUejjsj3w4+HF2wrgQmuk/XFo+H36euyvJSFXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=N/8AKUe6; arc=none smtp.client-ip=212.77.101.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 515 invoked from network); 2 May 2025 21:44:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1746215047; bh=M8iujvxQGOpd8snMonMxwTWSoEQvZ8kYbB55eRI/Mo0=;
-          h=From:To:Cc:Subject;
-          b=N/8AKUe6Injy9Ohy5Wkyyu/L+NPlcfznrBAkLB8+T9oV+0O+5Vn9y6Nap6W+piWxk
-           fXoabanY3CIrc+3IHpmAQUNZOMnT1mjFqdR+rorFGs9zaJ8skIsKPs3RS73sFr/vZq
-           /Gys/YVPdza1NRBe/68jItaqRypxg6Gc3Nm2iThM9aRpxGLmdQ42yNioZbgRgLKXbF
-           Cbh8Hu9ta/9V8GXXir2lUYnzM6Q/S0czV3LOJ35dDLqXMwAw110wugXnjCImLOtmZo
-           hUu3+jys4dwBeyevSYmq0Ov9j2WxWSLjrZR937ijgSFSNjGfJz/6/ri8Q1K6VSZSWp
-           XZT93LH+6cXyQ==
-Received: from 83.5.150.21.ipv4.supernova.orange.pl (HELO laptop-olek.home) (olek2@wp.pl@[83.5.150.21])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <johannes.berg@intel.com>; 2 May 2025 21:44:07 +0200
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-To: johannes.berg@intel.com,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Aleksander Jan Bajkowski <olek2@wp.pl>
-Subject: [PATCH iw,v2] iw: fix EHT capabilities on Big Endian platforms
-Date: Fri,  2 May 2025 21:44:05 +0200
-Message-Id: <20250502194405.3489240-1-olek2@wp.pl>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1746215298; c=relaxed/simple;
+	bh=ZSiygvF3WdzaX6LwXuj+ax4Ko068Lty+tICzFsRJhgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkF/EUmIyK3nIALnl0paYSEG1XZTcs5LBUajw3TK6Bzp8MZHmC2IbQzKii0R8olm8KXZNnp5HEr1/aV1N9DJ4/Ao5E+OGVb9hPdDOZoUi4ki8y1p7lGS+JAGasr7oqQyI8AAjZRZrEUJ+MNwxsjUF1Viizm4TUiklXHaJsK9z/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pYpdy97q; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ZSiygvF3WdzaX6LwXuj+ax4Ko068Lty+tICzFsRJhgc=; b=pYpdy97qho1iGh9jkTyENWSi52
+	AmQJgqKRzvYAyK+th2Xqqwd5RafoneKsEWo1l/IXsabppnfHQ2wNzOKOmOUHKz19k21IOi1OpnmE6
+	GpXpio/6raz7OtBR64GrVk1jAq9RRov4vznkB3r962nJ23k2YkEDCT2HiL5qi7WHrtxbGzaHK05TP
+	NGe5Q1AX8eWBXTOr3K7OKhKB+0yfCLwJYsIbib5sF5dR4jp3xRjkwPNBhxcjCs7wZZNIrMhJoj7zq
+	qix7on8xYYhbOXKOIiDXCH9ziL8S8CWztBlvnbusmnhDIqaLWhjhn8BCzw+rQoVq8jP8bwRVAjS6D
+	CPmkkuzw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uAwMi-0000000F5up-129G;
+	Fri, 02 May 2025 19:48:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AAE1D300321; Fri,  2 May 2025 21:48:07 +0200 (CEST)
+Date: Fri, 2 May 2025 21:48:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v12 00/21] futex: Add support task local hash maps,
+ FUTEX2_NUMA and FUTEX2_MPOL
+Message-ID: <20250502194807.GD24078@noisy.programming.kicks-ass.net>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416163142.aKBzQeqK@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-WP-DKIM-Status: good (id: wp.pl)                                                      
-X-WP-MailID: 2b1ff6474733ec445ba36c34ed366773
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 000000A [EcME]                               
+In-Reply-To: <20250416163142.aKBzQeqK@linutronix.de>
 
-IE fields are encoded in Little Endian and are not correctly
-printed on Big Endian platforms.
+On Wed, Apr 16, 2025 at 06:31:42PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-04-16 18:29:00 [+0200], To linux-kernel@vger.kernel.org wrote:
+> > v11…v12: https://lore.kernel.org/all/20250407155742.968816-1-bigeasy@linutronix.de
 
-Fixes: 5a71b722270c ("iw: Print local EHT capabilities")
-Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
----
- util.c | 40 +++++++++++++++++++++++++---------------
- 1 file changed, 25 insertions(+), 15 deletions(-)
-
-diff --git a/util.c b/util.c
-index c6d5974..9403528 100644
---- a/util.c
-+++ b/util.c
-@@ -1538,22 +1538,31 @@ static void __print_eht_capa(int band,
- 	unsigned int i;
- 	const char *pre = indent ? "\t" : "";
- 
--	#define PRINT_EHT_CAP(_var, _idx, _bit, _str) \
-+	#define PRINT_EHT_MAC_CAP(_idx, _bit, _str) \
- 	do { \
--		if (_var[_idx] & BIT(_bit)) \
-+		if (mac_cap[_idx] & BIT(_bit)) \
- 			printf("%s\t\t\t" _str "\n", pre); \
- 	} while (0)
- 
--	#define PRINT_EHT_CAP_MASK(_var, _idx, _shift, _mask, _str) \
-+	#define PRINT_EHT_MAC_CAP_MASK(_idx, _shift, _mask, _str) \
- 	do { \
--		if ((_var[_idx] >> _shift) & _mask) \
--			printf("%s\t\t\t" _str ": %d\n", pre, (_var[_idx] >> _shift) & _mask); \
-+		if ((mac_cap[_idx] >> _shift) & _mask) \
-+			printf("%s\t\t\t" _str ": %d\n", pre, \
-+			       (mac_cap[_idx] >> _shift) & _mask); \
-+	} while (0)
-+
-+	#define PRINT_EHT_PHY_CAP(_idx, _bit, _str) \
-+	do { \
-+		if (le32toh(phy_cap[_idx]) & BIT(_bit)) \
-+			printf("%s\t\t\t" _str "\n", pre); \
- 	} while (0)
- 
--	#define PRINT_EHT_MAC_CAP(...) PRINT_EHT_CAP(mac_cap, __VA_ARGS__)
--	#define PRINT_EHT_MAC_CAP_MASK(...) PRINT_EHT_CAP_MASK(mac_cap, __VA_ARGS__)
--	#define PRINT_EHT_PHY_CAP(...) PRINT_EHT_CAP(phy_cap, __VA_ARGS__)
--	#define PRINT_EHT_PHY_CAP_MASK(...) PRINT_EHT_CAP_MASK(phy_cap, __VA_ARGS__)
-+	#define PRINT_EHT_PHY_CAP_MASK(_idx, _shift, _mask, _str) \
-+	do { \
-+		if ((le32toh(phy_cap[_idx]) >> _shift) & _mask) \
-+			printf("%s\t\t\t" _str ": %d\n", pre, \
-+			       (le32toh(phy_cap[_idx]) >> _shift) & _mask); \
-+	} while (0)
- 
- 	printf("%s\t\tEHT MAC Capabilities (0x", pre);
- 	for (i = 0; i < 2; i++)
-@@ -1627,7 +1636,7 @@ static void __print_eht_capa(int band,
- 	PRINT_EHT_PHY_CAP(2, 1, "Rx 4096-QAM In Wider Bandwidth DL OFDMA Supported");
- 
- 	if (!from_ap &&
--	    !(he_phy_cap[0] & ((BIT(1) | BIT(2) | BIT(3) | BIT(4)) << 8))) {
-+	    !(le16toh(he_phy_cap[0]) & ((BIT(1) | BIT(2) | BIT(3) | BIT(4)) << 8))) {
- 		static const char * const mcs[] = { "0-7", "8-9", "10-11", "12-13" };
- 
- 		printf("%s\t\tEHT-MCS Map (20 Mhz Non-AP STA) (0x", pre);
-@@ -1649,8 +1658,9 @@ static void __print_eht_capa(int band,
- 		 * If no Channel Width bits are set, but we are an AP, we use
- 		 * this MCS logic also.
- 		 */
--		if (he_phy_cap[0] & ((BIT(1) | BIT(2)) << 8) ||
--		    (from_ap && !(he_phy_cap[0] & ((BIT(1) | BIT(2) | BIT(3) | BIT(4)) << 8)))) {
-+		if (le16toh(he_phy_cap[0]) & ((BIT(1) | BIT(2)) << 8) ||
-+		    (from_ap && !(le16toh(he_phy_cap[0]) &
-+		    ((BIT(1) | BIT(2) | BIT(3) | BIT(4)) << 8)))) {
- 			printf("%s\t\tEHT-MCS Map (BW <= 80) (0x", pre);
- 			for (i = 0; i < 3; i++)
- 				printf("%02x", ((__u8 *)mcs_set)[i]);
-@@ -1665,7 +1675,7 @@ static void __print_eht_capa(int band,
- 		}
- 		mcs_set += 3;
- 
--		if (he_phy_cap[0] & (BIT(3) << 8)) {
-+		if (le16toh(he_phy_cap[0]) & (BIT(3) << 8)) {
- 			printf("%s\t\tEHT-MCS Map (BW = 160) (0x", pre);
- 			for (i = 0; i < 3; i++)
- 				printf("%02x", ((__u8 *)mcs_set)[i]);
-@@ -1680,7 +1690,7 @@ static void __print_eht_capa(int band,
- 		}
- 
- 		mcs_set += 3;
--		if (band == NL80211_BAND_6GHZ && (phy_cap[0] & BIT(1))) {
-+		if (band == NL80211_BAND_6GHZ && (le32toh(phy_cap[0]) & BIT(1))) {
- 			printf("%s\t\tEHT-MCS Map (BW = 320) (0x", pre);
- 			for (i = 0; i < 3; i++)
- 				printf("%02x", ((__u8 *)mcs_set)[i]);
-@@ -1695,7 +1705,7 @@ static void __print_eht_capa(int band,
- 		}
- 	}
- 
--	if (ppet && ppet_len && (phy_cap[1] & BIT(11))) {
-+	if (ppet && ppet_len && (le32toh(phy_cap[1]) & BIT(11))) {
- 		printf("%s\t\tEHT PPE Thresholds ", pre);
- 		for (i = 0; i < ppet_len; i++)
- 			if (ppet[i])
--- 
-2.39.5
-
+I made a few changes (mostly the stuff I mailed about) and pushed out to
+queue/locking/futex.
 
