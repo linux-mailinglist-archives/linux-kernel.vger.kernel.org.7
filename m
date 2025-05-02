@@ -1,169 +1,163 @@
-Return-Path: <linux-kernel+bounces-630236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99D2AA774C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:30:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43520AA7750
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E501892F11
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:30:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62EBD7ACDB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E690C25DB16;
-	Fri,  2 May 2025 16:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A7025B668;
+	Fri,  2 May 2025 16:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDtQZoNv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A4TKzIOr"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AB31EEE6;
-	Fri,  2 May 2025 16:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16B725F98B;
+	Fri,  2 May 2025 16:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746203419; cv=none; b=tIq+kr9OAINVcC0+FqIua32UopqYnT+FgYedZ423/pKwaHUl5KV3HcWdUct+EyeONk8F0eL/mUx6bcIgCuQG/oYx6yZvzXB7Vzqwa/KWz5duxEsJZ5XMUt39uG3KzMZkySUMIxxTxwBIlXqZyvn+/kpgSH/grVZjNaqHir2Dr4Y=
+	t=1746203443; cv=none; b=dxk9oetRpuQmyM2zAPHLSDM0itLxEt+vLkTM43D7EM4rF+3nBLq/VLHBbDng/2//yvK98yFk2Y+Ap4NglrH47jFzjoAIgYaR+3QnNmPSiir6At+y5T2zb7E5fh7Vx5fufT7egfC23EbS4HfPH0yeDG1dFYSbo+t1jqBgX9ydrN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746203419; c=relaxed/simple;
-	bh=EpbjrjQeBOmnCpxYDHoY++MSJMrwC1iPEWEi23m1lO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6rfySxQSDRBz9nFpXeGeSACfJQADo2zRx2eHC+xrQ2nlGzVGQsX5GBNEfGkiES7/PjSEUIkAmtotmKAlTz0zcFD6W4EEd02LURnaLVvjueG2oeKdbhttZfs1b+BcCcqvpXyx0shM+IwAgVzQ/JY/tY6S5oMm5OyJz2zN9Nqaeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDtQZoNv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3DAC4CEE4;
-	Fri,  2 May 2025 16:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746203418;
-	bh=EpbjrjQeBOmnCpxYDHoY++MSJMrwC1iPEWEi23m1lO0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nDtQZoNv3cL3FOfTEYBe1NF+bWdWh2+E+X7U/ShyvXhUmYjdAY3d5DELCw45a+Y6e
-	 1p1vMCQ+JK29fe1vfYQ6Ikkh0M5aTIRAhd6yFD2q7MuATUw+kVYPlJlYzx+iOXOWpW
-	 5SerVYfBPrK+2dK9qmH6AyUM2Yyjfq1U5vz2QwvQ3S4uu3L0hLG/HrfTdtSe9tHRVK
-	 8F/7KwwCLaxcanaHlYrBwz3yjSbyLeoxaYFRBGg6tGnQuWDhqkzyVJBCP8ITvEwtVF
-	 RTgzfAbdHwURWBosZlc5Y04pLnUmKrvznn1r+gznWn3Ny+Utq00x2IgOH/QTRePRAw
-	 JvsDz1WxjyCiQ==
-Date: Fri, 2 May 2025 17:30:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] dt-bindings: iio: adc: adi,ad7606: add gain
- calibration support
-Message-ID: <20250502-yarn-answering-f395beaa1440@spud>
-References: <20250502-wip-bl-ad7606-calibration-v2-0-174bd0af081b@baylibre.com>
- <20250502-wip-bl-ad7606-calibration-v2-4-174bd0af081b@baylibre.com>
+	s=arc-20240116; t=1746203443; c=relaxed/simple;
+	bh=GGGJaQnxnZ+/Qywxhcm3pMs8DHoqSjZXKNpRXJXqxNo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Khpspj3vDYJi8YvPEeOrr8mNT6WE1F7QD73nVnnBO7ZT9gBMBGecA9vlyn9yt3k3Fo+uTMatMjUidaO+ufSQHAc2xgJvTYaddQ6NBXvI9BpA+AjRHOxYSa5SmouHnMysK6MIoy6opPW9A8fTufoPR2rvJj47A8sCd6RdXtPxLxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A4TKzIOr; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso2878095a12.2;
+        Fri, 02 May 2025 09:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746203441; x=1746808241; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tLgGDAzhbzi8zBfreiBGkw9+hq2PN6Kh7ZFPU4njLno=;
+        b=A4TKzIOrMjGT7Ip0W/FBp0g0/+Dz7vf//Ohe7I4qz4KMmb9Ib9cQ/jEJInNoiv/JEd
+         cmZ1JATDTaJ6bvKWXOwDBfmZrK7ZrKFP3nHTfNnszYqMPhylX1vgAxI9ALCvErv3oByM
+         je/WCYjh1nETlCr4XKBUEQq7gBGnziai6+Krci0w1GEif3o8D5DmdOsrCn2b30mS+k0L
+         HBvi9NxNPQpHIIYo5P0GX6BftG9vYS026V6qonabko72vUloweSDCVx5dhQo1hoTNCR8
+         g10dtL5DpDuJpDbs98EtHupE5+G5QG6k5LnwNgWfccJVJM5gUrDjPfHurre0wdKiLTo2
+         q9fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746203441; x=1746808241;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tLgGDAzhbzi8zBfreiBGkw9+hq2PN6Kh7ZFPU4njLno=;
+        b=mx/+LdQpOsBrHCfvJ069aFbfyTwjdydoPYqNW+pP5pcxguiXx31IgP0Zj0ICMRVK2Q
+         JvDm828IkYybFQtejRnEKtbZXweJ0LT0SgQ/S5ama8AOtYkS0+vJ0ye/pdjGb45v0NaW
+         OFMnpf11P92+9gm67oZetBOa5UA/99miTSLmxP6lxL6zgX4Ew4Hi3gGEV9VsQccLCi8F
+         eiP/42xcvD08SpTC3FEFLQMZE3wigUgjxvqeq2dq5U+Iko2psiMQjDVGl0OEeXi78aVy
+         Zt5QyUW0pl+S5PRH3tLMRKpdBCXFb/ZBTJijJo9Aa8nIMImB+VqXUWo+Mkq8dXZNSvPd
+         knhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxJQKU61tCdxm5/mFiICfUTPn3Pt0yTGTcTEBx/sBeUa4+JS+fUe6dupnL1yJqhzOdIjNJojBCtSI0LUQ=@vger.kernel.org, AJvYcCXTTdo7HQO87RAFh9b1RH48ggY5NJzXJhfCVlnzl96nOwkDWgnL3OHOj//pWuXQwN5+ThQ7iOrIx7l5@vger.kernel.org, AJvYcCXn8XxMkX1SKgB9a2jNNe2VFQQHvM+8Gw0nFNqpoH7txDFq6DYnB0UcUtedFItXZbUiAB8pepI/vwhmGKwS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9ZiqGTaK/e4uGtW9MRAW0kNEp+s9LpXzw2TraDjs01xDubsXc
+	8rR3xWMteJUkNjKkjjKQ0kEYCTlmv6IX7yq8HAWqa03Ih1xya2CwXqwMW2YHFhPGo/Fmvyi88ao
+	BZIk8zrXCnVwGniwN5Y9+lingC58=
+X-Gm-Gg: ASbGncvXgAZT0xcCVhKoUgabFEt4g43Qnp9BtOy7TbKFEEcC4IjK/Z8PwuikDwWb0hp
+	coxrXgf9Ru7cmAc8sBk6afX29S5RhFFQTiD6Ip/pbUx5SzGJY4EaXP//Fq7ct2U83qyLh0n2/2G
+	ykjSyh0IZrBWdntRP7q+g/tg==
+X-Google-Smtp-Source: AGHT+IFD83mVdOJy5lpNuPlZVPmLooAoJbMjhC2ix2c3XVL7B+J+mwkKq3CJH7cJU97BTv0F3P0V/yqYXOccmyxktrA=
+X-Received: by 2002:a17:90b:582e:b0:2ff:6608:78cd with SMTP id
+ 98e67ed59e1d1-30a4e5a5e10mr6554332a91.9.1746203440962; Fri, 02 May 2025
+ 09:30:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HfgoTnyluTIFnd9A"
-Content-Disposition: inline
-In-Reply-To: <20250502-wip-bl-ad7606-calibration-v2-4-174bd0af081b@baylibre.com>
-
-
---HfgoTnyluTIFnd9A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250502150513.4169098-1-m.felsch@pengutronix.de> <20250502150513.4169098-6-m.felsch@pengutronix.de>
+In-Reply-To: <20250502150513.4169098-6-m.felsch@pengutronix.de>
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 2 May 2025 11:30:29 -0500
+X-Gm-Features: ATxdqUGSLq9P6-CspNr6ECgbQeHdf383py-pp3cQ3WrpLLPzF-nJ74mtxVZrvag
+Message-ID: <CAHCN7xJ5p+dwJD7i7caqwhmrz8+gZDVeqfdWA_=He-H+aTJgRg@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/11] arm64: dts: imx8mp: drop gpcv2 vpu
+ power-domains and clocks
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: nicolas.dufresne@collabora.com, benjamin.gaignard@collabora.com, 
+	p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org, 
+	Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de, festevam@gmail.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, paulk@sys-base.io, 
+	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, 
+	sebastian.fricke@collabora.com, ming.qian@nxp.com, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 02, 2025 at 03:27:01PM +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> Add gain calibration support by a per-channel resistor value.
->=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+On Fri, May 2, 2025 at 10:10=E2=80=AFAM Marco Felsch <m.felsch@pengutronix.=
+de> wrote:
+>
+> The GPCv2 G1, G2 and VC8000E power-domain don't need to reference the
+> VPUMIX power-domain nor their module clocks since the power and reset
+> handling is done by the VPUMIX blkctrl driver.
+>
+It was my understanding that having this dependency ensures the order
+of the bring-up, but maybe I am wrong.  Do you know if the 8MP
+suspend-resume works properly?
+
+
+Should this get a fixes tag?
+
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 > ---
->  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 29 ++++++++++++++++=
-++++++
->  1 file changed, 29 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> index 29f12d650442b8ff2eb455306ce59a0e87867ddd..d4b8ea51f60be367e79a4db18=
-d932cbca9c7dc91 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> @@ -204,6 +204,15 @@ patternProperties:
->            considered a bipolar differential channel. Otherwise it is bip=
-olar
->            single-ended.
-> =20
-> +      adi,rfilter-ohms:
-> +        description:
-> +          For ADCs that supports gain calibration, this property must be=
- set to
-> +          the value of the external RFilter resistor. Proper gain error
-> +          correction is applied based on this value.
-> +        default: 0
-> +        minimum: 0
-
-Perhaps obvious to those working on these ADCs, but this is a series
-resistor so a default of zero for the existing devices makes sense.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-> +        maximum: 65536
-> +
->      required:
->        - reg
->        - bipolar
-> @@ -256,6 +265,25 @@ allOf:
->        properties:
->          adi,oversampling-ratio-gpios: false
-> =20
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - adi,ad7605-4
-> +              - adi,ad7606-4
-> +              - adi,ad7606-6
-> +              - adi,ad7606-8
-> +              - adi,ad7607
-> +              - adi,ad7608
-> +              - adi,ad7609
-> +              - adi,ad7616
-> +    then:
-> +      patternProperties:
-> +        "^channel@[0-9a-f]+$":
-> +          properties:
-> +            adi,rfilter-ohms: false
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -398,6 +426,7 @@ examples:
->                  reg =3D <8>;
->                  diff-channels =3D <8 8>;
->                  bipolar;
-> +                adi,rfilter-ohms =3D <2048>;
->              };
-> =20
->          };
->=20
-> --=20
-> 2.49.0
->=20
-
---HfgoTnyluTIFnd9A
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBTzFQAKCRB4tDGHoIJi
-0vZBAQD2cyiq/b9QR+BcUGzKmRbVuDtTnqIln/sWTRPzGOYiXAEArB2eBMq4S9EA
-cIhDP1W+NVvY9Nr7KbNiBI8o7Y7WNwQ=
-=nmcM
------END PGP SIGNATURE-----
-
---HfgoTnyluTIFnd9A--
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 7 -------
+>  1 file changed, 7 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index e0d3b8cba221..cf9b6c487bd5 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -879,24 +879,17 @@ pgc_mediamix: power-domain@10 {
+>
+>                                         pgc_vpu_g1: power-domain@11 {
+>                                                 #power-domain-cells =3D <=
+0>;
+> -                                               power-domains =3D <&pgc_v=
+pumix>;
+>                                                 reg =3D <IMX8MP_POWER_DOM=
+AIN_VPU_G1>;
+> -                                               clocks =3D <&clk IMX8MP_C=
+LK_VPU_G1_ROOT>;
+>                                         };
+>
+>                                         pgc_vpu_g2: power-domain@12 {
+>                                                 #power-domain-cells =3D <=
+0>;
+> -                                               power-domains =3D <&pgc_v=
+pumix>;
+>                                                 reg =3D <IMX8MP_POWER_DOM=
+AIN_VPU_G2>;
+> -                                               clocks =3D <&clk IMX8MP_C=
+LK_VPU_G2_ROOT>;
+> -
+>                                         };
+>
+>                                         pgc_vpu_vc8000e: power-domain@13 =
+{
+>                                                 #power-domain-cells =3D <=
+0>;
+> -                                               power-domains =3D <&pgc_v=
+pumix>;
+>                                                 reg =3D <IMX8MP_POWER_DOM=
+AIN_VPU_VC8000E>;
+> -                                               clocks =3D <&clk IMX8MP_C=
+LK_VPU_VC8KE_ROOT>;
+>                                         };
+>
+>                                         pgc_hdmimix: power-domain@14 {
+> --
+> 2.39.5
+>
+>
 
