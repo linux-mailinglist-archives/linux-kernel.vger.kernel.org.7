@@ -1,199 +1,111 @@
-Return-Path: <linux-kernel+bounces-629728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B6BAA70A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:34:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05490AA70B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E2AD3B95FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692BA1766BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B2023C4FA;
-	Fri,  2 May 2025 11:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906F6242D95;
+	Fri,  2 May 2025 11:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q02eNc8n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puzm0WPU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3241BEF77;
-	Fri,  2 May 2025 11:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5BD1BEF77;
+	Fri,  2 May 2025 11:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746185655; cv=none; b=DmqAxK22dUgwfi4JPJ0M3C7t2piFq6Oqu5wX/JahXf+2bIQ2NfRGdXVEB/matE8f8PMMnpC9rXuAHt2RObF33qFeFXQbctVqUeNMxBpokkA53YT5df/csPEKqKhp+8qbCLgiflfvXqLqaNfC+Y/zd+pi8k9vonHqSXrUC2YI49g=
+	t=1746185762; cv=none; b=IHjqMqB+Q40FtFNIjnnSnzFanS4A24FG+NrwCHv/rz0GDJa7NeJg2zjHhC/tsMdzI5YvwGTRya81yNdeRhyAlsF0TDYxqbP9//m/CSDA4v7kRRHL+DJ4AI+llMzeMACdeC6lYrV9yB7CnBNJxPC8TT4i7M/lXBYVpOa3NJugUTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746185655; c=relaxed/simple;
-	bh=ezYwlB9fBt/xFiYifIO5qVSNZM/FZ69JnrSopMVLz8k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=X8aavRI0Kt3Iv4jaW/ByLY3autMaMokRcDjXyQiWJK+Y4IH/vVo/aMqmRkT4PCv7ExxeX85vmD1VcjF8jKxK1qE0vbERSOxphK0M+VRxkgj2MtkPbo4GxC251UeT0P6oqbplGjeTNk0YrLUXygxyqFwmRY/AZqoJia/2sOKYjMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q02eNc8n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90300C4CEE4;
-	Fri,  2 May 2025 11:34:11 +0000 (UTC)
+	s=arc-20240116; t=1746185762; c=relaxed/simple;
+	bh=IC+tFmMgGc8gy+XWT7MuumYI16SywRq+USGzBe2YkhM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=UjgXgAPI47W8SBALaZlqZmsMoJHMJpK4uWMPPm+GbjIpts6tZTtbgsRw7B48JZTdCGi8jwAMLSDK8jBxImIvVqd8GXcNmRN1HL0RYKd6EzU5I4ykGql3AYhzKGnUj+A/UKP0L+S5PzAz0OODtvkPbV5QAOkptvxqqgZBwU318FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puzm0WPU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0716EC4CEEB;
+	Fri,  2 May 2025 11:36:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746185654;
-	bh=ezYwlB9fBt/xFiYifIO5qVSNZM/FZ69JnrSopMVLz8k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=q02eNc8ng9FxM05iwbatgdBbkj0XjGhf65VsdygWKlREwiqdiso2H7/bLenF6NnWD
-	 UDoX6osJQJtvqMqxNmgx2CF8Ko7/Tj1D0ae3JHlhaR4a6wDOljf53NXNiwxVqgsYvf
-	 wvt5CmA4iC653a4aG8RI+oDdwPBHju6Q2HMfNYiwy5ab73Bdl6Hi98ur5hZ/Bl8Yo/
-	 6aOMQ9fZ0sSy0q8MEetrMwDQQgJ7yv4uMKd1k9c9Qkn3irxa2I93EmThVk/cDdr816
-	 tPVU5PprEZZi0MK0rwwWTvUExatj++cpOymV55xK2JeKKf3KNWeLYhddM+3bMDDoqN
-	 hriStzu43b+dA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
-  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  Benno Lossin
- <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,  Trevor
- Gross <tmgross@umich.edu>,  Asahi Lina <lina@asahilina.net>,
-  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/5] rust: Add missing SAFETY documentation for ARef
- example
-In-Reply-To: <87o6wbz46a.fsf@kernel.org> (Andreas Hindborg's message of "Fri,
-	02 May 2025 12:40:29 +0200")
-References: <20250325-unique-ref-v9-0-e91618c1de26@pm.me>
-	<BilXj9TIYuQxgQ8GYVKxO0m88NUME1b-jtwrV9ZX3W9GXO-QJGFpb9rChJZarPa4e2AAvgJTm_DINEIW1JINlA==@protonmail.internalid>
-	<20250325-unique-ref-v9-3-e91618c1de26@pm.me> <87a58pd6t4.fsf@kernel.org>
-	<Z_33ntAgpRU_541N@mango> <87o6wbz46a.fsf@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Fri, 02 May 2025 13:33:53 +0200
-Message-ID: <87cycrz1pa.fsf@kernel.org>
+	s=k20201202; t=1746185761;
+	bh=IC+tFmMgGc8gy+XWT7MuumYI16SywRq+USGzBe2YkhM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=puzm0WPUFl9KxGEZ1hy/8EHzZGrBQnl7zP3MluGp7vWlEzgGjHjRRCji2j1GWnfkh
+	 R549rpDu2xN/MlxXHxKTemfaBYIKQi9IeEpRfwq8B9kXEG1L7l5eHMiK5CLF0q9WcO
+	 v9+usY+wk8Fo7Mz6JRzsnSUZfoiwiPTXKFOsuFQSeHpCZ5tfExInO+ABBc064vgA7L
+	 9+ZvnLJ8SOcjOijeqTDD0lbzy5vyYThlnA6ktDzc8tWovDVkWf0F4xTxZANnLF7/CB
+	 P1G8at6YADbYBZxPrlYBaPgJ4ia44RGMEMmzQ62lUL0MaEk7kmL9938qph/IKfZDWV
+	 xgnBrTlXCQJsQ==
+Date: Fri, 02 May 2025 06:35:59 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-Andreas Hindborg <a.hindborg@kernel.org> writes:
-
-> Oliver Mangold <oliver.mangold@pm.me> writes:
->
->> On 250409 1126, Andreas Hindborg wrote:
->>> "Oliver Mangold" <oliver.mangold@pm.me> writes:
->>> 
->>> > SAFETY comment in rustdoc example was just 'TODO'. Fixed.
->>> >
->>> > Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
->>> > ---
->>> >  rust/kernel/types.rs | 4 ++--
->>> >  1 file changed, 2 insertions(+), 2 deletions(-)
->>> >
->>> > diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
->>> > index c8b78bcad259132808cc38c56b9f2bd525a0b755..db29f7c725e631c11099fa9122901ec2b3f4a039 100644
->>> > --- a/rust/kernel/types.rs
->>> > +++ b/rust/kernel/types.rs
->>> > @@ -492,7 +492,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
->>> >      ///
->>> >      /// struct Empty {}
->>> >      ///
->>> > -    /// # // SAFETY: TODO.
->>> > +    /// // SAFETY: We do not free anything.
->>> 
->>> How about:
->>> 
->>>   This implementation will never free the underlying object, so the
->>>   object is kept alive longer than the safety requirement specifies.
->>
->> Yes, was rather sloppy wording. Thanks, I will use your version.
->>
->>> >      /// unsafe impl RefCounted for Empty {
->>> >      ///     fn inc_ref(&self) {}
->>> >      ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
->>> > @@ -500,7 +500,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
->>> >      ///
->>> >      /// let mut data = Empty {};
->>> >      /// let ptr = NonNull::<Empty>::new(&mut data).unwrap();
->>> > -    /// # // SAFETY: TODO.
->>> > +    /// // SAFETY: We keep `data` around longer than the `ARef`.
->>> 
->>> This is not sufficient. The safety requirement is:
->>> 
->>>   Callers must ensure that the reference count was incremented at least once, and that they
->>>   are properly relinquishing one increment. That is, if there is only one increment, callers
->>>   must not use the underlying object anymore -- it is only safe to do so via the newly
->>>   created [`ARef`].
->>> 
->>> How about:
->>> 
->>>   The `RefCounted` implementation for `Empty` does not count references
->>>   and never frees the underlying object. Thus we can act as having a
->>>   refcount on the object that we pass to the newly created `ARef`.
->>> 
->>> I think this example actually exposes a soundness hole. When the
->>> underlying object is allocated on the stack, the safety requirements are
->>> not sufficient to ensure the lifetime of the object. We could safely
->>> return `data_ref` and have the underlying object go away. We should add
->>> to the safety requirement of `ARef::from_raw`:
->>> 
->>>   `ptr` must be valid while the refcount is positive.
->>
->> Wouldn't this already be covered by the below in the doc for
->> AlwaysRefCounted?
->>
->>     Implementers must ensure that increments to the reference count keep
->>     the object alive in memory at least until matching decrements are
->>     performed."
->
-> No, I don't think that is enough. We can implement the trait properly
-> with refcounts and still we can allocate an object on the stack and then
-> do a `from_raw` on that object without violating any safety
-> requirements. I think the `ARef::from_raw` should have the safety
-> requirement above. But we can do that as a separate patch.
-
-On second thought, I think you are right. I was trying to implement a
-counter example, and I think it is not possible to implement
-`RefCounted` while following the safety requirements in a way that would
-trigger this issue. Implementers will have to make sure that the the
-type that implement `RefCounted` cannot be directly constructed. In
-other words the implementation for `Empty` is illegal in this regard.
-
-We can do this instead for the example
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org, 
+ Konrad Dybcio <konradybcio@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, 
+ devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>
+To: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <20250502-ipq5018-cmn-pll-v1-1-27902c1c4071@outlook.com>
+References: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
+ <20250502-ipq5018-cmn-pll-v1-1-27902c1c4071@outlook.com>
+Message-Id: <174618575948.666955.12764440519077221270.robh@kernel.org>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom: Add CMN PLL support for
+ IPQ5018 SoC
 
 
-    mod empty {
-        use crate::alloc::KBox;
-        use core::ptr::NonNull;
+On Fri, 02 May 2025 14:15:43 +0400, George Moussalem wrote:
+> The CMN PLL block in the IPQ5018 SoC takes 96 MHZ as the reference
+> input clock. Its output clocks are the XO (24Mhz), sleep (32Khz), and
+> ethernet (50Mhz) clocks.
+> 
+> Unlike IPQ9574, the CMN PLL to the ethernet block needs to be enabled
+> first in IPQ5018. Hence, add optional phandle to TCSR register space
+> and offset to do so.
+> 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml  | 11 ++++++++---
+>  include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h         | 16 ++++++++++++++++
+>  2 files changed, 24 insertions(+), 3 deletions(-)
+> 
 
-        pub struct Empty {
-            // Prevent direct construction
-            _p: (),
-        }
+My bot found errors running 'make dt_binding_check' on your patch:
 
-        // SAFETY: The `RefCounted` implementation for `Empty` does not count references
-        // and never frees the underlying object. Thus we can act as having a
-        // refcount on the object that we pass to the newly created `ARef`.
-        unsafe impl super::RefCounted for Empty {
-            fn inc_ref(&self) {}
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml:55:9: [warning] wrong indentation: expected 6 but found 8 (indentation)
 
-            unsafe fn dec_ref(_obj: NonNull<Self>) {}
-        }
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.example.dtb: clock-controller@9b000 (qcom,ipq9574-cmn-pll): 'reg' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
 
-        impl Empty {
-            pub fn new() -> NonNull<Self> {
-                NonNull::new(KBox::into_raw(
-                    KBox::new(Self { _p: () }, kernel::alloc::flags::GFP_KERNEL).unwrap(),
-                ))
-                .unwrap()
-            }
-        }
-    }
+doc reference errors (make refcheckdocs):
 
-    let ptr = empty::Empty::new();
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250502-ipq5018-cmn-pll-v1-1-27902c1c4071@outlook.com
 
-    // SAFETY: The `RefCounted` implementation for `Empty` does not count
-    // references and never frees the underlying object. Thus we can act as
-    // having a refcount on the object that we pass to the newly created `ARef`.
-    let data_ref: ARef<empty::Empty> = unsafe { ARef::from_raw(ptr) };
-    let _raw_ptr: NonNull<empty::Empty> = ARef::into_raw(data_ref);
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
+pip3 install dtschema --upgrade
 
-Best regards,
-Andreas Hindborg
-
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
