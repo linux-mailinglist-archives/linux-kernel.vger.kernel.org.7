@@ -1,179 +1,152 @@
-Return-Path: <linux-kernel+bounces-630321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63778AA7859
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B95AA77EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716BA1C01E13
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F33F1BC77A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99248267B83;
-	Fri,  2 May 2025 17:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F832571B6;
+	Fri,  2 May 2025 17:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="crQasWdH"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdbw+SbH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693122701CA;
-	Fri,  2 May 2025 17:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8A228E7;
+	Fri,  2 May 2025 17:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746205745; cv=none; b=g4+2Vtcume5XfMnWz1SeOwUDkKeQqH7zpW6kI44sNDs8v7DWjzD4i9EbSbLp01Uz58DNYURFjurTgYTeGQ6qfhGMLb4JDPYtC1xrdPJ0mk4MKfOrssh6GTFFIqpF6ga8BXt7gIcTDZLZx7pRMkEsYy0BsVqpfVOwYz0C5YpaDpE=
+	t=1746205222; cv=none; b=iaz3qSuYtdwzI65saF+tfsw1/vz6MqUlK7wpV76nN/MGuN/Jq5FmYB4r1OEEtYcxFAD90dtnCmGHk/rkVt3ITCs7rG1M4kcLJo9P5LaxmqOhSE0njdbxdga9vHvXLtChUVpj6D/lp/ur7tnM5832kPqjXX3FufKtPqRC6ygILlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746205745; c=relaxed/simple;
-	bh=j6bKjmoop+1/uaz6CfUQ2VZqh1wDm9EZSFTjlMrhnBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=razvreTRKfOw5NblDoiJHTdzWLTxy5Q+sieQXFiuym+01hMBXzWLtOU6KxJernZdjXUzauqkfiGHhki0a+TGJJcg+dR5StTQbPOcOTVGkngTRiOBFvs1OXXM2Ji2/nl0D+mzXw7ISplx6YHsnjZ4CtDDxZ8TsbjBYWLeRUS3MQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=crQasWdH; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-224341bbc1dso31823375ad.3;
-        Fri, 02 May 2025 10:09:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746205744; x=1746810544; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mQObzJ/G5smai1eIvIjNkPePS5oTUL5f/3qh2v6cVDU=;
-        b=crQasWdH2eht/JhI7zSp1VyjD3BmxY1RL94XoGNdnm3kX02XnzYteIHwT5hUJFu4gT
-         sP40/vi9zNECRVxp8ofJfbP2HxWqbegxmNWrjE4AEVhX2VdyxS4dc23dN8XromWMeQLd
-         JfPISPz4gsx54NRcfOYXAqnvt1SvqprrJQnqfAbvlQ7Ld+uyqRq7bgdUVPSa4/m6TcYs
-         XPm5jULi9z3//LICbySSUmgN7Bezt4aUrWzIfUhOdxzvEbXswG8QiqqwytsazUi1jMav
-         FVCtdLgQT2Bc3M6W7140K6A8iByQKrCQi6oDubklOD9AmKqS3UE6mXPPC5xQooWQ1ZKz
-         bMyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746205744; x=1746810544;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mQObzJ/G5smai1eIvIjNkPePS5oTUL5f/3qh2v6cVDU=;
-        b=h8wEB1cnk75rDy/5X8Z+LcMCALx1jnk6CqF4zTSh5FVQGgZCgpQoux0fcZE3Q6/m4c
-         9PYZHhVVhqpKDd1oV6cOvgQCMCDtRCokKVwxQsxpu/xCOCFhwpIMhmA6GWzig8q7V15Y
-         GTVjmL21Ivd4xR2MPOCFCdFGVYkJSdE540j3EPyvh607fODSILPETpNa6o9FiKVw6tk3
-         1jinlozt8w04spWPnhFi7KUlAOxxCtavI//enSSD/MZ6Bns0sAdQ2nOOSLcHitNRQqOu
-         2LSTZbqJhyDygK4ZB5rr6i4HXOSRcqNDOcr63TLBYfHsCOH6yDb+cvXVQKLy/J3Aonk0
-         gaEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEYT+FsSBkGTeAULhuA4I0AhfzQMaWpvoZsbLtY2R8h+44inTJRbtrYFlq4XlgmHBgq00oUXO7hAmwa57p@vger.kernel.org, AJvYcCVasqTtpJDAIphHTCMlHPgYwiQGgM2eI0jn8dMeU1HOZcEKptuhOWorGQqu6bOaHmFzgz5WOzjNmM4c/tsr@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB5zKrAskD32G/eiKgTUc+OGH+E0dh+rw+l+siUOVvuJUP+SqY
-	gwu0Le5HMPceLnoGy6/s2crXlYwV8KqTz7xUFs62QEQBbuR097fomj2TEw==
-X-Gm-Gg: ASbGncurguITLn1gisVKN911jzZkBfbFi77PWN/+dkwzTumWIIfzFbPPbqPiiYUctNK
-	xfg9JxYUtFhzUc0HVhxyY6c65zNyvhnrqsgSVaDx0Yt8qEUbsW9f1qqb6O5M81MucGLaZkuYv3l
-	/kQCDz7CRnEIQfJFT26weoAz0kUJZkpTlJ7DfAvTezl/x05HIJ9rJr+0RwvXteHTHUiqlvnfvyI
-	C4nFWk2waLSAgtyj0mTJZhOMykHDKQuFHXjSoBMZ/4ouIixKcbDcxPIj/8egof6Vsv8p5ZSBn07
-	saEXJ62AssX+uRUM1ACkpedtwkMFvUdiIhFjtJiDLcDtXALzBSQi17vwNCRxSFYSfe+nr8w3yUB
-	rOInLGMNCW52i1iQ=
-X-Google-Smtp-Source: AGHT+IFt0hJ0TFReRcQprtgIUwIHV5gv96kJ2x1/zd91bJ5uzVT1QVa2F1GOV3CmBQedUOyrodGMRA==
-X-Received: by 2002:a17:903:1904:b0:223:f408:c3cf with SMTP id d9443c01a7336-22e102e2c23mr59200455ad.21.1746205743576;
-        Fri, 02 May 2025 10:09:03 -0700 (PDT)
-Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a34748914sm6008563a91.11.2025.05.02.10.09.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 10:09:03 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Connor Abbott <cwabbott0@gmail.com>,
-	Rob Clark <robdclark@chromium.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 22/33] drm/msm: Crashdump prep for sparse mappings
-Date: Fri,  2 May 2025 09:56:49 -0700
-Message-ID: <20250502165831.44850-23-robdclark@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250502165831.44850-1-robdclark@gmail.com>
-References: <20250502165831.44850-1-robdclark@gmail.com>
+	s=arc-20240116; t=1746205222; c=relaxed/simple;
+	bh=6EUUOk0NkULNMctsLZSQJhdZlUb9fiQj6X+JcAqW8Zc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C+aUWBZUDtNyTmXl1X5dgO9jQCATEfv5DjfMGjPOxJffNOlkURu88FozaRPnjmfYhSm8JX3HKMx7qhqaJRLWTGgMvrqSmqR/2wNtE2e4RZtDz99uLNJDxahVPgGn3mDrcaWbfUmeZDJtWqEn5xAop1OkcfDcwPuymGfciRY7btM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdbw+SbH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F4AC4CEE4;
+	Fri,  2 May 2025 17:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746205220;
+	bh=6EUUOk0NkULNMctsLZSQJhdZlUb9fiQj6X+JcAqW8Zc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jdbw+SbH8ItXlV2qdKVLIYkb6PYDUrr571gHiho3SuV6ew2Jx11oOiPjXHEW8KYaF
+	 dT0ST5z81a1SQ1Gk3sTJObWJ/rkZ4gVxQnGdqcY6sexKdL5yf8Y+tZ42FGdTiP55b0
+	 5KgYZc5YJnGP+n+Rll1JimuDu4nMoVrSsYKmjRUps8pPdgvtbwCRBpsgUsH5dKHnc/
+	 K5rHcXH3FLdkTEI4B+ECiZ+4p41b1GLa0Qxc0VJI/yqp9VF9kzFrCYFxZ7JxZ1E/6z
+	 6KnrYkPvQr1RQPR40in9FZIYXXlzK0c9Emcks1vEyOCAHRWp30QB9Y+l2x6Prf1hx8
+	 Bit79xGmXOPDw==
+Message-ID: <32460611-f05e-43ea-a57c-494a29d85bb3@kernel.org>
+Date: Fri, 2 May 2025 19:00:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] mptcp: Align mptcp_inet6_sk with other protocols
+Content-Language: en-GB, fr-BE
+To: Pedro Falcato <pfalcato@suse.de>, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250430154541.1038561-1-pfalcato@suse.de>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20250430154541.1038561-1-pfalcato@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Rob Clark <robdclark@chromium.org>
+Hi Pedro,
 
-In this case, userspace could request dumping partial GEM obj mappings.
-Also drop use of should_dump() helper, which really only makes sense in
-the old submit->bos[] table world.
+On 30/04/2025 17:45, Pedro Falcato wrote:
+> Ever since commit f5f80e32de12 ("ipv6: remove hard coded limitation on
+> ipv6_pinfo") that protocols stopped using the old "obj_size -
+> sizeof(struct ipv6_pinfo)" way of grabbing ipv6_pinfo, that severely
+> restricted struct layout and caused fun, hard to see issues.
+> 
+> However, mptcp_inet6_sk wasn't fixed (unlike tcp_inet6_sk). Do so.
+> The non-cloned sockets already do the right thing using
+> ipv6_pinfo_offset + the generic IPv6 code.
+> 
+> Signed-off-by: Pedro Falcato <pfalcato@suse.de>
+> ---
+>  net/mptcp/protocol.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+> index 26ffa06c21e8..c4fd558307f2 100644
+> --- a/net/mptcp/protocol.c
+> +++ b/net/mptcp/protocol.c
+> @@ -3142,9 +3142,9 @@ static int mptcp_disconnect(struct sock *sk, int flags)
+>  #if IS_ENABLED(CONFIG_MPTCP_IPV6)
+>  static struct ipv6_pinfo *mptcp_inet6_sk(const struct sock *sk)
+>  {
+> -	unsigned int offset = sizeof(struct mptcp6_sock) - sizeof(struct ipv6_pinfo);
+> +	struct mptcp6_sock *msk6 = container_of(mptcp_sk(sk), struct mptcp6_sock, msk);
+>  
+> -	return (struct ipv6_pinfo *)(((u8 *)sk) + offset);
+> +	return &msk6->np;
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/msm_gpu.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Thank you for suggesting this! Good idea, that's clearer!
 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 6503ce655b10..2eaca2a22de9 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -219,13 +219,14 @@ static void msm_gpu_devcoredump_free(void *data)
- }
- 
- static void msm_gpu_crashstate_get_bo(struct msm_gpu_state *state,
--		struct drm_gem_object *obj, u64 iova, bool full)
-+				      struct drm_gem_object *obj, u64 iova,
-+				      bool full, size_t offset, size_t size)
- {
- 	struct msm_gpu_state_bo *state_bo = &state->bos[state->nr_bos];
- 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
- 
- 	/* Don't record write only objects */
--	state_bo->size = obj->size;
-+	state_bo->size = size;
- 	state_bo->flags = msm_obj->flags;
- 	state_bo->iova = iova;
- 
-@@ -236,7 +237,7 @@ static void msm_gpu_crashstate_get_bo(struct msm_gpu_state *state,
- 	if (full) {
- 		void *ptr;
- 
--		state_bo->data = kvmalloc(obj->size, GFP_KERNEL);
-+		state_bo->data = kvmalloc(size, GFP_KERNEL);
- 		if (!state_bo->data)
- 			goto out;
- 
-@@ -249,7 +250,7 @@ static void msm_gpu_crashstate_get_bo(struct msm_gpu_state *state,
- 			goto out;
- 		}
- 
--		memcpy(state_bo->data, ptr, obj->size);
-+		memcpy(state_bo->data, ptr + offset, size);
- 		msm_gem_put_vaddr(obj);
- 	}
- out:
-@@ -279,6 +280,7 @@ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
- 	state->fault_info = gpu->fault_info;
- 
- 	if (submit) {
-+		extern bool rd_full;
- 		int i;
- 
- 		if (state->fault_info.ttbr0) {
-@@ -294,9 +296,10 @@ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
- 			sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
- 
- 		for (i = 0; state->bos && i < submit->nr_bos; i++) {
--			msm_gpu_crashstate_get_bo(state, submit->bos[i].obj,
--						  submit->bos[i].iova,
--						  should_dump(submit, i));
-+			struct drm_gem_object *obj = submit->bos[i].obj;
-+			bool dump = rd_full || (submit->bos[i].flags & MSM_SUBMIT_BO_DUMP);
-+			msm_gpu_crashstate_get_bo(state, obj, submit->bos[i].iova,
-+						  dump, 0, obj->size);
- 		}
- 	}
- 
+Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
+@Netdev maintainers: this can be applied in net-next directly.
+
+Cheers,
+Matt
 -- 
-2.49.0
+Sponsored by the NGI0 Core fund.
 
 
