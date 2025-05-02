@@ -1,159 +1,157 @@
-Return-Path: <linux-kernel+bounces-629720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7A9AA7096
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:24:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E4CAA708E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 525A87AA897
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:22:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF1EE7B1F56
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5D5248F46;
-	Fri,  2 May 2025 11:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA441E5B62;
+	Fri,  2 May 2025 11:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lmV94JNE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bme3YeOH"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C881E5B62;
-	Fri,  2 May 2025 11:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B45224B03
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 11:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746185014; cv=none; b=osDXjMz7z3TvR5RrTV/Pr9VN+i+4UsqNkekmmHrcX8UD7kONHuXPO59sxibhAp05FwEE9AkRCpGa3Oz1MqB7oMnm9SIYUUKehsyyOi6aFqsZLNuzxKIfnatunEPPGzT8pxsbi4w9Opvd/JQGZEPx0lIN3hmjD7f9NK9FWnFEKno=
+	t=1746184968; cv=none; b=EeDli9GhwnXt7BnvRrl1mgywMGD4gIZOHabPVd6/OPIWbdkG3C0sPsoWubgnvPyHdci5MFUg3QZW4O6QK2Xz43D/Oe94K2XSeVV1KPE8S0cSk7Eltvunh6LTq9TGTvvg1wR2SRxW0qJfXbFvmBb9/JHk/TUX2HoNd4nHVeOEgMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746185014; c=relaxed/simple;
-	bh=PRPW/uDt3qcKT5KOPbhmERJnNbucXaeqN2L1IjyyPX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aUCWQpoSrcP0KEtS9ljATKEOt7WiXA5RQ2z+e0iHBPRJeKQCPi3tt0EeYalYNgp2ATSgIPh+L2QvHQlqOv9R+GpI/hsa+uZofrQvEZLA+bgRvMLfVVWYFA+fIWQ5+1a1mWqy87yKc5dwVNsHTfdkX6Kp7houkXPsPp4kxzVElJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lmV94JNE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PRPW/uDt3qcKT5KOPbhmERJnNbucXaeqN2L1IjyyPX4=; b=lmV94JNEzV4MsUJuxpPUrg3Bax
-	VPmVO1/zySgMAd5F2IJnFvPiwZNPECAQ1noECVKMioFjFmA+n5SOAzV+kGbk/f9S1iWtVP9rLg6cZ
-	hHF7SAR0m7IaJh5tCHy2qA/R/vkevPz7ZR3+xa+Zh5GSLdg0ezbI6iHsuifF9HE00+OjyODMdnQyb
-	JkPl44vhH6EmamOKaWacZeeUgT5U6RxA5F79Ex/83F13pJOquOWPbK7ely8gHy1uVeRQNWbA0aBQP
-	f+nYHty39Jk6K+NlHv/lPYoCn7B5BgUPqoEMb82IHPQShd8FJim54uJ17ucrfOJGKm432KMXzRw1R
-	RwhYSB9w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAoTJ-0000000FKnO-0XWf;
-	Fri, 02 May 2025 11:22:27 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6C1A530057C; Fri,  2 May 2025 13:22:16 +0200 (CEST)
-Date: Fri, 2 May 2025 13:22:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-perf-users@vger.kernel.org,
-	kvm@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>,
-	Nicolas Saenz Julienne <nsaenz@amazon.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Juergen Gross <jgross@suse.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.amakhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Rong Xu <xur@google.com>, Rafael Aquini <aquini@redhat.com>,
-	Song Liu <song@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Benjamin Berg <benjamin.berg@intel.com>,
-	Vishal Annapurve <vannapurve@google.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	John Stultz <jstultz@google.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v5 00/25] context_tracking,x86: Defer some IPIs until a
- user->kernel transition
-Message-ID: <20250502112216.GZ4198@noisy.programming.kicks-ass.net>
-References: <20250429113242.998312-1-vschneid@redhat.com>
- <fefcd1a6-f146-4f3c-b28b-f907e7346ddd@intel.com>
- <20250430132047.01d48647@gandalf.local.home>
- <019f6713-cfbd-466b-8fb5-dcd982cf8644@intel.com>
+	s=arc-20240116; t=1746184968; c=relaxed/simple;
+	bh=3TIzpFAkAwmJ5Ai0fCUIFb6sFww9WxO8C3aUIXLL09Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oZORr+F1R521wLfqPyUxhGXD2/yIfa3LI3a1duA/vzwBbd7hD94x79PEpeZxgYuWRT/UDH5cxvuelZRsJZBOa1TeaZ+FHJKAKwInLH8quIfmDW4g40tb5J98BOOna4riTvCot4PHpgOJPKqWv4E0CcwFecoOUNtoj+QDhREChRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bme3YeOH; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso2779851a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 04:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746184964; x=1746789764; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NqfMYbE/OTW0Ee2/eXWBsydPJFNpOPTDdKFpdPQUKCU=;
+        b=bme3YeOH4T0dKwoFVPaW3wQmL/VfgooS8sXnpgXTyv9/ToHEKcDLOCV5ARQVLHNEve
+         6VKK2yRN8rtfkDUQs+v69zLC+5ZTzessxATcekMH0gQ2WcrfYHpCeWKi7jIo8iaqY7UE
+         lEsxtg1niy4HOo3sL3HL188gvz00Ez5kTKm2qQm3xAZOJr65GWm3cB4gCyU+q8ADMe3f
+         f2KbkUBdsHsSQEhkbXux0fqcWRzk8Xc5/zLdGicsoV0nGFwzIasXVGDLTml8npblT8SY
+         mVMlIL+kkhaZ0xWGBHzU8P2oGjuubM3CiybW0Pb2txJ+7zu8n5r9ZQJqcnXflyRztBBi
+         h1oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746184964; x=1746789764;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NqfMYbE/OTW0Ee2/eXWBsydPJFNpOPTDdKFpdPQUKCU=;
+        b=BuygIBwj6DlfODRbySc5HQvBfBCea+g3h1/euB82zFxQbb9IRQcIA0h9w6t6E40G9A
+         fEtUQvpUNY/e+KgZt2ykbTqXTJsuYz1rSf2qyK5om0JkN4e1Mu8nmHZpXM+at50Ce5qb
+         GVBFEf4ygomrvXquUCShREQajNYVOpdSR0O/XXFdoZIaugFZlr0lWTmOgeGMPFGPoLdq
+         030O9+679ssREwo5eqOrWEPTVmGd1rvvKPTA53IQB7dsdcXtCy19bF5wifgYb5wwu/8n
+         /mJtFTuGibECEa2tC91iv4Ad1YNhVrOdRC9avZfs1JGYqdDUd3qm1xfw0c+LB5fPcLR5
+         9jgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwqHUnaYeI4s0KGm6RGP2UwXj/OZmFl1Py4LHqcBNkDwdT6sZEtbabfbAFO0ru20GqyFEAk3LYoQSrG08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWYBHD94+mUpKo1YmjCexn0dpMNZLfTupIDE50iT/0CaxR5KCv
+	4p3zchZZqwDLIVvdZXqR9huzuKg6JDHYPcZ4RwgQOdcdQXPh2Uso3/RWDQJ+NW5/WZTBaoSKrFp
+	f
+X-Gm-Gg: ASbGncu+3dsZ5jvzbreVxt0X9IUfDyfuuNNH3v06zbDoiMaVJO2W7eilzKVPxOccgee
+	bLw0aDO83zF8R0slREpEFwfXrbwNj/wtKtFPgACD8oD8S7SJfVva7UsD4HfH4zojjRAM+jLNHmQ
+	0mkHVb8bff8mCg5QO05ajP+KBtrlWCW5+hiSs90s2Nr8lDii4ujKrYNdsu3fwNFNM0xc1uNc5Jb
+	300yWtSioSBjU6ATnYyunpXK6VLMm9hBMBWao7QgJA8jA4GD6CPScoCj9Ri83PmUQc7XQ1ErcPJ
+	H65s6y5ZW1FsE9jJLYThr2tN/+kYq01pt3+hH02YpXbp1nDrlBOgZxo=
+X-Google-Smtp-Source: AGHT+IGhvBVIBFVtHBjng4vUf55rIcK1Nc7ggU/9+PFpPWuDtRvXkmQ3OGrZUveVFEdPd39HlFp12Q==
+X-Received: by 2002:a17:907:6d14:b0:ac6:fec7:34dd with SMTP id a640c23a62f3a-ad17afbe974mr219003766b.52.1746184964389;
+        Fri, 02 May 2025 04:22:44 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:3f2f:46a0:5bf3:f8f2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a2b6esm36062166b.42.2025.05.02.04.22.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 04:22:44 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Date: Fri, 02 May 2025 13:22:28 +0200
+Subject: [PATCH] irqchip/qcom-mpm: Fix crash when trying to handle non-wake
+ GPIOs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <019f6713-cfbd-466b-8fb5-dcd982cf8644@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250502-irq-qcom-mpm-fix-no-wake-v1-1-8a1eafcd28d4@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAPOqFGgC/x2MQQqAIBAAvxJ7bsE2guwr0SF0qyXUUqgg/HvSc
+ RhmXkgchRMM1QuRL0kSfIGmrsBss18ZxRYGUtSpThFKPPE0waE7HC7yoA94zzuj7XXLjdbUWgU
+ lPyIX/a/HKecP+M52P2oAAAA=
+X-Change-ID: 20250502-irq-qcom-mpm-fix-no-wake-d893e19923d0
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Shawn Guo <shawn.guo@linaro.org>, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Alexey Klimov <alexey.klimov@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Wed, Apr 30, 2025 at 11:07:35AM -0700, Dave Hansen wrote:
+On Qualcomm chipsets not all GPIOs are wakeup capable. Those GPIOs do not
+have a corresponding MPM pin and should not be handled inside the MPM
+driver. The IRQ domain hierarchy is always applied, so we need to
+explicitly disconnect the hierarchy for those. The pinctrl-msm driver marks
+these with GPIO_NO_WAKE_IRQ. qcom-pdc has a check for this, but
+irq-qcom-mpm is currently missing the check. This is causing crashes when
+setting up interrupts for non-wake GPIOs, e.g.
 
-> Both AMD and Intel have hardware to do it. ARM CPUs do it too, I think.
-> You can go buy the Intel hardware off the shelf today.
+ root@rb1:~# gpiomon -c gpiochip1 10
+   irq: IRQ159: trimming hierarchy from :soc@0:interrupt-controller@f200000-1
+   Unable to handle kernel paging request at virtual address ffff8000a1dc3820
+   Hardware name: Qualcomm Technologies, Inc. Robotics RB1 (DT)
+   pc : mpm_set_type+0x80/0xcc
+   lr : mpm_set_type+0x5c/0xcc
+   Call trace:
+    mpm_set_type+0x80/0xcc (P)
+    qcom_mpm_set_type+0x64/0x158
+    irq_chip_set_type_parent+0x20/0x38
+    msm_gpio_irq_set_type+0x50/0x530
+    __irq_set_trigger+0x60/0x184
+    __setup_irq+0x304/0x6bc
+    request_threaded_irq+0xc8/0x19c
+    edge_detector_setup+0x260/0x364
+    linereq_create+0x420/0x5a8
+    gpio_ioctl+0x2d4/0x6c0
 
-To be fair, the Intel RAR thing is pretty horrific :-( Definitely
-sub-par compared to the AMD and ARM things.
+Fix this by copying the check for GPIO_NO_WAKE_IRQ from qcom-pdc.c, so that
+MPM is removed entirely from the hierarchy for non-wake GPIOs.
 
-Furthermore, the paper states it is a uarch feature for SPR with no
-guarantee future uarchs will get it (and to be fair, I'd prefer it if
-they didn't).
+Cc: stable@vger.kernel.org
+Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
+Tested-by: Alexey Klimov <alexey.klimov@linaro.org>
+Fixes: a6199bb514d8 ("irqchip: Add Qualcomm MPM controller driver")
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+ drivers/irqchip/irq-qcom-mpm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Furthermore, I suspect it will actually be slower than IPIs for anything
-with more than 64 logical CPUs due to reduced parallelism.
+diff --git a/drivers/irqchip/irq-qcom-mpm.c b/drivers/irqchip/irq-qcom-mpm.c
+index 7942d8eb3d00eae5fa7e5718a05ef889bb8a82f0..f772deb9cba574b9f70649e1646f16a993eba58a 100644
+--- a/drivers/irqchip/irq-qcom-mpm.c
++++ b/drivers/irqchip/irq-qcom-mpm.c
+@@ -227,6 +227,9 @@ static int qcom_mpm_alloc(struct irq_domain *domain, unsigned int virq,
+ 	if (ret)
+ 		return ret;
+ 
++	if (pin == GPIO_NO_WAKE_IRQ)
++		return irq_domain_disconnect_hierarchy(domain, virq);
++
+ 	ret = irq_domain_set_hwirq_and_chip(domain, virq, pin,
+ 					    &qcom_mpm_chip, priv);
+ 	if (ret)
+
+---
+base-commit: e6a3fc4f10b872d02e25f83227e725c79b25d893
+change-id: 20250502-irq-qcom-mpm-fix-no-wake-d893e19923d0
+
+Best regards,
+-- 
+Stephan Gerhold <stephan.gerhold@linaro.org>
+
 
