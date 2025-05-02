@@ -1,134 +1,196 @@
-Return-Path: <linux-kernel+bounces-630476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69F5AA7AC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:18:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE9AAA7ACC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E2E4E16C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:18:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B821893B03
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4EE1F4E48;
-	Fri,  2 May 2025 20:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6C220127D;
+	Fri,  2 May 2025 20:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByyXYM2V"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="V0iZZZyo"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E024A146A68;
-	Fri,  2 May 2025 20:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01DC1FF1B3;
+	Fri,  2 May 2025 20:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746217079; cv=none; b=AKrAW4FAToXpC6SaERwMbORX7X/czuQ8e24AfFF5PyZRB6Q+dONyn+ap6pQKqpJJ/q045UkNyqlBdV3ST3xnywiBGqjlix1h2PdxfrZ+dT+4ICaY/4saoKUpePMT1L4OQj8UpCOe2B1l1w7lPvCbqXTYkeslPivQkdjU7YNGlBE=
+	t=1746217263; cv=none; b=oJ3p5d/LwR0ZlvQ6W2PuBH9aBiUlA1chwtgV7t0xT5oJTB33fvOV615VbYrOQNP6M1D7mV0M6GqMdtS6I8OIZ1v66cThYhddce5pkbCvs5Dw+xoKi+bXVqViMmw+vJwBMzgWxtZkjBw6NNyVAF5RDMRu8Vfnrb+ENc9V7ngZwtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746217079; c=relaxed/simple;
-	bh=E5gwB1+Hj5oqS1YcS2EpyRAcex38Ij8qcYJuEEvjAHw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=h8E9rM+nuHZWCJ2BnM3id0Ou1vbdzoug3SLiSwbG9MyBs3nc74UlLGqqX35irMh50AhX4oG/ZBe7qt+t9oLBNBwDEwqf4vuxdlghWnB92XQUYKXLNLvMlY8QLqJoKtTW9raYxFULfRIg2ho82PDszxxPishraKDZXMiHVa+k30E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ByyXYM2V; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf3f3539dso25209651fa.1;
-        Fri, 02 May 2025 13:17:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746217076; x=1746821876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SaIqjq9KpAJ/+nEjnkzbnEUUUTwKcNBa7HBXrlZhXUI=;
-        b=ByyXYM2VAKpbeHN0s3yWGbZPFbdS0viJPaMFVdn6VU414szNCJYzxGIFbjjpin9E4g
-         7VmODe2GPP748mJCw9/vn2EKpopVq544iXOsnSCWY/npD+6PERg1dQ1MMImQnaPu7+cx
-         uJ6SjkxFkNYxv3KB4V88mLC30etXyJVrstRGPjZmEnq9/3eYXcINvB2PrEtyY7aKWx/3
-         bfLitrTGOejIX6I05kKdLSqf2hBfwmFR/+FWEyJWdWX+Kve0u+LXh0XvKh/IJ/5+najA
-         XbGD4T2/3LCyEO431eN/873oXbTLIEpPOaiUzfDtQ0arU1eWas0N3NJxuC/2hB6RRn5M
-         DzRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746217076; x=1746821876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SaIqjq9KpAJ/+nEjnkzbnEUUUTwKcNBa7HBXrlZhXUI=;
-        b=B0UgX2lzfK8kb7f36C+cZKlfCZ2FkskWPzeOl/zqvIYV5rJtK/Obhk1E4mDGue9JhT
-         rRdyr4irW8ZvvOwebgTb5pEoObiVDQnHjR2dH5NP/NS1gJutznKQXkxxO5j3rsWT0ydk
-         x+zLZD/fBjBKQ3Xjyq0yTX1Rwcnvu4CgwT0I/2NYegshVbWL/wATosGHoh30BbMYU8O3
-         KG8rEJdutyrdQorruxlSoSmgqpbfXZT8XDgHJHX3O/uFEBp/+lZDy+mo9iQ1zrbcGOey
-         dAd7KbcVYrmIELEdQymFym0dNowSBE1zzP5x0/+85gkeob2oMuMR+idmtL9/cwvoWwGY
-         QIew==
-X-Forwarded-Encrypted: i=1; AJvYcCVGFj3+bpqR2mmsglLX5vaO2LroYjemSv3AIQVpqRf9w3m/JXYHsL0ZLn6+cgbmrBcZqZKa5qqbCAGx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2Sd4L2w1/UNev9p8zcGvaCPEC/bVa6YZ1owO6VKpsle/pgcZG
-	LtO5GodoZULufmTO0KjwqQljwc61XsTO81Pjy9+mxOkbKbKx1+z6VSJqKaHHR+ZFw+fH/8VfECS
-	IFHrkN22wMM5vO5vu/JNCZPL3ZBVAAPdM
-X-Gm-Gg: ASbGncsWvL930uCWDj/3fg5ny8AFoqFSfrcH2qGNANlRj7uCwSJLvcMQ1Yn+CfEBQk7
-	vIsKsgiFU1L73ZvDdeCwaMwUS/YgpwTURHC0FR9fJdcRgBoj8YaqtX38036KMaU7jOlXDEYkG3g
-	IKH4qE1oO2nY31ItfOF5IHlmGmPkafwjqDGZu/azRr3yWLT3u++P0JmV7m
-X-Google-Smtp-Source: AGHT+IGUIpUOwOcjH8Jb2We6DvKK+Y9vC3VbvRom4zxzK8kuLQbrpp4eguR5QpLbs6UKaD39zSQNimjKImedo4vnQJ4=
-X-Received: by 2002:a2e:bc81:0:b0:30b:aaca:9b2e with SMTP id
- 38308e7fff4ca-31fb8f0440bmr23267921fa.0.1746217075658; Fri, 02 May 2025
- 13:17:55 -0700 (PDT)
+	s=arc-20240116; t=1746217263; c=relaxed/simple;
+	bh=kY6MAQVGSJGyWCQASGdmCtKHkWrDLzz1jcf7KoUBEhI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BuQMl+HArtfQXu+VJtd0MJQaDpE+eIIyyz1/D1DJ3h0teuUe2A0vfRsrF5vI2QflA+OQ96zr8ayJsUkiKf3Yb7JXWWfR7drjmGkRnjjva9+86gJPXRIXYdPvMssQhJk128NNJ1XFctyY+wtaSRX/vWNx6BAitM2e8IwJcxCFjdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=V0iZZZyo; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 542A2XXe004552;
+	Fri, 2 May 2025 22:20:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	selector1; bh=OsEMX0M0+tlNvintg9TR1oPuNaK+4hQjLcB9If9RJdg=; b=V0
+	iZZZyo88F45SJ8Z8/ccfnEswofYOQNbGg49Uht35EQGJmagZOwQi5ABo78RMD8ZS
+	DMH8PCjmqNviBuQbkvneBf8DNdC8B9Vo0Xi3a+nnoMHEIAYYSYKXBxo43rH3h1k0
+	cYlvgMZN8elVBhvPAUKD7mkZ2zKBxZB3+9XftAHX9Y38dvVMP+i63IjxOtFBJsHU
+	kzhAWJCKrtASi1crvY/sjgYkbf5u2rQU1RqnG4/zz1gOBxWW6pHuasf5rXsHO/3y
+	EbMcppVttekZ94B0qDb8KZjsToGX8YwUcnLDdWpLXkJfkg+OK+XvJM7O7opeR1FL
+	hC4pV8MOQ4v98oxVffYw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46b6tmcbuj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 May 2025 22:20:49 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 081C94002D;
+	Fri,  2 May 2025 22:19:36 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 124B7A50E23;
+	Fri,  2 May 2025 22:18:55 +0200 (CEST)
+Received: from localhost (10.130.72.242) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 2 May
+ 2025 22:18:54 +0200
+From: Sylvain Petinot <sylvain.petinot@foss.st.com>
+To: <benjamin.mugnier@foss.st.com>, <sylvain.petinot@foss.st.com>,
+        <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <sakari.ailus@linux.intel.com>, <laurent.pinchart@ideasonboard.com>
+CC: <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <tomm.merciai@gmail.com>
+Subject: [PATCH v8 0/2] media: Add driver for ST VD56G3 camera sensor
+Date: Fri, 2 May 2025 22:18:47 +0200
+Message-ID: <20250502201849.12588-1-sylvain.petinot@foss.st.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 2 May 2025 15:17:44 -0500
-X-Gm-Features: ATxdqUHhe8LA-u1SUoZI1t1lKuVpSxdtHJ51mjP2n5B4HdsAv7qKe-L79Iba8hs
-Message-ID: <CAH2r5mvFmxyPuxTOzGVvDOq1N3nYwh2ogj7yA-rrABdXgGpjbQ@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-02_04,2025-04-30_01,2025-02-21_01
 
-Please pull the following changes since commit
-b4432656b36e5cc1d50a1f2dc15357543add530e:
+Hello,
 
-  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
+This serie adds support for STMicroelectronics VD56G3 camera sensor.
+This is a 1.5M pixel global shutter camera available in both Mono (VD56G3) and
+colour (VD66GY) variants.
 
-are available in the Git repository at:
+The following features are supported:
+- Auto exposure with expo bias or
+- Manual exposure with analog / digital gain
+- H/V flip
+- vblank/hblank/link freq
+- Test pattern
+- Supported resolutions in both raw8/raw10 :
+   - 1124x1364
+   - 1120x1360
+   - 1024x1280
+   - 1024x768
+   - 768x1024
+   - 720x1280
+   - 640x480
+   - 480x640
+   - 320x240
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.15-rc4-smb3-client-fixes
+This driver supports coldstart parameters for internal AE feature.
+To make it work, the driver save gain/expo values in ctrl's cur.val during
+poweroff phase. This implementation transgress V4L2 rules... Any advice to make
+it proper would be greatly appreciated.
 
-for you to fetch changes up to c59f7c9661b9d3ee33a21d7b4f1dd4b77079e3e7:
+Driver tested on RB5 and RPI (with and without libcamera) for V1. V2 to V8
+mainly tested on RPI.
 
-  smb: client: ensure aligned IO sizes (2025-05-01 08:35:58 -0500)
+---
 
-----------------------------------------------------------------
-Four client fixes:
-- fix posix mkdir error to ksmbd (also avoids crash in
-cifs_destroy_request_bufs)
-- two smb1 fixes: fixing querypath info and setpathinfo to old servers
-- fix rsize/wsize when not multiple of page size to address DIO reads/write=
-s
+v7 -> v8
+- driver: Hold control handler's lock in vd56g3_subdev_init()
 
-----------------------------------------------------------------
-Jethro Donaldson (1):
-      smb: client: fix zero length for mkdir POSIX create context
+v6 -> v7
+- driver: Make use of pm_runtime_dont_use_autosuspend() in probe/remove
+- driver: Fix Ctrl handler lock that might not be free in vd56g3_subdev_init
+- driver: Adjust log/error messages (No trailing dot, add '\n')
+- driver: Make 'nb_gpios_leds' an unsigned variable
 
-Pali Roh=C3=A1r (2):
-      cifs: Fix and improve cifs_query_path_info() and cifs_query_file_info=
-()
-      cifs: Fix changing times and read-only attr over SMB1
-smb_set_file_info() function
+v5 -> v6
+Changes are mainly related to Laurent's comments on VD55G1 series [2] (which
+could also apply to this driver):
+- driver: Fix vd56g3_disable_stream() could failed at lowest framerate
+- driver: Make vd56g3_power_off the exact opposite of power_on
+- driver: Define macros for Min and Max External Clock Freq
+- driver: Replace ctrl_to_sd by ctrl_to_vd56g3
+- driver: struct vd56g3 keep pointer on struct device
+- driver: Make test pattern naming more explicit
 
-Paulo Alcantara (1):
-      smb: client: ensure aligned IO sizes
+v4 -> v5
+Following Sakari's comment on VD55G1 series [1], use device_property*()
+instead of of_property*() and drop OF dependency.
 
- fs/smb/client/cifspdu.h    |   5 +-
- fs/smb/client/cifsproto.h  |   4 +
- fs/smb/client/cifssmb.c    |  57 ++++++++++++
- fs/smb/client/connect.c    |  23 +----
- fs/smb/client/file.c       |   6 +-
- fs/smb/client/fs_context.c |  25 ++----
- fs/smb/client/fs_context.h |  47 ++++++++++
- fs/smb/client/smb1ops.c    | 223 +++++++++++++++++++++++++++++++++++++++++=
------
- fs/smb/client/smb2pdu.c    |   9 +-
- 9 files changed, 324 insertions(+), 75 deletions(-)
+v3 -> v4:
+- driver: Revert to pm_runtime_put_autosuspend()
+- driver: Drop HAS_EVENTS and event handlers
+- driver: Make native resolution the default one
+- driver: Implements get_frame_desc() operation
+- driver: Use enable_streams and disable_streams ops
+- driver: Move asm/unaligned.h to linux/unaligned.h
+- driver: Variable data read using cci_read() doesn't require initialization
+- driver: Drop enum vd56g3_expo_state definition
 
---=20
-Thanks,
+v2 -> v3:
+- driver: Unify PM vd56g3_resume/suspend functions with vd56g3_power_on/off
+- driver: Add v4l2_fwnode ctrls parse and addition
+- driver: Exposure is bounded by a minimum number of lines
+- driver: Minor improvements while handling return values
+- driver: Move to __pm_runtime_put_autosuspend()
+- driver: Follow rules and convention for driver naming
+- dt-bindings: Improve st-leds description
+- dt-bindings: Add missing additionnalProperties on 'port'
+- dt-bindings: vd56g3 is a video-interface-device type of device 
+- dt-bindings: Follow rules and convention for bindings naming
 
-Steve
+v1 -> v2:
+- driver: Drop VD56G3_NUM_SUPPLIES
+- driver: Rename 'ext_clock' to 'xclk_freq'
+- driver: Make use of 'container_of_const' instead of 'container_of'
+- driver: Drop usage of WARN()
+- driver: Move a few variables to unsigned int
+- driver: Add defines for the different Cut revisions
+- driver: Replace dev_warn() by dev_err() in situation we're returning errors
+- driver: Ensure sensor has dedicated 3.5ms to boot after reset
+- driver: Take into account return value of __v4l2_ctrl_modify_range() and
+  __v4l2_ctrl_s_ctrl() functions
+- driver: Merge vd56g3_power_on() and vd56g3_boot()
+- dt-bindings: Lowercase power supply names
+- dt-bindings: Drop clock-lanes property
+- dt-bindings: Drop unecessary 'items' contraint for lane-polarities
+- dt-bindings: Drop unused labels
+
+[1] https://lore.kernel.org/r/20250402-b4-vd55g1-v4-0-84b1f54c670c@foss.st.com
+[2] https://lore.kernel.org/all/20250422150746.GA23173@pendragon.ideasonboard.com/
+
+Sylvain Petinot (2):
+  media: dt-bindings: Add ST VD56G3 camera sensor
+  media: i2c: Add driver for ST VD56G3 camera sensor
+
+ .../bindings/media/i2c/st,vd56g3.yaml         |  139 ++
+ MAINTAINERS                                   |    9 +
+ drivers/media/i2c/Kconfig                     |   11 +
+ drivers/media/i2c/Makefile                    |    1 +
+ drivers/media/i2c/vd56g3.c                    | 1586 +++++++++++++++++
+ 5 files changed, 1746 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml
+ create mode 100644 drivers/media/i2c/vd56g3.c
+
+-- 
+2.17.1
+
 
