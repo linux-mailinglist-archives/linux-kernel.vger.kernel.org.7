@@ -1,292 +1,218 @@
-Return-Path: <linux-kernel+bounces-629254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6853FAA69E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:42:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A9AAA69EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1121BA5DE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 04:42:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6E024C266D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 04:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FE41A3166;
-	Fri,  2 May 2025 04:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0E01A5BAD;
+	Fri,  2 May 2025 04:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lD93qQm0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="lU2i+a1n"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F091A3156
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 04:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089C838F91
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 04:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746160933; cv=none; b=hU8xNmG4RCQ9qtaj7Ff2qqnqxF8HEyye5G++8sOAGUksDBw76TOfM4qK7Zkb1iBw79fu4X5bN69aNe/i3LwQCKccP2FGKf8kRuFGxwjrH219En/kb5QIdLO2PkBQeQJBxoTyTbF8GnDuFlkoMzz1ZmiCC6/iAgRbbNR3mXeDkQs=
+	t=1746161548; cv=none; b=OZFkI3AI/d4aWAB983Jm2fSEcEhN8e7HFFWPvY8wK1FrgkquFEJU/svNU8iauo0rE8ZBv77RbKc6kjp+RiAGQJRfcGPdSWFQdcoTHYQq3y6obNY7gXxhEXLzhALLWZ66Z/m8Gmcdlb8ONElmV1P7bw7Av4jTqADjLR4EkuhzfqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746160933; c=relaxed/simple;
-	bh=AS5GCwcO4Mg8AL75Z9J2FHBKkN5+JSl/LX+VBO7oJqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Krb6jFlUmBlMGdijcO9rCSjYTjp5levExNvqvgv9aVApKVhjwr8ejFponGIo/CMSV3jG0SRXGUin4K1qrbkKjPjx4/sWM4ZimwXY4oIzjpyf12PeiOE0RJUKs+I6W4laccyWiBxtCGEYa2nw3SLHC0r4UW4rBr88vlAJVtIXeU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lD93qQm0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5421OAjj018172
-	for <linux-kernel@vger.kernel.org>; Fri, 2 May 2025 04:42:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7j5UxYN6C9Dd6qHXGE97a7YLEYkg4By51iUOqA+ylAQ=; b=lD93qQm0lfGtQu2b
-	Qol+d3LR4qo4+nRMOn5UzV0/SgDWNud83Pb+Tb1RKqYAJjqowwungs3q4s2MUfb6
-	7PXzNa05DwwAk2Rj1KaQsViGT+LbFMTslw56wXt5S4ADZssd0iVNijqc72MCH2l6
-	30Ndlv6aAvcHhBga9oSw6ybxw3mAwHQpEIpS1CiwVdJO29HkpbWoihIBbqjIwyKC
-	UBZ30zVcfnRHVBUtSNVVIBEI6fDQvOe3F6REV3Q6NwDIuRC03LCduxDPZfxwG8Cu
-	n1Int1HTfaIThrO4uv7x/l7f9t2By+WhIdTJpAy3ufJ9pyI+4lyiGiJNNFzybgLG
-	wm+Kow==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u3y5xs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 04:42:10 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-736c1ea954fso979618b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 May 2025 21:42:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746160929; x=1746765729;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7j5UxYN6C9Dd6qHXGE97a7YLEYkg4By51iUOqA+ylAQ=;
-        b=sfvywepJmRwDqyiipmtEtApC7Rps1JWFrSwHlG1N41BTU+i/XfP+LZbTHAjvo/91IZ
-         jKRcpkqRE6HyBN5YqaKC+PdfMXNIku3rfqBKADKz5E2BTzHmYv0NaM65eHypsxzBp3PI
-         GgwgjBNvrsrgMtVaQ6WjHNATgy0iTXWg2h9T87sILDbzFukV6AuojG9oROg0kHe1jhdf
-         tfgLbsQSS+EKeznWmM8nqP7IxOqWYSss8ANHf74Ssy/8y8gDKiAG4MtkaN+WJJ6zJOof
-         r7YIxTKAvAM2BpP7oP2P9BEQN5M+MhpXHgCO8jH0dS8FIWnz9cNAlcW7IUYrjrXtpDhH
-         i5rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnEkZvZMyC633shLGwU4qaTo5VhEjKmVMPFIROLqUcVvlNV7vHFik6WOyzBr6Kaor+3f6/jdxsEdfBe98=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3s+54QT/BSD3TRDuq/isEmmQteR1FPx+NOh95ratlkMjc++9f
-	zKkoRObXCB4l07rSdpdNR+HHszsNX8Las7aKWGoDEeYNOrQjyUV3LTpPjIT+YBqJ9y3CFswnbwY
-	7gpxhAGk6fcfpOhDnIDWyjPVM5r6dHEe0/gt08q/UqFD+8Q4t/ReFrdxulHD5K/8=
-X-Gm-Gg: ASbGncubOUlud7E81XDT+cxaulm+1GFq01NTqpatfkcS1hY9EzKu/aiHNN8UVG+OwMQ
-	c+HaSdrcFemMP0ofHrZRgcQOqTRgPXdBGdjPyG42FO5CLq0fVKYz82owlJjAlm3lg1ywHnu6WwM
-	xOCKnsMjGXKYWpgIlgFfEGecccYOZYWjDoVkghJUXApw9CNk224VqIUqcTirtbqTGNGFjEJLmbq
-	C+nl9lwaU1KD98EtlrtemE35X4Ow/q4wN5/FbXNeBb8/0AJd7vpJARpNDHCEbZ7+sS4cryQsKhR
-	SQIxaTLk5lcZBN4W6YetDF4beSQiM4E3jq50dCO9OoLdzA50A/21
-X-Received: by 2002:a05:6a00:4294:b0:736:6ecd:8e32 with SMTP id d2e1a72fcca58-74058b23ef3mr1866200b3a.21.1746160928682;
-        Thu, 01 May 2025 21:42:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBQrj67WLhBG3Hq96DBg+5Opa1dABnH/Q1s+TspcF/KflEqOJ5Mrv0bnI/pESCH+hoqmXB/g==
-X-Received: by 2002:a05:6a00:4294:b0:736:6ecd:8e32 with SMTP id d2e1a72fcca58-74058b23ef3mr1866183b3a.21.1746160928305;
-        Thu, 01 May 2025 21:42:08 -0700 (PDT)
-Received: from [10.151.37.217] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74059021483sm590790b3a.93.2025.05.01.21.42.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 May 2025 21:42:07 -0700 (PDT)
-Message-ID: <09579b2c-f312-4c8a-b57a-b240204cd733@oss.qualcomm.com>
-Date: Fri, 2 May 2025 10:12:02 +0530
+	s=arc-20240116; t=1746161548; c=relaxed/simple;
+	bh=OTi7ApWMtPFOuHRDQfUrldYEWzBkLwCGcJMVwp68PQ8=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=km91qvl36bk8U5Rb8fo30gnmVskHFujsyaVBO6RtqCvId3jDaYpMMBk460OUlXN5uWnejSY+y9R04+SzME6cOMTvic5pGoNDFDH2nZgoQiy2JNkQ92stAuQVX43XttLoL0Mbh9d+zzVCcv80bg7qynOgcfaiR3Qo59BdXoosK/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=lU2i+a1n; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1746161360;
+	bh=OTi7ApWMtPFOuHRDQfUrldYEWzBkLwCGcJMVwp68PQ8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lU2i+a1nWXkmo3BYQ6WaTlCCBf1oj6HT1tgYzvRoJcCgkxD6umtFzNIjN1HSz/iV7
+	 mGjEE69Mkf+POqG+SNRKLv3yvfb6q1/Mtqxdhl15Y/Tzf9wUVsfjDZjw5FhZQl0ZfQ
+	 L7F45Wt1U6r0goeYC+Xf4x8DtiDUKFoXgRQBm0sY=
+X-QQ-mid: zesmtpip3t1746161358tf79394f1
+X-QQ-Originating-IP: hdQxLLQ+GVlQDxNtMWIJsoe5jeqhquoI7ZB2ZOBN+Io=
+Received: from TYSPR06MB7158.apcprd06.prod.out ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 02 May 2025 12:49:16 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12450518463310796809
+EX-QQ-RecipientCnt: 6
+From: "huk23@m.fudan.edu.cn" <huk23@m.fudan.edu.cn>
+To: Dave Kleikamp <shaggy@kernel.org>
+CC: Jiaji Qin <jjtan24@m.fudan.edu.cn>, Shuoran Bai <baishuoran@hrbeu.edu.cn>,
+	jfs-discussion <jfs-discussion@lists.sourceforge.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
+Subject: BUG:read_message failed in LogSyncRelease
+Thread-Topic: BUG:read_message failed in LogSyncRelease
+Thread-Index: AQHbuxzN08Vq1io1BUKiwvicApeecg==
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date: Fri, 2 May 2025 04:49:16 +0000
+Message-ID:
+	<TYSPR06MB7158A2235E4058D3E32818A5F68D2@TYSPR06MB7158.apcprd06.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator:
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+msip_labels:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] watchdog: qcom: add support to read the restart
- reason from IMEM
-Content-Language: en-US
-To: Bryan O'Donoghue <bod.linux@nxsw.ie>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck
- <linux@roeck-us.net>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20250416-wdt_reset_reason-v2-0-c65bba312914@oss.qualcomm.com>
- <20250416-wdt_reset_reason-v2-5-c65bba312914@oss.qualcomm.com>
- <ebd4790b-e7aa-45b1-b7d7-9d1b331ee842@nxsw.ie>
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-In-Reply-To: <ebd4790b-e7aa-45b1-b7d7-9d1b331ee842@nxsw.ie>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Bv6dwZX5 c=1 sm=1 tr=0 ts=68144d22 cx=c_pps a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=Amq28VNnWxlBxfWyqssA:9 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-GUID: sYPSWLeLJuc5Fi0Isa39HAFqQGEKPcVl
-X-Proofpoint-ORIG-GUID: sYPSWLeLJuc5Fi0Isa39HAFqQGEKPcVl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDAzNCBTYWx0ZWRfX6J4hxEwf2BnW MDkW6wBmxyOY8uTqy/gioCQZJLgA7BAdHKKnxQ6ulgAS62Vf2JlT2s5RuRFoTZz8ywVEPIn7Jwf JGz0NxLBsHrma7ls1ydmCo4r6KePLnyI6bN38FpnB3u4dT/RpicreV3NKXgQwVtzPQj7SMIwd1l
- u3Rexxgi449whI3UrBssTw7pAVyNCP0rqdEzFot0PUcKfdv43rb+wnV0f7MQrgH7q5rlojK+FFl 1mU95RXeV7nKiad9lStGbwxwvWQN4ipf4aqAJNIBm7cxOYT6kBKFXB2UMGV58ZpqGbymjDRu04F oWE05klJdcZYSU43b/0LDd2D0wY3o6aO+0SehmJf3lkKQKvnK9KVYb6dUABPfjrQRBq2i6+R8cB
- +MOgeNZ0bf6SJTvZiaiJ7xzJRf0bRMAVe6h8KvD9QWyYwLTNNW1/kVsOlsQM7wrOv2CDemuU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-01_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505020034
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MyirvGjpKb1jhWkj0AFLoslnFQ0/aHTiJlAsblNXmjsc5flbYYrtBON/
+	KR5mdThTLLIhGD2gOdeZYF+8Pl7Ah5NlHsh1HD94SiK2XqB4fO0bgMUMFuHnjy1vbTkcISx
+	UoI4KM8W6yr/kj+2BhM+RVUX4/Ms44jREt6JJyd5SLe9t4kgrCynRdL815QWnaR9EmpegBR
+	SK7TLG0oy/PbDdV1JJmlKDBEDwG3B9Q5ZMhhZQwGfbnfGPe7hekkvgC+iUF0qj9Nu3HRzYZ
+	ckA+jVVTCwDPiQBIjQ5GAOa1XSQMSgRLZ1bv2NgsRzltZDrXNZKwp/4Kd7Mf5vonSz+BmwC
+	MsAb+OeWodA/UVXhcXz5AIMBEkKvPPEWTnxs1jkLw/I+Dis+GxiARqe/cAzfq/YQJqM1Kng
+	l7TcenAh2QzaGpsBAZFS1GefgF2zH8tjcvBC4B1FaFl3X7uUUMhzVfJ4gjZ+6rp8Vo8wDwg
+	kWiOrvYXq7rEI9voLFaWFDcr7F3kxesu1CRQPaNH13dsDT14BhvNqtxo1UvzuMXy4SoS63v
+	3OphvE/N+BUDmCmKYjVz1/pxOJ6S7zJ5HzpmpqlcsKseGtKjCNyofFfs29UuWtLx06aDhrL
+	BFg9VJy9ncmPotnQ1Nms+WbHh9E+EpNlKCEyhpOKY5WQYL0+ym8r3m41OuQCr044F1O1Lz5
+	Lxx84wWwFxWO47Jm7JY1KRc72HtRbxIQdtWQFLhqZTQd0YoDIrLYf6XRrLBD85jacBOnBHU
+	A8rRr2ujvx4p+l2p6S1pVxSFuVWPOsXhW5dsO86H6j0uAddMGVWwBRI0NlS8Vf/un2nAST0
+	1ouqkghJRDj6UhN2iB2GnnnIVwXU+iQML8Q9612QWj6g9VJCzKtllqlXZvMo5/lyrN5kyD7
+	D7Sju7mt52XNUTpxn1a1KhWeH8Dkzw691IPGaeNaZ2Ggya8nhlszjMNAaX4o7CRhBZBU0MI
+	lSBqWKVi68aheIqod8llGBx2QTHr2hlmYh1nOwqxjuFTpU9+zVuKmOlsSZF83UJRvLCYsWC
+	Q6bQ8bAR1XqrTB8R+sxirejH6zdYaZSXPJr1ICfdzfaXXhQ2ud
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-
-On 5/1/2025 5:31 AM, Bryan O'Donoghue wrote:
-> On 16/04/2025 09:29, Kathiravan Thirumoorthy wrote:
->> When the system boots up after a watchdog reset, the EXPIRED_STATUS bit
->> in the WDT_STS register is cleared. To identify if the system was restarted
->> due to WDT expiry, bootloaders update the information in the IMEM region.
->> Update the driver to read the restart reason from IMEM and populate the
->> bootstatus accordingly.
-> Which bootloaders ?
->
-> Do you mean bootrom or one of the subsequent phase bootloaders ?
-
-
-It is updated by the XBL. I shall mention it explicitly.
-
-
->
-> Please be specific about which bootloader populates this data i.e. if I
-> switch my bootloader to u-boot do I loose the added flag ?
->
->> For backward compatibility, keep the EXPIRED_STATUS bit check. Add a new
->> function qcom_wdt_get_restart_reason() to read the restart reason from
->> IMEM.
->>
->> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-> What I'd really love to see here is an example of reading out the data
-> from sysfs.
->
-> How do I as a user/consumer of this new functionality parse the new data
-> it provides ?
->
-> Ideally do this in the commit log and recommend doing it in the cover
-> letter to, as people don't always read both when commenting on patches.
-
-
-Sure, will mention the sysfs path and its output in the commit log and 
-cover letter.
-
-
->
->> ---
->> Changes in v2:
->> 	- Use the syscon API to access the IMEM region
->> 	- Handle the error cases returned by qcom_wdt_get_restart_reason
->> 	- Define device specific data to retrieve the IMEM compatible,
->> 	  offset and the value for non secure WDT, which allows to
->> 	  extend the support for other SoCs
->> ---
->>    drivers/watchdog/qcom-wdt.c | 47 +++++++++++++++++++++++++++++++++++++++++++--
->>    1 file changed, 45 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
->> index 006f9c61aa64fd2b4ee9db493aeb54c8fafac818..94ba9ec9907a19854cd45a94f8da17d6e6eb33bc 100644
->> --- a/drivers/watchdog/qcom-wdt.c
->> +++ b/drivers/watchdog/qcom-wdt.c
->> @@ -7,9 +7,11 @@
->>    #include <linux/interrupt.h>
->>    #include <linux/io.h>
->>    #include <linux/kernel.h>
->> +#include <linux/mfd/syscon.h>
->>    #include <linux/module.h>
->>    #include <linux/of.h>
->>    #include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->>    #include <linux/watchdog.h>
->>
->>    enum wdt_reg {
->> @@ -39,6 +41,9 @@ static const u32 reg_offset_data_kpss[] = {
->>    };
->>
->>    struct qcom_wdt_match_data {
->> +	const char *compatible;
->> +	unsigned int restart_reason_offset;
->> +	unsigned int non_secure_wdt_val;
->>    	const u32 *offset;
->>    	bool pretimeout;
->>    	u32 max_tick_count;
->> @@ -175,6 +180,15 @@ static const struct watchdog_info qcom_wdt_pt_info = {
->>    	.identity	= KBUILD_MODNAME,
->>    };
->>
->> +static const struct qcom_wdt_match_data match_data_ipq5424 = {
->> +	.compatible = "qcom,ipq5424-imem",
->> +	.restart_reason_offset = 0x7b0,
->> +	.non_secure_wdt_val = 0x5,
->> +	.offset = reg_offset_data_kpss,
->> +	.pretimeout = true,
->> +	.max_tick_count = 0xFFFFFU,
->> +};
->> +
-> You should separate the addition of your compatibles and their
-> descriptor tables from generic functional extensions.
->
-> i.e. add the compat string and the above table in a subsequent patch.
-
-
-Got it. Will split the patch into 2.
-
-
->
->>    static const struct qcom_wdt_match_data match_data_apcs_tmr = {
->>    	.offset = reg_offset_data_apcs_tmr,
->>    	.pretimeout = false,
->> @@ -187,6 +201,29 @@ static const struct qcom_wdt_match_data match_data_kpss = {
->>    	.max_tick_count = 0xFFFFFU,
->>    };
->>
->> +static int  qcom_wdt_get_restart_reason(struct qcom_wdt *wdt,
->> +					const struct qcom_wdt_match_data *data)
->> +{
->> +	struct regmap *imem;
->> +	unsigned int val;
->> +	int ret;
->> +
->> +	imem = syscon_regmap_lookup_by_compatible(data->compatible);
->> +	if (IS_ERR(imem))
->> +		return PTR_ERR(imem);
->> +
->> +	ret = regmap_read(imem, data->restart_reason_offset, &val);
->> +	if (ret) {
->> +		dev_err(wdt->wdd.parent, "failed to read the restart reason info\n");
->> +		return ret;
->> +	}
->> +
->> +	if (val == data->non_secure_wdt_val)
->> +		wdt->wdd.bootstatus = WDIOF_CARDRESET;
->> +
->> +	return 0;
->> +}
->> +
->>    static int qcom_wdt_probe(struct platform_device *pdev)
->>    {
->>    	struct device *dev = &pdev->dev;
->> @@ -267,8 +304,13 @@ static int qcom_wdt_probe(struct platform_device *pdev)
->>    	wdt->wdd.parent = dev;
->>    	wdt->layout = data->offset;
->>
->> -	if (readl(wdt_addr(wdt, WDT_STS)) & 1)
->> -		wdt->wdd.bootstatus = WDIOF_CARDRESET;
->> +	ret = qcom_wdt_get_restart_reason(wdt, data);
->> +	if (ret == -ENODEV) {
->> +		if (readl(wdt_addr(wdt, WDT_STS)) & 1)
->> +			wdt->wdd.bootstatus = WDIOF_CARDRESET;
->> +	} else if (ret) {
->> +		return ret;
->> +	}
->>
->>    	/*
->>    	 * If 'timeout-sec' unspecified in devicetree, assume a 30 second
->> @@ -322,6 +364,7 @@ static const struct dev_pm_ops qcom_wdt_pm_ops = {
->>    };
->>
->>    static const struct of_device_id qcom_wdt_of_table[] = {
->> +	{ .compatible = "qcom,apss-wdt-ipq5424", .data = &match_data_ipq5424 },
->>    	{ .compatible = "qcom,kpss-timer", .data = &match_data_apcs_tmr },
->>    	{ .compatible = "qcom,scss-timer", .data = &match_data_apcs_tmr },
->>    	{ .compatible = "qcom,kpss-wdt", .data = &match_data_kpss },
->>
->> --
->> 2.34.1
->>
->>
+Dear Maintainers,=0A=
+=0A=
+=0A=
+=0A=
+=0A=
+When using our customized Syzkaller to fuzz the latest Linux kernel, the fo=
+llowing crash (36th)was triggered.=0A=
+=0A=
+=0A=
+=0A=
+=0A=
+HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2=0A=
+git tree: upstream=0A=
+Output:https://github.com/pghk13/Kernel-Bug/blob/main/0103_6.13rc5_%E6%9C%A=
+A%E6%8A%A5%E5%91%8A/%E6%9C%89%E7%9B%B8%E4%BC%BC%E6%A3%80%E7%B4%A2%E8%AE%B0%=
+E5%BD%95/36-kernel%20BUG%20in%20txAbort/36call_trace.txt=0A=
+Kernel config:https://github.com/pghk13/Kernel-Bug/blob/main/config.txt=0A=
+C reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0103_6.13rc5_%E=
+6%9C%AA%E6%8A%A5%E5%91%8A/%E6%9C%89%E7%9B%B8%E4%BC%BC%E6%A3%80%E7%B4%A2%E8%=
+AE%B0%E5%BD%95/36-kernel%20BUG%20in%20txAbort/36repro.c=0A=
+Syzlang reproducer: https://github.com/pghk13/Kernel-Bug/blob/main/0103_6.1=
+3rc5_%E6%9C%AA%E6%8A%A5%E5%91%8A/%E6%9C%89%E7%9B%B8%E4%BC%BC%E6%A3%80%E7%B4=
+%A2%E8%AE%B0%E5%BD%95/36-kernel%20BUG%20in%20txAbort/36repro.txt=0A=
+=0A=
+=0A=
+=0A=
+This error is triggered in the transaction abort function txAbort, which is=
+ located in the JFS transaction manager code. The error occurs on line 2796=
+ of the fs/jfs/jfs_txnmgr.c file, asserting that mp->nohomeok failed. This =
+indicates that in the specified "metapage" (MP) object, the value of the no=
+homeok flag does not meet the expected condition (possibly 0 or false, whil=
+e the assertion requires it to be non-zero or true).=0A=
+We have reproduced this issue several times on 6.15-rc1 again.=0A=
+=0A=
+=0A=
+=0A=
+=0A=
+=0A=
+=0A=
+If you fix this issue, please add the following tag to the commit:=0A=
+Reported-by: Kun Hu <huk23@m.fudan.edu.cn>,=A0Jiaji Qin <jjtan24@m.fudan.ed=
+u.cn>, Shuoran Bai <baishuoran@hrbeu.edu.cn>=0A=
+=0A=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=0A=
+read_mapping_page failed!=0A=
+BUG at fs/jfs/jfs_txnmgr.c:2796 assert(mp->nohomeok)=0A=
+------------[ cut here ]------------=0A=
+kernel BUG at fs/jfs/jfs_txnmgr.c:2796!=0A=
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI=0A=
+CPU: 1 UID: 0 PID: 9491 Comm: syz-executor237 Not tainted 6.15.0-rc1 #1 PRE=
+EMPT(full)=0A=
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1=
+.1 04/01/2014=0A=
+RIP: 0010:txAbort+0x51e/0x570=0A=
+Code: e9 96 fd ff ff e8 22 2c 73 fe 48 c7 c1 00 4f cd 8b ba ec 0a 00 00 48 =
+c7 c6 e0 41 cd 8b 48 c7 c7 20 42 cd 8b e8 23 5d 52 fe 90 <0f> 0b e8 fb 2b 7=
+3 fe 48 c7 c1 40 4f cd 8b ba ed 0a 00 00 48 c7 c6=0A=
+RSP: 0018:ffffc90014c7f4c0 EFLAGS: 00010286=0A=
+RAX: 0000000000000034 RBX: dffffc0000000000 RCX: ffffffff819a5799=0A=
+RDX: 0000000000000000 RSI: ffff888022bc0000 RDI: 0000000000000002=0A=
+RBP: 0000000000000003 R08: fffffbfff1c4bb00 R09: ffffed100fdc47ba=0A=
+R10: ffffed100fdc47b9 R11: ffff88807ee23dcb R12: 0000000000000000=0A=
+R13: ffffc90001b69110 R14: ffff8880548a2ba0 R15: ffff8880548a2c48=0A=
+FS: =A0000055558797f880(0000) GS:ffff8880eb36b000(0000) knlGS:0000000000000=
+000=0A=
+CS: =A00010 DS: 0000 ES: 0000 CR0: 0000000080050033=0A=
+CR2: 00007f5264200058 CR3: 0000000023ba8000 CR4: 0000000000750ef0=0A=
+PKRU: 55555554=0A=
+Call Trace:=0A=
+=A0<TASK>=0A=
+=A0txCommit+0x2149/0x4720=0A=
+=A0jfs_create+0x808/0xb40=0A=
+=A0lookup_open+0x11ba/0x15f0=0A=
+=A0path_openat+0xed3/0x2980=0A=
+=A0do_filp_open+0x1f9/0x2f0=0A=
+=A0do_sys_openat2+0x4e3/0x710=0A=
+=A0do_sys_open+0xc6/0x150=0A=
+=A0__x64_sys_openat+0x9d/0x110=0A=
+=A0do_syscall_64+0xcf/0x260=0A=
+=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f=0A=
+RIP: 0033:0x7fbeaee100bd=0A=
+Code: c3 e8 17 2c 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 =
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff f=
+f 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48=0A=
+RSP: 002b:00007ffebb56d188 EFLAGS: 00000246 ORIG_RAX: 0000000000000101=0A=
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbeaee100bd=0A=
+RDX: 000000000000275a RSI: 0000000020000040 RDI: 00000000ffffff9c=0A=
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001=0A=
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffebb56d19c=0A=
+R13: 00007ffebb56d1a0 R14: 0000000000000000 R15: 0000000000000000=0A=
+=A0</TASK>=0A=
+Modules linked in:=0A=
+---[ end trace 0000000000000000 ]---=0A=
+RIP: 0010:txAbort+0x51e/0x570=0A=
+Code: e9 96 fd ff ff e8 22 2c 73 fe 48 c7 c1 00 4f cd 8b ba ec 0a 00 00 48 =
+c7 c6 e0 41 cd 8b 48 c7 c7 20 42 cd 8b e8 23 5d 52 fe 90 <0f> 0b e8 fb 2b 7=
+3 fe 48 c7 c1 40 4f cd 8b ba ed 0a 00 00 48 c7 c6=0A=
+RSP: 0018:ffffc90014c7f4c0 EFLAGS: 00010286=0A=
+RAX: 0000000000000034 RBX: dffffc0000000000 RCX: ffffffff819a5799=0A=
+RDX: 0000000000000000 RSI: ffff888022bc0000 RDI: 0000000000000002=0A=
+RBP: 0000000000000003 R08: fffffbfff1c4bb00 R09: ffffed100fdc47ba=0A=
+R10: ffffed100fdc47b9 R11: ffff88807ee23dcb R12: 0000000000000000=0A=
+R13: ffffc90001b69110 R14: ffff8880548a2ba0 R15: ffff8880548a2c48=0A=
+FS: =A0000055558797f880(0000) GS:ffff8880eb36b000(0000) knlGS:0000000000000=
+000=0A=
+CS: =A00010 DS: 0000 ES: 0000 CR0: 0000000080050033=0A=
+CR2: 00007f5264200058 CR3: 0000000023ba8000 CR4: 0000000000750ef0=0A=
+PKRU: 55555554=0A=
+2025/04/23 15:35:05 reproducing crash 'kernel BUG in txAbort': final repro =
+crashed as (corrupted=3Dfalse):=0A=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=0A=
+=0A=
+=0A=
+thanks,=0A=
+Kun Hu=0A=
+=0A=
+=0A=
 
