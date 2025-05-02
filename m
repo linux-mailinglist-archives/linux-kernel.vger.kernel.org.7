@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-630551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817DCAA7BB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07855AA7B93
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E81980BFC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:55:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928871898590
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 21:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2506721FF38;
-	Fri,  2 May 2025 21:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130272144C3;
+	Fri,  2 May 2025 21:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NCKogl3F"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eb1JuoYW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC5D217F30
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 21:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F57211276;
+	Fri,  2 May 2025 21:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746222808; cv=none; b=pMiRgCEb/jLqrjYfJf+tD4Yghv/OAyhM0dTs59vonJJHLQeeyBJDAy3B8rIC3x/FmUG58gtbVu9wi9i0Wytny0OkqmztpTkO/7UMc2QWactQy5kvQkFOkvbCYe7e338BMaECQpMq7Rvvxyu/P1+CJEzrrtM4tPL1X6oRCc57dUI=
+	t=1746222708; cv=none; b=nUUO8FxbBKNm57+n9ldo7ud1OEvoCNWDZUVpKqDlXT/efOZbvYua+1o+8eHBvThPyEZZmremZLPHjCSY94YxaBBj7EvQVGkZAjlLffiOXPdRMweJD3BjoqUZTT+eS0GF5ekvtaivnHxQnvR93ncboYijCo/0rw7IAJ1wbDzmrpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746222808; c=relaxed/simple;
-	bh=FQr+BHlQxSxBR2zipuncYisr6Ec0sQ1MPg6ilSJIAVY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gudBn1l3CZXovhoi04F3t+Iz4FaZiMMc5FsyQH7zSHfE4y1EgU912VHds8r3DObek2+WvHh9uhzVK96ov5GP/xkDIsKNs2Dlgs+peksuOCEbLiNvLGb3vqJ5po1Vy+Sl6It7v7lOZVaDCV/RftmOrBd4iLxVdTKoRf2hW/fg304=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NCKogl3F; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-225429696a9so36491945ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 14:53:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746222806; x=1746827606; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2N9ldHU5FxazqlSntDy1e6IIyYJu+r433Gbvk8Qp75Q=;
-        b=NCKogl3FkwnJXkxZZrO/32yQYXgdwUTQQKwsLaT6VZTOtkxCit5ROp0h+jgG9bhJTY
-         Eq9oc6UU6E2neQpbFO20vogkaOBboXq+mQh9X5jQq/Qt2hOcU158ALRLf58ul1nqdOea
-         tw6m2PbZR5gWdrBZkGLRtuAoS5w9r38gOtK2zsrE5wDmuobiF07nJAlB8k0dboHigoWs
-         i8SZEDBCVI2PauA3GasQfZq/r8J/b/ywPd/Ya7OpR1Eg67lYHdf4urt9A2qaAX9Mh5W2
-         Q5g3qk1iSMPxseNQVw2pl4xQTK8MKX6JjbszC/Wd719VKXGPxLPMX27Sh5DQ08M1M2sK
-         df/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746222806; x=1746827606;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2N9ldHU5FxazqlSntDy1e6IIyYJu+r433Gbvk8Qp75Q=;
-        b=He3egi/0Zeo73ms36TxuWEZr8kPW0dajpv39LvjBL9fBh25DmZiI2vCdjvBwuGRx7n
-         fsuH9piJne2edJkU21mWQ+susyukFHGBwDD6/q0mzuXnis83+em4IxoDhkobmOPCE4d1
-         V9oMDKr0Ynza1e47v55SBie8PGuEZWBO2rG5tnOLoxToZdE8Hj/49siEwNExdasRCv84
-         X5iawnTrIq9IutBCfw9ptr+R15djwDyqE5Ls7NoQTb03eqJeKdMXHiq6cHveJstW/TgJ
-         Bj73diuJgW0YbDpKBIH5vo+Su8q1adUW50jW+lGINfAQPdsvHBNawCd+YUJQJaUSirDd
-         vUvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfDVTu74SKpL3lZHhx9a6HGhm6sZoFVgqqvoGIav3xVWJUInWLHAgXrpPgshUpLZ8KabyxEcjQCzeZMAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSkvnSPqPojNzuwxNVknqNxFpXOuv4Hq13HMVcAZsCrra4W+kO
-	5Z1fdpP6SttDl6erfY5K7GBV9PQiE4icqCVYOkRtiK3k1cXhGwgry1VaQZOUjOf9LfFQEM0b2q9
-	7aA==
-X-Google-Smtp-Source: AGHT+IFybCoH+yRZqSEW5GjgjMi2HGp4+sGXvvJ0+WGZDozCL6CsKNaI6/NE1ygpGpjeY4FePZ40NmVB49E=
-X-Received: from pgla5.prod.google.com ([2002:a63:b45:0:b0:af3:30b9:99a4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1c7:b0:220:e023:8fa6
- with SMTP id d9443c01a7336-22e1035c5a9mr71760665ad.50.1746222806577; Fri, 02
- May 2025 14:53:26 -0700 (PDT)
-Date: Fri,  2 May 2025 14:51:07 -0700
-In-Reply-To: <20250318-vverma7-cleanup_x86_ops-v2-0-701e82d6b779@intel.com>
+	s=arc-20240116; t=1746222708; c=relaxed/simple;
+	bh=Fo/4cY/h3GvmA3zO6jclmLkwEdMV0ZBDksm5s1DKwPk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=btdYD9YUGYIT0udOvPNGDkAqe8qEKWn/eNxAegSdzLeCjvtvlB4pz8GNoysWtqUXpVlj4fCIyjybhSHwziEhrFEob8HXx4FWMI6HTO3VBPoKRe8ex5JnxjTkiYRb3DzLiENfH4j2mgp2lA4qrTXVwFiV37jTnqnuehAwUxNwrfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eb1JuoYW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06292C4CEED;
+	Fri,  2 May 2025 21:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746222708;
+	bh=Fo/4cY/h3GvmA3zO6jclmLkwEdMV0ZBDksm5s1DKwPk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Eb1JuoYWRHzLob+ECoIY41s36dHljuiKyKVggSYRWHwNJhW1hmaGU+0VLpRYZGlW1
+	 PeOEfovxIQMxPmnyux7TMHtGiKAd4yC78VM0PUdy7v9dhSlW6US44I0l+/Im/ev1Lq
+	 aeZ9B0aOExdK9OFUKwhm7wIKJa3khrYHXllXM8uVASkVHwW9zdDz4/5i5ToBPlYRYw
+	 1vhbls6ikTY5ALCoCbELh46oWdVKZ8ytKbFZ+StvKaff9OuMElLMtxsztNWSIcP8xs
+	 ljZQFpFCD5HuyQacGEI/gvG5D/QnxFjpAeLIvX7rEWLTmHSl7NisOOXSGgFJc251eC
+	 7pUEeYFiLL0Ew==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH 0/7] Rust KUnit `#[test]` support improvements
+Date: Fri,  2 May 2025 23:51:25 +0200
+Message-ID: <20250502215133.1923676-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250318-vverma7-cleanup_x86_ops-v2-0-701e82d6b779@intel.com>
-X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
-Message-ID: <174622213091.880948.13355437272012240115.b4-ty@google.com>
-Subject: Re: [PATCH v2 0/4] KVM: TDX: Cleanup the kvm_x86_ops structure for vmx/tdx
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Binbin Wu <binbin.wu@linxu.intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Mar 2025 00:35:05 -0600, Vishal Verma wrote:
-> This is a cleanup that should follow the initial TDX base support (i.e.
-> not an immediate fix needed for kvm-coco-queue).
-> 
-> Patch 1 is a precursory fix for a build warning/error found when
-> manually testing the CONFIG_INTEL_TDX_HOST=n case.
-> 
-> For Patches 2-4:
-> 
-> [...]
+Improvements that build on top of the very basic `#[test]` support merged in
+v6.15.
 
-Applied 2-4 to kvm-x86 vmx, with Chao's feedback incorporated, along with a few
-other minor cleanups.
+They are fairly minimal changes, but they allow us to map `assert*!`s back to
+KUnit, plus to add support for test functions that return `Result`s.
 
-[1/4] KVM: TDX: Fix definition of tdx_guest_nr_guest_keyids()
-      (no commit info)
-[2/4] KVM: VMX: Move apicv_pre_state_restore to posted_intr.c
-      https://github.com/kvm-x86/linux/commit/84ad4d834ce9
-[3/4] KVM: VMX: Make naming consistent for kvm_complete_insn_gp via define
-      https://github.com/kvm-x86/linux/commit/1a81d9d5a1da
-[4/4] KVM: VMX: Clean up and macrofy x86_ops
-      https://github.com/kvm-x86/linux/commit/907092bf7cbd
+In essence, they get our `#[test]`s essentially on par with the documentation
+tests.
 
+I also took the chance to convert some host `#[test]`s we had to KUnit in order
+to showcase the feature.
+
+Finally, I added documentation that was lacking from the original submission.
+
+I hope this helps.
+
+Miguel Ojeda (7):
+  rust: kunit: support KUnit-mapped `assert!` macros in `#[test]`s
+  rust: kunit: support checked `-> Result`s in KUnit `#[test]`s
+  rust: add `kunit_tests` to the prelude
+  rust: str: convert `rusttest` tests into KUnit
+  rust: str: take advantage of the `-> Result` support in KUnit
+    `#[test]`'s
+  Documentation: rust: rename `#[test]`s to "`rusttest` host tests"
+  Documentation: rust: testing: add docs on the new KUnit `#[test]`
+    tests
+
+ Documentation/rust/testing.rst | 80 ++++++++++++++++++++++++++++++++--
+ init/Kconfig                   |  3 ++
+ rust/Makefile                  |  3 +-
+ rust/kernel/kunit.rs           | 29 ++++++++++--
+ rust/kernel/prelude.rs         |  2 +-
+ rust/kernel/str.rs             | 76 ++++++++++++++------------------
+ rust/macros/helpers.rs         | 16 +++++++
+ rust/macros/kunit.rs           | 31 ++++++++++++-
+ rust/macros/lib.rs             |  6 ++-
+ 9 files changed, 191 insertions(+), 55 deletions(-)
+
+
+base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
 --
-https://github.com/kvm-x86/linux/tree/next
+2.49.0
 
