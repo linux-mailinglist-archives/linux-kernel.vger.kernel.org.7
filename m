@@ -1,125 +1,128 @@
-Return-Path: <linux-kernel+bounces-630097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D2BAA7570
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46471AA7579
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03BC87A881E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:59:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1710A3A554B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EB4241696;
-	Fri,  2 May 2025 15:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmWG5CLd"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43032566E6;
+	Fri,  2 May 2025 15:01:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDF62DC77E;
-	Fri,  2 May 2025 15:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A145F22F155
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 15:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746198028; cv=none; b=Isc3Bvv1FFl6aKESZhrKpr5AyBDYC9M94NPSBDMARATlXIb/fjmbxTKkoYaZ7DsVfQfD0h8NzwdTEdB3NvbfCoVB/6hyGDt3xwyaKXy09yM7XnZEs/DSJJf3UL7E5WexBUs12KTCdvvKGA0zTIVj6ehIexsU/mgrOIojhR83I+I=
+	t=1746198117; cv=none; b=GDpXXI8aPYWsU7SXia4jf8rhgO1UxtUJyWl0CjFzB9NELWXTxz2F0MmC89ol+6KyVsWpo8t/RcY1og9JfYWXslKG/CuvU4hTjf9sQEWSJ4Dao1J+mtCv6VXLQiniQTliYM+8QVQro1MU59kVFTsDxJ0C+1wu1ky5IbmcW5IMZH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746198028; c=relaxed/simple;
-	bh=fTcihm8F3AR9dLNLHu3BBcP7PrSwWeJrBnxCABPKK0g=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ajlxpIs90D10FG2vD5fbr9g8MbrRmh8tMQ1LuzekZgm2hFqvqVHVPa4A/7EyPp7I6IpwPGSNcCyhnuYJOb9vrNKduv7VMpdc+Aau6twM9ZX40x9fz8+ogWMoaufKdvZJxMVpIss4Mv/1pdO/Y0J8nEWjd19OrzInhyHzkokrs/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmWG5CLd; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so18494835e9.3;
-        Fri, 02 May 2025 08:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746198025; x=1746802825; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wirILAuxHEuuts1x0hrZv7b//qjDz030JZ7th3dBWqw=;
-        b=HmWG5CLdAGSbzz1VX9NPnB84kik0JIy5RGDuc3Wq/qi0QPOo/wwoPvJIQxGnZMsGLY
-         IqRchXn7NpPOQO0QBmquCxdTQ5X5fmmEEMe9SnUItarSqc8b3ZmI9gCcjiwmrFEzcEAG
-         mP6XGToJQ3UT1R6WHvBVUSmIPovCa8BBAfAtBaUQi8AHSDbEFAphpClkyEoMyGxkzUjo
-         XDtGdDzTJdkP6YJPooYV3BYqqOmGSmNESSIOHqbb2+UCUrx0EXIygNa/Xq1OEmPclJBJ
-         qHXGG5bb0OfuDnaR2LFMfLSQTFYElLJsWk6/EhIg4IjAXOK0a9Ads8VF2WJFZZwcXnG9
-         iNcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746198025; x=1746802825;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=wirILAuxHEuuts1x0hrZv7b//qjDz030JZ7th3dBWqw=;
-        b=s4b2ailgSgGAr+lZv6ZKNwVqzBYKvxnuQP/cEeGNHvAVSzaU4v9PImGJ8jjQo8U46m
-         dveTZ+dmvNHCPZ6KoJcZrVZ4847+c9ZEDZgoB9A7nVSoLzusB8doY8hSTgKRShufg3kH
-         6kxyUvAxL5UR+ze/MLnbz9nRl9eK8QfFxWk580tuXczaaFDWc7fSFYlSwGwYsEhPywKE
-         ejopuOaqwbekwYNlPQy3qX12QW4tk1eIns1VS4YmBQSvKJYDoRKkwzevmGNdQmjrvjCi
-         sbzcaM1cbQIDBEeq5Ok9PET9UZEt7pjrNaC3p4rvBrRxMwCzRDaOpEawqFRWp15Q07jd
-         z8cw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaSK5cjpXFkOMVnNKBUBoDr42Nm91HoFN3MPJbBR8eTo/0nbU9Ygwet8C15cD+9fWAZ6LJ9NjC7J0=@vger.kernel.org, AJvYcCXaZ/h3do35nsIEq0zGv8NNYE4tHswprg8lAugwMVVO1iz1L7qRd9if49eKld0oIUDRSxlz4ZKma8dCS/7p@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuxrnxIMhKWI/plrMWr5i6tITSF8GuaKmO2MGgBB2CPiFv1aCN
-	AiynCL1RXr+z58krhViusAwsassG7+48kTd/Tsu5fs+Sjo5NWWF5
-X-Gm-Gg: ASbGncvMYBdU1Lq3W/UToY8XZRZtr2MSFUDNYxXhSzMlkACyFPXRWP+6iRsy7eGhDC0
-	vLg7IdSOS+h80fNXOeQXPaoIhtN9Zrmse8Bej6CyzgeOtFNW/85759itciccnXFtGq+ekiczkeb
-	TfeeV3RIOVwqMSRYfvT8AxUaRIPaR4Rvc8me/piUSrFa9hlBwsthfo9xKCyeghCVHFSevOCjKsr
-	tHG/IGeLWNWtj8aeB+jJ6K+5PNbeZZgO5LJXt4KR22U8gaWoSHrk9+Siu+NFHfu1r5+ggp/2Y23
-	TTgRcSSPnDE8sDWdJ4KZhO4A+w+OCXKh703jpgDzLLwYuEXfjRRErtTWlYa/0obk749+TKVmd29
-	72+yV+/U09meW
-X-Google-Smtp-Source: AGHT+IFFWpEh7slZXKySMUTy1NRvBOFAP63y8zNRrlI6Z2VKIitUe0DjpU0kM0b82krGnYabfsODsg==
-X-Received: by 2002:a05:600c:4fc9:b0:43b:cc3c:60bc with SMTP id 5b1f17b1804b1-441bbed9ec1mr35278645e9.15.1746198025097;
-        Fri, 02 May 2025 08:00:25 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2ad78f6sm93817095e9.2.2025.05.02.08.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 08:00:24 -0700 (PDT)
-Message-ID: <00988dab7a90671d637466e4261d7b2248f172b6.camel@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add maintainers for ad4851 driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 02 May 2025 16:00:28 +0100
-In-Reply-To: <20250502100016.26279-1-antoniu.miclaus@analog.com>
-References: <20250502100016.26279-1-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1746198117; c=relaxed/simple;
+	bh=B1p0307AbGuUVy0xQNjE2egVjJKppcbO+fozf3RhI5E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zd4lKwU3p7Ta+O7cVHvItoPODjiBYQGQaf+oabiHfyEegQVyFmLJBxobb0SGZ8OSbJ5AVJRB/Us8r/WRzKZoYi9wSgyUw+gz7kNvHdTEE2YASz1ngBcTiqhLKOCFxkJDCqnx15nzc1tVsp7uVe3vup2ei8//PpRiLoDdP4s9QIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <m.felsch@pengutronix.de>)
+	id 1uArtR-0002iK-Ov; Fri, 02 May 2025 17:01:37 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: nicolas.dufresne@collabora.com,
+	benjamin.gaignard@collabora.com,
+	p.zabel@pengutronix.de,
+	mchehab@kernel.org,
+	shawnguo@kernel.org,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	paul.kocialkowski@bootlin.com,
+	hverkuil@xs4all.nl,
+	laurent.pinchart@ideasonboard.com,
+	sebastian.fricke@collabora.com,
+	ming.qian@nxp.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: [RFC PATCH 00/11] VC8000E H.264 V4L2 Stateless Encoder
+Date: Fri,  2 May 2025 17:00:53 +0200
+Message-Id: <20250502150105.4167289-1-m.felsch@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
+X-SA-Exim-Mail-From: m.felsch@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, 2025-05-02 at 13:00 +0300, Antoniu Miclaus wrote:
-> Add the ad4851 entry in the MAINTAINERS file.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
+Hi all,
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+this RFC implements the kernel V4L2 stateless encoding counter part for
+the Verisilicon VC8000E encoder. The encoder is capable of H.264 and
+H.265 encoding and can be found on several SoCs e.g. NXP i.MX8MP.
 
-> =C2=A0MAINTAINERS | 10 ++++++++++
-> =C2=A01 file changed, 10 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4a0089db6670..d5a985ae62bb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1350,6 +1350,16 @@ F:	Documentation/iio/ad4695.rst
-> =C2=A0F:	drivers/iio/adc/ad4695.c
-> =C2=A0F:	include/dt-bindings/iio/adc/adi,ad4695.h
-> =C2=A0
-> +ANALOG DEVICES INC AD4851 DRIVER
-> +M:	Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> +M:	Dragos Bogdan <dragos.bogdan@analog.com>
-> +R:	Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Supported
-> +W:	https://ez.analog.com/linux-software-drivers
-> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad4851.yaml
-> +F:	drivers/iio/adc/ad4851.c
-> +
-> =C2=A0ANALOG DEVICES INC AD7091R DRIVER
-> =C2=A0M:	Marcelo Schmitt <marcelo.schmitt@analog.com>
-> =C2=A0L:	linux-iio@vger.kernel.org
+The RFC is based on Pauls initial attempts [1].
+
+This patchset is still in a *very very* early state since the uAPI handling
+still needs to be figured out. It's clearly not for productive use yet!
+The only reason of publishing the driver in this early state is to align
+with other developers also working on V4L2 stateless H.264 encoding.
+
+That said, paired with the GStreamer userspace [2] the driver is capable
+of:
+ * H.264 encoding
+ * I/P frame handling
+ * Arbitrary frame sizes
+ * YUV420M input
+
+Note: Be aware that the GStreamer element [2] is in a *very* early state
+too, so don't expect to much. There are limitations like: the element
+requires to work on its own buffers, so there is no fast-path and
+always a copy involved.
+
+@DT folks
+The dt-bindings are missing yet.
+
+[1] https://github.com/bootlin/linux/tree/hantro/h264-encoding-v5.11
+[2] https://gitlab.freedesktop.org/dude/gstreamer/-/tree/h264-stateless-encoder
+
+Regards,
+  Marco
+
+Marco Felsch (7):
+  arm64: dts: imx8mp: drop gpcv2 vpu power-domains and clocks
+  arm64: dts: imx8mp: add VC8000E encoder node
+  arm64: dts: imx8mp: fix VPU_BUS clock setting
+  media: hantro: use hantro_decoded_buffer only for dst_vq
+  media: verisilicon: add H264 encoder support
+  media: verisilicon: split read/write debug
+  media: hantro: add support for i.MX8MP VC8000E
+
+Michael Tretter (3):
+  media: uapi: add documentation for the V4L2 H.264 stateless encoding
+    API
+  media: uapi: add nal unit header fields to encode_params
+  media: uapi: add more V4L2_H264_ENCODE_FLAGs
+
+Paul Kocialkowski (1):
+  media: Introduce Hantro V4L2 H.264 stateless encoding API
+
+-- 
+2.39.5
+
 
