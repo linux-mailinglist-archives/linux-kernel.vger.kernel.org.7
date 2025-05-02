@@ -1,106 +1,100 @@
-Return-Path: <linux-kernel+bounces-630085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04EBAA7545
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:47:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5EAAA7552
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42C701C057C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:47:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A754E0624
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCC32571CC;
-	Fri,  2 May 2025 14:46:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A77E256C87;
+	Fri,  2 May 2025 14:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JkeJGGuL"
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88359255F5A;
-	Fri,  2 May 2025 14:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B448C156C63;
+	Fri,  2 May 2025 14:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746197203; cv=none; b=nsA1G0It+rH8ZB1Q6coTId3L1OYz9tgzVdpFqL+hHboMgC3iMB4gwbg7y8AnhoIoMBMW/KCCggUppesJlFtV0htDH0An1dWUxfAj6rOV6enQHQQOfss/jObQODXbVNN1tuRySv7ksls3yB+paDGgISwmT3hcNlnf0BCLN8kNGmU=
+	t=1746197315; cv=none; b=VI3VD2BWZUkYPEePjk0qQ6aC6IrXyBcHIb/DJdyByxCDuEarxdelWN3dVVLjHMyCaoDkS+T7IQ/gm2TxcaW79wmnHhg3vhBgwcdPTow5tCR+j9jBov7WfSPxy8V2wI7nVyRlnCD+7cJZBuf5ybbfpefG6J6a2eH2qENZa1jkKDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746197203; c=relaxed/simple;
-	bh=UuuKgeE+zprAuA6fZuA79Fi7jQ7fBKhV8Bq5rjoWyvw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=HdudS1jWJeBge0LkIADTbvhj6NjXjLxMbKwAnsOl/yusUFMbmebQWy3TTI5zseZkMYIBBmVOY01PVc92qQ+aZO5FJx6fgk/023rQs48zmkQvAu4EJmpx7xgp3aqIPpehy9rs081VT+Ju8t8qguL4rEEmvUaOifHNuCPNthIPfk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332CEC4CEF5;
-	Fri,  2 May 2025 14:46:43 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uArf9-000000032vy-3Hmf;
-	Fri, 02 May 2025 10:46:51 -0400
-Message-ID: <20250502144651.638397805@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 02 May 2025 10:46:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- stable@vger.kernel.org,
- syzbot+441582c1592938fccf09@syzkaller.appspotmail.com
-Subject: [for-linus][PATCH 4/4] tracing: Do not take trace_event_sem in print_event_fields()
-References: <20250502144607.785079223@goodmis.org>
+	s=arc-20240116; t=1746197315; c=relaxed/simple;
+	bh=aMDQ00u2wosG5a5L/sZxauH/kaOwW41FVU7iQGC3+zI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jqKLSutoJ3CD6eVDsTmpC2DptRXX0nyU9aMHaEBOGpXQcpGrWTFbxMdwye0ujDUDuWw8zv0j8/IJqHp/IEqnoXk2PvY/2uCR3hXe/KDS90jfGiUlDZNzn+di/kNrezCkSA8w4LoydUW5aCsihh1dLoXLifWh9PXp0ECN2BAyarc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JkeJGGuL; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Argfun5tGUaXGArgjuvzTQ; Fri, 02 May 2025 16:48:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746197309;
+	bh=z7PvPH21b7p3LF3KjHizHHBNzX3Lf8Zcuuw5tyiAQ20=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=JkeJGGuL2VRUic3wRhPh5uUEyrYHXa/Jp5uzt28yvzkWr57tMrBLHBbn6E+vRQFOR
+	 W0RI0+cwQR4ux3soIwWrnfPidVj8bAysRfcChbt3rXIXT9Ug5RyryzpQN225BMP/uU
+	 CgbcSZZXvETgmRq5xjR2LgNnTbK/FMaMijBDncBlbr4KJL38jINVxVhhCs5GbhVWRA
+	 aFEatJnJ+kwS9iginwqRefNIknwAwpBm5FbnMH1t/HDCzBubv2Q1LNeP8f3IN0xVri
+	 cHphIVwdOxoxQSoV91t1kxc4c5laWUQ8BF4LQ44E67aAuj9OsZsPjX9ZP2OSM1P/Yd
+	 TOk3OK2626AFw==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 02 May 2025 16:48:29 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] power: supply: rt9471: Simplify definition of some struct linear_range
+Date: Fri,  2 May 2025 16:48:09 +0200
+Message-ID: <0da94193c5f8b35fa98f25a852d74b841670bd6e.1746197233.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Use LINEAR_RANGE() instead of hand-writing it. It is less verbose.
 
-On some paths in print_event_fields() it takes the trace_event_sem for
-read, even though it should always be held when the function is called.
-
-Remove the taking of that mutex and add a lockdep_assert_held_read() to
-make sure the trace_event_sem is held when print_event_fields() is called.
-
-Cc: stable@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250501224128.0b1f0571@batman.local.home
-Fixes: 80a76994b2d88 ("tracing: Add "fields" option to show raw trace event fields")
-Reported-by: syzbot+441582c1592938fccf09@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/6813ff5e.050a0220.14dd7d.001b.GAE@google.com/
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- kernel/trace/trace_output.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/power/supply/rt9471.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index fee40ffbd490..b9ab06c99543 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -1042,11 +1042,12 @@ enum print_line_t print_event_fields(struct trace_iterator *iter,
- 	struct trace_event_call *call;
- 	struct list_head *head;
+diff --git a/drivers/power/supply/rt9471.c b/drivers/power/supply/rt9471.c
+index bd966abb4df5..e7f843f12c98 100644
+--- a/drivers/power/supply/rt9471.c
++++ b/drivers/power/supply/rt9471.c
+@@ -192,12 +192,12 @@ static const struct reg_field rt9471_reg_fields[F_MAX_FIELDS] = {
+ };
  
-+	lockdep_assert_held_read(&trace_event_sem);
-+
- 	/* ftrace defined events have separate call structures */
- 	if (event->type <= __TRACE_LAST_TYPE) {
- 		bool found = false;
+ static const struct linear_range rt9471_chg_ranges[RT9471_MAX_RANGES] = {
+-	[RT9471_RANGE_AICR] = { .min = 50000,	.min_sel = 1, .max_sel = 63, .step = 50000 },
+-	[RT9471_RANGE_MIVR] = { .min = 3900000,	.min_sel = 0, .max_sel = 15, .step = 100000 },
+-	[RT9471_RANGE_IPRE] = { .min = 50000,	.min_sel = 0, .max_sel = 15, .step = 50000 },
+-	[RT9471_RANGE_VCHG] = { .min = 3900000,	.min_sel = 0, .max_sel = 80, .step = 10000 },
+-	[RT9471_RANGE_ICHG] = { .min = 0,	.min_sel = 0, .max_sel = 63, .step = 50000 },
+-	[RT9471_RANGE_IEOC] = { .min = 50000,	.min_sel = 0, .max_sel = 15, .step = 50000 },
++	[RT9471_RANGE_AICR] = LINEAR_RANGE(50000,	1, 63, 50000),
++	[RT9471_RANGE_MIVR] = LINEAR_RANGE(3900000,	0, 15, 100000),
++	[RT9471_RANGE_IPRE] = LINEAR_RANGE(50000,	0, 15, 50000),
++	[RT9471_RANGE_VCHG] = LINEAR_RANGE(3900000,	0, 80, 10000),
++	[RT9471_RANGE_ICHG] = LINEAR_RANGE(0,		0, 63, 50000),
++	[RT9471_RANGE_IEOC] = LINEAR_RANGE(50000,	0, 15, 50000),
+ };
  
--		down_read(&trace_event_sem);
- 		list_for_each_entry(call, &ftrace_events, list) {
- 			if (call->event.type == event->type) {
- 				found = true;
-@@ -1056,7 +1057,6 @@ enum print_line_t print_event_fields(struct trace_iterator *iter,
- 			if (call->event.type > __TRACE_LAST_TYPE)
- 				break;
- 		}
--		up_read(&trace_event_sem);
- 		if (!found) {
- 			trace_seq_printf(&iter->seq, "UNKNOWN TYPE %d\n", event->type);
- 			goto out;
+ static int rt9471_set_value_by_field_range(struct rt9471_chip *chip,
 -- 
-2.47.2
-
+2.49.0
 
 
