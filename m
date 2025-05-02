@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-630067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E0DAA7529
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:40:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2B3AA7530
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADB93AA880
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:39:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F7B27A57AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA0D2561D1;
-	Fri,  2 May 2025 14:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013C22571AA;
+	Fri,  2 May 2025 14:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UW+T+1O7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Q2WY/Vwe"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE792561AA;
-	Fri,  2 May 2025 14:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4554C256C8B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746196802; cv=none; b=kf2z8QYJ7wX948OgUP+ytMAYUq0viqnqSl4P25CLi5eagwKOCrTUEgS9ViP6yOkVTut0du28rRhIHXYTh4zYCeKW84lkOBswldWtXqGFZzhhogjpNKnRbV+NNtuFWz+AU7MMkhMkj80TyEUSHgUIIB5lA0t4PzBpsTPe3MmzS5o=
+	t=1746196836; cv=none; b=nv2hgaNMYEW+LdLuZ1DQ5MRcgvo8QE3WnDFcS9FfO1SpMz2ZgVvqC9C+mW31WcZOTK8Dl4lrwXdN2tK7HqXVAd1O5YV6ckQxDFXuiFXIyrdv0UkB6cKJVH44NfTGHO0vkhbnZrJjvMkZmby10CRrT+7rCCpeH3JoJQC5Fy+XJPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746196802; c=relaxed/simple;
-	bh=QsPpiaBLB1aFFmt/jJN2Nv++3refqGj4VMkze5Zx/mY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GOJveoTDEF088SbeBLyGKl1RSLJbAT1WW1UehinijofxFzIgGEnsgAyYTmdJHR1A2WmlnOJKZSr8KB1/l+9GLb5qz3C0KjIzb/WqcGH8ChqAtO287WwYc4FMi294mYBv1FHiJ4pz75QCtBJ4agFxyHamFCC1Ueo/q4BkNyL0YBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UW+T+1O7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 542DXQl8023283;
-	Fri, 2 May 2025 14:39:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ihUAnzGKyPDiDhSe0ZCJJ88GnAc85VGkvMyX1QaWv7o=; b=UW+T+1O78hQ2Z0Wz
-	tRR1GvCiB/ZVLs/WH2YCC5R9VhRpLVC00wZfKxjp73xIsHaV/HRW+podzmY/Kw8G
-	3ZMJ87riRJIwomHf/EhXaazuOVqDd0dlbRsWYM2EXdJfeDArJvgiyaYHzzxAwTnh
-	Nd8SHnD5SZBNpYCTh+gaWY4I3EDCb2sFI9kZVfca91yO1/OwqNglfzR23PBuU92D
-	fEwM5a3iVx6tud93/Z/Ok4V7x/FxO2S7kFyAd2LAKpmdB29PlYLXks5xq51zV86j
-	3r46hx+jHZaz1mwk42ivn4fxDqwVmO27J/648V8fwf66GrhsNCAHpg63PM7Fg6NY
-	9KM5Eg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u80kyw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 May 2025 14:39:55 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 542Eds6V020371
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 2 May 2025 14:39:54 GMT
-Received: from [10.216.18.87] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 2 May 2025
- 07:39:47 -0700
-Message-ID: <cc17c3d2-f882-4729-a676-476705a203bc@quicinc.com>
-Date: Fri, 2 May 2025 20:09:44 +0530
+	s=arc-20240116; t=1746196836; c=relaxed/simple;
+	bh=39dqUcCyMzTRb5cdM8I0FifJ7XYO5FNlhwLMdUzWL7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lyUypWbywhxaNY1BpJYRsOlhaq6mokmWwHGlYiQQJsqTNHTDYbRZoPeL5Oc9OSsPLFukxcG1TGUFI6t3fu8FC42ECCxVA8jyWH7MbjJIZhE4DALIZ7zNRGsMX0X2oqkDDMRGxGFErEKoAAPBbXVqKDv+dJ/LQeL1JElyQV5JU7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Q2WY/Vwe; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=cWF0
+	S/1MBrwO3AaGE2PAgjZIEyMy68anUlG7dJSs91g=; b=Q2WY/Vwe8J5D1vT9P09U
+	8kKZDCQVALh8zn4acmMb0P353LbK/DV16VFKsOyhoTa24bqe4HVGyxPX9Gg5P3SV
+	uVM1eMjeNCHIgyV7ZIClCSwCQEXrP4qJkrLZoxKP5bNahGCfQO4XJsjCBDQA+LX0
+	jkg5A+r9oKPYXKvZ2VVdc7vmkJBhK3VSdQRlQ4it39CYUMPebVl3L4+GwVOO9zPw
+	PUSMmFKKEonwan+zaHt1gIMpH5O8swr/584+RY6dFNkiFyLy0iO3tlO2TtytHbI3
+	DDwue0PkH/NOab1elzrRqjYtF3zzKcL2hdornlSy1k276CcAcpt0nW5uizfgc0X3
+	Lg==
+Received: (qmail 1483228 invoked from network); 2 May 2025 16:40:30 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 May 2025 16:40:30 +0200
+X-UD-Smtp-Session: l3s3148p1@C7HKISg0ioAujnsd
+Date: Fri, 2 May 2025 16:40:30 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Romain Gantois <romain.gantois@bootlin.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] i2c: Fix end of loop test in
+ i2c_atr_find_mapping_by_addr()
+Message-ID: <aBTZXsMJK3lsiUiU@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <aAii_iawJdptQyCt@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/9] opp: add new helper API dev_pm_opp_set_level()
-To: Viresh Kumar <viresh.kumar@linaro.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Viresh Kumar
-	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <psodagud@quicinc.com>,
-        <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
-        <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
-        <quic_mnaresh@quicinc.com>, <quic_shazhuss@quicinc.com>
-References: <20250502031018.1292-1-quic_ptalari@quicinc.com>
- <20250502031018.1292-2-quic_ptalari@quicinc.com>
- <20250502053758.utawzhq6famwenc2@vireshk-i7>
- <8ba02745-378b-4264-883a-b99764701d0b@quicinc.com>
- <20250502081402.yjagnnjrfva7u4cb@vireshk-i7>
- <e1b2029b-2461-4cfc-a6b3-acdf5e01c289@quicinc.com>
- <CAKohpondRqdfqC3CFSJibL2om8_Bbds8k5Dfu8fcZDksNxQUwg@mail.gmail.com>
-Content-Language: en-US
-From: Praveen Talari <quic_ptalari@quicinc.com>
-In-Reply-To: <CAKohpondRqdfqC3CFSJibL2om8_Bbds8k5Dfu8fcZDksNxQUwg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ldc86ifi c=1 sm=1 tr=0 ts=6814d93b cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=B5uisSGkWXMBVcHgxMUA:9 a=QEXdDO2ut3YA:10
- a=zZCYzV9kfG8A:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: BLC-XjugQWvpu8IIlQHOHrm1McJkrgrl
-X-Proofpoint-ORIG-GUID: BLC-XjugQWvpu8IIlQHOHrm1McJkrgrl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDExNiBTYWx0ZWRfX7+mQQSkd3Vij kNKshKwPex+efq4MBATgc6zx5ntseOs3rwNAFlnqJSRR3N8wLqihBeNFZa6YP7BwnwP1kyDq+5f oh12CHUkexUllb6CAKrOsXfMp3uW3PQHqyX1ErEiO3IfoyQrPV+zdP6P1GpPuH6bJoH/bnAS2Yi
- 1UzUhsGPIbBXN+crOaPFtBvTlIFLKPAQ4weTST0s7q3ZId42J9Tk03tlT4lzF0AIjRhu8dhMbeu QXDgVt/VEQd+F7rMcMf5nokFnr59T9teFCB3UilfCDyfOZxBblp8XhvUfK66oic6b8Lvpw/u23F oXCXgv37OVKa82BsSFY0+H+9CzMfcLEMA0Pasw4kGyL+OoqTUGcIG5ggCzq5YX4WvRqJDLHXtcX
- 00iUnMJ7kX980Xe6KrgsiX3jSsnlqqZBhnXbu/wLFW4QAAGIsSNWgvBnwj4oEFfJ8MhUlW/l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-02_02,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015 spamscore=0
- bulkscore=0 mlxlogscore=950 malwarescore=0 mlxscore=0 suspectscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505020116
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CJGHFGT6dwZtPHAX"
+Content-Disposition: inline
+In-Reply-To: <aAii_iawJdptQyCt@stanley.mountain>
 
-Hi
 
-On 5/2/2025 7:41 PM, Viresh Kumar wrote:
-> On Fri, 2 May 2025 at 19:32, Praveen Talari <quic_ptalari@quicinc.com> wrote:
->> now i can push V4 right and will not face errors on my series w.r.t this
->> API.
-> Not fully sure what you meant, but you can send a V4 of the series,
+--CJGHFGT6dwZtPHAX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-i mean one of the patch from series is depended on patch-1, that i have 
-removed from series now
+On Wed, Apr 23, 2025 at 11:21:18AM +0300, Dan Carpenter wrote:
+> When the list_for_each_entry_reverse() exits without hitting a break
+> then the list cursor points to invalid memory.  So this check for
+> if (c2a->fixed) is checking bogus memory.  Fix it by using a "found"
+> variable to track if we found what we were looking for or not.
+>=20
+> Fixes: c3f55241882b ("i2c: Support dynamic address translation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-so will i face any issue like kernel bot
+Applied to for-next with Tomi's description added, thanks!
 
-Thanks,
 
-Praveen Talari
+--CJGHFGT6dwZtPHAX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> without the first patch. Please mention it as an dependency in the
-> cover letter and that it is applied in the OPP tree's linux-next branch.
->
-> The one who applies your series needs to apply the series over the commit
-> in my branch to avoid breakage (if your series is going in 6.16-rc1).
->
-> --
-> Viresh
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgU2V4ACgkQFA3kzBSg
+KbYizQ/+NjG++zs7zSh4UTa3D4bQq/KDsq4uK1Lzg5zgy2VNhdkp4gGR5RXuCCO9
+UMifyNKEE0NDNInI8xIPc4LA8YtC1inlB7j53dFisRMXDw0KDdFyCtcYT7tG+lcI
+209Tc/mpnB1UgbF/LxE6Uj6xuDSWlxdsKENByJ7mBiJEBK162HYe273VHc3m1UjE
+dhAK8Y46mMXLwJ9U3XuXh5NVox9suQxeBxtO927yKAGLEzrAhm25Io3u5crwbXbp
+pg8jA9+NwTd+RYmlwmqS/Z72CxuLWaJX+T3623KPeiJOo4Fhet7nRcOD3w/CmFHH
+G17P3tXboDcoVuu7E15Db/QVg2JN4JdsseuMx/K+wBkn9geOguiZ2ltP5IeN3DyJ
+4gS8K3UMxgmUrW2oDlQhAYr2sEBjoBI2sVNtXIfXGSbA2C8ag4lwlhhDcd3IMyI7
+bF0gDj3ZmGR4I5ZluA61oTm7+9y41WUhtPELO4WrvPHx2WTtmYex69EqTdnKTdG8
+U+4IvQMPmdYdauA5Skr5fexF03cNhZ7WwQUMJM2CSJyA7dufnvzt9jYH9PyLc4ez
+HlRVG28nb0mOZ3TWOlqb4RIrYHbFEFJdHx31gitvb62xSNVHKRP08k3Z1qdFtR6A
+Cl4xQ/Q//y0ZbqmJmebrOBxi5ylxeFcbMkWmpkOQhx4Qz2is3Po=
+=8SXg
+-----END PGP SIGNATURE-----
+
+--CJGHFGT6dwZtPHAX--
 
