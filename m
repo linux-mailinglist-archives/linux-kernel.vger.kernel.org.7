@@ -1,156 +1,137 @@
-Return-Path: <linux-kernel+bounces-629830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AD9AA7204
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:34:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8C0AA71EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D6FA9C7438
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:32:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E5C4C6C2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157ED255F36;
-	Fri,  2 May 2025 12:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA157253949;
+	Fri,  2 May 2025 12:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KzLG5obL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TlzZp1/0"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC3A2550B2
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48D722D4C5;
+	Fri,  2 May 2025 12:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746189119; cv=none; b=LkF2Lmklpwodbt7gEu3JReaDcLgO3cvCyPW7ZnbmwE1oEJa5gOon220rGfa6bh6kx8FA8HCgEsQDgkhAyqbdezCgj1sWFa6nElA+H1jzi14srJRYH3VvTVUfWegIWCs/JL5UvgPBkFquImUDN8M2vCIsb5ykryp0zXZY7pmVwrI=
+	t=1746189080; cv=none; b=oXnzORw4kvLnxIqx1VBm12fb0P0Wc1DhH1TJ6Myu2TIGZqUav7W6HXYqENlOF1jck1ulNuh4DA/SO/tezIFrroreMXOZTqwqwV0kPssVpP4JnFYnE9Nz9WZ1mAaufCL52fOXGYcYnCa9bVii0B3cEwzmTWAyApJlFYWva1CxMyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746189119; c=relaxed/simple;
-	bh=JFN/A3j92YrW1yGcaADxhShlxbiQHnzx9X1/unZy8BI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kAtHmb4wghwxru/iO3I4BW+aWtlvBNWRLKhEB1MJLePEJBzysIA560fBf5Utnpk4/EmLillLmDD6A8F2x1qYhP6xT36Fm1gPZ/hN1TCx1QIz0Q3UTB/Baf81nsSa30km8iUPpMBIsVcEJZowZnS4qX+1dKai9bKINbZBzTsMg1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KzLG5obL; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746189118; x=1777725118;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JFN/A3j92YrW1yGcaADxhShlxbiQHnzx9X1/unZy8BI=;
-  b=KzLG5obLy7r8jUoa+NM44r7mmrRixmx0HQ6vNuxw6lVyO+mum3/kDINH
-   UIaUQWpBrUD20YJSPSpKrnSmuTY6PaRIG79Olo/S74e6vG4aykZ5uxnF+
-   SiNRzMEX735mKZfN3rPgmGPyk/5dAJCbqya49VE7WmGvw/uZE/oj+z5cP
-   NcfsfxoNfsmSg76Cw0+Cele2/f7oYX71foq1kQ7MWlWpdGAweAFP3GBg+
-   GW49ePnTk89UGycj+ceDVioL3dfLpg5qjYgpidsOS2JhADy8Lkg+RZGDc
-   hG26iiKrmnNwXi+V9L2NJJdxKaQz3gbxe4wKHIh8BiTaKXC6dMrxl6QP/
-   w==;
-X-CSE-ConnectionGUID: R+sJC4n3S+yxhAcY4rqG8g==
-X-CSE-MsgGUID: 8KcZTNDUR8uuPPg9Ppk9pg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="47955312"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="47955312"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 05:31:56 -0700
-X-CSE-ConnectionGUID: sbJx785xQzanfS08EVNpwQ==
-X-CSE-MsgGUID: 5xTkwiscQK6sj942VCs+iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="135592037"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 02 May 2025 05:31:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3C3201AC; Fri, 02 May 2025 15:31:48 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Denis Mukhin <dmukhin@ford.com>
-Subject: [PATCH v1 6/6] x86/boot: Introduce MMIO accessors and their support in earlyprintk
-Date: Fri,  2 May 2025 15:29:42 +0300
-Message-ID: <20250502123145.4066635-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250502123145.4066635-1-andriy.shevchenko@linux.intel.com>
-References: <20250502123145.4066635-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1746189080; c=relaxed/simple;
+	bh=3G3CkBJ5xwmbD1aL2pXi9Vq8HxzS0MbLhvQFlo4eHDE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=Rc1HVAL6IroCGRLJ9ahgrVnecv2mYBvaTNAdYIA7qlNnN4IIZjfeWDwk69bMBPrqDfnKr3HR8zJKn9UwpnQ23Tan8l20OaR1ftPKBOzZHRTpSxXQiFiwC782jlsFKgIYc0TzGsszlS7PMVm1lvZVpJqyNmDa/XBl49kNzH+QdAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TlzZp1/0; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CF4C843B02;
+	Fri,  2 May 2025 12:31:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746189075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IVc5PbC2k1qdzHpLeknU2G3KgAO+5ptclccnAPwMI+M=;
+	b=TlzZp1/0oKau46rbcImJXUoZfqTMdboxJb9zF5I+oT4MBM3UKybI43+7j3nTPbAC5Yp1mY
+	29LSG9vQ9szDDM4I0Z6OnEc8/UVUIZu8q7weO0ntfpvOXV9V8+t1W+fI/CvinnTDMPoy5D
+	L9LrATS0cs67BQ8+ByFdZD92EyDAX9WHhOr/s4ZPoMqan5z5GSQa/J4aBf3FCwmEKcrxBr
+	p8QzSm1wQtK9kbA3OTc7Vk0px3qUla+7M5oZ9RcvWVpvfdnOxZ528ejZjI4wvN2AspDwFq
+	fgCnH60HzO9LiKxoVy45e0ihTN6UwwnBzCP01UQGx1biZO9nAXGpdE/UDexZ+w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 02 May 2025 14:31:13 +0200
+Message-Id: <D9LOD5X8NXF2.2GWBU2IAZESH7@bootlin.com>
+Subject: Re: [PATCH v7 08/11] gpio: max7360: Add MAX7360 gpio support
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Bartosz Golaszewski"
+ <bartosz.golaszewski@linaro.org>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com>
+ <20250428-mdb-max7360-support-v7-8-4e0608d0a7ff@bootlin.com>
+ <aBSg2qwNhPqJJRxK@smile.fi.intel.com>
+In-Reply-To: <aBSg2qwNhPqJJRxK@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedvgeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-If user supplied serial base address via kernel command line and
-at the same time the word 'mmio' is present, use MMIO accessors.
+On Fri May 2, 2025 at 12:39 PM CEST, Andy Shevchenko wrote:
+> On Mon, Apr 28, 2025 at 01:57:26PM +0200, Mathieu Dubois-Briand wrote:
+>> +static int max7360_gpio_probe(struct platform_device *pdev)
+>> +{
+>> +	const struct max7360_gpio_plat_data *plat_data;
+>> +	struct gpio_regmap_config gpio_config =3D { };
+>> +	struct regmap_irq_chip *irq_chip;
+>> +	struct device *dev =3D &pdev->dev;
+>> +	struct regmap *regmap;
+>> +	unsigned int outconf;
+>> +	int ret;
+>> +
+>> +	regmap =3D dev_get_regmap(dev->parent, NULL);
+>> +	if (!regmap)
+>> +		return dev_err_probe(dev, -ENODEV, "could not get parent regmap\n");
+>> +
+>> +	plat_data =3D device_get_match_data(dev);
+>> +	if (plat_data->function =3D=3D MAX7360_GPIO_PORT) {
+>> +		if (device_property_read_bool(dev, "interrupt-controller")) {
+>> +			/*
+>> +			 * Port GPIOs with interrupt-controller property: add IRQ
+>> +			 * controller.
+>> +			 */
+>> +			gpio_config.regmap_irq_flags =3D IRQF_ONESHOT | IRQF_SHARED;
+>> +			gpio_config.regmap_irq_line =3D
+>> +				fwnode_irq_get_byname(dev_fwnode(dev->parent), "inti");
+>> +			if (gpio_config.regmap_irq_line < 0)
+>> +				return dev_err_probe(dev, gpio_config.regmap_irq_line,
+>> +						     "Failed to get IRQ\n");
+>
+>> +			irq_chip =3D devm_kzalloc(dev, sizeof(*irq_chip), GFP_KERNEL);
+>
+> Can this be made static const instead?
+>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- arch/x86/boot/early_serial_console.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Sorry, I don't think we can. We do have a few data that will vary:
+->name, but above all ->irq_drv_data, as it will point on the regmap of
+the specific device.
 
-diff --git a/arch/x86/boot/early_serial_console.c b/arch/x86/boot/early_serial_console.c
-index 6841f14346c2..fa8eb0b4542e 100644
---- a/arch/x86/boot/early_serial_console.c
-+++ b/arch/x86/boot/early_serial_console.c
-@@ -33,6 +33,20 @@ static void io_serial_out(unsigned long addr, int offset, int value)
- 	outb(value, addr + offset);
- }
- 
-+static void mem8_serial_out(unsigned long addr, int offset, int value)
-+{
-+	u8 __iomem *vaddr = (u8 __iomem *)addr;
-+	/* shift implied by pointer type */
-+	writeb(value, vaddr + offset);
-+}
-+
-+static unsigned int mem8_serial_in(unsigned long addr, int offset)
-+{
-+	u8 __iomem *vaddr = (u8 __iomem *)addr;
-+	/* shift implied by pointer type */
-+	return readb(vaddr + offset);
-+}
-+
- static void early_serial_configure(unsigned long port, int baud)
- {
- 	unsigned char c;
-@@ -59,6 +73,13 @@ static void early_serial_use_io_accessors(void)
- 	serial_out = io_serial_out;
- }
- 
-+static void early_serial_use_mmio_accessors(void)
-+{
-+	/* It is memory mapped - assume 8-bit alignment */
-+	serial_in = mem8_serial_in;
-+	serial_out = mem8_serial_out;
-+}
-+
- static void early_serial_init(unsigned long port, int baud)
- {
- 	early_serial_configure(port, baud);
-@@ -101,12 +122,16 @@ static void parse_earlyprintk(void)
- 		/*
- 		 * make sure we have
- 		 *	"serial,0x3f8,115200"
-+		 *	"serial,mmio,0xff010180,115200"
- 		 *	"serial,ttyS0,115200"
- 		 *	"ttyS0,115200"
- 		 */
- 		if (pos == 7 && !strncmp(arg + pos, "0x", 2)) {
- 			port = parse_serial_port(arg, pos + 0, &pos);
- 			early_serial_use_io_accessors();
-+		} else if (pos == 7 && !strncmp(arg + pos, "mmio,0x", 7)) {
-+			port = parse_serial_port(arg, pos + 5, &pos);
-+			early_serial_use_mmio_accessors();
- 		} else if (!strncmp(arg + pos, "ttyS", 4)) {
- 			static const int bases[] = { 0x3f8, 0x2f8 };
- 			int idx = 0;
--- 
-2.47.2
+> ...
+
+OK with all other comments.
+
+Thanks for your review.
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
