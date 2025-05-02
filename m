@@ -1,134 +1,180 @@
-Return-Path: <linux-kernel+bounces-629348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE210AA6B2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:01:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2277CAA6AE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD323BF28C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 07:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7684A5A69
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7CD267387;
-	Fri,  2 May 2025 07:01:37 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FE31E98EA;
-	Fri,  2 May 2025 07:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E073F2236FD;
+	Fri,  2 May 2025 06:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="qkU3ZpTl"
+Received: from mail-244108.protonmail.ch (mail-244108.protonmail.ch [109.224.244.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE7F1C863B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 06:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746169297; cv=none; b=Gy1yhCvZ9H+mpx0e/Z1BjZF2k9iyj2YdTeq8b+IfVIR52xVdc3aVlAqxVq7TkirxUqQVAEx1G3jCp4tTnEym7Px36Ld1+Zj2r7TYeZfZdKxMBmDd0/4EwLUB1Er1xcGZidZtBHUDbVXHbbuZdRZ2iu9G/dqR13sRB5XkJwXdWZA=
+	t=1746168406; cv=none; b=N6Q+vMmSLwXOoCDMzYgwwR9cCJva4Ah7Ar0POOBPmOWlh+42iaIqB/AVtz/799on6zbFtZPK3DI9byAzc2wLwPcqjei2sUHv252hg01ZCURUEMjboyLtk8h8JctRjyzI+bP28Se52ZlfHvBmmXbqrMJuu7k+0v+03O4QmzEG03A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746169297; c=relaxed/simple;
-	bh=GvDDf81Wz8kmvhvd60Ue0MYrQ9Kyf2n/GxjwQ2yjYdQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GUHQ2GC5h1ZYjgfxxCF3R1FoYMNn4nXIfUuU/rwTSW+KGcms0LoM8o22sSGT5xnVHCsHs4lhAcHcrwwpKae77NY+TKeVgwvcbc0yvk8lF3PqczUlRS5w8pUmngIPN7TCgpGatV2B2HPQnGWDpbJWi+4LaFdBv6YDMPON6Mk8FEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-81-68146a3d5fcd
-Message-ID: <9837bbe0-d494-43bb-8e92-8cbf47a32b68@sk.com>
-Date: Fri, 2 May 2025 15:46:21 +0900
+	s=arc-20240116; t=1746168406; c=relaxed/simple;
+	bh=fqyO7/+3WlP04t+i1zwgrSl/eHuQSlAWb074iqZmVZ8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FOpWwQKstja04CeNxHLezRH7ngkex8MSZf1Ky9dvbaDtJSMVxhVEAc53Z9w/sAuxwOellF0+V3fPIRG2lh7d3meA/4DYxlkspDPPcVMsUZyv2bXfXZPImFMpHMmyu2I32NfsMigEHiTnvBHksBriNQ3rKC/L+mwjcRQ2XAO+j6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=qkU3ZpTl; arc=none smtp.client-ip=109.224.244.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1746168393; x=1746427593;
+	bh=VHTmHzjuS78jw3qgLUdXQzELoskeGzhNFoEyTHdUSEA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=qkU3ZpTlgf0OJ8iPRMr+pnca2lSWx7OG/bEHwUzsP4YlYxsIPLozHC/hj2UE7x6c2
+	 19CS0nOXecjparHD2P/3FtttAxuL+eHiz2Q9mdMAxjREH+Em8P3j4W3kQpkqbmfpDS
+	 TPByQZtxvXhDs0b5aR+MquBzP7FaoCeE9lzLEAihs0rnTLoy4iZYibCCX1hSE/ObAn
+	 7G77nAITXTPKo2DcQkCuHX1mpaM7ISM7JGfsyH/Y7AQRLmKUMLtfE1sQXTJVw8+CeQ
+	 znJMdX24wQ0kyYacAF4tV00cKZGfGHpihYUnig225G5hVaTTbHs+YzyqqlPmkNbpeq
+	 1jOttQOIi/oGA==
+From: Esben Haabendal <esben@geanix.com>
+To: "Matti Vaittinen" <mazziesaccount@gmail.com>
+Cc: "Liam Girdwood" <lgirdwood@gmail.com>,  "Mark Brown"
+ <broonie@kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] regulator: bd718x7: Ensure SNVS power state is used as
+ requested
+In-Reply-To: <52221c62-689c-44d2-b65d-07a5301090b3@gmail.com> (Matti
+	Vaittinen's message of "Fri, 02 May 2025 08:24:51 +0300")
+References: <20250501-bd718x7-snvs-reset-v1-1-1fcc7088200e@geanix.com>
+	<j3M49vfoxys9iFGLs2PwAULHoQsSQsHAKmaT1D2QCwyjUJNzjxXKESFYkXasW3_3owOakk-tXosNLIgfnMC6vQ==@protonmail.internalid>
+	<52221c62-689c-44d2-b65d-07a5301090b3@gmail.com>
+Date: Fri, 02 May 2025 08:46:30 +0200
+Message-ID: <87tt638q7t.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, Andrew Morton <akpm@linux-foundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Gregory Price <gourry@gourry.net>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] mm/mempolicy: Fix error code in sysfs_wi_node_add()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Rakie Kim <rakie.kim@sk.com>
-References: <aAij2oUCP1zmcoPv@stanley.mountain>
-Content-Language: ko
-From: Honggyu Kim <honggyu.kim@sk.com>
-In-Reply-To: <aAij2oUCP1zmcoPv@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsXC9ZZnoa5tlkiGwYZ+a4s569ewWXyY18pu
-	MX3qBUaLn3ePs1sc3zqP3WLrLWmLy7vmsFncW/Of1YHDY+esu+we3W2X2T0W73nJ5LHp0yR2
-	jzvX9rB5nJjxm8Xj8ya5APYoLpuU1JzMstQifbsErox3r30LrvFUbFvVydzA+J+zi5GTQ0LA
-	ROL+0b2MMPaPy6vYQGxeAUuJPZvvMYHYLAIqEj2rl7BDxAUlTs58wgJiiwrIS9y/NQMozsXB
-	LDCFSWJT429mkISwgK/E4v/fWEFsEQEvidmvl4ItEBLQl3i1bCKYzSwgIjG7sw2snk1ATeLK
-	y0lgyzgFDCTetuxlhqgxk+ja2gVVLy+x/e0cZpBlEgK32SQe/5jDCnG1pMTBFTdYJjAKzkJy
-	4CwkO2YhmTULyawFjCyrGIUy88pyEzNzTPQyKvMyK/SS83M3MQJjZVntn+gdjJ8uBB9iFOBg
-	VOLhDSgQzhBiTSwrrsw9xCjBwawkwhtjABTiTUmsrEotyo8vKs1JLT7EKM3BoiTOa/StPEVI
-	ID2xJDU7NbUgtQgmy8TBKdXAGHr/zxuz5utfvvop73I9tVFv2rtbpSWyBmdSlGa7lq2ODs3y
-	XCdTJduQOVmqcsqbGQk7df64LKt3srt3mF92zfbd3pfK+rzZDt9eGKq78seuGXJlU62d/HKj
-	Wx1O3vep50sX+JsiViH7t4jLRL4u1HxHzOPDHFdNKjfP3L/88dws7ZboK75/lFiKMxINtZiL
-	ihMBdBeWM5ECAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsXCNUNLT9c2SyTDYOdcfYs569ewWXyY18pu
-	MX3qBUaLn3ePs1sc3zqP3WLrLWmLw3NPslpc3jWHzeLemv+sFoeuPWd14PLYOesuu0d322V2
-	j8V7XjJ5bPo0id3jzrU9bB4nZvxm8fh228Nj8YsPTB6fN8kFcEZx2aSk5mSWpRbp2yVwZbx7
-	7Vtwjadi26pO5gbG/5xdjJwcEgImEj8ur2IDsXkFLCX2bL7HBGKzCKhI9Kxewg4RF5Q4OfMJ
-	C4gtKiAvcf/WDKA4FwezwBQmiU2Nv5lBEsICvhKL/39jBbFFBLwkZr9eyghiCwnoS7xaNhHM
-	ZhYQkZjd2QZWzyagJnHl5SSwZZwCBhJvW/YyQ9SYSXRt7YKql5fY/nYO8wRGvllI7piFZNQs
-	JC2zkLQsYGRZxSiSmVeWm5iZY6pXnJ1RmZdZoZecn7uJERgLy2r/TNzB+OWy+yFGAQ5GJR7e
-	gALhDCHWxLLiytxDjBIczEoivDEGQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8XuGpCUIC6Ykl
-	qdmpqQWpRTBZJg5OqQbGONVJfNE1s/oEMz2mTyr4/P/67xv2R/huHfv8qYFx88ba6Ekyu6fn
-	zJnq+zPwDu8FBTs52yLp1P6u5sjV/nfSguq3L1i/48unj6HxEuw2uScn9GfeETi/hGnNQw82
-	deM0hRnbWv5dc2PPc7s4OVpu4/vGadUa/5LTipJl/c/2di3wW7i1oadRiaU4I9FQi7moOBEA
-	BCkJ+YECAAA=
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 
-Hi Dan,
+"Matti Vaittinen" <mazziesaccount@gmail.com> writes:
 
-On 4/23/2025 5:24 PM, Dan Carpenter wrote:
-> Return -EEXIST if the node already exists.  Don't return success.
-> 
-> Fixes: 1bf270ac1b0a ("mm/mempolicy: support memory hotplug in weighted interleave")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> Potentially returning success was intentional?  This is from static
-> analysis and I can't be totally sure.
-> 
->   mm/mempolicy.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index f43951668c41..0538a994440a 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -3539,7 +3539,7 @@ static const struct kobj_type wi_ktype = {
->   
->   static int sysfs_wi_node_add(int nid)
->   {
-> -	int ret = 0;
-> +	int ret;
->   	char *name;
->   	struct iw_node_attr *new_attr;
->   
-> @@ -3569,6 +3569,7 @@ static int sysfs_wi_node_add(int nid)
->   	if (wi_group->nattrs[nid]) {
->   		mutex_unlock(&wi_group->kobj_lock);
->   		pr_info("node%d already exists\n", nid);
-> +		ret = -EEXIST;
+> Hi Esben,
+>
+> Oh, it has been a while since I've heard anything from these PMICs :)
 
-Returning -EEXIST here looks good to me, but could you remove the above pr_info
-as well?  I mean the following change is needed.
+Still alive and kicking :)
 
--		pr_info("node%d already exists\n", nid)
-+		ret = -EEXIST;
+> On 01/05/2025 17:48, Esben Haabendal wrote:
+>> With the introduction of the rohm,reset-snvs-powered DT binding [2], the
+>> PMIC settings were only changed when the new property was not found.
+>>
+>> As mentioned in [1] the default for BD71387 and BD71847 is to switch to
+>> SNVS power state on watchdog reset.
+>
+> I suppose you mean READY, not SNVS? Commit seems to state:
+> "By default only wathcdog reset changes state from poweroff to ready."
 
-We don't need the above pr_info here because we delegate a warning message to
-its caller wi_node_notifier().
+You are absolutely right. Sorry about that.
 
-This can close another warning report below.
-https://lore.kernel.org/all/202505020458.yLHRAaW9-lkp@intel.com
+>> So even with rohm,reset-snvs-powered added to DT, a watchdog reset causes
+>> transitions through READY instead of SNVS.
+>
+> The original idea of the rohm,reset-snvs-powered was not to configure
+> the SNVS to be the target.
 
-If you apply my suggestion then please add
+Makes sense.
 
-	Reviewed-by: Honggyu Kim <honggyu.kim@sk.com>
+If we keep it that way, then I think we should change the description of
+the binding. "Transfer PMIC to SNVS state at reset" tricked at least me
+into believing it would actually make the kernel setup the PMIC to
+go to SNVS state at reset.
 
-Thanks,
-Honggyu
+Maybe someething like:
 
->   		goto out;
->   	}
->   
+    PMIC is configured to go to SNVS state on reset. Bootloader or
+    something else is responsible for configuring the PMIC to do this.
+    The driver will not change this configuration when this property is
+    present.
 
+I guess back in 2019 when you introduced the rohm,reset-snvs-powered
+binding you had to keep the code for writing to TRANS_COND1 in the
+default case for backwards compatibility. But in hindsight, I think the
+asymetry caused by not doing the same when rohm,reset-snvs-powered is
+used is what caught me off guard.
+But that is water under the bridge...
+
+> The driver was mostly built to assume that the PMIC has been
+> configured by earlier stages like uboot, and configs in the driver
+> were mostly introduced to make power rail enable states controllable
+> by the software - without risking the rails to be left off. Thus,
+> AFAIR, the values set by boot (or other power manager MCUs) haven't
+> been overwritten is the "rohm,reset-snvs-powered" has been found.
+
+Got it.
+
+> Configuring for example the hardware watchdog related stuff at Linux
+> driver boot is somewhat late, since watchdog should probably be running
+> already - and hangs might happen prior the driver probe.
+
+Yes. But this specific configuration is not too late to do at driver
+probe time, although it is better to do it as early as possible.
+
+>> And with the default reboot
+>> method in mxc_restart() is to cause a watchdog reset, we ended up powering
+>> off the SNVS domains, and thus losing SNVS state such as SNVS RTC and
+>> LPGPR, on reboots.
+>>
+>> With this change, the rohm,reset-snvs-powered property results in the PMIC
+>> configuration being modified so POWEROFF transitions to SNVS for all reset
+>> types, including watchdog reset.
+>
+> As far as I can say, this change is, in principle, fine. The
+> "rohm,reset-snvs-powered" shouldn't be populated in the device-tree, if
+> SNVS is not meant to be used. My only worry is that the BD71837, 47 and
+> 50 have been on the field since 2018 - and I am not at all sure all the
+> device-trees are sane...
+
+Yes, there is no way to know that fore sure. Even verifying the sanity
+of the in-tree device-trees will require quite some work.
+
+> And if we configure the reset to use SNVS state, then the software
+> controlled regulators will not turn ON after the reset. Fail to mark
+> them in the device-tree and the device will be dead until battery is
+> drained or removed.
+>
+> Is there a way for you to set the "target state" at boot SW?
+
+As of right now, not really. I am currently stuck with the existing
+bootloader. I will replace it sometime later, and at that time, I can
+make it configure the PMIC properly.
+
+> I think that should work as the Linux driver won't touch the target
+> state if rohm,reset-snvs-powered is set(?)
+
+That should work, yes.
+
+> This is not NACK to the change, this is asking if we had a safer way,
+> both for other users and also for you (since I still think these configs
+> should be done prior Linux driver probe)...
+
+We could create another device-tree binding to make the driver override
+PMIC configuration to use SNVS state on reset. But, in order to maintain
+backwards compatibility with the rohm,reset-snvs-powered, I don't know
+what to call it without adding more confusion. Maybe something like
+rohm,force-reset-snvs-powered?
+
+But although I found the bidning confusing at first, and currently is
+not able to configure the PMIC before starting Linux, I agree that
+it is better to have bootloader or something else handle PMIC
+configuration, so it is setup as early as possible.
+
+/Esben
 
