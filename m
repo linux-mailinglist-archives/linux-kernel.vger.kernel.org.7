@@ -1,223 +1,158 @@
-Return-Path: <linux-kernel+bounces-629230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D1DAA698B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 05:50:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C994AA6990
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 05:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3527A1BA6F54
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:50:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 169454A6AA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30832581;
-	Fri,  2 May 2025 03:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCB81A3175;
+	Fri,  2 May 2025 03:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="J2+h4eJp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBR6tDKb"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A013527718;
-	Fri,  2 May 2025 03:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717D01917CD;
+	Fri,  2 May 2025 03:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746157798; cv=none; b=nhWljYYbSFxsk1kAUXRUxAfmWOpjfefNcZPlv/0/hDHlHnMV0epR3JSXE/wlFmfXXqkh/5fco3GzJBwUBWiZgycQpfK5WFyH8t9YK89N0mb3TDkEQekCtNgMMuFFM4IkodY0ehiIeju3rvUXp17OGDRVOdOO9KQym2COZT+0GLQ=
+	t=1746157813; cv=none; b=PH2lkXl0rAwK9I0Kj0Nyn9AyoBHX9ZCvOGeJOr0z3M4rcVk2p/zaVW7mfDqhFusX+rDwCUBY49R2Y75BD3iksyuVxVOFFliRxZFYdEfv5aYppKF26F5v5RfIXSmpQywz1uUWc84HYNqBW+uLpCYHv14zdZeKL+4uKlYW51Cv8YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746157798; c=relaxed/simple;
-	bh=U5mdhGYsJQIu31ah8zFEE1prb3PTq8AzmT9FnTheryc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WnnER7C5wKiIHGZXmq5DqDa+nLiiQFZK6JP9+KMV5ZClqUtYBXrqNaec0x6EdGhDGxgX0/+u9r50Jo5kV8W2DrzthQlQGKg4uXWacF6TfEKDjqKMkyR/daj26yei13FIf8vdABoOUigltWCnm44IMWviPar4hcIYvHDkoSS+rBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=J2+h4eJp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5421MvsN001947;
-	Fri, 2 May 2025 03:49:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8aIn+HhV0I+UOqU2s77LSnK4rEAaF/YhK6sj5oV1cl4=; b=J2+h4eJpvRYGzO7e
-	iERM1hAZT85zLkLdfJQODWCDkBf63UG1AUC8HG7RK+O5UhqUK/fCjSmCOzufUpea
-	LlwFQHFcRllvbq3vfbPlDCDi2FdBIfkoIjnh11HrMVl+/Y9QOm+tqtECEnmnSwuQ
-	oPT02WvE18jDW3aqRYphSM5EeTUaR50f196izV/hAeWY/1vGRJoLq6UhhkZcchL8
-	8mL6qHddxJpOqW9no7Ja7okt7XELeTbEyvHw6t5OE3o4W4kqOE34JurpgetgkNc5
-	5iMPIgcL/ux1Qfaaoo3q6EJchtmSehbIOdMKD9GBqViqMdOUXi052Mm+NqXwqIMP
-	Y1MdUA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u7771a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 May 2025 03:49:51 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5423npWo026585
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 2 May 2025 03:49:51 GMT
-Received: from [10.110.24.115] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 May 2025
- 20:49:50 -0700
-Message-ID: <d7c53dac-790a-490f-b757-fa2bc86b5276@quicinc.com>
-Date: Thu, 1 May 2025 20:49:49 -0700
+	s=arc-20240116; t=1746157813; c=relaxed/simple;
+	bh=3c1nlzF8RZhIa2IfkWpFCztfXW4famdPY+LgthBQ6Fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQuSEJApiJyDvE4Iirt+8ZRCUBDsgP9XbmFY8f9jt733IzVhtUVxctsOnYbQTUfYBpQcbUDmhw6hMm5YtKXDuDMdF8qErbMA0bkKwV7pXP83XavnqPIZKF+YYBer5nZgPCTfWeG27ZM3Hc3zE3700V+GfkYhms5dzEhPgx4BshE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBR6tDKb; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3031354f134so1371591a91.3;
+        Thu, 01 May 2025 20:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746157812; x=1746762612; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q9Fmb2BpvFenPgSBSx7aFW99AUa48pruOHMxG4AYI/0=;
+        b=fBR6tDKb6ZhxKjwnaP1yus7+YeGppo85BGRAywrM//dJEphUR7dqhycbtHdDOrnPrr
+         QgIX283qkX8l+GX5/U9oHjYWGLQAjc9EPV1z+h0wfkqVXbt+mlPFOM62arZ3MQ1Hfnwy
+         8+R7Nvv61/SMDPoi6AE/ixykfpc28uBLcjrhooOU6CRtcKI57HYCYYBjgzBI6DxABQ4T
+         YcYdPPwqMvg1MPF9wxDyssHl9eaeaM9PqjfmNQDRSgBBuTV8uupcXMPF4UbkIg+75+5m
+         9SZx2a6hPBLLXKnaQ8K0EhhyLIkyF86xYdDS0/oyg47ra+mThGCPx+0FASCFkhFlGccM
+         Frbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746157812; x=1746762612;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q9Fmb2BpvFenPgSBSx7aFW99AUa48pruOHMxG4AYI/0=;
+        b=jl4LzkE88j/9fZdfnhHNvguadqwAVAHH1e+pHKrD531mdE/EdToaHFXvu0wKsrNIvS
+         jovoUAKoO19n83jSB2OIApyIHXjb1Cd4dgByNkqMwvhUlIwdAB+7y50YB5pGb0MtZBTp
+         eVwGkGOz4tlCqVKfcSiHtwpfLbFxUMvzcG5VDMjvV7l0ZXB1tpuTAy0NKhLj1WiAFFQn
+         L1Zq8Lax3g4qr8n9Veg01DPQ6lK+7bfz16EVhob1SMzeDN0DUhkM3WFGr1D2kMi+qHCa
+         Me00j3SWTLogEY01KVFgquO+7dKmgtRft+hTlacSI0WTVci/yD0ClBw5nVUyLB+8uF4x
+         efdA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8qNlUdxjJ90eCIcra4zIf5ikoTDLY+gLtdOfQ2v/fywtNeWT+lKGYhb6vod/h6vrE80Wa5D03G+vMMbhxrx7j@vger.kernel.org, AJvYcCXCpsdqx3chPR15DeDoXt7hEIDkLyqfzu/xA+TTUPAJHF6sHyEwWsvg5iLbj+IT0+HMmXkeDziCEz6AmG+c@vger.kernel.org, AJvYcCXkDnU/3pPn5UDEkYQxRXwZVkJevBvejt+Z9pPzSDblnHa7WxZsngmQM0NQYa1DPOykI9tEfDElfOo=@vger.kernel.org, AJvYcCXzz/U5Qiy0uf840uY/zKj9V3qPKaxGNgamRXPSpFRwQcKQEmrASKxLrtG2Zcrbo0iC+zFE7sYiEvMLo20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK703ZBqSu7KvQsTiaTZj5r+jEpS/doyPRQiX+w56B+4ls17eO
+	IEHZMr4ECjec2Szx1jc4e8ZEPSeTXf3owT0Uk/tvTRJZmbQSDddL
+X-Gm-Gg: ASbGncvAhYCH3LD9GbxjSVDFDbuQBaXSfRAexUuLvkB46qI5+BZIjDh7d1Tn23Letc9
+	e9Tgf3/e4z7oWL1ywuUbldEbM7c0kLrp+KjTAi3yC0atwpOzVCK+rUtBtq7GijagqqJRhiYaYt9
+	okvEWWSgZGjN+eQNo88/bNtvxNNHNq5xFmn/iu3pDjunHn7GLNh7WRoM2xw0u3QO670Um7Qpym4
+	7RumEnT2aRqiuIhqy6BJ3joOGsZJsW0ZnKpRDT89TGuGDLUR0q7ZxOB8WgC5zdJSNx7GliBvST7
+	SZ9+gGXpIj4YGcka692mGaxuJE0UMauvQ2P1gXND
+X-Google-Smtp-Source: AGHT+IFusSWo1BAwwXVBEu66ZFOQHwzVAGyr3p079qazgApC+Wzq8zZL3bsDTFLCQouzn2+zKuFDTg==
+X-Received: by 2002:a17:90b:586c:b0:2f8:b2c:5ef3 with SMTP id 98e67ed59e1d1-30a4e59f952mr2796823a91.14.1746157811349;
+        Thu, 01 May 2025 20:50:11 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a4748e852sm1776417a91.23.2025.05.01.20.50.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 20:50:10 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id CE99B420A6AB; Fri, 02 May 2025 10:50:07 +0700 (WIB)
+Date: Fri, 2 May 2025 10:50:07 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
+	kevin.tian@intel.com, corbet@lwn.net, will@kernel.org
+Cc: robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
+	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
+	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
+	yi.l.liu@intel.com, mshavit@google.com, praan@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
+Subject: Re: [PATCH v3 16/23] Documentation: userspace-api: iommufd: Update
+ vQUEUE
+Message-ID: <aBRA75V9l9WlI2Q3@archie.me>
+References: <cover.1746139811.git.nicolinc@nvidia.com>
+ <0beddeaaa4a8a7a45ce93ff21c543ae58be64908.1746139811.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/9] dt-bindings: serial: describe SA8255p
-To: Praveen Talari <quic_ptalari@quicinc.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon
-	<nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki"
-	<rafael@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-CC: <psodagud@quicinc.com>, <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
-        <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
-        <quic_mnaresh@quicinc.com>, <quic_shazhuss@quicinc.com>,
-        Nikunj Kela
-	<quic_nkela@quicinc.com>
-References: <20250502031018.1292-1-quic_ptalari@quicinc.com>
- <20250502031018.1292-3-quic_ptalari@quicinc.com>
-Content-Language: en-US
-From: Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <20250502031018.1292-3-quic_ptalari@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDAyNiBTYWx0ZWRfXxQtudpHRtV6Z NMesxL05INmoHCNBtBocmmmOi/PvKeRLaEUr/FGPHJSx+8ty7qdmBpCWkP09klyS9A4UtstyLSN HZiefs1H8B/0MtGmZ/zypGJo8myeg0jcmE7pcpiLPa6if4A4eFj1zmxKhZefHspw/r1P9idi4I8
- B5GpgauU78RfOyejBUMtVHptoiufkX0pWdxngR6Ay8gpFPnfpwGEbev4La4lNOyafK5v08ZUD9+ G30oK/2b438q+2f+z11Q4kYAqsEjuoWPr7k2OkeHgWswxgTBKNwNKD2v+wiGJq3/Nsg/K00gMCa 7tRKwZ7N2vjnaQD7cq5kUYa0wCkx/7Ivi+AL4wLx3dPglclMJoaIaJ2pRD+B1BGUm4N7QA8rV9k
- Wck+k5vMG81hgTv7t9vsTmr0UzKRk/FwVWXO3DEaXuYhSQmSN2gDxCoXhOhLv2lONl2bAQyw
-X-Proofpoint-GUID: z9yNTtQf08yRmmdQ-iyaXiJIvG2XhYYt
-X-Authority-Analysis: v=2.4 cv=W404VQWk c=1 sm=1 tr=0 ts=681440df cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=gEfo2CItAAAA:8 a=COk6AnOGAAAA:8 a=i1IpkjnnKvMeRn0L5gEA:9
- a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: z9yNTtQf08yRmmdQ-iyaXiJIvG2XhYYt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-01_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 spamscore=0
- clxscore=1015 phishscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505020026
-
-On 5/1/2025 8:10 PM, Praveen Talari wrote:
-> From: Nikunj Kela <quic_nkela@quicinc.com>
-> 
-> SA8255p platform abstracts resources such as clocks, interconnect and
-> GPIO pins configuration in Firmware. SCMI power and perf protocols are
-> used to send request for resource configurations.
-> 
-> Add DT bindings for the QUP GENI UART controller on sa8255p platform.
-> 
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> Co-developed-by: Praveen Talari <quic_ptalari@quicinc.com>
-> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
-> 
-> v2 -> v3
-> - dropped description for interrupt-names
-> - rebased reg property order in required option
-> 
-> v1 -> v2
-> - reorder sequence of tags in commit text
-> - moved reg property after compatible field
-> - added interrupt-names property
-
-Please fix all the patches. 
-
-> ---
->  .../serial/qcom,sa8255p-geni-uart.yaml        | 64 +++++++++++++++++++
->  1 file changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml b/Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml
-> new file mode 100644
-> index 000000000000..85b1d7c05079
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/serial/qcom,sa8255p-geni-uart.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Geni based QUP UART interface
-> +
-> +maintainers:
-> +  - Praveen Talari <quic_ptalari@quicinc.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/serial/serial.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sa8255p-geni-uart
-> +      - qcom,sa8255p-geni-debug-uart
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    items:
-> +      - description: UART core irq
-> +      - description: Wakeup irq (RX GPIO)
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: uart
-> +      - const: wakeup
-> +
-> +  power-domains:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: power
-> +      - const: perf
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - power-domains
-> +  - power-domain-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    serial@990000 {
-> +        compatible = "qcom,sa8255p-geni-uart";
-> +        reg = <0x990000 0x4000>;
-> +        interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
-> +        power-domains = <&scmi0_pd 0>, <&scmi0_dvfs 0>;
-> +        power-domain-names = "power", "perf";
-> +    };
-> +...
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VfsLxvgoTsplys2W"
+Content-Disposition: inline
+In-Reply-To: <0beddeaaa4a8a7a45ce93ff21c543ae58be64908.1746139811.git.nicolinc@nvidia.com>
 
 
--- 
----Trilok Soni
+--VfsLxvgoTsplys2W
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, May 01, 2025 at 04:01:22PM -0700, Nicolin Chen wrote:
+> +- IOMMUFD_OBJ_VQUEUE, representing a hardware accelerated virtual queue,=
+ as a
+> +  subset of IOMMU's virtualization features, for the IOMMU HW to directl=
+y read
+> +  or write the virtual queue memory owned by a guest OS. This HW-acceler=
+ation
+> +  allows VM to work with the IOMMU HW directly without a VM Exit, i.e. r=
+educing
+> +  overhead from the hypercalls. Along with this vQUEUE object, iommufd p=
+rovides
+> +  user space an mmap interface for VMM to mmap a physical MMIO region fr=
+om the
+> +  host physical address space to the guest physical address space, allow=
+ing the
+> +  guest OS to control the allocated vQUEUE HW. Thus, when allocating a v=
+QUEUE,
+> +  the VMM must request a pair of VMA info (vm_pgoff/size) for an mmap sy=
+scall.
+> +  The length argument of an mmap syscall can be smaller than the given s=
+ize for
+> +  a partial mmap, but the addr argument of the mmap syscall should never=
+ offset
+> +  from the returned vm_pgoff, which implies that an mmap will always sta=
+rt from
+
+Did you mean never be offset from returned vm_pgoff?
+
+> +  the beginning of the physical MMIO region.
+> +
+
+Confused...
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--VfsLxvgoTsplys2W
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaBRA6wAKCRD2uYlJVVFO
+o+SZAQDJ/gcFcLrWtK7lcL67yMIrbhi/Ip66m8FOzciKz7X4gAEAu6K/kN2zgCb1
+Up14Fvx9ssPG1/hIFF+QXlsxiG4N0Ag=
+=Umti
+-----END PGP SIGNATURE-----
+
+--VfsLxvgoTsplys2W--
 
