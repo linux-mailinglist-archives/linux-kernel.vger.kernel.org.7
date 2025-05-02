@@ -1,85 +1,72 @@
-Return-Path: <linux-kernel+bounces-629443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C6AAA6CA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:39:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE27AA6CB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A93B1BA529A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137E01BA65B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7404122ACE7;
-	Fri,  2 May 2025 08:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF24722D4C5;
+	Fri,  2 May 2025 08:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pgkeSmGo"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DIzoxIz0"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDDB8828
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F1C22ACD1;
+	Fri,  2 May 2025 08:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746175176; cv=none; b=kp4C705VoflZ3GzcNfK14euGL2m2N9ZiVC3QCYYWua9hXPqNR2F9uxTQYEQJwLU4ZFUJK5CiFbAt879WJb8sEqEzAf/5D2Zs/8TWdM9hFdBkCPKyWtzlND09twudUBYeLstRnrds2FU/yC5jgYDOSRemktcQ6EEX1pz0HJqGrK8=
+	t=1746175326; cv=none; b=HL0VEFYErLGLknlwmMRlZwm0xUAUFzijwrDsJ3F9/knT8zCrA7GOdPiQDbIGpGe7Jj+QSQy+cR8Cbi30mzwZHlXyOYEDu+3oKNMLRtPevSGkVX+vNHQl6ibInadvEdbSe3hRarrnvVLPXleada3vommvdgDz8MoeaE7dF/+rZ40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746175176; c=relaxed/simple;
-	bh=Fc6VGyglFbCU4Zg5Mw2hQNZJJof9kthAbyW2Wut9M2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WW0heIobT85dg+lihmjxaamj4PYiWebAvvNkbLH1Pl+seTc0MWEOPXNzMTJUDkFGNIcwZBTSpwahMV7Bzkx7QOHib0OTRpHOVlj+oernY6ju3TsDM7vfjdcEAvojh+a2m7pgyXT3OlwA7LZ63nanr5OOpRsNKWbj2M1ThE/12JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pgkeSmGo; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso1182959f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 01:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746175173; x=1746779973; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YTp1n3CXi4d/IkYoP7iNGIaUGP0jg9QVzJw7i5UhA5Y=;
-        b=pgkeSmGoxGb3NfuIJob4Qla0scUPSMXoTsndHmbdmjevpXYIfbDx4MAZn4oT6YbLOm
-         xw0IrMORmI9j9tflWnq3tb+KApmrfvvNjN5AQhARq+w+0R5nmLM9mnMKFqCS5XJPyHxo
-         ZGy4DKfP0RBUJXBZsDPWD3ETQHuMl8oOD/lLf24/i+dn38TW/79l2ayYffez7wkm2LB6
-         E0vFUMDR1QP3WqhZwGzws5jaC+Bu7ylByJz58gdyGInOUsMUythMtSzs2KESFQncXLsF
-         nIyZ795yXc42yqI0ohwTiiqGI0EFaOaE6ACA90QLsHmK26oLqIN//JN+vcHHfpJhFdED
-         g1UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746175173; x=1746779973;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YTp1n3CXi4d/IkYoP7iNGIaUGP0jg9QVzJw7i5UhA5Y=;
-        b=udq4ywGP8IJYbIxcqzF7JDuOL5F8lhTAOKRKD+YAXpaWfn10kginMHg5I0JxdLlvxF
-         bGAxU4FKAVFilPcFL5k3oFQ2lPkmHqqfKCmzRMVqjYrY1mHe565jan/fwnwdoCfzm4Nf
-         PgYZJyeoph7IZKejf73Gn5jya17zRTIZXQHHepVqhkZzGVgiWzC3k5oXjV+yW5fC8wW5
-         XvM/WtF4hc8RZ7QKDQKdr5NtaIuMKFANOVCUVih9J4hl2OBLnhPZaX67QJkuyS2Xgps3
-         3deXbEDpijXoBsUVrioD+FxrjjKxRva3s6+aKaKlkPkk7oph7SL1KX1nliiBqCy7zdEo
-         3eXw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4vZliHcZy0b3OBdGteVoKW6sF06XD7Sw3T76VHn3XnuytMpLX3VyPKcb9fFbVsCj5AIvmHKWkkiIMLAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV8VlIOP5eVCltzfMAABxY2fqpE1Bk6fhipxx/6dKCJb5f8q8N
-	5nTY/Gts/nROYWAMy1RMCksodCPWJpOYSs8pAagiJSqulcTDc0PnDDP60ayBTqI=
-X-Gm-Gg: ASbGnctgocIiN4hETSrVmEf0OYN3LSWI1RVj+0HxKQ5pOttDdcwEGkWJFYbtMmayVqH
-	Z7H6rcfbNuxjh4oTxCA9ABkpgrR95enPJm7wqaToIkweMIagCDn9GhZ+cIytmsiUqthc1FdFt4B
-	++s6eTZjm8IvKOwlx7BUs3pssrxWCqYpLoV9GOhRAZmQ1f6MPmkQgpZUIh65OUTHR8YZ3UHT9di
-	TdO9eOpgZRyLjcArWZoTab6F8UuA/f7A40JActOBpnoRuUvf6msyQ/bzuxBoVToCPePg3WHYaiT
-	C5ysvaxgrLnu4LeStyS0+qW4MoEsR53VN4D8qRTdmWm6lg==
-X-Google-Smtp-Source: AGHT+IGb74sv8hsGiSyin0BDmnbpMA2IZnPZBnAg8xwnjuUfYCPDX9NlYI/bGPAEUyHsmHQ+F3zSMg==
-X-Received: by 2002:a5d:588b:0:b0:39c:1f10:ba54 with SMTP id ffacd0b85a97d-3a099adeae2mr1444276f8f.35.1746175173327;
-        Fri, 02 May 2025 01:39:33 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099ae0d2csm1473852f8f.2.2025.05.02.01.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 01:39:32 -0700 (PDT)
-Date: Fri, 2 May 2025 11:39:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] mtd: rawnand: loongson1: Fix error code in
- ls1x_nand_dma_transfer()
-Message-ID: <aBSEwag_ducqOwy7@stanley.mountain>
+	s=arc-20240116; t=1746175326; c=relaxed/simple;
+	bh=JAkxRcMnCLTEaaF2Sx3Fm9Sem8/O4saWART4WZ6A1pU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqzjmhb+CWUQxbLnzdWie/Lgk2+bEiJmi6tV94ye3Q2SPSuVknh3LThz4uKCKqaOrS8TFbY0SwXcFgUhm3W3EeMzkBZ3jIvaNYCeShXzRzkUlw7mFkFQvLUyhDVFZaB+vZi9GpYuIG44GgdbddW9NoyGEAUj3eBEhOvdHqYGbr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DIzoxIz0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=j6cbPjR+T0yzG1mLDzVIumfGnchJ8jrJp8SEOFZnJ0c=; b=DIzoxIz0Ehp+HLggJApwwus3VG
+	7rYxbEyl0G5WKBNyh2ko6DrCZQ4m22+3PRjS5LpsFKXwZDC93qkLiI5/pSl9Vwju11TlWH28Wji0O
+	3xCqPFuF+TFs4nOK3tU9tnjCQx/575+qsVxK2leGPxXJnNDK+3KuUcuZZQPq6oT9u2sCGOBRdPbY7
+	lgl87qfSpNsoydPh2dRBaLEXE9dxXJT7yg0k+6KT9OiUJh3mj4O9SGoAW4StpZ0fDtNqZZiWi7J3Y
+	4HFfdhDqgekQjYw9G7bjWSo5vt8rruRV3y3h/A1/v1SRKMYxHXrUxd0gu5dsATZQcjts0dGwLI/yl
+	ZoIv90BA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAlwb-0000000At0F-2Hrl;
+	Fri, 02 May 2025 08:40:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BF3193001D4; Fri,  2 May 2025 10:40:07 +0200 (CEST)
+Date: Fri, 2 May 2025 10:40:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, pbonzini@redhat.com, ardb@kernel.org,
+	kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	gregkh@linuxfoundation.org, jpoimboe@kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
+	samitolvanen@google.com, ojeda@kernel.org, xin@zytor.com
+Subject: Re: [PATCH v2 00/13] objtool: Detect and warn about indirect calls
+ in __nocfi functions
+Message-ID: <20250502084007.GS4198@noisy.programming.kicks-ass.net>
+References: <20250430110734.392235199@infradead.org>
+ <8B86A3AE-A296-438C-A7A7-F844C66D0198@zytor.com>
+ <20250430190600.GQ4439@noisy.programming.kicks-ass.net>
+ <20250501103038.GB4356@noisy.programming.kicks-ass.net>
+ <20250501153844.GD4356@noisy.programming.kicks-ass.net>
+ <aBO9uoLnxCSD0UwT@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,37 +75,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <aBO9uoLnxCSD0UwT@google.com>
 
-The "desc" variable is NULL and PTR_ERR(NULL) is zero/success.  Return
-a negative error code instead.
+On Thu, May 01, 2025 at 11:30:18AM -0700, Sean Christopherson wrote:
 
-Fixes: d2d10ede04b1 ("mtd: rawnand: Add Loongson-1 NAND Controller Driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-It's hard to know what the patch prefix should be here.  Ideally when we
-add a new driver we would use the patch prefix for the driver.
+> Uh, aren't you making this way more complex than it needs to be? 
 
-Tired: subsystem: Add driver XXX
-Wired: subsystem: XXX: Add driver for XXX
+Possibly :-)
 
- drivers/mtd/nand/raw/loongson1-nand-controller.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> IIUC, KVM never
+> uses the FRED hardware entry points, i.e. the FRED entry tables don't need to be
+> in place because they'll never be used.  The only bits of code KVM needs is the
+> __fred_entry_from_kvm() glue.
 
-diff --git a/drivers/mtd/nand/raw/loongson1-nand-controller.c b/drivers/mtd/nand/raw/loongson1-nand-controller.c
-index 6a369b1c7d86..8754bb4f8b56 100644
---- a/drivers/mtd/nand/raw/loongson1-nand-controller.c
-+++ b/drivers/mtd/nand/raw/loongson1-nand-controller.c
-@@ -371,7 +371,7 @@ static int ls1x_nand_dma_transfer(struct ls1x_nand_host *host, struct ls1x_nand_
- 	desc = dmaengine_prep_slave_single(chan, dma_addr, op->len, xfer_dir, DMA_PREP_INTERRUPT);
- 	if (!desc) {
- 		dev_err(dev, "failed to prepare DMA descriptor\n");
--		ret = PTR_ERR(desc);
-+		ret = -ENOMEM;
- 		goto err;
- 	}
- 	desc->callback = ls1x_nand_dma_callback;
--- 
-2.47.2
+But __fred_entry_from_kvm() calls into fred_extint(), which then
+directly uses the fred sysvec_table[] for dispatch. How would we not
+have to set up that table?
 
+> Lightly tested, but this combo works for IRQs and NMIs on non-FRED hardware.
+
+So the FRED NMI code is significantly different from the IDT NMI code
+and I really didn't want to go mixing those.
+
+If we get a nested NMI I don't think it'll behave well.
 
