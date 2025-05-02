@@ -1,145 +1,214 @@
-Return-Path: <linux-kernel+bounces-629124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A2FAA6802
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 02:45:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B252CAA6805
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 02:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B014C1706
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9656B3B2B4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 00:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDFD3AC17;
-	Fri,  2 May 2025 00:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B09114A4E0;
+	Fri,  2 May 2025 00:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6MmL330"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOjcEtyo"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA312F2E;
-	Fri,  2 May 2025 00:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081E413B59B;
+	Fri,  2 May 2025 00:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746146694; cv=none; b=o54sX3a21zTHx5Kkgr49GIUKi0rHK5LTqhROIoJWFX5sPzojUwI0YcDeLHTZI+GZooafZmjQEhHo6B/krWWjWmttyNlH6nOyz5Pb96+yjx6c2qgm8HZkL1+JBTQTPF9UWJmAVdUCvqbX9nBAHfHHwhZNdOJSnpJhvO9syB3jeGs=
+	t=1746146782; cv=none; b=P4CSfBql7dI0PR6jULR4RuzMChnkqGZIissp/SRvYje57GPYv10gYxSVjcNPj/RlY7GGxcIKOeL1swpXd/5grfC62LlcGIgTNxwBOf5MWbfcHlB7zl1LaDhhd6+SD8ivJJh4Xs5kZy1HzTaQMynMcKrCnSa18y8dksELMxXKuCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746146694; c=relaxed/simple;
-	bh=I9YnlpZ7nYw/byrY2ZMUf792m/wnT2mUUf7KIelZxbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jl1DKLFEazSveRPvkr40YcnQAaHytJliU3khbkPb/T+kdpoUdhqcqGi5r0wdlWd46y0b1qe7Yi7+5q4XtlpQrUxTFZPKMV2TCY33CTa+EGip715WJzmbK/LTTM69LBdz9qLKthkUBGa1dOYMKU+8Pqb8v9gVUsPd5EBcDQ0RlE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6MmL330; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20679C4CEE3;
-	Fri,  2 May 2025 00:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746146694;
-	bh=I9YnlpZ7nYw/byrY2ZMUf792m/wnT2mUUf7KIelZxbY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=h6MmL3302zkA+VMyeHxvFjJxJSaXlRLKplJSkPSr8AeN1YoVBuuDXRb3xMVboQb4v
-	 5EJhVFfESa2NSwAK2wI0bO1a0Td97OheDrsGsgDP/RuR7ZZ1O96mf9buyXujPCkmjd
-	 JHI3TYWwj5fBJlpXpDIKXn6I/ylhMTko1lTAgRBLNsatloZTvQi1R+BXtHuW6eTytY
-	 prSNvpgF3tEtOGWroSYtaheJbqj9gbxHNXvPrZP2Z4Ge9GcNRGdf+rATgtJkQ2Ef7X
-	 NXtkOLQ+2hvTMEJ4Kmbjb1SWGTIvFGi4J67GfgM0nKBZ8GWqQBE5ZeScEmG8VP95dj
-	 LIiIfXv/+DQPA==
-Date: Thu, 1 May 2025 18:44:43 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Subject: [PATCH v3][next] overflow: Fix direct struct member initialization
- in _DEFINE_FLEX()
-Message-ID: <aBQVeyKfLOkO9Yss@kspp>
+	s=arc-20240116; t=1746146782; c=relaxed/simple;
+	bh=ckp4BYh+0ltp4gB0E82uUFruWYJ9h26auPASRUlDD1s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EUOLWmhHiEF9Gly6S37WlkCJb3rNCe6ORvLkvASFjd/7+iyfqJSCsCngHUrKryxH2p8XxhCQAPDBgsqBUqqjJOg6L732CmJrw50o6zD/OePQL+87hje6VztDaYkDIspzppRcXWcG9V5Fyv7nn/cBfenoVqLNGhmmt/tGROGik8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOjcEtyo; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3014678689aso1294577a91.0;
+        Thu, 01 May 2025 17:46:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746146780; x=1746751580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4RstIddaVEtOElaRmpn5euPEqZBshLgab0c4Ahx3ah0=;
+        b=QOjcEtyoeFEI+YjEMQly6qgCk56+MNakI3CLo+2Ld/BIj8lHtNqlmsTxG5NtR2nXFX
+         1TC27umrdpQ7MWbFQBOPRCd98KEsTDHgDyg+0hitALoaLTdMjPyh2RlK7MmeyRi6o3dn
+         /eoa7k8TeDYU11wasCHKoLT62nIvygoX9hpBlZJJqrc/P3S8Ooruco6zyIy4Wr6jecS3
+         ubwKC4ENWpui9hwso3tpDD8VOt0vPMxPlEbOkRbuv2cZmP2WtWxSBWd0FphQsYC41489
+         c08odGSvFDOZf31RZicogp3mfnK5XTVTvfMN5+hOeaeYdTcBOr4JHSU4pVnpoWw3sdY6
+         55eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746146780; x=1746751580;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4RstIddaVEtOElaRmpn5euPEqZBshLgab0c4Ahx3ah0=;
+        b=bYkTIt/DVuFm8Sp3xi1XWi0JHYnMFUPHxMIc9Ikje4B+0+eb13eHqFIWeGCFYRKARX
+         UgnbDPKH330KAJe80srk+VEvicLWbWWTf90Kq9yq2eAq3+Rp/MjqLLauXzN14hipESOA
+         L1WgVykf2OYK/H6Ma6QrJQ3NzUnz+mHf2obFUYx0ydLe1AkNBQdMK9mXrM5bwdCn4gHu
+         v0Gm8UGyjTipnQO/ReF2oiXi77UIhUHbV4XS2n1RXwl9CRsjB227L3TK+2xx8aoqoBkd
+         +xEZBIVKR4tLNsoQT6D5+5i/P1zDK6rfZWUTppeoj5QDRIsml36uxlhRuzwpxPY8MRop
+         kICA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTjNFFMylXUUbh5ZUnw19q2pzAz6XCYKNdiE+lFXIWGuziDrPL0TFihwTM4HzIUKRgvPWCtYGvadI5mlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3l5/mXBzYkmTIGBGVRDF8MSJ0CNOvWMxjesJjLrs6Q8m77/Fu
+	YlRJvykCQBdPeMboEPtN7/TqDDCmenxPBGAsyWOOR4HhjX9eQ3BVKNgWW4m9
+X-Gm-Gg: ASbGnct0Akmb/XYWd7rqrPoxqa/PQyv89tqx9EKFwnTVwK6eK18YPifCoU7d13s15ve
+	xgyXho6v5YeMIxLPpkPfjgJ6NivPR4NxW34juzI91zko4jFQT8LaJfzxGAEZC7vDwRW1+OVbZtk
+	yHO8KngRLlUqIX/tVY9zBN3DW3nHauzlvIcBia8tdi0tyNEGsRk2xrQ+50dYG5H5zIkB9fDO+5e
+	5djArdW4eD5AtgfCNdVbEkwlcE8kBF0eEuvt3rkL0mIapCCwv5rJXSkO1RZsCWimHhg8TCgmFxW
+	ezXjmzF7qiulAZ+/8ICQIyddrT8931J9ygHRqeXZCn6aW4CjJtOxFHAzqOKQ4NhIusRKf7bmYx9
+	A/6Yh3Vgzr/D2hN+ESA==
+X-Google-Smtp-Source: AGHT+IFTT/m2lfWUrCRjqd1HOHC25mow6B0tvkrcD2aAAAu4Fniz1kBsddCBXQQx68Q/KbaGlHpJXA==
+X-Received: by 2002:a17:90a:c88f:b0:2ff:5357:1c7e with SMTP id 98e67ed59e1d1-30a4e5c1eb6mr1576092a91.20.1746146780026;
+        Thu, 01 May 2025 17:46:20 -0700 (PDT)
+Received: from mew.. (p4138183-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.129.206.183])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a476421aasm1561976a91.49.2025.05.01.17.46.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 17:46:19 -0700 (PDT)
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+To: rust-for-linux@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	a.hindborg@samsung.com,
+	frederic@kernel.org,
+	lyude@redhat.com,
+	tglx@linutronix.de,
+	anna-maria@linutronix.de,
+	jstultz@google.com,
+	sboyd@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	chrisi.schrefl@gmail.com,
+	linux@armlinux.org.uk
+Subject: [PATCH v2] rust: time: Avoid 64-bit integer division on 32-bit architectures
+Date: Fri,  2 May 2025 09:45:24 +0900
+Message-ID: <20250502004524.230553-1-fujita.tomonori@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Currently, to statically initialize the struct members of the `type`
-object created by _DEFINE_FLEX(), the internal `obj` member must be
-explicitly referenced at the call site. See:
+Avoid 64-bit integer division that 32-bit architectures don't
+implement generally. This uses ktime_to_us() and ktime_to_ms()
+instead.
 
-struct flex {
-        int a;
-        int b;
-        struct foo flex_array[];
-};
+The time abstraction needs i64 / u32 division so C's div_s64() can be
+used but ktime_to_us() and ktime_to_ms() provide a simpler solution
+for this time abstraction problem on 32-bit architectures.
 
-_DEFINE_FLEX(struct flex, instance, flex_array,
-                 FIXED_SIZE, = {
-                        .obj = {
-                                .a = 0,
-                                .b = 1,
-                        },
-                });
+32-bit ARM is the only 32-bit architecture currently supported by
+Rust. Using the cfg attribute, only 32-bit architectures will call
+ktime_to_us() and ktime_to_ms(), while the other 64-bit architectures
+will continue to use the current code as-is to avoid the overhead.
 
-This leaks _DEFINE_FLEX() internal implementation details and make
-the helper harder to use and read.
+One downside of calling the C's functions is that the as_micros/millis
+methods can no longer be const fn. We stick with the simpler approach
+unless there's a compelling need for a const fn.
 
-Fix this and allow for a more natural and intuitive C99 init-style:
-
-_DEFINE_FLEX(struct flex, instance, flex_array,
-                 FIXED_SIZE, = {
-                        .a = 0,
-                        .b = 1,
-                });
-
-Note that before these changes, the `initializer` argument was optional,
-but now it's required.
-
-Also, update "counter" member initialization in DEFINE_FLEX().
-
-Fixes: 26dd68d293fd ("overflow: add DEFINE_FLEX() for on-stack allocs")
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 ---
-Changes in v3:
- - Fix changelog text: s/_DEFINE_RAW_FLEX/_DEFINE_FLEX
+v2:
+- fix the helper to call ktime_to_[us|ms]
+- use cfg to avoid calling ktime_to_[us|ms] on 64-bit archs
+- update the commit message
+v1: https://lore.kernel.org/lkml/20250501015818.226376-1-fujita.tomonori@gmail.com/
+---
+ rust/helpers/helpers.c |  1 +
+ rust/helpers/time.c    | 13 +++++++++++++
+ rust/kernel/time.rs    | 26 ++++++++++++++++++++++----
+ 3 files changed, 36 insertions(+), 4 deletions(-)
+ create mode 100644 rust/helpers/time.c
 
-Changes in v2:
- - Update kernel-doc block for _DEFINE_FLEX(). (Kees)
- - Update changelog text - `initializer` argument is now required.
- - Link: https://lore.kernel.org/all/aBP0b3gfurLFDlwY@kspp/
-
-v1:
- - Link: https://lore.kernel.org/linux-hardening/aBK2TUEeQfCFop9Y@kspp/
-
- include/linux/overflow.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-index 69533e703be5..b50c8b30a14a 100644
---- a/include/linux/overflow.h
-+++ b/include/linux/overflow.h
-@@ -396,7 +396,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
-  * @name: Name for a variable to define.
-  * @member: Name of the array member.
-  * @count: Number of elements in the array; must be compile-time const.
-- * @initializer: initializer expression (could be empty for no init).
-+ * @initializer: Initializer expression (e.g., pass `= { }` at minimum).
-  */
- #define _DEFINE_FLEX(type, name, member, count, initializer...)			\
- 	_Static_assert(__builtin_constant_p(count),				\
-@@ -404,7 +404,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
- 	union {									\
- 		u8 bytes[struct_size_t(type, member, count)];			\
- 		type obj;							\
--	} name##_u initializer;							\
-+	} name##_u = { .obj initializer };					\
- 	type *name = (type *)&name##_u
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 1e7c84df7252..2ac088de050f 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -34,6 +34,7 @@
+ #include "spinlock.c"
+ #include "sync.c"
+ #include "task.c"
++#include "time.c"
+ #include "uaccess.c"
+ #include "vmalloc.c"
+ #include "wait.c"
+diff --git a/rust/helpers/time.c b/rust/helpers/time.c
+new file mode 100644
+index 000000000000..3d31473bce08
+--- /dev/null
++++ b/rust/helpers/time.c
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/ktime.h>
++
++s64 rust_helper_ktime_to_us(const ktime_t kt)
++{
++	return ktime_to_us(kt);
++}
++
++s64 rust_helper_ktime_to_ms(const ktime_t kt)
++{
++	return ktime_to_ms(kt);
++}
+diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+index a8089a98da9e..b0a8f3c0ba49 100644
+--- a/rust/kernel/time.rs
++++ b/rust/kernel/time.rs
+@@ -228,13 +228,31 @@ pub const fn as_nanos(self) -> i64 {
+     /// Return the smallest number of microseconds greater than or equal
+     /// to the value in the [`Delta`].
+     #[inline]
+-    pub const fn as_micros_ceil(self) -> i64 {
+-        self.as_nanos().saturating_add(NSEC_PER_USEC - 1) / NSEC_PER_USEC
++    pub fn as_micros_ceil(self) -> i64 {
++        #[cfg(CONFIG_64BIT)]
++        {
++            self.as_nanos().saturating_add(NSEC_PER_USEC - 1) / NSEC_PER_USEC
++        }
++
++        #[cfg(not(CONFIG_64BIT))]
++        // SAFETY: It is always safe to call `ktime_to_us()` with any value.
++        unsafe {
++            bindings::ktime_to_us(self.as_nanos().saturating_add(NSEC_PER_USEC - 1))
++        }
+     }
  
- /**
-@@ -444,7 +444,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
-  * elements in array @member.
-  */
- #define DEFINE_FLEX(TYPE, NAME, MEMBER, COUNTER, COUNT)	\
--	_DEFINE_FLEX(TYPE, NAME, MEMBER, COUNT, = { .obj.COUNTER = COUNT, })
-+	_DEFINE_FLEX(TYPE, NAME, MEMBER, COUNT, = { .COUNTER = COUNT, })
- 
- /**
-  * STACK_FLEX_ARRAY_SIZE() - helper macro for DEFINE_FLEX() family.
+     /// Return the number of milliseconds in the [`Delta`].
+     #[inline]
+-    pub const fn as_millis(self) -> i64 {
+-        self.as_nanos() / NSEC_PER_MSEC
++    pub fn as_millis(self) -> i64 {
++        #[cfg(CONFIG_64BIT)]
++        {
++            self.as_nanos() / NSEC_PER_MSEC
++        }
++
++        #[cfg(not(CONFIG_64BIT))]
++        // SAFETY: It is always safe to call `ktime_to_ms()` with any value.
++        unsafe {
++            bindings::ktime_to_ms(self.as_nanos())
++        }
+     }
+ }
+
+base-commit: 679185904972421c570a1c337a8266835045012d
 -- 
 2.43.0
 
