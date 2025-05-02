@@ -1,267 +1,289 @@
-Return-Path: <linux-kernel+bounces-630053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01729AA74F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC9FAA74F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B24298032D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0F398046C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6108B256C98;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6827D256C99;
 	Fri,  2 May 2025 14:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RRdT92hS"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="BzzYZmoF"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2134.outbound.protection.outlook.com [40.107.22.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46D91624D2
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746195996; cv=none; b=vAO/ApdtemmImrd1/ZGXXBsJr4G5n18R/OPVHmP7z4yvnCpuQ+L/hWu5wrym0WdHjrDwmI8jV9hUvlfPf8S/URLSvRZ7BI6gVQT5Rvf6wMt/YVmhyzqsGxUSY5h2t6zwQ0OnA8Lsu8elOemVKRcQ9fwjQSzKxXOefdRQoVLpLUA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1772566D3;
+	Fri,  2 May 2025 14:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.134
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746195996; cv=fail; b=NKDy7W+RyGZmVlDEDp8PYz7Xrj1fpyN8EpebQ+XbdWR+5Wtx5PwgTLKNRH/yGnrcQ/TBITcBRsh6jj8242rU0q9kSMYUisB+pEcgYhMTmkZ0P1ky313DceFl24vt1ZyKpu7RcPCXoSEjj/qeBNbrgItYQ1fzFda4hjbC7B5+XWA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746195996; c=relaxed/simple;
-	bh=WnH+dqe0udCsTb2yb68GJWUxQUnxpidgGIRNl7dIGho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i+90oxlcAFsPfTeEOC9zbdk3H7k/gYUCt6byzKda2mQkYIk0kqjxTwyuI83aDk5DbnJwDLCzhd78e8QU/U/Kmexk5aU6a19eScFwCMLW7XESiB9tyk/JnzpSO1GmY0T8iUr52ZeDSrT2CnEyBCrCSuj7fxcTmvGvcgBc3ZjF5tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RRdT92hS; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f1f23c1a-f4a8-4807-8028-87e247775ec8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746195982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qhhZm+7v2L3Je3++vQOTPSZ1GcPWDVHw6xWa+wHNGkg=;
-	b=RRdT92hSwCCMwy891Mow09cD2Li4if9SkyeAymSds629ZfnqXVXZ5C91HLIfGYIYRi4i8F
-	BjDHJZvDbyJlUuaXcLd2p/XFKxUuZymv0Eq75l8NFFoSn35kGx9FGjoSpOHzeu2G6n1Rsj
-	T965yfd0A4H7jWOz/naFCzI8fFEC0I8=
-Date: Fri, 2 May 2025 22:25:59 +0800
+	bh=MO5lR6rRLk5CgQ5uqLmIXWYNsJsarivHN52Ro341JCU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l6Dpgif4x1QdGx8AK7RevFXpBSF4hMkCHrQBKteSd64XEbJptaZWN/64acDQUdlNHW3CWJZEwjgASWOBGG2zb08hYWQXJGqo7jgSjbL3n40VmgwyQn9yKXC0qFvhydq/JLy2IeBQGZfhJTxq/LTfd90ProBaNozoTYaklIyuczk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=BzzYZmoF; arc=fail smtp.client-ip=40.107.22.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wSLKlwuibLklBRghBKaKm3q4/1NJwppOoUt1oDe/MRo8G/Q3WAmEGmhemOVBHDOyap3+Nk80LYCLpMopvi8lMh7H4z/EySD9uVwA/3g4KlEJ0OkPncj7FeNfLI12ASWGShcW7ycqVcEuIFKk4yqgJIN2xk8ceAua0KBvIzn2CDwgxfGIQa/GQl6wMf0Md3YmBYfeKHlAJprXs2DUTZSpyZBzKyozV1fJkPOGWTVLWwT9suFYDMfPp08qt+jQSCZqyN/qjuNnjKcAK+WJoaQ3lCOnnoGJcWtV8ag9Ta5BS0xgF8cGgdBtdS2kEeOWp42EBAe/vMLN2n2lOPokzOtSow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AbH1Xx2Bspbo8b5a07oMy1KXVKdFJV2ljjkhKZ3iIXs=;
+ b=I6o4f1SAeAs1CQKrIgtUmUATQBmA6LZiB7F8Uu82KxTHKBYZcSHPv32V2+Xk+/Tl1gSJdXE3MNyXyFiEBErZHOLgqH0rPnUci31/egJAUGmXp5qS2EarMbOvsWYuDX1R8Tw1WU9CfHLZLDDT6MrWegMAV7Q6SuHW/bcGuLSpZBkIf6qlWWG2lUk/RiytXOpbNJ3kGM5usV7ACUDpAcLcGNyVWdAb+DgX7QHalvDPCnvVprrXOFap77unQ3kp7Ql5eHv0wrpteuIpcMfStgvP2OgGXiRfQ5s1BH44B67qdPnVSCU7+SVbjJzdv36MqH6yxfW0ylK51auZjABKVHu3ug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 91.26.50.189) smtp.rcpttodomain=ti.com smtp.mailfrom=phytec.de; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine header.from=phytec.de;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AbH1Xx2Bspbo8b5a07oMy1KXVKdFJV2ljjkhKZ3iIXs=;
+ b=BzzYZmoFRNmuRT6d1WPjUnZNtfw8sQk/ToaVJVlnJO3wVQ+TSO0I/x4+/y8NALex4sMdVL4kP/YLrl69k9+l7GBZuS9jwroUjp6INiWTv/DNevSAF7GtB8nsAqFWqVkSZawyOofody4yR8bSP/RlUt+NF+zMPVDDwXsy4CDUOC9DCLJ5QdfmQ/ZeHjmucl8oHrY4BMiWuPfl1kz9I29UZCqUupupZLq/vjv9GRQEX4buQvNMNQTdIiS8WVbovzssqf3ZcaWFCcZtv8z2iAMOv8pbdZiugN1DDmtcnVAMzNXes+2usHnmFhNLHhNbvpaaujXE9C+j8tyf3UEU4iUfIQ==
+Received: from DU6P191CA0072.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::25)
+ by GV1P195MB2551.EURP195.PROD.OUTLOOK.COM (2603:10a6:150:1c5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Fri, 2 May
+ 2025 14:26:24 +0000
+Received: from DU6PEPF00009529.eurprd02.prod.outlook.com
+ (2603:10a6:10:53e:cafe::c0) by DU6P191CA0072.outlook.office365.com
+ (2603:10a6:10:53e::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.42 via Frontend Transport; Fri,
+ 2 May 2025 14:26:24 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
+ smtp.mailfrom=phytec.de; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ phytec.de discourages use of 91.26.50.189 as permitted sender)
+Received: from Diagnostix.phytec.de (91.26.50.189) by
+ DU6PEPF00009529.mail.protection.outlook.com (10.167.8.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8699.20 via Frontend Transport; Fri, 2 May 2025 14:26:23 +0000
+Received: from Florix.phytec.de (172.25.0.13) by Diagnostix.phytec.de
+ (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Fri, 2 May
+ 2025 16:26:22 +0200
+Received: from ls-radium.phytec (172.25.39.17) by Florix.phytec.de
+ (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Fri, 2 May
+ 2025 16:26:20 +0200
+From: Daniel Schultz <d.schultz@phytec.de>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <upstream@lists.phytec.de>, Daniel Schultz <d.schultz@phytec.de>
+Subject: [PATCH 1/3] arm64: dts: ti: k3-am62a: Enable CPU freq throttling on thermal alert
+Date: Fri, 2 May 2025 07:26:04 -0700
+Message-ID: <20250502142606.2840508-1-d.schultz@phytec.de>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 1/4] bpf: Allow get_func_[arg|arg_cnt] helpers in
- raw tracepoint programs
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Kafai Wan <mannkafai@gmail.com>, Song Liu <song@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- bpf <bpf@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
- Network Development <netdev@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <20250426160027.177173-1-mannkafai@gmail.com>
- <20250426160027.177173-2-mannkafai@gmail.com>
- <CAADnVQ+DF18nKEf9i1RKEQN+ybH+duu7U-91YZDaa_PiqUx17g@mail.gmail.com>
- <CALqUS-6XtJ0Bb9jiykdC3jAY_OHjGuirj06Kzssjvo7eW_so2A@mail.gmail.com>
- <f951b81f-1b46-4219-82fd-0839e27ab3f3@linux.dev>
- <CAADnVQ+FANha0fO_BF+iHJ4iZSCPtDfoUkzR8mMFwOakw8+eCg@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leon Hwang <leon.hwang@linux.dev>
-In-Reply-To: <CAADnVQ+FANha0fO_BF+iHJ4iZSCPtDfoUkzR8mMFwOakw8+eCg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: Diagnostix.phytec.de (172.25.0.14) To Florix.phytec.de
+ (172.25.0.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009529:EE_|GV1P195MB2551:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a1fea80-b91d-43e1-16d5-08dd898550d8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0yvAL3ep3pphtDGTtZJOc8T6PuQiQQgdo1SgXuHpUyLHSWqeJbTnGdQ9k0J6?=
+ =?us-ascii?Q?yi1g7Q/v8dNWsfKk9dCdoB98jp44SPQI//7B+8erFvsVi8T/Kou1anQDPe/t?=
+ =?us-ascii?Q?ckKFjzq8nUnX6z7F8qaSae/w4ol3r2UWTEtMbJKtQqKyJFDBpgKTTc2OtzIA?=
+ =?us-ascii?Q?BZp6Fd/bA3FQYDSCOVZLr7cmlG9GB0w/FdS//MD42+eoCzm0PtcmvhRwu3ba?=
+ =?us-ascii?Q?KOsPpMvzsTEbEJi1mIVSRFHXJ16L3abdbgFOSlP2gMX88ld0RbgAS1DHejTS?=
+ =?us-ascii?Q?SrEp/MpTkmsKVClMAXGUliIltkj+eYb1VmItdjMoj2+eZhbCq6l8SP1oTayU?=
+ =?us-ascii?Q?ALAiqPV8/bqN+l775rNjOcf+haLY2HR9CEkbgI7HqYF59gJbjbIQzo3avXOV?=
+ =?us-ascii?Q?mV23z+lB7bjWMjbn2VEtMb42+mkqtjxue/P6rKocTQ81kItbtafPAJMTjF1z?=
+ =?us-ascii?Q?Plowf8fIZ0qrH9XLjxpmHMD7dH3qCfx8uKKZ+WrhVAQeeEgu8Yy2lkwYDJUo?=
+ =?us-ascii?Q?dWwuoDC7TfQUaicWL8QUF3kMSIHavyAS7y9t7lPt2KR0/bd4/HS09cNjuhE3?=
+ =?us-ascii?Q?COceGbajnBSYYC4LFUa2k3XQoqPvxdJXMqraUvsAPDPl7PxVPiVot/EnJbZt?=
+ =?us-ascii?Q?BOylpJFwNSd76MtGAGyn3j0VAtLljRaQjJHTX3aunm9Sr7kjHyRHTHFAEKWC?=
+ =?us-ascii?Q?uwuj+RML1IByVWgpLz8YovJRiEJdCbsEL56+qJOXD9VFzG/jY47UwaR3QG7H?=
+ =?us-ascii?Q?sGzwJZugSjnRnQ3dErmVlD0n9Ms1a9naFYzFdc11cLv8QyW5Y313gfbJcKTf?=
+ =?us-ascii?Q?4EIYxRZxsAxXIUJv8OPGNHDsD1PnQzvfaUNd2w2fdBiKjJzf/KmxDuWIh0fo?=
+ =?us-ascii?Q?y2y4L3g/wNxfkDDdnG78tmsSw0y7UqRWD22T80MWn1G2fOArKWmA575fYgY6?=
+ =?us-ascii?Q?EZ5DkmI0XA2hZJBDH2U9Qafn7Yj8Xm6CjOGFJVUwybBL8wIbbgorYsohPZdc?=
+ =?us-ascii?Q?EEA4o1Qg/AlJoh6Akm6RPrRXuo8FC6I3QOz8u/PP0CLB/Gpcojvj3v/XnXZN?=
+ =?us-ascii?Q?2nJhfzm/BPcAvFxGk3AQpVrOY9nrmgZVmBmkcGjPSYICI5nURjrzyWk5vjos?=
+ =?us-ascii?Q?9HJ/L6jrBFTLvhl0d27k+AgRmhWjesB+aCqjBG35e2ZwIThwMxaKtaYITnlm?=
+ =?us-ascii?Q?Ql4N2hpdjR9J2FtDWwogYrnWLjAvVYSZXstxNrumIdPhQ+Pi6cohmikakhEp?=
+ =?us-ascii?Q?C4Nv04AVJp+MJSVjC6nMiKrpUNzDqTWix4D1PjnyPzIJcHPnkHdkXx9rLegj?=
+ =?us-ascii?Q?1T91R7iH/n1rSvc4ohJLJ6L8viYrF5zdeB1JEfH5PY5uBAE6Bk8r1/h1I/2X?=
+ =?us-ascii?Q?iuCY2MLTGC3tZOjIJv2QDJqwH0foK7J9EffRdsJmIcL6Hfkp1W3rlmC0Yoof?=
+ =?us-ascii?Q?Vt6t0ZNZzoIiBTwWIjEa6QA4LmhZs9+nI8dqxTifm9Gz3+JTPUkofFYHa2xT?=
+ =?us-ascii?Q?KkWvx03Up0FCPlZodQC6V6uEugwcAFPln/QZ?=
+X-Forefront-Antispam-Report:
+	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:Diagnostix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: phytec.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2025 14:26:23.5774
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a1fea80-b91d-43e1-16d5-08dd898550d8
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Diagnostix.phytec.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF00009529.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1P195MB2551
 
+Enable throttling down the CPU frequency when an alert temperature
+threshold (lower than the critical threshold) is reached.
 
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+---
+ arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi | 57 ++++++++++++++++++--
+ arch/arm64/boot/dts/ti/k3-am62a7.dtsi        |  4 ++
+ 2 files changed, 58 insertions(+), 3 deletions(-)
 
-On 2025/5/1 00:53, Alexei Starovoitov wrote:
-> On Wed, Apr 30, 2025 at 8:55 AM Leon Hwang <leon.hwang@linux.dev> wrote:
->>
->>
->>
->> On 2025/4/30 20:43, Kafai Wan wrote:
->>> On Wed, Apr 30, 2025 at 10:46 AM Alexei Starovoitov
->>> <alexei.starovoitov@gmail.com> wrote:
->>>>
->>>> On Sat, Apr 26, 2025 at 9:00 AM KaFai Wan <mannkafai@gmail.com> wrote:
->>>>>
->>
-
-[...]
-
->>
->>
->> bpf_get_func_arg() will be very helpful for bpfsnoop[1] when tracing tp_btf.
->>
->> In bpfsnoop, it can generate a small snippet of bpf instructions to use
->> bpf_get_func_arg() for retrieving and filtering arguments. For example,
->> with the netif_receive_skb tracepoint, bpfsnoop can use
->> bpf_get_func_arg() to filter the skb argument using pcap-filter(7)[2] or
->> a custom attribute-based filter. This will allow bpfsnoop to trace
->> multiple tracepoints using a single bpf program code.
-> 
-> I doubt you thought it through end to end.
-> When tracepoint prog attaches we have this check:
->         /*
->          * check that program doesn't access arguments beyond what's
->          * available in this tracepoint
->          */
->         if (prog->aux->max_ctx_offset > btp->num_args * sizeof(u64))
->                 return -EINVAL;
-> 
-> So you cannot have a single bpf prog attached to many tracepoints
-> to read many arguments as-is.
-> You can hack around that limit with probe_read,
-> but the values won't be trusted and you won't be able to pass
-> such untrusted pointers into skb and other helpers/kfuncs.
-
-I understand that a single bpf program cannot be attached to multiple
-tracepoints using tp_btf. However, the same bpf code can be reused to
-create multiple bpf programs, each attached to a different tracepoint.
-
-For example:
-
-SEC("fentry")
-int BPF_PROG(fentry_fn)
-{
-	/* ... */
-	return BPF_OK;
-}
-
-The above fentry code can be compiled into multiple bpf programs to
-trace different kernel functions. Each program can then use the
-bpf_get_func_arg() helper to access the arguments of the traced function.
-
-With this patch, tp_btf will gain similar flexibility. For example:
-
-SEC("tp_btf")
-int BPF_PROG(tp_btf_fn)
-{
-	/* ... */
-	return BPF_OK;
-}
-
-Here, bpf_get_func_arg() can be used to access tracepoint arguments.
-
-Currently, due to the lack of bpf_get_func_arg() support in tp_btf,
-bpfsnoop[1] uses bpf_probe_read_kernel() to read tracepoint arguments.
-This is also used when filtering specific argument attributes.
-
-For instance, to filter the skb argument of the netif_receive_skb
-tracepoint by 'skb->dev->ifindex == 2', the translated bpf instructions
-with bpf_probe_read_kernel() would look like this:
-
-bool filter_arg(__u64 * args):
-; filter_arg(__u64 *args)
- 209: (79) r1 = *(u64 *)(r1 +0) /* all tracepoint's argument has been
-read into args using bpf_probe_read_kernel() */
- 210: (bf) r3 = r1
- 211: (07) r3 += 16
- 212: (b7) r2 = 8
- 213: (bf) r1 = r10
- 214: (07) r1 += -8
- 215: (85) call bpf_probe_read_kernel#-125280
- 216: (79) r3 = *(u64 *)(r10 -8)
- 217: (15) if r3 == 0x0 goto pc+10
- 218: (07) r3 += 224
- 219: (b7) r2 = 8
- 220: (bf) r1 = r10
- 221: (07) r1 += -8
- 222: (85) call bpf_probe_read_kernel#-125280
- 223: (79) r3 = *(u64 *)(r10 -8)
- 224: (67) r3 <<= 32
- 225: (77) r3 >>= 32
- 226: (b7) r0 = 1
- 227: (15) if r3 == 0x2 goto pc+1
- 228: (af) r0 ^= r0
- 229: (95) exit
-
-If bpf_get_func_arg() is supported in tp_btf, the bpf program will
-instead look like:
-
-static __noinline bool
-filter_skb(void *ctx)
-{
-    struct sk_buff *skb;
-
-    (void) bpf_get_func_arg(ctx, 0, (__u64 *) &skb);
-    return skb->dev->ifindex == 2;
-}
-
-This will simplify the generated code and eliminate the need for
-bpf_probe_read_kernel() calls. However, in my tests (on kernel
-6.8.0-35-generic, Ubuntu 24.04 LTS), the pointer returned by
-bpf_get_func_arg() is marked as a scalar rather than a trusted pointer:
-
-	0: R1=ctx() R10=fp0
-	; if (!filter_skb(ctx))
-	0: (85) call pc+3
-	caller:
-	 R10=fp0
-	callee:
-	 frame1: R1=ctx() R10=fp0
-	4: frame1: R1=ctx() R10=fp0
-	; filter_skb(void *ctx)
-	4: (bf) r3 = r10                      ; frame1: R3_w=fp0 R10=fp0
-	;
-	5: (07) r3 += -8                      ; frame1: R3_w=fp-8
-	; (void) bpf_get_func_arg(ctx, 0, (__u64 *) &skb);
-	6: (b7) r2 = 0                        ; frame1: R2_w=0
-	7: (85) call bpf_get_func_arg#183     ; frame1: R0_w=scalar()
-	; return skb->dev->ifindex == 2;
-	8: (79) r1 = *(u64 *)(r10 -8)         ; frame1: R1_w=scalar() R10=fp0
-fp-8=mmmmmmmm
-	; return skb->dev->ifindex == 2;
-	9: (79) r1 = *(u64 *)(r1 +16)
-	R1 invalid mem access 'scalar'
-	processed 7 insns (limit 1000000) max_states_per_insn 0 total_states 0
-peak_states 0 mark_read 0
-
-If the returned skb is a trusted pointer, the verifier will accept
-something like:
-
-static __noinline bool
-filter_skb(struct sk_buff *skb)
-{
-    return skb->dev->ifindex == 2;
-}
-
-Which will compile into much simpler and more efficient instructions:
-
-bool filter_skb(struct sk_buff * skb):
-; return skb->dev->ifindex == 2;
-  92: (79) r1 = *(u64 *)(r1 +16)
-; return skb->dev->ifindex == 2;
-  93: (61) r1 = *(u32 *)(r1 +224)
-  94: (b7) r0 = 1
-; return skb->dev->ifindex == 2;
-  95: (15) if r1 == 0x2 goto pc+1
-  96: (b7) r0 = 0
-; return skb->dev->ifindex == 2;
-  97: (95) exit
-
-In conclusion:
-
-1. It will be better if the pointer returned by bpf_get_func_arg() is
-trusted, only when the argument index is a known constant.
-2. Adding bpf_get_func_arg() support to tp_btf will significantly
-simplify and improve tools like bpfsnoop.
-
-[1] https://github.com/bpfsnoop/bpfsnoop
-
-Thanks,
-Leon
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
+index c7486fb2a5b4..39ff9118b6c4 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
+@@ -12,12 +12,29 @@ main0_thermal: main0-thermal {
+ 		thermal-sensors = <&wkup_vtm0 0>;
+ 
+ 		trips {
++			main0_alert: main0-alert {
++				temperature = <95000>;
++				hysteresis = <2000>;
++				type = "passive";
++			};
++
+ 			main0_crit: main0-crit {
+ 				temperature = <125000>;	/* milliCelsius */
+ 				hysteresis = <2000>;	/* milliCelsius */
+ 				type = "critical";
+ 			};
+ 		};
++
++		cooling-maps {
++			map0 {
++				trip = <&main0_alert>;
++				cooling-device =
++					<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++			};
++		};
+ 	};
+ 
+ 	main1_thermal: main1-thermal {
+@@ -26,25 +43,59 @@ main1_thermal: main1-thermal {
+ 		thermal-sensors = <&wkup_vtm0 1>;
+ 
+ 		trips {
++			main1_alert: main1-alert {
++				temperature = <95000>;
++				hysteresis = <2000>;
++				type = "passive";
++			};
++
+ 			main1_crit: main1-crit {
+ 				temperature = <125000>;	/* milliCelsius */
+ 				hysteresis = <2000>;	/* milliCelsius */
+ 				type = "critical";
+ 			};
+ 		};
++
++		cooling-maps {
++			map0 {
++				trip = <&main1_alert>;
++				cooling-device =
++					<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++			};
++		};
+ 	};
+ 
+ 	main2_thermal: main2-thermal {
+-	       polling-delay-passive = <250>;	/* milliSeconds */
+-	       polling-delay = <500>;		/* milliSeconds */
+-	       thermal-sensors = <&wkup_vtm0 2>;
++		polling-delay-passive = <250>;	/* milliSeconds */
++		polling-delay = <500>;		/* milliSeconds */
++		thermal-sensors = <&wkup_vtm0 2>;
+ 
+ 		trips {
++			main2_alert: main2-alert {
++				temperature = <95000>;
++				hysteresis = <2000>;
++				type = "passive";
++			};
++
+ 			main2_crit: main2-crit {
+ 				temperature = <125000>;	/* milliCelsius */
+ 				hysteresis = <2000>;	/* milliCelsius */
+ 				type = "critical";
+ 			};
+ 		};
++
++		cooling-maps {
++			map0 {
++				trip = <&main2_alert>;
++				cooling-device =
++					<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++			};
++		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
+index 6c99221beb6b..b6e5eee99370 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
+@@ -50,6 +50,7 @@ cpu0: cpu@0 {
+ 			next-level-cache = <&L2_0>;
+ 			operating-points-v2 = <&a53_opp_table>;
+ 			clocks = <&k3_clks 135 0>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -66,6 +67,7 @@ cpu1: cpu@1 {
+ 			next-level-cache = <&L2_0>;
+ 			operating-points-v2 = <&a53_opp_table>;
+ 			clocks = <&k3_clks 136 0>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -82,6 +84,7 @@ cpu2: cpu@2 {
+ 			next-level-cache = <&L2_0>;
+ 			operating-points-v2 = <&a53_opp_table>;
+ 			clocks = <&k3_clks 137 0>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -98,6 +101,7 @@ cpu3: cpu@3 {
+ 			next-level-cache = <&L2_0>;
+ 			operating-points-v2 = <&a53_opp_table>;
+ 			clocks = <&k3_clks 138 0>;
++			#cooling-cells = <2>;
+ 		};
+ 	};
+ 
+-- 
+2.25.1
 
 
