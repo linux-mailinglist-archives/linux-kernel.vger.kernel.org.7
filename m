@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-629570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77608AA6E50
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:39:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195F4AA6E51
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DB8F170501
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33193B96A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9345223182D;
-	Fri,  2 May 2025 09:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF05D2309BD;
+	Fri,  2 May 2025 09:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iYYwamRs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bTylJekk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61377230BC0;
-	Fri,  2 May 2025 09:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C5B1D554
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 09:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746178735; cv=none; b=ba6w18iChT8RF3VkznhV0YXaj45yKF+MmURBEXPotLEk+JrOieegKU2nxmFFPfkKBTkT/sspMUk0e1wK+lMKCSbMo5k5QR6/1yn1j7xLWi3z+UiEHVt6aHnBNncryJ5Mk/fU6+8tlknbmVnbLKmNJkMddQs7AF7Or9xdPXrlXlI=
+	t=1746178776; cv=none; b=f6rm7fSjV/FoVU0PHJN2o6j1aa7gZHQ9LtJy45O6h9VZw62NegakzeZxr7NOh65uxwzmS9nQ6WDI14q9NVsrX0meCJVl2KQUrwoGmBE+qjmBXUmyUqS9jepJM1fBaDmCcHs5eqs7g2JZcURDuS0FxD9FHpiaiYVezwlqxqqIoGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746178735; c=relaxed/simple;
-	bh=rwimjCFZIEK6IiRjQcWFRhle+PT2+gsG7qIuqDDE9jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqyA6EZK2prk7wAqRiysqshPCY1hKlRV48hBOxQIQJNd/bU7u+tKymXBASn6bvYfrFFAMcKPzfzLXGL/e9boBeBjMSYa5YLd9Xe22wXlSEAKN1Uh7TazTIzz5vtkdN7TfvFx1Sck1qjZ1xxsdKRBDaX8STgnZ1erCJiNhiIhhVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iYYwamRs; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746178733; x=1777714733;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rwimjCFZIEK6IiRjQcWFRhle+PT2+gsG7qIuqDDE9jw=;
-  b=iYYwamRsxJ/WsxuvkPDYn7CLqIxXiuUhLKqiOlPTYiMSvBQTI3oN3FhP
-   /ThzzPrHaLFyzuJgQtp+eajkDS7pItN5+Z2EFLScVd19t8bstbBmeryKB
-   jzsgpdMwTItPsfZ1GeDrq5GybwYfXUYaq55meTR/rkJQDbjRHYuBJCUt9
-   d2FcqP0Qm+i7O8AWiCIr7c9C1ZlIVp3sOda34hA2Dw2DG1XaidOxIZY4n
-   1ZaMECQZWOyXUdhugTq90vH7KtIWwHA2dgedEg2sCl10cNi9Gu+ZmliOc
-   Tan9nGkF++VVOKAVjXIDSBDhHj+ooaLID7eYyRaD24zVdBzNQuzT/+aVF
-   w==;
-X-CSE-ConnectionGUID: 0bpqy63XQvW39jx76bRXTw==
-X-CSE-MsgGUID: 148UoPQBSNWRflpfWof/wg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="58526498"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="58526498"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 02:38:52 -0700
-X-CSE-ConnectionGUID: MU4AK4eWSt6Dx0w45zqaAg==
-X-CSE-MsgGUID: aOZwKdC/T7mkYX/GcryvGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="134515801"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 02:38:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uAmr0-000000029HQ-3XlH;
-	Fri, 02 May 2025 12:38:46 +0300
-Date: Fri, 2 May 2025 12:38:46 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Judith Mendez <jm@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, Hari Nagalla <hnagalla@ti.com>
-Subject: Re: [PATCH RFC 0/2] Introduce PRU UART driver
-Message-ID: <aBSSpsT_7UsqN6bl@smile.fi.intel.com>
-References: <20250501003113.1609342-1-jm@ti.com>
+	s=arc-20240116; t=1746178776; c=relaxed/simple;
+	bh=bUC2ovIqDRYMP1p5Wi5+V8mwpGNo86wFcWNQiaEONJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZYpilQeM4BT2ilTk2RCp4Va4CYAxdk3ZZ/TEt4Cxa85Kr9CIdEyfVzw2+fMQLRvn5zO91E/lvWJ/qBSK0ME4Ee0xwhJCAkWCCeQYyRWMA109vbv6B2NGTWCrGmAZ4Q4CPel24lAZO1NsYWiYhC/7Q3ZVfELoDHsoduVEKTacq30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bTylJekk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746178773;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KvMTjXIr23L5UkFhokRaZjcjsplgryREMKqsg59/0zg=;
+	b=bTylJekkEcmxmyDaOoXwXtc/31l1fHOC+1yJPtNRVHiGnvUtUz7hTxzCxv8zZJwvtaxVR+
+	7URAUv2Lkpa26mk2mpyDaLGcTuUIl/No6SBZMWiDYz+vsm6+7+faB5dtqe9wrJFmyIyLk3
+	K0DaO7GuJXbgcW9tSkJrBPQkT7NILZk=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-vhsESbuVNUe4UYbRfqVAAQ-1; Fri, 02 May 2025 05:39:32 -0400
+X-MC-Unique: vhsESbuVNUe4UYbRfqVAAQ-1
+X-Mimecast-MFC-AGG-ID: vhsESbuVNUe4UYbRfqVAAQ_1746178771
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39d917b1455so601136f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 02:39:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746178771; x=1746783571;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KvMTjXIr23L5UkFhokRaZjcjsplgryREMKqsg59/0zg=;
+        b=lnRJ9aJLRVvLy+kAQnFXMxnZt17e2K+6gi4AOOGNrnLIvswgF8cLypNYixPWzuzalj
+         9gDziQ1c1l+kSbB/oFYz6Z5rMCtZl5FwaHE1POaauU/4DRh4mQXXoz2MY0+GWrIxqqyi
+         V0s/7lDnEVGm+OurZRLLolnhaetsFsQaXzpTRdk+koz5utAwP+Tj0qoNexNLI6NqbJq1
+         qhxJ5x3EpOx+WajPHILSdFWmbvbuFXPell2CEK1UvIsjarCcNe3oFAB1KAiXLpaaorSo
+         J7IgQl9xGQ6N02BL95kmcbYVRPZQttoJWQyn79KC5NDtiRbb2NqtiyeFK0dGwjuP6cM0
+         jZOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxF5gt2UZjgO59W7s3kstbGbGQpzb15/7hGQAkNuB+CREl36NIXiTWJYYcQLw/EXJ9xWA7Sb+N9eXbHwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0hc0RC5q7IjqyEshQ2ttrvROJnvmF3SxllOd9GPppZbqAmcA5
+	xlPrTuiWmjNagapfg9fZcEKa4+juskKU1PXxTIFZGE0B+w6QF76AgqgiletcvZ0eUPJMv6tVTKm
+	fHC1d3SX/jFCZOkYLkb50dJTC2uWBnpxgBdR4+8Ql5DFHMrQ3gC+qxgKYemmNvg==
+X-Gm-Gg: ASbGncs/OqrRTBYMmwOVMuc2acfnkO/OqDdUSu1BDKmgxkqQZUAxTqIzmgUfn51fL53
+	nq1cavaUIKkVRhfdrxQ77VjjC02MzW2nri/75ytbF60UWm5+sj3g6JvBQlNM/PYSt3P5q1YR0FB
+	yqF+h2ozRN9t+Rfm7bE+4PMr5VHcBxtvAbm3aUk/mhYbIbfw/IzCY2RmaFxzahg6MKM0FGHgThj
+	EuMsEWG6g7El/VON63wKUCmI+LmTU7CUdM64rq9NPp8E6GMhZNGIOHawyF9sTJ5x+DSpfqnZ/Tl
+	GkLf8mOt7Q1HsR4bUoU=
+X-Received: by 2002:a05:6000:1786:b0:39c:1efc:b02 with SMTP id ffacd0b85a97d-3a099adcf74mr1557128f8f.28.1746178770910;
+        Fri, 02 May 2025 02:39:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5qRtj7uOx+MrGjrQ0dlSuVyHoANGSwgxM48EP/hxqRnPg/Z9eT562Fod9WT5DTPyqxAshJw==
+X-Received: by 2002:a05:6000:1786:b0:39c:1efc:b02 with SMTP id ffacd0b85a97d-3a099adcf74mr1557108f8f.28.1746178770589;
+        Fri, 02 May 2025 02:39:30 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:246d:aa10::f39? ([2a0d:3344:246d:aa10::f39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae0bf6sm1660706f8f.18.2025.05.02.02.39.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 May 2025 02:39:30 -0700 (PDT)
+Message-ID: <cb94f33f-2e74-4e5d-8f68-58322a290ffb@redhat.com>
+Date: Fri, 2 May 2025 11:39:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250501003113.1609342-1-jm@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v7 08/12] net: usb: lan78xx: Convert to PHYLINK
+ for improved PHY and MAC management
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Woojung Huh <woojung.huh@microchip.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ Russell King <rmk+kernel@armlinux.org.uk>,
+ Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+ Rengarajan Sundararajan <Rengarajan.S@microchip.com>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
+ Phil Elwell <phil@raspberrypi.org>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Simon Horman <horms@kernel.org>
+References: <20250428130542.3879769-1-o.rempel@pengutronix.de>
+ <20250428130542.3879769-9-o.rempel@pengutronix.de>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250428130542.3879769-9-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 30, 2025 at 07:31:11PM -0500, Judith Mendez wrote:
-> This patch series is sent as an RFC to get some initial comments
-> on the PRU UART driver.
-> 
-> The ICSSM modules on am64x SoC and the PRUSS module on am62 SoC or am335x
-> SoCs have a UART sub-module. This patch series introduces the driver and the
-> corresponding binding documentation for this sub-module.
-> 
-> The DTS patches for adding PRU nodes and enabling PRU UART will be added
-> in a later v1 version of the series if accepted.
-> 
-> This driver has been previously tested on the following boards:
-> am64x SK, am62x SK, and am335x SK boards.
+On 4/28/25 3:05 PM, Oleksij Rempel wrote:
+> @@ -384,7 +385,7 @@ struct skb_data {		/* skb->cb is one of these */
+>  #define EVENT_RX_HALT			1
+>  #define EVENT_RX_MEMORY			2
+>  #define EVENT_STS_SPLIT			3
+> -#define EVENT_LINK_RESET		4
+> +#define EVENT_PHY_INT_ACK		4
 
-The first and main question here: Have you checked the existing zillion of
-drivers and become with an idea that none of them not even close to this one
-(based on RTL)?
+The patch is quite large as-is. The bit rename should possibly go in a
+separate patch.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+/P
 
 
