@@ -1,101 +1,171 @@
-Return-Path: <linux-kernel+bounces-629431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD92AA6C6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1113AA6CE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 153531BA570A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C648C1BA1A9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC572288C0;
-	Fri,  2 May 2025 08:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/TX4Mf5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B2722D788;
+	Fri,  2 May 2025 08:50:03 +0000 (UTC)
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0BA8828;
-	Fri,  2 May 2025 08:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25D722A7F8
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746173922; cv=none; b=c7spS0+srjKBstkuctxbUFp3w05HUXca4BapjUSeMvqPQ/nM7lWHQdT46DL7FrKr3unKamw31D2scID3DNYV2qlAFrGO2YENLQE0XX7VBWtqbZxvMQTJ/kJimFn2Wj0Fj84a8p3ByDT2HSrR3mRC5M2xp+k7SCn1YEZtPTf84dM=
+	t=1746175803; cv=none; b=eIfXbvo1I2T+vr2XFQehsSSMLi19O/7Xuta5/qvZY4tSwq3EUAxPuxKFiq+4D9WKpUwIEBbbD7AtaV031R8Fl0qlaur7qcpDD3v/YrH4YtKBBdU7p/ni/mAy3+2TZfh3gnOTUiuxS6MjSzYDOgnfARA5AFRQJY9iNoJY0LVb7Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746173922; c=relaxed/simple;
-	bh=cceIUw9EX6CJ615GNdppXNrElVMTPwJztPtsbm/5hy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vt7Jc/sIw8Fqc2xhbOrNLzkm5euA3Z4bFUVAjgY7NxG72qDQVoJf3NW9EC7+Z+h0s8qq3nrY/2JBhLolVntT14n2AOxgOvCXGUuNDPPk3Ui3DNcDkRl0YutnCDiA/jTRN1TY68VIjZSTeDHDT91VV8rwvF6i2n/j4np4evQcfkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/TX4Mf5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3FCDC4CEE9;
-	Fri,  2 May 2025 08:18:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746173921;
-	bh=cceIUw9EX6CJ615GNdppXNrElVMTPwJztPtsbm/5hy8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U/TX4Mf5qkn+d5eWIgqv7vIk75zfM6yrIPmHLSfaOvilB1TMJCOwX6UxaLi3/4ntF
-	 CTdvcW24sQjGFvj/AXsOJGncvakw6Z4p8ZclsEDe2hknFU+ckPt2/qHvdPIyk59xbo
-	 rV1pq8QWA/qTkpUObp899r1foJ9LRWGoqI6CTS1V0Cu+JCa9JAJtB9a+QLyuX858V2
-	 70a22IBVEVB0MRp2wD32EPcEnvbH3GYXu7Ra0oeU+V0Ro/eudlwhxrpwk5f5KAdfqv
-	 vheM2b3e+KJz5ez4AHrUsoRTaS6WvSOsjRrAmUB93Bp+mNMmxeQYuTcRVRzY5U5RIz
-	 AD+AuPXxVZ3PA==
-Date: Fri, 2 May 2025 10:18:30 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
-	linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	acme@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
-	peterz@infradead.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, wei.liu@kernel.org,
-	ajay.kaher@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	tony.luck@intel.com, pbonzini@redhat.com, vkuznets@redhat.com,
-	seanjc@google.com, luto@kernel.org, boris.ostrovsky@oracle.com,
-	kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
-	dapeng1.mi@linux.intel.com, ilpo.jarvinen@linux.intel.com
-Subject: Re: [PATCH v4 02/15] x86/msr: Move rdtsc{,_ordered}() to <asm/tsc.h>
-Message-ID: <aBR_1oQN-gKCREBD@gmail.com>
-References: <20250427092027.1598740-1-xin@zytor.com>
- <20250427092027.1598740-3-xin@zytor.com>
+	s=arc-20240116; t=1746175803; c=relaxed/simple;
+	bh=GdljnzaOmJQUsHwdXbdpdIIhHpWAQPc89HEotf1DmbI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=m6qqrEhGAtreDKJ21ap0WE9QgxrHLQag+kjlgvuffsTL8dLYj80QbhS/z00TX7tfILBLXKnASYqmcyUiI2E/qk1IyTg46QvW+RhT02cXSXN4lUC9tF6dDixsZt9Fj+PRH2FIGVbHxIn1BRMKLz2s/3JzWpK2QQgZRmGLsiqf/BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+	by 156.147.23.52 with ESMTP; 2 May 2025 17:19:57 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
+	by 156.147.1.125 with ESMTP; 2 May 2025 17:19:57 +0900
+X-Original-SENDERIP: 10.178.31.96
+X-Original-MAILFROM: chanho.min@lge.com
+From: Chanho Min <chanho.min@lge.com>
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: linux-kernel@vger.kernel.org,
+	gunho.lee@lge.com,
+	Chanho Min <chanho.min@lge.com>
+Subject: [PATCH] squashfs: Add optional full compressed block caching
+Date: Fri,  2 May 2025 17:19:47 +0900
+Message-Id: <20250502081947.44034-1-chanho.min@lge.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250427092027.1598740-3-xin@zytor.com>
 
+The commit 93e72b3c612adcaca1("squashfs: migrate from ll_rw_block usage to BIO")
+removed caching of compressed blocks in SquashFS, causing fio performance
+regression in workloads with repeated file reads. Without caching, every read
+triggers disk I/O, severely impacting performance in tools like fio.
 
-* Xin Li (Intel) <xin@zytor.com> wrote:
+This patch introduces a new CONFIG_SQUASHFS_COMP_CACHE_FULL Kconfig option to
+enable caching of all compressed blocks, restoring performance to pre-BIO
+migration levels. When enabled, all pages in a BIO are cached in the page
+cache, reducing disk I/O for repeated reads. The fio test results with this
+patch confirm the performance restoration:
 
-> For some reason, there are some TSC-related functions in the MSR
-  ^^^^^^^^^^^^^^^
-> header even though there is a tsc.h header.
+For example, fio tests (iodepth=1, numjobs=1,
+ioengine=psync) show a notable performance restoration:
 
-The real reason is that the rdtsc{,_ordered}() methods use the 
-EAX_EDX_*() macros to optimize their EDX/EAX assembly accessors, which 
-is why these methods were in <asm/msr.h>.
+Disable CONFIG_SQUASHFS_COMP_CACHE_FULL:
+  IOPS=815, BW=102MiB/s (107MB/s)(6113MiB/60001msec)
+Enable CONFIG_SQUASHFS_COMP_CACHE_FULL:
+  IOPS=2223, BW=278MiB/s (291MB/s)(16.3GiB/59999msec)
 
-Your followup patch tacitly acknowledges this by silently creating 
-duplicate copies of these facilities in both headers ...
+The trade-off is increased memory usage due to caching all compressed blocks.
+The CONFIG_SQUASHFS_COMP_CACHE_FULL option allows users to enable this feature
+selectively, balancing performance and memory usage for workloads with frequent
+repeated reads.
 
-I've cleaned it all up in tip:x86/msr via these preparatory patches:
+Signed-off-by: Chanho Min <chanho.min@lge.com>
+---
+ fs/squashfs/Kconfig | 21 +++++++++++++++++++++
+ fs/squashfs/block.c | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-  x86/msr: Improve the comments of the DECLARE_ARGS()/EAX_EDX_VAL()/EAX_EDX_RET() facility
-  x86/msr: Rename DECLARE_ARGS() to EAX_EDX_DECLARE_ARGS
-  x86/msr: Move the EAX_EDX_*() methods from <asm/msr.h> to <asm/asm.h>
+diff --git a/fs/squashfs/Kconfig b/fs/squashfs/Kconfig
+index 60fc98bdf421..cc5e4be58afa 100644
+--- a/fs/squashfs/Kconfig
++++ b/fs/squashfs/Kconfig
+@@ -149,6 +149,27 @@ config SQUASHFS_XATTR
+ 
+ 	  If unsure, say N.
+ 
++config SQUASHFS_COMP_CACHE_FULL
++	bool "Enable full caching of compressed blocks"
++	depends on SQUASHFS
++	default n
++	help
++	  This option enables caching of all compressed blocks, Without caching,
++	  repeated reads of the same files trigger excessive disk I/O, significantly
++	  reducinng performance in workloads like fio-based benchmarks.
++
++	  For example, fio tests (iodepth=1, numjobs=1, ioengine=psync) show:
++	   Without caching: IOPS=2223, BW=278MiB/s (291MB/s)
++	   With caching:    IOPS=815, BW=102MiB/s (107MB/s)
++
++	  Enabling this option restores performance to pre-regression levels by
++	  caching all compressed blocks in the page cache, reducing disk I/O for
++	  repeated reads. However, this increases memory usage, which may be a
++	  concern in memory-constrained environments.
++
++	  Enable this option if your workload involves frequent repeated reads and
++	  memory usage is not a limiting factor. If unsure, say N.
++
+ config SQUASHFS_ZLIB
+ 	bool "Include support for ZLIB compressed file systems"
+ 	depends on SQUASHFS
+diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
+index 2dc730800f44..3061043e915c 100644
+--- a/fs/squashfs/block.c
++++ b/fs/squashfs/block.c
+@@ -88,6 +88,10 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
+ 	struct bio_vec *bv;
+ 	int idx = 0;
+ 	int err = 0;
++#ifdef CONFIG_SQUASHFS_COMP_CACHE_FULL
++	struct page **cache_pages = kmalloc_array(page_count,
++			sizeof(void *), GFP_KERNEL | __GFP_ZERO);
++#endif
+ 
+ 	bio_for_each_segment_all(bv, fullbio, iter_all) {
+ 		struct page *page = bv->bv_page;
+@@ -110,6 +114,11 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
+ 			head_to_cache = page;
+ 		else if (idx == page_count - 1 && index + length != read_end)
+ 			tail_to_cache = page;
++#ifdef CONFIG_SQUASHFS_COMP_CACHE_FULL
++		/* Cache all pages in the BIO for repeated reads */
++		else if (cache_pages)
++			cache_pages[idx] = page;
++#endif
+ 
+ 		if (!bio || idx != end_idx) {
+ 			struct bio *new = bio_alloc_clone(bdev, fullbio,
+@@ -163,6 +172,25 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
+ 		}
+ 	}
+ 
++#ifdef CONFIG_SQUASHFS_COMP_CACHE_FULL
++	if (!cache_pages)
++		goto out;
++
++	for (idx = 0; idx < page_count; idx++) {
++		if (!cache_pages[idx])
++			continue;
++		int ret = add_to_page_cache_lru(cache_pages[idx], cache_mapping,
++						(read_start >> PAGE_SHIFT) + idx,
++						GFP_NOIO);
++
++		if (!ret) {
++			SetPageUptodate(cache_pages[idx]);
++			unlock_page(cache_pages[idx]);
++		}
++	}
++	kfree(cache_pages);
++out:
++#endif
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
 
-Thanks,
-
-	Ingo
 
