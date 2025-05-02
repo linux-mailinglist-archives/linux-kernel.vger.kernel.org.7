@@ -1,110 +1,245 @@
-Return-Path: <linux-kernel+bounces-630477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130BDAA7AC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:19:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362E5AA7AD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1587C17CC8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:19:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB62D3AE34B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C311F4C89;
-	Fri,  2 May 2025 20:19:19 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8951D1FCFE7;
+	Fri,  2 May 2025 20:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qijDsJ4u"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026D3146A68
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 20:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661411F4C89
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 20:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746217159; cv=none; b=tgl2SaKxoGUJDFDXSfz1nei6SyvD88BB2nYTADpmMOJJHam74oWdRB5g4qgPge8mboFSzYOHS0qoqJuIEvXqByoeLDJbl7Lak5XaPMF+qWjmjnxdbxrlPMIjk8TB8IuttAsurUyxSdq+r1oUacKvl6YPw/KWTwSrmMBIELAe55o=
+	t=1746217465; cv=none; b=tengOB8cqqIehHddlx9pwtrAeivYHVcB1YxdjbW65dJucADHltTprkI7C78+LTbSAbbM7qCFitLI1TGjE5NlcqHLSgwlZdaWY9eivQsN6hNnpP4tfr2ePFf1Qmeoj1tb/bdXEIfRxrCOniQb9I8d5nKpopVVoQfgnDy2750hvDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746217159; c=relaxed/simple;
-	bh=yYuqw05ixaJvRe4CUY2qg+SReCrNCvaLdxtBMpCKO2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JEyPSdLTr82xLGPbJba1UYu9Qvy3O1Mv2ejKtHZZFU/0fyhxYfvk/sPddwspQ+9fOy/bcCQ2Vup72qkuWQxDCIJqEjk8DPJZPhUtP0auo29Rp4TMMc0IOwh7YHgXZjnrlNmt6JYfSKp7xzFG/0m2a2KD3OTrNksClw+V1BkaG54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8697C4CEE4;
-	Fri,  2 May 2025 20:19:13 +0000 (UTC)
-Date: Fri, 2 May 2025 21:19:11 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Peter Collingbourne <pcc@google.com>
-Cc: David Hildenbrand <david@redhat.com>, Yeoreum Yun <yeoreum.yun@arm.com>,
-	will@kernel.org, broonie@kernel.org, anshuman.khandual@arm.com,
-	joey.gouly@arm.com, maz@kernel.org, oliver.upton@linux.dev,
-	frederic@kernel.org, james.morse@arm.com,
-	hardevsinh.palaniya@siliconsignals.io,
-	shameerali.kolothum.thodi@huawei.com, huangxiaojia2@huawei.com,
-	mark.rutland@arm.com, samuel.holland@sifive.com,
-	palmer@rivosinc.com, charlie@rivosinc.com,
-	thiago.bauermann@linaro.org, bgray@linux.ibm.com,
-	tglx@linutronix.de, puranjay@kernel.org,
-	yang@os.amperecomputing.com, mbenes@suse.cz,
-	joel.granados@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, nd@arm.com
-Subject: Re: [PATCH v3 2/4] prtcl: introduce PR_MTE_STORE_ONLY
-Message-ID: <aBUovySaQN8m8L0w@arm.com>
-References: <20250410080723.953525-1-yeoreum.yun@arm.com>
- <20250410080723.953525-3-yeoreum.yun@arm.com>
- <390f3d5e-8da6-4286-b8a9-72eabcc3abd5@redhat.com>
- <aBUC5fsSVzGkQtUV@arm.com>
- <CAMn1gO7ai3EvHhepJJQXOvjc8_Mp6DEAZg0J1gMKSJTECnU0VA@mail.gmail.com>
+	s=arc-20240116; t=1746217465; c=relaxed/simple;
+	bh=dZuVMFmp0Inh0pJRa9kV5vxGYfgwhCDsb1znOpLRUuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EsId4uwukqdAcO/Zg8umEkVBGPfmCos6kdrCVf+avaNaF9beoC4vpZXbjqDCvnvZXHJl3CJdnEK9sN+HfFToDgUxLxybUvY/xrlrx0Wd2wyPSOCv9fOgkz6awuHXShcapAO9Hd7BUDKRfAeJ284P0DrnHgiMJ2GGIoLBbFpD5DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qijDsJ4u; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f632bada3bso570a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 13:24:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746217461; x=1746822261; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gL/oGMV1bkBsob4mtK0KVB/s8CsmE7l1Y9u7qBwJ374=;
+        b=qijDsJ4uM7RQU03hpObBC5RwJQ+UnXe2v95/sNQ62K6Tu6XGDyV6exQZqCLu7iq4uU
+         /+PUvbo4fdwiVt7eVlzt8NAAWLpnotqbHz9czdmQt7WTJAubIrwCdJ6UhEoLWgDxlgZM
+         VVr7YAN+27ItumPgbt1WR8B6hQBMKNeZ0f5E4c+yjtNizgRE/FYJMAh+hVxQ/gXV1JBV
+         /I1RNcImiNfF5smL2yVgwuVFBiT6p2aPU0gjrt0oGEMkPsfrFK8OfwJfOQyW3GA2FoXL
+         0nxbmkXs9sfzPQ0y6nUiaoh9sfMt9VM0p+HX8nRfrFCXc6n+GTL8Q52FCymiMw6Y5noZ
+         K7cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746217461; x=1746822261;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gL/oGMV1bkBsob4mtK0KVB/s8CsmE7l1Y9u7qBwJ374=;
+        b=MNkxd8Xhzx9/+l030baxHi7oOjmMYjWGfHsGQcysPPhshvHxqPfjlhSwnorfzWuqLp
+         Ser7trs1wq+cN1Y9j8/1pzKAdPKD9H6GHZW+L3yORDxhWSRSIQJkRzl+ntrVk8X7XcuH
+         yDRWhStp+pPVvuIJP6cu6jlDjbTlFah4lBosNTIKCRmMu8dmzTxw5Ee/f/G/fzl521Cz
+         wMDd6ywXeyLddOh9xnmkG5HX8t3DbMoC3ZroKulS1kXVRCKiI/URoS3eb+RQYpVAuYYD
+         qSDvwRiQa77mMwTGpRGXlcPSP5gIXn97k7lNox1woPaNrsdRtXsD+lePzkxHyAAtpETb
+         gXcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdJZ5mn2cDebxq2kLiQMM6lQIEqMLa5KIuDEnxvIEZ9HVoPSeOAdKUgt8fhsH4gsg8MWyO1xAeBcrTaEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdV+2pN4i4vK1w0sbpn8lgMRTV7GJr0FzQ0u1JxebUtIuKMKwH
+	DQArvTGw5H0sqJC23X/ZUG0Ro6btlX3j+4md9T5mHob++CKRbA5ALR1DTvL12uaAbaf2gLSmMqj
+	aLptsvAiWai4g+ICOCYgeiaqhQIWuFS/t4Wfa
+X-Gm-Gg: ASbGncscAx/KXWTs4uP5MZCN01f/FusGGaCq72B4PP5COtHrrkK9UVECJiu6x+o1VFp
+	OZfMn83wgD4EKrVLaeoZs9xaKopHL2m3UCCi+yOwSGzKFZ5Ae6APwtNpTebxdXvLxMD6AwEqDbY
+	kkM5DU7e3pP6N7ksK8ybqsfd+78jU+ug4d7Qrc8Ewu7YUuBfrt9Q==
+X-Google-Smtp-Source: AGHT+IFBU11EVpVVrPBWAa64nkvdz6L6ofQR3kObgZnTcGWuajyGenWOEyDvBPb9FIURCMHMiUL8h1vtr1nfhcj1alo=
+X-Received: by 2002:a05:6402:3199:b0:5fa:82a1:b99c with SMTP id
+ 4fb4d7f45d1cf-5faa69618bamr24415a12.0.1746217460265; Fri, 02 May 2025
+ 13:24:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMn1gO7ai3EvHhepJJQXOvjc8_Mp6DEAZg0J1gMKSJTECnU0VA@mail.gmail.com>
+References: <20250502-work-coredump-socket-v2-0-43259042ffc7@kernel.org>
+ <20250502-work-coredump-socket-v2-3-43259042ffc7@kernel.org>
+ <CAG48ez1w+25tbSPPU6=z1rWRm3ZXuGq0ypq4jffhzUva9Bwazw@mail.gmail.com> <20250502-fanden-unbeschadet-89973225255f@brauner>
+In-Reply-To: <20250502-fanden-unbeschadet-89973225255f@brauner>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 2 May 2025 22:23:44 +0200
+X-Gm-Features: ATxdqUHXcPgw7KB5LjgFO4gcINlAup0zI_DygTIVLbII3rAu_F1SAY-m1syr1Ko
+Message-ID: <CAG48ez3xYzzazbxcHKEFzj9DDMOrnVf1cfjNpwE_FAY-YhtHmw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 3/6] coredump: support AF_UNIX sockets
+To: Christian Brauner <brauner@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 02, 2025 at 11:03:02AM -0700, Peter Collingbourne wrote:
-> On Fri, May 2, 2025 at 10:37 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > On Thu, Apr 24, 2025 at 10:34:57PM +0200, David Hildenbrand wrote:
-> > > On 10.04.25 10:07, Yeoreum Yun wrote:
-> > > > PR_MTE_STORE_ONLY is used to restrict the MTE tag check for store
-> > > > opeartion only.
-> > > >
-> > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > > > ---
-> > > >   include/uapi/linux/prctl.h | 2 ++
-> > > >   1 file changed, 2 insertions(+)
-> > > >
-> > > > diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> > > > index 15c18ef4eb11..83ac566251d8 100644
-> > > > --- a/include/uapi/linux/prctl.h
-> > > > +++ b/include/uapi/linux/prctl.h
-> > > > @@ -244,6 +244,8 @@ struct prctl_mm_map {
-> > > >   # define PR_MTE_TAG_MASK          (0xffffUL << PR_MTE_TAG_SHIFT)
-> > > >   /* Unused; kept only for source compatibility */
-> > > >   # define PR_MTE_TCF_SHIFT         1
-> > > > +/* MTE tag check store only */
-> > > > +# define PR_MTE_STORE_ONLY         (1UL << 19)
-> > >
-> > > That is the next available bit after PR_MTE_TAG_MASK, correct?
-> > >
-> > > Would we want to leave some space to grow PR_MTE_TAG_MASK in the future
-> > > (could that happen?)?
+On Fri, May 2, 2025 at 10:11=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> On Fri, May 02, 2025 at 04:04:32PM +0200, Jann Horn wrote:
+> > On Fri, May 2, 2025 at 2:42=E2=80=AFPM Christian Brauner <brauner@kerne=
+l.org> wrote:
+> > > diff --git a/fs/coredump.c b/fs/coredump.c
+> > [...]
+> > > @@ -801,6 +841,73 @@ void do_coredump(const kernel_siginfo_t *siginfo=
+)
+> > >                 }
+> > >                 break;
+> > >         }
+> > > +       case COREDUMP_SOCK: {
+> > > +               struct file *file __free(fput) =3D NULL;
+> > > +#ifdef CONFIG_UNIX
+> > > +               ssize_t addr_size;
+> > > +               struct sockaddr_un unix_addr =3D {
+> > > +                       .sun_family =3D AF_UNIX,
+> > > +               };
+> > > +               struct sockaddr_storage *addr;
+> > > +
+> > > +               /*
+> > > +                * TODO: We need to really support core_pipe_limit to
+> > > +                * prevent the task from being reaped before userspac=
+e
+> > > +                * had a chance to look at /proc/<pid>.
+> > > +                *
+> > > +                * I need help from the networking people (or maybe O=
+leg
+> > > +                * also knows?) how to do this.
+> > > +                *
+> > > +                * IOW, we need to wait for the other side to shutdow=
+n
+> > > +                * the socket/terminate the connection.
+> > > +                *
+> > > +                * We could just read but then userspace could sent u=
+s
+> > > +                * SCM_RIGHTS and we just shouldn't need to deal with
+> > > +                * any of that.
+> > > +                */
 > >
-> > The current mask covers 16 tags (bits 59:56 of a pointer) and given the
-> > reluctance to have a tag storage of 4 bits per 16 bytes (3% of RAM), I
-> > doubt we'd ever grow this.
+> > I don't think userspace can send you SCM_RIGHTS if you don't do a
+> > recvmsg() with a control data buffer?
+>
+> Oh hm, then maybe just a regular read at the end would work. As soon as
+> userspace send us anything or we get a close event we just disconnect.
+>
+> But btw, I think we really need a recvmsg() flag that allows a receiver
+> to refuse SCM_RIGHTS/file descriptors from being sent to it. IIRC, right
+> now this is a real issue that systemd works around by always calling its
+> cmsg_close_all() helper after each recvmsg() to ensure that no one sent
+> it file descriptors it didn't want. The problem there is that someone
+> could have sent it an fd to a hanging NFS server or something and then
+> it would hang in close() even though it never even wanted any file
+> descriptors in the first place.
+
+Would a recvmsg() flag really solve that aspect of NFS hangs? By the
+time you read from the socket, the file is already attached to an SKB
+queued up on the socket, and cleaning up the file is your task's
+responsibility either way (which will either be done by the kernel for
+you if you don't read it into a control message, or by userspace if it
+was handed off through a control message). The process that sent the
+file to you might already be gone, it can't be on the hook for
+cleaning up the file anymore.
+
+I think the thorough fix would probably be to introduce a socket
+option (controlled via setsockopt()) that already blocks the peer's
+sendmsg().
+
+> > > +                * In general though, userspace should just mark itse=
+lf
+> > > +                * non dumpable and not do any of this nonsense. We
+> > > +                * shouldn't work around this.
+> > > +                */
+> > > +               addr =3D (struct sockaddr_storage *)(&unix_addr);
+> > > +               retval =3D __sys_connect_file(file, addr, addr_size, =
+O_CLOEXEC);
 > >
-> > However, you have a good point, we could indeed leave 32 bits for the
-> > tag mask, just in case MTE gets so much traction that someone wants 8
-> > bits per tag (and likely a bigger granule than 16 bytes). It doesn't
-> > cost us anything to add additional bits from (PR_MTE_TAG_SHIFT + 32).
-> 
-> If it's 8 bits per tag wouldn't the exclusion mask need to be 256
-> bits? I probably wouldn't try to anticipate this case since it would
-> likely require a different API anyway.
+> > Have you made an intentional decision on whether you want to connect
+> > to a unix domain socket with a path relative to current->fs->root (so
+> > that containers can do their own core dump handling) or relative to
+> > the root namespace root (so that core dumps always reach the init
+> > namespace's core dumping even if a process sandboxes itself with
+> > namespaces or such)? Also, I think this connection attempt will be
+>
+> Fsck no. :) I just jotted this down as an RFC. Details below.
+>
+> > subject to restrictions imposed by (for example) Landlock or AppArmor,
+> > I'm not sure if that is desired here (since this is not actually a
+> > connection that the process in whose context the call happens decided
+> > to make, it's something the system administrator decided to do, and
+> > especially with Landlock, policies are controlled by individual
+> > applications that may not know how core dumps work on the system).
+> >
+> > I guess if we keep the current behavior where the socket path is
+> > namespaced, then we also need to keep the security checks, since an
+> > unprivileged user could probably set up a namespace and chroot() to a
+> > place where the socket path (indirectly, through a symlink) refers to
+> > an arbitrary socket...
+> >
+> > An alternative design might be to directly register the server socket
+> > on the userns/mountns/netns or such in some magic way, and then have
+> > the core dumping walk up the namespace hierarchy until it finds a
+> > namespace that has opted in to using its own core dumping socket, and
+> > connect to that socket bypassing security checks. (A bit like how
+> > namespaced binfmt_misc works.) Like, maybe userspace with namespaced
+>
+> Yeah, I namespaced that thing. :)
 
-Yep, not sure what I was thinking. So all good with the original patch.
+Oh, hah, sorry, I forgot that was you.
 
--- 
-Catalin
+> > CAP_SYS_ADMIN could bind() to some magic UNIX socket address, or use
+> > some new setsockopt() on the socket or such, to become the handler of
+> > core dumps? This would also have the advantage that malicious
+> > userspace wouldn't be able to send fake bogus core dumps to the
+> > server, and the server would provide clear consent to being connected
+> > to without security checks at connection time.
+>
+> I think that's policy that I absolute don't want the kernel to get
+> involved in unless absolutely necessary. A few days ago I just discussed
+> this at length with Lennart and the issue is that systemd would want to
+> see all coredumps on the system independent of the namespace they're
+> created in. To have a per-namespace (userns/mountns/netns) coredump
+> socket would invalidate that one way or the other and end up hiding
+> coredumps from the administrator unless there's some elaborate scheme
+> where it doesn't.
+>
+> systemd-coredump (and Apport fwiw) has infrastructure to forward
+> coredumps to individual services and containers and it's already based
+> on AF_UNIX afaict. And I really like that it's the job of userspace to
+> deal with this instead of the kernel having to get involved in that
+> mess.
+>
+> So all of this should be relative to the initial namespace. I want a
+
+Ah, sounds good.
+
+> separate security hook though so an LSMs can be used to prevent
+> processes from connecting to the coredump socket.
+>
+> My idea has been that systemd-coredump could use a bpf lsm program that
+> would allow to abort a coredump before the crashing process connects to
+> the socket and again make this a userspace policy issue.
+
+I don't understand this part. Why would you need an LSM to prevent a
+crashing process from connecting, can't the coredumping server process
+apply whatever filtering it wants in userspace?
 
