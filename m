@@ -1,128 +1,110 @@
-Return-Path: <linux-kernel+bounces-629840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056DDAA723F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:38:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0449AA7248
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08DEA9C3BF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:38:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A9357AB6C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2567253321;
-	Fri,  2 May 2025 12:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0576A254B02;
+	Fri,  2 May 2025 12:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cyq9WvAz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QGktqbLi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SO3Ht/BQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C92182;
-	Fri,  2 May 2025 12:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7419251782;
+	Fri,  2 May 2025 12:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746189498; cv=none; b=c1A0SeC66qpt8gU7aak4LTmNpHpu0WozrGUOy57nbozOdDHh0MICEDYjMWkX4cFO9/nsaiUUIWLBZxpoE727fhpBHsaONeAZdEVPTYx6sPxMnLFmpZ4A7vBAoiYdaO9+Dq9kc6wpZh65dVvJ0RYxKLInMRSqLxni5ywHyZa2mzY=
+	t=1746189625; cv=none; b=cKI0vWWyEwqP2vxHxHOgdQeWsXxyEjJNiziRR8hI7xoWnzVt73CnY/5lHI1EA2zEumPYR74zEQPOgWj7OtutfitHMZwEgLzVOGC8YSCbLQFfO0FOkMQPrUygm0Jv8k7jXw29gnuNSXBXPr+//3D9xQ2KPLKD7a7sPOmuoSXVgJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746189498; c=relaxed/simple;
-	bh=XkAKwcrcu3Kbyc6j3TA7W+HyEBnoC8cpTFtI8G59PAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9JeieJZs+iItXQ9cRZG5kl9XcKspxaJNskngsaRGjLmKeBVXS8Rs6F2PqOuh6Pf836tk5xMta8GNPjZwGg8aB6W7sm2UADeiDm7RsA6OtmLZhbD5Q1uQ5Gc4VOX+W4GiWaYrosRC3xoP+TN4eW/nUjorIvYjMG6GN4MNNaZuYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cyq9WvAz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1EABC4CEE4;
-	Fri,  2 May 2025 12:38:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746189496;
-	bh=XkAKwcrcu3Kbyc6j3TA7W+HyEBnoC8cpTFtI8G59PAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cyq9WvAzCSi8XgE7tn82RGvlWkpbBBAv0xyFlbV5V5aNWtZ2XxGLOvGlz1/P4yEw3
-	 XE0XyP08vWufSlawXNhQ2tSs64SUdrHg/af5bCABvvR+Gg4VlKPVltVQrmhKyo7adU
-	 WK44zwx4G+CuvJrDKirICcIlbR8/oP5L55bBqSZMd1nDkhacUlhMBn+pbbsS4Zfu/l
-	 k/r+yy2G9zPqKEUavHcVG+GAMfbA4Ew6khVxEoLaVGf2PIgYPuHT/y90G+2jkcbekE
-	 1R8Io2AyK6pS5Mde4xb5V0DMdnZHwKdmVjmydlXfhENQG8iaGQojMtiBZcfPH7CYwa
-	 pRbjeD7+n3jaQ==
-Date: Fri, 2 May 2025 13:38:11 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] dt-bindings: watchdog: renesas,wdt: Document RZ/V2N
- (R9A09G056) support
-Message-ID: <20250502-molasses-provolone-8e03b62cee21@spud>
-References: <20250502120054.47323-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1746189625; c=relaxed/simple;
+	bh=f6HuqdSvAKGVPOqVzQm172RnAOk9GhXCrG/e/TsGahU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qwN4LCuilK7KLrbwlGORujENYmEzF/y/pDs5gCYxdjBZtcVmMY/7Jm+kMv2oT6usImNEcxl/OfJJf2Ka4mZGiNbW25NoPFZjeXb9GCcjc3hfWmCGg2AyLwBGAfI7xQ1vXOj1qaxA09AW2k+Lp+qM+qCYJBqKWi5262Srro02Ir4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QGktqbLi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SO3Ht/BQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746189622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pDznLHNB3dpQYFIiF9hhdtTNUe2lHroDW4Mp9Gw5PGg=;
+	b=QGktqbLiim9nJtm35O64haJj4hUt7LU59uJKsgN+3hQUfEQR9LHICrXRGPgmSwBDwSxsbe
+	O6ra1TXa3h8UaUsK2g0lmJEnSJFwfQF05NQRZLZpfwmIaJ9RsQdo8n05tFNr0rxPb+uZ2f
+	1lxBMcxmbyLUsRqsfzEiZ0PvWJHK3fBxB9gUZFZVpxOwguxX8xp3T8VfLNviLUkD11PjRU
+	uCBIfD9YsTQLVIjqqtjmFEIJSzwY7diONhElU42yeVpXeHaPbirZdv0ntuuHBgrHOh8Yfc
+	Q8TkiR5PNGVzMmYmVYDxuyLQNeffHIGb4saUv0iRuib9Y5zhV4JSXlCoeE0Sog==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746189622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pDznLHNB3dpQYFIiF9hhdtTNUe2lHroDW4Mp9Gw5PGg=;
+	b=SO3Ht/BQxTTSEyYfehtEwnuO6YMFzOEO2Ts7H2kwKgsk9I2W2ZQtzJFIs/5m+ShAz+FtKb
+	4vB2GHjuUj1MKyBA==
+Subject: [PATCH 0/7] selftests: vDSO: Some cleanups and fixes
+Date: Fri, 02 May 2025 14:40:12 +0200
+Message-Id: <20250502-selftests-vdso-fixes-v1-0-fb5d640a4f78@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rtF743oJEpR0T3zD"
-Content-Disposition: inline
-In-Reply-To: <20250502120054.47323-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACy9FGgC/x3L0QpAQBBG4VfRXJti2cSryIXsv0wJ7UhK3t3k8
+ vR1HlIkgVKXPZRwicq+WZR5RtMybjNYgjW5wvmidhUr1nhCT+Ur6M5RbigHN6GpS3Pfkq1Hwg9
+ 29sP7fkGwvLtmAAAA
+X-Change-ID: 20250423-selftests-vdso-fixes-d2ce74142359
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Shuah Khan <shuah@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746189620; l=1230;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=f6HuqdSvAKGVPOqVzQm172RnAOk9GhXCrG/e/TsGahU=;
+ b=eqBpzSpZychCvlL1jyLuS1MmVqY+r/HQcSFY8U/3khmGZ+yulcZJieXAvrUmlt+IFLiGwamzT
+ EVdag3GP4FiB/gxKQhgRMkoR6/QBfszj81+bM7ORs+Mw9eO40rTNcSk
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
+Fixes and cleanups for various issues in the vDSO selftests.
 
---rtF743oJEpR0T3zD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Thomas Weißschuh (7):
+      selftests: vDSO: chacha: Correctly skip test if necessary
+      selftests: vDSO: clock_getres: Drop unused include of err.h
+      selftests: vDSO: vdso_test_correctness: Fix -Wold-style-definitions
+      selftests: vDSO: vdso_test_getrandom: Drop unused include of linux/compiler.h
+      selftests: vDSO: vdso_test_getrandom: Drop some dead code
+      selftests: vDSO: vdso_test_getrandom: Always print TAP header
+      selftests: vDSO: vdso_config: Avoid -Wunused-variables
 
-On Fri, May 02, 2025 at 01:00:54PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Document support for the watchdog IP found on the Renesas RZ/V2N
-> (R9A09G056) SoC. The watchdog IP is identical to that on RZ/V2H(P),
-> so `renesas,r9a09g057-wdt` will be used as a fallback compatible,
-> enabling reuse of the existing driver without changes.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+ tools/testing/selftests/vDSO/vdso_config.h            |  2 ++
+ tools/testing/selftests/vDSO/vdso_test_chacha.c       |  3 ++-
+ tools/testing/selftests/vDSO/vdso_test_clock_getres.c |  1 -
+ tools/testing/selftests/vDSO/vdso_test_correctness.c  |  2 +-
+ tools/testing/selftests/vDSO/vdso_test_getrandom.c    | 18 +++++-------------
+ 5 files changed, 10 insertions(+), 16 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250423-selftests-vdso-fixes-d2ce74142359
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-> ---
->  Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml =
-b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> index 3e0a8747a357..78874b90c88c 100644
-> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> @@ -76,7 +76,9 @@ properties:
->            - const: renesas,rcar-gen4-wdt # R-Car Gen4
-> =20
->        - items:
-> -          - const: renesas,r9a09g047-wdt # RZ/G3E
-> +          - enum:
-> +              - renesas,r9a09g047-wdt # RZ/G3E
-> +              - renesas,r9a09g056-wdt # RZ/V2N
->            - const: renesas,r9a09g057-wdt # RZ/V2H(P)
-> =20
->        - const: renesas,r9a09g057-wdt       # RZ/V2H(P)
-> --=20
-> 2.49.0
->=20
->=20
-
---rtF743oJEpR0T3zD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBS8swAKCRB4tDGHoIJi
-0psNAP4mStyLPceWvsvD4MiviARAn1vin/1+kLywOlH0mLGvDgD+O5hRdJvJDg3m
-g8O81b2C4Qdv0yDk9KQCgt7yvijb8Q8=
-=wR3n
------END PGP SIGNATURE-----
-
---rtF743oJEpR0T3zD--
 
