@@ -1,245 +1,115 @@
-Return-Path: <linux-kernel+bounces-629766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE160AA7125
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:05:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7275CAA712A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386B14A0024
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 114E83ABCB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFC624DFF3;
-	Fri,  2 May 2025 12:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XHoq/QPZ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8170B2550B8;
+	Fri,  2 May 2025 12:04:27 +0000 (UTC)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BA2245000
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA42E252914;
+	Fri,  2 May 2025 12:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746187451; cv=none; b=tdKdAW7GVPssyHwW3yySz8bEmgFpmdKo0edaPqTL2Kww58RQ6rrR9/bmj41ZIHsoCS10aHdg0VDlqP8bJJ2+HBYdBsgH0akBy4cdfD9mPPrdntiXCHHL/e7S/VV/u4uPaqIqiS0jTc/ET9Yp2Cm80Qe7yMBT95oL1d82U5rDbNc=
+	t=1746187467; cv=none; b=PIadk/LT4KEzFcSwo1Nl5amG5HZze9KtYoaiuRxglgndk6DpiUZJnl8IhExdz8BHVTNkOpAXpSjdvkN1maRUtqHaHvBCJ+qn4pVTZzb8oM3lBCJBg1cWzgesl7eW2yvo8lvswGxmb+mGYmsvwpcNW7g7qyh63+F1E6qXy6WJ2t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746187451; c=relaxed/simple;
-	bh=k4toQUQd4GXmpTZtzVU6CEYOWMfMFzWaAitrU1KmboY=;
+	s=arc-20240116; t=1746187467; c=relaxed/simple;
+	bh=XWPx6xFTy9CLJ6Wlt8NgWF6CuTT4a7VdsWU7Y8a9FZk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WIexZC3q95uwmW1fKWQtxA+Mo9O3sgFw+sNUC4qZZqYY7YtLWSNNtmUR4GqeHju4zqIWqxSVk7sXxQz63wzTBTm7C5w7rShfMYfTbX/6mWtaI54Ce7qgI9xPiElNZe9SJjIAld+yoH2qJPYEDTWBOSppmqWg2vJqACYYRwA2ZAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XHoq/QPZ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac345bd8e13so324357066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 05:04:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746187447; x=1746792247; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BPRPIKfVSGRq6ITejbYYVt34aehlUZuBk2QnZqFxJlA=;
-        b=XHoq/QPZRT/kAdl4Tmg2DqqDg8Ad9aMkr/jb1BOxlpICsEzUjkm5KoEcrpPv01wkKv
-         JpIIK04NlTi74lxIMUs9759cWEQF/W69teoNMs4jffv8c8/GL17xwAc9qlg6VbRJbfqU
-         fbrgQCAHSkTyhhCwUvl5fVD/UAnaPUoL0rZdlzYOweGp3+7SVItw+DO5752w2gPk+seB
-         HR5lg4Anty32d5HUaq58R6MPv4YvqCjTjkDIcpqiymOd9/GwOb7EGL7vUnYjVwWI+t4T
-         iTld+KB0oRBGRZGtOav+IYZOyf95dGiajwMR1zILH7dShY6q4TV2/ELuF28jlnZ48X0G
-         2rtg==
+	 To:Cc:Content-Type; b=AFOy8XEoR53Kqa2vS4ixAlnPlyFRAdLiMjlAHQ2MSL33pndVP9XdpBmSeuNBVkfJKJ++QEaanu3+wxvL4PoSCHAS9IFulKHpcYCybxng08fuYsCu+tNmd8b1Rsmhf35akSeyYVrVCwU5dCBTIxR3isbcGph8HYbAHyDXvfZfDP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c55500cf80so190272085a.1;
+        Fri, 02 May 2025 05:04:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746187447; x=1746792247;
+        d=1e100.net; s=20230601; t=1746187463; x=1746792263;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BPRPIKfVSGRq6ITejbYYVt34aehlUZuBk2QnZqFxJlA=;
-        b=bQdd3j393AQhwtRthFPXKarZhSNQzKRmsEdGI7QTymqSx2qr8V8n/dYpfEylJxUefW
-         m1d01HLDzXBNyCJLf4d0McdRSdS/Ijias41lYZgg+0EBIyBhWtIBeLCpVGheKJYHzsF2
-         XbQvqMi5s+tXMG2qCFtusr6dLC6A5TfZLoVzlwHcct/uBPXCWVnH9DRIf8KIwQsdyGSQ
-         Ia53N/oVe2esp2bVMc8sxJ3jZxv1zr52rNmx6l7YU/2zcgHY7u5dx509xTFW6uEalo78
-         rYVJL2J94gi2GMqul0YtlKNJMUhweMMfmBIiIjKOwlroDXoqtFFmLkZtQXkY7fpDEZF6
-         PSuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiAN01Cce9YSwZizfhGmVbIm+hxUvT7HZr3+N0WOSsaLmwfnP9u0VR00yOl0Fg9894VviYjoNQL4B3ORE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzWUeS5A4H1OX38R3q0FP/QQbnq9AxN/6bb7Q1ebZ+V+Li+ue0
-	pi8abhhLPlH27TpBgYDtnFjKGwH30WZt3fU4uoYoy/cT0kOa8p5UDy4nP5BzOYyZazSSJ1SqkC8
-	g+BBt37eMqRc21/7jbL2nYhhXnh3DJ4+mMsInDg==
-X-Gm-Gg: ASbGncs44qMkJ53TtIUHnl0vD/hkmOWEbTfS0MEGxOga3L3IbQnE3f76drE5GkbWADT
-	vlrev0kYKnVhlIiRpKBDCX6Gt4+howiOSzY7iNenGIDgYbgZRtzH7Q2aXUbcoOLcBjSKHbjYLk7
-	gwAGcpMtdaJYJQrNYOwTdL
-X-Google-Smtp-Source: AGHT+IFexHphn+QwtEkGN0QtvusZk4g7qhyXzh59CokpzsuzOfXNl9izhrW/FeZ+1YAKnoX41c8fmxfpp5LBg3FF4pw=
-X-Received: by 2002:a17:907:c28f:b0:acb:5583:6fe4 with SMTP id
- a640c23a62f3a-ad17ad3b23dmr269340766b.6.1746187447432; Fri, 02 May 2025
- 05:04:07 -0700 (PDT)
+        bh=UOzPOAHQMCOmxdJ2d2e+AsU+FXI1A0XpJIu1H20/Q4s=;
+        b=AVffqMcx9088huzkde79Hq5AOihRGMPdl9XSK7lEqgvapPk9MT9iWcfFeNdWRn9g3Q
+         hYA6IVEf3O053BJr/J1saydFKjPWoznuM0wvssdo59S/fwfZ7NNqHPP/YL5u5hn1e+eJ
+         0x7et39Vd/pAlD9/rOqdzHNwuukBk4EFh85/bF7v1eOOUgp7t10y4WCURWKgDqXwECWI
+         D94iNIgZ9q+/ywWIbXfu0qbgexA/kN0NCtDUdA6Hsw6YPy4fJGoDHGoZ4swEfhmOHolC
+         6BeYDC1Q9BgNQyqeotKlfZAb/mp/g53axOAkYy2P7Ql1Q82sH5JGnAhLP9edFIQeGJW0
+         58Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3vchOUlGrnIx3f/u03pwFv0ZEJXWrkuk0DKBu8jeyIJY87TQoh2fc7KtCp1ioJw4mCyXr06g4CgHf@vger.kernel.org, AJvYcCWtEuqPoVuyd71HYOX9b5Rrp5Ycq1EsqBNeRwh3zq4ac9jZgm3Cfr2tWrD4gSpJSWUabkB+4+GP0SUj@vger.kernel.org, AJvYcCXAFCGa9iboHj3GpL1e9qhmoPDWKAS1qULkbLGMAfpSjs9lzqR7JjvXfgNEsexY9NZZjwgdOQ/NBNdHcELJ@vger.kernel.org, AJvYcCXmg6HPv5L7iqfwKQLrE7semsZVd080PQ6O7y7GCg6nZQ+WNwXMABqfPB8SJRtBN1Y/H3clJvjSU1EZ7gCHxoH4tT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq8rjM9B17gszPnsA3INQ7CT32q75Oke23y9ottWnrClgNxFR3
+	XphPeT//XVYbqUNgn7lbWY2HOIw7WbPsep3s1ng4OinfV+XwUPYTBoMegdrh
+X-Gm-Gg: ASbGncuVPENeszZrRxAVqfXzSdvtZ9U9Xg5ArlbYNxfU6jErPun1jKM7vEkFr1R5SkZ
+	Ip4JgYpy3NRjraGPwVsMnogFhC/Z6g0PLicrt7V+6LppCWgzgPOyGhjQUth4XbwqF/lP9XepF17
+	p1oW/scrow3hzBvG2syjNCEIwfaUKTGYs4OGxqPxcbQ9JtnW4JlI7Q8HU+oq89VSZF3dXiVsbXO
+	9FoBQhM2i6ImI/EhzEGekz8tE/Cb3DThLNCmm2lTQ8B7dKvT72GTZWEAbj2QGmrGebbX1jv+UA+
+	oNMovbuGW8xgaoN5ZBzenD1TH60guZUeGHlMT0oFJnCX9sg+9LzSg3r28CS781XeZ6/FlPNKALB
+	YmedHFJM=
+X-Google-Smtp-Source: AGHT+IENK4Pel0k6kzKGAMVpIiHHD0NWpIQc4fa7VVXS490kDieCwVNBueFzYVwM/lb4fv05NTbljQ==
+X-Received: by 2002:a05:620a:bd5:b0:7c5:60c7:339 with SMTP id af79cd13be357-7cad5b23c32mr362364585a.9.1746187463564;
+        Fri, 02 May 2025 05:04:23 -0700 (PDT)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cad23d1c8dsm174633885a.60.2025.05.02.05.04.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 May 2025 05:04:22 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-47686580529so23902791cf.2;
+        Fri, 02 May 2025 05:04:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLiRxTqZFfJx6YPgqDh9umSqa089E/8n6PoIE9YzxToxgNx3+MidwAv7bMRJFfKBJEQCnQA21W3GQtbjCcduyNPi4=@vger.kernel.org, AJvYcCWg1IzYBtXuQXu3gvJUih2dCPeWd9oB0l5jDiF2i7AqPmKgnOuLxY4OHXNTzQLeo1uaUINNqbDEMWpF@vger.kernel.org, AJvYcCWl+51jIj0W40ejOizznjMuqnmaQNhXgGepSurJ/7QhJAwYFrxSEKzZrv/P7e6qIq8eSq/xLWAw3PRC@vger.kernel.org, AJvYcCXbY/psSh3+/2UO8w8JkKk/1opqL3/F9sHEpXDxXzNQuCfBgI0Edg7/MAa3CWQNCrB+a650Me29DNuPICNb@vger.kernel.org
+X-Received: by 2002:a05:622a:1b10:b0:476:78a8:4356 with SMTP id
+ d75a77b69052e-48c3183797bmr34905511cf.26.1746187462708; Fri, 02 May 2025
+ 05:04:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429151800.649010-1-neelx@suse.com> <20250430080317.GF9140@twin.jikos.cz>
- <CAPjX3FfBoU9-wYP-JC63K6y8Pzocu0z8cKvXEbjD_NjdxWO+Og@mail.gmail.com>
- <20250430133026.GH9140@suse.cz> <CAPjX3FdexSywSbJQfrj5pazrBRyVns3SdRCsw1VmvhrJv20bvw@mail.gmail.com>
- <20250502105630.GO9140@suse.cz>
-In-Reply-To: <20250502105630.GO9140@suse.cz>
-From: Daniel Vacek <neelx@suse.com>
-Date: Fri, 2 May 2025 14:03:55 +0200
-X-Gm-Features: ATxdqUEf1RQiTTyAISQFpziz--aYmeR-Yd3u2T6S9hrE9Iviu6ITi3lYgPSwwQY
-Message-ID: <CAPjX3Ffy2=CQP2mx9Wa3BBR54fEAcuo8ADqeTVdcAmCO7g+gmg@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: remove extent buffer's redundant `len` member field
-To: dsterba@suse.cz
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250501203310.140137-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250501203310.140137-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 May 2025 14:04:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVQZBSoOVUN=Q9qiDRgPXGYiApZ+ao462+xtCjZiXNoBg@mail.gmail.com>
+X-Gm-Features: ATxdqUEJgHYtUiuy-xcdw0i5gv_WbXbGpCAVJDeLjetj7gfcOPxvIqq6CYKlgKs
+Message-ID: <CAMuHMdVQZBSoOVUN=Q9qiDRgPXGYiApZ+ao462+xtCjZiXNoBg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: i2c: renesas,riic: Document RZ/V2N
+ (R9A09G056) support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 2 May 2025 at 12:56, David Sterba <dsterba@suse.cz> wrote:
+On Thu, 1 May 2025 at 22:33, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> On Wed, Apr 30, 2025 at 04:13:20PM +0200, Daniel Vacek wrote:
-> > On Wed, 30 Apr 2025 at 15:30, David Sterba <dsterba@suse.cz> wrote:
-> > >
-> > > On Wed, Apr 30, 2025 at 10:21:18AM +0200, Daniel Vacek wrote:
-> > > > > The benefit of duplicating the length in each eb is that it's in the
-> > > > > same cacheline as the other members that are used for offset
-> > > > > calculations or bit manipulations.
-> > > > >
-> > > > > Going to the fs_info->nodesize may or may not hit a cache, also because
-> > > > > it needs to do 2 pointer dereferences, so from that perspective I think
-> > > > > it's making it worse.
-> > > >
-> > > > I was considering that. Since fs_info is shared for all ebs and other
-> > > > stuff like transactions, etc. I think the cache is hot most of the
-> > > > time and there will be hardly any performance difference observable.
-> > > > Though without benchmarks this is just a speculation (on both sides).
-> > >
-> > > The comparison is between "always access 1 cacheline" and "hope that the
-> > > other cacheline is hot", yeah we don't have benchmarks for that but the
-> > > first access pattern is not conditional.
-> >
-> > That's quite right. Though in many places we already have fs_info
-> > anyways so it's rather accessing a cacheline in eb vs. accessing a
-> > cacheline in fs_info. In the former case it's likely a hot memory due
-> > to accessing surrounding members anyways, while in the later case is
-> > hopefully hot as it's a heavily shared resource accessed when
-> > processing other ebs or transactions.
-> > But yeah, in some places we don't have the fs_info pointer yet and two
-> > accesses are still needed.
+> Document support for the I2C Bus Interface (RIIC) found on the Renesas
+> RZ/V2N (R9A09G056) SoC. The RIIC IP is identical to that on RZ/V2H(P),
+> so `renesas,riic-r9a09g057` will be used as a fallback compatible,
+> enabling reuse of the existing driver without changes.
 >
-> The fs_info got added to eb because it used to be passed as parameter to
-> many functions.
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Makes sense.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> > In theory fs_info could be shuffled to move nodesize to the same
-> > cacheline with buffer_tree. Would that feel better to you?
->
-> We'd get conflicting requirements for ordering in fs_info. Right now
-> the nodesize/sectorsize/... are in once cacheline in fs_info and they're
-> often used together in many functions. Reordering it to fit eb usage
-> pattern may work but I'm not convinced we need it.
+Gr{oetje,eeting}s,
 
-I agree.
+                        Geert
 
-> > > > > I don't think we need to do the optimization right now, but maybe in the
-> > > > > future if there's a need to add something to eb. Still we can use the
-> > > > > remaining 16 bytes up to 256 without making things worse.
-> > > >
-> > > > This really depends on configuration. On my laptop (Debian -rt kernel)
-> > > > the eb struct is actually 272 bytes as the rt_mutex is significantly
-> > > > heavier than raw spin lock. And -rt is a first class citizen nowadays,
-> > > > often used in Kubernetes deployments like 5G RAN telco, dpdk and such.
-> > > > I think it would be nice to slim the struct below 256 bytes even there
-> > > > if that's your aim.
-> > >
-> > > I configured and built RT kernel to see if it's possible to go to 256
-> > > bytes on RT and it seems yes with a big sacrifice of removing several
-> > > struct members that cache values like folio_size or folio_shift and
-> > > generating worse code.
-> > >
-> > > As 272 is a multiple of 16 it's a reasonable size and we don't need to
-> > > optimize further. The number of ebs in one slab is 30, with the non-rt
-> > > build it's 34, which sounds OK.
-> >
-> > That sounds fair. Well the 256 bytes were your argument in the first place.
->
-> Yeah, 256 is a nice number because it aligns with cachelines on multiple
-> architectures, this is useful for splitting the structure to the "data
-> accessed together" and locking/refcounting. It's a tentative goal, we
-> used to have larger eb size due to own locking implementation but with
-> rwsems it got close/under 256.
->
-> The current size 240 is 1/4 of cacheline shifted so it's not all clean
-> but whe have some wiggle room for adding new members or cached values,
-> like folio_size/folio_shift/addr.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Sounds like we could force align to cacheline or explicitly pad to
-256B? The later could be a bit tricky though.
-
-> >
-> > Still, with this:
-> >
-> > --- a/fs/btrfs/extent_io.h
-> > +++ b/fs/btrfs/extent_io.h
-> > @@ -82,7 +82,10 @@ void __cold extent_buffer_free_cachep(void);
-> >  struct extent_buffer {
-> >         u64 start;
-> >         u32 folio_size;
-> > -       unsigned long bflags;
-> > +       u8 folio_shift;
-> > +       /* >= 0 if eb belongs to a log tree, -1 otherwise */
-> > +       s8 log_index;
-> > +       unsigned short bflags;
->
-> This does not compile because of set_bit/clear_bit/wait_on_bit API
-> requirements.
-
-Yeah, I realized when I tried to implement it. It was just an email
-idea when sent.
-
-> >         struct btrfs_fs_info *fs_info;
-> >
-> >         /*
-> > @@ -94,9 +97,6 @@ struct extent_buffer {
-> >         spinlock_t refs_lock;
-> >         atomic_t refs;
-> >         int read_mirror;
-> > -       /* >= 0 if eb belongs to a log tree, -1 otherwise */
-> > -       s8 log_index;
-> > -       u8 folio_shift;
-> >         struct rcu_head rcu_head;
-> >
-> >         struct rw_semaphore lock;
-> >
-> > you're down to 256 even on -rt. And the great part is I don't see any
-> > sacrifices (other than accessing a cacheline in fs_info). We're only
-> > using 8 flags now, so there is still some room left for another 8 if
-> > needed in the future.
->
-> Which means that the size on non-rt would be something like 228, roughly
-> calculating the savings and the increase due to spinloct_t going from
-> 4 -> 32 bytes. Also I'd like to see the generated assembly after the
-> suggested reordering.
-
-If I see correctly the non-rt will not change when I keep ulong
-bflags. The -rt build goes down to 264 bytes. That's a bit better for
-free but still not ideal from alignment POV.
-
-> The eb may not be perfect, I think there could be false sharing of
-> refs_lock and refs but this is a wild guess and based only on code
-
-refs_lock and refs look like they share the same cacheline in every
-case. At least on x86.
-But still, the slab object is not aligned in the first place. Luckily
-the two fields roam together.
-
-Out of curiosity, is there any past experience where this kind of
-optimizations make a difference within a filesystem code?
-I can imagine perhaps for fast devices like NVDIMM or DAX the CPU may
-become the bottleneck? Or are nowadays NVMe devices already fast
-enough to saturate the CPU?
-
-I faintly recall one issue where I debugged a CPU which could not keep
-up with handling the interrupts of finished IO on NVMe submitted by
-other CPUs. Though that was on xfs (or maybe ext4) not on btrfs. But
-that was a power-play of one against the rest as the interrupt was not
-balanced or spread to more CPUs.
-
-> observation. You may have more luck with other data structures with
-> unnecessary holes but please optimize for non-RT first.
-
-Clearly non-rt is the default and most important. No questions here.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
