@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-630569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1522DAA7BF3
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 00:05:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FFFAA7BF1
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 00:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81DD1B678D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4965816B3FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8BB22F77A;
-	Fri,  2 May 2025 22:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E48622A7E5;
+	Fri,  2 May 2025 22:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NgkpgE85"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nSO0dvJ9"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62A522F740;
-	Fri,  2 May 2025 22:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0B021CFEF;
+	Fri,  2 May 2025 22:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746223427; cv=none; b=uNXCiAxfc5rsKn70xRfKqt+h8TFEHHf+ApSaPcD0V/dRqJ3BN24Sh8jJh6J0lExV7shA35YYV0RE7tMQgSAZy1NKZvyp/nq20WpuSW1WTKMDvZfZkcD4ygYuuC3gRWrk/8k4n9WInIzIyzfXtPeLnjbeeyZld7BTX8g6gnj/ZUg=
+	t=1746223422; cv=none; b=lkXmXF4LvQ0B4UAdD5EGH2OvZvJA57dw3dmscPDUaKRhd1TwSn41zQLLbiNfgr0noaW5TATCp52Q28xO3A3llhhe60U73G1LLXmr+zY8r32d4HxTJtzKRMoWf/ocuMAfK+hsFBzn5r70cIjMWa7oHlrPuq36se3ct9z2ZBt6f6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746223427; c=relaxed/simple;
-	bh=Thwd6MRSD2RM8Smfp+f5EyrRhOVVFoHe54Jbtp3CDxM=;
+	s=arc-20240116; t=1746223422; c=relaxed/simple;
+	bh=g7zunVdoGAiOKmdmlh3Vxf2WJzGVeNmfLhc+y0wCpd0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eTIRVzGdzR8mOwaAK3ofh40eEul1Q7s1EvuqRjNv5el8GXU78k8N/AvkpSIBozBtFLhrMXnttCAdAQBPjnImgRhEwoIV6Yef83p0hopT6Hd4sQ2R+TLzWHg/oLHfbRyiCzbUwgS6nbsKlTd5iDuzodQIUYYSOPZ9118BH3XrUyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NgkpgE85; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=I9qDx/89ClqkjujkEsN9mFb+9kpRpnJ+2rMpKrb5ioQVu4XiJC5KIuJ3xec4yqaDJSztn0/DMpVp5hlT4KQvApUlJGVJE7xEqAN3Rpeumh8SQgDaRmEgrxVVdpXHkKZK2bR+AUtrAxQT2O1h17CgtgLsbRNRjdo6dSfUYsTiTsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nSO0dvJ9; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542M3QPm500003
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542M3QtA3955085
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Fri, 2 May 2025 17:03:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746223407;
-	bh=FWlZZog+xI4b0spP/ZWdcQgjKse3LrOk/NzAyoIs+g4=;
+	s=ti-com-17Q1; t=1746223406;
+	bh=0H8bxKDt3xxs+GwwIOm662M3ZGs3Da+aMqL17rxP3mE=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=NgkpgE85LmgxDPGUOQ4c1US2Bzx6r52tZBPlEg39wzMR6Xj4ByW3GY6nN8cGIbm3C
-	 RaV9icf/mujTY4OIoqroZMf70zZQxnZPOsEn2rahanBqh4LtKyWeWxxNATE7px4/6b
-	 EMjUbphvVo782Al0UCFjusL8ay7GYIqukAYzDuws=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542M3Q07031676
+	b=nSO0dvJ9Ea11m/dUABvlGUiZilR0/IT6aMFzkNDhARzmljLcKevNIkUB7Qy8tXyja
+	 E1MMNHzwshfdbXrxI4DRW4LqLHlTQMVKZnFPPKnLJuHTxp6oAQUhG9ArT/HiNIRoFH
+	 GkcLT1iqb3xbdSr0W23AN+X7DUQiXNVfVjySjUc8=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542M3Qsr054539
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Fri, 2 May 2025 17:03:26 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
  May 2025 17:03:26 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Fri, 2 May 2025 17:03:26 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542M3PC4006849;
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542M3PC5006849;
 	Fri, 2 May 2025 17:03:26 -0500
 From: Judith Mendez <jm@ti.com>
 To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
@@ -72,9 +72,9 @@ CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
  Thakkar <devarsht@ti.com>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 10/11] arm64: dts: ti: k3-am62a7-sk: Reserve main_rti4 for C7x DSP
-Date: Fri, 2 May 2025 17:03:24 -0500
-Message-ID: <20250502220325.3230653-11-jm@ti.com>
+Subject: [PATCH v8 11/11] arm64: dts: ti: k3-am64: Reserve timers used by MCU FW
+Date: Fri, 2 May 2025 17:03:25 -0500
+Message-ID: <20250502220325.3230653-12-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250502220325.3230653-1-jm@ti.com>
 References: <20250502220325.3230653-1-jm@ti.com>
@@ -90,29 +90,80 @@ X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 From: Hari Nagalla <hnagalla@ti.com>
 
-The main rti4 watchdog timer is used by the C7x DSP, so reserve the
-timer in the linux device tree.
+AM64x device has 4 R5F cores in the main domain. TI MCU firmware uses
+main domain timers as tick timers in these firmwares. Hence keep them
+as reserved in the Linux device tree.
 
 Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 Signed-off-by: Judith Mendez <jm@ti.com>
 Reviewed-by: Andrew Davis <afd@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts | 20 ++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts  | 20 ++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index f811911c1325..1e9fe997868e 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -870,3 +870,8 @@ &c7x_0 {
- 			<&c7x_0_memory_region>;
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+index f8ec40523254..5623ab354a1d 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+@@ -796,6 +796,26 @@ &mcu_m4fss {
  	status = "okay";
  };
-+
-+/* main_rti4 is used by C7x DSP */
-+&main_rti4 {
+ 
++/* main_timer8 is used by r5f0-0 */
++&main_timer8 {
 +	status = "reserved";
 +};
++
++/* main_timer9 is used by r5f0-1 */
++&main_timer9 {
++	status = "reserved";
++};
++
++/* main_timer10 is used by r5f1-0 */
++&main_timer10 {
++	status = "reserved";
++};
++
++/* main_timer11 is used by r5f1-1 */
++&main_timer11 {
++	status = "reserved";
++};
++
+ &serdes_ln_ctrl {
+ 	idle-states = <AM64_SERDES0_LANE0_PCIE0>;
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
+index 33e421ec18ab..1deaa0be0085 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
+@@ -710,6 +710,26 @@ &mcu_m4fss {
+ 	status = "okay";
+ };
+ 
++/* main_timer8 is used by r5f0-0 */
++&main_timer8 {
++	status = "reserved";
++};
++
++/* main_timer9 is used by r5f0-1 */
++&main_timer9 {
++	status = "reserved";
++};
++
++/* main_timer10 is used by r5f1-0 */
++&main_timer10 {
++	status = "reserved";
++};
++
++/* main_timer11 is used by r5f1-1 */
++&main_timer11 {
++	status = "reserved";
++};
++
+ &ecap0 {
+ 	status = "okay";
+ 	/* PWM is available on Pin 1 of header J3 */
 -- 
 2.49.0
 
