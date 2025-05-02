@@ -1,321 +1,134 @@
-Return-Path: <linux-kernel+bounces-630474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D75AA7AB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D69F5AA7AC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1A3172465
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:16:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E2E4E16C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96C31F5858;
-	Fri,  2 May 2025 20:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4EE1F4E48;
+	Fri,  2 May 2025 20:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGS/1WN+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByyXYM2V"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3F71E7C1C;
-	Fri,  2 May 2025 20:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E024A146A68;
+	Fri,  2 May 2025 20:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746216987; cv=none; b=nyhA6WWwM6X0wzy8kKC167l1lQT9I2fuHbOtvcy06m26VQKpVcQK0qmhZaoMlO1ugVVd6qfq8OTM+jB/YOL1qSi5FbzMRp2Xza+8JzP8fhZYeAlhRQ4HfzvL0wND0A2IUwUbzpgqvdA4+4cezRv0iCMH2feQ1jbd+9jN/fMdvkE=
+	t=1746217079; cv=none; b=AKrAW4FAToXpC6SaERwMbORX7X/czuQ8e24AfFF5PyZRB6Q+dONyn+ap6pQKqpJJ/q045UkNyqlBdV3ST3xnywiBGqjlix1h2PdxfrZ+dT+4ICaY/4saoKUpePMT1L4OQj8UpCOe2B1l1w7lPvCbqXTYkeslPivQkdjU7YNGlBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746216987; c=relaxed/simple;
-	bh=RW5K/w2L0V2EaZgbi8rSHarTcf/k6d7xE2jTTR7hZBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5SEtrwnswIeHTNu+Kg9S1Sv0C+LSla2Jcwsx0xLBfhbooumlK5uIvIBfBLjiAKih1Pt3clLMV9kuKThHrtpwSPHgYZ91Aai50GFl8xGqUV+OFHSlF2p3rFd3gVip0DIo/iw230MzUrZY9kHMnBnMHgEXaIqrUPtLDz14VnEOAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGS/1WN+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F06C4CEE4;
-	Fri,  2 May 2025 20:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746216986;
-	bh=RW5K/w2L0V2EaZgbi8rSHarTcf/k6d7xE2jTTR7hZBk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GGS/1WN+Y2oxasCC82z4yBpD57IEkkWcmdWTG6xgowI9D7yx1B8Keav7AskKucNd4
-	 XjZQEgFZt0x/Iwx3WoyTZNVZnACfhxrpND7zEbes+G1lVnHZaIy/4aQXLN6bVVF8nG
-	 ZZ0z+qlAF7uWDE/BCHWgEzKjrzjxlJS+jVJWpho1r++0rlj2eOLsgdq8BHW78CzaRF
-	 DTy6xJILGgxm9B8Y+UJ4R9quAonsF+CublmBtZdXH5hVUO050qpHuxvBcY/ivR61sv
-	 Bs2Ohc9jxSTWRjXy7B+6FkMBkXDoxH6ytW6kR75S3mfXWXR8r3ifJgKHeWTG5V8am9
-	 2BUCoqH3flUeQ==
-Date: Fri, 2 May 2025 13:16:23 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>, Weinan Liu <wnliu@google.com>,
-	Blake Jones <blakejones@google.com>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Alexander Aring <aahringo@redhat.com>
-Subject: Re: [PATCH v6 5/5] perf: Support deferred user callchains for per
- CPU events
-Message-ID: <aBUoF8DyzqmiW5vk@google.com>
-References: <20250501013202.997535180@goodmis.org>
- <20250501013506.751321323@goodmis.org>
- <aBPWE7ItDhEnSpav@google.com>
- <20250501165730.69642099@gandalf.local.home>
+	s=arc-20240116; t=1746217079; c=relaxed/simple;
+	bh=E5gwB1+Hj5oqS1YcS2EpyRAcex38Ij8qcYJuEEvjAHw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=h8E9rM+nuHZWCJ2BnM3id0Ou1vbdzoug3SLiSwbG9MyBs3nc74UlLGqqX35irMh50AhX4oG/ZBe7qt+t9oLBNBwDEwqf4vuxdlghWnB92XQUYKXLNLvMlY8QLqJoKtTW9raYxFULfRIg2ho82PDszxxPishraKDZXMiHVa+k30E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ByyXYM2V; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf3f3539dso25209651fa.1;
+        Fri, 02 May 2025 13:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746217076; x=1746821876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SaIqjq9KpAJ/+nEjnkzbnEUUUTwKcNBa7HBXrlZhXUI=;
+        b=ByyXYM2VAKpbeHN0s3yWGbZPFbdS0viJPaMFVdn6VU414szNCJYzxGIFbjjpin9E4g
+         7VmODe2GPP748mJCw9/vn2EKpopVq544iXOsnSCWY/npD+6PERg1dQ1MMImQnaPu7+cx
+         uJ6SjkxFkNYxv3KB4V88mLC30etXyJVrstRGPjZmEnq9/3eYXcINvB2PrEtyY7aKWx/3
+         bfLitrTGOejIX6I05kKdLSqf2hBfwmFR/+FWEyJWdWX+Kve0u+LXh0XvKh/IJ/5+najA
+         XbGD4T2/3LCyEO431eN/873oXbTLIEpPOaiUzfDtQ0arU1eWas0N3NJxuC/2hB6RRn5M
+         DzRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746217076; x=1746821876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SaIqjq9KpAJ/+nEjnkzbnEUUUTwKcNBa7HBXrlZhXUI=;
+        b=B0UgX2lzfK8kb7f36C+cZKlfCZ2FkskWPzeOl/zqvIYV5rJtK/Obhk1E4mDGue9JhT
+         rRdyr4irW8ZvvOwebgTb5pEoObiVDQnHjR2dH5NP/NS1gJutznKQXkxxO5j3rsWT0ydk
+         x+zLZD/fBjBKQ3Xjyq0yTX1Rwcnvu4CgwT0I/2NYegshVbWL/wATosGHoh30BbMYU8O3
+         KG8rEJdutyrdQorruxlSoSmgqpbfXZT8XDgHJHX3O/uFEBp/+lZDy+mo9iQ1zrbcGOey
+         dAd7KbcVYrmIELEdQymFym0dNowSBE1zzP5x0/+85gkeob2oMuMR+idmtL9/cwvoWwGY
+         QIew==
+X-Forwarded-Encrypted: i=1; AJvYcCVGFj3+bpqR2mmsglLX5vaO2LroYjemSv3AIQVpqRf9w3m/JXYHsL0ZLn6+cgbmrBcZqZKa5qqbCAGx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Sd4L2w1/UNev9p8zcGvaCPEC/bVa6YZ1owO6VKpsle/pgcZG
+	LtO5GodoZULufmTO0KjwqQljwc61XsTO81Pjy9+mxOkbKbKx1+z6VSJqKaHHR+ZFw+fH/8VfECS
+	IFHrkN22wMM5vO5vu/JNCZPL3ZBVAAPdM
+X-Gm-Gg: ASbGncsWvL930uCWDj/3fg5ny8AFoqFSfrcH2qGNANlRj7uCwSJLvcMQ1Yn+CfEBQk7
+	vIsKsgiFU1L73ZvDdeCwaMwUS/YgpwTURHC0FR9fJdcRgBoj8YaqtX38036KMaU7jOlXDEYkG3g
+	IKH4qE1oO2nY31ItfOF5IHlmGmPkafwjqDGZu/azRr3yWLT3u++P0JmV7m
+X-Google-Smtp-Source: AGHT+IGUIpUOwOcjH8Jb2We6DvKK+Y9vC3VbvRom4zxzK8kuLQbrpp4eguR5QpLbs6UKaD39zSQNimjKImedo4vnQJ4=
+X-Received: by 2002:a2e:bc81:0:b0:30b:aaca:9b2e with SMTP id
+ 38308e7fff4ca-31fb8f0440bmr23267921fa.0.1746217075658; Fri, 02 May 2025
+ 13:17:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250501165730.69642099@gandalf.local.home>
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 2 May 2025 15:17:44 -0500
+X-Gm-Features: ATxdqUHhe8LA-u1SUoZI1t1lKuVpSxdtHJ51mjP2n5B4HdsAv7qKe-L79Iba8hs
+Message-ID: <CAH2r5mvFmxyPuxTOzGVvDOq1N3nYwh2ogj7yA-rrABdXgGpjbQ@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 01, 2025 at 04:57:30PM -0400, Steven Rostedt wrote:
-> On Thu, 1 May 2025 13:14:11 -0700
-> Namhyung Kim <namhyung@kernel.org> wrote:
-> 
-> > Hi Steve,
-> > 
-> > On Wed, Apr 30, 2025 at 09:32:07PM -0400, Steven Rostedt wrote:
-> 
-> > > To solve this, when a per CPU event is created that has defer_callchain
-> > > attribute set, it will do a lookup from a global list
-> > > (unwind_deferred_list), for a perf_unwind_deferred descriptor that has the
-> > > id that matches the PID of the current task's group_leader.  
-> > 
-> > Nice, it'd work well with the perf tools at least.
-> 
-> Cool!
-> 
-> 
-> 
-> > > +static void perf_event_deferred_cpu(struct unwind_work *work,
-> > > +				    struct unwind_stacktrace *trace, u64 cookie)
-> > > +{
-> > > +	struct perf_unwind_deferred *defer =
-> > > +		container_of(work, struct perf_unwind_deferred, unwind_work);
-> > > +	struct perf_unwind_cpu *cpu_unwind;
-> > > +	struct perf_event *event;
-> > > +	int cpu;
-> > > +
-> > > +	guard(rcu)();
-> > > +	guard(preempt)();
-> > > +
-> > > +	cpu = smp_processor_id();
-> > > +	cpu_unwind = &defer->cpu_events[cpu];
-> > > +
-> > > +	WRITE_ONCE(cpu_unwind->processing, 1);
-> > > +	/*
-> > > +	 * Make sure the above is seen for the rcuwait in
-> > > +	 * perf_remove_unwind_deferred() before iterating the loop.
-> > > +	 */
-> > > +	smp_mb();
-> > > +
-> > > +	list_for_each_entry_rcu(event, &cpu_unwind->list, unwind_list) {
-> > > +		perf_event_callchain_deferred(event, trace);
-> > > +		/* Only the first CPU event gets the trace */
-> > > +		break;  
-> > 
-> > I guess this is to emit a callchain record when more than one events
-> > requested the deferred callchains for the same task like:
-> > 
-> >   $ perf record -a -e cycles,instructions
-> > 
-> > right?
-> 
-> Yeah. If perf assigns more than one per CPU event, we only need one of
-> those events to record the deferred trace, not both of them.
-> 
-> But I keep a link list so that if the program closes the first one and
-> keeps the second active, this will still work, as the first one would be
-> removed from the list, and the second one would pick up the tracing after
-> that.
+Please pull the following changes since commit
+b4432656b36e5cc1d50a1f2dc15357543add530e:
 
-Makes sense.
+  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
 
-> 
-> > 
-> > 
-> > > +	}
-> > > +
-> > > +	WRITE_ONCE(cpu_unwind->processing, 0);
-> > > +	rcuwait_wake_up(&cpu_unwind->pending_unwind_wait);
-> > > +}
-> > > +
-> > >  static void perf_free_addr_filters(struct perf_event *event);
-> > >  
-> > >  /* vs perf_event_alloc() error */
-> > > @@ -8198,6 +8355,15 @@ static int deferred_request_nmi(struct perf_event *event)
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +static int deferred_unwind_request(struct perf_unwind_deferred *defer)
-> > > +{
-> > > +	u64 cookie;
-> > > +	int ret;
-> > > +
-> > > +	ret = unwind_deferred_request(&defer->unwind_work, &cookie);
-> > > +	return ret < 0 ? ret : 0;
-> > > +}
-> > > +
-> > >  /*
-> > >   * Returns:
-> > >  *     > 0 : if already queued.
-> > > @@ -8210,11 +8376,14 @@ static int deferred_request(struct perf_event *event)
-> > >  	int pending;
-> > >  	int ret;
-> > >  
-> > > -	/* Only defer for task events */
-> > > -	if (!event->ctx->task)
-> > > +	if ((current->flags & PF_KTHREAD) || !user_mode(task_pt_regs(current)))
-> > >  		return -EINVAL;
-> > >  
-> > > -	if ((current->flags & PF_KTHREAD) || !user_mode(task_pt_regs(current)))
-> > > +	if (event->unwind_deferred)
-> > > +		return deferred_unwind_request(event->unwind_deferred);
-> > > +
-> > > +	/* Per CPU events should have had unwind_deferred set! */
-> > > +	if (WARN_ON_ONCE(!event->ctx->task))
-> > >  		return -EINVAL;
-> > >  
-> > >  	if (in_nmi())
-> > > @@ -13100,13 +13269,20 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
-> > >  		}
-> > >  	}
-> > >  
-> > > +	/* Setup unwind deferring for per CPU events */
-> > > +	if (event->attr.defer_callchain && !task) {  
-> > 
-> > As I said it should handle per-task and per-CPU events.  How about this?
-> 
-> Hmm, I just added some printk()s in this code, and it seems that perf
-> record always did per CPU.
+are available in the Git repository at:
 
-Right, that's the default behavior.
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.15-rc4-smb3-client-fixes
 
-> 
-> But if an event is per CPU and per task, will it still only trace that
-> task? It will never trace another task right?
+for you to fetch changes up to c59f7c9661b9d3ee33a21d7b4f1dd4b77079e3e7:
 
-Yes, the event can be inherited to a child but then child will create a
-new event so each task will have its own events.
+  smb: client: ensure aligned IO sizes (2025-05-01 08:35:58 -0500)
 
-> 
-> Because the way this is currently implemented is that the event that
-> requested the callback is the one that records it, even if it runs on
-> another CPU:
-> 
-> In defer_request_nmi():
-> 
-> 	struct callback_head *work = &event->pending_unwind_work;
-> 	int ret;
-> 
-> 	if (event->pending_unwind_callback)
-> 		return 1;
-> 
-> 	ret = task_work_add(current, work, TWA_NMI_CURRENT);
-> 	if (ret)
-> 		return ret;
-> 
-> 	event->pending_unwind_callback = 1;
-> 
-> The task_work_add() adds the work from the event's pending_unwind_work.
-> 
-> Now the callback will be:
-> 
-> static void perf_event_deferred_task(struct callback_head *work)
-> {
-> 	struct perf_event *event = container_of(work, struct perf_event, pending_unwind_work);
-> 
-> // the above is the event that requested this. This may run on another CPU.
-> 
-> 	struct unwind_stacktrace trace;
-> 
-> 	if (!event->pending_unwind_callback)
-> 		return;
-> 
-> 	if (unwind_deferred_trace(&trace) >= 0) {
-> 
-> 		/*
-> 		 * All accesses to the event must belong to the same implicit RCU
-> 		 * read-side critical section as the ->pending_unwind_callback reset.
-> 		 * See comment in perf_pending_unwind_sync().
-> 		 */
-> 		guard(rcu)();
-> 		perf_event_callchain_deferred(event, &trace);
-> 
-> // The above records the stack trace to that event.
-> // Again, this may happen on another CPU.
-> 
-> 	}
-> 
-> 	event->pending_unwind_callback = 0;
-> 	local_dec(&event->ctx->nr_no_switch_fast);
-> 	rcuwait_wake_up(&event->pending_unwind_wait);
-> }
-> 
-> Is the recording to an event from one CPU to another CPU an issue, if that
-> event also is only tracing a task?
+----------------------------------------------------------------
+Four client fixes:
+- fix posix mkdir error to ksmbd (also avoids crash in
+cifs_destroy_request_bufs)
+- two smb1 fixes: fixing querypath info and setpathinfo to old servers
+- fix rsize/wsize when not multiple of page size to address DIO reads/write=
+s
 
-IIUC it should be fine as long as you use the unwind descriptor logic
-like in the per-CPU case.  The data should be written to the current
-CPU's ring buffer for per-task and per-CPU events.
+----------------------------------------------------------------
+Jethro Donaldson (1):
+      smb: client: fix zero length for mkdir POSIX create context
 
-> 
-> > 
-> > 	if (event->attr.defer_callchain) {
-> > 		if (event->cpu >= 0) {
-> > 			err = perf_add_unwind_deferred(event);
-> > 			if (err)
-> > 				return ERR_PTR(err);
-> > 		} else {
-> > 			init_task_work(&event->pending_unwind_work,
-> > 					perf_event_callchain_deferred,
-> > 					perf_event_deferred_task);
-> > 		}
-> > 	}
-> > 
-> > > +		err = perf_add_unwind_deferred(event);
-> > > +		if (err)
-> > > +			return ERR_PTR(err);
-> > > +	}
-> > > +
-> > >  	err = security_perf_event_alloc(event);
-> > >  	if (err)
-> > >  		return ERR_PTR(err);
-> > >  
-> > >  	if (event->attr.defer_callchain)
-> > >  		init_task_work(&event->pending_unwind_work,
-> > > -			       perf_event_callchain_deferred);
-> > > +			       perf_event_deferred_task);  
-> > 
-> > And you can remove here.
-> 
-> There's nothing wrong with always initializing it. It will just never be
-> called.
+Pali Roh=C3=A1r (2):
+      cifs: Fix and improve cifs_query_path_info() and cifs_query_file_info=
+()
+      cifs: Fix changing times and read-only attr over SMB1
+smb_set_file_info() function
 
-Ok.
+Paulo Alcantara (1):
+      smb: client: ensure aligned IO sizes
 
-> 
-> What situation do we have where cpu is negative? What's the perf command?
-> Is there one?
+ fs/smb/client/cifspdu.h    |   5 +-
+ fs/smb/client/cifsproto.h  |   4 +
+ fs/smb/client/cifssmb.c    |  57 ++++++++++++
+ fs/smb/client/connect.c    |  23 +----
+ fs/smb/client/file.c       |   6 +-
+ fs/smb/client/fs_context.c |  25 ++----
+ fs/smb/client/fs_context.h |  47 ++++++++++
+ fs/smb/client/smb1ops.c    | 223 +++++++++++++++++++++++++++++++++++++++++=
+-----
+ fs/smb/client/smb2pdu.c    |   9 +-
+ 9 files changed, 324 insertions(+), 75 deletions(-)
 
-Yep, there's --per-thread option for just per-task events.
-
+--=20
 Thanks,
-Namhyung
+
+Steve
 
