@@ -1,145 +1,154 @@
-Return-Path: <linux-kernel+bounces-629420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5E7AA6C38
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:07:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7BAAA6C4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4F8984046
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BBC31BA5BD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98EB267B7C;
-	Fri,  2 May 2025 08:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941AA268C75;
+	Fri,  2 May 2025 08:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b="wXbVmrS3"
-Received: from server4.hayhost.am (server4.hayhost.am [2.56.206.6])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X74JdYW/"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA38C22A4DA
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=2.56.206.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05B422A4DA;
+	Fri,  2 May 2025 08:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746173243; cv=none; b=cRpvx2zRWEUI119wCY1C7UXYhsfIf8pIYjC71n1MednVL1cDuExBLd+mzADfkz1ccbZfqqCopc3oS7dDZ/EV+a+wSH8PJ/tnd9H0pvnCQDrpwkBrGj8hPkASNsdIN4iLhAJfzaOdCkHiijZP+1mIdczdeSpF7eT4fq5j9Qyrz14=
+	t=1746173296; cv=none; b=Yek3YbV0ZdnWtbOOGPsRXOfjqpo/gY8rsdnLisEBznWrWvHU5UBGZwvg+Dbff7Aa8uQkHNV/AP+JMNP/VcyITYZHTVqnEtO47Q0ggfP1wBcTg+xcFRebD6vZoL4Ri5gBCVigQfgGtH+Yr3g1EzHZGsGF5tZdYb619Gdk+RhJYSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746173243; c=relaxed/simple;
-	bh=p6gq58eX77BP4a7rUQlS11PJUzySHzbhlRVFL37G/54=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=HYjMNPHcGAmlYAmvq03aw7pCDQnDBx9oqYUT9k5WprAPCfFgpD7/U0BNwMwU+m8sxA4KFAsRFFflvl/SBdynu0toa9/RfY1zJV2qoy/P3dmSBY1FNdOX6R+/yWUPfqkHT6rL9KoIGYbAMLiT8jDtSIU0w+X9TysINkatzOWPNeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am; spf=pass smtp.mailfrom=beldev.am; dkim=pass (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b=wXbVmrS3; arc=none smtp.client-ip=2.56.206.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beldev.am
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=beldev.am;
-	s=default; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
-	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=CzAe5vMF8DS129Xc2GhqJXava5yjYwD2XhZYo1+/ldA=; b=wXbVmrS3cwkVGldE2bVysmhXis
-	0MYUB4PGq+coRIJbrSRA2r/yyfG018voOZiV7ev8rcsWV9zS0zaSKCvOpOfSx5bL1UnnrD/79MeK6
-	G02sIDz2oSee4RtjvXcxZoQK5qF8ZaX9dSdw4zNm2PdVJQ/gbA3wdTutKva5k5wkxla9Y7oRR4WI7
-	QEgSOo0uQslDIwfLqIf5ADC0xVWCaCs6msHWS388FcTui6NN9KQ8MtYY25EXZNU799SUKvjgwAz+P
-	X+TP9FeXKd/umE3SnZGQkygfJ5XtpeA1T44whQIC0oMzmWsp3vdJ9eAG5NowFmXF+YzG1D5lbReRF
-	PeRNsjXw==;
-Received: from [::1] (port=55676 helo=server4.hayhost.am)
-	by server4.hayhost.am with esmtpa (Exim 4.98.1)
-	(envelope-from <igor.b@beldev.am>)
-	id 1uAlQg-00000000AWg-0ZND;
-	Fri, 02 May 2025 12:07:30 +0400
+	s=arc-20240116; t=1746173296; c=relaxed/simple;
+	bh=eiatRJ4JAfkKyNICDEwl7AfYH7Bpo4yYzsqoeBbolTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mFdahp1ORmUBrW3LxuW5KuEH6oKX1klLhsYE9M4lNoRvCDc4S6l97TIZn/jmFydyfhGIIEikDQM4xqBUUWhGCiqN5SSkGayysGXWmVJb7k8jv+4ygIRMwwHEardPCQnwmKElZIXfrYB4VCE3G5J6TTFiVUNV/yg5hfN2ekzWCGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=X74JdYW/; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54287nYA365294
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 03:07:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746173269;
+	bh=XEy5kTWJrHiARXNw/DljkoPY++hyVEUVWZlPeTaseu8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=X74JdYW/1OIfaBEK/7dZ95S6ToeGG9XqfzmYWzQPbUy+LDQCGFEBwwxmqRc8u8MFs
+	 BFdx4pEvb5qy7v1G/XF/HS00TbopFHTdLyThPXKdzY54uN90+rtTMxRA8gnjcsgg6r
+	 QBOjB8wdp0XpEVtThGbqz1sODbj1l7RSooghyIIg=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54287nBo002710
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 May 2025 03:07:49 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ May 2025 03:07:49 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 May 2025 03:07:49 -0500
+Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54287ia1107040;
+	Fri, 2 May 2025 03:07:44 -0500
+Message-ID: <e6533f02-b71f-41f5-bb8c-7d6e57f02b87@ti.com>
+Date: Fri, 2 May 2025 13:37:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 02 May 2025 12:07:27 +0400
-From: Igor Belousov <igor.b@beldev.am>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, Shakeel Butt
- <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed
- <yosry.ahmed@linux.dev>, Minchan Kim <minchan@kernel.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH] mm/zblock: use vmalloc for page allocations
-In-Reply-To: <20250502080156.1672957-1-vitaly.wool@konsulko.se>
-References: <20250502080156.1672957-1-vitaly.wool@konsulko.se>
-User-Agent: Roundcube Webmail/1.6.9
-Message-ID: <fddf0457275576c890d16921465cf473@beldev.am>
-X-Sender: igor.b@beldev.am
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH v1 2/4] arm64: dts: ti: k3-am62x: Add required voltage
+ supplies for IMX219
+To: Rishikesh Donadkar <r-donadkar@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <y-abhilashchandra@ti.com>,
+        <s-jain1@ti.com>, <jai.luthra@linux.dev>,
+        <jai.luthra@ideasonboard.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <imx@lists.linux.dev>
+References: <20250429154133.3377962-1-r-donadkar@ti.com>
+ <20250429154133.3377962-3-r-donadkar@ti.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20250429154133.3377962-3-r-donadkar@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server4.hayhost.am
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - beldev.am
-X-Get-Message-Sender-Via: server4.hayhost.am: authenticated_id: igor.b@beldev.am
-X-Authenticated-Sender: server4.hayhost.am: igor.b@beldev.am
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2025-05-02 12:01, Vitaly Wool wrote:
-> From: Igor Belousov <igor.b@beldev.am>
+On 29/04/25 21:11, Rishikesh Donadkar wrote:
+> The device tree overlay for the IMX219 sensor requires three voltage
+> supplies to be defined: VANA (analog), VDIG (digital core), and VDDL
+> (digital I/O).
 > 
-> Use vmalloc for page allocations for zblock blocks to avoid extra
-> pressure on the memmory subsystem with multiple higher order
-> allocations.
+> Add the corresponding voltage supply definitions to avoid dtbs_check
+> warnings.
 > 
-> While at it, introduce a module parameter to opportunistically
-> allocate pages of lower orders via try_page_alloc() for faster
-> allocations whenever possible.
-> 
-> Since vmalloc works fine with non-power of 2 numbers of pages,
-> rewrite the block size tables to use that opportunity.
-> 
-> Signed-off-by: Igor Belousov <igor.b@beldev.am>
-> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+
+Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+
+Regards
+Devarsh
 > ---
+>  .../boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso  | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 > 
-> Tests run on qemu-arm64 (8 CPUs, 1.5G RAM, 4K pages):
-> 1. zblock
-> 43205.38user
-> 7320.53system
-> 2:12:04elapsed
-> zswpin 346127
-> zswpout 1642438
-> 
-> 2. zsmalloc
-> 47194.61user
-> 7978.48system
-> 2:25:03elapsed
-> zswpin 448031
-> zswpout 1810485
-> 
-> So zblock gives a nearly 10% advantage.
-> 
-> Please note that zsmalloc *crashes* on 16K page tests so I couldn't
-> compare performance in that case.
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
+> index dd090813a32d6..149c59c071823 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
+> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
+> @@ -15,6 +15,33 @@ clk_imx219_fixed: imx219-xclk {
+>  		#clock-cells = <0>;
+>  		clock-frequency = <24000000>;
+>  	};
+> +
+> +	reg_2p8v: regulator-2p8v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "2P8V";
+> +		regulator-min-microvolt = <2800000>;
+> +		regulator-max-microvolt = <2800000>;
+> +		vin-supply = <&vcc_3v3_sys>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	reg_1p8v: regulator-1p8v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "1P8V";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		vin-supply = <&vcc_3v3_sys>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	reg_1p2v: regulator-1p2v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "1P2V";
+> +		regulator-min-microvolt = <1200000>;
+> +		regulator-max-microvolt = <1200000>;
+> +		vin-supply = <&vcc_3v3_sys>;
+> +		regulator-always-on;
+> +	};
+>  };
+>  
+>  &main_i2c2 {
+> @@ -40,6 +67,10 @@ ov5640: camera@10 {
+>  
+>  				clocks = <&clk_imx219_fixed>;
+>  
+> +				VANA-supply = <&reg_2p8v>;
+> +				VDIG-supply = <&reg_1p8v>;
+> +				VDDL-supply = <&reg_1p2v>;
+> +
+>  				reset-gpios = <&exp1 13 GPIO_ACTIVE_HIGH>;
+>  
+>  				port {
 
-Right, and it looks like this:
-
-[  762.499278]  bug_handler+0x0/0xa8
-[  762.499433]  die_kernel_fault+0x1c4/0x36c
-[  762.499616]  fault_from_pkey+0x0/0x98
-[  762.499784]  do_translation_fault+0x3c/0x94
-[  762.499969]  do_mem_abort+0x44/0x94
-[  762.500140]  el1_abort+0x40/0x64
-[  762.500306]  el1h_64_sync_handler+0xa4/0x120
-[  762.500502]  el1h_64_sync+0x6c/0x70
-[  762.500718]  __pi_memcpy_generic+0x1e4/0x22c (P)
-[  762.500931]  zs_zpool_obj_write+0x10/0x1c
-[  762.501117]  zpool_obj_write+0x18/0x24
-[  762.501305]  zswap_store+0x490/0x7c4
-[  762.501474]  swap_writepage+0x260/0x448
-[  762.501654]  pageout+0x148/0x340
-[  762.501816]  shrink_folio_list+0xa7c/0xf34
-[  762.502008]  shrink_lruvec+0x6fc/0xbd0
-[  762.502189]  shrink_node+0x52c/0x960
-[  762.502359]  balance_pgdat+0x344/0x738
-[  762.502537]  kswapd+0x210/0x37c
-[  762.502691]  kthread+0x12c/0x204
-[  762.502920]  ret_from_fork+0x10/0x20
-
-Thanks,
-Igor
 
