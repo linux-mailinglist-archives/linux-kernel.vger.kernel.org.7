@@ -1,197 +1,233 @@
-Return-Path: <linux-kernel+bounces-629425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CB8AA6C4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:09:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B037AA6C59
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2844A5172
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88921BA10A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E5E267B86;
-	Fri,  2 May 2025 08:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6496B268C6D;
+	Fri,  2 May 2025 08:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tI5PG4Qe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JacS998m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DDE19FA92;
-	Fri,  2 May 2025 08:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D422AD32;
+	Fri,  2 May 2025 08:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746173357; cv=none; b=b6LIK5Z7zC/sdeJmqlGRZ4s7XSRPMrDCkZUjGn2u8/spVc370x+ts1+Lc5IQo1bO3etAjCMlYGOYxEWOmmIcWz9ZhsPBpvAIMdmE7ibnrA4xvPfGSfeR6tR7pl4t7Y9m9ajf+ws9GSUcVOuZwMy7rQC6EPLjNfuGQ+E72qnxFL8=
+	t=1746173542; cv=none; b=By7TUKA/4eQZfBr3BzJH4xuTiW13Mc3p64W7Y0TZlJiJGWOmU9JhWjpvpFoBbKmAvQv3Yy/aKvDJsAHVdt6y2tEVaA7i6XVXZlcyfHUKTsbmTKSjWmvGOOQRkJKQ+/AgABEZbbvo63MLi8hseo0cndYAU5X4mH0R4pfvlo7FX+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746173357; c=relaxed/simple;
-	bh=222XQO8mIFdeK93gPTX+FiisVY1wVm+zHaX+uMTtNyk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pQLmi9sQdFA093lGkewBPKxUH7B+AA8iSpLsVbAIrkf+rOciE8T13af9T2N61is/l69vIs6Dz632AvxGzYuHEnpDmPil4JJWgb4+Be/aqZYqDCy1lt9NiF/RV5NzKV1It+fIn637iRr/9ru3hn1QtSQPxpBtPjg8I3AWBO5LLGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tI5PG4Qe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0DF5BC4CEE9;
-	Fri,  2 May 2025 08:09:17 +0000 (UTC)
+	s=arc-20240116; t=1746173542; c=relaxed/simple;
+	bh=fFKF6DIMGJgI0j6u24h/rZ8wvQJckx4dGZIU8VuRAMM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=UCDy6KaE/jyvqa8vYAXlGD0LFIYMiGcu28uY12fluYxchwcKGRLUpvytL41qVO8b+aOfs+wtJPTEEw2z5PaooaoFfvRoPP9Kn3CGmLn94Zo/wDjhiJH7cLoxOHyiB0+Fg1BGQ7CkIJ3FmticumE1QAZz3g+q6RAwWJ/WGMK4m0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JacS998m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE9CAC4CEE4;
+	Fri,  2 May 2025 08:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746173357;
-	bh=222XQO8mIFdeK93gPTX+FiisVY1wVm+zHaX+uMTtNyk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=tI5PG4QeQvzMFh47B/4Vn8cSYMmEDtnZfQ6+CoGrMrCPy1Usjv22jk7ewble98gBB
-	 o9F6c0qSUFJtrdntZRhROKrQbJk1Nb/982wVWnneyo/1COamhi+t9gCZjSY7XIrLrx
-	 5PT+ZNRhI3808sFc0RolUwj/9IdL8hyvmw+ucX19uc1QjXlpUHqxKgM/pLuKN2rJ1T
-	 4FTtscmRJ45dRUj1nRXdsHecB4xdLCZCjo9F4TQRwIA6LjhScl5je06ovdyUCKxvPx
-	 muzrIdZ6SXEEG8bm9snzIc8LBSrRS2BUNSkPxrxytRtewLuS2wuNz+nKA+zpY7lsZx
-	 eE6fMBWz5S/dg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F337AC3ABA3;
-	Fri,  2 May 2025 08:09:16 +0000 (UTC)
-From: Kurt Borja via B4 Relay <devnull+kuurtb.gmail.com@kernel.org>
-Date: Fri, 02 May 2025 05:09:01 -0300
-Subject: [PATCH v3 2/2] Documentation: wmi: alienware-wmi: Add GPIO control
- documentation
+	s=k20201202; t=1746173541;
+	bh=fFKF6DIMGJgI0j6u24h/rZ8wvQJckx4dGZIU8VuRAMM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=JacS998m9s1HIsTW16mFOzxFU5Lwr8fhZkcyda2HotFjwGLMp/u28GU3qFGyFw5L7
+	 p169Yx8zQ+0s16Qt4DNcqVy7tLfZZL9+a41PfMp/TWSseKhBBta344iTchd87XyIiE
+	 G+t/0LEtrXZgyjrQJb8KnZdgzS2bo03iNSBxzD3xHNzrf3tC9hwRUCGWeqA1CPCW7W
+	 FY0ywhg6cx3g60I6MlV40pPi1WWEHuCP33eOONB/YhHroaykYXdqkA1N4dv0ngJBoS
+	 tgOSnY+3F4bD9yrB3oh4v8Bthc0YCK4w9TTRwbhOuCPhUiMxVf15Yw1D+iD9XB7gP+
+	 0RR+RxqEX9APA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250502-awcc-gpio-v3-2-ea9a932d1124@gmail.com>
-References: <20250502-awcc-gpio-v3-0-ea9a932d1124@gmail.com>
-In-Reply-To: <20250502-awcc-gpio-v3-0-ea9a932d1124@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Armin Wolf <W_Armin@gmx.de>
-Cc: Gabriel Marcano <gabemarcano@yahoo.com>, 
- platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5479; i=kuurtb@gmail.com;
- h=from:subject:message-id;
- bh=E4gkeRIqe9/4ceUXqpKcpLW0DOBvrYPY99p6cCu4H4U=;
- b=owGbwMvMwCUmluBs8WX+lTTG02pJDBkitas33Wpax7vO/vsO0Z+r3/C2PTH6evzfVsu1txJvR
- JYHaQbP6yhlYRDjYpAVU2RpT1j07VFU3lu/A6H3YeawMoEMYeDiFICJXDvEyPCHp6bqjYCasOVS
- oZ5qY7d9k9ezm1+1lQoOfb3qveZ/Q15Ghp677y2PvPnCbTfffMkkLW3BOKOiZe84bs48bKa5KIB
- RjxEA
-X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
- fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
-X-Endpoint-Received: by B4 Relay for kuurtb@gmail.com/default with
- auth_id=387
-X-Original-From: Kurt Borja <kuurtb@gmail.com>
-Reply-To: kuurtb@gmail.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 02 May 2025 10:12:15 +0200
+Message-Id: <D9LIUW74XIRW.2DUQCSLYX1JP4@kernel.org>
+Subject: Re: [PATCH v3 1/4] rust: debugfs: Bind DebugFS directory creation
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Sami Tolvanen" <samitolvanen@google.com>, "Timur Tabi" <ttabi@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250501-debugfs-rust-v3-0-850869fab672@google.com>
+ <20250501-debugfs-rust-v3-1-850869fab672@google.com>
+In-Reply-To: <20250501-debugfs-rust-v3-1-850869fab672@google.com>
 
-From: Kurt Borja <kuurtb@gmail.com>
+> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b589c2d9a8d169bd66e98d289=
+4261784e427230e
+> --- /dev/null
+> +++ b/rust/kernel/debugfs.rs
+> @@ -0,0 +1,155 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2025 Google LLC.
+> +
+> +//! DebugFS Abstraction
+> +//!
+> +//! C header: [`include/linux/debugfs.h`](srctree/include/linux/debugfs.=
+h)
+> +
+> +use crate::str::CStr;
+> +use core::mem::ManuallyDrop;
+> +use core::ops::Deref;
+> +
+> +/// Owning handle to a DebugFS directory.
+> +///
+> +/// This directory will be cleaned up when it goes out of scope.
 
-Add documentation for the GPIO control methods.
+We should also document that it's a unit struct when `CONFIG_DEBUG_FS`
+is disabled (and the operations are noops). Maybe even do something
+like:
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+    #[cfg_attr(CONFIG_DEBUG_FS, doc =3D "`CONFIG_DEBUG_FS=3Dy`")]
+    #[cfg_attr(not(CONFIG_DEBUG_FS), doc =3D "`CONFIG_DEBUG_FS=3Dn`")]
+
+> +///
+> +/// # Invariants
+> +///
+> +/// The wrapped pointer will always be `NULL`, an error, or an owned Deb=
+ugFS `dentry`.
+> +#[repr(transparent)]
+> +pub struct Dir(#[cfg(CONFIG_DEBUG_FS)] *mut bindings::dentry);
+> +
+> +// SAFETY: Dir is just a `dentry` under the hood, which the API promises=
+ can be transferred
+> +// between threads.
+> +unsafe impl Send for Dir {}
+> +
+> +// SAFETY: All the native functions we re-export use interior locking, a=
+nd the contents of the
+> +// struct are opaque to Rust.
+> +unsafe impl Sync for Dir {}
+> +
+> +impl Dir {
+> +    /// Create a new directory in DebugFS at the root.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// # use kernel::c_str;
+> +    /// # use kernel::debugfs::Dir;
+> +    /// {
+> +    ///    let parent =3D Dir::new(c_str!("parent"));
+> +    ///    // The path "parent" exists in DebugFS here.
+> +    /// }
+> +    /// // It does not exist here.
+> +    /// ```
+> +    pub fn new(name: &CStr) -> Self {
+> +        Self::create(name, None)
+> +    }
+> +
+> +    /// Create a DebugFS subdirectory.
+> +    ///
+> +    /// This returns a [`SubDir`], which will not be automatically clean=
+ed up when it leaves scope.
+> +    /// To convert this to a handle governing the lifetime of the direct=
+ory, use [`Dir::from`].
+
+But it will be cleaned up when the parent goes out of scope? We should
+also mention that.
+
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// # use kernel::c_str;
+> +    /// # use kernel::debugfs::Dir;
+> +    /// {
+> +    ///    let parent =3D Dir::new(c_str!("parent"));
+> +    ///    // The path "parent" exists in DebugFS here.
+> +    ///    {
+> +    ///        let child =3D parent.subdir(c_str!("child"));
+> +    ///        // The path "parent/child" exists in DebugFS here.
+> +    ///    }
+> +    ///    // The path "parent/child" still exists.
+> +    ///    {
+> +    ///        let child2 =3D Dir::from(parent.subdir(c_str!("child2")))=
+;
+> +    ///        // The path "parent/child2" exists in DebugFS here.
+> +    ///    }
+> +    ///    // The path "parent/child2" is gone.
+> +    /// }
+> +    /// // None of the paths exist here.
+> +    /// ```
+> +    pub fn subdir(&self, name: &CStr) -> SubDir {
+> +        SubDir::new(Self::create(name, Some(self)))
+> +    }
+> +
+> +    /// Create a new directory in DebugFS. If `parent` is [`None`], it w=
+ill be created at the root.
+> +    #[cfg(CONFIG_DEBUG_FS)]
+> +    fn create(name: &CStr, parent: Option<&Self>) -> Self {
+> +        let parent_ptr =3D match parent {
+> +            Some(parent) =3D> parent.as_ptr(),
+> +            None =3D> core::ptr::null_mut(),
+> +        };
+> +        // SAFETY:
+> +        // * `name` argument points to a NUL-terminated string that live=
+s across the call, by
+> +        //   invariants of `&CStr`.
+> +        // * If `parent` is `None`, `parent` accepts null pointers to me=
+an create at root.
+> +        // * If `parent` is `Some`, `parent` accepts live dentry debugfs=
+ pointers.
+> +        // * `debugfs_create_dir` either returns an error code or a lega=
+l `dentry` pointer,
+> +        //   so we can call `Self::from_ptr`.
+> +        unsafe { Self::from_ptr(bindings::debugfs_create_dir(name.as_cha=
+r_ptr(), parent_ptr)) }
+
+What about when an error got returned? Should that be exposed to the
+user?
+
+> +    }
+> +
+> +    #[cfg(not(CONFIG_DEBUG_FS))]
+> +    fn create(_name: &CStr, _parent: Option<&Self>) -> Self {
+> +        Self()
+> +    }
+> +
+
+> +impl Drop for Dir {
+> +    fn drop(&mut self) {
+> +        // SAFETY: `debugfs_remove` can take `NULL`, error values, and l=
+egal DebugFS dentries.
+> +        // `as_ptr` guarantees that the pointer is of this form.
+> +        #[cfg(CONFIG_DEBUG_FS)]
+> +        unsafe {
+
+I feel a bit uneasy with seeing `cfg` on `unsafe` code, since now the
+correctness also depends on the configuration. Someone might add/modify
+it making it incorrect under certain configurations.
+
+This case is pretty straight forward, but I'm not so sure if we already
+have such a case.
+
+How about having two modules providing the two implementations and then
+just conditionally import one or the other?
+
 ---
- Documentation/wmi/devices/alienware-wmi.rst | 82 +++++++++++++++++++++++++++--
- 1 file changed, 78 insertions(+), 4 deletions(-)
+Cheers,
+Benno
 
-diff --git a/Documentation/wmi/devices/alienware-wmi.rst b/Documentation/wmi/devices/alienware-wmi.rst
-index 79238051b18bc5de9b502325017cd5c5fcf41748..1d9d43e2e314b03c134e6c63a0f9124036939e32 100644
---- a/Documentation/wmi/devices/alienware-wmi.rst
-+++ b/Documentation/wmi/devices/alienware-wmi.rst
-@@ -231,6 +231,74 @@ WMI method MemoryOCControl([in] uint32 arg2, [out] uint32 argr)
- AWCC supports memory overclocking, but this method is very intricate and has
- not been deciphered yet.
- 
-+GPIO control Methods
-+====================
-+
-+Alienware and Dell G Series devices with the AWCC interface usually have an
-+embedded STM32 RGB lighting controller with USB/HID capabilities. It's vendor ID
-+is ``187c`` while it's product ID may vary from model to model.
-+
-+The control of two GPIO pins of this MCU is exposed as WMI methods for debugging
-+purposes.
-+
-++--------------+--------------------------------------------------------------+
-+| Pin          | Description                                                  |
-++==============+===============================+==============================+
-+| 0            | Device Firmware Update (DFU)  | **HIGH**: Enables DFU mode   |
-+|              | mode pin.                     | on next MCU boot.            |
-+|              |                               +------------------------------+
-+|              |                               | **LOW**: Disables DFU mode   |
-+|              |                               | on next MCU boot.            |
-++--------------+-------------------------------+------------------------------+
-+| 1            | Negative Reset (NRST) pin.    | **HIGH**: MCU is ON.         |
-+|              |                               |                              |
-+|              |                               +------------------------------+
-+|              |                               | **LOW**: MCU is OFF.         |
-+|              |                               |                              |
-++--------------+-------------------------------+------------------------------+
-+
-+See :ref:`acknowledgements` for more information on this MCU.
-+
-+.. note::
-+   Some GPIO control methods break the usual argument structure and take a
-+   **Pin number** instead of an operation on the first byte.
-+
-+WMI method FWUpdateGPIOtoggle([in] uint32 arg2, [out] uint32 argr)
-+------------------------------------------------------------------
-+
-++--------------------+------------------------------------+--------------------+
-+| Operation (Byte 0) | Description                        | Arguments          |
-++====================+====================================+====================+
-+| Pin number         | Set the pin status                 | - Byte 1: Pin      |
-+|                    |                                    |   status           |
-++--------------------+------------------------------------+--------------------+
-+
-+WMI method ReadTotalofGPIOs([out] uint32 argr)
-+----------------------------------------------
-+
-++--------------------+------------------------------------+--------------------+
-+| Operation (Byte 0) | Description                        | Arguments          |
-++====================+====================================+====================+
-+| N/A                | Get the total number of GPIOs      | - None             |
-++--------------------+------------------------------------+--------------------+
-+
-+.. note::
-+   Due to how WMI methods are implemented on the firmware level, this method
-+   requires a dummy uint32 input argument when invoked.
-+
-+WMI method ReadGPIOpPinStatus([in] uint32 arg2, [out] uint32 argr)
-+------------------------------------------------------------------
-+
-++--------------------+------------------------------------+--------------------+
-+| Operation (Byte 0) | Description                        | Arguments          |
-++====================+====================================+====================+
-+| Pin number         | Get the pin status                 | - None             |
-++--------------------+------------------------------------+--------------------+
-+
-+.. note::
-+   There known firmware bug in some laptops where reading the status of a pin
-+   also flips it.
-+
- Other information Methods
- =========================
- 
-@@ -239,10 +307,16 @@ WMI method ReadChassisColor([out] uint32 argr)
- 
- Returns the chassis color internal ID.
- 
-+.. _acknowledgements:
-+
- Acknowledgements
- ================
- 
--Kudos to `AlexIII <https://github.com/AlexIII/tcc-g15>`_ and
--`T-Troll <https://github.com/T-Troll/alienfx-tools/>`_ for documenting and
--testing some of this device's functionality, making it possible to generalize
--this driver.
-+Kudos to
-+
-+* `AlexIII <https://github.com/AlexIII/tcc-g15>`_
-+* `T-Troll <https://github.com/T-Troll/alienfx-tools/>`_
-+* `Gabriel Marcano <https://gabriel.marcanobrady.family/blog/2024/12/16/dell-g5-5505-se-acpi-or-figuring-out-how-to-reset-the-rgb-controller/>`_
-+
-+for documenting and testing some of this device's functionality, making it
-+possible to generalize this driver.
-
--- 
-2.49.0
-
-
+> +            bindings::debugfs_remove(self.as_ptr())
+> +        }
+> +    }
+> +}
 
