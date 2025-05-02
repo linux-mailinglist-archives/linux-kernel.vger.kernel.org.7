@@ -1,138 +1,143 @@
-Return-Path: <linux-kernel+bounces-630379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378BFAA7947
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:29:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84DFAA7950
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA911C01504
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD164C1989
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FEE25B1D3;
-	Fri,  2 May 2025 18:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ADE266B6B;
+	Fri,  2 May 2025 18:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CO6IWdf8"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dRb2ybyM"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B663C15350B;
-	Fri,  2 May 2025 18:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9704F1F4168
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 18:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746210571; cv=none; b=oKgQPQQ2KdgiKUEJ0cs1L4nAHDcG1ZnHOO8W82rmE3v2X1ktN2yOwHLNi++piItLIesat89wNt7pxU0vCr0FCD1fpS58auy17mIzS6VUic4BPRCobjuOvl07XsDptUytYXsb5rX2vLqktLLCiJybhFuU45QvUHEL6Hf03TKcQdA=
+	t=1746211081; cv=none; b=rq0jyRWjCqk1fXGfHL9S1eipkuzZS0xd7qrQW0ryVSlQgml1i/KzpEoW6XJjB4FgKKkos0bZ+iVDbGlZpyv6Jtr4I4p9KEHJoDEfHvKEJAx2Ompd9AtwuzHo7vSotIOKr0huQTV3kMAx5u9BLxxeo40Lu9Cv45H8A7xiHXT0NcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746210571; c=relaxed/simple;
-	bh=mQDY/AJR/89Z2jexEMxyjLo7VznybV3SxIwQ6cA0Cl0=;
+	s=arc-20240116; t=1746211081; c=relaxed/simple;
+	bh=evz0UL5GViJbQYOeXoB2+mBdr/LLmySfQf4mosHPGw0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C6U36SatgYwMqCVOlRCwINpmAUrVtGpgbAJXOveoWj5qsYt466K5SnlTlfYwKeT0J3mROTMQNbCXp+my6ZENzofXxUPDAiLaXJ+fjZpjav9nZyusPq6BoAqdghmH4aP8LfR5DtOHHoby5LJURAvr8EJWmlrHuMGUfHr2mkxINz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CO6IWdf8; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39ee5a5bb66so1379521f8f.3;
-        Fri, 02 May 2025 11:29:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=BE7DEmHzQXJ4IBk+xWOsYqqM8t+GALm7SjPd13uf34epfWRRZ2edDuqVv55Kf1DsGDYCk5pCRfizQn6AkfGAyp3q1/jjdC1BX+bTQw9HV2RRdCJ5lZHGhWh9Ji3nlq64+lZzfG2xx7bk0NMMgFz+vrhfxLEFojeCUfWXr2T04hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dRb2ybyM; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f728aeedacso3543645a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 11:37:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746210567; x=1746815367; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1746211078; x=1746815878; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zFHm1tfv35vyjBSvb7AN3OxjMGjn0tT8+FpYF9gx+rc=;
-        b=CO6IWdf8gARLteDIxormqgTLFueeulguIjXR4CQ0CnGKiD/fodsI8DzFKJO5yt+rjQ
-         CI2YMD9YE1DPtK+/qoIHm6xNQLLIYZLI5zge/WAvIimlrX+k5wtlt3kLfUoOHyyMEL8+
-         qgL+0/oJhCBxxvFlzZSeMFpMVA9hpahmjjsoptIds7QiMncrrY3AQbgmVVvtHURwE/Fd
-         vW4Sgw1i1UdnD1TcPevyi/mOmlaRq8aWI3Qkbw7PQU7hd/h+3Lj/gzLMBOwygqwU4InR
-         Sv+4aSarK+jA/Oc7Aak7nf+Fg635+/OIAXhW4rPy2MSjwIaTuFbO+TvNb85JgKLbC0w+
-         9vEw==
+        bh=Szvh9FDiAeZV5KMXY9XpVOO+pU/TH0kKZBG6xbyHs1E=;
+        b=dRb2ybyM9EToZlc9rRPDDaJFSph9bO2+zPF+OGTf3OTyX7p7aVGlPWIMJl9+OwrXnt
+         Y6v3AC5oD5ubzWTPTDMssf15VOeCPSjZ+SPlFhsH286iYmHGp59r2SQfXCEI85/258a1
+         /0V6NF7ef0FgPuZpYFfE/JbYCapbpTd+YBK+EGBP+j6M0eIpuH9C5K6ucBWY9uF0IOhH
+         Ngk3Y9u8R+Sv56fVyoLjoBD9LauE6ur0SRb7nyx7SCXmTDM3Zhpd/DgdqZHq+RejkFdN
+         +jphJy/dK5xLJYAwoWtp16fTelAuoHBFSqnr0r69M77QS+7mtzoU443KMrqi9p10Oxwr
+         yJXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746210567; x=1746815367;
+        d=1e100.net; s=20230601; t=1746211078; x=1746815878;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zFHm1tfv35vyjBSvb7AN3OxjMGjn0tT8+FpYF9gx+rc=;
-        b=P8kTxn6a1+/KuDszcw+XXlFHg954PBbHVdwUihsFdY9N2AXDD1nu2vQgerSLMXH6ge
-         xbhPVLeFAi0Qpmg7ETh3bE7g6Y5j1EZniUNoGO+nPK7HHd7WrKB08BNc1vZrvC4FGFgl
-         NtSapb0x0u6zR8ILA3CyNiGht188dGQgmYWo3rMipKMqBj3Fnp5oImXbVrG7kNodiETI
-         MHwyRcubz9GiqLwVItbFpWBRAqX0bXUpyuBFfsKsCrcOGpH9pGr54vLiTnEeupOodwUK
-         kJuSHsAN6L9E0fjrG7dEPlTorC33sK6kazhKgWHwn1mF0TTYhejh2stRKA3Gg8OdIz0/
-         U/dg==
-X-Forwarded-Encrypted: i=1; AJvYcCU185cVMm+M6y52mmCiJPHCqzbMIfCESXK71udifi+r2677VTRY/Fm288z8iIc5hWsQob0lOCHKjg==@vger.kernel.org, AJvYcCUm3w5zmKCm1yLB4YnwsWmU7lxCEAYKelbIORzwK6eJome8OwxnbWqtPim5jvy1rvHYylo=@vger.kernel.org, AJvYcCVBVXEusKS2CaoPUze5bSBE84uKXh6/NmBvDo2AaO5l2ZkMWARXbZCVVL24I9YihhzfYv7fqf44WaspSzpZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywttq/gCdx2McM95OUsmsh77RIdbvVNc5z8LZqBah9ZhmKwAc+F
-	e7wKiKr3myTLRoApEPS6iVr30Ce1bPC1+D0KxHOXloDaSPC1/8jz0X9ANGqiNVhQDrrH9yFgLKe
-	N/rJnccbch8veTN1uc+q/Ho8FIXg=
-X-Gm-Gg: ASbGnctuNh074oKK3JuPpKOGMHxq+BDacB63BYrCEiC3zk6JCz2OS/R04N4yeFAHQNg
-	9zL5JyNYup5saTh1ZU1OSo/US+6Of13q6Da8km6O8fCUO5esDLyTDlIcu3Z/o9r1h674vztp4DS
-	bphqKs4b6ybakHRTSBwge5+JWvCLjHu0IstbfpSA==
-X-Google-Smtp-Source: AGHT+IGZDVjNbQY0k7XiguUPy1qRwoEN4lzehDc7xAB6HtEldTcvHbiAVFR6uTiVw4aghdr0oalOFquu/9roPKdUkII=
-X-Received: by 2002:a5d:5984:0:b0:3a0:99e9:bcd7 with SMTP id
- ffacd0b85a97d-3a09cea72c1mr184420f8f.5.1746210566946; Fri, 02 May 2025
- 11:29:26 -0700 (PDT)
+        bh=Szvh9FDiAeZV5KMXY9XpVOO+pU/TH0kKZBG6xbyHs1E=;
+        b=vVa82dTf8Ldi0OF0WskT0Z8CXKTwylOFOH8D/dlb3NDxGjN34rTUlAwC2udQKatQJd
+         nGxiGH9AGtdkmFMvcEoAjj7lC8waHBQX4g/KCkwcgNonczolq8FP1pZeu/oYFh6Dk64p
+         wTAkezlbV5AzNEeVRmb4GLafc+1UNKEI2wgJImg5+WBfgpNzx2/HUaNjb/3Xde2QzuPl
+         t+e/agRPsbut4IHHG93p53zeNFCOfrWNma8d2g6fSknKhjGgClAa/Os6wbpwKdQRfTQA
+         484n4avdHhO0IGR3IM8f5Rdc6rvo4F7MwJS+6w6SpnBD32UkEaYLD5L8xGObtrDapgkt
+         EFrw==
+X-Gm-Message-State: AOJu0Yx0Hoa6ikjOR9te77O8Gz/BLmqjjmcBSr67ticU1dPUNuxnPo9o
+	9NrjbaTqemj1Bt+QjGdFHKurg3G22/7/CaJVGYuywy5bqLIt2RaV1PABLYJVqMtFE8epI3P8/gd
+	UeJJZ2fc86WnPILul0qdIFkmdHMA8/9CVbAdN
+X-Gm-Gg: ASbGncuNzbYpo4N7sXDFlX0teDEwbBgy3+agvvoxUFi+x3DEqmP+qbdEJaZx58P4HRS
+	ZPcCYrxlAP0qTSHDzGyO/ZaS9+flUra3+kx67yYbfS+lU/Ucif+a2me4uBVml4Z42hWJhhyAIrf
+	394966katXg2RhO8HMrJMWoyVxmg8YlELxVyLGSn/MUeY+G91/SA==
+X-Google-Smtp-Source: AGHT+IGwGEcGt7qt4y6UtHsVIeUZAmZUDbWtJ+Ey7gGLeSPt9gI0iA5XJZYC4rzHLcT2CmY4/egmqxuj7aqEk5l5ENE=
+X-Received: by 2002:a17:907:9812:b0:acb:94d6:a841 with SMTP id
+ a640c23a62f3a-ad17ad8096cmr430432366b.16.1746211077663; Fri, 02 May 2025
+ 11:37:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502001742.3087558-1-shakeel.butt@linux.dev> <20250502001742.3087558-4-shakeel.butt@linux.dev>
-In-Reply-To: <20250502001742.3087558-4-shakeel.butt@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 2 May 2025 11:29:16 -0700
-X-Gm-Features: ATxdqUHqug0Pj9O_29hq5eWY4vn7NLIM1dbUiX1mC592l5Jn0vudNn1sTCMtTQE
-Message-ID: <CAADnVQJ-XEEwVppk-qY2mmGB4R18_nqH-wdv5nuJf2LST5=Aaw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] memcg: no irq disable for memcg stock lock
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Meta kernel team <kernel-team@meta.com>, 
-	Vlastimil Babka <vbabka@suse.cz>
+References: <20250501225425.635167-1-changyuanl@google.com>
+ <20250501225425.635167-7-changyuanl@google.com> <20250501173557.1880f3aa8694352e0eb153b4@linux-foundation.org>
+In-Reply-To: <20250501173557.1880f3aa8694352e0eb153b4@linux-foundation.org>
+From: Changyuan Lyu <changyuanl@google.com>
+Date: Fri, 2 May 2025 11:37:20 -0700
+X-Gm-Features: ATxdqUHZQf1uwj7X5bskxFA1vT8WH6Uhw3YyifuFYUsYAjHkndnVOqhZb4vCKaQ
+Message-ID: <CAGzOjspvbMkr8b4-xy3EfGLE4nmLC8B9EPx0QYCdpoFQD-FESA@mail.gmail.com>
+Subject: Re: [PATCH v7 06/18] kexec: include asm/early_ioremap.h
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
+	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
+	catalin.marinas@arm.com, corbet@lwn.net, dave.hansen@linux.intel.com, 
+	devicetree@vger.kernel.org, dwmw2@infradead.org, ebiederm@xmission.com, 
+	graf@amazon.com, hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org, 
+	krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, 
+	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com, 
+	pbonzini@redhat.com, peterz@infradead.org, ptyadav@amazon.de, robh@kernel.org, 
+	rostedt@goodmis.org, rppt@kernel.org, saravanak@google.com, 
+	skinsburskii@linux.microsoft.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	will@kernel.org, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 1, 2025 at 5:18=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.dev=
-> wrote:
+On Thu, May 1, 2025 at 5:36=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
 >
-> There is no need to disable irqs to use memcg per-cpu stock, so let's
-> just not do that. One consequence of this change is if the kernel while
-> in task context has the memcg stock lock and that cpu got interrupted.
-> The memcg charges on that cpu in the irq context will take the slow path
-> of memcg charging. However that should be super rare and should be fine
-> in general.
+> On Thu,  1 May 2025 15:54:13 -0700 Changyuan Lyu <changyuanl@google.com> =
+wrote:
 >
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/memcontrol.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > The early_memremap() function is decleared in a header that is only ind=
+irectly
+> > included here:
+> >
+> > kernel/kexec_handover.c:1116:8: error: call to undeclared function 'ear=
+ly_memremap'; ISO C99 and later do not support implicit function declaratio=
+ns [-Wimplicit-function-declaration]
+> >  1116 |         fdt =3D early_memremap(fdt_phys, fdt_len);
+> >       |               ^
+> >
+> > ...
+> >
+> > --- a/kernel/kexec_handover.c
+> > +++ b/kernel/kexec_handover.c
+> > @@ -17,6 +17,9 @@
+> >  #include <linux/memblock.h>
+> >  #include <linux/notifier.h>
+> >  #include <linux/page-isolation.h>
+> > +
+> > +#include <asm/early_ioremap.h>
+> > +
+> >  /*
+> >   * KHO is tightly coupled with mm init and needs access to some of mm
+> >   * internal APIs.
 >
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index cd81c70d144b..f8b9c7aa6771 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1858,7 +1858,6 @@ static bool consume_stock(struct mem_cgroup *memcg,=
- unsigned int nr_pages,
->  {
->         struct memcg_stock_pcp *stock;
->         uint8_t stock_pages;
-> -       unsigned long flags;
->         bool ret =3D false;
->         int i;
->
-> @@ -1866,8 +1865,8 @@ static bool consume_stock(struct mem_cgroup *memcg,=
- unsigned int nr_pages,
->                 return ret;
->
->         if (gfpflags_allow_spinning(gfp_mask))
-> -               local_lock_irqsave(&memcg_stock.lock, flags);
-> -       else if (!local_trylock_irqsave(&memcg_stock.lock, flags))
-> +               local_lock(&memcg_stock.lock);
-> +       else if (!local_trylock(&memcg_stock.lock))
->                 return ret;
+> When resending, it's best to fold little fixes like this into the base
+> patch, along with a little note and the author's signed-off-by.
 
-I don't think it works.
-When there is a normal irq and something doing regular GFP_NOWAIT
-allocation gfpflags_allow_spinning() will be true and
-local_lock() will reenter and complain that lock->acquired is
-already set... but only with lockdep on.
+Thanks for the suggestion Andrew! I will follow it next time.
+
+> I shall queue this as a fix to be folded into "kexec: add KHO parsing
+> support", thanks.
+
+
+Best,
+Changyuan
 
