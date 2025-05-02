@@ -1,94 +1,156 @@
-Return-Path: <linux-kernel+bounces-629823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1137AA71EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432E1AA722A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B791C01015
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A74F9E0A5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD18F25486A;
-	Fri,  2 May 2025 12:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA4B2561CA;
+	Fri,  2 May 2025 12:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dZzgyc/J";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/3To1Us1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJR0yLzQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2D224BBFD
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE6E254AF3;
+	Fri,  2 May 2025 12:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746189098; cv=none; b=bFt7lS8av7d2eIwFn8Ik3sDQAiTOBmsLUBfooPgwjvPHiRPHf7YQUhR5p9+Gc1hEFsVi4lAvJRHuz8Hi9j5yHuKwROSLVMN0iyGWVv4/naAyDhiE6ej2lWATWn8p5VbrOwfZdcYRXjUbBZutBXcfbGJqA5BDxhoiy1y1TLms6lM=
+	t=1746189124; cv=none; b=Ag76oNl6/yL+XwIr2TV1t3EWodOhfNxWHK6KsdrpcRhKFSnmBsy9l6ajxRyan2ZOF9fsxz4PDoGkGNdo59NIiWQjUk0F+PGcCu31nLjhnqxQ+YodbclA4mekW1msiesENAuAffCYMAGMoX/XsdF0SkOP55TxZue7GtKeu50B6rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746189098; c=relaxed/simple;
-	bh=XesEG/0KvQlQV0UEHbw2alP/dDBhq3XhIOw7ALm9CfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tkjlwHB1XKXAM4654kXZXzy0jzzL0N3hy5CAp93fzcm4Kbxoo4erBTtbZd2d3ss/vVMP07Xec+6ObYUnvf3i/eDokm1GNBWeveiyFpUARUdKuW1KOSmJaVxHmISKPDcrUX7D1jZBQGikcF3MR8iO+0PXSTO0/Uia3W4ynXQUs+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dZzgyc/J; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/3To1Us1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 2 May 2025 14:31:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746189094;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l/ps/KnLOGHL6+wgjhHsQWYaOPZoEkEqnfArzWRawig=;
-	b=dZzgyc/Jx4pWYVxAI3jk4myI0wWutMBehsuMmDUNViApCehaoM0VEYBgJl8Xt+Y6/wqgbi
-	cRpMWV6mJcYuBZiVh+BVD3IEAfzUmQO2uypHhAMmPBBe/m92/+gV7KbkqslV3xLpGJaEyK
-	Hm4UBOvOtn1t8hl+KyOr5vSnk1SLLGwzs7qIaKWuMC9QQu4d4z0XmurB62vEttzbYBMLu/
-	YWVFiACC4p1x74av46EyOgSYW3X1rNyxN8Jn7tCpCZCJt6lELcJzU9UsOeg0xzw1Ck1iaO
-	5fVljhJzK8pYHkg0lao1WWECRdywmVrlf6MTi1qX+GvgvSERzi3OzgrbYU3DDQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746189094;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l/ps/KnLOGHL6+wgjhHsQWYaOPZoEkEqnfArzWRawig=;
-	b=/3To1Us1j6sBLnH+ixHLadDwWm+zG6mFH/XSbv0ikWEFKfqr/yvf+BxsH3lKix1aw4ubxT
-	9ldnHOGlM5lVVRDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, tglx@linutronix.de,
-	kprateek.nayak@amd.com
-Subject: Re: [PATCH V3 4/4] Sched: Add tracepoint for sched time slice
- extension
-Message-ID: <20250502123133.4pGihD-W@linutronix.de>
-References: <20250502015955.3146733-1-prakash.sangappa@oracle.com>
- <20250502015955.3146733-5-prakash.sangappa@oracle.com>
- <20250502091434.GV4198@noisy.programming.kicks-ass.net>
- <20250502110210.rZX1iHcg@linutronix.de>
- <20250502111044.GY4198@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1746189124; c=relaxed/simple;
+	bh=IGdaO2A/M4SfrvXrLhWuIG91zV2VLydm1UtEi2pY81o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MVsYpkDJvwmbzmzjRvGiaTILzuxdnMQK6N+lvuaI5+G/1QpE0GaLaCwkZ5zuxRjjlptcLEj+prN/G6Wtla2TxzRQs/Uftxj+XoNGhmeertfamtmudsr20phodvqNotKmKHS25CZkI+fLMzyZrBcrB7lK05ZTkgh2qOxEsjpFp1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJR0yLzQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52DF4C4CEEF;
+	Fri,  2 May 2025 12:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746189124;
+	bh=IGdaO2A/M4SfrvXrLhWuIG91zV2VLydm1UtEi2pY81o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=DJR0yLzQ8IZehPtDOH74CDb6XFTRXszbIOCH0+twTczQ8qMPDoIRYadse3B8QaR5g
+	 TAlnYn3lyRxanBVRHsXw5MqXxiVYXWK9T2s1MV0fQpDVOv8NqQ10Cgq4im3dab6YVW
+	 PXTMFLlGZPmK5YTyEAPiAYROgwK96LnXsc/9VP1e9eSrOc4lmSfbHFEl3jFYMC+6V3
+	 mayg+XKI/+17dwdaOf+q10oZNa0wV1TKHo9iilZ5Q+fxHLrEypKwPlfc7yMmvmYyN6
+	 Ns6vNm21S9axvS/tdH0+hXgW9pUHaRJSYmiLjq6AgCeyK+STpVSOD99hq+kc8BME8e
+	 0CyM/3fImhRaA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Danilo Krummrich" <dakr@kernel.org>,  "Oliver Mangold"
+ <oliver.mangold@pm.me>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: elaborate safety requirements for
+ `AlwaysReferenceCounted`
+In-Reply-To: <aBS0ZP9tFnujvodq@google.com> (Alice Ryhl's message of "Fri, 02
+	May 2025 12:02:44 +0000")
+References: <20250502-aref-from-raw-v1-1-eb0630626bba@kernel.org>
+	<y-zNJ4bc_qB45bZdnhojbouRbKGZCnzfvM4um6WShQHCTrvN6WikMId_DeZsZz2iSiSQwfNZ13cabCinPpDDlA==@protonmail.internalid>
+	<aBS0ZP9tFnujvodq@google.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Fri, 02 May 2025 14:31:55 +0200
+Message-ID: <87plgrxkg4.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250502111044.GY4198@noisy.programming.kicks-ass.net>
+Content-Type: text/plain
 
-On 2025-05-02 13:10:44 [+0200], Peter Zijlstra wrote:
-> On Fri, May 02, 2025 at 01:02:10PM +0200, Sebastian Andrzej Siewior wrote:
-> > On 2025-05-02 11:14:34 [+0200], Peter Zijlstra wrote:
-> > > This is horrific coding style. But really why do we need this? I'm not,
-> > > in general, a fan of tracepoints.
-> > 
-> > I suggested a tracepoint so that we see why the NEED_RESCHED flag
-> > disappeared. The trace would show a wakeup, the need_resched flag would
-> > be set and the flag would disappear without an explanation.
-> 
-> Would we not see a timer_start event for the hrtick or somesuch?
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Yes, we do. That would mean we need timer:hrtimer* in order for the
-sched:* to make sense.
+> On Fri, May 02, 2025 at 01:53:57PM +0200, Andreas Hindborg wrote:
+>> Clarify that implementers of `AlwaysReferenceCounted` must prevent the
+>> implementer from being directly initialized by users.
+>>
+>> It is a violation of the safety requirements of `AlwaysReferenceCounted` if
+>> its implementers can be initialized on the stack by users. Although this
+>> follows from the safety requirements, it is not immediately obvious.
+>>
+>> The following example demonstrates the issue. Note that the safety
+>> requirements for implementing `AlwaysRefCounted` and for calling
+>> `ARef::from_raw` are satisfied.
+>>
+>>   struct Empty {}
+>>
+>>   unsafe impl AlwaysRefCounted for Empty {
+>>       fn inc_ref(&self) {}
+>>       unsafe fn dec_ref(_obj: NonNull<Self>) {}
+>>   }
+>>
+>>   fn unsound() -> ARef<Empty> {
+>>       use core::ptr::NonNull;
+>>       use kernel::types::{ARef, RefCounted};
+>>
+>>       let mut data = Empty {};
+>>       let ptr = NonNull::<Empty>::new(&mut data).unwrap();
+>>       let aref: ARef<Empty> = unsafe { ARef::from_raw(ptr) };
+>>
+>>       aref
+>>   }
+>
+> I don't think it's entirely impossible to write an AlwaysRefCounted
+> value that can be on the stack. The type just needs a lifetime
+> parameter. For example, this API is not unsound:
+>
+> struct MyDataStorage {
+>     // ...
+> }
+>
+> impl MyDataStorage {
+>     fn as_aref(&self) -> ARef<MyData<'_>> {
+>         unsafe { ARef::from_raw(ptr::from_ref(self).cast()) }
+>     }
+> }
+>
+> #[repr(transparent)]
+> struct MyData<'s> {
+>     storage: MyDataStorage,
+>     _lifetime: PhantomData<&'s MyDataStorage>,
+> }
+>
+> unsafe impl AlwaysRefCounted for MyData<'_> {
+>     fn inc_ref(&self) {}
+>     unsafe fn dec_ref(_obj: NonNull<Self>) {}
+> }
+>
+> impl Deref for MyData<'_> {
+>     type Target = MyDataStorage;
+>     fn deref(&self) -> &MyDataStorage {
+>         &self.storage
+>     }
+> }
 
-Sebastian
+Right. I would rephrase then:
+
+It is a violation of the safety requirements of `AlwaysReferenceCounted`
+if its implementers can be initialized on the stack by users and an
+`ARef` referencing the object can outlive the object. Although this follows from
+the safety requirements, it is not immediately obvious.
+
+and
+
++/// Note: This means that implementers must prevent users from directly
++/// initializing the implementer when the implementer is `'static`. Otherwise users could
++/// initialize the implementer on
++/// the stack, which would violate the safety requirements.
+
+What do you think?
+
+
+Best regards,
+Andreas Hindborg
+
+
 
