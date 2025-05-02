@@ -1,133 +1,112 @@
-Return-Path: <linux-kernel+bounces-629528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DA2AA6DB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:10:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E3FAA6D2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC314C28EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9A23B1EC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC20433CE;
-	Fri,  2 May 2025 09:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA10122B8C8;
+	Fri,  2 May 2025 08:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="3KxdsgQi"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAaE7RbM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0C322576D;
-	Fri,  2 May 2025 09:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139C422616C
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746176849; cv=none; b=c+mnVvv+PTB65w9kwmNayHLoBVAf70GuaR3tMaiws0twLV15NhuxWcC6FxEE/WizAwUXqXkRDJDIcJtFN18cyXJi0fEaKK7H7AJ/ZmIlEmk2Yu7FjEUnhnAvjMcJiKW0n33Mm2IgnFAUEpkX8hSN0HAna3f6y87ArU9Fv7ynA+w=
+	t=1746176284; cv=none; b=dQJ/QEnqlPbxeMzNBlbAGzCJjEWf4W1Il+04Au7rjGTQawjKmZKJHppM+YCJ1eZs6E51id+NzBe/ggkx1V/Wsch0WdwdxXUlBOQvxpa6fs7A9/PIdE4R5BEUJa2qWBPMDZIkTMSk3WguVB/hGD7N3N0q2XLqIZZW/kx0lsZDRIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746176849; c=relaxed/simple;
-	bh=8V2LMlhIR6jtrHPIFw3siQfwtc50CNo0M2ewnkYj3uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i1LD/OrQb0AP39H9xI++C9yAxmFOUBw2H22to7qQvA1A/YhldoiOMrlnGfmLWIYnX/ncAvEqMjgxB/2TWH4/J4Kozi9OWOwVNBgrgyqRJZ+pptwPFvZouK/Uui7uTinYr/cuhQdbu9gBKP1KXnTKehlWS5h/mbc6QrATiPiUZx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=3KxdsgQi; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1746176277; bh=8V2LMlhIR6jtrHPIFw3siQfwtc50CNo0M2ewnkYj3uo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=3KxdsgQiEFZ9GDjPKSO03SGwMWvYiGtZ8i09NutZ3PZMILTSWgOlw7Xash8zMKxJx
-	 7vQ5WX9wlG1vCdpC90ds0ZIgfSxuXx1pqjRPBA3cosbEAyyOEYHzacALn5GmPbk6El
-	 fmtVz3B3duse6GoCdNEq9vw6UbKX2+Vp9mWBarCQ=
-Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id A8B872052D0F;
-	Fri,  2 May 2025 10:57:57 +0200 (CEST)
-Message-ID: <761a05ce-b711-439c-bbb5-44c570867a50@ralfj.de>
-Date: Fri, 2 May 2025 10:57:57 +0200
+	s=arc-20240116; t=1746176284; c=relaxed/simple;
+	bh=ZuiskJpGWxLu4eAPDCVIKrsFcyDHCI0/cLWzm/xfpgU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uAztmcdiepuu10LrDJW4BXigB8hbHtBN15AelL3ezTsW8cs301xkM8HPyzdjZCq2N+QDRQJ4w1GuislofkHQT0lxa10CFzNHH7P6ZCqkYftv9LCJs9D/Aq30beSVyQbXofSkS0mgScRdTu2AVAmTEFty6TPc4gt2uQa49MMOdVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAaE7RbM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC55C4CEE4;
+	Fri,  2 May 2025 08:58:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746176283;
+	bh=ZuiskJpGWxLu4eAPDCVIKrsFcyDHCI0/cLWzm/xfpgU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ZAaE7RbMned7hCMAWLGak6h15MF1eIy0ByRjIOVxbiI7o4WF7/Xh2BVjNdw4/uAVl
+	 7KeN/fKxNky3V92sbLtvWMO6a/G7owtAJIEn5agB/iv0BGjLxas6W8K9rLCD/b49ZF
+	 4ZuuGhvAtvrhvlPk/42PlT2wfU82ptJhIL8oJqSrI88jpVLhDsj6nyrZeOeenTmsbB
+	 B/H92L8clzSteNApaASEUYxC+zTfin61AkB1EvmcT7Pz1utPmqNxacVua2QC46Ni5g
+	 BlX7tFtJpX6VuVSEuQbljGkbaxf7Vzy6FLJnKCDDTv5qTtqX2Kt96FbhJizuEXUZLP
+	 JraEh4uDUEvpw==
+From: Daniel Wagner <wagi@kernel.org>
+Date: Fri, 02 May 2025 10:58:00 +0200
+Subject: [PATCH] nvme: unblock ctrl state transition for firmware update
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] rust: add UnsafePinned type
-To: Benno Lossin <lossin@kernel.org>,
- Christian Schrefl <chrisi.schrefl@gmail.com>, Sky <sky@sky9.dev>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com>
- <20250430-rust_unsafe_pinned-v2-1-fc8617a74024@gmail.com>
- <22f6f12b-d002-4ada-834e-00ef0073bd9e@gmail.com>
- <D9L1WOB7LYI2.1JNEDXOGQ4F9U@kernel.org>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <D9L1WOB7LYI2.1JNEDXOGQ4F9U@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250502-nvme-fix-fw-update-v1-1-cd7a9f3031f7@kernel.org>
+X-B4-Tracking: v=1; b=H4sIABeJFGgC/x2MuwqAMAwAf0UyG2gDdfBXxEFN1AxWaX1B6b9bH
+ A/uLkGUoBKhrRIEuTXq7gvYuoJpHfwiqFwYyJAzzhD6exOc9cX5wevg4RS0rhmZDQnTCCU8ghT
+ hn3Z9zh+ziGFrZAAAAA==
+X-Change-ID: 20250502-nvme-fix-fw-update-156bdd02ed2b
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Guenter Roeck <linux@roeck-us.net>, Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-Hi all,
+The original nvme subsystem design didn't have a CONNECTING state; the
+state machine allowed transitions from RESETTING to LIVE directly.
 
-On 01.05.25 20:55, Benno Lossin wrote:
-> On Thu May 1, 2025 at 7:12 PM CEST, Christian Schrefl wrote:
->> On 30.04.25 10:36 AM, Christian Schrefl wrote:
->>> +/// This type provides a way to opt-out of typical aliasing rules;
->>> +/// specifically, `&mut UnsafePinned<T>` is not guaranteed to be a unique pointer.
->>> +///
->>> +/// However, even if you define your type like `pub struct Wrapper(UnsafePinned<...>)`, it is still
->>> +/// very risky to have an `&mut Wrapper` that aliases anything else. Many functions that work
->>> +/// generically on `&mut T` assume that the memory that stores `T` is uniquely owned (such as
->>> +/// `mem::swap`). In other words, while having aliasing with `&mut Wrapper` is not immediate
->>> +/// Undefined Behavior, it is still unsound to expose such a mutable reference to code you do not
->>> +/// control! Techniques such as pinning via [`Pin`](core::pin::Pin) are needed to ensure soundness.
->>> +///
->>> +/// Similar to [`UnsafeCell`], [`UnsafePinned`] will not usually show up in
->>> +/// the public API of a library. It is an internal implementation detail of libraries that need to
->>> +/// support aliasing mutable references.
->>> +///
->>> +/// Further note that this does *not* lift the requirement that shared references must be read-only!
->>> +/// Use [`UnsafeCell`] for that.
->>
->> [CC Ralf]
->>
->> Ralf has replied to me on Github that this will most likely change [0]. How should this be handled?
->>
->> I would fine with submitting a patch once it changes on the rust side (possibly waiting until the
->> feature is close to stabilization). I think it is better to only add this guarantee later as it
->> will be easier to remove unnecessary `UnsafeCell`s than it would be to later add them back in ever
->> case where they would be needed (in case rust doesn't change `UnsafePinned` to act like `UnsafeCell`).
-> 
-> Agreed, unless Ralf suggests a different way, we should do it like this.
+With the introduction of nvme fabrics the CONNECTING state was
+introduce. Over time the nvme-pci started to use the CONNECTING state as
+well.
 
-Sorry, I replied only on github since that was easier to do more quickly. ;)
+Eventually, a bug fix for the nvme-fc started to depend that the only
+valid transition to LIVE was from CONNECTING. Though this change didn't
+update the firmware update handler which was still depending on
+RESETTING to LIVE transition.
 
-Yes I would recommend for now to keep the `UnsafeCell` in the kernel sources, 
-until the compiler actually implements the change that removes `noalias` from 
-`&UnsafePinned`. And even then you should probably keep the `UnsafeCell` when 
-building for older compiler versions from before that patch (or keep it until 
-you drop support for those older compiler versions).
+The simplest way to address it for the time being is to switch into
+CONNECTING state before going to LIVE state.
 
-This is not a spec-only change, codegen really has to be adjusted to make 
-`&UnsafePinned` properly compatible with mutable aliasing, and I see no reason 
-to risk potential problems here by prematurely removing that `UnsafeCell`.
+Fixes: d2fe192348f9 ("nvme: only allow entering LIVE from CONNECTING state")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Closes: https://lore.kernel.org/all/0134ea15-8d5f-41f7-9e9a-d7e6d82accaa@roeck-us.net
+Reviewed-by: Keith Busch <kbusch@kernel.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+ drivers/nvme/host/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Kind regards,
-Ralf
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index eb6ea8acb3cca7421d7fb218e51d855f2c056825..ac53629fce68d4c8c12cddc112986289eae79b43 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -4493,7 +4493,8 @@ static void nvme_fw_act_work(struct work_struct *work)
+ 		msleep(100);
+ 	}
+ 
+-	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
++	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING) ||
++	    !nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
+ 		return;
+ 
+ 	nvme_unquiesce_io_queues(ctrl);
 
-> 
-> ---
-> Cheers,
-> Benno
-> 
->> Also see to the tracking issue [1] for the reason why `UnsafeCell` behavior is most likely required.
->>
->> [0]: https://github.com/rust-lang/rust/issues/125735#issuecomment-2842926832
->> [1]: https://github.com/rust-lang/rust/issues/137750
->>
->> Cheers
->> Christian
+---
+base-commit: ebd297a2affadb6f6f4d2e5d975c1eda18ac762d
+change-id: 20250502-nvme-fix-fw-update-156bdd02ed2b
+
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
 
 
