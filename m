@@ -1,189 +1,181 @@
-Return-Path: <linux-kernel+bounces-630188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCAAAA7693
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:00:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAD6AA7697
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55943986E1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01670188EC25
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC22B25C80E;
-	Fri,  2 May 2025 16:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4BB25B69B;
+	Fri,  2 May 2025 16:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXSS1bAx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aB/aR1F1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C5325C6E1;
-	Fri,  2 May 2025 16:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D87225C812
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746201654; cv=none; b=CkvyMKaN/WU9ELAXkX5qtagmeevihKjPIS3ChgqOQDj4HWt5IOVedOUs1OhhWBABxr5BVWFSLOgnisXBvnieb1WGQfwqoboEu3MNQ/sHt7vPl1GtsnQc2FjejqR3BKI/inuF/n5PUsDmvcd8wNa9xmgVSNCC5OZiK4s2ML69Z/c=
+	t=1746201695; cv=none; b=mT4VL595wT82nLXC+1yE94P95XMtBO34HiaP42cn97DR4DeAK4SrlfYb6vos3JwJ0ieAL3Wi0piBv8YfI4n2aTXOl7k1ADYM3lpgutcuZOxI4VAi+zBE4bnBoLV2mPFg9lU9hW/QMjR/heXmTIiPTPm6orat6O7lPJkb+q519zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746201654; c=relaxed/simple;
-	bh=ytHKODURza7J0qG2g8cd79DBWYjObajhXHIR7ASo5uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ok0Xa/VQdfarA35eTgFrmG+M2hhx3kLl7dpDgCBdXScDVuXwF0gCml+DKH8kLfpNLHmEbpJEVg7fIwr2Eoum6DptfxA5n5AB4lwbrUUNc9N8In4T57+r1iaWdHyrvq9NkVxWWc3O0uPYYeWrQqLKk1EaUJfKAyS/cg0i8NlGQMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXSS1bAx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B5D2C4CEE4;
-	Fri,  2 May 2025 16:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746201653;
-	bh=ytHKODURza7J0qG2g8cd79DBWYjObajhXHIR7ASo5uI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RXSS1bAx1hIWZJurAtU/etvjPHp88oygQMX9UTuCCs0tGl/3AOCmLonhYUSAmKL3f
-	 Mzt45VQDCE4qu2nawPsdC8byrqGHfYqBOL+ULJE3f1Q0t8qPkQQ9Cpjx0QWH3NWy2+
-	 iwWkq8gzG1C+pIji5Hm/AP5G4B2XCIVkX5UL4VBS8iSHfTAis1CoVFUIt/aj84lY1c
-	 XWlltAI/DTap/Tl+tpbvT+ifiySqF+3GAsFEIrpJpTLcN5zAAhzTVzju4pMGo1U4+2
-	 RDUYKudGMWXgARA5mn09yObEHbLVooHXUtsj10P+/h73CrWawAFNoxVDcFiyAIwEKq
-	 SQtV8uZQKgttw==
-Date: Fri, 2 May 2025 13:00:50 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Joe Mario <jmario@redhat.com>, Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>, Leo Yan <leo.yan@arm.com>
-Subject: Re: [RFC/PATCHSET 00/11] perf mem: Add new output fields for data
- source (v1)
-Message-ID: <aBTsMkY1nAVpIUQ4@x1>
-References: <20250430205548.789750-1-namhyung@kernel.org>
+	s=arc-20240116; t=1746201695; c=relaxed/simple;
+	bh=oEvN69p8sBgWkmJUdXqCwtQw+r14F79DPd3s+SqCWqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pPSYwaGXH75vPRGjR3QiYAn82QT5AkXY27UAhesVr21tOVtg7l/VKUiLaV/SoZSxd8Cl7HJ/Q6KQ9M+lXnIj2tx/Fm6TxXfHbtiNwB4YMkZ4hDO+pxnMXhjPhQBryKlIni3uQsp0KCgXRyP8g5sNqy53tj4Ui3x9hzlnZ5N+vHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aB/aR1F1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 542Df95p015024
+	for <linux-kernel@vger.kernel.org>; Fri, 2 May 2025 16:01:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YoReAk4HgTq2VsfM4ooMcOtk4AFKsH6ALJtlrQXG0fM=; b=aB/aR1F10eANzjIY
+	sR/ixTlWHd0ANoXvrWUHjtGL5eEj6dlk2O/HnenQs91SuOQ1HXgsQVQTjrL+ZmcJ
+	DbT8YyFZ5lfpBVEQ2tcW1OjZn8zRX1GnnnHrBBPjhxTazhNz5rkRsnozaGIAbNFa
+	PVUtrTTQLlrB8dY2lqWBWenm2pSph9wRFx74NSpFCDAkU82dYF9wMgBk5yDdUf19
+	gAfChMax23Dtdy948wf98TVgZumjMKbpJaRwP2ygd8CV6eklO3W6OUs2XYFAtibs
+	3ghT6Uie0Gz1zxDj/3rxRU82exkvGe/HwYUuNVGLAbANKYP3KW1ravUBveUz3yaT
+	F58p9Q==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6ub0qdd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 16:01:31 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2254bdd4982so31436885ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 09:01:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746201690; x=1746806490;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YoReAk4HgTq2VsfM4ooMcOtk4AFKsH6ALJtlrQXG0fM=;
+        b=QBhN0uJOkw+a/3wKZjhvgovlBHGj8hkMgyjbeh4nEnmqc0J1XFx+qmHfsSYgLwbhA2
+         EOsA/NQL8qxekT88U2hTd3FuuZuzXE1KDo9Vkj7XmZQE+syx0j0gTiI0LdNdCw3AOHxt
+         5YjWpVvniRnm5fzcTLQkszj/nfjj0QV1yOMM7xSyLekKzFHi5QSznCgRaiXCLShDNpTZ
+         tBqkfVssAF3y38shcrk9hRjaTvAmI7JrrFdiWW5ZvrnXCKeFd4HsEX7bBpWiEyEJ6BpF
+         7HKRUcqiSgRzpEN4g71hPirph5DGFJ+/IgO3aJ8WsTzkxsLm8753YTlq/PYw73VuTVUs
+         3+qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLcfnIRGkvDyjEfD+wOuzmdXGG2bX79FOIm8DpQLSLmhZxWNzcxYrDq85Ge1m2JgTLmo21mesWJ9bACFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiEnCZIEOcecJ8aGaiXeWVWVG+UhxCbSVZRhsW5u9TSyi9pAI/
+	d38CRVBr/N5Ql4bDR0aknyk/DmFSXUoMaxLYjMLE6Y6xFnsJxuKs7sF8fF++kN3TO/QDXnToI4J
+	0uzcQDzmBmYN3Oh2fRDHHrvG05OKFHv7mRlXjbvgD25w8CR12KSu0UtHoXOgXknE=
+X-Gm-Gg: ASbGncvdfX1z3pOpdiOCCr37zAMv4kobH9ipXy55M1dMHb/8pT1s9NfstwGrRMrBWTg
+	ru9a3GWYxc+SjQJuVoAQmyWsuyJ39IjkE4zT6FCjg/Xpvhss+vDPxrHz2jbwT6ZeAc2UCcyImey
+	cLxW89TdmCMomeVt+psgG+o64vSzmCvL4WtNGdPJk0YcHBDyE+NBvpinrEI2tbmmOlh8IuCzuzi
+	rr/4u+gSJvP5LIsunwBNacDVjSD5t1cLvEQc3Fklj+F04FFJS2lcO3OS+cTCq4Kfkg7etPX1Cq1
+	h1YUFhFj90kkgjwT9YqPceLdBchd0BklSlGzeDejv49+iI+YuJC/
+X-Received: by 2002:a17:903:3b86:b0:223:65a9:ab86 with SMTP id d9443c01a7336-22e1031f4b8mr53002985ad.12.1746201690560;
+        Fri, 02 May 2025 09:01:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErV0e0vKI/fgoke9Y2Vn/UmFB0sglBHDOVAnYcG02t9Gkratp9oD7qJCWDutzkAvG97npa/Q==
+X-Received: by 2002:a17:903:3b86:b0:223:65a9:ab86 with SMTP id d9443c01a7336-22e1031f4b8mr53002545ad.12.1746201690057;
+        Fri, 02 May 2025 09:01:30 -0700 (PDT)
+Received: from [192.168.1.4] ([122.164.87.156])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fb3920e67sm952740a12.7.2025.05.02.09.01.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 May 2025 09:01:29 -0700 (PDT)
+Message-ID: <6d8f31ed-daaf-4ba2-9e84-227ab798ec5a@oss.qualcomm.com>
+Date: Fri, 2 May 2025 21:31:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430205548.789750-1-namhyung@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] watchdog: qcom: introduce the device data for
+ IPQ5424 watchdog device
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck
+ <linux@roeck-us.net>, bod.linux@nxsw.ie,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+References: <20250502-wdt_reset_reason-v3-0-b2dc7ace38ca@oss.qualcomm.com>
+ <20250502-wdt_reset_reason-v3-3-b2dc7ace38ca@oss.qualcomm.com>
+ <4fvlhcztwqw3sp4wb32rbvdra5ativo5zypeokpglzezkmjfmy@vogadyshroix>
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <4fvlhcztwqw3sp4wb32rbvdra5ativo5zypeokpglzezkmjfmy@vogadyshroix>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: gdAdh2au-wGeH00t_G3o8_U1yoz_uMAQ
+X-Authority-Analysis: v=2.4 cv=KtlN2XWN c=1 sm=1 tr=0 ts=6814ec5c cx=c_pps a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=wj/iefQKNY9P1RSDfSoyGA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=--xdvnZNnXTZpBI9SIwA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-ORIG-GUID: gdAdh2au-wGeH00t_G3o8_U1yoz_uMAQ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDEyOCBTYWx0ZWRfX44j9TuijGK2I 0pkD59DCcuNQnl6x5IXea+NslMoDpbNFwBBjSV3eZ+K4f80FregG68lUc78PkQrWIIVYxe+6v/P 4Ot17fTB6RMxcD9E3xNNYeqzVyLHtuUflye0BsbsVD1yKMbVgYv4eF4M4wWSK0TObV45n8+/RXg
+ LtarB0XOVfI3xhcr+PZpOSnUNmqd250h6EPID5VjNCAoUkcmC0WuGmy//I/+v5SK6qETdOPilqG f4IoGyCTlj54drWpCRS/Wo2b50ZjzLeFLUaE3F34AYC8MyvUcmmqvhH6s/fXlLmzmCuHLMbLQOb HJnBp6xhL3v3dYW1yxnmxdaD+7HeELZjXIpkGVjvvqtpq3hk/kAD+Zrpq7fiqq8fO1dDzdov0I2
+ EdfnRQHUUhOQOQHU6c1kv9WABYM6qcNfM+zR7UIl/FVjiEmpIrbYWv4MvwrRzq4mFRlcESJX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-02_02,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505020128
 
-On Wed, Apr 30, 2025 at 01:55:37PM -0700, Namhyung Kim wrote:
-> Hello,
- 
-> The perf mem uses PERF_SAMPLE_DATA_SRC which has a lot of information
-> for memory access.  It has various sort keys to group related samples
-> together but it's still cumbersome to see the result.  While perf c2c
-> command provides a way to investigate the data in a specific way, I'd
-> like to add more generic ways using new output fields.
- 
-> For example, the following is the 'cache' output field which breaks
-> down the sample weights into different level of caches.
 
-Super cool!
- 
->   $ perf mem record -a sleep 1
->   
->   $ perf mem report -F cache,dso,sym --stdio
->   ...
->   #
->   # -------------- Cache --------------
->   #      L1     L2     L3 L1-buf  Other  Shared Object                                  Symbol
->   # ...................................  .....................................  .........................................
->   #
->        0.0%   0.0%   0.0%   0.0% 100.0%  [kernel.kallsyms]                      [k] ioread8
->      100.0%   0.0%   0.0%   0.0%   0.0%  [kernel.kallsyms]                      [k] _raw_spin_lock_irq
->        0.0%   0.0%   0.0%   0.0% 100.0%  [xhci_hcd]                             [k] xhci_update_erst_dequeue
->        0.0%   0.0%   0.0%  95.8%   4.2%  [kernel.kallsyms]                      [k] smaps_account
->        0.6%   1.8%  22.7%  45.5%  29.5%  [kernel.kallsyms]                      [k] sched_balance_update_blocked_averages
->       29.4%   0.0%   1.6%  58.8%  10.2%  [kernel.kallsyms]                      [k] __update_load_avg_cfs_rq
->        0.0%   8.5%   4.3%   0.0%  87.2%  [kernel.kallsyms]                      [k] copy_mc_enhanced_fast_string
->       63.9%   0.0%   8.0%  23.8%   4.3%  [kernel.kallsyms]                      [k] psi_group_change
->        3.9%   0.0%   9.3%  35.7%  51.1%  [kernel.kallsyms]                      [k] timerqueue_add
->       35.9%  10.9%   0.0%  39.0%  14.2%  [kernel.kallsyms]                      [k] memcpy
->       94.1%   0.0%   0.0%   5.9%   0.0%  [kernel.kallsyms]                      [k] unmap_page_range
->       25.7%   0.0%   4.9%  51.0%  18.4%  [kernel.kallsyms]                      [k] __update_load_avg_se
->        0.0%  24.9%  19.4%   9.6%  46.1%  [kernel.kallsyms]                      [k] _copy_to_iter
->       12.9%   0.0%   0.0%  87.1%   0.0%  [kernel.kallsyms]                      [k] next_uptodate_folio
->       36.8%   0.0%   9.5%  16.6%  37.1%  [kernel.kallsyms]                      [k] update_curr
->      100.0%   0.0%   0.0%   0.0%   0.0%  bpf_prog_b9611ccbbb3d1833_dfs_iter     [k] bpf_prog_b9611ccbbb3d1833_dfs_iter
->       45.4%   1.8%  20.4%  23.6%   8.8%  [kernel.kallsyms]                      [k] audit_filter_rules.isra.0
->       92.8%   0.0%   0.0%   7.2%   0.0%  [kernel.kallsyms]                      [k] filemap_map_pages
->       10.6%   0.0%   0.0%  89.4%   0.0%  [kernel.kallsyms]                      [k] smaps_page_accumulate
->       38.3%   0.0%  29.6%  27.1%   5.0%  [kernel.kallsyms]                      [k] __schedule
- 
-> Please see the description of each commit for other fields.
- 
-> New mem_stat field was added to the hist_entry to save this
-> information.  It's a generic data structure (array) to handle
-> different type of information like cache-level, memory location,
-> snoop-result, etc.
- 
-> The first patch is a fix for the hierarchy mode and it was sent
-> separately.  I just add it here not to break the hierarchy mode.  The
-> second patch is to enable SAMPLE_DATA_SRC without SAMPLE_ADDR and
-> perf_event_attr.mmap_data which generate a lot more data.
+On 5/2/2025 8:23 PM, Dmitry Baryshkov wrote:
+> On Fri, May 02, 2025 at 06:47:51PM +0530, Kathiravan Thirumoorthy wrote:
+>> To retrieve the restart reason from IMEM, certain device specific data
+>> like IMEM compatible to lookup, location of IMEM to read, etc should be
+>> defined. To achieve that, introduce the separate device data for IPQ5424
+>> and add the required details subsequently.
+>>
+>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+>> ---
+>> Changes in v3:
+>> 	- New patch
+>> ---
+>>   drivers/watchdog/qcom-wdt.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+>> index 006f9c61aa64fd2b4ee9db493aeb54c8fafac818..dfaac5995c84c1f377023e6e62770c5548528a4c 100644
+>> --- a/drivers/watchdog/qcom-wdt.c
+>> +++ b/drivers/watchdog/qcom-wdt.c
+>> @@ -181,6 +181,12 @@ static const struct qcom_wdt_match_data match_data_apcs_tmr = {
+>>   	.max_tick_count = 0x10000000U,
+>>   };
+>>   
+>> +static const struct qcom_wdt_match_data match_data_ipq5424 = {
+>> +	.offset = reg_offset_data_kpss,
+>> +	.pretimeout = true,
+>> +	.max_tick_count = 0xFFFFFU,
+>> +};
+>> +
+>>   static const struct qcom_wdt_match_data match_data_kpss = {
+>>   	.offset = reg_offset_data_kpss,
+>>   	.pretimeout = true,
+>> @@ -322,6 +328,7 @@ static const struct dev_pm_ops qcom_wdt_pm_ops = {
+>>   };
+>>   
+>>   static const struct of_device_id qcom_wdt_of_table[] = {
+>> +	{ .compatible = "qcom,apss-wdt-ipq5424", .data = &match_data_ipq5424 },
+> Shouldn't it be qcom,ipq5424-apss-wdt ?
 
-I merged it and added a test for the hierachy mode as mentioned in my
-reply to that patch.
- 
-> The name of some new fields are the same as the corresponding sort
-> keys (mem, op, snoop) so I had to change the order whether it's
-> applied as an output field or a sort key.  Maybe it's better to name
-> them differently but I couldn't come up with better ideas.
 
-Looks ok at first sight.
- 
-> That means, you need to use -F/--fields option to specify those fields
-> and the sort keys you want.  Maybe we can change the default output
-> and sort keys for perf mem report with this.
+Currently, the compatible string is "qcom,apss-wdt-ipq5424". So used as 
+it is.
 
-Maybe we can come up with aliases to help using these new features
-without having to create a long command line, maybe:
 
-perf cache
-
-Or some other more suitable name.
-
-That would just be translated into the long command line for 'perf
-report', kinda like 'perf kvm', but maybe we can do it like with 'perf
-archive', i.e. just a shell wrapper?
- 
-> The code is available at 'perf/mem-field-v1' branch in
-
-I'll test it, and I'm CCing Joe Mario, who I think will be very much
-interesting in trying this!
-
-- Arnaldo
- 
->  git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
- 
-> Thanks,
-> Namhyung
- 
-> Namhyung Kim (11):
->   perf hist: Remove output field from sort-list properly
->   perf record: Add --sample-mem-info option
->   perf hist: Support multi-line header
->   perf hist: Add struct he_mem_stat
->   perf hist: Basic support for mem_stat accounting
->   perf hist: Implement output fields for mem stats
->   perf mem: Add 'op' output field
->   perf hist: Hide unused mem stat columns
->   perf mem: Add 'cache' and 'memory' output fields
->   perf mem: Add 'snoop' output field
->   perf mem: Add 'dtlb' output field
-> 
->  tools/perf/Documentation/perf-record.txt |   7 +-
->  tools/perf/builtin-record.c              |   6 +
->  tools/perf/ui/browsers/hists.c           |  50 ++++-
->  tools/perf/ui/hist.c                     | 272 ++++++++++++++++++++++-
->  tools/perf/ui/stdio/hist.c               |  57 +++--
->  tools/perf/util/evsel.c                  |   2 +-
->  tools/perf/util/hist.c                   |  78 +++++++
->  tools/perf/util/hist.h                   |  22 ++
->  tools/perf/util/mem-events.c             | 183 ++++++++++++++-
->  tools/perf/util/mem-events.h             |  57 +++++
->  tools/perf/util/record.h                 |   1 +
->  tools/perf/util/sort.c                   |  42 +++-
->  12 files changed, 718 insertions(+), 59 deletions(-)
-> 
-> -- 
-> 2.49.0.906.g1f30a19c02-goog
+>
+>>   	{ .compatible = "qcom,kpss-timer", .data = &match_data_apcs_tmr },
+>>   	{ .compatible = "qcom,scss-timer", .data = &match_data_apcs_tmr },
+>>   	{ .compatible = "qcom,kpss-wdt", .data = &match_data_kpss },
+>>
+>> -- 
+>> 2.34.1
+>>
 
