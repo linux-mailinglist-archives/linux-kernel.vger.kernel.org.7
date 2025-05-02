@@ -1,116 +1,167 @@
-Return-Path: <linux-kernel+bounces-629714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E573AA7074
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:12:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C3DAA707F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE0F9C132A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA1C1C00525
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F9F242D68;
-	Fri,  2 May 2025 11:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16353241CB0;
+	Fri,  2 May 2025 11:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="lWgDRGAY"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W5idxvhy"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC9C235044
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 11:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADCE19D07B;
+	Fri,  2 May 2025 11:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746184336; cv=none; b=GLYemhFSpIsc2MhBaUt+Y1yzHnYoxTh1BDLkW4dAhKeR1I5fABmjGxkAdzNRPB7Lh9HUHg0NNE2IHVOJfdOwWjG21MXpA47UGAU0oPS8jQMpb0PzeQ74dc5B0XjSXd4+Hl8wDZzMsIu1lDd3pIM/vC8zI4LmFkmqxd/A3gyhKpU=
+	t=1746184437; cv=none; b=HJpMJZy1gB4TtOXz6ExCB87lLVEfvs48R4v/DZm3bjHJ/Cc1r6kG3QMPLPKMeSRquu08bWWCKrrxj195eJIWdpdhVi1/fjlPlEK+IUhOKUjB5UPZskNjDtpufQOmSkVksgZc02CcKl7kqqmf2HHeNvlw/5tw3SH5211ZfgxUDZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746184336; c=relaxed/simple;
-	bh=CfOQILRrI2oOpfR8BBk2bJsADb5RlDrgVjWRzEAU4SE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FLjGAoWx2u7XDS3qjOj7Ql95CMQVCHRWHmukO0LwimlI/kcFMM3EHfjPdlQDUkFaOXGiRPVQyW22QUETkwD89WUpEG6q38ZthEXK+kpZFQBJy+x73UtGsrhWBrCp2cx9z7FznU2kRbV8I52WIaQEao2Pi6GlB9rKyXdavFwUsMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=lWgDRGAY; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1746184331; x=1746443531;
-	bh=xRovayJYx3DtpzagwTmA/2L4kuh33mTIVzdNmHqy2Ro=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=lWgDRGAY6FfVEr3lCeLwc3j9jijXccPqX7uGSwKQ5S+cR8iFvZ3FKMlSqCGUMth4d
-	 O3lMTH3sBRUJRi2M5RAEHHrtQS0VxtcN3e5KI2tJH7SDEaJGIx5MP0sYsmrVBg8ajz
-	 dTCDJRU/M/19ru+JCswb3OIa0o8OPf1q+tZIBW9146lcp9oqx3PUuZnnSBWXYpKOWI
-	 Gw60ustEeVyich43wgfwh09Yd84LbMpXeH8GDm23IIxdvIW0p6K4VEHYKbN2DDQ0P0
-	 RZLleXPCrZN99zgASEy8mx4vopqjLgSEje7CV61v3Z4OefvhM14q4UxWtId3GeCC3j
-	 5JrFmFO6sCk3A==
-Date: Fri, 02 May 2025 11:12:05 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 3/5] rust: Add missing SAFETY documentation for ARef example
-Message-ID: <aBSofsTTbt4pgsDU@mango>
-In-Reply-To: <87ikmjz45e.fsf@kernel.org>
-References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me> <ih3kqi48IA3vGKmMFL796yktZHuDzsSsrSz1KA_EIHnhlZaeKRQ2dK0FtgmzWTeVNoy9iVs9rNPjAp-ozQO3Xw==@protonmail.internalid> <20250502-unique-ref-v10-3-25de64c0307f@pm.me> <87ikmjz45e.fsf@kernel.org>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 038d256563889b47a1222ea27d8e05b406ef8404
+	s=arc-20240116; t=1746184437; c=relaxed/simple;
+	bh=9kHaM+DwGh2R0bvCj57XSgsqksXYbaATpqhrjd3RIio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Uien6E7Yf/mHDxTVxlz6ZTIMrv1cnyOnaJnViRh5Ho+yX7F5HgM7I1fBjxCbmLRFFkM16PIroHFAVJjfSgRHd0cbeJVdaWg0qr6XL/k78CFyKkdfbQjvAsaE+4MkUIxGbsyc71wmQ8cfnlkbb6z5bh/bh0IKjmYq35STr5/9wqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=W5idxvhy; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542BDiEq3848530
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 06:13:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746184424;
+	bh=e+w5Qh2JRjlMFyhkZEHnj7ml/ugQxghiOlkLkqWDVzI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=W5idxvhyn32t6wedPrduYdssQK5QNiQNVACARTf5WAYDH/BhLh3dbVBMNj/NwP7KM
+	 EwoDxSKVEf4W8FnSoPItBAul40ymbqBUrCRleffoQB9aTk+9bU4/e/qDATBznFViSk
+	 04h4bDSQw6y5r2o4tbHNkK+NMUkf/DUYWNFmO4Dg=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542BDiT1019558
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 May 2025 06:13:44 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ May 2025 06:13:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 May 2025 06:13:43 -0500
+Received: from [10.249.134.35] ([10.249.134.35])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542BDb39062789;
+	Fri, 2 May 2025 06:13:38 -0500
+Message-ID: <87d38b3d-607d-45c3-8f29-70f6c01187db@ti.com>
+Date: Fri, 2 May 2025 16:43:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/4] arm64: dts: ti: k3-am62x: Add required voltage
+ supplies for TEVI-OV5640
+To: Devarsh Thakkar <devarsht@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <y-abhilashchandra@ti.com>,
+        <s-jain1@ti.com>, <jai.luthra@linux.dev>,
+        <jai.luthra@ideasonboard.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <imx@lists.linux.dev>
+References: <20250429154133.3377962-1-r-donadkar@ti.com>
+ <20250429154133.3377962-5-r-donadkar@ti.com>
+ <f73d24a6-7da6-4bcc-95ba-9d84b865a7a7@ti.com>
+Content-Language: en-US
+From: "Donadkar, Rishikesh" <r-donadkar@ti.com>
+In-Reply-To: <f73d24a6-7da6-4bcc-95ba-9d84b865a7a7@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 250502 1241, Andreas Hindborg wrote:
-> >
-> > diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> > index d7fa8934c545f46a646ca900ab8957a04b0ad34d..33d2b4e4a87b991c6d934f4=
-e8d2c6c71a15b1bcb 100644
-> > --- a/rust/kernel/types.rs
-> > +++ b/rust/kernel/types.rs
-> > @@ -498,7 +498,9 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-> >      ///
-> >      /// struct Empty {}
-> >      ///
-> > -    /// # // SAFETY: TODO.
-> > +    /// // SAFETY: The `RefCounted` implementation for `Empty` does no=
-t count references
-> > +    /// // and never frees the underlying object. Thus we can act as h=
-aving a
-> > +    /// // refcount on the object that we pass to the newly created `A=
-Ref`.
-> >      /// unsafe impl RefCounted for Empty {
-> >      ///     fn inc_ref(&self) {}
-> >      ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
-> > @@ -506,7 +508,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-> >      ///
-> >      /// let mut data =3D Empty {};
-> >      /// let ptr =3D NonNull::<Empty>::new(&mut data).unwrap();
-> > -    /// # // SAFETY: TODO.
-> > +    /// // SAFETY: We keep `data` around longer than the `ARef`.
->=20
-> I still think this applies:
->=20
-> >> How about:
-> >>
-> >>   The `RefCounted` implementation for `Empty` does not count reference=
-s
-> >>   and never frees the underlying object. Thus we can act as having a
-> >>   refcount on the object that we pass to the newly created `ARef`.
-> >>
 
-Hi Andreas,
+On 02-05-2025 14:37, Devarsh Thakkar wrote:
+>
+> On 29/04/25 21:11, Rishikesh Donadkar wrote:
+>> The device tree overlay for TEVI-OV5640 requires following voltage
+>> supplies:
+>>
+>> AVDD-supply: Analog voltage supply, 2.8 volts
+>> DOVDD-supply: Digital I/O voltage supply, 1.8 volts
+>> DVDD-supply: Digital core voltage supply, 1.5 volts
+>>
+> I think this contradicts the voltage mentioned in TEVI-OV56540 doc [1]
+> which mention digital voltage as 3.3 volts ?
 
-I agree. Sorry, I just messed up the fix. Your wording landed in the
-previous to-be-fixed unsafe comment, as you can see.
 
-Happens when you are too much in a hurry and didn't touch the patch for
-too long :/
+Thank you for pointing out, I will fix it.
 
-I will fix it in the next version.
-
-Best,
-
-Oliver
-
+>
+>> Add them in the DT overlay.
+>>
+> [1]:
+> https://www.technexion.com/wp-content/uploads/2023/09/product-brief_tevi-ov5640.pdf
+>
+> Regards
+> Devarsh
+>> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+>> ---
+>>   .../dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso  | 32 +++++++++++++++++++
+>>   1 file changed, 32 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
+>> index b6bfdfbbdd984..123ab0e5e8dfa 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
+>> @@ -15,6 +15,33 @@ clk_ov5640_fixed: ov5640-xclk {
+>>   		#clock-cells = <0>;
+>>   		clock-frequency = <24000000>;
+>>   	};
+>> +
+>> +	reg_2p8v: regulator-2p8v {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "2P8V";
+>> +		regulator-min-microvolt = <2800000>;
+>> +		regulator-max-microvolt = <2800000>;
+>> +		vin-supply = <&vcc_3v3_sys>;
+>> +		regulator-always-on;
+>> +	};
+>> +
+>> +	reg_1p8v: regulator-1p8v {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "1P8V";
+>> +		regulator-min-microvolt = <1800000>;
+>> +		regulator-max-microvolt = <1800000>;
+>> +		vin-supply = <&vcc_3v3_sys>;
+>> +		regulator-always-on;
+>> +	};
+>> +
+>> +	reg_1p5v: regulator-1p5v {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "1P5V";
+>> +		regulator-min-microvolt = <1500000>;
+>> +		regulator-max-microvolt = <1500000>;
+>> +		vin-supply = <&vcc_3v3_sys>;
+>> +		regulator-always-on;
+>> +	};
+>>   };
+>>   
+>>   &main_i2c2 {
+>> @@ -40,6 +67,11 @@ ov5640: camera@3c {
+>>   
+>>   				clocks = <&clk_ov5640_fixed>;
+>>   				clock-names = "xclk";
+>> +
+>> +				AVDD-supply = <&reg_2p8v>;
+>> +				DOVDD-supply = <&reg_1p8v>;
+>> +				DVDD-supply = <&reg_1p5v>;
+>> +
+>>   				powerdown-gpios = <&exp1 13 GPIO_ACTIVE_LOW>;
+>>   
+>>   				port {
 
