@@ -1,65 +1,108 @@
-Return-Path: <linux-kernel+bounces-629713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7005AA7071
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:11:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081F3AA706F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399D94676A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:11:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0453AA220
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A81F2417C5;
-	Fri,  2 May 2025 11:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8994D242D82;
+	Fri,  2 May 2025 11:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UaWPp5Fu"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BIZgde4A";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vv9F+Vw8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VTnYrFUC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="obJFcnTK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA25E23FC5A
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 11:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5022417C5
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 11:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746184295; cv=none; b=DMBcuhrIu6EKummQi/ClI+OvBjaQFwGbV1mV5aGw5FlTDY3um93v/1f3/WCtNSKQfmg2jumf+EK3kDXllCTIEne8NL8vKr9dkWJ7BtNNw+k9M4Abnn3Q0ZwLPy1ktzqkRn3Xx8U/tP8gYnAUxrjux8aGXGoutDdqDJop9qee4OQ=
+	t=1746184261; cv=none; b=MMx+PFq5oSL5z06mCJoSGakbFxgi/YgrJBcWu0v+PZmJ97TA5ejMFpJhpMqiSX3WDHy0IBty7s2XlqEOAGrIQCyzLF4AyvSBOOBAa0YVVuToICse6xOTJ6qMI3JgMqftVR2rQ+o2UW9SdKcH9gRyPYjVOX0I0POHXlp/rFPEMKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746184295; c=relaxed/simple;
-	bh=lxjGHS3cfRSQaQe4SoSD/hzcMZPlcMfBcwBXxPqcwQ8=;
+	s=arc-20240116; t=1746184261; c=relaxed/simple;
+	bh=s/YKSwmEfZLdYEAVVKpxHe9wk393VQMROKfODJuwNWY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uN212A/jIFzcUUQMC3Fg9al/LO/oLLhiTJfp42kOscLlgszzR0zv0AWPfPuQ6Vz3y424evhuhw2eVzeaSCu8Fuu8vFZIRNP4ln7/zaq1O0nNFxnblPiT0q5FH1i4e5rYLlMYSZmdl5ec9PSeJmhRo6/LuVkDB0g4sMkHHEK1VLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UaWPp5Fu; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rOcmUHivWm2VyijzsBx2fgbFNnH4PTajNysnSptcXWo=; b=UaWPp5FubR6G8XSifKUH5oHEqv
-	5FWN3MCNRlpz4lbl9v7mMT73rlWRj/zO98rUPFdgD6OiHRLwTJ/hwHqU9M6Zan7Ib1r3QT0UnsvKV
-	aYIK+v8giP1CTbM6AIFa66XQVpmY4PecIoapK50uDsN8ZBKlVy4QyRvR21ei25DAcJx7f38NX9LRy
-	GuCcJbEx+48GPuKUqxzhAtBWiGBbZkqv4Edb4lCiqpahu54sCVjbyk3uZ0kWwUwACengc0v1KC6BD
-	T9Ugjf170jcrK/26huMOjF7lZvJdBXVoA8tMUd9byVJFAo6kEjicaJh77gY+ptGQuKdTF3gWkcr7d
-	f2ni50fw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAoIE-0000000F0w4-1kBh;
-	Fri, 02 May 2025 11:10:59 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 602C030057C; Fri,  2 May 2025 13:10:44 +0200 (CEST)
-Date: Fri, 2 May 2025 13:10:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, tglx@linutronix.de,
-	kprateek.nayak@amd.com
-Subject: Re: [PATCH V3 4/4] Sched: Add tracepoint for sched time slice
- extension
-Message-ID: <20250502111044.GY4198@noisy.programming.kicks-ass.net>
-References: <20250502015955.3146733-1-prakash.sangappa@oracle.com>
- <20250502015955.3146733-5-prakash.sangappa@oracle.com>
- <20250502091434.GV4198@noisy.programming.kicks-ass.net>
- <20250502110210.rZX1iHcg@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQFcPVPhyc0SHsgCdTAJTwMcIuYpDMcnManYvYPNEYZOnz2FEVEtDMYgKjwPoTChNZ3nGe+zFpftPVwTAxJPR1J3Wj7EspyMiIvIehs5B6zCW0P0qL16r6VlYNnO1Ptp7IY2ImP2EVw0zWNltYwJ735sJEVVTBB/qF6kgHIornQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BIZgde4A; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vv9F+Vw8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VTnYrFUC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=obJFcnTK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7791B1F387;
+	Fri,  2 May 2025 11:10:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746184258;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68RwN3NuFrSs2yXzuINW3GXKrctQtEUkF8f+0ox5Jz8=;
+	b=BIZgde4ASTOu02FQCP4guJ0N8EXhOjprNpzmLfCbtjRifNnT49Zhd2OsWVWK3NtDODCE1L
+	sZ7yli1v8CjHpHOEL4gpuLY1WzhRnOc6/8LzgD4W8Ewcf5zcTKGmF58OZOD4NuBEyt+SJ/
+	zF4hC+frRR9X+YoxuhtGfR+0JO0hQus=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746184258;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68RwN3NuFrSs2yXzuINW3GXKrctQtEUkF8f+0ox5Jz8=;
+	b=Vv9F+Vw8ACIJFZOiZ6DrbhdhiG4Fe5gBnEniN8xfX0jZgh7XJYMUVJTeM2lfvdzTC/e0fP
+	D+US2zRhniX3UMCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746184257;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68RwN3NuFrSs2yXzuINW3GXKrctQtEUkF8f+0ox5Jz8=;
+	b=VTnYrFUCgHIbTcmpbXGumJWvwr+lYUBDw/qYSCnas7LysWK0sgW/w0xxtqBJ5ckfodomGo
+	w76r1e952kQ/FT6uqtoUVfyUnfqdbk3fT898ikGqyZeSk4IB2Ag/lMPPm6/AypJeR/1TcK
+	mPnnqp2DHheBZ6KmO8IYc/iGScGtE/I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746184257;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68RwN3NuFrSs2yXzuINW3GXKrctQtEUkF8f+0ox5Jz8=;
+	b=obJFcnTK2U27dP3+ZPqoo8i4IK+9zSjDVdPX8eREvfkuvpx9yThmWfVmQQwL9qcEo4e+K5
+	1eN8y16BJBo19JAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F65E13687;
+	Fri,  2 May 2025 11:10:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id D9UrE0GoFGi8dAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 02 May 2025 11:10:57 +0000
+Date: Fri, 2 May 2025 13:10:56 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, Qu Wenruo <wqu@suse.com>
+Subject: Re: [PATCH v3 2/6] btrfs: drop usage of folio_index
+Message-ID: <20250502111056.GP9140@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20250430181052.55698-1-ryncsn@gmail.com>
+ <20250430181052.55698-3-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,16 +111,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250502110210.rZX1iHcg@linutronix.de>
+In-Reply-To: <20250430181052.55698-3-ryncsn@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kvack.org,linux-foundation.org,infradead.org,google.com,kernel.org,redhat.com,linux.alibaba.com,gmail.com,cmpxchg.org,vger.kernel.org,fb.com,toxicpanda.com,suse.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[fb.com:email,infradead.org:email,toxicpanda.com:email,suse.com:email,suse.cz:mid,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, May 02, 2025 at 01:02:10PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-05-02 11:14:34 [+0200], Peter Zijlstra wrote:
-> > This is horrific coding style. But really why do we need this? I'm not,
-> > in general, a fan of tracepoints.
+On Thu, May 01, 2025 at 02:10:48AM +0800, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
 > 
-> I suggested a tracepoint so that we see why the NEED_RESCHED flag
-> disappeared. The trace would show a wakeup, the need_resched flag would
-> be set and the flag would disappear without an explanation.
+> folio_index is only needed for mixed usage of page cache and swap
+> cache, for pure page cache usage, the caller can just use
+> folio->index instead.
+> 
+> It can't be a swap cache folio here.  Swap mapping may only call into fs
+> through `swap_rw` but btrfs does not use that method for swap.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> Cc: Chris Mason <clm@fb.com> (maintainer:BTRFS FILE SYSTEM)
+> Cc: Josef Bacik <josef@toxicpanda.com> (maintainer:BTRFS FILE SYSTEM)
+> Cc: David Sterba <dsterba@suse.com> (maintainer:BTRFS FILE SYSTEM)
+> Cc: linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM)
+> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Qu Wenruo <wqu@suse.com>
 
-Would we not see a timer_start event for the hrtick or somesuch?
+I've added the patch to our for-next, so Andrew can drop it from his
+patch queue.
 
