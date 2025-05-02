@@ -1,167 +1,164 @@
-Return-Path: <linux-kernel+bounces-629527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B13CAA6DBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:11:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66645AA6DB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795259C7869
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:09:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7D74A1F87
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E47AD24;
-	Fri,  2 May 2025 09:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6A9230BC3;
+	Fri,  2 May 2025 09:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VxJqz33K"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Wk53frdp"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19CF22576D
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 09:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D30922FF33;
+	Fri,  2 May 2025 09:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746176778; cv=none; b=NUrN3VDZM0wzpLBPa6Gn1mo+0rWX+1/crR6AnXFz7JhiDV/a4kAhXizzOJyh2vHs4mRRwHnNBGVk3jAga8Y+BXSxPbxwfdM2R2DCKHXIzopT7ornNUc9ynrseqJBlfKkgq2QLkyL9z6e1nh44w0/PEL2ck6x++++14T5neJtfJw=
+	t=1746176855; cv=none; b=tC9vXep9G+969X/pYZMHqSQfyEUPvM9GpjfF9VUImRbBia4lSfJmSzXqTFMG/EUZXQjor368mjW+msco1HgYAuEY+mnlLt7dZTkmzS4f2cZNJjf6ueS+zvLXCrsq6Vw9kDoeOT63kG5Hwv1o8frVS3D1Pesqx4Jcp0znbb1Bz4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746176778; c=relaxed/simple;
-	bh=M2oj46kMzUMSEbGNCUOFuda0AGjerO2qSWTOnylr0tY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+A/sGWgryS+zqjCgKBsGgqSAfLhLFPwFHxkGFdkgycXOfJzP339GVbZ2ECKXLxmxRcMr/mNKb3xed3jYZvjuxp7AZvuRYCwX5yy8xfASeptxN0XpPCYzfNgXxjusxo32gwfzjNnMvVSlRAUbq1ef0mIPB+W5HO20tuf9Hu2I84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VxJqz33K; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=R6qvRY5edeMxG0ix5dbjscdMhwf5+XMxecbE1wVwGGY=; b=VxJqz33KsJo1jRDyslIgs3neOa
-	/uIO/luCEUExbFGqwAqnnHsRcpbOXv5z82Agkv9GwrxhHHix+8A2HLOOZ86InzH40Lfy5pWc/OIyO
-	Wtt1EG/dPUrIQujK+0/tumKxgNEmPSzfkg4nTd0dvAo8M30qNpqb7pQWdAvrlUYQM/upYRtskNN2H
-	iPKkzymoguAo09u7mHZJc0x7H0Ogg9LdNeuORo6Pbd7d6+preVPEVpvN3J9tl82vPHOOComdBVUVp
-	7khuzejBvvKevUnIdAe3lCyO3Z/aK7/C6iX1jAlotcW8TJ3P+lsX7l4J6WlQ2bs094YfHawlz5LyP
-	o2xXWf0A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAmKs-0000000BaKr-3z1b;
-	Fri, 02 May 2025 09:05:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 316373001D4; Fri,  2 May 2025 11:05:29 +0200 (CEST)
-Date: Fri, 2 May 2025 11:05:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Prakash Sangappa <prakash.sangappa@oracle.com>
-Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, tglx@linutronix.de,
-	bigeasy@linutronix.de, kprateek.nayak@amd.com
-Subject: Re: [PATCH V3 1/4] Sched: Scheduler time slice extension
-Message-ID: <20250502090529.GU4198@noisy.programming.kicks-ass.net>
-References: <20250502015955.3146733-1-prakash.sangappa@oracle.com>
- <20250502015955.3146733-2-prakash.sangappa@oracle.com>
+	s=arc-20240116; t=1746176855; c=relaxed/simple;
+	bh=jxZ8cO+CJSfaVwHlVn803pBzpaBTTvk7KQa/P9xcHDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lJ03KEl1BN1a0MqyYHBKHqydUI1F7zPEhS/UBZCAGQw6XKc1lGQwD7C1QA2MKEUO19L8UlIZHa7HTfDFmFzAg5MH989SWy9Sl/W+cO98cO6kjzeqlS4782XJ2ZorQS6Vxmf7NwDQd2vdwlWKiaYRfz00VTFA8bAVL0AwQOIOwUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Wk53frdp; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54297Mj03827006
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 04:07:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746176842;
+	bh=XhYCISopNOwB8EooELWfSyKr1OQU1R0XEY/I8CEqY70=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Wk53frdpOGsul8Uxo1G8WZU1GdwCGTzubUEXLuYheUl5zIY78E3f65U0LakQRXi3C
+	 szGTLwv/K8vUMxYH9Bn8Ii1TbrqBGBdb73w+5OxGyW6qnXkW6xuNzEsmmz14JbZTuC
+	 ZNSQNkZfAW9l5NjU/pNFUYmmb/phVCGDp0OtGTvY=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54297Mwm129971
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 May 2025 04:07:22 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ May 2025 04:07:22 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 May 2025 04:07:22 -0500
+Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54297HF2052163;
+	Fri, 2 May 2025 04:07:18 -0500
+Message-ID: <f73d24a6-7da6-4bcc-95ba-9d84b865a7a7@ti.com>
+Date: Fri, 2 May 2025 14:37:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250502015955.3146733-2-prakash.sangappa@oracle.com>
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH v1 4/4] arm64: dts: ti: k3-am62x: Add required voltage
+ supplies for TEVI-OV5640
+To: Rishikesh Donadkar <r-donadkar@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <y-abhilashchandra@ti.com>,
+        <s-jain1@ti.com>, <jai.luthra@linux.dev>,
+        <jai.luthra@ideasonboard.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <imx@lists.linux.dev>
+References: <20250429154133.3377962-1-r-donadkar@ti.com>
+ <20250429154133.3377962-5-r-donadkar@ti.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20250429154133.3377962-5-r-donadkar@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, May 02, 2025 at 01:59:52AM +0000, Prakash Sangappa wrote:
-> Add support for a thread to request extending its execution time slice on
-> the cpu. The extra cpu time granted would help in allowing the thread to
-> complete executing the critical section and drop any locks without getting
-> preempted. The thread would request this cpu time extension, by setting a
-> bit in the restartable sequences(rseq) structure registered with the kernel.
+
+
+On 29/04/25 21:11, Rishikesh Donadkar wrote:
+> The device tree overlay for TEVI-OV5640 requires following voltage
+> supplies:
 > 
-> Kernel will grant a 50us extension on the cpu, when it sees the bit set.
-> With the help of a timer, kernel force preempts the thread if it is still
-> running on the cpu when the 50us timer expires. The thread should yield
-> the cpu by making a system call after completing the critical section.
+> AVDD-supply: Analog voltage supply, 2.8 volts
+> DOVDD-supply: Digital I/O voltage supply, 1.8 volts
+> DVDD-supply: Digital core voltage supply, 1.5 volts
 > 
-> Suggested-by: Peter Ziljstra <peterz@infradead.org>
-> Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
+
+I think this contradicts the voltage mentioned in TEVI-OV56540 doc [1]
+which mention digital voltage as 3.3 volts ?
+
+> Add them in the DT overlay.
+> 
+
+[1]:
+https://www.technexion.com/wp-content/uploads/2023/09/product-brief_tevi-ov5640.pdf
+
+Regards
+Devarsh
+> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
 > ---
-
-> diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
-> index c233aae5eac9..900cb75f6a88 100644
-> --- a/include/uapi/linux/rseq.h
-> +++ b/include/uapi/linux/rseq.h
-> @@ -26,6 +26,7 @@ enum rseq_cs_flags_bit {
->  	RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT_BIT	= 0,
->  	RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT	= 1,
->  	RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT	= 2,
-> +	RSEQ_CS_FLAG_DELAY_RESCHED_BIT		= 3,
->  };
->  
->  enum rseq_cs_flags {
-> @@ -35,6 +36,8 @@ enum rseq_cs_flags {
->  		(1U << RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT),
->  	RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE	=
->  		(1U << RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT),
-> +	RSEQ_CS_FLAG_DELAY_RESCHED		=
-> +		(1U << RSEQ_CS_FLAG_DELAY_RESCHED_BIT),
->  };
->  
->  /*
-> @@ -128,6 +131,10 @@ struct rseq {
->  	 * - RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
->  	 *     Inhibit instruction sequence block restart on migration for
->  	 *     this thread.
-> +	 * - RSEQ_CS_DELAY_RESCHED
-> +	 *     Request by user task to try delaying preemption. With
-> +	 *     use of a timer, extra cpu time upto 50us is granted for this
-> +	 *     thread before being rescheduled.
->  	 */
->  	__u32 flags;
-
-So while it works for testing, this really is a rather crap interface
-for real because userspace cannot up front tell if its going to work or
-not.
-
-> +void rseq_delay_resched_fini(void)
-> +{
-> +#ifdef CONFIG_SCHED_HRTICK
-> +	extern void hrtick_local_start(u64 delay);
-> +	struct task_struct *t = current;
-> +	/*
-> +	 * IRQs off, guaranteed to return to userspace, start timer on this CPU
-> +	 * to limit the resched-overdraft.
-> +	 *
-> +	 * If your critical section is longer than 50 us you get to keep the
-> +	 * pieces.
-> +	 */
-> +	if (t->sched_time_delay)
-> +		hrtick_local_start(50 * NSEC_PER_USEC);
-> +#endif
-> +}
-
-Should not the interface at least reflect this SCHED_HRTICK status? One,
-slightly hacky way of doing this might to be invert the bit. Have the
-system write a 1 when the feature is present, and have userspace flip it
-to 0 to activate.
-
-A better way might be to add a second bit.
-
-Also, didn't we all agree 50us was overly optimistic and this number
-should be lower?
-
-> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-> index cd38f4e9899d..1b2b64fe0fb1 100644
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -1378,6 +1378,11 @@ static void do_sched_yield(void)
->   */
->  SYSCALL_DEFINE0(sched_yield)
->  {
-> +	if (IS_ENABLED(CONFIG_RSEQ) && current->sched_time_delay) {
-> +		schedule();
-> +		return 0;
-> +	}
+>  .../dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso  | 32 +++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
+> index b6bfdfbbdd984..123ab0e5e8dfa 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
+> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
+> @@ -15,6 +15,33 @@ clk_ov5640_fixed: ov5640-xclk {
+>  		#clock-cells = <0>;
+>  		clock-frequency = <24000000>;
+>  	};
 > +
->  	do_sched_yield();
->  	return 0;
->  }
+> +	reg_2p8v: regulator-2p8v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "2P8V";
+> +		regulator-min-microvolt = <2800000>;
+> +		regulator-max-microvolt = <2800000>;
+> +		vin-supply = <&vcc_3v3_sys>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	reg_1p8v: regulator-1p8v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "1P8V";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		vin-supply = <&vcc_3v3_sys>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	reg_1p5v: regulator-1p5v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "1P5V";
+> +		regulator-min-microvolt = <1500000>;
+> +		regulator-max-microvolt = <1500000>;
+> +		vin-supply = <&vcc_3v3_sys>;
+> +		regulator-always-on;
+> +	};
+>  };
+>  
+>  &main_i2c2 {
+> @@ -40,6 +67,11 @@ ov5640: camera@3c {
+>  
+>  				clocks = <&clk_ov5640_fixed>;
+>  				clock-names = "xclk";
+> +
+> +				AVDD-supply = <&reg_2p8v>;
+> +				DOVDD-supply = <&reg_1p8v>;
+> +				DVDD-supply = <&reg_1p5v>;
+> +
+>  				powerdown-gpios = <&exp1 13 GPIO_ACTIVE_LOW>;
+>  
+>  				port {
 
-Multiple people, very much including Linus, have already said this
-'cute' hack isn't going to fly. Why is it still here?
 
