@@ -1,142 +1,286 @@
-Return-Path: <linux-kernel+bounces-629544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4D9AA6DFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:23:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A17AA6DFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D31C4A52CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C454A1BC60B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B00E227EBB;
-	Fri,  2 May 2025 09:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sNYaepKS"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48931229B02;
+	Fri,  2 May 2025 09:24:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100141E883A
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 09:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44A72581
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 09:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746177792; cv=none; b=C+lVbwvvGXxXwJitRIoIsdpZ/+DM9E6NWOKRfhB4e0WVc+ejEitnfWkkTsMlXZxfdbMd9r7x9OP9iS4dSYh5gnjT1GuPvt7rjLJtk3U2v9MhjqXzAkJPIU8xKCVmqltMs2UzJ4OuztjjE5byreqgVmruPZLg2nLsyTnIfA5SkMY=
+	t=1746177844; cv=none; b=IWSSOwJi0MeaIMozycNRxUxFD53udoTtd+p7ZdrdV2AGoRTIfxnxxFcS1v52nBq4yc5ItaiT533X/2bB5dVvF8Lwy1KbEKQnnjgipdRcYX+En0TvqOXpr3D1P+SK2vU3z1iLi0GYVotX+QNPV1Hmd6YAoS0sKvz0gV82SIr6Boc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746177792; c=relaxed/simple;
-	bh=ekJa/d94ESjfMuIQNVaqRWOsDNgRaf36C6VoqCPZFV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kj64vJFD1a3VG32d8zytDdvUvyPG9t0iF8pPqFzw1SbubJ4vfT1hWzPpEs0Wv3wLE4QaxP7b4OsebUf00wEqJHYAIEt/a4libECAePOotqqv5E+wiFii2MlwBYjp3PVtj4RJOJkQpA2SuJXYUtwkHVZuYz0WrJIWepRKaCZA6Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sNYaepKS; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39ee5ac4321so1828824f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 02:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746177789; x=1746782589; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CaOQHqMDa8OZ46blFqHo7Rw/aRIi/u9Q9Wy1w1jQELI=;
-        b=sNYaepKSdKb83a8yXkERuKY/EQ1QRoA15T8YMXgcfz+biHzAxFFRQ+ZTad52Nk7mEX
-         wKfsBfkIDRFjiet42P4D/8h5WnWIafypeTCuHXW9RZBppR2n0Lw20I2pWEw5o1wjTuUq
-         79VUgNdB/DHkeBDX2cjp94XrjqdOdGM/OC9sPlf+XaEzBFqtnJ1GA5H/8WWyDD/pFLxa
-         zgFVMM8hwTqjwrYD1g8kfDde1OSIzzWZmKGVHGaQs196pPJg/EDzg860HrDR1dLr2Psz
-         577/OjMCQ3micw+sLeXw+Qdthlxy/VgPOfp9K7ci/PQqhL0CcvccJxw1rO+cHQctICQX
-         V9WA==
+	s=arc-20240116; t=1746177844; c=relaxed/simple;
+	bh=FMggo4PHHRAOhkcjRhvlBf2TOEGObXmG/5NU5EcuTw4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=l3byV6JvuFzd2FSvkJAKemd+fGVtcafiCFGqZYE1dvUcPo/Zs1DHh53twS11AswcIujre8ZU0WiubG5qRGbfpCx40AgHGRoLIkRcnnCVzPJATi3vU+ygQLiu4TbpMUeF37DV4ug6PUWVfDtaIQS5e2f3GSWv3R2x/41EaHxp5Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85dad56a6cbso289101039f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 02:24:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746177789; x=1746782589;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1746177842; x=1746782642;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CaOQHqMDa8OZ46blFqHo7Rw/aRIi/u9Q9Wy1w1jQELI=;
-        b=sJJwzyCZDdTUrptvxOzW3kqQ/kFtuVrZWKPosxDOyAY94qhJt0kbd3HVA4f8aidXV3
-         4wgfo6CqYc/BkIgq1yK8dAXIY9IaTtUVeMf3gGbT4g32I0etd8cV5up2n4B75ZtzVdiQ
-         4TbFXHEqz2ri3m8eXNs6+BKW76THEZpeHqqE76w6izWnTP0XW1lUuRLcARNP+CjIBu2H
-         Ac/EqnBbqhr0iqjjfl7B8kAlPn5KxdMw/IB+jztLsdjDw1j7KX5HSSNsBPCCHFdeQ+bD
-         OQ5cqIPsayb8wjpJhrcEYCW0GmW8xEa41YT4UUPO7QzL9hBtGl6eTQY1q7jQ96H23sLa
-         DvQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmwodnh/NgCIhJvp53OTxpAypfB+DdrBqCjKiXniL8YZo5Mf1BMGP/L/Nk1pd2/QEG+DB6XdNZT/286YY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKyA9P+eRoRlNq4+zSMBkxW1XeTILiW7g9ReHVad5uzQLhYaih
-	JSfoYceVLbeFPLUlAZgNmD/6IQOV02NuAd+eajMa2QWZLGCJ/SaJQD6DSjoawck=
-X-Gm-Gg: ASbGncsuURzKHkS80v5D/AfdVZLwX2aJWvYxrQygy36ZOt0n08cSx3+UWnkQcPpD7uT
-	lvA82k9cihUhdD6PXLhC4MhWRMTT7pzXlOBvOrGHZM3BwpC7BiDvg7PdtpkAYwKbfD8brpu8o/q
-	20dfBth3i3JjmCUo34jsY8kKLspxWhlfbSuaccBbfNY1tieNg7mDfSct/6k0OfJmVU/0NveVJvI
-	eHvSsGCPkq9dJV9TKC+JRYUKH53TIy4q7Ae2k9eCwdEs0o016PXBaaFhLPQbPMhew4S5gxav4or
-	6R8r7cENpeIM2ra/MMxOXbR1j6XRics7dReCeuoJfGee2tHs3AkKn6FihJaUZcN4khV0yMB2+cO
-	s74E=
-X-Google-Smtp-Source: AGHT+IHZIZQKxokVXfqMkIHYqovCFqCOMp1S59YaL8IoOtnobquxt5VlkTlRg2xMgElyl2ygcoOp2A==
-X-Received: by 2002:a5d:64c4:0:b0:39e:e438:8e4b with SMTP id ffacd0b85a97d-3a099af1fbamr1268637f8f.50.1746177789352;
-        Fri, 02 May 2025 02:23:09 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b172b3sm1609188f8f.90.2025.05.02.02.23.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 02:23:08 -0700 (PDT)
-Date: Fri, 2 May 2025 11:23:07 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Robert Lin <robelin@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-	pohsuns@nvidia.com, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, sumitg@nvidia.com
-Subject: Re: [PATCH v7 0/3] clocksource: fix Tegra234 SoC Watchdog Timer.
-Message-ID: <aBSO-wk5WPsWYs-V@mai.linaro.org>
-References: <20250502043727.396896-1-robelin@nvidia.com>
+        bh=JUb6i8DPOrLWljRjUfE7VgMkFsWGGmK14oSGnno/Vuk=;
+        b=VXz0FBqUOWd+7z4IyYkfyd5wNeHCqWz6k0j4ZOBAQprhKdX4S2O+f2Z244DWaZS+6h
+         9TBV8cMhw36kyLdCg5TuZx4Z3zbWa8K7p134yoR9x/R72xWbmNeuFWb26IFvpB34t6ju
+         gc859n8545n/cBYmIB/7b9KS7zz/hvphOwU+3s+b0KS5EUCJNynjXzKx8pyXu3hBeHbo
+         nwl09Sf6XIDE8UL2Jkxzq3EOiJ60HVMXQS2+innPQFUNsEq+3PqzvizjJtxPfPvchkrO
+         bFUxW3JGhVuzjWCifLMKZOotwcgNhPR1a1iMIQsTCX/rCvC9A+O2taSZACjV3RwhatnE
+         KGOg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7GnMgMUeT4NDHYS5xuy0HevK9XDcAALNBp4P2cjD09qcu0Is1k6OdMuyBwfIEpl4Zs5GCMgXmOK5MxwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUfH3wk2PbDYG78gpg9xJ2+iG1abaZCF13nCyebfj5ea6psEfl
+	a1Y1IhztkFuyLnvsrPT/5fX75QuLzghvVpR/FHyicwY9VX1+ap+tI13UDHKPe0FKalbtp5O9jLD
+	z0hWUIYZbTGyXzYd1uoopJGTzqldGupum+tVbU3itQ+45knJLQMQ0IpI=
+X-Google-Smtp-Source: AGHT+IHUonjPuSnd12H4cGE62BSq7MUuFKHLRKP+VReD3EqWG2MlhefqGVAt6jfNDqHwCvP1gTxXZvYdBrQMxY5eTtocXmDO4ZV5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250502043727.396896-1-robelin@nvidia.com>
+X-Received: by 2002:a05:6e02:18c9:b0:3d8:2085:a188 with SMTP id
+ e9e14a558f8ab-3d97c17d1ffmr23297295ab.1.1746177841983; Fri, 02 May 2025
+ 02:24:01 -0700 (PDT)
+Date: Fri, 02 May 2025 02:24:01 -0700
+In-Reply-To: <20250502091015.1372-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68148f31.050a0220.14dd7d.0021.GAE@google.com>
+Subject: Re: [syzbot] [mm?] BUG: Bad page state in page_cache_ra_order
+From: syzbot <syzbot+7b3842775c9ce6b69efc@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 02, 2025 at 12:37:24PM +0800, Robert Lin wrote:
-> From: robelin <robelin@nvidia.com>
-> 
-> This set of patches includes a fix for watchdog for it may not bark
-> due to self-pinging and adds WDIOC_GETTIMELEFT support.
-> 
-> --
+Hello,
 
-When sending a new version, could you please Cc: the watchdog maintainers ?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+BUG: Bad page state in page_cache_ra_order
 
-Thanks
-  -- Daniel
+BUG: Bad page state in process syz.0.16  pfn:4ae01
+page does not match folio
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffffffffffffffff pfn:0x4ae01
+ksm flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 ffffea00012b8000 00000000ffffffff ffffffffffffffff
+raw: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: nonzero pincount
+page_owner tracks the page as allocated
+page last allocated via order 9, migratetype Unmovable, gfp_mask 0x152c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL), pid 6528, tgid 6528 (syz.0.16), ts 96978401088, free_ts 60314976314
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1718
+ prep_new_page mm/page_alloc.c:1726 [inline]
+ get_page_from_freelist+0x135c/0x3920 mm/page_alloc.c:3688
+ __alloc_frozen_pages_noprof+0x263/0x23a0 mm/page_alloc.c:4970
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2301
+ alloc_pages_noprof mm/mempolicy.c:2392 [inline]
+ folio_alloc_noprof+0x20/0x2d0 mm/mempolicy.c:2402
+ filemap_alloc_folio_noprof+0x3a1/0x470 mm/filemap.c:1007
+ ractl_alloc_folio mm/readahead.c:186 [inline]
+ ra_alloc_folio mm/readahead.c:441 [inline]
+ page_cache_ra_order+0x4c0/0xd00 mm/readahead.c:509
+ do_sync_mmap_readahead mm/filemap.c:3225 [inline]
+ filemap_fault+0x1a5e/0x2740 mm/filemap.c:3403
+ __do_fault+0x10a/0x490 mm/memory.c:5098
+ do_shared_fault mm/memory.c:5582 [inline]
+ do_fault mm/memory.c:5656 [inline]
+ do_pte_missing+0x1a6/0x3fb0 mm/memory.c:4160
+ handle_pte_fault mm/memory.c:5997 [inline]
+ __handle_mm_fault+0x103d/0x2a40 mm/memory.c:6140
+ handle_mm_fault+0x3fe/0xad0 mm/memory.c:6309
+ do_user_addr_fault+0x60c/0x1370 arch/x86/mm/fault.c:1337
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 6017 tgid 6017 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1262 [inline]
+ __free_frozen_pages+0x69d/0xff0 mm/page_alloc.c:2725
+ vfree+0x176/0x960 mm/vmalloc.c:3383
+ kcov_put kernel/kcov.c:439 [inline]
+ kcov_put kernel/kcov.c:435 [inline]
+ kcov_close+0x34/0x60 kernel/kcov.c:535
+ __fput+0x3ff/0xb70 fs/file_table.c:465
+ task_work_run+0x14d/0x240 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xafb/0x2c30 kernel/exit.c:953
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
+ get_signal+0x2673/0x26d0 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x8f/0x7d0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x260 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Modules linked in:
+CPU: 1 UID: 0 PID: 6529 Comm: syz.0.16 Not tainted 6.15.0-rc4-syzkaller-gebd297a2affa-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ bad_page+0xb3/0x1f0 mm/page_alloc.c:505
+ free_tail_page_prepare+0x44f/0x5b0 mm/page_alloc.c:1000
+ free_pages_prepare mm/page_alloc.c:1238 [inline]
+ __free_frozen_pages+0x96a/0xff0 mm/page_alloc.c:2725
+ __folio_put+0x329/0x450 mm/swap.c:112
+ folio_put_refs include/linux/mm.h:1600 [inline]
+ filemap_free_folio+0x132/0x170 mm/filemap.c:235
+ delete_from_page_cache_batch+0x741/0x9b0 mm/filemap.c:339
+ truncate_inode_pages_range+0x279/0xe30 mm/truncate.c:376
+ blkdev_flush_mapping+0xe9/0x280 block/bdev.c:717
+ blkdev_put_whole+0xc4/0xf0 block/bdev.c:726
+ bdev_release+0x47e/0x6d0 block/bdev.c:1151
+ blkdev_release+0x15/0x20 block/fops.c:660
+ __fput+0x3ff/0xb70 fs/file_table.c:465
+ task_work_run+0x14d/0x240 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xafb/0x2c30 kernel/exit.c:953
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
+ get_signal+0x2673/0x26d0 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x8f/0x7d0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x260 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f62ebd8e969
+Code: Unable to access opcode bytes at 0x7f62ebd8e93f.
+RSP: 002b:00007f62eccc30e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007f62ebfb5fa8 RCX: 00007f62ebd8e969
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f62ebfb5fa8
+RBP: 00007f62ebfb5fa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f62ebfb5fac
+R13: 0000000000000000 R14: 00007ffdd5f711a0 R15: 00007ffdd5f71288
+ </TASK>
+BUG: Bad page state in process syz.0.16  pfn:4ae00
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4ae00
+head: order:0 mapcount:0 entire_mapcount:1 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000049(locked|uptodate|head|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000049 dead000000000100 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+head: 00fff00000000049 dead000000000100 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+head: 00fff00000000000 0000000000000000 00000000ffffffff 0000000000000000
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+page_owner tracks the page as allocated
+page last allocated via order 9, migratetype Unmovable, gfp_mask 0x152c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL), pid 6528, tgid 6528 (syz.0.16), ts 96978401088, free_ts 60314965608
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1718
+ prep_new_page mm/page_alloc.c:1726 [inline]
+ get_page_from_freelist+0x135c/0x3920 mm/page_alloc.c:3688
+ __alloc_frozen_pages_noprof+0x263/0x23a0 mm/page_alloc.c:4970
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2301
+ alloc_pages_noprof mm/mempolicy.c:2392 [inline]
+ folio_alloc_noprof+0x20/0x2d0 mm/mempolicy.c:2402
+ filemap_alloc_folio_noprof+0x3a1/0x470 mm/filemap.c:1007
+ ractl_alloc_folio mm/readahead.c:186 [inline]
+ ra_alloc_folio mm/readahead.c:441 [inline]
+ page_cache_ra_order+0x4c0/0xd00 mm/readahead.c:509
+ do_sync_mmap_readahead mm/filemap.c:3225 [inline]
+ filemap_fault+0x1a5e/0x2740 mm/filemap.c:3403
+ __do_fault+0x10a/0x490 mm/memory.c:5098
+ do_shared_fault mm/memory.c:5582 [inline]
+ do_fault mm/memory.c:5656 [inline]
+ do_pte_missing+0x1a6/0x3fb0 mm/memory.c:4160
+ handle_pte_fault mm/memory.c:5997 [inline]
+ __handle_mm_fault+0x103d/0x2a40 mm/memory.c:6140
+ handle_mm_fault+0x3fe/0xad0 mm/memory.c:6309
+ do_user_addr_fault+0x60c/0x1370 arch/x86/mm/fault.c:1337
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 6017 tgid 6017 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1262 [inline]
+ __free_frozen_pages+0x69d/0xff0 mm/page_alloc.c:2725
+ vfree+0x176/0x960 mm/vmalloc.c:3383
+ kcov_put kernel/kcov.c:439 [inline]
+ kcov_put kernel/kcov.c:435 [inline]
+ kcov_close+0x34/0x60 kernel/kcov.c:535
+ __fput+0x3ff/0xb70 fs/file_table.c:465
+ task_work_run+0x14d/0x240 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xafb/0x2c30 kernel/exit.c:953
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
+ get_signal+0x2673/0x26d0 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x8f/0x7d0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x260 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Modules linked in:
+CPU: 2 UID: 0 PID: 6529 Comm: syz.0.16 Tainted: G    B               6.15.0-rc4-syzkaller-gebd297a2affa-dirty #0 PREEMPT(full) 
+Tainted: [B]=BAD_PAGE
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ bad_page+0xb3/0x1f0 mm/page_alloc.c:505
+ free_page_is_bad_report mm/page_alloc.c:938 [inline]
+ free_page_is_bad mm/page_alloc.c:948 [inline]
+ free_pages_prepare mm/page_alloc.c:1254 [inline]
+ __free_frozen_pages+0x76e/0xff0 mm/page_alloc.c:2725
+ __folio_put+0x329/0x450 mm/swap.c:112
+ folio_put_refs include/linux/mm.h:1600 [inline]
+ filemap_free_folio+0x132/0x170 mm/filemap.c:235
+ delete_from_page_cache_batch+0x741/0x9b0 mm/filemap.c:339
+ truncate_inode_pages_range+0x279/0xe30 mm/truncate.c:376
+ blkdev_flush_mapping+0xe9/0x280 block/bdev.c:717
+ blkdev_put_whole+0xc4/0xf0 block/bdev.c:726
+ bdev_release+0x47e/0x6d0 block/bdev.c:1151
+ blkdev_release+0x15/0x20 block/fops.c:660
+ __fput+0x3ff/0xb70 fs/file_table.c:465
+ task_work_run+0x14d/0x240 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xafb/0x2c30 kernel/exit.c:953
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
+ get_signal+0x2673/0x26d0 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x8f/0x7d0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x260 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f62ebd8e969
+Code: Unable to access opcode bytes at 0x7f62ebd8e93f.
+RSP: 002b:00007f62eccc30e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007f62ebfb5fa8 RCX: 00007f62ebd8e969
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f62ebfb5fa8
+RBP: 00007f62ebfb5fa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f62ebfb5fac
+R13: 0000000000000000 R14: 00007ffdd5f711a0 R15: 00007ffdd5f71288
+ </TASK>
 
-> V7:
-> - Fix formatting
-> - Consider overflow and warn if happens
-> 
-> V6:
-> - Fix timeleft value addition using unmatched time unit
-> - Use u64 type to maintain the microseconds value in case of overflow
-> 
-> V5:
-> - Print warning message if get unexpected value from the register
-> 
-> V4:
-> - Improve the precision of timeleft value
-> - Fix the unused variable warning
-> 
-> V3:
-> - Improve comment description
-> - Refactor to fit codeline within 80 columns
-> - Remove unused if(0) blocks
-> 
-> 
-> V2:
-> - Fix a compilation error, a warning and updates copyright
-> --
 
-[ ... ]
+Tested on:
 
--- 
+commit:         ebd297a2 Merge tag 'net-6.15-rc5' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=142de774580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca17f2d2ba38f7a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=7b3842775c9ce6b69efc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10f21f74580000
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
