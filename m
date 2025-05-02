@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-629524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4B7AA6DB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B13CAA6DBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FCC99830E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:08:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795259C7869
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBAE26B094;
-	Fri,  2 May 2025 09:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E47AD24;
+	Fri,  2 May 2025 09:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2Yr+TuqD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GQGYbXas"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VxJqz33K"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AA52690D6;
-	Fri,  2 May 2025 09:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19CF22576D
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 09:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746176675; cv=none; b=ad1CN8uWfolxI6J1gZTiFtm5uAKp1FeXtBIWKRlYyk7sG+n3HWBKhbg5xccTv8WVGW+kv4NhvBKXR1cH1sT4qSr5O//wJU1wG/GPnG2U9OBwO7xyLUv4sF+PoY/DFjp+nLJBGHXCyGhjtDYgVu8PWANA/L86pPcQ6nQK+85QduE=
+	t=1746176778; cv=none; b=NUrN3VDZM0wzpLBPa6Gn1mo+0rWX+1/crR6AnXFz7JhiDV/a4kAhXizzOJyh2vHs4mRRwHnNBGVk3jAga8Y+BXSxPbxwfdM2R2DCKHXIzopT7ornNUc9ynrseqJBlfKkgq2QLkyL9z6e1nh44w0/PEL2ck6x++++14T5neJtfJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746176675; c=relaxed/simple;
-	bh=gCsPQsqNPPq5oFxjeBUG4MLCfwCCxo5CwY/7WF4PNKk=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=o1lfOIxpyMZeUnOrEJ9AjlQW9zmjBedR03VZqo02ogOXBQqrVtVknEm/7+yqmF8KBYJGQxAx4pWOTpXgU911al3vIvluKcgYLmwrwSXwZrCsYzHKGzEf/vn1fUpbE5eA7GOFXchoKVVlub+muiWc71JiWjyLb+WoUoGx6oADG5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2Yr+TuqD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GQGYbXas; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 02 May 2025 09:04:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746176671;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=rmqT5EU1AbsvAublSa0SnGgYVCj7zG9K9ToqPbcFk88=;
-	b=2Yr+TuqDWWewptAjubEXUp11dis5WuRUhjGuNGozwxtckC/1VS9eTSNlX4htIdZhza9SQ7
-	YdIXLbh+kP2dJs0iCeAf3UAhP4psv2AkBzQlBsWJfNfO17RwTjJjr7kZtGQd/wGH/muCnT
-	EHG0YDvnf+Ler/1BZgsk5y4QnV+Z7i2FOVzQ98wvmI+9pZyFx66fkHm/M8NoH11sLF8FWr
-	83FPBG6Ml7FMNsJHpvKkqGWDsLSlvryagqoWvKGOmAtHr1MJMnoQ61kzwQVlFjpkW0e1sK
-	Qw99T5RSWMlzSZeg8kNCAy4VuLIRFV/9HIJR8h3djtWafd1+gEmxEWUysLOXlw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746176671;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=rmqT5EU1AbsvAublSa0SnGgYVCj7zG9K9ToqPbcFk88=;
-	b=GQGYbXasNo0NVCx4XzrXKTkgq1zXU1Voeo3KV/YUMzzQpTQXHPKTlBwLAhtTbz4gB0G6zt
-	9OYFvEy6bkcnzqBw==
-From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/merge] x86/msr: Improve the comments of the
- DECLARE_ARGS()/EAX_EDX_VAL()/EAX_EDX_RET() facility
-Cc: Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- Brian Gerst <brgerst@gmail.com>, Juergen Gross <jgross@suse.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Kees Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>,
- Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- Josh Poimboeuf <jpoimboe@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
- linux-kernel@vger.kernel.org, x86@kernel.org
+	s=arc-20240116; t=1746176778; c=relaxed/simple;
+	bh=M2oj46kMzUMSEbGNCUOFuda0AGjerO2qSWTOnylr0tY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+A/sGWgryS+zqjCgKBsGgqSAfLhLFPwFHxkGFdkgycXOfJzP339GVbZ2ECKXLxmxRcMr/mNKb3xed3jYZvjuxp7AZvuRYCwX5yy8xfASeptxN0XpPCYzfNgXxjusxo32gwfzjNnMvVSlRAUbq1ef0mIPB+W5HO20tuf9Hu2I84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VxJqz33K; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=R6qvRY5edeMxG0ix5dbjscdMhwf5+XMxecbE1wVwGGY=; b=VxJqz33KsJo1jRDyslIgs3neOa
+	/uIO/luCEUExbFGqwAqnnHsRcpbOXv5z82Agkv9GwrxhHHix+8A2HLOOZ86InzH40Lfy5pWc/OIyO
+	Wtt1EG/dPUrIQujK+0/tumKxgNEmPSzfkg4nTd0dvAo8M30qNpqb7pQWdAvrlUYQM/upYRtskNN2H
+	iPKkzymoguAo09u7mHZJc0x7H0Ogg9LdNeuORo6Pbd7d6+preVPEVpvN3J9tl82vPHOOComdBVUVp
+	7khuzejBvvKevUnIdAe3lCyO3Z/aK7/C6iX1jAlotcW8TJ3P+lsX7l4J6WlQ2bs094YfHawlz5LyP
+	o2xXWf0A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAmKs-0000000BaKr-3z1b;
+	Fri, 02 May 2025 09:05:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 316373001D4; Fri,  2 May 2025 11:05:29 +0200 (CEST)
+Date: Fri, 2 May 2025 11:05:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, tglx@linutronix.de,
+	bigeasy@linutronix.de, kprateek.nayak@amd.com
+Subject: Re: [PATCH V3 1/4] Sched: Scheduler time slice extension
+Message-ID: <20250502090529.GU4198@noisy.programming.kicks-ass.net>
+References: <20250502015955.3146733-1-prakash.sangappa@oracle.com>
+ <20250502015955.3146733-2-prakash.sangappa@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174617667063.22196.14941389876137049805.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502015955.3146733-2-prakash.sangappa@oracle.com>
 
-The following commit has been merged into the x86/merge branch of tip:
+On Fri, May 02, 2025 at 01:59:52AM +0000, Prakash Sangappa wrote:
+> Add support for a thread to request extending its execution time slice on
+> the cpu. The extra cpu time granted would help in allowing the thread to
+> complete executing the critical section and drop any locks without getting
+> preempted. The thread would request this cpu time extension, by setting a
+> bit in the restartable sequences(rseq) structure registered with the kernel.
+> 
+> Kernel will grant a 50us extension on the cpu, when it sees the bit set.
+> With the help of a timer, kernel force preempts the thread if it is still
+> running on the cpu when the 50us timer expires. The thread should yield
+> the cpu by making a system call after completing the critical section.
+> 
+> Suggested-by: Peter Ziljstra <peterz@infradead.org>
+> Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
+> ---
 
-Commit-ID:     76deb5452e79ab86eac699ae3b6a44ab9c437ffe
-Gitweb:        https://git.kernel.org/tip/76deb5452e79ab86eac699ae3b6a44ab9c437ffe
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Fri, 02 May 2025 10:07:59 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 02 May 2025 10:10:31 +02:00
+> diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+> index c233aae5eac9..900cb75f6a88 100644
+> --- a/include/uapi/linux/rseq.h
+> +++ b/include/uapi/linux/rseq.h
+> @@ -26,6 +26,7 @@ enum rseq_cs_flags_bit {
+>  	RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT_BIT	= 0,
+>  	RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT	= 1,
+>  	RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT	= 2,
+> +	RSEQ_CS_FLAG_DELAY_RESCHED_BIT		= 3,
+>  };
+>  
+>  enum rseq_cs_flags {
+> @@ -35,6 +36,8 @@ enum rseq_cs_flags {
+>  		(1U << RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT),
+>  	RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE	=
+>  		(1U << RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT),
+> +	RSEQ_CS_FLAG_DELAY_RESCHED		=
+> +		(1U << RSEQ_CS_FLAG_DELAY_RESCHED_BIT),
+>  };
+>  
+>  /*
+> @@ -128,6 +131,10 @@ struct rseq {
+>  	 * - RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
+>  	 *     Inhibit instruction sequence block restart on migration for
+>  	 *     this thread.
+> +	 * - RSEQ_CS_DELAY_RESCHED
+> +	 *     Request by user task to try delaying preemption. With
+> +	 *     use of a timer, extra cpu time upto 50us is granted for this
+> +	 *     thread before being rescheduled.
+>  	 */
+>  	__u32 flags;
 
-x86/msr: Improve the comments of the DECLARE_ARGS()/EAX_EDX_VAL()/EAX_EDX_RET() facility
+So while it works for testing, this really is a rather crap interface
+for real because userspace cannot up front tell if its going to work or
+not.
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-kernel@vger.kernel.org
----
- arch/x86/include/asm/msr.h | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+> +void rseq_delay_resched_fini(void)
+> +{
+> +#ifdef CONFIG_SCHED_HRTICK
+> +	extern void hrtick_local_start(u64 delay);
+> +	struct task_struct *t = current;
+> +	/*
+> +	 * IRQs off, guaranteed to return to userspace, start timer on this CPU
+> +	 * to limit the resched-overdraft.
+> +	 *
+> +	 * If your critical section is longer than 50 us you get to keep the
+> +	 * pieces.
+> +	 */
+> +	if (t->sched_time_delay)
+> +		hrtick_local_start(50 * NSEC_PER_USEC);
+> +#endif
+> +}
 
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index 2ccc78e..27bc0b5 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -37,20 +37,22 @@ struct saved_msrs {
- };
- 
- /*
-- * both i386 and x86_64 returns 64-bit value in edx:eax, but gcc's "A"
-- * constraint has different meanings. For i386, "A" means exactly
-- * edx:eax, while for x86_64 it doesn't mean rdx:rax or edx:eax. Instead,
-- * it means rax *or* rdx.
-+ * Both i386 and x86_64 returns 64-bit values in edx:eax for certain
-+ * instructions, but GCC's "A" constraint has different meanings.
-+ * For i386, "A" means exactly edx:eax, while for x86_64 it
-+ * means rax *or* rdx.
-+ *
-+ * These helpers wrapping these semantic differences save one instruction
-+ * clearing the high half of 'low':
-  */
- #ifdef CONFIG_X86_64
--/* Using 64-bit values saves one instruction clearing the high half of low */
--#define DECLARE_ARGS(val, low, high)	unsigned long low, high
--#define EAX_EDX_VAL(val, low, high)	((low) | (high) << 32)
--#define EAX_EDX_RET(val, low, high)	"=a" (low), "=d" (high)
-+# define DECLARE_ARGS(val, low, high)	unsigned long low, high
-+# define EAX_EDX_VAL(val, low, high)		((low) | (high) << 32)
-+# define EAX_EDX_RET(val, low, high)		"=a" (low), "=d" (high)
- #else
--#define DECLARE_ARGS(val, low, high)	u64 val
--#define EAX_EDX_VAL(val, low, high)	(val)
--#define EAX_EDX_RET(val, low, high)	"=A" (val)
-+# define DECLARE_ARGS(val, low, high)	u64 val
-+# define EAX_EDX_VAL(val, low, high)		(val)
-+# define EAX_EDX_RET(val, low, high)		"=A" (val)
- #endif
- 
- /*
+Should not the interface at least reflect this SCHED_HRTICK status? One,
+slightly hacky way of doing this might to be invert the bit. Have the
+system write a 1 when the feature is present, and have userspace flip it
+to 0 to activate.
+
+A better way might be to add a second bit.
+
+Also, didn't we all agree 50us was overly optimistic and this number
+should be lower?
+
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index cd38f4e9899d..1b2b64fe0fb1 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -1378,6 +1378,11 @@ static void do_sched_yield(void)
+>   */
+>  SYSCALL_DEFINE0(sched_yield)
+>  {
+> +	if (IS_ENABLED(CONFIG_RSEQ) && current->sched_time_delay) {
+> +		schedule();
+> +		return 0;
+> +	}
+> +
+>  	do_sched_yield();
+>  	return 0;
+>  }
+
+Multiple people, very much including Linus, have already said this
+'cute' hack isn't going to fly. Why is it still here?
 
