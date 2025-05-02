@@ -1,78 +1,144 @@
-Return-Path: <linux-kernel+bounces-630557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73ADEAA7BDB
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 00:02:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB582AA7BE3
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 00:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B62A6982EF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:02:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE124C5855
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB60020D51C;
-	Fri,  2 May 2025 22:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3F1215162;
+	Fri,  2 May 2025 22:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJw+RE7U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m3PqyK2j"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AF4158DA3;
-	Fri,  2 May 2025 22:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ACB19DF41;
+	Fri,  2 May 2025 22:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746223356; cv=none; b=tlSOjsvVngiKAzpjy7vaJFfHxgVNx4fA7x/ihlPxYX7ifct0wS58CpUhMJw0DqJzt/gX7U5C3VN/dln1ZDtTGOdL9plGmDKnb0pr0cclFq1vzAeU2lgGCnEeUFUK9bgr845aespLBTb7oLTXrdh0kWmCWIbhZke47ypv4A9Gq4M=
+	t=1746223416; cv=none; b=Y/yEurUm+yIyv3V83TlfzNBP+v9O/K/iejWL+QDIJfqL+rLBClwDJ6JdF8YZDj7Hl7ZfXHG6ACxinob5T8wWLJLddiGpEGFZraIRdG71SKE7CRD71/QdkYXce0V84E+dZ/av8vlWs44knMPCsOUA6Pk7kJ6l854ZSbCka8XrmtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746223356; c=relaxed/simple;
-	bh=xKFaFIhjjLaeU2dm+utRchf5z7uHb1vtiV/8ddS6c5k=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dX0wJmftQOiFxObnJamOEN4Wx0cWf8jve17klVCKnJr5+UX9V5ufuKzbH2N4hGT4uZWtBiVpe5vll+syeInEAfiYo5/XbaVBed1BzpN4qINS5MpTTgff2w6pSLfzPgiomq82dFsd3Nq4t8RClFpPYaGxJcxD99HVvnNd0E03Tfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJw+RE7U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 074E1C4CEEB;
-	Fri,  2 May 2025 22:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746223356;
-	bh=xKFaFIhjjLaeU2dm+utRchf5z7uHb1vtiV/8ddS6c5k=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=sJw+RE7U0bWBEi0FPYwc6u9jmVM2319mABYPR0WyLz12MDgD/El7ZTnJ06rV96xuP
-	 odRWHAyQTVw6g90qb4UHPplIJsulI9W9egzlV4NxMjZ0WSNUzpfMW2QU0MJVWoUp/A
-	 YVPNz3MX2wUNpsiRdN34t6S7yhA1aZzDQKZ6gTwMuuyrzMYv5agpunuhDu0c/TIUMb
-	 5zs6CKdsTGFDaPUuMMTPP4qyu7aDt/n6Wb6Lp/5oUy/IWbad5Ri+F4iiGGIE99qS+T
-	 6AfYbdXamGT47UGJWjNogEaw/pGhb2or17Rck6D4PayMjpjj6x+Rz+VJk6YXALBE13
-	 mJzuxs8tuHAXA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7128B380DBE9;
-	Fri,  2 May 2025 22:03:16 +0000 (UTC)
-Subject: Re: [GIT PULL] smb3 client fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5mvFmxyPuxTOzGVvDOq1N3nYwh2ogj7yA-rrABdXgGpjbQ@mail.gmail.com>
-References: <CAH2r5mvFmxyPuxTOzGVvDOq1N3nYwh2ogj7yA-rrABdXgGpjbQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5mvFmxyPuxTOzGVvDOq1N3nYwh2ogj7yA-rrABdXgGpjbQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/6.15-rc4-smb3-client-fixes
-X-PR-Tracked-Commit-Id: c59f7c9661b9d3ee33a21d7b4f1dd4b77079e3e7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: daad00c063a1b3ae4a7814a6047009d471f21073
-Message-Id: <174622339506.3739591.7378055221412590918.pr-tracker-bot@kernel.org>
-Date: Fri, 02 May 2025 22:03:15 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+	s=arc-20240116; t=1746223416; c=relaxed/simple;
+	bh=tICFQFu/SBphGHue0ry96UcJIW3smwa8vB+FMItmCdw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=axNyRSHXabgXgP5OJe9+7PPjUEbh1N76uzRc9vIlpBT0afaYK/dJWUNHEPSbwqDU9fINlh5nmH5vuOouRBmQclcZuiGL/BJm0/KiLQ/e2GAoEthYie1sJaddGpnZQVuweM/9/XESy1ZXgzqjFOsQb93HLnH6Lq2+mrrMIR2lXnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=m3PqyK2j; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542M3QBn3963042
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 17:03:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746223406;
+	bh=EKfpU4lraZO0B5QXMT8kuKIw0IgMgyfJsg/HlNJ+C5o=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=m3PqyK2jF5GISGgJNzEapPG4X68MSebz6LLdoHF1QS/w0/lIttN6cztg8Ij1OAUES
+	 /JAU7mu4L8tFq3UByVR1D7j87LNPohHlNXCKhDnGpZdSi/gKS2/h6YvHvijiviTIOh
+	 mbkWrXEvwOYrHCYgRKUFonHEWIBopO1wqhomioqc=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542M3QH1031669
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 May 2025 17:03:26 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ May 2025 17:03:25 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 May 2025 17:03:25 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542M3PBu006849;
+	Fri, 2 May 2025 17:03:25 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Hari
+ Nagalla <hnagalla@ti.com>,
+        Beleswar Padhi <b-padhi@ti.com>,
+        Markus
+ Schneider-Pargmann <msp@baylibre.com>,
+        Andrew Davis <afd@ti.com>, Devarsh
+ Thakkar <devarsht@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 02/11] arm64: dts: ti: k3-am62-wakeup: Add wakeup R5F node
+Date: Fri, 2 May 2025 17:03:16 -0500
+Message-ID: <20250502220325.3230653-3-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250502220325.3230653-1-jm@ti.com>
+References: <20250502220325.3230653-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The pull request you sent on Fri, 2 May 2025 15:17:44 -0500:
+From: Hari Nagalla <hnagalla@ti.com>
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/6.15-rc4-smb3-client-fixes
+AM62 SoC devices have a single core R5F processor in wakeup domain.
+The R5F processor in wakeup domain is used as a device manager
+for the SoC.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/daad00c063a1b3ae4a7814a6047009d471f21073
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+Signed-off-by: Judith Mendez <jm@ti.com>
+Acked-by: Andrew Davis <afd@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Thank you!
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+index 9b8a1f85aa15..6549b7efa656 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+@@ -106,6 +106,31 @@ wkup_rti0: watchdog@2b000000 {
+ 		status = "reserved";
+ 	};
+ 
++	wkup_r5fss0: r5fss@78000000 {
++		compatible = "ti,am62-r5fss";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x78000000 0x00 0x78000000 0x8000>,
++			 <0x78100000 0x00 0x78100000 0x8000>;
++		power-domains = <&k3_pds 119 TI_SCI_PD_EXCLUSIVE>;
++		status = "disabled";
++
++		wkup_r5fss0_core0: r5f@78000000 {
++			compatible = "ti,am62-r5f";
++			reg = <0x78000000 0x00008000>,
++			      <0x78100000 0x00008000>;
++			reg-names = "atcm", "btcm";
++			resets = <&k3_reset 121 1>;
++			firmware-name = "am62-wkup-r5f0_0-fw";
++			ti,atcm-enable = <1>;
++			ti,btcm-enable = <1>;
++			ti,loczrama = <1>;
++			ti,sci = <&dmsc>;
++			ti,sci-dev-id = <121>;
++			ti,sci-proc-ids = <0x01 0xff>;
++		};
++	};
++
+ 	wkup_vtm0: temperature-sensor@b00000 {
+ 		compatible = "ti,j7200-vtm";
+ 		reg = <0x00 0xb00000 0x00 0x400>,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.49.0
+
 
