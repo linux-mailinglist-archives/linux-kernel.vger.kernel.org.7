@@ -1,131 +1,172 @@
-Return-Path: <linux-kernel+bounces-629923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6BEAA7354
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:22:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11536AA72C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3BF43AC8E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F09188C414
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CFC25525C;
-	Fri,  2 May 2025 13:20:37 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC21DDAB;
-	Fri,  2 May 2025 13:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEFE22A4E8;
+	Fri,  2 May 2025 13:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RuP1oGUj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C317404E
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 13:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746192037; cv=none; b=TCIKa0A5L/J5smoDpGhmxJLIGuDMopDvjdh7Rs8Oihc7bJ1RwQ4LgL79ESjhBC6mgImeHReM3ufUiqVwhMZvcBaNP9R8Dm8Ia0kMIl6IqDS14c9wEC++OOfA3/c1NIMNAKugtgKH29zcx54VcpCoQ5QdUP369IQP+1qeJvB1ojc=
+	t=1746190946; cv=none; b=ISmFlBu4hqRsQWd0ploMjhlgdo9LfVDwce8lAeX3JshsSghhUbn+qXEpsrIG4iimZH0muVXq1Fq+EuLUVhGdIIIn2iDLgTv1/zUMjnOGXFJUnqk3zOpXMf50y2LrGV2ku1uJEUkFAZGZ5M5oxm69+xmSUB3qb8MfdfOapz3iRyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746192037; c=relaxed/simple;
-	bh=U6urzpE91xdUZF2TxiVY8gAIcNB1QAGPhG01RWYs0Mg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OqxvLa1DW/mJoio8qJg/PtyGTcUj7eBSUREF9bPBnp+5vyXGMADYlUFN2RbUFFh5p7QhFOlqSih7sbZasf96OxSGVchuhFMDrT2MWKM8TE7SJ1vBT/uE3IN97BXQNNi3f138emHP5F6RZqMIQxAhxpX/EgeKTU6U19PZXR5b0vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4Zprfq673lz9s36;
-	Fri,  2 May 2025 15:02:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Bu1Itk0akfuE; Fri,  2 May 2025 15:02:11 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4Zprfq5Q81z9s2l;
-	Fri,  2 May 2025 15:02:11 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B27598B765;
-	Fri,  2 May 2025 15:02:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id ifS9dlAYK1bu; Fri,  2 May 2025 15:02:11 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0C68E8B763;
-	Fri,  2 May 2025 15:02:11 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Leo Yan <leo.yan@arm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH] perf: Completely remove possibility to override MAX_NR_CPUS
-Date: Fri,  2 May 2025 15:02:02 +0200
-Message-ID: <bfa19c0a3a40d10a053a2c7d3219eee2098e3b38.1746190831.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1746190946; c=relaxed/simple;
+	bh=TIbxN8c6UGZ/5yzJEIFAR/xG+vFEg25KVq8uNJI1dlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0svYgY1L/vC4fJVZluTH/C07TFnlJti3W8liRa2kk20FGdQcK5o/LTdZzeIbJrZgSFLSy+edpD1Jp2wesX2J/G1TqxvlJlqj2qIRS4LQj48w2cYUbAoQM0qDxuLcMCGSHOS4UFGera8aYw2aVip5u2DsHL5/403yo2eCOWgK1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RuP1oGUj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746190942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=odfVdM8YPnyNrSpkrWxxjrSq/dURDuUZftAxCKPBm0k=;
+	b=RuP1oGUj0SmblDpWC2BupW4oCaozOCHCi9V87MqwCkA76xpE6KWcVF3V+YgabMvlrCynIP
+	19nh5c1XlEWYlEEpYEM8HAMhOWB7MFPaEFbANCQzNZEmKWmx/bitmMVbEQiWSO9l6dzNKp
+	0669qjGv4iTNdOX/uWSCrQ1npSrSMdY=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-443-qgih-ungPJiKEnVDBXeJVQ-1; Fri, 02 May 2025 09:02:21 -0400
+X-MC-Unique: qgih-ungPJiKEnVDBXeJVQ-1
+X-Mimecast-MFC-AGG-ID: qgih-ungPJiKEnVDBXeJVQ_1746190940
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3912b54611dso899362f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 06:02:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746190940; x=1746795740;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=odfVdM8YPnyNrSpkrWxxjrSq/dURDuUZftAxCKPBm0k=;
+        b=wa/bCwfYrGXOm/BMWF3wAuzm+oPAj83LGywMr7+bgJEa8TsEQ4qxpAEW//7q9Q3G9/
+         TU9UbNi/l5Ux5+xXcXEYSKWM+Y/a0gkXWdj4o7YeVHt6QfmNtR3ph4wPx4BdUK4O34d+
+         3+/tZvH7Rjd80kKD93sBQJKU6WmJqXQQ5GXYGhhycjcrbwBqujaUFfug2GMZE/pGJU7c
+         D71hzzx+62iI7FiWYZXKKhbdvPqM9rPKPJgj6RGSGogXC2RV0xoKmtUYerXNEpkZYtwI
+         U40eBrhwE5fBzOoZUT2QT/AYAPKHkZoCyVJfFZR9Weo0kwQUNwZWo3pozo1dVQGRGnWr
+         oRNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqdmwgnimXwvgOVs8MA/Cx/XjYUH3NVfaCaZRN2q0NGSGOtvdOcaJrEg1Gi0hr/I7u3kScnkybzGIE17U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywuGwrgUqI2GJInySl1CjERpGYTKgTMBI+PRtTQ6AiEr4AuMa7
+	nDtWxaS5k9Jz1Zj2HP6IYXv907uFgt7WjiRlHHxCvFpd7H1p0s9djhr/Irq8oCh4uVsctR4M1KY
+	ReHJI9LWgxnQ7PEdiB8G7AkXG5JjWF0KtTi0AbfhToaeKBUvkXRSQ2XRsqvC0uA==
+X-Gm-Gg: ASbGncsYZ86vY/2JwziF8u6dzByLIpGxvUlCxWKfe9gv0+eNMlOGRbeBZJgkvzP4aMq
+	r6kuSFkKeWjGmtYHD5okLWyd5mUm4SoUuGVEJ8WV12yjcREOhwHhNZuANJ1R5bidOijrBodE6yG
+	JMiwJpIh2TTFC8UTeVYmfMMRN0hnpG+o0cpkYKI6Cy+FP/54oX7CamoLZIwcGg/LAvzJq+9mON9
+	fHgo3pGwNPdXK1I/kt/dVzYUOGNj0Sf9GoeovFE8jUbKIC62B1h/lmVQcwy8F/9nfdi5/Ea5XGa
+	j562KNwFpoIixV5uxGwGyciHZPqS8l2TD+xRcXBLzw==
+X-Received: by 2002:a5d:5849:0:b0:39d:724f:a8ae with SMTP id ffacd0b85a97d-3a099addfdemr1602146f8f.33.1746190940013;
+        Fri, 02 May 2025 06:02:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOK5ZDN888Pg/A2eXXlLYfRzxbhnr0Nb3MEmG+0cje3ji4+2S15fFApo4p1SIFb+sNeFO6TQ==
+X-Received: by 2002:a5d:5849:0:b0:39d:724f:a8ae with SMTP id ffacd0b85a97d-3a099addfdemr1602084f8f.33.1746190939227;
+        Fri, 02 May 2025 06:02:19 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.10.31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b171b2sm2062594f8f.87.2025.05.02.06.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 06:02:18 -0700 (PDT)
+Date: Fri, 2 May 2025 15:02:16 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Doug Berger <opendmb@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/topology: clear freecpu bit on detach
+Message-ID: <aBTCWPSXgu9cId6D@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250422194853.1636334-1-opendmb@gmail.com>
+ <609e6fe5-2893-4c13-8e52-e9df05146ffb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746190923; l=1837; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=U6urzpE91xdUZF2TxiVY8gAIcNB1QAGPhG01RWYs0Mg=; b=AbOUqnFYBy/JIKaV6NPiEHKBx4D/iZtblMJLv+s4PQBQBiCEaWHpczStEz79pf2M6XeENOMBg H7RI8hx/LgpAV7EYtjQqjWWCiORDG/TzKjvtEYyDAqv87WdkNM5buYN
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <609e6fe5-2893-4c13-8e52-e9df05146ffb@gmail.com>
 
-Commit 21b8732eb447 ("perf tools: Allow overriding MAX_NR_CPUS at
-compile time") added the capability to override MAX_NR_CPUS. At
-that time it was necessary to reduce the huge amount of RAM used
-by static stats variables.
+Hi,
 
-But this has been unnecessary since commit 6a1e2c5c2673 ("perf stat:
-Remove a set of shadow stats static variables"), and
-commit e8399d34d568 ("libperf cpumap: Hide/reduce scope of
-MAX_NR_CPUS") broke the build in that case because it failed to
-add the guard around the new definition of MAX_NR_CPUS.
+On 29/04/25 10:15, Florian Fainelli wrote:
+> 
+> 
+> On 4/22/2025 9:48 PM, Doug Berger wrote:
+> > There is a hazard in the deadline scheduler where an offlined CPU
+> > can have its free_cpus bit left set in the def_root_domain when
+> > the schedutil cpufreq governor is used. This can allow a deadline
+> > thread to be pushed to the runqueue of a powered down CPU which
+> > breaks scheduling. The details can be found here:
+> > https://lore.kernel.org/lkml/20250110233010.2339521-1-opendmb@gmail.com
+> > 
+> > The free_cpus mask is expected to be cleared by set_rq_offline();
+> > however, the hazard occurs before the root domain is made online
+> > during CPU hotplug so that function is not invoked for the CPU
+> > that is being made active.
+> > 
+> > This commit works around the issue by ensuring the free_cpus bit
+> > for a CPU is always cleared when the CPU is removed from a
+> > root_domain. This likely makes the call of cpudl_clear_freecpu()
+> > in rq_offline_dl() fully redundant, but I have not removed it
+> > here because I am not certain of all flows.
+> > 
+> > It seems likely that a better solution is possible from someone
+> > more familiar with the scheduler implementation, but this
+> > approach is minimally invasive from someone who is not.
+> > 
+> > Signed-off-by: Doug Berger <opendmb@gmail.com>
+> > ---
+> 
+> FWIW, we were able to reproduce this with the attached hotplug.sh script
+> which would just randomly hot plug/unplug CPUs (./hotplug.sh 4). Within a
+> few hundred of iterations you could see the lock up occur, it's unclear why
+> this has not been seen by more people.
+> 
+> Since this is not the first posting or attempt at fixing this bug [1] and we
+> consider it to be a serious one, can this be reviewed/commented on/applied?
+> Thanks!
+> 
+> [1]: https://lkml.org/lkml/2025/1/14/1687
 
-So cleanup things and remove guards completely to officialise it
-is not necessary anymore to override MAX_NR_CPUS.
+So, going back to the initial report, the thing that makes me a bit
+uncomfortable with the suggested change is the worry that it might be
+plastering over a more fundamental issue. Not against it, though, and I
+really appreciate Doug's analysis and proposed fixes!
 
-Link: https://lore.kernel.org/all/8c8553387ebf904a9e5a93eaf643cb01164d9fb3.1736188471.git.christophe.leroy@csgroup.eu/
-Fixes: e8399d34d568 ("libperf cpumap: Hide/reduce scope of MAX_NR_CPUS")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- tools/perf/perf.h                        | 2 --
- tools/perf/util/bpf_skel/kwork_top.bpf.c | 2 --
- 2 files changed, 4 deletions(-)
+Doug wrote:
 
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 3cb40965549f..e004178472d9 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -2,9 +2,7 @@
- #ifndef _PERF_PERF_H
- #define _PERF_PERF_H
- 
--#ifndef MAX_NR_CPUS
- #define MAX_NR_CPUS			4096
--#endif
- 
- enum perf_affinity {
- 	PERF_AFFINITY_SYS = 0,
-diff --git a/tools/perf/util/bpf_skel/kwork_top.bpf.c b/tools/perf/util/bpf_skel/kwork_top.bpf.c
-index 73e32e063030..6673386302e2 100644
---- a/tools/perf/util/bpf_skel/kwork_top.bpf.c
-+++ b/tools/perf/util/bpf_skel/kwork_top.bpf.c
-@@ -18,9 +18,7 @@ enum kwork_class_type {
- };
- 
- #define MAX_ENTRIES     102400
--#ifndef MAX_NR_CPUS
- #define MAX_NR_CPUS     4096
--#endif
- #define PF_KTHREAD      0x00200000
- #define MAX_COMMAND_LEN 16
- 
--- 
-2.47.0
+"Initially, CPU0 and CPU1 are active and CPU2 and CPU3 have been
+previously offlined so their runqueues are attached to the
+def_root_domain.
+1) A hot plug is initiated on CPU2.
+2) The cpuhp/2 thread invokes the cpufreq governor driver during
+   the CPUHP_AP_ONLINE_DYN step.
+3) The sched util cpufreq governor creates the "sugov:2" thread to
+   execute on CPU2 with the deadline scheduler.
+4) The deadline scheduler clears the free_cpus mask for CPU2 within
+   the def_root_domain when "sugov:2" is scheduled."
+
+I wonder if it's OK to schedule sugov:2 on a CPU that didn't reach yet
+complete online state. Peter, others, what do you think?
+
+Thanks,
+Juri
 
 
