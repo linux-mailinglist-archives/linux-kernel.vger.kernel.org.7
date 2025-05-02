@@ -1,426 +1,103 @@
-Return-Path: <linux-kernel+bounces-629214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8378AA6933
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 05:14:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE634AA6901
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 05:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5760C3B9E77
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15875465FA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D821A08A6;
-	Fri,  2 May 2025 03:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BD018EFD4;
+	Fri,  2 May 2025 03:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p3jFZxGs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aP3lqXu1"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01CB19D081;
-	Fri,  2 May 2025 03:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4889AD24;
+	Fri,  2 May 2025 03:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746155524; cv=none; b=n/+IwAGsITcO0kmclnBsTZqnekNeC0tg3Ikc+NzABYWNVCUudayp0o+AkR4OBCw5yVvXjWUR6DRU3spfMCQxaulqgMHfW7AiI3jBcEDefsRz/rKGBYc+mEjZq8WNt36goWS8XuYcI9lqhlSHWr/puAw5ZyHBYmMMT+1bumlBN/U=
+	t=1746155430; cv=none; b=XDCKx7EY8Fevzs2mLmOLXSthKTcQbo8Mpm1NmzL/8RB3XphHC8xNo+2xGRhOe9mFCfAR67SVnjHGSPJopoDIzMqd9PUQmEjP97yeMXMYD+9ZQ4NcqgSaGL2TyraGFSSG1sFSvEbVFaVqWyWH5Sx9s2U7pXoa6z2sDFh4SQjDokg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746155524; c=relaxed/simple;
-	bh=Z5eTJqLCVOCXLlGOSr10sW3KiaDMVKUAk3DOAZaomzg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f3juuBXqLEIBlCrXdlt/wKCWHz5VPsZzXmyp39hJy08GGcN14dVI2Ee5PDa0awudtP28xC6lMFLzrx7mMoWdzhRFltMjfIH6HCMcKBumywHXvNvSI00eLoFwjBuKbxM0RBYtN0NsfyTOKcJBw+wMSjLPuH0fbylo0nLwuSubn7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p3jFZxGs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5421MwQW010097;
-	Fri, 2 May 2025 03:11:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xw9wcp2R9eJ8PgvgUrXdyJLc
-	rYNOyl4SqtPIFH3MgPs=; b=p3jFZxGsBiOkAkAUYVt86DuFOwY2KlmcFHOrSeHW
-	fsZ7lMyLotTVJ9UsR9axkdVTzX2STQxc2K8aKRLY5W9sTT13GzDS5UWwGadAiJIA
-	SXMGuu02eilMvkXs434S3yNRmhtv9IErZuqPRT8WiV9xmF53XtGhWgIjtpJC4mGS
-	rYYQ2n4GpfRzYg/IvNnOyIXa7ZKOM6FowKSOJoZGxxZQidZkWCzdLFv3HkiIKC+y
-	yxmXuzlMqrAiE28hM8ao54qs9YvusuDmkEsYMEaQZt/hL3Iw5VE9t1OW6WGT52L8
-	oMBvTozr5GaAPm/oFMDAnTTqD1vJLJaGBUQYAqegsHmReQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u9y0bt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 May 2025 03:11:58 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5423BvqW007004
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 2 May 2025 03:11:57 GMT
-Received: from hu-ptalari-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 1 May 2025 20:11:50 -0700
-From: Praveen Talari <quic_ptalari@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Viresh Kumar
-	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Praveen Talari
-	<quic_ptalari@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-CC: <psodagud@quicinc.com>, <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
-        <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
-        <quic_mnaresh@quicinc.com>, <quic_shazhuss@quicinc.com>
-Subject: [PATCH v3 9/9] serial: qcom-geni: Enable Serial on SA8255p Qualcomm platforms
-Date: Fri, 2 May 2025 08:40:18 +0530
-Message-ID: <20250502031018.1292-10-quic_ptalari@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250502031018.1292-1-quic_ptalari@quicinc.com>
-References: <20250502031018.1292-1-quic_ptalari@quicinc.com>
+	s=arc-20240116; t=1746155430; c=relaxed/simple;
+	bh=4+/rI1wiUBYGNxJna4MkbschuPz2AG/VFmnrbRg2ES0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WrFGrXyt52yzC+DAGNJBSz3v79/+rD+1WiOFVKxvWE3jJeeYfKFZbL/ommVI3M83hL0PIjRf2+W8WPJb8kDQMN4BOPjdm/g0c3oPFDtp7gM3VvcHgeB6bEZhFgh70Hbz7VqOoLd3BvUAVdXP3eARZyrW7mtWitCABtYrJLZKQDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aP3lqXu1; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2295d78b433so16033305ad.2;
+        Thu, 01 May 2025 20:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746155428; x=1746760228; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4Tz8QpW2yRSPnyN9+E+xuVvdU1GlFxrBV2mFXNUnh1I=;
+        b=aP3lqXu1cVdbSkVOekLJUtYQsKFdw6cLD5GQH3gALKiMwEp+qgKOlr1wLEtCr2uQBi
+         HILqVW1D8w0jE6u/lmL0rqL38RHt7+5qynwMEoF5RIHru2keS1Busatyx6mtkhEO98ZF
+         9Jd4G3fztaVKe16Ke6aVuh60wnhqpzUS7B2E+CCKXu2kfRwJpycqAi6FIHKYDKejVK/Z
+         sGq4o86bQx9jFToLu6G9xqVlTv/H1fLtECpImB3SHEC+u0Ru5vOjqaTbvyl4Ij+yqLZU
+         4W+/tV48pnooPUAsqmZzR0h9Rp9/v5p8um6v2LtoPCl0dyPDDCe8ujra9nkNp93GWqN+
+         1DYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746155428; x=1746760228;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Tz8QpW2yRSPnyN9+E+xuVvdU1GlFxrBV2mFXNUnh1I=;
+        b=c4pAT2BWCs4ks/cBhtRdsHqVCa7IizxnSGqlR+ik62NePauzEfLHfc1jUfFD+h2Jyt
+         90UilxrbOzpN21JblFh3fhwo4v8EV69tGdx/xXlnoagtRbt97B0IDi3Fro8PTYE32Ioy
+         9deuJZkbjEUzh6dZXiGlLozQJ5rkMXfH2+x4VNcVU8VIFPjl4Bb10TGJK+eY26OnsDrP
+         T6eqPrZn7870n79eLsz4pT5mlcaF9BRYLxCuLVULLbwwbLWkXepQvF+QOWrWu2K/I0Aa
+         nfHzFzPV8fcAEL/gIbLWqDhEUy6ZqHf3ND8XkcYk5pzGMTjiPfEi12c9n6NBe4ComF7y
+         qF6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUbg2LRxZD9bHFPbaw7eSkTqKypHdmPVJNU5R2hImlPML6Zm+RufVA/JMGpod0cbxgcLislhGLyWB1KQw==@vger.kernel.org, AJvYcCVZ1pJD04chc7lSfk9yWh5vlP4d8vs6zXrYaCytMKMdSAHSuMm+NVwXftMZvrWU46lyC4DUOMOQi3oV/1Rg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXjjx6rVDkpucU6d7eYfDBM2v/VAfNty87Y2zvOexE17qXvxCB
+	KKf4Xv83d5/MzPqE1FNYnua0JBqg3QGvc02XZ11DVtvbs4f6aXCm
+X-Gm-Gg: ASbGncv1NJMyN/GyP/Urubg66cU3MrkFZKtz3lgim9gBern0USOy4ipVqU9wYXUDkGb
+	LNYoAAgW3yumcS5tB/Ms1L9PDtagIdmSqykQxmD6pemvNnN58Qh3Qfp3+DGgY/GXWSXYdGOn6EA
+	q46DpNNynLwHHzIXkDlMpT75MXUeosyukzl4TRPMIUCaXARE0WrXpMGtOwOl0Q6Xqv37daXOkyW
+	jFSc4dNA1eRfV0F50+ga9GQ5Epm1NLZypn2NHIPvhLVOol9C1k1Pn/UTYvMBWsH3GC8ZiDCG+kh
+	ms7AIvucsw72RpvGGaK7XN+x3gJRn2jnrQqRJBSrdhFwzVoZZvdrEg==
+X-Google-Smtp-Source: AGHT+IG3jYUTv9hFdKl1ALM6mgxnYYenOg9a4tAX8hp2gdvql7zMP7rnzxg9C62Y/ZjNFsF2/NsVcA==
+X-Received: by 2002:a17:903:18a:b0:224:93e:b5d7 with SMTP id d9443c01a7336-22e10382c26mr21597655ad.34.1746155427823;
+        Thu, 01 May 2025 20:10:27 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e10941869sm3847135ad.258.2025.05.01.20.10.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 20:10:27 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 1 May 2025 20:10:26 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Bo Liu <liubo03@inspur.com>
+Cc: mail@carsten-spiess.de, jdelvare@suse.com, kcfeng0@nuvoton.com,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: convert to use maple tree register cache
+Message-ID: <26cb8da6-58cf-4c54-89ee-3313b15b3437@roeck-us.net>
+References: <20250424010829.2610-1-liubo03@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gZprPK_xlq42Gd23OZUc8uXwt8yIKPr8
-X-Proofpoint-ORIG-GUID: gZprPK_xlq42Gd23OZUc8uXwt8yIKPr8
-X-Authority-Analysis: v=2.4 cv=UZZRSLSN c=1 sm=1 tr=0 ts=681437fe cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=YJyStIVdxSjxqG8W5N4A:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDAyMSBTYWx0ZWRfX4h3ceconJQiz 03qNmqblsC1m2qu4yCjf6B80zXDCV21NMarKPMVIUn1s+u59ChVRP027N6Gl9EeIcoeM8NmrNhG XFUHpBMPSkN7MuC5e+mr7Nu6Puex4/6OSR1QKD/LAF7+BGTSVvGFTupESYJ8aEhc2ANB2LkqZ3l
- zKP5ejFlAXnQjFcLFoGH/fF9goDsFf99BhIpFwTmZfRbHq5XGV0Sty5WznKKoA5eWuPTte9NRJK V6NwmdnWzNtuljey23+6Yd1z7GGvJqXxHrkQqBrDyByEUTGxa0Bg4WYY4xcNXThx3BlzTOBSETp BiH3trMEvlqArOlMvSGN8kGp29AWfBCXX42uqrCsga7be8w5JuVf9j8Sb9f3U9pNAFz0eunJzTK
- XGuFBzKVcEOtS4m98zh9O9A9UMObNIoECDuvdwoQ+6NnOnDoKUJKMx5sLmukPotEje7i1+Gi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-01_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- mlxlogscore=999 spamscore=0 priorityscore=1501 impostorscore=0 mlxscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0 phishscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505020021
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424010829.2610-1-liubo03@inspur.com>
 
-The Qualcomm automotive SA8255p SoC relies on firmware to configure
-platform resources, including clocks, interconnects and TLMM.
-The driver requests resources operations over SCMI using power
-and performance protocols.
+On Wed, Apr 23, 2025 at 09:08:29PM -0400, Bo Liu wrote:
+> The maple tree register cache is based on a much more modern data structure
+> than the rbtree cache and makes optimisation choices which are probably
+> more appropriate for modern systems than those made by the rbtree cache.
+> 
+> Signed-off-by: Bo Liu <liubo03@inspur.com>
 
-The SCMI power protocol enables or disables resources like clocks,
-interconnect paths, and TLMM (GPIOs) using runtime PM framework APIs,
-such as resume/suspend, to control power states(on/off).
+Applied.
 
-The SCMI performance protocol manages UART baud rates, with each baud
-rate represented by a performance level. The driver uses the
-dev_pm_opp_set_level() API to request the desired baud rate by
-specifying the performance level.
-
-Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
----
- drivers/tty/serial/qcom_geni_serial.c | 150 +++++++++++++++++++++++---
- 1 file changed, 135 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 9d698c354510..51036d5c8ea1 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -11,6 +11,7 @@
- #include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/pm_domain.h>
- #include <linux/pm_opp.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -99,10 +100,16 @@
- #define DMA_RX_BUF_SIZE		2048
- 
- static DEFINE_IDA(port_ida);
-+#define DOMAIN_IDX_POWER	0
-+#define DOMAIN_IDX_PERF		1
- 
- struct qcom_geni_device_data {
- 	bool console;
- 	enum geni_se_xfer_mode mode;
-+	struct dev_pm_domain_attach_data pd_data;
-+	int (*geni_serial_pwr_rsc_init)(struct uart_port *uport);
-+	int (*geni_serial_set_rate)(struct uart_port *uport, unsigned long clk_freq);
-+	int (*geni_serial_switch_power_state)(struct uart_port *uport, bool state);
- };
- 
- struct qcom_geni_private_data {
-@@ -140,6 +147,7 @@ struct qcom_geni_serial_port {
- 
- 	struct qcom_geni_private_data private_data;
- 	const struct qcom_geni_device_data *dev_data;
-+	struct dev_pm_domain_list *pd_list;
- };
- 
- static const struct uart_ops qcom_geni_console_pops;
-@@ -1331,6 +1339,42 @@ static int geni_serial_set_rate(struct uart_port *uport, unsigned long baud)
- 	return 0;
- }
- 
-+static int geni_serial_set_level(struct uart_port *uport, unsigned long baud)
-+{
-+	struct qcom_geni_serial_port *port = to_dev_port(uport);
-+	struct device *perf_dev = port->pd_list->pd_devs[DOMAIN_IDX_PERF];
-+
-+	/*
-+	 * The performance protocol sets UART communication
-+	 * speeds by selecting different performance levels
-+	 * through the OPP framework.
-+	 *
-+	 * Supported perf levels for baudrates in firmware are below
-+	 * +---------------------+--------------------+
-+	 * |  Perf level value   |  Baudrate values   |
-+	 * +---------------------+--------------------+
-+	 * |      300            |      300           |
-+	 * |      1200           |      1200          |
-+	 * |      2400           |      2400          |
-+	 * |      4800           |      4800          |
-+	 * |      9600           |      9600          |
-+	 * |      19200          |      19200         |
-+	 * |      38400          |      38400         |
-+	 * |      57600          |      57600         |
-+	 * |      115200         |      115200        |
-+	 * |      230400         |      230400        |
-+	 * |      460800         |      460800        |
-+	 * |      921600         |      921600        |
-+	 * |      2000000        |      2000000       |
-+	 * |      3000000        |      3000000       |
-+	 * |      3200000        |      3200000       |
-+	 * |      4000000        |      4000000       |
-+	 * +---------------------+--------------------+
-+	 */
-+
-+	return dev_pm_opp_set_level(perf_dev, baud);
-+}
-+
- static void qcom_geni_serial_set_termios(struct uart_port *uport,
- 					 struct ktermios *termios,
- 					 const struct ktermios *old)
-@@ -1349,7 +1393,7 @@ static void qcom_geni_serial_set_termios(struct uart_port *uport,
- 	/* baud rate */
- 	baud = uart_get_baud_rate(uport, termios, old, 300, 4000000);
- 
--	ret = geni_serial_set_rate(uport, baud);
-+	ret = port->dev_data->geni_serial_set_rate(uport, baud);
- 	if (ret) {
- 		dev_err(port->se.dev,
- 			"%s: Failed to set baud:%u ret:%d\n",
-@@ -1640,8 +1684,27 @@ static int geni_serial_resources_on(struct uart_port *uport)
- 	return 0;
- }
- 
--static int geni_serial_resource_init(struct qcom_geni_serial_port *port)
-+static int geni_serial_resource_state(struct uart_port *uport, bool power_on)
- {
-+	return power_on ? geni_serial_resources_on(uport) : geni_serial_resources_off(uport);
-+}
-+
-+static int geni_serial_pwr_init(struct uart_port *uport)
-+{
-+	struct qcom_geni_serial_port *port = to_dev_port(uport);
-+	int ret;
-+
-+	ret = dev_pm_domain_attach_list(port->se.dev,
-+					&port->dev_data->pd_data, &port->pd_list);
-+	if (ret <= 0)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int geni_serial_resource_init(struct uart_port *uport)
-+{
-+	struct qcom_geni_serial_port *port = to_dev_port(uport);
- 	int ret;
- 
- 	port->se.clk = devm_clk_get(port->se.dev, "se");
-@@ -1680,7 +1743,6 @@ static int geni_serial_resource_init(struct qcom_geni_serial_port *port)
- static void qcom_geni_serial_pm(struct uart_port *uport,
- 		unsigned int new_state, unsigned int old_state)
- {
--
- 	/* If we've never been called, treat it as off */
- 	if (old_state == UART_PM_STATE_UNDEFINED)
- 		old_state = UART_PM_STATE_OFF;
-@@ -1774,13 +1836,16 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 	port->se.dev = &pdev->dev;
- 	port->se.wrapper = dev_get_drvdata(pdev->dev.parent);
- 
--	ret = geni_serial_resource_init(port);
-+	ret = port->dev_data->geni_serial_pwr_rsc_init(uport);
- 	if (ret)
- 		return ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EINVAL;
-+	if (!res) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
- 	uport->mapbase = res->start;
- 
- 	port->tx_fifo_depth = DEF_FIFO_DEPTH_WORDS;
-@@ -1790,19 +1855,26 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 	if (!data->console) {
- 		port->rx_buf = devm_kzalloc(uport->dev,
- 					    DMA_RX_BUF_SIZE, GFP_KERNEL);
--		if (!port->rx_buf)
--			return -ENOMEM;
-+		if (!port->rx_buf) {
-+			ret = -ENOMEM;
-+			goto error;
-+		}
- 	}
- 
- 	port->name = devm_kasprintf(uport->dev, GFP_KERNEL,
- 			"qcom_geni_serial_%s%d",
- 			uart_console(uport) ? "console" : "uart", uport->line);
--	if (!port->name)
--		return -ENOMEM;
-+	if (!port->name) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
-+	if (irq < 0) {
-+		ret = irq;
-+		goto error;
-+	}
-+
- 	uport->irq = irq;
- 	uport->has_sysrq = IS_ENABLED(CONFIG_SERIAL_QCOM_GENI_CONSOLE);
- 
-@@ -1824,7 +1896,7 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 			IRQF_TRIGGER_HIGH, port->name, uport);
- 	if (ret) {
- 		dev_err(uport->dev, "Failed to get IRQ ret %d\n", ret);
--		return ret;
-+		goto error;
- 	}
- 
- 	pm_runtime_enable(port->se.dev);
-@@ -1849,6 +1921,7 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 
- error:
- 	pm_runtime_disable(port->se.dev);
-+	dev_pm_domain_detach_list(port->pd_list);
- 	return ret;
- }
- 
-@@ -1863,22 +1936,31 @@ static void qcom_geni_serial_remove(struct platform_device *pdev)
- 	ida_free(&port_ida, uport->line);
- 	pm_runtime_disable(port->se.dev);
- 	uart_remove_one_port(drv, &port->uport);
-+	dev_pm_domain_detach_list(port->pd_list);
- }
- 
- static int qcom_geni_serial_runtime_suspend(struct device *dev)
- {
- 	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
- 	struct uart_port *uport = &port->uport;
-+	int ret = 0;
- 
--	return geni_serial_resources_off(uport);
-+	if (port->dev_data->geni_serial_switch_power_state)
-+		ret = port->dev_data->geni_serial_switch_power_state(uport, false);
-+
-+	return ret;
- };
- 
- static int qcom_geni_serial_runtime_resume(struct device *dev)
- {
- 	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
- 	struct uart_port *uport = &port->uport;
-+	int ret = 0;
-+
-+	if (port->dev_data->geni_serial_switch_power_state)
-+		ret = port->dev_data->geni_serial_switch_power_state(uport, true);
- 
--	return geni_serial_resources_on(uport);
-+	return ret;
- };
- 
- static int qcom_geni_serial_suspend(struct device *dev)
-@@ -1916,11 +1998,41 @@ static int qcom_geni_serial_resume(struct device *dev)
- static const struct qcom_geni_device_data qcom_geni_console_data = {
- 	.console = true,
- 	.mode = GENI_SE_FIFO,
-+	.geni_serial_pwr_rsc_init = geni_serial_resource_init,
-+	.geni_serial_set_rate = geni_serial_set_rate,
-+	.geni_serial_switch_power_state = geni_serial_resource_state,
- };
- 
- static const struct qcom_geni_device_data qcom_geni_uart_data = {
- 	.console = false,
- 	.mode = GENI_SE_DMA,
-+	.geni_serial_pwr_rsc_init = geni_serial_resource_init,
-+	.geni_serial_set_rate = geni_serial_set_rate,
-+	.geni_serial_switch_power_state = geni_serial_resource_state,
-+};
-+
-+static const struct qcom_geni_device_data sa8255p_qcom_geni_console_data = {
-+	.console = true,
-+	.mode = GENI_SE_FIFO,
-+	.pd_data = {
-+		.pd_flags = PD_FLAG_DEV_LINK_ON,
-+		.pd_names = (const char*[]) { "power", "perf" },
-+		.num_pd_names = 2,
-+	},
-+	.geni_serial_pwr_rsc_init = geni_serial_pwr_init,
-+	.geni_serial_set_rate = geni_serial_set_level,
-+};
-+
-+static const struct qcom_geni_device_data sa8255p_qcom_geni_uart_data = {
-+	.console = false,
-+	.mode = GENI_SE_DMA,
-+	.pd_data = {
-+		.pd_flags = PD_FLAG_DEV_LINK_ON,
-+		.pd_names = (const char*[]) { "power", "perf" },
-+		.num_pd_names = 2,
-+	},
-+	.geni_serial_pwr_rsc_init = geni_serial_pwr_init,
-+	.geni_serial_set_rate = geni_serial_set_level,
- };
- 
- static const struct dev_pm_ops qcom_geni_serial_pm_ops = {
-@@ -1934,10 +2046,18 @@ static const struct of_device_id qcom_geni_serial_match_table[] = {
- 		.compatible = "qcom,geni-debug-uart",
- 		.data = &qcom_geni_console_data,
- 	},
-+	{
-+		.compatible = "qcom,sa8255p-geni-debug-uart",
-+		.data = &sa8255p_qcom_geni_console_data,
-+	},
- 	{
- 		.compatible = "qcom,geni-uart",
- 		.data = &qcom_geni_uart_data,
- 	},
-+	{
-+		.compatible = "qcom,sa8255p-geni-uart",
-+		.data = &sa8255p_qcom_geni_uart_data,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, qcom_geni_serial_match_table);
--- 
-2.17.1
-
+Guenter
 
