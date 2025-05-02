@@ -1,143 +1,160 @@
-Return-Path: <linux-kernel+bounces-630286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48115AA77D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:55:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BCBAA77D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690E7982F53
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:54:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF84D7AFB14
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F1A2609D7;
-	Fri,  2 May 2025 16:54:23 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C616B267733;
+	Fri,  2 May 2025 16:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XyMD5uVH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564B425A2DA
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F97267713
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746204863; cv=none; b=hzyLm7EeVldpzClJpDT1CaxkTTVzxxi1yd8B6XS+C42L70r67S+TAfQ3qc3WbpLinzipGfvSfHNuwBrOL/b8eWi94WEF4ghYE2mdxFBCznrEuOrZPZkFQb97lYIxBWZouTN8nJuYO2J6yMqHjLEqhw4F2GC7lVuBAtC4f/I0KDM=
+	t=1746204872; cv=none; b=SC+SYt01iFZsKBtnkH+LOxvUHQOzOUtYV4QXLcR1iwXTk0a0Ca3Zv8npyKza22yUt2S+BUas3DY7sdMRObuxekOjPRx6LOVuph3qxJkr8EnK+flqKTvlb17RHzzvLVd9lGkEiJe2X0UyXO3YSBcXOiOpEyxYbNqMEYeGVKJfGak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746204863; c=relaxed/simple;
-	bh=3M12KVAiXepaMce8WCfsepjU54GrGCHwMIvFLVFLQ2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuULbq7vIIx75VHQaUoRagZekZQqQYGI3H2HKxdMOy1Jy0vp3j1Gxo517aAdnfaK5ErSAYWU8uogoNWa/Jx+1q/w5fqxX3/tqU0vgPXWm59lCePHf9yggfkCOutwbVE5UGmd+FyzleVRtZ4a5X6PdfT4Pme+jJP4RGG2FXeryFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uAteA-00065d-2h; Fri, 02 May 2025 18:53:58 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uAte9-000mLr-0c;
-	Fri, 02 May 2025 18:53:57 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uAte9-00GahR-07;
-	Fri, 02 May 2025 18:53:57 +0200
-Date: Fri, 2 May 2025 18:53:57 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Adam Ford <aford173@gmail.com>
-Cc: nicolas.dufresne@collabora.com, benjamin.gaignard@collabora.com,
-	p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org,
-	Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-	festevam@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, paulk@sys-base.io, hverkuil@xs4all.nl,
-	laurent.pinchart@ideasonboard.com, sebastian.fricke@collabora.com,
-	ming.qian@nxp.com, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH 05/11] arm64: dts: imx8mp: drop gpcv2 vpu
- power-domains and clocks
-Message-ID: <20250502165357.ncuve25xwvydhxz3@pengutronix.de>
-References: <20250502150513.4169098-1-m.felsch@pengutronix.de>
- <20250502150513.4169098-6-m.felsch@pengutronix.de>
- <CAHCN7xJ5p+dwJD7i7caqwhmrz8+gZDVeqfdWA_=He-H+aTJgRg@mail.gmail.com>
+	s=arc-20240116; t=1746204872; c=relaxed/simple;
+	bh=IBdEo4TKzpkkWBzpsOe+Lont38DEq8RTG02a5nilIj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EdI8HN+37ObegbUygmvsCSZj8CTGMn4xv7orbmADJVMsegGqNFR4zKwrnH+GsD8MKs0jV1dkk1NIX3PGMH+Ax1ZkjtAZYvJvh8yvhZyd8a7QLOrR3tIhByFMuk0Zyij+Z7Z1mFc+3pa8wLL0/CPOlwWbrthDF+/RCUQiARr7OJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XyMD5uVH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746204869;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bu9UhU+O+lj6htW8SouO0+6n/1iffy38JAAPOH/btzA=;
+	b=XyMD5uVHw4cVHDq2ECGGXJG+UXhPPZjBNZBZI6wUY+HSSAWmuGsVMJCsYqt9J75FtPDmkV
+	bvFDNFwNgYCJ7H51bKlToi9n0jfGekOpDxvLlIInm4WBrGTHQ14foDjTNO45QmRVOhxhy6
+	fgaYrbi+uUSUL+d0MSjW01njrd7yLEw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-529-DpK6vXU3NyqxzdYB4IHgDA-1; Fri,
+ 02 May 2025 12:54:24 -0400
+X-MC-Unique: DpK6vXU3NyqxzdYB4IHgDA-1
+X-Mimecast-MFC-AGG-ID: DpK6vXU3NyqxzdYB4IHgDA_1746204862
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B19C919560AD;
+	Fri,  2 May 2025 16:54:21 +0000 (UTC)
+Received: from [10.44.32.102] (unknown [10.44.32.102])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A46F019560A3;
+	Fri,  2 May 2025 16:54:16 +0000 (UTC)
+Message-ID: <a699035f-3e8d-44d7-917d-13c693feaf2e@redhat.com>
+Date: Fri, 2 May 2025 18:54:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHCN7xJ5p+dwJD7i7caqwhmrz8+gZDVeqfdWA_=He-H+aTJgRg@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-On 25-05-02, Adam Ford wrote:
-> On Fri, May 2, 2025 at 10:10 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
-> >
-> > The GPCv2 G1, G2 and VC8000E power-domain don't need to reference the
-> > VPUMIX power-domain nor their module clocks since the power and reset
-> > handling is done by the VPUMIX blkctrl driver.
-> >
-> It was my understanding that having this dependency ensures the order
-> of the bring-up, but maybe I am wrong.  Do you know if the 8MP
-
-If that is true, the 8MM should be broken.
-
-> suspend-resume works properly?
-
-No I didn't test suspend/resume.
-
-> Should this get a fixes tag?
-
-It's just a cleanup, therefore I didn't add the fixes-tag.
-
-Regards,
-  Marco
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 8/8] mfd: zl3073x: Register DPLL sub-device
+ during init
+To: Lee Jones <lee@kernel.org>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Michal Schmidt <mschmidt@redhat.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250430101126.83708-1-ivecera@redhat.com>
+ <20250430101126.83708-9-ivecera@redhat.com>
+ <20250501132201.GP1567507@google.com>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20250501132201.GP1567507@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
 
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 7 -------
-> >  1 file changed, 7 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > index e0d3b8cba221..cf9b6c487bd5 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > @@ -879,24 +879,17 @@ pgc_mediamix: power-domain@10 {
-> >
-> >                                         pgc_vpu_g1: power-domain@11 {
-> >                                                 #power-domain-cells = <0>;
-> > -                                               power-domains = <&pgc_vpumix>;
-> >                                                 reg = <IMX8MP_POWER_DOMAIN_VPU_G1>;
-> > -                                               clocks = <&clk IMX8MP_CLK_VPU_G1_ROOT>;
-> >                                         };
-> >
-> >                                         pgc_vpu_g2: power-domain@12 {
-> >                                                 #power-domain-cells = <0>;
-> > -                                               power-domains = <&pgc_vpumix>;
-> >                                                 reg = <IMX8MP_POWER_DOMAIN_VPU_G2>;
-> > -                                               clocks = <&clk IMX8MP_CLK_VPU_G2_ROOT>;
-> > -
-> >                                         };
-> >
-> >                                         pgc_vpu_vc8000e: power-domain@13 {
-> >                                                 #power-domain-cells = <0>;
-> > -                                               power-domains = <&pgc_vpumix>;
-> >                                                 reg = <IMX8MP_POWER_DOMAIN_VPU_VC8000E>;
-> > -                                               clocks = <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
-> >                                         };
-> >
-> >                                         pgc_hdmimix: power-domain@14 {
-> > --
-> > 2.39.5
-> >
-> >
+
+On 01. 05. 25 3:22 odp., Lee Jones wrote:
+> On Wed, 30 Apr 2025, Ivan Vecera wrote:
 > 
+>> Register DPLL sub-devices to expose the functionality provided
+>> by ZL3073x chip family. Each sub-device represents one of
+>> the available DPLL channels.
+>>
+>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>> ---
+>> v4->v6:
+>> * no change
+>> v3->v4:
+>> * use static mfd cells
+>> ---
+>>   drivers/mfd/zl3073x-core.c | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
+>> index 050dc57c90c3..3e665cdf228f 100644
+>> --- a/drivers/mfd/zl3073x-core.c
+>> +++ b/drivers/mfd/zl3073x-core.c
+>> @@ -7,6 +7,7 @@
+>>   #include <linux/device.h>
+>>   #include <linux/export.h>
+>>   #include <linux/math64.h>
+>> +#include <linux/mfd/core.h>
+>>   #include <linux/mfd/zl3073x.h>
+>>   #include <linux/module.h>
+>>   #include <linux/netlink.h>
+>> @@ -755,6 +756,14 @@ static void zl3073x_devlink_unregister(void *ptr)
+>>   	devlink_unregister(ptr);
+>>   }
+>>   
+>> +static const struct mfd_cell zl3073x_dpll_cells[] = {
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 0),
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 1),
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 2),
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 3),
+>> +	MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 4),
+>> +};
+> 
+> What other devices / subsystems will be involved when this is finished?
+
+Lee, btw. I noticed from another discussion that you mentioned that
+mfd_cell->id should not be used outside MFD.
+
+My sub-drivers uses this to get DPLL channel number that should be used
+for the particular sub-device.
+
+E.g.
+1) MFD_CELL_BASIC("zl3073x-dpll", NULL, NULL, 0, 2);
+2) MFD_CELL_BASIC("zl3073x-phc", NULL, NULL, 0, 3);
+
+In these cases dpll_zl3073x sub-driver will use DPLL channel 2 for this
+DPLL sub-device and ptp_zl3073x sub-driver will use DPLL channel 3 for
+this PHC sub-device.
+
+platform_device->id cannot be used for this purpose in conjunction with
+PLATFORM_DEVID_AUTO as that ->id can be arbitrary.
+
+So if I cannot use mfd_cell->id what should I use for that case?
+Platform data per cell with e.g. the DPLL channel number?
+
+Thanks for advices...
+
+Ivan
+
 
