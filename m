@@ -1,83 +1,152 @@
-Return-Path: <linux-kernel+bounces-629454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD83AA6CD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED58AA6CDC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DCC1BA1267
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACCC81BA463A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB6822AE7A;
-	Fri,  2 May 2025 08:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014DA22ACE3;
+	Fri,  2 May 2025 08:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAqSoNsw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDTH9KZO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BA2204840;
-	Fri,  2 May 2025 08:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5642D19D891;
+	Fri,  2 May 2025 08:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746175641; cv=none; b=lSN2bJxH6mCG6DHmjxSDgWgOept/Qs7QN3Fyyy/eTvWE2ADlDrD0pukoELhPCeueQ+sQKmrDSQ6cDis0FD5YzT2/pxvvLL4cAlnsMaY8oGnE66S37j7jpQUZwgRPP5F9qn0pOhEWIXcfGEDLpdnRpBFlkVkYoqYjhjT0x2sqr/E=
+	t=1746175669; cv=none; b=PpJhUHGson0FFSfk4O5tdET7UypnvZmiKvGY5OzheN5WYUq6tXU0mpcOS9FKwVwf6Ih5BwJsSHmvQAPFFAiRhMSL7tHkCzSzj6u4J/FNhW6QB6qosrSy7dBOZgoZ4H4CDNG9CF8eEj13YLagZ6tTaT0pdd0YLLcLgup1u491GMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746175641; c=relaxed/simple;
-	bh=rz47L1B7+iOlzIBY2QDLXPTa3bmtFpg9h20eFKWI2Bs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KqQGbFC5oXfmU/3OeC4OQuNhEnjXqpajZqa0ql7NaZqOEErf2yTrO6sBKvJkoXECP00Ii703on9UfWtJgmjsyp+i7iUkJ2QpQf5wCbmdV3kDphrbgz/JbPiCGyeVK2s1WTVmluzu1jaaqBOJSvJdynK+k2VGerhyiDBNZHBEHeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAqSoNsw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D90FC4CEE4;
-	Fri,  2 May 2025 08:47:18 +0000 (UTC)
+	s=arc-20240116; t=1746175669; c=relaxed/simple;
+	bh=NCirDjbr0P+QIBLiB7dQOcgcs9vpxXzMLjZHxOXUKuc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mz64U8qm0AFfbqviw2rRXafEtg5v65w4j/UCCCmAGWjLJ7DfOz9+OLUOEBvYwZdPClos3H330mdgP3M/LGKrWaBrL8X3LsMGegjjfE0qpe24JRbU5D7Kg0hhcyECeTl7GbIt2qlsDICxOR6FzQZY3C901Aw3MEDy4QHRXMnIIHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDTH9KZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1CADC4CEE4;
+	Fri,  2 May 2025 08:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746175640;
-	bh=rz47L1B7+iOlzIBY2QDLXPTa3bmtFpg9h20eFKWI2Bs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=SAqSoNswnvxyqHyDjh4fcY08JbD5JtTq7UDKzbiQjE0WGwJCKymbjFUHs5CcxaxVL
-	 4OY52zZvLdhSk+3L20Cb+MVztpko4+rAVkDgkbeVROrwAqMh6p+mJxJwQYgebpZRQr
-	 TGXGHA+xIxFN5oGrsAnXbrEU9DO88hdYb+9cVT46t6qYX0MenB+ugZswg7t4ObThXc
-	 PSutxLwYKiMM3z0GAXzbLZ/0F7uVGiVKdNbb6HFKX3pzNI8yIIKCO297OmJQ7DU5xJ
-	 ioESQcFgBGXHG2socKFXU0WK/9m7y5TFiINGl7eedUQDGVbDyOZr1W8T2FXQVDj70e
-	 nyKIN9n7T9IPw==
-From: Carlos Maiolino <cem@kernel.org>
-To: Hans Holmberg <Hans.Holmberg@wdc.com>
-Cc: Dave Chinner <david@fromorbit.com>, 
- "Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>, 
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250430083438.9426-1-hans.holmberg@wdc.com>
-References: <20250430083438.9426-1-hans.holmberg@wdc.com>
-Subject: Re: [PATCH v2] xfs: allow ro mounts if rtdev or logdev are
- read-only
-Message-Id: <174617563872.286454.3698448387151176934.b4-ty@kernel.org>
-Date: Fri, 02 May 2025 10:47:18 +0200
+	s=k20201202; t=1746175668;
+	bh=NCirDjbr0P+QIBLiB7dQOcgcs9vpxXzMLjZHxOXUKuc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dDTH9KZOh1hEj5xVKE8c4rjCXx6+gYnRq4nmbWqx+h06O4kbsj8rs3Cjor4bsvuxy
+	 IGVhsrPI+9HG3K1KPCVrJLkQ3Kyirq8fgViGp0hv3zYpPjFmdxqCXAP69SStXn19Yc
+	 xZWCq1QmxZ0v7nWggAMIJEEYmbb3XqEW2L93TLA/wto4PyFRIW34manFUmZq4gqR1+
+	 vbspoZbhRI9zQSxguE6Omoh41tLkqsiCmh4u0le1Z66WjXGuVl8Is5qO1QBDnoWcYK
+	 EutwhLC4Zr2qRZPlZdambTEO6RkFZPV6w2KfF5SvNs1BJmunFL4TSduEEXhshF1N66
+	 qkplJtD0MN8lA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uAm3e-00Apre-AY;
+	Fri, 02 May 2025 09:47:46 +0100
+Date: Fri, 02 May 2025 09:47:45 +0100
+Message-ID: <86r017h00e.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Per Larsen <perl@immunant.com>
+Cc: linux-kernel@vger.kernel.org,
+	"qperret@google.com" <qperret@google.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	kernel-team@android.com,
+	"will@kernel.org" <will@kernel.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	yuzenghui@huawei.com,
+	Armelle Laine <armellel@google.com>,
+	arve@android.org
+Subject: Re: [PATCH 1/3] KVM: arm64: Restrict FF-A host version renegotiation
+In-Reply-To: <CA+AY4XcaJa1_U3qXQUBj4wZJYc9hKmRX8FTNeDvV2auEnC_WrA@mail.gmail.com>
+References: <CA+AY4XcaJa1_U3qXQUBj4wZJYc9hKmRX8FTNeDvV2auEnC_WrA@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: perl@immunant.com, linux-kernel@vger.kernel.org, qperret@google.com, sebastianene@google.com, kernel-team@android.com, will@kernel.org, sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, yuzenghui@huawei.com, armellel@google.com, arve@android.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 30 Apr 2025 08:35:34 +0000, Hans Holmberg wrote:
-> Allow read-only mounts on rtdevs and logdevs that are marked as
-> read-only and make sure those mounts can't be remounted read-write.
+On Fri, 02 May 2025 04:52:39 +0100,
+Per Larsen <perl@immunant.com> wrote:
 > 
-> Use the sb_open_mode helper to make sure that we don't try to open
-> devices with write access enabled for read-only mounts.
+> FF-A implementations with the same major version must interoperate with
+> earlier minor versions per DEN0077A 1.2 REL0 13.2.1 but FF-A version 1.1
+> broke the ABI on several structures and 1.2 relies on SMCCC 1.2 is not
+> backwards compatible with SMCCC 1.2 (see DEN0028 1.6 G BET0 Appendix F).
 > 
+> If we return the negotiated hypervisor version when the host requests a
+> lesser minor version, the host will rely on the FF-A interoperability
+> rules. Since the hypervisor does not currently have the necessary
+> compatibility paths (e.g. to handle breaking changes to the SMC calling
+> convention), return NOT_SUPPORTED.
 > 
-> [...]
+> Signed-off-by: Per Larsen <perlarsen@google.com>
+> Signed-off-by: Per Larsen <perl@immunant.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 3369dd0c4009..10e88207b78e 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -712,7 +712,24 @@ static void do_ffa_version(struct arm_smccc_res *res,
+> 
+>   hyp_spin_lock(&version_lock);
+>   if (has_version_negotiated) {
+> - res->a0 = hyp_ffa_version;
+> + /*
+> + * FF-A implementations with the same major version must
+> + * interoperate with earlier minor versions per DEN0077A 1.2
+> + * REL0 13.2.1 but FF-A version 1.1 broke the ABI on several
+> + * structures and 1.2 relies on SMCCC 1.2 is not backwards
+> + * compatible with SMCCC 1.2 (see DEN0028 1.6 G BET0 Appendix F).
 
-Applied to for-next, thanks!
+I can't parse this sentence. Missing words?
 
-[1/1] xfs: allow ro mounts if rtdev or logdev are read-only
-      commit: bfecc4091e07a47696ac922783216d9e9ea46c97
+> + *
+> + * If we return the negotiated hypervisor version when the host
+> + * requests a lesser minor version, the host will rely on the
+> + * aforementioned FF-A interoperability rules. Since the
+> + * hypervisor does not currently have the necessary compatibility
+> + * paths (e.g. to paper over the above-mentioned calling
+> + * convention changes), return NOT_SUPPORTED.
+> + */
+> + if (FFA_MINOR_VERSION(ffa_req_version) < FFA_MINOR_VERSION(hyp_ffa_version))
+> + res->a0 = FFA_RET_NOT_SUPPORTED;
+> + else
+> + res->a0 = hyp_ffa_version;
+>   goto unlock;
+>   }
+> 
 
-Best regards,
+Something has gone seriously wrong with your email, and the patches
+are badly mangled and unusable. They are also sent as individual
+patches and not as a thread, which is a sign that you didn't send them
+using git. Please fix this for your next posting.
+
+More to the meat of the patches: why should the hypervisor paper over
+anything if the spec is broken? Why can't the host just as well decide
+for itself what to do?
+
+Thanks,
+
+	M.
+
 -- 
-Carlos Maiolino <cem@kernel.org>
-
+Without deviation from the norm, progress is not possible.
 
