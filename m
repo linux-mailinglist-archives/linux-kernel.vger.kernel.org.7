@@ -1,223 +1,153 @@
-Return-Path: <linux-kernel+bounces-629312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26DA9AA6AAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:19:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 126A4AA6AB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61791BA688B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88121BA6AFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 06:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4305121FF21;
-	Fri,  2 May 2025 06:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF6721FF34;
+	Fri,  2 May 2025 06:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nslick.com header.i=@nslick.com header.b="mnAZFOxd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KByhPSm/"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="FXdPTY1L";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ujPcTrex"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CAB1B5EB5
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 06:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267E41B4231;
+	Fri,  2 May 2025 06:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746166764; cv=none; b=kZd567ua3f0sMbiwOWMSUbXczUCJG/G4RGdCBFH07CaYX2Cm4Pd0kM27J+Ph9KPnoXG3qNI9yUBpTzeD/+HqyP/DcZzogjuCEw0g/ZhkEvbxwnwqS3CzoIbbnwSHbB4gn57Nma0CwKW+ifeDkEUQN6YdjHIg6JNg58ZtyH5GgME=
+	t=1746166838; cv=none; b=EGY2JdjUNJxdKU0cEAYTvGQVRPUTbNr3UwHX9TdPGwnZgQ0H5MGs2gJFmjeJ/ugOGV0ZOfqmBRy63Ej+5JVMsNmFcWSzncjAeN5naLjZkjGIr2EMgNLwFwt/XLl0nrKvjDFwUV/hyVNB1iOZRbD4PEcaT2SX5uhOpKsqYsBcLO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746166764; c=relaxed/simple;
-	bh=ole3Q/FohH8bDCW2nW/DGxLQ7bdLWQd0eDbS5gxOUiQ=;
-	h=Date:Message-ID:To:Cc:Subject:In-Reply-To:From; b=fAi5sFb0+KFvexQWKMeDRWlY79BXQR0wL3mGDxtTPIQcv6ugi78d83+6ud5oVnxxvKH3YpWmA6WmKv4gFc9mye41e22G7E+EN+AQjIq2q51PwNibyUVMsc3KipMUTYHUJLOo4NNjuLdsfMiOb4I+edbqkABHi+gWj5+SwvRHKCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nslick.com; spf=pass smtp.mailfrom=nslick.com; dkim=pass (2048-bit key) header.d=nslick.com header.i=@nslick.com header.b=mnAZFOxd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KByhPSm/; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nslick.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nslick.com
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A02C21140273;
-	Fri,  2 May 2025 02:19:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Fri, 02 May 2025 02:19:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nslick.com; h=cc
-	:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-	:message-id:reply-to:subject:subject:to:to; s=fm1; t=1746166760;
-	 x=1746253160; bh=V0O3TjEFzX0T6A4UXVUfxMH3H4KffmMjUGilk6wg12o=; b=
-	mnAZFOxdlN/Hg1KypivbnyD9rvR2S3oT6jX7onRlp6i+cU95gS4DdlY+pUgl944k
-	7ClHEDoapsomBccw1rwlQ/5Lvx3GT74QDhlg0Y4JElnZhLoEKUFYHcpqqtfjBSm1
-	AQ8l9yHx6HdxJb4OemDbWFno8Nj2vcp2BkKZ+ZL2h2yWbdQIuznSSx+9i91niL+s
-	1WdKw1CHIIQtP/GiGS2ANmU/qwJOLOR1Whmeg6lUgjQ8fTsz4rSWdqaEU6jVX+pc
-	yVb9McYi7nNQVpkMJpWfL7K6XgaHIiWCGl1tPEMR15xJ2bvx/IBIGKbCUGtoOVEy
-	w0RcZw2kSAdwXW5W2nJggg==
+	s=arc-20240116; t=1746166838; c=relaxed/simple;
+	bh=WvuPt5RdAVARTfYOxm0Wmhk/DhsvsRamVJN5qy5+S9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPyYAlgPLEKN7tE64os4/bHTtyvOHW1p/2Isb62NlWhNH9hbtD7KzvoBP0xQAqUcfBKeDsa3NdWunS6X2ks2ihfYJRBM0fFp8NserAuPnohPtCFWR2uaQrIOfwykSA0gSETOXmsq4QMm/rr7fNdriU+PFVtKyaiMyYYQsLSRj04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=FXdPTY1L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ujPcTrex; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id EB32013801CD;
+	Fri,  2 May 2025 02:20:34 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Fri, 02 May 2025 02:20:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1746166834; x=1746253234; bh=EGToxZctGt
+	PORdHrRC19/O8b5uQYvPDPBokXEfm3l4I=; b=FXdPTY1LnJNC0YYiru4tx3rOaB
+	gB5Z6A8FuaNaHQDmFj7acOL/AkjNB42eCJXw+haeu5vj5zPFOGgG+bk7gd3di4wh
+	/mVoQvyEYwHS7knJFU8058Zy9yCD2MqCMEPQXN47yMaZsVTXP4Tb4dVPMPat1GWE
+	+dsoh4H0Y2TgX1ELiBoc3CjomieV8dKnCrin8oW41t0I6jquyapja76t/9TY8ywp
+	D9g8Ie3IQYC11PpKetPcZWatq+FjqIjqo2yvmdc8n9Sgjfjg1af1Q0C3m6N+S9p/
+	amyiVU7gylSd8Kh5Kz4Xq6dCYCiemGgvhUeFcweVDyOCTzBjscQkH5nPbg1g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:in-reply-to:message-id
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1746166760; x=1746253160; bh=V
-	0O3TjEFzX0T6A4UXVUfxMH3H4KffmMjUGilk6wg12o=; b=KByhPSm/CaC9HdTKL
-	kyHoTG+PKaepiAHyoe9wC0pKPKT4PuVzVudHClwl9LCN3hlG/fDIcXlCnLxGO8nQ
-	pt7synclrO4V2fOD7d1uoIrN9velMmA+cbqDEAlBCVPq5YW+xnniODte9lcm24zr
-	UTEDiCuX+ozHkpbrxvX2cetFyFcyWQExerKSiqVQ4tEEjKclF95O2GT4S+xkVum1
-	LmaJD3U10Z6G3fk4srrdK20G6guiMsC5dpb7z4x7Lq0sADujreTNYDPuE3Oo8cK0
-	DeF/8vkK7J4kEZ12do/ZqlJ7Mws5VmPLCyBChFNcdPbr2AO1mfFd+11owEp9z47A
-	77UzA==
-X-ME-Sender: <xms:52MUaCoUO0GxA8esXh0RKmEOujYM76pgRvAbvIkAahW5aeJ5evzgag>
-    <xme:52MUaApu8yRAABv0cg8u0qBLdQHDc0wveOpIKA63DS2cwn_KslMM3BWC9JzafgDny
-    5msDKqTQyWlKxsNM04>
-X-ME-Received: <xmr:52MUaHMuG4V6vZdCsSLgFjOgtLKSMXxWyOdvIcADY_DAHYV2cFHKov8cqgIiCRMZmBxrockn9Aslnx3I7I87dc_RWkcdWHerJSfUOGpx4PvJ>
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1746166834; x=1746253234; bh=EGToxZctGtPORdHrRC19/O8b5uQYvPDPBok
+	XEfm3l4I=; b=ujPcTrex5pB9ZNmn9vUoBY2uPyfhxXSFWG4D6Nkm7kt7LqHpQLz
+	U1YjzdGrtLqgC5VjJ/bv4J0SqVd/2vlDWRmV3qKA9ceKgHIZd2xeyI0NluFsp5S8
+	yfrlMXCgfdNP6uuv5XKxyQypRrHLehKApy3YMamCv51nI+Du0RIhtOdAWvIZZr18
+	XB4UOfuuCOvtQ7zgEXj7o2NdeRoeIVkVXrazgUR4nV4z6pukLQcXdF9EgK4S/k9Q
+	cJlOiTT9B9GLEfQbzgu3XNQsIYdZvYzPGXX6oAdAdvn4uh/tjniOcSZZz03Rsarq
+	Ge3gSJi77Lc8Wyvmv37KG5Nxk+8QwbUPtzw==
+X-ME-Sender: <xms:MmQUaO_vtCo5kC7AtOCWSZ3jGMgK28GPRXn7gdg_4UTVKZDMpLmC6w>
+    <xme:MmQUaOv-5HiRdwjgZO97-iNM9TXAiR9XoufLsivjIWTaZ73IrYMDoUMFoNgEUhQYK
+    NB0Nqdj46ZWfg>
+X-ME-Received: <xmr:MmQUaEAEjPjxlL6QJ0MtsQBC19u5vhya4g8oqzuX9P_2Sqw2jOVHyR6qErC2kqAD2kRKr6M6ehlBaAT5ifApHLmeKdfh1EQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedujeduucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffkf
-    fvvefujgfhsedttdhjtddttddtnecuhfhrohhmpefpihgthhholhgrshcuufhivghlihgt
-    khhiuceoohhpvghnshhouhhrtggvsehnshhlihgtkhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepudduhfeggeegfeeiudekgeevheevvdejveefjeefffeffeejleduveejveffudek
-    necuffhomhgrihhnpehinhhtvghlrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepohhpvghnshhouhhrtggvsehnshhlihgtkhdrtgho
-    mhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hhvghrthhonhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghokhhulhhirghrsehr
-    vgguhhgrthdrtghomhdprhgtphhtthhopegrthhomhgrshhovhesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhgvrdhh
-    rghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhphgrseiihi
-    htohhrrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtg
-    hpthhtohepmhhjghhuiihikhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:52MUaB6FNen9Uw1RuWSZpyQiOLzpEGud1H2tNgUgFpd-k4GCPO4C1A>
-    <xmx:52MUaB5mTlny-NG6Zp_n_nG22y5fyWYPily9zO-P3zQGUvBo1aNefg>
-    <xmx:52MUaBgLrx5E12awWopflQGNuBiaXcbij6Im1Qx--1F_WqtdcoDAyA>
-    <xmx:52MUaL7aPNFqiM7ZaNsr7lKN4RQ9HCRswfV3HRI9tM4NoTe5vVcTkA>
-    <xmx:6GMUaGthLc2Cnkye37J7NEnOuD0b1iAGgCq-E0BDre49s_TxfjdL-82T>
-Feedback-ID: i78f146c6:Fastmail
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
+    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
+    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrg
+    hupdhrtghpthhtohepshhrvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhithhl
+    thhlrghtlhhtlhesghhmrghilhdrtghomhdprhgtphhtthhopehsvggsrghsthhirghnrd
+    hrvghitghhvghlsegtohhllhgrsghorhgrrdgtohhm
+X-ME-Proxy: <xmx:MmQUaGe7Uk-U6UOPZIvbpBDOmcmcDAr26VcaoJJZ6gp7qB1ZwQv4EA>
+    <xmx:MmQUaDMZ0GtcDOumI1zvi_7jB8C1rZgCDDzSUnf4eXvcvjMpyMcepA>
+    <xmx:MmQUaAkpKdTJ9RZZJuaw0BswtweKhBzn7LXBrtlkvMXEprVG36E5lw>
+    <xmx:MmQUaFsgTmXFOeCKh7no1Oh1asfmCt6FyVj9sIDhPgAP3G4pXSJL_w>
+    <xmx:MmQUaG5w1N0XBj3B22eu0Hl-E68nxCwV_lIrBBH40EtoqH-YRaty-Oz7>
+Feedback-ID: i787e41f1:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 2 May 2025 02:19:18 -0400 (EDT)
-Date: Fri, 02 May 2025 01:19:17 -0500
-Message-ID: <992edb0fed403333d237350b0a6730f2@dogleg.nslick.com>
-To: herton@redhat.com
-Cc: aokuliar@redhat.com,atomasov@redhat.com,bp@alien8.de,dave.hansen@linux.intel.com,hpa@zytor.com,linux-kernel@vger.kernel.org,mingo@redhat.com,mjguzik@gmail.com,olichtne@redhat.com,tglx@linutronix.de,torvalds@linux-foundation.org,x86@kernel.org
-Subject: Re: [PATCH] x86: write aligned to 8 bytes in copy_user_generic (when without FSRM/ERMS)
-In-Reply-To: <20250320142213.2623518-1-herton@redhat.com>
-From: Nicholas Sielicki <opensource@nslick.com>
+ 2 May 2025 02:20:34 -0400 (EDT)
+Date: Fri, 2 May 2025 08:20:28 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Pengyu Luo <mitltlatltl@gmail.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: linux-next: manual merge of the usb tree with the battery tree
+Message-ID: <2025050219-whoopee-duplicity-f859@gregkh>
+References: <20250501161515.21916747@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250501161515.21916747@canb.auug.org.au>
 
-On Thu, Mar 20, 2025 at 3:22 PM Herton R. Krzesinski <herton@redhat.com> wrote:
-> History of the performance regression:
-> ======================================
+On Thu, May 01, 2025 at 04:15:15PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Since the following series of user copy updates were merged upstream
-> ~2 years ago via:
+> Today's linux-next merge of the usb tree got a conflict in:
 > 
->   a5624566431d ("Merge branch 'x86-rep-insns': x86 user copy clarifications")
+>   MAINTAINERS
 > 
-> .. copy_user_generic() on x86_64 stopped doing alignment of the
-> writes to the destination to a 8 byte boundary for the non FSRM case.
+> between commit:
 > 
-> Previously, this was done through the ALIGN_DESTINATION macro that
-> was used in the now removed copy_user_generic_unrolled function.
+>   cfe769670e82 ("power: supply: add Huawei Matebook E Go psy driver")
 > 
-> Turns out this change causes some loss of performance/throughput on
-> some use cases and specific CPU/platforms without FSRM and ERMS.
+> from the battery tree and commit:
 > 
-> Lately I got two reports of performance/throughput issues after a
-> RHEL 9 kernel pulled the same upstream series with updates to user
-> copy functions. Both reports consisted of running specific
-> networking/TCP related testing using iperf3.
+>   00327d7f2c8c ("usb: typec: ucsi: add Huawei Matebook E Go ucsi driver")
 > 
-> Partial upstream fix
-> ====================
+> from the usb tree.
 > 
-> The first report was related to a Linux Bridge testing using VMs on a
-> specific machine with an AMD CPU (EPYC 7402), and after a brief
-> investigation it turned out that the later change via:
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 > 
->   ca96b162bfd2 ("x86: bring back rep movsq for user access on CPUs without ERMS")
+> -- 
+> Cheers,
+> Stephen Rothwell
 > 
-> ... helped/fixed the performance issue.
-> 
-> However, after the later commit/fix was applied, then I got another
-> regression reported in a multistream TCP test on a 100Gbit mlx5 nic, also
-> running on an AMD based platform (AMD EPYC 7302 CPU), again that was using
-> iperf3 to run the test. That regression was after applying the later
-> fix/commit, but only this didn't help in telling the whole history.
+> diff --cc MAINTAINERS
+> index f7a8c23d211c,91279eaec446..000000000000
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@@ -10998,7 -10967,7 +10998,8 @@@ M:	Pengyu Luo <mitltlatltl@gmail.com
+>   S:	Maintained
+>   F:	Documentation/devicetree/bindings/platform/huawei,gaokun-ec.yaml
+>   F:	drivers/platform/arm64/huawei-gaokun-ec.c
+>  +F:	drivers/power/supply/huawei-gaokun-battery.c
+> + F:	drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
+>   F:	include/linux/platform_data/huawei-gaokun-ec.h
+>   
+>   HUGETLB SUBSYSTEM
 
-I went down the rabbit-hole of this issue in late 2022 at $work, which
-we found from running the same iperf3 single-flow workload being
-described above on a Milan system. It took me some time (much longer
-than I'd like to admit), but eventually I started asking questions about
-FSRM and ERMS, and stumbled across the lkml threads surrounding the
-+FSRM/-ERMS alternative.
+Looks good to me, thanks!
 
-Before arriving at that root cause, I had noticed that tx-nocache-copy /
-NETIF_F_NOCACHE_COPY was able to considerably improve perf compared to
-baseline. Is that interesting to anyone?
-
-I did a bit of research on the history of tx-nocache-copy, and how it
-might relate to znver3, and walked away believing the following story to
-be mostly true:
-
-1. tx-nocache-copy was introduced in 2011 and was initially enabled by
-default on all non-loopback interfaces. It was tested on an AMD
-bulldozer-like system, it showed a significant improvement in tail
-latency and a 5%-10% improvement in transactions per second.
-
-2. A year later, for products released in year 2012, intel introduced
-something called DDIO. My entire understanding of DDIO comes from a
-single PDF [1], so take this with a massive grain of salt, but from what
-I understand it was intended to largely solve the same problem that
-tx-nocache-copy was optimizing for, and I think it did so in a way that
-broke many of the underlying assumptions that tx-nocache-copy was
-relying on.
-
-In other words, it didn't just make tx-nocache-copy unnecessary, but
-made its usage actively harmful. For two reasons:
-
-+ DDIO operates atop dedicated cache ways. So if that reserved cache
-  space is not used, it doesn't result in any less cache contention for
-  other uses, it just means wasting that cache space. Remote reads from
-  the NIC of data held in cache stopped resulting in a write-back to main
-  memory from the cache, which you might otherwise expect to occur under
-  most coherency protocols; their state machine grew a carve-out for this
-  specific flow.
-
-  So if your motivation for issuing a non-temporal write is any of:
-
-   a) to avoid your write from evicting other useful data from the cache
-   b) to avoid coherency traffic triggered by the remote read.
-   c) you anticipate a significant amount of time and/or cache churn to
-      occur between now and when the remote read takes place, and you feel
-      it's reasonable to suspect that the data will have been evicted from
-      cache into main memory by then, anyway.
-
-  all of them make less sense on a system with ddio.
-
-+ Because reads by the NIC are expected to usually be directly serviced
-  from cache, Intel also stopped issuing speculative reads against main
-  memory as early as they otherwise could, under the assumption that it
-  would be especially rare for it to be used.
-
-  This means that on systems with DDIO, if you elect to use the non-temporal
-  hints, those remote reads become extra slow, because they are
-  serialized with the read attempt against the cache.
-
-Putting these two together, tx-nocache-copy stopped making sense, and
-the best thing the kernel could do, was to play dumb.
-
-3. By 2017, after many complaints, and in a world where almost everyone
-in the high-performance networking/server space was using an intel
-platform with DDIO, tx-nocache-copy was moved to be disabled by default.
-
-I didn't see DDIO mentioned in any of the on-list discussions of
-tx-nocache-copy that I could find, and it lead me to wonder if this is
-real story behind tx-nocache-copy: a reasonable feature, introduced with
-unlucky timing, which ultimately fell victim to a hardware monoculture
-without anyone fully realizing it.
-
-If that story is true, then it might suggest that tx-nocache-copy still
-has merit under the current zen systems (which have nothing similar to
-DDIO, as far as I'm aware). At least in late 2022, under the original
-unpatched kernels that were available at the time, I can report that it
-did. I no longer work at $work, so I have no ability to retest myself,
-but I'd be curious to hear the results from anyone that finds this
-interesting enough to look into it. 
-
-[1]: https://www.intel.com/content/dam/www/public/us/en/documents/technology-briefs/data-direct-i-o-technology-brief.pdf
-The relevant section for tx-nocache-copy is "2.2".
+greg k-h
 
