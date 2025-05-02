@@ -1,78 +1,152 @@
-Return-Path: <linux-kernel+bounces-629392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2533AA6BD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:45:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005F1AA6BF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752161B6768C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 07:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE824A7536
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 07:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51FA267B77;
-	Fri,  2 May 2025 07:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4CC268691;
+	Fri,  2 May 2025 07:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p57Cfcjw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcYA8JZx"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5CA267AFB;
-	Fri,  2 May 2025 07:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312EF26773F;
+	Fri,  2 May 2025 07:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746171904; cv=none; b=NgKs2BtVMKjXvFtbMX1qgejmWpXqzCT3LVoICuO29NquVEwgQCom9RXNkxT3q32lmt7nXW9LD0Ig0Qim8QZfEv0FP1w4sIBuAx4PBBPeqj1PrmIDQ4+3/D52m8XoNIj9imIA+RyGyMfwri0nylAtRnjcdOlPZKP2su69HpxBiqQ=
+	t=1746171958; cv=none; b=FokimrFEpl4Y8sJu/M95OVcz24POt9q7LUGKTVrd7m1mrAmIxYZYn+U01VV6GLXdtuJHrGh0rOHE3jo4BYlXc56cuJN0X+bOFln8W4T0FIKkocJo7NkHbuG5yE5IQWAO3O2BwsLSYD4YOtzVS888mptRwoBVGvnRjgewHdL5s5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746171904; c=relaxed/simple;
-	bh=3UFf+SWKMS7v6/zsF9J+zoMK9moancOfUNZ8sFnC2HE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGsKmuGBCTAgrQQO4tylzRR4EkJJExrCFE7fmBEPpMC7EazFrw6CE2LxSqQ6M1dk+vCQlYf7ozSBJgz2YuZ7lRE0BExnGpYXPFbBfUqEyGYuEy/gt5ZyPV1zWWFmuRJDmbB7fq11eGN2llzuWCcy5hdIjHbsWKE6Nt0vZGQ4Lac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p57Cfcjw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B5DDC4CEE4;
-	Fri,  2 May 2025 07:45:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746171903;
-	bh=3UFf+SWKMS7v6/zsF9J+zoMK9moancOfUNZ8sFnC2HE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p57Cfcjw6Z6Ai9dPHSTjRANOeXCL2V0nuEcRgSHPy4n3sbDU42hrUZyat1rvnaGi4
-	 cE0F4YTt4g8oOhLzfyV3+q5ErLQLy48pCKk3Gpq0Nu1wqiET7/fW5uI76VTB0RpXjI
-	 2N/4o0uD4L5DkqMSaS7/5ofCkGjY+XOX9K29HMZmoijj3bDNIQwQ+4clDUvUHjR9fj
-	 0RKfmxTvuWg+yKimPbPkEhmD4SIkF6Dm7YPLOcRp82c2i66SC/eK5m9st7WLEJ3arw
-	 QSgGNRSufiK/C2dszI6PPD1cvyYHBdF+DrgusLXM1grGvPVQEFSbDOih6pYZsI9CWH
-	 QxWMh3qpE9alw==
-Date: Fri, 2 May 2025 09:44:57 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] rust: samples: Add debugfs sample
-Message-ID: <aBR3-Ry616ghAuGc@pollux>
-References: <20250501-debugfs-rust-v3-0-850869fab672@google.com>
- <20250501-debugfs-rust-v3-4-850869fab672@google.com>
- <aBRtrfTaaC3Vk9fL@pollux>
- <2025050253-wriggly-pod-e420@gregkh>
+	s=arc-20240116; t=1746171958; c=relaxed/simple;
+	bh=X3uP7v9fveDTGCV/msaaTp84y5PUa5NPgf4Fr5c2NkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h+wd1frPxajBbRZdR9kyZhrhfVnR/x8FFfClb78c4kRBS6rnoYaYEsbRl0xGUXn0bsO9K5OkdJsBJ5kk+e1Q51Be4ccmi3qPqvUZfS3t+/eKz8M2uwruO0ihkTzJRAWEawvnQG19exA4CfTFjmAdgUXT4m/PnbbsPmmuAxmjViA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcYA8JZx; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-227cf12df27so16862755ad.0;
+        Fri, 02 May 2025 00:45:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746171956; x=1746776756; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nr3uc/BuQAGaiplQ7OFovwD1jVNfwOYK+HpPvLkKsh4=;
+        b=YcYA8JZxBKuTsoHzcVS72Azli/2qTDsPHt2Y/mzEkHl5e/BVpWLi7MODgDSwd3nEni
+         glCIgnUeQJGKH4j9tkyeNWzVumUsisHmhLBP+C3e0M5kr2sCOQLXaUYgvZKy0L9eFbEu
+         hncExQ1pBUDvOZLWKPBLeY7w3Gl7DPCN2kRFtiBLfmBo/dbNbE09ogDvfksoKZ8z4wo/
+         U1qsnFPq7M+ge2k4PpZNTSIPkG0lkVThUllnu11/haPGSdOgFQZjRZdCLkCmcgQMXbu9
+         UvsCP4i9EN88nmEv53E1piYurrAVP8LU5+2pgrP6TOlFMUNX8QoXZ7vi3yMMnuVGAXCE
+         3zSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746171956; x=1746776756;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nr3uc/BuQAGaiplQ7OFovwD1jVNfwOYK+HpPvLkKsh4=;
+        b=IdZvs6ut2lhPZeeHnS9SgdX+HdIUr8b46e/9t0yese0r6WCAx1gTyvLynziTArjnOd
+         mqer+cIf0DecFpImK6iEE/ec0kKPNkz7Hlg/tttGondiBATQ78eI2FJlqXUVof+U7w5A
+         yniB3FCn8yRKlLnRfgvZLCAG6IcR34kdL32VNqqKySjDSmB0haGsGQkq/mV3a+HIN930
+         PrFX78zYYQVJBE37xB6oPJRUeV80eQ1y5dNwzC3rgQ38es3eM5xyMeY0BMWMVn3jAeIr
+         MWaiLwHny1DCkw2VyiSGht5OWCu9IhXULqIQ1bbZ7qcFtpzM3TD4jY8SwtifH3Omv2WD
+         UcuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCfHozmJW2dnU7E2O9yOzQboxEtq7NzZ2W3sJCigZ3iACT2rOA2NyWgRnZn4Uy5MOBkng7aBacstE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8XruGP6bf0bi1kkon+EbIHXvrO7YY9alPTbNYDRFwx92xrUpm
+	EIYP0OiQV153QRRtaLEhhvVGcJqaZw+V4c57n91hXsR7+Vi7a3z/
+X-Gm-Gg: ASbGncuxte+IHWRBpeuNUwvIEWmXdnDs7/KEt/IOOW8beBvEeDqHWWTQEb9Vj77VKA3
+	Wi9MdFIl+/use0R6nZWauzNFjuqyoNZJhdNhxuTbf3gLVb0mNri1W9GdKBq7fwUrJhBzzgXDwOb
+	HyzHGEEjikOFFOyizJkYYvSYj3IRjKyepOvf2uphnEsCe90b9NBqStkBV1u8JZJpJW0dc20w6tH
+	N/1pohgvq+3oU4VcWjGFf4AHjLi8jvy0HfokD8e6opSPsjNVdPYh22SjF+zx3vWuZtotDWe2XeZ
+	OK2NBqVJLUGJZAedgis7nF3o3pM7Ku49G1AMHTKO
+X-Google-Smtp-Source: AGHT+IG4krSXcYUW37s+vQA+xQDC716tvEz/O4UtgQjrB7hIGhgogg1UugtqDEfl8ASMq/rlQPjtMg==
+X-Received: by 2002:a17:903:3c47:b0:215:58be:3349 with SMTP id d9443c01a7336-22e1007d2bamr36744635ad.14.1746171956287;
+        Fri, 02 May 2025 00:45:56 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e152326f7sm1188375ad.227.2025.05.02.00.45.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 00:45:55 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 32E6F420A6AB; Fri, 02 May 2025 14:45:53 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Alyssa Ross <hi@alyssa.is>,
+	Rodolfo Giometti <giometti@enneenne.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Jan Kara <jack@suse.cz>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Lee Jones <lee@kernel.org>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] Documentation: ioctl-number: Update outdated submission info
+Date: Fri,  2 May 2025 14:45:05 +0700
+Message-ID: <20250502074504.26933-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025050253-wriggly-pod-e420@gregkh>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2201; i=bagasdotme@gmail.com; h=from:subject; bh=vF+0hLDaUpfcc1JpysrOmDrmp3tHznnlazht2GryoYs=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBki5SJzAvyZ2fz6BTcJLl4utXeW8UQr9d+PTlr+L/Dbu NSBS0O8o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABN5M5eRYUv7P66bF0K/vfz4 1WxVmltmeO+V0pKV5/1zSyPK+81YjBj+Cv3g5M2Je+VQFCqhsDyy6tN9gTX7E47q7tjWWHdjxvy 57AA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 02, 2025 at 09:13:28AM +0200, Greg Kroah-Hartman wrote:
-> AND how to have maintainers review code that uses the api that are
-> not that familiar with how Rust does things.
+Much like device numbers that used to be assigned by LANANA (see commit
+ebdf4040c16df5 ("Documentation: update the devices.txt documentation"),
+ioctl numbers list is maintained by general kernel community nowadays
+instead of contacting Michael directly as he's long stepped down from
+kernel-related activity (his last LKML message was from 2003 [1] and
+he's in CREDITS since the beginning of kernel's git history). Also,
+patch (including one to update ioctl numbers list) submission now
+follows process as described in
+Documentation/process/submitting-patches.rst rather than sending
+patches directly to Linus as in the distant past.
 
-That sounds very reasonable -- I like it!
+Update the docs to reflect that.
+
+Link: https://lore.kernel.org/r/200305261446.h4QEkBVv023861@duracef.shout.net/ [1]
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+Cc: Lee Jones <lee@kernel.org>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+ Documentation/userspace-api/ioctl/ioctl-number.rst | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index 7a1409ecc238eb..83e5d2abdad694 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -28,10 +28,10 @@ or number from the table below.  Because of the large number of drivers,
+ many drivers share a partial letter with other drivers.
+ 
+ If you are writing a driver for a new device and need a letter, pick an
+-unused block with enough room for expansion: 32 to 256 ioctl commands.
+-You can register the block by patching this file and submitting the
+-patch to Linus Torvalds.  Or you can e-mail me at <mec@shout.net> and
+-I'll register one for you.
++unused block with enough room for expansion: 32 to 256 ioctl commands
++should suffice. You can register the block by patching this file and
++submitting the patch through :doc:`usual patch submission process
++</process/submitting-patches>`.
+ 
+ The second argument to _IO, _IOW, _IOR, or _IOWR is a sequence number
+ to distinguish ioctls from each other.  The third argument to _IOW,
+
+base-commit: c0fe189b590c754f69e0cb87c5b5674cad535cf6
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
