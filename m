@@ -1,309 +1,119 @@
-Return-Path: <linux-kernel+bounces-629699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134F8AA704A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:05:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BECAA705A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56E01BA8252
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:06:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FB694C32B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0028F2550A2;
-	Fri,  2 May 2025 11:04:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95229243951;
-	Fri,  2 May 2025 11:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A4E243968;
+	Fri,  2 May 2025 11:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="t/glLIo0"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA22238C09;
+	Fri,  2 May 2025 11:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746183875; cv=none; b=rmD4tHFTdjjeIWOo06IMK5ii0ne6tldPrmoeLAZZHTba5qyW0whn9tutd+8nK1vBWIFU3CK+vaLjERnqY2omJIcfzWuQZz741nK/o27C8xe5kvi0iMn/O9Wb6f+T/P+wlYuoLGD2wfZ64iqxyfZm8jBab4faIyNTCv8aXQtHe8Y=
+	t=1746184034; cv=none; b=MuzXe8UW7Jft8gsJqTPUHWqAYaxeOlLzQkdLO6YSjyQXaHcUcNIIzEyCDXtkWhiaDssmF4kNdEdLf2hasx6DRyKuDseruMhuY34za3WYO/y0brskilvN9kRzO1Dh0CCgOTsBudLmOkj4idYQRXq44XhqzoZiymp0hMt2uH6mDpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746183875; c=relaxed/simple;
-	bh=3OTFRZBkrjijZtuyP1PjuHQyBy+WZ2Tuv4lnEulpl30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QeUtDEbjwufkSG5XuB+RN5+0dVBsup6Yr6HW9EESolWKuiOOxdOP5JZgsV7XO4c+R45PXJ/HuzN2AbImXG0zCRTNmHMTlotp1qXFAf/6rT6pClwIM0//03Jt0/kPFpGmKJTvJTdGUtPSldWDf6xAE7c1Nlvu/IqE0DG4Sb6XjvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 414501688;
-	Fri,  2 May 2025 04:04:22 -0700 (PDT)
-Received: from [10.57.43.85] (unknown [10.57.43.85])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 645533F66E;
-	Fri,  2 May 2025 04:04:25 -0700 (PDT)
-Message-ID: <bf0b9232-36b0-41c5-89a5-6639719cd09e@arm.com>
-Date: Fri, 2 May 2025 12:04:23 +0100
+	s=arc-20240116; t=1746184034; c=relaxed/simple;
+	bh=xbRFTk9j/CaY2rWfk0ojuy7uLZeBa00EkMY/PnfXQZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/5nZ9QfFKUBG0VQ7/MpXxWbDr6wEInzLwpm87+6dGI1zNrnOTgHH5rGlc4gHQIENQ6JrtPdkb8oj9W2VAhj5NjbU1ckJfwfw6BmvSuJQj1/dXW7HsglovzH6ucmNEel9bnI15ZcISOfEq437gH7efVFiwq4cvByf7Q56D3sccM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=t/glLIo0; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=g1cIohdaDs6bXdyUuOwWEeJRglggxQPC86GuctGorOQ=; b=t/glLIo0tyzkQb3KoOlyaohDT9
+	URUQrJK+OC/7ZJf+LpASPlR1pBWHs2RdySVbP4pIlupCjwJ7FIQdQJZzdPiCUL9f28AfnPW/F93Td
+	AHvCBOZLRAFTxIJx7IEYGFkLCwRwn6unuxVlpIsFfYKAzWvQxrTcgNDK17pYjxgL4jRS4ucw7kv59
+	g7tfPtPMMunHmGcBeHa1v9ijzplnbepnweYiAyGAyQSa45o+blQxAo1E8JDTQk9PELDsUZqY30UsV
+	dpgUpg+rkxqMkFNUXfaBEGpowzBtwmgHXvDOH9ycowKrBKY3KP/ILlFYzyZoRAgb/9bZR5ZXhcThQ
+	rpqVn9CQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36360)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uAoEF-0001GP-1H;
+	Fri, 02 May 2025 12:06:51 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uAoE9-0000cz-1Y;
+	Fri, 02 May 2025 12:06:45 +0100
+Date: Fri, 2 May 2025 12:06:45 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/1] Documentation: networking: expand and
+ clarify EEE_GET/EEE_SET documentation
+Message-ID: <aBSnRZEGTnHxnMaI@shell.armlinux.org.uk>
+References: <20250427134035.2458430-1-o.rempel@pengutronix.de>
+ <f82fe7ac-fc12-4d50-98d4-4149db2bffa0@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 13/43] arm64: RME: Support for the VGIC in realms
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>
-References: <20250416134208.383984-1-steven.price@arm.com>
- <20250416134208.383984-14-steven.price@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250416134208.383984-14-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f82fe7ac-fc12-4d50-98d4-4149db2bffa0@redhat.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 16/04/2025 14:41, Steven Price wrote:
-> The RMM provides emulation of a VGIC to the realm guest but delegates
-> much of the handling to the host. Implement support in KVM for
-> saving/restoring state to/from the REC structure.
+On Fri, May 02, 2025 at 10:46:02AM +0200, Paolo Abeni wrote:
+> On 4/27/25 3:40 PM, Oleksij Rempel wrote:
+> > Improve the documentation for ETHTOOL_MSG_EEE_GET and ETHTOOL_MSG_EEE_SET
+> > to provide accurate descriptions of all netlink attributes involved.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes from v5:
->   * Handle RMM providing fewer GIC LRs than the hardware supports.
-> ---
->   arch/arm64/include/asm/kvm_rme.h |  1 +
->   arch/arm64/kvm/arm.c             | 16 +++++++++---
->   arch/arm64/kvm/rme.c             |  5 ++++
->   arch/arm64/kvm/vgic/vgic-init.c  |  2 +-
->   arch/arm64/kvm/vgic/vgic-v3.c    |  6 ++++-
->   arch/arm64/kvm/vgic/vgic.c       | 43 ++++++++++++++++++++++++++++++--
->   6 files changed, 66 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
-> index f716b890e484..9bcad6ec5dbb 100644
-> --- a/arch/arm64/include/asm/kvm_rme.h
-> +++ b/arch/arm64/include/asm/kvm_rme.h
-> @@ -92,6 +92,7 @@ struct realm_rec {
->   
->   void kvm_init_rme(void);
->   u32 kvm_realm_ipa_limit(void);
-> +u32 kvm_realm_vgic_nr_lr(void);
->   
->   int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap);
->   int kvm_init_realm_vm(struct kvm *kvm);
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index fd83efb667cc..808d7e479571 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -683,19 +683,24 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
->   		kvm_call_hyp_nvhe(__pkvm_vcpu_put);
->   	}
->   
-> +	kvm_timer_vcpu_put(vcpu);
-> +	kvm_vgic_put(vcpu);
-> +
-> +	vcpu->cpu = -1;
-> +
-> +	if (vcpu_is_rec(vcpu))
-> +		return;
-> +
->   	kvm_vcpu_put_debug(vcpu);
->   	kvm_arch_vcpu_put_fp(vcpu);
->   	if (has_vhe())
->   		kvm_vcpu_put_vhe(vcpu);
-> -	kvm_timer_vcpu_put(vcpu);
-> -	kvm_vgic_put(vcpu);
->   	kvm_vcpu_pmu_restore_host(vcpu);
->   	if (vcpu_has_nv(vcpu))
->   		kvm_vcpu_put_hw_mmu(vcpu);
->   	kvm_arm_vmid_clear_active();
->   
->   	vcpu_clear_on_unsupported_cpu(vcpu);
-> -	vcpu->cpu = -1;
->   }
->   
->   static void __kvm_arm_vcpu_power_off(struct kvm_vcpu *vcpu)
-> @@ -912,6 +917,11 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
->   			return ret;
->   	}
->   
-> +	if (!irqchip_in_kernel(kvm) && kvm_is_realm(vcpu->kvm)) {
-> +		/* Userspace irqchip not yet supported with Realms */
-> +		return -EOPNOTSUPP;
-> +	}
-> +
->   	mutex_lock(&kvm->arch.config_lock);
->   	set_bit(KVM_ARCH_FLAG_HAS_RAN_ONCE, &kvm->arch.flags);
->   	mutex_unlock(&kvm->arch.config_lock);
-> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-> index f4923fc3b34e..1239eb07aca6 100644
-> --- a/arch/arm64/kvm/rme.c
-> +++ b/arch/arm64/kvm/rme.c
-> @@ -77,6 +77,11 @@ u32 kvm_realm_ipa_limit(void)
->   	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_S2SZ);
->   }
->   
-> +u32 kvm_realm_vgic_nr_lr(void)
-> +{
-> +	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS);
-> +}
-> +
->   static int get_start_level(struct realm *realm)
->   {
->   	return 4 - ((realm->ia_bits - 8) / (RMM_PAGE_SHIFT - 3));
-> diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
-> index 1f33e71c2a73..a81c7f3d1d42 100644
-> --- a/arch/arm64/kvm/vgic/vgic-init.c
-> +++ b/arch/arm64/kvm/vgic/vgic-init.c
-> @@ -81,7 +81,7 @@ int kvm_vgic_create(struct kvm *kvm, u32 type)
->   	 * the proper checks already.
->   	 */
->   	if (type == KVM_DEV_TYPE_ARM_VGIC_V2 &&
-> -		!kvm_vgic_global_state.can_emulate_gicv2)
-> +	    (!kvm_vgic_global_state.can_emulate_gicv2 || kvm_is_realm(kvm)))
->   		return -ENODEV;
->   
->   	/* Must be held to avoid race with vCPU creation */
-> diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
-> index b9ad7c42c5b0..c10ad817030d 100644
-> --- a/arch/arm64/kvm/vgic/vgic-v3.c
-> +++ b/arch/arm64/kvm/vgic/vgic-v3.c
-> @@ -8,9 +8,11 @@
->   #include <linux/kvm_host.h>
->   #include <linux/string_choices.h>
->   #include <kvm/arm_vgic.h>
-> +#include <asm/kvm_emulate.h>
->   #include <asm/kvm_hyp.h>
->   #include <asm/kvm_mmu.h>
->   #include <asm/kvm_asm.h>
-> +#include <asm/rmi_smc.h>
->   
->   #include "vgic.h"
->   
-> @@ -758,7 +760,9 @@ void vgic_v3_put(struct kvm_vcpu *vcpu)
->   		return;
->   	}
->   
-> -	if (likely(!is_protected_kvm_enabled()))
-> +	if (vcpu_is_rec(vcpu))
-> +		cpu_if->vgic_vmcr = vcpu->arch.rec.run->exit.gicv3_vmcr;
-> +	else if (likely(!is_protected_kvm_enabled()))
->   		kvm_call_hyp(__vgic_v3_save_vmcr_aprs, cpu_if);
->   	WARN_ON(vgic_v4_put(vcpu));
->   
-> diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
-> index 8d189ce18ea0..c68a41a29917 100644
-> --- a/arch/arm64/kvm/vgic/vgic.c
-> +++ b/arch/arm64/kvm/vgic/vgic.c
-> @@ -10,7 +10,9 @@
->   #include <linux/list_sort.h>
->   #include <linux/nospec.h>
->   
-> +#include <asm/kvm_emulate.h>
->   #include <asm/kvm_hyp.h>
-> +#include <asm/kvm_rme.h>
->   
->   #include "vgic.h"
->   
-> @@ -23,6 +25,8 @@ struct vgic_global kvm_vgic_global_state __ro_after_init = {
->   
->   static inline int kvm_vcpu_vgic_nr_lr(struct kvm_vcpu *vcpu)
->   {
-> +	if (unlikely(vcpu_is_rec(vcpu)))
-> +		return kvm_realm_vgic_nr_lr();
->   	return kvm_vgic_global_state.nr_lr;
->   }
->   
-> @@ -864,10 +868,23 @@ static inline bool can_access_vgic_from_kernel(void)
->   	return !static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif) || has_vhe();
->   }
->   
-> +static inline void vgic_rmm_save_state(struct kvm_vcpu *vcpu)
-> +{
-> +	struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
-> +	int i;
-> +
-> +	for (i = 0; i < kvm_vcpu_vgic_nr_lr(vcpu); i++) {
-> +		cpu_if->vgic_lr[i] = vcpu->arch.rec.run->exit.gicv3_lrs[i];
-> +		vcpu->arch.rec.run->enter.gicv3_lrs[i] = 0;
-> +	}
-> +}
+> This looks like an almost complete rewrite WRT v1, a changelog would
+> have helped reviewing. I'm unsure if it captures all the feedback from
+> Russell,
 
-We also need to save/restore gicv3_hcr/cpuif->vgic_hcr.
+Indeed, because I'm still of the opinion that we shouldn't be trying to
+document the same thing in two different places, but differently, which
+will only add confusion, and over time the two descriptions will diverge
+making the problem harder.
 
-> +
->   static inline void vgic_save_state(struct kvm_vcpu *vcpu)
->   {
->   	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
->   		vgic_v2_save_state(vcpu);
-> +	else if (vcpu_is_rec(vcpu))
-> +		vgic_rmm_save_state(vcpu);
->   	else
->   		__vgic_v3_save_state(&vcpu->arch.vgic_cpu.vgic_v3);
->   }
-> @@ -903,10 +920,28 @@ void kvm_vgic_sync_hwstate(struct kvm_vcpu *vcpu)
->   	vgic_prune_ap_list(vcpu);
->   }
->   
-> +static inline void vgic_rmm_restore_state(struct kvm_vcpu *vcpu)
-> +{
-> +	struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
-> +	int i;
-> +
-> +	for (i = 0; i < kvm_vcpu_vgic_nr_lr(vcpu); i++) {
-> +		vcpu->arch.rec.run->enter.gicv3_lrs[i] = cpu_if->vgic_lr[i];
-> +		/*
-> +		 * Also populate the rec.run->exit copies so that a late
-> +		 * decision to back out from entering the realm doesn't cause
-> +		 * the state to be lost
-> +		 */
-> +		vcpu->arch.rec.run->exit.gicv3_lrs[i] = cpu_if->vgic_lr[i];
-> +	}
-> +}
-> +
->   static inline void vgic_restore_state(struct kvm_vcpu *vcpu)
->   {
->   	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
->   		vgic_v2_restore_state(vcpu);
-> +	else if (vcpu_is_rec(vcpu))
-> +		vgic_rmm_restore_state(vcpu);
->   	else
->   		__vgic_v3_restore_state(&vcpu->arch.vgic_cpu.vgic_v3);
->   }
-> @@ -976,7 +1011,9 @@ void kvm_vgic_flush_hwstate(struct kvm_vcpu *vcpu)
->   
->   void kvm_vgic_load(struct kvm_vcpu *vcpu)
->   {
-> -	if (unlikely(!irqchip_in_kernel(vcpu->kvm) || !vgic_initialized(vcpu->kvm))) {
-> +	if (unlikely(!irqchip_in_kernel(vcpu->kvm) ||
-> +		     !vgic_initialized(vcpu->kvm) ||
-> +		     vcpu_is_rec(vcpu))) {
+We need to document this in exactly one place, not two places.
 
+So please, choose one of:
 
->   		if (has_vhe() && static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
->   			__vgic_v3_activate_traps(&vcpu->arch.vgic_cpu.vgic_v3);
->   		return;
-> @@ -990,7 +1027,9 @@ void kvm_vgic_load(struct kvm_vcpu *vcpu)
->   
->   void kvm_vgic_put(struct kvm_vcpu *vcpu)
->   {
-> -	if (unlikely(!irqchip_in_kernel(vcpu->kvm) || !vgic_initialized(vcpu->kvm))) {
-> +	if (unlikely(!irqchip_in_kernel(vcpu->kvm) ||
-> +		     !vgic_initialized(vcpu->kvm) ||
-> +		     vcpu_is_rec(vcpu))) {
->   		if (has_vhe() && static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
->   			__vgic_v3_deactivate_traps(&vcpu->arch.vgic_cpu.vgic_v3);
+* Documentation/devicetree/bindings/net/ethernet-phy.yaml
+* Documentation/networking/phy.rst
 
-We could return early here for rec, and skip the unnecessary trap steps. 
-Similar for the vgic_load case.
+and reference one from the other, if necessary improving the
+documentation.
 
-Rest looks good to me.
+Given that phylib is not a DT thing, I believe it should not be
+documented in the DT bindings, but people directed to the phylib
+documentation (the second) for the clarification of our implementation.
 
-Suzuki
-
-
->   		return;
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
