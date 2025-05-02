@@ -1,118 +1,115 @@
-Return-Path: <linux-kernel+bounces-629772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E1AAA7132
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE947AA7137
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56983A9BB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02E09A1F30
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E073B248F72;
-	Fri,  2 May 2025 12:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAhib/0q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0992528E9;
+	Fri,  2 May 2025 12:06:53 +0000 (UTC)
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B40241131;
-	Fri,  2 May 2025 12:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE01223C500;
+	Fri,  2 May 2025 12:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746187573; cv=none; b=hF2LJ+RfexJVcAiksIeMmJrrcUHJxWpDTHODPXB3CCrkV6znueti8uER6o/MJDw82bzKEYYF62SiwgWKKJvSvphYkeAl3HguvKSxpe/g8LnfqjythvjDScXDhiaPJbd9si8RdyGyLQXw/rMXjOvb3pJU6yNHQsK1brQLeF5PPEc=
+	t=1746187613; cv=none; b=PYGIRVTrw35IFovOymXVRjigoteWpvc+f6gi3+TllUETeQ1uim3xPebEhjJBlQiOSBuU5O/uy3bKbw3gV4qv6V94TXdjxCdcS9NKldCUde8ymhmQn/Q76FWe/qx1Vl+kHYE/hKrK6UPF9+Q8FBLOkcCGqMTfNFpxBWkaZa5Jqec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746187573; c=relaxed/simple;
-	bh=ylTDMNTJsX+fU1Fc1DS/h8rpSxVIonrpJGIhDeOznP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EFTESal7qNFveVsANUe4JCqUnVzc3CM6D1/DrKSq882dy0/pF9LXQHUNx82fQQqRg08KfDmWn2k20KK22DLhVJHYR72TtEG4s7xyOIE3ur5ugdcDsNxykuJmLZUSD1iCnobzOrH5skAk8/Y2Srv3bdWNSbApEqkjB9sBBeYH8TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAhib/0q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2115C4CEE4;
-	Fri,  2 May 2025 12:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746187572;
-	bh=ylTDMNTJsX+fU1Fc1DS/h8rpSxVIonrpJGIhDeOznP0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vAhib/0qiIR/x/ZP1Nqx2RdkhB634Dxmg0HP27rSPENeLrfCwulU4fGLCNFPErn5E
-	 tB270rs6P4iO+9sHEcAvXiGL7ppgIrI3eQApWiSi2rV9OB/AIzDxqsTJJOLAEJYwxZ
-	 P6W9iiEMjgsTH68TcrTNKFVbAzw1QUVRzPp+YmSbS9U2ba4w5xdCkYJu0VTJsdjZmS
-	 D0QK2RwEGR0dp265b3VGzXW/QWqO7l3UtrqyNhmFa9RCWPA647iIUm+Y6F1YWpdu1p
-	 RQkybCVXO3BeCUjoHWip51b/wW6B4NoBD8M8cm89Dl8zqfz+7E59QjTOqjM52lWq6p
-	 NXIctjzUI2nqg==
-Date: Fri, 2 May 2025 21:06:09 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] counter: interrupt-cnt: Protect enable/disable OPs with
- mutex
-Message-ID: <aBS1Mbta2iAV4EX-@ishi>
-References: <20250331163642.2382651-1-alexander.sverdlin@siemens.com>
- <jir0aD7w3brmbPDdhC4xAhaEKCp-g08TBmtdn785u_Z5M77ZHMhsK7UoamaROSznl2WmcUmPSnocgVnCSYmUYg==@protonmail.internalid>
- <8394ef31a75fdf9122331ecb97dd6f986d5026f1.camel@siemens.com>
- <aBSv1pJ1mulT78gn@ishi>
- <T0L7ZCpSzY8FaifF0VyBKLHBAndGU6TVQvtDuTbuqP4obrm-klTY7wbgRJucvcTHklGYVpYkn5rD3nioq756lw==@protonmail.internalid>
- <aBSxgDuw42kPlweT@pengutronix.de>
+	s=arc-20240116; t=1746187613; c=relaxed/simple;
+	bh=UKro3QdZRIq1amBBE4D4xDPLN9+5qRRN6poL9nd3lug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=goR/IHquICFUVhUIZRQxoDhBUgLZA9P6kHfP5JJp12HOMONLnntEOMkBdIkj7Ky+aHq5ek7qrg/UAkVN92/fHEpQxAjzByfQTNaZHWHGChbrPSIBhkeH1RsJm4DFOwxDBYnE4ifoXFM7euNicuWBSWdxC2ipDi0N+aRid8KsrK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6e8f254b875so22218436d6.1;
+        Fri, 02 May 2025 05:06:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746187609; x=1746792409;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fbk/yJweNXxGum/JgiGBSCMh0BOffu7F1Fg8ZsYFkDE=;
+        b=W3R1dK272tHfO/RlcUWItskKf2V04b4jLCkuyuhVt0aLGhiIKGMnCp8SUpZougvdFy
+         lb7tWleLbPlecyu3S0FVdbYHdOhoZmitBCxA2rBmmoHLrd3Tab6f/+NjrWxP78Tx5i60
+         SX1ScWqak/edr4ikHLQ3N4KeS/OAaYutT0qpx3OBA2Izt33NgA7CPY+LLDguKgPO88uw
+         fr8+fEIgDAXEnMWZxh4CnJHeOCv1LGi66GUIX1O2GZ8kDTQTUbO8LQa8SRoMUuhfZLja
+         lpoxI7MWOXoBHvaCtsEsnV3gD/2ieb5HSE0Egxwwf2VRAZK98RlvyZx9Eunh6DaqFG+3
+         KqaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1wCeRWUzz475+TA58s2rpxF5XYGEZ5/g7nw4KVtKJoFQvwtZjCJFyKPcD6NHIiCDr2MPDRb0zXBUNhvSobsTW6WI=@vger.kernel.org, AJvYcCVQnOi6vcmWOXs/NvoFWeI4ihP0pfOk1+MWiQRdVb99eJNcY1+fPSCVBjemphb5vY1gbTyyL8icVKi4@vger.kernel.org, AJvYcCX0cK7aA9bsiAdEnkKN+9B6jcMW+fpc4vhuHHvlX8fRqKZcUJKObyMhtU6HX746cQOjA4iZW2YOxErwf+EuptI=@vger.kernel.org, AJvYcCXEkbMhQbtbCANWQW6q2orvmzp/9WZVShDb6M3ufrFL7ejUkeVcFsPoGhvTL6K2XoRwDixSOfl1EVG3u4HO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlQS1LBS7wmEY3ixjn/a6h7cfm9BLNv7F+rSKGFy4q7YTuCu0u
+	GVyuUDF3c42Xlk6BT3nwHqz8eYOdqlr1CKzOtvP42xapqCDLnP6QY7FzBecm
+X-Gm-Gg: ASbGncul/aAqOWPRYkQB00HY/aTiEfcaJs3Rc1/qqCHW/s/ixhqelVMiAD4P7y3dOe5
+	BSMUD2+2grRVE+rhUNNZBUlhEKwAgwoLPbJWRw4xaipBIBGUQFo09cK4YdHphyWVYkL7QOIjgvc
+	wiHAiwWzCRQjCWbf72YATy94KOKptaTBIeqLuuRk+i6q1r8NcvZ4JwAn4Fu6RH+ShF/OxUwUY2U
+	JjghShd0pe18Ybw3SgkG+2crEKDGRMsrRzMOBgVQ59LksZIxJCcuwFjVUS09K87i9gXwVQqdxz1
+	oZnsOeTYc3VT9e7tMAfKBbYobRLIojJBuQSEzZRLcnl1o59Ct6WKiRnPSdv6BKj+ajwFElVzIHK
+	jUj1Ax/o=
+X-Google-Smtp-Source: AGHT+IEwCDj+mElIe+BFbLGotwbDEx61yD6v3IW2NHS4tO59srQM4KttSWAaR45Ut+nHuavg0sw0pA==
+X-Received: by 2002:a05:6214:21ed:b0:6e8:f8a8:83f2 with SMTP id 6a1803df08f44-6f51524f9acmr39885266d6.6.1746187609374;
+        Fri, 02 May 2025 05:06:49 -0700 (PDT)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f44f5a2sm17441886d6.78.2025.05.02.05.06.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 May 2025 05:06:48 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c597760323so219790785a.3;
+        Fri, 02 May 2025 05:06:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVa5M0fFWmyqoja/4GwjEMnOMmtD7UHgXrio4GecyIkw4rgjaZD4ZxNGqYU+l4HhhzV+BzdlBSbvho1YgZz28/pU3g=@vger.kernel.org, AJvYcCWt0zi+QyhcqzcNvoBvAAY9ZOmlNs5uj3WGx0bzqYDSTP3xrp7wi1W24ah6jZJ7iDdglt1vI6+W+ZaG2dQV@vger.kernel.org, AJvYcCX/EJUqEtxjy97E58NdEJLm4i4LDM+yzGqqTyUrIwXibJy6pyvC6TGCgjcBnr6s3F8BqftGfLo37DBWt6uOnZk=@vger.kernel.org, AJvYcCXXaB981cSoXMkE+l96efsc3CmBd1K3/RW3kGkpZO+01ci4XOR9RgQ7w67uXzEFqMxSaJxZNzeYCZc2@vger.kernel.org
+X-Received: by 2002:a05:620a:4248:b0:7ca:cd43:e46e with SMTP id
+ af79cd13be357-7cad5ba3155mr402540485a.36.1746187608019; Fri, 02 May 2025
+ 05:06:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6cTzLjJd0PAya12u"
-Content-Disposition: inline
-In-Reply-To: <aBSxgDuw42kPlweT@pengutronix.de>
+References: <20250502120054.47323-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250502120054.47323-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 May 2025 14:06:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWj-GeQhY0jdeiWYvyt9mEZYe+erO9peY0OVkRAnMFAtw@mail.gmail.com>
+X-Gm-Features: ATxdqUHymkxMas7Qiis2zfkAvJ9fGo2xLqlvHjlSHPf44p_b5tCMiQgFndKdEiM
+Message-ID: <CAMuHMdWj-GeQhY0jdeiWYvyt9mEZYe+erO9peY0OVkRAnMFAtw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: watchdog: renesas,wdt: Document RZ/V2N
+ (R9A09G056) support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 2 May 2025 at 14:01, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Document support for the watchdog IP found on the Renesas RZ/V2N
+> (R9A09G056) SoC. The watchdog IP is identical to that on RZ/V2H(P),
+> so `renesas,r9a09g057-wdt` will be used as a fallback compatible,
+> enabling reuse of the existing driver without changes.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
---6cTzLjJd0PAya12u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Fri, May 02, 2025 at 01:50:24PM +0200, Oleksij Rempel wrote:
-> On Fri, May 02, 2025 at 08:43:18PM +0900, William Breathitt Gray wrote:
-> > On Fri, May 02, 2025 at 09:24:20AM +0000, Sverdlin, Alexander wrote:
-> > > I've noticed that the patch has been marked as "Changes Requested" in
-> > > the patchwork, could it be a mistake? Because I never received any
-> > > change request.
-> >
-> > Hi Alexander,
-> >
-> > I can't comment on the patchwork status because I don't use that
-> > service, but I apologize nonetheless for the delay in responding to your
-> > patch submission. I'm hoping for an Ack from Oleksij, but this is a
-> > pretty straight-forward fix that I'll be happy to pick it up regardless.
-> >
-> > Would you provide a Fixes line so the stable trees can pick this up for
-> > the necessary kernel versions?
->=20
-> Sorry for delay, you can add my
-> Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Gr{oetje,eeting}s,
 
-Thanks Oleksij!
+                        Geert
 
-Would you provide an Ack as well for Alexander's other interrupt-cnt
-patch involving a change from atomic_t to atomic_long_t? [^1]
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-William Breathitt Gray
-
-[^1] https://lore.kernel.org/linux-iio/20250331152222.2263776-1-alexander.s=
-verdlin@siemens.com/
-
---6cTzLjJd0PAya12u
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCaBS1MQAKCRC1SFbKvhIj
-K+10AP9moQ0ZBiJCymyZyRt4NL+0CuMaUoYh/Y2ny5aELP8vUQD+I0U3VWsuN3ZG
-L5yKFru5ddYpdihse/1UikfdNNuYCwk=
-=6g2Q
------END PGP SIGNATURE-----
-
---6cTzLjJd0PAya12u--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
