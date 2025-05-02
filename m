@@ -1,142 +1,119 @@
-Return-Path: <linux-kernel+bounces-630003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B26AA7464
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 974D6AA745C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A584C9E096C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D28C23B7492
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D942571B4;
-	Fri,  2 May 2025 14:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A76255F32;
+	Fri,  2 May 2025 14:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qp0QSRIo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b7QhHo8A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB5A256C9D;
-	Fri,  2 May 2025 14:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E94782D98
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746194593; cv=none; b=CaaYq4ziJ6a5YgFEJLMYH6ALaIE5R+JtYZbd3v5tDuAa7alSjaTw0JcMvJifzg1qieH79MwOMWkE6Y0dTJoZtKC2LWmxF7WxpELqXVlVDKKGTYaBcYSh8sOZwKlEZa6jlDGQFpYRwURuPsvnMh2lS/VG0tLaO1vM8ckOxbJQbHo=
+	t=1746194580; cv=none; b=mrMV8KSdCdsISoJ+NTXSftFSUEmzEJXfLPzywkezzpDwMaBa7ReiLBG1PwtZDhIR+7kWQih8tpWKZx9AWinciq0/JVkeJl/86wQgTBLL5nYQ21v231yU3wJBrHoQwlZjWZqGynWBJv1t8FgJ0KxA97K/lWx5lBauALchAwX26y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746194593; c=relaxed/simple;
-	bh=rrnV+01T0+qPAKcB4Oo8Wm9xDzxUTNA9dV6DF4q3AcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FSvZRfaCCvV9Q3w/lABZq7+YiAyCJMm7JWOBszGE2p8MQDs6a5EEMtoK1HVsOwh2y9VL9Wng4MLQUOiNJyQB2UVVL4IJOhAcNw3c5qoO9SMAyFhH5uENcOXIrvYEZjL11ZXzoKG2cxzkwHvu7hOn/hfYWHwZJRYxgZjiQrgrFsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qp0QSRIo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF059C4CEEE;
-	Fri,  2 May 2025 14:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746194593;
-	bh=rrnV+01T0+qPAKcB4Oo8Wm9xDzxUTNA9dV6DF4q3AcI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qp0QSRIomAvKJbz+U5LCvGYCyU01BuMGu3kqGdK1A4+4bmZyu9GlSOh+wKfVTfJ5M
-	 F/8lu7NqNVHB02N/VHVr+0JB0dc1O9AFH/exMehPZ4R2Km5eD1uTKrsODTH1KKKhIA
-	 lyOsH8hppjF0o6RX/h5a7kKN9AxJqZj5zyYCSJrZkNnUV9DLLwqk5o8dW5bt5ThFW9
-	 BofecH5FtLViHgdCpwPXK2G23yeJ9/rgiNUfnRZGiZ5LYH1pXxbYZTXkcajM9vRhNH
-	 0NXg4qQk7JggluSY6yMIj3Uvx2BBy7vFbCG1xVAryQqKQzt5b63qFCVOU4n61TFvjX
-	 emBDq/TryySKw==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: [PATCH 3/5] rust: clean Rust 1.88.0's `unnecessary_transmutes` lint
-Date: Fri,  2 May 2025 16:02:35 +0200
-Message-ID: <20250502140237.1659624-4-ojeda@kernel.org>
-In-Reply-To: <20250502140237.1659624-1-ojeda@kernel.org>
-References: <20250502140237.1659624-1-ojeda@kernel.org>
+	s=arc-20240116; t=1746194580; c=relaxed/simple;
+	bh=F2zdVFItAdmP9ucapL/4OsjVj1IjfBsSOTDIvAGScgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSNNhF5p4znRIoxsCAVDvDzpD2aTtG2PLoFyZ+jsVIQ2EtXojuYgxmdqvDLBX20yToFkz6u7CyO2q2wh18ayfmilBOpw6ruCuZHqft9ORWDK5WlMghdJvQlfqgH4KXfLG7uWi4IOm29UjC5iEKut9qwUV9fJfTKB5m2xLXJZuGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b7QhHo8A; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746194579; x=1777730579;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=F2zdVFItAdmP9ucapL/4OsjVj1IjfBsSOTDIvAGScgM=;
+  b=b7QhHo8A71wOKJGCEFeWrQjJrlw6e2Pgsd9i+4NkwB8hWqraiZNbzDwt
+   Y/OMXnO5dQXExohlZRqSARier+8EXaM6Ahoz0gFlZxG+QY0MGAbxpgrQ1
+   owbsMtHYFt4gEZonFrC4DgCtILupr1y2TXNgZBNGb3VOmnWyp4S6G6hdr
+   q1k+eiwFLK/feApzftCH5KAP6W/V/G1SS9dDFZcV3lJdTcz5SZTzUAGTU
+   ICch5sCYgvTXAQW/LAIodIBNtY+fHFHCnu7eJrq7lJvQGTUhDZmBurqph
+   Yvxuqu/XNhphnKgyNH6Pgal2bX72fkW2cYtIQcUn2Ae3CAMu0mWwzTNxh
+   w==;
+X-CSE-ConnectionGUID: zWOxBcvORtSo6YGW3MGHxQ==
+X-CSE-MsgGUID: +L17VChUS8SuWKChMTKYNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="47763365"
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
+   d="scan'208";a="47763365"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:02:58 -0700
+X-CSE-ConnectionGUID: umyZV+QmTYuDpp7pnZnxEg==
+X-CSE-MsgGUID: /cgFCEp7Rue/ouOi24P9Jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
+   d="scan'208";a="134602630"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 02 May 2025 07:02:56 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 91AFF1A1; Fri, 02 May 2025 17:02:54 +0300 (EEST)
+Date: Fri, 2 May 2025 17:02:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Waiman Long <longman@redhat.com>,
+	Carlos Llamas <cmllamas@google.com>,
+	Ying Huang <huang.ying.caritas@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/10] [RESEND] lockdep: change 'static const' variables
+ to enum values
+Message-ID: <aBTQjnB8ej3z_van@black.fi.intel.com>
+References: <20250409122131.2766719-1-arnd@kernel.org>
+ <20250409122314.2848028-1-arnd@kernel.org>
+ <20250409122314.2848028-6-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409122314.2848028-6-arnd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Starting with Rust 1.88.0 (expected 2025-06-26) [1][2], `rustc` may
-introduce a new lint that catches unnecessary transmutes, e.g.:
+On Wed, Apr 09, 2025 at 02:22:58PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> gcc warns about 'static const' variables even in headers when building
+> with -Wunused-const-variables enabled:
+> 
+> In file included from kernel/locking/lockdep_proc.c:25:
+> kernel/locking/lockdep_internals.h:69:28: error: 'LOCKF_USED_IN_IRQ_READ' defined but not used [-Werror=unused-const-variable=]
+>    69 | static const unsigned long LOCKF_USED_IN_IRQ_READ =
+>       |                            ^~~~~~~~~~~~~~~~~~~~~~
+> kernel/locking/lockdep_internals.h:63:28: error: 'LOCKF_ENABLED_IRQ_READ' defined but not used [-Werror=unused-const-variable=]
+>    63 | static const unsigned long LOCKF_ENABLED_IRQ_READ =
+>       |                            ^~~~~~~~~~~~~~~~~~~~~~
+> kernel/locking/lockdep_internals.h:57:28: error: 'LOCKF_USED_IN_IRQ' defined but not used [-Werror=unused-const-variable=]
+>    57 | static const unsigned long LOCKF_USED_IN_IRQ =
+>       |                            ^~~~~~~~~~~~~~~~~
+> kernel/locking/lockdep_internals.h:51:28: error: 'LOCKF_ENABLED_IRQ' defined but not used [-Werror=unused-const-variable=]
+>    51 | static const unsigned long LOCKF_ENABLED_IRQ =
+>       |                            ^~~~~~~~~~~~~~~~~
+> 
+> This one is easy to avoid by changing the generated constant definition
+> into an equivalent enum.
 
-     error: unnecessary transmute
-         --> rust/uapi/uapi_generated.rs:23242:18
-          |
-    23242 |         unsafe { ::core::mem::transmute(self._bitfield_1.get(0usize, 1u8) as u8) }
-          |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace this with: `(self._bitfield_1.get(0usize, 1u8) as u8 == 1)`
-          |
-          = note: `-D unnecessary-transmutes` implied by `-D warnings`
-          = help: to override `-D warnings` add `#[allow(unnecessary_transmutes)]`
+Any news here, please? The problem still exists in v6.15-rc4.
 
-There are a lot of them (at least 300), but luckily they are all in
-`bindgen`-generated code.
-
-Thus clean all up by allowing it there.
-
-Since unknown lints trigger a lint itself in older compilers, do it
-conditionally so that we can keep the `unknown_lints` lint enabled.
-
-Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
-Link: https://github.com/rust-lang/rust/pull/136083 [1]
-Link: https://github.com/rust-lang/rust/issues/136067 [2]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- init/Kconfig         | 3 +++
- rust/bindings/lib.rs | 1 +
- rust/uapi/lib.rs     | 1 +
- 3 files changed, 5 insertions(+)
-
-diff --git a/init/Kconfig b/init/Kconfig
-index 63f5974b9fa6..4cdd1049283c 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -140,6 +140,9 @@ config LD_CAN_USE_KEEP_IN_OVERLAY
- config RUSTC_HAS_COERCE_POINTEE
- 	def_bool RUSTC_VERSION >= 108400
- 
-+config RUSTC_HAS_UNNECESSARY_TRANSMUTES
-+	def_bool RUSTC_VERSION >= 108800
-+
- config PAHOLE_VERSION
- 	int
- 	default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
-diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-index 014af0d1fc70..a08eb5518cac 100644
---- a/rust/bindings/lib.rs
-+++ b/rust/bindings/lib.rs
-@@ -26,6 +26,7 @@
- 
- #[allow(dead_code)]
- #[allow(clippy::undocumented_unsafe_blocks)]
-+#[cfg_attr(CONFIG_RUSTC_HAS_UNNECESSARY_TRANSMUTES, allow(unnecessary_transmutes))]
- mod bindings_raw {
-     // Manual definition for blocklisted types.
-     type __kernel_size_t = usize;
-diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
-index 13495910271f..c98d7a8cde77 100644
---- a/rust/uapi/lib.rs
-+++ b/rust/uapi/lib.rs
-@@ -24,6 +24,7 @@
-     unreachable_pub,
-     unsafe_op_in_unsafe_fn
- )]
-+#![cfg_attr(CONFIG_RUSTC_HAS_UNNECESSARY_TRANSMUTES, allow(unnecessary_transmutes))]
- 
- // Manual definition of blocklisted types.
- type __kernel_size_t = usize;
 -- 
-2.49.0
+With Best Regards,
+Andy Shevchenko
+
 
 
