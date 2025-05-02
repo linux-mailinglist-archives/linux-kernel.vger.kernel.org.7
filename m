@@ -1,129 +1,100 @@
-Return-Path: <linux-kernel+bounces-630077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78601AA753B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:45:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAAFAA7542
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCF53B8F81
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:44:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E96E84E1A29
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E78C256C82;
-	Fri,  2 May 2025 14:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D7F253B7C;
+	Fri,  2 May 2025 14:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfS2RhDL"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K9Hva6v3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276272566E1
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DF62571BE
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746197099; cv=none; b=IceXqxE/43LjvnL1Wb/VPHCTcjUf/SoU19oIQPkSJjnqo7PfVlxXrG+0J9+2WFs5vXYESBcbEYTtuMKNzObwVFQ/xYXLD1ruFBJvVt8vjY0nr1iUuNVb/wRPJK77mzN/BqbbzE2JrfdJmOq2ow7n5fI36uOJWilkPRi09spAye4=
+	t=1746197110; cv=none; b=liwZ6sNfrOiPoL692bEzXnieT4Zw/z0YeV87AFDayKkZSHII3F0Sv+Qa7sb39dq58YShWJW0U9EokwP6lQ/U87q87z+FITtsdhQGmTralmRnPsmTx8tD8Bs9zeBvNm5ySLZN0Y/EGMVNVbVsN1Ggs4GX2sMoB57w9PdimnReXVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746197099; c=relaxed/simple;
-	bh=K2v+V9BeNPO6z1mSHU2f46T3osTrV14m8I6JlOMOUTc=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c/BsZp4aB/ERZMyo8vLUG6vbCyR8QWjGstAU4rFQF61BmNyBG7Dfgof6U/hkbM4ADuHIvyaaM5Tg+QvZ663132VpUJa+ZJa4JAWJv8wrSXODm07GbpWl7JbH1WVwKMzr7bZqLbktRD5GtHwHfvftnqW583vBYYsf6zTu5tvKvSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfS2RhDL; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c5e39d1e0eso233439185a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 07:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746197096; x=1746801896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y1D5cABUWl03Gb3dEb9Zn/xPv0rDHSpYAcBsKyT8bso=;
-        b=nfS2RhDLjtxVsuw/2kdqZtMrVgvVzdjD6q/qgmtQyIk4SQKB7Xj9FOkVUlx1iFjOxw
-         DckQRfrv1dCFElZJe8va4so/3UoQtCaks//dU8vn4oo7lEFJwGYwtr+l9H1uIraA2fMA
-         ylm7/vyRPzgkt0xCH5Ofv9xJp5W+q5ydiPNtZLJWs3qLlwxqY5SYrBtrMBtf6/Fx6s3f
-         1wSCiIozGGZVb3rtvdJMXHitxMlwolq87GwIHi0JKcpMlLc/36cgwB8fz2vBeMdP3uBj
-         Fk73zDZgqpLyMkSGElIHZIjD2Z3ZdFGlg3Eqq3r9vYj1145aU5HvMDTxtIEAGfPBVuiY
-         poTw==
+	s=arc-20240116; t=1746197110; c=relaxed/simple;
+	bh=gIgjvlu9Lh4W9hA+25IQzvCi050+ERk+c0blFLwFmgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L80DvadDHEeud2KbWbt/7pqCYUfpA3C/kM+GsQTc2SkmerRzbmXr4/wkAowv0C/h+p3j2+NLdiEVvciZ6OuuMDnEycP4UJk9QsvxSZH68pfX1VNkARh6f1JxtG7oC3KCjyFjtaOazYj8v6C0jKi9PKIDyD+yJdRYLxh7U/wLTLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K9Hva6v3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 542Dx2Qi016417
+	for <linux-kernel@vger.kernel.org>; Fri, 2 May 2025 14:45:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=GKFBa6/zgrJ4k2F40/J4HmeH
+	gWpS8VMAWbzSckv2X6M=; b=K9Hva6v3NyHFI7Yaru/1727jojyJSiREBT3xLhVg
+	S/zkcXVacbQeJtlZgnCr9nj5cTx6G4m613rnV2WFyDDremtRxd/YdvQuCrNSy2Q5
+	mAb6lCJUmjzDzXDjy1fDB55xpqyhIz1Qdd2Jgk2sBd9wOwZ6N4Z4hJpWOG+diKNf
+	/MnaSnHlLniVGNxUXhXRjrv1O/qVhFY0U7pV4qkzggOlKv8zJxvg+IeqNZ4YW+Qg
+	x13Cl/XF+hfInKPc6qlC/Ol+xk3RVM7VIuRlnCvQ2pw9XGyLly9cDRPUU4NnHaoB
+	4E7uWMmqtiQj2Y6TzhRvs4sayQ8t71TKbMelQM93YqxKDg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6uagh65-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 14:45:07 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5c77aff55so470757485a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 07:45:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746197096; x=1746801896;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y1D5cABUWl03Gb3dEb9Zn/xPv0rDHSpYAcBsKyT8bso=;
-        b=QHZNepZAJouvtRJuYcdjoGFjgKV96dOE44MWcpsEzrPcVkZ66er1aaSOx4Cs5sMR1l
-         /Uyha7UXYcw5l6N9ztSOyU0HBBSpfonXlM6zWIl8DWTKoT3p58NLWNltFeXmWbDlUbVS
-         sJM0jTerwY4+xQy6N4hkGDvuxkJ/OdO5VuCzWEvhn3Vi33QsAEtgXXKiTPcm0HOH/6DG
-         YZYCz2ws8nLKNYRa6YMuv+aERxQeM/pmjt6kqfHNTk3l5a3ZijSw3y7Qqas7xHqgRDEk
-         sQs0xWA+3ODJlU7pWNlIld76GPqFmqZNmFLUFV1Wx0UbCyZBiCQ1uu9M2aD82KX5pmoT
-         OQUw==
-X-Gm-Message-State: AOJu0YxG1Fvao1GplUhCh1mPzaJcJSF8592alBR4sj5QLg+PXT44MvA2
-	QgM1Whmm5looyWmHLiGymj2nBMkLGfhlgoGBvhU5BGmFhSp1XBQt
-X-Gm-Gg: ASbGnctcceLDooPbbU1OsDcowKBiSJz6hW9p56xGyKTDD3e0ZPP2dIB0OlRWW1kbh1m
-	dYqB4OsZR02tPfnm+M8Gceb7O/McjnqxtM118ChTsBwJHq6xitx7mLZXrE7dn6KPujJxhrM9ED6
-	AcXIzB6kz+Of7uuBxkPpl/HxPm1guj+S72T0oDN5YaPVLC02Us1NkzrvppuIO5Fsv4777LQ80vY
-	sLSjgTvR43I7Ch2k5VtV1L8hcrZB5a0eHwypTqJiXwYpY+XDv2vull5xijel3De6abUKb9QYesi
-	zPBOoK7b1YoeY/10AFrrs0ukaIjKJfhlMGLTSchDFFY2kycvamX9n/ilIuhFI48PGWX1GvO5qvQ
-	U4RDmz2VJpXwokAMEImV6tDU/1gBpvH0=
-X-Google-Smtp-Source: AGHT+IHRPivqnggcPnth+cCtUlU5ktQEZ68fxYNwiRGEvvMI6JWX9VzuD4MXwQqFgO70AGZX+P3yaQ==
-X-Received: by 2002:a05:620a:1a9e:b0:7c7:bb3f:fd40 with SMTP id af79cd13be357-7cad5b2383emr418969385a.5.1746197095964;
-        Fri, 02 May 2025 07:44:55 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cad23d0d0fsm189599885a.50.2025.05.02.07.44.55
+        d=1e100.net; s=20230601; t=1746197106; x=1746801906;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GKFBa6/zgrJ4k2F40/J4HmeHgWpS8VMAWbzSckv2X6M=;
+        b=WO9NaIPWURUM33B4W6yg0ZsBhNrpvSmWJlsE0CBaeV977Qx9jPWG2XRhi0e/3dkYB8
+         IAPKq4eRLmXebHt+O1kSogfa0v0A0UVWeHgiJwzvaqUknq5Yb/BHnlQ9WkLUqyDfQ5ov
+         2YSbLwOyuFAUn/pMNLV1AXY+taSCrQtY/GtyC4a+l09HAsYw+byTZIhdWu7BkBGZbwD1
+         t1GZeZnX0j1LBtlBQpaVq7o6n8XZSpQzDenWZsXzzZ5a/30QDbru5Cqo82fmfq/ZxJaZ
+         4p8jQkS3wTMyEofPSfyN1v3raSfaM3smMBK55mcNzMK5ie0RpSgkRGlkHsv9sjvq15FO
+         TsEw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/h57fMEzjClrlcpm0w6mvcVABxskVjNNB32xkFUseVsNViKzoZfJOOkO2yiuzbzPncxZznwCOZrYfzb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmP67VlWSyf27aXbpR2Zg+Axexy32tn5e3+Z6AH+5p2GdzGxsu
+	JXk37q7oFNBjS7bbMhtIoMHO+uIHFnV41s3vo5RjHltNTVSQWgmJ6yXss6BcoLVazR1x1a2VKmV
+	ju422qaSXMQp8X6MmO2yIRH6IcvkbupllJ8PA8U35AULJ+bGEt1n7qVmzVXo0S80=
+X-Gm-Gg: ASbGncs3wUhn+u0h8V1yvG/fSjNXdTBv7SHkZge2VIOARl0EpCU8x31FTydjmqAE+OI
+	KfU9YAC/9VOIIVHcF8JN/vwDplqy+MK0c8I14zBFHK1Sh6OloFUQEUBdBLJWMvXdJKm4yzY4ekj
+	rLTH8DhUT6NGInZGbWJAvYHx+n5Dmf3hLIGZdoXxZo8IokLJ23q+x6/6kGPQ6EeIBIuJN/FQxWI
+	oIMn/gvRM9JrspU4TRH5U1wfP8Cp0Fb+phA0cg/iGST/vfCLuVolxtIITEqu/tyR8k2rPOVC2It
+	aJ+kZ70UaXHXWSjbEvsTHwaGo0nVvkJk5Zi2XByHKTBpK/0UXoPAL+PHHejmS136gkKbgwFSxGk
+	=
+X-Received: by 2002:a05:620a:248a:b0:7c5:544e:2ccf with SMTP id af79cd13be357-7cad5ba79femr368388985a.57.1746197106162;
+        Fri, 02 May 2025 07:45:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnTvg9+ZU86kpvNrwYxGXjpp9+8gfF9cru46QLku/mHRjHUI/CT9RbX1jXkEXwADoj3azjNA==
+X-Received: by 2002:a05:620a:248a:b0:7c5:544e:2ccf with SMTP id af79cd13be357-7cad5ba79femr368384285a.57.1746197105730;
+        Fri, 02 May 2025 07:45:05 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32029306984sm3560131fa.58.2025.05.02.07.45.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 07:44:55 -0700 (PDT)
-Message-ID: <6814da67.050a0220.2f3283.cdc1@mx.google.com>
-X-Google-Original-Message-ID: <aBTaZbjRBhRl7mDS@winterfell.>
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 0EDF21200043;
-	Fri,  2 May 2025 10:44:55 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Fri, 02 May 2025 10:44:55 -0400
-X-ME-Sender: <xms:ZtoUaHvANPzb0oMXyUaUUbvZer1Qt2-dLwySerQz7pmaYVQKqdy9pQ>
-    <xme:ZtoUaIeSvirOVsOwHJBs7DuaKe5rsRVY3U4oZC_m5ad1Ng--Wv30Fd1hZdzbz_3qV
-    oJDIY7uHahqT7ayTg>
-X-ME-Received: <xmr:ZtoUaKwFnohi7sgoHTCIucE4KPLorIxgmI8iH_LCfO_zQ4eK-On72pDn5iQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedvjedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedv
-    teehuddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtgho
-    mhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehllhhvmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphht
-    thhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhngh
-    hosehrvgguhhgrthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepnh
-    grthhhrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihgtkhdruggvshgruhhl
-    nhhivghrshdolhhkmhhlsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:ZtoUaGNe1Mu8wfVu8CTHH9LCHKLyYxsXz9SOJ--aWi_9AyGtYZE_jw>
-    <xmx:ZtoUaH_mwK8azKp1HllcyJC66m8qPsryEX2dja-9RL-71VRnMwU3dQ>
-    <xmx:ZtoUaGXaMkRsonYzmvw8dMOu5aksFuwaqDvT_yRsy7fjff1-yE0x-g>
-    <xmx:ZtoUaIdMlxeymlj3_FZFsirwcAxVKnXIqvP1dFwzi8h4SuivDFozuw>
-    <xmx:Z9oUaFesUaE_dn_vLVrg6F7MIorzBO9-4lWvzZ3QYq1oCOoJmM4hR6XI>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 2 May 2025 10:44:54 -0400 (EDT)
-Date: Fri, 2 May 2025 07:44:53 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] lockdep: Move hlock_equal() to the respective
- ifdeffery
-References: <20250415085857.495543-1-andriy.shevchenko@linux.intel.com>
- <aBTP9AaJ0uyzAjxG@smile.fi.intel.com>
+        Fri, 02 May 2025 07:45:04 -0700 (PDT)
+Date: Fri, 2 May 2025 17:45:03 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: george.moussalem@outlook.com
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
+        Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] arm64: dts: qcom: Update IPQ5018 xo_board_clk to use
+ fixed factor clock
+Message-ID: <frlw5n2fxu5wxrlaahiuwlgaeg4rsqk7ushpcgvc2q4mzorrzf@e4axknhir4el>
+References: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
+ <20250502-ipq5018-cmn-pll-v1-6-27902c1c4071@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -132,42 +103,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aBTP9AaJ0uyzAjxG@smile.fi.intel.com>
+In-Reply-To: <20250502-ipq5018-cmn-pll-v1-6-27902c1c4071@outlook.com>
+X-Authority-Analysis: v=2.4 cv=BNizrEQG c=1 sm=1 tr=0 ts=6814da73 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=UqCG9HQmAAAA:8 a=dROWWaiHUd5sXOo7F1MA:9 a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDExNyBTYWx0ZWRfX3uCn+1NuWh8c kaLHZ1Wu1uQ0ESbcYYUtwMRThpz216BdKO9L/5k8iajEhhYJ3DqnMzfRhMhoDOkotcs2Lmu7bcY uVQQF6v5O7uMEucNZDbnwxbVk+3Lf9ITahdypIod1/zxpxeoKBq0rPB5rwsyF7CojmJmx+VKyUA
+ 8FjZFwuOvjQ7Aoedb6ix2CoOTX7IKb/yrtt0NR6wQkAmpQz1sLVo/Ch400D5DCs3vsIatRYIfiT 0uj3+xWLFz5IVo6rQGPqxrCsXY5bPtGqFDSgAu4L3S5NyljpbX3uK8mb4Sfj+X/yv2uSwHB0aBM rXLzRI9yq7d1b4ghjxI35Y48ycQH1ApzGaZM+ictspHH8V0hMAyjPdTT8V4hb1ji9+EhUG1v/W2
+ hJEXdAgISRCxOoH9h1oC5fX8vfy6WMJzNuXy/vKiaAwIj4zKlkGeb3HnY832r6R4uN3IA68U
+X-Proofpoint-GUID: WorlguyiETNAAlOtqUR9yG_vTomrAHCl
+X-Proofpoint-ORIG-GUID: WorlguyiETNAAlOtqUR9yG_vTomrAHCl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-02_02,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0 adultscore=0
+ phishscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=936 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505020117
 
-Hi Andy,
-
-On Fri, May 02, 2025 at 05:00:20PM +0300, Andy Shevchenko wrote:
-> On Tue, Apr 15, 2025 at 11:58:56AM +0300, Andy Shevchenko wrote:
-> > When hlock_equal() is unused, it prevents kernel builds with clang,
-> > `make W=1` and CONFIG_WERROR=y, CONFIG_LOCKDEP=y and
-> > CONFIG_LOCKDEP_SMALL=n:
-> > 
-> >   lockdep.c:2005:20: error: unused function 'hlock_equal' [-Werror,-Wunused-function]
-> > 
-> > Fix this by moving the function to the respective existing ifdeffery
-> > for its the only user.
-> > 
-> > See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> > inline functions for W=1 build").
+On Fri, May 02, 2025 at 02:15:48PM +0400, George Moussalem via B4 Relay wrote:
+> From: George Moussalem <george.moussalem@outlook.com>
 > 
-> Any news here, please? The problem still exists in v6.15-rc4.
+> The xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output
+> clock 96 MHZ (also being the reference clock of CMN PLL) divided by 4
+> to the analog block routing channel.
 > 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts             | 3 ++-
+>  arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts | 3 ++-
+>  arch/arm64/boot/dts/qcom/ipq5018.dtsi                      | 3 ++-
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+> index 8460b538eb6a3e2d6b971bd9637309809e0c0f0c..abb629678c023a2eb387ebf229f6dd1c30133b19 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+> @@ -80,5 +80,6 @@ &usbphy0 {
+>  };
+>  
+>  &xo_board_clk {
+> -	clock-frequency = <24000000>;
+> +	clock-div = <4>;
+> +	clock-mult = <1>;
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts b/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
+> index 5bb021cb29cd39cb95035bfac1bdbc976439838b..7a25af57749c8e8c9a6a185437886b04b0d99e8e 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
+> @@ -124,5 +124,6 @@ uart_pins: uart-pins-state {
+>  };
+>  
+>  &xo_board_clk {
+> -	clock-frequency = <24000000>;
+> +	clock-div = <4>;
+> +	clock-mult = <1>;
+>  };
 
-This is in my radar, so it will be in a PR to tip soon. I didn't reply
-earlier because I meant to find a whole cleanup for ifdefferies in
-lockdep:
+Is the divider a part of the SoC? If so, please move these values to the SoC dtsi file.
 
-	https://lore.kernel.org/lkml/Z46BJ8FhWCIXbM7p@boqun-archlinux/
-
-to avoid whack-a-mole fixes. I never found time so I have to postpone
-that. Thanks!
-
-Regards,
-Boqun
-
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> index 78368600ba44825b38f737a6d7837a80dc32efb6..7e40f80e4795de25d55b5a19c1beb98e5abcdef3 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> @@ -31,7 +31,8 @@ sleep_clk: sleep-clk {
+>  		};
+>  
+>  		xo_board_clk: xo-board-clk {
+> -			compatible = "fixed-clock";
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&ref_96mhz_clk>;
+>  			#clock-cells = <0>;
+>  		};
+>  
+> 
 > -- 
-> With Best Regards,
-> Andy Shevchenko
+> 2.49.0
 > 
 > 
+
+-- 
+With best wishes
+Dmitry
 
