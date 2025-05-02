@@ -1,95 +1,154 @@
-Return-Path: <linux-kernel+bounces-629873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25E0AA72AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9447AA72A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C86E4A80CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E733A3BE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61171253938;
-	Fri,  2 May 2025 12:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A62253949;
+	Fri,  2 May 2025 12:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tt/dLVX7"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Kbv7RLxB"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5AF24677A;
-	Fri,  2 May 2025 12:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B6F23C516
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 12:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746190613; cv=none; b=ihj9e+OqOT8CK6zwozkjQSjzUqYJTMDe+3KK89WOzunU5JxRnubSw0cvwpqy3b0CFeEkZ0lAL6unjVEu3Sgt0QEWz6p5aoo0i4jqrJesFYcdD+JqsGhG/BeVRRgBv/cGPCiGaDoCoEqy6xNOYi58p8VF17H9j03Vx0ZuKCPhTfc=
+	t=1746190558; cv=none; b=bf3J7k+3KjTHrzi1x4holkAsT1pb4sAMORr8ml3IlmxXDdJUCGVm4oCuQzUnD/mBp7lLBkJGRdiQuRisiQKQQn878R01lPYCb+vseLA7RoVv0dNV3h9c5HiutbwLHklgAKpuV5c8NDe8HUayvOFOlLgRsFVevhcGHLaqMuJyAB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746190613; c=relaxed/simple;
-	bh=gEmQusnT88xq5t6pURHpX9DpFHyqeO2nqVJlJmsxM28=;
+	s=arc-20240116; t=1746190558; c=relaxed/simple;
+	bh=k7m5wfThSJzAnnocD4T0hTHkgEoH66cKQUimB1PY/ww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DRxMLSZJq7dZbx1yrfssNGRFZb5nSZWfAR7yz3Y0hAZ/LMXMDeW9BybWyJnTfqsGRbSjvJBBB0ca/Mg6mVGMsBaRT+Z5Zh2eRxcF4dTqPvEwCbJopk33r/SBwsWYnu78WQ+xbv0qPzN06nPhpUPa7ThRGLw6V4makAo4LHp5d70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Tt/dLVX7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cmqee1HYHBv88eJpBlZDO4RoVAoln7l0mi+JPbL0Qgo=; b=Tt/dLVX7QOmwJNcyglKshiLn6b
-	6kbZw0HeV8vnD5itDjIq4XhGOQ1MBB2Xe7QogjpuRx5z4IdbZgdszhjuIw5jgwXE7Q+B8uMFXBBVM
-	D15gF3xz+gU8To2WRi1NQJ15T9OfR29DU01PyYsNNQq6T3ksTwJqm7HSvL9kNL3til/KFFv5+J9TL
-	82nK+9yPCVOgDudogsCogwxX5lJSFH2ttX4Yts3/amuIewFa+y5/o52zRIvcV/NUBW7bAEn13FCiM
-	cFG9EGfa/91CmCibYKK+/JQQYpX7IeOtErjgZqVVE3J5Bch8oNOsGD9K0DvinJPIhWieAkMP994Ia
-	C6DtZ+8w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uApvf-00000000GSE-1jCB;
-	Fri, 02 May 2025 12:55:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3F43B30057C; Fri,  2 May 2025 14:55:33 +0200 (CEST)
-Date: Fri, 2 May 2025 14:55:33 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "da.gomez@samsung.com" <da.gomez@samsung.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"hch@infradead.org" <hch@infradead.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-modules@vger.kernel.org" <linux-modules@vger.kernel.org>,
-	"masahiroy@kernel.org" <masahiroy@kernel.org>,
-	"mcgrof@kernel.org" <mcgrof@kernel.org>,
-	"nathan@kernel.org" <nathan@kernel.org>,
-	"nicolas@fjasle.eu" <nicolas@fjasle.eu>,
-	"petr.pavlu@suse.com" <petr.pavlu@suse.com>,
-	"samitolvanen@google.com" <samitolvanen@google.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH -v2 0/7] module: Strict per-modname namespaces
-Message-ID: <20250502125533.GA4198@noisy.programming.kicks-ass.net>
-References: <20241202145946.108093528@infradead.org>
- <20250502115553.27803-1-roypat@amazon.co.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJNVexEcpgZU7HEQRQ+5VB+ycmZsjSPebXHKEqGm7ZTI++orhabcDu45SI7+5uewFlwm8ZsnIlPe+GclBAeNJ8/b8XI15OXLXjT+yLPXpFGNXHfOS9l0xzgrTqOTY605OXYwYQ3nR+ROBYkWh3Jr5OyKevc+EJt5L57FDmV5e54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Kbv7RLxB; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2963dc379so300535066b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 05:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1746190554; x=1746795354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vTtxRFIdDHANvRLEITN1xhjB2nGwxMHbp+zrOw808ds=;
+        b=Kbv7RLxBzhu0uZOphH5ecNmcPLf5QVjhthJBy8j8S71AL6CmCA69/WzkW0pta7ryfY
+         F8aKgFd2fnhl/RvbQl126PnB6YagI1naW3ncPa/b+qBQqrNcawarUxjqTn+kOxATBmjY
+         xE1a6q4w28BTzqCO90zmxt9i8kZYQW/a2tYbuLBz54DXA67cKglFHrmoNXc6cfNNMi8d
+         EZZWhKpAzSCm9YGrZeoXYUF8F8iNQkW3YjkF80k5262vnLt8zJ8XsOhhYr+lrocR0Huy
+         HSUa3GUHeHFAGey6loPAYAZrmct45key+vSNNolaP2bKoXTD2jmiEFVNFY1TtJjitSZ9
+         S90Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746190554; x=1746795354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vTtxRFIdDHANvRLEITN1xhjB2nGwxMHbp+zrOw808ds=;
+        b=gspnGNsN2fIB3YYwKeS322sp7tScDbtvQ0SUNtp/5T/XYuPZ4lTKFc/62ywkGrBUdy
+         4XOcMdkUSjvkMKTJ/0Y1qOWNkSObbsKwKBhqKxy+IkdcEZQ4aGkEKlF0NSa803G5ooT+
+         pLYkW6r3fLR6gj2cePEEmKWhsLF7lW1lgoeHfK7bKxHDwOEiQMz53yqH1aQ7ddY1mxWA
+         aa6FKlV7sV7HOJMQR+Ph9DobvRB6eNaMyOI7cUXewUXF2z7s7OMmWUQCeYdjCN4V+9Lt
+         gm+ptrJUrBEO2PsG7MRKx6jLWy2lp4Pc2j/MLLAbd4A0XL0BudfBpyW6G2RIMYJL133z
+         OWKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnGMeB30zCLQJsrzA40GfqCbwnn6o24sdIWCVH60hYXdhgLilmuV4wA8lai/D+fJm6XoyHw6W8+KX8cmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzkd0c8EZvjYRw3FkNEKjkYLpji0xs4hVla9kCdTNPXZvAN6vg
+	yTSGsRnLC9JOWp8HJcH8ZZHQJ8HNfW7vKliE6nVoqrfrI8aQYh3TGQoa+oP1q7WtayJf4Wh7iWM
+	e
+X-Gm-Gg: ASbGncvajdqK6s1tUyLParRWl8cQuhikubTc5br+uUCptKdkUi2MlERcVyK59C2Nwni
+	X8ar5m6GLaYXWKCiun1BvSBbqH6/kjtDCCWAy+fQ2j+IRqMpIelqbLiYGJi5GAmAkSECraTuGFj
+	yJSJ2TSLpM4L8qpyj3oTwPATw4E2cG0d6IVHc2U/LVAAluGZU6SJ4RfmmC+jhixtRTS+MgMSxpr
+	ikmH8pI/lOzn+GKD5gy+WNGLNtYEU/bU4B0FgevoRW1rV2Lqp6SV98jH1BW7RoPK6ak1gBjX3WC
+	8DGnOvQ+wZuIfMZ80irEkBDeQbx3/rsixlSK4IeOipo=
+X-Google-Smtp-Source: AGHT+IECspaJdwgNmehtHNmLcWXQRGlb35Xt5cxYK3SWshB5tpDmTMfOT2XlBnI+I/l7AOfra9OxPA==
+X-Received: by 2002:a17:907:3f8f:b0:ace:8398:b772 with SMTP id a640c23a62f3a-ad17ad7d68amr249115666b.14.1746190554024;
+        Fri, 02 May 2025 05:55:54 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a68a6sm46841166b.71.2025.05.02.05.55.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 05:55:53 -0700 (PDT)
+Date: Fri, 2 May 2025 14:55:51 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel/cgroup/pids: add "pids.forks" counter
+Message-ID: <bbublxzpnqrzjq5rmmbp772w2darjoahlewqky7caanaknglbx@6wuy5nidsnu3>
+References: <20250502121930.4008251-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zswwkexc5vsnudsv"
 Content-Disposition: inline
-In-Reply-To: <20250502115553.27803-1-roypat@amazon.co.uk>
+In-Reply-To: <20250502121930.4008251-1-max.kellermann@ionos.com>
 
-On Fri, May 02, 2025 at 11:55:54AM +0000, Roy, Patrick wrote:
-> Hi Peter,
-> 
-> Are you still working on this patch series? I'm working on having KVM remove
-> virtual machine memory from the kernel's direct map, to harden again
-> speculative execution attacks [1]. At David H.'s LSF/MM/BPF task on
-> guest_memfd, it was suggested to use per-modname namespaces to export
-> set_direct_map_valid() specifically for use in KVM to achieve this.
-> 
-> Is there anything I can do to help get this across the finish line
-> (testing/etc.)?
 
-Hmm, I had more or less forgotten about this.
+--zswwkexc5vsnudsv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH] kernel/cgroup/pids: add "pids.forks" counter
+MIME-Version: 1.0
 
-Let me rebase and address the comments.
+Hello Max.
+
+On Fri, May 02, 2025 at 02:19:30PM +0200, Max Kellermann <max.kellermann@ionos.com> wrote:
+> Counts the number of fork()/clone() calls, similar to the "processes"
+> row in /proc/stat, but per cgroup.
+
+> This helps with analyzing who was responsible for peaks in the global
+> "processes" counter.
+
+bpftrace <<EOD
+kprobe:copy_process
+{
+        @forks[cgroup] = count();
+}
+END {
+        for ($kv : @forks) {
+                printf("%s\t%d\n", cgroup_path($kv.0), (int64)$kv.1);
+        }
+        clear(@forks);
+}
+EOD
+
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+...
+> +  pids.forks
+> +	A read-only single value file which exists on non-root cgroups.
+> +
+> +	The number of fork()/clone() calls (whether successful or not).
+> +
+
+It would conceptually fit better as a pids.stat:forks (but there's no
+pids.stat unlike other controllers')
+
+But I don't know this new field justifies introductions of a cgroup
+attribute and (yet) another atomic operation on the forking path.
+
+Does the value have long-term or broad use?
+
+
+Thanks,
+Michal
+
+--zswwkexc5vsnudsv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCaBTAuwAKCRAt3Wney77B
+SRsQAQDXLaN1zLsyLBL2ikS2bGJHSeMHpyGNSE7RN9r0mxXn2gD+IJW8JRCQxMZw
+c09gMoHZi+qhX9QC5reIDjNkOpV9pQg=
+=PBfx
+-----END PGP SIGNATURE-----
+
+--zswwkexc5vsnudsv--
 
