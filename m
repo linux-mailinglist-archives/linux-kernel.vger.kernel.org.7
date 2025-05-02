@@ -1,89 +1,174 @@
-Return-Path: <linux-kernel+bounces-630181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F5BAA7673
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:51:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C15AA766F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 17:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501523B3BAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:50:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055FF16DF89
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34620258CE4;
-	Fri,  2 May 2025 15:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE6A258CE1;
+	Fri,  2 May 2025 15:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JsZFhV8j"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttOezoYp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D6426AD9;
-	Fri,  2 May 2025 15:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFD52571DF;
+	Fri,  2 May 2025 15:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746201051; cv=none; b=E6xAKAf5ZMy105htFHoOUpOihBxWr/RrtR6BFBAeCivDpQ0jtK6lw5q2C2oXEHMnJzoYfRwpqmSDBdacdZsL639aAbcDdGPMmbLqix6I0JD6HrfLtFVW+HjAAddi07MAleS4djqjAqKYOwrIZoLw4cVxnHALjJiH42cjkYHk0NM=
+	t=1746200991; cv=none; b=OTeEfGDmJyxjVvKVutY/2k5hiOAZg1a/oLkrGfFKNyK+Ssjz/spvoe78NThUvv6haYdGB+t66Ff+UuQXStz8ZYLxcqznFABsZ6vo7R+o1o0TGTxVnKdn8PWZVFQ06tVDnw0bKCBOV0Sc4damww8R+EUL2SILuROQwDccjDXiY94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746201051; c=relaxed/simple;
-	bh=uHBbvdhVZEuV/ehXAoQOuP+mnHCJrgkdC3/IAZ1c7fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSLv7JUdYht3ipkEpEsy+3AlR2/1dQozoiCY+ICi/McFTpf0m2h3UboFfewdMZ2m4K6TzJo7kG87xSPRYTGuHPljTJeq4HMqMBazz8Yf+qQHlpqlxOjDLkGkCJWE4LkeZjNg+x4c3xH7WcoaluTFgF/eZ1GsVGqOq2Id7AIG9hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JsZFhV8j; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=77t87rE0+Ie/XOv1QrJlACmGkOIthRco+3O3xhyV8iE=; b=JsZFhV8j/YfgQJyEiHmt/UjETm
-	13jmvuyG8AFsMfsbqorL7m3wpda5+otymSvyk+p0Frq6+IOGPJcDaUDvXJBSzmyNi7694XRNBYPR9
-	CtkZC1/TDTabiqNT55T/gWUYsB3wBv+Bmo4J2x86zgfHeMZSaxJO6XtS8Rd/3d+34+aK2Uv6wb3q1
-	piSXZx5MX3E3KXZ/0ewXMLSUPoLtdcNZuClTItm0j4oDStiJ3q20JRKRfn3trVSGKtxfpJd/CGio7
-	xJdJ9eghN1MVeI+PK1ep19Ka2tC16w5c7oKCy7B8zRCAsONjxe3AdadzOARCykn9eCKL5qvpt0p6y
-	um0hb+7Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAsdk-000000051JO-39jB;
-	Fri, 02 May 2025 15:49:28 +0000
-Date: Fri, 2 May 2025 16:49:28 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-arm-kernel@lists.infradead.org,
-	Olivier Masse <olivier.masse@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Subject: Re: [PATCH v8 09/14] cma: export cma_alloc() and cma_release()
-Message-ID: <aBTpiMIevmAmp5vr@casper.infradead.org>
-References: <20250502100049.1746335-1-jens.wiklander@linaro.org>
- <20250502100049.1746335-10-jens.wiklander@linaro.org>
+	s=arc-20240116; t=1746200991; c=relaxed/simple;
+	bh=nugAQl8X0Xn9dvegWvqV8CZq9+e3Xlp7ZHKgXTkmWsU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FM0Cjp/x/N3Qdlao9PVQYlfcGHC45PFmGHsaYvqtB0gIaNzlwjqoqH7cq2HDc6Vf9aPD5/XvK8qKfgPhJ3AJUkN/2pxh5NU1PrsHP1BQ9dtccv5bgKbZmmJ/WGLxfAgdgLFku5kdfNGdF5HqVQ43PbbOlvMD3L5HmoMSDLiDw7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttOezoYp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D26B6C4CEE4;
+	Fri,  2 May 2025 15:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746200991;
+	bh=nugAQl8X0Xn9dvegWvqV8CZq9+e3Xlp7ZHKgXTkmWsU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ttOezoYpok+M3jGb5KMaW4nGBcY6w9V1odxe2yjfyWX6lGSJqh6PHecDmhccDj8da
+	 mBu3w4TK+Idjia3I7rTiffLbPqHbw0NfrxIzxF6wYGVVOUGAPrJ18ZPknNF8nMBEN1
+	 PEtCAESVT+27kXrGzK8f564beQlx22GSODwQqcln1Bs7AVYpakQUwGzUrGTmRwdq0P
+	 UAeoAmOeVzH3q2U3CTVRK3g4NWYz0W1CDqBWO+VKiI0OxlBtq/ycQzHqZ16ab4ral/
+	 n+h8msiCMn71MjdzwUf4c3Dnu/7nF+LrTIgWUa+qE3xG1dDZS80BQoPQB1T7Q3Qk58
+	 oyO2IawvzQIKA==
+From: SeongJae Park <sj@kernel.org>
+To: Yunjeong Mun <yunjeong.mun@sk.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kernel_team@skhynix.com
+Subject: Re: [PATCH 0/7] mm/damon: auto-tune DAMOS for NUMA setups including tiered memory
+Date: Fri,  2 May 2025 08:49:49 -0700
+Message-Id: <20250502154949.50992-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250502073854.1689-1-yunjeong.mun@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250502100049.1746335-10-jens.wiklander@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 02, 2025 at 11:59:23AM +0200, Jens Wiklander wrote:
-> Export the two functions cma_alloc() and cma_release().
+Hi Yunjeong,
 
-Why?  This is clearly part of a larger series, but you've given those of
-us who are subscribed to linux-mm absolutely no information about why
-you want to do this.
+On Fri,  2 May 2025 16:38:48 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
+
+> Hi SeongJae, thanks for your helpful auto-tuning patchset, which optimizes 
+> the ease of used of DAMON on tiered memory systems. I have tested demotion
+> mechanism with a microbenchmark and would like to share the result.
+
+Thank you for sharing your test result!
+
+[...]
+> Hardware. 
+> - Node 0: 512GB DRAM
+> - Node 1: 0GB (memoryless)
+> - Node 2: 96GB CXL memory
+> 
+> Kernel
+> - RFC patchset on top of v6.14-rc7 
+> https://lore.kernel.org/damon/20250320053937.57734-1-sj@kernel.org/
+> 
+> Workload
+> - Microbenchmark creates hot and cold regions based on the specified parameters.
+>   $ ./hot_cold 1g 100g
+> It repetitively performs memset on a 1GB hot region, but only performs memset
+> once on a 100GB cold region. 
+> 
+> DAMON setup
+> - My intention is to demote most of all regions of cold memory from node 0 to 
+> node 2. So, damo start with below yaml configuration:
+> ...
+> # damo v2.7.2 from https://git.kernel.org/pub/scm/linux/kernel/git/sj/damo.git/
+>    schemes:
+>    - action: migrate_cold
+>       target_nid: 2
+> ...
+>       apply_interval_us: 0
+>       quotas:
+>         time_ms: 0 s
+>         sz_bytes: 0 GiB
+>         reset_interval_ms: 6 s
+>         goals:
+>         - metric: node_mem_free_bp 
+>           target_value: 99%
+>           nid: 0
+>           current_value: 1
+>         effective_sz_bytes: 0 B
+> ...
+
+Sharing DAMON parameters you used can be helpful, thank you!  Can you further
+share full parameters?  I'm especially interested in how the parameters for
+monitoring targets and migrate_cold scheme's target access pattern, and if
+there are other DAMON contexts or DAMOS schemes running together.
+
+> 
+> Results
+> I've run the hot_cold benchmark for approximately 2 days, and have monitored 
+> the memory usage of each node as follows:
+> 
+> $ numastat -c -p hot_cold
+> Per-node process memory usage (in MBs)
+> PID              Node 0 Node 1 Node 2 Node 3  Total
+> ---------------  ------ ------ ------ ------ ------
+> 2689746 (watch)       2      0      0      1      3
+> 2690067 (hot_col 100122      0   3303      0 103426
+> 3770656 (watch)       0      0      0      1      1
+> 3770657 (sh)          2      0      0      0      2
+> ---------------  ------ ------ ------ ------ ------
+> Total            100127      0   3303      1 103432
+> 
+> I expected that most of cold data from node 0 would be demoted to node 2, but it isn't.
+> In this situation, DAMON's variables are displayed as follows:
+> 
+> [2067202.863431] totalram 131938449 free 84504526 used 47433923 numerator 84504526
+> [2067202.863446] goal->current_value: 6404
+> [2067202.863452] score: 6468
+> [2067202.863455] quota->esz: 1844674407370955
+> 
+> `score` 6468 means the goal hasn't been achieved yet, and the `quota->esz`, 
+> which specifies the aggressiveness of the  demotion action, has reached 
+> ULONG_MAX. However, the demotion has not occured.
+
+Yes, as you intrpret, seems the auto-tuning is working as designed, but
+migration is not successfully happened.  I'm curious if migration is tried but
+failed.  DAMOS stats[1] may let us know that.  Can you check and share those?
+
+> 
+> [..snip..]
+> 
+> I think there may be some errors or misunderstanding in my experiment.
+> I would be grateful for any insights or feedback you might have regarding these
+> results.
+
+I don't have clear idea at the moment, sorry.  It would be helpful if you could
+share things I asked above.
+
+Also, it seems you suspect the auto-tuning as one of root causes.  I'm curious
+if you tried some different tests (e.g., same one without auto-tuning) and it
+gave you some theories.  If so, could you please share those?
+
+[1] https://origin.kernel.org/doc/html/latest/mm/damon/design.html#statistics
+
+
+Thanks,
+SJ
+
+[...]
 
