@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-630287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23643AA77D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:54:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F58AA77CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6948716D751
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E61980EEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF15266B72;
-	Fri,  2 May 2025 16:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD76525CC79;
+	Fri,  2 May 2025 16:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBjKyihP"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tcxL93Dc"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93915264FA5;
-	Fri,  2 May 2025 16:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C201A5BB7
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746204869; cv=none; b=ebxjM+QeTw/ftPg8GZ08rarXTm1KMJFSGYQPHBvG+4i1PGqtONXr0PIRwVcOegbpuuCYLlkW7UfAudJn2cqjsVtgWVpV9ddVeq3oSUNVHBDJ/mdeyoYMh0NwSiQPYIiLC79zAzRK6S24h1sLBkti2Chx/lx+M7enNhzrmdNp7wA=
+	t=1746204760; cv=none; b=ExRmcKi0O/YpFDw+JrlnKs6BydL47h3x1SkSPmzAqqK1UhaExSyXygkRHMy56icEcej+WnCATMuetZj3JDi9UGhFKdtgA2f0OoX2KQcZAcJ2nnwskXjZwp8mtdpPKGThbtKCKvClKPeqyXUICPg0uXaR/ymTdcrAAPjT1Uw63IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746204869; c=relaxed/simple;
-	bh=amLX7FDEwYM1CydOTz1TzXbPOF2Acs7PuTpiYKs/K6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G9PgFh4Oe568lqLX2kREVHnBvT2qydR8sqDb6LIQykPb2/XkVbwIPFDdwhcY8PxF1PIr2e6L+C8W9tfi20aXa4qCuu5jTzRuC2N/cOdcQ8PcO87CHzsgNs0RP+k8oYy1h3EEU/doLeMpKDiDX5p9hZDIYofpl56y6bGYxOzvtL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBjKyihP; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54af20849bbso2596247e87.0;
-        Fri, 02 May 2025 09:54:24 -0700 (PDT)
+	s=arc-20240116; t=1746204760; c=relaxed/simple;
+	bh=flHVlpeehR7TCw0XEm8yjU/UxT+hrKH/vgqJ1V8edzk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d16eLfgiy3yD5xrKBj6epS8XctmTQ5sOBxHJukQbEbLfHks9WfhGBXfaXEE6zBXvNaIXMOMNB/Sn+MKcVjKjdaCRN7nKPy0zDS1gInV4l1DbRQh5s25xQQHS0WQaaz/qywqxWWrjiwWJnKVd5ltRxJq6nnU1LgjhVsPi3VAY5Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tcxL93Dc; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso3329849b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 09:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746204862; x=1746809662; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rhPxxO8YPt82z7DOp+d+tt8ExEv/tDtudEGn21E0idc=;
-        b=aBjKyihPUoic/kZ8U8vQsfSjkvBrYVSbiWIQzHBOoGgPY6cbyHEmWsaPRipdpXeRby
-         dTdKcvG923ZDJT5lXZdnn/uMh+zoWVcOlmDn1Sa7faDWFerxCuww3NKjUegiKJJmLKg4
-         BfrEuuUaj5tS7ImLMb/Ks+1kbzpE/NFT0Qd4rfbmzNayuUV06unLdPrxvmLkW1zZm+Zm
-         su7Cr2zhcc9+qtvHDfPBj1Hc8rDHnZNcwShLOX55cXyutwmV9osUP4ioh1c5U7VGn6gI
-         eooyRQVswHOK+9j1ibLNdiD7NoebWBspUmvGy+qvnyYHD68LvSUwmgvFM8i5jvnvYt39
-         bABg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746204757; x=1746809557; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zwVDzOur7RIZgOEAv6FVzTh6NPuuDPam1fW7Dewd/Po=;
+        b=tcxL93DcEyiiBor9vEoz5e+S1Nb9dV7yIbabQGjxv41EQSMoBuxPMzlCQ2n/Lr0unZ
+         VWf5oejvbN927QA9YSaXldmXY5NBM0iLopNipVlGhzph23DvjbQbAkOT6gziGEQQFJfJ
+         Qwx6/llt/mQEUWIbJW9ln86ho2mSnzHQQ1aLO8dzd25DTj9uvzUkKnSOvsGyFUxBZ4qk
+         ScstrHj3pq4phwpwR+kLollQE3qAxRvNPWr+BbXwdKlD+EphBHsHX8IVkPJ0SpfBmEfQ
+         1dDc5EooL1aG34sjVl3ZfOEs3swtHVFINAvICXylR03yjBBr/4wVZabNsaJ3arFXrXLa
+         Li/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746204862; x=1746809662;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rhPxxO8YPt82z7DOp+d+tt8ExEv/tDtudEGn21E0idc=;
-        b=Tz8uwTMyePrPZ5Phj3TiFWBb9wlSHeCcuRQyMQhJefIHszxPrCh0k1TnopTSHDIn/1
-         NNUKwcVYnrJjVMFnvXef2vI654ZutTMv+GQIBBP1mdLP4QSxBCYbaUXtzIz8dPCFuEks
-         1G+4TueUZj7fc9AkzP8OOpoOWOjQ/svlAMWx0K4dBWeTeHE5Lpak1wzSGcKe1ladXkqo
-         H8bKBW7Qf0sGxnzMO97MqKSQsqoBnx0f3sLCWTRdpRHpJP4+zmYDrqm6wT7j4uDo4/Of
-         vtrSzLREQ74Uafpx1ZkT0BQ2Au+NbvLcLBghvGVj79mK/2Z5WL/z8ymKts/W4QrSudL7
-         P1hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDO39Q8LJERmAZdCTc9zV54ja77l12yCyqi7ju2hs66n0nM6lzvk9DAHmBnrIJclE9QLSR9AVQ@vger.kernel.org, AJvYcCVnzTFXBmrnuo2hKNKNxQFAGvsZWIPx0xJ6CE9eUuBtVUuKMQuna4EyKeFr/5VK+YesE2nrWIUU7h8MBJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuG2KruIUKJu7tlYV2a19aQG35pzcOrxtJQ71OxuBihQzz7+lc
-	4zamMxPNmfVKaEJ6418Eh3Nts1uE6V/YgAmAgijYCTfYzQhJJYH1MT1KEd7ZHIm5Jg==
-X-Gm-Gg: ASbGnct3Yq5eakD5fhZnz/mGPhQaiAT8H1zUBlOdNAaNnjvgtuq9yDGvt4J+Q4pEwdJ
-	sxhl+JqclFjCak0xjhpEdDEyCuDDmGft6WNZicgSYurL/hMZZuah//nykwl9qfaGnIglZqLMgQ3
-	XFDGjeoOs/8NrPBRHd16MEo49uqpLdClTSfAqHHvyifW6KrtreUMRJRYqiX8WJH1uMo6pX/43n8
-	CQmrkPFZfjw5soqNrKLkEnRyW4q22+SY6UesgKpu7LB76/JCUZjKgrJc0NxY9LXFTWmdbr7et9n
-	ugpm21IqhntjOT/6imyzsd9497dpfzx0qKc4IRhyVWM4qys1l8IymhfXqVWL4A==
-X-Google-Smtp-Source: AGHT+IGbvaDTC9NrNKd+YptZd2762bNPwxplnUaVY985tpKbgOAhcZCYedFWxnpKU5vEqKbeSyCHwQ==
-X-Received: by 2002:a05:6512:239a:b0:549:7145:5d24 with SMTP id 2adb3069b0e04-54eac242b4bmr1023552e87.46.1746204862291;
-        Fri, 02 May 2025 09:54:22 -0700 (PDT)
-Received: from localhost.localdomain ([91.193.179.235])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94f6969sm396685e87.248.2025.05.02.09.54.19
+        d=1e100.net; s=20230601; t=1746204757; x=1746809557;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zwVDzOur7RIZgOEAv6FVzTh6NPuuDPam1fW7Dewd/Po=;
+        b=c7siWISsY8/G9zTIR0I5SkGUCQk2yAaEIsqcp1d4vyFMjWzTx7m/Wf/zEopAR3j0wW
+         BCM17XqOzVPvdQURdDtK8Bt4f1iyrA/3ZNisNQlrkeCw+Ru2geL/wiBmV18HT3IQvId2
+         1ZOvF52QAcX6yVOuPT+5IcVWx+nlg6+VwSEakwa9uwFvjzgsmN6a6YkwxY+Prj+qheU8
+         ac6pqb7Wz1hCiOpfSpa9sOH9mBjuHC/+KxGRa1ACBT2arIEur0JfwIWWFMqugoveeeqW
+         QLiMiWt3H5PZlKE1NmmEFy2dUlIZypsoAIKbPFs/RF+pUMo6dBUTdti61BVyp2zQmlZq
+         DbDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Hf08nleRGiR0UJT4Gecsg7iU5Q1ek+3U2MLN4fG/lChIgRY6yEB0pOeTGUva2O5+kCJ0r427XFKb1OQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjQ9BIZuWLQzGg1qv9ko+ofcY8YXg10QSU8QYrVvox3mo8yjhx
+	RMIrqIaM6SB1whgNNEjMKsfKv4nJOkPw4VfawxT3exbDZi5CbXxZs/9pQjB7OrA=
+X-Gm-Gg: ASbGncvKFXiPFU0qmba0wglbwjLBzd+uRhfj86ecq9em6frirdkOFTkinh8Gd6mV+qr
+	9lyKnDXghDmGg9iDYBa5jA2BUdD+OG+vI2w72FbnBazsR4BfrF8HbNN81kxeTFyr4/5MvncVw8j
+	0TZiG65eJsGSID7oGwMkL4R0CwplASZZtN3QO7tDpcm6HpH04p+DZ+MwwcA9qBSEq8E/qbtwEdM
+	C05no+QAfZBtulSEivYlyW9eUgDSGtys7Gqdup4AbReEfnmfU2evSC7S4/Xx6jZGDDp+42HxFzB
+	qAq/shEW5wooMbV73YjFe2PQzz8csih8mhYn77s=
+X-Google-Smtp-Source: AGHT+IHL853QtPBvn6TRtsHQJ/I0TV+kdjSuCmTaYdabOIhgtftYO0dyIOU2uqAMhP2Xe4dVkYjrRw==
+X-Received: by 2002:aa7:9306:0:b0:73e:1e21:b653 with SMTP id d2e1a72fcca58-740672b165dmr5326b3a.5.1746204757544;
+        Fri, 02 May 2025 09:52:37 -0700 (PDT)
+Received: from localhost ([97.126.182.119])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fb3b56007sm1009841a12.17.2025.05.02.09.52.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 09:54:21 -0700 (PDT)
-From: Andrey Kriulin <kitotavrik.s@gmail.com>
-X-Google-Original-From: Andrey Kriulin <kitotavrik.media@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrey Kriulin <kitotavrik.media@gmail.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	NeilBrown <neilb@suse.de>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] fs: minix: Fix handling of corrupted directories
-Date: Fri,  2 May 2025 19:50:57 +0300
-Message-ID: <20250502165059.63012-1-kitotavrik.media@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        Fri, 02 May 2025 09:52:37 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Sukrut Bellary
+ <sbellary@baylibre.com>
+Cc: Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+ Tony Lindgren <tony@atomide.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Nishanth Menon <nm@ti.com>, Aaro Koskinen
+ <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, Roger
+ Quadros <rogerq@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Santosh
+ Shilimkar <ssantosh@kernel.org>, Bajjuri Praneeth <praneeth@ti.com>,
+ Raghavendra Vignesh <vigneshr@ti.com>, Bin Liu <b-liu@ti.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH 0/4] PM: TI: AM335x: PM STANDBY fixes
+In-Reply-To: <CAPDyKFrM7Qn2YtQKY+vCHP32Z_Ly-ECt=SU9EGojFu1ShktUpQ@mail.gmail.com>
+References: <20250318230042.3138542-1-sbellary@baylibre.com>
+ <7h34efy1yb.fsf@baylibre.com>
+ <CAPDyKFrM7Qn2YtQKY+vCHP32Z_Ly-ECt=SU9EGojFu1ShktUpQ@mail.gmail.com>
+Date: Fri, 02 May 2025 09:52:36 -0700
+Message-ID: <7hldrfuf8r.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-If the directory is corrupted and the number of nlinks is less than 2 
-(valid nlinks have at least 2), then when the directory is deleted, the
-minix_rmdir will try to reduce the nlinks(unsigned int) to a negative
-value.
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-Make nlinks validity check for directory in minix_lookup.
+> On Fri, 11 Apr 2025 at 02:30, Kevin Hilman <khilman@baylibre.com> wrote:
+>>
+>> Sukrut Bellary <sbellary@baylibre.com> writes:
+>>
+>> > This patch series fixes the Power management issues on TI's am335x soc.
+>> >
+>> > on AM335x, the wakeup doesn't work in the case of STANDBY.
+>>
+>> This series is specifically targetted at the AM335x EVM (which I don't
+>> have to test), so I'd appreciate getting any test reports for this
+>> before I queue it up.
+>>
+>> For AM335x, I currently only have the ICEv2 and Beaglebone Black,
+>> neithor of which support suspend resume with RTC wake AFAICT.  If they
+>> do, please enlighten me. :)
+>>
+>> I was able to do a basic boot test on the 2 boards I have with this
+>> series applied on top of v6.15-rc1 and basic boot still works, but I was
+>> not able to test the PM path that's being changed here, so any tests on
+>> AM3 platforms that actually use this path are appreciated.
+>>
+>> Kevin
+>
+> Is the pmdomain patch(3) ready to be applied here? Please let me know
+> if you want me to pick it up.
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+Not yet, I have some concerns so I'd like to see more testing on the
+actual hardware, which I don't have (yet, but it's on the way).
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Andrey Kriulin <kitotavrik.media@gmail.com>
----
- fs/minix/namei.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Kevin
 
-diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-index 8938536d8..5717a56fa 100644
---- a/fs/minix/namei.c
-+++ b/fs/minix/namei.c
-@@ -28,8 +28,13 @@ static struct dentry *minix_lookup(struct inode * dir, struct dentry *dentry, un
- 		return ERR_PTR(-ENAMETOOLONG);
- 
- 	ino = minix_inode_by_name(dentry);
--	if (ino)
-+	if (ino) {
- 		inode = minix_iget(dir->i_sb, ino);
-+		if (S_ISDIR(inode->i_mode) && inode->i_nlink < 2) {
-+			iput(inode);
-+			return ERR_PTR(-EIO);
-+		}
-+	}
- 	return d_splice_alias(inode, dentry);
- }
- 
--- 
-2.47.2
 
 
