@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-629954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0A8AA73C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCCEAA73B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 15:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048D5188378E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:31:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FDB7188C7BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 13:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040CD25525E;
-	Fri,  2 May 2025 13:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B242550AE;
+	Fri,  2 May 2025 13:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Oqamq4ql"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WpGIEfGn"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BDB25525C;
-	Fri,  2 May 2025 13:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72788242D98
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 13:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746192678; cv=none; b=iwQd/zyCkdwrWOdAAedVqVGvfypO5dApWOdkSwb9fT8medN68v/XjWjJcH30os5fec13aiTzdsYiaS/HbM9aons2+rKPH520XP3Y2mp7iuZbVAi0Z7olpMpuO7mr7IAq8hF3/Yggx4CaQg2LVN4O/YB+uLUh2+1DhlVhambJLzc=
+	t=1746192640; cv=none; b=o9/VZ2Nb+/u8VldobvdXMPhiKufaWa7Jnp5hHn/rzOl7z5wnDdpRuo52vYPFWXMjsVbephOw2ruLZH2egl+2ZVQPVQfFd0RumDss5xvtfIvSYncwiwtdTs4OjaWWSViJLtMKYoLo81Nem7G8VecgYrhSbbSBrzrOUbKN+gC+8vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746192678; c=relaxed/simple;
-	bh=ceItz0NSonxwZNsg0HKxcB2b92rRQMtHm+5vyEc1fiU=;
+	s=arc-20240116; t=1746192640; c=relaxed/simple;
+	bh=dOnI3ojRPOwkGTlZxJz/bQcxtl8BiIZwiuZeVEQYa98=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSVtxQU9AYIEbKE7p+L0dHMATUOY51/IUAEPtkXGvfIln0umAAIEuq0kSnm3MryubNhtCqP8a2clXucpk6FtdpDAD07OOWi+Do737rwF4KSnC2Fi6OgkxThCPOMtYDTnEpLdLltkU8k3oOpvDlo1lPiMNBmvj2P57GvTFM25zYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Oqamq4ql; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 779D940E01CF;
-	Fri,  2 May 2025 13:31:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bSZneCzSyNAU; Fri,  2 May 2025 13:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1746192658; bh=yUaue560YkltyOlDG0wH62GcwgC5OBuxzVya6sKvsug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oqamq4qlI7br9n5Wd3igLSUN52Oqi154+I/XEpufXyQzY89hKLUPg0BVnjkQXft7l
-	 UZo4Pya0eF+nHC5QI3AEidSN4ivSJbilDTAjd5H9zPx9sXR5KqGM+/9A1AlHCMia1w
-	 8wsiqbkIgZxoZDE5PHOm0YkgotZ+YBQVCw+bqNEzuYuBjW90jWBjZsxzLuO1+7s70n
-	 qQZ0Xc7Kbsu1FD+MMzGBmBpQAwP6iweMZu0nLZ1RM9uV5FOfkPOqseONVHej5WM+db
-	 rw3jIh1HGCJ8UCGbpFjdeIswVFefh6KHfczz3fgWs4iAH/TIadtANJDwlDnPYVKjH0
-	 UlZ/ibOIq+/khKozqesbiuZ6Rj8E54KvYOWfDQoLimYvm3+fg7Tx24F6G/cyJVOG0g
-	 Fjxn53yGtx/yA7X6atX57UuXLrrQbyse39OuUoOtWSCJY1OwFgvbmTzC6l8B3CcKwa
-	 r6RZL5/bLtc5a8M484Hqm88kEoXTtSd/Q3czfvtzM3byaTrfjuCahH/LRxB8nwjcs9
-	 GS+jZAs0TkGRjMa+WtyW1CYLmM+f+L/56wJojZCu/ePjN+lRXy3dYQoeFjyj7WsLWP
-	 NRIfuuh0RQb111hd3SFtfcBMhj82LCQeKKyNBdyvcSyax/pmEJYKYo9+toO8V7ZXOK
-	 pdmGk/nNVdi4Ir5g7G+OLe14=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4775940E0206;
-	Fri,  2 May 2025 13:30:43 +0000 (UTC)
-Date: Fri, 2 May 2025 15:30:32 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ashish Kalra <Ashish.Kalra@amd.com>, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, michael.roth@amd.com, nikunj@amd.com,
-	seanjc@google.com, ardb@kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [PATCH v3] x86/sev: Fix making shared pages private during kdump
-Message-ID: <20250502133032.GAaBTI-AsaIVn4hOS8@fat_crate.local>
-References: <20250430231738.370328-1-Ashish.Kalra@amd.com>
- <633b73ac-8983-fe38-dcdc-0b6a08388f5d@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ki4kGcuf7GzPUjmsT0V7/PIAEiR/NC6yrrjqtqboJ+7C6sxcBNG2xh+CvZUT7xyOxJ0wpqc4BF3zV2egtB4dMA9zXGj9qx1jZQ+xTjxysaJhlJM7yerC8j7i7IcREbU+LnbCG2lN3/MqoFPyvLoY5Ef52aI7dx+Fl73totGih2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WpGIEfGn; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac7bd86f637so575178366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 06:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1746192637; x=1746797437; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oI2ULQh5v/7XJgNEVII7Ar9c5ShGuV2fSObmZKZHKeY=;
+        b=WpGIEfGncZ95NerjXuJ1pkbyqq+hEe0awxXD3bHddeuzu1kl7HFFiOY7Q5BuoatwvT
+         bbA9sFRbgQbNTf0FAcDODEJuqH6u4gkGWJUc+zD3AuSyTMDiAizL5GkB/L19B18IFcLj
+         oZ0yRBpl8VuTSBcalxPn8uBKLWdgvihIsIBgoDUaICo6QX5fd/vy/i6f5LtwslXQJJ85
+         RmunEw5/DKtvx9tNk1n6CPy7n5Z/FZnyNK90nAxNLFSNrVo+NtgrN8zUV/LHbv/kgsDs
+         3NCuX0oRdsBvixBAf2q3QAQhpE26W5StnGVx56yCWIaa0/bKoFSVAQfMTG18Kfs5Qtwj
+         JHFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746192637; x=1746797437;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oI2ULQh5v/7XJgNEVII7Ar9c5ShGuV2fSObmZKZHKeY=;
+        b=L9pTD9Ir37G9qctEFR7OQVqBYrenhOJ87YAcniultIFBWIepHrcpkDYfLPCcAthpTR
+         eJFklSeXmtjs2Fa8Cs6m9Me7z4XN9Q+bzfm1PPfrfsI/jG7iq3DmcH1h0ramfbkJ1KQQ
+         J1afElw/Q3Gyq7feNoaOW9pfU+fQbVIKLUpvhS/tU9Mw1UC6dHTQDUv9pOrz+LahIW8i
+         JGe4j5+sHYKYcvmFlwukuQgufZR1ukW0qf2wVAQmDAiHO0ULRQdcseridSHmIo6nOeON
+         Fftt1VvM8z+ARgRGr2Vf3st9sblujoSlYqBKP2Db5xTk9xYC4tJgMFoci2cXVFUBdbgN
+         5ALA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnfKC0qLjlzdWDeGhNLJrMrkxGZNofpI4/YvWnwB1pNW1XorfNyHQe4LTVon4rWGebYxR+q4ZlQZzqmE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1P0HAJoOsTiO0YnfOQuwImatyCN30xYsEc15TM7sXhAeIT4ca
+	m2PoEkFXz6XpjmWAui5HA3UmEy6rf0CGfXsXoTwQo9hpx92Lyo7uFpCsTtmIv/o=
+X-Gm-Gg: ASbGncv9/16KNhkTtQVXkBrOgNTaUJrF15omPqvxBmSfQibAcqilRE9Fz+iLQQ6B9MO
+	SKo4T5cf50auXWUASwq+M3rljkhUod7SBI0BE8TMQx5OrQV7UHnQ8+mUVXh6LdzC3VwnAyTkfWl
+	72W15h1sAF/Cj6WTZoeH6706xDdYHBYBfLiy9rnz0gnDg5FPeeT5rlyDTG+fQ4AW/HmjKBBHF4X
+	oaQWNS4fgrLjUdZc6Eo6h6TW65oRrJrVeELRucDTyrdBzY9r3BtTpTIFG3MAihMKUucytZhUhWI
+	6ZgIdEKOZcduRcpRqq9M1PgV4hvOo43H4WtuQgjYM1474h3oMf2IBz/tuklnpw==
+X-Google-Smtp-Source: AGHT+IGNjdWSsHUN82hvMxthq8y7vwBmvrJ6nrWhg8zsSPmK5nzcMmRdBKIMbJNC2QRWTDJHY7Fsug==
+X-Received: by 2002:a17:907:c298:b0:ace:8176:9870 with SMTP id a640c23a62f3a-ad17ad88dc8mr244745366b.9.1746192636538;
+        Fri, 02 May 2025 06:30:36 -0700 (PDT)
+Received: from localhost.localdomain ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad189540d5bsm50208966b.176.2025.05.02.06.30.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 06:30:36 -0700 (PDT)
+Date: Fri, 2 May 2025 15:30:34 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Aditya Garg <gargaditya08@live.com>, alyssa@rosenzweig.io
+Cc: admin@kodeit.net, airlied@redhat.com, akpm@linux-foundation.org,
+	andriy.shevchenko@linux.intel.com, apw@canonical.com,
+	asahi@lists.linux.dev, corbet@lwn.net,
+	dri-devel@lists.freedesktop.org, dwaipayanray1@gmail.com,
+	geert@linux-m68k.org, joe@perches.com, kees@kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@rasmusvillemoes.dk, lukas.bulwahn@gmail.com, marcan@marcan.st,
+	mripard@kernel.org, rostedt@goodmis.org, senozhatsky@chromium.org,
+	simona@ffwll.ch, sven@svenpeter.dev, tamird@gmail.com,
+	tzimmermann@suse.de
+Subject: Re: [PATCH v3] checkpatch: remove %p4cn
+Message-ID: <aBTI-v5-_JWDdge2@localhost.localdomain>
+References: <20250428123132.578771-1-pmladek@suse.com>
+ <PN3PR01MB95971954FC5E026C59B6F8EDB8802@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB959760B89BF7E4B43852700CB8832@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <633b73ac-8983-fe38-dcdc-0b6a08388f5d@amd.com>
+In-Reply-To: <PN3PR01MB959760B89BF7E4B43852700CB8832@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 
-On Thu, May 01, 2025 at 08:56:00AM -0500, Tom Lendacky wrote:
-> On 4/30/25 18:17, Ashish Kalra wrote:
-> > From: Ashish Kalra <ashish.kalra@amd.com>
-> > 
-> > When the shared pages are being made private during kdump preparation
-> > there are additional checks to handle shared GHCB pages.
-> > 
-> > These additional checks include handling the case of GHCB page being
-> > contained within a huge page.
-> > 
-> > While handling the case of GHCB page contained within a huge page
-> > any shared page just below the GHCB page gets skipped from being
-> > transitioned back to private during kdump preparation.
+On Wed 2025-04-30 19:19:08, Aditya Garg wrote:
+> %p4cn was recently removed and replaced by %p4chR in vsprintf. So,
+> remove the check for %p4cn from checkpatch.pl.
 > 
-> Why this was occurring is because the original check was incorrect. The
-> check for
-> 
->  ghcb <= addr + size
-> 
-> can result in skipping a range that should not have been skipped because
-> the "addr + size" is actually the start of a page/range after the end of
-> the range being checked. If the ghcb address was equal to addr + size,
-> then it was mistakenly considered part of the range when it really wasn't.
-> 
-> I think the check could have just been changed to:
-> 
->   if (addr <= ghcb && ghcb < addr + size) {
-> 
-> The new checks are a bit clearer in showing normal pages vs huge pages,
-> though, but you can clearly see the "ghcb < addr + size" change to do the
-> right thing in the huge page case.
-> 
-> While it is likely that a GHCB page hasn't been part of a huge page during
-> all the testing, the change in snp_kexec_finish() to mask the address is
-> the proper thing to do. It probably doesn't even need the if check as the
-> mask can just be applied no matter what.
+> Fixes: 37eed892cc5f ("vsprintf: Use %p4chR instead of %p4cn for reading data in reversed host ordering")
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
 
-Sounds like I'll be getting a v3.1 with Tom's suggestions?
+Looks and works well:
 
-Thx.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Tested-by: Petr Mladek <pmladek@suse.com>
 
--- 
-Regards/Gruss,
-    Boris.
+Alyssa, could you please queue this one via drm-misc-next as well?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Best Regards,
+Petr
+
+PS: Aditya, thanks a lot for stepping in and providing this patch. Also
+      thanks others for shaping in. I was not able to react quickly. I
+      had technical problems with my workstation and public holidays.
 
