@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-630659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2B4AA7D8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 01:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC20CAA7D89
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 01:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780FD1C04745
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437313B75B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 23:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1117274676;
-	Fri,  2 May 2025 23:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE522270ED5;
+	Fri,  2 May 2025 23:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="sk7lKHbq"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PjVfLC62"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6B52701CA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B64C2701C9;
 	Fri,  2 May 2025 23:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746229948; cv=none; b=K1mr0r6Ps6NDosABBmLKs7iBMGGCZgjd2zR8pIhNJt4RQ50SCHbmJusLn4ldoSoQQQBdXIfIYzz8wX7D0dhWME4TyY+b2LisKJ95H2Jnn7ZVjbj3D01ZbX9Yoz/NTacEEvGZfMktJsvKYIZQf3QzNqTQSSIMfRMIGAUdnE317TA=
+	t=1746229947; cv=none; b=sy6LxV4veu/yuvoMedcQjfZ8MqdzQhMSxDaXAAQDOoW6mLsR0GoGjmhSEdyvY1zsrLRCVZAC2MwNDWiNKZYIrloPWRdTdZmidr2s+8hoHoPWnj1n+lbYc5bSJD/F+XlkltHVKkpNAaH4ISVM/dq31gpouhtT2NYWZw2TZOjgCYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746229948; c=relaxed/simple;
-	bh=r3SOx+4tIs5UVWHOWyBMj6xgY1H/nNSg6vJd+lwSRuM=;
+	s=arc-20240116; t=1746229947; c=relaxed/simple;
+	bh=sjGyzx5zYffZUol4Bd+XcAn9dmMJPKnOV5ISlUy/8+8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rq5tnMEffksEQRhBN4MWQMr821O0caEKzjFkNi0xhuuoVBo2XVm9Okqd7rHKU55xDs5tf87ajpPPBvgBfXyKW13+0ftiV8rXij3pQl4v4rRqov5VI9Izrt6AkKR+tCfI7PVAGqag9SeVEYqekGPGdYErnFJSicVcN6z2Mnh8nL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=sk7lKHbq; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=r2yOV0NF/lJ7UnXFpo8rDP0iLpdR2Kyfs0AoDpEL1iRNQuGjraNXv60aK6jgKihOKtSPGDyKPrkNS0RMSat/DrFs6aUx0SLsnYIF7qXQdSk6mILo2Wk498noRowwp94BehL2U3OuTsJ0ImD4modhKGfgmfCce46VFuheAV6dPK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PjVfLC62; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=dE2TbXySXTyn4iP/oq6u//q/0QbdJINWiIw94sh6vOs=; b=sk7lKHbqW/hRWCmZ
-	WUcx6VXicF1ojfirGnHwMAlpUIZinUOpcC6Xvvj/OmWcTIFCskMLvTyCP2gmP9Xkvb4U82dCyhHyn
-	yXeQ2OIK9TQ9g8tfVcVbw6Favoq/qdBoBFSsMH3hGaT1q+9xM6G1iJuPQg7AyT83jU6yXcxVCpv/e
-	a90+3wS5pD0xZFQ73AyAPCNb1IzNoYQSnlmIvMFJ4xGtK+2uZnAaqQl5fbnkjQ+Szremir2cHZWAO
-	TXfbfOkIDG1QieJSMr9e7559R4ds1Q56dKh7/9nQAuTVXOBVIbtgCcheT99JEAOIq0FXiWBFQphpm
-	YL8UpCy4MhfpJNh0ww==;
+	:Subject; bh=x2PLJPmdkpGUaXeB0Vpknxa7Gacsdx48KzqeupzvUGQ=; b=PjVfLC62tZRDMJdw
+	eJuHxD/CCzwhbEmysoW0G8LpyNDu8O3DGnpd57lbYEmTioEQBi8RshaoftY4SYbCbMKNZDk2PeMPD
+	I8fx3zRHCZyFLEYXPfmbeZ2gc8g17iZgPYjCiE7jlrDYAzclZpIJYEZawSuWdpNC4s4pRlLVJeFdc
+	rzMU8bAd21ewHoNxORtWC5Kr2A15PS1DPVCkYONHWQh0AjAVCPkYypuALk5b+P+UKEAF6otvgHaYL
+	Gp8SBtVzWIGsRZxsCQ/AqXed6OJrrrNYCwfLr0bNfTGBsDuzWXcoygLhlBgRvfZrRxaLlvy/7qcTz
+	lApCfjR+Rwr+HHlCXQ==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1uB0B4-001BML-1E;
-	Fri, 02 May 2025 23:52:22 +0000
+	id 1uB0B5-001BML-0N;
+	Fri, 02 May 2025 23:52:23 +0000
 From: linux@treblig.org
 To: perex@perex.cz,
 	tiwai@suse.com,
 	linux-sound@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 4/5] ALSA: core: Remove unused snd_device_get_state
-Date: Sat,  3 May 2025 00:52:18 +0100
-Message-ID: <20250502235219.1000429-5-linux@treblig.org>
+Subject: [PATCH 5/5] ALSA: core: Remove unused snd_jack_set_parent
+Date: Sat,  3 May 2025 00:52:19 +0100
+Message-ID: <20250502235219.1000429-6-linux@treblig.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250502235219.1000429-1-linux@treblig.org>
 References: <20250502235219.1000429-1-linux@treblig.org>
@@ -65,61 +65,73 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-snd_device_get_state() last use was removed in 2022 by
-commit 7e1afce5866e ("ALSA: usb-audio: Inform the delayed registration more
-properly")
+snd_jack_set_parent() was added as part of 2008's
+commit e76d8ceaaff9 ("ALSA: Add jack reporting API")
+
+but hasn't been used.
 
 Remove it.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- include/sound/core.h |  1 -
- sound/core/device.c  | 23 -----------------------
- 2 files changed, 24 deletions(-)
+ include/sound/jack.h |  6 ------
+ sound/core/jack.c    | 19 -------------------
+ 2 files changed, 25 deletions(-)
 
-diff --git a/include/sound/core.h b/include/sound/core.h
-index 1f3f5dccd736..64327e971122 100644
---- a/include/sound/core.h
-+++ b/include/sound/core.h
-@@ -326,7 +326,6 @@ void snd_device_disconnect(struct snd_card *card, void *device_data);
- void snd_device_disconnect_all(struct snd_card *card);
- void snd_device_free(struct snd_card *card, void *device_data);
- void snd_device_free_all(struct snd_card *card);
--int snd_device_get_state(struct snd_card *card, void *device_data);
+diff --git a/include/sound/jack.h b/include/sound/jack.h
+index 1ed90e2109e9..36dc104c1145 100644
+--- a/include/sound/jack.h
++++ b/include/sound/jack.h
+@@ -79,7 +79,6 @@ int snd_jack_new(struct snd_card *card, const char *id, int type,
+ 		 struct snd_jack **jack, bool initial_kctl, bool phantom_jack);
+ int snd_jack_add_new_kctl(struct snd_jack *jack, const char * name, int mask);
+ #ifdef CONFIG_SND_JACK_INPUT_DEV
+-void snd_jack_set_parent(struct snd_jack *jack, struct device *parent);
+ int snd_jack_set_key(struct snd_jack *jack, enum snd_jack_types type,
+ 		     int keytype);
+ #endif
+@@ -104,11 +103,6 @@ static inline void snd_jack_report(struct snd_jack *jack, int status)
+ #endif
  
- /* isadma.c */
- 
-diff --git a/sound/core/device.c b/sound/core/device.c
-index b57d80a17052..cdc5af526739 100644
---- a/sound/core/device.c
-+++ b/sound/core/device.c
-@@ -237,26 +237,3 @@ void snd_device_free_all(struct snd_card *card)
- 	list_for_each_entry_safe_reverse(dev, next, &card->devices, list)
- 		__snd_device_free(dev);
- }
--
--/**
-- * snd_device_get_state - Get the current state of the given device
-- * @card: the card instance
-- * @device_data: the data pointer to release
-- *
-- * Returns the current state of the given device object.  For the valid
-- * device, either @SNDRV_DEV_BUILD, @SNDRV_DEV_REGISTERED or
-- * @SNDRV_DEV_DISCONNECTED is returned.
-- * Or for a non-existing device, -1 is returned as an error.
-- *
-- * Return: the current state, or -1 if not found
-- */
--int snd_device_get_state(struct snd_card *card, void *device_data)
+ #if !defined(CONFIG_SND_JACK) || !defined(CONFIG_SND_JACK_INPUT_DEV)
+-static inline void snd_jack_set_parent(struct snd_jack *jack,
+-				       struct device *parent)
 -{
--	struct snd_device *dev;
--
--	dev = look_for_dev(card, device_data);
--	if (dev)
--		return dev->state;
--	return -1;
 -}
--EXPORT_SYMBOL_GPL(snd_device_get_state);
+-
+ static inline int snd_jack_set_key(struct snd_jack *jack,
+ 				   enum snd_jack_types type,
+ 				   int keytype)
+diff --git a/sound/core/jack.c b/sound/core/jack.c
+index e4bcecdf89b7..850f82340278 100644
+--- a/sound/core/jack.c
++++ b/sound/core/jack.c
+@@ -574,25 +574,6 @@ int snd_jack_new(struct snd_card *card, const char *id, int type,
+ EXPORT_SYMBOL(snd_jack_new);
+ 
+ #ifdef CONFIG_SND_JACK_INPUT_DEV
+-/**
+- * snd_jack_set_parent - Set the parent device for a jack
+- *
+- * @jack:   The jack to configure
+- * @parent: The device to set as parent for the jack.
+- *
+- * Set the parent for the jack devices in the device tree.  This
+- * function is only valid prior to registration of the jack.  If no
+- * parent is configured then the parent device will be the sound card.
+- */
+-void snd_jack_set_parent(struct snd_jack *jack, struct device *parent)
+-{
+-	WARN_ON(jack->registered);
+-	guard(mutex)(&jack->input_dev_lock);
+-	if (jack->input_dev)
+-		jack->input_dev->dev.parent = parent;
+-}
+-EXPORT_SYMBOL(snd_jack_set_parent);
+-
+ /**
+  * snd_jack_set_key - Set a key mapping on a jack
+  *
 -- 
 2.49.0
 
