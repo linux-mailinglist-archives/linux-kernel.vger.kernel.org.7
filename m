@@ -1,119 +1,117 @@
-Return-Path: <linux-kernel+bounces-629999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974D6AA745C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:03:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E41AA7466
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D28C23B7492
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:02:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB721703F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A76255F32;
-	Fri,  2 May 2025 14:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E1C2571DA;
+	Fri,  2 May 2025 14:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b7QhHo8A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inN3AMId"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E94782D98
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 14:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BF32561D6;
+	Fri,  2 May 2025 14:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746194580; cv=none; b=mrMV8KSdCdsISoJ+NTXSftFSUEmzEJXfLPzywkezzpDwMaBa7ReiLBG1PwtZDhIR+7kWQih8tpWKZx9AWinciq0/JVkeJl/86wQgTBLL5nYQ21v231yU3wJBrHoQwlZjWZqGynWBJv1t8FgJ0KxA97K/lWx5lBauALchAwX26y8=
+	t=1746194599; cv=none; b=uoHwv3Y5InZLgfUNWW/l5b3DIL4B6g1Q1zHIG/wsWGwL/6uTCtiX+Avjso7ZeTtRFNMojt89aD0qxPQLXwDoI9ebgIIxMUWkJ4Rc49fH9nN7ETsGLXxAVCg2MPau5TT282aIFwcfiBgCGf7FE4o7p9RYUxSzx0NtK3kTiX4BkRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746194580; c=relaxed/simple;
-	bh=F2zdVFItAdmP9ucapL/4OsjVj1IjfBsSOTDIvAGScgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JSNNhF5p4znRIoxsCAVDvDzpD2aTtG2PLoFyZ+jsVIQ2EtXojuYgxmdqvDLBX20yToFkz6u7CyO2q2wh18ayfmilBOpw6ruCuZHqft9ORWDK5WlMghdJvQlfqgH4KXfLG7uWi4IOm29UjC5iEKut9qwUV9fJfTKB5m2xLXJZuGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b7QhHo8A; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746194579; x=1777730579;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F2zdVFItAdmP9ucapL/4OsjVj1IjfBsSOTDIvAGScgM=;
-  b=b7QhHo8A71wOKJGCEFeWrQjJrlw6e2Pgsd9i+4NkwB8hWqraiZNbzDwt
-   Y/OMXnO5dQXExohlZRqSARier+8EXaM6Ahoz0gFlZxG+QY0MGAbxpgrQ1
-   owbsMtHYFt4gEZonFrC4DgCtILupr1y2TXNgZBNGb3VOmnWyp4S6G6hdr
-   q1k+eiwFLK/feApzftCH5KAP6W/V/G1SS9dDFZcV3lJdTcz5SZTzUAGTU
-   ICch5sCYgvTXAQW/LAIodIBNtY+fHFHCnu7eJrq7lJvQGTUhDZmBurqph
-   Yvxuqu/XNhphnKgyNH6Pgal2bX72fkW2cYtIQcUn2Ae3CAMu0mWwzTNxh
-   w==;
-X-CSE-ConnectionGUID: zWOxBcvORtSo6YGW3MGHxQ==
-X-CSE-MsgGUID: +L17VChUS8SuWKChMTKYNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="47763365"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="47763365"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2025 07:02:58 -0700
-X-CSE-ConnectionGUID: umyZV+QmTYuDpp7pnZnxEg==
-X-CSE-MsgGUID: /cgFCEp7Rue/ouOi24P9Jg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; 
-   d="scan'208";a="134602630"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 02 May 2025 07:02:56 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 91AFF1A1; Fri, 02 May 2025 17:02:54 +0300 (EEST)
-Date: Fri, 2 May 2025 17:02:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Waiman Long <longman@redhat.com>,
-	Carlos Llamas <cmllamas@google.com>,
-	Ying Huang <huang.ying.caritas@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/10] [RESEND] lockdep: change 'static const' variables
- to enum values
-Message-ID: <aBTQjnB8ej3z_van@black.fi.intel.com>
-References: <20250409122131.2766719-1-arnd@kernel.org>
- <20250409122314.2848028-1-arnd@kernel.org>
- <20250409122314.2848028-6-arnd@kernel.org>
+	s=arc-20240116; t=1746194599; c=relaxed/simple;
+	bh=JcmBhEUrvfaH96FSKF0m0KRLP7jLR6gEc4dpoEbdEt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MQvV7N6qk1gRrOez3zP3QgQRPLGaQoJMDy9yomuRpxOuPal1W5BoTQaTntd8tt5wU3BT3X2LhXdjaL8gaO15dEKoYNR6QhIkr5lo8lH7Z62/rpLN10GkXv0ZoAsiI3bMZoqORNTGQhrWO/Z4tdDuIXS6DmHgpSLHv4H+p9c8pjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inN3AMId; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA56C4CEEB;
+	Fri,  2 May 2025 14:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746194596;
+	bh=JcmBhEUrvfaH96FSKF0m0KRLP7jLR6gEc4dpoEbdEt0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=inN3AMIdb/IvUq7c5JYjEEcJjZ4YJZtQZNjXxcAYlOxOM9xu2aeLGlpsD5nSDenGF
+	 4AMtdAweIx6EMTDD2Ii4WaP8m/pC7hqExaara4Yvh9+/tOGwvcSXHhgVwGn/1LQdOn
+	 Iz/b8LINQOCO+9YGWO+/4kaLuSqL/2hRLu7rvhPtjRMb8KoEzgO7ZD22BUWnCt7UHh
+	 V/PRX9oU1uVdvT8Kxy8F+l3JOokHLiLIjyxMkTczVmOGck6i/nL2x5KN9QdG1SdeH9
+	 2M+JoHM5+Cfs91jk1mDWZ0z6/Ys9DpRBJJHHsSUlGsrbMu51LDo7qf6nwqFqW6LN0v
+	 DC4bpSveSTl0w==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: [PATCH 4/5] rust: clean Rust 1.88.0's warning about `clippy::disallowed_macros` configuration
+Date: Fri,  2 May 2025 16:02:36 +0200
+Message-ID: <20250502140237.1659624-5-ojeda@kernel.org>
+In-Reply-To: <20250502140237.1659624-1-ojeda@kernel.org>
+References: <20250502140237.1659624-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409122314.2848028-6-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 09, 2025 at 02:22:58PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> gcc warns about 'static const' variables even in headers when building
-> with -Wunused-const-variables enabled:
-> 
-> In file included from kernel/locking/lockdep_proc.c:25:
-> kernel/locking/lockdep_internals.h:69:28: error: 'LOCKF_USED_IN_IRQ_READ' defined but not used [-Werror=unused-const-variable=]
->    69 | static const unsigned long LOCKF_USED_IN_IRQ_READ =
->       |                            ^~~~~~~~~~~~~~~~~~~~~~
-> kernel/locking/lockdep_internals.h:63:28: error: 'LOCKF_ENABLED_IRQ_READ' defined but not used [-Werror=unused-const-variable=]
->    63 | static const unsigned long LOCKF_ENABLED_IRQ_READ =
->       |                            ^~~~~~~~~~~~~~~~~~~~~~
-> kernel/locking/lockdep_internals.h:57:28: error: 'LOCKF_USED_IN_IRQ' defined but not used [-Werror=unused-const-variable=]
->    57 | static const unsigned long LOCKF_USED_IN_IRQ =
->       |                            ^~~~~~~~~~~~~~~~~
-> kernel/locking/lockdep_internals.h:51:28: error: 'LOCKF_ENABLED_IRQ' defined but not used [-Werror=unused-const-variable=]
->    51 | static const unsigned long LOCKF_ENABLED_IRQ =
->       |                            ^~~~~~~~~~~~~~~~~
-> 
-> This one is easy to avoid by changing the generated constant definition
-> into an equivalent enum.
+Starting with Rust 1.88.0 (expected 2025-06-26) [1], Clippy may start
+warning about paths that do not resolve in the `disallowed_macros`
+configuration:
 
-Any news here, please? The problem still exists in v6.15-rc4.
+    warning: `kernel::dbg` does not refer to an existing macro
+      --> .clippy.toml:10:5
+       |
+    10 |     { path = "kernel::dbg", reason = "the `dbg!` macro is intended as a debugging tool" },
+       |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+This is a lint we requested at [2], due to the trouble debugging
+the lint due to false negatives (e.g. [3]), which we use to emulate
+`clippy::dbg_macro` [4]. See commit 8577c9dca799 ("rust: replace
+`clippy::dbg_macro` with `disallowed_macros`") for more details.
+
+Given the false negatives are not resolved yet, it is expected that
+Clippy complains about not finding this macro.
+
+Thus, until the false negatives are fixed (and, even then, probably we
+will need to wait for the MSRV to raise enough), use the escape hatch
+to allow an invalid path.
+
+Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
+Link: https://github.com/rust-lang/rust-clippy/pull/14397 [1]
+Link: https://github.com/rust-lang/rust-clippy/issues/11432 [2]
+Link: https://github.com/rust-lang/rust-clippy/issues/11431 [3]
+Link: https://github.com/rust-lang/rust-clippy/issues/11303 [4]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ .clippy.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/.clippy.toml b/.clippy.toml
+index 815c94732ed7..137f41d203de 100644
+--- a/.clippy.toml
++++ b/.clippy.toml
+@@ -7,5 +7,5 @@ check-private-items = true
+ disallowed-macros = [
+     # The `clippy::dbg_macro` lint only works with `std::dbg!`, thus we simulate
+     # it here, see: https://github.com/rust-lang/rust-clippy/issues/11303.
+-    { path = "kernel::dbg", reason = "the `dbg!` macro is intended as a debugging tool" },
++    { path = "kernel::dbg", reason = "the `dbg!` macro is intended as a debugging tool", allow-invalid = true },
+ ]
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.0
 
 
