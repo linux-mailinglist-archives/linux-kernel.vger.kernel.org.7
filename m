@@ -1,263 +1,171 @@
-Return-Path: <linux-kernel+bounces-630217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33927AA76F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:17:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC38AA770A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40C997A9C0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6084E4E99
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CB925E46E;
-	Fri,  2 May 2025 16:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA88262FF6;
+	Fri,  2 May 2025 16:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L5tK/zxQ"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WICHQwMH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D032561CA
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 16:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A02825D20C;
+	Fri,  2 May 2025 16:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746202581; cv=none; b=Yg1mVyEp42FqZgGA51eOZjAdLwcb8//3PkgEwTGBoR2n3b4Q6VRtl4WBs+xFb21btKOgbjHVkkbwPYt0qY1dCd7M3DQJ5GDAa6zHSBNjNYdQfJTIigzniOvmaVYk73MpRvfCsozoHHiZRum6OYHd0Hhn2I4gMPYaPJVCaP6uZfM=
+	t=1746202595; cv=none; b=lmx8wEOWUXSYhNhndZqvhBKYrTN0EBRP4ybi2E+TWeTE22Vnm8zU1rB7EoUP27CiGpiM3bV0w2g8YU2+EjJWItPNPEbaOmwez/D/aaMZfkRQ+RYwQpqv7l1aoTH3MkRdkga6m+sXZoUBO8s2Bivd8eWiTq1NeFtJiLZdVeqVWGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746202581; c=relaxed/simple;
-	bh=58bSUz7jJ2p8+5qkdJcblMgTqYam8GfQ6+npz5F5H34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UsOXgvAP0kyKHeG+mU2iibBNlb+owxpdVT+07r3pD8bTvnz+xLvas/ektifgxGEtVW+YstbU92E4vuTD2y5wBOyazT8vBhZHs+HjIjxzE+gStGlMVDf2vIUCjhIFO+StxLHlhtA89wrVhLerWtQz9WgbtgwGjWJWwysNB8cXLvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L5tK/zxQ; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4774611d40bso322771cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 09:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746202578; x=1746807378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=58bSUz7jJ2p8+5qkdJcblMgTqYam8GfQ6+npz5F5H34=;
-        b=L5tK/zxQj2s3TTqqrgsSI5i8k7QTmfhkv04vHQHPZKspc39cdjXOZM6XO1VqUMECvt
-         4KnwfnknBr2/+Ue/CPoO5A0m1cIVAvgH5yHf27uNMjtzYji96fO/DH7pmVXPUaKCvkFi
-         02LVUc3aHyeLrkc25LrPk5a+2DUjtXcudhGK3QuwOXjXAJMiozJFxaspHcfdaVJ9v5CA
-         9/q3aWnu0WBSNR9qc8lEodCQMY4Ex3hnyIi2G3sA0rr7yNMf0NK7F0yjI6nz1n2OD7H7
-         eVx/11BEHDsbbrR3W/8VxOPNdLOLGctxQdGr8wtVKmPI4EqNfOfU9LFVNTTVzVTv8A0n
-         rMqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746202578; x=1746807378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=58bSUz7jJ2p8+5qkdJcblMgTqYam8GfQ6+npz5F5H34=;
-        b=IKOPme+W0eywU/NPw79+kDfUoCTWBH6wThOl8pJl3SABQEdi0dO+jNgDw5Myu0TkkJ
-         Bz6psBec2uwL3t5GPYdAkqD/RV/Q6r6dcQZLC1IESKeYYHZBVZ/XBbWikHgWesCa/LPD
-         zZ19PPCytOHq71/CMcvjBFIhm6n3uKzrN4P/yu6SL7DUjBLGPnC1M3R34lj/ZbgOUoht
-         qf0m6wMR4mYENuc784BKy6wlMBLQJcIENH4QVsxbx+HndW+x7QxZ1783pRxKfT3qlx9H
-         BIS4lOdFs01AYhJPGtSpznmv2SIhPFvXSmHjObJ467e3Bz7jVTzilS35ySW6pNnPFODJ
-         cQOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMmNk4yBvR6awHBSOAU8BbIoD3RRL0T5aOEHEoHfOfFsx7Sz7V1IfTpV0tRxMSbbgfqkqKG0HHBVzdHa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg1N66cpg/VYc7OeZQdWWHT7IWwsv198Z/VyqFC/+KRaldhLT6
-	wv5R/I1hxnxQJcA2DQ1ScBQCKPzcI6aayAYih+yiTsXOkiO6sFQgiPYOgk28XIaCIldGgKpVzMV
-	F63sxhLyvRyFwnT7Wof3HuvwpRZ2i75Fl9luk
-X-Gm-Gg: ASbGncv/3KdBT56SJrWrlYz0UIFRMopkLV54sFoeFa2sOA71sGJ5YAOOgmBdrUR76YH
-	D36zRv3QUxtfMMYqIFPzdI/1tBeI1YuOp6uM2nQPpShEc8VDGQM7YI0+eNr/cQ1Zy5cYsLtEZRe
-	7wF9OCnlV7xTw0PnDptH2uQz+U0Itbdgo97F0QryxI4QLSjoyxiQ==
-X-Google-Smtp-Source: AGHT+IF8L2+CCwV5k84zUeiwruyaxm/9IB09bfyjXX6Acxns+WD6FRjO3eDCBsRxkWxyNifDbB4FnnkHPTpIweEMoLU=
-X-Received: by 2002:a05:622a:11:b0:486:8711:19af with SMTP id
- d75a77b69052e-48ae773409emr10652821cf.0.1746202577791; Fri, 02 May 2025
- 09:16:17 -0700 (PDT)
+	s=arc-20240116; t=1746202595; c=relaxed/simple;
+	bh=xwC6411AfiwsXF+xKeK2uSxZOyw8ub8uJR3YfkdNtZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eLPxnRT/5qQUZzLotxhf892i7F3Itoo44TuZYNRvKuLZxYvtIskW5AgNhQ5eSGK4EfILRwdc+ifVx+GXfNy4V5f5wbOOF0XaekPWPs1pAM1ztgJH6Q8+uOsXfFpGqMEgZQYefxUTtScnIT7blxHCwsOwg7NjSWTB49W18Uq0eks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WICHQwMH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1CBC4CEEE;
+	Fri,  2 May 2025 16:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746202593;
+	bh=xwC6411AfiwsXF+xKeK2uSxZOyw8ub8uJR3YfkdNtZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WICHQwMHh8mziGfE3MnSXM7TplK/5s5V8q+aRYbe873PjgIONvAo17lkduRnc8jru
+	 ZO+lqp/4AbgnSR70Ul7HCAC3tvxEFlrifqebho9WhdRO0hU2BlHaFDFPWeCI74ohty
+	 ghT4u1zX9+bNaJEVqiOaTlL7mlHIOT8ksh+da+tanLDu3Zf3jzDeYuiMIElldDwafQ
+	 lmiiGSKx6LJYSPHnFcCnD8wfZz44oT9BZP1GYVEY9Z8kgjldnPeiP7D+oxbFdUAlBr
+	 /fNkoBWhgU6x/TS98kM3c7bE3MdK0LzseVFu0jPL4DJUOKENyiRAZ/eLadyh2AyFQS
+	 nnqwVkyEeANoA==
+Date: Fri, 2 May 2025 18:16:25 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 21/22] irqchip/gic-v5: Add GICv5 IWB support
+Message-ID: <aBTv2cLX4rOQxl+L@lpieralisi>
+References: <20250424-gicv5-host-v2-0-545edcaf012b@kernel.org>
+ <20250424-gicv5-host-v2-21-545edcaf012b@kernel.org>
+ <867c31j20i.wl-maz@kernel.org>
+ <aBIlOrqLtbB5e7B/@lpieralisi>
+ <86y0vgh35t.wl-maz@kernel.org>
+ <aBR7bk62H3PEUbfi@lpieralisi>
+ <87tt6310hu.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-9-surenb@google.com>
- <CAEf4BzabPLJTy1U=aBrGZqKpskNYvj5MYuhPHSh_=hjmVJMvrg@mail.gmail.com>
- <CAG48ez29frEbJG+ySVARX-bO_QWe8eUbZiV8Jq2sqYemfuqP_g@mail.gmail.com>
- <CAJuCfpGxw7L67CvDnTiHN0kdVjFcPoZZ4ZsOHi0=wR7Y2umk0Q@mail.gmail.com>
- <CAG48ez1cR+kXBsvk4murYDBBxSzg9g5FSU--P8-BCrMKV6A+KA@mail.gmail.com>
- <CAEf4BzarQAmj477Lyp2aS0i2RM4JaxnAVvem6Kz-Eh1a5x-=6A@mail.gmail.com> <CAG48ez2tQsqS3+ZfSus+Wi5ur6HbYuaAhhmOOrkDyrZG+gsvXg@mail.gmail.com>
-In-Reply-To: <CAG48ez2tQsqS3+ZfSus+Wi5ur6HbYuaAhhmOOrkDyrZG+gsvXg@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 2 May 2025 16:16:06 +0000
-X-Gm-Features: ATxdqUE5eBihdzh_T37nNq-zp7SiYqV-8pNUMisZD5AepZKCzib88UxNXda6nVs
-Message-ID: <CAJuCfpGMJFM3Y_wXu+16Ha4LZx7gteucG478xZK6M9ZTWM297A@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] mm/maps: execute PROCMAP_QUERY ioctl under RCU
-To: Jann Horn <jannh@google.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, akpm@linux-foundation.org, 
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, 
-	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tt6310hu.wl-maz@kernel.org>
 
-On Fri, May 2, 2025 at 3:11=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
->
-> On Fri, May 2, 2025 at 12:10=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> > On Tue, Apr 29, 2025 at 10:25=E2=80=AFAM Jann Horn <jannh@google.com> w=
-rote:
-> > > On Tue, Apr 29, 2025 at 7:15=E2=80=AFPM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
-> > > > On Tue, Apr 29, 2025 at 8:56=E2=80=AFAM Jann Horn <jannh@google.com=
-> wrote:
-> > > > > On Wed, Apr 23, 2025 at 12:54=E2=80=AFAM Andrii Nakryiko
-> > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > > On Fri, Apr 18, 2025 at 10:50=E2=80=AFAM Suren Baghdasaryan <su=
-renb@google.com> wrote:
-> > > > > > > Utilize speculative vma lookup to find and snapshot a vma wit=
-hout
-> > > > > > > taking mmap_lock during PROCMAP_QUERY ioctl execution. Concur=
-rent
-> > > > > > > address space modifications are detected and the lookup is re=
-tried.
-> > > > > > > While we take the mmap_lock for reading during such contentio=
-n, we
-> > > > > > > do that momentarily only to record new mm_wr_seq counter.
-> > > > > >
-> > > > > > PROCMAP_QUERY is an even more obvious candidate for fully lockl=
-ess
-> > > > > > speculation, IMO (because it's more obvious that vma's use is
-> > > > > > localized to do_procmap_query(), instead of being spread across
-> > > > > > m_start/m_next and m_show as with seq_file approach). We do
-> > > > > > rcu_read_lock(), mmap_lock_speculate_try_begin(), query for VMA=
- (no
-> > > > > > mmap_read_lock), use that VMA to produce (speculative) output, =
-and
-> > > > > > then validate that VMA or mm_struct didn't change with
-> > > > > > mmap_lock_speculate_retry(). If it did - retry, if not - we are=
- done.
-> > > > > > No need for vma_copy and any gets/puts, no?
-> > > > >
-> > > > > I really strongly dislike this "fully lockless" approach because =
-it
-> > > > > means we get data races all over the place, and it gets hard to r=
-eason
-> > > > > about what happens especially if we do anything other than readin=
-g
-> > > > > plain data from the VMA. When reading the implementation of
-> > > > > do_procmap_query(), at basically every memory read you'd have to =
-think
-> > > > > twice as hard to figure out which fields can be concurrently upda=
-ted
-> > > > > elsewhere and whether the subsequent sequence count recheck can
-> > > > > recover from the resulting badness.
-> > > > >
-> > > > > Just as one example, I think get_vma_name() could (depending on
-> > > > > compiler optimizations) crash with a NULL deref if the VMA's ->vm=
-_ops
-> > > > > pointer is concurrently changed to &vma_dummy_vm_ops by vma_close=
-()
-> > > > > between "if (vma->vm_ops && vma->vm_ops->name)" and
-> > > > > "vma->vm_ops->name(vma)". And I think this illustrates how the "f=
-ully
-> > > > > lockless" approach creates more implicit assumptions about the
-> > > > > behavior of core MM code, which could be broken by future changes=
- to
-> > > > > MM code.
-> > > >
-> > > > Yeah, I'll need to re-evaluate such an approach after your review. =
-I
-> > > > like having get_stable_vma() to obtain a completely stable version =
-of
-> > > > the vma in a localized place and then stop worrying about possible
-> > > > races. If implemented correctly, would that be enough to address yo=
-ur
-> > > > concern, Jann?
-> > >
-> > > Yes, I think a stable local snapshot of the VMA (where tricky data
-> > > races are limited to the VMA snapshotting code) is a good tradeoff.
-> >
-> > I'm not sure I agree with VMA snapshot being better either, tbh. It is
-> > error-prone to have a byte-by-byte local copy of VMA (which isn't
-> > really that VMA anymore), and passing it into ops callbacks (which
-> > expect "real" VMA)... Who guarantees that this won't backfire,
-> > depending on vm_ops implementations? And constantly copying 176+ bytes
-> > just to access a few fields out of it is a bit unfortunate...
->
-> Yeah, we shouldn't be passing VMA snapshots into ops callbacks, I
-> agree that we need to fall back to using proper locking for that.
+On Fri, May 02, 2025 at 04:43:57PM +0100, Marc Zyngier wrote:
+> On Fri, 02 May 2025 08:59:42 +0100,
+> Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+> > 
+> > It looks like the msi_prepare() ITS callback (ie where the its_device is
+> > allocated) is called everytime an endpoint device driver requests a
+> > wired IRQ through:
+> > 
+> > gicv5_its_msi_prepare+0x68c/0x6f8
+> > its_pmsi_prepare+0x16c/0x1b8
+> > __msi_domain_alloc_irqs+0x70/0x448
+> > __msi_domain_alloc_irq_at+0xf8/0x194
+> > msi_device_domain_alloc_wired+0x88/0x10c
+> > irq_create_fwspec_mapping+0x3a0/0x4c0
+> > irq_create_of_mapping+0xc0/0xe8
+> > of_irq_get+0xa0/0xe4
+> > platform_get_irq_optional+0x54/0x1c4
+> > platform_get_irq+0x1c/0x50
+> > 
+> > so it becomes "shared" if multiple IWB wires are requested by endpoint
+> > drivers.
+> 
+> Right, I've reproduced on D05 with MBIGEN:
+> 
+> [    5.505530] Reusing ITT for devID 40000
+> [    5.505532] CPU: 36 UID: 0 PID: 557 Comm: (udev-worker) Not tainted 6.15.0-rc4-00079-geef147df4841-dirty #4403 PREEMPT 
+> [    5.505535] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT21 Nemo 2.0 RC0 04/18/2018
+> [    5.505536] Call trace:
+> [    5.505537]  show_stack+0x20/0x38 (C)
+> [    5.505540]  dump_stack_lvl+0x80/0xf8
+> [    5.505543]  dump_stack+0x18/0x28
+> [    5.505546]  its_msi_prepare+0xe4/0x1d0
+> [    5.505549]  its_pmsi_prepare+0x15c/0x1d0
+> [    5.505552]  __msi_domain_alloc_irqs+0x80/0x398
+> [    5.505556]  __msi_domain_alloc_irq_at+0x100/0x168
+> [    5.505560]  msi_device_domain_alloc_wired+0x9c/0x128
+> [    5.505564]  irq_create_fwspec_mapping+0x180/0x388
+> [    5.505567]  acpi_irq_get+0xac/0xe8
+> [    5.505570]  platform_get_irq_optional+0x1e8/0x208
+> [    5.505574]  devm_platform_get_irqs_affinity+0x58/0x298
+> [    5.505578]  hisi_sas_v2_interrupt_preinit+0x60/0xb0 [hisi_sas_v2_hw]
+> [    5.505582]  hisi_sas_probe+0x164/0x278 [hisi_sas_main]
+> [    5.505588]  hisi_sas_v2_probe+0x20/0x38 [hisi_sas_v2_hw]
+> [    5.505591]  platform_probe+0x70/0xd0
+> [    5.505595]  really_probe+0xc8/0x3a0
+> [    5.505598]  __driver_probe_device+0x84/0x170
+> [    5.505600]  driver_probe_device+0x44/0x120
+> [    5.505603]  __driver_attach+0xfc/0x210
+> [    5.505606]  bus_for_each_dev+0x7c/0xe8
+> [    5.505608]  driver_attach+0x2c/0x40
+> [    5.505611]  bus_add_driver+0x118/0x248
+> [    5.505613]  driver_register+0x68/0x138
+> [    5.505616]  __platform_driver_register+0x2c/0x40
+> [    5.505619]  hisi_sas_v2_driver_init+0x28/0xff8 [hisi_sas_v2_hw]
+> [    5.505623]  do_one_initcall+0x4c/0x2c0
+> [    5.505626]  do_init_module+0x60/0x230
+> [    5.505629]  load_module+0xa64/0xb30
+> [    5.505631]  init_module_from_file+0x8c/0xd8
+> [    5.505634]  idempotent_init_module+0x1c4/0x2b8
+> [    5.505637]  __arm64_sys_finit_module+0x74/0xe8
+> [    5.505640]  invoke_syscall+0x50/0x120
+> [    5.505642]  el0_svc_common.constprop.0+0x48/0xf0
+> [    5.505644]  do_el0_svc+0x24/0x38
+> [    5.505646]  el0_svc+0x34/0xf0
+> [    5.505650]  el0t_64_sync_handler+0x10c/0x138
+> [    5.505654]  el0t_64_sync+0x1ac/0x1b0
+> [    5.505681] ID:78 pID:8382 vID:143
+> 
+> And that a few dozen times.
 
-Yes, I'm exploring the option of falling back to per-vma locking to
-stabilize the VMA when its reference is used in vm_ops.
+Yep that matches my expectations, thanks a lot for testing it.
 
->
-> > Also taking mmap_read_lock() sort of defeats the point of "RCU-only
-> > access". It's still locking/unlocking and bouncing cache lines between
-> > writer and reader frequently. How slow is per-VMA formatting?
->
-> I think this mainly does two things?
->
-> 1. It shifts the latency burden of concurrent access toward the reader
-> a bit, essentially allowing writers to preempt this type of reader to
-> some extent.
-> 2. It avoids bouncing cache lines between this type of reader and
-> other *readers*.
->
-> > If we
-> > take mmap_read_lock, format VMA information into a buffer under this
-> > lock, and drop the mmap_read_lock, would it really be that much slower
-> > compared to what Suren is doing in this patch set? And if no, that
-> > would be so much simpler compared to this semi-locked/semi-RCU way
-> > that is added in this patch set, no?
+> I'll have a think at how to unfsck this. This was previously avoided
+> by (IIRC) populating the domain upfront and letting the domain
+> matching code do its job. That behaviour seems to have been lost. On
+> the other hand, as long as you don't expect the ITT to *grow*, nothing
+> horrible should happen.
 
-The problem this patch is trying to address is low priority readers
-blocking a high priority writer. Taking mmap_read_lock for each VMA
-will not help solve this problem. If we have to use locking then
-taking per-vma lock would at least narrow down the contention scope
-from the entire address space to individual VMAs.
+Yes - I can remove the "shared" ITS device flag but should keep the
+logic preventing an ITS device with same deviceID to be allocated
+if found.
 
->
-> > But I do agree that vma->vm_ops->name access is hard to do in a
-> > completely lockless way reliably. But also how frequently VMAs have
-> > custom names/anon_vma_name?
->
-> I think there are typically two VMAs with vm_ops->name per MM, vvar
-> and vdso. (Since you also asked about anon_vma_name: I think
-> anon_vma_name is more frequent than that on Android, there seem to be
-> 58 of those VMAs even in a simple "cat" process.)
->
-> > What if we detect that VMA has some
-> > "fancy" functionality (like this custom name thing), and just fallback
-> > to mmap_read_lock-protected logic, which needs to be supported as a
-> > fallback even for lockless approach?
-> >
-> > This way we can process most (typical) VMAs completely locklessly,
-> > while not adding any extra assumptions for all the potentially
-> > complicated data pieces. WDYT?
+> But I also get an interesting crash in msi_domain_debig_show(), so
+> there is more than just this corner case that is screwed.
 
-The option I'm currently contemplating is using per-vma locks to deal
-with "fancy" cases and to do snapshotting otherwise. We have several
-options with different levels of complexity vs performance tradeoffs
-and finding the right balance will require some experimentation. I'll
-likely need Paul's help soon to run his testcase with different
-versions.
+That I can try on my side too to try to help you untangle it.
 
->
-> And then we'd also use the fallback path if karg.build_id_size is set?
-> And I guess we also need it if the VMA is hugetlb, because of
-> vma_kernel_pagesize()? And use READ_ONCE() in places like
-> vma_is_initial_heap()/vma_is_initial_stack()/arch_vma_name() for
-> accessing both the VMA and the MM?
->
-> And on top of that, we'd have to open-code/change anything that
-> currently uses the ->vm_ops (such as vma_kernel_pagesize()), because
-> between us checking the type of the VMA and later accessing ->vm_ops,
-> the VMA object could have been reallocated with different ->vm_ops?
->
-> I still don't like the idea of pushing the complexity of "the VMA
-> contents are unstable, and every read from the VMA object may return
-> data about a logically different VMA" down into these various helpers.
-> In my mind, making the API contract "The VMA contents can be an
-> internally consistent snapshot" to the API contract for these helpers
-> constrains the weirdness a bit more - though I guess the helpers will
-> still need READ_ONCE() for accessing properties of the MM either
-> way...
+Possibly this was introduced when the MBIgen switched to MSI parent
+with 752e021f5b9b ? It is pure speculation at this stage just noticed
+that's a point in time where the domain code changed.
+
+Is MBIgen the only example of an IC relying on the ITS as MSI parent ?
+
+Thanks,
+Lorenzo
 
