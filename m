@@ -1,105 +1,105 @@
-Return-Path: <linux-kernel+bounces-630268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D149AA77B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:50:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D184AA77AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 18:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1231BA7BE7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D30B3AE5EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 16:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95748266B52;
-	Fri,  2 May 2025 16:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6521AA1E4;
+	Fri,  2 May 2025 16:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP+Y9lSp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8CB25DCF8;
-	Fri,  2 May 2025 16:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F41418AFC;
+	Fri,  2 May 2025 16:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746204609; cv=none; b=JStXytFp+fouTrw6E5YlT2WK7SOzpngmqZxJu9Hem2aF7bFP00+dwCmLR5ZLq2E24E2MWNuRmmcbl/ihhLGXelAHnhIX/FmFK99rNLw+QX2+IPVBy4WH+Rc1B4Pmmsbn+EQsp5kM6mU0b3yomrZWE2UIZSJEjo87vw6dZbgprX4=
+	t=1746204472; cv=none; b=LcuV4zL+0W/Hm7DPXR29tzJ3zgEs+JWvkgOecjKGzPhb5mA2r4P5g44qq+XpOmNvnNxLA0sVx/Q37tYgZOg0dHwIZJ/HZe01RCMpYb+Mnji3hyMKKCSUSpR8EMBve1lEAYz4mJIoinRvdiSmeuA3Gph/ZRXKUMq++Qao5kRCcWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746204609; c=relaxed/simple;
-	bh=mzbtnjJps06HCLHPOPcqSMIDBIvOi7mfpTIlyoJ7BSc=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=YP9kz1tUnhwZzsXVmCeKXMv88arqbKP7E0Z7Lg9Fkw50Ay+ZjxTT4CKFGAyiw+51wkQLJVMXag6cWJ62NxmlWt3jvXwyspmjwIanEL4C059pitrgBMNfX9LXf3lthBCdGlkMiP2ZZHQ9ripyvxwLu/L2eQuvOqnc/jSX5uuw0Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B944BC4AF0E;
-	Fri,  2 May 2025 16:50:08 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uAtaS-0000000030k-09BU;
-	Fri, 02 May 2025 12:50:08 -0400
-Message-ID: <20250502165007.885738514@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 02 May 2025 12:47:49 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- x86@kernel.org,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH v7 03/17] unwind_user/x86: Enable frame pointer unwinding on x86
-References: <20250502164746.178864972@goodmis.org>
+	s=arc-20240116; t=1746204472; c=relaxed/simple;
+	bh=tUQ4h7QZxsvJ5HB6FNwGgOGWyw/11iybNMFrdWHguKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QOgdLyifohsYbv5UgUeGLqCu7GRct3XfN281ua6mwBwXm+zjdjP9VgeDyZMNfumVizYuwcRP5a8z01jxVP/+0un88IenMxHo2U/RjQQ72b/4G+fXvknkk4z6gAbVQeg30dcUa2fT+3tsUf2JY7db12I2b6qKKi5hj3cixRx89Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP+Y9lSp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81660C4CEE4;
+	Fri,  2 May 2025 16:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746204472;
+	bh=tUQ4h7QZxsvJ5HB6FNwGgOGWyw/11iybNMFrdWHguKY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FP+Y9lSpgzpsoNdZNxNsvBRLEAnzB1mIfyi3ZQDvqSzkQTkUzQZJe1SIC2+GCE+PK
+	 rL6LpH+t6e6BE4onYn78VtpMbDwZuAFSb3aN3u5H8QcQdtxVC59hH3YoqEwNOnZCoq
+	 PeoTCK2BaKIBqZkKaN0WNjJBw225Fokr5IuPuqDBmkCYCsrBofJ8dll7Tfi6h6GX2S
+	 ZEalc+83CcJEAG5reAqm7FVEfa06sEM+HRVfoGGW8HMFJXGyuCq/RmRdmn7vunxK8Q
+	 BrqVGMVK0XTgeFgLsGHdU6AGEsX3SrMktPHE+ddOsjfsfeq+4fY53eG0D4ZBuLc8Lt
+	 XkwiZKya7hytA==
+Date: Fri, 2 May 2025 18:47:49 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: dimitri.fedrau@liebherr.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dimitri Fedrau <dima.fedrau@gmail.com>, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 0/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+Message-ID: <cz5tzcmkpkoi7f6g64opcoq5mclahyom4aqafpjxmhisjidize@uw4uq3pmxou4>
+References: <20250407-mc33xs2410-v9-0-57adcb56a6e4@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-
-Use ARCH_INIT_USER_FP_FRAME to describe how frame pointers are unwound
-on x86, and enable CONFIG_HAVE_UNWIND_USER_FP accordingly so the
-unwind_user interfaces can be used.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- arch/x86/Kconfig                   |  1 +
- arch/x86/include/asm/unwind_user.h | 11 +++++++++++
- 2 files changed, 12 insertions(+)
- create mode 100644 arch/x86/include/asm/unwind_user.h
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 4c33c644b92d..a6e529dc4550 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -301,6 +301,7 @@ config X86
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UACCESS_VALIDATION		if HAVE_OBJTOOL
- 	select HAVE_UNSTABLE_SCHED_CLOCK
-+	select HAVE_UNWIND_USER_FP		if X86_64
- 	select HAVE_USER_RETURN_NOTIFIER
- 	select HAVE_GENERIC_VDSO
- 	select VDSO_GETRANDOM			if X86_64
-diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind_user.h
-new file mode 100644
-index 000000000000..8597857bf896
---- /dev/null
-+++ b/arch/x86/include/asm/unwind_user.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_UNWIND_USER_H
-+#define _ASM_X86_UNWIND_USER_H
-+
-+#define ARCH_INIT_USER_FP_FRAME							\
-+	.cfa_off	= (s32)sizeof(long) *  2,				\
-+	.ra_off		= (s32)sizeof(long) * -1,				\
-+	.fp_off		= (s32)sizeof(long) * -2,				\
-+	.use_fp		= true,
-+
-+#endif /* _ASM_X86_UNWIND_USER_H */
--- 
-2.47.2
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fb4lyrpuybx6it7v"
+Content-Disposition: inline
+In-Reply-To: <20250407-mc33xs2410-v9-0-57adcb56a6e4@liebherr.com>
 
 
+--fb4lyrpuybx6it7v
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v9 0/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+MIME-Version: 1.0
+
+Hallo Dimitri,
+
+On Mon, Apr 07, 2025 at 01:21:50PM +0200, Dimitri Fedrau via B4 Relay wrote:
+> The MC33XS2410 is a four channel high-side switch. Featuring advanced
+> monitoring and control function, the device is operational from 3.0 V to
+> 60 V. The device is controlled by SPI port for configuration.
+
+Applied to
+
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-next
+
+as v6.16-rc1 material. Thanks for your contribution!
+
+Best regards
+Uwe
+
+--fb4lyrpuybx6it7v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgU9zEACgkQj4D7WH0S
+/k7Hnwf/dTP1MMQv9/ToNPc2H4nO5NJTsH2IUJtUlyKlbVaPrTmAilrWZJ6VquA9
+b2UJJ/udGeBwyaDC6pJQmZgw/gTBEbzCM19KdoI2U67j5XjNEApMfth0E4JcTNUI
+qgwQHWKlIsf/r+N8BioHl+7bBOY3oxJ8f8n78ZTI0mnfTHUc5H/TGbXY4/n+sn/l
+cJF/sR1OIlQ8m9orvJA8+XozHaev7jqsCTDnyJXHK5wZXRsyDVO1GXOYzm1GTd/g
+xDpgkXNrm7SLmP/9SIo8McnjFmb1CAcH66LxnQZUBDz1ly1qdeuPSFteK3TYjW5G
+oquesExyfQhOHS7OJ89DAp9yggNJqQ==
+=YH15
+-----END PGP SIGNATURE-----
+
+--fb4lyrpuybx6it7v--
 
