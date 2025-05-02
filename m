@@ -1,141 +1,78 @@
-Return-Path: <linux-kernel+bounces-629399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B183AAA6BEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2533AA6BD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E54671BA1F6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 07:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752161B6768C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 07:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85AB26B2A3;
-	Fri,  2 May 2025 07:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51FA267B77;
+	Fri,  2 May 2025 07:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ZKxOONMl"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p57Cfcjw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AD92690D9;
-	Fri,  2 May 2025 07:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5CA267AFB;
+	Fri,  2 May 2025 07:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746171928; cv=none; b=ctN1J+pj2QwymS6weMojp9Jds9BPb2ynB1Q/+FPMFY4a3Hl8KbsCvgbyginRvHiXiZT6m5EKFCbLDNn2MC+9yZI9l4I0/z2S5LN4G32PQCWQYuHk1V039kj+2GkHnJYOuImkUQvVg9QeVS8PkD1Byh9eQIXGyUyJuiL5UYxc//k=
+	t=1746171904; cv=none; b=NgKs2BtVMKjXvFtbMX1qgejmWpXqzCT3LVoICuO29NquVEwgQCom9RXNkxT3q32lmt7nXW9LD0Ig0Qim8QZfEv0FP1w4sIBuAx4PBBPeqj1PrmIDQ4+3/D52m8XoNIj9imIA+RyGyMfwri0nylAtRnjcdOlPZKP2su69HpxBiqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746171928; c=relaxed/simple;
-	bh=pEBb/P94CTc+kUMUWVOXbdynZw//A2HMy7F+XjB5wwQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lBtxXpxBgZsA+jBNk+DlEQPpp/J/fbL+us7Pv9ggMlmssmQs0fOmmhfcDSePIm8cxDSSTYjE2+PqREdmO0G3LV/ZQkia96ON9ERSDaQes273AWK6w9SbUShCXje1obX1UfS7FNzyC5uX7jQo9eon28vbUZO1+/h49S8eRktmLU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ZKxOONMl; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B8FD810252E21;
-	Fri,  2 May 2025 09:45:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1746171924; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=NCHZzqkbrKhZujwUWBoIgsXpnOP4BdiLcJ0DuXttCFs=;
-	b=ZKxOONMl07m6dnZm/RMqm0Trb64HeoFcRsMkzbQTRjb4j0SgtsWSnVJ4oFBFa+bN4nhPXl
-	MFpsj3dVlJTTvPPqhnQWY6hCiYzqVaGbNqaqLgk0RTY/94YEYyo3WANRg8xE2wZLb2lCD0
-	MwtJ7XPJs7EgGCsDI89kMz0w/DkipYgYyX/8F+ag6c9lLjVSfgUzY97ExODC7QfP1EuxzO
-	xAUe4bqtaHHx4bAUHKGZojDMlQoRRgSZwF2khax8LU+SEoxeKfdk+mqoTaP2RPSdsd21A3
-	sV1p1clxSGjyaskN4lvqR/Nb5BnqxaqykPnx2fWLxJjbjnmZ9UZwsFuwe2ZwFQ==
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next v10 7/7] ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2 switch
-Date: Fri,  2 May 2025 09:44:47 +0200
-Message-Id: <20250502074447.2153837-8-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250502074447.2153837-1-lukma@denx.de>
-References: <20250502074447.2153837-1-lukma@denx.de>
+	s=arc-20240116; t=1746171904; c=relaxed/simple;
+	bh=3UFf+SWKMS7v6/zsF9J+zoMK9moancOfUNZ8sFnC2HE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGsKmuGBCTAgrQQO4tylzRR4EkJJExrCFE7fmBEPpMC7EazFrw6CE2LxSqQ6M1dk+vCQlYf7ozSBJgz2YuZ7lRE0BExnGpYXPFbBfUqEyGYuEy/gt5ZyPV1zWWFmuRJDmbB7fq11eGN2llzuWCcy5hdIjHbsWKE6Nt0vZGQ4Lac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p57Cfcjw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B5DDC4CEE4;
+	Fri,  2 May 2025 07:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746171903;
+	bh=3UFf+SWKMS7v6/zsF9J+zoMK9moancOfUNZ8sFnC2HE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p57Cfcjw6Z6Ai9dPHSTjRANOeXCL2V0nuEcRgSHPy4n3sbDU42hrUZyat1rvnaGi4
+	 cE0F4YTt4g8oOhLzfyV3+q5ErLQLy48pCKk3Gpq0Nu1wqiET7/fW5uI76VTB0RpXjI
+	 2N/4o0uD4L5DkqMSaS7/5ofCkGjY+XOX9K29HMZmoijj3bDNIQwQ+4clDUvUHjR9fj
+	 0RKfmxTvuWg+yKimPbPkEhmD4SIkF6Dm7YPLOcRp82c2i66SC/eK5m9st7WLEJ3arw
+	 QSgGNRSufiK/C2dszI6PPD1cvyYHBdF+DrgusLXM1grGvPVQEFSbDOih6pYZsI9CWH
+	 QxWMh3qpE9alw==
+Date: Fri, 2 May 2025 09:44:57 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] rust: samples: Add debugfs sample
+Message-ID: <aBR3-Ry616ghAuGc@pollux>
+References: <20250501-debugfs-rust-v3-0-850869fab672@google.com>
+ <20250501-debugfs-rust-v3-4-850869fab672@google.com>
+ <aBRtrfTaaC3Vk9fL@pollux>
+ <2025050253-wriggly-pod-e420@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025050253-wriggly-pod-e420@gregkh>
 
-This patch enables support for More Than IP L2 switch available on some
-imx28[7] devices.
+On Fri, May 02, 2025 at 09:13:28AM +0200, Greg Kroah-Hartman wrote:
+> AND how to have maintainers review code that uses the api that are
+> not that familiar with how Rust does things.
 
-Moreover, it also enables CONFIG_SWITCHDEV and CONFIG_BRIDGE required
-by this driver for correct operation.
-
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
----
-Changes for v4:
-- New patch
-
-Changes for v5:
-- Apply this patch on top of patch, which updates mxs_defconfig to
-  v6.15-rc1
-- Add more verbose commit message with explanation why SWITCHDEV and
-  BRIDGE must be enabled as well
-
-Changes for v6:
-- None
-
-Changes for v7:
-- None
-
-Changes for v8:
-- None
-
-Changes for v9:
-- None
-
-Changes for v10:
-- None
----
- arch/arm/configs/mxs_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index b1a31cb914c8..ef4556222274 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -34,6 +34,8 @@ CONFIG_IP_PNP_DHCP=y
- CONFIG_SYN_COOKIES=y
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
-+CONFIG_BRIDGE=y
-+CONFIG_NET_SWITCHDEV=y
- CONFIG_CAN=m
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
-@@ -52,6 +54,7 @@ CONFIG_EEPROM_AT24=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
-+CONFIG_FEC_MTIP_L2SW=y
- CONFIG_ENC28J60=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
--- 
-2.39.5
-
+That sounds very reasonable -- I like it!
 
