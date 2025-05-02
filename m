@@ -1,109 +1,147 @@
-Return-Path: <linux-kernel+bounces-629764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58134AA7121
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:04:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86B6AA715E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 14:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A54B189D6D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CAF79A445A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF4C2528E9;
-	Fri,  2 May 2025 12:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF72253F1B;
+	Fri,  2 May 2025 12:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jQGaOsIs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vPaNF++h"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RUqc7JhW"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879C922A7E2;
-	Fri,  2 May 2025 12:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8898F252904;
+	Fri,  2 May 2025 12:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746187440; cv=none; b=nZ5jwBWqrlyqsw4Fx+Jl/yvTSuMObf+Iq7CvRZoRKbjMt+PYIAEOv5ny99Dtqk/DWTb4njbZu/gpihrZIsqjxgJlFaoZMgsfm3FGkybdYBcFpS7nKzhOPHIN8ei37ot42IDdAJhLJ/lo2VK5zJ9Yr2wuoYei0XwKnM43LVxPLu4=
+	t=1746188124; cv=none; b=IyaWl4TuTbXASaxHUfgORKqfYv/6V3Q8MZa+9fZFvQAyS2w4byDEwddMXr3/NlumHFvfAm92lmH2Qm6a4jwIRBL3xKCzKNC4/PrTMqNuj/DOoT7oKEXnYppS6WSCCHtMl7zhRWV4eRieBYNY6Oz9L4qzmy0nfRC2L9JusWAkbew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746187440; c=relaxed/simple;
-	bh=Le/SWYfSH/kGVW6ptZ6Ul3m1kirAQHpQ9706grwfzos=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CiDqswUTZSx7tBeQ1bLKs/OLUSyaqhCYIrpwuNKv8njrvNLuwmLrImMQAG+fnr5KKSgt3XWGrqiubI6YKPuknR12uyzuUmdJrL/PZGgFWX+ih5Mq7KFx1Vq38p0dpz4FEpjtpL8HhqBmUYb1c9GPbQBIVf+eSTnn2dCxf8R/FZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jQGaOsIs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vPaNF++h; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746187436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYTGSftcl8LW2JMow7gIBVI+Bpm0vOk2cjj2v4azH3g=;
-	b=jQGaOsIsiBOkcRg4UG6HX9UnWzqQIrfbc/z4jMp6IqTLuFxnDKoGp7O0zcb4Wc3Hk14uI1
-	kyHOC/rDYpEbWZsNh/Svx9SpQIYYbMuQuJygh9/fVBjKDxHrwxQktseUlrWSmBUzIo97Qx
-	EEia77oIV1loKcWRlWvmOiSmvclR2EdCi4DTNJ4ZuncJgWMFc4Qt2RKpLOimg2vCoaXwXP
-	RNzJwMhFnbuVZWIMcqflFjz2gLrkVp65hnLH0Hj6c7xAibWAZt43oIzvcpM/iuflQzoyuk
-	gONr+3vs6cjJqk0PAKVau15GV5i+gRQfgxBarRcNeJGO5CuhAE2NMqkY0SorYw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746187436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYTGSftcl8LW2JMow7gIBVI+Bpm0vOk2cjj2v4azH3g=;
-	b=vPaNF++hoS1PuCiadUgbmSt2EYIuBu9S9ohJXSsWjSWvVL6l0AuSFZJbh32qdpayiUz0y4
-	pD27Xcu6sJX5RHBQ==
-Date: Fri, 02 May 2025 14:03:52 +0200
-Subject: [PATCH 3/3] selftests/timens: timerfd: Use correct clockid type in
- tclock_gettime()
+	s=arc-20240116; t=1746188124; c=relaxed/simple;
+	bh=Gj8dQ2NYqz3Puzjnn2bvbGd2N3TgXYnAoNlFXwh0yo0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dibP1poseVjsFg2cAn4P1gpFhu57kRhXAFXw4/V/jZOXEYPLVx7hCpPdCPmMNI7+D2IX5HPPBFZ94XodKkMGPYV/fdRWgZbvXt4VciG7Gb+uuwOkbyMGlLAl6R7Nso/yWoMFSI7mVQlRpRBtwmSkdFtZYxzMzX1FJxdUObk8iao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RUqc7JhW; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 542CFDTj3856698
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 May 2025 07:15:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746188113;
+	bh=gF0fe93dDvvRc55ckQaLkdaPCwBtmDcqC3mqXfkN3qE=;
+	h=From:To:CC:Subject:Date;
+	b=RUqc7JhWiShQ8V9tEgqWV+bARrhamuqafbdo4WTgTRTqViigrCbb2rvNUJT+1d+f0
+	 CX+YGquQWiNO4kS0IL1kiWAeo66Bo6BvgW2orcqWI9A4aENI65OGRcL2T+0wHiyMG9
+	 3FT5ymO8e7o9w7kKvq6kSrSZ4ykNgbrOGJBJNm7U=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 542CFDm1002527
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 May 2025 07:15:13 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ May 2025 07:15:13 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 May 2025 07:15:13 -0500
+Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [172.24.227.40])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 542CFCBc086839;
+	Fri, 2 May 2025 07:15:12 -0500
+From: T Pratham <t-pratham@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: T Pratham <t-pratham@ti.com>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kamlesh
+ Gurudasani <kamlesh@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Praneeth
+ Bajjuri <praneeth@ti.com>,
+        Manorit Chawdhry <m-chawdhry@ti.com>
+Subject: [PATCH v3 0/2] Add support for Texas Instruments DTHE V2 crypto accelerator
+Date: Fri, 2 May 2025 17:21:15 +0530
+Message-ID: <20250502121253.456974-2-t-pratham@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250502-selftests-timens-fixes-v1-3-fb517c76f04d@linutronix.de>
-References: <20250502-selftests-timens-fixes-v1-0-fb517c76f04d@linutronix.de>
-In-Reply-To: <20250502-selftests-timens-fixes-v1-0-fb517c76f04d@linutronix.de>
-To: Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746187432; l=922;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=Le/SWYfSH/kGVW6ptZ6Ul3m1kirAQHpQ9706grwfzos=;
- b=HRwQibpE+GRGuZVKtTBA0HC7+AxCAVTQ7kv7CeLNC77gyUXxmcCtj7RHXJJE8QGlva9X+afVV
- UyAS3nh7wIHBW+M0ZL5IRcDBfvQl5iComI373j4grX/4OfouLu45L9R
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-tclock_gettime() is a wrapper around clock_gettime().
-The first parameter of clock_gettime() is of type "clockid_t",
-not "clock_t".
+This series adds support for TI DTHE V2 crypto accelerator. DTHE V2 is a
+new crypto accelerator which contains multiple crypto IPs [1].
+This series implements support for ECB and CBC modes of AES for the AES
+Engine of the DTHE, using skcipher APIs of the kernel.
 
-Use the correct type instead.
+Tested with:
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is not set
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+and tcrypt,
+sudo modprobe tcrypt mode=500 sec=1
+
+Signed-off-by: T Pratham <t-pratham@ti.com>
 ---
- tools/testing/selftests/timens/timerfd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1]: Section 14.6.3 (DMA Control Registers -> DMASS_DTHE)
+Link: https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
 
-diff --git a/tools/testing/selftests/timens/timerfd.c b/tools/testing/selftests/timens/timerfd.c
-index d6adf66bd8df064f5b76ccc265c13217d7a53f5b..402e2e4155450d946796b8297a8be85f93cea16f 100644
---- a/tools/testing/selftests/timens/timerfd.c
-+++ b/tools/testing/selftests/timens/timerfd.c
-@@ -15,7 +15,7 @@
- #include "log.h"
- #include "timens.h"
- 
--static int tclock_gettime(clock_t clockid, struct timespec *now)
-+static int tclock_gettime(clockid_t clockid, struct timespec *now)
- {
- 	if (clockid == CLOCK_BOOTTIME_ALARM)
- 		clockid = CLOCK_BOOTTIME;
+Change log:
+v3:
+ - Corrected dt-bindings reg length is too long error
+ - Converted AES driver code to use crypto_engine APIs for using
+   internal crypto queue instead of mutex.
+ - Removed calls to skcipher_request_complete in paths not returning
+   -EINPROGRESS before.
+ - Added missing KConfig import, which was accidentally removed in v2.
+
+v2:
+ - Corrected dt-bindings syntax errors and other review comments in v1.
+ - Completely changed driver code structure, splitting code into
+   multiple files
+
+Link to previous versions:
+v2: https://lore.kernel.org/all/20250411091321.2925308-1-t-pratham@ti.com/
+v1: https://lore.kernel.org/all/20250206-dthe-v2-aes-v1-0-1e86cf683928@ti.com/
+---
+T Pratham (2):
+  dt-bindings: crypto: Add binding for TI DTHE V2 driver
+  crypto: ti: Add driver for DTHE V2 AES Engine (ECB, CBC)
+
+ .../devicetree/bindings/crypto/ti,dthev2.yaml |  55 +++
+ MAINTAINERS                                   |   7 +
+ drivers/crypto/Kconfig                        |   1 +
+ drivers/crypto/Makefile                       |   1 +
+ drivers/crypto/ti/Kconfig                     |  13 +
+ drivers/crypto/ti/Makefile                    |   3 +
+ drivers/crypto/ti/dthev2-aes.c                | 414 ++++++++++++++++++
+ drivers/crypto/ti/dthev2-common.c             | 220 ++++++++++
+ drivers/crypto/ti/dthev2-common.h             | 110 +++++
+ 9 files changed, 824 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/ti,dthev2.yaml
+ create mode 100644 drivers/crypto/ti/Kconfig
+ create mode 100644 drivers/crypto/ti/Makefile
+ create mode 100644 drivers/crypto/ti/dthev2-aes.c
+ create mode 100644 drivers/crypto/ti/dthev2-common.c
+ create mode 100644 drivers/crypto/ti/dthev2-common.h
 
 -- 
-2.49.0
+2.43.0
 
 
