@@ -1,197 +1,170 @@
-Return-Path: <linux-kernel+bounces-629171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42FDAA687B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 03:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF3EAA6882
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 04:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE481B643D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 01:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021181BC3D34
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 02:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F2614A09C;
-	Fri,  2 May 2025 01:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF9C4430;
+	Fri,  2 May 2025 02:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="e9lmI114"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NLfCNqT9"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF651D554;
-	Fri,  2 May 2025 01:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F061AAC9
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 02:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746150767; cv=none; b=rC/8bP7U8PjV59ekdVcZGsAOj1WcP4HwHlmIM9SrEc9Yv32fffu6JEyQV3LXyic1xKxDCVXOWY+M4vLl4UEWoOmJnB6AJDv18ymfnhGf7v0zmA12i0kgu4SM3XvqJE+1R60vmTcmsMOsitU1GzKKPFAeCfIx5Zj0GxmwbqzqUg8=
+	t=1746151226; cv=none; b=TppM2XvMNrax4LXJPPodnH811IsDqPn08GTF7U/8i4wew1p3cKeedpLVrOM0/xsr7K4EyhQum16HOKE3EHz8ElGobglchEQpIqIzYEo1hFPWF6Dru5xQ0xPwc4w6SAmV5DVUKEc5m7pF+PAQBYrRlXWcnnRIzFkkHOfrzgPcQPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746150767; c=relaxed/simple;
-	bh=+6KC8Er2Yg+3lM3yjbM95E/f1pA2PsuQKmRBF9nwBPI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1oZIbUoAa5BNquNWdSzRGug4dhX8x+TtuI4r+EZNt74IJ6api97VBioEOROLwof6i/SxQSr21wAXY5EmCgfuQzGqtl+YqSjgmEnwtmGbgA1GqG7meSwaVOdjfSrfQVwA1q2CmzwbJVAET7A5UpyDtFnQ3Njn04lBVtT+ZG22xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=e9lmI114; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B325425F61;
-	Fri,  2 May 2025 03:52:43 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id VDfb4-N8fou8; Fri,  2 May 2025 03:52:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746150758; bh=+6KC8Er2Yg+3lM3yjbM95E/f1pA2PsuQKmRBF9nwBPI=;
-	h=Date:From:To:Subject:References:In-Reply-To;
-	b=e9lmI114NV6RHhztBfWeTJ0Ra99aZNmodTieZXLWzA0Bg1z0EMACs5cDutqZOY8LN
-	 tqCkxlAyF0i4fZNoliqbvSbI4l4XfZrqJrv0bHP4WN2dX/A9YZ0ulSF0oquXtmpPkC
-	 Zr0k4E+Kn0O2Xt9CtzIoy2nzr0+ABHpkXYOFqXAMuGFHEzLFahbl5NBZodJgCywHUz
-	 67/9ukio1bbsu/ZVL/X/ElhoxooyX6za26qntX4tFPAE3RsINvG++pMzFnELO5Gd4I
-	 IPtv+RWbhx5bqoHQSrabI38Dem3pZuzNlx1Q5twlKyIrR+RMcwMacnh5t3rKdOxiGC
-	 06c4RsDMTLdig==
-Date: Fri, 2 May 2025 01:52:22 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Aradhya Bhatia <a-bhatia1@ti.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [PATCH 3/4] LoongArch: dts: Add initial SoC devicetree for
- Loongson 2K0300
-Message-ID: <aBQlVrA_fxb22aPF@pie.lan>
-References: <20250501044239.9404-2-ziyao@disroot.org>
- <20250501044239.9404-5-ziyao@disroot.org>
- <8c102773-71e2-4c60-b260-07f099ddaae3@kernel.org>
+	s=arc-20240116; t=1746151226; c=relaxed/simple;
+	bh=kpRoIaGYD06X9YMd+ZJNo/rzg+WKwqETjw7smvXRlto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VIGecQ01ux6C7L7cvSmTKeuLoJ5e2LZY7tIUzDlJknc551Knd1SRf6E+tIoKSrAjhOpz5hqxMhkra6X0Iv+Vp3B5TwBIwT5SxheKZvuIshzklyoKaX4KuEgDZr0+6/X0w2E//22WGh6nE10nh6Ig3Q++s7hrJjBg6gz4w8pMTX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NLfCNqT9; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 541KeQOR025009;
+	Fri, 2 May 2025 01:59:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=l1n8z5bxw8VHxkEW7AWAEXC1znZs1
+	RbwqaWrSJfKroY=; b=NLfCNqT93txZ7xHhjVTjJHmJU0655uyqBGZs/RnHY8j/1
+	2Qe9P3y3sQfyIiVC2Vu8oOnWUy+xsKAcGRJ06GHwQr25pedqUIwxXeL1gHHBAl4E
+	hstsIRPW3wp1Rx1Ld1z97/hZGdRTgwcJzhOOrjCSDbS46+LGfD4nWTGuIN8dtMZ7
+	U8bKsqZAxyAYhI51SJjhI0ly1BakRAf1RUezJdfJ1nLnzZlX75jhFxlGm6CTuqOJ
+	EEKAA9lrp3AQqiqiHdYpyGQn7UCj9BTTCZJHv7C1dybzPu2fbFfDTcNZ7GlQC5qE
+	CBNBReTp7ynsvRpYjvgAfySE9jLF705VzMF2MNrPQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46b6usmcc1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 02 May 2025 01:59:58 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5421aMDR035421;
+	Fri, 2 May 2025 01:59:57 GMT
+Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 468nxd1euw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 02 May 2025 01:59:57 +0000
+From: Prakash Sangappa <prakash.sangappa@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com
+Subject: [PATCH V3 0/4] Scheduler time slice extension
+Date: Fri,  2 May 2025 01:59:51 +0000
+Message-ID: <20250502015955.3146733-1-prakash.sangappa@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c102773-71e2-4c60-b260-07f099ddaae3@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-01_06,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2505020013
+X-Proofpoint-ORIG-GUID: cEiyy3YzqfhBSehMertcFPUOid1N06Ab
+X-Proofpoint-GUID: cEiyy3YzqfhBSehMertcFPUOid1N06Ab
+X-Authority-Analysis: v=2.4 cv=Hd0UTjE8 c=1 sm=1 tr=0 ts=6814271f b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=meVymXHHAAAA:8 a=WsHKUha7AAAA:8 a=z6M46CtpNJjKcxa8ea8A:9
+ a=2JgSa4NbpEOStq-L5dxp:22 a=H4LAKuo8djmI0KOkngUh:22 cc=ntf awl=host:14638
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDAxMyBTYWx0ZWRfXxHOd/C5KdrIm oyWCBgOh08tHjG9D6MJEFyUgArydtcn5duXbk+tFFkkTpchvW+1qSU/9qMH9XHvJDL9bu+agsTf WofUtOoW3f2kO1UA2W9ZmY4Rg+C6oo60arNC1fegwA25akj/9a1vjlon0k/3vzLHbc0/6M2oO91
+ eAzCg1pJ0A1nmDG6I2i4aoBvftzVyTn7ucf3krYq18zN7XalDh4sjXOdzTiVwp4yiayK+d3Vo52 JlcdtM8FEQKLBAnkteh1FIJhFo2XgothvwXFUHCKYpK4kv8NdAuo1L2DtoHzUTxfbf4L5YYHt40 ELV3CUvzMi79/Lq46TSBcnxzKtjj7PVwpEyHButirakYZcfVWcr8smbZ6fU2dR+cP+k7682Ev2I
+ fo2iPuDAMMSEC3tlOGmG8QP5VVM+yKw/Ah3RJtKuT1cx9H+369oOsdwWko0Sqpric9uoWKpB
 
-On Thu, May 01, 2025 at 12:55:04PM +0200, Krzysztof Kozlowski wrote:
-> On 01/05/2025 06:42, Yao Zi wrote:
-> > Add SoC devicetree for 2K0300 SoC, which features one LA264 dual-issue
-> > core and targets embedded market. Only CPU core, legacy interrupt
-> > controllers and UARTs are defined for now.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  arch/loongarch/boot/dts/loongson-2k0300.dtsi | 197 +++++++++++++++++++
-> >  1 file changed, 197 insertions(+)
-> >  create mode 100644 arch/loongarch/boot/dts/loongson-2k0300.dtsi
-> > 
-> > diff --git a/arch/loongarch/boot/dts/loongson-2k0300.dtsi b/arch/loongarch/boot/dts/loongson-2k0300.dtsi
-> > new file mode 100644
-> > index 000000000000..6991a368ff94
-> > --- /dev/null
-> > +++ b/arch/loongarch/boot/dts/loongson-2k0300.dtsi
-> > @@ -0,0 +1,197 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2025 Loongson Technology Corporation Limited
-> > + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
-> > + */
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include <dt-bindings/interrupt-controller/irq.h>
-> > +
-> > +/ {
-> > +	compatible = "loongson,ls2k0300";
-> > +	#address-cells = <2>;
-> > +	#size-cells = <2>;
-> > +
-> > +	aliases {
-> > +		serial0 = &uart0;
-> > +		serial1 = &uart1;
-> > +		serial2 = &uart2;
-> > +		serial3 = &uart3;
-> > +		serial4 = &uart4;
-> > +		serial5 = &uart5;
-> > +		serial6 = &uart6;
-> > +		serial7 = &uart7;
-> > +		serial8 = &uart8;
-> > +		serial9 = &uart9;
-> 
-> 
-> UARTs depend on connectors, so these are board-level aliases.
-> 
-> 
-> > +	};
-> > +
-> > +	cpus {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		cpu0: cpu@0 {
-> > +			compatible = "loongson,la264";
-> > +			reg = <0>;
-> > +			device_type = "cpu";
-> > +			clocks = <&cpu_clk>;
-> > +		};
-> > +
-> > +	};
-> > +
-> > +	cpuintc: interrupt-controller {
-> > +		compatible = "loongson,cpu-interrupt-controller";
-> > +		interrupt-controller;
-> > +		#interrupt-cells = <1>;
-> > +	};
-> > +
-> > +	cpu_clk: clock-1000m {
-> > +		compatible = "fixed-clock";
-> > +		clock-frequency = <1000000000>;
-> > +		#clock-cells = <0>;
-> > +	};
-> > +
-> > +	soc {
-> > +		compatible = "simple-bus";
-> > +		#address-cells = <2>;
-> > +		#size-cells = <2>;
-> > +		ranges = <0x00 0x10000000 0x00 0x10000000 0x0 0x10000000>,
-> > +			 <0x00 0x02000000 0x00 0x02000000 0x0 0x04000000>,
-> > +			 <0x00 0x40000000 0x00 0x40000000 0x0 0x40000000>;
-> > +
-> > +		liointc0: interrupt-controller@16001400{
-> 
-> Missing space, {
-> 
-> > +			compatible = "loongson,liointc-2.0";
-> > +			reg = <0x0 0x16001400 0x0 0x40>,
-> > +			      <0x0 0x16001040 0x0 0x8>;
-> > +			reg-names = "main", "isr0";
-> > +
-> > +			interrupt-controller;
-> > +			#interrupt-cells = <2>;
-> > +
-> > +			interrupt-parent = <&cpuintc>;
-> > +			interrupts = <2>;
-> > +			interrupt-names = "int0";
-> > +
-> > +			loongson,parent_int_map = <0xffffffff>, /* int0 */
-> > +						  <0x00000000>, /* int1 */
-> > +						  <0x00000000>, /* int2 */
-> > +						  <0x00000000>; /* int3 */
-> > +		};
-> > +
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+A user thread can get preempted in the middle of executing a critical
+section in user space while holding locks, which can have undesirable affect
+on performance. Having a way for the thread to request additional execution
+time on cpu, so that it can complete the critical section will be useful in
+such scenario. The request can be made by setting a bit in mapped memory,
+such that the kernel can also access to check and grant extra execution time
+on the cpu. 
 
-Thanks for finding the issues, will fix all of them in v2.
+There have been couple of proposals[1][2] for such a feature, which attempt
+to address the above scenario by granting one extra tick of execution time.
+In patch thread [1] posted by Steven Rostedt, there is ample discussion about
+need for this feature.
 
-Thanks,
-Yao Zi
+However, the concern has been that this can lead to abuse. One extra tick can
+be a long time(about a millisec or more). Peter Zijlstra in response posted a 
+prototype solution[3], which grants 50us execution time extension only.
+This is achieved with the help of a timer started on that cpu at the time of
+granting extra execution time. When the timer fires the thread will be
+preempted, if still running. 
+
+This patchset implements above solution as suggested, with use of restartable
+sequences(rseq) structure for API. Refer to [3][4] for further discussions.
+
+
+v1: 
+https://lore.kernel.org/all/20250215005414.224409-1-prakash.sangappa@oracle.com/
+
+v2:
+https://lore.kernel.org/all/20250418193410.2010058-1-prakash.sangappa@oracle.com/
+- Based on dicussions in [3], expecting user application to call sched_yield()
+  to yield the cpu at the end of the critical section may not be advisable as
+  pointed out by Linus.  
+
+  So added a check in return path from a system call to reschedule if time
+  slice extension was granted to the thread. The check could as well be in
+  syscall enter path from user mode.
+  This would allow application thread to call any system call to yield the cpu. 
+  Which system call should be suggested? getppid(2) works.
+
+  Do we still need the change in sched_yield() to reschedule when the thread
+  has current->rseq_sched_delay set?
+
+- Added patch to introduce a sysctl tunable parameter to specify duration of
+  the time slice extension in micro seconds(us), called 'sched_preempt_delay_us'.
+  Can take a value in the range 0 to 100. Default is set to 50us.
+  Setting this tunable to 0 disables the scheduler time slice extension feature.
+
+v3:
+- Addressing review comments by Sebastian and Prateek.
+  * Rename rseq_sched_delay -> sched_time_delay. Move its place in
+    struct task_struct near other bits so it fits in existing word.
+  * Use IS_ENABLED(CONFIG_RSEQ) instead of #ifdef to access
+    'sched_time_delay'.
+  * removed rseq_delay_resched_tick() call from hrtick_clear().
+  * Introduced patch to add a tracepoint in exit_to_user_mode_loop().
+  * Added comments to describe RSEQ_CS_FLAG_DELAY_RESCHED flag.
+  
+
+[1] https://lore.kernel.org/lkml/20231025054219.1acaa3dd@gandalf.local.home/
+[2] https://lore.kernel.org/lkml/1395767870-28053-1-git-send-email-khalid.aziz@oracle.com/
+[3] https://lore.kernel.org/all/20250131225837.972218232@goodmis.org/
+[4] https://lore.kernel.org/all/20241113000126.967713-1-prakash.sangappa@oracle.com/
+[5] https://lore.kernel.org/lkml/20231030132949.GA38123@noisy.programming.kicks-ass.net/
+[6] https://lore.kernel.org/all/1631147036-13597-1-git-send-email-prakash.sangappa@oracle.com/
+
+Prakash Sangappa (4):
+  Sched: Scheduler time slice extension
+  Sched: Tunable to specify duration of time slice extension
+  Sched: Add scheduler stat for cpu time slice extension
+  Sched: Add tracepoint for sched time slice extension
+
+ include/linux/entry-common.h | 11 +++++--
+ include/linux/sched.h        | 21 +++++++++++++
+ include/trace/events/sched.h | 28 +++++++++++++++++
+ include/uapi/linux/rseq.h    |  7 +++++
+ kernel/entry/common.c        | 23 +++++++++++---
+ kernel/rseq.c                | 60 ++++++++++++++++++++++++++++++++++++
+ kernel/sched/core.c          | 35 +++++++++++++++++++++
+ kernel/sched/debug.c         |  1 +
+ kernel/sched/syscalls.c      |  5 +++
+ 9 files changed, 183 insertions(+), 8 deletions(-)
+
+-- 
+2.43.5
+
 
