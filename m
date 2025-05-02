@@ -1,448 +1,452 @@
-Return-Path: <linux-kernel+bounces-630458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33521AA7A80
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:01:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CDAAA7A76
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 22:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A17E7ABBFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 20:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71769802A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 19:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA9C1FCFE2;
-	Fri,  2 May 2025 20:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583441F4E34;
+	Fri,  2 May 2025 20:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z/BPyKfG"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="U6mgtz64"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2071.outbound.protection.outlook.com [40.107.94.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA431F4E34
-	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 20:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746216020; cv=none; b=oqzESFVmpLDqCM1ogUtpVeHfoItcKy4ys4Eb1DMEMJyVVPC0v6AxKV4JqnXc8uzsXNstZ/ta35CV1XDEbbqfGFWQLsSI6QjsIUWIHGq9eSYxT1O6EKODZplspDjvoTP3S0JCuBKainAtTSG9EMNgZatZYHgkmtTXi39PzEGLPb0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746216020; c=relaxed/simple;
-	bh=x9+BBsUWn5CT6heUB5Cn0XLl9xnBkRFy8cicf5/iK1w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EaDrOmi2Ao6ykhDy2wNvpIwoIVJRb5KYQPUOSBTh1LbEo19DVuVQAP0p6k5qh5/30tadGaHmyM3UvklH8tCYU2JPqh1de+nqSX1tYiwJ4SiKGxsHpKX3aC13NabI5VhzcPRtzdsv6hoYbAqBYZMSg2gxy4cMaOci6Nv1a4uFAEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z/BPyKfG; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746216014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ovDVNBJHIHUHnzYc0hryULdGfBYXL9xjKAwOPlwvfkw=;
-	b=Z/BPyKfGQ0BpXJOwC2hKF4LUf8P/GRdFXO/7xOlMxdsYclhrIm0PNWqdhnHlG3bTPKccvu
-	pUEjHwjIHET+RmGZnVdplBgY7Y7sh8Ys5KL23kTIwleDpT0CQVwoUJGIMaVN3gK/xSvnv+
-	sl4tNYmH66kpOfSyh+JNiqupAiCrMe0=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 7/8] bcachefs: bcachefs_metadata_version_snapshot_deletion_v2
-Date: Fri,  2 May 2025 15:59:59 -0400
-Message-ID: <20250502200002.1309862-8-kent.overstreet@linux.dev>
-In-Reply-To: <20250502200002.1309862-1-kent.overstreet@linux.dev>
-References: <20250502200002.1309862-1-kent.overstreet@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2171E2EAE5;
+	Fri,  2 May 2025 20:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746216009; cv=fail; b=eBzdm4d/PTJCNsqgHkkr+hkfi4ZHNtMLF9MU8W8Q3P5xbVQCfCW+IfqgIAVkYDqCdGiS54ZwifEVbE+gUQ598FDE356kgbEqtwe9p7UvHD3u6HRMOLnIlBNPisIAe/EltqmNP8DtDwJt237dKzOsIFUfo+UFrWG1Yi7/FevrBI4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746216009; c=relaxed/simple;
+	bh=BPFdeTEjEg2Vo//sAoxqozR3tppFS+J0uBh3nYT60v0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sscrEhUFW3TBVJ5u4g8iYiXPR9AYtd/eBQXpEoHptem/OJCENJqDulQKcXo4pIalmICFA13xAOhqesk38Bfhfzql0TFYYeBO66Zdm2b+S8P23elz9Ma78xX0p/uONoZD+NnIMV4heIkOmZ/Sd4frkIxDpNtf8eOOAOEH6gBRgn8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=U6mgtz64; arc=fail smtp.client-ip=40.107.94.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=imJVL4O6Bv6QuTDM6qVMp/1RLYROSXuxp5IVfn7A9enqjthFaYRt+i+YBTsqoFmKfLZ4xGEeF7igod1JlhJ3spRl+XGRf9rBzMeshIzMOZzFLvDm781IlLlgLNTYYo7YOud7JD5LqbojlDVxyEmVUb1hnrjqYmUCJhZkb0N8zgSnNVl+r3yMjR62+Cveeg2haCIk+w5s5XTJofsyJ7IFCyxAoLNE2OhyAaw50t1xgSXKRLQlOS4PvM6TBNLiVvWOxELRzfU4Y9OX/x5CUeoLOxIa6i9irONgupsRM4veBq8QhURWmMjrXV4Ef82DJ0D8IDQOs8cVVypGOZlpV7/GLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BjOQWLdU5gFPJHd6HcUwefoRJ/H5PcxbWPrejgbCUEo=;
+ b=AnY6o+SOWQCs39G9YTvLrkkwOznU0yy6eJu1DjKr7MHBMPHnl5E309cw1AlbxsUA45rIXbnkdhBfydscGnC9j3JqDQuTPO9KckKQrZ6lJY/6Z3TbxuNOQe51mErVVMlnHX8leuh04jvfA7Fvtrbdrn3PIWHRO6xTBacE61FoS2cvAA2+GtFYFT/mURtBXoEYUa5+aE3TvVY65yECmSJFZZeuupwDhFlfP4cUAL1TGp4xA+0bXBgl4p77tD9LcNOwtpLF3A4TOMcaG4SFk5R+DvZ6YEENCgwSvMTW/wWeFcqr0c/sb95p61O2H82UCkqjAXV0RQaIGoLBDqX8qCde2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BjOQWLdU5gFPJHd6HcUwefoRJ/H5PcxbWPrejgbCUEo=;
+ b=U6mgtz64shXuMns565TiYb8eCAkg0tEaOiDh360yXJ1CFRs6FPYi+txl0vjf2lvFuw86IRFBRBnk8tA4UawJKZlq9ZZd0wYxEHl46R6wNoZ3ak7CZTdRGv/2nk0RsN6mHSInLHjzAuarEG9ho+Qrp6HoKrIzAvNlMGl6Hgjd87bq6OWZeDpCKu51PSu5L4SFrCprv/CnfytG+aOLqMeHZdP1KVa/hm0O65Bginp2SakMOkETuclEN+rpIUA61d/TQUlS+WcFI2m9D2FHkWRqs9V29HxyJgzu4lgrso12Jj7xb1xyra7rdfAatfYsHhrhvj0srWGwfbyjbvWcTKFBsg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by BL3PR12MB6451.namprd12.prod.outlook.com (2603:10b6:208:3ba::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Fri, 2 May
+ 2025 20:00:03 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.8699.021; Fri, 2 May 2025
+ 20:00:03 +0000
+Message-ID: <d6962ea3-282d-437c-b3cf-ce701d514558@nvidia.com>
+Date: Fri, 2 May 2025 15:59:59 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 17/21] rust: num: Add an upward alignment helper for
+ usize
+To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+ Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250501-nova-frts-v2-0-b4a137175337@nvidia.com>
+ <20250501-nova-frts-v2-17-b4a137175337@nvidia.com>
+ <D9LEQ1U1PLO8.3N22GRY380ZM3@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <D9LEQ1U1PLO8.3N22GRY380ZM3@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR16CA0046.namprd16.prod.outlook.com
+ (2603:10b6:208:234::15) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|BL3PR12MB6451:EE_
+X-MS-Office365-Filtering-Correlation-Id: 889bf129-83c9-42a2-3c83-08dd89b3ed59
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SkoxVnkraHB2aExhWFpuSjdma0cyVXV5MTkySTVDT0hkTytLWXIrVk9CT3VX?=
+ =?utf-8?B?anlIQlRGVXhGQjh6UitDM1plcytNTGEvT29nd3JMSDJHU1VrVXExS05uL0h0?=
+ =?utf-8?B?ZVpXRGxzall0Y1RubU5ieVpKV3NQTkpETTFyVGYyb1grMHFDTGQyQWhzOHB0?=
+ =?utf-8?B?QzhaVDc1WGhhalZoaUtKY3RselNlelJmYzZGNGxHS1ZtRjFwRjR6YmZzc2t0?=
+ =?utf-8?B?RStIWW5vNmhNRWtxajZmT0RCZVhyTjZ2TWo4UmxYMmxlcWtFM2prWUozRFVz?=
+ =?utf-8?B?OTRmdmVlN0NUZFM1ajlTeG02TGdmWkRvTUxrSjRUdEZDM05ZWGs5bThaRFA2?=
+ =?utf-8?B?R1Z5WDVZbW0weUNiWlY5WjUyVXRRTnJWcDA0MHdaV0ZNbzFtaUxBenN6QXBQ?=
+ =?utf-8?B?MVExMGFmU2RHMjY2QVFuclphQUtTS0dZL1dyMVF0NzY2dzk0WnRBR200OWFu?=
+ =?utf-8?B?VUFoWXkvc1Yxa0czajFGY1lhZGpQbWcyWDZLaDdVRG5WTlkyMWRIVEIzRjBI?=
+ =?utf-8?B?WmJGNVVrcnRhZHI5OSt3b3dBVUlwZitiN1cwdTd2L3FZemhQdGR5eStNNHMw?=
+ =?utf-8?B?L3BiRGE3bU9ORVB5S2Q5WEZHSlNUWm04VzhIVHNNRkM5NEVpM28ySUxOdkRz?=
+ =?utf-8?B?M0J4MFlHVjY5dG5nbVNGRDRBRFVzT0E2YjA4a0VqbE9ISHNvVVhCSXdBUHRm?=
+ =?utf-8?B?QTVFMDBqOFhuWWtGaldFdGptdE5uZlpjUVZ5NW9jSDByYWY5RlFucFl0QVcr?=
+ =?utf-8?B?VUhOM3E5V0h0WHU4b0NQVHhvN0RYR3kwZVFGYXEvUzlqOHFCUUZ4T1F1cFZj?=
+ =?utf-8?B?cnFsWUdRMVFqRTRsUnB5YmNFQzczeGQ5N0RpclF3YjU3SlBQcy9hZVVJRFlW?=
+ =?utf-8?B?WkowQzFMU1VWTW14TE0vc0MwY3UvTVM1dHU4S01vUzkwQlRDNmRXWjRhZUU4?=
+ =?utf-8?B?VlY4TFFyM05sZ29vTjBuOG5rSlV1QU02bkNUN25VK2EvWlM5Z1VXOHViR1Nw?=
+ =?utf-8?B?UnhZeFFULzFoNzViK3o3K1pFL2xmb0xlL1k0cmNGQXozc2Qzc3hwLzJyK25o?=
+ =?utf-8?B?M1FIVHpERW5YK1BwbktMZHdvVzRnYm1RZDIwZEJiSFgrYnBNbG1oU3IzMnRC?=
+ =?utf-8?B?c3Q1WjUxRGxRR2pZdW4wVk9JOG9aTmxxeXNPdlpLVGszUjB5M3krc1ViN0k3?=
+ =?utf-8?B?b3VkSGdnRnlIV2Z0UzlLNU94cHNmcUROdlFnclJtU013OVF3NEo4Ym9iWVY0?=
+ =?utf-8?B?dlcraG0wcW1nUTJSMHpWbWNnNU1vRDFWZTY0czIwVlIvNCt3SUJuQzBZMDd5?=
+ =?utf-8?B?dHN0VXZsanFNTDNGMkdrb3dzM0FQK2c3WUJ4OVhRa2R4dmprSU9JOWNTbEJX?=
+ =?utf-8?B?SkdJQ1R4SUdvSkkxSHozZHZMZ1VkMjFIempVQ0dLUk5jUE1VWXBEa0pOd1pX?=
+ =?utf-8?B?OXFZL3ZvbStKUDRSVEhwanVMc3ZER1FoU3Ntayt1TGx2eUFwTjZQbHp6Ynd1?=
+ =?utf-8?B?a1FLdm1HSWNtL0IvRGxPM2JEYXlBSXRBOHYwcC9GOUZvRHNWRTNVZ2lQek1Y?=
+ =?utf-8?B?QlhjUmIyQ3puWFNzWGtGdFVEdVRqcytPTGJRVGR1R094RWI3NFFlOFQ0N1VU?=
+ =?utf-8?B?SXc2eGNvWUhNYndQM2xmUnE2b201NTIyKzROQ2RjK24rUXdBQ2NyR0ZOSmFa?=
+ =?utf-8?B?Snc3ejZXNTJpeXNzcEx6bk1zNVpQd3lkMUI2bTlYK0tLMUo4d2I5bWtxYTNy?=
+ =?utf-8?B?NCsrZ1RkUkpmWWNQaG5pUFc2cnBOYjJGN2JRU25PYVdramZ0R1JrcjdTL1dq?=
+ =?utf-8?B?YzlJVXEwMDNESGt6cHREdGFydVc1N1Y2dnhJS2VUeHFXd3VqMkJRZjB1YVpN?=
+ =?utf-8?B?NDBjRWpVZEFoL2o4L1Q0d0g2eTlmUkVSVjZwTFpBSkttR2lCQXJsL2haQldq?=
+ =?utf-8?B?OG1EVFUwaTJoenpDdWVaRU5oYXU0OHhaZDRTS1hjZkJEcGpKTEN6MEF3QTNE?=
+ =?utf-8?B?YzZidUR0bUpnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OXhHSmpaTlFGRXRmREFiQmcyNHpiRmpPV2o2aUNUbGtmUDFNZDFSWFMrMEZY?=
+ =?utf-8?B?UENQYWtkSnBBcjJMdzNBUVVaeTFaNlpCMFJBY1ZaaHhoNDFyK25iSWxwdGdz?=
+ =?utf-8?B?cDBLb1VjTFh2UWhCUHVCK05Ub1RERFZ5cyt3ck5kNy8zRUZudDFBay9vRkdX?=
+ =?utf-8?B?ZmRBMmtiOTVtSzBIdC9yUGV6aWRmMEFZQ2svUXdQd2RJRWo1bXZIQlNXTDgv?=
+ =?utf-8?B?QnUzMm1XTU5sZ2NkQWNkamdsOWg4ZUdsZ2UrQmZqTVBROG5reFZEOHg2NWlQ?=
+ =?utf-8?B?UGFEV0NKVFhyN1NTNi93RGMrUnAwY05XVnBQZUhFWDR4cjVmUzBTcCsrN3kz?=
+ =?utf-8?B?bklUNVZoaFpITEJTQ0dDSGt1cC9zVmRoRlVSdXlNVkVFZ09QSHFySS9vdVpi?=
+ =?utf-8?B?YTBlNDZjT1A1QWN3NWxxYzMwTGZyOUFEbDJWRXJ2d3RyYk5rY3hic1hkWXV1?=
+ =?utf-8?B?RktaRHVxcjhGRjYwaUdoVDNSbTFGNENqYmJRbitFV3k2V0MwM2lUNnczT09x?=
+ =?utf-8?B?QUZOK2JEY3NRd2lncmcxTzFTR3BxbFpGRFZrL29nQnNMeGpna2RaUGFVVCt3?=
+ =?utf-8?B?MUJkckxVR2xiTDYxeWxNc1M2TVplbEFvM3R6ZUhwNXhjMmhMQmpnTDFmT0dY?=
+ =?utf-8?B?TmMyUXV1MlFub2lHNmEvUEJQTXFYZURqVmVrSGtURUp3S216NGNkMTZNYWdG?=
+ =?utf-8?B?VEZvU3hUUHNIRHQyL0FaT1dHUTltNTVQdGhRaDZTaS9WWjdmV1l1RHJWcmhR?=
+ =?utf-8?B?cUMvZ1RRTmcyQzlnWDZ5OVA1WDBhTHZLMmxYM25oaDdiNUtRT2laZDRwTUpl?=
+ =?utf-8?B?UkxHS2NHd09WdDdmNEgyeVB0SzNma0VKWDNqUkJINXVzVmxMK3E5OCswSkhV?=
+ =?utf-8?B?K3FkTXZ1SnlMQnNpaGZaQ21Fc1UyRjlHVy9zNzdoWDJyM3R0Z2dMaDJGOC9X?=
+ =?utf-8?B?L0gwVVlYWnE1OEMrR1k3UC9wL0dLZzh4RlBySEtWR1VZc3hTQm85aFRFa1JO?=
+ =?utf-8?B?YlhmNWQ2Z0FqTzlXeHNUb2RFaGUvSXdqbnU1ODRFamFwOG4xaExBSStiNTlr?=
+ =?utf-8?B?eXlud3dSemM5K0tVTkNBVEJFbnQwMXl0QVl3aG1TbUJGRU1XeXBTQnBBQ2ZE?=
+ =?utf-8?B?d0ZkZ0ovc29ERm8xZWxZeVFUUVc1YjBCeDhhWnpjUEJrQjdhRy9LbjBoS0V0?=
+ =?utf-8?B?NkRYQSs1MjlSelFrZkI1SThOa25FamlCK3Fkc2dqMG1RclAreEpHZ2Q5Nmhx?=
+ =?utf-8?B?d1VlbmJXMFZ0bWhGQytHZ2lTU0MrQTY3QXZ4NDFKWmZNRDZHellNNDd1YzJY?=
+ =?utf-8?B?eE9QZGU2UlMwaFNHeWhRazlTa1Zzc21ZMjRNczZIV3JKWXRBeTJOYVFvU2RZ?=
+ =?utf-8?B?bittZFVWSGlOK2cyTU4wLzI1MS9PYThtQXlvR0FaeHJKS0UxTG14M3JvdGcy?=
+ =?utf-8?B?NjJDZXR3MmV3V04zTWdoU2tLZHQ2d2pBUUFvTDl0a1FVSGR1UU83c3dSb0lK?=
+ =?utf-8?B?QkIzcmg1RzN2MzFSZ2kwWHRhOGZ4Z3g1aVR5UzZUN1AvTFhON1VUanZuTzFr?=
+ =?utf-8?B?RVQvRHRQM3VGL0YraHZDc3pNSFRnNTJsemtudys0VUcrUzU1UEVTZTR1bUpK?=
+ =?utf-8?B?TlAweFZWMXpENi9ReHQ4SzFQOWdRZHpNZTBsdGdnSHR5RHEzMHpFTkdoL3Bz?=
+ =?utf-8?B?TFhvS01GdS91SUpCK20rZmVDeGl4c3V1cmRGcEZDaXA3Nzc0Um8rREVtcnBj?=
+ =?utf-8?B?aXZTR1ZFa01oRjBMNmhZYmFXYlBQVURCeThOVU1XbjdzdzZWUWNXeGVTOHIy?=
+ =?utf-8?B?VFdKbENwcDIxNUdSZFdGOUZhbEYyNGZyN3MwdVdmVDlUU0JCUFFUeGowWjAv?=
+ =?utf-8?B?Q3FISWhERUFRa0NPb3JicU9EK3RlblMzTHBub3dsY1NscHhMNlhhOGZRdTlQ?=
+ =?utf-8?B?aWRJSmhPZ1VPZWFmUFl3YkVZelkyeE0xb0I3TlU5OTJQTTBzeFQ5NmM0QjVR?=
+ =?utf-8?B?aTdyczRWWWlpK0hiUUp1bHlPV3hEeFkrWHQweWtKSS8wbjUwK2IwWENTSktr?=
+ =?utf-8?B?ZVhYWWVNT2Ywa04zazQxTHBqQVBGdTN6a0wyVmJrOWV2WndIbWlqMFRWK2xR?=
+ =?utf-8?Q?UQy1lnacf8Q8Ct/hqam1IxvRF?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 889bf129-83c9-42a2-3c83-08dd89b3ed59
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2025 20:00:03.3117
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1SvNh0CgF5gR1D7IEI2+nyGIIgHgkyekf3VuZ5p4myoHrhvgNfWKqd+w398iP7S2KuirNf6doN7eJ+ysATb8Hw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6451
 
-We're going to be speeding up snapshot deletion, by only having it
-process the extents/dirents/xattrs btrees if an inode of a given
-snapshot ID was present.
+Hello, Alex,
 
-This raises the possibility of 'bkey_in_missing_snapshot' errors popping
-up, if we ever accidentally don't do the corresponding inode update, or
-if the new algorithm has bugs.
+On 5/2/2025 12:57 AM, Alexandre Courbot wrote:
+> On Thu May 1, 2025 at 9:58 PM JST, Alexandre Courbot wrote:
+>> From: Joel Fernandes <joelagnelf@nvidia.com>
+>>
+>> This will be used in the nova-core driver where we need to upward-align
+>> the image size to get to the next image in the VBIOS ROM.
+>>
+>> [acourbot@nvidia.com: handled conflicts due to removal of patch creating
+>> num.rs]
+>>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
+>>  rust/kernel/lib.rs |  1 +
+>>  rust/kernel/num.rs | 21 +++++++++++++++++++++
+>>  2 files changed, 22 insertions(+)
+>>
+>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+>> index ab0286857061d2de1be0279cbd2cd3490e5a48c3..be75b196aa7a29cf3eed7c902ed8fb98689bbb50 100644
+>> --- a/rust/kernel/lib.rs
+>> +++ b/rust/kernel/lib.rs
+>> @@ -67,6 +67,7 @@
+>>  pub mod miscdevice;
+>>  #[cfg(CONFIG_NET)]
+>>  pub mod net;
+>> +pub mod num;
+>>  pub mod of;
+>>  pub mod page;
+>>  #[cfg(CONFIG_PCI)]
+>> diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..953c6ab012601efb3c9387b4b299e22233670c4b
+>> --- /dev/null
+>> +++ b/rust/kernel/num.rs
+>> @@ -0,0 +1,21 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +//! Numerical and binary utilities for primitive types.
+>> +
+>> +/// A trait providing alignment operations for `usize`.
+>> +pub trait UsizeAlign {
+>> +    /// Aligns `self` upwards to the nearest multiple of `align`.
+>> +    fn align_up(self, align: usize) -> usize;
+>> +}
+> 
+> As it turns out I will also need the same functionality for u64 in a
+> future patch. :) Could we turn this into a more generic trait? E.g:
+> 
+>     /// A trait providing alignment operations for `usize`.
+>     pub trait Align {
+>         /// Aligns `self` upwards to the nearest multiple of `align`.
+>         fn align_up(self, align: Self) -> Self;
+>     }
+> 
+> That way it can be implemented for all basic types. I'd suggest having a local
+> macro that takes an arbitrary number of arguments and generates the impl blocks
+> for each of them, which would be invoked as:
+> 
+>     impl_align!(i8, u8, i16, u16, ...);
 
-So instead of deleting snapshot IDs, add a new deleted flag, so that
-'key in missing snapshot' errors can more definitively tell what
-happened and automatically repair.
+I actually tried this initially before settling for the simpler solution.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- fs/bcachefs/bcachefs_format.h  |  3 +-
- fs/bcachefs/sb-errors_format.h |  3 +-
- fs/bcachefs/snapshot.c         | 80 ++++++++++++++++++++++++++--------
- fs/bcachefs/snapshot.h         | 25 ++++++++---
- fs/bcachefs/snapshot_format.h  |  2 +-
- fs/bcachefs/snapshot_types.h   | 30 +++++++++++++
- fs/bcachefs/subvolume_types.h  | 27 ------------
- 7 files changed, 116 insertions(+), 54 deletions(-)
+We can do this in 3 ways I think, generics, macros or both.
 
-diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-index 7ce475c565b5..0beff6af7ecf 100644
---- a/fs/bcachefs/bcachefs_format.h
-+++ b/fs/bcachefs/bcachefs_format.h
-@@ -695,7 +695,8 @@ struct bch_sb_field_ext {
- 	x(stripe_backpointers,		BCH_VERSION(1, 22))		\
- 	x(stripe_lru,			BCH_VERSION(1, 23))		\
- 	x(casefolding,			BCH_VERSION(1, 24))		\
--	x(extent_flags,			BCH_VERSION(1, 25))
-+	x(extent_flags,			BCH_VERSION(1, 25))		\
-+	x(snapshot_deletion_v2,		BCH_VERSION(1, 26))
- 
- enum bcachefs_metadata_version {
- 	bcachefs_metadata_version_min = 9,
-diff --git a/fs/bcachefs/sb-errors_format.h b/fs/bcachefs/sb-errors_format.h
-index 82bc1906aa00..448326c01d13 100644
---- a/fs/bcachefs/sb-errors_format.h
-+++ b/fs/bcachefs/sb-errors_format.h
-@@ -209,6 +209,7 @@ enum bch_fsck_flags {
- 	x(subvol_to_missing_root,				188,	0)		\
- 	x(subvol_root_wrong_bi_subvol,				189,	FSCK_AUTOFIX)	\
- 	x(bkey_in_missing_snapshot,				190,	0)		\
-+	x(bkey_in_deleted_snapshot,				315,	0)		\
- 	x(inode_pos_inode_nonzero,				191,	0)		\
- 	x(inode_pos_blockdev_range,				192,	0)		\
- 	x(inode_alloc_cursor_inode_bad,				301,	0)		\
-@@ -324,7 +325,7 @@ enum bch_fsck_flags {
- 	x(dirent_stray_data_after_cf_name,			305,	0)		\
- 	x(rebalance_work_incorrectly_set,			309,	FSCK_AUTOFIX)	\
- 	x(rebalance_work_incorrectly_unset,			310,	FSCK_AUTOFIX)	\
--	x(MAX,							315,	0)
-+	x(MAX,							316,	0)
- 
- enum bch_sb_error_id {
- #define x(t, n, ...) BCH_FSCK_ERR_##t = n,
-diff --git a/fs/bcachefs/snapshot.c b/fs/bcachefs/snapshot.c
-index 7349f7f33a4f..f074b9de5024 100644
---- a/fs/bcachefs/snapshot.c
-+++ b/fs/bcachefs/snapshot.c
-@@ -314,7 +314,9 @@ static int __bch2_mark_snapshot(struct btree_trans *trans,
- 	if (new.k->type == KEY_TYPE_snapshot) {
- 		struct bkey_s_c_snapshot s = bkey_s_c_to_snapshot(new);
- 
--		t->live		= true;
-+		t->state	= !BCH_SNAPSHOT_DELETED(s.v)
-+			? SNAPSHOT_ID_live
-+			: SNAPSHOT_ID_deleted;
- 		t->parent	= le32_to_cpu(s.v->parent);
- 		t->children[0]	= le32_to_cpu(s.v->children[0]);
- 		t->children[1]	= le32_to_cpu(s.v->children[1]);
-@@ -711,6 +713,9 @@ static int check_snapshot(struct btree_trans *trans,
- 	memset(&s, 0, sizeof(s));
- 	memcpy(&s, k.v, min(sizeof(s), bkey_val_bytes(k.k)));
- 
-+	if (BCH_SNAPSHOT_DELETED(&s))
-+		return 0;
-+
- 	id = le32_to_cpu(s.parent);
- 	if (id) {
- 		ret = bch2_snapshot_lookup(trans, id, &v);
-@@ -998,7 +1003,7 @@ int bch2_reconstruct_snapshots(struct bch_fs *c)
- 		snapshot_id_list_to_text(&buf, t);
- 
- 		darray_for_each(*t, id) {
--			if (fsck_err_on(!bch2_snapshot_exists(c, *id),
-+			if (fsck_err_on(bch2_snapshot_id_state(c, *id) == SNAPSHOT_ID_empty,
- 					trans, snapshot_node_missing,
- 					"snapshot node %u from tree %s missing, recreate?", *id, buf.buf)) {
- 				if (t->nr > 1) {
-@@ -1023,22 +1028,38 @@ int bch2_reconstruct_snapshots(struct bch_fs *c)
- 	return ret;
- }
- 
--int bch2_check_key_has_snapshot(struct btree_trans *trans,
--				struct btree_iter *iter,
--				struct bkey_s_c k)
-+int __bch2_check_key_has_snapshot(struct btree_trans *trans,
-+				  struct btree_iter *iter,
-+				  struct bkey_s_c k)
- {
- 	struct bch_fs *c = trans->c;
- 	struct printbuf buf = PRINTBUF;
- 	int ret = 0;
-+	enum snapshot_id_state state = bch2_snapshot_id_state(c, k.k->p.snapshot);
-+
-+	/* Snapshot was definitively deleted, this error is marked autofix */
-+	if (fsck_err_on(state == SNAPSHOT_ID_deleted,
-+			trans, bkey_in_deleted_snapshot,
-+			"key in deleted snapshot %s, delete?",
-+			(bch2_btree_id_to_text(&buf, iter->btree_id),
-+			 prt_char(&buf, ' '),
-+			 bch2_bkey_val_to_text(&buf, c, k), buf.buf)))
-+		ret = bch2_btree_delete_at(trans, iter,
-+					   BTREE_UPDATE_internal_snapshot_node) ?: 1;
- 
--	if (fsck_err_on(!bch2_snapshot_exists(c, k.k->p.snapshot),
-+	/*
-+	 * Snapshot missing: we should have caught this with btree_lost_data and
-+	 * kicked off reconstruct_snapshots, so if we end up here we have no
-+	 * idea what happened:
-+	 */
-+	if (fsck_err_on(state == SNAPSHOT_ID_empty,
- 			trans, bkey_in_missing_snapshot,
- 			"key in missing snapshot %s, delete?",
- 			(bch2_btree_id_to_text(&buf, iter->btree_id),
- 			 prt_char(&buf, ' '),
- 			 bch2_bkey_val_to_text(&buf, c, k), buf.buf)))
- 		ret = bch2_btree_delete_at(trans, iter,
--					    BTREE_UPDATE_internal_snapshot_node) ?: 1;
-+					   BTREE_UPDATE_internal_snapshot_node) ?: 1;
- fsck_err:
- 	printbuf_exit(&buf);
- 	return ret;
-@@ -1085,24 +1106,25 @@ static int bch2_snapshot_node_delete(struct btree_trans *trans, u32 id)
- 	struct btree_iter iter, p_iter = {};
- 	struct btree_iter c_iter = {};
- 	struct btree_iter tree_iter = {};
--	struct bkey_s_c_snapshot s;
- 	u32 parent_id, child_id;
- 	unsigned i;
- 	int ret = 0;
- 
--	s = bch2_bkey_get_iter_typed(trans, &iter, BTREE_ID_snapshots, POS(0, id),
--				     BTREE_ITER_intent, snapshot);
--	ret = bkey_err(s);
-+	struct bkey_i_snapshot *s =
-+		bch2_bkey_get_mut_typed(trans, &iter, BTREE_ID_snapshots, POS(0, id),
-+					BTREE_ITER_intent, snapshot);
-+	ret = PTR_ERR_OR_ZERO(s);
- 	bch2_fs_inconsistent_on(bch2_err_matches(ret, ENOENT), c,
- 				"missing snapshot %u", id);
- 
- 	if (ret)
- 		goto err;
- 
--	BUG_ON(s.v->children[1]);
-+	BUG_ON(BCH_SNAPSHOT_DELETED(&s->v));
-+	BUG_ON(s->v.children[1]);
- 
--	parent_id = le32_to_cpu(s.v->parent);
--	child_id = le32_to_cpu(s.v->children[0]);
-+	parent_id = le32_to_cpu(s->v.parent);
-+	child_id = le32_to_cpu(s->v.children[0]);
- 
- 	if (parent_id) {
- 		struct bkey_i_snapshot *parent;
-@@ -1160,24 +1182,38 @@ static int bch2_snapshot_node_delete(struct btree_trans *trans, u32 id)
- 		 */
- 		struct bkey_i_snapshot_tree *s_t;
- 
--		BUG_ON(s.v->children[1]);
-+		BUG_ON(s->v.children[1]);
- 
- 		s_t = bch2_bkey_get_mut_typed(trans, &tree_iter,
--				BTREE_ID_snapshot_trees, POS(0, le32_to_cpu(s.v->tree)),
-+				BTREE_ID_snapshot_trees, POS(0, le32_to_cpu(s->v.tree)),
- 				0, snapshot_tree);
- 		ret = PTR_ERR_OR_ZERO(s_t);
- 		if (ret)
- 			goto err;
- 
--		if (s.v->children[0]) {
--			s_t->v.root_snapshot = s.v->children[0];
-+		if (s->v.children[0]) {
-+			s_t->v.root_snapshot = s->v.children[0];
- 		} else {
- 			s_t->k.type = KEY_TYPE_deleted;
- 			set_bkey_val_u64s(&s_t->k, 0);
- 		}
- 	}
- 
--	ret = bch2_btree_delete_at(trans, &iter, 0);
-+	if (!bch2_request_incompat_feature(c, bcachefs_metadata_version_snapshot_deletion_v2)) {
-+		SET_BCH_SNAPSHOT_DELETED(&s->v, true);
-+		s->v.parent		= 0;
-+		s->v.children[0]	= 0;
-+		s->v.children[1]	= 0;
-+		s->v.subvol		= 0;
-+		s->v.tree		= 0;
-+		s->v.depth		= 0;
-+		s->v.skip[0]		= 0;
-+		s->v.skip[1]		= 0;
-+		s->v.skip[2]		= 0;
-+	} else {
-+		s->k.type = KEY_TYPE_deleted;
-+		set_bkey_val_u64s(&s->k, 0);
-+	}
- err:
- 	bch2_trans_iter_exit(trans, &tree_iter);
- 	bch2_trans_iter_exit(trans, &p_iter);
-@@ -1468,6 +1504,9 @@ static int check_should_delete_snapshot(struct btree_trans *trans, struct bkey_s
- 	if (BCH_SNAPSHOT_SUBVOL(s.v))
- 		return 0;
- 
-+	if (BCH_SNAPSHOT_DELETED(s.v))
-+		return 0;
-+
- 	for (unsigned i = 0; i < 2; i++) {
- 		u32 child = le32_to_cpu(s.v->children[i]);
- 
-@@ -1524,6 +1563,9 @@ static int bch2_fix_child_of_deleted_snapshot(struct btree_trans *trans,
- 	struct bkey_i_snapshot *s;
- 	int ret;
- 
-+	if (!bch2_snapshot_exists(c, k.k->p.offset))
-+		return 0;
-+
- 	if (k.k->type != KEY_TYPE_snapshot)
- 		return 0;
- 
-diff --git a/fs/bcachefs/snapshot.h b/fs/bcachefs/snapshot.h
-index 24a451bb7024..69c484b77729 100644
---- a/fs/bcachefs/snapshot.h
-+++ b/fs/bcachefs/snapshot.h
-@@ -120,21 +120,26 @@ static inline u32 bch2_snapshot_root(struct bch_fs *c, u32 id)
- 	return id;
- }
- 
--static inline bool __bch2_snapshot_exists(struct bch_fs *c, u32 id)
-+static inline enum snapshot_id_state __bch2_snapshot_id_state(struct bch_fs *c, u32 id)
- {
- 	const struct snapshot_t *s = snapshot_t(c, id);
--	return s ? s->live : 0;
-+	return s ? s->state : SNAPSHOT_ID_empty;
- }
- 
--static inline bool bch2_snapshot_exists(struct bch_fs *c, u32 id)
-+static inline enum snapshot_id_state bch2_snapshot_id_state(struct bch_fs *c, u32 id)
- {
- 	rcu_read_lock();
--	bool ret = __bch2_snapshot_exists(c, id);
-+	enum snapshot_id_state ret = __bch2_snapshot_id_state(c, id);
- 	rcu_read_unlock();
- 
- 	return ret;
- }
- 
-+static inline bool bch2_snapshot_exists(struct bch_fs *c, u32 id)
-+{
-+	return bch2_snapshot_id_state(c, id) == SNAPSHOT_ID_live;
-+}
-+
- static inline int bch2_snapshot_is_internal_node(struct bch_fs *c, u32 id)
- {
- 	rcu_read_lock();
-@@ -241,7 +246,17 @@ int bch2_snapshot_node_create(struct btree_trans *, u32,
- int bch2_check_snapshot_trees(struct bch_fs *);
- int bch2_check_snapshots(struct bch_fs *);
- int bch2_reconstruct_snapshots(struct bch_fs *);
--int bch2_check_key_has_snapshot(struct btree_trans *, struct btree_iter *, struct bkey_s_c);
-+
-+int __bch2_check_key_has_snapshot(struct btree_trans *, struct btree_iter *, struct bkey_s_c);
-+
-+static inline int bch2_check_key_has_snapshot(struct btree_trans *trans,
-+					      struct btree_iter *iter,
-+					      struct bkey_s_c k)
-+{
-+	return likely(bch2_snapshot_exists(trans->c, k.k->p.snapshot))
-+		? 0
-+		: __bch2_check_key_has_snapshot(trans, iter, k);
-+}
- 
- int bch2_snapshot_node_set_deleted(struct btree_trans *, u32);
- 
-diff --git a/fs/bcachefs/snapshot_format.h b/fs/bcachefs/snapshot_format.h
-index 685a9fe209ab..9bccae1f3590 100644
---- a/fs/bcachefs/snapshot_format.h
-+++ b/fs/bcachefs/snapshot_format.h
-@@ -16,9 +16,9 @@ struct bch_snapshot {
- };
- 
- LE32_BITMASK(BCH_SNAPSHOT_WILL_DELETE,	struct bch_snapshot, flags,  0,  1)
--
- /* True if a subvolume points to this snapshot node: */
- LE32_BITMASK(BCH_SNAPSHOT_SUBVOL,	struct bch_snapshot, flags,  1,  2)
-+LE32_BITMASK(BCH_SNAPSHOT_DELETED,	struct bch_snapshot, flags,  2,  3)
- 
- /*
-  * Snapshot trees:
-diff --git a/fs/bcachefs/snapshot_types.h b/fs/bcachefs/snapshot_types.h
-index 39fb47f43183..a64f4b942655 100644
---- a/fs/bcachefs/snapshot_types.h
-+++ b/fs/bcachefs/snapshot_types.h
-@@ -3,8 +3,38 @@
- #define _BCACHEFS_SNAPSHOT_TYPES_H
- 
- #include "bbpos_types.h"
-+#include "darray.h"
- #include "subvolume_types.h"
- 
-+typedef DARRAY(u32) snapshot_id_list;
-+
-+#define IS_ANCESTOR_BITMAP	128
-+
-+struct snapshot_t {
-+	enum snapshot_id_state {
-+		SNAPSHOT_ID_empty,
-+		SNAPSHOT_ID_live,
-+		SNAPSHOT_ID_deleted,
-+	}			state;
-+	u32			parent;
-+	u32			skip[3];
-+	u32			depth;
-+	u32			children[2];
-+	u32			subvol; /* Nonzero only if a subvolume points to this node: */
-+	u32			tree;
-+	unsigned long		is_ancestor[BITS_TO_LONGS(IS_ANCESTOR_BITMAP)];
-+};
-+
-+struct snapshot_table {
-+	struct rcu_head		rcu;
-+	size_t			nr;
-+#ifndef RUST_BINDGEN
-+	DECLARE_FLEX_ARRAY(struct snapshot_t, s);
-+#else
-+	struct snapshot_t	s[0];
-+#endif
-+};
-+
- struct snapshot_interior_delete {
- 	u32	id;
- 	u32	live_child;
-diff --git a/fs/bcachefs/subvolume_types.h b/fs/bcachefs/subvolume_types.h
-index 1549d6daf7af..9d634b906dcd 100644
---- a/fs/bcachefs/subvolume_types.h
-+++ b/fs/bcachefs/subvolume_types.h
-@@ -2,33 +2,6 @@
- #ifndef _BCACHEFS_SUBVOLUME_TYPES_H
- #define _BCACHEFS_SUBVOLUME_TYPES_H
- 
--#include "darray.h"
--
--typedef DARRAY(u32) snapshot_id_list;
--
--#define IS_ANCESTOR_BITMAP	128
--
--struct snapshot_t {
--	bool			live;
--	u32			parent;
--	u32			skip[3];
--	u32			depth;
--	u32			children[2];
--	u32			subvol; /* Nonzero only if a subvolume points to this node: */
--	u32			tree;
--	unsigned long		is_ancestor[BITS_TO_LONGS(IS_ANCESTOR_BITMAP)];
--};
--
--struct snapshot_table {
--	struct rcu_head		rcu;
--	size_t			nr;
--#ifndef RUST_BINDGEN
--	DECLARE_FLEX_ARRAY(struct snapshot_t, s);
--#else
--	struct snapshot_t	s[0];
--#endif
--};
--
- typedef struct {
- 	/* we can't have padding in this struct: */
- 	u64		subvol;
--- 
-2.49.0
+Unlike the last attempt, this time I did get generics to work. So how about this?
+
+use core::ops::{Add, Sub, BitAnd, Not};
+
+pub trait AlignUp {
+    fn align_up(self, alignment: Self) -> Self;
+}
+
+impl<T> AlignUp for T
+where
+    T: Copy
+        + Add<Output = T>
+        + Sub<Output = T>
+        + BitAnd<Output = T>
+        + Not<Output = T>
+        + From<u8>,
+{
+    fn align_up(self, alignment: Self) -> Self {
+        let one = T::from(1u8);
+        (self + alignment - one) & !(alignment - one)
+    }
+}
+
+I know you must be screaming the word monomorphization, but it is clean code and
+I'm willing to see just how much code the compiler generates and does not
+requiring specifying any specific types at all!
+
+This also could be simpler if we had num_traits in r4L like userspace, because
+num_trait's PrimInt encapsulates all the needed ops.
+
+use num_traits::PrimInt;
+
+pub trait RoundUp {
+    fn round_up(self, alignment: Self) -> Self;
+}
+
+impl<T> RoundUp for T
+where
+    T: PrimInt,
+{
+    fn round_up(self, alignment: Self) -> Self {
+        (self + alignment - T::one()) & !(alignment - T::one())
+    }
+}
+
+fn main() {
+    let x: u32 = 1234;
+    let y: usize = 1234;
+
+    // Output 1536
+    println!("u32: {}", x.round_up(512));
+    println!("usize: {}", y.round_up(512));
+}
+
+For the monomorphization issues, I do wish Rust in general supported restricting
+types further so if we could say "where T is u32, usize etc." but it does not
+afaics, so maybe we can do this then?
+
+/// This bit can go into separate module if we want to call it
+/// 'num_traits' something.
+
+ppub trait Alignable:
+    Copy
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + BitAnd<Output = Self>
+    + Not<Output = Self>
+    + From<u8>
+{
+}
+
+impl Alignable for usize {}
+impl Alignable for u8 {}
+impl Alignable for u16 {}
+impl Alignable for u32 {}
+impl Alignable for u64 {}
+impl Alignable for u128 {}
+
+//////////////////////
+
+And then num.rs remains simple but restricted to those types:
+
+pub trait AlignUp {
+    fn align_up(self, alignment: Self) -> Self;
+}
+
+impl<T> AlignUp for T
+where
+    T: Alignable ,
+{
+    fn align_up(self, alignment: Self) -> Self {
+        let one = T::from(1u8);
+        (self + alignment - one) & !(alignment - one)
+    }
+}
+
+If we dislike that, we could go with the pure macro implementation as well. But
+I do like the 'num_traits' approach better, since it keeps the align_up
+implementation quite clean.
+
+pub trait AlignUp {
+    fn align_up(self, alignment: Self) -> Self;
+}
+
+macro_rules! align_up_impl {
+    ($($t:ty),+) => {
+        $(
+            impl AlignUp for $t {
+                fn align_up(self, alignment: Self) -> Self {
+                    (self + alignment - 1) & !(alignment - 1)
+                }
+            }
+        )+
+    }
+}
+
+align_up_impl!(usize, u8, u16, u32, u64, u128);
+
+Or, we can even combine the 2 approaches. Use macros for the "impl Alignable"
+and use generics on the Alignable trait.
+
+macro_rules! impl_alignable {
+    ($($t:ty),+) => {
+        $(
+            impl Alignable for $t {}
+        )+
+    };
+}
+
+impl_alignable!(usize, u8, u16, u32, u64, u128);
+
+pub trait AlignUp {
+    fn align_up(self, alignment: Self) -> Self;
+}
+
+impl<T> AlignUp for T
+where
+    T: Alignable,
+{
+    fn align_up(self, alignment: Self) -> Self {
+        let one = T::from(1u8);
+        (self + alignment - one) & !(alignment - one)
+    }
+}
+
+Thoughts?
+
+>
+>> +impl UsizeAlign for usize {
+>> +    fn align_up(mut self, align: usize) -> usize {
+>> +        self = (self + align - 1) & !(align - 1);
+>> +        self
+>> +    }
+>> +}
+> 
+> Note that there is no need to mutate `self`, the body can just be:
+> 
+>     (self + align - 1) & !(align - 1)
+
+Sure, that's fair enough. I am Ok with either.
+
+> 
+> This operation can trigger overflows/underflows, so I guess for safety it
+> should return a `Result` and use `checked_add` and `checked_sub`, after moving
+> `align - 1` into a local variable to avoid checking it twice.
+> 
+> There is also the interesting question of, what if `align` is not a power of 2.
+> We should probably document the fact that it is expected to be.
+
+Good idea, makes sense to return Result and also check for power-of-2.
+
+> 
+>> +/// Aligns `val` upwards to the nearest multiple of `align`.
+>> +pub const fn usize_align_up(val: usize, align: usize) -> usize {
+>> +    (val + align - 1) & !(align - 1)
+>> +}
+> 
+> Let's add a statement in the documentation saying that this exists for use in
+> `const` contexts. The `impl` version can maybe call this one directly to avoid
+> repeating the same operation twice.
+
+Sure.
+
+> Actually I'm not sure whether we want the `impl` block at all since this>
+provides the same functionality, albeit in a slightly less cosmetic way. Can
+> core R4L folks provide guidance about that?
+
+Yeah I am Ok with this as well, however as you noted it is less cosmetic.
+
+To clarify for r4l folks, Alex is asking do we add an impl on the types for
+aligning them up as done by this patch, or do we provide a bunch of helpers
+(possibly using generics or macros to keep the code clean)?
+
+thanks,
+
+ - Joel
 
 
