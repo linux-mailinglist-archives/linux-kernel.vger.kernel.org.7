@@ -1,72 +1,87 @@
-Return-Path: <linux-kernel+bounces-629448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE27AA6CB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:42:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1BBAA6CA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137E01BA65B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:42:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08DE1BA5366
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 08:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF24722D4C5;
-	Fri,  2 May 2025 08:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A1022B5AA;
+	Fri,  2 May 2025 08:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DIzoxIz0"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e59c++Xo"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F1C22ACD1;
-	Fri,  2 May 2025 08:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E30622A7F8
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 08:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746175326; cv=none; b=HL0VEFYErLGLknlwmMRlZwm0xUAUFzijwrDsJ3F9/knT8zCrA7GOdPiQDbIGpGe7Jj+QSQy+cR8Cbi30mzwZHlXyOYEDu+3oKNMLRtPevSGkVX+vNHQl6ibInadvEdbSe3hRarrnvVLPXleada3vommvdgDz8MoeaE7dF/+rZ40=
+	t=1746175223; cv=none; b=dFsWDjZmlJxRKf0WYjoeClq7wo0BgdDHC75wqMXRBfqNmvgJWGlfOZ85vi+W5Ouzddf1QkYjNYNXEK27m9MCTGjl+57ODZjtk8J3scoWVpPsFPJaaw6KdCXUHV7f8HPGZkf151CIi0bTn/JX7uTxmEr34JjBcHHBPJIcdlOH2u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746175326; c=relaxed/simple;
-	bh=JAkxRcMnCLTEaaF2Sx3Fm9Sem8/O4saWART4WZ6A1pU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqzjmhb+CWUQxbLnzdWie/Lgk2+bEiJmi6tV94ye3Q2SPSuVknh3LThz4uKCKqaOrS8TFbY0SwXcFgUhm3W3EeMzkBZ3jIvaNYCeShXzRzkUlw7mFkFQvLUyhDVFZaB+vZi9GpYuIG44GgdbddW9NoyGEAUj3eBEhOvdHqYGbr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DIzoxIz0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=j6cbPjR+T0yzG1mLDzVIumfGnchJ8jrJp8SEOFZnJ0c=; b=DIzoxIz0Ehp+HLggJApwwus3VG
-	7rYxbEyl0G5WKBNyh2ko6DrCZQ4m22+3PRjS5LpsFKXwZDC93qkLiI5/pSl9Vwju11TlWH28Wji0O
-	3xCqPFuF+TFs4nOK3tU9tnjCQx/575+qsVxK2leGPxXJnNDK+3KuUcuZZQPq6oT9u2sCGOBRdPbY7
-	lgl87qfSpNsoydPh2dRBaLEXE9dxXJT7yg0k+6KT9OiUJh3mj4O9SGoAW4StpZ0fDtNqZZiWi7J3Y
-	4HFfdhDqgekQjYw9G7bjWSo5vt8rruRV3y3h/A1/v1SRKMYxHXrUxd0gu5dsATZQcjts0dGwLI/yl
-	ZoIv90BA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAlwb-0000000At0F-2Hrl;
-	Fri, 02 May 2025 08:40:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BF3193001D4; Fri,  2 May 2025 10:40:07 +0200 (CEST)
-Date: Fri, 2 May 2025 10:40:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, pbonzini@redhat.com, ardb@kernel.org,
-	kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	gregkh@linuxfoundation.org, jpoimboe@kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
-	samitolvanen@google.com, ojeda@kernel.org, xin@zytor.com
-Subject: Re: [PATCH v2 00/13] objtool: Detect and warn about indirect calls
- in __nocfi functions
-Message-ID: <20250502084007.GS4198@noisy.programming.kicks-ass.net>
-References: <20250430110734.392235199@infradead.org>
- <8B86A3AE-A296-438C-A7A7-F844C66D0198@zytor.com>
- <20250430190600.GQ4439@noisy.programming.kicks-ass.net>
- <20250501103038.GB4356@noisy.programming.kicks-ass.net>
- <20250501153844.GD4356@noisy.programming.kicks-ass.net>
- <aBO9uoLnxCSD0UwT@google.com>
+	s=arc-20240116; t=1746175223; c=relaxed/simple;
+	bh=4GwIMV2g6kYQJfYrG026JnY99HzIdumMHujNiN5PFkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SyeZLDmuw14f244jW1JbD3hwrrBPSqN8fYPyj97h+6yJE+GN1xrPEfbfpM4xBVt3iNyV0gq5FPFRvr2UX/MdGiYehBMxIsZDSWUmVCCy5d3hj25V/g0YXcVbUOHV48D+ov+xxqTQfBvjoSnQRjq1E3TPccaro+5ko1+y9vpBjAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e59c++Xo; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c1efbefc6so1200394f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 01:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746175219; x=1746780019; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dfPxHK34iqz0YjaqRlpXE1B0HpLY07y212OEUguH+Us=;
+        b=e59c++Xolau9uKv5LXFDx7H/lPOQPzpuTp6hpnqxJpjBP3r/6dkH7pML7nyqFlfn7l
+         Jk9/LaWBFyRpGjwX+0y252PGjgU0fHW9O+EAnDdsKcS+/ptq/AcWcAXVvAtbdsIJDb7Y
+         vVomeIxKb7xYf/rNXMt1cj7WsGh8vVB7QzHDCZ+ab6x10LRy3eE4MyAFi+5k84PIfmI0
+         ONasA/QKpHbEb98VZfvj2oGw0VVNU00wT6jhsF0ZuXm2QBT1NFCNA52O0JedBVmOzIjz
+         K0U9JrMW1BJxHD3SeCos7d84A6Rb2oW0ayxKd0j7Y5nZSDVcmFYB0qTbolcKsLYoFZvC
+         7sfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746175219; x=1746780019;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dfPxHK34iqz0YjaqRlpXE1B0HpLY07y212OEUguH+Us=;
+        b=jYZjMMwlfXPqSGq/VxIsLy21FX/An061RzliweCbzGv81UD9x/2ROezSXJRXwYJBe2
+         qXieeD8FRFoDr0ksgObtJGUjMgoxHIi2mSFdu3MCXsBFa2bFHnj5ILs1FUZusEqPVRvC
+         jrOog7mR/846wwRUKV0jRH4cynYy3CehOag0fsPgB5GhZlBqrw4mEL5s2TD6iPBf4OPs
+         gCo+FwyW9sBAHPsx3yaPFmcHYJleT0XE8eTDmnasVG18v4Guv5a3ftPwaVA0jlIx1hvN
+         68c4I0Z/gmeGmIV8EoViLnzTCv/2eVAi2ZiDJXq8LV6jlvluk1TF4bTbllmQL+vqfWte
+         P7nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJfTTFZH8W8k2K3R4wTIzNh7CiiHwJkjZieOUMfdRLXElyH249CzH+t3Oes8+pf0oyI7quRMOSJfAbq+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDIzzgccA6SEflbHyD0DzWugOYXpfCt7zB+yUB+w7espr8uhb4
+	aPBnmS8VkHs507aQVCyQ8AJiguzLGraty4wjyU5yWHX9h+SNzQ8F0u7/dCP1Gbo=
+X-Gm-Gg: ASbGnctKC30LyFjkJCWFkqF5OaYKjIDoHlCFEPvdxGuXQpWHp6legwarbpzu7FE9SzK
+	rKFF28liYG+Ld4WszGWBt36o7z7IK46u2Zxe3mXsN0p21/tOt/k9snNKwfYbfI1VgXEWqyiicsl
+	kMWp22KDbnCDun/gFtuRT3QChlsqtKIKWMzRkoRfjmROLFboaNYFok15uIVA0jW4kktKiVlDDKk
+	6zWXL22Jp7qOpEx0SaD5G3RZO8HgYIt0EDvpZNollza+8sUJfSpublj9L34SVpMXNDbaHIJqp6A
+	Gp80C8ltEMne6I/tSudhT3G/zJI2SHmdeCHH0WcCzBFt2g==
+X-Google-Smtp-Source: AGHT+IHreIZwzg9TVSTEmBpk2mrA1QNuEKFUEw+ZtdCxQ4dopKGMwZ9mLqKa2D9lb6EAzaR8gqchzg==
+X-Received: by 2002:a05:6000:1446:b0:391:2f2f:818 with SMTP id ffacd0b85a97d-3a099ad46a2mr1385443f8f.9.1746175219587;
+        Fri, 02 May 2025 01:40:19 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099b0f118sm1482225f8f.78.2025.05.02.01.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 01:40:18 -0700 (PDT)
+Date: Fri, 2 May 2025 11:40:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: Derek John Clark <derekjohn.clark@gmail.com>,
+	=?iso-8859-1?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] platform/x86: oxpec: Add a lower bounds check in
+ oxp_psy_ext_set_prop()
+Message-ID: <aBSE71VKfBlQg_fZ@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,27 +90,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aBO9uoLnxCSD0UwT@google.com>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, May 01, 2025 at 11:30:18AM -0700, Sean Christopherson wrote:
+The "val->intval" variable is an integer which comes from the user.  This
+code has an upper bounds check but the lower bounds check was
+accidentally omitted.  The write_to_ec() take a u8 value as a parameter
+so negative values would be truncated to positive values in the 0-255
+range.
 
-> Uh, aren't you making this way more complex than it needs to be? 
+Return -EINVAL if the user passes a negative value.
 
-Possibly :-)
+Fixes: 202593d1e86b ("platform/x86: oxpec: Add charge threshold and behaviour to OneXPlayer")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/platform/x86/oxpec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> IIUC, KVM never
-> uses the FRED hardware entry points, i.e. the FRED entry tables don't need to be
-> in place because they'll never be used.  The only bits of code KVM needs is the
-> __fred_entry_from_kvm() glue.
+diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
+index 4b48f4571b09..de70ca7e8493 100644
+--- a/drivers/platform/x86/oxpec.c
++++ b/drivers/platform/x86/oxpec.c
+@@ -582,7 +582,7 @@ static int oxp_psy_ext_set_prop(struct power_supply *psy,
+ 
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+-		if (val->intval > 100)
++		if (val->intval < 0 || val->intval > 100)
+ 			return -EINVAL;
+ 		return write_to_ec(OXP_X1_CHARGE_LIMIT_REG, val->intval);
+ 	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
+-- 
+2.47.2
 
-But __fred_entry_from_kvm() calls into fred_extint(), which then
-directly uses the fred sysvec_table[] for dispatch. How would we not
-have to set up that table?
-
-> Lightly tested, but this combo works for IRQs and NMIs on non-FRED hardware.
-
-So the FRED NMI code is significantly different from the IDT NMI code
-and I really didn't want to go mixing those.
-
-If we get a nested NMI I don't think it'll behave well.
 
