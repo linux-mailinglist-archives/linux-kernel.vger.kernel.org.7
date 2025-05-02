@@ -1,201 +1,322 @@
-Return-Path: <linux-kernel+bounces-629593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-629595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7511BAA6E90
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 11:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EF3AA6E99
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 12:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081091BA7B3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 09:58:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EEBA1BA7F37
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 May 2025 10:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106BA23BCE3;
-	Fri,  2 May 2025 09:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63937238C12;
+	Fri,  2 May 2025 10:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDPm6fIN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IwuLGKIl"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A56238C15;
-	Fri,  2 May 2025 09:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA8520E6E7
+	for <linux-kernel@vger.kernel.org>; Fri,  2 May 2025 10:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746179870; cv=none; b=HDXUO6ISFSGutqgpxrKnke66KOL+735mycbMicVwXADve8gklBIKwbxMtlIpaTYYCYiRi1/E2fh+TAAt0VRISHAS6k3WRQq4N9TPfL9FXhgsBm5HAP2jECB2JgAX0H+WijzM0KnFpk1ITr8iaklyApZtPUOuPY8DaPxlkB9NUFs=
+	t=1746180057; cv=none; b=RGw7SPlpF9/A5BoDbGj6c6vJptWKo6l4e1aV3hTsxSZBb7vUgg7V3sfZfgmz0bPlq3GLHU/TVNSxNmtZa9yGEcEekhrA59zMKR28tNF+IGOGzF8UT4q/wGn9WZKO/w2+vmqaIDxyxT6lotAUf1TOoEGC+ss0tKBF3PkJrbSYRRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746179870; c=relaxed/simple;
-	bh=pW1H8xXE21A+n17a+0P5k7+tQf/Aa0cTWaK+S948R4s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sjeLUENcct5CbUwBA73LMw9fbtCx0ZLEhJM5TOR1VM2R9BkE67X8FtXcEvYEVoz1k9R5FZht7aT6KacEl1w2MPxsHlWAMmqrd5epmCFQuN2cqXwo481iod0S+Zm6pbCbfl6jHdtVp9KED6ku2qTo0L26cdP5G+oIuN7iwR3oPo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDPm6fIN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBF68C4CEED;
-	Fri,  2 May 2025 09:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746179869;
-	bh=pW1H8xXE21A+n17a+0P5k7+tQf/Aa0cTWaK+S948R4s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=NDPm6fINYnhGBeSfvFNgqO/AnV4iA4AnGFqqrk5aE+5rqVTjGTwRhpP7iMrILQr/P
-	 DdILNeLXVmqJltLISpeZ6yEwnzgiG1b69h3l9aJG9+XRZ+wqowTXiKPFdXy9YpG/iy
-	 3QBrNBcC9MorTP4JZH3m+MkQrafRgEAUd9PAhYNgrQEwnuFPFum42zYaOB0z+RoN7S
-	 di/ilaVBvsXnEM886gxQapzZz00wFLowQRp0bv1P5Fz2+gkK6b23JaJ2hNifMb4oLy
-	 FlcTh5Gqs+KULhcCTop+tz/xHkd6urhWFmGdzyc8sKVryJMbA4kEF8D1Umwv07/OAi
-	 b6B9CJ6avteJA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Oliver Mangold" <oliver.mangold@pm.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Asahi Lina" <lina@asahilina.net>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 1/5] rust: types: Add Ownable/Owned types
-In-Reply-To: <20250502-unique-ref-v10-1-25de64c0307f@pm.me> (Oliver Mangold's
-	message of "Fri, 02 May 2025 09:02:29 +0000")
-References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me>
-	<d6hUddIgwZqRCgQQQV7L2VG4idnic0hOdWqt67Itt_xixs1RI25dMrPZRMyoIe2W_FS4eL6X66J_iclD2aUA0Q==@protonmail.internalid>
-	<20250502-unique-ref-v10-1-25de64c0307f@pm.me>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Fri, 02 May 2025 11:57:30 +0200
-Message-ID: <87zffvz65x.fsf@kernel.org>
+	s=arc-20240116; t=1746180057; c=relaxed/simple;
+	bh=D/JJ4qOSeo4yHB1DLkoJZrzzQSLd4yo6KqCy5jfCsAI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PPu96Lsw+Y5eyYmYWCKqh+YdM+XLO2ilH/YWYDgUnSv8A/TNGfnsHj5NN6kyU1/hz72aYA492y12UmFtnOVn33UrEvRmAL7XTkJ15q3Oylt30/TD0FfYgBMcz15FT04GlvXQ4bdCIoNQKUqFXOSmYe51LXXn/DGt9Mqc3Ibin8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IwuLGKIl; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-acacb8743a7so323950866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 03:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746180053; x=1746784853; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7s0K4WHliGKFdPFhl8MQS72UtHPv10vOZ0g0k2aEl9I=;
+        b=IwuLGKIlHoXJNIUAW34/YNCJJo4WLFJBAc+CUam833HTbOrxRD75CuYrrhsCckwzQX
+         Y2ca4VlOHV+AhHEUlEPCRF+VekCOMC26sJI9yBeO3BEF74VuTqksQpcjRlTrz2OzqpmQ
+         FdUjNTNooUMCUwpDzg5rA5zmbHrbJNaw/V30M7C+G3nyxdjVslO6++M/C0v7AMoY+4Jl
+         c4N+LESvmmbCvgmasUmL3D13+2vf+E1C32F7eMImd1fiRDDhOC0uV2eszdLrZrgOnQ2K
+         C1oKIANzw+wOPucpUji8m76xXpgXCERqBhuTD54M/w7HHISrgVolpxWkJT3IYRMOvHkN
+         cr9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746180053; x=1746784853;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7s0K4WHliGKFdPFhl8MQS72UtHPv10vOZ0g0k2aEl9I=;
+        b=CZRSPB1H24pHzbO86UbFFV2Bjmv3SlNNy3YJLJqKCYSmYa+90uRFu40Rf1mzaJhGla
+         ghqG0rF0kO06xhDEgoXYxRokNihk0JM8kicIvPXacYPosqZWh/fpyocGMb+4MbpyrkTh
+         oNcM/yEkQfQlhfpBZmUmgEjuJIctXSRD0u+XqxJ2ofNAwXXhJwPPfuTSvfv6ReEU+Mma
+         /HpfVyO5dfyk+neKOE4q7NH/gER9mfpKVQN9+b4IoNWT6qrH8SWF0dNL3qBnpx4FHbdt
+         Lwf7pABDhvEP+VLwJpe8n7KVTKV58co0iKJ2OOsLcbGJsu8AzwZtS7YcQfdEV1ZAq7VN
+         da/A==
+X-Gm-Message-State: AOJu0YzmTHxxX1Vm8UgdJ9bKbUnuZ4K1mqCJXoitzrgeDaGFNWy/oSvK
+	xicFD0I+txLGM1LV62oyq25PGoEPB62cyhFOebPKGWIJIFSBF8E0AExDbGnTuVNlVzMvzMJd30P
+	qX4I=
+X-Gm-Gg: ASbGncsX9ERzVButpthEHb2Yhlh2TuKBUUUSHxH5eB/sGh82RohXl2lkbHEQRjvQNeC
+	sd0JGoVXiQZJwZ56RodGK/86RjCWSIiGmxBSbn/YlKEigmVq58TtZ/+h15Ur1epVCeKymWjvutY
+	UA+OpWrYaoPVYA9WVatJP0Wbo0YjQ7R9wiPsktMQv1b6dnwdEAjf4P4373VvwO8pQURINZP0SqG
+	/PE8hmYPs8uahUjG1p5WC0zmF9k+8LWfQj3FIGydmXijIBy2SJG7Hutg0uTsEcC35OQORQo0h//
+	ElEbKCF4dzrsmU5wwSr3FyC6mdlSmVEBNjA9K7YGDApGTVewlEisSLreMreexMabjQD9tHumPFz
+	bkhY6axH6GLO/zMTxk1SwjPiZZE/E
+X-Google-Smtp-Source: AGHT+IFVQ05Wy19uhQgm3WGFHmkjNDkU/CkOZ/JefCJgyEqixW3GP1YNcmydW/OHUj5KILxYfZoE8Q==
+X-Received: by 2002:a17:907:6e87:b0:ace:4ed9:a8c3 with SMTP id a640c23a62f3a-ad17ad876e4mr209631266b.7.1746180052767;
+        Fri, 02 May 2025 03:00:52 -0700 (PDT)
+Received: from rayden.urgonet (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891473a1sm26030566b.4.2025.05.02.03.00.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 03:00:52 -0700 (PDT)
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	op-tee@lists.trustedfirmware.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Olivier Masse <olivier.masse@nxp.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	azarrabi@qti.qualcomm.com,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Daniel Stone <daniel@fooishbar.org>,
+	Rouven Czerwinski <rouven.czerwinski@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: [PATCH v8 00/14] TEE subsystem for protected dma-buf allocations
+Date: Fri,  2 May 2025 11:59:14 +0200
+Message-ID: <20250502100049.1746335-1-jens.wiklander@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Oliver Mangold" <oliver.mangold@pm.me> writes:
+Hi,
 
-> From: Asahi Lina <lina@asahilina.net>
->
-> By analogy to AlwaysRefCounted and ARef, an Ownable type is a (typically
-> C FFI) type that *may* be owned by Rust, but need not be. Unlike
-> AlwaysRefCounted, this mechanism expects the reference to be unique
-> within Rust, and does not allow cloning.
->
-> Conceptually, this is similar to a KBox<T>, except that it delegates
-> resource management to the T instead of using a generic allocator.
->
-> Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@asahilina.net/
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> [ om:
->   - split code into separate file and `pub use` it from types.rs
->   - make from_raw() and into_raw() public
->   - fixes to documentation
-> ]
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> ---
->  rust/kernel/types.rs         |   3 ++
->  rust/kernel/types/ownable.rs | 117 +++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 120 insertions(+)
->
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 9d0471afc9648f2973235488b441eb109069adb1..5d8a99dcba4bf733107635bf3f0c15840ec33e4c 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -11,6 +11,9 @@
->  };
->  use pin_init::{PinInit, Zeroable};
->
-> +pub mod ownable;
-> +pub use ownable::{Ownable, OwnableMut, Owned};
-> +
->  /// Used to transfer ownership to and from foreign (non-Rust) languages.
->  ///
->  /// Ownership is transferred from Rust to a foreign language by calling [`Self::into_foreign`] and
-> diff --git a/rust/kernel/types/ownable.rs b/rust/kernel/types/ownable.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..52e7a69019f1e2bbbe3cf715651b67a5a5c7c13d
-> --- /dev/null
-> +++ b/rust/kernel/types/ownable.rs
-> @@ -0,0 +1,117 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Owned reference types.
-> +
-> +use core::{
-> +    marker::PhantomData,
-> +    mem::ManuallyDrop,
-> +    ops::{Deref, DerefMut},
-> +    ptr::NonNull,
-> +};
-> +
-> +/// Types that may be owned by Rust code or borrowed, but have a lifetime managed by C code.
-> +///
-> +/// It allows such types to define their own custom destructor function to be called when
-> +/// a Rust-owned reference is dropped.
-> +///
-> +/// This is usually implemented by wrappers to existing structures on the C side of the code.
-> +///
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that:
-> +/// - Any objects owned by Rust as [`Owned<T>`] stay alive while that owned reference exists (i.e.
-> +///   until the [`release()`](Ownable::release) trait method is called).
-> +/// - That the C code follows the usual mutable reference requirements. That is, the kernel will
-> +///   never mutate the [`Ownable`] (excluding internal mutability that follows the usual rules)
-> +///   while Rust owns it.
-> +pub unsafe trait Ownable {
-> +    /// Releases the object (frees it or returns it to foreign ownership).
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the object is no longer referenced after this call.
-> +    unsafe fn release(this: NonNull<Self>);
-> +}
-> +
-> +/// A subtrait of Ownable that asserts that an [`Owned<T>`] or `&mut Owned<T>` Rust reference
-> +/// may be dereferenced into a `&mut T`.
-> +///
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that access to a `&mut T` is safe, implying that it is okay to call
-> +/// [`core::mem::swap`] on the `Ownable`. This excludes pinned types (meaning: most kernel types).
-> +pub unsafe trait OwnableMut: Ownable {}
-> +
-> +/// An owned reference to an ownable kernel object.
-> +///
-> +/// The object is automatically freed or released when an instance of [`Owned`] is
-> +/// dropped.
-> +///
-> +/// # Invariants
-> +///
-> +/// The pointer stored in `ptr` is valid for the lifetime of the [`Owned`] instance.
-> +pub struct Owned<T: Ownable> {
-> +    ptr: NonNull<T>,
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +// SAFETY: It is safe to send `Owned<T>` to another thread when the underlying `T` is `Send` because
-> +// it effectively means sending a `&mut T` (which is safe because `T` is `Send`).
-> +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
-> +
-> +// SAFETY: It is safe to send `&Owned<T>` to another thread when the underlying `T` is `Sync`
-> +// because it effectively means sharing `&T` (which is safe because `T` is `Sync`).
-> +unsafe impl<T: Ownable + Sync> Sync for Owned<T> {}
-> +
-> +impl<T: Ownable> Owned<T> {
-> +    /// Creates a new instance of [`Owned`].
-> +    ///
-> +    /// It takes over ownership of the underlying object.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the underlying object is acquired and can be considered owned by
-> +    /// Rust.
+This patch set allocates the protected DMA-bufs from a DMA-heap
+instantiated from the TEE subsystem.
+
+The TEE subsystem handles the DMA-buf allocations since it is the TEE
+(OP-TEE, AMD-TEE, TS-TEE, or perhaps a future QTEE) which sets up the
+protection for the memory used for the DMA-bufs.
+
+The DMA-heap uses a protected memory pool provided by the backend TEE
+driver, allowing it to choose how to allocate the protected physical
+memory.
+
+The allocated DMA-bufs must be imported with a new TEE_IOC_SHM_REGISTER_FD
+before they can be passed as arguments when requesting services from the
+secure world.
+
+Three use-cases (Secure Video Playback, Trusted UI, and Secure Video
+Recording) has been identified so far to serve as examples of what can be
+expected. The use-cases has predefined DMA-heap names,
+"protected,secure-video", "protected,trusted-ui", and
+"protected,secure-video-record". The backend driver registers protected
+memory pools for the use-cases it supports.
+
+Each use-case has it's own protected memory pool since different use-cases
+requires isolation from different parts of the system. A protected memory
+pool can be based on a static carveout instantiated while probing the TEE
+backend driver, or dynamically allocated from CMA and made protected as
+needed by the TEE.
+
+This can be tested on a RockPi 4B+ with the following steps:
+repo init -u https://github.com/jenswi-linaro/manifest.git -m rockpi4.xml \
+        -b prototype/sdp-v8
+repo sync -j8
+cd build
+make toolchains -j$(nproc)
+make all -j$(nproc)
+# Copy ../out/rockpi4.img to an SD card and boot the RockPi from that
+# Connect a monitor to the RockPi
+# login and at the prompt:
+gst-launch-1.0 videotestsrc ! \
+        aesenc key=1f9423681beb9a79215820f6bda73d0f \
+                iv=e9aa8e834d8d70b7e0d254ff670dd718 serialize-iv=true ! \
+        aesdec key=1f9423681beb9a79215820f6bda73d0f ! \
+        kmssink
+
+The aesdec module has been hacked to use an OP-TEE TA to decrypt the stream
+into protected DMA-bufs which are consumed by the kmssink.
+
+The primitive QEMU tests from previous patch set can be tested on RockPi
+in the same way with:
+xtest --sdp-basic
+
+The primitive test are tested on QEMU with the following steps:
+repo init -u https://github.com/jenswi-linaro/manifest.git -m qemu_v8.xml \
+        -b prototype/sdp-v8
+repo sync -j8
+cd build
+make toolchains -j$(nproc)
+make SPMC_AT_EL=1 all -j$(nproc)
+make SPMC_AT_EL=1 run-only
+# login and at the prompt:
+xtest --sdp-basic
+
+The SPMC_AT_EL=1 parameter configures the build with FF-A and an SPMC at
+S-EL1 inside OP-TEE. The parameter can be changed into SPMC_AT_EL=n to test
+without FF-A using the original SMC ABI instead. Please remember to do
+%rm -rf ../trusted-firmware-a/build/qemu
+for TF-A to be rebuilt properly using the new configuration.
+
+https://optee.readthedocs.io/en/latest/building/prerequisites.html
+list dependencies needed to build the above.
+
+The tests are pretty basic, mostly checking that a Trusted Application in
+the secure world can access and manipulate the memory. There are also some
+negative tests for out of bounds buffers etc.
+
+Thanks,
+Jens
+
+Changes since V7:
+* Adding "dma-buf: dma-heap: export declared functions",
+  "cma: export cma_alloc() and cma_release()", and
+  "dma-contiguous: export dma_contiguous_default_area" to export the symbols
+  needed to keep the TEE subsystem as a load module.
+* Removing CONFIG_TEE_DMABUF_HEAP and CONFIG_TEE_CMA since they aren't
+  needed any longer.
+* Addressing review comments in "optee: sync secure world ABI headers"
+* Better align protected memory pool initialization between the smc-abi and
+  ffa-abi parts of the optee driver.
+
+Changes since V6:
+* Restricted memory is now known as protected memory since to use the same
+  term as https://docs.vulkan.org/guide/latest/protected.html. Update all
+  patches to consistently use protected memory.
+* In "tee: implement protected DMA-heap" add the hidden config option
+  TEE_DMABUF_HEAP to tell if the DMABUF_HEAPS functions are available
+  for the TEE subsystem
+* Adding "tee: refactor params_from_user()", broken out from the patch
+  "tee: new ioctl to a register tee_shm from a dmabuf file descriptor"
+* For "tee: new ioctl to a register tee_shm from a dmabuf file descriptor":
+  - Update commit message to mention protected memory
+  - Remove and open code tee_shm_get_parent_shm() in param_from_user_memref()
+* In "tee: add tee_shm_alloc_cma_phys_mem" add the hidden config option
+  TEE_CMA to tell if the CMA functions are available for the TEE subsystem
+* For "tee: tee_device_alloc(): copy dma_mask from parent device" and
+  "optee: pass parent device to tee_device_alloc", added
+  Reviewed-by: Sumit Garg <sumit.garg@kernel.org>
+
+Changes since V5:
+* Removing "tee: add restricted memory allocation" and
+  "tee: add TEE_IOC_RSTMEM_FD_INFO"
+* Adding "tee: implement restricted DMA-heap",
+  "tee: new ioctl to a register tee_shm from a dmabuf file descriptor",
+  "tee: add tee_shm_alloc_cma_phys_mem()",
+  "optee: pass parent device to tee_device_alloc()", and
+  "tee: tee_device_alloc(): copy dma_mask from parent device"
+* The two TEE driver OPs "rstmem_alloc()" and "rstmem_free()" are replaced
+  with a struct tee_rstmem_pool abstraction.
+* Replaced the the TEE_IOC_RSTMEM_ALLOC user space API with the DMA-heap API
+
+Changes since V4:
+* Adding the patch "tee: add TEE_IOC_RSTMEM_FD_INFO" needed by the
+  GStreamer demo
+* Removing the dummy CPU access and mmap functions from the dma_buf_ops
+* Fixing a compile error in "optee: FF-A: dynamic restricted memory allocation"
+  reported by kernel test robot <lkp@intel.com>
+
+Changes since V3:
+* Make the use_case and flags field in struct tee_shm u32's instead of
+  u16's
+* Add more description for TEE_IOC_RSTMEM_ALLOC in the header file
+* Import namespace DMA_BUF in module tee, reported by lkp@intel.com
+* Added a note in the commit message for "optee: account for direction
+  while converting parameters" why it's needed
+* Factor out dynamic restricted memory allocation from
+  "optee: support restricted memory allocation" into two new commits
+  "optee: FF-A: dynamic restricted memory allocation" and
+  "optee: smc abi: dynamic restricted memory allocation"
+* Guard CMA usage with #ifdef CONFIG_CMA, effectively disabling dynamic
+  restricted memory allocate if CMA isn't configured
+
+Changes since the V2 RFC:
+* Based on v6.12
+* Replaced the flags for SVP and Trusted UID memory with a u32 field with
+  unique id for each use case
+* Added dynamic allocation of restricted memory pools
+* Added OP-TEE ABI both with and without FF-A for dynamic restricted memory
+* Added support for FF-A with FFA_LEND
+
+Changes since the V1 RFC:
+* Based on v6.11
+* Complete rewrite, replacing the restricted heap with TEE_IOC_RSTMEM_ALLOC
+
+Changes since Olivier's post [2]:
+* Based on Yong Wu's post [1] where much of dma-buf handling is done in
+  the generic restricted heap
+* Simplifications and cleanup
+* New commit message for "dma-buf: heaps: add Linaro restricted dmabuf heap
+  support"
+* Replaced the word "secure" with "restricted" where applicable
 
 
-This part "the underlying object is acquired" is unclear to me. How about:
 
-  Callers must ensure that *ownership of* the underlying object has been
-  acquired. That is, the object can be considered owned by the caller.
+Etienne Carriere (1):
+  tee: new ioctl to a register tee_shm from a dmabuf file descriptor
+
+Jens Wiklander (13):
+  tee: tee_device_alloc(): copy dma_mask from parent device
+  optee: pass parent device to tee_device_alloc()
+  optee: account for direction while converting parameters
+  optee: sync secure world ABI headers
+  dma-buf: dma-heap: export declared functions
+  tee: implement protected DMA-heap
+  tee: refactor params_from_user()
+  cma: export cma_alloc() and cma_release()
+  dma-contiguous: export dma_contiguous_default_area
+  tee: add tee_shm_alloc_cma_phys_mem()
+  optee: support protected memory allocation
+  optee: FF-A: dynamic protected memory allocation
+  optee: smc abi: dynamic protected memory allocation
+
+ drivers/dma-buf/dma-heap.c        |   3 +
+ drivers/tee/Makefile              |   1 +
+ drivers/tee/optee/Makefile        |   1 +
+ drivers/tee/optee/call.c          |  10 +-
+ drivers/tee/optee/core.c          |   1 +
+ drivers/tee/optee/ffa_abi.c       | 198 ++++++++++++-
+ drivers/tee/optee/optee_ffa.h     |  27 +-
+ drivers/tee/optee/optee_msg.h     |  83 +++++-
+ drivers/tee/optee/optee_private.h |  55 +++-
+ drivers/tee/optee/optee_smc.h     |  69 ++++-
+ drivers/tee/optee/protmem.c       | 330 +++++++++++++++++++++
+ drivers/tee/optee/rpc.c           |  31 +-
+ drivers/tee/optee/smc_abi.c       | 191 ++++++++++--
+ drivers/tee/tee_core.c            | 157 +++++++---
+ drivers/tee/tee_heap.c            | 470 ++++++++++++++++++++++++++++++
+ drivers/tee/tee_private.h         |  16 +
+ drivers/tee/tee_shm.c             | 164 ++++++++++-
+ include/linux/tee_core.h          |  70 +++++
+ include/linux/tee_drv.h           |  10 +
+ include/uapi/linux/tee.h          |  31 ++
+ kernel/dma/contiguous.c           |   1 +
+ mm/cma.c                          |   2 +
+ 22 files changed, 1789 insertions(+), 132 deletions(-)
+ create mode 100644 drivers/tee/optee/protmem.c
+ create mode 100644 drivers/tee/tee_heap.c
 
 
-Best regards,
-Andreas Hindborg
-
+base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+-- 
+2.43.0
 
 
