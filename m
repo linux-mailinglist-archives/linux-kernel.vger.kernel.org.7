@@ -1,169 +1,148 @@
-Return-Path: <linux-kernel+bounces-631089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67956AA8343
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 00:40:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF68AA834A
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 01:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCC3A3BC034
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 22:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CE917E25F
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 23:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFA0238D54;
-	Sat,  3 May 2025 22:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE42B1E521C;
+	Sat,  3 May 2025 23:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvcK7mTk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLiB81Ft"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD3315350B;
-	Sat,  3 May 2025 22:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C20E1FAA;
+	Sat,  3 May 2025 23:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746311997; cv=none; b=qOQ84snHOOQgf7u+eu/y8cxFoUxhPqroLxoFdekG4KWRAXIK4MsMlXkMgkNHLERhfulHzE564AYDp/M0g3Z5dYhi02gcMAg2eP46p1qa4rgHFmNP6Zt5noMr4be5mY2KBcb+xp9pZ8f0ONX5Y5EHnMm059pyJiZma6MNnhBAoYY=
+	t=1746313382; cv=none; b=ey0NiUU8I987tdaRkaauSq7jcCzju+Jc9V+FEy+Dcr+T0d/s3+RnGA13SwduYaGkCHTggBtsi47I+wBciSFf6m5LTIhi83iue03vzA2iBjpVbWWN9nzgwWs22J7x6uyGHXjgk9gcoyxqYVwzjPAObTNExIyfK1Ahjvw9SCYuTEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746311997; c=relaxed/simple;
-	bh=q/xAnCXUh7gKnEZY83rtkQmLm5+SBilPqhFLOnA9tCc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MoeCyG2zUnyMC3v0NhgCi9dVHUtN9IqfceYa0kCouHE/bvGwg9WLi0W1ikTLxhkdWzd7wL/b5MuFKPCczL9LZ8kJFJxFyQ7pVFjeHRal/5FgxzPBwkpSI8DRjFMBJmjFWwV3UAS5X2GYZNz7JfsadLAnyTPLySjxPGPQJOsUu0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvcK7mTk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D60FC4CEE3;
-	Sat,  3 May 2025 22:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746311997;
-	bh=q/xAnCXUh7gKnEZY83rtkQmLm5+SBilPqhFLOnA9tCc=;
-	h=Subject:From:Reply-To:To:Cc:Date:In-Reply-To:References:From;
-	b=DvcK7mTkvKmWGxzoRf9hCH1JhrQTgb2jv2whuFoqqKpflpZKLD3Ngz3jHjnDWZxj4
-	 O9qfOFXAFPN9FlJsNhATlg2xM690ZevuWT1K0H2EzAJHKHs0OnGgoeOQuHZrj7iQXF
-	 QSGPvxaV9mEzP9/pyKH+faQUrxgw5N2cpJn4QePSKkYuAotHLiSBmC6tUpx1KJyygi
-	 8ZHfeaWwT/8M0enFKllfh8NwDlbvQJTCZH280co1jzKPuVp7wY1nScU8IqxfdejtdF
-	 0j9QsWR5IjUg6pNDr0KTdwffoqDYSph/HC3ZCRckMbd1vkePbUuOXc8mS9PxmKjIjr
-	 5OFIr4EC54VvQ==
-Message-ID: <5ae1ef34c9844d6d0f5fb167dd596a4c43321367.camel@kernel.org>
-Subject: Re: [REGRESSION][BISECTED][STABLE] MT7925: mDNS and IPv6 broken in
- kernel 6.14.3 and above
-From: Niklas Schnelle <niks@kernel.org>
-Reply-To: niks@kernel.org
-To: Mingyen Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=98=8E=E8=AB=BA=29?=	
- <Mingyen.Hsieh@mediatek.com>, "stable@vger.kernel.org"
- <stable@vger.kernel.org>,  "fossben@pm.me"	 <fossben@pm.me>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, 
- "linux-mediatek@lists.infradead.org"
-	 <linux-mediatek@lists.infradead.org>, Allan Wang
- =?UTF-8?Q?=28=E7=8E=8B=E5=AE=B6=E5=81=89=29?=
-	 <Allan.Wang@mediatek.com>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "regressions@lists.linux.dev"
-	 <regressions@lists.linux.dev>
-Date: Sun, 04 May 2025 00:39:52 +0200
-In-Reply-To: <f73dec60b60dd7bb3be40c1feefbe223c7afe19b.camel@mediatek.com>
-References: 
-	<EmWnO5b-acRH1TXbGnkx41eJw654vmCR-8_xMBaPMwexCnfkvKCdlU5u19CGbaapJ3KRu-l3B-tSUhf8CCQwL0odjo6Cd5YG5lvNeB-vfdg=@pm.me>
-	 <f73dec60b60dd7bb3be40c1feefbe223c7afe19b.camel@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1746313382; c=relaxed/simple;
+	bh=Ze/ucH/TJIDtmTnwnUkyCVTHkjlJt8F4eCnpOypYzXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s8MnMa9Y5kyr4f8pFfBhHnNNKdyXZs9h/sjNFuItkgpStCMDouAidkIzF61Jnxghajjo3Ecejwt/OBEzIAtlDGcVWcCJifcjMJP/AP3fpxhfaCMBOFdYwN5HRNucgvhNi8p4sjeyLPrHmQDenc4S3Ci4dr/lf6JERDhyBVC+iSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLiB81Ft; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39efc1365e4so1416681f8f.1;
+        Sat, 03 May 2025 16:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746313379; x=1746918179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlHKqKUaOYpS5+aBx+GgXRJ1qdQccLtNIy7hEaMpn7Q=;
+        b=mLiB81Ft4A+MgU8Bk3SW1/MjxiTmeuagwJBlLRT6vmvyM94GCmEM7xMkJTDFZ2aEn3
+         xYQDyq0Elwv0Ojd8NXzD/eaeNQABg1SKAr+BvHmIXTuqq6JSc4LRHW4NlyZH+IK9KOKZ
+         nb2bOy3A6tE4KIvHr5bUgFKu3m/TmMLcjInRGz2Rh40woPKHgp59qW5jMux/MEc7/ylq
+         YdKa9BVYohN5stFylWx6wEzfivhIVrNbl6eFxIp2l9u4wxllH30WgX4Gohif9cbWazjB
+         PnBZBtrm9QIbsjstA/jh5wr+mCqoOdscdUsNrH2tBgd/+qR2YAFZ1u6FWyd7T5NsFFR7
+         ae/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746313379; x=1746918179;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wlHKqKUaOYpS5+aBx+GgXRJ1qdQccLtNIy7hEaMpn7Q=;
+        b=Evud+LmOZ8GslAaJRqhaRnv9U50RyWzDOtgmkuXAzkVky6syvkd/B2890vHJ8iAv46
+         WjvDF/bB1YtlK0kaKm4uG93a1a76Avph2K4NPX/WgOr9IR/MzTCWlk8ZbkSHzV8OBV0M
+         f2SMWt0V99/C1USt5CW1Jsfcq10IR16E9bB37HFMCU2gCItAZQ/qzADIg8/O28boB2vA
+         Tze7NO9zhGQdVwJPEWShe+oEpcHJPAVZnsCEdB5oKvwDsNx2IWkFrfsCGVGB/MMbnSNv
+         ks+UL2XfcXVePyD29JNhlZYTDlg7lLXKcr4pPjdUsOx10J07OSSPtC89cFqDV718tUoU
+         ot3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUY5uY/fu4qgQvyeRt7mbX8nG2ebK35mPTCpYXnbjgmnwu8whmtpbXxzhwuyK9SZ8noEjjoKGDZYKGn3vir@vger.kernel.org, AJvYcCVQK3GE/qq4BATTmdTQAy+dHEpO5aea8e2IbDDtwekfdqhYHjn99L9YXkhnpkhBmG9b8C5GebweaM4=@vger.kernel.org, AJvYcCXelIn0k4YpFxXzMs2JSZaWVTnhT1ea64SwIuWN2x55ZRdKW9L/4jDgucm7SRrCCzwj0Dd3ZKU89cdRnzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCZBQUukDXCe0qbTIZpGafK03NpF7acDXrsdzDuolY5sDUHWzz
+	1uJ0kExHYcuW141PTsmYnqZRHUEoNU3JQYU7fSUcSwFuqt7LmY3vvzIJD8pONJ0=
+X-Gm-Gg: ASbGnctA+STEDmMECklvFy5FlL/AVb+7QNYl/acCcFTEGjH4/cb+fwjO20A37Y4eV/h
+	B5MO0GYRb/SI39S5kP3uWxUCyAROvVcekNm5vukyYWabUdYQEZEquk+WFLxKcHCq7P35cjvif+5
+	aCu22yn4KW3hwZmktJ83PLM+XuiqIF7+W6xBeBEQBil7MmOc5mzArAMFdxjdASSA7CJvsOJx/us
+	0X1zn8I1Im+6QXvUtnIfw0SmILcJLAiTrBjS1BhbLqqDHbT7fu7pHy5UbfB7gMw9AcVm2z4Vl/C
+	4ddePKEOuuZsMwIDeLe0lPSbnLt0K0QAD+XKttbF+FTm7djyIj+uAOLa7w==
+X-Google-Smtp-Source: AGHT+IHkqW08MGO8FsSu58uDyOJe87EkK3pwda6LZu/QU05GvHZvgkOsUCyPLD0s4ki5roHaN7On1A==
+X-Received: by 2002:a05:6000:4304:b0:39f:e7b:2c87 with SMTP id ffacd0b85a97d-3a099adcdcfmr4716263f8f.29.1746313378572;
+        Sat, 03 May 2025 16:02:58 -0700 (PDT)
+Received: from puma.museclub.art ([185.189.115.103])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae0c25sm6015860f8f.17.2025.05.03.16.02.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 May 2025 16:02:57 -0700 (PDT)
+From: Eugene Shalygin <eugene.shalygin@gmail.com>
+To: eugene.shalygin@gmail.com
+Cc: pkarc <ivanchojara@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: (ausus-ec-sensors) add MAXIMUS VI HERO.
+Date: Sun,  4 May 2025 01:00:06 +0200
+Message-ID: <20250503230020.1005801-1-eugene.shalygin@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-04-30 at 06:47 +0000, Mingyen Hsieh (=E8=AC=9D=E6=98=8E=E8=AB=
-=BA) wrote:
-> On Wed, 2025-04-30 at 01:14 +0000, fossben@pm.me wrote:
-> >=20
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >=20
-> >=20
-> > Hello all,
-> >=20
-> > After upgrading to 6.14.3 on my PC with a MT7925 chip, I noticed that
-> > I could no longer ping *.local addresses provided by Avahi. In
-> > addition, I also noticed that I was not able to get a DHCP IPv6
-> > address from my router, no matter how many times I rebooted the
-> > router or reconnected with NetworkManager.
-> >=20
-> > Reverting to 6.14.2 fixes both mDNS and IPv6 addresses immediately.
-> > Going back to 6.14.3 immediately breaks mDNS again, but the IPv6
-> > address will stay there for a while before disappearing later,
-> > possibly because the DHCP lease expired? I am not sure exactly when
-> > it stops working.
-> >=20
-> > I've done a kernel bisect between 6.14.2 and 6.14.3 and found the
-> > offending commit that causes mDNS to fail:
-> >=20
-> > commit 80007d3f92fd018d0a052a706400e976b36e3c87
-> > Author: Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
-> > Date:=C2=A0=C2=A0 Tue Mar 4 16:08:50 2025 -0800
-> >=20
-> > =C2=A0=C2=A0=C2=A0 wifi: mt76: mt7925: integrate *mlo_sta_cmd and *sta_=
-cmd
-> >=20
-> > =C2=A0=C2=A0=C2=A0 commit cb1353ef34735ec1e5d9efa1fe966f05ff1dc1e1 upst=
-ream.
-> >=20
-> > =C2=A0=C2=A0=C2=A0 Integrate *mlo_sta_cmd and *sta_cmd for the MLO firm=
-ware.
-> >=20
-> > =C2=A0=C2=A0=C2=A0 Fixes: 86c051f2c418 ("wifi: mt76: mt7925: enabling M=
-LO when the
-> > firmware supports it")
-> >=20
-> > =C2=A0drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 59 ++++--------=
+From: pkarc <ivanchojara@gmail.com>
+
+Add support for MAXIMUS VI HERO.
+
+Signed-off-by: pkarc <ivanchojara@gmail.com>
+Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
 ---
-> > --------------------------------------------
-> > =C2=A01 file changed, 4 insertions(+), 55 deletions(-)
-> >=20
-> > I do not know if this same commit is also causing the IPv6 issues as
-> > testing that requires quite a bit of time to reproduce. What I do
-> > know with certainty as of this moment is that it definitely breaks in
-> > kernel 6.14.3.
-> >=20
-> > I've attached my hardware info as well as dmesg logs from the last
-> > working kernel from the bisect and 6.14.4 which exhibits the issue.
-> > Please let me know if there's any other info you need.
-> >=20
-> > Thanks!
-> > Benjamin Xiao
->=20
-> Hi,
->=20
-> Thanks for reporting this issue, we will aim into this.
->=20
-> Can you provide me with your testing steps?
->=20
-> Best Regards,
-> Yen.
->=20
+ Documentation/hwmon/asus_ec_sensors.rst |  1 +
+ drivers/hwmon/asus-ec-sensors.c         | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
 
-Hi Yan,
+diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
+index 3f5a2d1ffe65..816d1f9947ea 100644
+--- a/Documentation/hwmon/asus_ec_sensors.rst
++++ b/Documentation/hwmon/asus_ec_sensors.rst
+@@ -4,6 +4,7 @@ Kernel driver asus_ec_sensors
+ =================================
+ 
+ Supported boards:
++ * MAXIMUS VI HERO
+  * PRIME X470-PRO
+  * PRIME X570-PRO
+  * PRIME X670E-PRO WIFI
+diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
+index 964673c67597..e0a95197c71b 100644
+--- a/drivers/hwmon/asus-ec-sensors.c
++++ b/drivers/hwmon/asus-ec-sensors.c
+@@ -313,6 +313,15 @@ struct ec_board_info {
+ 	enum board_family family;
+ };
+ 
++static const struct ec_board_info board_info_maximus_vi_hero = {
++	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
++		SENSOR_TEMP_T_SENSOR |
++		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
++		SENSOR_FAN_CPU_OPT | SENSOR_FAN_WATER_FLOW,
++	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
++	.family = family_intel_300_series,
++};
++
+ static const struct ec_board_info board_info_prime_x470_pro = {
+ 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+ 		SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
+@@ -527,6 +536,8 @@ static const struct ec_board_info board_info_tuf_gaming_x670e_plus = {
+ 	}
+ 
+ static const struct dmi_system_id dmi_table[] = {
++	DMI_EXACT_MATCH_ASUS_BOARD_NAME("MAXIMUS VI HERO",
++					&board_info_maximus_vi_hero),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("PRIME X470-PRO",
+ 					&board_info_prime_x470_pro),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("PRIME X570-PRO",
+-- 
+2.49.0
 
-I see the same IPv6 issue on my Framework 13 (Ryzen 5 AI 340) with an
-mt7925e WiFI module.=C2=A0My setup is just a home router with native IPv6
-both for my uplink and in the LAN. The problems with IPv6 can already
-be seen just in the LAN for example by checking which IP was used for
-SSH, in my setup it should always be IPv6 but falls back to IPv4 in the
-broken state.
-
-As another data point, I tried reverting cb1353ef3473 ("wifi: mt76:
-mt7925: integrate *mlo_sta_cmd and *sta_cmd") on top of 6.15.-rc4. This
-fully restores IPv6 for me. Also note I'm running this with the mt7925
-firmware version 20250425073330 from linux-firmware's master branch as
-I had some dropped connections with earlier firmware.
-
-So it definitely looks like that commit also broke IPv6 and not just
-mDNS. Note that if if I use DHCPv6 instead of router advertisements, on
-the latest firmware, but without the revert, I get a global IPv6
-address added to the interface but then native IPv6 addresses are still
-uncreachable. With the offending patch reverted my SSH session to an
-IPv6 only host works fine and is stable. Also I'd be willing to test a
-proper fix as I rely on IPv6 heavily due to having to use CGNAT for
-IPv4 but not for IPv6.
-
-
-Thanks,
-Niklas
 
