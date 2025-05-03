@@ -1,151 +1,140 @@
-Return-Path: <linux-kernel+bounces-631003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C42AA8200
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:47:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF94AA81FF
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C5283B5DC6
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:46:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19CFC1892587
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC6027F751;
-	Sat,  3 May 2025 18:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD47D27E7FA;
+	Sat,  3 May 2025 18:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="V/7LL8rs";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="QS4DoFWS"
-Received: from mailrelay3-3.pub.mailoutpod3-cph3.one.com (mailrelay3-3.pub.mailoutpod3-cph3.one.com [46.30.212.2])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HX/h4kW+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9827081C
-	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 18:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E64318DB26;
+	Sat,  3 May 2025 18:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746297989; cv=none; b=UyweAGXNMNpvLXntBIQhvdU+1a5lYfeSnMjiJzQussqoljbL4H/b2vZSmwwGlh32U596qwOdCmaf8aCkqAWdqaW7uILSsHHx65QHu+anMyWSiLyu8hnhjqlGhTvZYaBQjF5j9ia6ywew4ZCY4qxfOd4b9E3kgFY4L98pPPJAuv8=
+	t=1746297987; cv=none; b=rLcsXZIXkCLKjqyR6sdVzWpyV9w+mOJ0eHPmtUVDDR9Bdqaow5LgEPOhliXKVoKRKIXdu/G3o9KRGWf+MlhoQL4uWAG+nBhUuxf2QhUQ8eiNJsuyDl9Aw6gldGjnP+vGhlA+PXEG0/XS+RQDXUpBZ7gj1aYHrtckzNFl3j7tdYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746297989; c=relaxed/simple;
-	bh=mq5X6iFm3sj6rGvKJsuQOgjHMlGVeYO+zOKsnKvdjis=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=tnJ4UjncuTfKhaOSPhMaeLppxoUcCrtYQgK6+Ehxt9CaKtHFqrR6V1mao/7Xvll4QTvBOLXzckcWA0VpgkEPzeT+OrxBc+cxN44j4SXpPfriATS1pxh91LFEsWN4NjrubT/EN/rOFTtJtab2bVgdcCPiE3Qh6XmFEp+0hfSQmBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=V/7LL8rs; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=QS4DoFWS; arc=none smtp.client-ip=46.30.212.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1746297978; x=1746902778;
-	d=konsulko.se; s=rsa1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=SgDQY5rPFVDOVTM0LSU4AZU6By/eM3JenPb1tAEbTQI=;
-	b=V/7LL8rsdalGXRmDc7eeP2apUPbY+9JKdoItqiT4W9oNG4imy5XqC43VUYwhhJuLNllkyXk7Mmrbf
-	 /pa3fhZzPdE8L0JRZ0MoxcIiwhhyrM689fzbbLBqQ3csTwKTVgsjBADhFBgjkfXav+AwaMXXdUAxDg
-	 +ZGU5ByM9Mmd5tg5pyAoN3xTJ2dC0Dr8p2jJpXHtr6I8UjEg9FKC43Ev8p58fgN4xiif8yeQ8Dg4S8
-	 4peH27EpUgEFRQ+G31XnPvGzKh7CxtLM0MltoNTmwNMzVxw8vCgiH5r7R0LASxkzxAyzNUW2Qj0tIb
-	 4o2i+hjQevTcMibx4aH1DaR3+cc4ixA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1746297978; x=1746902778;
-	d=konsulko.se; s=ed1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=SgDQY5rPFVDOVTM0LSU4AZU6By/eM3JenPb1tAEbTQI=;
-	b=QS4DoFWSeTzdHRbJWED7Q3S92zeZ0LW1eHmdjFBQEogzhAwTxSWwEAdJZmikiEUUT3DYK20kNosVm
-	 t7+0XVWAw==
-X-HalOne-ID: e5ce362a-284e-11f0-923b-2b8368a4d5c5
-Received: from smtpclient.apple (unknown [85.191.60.109])
-	by mailrelay3.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id e5ce362a-284e-11f0-923b-2b8368a4d5c5;
-	Sat, 03 May 2025 18:46:18 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1746297987; c=relaxed/simple;
+	bh=cmrsue879i0SFR336+VtZOxozOZsiQ5dawHHXzQfCT4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T9AhQnonm/GNlmUaroFxPOEU+gGetMB4MrXqVyKoQ607UrNUeNyQW4T5QJAiDdHxx240nFNY8xUYOlVbyw0Xf/TqBS19Qc2zFQhwiv2olwGs7FssotVytrpQUlDoRhyZ4tnfWyZhMCVWrG+8K0JCaXUb9/w/WOi4F/BvV0aWiEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HX/h4kW+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E05C4AF0C;
+	Sat,  3 May 2025 18:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746297986;
+	bh=cmrsue879i0SFR336+VtZOxozOZsiQ5dawHHXzQfCT4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HX/h4kW+u8OZY9JS4fM+MlUY7L/Ak8WJyQo+O4GNTudETJI8GY5bBDV6qOrAkkb+0
+	 Wr4tfa64vxTlZLrGbKjCrFW0iyj9i07s/alc81j6pkgGawterXu8/CQQ4GznnafBPU
+	 eZ2J200gjP/oOKTGn/kQd9QMjx8wzdMXqmU5RZc/X0at/kS/dyJGIICuRtEC1NBKPW
+	 JFZ6/jeCpkj/V1m+xefEsgh/iAzgMSA0lGdKwsdYNOLaR2Uzv3NX+o8TMqLE0j6jHI
+	 FMeJpetJqfdQO+/L6UD2nRDK/8g6nwdzrq449L8pKbebcS/vQQ5o90clk3Z3dHNNRl
+	 iIBWfwlc8lBAw==
+From: Kees Cook <kees@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Justin Stitt <justinstitt@google.com>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	llvm@lists.linux.dev
+Subject: [PATCH v3 0/3] Detect changed compiler dependencies for full rebuild
+Date: Sat,  3 May 2025 11:46:17 -0700
+Message-Id: <20250503184001.make.594-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH] mm/zblock: use vmalloc for page allocations
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <fddf0457275576c890d16921465cf473@beldev.am>
-Date: Sat, 3 May 2025 20:46:07 +0200
-Cc: linux-mm@kvack.org,
- akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org,
- Nhat Pham <nphamcs@gmail.com>,
- Shakeel Butt <shakeel.butt@linux.dev>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Yosry Ahmed <yosry.ahmed@linux.dev>,
- Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <83CB359A-955E-48B6-B0D9-DD4F2E1146D4@konsulko.se>
-References: <20250502080156.1672957-1-vitaly.wool@konsulko.se>
- <fddf0457275576c890d16921465cf473@beldev.am>
-To: Igor Belousov <igor.b@beldev.am>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2613; i=kees@kernel.org; h=from:subject:message-id; bh=cmrsue879i0SFR336+VtZOxozOZsiQ5dawHHXzQfCT4=; b=owGbwMvMwCVmps19z/KJym7G02pJDBliKex5Glf6uqY79um+fzhV7e/G6CI/q6v1Lx66z1du+ s798NWZjlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgInM72L4nxz345rV9LzVEx9G C8dp7Dd573ZI0O22kPspF4NEW7NvPxkZTh+XTkr8kxx4LV9zV9vpe5JsjydbFx5Njs65wCubOOc mCwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+ v3: move to include/generated, add touch helper
+ v2: https://lore.kernel.org/lkml/20250502224512.it.706-kees@kernel.org/
+ v1: https://lore.kernel.org/lkml/20250501193839.work.525-kees@kernel.org/
 
+Hi,
 
-> On May 2, 2025, at 10:07=E2=80=AFAM, Igor Belousov <igor.b@beldev.am> =
-wrote:
->=20
-> On 2025-05-02 12:01, Vitaly Wool wrote:
->> From: Igor Belousov <igor.b@beldev.am>
->> Use vmalloc for page allocations for zblock blocks to avoid extra
->> pressure on the memmory subsystem with multiple higher order
->> allocations.
->> While at it, introduce a module parameter to opportunistically
->> allocate pages of lower orders via try_page_alloc() for faster
->> allocations whenever possible.
->> Since vmalloc works fine with non-power of 2 numbers of pages,
->> rewrite the block size tables to use that opportunity.
->> Signed-off-by: Igor Belousov <igor.b@beldev.am>
->> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
->> ---
->> Tests run on qemu-arm64 (8 CPUs, 1.5G RAM, 4K pages):
->> 1. zblock
->> 43205.38user
->> 7320.53system
->> 2:12:04elapsed
->> zswpin 346127
->> zswpout 1642438
->> 2. zsmalloc
->> 47194.61user
->> 7978.48system
->> 2:25:03elapsed
->> zswpin 448031
->> zswpout 1810485
->> So zblock gives a nearly 10% advantage.
->> Please note that zsmalloc *crashes* on 16K page tests so I couldn't
->> compare performance in that case.
->=20
-> Right, and it looks like this:
->=20
-> [  762.499278]  bug_handler+0x0/0xa8
-> [  762.499433]  die_kernel_fault+0x1c4/0x36c
-> [  762.499616]  fault_from_pkey+0x0/0x98
-> [  762.499784]  do_translation_fault+0x3c/0x94
-> [  762.499969]  do_mem_abort+0x44/0x94
-> [  762.500140]  el1_abort+0x40/0x64
-> [  762.500306]  el1h_64_sync_handler+0xa4/0x120
-> [  762.500502]  el1h_64_sync+0x6c/0x70
-> [  762.500718]  __pi_memcpy_generic+0x1e4/0x22c (P)
-> [  762.500931]  zs_zpool_obj_write+0x10/0x1c
-> [  762.501117]  zpool_obj_write+0x18/0x24
-> [  762.501305]  zswap_store+0x490/0x7c4
-> [  762.501474]  swap_writepage+0x260/0x448
-> [  762.501654]  pageout+0x148/0x340
-> [  762.501816]  shrink_folio_list+0xa7c/0xf34
-> [  762.502008]  shrink_lruvec+0x6fc/0xbd0
-> [  762.502189]  shrink_node+0x52c/0x960
-> [  762.502359]  balance_pgdat+0x344/0x738
-> [  762.502537]  kswapd+0x210/0x37c
-> [  762.502691]  kthread+0x12c/0x204
-> [  762.502920]  ret_from_fork+0x10/0x20
+This is my attempt to introduce dependencies that track the various
+compiler behaviors that may globally change the build that aren't
+represented by either compiler flags nor the compiler version
+(CC_VERSION_TEXT). Namely, this is to detect when the contents of a
+file the compiler uses changes. We have 3 such situations currently in
+the tree:
 
-In fact we don=E2=80=99t know if zsmalloc is actually supposed to work =
-with 16K pages. That=E2=80=99s the question to Sergey and Minchan. If it =
-is indeed supposed to handle 16K pages, I would suggest that you =
-submitted a full report with reproduction steps and/or provided a fix if =
-possible.
+- If any of the GCC plugins change, we need to rebuild everything that
+  was built with them, as they may have changed their behavior and those
+  behaviors may need to be synchronized across all translation units.
+  (The most obvious of these is the randstruct GCC plugin, but is true
+  for most of them.)
 
-~Vitaly
+- If the randstruct seed itself changes (whether for GCC plugins or
+  Clang), the entire tree needs to be rebuilt since the randomization of
+  structures may change between compilation units if not.
+
+- If the integer-wrap-ignore.scl file for Clang's integer wrapping
+  sanitizer changes, a full rebuild is needed as the coverage for wrapping
+  types may have changed, once again cause behavior differences between
+  compilation units.
+
+The current solution is to:
+- Touch a .h file in include/generated that is updated when the specific
+  dependencies change.
+  e.g.: randstruct_hash.h depends on randstruct.seed
+
+- Add a conditional -D argument for each separate case
+  e.g.: RANDSTRUCT_CFLAGS += -DRANDSTRUCT
+
+- Include the .h file from compiler-version.h through an #ifdef for the define
+  e.g.:
+  #ifdef RANDSTUCT
+  #include <generated/randstruct_hash.h>
+  #endif
+
+This means that all targets gain the dependency (via fixdep), but only
+when the defines are active, which means they are trivially controlled
+by the existing CFLAGS removal mechanisms that are already being used
+to turn off each of the above features.
+
+-Kees
+
+Kees Cook (3):
+  gcc-plugins: Force full rebuild when plugins change
+  randstruct: Force full rebuild when seed changes
+  integer-wrap: Force full rebuild when .scl file changes
+
+ include/linux/compiler-version.h | 10 ++++++++++
+ include/linux/vermagic.h         |  1 -
+ scripts/Makefile.gcc-plugins     |  2 +-
+ scripts/Makefile.lib             | 18 ++++++++++++++++++
+ scripts/Makefile.ubsan           |  1 +
+ scripts/basic/Makefile           |  5 +++++
+ scripts/gcc-plugins/Makefile     |  4 ++++
+ 7 files changed, 39 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
 
 
