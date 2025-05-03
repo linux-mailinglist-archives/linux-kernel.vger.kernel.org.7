@@ -1,139 +1,106 @@
-Return-Path: <linux-kernel+bounces-630852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9227AA8075
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 13:23:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05CD2AA8072
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 13:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3292D9829B5
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 11:23:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 634EF7A5606
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 11:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296DF1F37C3;
-	Sat,  3 May 2025 11:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E201EE7B6;
+	Sat,  3 May 2025 11:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fTqKljZf"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7WpISdG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9141F1927
-	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 11:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE69B1EB189;
+	Sat,  3 May 2025 11:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746271377; cv=none; b=JrjMTqgcrrcx9CKxFWJXJh5vk6GVsHnxpPP76ychqN+xjsbk/q2r7bHx+uITkdvNkJMi5HXH/r7fuRT/sbQJCCCZMftV6YbRC07osBJKjHKGU6iMpxmibsBjww5HfL7TH24460fRpTTR4VRLOhLJDW+C06nnewu7Gsd0iQJiGak=
+	t=1746271372; cv=none; b=EkJO1fr9bDHAghXMhOmEIgfg2v8FeVGKgbrS4c4ZHIGDGGz/n4cLmWtYSte7KzI+6r8WLSW8GiG6mv4BJ8mc1zuoLFxkbwG5QCj2VcnGbuKH/rfvlc65UYYiS6QemJbqQzyANcdbaqD3akQKGVCjtELbrmP80DsQ5zxMVDzvXO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746271377; c=relaxed/simple;
-	bh=Ey1IGpeyUTEQBR1CH2WYTdzMrTDVKyzLa3v5b3Ov6+U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mFewLKkYhmRuqvSpLFfAQiPKNb6yB4uGHDgd508itN34OdWwmQZ/qvLbRD9mLiXJw7PHMXU6oyHBsW4kJPZ+v5P2ECgNtS7pjAtl01Y32vgva1mUSRnAt1SpW535KKdo99AQd/UiQlBop3lSAtvZ7Valncn367cmG2R73NNBvwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fTqKljZf; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43e9a3d2977so20412415e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 03 May 2025 04:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746271374; x=1746876174; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3SSo2V5DW0c+y3j+ua7cR3q/eHybtkZ4S8xKtKJs3yI=;
-        b=fTqKljZfr2qD0VnVxBgrEi7zA9dGPsw2NC8WSqVBT5O3ty1H3JUJzdzgMz2gxWdAjo
-         Z7s6UnZn54ua4p7d8tDfPlK5rRYeQdExciEb/GIO+ivS26QTSYdWwL+0YuEJwx4Hrryj
-         zWMAaRTAJF3Ytiykhs+sEOqFzUD8f7FuPOpYvQm9pR0baw5PkU0BzQIHvn5rnF926sh7
-         z4Lk3r08e0+x+Krkn1JyV4fkiq6ag1pJkZQD7Vmdmc4pX40+WXLFwYvFYF4GxSmGDCAl
-         dnBV1o5gZGHWN7qbKOZW+dNfgqThcLnLd9JI2r8quDwkcZ4Dh0JSFPsB+UOJcI0wOu+N
-         tLbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746271374; x=1746876174;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3SSo2V5DW0c+y3j+ua7cR3q/eHybtkZ4S8xKtKJs3yI=;
-        b=QnFZgrHXek0ENG6OYOeF5TCIXedZSdGEnSmws2xiC8eDqhgxyVUfnAvSY+a8jRaEke
-         VzzePb8Vn3j1h+vDHI0+m92kWEb4hddqjlDbfJT/xmtMwTUciq2SJRZjQE9nbYTH+VQb
-         sYNm45ssiekE3bYpode3mVLPUkvqRBWyS5ubblWho2fCdrQ7ZIeGZOtMoxoszM9EsW6T
-         Nj8V6+3HGmgYS/mqAXwV+TsWIhTiQQzvHcsRxLaH5GlO+WYTKX2NB0O07kVVvRPDjPjy
-         t4OrRzLTJZsIBcB2jm/AYACt+EyiOZuy5GjE05bG8MwI5Mb7xbh4njqB1tiO5p/BRI91
-         IWxA==
-X-Gm-Message-State: AOJu0YyQgoCPBHGbOQ6HxxlNyLN+RkfpC5TFHoawoba7CR/mI7mqPiXt
-	jDRlzIVohuSmGb/354LcAr/f3LaBLccHTRZPdVxwje1F03zXT5FOlUBRlXoBu9AMPOARiw==
-X-Google-Smtp-Source: AGHT+IF6yejisH/hDvE4jSPffTRfG+SXhs5IVajQ7lr9xpPhKHKJMphHm5b0g1Gou8Ej+L5xPw4dcEH3
-X-Received: from wmbfo18.prod.google.com ([2002:a05:600c:6912:b0:43d:847a:8ccc])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3554:b0:43d:aed:f7de
- with SMTP id 5b1f17b1804b1-441c492371cmr5292875e9.21.1746271374100; Sat, 03
- May 2025 04:22:54 -0700 (PDT)
-Date: Sat,  3 May 2025 13:21:41 +0200
-In-Reply-To: <20250503112137.1962910-5-ardb+git@google.com>
+	s=arc-20240116; t=1746271372; c=relaxed/simple;
+	bh=6njSZpjLFFK801EujEb3cuL3VrsBnFkcO396PYwdH7w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g+uA3sRZw1hm2iy3tgOWspVS44O0evoPE8IE+yCE6l4JTp3kiBDDrjhs1ttYjSayVzaz1PCwIkf++G0kpAMnvfA7SQ/3JvVQBY87o346PFi9AYu/7uvpfF771kV7Bb6pHfjUXMQ/fjvuhT70zUg0xfxef962gKbaCGC4qHOd9xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7WpISdG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D0DFC4AF09;
+	Sat,  3 May 2025 11:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746271371;
+	bh=6njSZpjLFFK801EujEb3cuL3VrsBnFkcO396PYwdH7w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=m7WpISdGGO3sg0pkZySqZVxhQXOrOO9sPlkZ9W5OhO0eUNb0quPvXWkiK0vca30C4
+	 ZRnYFSOa2Wkz0dwE4z6Fjs3+G6MnlmmFd0qpxz4TTnKfBslQkMezvu8eFYWRwpE5lu
+	 e5+AeZ3FIO5J2ejNLWWWITtCFNFxiF8JNABEJenWMHmJm04pcgjGRb5+2DGhMOt0d5
+	 gvDo6p+v9mum5Bk8GcMv1YAjfOJkh0SC2760HjyaVHDVm5Woa1F6ML+R1uSM14SHsi
+	 A+8taaKnDq1hWiNWgBof3ltLwLjqzUyegfdAAPgSHP4HlnhTvhdl/hU6iWV5wAwh6x
+	 jalm5zxtdKmuA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54998f865b8so2988413e87.3;
+        Sat, 03 May 2025 04:22:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKkN3BvOvXUZZFeTAclUWrYJ97neEi68BZQn801UAWVVhP+h6aHGoxUAdRZBm+wVGNL5O1B4Os@vger.kernel.org, AJvYcCUefbBY9EeA26wEYjl4w8NI/F2w0xeK9XRk8BybO96d1626X184FFdVS22uP73yoE7NwWreQ5pQLjPTuN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2vV46z7klbwBno+PBQMbkRrIvV//lrxG8smXZ0wq+2JDj47ks
+	E+utuXZefg7LemhGYEmlabJ9MrDvcpe4OmQIQRvpGNRC4RIJrlv568qe95VEZGF1HU+XIzKEvLD
+	iSVcuDWHTN/lnk4pBl/g8TyqSDL4=
+X-Google-Smtp-Source: AGHT+IG/LZhJuYwd6BT5g/YapcupnN/sQf19+E1GsW+tcerWCF3qKkEN4dkhge9FjiQ1f4Ybup6+9GqTT5D7d0ujND0=
+X-Received: by 2002:a05:6512:108e:b0:549:8f4a:6baa with SMTP id
+ 2adb3069b0e04-54eb24390c2mr671056e87.27.1746271369757; Sat, 03 May 2025
+ 04:22:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250503112137.1962910-5-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2200; i=ardb@kernel.org;
- h=from:subject; bh=z7mNfjQpBpv68AAd9mLqKIgg7+5n4LTGUtL+5ULXTPo=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIUP0jxvfFp07//euOxcgzJRTJtTTV6q79khId+maBWuLb
- R+FtTR3lLIwiHEwyIopsgjM/vtu5+mJUrXOs2Rh5rAygQxh4OIUgIkIrmRkaFycySHGGGp27+gj
- TW+tyNUn+/bn78zdVl2q9itT9IF+AsM/CxEdfuuHR0Olm06Z694+tckiatbUB6zLv70O2DXx8d5 sHgA=
-X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
-Message-ID: <20250503112137.1962910-8-ardb+git@google.com>
-Subject: [PATCH 2/3] arm64/boot: Move global CPU override variables out of BSS
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com, 
-	mark.rutland@arm.com, Ard Biesheuvel <ardb@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>
+MIME-Version: 1.0
+References: <20250502145755.3751405-1-yeoreum.yun@arm.com> <CAMj1kXEoYcS6YPU0mBdvijDRK6ZVB7mPYZsCVpz7sYotabrxtQ@mail.gmail.com>
+ <aBUHlGvZuI2O0bbs@arm.com> <aBULdGn+klwp8CEu@e129823.arm.com> <aBXqi4XpCsN3otHe@arm.com>
+In-Reply-To: <aBXqi4XpCsN3otHe@arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 3 May 2025 13:22:37 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHL5_2TM1ZTaPEgGm9uU7xvFpRxxarKpOTr=YVvj+72cQ@mail.gmail.com>
+X-Gm-Features: ATxdqUG1fvw_z6UhDYuaA_GkP9ybtJKQQ9wqgeSGK9OYj_TYO1ZfClLHhMe7z3g
+Message-ID: <CAMj1kXHL5_2TM1ZTaPEgGm9uU7xvFpRxxarKpOTr=YVvj+72cQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64/cpufeature: annotate arm64_use_ng_mappings with
+ ro_after_init to prevent wrong idmap generation
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>, will@kernel.org, nathan@kernel.org, 
+	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
+	broonie@kernel.org, maz@kernel.org, oliver.upton@linux.dev, 
+	frederic@kernel.org, joey.gouly@arm.com, james.morse@arm.com, 
+	hardevsinh.palaniya@siliconsignals.io, shameerali.kolothum.thodi@huawei.com, 
+	ryan.roberts@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Sat, 3 May 2025 at 12:06, Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> On Fri, May 02, 2025 at 07:14:12PM +0100, Yeoreum Yun wrote:
+> > > On Fri, May 02, 2025 at 06:41:33PM +0200, Ard Biesheuvel wrote:
+> > > > Making arm64_use_ng_mappings __ro_after_init seems like a useful
+> > > > change by itself, so I am not objecting to that. But we don't solve it
+> > > > more fundamentally, please at least add a big fat comment why it is
+> > > > important that the variable remains there.
+> > >
+> > > Maybe something like the section reference checker we use for __init -
+> > > verify that the early C code does not refer anything in the BSS section.
+> >
+> > Maybe but it would be better to be checked at compile time (I don't
+> > know it's possible) otherwise, early C code writer should check
+> > mandatroy by calling is_kernel_bss_data() (not exist) for data it refers.
+>
+> This would be compile time (or rather final link time). See
+> scripts/mod/modpost.c (the sectioncheck[] array) on how we check if, for
+> example, a .text section references a .init one. We could move the whole
+> pi code to its own section (e.g. .init.nommu.*) and add modpost checks
+> for references to the bss or other sections.
+>
 
-Accessing BSS will no longer be permitted form the startup code in
-arch/arm64/kernel/pi, as some of it executes before BSS is cleared.
-Clearing BSS earlier would involve managing cache coherency explicitly
-in software, which is a hassle we prefer to avoid.
+We can take care of this locally in image-vars.h, where each variable
+used by the startup code is made available to it explicitly.
 
-So move some variables that are assigned by the startup code out of BSS
-and into .data.
-
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/arm64/kernel/cpufeature.c | 22 ++++++++++----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 9c4d6d552b25..4f7a8050ab85 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -758,17 +758,17 @@ static const struct arm64_ftr_bits ftr_raz[] = {
- #define ARM64_FTR_REG(id, table)		\
- 	__ARM64_FTR_REG_OVERRIDE(#id, id, table, &no_override)
- 
--struct arm64_ftr_override id_aa64mmfr0_override;
--struct arm64_ftr_override id_aa64mmfr1_override;
--struct arm64_ftr_override id_aa64mmfr2_override;
--struct arm64_ftr_override id_aa64pfr0_override;
--struct arm64_ftr_override id_aa64pfr1_override;
--struct arm64_ftr_override id_aa64zfr0_override;
--struct arm64_ftr_override id_aa64smfr0_override;
--struct arm64_ftr_override id_aa64isar1_override;
--struct arm64_ftr_override id_aa64isar2_override;
--
--struct arm64_ftr_override arm64_sw_feature_override;
-+struct arm64_ftr_override __section(".data") id_aa64mmfr0_override;
-+struct arm64_ftr_override __section(".data") id_aa64mmfr1_override;
-+struct arm64_ftr_override __section(".data") id_aa64mmfr2_override;
-+struct arm64_ftr_override __section(".data") id_aa64pfr0_override;
-+struct arm64_ftr_override __section(".data") id_aa64pfr1_override;
-+struct arm64_ftr_override __section(".data") id_aa64zfr0_override;
-+struct arm64_ftr_override __section(".data") id_aa64smfr0_override;
-+struct arm64_ftr_override __section(".data") id_aa64isar1_override;
-+struct arm64_ftr_override __section(".data") id_aa64isar2_override;
-+
-+struct arm64_ftr_override __section(".data") arm64_sw_feature_override;
- 
- static const struct __ftr_reg_entry {
- 	u32			sys_id;
--- 
-2.49.0.906.g1f30a19c02-goog
-
+Sending out a separate series shortly.
 
