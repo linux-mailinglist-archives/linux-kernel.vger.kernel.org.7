@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-630783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E25BFAA7F97
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 11:09:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5654AAA7F93
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 11:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E46984075
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 09:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23DAD983FD7
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 09:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1B01DE4C2;
-	Sat,  3 May 2025 09:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859B71D5CDE;
+	Sat,  3 May 2025 09:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uw8KCeRJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cVcvYxtR"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868DB1D5CE5
-	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 09:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25076374F1;
+	Sat,  3 May 2025 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746263337; cv=none; b=XMks1NCo/Twr1q5PFjb9xssrLD7La31oUvpcMsh006hv6lt92+x445WVKqQF5gzmFwUIw6O62sE23dAS3Z1/GRfHnnfMkezGyKGJD5lmhjDyBsrVzdd90siAZXBcAtZTzaLB3DgE6rjIuZt9NIp9U3ioQlMrB4E6wCN8mHkM7EQ=
+	t=1746263333; cv=none; b=UrpZAGls3+ZaI1MgYsJ6QyNui3Xd6AVgGOzNdN3WVhb84OXJZG/sq8Euqby6Yyc/GaM+pTDeedli+lpUQ1lZhQbF4ynn2p2QOc4417IfK9VR/zvj5wEcfFjxG6sRv7lpJANEAOoRyb++LaF/3M8NKKpDkqVucaAAG/RKya6wAVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746263337; c=relaxed/simple;
-	bh=7DXKKLxqc9pxgZV4iNYTNG7B8b3bBjtSHb8Lyl7QTFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CKaiVsL5YJGW0plYrlQ4Fm5zDY89Qy5OhSde6HjmUkGFQReHHpQVO0KAiicmfCeGA3HkMA4QJfxKoQbT8z3vDGb6RKTkLJhiU+QEPz0BMNp6gX6W4r4Knb6BRY8sj+uDf8M1SOkw4oE50nF7hmUGfbMjmX4ZfmOkHg4ATvPB7ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uw8KCeRJ; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746263335; x=1777799335;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=7DXKKLxqc9pxgZV4iNYTNG7B8b3bBjtSHb8Lyl7QTFU=;
-  b=Uw8KCeRJUUyU/qC7/qVL/Bm2KL8UdsD+Yw6kB5SP7Q0jQiE+jyy8ZtrH
-   jlJs3mPezkA6NVqQ/ckrirP5EHbtBmJKZOXpbCImLNjpXPAQWLBFbwnBs
-   0qmohhBEKMEH2uOXG8dGIx0BRpsy09PncowfUjWaa8ZZ6EpweDgyAF3pZ
-   5StS71sXViI1uhcQnaY3c12F85iZKaiqBJJkVVmakyeWL3GjUa3XgaPRl
-   YO1ey/1wfdyd/GiQPxTEWgSbJMLjyhZB8FcdXmRWCOtKCHELnXCSB37ZV
-   F9Tr4Zpx9v3dD/BZagcfEOGJ+nRoVEZNozGLpMhVS95MgTrnE24R1qlzp
-   A==;
-X-CSE-ConnectionGUID: qiqfZwGCQ4CyonvMO9mUrg==
-X-CSE-MsgGUID: 2kTuBRqxQu+dqBGvKOg7uA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="35554530"
-X-IronPort-AV: E=Sophos;i="6.15,258,1739865600"; 
-   d="scan'208";a="35554530"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2025 02:08:54 -0700
-X-CSE-ConnectionGUID: hSku64yzSPOYPPLfRkiXlg==
-X-CSE-MsgGUID: kvScOu7pQV2GontxOajcrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,258,1739865600"; 
-   d="scan'208";a="134793274"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 03 May 2025 02:08:52 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uB8ra-0005HB-06;
-	Sat, 03 May 2025 09:08:50 +0000
-Date: Sat, 3 May 2025 17:08:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Jesse Taube <mr.bossman075@gmail.com>
-Subject: ld.lld: error: Function Import: link error: linking module flags
- 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at
- 1083866), and 'i32 1' from vmlinux.a(net-traces.o at 1275566)
-Message-ID: <202505031656.UrRdPiGI-lkp@intel.com>
+	s=arc-20240116; t=1746263333; c=relaxed/simple;
+	bh=wMxHVRVgFbTIQhrecFqp94HX3M4QeBu5lTzrxZwQSUM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cvUo1WaSQlGsQAKCGvqTRyKaRpxRqqqMu+8XaV2vgArUbHO3NOeseuMw2aiTZScds8KeQV5R1d3BOn/Tgo5CkS3ws0j+ZS4lWOeKSCt0oc9uUk1JIniPm/Ynm1vwP7ybQmvKC+sJPS0UgcgIfctcDTWYxWsCpgaW9j8rIIKiLnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cVcvYxtR; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 19A0F25D47;
+	Sat,  3 May 2025 11:08:48 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id U5SZ0WT7lUvW; Sat,  3 May 2025 11:08:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1746263326; bh=wMxHVRVgFbTIQhrecFqp94HX3M4QeBu5lTzrxZwQSUM=;
+	h=From:Subject:Date:To:Cc;
+	b=cVcvYxtRlSYaGRROHM9HE7uQBFF8Wfy8Um79hYpNBsHGSqa5HM/qagibRrAX+REmE
+	 mOZRFZX0CxLZJG8lQKuwXPq+JKyaO4v/joAeQYWnQXMnAqvJnaXdgthTp818s+LTIf
+	 0ZF6dUehV9cmwJQM1DY2TDF1dEj27s3DEBpghx1gejtXyCMauxis9rFElAfxq7NCUw
+	 IQN4XEsRzOUVUA/TFnrxWQ7l2dH5NZvZSM6uS3MkPfyyqfWZTv3DCichbq1EENQhSL
+	 as02Zy8hn1visrhqAmsk53waO/pE4ER51a+Bg9+E/2ZCG4N5tOdW/vwbmSEy8barIK
+	 ZeJv5DmNH45Qw==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH RFC 0/4] Support for MELFAS MIP4 touchkey devices
+Date: Sat, 03 May 2025 14:38:26 +0530
+Message-Id: <20250503-mip4-touchkey-v1-0-b483cda29a5b@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAArdFWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUwND3dzMAhPdkvzS5Izs1EpdM7NEQ0NjIyOzpORUJaCegqLUtMwKsHn
+ RSkFuzkqxtbUAvsQEB2QAAAA=
+X-Change-ID: 20250501-mip4-touchkey-66a113226bce
+To: Sangwon Jee <jeesw@melfas.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746263323; l=1369;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=wMxHVRVgFbTIQhrecFqp94HX3M4QeBu5lTzrxZwQSUM=;
+ b=lEmBgsGDqJD7p2ok4ZO0G9blk2vNLqO9DbxTZvUD447FY2n+wo1B1Q+nbgH7aQSEpYbG4ywo4
+ 7sanHRYgzShC6cehOTwCwk3iio7f0Tu/UBMhi8sLnqJkwscxrUEHNKk
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   95d3481af6dc90fd7175a7643fd108cdcb808ce5
-commit: 2c0391b29b27f315c1b4c29ffde66f50b29fab99 riscv: Allow NOMMU kernels to access all of RAM
-date:   5 weeks ago
-config: riscv-randconfig-r053-20250503 (https://download.01.org/0day-ci/archive/20250503/202505031656.UrRdPiGI-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250503/202505031656.UrRdPiGI-lkp@intel.com/reproduce)
+MIP4 is a protocol developed and used by MELFAS in its touchscreen and
+touchkey devices. The MIP4 touchscreen driver acknowledges the
+touchscreen capabilities, but touchkeys are left unimplemented.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505031656.UrRdPiGI-lkp@intel.com/
+Apart from touchscreen + touchkey devices, the protocol is also used by
+devices which are, functionally, touchkey devices. Thus, the driver
+should also be compatible with those devices. This series aims to
+introduce such required changes.
 
-All errors (new ones prefixed by >>):
+RFC: How should the compatible string be handled? The string defined in
+dtschema is 'melfas,mip4_ts', which implies that it's a MIP4 touchscreen
+by MELFAS.
 
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(memcontrol.o at 1100606)
->> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(net-traces.o at 1275566)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(trace.o at 1093826)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(dir.o at 1110086)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(skbuff.o at 1273406)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(syscall.o at 1095206)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(xprtsock.o at 1284926)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(slub.o at 1100306)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(tcp.o at 1279226)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(ring_buffer.o at 1093766)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(filter.o at 1274486)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(ip6_output.o at 1282346)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(af_packet.o at 1284686)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(page_alloc.o at 1100066)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(namei.o at 1101746)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(vmscan.o at 1098926)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(auth_gss.o at 1286246)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(svcsock.o at 1285346)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(xdr.o at 1285706)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1083866), and 'i32 1' from vmlinux.a(svcauth_gss.o at 1286366)
-   ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Kaustabh Chakraborty (4):
+      dt-bindings: input: melfas-mip4: document linux,keycodes property
+      Input: melfas-mip4 - add support for touchkey input events
+      Input: melfas-mip4 - initialize touch events only if the device is a touchscreen
+      Input: melfas-mip4 - add support for event formats 4 and 9
 
+ .../bindings/input/touchscreen/melfas_mip4.txt     |  2 +
+ drivers/input/touchscreen/melfas_mip4.c            | 98 ++++++++++++++++------
+ 2 files changed, 74 insertions(+), 26 deletions(-)
+---
+base-commit: 3e039dcc9c1320c0d33ddd51c372dcc91d3ea3c7
+change-id: 20250501-mip4-touchkey-66a113226bce
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
