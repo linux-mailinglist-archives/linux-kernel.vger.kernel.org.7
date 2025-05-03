@@ -1,101 +1,94 @@
-Return-Path: <linux-kernel+bounces-630863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B41AA8088
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 13:54:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92770AA808C
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 13:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB6F1BA0EA1
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 11:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C2546583D
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 11:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EA01F3FF4;
-	Sat,  3 May 2025 11:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0501F09AA;
+	Sat,  3 May 2025 11:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iUviIQsy"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpC5CK+o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DB01F3D31
-	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 11:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AD22A1CA;
+	Sat,  3 May 2025 11:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746273188; cv=none; b=tYJA0wKBhnTzQ5BMlWurxwRwhD3iUmGFYvKsOFxtpR34Q8gAAeudpmrT56nTw+rOyehjGBtstLTMXCY3r+yUBSL5/ZgZuAaH4j2IO4YWzxs4WNMcYE21PxWS0bMTiHKiKlWSaaLJ4zxuj8I4BATq5bUsVYr+6SjoM01xMKKPFFA=
+	t=1746273500; cv=none; b=C4nSnS3CdxC0P0JKa17037+g7OgUiN/i2WtNu5A07DbZnBu0QwwNpTiCsm+JFbA9N/XjynPHu2nFlC0i3X89VnyDO+zLCgkvkuO4BzHA3ZZoRM9A6/GPBO2KkiH/N3qEnyrhPeZ2HOMJU23GLv2ayINtoLUDQ9hv2dmoJzT/4KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746273188; c=relaxed/simple;
-	bh=w+fssZgFamC4QJtIuBh39lOyDQ/gn2TYeWA4uBF1fa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ps408CqA4L109VN45JY8o0oX2lZty8z/c6Jqrgsp5jzJNxtv2/joGuQGNMUD+8+KWdPT8nUtOhTOGGK/echrwhlcsskiGWXcnfy6zce9wNig0ikgTpWzu3vtINzOAT9gyhcU4h/v2YVKdEydvBpUKNkc5HtFnYdgadQxr3tbGC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iUviIQsy; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746273184;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3XlyEXv1TeOhpT7TJTq/JP6q/LbG0XV7hKmXjm2rX/w=;
-	b=iUviIQsyEi+aJQuzwXsXhOH9JARC3iWcFaoZPat01A10Y0FBtU2RGwP64q3xpedEbFuDMo
-	kzedVoHCcxQ5nChOt93LVQ8+EJRZdOxmSH59u7TBER/xe1YGILcKhdIdPTMfE+2pzBaeyR
-	KjhEEqeoDRJ/V5kfCGeojOusgQi0/x0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-unionfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ovl: Replace offsetof() with struct_size() in ovl_stack_free()
-Date: Sat,  3 May 2025 13:52:44 +0200
-Message-ID: <20250503115244.342674-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1746273500; c=relaxed/simple;
+	bh=Bo2kM4vpWeOzKCXc2t+PVRRC6F4rzJU4RcIaI8kD8nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V0kaJWmasd7FE0+op9wzuq0udKRzxZ7BUZdXtrcevMZvSnGwvzEG+ZvGQbiqqV0jDZYaofA2am4t1UIKxRekaKJyMTEEhYJCAl9lbXw2fpcqKyAc7SNysUd1dYkABAo82ikWMpDrhFGHvesNu1NsXokx7GfKb8FgAxh+4SxrxXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpC5CK+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D23DAC4CEE3;
+	Sat,  3 May 2025 11:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746273499;
+	bh=Bo2kM4vpWeOzKCXc2t+PVRRC6F4rzJU4RcIaI8kD8nk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BpC5CK+opqWUTeYkEKlTYv7V5RumKqveSSjujEpqSr/YXAnoj+I6qY+Ucvjl85sNh
+	 bxS5DgYLALN3eb67OW/hpt1bDy3aFJemupmEckOfX6//31XpwTwYCnsp36+EPm2Lj3
+	 BqJgJx3gwebE7VjH382cbtEBjzu+XLryBgnRUuwHLOOFYdNxeFs6fXJ9h3gh3SdvTa
+	 dcZI8hAc3Fm1JOJMVGKsN94+GWeGbpBNY4FEn40bxcPrbnNSYR8xWk0fK9waWUwWkr
+	 3/KrH2TL3dcyOu5wwJqXHWp5NmiuyIW0azkaznW1gWVBFRRIa5+BFSYlVn0AhF1EyA
+	 ymbnXYg1yWhEw==
+Date: Sat, 3 May 2025 13:58:10 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] rust: debugfs: Bind DebugFS directory creation
+Message-ID: <aBYE0rPmS6L6PJbs@polis>
+References: <20250501-debugfs-rust-v3-0-850869fab672@google.com>
+ <20250501-debugfs-rust-v3-1-850869fab672@google.com>
+ <aBRoNKjB063QhGZo@pollux>
+ <CAGSQo00hYLubqJy9zkO3_O3b6V15WtmoSybC+Ep5uJeU6k3t4A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAGSQo00hYLubqJy9zkO3_O3b6V15WtmoSybC+Ep5uJeU6k3t4A@mail.gmail.com>
 
-Compared to offsetof(), struct_size() provides additional compile-time
-checks for structs with flexible arrays (e.g., __must_be_array()).
+On Fri, May 02, 2025 at 08:48:36AM -0700, Matthew Maurer wrote:
+> On Thu, May 1, 2025 at 11:37 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > On Thu, May 01, 2025 at 10:47:41PM +0000, Matthew Maurer wrote:
+> > > +/// Owning handle to a DebugFS directory.
+> > > +///
+> > > +/// This directory will be cleaned up when it goes out of scope.
+> > > +///
+> > > +/// # Invariants
+> > > +///
+> > > +/// The wrapped pointer will always be `NULL`, an error, or an owned DebugFS `dentry`.
+> > > +#[repr(transparent)]
+> > > +pub struct Dir(#[cfg(CONFIG_DEBUG_FS)] *mut bindings::dentry);
+> >
+> > Should probably use Opaque instead of a raw pointer.
+> 
+> Opaque usage is problematic here:
 
-No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Changes in v2:
-- Add missing include
-- Link to v1: https://lore.kernel.org/lkml/20250503103415.281123-2-thorsten.blum@linux.dev/
----
- fs/overlayfs/util.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 0819c739cc2f..e33d2257c642 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -15,6 +15,7 @@
- #include <linux/uuid.h>
- #include <linux/namei.h>
- #include <linux/ratelimit.h>
-+#include <linux/overflow.h>
- #include "overlayfs.h"
- 
- /* Get write access to upper mnt - may fail if upper sb was remounted ro */
-@@ -145,9 +146,9 @@ void ovl_stack_free(struct ovl_path *stack, unsigned int n)
- 
- struct ovl_entry *ovl_alloc_entry(unsigned int numlower)
- {
--	size_t size = offsetof(struct ovl_entry, __lowerstack[numlower]);
--	struct ovl_entry *oe = kzalloc(size, GFP_KERNEL);
-+	struct ovl_entry *oe;
- 
-+	oe = kzalloc(struct_size(oe, __lowerstack, numlower), GFP_KERNEL);
- 	if (oe)
- 		oe->__numlower = numlower;
- 
--- 
-2.49.0
-
+Yes, when I wrote this I was back at your v1 in my mind -- the raw pointer is
+fine..
 
