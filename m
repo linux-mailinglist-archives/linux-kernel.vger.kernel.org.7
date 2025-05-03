@@ -1,201 +1,154 @@
-Return-Path: <linux-kernel+bounces-630993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E4FAA81E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 19:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AB0AA81F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73EBF7A7CAC
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 17:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6B717DBF9
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5476D27A461;
-	Sat,  3 May 2025 17:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A9127B51E;
+	Sat,  3 May 2025 18:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=michaellarabel.com header.i=@michaellarabel.com header.b="LA07Vxab"
-Received: from 190-102-104-130.static.hvvc.us (190-102-104-130.static.hvvc.us [190.102.104.130])
+	dkim=permerror (0-bit key) header.d=cyberprotect.ru header.i=@cyberprotect.ru header.b="8ZqGtmvY";
+	dkim=pass (2048-bit key) header.d=cyberprotect.ru header.i=@cyberprotect.ru header.b="KGkdryGF"
+Received: from mx1.cyberprotect.ru (mx1.cyberprotect.ru [185.232.107.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08A88F58;
-	Sat,  3 May 2025 17:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=190.102.104.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E1E7081C;
+	Sat,  3 May 2025 18:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.232.107.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746295153; cv=none; b=hSApOe+0qppFyDyOmeRUlzEH01JWiFBRSz0ofBowVw/Px6GyvOKag7SEUFfXUV5gvSyqXPUlGnSY9X7ETDLu/OlxcNDudN49YeMs50oSoE1/UH8zf/mfvJzC4uJXtjNPzCb7au2sM9KBpOVRgGw8G5CGyGU6EH6YUBVgc05g0ck=
+	t=1746297811; cv=none; b=Po14UiayQ99ERbm+7xMSRqLK0w1A3iknYInLCfuZRZNAkVBTy8YM3/d+10n+eejPjG6Xehf7EMQ5o1SWkbY1jjB98bdgIM87dIyyv0RIn3V0it2r6YTdNDgK8z5mYyrVibk6my9+OQ5HNeVLBxyWNFxu9ru3q2ixZcA0XQ3eaAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746295153; c=relaxed/simple;
-	bh=bCYEJYasft7mO5UXVByZt6FWWPs8yPW+I7ZXaGOWmyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U09mMmX6F95SEIykeH1yUaDUlrx+ibpJrL44BrFUGZJS+FI10ZlQIVoynpXHahO2am0ltIaFrnrD1dNlJCDRXKqnv17OfPIIg8Zqlgcbm6aQtWeIG1XgAzb25iKH7ICopaIqeWolbyAhm0TAkLkR/KN9eCmLMrUZKzZWweRlGgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=MichaelLarabel.com; spf=pass smtp.mailfrom=MichaelLarabel.com; dkim=pass (2048-bit key) header.d=michaellarabel.com header.i=@michaellarabel.com header.b=LA07Vxab; arc=none smtp.client-ip=190.102.104.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=MichaelLarabel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=MichaelLarabel.com
+	s=arc-20240116; t=1746297811; c=relaxed/simple;
+	bh=USaZuTsR8q/Z19BZKpqGh4iXZ0cGELGuZYmQNFyB+TY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jqs02RsGLJsfSIQiVyg2xeQ9lEDt2xl62xP2vzURWQ0DeCKnLtd7wrGb8tZ22JoCRztpjZyd+RdHrM3kJjbxHJUqUetNUWdtq8c0tyo2yTrVDq5zSaO9C4FqwO6vFngYCDKHBmWWCSl2ItOVOgDhLkKB+3Wfg202p1grGUsfIhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyberprotect.ru; spf=pass smtp.mailfrom=cyberprotect.ru; dkim=permerror (0-bit key) header.d=cyberprotect.ru header.i=@cyberprotect.ru header.b=8ZqGtmvY; dkim=pass (2048-bit key) header.d=cyberprotect.ru header.i=@cyberprotect.ru header.b=KGkdryGF; arc=none smtp.client-ip=185.232.107.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyberprotect.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyberprotect.ru
+DKIM-Signature: v=1; a=ed25519-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=cyberprotect.ru; s=dkim; h=MIME-Version:Date:From:Sender:Reply-To;
+	bh=/SyZKvqdJwrb2CSWfcnGSl3g9y4CF8icT7ILLzdG87I=; b=8ZqGtmvYqzie0st09pRbdH0VRz
+	LaUaxUI/in3xRF1pZpJdMoMGmmasMN13AO/ZukxE1DGVYDGCa0sqPvSBcHAw==;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=michaellarabel.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=uv/0MiJ1oDkQMuH3qE4kY+TiLMBt3lujQa/XExr5xos=; b=LA07VxabDoKmuEZP80o5PzsE/t
-	CMCH0BYU8DjELheVtDWM2b0iXd5/PcATqZHnOSyzt+wSh43Wqm6FsMfR25QIPG45c8dQA93wWx7Hf
-	lkxjWOQYIE2gh59FvEkrQGJaKofbvZeDAccY88C1WCIgFSsbqN7kLt5neV7vQwiM//L0LS6Sf8+3t
-	2p+Gz6LBB1DquOIpF3cX10xvJNKi1eI1FdpgY8zmZr8KwT8W/iTtB+Eymmgf5NRnOg94bU8xz/4r7
-	p7z1H92OFLS7+rSDQCWnhgHU6WMyIXk/htEDrNvIYXmDZ0uR4WcqsGHQyJlrFlyTX9G/EF9ht6REf
-	mqo3IxcA==;
-Received: from c-24-15-38-32.hsd1.in.comcast.net ([24.15.38.32]:1872 helo=[192.168.1.194])
-	by milan.phoronix.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <Michael@MichaelLarabel.com>)
-	id 1uBH8l-0000000Av9i-1Bi2;
-	Sat, 03 May 2025 13:59:04 -0400
-Message-ID: <ee6ad3c2-57f5-40a9-b655-006e65a80d3b@MichaelLarabel.com>
-Date: Sat, 3 May 2025 12:59:02 -0500
+	d=cyberprotect.ru; s=dkim-r; h=MIME-Version:Date:From:Sender:Reply-To;
+	bh=/SyZKvqdJwrb2CSWfcnGSl3g9y4CF8icT7ILLzdG87I=; b=KGkdryGF98IC+ihtKbQlTiXLRb
+	KJ7UxEr14q0rC7X7wXx4cuiNsvANjNxGAKpTMu6/vZQ7qx00NJJiU22EONhwbuqtjUBlJAWyyTfkd
+	unX+jboqfqFc8Xa+pxW9lTQQ3hBYZJN+0E/DjGpJiFKGcM18mKMVCIJThP/aIchq8N0mctvLqzhjL
+	vMIe9dNMLI4Q/NA3Kgp7ScZieesKuzU4nabWzrvZpqNrcXbw13FJNQrhdKhfu+KjZ/ti1MiXApFiN
+	SLZV/bghoH1zi5E2H3pYme5eWKrlpaVJKxD8bYJeOPXTRDY/oyRxlGYQ6JQJBeZkNexz8LR9XCcR+
+	X8XXsWjg==;
+From: Pavel Paklov <Pavel.Paklov@cyberprotect.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <pavel.paklov@cyberprotect.ru>, Steve French <sfrench@samba.org>, Paulo
+ Alcantara <pc@cjr.nz>, Ronnie Sahlberg <lsahlber@redhat.com>, Tom Talpey
+	<tom@talpey.com>, <linux-cifs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Jay Shin
+	<jaeshin@redhat.com>, Paulo Alcantara <pc@manguebit.com>, Steve French
+	<stfrench@microsoft.com>
+Subject: [PATCH 6.1] smb: client: fix double free of TCP_Server_Info::hostname
+Date: Sat, 3 May 2025 17:57:56 +0000
+Message-ID: <20250503175819.2818701-1-Pavel.Paklov@cyberprotect.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: SVM: Set/clear SRSO's BP_SPEC_REDUCE on 0 <=> 1 VM
- count transitions
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Borislav Petkov <bp@alien8.de>
-References: <20250502223456.887618-1-seanjc@google.com>
-Content-Language: en-CA
-From: Michael Larabel <Michael@MichaelLarabel.com>
-In-Reply-To: <20250502223456.887618-1-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - milan.phoronix.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - MichaelLarabel.com
-X-Get-Message-Sender-Via: milan.phoronix.com: authenticated_id: michael@michaellarabel.com
-X-Authenticated-Sender: milan.phoronix.com: michael@michaellarabel.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
- From my testing this patch is in good shape for returning the EPYC 
-Turin server bare metal performance w/o VMs back to where it was on 
-Linux 6.14.
+From: Pavel Paklov <pavel.paklov@cyberprotect.ru>
 
-Thanks,
+From: Paulo Alcantara <pc@manguebit.com>
 
-Michael
+commit fa2f9906a7b333ba757a7dbae0713d8a5396186e upstream
 
-On 5/2/25 5:34 PM, Sean Christopherson wrote:
-> Set the magic BP_SPEC_REDUCE bit to mitigate SRSO when running VMs if and
-> only if KVM has at least one active VM.  Leaving the bit set at all times
-> unfortunately degrades performance by a wee bit more than expected.
->
-> Use a dedicated spinlock and counter instead of hooking virtualization
-> enablement, as changing the behavior of kvm.enable_virt_at_load based on
-> SRSO_BP_SPEC_REDUCE is painful, and has its own drawbacks, e.g. could
-> result in performance issues for flows that are sensitive to VM creation
-> latency.
->
-> Similarly, don't bother optimizing the 1=>N and N=>1 transitions, e.g. by
-> using atomic_inc_return() to avoid taking the spinlock, as ensuring that
-> BP_SPEC_REDUCE is guaranteed to be set before KVM_RUN is non-trivial.  KVM
-> already serializes VM creation against kvm_lock (to add the VM to vm_list),
-> and the spinlock will only be held for a handful of cycles for the 1<=>N
-> cases.  I.e. the complexity needed to ensure correctness outweighs the
-> marginal benefits of eliding the lock.  See the Link for details.
->
-> Link: https://lore.kernel.org/all/aBOnzNCngyS_pQIW@google.com
-> Fixes: 8442df2b49ed ("x86/bugs: KVM: Add support for SRSO_MSR_FIX")
-> Reported-by: Michael Larabel <Michael@michaellarabel.com>
-> Closes: https://www.phoronix.com/review/linux-615-amd-regression
-> Cc: Borislav Petkov <bp@alien8.de>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/svm/svm.c | 43 ++++++++++++++++++++++++++++++++++++------
->   1 file changed, 37 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index cc1c721ba067..364959fd1040 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -607,9 +607,6 @@ static void svm_disable_virtualization_cpu(void)
->   	kvm_cpu_svm_disable();
->   
->   	amd_pmu_disable_virt();
-> -
-> -	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-> -		msr_clear_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
->   }
->   
->   static int svm_enable_virtualization_cpu(void)
-> @@ -687,9 +684,6 @@ static int svm_enable_virtualization_cpu(void)
->   		rdmsr(MSR_TSC_AUX, sev_es_host_save_area(sd)->tsc_aux, msr_hi);
->   	}
->   
-> -	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-> -		msr_set_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
-> -
->   	return 0;
->   }
->   
-> @@ -5032,10 +5026,46 @@ static void svm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector)
->   	sev_vcpu_deliver_sipi_vector(vcpu, vector);
->   }
->   
-> +#ifdef CONFIG_CPU_MITIGATIONS
-> +static DEFINE_SPINLOCK(srso_lock);
-> +static int srso_nr_vms;
-> +
-> +static void svm_toggle_srso_spec_reduce(void *set)
-> +{
-> +	if (set)
-> +		msr_set_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
-> +	else
-> +		msr_clear_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
-> +}
-> +
-> +static void svm_srso_add_remove_vm(int count)
-> +{
-> +	bool set;
-> +
-> +	if (!cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-> +		return;
-> +
-> +	guard(spinlock)(&srso_lock);
-> +
-> +	set = !srso_nr_vms;
-> +	srso_nr_vms += count;
-> +
-> +	WARN_ON_ONCE(srso_nr_vms < 0);
-> +	if (!set && srso_nr_vms)
-> +		return;
-> +
-> +	on_each_cpu(svm_toggle_srso_spec_reduce, (void *)set, 1);
-> +}
-> +#else
-> +static void svm_srso_add_remove_vm(int count) { }
-> +#endif
-> +
->   static void svm_vm_destroy(struct kvm *kvm)
->   {
->   	avic_vm_destroy(kvm);
->   	sev_vm_destroy(kvm);
-> +
-> +	svm_srso_add_remove_vm(-1);
->   }
->   
->   static int svm_vm_init(struct kvm *kvm)
-> @@ -5061,6 +5091,7 @@ static int svm_vm_init(struct kvm *kvm)
->   			return ret;
->   	}
->   
-> +	svm_srso_add_remove_vm(1);
->   	return 0;
->   }
->   
->
-> base-commit: 45eb29140e68ffe8e93a5471006858a018480a45
+When shutting down the server in cifs_put_tcp_session(), cifsd thread
+might be reconnecting to multiple DFS targets before it realizes it
+should exit the loop, so @server->hostname can't be freed as long as
+cifsd thread isn't done.  Otherwise the following can happen:
+
+  RIP: 0010:__slab_free+0x223/0x3c0
+  Code: 5e 41 5f c3 cc cc cc cc 4c 89 de 4c 89 cf 44 89 44 24 08 4c 89
+  1c 24 e8 fb cf 8e 00 44 8b 44 24 08 4c 8b 1c 24 e9 5f fe ff ff <0f>
+  0b 41 f7 45 08 00 0d 21 00 0f 85 2d ff ff ff e9 1f ff ff ff 80
+  RSP: 0018:ffffb26180dbfd08 EFLAGS: 00010246
+  RAX: ffff8ea34728e510 RBX: ffff8ea34728e500 RCX: 0000000000800068
+  RDX: 0000000000800068 RSI: 0000000000000000 RDI: ffff8ea340042400
+  RBP: ffffe112041ca380 R08: 0000000000000001 R09: 0000000000000000
+  R10: 6170732e31303000 R11: 70726f632e786563 R12: ffff8ea34728e500
+  R13: ffff8ea340042400 R14: ffff8ea34728e500 R15: 0000000000800068
+  FS: 0000000000000000(0000) GS:ffff8ea66fd80000(0000)
+  000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00007ffc25376080 CR3: 000000012a2ba001 CR4:
+  PKRU: 55555554
+  Call Trace:
+   <TASK>
+   ? show_trace_log_lvl+0x1c4/0x2df
+   ? show_trace_log_lvl+0x1c4/0x2df
+   ? __reconnect_target_unlocked+0x3e/0x160 [cifs]
+   ? __die_body.cold+0x8/0xd
+   ? die+0x2b/0x50
+   ? do_trap+0xce/0x120
+   ? __slab_free+0x223/0x3c0
+   ? do_error_trap+0x65/0x80
+   ? __slab_free+0x223/0x3c0
+   ? exc_invalid_op+0x4e/0x70
+   ? __slab_free+0x223/0x3c0
+   ? asm_exc_invalid_op+0x16/0x20
+   ? __slab_free+0x223/0x3c0
+   ? extract_hostname+0x5c/0xa0 [cifs]
+   ? extract_hostname+0x5c/0xa0 [cifs]
+   ? __kmalloc+0x4b/0x140
+   __reconnect_target_unlocked+0x3e/0x160 [cifs]
+   reconnect_dfs_server+0x145/0x430 [cifs]
+   cifs_handle_standard+0x1ad/0x1d0 [cifs]
+   cifs_demultiplex_thread+0x592/0x730 [cifs]
+   ? __pfx_cifs_demultiplex_thread+0x10/0x10 [cifs]
+   kthread+0xdd/0x100
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork+0x29/0x50
+   </TASK>
+
+Fixes: 7be3248f3139 ("cifs: To match file servers, make sure the server hostname matches")
+Reported-by: Jay Shin <jaeshin@redhat.com>
+Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Pavel Paklov <pavel.paklov@cyberprotect.ru>
+---
+Backport fix for CVE-2025-21673
+ fs/smb/client/connect.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+index 01ce81f77e89..2b0657fe2a3f 100644
+--- a/fs/smb/client/connect.c
++++ b/fs/smb/client/connect.c
+@@ -1066,6 +1066,7 @@ static void clean_demultiplex_info(struct TCP_Server_Info *server)
+ 	kfree(server->origin_fullpath);
+ 	kfree(server->leaf_fullpath);
+ #endif
++	kfree(server->hostname);
+ 	kfree(server);
+ 
+ 	length = atomic_dec_return(&tcpSesAllocCount);
+@@ -1688,8 +1689,6 @@ cifs_put_tcp_session(struct TCP_Server_Info *server, int from_reconnect)
+ 	kfree_sensitive(server->session_key.response);
+ 	server->session_key.response = NULL;
+ 	server->session_key.len = 0;
+-	kfree(server->hostname);
+-	server->hostname = NULL;
+ 
+ 	task = xchg(&server->tsk, NULL);
+ 	if (task)
+-- 
+2.43.0
+
 
