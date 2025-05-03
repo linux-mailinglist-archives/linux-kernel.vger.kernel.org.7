@@ -1,247 +1,163 @@
-Return-Path: <linux-kernel+bounces-630904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44C7AA80F9
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 16:08:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9AB9AA80FE
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 16:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CA0987099
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 14:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBB717DC35
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 14:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2562609F7;
-	Sat,  3 May 2025 14:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169D42698A2;
+	Sat,  3 May 2025 14:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E7xmUXJg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ib1u5OvU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E7xmUXJg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ib1u5OvU"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDgb157b"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345F314B965
-	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 14:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6571E261F
+	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 14:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746281302; cv=none; b=A6ptHP7DRIr9wo2o7+0Y36DoU7qXiHgYJeqk3EV+YtF8Amm7tumxTRmyWEjK10wOfeIjUSBI4eZtv17xEsTUQglbNTh6Eh7/lSCJCzfjSgMKkTU6V9/nJ+IRR9X9iXYUVdH+ENOYjpJpNs1++3XUbqBsqCoMPbaqzUEViN2ikLI=
+	t=1746281479; cv=none; b=burMBoqMK1AY8ojBq9gmCVq1Mf7+fuNqcc+Vlbiu98tKG9SKGjOiTM8DFOUWwgX/d4fPuTWLcpru2rSqMApoItjDTINH4/ZH5w6YqKZqzTSSPNjTb90YHFpofMojjWpRYeoC1gHRBZgKaeP33GNes71wK1MF0rqhT8w1NTneOl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746281302; c=relaxed/simple;
-	bh=OCsXiqG7drThgVHGvSWt4U/T+zjdViDpZqS9OPyeaEg=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=emItXF/6vc2dWldVs7naCIIArv8ZisplpZH9R0pnoc53fJEUO1F1+T6YmafGWicZiadzK5C5zbdnpkfimEhbei7kUgZJKVNSc3ObNhdW+2ehRd2gpwLe7HByt4GG88jjRIrRkfoZwW6xgkIjhWiUBq54ri6I++kYqDVSeT+NiVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E7xmUXJg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ib1u5OvU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E7xmUXJg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ib1u5OvU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A36F91F792;
-	Sat,  3 May 2025 14:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746281291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ifjp4NjKc024Az5rcJH3Zi/VQ07OsKVLa71MnSDwcWw=;
-	b=E7xmUXJglHH/6YoPjlz6tIM6cAX5Mc9i8FSuCHaPrxVOdqZKUpOgpMOF6CSsr2xAdrLEP0
-	3oIX9IBdioXzHxAbSS1l6pgmZ7gl5l7g8VWWe/HHSYV4GGs7/khOcqvtXrrfbON5bTW6IJ
-	1t/Zhoy3cM0zlTGsytXovY2+KLcM9mM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746281291;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ifjp4NjKc024Az5rcJH3Zi/VQ07OsKVLa71MnSDwcWw=;
-	b=Ib1u5OvUUE74h9iSVfP6Dcd7L1pqJAvxBtMFZOL9A0JuKSe8bVpp8T0JLHLzBOmFpj1CNh
-	dbWyElr8OWD8EsAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746281291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ifjp4NjKc024Az5rcJH3Zi/VQ07OsKVLa71MnSDwcWw=;
-	b=E7xmUXJglHH/6YoPjlz6tIM6cAX5Mc9i8FSuCHaPrxVOdqZKUpOgpMOF6CSsr2xAdrLEP0
-	3oIX9IBdioXzHxAbSS1l6pgmZ7gl5l7g8VWWe/HHSYV4GGs7/khOcqvtXrrfbON5bTW6IJ
-	1t/Zhoy3cM0zlTGsytXovY2+KLcM9mM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746281291;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ifjp4NjKc024Az5rcJH3Zi/VQ07OsKVLa71MnSDwcWw=;
-	b=Ib1u5OvUUE74h9iSVfP6Dcd7L1pqJAvxBtMFZOL9A0JuKSe8bVpp8T0JLHLzBOmFpj1CNh
-	dbWyElr8OWD8EsAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 711CA13712;
-	Sat,  3 May 2025 14:08:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GwDeGUsjFmg1UwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 03 May 2025 14:08:11 +0000
-Date: Sat, 03 May 2025 16:08:10 +0200
-Message-ID: <87bjs9ait1.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sound fixes for 6.15-rc5
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1746281479; c=relaxed/simple;
+	bh=ciu5FbXkqLQsWfZ8ZKhUxaSuzC0RvHTM5+IZUqMMrFI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GCcJPra2kPee+4T0UURpBwQ/7E97r2670ViaBQsulN0zdCGsOz4JUs0LlLRE1cobsXApyX8KTdeq8lAR5XuG2N6eqfEanY3Wn+uTPyac2lbzP2HSCKL9F0mIiNG6hGUc7b2wCcjdZwBeL+L4dZbhgYnSKLBVSF64QjoBPCQoPmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDgb157b; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c0dfad22aso1729138f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 03 May 2025 07:11:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746281476; x=1746886276; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sCh5nmEj3pX/SsoomowKWDNtilSD1iUESrACm5D+2RE=;
+        b=QDgb157brg/LP16BfKfLnLC9YOXmV7i02xehaM7vfoTcrv/6sWpUyLnxQL8tOgWPAr
+         /1aWv7ayuz2xsnvs2R7BizFWLD/HbSqqTne8Tu7zSHg+8Z3ttl8hKphZ6WS16ztStltD
+         7mZq55yRPFogAZQN44j3OGvcv5GZwnnMm0CA7jAG3cyPT7sPB+XLd3dPsjM6no/Ik5so
+         +cf8yw5RKAl9YV1F7QbA8Z8GSkQZ2mLooN96WnfT3eOuMsgknBoxnuuif2IWRRN2drk+
+         koZf+Tae07M8MX4U8TrmlPwbgQ60WvTEP5Ik76sp3llkZv520GsJT0UfjfXT/mQ2U9v2
+         UAVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746281476; x=1746886276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sCh5nmEj3pX/SsoomowKWDNtilSD1iUESrACm5D+2RE=;
+        b=GR74nmueuAYuy/gWIPmvVOigNuiRAodguE00fsjU2fYtovKTu2wNltiY19cxUMy6LM
+         avW5dcz0WkjfXpMZzi3xFBUHoNNdcHqeccGoYdySLB0Q974eVWcGZdcdJrqW1xaZ0J3f
+         BUNudKa2/MuVf0fD6oJI/2nCn1F2iOxz00DiZEP5MCB7uFmy0U6jt4zZOf6bfRjIkHZL
+         lUCa43tokMuFbMfbDR7xpoYxtqp5HgAD7MdLG6tZyDaVSs3gwlLzVcbNRAu4+Qacdec+
+         nWfvFtIP0EDaiNJIQZ1mP9AcF7LMw+N2/5hFZS7+yM5hGIcn54U7o2OOYn0wLWxbcBdh
+         ADgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKU0xFVZZSzAPSEnlwM1cRPKAKNKhsvD1uRWOJxSEom5o6Sa5qPzZV8N3/Ny1mSaIWxqd4Kc/KWA0RKv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9GkrNZDdlYdOGaaxlZbA/j/NXj6P44Qkt77sgzECcXyWmCR48
+	eNEJ5gIgOh8ypTmXR2sqvmTVdbnFOspuPh+nPa3qYlUsZSkIibWUaduNowTN3+s08TKou8JU8wK
+	0u7fVC3PQGtUVYrKKAzkz4EX8W70=
+X-Gm-Gg: ASbGncurg+Y/ZYUR/XNzIS8roWIPHksVl4m/Mc/vdTk3tq/FO5goDCuzYxcyFK8Xz4/
+	c/LjcIFUebwQSk3AzPD6BayB5ehJ6MXSFRncKe8Ae3WRad9NxAWCbkgSNegj80+JqvBo4PDYxHR
+	aDVkq1PH1twp9gEH0MP794vGg=
+X-Google-Smtp-Source: AGHT+IFb7FoJgZJFIZO/UjXktY4mru2tOwWLAcfykM2RabNXRombknByR3vqY2NGtrHcXQxnil1A63HxXg5JD4HSPTA=
+X-Received: by 2002:a05:6000:1845:b0:3a0:7b05:cfe4 with SMTP id
+ ffacd0b85a97d-3a099ad1c2dmr6177737f8f.11.1746281475670; Sat, 03 May 2025
+ 07:11:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <20250430055114.11469-1-clamor95@gmail.com> <20250430055114.11469-3-clamor95@gmail.com>
+ <CAPVz0n2dHmAF+x1txDXE40XkRpg-nAsMgqgZAGOPWgkAZ6wfVA@mail.gmail.com>
+In-Reply-To: <CAPVz0n2dHmAF+x1txDXE40XkRpg-nAsMgqgZAGOPWgkAZ6wfVA@mail.gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Sat, 3 May 2025 17:11:04 +0300
+X-Gm-Features: ATxdqUGfvdljdGUYK8pN56IkPTYdpQ4Evxfco5yxMRNoxLQAtLlATfHKHlCJRh4
+Message-ID: <CAPVz0n30to9CaYPJMLLkyb83JJP=BOvvBjXx4wm-EbPh+zKu5A@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] power: supply: Add support for Maxim MAX8971 charger
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+=D1=81=D0=B1, 3 =D1=82=D1=80=D0=B0=D0=B2. 2025=E2=80=AF=D1=80. =D0=BE 09:07=
+ Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> =D1=81=D1=80, 30 =D0=BA=D0=B2=D1=96=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 08=
+:51 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > The MAX8971 is a compact, high-frequency, high-efficiency switch-mode
+> > charger for a one-cell lithium-ion (Li+) battery.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  Documentation/ABI/testing/sysfs-class-power |  43 ++
+> >  drivers/power/supply/Kconfig                |  14 +
+> >  drivers/power/supply/Makefile               |   1 +
+> >  drivers/power/supply/max8971_charger.c      | 752 ++++++++++++++++++++
+> >  4 files changed, 810 insertions(+)
+> >  create mode 100644 drivers/power/supply/max8971_charger.c
+> >
+>
+> ...
+>
+> > diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfi=
+g
+> > index 8dbd39afa43c..09fb123efe4f 100644
+> > --- a/drivers/power/supply/Kconfig
+> > +++ b/drivers/power/supply/Kconfig
+> > @@ -595,6 +595,20 @@ config CHARGER_MAX77976
+> >           This driver can also be built as a module. If so, the module =
+will be
+> >           called max77976_charger.
+> >
+> > +config CHARGER_MAX8971
+> > +       tristate "Maxim MAX8971 battery charger driver"
+> > +       depends on I2C
+>
+> Greetings, Sebastian!
+>
+> Kernel test robot caught an issue regards dependencies of this driver.
+> Although, it was made in way that extcon is optional, unfortunately
+> extcon framework is not. Extcon header does not provide inline
+> versions of functions used here hence undefined references pop up. I
+> suppose proper fix would be by adding depends on EXTCON. Would you
+> amend this commit or should I send a v7?
+>
+> Thank you for all your efforts and sorry for inconvenience.
+>
+> Best regards,
+> Svyatoslav R.
+>
 
-please pull sound fixes for v6.15-rc5 from:
+UPD: addressed by Arnd Bergmann here
+https://lkml.org/lkml/2025/5/3/271
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.15-rc5
 
-The topmost commit is 6e5bea1c93062a43bc0435ae6cd589448094edaa
-
-----------------------------------------------------------------
-
-sound fixes for 6.15-rc5
-
-A bunch of small fixes.  Mostly driver specific.
-
-- An OOB access fix in core UMP rawmidi conversion code
-- Fix for ASoC DAPM hw_params widget sequence
-- Make retry of usb_set_interface() errors for flaky devices
-- Fix redundant USB MIDI name strings
-- Quirks for various HP and ASUS models with HD-audio, and
-  Jabra Evolve 65 USB-audio
-- Cirrus Kunit test fixes
-- Various fixes for ASoC Intel, stm32, renesas, imx-card, and
-  simple-card
-
-----------------------------------------------------------------
-
-Alexander Stein (1):
-      ASoC: simple-card-utils: Fix pointer check in graph_util_parse_link_direction
-
-Arnd Bergmann (1):
-      ASoC: Intel: catpt: avoid type mismatch in dev_dbg() format
-
-Bard Liao (1):
-      ASoC: soc-acpi-intel-ptl-match: add empty item to ptl_cs42l43_l3[]
-
-Charles Keepax (1):
-      ASoC: cs42l43: Disable headphone clamps during type detection
-
-Chenyuan Yang (2):
-      ASoC: imx-card: Adjust over allocation of memory in imx_card_parse_of()
-      ASoC: Intel: sof_sdw: Add NULL check in asoc_sdw_rt_dmic_rtd_init()
-
-Chris Chiu (2):
-      ALSA: hda: Apply volume control on speaker+lineout for HP EliteStudio AIO
-      ALSA: hda/realtek - Add more HP laptops which need mute led fixup
-
-Claudiu Beznea (1):
-      ASoC: renesas: rz-ssi: Use NOIRQ_SYSTEM_SLEEP_PM_OPS()
-
-Geoffrey D. Bennett (1):
-      ALSA: usb-audio: Add retry on -EPROTO from usb_set_interface()
-
-Joachim Priesner (1):
-      ALSA: usb-audio: Add second USB ID for Jabra Evolve 65 headset
-
-Kailang Yang (1):
-      ALSA: hda/realtek - Enable speaker for HP platform
-
-Nico Pache (1):
-      firmware: cs_dsp: tests: Depend on FW_CS_DSP rather then enabling it
-
-Olivier Moysan (2):
-      ASoC: stm32: sai: skip useless iterations on kernel rate loop
-      ASoC: stm32: sai: add a check on minimal kernel frequency
-
-Richard Fitzgerald (3):
-      kunit: configs: Add some Cirrus Logic modules to all_tests
-      ASoC: cs-amp-lib-test: Don't select SND_SOC_CS_AMP_LIB
-      ASoC: Add Cirrus and Wolfson headers to ASoC section of MAINTAINERS
-
-Sheetal (1):
-      ASoC: soc-pcm: Fix hw_params() and DAPM widget sequence
-
-Stefan Binding (2):
-      ASoC: intel/sdw_utils: Add volume limit to cs42l43 speakers
-      ASoC: intel/sdw_utils: Add volume limit to cs35l56 speakers
-
-Takashi Iwai (5):
-      ASoC: Intel: bytcr_rt5640: Add DMI quirk for Acer Aspire SW3-013
-      ALSA: hda/realtek: Add quirk for HP Spectre x360 15-df1xxx
-      ALSA: ump: Fix buffer overflow at UMP SysEx message conversion
-      ALSA: usb-audio: Fix duplicated name in MIDI substream names
-      ALSA: hda/realtek: Fix built-mic regression on other ASUS models
-
-Venkata Prasad Potturu (3):
-      ASoC: amd: acp: Fix NULL pointer deref on acp resume path
-      ASoC: amd: acp: Fix NULL pointer deref in acp_i2s_set_tdm_slot
-      ASoC: amd: acp: Fix devm_snd_soc_register_card(acp-pdm-mach) failure
-
-Vijendar Mukunda (1):
-      ASoC: amd: ps: fix for irq handler return status
-
----
- MAINTAINERS                                       |  6 ++
- drivers/firmware/cirrus/Kconfig                   |  5 +-
- include/sound/soc_sdw_utils.h                     |  1 +
- include/sound/ump_convert.h                       |  2 +-
- sound/pci/hda/patch_realtek.c                     | 91 ++++++++++++++++++++---
- sound/soc/amd/acp/acp-i2s.c                       |  2 +-
- sound/soc/amd/acp/acp-legacy-common.c             |  2 +-
- sound/soc/amd/acp/acp-rembrandt.c                 |  2 +-
- sound/soc/amd/acp/acp-renoir.c                    |  2 +-
- sound/soc/amd/acp/acp63.c                         |  2 +-
- sound/soc/amd/acp/acp70.c                         |  2 +-
- sound/soc/amd/ps/pci-ps.c                         |  5 +-
- sound/soc/codecs/Kconfig                          |  5 +-
- sound/soc/codecs/cs42l43-jack.c                   |  7 ++
- sound/soc/fsl/imx-card.c                          |  2 +-
- sound/soc/generic/simple-card-utils.c             |  4 +-
- sound/soc/intel/boards/bytcr_rt5640.c             | 13 ++++
- sound/soc/intel/catpt/dsp.c                       |  2 +-
- sound/soc/intel/common/soc-acpi-intel-ptl-match.c |  3 +-
- sound/soc/renesas/rz-ssi.c                        |  2 +-
- sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c      |  4 +
- sound/soc/sdw_utils/soc_sdw_cs42l43.c             | 10 +++
- sound/soc/sdw_utils/soc_sdw_cs_amp.c              | 24 ++++++
- sound/soc/sdw_utils/soc_sdw_rt_dmic.c             |  2 +
- sound/soc/soc-pcm.c                               |  5 +-
- sound/soc/stm/stm32_sai_sub.c                     | 16 ++--
- sound/usb/endpoint.c                              |  7 ++
- sound/usb/format.c                                |  3 +-
- sound/usb/midi.c                                  | 16 +++-
- tools/testing/kunit/configs/all_tests.config      |  2 +
- 30 files changed, 206 insertions(+), 43 deletions(-)
-
+> > +       select REGMAP_I2C
+> > +       help
+> > +         The MAX8971 is a compact, high-frequency, high-efficiency swi=
+tch-mode
+> > +         charger for a one-cell lithium-ion (Li+) battery. It delivers=
+ up to
+> > +         1.55A of current to the battery from inputs up to 7.5V and wi=
+thstands
+> > +         transient inputs up to 22V.
+> > +
+> > +         Say Y to enable support for the Maxim MAX8971 battery charger=
+.
+> > +         This driver can also be built as a module. If so, the module =
+will be
+> > +         called max8971_charger.
+> > +
+> >  config CHARGER_MAX8997
+> >         tristate "Maxim MAX8997/MAX8966 PMIC battery charger driver"
+> >         depends on MFD_MAX8997 && REGULATOR_MAX8997
+> ...
 
