@@ -1,284 +1,224 @@
-Return-Path: <linux-kernel+bounces-630915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50556AA8115
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 16:38:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81812AA811D
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 16:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F023BAC91
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 14:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 848C1462700
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 14:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D04266584;
-	Sat,  3 May 2025 14:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617B01E5B9A;
+	Sat,  3 May 2025 14:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VY/VvnVG"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2072.outbound.protection.outlook.com [40.107.100.72])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GodSzr3k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA434367;
-	Sat,  3 May 2025 14:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746283092; cv=fail; b=sC36lU63rDAXad5Ffw0OJDkDgwxdTflq0OkYGTZrOjtcgfWH59Qa3bZskm80M8wgciQGpBZPdlKeUOIPexmnyb37q7DY4PQVt4FsvQzUoFkENNNFiH5ma/zqs3jhcA+9LczJSyto7EYcz97PHLKqW4dynrhZ1Y0Xh2u8JVdZIUI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746283092; c=relaxed/simple;
-	bh=l6GKToBiFamiVpJ3TL/rLTkersWTMRQegr9fTOxDEnM=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=HcYubI8MFJqGaL0xedYTcMrbRrFMFUhga+3BUbRIq0NtcwkSPtAW7bbTmFllNLBVGtTdLLD849WIbUdeoZlCmm1QNBw6YyERU31Rm9IYJr3bAZI+o/JpKqAQ13CrtqQErtcDFNXoK2k1RDE9aTWspHRmZxWmvrOdbmVe1y01sfE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VY/VvnVG; arc=fail smtp.client-ip=40.107.100.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=St8lgrQN0Eyl1slrh6e664XniVM/35i/VZY5m+yzJTKNLjYHnZWWZ5pG3BXQTLSqTpaFqyE4eAhjy1xSWaXh1CNVIwtKUUVYecRRXcxncFLR/SRl40pFtFF7wbYpCtPVN1debcgTWJsD2t4QpKL1xJTN8gV4OA94TdKagYGNgtbRvgSAeDD++HK/fGqu+PlJh5x5XaLeKFvFIGLkZN8iHEILr33V+bnMiaV9+b0XXQjnl0c5hMjV0vsTbsVi6W8b440XIbJXpl1P+mOB0siisMqBXtjj5CiAiz3EqQEondcEfU01wSUzv2vdcPjCaOMJ/FOYQU6YTnfx4tO/pDDRCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gmQGqE0do93SL801k9OaetlC1kMvhZl08GXDD+mW0Lo=;
- b=xROB43UIgBPZLhugLjO2kTebzEyt1ywoTvRkOspxunvmfZdtGp4ng+ZZ2Eu/58BaT5SHXs3UJBA9pwsm0jbztdwSmkWQWReAJx2F/It1mITIz3GAMrDBxYkK8CcDWm+dzzl5s4JoP/5ezX/SSJr+7R/Ln8k+LzIXFmfS6T0OpcpzgqMLSXrsHxSSjr4KGewkbqXxlnlqcKlhpjJN/YtZBLPGDJII3FBpgv+USDA5rP/ck73V5lOY5t3MCo0g/S+TNxX2ksopURqF5ndl5JBEsfthB8SjiQKOzqh3JN41A9yXIf/7Y++nsiMIeHJKoJSNZ38SM0HGYkzlQc5it0UfAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gmQGqE0do93SL801k9OaetlC1kMvhZl08GXDD+mW0Lo=;
- b=VY/VvnVG4gpSVkAD45OkQ9mS95aJPxW/2h6nrnUQV9bZ4yHHbcsvdQlzPkcd3xM48CWLR1IvP027u/EmGieUSQVDqsIMYh7/xnDopO6SQplk5y2PH7ZBXUuBbAvMXx3Z8oWq8dJ0KkWbZR8VzV7mJ2i4fLc7M3iV6Djp+Rk9NSj6B9VSp6NKVf/KmH6LgPN9nmsqf3QjRuHEXwXgzupimFO+p3Y0voJGDcBXBxOvUS0Y2sBkR5dG1UNFDKiCXrnXwFTA9ReTIQ44xzidbWQy227sQQyn1Eat66jRfM3YMl8FQxzArZPgzmYlMtu7JTtUyWBypblLvl2p46ej4sZiZw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by IA1PR12MB8286.namprd12.prod.outlook.com (2603:10b6:208:3f8::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Sat, 3 May
- 2025 14:38:07 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%5]) with mapi id 15.20.8699.022; Sat, 3 May 2025
- 14:38:00 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 03 May 2025 23:37:56 +0900
-Message-Id: <D9MLOQC5G7XH.3GTUIRCCN8X70@nvidia.com>
-Cc: "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v2 17/21] rust: num: Add an upward alignment helper for
- usize
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Jonathan Corbet"
- <corbet@lwn.net>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250501-nova-frts-v2-0-b4a137175337@nvidia.com>
- <20250501-nova-frts-v2-17-b4a137175337@nvidia.com>
- <D9LEQ1U1PLO8.3N22GRY380ZM3@nvidia.com>
- <d6962ea3-282d-437c-b3cf-ce701d514558@nvidia.com>
- <D9M5K55GTN6S.1X827WU0Z50UM@nvidia.com>
- <112d971f-20c8-4598-86c9-6822d9c24001@nvidia.com>
-In-Reply-To: <112d971f-20c8-4598-86c9-6822d9c24001@nvidia.com>
-X-ClientProxiedBy: TYCP286CA0322.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3b7::11) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A832C367
+	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 14:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746283167; cv=none; b=bFU2NNNREou921kkSj8JASd778FAaPjQgnvLi4APfBZkmd54qL/cQfnifDUsEmPOrCGRGwt71MFf7YS3ZSrSmWak2AqL4tAm4Kbim4iPAcUYWY53yHRsnq7TTuJPCRHvIQ/8GYD6AimjZpDV4KVa5+18cSRqBBr/1SygYWQBRJ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746283167; c=relaxed/simple;
+	bh=rn7+o4EPtcG0oJ6Fi2Yb4BaDa4A0wgw01u7a4616hkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YFpQ1BNiPY1Yo5Pz2jKLcQJB4Skcs/YKWg3P1o5j7ebO/z19wkzm+ADDiGa0ECxY86fYOS4MQ9Tq7HLPufHlDUJn/djrVGxXvAlCarPAJKzXHYp2rvtW8jWnDbhQRh+PTEMvzjViGcLj45rMd43LLTyLmvz+DnG66BIgDhYth6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GodSzr3k; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746283164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=BH81id2CJI4866z+gecRvcwrouD/J6fuMh6H8yNd8d4=;
+	b=GodSzr3kAD7BYPRoYUC31MignLSP909TsEW2Y5VKhAt2QUd7IVgpg42J5+s4q3A/5HgLJA
+	CIq1Q4rhia0HnL6x0VjuLtqPz5gWA8//CpHngiApN4NIcuQRlABBPaj3/eKMOnoZ9Kv8LQ
+	Hw+DHedpVi1qacNqPQ+T0ghDVls05C8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-247-ZtCzUT75PpS_CNbRNwHy4Q-1; Sat,
+ 03 May 2025 10:39:19 -0400
+X-MC-Unique: ZtCzUT75PpS_CNbRNwHy4Q-1
+X-Mimecast-MFC-AGG-ID: ZtCzUT75PpS_CNbRNwHy4Q_1746283157
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C2E061800264;
+	Sat,  3 May 2025 14:39:16 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.23])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CDD0D30001A2;
+	Sat,  3 May 2025 14:39:11 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat,  3 May 2025 16:38:36 +0200 (CEST)
+Date: Sat, 3 May 2025 16:38:30 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+	Dave Hansen <dave@sr71.net>, Brian Gerst <brgerst@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Chang S . Bae" <chang.seok.bae@intel.com>
+Subject: [PATCH tip/x86/fpu 1/6] x86/fpu: simplify the switch_fpu_prepare() +
+ switch_fpu_finish() logic
+Message-ID: <20250503143830.GA8982@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA1PR12MB8286:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b634c65-f55a-4f51-7517-08dd8a501a0a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UlhCVW5hUVF1T3FXbEJ4b2s2K2R0YzJuYUMwVGdieTR6bTRzVTI0VEd0TnRx?=
- =?utf-8?B?Z1FYaUJQTWJZSFdWS0VZS25NemprYlVISnlHRzJwT3BaanJXcUJIejJkMjB1?=
- =?utf-8?B?NCtXMmdLM1hnR2lMTHphTjAxYTNXSWh4ZWtjQkNZcU9aSHYxOTdaeCt2UmRC?=
- =?utf-8?B?TERaQWZtc01nQllqZXp6Qkx0Qm12VFRpV2hScHVyVmJRNVZWeVpndDBVTWY3?=
- =?utf-8?B?NU14dnYzN3MxZHVQbE5aWERPaER1aFhqVTk0TDdRbm04UUF2V2wyY0pWblcw?=
- =?utf-8?B?bEpGSWFaaGZhRDF6aW9adEZlTzRYYUxWQm5samhoWkJXRE00ZmVyRko4MXpr?=
- =?utf-8?B?N3N5RTFlcEtFK0xsUllVeklIRWsvZG8vK3hOVnlWejY5VzFsaXVCZmw4OEFr?=
- =?utf-8?B?MmFncGlUWkpHcEVGNmFhQ3B6TGdhbzdNLzVDTUpFVkxCVytESUMvNlo3bFQx?=
- =?utf-8?B?MEZhWHdtRXNBT2krRXJVbngyeXZDR0ladVdtTGQzSUQ2eFBPbmJZZ3BuNng4?=
- =?utf-8?B?cGZKT3RDcmttVys3YXNsMlBibFFHaERsTFIwQ1BWZ0pwSTI0M3hlZ0tZSnpP?=
- =?utf-8?B?eU9QMGF0RUlYckJvQjBSQW10Sm5rN3ppK24zSXVKWWtBUE9lbDVBTGt1UEJv?=
- =?utf-8?B?QlozMzNHNXF5d2l6NEw0RGFzcFRFL1dYZ3puem5ZRWFGUDF1YzN2OUJVcTJy?=
- =?utf-8?B?b2hpZHcwUkp1RUt4YzBxSGJzTWcvRVZpS2YwUTRvZEpoclFHSFZYbzVIMS9G?=
- =?utf-8?B?WEsrVTdIVjhMYlZKcVE5Ny9ueTZIcmV2WGdMUkZYeE1YZUtRWENZVE9uUlR6?=
- =?utf-8?B?aWxNUkNyRGtCV200L0pKSEEreFh1RmwxcmMrUWVIWlBScTdFTmtyRnpwa3o1?=
- =?utf-8?B?MVdNeFVDbVN6R0R3Tk9Qb3d1eFZVa0VUdnUvYjQ4dlErT1BBdnBQUHdPOUM5?=
- =?utf-8?B?V0tZRC9SaVBmdklhWTlYaTM3TXdjMjE3Q1dCTmRFVDhiTXZBbEU5M3Vxci9U?=
- =?utf-8?B?cEVYUzFDNlVFM1pGaitXNUI4aXdaNUNpeU1ZSHBZTnVTaUJJNnhRWTFGZVQ1?=
- =?utf-8?B?VnN6ZC94eFgyYlM4Nkx1S0xCMSs2UUZqQUJoeWY5TGMvSUZBL1ArWFpsc0VO?=
- =?utf-8?B?Z1UwL1hyMCtvYThoSFQxdk1YTnptaUxlTk8zTTBGdVRPMXpoZk9UdFJneWgr?=
- =?utf-8?B?Z0Z2QWYvVGVPMHY3emdaYTArZWlRUXp6N0pyZU54MUlvaUtMbHIwTVRzZlM4?=
- =?utf-8?B?VytXazR3N3RtZlhFNUkrVE9FaGlzVXBXaDMxc1pETllHLzBZZjdWcHI5cm0y?=
- =?utf-8?B?V01GQjhEUWVUU3dDdE9IWVREQVFNOUVjUzNnVS82V3daaGJobjd4MGZKRGdF?=
- =?utf-8?B?QjgvZkxwVDFvUzJLZnZNcWFFVnArYkFtV3grQVdyMng3ajgwdk1DYjMyR2Uy?=
- =?utf-8?B?ZkN4UXEwaE8zWDkxN3M4Y0RETUY5RUFjWTF0OFJxQkJaZm5LZ3dtUVZ6Q1E3?=
- =?utf-8?B?cXNpQTBIWWtrN3drakFhbnJjV2t6YW5nNjNXQWdCNHNKYUJ4T2h1eEVnS1dY?=
- =?utf-8?B?bHE4TkhhZENzaWhZbVpHNTZrWXdUcHNqSEdaakgzTHdyY0hORkNKKzdWeDNX?=
- =?utf-8?B?bTZWWFpEYWFLL2VMVE5NTHk2WEduS3FEK3ZyNjJCV21lNlIzSHFRd0xWT1JK?=
- =?utf-8?B?NmYxZmszK3I1TTE4N05DUGNPdzFhcHcvNnEyNkJGL1M1UmRyRWdIa0taTmE1?=
- =?utf-8?B?RVBaRlptcFJOaWdFNjczbUx6eDV1U0dpekJuQ1JpeFVETVJhMzJab0xGRVUy?=
- =?utf-8?B?V2FaYjFwNW5zQ0haaE8zeFZuZkNRZGdTTk0yeFlybEo2eHlnUzVoaStkUkdp?=
- =?utf-8?B?THZsL0diTGkwOTVXeUQ3T003RlpEaU5OMWRrZFJISUNtTXJJQUEvOWZjWE4r?=
- =?utf-8?B?YXJrQ2ZoZjltUStVWUhOMVJsUEllZ2dSa2o5RUxjcERKQ0huWFhVRnRTL0l6?=
- =?utf-8?B?T0RpU1FoNDdBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T3E3SjIrbUM5d3IrMFMrajBtc2xtYnZudnRqcGlGZTF0N0hCMVNCZ1NmVjA5?=
- =?utf-8?B?Tk1YZ09FRTcxdVJjSUR0dHhQemdyU0lhSkZrZmFkRG1heXhoczZvUUYvQk12?=
- =?utf-8?B?bG5Ha21zOHk5UmxYc0hMUVJwZG4vY3BSNGplSkFKMXFuMTg0YUo5NElqRFM1?=
- =?utf-8?B?MHZMaHpGRmo1UGtvbXEyVWk5LzFVUC9ranVnRHRSZk8rQncxaWFSSVgrakNa?=
- =?utf-8?B?VVA0MDM4ZkpabngvV1dacjJnWmIrNzIwU0NLUTFwODNXd3VtWlp2VFNxM3lK?=
- =?utf-8?B?RXFhR3phL2tMSWk3R0NZQ3NjN1hDVVA1KzAwaUNSSjdYdjBLYVVKSHlSay9q?=
- =?utf-8?B?cDBIVjFLR0xwZmpndXc4RHMwY0ZOYjlwVFBLTE9IOXR3c1JjQmtkbHFPT2V3?=
- =?utf-8?B?U05sNFAzVkhDQTNyRURzamI2UlBueTBRbHRGYUJxTjNjeEhNK20xR1BRSkhH?=
- =?utf-8?B?aG8vbWpmWVJYbTcxUE5OKzQrSnZXYlZHNloyUUEzM3VTUGwybjZwVTRCZHhV?=
- =?utf-8?B?Q0ltVlpwQVpqSmxLUWYvbXFmLzAvSUoyRis1L0R6MCtCRnpiTGJjaU8zM2Jr?=
- =?utf-8?B?OUdSaGZKR1JuWVUyU2RZY2J6Y0Z2REU1bEUyb090OVBsMWpmdDJFdTh3cGRl?=
- =?utf-8?B?dmg5aUhDN0RjSFRNaUxwK1BFYkpwcGdzUG1qY1NZMG5YLytYRzYxbFhNTzJW?=
- =?utf-8?B?YzkyWHZsNkwzZUJ6S056MHR6VHBRc0VoWG5tcTgya0IrdndlV0VEdCs1VEti?=
- =?utf-8?B?K3ZJbVFSNjJmMGE2RUxZV3ZuZ2JzZVA3QStneTE1TGxXRFNDYXJwR2xzN25y?=
- =?utf-8?B?RUpsZmpIQlc1dlFheFE3ZEpNeUdnaE1WQXo3UXhEdERUaTdSZ2UzNW9MNEtT?=
- =?utf-8?B?ZG5ZdWpHUTc2SjFXQng0MUR2SU8xa2pKSlQxUjFVdjI0ZmUxMkcweW1jUHdZ?=
- =?utf-8?B?UmVwQ3dKWUZDaWl0LzU1UEhoUTZnTlhzclJtM0Q2S2ZnRmtCR3RGU2ZpNk9H?=
- =?utf-8?B?RFdOTnJVaVMvM1lWTG8zbFZRejZzWmlVeUJnYUY0dWF3TVBTWC9HOHQ2Ynlp?=
- =?utf-8?B?Y1c5SHp0cGg1cExIYlhmMmU2MWJRQnFValNNL0FQNHlwZTBDazRZSDRxK2RC?=
- =?utf-8?B?T0kwcGYvZGVDUHQzd2FWMWJibERKVzhJQWZWS3lGTHZmOWl1dDdFWkpPQndl?=
- =?utf-8?B?SjNmRzl3eDVqSTBIMWx2eURhc2xZc1ROWFhyLzI3c0RmYzJkOEtjYkZuQ0lm?=
- =?utf-8?B?bE5YWUFDVkViVTFXNEtCSXlRZjZUWlEwQVNRZDUzY1Y0dldsS1FTZkJlajF0?=
- =?utf-8?B?bHVBS01pajJ2MElaRlBBUGI5bDlnRjVlRFphUWFlU3RRZCtrVjJWOUlUZXhN?=
- =?utf-8?B?bTFBOVpCN1hTMnRJdDYzRXJZdzdROWduUGs0cW1Pd3l4ZC9DbTdYM09iaCsw?=
- =?utf-8?B?Z0grUFhRV0pqM3I5bnJsNWM0M2tITDFtMVRrajhseDA0M1FEeFZPNlVQeUdP?=
- =?utf-8?B?aHQrOFNBUktyNE5OTVZsRDlidndhVjZNbXNaWW5tQ1VUODdieTRSMlY1ZVV5?=
- =?utf-8?B?S3BxdmVMbkhkaHgya3ptUFYveCsxdzBDREpJU2kxUTdJZmJ0UmlJa01GU3Y5?=
- =?utf-8?B?SE5xa3VVRVVVR3ZFYWZESzg4N0o2VFZWb3JjQ0owNURIcWw3TTBYQWN5R1d5?=
- =?utf-8?B?bTRtZ1lhTDJqdDBSU3Z0UmZKbk1UeFpPMFJ6b3VIZlpkVmp5MitNczRKL1pQ?=
- =?utf-8?B?RUtNYjdjdUp4Qnp0RG5qbkFlZW85aFVMWFBuVzlLMWk0RGpJcEhuMVhMZVFV?=
- =?utf-8?B?Rk80TjdBZ1V5RnNNaTZJcDc3ekxjOVBvdkpDT2dFVHJMUHk4VUc0ZkZHdkF5?=
- =?utf-8?B?Q1cvTndLN0dUSnFxY3FpTXNreGRUbFRrV1F6cy9pVjI1SnVSODBjNk9zTlAy?=
- =?utf-8?B?RGYvRTFDNThJUzNucTNHUlNiTGhPT1l2V3JRYVlQTzEvUlBmK045TW52Y0RO?=
- =?utf-8?B?S0diWDVEVnZIZ3N3TkRoK2xhMHJWYnJGc1VsOW80b2hXS1ZkbUdueVp0UzRi?=
- =?utf-8?B?OHFVcjFnUnRVZUxWd3JsWFovWW1Obk95a0tabkxZYmJRQnFhWlVrWURHWkVY?=
- =?utf-8?B?WUJ3VFhDQjdEWkVQQ0dDb0ZoQTdYVmE0SWE3bVlPOWFtdHoydmFFWFc1UmlL?=
- =?utf-8?Q?TyF8nKh9j0LQyUSN80pm17EmaEFwfl2fFB5GpxkadJPT?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b634c65-f55a-4f51-7517-08dd8a501a0a
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2025 14:38:00.0017
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hmBg1tegRY1ediMyOhgS2AzTUqjI5qvu/z1nQBlFhQGIK+mU7DWoouhHKxITJPaqbwumaxN5avQoWIDI1smppQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8286
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409211127.3544993-1-mingo@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sat May 3, 2025 at 12:02 PM JST, Joel Fernandes wrote:
->
->
-> On 5/2/2025 9:59 PM, Alexandre Courbot wrote:
->>> pub trait AlignUp {
->>>     fn align_up(self, alignment: Self) -> Self;
->>> }
->>>
->>> macro_rules! align_up_impl {
->>>     ($($t:ty),+) =3D> {
->>>         $(
->>>             impl AlignUp for $t {
->>>                 fn align_up(self, alignment: Self) -> Self {
->>>                     (self + alignment - 1) & !(alignment - 1)
->>>                 }
->>>             }
->>>         )+
->>>     }
->>> }
->>>
->>> align_up_impl!(usize, u8, u16, u32, u64, u128);
->>>
->>> Or, we can even combine the 2 approaches. Use macros for the "impl Alig=
-nable"
->>> and use generics on the Alignable trait.
->>>
->>> macro_rules! impl_alignable {
->>>     ($($t:ty),+) =3D> {
->>>         $(
->>>             impl Alignable for $t {}
->>>         )+
->>>     };
->>> }
->>>
->>> impl_alignable!(usize, u8, u16, u32, u64, u128);
->>>
->>> pub trait AlignUp {
->>>     fn align_up(self, alignment: Self) -> Self;
->>> }
->>>
->>> impl<T> AlignUp for T
->>> where
->>>     T: Alignable,
->>> {
->>>     fn align_up(self, alignment: Self) -> Self {
->>>         let one =3D T::from(1u8);
->>>         (self + alignment - one) & !(alignment - one)
->>>     }
->>> }
->>>
->>> Thoughts?
->> I think that's the correct way to do it and am fully on board with this
->> approach.
->>=20
->> The only thing this doesn't solve is that it doesn't provide `const`
->> functions. But maybe for that purpose we can use a single macro that
->> nicely panics at build-time should an overflow occur.
->
-> Great, thanks. I split the traits as follows and it is cleaner and works.=
- I will
-> look into the build-time overflow check and the returning of Result chang=
-e on
-> Monday. Let me know if any objections.
+Now that switch_fpu_finish() doesn't load the FPU state, it makes more
+sense to fold it into switch_fpu_prepare() renamed to switch_fpu(), and
+more importantly, use the "prev_p" task as a target for TIF_NEED_FPU_LOAD.
+It doesn't make any sense to delay set_tsk_thread_flag(TIF_NEED_FPU_LOAD)
+until "prev_p" is scheduled again.
 
-Looking good IMHO, apart maybe from the names of the `BitOps` and
-`Unsigned` traits that are not super descriptive and don't need to be
-split for the moment anyway.
+There is no worry about the very first context switch, fpu_clone() must
+always set TIF_NEED_FPU_LOAD.
 
-Actually it may be a good idea to move this into its own patch/series so
-it gets more attention as this is starting to look like the `num` or
-`num_integer` crates and we might be well-advised to take more
-inspiration from them in order to avoid reinventing the wheel. It is
-basically asking the question "how do we want to extend the integer
-types in a useful way for the kernel", so it's actually pretty important
-that we get our answer right. :)
+Also, shift the test_tsk_thread_flag(TIF_NEED_FPU_LOAD) from the callers
+to switch_fpu().
 
-To address our immediate needs of an `align_up`, it just occurred to me
-that we could simply use the `next_multiple_of` method, at least
-temporarily. It is implemented with a modulo and will therefore probably
-result in less efficient code than a version optimized for powers of
-two, but it will do the trick until we figure out how we want to extend
-the primitive types for the kernel, which is really what this patch is
-about - we will also need an `align_down` for instance, and I don't know
-of a standard library equivalent for it...
+Note that the "PF_KTHREAD | PF_USER_WORKER" check can be removed but
+this deserves a separate patch which can change more functions, say,
+kernel_fpu_begin_mask().
 
-> I added the #[inline] and hopefully that
-> gives similar benefits to const that you're seeking:
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ arch/x86/include/asm/fpu/sched.h | 34 +++++++++-----------------------
+ arch/x86/kernel/process_32.c     |  5 +----
+ arch/x86/kernel/process_64.c     |  5 +----
+ 3 files changed, 11 insertions(+), 33 deletions(-)
 
-A `const` version is still going to be needed, `#[inline]` encourages the
-compiler to try and inline the function, but AFAIK it doesn't allow use
-in const context.
+diff --git a/arch/x86/include/asm/fpu/sched.h b/arch/x86/include/asm/fpu/sched.h
+index 5fd12634bcc4..c060549c6c94 100644
+--- a/arch/x86/include/asm/fpu/sched.h
++++ b/arch/x86/include/asm/fpu/sched.h
+@@ -18,31 +18,25 @@ extern void fpu_flush_thread(void);
+ /*
+  * FPU state switching for scheduling.
+  *
+- * This is a two-stage process:
++ * switch_fpu() saves the old state and sets TIF_NEED_FPU_LOAD if
++ * TIF_NEED_FPU_LOAD is not set.  This is done within the context
++ * of the old process.
+  *
+- *  - switch_fpu_prepare() saves the old state.
+- *    This is done within the context of the old process.
+- *
+- *  - switch_fpu_finish() sets TIF_NEED_FPU_LOAD; the floating point state
+- *    will get loaded on return to userspace, or when the kernel needs it.
+- *
+- * If TIF_NEED_FPU_LOAD is cleared then the CPU's FPU registers
+- * are saved in the current thread's FPU register state.
+- *
+- * If TIF_NEED_FPU_LOAD is set then CPU's FPU registers may not
+- * hold current()'s FPU registers. It is required to load the
++ * Once TIF_NEED_FPU_LOAD is set, it is required to load the
+  * registers before returning to userland or using the content
+  * otherwise.
+  *
+  * The FPU context is only stored/restored for a user task and
+  * PF_KTHREAD is used to distinguish between kernel and user threads.
+  */
+-static inline void switch_fpu_prepare(struct task_struct *old, int cpu)
++static inline void switch_fpu(struct task_struct *old, int cpu)
+ {
+-	if (cpu_feature_enabled(X86_FEATURE_FPU) &&
++	if (!test_tsk_thread_flag(old, TIF_NEED_FPU_LOAD) &&
++	    cpu_feature_enabled(X86_FEATURE_FPU) &&
+ 	    !(old->flags & (PF_KTHREAD | PF_USER_WORKER))) {
+ 		struct fpu *old_fpu = x86_task_fpu(old);
+ 
++		set_tsk_thread_flag(old, TIF_NEED_FPU_LOAD);
+ 		save_fpregs_to_fpstate(old_fpu);
+ 		/*
+ 		 * The save operation preserved register state, so the
+@@ -50,7 +44,7 @@ static inline void switch_fpu_prepare(struct task_struct *old, int cpu)
+ 		 * current CPU number in @old_fpu, so the next return
+ 		 * to user space can avoid the FPU register restore
+ 		 * when is returns on the same CPU and still owns the
+-		 * context.
++		 * context. See fpregs_restore_userregs().
+ 		 */
+ 		old_fpu->last_cpu = cpu;
+ 
+@@ -58,14 +52,4 @@ static inline void switch_fpu_prepare(struct task_struct *old, int cpu)
+ 	}
+ }
+ 
+-/*
+- * Delay loading of the complete FPU state until the return to userland.
+- * PKRU is handled separately.
+- */
+-static inline void switch_fpu_finish(struct task_struct *new)
+-{
+-	if (cpu_feature_enabled(X86_FEATURE_FPU))
+-		set_tsk_thread_flag(new, TIF_NEED_FPU_LOAD);
+-}
+-
+ #endif /* _ASM_X86_FPU_SCHED_H */
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 4636ef359973..9bd4fa694da5 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -160,8 +160,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 
+ 	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
+ 
+-	if (!test_tsk_thread_flag(prev_p, TIF_NEED_FPU_LOAD))
+-		switch_fpu_prepare(prev_p, cpu);
++	switch_fpu(prev_p, cpu);
+ 
+ 	/*
+ 	 * Save away %gs. No need to save %fs, as it was saved on the
+@@ -208,8 +207,6 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 
+ 	raw_cpu_write(current_task, next_p);
+ 
+-	switch_fpu_finish(next_p);
+-
+ 	/* Load the Intel cache allocation PQR MSR. */
+ 	resctrl_sched_in(next_p);
+ 
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 7196ca7048be..d55310d3133c 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -616,8 +616,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ENTRY) &&
+ 		     this_cpu_read(hardirq_stack_inuse));
+ 
+-	if (!test_tsk_thread_flag(prev_p, TIF_NEED_FPU_LOAD))
+-		switch_fpu_prepare(prev_p, cpu);
++	switch_fpu(prev_p, cpu);
+ 
+ 	/* We must save %fs and %gs before load_TLS() because
+ 	 * %fs and %gs may be cleared by load_TLS().
+@@ -671,8 +670,6 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	raw_cpu_write(current_task, next_p);
+ 	raw_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
+ 
+-	switch_fpu_finish(next_p);
+-
+ 	/* Reload sp0. */
+ 	update_task_stack(next_p);
+ 
+-- 
+2.25.1.362.g51ebf55
+
 
