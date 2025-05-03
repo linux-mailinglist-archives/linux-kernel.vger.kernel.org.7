@@ -1,50 +1,66 @@
-Return-Path: <linux-kernel+bounces-630871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915B6AA80A3
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 14:14:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E12CAA80A4
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 14:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686711892435
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 12:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEAA987E60
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 12:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A5D1F30C4;
-	Sat,  3 May 2025 12:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B481F37C3;
+	Sat,  3 May 2025 12:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YVEIjXMH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpseRRlz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39601F150F;
-	Sat,  3 May 2025 12:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C99519F130;
+	Sat,  3 May 2025 12:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746274481; cv=none; b=U2icZw0q5kiFBbFODMe2gQklMBctWylLUvaECvstxpD1rPIBui6go8L0S++ySE/YR3qHcYpXRQyVlXJk/A7sFFjN8zvOfFXniK9Qx39gSo7M4LmtgM+bEuNhZ+odHqFAOjbmtEnzYOJBt8Yf7DmGyWRnStJw+cEzBBFweBOkSs4=
+	t=1746274494; cv=none; b=pPVQqAjGUMmlK5iNvvgzg7EwRBPIMBlNUpi2rPjn5GNwqIT2EzzhQdp2s0/YQgPbXPizTy8JY5reSS4gzOmL+Pla+fVcHYV5rieKWT9TMNo+5qQWNsUtwQr3/vQo3BzCKghO9aZ1uWjxkYfq/rj15ITL1e67UQoh3WY/ObdouMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746274481; c=relaxed/simple;
-	bh=9uTjUya+3Bs+pjYCsEAe4MWGqBJe6e7zeLMfjhlslDk=;
+	s=arc-20240116; t=1746274494; c=relaxed/simple;
+	bh=5QSKVIWIyE0G0SOrr3V+CMtcq+HMng2o9oPwArw/ys8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJM0BFivQZmfb6QVXTM2LZ51MOHFzjo5bqub+dR7l8nW0DVPAkSPhJ79R+Cm5g+A8SbnxNHVZpuZdK97VyLA/TNf3fzU1xSPA6hw/7PYMw5F+HDOJPaIcJfM6uziXt6M/prWEXI1MadgUnXOuv0oO4CmQB63p8Ur04KKZMpoxns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YVEIjXMH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA875C4CEE3;
-	Sat,  3 May 2025 12:14:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1746274481;
-	bh=9uTjUya+3Bs+pjYCsEAe4MWGqBJe6e7zeLMfjhlslDk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bj+CM3aivgztl1LT7LbTbPgVjnPJ6r8ucRQqSvLr/HQkE9IEagmZXhquXDpSAmNe5TiAwqiaMkG+jWPb3hyBSw2bPlDhR/hEuI9huhgjTT552EqY9hKm5TY8AbEgcWTABMcmvXIv/tXHlq/ibi7rMRAHZ5CktwS/xvXY81QbxsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpseRRlz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49663C4CEE3;
+	Sat,  3 May 2025 12:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746274493;
+	bh=5QSKVIWIyE0G0SOrr3V+CMtcq+HMng2o9oPwArw/ys8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YVEIjXMHEQy0KxTm7vHG+xV08xUUKlZrHLPb6fZqYLEiexvfHoSj9ORcZ1Dh3msuJ
-	 zAwT39zBbHhBG8YdIBPKfse5XOwNK26249/gOgPpzn6AbtPnKfZ4r9glt7/KW3Rea+
-	 NxFEzh0geS49BEa9JCweweSPnFHTij9GKpeWTN0s=
-Date: Sat, 3 May 2025 14:14:37 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2025-37799: vmxnet3: Fix malformed packet sizing in
- vmxnet3_process_xdp
-Message-ID: <2025050311-passable-hydroxide-a435@gregkh>
-References: <2025050358-CVE-2025-37799-a1aa@gregkh>
+	b=GpseRRlz5KWkNw9uTxAqUrsdJNiI623pvI6Awe96LbPfqKazWdizWGIAykVF2NXS8
+	 1MT8rYe/c6DREdlgKcXxt6jdDPw5skQOrVcE1D9j0ltI5CDxLVIaatFRIztWpBXO7l
+	 u7zQ0d8bn8DkIxgeJl+h8V2MSEwAVwCItE6lXmYzPOEiEed5IdBwhG7IwuqVocsCsO
+	 qcBO5/FuL1d+Q0mAK4RCpu4cWa7mlLzDJPAD0voa6axjjhS7wBrrAGITOOSagUkP2q
+	 9cvfLtai9NX+1dri+Oa4sXU+K1MNvpvfOQsPubCNqAc3nf6Xv+4ccbE3YJJIlVPUxp
+	 VGK3R/lKFg2HA==
+Date: Sat, 3 May 2025 14:14:46 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] rust: debugfs: Bind file creation for long-lived
+ Display
+Message-ID: <aBYItvyLspP5lzBA@polis>
+References: <20250501-debugfs-rust-v3-0-850869fab672@google.com>
+ <20250501-debugfs-rust-v3-2-850869fab672@google.com>
+ <aBRrniLfCzWX7nbR@pollux>
+ <CAGSQo02bU9HLG=KoYAukUWDX=Ky+kx_wCJszpS-x4gjWXWrYjQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,18 +69,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025050358-CVE-2025-37799-a1aa@gregkh>
+In-Reply-To: <CAGSQo02bU9HLG=KoYAukUWDX=Ky+kx_wCJszpS-x4gjWXWrYjQ@mail.gmail.com>
 
-On Sat, May 03, 2025 at 01:39:59PM +0200, Greg Kroah-Hartman wrote:
-> The Linux kernel CVE team has assigned CVE-2025-37799 to this issue.
-> 
-> 
-> Affected and fixed versions
-> ===========================
-> 
-> 	Issue fixed in mainline with commit 4c22276
-> 
+On Fri, May 02, 2025 at 11:07:47AM -0700, Matthew Maurer wrote:
+> I'm making this change, but so that I can be correct in the future,
+> can you explain why taking an intermediate reference to private is UB?
+> My understanding is that my provided vtable are supposed to be the
+> only methods looking at this field, and they don't mutate it.
 
-Oops, toolchain bug, let me fix this up and re-issue this cve id, sorry
-for the noise...
+You're right, I confused it with something else.
 
