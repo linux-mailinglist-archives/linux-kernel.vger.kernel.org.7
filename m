@@ -1,143 +1,166 @@
-Return-Path: <linux-kernel+bounces-631000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EAFAA81FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:46:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB31AA8206
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7C0717EF3C
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6BD189FA99
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C743C27E7FF;
-	Sat,  3 May 2025 18:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516BF27A47A;
+	Sat,  3 May 2025 18:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMyiXwu5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="EJavWuzr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Aapabulk"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5A816B3B7;
-	Sat,  3 May 2025 18:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7F87081C
+	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 18:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746297987; cv=none; b=MevFtRfGT6hrJoRnHPKEiJTnZcBJHcFXZF3AzvJUefLvvo7K9tV1XDZFHFUwn9i7u6JRjLwZ+P3DP721R3eQT1ZMAJkCL2iSC/6iEDTut+hwqVP7XyKuiB3f545BIXCOoILYVz4MnZozImItichc6S1VvsvMXZzXLVTsW2zERUg=
+	t=1746298362; cv=none; b=R4zBZOnF4XnopEe3h3uz9Im9H5ch3wkV2Ewmrv1xUSiWsBEI8tNbdkbLbcDFtwPX4UlDZs3jlMFcNRJInS7GJfLqDM1XklOo5DE7plMndbRw5UyR+Q2Y+lkvCJ0+UNQH7QXqUTW6USjMRRB6nECYGfcJXL2J++UrI2jnIJTfGGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746297987; c=relaxed/simple;
-	bh=+tpyu2HU8spYPzq1uf4EZ3SloA5fFEfjRjUkQSozF1w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fjbT93gRYUDiYUD+tPQ7YKhAkvdjUvpcYA6BjePGEYqkTlHAeKE6/9ZefTte7SlyZ/hEulsq86nnqYWBDM4Ujg4y7lIv/Dw/R8E+OdNO6MVOrJHs+GTprqfhP94LoHBrf+45kGtsPEWXhO1tDZRrKbNPoGeh8Ox7q9ozOBCNiso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMyiXwu5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C232C4CEEE;
-	Sat,  3 May 2025 18:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746297986;
-	bh=+tpyu2HU8spYPzq1uf4EZ3SloA5fFEfjRjUkQSozF1w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nMyiXwu5nh0hGSlwFkUAtV2aMl6hkBcXj2nYBXc1EZfem3afnc7pOIoxQnegM+UtO
-	 AQIX/rgsH46feRTLVDVOdcfOdx7+h/S9GGAdOepB6Iak/4D6EZ7JHv1Ng8aNV3qeE/
-	 fEROiBke/e8y7Ef8ZrA7MekJgwyKG3eJuSMnANJcB5+kaWC45hvJfC3IsQhqx1s81z
-	 aoTZHdunenePfUBV7z3DDmdXUK5vADwMNnESZDl3o7C16DkfgDUBxS0fTgZyN1LSym
-	 RL9viwL9YsPstWtVkqXz7gqeZoyz4nucQhW4q3HhvUpRAOXGQs5X6JGm0/uCgtog5E
-	 DyVYWt6phyH7Q==
-From: Kees Cook <kees@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	linux-kbuild@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v3 3/3] integer-wrap: Force full rebuild when .scl file changes
-Date: Sat,  3 May 2025 11:46:20 -0700
-Message-Id: <20250503184623.2572355-3-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250503184001.make.594-kees@kernel.org>
-References: <20250503184001.make.594-kees@kernel.org>
+	s=arc-20240116; t=1746298362; c=relaxed/simple;
+	bh=vq1V+e7vmAe9DRhMLKswG/UYbRE4x84iqvAItSwX2K4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=avQRRIc9lrKJqiJJ4anFHUpJdqrriddiGNVmlyPODx4SI+VkCspWk8ha5DOtuujfJMULvW4L7Gzz/BF6HTwSFAnhVwN/+f1VIDDH/xA4x8xeDIHJUaQ1ArjTyKsCJ3pV7i2sQchy5F5V4doyY3QCZyrqPAsVsX5OIeHYuRxVkBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=EJavWuzr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Aapabulk; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 707CF2540115;
+	Sat,  3 May 2025 14:52:38 -0400 (EDT)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-06.internal (MEProxy); Sat, 03 May 2025 14:52:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1746298358;
+	 x=1746384758; bh=L7whafli7ccrgxtjjLt2LWxTdI/uTPEKZB5Tk4Ozj10=; b=
+	EJavWuzrdG2lF1+QcZXVqatf1Fn2BX8hkN8U4RKRlmsh1nXoBz4Qm7qzb42sWiq8
+	NPISbjGWj6Tdlqd5aLr7RVsZTs3Grhp8vI4b+P+o/2QQsy6WiC2vjux8OwCoHReJ
+	K7JoJBMdaHsrNn8HZ5Nrk58Vzjfy4PhjMDjohQrHaZjkonENHWBYXELA8msr8tPS
+	FrIE6uRz+lWgvR7+dae0TpVitPYDVbU0LJQttMOsxi+jWIOu6E3gwWy5K7DvRbNs
+	l5snGA1AmJFitdy8kGP+VCin8YQizi1zRH8PPzvMqlBKrkpx2+BRwzgGXSYWNTAd
+	LPrlBzA/0SwYVlU6+K7SeQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746298358; x=
+	1746384758; bh=L7whafli7ccrgxtjjLt2LWxTdI/uTPEKZB5Tk4Ozj10=; b=A
+	apabulkrmj/lvhEaoqF9mnr01F5XTnmTyCnDgOn+NzF9j6kPEt+gx+fcvKASXliL
+	jDIKBDXOHtbnBihZuWnOsrWWtWGEWLuL2dSwje5fVcSCbz5w96e+c1SyvjU2/T1n
+	KPqXsFlzOiK6B+Zolc9ABkRWhrj1oJn+tkpOqMeLUu5XOrJ3TRX0/JmwbndGG2nm
+	QlCcg8KEbMM9E31uLp258zXzeG3eqX2HchUhoY45YQerwS7C4ZbWuaBKwlP1Cejg
+	Njs7GUAsFSJcUGon7pUQ2dvAwrhqDDAAtbpDHMc8nLgMwiW6gcX+7+3YHJdEBPYx
+	CgWaohr61jC0pxQSrG7PA==
+X-ME-Sender: <xms:9WUWaAZaOXjayHPRNj0rqnJtfsZ_r-iBLuLHX3xtfrzUqBWZ_2vsjg>
+    <xme:9WUWaLbUyjDmfOunX1Qiw1lPGYudpbDgIDBDI4b5D0LgYpAcBPfyfiuzQlOrwVYLK
+    6iqr6Z8_4E8bVzqkoc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjeeiuddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpeflrghmvghsuceosgholhgurdiiohhnvgdvfeejfeesfhgrshhtmh
+    grihhlrdgtohhmqeenucggtffrrghtthgvrhhnpeeuhfdtheejiefghefhjedvheduuddv
+    gefhveeiheduleevveehkeetiefgieeukeenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegsohhlugdriihonhgvvdefjeefsehfrghsthhmrghi
+    lhdrtghomhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegrlhgvgidrhhhunhhgsegrmhgurdgtohhmpdhrtghpthhtoheprghlvgigrghn
+    uggvrhdruggvuhgthhgvrhesrghmugdrtghomhdprhgtphhtthhopegthhhrihhsthhirg
+    hnrdhkohgvnhhighesrghmugdrtghomhdprhgtphhtthhopehhrghrrhihrdifvghnthhl
+    rghnugesrghmugdrtghomhdprhgtphhtthhopehsuhhnphgvnhhgrdhlihesrghmugdrtg
+    homhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghi
+    rhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhquhgvihhrrgesihhgrg
+    hlihgrrdgtohhmpdhrtghpthhtohepshhkhhgrnheslhhinhhugihfohhunhgurghtihho
+    nhdrohhrgh
+X-ME-Proxy: <xmx:9WUWaK9toOQydufxLh0_u7f5mvc1v6hHdNQfj3hKCvyNtI_c_9Y6rA>
+    <xmx:9WUWaKpZEZ_iN5FaRixxsZ1j7aFCCIcwN1XP6aAiKm6CtcmNAhtRCg>
+    <xmx:9WUWaLqt7aHfKwI67c2gXfAtc6HWZ-I42oSs8Th0Abph73qpIii6Rw>
+    <xmx:9WUWaISwpnA_GQvFfTxPYImBFJrsCpqLnh-XvoIn75HvP-7cDFaS_g>
+    <xmx:9mUWaKFOW2N7x_Qp_Sv_orU37p5J0bKYC9mmDpOSxSUBQHX_qDwkxRZ1>
+Feedback-ID: ibd7e4881:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id F1B4978006B; Sat,  3 May 2025 14:52:36 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2674; i=kees@kernel.org; h=from:subject; bh=+tpyu2HU8spYPzq1uf4EZ3SloA5fFEfjRjUkQSozF1w=; b=owGbwMvMwCVmps19z/KJym7G02pJDBliyft7n2QtDHVZzPzT7voxVRX9o38qkjOX/vRYvIpJI GFTQFxERykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwETSDRj+Z68L0rBx8nkQ1vFK /Z3w59knAyKm/q25XLPDJ3Wd/pPO+4wMr37EPn6zUEbQ81Oxn66L3YPZSxqD1p88miN63FK3vj+ FDQA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T48d424c97f2c2475
+Date: Sat, 03 May 2025 11:52:16 -0700
+From: James <bold.zone2373@fastmail.com>
+To: "Alex Hung" <alex.hung@amd.com>,
+ "Harry Wentland" <harry.wentland@amd.com>, sunpeng.li@amd.com,
+ "Rodrigo Siqueira" <siqueira@igalia.com>,
+ "Alex Deucher" <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ airlied@gmail.com, simona@ffwll.ch, "Shuah Khan" <skhan@linuxfoundation.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Message-Id: <e2119599-6641-4327-b3eb-d49c128e8513@app.fastmail.com>
+In-Reply-To: <83eae1ce-ead2-47c9-a636-755a5207a6be@amd.com>
+References: <20250501055701.2667-1-bold.zone2373@fastmail.com>
+ <83eae1ce-ead2-47c9-a636-755a5207a6be@amd.com>
+Subject: Re: [PATCH RESEND] drm/amd/display: adds kernel-doc comment for
+ dc_stream_remove_writeback()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Since the integer wrapping sanitizer's behavior depends on its associated
-.scl file, we must force a full rebuild if the file changes. If not,
-instrumentation may differ between targets based on when they were built.
 
-Generate a new header file, integer-wrap.h, any time the Clang .scl
-file changes. Include the header file in compiler-version.h when its
-associated feature name, INTEGER_WRAP, is defined. This will be picked
-up by fixdep and force rebuilds where needed.
+On Fri, May 2, 2025, at 3:25 PM, Alex Hung wrote:
+> Hi James,
+>
+> checkpatch reports the following warning and error
+>
+> WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit 
+> description?)
+> #18:
+> Adds a kernel-doc for externally linked dc_stream_remove_writeback() 
+> function.
+>
+> ERROR: trailing whitespace
+> #39: FILE: drivers/gpu/drm/amd/display/dc/core/dc_stream.c:561:
+> + * Return: returns true on success, false otherwise. $
+>
+> total: 1 errors, 1 warnings, 14 lines checked
+>
+>
+> On 4/30/25 23:56, James Flowers wrote:
+>> Adds a kernel-doc for externally linked dc_stream_remove_writeback() function.
+>> 
+>> Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+>> ---
+>>   drivers/gpu/drm/amd/display/dc/core/dc_stream.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>> 
+>> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+>> index 0478dd856d8c..060ee6c3fc2e 100644
+>> --- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+>> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+>> @@ -552,6 +552,14 @@ bool dc_stream_fc_disable_writeback(struct dc *dc,
+>>   	return true;
+>>   }
+>>   
+>> +/**
+>> + * dc_stream_remove_writeback() - Disables writeback and removes writeback info.
+>> + * @dc: Display core control structure.
+>> + * @stream: Display core stream state.
+>> + * @dwb_pipe_inst: Display writeback pipe.
+>> + *
+>> + * Return: returns true on success, false otherwise.
+>> + */
+>>   bool dc_stream_remove_writeback(struct dc *dc,
+>>   		struct dc_stream_state *stream,
+>>   		uint32_t dwb_pipe_inst)
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Justin Stitt <justinstitt@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Marco Elver <elver@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: <linux-kbuild@vger.kernel.org>
-Cc: <kasan-dev@googlegroups.com>
-Cc: <linux-hardening@vger.kernel.org>
----
- include/linux/compiler-version.h | 3 +++
- scripts/Makefile.ubsan           | 1 +
- scripts/basic/Makefile           | 5 +++++
- 3 files changed, 9 insertions(+)
-
-diff --git a/include/linux/compiler-version.h b/include/linux/compiler-version.h
-index 69b29b400ce2..187e749f9e79 100644
---- a/include/linux/compiler-version.h
-+++ b/include/linux/compiler-version.h
-@@ -19,3 +19,6 @@
- #ifdef RANDSTRUCT
- #include <generated/randstruct_hash.h>
- #endif
-+#ifdef INTEGER_WRAP
-+#include <generated/integer-wrap.h>
-+#endif
-diff --git a/scripts/Makefile.ubsan b/scripts/Makefile.ubsan
-index 9e35198edbf0..653f7117819c 100644
---- a/scripts/Makefile.ubsan
-+++ b/scripts/Makefile.ubsan
-@@ -15,6 +15,7 @@ ubsan-cflags-$(CONFIG_UBSAN_TRAP)		+= $(call cc-option,-fsanitize-trap=undefined
- export CFLAGS_UBSAN := $(ubsan-cflags-y)
- 
- ubsan-integer-wrap-cflags-$(CONFIG_UBSAN_INTEGER_WRAP)     +=	\
-+	-DINTEGER_WRAP						\
- 	-fsanitize-undefined-ignore-overflow-pattern=all	\
- 	-fsanitize=signed-integer-overflow			\
- 	-fsanitize=unsigned-integer-overflow			\
-diff --git a/scripts/basic/Makefile b/scripts/basic/Makefile
-index dd289a6725ac..fb8e2c38fbc7 100644
---- a/scripts/basic/Makefile
-+++ b/scripts/basic/Makefile
-@@ -14,3 +14,8 @@ cmd_create_randstruct_seed = \
- $(obj)/randstruct.seed: $(gen-randstruct-seed) FORCE
- 	$(call if_changed,create_randstruct_seed)
- always-$(CONFIG_RANDSTRUCT) += randstruct.seed
-+
-+# integer-wrap: if the .scl file changes, we need to do a full rebuild.
-+$(obj)/../../include/generated/integer-wrap.h: $(srctree)/scripts/integer-wrap-ignore.scl FORCE
-+	$(call if_changed,touch)
-+always-$(CONFIG_UBSAN_INTEGER_WRAP) += ../../include/generated/integer-wrap.h
--- 
-2.34.1
-
+Thank you Alex, and sorry about that. I will correct those issues and submit a new version.
 
