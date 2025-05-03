@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-631009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBEBAA8211
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:08:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08BCAA824F
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5844417F03E
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 19:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8BF85A68DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 19:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8350427E7E8;
-	Sat,  3 May 2025 19:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEA827E7F7;
+	Sat,  3 May 2025 19:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="01OHnSf9"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="RKuStUz1"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581A82DC789;
-	Sat,  3 May 2025 19:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E955F1E8847;
+	Sat,  3 May 2025 19:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746299316; cv=none; b=MmWYygqvpoSm5F8l3Jk/9xULemJe+Bx53QIgJXvk2gSnfihtGgcjdESwxNjPPX84B9UfM6OFSV4kAH2uwEr47irXOoBwuFMuddcxm05SKZJRiRrG5ZifMO1391/tQo8GRVAu/YoRryj3IgJtBO19veq/AUkNl4m71lpFg187dIw=
+	t=1746299649; cv=none; b=SxCe/tr3HdMnr1lJmJk6+nJdKJaSMaH8ZCNm+6MpGNn9qziG2wrq9okUhkXZLLwITj0N786NhtHcxFLvYhmFaz93t0txHaqbrdRcmV5dAzd4DAWNe6otsDWohEHqriWDlAEoRubjihWIgLSJo5FNGxt1mAr6vpD0FLxanMpUDkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746299316; c=relaxed/simple;
-	bh=jvvG37KAbI59JUlaTYZdzQe6qpr7rWpxcAPSbfNKf54=;
+	s=arc-20240116; t=1746299649; c=relaxed/simple;
+	bh=INtqWdF1ttpcGxLYcmEEmkHcr1sBjwlLz2bhiN/ZlGY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eXcCGVBacOdxmhJnkXKubIRa4xqzC7bN1fV+aiehkDxb7YgY8IvOSxrW81Iroz5M15ttRoTn1vp8bCzp4lW2X1NV4494H7qhVWW2XrpYLspcvFoOUMAImb06eiOlbW07WBTY7NUQ/F3aBMP6mA+pkBW6RnG4xi62whay8v6Mo7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=01OHnSf9; arc=none smtp.client-ip=199.89.3.6
+	 In-Reply-To:Content-Type; b=SvqMca0//DYrjQcxKLwFoQcOQFv4/Z14vWahmJPCIdAEWaQRvutl4rDDLTFL0T+pgkrr9bbXlRx9g7g0d25V/YYsVjljnpFQF5RKIzw2nDTGKEf2H8yDG/g05aUX/rVIRP3Ss8Ga25ORPwZzyB1T4mO4vlK2NAw3JIoqydxTQSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=RKuStUz1; arc=none smtp.client-ip=199.89.3.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4Zqcl63cfxzlgqV0;
-	Sat,  3 May 2025 19:08:34 +0000 (UTC)
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZqcsV3dB1zm0yTv;
+	Sat,  3 May 2025 19:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:content-type:content-type:in-reply-to
 	:from:from:content-language:references:subject:subject
 	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1746299312; x=1748891313; bh=jvvG37KAbI59JUlaTYZdzQe6
-	qpr7rWpxcAPSbfNKf54=; b=01OHnSf9Ix0g38JrXYhc7n5oVyRYYVQdrf2LsJ5J
-	yX5QMDIIshGr9jy5tP1bqbzoVJ4iWdDGlIcpqmZUf//Ccr5x2HuCHTVDxBxZ5p0t
-	8u99WsVoH393gGU+u0aY+fMTbBdUbxNwCLDEWcM/Kbz6DLZfE2Z0Z1KdIesdJPiv
-	lP/r+Eup3zoMSyyw4tsmGk0cWZVY/VkK3gJnMWFcXbQx+HcJS6uE8YZDv1K24ulT
-	OoX4gdXPRxMAAC6zgriKG4wdGHEP8sUU3/Mf8X5nCdla/g0L5ZgHAT46Aa6ASUUL
-	cwc0xAuKpV236rJdi6rcR9gKoC8K6hl3YUX9ilTBFAT28w==
+	 s=mr01; t=1746299638; x=1748891639; bh=INtqWdF1ttpcGxLYcmEEmkHc
+	r1sBjwlLz2bhiN/ZlGY=; b=RKuStUz1pg6Z4V5+H5A4kb2tpH0qoqhbIkzY5+Di
+	0Mx4FqbPL+wKIdXv00tSUygKf7k37efg+NegA9USEA+BtS9sCBdNxuJsDmcEZkXo
+	KGK//P45RgKzu8d8/alXy0VIGoamRPWPYuJuGoA+pRvHTZS5rvfZ8o0ph1X5HX6J
+	iTP5Of7qhYNNVXT8DuQLC0J7+xnCouyLt/xHnb0fNLYt31jsZFJ6Oj4CRIgSwz0L
+	IaOUfuFPOR6U+kODE48fdLjKvbhtxcv8R6c3Ms1Bh+fzGYiKJWiOfkB3GG1TY+aB
+	jrLZOMGZ2glyEj1WRg+H+/FJlug51RvdD9ZeWxSGVVTS0g==
 X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id By_zUa0p23QT; Sat,  3 May 2025 19:08:32 +0000 (UTC)
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id DqXzoqknLYju; Sat,  3 May 2025 19:13:58 +0000 (UTC)
 Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4Zqcky33Y6zlgqTv;
-	Sat,  3 May 2025 19:08:24 +0000 (UTC)
-Message-ID: <33d7a1b3-4bf7-4337-ba82-dbd4b95ad0b8@acm.org>
-Date: Sat, 3 May 2025 12:08:23 -0700
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZqcrR2bKbzm0yMS;
+	Sat,  3 May 2025 19:13:09 +0000 (UTC)
+Message-ID: <08163d8b-4056-4b84-82a1-3dd553ee6468@acm.org>
+Date: Sat, 3 May 2025 12:13:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,27 +64,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2][next] scsi: sd: Avoid -Wflex-array-member-not-at-end
- warning
-To: Christoph Hellwig <hch@infradead.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aBO_32OsMj3hsJsv@kspp> <aBRrP8EuNkeAtPC9@infradead.org>
+Subject: Re: [PATCH RFC v3 0/8] kernel-hacking: introduce
+ CONFIG_NO_AUTO_INLINE
+To: Brendan Jackman <jackmanb@google.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>, chenlinxuan@uniontech.com,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Sagi Grimberg <sagi@grimberg.me>, Andrew Morton <akpm@linux-foundation.org>,
+ Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>, Peter Huewe
+ <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Zi Yan <ziy@nvidia.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Juergen Gross <jgross@suse.com>, Boris Ostrovsky
+ <boris.ostrovsky@oracle.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-integrity@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, llvm@lists.linux.dev,
+ Winston Wen <wentao@uniontech.com>, kasan-dev@googlegroups.com,
+ xen-devel@lists.xenproject.org, Changbin Du <changbin.du@intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250429-noautoinline-v3-0-4c49f28ea5b5@uniontech.com>
+ <20250429123504.GA13093@lst.de> <D9KW1QQR88EY.2TOSTVYZZH5KN@google.com>
+ <20250501150229.GU4439@noisy.programming.kicks-ass.net>
+ <D9KXE2YX8R2M.3L7Q6NVIXKPE9@google.com>
 Content-Language: en-US
 From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <aBRrP8EuNkeAtPC9@infradead.org>
+In-Reply-To: <D9KXE2YX8R2M.3L7Q6NVIXKPE9@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/1/25 11:50 PM, Christoph Hellwig wrote:
-> (I still wish we'd kill the stupid struct and this test and just used
-> the simpler and cleaner bitshifting and masking)
+On 5/1/25 8:22 AM, Brendan Jackman wrote:
+> Personally I sometimes spam a bunch of `noinline` into code
+> I'm debugging so this seems like a way to just slap that same thing on
+> the whole tree without dirtying the code, right?
 
-Bit-shifting and masking results in faster code. For slow path code I
-prefer bitfields because this results in much more compact source code.
+If this is for test builds only, has it been consider to add
+-fno-inline-functions as a local change in the top-level Makefile?
 
 Bart.
 
