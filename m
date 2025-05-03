@@ -1,106 +1,126 @@
-Return-Path: <linux-kernel+bounces-630849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CD2AA8072
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 13:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E65B6AA8076
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 13:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 634EF7A5606
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 11:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B7F9839CF
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 11:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E201EE7B6;
-	Sat,  3 May 2025 11:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6174D1EB9EF;
+	Sat,  3 May 2025 11:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7WpISdG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBAA/NgV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE69B1EB189;
-	Sat,  3 May 2025 11:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCF419ABD1
+	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 11:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746271372; cv=none; b=EkJO1fr9bDHAghXMhOmEIgfg2v8FeVGKgbrS4c4ZHIGDGGz/n4cLmWtYSte7KzI+6r8WLSW8GiG6mv4BJ8mc1zuoLFxkbwG5QCj2VcnGbuKH/rfvlc65UYYiS6QemJbqQzyANcdbaqD3akQKGVCjtELbrmP80DsQ5zxMVDzvXO8=
+	t=1746271733; cv=none; b=rPVh7txufFxKqcLTWL/bxZJE5z8VBXrAf6clQT1qE/zPqjd5DCPvxhRM4ZERN6kCBGPzIdKfmYsbUY/mYExFX6vEoVl1tqdOKZ41ywjVRkijO+FK1vhxC1y+4g6DD1fVjXK0SQxgYFOdGMnWmaVE3LtN2sn0NL0YKnZTNeTRcLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746271372; c=relaxed/simple;
-	bh=6njSZpjLFFK801EujEb3cuL3VrsBnFkcO396PYwdH7w=;
+	s=arc-20240116; t=1746271733; c=relaxed/simple;
+	bh=Td7Q6iRRCzPGbE1V9qO9rxXlsU90ebvGvLA0TcrLZDs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+uA3sRZw1hm2iy3tgOWspVS44O0evoPE8IE+yCE6l4JTp3kiBDDrjhs1ttYjSayVzaz1PCwIkf++G0kpAMnvfA7SQ/3JvVQBY87o346PFi9AYu/7uvpfF771kV7Bb6pHfjUXMQ/fjvuhT70zUg0xfxef962gKbaCGC4qHOd9xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7WpISdG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D0DFC4AF09;
-	Sat,  3 May 2025 11:22:51 +0000 (UTC)
+	 Cc:Content-Type; b=ZLexYcTetWpXkhMsAkPojjS/5f32rRS4IIDa4Hi+URzMGRQkY3F1KpG0g3WmkkvnpCG359kd8+VQZGHKCuD/YorllanU0g/vgICxoW3wvMMCiyaUPoVgU5X6DbmxxEiVbmCaB0WFW2o/sttkk9cN8v1gcljLY32jcBBHFVcMsZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBAA/NgV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B6EEC4CEEB
+	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 11:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746271371;
-	bh=6njSZpjLFFK801EujEb3cuL3VrsBnFkcO396PYwdH7w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m7WpISdGGO3sg0pkZySqZVxhQXOrOO9sPlkZ9W5OhO0eUNb0quPvXWkiK0vca30C4
-	 ZRnYFSOa2Wkz0dwE4z6Fjs3+G6MnlmmFd0qpxz4TTnKfBslQkMezvu8eFYWRwpE5lu
-	 e5+AeZ3FIO5J2ejNLWWWITtCFNFxiF8JNABEJenWMHmJm04pcgjGRb5+2DGhMOt0d5
-	 gvDo6p+v9mum5Bk8GcMv1YAjfOJkh0SC2760HjyaVHDVm5Woa1F6ML+R1uSM14SHsi
-	 A+8taaKnDq1hWiNWgBof3ltLwLjqzUyegfdAAPgSHP4HlnhTvhdl/hU6iWV5wAwh6x
-	 jalm5zxtdKmuA==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54998f865b8so2988413e87.3;
-        Sat, 03 May 2025 04:22:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKkN3BvOvXUZZFeTAclUWrYJ97neEi68BZQn801UAWVVhP+h6aHGoxUAdRZBm+wVGNL5O1B4Os@vger.kernel.org, AJvYcCUefbBY9EeA26wEYjl4w8NI/F2w0xeK9XRk8BybO96d1626X184FFdVS22uP73yoE7NwWreQ5pQLjPTuN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2vV46z7klbwBno+PBQMbkRrIvV//lrxG8smXZ0wq+2JDj47ks
-	E+utuXZefg7LemhGYEmlabJ9MrDvcpe4OmQIQRvpGNRC4RIJrlv568qe95VEZGF1HU+XIzKEvLD
-	iSVcuDWHTN/lnk4pBl/g8TyqSDL4=
-X-Google-Smtp-Source: AGHT+IG/LZhJuYwd6BT5g/YapcupnN/sQf19+E1GsW+tcerWCF3qKkEN4dkhge9FjiQ1f4Ybup6+9GqTT5D7d0ujND0=
-X-Received: by 2002:a05:6512:108e:b0:549:8f4a:6baa with SMTP id
- 2adb3069b0e04-54eb24390c2mr671056e87.27.1746271369757; Sat, 03 May 2025
- 04:22:49 -0700 (PDT)
+	s=k20201202; t=1746271732;
+	bh=Td7Q6iRRCzPGbE1V9qO9rxXlsU90ebvGvLA0TcrLZDs=;
+	h=References:In-Reply-To:From:Date:Subject:Cc:From;
+	b=jBAA/NgVcSCwa4d91CxRJNziUngQEJ3+vLiGm6Uft3ofxBPr6bgWtm8MBVJumzLff
+	 D86BThAyfnAZUOswVNfQTnbpHHJK87w5BBiV3lQ9+/FoaMY9JbXgtlYeOOngnubCmP
+	 PQ6FPcMLnNZ7ohtZ2XG5CvfivC4K718fwjfwch03U6sf7Z2ELuL3scJTQKGbrzN/gL
+	 63DJD56j0ahOT0Z49jadzeF77EscZOHN1ptNmu7ZgqsK0MIg1w9n/t3VY2v2F2VES9
+	 0fyAC3LDzdKSMXn0q9CO3mJSH2m3DiG7kQ61T3mUwSYnl5Lk7GFzGkMEXgnAQtrkLN
+	 aWWZRiXCbFDyQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54b09cb06b0so3011105e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 03 May 2025 04:28:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4eM41nCSq8G2uZwrbiOE6q6V0yDfxXZdFmcahL5fVtAkPtB8suJdstFZ1VQKmRcYjBhSfAh/dC6uOSo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrFyE3bvwiTFX9/DaAblRis0hfj0xfIEIYzEema1OIcPd+TTDu
+	MfcWB6OlG7aUWRBksSbq4J/LGsJ80jRoPkHek144HkjsGgNwT1vqaH1wKgX4dugheYcgrVmZh6o
+	N9e34ldYk41J8PDxah6URTQNKQpU=
+X-Received: by 2002:a05:6512:3f11:b0:545:d70:1d1c with SMTP id
+ 2adb3069b0e04-54f9efb44d4mt195795e87.11.1746271730523; Sat, 03 May 2025
+ 04:28:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502145755.3751405-1-yeoreum.yun@arm.com> <CAMj1kXEoYcS6YPU0mBdvijDRK6ZVB7mPYZsCVpz7sYotabrxtQ@mail.gmail.com>
- <aBUHlGvZuI2O0bbs@arm.com> <aBULdGn+klwp8CEu@e129823.arm.com> <aBXqi4XpCsN3otHe@arm.com>
-In-Reply-To: <aBXqi4XpCsN3otHe@arm.com>
+References: <20250503112137.1962910-5-ardb+git@google.com> <20250503112137.1962910-6-ardb+git@google.com>
+In-Reply-To: <20250503112137.1962910-6-ardb+git@google.com>
 From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 3 May 2025 13:22:37 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHL5_2TM1ZTaPEgGm9uU7xvFpRxxarKpOTr=YVvj+72cQ@mail.gmail.com>
-X-Gm-Features: ATxdqUG1fvw_z6UhDYuaA_GkP9ybtJKQQ9wqgeSGK9OYj_TYO1ZfClLHhMe7z3g
-Message-ID: <CAMj1kXHL5_2TM1ZTaPEgGm9uU7xvFpRxxarKpOTr=YVvj+72cQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64/cpufeature: annotate arm64_use_ng_mappings with
- ro_after_init to prevent wrong idmap generation
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, will@kernel.org, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
-	broonie@kernel.org, maz@kernel.org, oliver.upton@linux.dev, 
-	frederic@kernel.org, joey.gouly@arm.com, james.morse@arm.com, 
-	hardevsinh.palaniya@siliconsignals.io, shameerali.kolothum.thodi@huawei.com, 
-	ryan.roberts@arm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+Date: Sat, 3 May 2025 13:28:39 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFF_y9pJ+Nuy7-63LA79+x=pPOg5uHYB_RHP_4gRKhTeQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFQ7ucpjYLPLXveCPYSh-dH1vB1VaK13XEOetNi46u31OHmAGV-1WDuuMM
+Message-ID: <CAMj1kXFF_y9pJ+Nuy7-63LA79+x=pPOg5uHYB_RHP_4gRKhTeQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm64/boot: Move init_pgdir[] into __pi_ namespace
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, 
+	Yeoreum Yun <yeoreum.yun@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 3 May 2025 at 12:06, Catalin Marinas <catalin.marinas@arm.com> wrote:
+On Sat, 3 May 2025 at 13:22, Ard Biesheuvel <ardb+git@google.com> wrote:
 >
-> On Fri, May 02, 2025 at 07:14:12PM +0100, Yeoreum Yun wrote:
-> > > On Fri, May 02, 2025 at 06:41:33PM +0200, Ard Biesheuvel wrote:
-> > > > Making arm64_use_ng_mappings __ro_after_init seems like a useful
-> > > > change by itself, so I am not objecting to that. But we don't solve it
-> > > > more fundamentally, please at least add a big fat comment why it is
-> > > > important that the variable remains there.
-> > >
-> > > Maybe something like the section reference checker we use for __init -
-> > > verify that the early C code does not refer anything in the BSS section.
-> >
-> > Maybe but it would be better to be checked at compile time (I don't
-> > know it's possible) otherwise, early C code writer should check
-> > mandatroy by calling is_kernel_bss_data() (not exist) for data it refers.
+> From: Ard Biesheuvel <ardb@kernel.org>
 >
-> This would be compile time (or rather final link time). See
-> scripts/mod/modpost.c (the sectioncheck[] array) on how we check if, for
-> example, a .text section references a .init one. We could move the whole
-> pi code to its own section (e.g. .init.nommu.*) and add modpost checks
-> for references to the bss or other sections.
+> init_pgdir[] is only referenced from the startup code, but lives after
+> BSS in the linker map. Before tightening the rules about accessing BSS
+> from startup code, move init_pgdir[] into the __pi_ namespace, so it
+> does not need to be exported explicitly.
+>
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/arm64/include/asm/pgtable.h | 2 --
+>  arch/arm64/kernel/image-vars.h   | 2 --
+>  arch/arm64/kernel/pi/pi.h        | 1 +
+>  arch/arm64/kernel/vmlinux.lds.S  | 4 ++--
+>  4 files changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index d3b538be1500..6a040f0bbfe1 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -754,8 +754,6 @@ static inline bool pud_table(pud_t pud) { return true; }
+>                                  PUD_TYPE_TABLE)
+>  #endif
+>
+> -extern pgd_t init_pg_dir[];
+> -extern pgd_t init_pg_end[];
+>  extern pgd_t swapper_pg_dir[];
+>  extern pgd_t idmap_pg_dir[];
+>  extern pgd_t tramp_pg_dir[];
+> diff --git a/arch/arm64/kernel/image-vars.h b/arch/arm64/kernel/image-vars.h
+> index 5e3c4b58f279..a0977f7cd3ec 100644
+> --- a/arch/arm64/kernel/image-vars.h
+> +++ b/arch/arm64/kernel/image-vars.h
+> @@ -56,8 +56,6 @@ PROVIDE(__pi_memstart_offset_seed     = memstart_offset_seed);
+>
+>  PROVIDE(__pi_init_idmap_pg_dir         = init_idmap_pg_dir);
+>  PROVIDE(__pi_init_idmap_pg_end         = init_idmap_pg_end);
+> -PROVIDE(__pi_init_pg_dir               = init_pg_dir);
+> -PROVIDE(__pi_init_pg_end               = init_pg_end);
+>  PROVIDE(__pi_swapper_pg_dir            = swapper_pg_dir);
+>
+>  PROVIDE(__pi__text                     = _text);
+> diff --git a/arch/arm64/kernel/pi/pi.h b/arch/arm64/kernel/pi/pi.h
+> index c91e5e965cd3..38a908d048e8 100644
+> --- a/arch/arm64/kernel/pi/pi.h
+> +++ b/arch/arm64/kernel/pi/pi.h
+> @@ -22,6 +22,7 @@ static inline void *prel64_to_pointer(const prel64_t *offset)
+>  extern bool dynamic_scs_is_enabled;
+>
+>  extern pgd_t init_idmap_pg_dir[], init_idmap_pg_end[];
+> +extern pgd_t init_pg_dir[];
 >
 
-We can take care of this locally in image-vars.h, where each variable
-used by the startup code is made available to it explicitly.
-
-Sending out a separate series shortly.
+Apologies, I hit send too quickly - init_pg_end[] is missing here.
 
