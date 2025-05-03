@@ -1,192 +1,131 @@
-Return-Path: <linux-kernel+bounces-631026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB985AA8269
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:59:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0DF0AA8273
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 22:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F8417803B
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 19:59:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A3605A45E9
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0638727E7E3;
-	Sat,  3 May 2025 19:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B92F27F748;
+	Sat,  3 May 2025 19:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gKrDuvBZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFe/Am74"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C36012FF69;
-	Sat,  3 May 2025 19:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DC927F744;
+	Sat,  3 May 2025 19:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746302371; cv=none; b=uIiOdmPj/xsjBww0r8vYRD6HJIGllz4bYiVQ356fJPh/9U7VniUWP6bwl5M6WMUXd3c+kdWGL7+R2TPBH9H6YzxGguokRzSMTpwAa761w4V10CzGQJtPV9ORyl7YHlDG1ADfh8djKByNGH/aqX8+ofGdByWfmaNcRloldIDYiRs=
+	t=1746302385; cv=none; b=hYhcWCBhwiltVZIW4HxWUtkpuPXm/kOOY0Y5O4cY641Ted7LXHANJBTdDaIk61tpHNondPPuQGlCHBxVfb2Z77+/NCSCZoiyuQCyXJb0VSj9uv5O42JwQicAhb+Mewf6VQw19wNPACBM4OCrGa9QicMgtI/RbZv3cN1bKYEAfCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746302371; c=relaxed/simple;
-	bh=RhWXks4It/d1y3CV6Qkw2FkraI+EvWEqiPDwkgFOnLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CbCFcrZ3gYwKn6yC8Sdh247jrc4qhPO9pz1ZnxNUBLpWq/t2CuPqua8F/gHJA2OwhgHPYpJuXAzAFjSOcmRQmTPFer7IfTRxdjLkI0MZXZeX1/rb7DEOmjoY+92gB2ISsRelz7br94+Jh4KIcgAKk9sS43v446aqOJ1fiRH5zBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gKrDuvBZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 543Iw3iT021176;
-	Sat, 3 May 2025 19:59:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IKuc4j/QfJqpXxDOWjJeZDi7Y0r1Rf90lkMU3xbFGr0=; b=gKrDuvBZ6Pz5N5Sj
-	sE+rSUe88oB81p4oy3FAQoOsOUxJG3Fn+QHxfn7GtrwbBP7KSqFTmFEaEtuf7cQ9
-	b49TiOr5Ya03vbl1dbAcaYT9rr74gKd9iXYPk+uNLUE5xQ/zJ1oV55CVVwqnQWef
-	8bBbkN46ZyblOlJ3ojT5pTd8eq8b7ijW4ZXcOGQuuFXukz5kisuHoLKYuYEAqnZW
-	gyCa07woVEj3o2oIqPhNUPl8tMkJIhhjMZVKl9Ryv66izv5weAwk27eqBm9th9lJ
-	OkiR3487L3QHb7TGfJKgOZMwupxstFXFFm2zy605hDMK+HIa8dqYbSlg/WYRVJOf
-	EK5W2g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46daqxh2d6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 May 2025 19:59:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 543JxN26011254
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 3 May 2025 19:59:23 GMT
-Received: from [10.110.124.144] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 3 May 2025
- 12:59:22 -0700
-Message-ID: <858be1b7-0183-47b3-97b5-7d162b5748d3@quicinc.com>
-Date: Sat, 3 May 2025 12:59:21 -0700
+	s=arc-20240116; t=1746302385; c=relaxed/simple;
+	bh=eIdlLrqSSEsRlrpUoIgud3gIcOveQpIm5RZIgyAET9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ler3WGLqzKYvKjbbC8Su2lRXIOOsiGe1l4onSc/k7EIbKxGdJrAfWNeJJF5qIAkJY0Owoj5efv1KdKeb/H5JFPYg0mRcOAZNHzjXrZat19lbqoH2KNt2c9NDq4k3YKUhErgL6hjXYfBh5OFGT3fNX5jMJ0b2vOGAFuNmKuqm6KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFe/Am74; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 725EFC4CEEF;
+	Sat,  3 May 2025 19:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746302385;
+	bh=eIdlLrqSSEsRlrpUoIgud3gIcOveQpIm5RZIgyAET9A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HFe/Am748jdfaf6bPYLwB9lM2JKNMYoUjWaIHhDsfOB0V3wuAPbC7gRK6lr7jjIPX
+	 7SBS5cWVJzqvGpNEScdvBDE9t8kytqT7C6vEQmCovqqn2E66MA6jlgOVr22lbYwTrg
+	 xtMvmf+VITgrJ91FaBvXp1aAJAhvhdNvG8FM8wstYChJzeN89B5bFXGsP9W3eWEsEc
+	 mW52DIZzjNcaXwjiPpTCsEkZII3GbLT8+B2KRC11eahCkwB6aSGl7dI65vxtYL5TU0
+	 G7FWt0IWmXN1h//f9tsVId7SU1NO2UZXxIrsStQ/nVCK898eRm21CSSq4HtUZ2xj3w
+	 19EANFvDsuMmA==
+From: cel@kernel.org
+To: NeilBrown <neil@brown.name>,
+	Jeff Layton <jlayton@kernel.org>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <dai.ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>
+Cc: sargun@sargun.me,
+	<linux-nfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 04/18] nfsd: add a tracepoint to nfsd_lookup_dentry
+Date: Sat,  3 May 2025 15:59:22 -0400
+Message-ID: <20250503195936.5083-5-cel@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250503195936.5083-1-cel@kernel.org>
+References: <20250503195936.5083-1-cel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/WIP 1/4] arm64: dts: qcom: sm8750: Add display (MDSS)
- with Display CC
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jessica Zhang <jesszhan@quicinc.com>,
-        Abhinav Kumar <abhinavk@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
- <20250424-sm8750-display-dts-v1-1-6fb22ca95f38@linaro.org>
- <81205948-ae43-44ee-aa07-e490ea3bba23@oss.qualcomm.com>
- <97ae84c6-0807-4b19-a474-ba76cc049da9@quicinc.com>
- <dc64ygn6pt5bvdgizc2qk2qnxn3on5nv7hes3hhc6qqmiumdfd@nxpfis6disof>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <dc64ygn6pt5bvdgizc2qk2qnxn3on5nv7hes3hhc6qqmiumdfd@nxpfis6disof>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EU6cvjXVlfm9R-JQxbk96ugi01DbXM0w
-X-Proofpoint-ORIG-GUID: EU6cvjXVlfm9R-JQxbk96ugi01DbXM0w
-X-Authority-Analysis: v=2.4 cv=baZrUPPB c=1 sm=1 tr=0 ts=6816759c cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8
- a=eIBSfAiRY9SfulBmUi8A:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAzMDE4NSBTYWx0ZWRfX/9Go+m0Qt8aB
- YKLhSZf6U9cZW2e+mngmivFMeBpfPzUpyX3eCfnviFZayr3tqp2PdjtuCQSZNAHKdSdPSuA7zrq
- fik1odFVWXdpIabVakYZPhswmT6a7A2HuQKO50l/5d18sZRwCrp3kNDh7LNdKNGXfdtTogKjN6s
- So9dm6mxhWAA5lUhuU15lJMVSqNJ4nHPoldlKlRuQqIb2VWqpOHkO9SDP8tNUde9ika714AKKYd
- 73W4nONCzcILLnHcCAx8DnuhMgcrxuISwiCu7OW6j3AByx32tITH+LK7f2by5MOERBg3j8Y/2Az
- iUWq6GJC1OdMtZdmeyXRPkYXyKZJ+A4FTFcmDCOxfzqhU7YVEk/hROcmGC+q54oQNXhH7b/D7aj
- KqkYe90cZVT6Sg23mjDwflXZ82eWFovEC1PZ2qx8zfdCtCdAMkFj5jPqxZ+PNCE8wbGhYPbL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-03_08,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0
- mlxlogscore=977 clxscore=1015 suspectscore=0 spamscore=0 adultscore=0
- mlxscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505030185
+Content-Transfer-Encoding: 8bit
 
+From: Jeff Layton <jlayton@kernel.org>
 
+Replace the dprintk in nfsd_lookup_dentry() with a trace point.
+nfsd_lookup_dentry() is called frequently enough that enabling this
+dprintk call site would result in log floods and performance issues.
 
-On 5/2/2025 10:51 PM, Dmitry Baryshkov wrote:
-> On Tue, Apr 29, 2025 at 04:07:24PM -0700, Abhinav Kumar wrote:
->>
->>
->> On 4/28/2025 2:31 PM, Konrad Dybcio wrote:
->>> On 4/24/25 3:04 PM, Krzysztof Kozlowski wrote:
->>>> Add device nodes for entire display: MDSS, DPU, DSI, DSI PHYs,
->>>> DisplayPort and Display Clock Controller.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>
->>>> ---
->>>
->>> [...]
->>>
->>>> +				mdp_opp_table: opp-table {
->>>> +					compatible = "operating-points-v2";
->>>> +
->>>
->>> The computer tells me there's also a 156 MHz rate @ SVS_D1
->>>
->>> Maybe Abhinav could chime in whether we should add it or not
->>>
->>
->> Yes I also see a 156Mhz for LOW_SVS_D1 but we had a similar entry even for
->> sm8650 and did not publish it in the dt.
->>
->> It was present till sm8450.dtsi but dropped in sm8550/sm8650 even though
->> LOW_SVS_D1 is present even on those.
->>
->> I think the reason could be that the displays being used on the reference
->> boards will need a pixel clock of atleast >= low_svs and the MDP clock
->> usually depends on the value of the DSI pixel clock (which has a fixed
->> relationship to the byte clock) to maintain the data rate. So as a result
->> perhaps even if we add it, for most displays this level will be unused.
->>
->> If we end up using displays which are so small that the pixel clock
->> requirement will be even lower than low_svs, we can add those.
->>
->> OR as an alternative, we can leave this patch as it is and add the
->> low_svs_d1 for all chipsets which support it together in another series that
->> way it will have the full context of why we are adding it otherwise it will
->> look odd again of why sm8550/sm8650 was left out but added in sm8750.
-> 
-> I think it's better to describe hardware accurately, even if the
-> particular entry ends up being unused. I'd vote for this option.
-> 
->>> [...]
->>>
->>>> +				mdss_dsi_opp_table: opp-table {
->>>> +					compatible = "operating-points-v2";
->>>> +
->>>
->>> Similarly there's a 140.63 MHz rate at SVS_D1, but it seems odd
->>> with the decimals
->>
->> For this one, yes its true that LOW_SVS_D1 is 140.63Mhz for sm8750 but this
->> voltage corner was somehow never used for DSI byte clock again I am thinking
->> this is because for the display resolutions we use, we will always be >=
->> low_svs so the low_svs_d1 will never hit even if we add it.
-> 
-> Please add all voltage/frequency corners. Think about low-res DP or
-> low-res, low-rate WB.
-> 
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ fs/nfsd/trace.h | 23 +++++++++++++++++++++++
+ fs/nfsd/vfs.c   |  2 +-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-Sounds good, lets go ahead and add all the voltage/freq corners.
+diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
+index b435276a1aaa..661a870d62f5 100644
+--- a/fs/nfsd/trace.h
++++ b/fs/nfsd/trace.h
+@@ -2394,6 +2394,29 @@ TRACE_EVENT(nfsd_vfs_setattr,
+ 	)
+ )
+ 
++TRACE_EVENT(nfsd_vfs_lookup,
++	TP_PROTO(
++		const struct svc_rqst *rqstp,
++		const struct svc_fh *fhp,
++		const char *name,
++		unsigned int len
++	),
++	TP_ARGS(rqstp, fhp, name, len),
++	TP_STRUCT__entry(
++		NFSD_TRACE_PROC_CALL_FIELDS(rqstp)
++		__field(u32, fh_hash)
++		__string_len(name, name, len)
++	),
++	TP_fast_assign(
++		NFSD_TRACE_PROC_CALL_ASSIGNMENTS(rqstp);
++		__entry->fh_hash = knfsd_fh_hash(&fhp->fh_handle);
++		__assign_str(name);
++	),
++	TP_printk("xid=0x%08x fh_hash=0x%08x name=%s",
++		__entry->xid, __entry->fh_hash, __get_str(name)
++	)
++);
++
+ #endif /* _NFSD_TRACE_H */
+ 
+ #undef TRACE_INCLUDE_PATH
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 9e0a858d2129..657ba0c2da14 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -246,7 +246,7 @@ nfsd_lookup_dentry(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	struct dentry		*dentry;
+ 	int			host_err;
+ 
+-	dprintk("nfsd: nfsd_lookup(fh %s, %.*s)\n", SVCFH_fmt(fhp), len,name);
++	trace_nfsd_vfs_lookup(rqstp, fhp, name, len);
+ 
+ 	dparent = fhp->fh_dentry;
+ 	exp = exp_get(fhp->fh_export);
+-- 
+2.49.0
 
-Like I noted, even for sm8550/sm8650 the low_svs_d1 was missed out, so 
-if we are adding it for sm8750 now in this series, a follow up patch 
-should also be sent to add them for sm8550/sm8650 as well. That way we 
-will fix them all up together and this does not come across as a 
-discrepancy.
 
