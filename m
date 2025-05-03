@@ -1,113 +1,132 @@
-Return-Path: <linux-kernel+bounces-630997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF34FAA81EF
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D338AA8203
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4DDF189DAE3
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:29:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425F8189B1D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D4327E7D1;
-	Sat,  3 May 2025 18:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E3E27E1D6;
+	Sat,  3 May 2025 18:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NuL9IAtO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d63Y/juU"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30036DCE1;
-	Sat,  3 May 2025 18:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F001624E9;
+	Sat,  3 May 2025 18:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746296921; cv=none; b=uYf6gS+qlhVBFvHqN6WpdyUTg3jvD1rglUjbQ8dv5pPFvRQ9gMhWlYLjEmv5c05PtDP5WtZqcwMyTG+u3WIX3PcMNFyFPYVc/HNenGW+euv5NFX7qAb66AFQLXpnCvqiUys9t0bmPSS07wg4jyHLvW0G1TyVIHUbZyuu6HIRrsk=
+	t=1746298091; cv=none; b=IoaIa/Fb7XxQGU9RGysaEPMEVJ0uhevJwmvJU+1t1TVozyeahulvR3SPuYYgROxssMfQhLD6OqsWtgbYY0lTvOR4Um5DNsk61twdM4caPQfelOMVILVIfhwhkk0g3DKKhfZNT7301pib6Bnp3P5TCkajn+QYqqKffxJW0mNkA44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746296921; c=relaxed/simple;
-	bh=3fKBodp5CHqkWEFP9lvNQWnLHEOn5YEIduo8h9PK+nI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7ziVV4IWZFFHxUf2ZF1KafTf5aYvhqc7+25g+IRl/qU6BDrcEJPN9BeJZcjFAKg6j1jJYeZySq1bOMfofgie/7ToXjneDQtvb9xe4G3NtKbEI3PtN1gC0pKskxyQHS4E0ExokuuL6TZL9hDwiDK4ForQt+inpF3DCK5l88vbwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NuL9IAtO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4890C4CEE3;
-	Sat,  3 May 2025 18:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746296920;
-	bh=3fKBodp5CHqkWEFP9lvNQWnLHEOn5YEIduo8h9PK+nI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NuL9IAtOE7d193OKwDBV73buJtEMeabKO9HM7XEjD+YA88mKiDABuwUGNX+FGv4R4
-	 4VDW1tO3Vy2KCTyHsvoSRv8BvS8GJOU8rWIXholkdw6QYaFO/GZmhacyMu+2RD5HI0
-	 dcfPQT/uu+hFaXu11qKuPsmiUSJbhxf+ZoJmm+fbf6GnxZSlE5DPHlNpKR21xM//Bf
-	 2KW3zSwmof5v9vOd2UQx256HHwi4VmgCnx+oW0zYB7iLwUJTpLwHe20qIbSjE2DIVx
-	 iLPt0T7jUHJR+tpo49FRs9as7xJXRVxeq1fzmyjOQm6moyc3+7xYBJ9RKHwEN8+12k
-	 RH27QZpxtPM8A==
-Date: Sat, 3 May 2025 11:28:37 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Sean Christopherson <seanjc@google.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, 
-	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, pbonzini@redhat.com, 
-	ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	gregkh@linuxfoundation.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-efi@vger.kernel.org, samitolvanen@google.com, 
-	ojeda@kernel.org, xin@zytor.com
-Subject: Re: [PATCH v2 00/13] objtool: Detect and warn about indirect calls
- in __nocfi functions
-Message-ID: <p6mkebfvhxvtqyz6mtohm2ko3nqe2zdawkgbfi6h2rfv2gxbuz@ktixvjaj44en>
-References: <20250430110734.392235199@infradead.org>
- <8B86A3AE-A296-438C-A7A7-F844C66D0198@zytor.com>
- <20250430190600.GQ4439@noisy.programming.kicks-ass.net>
- <20250501103038.GB4356@noisy.programming.kicks-ass.net>
- <20250501153844.GD4356@noisy.programming.kicks-ass.net>
- <aBO9uoLnxCSD0UwT@google.com>
- <20250502084007.GS4198@noisy.programming.kicks-ass.net>
- <aBUiwLV4ZY2HdRbz@google.com>
- <20250503095023.GE4198@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1746298091; c=relaxed/simple;
+	bh=xlYQ163hDkhmgErY25mBm19wcr2Qj8fSb7MgLR0tv58=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZVQLEcIoBJ+3ZDSM3tMG+Z+Jgjlwr82UBme99zpSL6Rt2bKS81yAAd0KS/C/kxJMXG69rOEe3MSDR9PJmVwk3nReMhKeCjUd+UkgEpChEr00POR78jJmhSy1q4FGVJibdL6AuEGyxPubSCV0j3fGJcf4uGDStlEIPAoUt0gWTco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d63Y/juU; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-736b98acaadso3087059b3a.1;
+        Sat, 03 May 2025 11:48:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746298089; x=1746902889; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sHcRbppvMSqwRwoxXB969N7KQ0/ugOZSO5ywUwJYXKs=;
+        b=d63Y/juUi9Cm9PtHd4aF3DLVg8uT2BXdiPt+PM5JM6bfc2QALSvpvAwA9lVfqytjiT
+         26eiMb6iJt+CureazS7PDvFU0FyW+kg2ui82bW7W0l+gseTCV0DHwbYYywJnlwNudx3e
+         NpCOVo6cclcMHtvp/qIkcuqqnesJidzUaHMfuZO35UALSYsyAlRE4nGPiGLxdiWJy+99
+         ehCsrzeFEIApCV+jBhE5TIxUJZ3fHOnAAGcsUbbsXh5D8idgtxmJH6jl3TjqOGvQVPzO
+         Tukk4JaOML1cXO80SfATrBHf3yrMbP6k1xANtG+vtIKb38OAFTMM4AMygQC90tTZRfCE
+         iFDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746298089; x=1746902889;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sHcRbppvMSqwRwoxXB969N7KQ0/ugOZSO5ywUwJYXKs=;
+        b=v7Ca7Ks/0fvaIyLDmcfbXg0ceh/1+RarYXkB58plrA9qfqy7w3xtlXJzdUprakJNCd
+         I2cqXq/yitW+UqfSbw6hK9/P79AXPirEatO1w+8YUOq+RIYgdLSO1F5/Xu6y0Nuqd8Wm
+         4hTf7WQamUWKPuX5p/QXBOzWYsbQZ2bXmWopUKBu8ERIT6wxqzKKk7alSFokVCerNv9K
+         gzNW7GDwiJF8+YI+rnk1yx5B+vUxss7QXHzGL+/FQQKnq1SmdbgpaejMv1xwaCwnODBi
+         QaJ3rlr+y2wMWa9z2EZenp8uJbADPEfnqVTSvNcf1H6mjozthsPNhrF0tEj9tkBU31Gt
+         j0JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV364Q+/WS6IuQBgCXbCXS4bSUhVIzcv/X0gTxvR5jf6c7iaPJ6wzIrnU5OqW8o4BvM1EIPvcmTuH9y@vger.kernel.org, AJvYcCVhZYSRB1eg+VVBPE2DgyKYYX5Cfsq0Sj7A9J6/vjWrDe1JmOUbttAqytwMk6AlTmLG9dAFmNIiSqXi@vger.kernel.org, AJvYcCWjuWD4SDItuywdMnO8sVyy16uu4CAyaMU+pLEb/aB0x1XIcatyaepsVeemBXhS2r7xiGwROQSQkaJjhxve@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws+GUUzphC74aZGRUQVU9h6nb67tppm74azkR4BefybJw6kQEt
+	u0iRNLi5K6MOpHFh2qxL0HzixewAm32oAYK54vhMJ8yhlf+3psMn2J0Mgw2rBMw=
+X-Gm-Gg: ASbGncsS/aTh+GVKcxFhvow5ZbeJIxHqK9jSwwpQqxXcOdTrJA4nYROkgbj6aiY6oFG
+	ZxZuYMdcQfWy8EH0MjdlfPkbVPELGhduG4Ka4H91s+AHfZ8zgZCBbrg1sU3zMjP09MNqwNT1QsL
+	7UWum2COEQrF9owi/XzJI9miBLtUQNqi9vlTSRDIK3G+orgZdmmRG0DeSKhiCCdKnxaVzYgFOWx
+	AATN5NLZPvR9gmdEGhxn55b2ksaDTZd3yTykSM6iLvAdCk2tywKKlHUTuZiJlZmIIjJXRArFvwv
+	OJsgueV5W8NcP35LjvqyVS0+QsGLHIoVaKfwtwntURk/JNUCEO4Szg7K1fwm7gU=
+X-Google-Smtp-Source: AGHT+IG2f1e9Py8jCTDXwkqqSY2yZJE6TllMJro+MRSjHOeE+mcN8PlGZPLKgZBKTD5cuy1QpjDSLQ==
+X-Received: by 2002:a05:6a00:8087:b0:73d:ff02:8d83 with SMTP id d2e1a72fcca58-7406729efa7mr5644475b3a.3.1746298089035;
+        Sat, 03 May 2025 11:48:09 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:4ff:1626:32b1:712a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74059065223sm3761921b3a.141.2025.05.03.11.48.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 May 2025 11:48:08 -0700 (PDT)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: conor@kernel.org
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	jic23@kernel.org,
+	krzk+dt@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	rodrigo.gobbi.7@gmail.com,
+	~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH v2] dt-bindings:iio:adc:st,spear600-adc: txt to yaml format conversion.
+Date: Sat,  3 May 2025 15:44:12 -0300
+Message-ID: <20250503184800.27026-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250430-folic-skittle-06b0ccbedf35@spud>
+References: <20250430-folic-skittle-06b0ccbedf35@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250503095023.GE4198@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 03, 2025 at 11:50:23AM +0200, Peter Zijlstra wrote:
-> > +++ b/arch/x86/entry/entry_64_fred.S
-> > @@ -116,7 +116,8 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
-> >  	movq %rsp, %rdi				/* %rdi -> pt_regs */
-> >  	call __fred_entry_from_kvm		/* Call the C entry point */
-> >  	POP_REGS
-> > -	ERETS
-> > +
-> > +	ALTERNATIVE "", __stringify(ERETS), X86_FEATURE_FRED
-> >  1:
-> >  	/*
-> >  	 * Objtool doesn't understand what ERETS does, this hint tells it that
-> > @@ -124,7 +125,7 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
-> >  	 * isn't strictly needed, but it's the simplest form.
-> >  	 */
-> >  	UNWIND_HINT_RESTORE
-> > -	pop %rbp
-> > +	leave
-> >  	RET
-> 
-> So this, while clever, might be a problem with ORC unwinding. Because
-> now the stack is different depending on the alternative, and we can't
-> deal with that.
-> 
-> Anyway, I'll go have a poke on Monday (or Tuesday if Monday turns out to
-> be a bank holiday :-).
+> Is 0 the default here or 1? "Single data conversion" sounds more like 1
+> sample than 0, and the default of 0 is below the minimum of 1. What's
+> going on there?
 
-Can we just adjust the stack in the alternative?
+Good point, after I`ve submitted the patch I was double checking it and noticed 
+that too. It`s stange because the public datasheet mentions "Programmable averaging of results 
+from 1 (No averaging) up to 128". Meanwhile, the spear_adc.c driver at probe
+stated the following:
 
-	ALTERNATIVE "add $64 %rsp", __stringify(ERETS), X86_FEATURE_FRED
-1:
-	UNWIND_HINT_RESTORE
-	pop %rbp
-	RET
+	/*
+	 * Optional avg_samples defaults to 0, resulting in single data
+	 * conversion
+	 */
+	device_property_read_u32(dev, "average-samples", &st->avg_samples);
 
--- 
-Josh
+Since avg_samples is inside 
+
+	struct spear_adc_state *st;
+
+which is allocated with devm_iio_device_alloc() (which uses the kzalloc/zero filling the priv data):
+
+	indio_dev = devm_iio_device_alloc(dev, sizeof(struct spear_adc_state));
+	if (!indio_dev)
+		return dev_err_probe(dev, -ENOMEM,
+				     "failed allocating iio device\n");
+
+	st = iio_priv(indio_dev);
+
+...matches the driver comment meaning the default is actually "0", single data, but it does
+not match the public datasheet in my understanding. Since I don`t have access to a more
+detailed datasheet, I chose to describe "1" as a minimum value, but I agree it is weird.
+Maybe we could drop the minimum constraint in this case (go with default and max)?
+Tks and regards.
 
