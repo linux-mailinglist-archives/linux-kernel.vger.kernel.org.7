@@ -1,111 +1,90 @@
-Return-Path: <linux-kernel+bounces-631084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCDFAA82FE
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 23:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1B2AA8302
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 23:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7402B17DCF3
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBA3417DAC8
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE40C1AB528;
-	Sat,  3 May 2025 21:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668101991B6;
+	Sat,  3 May 2025 21:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="UpORUabr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="noE3qTIf"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kE5uofEH"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAB618DF80
-	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 21:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350E418DF80;
+	Sat,  3 May 2025 21:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746307163; cv=none; b=BLYz1pjYC0e1b3AbL8f+NqDJ22w9eJ4uM4gSDa8PW6UpsFti8EWTSiOssyuJJWxxGEPuSvyG7Tg21W//ovJza/7wEfMtZeFpAzXiWWI2/AujHk+INqXCKxsr2vNEQgdRSwQ6WXRdHiC7txO9+fvlitKVE6muF9KmN7pW+TIWhfI=
+	t=1746307215; cv=none; b=J8s+dp21iDysisYq5J7iEfWwt18htwDrxL+cHANsSIWIh+9MNYz98YUQeJxr4ys7oC85ItzKUYT1z9B+Kub8850i355rJkLNolrAq7TWO5MWyEyDFNrpYQPd2YHBOzALfPSmk7fBuXi3kkHVSaxGW7IElIKUsmHwFA3o3ct/eNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746307163; c=relaxed/simple;
-	bh=bjW2Ozk+ryipDf/oBirPv588cK3svv0YSxm0DRoMwmE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gCpbfGFLHOuwTLT6fqceZIXNsC2DZG65wLR+GyFExIWQBEe9hRXV2ewPMdHM3IVHXAuNlwxt6/N3T9QFyhrVjRKFqy1LVAddnEro53Cj4YLjPoMDQORf70CSXPbISm1DDWCfJayId7RYT7MnIWlvFWan4JiL6+uaH0A8t2cUSjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=UpORUabr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=noE3qTIf; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 26924254013E;
-	Sat,  3 May 2025 17:19:19 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Sat, 03 May 2025 17:19:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1746307159; x=1746393559; bh=Un/bt6UrGtVYI4PFhsLl7
-	CgrGuxCoSHY1s4qLoGbllQ=; b=UpORUabrLd8cN76Jaq6K2gkqwM7By3HBukQma
-	oUYNv0zXHW7u1PBaHzM7HW5affDXjNZ6QxE9keHf3gIm8NH6qgOL9SDjyMWEaLmp
-	DX4ZwEu064lFTe0tzfIvhlf6z6A+oza0qbmWRUlVXRyhgXQYu5cuQf1JBnwoWeAj
-	br+/0Xw5ccuojAyfUM0UAbPJ9lBhHxF2BeFGiAz5neZ/7F+9cMaUc4TW5aw1mOKW
-	UUALRcAuacdYt5NWiNGFgdMiqtDbtGx7Z4NAlsEku7p6/u/FQEARs1Ph7vILrU4M
-	PtH8XOVHSEX176ZtdQLQjrK/nA+WMFZuc8j8ITV3PsugRLsdA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1746307159; x=1746393559; bh=Un/bt6UrGtVYI4PFhsLl7CgrGuxCoSHY1s4
-	qLoGbllQ=; b=noE3qTIfgRvJF1xbUDmZjlGPJqUtmlmmzmNHLBHNmKeseXZUH99
-	MhnejinCiEDwlQGxPa4qlDqYHKrUA0UofCwvHMRMLOw3isU0NbLSHAA2qZJ9mc9C
-	9Oxu+uZB8RTi1ucJJ+2VLtFf5Vu+DPI+TzagPShBeYonJ+tTVmdS59jq92190p4w
-	3IaYsaObLcT9m65qyGCCiAqnBDCXE9osT5V8mCI6sNjb8pFu3H08/hPtWqxPX/4r
-	gyMF4sJJgblnP+yfl1S1FV2pdGHB++60UqGGbohd2AGqufg51HA4RNFAnHHfgIv/
-	h6IZbJYvanDUz0+yY38Xwn/flEc4+ACLqgw==
-X-ME-Sender: <xms:VogWaMuH_f-vO3iJMZCF0uUZlGFNoJi-rDgUdE_2klNulzM8XkZJfw>
-    <xme:VogWaJdPDUhJkqOu_SPXr92ZC2z0BApsMm_PUKDHSYwij04eAfx9lbAOiu5UqMFhi
-    bx-5OJNsu3K3LmCoPI>
-X-ME-Received: <xmr:VogWaHzlwOtLlAxTcG6J8wE3FZOYiyPgHK_CGYXnrQ5qjJnW6jjN0JdDiQLNPRffUiFp9cwTwqt5q4mOA69jlx9Ev2VNDRET9Y-tFFLbhcxsY1pU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjeeifeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
-    evufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeflrghmvghsucfhlhhofigvrhhs
-    uceosgholhgurdiiohhnvgdvfeejfeesfhgrshhtmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpefhvefgkeeiuddtudfhgefgiedvuefhhedtffejtddtfeekieefieejveet
-    hfegheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhlugdriihonhgvvdefjeefsehfrghsthhmrghilhdrtghomhdpnhgspghrtghpthht
-    ohepudeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhrghrrhihrdifvghnth
-    hlrghnugesrghmugdrtghomhdprhgtphhtthhopehsuhhnphgvnhhgrdhlihesrghmugdr
-    tghomhdprhgtphhtthhopehsihhquhgvihhrrgesihhgrghlihgrrdgtohhmpdhrtghpth
-    htoheprghlvgigrghnuggvrhdruggvuhgthhgvrhesrghmugdrtghomhdprhgtphhtthho
-    pegthhhrihhsthhirghnrdhkohgvnhhighesrghmugdrtghomhdprhgtphhtthhopegrih
-    hrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhl
-    rdgthhdprhgtphhtthhopegrlhhvihhnrdhlvggvvdesrghmugdrtghomhdprhgtphhtth
-    hopeiirggvvghmrdhmohhhrghmvggusegrmhgurdgtohhm
-X-ME-Proxy: <xmx:VogWaPOJggpnPRy39gdK-KmQ1lH-vrPZCA_Q0myv6HK8vhG5tK-81A>
-    <xmx:VogWaM_SzOP117tFfJ1ArzIaxdsWp-Qh2InRVKwDbzeCXsFPfu0f3g>
-    <xmx:VogWaHVYVl2__DEJXwZ2AEln8aPqwAFiM1PP73GXA09lopxGJB8xQA>
-    <xmx:VogWaFdZtsW59lP3kU3fTGc8PQpvp4HSy31odCNxts-iQA4ENVwTiQ>
-    <xmx:VogWaKrZt3rFDrJvHAiEGqVBDy7aqY01UZpTRjDteXaGD9Ahhy5hfsnv>
-Feedback-ID: ibd7e4881:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 3 May 2025 17:19:16 -0400 (EDT)
-From: James Flowers <bold.zone2373@fastmail.com>
-To: harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	siqueira@igalia.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	alvin.lee2@amd.com,
-	zaeem.mohamed@amd.com,
-	alex.hung@amd.com,
-	skhan@linuxfoundation.org
-Cc: James Flowers <bold.zone2373@fastmail.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1746307215; c=relaxed/simple;
+	bh=cFb0ULAf5jdb7TStOgkvOO/Tm4mPzvHjjiakbPlwEvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XKUC16XWvuEBm/Rbxfs96XNacUh0RFqfwADh7611+faWWu0fhX7Yk38UrQ3/9Klsspnu6l6hGlHH3jwBOOi1pfI2xK08S0qqq8gJ5MrWF0JJ26L+mqBtVRAn35FAQl/IA8+boi735k3QtqpPCPesh8iKFabnqopFLb5xOF21IVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kE5uofEH; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6f0ad744811so24799136d6.1;
+        Sat, 03 May 2025 14:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746307213; x=1746912013; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vllDTIDOtw9hOtdxWDzvdQ7W4F51fxv/uqswZoJV5Gs=;
+        b=kE5uofEH6L1tuCvkHmWSX4PdwlQHC2I3vxAPyqf6PshbOJoO15fr5R5gdMEtyGDzP6
+         e8h/fIoHE1/qDKowVW+NOaEiiFZgRmhmjfLV0jCoNydb5mSDt5qH4pSUAnVQ6rZVwuCs
+         Ta4BbjGSDT/9aT2lt4iWFXEy133hQY8More+HeEeFp+68MA3pLn4WR7HzpnwPhRjI657
+         xQTtmcuDDTowC9xjJpQd5UkSftmYo8024K3/zgFeDNuRzQ5Sp0XlR0NUj2xnjp7tS/OG
+         8MwuNNskbTvDpO3M/XhneZeM5pwRViu5ww0BQRYIQTCU1g3gZUAcwPYGJyWDUzX8w6FK
+         vvgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746307213; x=1746912013;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vllDTIDOtw9hOtdxWDzvdQ7W4F51fxv/uqswZoJV5Gs=;
+        b=BzXyTgOgwrsMK7PHsWQ9MfHtc5lsretiR7stBhzNMeCExEyW7ghiItTiki75Dbw2dv
+         L5hHYfGOZdKpzzelLpXSq0ad3izTHgpusVdmQ07DEi5yCmlgPUlNRhwErjmXewkZxH6g
+         a2VWdznfHOKjoTI6q+t9GqSXjwPAi1XNnRWlKCo9zvu2mUKbpPCAj2t6FQjOfy5t03Pc
+         b3o8l82OcFKGdQOJyA2XnEA7IpURY3zKYhCN6ZFM2HMAPLP83alWzwPGx1MuHAC/ffiD
+         dXPFWAtDz7LsXrE0lMQPau6Xd2BZhDg9LkdFFrumqiGwn7mz92YD96qbcvh9Wk3NlexG
+         ZbHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnwufGp3SDK8naR67NnwLAw7bsNl/x7HPt4jK2WF4mp/Ew4j4sBsup75UoVy81OA+qjJLmsJ8fhlj3kU4=@vger.kernel.org, AJvYcCXUGMaZfKdl4DgvpA+3mFgFoGsRB1TSk+auvr3z4ttG0ngvUzhGheqRGVbC3MfuA80FhBCUegxoVx7rciafjor2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqQUIZQCY6vqpCYkoJSrsv2+Oxkskr7GKIt1kgGMVmbM5g8rW1
+	8/thGxlAQCDHEUBNTTwF5PN7Li0G46CYKHwBma4xaX6tQqlsDFa8
+X-Gm-Gg: ASbGncsGbVLVNZ53I9aK4HIb48Mc2w2lj7izzYs1fl69Of1YHXnuhdzT42D41he1jeA
+	9trYPUy9ZHFIR8k8zoUY4Np3AzvKRsdkxFvz11y+pbP/jdtZ9O9VtriCmX7j613Xx11Z1crypAb
+	kVgfiJJrSlnLEkyxenaL+egTQMvYXO5oM0KRfM6bnxxYD2dbV5TBv0oNiNmC+8hPmD1lvQZFxWo
+	j5hAckI/4sMMrn0f4maPySfhmPMl6lB6K2xrXrTGfRJ+WaAiV2u5BC2eZMF9c37b7kTaD6jwsji
+	JGcm7KAIFZirTTulsTqO8UIueo4x2LAVGZdamEVMn028T9jD+tf4cpdEod6vw6ddnk2fQezO
+X-Google-Smtp-Source: AGHT+IF+E50sm3xgvK7H1soj5wHqnu0tw7JsqkFtzxLx6NPto1aKYp8ETNVb+qv8/y8L5SITYOcA+A==
+X-Received: by 2002:a05:6214:765:b0:6f2:b0a7:397e with SMTP id 6a1803df08f44-6f528d19badmr37029426d6.43.1746307212628;
+        Sat, 03 May 2025 14:20:12 -0700 (PDT)
+Received: from c65201v1.fyre.ibm.com ([129.41.87.7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f47e88asm36028706d6.106.2025.05.03.14.20.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 May 2025 14:20:11 -0700 (PDT)
+From: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+To: shuah@kernel.org
+Cc: brauner@kernel.org,
+	akpm@linux-foundation.org,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH v2] drm/amd/display: adds kernel-doc comment for dc_stream_remove_writeback()
-Date: Sat,  3 May 2025 14:18:51 -0700
-Message-ID: <20250503211902.70141-1-bold.zone2373@fastmail.com>
-X-Mailer: git-send-email 2.49.0
+	linux-mm@kvack.org,
+	Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+Subject: [PATCH v2] selftests: Fix some typos in tools/testing/selftests
+Date: Sat,  3 May 2025 14:19:59 -0700
+Message-ID: <20250503211959.507815-1-chelsyratnawat2001@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250503195911.426158-1-chelsyratnawat2001@gmail.com>
+References: <20250503195911.426158-1-chelsyratnawat2001@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,35 +93,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adds kernel-doc for externally linked dc_stream_remove_writeback function.
+Fix multiple spelling errors:
 
-Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+ - "rougly" -> "roughly"
+ - "fielesystems" -> "filesystems"
+ - "Can'" -> "Can't"
+
+Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
 ---
-V1 -> V2: Corrected checkpatch warnings and errors
+ tools/testing/selftests/filesystems/file_stressor.c           | 2 +-
+ tools/testing/selftests/mm/gup_longterm.c                     | 2 +-
+ .../selftests/thermal/intel/power_floor/power_floor_test.c    | 2 +-
+ .../thermal/intel/workload_hint/workload_hint_test.c          | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
- drivers/gpu/drm/amd/display/dc/core/dc_stream.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-index e6e41678525f..b883fb24fa12 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-@@ -569,6 +569,14 @@ bool dc_stream_fc_disable_writeback(struct dc *dc,
- 	return true;
- }
+diff --git a/tools/testing/selftests/filesystems/file_stressor.c b/tools/testing/selftests/filesystems/file_stressor.c
+index 1136f93a9977..01dd89f8e52f 100644
+--- a/tools/testing/selftests/filesystems/file_stressor.c
++++ b/tools/testing/selftests/filesystems/file_stressor.c
+@@ -156,7 +156,7 @@ TEST_F_TIMEOUT(file_stressor, slab_typesafe_by_rcu, 900 * 2)
+ 			ssize_t nr_read;
  
-+/**
-+ * dc_stream_remove_writeback() - Disables writeback and removes writeback info.
-+ * @dc: Display core control structure.
-+ * @stream: Display core stream state.
-+ * @dwb_pipe_inst: Display writeback pipe.
-+ *
-+ * Return: returns true on success, false otherwise.
-+ */
- bool dc_stream_remove_writeback(struct dc *dc,
- 		struct dc_stream_state *stream,
- 		uint32_t dwb_pipe_inst)
+ 			/*
+-			 * Concurrently read /proc/<pid>/fd/ which rougly does:
++			 * Concurrently read /proc/<pid>/fd/ which roughly does:
+ 			 *
+ 			 * f = fget_task_next(p, &fd);
+ 			 * if (!f)
+diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
+index 21595b20bbc3..d50ada0c7dbf 100644
+--- a/tools/testing/selftests/mm/gup_longterm.c
++++ b/tools/testing/selftests/mm/gup_longterm.c
+@@ -158,7 +158,7 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
+ 		/*
+ 		 * R/O pinning or pinning in a private mapping is always
+ 		 * expected to work. Otherwise, we expect long-term R/W pinning
+-		 * to only succeed for special fielesystems.
++		 * to only succeed for special filesystems.
+ 		 */
+ 		should_work = !shared || !rw ||
+ 			      fs_supports_writable_longterm_pinning(fs_type);
+diff --git a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
+index 0326b39a11b9..30cab5d425d2 100644
+--- a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
++++ b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
+@@ -56,7 +56,7 @@ int main(int argc, char **argv)
+ 	}
+ 
+ 	if (write(fd, "1\n", 2) < 0) {
+-		perror("Can' enable power floor notifications\n");
++		perror("Can't enable power floor notifications\n");
+ 		exit(1);
+ 	}
+ 
+diff --git a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
+index 217c3a641c53..a40097232967 100644
+--- a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
++++ b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
+@@ -37,7 +37,7 @@ void workload_hint_exit(int signum)
+ 	}
+ 
+ 	if (write(fd, "0\n", 2) < 0) {
+-		perror("Can' disable workload hints\n");
++		perror("Can't disable workload hints\n");
+ 		exit(1);
+ 	}
+ 
+@@ -99,7 +99,7 @@ int main(int argc, char **argv)
+ 	}
+ 
+ 	if (write(fd, "1\n", 2) < 0) {
+-		perror("Can' enable workload hints\n");
++		perror("Can't enable workload hints\n");
+ 		exit(1);
+ 	}
+ 
 -- 
-2.49.0
+2.43.5
 
 
