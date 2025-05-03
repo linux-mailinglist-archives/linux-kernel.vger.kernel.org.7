@@ -1,173 +1,176 @@
-Return-Path: <linux-kernel+bounces-630969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032A4AA8195
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:14:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF20AA81B9
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 18:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AD5A7A36B0
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 16:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DB0C3BD29B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 16:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8515227A467;
-	Sat,  3 May 2025 16:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDE627E1AF;
+	Sat,  3 May 2025 16:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5pXMkVa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pjgr/rM9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5A7EAC6;
-	Sat,  3 May 2025 16:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A749F27CB22;
+	Sat,  3 May 2025 16:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746288844; cv=none; b=B6YcDbkphI/KUHW8fmO/uc8vEQGSAqAWmyYlHo3WWnHgmj/GHfDxeUBF4B+kQYFgtsdN1E2Ib5okKq17aV70emCM4HyMDdlAlFgk+H5KHlCpBYSTjE2om0rv/lZ7MH48dwe6DJBCuc0xC2mlnFrvQ37LrIcKIUu08cQltGn4YIg=
+	t=1746289521; cv=none; b=u2CtzTsBcyNDubo4CXzzdbFiMaA1KT9i+++wjnNfooVewohLLjNlonoOMXyAteMcmknE3zGeRlMfZwIXBn3WTyE3EGPrjM86jDTAIMXiCVNdrtexvzjlKW/MCiCKqK3ogzYkQhW3X9/2PkgHbRHhWogbGwbgRu5pMxHdtnAtD3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746288844; c=relaxed/simple;
-	bh=dQFlsrCTZJJhnxlBv9NIjwv4jFi5kwKvclce/AdCPNY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Huk/CGGX0rbpts1BHJAcozxwTps2hsBlWvfX+Gwd6Wuxeh1e1ua97rzVjuxstb5/Xvu7IqXqSyG44p4T3ixOS5ovSTH+N3mGUuqZcTO0kW8CPt/aVDCoCPZl3Q7p+2zYBvYEm1qvuexwb+K413B/TbKYQv5tjci1adDSUql5lic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5pXMkVa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F2F5C4CEE9;
-	Sat,  3 May 2025 16:14:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746288843;
-	bh=dQFlsrCTZJJhnxlBv9NIjwv4jFi5kwKvclce/AdCPNY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Z5pXMkVaJpl7FUJLdZa5bZq3J/xwQm0DrDrF7mGZqLAA6P7+gpnwhePcxqI8lJjIN
-	 VK9S74bfrEisYKF2IwEr1LLdXI9Q5TWXPrg8IMTTLsDb1Tam6ePoFlGOIjV9+lcZr/
-	 rp0LxH8lb54BW7g0lqBM0SmnBb2Aw0XIJUbpxKLxuTk1MvuLPNJNGLGIaNQQR2Xkn6
-	 scMQXm4MGtV2nlce1pyvF88QdOMn1hgw+LFob35i+6LBaP6jJOm/+jg/2uUNth6TwT
-	 qascuWscFZAreSZmbQhQmTp5jwBt02QQ/5pbRo6B7TLEQfoMw6dLxD2rSxzH82f5jO
-	 S8AU8298zi/iw==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso27672241fa.2;
-        Sat, 03 May 2025 09:14:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiEEyBVWm73EOAEdMKYyy0DO7IGoBqNW8PeCIhJRK+6SLJlWarzIMur2gvBX8jUDdIvdxLysIwcDVGDDc=@vger.kernel.org, AJvYcCXXu0V0PJEJUzaM5iyQw8PjOLF24kNTbGsCzPAsV04gujaryWzH3hWwavTTqndUfo9/pnTgQ2+ARFcrygQe1pU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxILvLo8KPDPdk/7Ay/Lc8fQlbTqgjG6wgRp4NbdWDE63lMRjlk
-	g+4YWKOlnGrtzRQ5v5IEIpBA2Dvx83OfoYC8SS5AVULHus6E4jdW5zkAgvw+d44WgYAL35ELNYM
-	mVYiEAH3qYIkAqp6XPKs71XFK0zI=
-X-Google-Smtp-Source: AGHT+IEaWaMALwU7NzK8uQ2sCWOt9yd++wv1jm1Y1Ewfwbc1zccZJPC8McJkleTjD1tJKMlZpF2V/oj3r1+7nu3Gpo4=
-X-Received: by 2002:a2e:ad93:0:b0:30c:40d6:5cdb with SMTP id
- 38308e7fff4ca-321daedda8amr9465411fa.11.1746288841953; Sat, 03 May 2025
- 09:14:01 -0700 (PDT)
+	s=arc-20240116; t=1746289521; c=relaxed/simple;
+	bh=lmO4x2+t3QziuW2k0N+PL7hCra0Ls17nFTjeHK247rM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rbQ7X1ckfS1l+y60dXJ7Ngojbr0VbOXYv305xwA6y5khyYIUQb7fLIO1G/Ht/fTNNGi/K2nx7fIcwIxWS1lD8ef7ELxg7DqvdUm4lU1NNKGeYHfN/tzj9iVWrxDp7udWraoiZWlM4FMoEhYN7H9dwauyVfyQRFUTgfm3f1vRryw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pjgr/rM9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 543Cqhtf018700;
+	Sat, 3 May 2025 16:24:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=2CwVosHohxFjCseqRnNgqWdVUFg3aBCsIOE
+	twGCjag4=; b=pjgr/rM9+9lbY/ScxB0kUxoEaOBNjNRnauIH4h/oUeIRH2VMwQ7
+	9/u9Up6AxQyPF4SaNtv3bKD58h3htubLqHXpgvm8Gqx3AYIz6P1xZp9OCNaAwgYw
+	+wMxX5mo7TEiGnhwAeyoAhfhTgGiGw7hIR1Uu0RRJeBUHuWo8A267BBcRQ4beCeQ
+	3ti+gvVaiTJTUmV4z3IZQnTrDkYulWcqJR5gEhCI5wPStKhdaKcgwUp5fFIW3JVi
+	9eXm4dVEm9ruBh0mkRxU8xCDGS/t6EYGQMHTX1ZkXlVXUTIfO73qo+OMka4W0Pkj
+	c0YrMyvOTrXUx9LUXY+bAWgSPh5UDxNvWXA==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46d9ep0ya1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 03 May 2025 16:24:46 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 543GOhgK029753;
+	Sat, 3 May 2025 16:24:43 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 46dc7kb1em-1;
+	Sat, 03 May 2025 16:24:43 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 543GOgxR029746;
+	Sat, 3 May 2025 16:24:42 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 543GOgI7029745;
+	Sat, 03 May 2025 16:24:42 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id C891A5015A2; Sat,  3 May 2025 21:54:41 +0530 (+0530)
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, manivannan.sadhasivam@linaro.org,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+        bvanassche@acm.org, andersson@kernel.org, neil.armstrong@linaro.org,
+        konrad.dybcio@oss.qualcomm.com
+Cc: quic_rdwivedi@quicinc.com, quic_cang@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: [PATCH V4 00/11] Refactor ufs phy powerup sequence
+Date: Sat,  3 May 2025 21:54:29 +0530
+Message-ID: <20250503162440.2954-1-quic_nitirawa@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250426030815.1310875-1-rdunlap@infradead.org> <CAK7LNASww7Zyeg7G0R9US-_MWtFmBF-P5JiwZkgGBBrfoivi5A@mail.gmail.com>
-In-Reply-To: <CAK7LNASww7Zyeg7G0R9US-_MWtFmBF-P5JiwZkgGBBrfoivi5A@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 4 May 2025 01:13:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQpZvXREY5+4H_WA4UOgYpYoTLS=bpb_Gkb+SyetKh_tw@mail.gmail.com>
-X-Gm-Features: ATxdqUGb7qfS5TSIqD7ON7k9RYxn59Gp78YZNa9UVZ7M1cO4MoSPCA2KL2bo4k4
-Message-ID: <CAK7LNAQpZvXREY5+4H_WA4UOgYpYoTLS=bpb_Gkb+SyetKh_tw@mail.gmail.com>
-Subject: Re: [PATCH] usr/include: openrisc: don't HDRTEST bpf_perf_event.h
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Jonas Bonn <jonas@southpole.se>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
-	linux-openrisc@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EOUG00ZC c=1 sm=1 tr=0 ts=6816434e cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=dt9VzEwgFbYA:10 a=D06968NiBJqSOUjID_UA:9
+X-Proofpoint-ORIG-GUID: fn9y4-nIjHYEeWVSnRGtGxCDnNMKH3dC
+X-Proofpoint-GUID: fn9y4-nIjHYEeWVSnRGtGxCDnNMKH3dC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAzMDE1MCBTYWx0ZWRfX2KojasTOcXk2
+ /TyZdbE5D30Kfb4ns7nF5v5ZxGbiZI5WaTecTRiBJYbTK95bUWWGLaDKI8PGDKun3ZLUPANkIHK
+ 5r48QgRsGExVdmVplYy3aZmCkew+hmczIJJn6Ykpjw/6YHjWFxrU3SAi60OajHTTWrM28OVsir/
+ 0t4g0sZzwaIX1nYhG3EYJB7Qnb4uHHpgBZqbEu4VK/GYUlRG6120ZCygYQm/vdORyHufGkMyfBb
+ sAIv5Qhzbc50BFYVC226j2INWMJN0ZHvgFVMw4IarDthUq7DmQYOrB6F5GczWSeB2PQCMWFjAVh
+ QVygAoV8283LwDCjqFje3TDNoNlLqgJqIt4otSyIde9HlLx6lQNdh5OjXXfPRITkN54dPhusJ2P
+ UxJGLGIYZKgWutnMCctoLSP9ahhNgRSuxOcTvkwUe6VlrexAuQFwY5uMKimy5F6Eeu8juuJ3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-03_07,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 lowpriorityscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505030150
 
-On Sun, May 4, 2025 at 1:01=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
-> On Sat, Apr 26, 2025 at 12:08=E2=80=AFPM Randy Dunlap <rdunlap@infradead.=
-org> wrote:
-> >
-> > Since openrisc does not support PERF_EVENTS, omit the HDRTEST of
-> > bpf_perf_event.h for arch/openrisc/.
-> >
-> > Fixes a build error:
-> > usr/include/linux/bpf_perf_event.h:14:28: error: field 'regs' has incom=
-plete type
->
->
->
-> Where can I get openrisc compiler that enables CONFIG_CC_CAN_LINK?
+In Current code regulators enable, clks enable, calibrating UFS PHY,
+start_serdes and polling PCS_ready_status are part of phy_power_on.
 
-Never mind.
-I downloaded a one from
-https://github.com/stffrdhrn/or1k-toolchain-build/releases
+UFS PHY registers are retained after power collapse, meaning calibrating
+UFS PHY, start_serdes and polling PCS_ready_status can be done only when
+hba is powered_on, and not needed every time when phy_power_on is called
+during resume. Hence keep the code which enables PHY's regulators & clks
+in phy_power_on and move the rest steps into phy_calibrate function.
 
-Hmm, I did not observe an error like that.
+Since phy_power_on is separated out from phy calibrate, make separate calls
+to phy_power_on and phy_calibrate calls from ufs qcom driver.
 
-Instead, I got a different error message.
+Also for better power saving, remove the phy_power_on/off calls from
+resume/suspend path and put them to ufs_qcom_setup_clocks, so that
+PHY's regulators & clks can be turned on/off along with UFS's clocks.
 
-  HDRTEST usr/include/linux/bpf_perf_event.h
-In file included from <command-line>:
-./usr/include/linux/bpf_perf_event.h:15:9: error: unknown type name '__u64'
-   15 |         __u64 sample_period;
-      |         ^~~~~
-./usr/include/linux/bpf_perf_event.h:16:9: error: unknown type name '__u64'
-   16 |         __u64 addr;
-      |         ^~~~~
+This patch series is tested on SM8550 QRD, SM8650 MTP , SM8750 MTP.
 
+Note: Patch 1 of this series is a requirement for the rest of the PHY
+      patches for the functional dependency.
 
+Changes in v4:
+1. Addressed Dmitry's comment to update cover letter to mention patch1
+   as a requirement for the rest of the PHY patches.
+2. Addressed Dmitry's comment to move parsing UFS PHY reset handle logic
+   to init from probe to avoid probe failure.
+3. Addressed Dmitry's comment to update commit text to reflect reason
+   to remove qmp_ufs_com_init() (Patch 7 of current series)
+4. Addrssed Konrad's comment to return failure from power up sequence when
+    phy_calibrate return failure and modify the debug print.
 
+Changes in v3:
+1. Addresed neil and bjorn comment to align the order of the patch to
+   maintain the bisectability compliance within the patch.
+2. Addressed neil comment to move qmp_ufs_get_phy_reset() in a separate
+   patch, inline qmp_ufs_com_init() inline.
 
-diff --git a/include/uapi/linux/bpf_perf_event.h
-b/include/uapi/linux/bpf_perf_event.h
-index eb1b9d21250c..61264bdda988 100644
---- a/include/uapi/linux/bpf_perf_event.h
-+++ b/include/uapi/linux/bpf_perf_event.h
-@@ -8,6 +8,7 @@
- #ifndef _UAPI__LINUX_BPF_PERF_EVENT_H__
- #define _UAPI__LINUX_BPF_PERF_EVENT_H__
-
-+#include <linux/types.h>
- #include <asm/bpf_perf_event.h>
-
- struct bpf_perf_event_data {
-
-
-
-
-
-
-
-
-
+Changes in v2:
+1. Addressed vinod koul and manivannan comment to split the phy patch
+   into multiple patches.
+2. Addressed vinod's comment to reuse SW_PWRDN instead of creating
+   new macros SW_PWRUP in phy-qcom-qmp-ufs.c.
+3. Addressed Konrad's comment to optimize mutex lock in ufs-qcom.c
+4. Addressed konrad and Manivannan comment to clean debug print in
+   ufs-qcom.c
 
 
->
->
-> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: Masahiro Yamada <masahiroy@kernel.org>
-> > Cc: Jonas Bonn <jonas@southpole.se>
-> > Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-> > Cc: Stafford Horne <shorne@gmail.com>
-> > Cc: linux-openrisc@vger.kernel.org
-> > Cc: linux-kbuild@vger.kernel.org
-> > ---
-> >  usr/include/Makefile |    4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > --- linux-next-20250424.orig/usr/include/Makefile
-> > +++ linux-next-20250424/usr/include/Makefile
-> > @@ -59,6 +59,10 @@ ifeq ($(SRCARCH),arc)
-> >  no-header-test +=3D linux/bpf_perf_event.h
-> >  endif
-> >
-> > +ifeq ($(SRCARCH),openrisc)
-> > +no-header-test +=3D linux/bpf_perf_event.h
-> > +endif
-> > +
-> >  ifeq ($(SRCARCH),powerpc)
-> >  no-header-test +=3D linux/bpf_perf_event.h
-> >  endif
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+Nitin Rawat (11):
+  scsi: ufs: qcom: add a new phy calibrate API call
+  phy: qcom-qmp-ufs: Rename qmp_ufs_enable and qmp_ufs_power_on
+  phy: qcom-qmp-ufs: Refactor phy_power_on and phy_calibrate callbacks
+  phy: qcom-qmp-ufs: Refactor UFS PHY reset
+  phy: qcom-qmp-ufs: Remove qmp_ufs_com_init()
+  phy: qcom-qmp-ufs: Rename qmp_ufs_power_off
+  phy: qcom-qmp-ufs: Remove qmp_ufs_exit() and Inline qmp_ufs_com_exit()
+  phy: qcom-qmp-ufs: refactor qmp_ufs_power_off
+  scsi: ufs: qcom : Refactor phy_power_on/off calls
+  scsi: ufs: qcom : Introduce phy_power_on/off wrapper function
+  scsi: ufs: qcom: Prevent calling phy_exit before phy_init
 
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 145 ++++++++----------------
+ drivers/ufs/host/ufs-qcom.c             |  96 ++++++++++------
+ drivers/ufs/host/ufs-qcom.h             |   4 +
+ 3 files changed, 111 insertions(+), 134 deletions(-)
 
+--
+2.48.1
 
---=20
-Best Regards
-Masahiro Yamada
 
