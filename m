@@ -1,78 +1,76 @@
-Return-Path: <linux-kernel+bounces-630698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FB0AA7E45
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 05:24:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 341DEAA7E4B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 05:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC5A9885D5
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 03:24:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B50179A2B31
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 03:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D83146A66;
-	Sat,  3 May 2025 03:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F951537C6;
+	Sat,  3 May 2025 03:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="jVUbotxL"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MWwqAF90"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2075.outbound.protection.outlook.com [40.107.102.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B56C1BC3C
-	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 03:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746242673; cv=none; b=ADPnfSKkPXe5mXiNoR2FQSGxsAqqELROIrQgFl1DyD3tCHbb7wLTNR3gHKiZp/CkpjisWBF4Uc6AZtJRMdiLadQEjHe9/SOp3Mykdzh/WJVyRgA+z2OiiWfH2/USXp5sMVOT8dTATJ1nlERg9Yd40FN4noGtvrzPUlgH4yfZpuM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746242673; c=relaxed/simple;
-	bh=yu/6Tg8ZTq+DttRgp7CeLbDw8imhFFEHXPhv+8viRAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=scHWjXHh++M9GHQl0QoBH7F3uMVGt91gRkI3No0GiU+z+Q0s4IEbwP40h6Tglp246d6fKwYvqE9ydgX0gq0jUZ9AdbVurunqriw4pkSh7LFBzzD28jApctSQ8w3QhvfhiAvpEbBMsAzBn/880iuxmE8zTiQU1zzBhWGuOoEs0ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=jVUbotxL; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7370a2d1981so2369057b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 May 2025 20:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1746242670; x=1746847470; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=01S3EXrUvAFlfKl+vJu+6SWulW0bTDiNVSLWcw/lkYE=;
-        b=jVUbotxLQ1dYYHuno/x4fTS2wePS9KHd7cLAiG4zWi8KtjFWyK83h4oHG62QqY1Ab1
-         /Fdz87VC5CqmBRBo+LejCx7kH7PDiwPgmcwyc5TUqriy79hRwK6zXrH6y5x9Q3pN5AYf
-         tkhOGMdQMLH4FZsa7Lv6sfp8NYrFEJfdN0ORGbt9UgBfFaFC6sqZY/ZgPpUhgRgLxlUS
-         06pbLiTa81oV47swLcPKxMd7xgupHAQcyPLa3jqJzMe4dd1jTqKzHXwPUjvR5x0swMHn
-         0LXaIWMrJ+/4wbjQY0E2zamKBKxa8Tq+Do8bnurZxCu/RfAIykR1u2rh07iXN+PvWPb2
-         cDZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746242670; x=1746847470;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=01S3EXrUvAFlfKl+vJu+6SWulW0bTDiNVSLWcw/lkYE=;
-        b=dnGqTzKQSLSaUeROPSoQOaSil82TQGQB6SuC4Z9EFRXXU6hSwnI1/CopPEllDr1CKl
-         dHN+HZ92/WNXZq7YvnV26ZONMR2MD2hYfPZ4UsVASztvNOyZfllEbo0u7IMq+QMWtnBW
-         MoslAyPhZaxAMQG2ibQfObnPOB9vpOzgRvSM3yWVvAUeOENQrlgdn41na4DQtWGV2Qac
-         bkJw/UX6x4Kndm0ys+NUp4MXIJDKfWQH6wTsuL/vU9dIogch/1czVYLnrZ3PUPmfHOf2
-         fjq4rp1oWBpcx6CHHxKmVJ75gYh9c0aazHwQ6kH13UfJ/sUMnshoyVBQxofivd0Yw0e3
-         B/0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUij96hrpI6yE38CToqa3vO2/sfP38W/MDqAqBmGXPIt+RLeqKcD91pypVCXftGc4jNJs0VKDYLHukh/Yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjwkT8fFT4noVR8UIAChlRVM/6FzoFnIVH3fnIaN4xfW1G0tp2
-	kEkI2AL5VJU1BFGbNVwtqufCf1P0y8MkfNKbcGL86Ftj1I1y+wIJMcPYTGsvgEk=
-X-Gm-Gg: ASbGncs2w5WnqRSVhG/p0+moUFPvXrowuSqOwTXskSUHSssk3O7qhdmcBRSy4iXpKTe
-	WdeLs+HdJxl7ZWSkg0kkCScFFfVGAFxTWeRyXjdBp1iNXGrmaJNs3M7yXYACMCAJl8YOXQbO3Dz
-	j+6IvODaxXHsrs+MPH6v9nICXaNSljTD45kTYNhNhfpK72WSr5QTshtJ2LA9cTjd2/K1gfywp8C
-	wDqp0JR4zwQZ8qeIH1UXasd9WacQXQvJfEv5VsOocYADfPoIgLLB/lJYikGc+1qlynAH32SGqyW
-	7bxJLEPsqB0gKZLE2xBVW3xbmR9IZf/W9E5TdyOPU4iI4Pk=
-X-Google-Smtp-Source: AGHT+IGKyyY6b5IkmssEe4hWWkvxqqRx2LJ7Sz66T8MoGjg3QVXwsluSYcL6JIqsHdUYbBH02YKfRQ==
-X-Received: by 2002:a05:6a20:c90a:b0:201:2834:6c62 with SMTP id adf61e73a8af0-20cdef3e7d8mr8316564637.25.1746242670102;
-        Fri, 02 May 2025 20:24:30 -0700 (PDT)
-Received: from [192.168.1.21] ([97.126.136.10])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058d7a397sm2414292b3a.28.2025.05.02.20.24.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 May 2025 20:24:29 -0700 (PDT)
-Message-ID: <12ecd375-441d-440d-bb63-d83651cbb049@davidwei.uk>
-Date: Fri, 2 May 2025 20:24:28 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44255156F45;
+	Sat,  3 May 2025 03:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746243282; cv=fail; b=o3apDiwa4TuYlWq7UXuKncCm7BmVgGUzZepZQ9v3rgTVVbmFNwd9H4lZ/aogBpe7XMsVHLaNzL4H+l1vPcJUWVoVp0nwsuReF+D57K9dLxPJecP7/JwUFQ1+qxVk1O9G8cjezy9x3KaVI1KQQtpz5O7EsiQdxIklr0UegpdMSMQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746243282; c=relaxed/simple;
+	bh=GWv4tAsFye88dZ7WQkBzVCEYyMcmr8YLNrEFfljFdZw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PIRLG5sg0FqV7SpaNeyGacg5DsBMvUukOdl5WyYJO2SqdpBAUF9gjT02WPc7y1xIhUUuU7pnELyB65PK3nUE3Dz42BhrT1EwiwFQ4FpuaLs0DtEYGKP2PoCxtKvUlVUZWM4EGj8Ilk1lpiH1zWAoXyPVloDRnPU5pSa2q36F+9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MWwqAF90; arc=fail smtp.client-ip=40.107.102.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ey00R6so2Or0xJdfT0u7OIF+DGtlR2yBEtC4SoRzc4ZoQD5/NRBxS2pcQMrGZ45dUgcX42/8fEnEC2SaCm2vtnFutXqxD03AmmXoei+EMl2qzCk3hGAMhMNWCYuDuqeC8d52LBTtf0OR6EGBx20cqSnu7T6HmQdhGacR6zpa7PnigVJNV6sPx0WGb12ylrtpLX3VCLs7iyugUzRKHDiBabjStduob1xWzHb2u+HU5JuApFBBmzgUWM7MskoymQjmYpQr1o3INnsfWI9QF1YmGpajRMTV9xK84+k9oG+GQImAd+1Bo9QykgV6nMr6yDn+TGwQ5cQjBinnpgXcVnSqLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rPgNobfBTYOujqbLiEIdQ4nZqkuaEpAIqPG9ONJwXPA=;
+ b=CCLVlBuznsfsdmjHuoOAvVljeL7aPgJeOomt8DgxnZju6fnni+5VDLQmwNHNvUsB1mJflS9pKl5tALfsjsUk90JbbTGKyJtlzgdYN4w7t0E+N//TvtXb1RICO59684Z95znWRi+K/9DBjqIK0RCXdwZ/T4w9bnJ001BwR2rT07bsSvY0B1bcISvs/8DQCm8OEWgFcZemCZC7FHF6RTi032de8G+5IBbrCd45gSNWENKll36mbE6eOO24V1JBCHr6NqGItzlL0yESVFgblPbTu+LdigRJxEPwvVsQVlxBxq2w9AtS4/mwaT42klehE9nrShejOTJCgyNtQ7uQxLpqOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rPgNobfBTYOujqbLiEIdQ4nZqkuaEpAIqPG9ONJwXPA=;
+ b=MWwqAF90QgAErPxaenDlmCba1yUi/lf6Z7tQZFJ1abDC+DQnwKjgRO7yC4+2bzVIU4CWQDVUD9qFOH4NJkH2od51MYZ5+mQwaYPaZL6HUT9AQyZoaprw8pTYPqgqEmZKp4I1oulnAV5AzmndO5lilOJnIRapZgubdiLxk0uFW5c=
+Received: from PH8P221CA0061.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:349::17)
+ by PH7PR12MB8828.namprd12.prod.outlook.com (2603:10b6:510:26b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Sat, 3 May
+ 2025 03:34:36 +0000
+Received: from SA2PEPF000015CD.namprd03.prod.outlook.com
+ (2603:10b6:510:349:cafe::3) by PH8P221CA0061.outlook.office365.com
+ (2603:10b6:510:349::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.24 via Frontend Transport; Sat,
+ 3 May 2025 03:34:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF000015CD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8699.20 via Frontend Transport; Sat, 3 May 2025 03:34:36 +0000
+Received: from [10.143.196.137] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 2 May
+ 2025 22:34:30 -0500
+Message-ID: <6a83c7fb-dbfa-49df-be8b-f1257ad1a47a@amd.com>
+Date: Sat, 3 May 2025 09:04:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,55 +78,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] selftests: iou-zcrx: Clean up build warnings
- for error format
-To: Haiyue Wang <haiyuewa@163.com>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Simon Horman <horms@kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250502175136.1122-1-haiyuewa@163.com>
+Subject: Re: EEVDF regression still exists
+To: Linus Torvalds <torvalds@linux-foundation.org>, "Prundeanu, Cristian"
+	<cpru@amazon.com>
+CC: Peter Zijlstra <peterz@infradead.org>, "Mohamed Abuelfotoh, Hazem"
+	<abuehaze@amazon.com>, "Saidi, Ali" <alisaidi@amazon.com>, "Benjamin
+ Herrenschmidt" <benh@kernel.crashing.org>, "Blake, Geoff"
+	<blakgeof@amazon.com>, "Csoma, Csaba" <csabac@amazon.com>, "Doebel, Bjoern"
+	<doebel@amazon.de>, Gautham Shenoy <gautham.shenoy@amd.com>, Swapnil Sapkal
+	<swapnil.sapkal@amd.com>, Joseph Salisbury <joseph.salisbury@oracle.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-tip-commits@vger.kernel.org"
+	<linux-tip-commits@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+References: <20250429213817.65651-1-cpru@amazon.com>
+ <20250430100259.GK4439@noisy.programming.kicks-ass.net>
+ <B27ECDA1-632D-44CD-AB99-B7A9C27393E4@amazon.com>
+ <CAHk-=wgb5WcfMEgsOQg4wzVWuYNgCL-e17YX33ZET_G3-ZCo7g@mail.gmail.com>
 Content-Language: en-US
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20250502175136.1122-1-haiyuewa@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <CAHk-=wgb5WcfMEgsOQg4wzVWuYNgCL-e17YX33ZET_G3-ZCo7g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015CD:EE_|PH7PR12MB8828:EE_
+X-MS-Office365-Filtering-Correlation-Id: b938ea01-96e3-4e56-5716-08dd89f36d61
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RUQvZndDQU14UWlZYnFxb3hsTnIyeFNmR0V0K0VXcTRTTTMwajVXbmxpK095?=
+ =?utf-8?B?WFEreFNVUTJVd2M5RkRNbml3S1gwRDdYZCttdkZ3NGp5Q29HeTYreWUvMElN?=
+ =?utf-8?B?N0RQWUwzMlpXT01IMTl1a0JEejEzNGxybDd3MlB4N0p4eDVlWHdTbThwTmpr?=
+ =?utf-8?B?VmZQbUt6K01nOEQyalpIeEVWVm56UWNlVXk1QkN5L3dlYzhIa1JzKzZReEtX?=
+ =?utf-8?B?SGFuc0w4MENObHdFUmcwbHBDbXJYQ2dIT3JPa2pYU0tMVGluZUI5ZWd0QmJF?=
+ =?utf-8?B?dWRlWHlWWTNqeGR5QXlqSUZZd2h3TTB1V0xYeG0vbkxSaG1NYVdOd3ZycHd4?=
+ =?utf-8?B?UDVwSm42TFJWR29ZYm40UncrTGhkN05TczZmRDJjckt1K2gzbkE2RUZscDNF?=
+ =?utf-8?B?MFdmNjJveGdLY1hPT3ZnMTFGam5DOXhVMHV6VXNrZkNrNGRIaTh6Vnc5V1ph?=
+ =?utf-8?B?bFZ0MnVhSlZrRGpmc2R1ZTF5WmFBN2dGSkJjVmE1YWdNQ3J0VmNEOWE5K0ds?=
+ =?utf-8?B?TFdOdGc3S3o0VWxEYXB3QjRoNXJyS1JwQi9hS0REdUp4YjhLZ1NIbVFIS0Rv?=
+ =?utf-8?B?cFY2MUhwaFo4M0kxTW1nU29hamE2R3lySlgwL1pSUUE2MXRNcm1hUFl4NXlI?=
+ =?utf-8?B?bnZvNGxYajRzTmI2bko3VXV6NWJENTkwVUJncVpwSXN1RWxyL3cyS2QyRmND?=
+ =?utf-8?B?aEJOUThucFU5bUhRVW5RYklyNTV3Qi8wVXVHcHdJd2tYaVNsU2RoSU8zamNE?=
+ =?utf-8?B?N0pJb3J3TkgvVmFueDUrVWVEeVliRTVURUtYQVRocXFadmxwY0pCamVKMFZx?=
+ =?utf-8?B?emppcFdSNDAyVG1hdlMyRzlMdDlqYkdRczhia05pTXgxZFlJdnB4Vi9pdE11?=
+ =?utf-8?B?LzFEc3IxbCtsU3llZGpITFdjbmNFWmpvaGtpeUdVMk9uZUErdm9WREVjTGd6?=
+ =?utf-8?B?NnpCREZGK1ZrblhiQzVyb2VudC9pUktFdW5kdGVNQVNhQWM1dm43c0NyQ1gw?=
+ =?utf-8?B?bS9DSmc0SjFucWtBdnE2RDNaN3cxTWFMTzhFY3I3dU9mb1ZHRnFuSXNxdEo2?=
+ =?utf-8?B?eEljNHFwcHhic0JaMy82SzM4dUlXWS8zQnFFSWxxc0I2SUk3ZHdtdkxBcWxO?=
+ =?utf-8?B?Nng2andQS0pBTXorUFBENGRHdDRnL1UyTW1hYjVUQjFjSCt3aUtrdS80NldS?=
+ =?utf-8?B?UEw2SmFVRFd6eFlCVUVkSE1iZ1BUZ3hxOWtPOXFxL2pJV2JwQU15K3FWUThu?=
+ =?utf-8?B?MEt0dnpCUWxyVWJ5ayt2aGR0UHV1VjBtcytEUFdZRkxVZGpQaHhJeXNyL3lO?=
+ =?utf-8?B?QU05U05CeUIzZi85RXltQ29xWlExYmRlcEJaTmF2NmpIZklKdDFSYkhMaEc0?=
+ =?utf-8?B?b2ROY3VZK01LZ0hyK0wyWjZBMldlOSttNDFVNFM4bWoyTnA2RE1CN1dsdVkx?=
+ =?utf-8?B?aFBQdnFxcHZjM1huVisxck93UFBIa3VSVUd1SlIxcDRGQXk0cXdodnorenFU?=
+ =?utf-8?B?ZE4vR0RlUnh6R0lxbEkvQ3hNTTRzd05CMXRBZ0ZoRGVMQXVlaHZMcXc0MnVX?=
+ =?utf-8?B?MnhZSTdDWGdXcm1HcWdjTVFUYWR1V201K29jcWxNTk1EbWsxSjEwNStLNkhC?=
+ =?utf-8?B?ZDRYSmdOWnIrMlcyeWY1OGNpejFYTXZIMVhzRUJwWWlDWE5rdWEzZmdyRkM2?=
+ =?utf-8?B?NVdKVkdkS1dWMWtDdkdWaDQ0ZnVUdGVZTlJpdXorZ1Z3V2tubDBNQzNuQUZm?=
+ =?utf-8?B?bisrU0JEb1NyN0hoSE9oTzZqeThJeGNFcXMvNHJhdTZDUXgvdzVNcWNBZWp1?=
+ =?utf-8?B?L1NXZGwyU2gzQTV4cjNyMkg5YWN1MCszQzN6SGR6bUd4NUJwRkdHMGx6YVVt?=
+ =?utf-8?B?V2kxREhBTGljUjNUd3g0a0ZKSkIwbUpaWHVJNTVHVDc1VG9yV1duVE5tb3Nm?=
+ =?utf-8?B?cEIvaHNyMHpMN0cxeWdEbm45bjNORjJhRHJIYTJDUGd2OXF6YkJLSVJHZVdw?=
+ =?utf-8?B?T2lVODFDemlGQmdIVTZmUnU3d0swVFBXbFBubVRzSzIzcERqajU5NlNCL0hS?=
+ =?utf-8?Q?8S5Zos?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2025 03:34:36.0969
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b938ea01-96e3-4e56-5716-08dd89f36d61
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015CD.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8828
 
-On 5/2/25 10:50, Haiyue Wang wrote:
-> Clean up two build warnings:
-> 
-> [1]
-> 
-> iou-zcrx.c: In function ‘process_recvzc’:
-> iou-zcrx.c:263:37: warning: too many arguments for format [-Wformat-extra-args]
->    263 |                         error(1, 0, "payload mismatch at ", i);
->        |                                     ^~~~~~~~~~~~~~~~~~~~~~
-> 
-> [2] Use "%zd" for ssize_t type as better
-> 
-> iou-zcrx.c: In function ‘run_client’:
-> iou-zcrx.c:357:47: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘ssize_t’ {aka ‘long int’} [-Wformat=]
->    357 |                         error(1, 0, "send(): %d", sent);
->        |                                              ~^   ~~~~
->        |                                               |   |
->        |                                               int ssize_t {aka long int}
->        |                                              %ld
-> 
-> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+Hello Linus,
 
-> ---
-> v2:
->    - Dont't wrap the build warning message to make scripts/checkpatch.pl happy,
->      keep it as for readability.
->    - Change the format for ssize_t from "%ld" to "%zd" as Simon suggested.
->    - Change the target to net-next tree.
-> v1: https://lore.kernel.org/netdev/20250502042240.17371-1-haiyuewa@163.com/
+On 5/2/2025 11:22 PM, Linus Torvalds wrote:
+> On Fri, 2 May 2025 at 10:25, Prundeanu, Cristian <cpru@amazon.com> wrote:
+>>
+>> Another, more recent observation is that 6.15-rc4 has worse performance than
+>> rc3 and earlier kernels. Maybe that can help narrow down the cause?
+>> I've added the perf reports for rc3 and rc2 in the same location as before.
+> 
+> The only _scheduler_ change that looks relevant is commit bbce3de72be5
+> ("sched/eevdf: Fix se->slice being set to U64_MAX and resulting
+> crash"). Which does affect the slice calculation, although supposedly
+> only under special circumstances.> 
+> Of course, it could be something else.
 
-Thanks for the cleanups. But next time please note that there is a 24h
-cooldown on respins in netdev.
+Since it is the only !SCHED_EXT change in kernel/sched, Cristian can
+perhaps try reverting it on top of v6.15-rc4 and checking if the
+benchmark results jump back to v6.15-rc3 level to rule that single
+change out. Very likely it could be something else.
 
-Reviewed-by: David Wei <dw@davidwei.uk>
+> 
+> For example, we have a AMD performance regression in general due to
+> _another_ CPU leak mitigation issue, but that predates rc3 (happened
+> during the merge window), so that one isn't relevant, but maybe
+> something else is..
+> 
+> Although honestly, that slice calculation still looks just plain odd.
+> It defaults the slice to zero, so if none of the 'break' conditions in
+> the first loop happens, it will reset the slice to that zero value and
+
+I believe setting slice to U64_MAX was the actual problem. Previously,
+when the slice was initialized as:
+
+       cfs_rq = group_cfs_rq(se);
+       slice = cfs_rq_min_slice(cfs_rq);
+
+If the "se" was delayed, it basically means that the group_cfs_rq() had
+no tasks on it and cfs_rq_min_slice() would return "~0ULL" which will
+get propagated and can lead to bad math.
+
+> then the
+> 
+>          slice = cfs_rq_min_slice(cfs_rq);
+> 
+> ion that second loop looks like it might just pick up that zero value again.
+
+If the first loop does not break, even for "if (cfs_rq->load.weight)",
+it basically means that there are no tasks / delayed entities queued
+all the way until root cfs_rq so the slices shouldn't matter.
+
+Enqueue of the next task will correct the slices for the queued
+hierarchy.
+
+> 
+> I clearly don't understand the code.
+> 
+>               Linus
+
+-- 
+Thanks and Regards,
+Prateek
+
 
