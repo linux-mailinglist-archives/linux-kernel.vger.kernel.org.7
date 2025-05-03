@@ -1,84 +1,60 @@
-Return-Path: <linux-kernel+bounces-631040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AC0AA8288
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 22:02:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E047AA826B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF87C1B62923
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 20:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38D55A4213
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 19:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D574281368;
-	Sat,  3 May 2025 19:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D2E27E7DB;
+	Sat,  3 May 2025 19:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlaE5EW6"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tlD/oQx/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B34F28150E;
-	Sat,  3 May 2025 19:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3D212FF69;
+	Sat,  3 May 2025 19:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746302394; cv=none; b=ENUh1l+fZB9FjhCliT5ERrGCHf/SCqHoNiUipf0hWZy4OKut5Vvsxq1PTLGJWCB2HShH2c1iKy3pmtatZ9cKsdRmHo8qbdS+yethcGE+ev+w9T6dR2jH3hc4085A5KT17yzUbXfV0ud5neWms/UgFhEiDcy+3nMnp1KvOhfev4M=
+	t=1746302382; cv=none; b=mm5ssBCudp/irla54y54UO29iimv+XuDbE/GhIfwhbOV5mj9qtTO++C05uYSBmiY0GTU7YR7C/ghT6O17C9unPWRyjeT2VR8l/ry0Yn7mZUb+eZvCi5InYU+lqIHTUA61VcDbZBc8Hkh3pVmoTsbVqe4n1gf/12tVocep2Tfwmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746302394; c=relaxed/simple;
-	bh=gU74hqXq8gUI3W0CQRs8UPvO2W64+odu6oE3qMydXNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ieRUFJlpMWnWaAFOGlRKpXsvet8XJO/EwE9LP9iPmoZrOWezt2gYN33Pp87KjCEZjt7id+OKaXZ5VTJY7gGLx5XEDvCmcDV86/mkULeMlR2Nu3t9+CFssnXOnzdbGwt7WGOiH0FZuQm+pWlfjsX5zLW3ER9Nk08zHR3OUnyctEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlaE5EW6; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e8f254b875so35064616d6.1;
-        Sat, 03 May 2025 12:59:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746302391; x=1746907191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s1mbnIenwaAh9cJypd/Gpwl4cnjxkwwDmZM+HdWEs+o=;
-        b=BlaE5EW6vP4bghJ4kPIskJEblK3Y6NUcPyukaGs24D3f7rxNOmfCntYulieXAPWzZC
-         DAJVHq8HEZI7/6fYzmR8ol0LKToxweJ57oK7uCwedBrp0rl2/Lm5LSNeJITP76/QaiJa
-         sbfqcGLg8uGYXWNbhB4CwqTikDwxF4790DananL+V02hLuLzwsElkmyMmOpzcbwar/U7
-         lA+vW+bR+y8JUo7/vUQOeC3khT1LeLADQcgXBUyIb7QkrnnPWZkzl7766OEe9vlzthJk
-         MxSc7SlVGAWJfLrGgjOQvfBjSJPEJegsxVsESzYklZQBUFKYFvto8uns8rbHG13bFGAc
-         yitw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746302391; x=1746907191;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s1mbnIenwaAh9cJypd/Gpwl4cnjxkwwDmZM+HdWEs+o=;
-        b=ppbPOCq7hUBFAphm/MeEwAzLJN+71BjvPCeFjVpyL4iTRvsaFfzRvaMuquSuvMRzXp
-         jNuN6TeWFYE/K5Ws7LKftgmOItuqDsq5o+0l9hiC/Oj13QZXib2MJ252y3DNIBHzpFDo
-         lKT/pV5usAAR8JdHQuoXArdWRt4Tdnfg75WiBdna3C7p0ISxdpfokVspxvxvlLvwGPHZ
-         qhbKDIBLIp0pLPlqcKGR4odhJGZ6eqPUoJaSpAfav+rnmlPX+/hbSH7pRn0QAtpYPaVw
-         x2Ri5oxHMFvRhDeI21G1RgYG2K38e5La1t4XxW5ZhmI4HW/Wj9GPHMWlFEHbgA3V3XBG
-         M5eA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgQKZcCJy7SeMFjrAGHd7z2d7TAMLXALba3Si42ZqbKXpN7wxc7ELSl7V7pPu3uWVmXSNt5QXQUAw+awQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS6Ckl4apP5xHmmI5OBX5Ro08Maf168Hbkg+7ltEGbwBusvyog
-	e7bED5HQ9DENe/D2XYUq/pePCATMErKHQi9uz6JVZ8DBk5cFcldi
-X-Gm-Gg: ASbGncuufeUFWSAK2InMLG8F/1VpL7WrPDfy9D1y6s1uEZPca4XyaOEXPWvLumAMuxG
-	wZ5Cc1Sc4svE58uTH78y4SHqj50aGF2BQ96pkQJdeiqvYH4o9vlpjpSeE0uopFAGD3zBf1ASBcD
-	FndzZhXBpSRdH5c7znxkGR+PzlcQI/WXTz/1a4Y8AmVFOfsikKV3OVW1w4a3oFJ4WuF4gla0v0p
-	fb8JUDJxhgsCf9LAmgC9QpW9v+XTC2DtigGfdvKfvKnRefEWWDw8ReI9PHi79pGuYO9kiNReNEV
-	537/p6zPJvzP2b12RM4PwlXvnZygx4oMq8o2csTBo5rz7ipkCDMxs1NtBCZC9hgxu/xnbkUx
-X-Google-Smtp-Source: AGHT+IEcjJdx+HiU3ArdgIRP5VndtHr6Bi6xFwtCX+gArCzOlQZ9wL3L1AhJJLgejhW51g3y+bWe0w==
-X-Received: by 2002:a05:6214:404:b0:6f4:c8c9:c4fb with SMTP id 6a1803df08f44-6f5237552e3mr47167386d6.11.1746302391081;
-        Sat, 03 May 2025 12:59:51 -0700 (PDT)
-Received: from c65201v1.fyre.ibm.com ([129.41.87.7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm35310866d6.7.2025.05.03.12.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 May 2025 12:59:50 -0700 (PDT)
-From: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-To: shuah@kernel.org,
-	brauner@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-Subject: [PATCH] selftests/filesystems: Fix typo in file_stressor.c
-Date: Sat,  3 May 2025 12:59:11 -0700
-Message-ID: <20250503195911.426158-1-chelsyratnawat2001@gmail.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1746302382; c=relaxed/simple;
+	bh=xdegIXPd1JWcMcmfp1mSeFksw70Hpw5bI8hkCWcHnJA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CMdspp2GTQmxW9BhzkvbS1NT3cM89BvFnjBWeXtEKeLT+kK/yjSygYqXQcOMBr9gz1rre97JKYLaUrdlCDth+tGZSgLsozzaHb9QFwDpufCjPKb9as37q5VPSSD2I32qX860EVPY3QrO26zohfNRQwxvKi+2g1bAx5GCL8vLfhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tlD/oQx/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89186C4CEE3;
+	Sat,  3 May 2025 19:59:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746302381;
+	bh=xdegIXPd1JWcMcmfp1mSeFksw70Hpw5bI8hkCWcHnJA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tlD/oQx/KYK05XytravvvIDJqni8I6GmTqXKACB2mjXaXHyIc555oCckUEY3MwoEq
+	 W/V9mUehvGbTXaCQqNv/KtKju/qV4z6uOPeUK71vetXYHZ3eZyEE7lWtLwa7Dj0jal
+	 fyDo0au8OCZ+mRRN34uVsTZIe2sZA7Tao6WmTyf1HnxGRAnvKK7kNaCjrj5uZN3rN3
+	 mGSPYVk00qiUXmAIezDGDZa9Xzb/JMVRdkzrSoN6APSbS/qhV/n2f0rP+bZSm+OE85
+	 twN6ZkCSXyOAEruFsufgU834hvBYm+GB5Exkh5H0PbVkLLiNw16BVh+yAwcNjq9TcQ
+	 3EE2Xv5A/1iOQ==
+From: cel@kernel.org
+To: NeilBrown <neil@brown.name>,
+	Jeff Layton <jlayton@kernel.org>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <dai.ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>
+Cc: sargun@sargun.me,
+	<linux-nfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH v4 00/18] nfsd: observability improvements
+Date: Sat,  3 May 2025 15:59:18 -0400
+Message-ID: <20250503195936.5083-1-cel@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,27 +63,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change spelling from rougly to roughly.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
----
- tools/testing/selftests/filesystems/file_stressor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These needed enough cosmetic changes that a v4 posting is warranted.
 
-diff --git a/tools/testing/selftests/filesystems/file_stressor.c b/tools/testing/selftests/filesystems/file_stressor.c
-index 1136f93a9977..01dd89f8e52f 100644
---- a/tools/testing/selftests/filesystems/file_stressor.c
-+++ b/tools/testing/selftests/filesystems/file_stressor.c
-@@ -156,7 +156,7 @@ TEST_F_TIMEOUT(file_stressor, slab_typesafe_by_rcu, 900 * 2)
- 			ssize_t nr_read;
- 
- 			/*
--			 * Concurrently read /proc/<pid>/fd/ which rougly does:
-+			 * Concurrently read /proc/<pid>/fd/ which roughly does:
- 			 *
- 			 * f = fget_task_next(p, &fd);
- 			 * if (!f)
+Some of these could add a few more arguments, but the basic
+infrastructure is solid enough to run with.
+
+Changes in v4:
+- Replace usage of __array/memcpy for capturing sockaddrs
+- Add NFSD_TRACE_PROC_CALL macros instead of re-using SVC_RQST_ENDPOINT
+- Const-ify tracepoint pointer arguments
+- Rename nfsd_setattr and nfsd_lookup_dentry tracepoints to include _vfs_
+- Restructure the new READDIR tracepoint to capture the "count" argument
+- Add non-empty patch descriptions to silence checkpatch.pl
+- Link to v3: https://lore.kernel.org/r/20250503-nfsd-tracepoints-v3-0-d89f445969af@kernel.org
+
+Changes in v3:
+- move most of the tracepoints into non-version specific nfsd/vfs.c calls
+- rename them with a nfsd_vfs_* prefix
+- remove the dprintks in separate patches
+- Link to v2: https://lore.kernel.org/r/20250409-nfsd-tracepoints-v2-0-cf4e084fdd9c@kernel.org
+
+Changes in v2:
+- Break tracepoints out into multiple patches
+- Flesh out the tracepoints in these locations to display the same info
+  as legacy dprintks.
+- have all the tracepoints SVC_XPRT_ENDPOINT_* info
+- update svc_xprt_dequeue tracepoint to show how long xprt was on queue
+- Link to v1: https://lore.kernel.org/r/20250306-nfsd-tracepoints-v1-0-4405bf41b95f@kernel.org
+
+Chuck Lever (2):
+  NFSD: Use sockaddr instead of a generic array
+  NFSD: Add a Call equivalent to the NFSD_TRACE_PROC_RES macros
+
+Jeff Layton (16):
+  nfsd: add a tracepoint for nfsd_setattr
+  nfsd: add a tracepoint to nfsd_lookup_dentry
+  nfsd: add nfsd_vfs_create tracepoints
+  nfsd: add tracepoint to nfsd_symlink
+  nfsd: add tracepoint to nfsd_link()
+  nfsd: add tracepoints for unlink events
+  nfsd: add tracepoint to nfsd_rename
+  nfsd: add tracepoint to nfsd_readdir
+  nfsd: add tracepoint for getattr and statfs events
+  nfsd: remove old v2/3 create path dprintks
+  nfsd: remove old v2/3 SYMLINK dprintks
+  nfsd: remove old LINK dprintks
+  nfsd: remove REMOVE/RMDIR dprintks
+  nfsd: remove dprintks for v2/3 RENAME events
+  nfsd: remove legacy READDIR dprintks
+  nfsd: remove legacy dprintks from GETATTR and STATFS codepaths
+
+ fs/nfsd/nfs3proc.c      |  63 +--------
+ fs/nfsd/nfs4proc.c      |   5 +
+ fs/nfsd/nfsproc.c       |  35 +----
+ fs/nfsd/trace.h         | 300 ++++++++++++++++++++++++++++++++++++++--
+ fs/nfsd/vfs.c           |  16 ++-
+ include/trace/misc/fs.h |  21 +++
+ 6 files changed, 336 insertions(+), 104 deletions(-)
+
 -- 
-2.43.5
+2.49.0
 
 
