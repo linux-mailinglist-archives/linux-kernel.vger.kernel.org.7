@@ -1,113 +1,123 @@
-Return-Path: <linux-kernel+bounces-630899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27944AA80E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 15:56:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B1AAA80F5
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 16:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9476598648A
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 13:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751ED1B61804
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 14:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B2C2797B7;
-	Sat,  3 May 2025 13:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pueu93Rc"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555DD2698A2;
+	Sat,  3 May 2025 14:04:00 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE809EEBB;
-	Sat,  3 May 2025 13:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904DC1E0DEB
+	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 14:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746280553; cv=none; b=KHAfUNmvzlf7DulJb9c1AjRJQeuS62FC2/kTgEYzTVYDWIq08EqDXqOwTrHtcDwjwJw1Qj4l3QEmp7CLJW9AAOLydz2Hgi1mSlCmW9oQtpaX8JqYSRkvlQSTtGjnX+dEzFi4V6+61GTC8hsk2XlO7uCl2VltaMA+vayvAJxHu/M=
+	t=1746281040; cv=none; b=MDHSeUVVCgM8VNkoypsIf3a2rc4UhDAyYdZpNilpBRmwPOvAxyklJOYy9f9OIptOGbe+2yTW95bcXuc+0ooTcCJpUOg89xG30u8LnEJWZCYZRMuGbrGv8q1Mfcs334f4PwSkplH12bKssuMWLVIdF3QSfjFouryOVE4EFfgrrjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746280553; c=relaxed/simple;
-	bh=JVSKOu5SCPtH31XM67BYwV7lZoni8LHG7Aym8C8zsBM=;
+	s=arc-20240116; t=1746281040; c=relaxed/simple;
+	bh=EMrs8wHAxIwazzNrklKhbJssyCiqWrFWNMoW8lVGmUI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pr0vpxeLo/AzYf7yt1XdAJcxdYFvYNugSgSPtAUSaGSZD26JTVqU7aiEU02dV1UP++8XJ9gbk9vwatswAcHnHG1e5o4K++VOCIHqS1RWTcpdhXeF3Glo4VQ2q6n9IPsagyMuUu/V/Qrfytec2u0zHysu7zjZF2IenrPz76/DHEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pueu93Rc; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2255003f4c6so32437975ad.0;
-        Sat, 03 May 2025 06:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746280551; x=1746885351; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sQxpjKwxVJwW17qm7YNjoZcnUxqGHc3Vct7PxbSbEt8=;
-        b=Pueu93RcM7Z/6H+v8RsrrU2uAxqvKMA+PSpRca3y8RIQ7n9BwFoTpC9klIVFPCQwT2
-         xQwFMIryHtQC0Q67ojor5pyigdSNUBlUEl4CcQ30k/IH/ajy7CUGHmPGVPVZW6MJCwRf
-         nycIOXuvjD3iCi1hwWSQSe69nIWj8xv6+bozPr3a9KBI0/uUXhJhM7rwQO0LUzd3Yqrt
-         cqjfq/5pBDkmUZyArt3/Tfv9/+FcYLAagBjiTdit+Q/+Uarqz78pOUbxBaParwH9xiy0
-         rubL8kw8VsalHBdGnGIhzqbz0R4ntobkOwViOQmZflBrkLRmSH6yER+KLN6n5a3za8XV
-         1pRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746280551; x=1746885351;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sQxpjKwxVJwW17qm7YNjoZcnUxqGHc3Vct7PxbSbEt8=;
-        b=Lj2WhYLwnyxlXcolUkWyIOMWNWD+nglmGNC++uR8VJfhGU54WyVDf5wHd6UZ07k9MU
-         GcuLYnL2ksi3e1tMgKW6GfgzTGw5re9QjT3a+nn4XkeisOy0vTB9CVK4ORtd/K+KjMDP
-         I2tz/mAUUnlTLRFIYGv6XahVxqrXwwgcUIi+++Eg+U2iNwWlyM401hnWKhsSq+t0NvWB
-         ULcNSgbjs1xWoWmlI9Jk655QAVWAJmdhiGAN8PVGqfh6WHw7RydnxPgL2VIRtqYpovN8
-         gt241W83JLUSa6L0rDYE/iFLGlbIqY9Rv2eDIr0SI+w5uM/MfmaCne4bvtSbbjhTXBer
-         zhpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXQT5tZBEmKVFcoplCrJmlWmwatr03RfEH1muNXWXwKeI6mhKjv4vpZJrkBdG/FX97rlcFFYCzNpxvqi1A@vger.kernel.org, AJvYcCVPxneC6DgpcGAaiqAtnmbZSvQ9HrPH5ZdMH4bG+tncgS1Qtb7PFs0Bg8O8Bf5xVt0teo+r/V9i7YA=@vger.kernel.org, AJvYcCW66GAeag8/UJi8ppR8IaYy2M50MdlFKkRaxiIgasyEJFCUh/0kVVEk8wMUQ64mRjypsk6Ndrml@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX3ACnVs2qNN8b+cd61M7YDkF0attcklg5VZhEYlYHVkQMOYMw
-	mF3kuPBCP1sH7gIlMjxJDLvtvTZuwXOsREHvkEWY/Yhzq04uTxYt
-X-Gm-Gg: ASbGnctsXDhZGj79OaIp+4wfwVLEuCpklFac6k+7fMQZKgucA7X3AOOuE0ECZ69MS0P
-	4kLLZn4w26h8Od2pbyzI4wlaaj7eWAThuDkqUgGwFdozDBDGDfO1ouHVi2x9vQlmmKgO/ipLMrY
-	ra9/kvIsOyE1nHxsIxDuxW5KtItxOZfDWcRvSAGAWY04Sy6meRZf0mdVhmTeuCNUACubS9S7VAO
-	RfHVpDBsbuOIxEw2dSrl0dDSaA9tD4jricLl7nAm5jUSM/cJEtNWU2QW4GYLmwNRcn+wRN5JUsu
-	BI11f0ybZ7f8uFEWhxqfgW5toin8DHu/Wp9dJZs9l4UdILfPnA==
-X-Google-Smtp-Source: AGHT+IHZmasQz743a0tfLtopxIWf41pLhz95umr4dtL/nWfbwqDglC1Sp8B9VX7iQDYnqcdQ/6ksoA==
-X-Received: by 2002:a17:903:1aec:b0:224:1935:fb91 with SMTP id d9443c01a7336-22e10313ad3mr103369155ad.27.1746280550820;
-        Sat, 03 May 2025 06:55:50 -0700 (PDT)
-Received: from localhost ([2804:30c:4024:1700:8e03:72a4:b895:b221])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b1fb3c3f72fsm2436641a12.49.2025.05.03.06.55.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 May 2025 06:55:50 -0700 (PDT)
-Date: Sat, 3 May 2025 10:57:09 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: accel: fxls8962af: Fix sign temperature scan
- element
-Message-ID: <aBYgtRyJQXGWDgHl@debian-BULLSEYE-live-builder-AMD64>
-References: <20250502-fxls-v2-0-e1af65f1aa6c@geanix.com>
- <20250502-fxls-v2-2-e1af65f1aa6c@geanix.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tVl2/U7LbWSqcItVdiKvUDW/VPtD1TQpB9HNOasTO6ez9i5wrv7U1FI3pN2k7rD3t9qouX5975KgvbMBCcFan5sbHiau7wvPljM72Xdh3GkF64hhVC0NvWcNVPrMQ+CD4i9JFB1l0Znh3flAIuqknpljlXwUxiF/fvG41Qee4vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uBDSo-0004un-FQ; Sat, 03 May 2025 16:03:34 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uBDSm-000uwH-1H;
+	Sat, 03 May 2025 16:03:32 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 010774074C8;
+	Sat, 03 May 2025 14:03:31 +0000 (UTC)
+Date: Sat, 3 May 2025 16:03:31 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Vishal Mahaveer <vishalm@ti.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+	Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+	Simon Horman <horms@kernel.org>, Vincent MAILHOL <mailhol.vincent@wanadoo.fr>, 
+	linux-can@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/4] can: m_can: Add am62 wakeup support
+Message-ID: <20250503-petite-echidna-from-hyperborea-cfd7fc-mkl@pengutronix.de>
+References: <20250421-topic-mcan-wakeup-source-v6-12-v7-0-1b7b916c9832@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="msi7s5izy7ouaffb"
 Content-Disposition: inline
-In-Reply-To: <20250502-fxls-v2-2-e1af65f1aa6c@geanix.com>
+In-Reply-To: <20250421-topic-mcan-wakeup-source-v6-12-v7-0-1b7b916c9832@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 05/02, Sean Nyekjaer wrote:
-> TEMP_OUT register contains the 8-bit, 2's complement temperature value.
-> Let's mark the temperature scan element signed.
-> 
-> Fixes: a3e0b51884ee ("iio: accel: add support for FXLS8962AF/FXLS8964AF accelerometers")
-> Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
 
-Sort of nitpinking but I think the commit description could be more assertive.
-The main idea is that we want to make the scan element signed because the
-data read from the TEMP_OUT register is in two's complement format and not
-having the scan element marked as a signed number may cause it to be mishandled
-and miss displayed. Nevertheless, I do think the patch is good so
+--msi7s5izy7ouaffb
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 0/4] can: m_can: Add am62 wakeup support
+MIME-Version: 1.0
 
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+On 21.04.2025 10:10:36, Markus Schneider-Pargmann wrote:
+
+[...]
+
+> Devicetree Bindings
+> -------------------
+> The wakeup-source property is used with references to
+> system-idle-states. This depends on the dt-schema pull request that adds
+> bindings for system-idle-states and updates the binding for wakeup-source:
+>   https://github.com/devicetree-org/dt-schema/pull/150
+
+How can we get an Ack for patch 1 by the DT people?
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--msi7s5izy7ouaffb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmgWIjAACgkQDHRl3/mQ
+kZzihggAjm7BmW/gTNjnz7/mLUDVwqHN3vnG3QhYzxEcY2FBA6MgB61J03UbA0y0
+XSRp9R1WqWFpBn0no67iaoU3AFSeG3cTqVi8688dvhN/7GG4Tdy9QjAuEpTzaJUG
+rSKZuHf82aSMxE3/2FbS3MV18YbZCty29kTaTUdkpk4YS28wa5+nDGSSyvYLqy98
+DVE/2elgBNkO0DEBKtiNr8NDtljgfutKCq02mhGklVuz07tj430xJh9T4BBZKA6M
+oJ6FxIGyiN5sSGj41WJ+ixkuL/L4zob4ji73p3lMVbkr0UZnE5wTo8sAbT0mBzmK
+x/+zfIi7bMwR/HMVddln20TQ0ZeGxw==
+=s7eO
+-----END PGP SIGNATURE-----
+
+--msi7s5izy7ouaffb--
 
