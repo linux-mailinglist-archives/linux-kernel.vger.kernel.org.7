@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-630721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-630723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8B9AA7E9F
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 07:41:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3E4AA7EA1
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 07:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A1021BA292E
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 05:41:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81A37985F3F
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 05:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596C19CD16;
-	Sat,  3 May 2025 05:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC75819CD16;
+	Sat,  3 May 2025 05:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QdcozqtV"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WMU2vsQK"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68B718EFD1
-	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 05:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A7D1A2C0B
+	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 05:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746250862; cv=none; b=NzNLgftncW7nYM9P/9uAF1cTpZCaMcMQETD2TxBWzI9Ww1wZuSMd5p01bJLhTF8WTMySXXE5zMFvb/xl5rSoJ4nFEp5VohiU2v8YE2qrHwXvHo7oTPYQwpxqyW0V9Odg88a8u+9goWw+fEI3lhH6WdK7KHVo1nA+/iLKS9FKdDM=
+	t=1746250869; cv=none; b=VCxJpYqEea27ty51GF/N1DYPEaPxLT+oWYX+ZovtKl+plkwo2NFonlJu8xJsN66jM3yE3HBaSmr6EXQugDhGCTR3FArM8tIAA791+i5+HMAZaSAiXogtEaDHkFL8AnvuAKQ2UqhzqireUE7QbidaSA0+tFxp8zTeP1R1baItFcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746250862; c=relaxed/simple;
-	bh=XwDZf4eeNIxR6Etn6KW0cde7H9TfDfcPipMQlSc8YJM=;
+	s=arc-20240116; t=1746250869; c=relaxed/simple;
+	bh=DEhnxsXx4VyePjrJTUbAoxReJpbAZwiMS/AH9S2WLF4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=heTlfRoeqp/aFOuLv4DmuRJ61sVUqT3phR7gHqhOmgva0PynvDnybJ1bsb3ZTdcqwHfUX+N1YKQeU5/3skXsDCKVSwWDlmAkmwpPOyzpZoOduPsNeaZjVtglm63V8pa2t6NE0fw9/VxT56wX/SfoQBnPks3zuHb8pLc19cxdRaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QdcozqtV; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=Z7uasyAFBhMAMce/EylUXhPGIRlMHkBgB0XEsVceC/UntOHNoc85mQOI79RFmotKwleCIUSL5S3vYSkQSQq44BOomiQkgO2v2aJyZy2lGUoCMJDWUpFRx3bv73HtkI78/GujF415BC9TlKMD4mcrbcOgkvkvWS1sdK/WJ+3bzZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WMU2vsQK; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 543303JC007380;
-	Sat, 3 May 2025 05:40:39 GMT
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5430PsZC018751;
+	Sat, 3 May 2025 05:40:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=YBuG9iHpO49vJs0ff
-	6cHvwnAQWzm8aA82ZPebpBqUp0=; b=QdcozqtVhkjka+TpNpxmWSFGkDPLw42r2
-	HM6peNtzfLnibKERYEyTsgbpOPmGNr/bkvuox1Qw4T/yKNrvzNMukD/rNV8yOtof
-	fOWs9LCOuR4/B6ZKfO8k67Ll9lkkvx578uuDj4EZzmflwSRArOPGT8+Bhze+hUbg
-	BYDJ02UYBvPsHVwdQUqeF2pPCXVkNU1PhUzZCXO0auXg78bWMVWP5wO7BH8s1PNL
-	YN43/AbF4Nb5Zm1aFSIN6HopscstB8PV927OlBbon3p3B+TeeEcEIl0vw3A796as
-	jNAzjpk+H0QlWxs1zRZq0QSUugDtrwsiA1BhEcsvDMQOtsh1LhIIA==
+	:mime-version:references:subject:to; s=pp1; bh=inI6MUKmqlTmRFr++
+	9JUAZsfAWPVWrFtVxsCsA3vcFk=; b=WMU2vsQKPOnUQhtMB/zbycJOowAQR8g25
+	yfPEHqxvAen1PeriqT5dO25PHlQIEFn3/w727sv6x9P/b2BvdirrDJ9kSc9Oh5G/
+	AZi5pst4JLkBzLSJZxmBhhKBntAxHkyC2iVNR1ZX2rhUmmxNIXw7ugZRA2dtul4L
+	enr8MdsevusQOF7oD/W4ePrIgGmEVfq4EhCxPbTKXy/FtvbhA5+vmGcFeb5OcRIQ
+	WcpZAhZ8g5jq8K/AjckiSuTq0dhm8CusJ+3LQMTwPUkFu/bYJPqXb13poA/AJtN+
+	n4jIebS/2fLUlnJxeJlOgChNM0TIl4bn8vBPaCdOTACpPvcr5Xg5Q==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46daty0abt-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46d8jr0p4j-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 May 2025 05:40:39 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5435ecOn016737;
-	Sat, 3 May 2025 05:40:38 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46daty0abr-1
+	Sat, 03 May 2025 05:40:45 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5435ejbf018962;
+	Sat, 3 May 2025 05:40:45 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46d8jr0p4h-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 May 2025 05:40:38 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5431I55G024662;
-	Sat, 3 May 2025 05:40:37 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 469c1mms5m-1
+	Sat, 03 May 2025 05:40:45 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5435cOZ6000700;
+	Sat, 3 May 2025 05:40:44 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 469atpw199-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 May 2025 05:40:37 +0000
+	Sat, 03 May 2025 05:40:44 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5435ea2036503828
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5435egcC52494732
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 3 May 2025 05:40:36 GMT
+	Sat, 3 May 2025 05:40:42 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2735320040;
-	Sat,  3 May 2025 05:40:36 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 8253920043;
+	Sat,  3 May 2025 05:40:42 +0000 (GMT)
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AA9302004F;
-	Sat,  3 May 2025 05:40:32 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 0BAFB20040;
+	Sat,  3 May 2025 05:40:39 +0000 (GMT)
 Received: from li-06431bcc-2712-11b2-a85c-a6fe68df28f9.ibm.com.com (unknown [9.124.222.98])
 	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat,  3 May 2025 05:40:32 +0000 (GMT)
+	Sat,  3 May 2025 05:40:38 +0000 (GMT)
 From: Donet Tom <donettom@linux.ibm.com>
 To: Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
         Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
@@ -85,9 +85,9 @@ Cc: Ritesh Harjani <ritesh.list@gmail.com>,
         Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Donet Tom <donettom@linux.ibm.com>
-Subject: [PATCH v3 2/3] driver/base: remove register_mem_block_under_node_early()
-Date: Sat,  3 May 2025 11:10:13 +0530
-Message-ID: <871e79e4583fcf5f28ecbb37f28297098f1ac748.1746250339.git.donettom@linux.ibm.com>
+Subject: [PATCH v3 3/3] drivers/base : Rename register_memory_blocks_under_node() and remove context argument
+Date: Sat,  3 May 2025 11:10:14 +0530
+Message-ID: <9e9fe4715c729e54e3820de0f24c185a26679e72.1746250339.git.donettom@linux.ibm.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <b49ed289096643ff5b5fbedcf1d1c1be42845a74.1746250339.git.donettom@linux.ibm.com>
 References: <b49ed289096643ff5b5fbedcf1d1c1be42845a74.1746250339.git.donettom@linux.ibm.com>
@@ -99,128 +99,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=fKc53Yae c=1 sm=1 tr=0 ts=6815ac57 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=64vTnB0G6KJa_LJvZe8A:9
-X-Proofpoint-GUID: FVnB2AsHyshvjv0CBXGw5-inUP-IRfxE
-X-Proofpoint-ORIG-GUID: nv-RFAkYlDNglGJ2En-dlGUOLwH8xdec
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAzMDA0NSBTYWx0ZWRfX0ElWrtPn4Lai 0YrFCkOj9fVAad4nSnbWMe/9ClT8IERCy7IBiLMrvDpQXLnhp3NvR82Az+e9AuvN4a+QK+X7Tw3 sfNrpMqhqzMExB5IXk+sy/Ko09IMHUU91HMyBDgW6KXm9pvnrhGp0J+tae1LXkB8jMMUDbWbI6x
- d7/u6DmRNsxIFabIM/FtQXZY3gBuElYWLF369GMzXuyoxPYjs7lqsB4ASBbOJXjt9szwL4WlPKp vaN3J414Dy5OnLOhxEzQL75VthxcHxRn5CpkbkNxuGYUIPdUFD64L8lBjHm6ZJtjRBXidehBM3D nAmWbgN4X7JIWAHO3bezYqVKFfCoQhIrrZXZhBreYeoZ00uf7Lk8fUceUPp7EO0EpxEAEBW9qox
- 0ixCEdVyBoc1nbi3xLbO/zPEozxkAgqNNyuxl7YaIWcW/XS5hVVKWqwxeC30Gxyb2vLePaUJ
+X-Authority-Analysis: v=2.4 cv=TduWtQQh c=1 sm=1 tr=0 ts=6815ac5d cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=pSmtlzIa0S65UvMo3TcA:9
+X-Proofpoint-GUID: h_Qxi5KQ9QHkcf3fhZ1-Qn6b1Cy1d_-F
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAzMDA0NSBTYWx0ZWRfX7GLlN1lEuTuF s81unHmQd7Np8GlRsL3+U+j14id8M9FF8AJpOi3YtxMHrF18tmmIDgvGrSUsaocN+hKllC1f8sk Pp8cPttbkgbWFkiIYrHW7pOvzKnAApgiWCq5xF2a93hyYIB8dbg0eLS5bOclzDYO36fO4jvo073
+ CKfERfMPHtgk3e7g/adnHvs12XK7i8aLldGMnrbRHIePGOkRlL6t/Wo/wnRn+Nf9S3wwqlUioyr 2LVS1OVNq46es8RKZCEtusxdUZ7ClkaL90wAk7utlpttt2/mrA9Lgu34bMSDB53PgkTiREX8d+n WpjI+x7jRdoboiQPFxJ1ASENS/nubVQNKfRls8tDiaybnJJb9FBaxAkyhbUG6+P77Lp15LF6zLF
+ 5c6Z1Si8djEjrfVRzm20J4cl5Otn4GeS9yfgpraxUOQVS4XCGTOz15Ngtoi2AjqljfRXKZ1N
+X-Proofpoint-ORIG-GUID: cD9RStQBoKFd80914gyHdZ302U33Ij-U
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-03_03,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxlogscore=999 bulkscore=0
- adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ malwarescore=0 mlxlogscore=999 impostorscore=0 phishscore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 adultscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
  definitions=main-2505030045
 
-The function register_mem_block_under_node_early() is no longer used,
-as register_memory_blocks_under_node_early() now handles memory block
-registration during early boot.
+The function register_memory_blocks_under_node() is now only called from
+the memory hotplug path, as register_memory_blocks_under_node_early()
+handles registration during early boot. Therefore, the context argument
+used to differentiate between early boot and hotplug is no longer needed
+and was removed.
 
-Removed register_mem_block_under_node_early() and get_nid_for_pfn(),
-the latter was only used by the former.
+Since the function is only called from the hotplug path, we renamed
+register_memory_blocks_under_node() to
+register_memory_blocks_under_node_hotplug()
 
-Acked-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Donet Tom <donettom@linux.ibm.com>
 
 ---
+
 v2->v3
 
-Removed temporary variable(fun) and passing
-register_mem_block_under_node_hotplug directly to walk_memory_blocks.
+Removed context argument from register_memory_blocks_under_node()
+Renamed  register_memory_blocks_under_node() to
+register_memory_blocks_under_node_hotplug()
 
 v2 - https://lore.kernel.org/all/fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom@linux.ibm.com/
 v1 - https://lore.kernel.org/all/50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com/
 ---
- drivers/base/node.c | 58 +--------------------------------------------
- 1 file changed, 1 insertion(+), 57 deletions(-)
+ drivers/base/node.c  |  5 ++---
+ include/linux/node.h | 11 +++++------
+ mm/memory_hotplug.c  |  5 ++---
+ 3 files changed, 9 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 0f8a4645b26c..948392b477ea 100644
+index 948392b477ea..206944c83849 100644
 --- a/drivers/base/node.c
 +++ b/drivers/base/node.c
-@@ -748,15 +748,6 @@ int unregister_cpu_under_node(unsigned int cpu, unsigned int nid)
+@@ -839,9 +839,8 @@ void register_memory_blocks_under_node_early(int nid)
+ 	}
  }
  
- #ifdef CONFIG_MEMORY_HOTPLUG
--static int __ref get_nid_for_pfn(unsigned long pfn)
--{
--#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
--	if (system_state < SYSTEM_RUNNING)
--		return early_pfn_to_nid(pfn);
--#endif
--	return pfn_to_nid(pfn);
--}
--
- static void do_register_memory_block_under_node(int nid,
- 						struct memory_block *mem_blk,
- 						enum meminit_context context)
-@@ -783,46 +774,6 @@ static void do_register_memory_block_under_node(int nid,
- 				    ret);
- }
- 
--/* register memory section under specified node if it spans that node */
--static int register_mem_block_under_node_early(struct memory_block *mem_blk,
--					       void *arg)
--{
--	unsigned long memory_block_pfns = memory_block_size_bytes() / PAGE_SIZE;
--	unsigned long start_pfn = section_nr_to_pfn(mem_blk->start_section_nr);
--	unsigned long end_pfn = start_pfn + memory_block_pfns - 1;
--	int nid = *(int *)arg;
--	unsigned long pfn;
--
--	for (pfn = start_pfn; pfn <= end_pfn; pfn++) {
--		int page_nid;
--
--		/*
--		 * memory block could have several absent sections from start.
--		 * skip pfn range from absent section
--		 */
--		if (!pfn_in_present_section(pfn)) {
--			pfn = round_down(pfn + PAGES_PER_SECTION,
--					 PAGES_PER_SECTION) - 1;
--			continue;
--		}
--
--		/*
--		 * We need to check if page belongs to nid only at the boot
--		 * case because node's ranges can be interleaved.
--		 */
--		page_nid = get_nid_for_pfn(pfn);
--		if (page_nid < 0)
--			continue;
--		if (page_nid != nid)
--			continue;
--
--		do_register_memory_block_under_node(nid, mem_blk, MEMINIT_EARLY);
--		return 0;
--	}
--	/* mem section does not span the specified node */
--	return 0;
--}
--
- /*
-  * During hotplug we know that all pages in the memory block belong to the same
-  * node.
-@@ -892,15 +843,8 @@ void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
- 				       unsigned long end_pfn,
- 				       enum meminit_context context)
+-void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
+-				       unsigned long end_pfn,
+-				       enum meminit_context context)
++void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
++					       unsigned long end_pfn)
  {
--	walk_memory_blocks_func_t func;
--
--	if (context == MEMINIT_HOTPLUG)
--		func = register_mem_block_under_node_hotplug;
--	else
--		func = register_mem_block_under_node_early;
--
  	walk_memory_blocks(PFN_PHYS(start_pfn), PFN_PHYS(end_pfn - start_pfn),
--			   (void *)&nid, func);
-+			   (void *)&nid, register_mem_block_under_node_hotplug);
- 	return;
+ 			   (void *)&nid, register_mem_block_under_node_hotplug);
+diff --git a/include/linux/node.h b/include/linux/node.h
+index 93beefe8f179..ac233c302d1d 100644
+--- a/include/linux/node.h
++++ b/include/linux/node.h
+@@ -111,14 +111,13 @@ struct memory_block;
+ extern struct node *node_devices[];
+ 
+ #if defined(CONFIG_MEMORY_HOTPLUG) && defined(CONFIG_NUMA)
+-void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
+-				       unsigned long end_pfn,
+-				       enum meminit_context context);
++void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
++					       unsigned long end_pfn);
+ void register_memory_blocks_under_node_early(int nid);
+ #else
+-static inline void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
+-						     unsigned long end_pfn,
+-						     enum meminit_context context)
++static inline void register_memory_blocks_under_node_hotplug(int nid,
++							     unsigned long start_pfn,
++							     unsigned long end_pfn)
+ {
  }
- #endif /* CONFIG_MEMORY_HOTPLUG */
+ static inline void register_memory_blocks_under_node_early(int nid)
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 8305483de38b..e3e83ae90c7c 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1575,9 +1575,8 @@ int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
+ 		BUG_ON(ret);
+ 	}
+ 
+-	register_memory_blocks_under_node(nid, PFN_DOWN(start),
+-					  PFN_UP(start + size - 1),
+-					  MEMINIT_HOTPLUG);
++	register_memory_blocks_under_node_hotplug(nid, PFN_DOWN(start),
++						  PFN_UP(start + size - 1));
+ 
+ 	/* create new memmap entry */
+ 	if (!strcmp(res->name, "System RAM"))
 -- 
 2.48.1
 
