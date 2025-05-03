@@ -1,138 +1,119 @@
-Return-Path: <linux-kernel+bounces-631023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC77AA824A
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:13:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82E4AA8255
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C46F5A5CF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 19:12:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C2793BDDA9
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 19:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997822820BB;
-	Sat,  3 May 2025 19:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1127227E7F1;
+	Sat,  3 May 2025 19:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aZO5uDaW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1lW5zvT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A887280CE7;
-	Sat,  3 May 2025 19:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6812319CC22;
+	Sat,  3 May 2025 19:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746299422; cv=none; b=XnDtHqvsDjKRFXxXRK8wL7h5LHMwN3LCDQUJrp5aMdh1tmwBrpfooZqHGPTiSeQNnbiIOMfzsD8gt2jtVBkuhww3hE9iKdQ4WccV4S/wPkiiRDPr/wcfaZMzB9yX8k9Obcn/etsdz3gj0JT1wdU8hUljMBaKipvmEayFjJ+hC9k=
+	t=1746301112; cv=none; b=Bu1nSach7M7i7uRFGBqs1EQBDpoZp+XfkEBWh7Mrgkebg8DdjmVa0QkjBZvxg57Hl3TNgK3tP20BuHwkguKudODAcqRp/FxK1lqr0MKVH01j6i9rQLnf738xWJevplhoqDZdeumYAABskOfVIviDPYTrvmOAJpeiHBDBGtesTjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746299422; c=relaxed/simple;
-	bh=ETQow3I3jVQQbfoDkbZ6LD9Df4riH/sjwHO2fajMiE0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=LKIehVKFQZ53rhzP9rGhvJAnpPewrsW39L8UXTuz/hqHcEEn7/VUnOrn7eIxrrEmb+q2AfrrckLuEGg5U4p4lg7ZdfUdwIdCtHsh8OVzqAQ2DSfEuVo/PwEUODe2gc/NqrRDkPND+Amr6rBWOrOl5yb8BUUEpbfFyZCctscMgEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aZO5uDaW; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746299420; x=1777835420;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=ETQow3I3jVQQbfoDkbZ6LD9Df4riH/sjwHO2fajMiE0=;
-  b=aZO5uDaWGvdggdlPNJFlXva1la+oZ+B1/6k3mpn3mrlzNG/Rv4yd6OVX
-   CRHu5wF2mDlYDu1vlVKK7ptgxOEEtxHuyqUbMUtLRXiTSWyiuruEnM534
-   nkI09cQFtVJpFtBSLr0FS919g8orUgJH0FPlwMl2eemyZxoFJoXgVS1PR
-   UxZHw7+kAJjThbO0kyFMbThP1J3i6QxNBrrc00PcyscxWfzzQupPErY+y
-   DYxtT+h1Q5KR/PaF6jPY0GSZib39GJVo4lsKFb2rGddzKEK5G4Qgjrhsk
-   REHZCWjuTFGWyUNVGdR0f9rQWQVCu4eMWRymC196DPqjfhUwZCSVHYUeF
-   A==;
-X-CSE-ConnectionGUID: J4F2she8Tf+h4phYEaiVcQ==
-X-CSE-MsgGUID: 9MM4zJbWSNCN2ORaTZ8iMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11422"; a="48095666"
-X-IronPort-AV: E=Sophos;i="6.15,258,1739865600"; 
-   d="scan'208";a="48095666"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2025 12:10:17 -0700
-X-CSE-ConnectionGUID: Cg2HYCxrS3K8KM6RbaS3ew==
-X-CSE-MsgGUID: AOkYwIMJRhiXoovjmJrE9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,258,1739865600"; 
-   d="scan'208";a="140046125"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa004.fm.intel.com with ESMTP; 03 May 2025 12:10:16 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: x86@kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>
-Cc: devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org ,
-	linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: [PATCH v3 13/13] x86/hyperv/vtl: Use the wakeup mailbox to boot secondary CPUs
-Date: Sat,  3 May 2025 12:15:15 -0700
-Message-Id: <20250503191515.24041-14-ricardo.neri-calderon@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
-References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
+	s=arc-20240116; t=1746301112; c=relaxed/simple;
+	bh=wFmHsvoTtpbRFd5tfMpmSxDV6/y1Pa+D6JEA4XNarKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q6CLGb2SE28hb23OAEJd4l8h7gI649jMlB1rrJ31o5WOIaMV6q8aLjhV31KO3G12yfztSrEp/GwnEylMNyMIVSUNVyzZ16i5wi4HoFjwI8aYpsGKMtHPXiCZzSxeWQBOVqFeEcIEz+KAp/NcEYERHwVfcn8JX0MW+3PmLEYt5uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1lW5zvT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6856FC4CEE3;
+	Sat,  3 May 2025 19:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746301111;
+	bh=wFmHsvoTtpbRFd5tfMpmSxDV6/y1Pa+D6JEA4XNarKo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=m1lW5zvT+eHAWt8WnnutFq8vq1ZHzucScmlZ3r39WIic7D8C9T7u5zsyYSIalcO6I
+	 e/mOF6puvpg96C5hv32fGkNnaRfqJQRH5R2fTK5LT1nchVI6VAOdIhBYkOKFQq1WXN
+	 VEDdMc4+15nv4ySZgY6DM6tzqgly5k3Qevhjo+Pv5H1r8EUMVtuu2p2FhffkL7k6ok
+	 1pfP7qU1YgFBp8Dk+wplMvJspc501JzskMiq94wd3Pvck2sGfNyaxcovsKZk0NwT0+
+	 7M0wZzu667IC15rJFW7pJbQu3elqKnX50WULTOhFJqHTld1X0g5mHetTqhn2URhsDn
+	 719oNmgmAEOhQ==
+Date: Sat, 3 May 2025 21:38:26 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.15-rc5
+Message-ID: <aBZwsuhgpgETHQOO@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="y+OzHAFoCTCV9zDJ"
+Content-Disposition: inline
 
-The hypervisor is an untrusted entity for TDX guests. It cannot be used
-to boot secondary CPUs. The function hv_vtl_wakeup_secondary_cpu() cannot
-be used.
 
-Instead, the virtual firmware boots the secondary CPUs and places them in
-a state to transfer control to the kernel using the wakeup mailbox.
+--y+OzHAFoCTCV9zDJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The kernel updates the APIC callback wakeup_secondary_cpu_64() to use
-the mailbox if detected early during boot (enumerated via either an ACPI
-table or a DeviceTree node).
+The following changes since commit b4432656b36e5cc1d50a1f2dc15357543add530e:
 
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
----
-Changes since v2:
- - Unconditionally use the wakeup mailbox in a TDX confidential VM.
-   (Michael).
- - Edited the commit message for clarity.
+  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
 
-Changes since v1:
- - None
----
- arch/x86/hyperv/hv_vtl.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+are available in the Git repository at:
 
-diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-index cd48bedd21f0..30a5a0c156c1 100644
---- a/arch/x86/hyperv/hv_vtl.c
-+++ b/arch/x86/hyperv/hv_vtl.c
-@@ -299,7 +299,15 @@ int __init hv_vtl_early_init(void)
- 		panic("XSAVE has to be disabled as it is not supported by this module.\n"
- 			  "Please add 'noxsave' to the kernel command line.\n");
- 
--	apic_update_callback(wakeup_secondary_cpu_64, hv_vtl_wakeup_secondary_cpu);
-+	/*
-+	 * TDX confidential VMs do not trust the hypervisor and cannot use it to
-+	 * boot secondary CPUs. Instead, they will be booted using the wakeup
-+	 * mailbox if detected during boot. See setup_arch().
-+	 *
-+	 * There is no paravisor present if we are here.
-+	 */
-+	if (!hv_isolation_type_tdx())
-+		apic_update_callback(wakeup_secondary_cpu_64, hv_vtl_wakeup_secondary_cpu);
- 
- 	return 0;
- }
--- 
-2.43.0
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.15-rc5
 
+for you to fetch changes up to 8e17493ea2d1c9f72e5e31160f75f8be56f79ffb:
+
+  Merge tag 'i2c-host-fixes-6.15-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-05-02 16:31:35 +0200)
+
+----------------------------------------------------------------
+i2c-for-6.15-rc5
+
+imx-lpi2c: fix clock error handling sequence in probe
+
+----------------------------------------------------------------
+Clark Wang (1):
+      i2c: imx-lpi2c: Fix clock count when probe defers
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.15-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+
+ drivers/i2c/busses/i2c-imx-lpi2c.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--y+OzHAFoCTCV9zDJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgWcLIACgkQFA3kzBSg
+KbY8ug//f86WHXORR6xyD++G6COx+9rIFn8QwctgO/B0btSRbryBcQoqe2DtOaJl
+7bWLsYH4IkmBwJ1XJnGMOVy36ESp8I1QoFo9H9izCP7KDFRYhp6XUYMZbQhVFlVe
+HJ0Gg+rNytK911UDiMz12+drMO/JWX2+Sc9jTrKsnHMwp/76j00b2pT2L0hgq/at
+HcWNmyyYpglevA16dRvncZLfjCxEZwwon8+Bxp3TxzGWQ2iUvByB1jcb/X/295rE
+ekdrFeM+kkb1aU/xqYrftdAmSboNEBqosnm/fMOt53KoUncljVAA0jP65nsp44BT
+7mftnPFkiaW4hY8s+z1EkXuCL75kvxMXz1dLqGC9z6BGuxlp6BqIGS2Sp63e1z2r
+o9L868xOKm60OSG+tiAFppdsf8paBLyEBN7k3L7hwPG7eiHPTqGc/u907b/x2j+l
+ikIOREgeswXU14K8VaYvIpZTi/4GHeyz1owfdy0koZZEPv/em6/NER0jTkPgq+tU
+hsRL1aXODoO7Q91slxUmdAd+HRR2wkuMwliBotTTYOxUOdrroeX0zZfNbZVhN0Dk
+fY7YlDmpVbgXR6i837lDDcpZx+e3nMLvtZWzCZQKB5jFZdCT2eBNx0huU2Zg5nMs
+Sulq9Suo+vmJIJsQ+1IZvUstVpfduK/POncBv1yZmDV1YZEvvoE=
+=1JUF
+-----END PGP SIGNATURE-----
+
+--y+OzHAFoCTCV9zDJ--
 
