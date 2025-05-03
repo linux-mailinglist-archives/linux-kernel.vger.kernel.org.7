@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-631075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91349AA82F1
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 23:14:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F567AA82F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 23:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB84C17EA97
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:14:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683A85A37EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 May 2025 21:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3041D1C701A;
-	Sat,  3 May 2025 21:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56C127F4C7;
+	Sat,  3 May 2025 21:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PQKHJ+FU";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Y+spOOUf"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G7gi2wIz";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="FBdSTO38"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695EAC13D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB161EF388
 	for <linux-kernel@vger.kernel.org>; Sat,  3 May 2025 21:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746306857; cv=fail; b=PKNjFLDSAsyKTK1MYut+/qN8xdGIrN/OwzQyDwsus1sSE2HwrzQPGw/K8VcfL2N+Ab14x/jtq0qs+h0tn1AN6E5IUGyneOdiKlJz7ZpXHPTEbKUC0niGvC4uhr8UP40FiUxS+RlwFR6oau0UOGlqDAFQQJgN4oLvetM8fS8ONMc=
+	t=1746306860; cv=fail; b=YLOil3TXRV9cB3uaAKWYy+4qpNmXoSbE6j7uf/q3LCjOPKz6HMOLglF2qDmt8AdUOd6RylCrKXVe2K57BlixQA3im5nfKyxTyzPEWnniAx+Ebt9AokK2b1PtlVCDSBwL1xWCaNuvdBq9fAL6UxCtVBs71gwuT3yXU54pcLSqSF0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746306857; c=relaxed/simple;
-	bh=+7zTREBCiqvY9h69dXMwcf1kRws47q3rlu8Fb8FYZp0=;
+	s=arc-20240116; t=1746306860; c=relaxed/simple;
+	bh=1nVwT8Qz7gY2+6E7+ExaOHrkI5Z8hkHbWSV+0IQ6v10=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sLqQkveGNMBN2PrCocSOqozV9sS5q7ClQvjUIPiKRAwnK+XTSIqY3eNJymaCaLrRsu0TYE9I74nhv5B8Dn5AENHyHUgszmF6TeQKi3vZBtP5epumpcbadLtcHdUJL/vdTcrEN4JpTOR3L2cGYnL+MxXAnqVy7JdhRFWdpXeyN/c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PQKHJ+FU; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Y+spOOUf; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Type:MIME-Version; b=F6guHVwepLE1j8m0mSlrdJksVLqtvU+2nMYweEwHzb9UzYnXCr17YUFchHEo9rWbW7bm+tVk8X4kJX8r6EErT12rHgMw5b4/OTo2VkYzV4CxyU+QF67iNIPsotgxa9WRAfnmGjpJrfpMhEeeegr4c9hT1n4n4hu7DAAdYEYh6hw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=G7gi2wIz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=FBdSTO38; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 543L2jtY017846;
-	Sat, 3 May 2025 21:12:54 GMT
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 543L71kq019538;
+	Sat, 3 May 2025 21:12:57 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=HqWPu4vlOVCphmTjxWn+AsLAW/zIxRucRyYtin5TDCA=; b=
-	PQKHJ+FUtUfQf6llYUZMpdUx6YWp7kj11GR2W/vXzKw8LGeIw+HZCXfV86iihiJh
-	68nrwGP5vr3YUa1TAsZUGDb+cvSB9+IDkZuYVJUs2Ja8IC6yIAp6QPLDAGPVysnx
-	VjDzt6uXQZY+gHumJXAlxEymWboyjy8IzTH7/6ys6P9KXZnB5Bq8/1RwsYUm480P
-	/2VVe3UGIAVt2NnRUwwtIc6R1Og76LoiMGqwxWGSDfOyvILSBQqWJOENBiJCJHZn
-	WP5RxaiszN9hGx9PdEF2/LAAC/bzFLfCDR+VO7MMIiLGFzW2CO4xkE14x4cv33hW
-	RmUSV4uZjiCug236YmpBag==
+	corp-2025-04-25; bh=KKypNneju+ZCFRWSRZLiyimU0q1NOEC2ITaqC8aPPdE=; b=
+	G7gi2wIzEbCU3GaNpLworidWIxUp8D+3b6Sw+uuNsW0smqMBoLBsooWAImLILn16
+	UUX1Hp1YDvNeddtQSaHyeffErKl1v3Q8OLOw2AD70FujLBYHn6AiL6bSHcyuLGPg
+	7dIILGOXQFGJpociZBVkfMHMgfDJ+n20VUVOjEUBnNXXC2zrp+yYN/unU9rYJkbb
+	KA1Uc343ydZDxGIwijRo/i7+nYfcTtrTt/IUli/Ilg2xVm/gHf9uvOxL8TkQ0+yt
+	TciSpH9GSR5Yn/5nSU8A+HC53N0TToOueo70w6GwowvYAgY84Qrrd7MZDjdRoVkU
+	eB/47HA8fBVty5w4CRTtVw==
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46dtpvr03w-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46dsp300xt-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 03 May 2025 21:12:54 +0000 (GMT)
+	Sat, 03 May 2025 21:12:56 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 543I10Td036013;
-	Sat, 3 May 2025 21:12:52 GMT
-Received: from sj2pr03cu002.outbound.protection.outlook.com (mail-westusazlp17013075.outbound.protection.outlook.com [40.93.1.75])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46d9k6f60x-1
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 543Hp2va036150;
+	Sat, 3 May 2025 21:12:55 GMT
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazlp17010007.outbound.protection.outlook.com [40.93.13.7])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46d9k6f616-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 03 May 2025 21:12:52 +0000
+	Sat, 03 May 2025 21:12:55 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RozjRyX67bF4m8nSrP2BwteVFuKQCNy1m3SuFow6zR37zU7KYcT11HvD2hrZ+0pyCnC9G2qH80wRXhBRjnI2+SWpfXqMuAaBC5xjG9PS3G1sNg0KMcmShsKXzSp2WLNaoj0ryMU2iNp00TanNlJ/yEulXTtd2OwxdYEFnm86ug07i5+HqftuoNVx2LPhRZ/Scbr5mUDoFfAPyfw9SyeB7+T9wSEbEfPuxAMJu/PxCpRZGU9mnCbiU2UfANKLPoK/DE2pq28EFg9ngP0ulYm9QbaAFeofGdHiXjS0nCFm01orwb9bps9Yhz0rAZbVfoAlogeFcVpfx54zrwZthVtUBA==
+ b=sjW2A3AKCsz6LFavOQq4/JZcuTd3x9aoGQ1Eg9HfMz6EFjZMmLRKFT8GbyolY/H8ELmmmaS7F6n5Ke4ZRQoUWstocET4Mb/xS0KuSlTGKEmMVGndeMLQMFjti/oSJGdtTHRneZSfQWJrgJLClMNUD5AW9UpMNVhm7EmNFXrp45mD7DRqNFzGD5vEziEux09SlzOJ6yHYYPjm8HT6YX2UOWwGt5C6Ah5AFPySMF/IYAydIjyZHsVejgk5HiUQLqX9hw75hbpZTvk83tnwmWxVe6OvDbcYPZ2IIXx1EHCmd4HWBgaryglJaC/rjZ/IMh8bH/bsl9K0cod8/ODsbCH4eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HqWPu4vlOVCphmTjxWn+AsLAW/zIxRucRyYtin5TDCA=;
- b=J83dn/2p0Ctx+faf4vfvDbwEyvBs2zXPRWMORtjPF9hEHR5y17kjTy4XDIua1C//1IYXRhbyQ9lowgQKIGeqW705Yj16TZaJD4uMZcRNILJqcbHNnS6xcg11X0f4njFAPKsj+dSA4ITBAM8cLIzUa5Y8khG1eQCZWPNBVLgx/8Clf2ILfyGEOA+jCyysmvSOWVuDjdd0EyEJkKCVx/mrY2KhTBMaQGm0no1xpinAU5QsbDoUil5sqr0B2o9q0tP796W7mssXVMKnwLzefM+mAlAM95snhRCYWXzKoR4zUfgk1/YSF2QYzAxqhBcBTFjtTwcqGH2PKcdyeJbdY4dCWQ==
+ bh=KKypNneju+ZCFRWSRZLiyimU0q1NOEC2ITaqC8aPPdE=;
+ b=LDy77FoOdLN0qMNLXEG01IXZAburZTDxFk2n8c/O5mLIh4Jb9717h+/I20vB/JU1nJ06xXTMncdwfooASRftjSOparhSFMQA/i/rxtOgkSBIsKKDAnuJe2IwOEXAQsL8liGF6Hb3xDDaIr96yhWlXuzReDgYDDFm5JebTAH1dwPW9o7ccg909/swwvApWiFpM2r4YDIbNaogGHjVkxqI3KHVvKYOgQvOmh4Y96/MhGwlSl/lOM+NUVbItisxMh8jMbABHDqJePtu7Glt5yyRdLxUyFWrXdqGCh+MpsY7JguEVvVfe+dLC7nn8XgPFum4H7RRaDKvk2V7V5PAc2P1Yw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HqWPu4vlOVCphmTjxWn+AsLAW/zIxRucRyYtin5TDCA=;
- b=Y+spOOUf6eVH7Hhh91HV+lj0zwefJxMLmMcTfSluQWMmq+sESlRDWg1PHye5CSrldHBPkt06LGdddOVhDv6sW7AZmAQLCl3tMPlglt74Onv4lVCbqSnecpYQmUcCr8uwhTClQICM6iRotquvFv4q91jTaKsr/xMH4r0z7/1zMVY=
+ bh=KKypNneju+ZCFRWSRZLiyimU0q1NOEC2ITaqC8aPPdE=;
+ b=FBdSTO38HvYSCRp5ruuHG3JBEGxC858LN0zzDuz9Yk1zOJkDhr2UqbV7pmbW9DoTev8rMJEL5nn/1Jio9RxAg2mXVCKtThzdgAjOlOk2N61ZiPNCmDLXohWaAfRGveZzGcWsMkzCzQspSgHMG8Tpyv/7nTQ77SsjNEuQ5UaEk50=
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
  by CH2PR10MB4373.namprd10.prod.outlook.com (2603:10b6:610:a9::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Sat, 3 May
- 2025 21:12:50 +0000
+ 2025 21:12:53 +0000
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8699.022; Sat, 3 May 2025
- 21:12:50 +0000
+ 21:12:53 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
@@ -92,16 +92,16 @@ Cc: Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
         Dev Jain <dev.jain@arm.com>, Jakub Matena <matenajakub@gmail.com>,
         Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 02/11] mm/mremap: add MREMAP_MUST_RELOCATE_ANON
-Date: Sat,  3 May 2025 22:12:24 +0100
-Message-ID: <8141b4013644e4b8533d69ee297bb00516468ef9.1746305604.git.lorenzo.stoakes@oracle.com>
+Subject: [RFC PATCH v3 03/11] mm/mremap: add MREMAP[_MUST]_RELOCATE_ANON support for large folios
+Date: Sat,  3 May 2025 22:12:25 +0100
+Message-ID: <8ca7c8219a2a0e67e1c5c277d0c0d070052de401.1746305604.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746305604.git.lorenzo.stoakes@oracle.com>
 References: <cover.1746305604.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0225.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:315::10) To DM4PR10MB8218.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO2P265CA0325.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a4::25) To DM4PR10MB8218.namprd10.prod.outlook.com
  (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -111,231 +111,538 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH2PR10MB4373:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1519698e-1581-4002-9ee3-08dd8a874303
+X-MS-Office365-Filtering-Correlation-Id: 1084e05c-f038-428b-40b5-08dd8a874473
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hLUuQzYI6U5eDAQH/ioDkwBZZQZsDPTMBT1w32jeC7IzI1R5JjaVrLydcfgN?=
- =?us-ascii?Q?Mg9tl1LfrHgPDNLxQeVcB2B+qlCo06uP38Z7aZr7MD+T1w9xT4PDO+w0r3z+?=
- =?us-ascii?Q?u1yAi90Hs//XvZBf4lJVqxYp9DAbeod3zMjejxjggPvduo+zYCNT4OhBbbkn?=
- =?us-ascii?Q?8QhEkPgBeJiN5v6BmTQdFmhsMecYjmsdhwLqMZr0Xtf8sLQzVaDZo8qY6vsy?=
- =?us-ascii?Q?HdvcDlKMW9taowbyHid7JdiBpPwJl1McoDLHW7A11R4CwBmsrwhAS/SCWpD8?=
- =?us-ascii?Q?6GhJn+p7vygy9z/PWLJZx8YSpY0Ba9Kcswc4yfepPIZZbNO/qhg7GGu7BafT?=
- =?us-ascii?Q?dF+iQmg5W9T2z5YGE6f1Fx1w4AiK/SnpFYEaYpxkCs6pxT+JEVL2yGP206Sj?=
- =?us-ascii?Q?7DPAzV1ZmnQlYiOwQBUJvEWNDT+ThXLcAnCcfqy99Et2a5leAmYpFX9ku6t+?=
- =?us-ascii?Q?GzV5zqyXYE6Za1ent5muQ0P0FYIiaNxv7Imnb2P3Iv6KeiMWAiuCl6EfU3bR?=
- =?us-ascii?Q?xkYJU5Rby3u9q5EOcRbVGQUgHWf+lYB4/M4Q6lQLO79dt1c7HDZlU46URNaK?=
- =?us-ascii?Q?rarykAuPkPtzsbAB0AwSB3VLWkU3OGHsLrEWMfhqfwiY1l2EXXsx0+zHhwoM?=
- =?us-ascii?Q?7N5rOTr7qaJyZHqHA5PfTppxAq/tHJPHbJi9ySVcVvfrsibKpPd+fhM7QPGj?=
- =?us-ascii?Q?Rv9YOPw6FDrPb3076a2Z5AB6rHNb535San3KQgDoYf+bjsdBFMKn19Nfx4ly?=
- =?us-ascii?Q?3eX93rjt9C0POHuKMM7GOH3kDwSLYyIo1BzIwFSJ2VStz4ysL7qACZ1r3SMG?=
- =?us-ascii?Q?ETUqMGZIDn3j0+1aWEiUIP4HkPEGe2E42yVr+hweaQ67awkA7+8cCNMz5KMq?=
- =?us-ascii?Q?DZhXYB6UF1sjH9W8OxI1RpBJbmV/GiIcZE7odbEGL9CEliB1NRMgOX6RtMXM?=
- =?us-ascii?Q?E5FkbzDwSpkrHd1/H4Ve29AV6gafw01qaWglGP7IG0Pfjg26PUHwkpZYxyhA?=
- =?us-ascii?Q?zOOzuR1FgvkKi+/xUhBiCU13ssSbZUcubR/lYYvMtLDeSDsrF6drIElgNRKp?=
- =?us-ascii?Q?cPiOgmm7vNuV/aEfOqvks/0v+J7Jra24skmygUO1Jc6/h21E/zIlEi1Z0qcc?=
- =?us-ascii?Q?wp5XhOgPkZoVBVna/CgUEWQAz+nioMFzeRVYmRTUryfiLvjYCuiWLV8OgQYn?=
- =?us-ascii?Q?mn/m3qQZ6TWULTdOZo3Q5lS62linmw89kea8R4FGr8B0/WiTWFS7nvCIOlNF?=
- =?us-ascii?Q?xCizRM152qswjojv3PEEWXAOcu8eHhgJ3hZeFf6/iP1xR+9YzaaqhyBtofKN?=
- =?us-ascii?Q?YZQoBEcCqD7XXx1SxUWplg/1s+KPX3HDnn5AYdaZKOc8nODmLYBOBoyNE13b?=
- =?us-ascii?Q?mnl13Cq4WW+/ftedS8zmfTs35ywxa7i19YaSYGuwk/fFGAUVMwSkutl6v9e7?=
- =?us-ascii?Q?HQKrtfTkQzc=3D?=
+	=?us-ascii?Q?b7l5WsZq7f9dO+5c4avuO2PQAgSZ6iVYozcdM+8Ab7xqAK2nuHMsvceMegkZ?=
+ =?us-ascii?Q?mqHAhp96RpFYmo7fGp8h9s71ru4We77ptvfSF0GcRnZFenokrHUTsBSoke5u?=
+ =?us-ascii?Q?WA9PkR0M4JmA3Nqo7f7+Pnbhh5TUGMaSwAl/WgDDZjUqyQiLnfioWE86Htp6?=
+ =?us-ascii?Q?vhwkZANEOvY3HGe51Ejo/z7C8y/hnE62MC/xG8gQr8ld2gMRK8Ts+bg0Nv6S?=
+ =?us-ascii?Q?DiH8qzwktPy1YPY566+d8EL86YjNgEUqyhdmoJ4Q1yrNo+E0nCzPp3SoT4Tg?=
+ =?us-ascii?Q?0+xCH5alZu4vl+oYl8/DboDnOiIz5qrXxIh9JJIY3iCD6e88pj7hGtX76NhS?=
+ =?us-ascii?Q?CMJ6PrgCJchGEC1GwttMhJy6cWqEr4RJd4cOmnxFDJm3EDu3JcXxg0UM/vwU?=
+ =?us-ascii?Q?IPn+TQWWgK6qJtfPYluf1Ipv4Xut/ADdVz0BgKgM67RIvXeQL++HxmT/OvIe?=
+ =?us-ascii?Q?lsc2v0CsAF1LH3Qho20WnivCnMcaYjFF28NuMBclTydfAm78GC3zNLPs6yyq?=
+ =?us-ascii?Q?11YGHwAC7SZi7PxcqUHIcXlp2ataCKTQJwP65EB3lyQqdAsJg7JI4UJmb7MM?=
+ =?us-ascii?Q?ml0vCyETm6OBGd/AMK/VmaV5oqY88pzlBIMmT3xBpI4aNHgU5qzE3BDgbTb+?=
+ =?us-ascii?Q?NI21qRw0WM5ayF5NXBqFQbxRnWsx8fwGYrJvU5CDRvsBsXqVUEiXcC78HOjc?=
+ =?us-ascii?Q?vXw8AvN1pVQ4azcBs8IFSe/e02rr7tg+m2MWZnTuk+b9CBBwkVV2odiIPoeR?=
+ =?us-ascii?Q?8Fi6DNY4e+g5PoJHUITD0cr9/xPIPk2UTNxt+/+Vib+U9wZ3KVadPJZVyfcj?=
+ =?us-ascii?Q?M62J6d7uhV8Y8K/s5an9hfRoCM/7+CExuOKCcMoQ+zMChl4YcdCgfBN+eYnX?=
+ =?us-ascii?Q?XsT3Yu5q/Qv5NmcTmbNEJHpr4opKh1W5bqeECLiXz8TDXZNFrsHjCDgpdesw?=
+ =?us-ascii?Q?L46dr/hBCJGpQHPHa4XQXQAFWex3iRO2POAVpNUEmKq8eWlb6ORwzxR0oPEI?=
+ =?us-ascii?Q?QXxRnx6g0B2XO92y1fTLXa9epxrmZqAOdEOlurhtRI3pFszyq57B3Hu6k40s?=
+ =?us-ascii?Q?KJLT4f4FTapyNpvY2iI1lpfCFOcpQQHA5+z/CH7Jn9GQRrzEgLaEEW+4FE23?=
+ =?us-ascii?Q?/ep99K7qaNLtOVNdf+qDwcJM0tVopcKLR8elTiQnHrs3KO+u2FSQubdm3bi7?=
+ =?us-ascii?Q?mdK/F1taYOrSxhFH8+Scf8G5suhVMn8qN/g+dFyMK7x4SYZjUUpeAIXicAVf?=
+ =?us-ascii?Q?MIW9Nx4T4+8CYXzvqtL7OjM3uTY50Xt04jLplXl8CW92mVrnc9BhDd3D8MNk?=
+ =?us-ascii?Q?FhCxDiY1U64WeXu7u1RcSQ7iRCXNkCfhUb6C93K0kr5usHyI4RHey/64XoyT?=
+ =?us-ascii?Q?54IsEqDu20eXvfdKVR4m+e9tmdUdRdyb7ISq8ZAlwJo2dvkQ9235x5BBCXMq?=
+ =?us-ascii?Q?3LhGwT+nwzo=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DRHww+Vnt7YAV2oCP86GY9dtSkcTp0pNoZH91dsrlWStZM+7opLZe8PdSjVn?=
- =?us-ascii?Q?ZhsYfyWbjcb66bIBhqNJlXEZLlwqxX7IEpomzdQIC6TUC3YI5+qWWHi0XGss?=
- =?us-ascii?Q?nrsjtsq3RHPvP3Kzb6c653anWwJk+tH8/RDA+d7M3NwX6N2Ezy8sJV8mNaFI?=
- =?us-ascii?Q?ALY8Yf0okPlIA22gg1QluJfwtRigBrf3lQ/09n3Xp4kPw3ihdQjyRPEyV+yd?=
- =?us-ascii?Q?fZmfqRvOM9UEvNoJxMqDecgb+6n8BgmYHikOMAc+ZCxzpNt42zPe7KhzEAIl?=
- =?us-ascii?Q?qc8Lyznz7AG8QNtJmBp2K0xAA6vSS4i+CgQZZdJ6A0ZEANK2yij0URyPgBgn?=
- =?us-ascii?Q?iUfnmt+61ouaR+iywc9ygsEKyTJsqCJHi4g7MYeJn99EMt9NQuV9SfPhecFR?=
- =?us-ascii?Q?mWypEBwJZIvEt+4U/nVMGw1fq1Il9aFQDLUcmAdDObMRyobjSnrAtr6LzQqy?=
- =?us-ascii?Q?GpFekHRy6bNmAiQPGVsuXWRByROI8+v2uBcIyG1hzg7JHC14QbF+rOurXF3T?=
- =?us-ascii?Q?9TQe+oCq2jp8lzDQYwMka87DIIcTxPtrrP+Pg9X7YSX3A4oTgJLDFvO2s43/?=
- =?us-ascii?Q?G7jk+YVFFIQO/Rjtd3+FNClpAqnRTA/CDuWLX178n4t7l5r1RqMJ67FxdiWj?=
- =?us-ascii?Q?3w9xhpGZY74LpNtZRkInghNl6/Ov+mN6TFJX/9S6lEQXkoS3tROGJLBkrQys?=
- =?us-ascii?Q?QnNrGMCtF4KHbHg+LPtF8RZz5kT5Pkqf6ilnMuLM/SknVLlvr+VUkFYtxp56?=
- =?us-ascii?Q?NS/VQxFlT7Pra3i+86S1BdKvCC1aavr7OI2lWWJw0jLmSS7p6wYdRl8NWEBg?=
- =?us-ascii?Q?WZXbgAYAA3uqJ5z2Nmpppumuniy4htd0r5+xf5avLVRCY2crErhEWlUv6mJs?=
- =?us-ascii?Q?7hqLUPryQTDcWJJKZwEkrmhe3bwRN4BI3XQkXBlAUjOeje12EuEfcDCZrheB?=
- =?us-ascii?Q?gQBtF9bO1B6ot9Y5Bw+yct+Q+oik8tYQWRGjJG9dxdSbBqOvfxqm9afWsWPU?=
- =?us-ascii?Q?ZE4vHPZlMOxScP4laSGR6HEh6jSlVo1Ypco696PPVG+u9KLJzsUFj+FfKOzz?=
- =?us-ascii?Q?/+fPzZCsTLK1jYJhV0695Q/dULeVIvQoXw2fwoPSAyq+pJCK+yJ3twQEjIyf?=
- =?us-ascii?Q?p80gVvwVH25plhe2d31M0MKu+7BelasipBy40bps1xhsN1SKzw3amvNfS1IB?=
- =?us-ascii?Q?GfTYr/ZcoFmMijb5F5OQNAEtHqq9N/olMFL6nkZ4PhexsGnEAwGklnCyqKOa?=
- =?us-ascii?Q?NjCrFuCI7gMQfDP0+Rys3RqGUDLAOBa/gG0pdojOv64E7DqzHCHzcRQe+MBa?=
- =?us-ascii?Q?KGTamwbpbg2G5QytFo+x5hJxo2fsvHTj8aDbUeawa/913yEPXtu4V0TOllkE?=
- =?us-ascii?Q?CkPhvrLsZzkFilBIFxFT2i8H5A0GBK5JmnDWTK2/YNHQcQ5Xqs+ac9QH0pi6?=
- =?us-ascii?Q?YbdwDZi0e2a7oF4qQyw15VGYJ+jaJw0y2Gk2RGzuy97ODcwsNFzJLsofrX/O?=
- =?us-ascii?Q?MPofg3afoyIf1FFzqIMOW+ZXDoi8zv9oaO7boVMZw9hdWXaPwu1FP7BwgdKe?=
- =?us-ascii?Q?PaZPArP9YV0xjtK+OvrXZnlshrZunhy/2CfwVaT+jm2aU+0Elk8L7bkfevS2?=
- =?us-ascii?Q?IA=3D=3D?=
+	=?us-ascii?Q?de7A9NrxgMwefZBzqrpHOK6g9NfFeUGS7TrZa+BHxHTo9PixZZjv8I2bnDCm?=
+ =?us-ascii?Q?Sf1ZNBbzjFKcf5piIMkfgL25Xhm+CfYsyf48gYN//feXSc20pbyNR/kQ6iTC?=
+ =?us-ascii?Q?WNW4hSj6RnNkMA6Wcwarq6UGmqO2gHN1Zj8ZxVIPN/D26FF2sm0i1XO4bODj?=
+ =?us-ascii?Q?B4tz3OY8KGM3uvMbs0pxG9dbtEKBlDVzKzCwR7oFltpDNMa9GLZ1BdAJ1gQZ?=
+ =?us-ascii?Q?wvlre6knqfIEf4IDtWPWJfPBKQJFsEUwCjxxG2kMtKFwKrCMgknWsRtKWpiu?=
+ =?us-ascii?Q?TwxF4F6yCYsel79wOMTwRFhrr/DeWBiBcvic91UlgdzC5C91bGXmKIuImvjJ?=
+ =?us-ascii?Q?W35E+e2W5MsCjvra1il1uncaEvlY40slkYoQNtKrHFZIodYC0SYHjKT+5zMm?=
+ =?us-ascii?Q?meLbgjU9s0Mr2RfiT5BGSjZATkpJzhGK1odYVQ1Eyx8l3ZJatHpHn9qutt97?=
+ =?us-ascii?Q?INooctzQXesaHKsQA22n/ZPISDGUmURCafxJjwhpAYADjP6EvEriu3EzbbRs?=
+ =?us-ascii?Q?w5VDGtlnxgaN/qN51i2yRPv2L6QtDWwgqrFhupy8DFM0JOasiCNtlDgaebWJ?=
+ =?us-ascii?Q?HKnvxSVkjieS3EYMKdDNuxwIL1WqglTR+sP399ZWTnXW+7VfNJRgveUULsrM?=
+ =?us-ascii?Q?5k7xIiotN/QIn/E6NVh/APxc5LYyWVi3RyHlcWws/gk7ez+vmqSV9xmUbJBi?=
+ =?us-ascii?Q?WSCMHpv3QpFB0x2jWhpp3zHAak0vomO+P52+Igb5OBMZlR1Q578IMsxiS1tU?=
+ =?us-ascii?Q?TcCiJl8iXemqpATy/DOufTdkc0y7JLV6lHswDbaI9XLjS4UG41rl4efqAs0P?=
+ =?us-ascii?Q?4eR2Yvjr0cOWs6O9/m4NCsyJiYB3cNQSA3TUHGL5Y/eDO1NlijfVZN1rrOyN?=
+ =?us-ascii?Q?Q+P8wzbsLMPL6O7HwkLprcQKgxssxlroP2prhApiSmxZk9M8himhum8f8Eot?=
+ =?us-ascii?Q?Y3PNFQlohBtipsf+wksOcm1ql6WHoTgX98qrvMbiX2J3aix+N8vMMn1gjs+t?=
+ =?us-ascii?Q?AfvTD5uCFsEwrcEqW9I4KMOlatkqizduyd5e2JHUVRkyjz13DeaiXr/t2gSb?=
+ =?us-ascii?Q?iKGTX0fkGnkx2R7DGgMnr0vQvXKJoKqvYorvsMu5l9dxToe7ecTF/BlZkjEL?=
+ =?us-ascii?Q?wofoYHtJJk8Oj22KY3ATWzlo34fJP9AptaAZODKlUVl1qcIw5Ip0HVQbJxXx?=
+ =?us-ascii?Q?NLibPuENge+RGBYHx/rctiXo/Qxd0cM5qLXEhxaRPFdYzEjwzHkfLEL5kBsi?=
+ =?us-ascii?Q?LHO/eSM0IC60TydwAobpnwCwXC/40FrkdQ6Se7SX0mgeLtm/YvoVjox3xWqq?=
+ =?us-ascii?Q?uCVQMaKRSyT/3aA6JoN3ejDA6Rq0tp5ksPIyVAaw/MXUVlFB+7jH8MtDJb7w?=
+ =?us-ascii?Q?Pa6lknsS6Yz4Yi7zx/I1Bxh6OIbFmjiL42cRrCbAc7DA8iNpjcFYK8gySEvC?=
+ =?us-ascii?Q?wjtk4lPerAGQ4+C5/bsoEKAgosIqouIl/b2k/SSDLANEzWOVB8cI7m3rWrGx?=
+ =?us-ascii?Q?dPB313S9IewzDSWnY4nyZLpdJUl04V2nuw8L6lMyVx34zyijUFU3KeA0xqjI?=
+ =?us-ascii?Q?0G/piRYO+gpuD4+y3nxQYgB92tkvD/wKyrM4O8fHDUXq67EcJCGXkarsTrrd?=
+ =?us-ascii?Q?Xg=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	XYIiGQXwwV5LbWcr1unrpUQgjV5yn9P5dPcY/FGThlDqGLH2qApsw6+TwyKkzhC14CiwDpnU9CrldLqKK4iCAqrEx59ZZYVvXvJ20/J3ADfXju9KbWWY2YI12ljHGv+IBeRyXVjj75KGqVhZoJwdrUmtdpO0PvgrsadrWbhfNK3IPiEv4cmh+QVCLaPk6CGJgyMFpE61egnA3yrx7nVsxHqecsslv8CpW3arQer6j+0kLHNgY9pV5sC+ALvXIIG0m2zPg56LRAZyCOIYlGcilo+uE9os331wHiSSWmoMVIra5VMirb8Mb6Ts8cy2Ut7X5wSh0fSqjcKRnNIOjhiof5x79mJADFY2rbebk+Z1rByDwzCB6noKlXzx2W1LVhXeStUNoHn9Ihn6ZP3h1y2B8i2ygketJFKGiYP2F4F/g9JL/0qw+1Bs5VMaJ13/56iAI6EkQK8YWf62lurVfX7ekxbaw4t525ks0H5S87k9mBecQWDR1tfdKVbc9lYwYn4riKlm8DCOpj1GqS2pE8OuEgWrVlnoYazbziTbL/q41k1koPGqbdLfKEwZJeXOJdB59tKUEVFhWG/v+uCsaORLOXwMbfToOI76kvRL/uCXHWw=
+	2B44SN8hyIEsBftIYzMsO6ciAPJnK2lPQU00YbndjxPun0CPIYxaFXnq8Z6Sr0WifGscmV5yz/QqxrbFQvkIcAaMoK6CWcAkoMBPpKOlHNoY1iMiTiuzpTAXp3xged9cXRMaNgU+NYhgYpte7sNSRapT5ipiDaFw+Clt6S4S3wpbBaZKLYAVPJPUPOdwLnmzZwwQhT1ZfpWtR1hRZ1H/LOLipLoGAzp4P1vlJRleLMGKVCuXXzkhSR9XtB7dFKws7sGvUkRwlRHU21AuYJL7kepe5N/3VJJPBLvB5hskCOptjCFm3m7AplOWykujpjGw/oCj9+z6AOTnVSo+j6iRLvgkAQds/btWKKowGl/sTVmbFFR3jmkJrtzO6lsVFBdkODLzJSnnhHYp5O0RoI1oRvNazuaYDnn9O/ktpbt6ZIhckGJJxvGbSNqZvCfu6g9lbFH3kaJNIpkh1dbXeKLxNOYBceDkhTv9iiLnqgg8rHdcV0roNKfhygqvNakRWpsf24Ao35qcz8ROdC3rn4SfqEHyFpFrHOiRWxgD6cFK6HDiV+hlUPDQl9misVGijdHYSkIBmpEqJLSbqxBK+x3EOSJSzSGJMqX/Z/Lt5RcFj14=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1519698e-1581-4002-9ee3-08dd8a874303
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1084e05c-f038-428b-40b5-08dd8a874473
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2025 21:12:50.8021
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2025 21:12:53.2316
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z+2mKsq6lQVR4CVHFD0FQL5giOzKCTA4ueh6TbM8fsiKLL++WSsL3lAeg7jkcCNBrNxLYg1dZ6bzMBwEpHhJ8r6DuMjYq9GSW8fWDqTgb38=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9JGHMc8wWJtGpVk4e147DpSA7JNHz6A0uJA8LxgfmXsWZy2s73IHxHgEn5cjDOLHa/9wxI4cjQZp6rhioY0LA4tnrLtOGvHrhd4iV1f36JA=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4373
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-03_09,2025-04-30_01,2025-02-21_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=1 mlxscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
  suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2504070000 definitions=main-2505030196
-X-Authority-Analysis: v=2.4 cv=UcFRSLSN c=1 sm=1 tr=0 ts=681686d6 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=qNC_Z3nAvvFLoNyIVMsA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAzMDE5NyBTYWx0ZWRfXzZN/uLQvKkaG 0heTU3E07H4JQPYZ4UPe5m48VRYtNO65cxU3yCMfc98bNc9sBK+cc8TUp94JdCPdSsXeFjdzfP9 8zavL9GdHG9WbCTcIFBvDS4Fb17otEReRBzNtONMXbjVR/wGz/81X23229ohZyVU50vzJ3nAEcL
- WM+hJ23cNzl4RMt8ghnCDhF1La/WRPP4SQxGLsg+Sb8DGrRMepiE0DeRojkBMkRbDfDh6AeZtq7 oLdsXz0KKs2b0Iy1t6KPUJQ0GdnfxnFwRwJgRZvCQ39g1dCZhk765WbFyFvjr9Bvj1CxgsfEzV6 zTaDQV6Xfsz548K9mKJCasGfrOSHUeEGEXGJnmsxbfTbjNObUVY4fFev9WrkZRw0M+bZiIlka2a
- HGJlI+p7V4D9TvceVyUrUR4NRzFkvWgGBsmpNIE7GrmUdGRGJu8YdCyhtUh4CnYUORGmfW0l
-X-Proofpoint-ORIG-GUID: G3ig-q38caEbYH2_VQcx2UduMje8tEyD
-X-Proofpoint-GUID: G3ig-q38caEbYH2_VQcx2UduMje8tEyD
+X-Proofpoint-GUID: _sV1tnk3uPDkG0Vu5ZYdquPIGRTtLQjq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAzMDE5NSBTYWx0ZWRfXzBzIoaqrvpO3 oSEQAc/ahLvrlnyn4wuoC8TGM9j4V4rWNIy+S+RX2iuEJViT+KDvUYc/HbkkZlkmNXhJCH3yyv6 +WBiA+NhNg7unRPsgL7O32ih7CLUpV7ayiF2kBB1f/Gy/VO3R/CLDt8FMfklmFDfIiWfM7IN3Fe
+ bkYSxR5PAHAg80uS7hpeI7Ut0etvhsioM4lDxg88A3jCQZ6AK4BJn0n7PBdKmhc73ByO8NNLtBP QteFokNhSyvfLAx1K79qaKvIYm6ZvvW5L/cmKMuSqRkxKD4/funpC5ZIPtNH1bboTSCJsZos/ll xBjLuZWvp2y+RSyz2yJR456SnqmvPO23EQRnXIOxadKmLXnogn3ad6UdKFRm2Ms/5K8DYatHlJE
+ xGAsYukDrh4lyj3LN2CX0GZsUkivaX2easYGLSbE96ZdWYIdx67p3NBuTaiVXBmptz+b8ECv
+X-Authority-Analysis: v=2.4 cv=NN/V+16g c=1 sm=1 tr=0 ts=681686d8 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=OzY_kpnUWJltT3yWpIcA:9
+X-Proofpoint-ORIG-GUID: _sV1tnk3uPDkG0Vu5ZYdquPIGRTtLQjq
 
-This flag is the same as MREMAP_RELOCATE_ANON, however it returns an
--EFAULT error should folios not be able to be relocated.
+Larger folios are a challenge, as they might be mapped across multiple
+VMAs, and can be mapped at a higher page table level (PUD, PMD) or also at
+PTE level.
 
-The operation is undone when this occurs so the user can choose to proceed
-without setting this flag at this stage.
+Handle them correctly by checking whether they are fully spanned by the VMA
+we are examining. If so, then we can simply relocate the folio as we would
+any other.
 
-This is useful for cases where a use case absolutely requires mergeability,
-or moreover a user needs to know whether it succeeded or not for internal
-bookkeeping purposes.
+If not, then we must split the folio. If there is a higher level page table
+level mapping the large folio directly then we must also split this.
 
-If the move would be a no-op (could be merged, or folios in range are
-unmapped), then the operation proceeds normally.
+This will be the minority of cases, and if the operation is performed on a
+large, mapping will only be those folios at the start and end of the
+mapping which the mapping is not aligned to.
 
-It is only in instances where we would have fallen back to the usual
-mremap() logic if we were using MREMAP_RELOCATE_ANON that we return -EFAULT
-for MREMAP_MUST_RELOCATE_ANON.
+The net result is that we are able to handle large folios mapped in any
+form which might be encountered correctly.
 
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 ---
- include/uapi/linux/mman.h |  9 +++++----
- mm/mremap.c               | 35 ++++++++++++++++++++++++++---------
- 2 files changed, 31 insertions(+), 13 deletions(-)
+ mm/mremap.c | 327 +++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 297 insertions(+), 30 deletions(-)
 
-diff --git a/include/uapi/linux/mman.h b/include/uapi/linux/mman.h
-index d0542f872e0c..a61dbe1e8b2b 100644
---- a/include/uapi/linux/mman.h
-+++ b/include/uapi/linux/mman.h
-@@ -6,10 +6,11 @@
- #include <asm-generic/hugetlb_encode.h>
- #include <linux/types.h>
- 
--#define MREMAP_MAYMOVE		1
--#define MREMAP_FIXED		2
--#define MREMAP_DONTUNMAP	4
--#define MREMAP_RELOCATE_ANON	8
-+#define MREMAP_MAYMOVE			1
-+#define MREMAP_FIXED			2
-+#define MREMAP_DONTUNMAP		4
-+#define MREMAP_RELOCATE_ANON		8
-+#define MREMAP_MUST_RELOCATE_ANON	16
- 
- #define OVERCOMMIT_GUESS		0
- #define OVERCOMMIT_ALWAYS		1
 diff --git a/mm/mremap.c b/mm/mremap.c
-index 35a984977f85..efa0d3c2ca20 100644
+index efa0d3c2ca20..ce70139ae784 100644
 --- a/mm/mremap.c
 +++ b/mm/mremap.c
-@@ -1383,14 +1383,18 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
-  * is being moved to by updating index and mapping fields accordingly?
-  */
- static bool should_relocate_anon(struct vma_remap_struct *vrm,
--	struct pagetable_move_control *pmc)
-+	struct pagetable_move_control *pmc, int *errp)
+@@ -77,6 +77,7 @@ struct pte_state {
+ 	unsigned long new_addr;
+ 	unsigned long old_end;
+ 	pte_t *ptep;
++	pmd_t *pmdp;
+ 	spinlock_t *ptl;
+ };
+ 
+@@ -532,40 +533,67 @@ enum pgt_entry {
+ 	HPAGE_PUD,
+ };
+ 
+-/*
+- * Returns an extent of the corresponding size for the pgt_entry specified if
+- * valid. Else returns a smaller extent bounded by the end of the source and
+- * destination pgt_entry.
+- */
+-static __always_inline unsigned long get_extent(enum pgt_entry entry,
+-						struct pagetable_move_control *pmc)
++static void __get_mask_size(enum pgt_entry entry,
++		unsigned long *mask, unsigned long *size)
  {
- 	struct vm_area_struct *old = vrm->vma;
- 
- 	/* Currently we only do this if requested. */
--	if (!(vrm->flags & MREMAP_RELOCATE_ANON))
-+	if (!(vrm->flags & (MREMAP_RELOCATE_ANON | MREMAP_MUST_RELOCATE_ANON)))
- 		return false;
- 
-+	/* Failures are fatal in the 'must' case. */
-+	if (vrm->flags & MREMAP_MUST_RELOCATE_ANON)
-+		*errp = -EFAULT;
-+
- 	/* We can't deal with special or hugetlb mappings. */
- 	if (old->vm_flags & (VM_SPECIAL | VM_HUGETLB))
- 		return false;
-@@ -1399,14 +1403,17 @@ static bool should_relocate_anon(struct vma_remap_struct *vrm,
- 	if (!vma_is_anonymous(old))
- 		return false;
- 
--	/* If no folios are mapped, then no need to attempt this. */
--	if (!old->anon_vma)
--		return false;
+-	unsigned long next, extent, mask, size;
+-	unsigned long old_addr = pmc->old_addr;
+-	unsigned long old_end = pmc->old_end;
+-	unsigned long new_addr = pmc->new_addr;
 -
- 	/* We don't allow relocation of non-exclusive folios. */
- 	if (vma_maybe_has_shared_anon_folios(old))
- 		return false;
- 
-+	/* Below issues are non-fatal in 'must' case. */
-+	*errp = 0;
+ 	switch (entry) {
+ 	case HPAGE_PMD:
+ 	case NORMAL_PMD:
+-		mask = PMD_MASK;
+-		size = PMD_SIZE;
++		*mask = PMD_MASK;
++		*size = PMD_SIZE;
+ 		break;
+ 	case HPAGE_PUD:
+ 	case NORMAL_PUD:
+-		mask = PUD_MASK;
+-		size = PUD_SIZE;
++		*mask = PUD_MASK;
++		*size = PUD_SIZE;
+ 		break;
+ 	default:
+ 		BUILD_BUG();
+ 		break;
+ 	}
++}
 +
-+	/* If no folios are mapped, then no need to attempt this. */
-+	if (!old->anon_vma)
++/* Same as get extent, only ignores new address.  */
++static unsigned long __get_old_extent(struct pagetable_move_control *pmc,
++		unsigned long mask, unsigned long size)
++{
++	unsigned long next, extent;
++	unsigned long old_addr = pmc->old_addr;
++	unsigned long old_end = pmc->old_end;
+ 
+ 	next = (old_addr + size) & mask;
+ 	/* even if next overflowed, extent below will be ok */
+ 	extent = next - old_addr;
+ 	if (extent > old_end - old_addr)
+ 		extent = old_end - old_addr;
++
++	return extent;
++}
++
++static unsigned long get_old_extent(enum pgt_entry entry,
++		struct pagetable_move_control *pmc)
++{
++	unsigned long mask, size;
++
++	__get_mask_size(entry, &mask, &size);
++	return __get_old_extent(pmc, mask, size);
++}
++
++/*
++ * Returns an extent of the corresponding size for the pgt_entry specified if
++ * valid. Else returns a smaller extent bounded by the end of the source and
++ * destination pgt_entry.
++ */
++static __always_inline unsigned long get_extent(enum pgt_entry entry,
++						struct pagetable_move_control *pmc)
++{
++	unsigned long next, extent, mask, size;
++	unsigned long new_addr = pmc->new_addr;
++
++	__get_mask_size(entry, &mask, &size);
++
++	extent = __get_old_extent(pmc, mask, size);
++
+ 	next = (new_addr + size) & mask;
+ 	if (extent > next - new_addr)
+ 		extent = next - new_addr;
+@@ -795,6 +823,165 @@ static unsigned long pmc_progress(struct pagetable_move_control *pmc)
+ 	return old_addr < orig_old_addr ? 0 : old_addr - orig_old_addr;
+ }
+ 
++/* Assumes folio lock is held. */
++static bool __relocate_large_folio(struct pagetable_move_control *pmc,
++		unsigned long old_addr, unsigned long new_addr,
++		struct folio *folio, bool undo)
++{
++	pgoff_t new_index;
++	struct vm_area_struct *old = pmc->old;
++	struct vm_area_struct *new = pmc->new;
++
++	VM_WARN_ON_ONCE(!folio_test_locked(folio));
++
++	/* no-op. */
++	if (!folio_test_anon(folio))
++		return true;
++
++	if (!undo)
++		new_index = linear_page_index(new, new_addr);
++	else
++		new_index = linear_page_index(old, old_addr);
++
++	/* See comment in relocate_anon_pte(). */
++	folio_move_anon_rmap(folio, undo ? old : new);
++	WRITE_ONCE(folio->index, new_index);
++	return true;
++}
++
++static bool relocate_large_folio(struct pagetable_move_control *pmc,
++		unsigned long old_addr, unsigned long new_addr,
++		struct folio *folio, bool undo)
++{
++	bool ret;
++
++	folio_lock(folio);
++
++	if (!folio_test_large(folio) || folio_test_ksm(folio)) {
++		ret = false;
++		goto out;
++	}
++
++	/* See relocate_anon_pte() for description. */
++	if (WARN_ON_ONCE(folio_maybe_mapped_shared(folio))) {
++		ret = false;
++		goto out;
++	}
++	if (folio_maybe_dma_pinned(folio)) {
++		ret = false;
++		goto out;
++	}
++
++	ret = __relocate_large_folio(pmc, old_addr, new_addr, folio, undo);
++
++out:
++	folio_unlock(folio);
++	return ret;
++}
++
++static bool relocate_anon_pud(struct pagetable_move_control *pmc,
++		pud_t *pudp, bool undo)
++{
++	spinlock_t *ptl;
++	pud_t pud;
++	struct folio *folio;
++	struct page *page;
++	bool ret;
++	unsigned long old_addr = pmc->old_addr;
++	unsigned long new_addr = pmc->new_addr;
++
++	VM_WARN_ON(old_addr & ~HPAGE_PUD_MASK);
++	VM_WARN_ON(new_addr & ~HPAGE_PUD_MASK);
++
++	ptl = pud_trans_huge_lock(pudp, pmc->old);
++	if (!ptl)
 +		return false;
 +
- 	/* Otherwise, we're good to go! */
- 	return true;
- }
-@@ -1458,7 +1465,10 @@ static int copy_vma_and_data(struct vma_remap_struct *vrm,
- 	struct vm_area_struct *new_vma;
- 	int err = 0;
- 	PAGETABLE_MOVE(pmc, NULL, NULL, vrm->addr, vrm->new_addr, vrm->old_len);
--	bool relocate_anon = should_relocate_anon(vrm, &pmc);
-+	bool relocate_anon = should_relocate_anon(vrm, &pmc, &err);
++	pud = pudp_get(pudp);
++	if (!pud_present(pud)) {
++		ret = true;
++		goto out;
++	}
++	if (!pud_leaf(pud)) {
++		ret = false;
++		goto out;
++	}
 +
-+	if (err)
-+		return err;
++	page = pud_page(pud);
++	if (!page) {
++		ret = true;
++		goto out;
++	}
++
++	folio = page_folio(page);
++	ret = relocate_large_folio(pmc, old_addr, new_addr, folio, undo);
++
++out:
++	spin_unlock(ptl);
++	return ret;
++}
++
++static bool relocate_anon_pmd(struct pagetable_move_control *pmc,
++		pmd_t *pmdp, bool undo)
++{
++	spinlock_t *ptl;
++	pmd_t pmd;
++	struct folio *folio;
++	bool ret;
++	unsigned long old_addr = pmc->old_addr;
++	unsigned long new_addr = pmc->new_addr;
++
++	VM_WARN_ON(old_addr & ~HPAGE_PMD_MASK);
++	VM_WARN_ON(new_addr & ~HPAGE_PMD_MASK);
++
++	ptl = pmd_trans_huge_lock(pmdp, pmc->old);
++	if (!ptl)
++		return false;
++
++	pmd = pmdp_get(pmdp);
++	if (!pmd_present(pmd)) {
++		ret = true;
++		goto out;
++	}
++	if (is_huge_zero_pmd(pmd)) {
++		ret = true;
++		goto out;
++	}
++	if (!pmd_leaf(pmd)) {
++		ret = false;
++		goto out;
++	}
++
++	folio = pmd_folio(pmd);
++	if (!folio) {
++		ret = true;
++		goto out;
++	}
++
++	ret = relocate_large_folio(pmc, old_addr, new_addr, folio, undo);
++out:
++	spin_unlock(ptl);
++	return ret;
++}
++
++/*
++ * Is the THP discovered at old_addr fully spanned at both the old and new VMAs?
++ */
++static bool is_thp_fully_spanned(struct pagetable_move_control *pmc,
++				 unsigned long old_addr,
++				 size_t thp_size)
++{
++	unsigned long old_end = pmc->old_end;
++	unsigned long orig_old_addr = old_end - pmc->len_in;
++	unsigned long aligned_start = old_addr & ~(thp_size - 1);
++	unsigned long aligned_end = aligned_start + thp_size;
++
++	if (aligned_start < orig_old_addr || aligned_end > old_end)
++		return false;
++
++	return true;
++}
++
+ /*
+  * If the folio mapped at the specified pte entry can have its index and mapping
+  * relocated, then do so.
+@@ -811,10 +998,12 @@ static unsigned long relocate_anon_pte(struct pagetable_move_control *pmc,
+ 	unsigned long ret = 1;
+ 	unsigned long old_addr = state->old_addr;
+ 	unsigned long new_addr = state->new_addr;
++	struct mm_struct *mm = current->mm;
  
- again:
- 	new_vma = copy_vma(&vma, vrm->new_addr, vrm->new_len, new_pgoff,
-@@ -1489,6 +1499,12 @@ static int copy_vma_and_data(struct vma_remap_struct *vrm,
+ 	old = pmc->old;
+ 	new = pmc->new;
  
- 			do_munmap(current->mm, start, size, NULL);
- 			relocate_anon = false;
-+			if (vrm->flags & MREMAP_MUST_RELOCATE_ANON) {
-+				vrm_uncharge(vrm);
-+				*new_vma_ptr = NULL;
-+				return -EFAULT;
++retry:
+ 	pte = ptep_get(state->ptep);
+ 
+ 	/* Ensure we have truly got an anon folio. */
+@@ -851,13 +1040,55 @@ static unsigned long relocate_anon_pte(struct pagetable_move_control *pmc,
+ 	if (folio_maybe_dma_pinned(folio))
+ 		goto out;
+ 
+-	/*
+-	 * This should not happen as we explicitly disallow this, but check
+-	 * anyway.
+-	 */
++	/* If a split huge PMD, try to relocate all at once. */
+ 	if (folio_test_large(folio)) {
+-		ret = 0;
+-		goto out;
++		size_t size = folio_size(folio);
++
++		if (is_thp_fully_spanned(pmc, old_addr, size) &&
++		    __relocate_large_folio(pmc, old_addr, new_addr, folio, undo)) {
++			VM_WARN_ON_ONCE(old_addr & (size - 1));
++			ret = folio_nr_pages(folio);
++			goto out;
++		} else {
++			int err;
++			struct anon_vma *anon_vma = folio_anon_vma(folio);
++
++			/*
++			 * If the folio has the anon_vma whose lock we hold, we
++			 * have a problem, as split_folio() will attempt to lock
++			 * the already-locked anon_vma causing a deadlock. In
++			 * this case, bail out.
++			 */
++			if (anon_vma->root == pmc->relocate_locked->anon_vma->root) {
++				ret = 0;
++				goto out;
 +			}
 +
- 			goto again;
- 		}
++			/* split_folio() expects elevated refcount. */
++			folio_get(folio);
++
++			/*
++			 * We must relinquish/reacquire the PTE lock over this
++			 * operation. We hold the folio lock and an increased
++			 * reference count, so there's no danger of the folio
++			 * disappearing beneath us.
++			 */
++			pte_unmap_unlock(state->ptep, state->ptl);
++			err = split_folio(folio);
++			state->ptep = pte_offset_map_lock(mm, state->pmdp,
++							  old_addr, &state->ptl);
++			folio_unlock(folio);
++			folio_put(folio);
++
++			if (err || !state->ptep)
++				return 0;
++
++			/*
++			 * If we split, we need to look up the folio again, so
++			 * simply retry the operation.
++			 */
++			goto retry;
++		}
  	}
-@@ -1843,7 +1859,7 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
  
- 	/* Ensure no unexpected flag values. */
- 	if (flags & ~(MREMAP_FIXED | MREMAP_MAYMOVE | MREMAP_DONTUNMAP |
--		      MREMAP_RELOCATE_ANON))
-+		      MREMAP_RELOCATE_ANON | MREMAP_MUST_RELOCATE_ANON))
- 		return -EINVAL;
+ 	if (!undo)
+@@ -904,6 +1135,7 @@ static bool relocate_anon_ptes(struct pagetable_move_control *pmc,
+ 		.old_addr = pmc->old_addr,
+ 		.new_addr = pmc->new_addr,
+ 		.old_end = pmc->old_addr + extent,
++		.pmdp = pmdp,
+ 	};
+ 	pte_t *ptep_start;
+ 	bool ret;
+@@ -953,29 +1185,64 @@ static bool __relocate_anon_folios(struct pagetable_move_control *pmc, bool undo
+ 		pmd_t pmd;
+ 		pud_t pud;
  
- 	/* Start address must be page-aligned. */
-@@ -1859,7 +1875,8 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
- 		return -EINVAL;
+-		extent = get_extent(NORMAL_PUD, pmc);
++		extent = get_old_extent(NORMAL_PUD, pmc);
  
- 	/* We can't relocate without allowing a move. */
--	if ((flags & MREMAP_RELOCATE_ANON) && !(flags & MREMAP_MAYMOVE))
-+	if ((flags & (MREMAP_RELOCATE_ANON | MREMAP_MUST_RELOCATE_ANON)) &&
-+	     !(flags & MREMAP_MAYMOVE))
- 		return -EINVAL;
+ 		pudp = get_old_pud(mm, pmc->old_addr);
+ 		if (!pudp)
+ 			continue;
+ 		pud = pudp_get(pudp);
++		if (pud_trans_huge(pud)) {
++			unsigned long old_addr = pmc->old_addr;
++
++			if (extent != HPAGE_PUD_SIZE)
++				return false;
  
- 	/* Remainder of checks are for cases with specific new_addr. */
+-		if (pud_trans_huge(pud) || pud_devmap(pud))
++			VM_WARN_ON_ONCE(old_addr & ~HPAGE_PUD_MASK);
++
++			/* We may relocate iff the new address is aligned. */
++			if (!(pmc->new_addr & ~HPAGE_PUD_MASK) &&
++			    is_thp_fully_spanned(pmc, old_addr, HPAGE_PUD_SIZE)) {
++				if (!relocate_anon_pud(pmc, pudp, undo))
++					return false;
++				continue;
++			}
++
++			/* Otherwise, we split so we can do this with PMDs/PTEs. */
++			split_huge_pud(pmc->old, pudp, old_addr);
++		} else if (pud_devmap(pud)) {
+ 			return false;
++		}
+ 
+-		extent = get_extent(NORMAL_PMD, pmc);
++		extent = get_old_extent(NORMAL_PMD, pmc);
+ 		pmdp = get_old_pmd(mm, pmc->old_addr);
+ 		if (!pmdp)
+ 			continue;
+ 		pmd = pmdp_get(pmdp);
+-
+-		if (is_swap_pmd(pmd) || pmd_trans_huge(pmd) ||
+-		    pmd_devmap(pmd))
+-			return false;
+-
+ 		if (pmd_none(pmd))
+ 			continue;
+ 
++		if (pmd_trans_huge(pmd)) {
++			unsigned long old_addr = pmc->old_addr;
++
++			if (extent != HPAGE_PMD_SIZE)
++				return false;
++
++			VM_WARN_ON_ONCE(old_addr & ~HPAGE_PMD_MASK);
++
++			/* We may relocate iff the new address is aligned. */
++			if (!(pmc->new_addr & ~HPAGE_PMD_MASK) &&
++			    is_thp_fully_spanned(pmc, old_addr, HPAGE_PMD_SIZE)) {
++				if (!relocate_anon_pmd(pmc, pmdp, undo))
++					return false;
++				continue;
++			}
++
++			/* Otherwise, we split so we can do this with PTEs. */
++			split_huge_pmd(pmc->old, pmdp, old_addr);
++		} else if (is_swap_pmd(pmd) || pmd_devmap(pmd)) {
++			return false;
++		}
++
+ 		if (!relocate_anon_ptes(pmc, extent, pmdp, undo))
+ 			return false;
+ 	}
 -- 
 2.49.0
 
