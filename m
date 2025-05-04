@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-631573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A37CAA8A0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 01:33:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7679CAA8A0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 01:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93CB97A8CE7
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 23:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C011895098
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 23:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF9B250C1C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E67250C09;
 	Sun,  4 May 2025 23:32:25 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641EA24BBFF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D05024BBFA;
 	Sun,  4 May 2025 23:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746401544; cv=none; b=EEYCn7iBJ+JQHuAWuTxmk0DE4vynRh04W+iieWkt+h/Z2D9pAz/1xkqTII1fHjPC3qVmr9mRjfuBAyNrrSiA7ZrWZ0TEsXvoPYP1gBx533dRFZVoE6NTqso+e0g5P/ODGM0uT8QSVFLPEW/T+g/FTS1v5e/ckSPx6feBAgvqT98=
+	t=1746401544; cv=none; b=PM6qEsYZHfCZoRUWpOBzz9vDId71SNBnj/C5RiM8gF/SL1SMfkGJKF4tAP652sKBwIWkh5wYQO3IuGZkVW/cEy+2ZC0amjUylO62vWN7itxgIqPKs/1AtieEwzvnxl9kah74mqVkZd17VkAw+t1sdVdP+E7pINEKNNKhfmWD2Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746401544; c=relaxed/simple;
-	bh=obM2gqiCgCvLNKL1QVcio0LYuOkw8F8jjmVGogoyKg4=;
+	bh=iHxExqdpCUO0hZu9dF77QQEQ3XQrFK96IJ2ClCtqM3U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K3HBye8izELKNo4ORO2x2R/YBRkPV9uzAit8axHlOuzdZhaHGGHKCYRu+zZCl+r+0bhlL2ldLkzcykTA28HRwayAF+n/l9+VoXi6wdi8FJ78KiGDlAgE3+st9iAugDg7R9qLaF+x1Te09WnSrxW3GP/hataX3y3oLyIgg/4ANiE=
+	 MIME-Version; b=MZGIe2AYCyd40OKA3na/G1UKtB+DzuRMgOnBwmkEfbtUPiXoMV8czJ98tJhBYQtvoOa2ybH27yiLy/rS1zrH9nG/Zvs+2QHTsTVgWj2MAKfn0QwHqBY2MWjAshU3D0SQU+rOgwxFdME5LGnoCvZGEh8OJDV7XrI1dop/dUlKM/E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C420A1E8D;
-	Sun,  4 May 2025 16:32:12 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD9B31EA6;
+	Sun,  4 May 2025 16:32:13 -0700 (PDT)
 Received: from u200865.usa.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D3CC3F58B;
-	Sun,  4 May 2025 16:32:21 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80C013F58B;
+	Sun,  4 May 2025 16:32:22 -0700 (PDT)
 From: Jeremy Linton <jeremy.linton@arm.com>
 To: linux-trace-kernel@vger.kernel.org
 Cc: linux-perf-users@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-perf-users@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v3 6/7] arm64: Kconfig: Remove GCS restrictions on UPROBES
-Date: Sun,  4 May 2025 18:32:02 -0500
-Message-ID: <20250504233203.616587-7-jeremy.linton@arm.com>
+Subject: [PATCH v3 7/7] uprobes: uprobe_warn should use passed task
+Date: Sun,  4 May 2025 18:32:03 -0500
+Message-ID: <20250504233203.616587-8-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250504233203.616587-1-jeremy.linton@arm.com>
 References: <20250504233203.616587-1-jeremy.linton@arm.com>
@@ -70,26 +70,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that the uprobe paths have been made GCS compatible
-drop the Kconfig restriction.
+uprobe_warn() is passed a task structure, yet its using current. For
+the most part this shouldn't matter, but since a task structure is
+provided, lets use it.
 
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 ---
- arch/arm64/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/events/uprobes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a182295e6f08..b962a1321ebf 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -2236,7 +2236,6 @@ config ARM64_GCS
- 	default y
- 	select ARCH_HAS_USER_SHADOW_STACK
- 	select ARCH_USES_HIGH_VMA_FLAGS
--	depends on !UPROBES
- 	help
- 	  Guarded Control Stack (GCS) provides support for a separate
- 	  stack with restricted access which contains only return
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 8d783b5882b6..6552d9815292 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -120,7 +120,7 @@ struct xol_area {
+ 
+ static void uprobe_warn(struct task_struct *t, const char *msg)
+ {
+-	pr_warn("uprobe: %s:%d failed to %s\n", current->comm, current->pid, msg);
++	pr_warn("uprobe: %s:%d failed to %s\n", t->comm, t->pid, msg);
+ }
+ 
+ /*
 -- 
 2.49.0
 
