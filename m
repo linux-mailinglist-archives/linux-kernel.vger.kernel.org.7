@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-631407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8719DAA87E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8DCAA87AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0890177E9B
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:16:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C374175E17
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E462C1F4717;
-	Sun,  4 May 2025 16:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B9D1DE2CB;
+	Sun,  4 May 2025 16:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N6XVvHgG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9osQcVM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EB51F3FC0
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 16:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202685695;
+	Sun,  4 May 2025 16:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746375238; cv=none; b=EBahccduC5EvQMg+0qLAUvMahWtOZ4qWF1yHeXUh7hTKX3hcgcRzcezWVfcEW9tjZw87y4fl94VYBpmjmmn7ShVANANLGm12AUmljpp/IJ2xZgZeR8x0PEi6xv84tefpuySX/pnOnZfmwg4TSVsFHwhMxNRTwU6ThYn9YRhOp/k=
+	t=1746375216; cv=none; b=LCuYGpORRphf9WgYFbLIRLGetQYpuxNvqY6IYdnd/W4ejbOMDsY8Yyfu3NpMxlSFl4fgV/EmdvLRzAOT1jACr6t8FuknKx5S+R5JR7qi9mniJSKERhKqlIeDPk/16ZPdxS3SCYnqT4JEyzmV0sKlowZt5pXaGRv4kmHDVeGqIlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746375238; c=relaxed/simple;
-	bh=LiiIOXZeFcrFR5Wr0strWiFYZsNp/GL21CWg7UxWNPg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L4WOTXGBBINVCJpVAv6uJs6n//q1F3JEvazwdXslA7n735ErW418DNf2a/L9rHUUE0I9zQjunHWVRBau2MMix46E+hwy9BC0QPw71W2jXH4pNQvZTNGexM4s3dd6UWC8RSKgL/wLpXwR9RNS2/ET3RDgezCSByT/hv19uTmZc0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N6XVvHgG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 544DPAc3029374
-	for <linux-kernel@vger.kernel.org>; Sun, 4 May 2025 16:13:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YpRdgnHDvP7D1x0JNflI0yCjzYKAnzgn37H44xlpJs4=; b=N6XVvHgGqVq3Z7nF
-	Dp/qgyhEEixJjIPcyfF/FVcF3tF8iAb0lPBL4wN7eUcHf/9BPKZmPls3EXW7Ow8+
-	DmXSjGiJXrvY8HkXyCLb4uXat8Jqaf88jwMilaK7aKcT/qH583+aO4h5U9h/R2Ra
-	Drb0QYDMSb4YjcrUn93uJLVkpE8RoiEc3ow7FMXxFPkPeBckF2VmDi+V85hvuyiO
-	fhqs4fRsyrVjmnCPB2GlLA8HnKzqAhFN3ZjfnhDeeI0G2Gl/WrgJ+EbgJ9uxoJh1
-	r5Ys0wic3+ERFACI7yTsdSPwaUfOztpsF9r8KQRf7iehupnxHC5CaFLSp9o59ELu
-	zARDPQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dcakj343-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 16:13:55 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4853364ad97so46945621cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 09:13:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746375234; x=1746980034;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YpRdgnHDvP7D1x0JNflI0yCjzYKAnzgn37H44xlpJs4=;
-        b=oVlGugU327AML2Ze5VZHu5QF5KvWuXI7lJYMlbCxQax6+p6GD4qmC6MTLdKGXquxxY
-         mZU/Afz43y1TiivxuBLrwtf5So+1S7kJmB78c4C5cE112uWIgVMBbfqDEPEuu4oLutKF
-         D8eHcEMIpC+UBVS9FERVuaqs165QbCHGo0X1SV6pbSUlFOKw7bh9U+5wOu5SXlbPQOdK
-         oRedm9vqobwdwsQXh7n9RVn5CiZQ+1a6jLBEeFnVUUw+TE34ACEKln56/RKI0EB8tPov
-         yDLt817qbZUUhcXGShTzASiNYx4e8atBgqZNVS8+IomuLu0zg8zCnkskwiXzUZkAPOmI
-         ACaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdCyoDD4RCWKb2vZVwX/VkQwezrQxBSBcd5dx5pOuCDEk6dBS1z/KzGqp579IWFLQN52mohgpG89ncnqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDiEVIMLSOf6QP0IytLf/oQYiovJSizypKgaK4Mqk3p8Phnhna
-	5RWdcax6kaQV8cmNxqBTxrlO/pb7VhvCreeIktg29PLdOKMrfycXCbMQ4fM0wCSXSRhDXQyjt38
-	8diGb0SyE55y78LVueZ5R8PsMR2KXc7OOLdJ6PEExgKvJNuQ4282Vng2Mwk+z/rA=
-X-Gm-Gg: ASbGnctN/w8ksnZHOgSYltEje3F8dc64IDRFNLrxWRt+6A1POcAqVQyKAKsSx5+PQXt
-	pqTHe4JJ65j4bq/j7yxRNmY1yCINSXw/2oIdioVg/6vBeFZJgszD2k44kekWAZZlPT+QZ7wUWH/
-	xazygeEQtaw+l92xHRYK3sWzMLgkccAcmIKhcWDMtAH614gZOIp3Owh1p+MDxquYj2dGhG0Rk4q
-	aIysgTi82/fP+QyL2Ums4Bn3wkpFk6KEuNEp6XPqhQVHsqXmH5QhXQThdpIixpyBc1wj4IOJndC
-	srL5OALdQWGCq/r7oKJNYTpAuDRjQ2PpCc+FTxMc74wOrmf9YaPeyBM1vMMla93A3xiV507TXEJ
-	FTQh1QqvLyumHsERwuUYqJoG0
-X-Received: by 2002:ac8:7f0d:0:b0:476:a895:7e82 with SMTP id d75a77b69052e-48e01552584mr75446021cf.50.1746375234625;
-        Sun, 04 May 2025 09:13:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhEOxFwHYPaRivE5KuBUUSrIQdtLUQdGkwtMO2jrXIxKo/JL2oOjaGV22aEcp+VehZmah9tA==
-X-Received: by 2002:ac8:7f0d:0:b0:476:a895:7e82 with SMTP id d75a77b69052e-48e01552584mr75445631cf.50.1746375234338;
-        Sun, 04 May 2025 09:13:54 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94ee937sm1335231e87.142.2025.05.04.09.13.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 May 2025 09:13:53 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: robdclark@gmail.com, sean@poorly.run, konradybcio@kernel.org,
-        quic_abhinavk@quicinc.com, lumag@kernel.org,
-        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
-        Chen Ni <nichen@iscas.ac.cn>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm: Convert comma to semicolon
-Date: Sun,  4 May 2025 19:13:30 +0300
-Message-Id: <174637445763.1385605.2171270817711925653.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250410025221.3358387-1-nichen@iscas.ac.cn>
-References: <20250410025221.3358387-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1746375216; c=relaxed/simple;
+	bh=gnfvGF5umEPHtAwOpL7GT8GArnNx+24y7yXlpuUgoh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Os9KOyLaHJRO996gQW6b3SuJ7zlc4FY6UOo38WdS2jtmYn9EXMmMqf+eUNAaAOzp93yxgJbwf7CgSY+EVkQecZo5dDuksd1zYmufVq5IxnlrO/ZWWiSoAXJOqkQqL8Q7wDpLeFrriZh+7rs2s+hp1eJXOMCy8Hxgwhgcjozmitw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9osQcVM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32721C4CEE7;
+	Sun,  4 May 2025 16:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746375213;
+	bh=gnfvGF5umEPHtAwOpL7GT8GArnNx+24y7yXlpuUgoh4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z9osQcVMXzJi1v6e35fstCW+Q1WW8evam2sBWGak6A4RdMWopNyU4Uaf0EudQz48m
+	 5r1xAPro0y8Qvu5R4GBOUzstwL1mUDxZoSDlnc/u4pMtHCnoebA9h2GPSpzh3S8nn3
+	 EWSCAVQKLlnvE6AtmU9mEnKexAYFh5ajWfhCtDShRAoqMvUm+Zi3lCelaH0/eIf9rG
+	 xrOkRh75TpZh539k0iIbVwf2ESIv+dd0SE5tl2R9iIjpuPFMn6pknCaqbMS8FXBU3h
+	 FQ+xypd23+99+2zN+U7fV2VDmUBQ1vMSNCGSQmKbmffjOxMA1aujpo7rBvQ6Zdt8Zr
+	 3/CREr04jSuCg==
+Message-ID: <c88f59dd-2319-41d2-a21e-6fa7c205b1d0@kernel.org>
+Date: Sun, 4 May 2025 18:13:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA0MDE1MiBTYWx0ZWRfX4fAyucT8FK5w
- daLNIYlbeS5foqr2Yn4Ti1gPJdC4y+Pgo/pVDMBRRGekosdZrMwlUTVdTvSjxMB8Llzq9jkEmsm
- 3+ySwfa9zfrInZ7aaZRc0zTdnRP1+5VFFEcP6Q2OE445iUaFYXIMfR8U7Xyn+/Z9uBcXskIcm/8
- kni1ud8Py9rf15Q8CnsJ9keTriqY48aW9KIx7O/WfaPCgekQiHZLoIAsO0CNvEW3yihUs1zdbLZ
- q8yDnoR8imZp/w2ceYTCu0ESy8O0WvV8zVnJQVbSz57tAlw3ep3q2m1z45JaJZSQhDHekgQyOQv
- mI78zTL+th3comwuAHfPEk1AeUlnW+5UtBd6JPAa8tLJHA86VBAauCrPz4FlZgnPaMCZb4O79Sl
- OydILsX7TT5khKB4EMIKHH31HldEyWxAUtXaM9cY98utj87OFcZEz+bafXMwXLJ6G17NBCwE
-X-Proofpoint-ORIG-GUID: 19e5HhldHADXIrLqhBkIMXBMo3CCMXCv
-X-Authority-Analysis: v=2.4 cv=JtvxrN4C c=1 sm=1 tr=0 ts=68179243 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8 a=sNhlO-HqowW9r6Pg40gA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-GUID: 19e5HhldHADXIrLqhBkIMXBMo3CCMXCv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-04_06,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 bulkscore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 mlxscore=0 suspectscore=0 mlxlogscore=798 clxscore=1015
- malwarescore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505040152
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: tegra210-emc: Support Device Tree EMC Tables
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com>
+ <0dcf786f-d93a-4526-bdc6-e11d59347f98@kernel.org>
+ <CALHNRZ_oxOO_iekbKvN=5mJrR+UEh5jjkZ56UHGTaEAcs-BE3Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALHNRZ_oxOO_iekbKvN=5mJrR+UEh5jjkZ56UHGTaEAcs-BE3Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 10 Apr 2025 10:52:21 +0800, Chen Ni wrote:
-> Replace comma between expressions with semicolons.
+On 04/05/2025 17:58, Aaron Kling wrote:
+>>> +static int tegra210_emc_parse_dt(struct tegra210_emc *emc)
+>>> +{
+>>> +     struct device_node *node, *np = emc->dev->of_node;
+>>> +     int ram_code, ret = 0;
+>>> +
+>>> +     if (!np) {
+>>> +             dev_err(emc->dev, "Unable to find emc node\n");
+>>> +             return -ENODEV;
+>>> +     }
+>>> +
+>>> +     if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
+>>
+>> I cannot find the bindings for this. Where is your DTS? Was it tested?
+>>
+>> It seems nothing here is documented.
 > 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
-> 
-> [...]
+> The relevant nodes are filled in by the bootloader. I had hoped that
+> the early stage bootloader would be able to copy that into the
 
-Applied, thanks!
+It does not matter. You cannot have compatibles and ABI here without
+documenting that ABI.
 
-[1/1] drm/msm: Convert comma to semicolon
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/5db5401c2455
+
 
 Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Krzysztof
 
