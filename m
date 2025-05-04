@@ -1,64 +1,49 @@
-Return-Path: <linux-kernel+bounces-631125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC336AA83B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 05:09:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFA4AA8394
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 04:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F8CF17A731
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 03:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99333B8456
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 02:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D042146A72;
-	Sun,  4 May 2025 03:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=illinois.edu header.i=@illinois.edu header.b="YNj57LkL"
-Received: from mx0a-00007101.pphosted.com (mx0a-00007101.pphosted.com [148.163.135.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F720EAC7
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 03:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AA86F30C;
+	Sun,  4 May 2025 02:11:21 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C5E35977;
+	Sun,  4 May 2025 02:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746328190; cv=none; b=QLLt9ywzN8JGwuIZAnRyPnHSivQWpU79jfXe+M/Uq/dfHxkQKzH1ZcUNNaS0F1Q/ktjnEPOXo+AsUa6ZDPwiLrmirHCnNasTun9GWMwmgiOxH9oh/p23ukyg/8oaS2PqhBu/wIxoA0U61EVqGZGqCYJROE47tclmlt/Pf1E9NRk=
+	t=1746324681; cv=none; b=aD5T2/H0+Mw1U0SkM5vpcnoYMahI7t2veA5i8x5wGE7/YaPt95qGRQQ7sYsiuDKfdrgkOqz188l24T1OZT7/h+W7XfR3aO2LIlubqCqmYFCVtQq9NJPpnw0R0daVWvWSyM8NyCZXw+iP7Uq/Vt16Fukn5T0i1w/8GIQBZDjHaHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746328190; c=relaxed/simple;
-	bh=uGSGfd8aJjeZVERz1reCpqzWG2oOKLe7hui5Gt9AY90=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LjADVoPpVhAfvKg5kO1BU8BHxDcMP0poQ9h/4Tqk2BKfO61k8MEKqomOpBz1MZaWvmQUWiusCQDdvOVSaPkeWrR5wjEy1dbRAQi+mmnrH+eU/SQ27T4yVYLTlZswraWH2L2+pi95DDhMuKt+k7uN+nzGdvJLRDqWzZhKI0mZTeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu; spf=pass smtp.mailfrom=illinois.edu; dkim=pass (2048-bit key) header.d=illinois.edu header.i=@illinois.edu header.b=YNj57LkL; arc=none smtp.client-ip=148.163.135.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=illinois.edu
-Received: from pps.filterd (m0166257.ppops.net [127.0.0.1])
-	by mx0a-00007101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 543FG3qZ030008;
-	Sun, 4 May 2025 01:46:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=illinois.edu; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=campusrelays; bh=ml0g/r5yh1KDETRwwBFQaC/xbU3HkiU9
-	c7/xFhnLE8o=; b=YNj57LkL8FxIQfCiPO017oHyl7UHAhlSjv4r4RV5Qdu043Na
-	IlZuDYowsy3jZlWQ+WVaC5QI091pTfUDtAsO3tTklIMLzrfVaePYiFRJqVr0UqDm
-	H7RuMS5fM2rXDFEeB3Ujaq2KgLACdhSEXxWBM0K5eN8h+F9KTv8WFNAQoN75VKjm
-	776mR9pzRnLCd6ObeDwb3D5CkBxY5TGMzqQHx119jnZhesU04DGwfJ7mibsi9Ip0
-	YwP9X5+WU5A6lTi3pRSM4w3PvKfzuI6rMx3JWmfxCg8/2A6E/VQ8zrMN321uPYM0
-	jYMD2plXqi0dJq24kIAlOoxjBYkC7vvADr4/yA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-00007101.pphosted.com (PPS) with ESMTPS id 46dbwhm0du-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 04 May 2025 01:46:48 +0000 (GMT)
-Received: from m0166257.ppops.net (m0166257.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5441klD9007299;
-	Sun, 4 May 2025 01:46:47 GMT
-Received: from localhost.localdomain ([192.17.102.224])
-	by mx0a-00007101.pphosted.com (PPS) with ESMTP id 46dbwhm0ds-1;
-	Sun, 04 May 2025 01:46:47 +0000 (GMT)
-From: yikangy2@illinois.edu
-To: mikulas@artax.karlin.mff.cuni.cz
-Cc: linux-kernel@vger.kernel.org, yikangy2@illinois.edu, shaobol2@illinois.edu,
-        yiruiz2@illinois.edu, jianh@illinois.edu
-Subject: [PATCH] fs/hpfs: Fix error code for new_inode() failure in mkdir/create/mknod/symlink
-Date: Sat,  3 May 2025 20:44:34 -0500
-Message-Id: <20250504014433.120804-1-yikangy2@illinois.edu>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1746324681; c=relaxed/simple;
+	bh=m/d7rSc/X+aQXzQ0IDooLNyaR8cZrb1ZN8xc7K7347I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U9AnYhO2KV311w0oDyjUE8Bey7mENiTnnVQ7R+PAKgPfR9tllBFVCmDPJaG51eSkZWo/X5LbLRgCNBxEoYhH7LZ5onlT1R+GFtDzausiTnntIysdvEjWs+wJDgX7HQ4vzx4PawTIUH25Eg0B3ojnXRe6a+HRsxkTvYrfxT048t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.186])
+	by gateway (Coremail) with SMTP id _____8AxGHG8zBZox3rTAA--.22004S3;
+	Sun, 04 May 2025 10:11:08 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.186])
+	by front1 (Coremail) with SMTP id qMiowMAxTRu3zBZoM7WuAA--.11681S2;
+	Sun, 04 May 2025 10:11:07 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: Xuerui Wang <kernel@xen0n.name>,
+	stable@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH for 6.1.y] LoongArch: Fix build error due to backport
+Date: Sun,  4 May 2025 10:10:54 +0800
+Message-ID: <20250504021054.783045-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,107 +51,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA0MDAxNCBTYWx0ZWRfX2yHQYlIMyS4i DjEUok+MRkiXahWDE4BsS42OG+9guyyxekasAneE4VJolGFNU8RyplzHPX/g5g4p4xxoqpu4TwK IUNYgVbrRJMkWivNQ77ve7OOar/AxM2+vwRZK+zPDmdIVO+jW22wVVr1GRaHjCW2bxXT3FdT2gg
- T/wgmp3303+/iDyGL/IC+qhhzLHQfytyy2/RLCpIH/6ShbyvNdAj53S+aubsMokxmA6njeDyc24 a+mFckhaZ30kI/M7kUtKIzJobX/EWvczAxJFhBd4cHaQi3mobPvksAcJPBq0BhBJNlGiL80xbew xO41RqlPEZmtZiGWkRUs1mxxmD/NOPYEYI5VIi96ZlFNUIRzlVtEa2I3Q+qNAAzYM5N3hxx/EZM o3Y4EsGv
-X-Proofpoint-GUID: C-VL-MTQva-TvkhFi8s0p60XKCGP88fT
-X-Proofpoint-ORIG-GUID: 3QF4HlxuAvWZLyK2DXoxQ6Qx1Y6NxhlI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-04_01,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=cautious_plus_nq_notspam policy=cautious_plus_nq score=0 clxscore=1011
- bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 mlxlogscore=756
- lowpriorityscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- mlxscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505040014
-X-Spam-Score: 0
-X-Spam-OrigSender: yikangy2@illinois.edu
-X-Spam-Bar: 
+X-CM-TRANSID:qMiowMAxTRu3zBZoM7WuAA--.11681S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7JF48Cw47CryUWF4fXF1rKrX_yoWDtFcEgF
+	1Iv3yxKr48Xw12ywsxW3y5J3WUtanY9Fn0y3Zruw13Jas0grn5Gr4vv39akr1Sg3yUWr43
+	Kr909an8Aw17tosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb7AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UUUUU==
 
-From: Yikang Yue <yikangy2@illinois.edu>
+In 6.1 there is no pmdp_get() definition, so use *pmd directly, in order
+to avoid such build error due to a recently backport:
 
-The function call new_inode() is a primitive for allocating an inode in memory,
-rather than planning disk space for it. Therefore, -ENOMEM should be returned
-as the error code rather than -ENOSPC.
+arch/loongarch/mm/hugetlbpage.c: In function 'huge_pte_offset':                                                                                                                
+arch/loongarch/mm/hugetlbpage.c:50:25: error: implicit declaration of
+function 'pmdp_get'; did you mean 'ptep_get'?
+[-Wimplicit-function-declaration]                          
+   50 |         return pmd_none(pmdp_get(pmd)) ? NULL : (pte_t *) pmd;                                                                                                         
+      |                         ^~~~~~~~                                                                                                                                       
+      |                         ptep_get                            
 
-To be specific, new_inode()'s call path looks like this:
-new_inode
-  new_inode_pseudo
-    alloc_inode
-      ops->alloc_inode (hpfs_alloc_inode)
-        alloc_inode_sb
-          kmem_cache_alloc_lru
-
-Therefore, the failure of new_inode() indicates a memory presure issue (-ENOMEM),
-not a lack of disk space. However, the current implementation of
-hpfs_mkdir/create/mknod/symlink incorrectly returns -ENOSPC when new_inode() fails.
-This patch fix this by set err to -ENOMEM before the goto statement.
-
-BTW, we also noticed that other nested calls within these four functions,
-like hpfs_alloc_f/dnode and hpfs_add_dirent, might also fail due to memory presure.
-But similarly, only -ENOSPC is returned. Addressing these will involve code
-modifications in other functions, and we plan to submit dedicated patches for these
-issues in the future. For this patch, we focus on new_inode().
-
-Signed-off-by: Yikang Yue <yikangy2@illinois.edu>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 ---
- fs/hpfs/namei.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ arch/loongarch/mm/hugetlbpage.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
-index e3cdc421dfba..353e13a615f5 100644
---- a/fs/hpfs/namei.c
-+++ b/fs/hpfs/namei.c
-@@ -52,8 +52,10 @@ static struct dentry *hpfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	dee.fnode = cpu_to_le32(fno);
- 	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
- 	result = new_inode(dir->i_sb);
--	if (!result)
-+	if (!result) {
-+		err = -ENOMEM;
- 		goto bail2;
-+	}
- 	hpfs_init_inode(result);
- 	result->i_ino = fno;
- 	hpfs_i(result)->i_parent_dir = dir->i_ino;
-@@ -153,9 +155,10 @@ static int hpfs_create(struct mnt_idmap *idmap, struct inode *dir,
- 	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
+diff --git a/arch/loongarch/mm/hugetlbpage.c b/arch/loongarch/mm/hugetlbpage.c
+index cf3b8785a921..70b4a51885c2 100644
+--- a/arch/loongarch/mm/hugetlbpage.c
++++ b/arch/loongarch/mm/hugetlbpage.c
+@@ -47,7 +47,7 @@ pte_t *huge_pte_offset(struct mm_struct *mm, unsigned long addr,
+ 				pmd = pmd_offset(pud, addr);
+ 		}
+ 	}
+-	return pmd_none(pmdp_get(pmd)) ? NULL : (pte_t *) pmd;
++	return pmd_none(*pmd) ? NULL : (pte_t *) pmd;
+ }
  
- 	result = new_inode(dir->i_sb);
--	if (!result)
-+	if (!result) {
-+		err = -ENOMEM;
- 		goto bail1;
--	
-+	}
- 	hpfs_init_inode(result);
- 	result->i_ino = fno;
- 	result->i_mode |= S_IFREG;
-@@ -239,9 +242,10 @@ static int hpfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
- 
- 	result = new_inode(dir->i_sb);
--	if (!result)
-+	if (!result) {
-+		err = -ENOMEM;
- 		goto bail1;
--
-+	}
- 	hpfs_init_inode(result);
- 	result->i_ino = fno;
- 	hpfs_i(result)->i_parent_dir = dir->i_ino;
-@@ -314,8 +318,10 @@ static int hpfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
- 
- 	result = new_inode(dir->i_sb);
--	if (!result)
-+	if (!result) {
-+		err = -ENOMEM;
- 		goto bail1;
-+	}
- 	result->i_ino = fno;
- 	hpfs_init_inode(result);
- 	hpfs_i(result)->i_parent_dir = dir->i_ino;
+ /*
 -- 
-2.46.0.windows.1
+2.47.1
 
 
