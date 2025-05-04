@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-631181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DE8AA84C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 10:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EB0AA84CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 10:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18641793EB
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 08:08:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5D8179976
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 08:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA70218C91F;
-	Sun,  4 May 2025 08:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="CBTccOj3"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8823B19644B;
+	Sun,  4 May 2025 08:14:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0882470838;
-	Sun,  4 May 2025 08:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125D28479
+	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 08:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746346103; cv=none; b=iq0Q4JQVHXT1aVSd0zISS6jcEdUP0SyinxyseNVHuCxAh5UinTF53FynhUwRYLtJr5VUmzoTyGmoOH+VqbvF9z+Ya559z1T7a5EZkkb477ugSRvaWgC+9pcOxiEkYwoF5hFY8WHYnfHjJ4b9fc5AlC9UcELmyNyRKtONcZDXI4U=
+	t=1746346493; cv=none; b=l6vKdBN71REHYzKsUFjYBvsnLJFC0aQujzMgRTl2Q7SxiWxJH7vboNzWLw8bY6aWI9fgZeBFb4nHpb7NXDIf8oOdRJLsxsdzNv5yN/CDcvn1DcqIrqYBJtQxpaQtMxUyZMiFkXCJ1xDSQeZMHydX0bpSaLeprRYK0ST2JHAzgY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746346103; c=relaxed/simple;
-	bh=w7yqJQzhtrCr7oJzbIyngnZxO005T0pYH5OnmXj4nE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OIMvwN2RAibt4zH/r6pQnIdOoytZdTY6e77vaBAJq+3RlLfQn6/NsE8ndoDsEIxdLWp6JdW/ZVXglF6yU9LLsgURwDPO5QZsa93ExmZ/w96SnKATKl7saSuZGHU6+ZgllLb3LJLoZo3Wl7zVg7djpEVKznILNcTX7iKaIl3Hzks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=CBTccOj3; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=mLP3R30hC3fxPu/ombNn8VmQhzKUIdMsoZzomOMeaIc=; b=CBTccOj3ebdyLaZrgxA4aknmOw
-	R6+83tJkR8QqIMcWoSaVIyPPMKofb3EaUPoOji0nKrPwRLE2rgXm8S2iSRbv69b0GZ7tKNEYxUbSP
-	i+bhJg4/g34NytT+GrHHArCTRAw4EP9lojtdyd0O0/+FH7geg7vhuGVKMqRVYP96wrQfq9rz0LWVz
-	UQHalGbPRXHW2ftKJkVtEGXRWMdDId3JgPzboiK8ZpNcTAYcTyKgksZ2tScxbtx0CLXX+nDlW5rbq
-	nd3+3aLAdbMOT7zjKdSgf8ZiL6/bAmQ8Wd4Gd7UFVtOR9xBOwCnOtJsQhnD1KuGA6ZYYEza1IRhzO
-	PO6pKR5w==;
-Received: from i53875bbc.versanet.de ([83.135.91.188] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uBUOQ-0006Ou-II; Sun, 04 May 2025 10:08:10 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: John Clark <inindev@gmail.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- detlev.casanova@collabora.com, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, John Clark <inindev@gmail.com>,
- sebastian.reichel@collabora.com
-Subject:
- Re: [PATCH v1 0/3] Add Luckfox Omni3576 Carrier Board support for RK3576
-Date: Sun, 04 May 2025 10:08:09 +0200
-Message-ID: <3352030.oiGErgHkdL@diego>
-In-Reply-To: <7462454.lOV4Wx5bFT@workhorse>
-References:
- <20250502205533.51744-1-inindev@gmail.com> <7462454.lOV4Wx5bFT@workhorse>
+	s=arc-20240116; t=1746346493; c=relaxed/simple;
+	bh=anzPSjuVn++Aj09QLcJVVuFubNsZ4dYazOZp3wVinHA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rb+vJPJbpD2+A9Cm9HgssSnUjg5NhjMZlL238zGFR6wRrRwD3kUSxYoTzdSdcrycstLiudaEBit72ZN1DlyF0EEuxiYPP7QtgGHzRAaLTiDEu7+TOATFdUvWqbjPv/RCZR5HSnFMfvFMP/JC5hZDnm8OhSX3WVB4LvzxAAkqtEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uBUUf-00062Z-64; Sun, 04 May 2025 10:14:37 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uBUUd-0012RM-0T;
+	Sun, 04 May 2025 10:14:35 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uBUUd-001mQy-0B;
+	Sun, 04 May 2025 10:14:35 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	stable@vger.kernel.org
+Subject: [PATCH net v3 0/2] address EEE regressions on KSZ switches since v6.9 (v6.14+)
+Date: Sun,  4 May 2025 10:14:32 +0200
+Message-Id: <20250504081434.424489-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi,
+This patch series addresses a regression in Energy Efficient Ethernet
+(EEE) handling for KSZ switches with integrated PHYs, introduced in
+kernel v6.9 by commit fe0d4fd9285e ("net: phy: Keep track of EEE
+configuration").
 
-Am Sonntag, 4. Mai 2025, 01:39:56 Mitteleurop=C3=A4ische Sommerzeit schrieb=
- Nicolas Frattaroli:
-> On Friday, 2 May 2025 22:55:30 Central European Summer Time John Clark wr=
-ote:
-> > Disabled features:
-> > - eMMC: Not populated on the tested board; believed to be functional bu=
-t disabled.
-> > - HDMI: Disabled due to mainline driver maturity issues (basic 1080p ou=
-tput works; audio and 4K untested).
->=20
-> that's not a good reason to disable the node, in my eyes. HDMI 2.0 4K out=
-put=20
-> should work AFAIK, HDMI audio will land with the already posted SAI audio=
-=20
-> controller patch set. Is there any specific issue like an SoC lock-up you=
- ran=20
-> into that is keeping you from enabling it? If so, please do let the maili=
-ng list=20
-> know.
+The first patch updates the DSA driver to allow phylink to properly
+manage PHY EEE configuration. Since integrated PHYs handle LPI
+internally and ports without integrated PHYs do not document MAC-level
+LPI support, dummy MAC LPI callbacks are provided.
 
-Also a more general point, Devicetree is supposed to describe the hardware
-and both emmc and hdmi do work on a hw-level and have reviewed bindings,
-so the node can be enabled and also any functionality improvement should
-just affect the kernel driver-side.
+The second patch removes outdated EEE workarounds from the micrel PHY
+driver, as they are no longer needed with correct phylink handling.
 
-And in my testing on the rk3576 firefly, I also got a working 3440x1440
-on my display. So not a full 4k, but nearly there :-) .
+This series addresses the regression for mainline and kernels starting
+from v6.14. It is not easily possible to fully fix older kernels due
+to missing infrastructure changes.
 
+Tested on KSZ9893 hardware.
 
-> - RK3576 USB Type-C OTG stuff: the USB 2 PHY driver needed some changes t=
-o make
->   this work. I've yet to send out v2 that reworks the way we detect a typ=
-e-C
->   port, but that part of the code is already done. I was basically just l=
-etting
->   it stew on my local machine for a bit longer to see if I can figure out=
- why
->   superspeed only works in one cable orientation,
+Oleksij Rempel (2):
+  net: dsa: microchip: let phylink manage PHY EEE configuration on KSZ
+    switches
+  net: phy: micrel: remove KSZ9477 EEE quirks now handled by phylink
 
-That is probably the same issue, I have on rk3588, the type-c phy not
-changing its settings and waiting for the dwc3 to re-start, which it never
-does.
+ drivers/net/dsa/microchip/ksz_common.c | 135 ++++++++++++++++++++-----
+ drivers/net/phy/micrel.c               |   7 --
+ include/linux/micrel_phy.h             |   1 -
+ 3 files changed, 107 insertions(+), 36 deletions(-)
 
-See [0], [1] ... but importantly Ond=C5=99ej Jirman's response on why my ap=
-proach
-is probably wrong [2].
-
-At this time, I don't know when I get around to look at that again, so
-if someone wants to give it a try, feel free to :-)
-
-
-Heiko
-
-
-[0] https://lore.kernel.org/r/20250225184519.3586926-1-heiko@sntech.de
-[1] https://lore.kernel.org/r/20250226103810.3746018-1-heiko@sntech.de
-[2] https://lore.kernel.org/r/h57ok2hw6os7bcafqkrqknfvm7hnu25m2oe54qmrsuzdw=
-qlos3@m4och2fcdm7s
-
-
+--
+2.39.5
 
 
