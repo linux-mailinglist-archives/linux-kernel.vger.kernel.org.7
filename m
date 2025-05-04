@@ -1,150 +1,114 @@
-Return-Path: <linux-kernel+bounces-631222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C28AA856D
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:23:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CD7AA857A
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCDCF179104
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:23:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A1757A350D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655D219ABD8;
-	Sun,  4 May 2025 09:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DFB191F92;
+	Sun,  4 May 2025 09:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQb5AV22"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N9Tmqr5O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3DF1F948;
-	Sun,  4 May 2025 09:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D1129D19
+	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 09:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746350612; cv=none; b=AgPjk7Ptzx0pklCuUgWVDUmOBw6IeK2brBorvCAZcbXcfuiWpMRE4mn4cVJ1Tkta8Me/Ammxavb7KfKnHh50OeXVZXLHEIP8uG5b7gGYl2jMlTRyAxM+oMdFDtSegTq94Ko72uR74OyBrviFustAGQz2IMqj9K7JW6lIFQNcHBo=
+	t=1746350764; cv=none; b=Qeqmi52UpfECqB+5XVRJhHt/XDN5/uDCta0DY2jOZ92YIEv5xyZ/aR4oYJu7ruHnFBj0RxwGzeRfTs0tk2A4yFEZ8HwD/TdAuijB9z/0PFK3rc8TAKSzDAhlfxxxM6QcxhMOscMsAQx7AnBgOim+OijYyId0enB8E2UFpoDZRCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746350612; c=relaxed/simple;
-	bh=D8CmpEX+akOScouJwEkOSdOqEGc4J0EbIcSdXI6sou8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bFfV+WStGnu+ywYQkcNZhJ5pAyklijwQlHR7x6hPfxWpfdBxNkOpvpLmQccxOVP4L2u2Ykuw4uX/33DgBQEmOE+f8VqhVp5mid2+qCUNCBZ68yXdmX60X+ojXwxcbV0+jQwUeXWyUtwQsyazyqgpPJMJElhS1ka1q8GfgfJhQd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQb5AV22; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22423adf751so40778655ad.2;
-        Sun, 04 May 2025 02:23:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746350611; x=1746955411; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=v4vvIIMUjGPWvlpk7tTHWDKYFTzP4XJtC/Wv6x1ii98=;
-        b=MQb5AV22qe6YgOhzZvCr0ThBEIObVnayDxBWPKTT3kd35xoC8SvKdD2/ZkBGSACLOe
-         7ZZ18YrWRZjnfNRiDjExt5w1mYnL797eS085+6uTK9jV/ANhhFyLOVp5Xm+zseZLOVko
-         3FvAjGGGz3SqGFuQ8wmodc8sFL9t+UqJdnrgjg/CeN0TgohNjV1Fef/2pEeye60NT362
-         YM1ek6xikqa1YjFmuKii7E33Eh2IlV4wt0s+gSI2jv4uMBdUCJoquGwoL7tEaky+9UUo
-         jqaBDmeUFXr5KO9N4lSlwRMMtm/AmhVXcqNRYBokaY5KaTvygJPyR0jw2NqiTK8Vl52k
-         dEdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746350611; x=1746955411;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v4vvIIMUjGPWvlpk7tTHWDKYFTzP4XJtC/Wv6x1ii98=;
-        b=K//HyqxmwoQNg4XHn/EFqAUoyZGvytvY98xg/5OZ0+OxPejlsWh6Smav+5sOLKStrQ
-         YrL+waoGdi+JI8gy8N1YZGcT4hyHMq5xMGfz07iImBonsqpf1/J+4AoO9AOHV/IFExMd
-         1oNpiUBiibSbluLPuaeBWprcthsuUq7fHdCI4JZn3+j26YdF1CyfUQW9APNTJ4gjai1A
-         R16a+e/wQ3pfmBWftNAc2nAUKvTXGszr8G37/Hy87StYJhogA8tclFkWnGHp+bDKiWQp
-         nqDcHGM2XIluBsDtsnR2ZDjXfNVqFS5/ha+SaANnm6ZurUtGGBdaf3wY/Yr/zYNQQhPa
-         dpbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWcs7gneMd1QxkOqj6LuMY+hHYmKYOX09/+VUqv8QAPFesKCCMJDyFtuVvrLc8SRqienv4DkP6Vz5UvQ==@vger.kernel.org, AJvYcCWJDeL8mZm/XqWYlLlOvy9yWKq+CdHy+/dJSonNtLqSDDjokoHH+xH1R/czSEOod+tg6ScesRq7b0AYD+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ5mZRx1/509UsKic2Pz1zMLqsuePTFSvx666m9B+obmC+6Tkl
-	Tp3rWQD3w+7B9HPQ9+lBu38tkwemklMPNOuKYQTpX2Lu0IMoVbId
-X-Gm-Gg: ASbGncvF6GeCwleaOp/O3MzNKfGO0WBMAFM+v9ZOWMMx3enOPlZsC0LAABKwn2hLNRZ
-	32+a1LywYKVyJQqKge0PhLD/mJDuCp9q4n5Vg9vzxGDm6TxqO6HtEw0DRngKbhUDJ31jLVbmRuf
-	Hd+aw8p7siHWhUSZEqMECnzbDYZNwOOwvtFWz3/qP1gegZb9dNQ8XiPyVSx2h2MDENTKq+MCbfU
-	Q1SE7aUVc85oL+0CMzA5VbTWFiTwXYuPeI3FuT30LxYzK2MJEZ8NxrIFW4Rc3AtYxt2rwwT9HXd
-	EslHCKKnCqHHUVd9Uo4Oj1F5BKcNdGzm8Fcs8/ORqoGAsuoFuPBfAjl5N5h+p1FYGx0D3cLIYiI
-	MjyVelOsiHoNlhW3a
-X-Google-Smtp-Source: AGHT+IENnOKUUkHFH+TnWk3OHl36odvv4VMQ80wl5aHy+VyKS+N0Ak00/T7Y7LEMELxqaTm9O4ju1g==
-X-Received: by 2002:a17:903:234e:b0:224:26fd:82e5 with SMTP id d9443c01a7336-22e1038ea74mr140776695ad.48.1746350610579;
-        Sun, 04 May 2025 02:23:30 -0700 (PDT)
-Received: from [192.168.11.2] (FL1-119-244-79-106.tky.mesh.ad.jp. [119.244.79.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e1521fc85sm35017215ad.110.2025.05.04.02.23.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 May 2025 02:23:30 -0700 (PDT)
-Message-ID: <7e7d944b-b211-458a-8a03-b9b7b5f3dcde@gmail.com>
-Date: Sun, 4 May 2025 18:23:27 +0900
+	s=arc-20240116; t=1746350764; c=relaxed/simple;
+	bh=pvaiVm1SRiewSrbNvJopGE8et9l16ah5O/Zr2OmCb4E=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QqZwXBcZrCqj3tdvo2DF0vMbFI0sOTO+nYfQKbhd18RsIQoZJfP9+VLhrXjxWYKvARjDI8cAtW56iq5z88z8vIGHEBUR2fU3ieyx8orGZ8pVpwchtPr75/dnvfCs3ZA8OO9lYHycqYAHKwa3saxOBSTALs0dzwtxUUxDdPfW7Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=N9Tmqr5O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5591AC4CEE7;
+	Sun,  4 May 2025 09:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1746350763;
+	bh=pvaiVm1SRiewSrbNvJopGE8et9l16ah5O/Zr2OmCb4E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N9Tmqr5OGM31v/4ZVmNz3ZLREHpZ1p4hFuPFF4IosicfxJAIWyTlnrSyfxuK5mVU0
+	 zeWZ1zD4HEanmQMiHTHLseozpyzUBKHVjJ28C8tvzuDrdqPfM2+MO6J1k4GfKsAUpJ
+	 LTJeb+WgKOdcq5gnFdZEwbqYsoXbJ87uMhZP7cg8=
+Date: Sun, 4 May 2025 02:26:02 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Nhat Pham
+ <nphamcs@gmail.com>, Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner
+ <hannes@cmpxchg.org>, Igor Belousov <igor.b@beldev.am>
+Subject: Re: [PATCH v4] mm: add zblock allocator
+Message-Id: <20250504022602.13fe05f43ceb273e96e5907b@linux-foundation.org>
+In-Reply-To: <20250412154207.2152667-1-vitaly.wool@konsulko.se>
+References: <20250412154207.2152667-1-vitaly.wool@konsulko.se>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next v2 0/2] RDMA/rxe: Prefetching pages with explicit
- ODP
-To: Zhu Yanjun <yanjun.zhu@linux.dev>, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
- zyjzyj2000@gmail.com
-References: <20250503134224.4867-1-dskmtsd@gmail.com>
- <526be00d-98e6-45fb-a5d3-eb26fd7a88d0@linux.dev>
-Content-Language: en-US
-From: Daisuke Matsuda <dskmtsd@gmail.com>
-In-Reply-To: <526be00d-98e6-45fb-a5d3-eb26fd7a88d0@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2025/05/04 2:08, Zhu Yanjun wrote:
-> 在 2025/5/3 15:42, Daisuke Matsuda 写道:
->> There is ibv_advise_mr(3) that can be used by applications to optimize
->> memory access. This series enables the feature on rxe driver, which has
->> already been available in mlx5.
->>
->> There is a tiny change on the rdma-core util.
->> cf. https://github.com/linux-rdma/rdma-core/pull/1605
-> 
-> Hi, Daisuke
-> 
-> Thanks a lot for your efforts to this patch series. It is very nice. With this patch series, we can make prefetch for ODP MRs of RXE.
-> 
-> I read through this patch series. And it seems fine with me.^_^
-> 
-> IIRC, you have added ODP testcases in rdma-core. To verify this prefetch work well for ODP MRs, can you add this synchronous/asynchronous prefetch to the ODP testcases in rdma-core?
-> 
-> Thus, we can verify this patch series. And in the future, we can use these testcases to confirm this prefetch feature work well.
-> 
-> To now, it seems that no tool can verify this prefetch feature.
+On Sat, 12 Apr 2025 17:42:07 +0200 Vitaly Wool <vitaly.wool@konsulko.se> wrote:
 
-Hi, Thank you for taking a look!
-
-There are already relevant testcases implemented in ./tests/test_odp.py:
-  - test_odp_sync_prefetch_rc_traffic
-  - test_odp_async_prefetch_rc_traffic
-  - test_odp_prefetch_sync_no_page_fault_rc_traffic
-  - test_odp_prefetch_async_no_page_fault_rc_traffic
-On my node (x86-64/linux-6.15.0-rc1+), this series can pass all these tests.
-
-Other than that, this feature is required by librpma as far as I know.
-Though it is not maintained anymore, perhaps this could also be used for testing.
-cf. https://github.com/pmem/rpma
-
-Thanks,
-Daisuke
-
+> zblock is a special purpose allocator for storing compressed pages.
+> It stores integer number of same size objects per its block. These
+> blocks consist of several physical pages (2**n, i. e. 1/2/4/8).
 > 
-> Thanks a lot.
-> Zhu Yanjun
+> With zblock, it is possible to densely arrange objects of various sizes
+> resulting in low internal fragmentation. Also this allocator tries to
+> fill incomplete blocks instead of adding new ones, in many cases
+> providing a compression ratio comparable to zmalloc's.
 > 
->>
->> Daisuke Matsuda (2):
->>    RDMA/rxe: Implement synchronous prefetch for ODP MRs
->>    RDMA/rxe: Enable asynchronous prefetch for ODP MRs
->>
->>   drivers/infiniband/sw/rxe/rxe.c     |   7 ++
->>   drivers/infiniband/sw/rxe/rxe_loc.h |  10 ++
->>   drivers/infiniband/sw/rxe/rxe_odp.c | 165 ++++++++++++++++++++++++++++
->>   3 files changed, 182 insertions(+)
->>
+> zblock is also in most cases superior to zsmalloc with regard to
+> average performance and worst execution times, thus allowing for better
+> response time and real-time characteristics of the whole system.
 > 
+> High memory and page migration are currently not supported by zblock.
+> 
+
+My x86_64 allmodconfig build failed.
+
+  MODPOST Module.symvers
+ERROR: modpost: "try_alloc_pages_noprof" [mm/zblock.ko] undefined!
+
+I don't understand why this wasn't encountered earlier.
+
+
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: mm-add-zblock-allocator-fix-2
+Date: Sun May  4 02:13:54 AM PDT 2025
+
+export try_alloc_pages_noprof() to modules for CONFIG_ZBLOCK=m
+
+Cc: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: Igor Belousov <igor.b@beldev.am>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Nhat Pham <nphamcs@gmail.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: David Hildenbrand <david@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/page_alloc.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/mm/page_alloc.c~a
++++ a/mm/page_alloc.c
+@@ -7470,3 +7470,4 @@ struct page *try_alloc_pages_noprof(int
+ 	kmsan_alloc_page(page, order, alloc_gfp);
+ 	return page;
+ }
++EXPORT_SYMBOL_GPL(try_alloc_pages_noprof);
+_
 
 
