@@ -1,198 +1,204 @@
-Return-Path: <linux-kernel+bounces-631466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAB1AA8897
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFC3AA88A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2853F3A5BC2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1FBF3BAF7C
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B02C1F5434;
-	Sun,  4 May 2025 17:32:24 +0000 (UTC)
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D642222AB;
+	Sun,  4 May 2025 17:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nD1e+VpE"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFC11F4615;
-	Sun,  4 May 2025 17:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C1A221F08;
+	Sun,  4 May 2025 17:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746379943; cv=none; b=YHDMUcKuaxZ9DKVkLKBsvMYNiFdCYqrwQ6Elx1z5ph4SoGMQOaBHtUhr9dg9alxZSWL9f4Ibo7R06+WRdcjSVufw1YdsStK1qjVckhNVdad4AurEhNj3GAkuKKKXXDAPqD5BMPi0QA6VqCyxQlnoc4a5BaKKdIDMGHyv/xOu5Tk=
+	t=1746380049; cv=none; b=gZMXgJpcdbd3w8ZATwhd2/7hS8oQfrHaaSUGHbkSt6Hzx54KWQXjACG0IxHZNi1KhKkTPYXcm/+1d5Ll2OVRLbyY78LN9+h5czMcRLx9UExgxveOIqQ+YXRArFrYmmV0yowm/aqIiOJrn/MRKM1opshJf3Hsmc4JleGfVGM510g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746379943; c=relaxed/simple;
-	bh=77hKcSKMWZYeX5joA52qyQWO7ZcI4hxABnA/VCNsc4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PeKUZlLKLdd4qHTdThNoKfXf9l1vwHVH5xgGuB7Ogqwo3/UJwanCUFW1NR1oXfTpOKJmkJ0o2WzGte1TO9EppmriQ18bpQwc29HuG2W1+IiRdkGbzGpzuGJXYwyerWzUWCEEONXUIp0/4InL7h438g/Qf7h+wgiHWg2jLXgva4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4ZrBYZ459Sz9sv3;
-	Sun,  4 May 2025 19:32:18 +0200 (CEST)
-From: Remo Senekowitsch <remo@buenzli.dev>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Remo Senekowitsch <remo@buenzli.dev>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v4 9/9] samples: rust: platform: Add property read examples
-Date: Sun,  4 May 2025 19:31:54 +0200
-Message-ID: <20250504173154.488519-10-remo@buenzli.dev>
-In-Reply-To: <20250504173154.488519-1-remo@buenzli.dev>
-References: <20250504173154.488519-1-remo@buenzli.dev>
+	s=arc-20240116; t=1746380049; c=relaxed/simple;
+	bh=TI+IAdyGi+IL8Xy71Y9qCmSdPrRxiWOpnXzL5ViZOC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IwEqRguAmqoKxMnxiCnrtd++X+qvdomPUVYcc7CSAZRIGT4eN/4tDfJ8IXpOGmNKkdOfxQ2v9Xn0cMDoIX93E95KvXifjBx1qq6vMWmQ4RcerGYCauIGEWsmP/ZVPQ05Qyhjc4G8tvCE6vdsQNFSbkB0XcrE2/yAUx0DvOZQ0OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nD1e+VpE; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-310447fe59aso38726441fa.0;
+        Sun, 04 May 2025 10:34:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746380045; x=1746984845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N1fVaVItBBDC1ZD6iIEWvvKbSsgQoZnhQOhbzKdtWXs=;
+        b=nD1e+VpEZUzE0MrZm25UUIhHAJ3Ub2rtp6VxQpojZcZTpRYQTPL/EfsR6kdHEvrkcF
+         dK+0iFTjxxycl7RsDjE+rM3AXdbQWfpH/MFFPPjreF6p4GAkkqB6XIJdbK9+kFNsFlAd
+         1aXdf/kWLvIgHXuyDmpLyltTsa+i6X3X/rcyjzhAcTcvGTAiriRxdbqqBCspW5nIiGma
+         LSXJW5w89Wd0CNGkzwG78f+BHR315h1xmcV++t/LFB311fvxKQ7x4ee7AzXseWiwG5/B
+         e4b8akGl3FR7dWUxgzZdG99wQGdg19Ha34FGQA1RpjAGZwxYupfB7pxtWgEGpx6QhE43
+         4oBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746380045; x=1746984845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N1fVaVItBBDC1ZD6iIEWvvKbSsgQoZnhQOhbzKdtWXs=;
+        b=l3CGHQCho695tad4BgJz0wiuXUI3y0HfzLHatdnLIxJtYgdQruCZTkigviP8YfZZKg
+         wVUkDRPspQSEh6faQktRw33SF6ZNVrwDjmGtDsJPxa0edJuBVXCpTDuPVbJEgkjd6Pm0
+         gkixm7WaBjz/2bc060wY99jNz9wN4752vEbfRx+8sEAsqSmZ0U+ESbOsGJ5d9j9PW1f0
+         OUFuTYkJL25at7uya2mmH+XFMqx5DsrR+NqJCBAUQz1l9FQpwGVAr1E99f4l9NXCz1wV
+         qUX9DaFXm24N/0tnllJcNKkya14BmF4imrhk4Lp5gsBsMObaCfDRIi/0E9sc6TVmYzx9
+         y/GA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTq0Fv2mhdSod8Oy8oQPTAZhiVEDuN/rl/m8tmz3Niv1scqEUfLNZGp7zilWwAFl2at+97d7D5gnk4wdAWkEE=@vger.kernel.org, AJvYcCUZEkJCzstNF1AW+4i+nwGgH9Nf5/kyTyCmvID14gjQ2ZrNMyhQwK0Ai2F93ayIcXiPrUueyIiUrG0V83M=@vger.kernel.org, AJvYcCWxF/gPtsyW7vlkaob/6ei1WgMcqkL0o9ny/TM6ofuZmndcvxeytmy/OnQ/9iY0LdiTo0HuSWyy7c8VYKa1djh7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDPxYC27W9JhIrlNaH1L6NgGpAuel58d8A2HG6lJauy2240CZ9
+	oebtaMyPLBFk3Ih0JD3PjatuUIwxrBjPyCeVEK4GdApomsYWuqoAr+yB99tEDEuvhM+xahepuWT
+	Dk2TJYOfUetH3xuxTOKxf0LgQy/A=
+X-Gm-Gg: ASbGnctVWi+CKw4gqp/ERal4k0NbVdNZlxg1b59nkHnwO6B1MBwLmpjNoOk3wfLN0c5
+	bmvTakJ/BzluJHxVax69QgzdhA4QA7sZnLJpAPZdm4as/rxMghfe1ZtS20WzeuBgVkQnKhfQJRq
+	LBHotEmUuuLXdpRtLKpe5j245uUzn5rJcFDPW24pEWugTHxeZMbkDJkRg=
+X-Google-Smtp-Source: AGHT+IHjlg5r+GtZPby1N3y/lBB/JYkis+ONns+ydoYTgWyGUU7+7O4MuOnenH2xOKWDCtegS00Wd//KowDVF/l59is=
+X-Received: by 2002:a2e:be1b:0:b0:308:fbd5:9d2d with SMTP id
+ 38308e7fff4ca-323525056damr11809611fa.37.1746380045047; Sun, 04 May 2025
+ 10:34:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250502215133.1923676-1-ojeda@kernel.org> <20250502215133.1923676-3-ojeda@kernel.org>
+In-Reply-To: <20250502215133.1923676-3-ojeda@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sun, 4 May 2025 13:33:28 -0400
+X-Gm-Features: ATxdqUGeVFcwO9nOZqJQZmUYd49yvR_Ewg1ZcZNRyKblGfpu9Gz2cSxTrocB1zc
+Message-ID: <CAJ-ks9=v8E_bV+oJ-bdm3KZW2dfrFdiCmeVLs+bgK8oVu6BCUA@mail.gmail.com>
+Subject: Re: [PATCH 2/7] rust: kunit: support checked `-> Result`s in KUnit `#[test]`s
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Rae Moar <rmoar@google.com>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add some example usage of the device property read methods for
-DT/ACPI/swnode properties.
+On Fri, May 2, 2025 at 5:53=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> Currently, return values of KUnit `#[test]` functions are ignored.
+>
+> Thus introduce support for `-> Result` functions by checking their
+> returned values.
+>
+> At the same time, require that test functions return `()` or `Result<T,
+> E>`, which should avoid mistakes, especially with non-`#[must_use]`
+> types. Other types can be supported in the future if needed.
 
-Co-developed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
----
- drivers/of/unittest-data/tests-platform.dtsi |  3 +
- samples/rust/rust_driver_platform.rs         | 71 +++++++++++++++++++-
- 2 files changed, 72 insertions(+), 2 deletions(-)
+Why not restrict this to Result<(), E>?
 
-diff --git a/drivers/of/unittest-data/tests-platform.dtsi b/drivers/of/unittest-data/tests-platform.dtsi
-index 4171f43cf01cc..50a51f38afb60 100644
---- a/drivers/of/unittest-data/tests-platform.dtsi
-+++ b/drivers/of/unittest-data/tests-platform.dtsi
-@@ -37,6 +37,9 @@ dev@100 {
- 			test-device@2 {
- 				compatible = "test,rust-device";
- 				reg = <0x2>;
-+
-+				test,u32-prop = <0xdeadbeef>;
-+				test,i16-array = /bits/ 16 <1 2 (-3) (-4)>;
- 			};
- 		};
- 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 8b42b3cfb363a..a04ff4afb1325 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -2,7 +2,7 @@
- 
- //! Rust Platform driver sample.
- 
--use kernel::{c_str, device::Core, of, platform, prelude::*, types::ARef};
-+use kernel::{c_str, device::Core, of, platform, prelude::*, str::CString, types::ARef};
- 
- struct SampleDriver {
-     pdev: ARef<platform::Device>,
-@@ -25,18 +25,85 @@ fn probe(
-         pdev: &platform::Device<Core>,
-         info: Option<&Self::IdInfo>,
-     ) -> Result<Pin<KBox<Self>>> {
-+        let dev = pdev.as_ref();
-+
-         dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
- 
-         if let Some(info) = info {
--            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n", info.0);
-+            dev_info!(dev, "Probed with info: '{}'.\n", info.0);
-         }
- 
-+        Self::properties_parse(dev)?;
-+
-         let drvdata = KBox::new(Self { pdev: pdev.into() }, GFP_KERNEL)?;
- 
-         Ok(drvdata.into())
-     }
- }
- 
-+impl SampleDriver {
-+    fn properties_parse(dev: &kernel::device::Device) -> Result<()> {
-+        let fwnode = dev.fwnode().ok_or(ENOENT)?;
-+
-+        if let Ok(idx) =
-+            fwnode.property_match_string(c_str!("compatible"), c_str!("test,rust-device"))
-+        {
-+            dev_info!(dev, "matched compatible string idx = {}\n", idx);
-+        }
-+
-+        if let Ok(str) = fwnode
-+            .property_read::<CString>(c_str!("compatible"))
-+            .required_by(dev)
-+        {
-+            dev_info!(dev, "compatible string = {:?}\n", str);
-+        }
-+
-+        let prop = fwnode.property_read_bool(c_str!("test,bool-prop"));
-+        dev_info!(dev, "bool prop is {}\n", prop);
-+
-+        if fwnode.property_present(c_str!("test,u32-prop")) {
-+            dev_info!(dev, "'test,u32-prop' is present\n");
-+        }
-+
-+        let prop = fwnode
-+            .property_read::<u32>(c_str!("test,u32-optional-prop"))
-+            .or(0x12);
-+        dev_info!(
-+            dev,
-+            "'test,u32-optional-prop' is {:#x} (default = {:#x})\n",
-+            prop,
-+            0x12
-+        );
-+
-+        // Missing property without a default will print an error
-+        let _ = fwnode
-+            .property_read::<u32>(c_str!("test,u32-required-prop"))
-+            .required_by(dev);
-+
-+        let prop: u32 = fwnode
-+            .property_read(c_str!("test,u32-prop"))
-+            .required_by(dev)?;
-+        dev_info!(dev, "'test,u32-prop' is {:#x}\n", prop);
-+
-+        let prop: [i16; 4] = fwnode
-+            .property_read(c_str!("test,i16-array"))
-+            .required_by(dev)?;
-+        dev_info!(dev, "'test,i16-array' is {:?}\n", prop);
-+        dev_info!(
-+            dev,
-+            "'test,i16-array' length is {}\n",
-+            fwnode.property_count_elem::<u16>(c_str!("test,i16-array"))?,
-+        );
-+
-+        let prop: KVec<i16> = fwnode
-+            .property_read_array_vec(c_str!("test,i16-array"), 4)?
-+            .required_by(dev)?;
-+        dev_info!(dev, "'test,i16-array' is KVec {:?}\n", prop);
-+
-+        Ok(())
-+    }
-+}
-+
- impl Drop for SampleDriver {
-     fn drop(&mut self) {
-         dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver sample.\n");
--- 
-2.49.0
+>
+> With this, a failing test like:
+>
+>     #[test]
+>     fn my_test() -> Result {
+>         f()?;
+>         Ok(())
+>     }
+>
+> will output:
+>
+>     [    3.744214]     KTAP version 1
+>     [    3.744287]     # Subtest: my_test_suite
+>     [    3.744378]     # speed: normal
+>     [    3.744399]     1..1
+>     [    3.745817]     # my_test: ASSERTION FAILED at rust/kernel/lib.rs:=
+321
+>     [    3.745817]     Expected is_test_result_ok(my_test()) to be true, =
+but is false
 
+Is it possible to include the error in the output?
+
+>     [    3.747152]     # my_test.speed: normal
+>     [    3.747199]     not ok 1 my_test
+>     [    3.747345] not ok 4 my_test_suite
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>  rust/kernel/kunit.rs | 25 +++++++++++++++++++++++++
+>  rust/macros/kunit.rs |  3 ++-
+>  2 files changed, 27 insertions(+), 1 deletion(-)
+>
+> diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
+> index 2659895d4c5d..f43e3ed460c2 100644
+> --- a/rust/kernel/kunit.rs
+> +++ b/rust/kernel/kunit.rs
+> @@ -164,6 +164,31 @@ macro_rules! kunit_assert_eq {
+>      }};
+>  }
+>
+> +trait TestResult {
+> +    fn is_test_result_ok(&self) -> bool;
+> +}
+> +
+> +impl TestResult for () {
+> +    fn is_test_result_ok(&self) -> bool {
+> +        true
+> +    }
+> +}
+> +
+> +impl<T, E> TestResult for Result<T, E> {
+> +    fn is_test_result_ok(&self) -> bool {
+> +        self.is_ok()
+> +    }
+> +}
+> +
+> +/// Returns whether a test result is to be considered OK.
+> +///
+> +/// This will be `assert!`ed from the generated tests.
+> +#[doc(hidden)]
+> +#[expect(private_bounds)]
+> +pub fn is_test_result_ok(t: impl TestResult) -> bool {
+> +    t.is_test_result_ok()
+> +}
+> +
+>  /// Represents an individual test case.
+>  ///
+>  /// The [`kunit_unsafe_test_suite!`] macro expects a NULL-terminated lis=
+t of valid test cases.
+> diff --git a/rust/macros/kunit.rs b/rust/macros/kunit.rs
+> index eb4f2afdbe43..9681775d160a 100644
+> --- a/rust/macros/kunit.rs
+> +++ b/rust/macros/kunit.rs
+> @@ -105,8 +105,9 @@ pub(crate) fn kunit_tests(attr: TokenStream, ts: Toke=
+nStream) -> TokenStream {
+>      let path =3D crate::helpers::file();
+>      for test in &tests {
+>          let kunit_wrapper_fn_name =3D format!("kunit_rust_wrapper_{}", t=
+est);
+> +        // An extra `use` is used here to reduce the length of the messa=
+ge.
+>          let kunit_wrapper =3D format!(
+> -            "unsafe extern \"C\" fn {}(_test: *mut kernel::bindings::kun=
+it) {{ {}(); }}",
+> +            "unsafe extern \"C\" fn {}(_test: *mut kernel::bindings::kun=
+it) {{ use kernel::kunit::is_test_result_ok; assert!(is_test_result_ok({}()=
+)); }}",
+>              kunit_wrapper_fn_name, test
+>          );
+>          writeln!(kunit_macros, "{kunit_wrapper}").unwrap();
+> --
+> 2.49.0
+>
+>
 
