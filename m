@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-631438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFC3AA8853
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDBEAA883B
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5692F175564
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79AB818970D9
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C323A1E51EA;
-	Sun,  4 May 2025 17:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763641E5208;
+	Sun,  4 May 2025 16:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0atlas.com header.i=@0atlas.com header.b="j8nyjKpg"
-Received: from mail83.out.titan.email (mail83.out.titan.email [3.216.99.61])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYPp7SoF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106F84A29
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 17:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.216.99.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD5D1E1DE7;
+	Sun,  4 May 2025 16:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746378677; cv=none; b=N6A/UPR1ld8l8dTZHsMKpCihYvsl8obR7kNxCq9CuLLFA0MOVWpLH6uX0FpqvF3X4frSG2kPplPKnBUHrDiQ6faDRuHARasDN5SXr71lDsKavFVDiXc1iapZB2vY+mIWi3aVpIUV3pdx6BUOW3lr0+eMjrAgpu0h1XgEC4SxzG8=
+	t=1746377763; cv=none; b=PkkSRO1BzNsgwPjF+gxwSa9uh01LnskU3w8ax080RpwCktwzbE1/XeDuQw8e3KnszupGYOo9S6gtisScXOT4UOrExol0P0cetXSo3x2yHBwGjbz9NPCCn8/E6m+0+tDtmESwWK41Xf62r7vDM6i99JVmbMXOdiSeVcpQxhF3ydY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746378677; c=relaxed/simple;
-	bh=VGy2bVJvnII8gFCvBTLW0BiEPlMwoT8ZwRAzAEkvjPw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XxcJKJsXrD62JogMZojg6Qd5n1n41cgScK1QtjlwcmVuVfAlPn1EH+35wyS/20ESiISkBaGhXr21cajme0csgcws2UtZvmfNEdtPWkk7drSh+V/MV10AbGS90vT8TcPp1RXieWrRfDo31BnNFbcatREdffRFopqG/rYvf053pq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0atlas.com; spf=pass smtp.mailfrom=0atlas.com; dkim=pass (1024-bit key) header.d=0atlas.com header.i=@0atlas.com header.b=j8nyjKpg; arc=none smtp.client-ip=3.216.99.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0atlas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0atlas.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out.flockmail.com (Postfix) with ESMTP id 1EA586016A;
-	Sun,  4 May 2025 16:55:21 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=0EKTRc7dcouGTgN1LxVdoVGOZgM+VQUzaLOlEeX1N2M=;
-	c=relaxed/relaxed; d=0atlas.com;
-	h=cc:subject:message-id:to:mime-version:from:date:from:to:cc:subject:date:message-id:in-reply-to:reply-to:references;
-	q=dns/txt; s=titan3; t=1746377721; v=1;
-	b=j8nyjKpg8VUX7RtRkiCKdxKpKZ2SV7PMPM1w5OZtCr2iBhL/6udumb5PhTMnigBFX24Ay6BT
-	pHPPbNwBM/Yzsbh4GtDXVe0bg7k4LShZXt3iPJfK8wNp+B7+wneHDEYLkjbvX+uo5dwK+DiwQxi
-	jCqZMPShWNu9KD7wRG0JeeoY=
-Received: from laviux.. (n219079102104.netvigator.com [219.79.102.104])
-	by smtp-out.flockmail.com (Postfix) with ESMTPA id 0122560117;
-	Sun,  4 May 2025 16:55:17 +0000 (UTC)
-Feedback-ID: :johnchau@0atlas.com:0atlas.com:flockmailId
-From: John Chau <johnchau@0atlas.com>
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Cc: ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	John Chau <johnchau@0atlas.com>
-Subject: [PATCH] Make thinkpad_acpi to support also NEC Lavie X1475JAS
-Date: Mon,  5 May 2025 01:55:13 +0900
-Message-ID: <20250504165513.295135-1-johnchau@0atlas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1746377763; c=relaxed/simple;
+	bh=7byS+mjeSFHrzb+IfI4pFxAaork3Tq6cUfMVQ3+Gz9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/9DCSi2a+0/oK92onh1dppDoyHKvChvO/WB1GUl9PjFD6V6pqtaURyLPmkKuQfVohKe7K+LCxrrymM1KMMUMdzwntrHSPQ2I/764zryNbkdB81/QpgzdCKeUWEPhQNUn4soQVrjvamnRBmifiaKEIfEj0B4sirGhbcJF2A7tmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYPp7SoF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD47C4CEE7;
+	Sun,  4 May 2025 16:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746377763;
+	bh=7byS+mjeSFHrzb+IfI4pFxAaork3Tq6cUfMVQ3+Gz9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mYPp7SoFQgkP8sahvG/Tei97RR/8zhOMj0Tn7BI3CCTOTpgJihq65Tic8HqBDtw0Z
+	 HpbjfKZKMkyQbYT+x/m9OufNyXDhzdTmvo9lWAUn3ScsD6vXfrggpC2mU9jhHcMRXT
+	 1HOGbKr8sjgIgZcPMjWQ+eehI3Ng3ZukcUqOnR+wc6ecsBUD0DVWmbRW8aOu/E0nn8
+	 /QwUFwC94XFPjJVIzvyiQXU7XMGi46liIxxqTt/5pflc0qFXZm+QJZLWpFlh/VoOqn
+	 WSHY1YBDsuHx8qA4R++lGTjRCYxgsAKRi/qFHuQ3y1AcMLnONfknytVSlW0HeK9pcU
+	 vmxUuCeFjTGVw==
+Date: Sun, 4 May 2025 19:55:58 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] KEYS: Reduce smp_mb() calls in key_put()
+Message-ID: <aBecHr6jBLWmJcyP@kernel.org>
+References: <20250430152554.23646-1-jarkko@kernel.org>
+ <aBYqlBoSq4FwiDKD@kernel.org>
+ <aBYwIcy5JCOamAkj@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1746377720964137638.5242.26633778875609042@prod-use1-smtp-out1001.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=O7TDvA9W c=1 sm=1 tr=0 ts=68179bf8
-	a=iJ4LEHJSImB6z5Afb8xgNg==:117 a=iJ4LEHJSImB6z5Afb8xgNg==:17
-	a=CEWIc4RMnpUA:10 a=2z1OXlWFAAAA:8 a=5olU5vRNAAAA:8
-	a=aeDjl3ZlLZUCWRMWLv8A:9 a=SNRPda0NjyR9MlWdJ_lJ:22
-	a=PF5gbd1S6XIqBhKP7f6D:22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBYwIcy5JCOamAkj@gondor.apana.org.au>
 
-This patch changes get_thinkpad_model_data in thinkpad_acpi.c
-to check for additional vendor name "NEC" in order to support
-NEC Lavie X1475JAS notebook (and perhaps more).
+On Sat, May 03, 2025 at 11:02:57PM +0800, Herbert Xu wrote:
+> On Sat, May 03, 2025 at 05:39:16PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, Apr 30, 2025 at 06:25:53PM +0300, Jarkko Sakkinen wrote:
+> > > Rely only on the memory ordering of spin_unlock() when setting
+> > > KEY_FLAG_FINAL_PUT under key->user->lock in key_put().
+> > > 
+> > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > ---
+> > >  security/keys/key.c | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/security/keys/key.c b/security/keys/key.c
+> > > index 7198cd2ac3a3..aecbd624612d 100644
+> > > --- a/security/keys/key.c
+> > > +++ b/security/keys/key.c
+> > > @@ -656,10 +656,12 @@ void key_put(struct key *key)
+> > >  				spin_lock_irqsave(&key->user->lock, flags);
+> > >  				key->user->qnkeys--;
+> > >  				key->user->qnbytes -= key->quotalen;
+> > > +				set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> > >  				spin_unlock_irqrestore(&key->user->lock, flags);
+> > > +			} else {
+> > > +				set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> > > +				smp_mb(); /* key->user before FINAL_PUT set. */
+> > >  			}
+> > > -			smp_mb(); /* key->user before FINAL_PUT set. */
+> > > -			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> > 
+> > Oops, my bad (order swap), sorry. Should have been:
+> > 	
+> >  				spin_unlock_irqrestore(&key->user->lock, flags);
+> > 			} else {
+> > 				smp_mb(); /* key->user before FINAL_PUT set. */
+> 
+> You can use smp_mb__before_atomic here as it is equivalent to
+> smp_mb in this situation.
+> 
+> >  			}
+> > 			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> > 
+> > Should spin_lock()/unlock() be good enough or what good does smp_mb() do
+> > in that branch? Just checking if I'm missing something before sending
+> > fixed version.
+> 
+> I don't think spin_unlock alone is enough to replace an smp_mb.
+> A spin_lock + spin_unlock would be enough though.
+> 
+> However, looking at the bigger picture this smp_mb looks bogus.
+> What exactly is it protecting against?
+> 
+> The race condition that this is supposed to fix should have been
+> dealt with by the set_bit/test_bit of FINAL_PUT alone.  I don't
+> see any point in having this smb_mb at all.
 
-The reason of this works with minimal changes is because NEC
-Lavie X1475JAS is a Thinkpad inside. ACPI dumps reveals its
-OEM ID to be "LENOVO", BIOS version "R2PET30W" matches typical
-Lenovo BIOS version, the existence of HKEY of LEN0268, with DMI
-fw string is "R2PHT24W".
+smp_mb() there makes sure that key->user change don't spill between
+key_put() and gc.
 
-I compiled and tested with my own machine, attached the dmesg
-below as proof of work:
-[    6.288932] thinkpad_acpi: ThinkPad ACPI Extras v0.26
-[    6.288937] thinkpad_acpi: http://ibm-acpi.sf.net/
-[    6.288938] thinkpad_acpi: ThinkPad BIOS R2PET30W (1.11 ), EC R2PHT24W
-[    6.307000] thinkpad_acpi: radio switch found; radios are enabled
-[    6.307030] thinkpad_acpi: This ThinkPad has standard ACPI backlight brightness control, supported by the ACPI video driver
-[    6.307033] thinkpad_acpi: Disabling thinkpad-acpi brightness events by default...
-[    6.320322] thinkpad_acpi: rfkill switch tpacpi_bluetooth_sw: radio is unblocked
-[    6.371963] thinkpad_acpi: secondary fan control detected & enabled
-[    6.391922] thinkpad_acpi: battery 1 registered (start 0, stop 85, behaviours: 0x7)
-[    6.398375] input: ThinkPad Extra Buttons as /devices/platform/thinkpad_acpi/input/input13
+GC pairs smp_mb() in key_put() after FINAL_PUT to make sure that also
+in its side key->user changes have been walled before moving the key
+as part of unrefenced keys.
 
-Signed-off-by: John Chau <johnchau@0atlas.com>
----
- drivers/platform/x86/thinkpad_acpi.c | 2 ++
- 1 file changed, 2 insertions(+)
+See also [1]. It cleared this up for me. Here user->lock easily misleads
+to overlook the actual synchronization scheme.
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index 5790095c175e..92b21e49faf6 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -11478,6 +11478,8 @@ static int __must_check __init get_thinkpad_model_data(
- 		tp->vendor = PCI_VENDOR_ID_IBM;
- 	else if (dmi_name_in_vendors("LENOVO"))
- 		tp->vendor = PCI_VENDOR_ID_LENOVO;
-+	else if (dmi_name_in_vendors("NEC"))
-+		tp->vendor = PCI_VENDOR_ID_LENOVO;
- 	else
- 		return 0;
- 
--- 
-2.43.0
+> 
+> Cheers,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
+[1] https://lore.kernel.org/keyrings/1121543.1746310761@warthog.procyon.org.uk/
+
+BR, Jarkko
 
