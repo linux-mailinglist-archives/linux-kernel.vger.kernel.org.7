@@ -1,183 +1,206 @@
-Return-Path: <linux-kernel+bounces-631420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F61AAA8814
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:39:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECE5AA8818
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B786173C8A
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4321885697
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBD11C6FE9;
-	Sun,  4 May 2025 16:39:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0ECF1DFD96;
+	Sun,  4 May 2025 16:41:32 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EA538F91
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 16:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30F81DBB37
+	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 16:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746376763; cv=none; b=JpEgBq2tfNJnfK+PrzIVKk5/4Nx3m8c2x9VWEsbRdu9mgslhiOifkf7VK3CCReVUFzIWl9TFal5DuZix0W8XauouwG/dwO3MEK4by9ISfh2JuQq1zo0qzg3Ex9VG0MdBGf5BkuXz4+pM2UCDDhtN6lA9e6Iim8ac1VHrB3llrXo=
+	t=1746376892; cv=none; b=uPgn+RI5hW9lsbjdoDl6vyqcfXcOgm1px91N3AwXgFIZ/YYp5BeWsWHypaZaYwfQGfGMNKuXQzGFap7YRAvaudTjcb/2r68DdXAD94kaIj7LQRMoV44WuZZNdMb1jTYV870Dm858xXy6eWZcUbsTEP0+nGHAVM4ODMmonAGkONQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746376763; c=relaxed/simple;
-	bh=/Mx8EoOeS+Qn98L466S3AhSUqO0g6+4bMn7cT+lHINg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iA71Ht3E18fBoiMfJNBI2N+SVbVAcaVIfOvpQAlXMuSX9Tn+1N8ob5i5Ei807C1zn3+YME6OdF6cwYX+EQTK6bvDwrm70QTT3HjwHbvBqoYW2ut1vNhRpsr1X1ou5VrckRyrAv9tfNeGzLyUgQpwSqrzT5SvrWkK9eK3IeJva84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F866C4CEE7;
-	Sun,  4 May 2025 16:39:22 +0000 (UTC)
-Date: Sun, 4 May 2025 12:39:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Colin Ian King <colin.i.king@gmail.com>, Jeongjun Park
- <aha310510@gmail.com>
-Subject: [GIT PULL] tracing: Fixes for v6.15
-Message-ID: <20250504123921.641e2865@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746376892; c=relaxed/simple;
+	bh=zx+jKXcri6dR+IIa1Sk/SxxetBjN9UsFxeJlWEPlXdU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EDypBkJfLJGnBJGpTZ2SpMj0cNSr7a9bfOjuSOgLmpSlmIiIHctUr9H1L7VMgmc2MwTZ486Z/iIIOeb+GT8+kN0hLXM8fwIvzLPu89K/KokKQHtkZJTSpFAnSEzp35K57XrJ7GxNSq+RJy3lN1qD1Zg2ELlWup2aEUnHcpfCyNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85b4ee2e69bso414787739f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 09:41:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746376889; x=1746981689;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gfw45Ij98dx4ZUWmy0fErG1QSZAKfLu5YdTYGEu1vH0=;
+        b=bYLdBs/sHwi+qgx8IdQTDfcfUdb5tnHAOBEnOfWFUIiLy+c7FBHfzQxu9OiV0Lnr5L
+         JW9ADJ5abqApAkRbDz0UQEb4hZZURyjN0i2uViDcoVq1WCZry76yWTBOIl+TAWKjRhQo
+         hxgJhYtr1/x3FJAcEcBj0Bg73lns56WBQlVYu6OPlyMl0sOeT2BEbT1EqKUB2Gl7AVk+
+         ug4tUuU+O0L45DknEQzUUkmCNLnh5KRbVZ7nawkqwKvzNlJ9dS5/+j/UOvzcsvV3dVw/
+         pfIpZ47O4sribEKng2CVt7H0M8HprHMkS2AZisCLFRa46V7vIJ0+GUPjWd8RO83Tgo5e
+         bmJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvL8Nn6RDYFECpkuK4Il9QYLUs9gH7c26w8w6990VKOvdRlEGVesOUhEYqdpN30JbUEEJOTWQRuiTQ9NQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgxrwdEz2cYofkWoYF0MrreTlw8UwLEhZR84r6lC3wusxLoN+k
+	3uOdCpacxUVx8QjQ/6r5+OCczE813VVJIXWsvvQagDf+j8q3i+kuequpH9C9fVIR2sUOoItJVoh
+	THW/uAuDxylRiWF6BCs6docoCVUqT7aSoL5F8PBa4S5saMk9yRwmm+tk=
+X-Google-Smtp-Source: AGHT+IEVyigHJO6JzmSf7gcFgqLz6Xr9b4/nKfyn2Gi1Si0GpO7frnmtmbzTAHwJIYllmmS90gnLV9quVD6Io84gRzFMfY/G4L3e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:32c2:b0:3d8:1a41:69a9 with SMTP id
+ e9e14a558f8ab-3da5b2a02fbmr47154055ab.12.1746376889714; Sun, 04 May 2025
+ 09:41:29 -0700 (PDT)
+Date: Sun, 04 May 2025 09:41:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <681798b9.050a0220.11da1b.0033.GAE@google.com>
+Subject: [syzbot] [net?] general protection fault in rt6_find_cached_rt
+From: syzbot <syzbot+c98f63d3185beafbc080@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    2bfcee565c3a Merge tag 'bcachefs-2025-05-01' of git://evil..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ecf774580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a9a25b7a36123454
+dashboard link: https://syzkaller.appspot.com/bug?extid=c98f63d3185beafbc080
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/75f61dd1e26c/disk-2bfcee56.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b0255b732c7e/vmlinux-2bfcee56.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bff4e7ba94d0/bzImage-2bfcee56.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c98f63d3185beafbc080@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000000c: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
+CPU: 1 UID: 0 PID: 5881 Comm: kworker/1:4 Not tainted 6.15.0-rc4-syzkaller-00189-g2bfcee565c3a #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
+Workqueue: mld mld_ifc_work
+RIP: 0010:fib6_nh_get_excptn_bucket net/ipv6/route.c:1662 [inline]
+RIP: 0010:rt6_find_cached_rt+0xb9/0x270 net/ipv6/route.c:1858
+Code: 48 c1 e8 03 48 89 44 24 08 48 8b 44 24 08 80 3c 18 00 74 08 4c 89 f7 e8 65 8c 14 f8 49 8b 2e 48 83 c5 60 48 89 e8 48 c1 e8 03 <80> 3c 18 00 74 08 48 89 ef e8 49 8c 14 f8 4c 8b 6d 00 e8 70 c5 48
+RSP: 0018:ffffc90000a084e0 EFLAGS: 00010206
+RAX: 000000000000000c RBX: dffffc0000000000 RCX: 0000000000000100
+RDX: ffff88807f319e00 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000060 R08: ffff88807ef99633 R09: 1ffff1100fdf32c6
+R10: dffffc0000000000 R11: ffffed100fdf32c7 R12: ffffc90000a085b8
+R13: 0000000000000000 R14: ffffc90000a085b0 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881261cc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbb92ae56c0 CR3: 000000006a5c2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000005325
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ ip6_pol_route+0x28d/0x1180 net/ipv6/route.c:2273
+ pol_lookup_func include/net/ip6_fib.h:616 [inline]
+ fib6_rule_lookup+0x55e/0x6f0 net/ipv6/fib6_rules.c:125
+ ip6_route_input_lookup net/ipv6/route.c:2335 [inline]
+ ip6_route_input+0x6ce/0xa50 net/ipv6/route.c:2631
+ ip6_rcv_finish+0x141/0x2d0 net/ipv6/ip6_input.c:77
+ NF_HOOK+0x309/0x3a0 include/linux/netfilter.h:314
+ __netif_receive_skb_one_core net/core/dev.c:5887 [inline]
+ __netif_receive_skb+0xd3/0x380 net/core/dev.c:6000
+ process_backlog+0x60e/0x14f0 net/core/dev.c:6352
+ __napi_poll+0xc4/0x480 net/core/dev.c:7324
+ napi_poll net/core/dev.c:7388 [inline]
+ net_rx_action+0x6ea/0xdf0 net/core/dev.c:7510
+ handle_softirqs+0x283/0x870 kernel/softirq.c:579
+ do_softirq+0xec/0x180 kernel/softirq.c:480
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:910 [inline]
+ __dev_queue_xmit+0x1cd7/0x3a70 net/core/dev.c:4656
+ neigh_output include/net/neighbour.h:539 [inline]
+ ip6_finish_output2+0x11fb/0x16a0 net/ipv6/ip6_output.c:141
+ __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
+ ip6_finish_output+0x234/0x7d0 net/ipv6/ip6_output.c:226
+ NF_HOOK+0x9e/0x380 include/linux/netfilter.h:314
+ mld_sendpack+0x800/0xd80 net/ipv6/mcast.c:1868
+ mld_send_cr net/ipv6/mcast.c:2169 [inline]
+ mld_ifc_work+0x835/0xde0 net/ipv6/mcast.c:2702
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xadb/0x17a0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:fib6_nh_get_excptn_bucket net/ipv6/route.c:1662 [inline]
+RIP: 0010:rt6_find_cached_rt+0xb9/0x270 net/ipv6/route.c:1858
+Code: 48 c1 e8 03 48 89 44 24 08 48 8b 44 24 08 80 3c 18 00 74 08 4c 89 f7 e8 65 8c 14 f8 49 8b 2e 48 83 c5 60 48 89 e8 48 c1 e8 03 <80> 3c 18 00 74 08 48 89 ef e8 49 8c 14 f8 4c 8b 6d 00 e8 70 c5 48
+RSP: 0018:ffffc90000a084e0 EFLAGS: 00010206
+
+RAX: 000000000000000c RBX: dffffc0000000000 RCX: 0000000000000100
+RDX: ffff88807f319e00 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000060 R08: ffff88807ef99633 R09: 1ffff1100fdf32c6
+R10: dffffc0000000000 R11: ffffed100fdf32c7 R12: ffffc90000a085b8
+R13: 0000000000000000 R14: ffffc90000a085b0 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881261cc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbb92ae56c0 CR3: 000000006a5c2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000005325
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	48 c1 e8 03          	shr    $0x3,%rax
+   4:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+   9:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+   e:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1)
+  12:	74 08                	je     0x1c
+  14:	4c 89 f7             	mov    %r14,%rdi
+  17:	e8 65 8c 14 f8       	call   0xf8148c81
+  1c:	49 8b 2e             	mov    (%r14),%rbp
+  1f:	48 83 c5 60          	add    $0x60,%rbp
+  23:	48 89 e8             	mov    %rbp,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	48 89 ef             	mov    %rbp,%rdi
+  33:	e8 49 8c 14 f8       	call   0xf8148c81
+  38:	4c 8b 6d 00          	mov    0x0(%rbp),%r13
+  3c:	e8                   	.byte 0xe8
+  3d:	70 c5                	jo     0x4
+  3f:	48                   	rex.W
 
 
-Linus,
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-tracing updates for v6.15
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-- Fix read out of bounds bug in tracing_splice_read_pipe()
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-  The size of the sub page being read can now be greater than a page. But
-  the buffer used in tracing_splice_read_pipe() only allocates a page size.
-  The data copied to the buffer is the amount in sub buffer which can
-  overflow the buffer. Use min((size_t)trace_seq_used(&iter->seq), PAGE_SIZE)
-  to limit the amount copied to the buffer to a max of PAGE_SIZE.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-- Fix the test for NULL from "!filter_hash" to "!*filter_hash"
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-  The add_next_hash() function checked for NULL at the wrong pointer level.
-
-- Do not use the array in trace_adjust_address() if there are no elements
-
-  The trace_adjust_address() finds the offset of a module that was stored in
-  the persistent buffer when reading the previous boot buffer to see if the
-  address belongs to a module that was loaded in the previous boot. An array
-  is created that matches currently loaded modules with previously loaded
-  modules. The trace_adjust_address() uses that array to find the new offset
-  of the address that's in the previous buffer.  But if no module was
-  loaded, it ends up reading the last element in an array that was never
-  allocated. Check if nr_entries is zero and exit out early if it is.
-
-- Remove nested lock of trace_event_sem in print_event_fields()
-
-  The print_event_fields() function iterates over the ftrace_events list and
-  requires the trace_event_sem semaphore held for read. But this function is
-  always called with that semaphore held for read. Remove the taking of the
-  semaphore and replace it with lockdep_assert_held_read(&trace_event_sem);
-
-
-Please pull the latest trace-v6.15-rc4 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.15-rc4
-
-Tag SHA1: b2e4a898d100e7baf9a77ad9dbab05b7f63e4940
-Head SHA1: 0a8f11f8569e7ed16cbcedeb28c4350f6378fea6
-
-
-Colin Ian King (1):
-      ftrace: Fix NULL memory allocation check
-
-Jeongjun Park (1):
-      tracing: Fix oob write in trace_seq_to_buffer()
-
-Steven Rostedt (2):
-      tracing: Fix trace_adjust_address() when there is no modules in scratch area
-      tracing: Do not take trace_event_sem in print_event_fields()
-
-----
- kernel/trace/ftrace.c       | 2 +-
- kernel/trace/trace.c        | 9 ++++++---
- kernel/trace/trace_output.c | 4 ++--
- 3 files changed, 9 insertions(+), 6 deletions(-)
----------------------------
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 61130bb34d6c..6981830c3128 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -3436,7 +3436,7 @@ static int add_next_hash(struct ftrace_hash **filter_hash, struct ftrace_hash **
- 
- 		/* Copy the subops hash */
- 		*filter_hash = alloc_and_copy_ftrace_hash(size_bits, subops_hash->filter_hash);
--		if (!filter_hash)
-+		if (!*filter_hash)
- 			return -ENOMEM;
- 		/* Remove any notrace functions from the copy */
- 		remove_hash(*filter_hash, subops_hash->notrace_hash);
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 8ddf6b17215c..5b8db27fb6ef 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6043,8 +6043,10 @@ unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
- 	tscratch = tr->scratch;
- 	/* if there is no tscrach, module_delta must be NULL. */
- 	module_delta = READ_ONCE(tr->module_delta);
--	if (!module_delta || tscratch->entries[0].mod_addr > addr)
-+	if (!module_delta || !tscratch->nr_entries ||
-+	    tscratch->entries[0].mod_addr > addr) {
- 		return addr + tr->text_delta;
-+	}
- 
- 	/* Note that entries must be sorted. */
- 	nr_entries = tscratch->nr_entries;
-@@ -6821,13 +6823,14 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
- 		/* Copy the data into the page, so we can start over. */
- 		ret = trace_seq_to_buffer(&iter->seq,
- 					  page_address(spd.pages[i]),
--					  trace_seq_used(&iter->seq));
-+					  min((size_t)trace_seq_used(&iter->seq),
-+						  PAGE_SIZE));
- 		if (ret < 0) {
- 			__free_page(spd.pages[i]);
- 			break;
- 		}
- 		spd.partial[i].offset = 0;
--		spd.partial[i].len = trace_seq_used(&iter->seq);
-+		spd.partial[i].len = ret;
- 
- 		trace_seq_init(&iter->seq);
- 	}
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index fee40ffbd490..b9ab06c99543 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -1042,11 +1042,12 @@ enum print_line_t print_event_fields(struct trace_iterator *iter,
- 	struct trace_event_call *call;
- 	struct list_head *head;
- 
-+	lockdep_assert_held_read(&trace_event_sem);
-+
- 	/* ftrace defined events have separate call structures */
- 	if (event->type <= __TRACE_LAST_TYPE) {
- 		bool found = false;
- 
--		down_read(&trace_event_sem);
- 		list_for_each_entry(call, &ftrace_events, list) {
- 			if (call->event.type == event->type) {
- 				found = true;
-@@ -1056,7 +1057,6 @@ enum print_line_t print_event_fields(struct trace_iterator *iter,
- 			if (call->event.type > __TRACE_LAST_TYPE)
- 				break;
- 		}
--		up_read(&trace_event_sem);
- 		if (!found) {
- 			trace_seq_printf(&iter->seq, "UNKNOWN TYPE %d\n", event->type);
- 			goto out;
+If you want to undo deduplication, reply with:
+#syz undup
 
