@@ -1,62 +1,48 @@
-Return-Path: <linux-kernel+bounces-631413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A22AAA87FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:20:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5989AA87FE
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 018E1177328
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33C183AEEC3
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8917F1DE3B7;
-	Sun,  4 May 2025 16:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="diEQgoGH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23D11D63CF;
+	Sun,  4 May 2025 16:21:30 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7031B3957;
-	Sun,  4 May 2025 16:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764128F58;
+	Sun,  4 May 2025 16:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746375646; cv=none; b=kWpuYYlAGanHnd0RosVPD3VuNGSbhQpdsj+wnyYLa3a52+xBpMu39K2kByVVSm1wU/J6wsCK2PM/U+DzLsC9Zreb4XpxfGezcjnMXeP+4y8nFCV/wSf7/4f1APOqDWSSJuzLQNG7kUEgQ3/UCErAWmI2KxxaybYAk8LmvKorbQk=
+	t=1746375690; cv=none; b=Yz2Q386pvcWdfSUU4cx5dciWnzRzPqL9x7rR1J18LD8ZytrPyQcGYXBUp28s05zmFMMxe/2bmSQ2baSHdxZhvpefwvR2oy+MnDUypfu/N9OgWQGe63SEkCrkpncf3/OeNoU24kNltQjyAxb0cKGI7AfIZRJ4MIYTjr0rMo8Mv8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746375646; c=relaxed/simple;
-	bh=8SGKrwFsi6MSGg1AkOsX7EbuWyf4IOy6I9k86qXwR5o=;
+	s=arc-20240116; t=1746375690; c=relaxed/simple;
+	bh=KbEtVg6e3NcKxt57TJfcdFRXYXBSPk0HDdb207vqtbE=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QJppkii1pv5na5j1iCOOGWSfdcy7ciJuVHsA9VO0fBMn/ZBz1lf3QbAX1Ev3yhft0CEjiclF513NtSyVXFKHiGjEbC8lt1qyuE+IfewobWsaRt0uN0nqbPNV3WQZyqP7sTK+lJta8Rob0jc6r3v8D93zj0lATbjPxr1uuwIzvew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=diEQgoGH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B47C4CEED;
-	Sun,  4 May 2025 16:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746375645;
-	bh=8SGKrwFsi6MSGg1AkOsX7EbuWyf4IOy6I9k86qXwR5o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=diEQgoGHb4QlcwRjRjhFNpHordBbmX2YI7DoQFo0LlesJA9RE/dzCML+UxCx7sW0D
-	 89I5ZRX1FvabdAg4KLmjy491B7qQex8Mw+E82cv6NnLFOEt0tL5Ku91Ud7xtkJQQxl
-	 /kqQIS4N4fC2UevTvNmGITHZR+57QFnlkyTl0YJ0gj/XIafkRnqojzi0sQ1j1/IoXG
-	 gza8fKcWPhsqlmyLxQnZqZ+SaEGclgAFql4pQ29LEpXKnB/uxC0b/CgSuG3DVe3S0i
-	 /xcZw0hDBPweZAi+fnHfKXrphoDbjv+zRlCwubC92upOyveDn7f7/W5CJDPAUIPGdv
-	 AZVHVN5f4KkUQ==
-Date: Sun, 4 May 2025 17:20:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sayyad Abid <sayyad.abid16@gmail.com>
-Cc: linux-iio@vger.kernel.org, lars@metafoo.de, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, dlechner@baylibre.com,
- nuno.sa@analog.com, javier.carrasco.cruz@gmail.com,
- olivier.moysan@foss.st.com, gstols@baylibre.com, tgamblin@baylibre.com,
- alisadariana@gmail.com, eblanc@baylibre.com, antoniu.miclaus@analog.com,
- andriy.shevchenko@linux.intel.com, stefan.popa@analog.com,
- ramona.gradinariu@analog.com, herve.codina@bootlin.com,
- tobias.sperling@softing.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/5] iio: adc: Add initial support for TI ADS1262
-Message-ID: <20250504172034.2ab4936a@jic23-huawei>
-In-Reply-To: <20250501100043.325423-1-sayyad.abid16@gmail.com>
-References: <20250501100043.325423-1-sayyad.abid16@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=OoIPVnGv9gBtKZVVwaeYqOQEb3kWxIFfe3WszywnHPPIKJ/A1zSTjiBWQ3IDmTf6z554q9NleKyAkJzm1d232aYd+GVNe2m82swAyWML53lycza5M/qNiqQjIZ9KOYuzpHvcJQKPa76nZV9wJZ7+6PiJuHT8N3K7Ql0zvUh9pJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9F7C4CEE7;
+	Sun,  4 May 2025 16:21:28 +0000 (UTC)
+Date: Sun, 4 May 2025 12:21:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH v7 08/17] unwind_user/deferred: Add unwind cache
+Message-ID: <20250504122131.6ca0d50c@batman.local.home>
+In-Reply-To: <aBc1cqWcTJmeqg3X@gmail.com>
+References: <20250502164746.178864972@goodmis.org>
+	<20250502165008.734340489@goodmis.org>
+	<aBc1cqWcTJmeqg3X@gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,76 +52,96 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu,  1 May 2025 15:30:38 +0530
-Sayyad Abid <sayyad.abid16@gmail.com> wrote:
+On Sun, 4 May 2025 11:37:54 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-> The ADS1262 is a 32-bit, high-resolution delta-sigma ADC communicating
-> over SPI. It's designed for precision measurements.
-> 
-> This initial driver provides the basic functionality needed to:
->  - Probe and register the device via SPI.
->  - Expose standard IIO channels for reading raw voltage samples.
-> 
-> Basic testing was performed on a Raspberry Pi Zero 2W using the hardware
-> SPI0 interface. The connections used were:
-> 
-> +-----------------+            +-----------------+
-> | RPi Zero 2W     |            | TI ADS1262      |
-> | (SPI0 Pins)     |            |                 |
-> |-----------------|            |-----------------|
-> | MOSI            |----------->| DIN             |
-> | MISO            |<-----------| DOUT/DRDY       |
-> | SCLK            |----------->| SCLK            |
-> | CE0             |----------->| /CS             |
-> | 5V              |----------->| DVDD, AVDD      |
-> | GND             |----------->| DGND, AGND      |
-> +-----------------+            +-----------------+
-> 
-> I would greatly appreciate any feedback on the driver structure,
-> IIO integration, SPI communication handling, or any potential issues
-> or areas for improvement you might spot.
-> 
-> This series is broken down as follows:
->  Patch 1: Adds the core driver code (ti-ads1262.c).
->  Patch 2: Adds the Kconfig option.
->  Patch 3: Adds the Makefile entry for compilation.
->  Patch 4: Adds the MAINTAINERS entry.
-> 
-> Thanks for your time and consideration.
+Hi Ingo,
 
-Hi Sayyad
+> * Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > -struct unwind_task_info {
+> > +struct unwind_cache {
+> >  	unsigned long		*entries;
+> > +	unsigned int		nr_entries;
+> > +};
+> > +
+> > +struct unwind_task_info {
+> > +	struct unwind_cache	cache;
+> >  };  
+> 
+> > @@ -19,17 +20,29 @@ int unwind_deferred_trace(struct unwind_stacktrace *trace)
+> >  	if (current->flags & PF_EXITING)
+> >  		return -EINVAL;
+> >  
+> > -       if (!info->entries) {
+> > -               info->entries = kmalloc_array(UNWIND_MAX_ENTRIES, sizeof(long),
+> > -                                             GFP_KERNEL);
+> > -               if (!info->entries)
+> > -		       return -ENOMEM;
+> > +	if (!cache->entries) {
+> > +		cache->entries = kmalloc_array(UNWIND_MAX_ENTRIES, sizeof(long),
+> > +					       GFP_KERNEL);
+> > +		if (!cache->entries)
+> > +			return -ENOMEM;
+> > +        }  
+> 
+> That's just sloppy: why isn't the unwind_cache a pointer to begin with, 
+> with the dynamically allocated object containing ::nr_entries?
 
-As a general rule, an RFC is usually meant to contain a list of open
-questions or some clear statement on why it is not ready for consideration
-as a final driver submissions. Often that is something like some other
-ongoing discussion that needs to conclude.
+Basically you want?
 
-I'm not seeing such questions, so I'm guessing this was just a bit of
-a lack of confidence?  In general it looks pretty good so drop the RFC on
-v2 :)
+struct unwind_task_info {
+	struct unwind_cache	*cache;
+};
 
-Jonathan
+Then have:
+
+struct unwind_cache {
+	int			nr_entries;
+	unsigned long		entries[];
+};
+
+And allocate the unwind_cache to include the size (using the dynamic
+structure macro helpers)?
+
+That makes sense to me.
 
 > 
-> Sayyad Abid (5):
->   iio: adc: ti-ads1262.c: add initial driver for TI ADS1262 ADC
->   iio: adc: Kconfig: add Kconfig entry for TI ADS1262 driver
->   iio: adc: Makefile: add compile support for TI ADS1262 driver
->   MAINTAINERS: add entry for TI ADS1262 ADC driver
->   dt-bindings: iio: adc: add bindings for TI ADS1262
+> Also, the code has whitespace damage.
 > 
->  .../bindings/iio/adc/ti,ads1262.yaml          | 189 ++++++++
->  MAINTAINERS                                   |   7 +
->  drivers/iio/adc/Kconfig                       |  12 +
->  drivers/iio/adc/Makefile                      |   1 +
->  drivers/iio/adc/ti-ads1262.c                  | 438 ++++++++++++++++++
->  5 files changed, 647 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1262.yaml
->  create mode 100644 drivers/iio/adc/ti-ads1262.c
+> > +
+> > +	trace->entries = cache->entries;
+> > +
+> > +	if (cache->nr_entries) {
+> > +               /*
+> > +                * The user stack has already been previously
+> > unwound in this
+> > +                * entry context.  Skip the unwind and use the
+> > cache.
+> > +                */
+> > +               trace->nr = cache->nr_entries;
+> > +               return 0;  
 > 
-> --
-> 2.39.5
+> Whitespace damage here too. Maybe in other patches as well.
 > 
-> 
+> Please don't rush this series without first reviewing it carefully ...
+
+Hmm, For whitespace damage, I usually rely on git show to show me where
+whitespace damage is. But if there's no tabs, then it doesn't show. The
+whitespace damage came from when I pulled in Josh's work and rebased it
+on the latest kernel. There were conflicts which was solved by having
+to do some cut and paste from .rej files, and somehow it added spaces
+instead of tabs.
+
+Peter caught this is the beginning, and I thought I got all the
+locations that had that white space issue. This patch hasn't been
+touched much during the various versions.
+
+I'll do a search for spaces to see if there's more in any of the other
+patches.
+
+Thanks!
+
+-- Steve
 
 
