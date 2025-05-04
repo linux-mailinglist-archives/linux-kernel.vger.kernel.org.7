@@ -1,436 +1,193 @@
-Return-Path: <linux-kernel+bounces-631186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E398AA84D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 10:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA9B7AA857E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39FA61897F90
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 08:27:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8737A1890BC8
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2186C189B91;
-	Sun,  4 May 2025 08:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B99A1624C3;
+	Sun,  4 May 2025 09:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=op.pl header.i=@op.pl header.b="qHy+3c8V"
-Received: from smtpa35.poczta.onet.pl (smtpa35.poczta.onet.pl [213.180.142.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzXR4q+9"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8528436B
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 08:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.180.142.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184C918DB37;
+	Sun,  4 May 2025 09:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746347227; cv=none; b=qn33ylvvlojQLiB/D5hQEnoMgn0t1ip7ywLl+IVZ3vTHhogE9aezyYOeJNu3XmpZ+S+xCMJbsCZMvL6XXg+15E+ab0/SXep1ZQUFQcVIoJGTPu/ZYAXUXXC2ZGK0z4Pa39vyUhbudx32eKD+x2hTtO2zxp7d/w/zRzw15Cu69IA=
+	t=1746350802; cv=none; b=nnVbuQ7yKK7E4+kgeS9F1Q4AhSw1ql+d3ruBT5InGmyW8BZco8zRU2ekZFU+e9EsA0oqNF2FSvfemgxAs79HfmvoCuUPcRK1NwS/sHOCe2vYhd8LQvjQUCZMXGIztUljoI1PBn/RAjX03DEZB7TO0Ee9m4P2YzJs6dYeIG1bkQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746347227; c=relaxed/simple;
-	bh=Y8x1cGBM83YS1OYshQDtXujVjbTi9cgefnEjsnb64eI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YneuFnYNl8RWSlorg1r0FaXWFIeLRIjnOX4lOoON4XZBVpN4HCL17ATccPyEQDGewzOCcYkB+FfgeMygAil9Buz+H4zqtXoj3iTlPAcM4aB/qRUyG9OqReFT+o60lWTz0xQZLv7v6f0IeoqZRX7w9r9CSyhY+1FD+TAcBJt2Jvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=op.pl; spf=pass smtp.mailfrom=op.pl; dkim=pass (1024-bit key) header.d=op.pl header.i=@op.pl header.b=qHy+3c8V; arc=none smtp.client-ip=213.180.142.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=op.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=op.pl
-Received: from [192.168.88.101] (unknown [185.127.22.95])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: dragonn@op.pl)
-	by smtp.poczta.onet.pl (Onet) with ESMTPSA id 4ZqyQq4FGmzlgMqZ;
-	Sun,  4 May 2025 10:25:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=op.pl; s=2011;
-	t=1746347146; bh=UnYj5MH920U0WGeVlFcY/sfuuxkPyX2618eh+yGiFe8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qHy+3c8VmhbzCvnZ/oNptrvCzqidNdiIfWhlepzIa9hkKPXQWYPYDMzp1R05IhutT
-	 G9fsr+VOzOQIAKcXbjSW0qeDnIEoZiklFP88Y9VUSmogMfSsnB+9K3USVwY88PdvPq
-	 6foGax5sa6NK5qRviVxkMB65KAB7LQgx2i8e66nQ=
-Message-ID: <4db60fd6-ffd7-43d8-967b-38d6dae5be71@op.pl>
-Date: Sun, 4 May 2025 10:25:04 +0200
+	s=arc-20240116; t=1746350802; c=relaxed/simple;
+	bh=GgE3fUePBwhCFgyR0mBctmDXGX2r6ZS1hfSP17x1TBk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Nat8QGVoRi+3yIUIj5tIHS8DbARf9yI9bqs9VAveUu59dFBabM80dA+lrlXMUuKq9HRjYwYMWZDqb0az/le6hvTaG38OBpI6e4YPFMqB48DIYVm7B6b1mKbOW0KADymzmzbDzy26Ed4THPOdLRFF0NQilTxskSAfKMfgbn97uA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzXR4q+9; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so27397775e9.3;
+        Sun, 04 May 2025 02:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746350799; x=1746955599; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vqZJZgAzdDTF79oqF94DA/Bbc6jcWSbG8amRxWSzjaU=;
+        b=VzXR4q+9wuOadm7UNi5x5B2Za0n9GOzRjI9yELprMCAt42cZhRLJqH3IhNC2Vin2/w
+         unRKusUxjnqPlp7fqc15Y8L/rZ3N+AKcJvJyjQFeC5IU3SYo9NLgDBp1k+vwvv/3Ric/
+         JURPvKKWDkhXSDj7Q6UIY/RvsxFE/KMY3Z1oMlsHNN497ZddSn0Yr4yl2pumpnV+q8jX
+         2vHCIBKQLwSBw0Uo3kXPMt0OO7YGuzDDIDQeR7DqcZi9TNe2weW4s67+3ZEHf8F6Jrh4
+         AjoOxZ683PU98b0bbJ/fLLd1V3I4eVhY0xWiqLkUCJNnEVXOLUM6VAUp4D58IDgiL4ON
+         8lGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746350799; x=1746955599;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vqZJZgAzdDTF79oqF94DA/Bbc6jcWSbG8amRxWSzjaU=;
+        b=hrkeCi+UxuBDjHnNAZIW7K3Bs6DNqZk1EjXUa/J7SgQ9zxHIkryOfUGlbOjZTWBhOm
+         gW/2/MWDCWZj78/r8ef6wQagQnliroYMvaZGj+0RWmkKwEjZhpJfSa8zjm+AvVGs79Cn
+         /R1w7pMqBvSNTVOgvLjL6nZNTTc5mTPJPJwUnaUeUM10M34rkuGLBl207IohcrlbpqFm
+         IncSNSGeeO9wFTHUOFM3tZKafem2yKvPlFd6VPH44XZdvgmhaPEa8qXbBSMcsbEnx380
+         lXJc2rxAbk0l+fjVaUDxIlMW+EiVQkoGn3CZd8W/Zy1XAz+T/4h4o2i9LGucp3zT49T+
+         C6nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4k8eLF/1RhzDtHOp91jerVNcil5gOGeCW1+VWHUYSCVe46xMegCWDSp8xRm0rGXmiDA1irOjTNVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwehHOzLM8pCbRAAaCVmP+nJMlhJ8RPJYKofZcpRWtiGpcUX9qH
+	l1/7c68P8bzpv60FxDgT1kh1rAq584/+Ls6x+dusjb+QI8ChMaLi
+X-Gm-Gg: ASbGncslWO1FBfSMwe0H4BGyo0DGpL0FNeGuqhG1n6Cg/5KoXm1vzTbO2irKA/h9+Zu
+	ll3U3k+ninPlrGSr0nk3EHX0malVXntUgGJdRCbnBvv6CIIjXVrxdo4RPs4RjAWRChnhvwM2Q9l
+	0/mcjb4ubWhk+mJ1cLiYLAW5WLDe9S0RFvUfAw6PmTdUFMDcgs1a+JTfHbPtB8j3JXCeGO1mylM
+	pdq+TRx9u0YTpoG1pBTSoVKkAqFcLM7mGdA+PVqZJ7+2wd6qHoOAvC5FHkgiLEaiwXQFUI5c9GP
+	mIKL9Xq+IL46ncmB4nHv4Eu5bCGpopVTe7uRf1rG3pR4fWniJmWsjksVQjBQYZAaddtpM+vZUwn
+	VLPh1wCwmjYBuOowJRZCHF2JE9A==
+X-Google-Smtp-Source: AGHT+IGbUJX6NTICvb23QJT7MaAWEUFhHfJ9ihgVnn7Zxv9DMPj37lRyOTGh4JnJWNfKpPzV7HUCbw==
+X-Received: by 2002:a05:600c:1e2a:b0:43d:1f1:8cd with SMTP id 5b1f17b1804b1-441c491fb16mr27013515e9.24.1746350799134;
+        Sun, 04 May 2025 02:26:39 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2ad7688sm144143805e9.3.2025.05.04.02.26.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 May 2025 02:26:38 -0700 (PDT)
+Message-ID: <e6e05f18418a6dc30c1130e5979f642f6ec8d412.camel@gmail.com>
+Subject: Re: EXTERNAL - [PATCH v1] iio: backend: fix out-of-bound write
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Markus Burri <markus.burri@mt.com>
+Cc: linux-kernel@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>, Olivier
+ Moysan <olivier.moysan@foss.st.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, Markus
+ Burri <markus.burri@bbv.ch>
+Date: Sun, 04 May 2025 09:27:02 +0100
+In-Reply-To: <aBU0-ZChCrMCWWLu@Debian-VM-Markus.debian>
+References: <20250501063240.25295-1-markus.burri@mt.com>
+	 <c3a792558b7d35f7342a53c94810861cb0eb0b8e.camel@gmail.com>
+	 <aBU0-ZChCrMCWWLu@Debian-VM-Markus.debian>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mei: vsc: Fix fortify-panic caused by invalid
- counted_by() use
-To: Hans de Goede <hdegoede@redhat.com>, Wentong Wu <wentong.wu@intel.com>,
- Alexander Usyskin <alexander.usyskin@intel.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
- linux-kernel@vger.kernel.org, stable@kernel.org
-References: <20250318141203.94342-1-hdegoede@redhat.com>
- <20250318141203.94342-2-hdegoede@redhat.com>
-Content-Language: en-US
-From: Mateusz Schyboll <dragonn@op.pl>
-In-Reply-To: <20250318141203.94342-2-hdegoede@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi,
+On Fri, 2025-05-02 at 23:11 +0200, Markus Burri wrote:
+> On Fri, May 02, 2025 at 04:12:04PM +0100, Nuno S=C3=A1 wrote:
+> > On Thu, 2025-05-01 at 08:32 +0200, Markus Burri wrote:
+> > > The buffer is set to 80 character. If a caller write more characters,
+> > > count is truncated to the max available space in "simple_write_to_buf=
+fer".
+> > > But afterwards a string terminator is written to the buffer at offset=
+ count
+> > > without boundary check. The zero termination is written OUT-OF-BOUND.
+> > >=20
+> > > Add a check that the given buffer is smaller then the buffer to preve=
+nt.
+> > >=20
+> > > Fixes: 035b4989211d ("iio: backend: make sure to NULL terminate stack=
+ buffer")
+> > > Signed-off-by: Markus Burri <markus.burri@mt.com>
+> > > ---
+> > > =C2=A0drivers/iio/industrialio-backend.c | 3 +++
+> > > =C2=A01 file changed, 3 insertions(+)
+> > >=20
+> > > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industr=
+ialio-
+> > > backend.c
+> > > index a43c8d1bb3d0..3878bd698c98 100644
+> > > --- a/drivers/iio/industrialio-backend.c
+> > > +++ b/drivers/iio/industrialio-backend.c
+> > > @@ -155,6 +155,9 @@ static ssize_t iio_backend_debugfs_write_reg(stru=
+ct file
+> > > *file,
+> > > =C2=A0	ssize_t rc;
+> > > =C2=A0	int ret;
+> > > =C2=A0
+> > > +	if (count >=3D sizeof(buf))
+> > > +		return -ENOSPC;
+> > > +
+> >=20
+> > Oh, this can indeed easily lead to an oob access. However, I would like=
+ly not
+> > mind in early returning an error. This is to write registers so 80 shou=
+ld be
+> > more than enough. Meaning that to trigger this, it has to be intentiona=
+l. That
+> > said, of course we should not let that happen but I would still truncat=
+e things
+> > and let it fail afterwards (keep the code slightly simpler with one les=
+s check).
+> >=20
+> Thanks for your response.
+> I would prefer the upfront error check. The code is cleaner and simpler t=
+o read.
 
-found this patch while searching for a I think a similar bug on 6.14.4 
-compiled with gcc 15:
+Simpler yes, cleaner arguable :). Anyways, no strong feelings so leave it a=
+s-is if
+it's your preference. However, I think the proper way is:
 
-[  121.966267] memcpy: detected buffer overflow: 3 byte read of buffer 
-size 18446744073709551615
-[  121.966273] WARNING: CPU: 7 PID: 3709 at lib/string_helpers.c:1032 
-__fortify_report+0x49/0x50
-[  121.966277] Modules linked in: xt_addrtype ip_set_hash_net ip_set 
-xt_connmark xt_MASQUERADE xt_mark xt_conntrack iptable_nat nf_nat 
-nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_mangle nf_tables 
-iptable_filter wireguard curve25519_x86_64 libchacha20poly1305 
-chacha_x86_64 poly1305_x86_64 libcurve25519_generic libchacha 
-ip6_udp_tunnel udp_tunnel snd_seq_dummy snd_hrtimer rfcomm snd_seq qrtr 
-ccm algif_aead crypto_null des3_ede_x86_64 cbc des_generic libdes uhid 
-cmac md4 algif_hash algif_skcipher af_alg bnep sch_cake zram 
-842_decompress 842_compress pkcs8_key_parser bcachefs lz4hc_compress 
-nls_iso8859_1 lz4_compress vfat fat snd_usb_audio snd_usbmidi_lib 
-snd_ump snd_rawmidi snd_seq_device mc amd_atl intel_rapl_msr 
-intel_rapl_common iwlmvm snd_hda_codec_realtek kvm_amd 
-snd_hda_codec_generic snd_hda_scodec_component mac80211 kvm 
-snd_hda_intel nvidia_drm(OE) libarc4 snd_intel_dspcfg irqbypass ptp 
-snd_intel_sdw_acpi polyval_clmulni pps_core btusb snd_hda_codec 
-polyval_generic btrtl ghash_clmulni_intel snd_hda_core
-[  121.966340]  nvidia_modeset(OE) sha512_ssse3 btintel snd_hwdep 
-sha256_ssse3 iwlwifi spd5118 btbcm sha1_ssse3 snd_pcm r8169 btmtk 
-aesni_intel sp5100_tco snd_timer crypto_simd drm_ttm_helper realtek 
-bluetooth mousedev joydev ttm snd cryptd mdio_devres i2c_piix4 cfg80211 
-wmi_bmof rapl ccp soundcore libphy pcspkr i2c_smbus mac_hid 
-nvidia_uvm(OE) nvidia(OE) it87(OE) hwmon_vid i2c_dev sg crypto_user 
-k10temp acpi_call(OE) dm_mod loop nfnetlink ip_tables x_tables 
-hid_generic nvme nvme_core nvme_auth hid_asus usbhid asus_wmi video wmi 
-sparse_keymap i8042 platform_profile rfkill atkbd libps2 serio vivaldi_fmap
-[  121.966389] CPU: 7 UID: 1000 PID: 3709 Comm: Wonderlands.exe Tainted: 
-G           OE      6.14.4-arch1-1.2-g14 #1 
-57caf87d4589a112ce1dd9d12091033e815c0f73
-[  121.966392] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-[  121.966393] Hardware name: Micro Computer (HK) Tech Limited 
-MotherBoard Series/DRFXL, BIOS 1.09 09/29/2024
-[  121.966394] RIP: 0010:__fortify_report+0x49/0x50
-[  121.966396] Code: d0 48 0f 47 c2 83 e7 01 4c 89 ca 48 8b 34 c5 e0 ef 
-6f 9b 48 c7 c0 b0 15 e2 9b 48 c7 c7 f0 15 d5 9b 48 0f 44 c8 e8 27 98 80 
-ff <0f> 0b e9 0b 6b 5b ff 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-[  121.966398] RSP: 0018:ffffb73e0663f880 EFLAGS: 00010246
-[  121.966399] RAX: 0000000000000000 RBX: ffffb73e0663f8f0 RCX: 
-0000000000000027
-[  121.966401] RDX: ffff96c6bd3a1908 RSI: 0000000000000001 RDI: 
-ffff96c6bd3a1900
-[  121.966401] RBP: ffffb73e0663f988 R08: 0000000000000000 R09: 
-00000000ffffdfff
-[  121.966402] R10: ffffffff9d240820 R11: ffffb73e0663f718 R12: 
-ffff96b9ceb4c000
-[  121.966403] R13: 0000000000000003 R14: ffff96b8fc79e290 R15: 
-ffff96bad2e81b40
-[  121.966404] FS:  00007860a69c0f80(0000) GS:ffff96c6bd380000(0000) 
-knlGS:000000007ffc0000
-[  121.966406] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  121.966407] CR2: 0000000081f2d31c CR3: 000000030f1ae000 CR4: 
-0000000000f50ef0
-[  121.966408] PKRU: 55555554
-[  121.966409] Call Trace:
-[  121.966411]  <TASK>
-[  121.966412]  __fortify_panic+0xd/0xf
-[  121.966416]  bch2_xattr_get_trans.cold+0xe/0xe [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966446]  ? __bch2_time_stats_update+0xfc/0x340 [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966471]  bch2_xattr_get_handler+0x85/0x150 [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966488]  __vfs_getxattr+0x91/0xd0
-[  121.966492]  do_getxattr+0xb5/0x190
-[  121.966494]  path_getxattrat+0x12f/0x190
-[  121.966500]  do_syscall_64+0x7f/0x190
-[  121.966505]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966507]  ? switch_fpu_return+0x5d/0xe0
-[  121.966510]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966511]  ? arch_exit_to_user_mode_prepare.isra.0+0x7c/0xa0
-[  121.966514]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966515]  ? syscall_exit_to_user_mode+0x45/0x1d0
-[  121.966517]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966519]  ? __bch2_fs_usage_read_short+0x1cb/0x200 [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966538]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966540]  ? bch2_fs_usage_read_short+0x56/0xe0 [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966553]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966555]  ? do_statfs_native+0x38/0x70
-[  121.966558]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966560]  ? __do_sys_fstatfs+0x5e/0x70
-[  121.966561]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966562]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966564]  ? cp_new_stat+0x131/0x170
-[  121.966568]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966569]  ? __do_sys_newfstat+0x6a/0x80
-[  121.966572]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966573]  ? syscall_exit_to_user_mode+0x45/0x1d0
-[  121.966575]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966576]  ? do_syscall_64+0x8b/0x190
-[  121.966578]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966579]  ? do_syscall_64+0x8b/0x190
-[  121.966581]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966582]  ? irqentry_exit_to_user_mode+0x3a/0x1d0
-[  121.966584]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  121.966586] RIP: 0033:0x7860a6e8df9e
-[  121.966608] Code: 48 89 e5 48 83 ec 08 6a 4b e8 8e 30 f8 ff c9 c3 66 
-2e 0f 1f 84 00 00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 c1 00 00 00 0f 
-05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 42 6d 0d 00 f7 d8 64 89 01 48
-[  121.966610] RSP: 002b:00000001000ff318 EFLAGS: 00000246 ORIG_RAX: 
-00000000000000c1
-[  121.966611] RAX: ffffffffffffffda RBX: 00000001000ff434 RCX: 
-00007860a6e8df9e
-[  121.966612] RDX: 00000001000ff330 RSI: 00007860a5439317 RDI: 
-00000000000003e6
-[  121.966613] RBP: 00000001000ff3f0 R08: 0000000000001460 R09: 
-00007860a548f5c0
-[  121.966614] R10: 0000000000000040 R11: 0000000000000246 R12: 
-0000000000000000
-[  121.966615] R13: 00000001000ff330 R14: 00000001000ff440 R15: 
-00000000000003e6
-[  121.966618]  </TASK>
-[  121.966619] ---[ end trace 0000000000000000 ]---
-[  121.966623] ------------[ cut here ]------------
-[  121.966623] kernel BUG at lib/string_helpers.c:1040!
-[  121.966629] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-[  121.966631] CPU: 7 UID: 1000 PID: 3709 Comm: Wonderlands.exe Tainted: 
-G        W  OE      6.14.4-arch1-1.2-g14 #1 
-57caf87d4589a112ce1dd9d12091033e815c0f73
-[  121.966634] Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-[  121.966635] Hardware name: Micro Computer (HK) Tech Limited 
-MotherBoard Series/DRFXL, BIOS 1.09 09/29/2024
-[  121.966636] RIP: 0010:__fortify_panic+0xd/0xf
-[  121.966638] Code: e9 bc 22 90 00 0f 1f 84 00 00 00 00 00 90 90 90 90 
-90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 40 0f b6 ff e8 43 50 90 
-00 <0f> 0b 48 8b 54 24 18 48 8b 74 24 10 4d 89 d0 4c 89 e1 48 c7 c7 cc
-[  121.966640] RSP: 0018:ffffb73e0663f888 EFLAGS: 00010246
-[  121.966641] RAX: 0000000000000000 RBX: ffffb73e0663f8f0 RCX: 
-0000000000000027
-[  121.966642] RDX: ffff96c6bd3a1908 RSI: 0000000000000001 RDI: 
-ffff96c6bd3a1900
-[  121.966644] RBP: ffffb73e0663f988 R08: 0000000000000000 R09: 
-00000000ffffdfff
-[  121.966645] R10: ffffffff9d240820 R11: ffffb73e0663f718 R12: 
-ffff96b9ceb4c000
-[  121.966646] R13: 0000000000000003 R14: ffff96b8fc79e290 R15: 
-ffff96bad2e81b40
-[  121.966647] FS:  00007860a69c0f80(0000) GS:ffff96c6bd380000(0000) 
-knlGS:000000007ffc0000
-[  121.966648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  121.966649] CR2: 0000000081f2d31c CR3: 000000030f1ae000 CR4: 
-0000000000f50ef0
-[  121.966651] PKRU: 55555554
-[  121.966652] Call Trace:
-[  121.966653]  <TASK>
-[  121.966654]  bch2_xattr_get_trans.cold+0xe/0xe [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966673]  ? __bch2_time_stats_update+0xfc/0x340 [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966693]  bch2_xattr_get_handler+0x85/0x150 [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966710]  __vfs_getxattr+0x91/0xd0
-[  121.966712]  do_getxattr+0xb5/0x190
-[  121.966715]  path_getxattrat+0x12f/0x190
-[  121.966721]  do_syscall_64+0x7f/0x190
-[  121.966724]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966725]  ? switch_fpu_return+0x5d/0xe0
-[  121.966727]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966728]  ? arch_exit_to_user_mode_prepare.isra.0+0x7c/0xa0
-[  121.966730]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966731]  ? syscall_exit_to_user_mode+0x45/0x1d0
-[  121.966733]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966735]  ? __bch2_fs_usage_read_short+0x1cb/0x200 [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966755]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966756]  ? bch2_fs_usage_read_short+0x56/0xe0 [bcachefs 
-b5391e24358551d6754989dda9ec90add2ece543]
-[  121.966770]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966772]  ? do_statfs_native+0x38/0x70
-[  121.966775]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966776]  ? __do_sys_fstatfs+0x5e/0x70
-[  121.966778]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966779]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966781]  ? cp_new_stat+0x131/0x170
-[  121.966784]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966786]  ? __do_sys_newfstat+0x6a/0x80
-[  121.966789]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966791]  ? syscall_exit_to_user_mode+0x45/0x1d0
-[  121.966792]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966794]  ? do_syscall_64+0x8b/0x190
-[  121.966796]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966797]  ? do_syscall_64+0x8b/0x190
-[  121.966799]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  121.966801]  ? irqentry_exit_to_user_mode+0x3a/0x1d0
-[  121.966803]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  121.966805] RIP: 0033:0x7860a6e8df9e
-[  121.966807] Code: 48 89 e5 48 83 ec 08 6a 4b e8 8e 30 f8 ff c9 c3 66 
-2e 0f 1f 84 00 00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 c1 00 00 00 0f 
-05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 42 6d 0d 00 f7 d8 64 89 01 48
-[  121.966808] RSP: 002b:00000001000ff318 EFLAGS: 00000246 ORIG_RAX: 
-00000000000000c1
-[  121.966810] RAX: ffffffffffffffda RBX: 00000001000ff434 RCX: 
-00007860a6e8df9e
-[  121.966811] RDX: 00000001000ff330 RSI: 00007860a5439317 RDI: 
-00000000000003e6
-[  121.966812] RBP: 00000001000ff3f0 R08: 0000000000001460 R09: 
-00007860a548f5c0
-[  121.966814] R10: 0000000000000040 R11: 0000000000000246 R12: 
-0000000000000000
-[  121.966815] R13: 00000001000ff330 R14: 00000001000ff440 R15: 
-00000000000003e6
-[  121.966818]  </TASK>
-[  121.966819] Modules linked in: xt_addrtype ip_set_hash_net ip_set 
-xt_connmark xt_MASQUERADE xt_mark xt_conntrack iptable_nat nf_nat 
-nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_mangle nf_tables 
-iptable_filter wireguard curve25519_x86_64 libchacha20poly1305 
-chacha_x86_64 poly1305_x86_64 libcurve25519_generic libchacha 
-ip6_udp_tunnel udp_tunnel snd_seq_dummy snd_hrtimer rfcomm snd_seq qrtr 
-ccm algif_aead crypto_null des3_ede_x86_64 cbc des_generic libdes uhid 
-cmac md4 algif_hash algif_skcipher af_alg bnep sch_cake zram 
-842_decompress 842_compress pkcs8_key_parser bcachefs lz4hc_compress 
-nls_iso8859_1 lz4_compress vfat fat snd_usb_audio snd_usbmidi_lib 
-snd_ump snd_rawmidi snd_seq_device mc amd_atl intel_rapl_msr 
-intel_rapl_common iwlmvm snd_hda_codec_realtek kvm_amd 
-snd_hda_codec_generic snd_hda_scodec_component mac80211 kvm 
-snd_hda_intel nvidia_drm(OE) libarc4 snd_intel_dspcfg irqbypass ptp 
-snd_intel_sdw_acpi polyval_clmulni pps_core btusb snd_hda_codec 
-polyval_generic btrtl ghash_clmulni_intel snd_hda_core
-[  121.966863]  nvidia_modeset(OE) sha512_ssse3 btintel snd_hwdep 
-sha256_ssse3 iwlwifi spd5118 btbcm sha1_ssse3 snd_pcm r8169 btmtk 
-aesni_intel sp5100_tco snd_timer crypto_simd drm_ttm_helper realtek 
-bluetooth mousedev joydev ttm snd cryptd mdio_devres i2c_piix4 cfg80211 
-wmi_bmof rapl ccp soundcore libphy pcspkr i2c_smbus mac_hid 
-nvidia_uvm(OE) nvidia(OE) it87(OE) hwmon_vid i2c_dev sg crypto_user 
-k10temp acpi_call(OE) dm_mod loop nfnetlink ip_tables x_tables 
-hid_generic nvme nvme_core nvme_auth hid_asus usbhid asus_wmi video wmi 
-sparse_keymap i8042 platform_profile rfkill atkbd libps2 serio vivaldi_fmap
-[  121.966899] ---[ end trace 0000000000000000 ]---
-[  121.966900] RIP: 0010:__fortify_panic+0xd/0xf
-[  121.966902] Code: e9 bc 22 90 00 0f 1f 84 00 00 00 00 00 90 90 90 90 
-90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 40 0f b6 ff e8 43 50 90 
-00 <0f> 0b 48 8b 54 24 18 48 8b 74 24 10 4d 89 d0 4c 89 e1 48 c7 c7 cc
-[  121.966903] RSP: 0018:ffffb73e0663f888 EFLAGS: 00010246
-[  121.966905] RAX: 0000000000000000 RBX: ffffb73e0663f8f0 RCX: 
-0000000000000027
-[  121.966906] RDX: ffff96c6bd3a1908 RSI: 0000000000000001 RDI: 
-ffff96c6bd3a1900
-[  121.966907] RBP: ffffb73e0663f988 R08: 0000000000000000 R09: 
-00000000ffffdfff
-[  121.966908] R10: ffffffff9d240820 R11: ffffb73e0663f718 R12: 
-ffff96b9ceb4c000
-[  121.966909] R13: 0000000000000003 R14: ffff96b8fc79e290 R15: 
-ffff96bad2e81b40
-[  121.966910] FS:  00007860a69c0f80(0000) GS:ffff96c6bd380000(0000) 
-knlGS:000000007ffc0000
-[  121.966912] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  121.966913] CR2: 0000000081f2d31c CR3: 000000030f1ae000 CR4: 
-0000000000f50ef0
-[  121.966914] PKRU: 55555554
+if (count >=3D sizeof(buf) - 1)
+	return -ENOSPC;
 
-Unfortunately even with this patch the bug still shows up, so I am not 
-100% sure this is exactly the same , the call trace is diffirent so 
-maybe a similar bug but in a diffirent subsystem?
+And since you're doing this, I think my suggestion still makes sense. I mea=
+n:
 
-The behavior from user space is that I am trying to launch Tiny Tina's 
-Wonderlands and that pops up after the optimizing shaders finishes and 
-the game never launches, it gets stuck after that.
+buf[rc] =3D '\0';
 
-W dniu 18.03.2025 o 15:12, Hans de Goede pisze:
-> gcc 15 honors the __counted_by(len) attribute on vsc_tp_packet.buf[]
-> and the vsc-tp.c code is using this in a wrong way. len does not contain
-> the available size in the buffer, it contains the actual packet length
-> *without* the crc. So as soon as vsc_tp_xfer() tries to add the crc to
-> buf[] the fortify-panic handler gets triggered:
->
-> [   80.842193] memcpy: detected buffer overflow: 4 byte write of buffer size 0
-> [   80.842243] WARNING: CPU: 4 PID: 272 at lib/string_helpers.c:1032 __fortify_report+0x45/0x50
-> ...
-> [   80.843175]  __fortify_panic+0x9/0xb
-> [   80.843186]  vsc_tp_xfer.cold+0x67/0x67 [mei_vsc_hw]
-> [   80.843210]  ? seqcount_lockdep_reader_access.constprop.0+0x82/0x90
-> [   80.843229]  ? lockdep_hardirqs_on+0x7c/0x110
-> [   80.843250]  mei_vsc_hw_start+0x98/0x120 [mei_vsc]
-> [   80.843270]  mei_reset+0x11d/0x420 [mei]
->
-> The easiest fix would be to just drop the counted-by but with the exception
-> of the ack buffer in vsc_tp_xfer_helper() which only contains enough room
-> for the packet-header, all other uses of vsc_tp_packet always use a buffer
-> of VSC_TP_MAX_XFER_SIZE bytes for the packet.
->
-> Instead of just dropping the counted-by, split the vsc_tp_packet struct
-> definition into a header and a full-packet definition and use a fixed
-> size buf[] in the packet definition, this way fortify-source buffer
-> overrun checking still works when enabled.
->
-> Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
-> Cc: stable@kernel.org
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->   drivers/misc/mei/vsc-tp.c | 26 +++++++++++++++-----------
->   1 file changed, 15 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
-> index 7be1649b1972..fa553d4914b6 100644
-> --- a/drivers/misc/mei/vsc-tp.c
-> +++ b/drivers/misc/mei/vsc-tp.c
-> @@ -36,20 +36,24 @@
->   #define VSC_TP_XFER_TIMEOUT_BYTES		700
->   #define VSC_TP_PACKET_PADDING_SIZE		1
->   #define VSC_TP_PACKET_SIZE(pkt) \
-> -	(sizeof(struct vsc_tp_packet) + le16_to_cpu((pkt)->len) + VSC_TP_CRC_SIZE)
-> +	(sizeof(struct vsc_tp_packet_hdr) + le16_to_cpu((pkt)->hdr.len) + VSC_TP_CRC_SIZE)
->   #define VSC_TP_MAX_PACKET_SIZE \
-> -	(sizeof(struct vsc_tp_packet) + VSC_TP_MAX_MSG_SIZE + VSC_TP_CRC_SIZE)
-> +	(sizeof(struct vsc_tp_packet_hdr) + VSC_TP_MAX_MSG_SIZE + VSC_TP_CRC_SIZE)
->   #define VSC_TP_MAX_XFER_SIZE \
->   	(VSC_TP_MAX_PACKET_SIZE + VSC_TP_XFER_TIMEOUT_BYTES)
->   #define VSC_TP_NEXT_XFER_LEN(len, offset) \
-> -	(len + sizeof(struct vsc_tp_packet) + VSC_TP_CRC_SIZE - offset + VSC_TP_PACKET_PADDING_SIZE)
-> +	(len + sizeof(struct vsc_tp_packet_hdr) + VSC_TP_CRC_SIZE - offset + VSC_TP_PACKET_PADDING_SIZE)
->   
-> -struct vsc_tp_packet {
-> +struct vsc_tp_packet_hdr {
->   	__u8 sync;
->   	__u8 cmd;
->   	__le16 len;
->   	__le32 seq;
-> -	__u8 buf[] __counted_by(len);
-> +};
-> +
-> +struct vsc_tp_packet {
-> +	struct vsc_tp_packet_hdr hdr;
-> +	__u8 buf[VSC_TP_MAX_XFER_SIZE - sizeof(struct vsc_tp_packet_hdr)];
->   };
->   
->   struct vsc_tp {
-> @@ -158,12 +162,12 @@ static int vsc_tp_dev_xfer(struct vsc_tp *tp, void *obuf, void *ibuf, size_t len
->   static int vsc_tp_xfer_helper(struct vsc_tp *tp, struct vsc_tp_packet *pkt,
->   			      void *ibuf, u16 ilen)
->   {
-> -	int ret, offset = 0, cpy_len, src_len, dst_len = sizeof(struct vsc_tp_packet);
-> +	int ret, offset = 0, cpy_len, src_len, dst_len = sizeof(struct vsc_tp_packet_hdr);
->   	int next_xfer_len = VSC_TP_PACKET_SIZE(pkt) + VSC_TP_XFER_TIMEOUT_BYTES;
->   	u8 *src, *crc_src, *rx_buf = tp->rx_buf;
->   	int count_down = VSC_TP_MAX_XFER_COUNT;
->   	u32 recv_crc = 0, crc = ~0;
-> -	struct vsc_tp_packet ack;
-> +	struct vsc_tp_packet_hdr ack;
->   	u8 *dst = (u8 *)&ack;
->   	bool synced = false;
->   
-> @@ -280,10 +284,10 @@ int vsc_tp_xfer(struct vsc_tp *tp, u8 cmd, const void *obuf, size_t olen,
->   
->   	guard(mutex)(&tp->mutex);
->   
-> -	pkt->sync = VSC_TP_PACKET_SYNC;
-> -	pkt->cmd = cmd;
-> -	pkt->len = cpu_to_le16(olen);
-> -	pkt->seq = cpu_to_le32(++tp->seq);
-> +	pkt->hdr.sync = VSC_TP_PACKET_SYNC;
-> +	pkt->hdr.cmd = cmd;
-> +	pkt->hdr.len = cpu_to_le16(olen);
-> +	pkt->hdr.seq = cpu_to_le32(++tp->seq);
->   	memcpy(pkt->buf, obuf, olen);
->   
->   	crc = ~crc32(~0, (u8 *)pkt, sizeof(pkt) + olen);
+since rc is indeed the number of bytes written and we do want to terminate =
+the buffer
+at the proper place. So the above is the correct form even if there's no re=
+al issue
+with the current form after this patch. Being this a fix, not sure if Jonat=
+han is ok
+with the above in the current patch or as follow up.
+
+- Nuno S=C3=A1
+
+> As you wrote the buffer should only contain a register and a value and
+> therefore never extend the 80 character.
+> If there are more, it must be intentional or by mistake. In both cases I =
+expect
+> to get an error back, instead of try to handle partial/wrong data.
+>=20
+> > So I would instead do:
+> >=20
+> > buf[rc] =3D '\0';
+> >=20
+> > Thanks for catching this!
+> > - Nuno S=C3=A1
+> >=20
+> >=20
+> > > =C2=A0	rc =3D simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, user=
+buf,
+> > > count);
+> > > =C2=A0	if (rc < 0)
+> > > =C2=A0		return rc;
+> > >=20
+> > > base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+
 
