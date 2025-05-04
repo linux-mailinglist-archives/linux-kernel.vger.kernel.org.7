@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-631461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D9BAA888C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:32:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9301FAA8893
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A2803BA1BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC7883BAA48
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAEF1F2B99;
-	Sun,  4 May 2025 17:32:14 +0000 (UTC)
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099251F4612;
+	Sun,  4 May 2025 17:32:22 +0000 (UTC)
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C501EFFB5;
-	Sun,  4 May 2025 17:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE291F3D2C;
+	Sun,  4 May 2025 17:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746379934; cv=none; b=tEUNijvVaqwbuCDRLa78SU/Ncwg9f9Lm1IIBwXMOc1ThpGpT2Kk0jy+aciCMrbLv5Cl9bOM/Mq4/fGj1tZl9GE7hsCwnPX2SsJjDaU1e9cQudy3juMOW0pktNY6x30lvwxRoflrguCtSD3p+lG7FUp7oiEiZkh6G6wXF6NQ0YBk=
+	t=1746379941; cv=none; b=qt/426xJ5nEID5SCWugGTLzKQiyEm7oX80ZyNiDuxwWCkdxcP6dddVMlczc7Rgp2m0pFhYGlfaD1wkrnXss0FByvLDD8ZiJPHDzhlQ6BtDly9X7IyeSP5s4+QTmKIaDowDs/tRjIjYJy1NL2YMGtqd22YlFKBa6Q9P6zLXmXOs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746379934; c=relaxed/simple;
-	bh=lBPC/zrvrNHermCXWGNtETuEb0cFund/AAT9AWz+vvM=;
+	s=arc-20240116; t=1746379941; c=relaxed/simple;
+	bh=J2lwdCE8iDDP3UvbXLuSXS9ESV77jCz6AkFvJkR0FyU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KzlZpWjpK9l4jkf9pQb9XFuVCbf2xuRPZyXg+Dx6ToJbWIVTwcA8lnIhVRxP7ZY4egTf3OPs2nOlqHGJKbWGAGdx/6CEI84EHZKa0nX8wNqGwPHfeEgRWyDoNqfqiYjiSlwu70oSt9cwqBskr0+a+Wtx/2M0uuUKATmfLvTTH0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=nMqGwmbjwXBxx1jfMbj3/sCbFjScg8gCyP+pew+vHhuogHHIISIOjtYV+PfkiQgY7DTj5MFCrIsehg9cBLbGB/dRmlB/7qy6FVcjGVZr50cl955dyT1ygrfN1di5WCKHAUwPkYiI9WLo2fun5s1kilw8TrVpisJ8dMtcxmKXQl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZrBYN2QKvz9tSt;
-	Sun,  4 May 2025 19:32:08 +0200 (CEST)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4ZrBYQ25W8z9tQQ;
+	Sun,  4 May 2025 19:32:10 +0200 (CEST)
 From: Remo Senekowitsch <remo@buenzli.dev>
 To: Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@google.com>,
@@ -54,9 +54,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v4 4/9] rust: device: Enable printing fwnode name and path
-Date: Sun,  4 May 2025 19:31:49 +0200
-Message-ID: <20250504173154.488519-5-remo@buenzli.dev>
+Subject: [PATCH v4 5/9] rust: device: Introduce PropertyGuard
+Date: Sun,  4 May 2025 19:31:50 +0200
+Message-ID: <20250504173154.488519-6-remo@buenzli.dev>
 In-Reply-To: <20250504173154.488519-1-remo@buenzli.dev>
 References: <20250504173154.488519-1-remo@buenzli.dev>
 Precedence: bulk
@@ -67,100 +67,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add two new public methods `display_name` and `display_path` to
-`FwNode`. They can be used by driver authors for logging purposes. In
-addition, they will be used by core property abstractions for automatic
-logging, for example when a driver attempts to read a required but
-missing property.
+This abstraction is a way to force users to specify whether a property
+is supposed to be required or not. This allows us to move error
+logging of missing required properties into core, preventing a lot of
+boilerplate in drivers.
+
+It will be used by upcoming methods for reading device properties.
 
 Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
 ---
- rust/kernel/device/property.rs | 72 ++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ rust/kernel/device/property.rs | 59 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
 diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
-index 70593343bd811..6ccc7947f9c31 100644
+index 6ccc7947f9c31..59c61e2493831 100644
 --- a/rust/kernel/device/property.rs
 +++ b/rust/kernel/device/property.rs
-@@ -32,6 +32,78 @@ pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_handle {
-         self.0.get()
+@@ -123,3 +123,62 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+         unsafe { bindings::fwnode_handle_put(obj.cast().as_ptr()) }
      }
- 
-+    /// Returns an object that implements [`Display`](core::fmt::Display) for
-+    /// printing the name of a node.
-+    pub fn display_name(&self) -> impl core::fmt::Display + '_ {
-+        struct FwNodeDisplayName<'a>(&'a FwNode);
+ }
 +
-+        impl core::fmt::Display for FwNodeDisplayName<'_> {
-+            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+                // SAFETY: self is valid by its type invariant
-+                let name = unsafe { bindings::fwnode_get_name(self.0.as_raw()) };
-+                if name.is_null() {
-+                    return Ok(());
-+                }
-+                // SAFETY: fwnode_get_name returns null or a valid C string and
-+                // name is not null
-+                let name = unsafe { CStr::from_char_ptr(name) };
-+                write!(f, "{name}")
-+            }
++/// A helper for reading device properties.
++///
++/// Use [`Self::required_by`] if a missing property is considered a bug and
++/// [`Self::optional`] otherwise.
++///
++/// For convenience, [`Self::or`] and [`Self::or_default`] are provided.
++pub struct PropertyGuard<'fwnode, 'name, T> {
++    /// The result of reading the property.
++    inner: Result<T>,
++    /// The fwnode of the property, used for logging in the "required" case.
++    fwnode: &'fwnode FwNode,
++    /// The name of the property, used for logging in the "required" case.
++    name: &'name CStr,
++}
++
++impl<T> PropertyGuard<'_, '_, T> {
++    /// Access the property, indicating it is required.
++    ///
++    /// If the property is not present, the error is automatically logged. If a
++    /// missing property is not an error, use [`Self::optional`] instead. The
++    /// device is required to associate the log with it.
++    pub fn required_by(self, dev: &super::Device) -> Result<T> {
++        if self.inner.is_err() {
++            dev_err!(
++                dev,
++                "{}: property '{}' is missing\n",
++                self.fwnode.display_path(),
++                self.name
++            );
 +        }
-+
-+        FwNodeDisplayName(self)
++        self.inner
 +    }
 +
-+    /// Returns an object that implements [`Display`](core::fmt::Display) for
-+    /// printing the full path of a node.
-+    pub fn display_path(&self) -> impl core::fmt::Display + '_ {
-+        struct FwNodeDisplayPath<'a>(&'a FwNode);
-+
-+        impl core::fmt::Display for FwNodeDisplayPath<'_> {
-+            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+                // The logic here is the same as the one in lib/vsprintf.c
-+                // (fwnode_full_name_string).
-+
-+                // SAFETY: `self.0.as_raw()` is valid by its type invariant
-+                let num_parents = unsafe { bindings::fwnode_count_parents(self.0.as_raw()) };
-+
-+                for depth in (0..=num_parents).rev() {
-+                    let fwnode = if depth == 0 {
-+                        self.0.as_raw()
-+                    } else {
-+                        // SAFETY: `self.0.as_raw()` is valid
-+                        unsafe { bindings::fwnode_get_nth_parent(self.0.as_raw(), depth) }
-+                    };
-+
-+                    // SAFETY: fwnode is valid, it is either `self.0.as_raw()` or
-+                    // the return value of `bindings::fwnode_get_nth_parent` which
-+                    // returns a valid pointer to a fwnode_handle if the provided
-+                    // depth is within the valid range, which we know to be true.
-+                    let prefix = unsafe { bindings::fwnode_get_name_prefix(fwnode) };
-+                    if !prefix.is_null() {
-+                        // SAFETY: fwnode_get_name_prefix returns null or a
-+                        // valid C string
-+                        let prefix = unsafe { CStr::from_char_ptr(prefix) };
-+                        write!(f, "{prefix}")?;
-+                    }
-+                    write!(f, "{}", self.0.display_name())?;
-+
-+                    if depth != 0 {
-+                        // SAFETY: `fwnode` is valid, because `depth` is
-+                        // a valid depth of a parent of `self.0.as_raw()`.
-+                        // `fwnode_get_nth_parent` increments the refcount and
-+                        // we are responsible to decrement it.
-+                        unsafe { bindings::fwnode_handle_put(fwnode) }
-+                    }
-+                }
-+
-+                Ok(())
-+            }
-+        }
-+
-+        FwNodeDisplayPath(self)
++    /// Access the property, indicating it is optional.
++    ///
++    /// In contrast to [`Self::required_by`], no error message is logged if
++    /// the property is not present.
++    pub fn optional(self) -> Option<T> {
++        self.inner.ok()
 +    }
 +
-     /// Checks if property is present or not.
-     pub fn property_present(&self, name: &CStr) -> bool {
-         // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
++    /// Access the property or the specified default value.
++    ///
++    /// Do not pass a sentinel value as default to detect a missing property.
++    /// Use [`Self::required_by`] or [`Self::optional`] instead.
++    pub fn or(self, default: T) -> T {
++        self.inner.unwrap_or(default)
++    }
++}
++
++impl<T: Default> PropertyGuard<'_, '_, T> {
++    /// Access the property or a default value.
++    ///
++    /// Use [`Self::or`] to specify a custom default value.
++    pub fn or_default(self) -> T {
++        self.inner.unwrap_or_default()
++    }
++}
 -- 
 2.49.0
 
