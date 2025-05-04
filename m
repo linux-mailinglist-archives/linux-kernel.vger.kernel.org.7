@@ -1,320 +1,300 @@
-Return-Path: <linux-kernel+bounces-631468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74182AA889D
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA1FAA887F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BC673BB635
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000623B000E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26461F7092;
-	Sun,  4 May 2025 17:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAF61EDA34;
+	Sun,  4 May 2025 17:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="syiaYLbC";
-	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="VKRRSBm2"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DU9CJ0ap"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41EB1EEA39;
-	Sun,  4 May 2025 17:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746379960; cv=pass; b=KsNuKMWwZLGpNClJf5PJw2zCx6JV4yBkrp6Zhmb0q8GXYjhubDqDofZs5qrPMDbFTfhGjDyTyTjs84PY0I+XzcBVMJ6BGf/rOQZqULdimnaSXs6xEvk0S6r2ozZN2H/KaRUvxWHLj+AsdRtmDBj35SfZgrc4HNKNjT2NwPDT97k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746379960; c=relaxed/simple;
-	bh=CGq95FFCitrDU4kSl80FyMm3qcIAzLYe4OPJEcok9ww=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GLquSytpvxB0U95WtjO5aJHMntYSos+Lc/AdLCEuRJ4cEkOGq52MoMDzwtyJLZjVCkNgZJ098IjZcvVijJMkCIXa43XRi/enWelwIXN8W9ffABUURxZtHJ/YpOhSG1bGOlpJU1WBVMmjcrvqf4e3HTh8328phytUtGLbGnnlZDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=a98shuttle.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=syiaYLbC; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=VKRRSBm2; arc=pass smtp.client-ip=85.215.255.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=a98shuttle.de
-ARC-Seal: i=1; a=rsa-sha256; t=1746379774; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=kPOmm7elWmM0zs9YKe0mxTNWb5w+qYBlPgdf+57ZjMBXhjMvzuMjrE3aI5KstUSwck
-    rfNstgoe+pUJo/DSXYNmKgXW0PfBD1fXc4ZcKS8MYbj7oBYU3pGPBNYkH1rS+M6VSp5Y
-    bgqOnv1yl8n4sJnM00sgapL/GL4kZwSRQi3nmwwsKqWh7g0c3dmu+iHj7SMiWd3MkriT
-    ysIzosHXC00b5kza/TS1sGEPVRpLRMnjizy3BBXWPdgZexmiC5NmjG69TSSc9oRPfbxU
-    YPhEtieqzDmQSn9z66Ojlfpocirsn6azSlDEfIhwt1fJE89fuPrq/8FwgzNWNJTAcZWF
-    6tdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1746379774;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=PaEoVQlznhi9pCpWZbxcLxQZGvCFQ3YD/uDLUZg5VWE=;
-    b=dmKvPiIf+wayGcgJoG5MxAdWYWz4JwRZwcyQ7GR/VC/eQ678RzZEqyGMvEdSRcyTNL
-    fqFSU4+tHKLLSw5N3gvheXJARjWKHEMNaVBfQrAl0qVRpicZJJBk7PJE2iO76XZrrS4n
-    /O1tHk7crJrIWBocBlHl4bhEIPa/hFz84fGCp+vKDMxu/jSz4mPIWUeAhrRxJRXsHEKC
-    zu3RvN7EMKH4UHrkz+D98sW2TtzkjOag7bSeCSg64yqjxBKQg+UbiABLQzo58Fyg0X8v
-    opwu3S4TiThoNm0443lbFUachdpjVKadNABy8A572nokUGoKFpGxwxsA/jbH2h33i9FK
-    TX6Q==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1746379774;
-    s=strato-dkim-0002; d=fossekall.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=PaEoVQlznhi9pCpWZbxcLxQZGvCFQ3YD/uDLUZg5VWE=;
-    b=syiaYLbC5mNqfNKfiGgrsRD5F1NY4edjPEXGQf2BadLt53QjWg1dCyKzd5bRmO2Nav
-    +C8hJpNv82mWZIffqCUo0DVE4hKgbsUkCAYPY5YhUHpy3Mfkqbv78fmGnZunHTwkBK5y
-    FkwUU4MQbK+qPowm06OVRO/QKMokoqyzJDEKa0KbIF9BivTd2bLxCB27XCVUC0vSi0BY
-    HmAUv3GDWMgkpM89pG4MWHk7MX40l+3jV0Tr7nZqbi0skPFpJZHfXiImPvhmOFrfe6Rl
-    pUrY8HlZkjEWiWX3k918Ss7Np9Bk3FdbxYxv4ZbIqR9EGCpwXa07MT46jUy+lMUWCu77
-    5qRQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1746379774;
-    s=strato-dkim-0003; d=fossekall.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=PaEoVQlznhi9pCpWZbxcLxQZGvCFQ3YD/uDLUZg5VWE=;
-    b=VKRRSBm2kG0JkyaLwjUnEtyYGj1Mw/pTclG703uQTenmfp21fwFBoWpajBvswRGgX7
-    slKdibBluGkEnZFjZ1Cg==
-X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
-Received: from aerfugl
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id f28b35144HTYz9L
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Sun, 4 May 2025 19:29:34 +0200 (CEST)
-Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
-	by aerfugl with smtp (Exim 4.96)
-	(envelope-from <michael@a98shuttle.de>)
-	id 1uBd9g-0004Or-2w;
-	Sun, 04 May 2025 19:29:32 +0200
-Received: (nullmailer pid 243306 invoked by uid 502);
-	Sun, 04 May 2025 17:29:32 -0000
-From: Michael Klein <michael@fossekall.de>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Michael Klein <michael@fossekall.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [net-next v7 6/6] net: phy: realtek: Add support for PHY LEDs on RTL8211E
-Date: Sun,  4 May 2025 19:29:16 +0200
-Message-Id: <20250504172916.243185-7-michael@fossekall.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250504172916.243185-1-michael@fossekall.de>
-References: <20250504172916.243185-1-michael@fossekall.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130841E5B88;
+	Sun,  4 May 2025 17:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746379802; cv=none; b=VGlAVYWcYR3ril6OIKunPkeNoohc05b2euO+pNeI6UAI+g6zyVvBjyc/tNvYutEHND2FEevE1b3LI4MCNfvdMYDZ/ljUGIy3p6hxi+y0S2VHceWJJvUYIBs+AZbGymDgZY9Qlb2kOzOo2DXc1GtJoJiLro1Ojr/wEnCHb9io36o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746379802; c=relaxed/simple;
+	bh=UPZ/v/zVDaKn23W0QWjzgIyPsVG8PE2v13VVOn3wiUU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FZepjZVQcCZeE7009jr1WGLQQfrGC58+/ss1jVR9iR+f/HiMUVOv8Ydb92mcbjs3SGUcmorBvYnhq+W590htmNrWq+8U/vLzyVCYWZLyw/WQkZ7u0zIgt3QatKbkGZr21eSiq1eq6gjmgQJ2UmkUJmL4x6V2IhxlCBUPEUIWXbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DU9CJ0ap; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54b1095625dso4408912e87.0;
+        Sun, 04 May 2025 10:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746379797; x=1746984597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DqaANv92m4hTYV8OL5ZcTItvvIMVs56xMsm33zu7CQg=;
+        b=DU9CJ0apLB36qxn0wy6sqBdyRxhXhlGSjwjSsiRhTM4c21TF9FF6UI5uX43YTDrzi0
+         MDOoPu4MpS7hqsgD808RiLVGshfTzSMY54Jf1b0TDlqG5gK2dh+Y+pWBxAQIslz6g3hM
+         QvYzikunhPs1RviUpWxA4B7v6DWev/Fx4kZZ70yE10VHlzZIFGcZBcEktOew41dDj1RD
+         17jZNbqrx2/nqme/icwKsmmtXMYoNc8KtmD32amWRSAM2Fnh618v4qaLKvDnZS7iD3PM
+         kJzrgYF1MYqFi+OLqiE0/WhsdYxMKgLYisaUI0s/K1XgJIORKj5K9I6R1Kjv53X6lDBl
+         4aAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746379797; x=1746984597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DqaANv92m4hTYV8OL5ZcTItvvIMVs56xMsm33zu7CQg=;
+        b=hmS4Q9o2/q+FDN6bH2hCZp0ASGnguDZnUKkOZ22UBrjjak4MrxEaf6XJDTcrHM2LNb
+         fCETdBfHsWXLmAWHCutF4Vb032GmfnjLnDDHDal//iOvOPqNrPAL0sP9Nb/nWvAeEpRJ
+         4JIfpeuMnrC9rzkI4hJnwmKdYVUl2mjmXcAjYPlwhDxG0J6dqMoXO5LYcPXJVh1akyLr
+         r2+Nw+9X564ADeZEnUVt0FWQJ9HP8RkS230lc83KB+z9lzc8pdipdQL6UYVTVwbng9Ay
+         xL48ur18hVufsTOFXbLpaBAWu9OjFnJzFRzUfKJoNde8uJncIa/Mlrhx3ROSGcvc05qh
+         0FRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1JR0KBqrcXswUt6gVisGL2eObEb4vL5XQB6WJb81erBSmKbE6Njdd9DzcKZtUDqRtw326Kmh0CsAwhGaY6uim@vger.kernel.org, AJvYcCV1y10PMqwVaJ2OdD0y+6dtg7M39xTF1mZ1aeHZ6BaYkbqeM9iKciRAFnHHkx2P391s4DAxBcwWQ0aBxRA=@vger.kernel.org, AJvYcCVVa3ck/Q6zeY6epsMXOXhZt/7vxfv6OhawPt6YUNtY2U9NyV0VlNm3qOMR+7KL818XYJKM9unWsFWxvOKzz2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnwbg+aamOS3ADj5+7SXNh2DrORYVd4WBrqZjljBq8VmODbq/C
+	lHQtRXmVSwUODoW9oCk7GNs+OWxh5q4OZ7DEH2YrBOgW2gYbokB06JVofTfiIyxT5X5yrSgB4df
+	Ybg4IkihgxL+NgZVD4nr6ntqBX94=
+X-Gm-Gg: ASbGnctfZkiz/MYquHvTlwNYRGng6qNyg5Oj9i9ZRit2+3Aq9onDJFUp/uQJ3mNNqQ8
+	onbLM7ZdXzqJeCZB8aJLy0sz1gh01zf35lrYmrw5bj9wJoMTlAsDZStCXZzqwBlns2p9p/XbRto
+	yrDFdivAhhy6uvX4yLyu2UeB3z7M7gac0R+YFDjSsDXvkRXNCjP1w6HKE=
+X-Google-Smtp-Source: AGHT+IHFwQGId/qg0kBW+KYdkOs+J3tWLMwK0WAbCd1RELh3Re9uudfVzggOVnYlLipmaOIsCQoGNE89jzqxeW1+l7o=
+X-Received: by 2002:a05:651c:b25:b0:30c:719:1145 with SMTP id
+ 38308e7fff4ca-320c44e62d7mr27278341fa.17.1746379796945; Sun, 04 May 2025
+ 10:29:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20250502215133.1923676-1-ojeda@kernel.org> <20250502215133.1923676-6-ojeda@kernel.org>
+In-Reply-To: <20250502215133.1923676-6-ojeda@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sun, 4 May 2025 13:29:19 -0400
+X-Gm-Features: ATxdqUHy3xw0YS_UixKAyjECkzgBxuNPadNnJTHr2K-h1SUeIdIon-i0DKnWu9Y
+Message-ID: <CAJ-ks9n7u3WkYmJCVc18c_cKod6DaB7KrA7NXbOuD3E3TYbvpQ@mail.gmail.com>
+Subject: Re: [PATCH 5/7] rust: str: take advantage of the `-> Result` support
+ in KUnit `#[test]`'s
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Rae Moar <rmoar@google.com>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Like the RTL8211F, the RTL8211E PHY supports up to three LEDs.
-Add netdev trigger support for them, too.
+On Fri, May 2, 2025 at 5:54=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> Since now we have support for returning `-> Result`s, we can convert some
+> of these tests to use the feature, and serve as a first user for it too.
+>
+> Thus convert them.
+>
+> This, in turn, simplifies them a fair bit.
+>
+> We keep the actual assertions we want to make as explicit ones with
+> `assert*!`s.
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Signed-off-by: Michael Klein <michael@fossekall.de>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/net/phy/realtek/realtek_main.c | 125 +++++++++++++++++++++++--
- 1 file changed, 119 insertions(+), 6 deletions(-)
+Alice pointed this out in another thread but: one of the downsides of
+returning Result is that in the event of failure the line number where
+the error occurred is no longer contained in the test output. I'm =F0=9F=91=
+=8E
+on this change for that reason.
 
-diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-index e26098a2ff27..301fbe141b9b 100644
---- a/drivers/net/phy/realtek/realtek_main.c
-+++ b/drivers/net/phy/realtek/realtek_main.c
-@@ -40,6 +40,20 @@
- #define RTL821x_PAGE_SELECT			0x1f
- #define RTL821x_SET_EXT_PAGE			0x07
- 
-+/* RTL8211E extension page 44/0x2c */
-+#define RTL8211E_LEDCR_EXT_PAGE			0x2c
-+#define RTL8211E_LEDCR1				0x1a
-+#define RTL8211E_LEDCR1_ACT_TXRX		BIT(4)
-+#define RTL8211E_LEDCR1_MASK			BIT(4)
-+#define RTL8211E_LEDCR1_SHIFT			1
-+
-+#define RTL8211E_LEDCR2				0x1c
-+#define RTL8211E_LEDCR2_LINK_1000		BIT(2)
-+#define RTL8211E_LEDCR2_LINK_100		BIT(1)
-+#define RTL8211E_LEDCR2_LINK_10			BIT(0)
-+#define RTL8211E_LEDCR2_MASK			GENMASK(2, 0)
-+#define RTL8211E_LEDCR2_SHIFT			4
-+
- /* RTL8211E extension page 164/0xa4 */
- #define RTL8211E_RGMII_EXT_PAGE			0xa4
- #define RTL8211E_RGMII_DELAY			0x1c
-@@ -145,7 +159,8 @@
- #define RTL_8221B_VN_CG				0x001cc84a
- #define RTL_8251B				0x001cc862
- 
--#define RTL8211F_LED_COUNT			3
-+/* RTL8211E and RTL8211F support up to three LEDs */
-+#define RTL8211x_LED_COUNT			3
- 
- MODULE_DESCRIPTION("Realtek PHY driver");
- MODULE_AUTHOR("Johnson Leung");
-@@ -169,6 +184,21 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
- 	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
- }
- 
-+static int rtl821x_read_ext_page(struct phy_device *phydev, u16 ext_page,
-+				 u32 regnum)
-+{
-+	int oldpage, ret = 0;
-+
-+	oldpage = phy_select_page(phydev, RTL821x_SET_EXT_PAGE);
-+	if (oldpage >= 0) {
-+		ret = __phy_write(phydev, RTL821x_EXT_PAGE_SELECT, ext_page);
-+		if (ret == 0)
-+			ret = __phy_read(phydev, regnum);
-+	}
-+
-+	return phy_restore_page(phydev, oldpage, ret);
-+}
-+
- static int rtl821x_modify_ext_page(struct phy_device *phydev, u16 ext_page,
- 				   u32 regnum, u16 mask, u16 set)
- {
-@@ -608,7 +638,7 @@ static int rtl821x_resume(struct phy_device *phydev)
- 	return 0;
- }
- 
--static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+static int rtl8211x_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 					unsigned long rules)
- {
- 	const unsigned long mask = BIT(TRIGGER_NETDEV_LINK_10) |
-@@ -627,9 +657,11 @@ static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 	 *      rates and Active indication always at all three 10+100+1000
- 	 *      link rates.
- 	 * This code currently uses mode B only.
-+	 *
-+	 * RTL8211E PHY LED has one mode, which works like RTL8211F mode B.
- 	 */
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	/* Filter out any other unsupported triggers. */
-@@ -648,7 +680,7 @@ static int rtl8211f_led_hw_control_get(struct phy_device *phydev, u8 index,
- {
- 	int val;
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	val = phy_read_paged(phydev, 0xd04, RTL8211F_LEDCR);
-@@ -681,7 +713,7 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
- 	const u16 mask = RTL8211F_LEDCR_MASK << (RTL8211F_LEDCR_SHIFT * index);
- 	u16 reg = 0;
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-@@ -704,6 +736,84 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
- 	return phy_modify_paged(phydev, 0xd04, RTL8211F_LEDCR, mask, reg);
- }
- 
-+static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
-+				       unsigned long *rules)
-+{
-+	int ret;
-+	u16 cr1, cr2;
-+
-+	if (index >= RTL8211x_LED_COUNT)
-+		return -EINVAL;
-+
-+	ret = rtl821x_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				    RTL8211E_LEDCR1);
-+	if (ret < 0)
-+		return ret;
-+
-+	cr1 = ret >> RTL8211E_LEDCR1_SHIFT * index;
-+	if (cr1 & RTL8211E_LEDCR1_ACT_TXRX) {
-+		__set_bit(TRIGGER_NETDEV_RX, rules);
-+		__set_bit(TRIGGER_NETDEV_TX, rules);
-+	}
-+
-+	ret = rtl821x_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				    RTL8211E_LEDCR2);
-+	if (ret < 0)
-+		return ret;
-+
-+	cr2 = ret >> RTL8211E_LEDCR2_SHIFT * index;
-+	if (cr2 & RTL8211E_LEDCR2_LINK_10)
-+		__set_bit(TRIGGER_NETDEV_LINK_10, rules);
-+
-+	if (cr2 & RTL8211E_LEDCR2_LINK_100)
-+		__set_bit(TRIGGER_NETDEV_LINK_100, rules);
-+
-+	if (cr2 & RTL8211E_LEDCR2_LINK_1000)
-+		__set_bit(TRIGGER_NETDEV_LINK_1000, rules);
-+
-+	return ret;
-+}
-+
-+static int rtl8211e_led_hw_control_set(struct phy_device *phydev, u8 index,
-+				       unsigned long rules)
-+{
-+	const u16 cr1mask =
-+		RTL8211E_LEDCR1_MASK << (RTL8211E_LEDCR1_SHIFT * index);
-+	const u16 cr2mask =
-+		RTL8211E_LEDCR2_MASK << (RTL8211E_LEDCR2_SHIFT * index);
-+	u16 cr1 = 0, cr2 = 0;
-+	int ret;
-+
-+	if (index >= RTL8211x_LED_COUNT)
-+		return -EINVAL;
-+
-+	if (test_bit(TRIGGER_NETDEV_RX, &rules) ||
-+	    test_bit(TRIGGER_NETDEV_TX, &rules)) {
-+		cr1 |= RTL8211E_LEDCR1_ACT_TXRX;
-+	}
-+
-+	cr1 <<= RTL8211E_LEDCR1_SHIFT * index;
-+	ret = rtl821x_modify_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				      RTL8211E_LEDCR1, cr1mask, cr1);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_10;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_100, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_100;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_1000, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_1000;
-+
-+	cr2 <<= RTL8211E_LEDCR2_SHIFT * index;
-+	ret = rtl821x_modify_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				      RTL8211E_LEDCR2, cr2mask, cr2);
-+
-+	return ret;
-+}
-+
- static int rtl8211e_config_init(struct phy_device *phydev)
- {
- 	u16 val;
-@@ -1479,6 +1589,9 @@ static struct phy_driver realtek_drvs[] = {
- 		.resume		= genphy_resume,
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
-+		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
-+		.led_hw_control_get = rtl8211e_led_hw_control_get,
-+		.led_hw_control_set = rtl8211e_led_hw_control_set,
- 	}, {
- 		PHY_ID_MATCH_EXACT(0x001cc916),
- 		.name		= "RTL8211F Gigabit Ethernet",
-@@ -1494,7 +1607,7 @@ static struct phy_driver realtek_drvs[] = {
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
- 		.flags		= PHY_ALWAYS_CALL_SUSPEND,
--		.led_hw_is_supported = rtl8211f_led_hw_is_supported,
-+		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
- 		.led_hw_control_get = rtl8211f_led_hw_control_get,
- 		.led_hw_control_set = rtl8211f_led_hw_control_set,
- 	}, {
--- 
-2.39.5
+> ---
+>  rust/kernel/str.rs | 68 ++++++++++++++++++++--------------------------
+>  1 file changed, 30 insertions(+), 38 deletions(-)
+>
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index cf2caa2db168..8dcfb11013f2 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -576,25 +576,9 @@ macro_rules! c_str {
+>  mod tests {
+>      use super::*;
+>
+> -    struct String(CString);
+> -
+> -    impl String {
+> -        fn from_fmt(args: fmt::Arguments<'_>) -> Self {
+> -            String(CString::try_from_fmt(args).unwrap())
+> -        }
+> -    }
+> -
+> -    impl Deref for String {
+> -        type Target =3D str;
+> -
+> -        fn deref(&self) -> &str {
+> -            self.0.to_str().unwrap()
+> -        }
+> -    }
 
+These changes don't depend on returning `Result` from the tests
+AFAICT. Can they be in a separate patch?
+
+> -
+>      macro_rules! format {
+>          ($($f:tt)*) =3D> ({
+> -            &*String::from_fmt(kernel::fmt!($($f)*))
+> +            CString::try_from_fmt(kernel::fmt!($($f)*))?.to_str()?
+>          })
+>      }
+>
+> @@ -613,66 +597,72 @@ macro_rules! format {
+>          \\xf0\\xf1\\xf2\\xf3\\xf4\\xf5\\xf6\\xf7\\xf8\\xf9\\xfa\\xfb\\xf=
+c\\xfd\\xfe\\xff";
+>
+>      #[test]
+> -    fn test_cstr_to_str() {
+> +    fn test_cstr_to_str() -> Result {
+>          let good_bytes =3D b"\xf0\x9f\xa6\x80\0";
+> -        let checked_cstr =3D CStr::from_bytes_with_nul(good_bytes).unwra=
+p();
+> -        let checked_str =3D checked_cstr.to_str().unwrap();
+> +        let checked_cstr =3D CStr::from_bytes_with_nul(good_bytes)?;
+> +        let checked_str =3D checked_cstr.to_str()?;
+>          assert_eq!(checked_str, "=F0=9F=A6=80");
+> +        Ok(())
+>      }
+>
+>      #[test]
+> -    fn test_cstr_to_str_invalid_utf8() {
+> +    fn test_cstr_to_str_invalid_utf8() -> Result {
+>          let bad_bytes =3D b"\xc3\x28\0";
+> -        let checked_cstr =3D CStr::from_bytes_with_nul(bad_bytes).unwrap=
+();
+> +        let checked_cstr =3D CStr::from_bytes_with_nul(bad_bytes)?;
+>          assert!(checked_cstr.to_str().is_err());
+> +        Ok(())
+>      }
+>
+>      #[test]
+> -    fn test_cstr_as_str_unchecked() {
+> +    fn test_cstr_as_str_unchecked() -> Result {
+>          let good_bytes =3D b"\xf0\x9f\x90\xA7\0";
+> -        let checked_cstr =3D CStr::from_bytes_with_nul(good_bytes).unwra=
+p();
+> +        let checked_cstr =3D CStr::from_bytes_with_nul(good_bytes)?;
+>          // SAFETY: The contents come from a string literal which contain=
+s valid UTF-8.
+>          let unchecked_str =3D unsafe { checked_cstr.as_str_unchecked() }=
+;
+>          assert_eq!(unchecked_str, "=F0=9F=90=A7");
+> +        Ok(())
+>      }
+>
+>      #[test]
+> -    fn test_cstr_display() {
+> -        let hello_world =3D CStr::from_bytes_with_nul(b"hello, world!\0"=
+).unwrap();
+> +    fn test_cstr_display() -> Result {
+> +        let hello_world =3D CStr::from_bytes_with_nul(b"hello, world!\0"=
+)?;
+>          assert_eq!(format!("{}", hello_world), "hello, world!");
+> -        let non_printables =3D CStr::from_bytes_with_nul(b"\x01\x09\x0a\=
+0").unwrap();
+> +        let non_printables =3D CStr::from_bytes_with_nul(b"\x01\x09\x0a\=
+0")?;
+>          assert_eq!(format!("{}", non_printables), "\\x01\\x09\\x0a");
+> -        let non_ascii =3D CStr::from_bytes_with_nul(b"d\xe9j\xe0 vu\0").=
+unwrap();
+> +        let non_ascii =3D CStr::from_bytes_with_nul(b"d\xe9j\xe0 vu\0")?=
+;
+>          assert_eq!(format!("{}", non_ascii), "d\\xe9j\\xe0 vu");
+> -        let good_bytes =3D CStr::from_bytes_with_nul(b"\xf0\x9f\xa6\x80\=
+0").unwrap();
+> +        let good_bytes =3D CStr::from_bytes_with_nul(b"\xf0\x9f\xa6\x80\=
+0")?;
+>          assert_eq!(format!("{}", good_bytes), "\\xf0\\x9f\\xa6\\x80");
+> +        Ok(())
+>      }
+>
+>      #[test]
+> -    fn test_cstr_display_all_bytes() {
+> +    fn test_cstr_display_all_bytes() -> Result {
+>          let mut bytes: [u8; 256] =3D [0; 256];
+>          // fill `bytes` with [1..=3D255] + [0]
+>          for i in u8::MIN..=3Du8::MAX {
+>              bytes[i as usize] =3D i.wrapping_add(1);
+>          }
+> -        let cstr =3D CStr::from_bytes_with_nul(&bytes).unwrap();
+> +        let cstr =3D CStr::from_bytes_with_nul(&bytes)?;
+>          assert_eq!(format!("{}", cstr), ALL_ASCII_CHARS);
+> +        Ok(())
+>      }
+>
+>      #[test]
+> -    fn test_cstr_debug() {
+> -        let hello_world =3D CStr::from_bytes_with_nul(b"hello, world!\0"=
+).unwrap();
+> +    fn test_cstr_debug() -> Result {
+> +        let hello_world =3D CStr::from_bytes_with_nul(b"hello, world!\0"=
+)?;
+>          assert_eq!(format!("{:?}", hello_world), "\"hello, world!\"");
+> -        let non_printables =3D CStr::from_bytes_with_nul(b"\x01\x09\x0a\=
+0").unwrap();
+> +        let non_printables =3D CStr::from_bytes_with_nul(b"\x01\x09\x0a\=
+0")?;
+>          assert_eq!(format!("{:?}", non_printables), "\"\\x01\\x09\\x0a\"=
+");
+> -        let non_ascii =3D CStr::from_bytes_with_nul(b"d\xe9j\xe0 vu\0").=
+unwrap();
+> +        let non_ascii =3D CStr::from_bytes_with_nul(b"d\xe9j\xe0 vu\0")?=
+;
+>          assert_eq!(format!("{:?}", non_ascii), "\"d\\xe9j\\xe0 vu\"");
+> -        let good_bytes =3D CStr::from_bytes_with_nul(b"\xf0\x9f\xa6\x80\=
+0").unwrap();
+> +        let good_bytes =3D CStr::from_bytes_with_nul(b"\xf0\x9f\xa6\x80\=
+0")?;
+>          assert_eq!(format!("{:?}", good_bytes), "\"\\xf0\\x9f\\xa6\\x80\=
+"");
+> +        Ok(())
+>      }
+>
+>      #[test]
+> -    fn test_bstr_display() {
+> +    fn test_bstr_display() -> Result {
+>          let hello_world =3D BStr::from_bytes(b"hello, world!");
+>          assert_eq!(format!("{}", hello_world), "hello, world!");
+>          let escapes =3D BStr::from_bytes(b"_\t_\n_\r_\\_\'_\"_");
+> @@ -683,10 +673,11 @@ fn test_bstr_display() {
+>          assert_eq!(format!("{}", non_ascii), "d\\xe9j\\xe0 vu");
+>          let good_bytes =3D BStr::from_bytes(b"\xf0\x9f\xa6\x80");
+>          assert_eq!(format!("{}", good_bytes), "\\xf0\\x9f\\xa6\\x80");
+> +        Ok(())
+>      }
+>
+>      #[test]
+> -    fn test_bstr_debug() {
+> +    fn test_bstr_debug() -> Result {
+>          let hello_world =3D BStr::from_bytes(b"hello, world!");
+>          assert_eq!(format!("{:?}", hello_world), "\"hello, world!\"");
+>          let escapes =3D BStr::from_bytes(b"_\t_\n_\r_\\_\'_\"_");
+> @@ -697,6 +688,7 @@ fn test_bstr_debug() {
+>          assert_eq!(format!("{:?}", non_ascii), "\"d\\xe9j\\xe0 vu\"");
+>          let good_bytes =3D BStr::from_bytes(b"\xf0\x9f\xa6\x80");
+>          assert_eq!(format!("{:?}", good_bytes), "\"\\xf0\\x9f\\xa6\\x80\=
+"");
+> +        Ok(())
+>      }
+>  }
+>
+> --
+> 2.49.0
+>
+>
 
