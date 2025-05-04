@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-631477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7461FAA88B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:39:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24F1AA888A
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4CFA3A87E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:38:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8D8418944FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C1021FF5A;
-	Sun,  4 May 2025 17:38:51 +0000 (UTC)
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5E01F09AA;
+	Sun,  4 May 2025 17:32:12 +0000 (UTC)
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8462D25776;
-	Sun,  4 May 2025 17:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325BE1EDA35;
+	Sun,  4 May 2025 17:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746380331; cv=none; b=NcutaDaYm1dt/3Stuiuz6WnuGng3EJnZmaqolEQOVIpWJhcdssyWR9mW6T2P5Lv6FplDvVw3+RN3G1yfXMwZxIfezKx7GsWeWbbtYShjgvieez2rfHNMtB1WWVkDaNGdePMcIktBKeiVNcccuMnrxupanpe8oOgKNm8AUx0c1vw=
+	t=1746379931; cv=none; b=Q7pQYuxP71r4NB8Tdk/Bavi5RA6mTDXOLg0T+P7axm6xbQ5/9YeVV79vQdc/S2REwxgH+iSOWsjYCas53jyI0svtxDhPnTP9sfHHDiLLcdae7Ab/D1y3DyKN+EMz2kC4IzwPfa4tjw94o0oP+FgorZDAu3Hg7ocyVboC51B+odU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746380331; c=relaxed/simple;
-	bh=xZMoxyD1M6hO1rjE/H9RTuK9a0wHG4M1f4p3TCszldo=;
+	s=arc-20240116; t=1746379931; c=relaxed/simple;
+	bh=IuJ/JYEcJX5Y174KySDaQUhQfRssj2v+q0jSvHXpWBU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VRtGo9nj+1I7KD1UfM6WAQeh9B1NA1wyj4uDdHrJtUc2Sebw2OLFluyIegw8LV7bFtMhQjkfD1y4ARDb+ywGMNkHEFe14RucgqPQQ0dYSZOYdd/H3cZs+0xYG2pRxXEr1XUlCwaVQMwZ988N+rlfydoMpPRvkIopuWrdkMvjhkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=LAkGEJhn1gvDQNDie2Cax1An0wkGlSk4GsVM9CHvVOM3jowVPeZc9Z1onzkgKaLdL206aN9hEMW0XhBWN+BUjry1RJ4OjwMc/u5ETm4ErquAXGIQmoDf14kTX2dtIxC6tOYA28uixKVN/VwJEVCRoazovtOVdLyoLpLeXY3PlLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZrBYJ12J4z9tk2;
-	Sun,  4 May 2025 19:32:04 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4ZrBYL24Gzz9tch;
+	Sun,  4 May 2025 19:32:06 +0200 (CEST)
 From: Remo Senekowitsch <remo@buenzli.dev>
 To: Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@google.com>,
@@ -54,9 +54,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v4 2/9] rust: device: Enable accessing the FwNode of a Device
-Date: Sun,  4 May 2025 19:31:47 +0200
-Message-ID: <20250504173154.488519-3-remo@buenzli.dev>
+Subject: [PATCH v4 3/9] rust: device: Move property_present() to FwNode
+Date: Sun,  4 May 2025 19:31:48 +0200
+Message-ID: <20250504173154.488519-4-remo@buenzli.dev>
 In-Reply-To: <20250504173154.488519-1-remo@buenzli.dev>
 References: <20250504173154.488519-1-remo@buenzli.dev>
 Precedence: bulk
@@ -67,40 +67,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The FwNode is an abstraction over the C struct fwnode_handle. It will be
-used to access all device properties.
+The new FwNode abstraction will be used for accessing all device
+properties, so it must have the property_present method.
+
+It's possible to duplicate the methods on the device itself, but since
+some of the methods on Device would have different type sigatures as the
+ones on FwNode, this would only lead to inconsistency and confusion.
+Hence, remove the method from Device.
+
+There aren't any users to update yet.
 
 Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
 ---
- rust/kernel/device/mod.rs | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ rust/kernel/device/mod.rs      | 7 -------
+ rust/kernel/device/property.rs | 8 +++++++-
+ 2 files changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/rust/kernel/device/mod.rs b/rust/kernel/device/mod.rs
-index d8619d4485fb4..b4b7056eb80f8 100644
+index b4b7056eb80f8..15d89cd45e871 100644
 --- a/rust/kernel/device/mod.rs
 +++ b/rust/kernel/device/mod.rs
-@@ -186,6 +186,21 @@ unsafe fn printk(&self, klevel: &[u8], msg: fmt::Arguments<'_>) {
-         };
-     }
+@@ -6,7 +6,6 @@
  
-+    /// Obtain the [`FwNode`](property::FwNode) corresponding to the device.
-+    pub fn fwnode(&self) -> Option<&property::FwNode> {
-+        // SAFETY: `self` is valid.
-+        let fwnode_handle = unsafe { bindings::__dev_fwnode(self.as_raw()) };
-+        if fwnode_handle.is_null() {
-+            return None;
-+        }
-+        // SAFETY: `fwnode_handle` is valid. Its lifetime is tied to `&self`. We
-+        // return a reference instead of an `ARef<FwNode>` because `dev_fwnode()`
-+        // doesn't increment the refcount. It is safe to cast from a
-+        // `struct fwnode_handle*` to a `*const FwNode` because `FwNode` is
-+        // defined as a `#[repr(transparent)]` wrapper around `fwnode_handle`.
-+        Some(unsafe { &*fwnode_handle.cast() })
-+    }
+ use crate::{
+     bindings,
+-    str::CStr,
+     types::{ARef, Opaque},
+ };
+ use core::{fmt, marker::PhantomData, ptr};
+@@ -200,12 +199,6 @@ pub fn fwnode(&self) -> Option<&property::FwNode> {
+         // defined as a `#[repr(transparent)]` wrapper around `fwnode_handle`.
+         Some(unsafe { &*fwnode_handle.cast() })
+     }
+-
+-    /// Checks if property is present or not.
+-    pub fn property_present(&self, name: &CStr) -> bool {
+-        // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
+-        unsafe { bindings::device_property_present(self.as_raw().cast_const(), name.as_char_ptr()) }
+-    }
+ }
+ 
+ // SAFETY: `Device` is a transparent wrapper of a type that doesn't depend on `Device`'s generic
+diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
+index e75d55f5856cf..70593343bd811 100644
+--- a/rust/kernel/device/property.rs
++++ b/rust/kernel/device/property.rs
+@@ -6,7 +6,7 @@
+ 
+ use core::ptr;
+ 
+-use crate::{bindings, types::Opaque};
++use crate::{bindings, str::CStr, types::Opaque};
+ 
+ /// A reference-counted fwnode_handle.
+ ///
+@@ -31,6 +31,12 @@ impl FwNode {
+     pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_handle {
+         self.0.get()
+     }
 +
-     /// Checks if property is present or not.
-     pub fn property_present(&self, name: &CStr) -> bool {
-         // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
++    /// Checks if property is present or not.
++    pub fn property_present(&self, name: &CStr) -> bool {
++        // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
++        unsafe { bindings::fwnode_property_present(self.as_raw().cast_const(), name.as_char_ptr()) }
++    }
+ }
+ 
+ // SAFETY: Instances of `FwNode` are always reference-counted.
 -- 
 2.49.0
 
