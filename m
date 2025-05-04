@@ -1,191 +1,150 @@
-Return-Path: <linux-kernel+bounces-631226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B672FAA8579
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:24:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C28AA856D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441BE162989
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCDCF179104
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AF01A3146;
-	Sun,  4 May 2025 09:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655D219ABD8;
+	Sun,  4 May 2025 09:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZe/nXOL"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQb5AV22"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC60C19E7D1;
-	Sun,  4 May 2025 09:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3DF1F948;
+	Sun,  4 May 2025 09:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746350632; cv=none; b=hOxLRvm8YF7wWTo4AFAXFH2oCdlGbFZjCwN8DnzJUTaCPhyQSgnXrNzSMF4HmP39odKKYV8ff9UYPbrh/udMfGHpwlJGoexbiUK5XV8DJyPYNAb2+YWNU9O1xhgjbCVrOOEcvI55vF//W0rZWzFZFBhW9G8j7yPqgB6l3qmnqTs=
+	t=1746350612; cv=none; b=AgPjk7Ptzx0pklCuUgWVDUmOBw6IeK2brBorvCAZcbXcfuiWpMRE4mn4cVJ1Tkta8Me/Ammxavb7KfKnHh50OeXVZXLHEIP8uG5b7gGYl2jMlTRyAxM+oMdFDtSegTq94Ko72uR74OyBrviFustAGQz2IMqj9K7JW6lIFQNcHBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746350632; c=relaxed/simple;
-	bh=BO6DxgXTRnZVb2SSLavVfZPIIK3dMJeUTCm7UYWcAtM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZxCIoff9YIUZTc72NIEWLJwxfWfGuyAO1jbspqIprUt/qAXMzc+v6qIMzoO/69eC0lTut3SpzwB1xfW9SPYk0uZdJEDJa4/4fMAYF6nA/Jy1Nd1GQX228PI2Q3PFrI6lqoSvNHcQCip98KW23oVOX7EaIIe9yYUGTwYZ9dksXiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZe/nXOL; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1746350612; c=relaxed/simple;
+	bh=D8CmpEX+akOScouJwEkOSdOqEGc4J0EbIcSdXI6sou8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bFfV+WStGnu+ywYQkcNZhJ5pAyklijwQlHR7x6hPfxWpfdBxNkOpvpLmQccxOVP4L2u2Ykuw4uX/33DgBQEmOE+f8VqhVp5mid2+qCUNCBZ68yXdmX60X+ojXwxcbV0+jQwUeXWyUtwQsyazyqgpPJMJElhS1ka1q8GfgfJhQd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQb5AV22; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5faaddb09feso1611844a12.2;
-        Sun, 04 May 2025 02:23:50 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22423adf751so40778655ad.2;
+        Sun, 04 May 2025 02:23:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746350629; x=1746955429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ULlfDCNR8m/9pJtlgrHCEPaJVNLe3RFSja1Lf02MnM4=;
-        b=jZe/nXOLllzb7vy3aWilQ3lJfukrdw5fCFyvuUhkyDJxV7e3lVRNJ2IIRvTsq3+MAF
-         DlEKIm0WIAYhTjY8oRbumLXZOz1RJy8FTRDySCfO/L32uCh0dzsqOnoDSJ8D27cBhDci
-         y9ZhSogt6yLGH1DmGk+3pGbx8QZ2S3rQm+h+JExcv4KKEscdRERR3N5A1XCWf8u5tr3p
-         jCz9f/0C+XQtaqTxVWTb9SXnpI7Wa+TMPhH1THvsVechy01Eu4+pTShQLXDhdzBKovpA
-         Q4UaLjmiJ/d6ut6fO5U7dK4T6v4ZcfodyT9/MXFmBrqMFIcOPn1aHft/Fp2O9gLPj2Wk
-         nPPw==
+        d=gmail.com; s=20230601; t=1746350611; x=1746955411; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=v4vvIIMUjGPWvlpk7tTHWDKYFTzP4XJtC/Wv6x1ii98=;
+        b=MQb5AV22qe6YgOhzZvCr0ThBEIObVnayDxBWPKTT3kd35xoC8SvKdD2/ZkBGSACLOe
+         7ZZ18YrWRZjnfNRiDjExt5w1mYnL797eS085+6uTK9jV/ANhhFyLOVp5Xm+zseZLOVko
+         3FvAjGGGz3SqGFuQ8wmodc8sFL9t+UqJdnrgjg/CeN0TgohNjV1Fef/2pEeye60NT362
+         YM1ek6xikqa1YjFmuKii7E33Eh2IlV4wt0s+gSI2jv4uMBdUCJoquGwoL7tEaky+9UUo
+         jqaBDmeUFXr5KO9N4lSlwRMMtm/AmhVXcqNRYBokaY5KaTvygJPyR0jw2NqiTK8Vl52k
+         dEdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746350629; x=1746955429;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ULlfDCNR8m/9pJtlgrHCEPaJVNLe3RFSja1Lf02MnM4=;
-        b=fmDsUSGyQMM5K68ebj2+4NjaXKe8dQKP1Ahi5W1RQdPmhYopGyLhp+JoHtfdN1MlvD
-         NydZeoLAEEInUOXK4N01wtWjh65MiOTingGdSU8Q/p/vnTxJcbu4rbqao/veC++Vgh+X
-         LnNXOZiCpEt7sUlSbLp+DprLUOHI/i2vLk1sQkE1/D8o9Tt5Ma8XY4bzaDnJhSp1vcQp
-         9QZevSkzx0CShMwFNxhpcEasOGG4FwyW+8VagADWkMcT9yq61H+0yt6oplyhyowJ1CPO
-         jR8nlzxdwIa+ygSy11YWgmdyOTehanG+NZM+ZggouZAWlfpVYFNuVz0gGJrjMF0Zs6pO
-         ow1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWJC3w/Cum1dgA1VUxybqdYOTWQd9uwwtkiIpq+/Gx4Qd70Va4BIs3bis/MP0wovkAuqo/HrA/T1aPNEJo=@vger.kernel.org, AJvYcCXkeg0X7kMZRojdx1rPPt9ZKLhZyv2gTd002lcn+LAIuSvmN4tKyD2mlnjBip7ura9NpbEud9182exBLEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH0VJlsLNT+OD9N6PnXR8Gs6aen53MCl4kHhtU5LhkhgewGYhD
-	3szxVft2TbnK/JP6UBTUyEc6hVNp+LxLJAo3yUzFBaRcZIQbihXA
-X-Gm-Gg: ASbGncvr/0/LfbdCjG2MKbhK3DxL7cEF0ZTp8T9Ndkv/LlReQQ1/TOLjd4ncE55z17X
-	L9i8rz8X/qn4H/v6BVj7TdhGzoLCfe/hYrcVNutSr8IBIPFEBD624OHw8fWZasPc21SI4PsENDh
-	NXiKlrMHsAoFynAIOk3MZ/IEznfVO+YDAme28WO0M9BBmlY9Q/yPKfz/8Dd1qB6/8TX+TYJEUIM
-	YTqFbBFGaUlSRjoKhPpJZ3uBerCZsmXYZn2Vrxy5gt4q1SoLZVqHsJUNcTYnQHOuLd83nyGl0xX
-	1TFS4XFmvVEQ1SEKv4AjDR7EDximDS7V
-X-Google-Smtp-Source: AGHT+IGKrc+4P+CCmQxGtEci8Piln9XhnppgGCzsKX971n/OxzWghBmZW4xn+ucKpFSOXGJQ0gP/3g==
-X-Received: by 2002:a17:907:6e94:b0:acb:ba01:4a4 with SMTP id a640c23a62f3a-ad1a48bcf72mr352875066b.3.1746350628696;
-        Sun, 04 May 2025 02:23:48 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a26bdsm306050266b.43.2025.05.04.02.23.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 May 2025 02:23:48 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] ARM: tegra124: complete HOST1X devices binding
-Date: Sun,  4 May 2025 12:23:24 +0300
-Message-ID: <20250504092324.10802-4-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250504092324.10802-1-clamor95@gmail.com>
-References: <20250504092324.10802-1-clamor95@gmail.com>
+        d=1e100.net; s=20230601; t=1746350611; x=1746955411;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v4vvIIMUjGPWvlpk7tTHWDKYFTzP4XJtC/Wv6x1ii98=;
+        b=K//HyqxmwoQNg4XHn/EFqAUoyZGvytvY98xg/5OZ0+OxPejlsWh6Smav+5sOLKStrQ
+         YrL+waoGdi+JI8gy8N1YZGcT4hyHMq5xMGfz07iImBonsqpf1/J+4AoO9AOHV/IFExMd
+         1oNpiUBiibSbluLPuaeBWprcthsuUq7fHdCI4JZn3+j26YdF1CyfUQW9APNTJ4gjai1A
+         R16a+e/wQ3pfmBWftNAc2nAUKvTXGszr8G37/Hy87StYJhogA8tclFkWnGHp+bDKiWQp
+         nqDcHGM2XIluBsDtsnR2ZDjXfNVqFS5/ha+SaANnm6ZurUtGGBdaf3wY/Yr/zYNQQhPa
+         dpbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWcs7gneMd1QxkOqj6LuMY+hHYmKYOX09/+VUqv8QAPFesKCCMJDyFtuVvrLc8SRqienv4DkP6Vz5UvQ==@vger.kernel.org, AJvYcCWJDeL8mZm/XqWYlLlOvy9yWKq+CdHy+/dJSonNtLqSDDjokoHH+xH1R/czSEOod+tg6ScesRq7b0AYD+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ5mZRx1/509UsKic2Pz1zMLqsuePTFSvx666m9B+obmC+6Tkl
+	Tp3rWQD3w+7B9HPQ9+lBu38tkwemklMPNOuKYQTpX2Lu0IMoVbId
+X-Gm-Gg: ASbGncvF6GeCwleaOp/O3MzNKfGO0WBMAFM+v9ZOWMMx3enOPlZsC0LAABKwn2hLNRZ
+	32+a1LywYKVyJQqKge0PhLD/mJDuCp9q4n5Vg9vzxGDm6TxqO6HtEw0DRngKbhUDJ31jLVbmRuf
+	Hd+aw8p7siHWhUSZEqMECnzbDYZNwOOwvtFWz3/qP1gegZb9dNQ8XiPyVSx2h2MDENTKq+MCbfU
+	Q1SE7aUVc85oL+0CMzA5VbTWFiTwXYuPeI3FuT30LxYzK2MJEZ8NxrIFW4Rc3AtYxt2rwwT9HXd
+	EslHCKKnCqHHUVd9Uo4Oj1F5BKcNdGzm8Fcs8/ORqoGAsuoFuPBfAjl5N5h+p1FYGx0D3cLIYiI
+	MjyVelOsiHoNlhW3a
+X-Google-Smtp-Source: AGHT+IENnOKUUkHFH+TnWk3OHl36odvv4VMQ80wl5aHy+VyKS+N0Ak00/T7Y7LEMELxqaTm9O4ju1g==
+X-Received: by 2002:a17:903:234e:b0:224:26fd:82e5 with SMTP id d9443c01a7336-22e1038ea74mr140776695ad.48.1746350610579;
+        Sun, 04 May 2025 02:23:30 -0700 (PDT)
+Received: from [192.168.11.2] (FL1-119-244-79-106.tky.mesh.ad.jp. [119.244.79.106])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e1521fc85sm35017215ad.110.2025.05.04.02.23.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 May 2025 02:23:30 -0700 (PDT)
+Message-ID: <7e7d944b-b211-458a-8a03-b9b7b5f3dcde@gmail.com>
+Date: Sun, 4 May 2025 18:23:27 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for-next v2 0/2] RDMA/rxe: Prefetching pages with explicit
+ ODP
+To: Zhu Yanjun <yanjun.zhu@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
+ zyjzyj2000@gmail.com
+References: <20250503134224.4867-1-dskmtsd@gmail.com>
+ <526be00d-98e6-45fb-a5d3-eb26fd7a88d0@linux.dev>
+Content-Language: en-US
+From: Daisuke Matsuda <dskmtsd@gmail.com>
+In-Reply-To: <526be00d-98e6-45fb-a5d3-eb26fd7a88d0@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add nodes for devices on the HOST1X bus: VI, ISP, ISPB, MSENC and TSEC.
+On 2025/05/04 2:08, Zhu Yanjun wrote:
+> 在 2025/5/3 15:42, Daisuke Matsuda 写道:
+>> There is ibv_advise_mr(3) that can be used by applications to optimize
+>> memory access. This series enables the feature on rxe driver, which has
+>> already been available in mlx5.
+>>
+>> There is a tiny change on the rdma-core util.
+>> cf. https://github.com/linux-rdma/rdma-core/pull/1605
+> 
+> Hi, Daisuke
+> 
+> Thanks a lot for your efforts to this patch series. It is very nice. With this patch series, we can make prefetch for ODP MRs of RXE.
+> 
+> I read through this patch series. And it seems fine with me.^_^
+> 
+> IIRC, you have added ODP testcases in rdma-core. To verify this prefetch work well for ODP MRs, can you add this synchronous/asynchronous prefetch to the ODP testcases in rdma-core?
+> 
+> Thus, we can verify this patch series. And in the future, we can use these testcases to confirm this prefetch feature work well.
+> 
+> To now, it seems that no tool can verify this prefetch feature.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra124.dtsi | 65 ++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Hi, Thank you for taking a look!
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra124.dtsi b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-index ec4f0e346b2b..ad7813da8aec 100644
---- a/arch/arm/boot/dts/nvidia/tegra124.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-@@ -103,6 +103,45 @@ host1x@50000000 {
- 
- 		ranges = <0 0x54000000 0 0x54000000 0 0x01000000>;
- 
-+		vi@54080000 {
-+			compatible = "nvidia,tegra124-vi";
-+			reg = <0x0 0x54080000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_VI>;
-+			resets = <&tegra_car 20>;
-+			reset-names = "vi";
-+
-+			iommus = <&mc TEGRA_SWGROUP_VI>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54600000 {
-+			compatible = "nvidia,tegra124-isp";
-+			reg = <0x0 0x54600000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_ISP>;
-+			resets = <&tegra_car TEGRA124_CLK_ISP>;
-+			reset-names = "isp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP2>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54680000 {
-+			compatible = "nvidia,tegra124-isp";
-+			reg = <0x0 0x54680000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_ISPB>;
-+			resets = <&tegra_car TEGRA124_CLK_ISPB>;
-+			reset-names = "isp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP2B>;
-+
-+			status = "disabled";
-+		};
-+
- 		dc@54200000 {
- 			compatible = "nvidia,tegra124-dc";
- 			reg = <0x0 0x54200000 0x0 0x00040000>;
-@@ -209,6 +248,32 @@ dsib: dsi@54400000 {
- 			#size-cells = <0>;
- 		};
- 
-+		msenc@544c0000 {
-+			compatible = "nvidia,tegra124-msenc";
-+			reg = <0x0 0x544c0000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_MSENC>;
-+			resets = <&tegra_car TEGRA124_CLK_MSENC>;
-+			reset-names = "mpe";
-+
-+			iommus = <&mc TEGRA_SWGROUP_MSENC>;
-+
-+			status = "disabled";
-+		};
-+
-+		tsec@54500000 {
-+			compatible = "nvidia,tegra124-tsec";
-+			reg = <0x0 0x54500000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_TSEC>;
-+			resets = <&tegra_car TEGRA124_CLK_TSEC>;
-+			reset-names = "tsec";
-+
-+			iommus = <&mc TEGRA_SWGROUP_TSEC>;
-+
-+			status = "disabled";
-+		};
-+
- 		sor@54540000 {
- 			compatible = "nvidia,tegra124-sor";
- 			reg = <0x0 0x54540000 0x0 0x00040000>;
--- 
-2.48.1
+There are already relevant testcases implemented in ./tests/test_odp.py:
+  - test_odp_sync_prefetch_rc_traffic
+  - test_odp_async_prefetch_rc_traffic
+  - test_odp_prefetch_sync_no_page_fault_rc_traffic
+  - test_odp_prefetch_async_no_page_fault_rc_traffic
+On my node (x86-64/linux-6.15.0-rc1+), this series can pass all these tests.
+
+Other than that, this feature is required by librpma as far as I know.
+Though it is not maintained anymore, perhaps this could also be used for testing.
+cf. https://github.com/pmem/rpma
+
+Thanks,
+Daisuke
+
+> 
+> Thanks a lot.
+> Zhu Yanjun
+> 
+>>
+>> Daisuke Matsuda (2):
+>>    RDMA/rxe: Implement synchronous prefetch for ODP MRs
+>>    RDMA/rxe: Enable asynchronous prefetch for ODP MRs
+>>
+>>   drivers/infiniband/sw/rxe/rxe.c     |   7 ++
+>>   drivers/infiniband/sw/rxe/rxe_loc.h |  10 ++
+>>   drivers/infiniband/sw/rxe/rxe_odp.c | 165 ++++++++++++++++++++++++++++
+>>   3 files changed, 182 insertions(+)
+>>
+> 
 
 
