@@ -1,98 +1,133 @@
-Return-Path: <linux-kernel+bounces-631572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7679CAA8A0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 01:33:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79174AA8A11
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 01:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C011895098
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 23:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D10918952C0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 23:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E67250C09;
-	Sun,  4 May 2025 23:32:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D05024BBFA;
-	Sun,  4 May 2025 23:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D75248867;
+	Sun,  4 May 2025 23:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="j9GiojF+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A846F17A31D;
+	Sun,  4 May 2025 23:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746401544; cv=none; b=PM6qEsYZHfCZoRUWpOBzz9vDId71SNBnj/C5RiM8gF/SL1SMfkGJKF4tAP652sKBwIWkh5wYQO3IuGZkVW/cEy+2ZC0amjUylO62vWN7itxgIqPKs/1AtieEwzvnxl9kah74mqVkZd17VkAw+t1sdVdP+E7pINEKNNKhfmWD2Lw=
+	t=1746401912; cv=none; b=D8a0p+JK6qa1Gn7esP1fY+5rbEU9cIz282ceej+BAtyGm/dkYUDsNt5thLLKa+rtNNW6/dcMkSdLQlc/PFs2vzH+EZvi3oXVheeK5GKSXIZ9gk/81aRGKceQvCcpwbaKrcD0Eu8WP2BqkfkKA8YvwU0oOXs9duafOYIFTfpO/ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746401544; c=relaxed/simple;
-	bh=iHxExqdpCUO0hZu9dF77QQEQ3XQrFK96IJ2ClCtqM3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MZGIe2AYCyd40OKA3na/G1UKtB+DzuRMgOnBwmkEfbtUPiXoMV8czJ98tJhBYQtvoOa2ybH27yiLy/rS1zrH9nG/Zvs+2QHTsTVgWj2MAKfn0QwHqBY2MWjAshU3D0SQU+rOgwxFdME5LGnoCvZGEh8OJDV7XrI1dop/dUlKM/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD9B31EA6;
-	Sun,  4 May 2025 16:32:13 -0700 (PDT)
-Received: from u200865.usa.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80C013F58B;
-	Sun,  4 May 2025 16:32:22 -0700 (PDT)
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: linux-trace-kernel@vger.kernel.org
-Cc: linux-perf-users@vger.kernel.org,
-	mhiramat@kernel.org,
-	oleg@redhat.com,
-	peterz@infradead.org,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	thiago.bauermann@linaro.org,
-	broonie@kernel.org,
-	yury.khrustalev@arm.com,
-	kristina.martsenko@arm.com,
-	liaochang1@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v3 7/7] uprobes: uprobe_warn should use passed task
-Date: Sun,  4 May 2025 18:32:03 -0500
-Message-ID: <20250504233203.616587-8-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250504233203.616587-1-jeremy.linton@arm.com>
-References: <20250504233203.616587-1-jeremy.linton@arm.com>
+	s=arc-20240116; t=1746401912; c=relaxed/simple;
+	bh=vrphGDl/y7/iEIu4rfgiaAktIP8GL7K1CsH2nW/CGlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DsWFBH0mVfK7PH9oLxqvzjuTtPw5YQ6bBcoYZ/aKnai3ipb94SaO5A2ccFznRORs2CerwDjvhzytPvKTzc0b2ccR5flS2oU16/GKmuCUlFxNR7BijcLSyIccYXGLEl4M/AsKQlDnFb1QA90J+NrYYXoLMCtgD59oaMmNn2NNp2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=j9GiojF+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1746401902;
+	bh=u2i2BIqFit/Wwnzz8waPFlwa5pIfJgrzIQEOFxRXUZs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=j9GiojF+g5bPm5PCs8cI/yzbdsfAlHOkQdxR7w9IkBXAkj4EFf+2QphjJR/ZfI+r3
+	 UMG2Jnbvo9HAVR3r1y74GCTMCgfzxd70AFOhz6FFGcqZYuoEabYchOkb+Dl4qjUR7Z
+	 gojkdRYjpz2s2e2RP9aBLYrlCxdJ7dIHM9/1mn9/48Ve8AYauilZDhJ/EbONfdGzpW
+	 FIkeocDw4KQ/Uch+k7bOQsIg4+ikii/Q8RDxHQk383Kcgzx7WoUNKK2/n0ZpWSK9u/
+	 uFCw/01TRsUzSsd3+VNdlMbs1XP2o9C+kCyHUQ/riGfgtBxdLBSI4lSzPgkvKGYenr
+	 YUh/Gl79EaUQQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZrLgy4FvQz4wnp;
+	Mon,  5 May 2025 09:38:22 +1000 (AEST)
+Date: Mon, 5 May 2025 09:37:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kwilczynski@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>
+Subject: linux-next: manual merge of the pci-current tree with Linus' tree
+Message-ID: <20250505093759.4b88323e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/OCSl5IDeyrjOmuU2yPMDlAR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-uprobe_warn() is passed a task structure, yet its using current. For
-the most part this shouldn't matter, but since a task structure is
-provided, lets use it.
+--Sig_/OCSl5IDeyrjOmuU2yPMDlAR
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
----
- kernel/events/uprobes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi all,
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 8d783b5882b6..6552d9815292 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -120,7 +120,7 @@ struct xol_area {
- 
- static void uprobe_warn(struct task_struct *t, const char *msg)
- {
--	pr_warn("uprobe: %s:%d failed to %s\n", current->comm, current->pid, msg);
-+	pr_warn("uprobe: %s:%d failed to %s\n", t->comm, t->pid, msg);
- }
- 
- /*
--- 
-2.49.0
+Today's linux-next merge of the pci-current tree got a conflict in:
 
+  MAINTAINERS
+
+between commit:
+
+  0747c136753e ("MAINTAINERS: Move Manivannan Sadhasivam as PCI Native host=
+ bridge and endpoint maintainer")
+
+from Linus' tree and commit:
+
+  69dcbfec5f02 ("MAINTAINERS: Update Krzysztof Wilczy=C5=84ski email addres=
+s")
+
+from the pci-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 51b64cabe308,ef64f4bd2de7..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -18763,8 -18632,8 +18763,8 @@@ F:	drivers/pci/controller/pci-xgene-msi
+ =20
+  PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS
+  M:	Lorenzo Pieralisi <lpieralisi@kernel.org>
+- M:	Krzysztof Wilczy=C5=84ski <kw@linux.com>
++ M:	Krzysztof Wilczy=C5=84ski <kwilczynski@kernel.org>
+ -R:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+ +M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+  R:	Rob Herring <robh@kernel.org>
+  L:	linux-pci@vger.kernel.org
+  S:	Supported
+
+--Sig_/OCSl5IDeyrjOmuU2yPMDlAR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgX+lcACgkQAVBC80lX
+0GzM+gf/ZdM+LDjf5nwY5QKqApcerdAtZkMKRtomiuj2Fjglq+Z4JSX2Y8DbCwE/
+6+3/QvsXOOQMC5P1RhuRnEaE+TOEONmY3CnldOgGKB83LqhrcSPfDz6ONPN7sHya
+d8paVJu/6E0SB4cIP0kHlBMMV4zxRZHju/DU2pD4lqMACnuEyKN3rAMRmv0zRQLp
+Ui5zky9NvZi4PjDJxSbqabSs19xn7j11qcdPYpD7jEsr2CkLWbhnpDqe8cXe7gPa
+OVOsBQcZdcsjeajrHvAgCJpmLf+wu70HRsCxP9e8KleIl9N2gQg2EfAkwg9491vk
+l+1LZlAntp1ROa7MIbqN9lFwb04d4g==
+=R7ks
+-----END PGP SIGNATURE-----
+
+--Sig_/OCSl5IDeyrjOmuU2yPMDlAR--
 
