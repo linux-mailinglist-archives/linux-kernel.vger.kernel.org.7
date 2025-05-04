@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-631359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2C8AA8715
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:58:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F43AA8703
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABDBE177B07
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 14:58:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB9677A9C79
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 14:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC691F30B3;
-	Sun,  4 May 2025 14:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E821BD01F;
+	Sun,  4 May 2025 14:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Z6nmZtES"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYmW/Pv+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B402D1EEA4B;
-	Sun,  4 May 2025 14:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8291B0420;
+	Sun,  4 May 2025 14:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746370585; cv=none; b=QOTg00fch2QPwJfo9G1klbCpkzPIRpssYRgo8pWYIMLc7tJqzChENZq8OOl7z9t0osTIWlo2NTxSd6R9LG6LtM3K6sAobtpRXSPm3v19CY61i2BSW8Qk35PwkyaufhbefwONqhnBpIB8pwl6V56IBodJg7AWJhzIApT7oO56MrI=
+	t=1746370552; cv=none; b=FOXfwbVdP1ge985lkYSnmt0hiiYDkqK1MoRFR98YpdrTmzJoFgrw/yECI8o6Mm67nIdcKT++0U9Y+IM1nCxe1d9giL8IkgA2rhRXg/t0e7K1QRneYYej7RKQYiFpKAVZJ5+DNkkP2kbW45FCU/5Pt7cTlhNwjXCiqsSW3PRhkUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746370585; c=relaxed/simple;
-	bh=/5nL6+/kdmiB63wqMIerwIWFwFN5EywEEBav/DWm1D0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oTbaPNGTWvgXamiG38i/uiVmN1rU20MU2MlyCtk9/FqjE9g0efJAFGmDwdCtnUUWBsYugGb1Ma53/CqgtrXse0TAlKm1xLek73J5bFIuFtWN34EKzrG3dE0QeW+vtMaCrLmF0v0NGjkRMKkGKuHNHfXhpFDvod2Lv/Jxt5i6wVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Z6nmZtES; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2C2331048C2EB;
-	Sun,  4 May 2025 16:56:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1746370581; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=2ic75qfUQ5dsvgeD7dQg7XwR25eUpd2j6vcWbqOyRZs=;
-	b=Z6nmZtESH2Kw6EqRNrDHDyRCTgWUssCaym8LamlLwvkyJhW5mAt31YXsGmLSfgqZFroekk
-	4wlA/2oA2QU2sIOCOxdJfwgb7FniWMDjjvkywFT/zzGDQmqGqiT8KmVTO2pDjNRzCbvLf0
-	C6KTVo1/phyLukfJAfrQ6H3C3EIByvXEUnvLmdTPNnHiB01+yH4LaLTfF36qfWBmPReLZL
-	c4OcF1NqOwkvB3Ro7y69iwQOs6VT0uyzUpcgLqLbUqu+0IyhidtoPsOtNuOS9iQ4sCYqmW
-	6SenHxrUOcQp4GUKMlG/Y66eQJEWuQCBw28qfGqf2DqYwywKlXMT7h+bRcB8EA==
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next v11 7/7] ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2 switch
-Date: Sun,  4 May 2025 16:55:38 +0200
-Message-Id: <20250504145538.3881294-8-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250504145538.3881294-1-lukma@denx.de>
-References: <20250504145538.3881294-1-lukma@denx.de>
+	s=arc-20240116; t=1746370552; c=relaxed/simple;
+	bh=vrj1OZWNkG66dZ01sAaU7OPbnkPuToJd3eMZlGtWN5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e3yxPELCwjW4EI8ZATUHGJGd328gh4d1/0gNv4LYUgUfkR/hU6M+KJ4y6Qy2IPfmYQkUZByBZ4JGTPIoOMH+sIje41gXB6VT60c1RacixGLYBidAFEcAV3B6d0Y4B2ZMnMxAWoknSPvQ4zyvLTHF7hI2Qs9ikKb7TLZem3ZpsWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYmW/Pv+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46500C4CEE7;
+	Sun,  4 May 2025 14:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746370552;
+	bh=vrj1OZWNkG66dZ01sAaU7OPbnkPuToJd3eMZlGtWN5Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kYmW/Pv+S1NISht7XdVEkKlYD10fOVRop2doU0a/MeY/QKjfn5Wgz5iBBMaRtcnej
+	 H2hOrL01uuj/LPz7RMn5k4A0omEP8qUYyABdCKxRemin3/+B1RrNREsZXI8Q0EHL8J
+	 gIxcvoTybZ1eMESzNWItXDzhI3forwVr22EmT7VUPIoXe4XDjcF6uxCluMtjqP8O3t
+	 NOsk64onSN3z8uBeov6JN7cWF7/bDOC0ZTbroxdlbzZa35gE2VeGlSecarBRpgM8KA
+	 pHYEzy0XiL5Z3vrgm5NMt/s5DIPgyV8N4wvuT5Q8NWcHtu55fM3QOBm/wBv0g/3sOk
+	 SRvRXlrGOJlBQ==
+Date: Sun, 4 May 2025 15:55:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Michael Hennerich 
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= 
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad7606: explicit timestamp alignment
+Message-ID: <20250504155544.60fe3464@jic23-huawei>
+In-Reply-To: <d7f00a8c9d4da6f780c1ec067be2702fa0e60ea1.camel@gmail.com>
+References: <20250428-iio-adc-ad7606-fix-buffer-alignment-v1-1-88dfc57e5df0@baylibre.com>
+	<d7f00a8c9d4da6f780c1ec067be2702fa0e60ea1.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This patch enables support for More Than IP L2 switch available on some
-imx28[7] devices.
+On Tue, 29 Apr 2025 14:01:54 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Moreover, it also enables CONFIG_SWITCHDEV and CONFIG_BRIDGE required
-by this driver for correct operation.
+> On Mon, 2025-04-28 at 21:17 -0500, David Lechner wrote:
+> > Use struct with aligned_s64 timestamp to make timestamp alignment
+> > explicit. Technically, what we have works because for all known
+> > architectures, IIO_DMA_MINALIGN is a multiple of __alignof__(s64).
+> > But this way, we don't have to make people read the comments to know
+> > why there are extra elements in each buffer.
+> >=20
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+for all the normal reasons.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
----
-Changes for v4:
-- New patch
+Thanks,
 
-Changes for v5:
-- Apply this patch on top of patch, which updates mxs_defconfig to
-  v6.15-rc1
-- Add more verbose commit message with explanation why SWITCHDEV and
-  BRIDGE must be enabled as well
+Jonathan
 
-Changes for v6:
-- None
-
-Changes for v7:
-- None
-
-Changes for v8:
-- None
-
-Changes for v9:
-- None
-
-Changes for v10:
-- None
-
-Changes for v11:
-- None
----
- arch/arm/configs/mxs_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index b1a31cb914c8..ef4556222274 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -34,6 +34,8 @@ CONFIG_IP_PNP_DHCP=y
- CONFIG_SYN_COOKIES=y
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
-+CONFIG_BRIDGE=y
-+CONFIG_NET_SWITCHDEV=y
- CONFIG_CAN=m
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
-@@ -52,6 +54,7 @@ CONFIG_EEPROM_AT24=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
-+CONFIG_FEC_MTIP_L2SW=y
- CONFIG_ENC28J60=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
--- 
-2.39.5
+>=20
+> > =C2=A0drivers/iio/adc/ad7606.h | 13 ++++++++-----
+> > =C2=A01 file changed, 8 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
+> > index
+> > 89d49551eaf515bab9706c12bff056dfcb707b67..441e62c521bcbea69b4f70bb2d55f=
+65334d2
+> > 2276 100644
+> > --- a/drivers/iio/adc/ad7606.h
+> > +++ b/drivers/iio/adc/ad7606.h
+> > @@ -155,12 +155,15 @@ struct ad7606_state {
+> > =C2=A0	/*
+> > =C2=A0	 * DMA (thus cache coherency maintenance) may require the
+> > =C2=A0	 * transfer buffers to live in their own cache lines.
+> > -	 * 16 * 16-bit samples + 64-bit timestamp - for AD7616
+> > -	 * 8 * 32-bit samples + 64-bit timestamp - for AD7616C-18 (and
+> > similar)
+> > +	 * 16 * 16-bit samples for AD7616
+> > +	 * 8 * 32-bit samples for AD7616C-18 (and similar)
+> > =C2=A0	 */
+> > -	union {
+> > -		u16 buf16[20];
+> > -		u32 buf32[10];
+> > +	struct {
+> > +		union {
+> > +			u16 buf16[16];
+> > +			u32 buf32[8];
+> > +		};
+> > +		aligned_s64 timestamp;
+> > =C2=A0	} data __aligned(IIO_DMA_MINALIGN);
+> > =C2=A0	__be16				d16[2];
+> > =C2=A0};
+> >=20
+> > ---
+> > base-commit: b475195fecc79a1a6e7fb0846aaaab0a1a4cb2e6
+> > change-id: 20250428-iio-adc-ad7606-fix-buffer-alignment-9fcde71687dc
+> >=20
+> > Best regards, =20
 
 
