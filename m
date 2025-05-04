@@ -1,186 +1,319 @@
-Return-Path: <linux-kernel+bounces-631475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D8CAA88B0
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D90AAA88B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1941897DC8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:37:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 076E91890D59
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6332D1FDE39;
-	Sun,  4 May 2025 17:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CFC2222AD;
+	Sun,  4 May 2025 17:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cggMjF1t"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nLZ2hLaN"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F019641C7F
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 17:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C971F4187;
+	Sun,  4 May 2025 17:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746380211; cv=none; b=jU2LYfgw9oXjmKa6gYfh7Nw4oaHzhASh6F+BTzacPZq37xhbOkZ8VpdQrxo0oJWdVHTvg13kqrdaCgcitXJaOAoLukxPFfaNOd1ckWQ+nwQhnPtNXJpCtx3NAMIeoiQ6OmzKp7GwamVDX/I0K1cuMaZyHGXfoa71gpK9xF2kuoM=
+	t=1746380530; cv=none; b=YTm/y3DalCh/Ua2N2/tlbDctSww/1GAw1gl0EbRngPtRoNm9Q/b6Q5iNbjKQosvcPmhWgMTDPbUFnp8YlgAIJcqE6tGlQ8oXfOWMqXbeP8jpiBeuRuXHjnfx+96F6rgi+2aiFERkCRQRBEF8U3NDbOdWtdk4DTcziDmyWD0FGPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746380211; c=relaxed/simple;
-	bh=qUJyY+Pm7fBiy5QRkFsCqC2J1jEL+LVs8n7x7xWbk3I=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cuf9BNDR89/hoPNOeMG0nUi2OHhEynUgiYb0WH+PgCXmDswS1BRieeYp9cnCLHSsfXju6aKqHp18GiOtNpvV+7I9b8jyrgVIYE5L6iP01PwCo+S9yhhhCrZJxL23yZTpdWdUfQ3JBHcdzJmYWyV0awEgdtBnxX3AMrlRr02xxVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cggMjF1t; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1746380530; c=relaxed/simple;
+	bh=4pOunVr8/3fLXQgqGT1pXD4fEAguAC9IvJ+qcjqsR+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GdP4zMIhe4xCEWRx7kaiY0vaw/iRRnBB9X0VpJwUlRuZiqjCTW6+1kKD4Y6Pf1/HTXemBrEfI+zVS5+NonoODASwtAZ3SPwjucBYkYtvLX615jRWDXIpcQHYmoIusSpr0NQmtAbsfFsFT/aq5HaxTL6zUmQpaD4AkQKQnBIk/4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nLZ2hLaN; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54b166fa41bso4860854e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 10:36:49 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30bfed67e08so35805221fa.2;
+        Sun, 04 May 2025 10:42:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746380208; x=1746985008; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i1R1HQ9HyFIN3dBGbHVb38mA80A5GKNDNA54pgzRhZM=;
-        b=cggMjF1tZ+WOwtBErGdUfXSQH47q92BWvz1nbiQbCC6i5OvkCKV1q+65P7t3cMB3gH
-         M16ARsa6u8Elo/TXi2SclMIPX0K+GU7NIA5i3GmeQ6hzLXHWwEr/ov0qJ/umKNkoituZ
-         qFDl1ALNIgMsiuJw/FQbGr9YM/tfj6J9j6FNuECEJ1eHv5b9ITF3ihY6/NrLvz5J+YF/
-         z8igpooeV9XwDl+SMXpRDRtyHcnB4s09XL5Y/yRQACdxv3ClbPcnLvWZT/L+Tgwl+w42
-         hHkuF7ydPP092343jKgDlnQZI4f3zoXJLqtbYB2gUzJ7h8qIeJAGOKza9Q6JlmokTZ9g
-         bDdA==
+        d=gmail.com; s=20230601; t=1746380527; x=1746985327; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cbxWuEGnrX3oYqiG6styFnyanMknLABwZdYxFlWP+28=;
+        b=nLZ2hLaNc0tlCoYSgJV9j9iLNBAqBXCAsR8nrQNursQJYgTYFa8qBgPEbtOt6uwZvZ
+         aWGDnbezsw5DFxQ8zoLLTUMm5368MCT2H3dgXl4QNWHoJGurf4g+LJwfzdkp9o8t+Mac
+         crqPBCZnH6udVP1Yazvfd5H8+ebnGBn/Sx69Wv/VkVx49X6x4qFUyDpd5tma8Y5hMsgu
+         RQt4dgOQlBwx+hKE2pk5Heb10xwwFfVCNkqxdkQnTh8VN9wXqDNPqGLAuWNOin814tGK
+         46bDygmosAwe5Q31e5vV75B4Ex8i4z7VOvb5F0rqUKzCW/9Dt36pJ0zjqB7fopzvscOt
+         Cy4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746380208; x=1746985008;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i1R1HQ9HyFIN3dBGbHVb38mA80A5GKNDNA54pgzRhZM=;
-        b=TOBiRxQ3vZEhfBJdUuGZJ2nNldpp0uS1r/O15cqqi9B7OhFsQ8PprmYvXdZH0Jr4PI
-         TVgnocHG3aDCXtcUmlPyJcKbxIAZ+gx81PrA1pyMCYvvuLBs9ImhJ2yo/38KlZefstZG
-         JDMJJqwKsMXu9+oqNsuT2Me8Yl6PxKe/DMjO+moIgiX4wfIGl8WMuVrPe6hgxlim1CiK
-         NPrZ1lwRJIGolZjXhJpmQDaMHVLZmU1Rpgs5QY/4v2Kh4WYkMSjHmCXoDmn0aTw8yoqN
-         M3QtemgMktH57rU5wQJ09MH0wLQnyE2NtNH3czltYZyPJCMQxHyh+I+ekH3q0hDsXylX
-         la5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU43GCHEXrLJBt8z7yiUe/qJkLGt3XekvuBkOpXcmyOEFixqVTwpbeDPKRHt3VJh/iEo794hEzLKyel7/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4yR6FG7ZbJbppQl5qyr4ps5KUAqEYmvfn0RyCs8BIJX+jwnm7
-	YSO4Aa9esVRaXFvHovPwxdDvL4fmx0zlGHpOksPxjxabljxZCRSaY1ch1kO8
-X-Gm-Gg: ASbGncveAXsy1AxrCWSOkhUtNcqcjfCTxh3t6E/sLX8Yv3/1sNBWlz+VrNOiEr7RPgp
-	yFLNnIpO3J6c2qniXz64KikBuSvLMYqj0iJSqCgvbGm5REZzbbNXZ0vLICLndAbore6ME6bhIGI
-	5pqksKoliy1RDh9ddBVz/4DKA8kHU6ebDiJrP5MWSlqfoj4no2VT7bFGMON8mdqNSc6EUaBQBnw
-	rliAtgZtueFAw6khgBB3H0mJt3pDUWg5x6ema03Qu7P3pXCvxNUq1IU2LrOuXlsxwUbNA/cWvjV
-	cbEm0fnbVuoKyJ46ZKN07ZgbWYnGoLh7AEf5QAcUyytKa6UtjsoKCtoEvBp1FT/PR8lPnmvJOgs
-	u5e0K66096InKXM+df7IXkHQoa1P2u4LkYt8il7bvkrauW5PF
-X-Google-Smtp-Source: AGHT+IH3noLLLf4F+GoZtIuspmu4BwJrKfT8mbj105wxtpW8D2nTlAaw23TrbFihdIH8g6fRjwO8cg==
-X-Received: by 2002:a05:6512:3e16:b0:54e:81c4:5b13 with SMTP id 2adb3069b0e04-54fa4fa59e7mr1084115e87.52.1746380207768;
-        Sun, 04 May 2025 10:36:47 -0700 (PDT)
-Received: from Lappari.v6.elisa-laajakaista.fi (nzckegfiondeujtqrpj-1.v6.elisa-laajakaista.fi. [2001:99a:20b9:a000:e830:2617:2988:d7c7])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54eac09a963sm1163647e87.24.2025.05.04.10.36.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 May 2025 10:36:47 -0700 (PDT)
-Date: Sun, 4 May 2025 20:36:46 +0300
-From: Heikki Huttu <heissendo88@gmail.com>
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Staging: comedi: drivers: adl_pci9118.c: Edit file so that
- checkpatch.pl has 0 errors
-Message-ID: <aBelroMtikijLKuk@Lappari.v6.elisa-laajakaista.fi>
+        d=1e100.net; s=20230601; t=1746380527; x=1746985327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cbxWuEGnrX3oYqiG6styFnyanMknLABwZdYxFlWP+28=;
+        b=my9Zosd8kErQygUzAzAE2PZ4tIryza7n7jEq+7VdHpoKNT3mokx57uuB1AVdtqWbYq
+         1Kl9ma74KP1iw1muDiLDn5P9S1c/3lrwaH1VJXAC788IcRb9lvyAIODwEuwvwDmzQbJD
+         ZOMOA0u+IVQj9Nz6ioEfAsz6szSqoawohcxzOMAsfliMfESI3p6yT1oaXEkc/gNBW8Iv
+         ISJ7+y7KMWX6kJAucJXZF5qIn9EmwB1yE/vtOMXkID5SvLXTE8kyEAzT414dGSdXSYnP
+         +8g6PrZZJn5eAqcKQ3Whz6pINTeE9/SVoY3JpMZHl70a6RYhpEafItbZeOBBfIMGU4WY
+         57fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrqQ5f+4ZhVbHkaPIU+Suc9j0I2pY+QDANpZX5IHt+k/sizUN1SPUNN02qui30uKkpE5YM2Nyx1Hc22NtkgHc=@vger.kernel.org, AJvYcCX30ivOTI3vjk4ZE2CTHTiaLOeQSMTD7B4Ko3eJJ+YGq17yeLv8y4qdBc8330OhnbaAsjSMARXPfM8Kw+hH0CIG@vger.kernel.org, AJvYcCXo5mBS3+P5FqvWxXHcaQxTk1dWPfMCMssjV3qn0V5BkEItPKsJPDPbvOuO4mvwZiABS0oF3tNx8Xd+Yv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD5Z8ok2gyhUp6c/PYkgBcWVgG/vA7ZvgSAa8ITBonFBydYxKF
+	gY9o3H4/9aVCMAdK3qu0r7orbJ9N/JVUKccNRgdZ3u5+ODGVVIxPgRSXF58WXozve+TXG06VReo
+	jUfMAVdc6vxOK4cWSf/xjzYthGBo=
+X-Gm-Gg: ASbGnctwPn1A7x3kPpqtJmOG5LWVNlEZzptVLjZmHiPfAoxMtsmOflHz5UzoUknGHth
+	GHv+0GNgbhi2Dp5ETkRIylXd28pUJO/28RAP+wp0FUqcehgs8tMK7njfj0CAzbXOIk+xSnDnC4D
+	W3zXksaFiAOVgUEqw0dToPEVsAK5hpWWFOrZOOCKNldYXD27bgSFR7zrM=
+X-Google-Smtp-Source: AGHT+IEX2MgLBv1W9wDyAPXhemuUaSDB46sI5pVSf7YiajkbFnm1iRcA2zYgYDx0nutSeqLiuGNKVMOgwbgmHJhywZI=
+X-Received: by 2002:a05:651c:1470:b0:30c:5c6:91e0 with SMTP id
+ 38308e7fff4ca-32348656ab7mr14289281fa.2.1746380526576; Sun, 04 May 2025
+ 10:42:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250502215133.1923676-1-ojeda@kernel.org> <20250502215133.1923676-2-ojeda@kernel.org>
+In-Reply-To: <20250502215133.1923676-2-ojeda@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sun, 4 May 2025 13:41:30 -0400
+X-Gm-Features: ATxdqUFBpKKDyITWcWdzh3LClwcDwVExiKBe2tO-Z1m160TXpjfIFUJFdYXPoTQ
+Message-ID: <CAJ-ks9kARZT5TMrfXvAqmGdsMD+EgdaY061tyhm_n4oerFLOfA@mail.gmail.com>
+Subject: Re: [PATCH 1/7] rust: kunit: support KUnit-mapped `assert!` macros in `#[test]`s
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Rae Moar <rmoar@google.com>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Change lines that checkpatch.pl throws errors about.
-Errors were about extra parenthesies and typos.
+On Fri, May 2, 2025 at 5:53=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> The KUnit `#[test]` support that landed recently is very basic and does
+> not map the `assert*!` macros into KUnit like the doctests do, so they
+> panic at the moment.
+>
+> Thus implement the custom mapping in a similar way to doctests, reusing
+> the infrastructure there.
+>
+> In Rust 1.88.0, the `file()` method in `Span` may be stable [1]. However,
+> it was changed recently (from `SourceFile`), so we need to do something
+> different in previous versions. Thus create a helper for it and use it
+> to get the path.
+>
+> With this, a failing test suite like:
+>
+>     #[kunit_tests(my_test_suite)]
+>     mod tests {
+>         use super::*;
+>
+>         #[test]
+>         fn my_first_test() {
+>             assert_eq!(42, 43);
+>         }
+>
+>         #[test]
+>         fn my_second_test() {
+>             assert!(42 >=3D 43);
+>         }
+>     }
+>
+> will properly map back to KUnit, printing something like:
+>
+>     [    1.924325]     KTAP version 1
+>     [    1.924421]     # Subtest: my_test_suite
+>     [    1.924506]     # speed: normal
+>     [    1.924525]     1..2
+>     [    1.926385]     # my_first_test: ASSERTION FAILED at rust/kernel/l=
+ib.rs:251
+>     [    1.926385]     Expected 42 =3D=3D 43 to be true, but is false
+>     [    1.928026]     # my_first_test.speed: normal
+>     [    1.928075]     not ok 1 my_first_test
+>     [    1.928723]     # my_second_test: ASSERTION FAILED at rust/kernel/=
+lib.rs:256
+>     [    1.928723]     Expected 42 >=3D 43 to be true, but is false
+>     [    1.929834]     # my_second_test.speed: normal
+>     [    1.929868]     not ok 2 my_second_test
+>     [    1.930032] # my_test_suite: pass:0 fail:2 skip:0 total:2
+>     [    1.930153] # Totals: pass:0 fail:2 skip:0 total
+>
+> Link: https://github.com/rust-lang/rust/pull/140514 [1]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>  init/Kconfig           |  3 +++
+>  rust/Makefile          |  3 ++-
+>  rust/kernel/kunit.rs   |  1 -
+>  rust/macros/helpers.rs | 16 ++++++++++++++++
+>  rust/macros/kunit.rs   | 28 +++++++++++++++++++++++++++-
+>  rust/macros/lib.rs     |  4 ++++
+>  6 files changed, 52 insertions(+), 3 deletions(-)
+>
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 63f5974b9fa6..5f442c64c47b 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -140,6 +140,9 @@ config LD_CAN_USE_KEEP_IN_OVERLAY
+>  config RUSTC_HAS_COERCE_POINTEE
+>         def_bool RUSTC_VERSION >=3D 108400
+>
+> +config RUSTC_HAS_SPAN_FILE
+> +       def_bool RUSTC_VERSION >=3D 108800
+> +
+>  config PAHOLE_VERSION
+>         int
+>         default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
+> diff --git a/rust/Makefile b/rust/Makefile
+> index 3aca903a7d08..075b38a24997 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -402,7 +402,8 @@ quiet_cmd_rustc_procmacro =3D $(RUSTC_OR_CLIPPY_QUIET=
+) P $@
+>                 -Clink-args=3D'$(call escsq,$(KBUILD_PROCMACROLDFLAGS))' =
+\
+>                 --emit=3Ddep-info=3D$(depfile) --emit=3Dlink=3D$@ --exter=
+n proc_macro \
+>                 --crate-type proc-macro \
+> -               --crate-name $(patsubst lib%.$(libmacros_extension),%,$(n=
+otdir $@)) $<
+> +               --crate-name $(patsubst lib%.$(libmacros_extension),%,$(n=
+otdir $@)) \
+> +               @$(objtree)/include/generated/rustc_cfg $<
+>
+>  # Procedural macros can only be used with the `rustc` that compiled it.
+>  $(obj)/$(libmacros_name): $(src)/macros/lib.rs FORCE
+> diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
+> index 1604fb6a5b1b..2659895d4c5d 100644
+> --- a/rust/kernel/kunit.rs
+> +++ b/rust/kernel/kunit.rs
+> @@ -323,7 +323,6 @@ mod tests {
+>
+>      #[test]
+>      fn rust_test_kunit_example_test() {
+> -        #![expect(clippy::eq_op)]
 
-Signed-off-by: Heikki Huttu <heissendo88@gmail.com>
----
- drivers/comedi/drivers/adl_pci9118.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+How come this vanished?
 
-diff --git a/drivers/comedi/drivers/adl_pci9118.c b/drivers/comedi/drivers/adl_pci9118.c
-index a76e2666d583..691c8d6bb767 100644
---- a/drivers/comedi/drivers/adl_pci9118.c
-+++ b/drivers/comedi/drivers/adl_pci9118.c
-@@ -32,7 +32,7 @@
-  * ranges).
-  *
-  * There are some hardware limitations:
-- * a) You cann't use mixture of unipolar/bipoar ranges or differencial/single
-+ * a) You can't use mixture of unipolar/bipolar ranges or differencial/single
-  *  ended inputs.
-  * b) DMA transfers must have the length aligned to two samples (32 bit),
-  *  so there is some problems if cmd->chanlist_len is odd. This driver tries
-@@ -227,7 +227,7 @@ struct pci9118_private {
- 	struct pci9118_dmabuf dmabuf[2];
- 	int softsshdelay;		/*
- 					 * >0 use software S&H,
--					 * numer is requested delay in ns
-+					 * number is requested delay in ns
- 					 */
- 	unsigned char softsshsample;	/*
- 					 * polarity of S&H signal
-@@ -946,8 +946,8 @@ static int pci9118_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
- 	devpriv->ai_add_back = 0;
- 	if (devpriv->master) {
- 		devpriv->usedma = 1;
--		if ((cmd->flags & CMDF_WAKE_EOS) &&
--		    (cmd->scan_end_arg == 1)) {
-+		if (cmd->flags & CMDF_WAKE_EOS &&
-+		    cmd->scan_end_arg == 1) {
- 			if (cmd->convert_src == TRIG_NOW)
- 				devpriv->ai_add_back = 1;
- 			if (cmd->convert_src == TRIG_TIMER) {
-@@ -958,9 +958,9 @@ static int pci9118_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
- 					 */
- 			}
- 		}
--		if ((cmd->flags & CMDF_WAKE_EOS) &&
--		    (cmd->scan_end_arg & 1) &&
--		    (cmd->scan_end_arg > 1)) {
-+		if (cmd->flags & CMDF_WAKE_EOS &&
-+		    cmd->scan_end_arg & 1 &&
-+		    cmd->scan_end_arg > 1) {
- 			if (cmd->scan_begin_src == TRIG_FOLLOW) {
- 				devpriv->usedma = 0;
- 				/*
-@@ -983,7 +983,7 @@ static int pci9118_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
- 	 */
- 	if (cmd->convert_src == TRIG_NOW && devpriv->softsshdelay) {
- 		devpriv->ai_add_front = 2;
--		if ((devpriv->usedma == 1) && (devpriv->ai_add_back == 1)) {
-+		if (devpriv->usedma == 1 && devpriv->ai_add_back == 1) {
- 							/* move it to front */
- 			devpriv->ai_add_front++;
- 			devpriv->ai_add_back = 0;
-@@ -1185,7 +1185,7 @@ static int pci9118_ai_cmdtest(struct comedi_device *dev,
- 	    (!(cmd->convert_src & (TRIG_TIMER | TRIG_NOW))))
- 		err |= -EINVAL;
- 
--	if ((cmd->scan_begin_src == TRIG_FOLLOW) &&
-+	if (cmd->scan_begin_src == TRIG_FOLLOW &&
- 	    (!(cmd->convert_src & (TRIG_TIMER | TRIG_EXT))))
- 		err |= -EINVAL;
- 
-@@ -1210,8 +1210,8 @@ static int pci9118_ai_cmdtest(struct comedi_device *dev,
- 	if (cmd->scan_begin_src & (TRIG_FOLLOW | TRIG_EXT))
- 		err |= comedi_check_trigger_arg_is(&cmd->scan_begin_arg, 0);
- 
--	if ((cmd->scan_begin_src == TRIG_TIMER) &&
--	    (cmd->convert_src == TRIG_TIMER) && (cmd->scan_end_arg == 1)) {
-+	if (cmd->scan_begin_src == TRIG_TIMER &&
-+	    cmd->convert_src == TRIG_TIMER && cmd->scan_end_arg == 1) {
- 		cmd->scan_begin_src = TRIG_FOLLOW;
- 		cmd->convert_arg = cmd->scan_begin_arg;
- 		cmd->scan_begin_arg = 0;
-@@ -1279,8 +1279,8 @@ static int pci9118_ai_cmdtest(struct comedi_device *dev,
- 			} else {
- 				arg = cmd->convert_arg * cmd->chanlist_len;
- 			}
--			err |= comedi_check_trigger_arg_min(
--				&cmd->scan_begin_arg, arg);
-+			err |= comedi_check_trigger_arg_min
-+				(&cmd->scan_begin_arg, arg);
- 		}
- 	}
- 
--- 
-2.47.2
+>          assert_eq!(1 + 1, 2);
+>      }
+>
+> diff --git a/rust/macros/helpers.rs b/rust/macros/helpers.rs
+> index a3ee27e29a6f..57c3b0f0c194 100644
+> --- a/rust/macros/helpers.rs
+> +++ b/rust/macros/helpers.rs
+> @@ -86,3 +86,19 @@ pub(crate) fn function_name(input: TokenStream) -> Opt=
+ion<Ident> {
+>      }
+>      None
+>  }
+> +
+> +pub(crate) fn file() -> String {
+> +    #[cfg(not(CONFIG_RUSTC_HAS_SPAN_FILE))]
+> +    {
+> +        proc_macro::Span::call_site()
+> +            .source_file()
+> +            .path()
+> +            .to_string_lossy()
+> +            .into_owned()
+> +    }
+> +
+> +    #[cfg(CONFIG_RUSTC_HAS_SPAN_FILE)]
+> +    {
+> +        proc_macro::Span::call_site().file()
+> +    }
+> +}
+> diff --git a/rust/macros/kunit.rs b/rust/macros/kunit.rs
+> index 4f553ecf40c0..eb4f2afdbe43 100644
+> --- a/rust/macros/kunit.rs
+> +++ b/rust/macros/kunit.rs
+> @@ -101,6 +101,8 @@ pub(crate) fn kunit_tests(attr: TokenStream, ts: Toke=
+nStream) -> TokenStream {
+>      // ```
+>      let mut kunit_macros =3D "".to_owned();
+>      let mut test_cases =3D "".to_owned();
+> +    let mut assert_macros =3D "".to_owned();
 
+nit: why not String::new() for all these?
+
+> +    let path =3D crate::helpers::file();
+>      for test in &tests {
+>          let kunit_wrapper_fn_name =3D format!("kunit_rust_wrapper_{}", t=
+est);
+>          let kunit_wrapper =3D format!(
+> @@ -114,6 +116,27 @@ pub(crate) fn kunit_tests(attr: TokenStream, ts: Tok=
+enStream) -> TokenStream {
+>              test, kunit_wrapper_fn_name
+>          )
+>          .unwrap();
+> +        writeln!(
+> +            assert_macros,
+> +            r#"
+> +/// Overrides the usual [`assert!`] macro with one that calls KUnit inst=
+ead.
+> +#[allow(unused)]
+> +macro_rules! assert {{
+> +    ($cond:expr $(,)?) =3D> {{{{
+> +        kernel::kunit_assert!("{test}", "{path}", 0, $cond);
+> +    }}}}
+> +}}
+> +
+> +/// Overrides the usual [`assert_eq!`] macro with one that calls KUnit i=
+nstead.
+> +#[allow(unused)]
+> +macro_rules! assert_eq {{
+> +    ($left:expr, $right:expr $(,)?) =3D> {{{{
+> +        kernel::kunit_assert_eq!("{test}", "{path}", 0, $left, $right);
+> +    }}}}
+> +}}
+> +        "#
+> +        )
+> +        .unwrap();
+>      }
+>
+>      writeln!(kunit_macros).unwrap();
+> @@ -152,7 +175,10 @@ pub(crate) fn kunit_tests(attr: TokenStream, ts: Tok=
+enStream) -> TokenStream {
+>          }
+>      }
+>
+> -    let mut new_body =3D TokenStream::from_iter(new_body);
+> +    let body =3D new_body;
+> +    let mut new_body =3D TokenStream::new();
+> +    new_body.extend::<TokenStream>(assert_macros.parse().unwrap());
+> +    new_body.extend(body);
+
+Could we do this (pushing `assert_macros`) before the block above to
+avoid this body/new_body name juggling?
+
+>      new_body.extend::<TokenStream>(kunit_macros.parse().unwrap());
+>
+>      tokens.push(TokenTree::Group(Group::new(Delimiter::Brace, new_body))=
+);
+> diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+> index 9acaa68c974e..8bd7906276be 100644
+> --- a/rust/macros/lib.rs
+> +++ b/rust/macros/lib.rs
+> @@ -6,6 +6,10 @@
+>  // and thus add a dependency on `include/config/RUSTC_VERSION_TEXT`, whi=
+ch is
+>  // touched by Kconfig when the version string from the compiler changes.
+>
+> +// TODO: check that when Rust 1.88.0 is released, this would be enough:
+> +// #![cfg_attr(not(CONFIG_RUSTC_HAS_SPAN_FILE), feature(proc_macro_span)=
+)]
+> +#![feature(proc_macro_span)]
+> +
+>  #[macro_use]
+>  mod quote;
+>  mod concat_idents;
+> --
+> 2.49.0
+>
+>
 
