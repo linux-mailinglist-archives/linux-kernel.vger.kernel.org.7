@@ -1,96 +1,109 @@
-Return-Path: <linux-kernel+bounces-631298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BC2AA8636
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 13:31:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6A4AA8642
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 13:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F48A177EAF
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:31:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D613BC27D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18F81AC891;
-	Sun,  4 May 2025 11:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8241B0F11;
+	Sun,  4 May 2025 11:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fhrs6DbA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="eUa9UHmI"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF0E43AA8
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 11:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3931B07AE
+	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 11:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746358258; cv=none; b=OO2zA/cJq4rO6sxzAqDng/p2FPS36j1WSfQXJAHMqqhjooDWW7KNXEHvjiR0NB5AdEEPi5Iy7tcnWgOkNUqvVuPNs7qPnRoAuaggPLYx+TdMSSY//LNakPfhc6Sgr2yOWcG/iS+5WhPx6Q3R7Vx2qBdRIy2rti203odfzaHc0rI=
+	t=1746359518; cv=none; b=agPvF4eJR6ILbDGHXgdNxdm8o+hLlbdZNbFNGxjC/sK/LFznn/xXZcPqIJnuV3c4ciStOTa57zhY64LJb71d28SSyA/Mi7aB0L17AYedwos42As+VgepX6/ZrfkQ4ciCxoNUakaWri5Wfvs/kNRy3zwVheJdiMzqnZkQixrkksA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746358258; c=relaxed/simple;
-	bh=Ht81KqRFYdhj6o3Gw8ymvJM+JmwvnLJV/L0dXKOReK0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=hmZeZ6p8vGULpGHnqkNU5VWcPpXH9W0kiSS4vn2bZnVMp6OQfL5M0PaKaik23FemWpkoKHirq8Ach/k6+MR70zAjEEz4VrWarSPF8lncrzIhNRlTOXV6i32YshPviWZan/zVohOBtL063Zt8uWEeFIkpNs3X7yNNqUeAc/TVfEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fhrs6DbA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746358254;
+	s=arc-20240116; t=1746359518; c=relaxed/simple;
+	bh=u0804QVAGmcXwjwp3po7cxMRu0aamQ6heTTl2p+MiD0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pXXAiOdqqbYfSCMt5yl1E6yzGeg4o2O/HOzaZWKQDW3U7QtKgFAegl+fkLD6clPVowG64Jw9o3IMBf6fgDnO2ePkCGHtmq4DdrdjfbCFk3eo5LSGDsJAGftkn+OcSBqWwg8LvG8Ns/wiJhdSBxUTgXCZiJlc4sTnSJFdZkvc4is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=eUa9UHmI; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1746359504;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EazkyjVOz4TwmCMWeSQ28sdm9rYVdcferzElC0nH0h8=;
-	b=Fhrs6DbAv8XuG/8iN0V6AM5wAmSHgM7u+AhUpRI8LuRwcgWfc3bUls6Pr4QeGdhZ2u+u6y
-	eYQ4v8gWAwJrWYJ19W/3VTFMyQHCI6pzD1C57SnNM3bAxvgTwg6T5xPVJduGIcWLfp0SoQ
-	2EtfpgSnH9fLt8IT2jBlr0nOPHhKSTo=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-459-MF_yTTSgMg6Urhq-ULfCDg-1; Sun,
- 04 May 2025 07:30:50 -0400
-X-MC-Unique: MF_yTTSgMg6Urhq-ULfCDg-1
-X-Mimecast-MFC-AGG-ID: MF_yTTSgMg6Urhq-ULfCDg_1746358249
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C13671956087;
-	Sun,  4 May 2025 11:30:48 +0000 (UTC)
-Received: from [10.22.80.45] (unknown [10.22.80.45])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 077EB195608D;
-	Sun,  4 May 2025 11:30:45 +0000 (UTC)
-Date: Sun, 4 May 2025 13:30:42 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Benjamin Marzinski <bmarzins@redhat.com>, 
-    Dan Carpenter <dan.carpenter@linaro.org>
-cc: Eric Biggers <ebiggers@kernel.org>, Satya Tangirala <satyat@google.com>, 
-    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dm: add missing unlock on in dm_keyslot_evict()
-In-Reply-To: <cad25513-31c4-5895-cfc0-b9c7dce4ce08@redhat.com>
-Message-ID: <fbc26327-d14d-f049-d62e-babaab0e9750@redhat.com>
-References: <aBHZ4puON8GNK0vw@stanley.mountain> <20250430165037.GA1958@sol.localdomain> <aBJgeV7pZ7Q47OCb@stanley.mountain> <cad25513-31c4-5895-cfc0-b9c7dce4ce08@redhat.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dsCLlaxW5Ry4SD7QVSXb//q8OL/Z72WZhoaVT84ZE4k=;
+	b=eUa9UHmIq83v7LNGquwIZmYWyWTBNotgrbliZPrYVrW0Fm3t+b6RCl8cGZEMoMEkTFIy/w
+	s7VoldfLoHK4Fq9UkhyygMeF3wgbO6FDPFhEcrIkwSbyyftKw/Qp8cwJlktI0Ae3r8F1pJ
+	PVBQMmQkOag9PM8ygVCBWbYICQFLqrTC/WGWoYQHHqA5tUOT5WEVzfXkxQ27cOq3WQVEcl
+	c7uo80hOd1bo/LaKKsz/VsB0x0wtzyaA6wpADLyymNTD7RifpY0l+IKzjcQdk0F5aXYaPM
+	fQsjmqH+EvnNqgqcMOvEUzRx/j7mtnohmJMpcP4z6q/7jJiC/amWzoOmZ++/Kw==
+From: Alexey Minnekhanov <alexeymin@postmarketos.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>
+Cc: Dang Huynh <danct12@riseup.net>,
+	Alexey Minnekhanov <alexey.min@gmail.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Alexey Minnekhanov <alexeymin@postmarketos.org>
+Subject: [PATCH 0/3] Elminate all DTBs check warnings for SDM630/660 boards
+Date: Sun,  4 May 2025 14:51:17 +0300
+Message-ID: <20250504115120.1432282-1-alexeymin@postmarketos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Run the following:
 
+ make -j1  CHECK_DTBS=y 'qcom/sdm630-*.dtb' \
+         'qcom/sdm636-*.dtb' 'qcom/sdm660-*.dtb' \
+         'qcom/sda660-*.dtb'
 
-On Wed, 30 Apr 2025, Mikulas Patocka wrote:
+Before:
 
-> Ben already tried to fix it in dm_blk_report_zones (see the linux-dm git, 
-> for-next branch) - but his fix is incorrect because the "if" condition for 
-> dm_get_live_table and dm_put_live_table differs. I'll update his patch to 
-> fix this mismatch.
-> 
-> Mikulas
+ Observe multiple warning about memory-region is too short,
+ one about 'vdda-pll-supply' is a required property, two
+ about 'clocks' is a dependency of 'clock-names'. Fix them all!
 
-I fixed it in the Ben's patch "dm: fix dm_blk_report_zones". Ben, please 
-review it - it's the patch 37f53a2c60d03743e0eacf7a0c01c279776fef4e in the 
-linux-dm repository, for-next branch.
+After:
 
-Mikulas
+ SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+ DTC [C] arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dtb
+ DTC [C] arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dtb
+ DTC [C] arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dtb
+ DTC [C] arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dtb
+ DTC [C] arch/arm64/boot/dts/qcom/sdm636-sony-xperia-ganges-mermaid.dtb
+ DTC [C] arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb
+ DTC [C] arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
+
+No errors, no warnings.
+
+Alexey Minnekhanov (3):
+  arm64: dts: qcom: sdm630: Add modem metadata mem
+  arm64: dts: qcom: sdm660-lavender: Add missing USB phy supply
+  arm64: dts: qcom: sda660-ifc6560: Fix dt-validate warning
+
+ arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dts | 2 ++
+ arch/arm64/boot/dts/qcom/sdm630.dtsi                | 8 +++++++-
+ arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dts | 1 +
+ 3 files changed, 10 insertions(+), 1 deletion(-)
+
+-- 
+2.49.0
 
 
