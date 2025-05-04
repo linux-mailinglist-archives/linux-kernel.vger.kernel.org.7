@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-631184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FB0AA84CD
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 10:15:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40028AA8565
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CAC71799B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 08:15:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3129F189A946
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29ED19993D;
-	Sun,  4 May 2025 08:14:54 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD33519ABD8;
+	Sun,  4 May 2025 09:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRC6zdVS"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97BE192D6B
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 08:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFB919755B;
+	Sun,  4 May 2025 09:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746346494; cv=none; b=DR7typNCvWioWi7YRJ9SfbC2/g1Q+jJU2hWAL1qjCGtFbte3FFpvBkD+1L79Or6nV97rvzJEN35u8wJArrjh+z9DeZgLyM8+vi/6bOqC2NgvNpOTAru8Ct755T9vqtgIJBodkcyzs5osTnEaOdumhD9x9A/COdTtivH51Vf5xbE=
+	t=1746350419; cv=none; b=NKodBsijMXOlm0/HoevvVBWpb3urtp0sNZI21g22jDYgQAMJyvTKCKhbPv06AdY6SgKvwFvbIWu3jb/L50X5/xO2eCQX1MGr1igHvWN0FGUKs1Qf1Cd6Xd/51VtohYTWxaaCxBVeYcXeW5gUQHVUYr5fPsEaCn1gw4Cgs9Ej0uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746346494; c=relaxed/simple;
-	bh=VGUYVw6QW+wGdP57zdeokyo5cVDXcXvy4Co08zbuMzM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=exE20bGIpriAmdJ1ZwDdqiqMf7kuvjKhiRZ+X8QMOsh785aWNQ4ad1Oj4qcFCyGz8I5w8MPZJ1tFbcgKgZ84nIsCBkzi0psJLpXWOEXBoLc9kARQTw7T1iqybRfzxy44HQQQmsdbsTsmYaUAI1ocO9hPRX9ygqeiT/Hy5322vus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uBUUf-00062b-5x; Sun, 04 May 2025 10:14:37 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uBUUd-0012RO-0e;
-	Sun, 04 May 2025 10:14:35 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uBUUd-001mRI-0N;
-	Sun, 04 May 2025 10:14:35 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	stable@vger.kernel.org,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: [PATCH net v4 2/2] net: phy: micrel: remove KSZ9477 EEE quirks now handled by phylink
-Date: Sun,  4 May 2025 10:14:34 +0200
-Message-Id: <20250504081434.424489-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250504081434.424489-1-o.rempel@pengutronix.de>
-References: <20250504081434.424489-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1746350419; c=relaxed/simple;
+	bh=z0gGa+NmC7XPJY4PUSFXFROOY84Xqh/y2X250hFRGSY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W3fMePOxBi4TqKKdDZsTWPmMsBcqv6TWGK79uLSx4wq5D+R5NpJCjZuPbgSMBJiULMxH1Y7z/eNAkZOrSKTcz6eiGfJz1PywYVDFQZFnI4OyDlhoYYZ860SljV9gqt3hhtPz2tWxyMGxy/TzmUlnQyZk8ohr5J3HoX+mNM41dY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRC6zdVS; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39efc1365e4so1494178f8f.1;
+        Sun, 04 May 2025 02:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746350416; x=1746955216; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=miVLsPyv3tGgvpJpIN6lHdQtrfQb64+k98bN+2tbbJY=;
+        b=NRC6zdVSZkmMwJMACqXS8aZPzYv/XlgFn9RLKQUX978nOq44LoT4swaE2uyZ8MOi0S
+         FmBuR/21n/V3p5b/WlQlHWJSQem2chUII4lvofHGBU6dmw3uOczJmiqeo7p46ZAOYUPB
+         kJ29OnM3xe2HuvZHHeI8BGiHeklIPH+0wdGaUJb3k6etJGxJWuLGrM2WiuXbZsW1EiYi
+         g7iGFwqn5r8Ev0sCQFTye5JZT+jv8m0l5kVYFeopei88VfW0Of+N3HhwI9Pp8+J44/D6
+         lwsFT2huc+X8F/i5KuDrbcgruh4/5qj6pOiqL6Z83LBdocC0sZoOvRr5kj7ni64NSDam
+         +LyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746350416; x=1746955216;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=miVLsPyv3tGgvpJpIN6lHdQtrfQb64+k98bN+2tbbJY=;
+        b=tItQJsW3JIYcM6/VMNqA2NiIUj7KIZHwxcw2m8I0ZpUh5qLyWlCY0z8yAUghY3VkhC
+         Ec5PxbroF/wK8cJJwESHF/MetvTwTQfbgR2n3hDegRvh8QeC+WDVt7IYIUnkHvZ+BAS/
+         x8/L2heyyT4Tmw7FQ8J7ykAsmkwFZl9/FeiyRgeNErzrnc7eqjvc9UUipfQo8BEpjnPK
+         iGYCPJPvk5r1nEsnXi0d8hvN6qS+ZuWpyFh+438eot+TW3qPLzCfGj2GA50P/tUlTEYD
+         zJPIQUl0TTZR0yqOoQfPWkpc14zr3giSUDw9R6Gz84yNo23qZ8zPqCOM3YoRwzxRDtQ1
+         vFwA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3S9hAEX49R7AR7aCeK1P+9VcoDkEVe+feBjrUJU3+W9zC9PUBAKSCL5iFLaOePc5DtCemt7zl9866@vger.kernel.org, AJvYcCU7AcIzC8u2wgPFbnP/Vy2si9ktO/zcclQ2a399Y+OXV+wzRrjZZKnLzJ7ICIkCEA1+BI8CCEfesbb7aPRE@vger.kernel.org, AJvYcCVq84Q1Y9FrLqgJjfLp0elfurk3PizJ2PXOh9iFk7GlQbgO/BBvudgKFwWsC5ILWN9fID8iVWmf8eei@vger.kernel.org, AJvYcCXsHLnqePpYvhvTctAXDAkhxaaRT1cJoqry8D9/xCr8dT6VULPZWmCLSeoFMY5E6gUOY07CzzPyr7oO1jU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTYRHuImgi8875BIRdrMP8+nruo6jmDLnDni9ZSvlRbtEN6oqO
+	13Lvw5Q/xV8IZB+zU+bxyn67zcEq70oLRJodw+Lw3k82nefYa6EKJQI/2kFB
+X-Gm-Gg: ASbGnctPuLHYz46ABoYzIjEtQO1cHBq2URRbP3cFDmZQYQFO+u1+D4loTweNDdkOcid
+	SW3DBcuay1IODSVH6v4vKTrizshhATR2Tw3uQx/vQQpPT7sKiBL90RJLhPLFHsspOv2rjWqVNY3
+	aR22w8t2gJ8vvdiXLfzeHkKqoeu2xCxTFZ7wRbCIN1f+Ej29FONkZ0YtosUT2wZrpmJIe/cO3dW
+	3LRYdlNHSwMZ+h0iQsvC7bqBLVPjG3yGiN2E40T5cvgNeGkcA5Xdmx6D71+isKKCjAiRDVPTve4
+	+OA/rg05NLUZgRz+7GjlBYKspOB5cvNrHC71IvdbY+wja5Biy+GbpAp7Z0xTpFH+916E8htPDl0
+	pPcgDuGg6X4PsRDk=
+X-Google-Smtp-Source: AGHT+IEFinYmjn7z7MpKaUt4ZnpD4pRPE9D6E6BnLTvFrA9opflM1PbE8AjFJncdEBVVTQSsE8u1zw==
+X-Received: by 2002:a05:6000:40cd:b0:391:4873:7940 with SMTP id ffacd0b85a97d-3a099aef847mr6699348f8f.54.1746350415418;
+        Sun, 04 May 2025 02:20:15 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b0efbfsm7168302f8f.69.2025.05.04.02.20.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 May 2025 02:20:14 -0700 (PDT)
+Message-ID: <62b78d8c53429438fd7dfa83c07df3576f91eef5.camel@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: rectify file entry in ADP5585 driver
+ section
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
+ Bulwahn <lukas.bulwahn@redhat.com>
+Date: Sun, 04 May 2025 09:20:38 +0100
+In-Reply-To: <20250504041040.40421-1-lukas.bulwahn@redhat.com>
+References: <20250504041040.40421-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The KSZ9477 PHY driver contained workarounds for broken EEE capability
-advertisements by manually masking supported EEE modes and forcibly
-disabling EEE if MICREL_NO_EEE was set.
+On Sun, 2025-05-04 at 06:10 +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit a53fc67a1e21 ("Input: adp5585: Add Analog Devices ADP5585/89
+> support") adds the file drivers/input/keyboard/adp5585-keys.c, but then
+> refers with a file entry to the non-existing file
+> drivers/input/adp5585-keys.c in the MAINTAINERS section ADP5585 GPIO
+> EXPANDER, PWM AND KEYPAD CONTROLLER DRIVER.
+>=20
+> Make this file entry refer to the intended file.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
 
-With proper MAC-side EEE handling implemented via phylink, these quirks
-are no longer necessary. Remove MICREL_NO_EEE handling and the use of
-ksz9477_get_features().
+Hmm, look here [1]. That patch was wrongly applied, the series needs more w=
+ork. I'll
+see if I do not forget to fix this in the next iteration.
 
-This simplifies the PHY driver and avoids duplicated EEE management logic.
+[1]:https://lore.kernel.org/linux-input/20250502083055.GG3865826@google.com=
+/T/#m1dc8ca24c89b3b111992f388b67e17842c89d7c1
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: stable@vger.kernel.org # v6.14+
----
-changes v3:
-- included missing CC
----
- drivers/net/phy/micrel.c   | 7 -------
- include/linux/micrel_phy.h | 1 -
- 2 files changed, 8 deletions(-)
+- Nuno S=C3=A1
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 71fb4410c31b..c2e5be404f07 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -2027,12 +2027,6 @@ static int ksz9477_config_init(struct phy_device *phydev)
- 			return err;
- 	}
- 
--	/* According to KSZ9477 Errata DS80000754C (Module 4) all EEE modes
--	 * in this switch shall be regarded as broken.
--	 */
--	if (phydev->dev_flags & MICREL_NO_EEE)
--		phy_disable_eee(phydev);
--
- 	return kszphy_config_init(phydev);
- }
- 
-@@ -5698,7 +5692,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.handle_interrupt = kszphy_handle_interrupt,
- 	.suspend	= genphy_suspend,
- 	.resume		= ksz9477_resume,
--	.get_features	= ksz9477_get_features,
- } };
- 
- module_phy_driver(ksphy_driver);
-diff --git a/include/linux/micrel_phy.h b/include/linux/micrel_phy.h
-index 591bf5b5e8dc..9af01bdd86d2 100644
---- a/include/linux/micrel_phy.h
-+++ b/include/linux/micrel_phy.h
-@@ -44,7 +44,6 @@
- #define MICREL_PHY_50MHZ_CLK	BIT(0)
- #define MICREL_PHY_FXEN		BIT(1)
- #define MICREL_KSZ8_P1_ERRATA	BIT(2)
--#define MICREL_NO_EEE		BIT(3)
- 
- #define MICREL_KSZ9021_EXTREG_CTRL	0xB
- #define MICREL_KSZ9021_EXTREG_DATA_WRITE	0xC
--- 
-2.39.5
+> =C2=A0MAINTAINERS | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b21363fdbf4d..1401209d06df 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -550,7 +550,7 @@ L:	linux-pwm@vger.kernel.org
+> =C2=A0S:	Maintained
+> =C2=A0F:	Documentation/devicetree/bindings/*/adi,adp5585*.yaml
+> =C2=A0F:	drivers/gpio/gpio-adp5585.c
+> -F:	drivers/input/adp5585-keys.c
+> +F:	drivers/input/keyboard/adp5585-keys.c
+> =C2=A0F:	drivers/mfd/adp5585.c
+> =C2=A0F:	drivers/pwm/pwm-adp5585.c
+> =C2=A0F:	include/linux/mfd/adp5585.h
 
 
