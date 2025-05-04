@@ -1,91 +1,128 @@
-Return-Path: <linux-kernel+bounces-631254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF24AA85B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:55:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B73AA85D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 12:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CDF93BC0D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:54:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2F433A62BB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 10:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19661C863D;
-	Sun,  4 May 2025 09:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D811C19DF4A;
+	Sun,  4 May 2025 10:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8oYcVlI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gn1WoT53"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4581D516F;
-	Sun,  4 May 2025 09:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BAE153800
+	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 10:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746352410; cv=none; b=Pzii+TAMjhojhJ9I1ijW2llx76M/iXMZt3qgiBoMNcDe0scw28+qliROD33gIBMngNIdbpJQjUK/Osm43g9UQeQQoL8HRn3P7dsXBN1vC/n24sk+noyqaN8ecwTbwIfyI8vmqE/LCQz7hoMe5rjfhuhRNOvdNkSXzMp+XpqZ3V4=
+	t=1746353174; cv=none; b=VrrwvM3ZG7PNRSco5h+V6fC8oE0LKXGJhdEYMUYJracVGyo+CCgeTjxJcOnZoNacY8pAqBn0blt7a0QzHHggrprcNxEhYLpI138wXoGpMya2/e8YkWfki/gJN/xzK/tw4pQrOkgzE3giLPr/HiXhaAK07aCR9PFfd7QsHP26E9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746352410; c=relaxed/simple;
-	bh=eiuoW4WfYbB/NLMVhSl0ytucyk+1Q9O7CyBNqlpFpZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pAJptmaePrsDvxgyZUl4HyuImyQhyZoPmG2ZMYnvzy+WPO+5ueAz5G1fleTrpjlL8FLYnsLVdj8RGOjZrbUySrN470y2C+Xh3ls6MRtZ9hM0y/SRA9/Qwy40qHeA8gYTkIOTjlAhtA6WiL47iMkihO1kWjWHL8sYnM7mZ1gMESk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8oYcVlI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5EACC4CEF2;
-	Sun,  4 May 2025 09:53:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746352409;
-	bh=eiuoW4WfYbB/NLMVhSl0ytucyk+1Q9O7CyBNqlpFpZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c8oYcVlI+leIUNnMqswnXdkX2I0SXzGzWTqVI6ro7suaX1MMgQQMEx0r5KRdsx4TC
-	 3SrWEweUKdCkD8dAhOGGkWAKLUhoH9f0XYv4+HsOluPeYzDZHsGas/xOiOKxO4dyCM
-	 kwN7VXhAHSILcvZWFrI94qzGPdl8czdZqItc2RC5Vpp9EJgpvftMT2X8IebSVDJSRs
-	 efNYrNgDJYj2bSX8FWlw9700fo5yDOMx3e/QE/9/EVHjn3Es5oQPvrKck/75PNNVjs
-	 BF8/l1BGuQMxJQSbmB01PeRWeyh//D/YRjs5l5GEShhaZBh88KX0/snn8WruQ55TZr
-	 HdmwoLnmR83Hg==
-Date: Sun, 4 May 2025 11:53:24 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-	"Chang S. Bae" <chang.seok.bae@intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: hardened_usercopy 32-bit (was: Re: [tip: x86/merge] x86/fpu:
- Make task_struct::thread constant size)
-Message-ID: <aBc5FNmf-pl6iypR@gmail.com>
-References: <20250503120712.GJaBYG8A-D77MllFZ3@fat_crate.local>
- <aBcM7UXj8HQWZeHJ@gmail.com>
- <aBco5IostuyCepaT@gmail.com>
- <20250504095041.GAaBc4cRpKHJvo5fRE@fat_crate.local>
+	s=arc-20240116; t=1746353174; c=relaxed/simple;
+	bh=JL3XkAj7vKDP2Rhw1aBkOgJ/hiKDV5Cf8RNnHw8tbNQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hYLaxzh5VbyI0pYQSa0pGn1MJ9BsrtfFHWrHbkdxTEKH1SR4N97FCSFCIk294TQJlYHkxxmJWGK9b9e/o51DMoPl76GpQ6tLxkjQR7AOfRMKyZ/w0MJeuGP/B0OAh+Gxb8rG/cj6bU+NRKuGQiOgSGQu2u/aRXFYFjbFXWUIycg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gn1WoT53; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746353170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NvJ7vLDIHj6O9i5UsnQ+ux6Ts9JtSmkul70topMATbY=;
+	b=Gn1WoT53nRlL3VKozR6rytgeloTR708ZH1oa0N1UcvS1JUk1/Z97kxqT7FA2V8GYnKSfh8
+	i4ehWlImwyXuZdLrkXQ7dmAv08Ex5jo0s0qQ56VDdd/yiNHQE7M1U635XRsE5CNDrWSgtA
+	BXC1nYEgoP4f6fH/dk70vKjsL0NGQs0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-GHA9sYqyOzed-hwZy9XjIg-1; Sun,
+ 04 May 2025 06:06:07 -0400
+X-MC-Unique: GHA9sYqyOzed-hwZy9XjIg-1
+X-Mimecast-MFC-AGG-ID: GHA9sYqyOzed-hwZy9XjIg_1746353166
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A94591800263;
+	Sun,  4 May 2025 10:06:05 +0000 (UTC)
+Received: from [10.22.80.45] (unknown [10.22.80.45])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8114E1800352;
+	Sun,  4 May 2025 10:06:03 +0000 (UTC)
+Date: Sun, 4 May 2025 12:05:58 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: John Garry <john.g.garry@oracle.com>
+cc: agk@redhat.com, snitzer@kernel.org, dm-devel@lists.linux.dev, 
+    linux-kernel@vger.kernel.org, martin.petersen@oracle.com
+Subject: Re: [PATCH] dm-table: Set BLK_FEAT_ATOMIC_WRITES for target queue
+ limits
+In-Reply-To: <20250502143933.1320061-1-john.g.garry@oracle.com>
+Message-ID: <57c7b277-4afd-cc22-d1aa-90ad2d9d23ea@redhat.com>
+References: <20250502143933.1320061-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250504095041.GAaBc4cRpKHJvo5fRE@fat_crate.local>
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+
+Hi
+
+I applied the patch, thanks.
+
+Mikulas
 
 
-* Borislav Petkov <bp@alien8.de> wrote:
 
-> On Sun, May 04, 2025 at 10:44:20AM +0200, Ingo Molnar wrote:
-> > > Thx for the report, mind sending the exact .config that fails for you?
-> > 
-> > BTW., mind sending the full bootlog as well? I cannot reproduce it here 
-> > with CONFIG_HARDENED_USERCOPY=y, so I suspect it's something about the 
-> > build, HW or boot environment.
+On Fri, 2 May 2025, John Garry wrote:
+
+> Feature flag BLK_FEAT_ATOMIC_WRITES is not being properly set for the
+> target queue limits, and this means that atomic writes are not being
+> enabled for any dm personalities.
 > 
-> Attaching boot.log and .config.
+> When calling dm_set_device_limits() -> blk_stack_limits() ->
+> ... -> blk_stack_atomic_writes_limits(), the bottom device limits
+> (which corresponds to intermediate target queue limits) does not have
+> BLK_FEAT_ATOMIC_WRITES set, and so atomic writes can never be enabled.
 > 
-> Toolchain is:
+> Typically such a flag would be inherited from the stacked device in
+> dm_set_device_limits() -> blk_stack_limits() via BLK_FEAT_INHERIT_MASK,
+> but BLK_FEAT_ATOMIC_WRITES is not inherited as it's preferred to manually
+> enable on a per-personality basis.
 > 
-> gcc (Debian 13.2.0-25) 13.2.0
+> Set BLK_FEAT_ATOMIC_WRITES manually for the intermediate target queue
+> limits from the stacked device to get atomic writes working.
+> 
+> Fixes: 3194e36488e2 ("dm-table: atomic writes support")
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> 
+> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+> index 9e175c5e0634..b35e48fed641 100644
+> --- a/drivers/md/dm-table.c
+> +++ b/drivers/md/dm-table.c
+> @@ -431,6 +431,12 @@ static int dm_set_device_limits(struct dm_target *ti, struct dm_dev *dev,
+>  		return 0;
+>  	}
+>  
+> +	/*
+> +	 * BLK_FEAT_ATOMIC_WRITES is not inherited from the bottom device in
+> +	 * blk_stack_limits(), so do it manually.
+> +	 */
+> +	limits->features |= (q->limits.features & BLK_FEAT_ATOMIC_WRITES);
+> +
+>  	if (blk_stack_limits(limits, &q->limits,
+>  			get_start_sect(bdev) + start) < 0)
+>  		DMWARN("%s: adding target device %pg caused an alignment inconsistency: "
+> -- 
+> 2.31.1
+> 
 
-Thanks!
-
-	Ingo
 
