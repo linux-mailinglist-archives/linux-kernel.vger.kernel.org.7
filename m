@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-631463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6490AA8890
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C58AA8894
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B3A3B7475
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B2693BAAA0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169A71F3D5D;
-	Sun,  4 May 2025 17:32:20 +0000 (UTC)
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2C21F4616;
+	Sun,  4 May 2025 17:32:22 +0000 (UTC)
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E241E0DEB;
-	Sun,  4 May 2025 17:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1562C1F3D58;
+	Sun,  4 May 2025 17:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746379939; cv=none; b=iQ8qOmQmrW4pb2Mzk+MXeVqxevMGjnwfsEhKyyax2GZ6ZegudszvZ0NbwxcE8KIxfT7fR41/rewXx3wus2O/QQhOUY4L6cSQ2kT1DJp9dSaahk3XWkrUfOEi6k5rzHe7oa3OJNodt5Ze/jxdLaBjvOLVW5qhzcytHBMzhIPJL5A=
+	t=1746379941; cv=none; b=feM89U60IlNvRMQACHwfZE/0Cnqwo3CHOgwJ8D08n/8ryfAqPpjCu6qSfADoKj0h7bLhIGCqs7hrvwRRkSJL8T/1CAa1bRYp4axzjfFpwnfdxlpOCem6e0v8qwSO7TVi0zfGmHNs5SZd1SFUp93xf5a+KH6Y6FvwxzHNztYupIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746379939; c=relaxed/simple;
-	bh=arVvYY/U4KcowDeyUPfOPUK4/y7MQua5SHBupaDB3gU=;
+	s=arc-20240116; t=1746379941; c=relaxed/simple;
+	bh=khpVA+vbpCfpcp+ac2N3aNrX8w8epr9uHVpWDeshWwM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F5Zxpsev81yYacTloR+BCHDn4Z2L/lC5rB+dYhIfLkQAHHqjAHU+U1g2VCIub4hUT9LtIBgKheA6gX+sqNr8VLNqPLHfAGHNHgLYESl+2zBbLqmPkzAjq8CbGbcYBkTAjzH/UWiCWyCZVzYQfHJFg9U+mEHZJmtdUnj4gsxuueU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=Rs++tE7Y26PuvB2iKkiWcVoQe00waplsaMKBQdkTxbjUNyS9L+YNqOvAQvSN84o0Lgx7KNzHKqSnJc7DJzzMUYEZIhtMPV0/a7RezRDV5JwbFDljSnq1r4NM7hh3+pikX5foN+70wuVY1eIjVTZDWcm6UtS9jQcUWcAOxOz9sPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZrBYV3TTcz9tSw;
-	Sun,  4 May 2025 19:32:14 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4ZrBYX45pSz9tch;
+	Sun,  4 May 2025 19:32:16 +0200 (CEST)
 From: Remo Senekowitsch <remo@buenzli.dev>
 To: Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@google.com>,
@@ -54,9 +54,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v4 7/9] rust: device: Add child accessor and iterator
-Date: Sun,  4 May 2025 19:31:52 +0200
-Message-ID: <20250504173154.488519-8-remo@buenzli.dev>
+Subject: [PATCH v4 8/9] rust: device: Add property_get_reference_args
+Date: Sun,  4 May 2025 19:31:53 +0200
+Message-ID: <20250504173154.488519-9-remo@buenzli.dev>
 In-Reply-To: <20250504173154.488519-1-remo@buenzli.dev>
 References: <20250504173154.488519-1-remo@buenzli.dev>
 Precedence: bulk
@@ -67,123 +67,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow Rust drivers to access children of a fwnode either by name or by
-iterating over all of them.
-
-In C, there is the function `fwnode_get_next_child_node` for iteration
-and the macro `fwnode_for_each_child_node` that helps with handling the
-pointers. Instead of a macro, a native iterator is used in Rust such
-that regular for-loops can be used.
+Allow Rust code to read reference args from device properties. The
+wrapper type `FwNodeReferenceArgs` allows callers to access the buffer
+of read args safely.
 
 Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
 ---
- rust/kernel/device/property.rs | 79 +++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
+ rust/kernel/device/property.rs | 68 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
 diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
-index 413166e2d082e..10061156f79a8 100644
+index 10061156f79a8..1cd3886b8f552 100644
 --- a/rust/kernel/device/property.rs
 +++ b/rust/kernel/device/property.rs
-@@ -12,7 +12,7 @@
-     error::{to_result, Result},
-     prelude::*,
-     str::{CStr, CString},
--    types::Opaque,
-+    types::{ARef, Opaque},
- };
- 
- /// A reference-counted fwnode_handle.
-@@ -34,6 +34,27 @@
- pub struct FwNode(Opaque<bindings::fwnode_handle>);
- 
- impl FwNode {
-+    /// # Safety
-+    ///
-+    /// Callers must ensure that:
-+    /// - The reference count was incremented at least once.
-+    /// - They relinquish that increment. That is, if there is only one
-+    ///   increment, callers must not use the underlying object anymore -- it is
-+    ///   only safe to do so via the newly created `ARef<FwNode>`.
-+    unsafe fn from_raw(raw: *mut bindings::fwnode_handle) -> ARef<Self> {
-+        // SAFETY: As per the safety requirements of this function:
-+        // - `NonNull::new_unchecked`:
-+        //   - `raw` is not null.
-+        // - `ARef::from_raw`:
-+        //   - `raw` has an incremented refcount.
-+        //   - that increment is relinquished, i.e. it won't be decremented
-+        //     elsewhere.
-+        // CAST: It is safe to cast from a `*mut fwnode_handle` to
-+        // `*mut FwNode`, because `FwNode` is  defined as a
-+        // `#[repr(transparent)]` wrapper around `fwnode_handle`.
-+        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(raw.cast())) }
-+    }
-+
-     /// Obtain the raw `struct fwnode_handle *`.
-     pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_handle {
-         self.0.get()
-@@ -215,6 +236,62 @@ pub fn property_read<'fwnode, 'name, T: Property>(
-             name,
-         }
+@@ -292,6 +292,65 @@ pub fn children<'a>(&'a self) -> impl Iterator<Item = ARef<FwNode>> + 'a {
+             Some(next)
+         })
      }
 +
-+    /// Returns first matching named child node handle.
-+    pub fn get_child_by_name(&self, name: &CStr) -> Option<ARef<Self>> {
-+        // SAFETY: `self` and `name` are valid by their type invariants.
-+        let child =
-+            unsafe { bindings::fwnode_get_named_child_node(self.as_raw(), name.as_char_ptr()) };
-+        if child.is_null() {
-+            return None;
-+        }
-+        // SAFETY:
-+        // - `fwnode_get_named_child_node` returns a pointer with its refcount
-+        //   incremented.
-+        // - That increment is relinquished, i.e. the underlying object is not
-+        //   used anymore except via the newly created `ARef`.
-+        Some(unsafe { Self::from_raw(child) })
++    /// Finds a reference with arguments.
++    pub fn property_get_reference_args(
++        &self,
++        prop: &CStr,
++        nargs: NArgs<'_>,
++        index: u32,
++    ) -> Result<FwNodeReferenceArgs> {
++        let mut out_args = FwNodeReferenceArgs::default();
++
++        let (nargs_prop, nargs) = match nargs {
++            NArgs::Prop(nargs_prop) => (nargs_prop.as_char_ptr(), 0),
++            NArgs::N(nargs) => (ptr::null(), nargs),
++        };
++
++        // SAFETY: `self.0.get()` is valid. `prop.as_char_ptr()` is valid and
++        // zero-terminated. `nargs_prop` is valid and zero-terminated if `nargs`
++        // is zero, otherwise it is allowed to be a null-pointer.
++        let ret = unsafe {
++            bindings::fwnode_property_get_reference_args(
++                self.0.get(),
++                prop.as_char_ptr(),
++                nargs_prop,
++                nargs,
++                index,
++                &mut out_args.0,
++            )
++        };
++        to_result(ret)?;
++
++        Ok(out_args)
++    }
++}
++
++/// The return value of `property_get_reference_args`.
++///
++/// - [`Device::property_get_reference_args`]
++/// - [`FwNode::property_get_reference_args`]
++#[repr(transparent)]
++#[derive(Copy, Clone, Default)]
++pub struct FwNodeReferenceArgs(bindings::fwnode_reference_args);
++
++impl FwNodeReferenceArgs {
++    /// Returns the slice of reference arguments.
++    pub fn as_slice(&self) -> &[u64] {
++        // SAFETY: As per the safety invariant of FwNodeReferenceArgs, `nargs`
++        // is the number of elements in `args` that is valid.
++        unsafe { core::slice::from_raw_parts(self.0.args.as_ptr(), self.0.nargs as usize) }
 +    }
 +
-+    /// Returns an iterator over a node's children.
-+    pub fn children<'a>(&'a self) -> impl Iterator<Item = ARef<FwNode>> + 'a {
-+        let mut prev: Option<ARef<FwNode>> = None;
++    /// Returns the number of reference arguments.
++    pub fn len(&self) -> usize {
++        self.0.nargs as usize
++    }
 +
-+        core::iter::from_fn(move || {
-+            let prev_ptr = match prev.take() {
-+                None => ptr::null_mut(),
-+                Some(prev) => {
-+                    // We will pass `prev` to `fwnode_get_next_child_node`,
-+                    // which decrements its refcount, so we use
-+                    // `ARef::into_raw` to avoid decrementing the refcount
-+                    // twice.
-+                    let prev = ARef::into_raw(prev);
-+                    prev.as_ptr().cast()
-+                }
-+            };
-+            // SAFETY:
-+            // - `self.as_raw()` is valid by its type invariant.
-+            // - `prev_ptr` may be null, which is allowed and corresponds to
-+            //   getting the first child. Otherwise, `prev_ptr` is valid, as it
-+            //   is the stored return value from the previous invocation.
-+            // - `prev_ptr` has its refount incremented.
-+            // - The increment of `prev_ptr` is relinquished, i.e. the
-+            //   underlying object won't be used anymore.
-+            let next = unsafe { bindings::fwnode_get_next_child_node(self.as_raw(), prev_ptr) };
-+            if next.is_null() {
-+                return None;
-+            }
-+            // SAFETY:
-+            // - `next` is valid because `fwnode_get_next_child_node` returns a
-+            //   pointer with its refcount incremented.
-+            // - That increment is relinquished, i.e. the underlying object
-+            //   won't be used anymore, except via the newly created
-+            //   `ARef<Self>`.
-+            let next = unsafe { FwNode::from_raw(next) };
-+            prev = Some(next.clone());
-+            Some(next)
-+        })
++    /// Returns `true` if there are no reference arguments.
++    pub fn is_empty(&self) -> bool {
++        self.0.nargs == 0
 +    }
  }
  
  // SAFETY: Instances of `FwNode` are always reference-counted.
+@@ -429,6 +488,15 @@ fn read_from_fwnode_property(fwnode: &FwNode, name: &CStr) -> Result<Self> {
+     }
+ }
+ 
++/// The number of arguments of a reference.
++pub enum NArgs<'a> {
++    /// The name of the property of the reference indicating the number of
++    /// arguments.
++    Prop(&'a CStr),
++    /// The known number of arguments.
++    N(u32),
++}
++
+ /// A helper for reading device properties.
+ ///
+ /// Use [`Self::required_by`] if a missing property is considered a bug and
 -- 
 2.49.0
 
