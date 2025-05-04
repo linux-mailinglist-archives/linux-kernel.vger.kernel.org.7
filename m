@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-631521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A61AA8924
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 21:27:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2E0AA8912
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 21:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F2318950F2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38D2170D6D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49083246761;
-	Sun,  4 May 2025 19:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC627248862;
+	Sun,  4 May 2025 19:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=att.net header.i=@att.net header.b="hwVsdPV4"
-Received: from sonic313-12.consmr.mail.ne1.yahoo.com (sonic313-12.consmr.mail.ne1.yahoo.com [66.163.185.35])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtKbcMN8"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5749376
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 19:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06A41A76DE;
+	Sun,  4 May 2025 19:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746386827; cv=none; b=uQHmmXxfCT+V/meyX+H5di0UUYE0CgjLrbpeGVbnzomxQnssGr5RF+NtdHci80Khb8iVsq0PNClIsgVAoYJktLXQB0EnNxfJkplUgz1lW2B/1hBMWKMSYqQ7P4TEz8M36Sfzlyv+sooMsVMNguf3ozV1E0Eeb7B5k41yk5bUNl4=
+	t=1746385348; cv=none; b=h/xGkDu975Fn/8gpIJ5sCqY4Ehf78YIr0oDowDV1BSAdeE6HoqgSrT8do6d9uI1LE2UUTYdEFk9ViIQYNPQKdtsmoJhRc6GnrkYROufrMKFqR5LoAWncLeZkJVTFiFuxCR0SGdSOjC9U9aAMRubDUZJNNoHFJ5/m3I/dcAm3yEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746386827; c=relaxed/simple;
-	bh=8U+WkK4jluyo0VHnqhoSr/HfjGEN1CurRngt+rDUNAM=;
-	h=Date:From:Subject:To:Message-Id:MIME-Version:Content-Type:
-	 References; b=kkvTAG7XgLkbZ3C5KK2+xf4Atj2xgCmpaaFfwD6A94gvEOVBZmQlyWCFqxYYelfIx0NnIXFZ/8u8DMhfB49y8hVWsNt2fCLLpZThdTA0is8vYKJo1gO0jjRnUuvMcRcuRfUZSYFo9pg7ca33njMNUVKP2oIsG8HFMy4pmd6IyV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=att.net; spf=pass smtp.mailfrom=att.net; dkim=pass (1024-bit key) header.d=att.net header.i=@att.net header.b=hwVsdPV4; arc=none smtp.client-ip=66.163.185.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=att.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=att.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=att.net; s=s1024; t=1746386819; bh=GgKj4EbLukbp9mBampYxQkfkiaZkSgMHMtZ62AgjTYs=; h=Date:From:Subject:To:References:From:Subject:Reply-To; b=hwVsdPV4LtTs2nqRAnlBcmgmgFpeJX9m3lFN/pXVWIqaE34XgYuoloEHM04E/UE0TjRuTrL1O+hLUxQdgSvWLZRmBsay/B9QMab82IUP28xKbObp7L6FKfXFDP/bbPOQLivqvHzXHuJLxUoLY2Wz+Wvl1/Kiotg1T0vI2BzVcIw=
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746386819; bh=cLXrn0S5AdzgqzO8mcofTf2mA5bCT3zhiUpHbEKvnLK=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=ogrgXCRCYzYET9to3d1se8qVKidPYfdgtk/UzGYe2XXGUnRDTUT0omqwd1jD2TSnyswDni9tMJdBFYOymQY9fVut59mLo0JUX+pif+TvNcSB57/MBisjtSRaxI6InFWQno2yHFMW/DJxfTmNO0PEQ7RBhLruQmxxP6I5yh5K9l8D+UxILMk/bxVoccIfl3YpGY6CCVNpBgWiJq7pKDZUTLWy+oUwgTiOFVY2D5+wyt5ACYhDifFMgLtxKLFABZErcZPFc92HugE/BxzTprKO7RThmKx96A7PCYNjji8/I74qYnEqgNo+N4GMGhCPtVFGLDuaZEQSnR/D/Cq9xZLPFg==
-X-YMail-OSG: fEAnmoMVM1mfADvP_w208nk7w1MPhAGa713ZvQ9tZ1uAOP6.i42CEMpgx8f34in
- ZAAlp75CTKK5yPwsk9n6O9sE_vCNxCYTsT.Mgnmbyyz4RgMAqGq7.c7V0QBSwOYRLmlQawyVHtPG
- wLfz8V84hEtEpjeOe7ui9aCwOTCK4V97kpeyXB9oncKrZIqNkxTUhgx9S2hS6C6GJqQc_vG8QgMP
- czyqYuFbli9LVKnB8VQdekVdiAEjCtwO.Efzp8TPwltmU.SyaNQKiUIhUoBIGJvb_8HxrZfy0_oL
- 2qt7atE9lyiloHJCgcVeFvPMkw_Vx8OiEP5k5HjmiaLkzUyg2gMghA8bnWo138iXmqQrJULpoVQi
- ukEMGHoQ2P11GRUyCFG5Fgh9DGPh27Uf1nNlgIIhpgx32h.RsZQPVra2XndHmtkha7ydQ7xEuIQ3
- 0LPYQOiwBlNqwBRIxiwiyt82A8xJpSzbkLkJW2cF0X2IqHlDcyvP87cAZZBd4kxvVWq0q97GVRLe
- 30.8UMszK7xEIyMkXqitjHU8zIGr1LiWbMcTqbm1Q08BBQHcYrb795GInMLD33z6gLpiOAB5vXc0
- I2YU4pyNn3IIlZ2YpzAJY_m.niuTYZkHqC4NAoRNvajBLQwS1TT2R2a1L0znyAkSmLKdxykDJ8iM
- A3tRicNbhSIMfov4BlU2S82IalTQ_uweFqz.bJPQiUjNUkM2RN4hRx.AsXFNgOEtGAmONVBhaCRE
- 70jxLw7_TKXaqGtbLOcl2vhvAeJ5DwfkBArUzEK7hk.1kpdru1YshztV5WzVrd6IaNN22RmFCZZ4
- H_vVtyvBRJuPukei0gQRmcNnDQxwqJryqBLpF0I9pvOuYCwXWFi66QH8rKGajGPnqaKaZn9NGUlx
- nAJ2fpZFx5EPy4yyPYTgI8Jm9nrA2enqUA.jUVnakarhvmWlergiHM6G6ODxNMHG3i_6Mv3U1gyr
- ozwZbnyHaL7o69061zzbngLslRlVppHu2oR4m_SO62.f_fOgco8whHz4SN_pQb3Laeug1YZ._VUQ
- nEqfW9WkWQTFMn3jzxglYEnPlSq69PB6PnUeuHlC9L.c8VgWMOfND1D0H2f8Ou1HbFK0LuBlQ9Ni
- PhBSgTqY9pcvKlvwxbMkr7J9GnbP0Hw0aar7LTUVJpHI.JsJqywcsFB1yUnqkczYd_tL9w.cFhQq
- 4efDcSkRVmWJg_pliMr6srbyW1YQ0G3pCMawi0Bl_UIqSnyiqVasNI_Q4IOqvUcIiTlx2sCWXevS
- 766NZ5KrAfZTL0ADdAjjL9Fr53YlV.cG0GZ9f80qUGYr6wMuo6U3o.UFEXcuSiAW1mZBMM2Qz3yE
- hhASzARxclhKdwmtPIYMbbxo52z8.T9GkRD2q5B1PJAms8eDK15OSRC38TNNJpd26NENbU7zdw4b
- gGuqxSHh.70_cC9Ia.oz8Q0AFlRotLOqbPm5SsgFrH_4xOtVhyetrI2gaBf59dSNCANttiM46u_s
- CSQTwXZvrao3.nP_wDQTATAHqudfw5vllNZ78G_rHqWFUEULJclrb04qlIgwBuzJlvoeOyE6MgJ.
- wk6zmg8ow5eVS_ANTQmtvRwd25cgt9fQXKUCjPdRs1E125eOsvQDK5eOPi2Tqiv0wSYubb86se5_
- BVzOpuckJMAX67Tl1NA.0RkDiJi.oWegLRz7C.6iOMMOKFuJo1b1_DjGtAzrz6SYIxHa.S8c48f8
- hIEy8WoyP0mUPnRr3bSUFb2rTT0rhHWKLhOLgs2oojkCMSTCH2aPDSrTLKCv0Qte9GhXZ9hXiof5
- 6KSEGqbwwDmsXPykCCdWrRIlpquS7tCfPLlKOzPM9YDkvryRbWRl6a6dIXwqZJyi4CUAJD5y51Mu
- sQxa2EiNwioAX3j3IqvHtBDXEDr4ledW0_VqeG9UjxobHrAtIZM9HyzJ85ycLhpTAjNeOuU0N20P
- Le8VUPTeDoTfLKFk5Yh5Jk95U.y77JjUzKcOyRaLrqBbUigzC73OtM67HgjXsCp3SDcgGK8toU5Z
- rUyka_VF26dBd9ZBqFIgrHeIaZWrco6b21uPIOim4Uir2egLOvHXgcw4ESLv65ltoxezrbSi2DuB
- ErL11vWGiW12jdyWEBnqvDGPqUIlWIozA.tjpNJEIz1MQqE8I2LRbghaeW6KJ6_wjH7Jeyfv31aK
- lzEJdJukY.W3Gx7rtdmqqhniHDqWEffj2RTMoUd3406wnRy5jQGmcTm5XNo_8orh7ZIiS82a3Ln7
- 3m22dkKiMDL4mvGCFV.gAWb.TvlehBQ--
-X-Sonic-MF: <pheonix.sja@att.net>
-X-Sonic-ID: f006822f-cc10-4733-8c63-7df21630d960
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Sun, 4 May 2025 19:26:59 +0000
-Received: by hermes--production-bf1-689c4795f-m296b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d01299511efab02f3032f3b1fc166e29;
-          Sun, 04 May 2025 18:56:31 +0000 (UTC)
-Date: Sun, 04 May 2025 14:56:23 -0400
-From: Steven J Abner <pheonix.sja@att.net>
-Subject: Kernel bug after 6.1 bug ryzen
-To: linux-kernel@vger.kernel.org
-Message-Id: <Z93RVS.RPMYFU5Y3A7F1@att.net>
-X-Mailer: geary/40.0
+	s=arc-20240116; t=1746385348; c=relaxed/simple;
+	bh=gWhqncYnT79JitMZOxQNY9LoBk9q4Nc/oFC/nBl8/SQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qek6i9dXEQJpCBmOS9tBoOUl/tabUBf47CHjS8tO8zEOJAjstQnzkeVKQ1Va3ihVcZWVrRu8Jmn9gF75ruQ2ThjlLblydivMDqAMwioio9uU+kpZsCNQhjMgFX1cxDjZk/Cxn9mxrE02I//gXR23sngwl99O9XEqCtVVpQkPPSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtKbcMN8; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-309f26c68b8so374266a91.2;
+        Sun, 04 May 2025 12:02:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746385346; x=1746990146; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gWhqncYnT79JitMZOxQNY9LoBk9q4Nc/oFC/nBl8/SQ=;
+        b=QtKbcMN8bWAkYgu1OJYH36E/J7ZZUVTwLUwoRlQyy8iMFo84jXh+LPUTLnXb9Nfv7Q
+         Wyq7C6I1oBTHp6+3oAb5ad0cqo/ms/QNnwDxsuxiDzreP87y/6pQmo9JKTlB9r5fJGvy
+         rgqb7dhrNpy0xhqEiV2M6YqhNYu3l1n6XLuphurklOQZSvxWjkhHXGLRUrQStWLmiTgL
+         y0X5pVOAJPbh00kCmm4TKeAzdH2+1mUP3DGsoCBZH2TPkdjpslf8oznfU+8zyRYY9CC9
+         oE4sxhskVMdPFGZC0vn5SKEHnxcsIk5/NnDLT8+fpwMiluPSWP88NkkwOX4G57wxxNZW
+         WOOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746385346; x=1746990146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gWhqncYnT79JitMZOxQNY9LoBk9q4Nc/oFC/nBl8/SQ=;
+        b=VQl9vzPl7B2yZv/1iFibZG79GbQZWCMC8uEWkIWf1D79D8ZzLj2juYJFf+926VJpRl
+         ZVBlx978C86hWF7sZEOOy1/ZIeTLyhpgH8F9p0q761RFsDltrGxI7zfbxCC31yAcSG0z
+         9Xqf5Wil22z3FgZEyYb26a15DvXhHMgLP93acE21x6uoFm6N1TBqn8hcgKLkyml5vC1V
+         OmjSYsUShLGUPKRaqlUjHvOLK24orqLG5rfIL+4w6o9hfK6GmHcHr5cbXaC+93zSdglu
+         eIFnEAm2bslZI6kTDQ9y0D1TV5czg7Qw8r7THG7nkljW0CS7qugvqbxDuS4m/GWoGB2d
+         oH0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWzbvjWcNJxNPMy2CqAersfpzljOYMSvYxQuANEz+qJRQjX3Yay1l09oJPw1Rz0FK09AHo0q4Oky6F2UOB0LMS@vger.kernel.org, AJvYcCWCMv8cRZf0tSI0ymhb7Nx2mnLH8xUd0w7e1WSrusT412gbOIb+BbcVhEbrhaX6N+e5d+ScJ49lJimvFVg=@vger.kernel.org, AJvYcCWwiwRi0rxuoQGD3fo5lXXIM03QjgEkH7W04Zk1CnfqaMmy4v5hdLLyYjwQOEUWMs/SWgXZAUlbHq/R6IqJDVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz31+gtjaWIkBIpSPNv5Iy2yb2se7HFIb8n0gLEVmGLXOKwqUFg
+	QfK4DUoJNk+CQqV/ztaR1VCGjhjSI/RYJ+PtbvZrjW2hUOi8LPVvycRXI2OE0HuKo7ALZXwxzia
+	HZpybDK67LBXaXEU4Pxw5wmCUJ14=
+X-Gm-Gg: ASbGncsaLWFzheNJ7zw5GHnr7sKSi9JRLT5ylKpoMlLc4uw0S/aHW/rFHi8nTQeFte3
+	dveeSxia7qAsByjLIzUKqEId5J/818tOVlcoS6k6p8fABRPQ6KrTkLjVLxy7NwHQs5Eyb0w3MUi
+	dLNGEIJCCwQg7LvvgrsrA3uA==
+X-Google-Smtp-Source: AGHT+IEO0raa8GkuuUNuEp7ZNefeofLseoaoOs06qtWnnjKYQ6iOYJix1qXEG05SOHHwbs5jqIqPiXaFuIPCWJpZQIU=
+X-Received: by 2002:a17:90b:4b49:b0:2ff:4b7a:f0a4 with SMTP id
+ 98e67ed59e1d1-30a4e6c0e69mr5864090a91.3.1746385345937; Sun, 04 May 2025
+ 12:02:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-References: <Z93RVS.RPMYFU5Y3A7F1.ref@att.net>
+References: <20250502215133.1923676-1-ojeda@kernel.org> <20250502215133.1923676-5-ojeda@kernel.org>
+ <CAJ-ks9k=uxxumgEU84-54u8OxxJVBsUprGk7Ht31ndoumHB95w@mail.gmail.com>
+ <CANiq72=Q_Vbfh6YhDsNeCBDPZ-q1d2HNfaTj4azAsd2Q-zPfEw@mail.gmail.com> <CAJ-ks9mAgR3N+cxL6H5XhAN-iWM=T66vuWr=LEozj8bqofBf6g@mail.gmail.com>
+In-Reply-To: <CAJ-ks9mAgR3N+cxL6H5XhAN-iWM=T66vuWr=LEozj8bqofBf6g@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 4 May 2025 21:02:11 +0200
+X-Gm-Features: ATxdqUHa3BzmXCDKf-vPiiRQBie8yaB_bY4-x1_F18HdvVt9ZxcHIW-X1fAPluM
+Message-ID: <CANiq72nQeHpZFk3KYGsgGO0Sh2TgV8T2z7Pahkijrgd=T64KYQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] rust: str: convert `rusttest` tests into KUnit
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Rae Moar <rmoar@google.com>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
- I introduced as amdgpu issue on 30 Apr, but believe it should be moved 
-to kernel. This even effects my OS mainline kernel upgrade, tried 6.8.
- I'm on a AMD 2400g, Asrock B450, GCC14.2.0, Binutils 2.44. Successful 
-builds of 5.15 and 6.1. Starting with 6.13.4 I encountered display 
-blackouts, disconnection of gpu from monitor, with a working console. I 
-got the same result downloading on a debian/ubuntu based OS's mainline 
-upgrade of 6.8 running a 5.15 kernel. That's when I back-tracked and 
-built 5.15 on new LFS system, which I got working, no issue. Proceeded 
-to 6.1 using 5.15 config as baseline and got that working 100%. Used 
-6.1 as baseline for 6.14 and same issues as before. I ruled out 
-firmware since all 3 ran on 250410 download of firmware. Please note 
-that on initial 5.15 build I did have to change kernel setting but 
-major difference of it didn't disconnect the gpu as 6.1 didn't either. 
-Screwy sequence of builds: 6.14, 6.1, OS 6.8, 5.15, 6.1, 6.14. Most of, 
-if not all, I found same results using safe mode also. For 'working', 
-ran X server with a program I created as test.
- Not sure how to help, other than not use 2400g :) I've seem to run out 
-of ideas. But felt since this in OS mainline's upgrades I should try to 
-get peoples attention.
-Steve
+On Sun, May 4, 2025 at 8:39=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
+wrote:
+>
+> One example is https://github.com/torvalds/linux/blob/59c9ab3e8cc7f56cd65=
+608f6e938b5ae96eb9cd2/tools/testing/radix-tree/xarray.c.
+>
+> It might be that these are necessary because the xarray tests don't
+> use kunit, and so are pretty inconvenient to run. As you might have
+> guessed, I discovered these host tests when my patch porting the
+> xarray tests to kunit broke the host-side build :(
 
+It can be useful to have some tests as independent userspace things
+(i.e. outside KUnit-UML) to use other tooling on it, but I think for
+such cases we would want to have a way to use the tests from userspace
+without having to remove them from being KUnit tests too, since we
+definitely want to test them in the actual kernel too.
 
+David et al. can probably tell us more context, e.g. I may be missing
+some plans on their side here. For instance, for Rust, we wanted to
+eventually have a way to tag stuff as kernel vs. host etc., but that
+is longer term.
+
+Cheers,
+Miguel
 
