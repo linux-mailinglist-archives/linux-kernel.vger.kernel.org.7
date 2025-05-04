@@ -1,230 +1,156 @@
-Return-Path: <linux-kernel+bounces-631235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696E3AA858D
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:36:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F9DAA84DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 10:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 279B71896FEF
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:37:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E39777A2D44
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F838153800;
-	Sun,  4 May 2025 09:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDED01953BB;
+	Sun,  4 May 2025 08:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6wiGaqN"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="tekcZyI0"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05B4A923;
-	Sun,  4 May 2025 09:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01422A1D8;
+	Sun,  4 May 2025 08:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746351412; cv=none; b=IqzRVn4oDClb6tG3Wr8rZa1Gausrw9yE8SuIX8GTs+uOpzk+ZRZ4hnu3wg9bLzBAR4Ujva67Wxo5QMH5sNRcL6IT72bbFBlSZpr2Usi7NIgcAi/SBYtTiPY+9JXuriwyijCuttiB8aTVNOM68nfQXRiCEoFJRao7idAxk6fCocw=
+	t=1746347905; cv=none; b=Vo6Jz9s86xZMo6qTQmwqLzJZsM7cJxkKmmxyIHDERDc5IjCvP3oe8lVy5HgFyXUnTShvth+02ysfA/6SRd/pBEMM2HtlbJHTNzHXCciXB+wLgT5pBFfcOLLdpbQoFXsoJEbYHJkRHewF7cJyuZ41HffWCeK0ohpqv9HYnTDpCrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746351412; c=relaxed/simple;
-	bh=y+QO4wdiyY/5YUroTNg++eaudNfYMl5saJSbZlue32k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j1wEMrH4R+iJS0JQjbYkPW5iD0oI1nLxztHBsmVFKXq5/O9ZQsjeObXJ6QYmYK0+8xDVrYcv+U1PUPB2qgJCJSCyt/Csu7g5e7VBy29BKwvpTr0vqVLUDDzwyQ8AZB0v1l17ZRI/7a3oK7kF7+inqDJUcaOac4ajqO+fm9ldhOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6wiGaqN; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso14822975e9.3;
-        Sun, 04 May 2025 02:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746351409; x=1746956209; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Mq4YxAu2rRcNgM3YBVf23JtR9YIlVeHime/ANWk0XVk=;
-        b=C6wiGaqN13yvUem7/Acr/HoUzBwEb/pXMHqxXcO7wwNHDprdPSzM2yMnYMOkBhG9Kf
-         eZS3B/77s1decoMiK4sH5uPbdiKAZIZtMg7CFVFomkaShfB8oAeIDPK9YPXLP+O98wc8
-         BBAUiegg84Xgoao9ebpklTybnUyC8HE/a8ck/apHyUm7+ZqaTa+o/YzG0PYNM1bKKWSn
-         i6/CwAvXGAFgxDYG4x+SeN32JlwYNcgfZ1iOQwt36dkn7SQkU0/At9llItGzO5KuRycr
-         1p8Z2jhZ2vI4qk+RnqJZMhMfz9Bth7oBu63uCkUYJ9mreL0wChwC7O/coAupUCCiJgd0
-         DDVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746351409; x=1746956209;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mq4YxAu2rRcNgM3YBVf23JtR9YIlVeHime/ANWk0XVk=;
-        b=X3jFDB0dKGfCJ7JpmeqJa0yl5Feb+//46xmq9vW7WPgBSmUVe2ZFITUgkhH2LdXZfo
-         HKFodw6KP7JZOF08/I76hvIrdvYoLzZmC+QDblAlvU/O/c4Mg9nuWiZNe1GuOyOnQ/SS
-         kwiWyLxoLEbgjch5PJ+/iiwfSQ2VNPBvBrrtoC2YGflPkCC5/OWkjitH7OR1Skcyzsbr
-         eR/dL4pbJPaw60Nx/e2WLek411YGsZ3g8ChFpGMs0iVYXFx3tFHFLf6PkOf/GvGwlJbK
-         yyESUp5dAA/3Rp1ZDjuAIywj2/EqAQ+TXi57rkq8aREyaXQy39SU4wLTKWBd3e6yEMwx
-         +d9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUi1fsYl13n9u5S8/dqJlfQz6xX7qBNveNuOhmtyRg/jBBW37oTmbXOyMWwKC4/KXM/rSv0NAVYzXU=@vger.kernel.org, AJvYcCWZIa0LkSk7fLaRmACg2qgB35Slq5aTY6nZcDKQARjls/btF7AkcfSPuFXWYc3M34uNxVzTX7m+h7id8VQY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgnup4G1REogVgSsmxq8XWvkFxZA3xn6vSlonliRtrdWOqmkaG
-	CaQ/vhkB19UlxV/G+LMxxui4M4dnRq0jmKdaV4RVO7HxhvcIjLxmSKRP7NWp
-X-Gm-Gg: ASbGncsL0XLo3biSzUi78bdNLWDI4yBVEzmMssKvNf5JqUg1eMfhMoZOben/tB/QSz1
-	de+1MwWkxPpiO0eX3WNb92azwflJnfmawX33iv04tdF0suMMMgXCQx7XNDdxZpcVd019TN7lnst
-	UAqTRB0buIBaA848AyCAu5US/x0bzmsyXR10UiBqLACwXMbqUEdMCBArE86vd2pQLeSqWzQzWTK
-	ePOKTVLh7vNRIeFilbXN7Sa4Hf9id2cPNquQAogMwDNwL/ZFMXIxBWTMYio+qaxwXrXIGKoTSjz
-	t6GdTwCmhpUzXjYDlShAOonTXZwsacDTHDxM4Kh2gcXDMxRqhMfu8nXo3mqTk5in6seMH0ZidiC
-	dumLteChgp/A1iQw=
-X-Google-Smtp-Source: AGHT+IFoDAGULCLBBKh318FrEAR1MfItiv/hYoplaO3+Y7sNecsD0Zeb2TVajbheH7bhvfun2ULUJw==
-X-Received: by 2002:a05:600c:3e09:b0:43d:2230:303b with SMTP id 5b1f17b1804b1-441c491fce2mr24100975e9.20.1746351409042;
-        Sun, 04 May 2025 02:36:49 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2af2922sm142017985e9.17.2025.05.04.02.36.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 May 2025 02:36:48 -0700 (PDT)
-Message-ID: <5bdc6802bc10b71774fb6d839a1a45d94463f4cf.camel@gmail.com>
-Subject: Re: [PATCH v2] iio: adc: ad7606_spi: add offload scan mask check
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Michael Hennerich
-	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Angelo Dureghello
-	 <adureghello@baylibre.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Sun, 04 May 2025 09:37:12 +0100
-In-Reply-To: <20250502-iio-adc-ad7606_spi-fix-offload-scan-mask-check-v2-1-e70c6d71baa3@baylibre.com>
-References: 
-	<20250502-iio-adc-ad7606_spi-fix-offload-scan-mask-check-v2-1-e70c6d71baa3@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1746347905; c=relaxed/simple;
+	bh=zajni2ZotkkHJ3e2nqxmanS/CfmCsSsU+pl0LSL/dHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yzb1kEakLfd2GcOwNsxujogqrgmraMYlH1OYn6A7BmWko/hdoJUf+uYrISrAmHNU5T433f1gmDQhyQEBWwSxu2itNJ63zTx2FLenBtlwvNz4+7tIyhv1/6IwDorrdZn8wEgdeGSoi4LagLdPb1jm0Wv21c+DQ+PQ1Viv7bHlqHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=tekcZyI0; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.112.122.126] (unknown [193.96.224.59])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 605E0166B39;
+	Sun,  4 May 2025 10:38:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1746347898;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0+7ojsVOVO/CRe37Da0xAzrNQ3YahhkxCE5bOnIDJY4=;
+	b=tekcZyI0IOY9MTDmq4csOxiiKr5cVKtFem8wQkzK0fbNPQ78zPp3q+IX0+KxmQXkBzvEtl
+	ytBBHXVobjqe1w+CaDdtCw9M02BWPrhNTHlmDlipyYn2gOfZztWmm21ILVY76gPDiIRmQh
+	ssemKQxcdwAHWuAMYv6BxpMLgisMv7k=
+Message-ID: <84ce1af9-3a95-48c5-8424-c93d9a34cefb@ixit.cz>
+Date: Sun, 4 May 2025 10:38:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in OMNIVISION OV7670
+ SENSOR DRIVER
+To: Lukas Bulwahn <lbulwahn@redhat.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20250504033502.37809-1-lukas.bulwahn@redhat.com>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <20250504033502.37809-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2025-05-02 at 10:42 -0500, David Lechner wrote:
-> Validate the scan mask when SPI offloading is being used.
->=20
-> Since this family of ADCs is simultaneous sampling, there isn't a way
-> to selectively disable channels when reading sample data. (Technically,
-> AD7616 has a sequencer so could have some control, but that is for
-> another day).
->=20
-> For "regular" IIO triggered buffer reads, this isn't a problem and the
-> IIO core will demux the data and ignore data from disabled channels.
-> However, since SPI offloading is done completely in hardware, we don't
-> have a way to do the same. So before this patch, if less than all
-> channels were enabled, the data would be misplaced in the buffer.
->=20
-> By adding a check in update_scan_mode, we can fail to enable the buffer
-> instead of having bad data returned to userspace.
->=20
-> Fixes: e96d35faf357 ("iio: adc: ad7606: add SPI offload support")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+Good catch, thank you.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Reviewed-by: David Heidelberg <david@ixit.cz>
 
-> Changes in v2:
-> - Use bitmap_weight() instead of bitmap_equal().
-> - Link to v1:
-> https://lore.kernel.org/r/20250430-iio-adc-ad7606_spi-fix-offload-scan-ma=
-sk-check-v1-1-8b165d9d6c0e@baylibre.com
->=20
-> And in case it isn't obvious, the patch this fixes is fairly recent, so
-> this goes in togreg rather than fixes-togreg.
+On 04/05/2025 05:35, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 59b24c0047a2 ("media: dt-bindings: media: i2c: align filenames
+> format with standard") renames the files in
+> Documentation/devicetree/bindings/media/i2c/, but misses to adjust the file
+> entry in OMNIVISION OV7670 SENSOR DRIVER.
+> 
+> Adjust the file entry after this renaming.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > ---
-> =C2=A0drivers/iio/adc/ad7606_spi.c | 29 +++++++++++++++++++++++++++++
-> =C2=A01 file changed, 29 insertions(+)
->=20
-> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
-> index
-> 997be483ebb93293481b922e13ece4edb47e940a..5b5b4677273b15956f1da73da41b16c=
-5ee64e818
-> 100644
-> --- a/drivers/iio/adc/ad7606_spi.c
-> +++ b/drivers/iio/adc/ad7606_spi.c
-> @@ -5,6 +5,7 @@
-> =C2=A0 * Copyright 2011 Analog Devices Inc.
-> =C2=A0 */
-> =C2=A0
-> +#include <linux/bitmap.h>
-> =C2=A0#include <linux/err.h>
-> =C2=A0#include <linux/math.h>
-> =C2=A0#include <linux/module.h>
-> @@ -329,19 +330,44 @@ static int ad7606_spi_offload_probe(struct device *=
-dev,
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> +static int ad7606_spi_update_scan_mode(struct iio_dev *indio_dev,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const unsigned long *scan_mask)
-> +{
-> +	struct ad7606_state *st =3D iio_priv(indio_dev);
-> +
-> +	if (st->offload_en) {
-> +		unsigned int num_adc_ch =3D st->chip_info->num_adc_channels;
-> +
-> +		/*
-> +		 * SPI offload requires that all channels are enabled since
-> +		 * there isn't a way to selectively disable channels that get
-> +		 * read (this is simultaneous sampling ADC) and the DMA buffer
-> +		 * has no way of demuxing the data to filter out unwanted
-> +		 * channels.
-> +		 */
-> +		if (bitmap_weight(scan_mask, num_adc_ch) !=3D num_adc_ch)
-> +			return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> =C2=A0static const struct ad7606_bus_ops ad7606_spi_bops =3D {
-> =C2=A0	.offload_config =3D ad7606_spi_offload_probe,
-> =C2=A0	.read_block =3D ad7606_spi_read_block,
-> +	.update_scan_mode =3D ad7606_spi_update_scan_mode,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct ad7606_bus_ops ad7607_spi_bops =3D {
-> =C2=A0	.offload_config =3D ad7606_spi_offload_probe,
-> =C2=A0	.read_block =3D ad7606_spi_read_block14to16,
-> +	.update_scan_mode =3D ad7606_spi_update_scan_mode,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct ad7606_bus_ops ad7608_spi_bops =3D {
-> =C2=A0	.offload_config =3D ad7606_spi_offload_probe,
-> =C2=A0	.read_block =3D ad7606_spi_read_block18to32,
-> +	.update_scan_mode =3D ad7606_spi_update_scan_mode,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct ad7606_bus_ops ad7616_spi_bops =3D {
-> @@ -350,6 +376,7 @@ static const struct ad7606_bus_ops ad7616_spi_bops =
-=3D {
-> =C2=A0	.reg_read =3D ad7606_spi_reg_read,
-> =C2=A0	.reg_write =3D ad7606_spi_reg_write,
-> =C2=A0	.rd_wr_cmd =3D ad7616_spi_rd_wr_cmd,
-> +	.update_scan_mode =3D ad7606_spi_update_scan_mode,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct ad7606_bus_ops ad7606b_spi_bops =3D {
-> @@ -359,6 +386,7 @@ static const struct ad7606_bus_ops ad7606b_spi_bops =
-=3D {
-> =C2=A0	.reg_write =3D ad7606_spi_reg_write,
-> =C2=A0	.rd_wr_cmd =3D ad7606b_spi_rd_wr_cmd,
-> =C2=A0	.sw_mode_config =3D ad7606b_sw_mode_config,
-> +	.update_scan_mode =3D ad7606_spi_update_scan_mode,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct ad7606_bus_ops ad7606c_18_spi_bops =3D {
-> @@ -368,6 +396,7 @@ static const struct ad7606_bus_ops ad7606c_18_spi_bop=
-s =3D {
-> =C2=A0	.reg_write =3D ad7606_spi_reg_write,
-> =C2=A0	.rd_wr_cmd =3D ad7606b_spi_rd_wr_cmd,
-> =C2=A0	.sw_mode_config =3D ad7606b_sw_mode_config,
-> +	.update_scan_mode =3D ad7606_spi_update_scan_mode,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct ad7606_bus_info ad7605_4_bus_info =3D {
->=20
-> ---
-> base-commit: a9b169746d2e299159d4dde190552ae620982bbd
-> change-id: 20250430-iio-adc-ad7606_spi-fix-offload-scan-mask-check-1d3304=
-00c014
->=20
-> Best regards,
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7b78a98d1f42..78872ebb1aac 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18163,7 +18163,7 @@ OMNIVISION OV7670 SENSOR DRIVER
+>   L:	linux-media@vger.kernel.org
+>   S:	Orphan
+>   T:	git git://linuxtv.org/media.git
+> -F:	Documentation/devicetree/bindings/media/i2c/ov7670.txt
+> +F:	Documentation/devicetree/bindings/media/i2c/ovti,ov7670.txt
+>   F:	drivers/media/i2c/ov7670.c
+>   
+>   OMNIVISION OV772x SENSOR DRIVER
+
+-- 
+David Heidelberg
 
 
