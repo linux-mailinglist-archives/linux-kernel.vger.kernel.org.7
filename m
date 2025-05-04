@@ -1,184 +1,108 @@
-Return-Path: <linux-kernel+bounces-631421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C038AA8817
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:41:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B598AA881D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 18:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8826188FCC2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:41:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43BFD7A563F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 16:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC341DF73D;
-	Sun,  4 May 2025 16:41:32 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4051DFD96;
+	Sun,  4 May 2025 16:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="os9fQfoE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA8C1D8E10
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 16:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025581DEFC8;
+	Sun,  4 May 2025 16:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746376892; cv=none; b=iyW/WUodZOnRSnxVb8B4/HtHiSv7WFH8eEWGYHF2uaJMN8H2PDasScQyWlZnIngVOl2rnNaYIlNYSFa+fqty/WcfE0j0x8CZk0p+tC+Wp6jZyjBZQSzENhtzIlGrvhACiaFd7IIjXwFooe6roO4TW5Qsq/YGC5oApvUGGx0lpog=
+	t=1746376935; cv=none; b=i102xsWRFT6+3ijGdtNtDOzHhxMoCN9hd+Jl63dEKl2e0/3SBWJTD70xDpQyGaMFs50r4KWcl9Tf27az0Xpt4UGPdZwysE1AolhT1yXY2s7C7xmulxq6BEmCM+e8CAxm8ZQaSQIdXL8tf7IVcLa13Tb8JdEXLMfHywU4cGAOn3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746376892; c=relaxed/simple;
-	bh=kIUoSPeRICPPvmJitOqBEIjVzlnGAWmggQxNwCLJQLk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Qz9WvnD97Rgjx3Gu4DsfIh5yilIcUmVbec9FFwG2N0+doJ12ckLuC+WMNy1d904wQr6k0TBProyoTdR6pdeaYheo11EaURW9rSZ9CaJZml6GQeAASJE0lgtJCLYRmDQRDrZSqf7wD8aQI6MwsCSeHIuaVOXHc39QRDjb7pVF9P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d8a9b1c84eso47748815ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 09:41:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746376889; x=1746981689;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1y7mLr6LB7Kg0wjeAns0ppO15euW50CxesN3waBZcYw=;
-        b=f12IZRmewb4GMojQ6INZJB9kE+2TQCSui0/BbKpVe4oQeVSD/4zp5VnhEcOLnbCNKQ
-         Hcu01V0ZcZpSnqDKKZzr+uJDyV0P4qt4nY45FafjCNq8LJ12nI3DPKjFqhL159PQUWO2
-         K07XWz/A55lrYNKp4JgDg0ZIFEYEvcmKW9Bql6OG7UWzKCiYFNa8ikxtKqT/SOae3LRO
-         ZIGuPc28VoBZ0Jcn3YO2kDQ9a90qN2DEvaL+8PhVn+9XrOYFkNd111jzbGImIoFuDt7b
-         y2rN51D1JGZN2IXIaOlwUeoY+o7r9vaY3bQ85W6a71NdKWErBv9a8HqYwrXHrviRT5PU
-         E6QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXX85l2f71tG6TfYr+EstZmOnhupicNtPy08Yj+yhOXsG6C2DZX8yCJyOC4qy+Ua+1QS0d4+gXooM56/fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2AR3YziUdPAB9SzBalJ34tNZo1X+g/8rSbCrz7IZ0Bna2EDpV
-	FV2Qw7bgqp29DKt/PVC+DN4JozfPM8Un8Sql+F7NyCfNvvpuIgyq6mo9zyVQfrRGwUKbYb1fUTU
-	5gvo9Pakut2LEtLaSKsW+twxRex87A/pme9Rp1VcRk4sZE2LZ4F3Ojh0=
-X-Google-Smtp-Source: AGHT+IH2mfTcU2xhZamann+fvbXzJfBSRHknCn9vWW10+/vvVzt14dkZ/XWiw1C4x2FlAH+ddznLf1tNaKuf70rLwpdE9E4gEcrD
+	s=arc-20240116; t=1746376935; c=relaxed/simple;
+	bh=+M5mmT0UHIqtM31POEFwoPqf8yaTarHCNYDnaixSjfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZG3q2FSkgF5uVbCQ5PRK2uUZC2FzGtRq1GGgVWMejvweX4xQf3eP3TSnKDjfXfdjCXfeCXfb2LDiRnDcLm26bJKqivTfjiXAO6OWAxdVnTMiGhBTv92UQpFaSPOLzTIaz33tHxrtw5Z59zVI2B5I1qUa4OCowTqQ881bq6X510A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=os9fQfoE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD9EC4CEE7;
+	Sun,  4 May 2025 16:42:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746376934;
+	bh=+M5mmT0UHIqtM31POEFwoPqf8yaTarHCNYDnaixSjfA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=os9fQfoE8F+obXtE5buent0qyDUUHXnYR5Ti8LJDJaWfc1+jmnkk6QuTZ+CkEcUVh
+	 WTrwSGw2aJMA7iNWadyheGJY19QUKoV6X0StwE+41jPr4zKZXj2wcPnqzWkzM4/eys
+	 GiZSe8mgJFe5U7oEadKrv6ThTLIB0CTZ1MBxkPf7lk3S2fcISTMv+qXoTEnN6dWyAz
+	 Vp7P0yQxCS46wkMayYJzgaZXva56yOay/bjlVBWAlctE32N3h+hhmTsGquOG+i5qhz
+	 oo++6IJrcuaEI4+FC8GrubTY4IedpaDXedwNgMkce1BfkaIla4sYsUdBjpYQoCV4c+
+	 URnXf6g5MkbOg==
+Date: Sun, 4 May 2025 19:42:09 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] KEYS: Reduce smp_mb() calls in key_put()
+Message-ID: <aBeY4d3eC2aOthx-@kernel.org>
+References: <aBYqlBoSq4FwiDKD@kernel.org>
+ <20250430152554.23646-1-jarkko@kernel.org>
+ <1121543.1746310761@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2147:b0:3d6:cbed:3305 with SMTP id
- e9e14a558f8ab-3da5b27501cmr35921425ab.10.1746376889493; Sun, 04 May 2025
- 09:41:29 -0700 (PDT)
-Date: Sun, 04 May 2025 09:41:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <681798b9.050a0220.11da1b.0032.GAE@google.com>
-Subject: [syzbot] [net?] KASAN: global-out-of-bounds Read in fib6_ifup
-From: syzbot <syzbot+0ea39a434b610c03f7ea@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1121543.1746310761@warthog.procyon.org.uk>
 
-Hello,
+On Sat, May 03, 2025 at 11:19:21PM +0100, David Howells wrote:
+> Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> 
+> > Oops, my bad (order swap), sorry. Should have been:
+> > 	
+> >  				spin_unlock_irqrestore(&key->user->lock, flags);
+> > 			} else {
+> > 				smp_mb(); /* key->user before FINAL_PUT set. */
+> >  			}
+> > 			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> > 
+> > Should spin_lock()/unlock() be good enough or what good does smp_mb() do
+> > in that branch? Just checking if I'm missing something before sending
+> > fixed version.
+> 
+> spin_unlock() is semi-permeable, so stuff after it can leak into the inside of
+> it up as far as the spin_lock().  With your change, the garbage collector can
+> no longer guarantee that key_put() will have done with accessing key->user
+> when it sees KEY_FLAG_FINAL_PUT is set.
+> 
+> So, NAK on this patch, I think.  If you want a second opinion, I'd suggest
+> waving it in front of Paul McKenney.
 
-syzbot found the following issue on:
+Fair enough.
 
-HEAD commit:    2a239ffbebb5 Merge tag 'sound-6.15-rc5' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12f8d8d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=541aa584278da96c
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ea39a434b610c03f7ea
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+If I revisit this in a way or another,  I'll cc to him for comments but
+for this I'll buy what you said.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Possibly we only need smp_mb() in the IN_QUOTA branch in key_put().
+> 
+> David
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9b278a43c30b/disk-2a239ffb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6643e08be3ea/vmlinux-2a239ffb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c8acd8502009/bzImage-2a239ffb.xz
+Thank you for the comments.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ea39a434b610c03f7ea@syzkaller.appspotmail.com
-
-tipc: Started in network mode
-tipc: Node identity 56b07f7dae81, cluster identity 4711
-tipc: Enabled bearer <eth:syzkaller0>, priority 0
-syzkaller0: entered promiscuous mode
-syzkaller0: entered allmulticast mode
-==================================================================
-BUG: KASAN: global-out-of-bounds in fib6_ifup+0x257/0x2a0 net/ipv6/route.c:4815
-Read of size 8 at addr ffffffff9af9a530 by task syz.5.7046/29528
-
-CPU: 0 UID: 0 PID: 29528 Comm: syz.5.7046 Not tainted 6.15.0-rc4-syzkaller-00291-g2a239ffbebb5 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xc3/0x670 mm/kasan/report.c:521
- kasan_report+0xe0/0x110 mm/kasan/report.c:634
- fib6_ifup+0x257/0x2a0 net/ipv6/route.c:4815
- fib6_clean_node+0x2a4/0x5b0 net/ipv6/ip6_fib.c:2199
- fib6_walk_continue+0x44f/0x8d0 net/ipv6/ip6_fib.c:2124
- fib6_walk+0x182/0x370 net/ipv6/ip6_fib.c:2172
- fib6_clean_tree+0xd4/0x110 net/ipv6/ip6_fib.c:2252
- __fib6_clean_all+0x107/0x2d0 net/ipv6/ip6_fib.c:2268
- rt6_sync_up+0xc9/0x170 net/ipv6/route.c:4837
- addrconf_notify+0x73d/0x19e0 net/ipv6/addrconf.c:3748
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:85
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2176
- call_netdevice_notifiers_extack net/core/dev.c:2214 [inline]
- call_netdevice_notifiers net/core/dev.c:2228 [inline]
- __dev_notify_flags+0x12c/0x2e0 net/core/dev.c:9405
- netif_change_flags+0x108/0x160 net/core/dev.c:9434
- dev_change_flags+0xba/0x250 net/core/dev_api.c:68
- dev_ifsioc+0x1498/0x1f70 net/core/dev_ioctl.c:565
- dev_ioctl+0x223/0x10e0 net/core/dev_ioctl.c:821
- sock_do_ioctl+0x19d/0x280 net/socket.c:1204
- sock_ioctl+0x227/0x6b0 net/socket.c:1311
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc72c38e969
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc72d1fc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fc72c5b5fa0 RCX: 00007fc72c38e969
-RDX: 0000200000002280 RSI: 0000000000008914 RDI: 0000000000000004
-RBP: 00007fc72c410ab1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fc72c5b5fa0 R15: 00007ffcaefaed28
- </TASK>
-
-The buggy address belongs to the variable:
- __key.0+0x30/0x40
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1af9a
-flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000002000 ffffea00006be688 ffffea00006be688 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
-
-Memory state around the buggy address:
- ffffffff9af9a400: 00 f9 f9 f9 f9 f9 f9 f9 00 f9 f9 f9 f9 f9 f9 f9
- ffffffff9af9a480: 00 f9 f9 f9 f9 f9 f9 f9 00 f9 f9 f9 f9 f9 f9 f9
->ffffffff9af9a500: 00 00 f9 f9 f9 f9 f9 f9 00 f9 f9 f9 f9 f9 f9 f9
-                                     ^
- ffffffff9af9a580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9
- ffffffff9af9a600: f9 f9 f9 f9 00 00 f9 f9 f9 f9 f9 f9 00 00 f9 f9
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+BR, Jarkko
 
