@@ -1,339 +1,317 @@
-Return-Path: <linux-kernel+bounces-631198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACD3AA84ED
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 10:58:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 439A1AA8501
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205193B1F42
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 08:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C82C17879D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57FD1917ED;
-	Sun,  4 May 2025 08:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443851A08AF;
+	Sun,  4 May 2025 09:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eM69n1Lf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OVSKCcHI";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DyKWnE4B"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3AE16F0FE
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 08:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746349132; cv=none; b=d6/AuXCCTSzk+WasMSETHE4Mqj/XC1Hpt/XdYptaX3vmJ9mIZMIKmJMQ3g0BpyMiNZiOupmJfHHLrfQUYll7tJbAs4AYlKa24HEjGbypJn3WfxMmR2vaJCBi1b7a7xV//0Xa7NcDSPySqlLCgsNuYi803gznkWkUSSERXjVsedc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746349132; c=relaxed/simple;
-	bh=jaWx3YZYDYg+EMCF6YRajH35lLb/kKeeVdHNs6E2k68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mW0MiOWxl0O4wUdpv1yyepSrFwIW2N+IJhOuCLtq2x3ojyu1OvlDLSBAc8AIK4hUBxbJjEqrvR/+GdjE3xEkjhVoQZ0Ty89/CofnsVDiikFtL6jRUBXIsE1YWenVWJ8TfEMuG2EAVaPFJKFZ/QIWxcdZ8luVLq7Xcyda+sP4nvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eM69n1Lf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746349129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vj3NJsau7qgGczjDe65tGwTFiQ1Pl04vVciIlmYsMD8=;
-	b=eM69n1LfPwPCm7KSqnNS+a8vRNGxcDnfjt4rU46AiPGL/G4BcWvjIU9IqBTStjIkLSQwWF
-	fGqSnVVJqD2+QKI1PjsUUyugt9FOSPbyMe36F96vs6kX9QqSZuRwz4uELj4lMg38tUDcRf
-	sg0ik4QHvFZ3qsNlIIqm66ydLk9Xdgw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-622-pVK0EUZxPUuOm70tFcJpvg-1; Sun, 04 May 2025 04:58:47 -0400
-X-MC-Unique: pVK0EUZxPUuOm70tFcJpvg-1
-X-Mimecast-MFC-AGG-ID: pVK0EUZxPUuOm70tFcJpvg_1746349127
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43eea5a5d80so17720835e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 01:58:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746349127; x=1746953927;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vj3NJsau7qgGczjDe65tGwTFiQ1Pl04vVciIlmYsMD8=;
-        b=T901lS0MqtKQLZ0arQheLl58T3UMgk2NDEw4hzxIH6pDf9oqF9Gqsk9sQ3zvIYb0jq
-         bOlVYxo0+xLr93zAoeaNDiUWGhlMi2sdbHjmX9WfsGMovEAwo9TgjJHzZ48TUIaczsGb
-         7kLqrXjUEWgqRt/INx0S0I7gV8GYU3k6btYXkXRPIQcJeqyK+S5W1ks2pcr4g1x6pMZI
-         GQRy1VKGxQuJZPQhJ4WdfYx9C9X+EiVEQYqur420f8b2HT2H+zJ2RQTRMqPqOovY4e1b
-         3ZCI94WskglNB/hhfuj6ZLCKWedsZ3Hg8HFeT8QPGY/+QDHD45VzhoOexXVadVGpl/6J
-         VGIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV6WhWzdZ72SBLQRD4YGKEdYBiNjfy4+QO4fQtsMg5v6s/9D/2LmIqa9d1zmcncZFFA6CTaTqMjQt+SjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw57s1O36tceC2PqAqfkk0jQMU77C96GVxc5x1LpQIbEKOsp8N6
-	N92G8v8UB9tH1vq4X4KxszXQlPkrMfMDYWt/n1vhxU9NA3n51/KMSyi/mSnLoAeSgPTL6G5plN1
-	d7N4JUh+Fr2ZnbOV6O7QImVlbXOIZOjTO/vSg8/kWTlF9GDm20Fk9zqFHt+GvDLLtAfvB0taZ
-X-Gm-Gg: ASbGncslPVeBdhMtQlcgxrJgsNz36S/1adINgJsFau5Y7QEKDQjQBADD/mLNEnlb9Sq
-	b0KXDGtBPxmoyvIpxDjyiC3M/qJ29pBCmnTz62FtzJwHgigE4fJqh/4IjZOY4SbZwEYgg4RiKrq
-	0QLhhmXe3WBdPofrt75Qe7xepa+X6aerpcUyvgD8T5NhS+gDG+eA8Fde4k6m8yT2RR5uxhb5g3a
-	36QLJExg3HWTs/slJ0B0HuJK9NUXI674AQLGcIoJjhxYN7rEoJLodA4roSkeTiH4q5qBXSYuUju
-	SGUyUhZAwGbJ8/j1QXITQTjW3JqOYUuhsr0JgjJ9ERlyCtMwzkbKmB8giV6+NmoycpK+Ve6sZQr
-	OWNY1tXlqaXKBfQWK51fKApVeGfE4ywbrZuFAlk8=
-X-Received: by 2002:a05:600c:1d8c:b0:43d:4e9:27f3 with SMTP id 5b1f17b1804b1-441c48bc74fmr29232035e9.9.1746349126541;
-        Sun, 04 May 2025 01:58:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEn3IQ0vSijkX0LfADp/dGBPf2e0AfGQt6rZMhiI63QBK6irAZUw+VWNy36ePcsHVSEXhRqxA==
-X-Received: by 2002:a05:600c:1d8c:b0:43d:4e9:27f3 with SMTP id 5b1f17b1804b1-441c48bc74fmr29231845e9.9.1746349126008;
-        Sun, 04 May 2025 01:58:46 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c732:7200:c4da:f12e:1fa8:eaef? (p200300cbc7327200c4daf12e1fa8eaef.dip0.t-ipconnect.de. [2003:cb:c732:7200:c4da:f12e:1fa8:eaef])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b8a31695sm97450265e9.40.2025.05.04.01.58.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 May 2025 01:58:45 -0700 (PDT)
-Message-ID: <62990a3f-524f-4362-8f64-2fc582986eba@redhat.com>
-Date: Sun, 4 May 2025 10:58:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A491862;
+	Sun,  4 May 2025 09:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746349217; cv=fail; b=pz5QdSGQ0CFX8H+IA4OryDqO9zKSPtdsiy0WZzx8G2TMPJyJy+JP7s8m7EOU0avDmGlwjGdb2ZaD5li7mZHDVvw0jXBG8xAjGYdz/fbJqVASxlfEAFe9BfODXjXDMOiryDGdExiu0GSxbTYpEfh0Oft7vw+bG68ZSSmj2RMgqWo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746349217; c=relaxed/simple;
+	bh=xrWHo2sAodMThn6lg/+SsuaIsBN+sm1rVphqyMevH20=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OPmqrr0uYZ+Y+FPg8MakET7PUPX3MeoDMy5s+i3jZpTxomehe1R84TKN3Iwf+LUQ0arGhwQYrhhUt1dPLrIlS+0ZVYi8WRD0AnrPHBV3tsTZ8J9oDCpZ8juHX+/E2qmdQsHYMPg1mpnjQoP1E6XQY8PTapcHMgLEHtanNS3tI9M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OVSKCcHI; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DyKWnE4B; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5448qkfS010302;
+	Sun, 4 May 2025 09:00:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=2eq4+usGrS9AET4m
+	6jw0tFT0zDQSTDhGOFynOFz3hgA=; b=OVSKCcHI5O0qte0Glx95gTZFaUDVcpI3
+	JopkzjVMhaETTL8Q6tBAo7Z+KK0Gau88aDp/B2JR2CPlMUftqwNk1YEnsY6RQEKB
+	qL+Hdi4kvUCIl1hwYRVcam/ybuL3hJcxIjEL+vYVclrhYEJtUejfnBYhYNqzminp
+	SfLemUiAtJDwwopNpJSPbp305FWeM6pcM3w2aUy9Rq0rO0hLLvJT9C5/7tTe4Wzq
+	xOl8D5sDVcxSp3+ob33FPGfkCZw9ZvnfaRxq/xAloKnah4hZgodWtTnQcDj1yhy4
+	CZqxcYlceGYjd9iMiRrNT7fLirudZBxAQu1Wn1AfSOPPrE03XB5Jtg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46e53p804a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 04 May 2025 09:00:00 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5443UDQn036077;
+	Sun, 4 May 2025 08:59:59 GMT
+Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazlp17012052.outbound.protection.outlook.com [40.93.20.52])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46d9k7ghc9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 04 May 2025 08:59:59 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Rn2jIiO6W3/FploIaWp8hjI2S6jczUUYEpUDq9TAFeLzXIdmY8Y/qdRLdS4R0HcyE4tcSYuGKbE4c9lvtZc1yrDBtgZoaCY5buBo2zBdclnq8Rx9wbWLHcIQZ0e/pvfFovCiIpnS14Eijs02Vec124aimARuwGPoRcgq4vX3GHGKS0ZqEdoNV6mZIy6VGKJabg8XkwZvNy6O/AVxyKmQY42VM9MdJc9Fko0w6mlmjnA0ZpK1T/Ve5xzfOqy+9qeR06g3SmwwoOVOCFYv2AvXC9vBj/oSPVMRUQ2HRLUjzl0gs0VC7QxgycFtcpW+XPh1on7YycvPc5R6/tgwDPoQiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2eq4+usGrS9AET4m6jw0tFT0zDQSTDhGOFynOFz3hgA=;
+ b=UM7X4tmnGxLeJ56yXDmlz4ZyGvuGOSfNLogpGtJdfTvnrdvhK6sX2LY4b2s8PHTqQXc5TrmweBhkQovpSsMlhftDZb0eN1ZI5VJSeB+5RYBsmWNUU7n/pqvN81lXi7EaqMiM3vzZTZdlsw0bY+RB8GWs5BaiyHHlMlBgeqv2p5D4UeZ2u4UdlwrPY/2IIiKjjUxpOUZMIg/UDKcpnZbStzfZ82VJBbtdfQREr0kFW4gso0tPyVrOimSxsYWhJO9fIE2H7cFjMVtWG70/YcKyeA1Zj1UI+1CzclgYex0y5ksOmlFLf9f5slrjuYvz04+a+btk5QWowiIXN2Hyoab86g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2eq4+usGrS9AET4m6jw0tFT0zDQSTDhGOFynOFz3hgA=;
+ b=DyKWnE4BFURlv3DQgm2NegD0R2c2da406x5is8/98yAOVYkOOr4wz++1zu5ME4wk2tkaZwoiu2lM+idfM0TAFS033XnwpWZIsEjF7JC89XZUkBjoRkN4ZoOInMztCi8r4ME4fJNF+dH//T6JgDlJcZhCfecgBFWQYIk6DAtDN7o=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DS7PR10MB7178.namprd10.prod.outlook.com (2603:10b6:8:e1::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Sun, 4 May
+ 2025 08:59:56 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%7]) with mapi id 15.20.8699.022; Sun, 4 May 2025
+ 08:59:56 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: brauner@kernel.org, djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+        jack@suse.cz, cem@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+        martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+        linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+        linux-api@vger.kernel.org, John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v11 00/16] large atomic writes for xfs
+Date: Sun,  4 May 2025 08:59:07 +0000
+Message-Id: <20250504085923.1895402-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR05CA0041.namprd05.prod.outlook.com
+ (2603:10b6:208:236::10) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] mm: fix folio_pte_batch() on XEN PV
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: =?UTF-8?Q?Petr_Van=C4=9Bk?= <arkamar@atlas.cz>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Ryan Roberts <ryan.roberts@arm.com>,
- xen-devel@lists.xenproject.org, x86@kernel.org, stable@vger.kernel.org
-References: <20250502215019.822-1-arkamar@atlas.cz>
- <20250502215019.822-2-arkamar@atlas.cz>
- <20250503182858.5a02729fcffd6d4723afcfc2@linux-foundation.org>
- <9e3fb101-9a5d-43bb-924a-0df3c38333f8@redhat.com>
- <20250504001547.177b2aba8c2ffbfe63e0552e@linux-foundation.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250504001547.177b2aba8c2ffbfe63e0552e@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS7PR10MB7178:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70d3ab51-9209-41e7-71eb-08dd8aea0a54
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?98LmQjx5C9pxiMhzwP66yvn4BHPBIcUvKc5Nsw0wHmbwcxNjD0MhqblungH/?=
+ =?us-ascii?Q?ePJx6awmr2QvX1+Wi+xgTOi8u7C6YAeV6F2EdYbgF/pe5MUAkvrC/NUqhFHS?=
+ =?us-ascii?Q?ibD8RfTJbmV6rfhesc8BUMcvyO1kBblsA8atSguV0mlmOk9Sf89JQRfl+9LC?=
+ =?us-ascii?Q?YJq9ipS9htiyOpSQQKohYAOZxT5hiy4NnNALCYHCX7Cr3pp3ZQmlXDUPL90P?=
+ =?us-ascii?Q?x5nSoIa7fb+N4t3TFxFKbrGEFxUZAlt5xvGJgHDAMvY3gBPV8Gzg4yaZasTL?=
+ =?us-ascii?Q?tSateWalGnbdBYLm3/KSX6PuPouv7x6VFZhQ1uf8/qDxCtYCZ1ujPPn6fdYn?=
+ =?us-ascii?Q?l3I2MYSdw/mMOq1q0amQu7bwuVqqqBZ0Yu5G+U2S78fYeQjJio84LcSxfFjq?=
+ =?us-ascii?Q?YVorjb2N0kMMfWEiFYwbdNaZwj8YpEX0EyVQB0kXmpuk9zjCamr7HXwTOsJt?=
+ =?us-ascii?Q?V1SqsJ38yzBYhJixUe9nPMGX5KyWYADHzkkHjwj7ILIo+rwuqoIXbgBImekN?=
+ =?us-ascii?Q?4Fp5m1sidPq3hv7FQ3sIm/pANSaaEZW3Wkwum4SaY/dAP8u/9OOXoY+ub2GE?=
+ =?us-ascii?Q?5WuQoTm/DiBz7wsFhW2LNOLZEe2IphAYpKUPzRuBM3w4o7kxyJCS5NmTw0Md?=
+ =?us-ascii?Q?lvygf3N+MLxTHvlus4sBmzR/4rA+96TRhGJD3TZCqkYKG3jWllb1uNIiE7av?=
+ =?us-ascii?Q?EizMi1lB+UaQ2Epwrp8f4pbpY0/EV1wMInqpQq9YX+dZ0g5L3MFaRWdOhtMK?=
+ =?us-ascii?Q?iiE7DIgQZHdE4bkPAXvvJM/tasJU54PhsX0nQ20PVw4DMZVuK78auWPvWHKA?=
+ =?us-ascii?Q?9YszzO3Cm18HV+4QAnKGAQFE6rxvorfC7dn5oGtQvb4IoIk6IOS6xNl4eDJU?=
+ =?us-ascii?Q?z+itX5w0vMfAhkTl9lEwBkWWhdPgHXacAne+KIfhg7HBVXWnS8SdrgSeK7tf?=
+ =?us-ascii?Q?HBY+VDSkbqHxNsUJAnt7/WcuRxh6WWbVe6pFw3D5ny09cg1ZaqNUQgFllpzv?=
+ =?us-ascii?Q?RXpZkguwc73PDrBqmf1aaTSjlq3rujef6np6Oa1wNTVnKUDbXf5ASamol65u?=
+ =?us-ascii?Q?NSD+uz7/XaqL1hBmanMqkqQOjqm4o/nJVr4tTS7xCrtz7oQghz29f6wEuOQ2?=
+ =?us-ascii?Q?952bXJb5wX3rKBobu+T5n9Yuh+1N3qNbJIDVnBFM6RTgxFYMol9P3Je3Nes7?=
+ =?us-ascii?Q?kE9HmDKtIXUVpQmtlf9o1Rw/BDWf/IPbCJyrNnmKXotHlVNuOR2PSkYqAKoH?=
+ =?us-ascii?Q?K4+1mKdD4scqC7Sp7405+rEyeNiTrohwuzKR3/kNKJGClITlB+vu35cQsngI?=
+ =?us-ascii?Q?YU+qR+/N0m2Wxj2SaGO6LFTX7oxtpey+ro/A94CTa3TikdkFMVNMd9UaZGgz?=
+ =?us-ascii?Q?mrGmw/eNepdo501koRdms8NCh9dbFBqX86LzS7iCq3CEY3G4arwe7N5i1TDC?=
+ =?us-ascii?Q?7xkeBLOv0iI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TA+90uAb0YawHtF3MJV6OHzuZr1lytX+pE/we0JT0GBujztPGblpd6VEFRuo?=
+ =?us-ascii?Q?ADNqMDsiScTdAomIM518RGCL8P+R2BwOCAI5oIges6kqDbNaLhha9gUib7sH?=
+ =?us-ascii?Q?c9cE922EnRQYo8v88Ikfd84zp8dFok7U9HvBCJDAMVlON43Ez97Sx3+5rSQf?=
+ =?us-ascii?Q?ORcwNXr3ds+D2Uorm7NejN+mFcbzg2gaANph0S4dBZ/ZeAqgm0yBjIEOqr5O?=
+ =?us-ascii?Q?XBNXVMDxZ31ZdEq3zc/fBBj4Ke8gOk6vvx6dMBMkA4AoezYjUHYPn/+qE/1b?=
+ =?us-ascii?Q?Y6+muRMwdj/Y13/hn8KcwLA8bTnrpQCOgz7yh9gTCFefZVdjxWSH1hMYKc+F?=
+ =?us-ascii?Q?JIJYNKj1e2KPlSRFk6Asj2+Gf8aXYfUd1TjIeoGL51YQ5cuhhCUuAk43sJcM?=
+ =?us-ascii?Q?yFRFxBMEP5kyjWU2V1Sc4t+0g2RNTD5ZLq3oq6Cl+3fY8g4EXkPZOIeTktfx?=
+ =?us-ascii?Q?gKjJvAD1J3N1jZ1Bo3WnOzWflST8FqmH7NgoYLrr8EFV3vwdJn3+JbAzPoRn?=
+ =?us-ascii?Q?CTHOozuJkEc5QcPgbsq/eujjT52ny7epYwC2vpnVgwj3wkwLCZdHnA7UtBjR?=
+ =?us-ascii?Q?Lp1wncd++u/oxP7QV2z6Usrhp4nOE4GLbk9cLbjKPh5YJgQfd8nWwbJjADAN?=
+ =?us-ascii?Q?TMyYDsChuaF5h1kjdy6ElKOkQKEoRsOlpDYMASrTqD9YqwFsUL8qQNLjn0+p?=
+ =?us-ascii?Q?hiSEqI+cYE+sZ6Zf8udpIhLHe61rw05UupPi9XHcOmwsA3+DHxgUKI2PHoHm?=
+ =?us-ascii?Q?jwV0AGUePIa375Qh7l3kmlJJyLg8csrF218AQszkVJ/etLxYsaapZAhKioD6?=
+ =?us-ascii?Q?RDivKvtJkhEKPRdUsoc8hgScLmb7aT53AC1N3L3zAqjkuZsdyfd7rBhesPVU?=
+ =?us-ascii?Q?L4GuBBcFivDmA9VZjFdi+TNC6yF/gyxayAT8fyeZot197K9hB3lxP68oDm1k?=
+ =?us-ascii?Q?5R6hi9OMpUmKPUz9+gBEKjGFxezbNrdRwo3roYoLGgXfr+EkQg8XRvZ7guBC?=
+ =?us-ascii?Q?Gy8OwYtyHJZVs4RuSrYTXvJNvlhAm6oo/cKuAcE0m684la9iBTVUyIrpYlMF?=
+ =?us-ascii?Q?2RtON9+/P6Mi3Ua34fBt06QWraNkX0j1USqtHvqnjjsqRG18SNyS5u2U3Hr8?=
+ =?us-ascii?Q?F5rxlWpyb1YSDt4KRY8fnjYJW1vRYLkVLAZL3mkd2Vdnrccbrtrz7TIsdoSO?=
+ =?us-ascii?Q?Km3d5NrTZlapYbK2UkX1zMAdMhINknIFUyyLRhSsIdvQUf+yXsQldndjh5MS?=
+ =?us-ascii?Q?g2PzquXWKiIfSzTc1ASsKBAqPMFckJcDtDUXjfDrfCTrJscyeaMjS3qAFp1+?=
+ =?us-ascii?Q?a+D7CuLSZz919HUXLErxCBm/6NMFLuaXvjBc5GAHYVtp+vz4h25hL+R0CkFx?=
+ =?us-ascii?Q?QLPpuFYWmU9UdEDlAynMN68whKoidyWh1O+/jQ8i+SCdATRDcroJct4i/tp7?=
+ =?us-ascii?Q?Pd7EkDuOPWXF0iTPiXruPkOl2kn6H+qsOlFvrSOOz6zuo8lmZ/KpHElrzqII?=
+ =?us-ascii?Q?AjFPyyr07QDcYor4QU9fmOV2B278PxrU/LOXRRrdZhHsEmdp+eoSnXBbRCek?=
+ =?us-ascii?Q?knoKbUMCohwfEmb9Y5K1KSzzAnopZh+48kikoaa0K9pwGgAgGv8pn/SwsHCj?=
+ =?us-ascii?Q?xA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	xBgtmPTiCnl5UkDes5ofJ6R3Espmyom6D8eaHDmJJw6Fa81cJAVtOSnTPXK3sCvlfL/BBZ0tKpXcJ2IBgbA4Dz7ND+Ikiyi+++kSf/W4TguzhOIc6s9yc8V2tWytSHvzxusn/gqvXG+LvOmCCx29zsXyU8eHwe/1JOVg9leEg0YfoYVqeIGBIo1phAOiyrEos1ix7E8NLX63zTNfDKUekCz4G8QJrwjbxwK6rfmBZVaJ63dLWFnOqvwYHV0Ra7C9qOYPijjHVhTA/UJ7y/A2BJJfensVUR+gYZDT6a1k7mtNKMtrVv5N/nOaD4tj3C0dXsFzJTDuOtrT1BS1lhv6ngcHfc7bP+QY8YcjQYDBuO81EpT3p6vdCSL18IZ70+cbYH8ZivTnFZ68KOFv7TArZ3F2x9VXtcO3Cei7dh0l2UHx7cn2UHOefE5l2HzJ0heI5r12bKnpkOm8fiRzkTAu+MJmL/hL7SXwy8Fq7BnhK1JyAbJHkZBxIGZuSMqCUdyZZvJ4UM4Gfs2NDHrY2+W6Yv6/juI0aRxxsDi+cMlRrxhk4qkr6rdRG1EEHUEE1ygbntMNGxmuDXzhuwsJYyrv0uHE1cMoaJbCwUrminc+u/U=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70d3ab51-9209-41e7-71eb-08dd8aea0a54
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2025 08:59:55.8853
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6SgZ1FIaxUQAYk+svy+uwiVRKbgIvDksCYlLEvCHZnnJsAtbCnHrTEPnLcqcYwenpj9T54qcio+vkLxtfzFNvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7178
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-04_03,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 phishscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2504070000
+ definitions=main-2505040081
+X-Proofpoint-GUID: 1AxKvGNEhloP-Fwo4cfajmAzhWUZaCxQ
+X-Proofpoint-ORIG-GUID: 1AxKvGNEhloP-Fwo4cfajmAzhWUZaCxQ
+X-Authority-Analysis: v=2.4 cv=eMcTjGp1 c=1 sm=1 tr=0 ts=68172c90 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10
+ a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=04d_y77oF55RfSPHe00A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA0MDA4MSBTYWx0ZWRfX2weHmN8WH+6S aeovu5CMxGMPLELy8LaxV5u4CReP1KZq7tJr3+n8i6cPw+PHYKR9UV2EaQw+cOc/4nGFNYsKBAJ dk5s4b1Jr4F0TAFVVZnhh1JrURumuadzGRndX2RvfsW8HLsDAqhdhjpI/RM+gAJgN40X5HC8N8R
+ fEiPumiGpwhBQ7PdKYyx97y/LDspacNyXQSD1916s9ZlylkBGa9npJecsKtzzQWtpq98DgKbVZV kmafrG10Kt1LMiEOfaWaKWUjUqufI7kKwY0b9eoIVKBT20iFfhJOGWa49wUBmb+8a5sDvTkv3qP pZ0hJO1GZT8u3wEf+uUh36JuZtQtFnEDNjgTHaqI9BY7Z5Heq0nyCirzqVaFw60SiGhz7qE2Oat
+ twDM8XBzEYG+K1Ew/85bxmItE++YaGAHvAM1tuftDdXryJ0yapXCD0dEN1oDwZinWuQrp2ek
 
-On 04.05.25 09:15, Andrew Morton wrote:
-> On Sun, 4 May 2025 08:47:45 +0200 David Hildenbrand <david@redhat.com> wrote:
-> 
->>>
->>> Methinks max_nr really wants to be unsigned long.
->>
->> We only batch within a single PTE table, so an integer was sufficient.
->>
->> The unsigned value is the result of a discussion with Ryan regarding similar/related
->> (rmap) functions:
->>
->> "
->> Personally I'd go with signed int (since
->> that's what all the counters in struct folio that we are manipulating are,
->> underneath the atomic_t) then check that nr_pages > 0 in
->> __folio_rmap_sanity_checks().
->> "
->>
->> https://lore.kernel.org/linux-mm/20231204142146.91437-14-david@redhat.com/T/#ma0bfff0102f0f2391dfa94aa22a8b7219b92c957
->>
->> As soon as we let "max_nr" be an "unsigned long", also the return value
->> should be an "unsigned long", and everybody calling that function.
->>
->> In this case here, we should likely just use whatever type "max_nr" is.
->>
->> Not sure myself if we should change that here to unsigned long or long. Some
->> callers also operate with the negative values IIRC (e.g., adjust the RSS by doing -= nr).
-> 
-> "rss -= nr" doesn't require, expect or anticipate that `nr' can be negative!
+Currently atomic write support for xfs is limited to writing a single
+block as we have no way to guarantee alignment and that the write covers
+a single extent.
 
-The one thing I ran into with "unsigned int" around folio_nr_pages()
-was that if you pass
+This series introduces a method to issue atomic writes via a
+software-based method.
 
--folio-nr_pages()
+The software-based method is used as a fallback for when attempting to
+issue an atomic write over misaligned or multiple extents.
 
-into a function that expects an "long" (add vs. remove a value to a counter), then
-the result might not be what one would expect when briefly glimpsing at the code:
+For xfs, this support is based on reflink CoW support.
 
-#include <stdio.h>
+The basic idea of this CoW method is to alloc a range in the CoW fork,
+write the data, and atomically update the mapping.
 
-static __attribute__((noinline)) void print(long diff)
-{
-         printf("%ld\n", diff);
-}
+Initial mysql performance testing has shown this method to perform ok.
+However, there we are only using 16K atomic writes (and 4K block size),
+so typically - and thankfully - this software fallback method won't be
+used often.
 
-static int value_int()
-{
-         return 12345;
-}
+For other FSes which want large atomics writes and don't support CoW, I
+think that they can follow the example in [0].
 
-static unsigned int value_unsigned_int()
-{
-         return 12345;
-}
+Catherine is currently working on further xfstests for this feature,
+which we hope to share soon.
 
-static int value_long()
-{
-         return 12345;
-}
+About 16/16, maybe it can be omitted as there is no strong demand to have
+it included.
 
-static unsigned long value_unsigned_long()
-{
-         return 12345;
-}
+Based on bfecc4091e07 (xfs/next-rc, xfs/for-next) xfs: allow ro mounts
+if rtdev or logdev are read-only
 
-int main(void)
-{
-         print(-value_int());
-         print(-value_unsigned_int());
-         print(-value_long());
-         print(-value_unsigned_long());
-         return 0;
-}
+[0] https://lore.kernel.org/linux-xfs/20250310183946.932054-1-john.g.garry@oracle.com/
+
+Differences to v10:
+- add "xfs: only call xfs_setsize_buftarg once ..." by Darrick
+- symbol renames in "xfs: ignore HW which cannot..." by Darrick
+
+Differences to v9:
+- rework "ignore HW which cannot .." patch by Darrick
+- Ensure power-of-2 max always for unit min/max when no HW support
+
+Differences to v8:
+- Darrick reworked patch for mount option
+- Darrick reworked patch to ignore HW
+- Minor changes and cleanups from Darrick
+- Rework some commit messages (Christoph)
+- Pick up RB tags from Christoph (thanks!)
+
+Differences to v7:
+- Add patch for mp hw awu max and min
+- Fixed for awu max mount option (Darrick)
 
 
-$ ./tmp
--12345
-4294954951
--12345
--12345
+Darrick J. Wong (5):
+  xfs: only call xfs_setsize_buftarg once per buffer target
+  xfs: add helpers to compute log item overhead
+  xfs: add helpers to compute transaction reservation for finishing
+    intent items
+  xfs: ignore HW which cannot atomic write a single block
+  xfs: allow sysadmins to specify a maximum atomic write limit at mount
+    time
 
-So, I am fine with using "unsigned long" (as stated in that commit description below).
+John Garry (11):
+  fs: add atomic write unit max opt to statx
+  xfs: rename xfs_inode_can_atomicwrite() ->
+    xfs_inode_can_hw_atomic_write()
+  xfs: allow block allocator to take an alignment hint
+  xfs: refactor xfs_reflink_end_cow_extent()
+  xfs: refine atomic write size check in xfs_file_write_iter()
+  xfs: add xfs_atomic_write_cow_iomap_begin()
+  xfs: add large atomic writes checks in xfs_direct_write_iomap_begin()
+  xfs: commit CoW-based atomic writes atomically
+  xfs: add xfs_file_dio_write_atomic()
+  xfs: add xfs_calc_atomic_write_unit_max()
+  xfs: update atomic write limits
 
-> 
->>
->>> That will permit the
->>> cleanup of quite a bit of truncation, extension, signedness conversion
->>> and general type chaos in folio_pte_batch()'s various callers.
->>>> And...
->>>
->>> Why does folio_nr_pages() return a signed quantity?  It's a count.
->>
->> A partial answer is in 1ea5212aed068 ("mm: factor out large folio handling
->> from folio_nr_pages() into folio_large_nr_pages()"), where I stumbled over the
->> reason for a signed value myself and at least made the other
->> functions be consistent with folio_nr_pages():
->>
->> "
->>       While at it, let's consistently return a "long" value from all these
->>       similar functions.  Note that we cannot use "unsigned int" (even though
->>       _folio_nr_pages is of that type), because it would break some callers that
->>       do stuff like "-folio_nr_pages()".  Both "int" or "unsigned long" would
->>       work as well.
->>
->> "
->>
->> Note that folio_nr_pages() returned a "long" since the very beginning. Probably using
->> a signed value for consistency because also mapcounts / refcounts are all signed.
-> 
-> Geeze.
-> 
-> Can we step back and look at what we're doing?  Anything which counts
-> something (eg, has "nr" in the identifier) cannot be negative.
-
-Yes. Unless we want to catch underflows (e.g., mapcount / refcount). For "nr_pages" I agree.
-
-> 
-> It's that damn "int" thing.  I think it was always a mistake that the C
-> language's go-to type is a signed one. 
-
-Yeah. But see above that "unsigned int" in combination with long can also cause pain.
-
-> It's a system programming
-> language and system software rarely deals with negative scalars.
-> Signed scalars are the rare case.
-> 
-> I do expect that the code in and around here would be cleaner and more
-> reliable if we were to do a careful expunging of inappropriately signed
-> variables.
-
-Maybe, but it would mostly be a "int -> unsigned long" conversion, probably not
-much more. I'm not against cleaning that up at all.
-
-> 
->>
->>>
->>> And why the heck is folio_pte_batch() inlined?  It's larger then my
->>> first hard disk and it has five callsites!
->>
->> :)
->>
->> In case of fork/zap we really want it inlined because
->>
->> (1) We want to optimize out all of the unnecessary checks we added for other users
->>
->> (2) Zap/fork code is very sensitive to function call overhead
->>
->> Probably, as that function sees more widespread use, we might want a
->> non-inlined variant that can be used in places where performance doesn't
->> matter all that much (although I am not sure there will be that many).
-> 
-> a quick test.
-> 
-> before:
->     text	   data	    bss	    dec	    hex	filename
->    12380	    470	      0	  12850	   3232	mm/madvise.o
->    52975	   2689	     24	  55688	   d988	mm/memory.o
->    25305	   1448	   2096	  28849	   70b1	mm/mempolicy.o
->     8573	    924	      4	   9501	   251d	mm/mlock.o
->    20950	   5864	     16	  26830	   68ce	mm/rmap.o
-> 
->   (120183)
-> 
-> after:
-> 
->     text	   data	    bss	    dec	    hex	filename
->    11916	    470	      0	  12386	   3062	mm/madvise.o
->    52990	   2697	     24	  55711	   d99f	mm/memory.o
->    25161	   1448	   2096	  28705	   7021	mm/mempolicy.o
->     8381	    924	      4	   9309	   245d	mm/mlock.o
->    20806	   5864	     16	  26686	   683e	mm/rmap.o
-> 
->   (119254)
-> 
-> so uninlining saves a kilobyte of text - less than I expected but
-> almost 1%.
-
-As I said, for fork+zap/unmap we really want to inline -- the first two users
-of that function when that function was still simpler and resided in mm/memory.o. For
-the other users, probably okay to have a non-inlined one in mm/util.c .
+ Documentation/admin-guide/xfs.rst |  11 +
+ block/bdev.c                      |   3 +-
+ fs/ext4/inode.c                   |   2 +-
+ fs/stat.c                         |   6 +-
+ fs/xfs/libxfs/xfs_bmap.c          |   5 +
+ fs/xfs/libxfs/xfs_bmap.h          |   6 +-
+ fs/xfs/libxfs/xfs_log_rlimit.c    |   4 +
+ fs/xfs/libxfs/xfs_trans_resv.c    | 343 +++++++++++++++++++++++++++---
+ fs/xfs/libxfs/xfs_trans_resv.h    |  25 +++
+ fs/xfs/xfs_bmap_item.c            |  10 +
+ fs/xfs/xfs_bmap_item.h            |   3 +
+ fs/xfs/xfs_buf.c                  |  58 +++--
+ fs/xfs/xfs_buf.h                  |   9 +-
+ fs/xfs/xfs_buf_item.c             |  19 ++
+ fs/xfs/xfs_buf_item.h             |   3 +
+ fs/xfs/xfs_extfree_item.c         |  10 +
+ fs/xfs/xfs_extfree_item.h         |   3 +
+ fs/xfs/xfs_file.c                 |  87 +++++++-
+ fs/xfs/xfs_inode.h                |  14 +-
+ fs/xfs/xfs_iomap.c                | 190 ++++++++++++++++-
+ fs/xfs/xfs_iomap.h                |   1 +
+ fs/xfs/xfs_iops.c                 |  76 ++++++-
+ fs/xfs/xfs_iops.h                 |   3 +
+ fs/xfs/xfs_log_cil.c              |   4 +-
+ fs/xfs/xfs_log_priv.h             |  13 ++
+ fs/xfs/xfs_mount.c                | 159 ++++++++++++++
+ fs/xfs/xfs_mount.h                |  17 ++
+ fs/xfs/xfs_refcount_item.c        |  10 +
+ fs/xfs/xfs_refcount_item.h        |   3 +
+ fs/xfs/xfs_reflink.c              | 146 ++++++++++---
+ fs/xfs/xfs_reflink.h              |   6 +
+ fs/xfs/xfs_rmap_item.c            |  10 +
+ fs/xfs/xfs_rmap_item.h            |   3 +
+ fs/xfs/xfs_super.c                |  97 ++++++++-
+ fs/xfs/xfs_trace.h                | 115 ++++++++++
+ include/linux/fs.h                |   3 +-
+ include/linux/stat.h              |   1 +
+ include/uapi/linux/stat.h         |   8 +-
+ 38 files changed, 1363 insertions(+), 123 deletions(-)
 
 -- 
-Cheers,
-
-David / dhildenb
+2.31.1
 
 
