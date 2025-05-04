@@ -1,93 +1,96 @@
-Return-Path: <linux-kernel+bounces-631241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C60AA8597
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79EF1AA8599
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 859671760D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C898E1898546
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BD31A08AF;
-	Sun,  4 May 2025 09:52:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BCD19FA8D;
+	Sun,  4 May 2025 09:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Hn0T5Py7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20B019E967
-	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 09:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C98A19DF48;
+	Sun,  4 May 2025 09:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746352326; cv=none; b=lqRYL2jbs4jcwVXjODSa2SogRn4Y6bpA0gpvqYpwtSjd0LXyNmNmYG5TqKgW26mXY5CUmZH3AwuY3sHKYoKv+0CGs8+WLZosxxzSfIXVqFIvlSqj+/4ykKLJj8AhTbS7iKelKGtLZ8ZNpschf9A9XtWX6YGPu9GShUMYbVOOefs=
+	t=1746352346; cv=none; b=IZ+p6ucU03e2m7leQE2MZI4ktMSaU8gTRX9iPJV4iEGNuJj+M+n/26xq/DdC25wTyGsMS1arpSu+VgewwNq6ac8sbVSfxhkaU3s9kbnmGoAu0bn9b5YIX4plqdA6JOWsC7QJ3qdnrQo6+egP1LXOjTZGNYyLJPbdw7AoTNhnpPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746352326; c=relaxed/simple;
-	bh=u3ZllCEErUzXM10HEe/yG0/k1hIxUJeRwUILm7bFe6g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=m0BCCLSnA3cCAosxpf9Nx6Dm9ruQ4fPTTYoGfXT89I5v5GPHYFoT5e25LyDYffH3Kg7gtaG299Hm4JNmLvdzUrO0GDWyG97RD3ZnYDKIrSNCXijVPq2ZGBJqAFHbMdWqbYSzishTIIl0vN/CRCHK1ZT1QIGmXZ85VYsF4jEAIbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d43541a706so29789045ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 02:52:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746352324; x=1746957124;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nOqB0ylLnisnS82w2E9eqZPt6lMbQjhiPur1Ic1Rq3Q=;
-        b=WMorFEZyXcpQVsb6hBBouGISBK0tSxPCqPbNjgrX9/cX4BPQu4umQhEUr+KTNJ+9xM
-         bykakDN66SyRxZzaxvYsELnRRw5Y0oQUtDIAPFEB2chVnjrDLCeg0M2nxhpng4uCbaUI
-         ZARc7vJ7vegcShaPlaIfJ4XLQwCNtwgmdtR/0b82Z8SDmJdVpVhvYx9uPuROYI4jdWBs
-         IGecxt3rizSUUQxsV+phoEQPT5C55t3jYeAC2dRn4bEsLZrYW1wH7chOBfMQtfI+edMK
-         Rgge3K0rRHC2YQMO5F+P2bia1/+gQjJoLa/WpC+RdkWyMWBwgea9oeOO4kFFB+7iBec9
-         rP6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWvuyTVKPqOBu1vh96If9zNd4XUnzJxL5QjFfqLKTR7wct9ITfuSyVcL4FmXYShY2CD0GLugvBp0/8ZioU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIz+hVxvvxvpvjfVrZ6yH2K2nKlzC/ZsvMjfjB5jYYrhPBXCqi
-	K/h8ntoQH6ZYlBIvJzxOBMjTH/RQwVjWQBjhJjRNjyOCVGjXera1Tn7jd7FgbY6LOi6Koxdfr3n
-	bSFWdcuqpGuf+qpWQPDgWzS5DD/TxlHNEFxn4f8NlM1PCrYakPRnpZoY=
-X-Google-Smtp-Source: AGHT+IEgwdAkhvFU8+ZwR1aaoOoFlKOilkqvB6dUsIJVl883e58EoTxNMDwQLKpYrPh6rhIqv3SrF33drLa9mDdl2mjxUSVH08Dv
+	s=arc-20240116; t=1746352346; c=relaxed/simple;
+	bh=Nze/SA9bYUHiBqOk4wcv/+05FhwIreXwokqHCkJ0EB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ua5vMoqZIksnRIvkmiQ3V/ItHf9eBgRklOS36i0BPr2HlZHM6aEgHdcrCxbLZI71zuxqgYDhnCOgxMmwGq7fGVGDFex79wY/pvxh001aGSXIXM4VpiwWOMaDmT7IytiuLjP73lSbgJG0AR7uP0FiYlGBM4I+Amuk8lH93/fD644=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Hn0T5Py7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A5BA340E0173;
+	Sun,  4 May 2025 09:52:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZtFx5EtG6rfo; Sun,  4 May 2025 09:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1746352338; bh=Cm20TX7ygDvmsM4levbHO9jiUOJ71+S+/h1MXQi3RaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hn0T5Py7vS32ScDM8L1WzrM1qKSM1yXd2cIKLZBIa69wALuKjNEQks57yCAmUinkE
+	 2hk9TQaMRGlkPgC8Ie9cXdTgp2AWmISB/LPX3T5xSdlWd53byAgSYfVRwpovgDWlR1
+	 LMW0Cg/qvnT3O4aBilu9N3XbzhAoGFDrl9vaN1xZYOi7Ee1GgkLgoHt6NluJ6e6eQ+
+	 Z1S2yjWI7j4NC32YrDdJzidJfLbkP9e+7VU9DkxOFbakCBklLFiOPPJyN4+m3P+lfO
+	 a54FqQ47DG4cr0E8pLgJn+oWVDKW2QV3QJ2OSTINmIJI+D1bUpbPYwgf482ViMf1eK
+	 n7mPXoO9gp/++4iEsnlMuRqC1tGlVKSE43mOZW7bBZ6s0PVXnK5yIgWuoMiW+jNBRK
+	 MXbTcgdSy+GSVDPyo9yMHz0gFhLmizowctXVLlaGns3meoezMfVQt8jKHW53rAIXne
+	 mEsTu16azrChJUwHhodzyV1Wt60svgFhrbWl4w04qsyPs5a4DR2MkJNtIrEuEU+Tyn
+	 p8D55sBFkH5efaZL3deh8ZeIT/5l1IthZw+OQ1K7T/Ww0y2qgIxGB/cOmGACuM5XHH
+	 itYgV2wI1tnggTeX/VzD7l9v+UWEEETszga7kioFVRM+F3C0WUybSVCI6ZxmMORsmZ
+	 EF8yWov39jcKtPBO084jdwyA=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6A24A40E0196;
+	Sun,  4 May 2025 09:52:12 +0000 (UTC)
+Date: Sun, 4 May 2025 11:52:12 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>, x86@kernel.org
+Subject: Re: [PATCH] x86/CPU/AMD: Clean up the last-reset printing code a bit
+Message-ID: <20250504095212.GBaBc4zOxcAKQ26cbn@fat_crate.local>
+References: <20250422234830.2840784-6-superm1@kernel.org>
+ <174617858494.22196.5727323411231361285.tip-bot2@tip-bot2>
+ <aBcLJxjTQGa1-r5S@gmail.com>
+ <aBcRXYkJlfySzBEx@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2147:b0:3d6:cbed:3305 with SMTP id
- e9e14a558f8ab-3da5b27501cmr27271795ab.10.1746352323999; Sun, 04 May 2025
- 02:52:03 -0700 (PDT)
-Date: Sun, 04 May 2025 02:52:03 -0700
-In-Reply-To: <000000000000820e380606161640@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <681738c3.050a0220.11da1b.002e.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] [mm?] KASAN: slab-out-of-bounds Read in generic_perform_write
-From: syzbot <syzbot+4a2376bc62e59406c414@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, almaz.alexandrovich@paragon-software.com, 
-	dvyukov@google.com, eadavis@sina.com, hughd@google.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	tintinm2017@gmail.com, twuufnxlz@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aBcRXYkJlfySzBEx@gmail.com>
 
-syzbot suspects this issue was fixed by commit:
+On Sun, May 04, 2025 at 09:03:57AM +0200, Ingo Molnar wrote:
+> Patch attached to clean this all up.
 
-commit b432163ebd15a0fb74051949cb61456d6c55ccbd
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Thu Jan 30 14:03:41 2025 +0000
+Ack, just merge it into Mario's original patch.
 
-    fs/ntfs3: Update inode->i_mapping->a_ops on compression state
+Thx.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=115c5b68580000
-start commit:   fc033cf25e61 Linux 6.13-rc5
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ba7cde9482d6bb6
-dashboard link: https://syzkaller.appspot.com/bug?extid=4a2376bc62e59406c414
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1654aac4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ff26df980000
+-- 
+Regards/Gruss,
+    Boris.
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/ntfs3: Update inode->i_mapping->a_ops on compression state
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+https://people.kernel.org/tglx/notes-about-netiquette
 
