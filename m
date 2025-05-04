@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-631219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40028AA8565
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 11:20:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C152DAA84D4
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 10:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3129F189A946
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 09:20:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D5F1895E6A
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 08:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD33519ABD8;
-	Sun,  4 May 2025 09:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA34D18DB37;
+	Sun,  4 May 2025 08:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRC6zdVS"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvbk6x57"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFB919755B;
-	Sun,  4 May 2025 09:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308F83597E;
+	Sun,  4 May 2025 08:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746350419; cv=none; b=NKodBsijMXOlm0/HoevvVBWpb3urtp0sNZI21g22jDYgQAMJyvTKCKhbPv06AdY6SgKvwFvbIWu3jb/L50X5/xO2eCQX1MGr1igHvWN0FGUKs1Qf1Cd6Xd/51VtohYTWxaaCxBVeYcXeW5gUQHVUYr5fPsEaCn1gw4Cgs9Ej0uI=
+	t=1746346952; cv=none; b=fYLBe/96U4JcxXAPkaeHf50ROUgHiMdYEV6g9GlMCIgGMIVMyy/Yp01rkS5gZsQx5GLGPrUJ8oCFl6oQT4CDpobG8N0WBXrbE89ZCsHWIbub4flz03uVqPuWX85R9Zt9gTFnNMWTsB6N7+eiHZ1Q15kFypVIJ05QDruAsade9WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746350419; c=relaxed/simple;
-	bh=z0gGa+NmC7XPJY4PUSFXFROOY84Xqh/y2X250hFRGSY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W3fMePOxBi4TqKKdDZsTWPmMsBcqv6TWGK79uLSx4wq5D+R5NpJCjZuPbgSMBJiULMxH1Y7z/eNAkZOrSKTcz6eiGfJz1PywYVDFQZFnI4OyDlhoYYZ860SljV9gqt3hhtPz2tWxyMGxy/TzmUlnQyZk8ohr5J3HoX+mNM41dY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRC6zdVS; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39efc1365e4so1494178f8f.1;
-        Sun, 04 May 2025 02:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746350416; x=1746955216; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=miVLsPyv3tGgvpJpIN6lHdQtrfQb64+k98bN+2tbbJY=;
-        b=NRC6zdVSZkmMwJMACqXS8aZPzYv/XlgFn9RLKQUX978nOq44LoT4swaE2uyZ8MOi0S
-         FmBuR/21n/V3p5b/WlQlHWJSQem2chUII4lvofHGBU6dmw3uOczJmiqeo7p46ZAOYUPB
-         kJ29OnM3xe2HuvZHHeI8BGiHeklIPH+0wdGaUJb3k6etJGxJWuLGrM2WiuXbZsW1EiYi
-         g7iGFwqn5r8Ev0sCQFTye5JZT+jv8m0l5kVYFeopei88VfW0Of+N3HhwI9Pp8+J44/D6
-         lwsFT2huc+X8F/i5KuDrbcgruh4/5qj6pOiqL6Z83LBdocC0sZoOvRr5kj7ni64NSDam
-         +LyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746350416; x=1746955216;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=miVLsPyv3tGgvpJpIN6lHdQtrfQb64+k98bN+2tbbJY=;
-        b=tItQJsW3JIYcM6/VMNqA2NiIUj7KIZHwxcw2m8I0ZpUh5qLyWlCY0z8yAUghY3VkhC
-         Ec5PxbroF/wK8cJJwESHF/MetvTwTQfbgR2n3hDegRvh8QeC+WDVt7IYIUnkHvZ+BAS/
-         x8/L2heyyT4Tmw7FQ8J7ykAsmkwFZl9/FeiyRgeNErzrnc7eqjvc9UUipfQo8BEpjnPK
-         iGYCPJPvk5r1nEsnXi0d8hvN6qS+ZuWpyFh+438eot+TW3qPLzCfGj2GA50P/tUlTEYD
-         zJPIQUl0TTZR0yqOoQfPWkpc14zr3giSUDw9R6Gz84yNo23qZ8zPqCOM3YoRwzxRDtQ1
-         vFwA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3S9hAEX49R7AR7aCeK1P+9VcoDkEVe+feBjrUJU3+W9zC9PUBAKSCL5iFLaOePc5DtCemt7zl9866@vger.kernel.org, AJvYcCU7AcIzC8u2wgPFbnP/Vy2si9ktO/zcclQ2a399Y+OXV+wzRrjZZKnLzJ7ICIkCEA1+BI8CCEfesbb7aPRE@vger.kernel.org, AJvYcCVq84Q1Y9FrLqgJjfLp0elfurk3PizJ2PXOh9iFk7GlQbgO/BBvudgKFwWsC5ILWN9fID8iVWmf8eei@vger.kernel.org, AJvYcCXsHLnqePpYvhvTctAXDAkhxaaRT1cJoqry8D9/xCr8dT6VULPZWmCLSeoFMY5E6gUOY07CzzPyr7oO1jU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTYRHuImgi8875BIRdrMP8+nruo6jmDLnDni9ZSvlRbtEN6oqO
-	13Lvw5Q/xV8IZB+zU+bxyn67zcEq70oLRJodw+Lw3k82nefYa6EKJQI/2kFB
-X-Gm-Gg: ASbGnctPuLHYz46ABoYzIjEtQO1cHBq2URRbP3cFDmZQYQFO+u1+D4loTweNDdkOcid
-	SW3DBcuay1IODSVH6v4vKTrizshhATR2Tw3uQx/vQQpPT7sKiBL90RJLhPLFHsspOv2rjWqVNY3
-	aR22w8t2gJ8vvdiXLfzeHkKqoeu2xCxTFZ7wRbCIN1f+Ej29FONkZ0YtosUT2wZrpmJIe/cO3dW
-	3LRYdlNHSwMZ+h0iQsvC7bqBLVPjG3yGiN2E40T5cvgNeGkcA5Xdmx6D71+isKKCjAiRDVPTve4
-	+OA/rg05NLUZgRz+7GjlBYKspOB5cvNrHC71IvdbY+wja5Biy+GbpAp7Z0xTpFH+916E8htPDl0
-	pPcgDuGg6X4PsRDk=
-X-Google-Smtp-Source: AGHT+IEFinYmjn7z7MpKaUt4ZnpD4pRPE9D6E6BnLTvFrA9opflM1PbE8AjFJncdEBVVTQSsE8u1zw==
-X-Received: by 2002:a05:6000:40cd:b0:391:4873:7940 with SMTP id ffacd0b85a97d-3a099aef847mr6699348f8f.54.1746350415418;
-        Sun, 04 May 2025 02:20:15 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b0efbfsm7168302f8f.69.2025.05.04.02.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 May 2025 02:20:14 -0700 (PDT)
-Message-ID: <62b78d8c53429438fd7dfa83c07df3576f91eef5.camel@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: rectify file entry in ADP5585 driver
- section
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Laurent
- Pinchart <laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@redhat.com>
-Date: Sun, 04 May 2025 09:20:38 +0100
-In-Reply-To: <20250504041040.40421-1-lukas.bulwahn@redhat.com>
-References: <20250504041040.40421-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1746346952; c=relaxed/simple;
+	bh=wqBfIaD1DCzuS063sqcRt5sffO2+02CDSokPTPFOh0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqfepRIz0FaZNKPLGz5nxVFXpQAfIRaUtHz83d1fZFGU3M4mcVKVt8oDxWpwh/E3qWhZg88o6Hc8eLnJ4+D/zvhId1fm5WjWPk2j2qwplkEwmeOU/JGIrSrl06/PhG3hbi8lee9zRxn3VUZg9ddZETcnevYoyGhCtr8uz2CNBK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvbk6x57; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69DCDC4CEE7;
+	Sun,  4 May 2025 08:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746346951;
+	bh=wqBfIaD1DCzuS063sqcRt5sffO2+02CDSokPTPFOh0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lvbk6x57E9od9ceyaY5rvLZtLMp/Z/lx8P1sOYx23gbJngMi7Q97uG+zdM82rsB+8
+	 yVvAUSAZLGygjoRhDo2aCBCIgdMPyX2O8WcTgB5wJBekqGpjBrVZRkHC64m1lGXKTf
+	 smvHPX/CvH4PvTR6NgDZOgDXvZLeDAioCpmUuhIjGfaI00wG0o7QppFhMBPpMlu5BO
+	 sKcXMftRTxJjFXU8DzjSRixwI7yhyqKi0QnBctEnwcXzRIS03Wqf9l7QaZLt8IDEbK
+	 ezvlh65ZI/1432B8jX6gYXI8fJXG/4tcw+Af/XrvXK1+UwA0E6XdB5343USnI3gjwB
+	 JlnRKiOkZi+Gg==
+Date: Sun, 4 May 2025 10:22:26 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [RFC/PATCH] perf report: Support latency profiling in
+ system-wide mode
+Message-ID: <aBcjwoINtWRWKMIJ@gmail.com>
+References: <20250503003620.45072-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250503003620.45072-1-namhyung@kernel.org>
 
-On Sun, 2025-05-04 at 06:10 +0200, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->=20
-> Commit a53fc67a1e21 ("Input: adp5585: Add Analog Devices ADP5585/89
-> support") adds the file drivers/input/keyboard/adp5585-keys.c, but then
-> refers with a file entry to the non-existing file
-> drivers/input/adp5585-keys.c in the MAINTAINERS section ADP5585 GPIO
-> EXPANDER, PWM AND KEYPAD CONTROLLER DRIVER.
->=20
-> Make this file entry refer to the intended file.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
 
-Hmm, look here [1]. That patch was wrongly applied, the series needs more w=
-ork. I'll
-see if I do not forget to fix this in the next iteration.
+* Namhyung Kim <namhyung@kernel.org> wrote:
 
-[1]:https://lore.kernel.org/linux-input/20250502083055.GG3865826@google.com=
-/T/#m1dc8ca24c89b3b111992f388b67e17842c89d7c1
+> When it profile a target process (and its children), it's
+> straight-forward to track parallelism using sched-switch info.  The
+> parallelism is kept in machine-level in this case.
+> 
+> But when it profile multiple processes like in the system-wide mode,
+> it might not be clear how to apply the (machine-level) parallelism to
+> different tasks.  That's why it disabled the latency profiling for
+> system-wide mode.
+> 
+> But it should be able to track parallelism in each process and it'd
+> useful to profile latency issues in multi-threaded programs.  So this
+> patch tries to enable it.
+> 
+> However using sched-switch info can be a problem since it may emit a lot
+> more data and more chances for losing data when perf cannot keep up with
+> it.
+> 
+> Instead, it can maintain the current process for each CPU when it sees
+> samples.  And the process updates parallelism so that it can calculate
+> the latency based on the value.  One more point to improve is to remove
+> the idle task from latency calculation.
+> 
+> Here's an example:
+> 
+>   # perf record -a -- perf bench sched messaging
+> 
+> This basically forks each sender and receiver tasks for the run.
+> 
+>   # perf report --latency -s comm --stdio
+>   ...
+>   #
+>   #  Latency  Overhead  Command
+>   # ........  ........  ...............
+>   #
+>       98.14%    95.97%  sched-messaging
+>        0.78%     0.93%  gnome-shell
+>        0.36%     0.34%  ptyxis
+>        0.23%     0.23%  kworker/u112:0-
+>        0.23%     0.44%  perf
+>        0.08%     0.10%  KMS thread
+>        0.05%     0.05%  rcu_preempt
+>        0.05%     0.05%  kworker/u113:2-
+>        ...
 
-- Nuno S=C3=A1
+Just a generic user-interface comment: I had to look up what 'latency' 
+means in this context, and went about 3 hops deep into various pieces 
+of description until I found Documentation/cpu-and-latency-overheads.txt,
+where after a bit of head-scratching I realized that 'latency' is a
+weird alias for 'wall-clock time'...
 
-> =C2=A0MAINTAINERS | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b21363fdbf4d..1401209d06df 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -550,7 +550,7 @@ L:	linux-pwm@vger.kernel.org
-> =C2=A0S:	Maintained
-> =C2=A0F:	Documentation/devicetree/bindings/*/adi,adp5585*.yaml
-> =C2=A0F:	drivers/gpio/gpio-adp5585.c
-> -F:	drivers/input/adp5585-keys.c
-> +F:	drivers/input/keyboard/adp5585-keys.c
-> =C2=A0F:	drivers/mfd/adp5585.c
-> =C2=A0F:	drivers/pwm/pwm-adp5585.c
-> =C2=A0F:	include/linux/mfd/adp5585.h
+This is *highly* confusing terminology IMHO.
 
+'Latency' is a highly overloaded concept that almost never corresponds 
+to 'wall clock time'. It usually means a relative delay value, which is 
+why I initially thought this somehow means instruction-latency or 
+memory-latency profiling ...
+
+Ie. 'latency' in its naive meaning, is on the exact opposite side of 
+the terminology spectrum of where it should be: it suggests relative 
+time, while in reality it's connected to wall-clock/absolute time ...
+
+*Please* use something else. Wall-clock is fine, as 
+cpu-and-latency-overheads.txt uses initially, but so would be other 
+combinations:
+
+   #1: 'CPU time' vs. 'real time'
+
+        This is short, although a disadvantage is the possible 
+        'real-time kernel' source of confusion here.
+
+   #2: 'CPU time' vs. 'wall-clock time'
+
+        This is longer but OK and unambiguous.
+
+   #3: 'relative time' vs. 'absolute time'
+
+        This is short and straightforward, and might be my favorite 
+        personally, because relative/absolute is such an unambiguous 
+        and well-known terminology and often paired in a similar 
+        fashion.
+
+   #4: 'CPU time' vs. 'absolute time'
+
+        This is a combination of #1 and #3 that keeps the 'CPU time' 
+        terminology for relative time. The CPU/absolute pairing is not 
+        that intuitive though.
+
+   #5: 'CPU time' vs. 'latency'
+
+        This is really, really bad and unintuitive. Sorry to be so 
+        harsh and negative about this choice, but this is such a nice 
+        feature, which suffers from confusing naming. :-)
+
+Thanks,
+
+	Ingo
 
