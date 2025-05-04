@@ -1,183 +1,239 @@
-Return-Path: <linux-kernel+bounces-631471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3534AA88A2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:36:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92D3AA88AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 19:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A7593BAC0F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E34E1899828
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 May 2025 17:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702B821CA07;
-	Sun,  4 May 2025 17:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A98C21D00A;
+	Sun,  4 May 2025 17:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQMbq8Wa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ORf2pr9z"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E5421CC5A;
-	Sun,  4 May 2025 17:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A3E2163B9
+	for <linux-kernel@vger.kernel.org>; Sun,  4 May 2025 17:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746380024; cv=none; b=FXEmYL5SbEG6DrO+qeVKaXtQnKBcz4Ea37pccDlhlXd2TmUwJUqDUcY+I2ER8o4PRHn8kZe2vYGVDwK9tBBdz5Nc3X0ay7ukYZkDJnSWTPSVJ6p9ZAhBCZzzof8wk9i71zS6IooEUjtzLeJC951Ms+4H6/Tkxc0NjcBwrOMupRI=
+	t=1746380186; cv=none; b=HUo63MZD9RyhBJB+Z1rcgOAFn0+RsXd5wcMTaSQP2CzkFtje9T/H1zX6yaAsoxPYgiDnBYo05tFPJ4NPn7lN6u1hCEBcZJO67tRuR1hGOrqWEgstAPyZ2cXqhWfuid65vtq2I5HBosNDReOXaJioGsRAcpCpo2+v5eYAUdgGOik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746380024; c=relaxed/simple;
-	bh=giT+sq5DATQNvD7PW1F1+M8kPXf80IBcWPokvEGeD4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vz+EyD9pwJ2gCDXwcwrfDyvqLE7Ofqdybt0Jf4vgmVdarMxuxE8J8v+Me6OH+M+9F0Bwoe/GjnsiOinTT+OrtqBj6+spHZ/BqWlLbPqCalVm4rCuu6AxjD/9vt4CYZ8cvm9vwEDZOkU9ijxS/DmjGYJmcn5jqkVr6Z9CdbDLWmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQMbq8Wa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 029E5C4CEE7;
-	Sun,  4 May 2025 17:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746380024;
-	bh=giT+sq5DATQNvD7PW1F1+M8kPXf80IBcWPokvEGeD4o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BQMbq8Was3Sh/yrO1ZIB151kWubLfn3ZfwX6JRSYYEF0j+TzVqanC2YeI3tMy4nhl
-	 jo5U2kp1Fcx3RoI+++HkkEFdlJh79ODm25uwnsTJfTlYtg47utrnJGeVr4dO+IK6LH
-	 kxmoV4r2Gu1qRqYDU0xgoBmF8fEjnInZMrjWioyEUKvBxNXshmlyfp3XV+jYYZ3w5z
-	 GzqAmSvMWeViypCjR9vVvgIhJJMJXmveAU19FtY+RpmuXzZZPDfqDTQgpQ4bBUqKE7
-	 /yTv8Vr2MYg/TWjXL2iPX9xy20QzDX1sVwnRxfjpMRxmfUQkNJmoHyGsWo+ozQ72A6
-	 K3KwQufOuLZsg==
-Message-ID: <82c62623-97b4-4d57-8e18-97750b402aa1@kernel.org>
-Date: Sun, 4 May 2025 19:33:39 +0200
+	s=arc-20240116; t=1746380186; c=relaxed/simple;
+	bh=PKto6XWHPw3qkf98Cr2fpVFSXZupXtz55RQHLXKhy38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g7fbdRmz1zlu3Ch3DNbFrdITpBMkvk9XpYuEbwX2+2GpP8oIW2T4rjPu/wpFdTnyqkD3f+ZbMscnCeat2bJ4FoaETlFAacSIhyWTKvf7dnbQH9/7NxF7d/Vd25rPVXEgEP4s9F76jJIYk9FqIwFgnlrCy5napFjmYC38rzdp5GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ORf2pr9z; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6feab7c5f96so30915787b3.3
+        for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 10:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1746380183; x=1746984983; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HXXRsHPoH/0YETZ7MLRenRDro5Q1bAftLTE63l4umNc=;
+        b=ORf2pr9z2IlpLqvfRPOJsECvEX72Cb2asbZtYacel0smJqsUf7LVbqb0rOaIJnAEml
+         XLpYDJx2ClultkAYkiZyZM7BzungNJ5o2IH2C4gN6WRDobrzW9ssL1HX3GKVHDBfx5Nk
+         pvl8cSyXY9B+P6/qVhmbQQQDv31Z7OTtXrFnKydyvWqMy8TlCi5mQ9RDE/8NuXWGLwnt
+         9YjUJ3aLjq7GoHAhIfCjySa5mkH6Qo6YcolDJiYhKu1oTkZp1Qe3IJVjXYEWavnhJpT6
+         TS6mdbUfkHtTVIgXQw5W/UwXSAF5glE7IJKYeC1iARhTj3rGQgbqYuBymaT7c7JqF/Rw
+         JxPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746380183; x=1746984983;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HXXRsHPoH/0YETZ7MLRenRDro5Q1bAftLTE63l4umNc=;
+        b=DXzsz+XpSP3lyVPjh2ocJk2MULc2tGv34BSSkcqyYFq+2slsksMKN7bnEii3g1YHqJ
+         Ijhm2kIEdDf8Gq8/tMbEZ2rY8KjdDnG4dZK3P9bD0OBOrkDIQpSjDrHBDlvBe+iqOIZ4
+         ldIEE2AIGtWyrr/AfSJJECZn6e4yxMlJbIGytdCZNch0zq4MzPMxEgis7JrimqNw3jV3
+         AxrS3cj5DqwXgzJHZto5wwdN88DXAfFp8DQFyUYifH7/u57mkvMRAew0ZYik5zJwP37Q
+         /J43P69YaMuZHUttehr8OG2S5BAmnCWAzCwEYnNJklHAOwSABMefSqJWkJARSQliNFPZ
+         FSbA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2NjIzMk13SQ49q/kW+7dLNOoQFVO7G9tXQHomIEQvvEwiYsan3OI1bkU56bO3nYlv2pSocJPoHZ8wjJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydb3yYr2NWuHNvpNbn5SYmzrUOutGNC2keNSNBtjUDWHdxWStZ
+	MnE+K7IPrt2tgNJ9QFMErf9MlAOYp9FrYaSAjpSDTh/MMNjpUIYJ/m1qByLy5Js9TwLGCl2crPg
+	JUfLzry2wJP460YTRvQ4OTJtrVVPskxbSL10m
+X-Gm-Gg: ASbGncuO5CN7Z1EzFKYH7yXIMGMYdigZlvzHeL+vLB8Q3c9ENeUC+B2yEyF8sE9vvhV
+	mfc6a2x/iLrluArrQWSmXlihanNndjV8odvm+BaVj3XdJQaw5g94MfoQ2k7JJM4tj8+mgEpe0SY
+	ORdZ9NSVKaFgMpyzYwcOqn1A==
+X-Google-Smtp-Source: AGHT+IGH4iM2kOBwjguhM2tjRQ5NOwlV2cMNEshm7rCu9worhB26SxpY/yE7dTp6irnVpWrLXhT6tFSernyBUKKlH2U=
+X-Received: by 2002:a05:690c:6385:b0:6ef:69b2:eac with SMTP id
+ 00721157ae682-708eaecbe4cmr56763087b3.4.1746380182785; Sun, 04 May 2025
+ 10:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250321095556.91425-1-clamor95@gmail.com>
- <20250321095556.91425-3-clamor95@gmail.com>
- <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
- <CAPVz0n2580WLJmqeH-mJGrTQUpADt32qw7pJzuqRuwrpojc5vA@mail.gmail.com>
- <bd60283a-500a-4ed4-bb8b-c019d33f94cf@kernel.org>
- <CAPVz0n0Ty3QAg_9rSvV7c7EBGDigHtTAOAfkRFBcTR9fziEvQQ@mail.gmail.com>
- <aa8bdf4f-feb9-4355-b629-a5d7c6a43d25@kernel.org>
- <CAPVz0n1y4oF9MJkOJ+XTyDDe2u6mOXHsnAaJfLSM6tpcWTW7BQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAPVz0n1y4oF9MJkOJ+XTyDDe2u6mOXHsnAaJfLSM6tpcWTW7BQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com> <20250502210034.284051-1-kpsingh@kernel.org>
+In-Reply-To: <20250502210034.284051-1-kpsingh@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 4 May 2025 13:36:12 -0400
+X-Gm-Features: ATxdqUG6G28ftr2F4dYbjsrK10lOxkoYxSdmHmsU_Sm_2J3in-8hzdqOgV_xvXY
+Message-ID: <CAHC9VhS5Vevcq90OxTmAp2=XtR1qOiDDe5sSXReX5oXzf+siVQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
+To: KP Singh <kpsingh@kernel.org>
+Cc: bboscaccy@linux.microsoft.com, James.Bottomley@hansenpartnership.com, 
+	bpf@vger.kernel.org, code@tyhicks.com, corbet@lwn.net, davem@davemloft.net, 
+	dhowells@redhat.com, gnoack@google.com, herbert@gondor.apana.org.au, 
+	jarkko@kernel.org, jmorris@namei.org, jstancek@redhat.com, 
+	justinstitt@google.com, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	llvm@lists.linux.dev, masahiroy@kernel.org, mic@digikod.net, morbo@google.com, 
+	nathan@kernel.org, neal@gompa.dev, nick.desaulniers+lkml@gmail.com, 
+	nicolas@fjasle.eu, nkapron@google.com, roberto.sassu@huawei.com, 
+	serge@hallyn.com, shuah@kernel.org, teknoraver@meta.com, 
+	xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/05/2025 19:30, Svyatoslav Ryhel wrote:
-> нд, 4 трав. 2025 р. о 20:11 Krzysztof Kozlowski <krzk@kernel.org> пише:
->>
->> On 04/05/2025 18:25, Svyatoslav Ryhel wrote:
->>> нд, 4 трав. 2025 р. о 19:23 Krzysztof Kozlowski <krzk@kernel.org> пише:
->>>>
->>>> On 03/05/2025 10:54, Svyatoslav Ryhel wrote:
->>>>>>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
->>>>>>> +/*
->>>>>>> + * This header provides Tegra114-specific constants for binding
->>>>>>> + * nvidia,tegra114-car.
->>>>>>> + */
->>>>>>> +
->>>>>>> +#ifndef _DT_BINDINGS_RESET_TEGRA114_CAR_H
->>>>>>> +#define _DT_BINDINGS_RESET_TEGRA114_CAR_H
->>>>>>> +
->>>>>>> +#define TEGRA114_RESET(x)            (5 * 32 + (x))
->>>>>>
->>>>>>
->>>>>> Does not look like a binding, but some sort of register. Binding IDs
->>>>>> start from 0 (or 1) and are incremented by 1.
->>>>>>
->>>>>
->>>>> Hello there!
->>>>> This file add same logic for Tegra114 as Tegra124 currently
->>>>> implements, check here
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/dt-bindings/reset/tegra124-car.h?h=v6.14.5
->>>>>
->>>>> I did not re-use Tegra124 value, though it is same, to avoid confusion
->>>>> in main Tegra114 device tree.
->>>>
->>>> What confusion? Why would anyone be interested in comparing numbers thus
->>>> getting confused by different number? These are abstract IDs.
->>>>
->>>
->>> By using TEGRA124_RESET in Tegra114 device tree
->>
->> Why would you use define from other SoC... and how is it related to my
->> comment in the first place?
->>
-> 
-> You did not even bother to check link that I have provided, did you?
+On Fri, May 2, 2025 at 5:00=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
+>
+> > This patch series introduces the Hornet LSM. The goal of Hornet is to p=
+rovide
+> > a signature verification mechanism for eBPF programs.
+> >
+>
+> [...]
+>
+> >
+> > References: [1]
+> > https://lore.kernel.org/bpf/20220209054315.73833-1-alexei.starovoitov@g=
+mail.com/
+> > [2]
+> > https://lore.kernel.org/bpf/CAADnVQ+wPK1KKZhCgb-Nnf0Xfjk8M1UpX5fnXC=3Dc=
+BzdEYbv_kg@mail.gmail.com/
+> >
+> > Change list: - v2 -> v3 - Remove any and all usage of proprietary bpf A=
+PIs
+>
+> BPF APIs are not proprietary, but you cannot implement BPF program signin=
+g
+> for BPF users without aligning with the BPF maintainers and the community=
+.
+> Signed programs are a UAPI and a key part of how developers experience BP=
+F
+> and this is not how we would like signing to be experienced by BPF users.
+>
+> Some more feedback (which should be pretty obvious) but explicitly:
+>
+> * Hacks like if (current->pid =3D=3D 1) return 0; also break your threat =
+model
+>   about root being untrusted.
 
-I did. I clicked it, looked the same as here. Does not help.
+Speaking with Blaise off-list when that change was discussed, I
+believe the intent behind that Kconfig option was simply for
+development/transition purposes, and not for any long term usage.  My
+understanding is that this is why it was a separate build time
+configuration and not something that could be toggled at runtime, e.g.
+sysctl or similar.
 
-> 
-> You cut the actual device tree compatible definition,
-> TEGRA114_RESET(x) is a macro used further to define device tree
-> compatibles.
+> * You also did not take the feedback into account:
+>
+>    new =3D map->ops->map_lookup_elem(map, &key);
+>
+>   This is not okay without having the BPF maintainers aligned, the same w=
+ay as
+>
+>   https://patchwork.kernel.org/project/netdevbpf/patch/20240629084331.380=
+7368-4-kpsingh@kernel.org/#25928981
+>
+>   was not okay. Let's not have double standards.
 
-There are no further users...
+From my perspective these two patches are not the same.  Even on a
+quick inspection we notice two significant differences.  First, Hornet
+reads data (BPF maps) passed from userspace to determine if loading
+the associated BPF program should be allowed to load; whereas the
+patch you reference above had the BPF LSM directly modifying the very
+core of the LSM framework state, the LSM hook data.  Secondly, we can
+see multiple cases under net/ where map_lookup_elem() is either called
+or takes things a step further and provides an alternate
+implementation outside of the BPF subsystem, Hornet's use of
+map_lookup_elem() doesn't appear to be a significant shift in how the
+API is used; whereas the patch you reference attempted to do something
+no other LSM has ever been allowed to do as it could jeopardize other
+LSMs.  However, let us not forget perhaps the biggest difference
+between Hornet and patchset you mentioned; the LSM community worked
+with you and ultimately merged your static call patchset, I even had
+to argue *on*your*behalf* against Tetsuo Handa to get your patchset
+into Linus' tree.
 
-> 
-> Like this:
-> 
-> #define TEGRA114_RST_DFLL_DVCO         TEGRA114_RESET(0)
+I'm sorry you are upset that a portion of your original design for the
+static call patchset didn't make it into Linus' tree, but ultimately
+the vast majority of your original design *did* make it into Linus
+tree, and the process to get there involved the LSM community working
+with you in good faith, including arguing along side of you to support
+your patchset against a dissenting LSM.
 
-and still my comment stands. Bindings start from 0 or 1.
+This might also be a good time to remind others who don't follow LSM
+development of a couple other things that we've done recently in LSM
+land to make things easier, or better, for BPF and/or the BPF LSM.
+Perhaps the most important was the work to resolve a number of issues
+with the LSM hook default values, solving some immediate issues and
+preventing similar problems from occurring in the future; this was a
+significant improvement and helped pave the way for greater
+flexibility around where the BPF LSM could be inserted into the LSM
+ordering.  There was also the work around inspecting and normalizing a
+number of LSM hooks to make it easier for the BPF verifier to verify
+BPF LSM callbacks; granted we were not able to normalize every single
+LSM hook, but we did improve on a number of them and the BPF verifier
+was able to take advantage of those improvements.
 
+From what I've seen in Blaise's efforts to implement BPF signature
+validation in the upstream kernel he has been working in good faith
+and has been trying to work with the greater BPF community at each
+step along the way.  He attempted to learn from previously rejected
+attempts with his first patchset, however, that too was rejected, but
+with feedback on how he might proceed.  Blaise took that feedback and
+implemented Hornet, traveling to LSFMMBPF to present his idea to the
+BPF community, as well as the usual mailing list postings.  When there
+was feedback that certain APIs would not be permitted, despite being
+EXPORT_SYMBOL'd, Blaise made some adjustments and came back to the
+lists with an updated version.  You are obviously free to object to
+portions of Hornet, but I don't believe you can claim Blaise isn't
+trying to work with the BPF community on this effort.
 
-Best regards,
-Krzysztof
+> So for this approach, it's a:
+>
+> Nacked-by: KP Singh <kpsingh@kernel.org>
+
+Noted.
+
+> Now if you really care about the use-case and want to work with the maint=
+ainers
+> and implement signing for the community, here's how we think it should be=
+ done:
+>
+> * The core signing logic and the tooling stays in BPF, something that the=
+ users
+>   are already using. No new tooling.
+
+I think we need a more detailed explanation of this approach on-list.
+There has been a lot of vague guidance on BPF signature validation
+from the BPF community which I believe has partly led us into the
+situation we are in now.  If you are going to require yet another
+approach, I think we all need to see a few paragraphs on-list
+outlining the basic design.
+
+> * The policy decision on the effect of signing can be built into various
+>   existing LSMs. I don't think we need a new LSM for it.
+> * A simple UAPI (emphasis on UAPI!) change to union bpf_attr in uapi/bpf.=
+h in
+>   the BPF_PROG_LOAD command:
+>
+> __aligned_u64 signature;
+> __u32 signature_size;
+
+--=20
+paul-moore.com
 
