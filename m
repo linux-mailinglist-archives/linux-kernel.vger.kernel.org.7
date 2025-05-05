@@ -1,71 +1,56 @@
-Return-Path: <linux-kernel+bounces-634962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91D5AAB7EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:22:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51AB8AAB7BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3026D3B12D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:16:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 097BD7A3EE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE8F3BC7D2;
-	Tue,  6 May 2025 00:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6B134E1BE;
+	Tue,  6 May 2025 00:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkjHt6OX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tPlyNmLX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FE23BC911;
-	Mon,  5 May 2025 23:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7E43BE0AC;
+	Mon,  5 May 2025 23:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487379; cv=none; b=ZpXlxufWilcOyJ6WwFerAOl4JYPgb2W92oonDN/sKXhLFKBkxqEJqd0BH8TZEwgyxXo2ajtBmqa1OYqS5VnvQAOx3+UMuvWcO4i/ME6FMf+b91koJ55HtMC5VEOq8L6Ex+AXVlD+SK8Bb9CS/0Eoz0/7OodjJBWAvDKnrhGR280=
+	t=1746487408; cv=none; b=lg9poEjZc1Kkx6E5AkGzLNX9IGTSJqCYXLj+Y2LiPd/fMXfQEH3Wy+Qpmg7ftO/lioECJPtiaYZvJ0fT433dnxUp95xh1MAlKMPLFweKTvZB9L62fcmmyP/EsHzEL7lOfM+LbztL7fQPHl3vM79KpoYY1wheJcf0GORYS4iV1mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487379; c=relaxed/simple;
-	bh=l/4b43+I/Q7I2hH7lNzoFB6BL9SBpXW0FY9TozswYGY=;
+	s=arc-20240116; t=1746487408; c=relaxed/simple;
+	bh=hKUiINuiaux0kf5AuOdaEyHIw81+k5EKGTxhvDeCSao=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NvH33RKJE3ahRBR6d26c/iIbSZp0JxTHdl9wL/5iYLvgqfVpHnTlMY2Ye6P6NugXJHGZRojMm2HzwF3IJI8mEpAASiFlG7O9QqrMY1KQ8dpLbbkFwrjNjHOrI/I0a44qnS7KCA8upKh9NiBD8Cs71YF4SoxOsEKx9XW4DxvHy10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkjHt6OX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01FB9C4CEE4;
-	Mon,  5 May 2025 23:22:55 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZuGo6pJj/I4rovu/IP5i9/hclvlurUsn/5xe4GTSEJAWw4Pad16bfMxQdiIcJhILkXqVwONSwdlVdax/2qcfjPsR83a6ilWCc19ekAj5e63XF7R8YbVCRNwJTV8I/+0G4VNY5j+J1aQvtX6/WMuCQUuEk61ddIVfOFfC9Ova5w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tPlyNmLX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D711C4CEE4;
+	Mon,  5 May 2025 23:23:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487378;
-	bh=l/4b43+I/Q7I2hH7lNzoFB6BL9SBpXW0FY9TozswYGY=;
+	s=k20201202; t=1746487407;
+	bh=hKUiINuiaux0kf5AuOdaEyHIw81+k5EKGTxhvDeCSao=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fkjHt6OXLQ7PlHhAbpyl+gkr7Ez/XYr5/jNsYcJ8NGE5AyTsAeKNtZXJYs8FJxLay
-	 cacAFsrAgp8MVOXslxtTFepqNd0ceNtIx9FIQhblxWQJ1Xfsr5aBdLXvH3dmAe8XlO
-	 gqScxskJMuCLRYWjXxNT3PQqlIvnrikWb9zFH/TCfDPpuWWVc9A3c0MDFII9IdCCxf
-	 eZQBXc73AjPPv7XL9wz5SPiUkKT3OTifPtRqUc68uB36EkhhsImIYerEEiOsRrdyHE
-	 gJedkpnCXuVFMfIphtp3cRPJBL+2S4VjyNprND9r8V5aX2B+kEerG2CRqHazSz1gPo
-	 cJrixvwcopogA==
+	b=tPlyNmLXGvyv5KKrf4+WJ24i6HcaZUL6X9Wgl4kH6ih4hrm8QZOKYDIk3CcRDXty3
+	 182YB57tNuIphdXgd8G6QZP3Z0VHkfcxKI7zCdrv8amH4tI59YGVEVXbnpOaCcSRDd
+	 tWi31kkEICBg3HwtFHLgrIJKZlvHjloq46VP0k3M/yioS48ga5cLRxWbcOA6mKlvo0
+	 5eA73aLoA/ufCr/qX21aWwvvm4qUQpIomgnE6OqhI7boaec8l8vfxSYq9Aa3069qkA
+	 CXP1N3lg4GctAO6Ya8ptwWvHYf8X3MZNuIV+vdLhm1J9UctZwsQFADZKKKbQCVD8nj
+	 9bQW6IIV1HnCA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Breno Leitao <leitao@debian.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Kaplan <David.Kaplan@amd.com>,
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Xiaochun Lee <lixc17@lenovo.com>,
 	Sasha Levin <sashal@kernel.org>,
-	corbet@lwn.net,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	mingo@redhat.com,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	akpm@linux-foundation.org,
-	rostedt@goodmis.org,
-	paulmck@kernel.org,
-	thuth@redhat.com,
-	ardb@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 37/79] x86/bugs: Make spectre user default depend on MITIGATION_SPECTRE_V2
-Date: Mon,  5 May 2025 19:21:09 -0400
-Message-Id: <20250505232151.2698893-37-sashal@kernel.org>
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 53/79] PCI: Fix old_size lower bound in calculate_iosize() too
+Date: Mon,  5 May 2025 19:21:25 -0400
+Message-Id: <20250505232151.2698893-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505232151.2698893-1-sashal@kernel.org>
 References: <20250505232151.2698893-1-sashal@kernel.org>
@@ -75,99 +60,49 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.4.293
 Content-Transfer-Encoding: 8bit
 
-From: Breno Leitao <leitao@debian.org>
+From: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-[ Upstream commit 98fdaeb296f51ef08e727a7cc72e5b5c864c4f4d ]
+[ Upstream commit ff61f380de5652e723168341480cc7adf1dd6213 ]
 
-Change the default value of spectre v2 in user mode to respect the
-CONFIG_MITIGATION_SPECTRE_V2 config option.
+Commit 903534fa7d30 ("PCI: Fix resource double counting on remove &
+rescan") fixed double counting of mem resources because of old_size being
+applied too early.
 
-Currently, user mode spectre v2 is set to auto
-(SPECTRE_V2_USER_CMD_AUTO) by default, even if
-CONFIG_MITIGATION_SPECTRE_V2 is disabled.
+Fix a similar counting bug on the io resource side.
 
-Set the spectre_v2 value to auto (SPECTRE_V2_USER_CMD_AUTO) if the
-Spectre v2 config (CONFIG_MITIGATION_SPECTRE_V2) is enabled, otherwise
-set the value to none (SPECTRE_V2_USER_CMD_NONE).
-
-Important to say the command line argument "spectre_v2_user" overwrites
-the default value in both cases.
-
-When CONFIG_MITIGATION_SPECTRE_V2 is not set, users have the flexibility
-to opt-in for specific mitigations independently. In this scenario,
-setting spectre_v2= will not enable spectre_v2_user=, and command line
-options spectre_v2_user and spectre_v2 are independent when
-CONFIG_MITIGATION_SPECTRE_V2=n.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: David Kaplan <David.Kaplan@amd.com>
-Link: https://lore.kernel.org/r/20241031-x86_bugs_last_v2-v2-2-b7ff1dab840e@debian.org
+Link: https://lore.kernel.org/r/20241216175632.4175-6-ilpo.jarvinen@linux.intel.com
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Xiaochun Lee <lixc17@lenovo.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  2 ++
- arch/x86/kernel/cpu/bugs.c                      | 10 +++++++---
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/pci/setup-bus.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9975dcab99c35..6d9acc3f977b3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4600,6 +4600,8 @@
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 32e34ade736c3..1793e1084aeb3 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -800,11 +800,9 @@ static resource_size_t calculate_iosize(resource_size_t size,
+ 	size = (size & 0xff) + ((size & ~0xffUL) << 2);
+ #endif
+ 	size = size + size1;
+-	if (size < old_size)
+-		size = old_size;
  
- 			Selecting 'on' will also enable the mitigation
- 			against user space to user space task attacks.
-+			Selecting specific mitigation does not force enable
-+			user mitigations.
- 
- 			Selecting 'off' will disable both the kernel and
- 			the user space protections.
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 4f803aed2ef0e..0f523ebfbabf6 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1050,9 +1050,13 @@ static __ro_after_init enum spectre_v2_mitigation_cmd spectre_v2_cmd;
- static enum spectre_v2_user_cmd __init
- spectre_v2_parse_user_cmdline(void)
- {
-+	enum spectre_v2_user_cmd mode;
- 	char arg[20];
- 	int ret, i;
- 
-+	mode = IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?
-+		SPECTRE_V2_USER_CMD_AUTO : SPECTRE_V2_USER_CMD_NONE;
-+
- 	switch (spectre_v2_cmd) {
- 	case SPECTRE_V2_CMD_NONE:
- 		return SPECTRE_V2_USER_CMD_NONE;
-@@ -1065,7 +1069,7 @@ spectre_v2_parse_user_cmdline(void)
- 	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
- 				  arg, sizeof(arg));
- 	if (ret < 0)
--		return SPECTRE_V2_USER_CMD_AUTO;
-+		return mode;
- 
- 	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
- 		if (match_option(arg, ret, v2_user_options[i].option)) {
-@@ -1075,8 +1079,8 @@ spectre_v2_parse_user_cmdline(void)
- 		}
- 	}
- 
--	pr_err("Unknown user space protection option (%s). Switching to AUTO select\n", arg);
--	return SPECTRE_V2_USER_CMD_AUTO;
-+	pr_err("Unknown user space protection option (%s). Switching to default\n", arg);
-+	return mode;
+-	size = ALIGN(max(size, add_size) + children_add_size, align);
+-	return size;
++	size = max(size, add_size) + children_add_size;
++	return ALIGN(max(size, old_size), align);
  }
  
- static inline bool spectre_v2_in_eibrs_mode(enum spectre_v2_mitigation mode)
+ static resource_size_t calculate_memsize(resource_size_t size,
 -- 
 2.39.5
 
