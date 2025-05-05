@@ -1,173 +1,194 @@
-Return-Path: <linux-kernel+bounces-632570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3ADAA9907
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:33:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC935AA9901
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186B5189A41F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467CD176A13
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491CC1F91C8;
-	Mon,  5 May 2025 16:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE648268682;
+	Mon,  5 May 2025 16:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gMoabXhF"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF1617B4EC;
-	Mon,  5 May 2025 16:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EEC0fWZb"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF3919341F
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 16:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746462663; cv=none; b=Okh0cOF9O/FG38+l48XXFfh8KKR36bQI5GPN51qi3Ps5IrEA0Spk0DeP9zaZeTeYAkASlXShWc1G0e0hyzJoujaFHwkkj01tbS9rTMaKboPEL8aeCEMnkueWO1JhaaNIocSdXDyzVQjs1X9+Bez2m4aGOu+71a8Fq+rIVnyQgxE=
+	t=1746462765; cv=none; b=PZfzQq9eWEADIVnlb/siysqtif12iznQNcZm5u1hh5N0BnJsq+F+yJeFMkjTpmsSda/WQuBw6ybnLDHz2iJ4Wqc+LS93xhNYB1u0tODZso632Kxamn+Xq2KA2LzbaViJ0bQh8daW3uqqaoazqAtitfc3Vil3QTnnOP4Wqi1NSvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746462663; c=relaxed/simple;
-	bh=REzvuUwtmUFOAo5hVg7I8vWb9o46O0LmGL7TOaYwix4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hnVsFbAGDGio6ChHxz0Wtk6wWvs57XCvr7KYPnaw46+ed/b5Hzo7iOIyJ0ZvUgkl6rKpzn2644qLs01V5wTAG068QrrAjUUD7/qGTJRAVowm86mDJODs1uAKNV98SoDBYW5x46+oO4qpckxHFhs29ZsTN0+5Zp35gM8Ddx3Y5SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gMoabXhF; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=n4X6MBESsGxzF5cGOAROegCEOry1mSiZUFSWDthw/3s=;
-	b=gMoabXhFzmq2/rA9brBr23GELaQiE/P+dW6x4Wb1F/QxZpVqc4tRGw1ElVeK3s
-	bE4Ta7qH6iQlACfKgLjLmDSVE4T7mKfzVdXojZ/Skq+F+KtkgiepRuHGL/haly0M
-	a+meaP8nDlG8AXa8uYhkGE4XFHDw21Ab1tCapLsE3fiv4=
-Received: from [192.168.71.93] (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDnY+O05xhoIBFZEg--.58622S2;
-	Tue, 06 May 2025 00:30:45 +0800 (CST)
-Message-ID: <126ed213-1836-46e0-895c-6106f885a949@163.com>
-Date: Tue, 6 May 2025 00:30:44 +0800
+	s=arc-20240116; t=1746462765; c=relaxed/simple;
+	bh=hYnwKldeyCYR/JIL/xowr6X7GeHBTR1A13sTV64gYGA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CK0QFQq+FBnyaKFE15eclgLYB84yyVUSlii1SqvySiEuSq6sFyQkCXSgdbenkRgvraW9FJdjW4b1vtcy/kxcXyYx9EoedB1ZMFa9NfirPyDHsU++BajlFo8mkQ9IXkFulLLELzplDSYhKexoy14dT2bou5Pf2I5aAA62mPJ1hwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EEC0fWZb; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4033c89f2aaso2669997b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 09:32:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746462761; x=1747067561; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D6QMJxSvYb+DoZksUxOYwXqaCXAwRl1Ug30Nn9yKcK4=;
+        b=EEC0fWZb6R6TJkckcBxIGzGRLIhVRU1PoU04d0V/y5QMohVhsMC9jGmBEY+l5Qf1FM
+         WCY8CuendPRMgUpTFEBw1LjRHrTM5wCPfTZB8SloTenVvFD2qQq5OcZcwo3nLyLBIQdX
+         0DVYI4ra8RdZWze3x3ThWZunIoR767iykUWdMweTeEp6QIbyUiAb4UP08jk7TZsgIg3r
+         OAU9Wf4ZlatCVxyptn/eO5JAcf2JVSajgReUegwtGikZO/numCSYv9TMp8r7WgynGrSR
+         qyJ70CvRPpkmcdPrUx/InbtC0TX6Ze2lnMuFUleckFOl2sLk4K+tWAi78O+GWif5PkUA
+         EjtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746462761; x=1747067561;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D6QMJxSvYb+DoZksUxOYwXqaCXAwRl1Ug30Nn9yKcK4=;
+        b=tLF1sFMTz2UucX9ht6wyd/DG46Zzr8Vb1Mvxb+RS01wPTrtwAtrfNa5s0Jgdn7ZJzX
+         tWe8sC9AluskVNi+nqMraAgEm6a5GimVaz+h34/duqnymyt6pPjAXCzhmo4/TRBs56x3
+         TA8u7owpE0WAUdZU5Fu5sK1VSq1BzYRJdk7HArBVkV4doHOaYj8pr6bnkIUqEPa2MA1T
+         ku/NovlaVPmUlF3bAwGcNylFWs2IZ5qUI726T0+i4x3lK3g/r/bkT+AY471F85gMgJjg
+         ZFtfpAvD8Mh56vp063afmtnR1jhlZ9wO2s4mQn3Avu5zg9g6uxjlFyASIQEtrin4J+M3
+         F4QA==
+X-Forwarded-Encrypted: i=1; AJvYcCUY+CFN78r6AZ+kPDgFG6/rmsNAZcT4279qcMtOD9Uy87fRkSIZD4f/c9uEDBQ54O+RUNyaTm+zekFikFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYD3WkWC9bg08hT+OFYpm3/MCq+/H1FFRrGHig8HuqhYBB3Kln
+	rTj1ZbyUFjy9vodkAi3lYPDXb8dU6bm6InXinPIdztCMINurRkw6gqOcrIY2pGEKl2V33IJ7lQN
+	g
+X-Gm-Gg: ASbGncvOhQBQA2aYBg8FyEmG5ti2pmXFNaQg0ulngMswLPwr6wWraV3UIxiHtw/a4JF
+	JodrFHUQaau9U9BTdpb8kfLZl/mni4oqfMEsrU84H9RuO7+eMrk1i1qjpUqp7JLz3bOB3vnKkmZ
+	22XbUK/lnX49kbiqStkpk7g/Dil3XOsYxOF2fbFRaLoFQgbCvXAOzRkeuYuqkRiAhvQl4j+Ubwb
+	p6Ci+mARGLJrfqbYnLwRm/sNYxB6xjlM6diV9TMMxrUMJwAl4XPE+q3Ct2aD9oukxxLBYStPSyN
+	imALQ10xS1wGwKngK1k/XVTzQxdMhyGx4/kIhSeWXxg0BQ==
+X-Google-Smtp-Source: AGHT+IEAb7wN6Xj4gTxhIaHaxaX2lbTLyAAaizSD3Tpvtgd3KpcAkDDkzsvRIGIEg/4Ozb6SlOjBug==
+X-Received: by 2002:a05:6808:2292:b0:401:e6f0:a8d4 with SMTP id 5614622812f47-403419aad82mr8804825b6e.5.1746462761622;
+        Mon, 05 May 2025 09:32:41 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:2151:6806:9b7:545d])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4033dae68f7sm1971854b6e.26.2025.05.05.09.32.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 09:32:41 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v5 0/7] iio: introduce IIO_DECLARE_BUFFER_WITH_TS
+Date: Mon, 05 May 2025 11:31:41 -0500
+Message-Id: <20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xhci: Add missing parameter description to
- xhci_get_endpoint_index()
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250504160415.183331-1-18255117159@163.com>
- <2025050546-unlivable-monitor-ad66@gregkh>
- <4cfa9138-43c7-4ca8-bb00-3bd15ab0dd98@163.com>
- <dc6ae086-c4dd-466e-ab7d-ba590877c825@163.com>
- <2025050549-unmasking-financial-4094@gregkh>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <2025050549-unmasking-financial-4094@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDnY+O05xhoIBFZEg--.58622S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr4DCF4rAFy8tFW8ArW3trb_yoWrCrW3pa
-	42yF9YkF4fJryFkF1v9w4rtr1UK3y7C343W347W345Ar4qyF1xJas7KF4FgFnrAr4ruF18
-	AFWxWwnrWr1UAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UzMKtUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwdEo2gY4bmFNwAAs1
+X-B4-Tracking: v=1; b=H4sIAO3nGGgC/53QTWrDMBCG4asErasijWTJdNV7lGL0M1MPpHaRH
+ bch+O6VszIlG3f5zuL5YG5iwsI4iZfTTRRceOJxqNE8nUTqw/CBknNtAQoaZXUrmUfJw1zGfEm
+ 4VZcxnUPBLl6IsHTfPPfdPEmg1ntDPofsROW+ChL/3Kfe3mv3PM1jud6XF71d/zGyaKkkokoOg
+ jFB0WsM1zPHgs9p/BTbzgI7G+CADdU2lI2zvkleuQe22dvNAdtUmzRk0pEIbPvAtnv7yE9stR1
+ 5choc6RT/2Ou6/gIRNcyr9wEAAA==
+X-Change-ID: 20250418-iio-introduce-iio_declare_buffer_with_ts-2f8773f7dad6
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Trevor Gamblin <tgamblin@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3565; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=hYnwKldeyCYR/JIL/xowr6X7GeHBTR1A13sTV64gYGA=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoGOfw0KmlDYseVpAgaaAgy5RQ/GQPoLBAF23yB
+ m7Yv0pwF6mJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaBjn8AAKCRDCzCAB/wGP
+ wAirB/wO+qf8Ih7G7JqFC/x8axX3O9pv7JgHrlVRxYTW2iX82uIBHyaB+pyjKn8DAt3M3VGaXL4
+ 2vWJvZxdyWBKypNi834Cm1qOExB5ROp69bUOoy+DWrKscujGXl46Ehh3Jl19nyeNaIcnHv0XBHn
+ aQZHqWzPktGxHlfC2gkqo7rttCldK2Bu0dWg7fnTHCKDyMf8VuDoDSgZ+tS7f4rb1PlBe3iFD6K
+ UpYjfHcNb4jn3zLjGB+0Yv7mwiGp+OG+A8nGQU/OtVo+xvnqIy+5e3zPg+ydpFXpf6hJcmdypSQ
+ +1EZbXUQi+6l9n1s7j99XrLql9fs4vJVH2AqXBkF4MWQyOls
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
+Creating a buffer of the proper size and correct alignment for use with
+iio_push_to_buffers_with_ts() is commonly used and not easy to get
+right (as seen by a number of recent fixes on the mailing list).
 
+In general, we prefer to use this pattern for creating such buffers:
 
-On 2025/5/6 00:17, Greg KH wrote:
-> On Mon, May 05, 2025 at 11:43:05PM +0800, Hans Zhang wrote:
->>
->>
->> On 2025/5/5 23:35, Hans Zhang wrote:
->>>
->>>
->>> On 2025/5/5 13:00, Greg KH wrote:
->>>> On Mon, May 05, 2025 at 12:04:15AM +0800, Hans Zhang wrote:
->>>>> Fix kernel-doc warning by documenting the @desc parameter:
->>>>>
->>>>> drivers/usb/host/xhci.c:1369: warning: Function parameter or
->>>>> struct member
->>>>> 'desc' not described in 'xhci_get_endpoint_index'
->>>>>
->>>>> Add detailed description of the @desc parameter and clarify the indexing
->>>>> logic for control endpoints vs other types. This brings the
->>>>> documentation
->>>>> in line with kernel-doc requirements while maintaining technical
->>>>> accuracy.
->>>>>
->>>>> Signed-off-by: Hans Zhang <18255117159@163.com>
->>>>
->>>> What commit id does this fix?
->>>>
->>>
->>> Hi Greg,
->>>
->>> export ARCH=arm64
->>> make defconfig
->>> make Image W=1 -j16
->>>
->>> ./aarch64-none-linux-gnu-gcc -v
->>> Using built-in specs.
->>> COLLECT_GCC=./aarch64-none-linux-gnu-gcc
->>> COLLECT_LTO_WRAPPER=/media/zhb/hans/code/cix_linux_gcc/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/bin/../libexec/gcc/aarch64-none-linux-gnu/12.3.1/lto-wrapper
->>> Target: aarch64-none-linux-gnu
->>> Configured with:
->>> /data/jenkins/workspace/GNU-toolchain/arm-12/src/gcc/configure
->>> --target=aarch64-none-linux-gnu --prefix=
->>> --with-sysroot=/aarch64-none-linux-gnu/libc --with-build-sysroot=/data/jenkins/workspace/GNU-toolchain/arm-12/build-aarch64-none-linux-gnu/install//aarch64-none-linux-gnu/libc
->>> --with-bugurl=https://bugs.linaro.org/ --enable-gnu-indirect-function
->>> --enable-shared --disable-libssp --disable-libmudflap
->>> --enable-checking=release --enable-languages=c,c++,fortran --with-gmp=/data/jenkins/workspace/GNU-toolchain/arm-12/build-aarch64-none-linux-gnu/host-tools --with-mpfr=/data/jenkins/workspace/GNU-toolchain/arm-12/build-aarch64-none-linux-gnu/host-tools --with-mpc=/data/jenkins/workspace/GNU-toolchain/arm-12/build-aarch64-none-linux-gnu/host-tools --with-isl=/data/jenkins/workspace/GNU-toolchain/arm-12/build-aarch64-none-linux-gnu/host-tools
->>> --enable-fix-cortex-a53-843419 --with-pkgversion='Arm GNU Toolchain
->>> 12.3.Rel1 (Build arm-12.35)'
->>> Thread model: posix
->>> Supported LTO compression algorithms: zlib
->>> gcc version 12.3.1 20230626 (Arm GNU Toolchain 12.3.Rel1 (Build arm-12.35))
->>>
->>>
->>> I'm debugging the problem of pci and modified the iinclude/linux/pci.h
->>> file. If the above compilation method is adopted, the following warnings
->>> will occur. Use my patch and the warning disappears.
->>>
->>> Compilation warning:
->>> drivers/usb/host/xhci.c:1370: warning: Function parameter or struct
->>> member 'desc' not described in 'xhci_get_endpoint_index'
->>>
->>>
->>> The reproduction method can also be modified by modifying the
->>> drivers/usb/host/xhci.c file and then compiling, and the above warning
->>> will appear.
->>>
->>> Please review whether this needs to be fixed. If not, please ignore this
->>> patch.
->>>
->>>
->>
->> Hi Greg,
->>
->> This patch does not fix specific code errors. Instead, it improves the
->> parameter documentation of the xhci_get_endpoint_index function (adding a
->> description for @desc) to enhance code readability. Therefore, it does not
->> fix any issues with historical submissions and is an independent document
->> improvement patch.
-> 
-> It fixes when that parameter was added to that function, OR it fixes
-> when the comment block was added to document that function, right?  So
-> either way, it does "Fix" something...
-> 
+struct {
+    u16 data[2];
+    aligned_s64 timestamp;
+} buffer;
 
-Hi Greg,
+However, there are many cases where a driver may have a large number of
+channels that can be optionally enabled or disabled in a scan or the
+driver might support a range of chips that have different numbers of
+channels or different storage sizes for the data. In these cases, the
+timestamp may not always be at the same place relative to the data. To
+handle these, we allocate a buffer large enough for the largest possible
+case and don't care exactly where the timestamp ends up in the buffer.
 
-Thank you for the feedback. This patch adds the missing documentation 
-for the `@desc` parameter in the `xhci_get_endpoint_index` function, 
-which was introduced in commit <d0e96f5a71a0> ("usb: xhci: Control 
-transfer support.") but lacked proper parameter description.
+For these cases, we propose to introduce new macros to make it easier
+it easier for both the authors to get it right and for readers of the
+code to not have to do all of the math to verify that it is correct.
 
-In the next version, I will add:
-Fixes: d0e96f5a71a0 ("USB: xhci: Control transfer support.")
+I have just included a few examples of drivers that can make use of this
+new macro, but there are dozens more.
 
+---
+Changes in v5:
+- Add new patch to set minimum alignment to 8 for IIO_DMA_MINALIGN.
+- Adjust IIO_DECLARE_DMA_BUFFER_WITH_TS() macro for above change.
+- Drop one ad4695 patch that was already applied.
+- Link to v4: https://lore.kernel.org/r/20250428-iio-introduce-iio_declare_buffer_with_ts-v4-0-6f7f6126f1cb@baylibre.com
 
-Is that so? If not, please correct me.
+Changes in v4:
+- Dropped static_assert()s from the first patch.
+- Handle case when IIO_DMA_MINALIGN < sizeof(timestamp).
+- Added one more patch for ad4695 to rename a confusing macro.
+- Link to v3: https://lore.kernel.org/r/20250425-iio-introduce-iio_declare_buffer_with_ts-v3-0-f12df1bff248@baylibre.com
 
+Changes in v3:
+- Fixed a few mistakes, style issues and incorporate other feedback (see
+  individual commit message changelogs for details).
+- Link to v2: https://lore.kernel.org/r/20250422-iio-introduce-iio_declare_buffer_with_ts-v2-0-3fd36475c706@baylibre.com
+
+Changes in v2:
+- Add 2nd macro for case where we need DMA alignment.
+- Add new patch for ad4695 to convert buffer from u8 to u16 before
+  making use of the new macro.
+- Drop the bmp280 patch since it was determined to have a better
+  alternative not using these macros.
+- Add a few more examples to show the non-DMA case, both in a struct and
+  stack allocated.
+- Link to v1: https://lore.kernel.org/r/20250418-iio-introduce-iio_declare_buffer_with_ts-v1-0-ee0c62a33a0f@baylibre.com
+
+---
+David Lechner (7):
+      iio: make IIO_DMA_MINALIGN minimum of 8 bytes
+      iio: introduce IIO_DECLARE_BUFFER_WITH_TS macros
+      iio: adc: ad4695: use IIO_DECLARE_DMA_BUFFER_WITH_TS
+      iio: adc: ad4695: rename AD4695_MAX_VIN_CHANNELS
+      iio: adc: ad7380: use IIO_DECLARE_DMA_BUFFER_WITH_TS
+      iio: accel: sca3300: use IIO_DECLARE_BUFFER_WITH_TS
+      iio: adc: at91-sama5d2: use IIO_DECLARE_BUFFER_WITH_TS
+
+ drivers/iio/accel/sca3300.c        | 18 ++--------------
+ drivers/iio/adc/ad4695.c           | 11 +++++-----
+ drivers/iio/adc/ad7380.c           |  3 +--
+ drivers/iio/adc/at91-sama5d2_adc.c | 13 ++----------
+ include/linux/iio/iio.h            | 42 ++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 52 insertions(+), 35 deletions(-)
+---
+base-commit: 7e9a82ab5b861d3c33c99a22c1245a5b262ee502
+change-id: 20250418-iio-introduce-iio_declare_buffer_with_ts-2f8773f7dad6
 
 Best regards,
-Hans
-
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
