@@ -1,162 +1,148 @@
-Return-Path: <linux-kernel+bounces-634190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14493AAACD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:24:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411E4AAAD06
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3345167249
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:22:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 109E47B0095
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5CE3CF357;
-	Mon,  5 May 2025 23:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ABC3E58C4;
+	Mon,  5 May 2025 23:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4UsxWWa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFZfrCUQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7722F5F81;
-	Mon,  5 May 2025 23:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079C73AFA69;
+	Mon,  5 May 2025 23:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487043; cv=none; b=dLH8XIIr9Bh4AU0UvNytDUyqBE71ZBnspP+5kmJnKKx+lYsOirusCkRkejca/EPTJYKVqojj0Jg5FwYaDRrpYJx1TCcU7c9bFzicg0JnkIWfAtFGzUjkyp1nDHPMvJaXYWNrpl8CMFjDzpNMgc6JXaRKjYzugrSpA1+JUs35nQ4=
+	t=1746487214; cv=none; b=fBDL4EXxCYLVNo4TRgDn1R9cqiu7Kw8L570Yf6+3yxKfCgzED4QLDPFH3Jjz1GzMHxGyXwsHcN8E3DMct6WFD/liszoZY2Bd2BZRIVmVy5NWeti0RO1n1AO86PBtW+IyT1gSgVWIMiHMgf2nBPDW1QhlcpiJ3vDJWVmSHoc67t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487043; c=relaxed/simple;
-	bh=CxzDOEhPeAMdFnioim5gogV4IBxuwBb0TfkNgH4trfc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D7Dx9pNMl1rVB7cN++wrx0rjftAWVc97hDn/K79sTctH63Ax4pqrI9LGqYHzKJ59rc+8Yo/kjZnNOMphxJHFr5F5PjJfb6+N462it+Hw3I9Ys2Z+MLDLtj/4nSG8iUF8P8CdZOi7LDbid+AzqJXDjlYMmZSXOoZA0SbZAwjKZtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4UsxWWa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7EA52C4CEF4;
-	Mon,  5 May 2025 23:17:21 +0000 (UTC)
+	s=arc-20240116; t=1746487214; c=relaxed/simple;
+	bh=ar1Hgh74LuGM12CBKVjeJklgZow5ZSNA6QBQMPoecTI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Zb3SjFiS5UqigWpP3HWBL+oEPZ6OQjwbi6wfzP8hQMM8jO+LLONuE9jEvLCBoIy/Ni2pxjcnxFOM3ESJwzkL4BCAzF6zRp06oXebIwoZ02/4kebaAZ5FjIh/LCul1FA9Me8yS8lmFOdYQd29eFoOMEz6tH/+lyBQbp4EMsE1aRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFZfrCUQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96AACC4CEE4;
+	Mon,  5 May 2025 23:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487041;
-	bh=CxzDOEhPeAMdFnioim5gogV4IBxuwBb0TfkNgH4trfc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=S4UsxWWaIuXb/2+SApec3EF5Hpe3veh5fMyMgqyPRRmsQPVgpZfY8zhMuISOkQLdp
-	 PokFIuoFCO/Y9N8ArOGvawKsu7LZjiVY1xsvcZDvYBCpOVte9eV4EdXtLJA/FiYHfq
-	 o0zK125bpb+eV0bWvVs1kQKVmf3fIGGUD+eDbAHLzBKsSCnaa4iJfEgcIBubkXLQXk
-	 wsoNX9UREjnmMO0Nu6g99wxcAMScB7pU+xgFKC6l0yxLaT4o8oz2hO8Jdc2JylOzVM
-	 Euj9moflKtnk58x3UEpjuhTxM03Di6B49xdeFg/Ro2onWgfvOYWYn8rgJqFj/wl4Vu
-	 LT4WV1Z4Pc6zg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AECFC3ABC3;
-	Mon,  5 May 2025 23:17:21 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 05 May 2025 18:17:22 -0500
-Subject: [PATCH v5 3/3] PCI: tegra: Allow building as a module
+	s=k20201202; t=1746487212;
+	bh=ar1Hgh74LuGM12CBKVjeJklgZow5ZSNA6QBQMPoecTI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HFZfrCUQ7kZwhP81PEtDsRBLmfZfZd4fo6h2t+WPiK5E8zp76l7D+Q/H1lG7Ra8Zp
+	 7FS95Kkbuq4iRwZ8mEriu+6Rn5qPLOWB5R3/OppzIZjuJv79E5euYhy7ay4atsD7cW
+	 p4m+2nbl0Jyuo9eMCH1fyQZnUAp0OeBAHPT1+Fqv3+lIcEX31TBEjffREcC6PeA9nD
+	 4KRgoq7I6wC/A5iAESpCUFFBjV1TUC2Av3XmRYloAksZ/Rx6GPmGObLZkWgwMxbnfh
+	 /s/eO0c03LgYkNYM2kFWLVfKe3LzM19khxFY+1BY/+JVp9OPjKmHpxkIPzVS4fUeY3
+	 AlKd6eaDkSCrQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Philip Yang <Philip.Yang@amd.com>,
+	Felix Kuehling <felix.kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Felix.Kuehling@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.10 060/114] drm/amdkfd: KFD release_work possible circular locking
+Date: Mon,  5 May 2025 19:17:23 -0400
+Message-Id: <20250505231817.2697367-60-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505231817.2697367-1-sashal@kernel.org>
+References: <20250505231817.2697367-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250505-pci-tegra-module-v5-3-827aaac998ba@gmail.com>
-References: <20250505-pci-tegra-module-v5-0-827aaac998ba@gmail.com>
-In-Reply-To: <20250505-pci-tegra-module-v5-0-827aaac998ba@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746487040; l=2578;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=HNeyxqklHxYO1Z7cAeod50HxFJLbvD8WnX339dtMaiA=;
- b=fo9TtaSwgnvyZQgGNVox7gBbbZWS5P86hTXhr9PHEDbnBO0nSk1f8JZRc8ZwDeCXX1jrsBORI
- FOCgV6oimC2AAeHSEiboaqMaI+z8Y0mbfnKQSpAIzD3iAmgfdCdhCMD
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.237
+Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+From: Philip Yang <Philip.Yang@amd.com>
 
-This changes the module macro back to builtin, which does not define an
-exit function. This will prevent the module from being unloaded. There
-are concerns with modules not cleaning up IRQs on unload, thus this
-needs specifically disallowed. The remove callback is also dropped as it
-is unused.
+[ Upstream commit 1b9366c601039d60546794c63fbb83ce8e53b978 ]
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+If waiting for gpu reset done in KFD release_work, thers is WARNING:
+possible circular locking dependency detected
+
+  #2  kfd_create_process
+        kfd_process_mutex
+          flush kfd release work
+
+  #1  kfd release work
+        wait for amdgpu reset work
+
+  #0  amdgpu_device_gpu_reset
+        kgd2kfd_pre_reset
+          kfd_process_mutex
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock((work_completion)(&p->release_work));
+                  lock((wq_completion)kfd_process_wq);
+                  lock((work_completion)(&p->release_work));
+   lock((wq_completion)amdgpu-reset-dev);
+
+To fix this, KFD create process move flush release work outside
+kfd_process_mutex.
+
+Signed-off-by: Philip Yang <Philip.Yang@amd.com>
+Reviewed-by: Felix Kuehling <felix.kuehling@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/Kconfig     |  2 +-
- drivers/pci/controller/pci-tegra.c | 29 ++++-------------------------
- 2 files changed, 5 insertions(+), 26 deletions(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-index 9800b768105402d6dd1ba4b134c2ec23da6e4201..a9164dd2eccaead5ae9348c24a5ad75fcb40f507 100644
---- a/drivers/pci/controller/Kconfig
-+++ b/drivers/pci/controller/Kconfig
-@@ -224,7 +224,7 @@ config PCI_HYPERV_INTERFACE
- 	  driver.
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+index 184527afe2bd5..05d2598f516d1 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -755,6 +755,14 @@ struct kfd_process *kfd_create_process(struct file *filep)
+ 	if (thread->group_leader->mm != thread->mm)
+ 		return ERR_PTR(-EINVAL);
  
- config PCI_TEGRA
--	bool "NVIDIA Tegra PCIe controller"
-+	tristate "NVIDIA Tegra PCIe controller"
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on PCI_MSI
- 	help
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index b3cdbc5927de3742161310610dc5dcb836f5dd69..e2d976c126817808933ca936cf650088157283be 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2674,29 +2674,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 	return err;
- }
- 
--static void tegra_pcie_remove(struct platform_device *pdev)
--{
--	struct tegra_pcie *pcie = platform_get_drvdata(pdev);
--	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
--	struct tegra_pcie_port *port, *tmp;
++	/* If the process just called exec(3), it is possible that the
++	 * cleanup of the kfd_process (following the release of the mm
++	 * of the old process image) is still in the cleanup work queue.
++	 * Make sure to drain any job before trying to recreate any
++	 * resource for this process.
++	 */
++	flush_workqueue(kfd_process_wq);
++
+ 	/*
+ 	 * take kfd processes mutex before starting of process creation
+ 	 * so there won't be a case where two threads of the same process
+@@ -767,14 +775,6 @@ struct kfd_process *kfd_create_process(struct file *filep)
+ 	if (process) {
+ 		pr_debug("Process already found\n");
+ 	} else {
+-		/* If the process just called exec(3), it is possible that the
+-		 * cleanup of the kfd_process (following the release of the mm
+-		 * of the old process image) is still in the cleanup work queue.
+-		 * Make sure to drain any job before trying to recreate any
+-		 * resource for this process.
+-		 */
+-		flush_workqueue(kfd_process_wq);
 -
--	if (IS_ENABLED(CONFIG_DEBUG_FS))
--		tegra_pcie_debugfs_exit(pcie);
--
--	pci_stop_root_bus(host->bus);
--	pci_remove_root_bus(host->bus);
--	pm_runtime_put_sync(pcie->dev);
--	pm_runtime_disable(pcie->dev);
--
--	if (IS_ENABLED(CONFIG_PCI_MSI))
--		tegra_pcie_msi_teardown(pcie);
--
--	tegra_pcie_put_resources(pcie);
--
--	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
--		tegra_pcie_port_free(port);
--}
--
- static int tegra_pcie_pm_suspend(struct device *dev)
- {
- 	struct tegra_pcie *pcie = dev_get_drvdata(dev);
-@@ -2800,6 +2777,8 @@ static struct platform_driver tegra_pcie_driver = {
- 		.pm = &tegra_pcie_pm_ops,
- 	},
- 	.probe = tegra_pcie_probe,
--	.remove = tegra_pcie_remove,
- };
--module_platform_driver(tegra_pcie_driver);
-+builtin_platform_driver(tegra_pcie_driver);
-+MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
-+MODULE_DESCRIPTION("NVIDIA PCI host controller driver");
-+MODULE_LICENSE("GPL");
-
+ 		process = create_process(thread);
+ 		if (IS_ERR(process))
+ 			goto out;
 -- 
-2.48.1
-
+2.39.5
 
 
