@@ -1,160 +1,164 @@
-Return-Path: <linux-kernel+bounces-632420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93FBAA9717
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:15:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A11CAA971C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D34A16E295
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:15:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC8571890979
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7AF25C83C;
-	Mon,  5 May 2025 15:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABCD25D543;
+	Mon,  5 May 2025 15:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KeyV2cBh"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PKxUygPD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RMRlgZSS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D8E4C85
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643024204E;
+	Mon,  5 May 2025 15:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746458093; cv=none; b=Z6khYyAArwgPdM9zZ4NX4CaGbYuBousaBq/dgMvxIYjyPgU/HrSqTE/jv655HgtHxfUO3rrSO/9qHJSEwY3TOnACvrX4+g1O3HGyIeAbrw3wvsAz3sIh+ljKKMeWvFnTfIJljb79bo5Ifojk1b+VhTPol3maYHxksoT355Tp10I=
+	t=1746458175; cv=none; b=QGU09mo0Y0s2EUW1khFlaf/DWbICll58058t2sIyHnh4Ff2CC24AKW2+MLOs+6WAPnCT6HjLqrtpU9mZle4iWGm216b89hQvpKvxTchDp91PtbTJGXOJRl8OqzYqVlW5kuqD5H7Tcs27hnIlm84dgUiUnnQmby/LfHqHi8tAMKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746458093; c=relaxed/simple;
-	bh=pgPKW4o269AEzuRZ7ilMi1bigEa3Hu2tQwNb2hqo0bY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7cI65px4oF5BL21wyTZHjJfiaJIjd3IOkQlE+lniLoTfvr4foJyGMU6JyrOCvHA/Otjfl0LXrGkzoDXstnliz+unKCe3CQS2tn3+jUqYFiRLS82gF5a0588M0hHke+NFTPm98YU472LnDx8i6oSGNg5J/cmsOaeyWi/k/iaSBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KeyV2cBh; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-44069f5f3aaso5420055e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746458090; x=1747062890; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=d32GTanChrRQiIX2kw/78XA2TlMTohJ35wsLjmwnrpU=;
-        b=KeyV2cBhwdOBj86COo1QPl3oGjWmy1Vuk4j6RzqYQcffmZLvwrpDFPp6A+PDWMfrNG
-         fWSTdHvXIlj5aM47r0oO5/0WcVyOJIfyrApvA/RTfzcyzv7TJQHvOw1i69LNjfKog2Nx
-         CVjY57PnNB4zKsu1IxNVIHCGOgOaozxdj/uKmAe6BWAH7OQ/e7gLFUxx20dHpeWgtPuD
-         fQssMeUEMAHuGfa53CsunVFFduLvWdW/bIIN3PSnuwQfW6J2qBWuKim4UqG891EKXsaK
-         0JQVAuUyhQqdcj/8mSaxINkQk2LrZnKCiaZc81yklpZVDQ2gjxGtUaRICLbgTOGDEBdq
-         1iRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746458090; x=1747062890;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d32GTanChrRQiIX2kw/78XA2TlMTohJ35wsLjmwnrpU=;
-        b=ZLXBGZiiPAeNEs1fgxjC5nCenIJPkHtzJFTSwVPHx1qOYJ7DjZa9ZfYk6OmD32c23I
-         9JxYwRUvHxL/kq7Y7fRaI+z2uEKF3tluoHfpNu5hS6sg+rV44vQ9D0rcy16neLLPAKHT
-         CBus6+2q65Y7qinc9wvDzVAuyKsnDta6X4ieSPlaJMV2RzdSfDnB7ztSoQdsMAS6yh1Y
-         OW8t7Vegk6JNaaI5d1hHmH26H4dzOsLD32GMcOT3LgI0Vx5ex43C1WDyfFVK65sjfDIk
-         VmmoIirf/d29J5pgk3XdeiuNMfNBPfiUs3JntaqWDTGOC1eUdpNrAblZDSf3GCYi8rsV
-         q3Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVO4nPSEy7qMNSPqwV2Xi1GMB5SW6yXiL+BfDkzewuy3hTZEwfrnsZ+jpQ+MzTpu6AVkLGLM/ZU9/QcDik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRnEZ8E+93fllvpem95Ekq+DiQF5oMgXemSIvY/PpJEj/iVxoR
-	3L1X6ofaA/MRe69iQmq/faF6GXWnSo/xUCifL3BCHORj5YneWtggSkTWeHidjMo=
-X-Gm-Gg: ASbGncug++6AOomN/XCyYWS3IcXJAez/xJdGsEnz9EjtHtkVD9xiCZUorVnfTPdAKfG
-	Zmaqz2zbs7PsuHWVwqBXj8e98lj+lIlP4N2JBH3+pS/EATHGIfnZ1UP8JnQJNAqgjgsVgtTvKtD
-	CHV/cs+OS92m+7qU5b43IDh5zzrAjVUDc4XDYy4kd4XQBBZiVrG8CXSZ2cqJ1YYnNxw/Sk6Mdtl
-	amJLJb3mZ7IOF24ohlfkqI1YWbyPgqRzelkjjv8SVU1dxQhm9Sbza6GtLXvSa6rxo+ulRU9Eq6X
-	v+uDRdV7Mpwn1e5Yg9WTREt9bR7Nj6iIHwfRQgfXBkFwoPURB7z0eJoWCvi9+8O5vrYxSw==
-X-Google-Smtp-Source: AGHT+IGcpN1WH+W1TOAguqrm2FpFHGatweK6lfRlcaT9gjRgYlUH82bX8IAOdPt8S2pz9M/xpfDWfg==
-X-Received: by 2002:a05:6000:40dc:b0:3a0:6bd0:9771 with SMTP id ffacd0b85a97d-3a099adde6emr3159216f8f.7.1746458089886;
-        Mon, 05 May 2025 08:14:49 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2aecc14sm182288875e9.12.2025.05.05.08.14.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 08:14:49 -0700 (PDT)
-Message-ID: <4fe7a429-50d8-41a6-a63a-6294cc76d599@linaro.org>
-Date: Mon, 5 May 2025 17:14:47 +0200
+	s=arc-20240116; t=1746458175; c=relaxed/simple;
+	bh=Mfsyo2fSDCNmEv9ZhVx16pPueonzCvDgyr5p8l92RKo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FAaJYI7no7RBX0LI+8/FC1KSg7iz2eMH3Mn5aKnwWpgCjmeFXtRp4o84zjbSVLLGR+knegutlXnsnFdwkx35HCNg9i35MZbTuFXo/K4Fmig+ynMIMJjuPhr9Y1X5QMVPCVWZbsjC5VRU5JxI4Jmm1liGVEvpQnxxZC1/nZ+J+kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PKxUygPD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RMRlgZSS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746458171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rhKbZviyh0DAUxpnNqUgMkCDm0UvTfhEoezn0+KkcyE=;
+	b=PKxUygPDerNLepPVwNJawPuRl2VPnsk9ov8WwvISJETw006A+eVn6/jD1hkmM8M/1QMCOB
+	Tr0dI5a1+XjWeR3WgnC3F5NWd/x/9F1basFi4S5d6YQ4q0tOYmNg1UgDT8P72liveRLhvm
+	01lqEUk0yVbfUQ4joePBapmiqyLIlaIVD9YPICSzWQGmq8c9UbU1T/R9wEZo3ztgtXnDNj
+	J/Uh6qtoJ5AP0UhuDfS2WYACCaHlR6PJzA8dADHC0k+R8f0eM6vS4uy4hduXoOvx2z4jEM
+	njo8Dk6WXjNH61wBs6U4W+H9ibUc5Kkxg5jeceLfLPHt8Rb8Ehd+FCf//XHReA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746458171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rhKbZviyh0DAUxpnNqUgMkCDm0UvTfhEoezn0+KkcyE=;
+	b=RMRlgZSSHVtl8grGxghGuzPgzBlX+YKuDlE9tKqqaj15ov7fxpiZ6OUbnSAvEKe1bID+7E
+	aMR6fceC2yNgjuAQ==
+Subject: [PATCH v4 00/14] kselftest harness and nolibc compatibility
+Date: Mon, 05 May 2025 17:15:18 +0200
+Message-Id: <20250505-nolibc-kselftest-harness-v4-0-ee4dd5257135@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/panel: Add Novatek NT37801 panel driver
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250505-sm8750-display-panel-v1-0-e5b5398482cc@linaro.org>
- <20250505-sm8750-display-panel-v1-2-e5b5398482cc@linaro.org>
- <2fb8cb05-8fd7-431d-87a9-134448125f06@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <2fb8cb05-8fd7-431d-87a9-134448125f06@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAfWGGgC/4XPwU7DMAwG4FeZciYosdM15cR7oB3SxKEWVTolp
+ Rqa+u6k5QCaYBx/S/5++yoKZaYing5XkWnhwlOqwTwchB9ceiXJoWYBChqlUck0jdx7+VZojDO
+ VWQ4uJypF2h689c4b7KOo6+dMkS87/XKqeeAyT/ljb1r0Nv1CQePf6KKlkkhkj8a0faPi88jpf
+ c5T4stjoK1nR1CZfxAXvGt9ANQEN8h23QLfFxnV3sGgYtFaDbE9UofqNwx/YFrfwbBiJnReQdf
+ YDm/fO63r+gllOEHQowEAAA==
+X-Change-ID: 20250130-nolibc-kselftest-harness-8b2c8cac43bf
+To: Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Kees Cook <kees@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+ Mark Brown <broonie@kernel.org>, 
+ Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746458170; l=3781;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=Mfsyo2fSDCNmEv9ZhVx16pPueonzCvDgyr5p8l92RKo=;
+ b=AXsv6aUsN4ncuUf6sHOJJ49+hKnIzDsVmDkMsD8F+48DPHJ7yjAJKEZfXpPd/DdYOyU8hMs1y
+ IPEFZ38LViqCTsnV5GUDWu8nioVgWm6c5hEH77d1TR15FddWH+KKYih
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 05/05/2025 15:58, Neil Armstrong wrote:
->> +	dsi->lanes = 4;
->> +	dsi->format = MIPI_DSI_FMT_RGB888;
->> +	dsi->mode_flags = MIPI_DSI_MODE_NO_EOT_PACKET | MIPI_DSI_CLOCK_NON_CONTINUOUS;
->> +
->> +	drm_panel_init(&ctx->panel, dev, &novatek_nt37801_panel_funcs,
->> +		       DRM_MODE_CONNECTOR_DSI);
-> 
-> Please switch to devm_drm_panel_alloc()
-Ack
+Nolibc is useful for selftests as the test programs can be very small,
+and compiled with just a kernel crosscompiler, without userspace support.
+Currently nolibc is only usable with kselftest.h, not the more
+convenient to use kselftest_harness.h
+This series provides this compatibility by removing the usage of problematic
+libc features from the harness.
+
+Based on nolibc/for-next.
+The series is meant to be merged through the nolibc tree.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v4:
+- Drop patches for nolibc which where already applied
+- Preserve signatures of test functions for tests making assumptions about them
+  drop 'selftests: harness: Always provide "self" and "variant"'
+  add 'selftests: harness: Add "variant" and "self" to test metadata'
+  adapt 'selftests: harness: Stop using setjmp()/longjmp()'
+- Validate test function signatures in harness selftest
+- Link to v3: https://lore.kernel.org/r/20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de
+
+Changes in v3:
+- Send patches to correct kselftest harness maintainers
+- Move harness selftest to dedicated directory
+- Add harness selftest to MAINTAINERS
+- Integrate harness selftest cleanup with the selftest framework
+- Consistently use "kselftest harness" in commit messages
+- Properly propagate kselftest harness failure
+- Link to v2: https://lore.kernel.org/r/20250407-nolibc-kselftest-harness-v2-0-f8812f76e930@linutronix.de
+
+Changes in v2:
+- Rebase unto v6.15-rc1
+- Rename internal nolibc symbols
+- Handle edge case of waitpid(INT_MIN) == ESRCH
+- Fix arm configurations for final testing patch
+- Clean up global getopt.h variable declarations
+- Add Acks from Willy
+- Link to v1: https://lore.kernel.org/r/20250304-nolibc-kselftest-harness-v1-0-adca7cd231e2@linutronix.de
+
+---
+Thomas Weißschuh (14):
+      selftests: harness: Add kselftest harness selftest
+      selftests: harness: Use C89 comment style
+      selftests: harness: Ignore unused variant argument warning
+      selftests: harness: Mark functions without prototypes static
+      selftests: harness: Remove inline qualifier for wrappers
+      selftests: harness: Remove dependency on libatomic
+      selftests: harness: Implement test timeouts through pidfd
+      selftests: harness: Don't set setup_completed for fixtureless tests
+      selftests: harness: Move teardown conditional into test metadata
+      selftests: harness: Add teardown callback to test metadata
+      selftests: harness: Add "variant" and "self" to test metadata
+      selftests: harness: Stop using setjmp()/longjmp()
+      selftests: harness: Guard includes on nolibc
+      HACK: selftests/nolibc: demonstrate usage of the kselftest harness
+
+ MAINTAINERS                                        |    1 +
+ tools/testing/selftests/Makefile                   |    1 +
+ tools/testing/selftests/kselftest_harness.h        |  175 +-
+ .../testing/selftests/kselftest_harness/.gitignore |    2 +
+ tools/testing/selftests/kselftest_harness/Makefile |    7 +
+ .../selftests/kselftest_harness/harness-selftest.c |  138 ++
+ .../kselftest_harness/harness-selftest.expected    |   64 +
+ .../kselftest_harness/harness-selftest.sh          |   13 +
+ tools/testing/selftests/nolibc/Makefile            |   15 +-
+ tools/testing/selftests/nolibc/harness-selftest.c  |    1 +
+ tools/testing/selftests/nolibc/nolibc-test.c       | 1715 +-------------------
+ tools/testing/selftests/nolibc/run-tests.sh        |    2 +-
+ 12 files changed, 313 insertions(+), 1821 deletions(-)
+---
+base-commit: 2051d3b830c0889ae55e37e9e8ff0d43a4acd482
+change-id: 20250130-nolibc-kselftest-harness-8b2c8cac43bf
 
 Best regards,
-Krzysztof
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
