@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-634805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69A1AAB4D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:16:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F83AAAB49E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC313B5A1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C1B21B60627
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6464047DCAE;
-	Tue,  6 May 2025 00:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D6747ED9D;
+	Tue,  6 May 2025 00:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYuXc8n4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwwZf7P9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6693A389401;
-	Mon,  5 May 2025 23:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0D12F0BB5;
+	Mon,  5 May 2025 23:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486753; cv=none; b=XTbGbxUquFUrOhdhxLFN0AdyJDSm0sunyZinmv+YODMPS9DAscU42dahgp2H1+3xfrJhCTNBpJP/MMVFOIdSZKYd0FUsUOZ6g7i9RViP9M1xWIz3Uh6khj2yQviThLZn+ymYmwutAuTzgo8yB9xds+OOgjyZEVddNAgYApVBLTQ=
+	t=1746486759; cv=none; b=FNy8oWkQbIfMXJFzgSaNbxtyMVj+rA8Xojh46iFCwqSWUi/3jJX7bnGOZxgpVbO/9XfP0gptUsJo2Yj3GEEuz4R0k45GiyMqhjc2Tb0eRKvZamt0gBJm0OXTfRlTCBeTXg/9108rMGUSnv3I2K1PgKvTX8kGaTRpiy7CpnLQItM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486753; c=relaxed/simple;
-	bh=uk8MysGQEPaxlxxwg5K/J3eRbH1SAWnRT1OLiffH3GE=;
+	s=arc-20240116; t=1746486759; c=relaxed/simple;
+	bh=2MhPMJolL3bzf0hpny7AO0Glle1RNAMi1eEnNaXcDZs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XNHK+SVUwyDcPZ2pYknFUCKU33HV+uYUysmb21IqCMB2dJviA9cvFay1aKBCqlwkpZeD8s4aKzMweKBOqwFb/5C2advWoL3zkkuAmNGwDL49yWDfBDPLC9LiFhfRelxQ7AyTwZIM0/nin9ARECbwNxBPWzz8NUExwi9zLV9ZOIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYuXc8n4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20BDAC4CEED;
-	Mon,  5 May 2025 23:12:31 +0000 (UTC)
+	 MIME-Version; b=c8mpPRiy1SyLxd/gWEGivK21BkzAQsJD8Q87GcsfZ1nQba1eEWLQgymlK8MAqHqcIiAZbRiqRRoVKWt6Av1dgg8a9IBZSzp7aJrC/e1wJZ4aBBwpdSC1d/yojbXPjenBA1+FOYpkPmywDXUg60WCwndyivmZ6Kei+sA02pH3Hw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwwZf7P9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F84CC4CEEE;
+	Mon,  5 May 2025 23:12:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486752;
-	bh=uk8MysGQEPaxlxxwg5K/J3eRbH1SAWnRT1OLiffH3GE=;
+	s=k20201202; t=1746486759;
+	bh=2MhPMJolL3bzf0hpny7AO0Glle1RNAMi1eEnNaXcDZs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UYuXc8n4/3QQMNQQ+iRlfSLY/Ov3JTnrNiNm1ivg7CWtB8oHoPdf9WhZXHpo7y+Mv
-	 cvRqFAVH7JmeDobLQk6zcvb9iu+0uXX6o2wbbFtS3pXaVQtlPLy+pVAuev8/yQ1wpA
-	 vIgeJqY1h0F7BnjGWb4r42sJnyxq8ikDjCPAjORdlrBVXi0GRiuXLEwyrgIG2S3wQE
-	 oRyxzxrUMRqTS/fjfzYO4/vntvAOk7BKXvl8bCDudbTl14gT0h+hSy9p6/d5Oh/COG
-	 GPt5MCW7Wuf6GjGGMOsOsER4HcyH1qUD7PmnHh91j0JkOifk7cHtlVjESTx0IuxLIe
-	 GUEgFqFrKDNjg==
+	b=JwwZf7P9smrhSyYQxigbdDOObpT/rDs4oTcKaU6yI/8OnE6WlD5CZxs/GgEmcC5M2
+	 Uyc0iSRV1bMlsfY251IUilzaaqI8otmgZMqyeZNMQEAEFVBzfCxpbzyg4cIPp2x1yO
+	 8vyhxzWoG+lBggIhMwc8A/jVNxqaEywl4IWLWkHXYijyrnZnDhsiBRgaoS8D9Zppv8
+	 V+35DrbEuAC91O8O4jak8TmMng0NBziIXjfJgU9f1uaXSaKrD4EjVALZJeV0+GTRff
+	 elY2+6I9kVhsu/MA4r6w3eKWDf9Pv/ak4juke4bvWDefOewltqQP7DlpHFjeS64de+
+	 phQfxev2wpi7Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	akpm@linux-foundation.org,
-	mhocko@suse.com,
-	mjguzik@gmail.com,
-	alexjlzheng@tencent.com,
-	pasha.tatashin@soleen.com
-Subject: [PATCH AUTOSEL 6.1 184/212] exit: change the release_task() paths to call flush_sigqueue() lockless
-Date: Mon,  5 May 2025 19:05:56 -0400
-Message-Id: <20250505230624.2692522-184-sashal@kernel.org>
+	nic_swsd@realtek.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 188/212] r8169: don't scan PHY addresses > 0
+Date: Mon,  5 May 2025 19:06:00 -0400
+Message-Id: <20250505230624.2692522-188-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -69,80 +70,34 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Oleg Nesterov <oleg@redhat.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit fb3bbcfe344e64a46574a638b051ffd78762c12d ]
+[ Upstream commit faac69a4ae5abb49e62c79c66b51bb905c9aa5ec ]
 
-A task can block a signal, accumulate up to RLIMIT_SIGPENDING sigqueues,
-and exit. In this case __exit_signal()->flush_sigqueue() called with irqs
-disabled can trigger a hard lockup, see
-https://lore.kernel.org/all/20190322114917.GC28876@redhat.com/
+The PHY address is a dummy, because r8169 PHY access registers
+don't support a PHY address. Therefore scan address 0 only.
 
-Fortunately, after the recent posixtimer changes sys_timer_delete() paths
-no longer try to clear SIGQUEUE_PREALLOC and/or free tmr->sigq, and after
-the exiting task passes __exit_signal() lock_task_sighand() can't succeed
-and pid_task(tmr->it_pid) will return NULL.
-
-This means that after __exit_signal(tsk) nobody can play with tsk->pending
-or (if group_dead) with tsk->signal->shared_pending, so release_task() can
-safely call flush_sigqueue() after write_unlock_irq(&tasklist_lock).
-
-TODO:
-	- we can probably shift posix_cpu_timers_exit() as well
-	- do_sigaction() can hit the similar problem
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Link: https://lore.kernel.org/r/20250206152314.GA14620@redhat.com
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Link: https://patch.msgid.link/830637dd-4016-4a68-92b3-618fcac6589d@gmail.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/exit.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/realtek/r8169_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 49e4792405008..3ed45df420d9b 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -198,20 +198,13 @@ static void __exit_signal(struct task_struct *tsk)
- 	__unhash_process(tsk, group_dead);
- 	write_sequnlock(&sig->stats_lock);
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index 4b461e93ffe9d..6346821d480bd 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -5156,6 +5156,7 @@ static int r8169_mdio_register(struct rtl8169_private *tp)
+ 	new_bus->priv = tp;
+ 	new_bus->parent = &pdev->dev;
+ 	new_bus->irq[0] = PHY_MAC_INTERRUPT;
++	new_bus->phy_mask = GENMASK(31, 1);
+ 	snprintf(new_bus->id, MII_BUS_ID_SIZE, "r8169-%x-%x",
+ 		 pci_domain_nr(pdev->bus), pci_dev_id(pdev));
  
--	/*
--	 * Do this under ->siglock, we can race with another thread
--	 * doing sigqueue_free() if we have SIGQUEUE_PREALLOC signals.
--	 */
--	flush_sigqueue(&tsk->pending);
- 	tsk->sighand = NULL;
- 	spin_unlock(&sighand->siglock);
- 
- 	__cleanup_sighand(sighand);
- 	clear_tsk_thread_flag(tsk, TIF_SIGPENDING);
--	if (group_dead) {
--		flush_sigqueue(&sig->shared_pending);
-+	if (group_dead)
- 		tty_kref_put(tty);
--	}
- }
- 
- static void delayed_put_task_struct(struct rcu_head *rhp)
-@@ -281,6 +274,16 @@ void release_task(struct task_struct *p)
- 	proc_flush_pid(thread_pid);
- 	put_pid(thread_pid);
- 	release_thread(p);
-+	/*
-+	 * This task was already removed from the process/thread/pid lists
-+	 * and lock_task_sighand(p) can't succeed. Nobody else can touch
-+	 * ->pending or, if group dead, signal->shared_pending. We can call
-+	 * flush_sigqueue() lockless.
-+	 */
-+	flush_sigqueue(&p->pending);
-+	if (thread_group_leader(p))
-+		flush_sigqueue(&p->signal->shared_pending);
-+
- 	put_task_struct_rcu_user(p);
- 
- 	p = leader;
 -- 
 2.39.5
 
