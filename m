@@ -1,146 +1,117 @@
-Return-Path: <linux-kernel+bounces-633898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 809DBAAAAA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:41:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA8EAAAAE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C69188AE4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:40:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 315147AA261
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA5F2874FB;
-	Mon,  5 May 2025 23:03:45 +0000 (UTC)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6602F37BD;
+	Mon,  5 May 2025 23:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8mrYBtm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE2135D7B0;
-	Mon,  5 May 2025 22:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D50538E92C;
+	Mon,  5 May 2025 23:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485907; cv=none; b=NqXndjlF7UXtxwhv5z97T9mG8vtn7fe0UZWKJ2/siY2KfX2elLmjlwiUmF8ldmBJrqIdPV6or73MKZtBsvKdvv0g/ILbbiwvQApe/ohty1SpxZ1X2lHa5+gJoyONuW2GGfov5ldHJ+oYS61pQ4hmnizFB3wA3Msjbw8eMYVzN9o=
+	t=1746486122; cv=none; b=GNpsW5CzgqlVHmiwvHuwjLxobUXqQq0zhgLUIH93PZD31LLX0cHSFlcQ2x68sOJWUcrJB5b6f6bdLB419iGjszSbeftjgGD9vLSSfI0dEC+ilrHbByqr5ZobcMORibXDR+cSmXBIrbmjbmaqf7LIPEmn2H7mEGQoksukVv2EU7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485907; c=relaxed/simple;
-	bh=0iA7SnkO+rHs3cH5clhDyFXZGFleV4DrWF4XKWa+sJE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uf8qPEEDBUnaZ553HgnSeD5UqVrieQTt3M/dYADeJC30THNN4W6Efhcj34Fk4JGNNoyNsEkUdeZGXENHGrbGjSG3GQe75Ih070Oub1BKk2f8yTEy7nVeMxefOTtvNl15qJsacBp1sgsyv8ZmUsUV5j7Y7p6H2ITyq+P7dgFVe8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-301a8b7398cso562090a91.1;
-        Mon, 05 May 2025 15:58:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746485904; x=1747090704;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E69HBkxQBdEYOvZVGJya06bZ/qelSSQFUZVNp/6hv4Q=;
-        b=lJvzSgtyPnoHiFxUpFmzKiz6URvRZCx33ChApMBAWF5Uz4p1OO6I1sMp03p/ZBPdC5
-         CV2FEGQWEd3E4Adp4bPi2kC2N5bhT/wnoMehzaRNZcemP6lGxUBuNuXGJUsAxryDBtmu
-         Rms+Vn2Z+aN6yYDDw+b7VyapearqB8sxGQpkE2RPvuA2JyH4OsgM4nr9WpzmT+rs2iSx
-         Zj2MoGS+0klurQsSW1GHPX5MzQPmgMQvrU8gPG3aBJGyaf2JBo37mzzWLUbLtjbByi2k
-         NS/qM1NE4n8xIh/SzcACPHBeGSnkHfCG4ORTyK73nAAK5cWAVE35+cQO+tMZDx1WUB+x
-         1fYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUy6vXRy3kTbASz93AciySyXYKbLdiB0fKenkW1NjoReB3gmSsA0+oM+nnU8TcJtItGnmBSCEGDFvw=@vger.kernel.org, AJvYcCW3l945nYAP1uoPIEObMwQN5vNaEhUmPxu8fCwGkR7reNSzGJB2C/UR7WjrSTxyWvtuYi48bmNDyL04c0xb@vger.kernel.org, AJvYcCXoIxNff7atlPMw04bMfZJInDljxL1XIH3+HKisiGdAV/xwd5MKP6qrLp+WFnQnk3xxKz5yCEDWQmDZIcDz3A==@vger.kernel.org, AJvYcCXrFlfSJZJopr1GzL9abx1UcVQzAmxI+CxHiaRy9dLHMrTRcmUiisFnyBELekhLrln7Gg2OJ5Yfo+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Kn69NkgJleSsMj82SLxJRVlEphWtb+4NVeyh1/s+RKJP4GE4
-	IffK3d/+i5+KK9+DvlZTzQSPLfTgkXw/vCtMxJLkG/cXFlwkKdRV
-X-Gm-Gg: ASbGnctmvgOoU12WsfDLDTmS0ysJgv7vV8tlt6/iPrlv89zx67kJ6L6yuwy8UA3XZwd
-	tESQWLnaLzdJQ3W7IaOVVlX7dCwskH4YyihJHfOgPAXWXMVYH7ADSikJdROMI8ytUnFKj78Ob7w
-	F6Cneypm7r9SJBI7peWvFfvgIkXQ+RhzdgwSdiGmmYP3uGakvu7kI1Wz1dvum0L1m9Lcyr9DOKQ
-	ljVFJPmJAtLWdugEkb90rC3kldSorJ/sVj913oybvLSmd8GjRTSyuIyVnQep3efrD9PyD2Gq2Jf
-	oHWZVc00o6lD/qJ8kxHYowJxSSnwxdMxwVUKvkxtr8l/W36k/e+I
-X-Google-Smtp-Source: AGHT+IHJTeyvyyCYbIt/rYD4AuU2+QD3JmkKZhwPhbVCwB3WHS4NZFqPQbdjDVG7wdbKMVf90do5qQ==
-X-Received: by 2002:a17:902:d4c4:b0:224:e0e:e08b with SMTP id d9443c01a7336-22e1022be16mr89698425ad.0.1746485903779;
-        Mon, 05 May 2025 15:58:23 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a347488b0sm12359854a91.16.2025.05.05.15.58.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 15:58:23 -0700 (PDT)
-Message-ID: <81a917f3-fb41-4958-8d76-7cdfa7b60a7c@kzalloc.com>
-Date: Tue, 6 May 2025 07:58:18 +0900
+	s=arc-20240116; t=1746486122; c=relaxed/simple;
+	bh=MruHz70q8C4LHPMWLrcifiaLFqr0szg5KcDA46S/mnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cF3UAilCt1HdSezVqKDQkCATwr/i5ty3tPrkvWKl77r3CpPOXj0vabZBm6hv282nuGAPhxjOnhx2z74ZuY6DeO7R8vrpsWY9/vqblKkpkQKoyKW/2DJ8/Me46a2l2MzF0K2Jvki63Bx5E1L7bhH0gUksXzx4Fc+/31SWP7KjDCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8mrYBtm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A89CC4CEED;
+	Mon,  5 May 2025 23:02:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746486121;
+	bh=MruHz70q8C4LHPMWLrcifiaLFqr0szg5KcDA46S/mnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O8mrYBtmF4fTFyUfX3jbyauHlWz8NT6nK80QoKyLfppZNoP0O6PRoE/FkS0bP09tc
+	 lPerD+IaP9PP7Xn1p5PtIr3NY+RmdTX2N7oDpQisLIFa2XiAgS5xrjHhePnE8tBLP+
+	 vppqTSQ08gZ+mPCskQiwsvXpx76Zb+W+r9dMI6FUzv6NWzRmHKYyFQETjUO/RKHNNs
+	 cAnx7xj54ziPRX5HPaZbBBdQrJDSY9Y3t6AT5U4kc0QBowQwbE9eF0ozbtY+cgrSNs
+	 KmhxxVmOowe8Hv43UkEGqKPhRLuxELrmBWsZYwKUq3qag0ai2divO2HUfdNXW3TmrL
+	 9pyvLTi6IAI1w==
+Date: Tue, 6 May 2025 01:01:57 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Emanuele Ghidoli <emanuele.ghidoli@toradex.com>, 
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1] i2c: lpi2c: implement master_xfer_atomic callback
+Message-ID: <aotznndpptgl5qtmkavmeuqydzpkefncnovddzyqqst6ozsm5p@fewoclduusfz>
+References: <20250319145114.50771-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: Prevent panic from NULL dereference in
- alloc_fs_context() during do_exit()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Len Brown <len.brown@intel.com>, byungchul@sk.com,
- max.byungchul.park@gmail.com, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
- linux-efi@vger.kernel.org
-References: <20250505203801.83699-2-ysk@kzalloc.com>
- <20250505223615.GK2023217@ZenIV>
-Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <20250505223615.GK2023217@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319145114.50771-1-francesco@dolcini.it>
 
-Hi Alexander,
+Hi Francesco,
 
-Thanks for the feedback!
+I'm sorry for the late reply on this.
 
-On 5/6/25 7:36 오전, Al Viro wrote:
-> On Tue, May 06, 2025 at 05:38:02AM +0900, Yunseong Kim wrote:
->> The function alloc_fs_context() assumes that current->nsproxy and its
->> net_ns field are valid. However, this assumption can be violated in
->> cases such as task teardown during do_exit(), where current->nsproxy can
->> be NULL or already cleared.
->>
->> This issue was triggered during stress-ng's kernel-coverage.sh testing,
->> Since alloc_fs_context() can be invoked in various contexts — including
->> from asynchronous or teardown paths like do_exit() — it's difficult to
->> guarantee that its input arguments are always valid.
->>
->> A follow-up patch will improve the granularity of this fix by moving the
->> check closer to the actual mount trigger(e.g., in efivarfs_pm_notify()).
+Can someone from NXP help with the review? Carlos? Dong?
+
+On Wed, Mar 19, 2025 at 03:51:14PM +0100, Francesco Dolcini wrote:
+> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 > 
-> UGH.
+> Rework the read and write code paths in the driver to support operation
+> in atomic contexts. To achieve this, the driver must not rely on IRQs
+> or perform any scheduling, e.g., via a sleep or schedule routine. Even
+> jiffies do not advance in atomic contexts, so timeouts based on them
+> are substituted with delays.
 > 
->> diff --git a/fs/fs_context.c b/fs/fs_context.c
->> index 582d33e81117..529de43b8b5e 100644
->> --- a/fs/fs_context.c
->> +++ b/fs/fs_context.c
->> @@ -282,6 +282,9 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
->>  	struct fs_context *fc;
->>  	int ret = -ENOMEM;
->>  
->> +	if (!current->nsproxy || !current->nsproxy->net_ns)
->> +		return ERR_PTR(-EINVAL);
->> +
->>  	fc = kzalloc(sizeof(struct fs_context), GFP_KERNEL_ACCOUNT);
->>  	if (!fc)
->>  		return ERR_PTR(-ENOMEM);
+> Implement atomic, sleep-free, and IRQ-less operation. This increases
+> complexity but is necessary for atomic I2C transfers required by some
+> hardware configurations, e.g., to trigger reboots on an external PMIC chip.
 > 
-> That might paper over the oops, but I very much doubt that this will be
-> a correct fix...  Note that in efivarfs_pm_notify() we have other
-> fun issues when run from such context - have task_work_add() fail in
-> fput() and if delayed_fput() runs right afterwards and
->         efivar_init(efivarfs_check_missing, sfi->sb, false);
-> in there might end up with UAF...
+> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+>  drivers/i2c/busses/i2c-imx-lpi2c.c | 258 +++++++++++++++++++----------
+>  1 file changed, 173 insertions(+), 85 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
+> index 0d4b3935e687..f34b6f07e9a4 100644
+> --- a/drivers/i2c/busses/i2c-imx-lpi2c.c
+> +++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -187,36 +188,35 @@ struct lpi2c_imx_struct {
+>  	struct i2c_client	*target;
+>  };
+>  
+> +#define READL_POLL_TIMEOUT(atomic, addr, val, cond, delay_us, timeout_us) \
 
-I see your point — simply returning early in alloc_fs_context() may just
-paper over a deeper issue, and I agree that this might not be the right
-long-term fix. I wasn’t aware of the potential UAF scenario involving
-efivarfs_pm_notify() and delayed_fput().
+READ_POLL_TIMEOUT is not really a name that belongs to this
+driver. Could we name it something like
+lpi2c_imx_read_poll_timeout()? I'd prefer lowercase, but I
+won't object to capital letters.
 
-I’ll take a closer look at the call paths involved here, especially
-around efivarfs_pm_notify(), fput(), and delayed_fput() interactions
-during do_exit().
+Additionally, the timeout_us value is always 500000, could we
+just drop it from the parameter list? Same goes for LPI2C_MSR.
 
-Also, I’ll loop in the EFI mailing list so we can discuss this
-further from the efivarfs side as well.
-
-Thanks again,
-Yunseong
+Thanks,
+Andi
 
