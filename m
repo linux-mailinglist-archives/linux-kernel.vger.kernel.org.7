@@ -1,140 +1,94 @@
-Return-Path: <linux-kernel+bounces-632558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA868AA98D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:28:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF73AA98DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A473BB123
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:27:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC73B17CEE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AF826C390;
-	Mon,  5 May 2025 16:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474F626C39B;
+	Mon,  5 May 2025 16:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNaMgTbn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RE31I3cy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E6C26B956
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 16:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED1E26E143;
+	Mon,  5 May 2025 16:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746462411; cv=none; b=QHrGgBL4na+txlkfTpie3i751e8/zzJRARqDRpEaI86b0/vyf0MF5TqhYy/FhetrXR0JPKycUkCa12IxXh7x5gOF1e89QWkZ/w6pcqlwO+wvjssPBsF26DbpdVxF7nKBALAdKc9rbbGxP+OgQLE38vJSgoi3cog1y4Xsl4M7HCY=
+	t=1746462416; cv=none; b=ZjhXks1JkH7ucv8AKjYgDJxW5GMHAkWEgZm+FijdSgi9MUPCiMiZXA9AMIp3zsUFgs/iISVS/kx4N/OlMJFFsZIqd+AV89MqDUcfV/Vc1FMRHYGfy09yyzhxoowutw/nEbQ8YPGoE/C2AuW9o+ByKQX2Z3qjgn+5OBuqKXZnKzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746462411; c=relaxed/simple;
-	bh=EGGJnHIWc15ljBJ4BvumRNEt/hLw4JN780A4hfHI4Os=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uFByoMjn9cJdGq4BXmrV4Ncip8J9PIuQJ75HW1EFgeQ87BsW4UTM2Koz8mZz1PSaa7U/yS4BvN0mcozYSPlqeXX7QiR/fQXjWDV+JTkvM/k0qXnwTvFzmP9O8xz1SRlC6Uk1ij1Kfh8b6MvCgNXkFyBvgOUELvrek0Tbp/u6jrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNaMgTbn; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746462409; x=1777998409;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EGGJnHIWc15ljBJ4BvumRNEt/hLw4JN780A4hfHI4Os=;
-  b=iNaMgTbn+LghSZqdYARPU8HTon5USN4lc9xq9XfJvkNSFITLXZ/MY7FY
-   Xd9yQ2tVsxdJzBXywQxa1voWMXnBBajLGCYdjo1/CPmER51+CHIakeSSo
-   hwvp15CCRfXmu7InXNaUrvaIzBNoPfl4VvN6Q+pb8pLLSLv3vnRk3lDpb
-   EPAcKSxYo3rbaQ+w0oa2yuMvbPgH3iWlsLeswyjPJ7SVYSr2LLBKYzpDj
-   KXloRER2gjsR4sJigi8lfUOkaqCTV9UePCI5x9MhMtzyOMRl4atqjdm4u
-   Y0onmzxrB5m6ChHdW/pXIbloymZCBQHYzPUqVPNhGo0a65WMgiFqlqt6U
-   Q==;
-X-CSE-ConnectionGUID: bM/4tGXjRJ6lcQbOljbnZg==
-X-CSE-MsgGUID: IWhUqfZiTRm7UKCmuTnGAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="58742373"
-X-IronPort-AV: E=Sophos;i="6.15,264,1739865600"; 
-   d="scan'208";a="58742373"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 09:26:48 -0700
-X-CSE-ConnectionGUID: uG6Z+SZOSf+4vvo/6Xu13w==
-X-CSE-MsgGUID: z/ZGRtCsShm8DkK0KpgTpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,264,1739865600"; 
-   d="scan'208";a="140461397"
-Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.221.35]) ([10.124.221.35])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 09:26:48 -0700
-Message-ID: <78ba0ac1-18ae-45ce-ae62-f9507de0fa9e@intel.com>
-Date: Mon, 5 May 2025 09:26:45 -0700
+	s=arc-20240116; t=1746462416; c=relaxed/simple;
+	bh=0FA9ZxPVKHr+QVDvJVcCqlsa9HFGPQiD9yLo3K/xWI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DjS8t1zNw2l8WBbUj0l7CY3pIRcBcskS+qX7xYe4rRuJa7j/ovgEQ3sHFxQiycFOw0yfEfMfYu7/cOIvnBOJZLro3hgy5wSrz93V7bbHvgpyG12Dui5tjLRYRDSq98bAWOd95zvsb+eflFFF69BOrbQVsVLb0xxWxf1dhuU5rkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RE31I3cy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QWyIPfbKGN6ElRg+2eJC1JBl8Q1lwxPgt6OPkmoGqmQ=; b=RE31I3cyW0mz2FPDHHVzAG1o8i
+	luuxU+UMhj6rjeMh8qgLY19WO9Rm7EEb+oHli+X8wWex2vmKvkGZcoYr841sopZHutbBUukxKJzVv
+	wwhHElTDP+ZmaDlQeFAZDIaucZhGZV+NEZJbc2HiG8ay3LPmmxlmC9FR7XbZ3/h9i3Oc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uByeV-00Bc3T-En; Mon, 05 May 2025 18:26:47 +0200
+Date: Mon, 5 May 2025 18:26:47 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <goran.radni@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?B=F6rge_Str=FCmpfel?= <boerge.struempfel@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 4/4] ARM: dts: stm32: add initial support for
+ stm32mp157-ultra-fly-sbc board
+Message-ID: <2d0ff289-06f6-4bde-a238-097d22573d4e@lunn.ch>
+References: <20250505115827.29593-1-goran.radni@gmail.com>
+ <20250505115827.29593-5-goran.radni@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/alternative: clean up asm/alternative.h
-To: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>
-References: <20250505131646.29288-1-jgross@suse.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250505131646.29288-1-jgross@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250505115827.29593-5-goran.radni@gmail.com>
 
-On 5/5/25 06:16, Juergen Gross wrote:
-> -#define old_len			141b-140b
-> -#define new_len1		144f-143f
-> -#define new_len2		145f-144f
-> -#define new_len3		146f-145f
+> +&ethernet0 {
+> +	status = "okay";
+> +	pinctrl-0 = <&ethernet0_ux_rgmii_pins_a>;
+> +	pinctrl-1 = <&ethernet0_ux_rgmii_pins_sleep_a>;
+> +	pinctrl-names = "default", "sleep";
+> +	phy-mode = "rgmii-id";
+> +	max-speed = <1000>;
 
-I was surprised these haven't already broken the build, but they're
-under an #ifdef __ASSEMBLER__ which I guess limits the damage.
+max-speed is probably pointless, rgmii cannot do more than 1G.
 
-Also, just a little note: The subject here is a bit anemic. I can pretty
-easily and unambiguously tell the file from the diffstat. Wouldn't
-something like this be slightly more helpful?
+> +	phy-handle = <&phy1>;
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		compatible = "snps,dwmac-mdio";
+> +		phy1: ethernet-phy@1 {
+> +			reg = <1>;
+> +			interrupt-parent = <&gpiod>;
+> +			interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
 
-	x86/alternative: Remove unused header #defines
+PHY interrupts are 99% time level, not edge.
 
+	Andrew
 
