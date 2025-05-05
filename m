@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-633821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6A9AAAE6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9A5AAB0CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07FCE1BA273D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C453A8F7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D772DAF62;
-	Mon,  5 May 2025 22:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D66329ACD5;
+	Tue,  6 May 2025 00:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUoshxnS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDyD300x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0AA2BE7B1;
-	Mon,  5 May 2025 22:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72252BE7BC;
+	Mon,  5 May 2025 22:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485254; cv=none; b=XGXv5U+oL89irVmn7G2eodCFMBlAq6Z9FIYycgdTIGGSOB7GSudYKmwRGGWfOZeqsd0gp3qM68PTFr9Wm9CfCNMKFQUym8PI8cdYC+i8ruu+lF/CFfCBMftNDnHs0czvDwAfGAI6GiAPbwmcaj+oEp7+jWvm2Q8lLLKnCr5NMAo=
+	t=1746485256; cv=none; b=ARxBH5yPwCv1IWHc0gtm6ATuFmXNOF5K1KXYpwYSCfhvov+1+RLwykdENP66zDoY9cNXx03TlvH/Aj0g4FKV5VuDBa0S+6Y7DDlzDPMbGV3Up9lo5KWat4RwnXFqC5uAD9PS8Ghv5tgM07FIpUsuD+/ghX9qeu2IxemPhkhWwTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485254; c=relaxed/simple;
-	bh=jIhSum4+a6VmsFbYcJTxe1fbt8iNZlAUy3+yev6QYro=;
+	s=arc-20240116; t=1746485256; c=relaxed/simple;
+	bh=Z9n9wiIPdC41RfHmTwLHjKY+A1WrsoMrfXOJKYq3Qso=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g0fomfqZIOxLK9bhNV2xKXNlDpZyQPlRWKqkVlG0OHczA4dQRUH1dNCkJOlbNZx84ROpAWzSsJ8zaUpAaDFbHYT2pRje+9XVypn7pNDzGKJ+r8Y4j/6r99aDt/j/hWUGTcDUv8DlkashJsRw0C41L3UP/eso+iaFBfXJ+EDy0pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUoshxnS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92DF6C4CEED;
-	Mon,  5 May 2025 22:47:31 +0000 (UTC)
+	 MIME-Version; b=WAt0c20UcRLrBOhkpyJSkukq/j7fmHw4Us1Oc9YaGN256TGDLXGe9xMUVEonSgj/kxu1qhQZU075BIdBOMtn6J4AuQUkzYLRgcgp4PgFtQTUumHHjxub4RlUOPRLWv7g8ycmdTFqzj9aVbrCzim52mjtdIdLCU6PyOrtUEe498g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDyD300x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66005C4CEF2;
+	Mon,  5 May 2025 22:47:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485253;
-	bh=jIhSum4+a6VmsFbYcJTxe1fbt8iNZlAUy3+yev6QYro=;
+	s=k20201202; t=1746485256;
+	bh=Z9n9wiIPdC41RfHmTwLHjKY+A1WrsoMrfXOJKYq3Qso=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LUoshxnSBbJYYxVqXyQ9UjsHUb8OavG5ae3ju2kLhBGpSYpRQIgnOv3RA74PQti9E
-	 f+xC+skDrjbmocqSFzUuchzpSXwDiZbtxaN6kLE/YKxjnBfijlWCFKLEqpSEKX1PDI
-	 CBo/AMdbOqnvaVbhLQ9Bmi2HlJq31jh16eJWAxYiv3GSx/s68QpCcs56NFhoUonqeQ
-	 JCtfDnTUrPwqP57hKxYN5YD8vhwC5gyJucrHiVWuiR4DET1PZyWKEjZ2NlhxD+Rm8S
-	 pEukfK+aWP9YMbSTXgJ6Tiiy7bUEoVRj+/8u0HUrZ3saXgOOVgLtvxcZisahsFrt+u
-	 ihOomzAVmvPlw==
+	b=aDyD300x/mOB4/lsXU4OZyGeOIHIeqSnl02RCN6FGVMEQGZsoontt6+hQZMOs/wTV
+	 qSkHyrczLndDfIetP2ogs4xgRUQim+IlF8rsNlC3fDhOnbq3291S2Pe3tFt+VC1n+K
+	 5gXq/SwVUd6fm1xTZgTsnXuZVeMUL5n0wV3FCk2Mb73JwgRvHlSOeldACRd2XRiaks
+	 Iv6Z7Z3SfbjG9qpwp32loDHhJzlijT8mQFlTQZlYb6tM628h1FBqNiGpAcBQNQCL9k
+	 JVazEfvUE2jFgNyyRbScVbl4qJjOYFuI58TyBSGtNluUt92JdOP191v7IgSyGJpw8N
+	 3DexpyVpF76ew==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>,
-	=?UTF-8?q?Micha=C5=82=20Wajdeczko?= <michal.wajdeczko@intel.com>,
-	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
-	=?UTF-8?q?Piotr=20Pi=C3=B3rkowski?= <piotr.piorkowski@intel.com>,
+Cc: Kevin Krakauer <krakauer@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 237/486] drm/xe/pf: Create a link between PF and VF devices
-Date: Mon,  5 May 2025 18:35:13 -0400
-Message-Id: <20250505223922.2682012-237-sashal@kernel.org>
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 239/486] selftests/net: have `gro.sh -t` return a correct exit code
+Date: Mon,  5 May 2025 18:35:15 -0400
+Message-Id: <20250505223922.2682012-239-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -67,121 +65,40 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
+From: Kevin Krakauer <krakauer@google.com>
 
-[ Upstream commit 8c0aff7d92e2be25717669eb65a81a89740a24f2 ]
+[ Upstream commit 784e6abd99f24024a8998b5916795f0bec9d2fd9 ]
 
-When both PF and VF devices are enabled on the host, they
-resume simultaneously during system resume.
+Modify gro.sh to return a useful exit code when the -t flag is used. It
+formerly returned 0 no matter what.
 
-However, the PF must finish provisioning the VF before any
-VFs can successfully resume.
-
-Establish a parent-child device link between the PF and VF
-devices to ensure the correct order of resumption.
-
-V4 -> V5:
-- Added missing break in the error condition.
-V3 -> V4:
-- Made xe_pci_pf_get_vf_dev() as a static function and updated
-  input parameter types.
-- Updated xe_sriov_warn() to xe_sriov_abort() when VF device
-  cannot be found.
-V2 -> V3:
-- Added function documentation for xe_pci_pf_get_vf_dev().
-- Added assertion if not called from PF.
-V1 -> V2:
-- Added a helper function to get VF pci_dev.
-- Updated xe_sriov_notice() to xe_sriov_warn() if vf pci_dev
-  is not found.
-
-Signed-off-by: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
-Cc: Michał Wajdeczko <michal.wajdeczko@intel.com>
-Cc: Michał Winiarski <michal.winiarski@intel.com>
-Cc: Piotr Piórkowski <piotr.piorkowski@intel.com>
-Reviewed-by: Piotr Piorkowski <piotr.piorkowski@intel.com>
-Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20250224102807.11065-2-satyanarayana.k.v.p@intel.com
+Tested: Ran `gro.sh -t large` and verified that test failures return 1.
+Signed-off-by: Kevin Krakauer <krakauer@google.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+Link: https://patch.msgid.link/20250226192725.621969-2-krakauer@google.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/xe/xe_pci_sriov.c | 51 +++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ tools/testing/selftests/net/gro.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_pci_sriov.c b/drivers/gpu/drm/xe/xe_pci_sriov.c
-index aaceee748287e..09ee8a06fe2ed 100644
---- a/drivers/gpu/drm/xe/xe_pci_sriov.c
-+++ b/drivers/gpu/drm/xe/xe_pci_sriov.c
-@@ -62,6 +62,55 @@ static void pf_reset_vfs(struct xe_device *xe, unsigned int num_vfs)
- 			xe_gt_sriov_pf_control_trigger_flr(gt, n);
- }
- 
-+static struct pci_dev *xe_pci_pf_get_vf_dev(struct xe_device *xe, unsigned int vf_id)
-+{
-+	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
-+
-+	xe_assert(xe, IS_SRIOV_PF(xe));
-+
-+	/* caller must use pci_dev_put() */
-+	return pci_get_domain_bus_and_slot(pci_domain_nr(pdev->bus),
-+			pdev->bus->number,
-+			pci_iov_virtfn_devfn(pdev, vf_id));
-+}
-+
-+static void pf_link_vfs(struct xe_device *xe, int num_vfs)
-+{
-+	struct pci_dev *pdev_pf = to_pci_dev(xe->drm.dev);
-+	struct device_link *link;
-+	struct pci_dev *pdev_vf;
-+	unsigned int n;
-+
-+	/*
-+	 * When both PF and VF devices are enabled on the host, during system
-+	 * resume they are resuming in parallel.
-+	 *
-+	 * But PF has to complete the provision of VF first to allow any VFs to
-+	 * successfully resume.
-+	 *
-+	 * Create a parent-child device link between PF and VF devices that will
-+	 * enforce correct resume order.
-+	 */
-+	for (n = 1; n <= num_vfs; n++) {
-+		pdev_vf = xe_pci_pf_get_vf_dev(xe, n - 1);
-+
-+		/* unlikely, something weird is happening, abort */
-+		if (!pdev_vf) {
-+			xe_sriov_err(xe, "Cannot find VF%u device, aborting link%s creation!\n",
-+				     n, str_plural(num_vfs));
-+			break;
-+		}
-+
-+		link = device_link_add(&pdev_vf->dev, &pdev_pf->dev,
-+				       DL_FLAG_AUTOREMOVE_CONSUMER);
-+		/* unlikely and harmless, continue with other VFs */
-+		if (!link)
-+			xe_sriov_notice(xe, "Failed linking VF%u\n", n);
-+
-+		pci_dev_put(pdev_vf);
-+	}
-+}
-+
- static int pf_enable_vfs(struct xe_device *xe, int num_vfs)
- {
- 	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
-@@ -92,6 +141,8 @@ static int pf_enable_vfs(struct xe_device *xe, int num_vfs)
- 	if (err < 0)
- 		goto failed;
- 
-+	pf_link_vfs(xe, num_vfs);
-+
- 	xe_sriov_info(xe, "Enabled %u of %u VF%s\n",
- 		      num_vfs, total_vfs, str_plural(total_vfs));
- 	return num_vfs;
+diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
+index 02c21ff4ca81f..aabd6e5480b8e 100755
+--- a/tools/testing/selftests/net/gro.sh
++++ b/tools/testing/selftests/net/gro.sh
+@@ -100,5 +100,6 @@ trap cleanup EXIT
+ if [[ "${test}" == "all" ]]; then
+   run_all_tests
+ else
+-  run_test "${proto}" "${test}"
++  exit_code=$(run_test "${proto}" "${test}")
++  exit $exit_code
+ fi;
 -- 
 2.39.5
 
