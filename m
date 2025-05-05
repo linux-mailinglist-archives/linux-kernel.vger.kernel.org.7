@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-634830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD7EAAB797
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:14:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB19FAAB785
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2FEA3B25A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C8B1C25ABE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25258482D4B;
-	Tue,  6 May 2025 00:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2BC28983D;
+	Tue,  6 May 2025 00:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBs+TmUk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QU/rqBrK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3F02F2C75;
-	Mon,  5 May 2025 23:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9621628982A;
+	Mon,  5 May 2025 23:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486830; cv=none; b=JFOaFkUJP5kvfIbnB80HtAdYnzwxEs+6LWK5nutAXQExvsKyQNHb06FVmngvgQ6ISfbi3SzIuAldg1qpToQhQQYcgshFtzOaI9XLu6ZzXE6ueCAeEW6Lz1gs1vh7K+0Cfjax+5rqTKoIfateeCP0Pdf6qrkF3uUFHogiOmGtSyA=
+	t=1746486857; cv=none; b=Hb6VfvGzrRNtxT1YuLaNfGh52VTPIAOyQifmMMp1JGg4CHqxeTFIIVxCRRWGZXjYSa3fjAKNMi4mxEAotJGNpsbjDnehtFL0X6+Stymp0kulmEnqNlTefMyJxZJKxvK8G4cYIakjMY/W+QAtmFrbdpIU4usscR9UYoO9jDCjxVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486830; c=relaxed/simple;
-	bh=c/ZRcjt/5odMSgBwPe3ZiTpzNSyYGXxRkVdPpWZtesY=;
+	s=arc-20240116; t=1746486857; c=relaxed/simple;
+	bh=0EWvK4TsmZ4hBZAMOT+xfxdc3HMMgFzeks/y6hvpEGE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XX3hQaItL6C14dWvkzC3g6dvfmIRECEaKMeiGfeI361mjJugt779Se6+MO0cycGch1UbQ2+J0HiZC1CL/R3m6L2brqinzSc5c7290/MJ933qjsujnvpdJ3LVngfnCv0MV3Z6Bv1+h8OTHIcvkHNasrhTin8Okg8Zf37mpCKxQfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBs+TmUk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB327C4CEE4;
-	Mon,  5 May 2025 23:13:49 +0000 (UTC)
+	 MIME-Version; b=EheZwb3FsL13w0TdheB5s1AoK2JBAZeeE5sd9YB+9sMxBscgfRdAlIWLlmtUW7XpYFg9aNyGzo0EutPGXavEKaMX7DCwe9YJavigO67QR4qyNcYGwMpVvOihm1HSZzabdGUqWIClAiuQDHQmQS5roGqB5eLILmOsK99xYSSLImQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QU/rqBrK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 723C5C4CEED;
+	Mon,  5 May 2025 23:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486830;
-	bh=c/ZRcjt/5odMSgBwPe3ZiTpzNSyYGXxRkVdPpWZtesY=;
+	s=k20201202; t=1746486857;
+	bh=0EWvK4TsmZ4hBZAMOT+xfxdc3HMMgFzeks/y6hvpEGE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IBs+TmUkcDi7VAKOLDSoclJgodXZhS7ht6BuSB6Ea8y2445GAA54fUFczpR+LTWHH
-	 yBysunE3O4IHDyjk7rFi2/rqLCzWS21Xl7RSpjTWbAgmuWWIFUF+Tq0l//2qMNtCEa
-	 Kg7NWG0WZdnzd3H8TZSHXMcBnefyqBIobyw5Jyqk7rZJfydtt9HWsOfG3QIVOK82Xm
-	 DTaixtnE4XibN4umM+5snDgBTLcYCTL0WIMmEpNfs1CbEPBxCd8fpOa8YClWA0iYoe
-	 SCmfwPuZPm8io6d0yLh3dj+blISIPkK5UM8VxaG5KvEXzXGt+SA1xpDGJO0I9Fb2UK
-	 3j/bdlKG2uz1A==
+	b=QU/rqBrKUH6KumuPQzsv7iuz6wovWmMAiFAIrM9vfJO1CIXpjvpKGQen3S3pCLBOx
+	 ahhooVH7vfei2Iy+Yh+SHBbLNZLgTU81f4uHZlDenC60L4QorwK1AJcZAslANCuyzG
+	 PDAYHp7/1l0t96xzKGs2oZYxzDjfUAM2FUloThEmCI/t4ItzQ/HQiVE2E5nqV08z/3
+	 5DqKBXBmmwAgqfNTsBtgyLXPzZh/SrKFlBXAE04Dh69qGPHQV9P7w91xEg5mwz4PZS
+	 nCTbiyFfwSUqaHO2n6kllfkuJ/YF0i10LIrVF0sqtYJW88ftVuoodgEQu09KrvAkZ4
+	 /JQwrl/8mFagg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Jing Su <jingsusu@didiglobal.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.15 013/153] dql: Fix dql->limit value when reset.
-Date: Mon,  5 May 2025 19:11:00 -0400
-Message-Id: <20250505231320.2695319-13-sashal@kernel.org>
+Cc: Stanley Chu <yschu@nuvoton.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Sasha Levin <sashal@kernel.org>,
+	miquel.raynal@bootlin.com,
+	linux-i3c@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: [PATCH AUTOSEL 5.15 028/153] i3c: master: svc: Fix missing STOP for master request
+Date: Mon,  5 May 2025 19:11:15 -0400
+Message-Id: <20250505231320.2695319-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -63,44 +67,35 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Jing Su <jingsusu@didiglobal.com>
+From: Stanley Chu <yschu@nuvoton.com>
 
-[ Upstream commit 3a17f23f7c36bac3a3584aaf97d3e3e0b2790396 ]
+[ Upstream commit 0430bf9bc1ac068c8b8c540eb93e5751872efc51 ]
 
-Executing dql_reset after setting a non-zero value for limit_min can
-lead to an unreasonable situation where dql->limit is less than
-dql->limit_min.
+The controller driver nacked the master request but didn't emit a
+STOP to end the transaction. The driver shall refuse the unsupported
+requests and return the controller state to IDLE by emitting a STOP.
 
-For instance, after setting
-/sys/class/net/eth*/queues/tx-0/byte_queue_limits/limit_min,
-an ifconfig down/up operation might cause the ethernet driver to call
-netdev_tx_reset_queue, which in turn invokes dql_reset.
-
-In this case, dql->limit is reset to 0 while dql->limit_min remains
-non-zero value, which is unexpected. The limit should always be
-greater than or equal to limit_min.
-
-Signed-off-by: Jing Su <jingsusu@didiglobal.com>
-Link: https://patch.msgid.link/Z9qHD1s/NEuQBdgH@pilot-ThinkCentre-M930t-N000
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Link: https://lore.kernel.org/r/20250318053606.3087121-4-yschu@nuvoton.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/dynamic_queue_limits.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i3c/master/svc-i3c-master.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/dynamic_queue_limits.c b/lib/dynamic_queue_limits.c
-index fde0aa2441480..a75a9ca46b594 100644
---- a/lib/dynamic_queue_limits.c
-+++ b/lib/dynamic_queue_limits.c
-@@ -116,7 +116,7 @@ EXPORT_SYMBOL(dql_completed);
- void dql_reset(struct dql *dql)
- {
- 	/* Reset all dynamic values */
--	dql->limit = 0;
-+	dql->limit = dql->min_limit;
- 	dql->num_queued = 0;
- 	dql->num_completed = 0;
- 	dql->last_obj_cnt = 0;
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index 368429a34d600..92488ba5b5f2a 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -437,6 +437,7 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
+ 		queue_work(master->base.wq, &master->hj_work);
+ 		break;
+ 	case SVC_I3C_MSTATUS_IBITYPE_MASTER_REQUEST:
++		svc_i3c_master_emit_stop(master);
+ 	default:
+ 		break;
+ 	}
 -- 
 2.39.5
 
