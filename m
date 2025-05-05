@@ -1,101 +1,124 @@
-Return-Path: <linux-kernel+bounces-633787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29E45AAAE3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:53:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246BBAAAE3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347901BA6714
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:49:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 918521747EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3862D3F8C;
-	Mon,  5 May 2025 22:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2219E278E67;
+	Mon,  5 May 2025 22:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3QBcI6/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4oxRSGS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBEA35A765;
-	Mon,  5 May 2025 22:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C9C2BD5B4;
+	Mon,  5 May 2025 22:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485170; cv=none; b=lml1zYoyr2+MfbEJMer/MEZ6g+7qBj2pHLqt+sm4EkEbsskRWLAgq7pChkh0YFgYYXiTDmGF9XMgiKMzX53OymFe3AOXY0Vfqh8tT/sOvW2rt6HLM+6/85h5N2dAknIM6ESVQzrCyyagN4g4Cq07+LSJZOW7skacrnvV9Sn28CU=
+	t=1746485203; cv=none; b=od9/JRjxZte4oCU7DlIQZ/z7a5r4qYnOHBIsWuuLNcxKplsGboWoUYrR3KaZqd05WWnjBOEZtnhT6MGho/0lho+Gg9jBRWHE2hkCxWhNk7SqVC65tPdA3VZuKYzGPbtSItQlVUtNsrQENYt1J2AlZ00ri1gP/VREubmgt0pwQfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485170; c=relaxed/simple;
-	bh=AS2TsFu8Kc7csbiJYii5SkgQrzo5hXNx2c6AtZWQVfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1HRuAQHQ3BbWFVu9eZi2ocs8hwsU+EpMTAvk44RdyeEy+FAaWdd4J/ETsPUvAmgrF2LG5c4DebNHm2Ulkm3w9InW49CmPUEucu2s1TVrkPkF6veczZtLJuNc0TJNPKPJp0DYunljWOALfjsDbFBBF90WibyjyN/j3lz4Q19sp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3QBcI6/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3EE4C4CEE4;
-	Mon,  5 May 2025 22:46:08 +0000 (UTC)
+	s=arc-20240116; t=1746485203; c=relaxed/simple;
+	bh=C8BUscfLIIEUfvzsO14+qAva3/lpPpQTzT0cD2qt8sc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bDuMpfBmNiCmf7MDN8mLj5u/UUuvsxDT+260C6uMfuNgqyphukIwNHm1D336rJ4ogax4kO/uUF/xWlHQqXIHyWE6KsT/0wF+kLQjkkM0XKk0X2OXU3Lmpc2gbMmq/7UKSKiFtQ3GuNdgbstzPMF67VEZU9wAcXmyKENSnu+v+MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4oxRSGS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36161C4CEEE;
+	Mon,  5 May 2025 22:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485169;
-	bh=AS2TsFu8Kc7csbiJYii5SkgQrzo5hXNx2c6AtZWQVfg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s3QBcI6/oA0tA/PINZMYq4M38D3tbRwKAXJDV6Hr+ga8m/gVZZ95oar+vdrAk5Yhd
-	 SGd6VqgCRRpKTqJCkcn5HzEFAfu+R+eGBjc6WSDDlqQ6kg/MBANCXMVscaVBxH4iyF
-	 MCyVB6QIn1ExoO6/X+Ctpw/GnBfzOiewFztOcJl2T2lXkc75NLPHMSW5kSUNMBDglS
-	 0b9Qln+5S9vuIv0nBjPeMFc6zwX3tNo+FCOoCvt5VUz7hh8ljH270qq2IJeI0adTjc
-	 Lc3IO/Hsc0RuHl788v3v3ExF8rxDnbk/O50eDOfYe15liNSmz6xPgITNzLoAtip5kS
-	 URYXhj3D+7o2w==
-Date: Tue, 6 May 2025 07:46:04 +0900
+	s=k20201202; t=1746485201;
+	bh=C8BUscfLIIEUfvzsO14+qAva3/lpPpQTzT0cD2qt8sc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=a4oxRSGSlExtFAtplZWiA+qIDsvJOMZi8sLWjVYd05dpqAuINhxc1xH3A9IEvmXX/
+	 Bz9vJ22KduqkULFLZwQHrgoLR8HtIfZmdxyT9FX5ja5MfB7JFEqAhYR50AAOv3/8dg
+	 0mhikYnCbomldcIMgwlYLP1x3ON2xR1Hq+pEczHrGvoDCOAdt8oRXpkmv3badwJrek
+	 3df1R/1rrRJfOZatJOeLE4XlSQWttRk8vi/OXFNMK+U7unnFYixOXp8TNJwg4pz1QC
+	 jP7AJVaA3STliPfLtFhlmdiT5Jum6tJTDL/vGEZbYe5P1BuCzi5TYjr+LAgWJ8PZCB
+	 WgBOLCfGBs/ZQ==
 From: Mark Brown <broonie@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, lgirdwood@gmail.com,
-	perex@perex.cz, tiwai@suse.com, javier.carrasco.cruz@gmail.com,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.14 591/642] ASoC: cpcap: Implement
- .set_bias_level
-Message-ID: <aBk_rHbbzvR_vD64@finisterre.sirena.org.uk>
-References: <20250505221419.2672473-1-sashal@kernel.org>
- <20250505221419.2672473-591-sashal@kernel.org>
+To: alsa-devel@alsa-project.org, 
+ Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: Mario.Limonciello@amd.com, venkataprasad.potturu@amd.com, 
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ sound-open-firmware@alsa-project.org, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>
+In-Reply-To: <20250502154445.3008598-1-Vijendar.Mukunda@amd.com>
+References: <20250502154445.3008598-1-Vijendar.Mukunda@amd.com>
+Subject: Re: [PATCH 0/9] ASoC: SOF: amd: add soundwire IO support for
+ ACP7.0 & ACP7.1 platforms
+Message-Id: <174648519686.4113425.12105826328467218171.b4-ty@kernel.org>
+Date: Tue, 06 May 2025 07:46:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BmqjSXNMkh0e0Yd9"
-Content-Disposition: inline
-In-Reply-To: <20250505221419.2672473-591-sashal@kernel.org>
-X-Cookie: Well begun is half done.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
+On Fri, 02 May 2025 21:12:39 +0530, Vijendar Mukunda wrote:
+> This patch series contains
+> - ACP sof stack improvements
+> - Add support for ACP7.1 platform.
+> - Soundwire IO support for ACP7.0 & ACP7.1 platforms
+> 
+> Link: https://github.com/thesofproject/linux/pull/5392
+> Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+> Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+> 
+> [...]
 
---BmqjSXNMkh0e0Yd9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-On Mon, May 05, 2025 at 06:13:27PM -0400, Sasha Levin wrote:
-> From: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
->=20
-> [ Upstream commit 5b4288792ff246cf2bda0c81cebcc02d1f631ca3 ]
->=20
-> With VAUDIO regulator being always on, we have to put it in low-power mode
-> when codec is not in use to decrease power usage.
->=20
-> Do so by implementing driver .set_bias_level callback.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-This is clearly a performance improvement not a bug fix.
+Thanks!
 
---BmqjSXNMkh0e0Yd9
-Content-Type: application/pgp-signature; name="signature.asc"
+[1/9] ASoC: SOF: amd: remove else condition in resume sequence
+      commit: e46da64f333ede33adc3a1903821a73ed6c018a6
+[2/9] ASoC: SOF: amd: add missing acp descriptor field
+      commit: 7c2bad7b95db5b4b978853cd4dd042ae3ec83e63
+[3/9] ASoC: SOF: amd: add ACP7.1 platform support
+      commit: 451bd0e7b91c83f817b741557c9be0f133d3836d
+[4/9] ASoC: SOF: amd: update soundwire specific acp descriptor fields
+      commit: 8cc69ecbf195aaf90e8bd5f364ed10ec0bdecb5f
+[5/9] ASoC: SOF: amd: enable ACP_PME_EN register for ACP7.0 & ACP7.1 platforms
+      commit: cc489cced17b2e32170ee87a3b64aaa3c7c6fddb
+[6/9] ASoC: SOF: amd: refactor acp reset sequence
+      commit: 169c5e444bb9cd4ae770f54157a04fdd8569508a
+[7/9] ASoC: SOF: amd: enable soundwire host wake irq mask
+      commit: a536f3c51edb63900b3340978d38da3aabc1fb2f
+[8/9] ASoC: SOF: amd: add soundwire wake irq handling
+      commit: 1f41bf67bfe3721a4d4d36695302801cf70b5a70
+[9/9] ASoC: SOF: amd: add build support for soundwire
+      commit: e68074c63fded9468c513f65734ffb4c80dc2a6d
 
------BEGIN PGP SIGNATURE-----
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgZP6sACgkQJNaLcl1U
-h9AzuQf/TsuJY2vN7IY0edGyLFwWnvp3oaCEwl470g0akuayphANG/PQhswy/1aF
-mNXr7LOguHFmhEVZeH20D7ByqnzGffdB511QUKgJXIX4B6zyhpzn51hqJc8BYTXL
-tcOBAnJfTmjdyHW4WdbEd7zln7BcX2gmDbPs9jYzERHtbqvuTpPeIrXN/qrwlBrd
-z7S88euH09affGKk1ypNJ9+NCbi0vhljp6cOI4BB2AN+UnC8pi3EG4j5rPk9HN4a
-o134B+T8brNoSzEExEj1B8eB2yrxD/aQ70/rwu0XCMfGwuw8bIFF2uNR40JhhUSv
-sW/Qtbq6cvzmIyrlCJmIM73woreV5Q==
-=GcKz
------END PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---BmqjSXNMkh0e0Yd9--
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
