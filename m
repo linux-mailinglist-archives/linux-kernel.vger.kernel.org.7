@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-634844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DEC8AAB7AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:15:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBBCAAB793
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71F083AF0AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:07:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345DA1C26E29
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B3D299923;
-	Tue,  6 May 2025 00:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88F934543D;
+	Tue,  6 May 2025 00:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EN5Nd2Mt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVPTCFIQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9344A28983B;
-	Mon,  5 May 2025 23:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24022F3A7E;
+	Mon,  5 May 2025 23:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486867; cv=none; b=YvPUutW6kZAQcb81fotsSPVVw7NfPWYDzdY2gjJDjOCxCVJiZonqThJX23C1gX1vs6MlDG8BzfafPbqOiMP577EDQmrMi6FVLUd2uxq0LsCWc9Y7krOkUXCc2u543ab097Z09lv3jRBiWNSfr5nIr2zhh2Mt0X6pYESpDfzHuj0=
+	t=1746486886; cv=none; b=sQdikaOPi2CwZX8Qn6shcynRdSzogsqUDQWm7vm+IwE7gCMOYRPcdrfCLpFq4olTsxYOXx/nunhjE7Zu+6kZ09HCdDshH09wFTdhWOrAFImfi3e5zN3fpDaRVZofYcFNHfF6oW4wclzHff6eiIAh0TToAqkAZEmhDoCH9pOylAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486867; c=relaxed/simple;
-	bh=BFGZvz3m0NrOmtEShPyDLDmAHNH1RMEpCvqr26JPKEM=;
+	s=arc-20240116; t=1746486886; c=relaxed/simple;
+	bh=AaVyXzjXMB89c+N3cLGs6RLB1uFIyFBHLakI9cGBQ9U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LugkWSnM9qgNt7TMiNIWPUfeiU72aGc3zjxC68jTuPsVyEaALb5rJiN/zns/0z7ceftogyeNXATAveX2OBcCy935mI1zloWoCUS1cSxbmoPLkmBkKV34PhmF/KsZHqbv170XMX5iE8A61SZ7weKoGiaTUOpV9QArhN3JFJu6jws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EN5Nd2Mt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EC30C4CEEF;
-	Mon,  5 May 2025 23:14:25 +0000 (UTC)
+	 MIME-Version; b=qU1WJKRBe6Y5oCrZvPxEOvi/qxAw1Ilivcc7bFk2ybrqxz+WPChILvRwGxPnttx/Xdsx/rRF4kPOrWXiuVbeX6LbAxje7Vz4iGHd/OGxndwWuteb8OOy5Bi5d+F5Z68kAEKfHGlcqN8uwIgAg5kMIBmVIVsOMihqtg1nFNm+QKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVPTCFIQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81328C4CEF1;
+	Mon,  5 May 2025 23:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486866;
-	bh=BFGZvz3m0NrOmtEShPyDLDmAHNH1RMEpCvqr26JPKEM=;
+	s=k20201202; t=1746486885;
+	bh=AaVyXzjXMB89c+N3cLGs6RLB1uFIyFBHLakI9cGBQ9U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EN5Nd2MtAeJkuJwauvQbnLn/xGSpef9t22WqLmj6aAHTGXtVwzcB/dDYAdpm4WceY
-	 NVfdSvrgK4+j9/AV0B6+6ByTFYJPVBFQ37xtsE//fh5fYwswF0JDaFfCKtYJiqX1s/
-	 E00uaG6L8295mv289KjsnxGdsYvJBDwe1/ggxJy0Sg46qWmswTjYEw69nPrn89H+iM
-	 bWoRuys8MP3FyAOG9vyycvdXWf7oZ1kcV2D2RY48kEeIOoFOnRKqdSZlijj3ZqtyU0
-	 vHWItSzSPgqfEL2DdhgZrKRAqh6EodzezmnRSovNereVd4fm18f91HJQ946A6It6ba
-	 svyPd8NqzG1EA==
+	b=HVPTCFIQrJ2KaeujaUMNIqDB06WwR297YjQeAukSKLIIB0XXHltgVekrrbIuYIkaS
+	 Iw7F/hzIPdal+bOqI8rZPFjj1UYtPlXldDRD+YXSkDjzp6JFkKh7yz8XL7unJk8aHg
+	 pRJ/IZlwmsw0YjoUGreLdacF5mhZmOp+DibkeU+CR8gwIMruZUliEyuXBUQElcHp6/
+	 ndFkvVjUl9Jx67ZsFdXbK5gCebj/pcDDeekzp+9MNtd9BhHiPguw0nG2bJYdynNhAg
+	 m7eCONGMSz8nWVe7wmEk/jTmECVtcbjcjhUrft50KCU6wmPul7cPKQT8tXVqkhuh8Q
+	 rgIhGy8TAT9tg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Serge Hallyn <serge@hallyn.com>,
-	Jan Kara <jack@suse.cz>,
-	Theodore Ts'o <tytso@mit.edu>,
+Cc: Frediano Ziglio <frediano.ziglio@cloud.com>,
+	Juergen Gross <jgross@suse.com>,
 	Sasha Levin <sashal@kernel.org>,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 033/153] ext4: reorder capability check last
-Date: Mon,  5 May 2025 19:11:20 -0400
-Message-Id: <20250505231320.2695319-33-sashal@kernel.org>
+	sstabellini@kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH AUTOSEL 5.15 043/153] xen: Add support for XenServer 6.1 platform device
+Date: Mon,  5 May 2025 19:11:30 -0400
+Message-Id: <20250505231320.2695319-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -62,56 +60,68 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Christian Göttsche <cgzones@googlemail.com>
+From: Frediano Ziglio <frediano.ziglio@cloud.com>
 
-[ Upstream commit 1b419c889c0767a5b66d0a6c566cae491f1cb0f7 ]
+[ Upstream commit 2356f15caefc0cc63d9cc5122641754f76ef9b25 ]
 
-capable() calls refer to enabled LSMs whether to permit or deny the
-request.  This is relevant in connection with SELinux, where a
-capability check results in a policy decision and by default a denial
-message on insufficient permission is issued.
-It can lead to three undesired cases:
-  1. A denial message is generated, even in case the operation was an
-     unprivileged one and thus the syscall succeeded, creating noise.
-  2. To avoid the noise from 1. the policy writer adds a rule to ignore
-     those denial messages, hiding future syscalls, where the task
-     performs an actual privileged operation, leading to hidden limited
-     functionality of that task.
-  3. To avoid the noise from 1. the policy writer adds a rule to permit
-     the task the requested capability, while it does not need it,
-     violating the principle of least privilege.
+On XenServer on Windows machine a platform device with ID 2 instead of
+1 is used.
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://patch.msgid.link/20250302160657.127253-2-cgoettsche@seltendoof.de
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+This device is mainly identical to device 1 but due to some Windows
+update behaviour it was decided to use a device with a different ID.
+
+This causes compatibility issues with Linux which expects, if Xen
+is detected, to find a Xen platform device (5853:0001) otherwise code
+will crash due to some missing initialization (specifically grant
+tables). Specifically from dmesg
+
+    RIP: 0010:gnttab_expand+0x29/0x210
+    Code: 90 0f 1f 44 00 00 55 31 d2 48 89 e5 41 57 41 56 41 55 41 89 fd
+          41 54 53 48 83 ec 10 48 8b 05 7e 9a 49 02 44 8b 35 a7 9a 49 02
+          <8b> 48 04 8d 44 39 ff f7 f1 45 8d 24 06 89 c3 e8 43 fe ff ff
+          44 39
+    RSP: 0000:ffffba34c01fbc88 EFLAGS: 00010086
+    ...
+
+The device 2 is presented by Xapi adding device specification to
+Qemu command line.
+
+Signed-off-by: Frediano Ziglio <frediano.ziglio@cloud.com>
+Acked-by: Juergen Gross <jgross@suse.com>
+Message-ID: <20250227145016.25350-1-frediano.ziglio@cloud.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/balloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/xen/platform-pci.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-index c23ac149601e5..d6872b71657b6 100644
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -637,8 +637,8 @@ static int ext4_has_free_clusters(struct ext4_sb_info *sbi,
- 	/* Hm, nope.  Are (enough) root reserved clusters available? */
- 	if (uid_eq(sbi->s_resuid, current_fsuid()) ||
- 	    (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) && in_group_p(sbi->s_resgid)) ||
--	    capable(CAP_SYS_RESOURCE) ||
--	    (flags & EXT4_MB_USE_ROOT_BLOCKS)) {
-+	    (flags & EXT4_MB_USE_ROOT_BLOCKS) ||
-+	    capable(CAP_SYS_RESOURCE)) {
+diff --git a/drivers/xen/platform-pci.c b/drivers/xen/platform-pci.c
+index 6ebd819338ecb..2c77cac5594ba 100644
+--- a/drivers/xen/platform-pci.c
++++ b/drivers/xen/platform-pci.c
+@@ -26,6 +26,8 @@
  
- 		if (free_clusters >= (nclusters + dirty_clusters +
- 				      resv_clusters))
+ #define DRV_NAME    "xen-platform-pci"
+ 
++#define PCI_DEVICE_ID_XEN_PLATFORM_XS61	0x0002
++
+ static unsigned long platform_mmio;
+ static unsigned long platform_mmio_alloc;
+ static unsigned long platform_mmiolen;
+@@ -174,6 +176,8 @@ static int platform_pci_probe(struct pci_dev *pdev,
+ static const struct pci_device_id platform_pci_tbl[] = {
+ 	{PCI_VENDOR_ID_XEN, PCI_DEVICE_ID_XEN_PLATFORM,
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
++	{PCI_VENDOR_ID_XEN, PCI_DEVICE_ID_XEN_PLATFORM_XS61,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+ 	{0,}
+ };
+ 
 -- 
 2.39.5
 
