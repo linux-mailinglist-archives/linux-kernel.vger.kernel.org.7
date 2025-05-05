@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-634871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97398AAB7AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:16:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14CDAAB75F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90B481C25023
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:10:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7401A7B3447
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D9448BA12;
-	Tue,  6 May 2025 00:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A4A3A7855;
+	Tue,  6 May 2025 00:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDEyZl5r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPYtBnrb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BAC3A5DF5;
-	Mon,  5 May 2025 23:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52263A6FB3;
+	Mon,  5 May 2025 23:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486988; cv=none; b=l2psg9HoxRGO9CdVNkH8hdKuFs0zTSLJXfgs3+VGpQPKx/cFd8lfUPiKzwegodBTG94aLg/P+8r9VOdddaFe006cZLIMRiOMFPnxJUC+zahxow6A9/Eu7f5U/kmhfJIqWTHA9T3q/gz6LXRfrqrc2NKLcrQ9h7HQjyzndnPtrp8=
+	t=1746487011; cv=none; b=N3m1cMWxGYFZyMCsUeipUbOn5jYw846mJ4T6KUL7N5XPH+tqagpuTdSCwUXLGJdBrzF1I0voqmXhiThzH9bgEf0AT3Z9Y5vb4HQsM3m4hGx/xNXAKu93LKV/ADYdjqR7UajT7WyuIT7NTvXFQfqsVIiPHD4syU6RJgYt7oXrkP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486988; c=relaxed/simple;
-	bh=e6PPiJqHq1kb2CurSc9d+u9z45PoeCFo6VTeddddQ/o=;
+	s=arc-20240116; t=1746487011; c=relaxed/simple;
+	bh=RB1GCYxJZRBjdfu7LkDBzuFWTa4iGUxDh2yLcwZrvbw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=knhBeRM0ywJsYd0N29SITR4WtLy/fnrcjoVr5xJrHgnsv1nl1VWU7f2gtIZXOfIT/pDoDgPmjKvABl4TTDtI9nBe6Fsss7Mia5LkdYPLCGDJGt8LdRNB4ohacrfRKmhewEjfEcx2VZE8zJvKN/+joS1J5DCRgRG2HmyAV7K2wT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDEyZl5r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E91C4CEED;
-	Mon,  5 May 2025 23:16:25 +0000 (UTC)
+	 MIME-Version; b=fCLUWKtoYYYXgxGO5ik906dWziPUxm5yFX5LtAxGYrVz6+mU0d3jt/PkTMxfZDtG0J7/ZM4QRXUQ4YSrw8jTkky6fBedkGJWNR9ydKsSUmE+4AYtIh8mn+CajdmMbuv0qVFCvfBCZyI/cz0i1w+e4DYf9Jc+KroaMdFY85Pmf18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPYtBnrb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87886C4CEE4;
+	Mon,  5 May 2025 23:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486987;
-	bh=e6PPiJqHq1kb2CurSc9d+u9z45PoeCFo6VTeddddQ/o=;
+	s=k20201202; t=1746487011;
+	bh=RB1GCYxJZRBjdfu7LkDBzuFWTa4iGUxDh2yLcwZrvbw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CDEyZl5roPv7lGcoSMqpiGJGDcHvBDgl49InnJLaIKEbr1pro16SWWz0yzdi3aJm7
-	 xQFcXnHsuX7DlS/2LQoeR8kkemAfAR20OAnglsHcVRWlvjZ+tniYMB1Sr4Uy54VyvX
-	 +l3SOqsmeAr+d/HVoG2D8iGZGCpaSS8rNAoLMEyTg9Si36UWFy2q+6f1LCFN427213
-	 CSNKQNgIUZ9tiHPTN2MbxC4FYjTP9bnhs4gh8gL8dEMczEMuuYPM0NvAA/pxwpXZEl
-	 YKt8khgC2bfe8nud0JuRzAoyyKKkTmklNBTUYDpPasHo3XtNpzxqIM57RkT3+f8aWD
-	 pdfAiwC/nUcnw==
+	b=LPYtBnrbXqxZUGdBY8hOmiK6TjP3lkwcGQIn147+3f+MMRf/OwcH548PTeqrrZMo6
+	 yx2y3Je9OYV8sJ/BnLgR8QZ8prf+knOiVn67uDUeWbokxvlpzaXYbaouPRln2nAIwO
+	 eQvV54yNR1zG9j1i/cw1bdW72pgFpwdhMYSWWyiRPjxVnJtpU8t7FxmL90BKHd0DMJ
+	 ks7gV735VvGMjp1vL4o9jXb78rQqjW4KuW3lGD/52dva8KhJ75sbuJIRLV9lY11hNm
+	 PWpTJtn4ieZfxyDn/rHCYZUnEps52a1uuKsQczdxJAJS8w57zol23CR7WpQ84vHLpE
+	 K0sunltuMgQEQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Aboorva Devarajan <aboorvad@linux.ibm.com>,
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
 	Sasha Levin <sashal@kernel.org>,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 092/153] cpuidle: menu: Avoid discarding useful information
-Date: Mon,  5 May 2025 19:12:19 -0400
-Message-Id: <20250505231320.2695319-92-sashal@kernel.org>
+	u.kleine-koenig@baylibre.com,
+	linux-can@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 106/153] can: c_can: Use of_property_present() to test existence of DT property
+Date: Mon,  5 May 2025 19:12:33 -0400
+Message-Id: <20250505231320.2695319-106-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -68,63 +67,35 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[ Upstream commit 85975daeaa4d6ec560bfcd354fc9c08ad7f38888 ]
+[ Upstream commit ab1bc2290fd8311d49b87c29f1eb123fcb581bee ]
 
-When giving up on making a high-confidence prediction,
-get_typical_interval() always returns UINT_MAX which means that the
-next idle interval prediction will be based entirely on the time till
-the next timer.  However, the information represented by the most
-recent intervals may not be completely useless in those cases.
+of_property_read_bool() should be used only on boolean properties.
 
-Namely, the largest recent idle interval is an upper bound on the
-recently observed idle duration, so it is reasonable to assume that
-the next idle duration is unlikely to exceed it.  Moreover, this is
-still true after eliminating the suspected outliers if the sample
-set still under consideration is at least as large as 50% of the
-maximum sample set size.
-
-Accordingly, make get_typical_interval() return the current maximum
-recent interval value in that case instead of UINT_MAX.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reported-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Tested-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-Tested-by: Christian Loehle <christian.loehle@arm.com>
-Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Link: https://patch.msgid.link/7770672.EvYhyI6sBW@rjwysocki.net
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Link: https://patch.msgid.link/20250212-syscon-phandle-args-can-v2-3-ac9a1253396b@linaro.org
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpuidle/governors/menu.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/net/can/c_can/c_can_platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index 2e5670446991f..e1e2721beb75b 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -249,8 +249,19 @@ static unsigned int get_typical_interval(struct menu_device *data,
- 	 * This can deal with workloads that have long pauses interspersed
- 	 * with sporadic activity with a bunch of short pauses.
- 	 */
--	if ((divisor * 4) <= INTERVALS * 3)
-+	if (divisor * 4 <= INTERVALS * 3) {
-+		/*
-+		 * If there are sufficiently many data points still under
-+		 * consideration after the outliers have been eliminated,
-+		 * returning without a prediction would be a mistake because it
-+		 * is likely that the next interval will not exceed the current
-+		 * maximum, so return the latter in that case.
-+		 */
-+		if (divisor >= INTERVALS / 2)
-+			return max;
-+
- 		return UINT_MAX;
-+	}
+diff --git a/drivers/net/can/c_can/c_can_platform.c b/drivers/net/can/c_can/c_can_platform.c
+index c5d7093d54133..c29862b3bb1f3 100644
+--- a/drivers/net/can/c_can/c_can_platform.c
++++ b/drivers/net/can/c_can/c_can_platform.c
+@@ -334,7 +334,7 @@ static int c_can_plat_probe(struct platform_device *pdev)
+ 		/* Check if we need custom RAMINIT via syscon. Mostly for TI
+ 		 * platforms. Only supported with DT boot.
+ 		 */
+-		if (np && of_property_read_bool(np, "syscon-raminit")) {
++		if (np && of_property_present(np, "syscon-raminit")) {
+ 			u32 id;
+ 			struct c_can_raminit *raminit = &priv->raminit_sys;
  
- 	thresh = max - 1;
- 	goto again;
 -- 
 2.39.5
 
