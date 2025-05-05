@@ -1,58 +1,63 @@
-Return-Path: <linux-kernel+bounces-634355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A455AAB613
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:42:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD38AAB618
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2455B1BC0FB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1729A1BA1312
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F43532559E;
-	Tue,  6 May 2025 00:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CE729ACC4;
+	Tue,  6 May 2025 00:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwVPSBbr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUTXCooE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6655C2D37FF;
-	Mon,  5 May 2025 22:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C39D2BE110;
+	Mon,  5 May 2025 22:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485242; cv=none; b=iuZwErXFni9Yv+bjZDCn2+EFOcu6P9lHbG0UZ3fYg4NinoNvkFyE3cedDw5dKTTQHyjxezg9jOwdQ/Dw4Ygg+7KHy+PfI9MCTfHDwOQzPV9EqTWmy77diGj8yT7fTSKCqmXhbZnsdcw1hODyTkLowVUHNHjRDyWXNWaCj3M4vHk=
+	t=1746485252; cv=none; b=nwivD3Yjr1nOtLtFHSRAfEXXdfB5p4YCqqJ9wJB31UcIdcG2Thir7Sy9aHMcUPRaKtApFJyQt/MEDimSXK4vjwDJvZ72QA6LPLtgMEMiiu5gQ0T3upvhNzh//FkOKYxc+uLLbrWaRBSwirhQWyxlZ2ZB+8np+4E+6fsLvq0izTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485242; c=relaxed/simple;
-	bh=1kVFBF5Km5WKizSO08Xy/7gQngJUmOZ7T0h0aO7IcfU=;
+	s=arc-20240116; t=1746485252; c=relaxed/simple;
+	bh=W46LSlL8PNcCg/BgoRCw2sj0WkVz49Qmr0jlJ6VpNFg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kJYuxPyDNlQ7m77tqrtdYnMWS0fIBBMX/9uP45zsG9OHvU8MRY6sFbKuKcKvK/N56y4YPqQd5wu6pkNCpehgUytPWRJjMCBBypZBTQg9N+sA3+A20VxXEioAsiR/lhSnRT5LG+IO4i1itOz/5bOk+MN3rNW0AME8hGxIT1VVMV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwVPSBbr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E1CDC4CEED;
-	Mon,  5 May 2025 22:47:20 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qse4d0rqyKd7xMw8VOuSKoIT3e4/nYE60f3f5j4z6MfOhXT4hwIZCxlqoGjWjca/wM4+FXIaMWhV8D+mHrHROVaB7um/d8r78L6NW65bqp39pqA3MuIJokYFALoO+8e8TOur5qceCqrRvCy6mDB6FqMKsZkwE3jrihKNAjj5vBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUTXCooE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D92C4CEEF;
+	Mon,  5 May 2025 22:47:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485241;
-	bh=1kVFBF5Km5WKizSO08Xy/7gQngJUmOZ7T0h0aO7IcfU=;
+	s=k20201202; t=1746485251;
+	bh=W46LSlL8PNcCg/BgoRCw2sj0WkVz49Qmr0jlJ6VpNFg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XwVPSBbrS5iHpSCgCBsWYBGWuOCDuV+WMKCO+RkG0fSXAn1Oi8yxAk29QdwlfcVW9
-	 bI1qfi876PJLfqLINrqaChkuBR2u5CgDeSF3UAmRItuJa5bzQX/PS8E5GFEHhGydCZ
-	 NCV0c5ZBmWM/h5dd56nI0+T78k7bcpCe96GzpIGCTqY7bYs8XE0uO4HifYpiYweMFf
-	 MMuIvB3sIHJKJbA8EyjgP+gUk2jj/Bfrg1Go9uypmFm8hGYFpkB5zw6ceNxCUD+LzJ
-	 t6vQ7K3AL0OCX+YpBPCTV2Ubm9YLw9X7MO53Lewa2bOAMSxgI+Zm4SSU2gulIirAc+
-	 wzwZKTSLKDzeg==
+	b=jUTXCooEf3zQTEsG/QY0k3fG3qJu0OQe/hSRJt2h63nkkOKXwJ6+8Y1XyklNNgOoe
+	 lyMq8S+yobVLaXIh7npMfGFy2f+JauNVpVYAPMn0Eme/G4zyRTZpQLdxSa4raKwPha
+	 VYsqmZoowqaw5+jht7AgeNHkXTTNcuS+ejhG9B7dGJTvZBAGN69SulhZ4tRpB5SpjR
+	 Uf3bMxSSOTawXRcuK6AUwBd5nmHwt9SqOg3nSl7IKRjYAVzXUMkku7Tu6lWLECFGxW
+	 /x1eQ9Fx5ou1vFKkvIFt3W59ENgxazsjoii0rB4OU+bxe+RsmUEFPDVi26/jAW3P4/
+	 4ZnG3YVCjeBrQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Hector Martin <marcan@marcan.st>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Sven Peter <sven@svenpeter.dev>,
+Cc: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>,
+	=?UTF-8?q?Micha=C5=82=20Wajdeczko?= <michal.wajdeczko@intel.com>,
+	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
+	=?UTF-8?q?Piotr=20Pi=C3=B3rkowski?= <piotr.piorkowski@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	j@jannau.net,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 230/486] soc: apple: rtkit: Implement OSLog buffers properly
-Date: Mon,  5 May 2025 18:35:06 -0400
-Message-Id: <20250505223922.2682012-230-sashal@kernel.org>
+	lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.12 236/486] drm/xe/vf: Retry sending MMIO request to GUC on timeout error
+Date: Mon,  5 May 2025 18:35:12 -0400
+Message-Id: <20250505223922.2682012-236-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -62,159 +67,65 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Hector Martin <marcan@marcan.st>
+From: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
 
-[ Upstream commit a06398687065e0c334dc5fc4d2778b5b87292e43 ]
+[ Upstream commit ba757a65d2a28d46a8ccf50538f4f05036983f1b ]
 
-Apparently nobody can figure out where the old logic came from, but it
-seems like it has never been actually used on any supported firmware to
-this day. OSLog buffers were apparently never requested.
+Add support to allow retrying the sending of MMIO requests
+from the VF to the GUC in the event of an error. During the
+suspend/resume process, VFs begin resuming only after the PF has
+resumed. Although the PF resumes, the GUC reset and provisioning
+occur later in a separate worker process.
 
-But starting with 13.3, we actually need this implemented properly for
-MTP (and later AOP) to work, so let's actually do that.
+When there are a large number of VFs, some may attempt to resume
+before the PF has completed its provisioning. Therefore, if a
+MMIO request from a VF fails during this period, we will retry
+sending the request up to GUC_RESET_VF_STATE_RETRY_MAX times,
+which is set to a maximum of 10 attempts.
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Link: https://lore.kernel.org/r/20250226-apple-soc-misc-v2-2-c3ec37f9021b@svenpeter.dev
-Signed-off-by: Sven Peter <sven@svenpeter.dev>
+Signed-off-by: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
+Cc: Michał Wajdeczko <michal.wajdeczko@intel.com>
+Cc: Michał Winiarski <michal.winiarski@intel.com>
+Cc: Piotr Piórkowski <piotr.piorkowski@intel.com>
+Reviewed-by: Piotr Piorkowski <piotr.piorkowski@intel.com>
+Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20250224102807.11065-3-satyanarayana.k.v.p@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/apple/rtkit-internal.h |  1 +
- drivers/soc/apple/rtkit.c          | 56 ++++++++++++++++++------------
- 2 files changed, 35 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/xe/xe_gt_sriov_vf.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/apple/rtkit-internal.h b/drivers/soc/apple/rtkit-internal.h
-index 27c9fa745fd52..b8d5244678f01 100644
---- a/drivers/soc/apple/rtkit-internal.h
-+++ b/drivers/soc/apple/rtkit-internal.h
-@@ -44,6 +44,7 @@ struct apple_rtkit {
+diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_vf.c b/drivers/gpu/drm/xe/xe_gt_sriov_vf.c
+index f982d6f9f218d..7ddbfeaf494ac 100644
+--- a/drivers/gpu/drm/xe/xe_gt_sriov_vf.c
++++ b/drivers/gpu/drm/xe/xe_gt_sriov_vf.c
+@@ -46,12 +46,19 @@ static int guc_action_vf_reset(struct xe_guc *guc)
+ 	return ret > 0 ? -EPROTO : ret;
+ }
  
- 	struct apple_rtkit_shmem ioreport_buffer;
- 	struct apple_rtkit_shmem crashlog_buffer;
-+	struct apple_rtkit_shmem oslog_buffer;
- 
- 	struct apple_rtkit_shmem syslog_buffer;
- 	char *syslog_msg_buffer;
-diff --git a/drivers/soc/apple/rtkit.c b/drivers/soc/apple/rtkit.c
-index 00d59a81db88b..45ccbe2cbcd63 100644
---- a/drivers/soc/apple/rtkit.c
-+++ b/drivers/soc/apple/rtkit.c
-@@ -66,8 +66,9 @@ enum {
- #define APPLE_RTKIT_SYSLOG_MSG_SIZE  GENMASK_ULL(31, 24)
- 
- #define APPLE_RTKIT_OSLOG_TYPE GENMASK_ULL(63, 56)
--#define APPLE_RTKIT_OSLOG_INIT	1
--#define APPLE_RTKIT_OSLOG_ACK	3
-+#define APPLE_RTKIT_OSLOG_BUFFER_REQUEST 1
-+#define APPLE_RTKIT_OSLOG_SIZE GENMASK_ULL(55, 36)
-+#define APPLE_RTKIT_OSLOG_IOVA GENMASK_ULL(35, 0)
- 
- #define APPLE_RTKIT_MIN_SUPPORTED_VERSION 11
- #define APPLE_RTKIT_MAX_SUPPORTED_VERSION 12
-@@ -251,15 +252,21 @@ static int apple_rtkit_common_rx_get_buffer(struct apple_rtkit *rtk,
- 					    struct apple_rtkit_shmem *buffer,
- 					    u8 ep, u64 msg)
++#define GUC_RESET_VF_STATE_RETRY_MAX	10
+ static int vf_reset_guc_state(struct xe_gt *gt)
  {
--	size_t n_4kpages = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_SIZE, msg);
- 	u64 reply;
++	unsigned int retry = GUC_RESET_VF_STATE_RETRY_MAX;
+ 	struct xe_guc *guc = &gt->uc.guc;
  	int err;
  
-+	/* The different size vs. IOVA shifts look odd but are indeed correct this way */
-+	if (ep == APPLE_RTKIT_EP_OSLOG) {
-+		buffer->size = FIELD_GET(APPLE_RTKIT_OSLOG_SIZE, msg);
-+		buffer->iova = FIELD_GET(APPLE_RTKIT_OSLOG_IOVA, msg) << 12;
-+	} else {
-+		buffer->size = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_SIZE, msg) << 12;
-+		buffer->iova = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_IOVA, msg);
-+	}
+-	err = guc_action_vf_reset(guc);
++	do {
++		err = guc_action_vf_reset(guc);
++		if (!err || err != -ETIMEDOUT)
++			break;
++	} while (--retry);
 +
- 	buffer->buffer = NULL;
- 	buffer->iomem = NULL;
- 	buffer->is_mapped = false;
--	buffer->iova = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_IOVA, msg);
--	buffer->size = n_4kpages << 12;
- 
- 	dev_dbg(rtk->dev, "RTKit: buffer request for 0x%zx bytes at %pad\n",
- 		buffer->size, &buffer->iova);
-@@ -284,11 +291,21 @@ static int apple_rtkit_common_rx_get_buffer(struct apple_rtkit *rtk,
- 	}
- 
- 	if (!buffer->is_mapped) {
--		reply = FIELD_PREP(APPLE_RTKIT_SYSLOG_TYPE,
--				   APPLE_RTKIT_BUFFER_REQUEST);
--		reply |= FIELD_PREP(APPLE_RTKIT_BUFFER_REQUEST_SIZE, n_4kpages);
--		reply |= FIELD_PREP(APPLE_RTKIT_BUFFER_REQUEST_IOVA,
--				    buffer->iova);
-+		/* oslog uses different fields and needs a shifted IOVA instead of size */
-+		if (ep == APPLE_RTKIT_EP_OSLOG) {
-+			reply = FIELD_PREP(APPLE_RTKIT_OSLOG_TYPE,
-+					   APPLE_RTKIT_OSLOG_BUFFER_REQUEST);
-+			reply |= FIELD_PREP(APPLE_RTKIT_OSLOG_SIZE, buffer->size);
-+			reply |= FIELD_PREP(APPLE_RTKIT_OSLOG_IOVA,
-+					    buffer->iova >> 12);
-+		} else {
-+			reply = FIELD_PREP(APPLE_RTKIT_SYSLOG_TYPE,
-+					   APPLE_RTKIT_BUFFER_REQUEST);
-+			reply |= FIELD_PREP(APPLE_RTKIT_BUFFER_REQUEST_SIZE,
-+					    buffer->size >> 12);
-+			reply |= FIELD_PREP(APPLE_RTKIT_BUFFER_REQUEST_IOVA,
-+					    buffer->iova);
-+		}
- 		apple_rtkit_send_message(rtk, ep, reply, NULL, false);
- 	}
- 
-@@ -482,25 +499,18 @@ static void apple_rtkit_syslog_rx(struct apple_rtkit *rtk, u64 msg)
- 	}
- }
- 
--static void apple_rtkit_oslog_rx_init(struct apple_rtkit *rtk, u64 msg)
--{
--	u64 ack;
--
--	dev_dbg(rtk->dev, "RTKit: oslog init: msg: 0x%llx\n", msg);
--	ack = FIELD_PREP(APPLE_RTKIT_OSLOG_TYPE, APPLE_RTKIT_OSLOG_ACK);
--	apple_rtkit_send_message(rtk, APPLE_RTKIT_EP_OSLOG, ack, NULL, false);
--}
--
- static void apple_rtkit_oslog_rx(struct apple_rtkit *rtk, u64 msg)
- {
- 	u8 type = FIELD_GET(APPLE_RTKIT_OSLOG_TYPE, msg);
- 
- 	switch (type) {
--	case APPLE_RTKIT_OSLOG_INIT:
--		apple_rtkit_oslog_rx_init(rtk, msg);
-+	case APPLE_RTKIT_OSLOG_BUFFER_REQUEST:
-+		apple_rtkit_common_rx_get_buffer(rtk, &rtk->oslog_buffer,
-+						 APPLE_RTKIT_EP_OSLOG, msg);
- 		break;
- 	default:
--		dev_warn(rtk->dev, "RTKit: Unknown oslog message: %llx\n", msg);
-+		dev_warn(rtk->dev, "RTKit: Unknown oslog message: %llx\n",
-+			 msg);
- 	}
- }
- 
-@@ -710,6 +720,7 @@ int apple_rtkit_reinit(struct apple_rtkit *rtk)
- 
- 	apple_rtkit_free_buffer(rtk, &rtk->ioreport_buffer);
- 	apple_rtkit_free_buffer(rtk, &rtk->crashlog_buffer);
-+	apple_rtkit_free_buffer(rtk, &rtk->oslog_buffer);
- 	apple_rtkit_free_buffer(rtk, &rtk->syslog_buffer);
- 
- 	kfree(rtk->syslog_msg_buffer);
-@@ -890,6 +901,7 @@ void apple_rtkit_free(struct apple_rtkit *rtk)
- 
- 	apple_rtkit_free_buffer(rtk, &rtk->ioreport_buffer);
- 	apple_rtkit_free_buffer(rtk, &rtk->crashlog_buffer);
-+	apple_rtkit_free_buffer(rtk, &rtk->oslog_buffer);
- 	apple_rtkit_free_buffer(rtk, &rtk->syslog_buffer);
- 
- 	kfree(rtk->syslog_msg_buffer);
+ 	if (unlikely(err))
+ 		xe_gt_sriov_err(gt, "Failed to reset GuC state (%pe)\n", ERR_PTR(err));
+ 	return err;
 -- 
 2.39.5
 
