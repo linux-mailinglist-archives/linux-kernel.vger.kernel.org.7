@@ -1,70 +1,58 @@
-Return-Path: <linux-kernel+bounces-633979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D3FAAAB05
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:50:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB13AAAB34
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3A24A355D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF6B45A37CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DA93A80CE;
-	Mon,  5 May 2025 23:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585472F6621;
+	Mon,  5 May 2025 23:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btRdZ39R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UcNAgj5o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DF42E6865;
-	Mon,  5 May 2025 23:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDB92DFA4D;
+	Mon,  5 May 2025 23:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486163; cv=none; b=aYLGQMjYO81fj/PxpUxdsCAuflrySC7fNngnKV2Oqlyrg0YmxQiYu6oB2eQ/Zuazh5PMw0FbC5PNrtDJQfeaxTtRE1OwUd7lvtqx7gbQ3kNWflHjK1FVFGnzJQIOYAIRKpQWd97Lh439ff2bNIJz/KHNQOLzYtTzmK5heXiz5fE=
+	t=1746486180; cv=none; b=HEvR7KuIwc1v1MZQYZiaZLuXu4fEqhKCTF5VpviaVLSI/OYXodlIJxh8QSjlcJGY4xv8JUNZZKGDJe9seATDHNCXFzAQxK/ydpyNFmR+Lk1S/fplJSKvMJsDCb416vGxbYJRM9uuj/TA2q3RYagUz5CPCFPXlpTSjrFvgAwLdK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486163; c=relaxed/simple;
-	bh=wU0dJgQrN6llgCDacv/lF1XNbrIqJWn+Wj7cXZyNsmI=;
+	s=arc-20240116; t=1746486180; c=relaxed/simple;
+	bh=+BdJJ2xWjuR4qfYXG8rODyRJVYqVlhib4yqZHEzXxOI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qcS8fqpj9Xjmxs8/LOwy7tU2AxYrY4pA1uj7JVzoIP4WhNuNrzJNLBqrqHG6Px25iNfdOXhwCAy5Tdj0+4okgUwcBtf7VqzgeCgo6RsPQaMM3r+VfQSjw4aznjuygZt7VlP0zgDQQgtRbo7X5WVBioRll5DIL6kK+6TGsbiiA28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btRdZ39R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 514D2C4CEEE;
-	Mon,  5 May 2025 23:02:40 +0000 (UTC)
+	 MIME-Version; b=o+6bjvIR6KznuA2gBLjWqRA6XtCZGPt64vVsaLkPieOsbD6Bre2O9ATRSdoLmACaQptJxfg73GP59SLwvCI07GBiBNtBXtAQTgWliFsDl+3ZYQc86WPnoh9y4lactoEds+4ykUN0NiGKS1XpELsu0d7eySym/+vrYX489pEpEPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UcNAgj5o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A1B4C4CEED;
+	Mon,  5 May 2025 23:02:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486162;
-	bh=wU0dJgQrN6llgCDacv/lF1XNbrIqJWn+Wj7cXZyNsmI=;
+	s=k20201202; t=1746486180;
+	bh=+BdJJ2xWjuR4qfYXG8rODyRJVYqVlhib4yqZHEzXxOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=btRdZ39RowItPcG1IjdkuG3ViimP0mqo30qhK3Ix0SKcJw/i/EB2JzBMhNQEH/Hve
-	 w2clRGsEQvlcUNpQyZr016nJudQ8ovn17izfxUeAg93d2WY1svkcqohCuI9xtk1LMe
-	 NjSQwLpt/2jHM61iXOlmZW2hixt34aL5pmSaPW1jzytAsnVpSIueKHaFvoaPmhJJ3n
-	 TWmPqEhpUvU4dbRDIFNvYBJri0TqaaheeTQpeLy1ByMF0paACjFjJ68U5cKTPKdkLp
-	 ebhudl3LyAKoeMiom9RdpsJ0mbXw6WcxNAC+J/UpKiGsANZxnwO336UxKMDrg7diPl
-	 +QO05lR08xtwg==
+	b=UcNAgj5o33WjZXQ5HbW32kVjgMWP/ObblbzLiUlJGo6S+052uLcEW9q1pLXEAiCHy
+	 HZnH6EGfKm4ZtXUBz4r6g+GWB6keEPLoExvFKrlpPp8a08J99A6v1Dvh86i9izzVhF
+	 AthpCWCgdqM/AEvWQGjwgotGI370vVX+nQxPHnFO2kqECyOh3UCokO491k48+qE3x1
+	 LiVW+kdw3LPv3y4pnxqAnU6Yd8gOL9fdUF4qEbqPNxvmwhyYjA+LvKZkh3J3q7jLO0
+	 Ga9UkHVLAE+1jL+IKgRQyuvXcXixMp5Wchr1ux83hFq4t54Dof3vr0CYoIoqy5hFKy
+	 XoiGTUgkOJVDQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Harry VanZyllDeJong <hvanzyll@amd.com>,
-	Wenjing Liu <wenjing.liu@amd.com>,
-	Roman Li <roman.li@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
 	Sasha Levin <sashal@kernel.org>,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	alex.hung@amd.com,
-	michael.strauss@amd.com,
-	george.shen@amd.com,
-	PeiChen.Huang@amd.com,
-	Ausef.Yousof@amd.com,
-	Cruise.Hung@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 185/294] drm/amd/display: Add support for disconnected eDP streams
-Date: Mon,  5 May 2025 18:54:45 -0400
-Message-Id: <20250505225634.2688578-185-sashal@kernel.org>
+	u.kleine-koenig@baylibre.com,
+	linux-can@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 189/294] can: c_can: Use of_property_present() to test existence of DT property
+Date: Mon,  5 May 2025 18:54:49 -0400
+Message-Id: <20250505225634.2688578-189-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -79,42 +67,35 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Harry VanZyllDeJong <hvanzyll@amd.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[ Upstream commit 6571bef25fe48c642f7a69ccf7c3198b317c136a ]
+[ Upstream commit ab1bc2290fd8311d49b87c29f1eb123fcb581bee ]
 
-[Why]
-eDP may not be connected to the GPU on driver start causing
-fail enumeration.
+of_property_read_bool() should be used only on boolean properties.
 
-[How]
-Move the virtual signal type check before the eDP connector
-signal check.
-
-Reviewed-by: Wenjing Liu <wenjing.liu@amd.com>
-Signed-off-by: Harry VanZyllDeJong <hvanzyll@amd.com>
-Signed-off-by: Roman Li <roman.li@amd.com>
-Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Link: https://patch.msgid.link/20250212-syscon-phandle-args-can-v2-3-ac9a1253396b@linaro.org
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/can/c_can/c_can_platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-index 1e621eae9b7da..adf0ef8b70e4b 100644
---- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-+++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-@@ -920,6 +920,9 @@ bool link_decide_link_settings(struct dc_stream_state *stream,
- 		 * TODO: add MST specific link training routine
+diff --git a/drivers/net/can/c_can/c_can_platform.c b/drivers/net/can/c_can/c_can_platform.c
+index 7f405bcf11c23..603680792f1ff 100644
+--- a/drivers/net/can/c_can/c_can_platform.c
++++ b/drivers/net/can/c_can/c_can_platform.c
+@@ -333,7 +333,7 @@ static int c_can_plat_probe(struct platform_device *pdev)
+ 		/* Check if we need custom RAMINIT via syscon. Mostly for TI
+ 		 * platforms. Only supported with DT boot.
  		 */
- 		decide_mst_link_settings(link, link_setting);
-+	} else if (stream->signal == SIGNAL_TYPE_VIRTUAL) {
-+		link_setting->lane_count = LANE_COUNT_FOUR;
-+		link_setting->link_rate = LINK_RATE_HIGH3;
- 	} else if (link->connector_signal == SIGNAL_TYPE_EDP) {
- 		/* enable edp link optimization for DSC eDP case */
- 		if (stream->timing.flags.DSC) {
+-		if (np && of_property_read_bool(np, "syscon-raminit")) {
++		if (np && of_property_present(np, "syscon-raminit")) {
+ 			u32 id;
+ 			struct c_can_raminit *raminit = &priv->raminit_sys;
+ 
 -- 
 2.39.5
 
