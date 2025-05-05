@@ -1,65 +1,59 @@
-Return-Path: <linux-kernel+bounces-634755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73F3AAB741
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:08:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EA2AAB732
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5936F1C2479D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1699B505171
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D04D382555;
-	Tue,  6 May 2025 00:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFEB474F24;
+	Tue,  6 May 2025 00:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYcNVUUM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcTZsKUi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30217381E1A;
-	Mon,  5 May 2025 23:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F342EEBD1;
+	Mon,  5 May 2025 23:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486583; cv=none; b=GHvXMuHHmYrW1D/mTc4zud9iudMAzwXgHlTPRMB8u0Hn4I+XzteNMFlzQPZTNfQeS81F2f1GJn5rmend1R2JkLo6r9mK8ffuVcryX9d64FEk7vjQQS6gYSTM3ADp1VPJagWZw877s59geV/l6iUUoU4DafpkFTm5S1ud6r+OzGo=
+	t=1746486603; cv=none; b=mh4eRtl/Y5Kglus5BAkLpuQXUVOtTENxWORyOVFkATAMzOy0QfjvgguKlel57QIzcIvcjaezBFn3hn3lv1kU6t1H+035XPdIVfaecPrvDCSfnucx85pMnNyEANvoHMzMzaK1jqfZcrnojBpTqEPlb3+JBrlUOZoMBjU5YTabuNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486583; c=relaxed/simple;
-	bh=5vqwOQMoxkHQre/5nMOtaa2tCID368xye4ecQUKhAzE=;
+	s=arc-20240116; t=1746486603; c=relaxed/simple;
+	bh=/A2lNNDhMc5Fco9orW1zjWE7iSjabScTNUs6YZMsbcs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CioVwph0BRt3B2vWRVk32TKxDl4qJhAdJ+NYqBeSf6L/neyBej9+B3f6STbFMcwTSEB4eAm76regud0faEJiElbIuNaXqyMyKD3AboibnzGBWHpr6wUFK5INUrb6pCvhf3qjuZC58CN7SRpZ+7XuyZq+ZMXO9aGWNROq0H88zZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IYcNVUUM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF809C4CEE4;
-	Mon,  5 May 2025 23:09:38 +0000 (UTC)
+	 MIME-Version; b=TlADusUeF8tcWpQEnB+qWl9ZdtVoSms9mWNO/NT2C6Yd4Jyew4Vzi3rRPgRq4MJd2CWetZ7sf51/N2/X3nx66TZ0BtK5cYxA3+GqG2eFqhKefKYaeT6ye9c7hmx776IyNmw9puEcNQ+6bcNeGeZkmEeccc3rNnMmCyIHagBa+aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcTZsKUi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C799C4CEEE;
+	Mon,  5 May 2025 23:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486580;
-	bh=5vqwOQMoxkHQre/5nMOtaa2tCID368xye4ecQUKhAzE=;
+	s=k20201202; t=1746486602;
+	bh=/A2lNNDhMc5Fco9orW1zjWE7iSjabScTNUs6YZMsbcs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IYcNVUUMDNmC+qB5lZuYkL8KUJaoHgXTwSWHwCrNjkrM9XLuKeCZJY9+7U/KmxUC6
-	 3dWuobqrKLl/yXlTxnU0wgVqcIFrsDfU9lyynHE6axP4CAeN/fuyY/pSR+cGKTl8tf
-	 Lpmn3qwmcWFrGD29Lukb3LAwN11xF81eSmr29p/zwscGspBEwbYG5B/vOnawrvmiUf
-	 q659jHimfwwiUIOtbTTsaUmUJIlvCZMxU4dE007O6uJESu9OWzl7fmkvjZ2EE9B+Eh
-	 VFSiDrX0yL6EIsX3WP+c0xNeVZ1kurw6q37dvYrclBCFs7I8SKeUl8fEh/TjDPbs5v
-	 hOWFgjxjNFhmg==
+	b=YcTZsKUiEAJ2VcHMcG+Igda5Mg/8P47PCr6DZhaBgjvYlDDfGi95984Wcr5/g6N9i
+	 D3UABN5gQ0kyTwAJ3m1rva5ZLHMFig7savcRjqhpr5yqCCwgYNnKwf/UZYNNE3WPBe
+	 yXfuT/ChfLrCq9Q4Z0KbvwYtjP1qpVruLZa3E+bG01onSo02OhPcQNjk50yeaGGvoP
+	 zL2iHkftp8zm3y+wSVUtMLD2ebyWLHCoWSdtnipvLbSdNEe8rsPLb/G+HRIfInrWQF
+	 TuaOlJPe+StLT5c/eZ/wfaLHIF3jFeL16dxfFcWKtX3aba/jlgaSPHVzjhjEgSQktY
+	 Q3RZ66RsrXysg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>,
+Cc: Xinyu Zhang <xizhang@purestorage.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Ming Lei <ming.lei@redhat.com>,
+	Keith Busch <kbusch@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	hjc@rock-chips.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 100/212] drm/rockchip: vop2: Add uv swap for cluster window
-Date: Mon,  5 May 2025 19:04:32 -0400
-Message-Id: <20250505230624.2692522-100-sashal@kernel.org>
+	sagi@grimberg.me,
+	linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.1 112/212] nvme: map uring_cmd data even if address is 0
+Date: Mon,  5 May 2025 19:04:44 -0400
+Message-Id: <20250505230624.2692522-112-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -74,44 +68,46 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Andy Yan <andy.yan@rock-chips.com>
+From: Xinyu Zhang <xizhang@purestorage.com>
 
-[ Upstream commit e7aae9f6d762139f8d2b86db03793ae0ab3dd802 ]
+[ Upstream commit 99fde895ff56ac2241e7b7b4566731d72f2fdaa7 ]
 
-The Cluster windows of upcoming VOP on rk3576 also support
-linear YUV support, we need to set uv swap bit for it.
+When using kernel registered bvec fixed buffers, the "address" is
+actually the offset into the bvec rather than userspace address.
+Therefore it can be 0.
 
-As the VOP2_WIN_UV_SWA register defined on rk3568/rk3588 is
-0xffffffff, so this register will not be touched on these
-two platforms.
+We can skip checking whether the address is NULL before mapping
+uring_cmd data. Bad userspace address will be handled properly later when
+the user buffer is imported.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
-Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20250303034436.192400-4-andyshrk@163.com
+With this patch, we will be able to use the kernel registered bvec fixed
+buffers in io_uring NVMe passthru with ublk zero-copy support.
+
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Xinyu Zhang <xizhang@purestorage.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Link: https://lore.kernel.org/r/20250227223916.143006-4-kbusch@meta.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/nvme/host/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index 955ef2caac89f..6efa0a51b7d65 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -1289,10 +1289,8 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index acf73a91e87e7..0d84acbdbf6b0 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -541,7 +541,7 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 		return PTR_ERR(req);
+ 	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
  
- 	rb_swap = vop2_win_rb_swap(fb->format->format);
- 	vop2_win_write(win, VOP2_WIN_RB_SWAP, rb_swap);
--	if (!vop2_cluster_window(win)) {
--		uv_swap = vop2_win_uv_swap(fb->format->format);
--		vop2_win_write(win, VOP2_WIN_UV_SWAP, uv_swap);
--	}
-+	uv_swap = vop2_win_uv_swap(fb->format->format);
-+	vop2_win_write(win, VOP2_WIN_UV_SWAP, uv_swap);
- 
- 	if (fb->format->is_yuv) {
- 		vop2_win_write(win, VOP2_WIN_UV_VIR, DIV_ROUND_UP(fb->pitches[1], 4));
+-	if (d.addr && d.data_len) {
++	if (d.data_len) {
+ 		ret = nvme_map_user_request(req, d.addr,
+ 			d.data_len, nvme_to_user_ptr(d.metadata),
+ 			d.metadata_len, 0, &meta, ioucmd, vec);
 -- 
 2.39.5
 
