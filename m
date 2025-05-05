@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-632377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4BFAA9682
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:55:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54CADAA9692
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EEEA3A5CAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:54:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D257518893E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A4B2749E3;
-	Mon,  5 May 2025 14:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8866727587C;
+	Mon,  5 May 2025 14:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXo4iqsF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sb7mlVoi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A874265CDA;
-	Mon,  5 May 2025 14:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DC327511F;
+	Mon,  5 May 2025 14:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746456540; cv=none; b=FYDb5xbJjxNg97m+wIGDedIZdDV92gcCjVTq/AoZwgrOxCbsVwSXgqVLVJjuwq0Om9tT9EErpGFGxNWvUI5r7BTS5FJjEW4hMYI2kHldugtir40Yjr5Q/KzT1V623oEaCmzX3mcvm3oF+GKXHZ2rLpplxKkAO43neRnLIX+jc5c=
+	t=1746456546; cv=none; b=KnZsliHg+lU+VjWHZMQ6levPXQHDtR28X5A3qm+r5bO3Gv3EzD7i/U1ufEJTyCWEUIHGXaTZlg4l0WoMbVm3hjbxzw9wC66nsT+lLUf3B4yaEAI+bRXq7lYS3bLwnUpIL3Dyr2toHO6fzDYKECUJCFG8H86PkvUlv5cRMXEWKxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746456540; c=relaxed/simple;
-	bh=lozRBFVxQQN1nhVsQFYGSiIpmytQJaLRhJd+J1imAZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r6B6lCFsWcko1rwm8oexSQd2E+sdipceoMiWVrQYxNrLupU4mFJ63ogm60gvAtoOTG608dPXxFxbJ1lLrrT59GG3igJIEOdSjgmbJORYPIFCMw4CKfEThZEr0cAGdVoLv1eFYdouACwko8EcYAsngGFhCIwXcMB+XBwSoZkPZX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXo4iqsF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B96F3C4CEE4;
-	Mon,  5 May 2025 14:48:59 +0000 (UTC)
+	s=arc-20240116; t=1746456546; c=relaxed/simple;
+	bh=f++R7onyGhztL2ppO2pM5iKx8EpcAYqPrcfJ8Kqk3sc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YWN2UxocBuRbpDBpcrPtUjwz+FY4wtNod19LgVrcmp7MUy6bQOHlx12y0B0vPMQ3dmctHhQ501Er+Sks31xpcXyMvCMJwz9s6yuWboLmP/SX2PXvW016Bgt7W2Bid1+T1vMxoL9nctZNA6a7LbFw3Kx9GQbR0BY5NfQQaQsJX80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sb7mlVoi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED3CC4CEE4;
+	Mon,  5 May 2025 14:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746456539;
-	bh=lozRBFVxQQN1nhVsQFYGSiIpmytQJaLRhJd+J1imAZM=;
+	s=k20201202; t=1746456546;
+	bh=f++R7onyGhztL2ppO2pM5iKx8EpcAYqPrcfJ8Kqk3sc=;
 	h=From:To:Cc:Subject:Date:From;
-	b=IXo4iqsFfsx+ZTDvKwpgJgJtebEAWbLMD4mMABQu+4WmH1fp9tjDR6As3tZRLLKdU
-	 mXypz1G/wpGGHL6sRErFSzjthxSp9/fQCssVrB/8YOVYb5fE6EjW8KRCj+gfdzcs2s
-	 JOust+QBbK+Rmd97sZ20ws1f9GjCweCqUsihGUCOMVzjqX/pjniHdDV5T82plOPW9/
-	 XmnlQi0q8dn3gQfGAIhDqJI23nsVqIKtdHBm9EtyjPDV/N2VZ9XXfUYJ8WD7OtNrsQ
-	 Ka4QMoYFx2O7TPl0Jq1bX4+Tq9jk4B5TRLE+ExUiG4zURGjcbDgowHngP2YphjRmhV
-	 fNmxgB5LDzCNg==
+	b=sb7mlVoiE1QnY8Y3Cnez/74lIduA5sZVjVun81kXxvOhy/mL5J34IaXXt56Fiu2TW
+	 dPVWtDgFTBZ6mjSOEmD+xdvPNpGEATQLu47HpkAQwl6nZ7ikyyq3etBif4otg6PY5z
+	 6CidgFY+8SI2xI4tfc3YT846oRG5zbRsvjmC2drnbyVkD9kqmnGazTMrbt8yauzxZY
+	 IxlglIfc9SH5tZqAWMCR3qdej3QZ2Mnhs5afLopF3HQbxJee3zrUDYvBuHRayHK0KX
+	 jtLpBwcOqQtHqpfd4ua4avP6ho0PEK5BwpNI4+1za7x/inxrzdM70iSuQKX9V3x91L
+	 A74KaCUE8X42Q==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Damien Riegel <damien.riegel@savoirfairelinux.com>
+	Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: interrupt-controller: Convert technologic,ts4800-irqc to DT schema
-Date: Mon,  5 May 2025 09:48:55 -0500
-Message-ID: <20250505144856.1293370-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: interrupt-controller: Convert ti,cp-intc to DT schema
+Date: Mon,  5 May 2025 09:49:00 -0500
+Message-ID: <20250505144903.1293558-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,94 +56,110 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Convert the TS-4800 FPGA interrupt controller binding to schema format.
-It's a straight-forward conversion of the typical interrupt controller.
+Convert the TI Common Platform interrupt controller binding to schema
+format. It's a straight-forward conversion of the typical interrupt
+controller.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../technologic,ts4800-irqc.yaml              | 49 +++++++++++++++++++
- .../technologic,ts4800.txt                    | 14 ------
- 2 files changed, 49 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800-irqc.yaml
- delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800.txt
+ .../interrupt-controller/ti,cp-intc.txt       | 27 ----------
+ .../interrupt-controller/ti,cp-intc.yaml      | 50 +++++++++++++++++++
+ 2 files changed, 50 insertions(+), 27 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,cp-intc.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,cp-intc.yaml
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800-irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800-irqc.yaml
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,cp-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,cp-intc.txt
+deleted file mode 100644
+index 597e8a089fe4..000000000000
+--- a/Documentation/devicetree/bindings/interrupt-controller/ti,cp-intc.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-* TI Common Platform Interrupt Controller
+-
+-Common Platform Interrupt Controller (cp_intc) is used on
+-OMAP-L1x SoCs and can support several configurable number
+-of interrupts.
+-
+-Main node required properties:
+-
+-- compatible : should be:
+-	"ti,cp-intc"
+-- interrupt-controller : Identifies the node as an interrupt controller
+-- #interrupt-cells : Specifies the number of cells needed to encode an
+-  interrupt source. The type shall be a <u32> and the value shall be 1.
+-
+-  The cell contains the interrupt number in the range [0-128].
+-- ti,intc-size: Number of interrupts handled by the interrupt controller.
+-- reg: physical base address and size of the intc registers map.
+-
+-Example:
+-
+-	intc: interrupt-controller@1 {
+-		compatible = "ti,cp-intc";
+-		interrupt-controller;
+-		#interrupt-cells = <1>;
+-		ti,intc-size = <101>;
+-		reg = <0xfffee000 0x2000>;
+-	};
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,cp-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/ti,cp-intc.yaml
 new file mode 100644
-index 000000000000..f1a15d725cd6
+index 000000000000..77d018d20f9f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800-irqc.yaml
-@@ -0,0 +1,49 @@
++++ b/Documentation/devicetree/bindings/interrupt-controller/ti,cp-intc.yaml
+@@ -0,0 +1,50 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/interrupt-controller/technologic,ts4800-irqc.yaml#
++$id: http://devicetree.org/schemas/interrupt-controller/ti,cp-intc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: TS-4800 FPGA Interrupt Controller
++title: TI Common Platform Interrupt Controller
 +
 +maintainers:
-+  - Damien Riegel <damien.riegel@savoirfairelinux.com>
-+
++  - Bartosz Golaszewski <brgl@bgdev.pl>
++  
 +description:
-+  TS-4800 FPGA has an internal interrupt controller. When one of the interrupts
-+  is triggered, the SoC is notified, usually using a GPIO as parent interrupt
-+  source.
++  Common Platform Interrupt Controller (cp_intc) is used on OMAP-L1x SoCs and
++  can support several configurable number of interrupts.
 +
 +properties:
 +  compatible:
-+    const: technologic,ts4800-irqc
++    const: ti,cp-intc
 +
 +  reg:
 +    maxItems: 1
 +
-+  '#interrupt-cells':
-+    const: 1
-+
 +  interrupt-controller: true
 +
-+  interrupts:
-+    maxItems: 1
++  '#interrupt-cells':
++    const: 1
++    description: Encodes an interrupt number in the range 0–128.
++
++  ti,intc-size:
++    description: Number of interrupts handled by the interrupt controller.
++    $ref: /schemas/types.yaml#/definitions/uint32
 +
 +required:
 +  - compatible
 +  - reg
 +  - interrupt-controller
 +  - '#interrupt-cells'
-+  - interrupts
++  - ti,intc-size
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    interrupt-controller@1000 {
-+        compatible = "technologic,ts4800-irqc";
-+        reg = <0x1000 0x80>;
++    interrupt-controller@fffee000 {
++        compatible = "ti,cp-intc";
++        reg = <0xfffee000 0x2000>;
 +        interrupt-controller;
 +        #interrupt-cells = <1>;
-+        interrupts = <10>;
++        ti,intc-size = <101>;
 +    };
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800.txt b/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800.txt
-deleted file mode 100644
-index 341ae5909333..000000000000
---- a/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800.txt
-+++ /dev/null
-@@ -1,14 +0,0 @@
--TS-4800 FPGA interrupt controller
--
--TS-4800 FPGA has an internal interrupt controller. When one of the
--interrupts is triggered, the SoC is notified, usually using a GPIO as
--parent interrupt source.
--
--Required properties:
--- compatible: should be "technologic,ts4800-irqc"
--- interrupt-controller: identifies the node as an interrupt controller
--- reg: physical base address of the controller and length of memory mapped
--  region
--- #interrupt-cells: specifies the number of cells needed to encode an interrupt
--  source, should be 1.
--- interrupts: specifies the interrupt line in the interrupt-parent controller
 -- 
 2.47.2
 
