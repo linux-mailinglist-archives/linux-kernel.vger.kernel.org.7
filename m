@@ -1,131 +1,84 @@
-Return-Path: <linux-kernel+bounces-634902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB16DAAB56F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:29:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF20AAB4B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B40E1C20A31
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B9918811AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B25649D40A;
-	Tue,  6 May 2025 00:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="imgs4Z5+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ADA2F6B5B;
-	Mon,  5 May 2025 23:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386DD480B61;
+	Tue,  6 May 2025 00:43:10 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88402F275C
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 23:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487079; cv=none; b=WKGpb20vYq1ovRhHVKMDj2/jKDw3JDKNwf9ldU8XrQjfkpnUx/92lOeoDAHemste9PvnRoBAd3zLPmJ0Z126MvyYtqF0MZ6C3s2KKIglaIbmUA59pfgH6xNVX/Pe4q6nJmABNWxyKv30cR25I/cSfW3Ngo2Nu0D+ddu/dImdhAI=
+	t=1746486799; cv=none; b=CBb1pENU0zSYDgxYKtWdPZ34d9VRi/GZCu0SJYAKHWaB1DYKcekwf7SZ73Ti5Ytw1zRWhjE85txfHzT6/ULEhB05kuw9M0ed2rhC2PPpLJBqgnzD/eJtANFEflTas3AEg6cCRR5tffRGWMF5Xc19pqD7EIWZ8J3TQ3xdoVEoYb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487079; c=relaxed/simple;
-	bh=CMDfBiFwcjIQ0GzR+o2KKA+zOU0rN/vwkB/RvxyrxWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bp+dp5z8R3lOeAn3gvhlEJb0WgjISplLOe/1wch9uaYC85ICru/a7ZHdxDJaY4xb57k7/RBfbiSu+GLXghd6mfA3/crxsIitKB2duiahXV3Zjy90oUkxQs1m6HnySQOW6PQN8fsJWt7VfQa4+VlKACDrvmUk0dusVqGZFlIYnjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=imgs4Z5+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4EE9C4CEF1;
-	Mon,  5 May 2025 23:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487079;
-	bh=CMDfBiFwcjIQ0GzR+o2KKA+zOU0rN/vwkB/RvxyrxWA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=imgs4Z5+5M7KiGE2y4jIRYpHjryLiYWFHVQvDLKBei/ZxlY5wVgIxSYHeYd89qjhT
-	 qRbetTWGUUr0WbWI3ssTC7Ia/om6E13QmkfSMBAr+kfjI5/7890hObMiTvN4DbsRyQ
-	 zoPcBTZMAFIy9E1Se6S15cRh8DcvYbsL8rFqomviTOjAtRZ+1YZ+zNGvEgKN7s7DMz
-	 aINRMKX/46WWEabCjumXecs6BBHl0FSYPjJZAIuCJ4T7O+jaKS14zDMqTnALIipO2M
-	 zoUQ4g4pivCNIHyEX/u+ij9k5xqZbvIYe2Bwd41jwprokmIOjlKI+zaVtQVtjHZL/o
-	 xqL1GgEm5aMtQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Justin Tee <justin.tee@broadcom.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Sasha Levin <sashal@kernel.org>,
-	james.smart@broadcom.com,
-	dick.kennedy@broadcom.com,
-	James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 142/153] scsi: lpfc: Handle duplicate D_IDs in ndlp search-by D_ID routine
-Date: Mon,  5 May 2025 19:13:09 -0400
-Message-Id: <20250505231320.2695319-142-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
-References: <20250505231320.2695319-1-sashal@kernel.org>
+	s=arc-20240116; t=1746486799; c=relaxed/simple;
+	bh=klT+e0G7GBgldQiw2Du9d6zSDr6XFN1S9BQ5CRt2ufc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=d7mHhWkijG4fhAvSsxabusjJMYEyiXEgLfH9SRNGkKxtiL9lj2VAkCe63aiEbAwj8O6CPkAS4u1VRm9nEiXf4WqJnriPYmKAmKk5t2wSWD0EwVTOBSII2SgfSBf+IsACsOqvdoOA5KeBkwKuzQhqwlM6S/2DBbc/vtT+V6zxHTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id C7D9E92009D; Tue,  6 May 2025 01:13:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id C3B6392009C;
+	Tue,  6 May 2025 00:13:13 +0100 (BST)
+Date: Tue, 6 May 2025 00:13:13 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Nathan Chancellor <nathan@kernel.org>, llvm@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: Adding __popcountsi2 and __popcountdi2
+In-Reply-To: <CAHk-=wiQN=jqK9n-mUEAD1Q36t-6d589M_rAG568pLq2KysJ5w@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.2505052357091.31828@angie.orcam.me.uk>
+References: <20250425003342.GA795313@ax162> <CAHk-=whfT3A8K2Z+WbieGG5Hhc9QAT5s3qsbB19O0Roj2G5tfA@mail.gmail.com> <20250425021138.GA3800209@ax162> <CAHk-=wjDV3nOK34rbU8bdo6OjM=KYoCN92=1eVEVFu=FQr8TNA@mail.gmail.com> <alpine.DEB.2.21.2505051543470.31828@angie.orcam.me.uk>
+ <CAHk-=wiQN=jqK9n-mUEAD1Q36t-6d589M_rAG568pLq2KysJ5w@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.181
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Justin Tee <justin.tee@broadcom.com>
+On Mon, 5 May 2025, Linus Torvalds wrote:
 
-[ Upstream commit 56c3d809b7b450379162d0b8a70bbe71ab8db706 ]
+> > > Once you have the overhead of a function call - and all the register
+> > > games etc that involves, you're almost certainly better off with the
+> > > simple unconditional bitwise games.
+> >
+> >  Unless optimising for size, which we do support.
+> 
+> I think you missed the part where I said
+> 
+>  "But if you want to do this, put the damn thing as an alias on the code
+>   that actually *does* the SW fallback in lib/hweight.c."
+> 
+> IOW, what I object to is being *stupid* and doing *two* function
+> calls. It sure as hell doesn't optimize for size.
 
-After a port swap between separate fabrics, there may be multiple nodes in
-the vport's fc_nodes list with the same fabric well known address.
-Duplication is temporary and eventually resolves itself after dev_loss_tmo
-expires, but nameserver queries may still occur before dev_loss_tmo.  This
-possibly results in returning stale fabric ndlp objects.  Fix by adding an
-nlp_state check to ensure the ndlp search routine returns the correct newer
-allocated ndlp fabric object.
+ Sure, I only commented on whether or not to have entry points defined in 
+the link for libcalls that GCC emits whenever it produces a `popcount' 
+operation it cannot find a machine description pattern for (IOW a machine 
+instruction or a favourable sequence of).
 
-Signed-off-by: Justin Tee <justin.tee@broadcom.com>
-Link: https://lore.kernel.org/r/20250131000524.163662-5-justintee8345@gmail.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/scsi/lpfc/lpfc_hbadisc.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ They need to have specific names a per the subject and it's up to us to 
+implement them one way or another should we choose to; and as I say it 
+seems not unreasonable to me for GCC to emit these libcalls at least when 
+optimising for size.
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index 54aff304cdcf4..d04669ae878bd 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -5631,6 +5631,7 @@ static struct lpfc_nodelist *
- __lpfc_findnode_did(struct lpfc_vport *vport, uint32_t did)
- {
- 	struct lpfc_nodelist *ndlp;
-+	struct lpfc_nodelist *np = NULL;
- 	uint32_t data1;
- 
- 	list_for_each_entry(ndlp, &vport->fc_nodes, nlp_listp) {
-@@ -5645,14 +5646,20 @@ __lpfc_findnode_did(struct lpfc_vport *vport, uint32_t did)
- 					 ndlp, ndlp->nlp_DID,
- 					 ndlp->nlp_flag, data1, ndlp->nlp_rpi,
- 					 ndlp->active_rrqs_xri_bitmap);
--			return ndlp;
-+
-+			/* Check for new or potentially stale node */
-+			if (ndlp->nlp_state != NLP_STE_UNUSED_NODE)
-+				return ndlp;
-+			np = ndlp;
- 		}
- 	}
- 
--	/* FIND node did <did> NOT FOUND */
--	lpfc_printf_vlog(vport, KERN_INFO, LOG_NODE,
--			 "0932 FIND node did x%x NOT FOUND.\n", did);
--	return NULL;
-+	if (!np)
-+		/* FIND node did <did> NOT FOUND */
-+		lpfc_printf_vlog(vport, KERN_INFO, LOG_NODE,
-+				 "0932 FIND node did x%x NOT FOUND.\n", did);
-+
-+	return np;
- }
- 
- struct lpfc_nodelist *
--- 
-2.39.5
+ Traditionally we have chosen not to implement double-precision division 
+libcalls so as to trap expensive usage.  For `popcount' I have no opinion 
+offhand.
 
+  Maciej
 
