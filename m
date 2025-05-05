@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-634808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB29AAB798
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:14:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B30AAB752
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62003A4EAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4C24C4287
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D3A38A9A1;
-	Tue,  6 May 2025 00:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4E84801F4;
+	Tue,  6 May 2025 00:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+EbGQbH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwQnfhol"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB4D2F1CE2;
-	Mon,  5 May 2025 23:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246EF2F22F0;
+	Mon,  5 May 2025 23:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486767; cv=none; b=komFCKkTA2Lat7MxYwavRyxUlkyoiw+a/2bEubo0JQ8yt3KzLur+PgU89Ew3FWhX3yYH3PZcMmYlke6cGqsvHbWE+HRbkTVi5BvJxkobyLcHexckoBCkgcp50E/VP5lTvYQMwcx8rEPxqTVJN99V4sKRsIxljPf9dAUn0CWfwb0=
+	t=1746486788; cv=none; b=tHY/SnSi88REkAsKXHEtxpIw7kRS9X9oGfOXKUcli9Jv9zkrlYVdyqsRKCYU/txJ1UMsEcKqIhhvs7J+G8RUXawaUbQGvWihQJfL/PqavbbLAuCUoXt6ox244LS/VfewV71Dv5aCQCg9WLJyZrW3Iy3N6aZnmktaRHp5lse7YKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486767; c=relaxed/simple;
-	bh=CJ7mdf4vRbTYoLfPVW/MpaXB5BFerskzFGtYZi0NiU4=;
+	s=arc-20240116; t=1746486788; c=relaxed/simple;
+	bh=vegssbJyrsi+fZjzXV+RAgD8CqwmmTwkBo3yFn/EQMg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nH5zjy7cGwyGNiqUReh7ePlHcpBBrreo0KT80aZmiHmXtQ0BaHPZvm7a2yQUzmnvFZ72NBKLoHrn+DyNa9p6ApBRH77QuLwk1wS1y11e51YtiGh4BN9hwG+kUljU1WCZ56nwld0KzMDv74K5sHEAPT5yvcpf29DMT/kVQm9Io+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+EbGQbH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85142C4CEE4;
-	Mon,  5 May 2025 23:12:45 +0000 (UTC)
+	 MIME-Version; b=qGBIYsAXgLqwHsorC56ZLc6ihQKG066otso9TgvkzfJjJE7AYzK3L4crbDXTOkfQki2HffdUfLxtz7DxOYne79YY4LWdlZ584D4iiHGscBUFoDc917NKm9OZeo06MBU/qcvHQGsjDLNc0093lBqcPVkkTuhp4qyuDNoSnn2kg3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwQnfhol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3680BC4CEE4;
+	Mon,  5 May 2025 23:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486766;
-	bh=CJ7mdf4vRbTYoLfPVW/MpaXB5BFerskzFGtYZi0NiU4=;
+	s=k20201202; t=1746486787;
+	bh=vegssbJyrsi+fZjzXV+RAgD8CqwmmTwkBo3yFn/EQMg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J+EbGQbHZz6M+EevWUBBJ5uLAc52mFoXfJtxv7ziawoTlqSAl9+5nv9dtXC6U4gZY
-	 Chc2g2JGDndcKskBVXpfAzmh3GblCORKLM+j5w93oK0fH8DU+3d6ZDKFFeuxHQRM9e
-	 GmucS0UUOATRY20AF4Ye20UZ/kQ4HeiM4lZNBgc+6L+O5lPqYzrKk7yinQvt8JQknK
-	 HrKyQ2Bxrpypkf/aRiDsjf8XpxJAWWnBsPR/vEI9j+NqyXxJqSZWz4mYofRT5Blr19
-	 nYlf6AOQwAYceFknidoIXC8bocR0ergrgMbLVIEkejZrILOJWBj38m6K0U5nsYtkaa
-	 1FeAwAjdpeG5w==
+	b=UwQnfholILq+wa8YLypRmq6j+tHokoSpDLwyBd6a94zLu1qjobe5KMBggrFJKey6b
+	 4Vx/FrR0xAxsC00rdqo9G2+iH2WJ9roHKS91rkSjH74UVx1Qvf2ISqY4autfMV9fQO
+	 6dp1fYvx4Tm1WDo5/cl3ApM6lZXNXLMMMbjPpI0q0SLQJxtPOl51x7CO9TI2uscaUv
+	 Xn3EM6TIRFWRIAMcPNozMFaFMaAn5omcCMb/9Oy+FxEcsMAMjWfbAMvQm20u4rk7+w
+	 rRsMLGitldf4P9vbZY94x4oSinyJNVvp/f/I8Grq6IdKG6iIWlm9McEPZP7qTqN1Fp
+	 Kd85QjE1u1caw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Ankur Arora <ankur.a.arora@oracle.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Boqun Feng <boqun.feng@gmail.com>,
+Cc: Soeren Moch <smoch@web.de>,
+	Ping-Ke Shih <pkshih@realtek.com>,
 	Sasha Levin <sashal@kernel.org>,
-	neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org,
-	josh@joshtriplett.org,
-	urezki@gmail.com,
-	rcu@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 192/212] rcu: fix header guard for rcu_all_qs()
-Date: Mon,  5 May 2025 19:06:04 -0400
-Message-Id: <20250505230624.2692522-192-sashal@kernel.org>
+	Jes.Sorensen@gmail.com,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 204/212] wifi: rtl8xxxu: retry firmware download on error
+Date: Mon,  5 May 2025 19:06:16 -0400
+Message-Id: <20250505230624.2692522-204-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -71,42 +65,65 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Ankur Arora <ankur.a.arora@oracle.com>
+From: Soeren Moch <smoch@web.de>
 
-[ Upstream commit ad6b5b73ff565e88aca7a7d1286788d80c97ba71 ]
+[ Upstream commit 3d3e28feca7ac8c6cf2a390dbbe1f97e3feb7f36 ]
 
-rcu_all_qs() is defined for !CONFIG_PREEMPT_RCU but the declaration
-is conditioned on CONFIG_PREEMPTION.
+Occasionally there is an EPROTO error during firmware download.
+This error is converted to EAGAIN in the download function.
+But nobody tries again and so device probe fails.
 
-With CONFIG_PREEMPT_LAZY, CONFIG_PREEMPTION=y does not imply
-CONFIG_PREEMPT_RCU=y.
+Implement download retry to fix this.
 
-Decouple the two.
+This error was observed (and fix tested) on a tbs2910 board [1]
+with an embedded RTL8188EU (0bda:8179) device behind a USB hub.
 
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+[1] arch/arm/boot/dts/nxp/imx/imx6q-tbs2910.dts
+
+Signed-off-by: Soeren Moch <smoch@web.de>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Link: https://patch.msgid.link/20250127194828.599379-1-smoch@web.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/rcutree.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../wireless/realtek/rtl8xxxu/rtl8xxxu_core.c   | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-index 5efb51486e8af..54483d5e6f918 100644
---- a/include/linux/rcutree.h
-+++ b/include/linux/rcutree.h
-@@ -105,7 +105,7 @@ extern int rcu_scheduler_active;
- void rcu_end_inkernel_boot(void);
- bool rcu_inkernel_boot_has_ended(void);
- bool rcu_is_watching(void);
--#ifndef CONFIG_PREEMPTION
-+#ifndef CONFIG_PREEMPT_RCU
- void rcu_all_qs(void);
- #endif
+diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+index 9ccf8550a0679..cd22c756acc69 100644
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+@@ -798,9 +798,10 @@ rtl8xxxu_writeN(struct rtl8xxxu_priv *priv, u16 addr, u8 *buf, u16 len)
+ 	return len;
  
+ write_error:
+-	dev_info(&udev->dev,
+-		 "%s: Failed to write block at addr: %04x size: %04x\n",
+-		 __func__, addr, blocksize);
++	if (rtl8xxxu_debug & RTL8XXXU_DEBUG_REG_WRITE)
++		dev_info(&udev->dev,
++			 "%s: Failed to write block at addr: %04x size: %04x\n",
++			 __func__, addr, blocksize);
+ 	return -EAGAIN;
+ }
+ 
+@@ -3920,8 +3921,14 @@ static int rtl8xxxu_init_device(struct ieee80211_hw *hw)
+ 	 */
+ 	rtl8xxxu_write16(priv, REG_TRXFF_BNDY + 2, fops->trxff_boundary);
+ 
+-	ret = rtl8xxxu_download_firmware(priv);
+-	dev_dbg(dev, "%s: download_firmware %i\n", __func__, ret);
++	for (int retry = 5; retry >= 0 ; retry--) {
++		ret = rtl8xxxu_download_firmware(priv);
++		dev_dbg(dev, "%s: download_firmware %i\n", __func__, ret);
++		if (ret != -EAGAIN)
++			break;
++		if (retry)
++			dev_dbg(dev, "%s: retry firmware download\n", __func__);
++	}
+ 	if (ret)
+ 		goto exit;
+ 	ret = rtl8xxxu_start_firmware(priv);
 -- 
 2.39.5
 
