@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-631842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55976AA8E38
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:27:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9046AA8E30
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B37227AA200
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:26:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 035167A9159
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E391F4192;
-	Mon,  5 May 2025 08:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705181F3FF8;
+	Mon,  5 May 2025 08:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="CDZVROZn"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="hYanNWuJ"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B721F419B;
-	Mon,  5 May 2025 08:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202A91F3FC3
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746433609; cv=none; b=N8IlrG9R9gyykX9K6cEGNGJQbnL+9mfdsLPtFZnuwGq0NS4GPokdwW7TARwSwgzd9R9I+XLpQmhl76Uh6kKmlUnX8SmC6hv8o8FfHsgzh1UiP4keg2QoJy3b6jhnvo2M3uOEykn/tdb1ZQ+JoLmdwESlfvg2LLfrq3fTv7kUnPc=
+	t=1746433592; cv=none; b=Ov+OHzmGaFVqtiXu0yB871wifcgFPBSNTv5KK8WI+AmbqI6plrFD5NSzoJnnv9/4ztPPt/DEFusJwrftHgAl2+1Jsf1zRC5hj+TGfxw2AiS8c5mGU44CKTW/WF1yQOFBhof72yCZRXOX59UkozpIdr/law5LlRL9wt5UtQJ3grI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746433609; c=relaxed/simple;
-	bh=28fTn6+CXDdAMNn1wgavj1F/LzHm79b1rTFHO2xS54c=;
+	s=arc-20240116; t=1746433592; c=relaxed/simple;
+	bh=z1SvM46L+xrhbg9nFj07gbhtosZG21c9G2bsCHhv7a8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VYKVwvxNRq/yFICB9gHywK230qeD0ipDq/BFrkEYAPcFoJCdYiy4B+d2dqwlhj99CFqTRPfSk7BqqRsW4OMAWL8yQtBsPe6oKY2Jx3Tx2lyH4i347Lvr2LNe2qz0QKLYQwtfKzSC7hr9vOvvouMoisEU+Imx+5r6b0F/vojzxO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=CDZVROZn; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=oa/0WdyPLQfO7FmcFTY9MnVs9GAvf4tOfJddvEuWvIZ5t4nwDHCWnjSnkW4iF325+fztvU1lYdahotV3a8fPwaiQZx2oxfJ2IEl4NmU1J4q2yLii9pZmhSMH/m+z0Kg9WyZdDHSY0ZxG9JcLO291blVkNSBB8TTP8jN+e5Xd30k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=hYanNWuJ; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,36 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=CaqP67BMNYN7LC3R6Za31vMQCwrdPvTZaPLg+kYHYg0=; b=CDZVROZnK5s3N3ZD5m2+gPI0rb
-	IpJO40oDZQTV2yVohzoCyzs/A8zlfHNuDX3F/virOmlQIWRaApvQOO8eZ0dr7SS59z9NCkKqKGB7l
-	9RMGf1sLQ/aXCJZnoVQrqcJxPDrO01NzpTHEWSOPbGiL1w2eVJchzFyuWYlynNL32YC4cKdm+R9cO
-	2BXFP2ZEmUrm2Jkqj9hLXN+mP3Hy8Z4iJUpCXxmAdLxZiX3lnN9trAGM3pnLFTlkRIdfkoCmUSlKH
-	I/HYZZ9obtnBf6L9CzqrxgRYc4CFd0iCBaeKnCdtCrmQi7dBqd/srhcgIE0NKa7OXar84TI8OHLCL
-	T/WnCB/w==;
+	bh=tcKn5fgFgJYMW14/UIgbAr3xvSOFZE4UOmlwvYcTvq4=; b=hYanNWuJ8wYGOLPdj9w8MvI97U
+	oFD0l/S82Fcl3Z/UiZBTtWBsv4YWaMxg+ql4Y6YjO8Rc3IqJAMZ9DzV/nT0iEUeD7IMeOiOw2JHlM
+	CeL822WY4z/f4dhXzJdGnZJq8Yn89ynJTdhJh9nNBAqwu1gSs7V7ReMRWSN2taw/n5wJbsrpBe6TR
+	2KOsSLARZYWYua0MGVr0rMqJDEy2A3L6ARnnTcZoDps5vMYpCPEEpr09tKA+Z/f4wukjdkgG+spmJ
+	W4x8yG1CnMdUIlaJUQ41ugJCHyBq4gP4/+ZyOthDip1b7DCQ6WDfh6DZNkCc4/MU+Sv0YLNuI1xMw
+	BYoJDPjA==;
 Received: from i53875a1d.versanet.de ([83.135.90.29] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uBr9g-0001Ho-Rb; Mon, 05 May 2025 10:26:28 +0200
+	id 1uBr9h-0001Ho-3f; Mon, 05 May 2025 10:26:29 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Diederik de Haas <didi.debian@cknow.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dragan Simic <dsimic@manjaro.org>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Tianling Shen <cnsztl@gmail.com>
-Subject: Re: [PATCH 0/2] Add phy+vcc supply to NanoPi R5S and Q64-B
-Date: Mon,  5 May 2025 10:26:16 +0200
-Message-ID: <174643357079.1204535.15682445178976713220.b4-ty@sntech.de>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Some graphics enablement for the ancient rk3066 marsboard
+Date: Mon,  5 May 2025 10:26:17 +0200
+Message-ID: <174643357078.1204535.9408600816388349176.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250503152917.138648-1-didi.debian@cknow.org>
-References: <20250503152917.138648-1-didi.debian@cknow.org>
+In-Reply-To: <20250503201043.990933-1-heiko@sntech.de>
+References: <20250503201043.990933-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,22 +67,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 03 May 2025 17:22:17 +0200, Diederik de Haas wrote:
-> Testing on my NanoPi R5S and Quartz64 Model B brought some more issues
-> with power supplies to light, so fix them as well.
+On Sat, 03 May 2025 22:10:41 +0200, Heiko Stuebner wrote:
+> Enable both the hdmi output as well as the Mali400-gpu.
 > 
-> Diederik de Haas (2):
->   arm64: dts: rockchip: Add phy-supply to gmac0 on NanoPi R5S
->   arm64: dts: rockchip: Add vcc-supply to SPI flash on rk3566-quartz64-b
+> Did this to test a patch converting the rk3066-hdmi to a bridge driver,
+> for future improvements, so it'll be nice to keep this around too.
+> 
+> Heiko Stuebner (2):
+>   ARM: dts: rockchip: enable hdmi on rk3066 marsboard
+>   ARM: dts: rockchip: enable Mali gpu on rk3066 marsboard
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] arm64: dts: rockchip: Add phy-supply to gmac0 on NanoPi R5S
-      commit: fdc68be8a8acbea9630c3bca560b7a1cf3a952e2
-[2/2] arm64: dts: rockchip: Add vcc-supply to SPI flash on rk3566-quartz64-b
-      commit: ec79aee752c6b5c7695cd82a57a8a9249d09316d
+[1/2] ARM: dts: rockchip: enable hdmi on rk3066 marsboard
+      commit: cb2a6738f33c3a9da7d1c0afa9ea5e9d78282eaa
+[2/2] ARM: dts: rockchip: enable Mali gpu on rk3066 marsboard
+      commit: c895c32bf1ce90839fc525c5d23cbf867ebe519a
 
 Best regards,
 -- 
