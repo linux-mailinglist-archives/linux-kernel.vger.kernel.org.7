@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-634943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994C4AAB810
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:25:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBC9AAB7E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24BAB3AD2F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923311C26176
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1396334C0D0;
-	Tue,  6 May 2025 00:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC61B29B8FD;
+	Tue,  6 May 2025 00:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGxQBh6q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouw3d8UJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3D83B7AA5;
-	Mon,  5 May 2025 23:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6923B9713;
+	Mon,  5 May 2025 23:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487300; cv=none; b=AJAzo1jaxT6m41uIh04nsdHqu3E/v4KMD2UWAicRyzJqGpw3HOxOAk10sTCwpZ01/aLLYIpaEmH7LZdflWeYd8+4MbCdRtauCAyFGpsSKPryLcIFO5qb9wF9794Pwxx9OyW2J2TQHhZkT7YGjQ7pWCh40egORa0n6qS8grD39S0=
+	t=1746487327; cv=none; b=RYq1ukp5z2zrvU3wvzBfvyIXxBYDEnIYmELwgVcg2Eq36kt60p9hojWwDr10fAPW4I+T2KM5uMC3HN7f8gA66UGTYBicnD+2JAZG1ozTrz0yR4ZPq/g5mf5ykZIWJ2yvFoS+KVBhf6/P/mHZ+/vCrycbZqOW+34jgZWixXoowM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487300; c=relaxed/simple;
-	bh=nMax0lR7nSV7ZcdvbX3dQfW/zDJ5IN2hV1tGg5hqYrc=;
+	s=arc-20240116; t=1746487327; c=relaxed/simple;
+	bh=U0TwbD88pZSRao+uKN5cVvjVctGmavvj1FmStfO7D18=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rpFffRxNmJQPqPaQo6bVT5ke3HlijHGUJG/n+gESNOsn0EC2NNjuuZDb99G5RBhh/969L0vcFNnfeyoQE8RGfcD0H06rvov3JBkQm29Qp/T6is+l+K35cDuWoyaZyqcMVUV+WJusG+e2gNZAdCu47pOIYNpTUm9EGxNRuQ2cR2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGxQBh6q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 907C5C4CEF7;
-	Mon,  5 May 2025 23:21:38 +0000 (UTC)
+	 MIME-Version; b=JplbD4pDoHz4PyOtnugNEsbEsSuJajtvMJiPwuZuB5gEZy87IqLWZPs9av8c6M0kfBVd3x7fQfjnB9baWp4qreZUCCqZSMcdfP6bLv47FGzOv1VIVSfsrsqy5fRcwJSIX9y98lSle6eP4IRTl+0Jr21dTj/7UFxLylp0cQGwl5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouw3d8UJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F63FC4CEE4;
+	Mon,  5 May 2025 23:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487299;
-	bh=nMax0lR7nSV7ZcdvbX3dQfW/zDJ5IN2hV1tGg5hqYrc=;
+	s=k20201202; t=1746487326;
+	bh=U0TwbD88pZSRao+uKN5cVvjVctGmavvj1FmStfO7D18=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NGxQBh6qYKMk5MXcOkVF5ApxAmqRC61VJDwvT2uXzegzxLbYrxJwQc7RDQJQl04Up
-	 jcmZsaFrx6jz9gZhOJFWzIs8Wjcn8jah1saHS1KyAEp0t22VM6PouVEmIBt2N6T3xn
-	 Uj+oWoS/MqhiACk8aCQ17m4wIJHfPNnTTBMGTMkNZopKDFYg5neJJ8URJ2P1/RvWiX
-	 57V+qSA8IMVptWfiXNLcnopvtSzfunYWKCOZz4cMGKmExRuptq1LBCxfS31RRIkA5m
-	 C1+oWuBU6J/Gm5ZLEQNLRugnfg6Av8URZY733c8hv7oTpEHN5U+1AcOilvF/JEcvot
-	 DFpn/bIv1lsoA==
+	b=ouw3d8UJiZkIaNUhLY/kNvzsKk5bLLL/ppUAYuEi8rjnuCA4+BRlTrnTOEuXJCXQk
+	 CIg8Yd9NFrL1s50ITCWKKnllbDLDPk+cbweljvtom3Hv9HDWaUMZ8p9lhoBTV3T4e2
+	 Wjz0GWd7UOPf89fNlKZnjQGbQb7uJt1sTZ4KdbYyG4OPgS5DH4tHK8dibkpprfVpLO
+	 RUJy4xcuk5dvm5IR8zMhFVBWnwMKyVWP2qMi+vXqBIVDkr5IjsRmx3aAaqhNW8EeHI
+	 Fst9lcHEHHaluWmYcsrwn5evM6qnOMTZMjmSWXgjf0/AjAIxqV+/OkIhgCLLWUDIvX
+	 8nKhYEwnYJBig==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	airlied@redhat.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.10 107/114] drm/ast: Find VBIOS mode from regular display size
-Date: Mon,  5 May 2025 19:18:10 -0400
-Message-Id: <20250505231817.2697367-107-sashal@kernel.org>
+	akpm@linux-foundation.org,
+	mhocko@suse.com,
+	mjguzik@gmail.com,
+	pasha.tatashin@soleen.com,
+	alexjlzheng@tencent.com
+Subject: [PATCH AUTOSEL 5.4 07/79] exit: fix the usage of delay_group_leader->exit_code in do_notify_parent() and pidfs_exit()
+Date: Mon,  5 May 2025 19:20:39 -0400
+Message-Id: <20250505232151.2698893-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505231817.2697367-1-sashal@kernel.org>
-References: <20250505231817.2697367-1-sashal@kernel.org>
+In-Reply-To: <20250505232151.2698893-1-sashal@kernel.org>
+References: <20250505232151.2698893-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,90 +65,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.237
+X-stable-base: Linux 5.4.293
 Content-Transfer-Encoding: 8bit
 
-From: Thomas Zimmermann <tzimmermann@suse.de>
+From: Oleg Nesterov <oleg@redhat.com>
 
-[ Upstream commit c81202906b5cd56db403e95db3d29c9dfc8c74c1 ]
+[ Upstream commit 9133607de37a4887c6f89ed937176a0a0c1ebb17 ]
 
-The ast driver looks up supplied display modes from an internal list of
-display modes supported by the VBIOS.
+Consider a process with a group leader L and a sub-thread T.
+L does sys_exit(1), then T does sys_exit_group(2).
 
-Do not use the crtc_-prefixed display values from struct drm_display_mode
-for looking up the VBIOS mode. The fields contain raw values that the
-driver programs to hardware. They are affected by display settings like
-double-scan or interlace.
+In this case wait_task_zombie(L) will notice SIGNAL_GROUP_EXIT and use
+L->signal->group_exit_code, this is correct.
 
-Instead use the regular vdisplay and hdisplay fields for lookup. As the
-programmed values can now differ from the values used for lookup, set
-struct drm_display_mode.crtc_vdisplay and .crtc_hdisplay from the VBIOS
-mode.
+But, before that, do_notify_parent(L) called by release_task(T) will use
+L->exit_code != L->signal->group_exit_code, and this is not consistent.
+We don't really care, I think that nobody relies on the info which comes
+with SIGCHLD, if nothing else SIGCHLD < SIGRTMIN can be queued only once.
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20250131092257.115596-9-tzimmermann@suse.de
+But pidfs_exit() is more problematic, I think pidfs_exit_info->exit_code
+should report ->group_exit_code in this case, just like wait_task_zombie().
+
+TODO: with this change we can hopefully cleanup (or may be even kill) the
+similar SIGNAL_GROUP_EXIT checks, at least in wait_task_zombie().
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Link: https://lore.kernel.org/r/20250324171941.GA13114@redhat.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/ast/ast_mode.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ kernel/exit.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
-index d27f2840b9555..9c8595a986098 100644
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -104,7 +104,7 @@ static bool ast_get_vbios_mode_info(const struct drm_format_info *format,
- 		return false;
- 	}
- 
--	switch (mode->crtc_hdisplay) {
-+	switch (mode->hdisplay) {
- 	case 640:
- 		vbios_mode->enh_table = &res_640x480[refresh_rate_index];
- 		break;
-@@ -115,7 +115,7 @@ static bool ast_get_vbios_mode_info(const struct drm_format_info *format,
- 		vbios_mode->enh_table = &res_1024x768[refresh_rate_index];
- 		break;
- 	case 1280:
--		if (mode->crtc_vdisplay == 800)
-+		if (mode->vdisplay == 800)
- 			vbios_mode->enh_table = &res_1280x800[refresh_rate_index];
- 		else
- 			vbios_mode->enh_table = &res_1280x1024[refresh_rate_index];
-@@ -127,7 +127,7 @@ static bool ast_get_vbios_mode_info(const struct drm_format_info *format,
- 		vbios_mode->enh_table = &res_1440x900[refresh_rate_index];
- 		break;
- 	case 1600:
--		if (mode->crtc_vdisplay == 900)
-+		if (mode->vdisplay == 900)
- 			vbios_mode->enh_table = &res_1600x900[refresh_rate_index];
- 		else
- 			vbios_mode->enh_table = &res_1600x1200[refresh_rate_index];
-@@ -136,7 +136,7 @@ static bool ast_get_vbios_mode_info(const struct drm_format_info *format,
- 		vbios_mode->enh_table = &res_1680x1050[refresh_rate_index];
- 		break;
- 	case 1920:
--		if (mode->crtc_vdisplay == 1080)
-+		if (mode->vdisplay == 1080)
- 			vbios_mode->enh_table = &res_1920x1080[refresh_rate_index];
- 		else
- 			vbios_mode->enh_table = &res_1920x1200[refresh_rate_index];
-@@ -180,6 +180,7 @@ static bool ast_get_vbios_mode_info(const struct drm_format_info *format,
- 	hborder = (vbios_mode->enh_table->flags & HBorder) ? 8 : 0;
- 	vborder = (vbios_mode->enh_table->flags & VBorder) ? 8 : 0;
- 
-+	adjusted_mode->crtc_hdisplay = vbios_mode->enh_table->hde;
- 	adjusted_mode->crtc_htotal = vbios_mode->enh_table->ht;
- 	adjusted_mode->crtc_hblank_start = vbios_mode->enh_table->hde + hborder;
- 	adjusted_mode->crtc_hblank_end = vbios_mode->enh_table->ht - hborder;
-@@ -189,6 +190,7 @@ static bool ast_get_vbios_mode_info(const struct drm_format_info *format,
- 					 vbios_mode->enh_table->hfp +
- 					 vbios_mode->enh_table->hsync);
- 
-+	adjusted_mode->crtc_vdisplay = vbios_mode->enh_table->vde;
- 	adjusted_mode->crtc_vtotal = vbios_mode->enh_table->vt;
- 	adjusted_mode->crtc_vblank_start = vbios_mode->enh_table->vde + vborder;
- 	adjusted_mode->crtc_vblank_end = vbios_mode->enh_table->vt - vborder;
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 56d3a099825fb..5015ecdda6d95 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -262,6 +262,9 @@ void release_task(struct task_struct *p)
+ 	leader = p->group_leader;
+ 	if (leader != p && thread_group_empty(leader)
+ 			&& leader->exit_state == EXIT_ZOMBIE) {
++		/* for pidfs_exit() and do_notify_parent() */
++		if (leader->signal->flags & SIGNAL_GROUP_EXIT)
++			leader->exit_code = leader->signal->group_exit_code;
+ 		/*
+ 		 * If we were the last child thread and the leader has
+ 		 * exited already, and the leader's parent ignores SIGCHLD,
 -- 
 2.39.5
 
