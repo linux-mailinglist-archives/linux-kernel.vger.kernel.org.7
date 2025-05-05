@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-633402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31F1AAA5FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:02:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509BBAAA61C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F2254A0567
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:02:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C8477B42B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AD429209E;
-	Mon,  5 May 2025 22:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C33631DA48;
+	Mon,  5 May 2025 22:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RRM1hshj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgftdVMn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FA029208B;
-	Mon,  5 May 2025 22:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEE428E616;
+	Mon,  5 May 2025 22:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484312; cv=none; b=m+fhxom6bFrcmtTQNs2c7cFBPViPv8VVojqTtk6dEbBbCgJpsmY3r2a/xocJgFBghwNRLzsjK+ZUSLdV0tThe/ngi9JeTObe/LXhJnBUbLQRXmCa8MhBgcXjAxFSW3kHwFUetBjN6PFYReM3Pu0H+MdBfdV4HqrvBRNBbKBkfaA=
+	t=1746484315; cv=none; b=k/EyyvDQb1OyjfG1OtNxHPuq2oKv8f1gyxkUw4AD8CQuyyipBWT0gBJsZuCu0GqXwx6GyjQPpj6sN9jagFX2V7h9rR/D0iygnyGG4FPHC53cteWrkVZbXA+mpHxZ5nF97V6Uuitgf50NYH0Tb8jpKFujlp9OAB0i2ufC4dpiUXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484312; c=relaxed/simple;
-	bh=D0rMHEOc2MSLM4sPtOiGN51KjDm8Ew3MsYxv536bVZk=;
+	s=arc-20240116; t=1746484315; c=relaxed/simple;
+	bh=0+x/1ba+TCL1sFEC6TM5FPJpMZfBZBascbItQHc6Fe0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NpU31hs7mYqehMKUFD1jlPOmi4zLAA7L6VYxgkdkx5k8/TBmbGTjLChfR59QgL1Jw24gQzMxs52rIYLQPXul17CxDxcCUA8afufMeYvRQLLupflHG3FzaNb5MRaD85MTNjc+sZvIYsWK04VTo2CbqHEYfF0jxY61/Bx52BWf5ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RRM1hshj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 991D0C4CEE4;
-	Mon,  5 May 2025 22:31:50 +0000 (UTC)
+	 MIME-Version; b=KvBtBKHs7wxeQnsSnKVBJWpRovzY9iHsvEQTDUJwrah4Z1O/EEmE2YqCzI2NB3vuDF6hJHUNdrc4P/24jY6ax1P1BPcxaY/6yAjMbRI6H8aYeNAUR83Jg/pwkUSZoPLv2d7HXRRjc+f9ZQvrFtilWBHX2Qs6rO/WXx1BTYR65Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgftdVMn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC5E6C4CEED;
+	Mon,  5 May 2025 22:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484311;
-	bh=D0rMHEOc2MSLM4sPtOiGN51KjDm8Ew3MsYxv536bVZk=;
+	s=k20201202; t=1746484315;
+	bh=0+x/1ba+TCL1sFEC6TM5FPJpMZfBZBascbItQHc6Fe0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RRM1hshjBLyP6IF/Qd8a7bgUnVZRssJ+Ml3hp1klDYs7EQCDvLRArcWQCT1hrmTfA
-	 nvDCvGJ7NFmX6kKyIoVGIGmCD9kGVwmU3AFIVG0BGQEqF9KBd0roGwwCQUmOjzpHM0
-	 7W5VuV/rruOiugwZNT912B7cOZvp42g1RCYqWDbHdOcRmU7RsiXJ/TDXKRfAU/vJqR
-	 Eps1iDpeUdWlNZtSfKT/WtfUh4234Se49veTmFrMYCoQd06oky2cPXSn7lBSiQ3G9j
-	 qcTQyQbk13rSrLdTxg9BDUS7ay9Ydyo1lIsyF2U/py6NaHYp9/i+EQJC1CC7HTuae8
-	 EyBjwr/At6cog==
+	b=sgftdVMnM5Lz40NihVmPIJ9hkH3xpIQHWB0+2H4ivyTILFQCiRBwpuVydaPJHL1wk
+	 XxNQvCmXMrd0H1irgtF1ubhQhNkq3rR0U/XyXhItyt02Ihqc+THG+tG2fJQxWdwrab
+	 yx0f8pNVqgHykiFUWBCtVkWahauBg+p91XZe831fwJ7Zb0nnUAhdW5qwZKZMPVmYw+
+	 kNXc2iIQZ/e5AnpWDRD3mid5o5udE7HSeXUMsGIpN9jbIMb6zeQgJH9itODs6De1sx
+	 iIv88fUft87syUHwp064yUogo23F8czYExy1UfXVkpxWLgolo4/IQIZ0QgFU+a1wph
+	 LCGG1BMSZiT8Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Imre Deak <imre.deak@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	jirislaby@kernel.org,
-	p.zabel@pengutronix.de,
-	wsa+renesas@sang-engineering.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	namcao@linutronix.de,
-	linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 447/642] serial: sh-sci: Update the suspend/resume support
-Date: Mon,  5 May 2025 18:11:03 -0400
-Message-Id: <20250505221419.2672473-447-sashal@kernel.org>
+	jani.nikula@linux.intel.com,
+	lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.14 449/642] drm/xe/display: Remove hpd cancel work sync from runtime pm path
+Date: Mon,  5 May 2025 18:11:05 -0400
+Message-Id: <20250505221419.2672473-449-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -70,162 +71,37 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-[ Upstream commit 22a6984c5b5df8eab864d7f3e8b94d5a554d31ab ]
+[ Upstream commit 1ed591582b7b894d2f7e7ab5cef2e9b0b6fef12b ]
 
-The Renesas RZ/G3S supports a power saving mode where power to most of the
-SoC components is turned off. When returning from this power saving mode,
-SoC components need to be re-configured.
+This function will synchronously cancel and wait for many display
+work queue items, which might try to take the runtime pm reference
+causing a bad deadlock. So, remove it from the runtime_pm suspend patch.
 
-The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
-returning from this power saving mode. The sh-sci code already configures
-the SCIF clocks, power domain and registers by calling uart_resume_port()
-in sci_resume(). On suspend path the SCIF UART ports are suspended
-accordingly (by calling uart_suspend_port() in sci_suspend()). The only
-missing setting is the reset signal. For this assert/de-assert the reset
-signal on driver suspend/resume.
-
-In case the no_console_suspend is specified by the user, the registers need
-to be saved on suspend path and restore on resume path. To do this the
-sci_console_save()/sci_console_restore() functions were added. There is no
-need to cache/restore the status or FIFO registers. Only the control
-registers. The registers that will be saved/restored on suspend/resume are
-specified by the struct sci_suspend_regs data structure.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20250207113313.545432-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Imre Deak <imre.deak@intel.com>
+Reviewed-by: Imre Deak <imre.deak@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20250212192447.402715-1-rodrigo.vivi@intel.com
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sh-sci.c | 71 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 69 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/xe/display/xe_display.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 41f987632bce8..e0ead0147bfe0 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -104,6 +104,15 @@ struct plat_sci_reg {
- 	u8 offset, size;
- };
+diff --git a/drivers/gpu/drm/xe/display/xe_display.c b/drivers/gpu/drm/xe/display/xe_display.c
+index b3921dbc52ff6..b735e30953cee 100644
+--- a/drivers/gpu/drm/xe/display/xe_display.c
++++ b/drivers/gpu/drm/xe/display/xe_display.c
+@@ -346,7 +346,8 @@ static void __xe_display_pm_suspend(struct xe_device *xe, bool runtime)
  
-+struct sci_suspend_regs {
-+	u16 scsmr;
-+	u16 scscr;
-+	u16 scfcr;
-+	u16 scsptr;
-+	u8 scbrr;
-+	u8 semr;
-+};
-+
- struct sci_port_params {
- 	const struct plat_sci_reg regs[SCIx_NR_REGS];
- 	unsigned int fifosize;
-@@ -134,6 +143,8 @@ struct sci_port {
- 	struct dma_chan			*chan_tx;
- 	struct dma_chan			*chan_rx;
+ 	xe_display_flush_cleanup_work(xe);
  
-+	struct reset_control		*rstc;
-+
- #ifdef CONFIG_SERIAL_SH_SCI_DMA
- 	struct dma_chan			*chan_tx_saved;
- 	struct dma_chan			*chan_rx_saved;
-@@ -153,6 +164,7 @@ struct sci_port {
- 	int				rx_trigger;
- 	struct timer_list		rx_fifo_timer;
- 	int				rx_fifo_timeout;
-+	struct sci_suspend_regs		suspend_regs;
- 	u16				hscif_tot;
+-	intel_hpd_cancel_work(xe);
++	if (!runtime)
++		intel_hpd_cancel_work(xe);
  
- 	bool has_rtscts;
-@@ -3374,6 +3386,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 	}
- 
- 	sp = &sci_ports[id];
-+	sp->rstc = rstc;
- 	*dev_id = id;
- 
- 	p->type = SCI_OF_TYPE(data);
-@@ -3546,13 +3559,57 @@ static int sci_probe(struct platform_device *dev)
- 	return 0;
- }
- 
-+static void sci_console_save(struct sci_port *s)
-+{
-+	struct sci_suspend_regs *regs = &s->suspend_regs;
-+	struct uart_port *port = &s->port;
-+
-+	if (sci_getreg(port, SCSMR)->size)
-+		regs->scsmr = sci_serial_in(port, SCSMR);
-+	if (sci_getreg(port, SCSCR)->size)
-+		regs->scscr = sci_serial_in(port, SCSCR);
-+	if (sci_getreg(port, SCFCR)->size)
-+		regs->scfcr = sci_serial_in(port, SCFCR);
-+	if (sci_getreg(port, SCSPTR)->size)
-+		regs->scsptr = sci_serial_in(port, SCSPTR);
-+	if (sci_getreg(port, SCBRR)->size)
-+		regs->scbrr = sci_serial_in(port, SCBRR);
-+	if (sci_getreg(port, SEMR)->size)
-+		regs->semr = sci_serial_in(port, SEMR);
-+}
-+
-+static void sci_console_restore(struct sci_port *s)
-+{
-+	struct sci_suspend_regs *regs = &s->suspend_regs;
-+	struct uart_port *port = &s->port;
-+
-+	if (sci_getreg(port, SCSMR)->size)
-+		sci_serial_out(port, SCSMR, regs->scsmr);
-+	if (sci_getreg(port, SCSCR)->size)
-+		sci_serial_out(port, SCSCR, regs->scscr);
-+	if (sci_getreg(port, SCFCR)->size)
-+		sci_serial_out(port, SCFCR, regs->scfcr);
-+	if (sci_getreg(port, SCSPTR)->size)
-+		sci_serial_out(port, SCSPTR, regs->scsptr);
-+	if (sci_getreg(port, SCBRR)->size)
-+		sci_serial_out(port, SCBRR, regs->scbrr);
-+	if (sci_getreg(port, SEMR)->size)
-+		sci_serial_out(port, SEMR, regs->semr);
-+}
-+
- static __maybe_unused int sci_suspend(struct device *dev)
- {
- 	struct sci_port *sport = dev_get_drvdata(dev);
- 
--	if (sport)
-+	if (sport) {
- 		uart_suspend_port(&sci_uart_driver, &sport->port);
- 
-+		if (!console_suspend_enabled && uart_console(&sport->port))
-+			sci_console_save(sport);
-+		else
-+			return reset_control_assert(sport->rstc);
-+	}
-+
- 	return 0;
- }
- 
-@@ -3560,8 +3617,18 @@ static __maybe_unused int sci_resume(struct device *dev)
- {
- 	struct sci_port *sport = dev_get_drvdata(dev);
- 
--	if (sport)
-+	if (sport) {
-+		if (!console_suspend_enabled && uart_console(&sport->port)) {
-+			sci_console_restore(sport);
-+		} else {
-+			int ret = reset_control_deassert(sport->rstc);
-+
-+			if (ret)
-+				return ret;
-+		}
-+
- 		uart_resume_port(&sci_uart_driver, &sport->port);
-+	}
- 
- 	return 0;
- }
+ 	if (!runtime && has_display(xe)) {
+ 		intel_display_driver_suspend_access(display);
 -- 
 2.39.5
 
