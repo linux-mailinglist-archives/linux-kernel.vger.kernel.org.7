@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-634851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA814AAB4F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:19:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6B4AAB4EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672B0462F49
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A7B4E51B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D0F345459;
-	Tue,  6 May 2025 00:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFAD2DCB5B;
+	Tue,  6 May 2025 00:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hznrb6GK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gASA5d93"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B652F3A8F;
-	Mon,  5 May 2025 23:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DFA283FCD;
+	Mon,  5 May 2025 23:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486891; cv=none; b=FueWDv6YdKqXJzySPv1sITqyzoDnxcCY58deojLDcjlBQEIqGzUqnvKn+HXMxbbaTt9qDk+uBpDgUaE3z6WI6ZKOAa99FdUONBBPJdOoI7s+ZH/vPWgM4IgAwZXuwehwlJpWtetvLvLULEqdZWt6z9BH4h8bKxsQThtJDmdP6FU=
+	t=1746486897; cv=none; b=YZIGk7PUEpy67JoONGlQD8JHoqP0CXb+1c1rBIghgrxxgyuB6LiwtOYXOUXXO8206O3VHfgJOvDnPRmWbHmFMB3jeMYIOMnOEbHWqTDHeor4DYSl83FxEfJ+AUkgzcBHzSb3k0MGAYxebaKq3g1lt+7S8vUmrrZpkenPo/LapxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486891; c=relaxed/simple;
-	bh=8ONW94dM+NZTcEz/+rs4aAEOz/0Y7F+L1BCO5cWJ4U0=;
+	s=arc-20240116; t=1746486897; c=relaxed/simple;
+	bh=wZrL33Y2UhmB/joSQfwWeseTnQl7iGXHm9sKMmzLLcU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Aa0H3klfq5aWcaoMxVisA/diA2rd4kRWmB6aNkFGi5QNR2DSZs2OOm90+oZco3Mf+oOZGwhKw0K6tmJ7iZka4TQMxO+8xeCdsQ/Q7enMDs3jRZF8pP/yM86/nzFtF0nirUijBhXCVuChVAtjYY7kUshZblBilT0CRF/G3e6AO3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hznrb6GK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ADB5C4CEF1;
-	Mon,  5 May 2025 23:14:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pvkw8MQcrHv2hGrFZJt9UgoR3yc9ZyKHen8yGhr1kmPCYm4XVYcbtmwg0UpdxNe0KPErKue/MnMUZ8UwHUyUXY01DLKhuubnApvH2/WX8JAy4AAgq7gUfr1nXiwr4tQ4Jc+Tjzel39NrD+B8VWgJN58JuqtAY0gxJG5GhXbzTck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gASA5d93; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03691C4CEEF;
+	Mon,  5 May 2025 23:14:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486890;
-	bh=8ONW94dM+NZTcEz/+rs4aAEOz/0Y7F+L1BCO5cWJ4U0=;
+	s=k20201202; t=1746486897;
+	bh=wZrL33Y2UhmB/joSQfwWeseTnQl7iGXHm9sKMmzLLcU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hznrb6GKyQPyGbiWaY4gXCB7M/jZiuCJ7MDsf/etMk7aPl3qr2vbhml+YLtL/pWEt
-	 LZOEeAGWgHDzzt7AYzI/X478lJA96b3BBCEvB3qIREvCP/q9ePL1rLksq9HtHGJYtx
-	 4wL4QGt+9OG+iNj6lB2+zKqHrl/cN4QIbHxRBrzQYmGhpojWQRfSJ9GtrbmqYB/A95
-	 o78g+VaONToaLXZtuGABTJRPAaiwgo959d3j4mpN6XGXV3LkFH+wGPvB7iju/7rwfU
-	 geWXyrd4aETThPJjWU0pUKxYXFAyGJ/dwOsJEzYI5TfmB7MSFY30Nj6dzoPRR0E5E+
-	 4NS00pFmFNXSQ==
+	b=gASA5d93/gEjIe0t7pa4f1ZVLLzJnjuS7W49FZqHHKR8y5hBj7hDKGDOnVBl94e1M
+	 5daNH7It0uV5nH7tK+l7bb5SUIhqLqTxw1UmmdCYjhkbQ+YUepI9i7Cm0ioobQ0WJt
+	 3Fcl/WrCieZCiBc+XpZSYTQl0UljWQwLAck0Ym7AgR4DGwGc4DsRbiD4+3/bv0RwAH
+	 Yx9pKL0Pz+qbK0FTCP1Df/OpY2rJiYzJUh/wFfv3By62S96/NCgaOi5bj9PGkCldJ+
+	 2rzSvaMDO41bGy9XPieWbrWy7yNKo0rJtUEIcDKTS7Lk9TY/scPsmzSFrA3YfFhm5i
+	 KCWBKYwT1eOfQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
+Cc: Erick Shepherd <erick.shepherd@ni.com>,
+	Kyle Roeschley <kyle.roeschley@ni.com>,
+	Brad Mouring <brad.mouring@ni.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	anna-maria@linutronix.de
-Subject: [PATCH AUTOSEL 5.15 046/153] posix-timers: Add cond_resched() to posix_timer_add() search loop
-Date: Mon,  5 May 2025 19:11:33 -0400
-Message-Id: <20250505231320.2695319-46-sashal@kernel.org>
+	linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 050/153] mmc: sdhci: Disable SD card clock before changing parameters
+Date: Mon,  5 May 2025 19:11:37 -0400
+Message-Id: <20250505231320.2695319-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -60,44 +62,55 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Eric Dumazet <edumazet@google.com>
+From: Erick Shepherd <erick.shepherd@ni.com>
 
-[ Upstream commit 5f2909c6cd13564a07ae692a95457f52295c4f22 ]
+[ Upstream commit fb3bbc46c94f261b6156ee863c1b06c84cf157dc ]
 
-With a large number of POSIX timers the search for a valid ID might cause a
-soft lockup on PREEMPT_NONE/VOLUNTARY kernels.
+Per the SD Host Controller Simplified Specification v4.20 §3.2.3, change
+the SD card clock parameters only after first disabling the external card
+clock. Doing this fixes a spurious clock pulse on Baytrail and Apollo Lake
+SD controllers which otherwise breaks voltage switching with a specific
+Swissbit SD card.
 
-Add cond_resched() to the loop to prevent that.
-
-[ tglx: Split out from Eric's series ]
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lore.kernel.org/all/20250214135911.2037402-2-edumazet@google.com
-Link: https://lore.kernel.org/all/20250308155623.635612865@linutronix.de
+Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
+Signed-off-by: Brad Mouring <brad.mouring@ni.com>
+Signed-off-by: Erick Shepherd <erick.shepherd@ni.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Link: https://lore.kernel.org/r/20250211214645.469279-1-erick.shepherd@ni.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/time/posix-timers.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/sdhci.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index 2d6cf93ca370a..fc08d4ccdeeb9 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -161,6 +161,7 @@ static int posix_timer_add(struct k_itimer *timer)
- 			return id;
- 		}
- 		spin_unlock(&hash_lock);
-+		cond_resched();
- 	}
- 	/* POSIX return code when no timer ID could be allocated */
- 	return -EAGAIN;
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index c0900b2f7b5c8..97eeb0c61baec 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -2009,10 +2009,15 @@ void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+ 
+ 	host->mmc->actual_clock = 0;
+ 
+-	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
++	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++	if (clk & SDHCI_CLOCK_CARD_EN)
++		sdhci_writew(host, clk & ~SDHCI_CLOCK_CARD_EN,
++			SDHCI_CLOCK_CONTROL);
+ 
+-	if (clock == 0)
++	if (clock == 0) {
++		sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+ 		return;
++	}
+ 
+ 	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+ 	sdhci_enable_clk(host, clk);
 -- 
 2.39.5
 
