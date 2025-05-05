@@ -1,90 +1,93 @@
-Return-Path: <linux-kernel+bounces-632629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E9EAA99EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:01:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76556AA99F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2D117DB1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668423AD479
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6C026B0BC;
-	Mon,  5 May 2025 17:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C0426B2DF;
+	Mon,  5 May 2025 17:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="EFi3lw7V";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wHokB4Or"
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="PadnLKAR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ukrEec7m"
 Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998CD79CD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9995A189B8B;
 	Mon,  5 May 2025 17:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746464471; cv=none; b=tKrCddEEo49ulGtWfRcEDZTaRoQznSavLcYEgNVn39kvF5sk/Og7r/bJQOrETwumrmfNrdECYHW9so4haC5Vk+cnIC/Y7Y3+FAmm4xeLp2xt7uDVYRzqA8dCCjosFlnKcS0sPG6OX6ETtOmE5T21rTMs3gDyGV2nf5QqI7nZYCk=
+	t=1746464472; cv=none; b=O+QsiwnBV1mFEdCDvmenckwlN072u6+rZym7aaZJVIbppOq+UWVSiegu8xMzroHg+LB7Gzralul9J67nEgwA1cuzGXSCU/yKQGaSY5wCLayr1ErDnIpI6tbgzsgPW2frNaKvtX+xsHSJ3fcQ8m6ITwpc31/Klr1QkPr5xi4nOJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746464471; c=relaxed/simple;
-	bh=/rb9sDoHFaPXkvVypXPPnNhJCmnEbt4hxIXviG6UFjU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vB6nW9numi1E7slBWeN3OWp3NIYbJq/N8rj0axay/xOE79VU1lh8KeOhYG27Pw85na0wkBrcjB9xAzKrAqTHxG21jCppyub/JXPacRWPp2pTWi9ttC9llYu9jYex1iOByHFF88RBf5NcF2L19DhasppmU0q1oyiaWoQK+03uaAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=EFi3lw7V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wHokB4Or; arc=none smtp.client-ip=202.12.124.147
+	s=arc-20240116; t=1746464472; c=relaxed/simple;
+	bh=87J4+10tw0aBiCCo7OxCAL5Ve3ziirUjYkIJXC8qCxQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ESlntXchs/PUySLB8oUe1X1GzxXWo/5aan0voVTdw3VmrckB70W3BkJ2js01n+ANYnWuHPKibBqIMSjEq+2oeQjlmuV4ezUnMU2mEA5Y0CmUBN23fsPIatadotxpRd70mJ3+F2lnW6Aim29+jCYERjpT5yzlve40anIN4suMKPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=PadnLKAR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ukrEec7m; arc=none smtp.client-ip=202.12.124.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id 87E301140251;
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id A12CE1140255;
 	Mon,  5 May 2025 13:01:08 -0400 (EDT)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-03.internal (MEProxy); Mon, 05 May 2025 13:01:08 -0400
+Received: from phl-frontend-02 ([10.202.2.161])
+  by phl-compute-01.internal (MEProxy); Mon, 05 May 2025 13:01:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1746464468; x=1746550868; bh=i+NjHOQvyPmCkguaVscPy
-	Ug5INbsdBvyRRq7QrgMbGU=; b=EFi3lw7VcH19H6yZ+t2a1lGLB8NHmy7Qs3p5j
-	beAzogmvvqxyQuWj8/uGQjSfYNZCbCsQrBRDqlucCOdbLaSk2wlueUzw3G5q87Iv
-	Sg8jBBzAbdxzHTckuBKzqFwfhK8WWdja9GJPSRWF3J8gEl7CaN0GphiWuk0YxIf0
-	iDPFBSkJhi5CokutZKAmle/TVzZMyokv/asBfTyhbbehUqgH2zyazoo8XLAFlF5L
-	FZcDxL9guKiC//4YsMYKDsw9QxBRuF8o6HWzSsHWeXJ/t0FqTEEzWYzYPXtpCVm4
-	7HxH/RsrjxzzkWIoIt+dXYPwfgOM5kfmWbet9wkFHoi7DQ1ow==
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1746464468; x=
+	1746550868; bh=QVKu64FnPFkGQGnNcQhk+59/Y/TDDqUKlS7l09ruG4Q=; b=P
+	adnLKAR9YvW3HYGAIk4HxjHzccaKe0TZpclc7Y4nKoX3mRmLfjbN2B1i/m715qf7
+	f5cCRFLkIh6eZDg8NZDuEVQL+fZFK+HDhQ2okdt6bAERPJnXrh+w0XXRS38i75we
+	fqQn+Ra1RtEOtFWEjyyqDcrXkilGTolpKOVsAf6cL4mByCYAUd653K5z/AQzpj9F
+	1Xup77vVGp6SKeJZkxNnFVLeqme41jSDNC4hWXIA79eKwM0wRRI0jYYaH3j7/Ka+
+	BQHUTl4866jmCiSTvZdMrbLLkLgtwb9pdfOtmKp//eWrPzH4Nt41C7eDhvq4/pc6
+	2yKJXe2lUYjeZVM606ALg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1746464468; x=1746550868; bh=i+NjHOQvyPmCkguaVscPyUg5INbsdBvyRRq
-	7QrgMbGU=; b=wHokB4OrijdGfEuX9MwkDVaRvcKkFXuiy3YuZqvKwxUJn11Y+0a
-	JUwY2edDS3O2eheA1tBYhk1SF3PmP910B1C1Z1bhRgI0fCOssCzeeXTj59QfAk2Z
-	Wdw2SHkAr9ERGTMAOfI6pScQLg53G3iUOtnaO6XhYTXVsllcF+CGMgiSAdb/h4PW
-	2ylCxNwFjw2jDjMcE7U0TXmVulnBTFkQrJc55PBgTUBQJ478xzNfp628li9PhDH9
-	x/EUzBfOMy1/R6fXMRGhcx7/6R333iE5g0jRADZePkNDPxi/myzTaOCnx9k3tihg
-	2smhAMLLJSaM+ygPCQo5hJkIwPw6T2Z2K8A==
-X-ME-Sender: <xms:1O4YaNsKL2qKby7egQylp4ETCMg_ti6oK7czLNi8-2-GCRNyX5n3KA>
-    <xme:1O4YaGd9oq080pbZ0nNqzqzE1prQOT4GbT9p9Ot0AGwpp-QDlxAlpQ8PwE0RbAb-M
-    GRbx8jSBuoxVLdSIts>
-X-ME-Received: <xmr:1O4YaAxHLs8Pw0eqqWNIHL7BZAjYj5vkhaNUc3dZC0dav1abfh1nnXAxzj2S5N0zH57P64mebxjfaTajZmmaLjeCujnUdF15sYJL0LgFw4DYVrGr4A>
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1746464468; x=1746550868; bh=Q
+	VKu64FnPFkGQGnNcQhk+59/Y/TDDqUKlS7l09ruG4Q=; b=ukrEec7mxrgUUQTj3
+	3GAbOo/TJ+5eKSK4ZGa1R1M8xcyV/ygOMnKbHlPBLxBQyCVRCBzt9izYQl82WJHh
+	Bs+6ynNoGKcFzhnE060tl9GYScRHF7gx95F/SJxiDL2aNU7xkvsLsCZ7PTVsWV3b
+	huTzhZk6bHReuUVzu92nisTb3IzyXifLMT9ADsUwzgLTkaVwpEqmqhk/vQh4C+8V
+	PA+YQQ34ccIWq8fSCWEp2Y8XoeXjwhnR2o+sfXS2uUnaS7yjQeDY9oIxnIAiZVj/
+	kMY2af4zNSc0r2em12mBaAaQolT1Gq9EdAJfbPWj73cvn37OjImxiQNMzvhe1RB/
+	kIgEA==
+X-ME-Sender: <xms:1O4YaA-2tw9mAf0cC7Bzpwjh1jnXuXPcgr9p8a2hjidumMiML7yGXw>
+    <xme:1O4YaIsalN6Nelh2kA_9ersxy1--2NoF0tzhAJfPVd3hfbHhYlcK5VG9bs-eTJLoM
+    2BYEVRJ9LCCiNoY2o0>
+X-ME-Received: <xmr:1O4YaGCHbM7hC9VDek9gMzJdiETqqX_yfzKLcAtKDRgPuY8zpy_o_zB58E1J5-0qrmB0bi0clNRnmZ17Ztp_VMMSgDsPtnms9LT_clThKpqz6W_tyA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeduieegucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
-    ucfhrhhomheppfhitgholhgrshcurfhithhrvgcuoehnihgtohesfhhluhignhhitgdrnh
-    gvtheqnecuggftrfgrthhtvghrnhepudfhvdelgfeguefgjeeigfdtkeejheekveevgeei
-    tdelvdeihfevfeetffeigeeknecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtohesfhhl
-    uhignhhitgdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepnhhpihhtrhgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehj
-    ihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslh
-    hinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvg
-    hrihgrlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:1O4YaEN0fPaPsaNEpW07cmKF-z_Bnsi7VZFC-h6LXL--74XMdvYTRA>
-    <xmx:1O4YaN92eUf6uQbvYIiyUdY3IBjrCSq5sCphuwQQaX-9uh2W2VovYw>
-    <xmx:1O4YaEWT_gfICvnQXiFvzIIQbMrhIkSxXB2BGTSJ3G8yr1Rxejih4Q>
-    <xmx:1O4YaOdD7itcIfgqboAUhdcn5CGT3md38aMqLG2FF6MVEl1xn7XFqQ>
-    <xmx:1O4YaA_eh-3qd_jm-0PJvq6cD_PHclPzTdrwaOHH3vO094s_rthkL8wT>
+    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredt
+    tdenucfhrhhomheppfhitgholhgrshcurfhithhrvgcuoehnihgtohesfhhluhignhhitg
+    drnhgvtheqnecuggftrfgrthhtvghrnheptdejueeiieehieeuffduvdffleehkeelgeek
+    udekfeffhfduffdugedvteeihfetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepnhhitghosehflhhugihnihgtrdhnvghtpdhnsggprhgtphht
+    thhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehnphhithhrvgessggrhi
+    hlihgsrhgvrdgtohhmpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:1O4YaAdQObfuVvLyF0hOXaumwSIg6D80YqtR6IVvJPtgebRyxe43tg>
+    <xmx:1O4YaFMhBZYvEU7hWDHoZsWyIIui6_Na-zQI507AN2sUGYSQn17VKA>
+    <xmx:1O4YaKleiq8tI08In-4xRJxbR1eDuLHiuL-ikiAF4MCVeH3rOHWk4w>
+    <xmx:1O4YaHu1X1OH6B5Svsc1k79bCApK360vT10eMU-hxfMMhmcm20HH1w>
+    <xmx:1O4YaHMvZ_Li69683xrrOGqDsYTh18wPMYTKdRAWeJQ4I7hrEbcRDXgk>
 Feedback-ID: i58514971:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
  5 May 2025 13:01:08 -0400 (EDT)
 Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 2F6F01185457;
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 504B11185459;
 	Mon, 05 May 2025 13:01:07 -0400 (EDT)
 From: Nicolas Pitre <nico@fluxnic.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -92,10 +95,12 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: Nicolas Pitre <npitre@baylibre.com>,
 	linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] vt: more Unicode handling changes
-Date: Mon,  5 May 2025 12:55:23 -0400
-Message-ID: <20250505170021.29944-1-nico@fluxnic.net>
+Subject: [PATCH 1/8] vt: ucs.c: fix misappropriate in_range() usage
+Date: Mon,  5 May 2025 12:55:24 -0400
+Message-ID: <20250505170021.29944-2-nico@fluxnic.net>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250505170021.29944-1-nico@fluxnic.net>
+References: <20250505170021.29944-1-nico@fluxnic.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,32 +109,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Linux VT console has many problems with regards to proper Unicode
-handling. A first set of patches was submitted here:
+From: Nicolas Pitre <npitre@baylibre.com>
 
-https://lore.kernel.org/all/20250417184849.475581-1-nico@fluxnic.net/
+The in_range() helper accepts a start and a length, not a start and
+an end.
 
-Those patches are currently in Greg's tty-next branch.
+Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+---
+ drivers/tty/vt/ucs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The first 2 patches in the following series contain fixes for those
-already-applied patches.
+diff --git a/drivers/tty/vt/ucs.c b/drivers/tty/vt/ucs.c
+index 0b58cb7344a3..b0b23830170d 100644
+--- a/drivers/tty/vt/ucs.c
++++ b/drivers/tty/vt/ucs.c
+@@ -46,7 +46,7 @@ static int interval32_cmp(const void *key, const void *element)
+ 
+ static bool cp_in_range16(u16 cp, const struct ucs_interval16 *ranges, size_t size)
+ {
+-	if (!in_range(cp, ranges[0].first, ranges[size - 1].last))
++	if (cp < ranges[0].first || cp > ranges[size - 1].last)
+ 		return false;
+ 
+ 	return __inline_bsearch(&cp, ranges, size, sizeof(*ranges),
+@@ -55,7 +55,7 @@ static bool cp_in_range16(u16 cp, const struct ucs_interval16 *ranges, size_t si
+ 
+ static bool cp_in_range32(u32 cp, const struct ucs_interval32 *ranges, size_t size)
+ {
+-	if (!in_range(cp, ranges[0].first, ranges[size - 1].last))
++	if (cp < ranges[0].first || cp > ranges[size - 1].last)
+ 		return false;
+ 
+ 	return __inline_bsearch(&cp, ranges, size, sizeof(*ranges),
+@@ -144,8 +144,8 @@ static int recomposition_cmp(const void *key, const void *element)
+ u32 ucs_recompose(u32 base, u32 mark)
+ {
+ 	/* Check if characters are within the range of our table */
+-	if (!in_range(base, UCS_RECOMPOSE_MIN_BASE, UCS_RECOMPOSE_MAX_BASE) ||
+-	    !in_range(mark, UCS_RECOMPOSE_MIN_MARK, UCS_RECOMPOSE_MAX_MARK))
++	if (base < UCS_RECOMPOSE_MIN_BASE || base > UCS_RECOMPOSE_MAX_BASE ||
++	    mark < UCS_RECOMPOSE_MIN_MARK || mark > UCS_RECOMPOSE_MAX_MARK)
+ 		return 0;
+ 
+ 	struct compare_key key = { base, mark };
+-- 
+2.49.0
 
-Remaining patches introduce tables that map complex Unicode characters
-to simpler fallback characters for terminal display when corresponding
-glyphs are unavailable. Only the subset of Unicode that can reasonably
-be substituted by ASCII/Latin-1 characters is covered. Substitution may
-not be as good as the actual glyphs but still way more helpful than squared
-question marks.
-
-This applies on top of tty-next currently at commit 5ee558c5d9e9.
-
-diffstat:
- drivers/tty/vt/.gitignore                   |    1 +
- drivers/tty/vt/Makefile                     |    8 +-
- drivers/tty/vt/gen_ucs_fallback_table.py    |  881 ++++++++++++
- drivers/tty/vt/ucs.c                        |   89 +-
- drivers/tty/vt/ucs_fallback_table.h_shipped | 1498 +++++++++++++++++++++
- drivers/tty/vt/vt.c                         |   95 +-
- include/linux/consolemap.h                  |    6 +
- 7 files changed, 2535 insertions(+), 43 deletions(-)
 
