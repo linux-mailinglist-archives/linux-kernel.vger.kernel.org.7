@@ -1,58 +1,65 @@
-Return-Path: <linux-kernel+bounces-634723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFDEAAB73A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:07:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98EE3AAB730
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7D13AEEED
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8521C22C9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8C646BFE9;
-	Tue,  6 May 2025 00:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6233D34030A;
+	Tue,  6 May 2025 00:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLr3d4Cw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YF8iyEOq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813DC3984B5;
-	Mon,  5 May 2025 23:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60393991DB;
+	Mon,  5 May 2025 23:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486449; cv=none; b=qS5L4tj/Mh73YWb3Vp6H9N+/DejwCOZh0CJN+QFi/Y3AUId4MJN2lUxtn37Ozgnpzgy+JrwTn6xfyZx+iYUZ2KFC37E53wa+EXKG0C6oKMoYADeAfIEV8bZshfwlNI07tDiCYsrfHAk21J3P3GUoRCsiSQaAF/5XZuSo891Zny0=
+	t=1746486477; cv=none; b=UoRijZQ5ryh+HJ5sfVz+kpypsLYWu3T7WAY2qzpoB0oLyo/kqPltfF7cIf9VgvVBEIaBMjG5g9rHxHm2VHxHzQpw5JvkvP+3VHaQQ3QKZXutJj3fnSEKwI9IJcaKQw7PYLNLSp2OCXoBISb8E1LvzVu234UNKJUeZdK55sqItvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486449; c=relaxed/simple;
-	bh=MPF6wWBKzM1USUfhyPEyr7DIB2q8BE1AbSadFY40MF4=;
+	s=arc-20240116; t=1746486477; c=relaxed/simple;
+	bh=AiT5k0s5mXpAD3zPqGOswp5BQWHKAGYaSBP6/TbyIVE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YSaZ6yLHXbLqXrfCUV2etrLErEOSsWMuZ2m4qJcc4b04uy99shdl2x++YUEIq4uDCPn6kzSK0ORzEiM8zz1jy5dm4kBRCbRQmHYQFxX5RyYeFhQBHswfbjaDwOHI7AxPI/Y2OwC7SoLQCgEJtpepSYN3Fwl9qlLIIRUx9NpEyXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLr3d4Cw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63AB8C4CEF1;
-	Mon,  5 May 2025 23:07:28 +0000 (UTC)
+	 MIME-Version; b=tGeH7fPRVajIEuN8UQ73TP/jELfLf6VwNXrHUda/PE6DkLwAvZlnVxdKQk4kWYnLvcSa4Su9hsiVnElTptTKnflobfI8SZvEJlO1bNTMNPjVjSkOrKB8k+iHxwj7YHNJzc3BoQp6BhW09x/blcWHFa7/o61+cqyHG1QRwI89F74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YF8iyEOq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27397C4CEE4;
+	Mon,  5 May 2025 23:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486449;
-	bh=MPF6wWBKzM1USUfhyPEyr7DIB2q8BE1AbSadFY40MF4=;
+	s=k20201202; t=1746486476;
+	bh=AiT5k0s5mXpAD3zPqGOswp5BQWHKAGYaSBP6/TbyIVE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZLr3d4CwULH4QzVD7PZzzu906PVHSg7P9dHgTuebpxXGtFOJdTOsHcLXFz/bc9jUP
-	 XoB/GWTUiMnrr7w9pLORAcJFkq3jG6JvYj8RnhNwVMK1yzZ/LIjPiY43hEpFJ6Yw/4
-	 cwx0SH8ahXaZ+D1IfyUdJlHIwBjh0XVyqL1cniEmvly4dq9ZJQXxOucvBKYhfum2OZ
-	 CcnCaGLdnQptbeXsFETGUAtASK52zpu+M66GG2KvhlDZzr70IRRJvlo7cGxtGGFR5T
-	 Fv9yiplBolj5e5tvJ0jr8NyrISa+Hn5GrBUQZnyfDvuFQwKBXtzmH9FijCtE2aZrFz
-	 LGDU35o/iI42g==
+	b=YF8iyEOqlhkyWrEwtrpfTdAw3ZRQit84Eg8U0NhBW1InQp8GV7IXZ6gqARihwfj0P
+	 h2xcKlc4CicxkzXB8xiRgms0OnlNM8cEb0R0YaoehjYqpBkGpsPI2q+4btZiEfMrHl
+	 cyNtEuktRbE0nBs+LnTl1SsLGYfUxwZQXp7aOec7+og3KQH+u9FcZcbNSuYSxA3CCH
+	 1w4+wqJSANTDNdngdF7V8vuhkLxB7WNOx9bvu6BMNaiFmCVXz61vM7uqz7hWXnYwQy
+	 vWqz/5CKsAsun0GkxQxT5PuLGHGwjoBXcvGcw1uqcctq6ywnwduEqldfHSvNm+lGDy
+	 JiH6G6qb425RA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Mark Harmstone <maharmstone@fb.com>,
-	Qu Wenruo <wqu@suse.com>,
-	David Sterba <dsterba@suse.com>,
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Kevin Tian <kevin.tian@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 035/212] btrfs: avoid linker error in btrfs_find_create_tree_block()
-Date: Mon,  5 May 2025 19:03:27 -0400
-Message-Id: <20250505230624.2692522-35-sashal@kernel.org>
+	Yunxiang.Li@amd.com,
+	avihaih@nvidia.com,
+	yi.l.liu@intel.com,
+	zhangdongdong@eswincomputing.com,
+	jgg@ziepe.ca,
+	bhelgaas@google.com,
+	peterx@redhat.com,
+	pstanner@redhat.com,
+	dan.carpenter@linaro.org,
+	pabeni@redhat.com,
+	kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 049/212] vfio/pci: Handle INTx IRQ_NOTCONNECTED
+Date: Mon,  5 May 2025 19:03:41 -0400
+Message-Id: <20250505230624.2692522-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -67,59 +74,82 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Mark Harmstone <maharmstone@fb.com>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-[ Upstream commit 7ef3cbf17d2734ca66c4ed8573be45f4e461e7ee ]
+[ Upstream commit 860be250fc32de9cb24154bf21b4e36f40925707 ]
 
-The inline function btrfs_is_testing() is hardcoded to return 0 if
-CONFIG_BTRFS_FS_RUN_SANITY_TESTS is not set. Currently we're relying on
-the compiler optimizing out the call to alloc_test_extent_buffer() in
-btrfs_find_create_tree_block(), as it's not been defined (it's behind an
- #ifdef).
+Some systems report INTx as not routed by setting pdev->irq to
+IRQ_NOTCONNECTED, resulting in a -ENOTCONN error when trying to
+setup eventfd signaling.  Include this in the set of conditions
+for which the PIN register is virtualized to zero.
 
-Add a stub version of alloc_test_extent_buffer() to avoid linker errors
-on non-standard optimization levels. This problem was seen on GCC 14
-with -O0 and is helps to see symbols that would be otherwise optimized
-out.
+Additionally consolidate vfio_pci_get_irq_count() to use this
+virtualized value in reporting INTx support via ioctl and sanity
+checking ioctl paths since pdev->irq is re-used when the device
+is in MSI mode.
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Mark Harmstone <maharmstone@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+The combination of these results in both the config space of the
+device and the ioctl interface behaving as if the device does not
+support INTx.
+
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Link: https://lore.kernel.org/r/20250311230623.1264283-1-alex.williamson@redhat.com
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/extent_io.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/vfio/pci/vfio_pci_config.c |  3 ++-
+ drivers/vfio/pci/vfio_pci_core.c   | 10 +---------
+ drivers/vfio/pci/vfio_pci_intrs.c  |  2 +-
+ 3 files changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 72227c0b4b5a1..d5552875f872a 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4459,10 +4459,10 @@ struct extent_buffer *find_extent_buffer(struct btrfs_fs_info *fs_info,
- 	return eb;
- }
+diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+index 7902e1ec0fef2..105243d83b2dc 100644
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -1806,7 +1806,8 @@ int vfio_config_init(struct vfio_pci_core_device *vdev)
+ 					cpu_to_le16(PCI_COMMAND_MEMORY);
+ 	}
  
--#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
- struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
- 					u64 start)
+-	if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx)
++	if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx ||
++	    vdev->pdev->irq == IRQ_NOTCONNECTED)
+ 		vconfig[PCI_INTERRUPT_PIN] = 0;
+ 
+ 	ret = vfio_cap_init(vdev);
+diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+index f357fd157e1ed..aa362b434413a 100644
+--- a/drivers/vfio/pci/vfio_pci_core.c
++++ b/drivers/vfio/pci/vfio_pci_core.c
+@@ -719,15 +719,7 @@ EXPORT_SYMBOL_GPL(vfio_pci_core_finish_enable);
+ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_type)
  {
-+#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
- 	struct extent_buffer *eb, *exists = NULL;
- 	int ret;
+ 	if (irq_type == VFIO_PCI_INTX_IRQ_INDEX) {
+-		u8 pin;
+-
+-		if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) ||
+-		    vdev->nointx || vdev->pdev->is_virtfn)
+-			return 0;
+-
+-		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
+-
+-		return pin ? 1 : 0;
++		return vdev->vconfig[PCI_INTERRUPT_PIN] ? 1 : 0;
+ 	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
+ 		u8 pos;
+ 		u16 flags;
+diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+index 5cbcde32ff79e..64d78944efa53 100644
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -207,7 +207,7 @@ static int vfio_intx_enable(struct vfio_pci_core_device *vdev,
+ 	if (!is_irq_none(vdev))
+ 		return -EINVAL;
  
-@@ -4498,8 +4498,11 @@ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
- free_eb:
- 	btrfs_release_extent_buffer(eb);
- 	return exists;
--}
-+#else
-+	/* Stub to avoid linker error when compiled with optimizations turned off. */
-+	return NULL;
- #endif
-+}
+-	if (!pdev->irq)
++	if (!pdev->irq || pdev->irq == IRQ_NOTCONNECTED)
+ 		return -ENODEV;
  
- static struct extent_buffer *grab_extent_buffer(
- 		struct btrfs_fs_info *fs_info, struct page *page)
+ 	name = kasprintf(GFP_KERNEL_ACCOUNT, "vfio-intx(%s)", pci_name(pdev));
 -- 
 2.39.5
 
