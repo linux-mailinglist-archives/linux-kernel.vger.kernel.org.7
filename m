@@ -1,67 +1,76 @@
-Return-Path: <linux-kernel+bounces-634457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 108C2AAB19F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:04:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFDBBAAB1A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7361891B1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:03:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E7137B7EC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA344120DA;
-	Tue,  6 May 2025 00:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FA427FB27;
+	Tue,  6 May 2025 00:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glCzmUjK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLI17ZQ7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032582D26B2;
-	Mon,  5 May 2025 22:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAB42D3209;
+	Mon,  5 May 2025 22:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485546; cv=none; b=DjkRRSCFi+xQNP6vKllw9l4c0bJBtl/C2xkvUo/v6ACHw1Y2rC4TBxX8xWrDZFHBOco/oguVXU9CU3syGbo5Kn21koyZKZGUwzZVxzm+yQHSKP429rS5QWoduCRVlGwMwyQhHvmrSxdCh3ecb5gw6dwYr+Yu+K40oXNtuG9UI04=
+	t=1746485559; cv=none; b=ClAXeRBaVOVbfwGxbMS+XECdfoBSDi68ovYenW/ugpBleujEKA1m5pZap8jeIpYSKeUs/N7AP8ln8lXsKKmdVM+PViaskOqJW8evchxAr2JcQQCDRK4LNsu57IrwQAMqtptv1PwWNcOaC0xH643ZOkn5CxIz665yOLQryvhdpX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485546; c=relaxed/simple;
-	bh=rGczOpTAIDyhclrEPlCeWm4VUlOtOanjNMGktYdkV7k=;
+	s=arc-20240116; t=1746485559; c=relaxed/simple;
+	bh=okfQ0p2BkEh19Ojv1U+9vH9B+4z3vlhl41JYyyWl/RM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sT3BmJxs71nNl2gn/mn38XEuNghOBQ1tf1b1EB3E+0rCViPuSaUnu//6avUaZcPP+QXnoShpEvF1tATNV2f3XkCdrPXNKy0svxig7BjkAQSPQB3A5dNqbx7fzoDyr5xtSoHUw9OIXPA5kz2WNDCNgB9kfOOmO2sBxplvq1PixjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glCzmUjK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED6EC4CEE4;
-	Mon,  5 May 2025 22:52:23 +0000 (UTC)
+	 MIME-Version; b=nubDtsp2jaPtjPrg5nut/1EO18QcD0Q27i2QDk9UYTgzz0yekRCIj85n3BQc3dO+GDxcHLWEqetR7CxGV6OYFLbs1iVbpfNm9eArTcaV1t5b/19lAJgjBiZPJQbYkY/cetSvPptehBSiI3CbHOn0d3sWDdJy0SAxOO5SMX/+X5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLI17ZQ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F7D7C4CEE4;
+	Mon,  5 May 2025 22:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485545;
-	bh=rGczOpTAIDyhclrEPlCeWm4VUlOtOanjNMGktYdkV7k=;
+	s=k20201202; t=1746485559;
+	bh=okfQ0p2BkEh19Ojv1U+9vH9B+4z3vlhl41JYyyWl/RM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=glCzmUjKXsa8+9V5zBwUBXJrkNc3KJmRNoXgRoiAoe8RY+3ZrwltceLA3M2A+rbDX
-	 saNCBEkJdOw7CP5ztdqvaOVvR6J6uSgyGPOXCUeYRZfiFwhqeavIfX3WaPkMy7bRrR
-	 awXEjO1ywVrbKtMe2QXX5UqiWLcDaO2SZVMeHt/qrB/+EXiR6hFJFIXaBr7NkTbSpM
-	 Le7p2WYNxU95EYA/t5l7al+oFMcxK6b6vKDm9BdEiflVK3iQIWFTPdIlGTNTzqXAO1
-	 z/8G/o3APQxOGF660zSXXdaCG1/8liVuXsFaK8OwVd2TemmybSnxe5jEyL+VW6glIp
-	 Dqsrjpd3MOuLw==
+	b=cLI17ZQ72Yb8rbmTc922eXCL6KhWzCVZQ7XaO5gK/GXWMICW2wCjvB3vXFaiHMngP
+	 5MIsB2qOtzQYtAHZT+dDYqRjBo267TTz/MmGpGMELXNt7Ix0z/1UEsn8f3BxweQTQk
+	 wXvVibEyod/0TXV1ZcFS5jDq97a6SPDBouJZGsZWhNAj7ELj6PXp2z/yw3X6xSmS10
+	 EJ/aaQl68BaWpAPNDriPv5f2FICmxxgoJdDRoXYQdNsp5IH2719nXDtvPwJyh4t6rD
+	 5uG6/0LPhFGQqcB1q+0S/WS4DHtVNPfRI9BF6UfK0Ya4VRpI1WeP2PFC627XnHQaz8
+	 SsqtQ/5R3rs6A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Jiang Liu <gerry@linux.alibaba.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
+Cc: Brandon Syu <Brandon.Syu@amd.com>,
+	Charlene Liu <charlene.liu@amd.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Daniel Wheeler <daniel.wheeler@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
 	christian.koenig@amd.com,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	Hawking.Zhang@amd.com,
-	sunil.khatri@amd.com,
-	le.ma@amd.com,
-	YiPeng.Chai@amd.com,
-	candice.li@amd.com,
-	Feifei.Xu@amd.com,
-	kevinyang.wang@amd.com,
+	Charlene.Liu@amd.com,
+	alvin.lee2@amd.com,
+	chiahsuan.chung@amd.com,
+	jerry.zuo@amd.com,
+	Kaitlyn.Tse@amd.com,
+	Ovidiu.Bunea@amd.com,
+	ryanseto@amd.com,
+	martin.tsai@amd.com,
+	yi-lchen@amd.com,
+	tjakobi@math.uni-bielefeld.de,
+	Sungjoon.Kim@amd.com,
+	michael.strauss@amd.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 365/486] drm/amdgpu: reset psp->cmd to NULL after releasing the buffer
-Date: Mon,  5 May 2025 18:37:21 -0400
-Message-Id: <20250505223922.2682012-365-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 368/486] Revert "drm/amd/display: Exit idle optimizations before attempt to access PHY"
+Date: Mon,  5 May 2025 18:37:24 -0400
+Message-Id: <20250505223922.2682012-368-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -76,43 +85,55 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Jiang Liu <gerry@linux.alibaba.com>
+From: Brandon Syu <Brandon.Syu@amd.com>
 
-[ Upstream commit e92f3f94cad24154fd3baae30c6dfb918492278d ]
+[ Upstream commit be704e5ef4bd66dee9bb3f876964327e3a247d31 ]
 
-Reset psp->cmd to NULL after releasing the buffer in function psp_sw_fini().
+This reverts commit de612738e9771bd66aeb20044486c457c512f684.
 
-Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
-Signed-off-by: Jiang Liu <gerry@linux.alibaba.com>
+Reason to revert: screen flashes or gray screen appeared half of the
+screen after resume from S4/S5.
+
+Reviewed-by: Charlene Liu <charlene.liu@amd.com>
+Signed-off-by: Brandon Syu <Brandon.Syu@amd.com>
+Signed-off-by: Alex Hung <alex.hung@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-index d70855d7c61c1..31a376f2742a2 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-@@ -531,7 +531,6 @@ static int psp_sw_fini(void *handle)
- {
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
- 	struct psp_context *psp = &adev->psp;
--	struct psp_gfx_cmd_resp *cmd = psp->cmd;
+diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
+index 297f313794e49..809c556f4e7de 100644
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
+@@ -1890,7 +1890,6 @@ void dce110_enable_accelerated_mode(struct dc *dc, struct dc_state *context)
+ 	bool can_apply_edp_fast_boot = false;
+ 	bool can_apply_seamless_boot = false;
+ 	bool keep_edp_vdd_on = false;
+-	struct dc_bios *dcb = dc->ctx->dc_bios;
+ 	DC_LOGGER_INIT();
  
- 	psp_memory_training_fini(psp);
  
-@@ -541,8 +540,8 @@ static int psp_sw_fini(void *handle)
- 	amdgpu_ucode_release(&psp->cap_fw);
- 	amdgpu_ucode_release(&psp->toc_fw);
+@@ -1967,8 +1966,6 @@ void dce110_enable_accelerated_mode(struct dc *dc, struct dc_state *context)
+ 			hws->funcs.edp_backlight_control(edp_link_with_sink, false);
+ 		}
+ 		/*resume from S3, no vbios posting, no need to power down again*/
+-		if (dcb && dcb->funcs && !dcb->funcs->is_accelerated_mode(dcb))
+-			clk_mgr_exit_optimized_pwr_state(dc, dc->clk_mgr);
  
--	kfree(cmd);
--	cmd = NULL;
-+	kfree(psp->cmd);
-+	psp->cmd = NULL;
+ 		power_down_all_hw_blocks(dc);
  
- 	psp_free_shared_bufs(psp);
- 
+@@ -1981,8 +1978,6 @@ void dce110_enable_accelerated_mode(struct dc *dc, struct dc_state *context)
+ 		disable_vga_and_power_gate_all_controllers(dc);
+ 		if (edp_link_with_sink && !keep_edp_vdd_on)
+ 			dc->hwss.edp_power_control(edp_link_with_sink, false);
+-		if (dcb && dcb->funcs && !dcb->funcs->is_accelerated_mode(dcb))
+-			clk_mgr_optimize_pwr_state(dc, dc->clk_mgr);
+ 	}
+ 	bios_set_scratch_acc_mode_change(dc->ctx->dc_bios, 1);
+ }
 -- 
 2.39.5
 
