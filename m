@@ -1,116 +1,78 @@
-Return-Path: <linux-kernel+bounces-632024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52DC2AA91A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2A6AA915A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9326B18988A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268E81895DCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1394B204689;
-	Mon,  5 May 2025 11:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="uanME0bx"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9B6201033;
+	Mon,  5 May 2025 10:49:09 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8712E20D506;
-	Mon,  5 May 2025 11:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388B2EAC6;
+	Mon,  5 May 2025 10:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746443417; cv=none; b=O8kk1OrHX74KStYsiadWH7IxmewWMQhWipkoAnsIUHVEFDXw6z9oQF7La3EItsiQowIXvyHCNM+cT53mg1Kqet5wlp+8PAPRDWc4gzn5IdBZkO5w6UpW+ARI+o7Bz6yzH/2LMMCL3vqd7FbXtb4kX3nqAXFv5Mh8YmJ9zapEeNE=
+	t=1746442149; cv=none; b=twnTqZ31Q5E2lriW3p3m44v40amtXv9p5++31FhaYd8YG9gGllHSjVakWeV6MWDq2g2nPOandmOfPiign2T89VX0XhbmiPwQ8XfEQjKK7a724Utx1H5b5zCsqKMi5G+GoDn3ZUzDFGa/650YB+bLrvR6vNPqKyqdMnIykIE0lyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746443417; c=relaxed/simple;
-	bh=iJaVMgd50y/RnCXRg81TNgmiWPGPCTRnLSqLZR4Fta8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tM0/YdRx1kWVlFzNZ/Dxp9NtO3fQfQx2hYzX3Dsuaq6bgjDMFGPeueodItlr5XrWxVrNULA3uqhmEUCbn8DDvYrrrCI6SBMknHLD9YJwhYUwjjJm4GuX6/HcRYKQ3IU4ktlSDzpfjWjRpzY3vKpRIqg/yeXJVJe2b40UYA2/ZyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=uanME0bx; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5457crpm028600;
-	Mon, 5 May 2025 12:49:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	dZm36Yfu/299NsjICP2d/3EQGEdcRXUPll1j4pYAovk=; b=uanME0bxGMeWrEun
-	VXEhYyAmcF3Ggw6Bcn0ItgQ/sXDGAggQUoiRu+HWBFgJMRHKGBmt4uszK+mxTGjg
-	o3Tr4N6p1GVASh8Az3GJTKGm/NkyLblxT5Ke0MtYoSGhwxW+02J5JGvJzj7Ujk3J
-	HN0UBvoQ/rtT4AxjrQcl9s5Y//Ke129sHGJIUfuZGfU5J4f6l7D7c6dxHrbrEpQU
-	iXZNJf80abNSQNLxV6wYhfMpdDFPffsIcRc1lq3ygHidGPfzclqhmkDlKid9zkW2
-	IFIF4qK671K5M+46V4eStRbxVfdg1ZeD2h9gqOaS8G+so445XQboBtVpnV/3DCh4
-	wnNnzQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46dx3m3yn7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 May 2025 12:49:50 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 037C940060;
-	Mon,  5 May 2025 12:48:32 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B3199B0ECC8;
-	Mon,  5 May 2025 12:47:24 +0200 (CEST)
-Received: from [10.131.131.7] (10.131.131.7) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 5 May
- 2025 12:47:24 +0200
-Message-ID: <b25bf051-1459-4572-8d41-ebdf5fd7abf3@foss.st.com>
-Date: Mon, 5 May 2025 12:47:23 +0200
+	s=arc-20240116; t=1746442149; c=relaxed/simple;
+	bh=TWSLfPAQGFr10Sswmc3ZrKNirAwVgspFxtgXmzrbs5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqJQp4GHwl6UKzh3v6FtWt5uQl0YtEySYXa5G0tc4kxZwZ5gymVRczordgq2GsQn7Gwmt1NtskbB8Gvh+7vYuqRpL3cicWQgyU8nRljZAL7fMNcgDLlMK2cQf0+XsqEts8phlXNOEpjcP/AcPujLEHG/ALkIjGoYVg7U4I5uX9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7EC1E67373; Mon,  5 May 2025 12:49:01 +0200 (CEST)
+Date: Mon, 5 May 2025 12:49:01 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, brauner@kernel.org, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v11 02/16] xfs: only call xfs_setsize_buftarg once per
+ buffer target
+Message-ID: <20250505104901.GA10128@lst.de>
+References: <20250504085923.1895402-1-john.g.garry@oracle.com> <20250504085923.1895402-3-john.g.garry@oracle.com> <20250505054031.GA20925@lst.de> <8ea91e81-9b96-458e-bd4e-64eada31e184@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/2] media: i2c: Add driver for ST VD56G3 camera sensor
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: <benjamin.mugnier@foss.st.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <laurent.pinchart@ideasonboard.com>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tomm.merciai@gmail.com>
-References: <20250502201849.12588-1-sylvain.petinot@foss.st.com>
- <20250502201849.12588-3-sylvain.petinot@foss.st.com>
- <aBhwIl7G60EJ9k9F@kekkonen.localdomain>
-Content-Language: en-US
-From: Sylvain Petinot <sylvain.petinot@foss.st.com>
-In-Reply-To: <aBhwIl7G60EJ9k9F@kekkonen.localdomain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_05,2025-04-30_01,2025-02-21_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ea91e81-9b96-458e-bd4e-64eada31e184@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Sakari,
+On Mon, May 05, 2025 at 11:04:55AM +0100, John Garry wrote:
+> @@ -503,6 +509,9 @@ xfs_open_devices(
+>  		mp->m_logdev_targp = xfs_alloc_buftarg(mp, logdev_file);
+>  		if (!mp->m_logdev_targp)
+>  			goto out_free_rtdev_targ;
+> +		error = sync_blockdev(mp->m_logdev_targp->bt_bdev);
+> +		if (error)
+> +			goto out_free_rtdev_targ;
+>  	} else {
+>  		mp->m_logdev_targp = mp->m_ddev_targp;
+>  		/* Handle won't be used, drop it */
+>
+>
+> Right?
 
-Le 05/05/2025 à 10:00, Sakari Ailus a écrit :
-> Hi Sylvain,
-> 
-> Thanks for the update.
-> 
-> On Fri, May 02, 2025 at 10:18:49PM +0200, Sylvain Petinot wrote:
->> +static int vd56g3_check_csi_conf(struct vd56g3 *sensor,
->> +				 struct fwnode_handle *endpoint)
->> +{
->> +	struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_CSI2_DPHY };
->> +	u32 phy_data_lanes[VD56G3_MAX_CSI_DATA_LANES] = { ~0, ~0 };
->> +	u8 n_lanes;
->> +	u64 frequency;
->> +	int p, l;
-> 
-> unsigned int. There are more cases where you have a loop variable that
-> doesn't need to be signed. Please address these in a follow-up patch.
-> 
-
-Thanks for raising the point. I'll do that asap.
-
--- 
-Sylvain
-
+Yes.  Or in fact just folding it into xfs_alloc_buftarg, which might
+be even simpler.  While you're at it adding a command why we are doing
+the sync would also be really useful, and having it in just one place
+helps with that.
 
