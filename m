@@ -1,100 +1,105 @@
-Return-Path: <linux-kernel+bounces-631960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B90AA905F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:56:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB4DAA9065
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2A1718983C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:56:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242C8175B0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0341FF1D8;
-	Mon,  5 May 2025 09:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967321FBCA1;
+	Mon,  5 May 2025 09:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gEBvWWkD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rSXq/GKo"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CB91F7910
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 09:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E793EAE7;
+	Mon,  5 May 2025 09:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746438949; cv=none; b=oUg8D/5ezWYKUoT6jba/wxK9I+tTTWbdu9CxVaUwOXvq7TgHh+YwjQa0KlMb8ZLqG9whGuS7BmYOZmrldThEMFIvUow71nCknuizRVKDi8Mgi7e0asOgmUPQtPixbtVFSEh2lv8EcUsW+9Jk/OYpy9xaL+aI/uQUosiy2vK+PIw=
+	t=1746439035; cv=none; b=IMm3Ll4lsmhNWsvWVmKWvFJ9Uk667MT4stxv1CjtW8Ab4RN4e3CNGzm3JqHqT8rlcRuI4krCce6bLUb+qyx4UHoOmVO79XWqDLGMfMxlnivKulKmqnWk41iKEliQPFDJ5r9COvzH2hWIWpWjNd84AnDY4Rb0ApQEUd/27EPjx74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746438949; c=relaxed/simple;
-	bh=4fXXGQzfUtKtkKuKQhES1f00tVzlysT3cxFwz6vRIHo=;
+	s=arc-20240116; t=1746439035; c=relaxed/simple;
+	bh=DdUUTkfnlA9fK+AY7ESBEJWr8GgX2XsTVOxe0gHjLFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFTcBJf3uGoq81T2FZyy9EKWNwGzyZA3Bv4R6UNiKfPyZve0KNUUYQo/aJxZeYExCsmvrdSAI5e0nCNR2JnJ/lvE/e022AmyVhfwpgfqKAKNBCHnjCe20qCE0KOnjY/topZ4s2G4wZChox6tZ3UCH60qeTHO/0Mmz3T8D+0ap5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gEBvWWkD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 544MZLfW017719
-	for <linux-kernel@vger.kernel.org>; Mon, 5 May 2025 09:55:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=2/mHzBkdkIdu/XMlXL1MKLhp
-	gnZzaTuY/YtYOHlKf3k=; b=gEBvWWkDAkH2mH/o/AVZkrUpWTD4uiNsgHtK99c8
-	AvUfzmTcVjreuEAaeGXJ/02eEIQVkGXFDalkYM/5GLCSAn99rML7YNX/pC50nIsS
-	ARbmezpJL6NLNvoI3xhEWcqOXRB44X8Q8sidxWpM8ISrkmYsS9k+rRN9UuHyU3jP
-	A0G+3psf8E207D7s+ToOAFiLPZ63rTuWfnr6jTdTV37lmBzKyhOSU+mogdFjQU0r
-	JWA8PEzy62ISv8yXGXeBuGteAJsCyKuFcoMvKC9GMlth9GJOmbaJ86zYnIXXRJdB
-	ZlY3rRmqSodzYAYI6sr0mGzsxaT7lWLHiiD3/YwD8mPf2g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dce9bmf5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 09:55:46 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4768488f4d7so66759591cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 02:55:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746438945; x=1747043745;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2/mHzBkdkIdu/XMlXL1MKLhpgnZzaTuY/YtYOHlKf3k=;
-        b=oX3bEXyR7ZUa9pXea4FmwvfWh/p8lhwWEDClA75cjtV26baxnautVymhiSc8WEY8I/
-         p2X2aiKs6G4lCwU1nGMF1/qpCgIhq2weZ9KapaUM+yomymArbx36XFTpCxZJ+scqTX0d
-         4e0GIdbXuFrH5neMgzna5Y18/T+u6IOqXmlv6KVTtPZWfoWl5NJvaInSh1AnJve1xtop
-         CahnqE6GoE9IqflipTOXSN2Oa8ihpwR47+Hvn2vghv0BQVz4UigkZvmyYrSFOpox/kQu
-         25KBZ0cxgkKIOC4vjFSu6THbBYj0wcNuUwI2AJ2LjvNyAMwSoe81Dn9M1SAg4TsBcFTh
-         4L8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWvxEjx9uPMP0xM7XSlvGLNC4Yam5jfXb0V+OfTbSwTmbHda0+g7TrpAFncdJquVL/YO1s5Eow4X9bJXW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZog2Kt05kZIc47bgyiyomvbU1ygSK0Duvyp4w+9zE801wwOjo
-	yWwHlJaEPgC0wdsdHVVsQO87493AVE36vQHLePZK1V2blP4H4AmS0F7Mm7EQLZIhaBuR4TOd0g1
-	TAl6W4WZgyULpibuO5xIwmBesqPS828H4/KQ5zXjxEVVZ1rXHAl8ffJMVS9EL0kYSF6gad0s=
-X-Gm-Gg: ASbGncvII8CIayKIsB35CGY4kujbr1puWKercM+QLiG8C5ifS5SVqNtcyRnFBTG59Zg
-	g2Z4e3x6AKHhcE6nkoVOtGQ4YZPapDs4WJ8d6yQa2/ugwU6TG4Ocysx1MaO04cBmtn61g2zuK9J
-	yqLfVyZIfxia9M3FNmyNpKv5VATvF0nYMtSOmWqxyNbTv03dvBTQiQfmZhTrkEMeV+ymgbpwgx7
-	l4aNnzr/CaLLN4GSu2CQAdaHwZpQQ55zPYYPuRpreakSSxxEVsfbaDAgt2xUjOX/gcmeJEjUXZo
-	YYUZbW4T1C3N9IVq3/oqUq1ydWYV7dTZ+WArXp4m7oYoSzRyf1OM116YNmrOAaiR1JMhlm+wHxA
-	=
-X-Received: by 2002:a05:6214:1c0e:b0:6f5:117c:76cf with SMTP id 6a1803df08f44-6f51580c00fmr168424606d6.40.1746438945414;
-        Mon, 05 May 2025 02:55:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGknyWbznndebKntrV92c9APdUuAC3oqeLq7ISMW2xppAZupC/c68JL1jEz5Pc9uS8Y/NJ8Dg==
-X-Received: by 2002:a05:6214:1c0e:b0:6f5:117c:76cf with SMTP id 6a1803df08f44-6f51580c00fmr168424416d6.40.1746438945126;
-        Mon, 05 May 2025 02:55:45 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94f6a9fsm1658248e87.234.2025.05.05.02.55.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 02:55:44 -0700 (PDT)
-Date: Mon, 5 May 2025 12:55:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 0/3] SC8280XP SLPI
-Message-ID: <xwuxekxqqt76xi5vitfwp4juwm7vowkdn7zjniymup6pmcwwef@rkr366xgetxz>
-References: <20250503-topic-8280_slpi-v1-0-9400a35574f7@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bni5rZoUSa7tFjJcbVho9H6VjxNaHnp5onVjsW4EdAG839Kfgf2r0py2xR7SEu2y87+1C1L95tnccpp57MXAhEhBzuCXgRFyf/1jUiV/YTzTIiE0gMAbX3dsi/ZqSsHmxjASKS0y+ADy/CaDNhAGYP20oZybWPLW9dBv2L1K7Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rSXq/GKo; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 544L4Asp030724;
+	Mon, 5 May 2025 09:56:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=LhUGs6EEJ+/H8XoxFLa+sktR1zW0IF
+	WrMGyaiWI3uTk=; b=rSXq/GKoEvm8sjQA6bU+/dc88eodbGbZLyvF6AgQZiLo2S
+	WjYYCeP6GftDPgY2HF7yzJQ0soHbyonEaeaq0vCbvFQO27xFjCGQcwD20UvcQd8J
+	y7FYHmS5Etq8GRGK8567LQV2KvqmLWXE58p746hWMb37aoju6eS/msyOQAqioFwi
+	JNa5xxXgVSamEUyT8Ppr+1SUJWVXIrKcImFyV1ndvHyxVPAjhEvzarbQU+/EPnD+
+	x1sdwGR1biLXggbkXtamzJoKccuWA3lGV0++0oaIO2zXYLyBtV9sOe93euKLL4DC
+	ssebMectqwwdqBS3FABjSD26ee4qONHgpaGdNB9g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46eftkjaxf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 09:56:38 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5459ou9E002673;
+	Mon, 5 May 2025 09:56:37 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46eftkjaxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 09:56:37 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54579DSq025969;
+	Mon, 5 May 2025 09:56:36 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dwuynsg6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 09:56:36 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5459uWsh59113944
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 May 2025 09:56:32 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2C39520043;
+	Mon,  5 May 2025 09:56:32 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F009B20040;
+	Mon,  5 May 2025 09:56:30 +0000 (GMT)
+Received: from osiris (unknown [9.111.37.115])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  5 May 2025 09:56:30 +0000 (GMT)
+Date: Mon, 5 May 2025 11:56:29 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Juergen Christ <jchrist@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v9 2/9] preempt: Introduce __preempt_count_{sub,
+ add}_return()
+Message-ID: <20250505095629.13658Aea-hca@linux.ibm.com>
+References: <20250227221924.265259-1-lyude@redhat.com>
+ <20250227221924.265259-3-lyude@redhat.com>
+ <20250228091509.8985B18-hca@linux.ibm.com>
+ <1491bedb15db7317d2af77345b2946c2529c70b1.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,47 +108,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250503-topic-8280_slpi-v1-0-9400a35574f7@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA5NCBTYWx0ZWRfX4X2cvjAyLO90
- JO+rkpYsAiluc9Y6rw4VOQ46M6NOIeJm5K4A4kFdEk9CqYvdoRCh+IkxnlaxryaLNQlda+e45cG
- NOtBg7z1IQNmIV0bRxpxOGlkcXvwM7G00BHzA1nMzNMy5Re6r/hLE4bbgmyYtMUeZd/rcgSJyw1
- 3kE5aPMcCswXRo43TxeAAzE22RX28aqQAK2i1/+U3l9+9TM20w5AQavIRep4ExupSPWJko7xLJl
- vZLmAdcnn0bnNjnCawigMVblTtSV7jk6Iht5b63JxjEFT/fWtWx7epf3PcyDcha6FX2+qXQzMbC
- kUbEZ41nrgeKW9Q2lNKwCcXywyWDTLzW/9i6S6xYHfHmlbxB7Mb8hMFoQ7G1sqvMJbYzInKfbri
- +DIUaJ1ubGC9jKSbndeaE5ll/QqzPufYbUnmZtU9YhOJw3i9I+5Vy7JZMvkpmG1uTk94U8mL
-X-Proofpoint-ORIG-GUID: f755uNwqyNLi-glwPsJs72DUoOxm3q1v
-X-Authority-Analysis: v=2.4 cv=Qope3Uyd c=1 sm=1 tr=0 ts=68188b22 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=x_-MvMI86miFrt3VAdAA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: f755uNwqyNLi-glwPsJs72DUoOxm3q1v
+In-Reply-To: <1491bedb15db7317d2af77345b2946c2529c70b1.camel@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA5MSBTYWx0ZWRfXwwP0h4V48zhW 0AVSEswbTvJIy33/TC7mPjmelx5mY/fBKGqOfZeO62vdclxmwgmEzdZ23P6nHJ79SHfb1/Cc8bM P5zZ/+4RgCWhqwoC0lFvAr4xBtyqTHVFIdavnZSF6vJ+Q+Ko+gZnR70DWEV+OnZUvab9wR1aU6l
+ /+T81fMYkazI5rIDrqnJwPRQQnPNbzT1rmL80QY1Y1gz7LWJfH/pD0WPURTfWAkA0XlhL6E2CDO e/Kug34Y7PRy9TbQV4W94TPYiVsFucZ+Xp8lFLWq73iK1sSNcSTFQjkPhM/WU2JoGLyh7aTkfz3 7oupbUF3uvbw8G5DwwczPeylex+rlypqmpZ2bTkyxxiq5CZIscj089xXeELVEjflCR3711/I7Xj
+ lB26F3+9oMDm+Jk3IU7C2kqArGZynSBmWL7vYs3vjcHt6f9oF4diQUrRNzZ5XBB07CGI5XEn
+X-Proofpoint-GUID: VP6z2O9dsYmZNNJdubnfxfxKgcPntrt1
+X-Authority-Analysis: v=2.4 cv=Q7vS452a c=1 sm=1 tr=0 ts=68188b56 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=1J5S7fVpQaFMGjp2_GYA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: QgC67dW-fUJDkaoN9Kch0MBUP2vTEdIS
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-05_04,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015
- malwarescore=0 bulkscore=0 suspectscore=0 impostorscore=0 phishscore=0
- mlxlogscore=611 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 phishscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ suspectscore=0 mlxscore=0 mlxlogscore=833 clxscore=1015 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505050094
+ definitions=main-2505050091
 
-On Sat, May 03, 2025 at 12:37:58AM +0200, Konrad Dybcio wrote:
-> SC8280XP features a SLPI, much like its distant relative, SM8350.
+On Wed, Apr 30, 2025 at 05:38:02PM -0400, Lyude Paul wrote:
+> On Fri, 2025-02-28 at 10:15 +0100, Heiko Carstens wrote:
+> > 
+> > Well.. at least it should not, but the way it is currently implemented it
+> > indeed does sometimes depending on config options - there is room for
+> > improvement. That's my fault - going to address that.
 > 
-> This series adds the bindings and dt node for it (also cleaning up the
-> DTSI in meantime)
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Konrad Dybcio (3):
->       dt-bindings: remoteproc: qcom,sm8350-pas: Add SC8280XP
->       arm64: dts: qcom: sc8280xp: Fix node order
->       arm64: dts: qcom: sc8280xp: Add SLPI
-> 
+> BTW - was this ever fixed? Going through and applying changes to the spinlock
+> series to get it ready for sending out again and I don't know if I should
+> leave this code as-is or not here.
 
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> # Lenovo X13s
+Well, this fix was that the atomic primitives, like used in your code, would
+always fail to compile. That was address with commit 08d95a12cd28
+("s390/atomic_ops: Let __atomic_add_const() variants always return void").
 
--- 
-With best wishes
-Dmitry
+So yes, you need to change your code like I proposed.
 
