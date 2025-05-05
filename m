@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-633899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F7EAAAEAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:01:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D205FAAAE90
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE44189B011
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:58:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB5887B6DB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C1028751E;
-	Mon,  5 May 2025 23:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7E928853A;
+	Mon,  5 May 2025 23:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuVcm/+c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRitPlOW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C608D35D7BB;
-	Mon,  5 May 2025 22:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B162BD929;
+	Mon,  5 May 2025 22:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485906; cv=none; b=b1D/lNXqBW+LmuwLC4fdKI10G0iZ1/FnDg5NLisSX7xtmteBWSeyxzB9MZV+8XiQiUJkvKot6h37ZQsLd3am9Kgz48uR+9KjMb/1y6NvNRITnfN87qSBvuu3UVrRDI/Cez5nVywkxPkrg9QLb0/j9hw5zemY9L88wRcT95KSkOA=
+	t=1746485955; cv=none; b=cTvYWSB78T7yGIFv47zum9JHrerWnIL3A2ddOtGGy4QyYdQIZYzHxSWWvSnUqJt2zV8zb0lWgKsJzuADhIIGJjp84YaHS+mRUPOwoX7ADrn7srEhH9newGiipCcCyE+o31wy0jRpPQScE5+ITOyT1P5jJ965dmR74AWxQBdrviI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485906; c=relaxed/simple;
-	bh=ptyUP18uHVTbecN1W1P7sS32RvPDU/5QXcxuPG2yEpE=;
+	s=arc-20240116; t=1746485955; c=relaxed/simple;
+	bh=VN5EtMg9ZrHmsH7A10pX7oRSpKuBk9x0NuB/eM47aWc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eKR4AKH3OLb4iytZhNrbqrnC0MMB3CrkEh2ZrFS7BZXXaNMuml3Qa5L3pFdPUvzpECw8xLu4XzR+u6y1RheKJWOBME39hAz99tl+08bNa3jFXib+5YxprpRK43/I49wMxnDZLqPoGTXvzRjTQUv3GwTHXGjYY0vQ7bOcrmGKUYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuVcm/+c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4242C4CEF1;
-	Mon,  5 May 2025 22:58:24 +0000 (UTC)
+	 MIME-Version:Content-Type; b=q31NhgLVsug5PUxxqmRqMeQlzBuJs8ct/BRvjfwHZBIzg95MSJnBJAjAyGCgItrtZ02t74rqNYFC5pzBPy7qICZ7KujvwouILXNwvjtYAp0lXDoybiGySGEoYfAkl0lM8qU6UOCIz9QZgLLxRylJw/no430ZJFh281emqYN90gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRitPlOW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04CB7C4CEED;
+	Mon,  5 May 2025 22:59:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485905;
-	bh=ptyUP18uHVTbecN1W1P7sS32RvPDU/5QXcxuPG2yEpE=;
+	s=k20201202; t=1746485953;
+	bh=VN5EtMg9ZrHmsH7A10pX7oRSpKuBk9x0NuB/eM47aWc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VuVcm/+cmZxQE54NNQGFdMBSxJTS77XGydUJ660M8Zn9r8zhSROjF3ZIK5BXe8ZhB
-	 8Xvax6S0Rrn/hXmNfj+x7+8MklaDkjpiHauQBx62PsChGKBo88nQpfF+UWwwYbFR3q
-	 F6AvGrUl1B1+qMMf23QsErQVQh+9xS7toc/BZRJlsnSX2FTuyuq0kDOOmvQCBkxf0d
-	 yNRuzwRY/jmFzPOXEQ5TyHlvhXv2WmWEbVZIfpqVFmZhh4j3YKAUKbj5oNLdTxzVY/
-	 5Sq0Z8+QlZWarCx9pOm7OBafHaZNs1q9pENxGerzrdZ5ZmjjKewontTh1RR8UhKOgt
-	 ymM/di8b4C79Q==
+	b=bRitPlOWzXaiAxr47T8VQEVhzhzZiCKIihQ2VsaY1PZuAjGzP4U0WzD/RX8SQeybW
+	 yY5PGjkOSN+eFtLpwBZhcQJOlMh++ywPxZz/ScxFiUqozivJNG08P2F87FpTn4kjfs
+	 EovNVnSE6Le1Z7V5WU6kakgWIFoLhad4nA4J0DmUttKEBBqGmBgUNm8nCjW35q7zCZ
+	 5Dz9fULwiZrye3kGDvThQEirDSdfZDV17P3/1K4o9BzVml3AxplxwHp+KYII5tov36
+	 gugxnSD2qmTTYYZ1Eo4C2AOQMeCwhwzg2zjdvaRR7KPIC5cHUJ58QDkBPL7W1Bpeiw
+	 wwg2O7J/jlACg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Sasha Levin <sashal@kernel.org>,
-	James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 058/294] scsi: st: Tighten the page format heuristics with MODE SELECT
-Date: Mon,  5 May 2025 18:52:38 -0400
-Message-Id: <20250505225634.2688578-58-sashal@kernel.org>
+	anna-maria@linutronix.de,
+	frederic@kernel.org
+Subject: [PATCH AUTOSEL 6.6 083/294] timer_list: Don't use %pK through printk()
+Date: Mon,  5 May 2025 18:53:03 -0400
+Message-Id: <20250505225634.2688578-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -66,42 +66,60 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Kai Mäkisara <Kai.Makisara@kolumbus.fi>
+From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-[ Upstream commit 8db816c6f176321e42254badd5c1a8df8bfcfdb4 ]
+[ Upstream commit a52067c24ccf6ee4c85acffa0f155e9714f9adce ]
 
-In the days when SCSI-2 was emerging, some drives did claim SCSI-2 but did
-not correctly implement it. The st driver first tries MODE SELECT with the
-page format bit set to set the block descriptor.  If not successful, the
-non-page format is tried.
+This reverts commit f590308536db ("timer debug: Hide kernel addresses via
+%pK in /proc/timer_list")
 
-The test only tests the sense code and this triggers also from illegal
-parameter in the parameter list. The test is limited to "old" devices and
-made more strict to remove false alarms.
+The timer list helper SEQ_printf() uses either the real seq_printf() for
+procfs output or vprintk() to print to the kernel log, when invoked from
+SysRq-q. It uses %pK for printing pointers.
 
-Signed-off-by: Kai Mäkisara <Kai.Makisara@kolumbus.fi>
-Link: https://lore.kernel.org/r/20250311112516.5548-4-Kai.Makisara@kolumbus.fi
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+In the past %pK was prefered over %p as it would not leak raw pointer
+values into the kernel log. Since commit ad67b74d2469 ("printk: hash
+addresses printed with %p") the regular %p has been improved to avoid this
+issue.
+
+Furthermore, restricted pointers ("%pK") were never meant to be used
+through printk(). They can still unintentionally leak raw pointers or
+acquire sleeping looks in atomic contexts.
+
+Switch to the regular pointer formatting which is safer, easier to reason
+about and sufficient here.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+Link: https://lore.kernel.org/all/20250311-restricted-pointers-timer-v1-1-6626b91e54ab@linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/st.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/time/timer_list.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index 900322bad4f3b..293074f30906f 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -3082,7 +3082,9 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
- 			   cmd_in == MTSETDRVBUFFER ||
- 			   cmd_in == SET_DENS_AND_BLK) {
- 			if (cmdstatp->sense_hdr.sense_key == ILLEGAL_REQUEST &&
--			    !(STp->use_pf & PF_TESTED)) {
-+				cmdstatp->sense_hdr.asc == 0x24 &&
-+				(STp->device)->scsi_level <= SCSI_2 &&
-+				!(STp->use_pf & PF_TESTED)) {
- 				/* Try the other possible state of Page Format if not
- 				   already tried */
- 				STp->use_pf = (STp->use_pf ^ USE_PF) | PF_TESTED;
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index ed7d6ad694fba..20a5e6962b696 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -46,7 +46,7 @@ static void
+ print_timer(struct seq_file *m, struct hrtimer *taddr, struct hrtimer *timer,
+ 	    int idx, u64 now)
+ {
+-	SEQ_printf(m, " #%d: <%pK>, %ps", idx, taddr, timer->function);
++	SEQ_printf(m, " #%d: <%p>, %ps", idx, taddr, timer->function);
+ 	SEQ_printf(m, ", S:%02x", timer->state);
+ 	SEQ_printf(m, "\n");
+ 	SEQ_printf(m, " # expires at %Lu-%Lu nsecs [in %Ld to %Ld nsecs]\n",
+@@ -98,7 +98,7 @@ print_active_timers(struct seq_file *m, struct hrtimer_clock_base *base,
+ static void
+ print_base(struct seq_file *m, struct hrtimer_clock_base *base, u64 now)
+ {
+-	SEQ_printf(m, "  .base:       %pK\n", base);
++	SEQ_printf(m, "  .base:       %p\n", base);
+ 	SEQ_printf(m, "  .index:      %d\n", base->index);
+ 
+ 	SEQ_printf(m, "  .resolution: %u nsecs\n", hrtimer_resolution);
 -- 
 2.39.5
 
