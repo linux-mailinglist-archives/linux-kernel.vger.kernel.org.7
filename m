@@ -1,126 +1,144 @@
-Return-Path: <linux-kernel+bounces-632221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B774BAA9430
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E83BEAA9434
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B84FC18925D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:15:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF71E189060E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFBA2580D0;
-	Mon,  5 May 2025 13:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A97819CCEA;
+	Mon,  5 May 2025 13:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="eaAdMAuk"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="N9VWdZKU";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="OUnLBeuI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B743155C83
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 13:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BCC2AF1B
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 13:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746450923; cv=none; b=fBKMnx5lKCbLxKzrZC7qS3bGRYs8i+xebGd5992kmp/VFDE9WhwleNlGW9aqdnZ2uhB1SoLyXJpdJQ/OpgKuYPoqvEUO8PZTQZJQubW+AI9LLB63BxJRrX9buMPE/Vt8ht7EHjEPF9MvPy55wKz1+e9B4Z3HhMBZcf3ZJNe6Fjg=
+	t=1746451013; cv=none; b=SI7XF62bBL0ZE8JBmfwuZPE0nnxADbDtJ6d7gRddU8+OkUx6kX903dCN2VnHqMIMXi1xqCPMGLoev9uZS6hmnFDzRxPNrSIHPaaC0NAJfM6GWoMXF0y3grd2dIRzgNHLSFt6+55+k8irJIXbPWZ2a2xdVhezWMrc+Z+icOxkKH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746450923; c=relaxed/simple;
-	bh=lQrkN+4oEXoabNebRbEs2m8OZGZ5XRso7DP90cD3zRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bPcUSWmAyMymDMxOYRBm1bcyIPxxhL+QONQl4CN4InR9/tmXwFdYC3BzlZOGtYw1yW5kFukxXwlTNg+/ToJfqdaALdi09aup6d0VU6kMw29XBwc8kekamXMXyPB6bxdZvCV2e/C9pcRWJnTzMCzqPeDEFmc+5ggNyJo8Bb8RsMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=eaAdMAuk; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d7f111e9e1so50601695ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 06:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1746450919; x=1747055719; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JC2mo3/LlPLofco9In8VXGkCzE2KGJMSgE1KU9GTJew=;
-        b=eaAdMAukShiqAA5d5+7pxX60uM515QJVM72l/9XEmvUyYs2yE/ARsc/y5d6ddmPF/k
-         +oKJIOyFKsu5Km3uJyNybDmTj4HSOiCG18OgHlIIqdgBnw9lg5iMbpFV3adHpQjWoV3f
-         hsZ50xtDu6M20dUV8J+uZbQjK7mNwGOpc8AgcssUi4BwIFGpJfPbhMGW/YzLEHsCPD5X
-         yR7pWnDZliWKbXKi0l/Sxa9Rph2O9FSdbePRIW9aoFRUPclrQq+aOnl4J9eAvBgPfW7m
-         Zhy5cJTGunlVIr3OxEGEs4zPdVEKzt/8hhpk8Pzs/gy2kiD/TmhRostWVTAuUuFIrMpr
-         0Ufw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746450919; x=1747055719;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JC2mo3/LlPLofco9In8VXGkCzE2KGJMSgE1KU9GTJew=;
-        b=LECJCq3wcbAj2JsjoAMRrl6+xVDJcso89lGei4y9OfngsB6pikb28VSFtvRM0tL5KO
-         8E2enacEFEQSBtQFMUYGSawDcATsmYG6+fMZ5R+e6TWZ3Pp+YAy5UW/TUGPoL4LNeb2R
-         5hMTuO/XPzVy9ddqL/gvnEJ7DJlHf7dIerqTGD0LhnFqeBw+URXim6Gyol4ft0cHO/PF
-         rdqxgkUao/kGgBJ84rLJ2vg6W6pTzjXubArw0qvHegMsWiiIBhbKzgovI1cE46gZoAF3
-         tG+HYu/9I7oacDW6ixmpZRdQVfggIDUBMl7OBIUj1vLJ3CHElQv2BLNEk3ImaTTprW14
-         lJKg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3f/iOXaqzZ/dzBEtI6ZSnKzR4f3ZeM18fdOUHanhIxilJKfffZnqOpgtaP8xKdN7GnfXsfWMFtUo2mnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDLpdBktJA6lqgH8zrXh2080I+evB9xESnto//evxmPCX7HDFH
-	e46rMRPnnjfG5jCSbta+Rn+Y7VTGR2anBvMOar8F8g6D7pLvq+CLPByRlOQ+5t8=
-X-Gm-Gg: ASbGncsTygI98EjMZD+zLWPcOsDFFKaSRaLaRgPMDzqwfYKbc+v95J0YL2wmIuGm7GC
-	/LtBYotD+c0XK01SfeSvQHC2IrOS+A8IspToqgZcc9Oxovry9MIDYutGIWP25XWDRKYgPzahWDY
-	1VKRnyTMpiDJc8I4KqzHTSqyVorh4A+IyVz8sRtKmyly77YyYOVVMCrZmmqPi+tF436GPBhn/Wg
-	yekBnlSGCqyOySkQlF42krQ7k7aN5KgpraKRqbFybI6TL2K/nInKHs2JBf4c0+QUwQ3OnTZkq5X
-	tSAnZtzDj775c9Z5wFRLOS+vxhJucqeOmvejhg==
-X-Google-Smtp-Source: AGHT+IFK4worD8fkVatd6ju3w0j+bUR8Z8yoarIsuUbwXVcwuUJnPu+7pcRFlTT3Bz4wpsAhzX8SLQ==
-X-Received: by 2002:a05:6e02:2510:b0:3d9:6cd9:5079 with SMTP id e9e14a558f8ab-3da5b31d935mr65744215ab.14.1746450919401;
-        Mon, 05 May 2025 06:15:19 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d975f58be3sm20308835ab.58.2025.05.05.06.15.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 06:15:18 -0700 (PDT)
-Message-ID: <daba7244-ab22-460d-9b7f-7453b5c4670f@kernel.dk>
-Date: Mon, 5 May 2025 07:15:18 -0600
+	s=arc-20240116; t=1746451013; c=relaxed/simple;
+	bh=hEg+WKVwi/0B1dVI0AvaCpEXJg82KJZJAJ11XdXcXT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z8IxN/vxYmTNBl1Q3owOy84S+I5QVEtUvCQtXgT1GIeh3NaZoItFSGWcui1eQg9E9vd7xCGA1oxj+LNHuxcBpIRheDimIgnMBpsEOOsHpp7mtkg0uJBNkg46l0Wp3CBEzrWVjEFakuhDv2xCeyiz0jjZWm4IiJf/zXsTKR+72/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=N9VWdZKU; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=OUnLBeuI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EB5611F791;
+	Mon,  5 May 2025 13:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1746451010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=7V9PDBh96s9T++F2TsLmR2Xsuc9lS5rGPMPHdNvE45Y=;
+	b=N9VWdZKUp5waaEwReVQDor1mwa/ZewVgFy0uwCckhPALBAFBpGqpcUJIOQ/iPQwlwwiuVd
+	8Ofe4vZVeFcIvrGhLLmf+y/2R+9qsCSDHpO4VF6GZ8hlkjVNiIlofaftYeXsE7vOJ337qm
+	fS8lxjzkhCHApAbZsr6iaSm1CyBp6lU=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=OUnLBeuI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1746451008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=7V9PDBh96s9T++F2TsLmR2Xsuc9lS5rGPMPHdNvE45Y=;
+	b=OUnLBeuIp+m57fO4epo6IeyDojK6pLqBVkyJXMH3w5jBSR+h/gmc41CIp1NwiJH1eyUkch
+	D60wMuc7UsGdd6PbR1dgDH7CEqqrRJxDithb8s5+nkNoakE2Zps/HR/tIAPy+LwMbz2dgw
+	B6TGj55B59+EtMP3GXIz78ZdIVh6f5Q=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A897B1372E;
+	Mon,  5 May 2025 13:16:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eyqpJ0C6GGiRMAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 05 May 2025 13:16:48 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] x86/alternative: clean up asm/alternative.h
+Date: Mon,  5 May 2025 15:16:46 +0200
+Message-ID: <20250505131646.29288-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Ming Lei <ming.lei@redhat.com>
-References: <20250505132520.0a33799d@canb.auug.org.au>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250505132520.0a33799d@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: EB5611F791
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 5/4/25 9:25 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the block tree got a conflict in:
-> 
->   drivers/block/ublk_drv.c
-> 
-> between commit:
-> 
->   69edf98be844 ("ublk: decouple zero copy from user copy")
-> 
-> from Linus' tree and commit:
-> 
->   2a86eec6396f ("ublk: take const ubq pointer in ublk_get_iod()")
-> 
-> from the block tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Remove some unused macros in arch/x86/include/asm/alternative.h which
+could potentially result in weird build failures.
 
-Thanks looks good, I've merged the 6.15 block changes into
-for-6.16/block to resolve this locally. Current block for-next branch
-should merge cleanly.
+Fixes: 1a6ade825079 ("x86/alternative: Convert the asm ALTERNATIVE_3() macro")
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/include/asm/alternative.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 4a37a8bd87fd..8359ed0f2090 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -335,11 +335,6 @@ void nop_func(void);
+ 	__ALTERNATIVE(\oldinstr, \newinstr, \ft_flags)
+ .endm
+ 
+-#define old_len			141b-140b
+-#define new_len1		144f-143f
+-#define new_len2		145f-144f
+-#define new_len3		146f-145f
+-
+ /*
+  * Same as ALTERNATIVE macro above but for two alternatives. If CPU
+  * has @feature1, it replaces @oldinstr with @newinstr1. If CPU has
 -- 
-Jens Axboe
+2.43.0
+
 
