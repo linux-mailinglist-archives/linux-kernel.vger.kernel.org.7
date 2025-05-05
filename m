@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-634953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3122FAAB5EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:39:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4135CAAB5C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16EC3A41DA
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D8587BB8FC
 	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A41A4AB354;
-	Tue,  6 May 2025 00:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF11B4ABD19;
+	Tue,  6 May 2025 00:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WbVgAOcA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJGYPYmY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABE337F956;
-	Mon,  5 May 2025 23:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125CA28B7ED;
+	Mon,  5 May 2025 23:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487335; cv=none; b=SZtyc8jEJas37ZrlXNE7mci6TBZHPR2Gdivu50j8+VKgD+hF8FA7trcKq42bzB/mZXr6UAxHBsrbw4IDY1eyvs6w3ohIyK20rTQmTrn37uJrxDLf5cTP9+mBz+DhO7a8qkcX30vK1g4GBvbnABNcdV35FgH0tEqjA0sPjoAePxc=
+	t=1746487339; cv=none; b=azj5CWt9C1k/j0sS4Q6UZ/2MfBvVH86DAILfNx8tFKObmefWDgsMKqQ3nGhBLRn1Xv8WzcG7pVtYEb0dxQsRg8ZIQRGXF5SOk/ll5Lb5p2rU/VXOxAuYXRwOIXljv1AdNuIQigwYneB0Lu0mWQ3UiO+eEeJNFVVvzSKdxv0pU34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487335; c=relaxed/simple;
-	bh=deWMExZlTsov2QDeAFquKoWOnR4Wsp9FplU2CGgtVOc=;
+	s=arc-20240116; t=1746487339; c=relaxed/simple;
+	bh=UUwk0fwNUMK4vYKeCf76foxPIDzIqqMebaWL0aejZsI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DDj3AVrguEkgzhdf721cHFusC2xQyWXyY4OZOSeCGGI1XoVXgDO/7rn4Cy29DYfSrjpH42mxg+Af+CHd7VQK+df6DmnbW94mJBAi0/leFStNtifncZEzIMcf5bZaxSsiPJ9LmXgC77EIMaESQhhKMpTagQV5uzVg3fAV5xj5zyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WbVgAOcA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 589D4C4CEF4;
-	Mon,  5 May 2025 23:22:13 +0000 (UTC)
+	 MIME-Version; b=fb/IULQtkaphyYQCqZ7BMUvLcxkDO6sFeHUOBEunZ1h15p4Q0JZjvSMqFVpNJ8H940zmbh40eAG9ht25hQN9lukm8q5udY8+sUKlsFMOBkI2c50pJJi7T+3ZTCbi+MVab0D3+1cFuWyyzrBWo4i9txsPh200OxwE97xfLobWrmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJGYPYmY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CDB2C4CEEE;
+	Mon,  5 May 2025 23:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487334;
-	bh=deWMExZlTsov2QDeAFquKoWOnR4Wsp9FplU2CGgtVOc=;
+	s=k20201202; t=1746487337;
+	bh=UUwk0fwNUMK4vYKeCf76foxPIDzIqqMebaWL0aejZsI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WbVgAOcAUaQAX2BR0i2HcoRIxSIc4qUUkNCMrTHsNjDyZdx96fP5NN6QYRWAW1LlP
-	 7dAGqFO6hYdc+WDVsuduxzL01krqbEApftWWnh2delQxCzU14eYTkPkSiV98ABdtdR
-	 wPd2RDDVaCFZolp6UvGcNMJ/G55md1wXthhcGsybUY/EQ3fp6A3bLF6UNkm6nKX7RC
-	 aslYgQGJZKXLbirq8HVr5YFQfkTVF6hykon9wwX+/xGAhj/Nkz9S0dPb30HHIokSsA
-	 eRLCBOgojRfuaFq3p3oSECGrqfFMbO6MKhnGFqeEjUfkzpuV1BVrB+tyZBUIdOdFpI
-	 7tkMJYjp9T/JA==
+	b=GJGYPYmYZpKfK/aWgjk5HmibFxEz/+VXnz85uwZxm2VTVZj/seZdt1gDMI5+dIpEm
+	 CZ7Umyrit/JVWD5RR442zoDX/uHEaJp/2fDWSw41YUEdaU+pOV5UZQTL2QF731ywW8
+	 /Y2yy+0Zyr6B1qSbIRd1VwV5bVY2ZnxT79/0+KsVbqqvGR6FJd1kfNCFUhSbQo5Is/
+	 AEvHZEFp07iyBfxJuuW1WOtKf4dtFw7fi0HE2m+AU8Ux8u6zNqjTHlStf0NUS0X/yC
+	 ycBNjRyVaJIjSANhvedTrrKx4MWRajEZJCF7k7iOw02Zt+5p7J1zqdbM8S1W0AzPlG
+	 HtYtPbEgF2Wxg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Erick Shepherd <erick.shepherd@ni.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+Cc: Filipe Manana <fdmanana@suse.com>,
+	David Sterba <dsterba@suse.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 12/79] mmc: host: Wait for Vdd to settle on card power off
-Date: Mon,  5 May 2025 19:20:44 -0400
-Message-Id: <20250505232151.2698893-12-sashal@kernel.org>
+	clm@fb.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 15/79] btrfs: send: return -ENAMETOOLONG when attempting a path that is too long
+Date: Mon,  5 May 2025 19:20:47 -0400
+Message-Id: <20250505232151.2698893-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505232151.2698893-1-sashal@kernel.org>
 References: <20250505232151.2698893-1-sashal@kernel.org>
@@ -65,44 +66,43 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.4.293
 Content-Transfer-Encoding: 8bit
 
-From: Erick Shepherd <erick.shepherd@ni.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 31e75ed964582257f59156ce6a42860e1ae4cc39 ]
+[ Upstream commit a77749b3e21813566cea050bbb3414ae74562eba ]
 
-The SD spec version 6.0 section 6.4.1.5 requires that Vdd must be
-lowered to less than 0.5V for a minimum of 1 ms when powering off a
-card. Increase wait to 15 ms so that voltage has time to drain down
-to 0.5V and cards can power off correctly. Issues with voltage drain
-time were only observed on Apollo Lake and Bay Trail host controllers
-so this fix is limited to those devices.
+When attempting to build a too long path we are currently returning
+-ENOMEM, which is very odd and misleading. So update fs_path_ensure_buf()
+to return -ENAMETOOLONG instead. Also, while at it, move the WARN_ON()
+into the if statement's expression, as it makes it clear what is being
+tested and also has the effect of adding 'unlikely' to the statement,
+which allows the compiler to generate better code as this condition is
+never expected to happen.
 
-Signed-off-by: Erick Shepherd <erick.shepherd@ni.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Link: https://lore.kernel.org/r/20250314195021.1588090-1-erick.shepherd@ni.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-pci-core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/btrfs/send.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index 390caef1bdabc..22978057b94a1 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -669,8 +669,12 @@ static void sdhci_intel_set_power(struct sdhci_host *host, unsigned char mode,
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index e1063ef3dece5..b0933d9525939 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -397,10 +397,8 @@ static int fs_path_ensure_buf(struct fs_path *p, int len)
+ 	if (p->buf_len >= len)
+ 		return 0;
  
- 	sdhci_set_power(host, mode, vdd);
+-	if (len > PATH_MAX) {
+-		WARN_ON(1);
+-		return -ENOMEM;
+-	}
++	if (WARN_ON(len > PATH_MAX))
++		return -ENAMETOOLONG;
  
--	if (mode == MMC_POWER_OFF)
-+	if (mode == MMC_POWER_OFF) {
-+		if (slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_APL_SD ||
-+		    slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_BYT_SD)
-+			usleep_range(15000, 17500);
- 		return;
-+	}
- 
- 	/*
- 	 * Bus power might not enable after D3 -> D0 transition due to the
+ 	path_len = p->end - p->start;
+ 	old_buf_len = p->buf_len;
 -- 
 2.39.5
 
