@@ -1,56 +1,66 @@
-Return-Path: <linux-kernel+bounces-633884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3501AAAA7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66328AAAA91
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0244B1889E72
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:36:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C81C2188C983
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6655937A8B8;
-	Mon,  5 May 2025 23:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB0F2E6886;
+	Mon,  5 May 2025 23:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9iXGVV2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJYiFnuL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F1A36EF37;
-	Mon,  5 May 2025 22:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1F52D2CDE;
+	Mon,  5 May 2025 22:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485864; cv=none; b=R5Auj0vidVvaO/0zOnxxuPl134uPh5yb6QbOCCS28ysc9HQ3p+xLftiEdHCHe8bK8Arj3rYBmHhjuvk9+TPSUHlsDlvRVrKzE35urXklhw3ojNuk9CIgqlPDtB5agODQ1QBmogPJY4Hk2X1y6o4xITes3pM6FyMMcgEgdSMtk70=
+	t=1746485871; cv=none; b=tsFVvVNuQn23qSTpTi7ZFwGm33Y3ZqloLOqynjbAvCAsi5xZJbWR7N12HWjTkg2zXCS9MYNm+je6NBLex7TwA127CCAMO3drYxtts0CJRzKHtaxoJ5LHkfMrdOdwFIyHXvsJh1qmNn7850IrO8Nce/equCnYV+bW/EKGPOUVtb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485864; c=relaxed/simple;
-	bh=W1KoIUb4JGXXwoEaGriyWSvSgIDLHl3lD+Np+7AzArM=;
+	s=arc-20240116; t=1746485871; c=relaxed/simple;
+	bh=p25o4cPOgtbNcaJdtjxvdexJ48gX+J/KIj4fRxWBDTA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i5Hc7gDuc8wHPkj/o76/CJCQhBzbz8/Occ+1cRISppr7jWuUJw5mCCd4KL1hz8W27SstI0spGowyzcvuNrAb6jjKXJ6eI9wMr+lnHRZN48H8p8yYQE2Enm6Ahbb4xS7yMagpJdVIhSBm7xKPaV55imkAlmYNv6z3OUBNPRoSkU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9iXGVV2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA064C4CEEE;
-	Mon,  5 May 2025 22:57:43 +0000 (UTC)
+	 MIME-Version; b=fMpmlYBvLf4731lwucSJWcnCPySgTPkLVCYeFyFNibTn2q2rWy8ZCeD3Ry61HGp2zxjUOJY9b1fXX5jpH/UfnlNPoh43zrjT/E/L55rc8p+qVDW9oVygmhJQPhu5xGCyjLu5zlX56S2rpQLdjVtomnlapXjKeBgTnWTzEpPxrRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJYiFnuL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A0CC4CEE4;
+	Mon,  5 May 2025 22:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485864;
-	bh=W1KoIUb4JGXXwoEaGriyWSvSgIDLHl3lD+Np+7AzArM=;
+	s=k20201202; t=1746485870;
+	bh=p25o4cPOgtbNcaJdtjxvdexJ48gX+J/KIj4fRxWBDTA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X9iXGVV2ehc3i2u5ZfSMjyOf+MDp2k8U4gxobnyxctYU/PZF7WP9Ip4//IeeZjOXW
-	 IoTUdXsf/5XuC7P/VmpXhPD4ne7hDylO681/bD4kZ3YWHjH1QNI4Jz8WLU8ZyHrpNM
-	 I14HufLH5tvLh2ZXMDXYB5dneHGiEZKgD8nkxWll9U91ascHi5+89dw5Mlas5bMOOi
-	 o83CxUp/qp6XX3VRgHvODIPwNzpQV2B33pweH6dPoRFIXS/MIslIoWiJgy5wTHCffE
-	 T89jo0/VoHwd/Pidfm7lmtOQzyOhkjVE3MNEjZezpHrr177JQOOpz7Dakn+AGaWsll
-	 lzWAlATM8O8PA==
+	b=CJYiFnuLictTqYcOeVI+JeUC9USS6yfmwJycQrfcMDOy1VSzSjyvpWd4khChH1mhh
+	 9xos7V1wzRY/Rw35P7sWk9NzNkajMmGwBz1Fgf+zsHn64k07SAelsM8PeG90M/3h6U
+	 BVso5EEI5bGfm9CdToFU/KgFkmneRTP1xEQinuxhFrS5zaP9UItyEJheberAw7r7W8
+	 hD6DyNYo9W+yrsQpdrVrosvu+0YyuwXdRzd+aCc2087hrArGOHCBoWRpmEnGqdmpCR
+	 jDGkxd9QU9dhSH6nkKwqCkiv/u1NiW4pdSdkpNRHbtStJ2ugiPz8h/j4lufRRwaBGc
+	 tV6sp8RJsJNDQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Erick Shepherd <erick.shepherd@ni.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+Cc: Felix Fietkau <nbd@nbd.name>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 037/294] mmc: host: Wait for Vdd to settle on card power off
-Date: Mon,  5 May 2025 18:52:17 -0400
-Message-Id: <20250505225634.2688578-37-sashal@kernel.org>
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	kuba@kernel.org,
+	johannes.berg@intel.com,
+	edumazet@google.com,
+	emmanuel.grumbach@intel.com,
+	miriam.rachel.korenblit@intel.com,
+	uwu@icenowy.me,
+	linux-wireless@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.6 038/294] wifi: mt76: only mark tx-status-failed frames as ACKed on mt76x0/2
+Date: Mon,  5 May 2025 18:52:18 -0400
+Message-Id: <20250505225634.2688578-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -65,44 +75,109 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Erick Shepherd <erick.shepherd@ni.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit 31e75ed964582257f59156ce6a42860e1ae4cc39 ]
+[ Upstream commit 0c5a89ceddc1728a40cb3313948401dd70e3c649 ]
 
-The SD spec version 6.0 section 6.4.1.5 requires that Vdd must be
-lowered to less than 0.5V for a minimum of 1 ms when powering off a
-card. Increase wait to 15 ms so that voltage has time to drain down
-to 0.5V and cards can power off correctly. Issues with voltage drain
-time were only observed on Apollo Lake and Bay Trail host controllers
-so this fix is limited to those devices.
+The interrupt status polling is unreliable, which can cause status events
+to get lost. On all newer chips, txs-timeout is an indication that the
+packet was either never sent, or never acked.
+Fixes issues with inactivity polling.
 
-Signed-off-by: Erick Shepherd <erick.shepherd@ni.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Link: https://lore.kernel.org/r/20250314195021.1588090-1-erick.shepherd@ni.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://patch.msgid.link/20250311103646.43346-6-nbd@nbd.name
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-pci-core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/wireless/mediatek/mt76/mt76.h       | 1 +
+ drivers/net/wireless/mediatek/mt76/mt76x0/pci.c | 3 ++-
+ drivers/net/wireless/mediatek/mt76/mt76x0/usb.c | 3 ++-
+ drivers/net/wireless/mediatek/mt76/mt76x2/pci.c | 3 ++-
+ drivers/net/wireless/mediatek/mt76/mt76x2/usb.c | 3 ++-
+ drivers/net/wireless/mediatek/mt76/tx.c         | 3 ++-
+ 6 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index 6b351810a301c..dbfe0a5324eaf 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -608,8 +608,12 @@ static void sdhci_intel_set_power(struct sdhci_host *host, unsigned char mode,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76.h b/drivers/net/wireless/mediatek/mt76/mt76.h
+index 8b620d4fed439..df0ea638370b5 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76.h
++++ b/drivers/net/wireless/mediatek/mt76/mt76.h
+@@ -439,6 +439,7 @@ struct mt76_hw_cap {
+ #define MT_DRV_RX_DMA_HDR		BIT(3)
+ #define MT_DRV_HW_MGMT_TXQ		BIT(4)
+ #define MT_DRV_AMSDU_OFFLOAD		BIT(5)
++#define MT_DRV_IGNORE_TXS_FAILED	BIT(6)
  
- 	sdhci_set_power(host, mode, vdd);
- 
--	if (mode == MMC_POWER_OFF)
-+	if (mode == MMC_POWER_OFF) {
-+		if (slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_APL_SD ||
-+		    slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_BYT_SD)
-+			usleep_range(15000, 17500);
+ struct mt76_driver_ops {
+ 	u32 drv_flags;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
+index 9277ff38b7a22..57ae362dad50b 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
+@@ -152,7 +152,8 @@ mt76x0e_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	static const struct mt76_driver_ops drv_ops = {
+ 		.txwi_size = sizeof(struct mt76x02_txwi),
+ 		.drv_flags = MT_DRV_TX_ALIGNED4_SKBS |
+-			     MT_DRV_SW_RX_AIRTIME,
++			     MT_DRV_SW_RX_AIRTIME |
++			     MT_DRV_IGNORE_TXS_FAILED,
+ 		.survey_flags = SURVEY_INFO_TIME_TX,
+ 		.update_survey = mt76x02_update_channel,
+ 		.tx_prepare_skb = mt76x02_tx_prepare_skb,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/usb.c b/drivers/net/wireless/mediatek/mt76/mt76x0/usb.c
+index 0422c332354a1..520fd46227a7b 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/usb.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/usb.c
+@@ -210,7 +210,8 @@ static int mt76x0u_probe(struct usb_interface *usb_intf,
+ 			 const struct usb_device_id *id)
+ {
+ 	static const struct mt76_driver_ops drv_ops = {
+-		.drv_flags = MT_DRV_SW_RX_AIRTIME,
++		.drv_flags = MT_DRV_SW_RX_AIRTIME |
++			     MT_DRV_IGNORE_TXS_FAILED,
+ 		.survey_flags = SURVEY_INFO_TIME_TX,
+ 		.update_survey = mt76x02_update_channel,
+ 		.tx_prepare_skb = mt76x02u_tx_prepare_skb,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/pci.c b/drivers/net/wireless/mediatek/mt76/mt76x2/pci.c
+index df85ebc6e1df0..7e2475b3c278e 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2/pci.c
+@@ -22,7 +22,8 @@ mt76x2e_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	static const struct mt76_driver_ops drv_ops = {
+ 		.txwi_size = sizeof(struct mt76x02_txwi),
+ 		.drv_flags = MT_DRV_TX_ALIGNED4_SKBS |
+-			     MT_DRV_SW_RX_AIRTIME,
++			     MT_DRV_SW_RX_AIRTIME |
++			     MT_DRV_IGNORE_TXS_FAILED,
+ 		.survey_flags = SURVEY_INFO_TIME_TX,
+ 		.update_survey = mt76x02_update_channel,
+ 		.tx_prepare_skb = mt76x02_tx_prepare_skb,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c b/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
+index d804309992196..70d3895762b4c 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
+@@ -29,7 +29,8 @@ static int mt76x2u_probe(struct usb_interface *intf,
+ 			 const struct usb_device_id *id)
+ {
+ 	static const struct mt76_driver_ops drv_ops = {
+-		.drv_flags = MT_DRV_SW_RX_AIRTIME,
++		.drv_flags = MT_DRV_SW_RX_AIRTIME |
++			     MT_DRV_IGNORE_TXS_FAILED,
+ 		.survey_flags = SURVEY_INFO_TIME_TX,
+ 		.update_survey = mt76x02_update_channel,
+ 		.tx_prepare_skb = mt76x02u_tx_prepare_skb,
+diff --git a/drivers/net/wireless/mediatek/mt76/tx.c b/drivers/net/wireless/mediatek/mt76/tx.c
+index 1809b03292c3d..47cdccdbed6aa 100644
+--- a/drivers/net/wireless/mediatek/mt76/tx.c
++++ b/drivers/net/wireless/mediatek/mt76/tx.c
+@@ -100,7 +100,8 @@ __mt76_tx_status_skb_done(struct mt76_dev *dev, struct sk_buff *skb, u8 flags,
  		return;
-+	}
  
- 	/*
- 	 * Bus power might not enable after D3 -> D0 transition due to the
+ 	/* Tx status can be unreliable. if it fails, mark the frame as ACKed */
+-	if (flags & MT_TX_CB_TXS_FAILED) {
++	if (flags & MT_TX_CB_TXS_FAILED &&
++	    (dev->drv->drv_flags & MT_DRV_IGNORE_TXS_FAILED)) {
+ 		info->status.rates[0].count = 0;
+ 		info->status.rates[0].idx = -1;
+ 		info->flags |= IEEE80211_TX_STAT_ACK;
 -- 
 2.39.5
 
