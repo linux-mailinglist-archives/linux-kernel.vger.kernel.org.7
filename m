@@ -1,94 +1,135 @@
-Return-Path: <linux-kernel+bounces-632620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079EEAA99CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:55:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E9EAA99EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709FF166F27
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:55:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2D117DB1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AB826A0EB;
-	Mon,  5 May 2025 16:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6C026B0BC;
+	Mon,  5 May 2025 17:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kpn6qr1A"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="EFi3lw7V";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wHokB4Or"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90D218C322;
-	Mon,  5 May 2025 16:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998CD79CD;
+	Mon,  5 May 2025 17:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746464112; cv=none; b=Vn2x0VA00beSKwC0nAVzTEP+aos1IitdojfT7+sqLxMUi1kNZiFSsD6zn+19VMtg2SUpe/FeSIBs1YS0DI13pxRSqe9ypacGPsqDSRMi9W7pwq2zpLjteAM2IxvdsQgOZLm0o/JwoYRBUum4j8pnR2I7uJFY3D2de984kU6ihxo=
+	t=1746464471; cv=none; b=tKrCddEEo49ulGtWfRcEDZTaRoQznSavLcYEgNVn39kvF5sk/Og7r/bJQOrETwumrmfNrdECYHW9so4haC5Vk+cnIC/Y7Y3+FAmm4xeLp2xt7uDVYRzqA8dCCjosFlnKcS0sPG6OX6ETtOmE5T21rTMs3gDyGV2nf5QqI7nZYCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746464112; c=relaxed/simple;
-	bh=KqMqzbRZc4K6m2I2OzYb3S8yTZKb+Bvk5nv6OKBxla4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4yRYSaU9WpHeS3xPMD/nhXuQH7ssX+QwDlbm2J9wJWKLt+2ZCdWQjTLih6cuJ+TtlDLTeLQ5WxymnMucC0f2viZFKxbEEtuUTYq5BZYuU87+VB7+RBGmDpOFt3pJxnlL638/9Fsc8AXxhUTYpbXzAZam524UJWcL6c4Yw2tksw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kpn6qr1A; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZrnhD66klzlgqxr;
-	Mon,  5 May 2025 16:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1746464106; x=1749056107; bh=KqMqzbRZc4K6m2I2OzYb3S8y
-	TZKb+Bvk5nv6OKBxla4=; b=kpn6qr1Ak4EAZLphiBxb9e+Ur1vrPuJmL5+GCgDX
-	JJXRF0WyA4bGKStuM25pBoTfd7w/m2BWC/imNO+IWLguHw1XU5DcDo5Syt3wk4HY
-	mu1QIyRADZCN3oB9P2aR4dZ0bi3Uu1DfiPXLYZsUhZBqlNrzgOlG3N2OCAKNdUYE
-	d4fgcA69ARpaWdRKsLVNxvQn0Ta+stFEkSMJifIl3Ag5l6rH5cVqNYO8Z8vEMwSM
-	NAn2gDCZXq0GzjUwlidLr72RyHOtTn4PoZZ8a0gVDTERLz6TQ0m3pJrVWo6g7FMa
-	F80omCGBEogfFwAXOY5v2QkrCFzzsNjwTbD2MORxTEIMQA==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id S3c9Q-mRkkDm; Mon,  5 May 2025 16:55:06 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4Zrnh25QDJzlgqTs;
-	Mon,  5 May 2025 16:54:57 +0000 (UTC)
-Message-ID: <3743e95f-f900-4646-b82b-67c104174852@acm.org>
-Date: Mon, 5 May 2025 09:54:57 -0700
+	s=arc-20240116; t=1746464471; c=relaxed/simple;
+	bh=/rb9sDoHFaPXkvVypXPPnNhJCmnEbt4hxIXviG6UFjU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vB6nW9numi1E7slBWeN3OWp3NIYbJq/N8rj0axay/xOE79VU1lh8KeOhYG27Pw85na0wkBrcjB9xAzKrAqTHxG21jCppyub/JXPacRWPp2pTWi9ttC9llYu9jYex1iOByHFF88RBf5NcF2L19DhasppmU0q1oyiaWoQK+03uaAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=EFi3lw7V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wHokB4Or; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 87E301140251;
+	Mon,  5 May 2025 13:01:08 -0400 (EDT)
+Received: from phl-frontend-01 ([10.202.2.160])
+  by phl-compute-03.internal (MEProxy); Mon, 05 May 2025 13:01:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1746464468; x=1746550868; bh=i+NjHOQvyPmCkguaVscPy
+	Ug5INbsdBvyRRq7QrgMbGU=; b=EFi3lw7VcH19H6yZ+t2a1lGLB8NHmy7Qs3p5j
+	beAzogmvvqxyQuWj8/uGQjSfYNZCbCsQrBRDqlucCOdbLaSk2wlueUzw3G5q87Iv
+	Sg8jBBzAbdxzHTckuBKzqFwfhK8WWdja9GJPSRWF3J8gEl7CaN0GphiWuk0YxIf0
+	iDPFBSkJhi5CokutZKAmle/TVzZMyokv/asBfTyhbbehUqgH2zyazoo8XLAFlF5L
+	FZcDxL9guKiC//4YsMYKDsw9QxBRuF8o6HWzSsHWeXJ/t0FqTEEzWYzYPXtpCVm4
+	7HxH/RsrjxzzkWIoIt+dXYPwfgOM5kfmWbet9wkFHoi7DQ1ow==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1746464468; x=1746550868; bh=i+NjHOQvyPmCkguaVscPyUg5INbsdBvyRRq
+	7QrgMbGU=; b=wHokB4OrijdGfEuX9MwkDVaRvcKkFXuiy3YuZqvKwxUJn11Y+0a
+	JUwY2edDS3O2eheA1tBYhk1SF3PmP910B1C1Z1bhRgI0fCOssCzeeXTj59QfAk2Z
+	Wdw2SHkAr9ERGTMAOfI6pScQLg53G3iUOtnaO6XhYTXVsllcF+CGMgiSAdb/h4PW
+	2ylCxNwFjw2jDjMcE7U0TXmVulnBTFkQrJc55PBgTUBQJ478xzNfp628li9PhDH9
+	x/EUzBfOMy1/R6fXMRGhcx7/6R333iE5g0jRADZePkNDPxi/myzTaOCnx9k3tihg
+	2smhAMLLJSaM+ygPCQo5hJkIwPw6T2Z2K8A==
+X-ME-Sender: <xms:1O4YaNsKL2qKby7egQylp4ETCMg_ti6oK7czLNi8-2-GCRNyX5n3KA>
+    <xme:1O4YaGd9oq080pbZ0nNqzqzE1prQOT4GbT9p9Ot0AGwpp-QDlxAlpQ8PwE0RbAb-M
+    GRbx8jSBuoxVLdSIts>
+X-ME-Received: <xmr:1O4YaAxHLs8Pw0eqqWNIHL7BZAjYj5vkhaNUc3dZC0dav1abfh1nnXAxzj2S5N0zH57P64mebxjfaTajZmmaLjeCujnUdF15sYJL0LgFw4DYVrGr4A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeduieegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
+    ucfhrhhomheppfhitgholhgrshcurfhithhrvgcuoehnihgtohesfhhluhignhhitgdrnh
+    gvtheqnecuggftrfgrthhtvghrnhepudfhvdelgfeguefgjeeigfdtkeejheekveevgeei
+    tdelvdeihfevfeetffeigeeknecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtohesfhhl
+    uhignhhitgdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtohepnhhpihhtrhgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehj
+    ihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslh
+    hinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
+    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvg
+    hrihgrlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:1O4YaEN0fPaPsaNEpW07cmKF-z_Bnsi7VZFC-h6LXL--74XMdvYTRA>
+    <xmx:1O4YaN92eUf6uQbvYIiyUdY3IBjrCSq5sCphuwQQaX-9uh2W2VovYw>
+    <xmx:1O4YaEWT_gfICvnQXiFvzIIQbMrhIkSxXB2BGTSJ3G8yr1Rxejih4Q>
+    <xmx:1O4YaOdD7itcIfgqboAUhdcn5CGT3md38aMqLG2FF6MVEl1xn7XFqQ>
+    <xmx:1O4YaA_eh-3qd_jm-0PJvq6cD_PHclPzTdrwaOHH3vO094s_rthkL8wT>
+Feedback-ID: i58514971:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 5 May 2025 13:01:08 -0400 (EDT)
+Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 2F6F01185457;
+	Mon, 05 May 2025 13:01:07 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Nicolas Pitre <npitre@baylibre.com>,
+	linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] vt: more Unicode handling changes
+Date: Mon,  5 May 2025 12:55:23 -0400
+Message-ID: <20250505170021.29944-1-nico@fluxnic.net>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ufs: core: Remove redundant query_complete trace
-To: Avri Altman <Avri.Altman@sandisk.com>,
- "keosung.park@samsung.com" <keosung.park@samsung.com>,
- ALIM AKHTAR <alim.akhtar@samsung.com>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <CGME20250425010605epcms2p67e89b351398832fe0fd547404d3afc65@epcms2p6>
- <20250425010605epcms2p67e89b351398832fe0fd547404d3afc65@epcms2p6>
- <PH7PR16MB61962DED035E3F1F5F03B142E5842@PH7PR16MB6196.namprd16.prod.outlook.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <PH7PR16MB61962DED035E3F1F5F03B142E5842@PH7PR16MB6196.namprd16.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/24/25 10:38 PM, Avri Altman wrote:
-> Fixes: 71aabb747d5f ("scsi: ufs: core: Reuse exec_dev_cmd")
-> Reviewed-by: Avri Altman <avri.altman@sandisk.com>
-With the Fixes: tag added:
+The Linux VT console has many problems with regards to proper Unicode
+handling. A first set of patches was submitted here:
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+https://lore.kernel.org/all/20250417184849.475581-1-nico@fluxnic.net/
+
+Those patches are currently in Greg's tty-next branch.
+
+The first 2 patches in the following series contain fixes for those
+already-applied patches.
+
+Remaining patches introduce tables that map complex Unicode characters
+to simpler fallback characters for terminal display when corresponding
+glyphs are unavailable. Only the subset of Unicode that can reasonably
+be substituted by ASCII/Latin-1 characters is covered. Substitution may
+not be as good as the actual glyphs but still way more helpful than squared
+question marks.
+
+This applies on top of tty-next currently at commit 5ee558c5d9e9.
+
+diffstat:
+ drivers/tty/vt/.gitignore                   |    1 +
+ drivers/tty/vt/Makefile                     |    8 +-
+ drivers/tty/vt/gen_ucs_fallback_table.py    |  881 ++++++++++++
+ drivers/tty/vt/ucs.c                        |   89 +-
+ drivers/tty/vt/ucs_fallback_table.h_shipped | 1498 +++++++++++++++++++++
+ drivers/tty/vt/vt.c                         |   95 +-
+ include/linux/consolemap.h                  |    6 +
+ 7 files changed, 2535 insertions(+), 43 deletions(-)
 
