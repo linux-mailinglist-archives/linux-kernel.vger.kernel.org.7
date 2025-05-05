@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-634066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BD8AAAF53
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:14:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB58AAAC1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9BE31707A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F3E5A3FD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB443BA894;
-	Mon,  5 May 2025 23:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534913BBDB4;
+	Mon,  5 May 2025 23:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAK9SlgA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zi5EvHR7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699392EE16D;
-	Mon,  5 May 2025 23:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCCC2EE468;
+	Mon,  5 May 2025 23:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486545; cv=none; b=niDhWJiQV9H4+wu98IOzGe52rSZk9bDEDiQZHljblPD3hHX3AQ1hbe5UFjnSuAmQV1HVMbYPERFVxTy4FeAroKc6NplNRZFdrCzi2EAS8zcllcNwprVJ+ESEryz21MMSfM0WD/fOsefxJiO4IxrNbQLo9SccHfot/M58mCstD2Q=
+	t=1746486562; cv=none; b=XAJoL3RUfBMOPWuD/yVWQhxzu9yqg+E7KVp19Ega6o77CCkuMZJBBsDy6IHyVAsJyYqz3Gy0Id+XnRYLp4nBfD8wa/N9auJkipxRbkynkuBmK5HJjM6pmOlSMaGGIKaHDX2im5g47a6m/+dbvSr/eSDGOfAXycLUOUOg4J2Z4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486545; c=relaxed/simple;
-	bh=SRnRJO6g1B7jvzWhfxhh5YTRN7XIca6siImFMw6aC7c=;
+	s=arc-20240116; t=1746486562; c=relaxed/simple;
+	bh=xR8HItLqSKPUB0KcBnM9Bg8bJlEv0YqN9bUXCQUdFI4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z19XXIO6QvSqojVe77R77LeQQEzON0ry7UgwmWv2H/dJLy2ajpKi2f0Hfj+mlYIjSoS0MzJN/kCpzHZlQJtN4wOdfcmFnimyVA2VGLGclkWnIkSe8/xi/z3RlW//JHH2EWzGg2K0PgfCd74ydiHVru7r0eBxKj/I+tUOqzeDy4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAK9SlgA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4843DC4CEE4;
-	Mon,  5 May 2025 23:09:04 +0000 (UTC)
+	 MIME-Version; b=oLS98eMVFdgBf3g/t7j0Lp8PnKG9VBibnaLrdPceYfQYXAJ20Ishz9MkS/QuSZeJfwsnz2RUdr8LMvSb0wJHKno5xajG5CZLgeTasvE4OWS9+1nuMbq9UfT4GE85i4Ewm146J/bXH70D4HPneotmPl/OEPGVZ8jhPLp8nW7Gsxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zi5EvHR7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3862EC4CEED;
+	Mon,  5 May 2025 23:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486545;
-	bh=SRnRJO6g1B7jvzWhfxhh5YTRN7XIca6siImFMw6aC7c=;
+	s=k20201202; t=1746486561;
+	bh=xR8HItLqSKPUB0KcBnM9Bg8bJlEv0YqN9bUXCQUdFI4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RAK9SlgAyY63JbqUCLnAH7K3yy5WmOAbkhSwB4Q3PQZdb5NcZGqHz7qkU0kPlo0jQ
-	 19I6BSVBNcr8uoi/3geh7VZYWIQM4gdo2VvGBW4Nc0b8VOclUmYiqZjpYoVkxSMKVt
-	 gZ5/BkgYGUkfcsubVtoyRFwoJMYUFBVf+cbCGbXVq/AC+gBy4Og5rCERzRg2FR5bpj
-	 K6hlSErCkjIHe+bak5JwelRqTSH+ABtE9rkdaQ0O3vJR+XkesAX5wYnCNXgKciMhE6
-	 scdC8RqixEzCoIABN5zE2gAEaCDLPQ92IkBzVn3Xh6wMOTjlCIMwsvPYbgJ3QbDKy6
-	 b68fX+BcBUhFg==
+	b=Zi5EvHR7guJtfavszqJAzRrVp3xnvvV3dNlXG1K8PBrlvpKr2JEvZ0mxDvkUfgsiB
+	 +w4bLSj2/mJZuDQvTIUIGhvBBmG6Au0lxUpwtwmJttY9a1StO3ZwW/MqOTpXD5UAom
+	 mLTRWqS98mVoW6f2sRh8vfU/rLbhhmZcJcYw+i8tqyp4DFfzOENiz6PIhwjDJ7t7ar
+	 +OoR4niYyv/LgnFIQNaE3hBcACxcUJrTJUm2+2Nb65556ICayYIov7fasOdFYQETQL
+	 APvIoszdO5UysrSSGp24+gSBludqRQltPKXv70uAb4jd0kZU7w07T3KIEIqeCYACV/
+	 dU2CM8gZggxJg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Takashi Iwai <tiwai@suse.de>,
-	syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com,
+Cc: Victor Lu <victorchengchi.lu@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	perex@perex.cz,
-	tiwai@suse.com,
-	viro@zeniv.linux.org.uk,
-	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 082/212] ALSA: seq: Improve data consistency at polling
-Date: Mon,  5 May 2025 19:04:14 -0400
-Message-Id: <20250505230624.2692522-82-sashal@kernel.org>
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	tao.zhou1@amd.com,
+	Hawking.Zhang@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.1 092/212] drm/amdgpu: Do not program AGP BAR regs under SRIOV in gfxhub_v1_0.c
+Date: Mon,  5 May 2025 19:04:24 -0400
+Message-Id: <20250505230624.2692522-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -67,68 +70,43 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Victor Lu <victorchengchi.lu@amd.com>
 
-[ Upstream commit e3cd33ab17c33bd8f1a9df66ec83a15dd8f7afbb ]
+[ Upstream commit 057fef20b8401110a7bc1c2fe9d804a8a0bf0d24 ]
 
-snd_seq_poll() calls snd_seq_write_pool_allocated() that reads out a
-field in client->pool object, while it can be updated concurrently via
-ioctls, as reported by syzbot.  The data race itself is harmless, as
-it's merely a poll() call, and the state is volatile.  OTOH, the read
-out of poll object info from the caller side is fragile, and we can
-leave it better in snd_seq_pool_poll_wait() alone.
+SRIOV VF does not have write access to AGP BAR regs.
+Skip the writes to avoid a dmesg warning.
 
-A similar pattern is seen in snd_seq_kernel_client_write_poll(), too,
-which is called from the OSS sequencer.
-
-This patch drops the pool checks from the caller side and add the
-pool->lock in snd_seq_pool_poll_wait() for better data consistency.
-
-Reported-by: syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/67c88903.050a0220.15b4b9.0028.GAE@google.com
-Link: https://patch.msgid.link/20250307084246.29271-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Victor Lu <victorchengchi.lu@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/seq/seq_clientmgr.c | 5 +----
- sound/core/seq/seq_memory.c    | 1 +
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfxhub_v1_0.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
-index 2d707afa1ef1c..1252ea7ad55ea 100644
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -1140,8 +1140,7 @@ static __poll_t snd_seq_poll(struct file *file, poll_table * wait)
- 	if (snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_OUTPUT) {
- 
- 		/* check if data is available in the pool */
--		if (!snd_seq_write_pool_allocated(client) ||
--		    snd_seq_pool_poll_wait(client->pool, file, wait))
-+		if (snd_seq_pool_poll_wait(client->pool, file, wait))
- 			mask |= EPOLLOUT | EPOLLWRNORM;
- 	}
- 
-@@ -2382,8 +2381,6 @@ int snd_seq_kernel_client_write_poll(int clientid, struct file *file, poll_table
- 	if (client == NULL)
- 		return -ENXIO;
- 
--	if (! snd_seq_write_pool_allocated(client))
--		return 1;
- 	if (snd_seq_pool_poll_wait(client->pool, file, wait))
- 		return 1;
- 	return 0;
-diff --git a/sound/core/seq/seq_memory.c b/sound/core/seq/seq_memory.c
-index 47ef6bc30c0ee..e30b92d85079b 100644
---- a/sound/core/seq/seq_memory.c
-+++ b/sound/core/seq/seq_memory.c
-@@ -366,6 +366,7 @@ int snd_seq_pool_poll_wait(struct snd_seq_pool *pool, struct file *file,
- 			   poll_table *wait)
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_0.c b/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_0.c
+index ec4d5e15b766a..de74686cb1dbd 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_0.c
+@@ -92,12 +92,12 @@ static void gfxhub_v1_0_init_system_aperture_regs(struct amdgpu_device *adev)
  {
- 	poll_wait(file, &pool->output_sleep, wait);
-+	guard(spinlock_irq)(&pool->lock);
- 	return snd_seq_output_ok(pool);
- }
+ 	uint64_t value;
  
+-	/* Program the AGP BAR */
+-	WREG32_SOC15_RLC(GC, 0, mmMC_VM_AGP_BASE, 0);
+-	WREG32_SOC15_RLC(GC, 0, mmMC_VM_AGP_BOT, adev->gmc.agp_start >> 24);
+-	WREG32_SOC15_RLC(GC, 0, mmMC_VM_AGP_TOP, adev->gmc.agp_end >> 24);
+-
+ 	if (!amdgpu_sriov_vf(adev) || adev->asic_type <= CHIP_VEGA10) {
++		/* Program the AGP BAR */
++		WREG32_SOC15_RLC(GC, 0, mmMC_VM_AGP_BASE, 0);
++		WREG32_SOC15_RLC(GC, 0, mmMC_VM_AGP_BOT, adev->gmc.agp_start >> 24);
++		WREG32_SOC15_RLC(GC, 0, mmMC_VM_AGP_TOP, adev->gmc.agp_end >> 24);
++
+ 		/* Program the system aperture low logical page number. */
+ 		WREG32_SOC15_RLC(GC, 0, mmMC_VM_SYSTEM_APERTURE_LOW_ADDR,
+ 			min(adev->gmc.fb_start, adev->gmc.agp_start) >> 18);
 -- 
 2.39.5
 
