@@ -1,151 +1,160 @@
-Return-Path: <linux-kernel+bounces-631819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F317AA8DDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0CEAA8E68
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCCCC169793
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E4E53B178B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF10A1E3DDE;
-	Mon,  5 May 2025 08:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52981F4C94;
+	Mon,  5 May 2025 08:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HVafOWoC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T18kbwql"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BB01E0DDC
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02DE1F470E;
+	Mon,  5 May 2025 08:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746432538; cv=none; b=kuskC5+VqeNCrOnviycq3/0V+3CKqZ2Ec+Efil59IE343pfrM68xvIjQFS/94w/0jQvmyTTbETOFld64mhr3Vp08MrZMzlon45XZXSvOUB2xfD1C19Fhkfm/Y6PdxGvj/1kSGSpum8c3U0Ymdmlq8RNgLW5g7zUJ1WMH9v8F5fA=
+	t=1746434526; cv=none; b=IcBNSscTK0GQso6DNUb/6/s8DV5P8DmdPVB27dOKt/9+X1xbQi1Mew0Wh6TVd8+wk6tLx1PW9QqLZ25u3lz3GZ5kTHQo5KzkZJKdpQNseFokEc9esG4NYcDbd8yDeXd3vSlJ81VdsYnHOhg6cXvG0jP7QjnJuG7qPPrAnK8eAX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746432538; c=relaxed/simple;
-	bh=fpiegDdPN4vJSsUvTfFDScdpNUKB1Bs1LE0KbvzE0rk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=teZH/LauV0gy+/qr8LhZJ9OkmeOx2Axnr02Bz7FNMdNwFlScJgEDGEFxRJyg0rKvgTVlJ195kRFOsmSLzikNJjxGAf+PrnuKMHC7h/mggvFQIPWG4+oLuz2cDHCIMf9fRlPgR7d9Pr+uAjXXc5ciayxy97k3rGo2N2KpwyJW62I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HVafOWoC; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so33567945e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 01:08:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746432534; x=1747037334; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ih3NqDpNYxVnwTqQNjr/HduzzcPs128fQGA7XiiKKbU=;
-        b=HVafOWoC3/jTLo7x3AKPu38ObO0NpLhvPQlSV0JtoLhc9wxHQ+1W5I+dnDU4hkzZwV
-         mKPvK74grtYJdMwaYlCHhmMgnpVou62xl1TzmRrw+BuAd2mH+cUSFVnXenRuzLo4w9OU
-         c37Rt7N7RflYon88Jqmt+y2eYJ4YtlSUQpFVMTqpHpdjgiwfAMC8/62/VG7SCWs03mFO
-         rMAufkA5YrHuPP41kGT7uEZN8ZcXDcSxncQj/jWMS4VYXiAJKokIIHUGp7X9YpP4tyny
-         JI/ZEn7gV3l+GOLzusAGkHSxAP9vOU4/3ZeMrW5TQAqUxEZPzHGR0Oas9ym6yQw9I0ZN
-         Smtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746432534; x=1747037334;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ih3NqDpNYxVnwTqQNjr/HduzzcPs128fQGA7XiiKKbU=;
-        b=byJz6tdwPvVu4fZUsDE3cSGHzHwKMaKjJmIGoKY0tfZRSdhRx6dvPKIbs+isTJEuuf
-         KwkYgGFIbDfw17+lX8WrySKxVq2j4OGhlYWkM9v9MhOCNkry8ZBOWNkAZuApofdyDiUj
-         sCO3Q5IUQZo0jLQbThmmGyjQpZQyfnzlzb+GFzxDMdWIr4bF40BNQpuu8OOBRGqkOVIn
-         Pn9qzS7SX74si/UmtCZhnmFHbHNRU4r2Wx2R3c98eyUUUXBpIhABOxD7xqhVTBZG0Uuf
-         1zi0sFmR4YSRWKSji+VB+vZpPCdVuPXapMAWJEtdaI8/JTzAN5iTy5gXoC/1egT+4tGI
-         aJ3w==
-X-Gm-Message-State: AOJu0Yz9qzX7NgiLNXx1mlubqEptRnIGGbS4f4tKHC6fhrTtyRJrYmzI
-	4BMLVKY6YaM9+75yY68/DHgJpZyxbaLNbGwmuaDTUL6HW9pcBj0Aix5LnuNp5x/1ZSNMMHTx+EW
-	j
-X-Gm-Gg: ASbGncv6MRpAqxFxoM3RnEjO2sIgFkieb4PfO6+Akk12eOfItU3J5vgNVqgibW1T+za
-	4eljiLGCHfHXemsHeZNDulKbWISx0RT/cF5tdlEyO5ezW2IyDAU/xR4mWMv+4ZNgsnN/I7v6AAZ
-	Zb4RlFx+YPv/z3MSlnsZbmvyBqjy/z4g+CTFSf+hVJyDUJF1neeTpa5VEAvmg0tT4m3+pvAeLla
-	qIIlFJ8f/swEFUBMZ0OWqt/nQHrn1aEUwJlUZG1R9gf+uDaZ0SOd7+nmjHmNgHqgxyGFwGHgqwR
-	FmqO2ExPcRkn7bOOHXLpIJ7Cc5MT55VqCiMhT3mSsQ6WHomEU9k=
-X-Google-Smtp-Source: AGHT+IEurvdHsB2rKDl3Rsu/uufeIj/T+2DXVXCdsFmbDaGBcEViq6YlhktTwiTRJwVY7SSU0p4HUg==
-X-Received: by 2002:a05:600c:5124:b0:43c:fe15:41cb with SMTP id 5b1f17b1804b1-441c48c1d07mr44823985e9.15.1746432534171;
-        Mon, 05 May 2025 01:08:54 -0700 (PDT)
-Received: from localhost (109-81-80-21.rct.o2.cz. [109.81.80.21])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2af4546sm172441785e9.22.2025.05.05.01.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 01:08:53 -0700 (PDT)
-Date: Mon, 5 May 2025 10:08:53 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Suren Baghdasaryan <surenb@google.com>,
-	David Rientjes <rientjes@google.com>, Josh Don <joshdon@google.com>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, bpf@vger.kernel.org
-Subject: Re: [PATCH rfc 10/12] mm: introduce bpf_out_of_memory() bpf kfunc
-Message-ID: <aBhyFQje85fPhIiM@tiehlicka>
-References: <20250428033617.3797686-1-roman.gushchin@linux.dev>
- <20250428033617.3797686-11-roman.gushchin@linux.dev>
- <aBC7_2Fv3NFuad4R@tiehlicka>
- <aBFFNyGjDAekx58J@google.com>
- <aBHQ69_rCqjnDaDl@tiehlicka>
- <aBI5fh28P1Qgi2zZ@google.com>
+	s=arc-20240116; t=1746434526; c=relaxed/simple;
+	bh=0+6oZE1hwK3UeG5kCzKKYxsMJ/enj4nAcQVTQmp0PgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jf6T7KFFN2IStbEG1w75EMAyqZW63HBnlSMP0coVO8XBBnhsOHLzmjBF3l1cKGLvPf/86/4dHBgJpf15Z5QG3g+CIrprkPJeAQwSCdRtQKzGFYfRfBQmmKHFG4SpvSbmqG5QSumwV6GwbW03eTI/RWl0g2IAXk5NnyLoQtZd2Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T18kbwql; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id C16C558476A;
+	Mon,  5 May 2025 08:10:44 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7979A1FCE8;
+	Mon,  5 May 2025 08:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746432637;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vzVOmKsYIDKNF1BIkZAw33am/9eak/yksL+SVCLIQ7A=;
+	b=T18kbwql+qFAaSqfn1iAyCd1YAxHHYCjb2hrJjPQq8ea65bYxGJ9cr9/kzdeUtzMpAgy4w
+	GbIr8VnutWSMgvcPo5fAjJ4GCPu1AFoR9lVRwGfYYtpgkhdWW/yrShkDj6aFQ/0Grk9LAp
+	0Kn5mcpvLCl5+4UgC7Mn3wgUlqflJ7tHkGj7ajMwA5CbQRhJW9PgBwtIFCcrQR/pz7L0Mv
+	4c7T4VFBWZ4T+c3EignL5hTpb+F9W8mB++oVU3CnsiIyRDI+0bn/PjPQla/hXQVUCdohFI
+	lrvkgYClhTq29UHlVaJEvYCdYe8ckMhK9ZGCMjZfZkraO1hN8DEjqG5P2Lk8Kw==
+Date: Mon, 5 May 2025 10:10:34 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Ayush Singh
+ <ayush@beagleboard.org>
+Cc: David Gibson <david@gibson.dropbear.id.au>, Andrew Davis <afd@ti.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>,
+ devicetree@vger.kernel.org, devicetree-compiler@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 3/7] of: resolver: Add export_symbols in
+ of_resolve_phandles() parameters
+Message-ID: <20250505101034.6e29c8bc@bootlin.com>
+In-Reply-To: <20250502163559.0a5643e5@booty>
+References: <20250430125154.195498-1-herve.codina@bootlin.com>
+	<20250430125154.195498-4-herve.codina@bootlin.com>
+	<20250502163559.0a5643e5@booty>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBI5fh28P1Qgi2zZ@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkedtheekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduhedprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrvhhiugesghhisghsohhnrdgurhhophgsvggrrhdrihgurdgruhdprhgtphhtthhopegrfhgusehtihdrtghomhdprhgtphhtthhopegrhihushhhsegsvggrghhlvggsohgrrhgurdhorhhgpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepr
+ hhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Wed 30-04-25 14:53:50, Roman Gushchin wrote:
-> On Wed, Apr 30, 2025 at 09:27:39AM +0200, Michal Hocko wrote:
-> > On Tue 29-04-25 21:31:35, Roman Gushchin wrote:
-> > > On Tue, Apr 29, 2025 at 01:46:07PM +0200, Michal Hocko wrote:
-> > > > On Mon 28-04-25 03:36:15, Roman Gushchin wrote:
-> > > > > Introduce bpf_out_of_memory() bpf kfunc, which allows to declare
-> > > > > an out of memory events and trigger the corresponding kernel OOM
-> > > > > handling mechanism.
-> > > > > 
-> > > > > It takes a trusted memcg pointer (or NULL for system-wide OOMs)
-> > > > > as an argument, as well as the page order.
-> > > > > 
-> > > > > Only one OOM can be declared and handled in the system at once,
-> > > > > so if the function is called in parallel to another OOM handling,
-> > > > > it bails out with -EBUSY.
-> > > > 
-> > > > This makes sense for the global OOM handler because concurrent handlers
-> > > > are cooperative. But is this really correct for memcg ooms which could
-> > > > happen for different hierarchies? Currently we do block on oom_lock in
-> > > > that case to make sure one oom doesn't starve others. Do we want the
-> > > > same behavior for custom OOM handlers?
-> > > 
-> > > It's a good point and I had similar thoughts when I was working on it.
-> > > But I think it's orthogonal to the customization of the oom handling.
-> > > Even for the existing oom killer it makes no sense to serialize memcg ooms
-> > > in independent memcg subtrees. But I'm worried about the dmesg reporting,
-> > > it can become really messy for 2+ concurrent OOMs.
-> > > 
-> > > Also, some memory can be shared, so one OOM can eliminate a need for another
-> > > OOM, even if they look independent.
-> > > 
-> > > So my conclusion here is to leave things as they are until we'll get signs
-> > > of real world problems with the (lack of) concurrency between ooms.
-> > 
-> > How do we learn about that happening though? I do not think we have any
-> > counters to watch to suspect that some oom handlers cannot run.
+Hi Luca,
+
+On Fri, 2 May 2025 16:35:59 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+
+> Hello Hervé,
 > 
-> The bpf program which declares an OOM can handle this: e.g. retry, wait
-> and retry, etc. We can also try to mimick the existing behavior and wait
-> on oom_lock (potentially splitting it into multiple locks to support
-> concurrent ooms in various memcgs). Do you think it's preferable?
+> On Wed, 30 Apr 2025 14:51:47 +0200
+> Herve Codina <herve.codina@bootlin.com> wrote:
+> 
+> > In order to prepare the introduction of the export symbols node
+> > handling, add a export_symbols parameter in of_resolve_phandles().
+> > 
+> > The export_symbols is the export symbols device tree node the resolver
+> > will use for the overlay symbols resolution.
+> > 
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > Tested-by: Ayush Singh <ayush@beagleboard.org>  
+> 
+> [...]
+> 
+> > --- a/drivers/of/resolver.c
+> > +++ b/drivers/of/resolver.c
+> > @@ -237,7 +237,8 @@ static int get_phandle_from_symbols_node(const struct device_node *tree_symbols,
+> >  /**
+> >   * of_resolve_phandles - Relocate and resolve overlay against live tree
+> >   *
+> > - * @overlay:	Pointer to devicetree overlay to relocate and resolve
+> > + * @overlay:		Pointer to devicetree overlay to relocate and resolve
+> > + * @export_symbols:	Pointer to devicetree export symbols node.
+> >   *
+> >   * Modify (relocate) values of local phandles in @overlay to a range that
+> >   * does not conflict with the live expanded devicetree.  Update references
+> > @@ -257,6 +258,10 @@ static int get_phandle_from_symbols_node(const struct device_node *tree_symbols,
+> >   * corresponding to that symbol in the live tree.  Update the references in
+> >   * the overlay with the phandle values in the live tree.
+> >   *
+> > + * @export_symbols can be use in this references update. The resolver tries
+> > + * first to find a match in the @export_symbols. If not found, it uses the
+> > + * "__symbol__" node in the live tree.  
+> 
+> The rationale behind this logic is not clear to me. I'd have expected
+> instead this logic:
+> 
+>   if (export-symbols != NULL):
+>       match only in export-symbols
+>   else
+>       match only in __symbols__
+> 
+> following the idea that it's better to be strict when introducing
+> something, and possibly relax it later on.
+> 
+> As I see it, with the current logic if you use export-symbols but you
+> build dtbs with -@, you can still match a global label. export-symbols
+> should avoid that instead.
+> 
+> Let me know whether I'm missing something here (which is surely
+> possible).
 
-Yes, I would just provide different callbacks for global and memcg ooms
-and do the blockin for the latter. It will be consistent with the in
-kernel implementation (therefore less surprising behavior).
+No, you don't miss anything, it was just a choice and I have chosen to be
+not exclusive between export-symbols and __symbols__.
 
--- 
-Michal Hocko
-SUSE Labs
+export-symbols is taken in priority and if the symbol is not found in
+export-symbols, we try with __symbols__.
+
+Maybe I should be stricter. I don't have any strong opinion about that.
+
+Ayush, on fdtoverlay what is the choice done ?
+
+If an export-symbols is present and a symbol needs to be resolved but this
+symbol is not found in export-symbols, do you try to fing it in __symbols__
+or do you simply abort the resolution with an error ?
+
+Best regards,
+Hervé
 
