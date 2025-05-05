@@ -1,65 +1,60 @@
-Return-Path: <linux-kernel+bounces-633879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624FAAAAE72
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:56:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AE3AAAEAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC56B7B8CF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F173A7882
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A586638F86A;
-	Mon,  5 May 2025 23:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F9C36E08B;
+	Mon,  5 May 2025 23:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXda2Gjb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1kXA2W+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9313136E0B8;
-	Mon,  5 May 2025 22:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F2A36EF26;
+	Mon,  5 May 2025 22:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485852; cv=none; b=aGhDA79TqJOV5OY87Sq6vQSnw9iPNmD+8DYU6Wlh4cEK9HQVqzeEFgISFSbPgGyXTOg8PGnWlxnurEx9Ep5lHoR1v3fqAhz4YneWid5daDqiSmYDXAcOnTgb1B0jIU7Ev/FDYP+t2OM3ZYW5dJHcQfy5S+3g7opM2xRlwjUWyAA=
+	t=1746485861; cv=none; b=oalPIUCPM8eBVLp0ugl3oLIdZf4tvbcMhs9Li2uDZvc2CTj9JKGosUf+kd2aa5N7WmPK1UHFWBdd5sxWEkEQHZ2sj5gNgfZU+PUzVStAf/tEjJhrU2IfF3+Tv3BymKB0nJWLr0yIQUKkSoXZvFShU2w7upOFeWNWlAGszOSg5jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485852; c=relaxed/simple;
-	bh=EdwILdVaire8vhmb2WBvXctMUcG6K6R7Qmm0MOIB+/s=;
+	s=arc-20240116; t=1746485861; c=relaxed/simple;
+	bh=n/xcGtcActF4OHLhnY34V8NfaTeXOL8f7VrAboRer90=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cN5T5kklbLGAOszfRNmzUHNgnE/cX0jcWWzNSXJ64J/AgRcekVG4zR5lwZ4YVuIyXXm/uqlBUO/O3c3stqcS86dNYHq5S1DLKFvun5lxY/vqTUFe7MUFrsTSfJv7SmSQLvplH8aOA7po9pqZsLj5QVx9TQjjqRTtsa6KPs/leRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXda2Gjb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0FC8C4CEED;
-	Mon,  5 May 2025 22:57:30 +0000 (UTC)
+	 MIME-Version:Content-Type; b=p1hcuIooUjeHy7b9AXaA/u6uP7qhbMofRKlmzgC637Jz5MEJ6PmzgTQ+1HJS4Te5WNHB/qUNLVnwl6wHdnV957g14THYPVnzKP10dSAEgTBxQQYnXofJI+F3HSgNMCJQvHOINVX1P/dPtgP/hv2kxulFw+FZvC/Ke2zOqFjH3cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1kXA2W+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD80EC4CEF2;
+	Mon,  5 May 2025 22:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485852;
-	bh=EdwILdVaire8vhmb2WBvXctMUcG6K6R7Qmm0MOIB+/s=;
+	s=k20201202; t=1746485860;
+	bh=n/xcGtcActF4OHLhnY34V8NfaTeXOL8f7VrAboRer90=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OXda2GjbqRspMtQ7aEL3rXtiSL9D1gtLHCbDT9ikM/x6V0/ZKXRTWVVLOzV+Obbbn
-	 DMGd/IMoaZStFpYy3LjoknZ5AlikRtPnh8Ebr0ct6HkKCi+1xnv0ACDF4Kz4mOTth/
-	 gA2ig25Z1wJirs80g2BuUlO+wyjvwQ0roHIwg2vVT6rMTRSr6myZu80PIdWEP3xn0N
-	 48mkvlvKhotKhyIbBOf9pEs9SzbrL/q77c71TW590+6xO/UDfggP8x5CzG5voE5LH0
-	 2STLtgX7RZdz7LsN/oDKAhIkALfEB1Se920oqhrkf4XoZdlv74l6LVcwmuLgopzQiP
-	 Qb1plv0rmhzRA==
+	b=J1kXA2W+XsRQcPMlD/RON+IQUdniS/IUIDrOwIC3ppMEymYINaOYYqiXkQfw0koTL
+	 mprHNpXHfAtS5bNKuXANb7pVQYCgU4av9pPqtLLbE5uFPyJFb1/7L/uV2O+fpyor3e
+	 ZdTF+GnP4GIl9mXZUTkEyWmuAW9N+Luj2eFgVCuX7HCfWBbX1YqF+ogiIAd+m6THie
+	 xEym3dlZIM9A5eJiZbnbfQxc3lXH7izVr7t/Am8dhvnU1c4G+7jW5l+0bykQtQiEsb
+	 vO52FKOnggh4a/TXgdAbLtPVR+efcmF1WxAHjMS2HPweP0Kki51hhmf8f00n07hmlX
+	 m7SKz4yQFddBg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Ryo Takakura <ryotkkr98@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
+Cc: Roger Pau Monne <roger.pau@citrix.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Juergen Gross <jgross@suse.com>,
 	Sasha Levin <sashal@kernel.org>,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	rostedt@goodmis.org,
-	tglx@linutronix.de,
-	peterz@infradead.org,
-	frederic@kernel.org,
-	kprateek.nayak@amd.com,
-	neilb@suse.de,
-	csander@purestorage.com,
-	linux-rt-devel@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.6 029/294] lockdep: Fix wait context check on softirq for PREEMPT_RT
-Date: Mon,  5 May 2025 18:52:09 -0400
-Message-Id: <20250505225634.2688578-29-sashal@kernel.org>
+	nirmal.patel@linux.intel.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 034/294] PCI: vmd: Disable MSI remapping bypass under Xen
+Date: Mon,  5 May 2025 18:52:14 -0400
+Message-Id: <20250505225634.2688578-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -69,102 +64,79 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Ryo Takakura <ryotkkr98@gmail.com>
+From: Roger Pau Monne <roger.pau@citrix.com>
 
-[ Upstream commit 61c39d8c83e2077f33e0a2c8980a76a7f323f0ce ]
+[ Upstream commit 6c4d5aadf5df31ea0ac025980670eee9beaf466b ]
 
-Since:
+MSI remapping bypass (directly configuring MSI entries for devices on the
+VMD bus) won't work under Xen, as Xen is not aware of devices in such bus,
+and hence cannot configure the entries using the pIRQ interface in the PV
+case, and in the PVH case traps won't be setup for MSI entries for such
+devices.
 
-  0c1d7a2c2d32 ("lockdep: Remove softirq accounting on PREEMPT_RT.")
+Until Xen is aware of devices in the VMD bus prevent the
+VMD_FEAT_CAN_BYPASS_MSI_REMAP capability from being used when running as
+any kind of Xen guest.
 
-the wait context test for mutex usage within "in softirq context" fails
-as it references @softirq_context:
+The MSI remapping bypass is an optional feature of VMD bridges, and hence
+when running under Xen it will be masked and devices will be forced to
+redirect its interrupts from the VMD bridge.  That mode of operation must
+always be supported by VMD bridges and works when Xen is not aware of
+devices behind the VMD bridge.
 
-    | wait context tests |
-    --------------------------------------------------------------------------
-                                   | rcu  | raw  | spin |mutex |
-    --------------------------------------------------------------------------
-                 in hardirq context:  ok  |  ok  |  ok  |  ok  |
-  in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
-                 in softirq context:  ok  |  ok  |  ok  |FAILED|
-
-As a fix, add lockdep map for BH disabled section. This fixes the
-issue by letting us catch cases when local_bh_disable() gets called
-with preemption disabled where local_lock doesn't get acquired.
-In the case of "in softirq context" selftest, local_bh_disable() was
-being called with preemption disable as it's early in the boot.
-
-[ boqun: Move the lockdep annotations into __local_bh_*() to avoid false
-         positives because of unpaired local_bh_disable() reported by
-	 Borislav Petkov and Peter Zijlstra, and make bh_lock_map
-	 only exist for PREEMPT_RT. ]
-
-[ mingo: Restored authorship and improved the bh_lock_map definition. ]
-
-Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250321143322.79651-1-boqun.feng@gmail.com
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Message-ID: <20250219092059.90850-3-roger.pau@citrix.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/softirq.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/pci/controller/vmd.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index f24d80cf20bd3..d9e37f3fa1303 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -125,6 +125,18 @@ static DEFINE_PER_CPU(struct softirq_ctrl, softirq_ctrl) = {
- 	.lock	= INIT_LOCAL_LOCK(softirq_ctrl.lock),
- };
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index dfa222e02c4da..ad82feff0405e 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -17,6 +17,8 @@
+ #include <linux/rculist.h>
+ #include <linux/rcupdate.h>
  
-+#ifdef CONFIG_DEBUG_LOCK_ALLOC
-+static struct lock_class_key bh_lock_key;
-+struct lockdep_map bh_lock_map = {
-+	.name			= "local_bh",
-+	.key			= &bh_lock_key,
-+	.wait_type_outer	= LD_WAIT_FREE,
-+	.wait_type_inner	= LD_WAIT_CONFIG, /* PREEMPT_RT makes BH preemptible. */
-+	.lock_type		= LD_LOCK_PERCPU,
-+};
-+EXPORT_SYMBOL_GPL(bh_lock_map);
-+#endif
++#include <xen/xen.h>
 +
- /**
-  * local_bh_blocked() - Check for idle whether BH processing is blocked
-  *
-@@ -147,6 +159,8 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+ #include <asm/irqdomain.h>
  
- 	WARN_ON_ONCE(in_hardirq());
+ #define VMD_CFGBAR	0
+@@ -981,6 +983,24 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	struct vmd_dev *vmd;
+ 	int err;
  
-+	lock_map_acquire_read(&bh_lock_map);
++	if (xen_domain()) {
++		/*
++		 * Xen doesn't have knowledge about devices in the VMD bus
++		 * because the config space of devices behind the VMD bridge is
++		 * not known to Xen, and hence Xen cannot discover or configure
++		 * them in any way.
++		 *
++		 * Bypass of MSI remapping won't work in that case as direct
++		 * write by Linux to the MSI entries won't result in functional
++		 * interrupts, as Xen is the entity that manages the host
++		 * interrupt controller and must configure interrupts.  However
++		 * multiplexing of interrupts by the VMD bridge will work under
++		 * Xen, so force the usage of that mode which must always be
++		 * supported by VMD bridges.
++		 */
++		features &= ~VMD_FEAT_CAN_BYPASS_MSI_REMAP;
++	}
 +
- 	/* First entry of a task into a BH disabled section? */
- 	if (!current->softirq_disable_cnt) {
- 		if (preemptible()) {
-@@ -210,6 +224,8 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
- 	WARN_ON_ONCE(in_hardirq());
- 	lockdep_assert_irqs_enabled();
+ 	if (resource_size(&dev->resource[VMD_CFGBAR]) < (1 << 20))
+ 		return -ENOMEM;
  
-+	lock_map_release(&bh_lock_map);
-+
- 	local_irq_save(flags);
- 	curcnt = __this_cpu_read(softirq_ctrl.cnt);
- 
-@@ -260,6 +276,8 @@ static inline void ksoftirqd_run_begin(void)
- /* Counterpart to ksoftirqd_run_begin() */
- static inline void ksoftirqd_run_end(void)
- {
-+	/* pairs with the lock_map_acquire_read() in ksoftirqd_run_begin() */
-+	lock_map_release(&bh_lock_map);
- 	__local_bh_enable(SOFTIRQ_OFFSET, true);
- 	WARN_ON_ONCE(in_interrupt());
- 	local_irq_enable();
 -- 
 2.39.5
 
