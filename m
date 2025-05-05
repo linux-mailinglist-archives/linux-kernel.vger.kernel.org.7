@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-632632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25D4AA99F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:01:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933D5AA99FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468F11891A21
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:01:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8423C188B79D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3558526B95B;
-	Mon,  5 May 2025 17:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92EE26B0A9;
+	Mon,  5 May 2025 17:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="arUgfUTY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fLLuHXvp"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="YTi884bu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wQx1gh+Z"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE5F25C807;
-	Mon,  5 May 2025 17:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5F826738B;
+	Mon,  5 May 2025 17:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746464472; cv=none; b=c6agB0mXkGvtThZUL+9JJnXMhiHF7chneeC1n/Yt6k3zlwiEYO707MMKkzrZPY4VQnTsYGsbPsZR7OHqpqOcEZrkv+cwQhjxhSymwJHzu+M9iC1dVM+Obw1zf8sEiIx92QJFynxN/KnKZQLrSoo5dqJIL6w1K82XE81er+LbWt4=
+	t=1746464481; cv=none; b=Wz855W73GuVRIuiso+loDiz7Sy8VttpoiibxFI1dcKgWGQvVEPLukmcmqgeac8SjsmGP7ReZmPAJpGvIIkpDNknvzgOT2RG1zWneAYzMprewrvWjnixwo6/T6/zcAFfgeaxSAix+EhoiAb3yBlL1L85beumaAp72QGX+UBEJlT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746464472; c=relaxed/simple;
-	bh=p9nY1NAFGtHgUpIZVBZajYP8aShmdwshXSYnOJp9EWE=;
+	s=arc-20240116; t=1746464481; c=relaxed/simple;
+	bh=2j5Ofg5BLmtWpoLQrgQksoC/1ql11j2laUy1NR6Udg8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OMy/eyMHN7d31LW+FcsoZrM0WdPy5iOpxQsAsNJPd/ac++d0a/OYwXnatM8amLVA6K3QxTpb2or4SeroqZrIk1dLzCWoCGVOeg+sOKTft/Xi/Qk/4KS6ZYNOjQLTMegkT3pjVC/usna53ILFj0MOCrycbf6JAK20+diAcLBl9/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=arUgfUTY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fLLuHXvp; arc=none smtp.client-ip=202.12.124.154
+	 MIME-Version:Content-Type; b=CoWhDUtg4bP719Cyi3j4FmkvoS+xK0BBHEqpUEwHjb8VM94zJDf+JaTX5y6wk+q1tde1HLCiXlsLuuAt+PFTAIDRm8BX5dx8u3whz7VYrVdoDxZEr6E44/qcHmA1Me2aw5OrFbkGNUdEIzbep6gLaoJJoX6LLuN2/S1BW4b5e4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=YTi884bu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wQx1gh+Z; arc=none smtp.client-ip=202.12.124.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id C48D0254029D;
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id B1C281140097;
 	Mon,  5 May 2025 13:01:09 -0400 (EDT)
 Received: from phl-frontend-02 ([10.202.2.161])
-  by phl-compute-10.internal (MEProxy); Mon, 05 May 2025 13:01:09 -0400
+  by phl-compute-05.internal (MEProxy); Mon, 05 May 2025 13:01:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to; s=fm3; t=1746464469;
-	 x=1746550869; bh=TGWIYC33gmFduO8qrWFHsccAtU9c5cr+Hb5yF9c5+7k=; b=
-	arUgfUTYYR9PxFhKZXN0WEeIbQ6PosCATULRkv3lj7RhGTAvCPpD7CxNtYlea1jT
-	Sc0NosKi4NucjVgpLlci+I4WZAVc5ZDeQ/5ixSYn39mgGSaTH3KkRTuqUKI/LUxr
-	ZE+MEW+lgcTWUS7EQpf2VIwt+3RzGz3kaKkQ89thsZN/ppyuSQqeuWeUvEm4LXqi
-	pK6EquEPN4WvtO91HgjVsjLXHzP1i384LvkqBrORn4m+iqsY8QkcezJVPshJ6zZN
-	8Ox50hfi8leBFbnYeaIHPSGAR//QwMlCZAOey4Iqw6//0ABNLvS7qOvJ3vmSr2nX
-	iRdEQo2ZZqdlzsf7K97Ldg==
+	 x=1746550869; bh=tBKs41Mxkg0h0njmKXsU9oExiVamYbZey9ou+QZlT9M=; b=
+	YTi884bu0DXrEwfBdw2T1RABpG7jegGxsMEJob1Gb3Wt6oGHYuiwg2R+gKIBZypR
+	ZyaGiW9hFDNcdsatR0KYSP2TFV2ZJ5MRTUt7OOUq/CS5FcCbKi4hRtTNSEZ09+tM
+	vbankmp1ileITUww9jFsvE1rLHFZ4Vaur2TdFwxuW9bVWkiNnmhwhO8i1ypaF9a8
+	Q3dNhVqKAOsCKsZaskV9c4ZSy1jI0e1yQOWp7kYD5L4Ugxx6h3hLS5WVaxn+Y1tW
+	8uORCRDuJ7tmbGRfiW77WO/kyN20lBWL2JsGkgL7NidNgRVbsJ2xi48Xt8YkdeDg
+	3ia2w1PfhE6iZKUGioYBvA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
 	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746464469; x=
-	1746550869; bh=TGWIYC33gmFduO8qrWFHsccAtU9c5cr+Hb5yF9c5+7k=; b=f
-	LLuHXvpZpj7X+aDHpkco5lyNdAmROMf9Pvmrp0S1PY6BuUk/HZYvdFyKx8nyLG/5
-	ANyOE5QjwRgQVrAXkp6nPtfO9Y5da/BrLm4eH+NdlynDoAcqN21h2FenpKTxbk8I
-	ycanGHOwn+4Q0ic8yFLb+iWzIQepv4kLkWosfDnpcDOYDATk4JI+w3XYd1PigKp/
-	BK9YhB4TKmYsa3VXsFqYXSwX9FsxEQXGGk6yoT1VEddmUdZ0W5yh2f8Mh5ElZ8Nx
-	gUHtAhNokxtcoifCrbIGyKT7840p16ikkGp/7IUNvRg2Id7Op/h37M+3iyka8rUf
-	V0SH0/Cqm1fsIxykCoQ6A==
-X-ME-Sender: <xms:1e4YaCPOaj5aCSQ46-rGPuRJscxe0yUkd4oUR_4lGhpsM_98p8LPAQ>
-    <xme:1e4YaA9T5zLTrccpRqmhUjBXUtUan75SivZ4mEbNDO1uJvSwEH6N5o8XD74Zh4Gax
-    tDfAwGf4WnhitkK3CY>
-X-ME-Received: <xmr:1e4YaJQvUgyeqpYyUdfZ_KLIP3bIqHJ0T7fHJUU9h80Saq6CqGAL7u05_9GUSv4E3B1MakaGOnnqP3ud07tm8GhCHgUoADE2L3Vr3d3HNdplozgImw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeduieehucetufdoteggodetrf
+	1746550869; bh=tBKs41Mxkg0h0njmKXsU9oExiVamYbZey9ou+QZlT9M=; b=w
+	Qx1gh+ZBRDGeDJOaOuqyowmBRAdTBB/DxgTntHdNYQfeKyZ97KL7sNcxJ93wOEA/
+	b/4g4lNLaaqRrRnl94O0g0r/GMUP8gOHov/nZghd5E2zB1KXg4umOdkm4n+3GMF9
+	/1h3at4szuoRfu+4QqAlX/AOTLcRy3i2MWGMNCfIvcuqiQGGU9YA8zYxDx8vweG+
+	nKYZHLHtjK+cZA7x7/0d4YISTRtsYmRJ93eSDAhBj5ZXOd41Pi6mYj0FaExaVXCu
+	JMFWDOUppJ+7N/0hWTtgpY2/RLa3Gtd6L6c3yWpt/28A8amD7g1uzJSrxND3LO+S
+	Ts2xmHnoYHahp5UNxnUuQ==
+X-ME-Sender: <xms:1e4YaE6bol-96_UQer7XsqBuvcVJwDo6MCCPncFnE5jDEfJEGgWeTQ>
+    <xme:1e4YaF5QoudjAfdfLPXe4jZ1wIyj496sngIRwM6DI3_OGYQpdQ1ujbfwpcfVOgTEf
+    tPazOVarpY23Pukoqk>
+X-ME-Received: <xmr:1e4YaDcEWQYUE81Du156Q8pX-C8dchjkClzdNfabEvpxNrjonY1FI5LJQ6rGOBAeDpSn8UtgTiJD9tltFPS9BxYUjcs0jbGAwn6331qCNn9D6KqLZw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeduieegucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
     gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhggtgfgsehtkeertder
@@ -78,16 +78,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeduieehucetufdote
     hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
     ohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvghrrdhkvghrnhgvlh
     drohhrgh
-X-ME-Proxy: <xmx:1e4YaCumEI9a3dgAhIasSD1cD5axysg1rB5xoH-2it-kRBkRE6eLFw>
-    <xmx:1e4YaKcmSZUz0KkBKiXizvkd6ZH2Mx_taQtGYni56hSIUe2cA7Itdw>
-    <xmx:1e4YaG0buj3NoLHj4Y_oQKCJFr6TRquMVLDQ5XmuzR4-siIYLnJD5w>
-    <xmx:1e4YaO8s-73Z2IsIHdYU5ndRXV2a_TqK-CFJngGaHrip6dhsPCdzFg>
-    <xmx:1e4YaDcCj0fuKCEU6PIHdDDQ1mMNX7BZL2wCRHdFg5eVqljQ_XVIS3dN>
+X-ME-Proxy: <xmx:1e4YaJKhR4cKsdVpXX9mq3e2Pl5HmeLmUPV3v-bSaKfqlhUBiOjkpA>
+    <xmx:1e4YaIK7hL9Ok1jv5Dv6LfsYvqGfDf9y5wDlvkzzalfgAnFTvKUoGw>
+    <xmx:1e4YaKw-ueSndkAe1quBPG9o0K73JaXMG0CcG7JKE3LmV1_S1X9AKA>
+    <xmx:1e4YaMLIWzJRWbV5OHVH1SaJVBNQJUB1Jw0WARPc38yJ_TZbg-nIJw>
+    <xmx:1e4YaPYH4rW8m8Tt-n1rnO79uFOM1s1xwmO7wJq_VMex9L7rSCH_zhG3>
 Feedback-ID: i58514971:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
  5 May 2025 13:01:09 -0400 (EDT)
 Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 43D851185462;
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 5DE8F1185463;
 	Mon, 05 May 2025 13:01:08 -0400 (EDT)
 From: Nicolas Pitre <nico@fluxnic.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -95,9 +95,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: Nicolas Pitre <npitre@baylibre.com>,
 	linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/8] vt: make use of ucs_get_fallback() when glyph is unavailable
-Date: Mon,  5 May 2025 12:55:30 -0400
-Message-ID: <20250505170021.29944-8-nico@fluxnic.net>
+Subject: [PATCH 8/8] vt: process the full-width ASCII fallback range programmatically
+Date: Mon,  5 May 2025 12:55:31 -0400
+Message-ID: <20250505170021.29944-9-nico@fluxnic.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250505170021.29944-1-nico@fluxnic.net>
 References: <20250505170021.29944-1-nico@fluxnic.net>
@@ -112,44 +112,259 @@ Content-Transfer-Encoding: 8bit
 
 From: Nicolas Pitre <npitre@baylibre.com>
 
-Attempt to display a fallback character when given character doesn't
-have an available glyph. The substitution may not be as good as the
-original character but still way more helpful than a squared question
-mark.
-
-Example substitutions: À -> A, ç -> c, ø -> o, ─ -> -, © -> C, etc.
-
-See gen_ucs_fallback_table.py for a comprehensive list.
+This saves about 258 bytes of text.
 
 Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
 ---
- drivers/tty/vt/vt.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/tty/vt/gen_ucs_fallback_table.py    |  11 +-
+ drivers/tty/vt/ucs.c                        |   8 +
+ drivers/tty/vt/ucs_fallback_table.h_shipped | 188 --------------------
+ 3 files changed, 13 insertions(+), 194 deletions(-)
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 4e80384a419b..479a03647aab 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -3009,6 +3009,19 @@ static int vc_get_glyph(struct vc_data *vc, int tc)
- 		return tc;
- 	}
+diff --git a/drivers/tty/vt/gen_ucs_fallback_table.py b/drivers/tty/vt/gen_ucs_fallback_table.py
+index cb4e75b454fe..3a725d47366d 100755
+--- a/drivers/tty/vt/gen_ucs_fallback_table.py
++++ b/drivers/tty/vt/gen_ucs_fallback_table.py
+@@ -666,12 +666,11 @@ def collect_drawing_character_mappings():
+     fallback_map[0x2746] = ord('*')  # ❆ HEAVY CHEVRON SNOWFLAKE
+     fallback_map[0x2698] = ord('*')  # ⚘ FLOWER
+ 
+-    # Add special ASCII characters with full-width equivalents
+-    # Map between full-width and ASCII forms
+-    for i, cp in enumerate(range(0xFF01, 0xFF5E+1)):
+-        # Full-width to ASCII mapping (covering all printable ASCII 33-126)
+-        # 0xFF01 (！) to 0xFF5E (～) -> ASCII 33 (!) to 126 (~)
+-        fallback_map[cp] = 33 + i
++    # Full-width to ASCII mapping (covering all printable ASCII 33-126)
++    # 0xFF01 (！) to 0xFF5E (～) -> ASCII 33 (!) to 126 (~)
++    # Those are not included here to reduce the table size.
++    # It is more efficient to process them programmatically in
++    # ucs.c:ucs_get_fallback().
+ 
+     return fallback_map
+ 
+diff --git a/drivers/tty/vt/ucs.c b/drivers/tty/vt/ucs.c
+index dcce733b80cb..ae3254302760 100644
+--- a/drivers/tty/vt/ucs.c
++++ b/drivers/tty/vt/ucs.c
+@@ -222,5 +222,13 @@ u32 ucs_get_fallback(u32 cp)
+ 	if (single)
+ 		return ucs_fallback_singles_subs[single - ucs_fallback_singles];
  
 +	/*
-+	 * The Unicode screen memory is allocated only when required.
-+	 * This is one such case: we're about to "cheat" with the displayed
-+	 * character meaning the simple screen buffer won't hold the original
-+	 * information, whereas the Unicode screen buffer always does.
++	 * Full-width to ASCII mapping (covering all printable ASCII 33-126)
++	 * 0xFF01 (！) to 0xFF5E (～) -> ASCII 33 (!) to 126 (~)
++	 * We process them programmatically to reduce the table size.
 +	 */
-+	vc_uniscr_check(vc);
++	if (cp >= 0xFF01 && cp <= 0xFF5E)
++		return cp - 0xFF01 + 33;
 +
-+	/* Try getting a simpler fallback character. */
-+	tc = ucs_get_fallback(tc);
-+	if (tc)
-+		return vc_get_glyph(vc, tc);
-+
- 	/* Display U+FFFD (Unicode Replacement Character). */
- 	return conv_uni_to_pc(vc, UCS_REPLACEMENT);
+ 	return 0;
  }
+diff --git a/drivers/tty/vt/ucs_fallback_table.h_shipped b/drivers/tty/vt/ucs_fallback_table.h_shipped
+index d528d500ec9d..fe61418497ee 100644
+--- a/drivers/tty/vt/ucs_fallback_table.h_shipped
++++ b/drivers/tty/vt/ucs_fallback_table.h_shipped
+@@ -817,100 +817,6 @@ static const u16 ucs_fallback_singles[] = {
+ 	0x2718, /* HEAVY BALLOT X -> LATIN CAPITAL LETTER X */
+ 	0x27F8, /* LONG LEFTWARDS DOUBLE ARROW -> LESS-THAN SIGN */
+ 	0x27F9, /* LONG RIGHTWARDS DOUBLE ARROW -> GREATER-THAN SIGN */
+-	0xFF01, /* FULLWIDTH EXCLAMATION MARK -> EXCLAMATION MARK */
+-	0xFF02, /* FULLWIDTH QUOTATION MARK -> QUOTATION MARK */
+-	0xFF03, /* FULLWIDTH NUMBER SIGN -> NUMBER SIGN */
+-	0xFF04, /* FULLWIDTH DOLLAR SIGN -> DOLLAR SIGN */
+-	0xFF05, /* FULLWIDTH PERCENT SIGN -> PERCENT SIGN */
+-	0xFF06, /* FULLWIDTH AMPERSAND -> AMPERSAND */
+-	0xFF07, /* FULLWIDTH APOSTROPHE -> APOSTROPHE */
+-	0xFF08, /* FULLWIDTH LEFT PARENTHESIS -> LEFT PARENTHESIS */
+-	0xFF09, /* FULLWIDTH RIGHT PARENTHESIS -> RIGHT PARENTHESIS */
+-	0xFF0A, /* FULLWIDTH ASTERISK -> ASTERISK */
+-	0xFF0B, /* FULLWIDTH PLUS SIGN -> PLUS SIGN */
+-	0xFF0C, /* FULLWIDTH COMMA -> COMMA */
+-	0xFF0D, /* FULLWIDTH HYPHEN-MINUS -> HYPHEN-MINUS */
+-	0xFF0E, /* FULLWIDTH FULL STOP -> FULL STOP */
+-	0xFF0F, /* FULLWIDTH SOLIDUS -> SOLIDUS */
+-	0xFF10, /* FULLWIDTH DIGIT ZERO -> DIGIT ZERO */
+-	0xFF11, /* FULLWIDTH DIGIT ONE -> DIGIT ONE */
+-	0xFF12, /* FULLWIDTH DIGIT TWO -> DIGIT TWO */
+-	0xFF13, /* FULLWIDTH DIGIT THREE -> DIGIT THREE */
+-	0xFF14, /* FULLWIDTH DIGIT FOUR -> DIGIT FOUR */
+-	0xFF15, /* FULLWIDTH DIGIT FIVE -> DIGIT FIVE */
+-	0xFF16, /* FULLWIDTH DIGIT SIX -> DIGIT SIX */
+-	0xFF17, /* FULLWIDTH DIGIT SEVEN -> DIGIT SEVEN */
+-	0xFF18, /* FULLWIDTH DIGIT EIGHT -> DIGIT EIGHT */
+-	0xFF19, /* FULLWIDTH DIGIT NINE -> DIGIT NINE */
+-	0xFF1A, /* FULLWIDTH COLON -> COLON */
+-	0xFF1B, /* FULLWIDTH SEMICOLON -> SEMICOLON */
+-	0xFF1C, /* FULLWIDTH LESS-THAN SIGN -> LESS-THAN SIGN */
+-	0xFF1D, /* FULLWIDTH EQUALS SIGN -> EQUALS SIGN */
+-	0xFF1E, /* FULLWIDTH GREATER-THAN SIGN -> GREATER-THAN SIGN */
+-	0xFF1F, /* FULLWIDTH QUESTION MARK -> QUESTION MARK */
+-	0xFF20, /* FULLWIDTH COMMERCIAL AT -> COMMERCIAL AT */
+-	0xFF21, /* FULLWIDTH LATIN CAPITAL LETTER A -> LATIN CAPITAL LETTER A */
+-	0xFF22, /* FULLWIDTH LATIN CAPITAL LETTER B -> LATIN CAPITAL LETTER B */
+-	0xFF23, /* FULLWIDTH LATIN CAPITAL LETTER C -> LATIN CAPITAL LETTER C */
+-	0xFF24, /* FULLWIDTH LATIN CAPITAL LETTER D -> LATIN CAPITAL LETTER D */
+-	0xFF25, /* FULLWIDTH LATIN CAPITAL LETTER E -> LATIN CAPITAL LETTER E */
+-	0xFF26, /* FULLWIDTH LATIN CAPITAL LETTER F -> LATIN CAPITAL LETTER F */
+-	0xFF27, /* FULLWIDTH LATIN CAPITAL LETTER G -> LATIN CAPITAL LETTER G */
+-	0xFF28, /* FULLWIDTH LATIN CAPITAL LETTER H -> LATIN CAPITAL LETTER H */
+-	0xFF29, /* FULLWIDTH LATIN CAPITAL LETTER I -> LATIN CAPITAL LETTER I */
+-	0xFF2A, /* FULLWIDTH LATIN CAPITAL LETTER J -> LATIN CAPITAL LETTER J */
+-	0xFF2B, /* FULLWIDTH LATIN CAPITAL LETTER K -> LATIN CAPITAL LETTER K */
+-	0xFF2C, /* FULLWIDTH LATIN CAPITAL LETTER L -> LATIN CAPITAL LETTER L */
+-	0xFF2D, /* FULLWIDTH LATIN CAPITAL LETTER M -> LATIN CAPITAL LETTER M */
+-	0xFF2E, /* FULLWIDTH LATIN CAPITAL LETTER N -> LATIN CAPITAL LETTER N */
+-	0xFF2F, /* FULLWIDTH LATIN CAPITAL LETTER O -> LATIN CAPITAL LETTER O */
+-	0xFF30, /* FULLWIDTH LATIN CAPITAL LETTER P -> LATIN CAPITAL LETTER P */
+-	0xFF31, /* FULLWIDTH LATIN CAPITAL LETTER Q -> LATIN CAPITAL LETTER Q */
+-	0xFF32, /* FULLWIDTH LATIN CAPITAL LETTER R -> LATIN CAPITAL LETTER R */
+-	0xFF33, /* FULLWIDTH LATIN CAPITAL LETTER S -> LATIN CAPITAL LETTER S */
+-	0xFF34, /* FULLWIDTH LATIN CAPITAL LETTER T -> LATIN CAPITAL LETTER T */
+-	0xFF35, /* FULLWIDTH LATIN CAPITAL LETTER U -> LATIN CAPITAL LETTER U */
+-	0xFF36, /* FULLWIDTH LATIN CAPITAL LETTER V -> LATIN CAPITAL LETTER V */
+-	0xFF37, /* FULLWIDTH LATIN CAPITAL LETTER W -> LATIN CAPITAL LETTER W */
+-	0xFF38, /* FULLWIDTH LATIN CAPITAL LETTER X -> LATIN CAPITAL LETTER X */
+-	0xFF39, /* FULLWIDTH LATIN CAPITAL LETTER Y -> LATIN CAPITAL LETTER Y */
+-	0xFF3A, /* FULLWIDTH LATIN CAPITAL LETTER Z -> LATIN CAPITAL LETTER Z */
+-	0xFF3B, /* FULLWIDTH LEFT SQUARE BRACKET -> LEFT SQUARE BRACKET */
+-	0xFF3C, /* FULLWIDTH REVERSE SOLIDUS -> REVERSE SOLIDUS */
+-	0xFF3D, /* FULLWIDTH RIGHT SQUARE BRACKET -> RIGHT SQUARE BRACKET */
+-	0xFF3E, /* FULLWIDTH CIRCUMFLEX ACCENT -> CIRCUMFLEX ACCENT */
+-	0xFF3F, /* FULLWIDTH LOW LINE -> LOW LINE */
+-	0xFF40, /* FULLWIDTH GRAVE ACCENT -> GRAVE ACCENT */
+-	0xFF41, /* FULLWIDTH LATIN SMALL LETTER A -> LATIN SMALL LETTER A */
+-	0xFF42, /* FULLWIDTH LATIN SMALL LETTER B -> LATIN SMALL LETTER B */
+-	0xFF43, /* FULLWIDTH LATIN SMALL LETTER C -> LATIN SMALL LETTER C */
+-	0xFF44, /* FULLWIDTH LATIN SMALL LETTER D -> LATIN SMALL LETTER D */
+-	0xFF45, /* FULLWIDTH LATIN SMALL LETTER E -> LATIN SMALL LETTER E */
+-	0xFF46, /* FULLWIDTH LATIN SMALL LETTER F -> LATIN SMALL LETTER F */
+-	0xFF47, /* FULLWIDTH LATIN SMALL LETTER G -> LATIN SMALL LETTER G */
+-	0xFF48, /* FULLWIDTH LATIN SMALL LETTER H -> LATIN SMALL LETTER H */
+-	0xFF49, /* FULLWIDTH LATIN SMALL LETTER I -> LATIN SMALL LETTER I */
+-	0xFF4A, /* FULLWIDTH LATIN SMALL LETTER J -> LATIN SMALL LETTER J */
+-	0xFF4B, /* FULLWIDTH LATIN SMALL LETTER K -> LATIN SMALL LETTER K */
+-	0xFF4C, /* FULLWIDTH LATIN SMALL LETTER L -> LATIN SMALL LETTER L */
+-	0xFF4D, /* FULLWIDTH LATIN SMALL LETTER M -> LATIN SMALL LETTER M */
+-	0xFF4E, /* FULLWIDTH LATIN SMALL LETTER N -> LATIN SMALL LETTER N */
+-	0xFF4F, /* FULLWIDTH LATIN SMALL LETTER O -> LATIN SMALL LETTER O */
+-	0xFF50, /* FULLWIDTH LATIN SMALL LETTER P -> LATIN SMALL LETTER P */
+-	0xFF51, /* FULLWIDTH LATIN SMALL LETTER Q -> LATIN SMALL LETTER Q */
+-	0xFF52, /* FULLWIDTH LATIN SMALL LETTER R -> LATIN SMALL LETTER R */
+-	0xFF53, /* FULLWIDTH LATIN SMALL LETTER S -> LATIN SMALL LETTER S */
+-	0xFF54, /* FULLWIDTH LATIN SMALL LETTER T -> LATIN SMALL LETTER T */
+-	0xFF55, /* FULLWIDTH LATIN SMALL LETTER U -> LATIN SMALL LETTER U */
+-	0xFF56, /* FULLWIDTH LATIN SMALL LETTER V -> LATIN SMALL LETTER V */
+-	0xFF57, /* FULLWIDTH LATIN SMALL LETTER W -> LATIN SMALL LETTER W */
+-	0xFF58, /* FULLWIDTH LATIN SMALL LETTER X -> LATIN SMALL LETTER X */
+-	0xFF59, /* FULLWIDTH LATIN SMALL LETTER Y -> LATIN SMALL LETTER Y */
+-	0xFF5A, /* FULLWIDTH LATIN SMALL LETTER Z -> LATIN SMALL LETTER Z */
+-	0xFF5B, /* FULLWIDTH LEFT CURLY BRACKET -> LEFT CURLY BRACKET */
+-	0xFF5C, /* FULLWIDTH VERTICAL LINE -> VERTICAL LINE */
+-	0xFF5D, /* FULLWIDTH RIGHT CURLY BRACKET -> RIGHT CURLY BRACKET */
+-	0xFF5E, /* FULLWIDTH TILDE -> TILDE */
+ };
+ 
+ static const u8 ucs_fallback_singles_subs[] = {
+@@ -1589,98 +1495,4 @@ static const u8 ucs_fallback_singles_subs[] = {
+ 	0x58, /* HEAVY BALLOT X -> LATIN CAPITAL LETTER X */
+ 	0x3C, /* LONG LEFTWARDS DOUBLE ARROW -> LESS-THAN SIGN */
+ 	0x3E, /* LONG RIGHTWARDS DOUBLE ARROW -> GREATER-THAN SIGN */
+-	0x21, /* FULLWIDTH EXCLAMATION MARK -> EXCLAMATION MARK */
+-	0x22, /* FULLWIDTH QUOTATION MARK -> QUOTATION MARK */
+-	0x23, /* FULLWIDTH NUMBER SIGN -> NUMBER SIGN */
+-	0x24, /* FULLWIDTH DOLLAR SIGN -> DOLLAR SIGN */
+-	0x25, /* FULLWIDTH PERCENT SIGN -> PERCENT SIGN */
+-	0x26, /* FULLWIDTH AMPERSAND -> AMPERSAND */
+-	0x27, /* FULLWIDTH APOSTROPHE -> APOSTROPHE */
+-	0x28, /* FULLWIDTH LEFT PARENTHESIS -> LEFT PARENTHESIS */
+-	0x29, /* FULLWIDTH RIGHT PARENTHESIS -> RIGHT PARENTHESIS */
+-	0x2A, /* FULLWIDTH ASTERISK -> ASTERISK */
+-	0x2B, /* FULLWIDTH PLUS SIGN -> PLUS SIGN */
+-	0x2C, /* FULLWIDTH COMMA -> COMMA */
+-	0x2D, /* FULLWIDTH HYPHEN-MINUS -> HYPHEN-MINUS */
+-	0x2E, /* FULLWIDTH FULL STOP -> FULL STOP */
+-	0x2F, /* FULLWIDTH SOLIDUS -> SOLIDUS */
+-	0x30, /* FULLWIDTH DIGIT ZERO -> DIGIT ZERO */
+-	0x31, /* FULLWIDTH DIGIT ONE -> DIGIT ONE */
+-	0x32, /* FULLWIDTH DIGIT TWO -> DIGIT TWO */
+-	0x33, /* FULLWIDTH DIGIT THREE -> DIGIT THREE */
+-	0x34, /* FULLWIDTH DIGIT FOUR -> DIGIT FOUR */
+-	0x35, /* FULLWIDTH DIGIT FIVE -> DIGIT FIVE */
+-	0x36, /* FULLWIDTH DIGIT SIX -> DIGIT SIX */
+-	0x37, /* FULLWIDTH DIGIT SEVEN -> DIGIT SEVEN */
+-	0x38, /* FULLWIDTH DIGIT EIGHT -> DIGIT EIGHT */
+-	0x39, /* FULLWIDTH DIGIT NINE -> DIGIT NINE */
+-	0x3A, /* FULLWIDTH COLON -> COLON */
+-	0x3B, /* FULLWIDTH SEMICOLON -> SEMICOLON */
+-	0x3C, /* FULLWIDTH LESS-THAN SIGN -> LESS-THAN SIGN */
+-	0x3D, /* FULLWIDTH EQUALS SIGN -> EQUALS SIGN */
+-	0x3E, /* FULLWIDTH GREATER-THAN SIGN -> GREATER-THAN SIGN */
+-	0x3F, /* FULLWIDTH QUESTION MARK -> QUESTION MARK */
+-	0x40, /* FULLWIDTH COMMERCIAL AT -> COMMERCIAL AT */
+-	0x41, /* FULLWIDTH LATIN CAPITAL LETTER A -> LATIN CAPITAL LETTER A */
+-	0x42, /* FULLWIDTH LATIN CAPITAL LETTER B -> LATIN CAPITAL LETTER B */
+-	0x43, /* FULLWIDTH LATIN CAPITAL LETTER C -> LATIN CAPITAL LETTER C */
+-	0x44, /* FULLWIDTH LATIN CAPITAL LETTER D -> LATIN CAPITAL LETTER D */
+-	0x45, /* FULLWIDTH LATIN CAPITAL LETTER E -> LATIN CAPITAL LETTER E */
+-	0x46, /* FULLWIDTH LATIN CAPITAL LETTER F -> LATIN CAPITAL LETTER F */
+-	0x47, /* FULLWIDTH LATIN CAPITAL LETTER G -> LATIN CAPITAL LETTER G */
+-	0x48, /* FULLWIDTH LATIN CAPITAL LETTER H -> LATIN CAPITAL LETTER H */
+-	0x49, /* FULLWIDTH LATIN CAPITAL LETTER I -> LATIN CAPITAL LETTER I */
+-	0x4A, /* FULLWIDTH LATIN CAPITAL LETTER J -> LATIN CAPITAL LETTER J */
+-	0x4B, /* FULLWIDTH LATIN CAPITAL LETTER K -> LATIN CAPITAL LETTER K */
+-	0x4C, /* FULLWIDTH LATIN CAPITAL LETTER L -> LATIN CAPITAL LETTER L */
+-	0x4D, /* FULLWIDTH LATIN CAPITAL LETTER M -> LATIN CAPITAL LETTER M */
+-	0x4E, /* FULLWIDTH LATIN CAPITAL LETTER N -> LATIN CAPITAL LETTER N */
+-	0x4F, /* FULLWIDTH LATIN CAPITAL LETTER O -> LATIN CAPITAL LETTER O */
+-	0x50, /* FULLWIDTH LATIN CAPITAL LETTER P -> LATIN CAPITAL LETTER P */
+-	0x51, /* FULLWIDTH LATIN CAPITAL LETTER Q -> LATIN CAPITAL LETTER Q */
+-	0x52, /* FULLWIDTH LATIN CAPITAL LETTER R -> LATIN CAPITAL LETTER R */
+-	0x53, /* FULLWIDTH LATIN CAPITAL LETTER S -> LATIN CAPITAL LETTER S */
+-	0x54, /* FULLWIDTH LATIN CAPITAL LETTER T -> LATIN CAPITAL LETTER T */
+-	0x55, /* FULLWIDTH LATIN CAPITAL LETTER U -> LATIN CAPITAL LETTER U */
+-	0x56, /* FULLWIDTH LATIN CAPITAL LETTER V -> LATIN CAPITAL LETTER V */
+-	0x57, /* FULLWIDTH LATIN CAPITAL LETTER W -> LATIN CAPITAL LETTER W */
+-	0x58, /* FULLWIDTH LATIN CAPITAL LETTER X -> LATIN CAPITAL LETTER X */
+-	0x59, /* FULLWIDTH LATIN CAPITAL LETTER Y -> LATIN CAPITAL LETTER Y */
+-	0x5A, /* FULLWIDTH LATIN CAPITAL LETTER Z -> LATIN CAPITAL LETTER Z */
+-	0x5B, /* FULLWIDTH LEFT SQUARE BRACKET -> LEFT SQUARE BRACKET */
+-	0x5C, /* FULLWIDTH REVERSE SOLIDUS -> REVERSE SOLIDUS */
+-	0x5D, /* FULLWIDTH RIGHT SQUARE BRACKET -> RIGHT SQUARE BRACKET */
+-	0x5E, /* FULLWIDTH CIRCUMFLEX ACCENT -> CIRCUMFLEX ACCENT */
+-	0x5F, /* FULLWIDTH LOW LINE -> LOW LINE */
+-	0x60, /* FULLWIDTH GRAVE ACCENT -> GRAVE ACCENT */
+-	0x61, /* FULLWIDTH LATIN SMALL LETTER A -> LATIN SMALL LETTER A */
+-	0x62, /* FULLWIDTH LATIN SMALL LETTER B -> LATIN SMALL LETTER B */
+-	0x63, /* FULLWIDTH LATIN SMALL LETTER C -> LATIN SMALL LETTER C */
+-	0x64, /* FULLWIDTH LATIN SMALL LETTER D -> LATIN SMALL LETTER D */
+-	0x65, /* FULLWIDTH LATIN SMALL LETTER E -> LATIN SMALL LETTER E */
+-	0x66, /* FULLWIDTH LATIN SMALL LETTER F -> LATIN SMALL LETTER F */
+-	0x67, /* FULLWIDTH LATIN SMALL LETTER G -> LATIN SMALL LETTER G */
+-	0x68, /* FULLWIDTH LATIN SMALL LETTER H -> LATIN SMALL LETTER H */
+-	0x69, /* FULLWIDTH LATIN SMALL LETTER I -> LATIN SMALL LETTER I */
+-	0x6A, /* FULLWIDTH LATIN SMALL LETTER J -> LATIN SMALL LETTER J */
+-	0x6B, /* FULLWIDTH LATIN SMALL LETTER K -> LATIN SMALL LETTER K */
+-	0x6C, /* FULLWIDTH LATIN SMALL LETTER L -> LATIN SMALL LETTER L */
+-	0x6D, /* FULLWIDTH LATIN SMALL LETTER M -> LATIN SMALL LETTER M */
+-	0x6E, /* FULLWIDTH LATIN SMALL LETTER N -> LATIN SMALL LETTER N */
+-	0x6F, /* FULLWIDTH LATIN SMALL LETTER O -> LATIN SMALL LETTER O */
+-	0x70, /* FULLWIDTH LATIN SMALL LETTER P -> LATIN SMALL LETTER P */
+-	0x71, /* FULLWIDTH LATIN SMALL LETTER Q -> LATIN SMALL LETTER Q */
+-	0x72, /* FULLWIDTH LATIN SMALL LETTER R -> LATIN SMALL LETTER R */
+-	0x73, /* FULLWIDTH LATIN SMALL LETTER S -> LATIN SMALL LETTER S */
+-	0x74, /* FULLWIDTH LATIN SMALL LETTER T -> LATIN SMALL LETTER T */
+-	0x75, /* FULLWIDTH LATIN SMALL LETTER U -> LATIN SMALL LETTER U */
+-	0x76, /* FULLWIDTH LATIN SMALL LETTER V -> LATIN SMALL LETTER V */
+-	0x77, /* FULLWIDTH LATIN SMALL LETTER W -> LATIN SMALL LETTER W */
+-	0x78, /* FULLWIDTH LATIN SMALL LETTER X -> LATIN SMALL LETTER X */
+-	0x79, /* FULLWIDTH LATIN SMALL LETTER Y -> LATIN SMALL LETTER Y */
+-	0x7A, /* FULLWIDTH LATIN SMALL LETTER Z -> LATIN SMALL LETTER Z */
+-	0x7B, /* FULLWIDTH LEFT CURLY BRACKET -> LEFT CURLY BRACKET */
+-	0x7C, /* FULLWIDTH VERTICAL LINE -> VERTICAL LINE */
+-	0x7D, /* FULLWIDTH RIGHT CURLY BRACKET -> RIGHT CURLY BRACKET */
+-	0x7E, /* FULLWIDTH TILDE -> TILDE */
+ };
 -- 
 2.49.0
 
