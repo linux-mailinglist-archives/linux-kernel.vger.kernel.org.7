@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-633828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0E9AAAE83
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:58:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6202AAB0E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A8D3B2371
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104161BC07CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F00637C759;
-	Mon,  5 May 2025 22:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CBD32DAAA;
+	Tue,  6 May 2025 00:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="me/Emz+n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jlL/514e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DA235EB97;
-	Mon,  5 May 2025 22:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F349376423;
+	Mon,  5 May 2025 22:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485322; cv=none; b=g8uzgkRegW2XKDDLoKbHetaEY4w9kJsuUCFNoywqhNuwDk3ABFO10ZU3xuZML8NGJlKqNaDHP8XQ1p/XdgB6P2tWlClzN4hFLHYuHCWEzrSOFilD/HBFrUF2BXm4GWt9eOAsQVZQeWxNtQBSCG3Cygr2Zg/Xdi0GDYbo85Kvrws=
+	t=1746485323; cv=none; b=FzHkMHdi1uTYIignvSG4X3+LyFBJ/Xl2qqNawkCTE528I3urDZw4Uea3sZSUVyTIp9pTZtSIQ+qSlUsZZ6PPUOpqkK0jmiIjBbJmNqZqbtbbQzjofj7H51ygEUvOzNGdnqiNYipZu3tc0evEbRy6nMFvrbPKoFW8QOA6qpqs6M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485322; c=relaxed/simple;
-	bh=+kAlWFpPjvZ7Wc+Kh6SVwp/JOzpD4dwJ6NntXTUfaRU=;
+	s=arc-20240116; t=1746485323; c=relaxed/simple;
+	bh=yWFjMX1ZqvLqly+P9GlnkqG3a4TI4FX3wlkXs3YyfEQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n8QHhl6ZIvGTun8xDrjKc83XqU6ANB4dPiIXolDj+3vNABd9lcLkc4VZacoBGjyDlu3LV4kWxwvCyQoCjBFzkxi4EexD8SLli/y8YKyD0iQEreb6NIdBzOJwEvgahWUjkiL7U/T9umrn4In/j/rXYFwoiHu/rRMcp2jYpqcUO8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=me/Emz+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF13C4CEE4;
-	Mon,  5 May 2025 22:48:40 +0000 (UTC)
+	 MIME-Version; b=Yheks+VZyp5zrAH730EzBJScfZzWJVoACVGZoNkCAEJrjqZq/WacH60IVCIDuAtlaxEGcl7NDh1EC0dJMGyQT/0m5WOnRVFFgIms+pB32XKsy1x7evwhQjeIQcI1bK37C2epRQBDxXIc7F56FWk2MzFSXIqs+seu7D4gMCSNVgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jlL/514e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F1F1C4CEEE;
+	Mon,  5 May 2025 22:48:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485321;
-	bh=+kAlWFpPjvZ7Wc+Kh6SVwp/JOzpD4dwJ6NntXTUfaRU=;
+	s=k20201202; t=1746485323;
+	bh=yWFjMX1ZqvLqly+P9GlnkqG3a4TI4FX3wlkXs3YyfEQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=me/Emz+nmToJ9Zbu5hsHxZYgoyWrEYlM7DHUvIvq2UsrBoF9HyvMECjoYPpogzvIZ
-	 u5FJjPu7FKj/1NZdfw949ieA56oxyuVRS/wElk1qQrzJi5M3J5o27YdqdDZqt6HJzY
-	 FKBhiirYceJy8OGbXir82J0/dv7Sxx0bI2ETm7KQKQnBO9XVStj3ZpYwMl1c5QMb5K
-	 cm9d3ztJ1E04brAbiw/3JE9gAyL5A1uTVgXOeM2AISFYsmQxmNUIPH4Iasl9WIcEe6
-	 26xDSGv0HkQ5heMEPJMpa3qEidec7/n3/YDbqgRVYgwILmCdcxlMLf1X/BDmb3Wooy
-	 hJtz+BkxxnVSw==
+	b=jlL/514eN6/t4Vg8hkrl9JMiLuD7zrGJ3I6i/1cfZ5/bGf2GVH49n0XHW/k6cW42D
+	 IgcyIwW+FC3nbSo3SuffbFR4pZjb8N5piKV8FXH5LWJvUf6gNxeYBv0iLnFzB+prAt
+	 l2wy7rxoz3Y+wMV7opAEDu/BSEohLd9o4zv8ILF6fLgLy4gR5sut6641cZyKIGJ1Iz
+	 zmKgNSgcYg1sg4/vZllHu3bw5kGl3aBVZrcldRFL/mdc57iJfyjLi9WvoS3P5Ru9NV
+	 r6pWZSEQTpkQCRs75TyH5wf46PeKlUFpKOjarK+zgpUeZkFZDGZefiCWpN90B0LwRO
+	 3INcIiXTXJOdg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Nandakumar Edamana <nandakumar@nandakumar.co.in>,
-	Andrii Nakryiko <andrii@kernel.org>,
+Cc: Jinliang Zheng <alexjlzheng@gmail.com>,
+	Jinliang Zheng <alexjlzheng@tencent.com>,
+	Tianxiang Peng <txpeng@tencent.com>,
+	Hao Peng <flyingpeng@tencent.com>,
+	Mikulas Patocka <mpatocka@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 266/486] libbpf: Fix out-of-bound read
-Date: Mon,  5 May 2025 18:35:42 -0400
-Message-Id: <20250505223922.2682012-266-sashal@kernel.org>
+	agk@redhat.com,
+	snitzer@kernel.org,
+	dm-devel@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.12 267/486] dm: fix unconditional IO throttle caused by REQ_PREFLUSH
+Date: Mon,  5 May 2025 18:35:43 -0400
+Message-Id: <20250505223922.2682012-267-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -67,41 +69,80 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Nandakumar Edamana <nandakumar@nandakumar.co.in>
+From: Jinliang Zheng <alexjlzheng@gmail.com>
 
-[ Upstream commit 236d3910117e9f97ebf75e511d8bcc950f1a4e5f ]
+[ Upstream commit 88f7f56d16f568f19e1a695af34a7f4a6ce537a6 ]
 
-In `set_kcfg_value_str`, an untrusted string is accessed with the assumption
-that it will be at least two characters long due to the presence of checks for
-opening and closing quotes. But the check for the closing quote
-(value[len - 1] != '"') misses the fact that it could be checking the opening
-quote itself in case of an invalid input that consists of just the opening
-quote.
+When a bio with REQ_PREFLUSH is submitted to dm, __send_empty_flush()
+generates a flush_bio with REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC,
+which causes the flush_bio to be throttled by wbt_wait().
 
-This commit adds an explicit check to make sure the string is at least two
-characters long.
+An example from v5.4, similar problem also exists in upstream:
 
-Signed-off-by: Nandakumar Edamana <nandakumar@nandakumar.co.in>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-Link: https://lore.kernel.org/bpf/20250221210110.3182084-1-nandakumar@nandakumar.co.in
+    crash> bt 2091206
+    PID: 2091206  TASK: ffff2050df92a300  CPU: 109  COMMAND: "kworker/u260:0"
+     #0 [ffff800084a2f7f0] __switch_to at ffff80004008aeb8
+     #1 [ffff800084a2f820] __schedule at ffff800040bfa0c4
+     #2 [ffff800084a2f880] schedule at ffff800040bfa4b4
+     #3 [ffff800084a2f8a0] io_schedule at ffff800040bfa9c4
+     #4 [ffff800084a2f8c0] rq_qos_wait at ffff8000405925bc
+     #5 [ffff800084a2f940] wbt_wait at ffff8000405bb3a0
+     #6 [ffff800084a2f9a0] __rq_qos_throttle at ffff800040592254
+     #7 [ffff800084a2f9c0] blk_mq_make_request at ffff80004057cf38
+     #8 [ffff800084a2fa60] generic_make_request at ffff800040570138
+     #9 [ffff800084a2fae0] submit_bio at ffff8000405703b4
+    #10 [ffff800084a2fb50] xlog_write_iclog at ffff800001280834 [xfs]
+    #11 [ffff800084a2fbb0] xlog_sync at ffff800001280c3c [xfs]
+    #12 [ffff800084a2fbf0] xlog_state_release_iclog at ffff800001280df4 [xfs]
+    #13 [ffff800084a2fc10] xlog_write at ffff80000128203c [xfs]
+    #14 [ffff800084a2fcd0] xlog_cil_push at ffff8000012846dc [xfs]
+    #15 [ffff800084a2fda0] xlog_cil_push_work at ffff800001284a2c [xfs]
+    #16 [ffff800084a2fdb0] process_one_work at ffff800040111d08
+    #17 [ffff800084a2fe00] worker_thread at ffff8000401121cc
+    #18 [ffff800084a2fe70] kthread at ffff800040118de4
+
+After commit 2def2845cc33 ("xfs: don't allow log IO to be throttled"),
+the metadata submitted by xlog_write_iclog() should not be throttled.
+But due to the existence of the dm layer, throttling flush_bio indirectly
+causes the metadata bio to be throttled.
+
+Fix this by conditionally adding REQ_IDLE to flush_bio.bi_opf, which makes
+wbt_should_throttle() return false to avoid wbt_wait().
+
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Reviewed-by: Tianxiang Peng <txpeng@tencent.com>
+Reviewed-by: Hao Peng <flyingpeng@tencent.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/libbpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 5b45f76059296..a6bbae1e4c6b9 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -2074,7 +2074,7 @@ static int set_kcfg_value_str(struct extern_desc *ext, char *ext_val,
- 	}
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 19230404d8c2b..d29125ee9e72a 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1541,14 +1541,18 @@ static void __send_empty_flush(struct clone_info *ci)
+ {
+ 	struct dm_table *t = ci->map;
+ 	struct bio flush_bio;
++	blk_opf_t opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC;
++
++	if ((ci->io->orig_bio->bi_opf & (REQ_IDLE | REQ_SYNC)) ==
++	    (REQ_IDLE | REQ_SYNC))
++		opf |= REQ_IDLE;
  
- 	len = strlen(value);
--	if (value[len - 1] != '"') {
-+	if (len < 2 || value[len - 1] != '"') {
- 		pr_warn("extern (kcfg) '%s': invalid string config '%s'\n",
- 			ext->name, value);
- 		return -EINVAL;
+ 	/*
+ 	 * Use an on-stack bio for this, it's safe since we don't
+ 	 * need to reference it after submit. It's just used as
+ 	 * the basis for the clone(s).
+ 	 */
+-	bio_init(&flush_bio, ci->io->md->disk->part0, NULL, 0,
+-		 REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC);
++	bio_init(&flush_bio, ci->io->md->disk->part0, NULL, 0, opf);
+ 
+ 	ci->bio = &flush_bio;
+ 	ci->sector_count = 0;
 -- 
 2.39.5
 
