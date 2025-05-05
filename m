@@ -1,58 +1,63 @@
-Return-Path: <linux-kernel+bounces-634875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14CDAAB75F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:10:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3622AAB76D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7401A7B3447
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:09:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 961D97B55CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A4A3A7855;
-	Tue,  6 May 2025 00:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BCE34792A;
+	Tue,  6 May 2025 00:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPYtBnrb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6tj8Asm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52263A6FB3;
-	Mon,  5 May 2025 23:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34A22F5FB8;
+	Mon,  5 May 2025 23:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487011; cv=none; b=N3m1cMWxGYFZyMCsUeipUbOn5jYw846mJ4T6KUL7N5XPH+tqagpuTdSCwUXLGJdBrzF1I0voqmXhiThzH9bgEf0AT3Z9Y5vb4HQsM3m4hGx/xNXAKu93LKV/ADYdjqR7UajT7WyuIT7NTvXFQfqsVIiPHD4syU6RJgYt7oXrkP0=
+	t=1746487067; cv=none; b=Y7IkLSpeq1CONPno4yBLX9TXS/BSDXin/sGDArerXNMlTploxRJrHCWhjsUHuuuY6nijOdAOQC8BZPt5MNlyOsC5o2uRXZvOyMWFKBtYR4oBgeoDhQj8QM63aSv0UJO92wiUl2/dRK4THFIrgHrxmBHPAHnv93H+bYNWXXYoIXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487011; c=relaxed/simple;
-	bh=RB1GCYxJZRBjdfu7LkDBzuFWTa4iGUxDh2yLcwZrvbw=;
+	s=arc-20240116; t=1746487067; c=relaxed/simple;
+	bh=KWNQkcUpLYPaaAMI1wQpEgFfwenRPtBvR5QXr06sJBI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fCLUWKtoYYYXgxGO5ik906dWziPUxm5yFX5LtAxGYrVz6+mU0d3jt/PkTMxfZDtG0J7/ZM4QRXUQ4YSrw8jTkky6fBedkGJWNR9ydKsSUmE+4AYtIh8mn+CajdmMbuv0qVFCvfBCZyI/cz0i1w+e4DYf9Jc+KroaMdFY85Pmf18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPYtBnrb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87886C4CEE4;
-	Mon,  5 May 2025 23:16:50 +0000 (UTC)
+	 MIME-Version; b=a8YEhbTM7NbY72Kj4Xp8L1XEjnpNPCgup3aEWpzR6cTLzo7QjZ8MQpXdpeA9g2FWYV2ptOxiG6fAl/u8ZV1bnK8ldlD7SewBKC01GIcskBrOp+GYcQFR8c0dtmB7cQI9g0YmrPifPt7zZrw7eZkn+9NoFGt9PohzdcA6e9dVWv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6tj8Asm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DE13C4CEED;
+	Mon,  5 May 2025 23:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487011;
-	bh=RB1GCYxJZRBjdfu7LkDBzuFWTa4iGUxDh2yLcwZrvbw=;
+	s=k20201202; t=1746487067;
+	bh=KWNQkcUpLYPaaAMI1wQpEgFfwenRPtBvR5QXr06sJBI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LPYtBnrbXqxZUGdBY8hOmiK6TjP3lkwcGQIn147+3f+MMRf/OwcH548PTeqrrZMo6
-	 yx2y3Je9OYV8sJ/BnLgR8QZ8prf+knOiVn67uDUeWbokxvlpzaXYbaouPRln2nAIwO
-	 eQvV54yNR1zG9j1i/cw1bdW72pgFpwdhMYSWWyiRPjxVnJtpU8t7FxmL90BKHd0DMJ
-	 ks7gV735VvGMjp1vL4o9jXb78rQqjW4KuW3lGD/52dva8KhJ75sbuJIRLV9lY11hNm
-	 PWpTJtn4ieZfxyDn/rHCYZUnEps52a1uuKsQczdxJAJS8w57zol23CR7WpQ84vHLpE
-	 K0sunltuMgQEQ==
+	b=O6tj8AsmsP9cvs9psTgvcXpqhMddOSK6XLVlrcNOBdV2suoHqa02wQLvrwvjQtlBs
+	 vA75J3iuR4QSaNKhhJyWpg7NS+yySW1U8tynfvTzsHYvs0V2K/XSeGFSwWJzoa++EG
+	 TEMfZhOO+jVQJT+wghIbzbm7jjBThvcn1JE4T9ZnnfO3ju8OGEgKvb1PhgA3CnW7OQ
+	 KEDV2r/qKigjexURWU51tjvTX0ikxMnJkIPxVov37IzUWGeJHBGzKfbJPhl4X0YPhP
+	 aPKp0yOJk74xe57+6VaXUZBR2Ua61X42No8yCiehuOMDcpTpmemOF6refb/WrIK6tV
+	 N4bTJvhxcq5fw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
+Cc: Ido Schimmel <idosch@nvidia.com>,
+	Petr Machata <petrm@nvidia.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	u.kleine-koenig@baylibre.com,
-	linux-can@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 106/153] can: c_can: Use of_property_present() to test existence of DT property
-Date: Mon,  5 May 2025 19:12:33 -0400
-Message-Id: <20250505231320.2695319-106-sashal@kernel.org>
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	pabeni@redhat.com,
+	menglong8.dong@gmail.com,
+	gnault@redhat.com,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 136/153] vxlan: Annotate FDB data races
+Date: Mon,  5 May 2025 19:13:03 -0400
+Message-Id: <20250505231320.2695319-136-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -67,35 +72,142 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+From: Ido Schimmel <idosch@nvidia.com>
 
-[ Upstream commit ab1bc2290fd8311d49b87c29f1eb123fcb581bee ]
+[ Upstream commit f6205f8215f12a96518ac9469ff76294ae7bd612 ]
 
-of_property_read_bool() should be used only on boolean properties.
+The 'used' and 'updated' fields in the FDB entry structure can be
+accessed concurrently by multiple threads, leading to reports such as
+[1]. Can be reproduced using [2].
 
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Link: https://patch.msgid.link/20250212-syscon-phandle-args-can-v2-3-ac9a1253396b@linaro.org
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Suppress these reports by annotating these accesses using
+READ_ONCE() / WRITE_ONCE().
+
+[1]
+BUG: KCSAN: data-race in vxlan_xmit / vxlan_xmit
+
+write to 0xffff942604d263a8 of 8 bytes by task 286 on cpu 0:
+ vxlan_xmit+0xb29/0x2380
+ dev_hard_start_xmit+0x84/0x2f0
+ __dev_queue_xmit+0x45a/0x1650
+ packet_xmit+0x100/0x150
+ packet_sendmsg+0x2114/0x2ac0
+ __sys_sendto+0x318/0x330
+ __x64_sys_sendto+0x76/0x90
+ x64_sys_call+0x14e8/0x1c00
+ do_syscall_64+0x9e/0x1a0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff942604d263a8 of 8 bytes by task 287 on cpu 2:
+ vxlan_xmit+0xadf/0x2380
+ dev_hard_start_xmit+0x84/0x2f0
+ __dev_queue_xmit+0x45a/0x1650
+ packet_xmit+0x100/0x150
+ packet_sendmsg+0x2114/0x2ac0
+ __sys_sendto+0x318/0x330
+ __x64_sys_sendto+0x76/0x90
+ x64_sys_call+0x14e8/0x1c00
+ do_syscall_64+0x9e/0x1a0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x00000000fffbac6e -> 0x00000000fffbac6f
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 2 UID: 0 PID: 287 Comm: mausezahn Not tainted 6.13.0-rc7-01544-gb4b270f11a02 #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+
+[2]
+ #!/bin/bash
+
+ set +H
+ echo whitelist > /sys/kernel/debug/kcsan
+ echo !vxlan_xmit > /sys/kernel/debug/kcsan
+
+ ip link add name vx0 up type vxlan id 10010 dstport 4789 local 192.0.2.1
+ bridge fdb add 00:11:22:33:44:55 dev vx0 self static dst 198.51.100.1
+ taskset -c 0 mausezahn vx0 -a own -b 00:11:22:33:44:55 -c 0 -q &
+ taskset -c 2 mausezahn vx0 -a own -b 00:11:22:33:44:55 -c 0 -q &
+
+Reviewed-by: Petr Machata <petrm@nvidia.com>
+Signed-off-by: Ido Schimmel <idosch@nvidia.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
+Link: https://patch.msgid.link/20250204145549.1216254-2-idosch@nvidia.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/c_can/c_can_platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/vxlan/vxlan_core.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/can/c_can/c_can_platform.c b/drivers/net/can/c_can/c_can_platform.c
-index c5d7093d54133..c29862b3bb1f3 100644
---- a/drivers/net/can/c_can/c_can_platform.c
-+++ b/drivers/net/can/c_can/c_can_platform.c
-@@ -334,7 +334,7 @@ static int c_can_plat_probe(struct platform_device *pdev)
- 		/* Check if we need custom RAMINIT via syscon. Mostly for TI
- 		 * platforms. Only supported with DT boot.
- 		 */
--		if (np && of_property_read_bool(np, "syscon-raminit")) {
-+		if (np && of_property_present(np, "syscon-raminit")) {
- 			u32 id;
- 			struct c_can_raminit *raminit = &priv->raminit_sys;
+diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
+index 65a2f4ab89970..9c4d7bedc7641 100644
+--- a/drivers/net/vxlan/vxlan_core.c
++++ b/drivers/net/vxlan/vxlan_core.c
+@@ -334,9 +334,9 @@ static int vxlan_fdb_info(struct sk_buff *skb, struct vxlan_dev *vxlan,
+ 			be32_to_cpu(fdb->vni)))
+ 		goto nla_put_failure;
  
+-	ci.ndm_used	 = jiffies_to_clock_t(now - fdb->used);
++	ci.ndm_used	 = jiffies_to_clock_t(now - READ_ONCE(fdb->used));
+ 	ci.ndm_confirmed = 0;
+-	ci.ndm_updated	 = jiffies_to_clock_t(now - fdb->updated);
++	ci.ndm_updated	 = jiffies_to_clock_t(now - READ_ONCE(fdb->updated));
+ 	ci.ndm_refcnt	 = 0;
+ 
+ 	if (nla_put(skb, NDA_CACHEINFO, sizeof(ci), &ci))
+@@ -542,8 +542,8 @@ static struct vxlan_fdb *vxlan_find_mac(struct vxlan_dev *vxlan,
+ 	struct vxlan_fdb *f;
+ 
+ 	f = __vxlan_find_mac(vxlan, mac, vni);
+-	if (f && f->used != jiffies)
+-		f->used = jiffies;
++	if (f && READ_ONCE(f->used) != jiffies)
++		WRITE_ONCE(f->used, jiffies);
+ 
+ 	return f;
+ }
+@@ -1073,12 +1073,12 @@ static int vxlan_fdb_update_existing(struct vxlan_dev *vxlan,
+ 	    !(f->flags & NTF_VXLAN_ADDED_BY_USER)) {
+ 		if (f->state != state) {
+ 			f->state = state;
+-			f->updated = jiffies;
++			WRITE_ONCE(f->updated, jiffies);
+ 			notify = 1;
+ 		}
+ 		if (f->flags != fdb_flags) {
+ 			f->flags = fdb_flags;
+-			f->updated = jiffies;
++			WRITE_ONCE(f->updated, jiffies);
+ 			notify = 1;
+ 		}
+ 	}
+@@ -1112,7 +1112,7 @@ static int vxlan_fdb_update_existing(struct vxlan_dev *vxlan,
+ 	}
+ 
+ 	if (ndm_flags & NTF_USE)
+-		f->used = jiffies;
++		WRITE_ONCE(f->used, jiffies);
+ 
+ 	if (notify) {
+ 		if (rd == NULL)
+@@ -1525,7 +1525,7 @@ static bool vxlan_snoop(struct net_device *dev,
+ 				    src_mac, &rdst->remote_ip.sa, &src_ip->sa);
+ 
+ 		rdst->remote_ip = *src_ip;
+-		f->updated = jiffies;
++		WRITE_ONCE(f->updated, jiffies);
+ 		vxlan_fdb_notify(vxlan, f, rdst, RTM_NEWNEIGH, true, NULL);
+ 	} else {
+ 		u32 hash_index = fdb_head_index(vxlan, src_mac, vni);
+@@ -3000,7 +3000,7 @@ static void vxlan_cleanup(struct timer_list *t)
+ 			if (f->flags & NTF_EXT_LEARNED)
+ 				continue;
+ 
+-			timeout = f->used + vxlan->cfg.age_interval * HZ;
++			timeout = READ_ONCE(f->used) + vxlan->cfg.age_interval * HZ;
+ 			if (time_before_eq(timeout, jiffies)) {
+ 				netdev_dbg(vxlan->dev,
+ 					   "garbage collect %pM\n",
 -- 
 2.39.5
 
