@@ -1,235 +1,194 @@
-Return-Path: <linux-kernel+bounces-631832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD77AA8E1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:20:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280C0AA8E22
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 526EB1895F4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9AA3AFB24
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62B31EE7DD;
-	Mon,  5 May 2025 08:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="pOHlkCF2"
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391561EFFA8;
+	Mon,  5 May 2025 08:21:52 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5066E1E7C24
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2471EA7FC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746433231; cv=none; b=XJTgBm4RAOLDEeeuis45frrH/3kOPYqHM4loJdGJjtf4rJ4QtT6vYfwkDL9qa60kLXCtRqnO2xy8Ws/uRNQ+XZCI/YKYI1vO0Kg1n/YRbupHCd9ctNyicdNwDKuca7zK8NdyFkTrT4z5/9MFKyuqLSGnRZ1j3zNlN6q+ju2KAEw=
+	t=1746433311; cv=none; b=VK8Eok75b8p9ltV3d8MeC6pR0hbvgIE71hUjIjWJjiXwqLZyGUC/mX8C0jtB5gIcX39q+qX30pOHb1zmAWqTuIJUpDTWpvOPwohTg/Usm4scCRNXFyTshkm8E1zggaNvwHWKAf8vTMv4LeGnf3ZpVI8LfEFZeGAxaq7zPFCdLjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746433231; c=relaxed/simple;
-	bh=2nld4hcGgo6X0z6GWVU9T2qu2SGGif3NrxrDhDm+P9w=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ejYRpcaM4WsGH4an9+AXeX5C8uppavO0iOxlf16UAEBrS8DoLu/C0XPcWuVJMOXioja1X77nIu4xYXfbZ5HWHEoPHfIULNajRb1NlKWQWNcO5EPv5Pq1mPwVtcOYwHlh9nI2V1dNP5LkPqUyhpdGRb/gb31vgh2uvbxZitKw5ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=pOHlkCF2; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1746433220; x=1746692420;
-	bh=PPmY1q+mDq92unxZt7p8cEaDwhs2YRbB62LoxxnlFpE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=pOHlkCF2T1ravadpuvayGDQeSZ/x50ch5YmOm3ewP8GVMn2aegoZ5eQ/WmTsEGd6o
-	 VtySB0xnk+5XpQqit9qXlw8yxfbgxpay7ezwsHcrv+hSL1chyzvZEuhbPhFJJDLQZ4
-	 CEGgn4Yy5Gu4KNvSN1IcI90m/lNT2VQh4+PS6YI+xZnTtI1NP1MkJMel6/tmNHOXlN
-	 daR1dNrHA0AZwjetkfqbrlD9EW3mFaS2b1WJlGCu+sqfGp9wafe31MR8s+Z7Htew3Z
-	 URtcBKqp+u9YK2/xY/tYAka7XJ/YyIwKbg0ib0xpAowPqcfUt2Yl/61QBmJkdgK63j
-	 NgzSGvQNVWEQQ==
-Date: Mon, 05 May 2025 08:20:16 +0000
-To: Mingyen Hsieh <Mingyen.Hsieh@mediatek.com>
-From: fossben@pm.me
-Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>, "niks@kernel.org" <niks@kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, Allan Wang <Allan.Wang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: Re: [REGRESSION][BISECTED][STABLE] MT7925: mDNS and IPv6 broken in kernel 6.14.3 and above
-Message-ID: <Q8fBN4506NOX9rrFspv9q0xuQRlE1YcHDbwfRUlXy7if-Lv-kGyIXPrNN2kOMoWENMYCfTmOhAhnSCs4gtUvpzEf0O_JZ_BV__V3B_A7iU8=@pm.me>
-In-Reply-To: <28ef2cc608d071d1530902d7b5df045555ab5651.camel@mediatek.com>
-References: <EmWnO5b-acRH1TXbGnkx41eJw654vmCR-8_xMBaPMwexCnfkvKCdlU5u19CGbaapJ3KRu-l3B-tSUhf8CCQwL0odjo6Cd5YG5lvNeB-vfdg=@pm.me> <f73dec60b60dd7bb3be40c1feefbe223c7afe19b.camel@mediatek.com> <5ae1ef34c9844d6d0f5fb167dd596a4c43321367.camel@kernel.org> <28ef2cc608d071d1530902d7b5df045555ab5651.camel@mediatek.com>
-Feedback-ID: 134317997:user:proton
-X-Pm-Message-ID: fef2514a1a9fdd3fff94770a5f82dde0aa08ad69
+	s=arc-20240116; t=1746433311; c=relaxed/simple;
+	bh=hoJMcnkXUxzmBteBqLeg+T1WKO/xPfGB/+Rwylex62w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=dBnNfp1ViLUqfCMgCE+OGsd6mOu+3sP1R4ayrzDBd2SoIasfaRHowRob9MxqDM2bNex0ywSHebwCKeBXircK1bQZhAcXSK3GhvhaAPAQ2xPOFCTfrchokkvyjHv+bSzhoHYuUvLjfagwC5tPJhoOQArNmOAW3JwzJVaT+ct7L+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d94fe1037cso53457085ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 01:21:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746433309; x=1747038109;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=83Ru93OjcA2jUzYAv7pKjys9+lPnGVuI5yy1bz/h3NM=;
+        b=nwl8wFl0T1SG63Eu3in0Pto5DH04Alt643MV50ViOB8WAlt0ONDm1wXiOpZn3fNftc
+         hJBqkiV+l1FAvqe1Lr2TkVIvrdOdcTorsghK0CF0SIRWUoMM4XWKMj8jdmo3kn/4ax0T
+         1dkLLS4BLnHRaBfbHniIqFKuDd90YhzcCFM4RJQhvI633IZImJSN0fyIPtuGT1Wpwyul
+         MZx8IVt7DFVVJlYWjD+KjxNZ8rq7c51OEA3KFevA7QDjPRM/HNoZTHmzKs7ZR69FBdrW
+         a6oieEd71b1C6qsfzmy6wloVxiaB7Xk6dxPQYZBZ/TdiclmLtE9uClyEgcFG7/0wX9zk
+         fNHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIzV2KdcNGEf1No4vPeFnNfAY4JvNY8vWf5BIVhj0eplmUTgn0fKtwaq2S7+cJAPKI569GhFYRFx5Dajw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZMd5EG7rwQuGheqybBTVse6gTd8dExzlfJ5GDq1YtPyaQIuTW
+	686eaBsnOC2nnioMMoW7qNJokRoCsfAWGYb3/ORNhAU/fYLuxrdT8a8hwTBC0ebKKSHniNatfdr
+	uPSXUejxxZUsgPLQOrxqiR75dOKPHiYnh4Jl2vI/LwsjhgMhJ2Rd5I2M=
+X-Google-Smtp-Source: AGHT+IEIsBM0KWPcaVd/5cBnAeEpBLEKuWbHcQwyCdy4OxNj64NE4dJ/rfFlowuRaEq8qZbJZ631NxjTlwEmBjOnEpifRqM42g2v
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:2510:b0:3d6:cd54:ba53 with SMTP id
+ e9e14a558f8ab-3da5b3422cdmr64996885ab.22.1746433309186; Mon, 05 May 2025
+ 01:21:49 -0700 (PDT)
+Date: Mon, 05 May 2025 01:21:49 -0700
+In-Reply-To: <ba14c3e0e9a7636998638c7c2283a12a5dffa075.camel@codeconstruct.com.au>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6818751d.050a0220.11da1b.0046.GAE@google.com>
+Subject: Re: [syzbot] [net?] upstream test error: KMSAN: use-after-free in mctp_dump_addrinfo
+From: syzbot <syzbot+1065a199625a388fce60@syzkaller.appspotmail.com>
+To: matt@codeconstruct.com.au
+Cc: matt@codeconstruct.com.au, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Monday, May 5th, 2025 at 12:48 AM, Mingyen Hsieh <Mingyen.Hsieh@mediatek=
-.com> wrote:
+> #syz dup: uninit-value in mctp_dump_addrinfo
 
-> On Sun, 2025-05-04 at 00:39 +0200, Niklas Schnelle wrote:
-> >=20
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >=20
-> >=20
-> > On Wed, 2025-04-30 at 06:47 +0000, Mingyen Hsieh (=E8=AC=9D=E6=98=8E=
-=E8=AB=BA) wrote:
-> > > On Wed, 2025-04-30 at 01:14 +0000, fossben@pm.me=C2=A0wrote:
-> > > >=20
-> > > > External email : Please do not click links or open attachments
-> > > > until
-> > > > you have verified the sender or the content.
-> > > >=20
-> > > >=20
-> > > > Hello all,
-> > > >=20
-> > > > After upgrading to 6.14.3 on my PC with a MT7925 chip, I noticed
-> > > > that
-> > > > I could no longer ping *.local addresses provided by Avahi. In
-> > > > addition, I also noticed that I was not able to get a DHCP IPv6
-> > > > address from my router, no matter how many times I rebooted the
-> > > > router or reconnected with NetworkManager.
-> > > >=20
-> > > > Reverting to 6.14.2 fixes both mDNS and IPv6 addresses
-> > > > immediately.
-> > > > Going back to 6.14.3 immediately breaks mDNS again, but the IPv6
-> > > > address will stay there for a while before disappearing later,
-> > > > possibly because the DHCP lease expired? I am not sure exactly
-> > > > when
-> > > > it stops working.
-> > > >=20
-> > > > I've done a kernel bisect between 6.14.2 and 6.14.3 and found the
-> > > > offending commit that causes mDNS to fail:
-> > > >=20
-> > > > commit 80007d3f92fd018d0a052a706400e976b36e3c87
-> > > > Author: Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
-> > > > Date:=C2=A0=C2=A0 Tue Mar 4 16:08:50 2025 -0800
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0 wifi: mt76: mt7925: integrate *mlo_sta_cmd and *=
-sta_cmd
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0 commit cb1353ef34735ec1e5d9efa1fe966f05ff1dc1e1 =
-upstream.
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0 Integrate *mlo_sta_cmd and *sta_cmd for the MLO =
-firmware.
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0 Fixes: 86c051f2c418 ("wifi: mt76: mt7925: enabli=
-ng MLO when
-> > > > the
-> > > > firmware supports it")
-> > > >=20
-> > > > =C2=A0drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 59 ++++----=
----
-> > > > ----
-> > > > --------------------------------------------
-> > > > =C2=A01 file changed, 4 insertions(+), 55 deletions(-)
-> > > >=20
-> > > > I do not know if this same commit is also causing the IPv6 issues
-> > > > as
-> > > > testing that requires quite a bit of time to reproduce. What I do
-> > > > know with certainty as of this moment is that it definitely
-> > > > breaks in
-> > > > kernel 6.14.3.
-> > > >=20
-> > > > I've attached my hardware info as well as dmesg logs from the
-> > > > last
-> > > > working kernel from the bisect and 6.14.4 which exhibits the
-> > > > issue.
-> > > > Please let me know if there's any other info you need.
-> > > >=20
-> > > > Thanks!
-> > > > Benjamin Xiao
-> > >=20
-> > > Hi,
-> > >=20
-> > > Thanks for reporting this issue, we will aim into this.
-> > >=20
-> > > Can you provide me with your testing steps?
-> > >=20
-> > > Best Regards,
-> > > Yen.
-> > >=20
-> >=20
-> > Hi Yan,
-> >=20
-> > I see the same IPv6 issue on my Framework 13 (Ryzen 5 AI 340) with an
-> > mt7925e WiFI module. My setup is just a home router with native IPv6
-> > both for my uplink and in the LAN. The problems with IPv6 can already
-> > be seen just in the LAN for example by checking which IP was used for
-> > SSH, in my setup it should always be IPv6 but falls back to IPv4 in
-> > the
-> > broken state.
-> >=20
-> > As another data point, I tried reverting cb1353ef3473 ("wifi: mt76:
-> > mt7925: integrate *mlo_sta_cmd and *sta_cmd") on top of 6.15.-rc4.
-> > This
-> > fully restores IPv6 for me. Also note I'm running this with the
-> > mt7925
-> > firmware version 20250425073330 from linux-firmware's master branch
-> > as
-> > I had some dropped connections with earlier firmware.
-> >=20
-> > So it definitely looks like that commit also broke IPv6 and not just
-> > mDNS. Note that if if I use DHCPv6 instead of router advertisements,
-> > on
-> > the latest firmware, but without the revert, I get a global IPv6
-> > address added to the interface but then native IPv6 addresses are
-> > still
-> > uncreachable. With the offending patch reverted my SSH session to an
-> > IPv6 only host works fine and is stable. Also I'd be willing to test
-> > a
-> > proper fix as I rely on IPv6 heavily due to having to use CGNAT for
-> > IPv4 but not for IPv6.
-> >=20
-> >=20
-> > Thanks,
-> > Niklas
->=20
-> Hi Benjamin & Niklas,
->=20
-> Can you help to try this patch? I can get IPv6 address through this
-> patch.
->=20
-> If it can work at your environment as well, i will upstream it and add
-> test tag with you.
->=20
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-> b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-> index a42b584634ab..fd756f0d18f8 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-> @@ -2183,14 +2183,14 @@ mt7925_mcu_sta_cmd(struct mt76_phy *phy,
->                         mt7925_mcu_sta_mld_tlv(skb, info->vif, info-
-> >link_sta->sta);
->                         mt7925_mcu_sta_eht_mld_tlv(skb, info->vif,
-> info->link_sta->sta);
->                 }
-> -
-> -               mt7925_mcu_sta_hdr_trans_tlv(skb, info->vif, info-
-> >link_sta);
->         }
->=20
->         if (!info->enable) {
->                 mt7925_mcu_sta_remove_tlv(skb);
->                 mt76_connac_mcu_add_tlv(skb, STA_REC_MLD_OFF,
->                                         sizeof(struct tlv));
-> +       } else {
-> +               mt7925_mcu_sta_hdr_trans_tlv(skb, info->vif, info-
-> >link_sta);
->         }
->=20
->         return mt76_mcu_skb_send_msg(dev, skb, info->cmd, true);
->=20
->=20
-> Thanks~
-> Yen.
+can't find the dup bug
 
-Hi Yen,
-
-I manually applied the changes on top of 6.14.5 and mDNS seems to work alon=
-g with IPv6! I will do more testing for the rest of the day to see if the i=
-ssue is completely fixed but so far looks good at least for the 5 minutes I=
-'ve been testing it.
-
-Thanks for the fix,
-Ben
+>
+> On Thu, 2025-05-01 at 04:15 -0700, syzbot wrote:
+>> Hello,
+>> 
+>> syzbot found the following issue on:
+>> 
+>> HEAD commit:    4f79eaa2ceac kbuild: Properly disable -Wunterminated-strin..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=15bc71b3980000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=53c85d265a8f3692
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=1065a199625a388fce60
+>> compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+>> 
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/3594998c29f0/disk-4f79eaa2.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/2cd908ac5281/vmlinux-4f79eaa2.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/5ea15b7bacde/bzImage-4f79eaa2.xz
+>> 
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+1065a199625a388fce60@syzkaller.appspotmail.com
+>> 
+>> =====================================================
+>> BUG: KMSAN: use-after-free in mctp_dump_addrinfo+0x208/0xac0 net/mctp/device.c:128
+>>  mctp_dump_addrinfo+0x208/0xac0 net/mctp/device.c:128
+>>  rtnl_dump_all+0x3ec/0x5b0 net/core/rtnetlink.c:4380
+>>  rtnl_dumpit+0xd5/0x2f0 net/core/rtnetlink.c:6824
+>>  netlink_dump+0x97b/0x1690 net/netlink/af_netlink.c:2309
+>>  __netlink_dump_start+0x716/0xd60 net/netlink/af_netlink.c:2424
+>>  netlink_dump_start include/linux/netlink.h:340 [inline]
+>>  rtnetlink_dump_start net/core/rtnetlink.c:6853 [inline]
+>>  rtnetlink_rcv_msg+0x1262/0x14b0 net/core/rtnetlink.c:6920
+>>  netlink_rcv_skb+0x54a/0x680 net/netlink/af_netlink.c:2534
+>>  rtnetlink_rcv+0x35/0x40 net/core/rtnetlink.c:6982
+>>  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>>  netlink_unicast+0xed5/0x1290 net/netlink/af_netlink.c:1339
+>>  netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1883
+>>  sock_sendmsg_nosec net/socket.c:712 [inline]
+>>  __sock_sendmsg+0x330/0x3d0 net/socket.c:727
+>>  __sys_sendto+0x590/0x710 net/socket.c:2180
+>>  __do_sys_sendto net/socket.c:2187 [inline]
+>>  __se_sys_sendto net/socket.c:2183 [inline]
+>>  __x64_sys_sendto+0x130/0x200 net/socket.c:2183
+>>  x64_sys_call+0x3c0b/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:45
+>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> 
+>> Uninit was created at:
+>>  slab_free_hook mm/slub.c:2324 [inline]
+>>  slab_free mm/slub.c:4656 [inline]
+>>  kmem_cache_free+0x286/0xf00 mm/slub.c:4758
+>>  skb_kfree_head net/core/skbuff.c:1056 [inline]
+>>  skb_free_head net/core/skbuff.c:1070 [inline]
+>>  skb_release_data+0xe56/0x1110 net/core/skbuff.c:1097
+>>  skb_release_all net/core/skbuff.c:1162 [inline]
+>>  __kfree_skb+0x6b/0x260 net/core/skbuff.c:1176
+>>  consume_skb+0x83/0x230 net/core/skbuff.c:1408
+>>  netlink_broadcast_filtered+0x21b6/0x2370 net/netlink/af_netlink.c:1524
+>>  nlmsg_multicast_filtered include/net/netlink.h:1129 [inline]
+>>  nlmsg_multicast include/net/netlink.h:1148 [inline]
+>>  nlmsg_notify+0x15b/0x2f0 net/netlink/af_netlink.c:2577
+>>  rtnl_notify+0xba/0x100 net/core/rtnetlink.c:958
+>>  inet6_rt_notify+0x27d/0x4a0 net/ipv6/route.c:6270
+>>  fib6_add_rt2node net/ipv6/ip6_fib.c:1259 [inline]
+>>  fib6_add+0x33c7/0x6c70 net/ipv6/ip6_fib.c:1488
+>>  __ip6_ins_rt net/ipv6/route.c:1351 [inline]
+>>  ip6_ins_rt+0xc0/0x170 net/ipv6/route.c:1361
+>>  __ipv6_ifa_notify+0x851/0x1990 net/ipv6/addrconf.c:6283
+>>  ipv6_ifa_notify net/ipv6/addrconf.c:6322 [inline]
+>>  add_addr+0x301/0x4c0 net/ipv6/addrconf.c:3206
+>>  init_loopback net/ipv6/addrconf.c:3289 [inline]
+>>  addrconf_init_auto_addrs+0xb53/0x10e0 net/ipv6/addrconf.c:3564
+>>  addrconf_notify+0x1643/0x1d10 net/ipv6/addrconf.c:3741
+>>  notifier_call_chain kernel/notifier.c:85 [inline]
+>>  raw_notifier_call_chain+0xdd/0x410 kernel/notifier.c:453
+>>  call_netdevice_notifiers_info+0x1ac/0x2b0 net/core/dev.c:2176
+>>  call_netdevice_notifiers_extack net/core/dev.c:2214 [inline]
+>>  call_netdevice_notifiers net/core/dev.c:2228 [inline]
+>>  __dev_notify_flags+0x20d/0x3c0 net/core/dev.c:-1
+>>  netif_change_flags+0x162/0x1e0 net/core/dev.c:9434
+>>  dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
+>>  devinet_ioctl+0x1186/0x2500 net/ipv4/devinet.c:1200
+>>  inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1001
+>>  sock_do_ioctl+0x9c/0x480 net/socket.c:1190
+>>  sock_ioctl+0x70b/0xd60 net/socket.c:1311
+>>  vfs_ioctl fs/ioctl.c:51 [inline]
+>>  __do_sys_ioctl fs/ioctl.c:906 [inline]
+>>  __se_sys_ioctl+0x239/0x400 fs/ioctl.c:892
+>>  __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:892
+>>  x64_sys_call+0x1ebe/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:17
+>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> 
+>> CPU: 1 UID: 0 PID: 5440 Comm: dhcpcd Not tainted 6.15.0-rc4-syzkaller-00052-g4f79eaa2ceac #0 PREEMPT(undef) 
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
+>> =====================================================
+>> 
+>> 
+>> ---
+>> This report is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>> 
+>> syzbot will keep track of this issue. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>> 
+>> If the report is already addressed, let syzbot know by replying with:
+>> #syz fix: exact-commit-title
+>> 
+>> If you want to overwrite report's subsystems, reply with:
+>> #syz set subsystems: new-subsystem
+>> (See the list of subsystem names on the web dashboard)
+>> 
+>> If the report is a duplicate of another one, reply with:
+>> #syz dup: exact-subject-of-another-report
+>> 
+>> If you want to undo deduplication, reply with:
+>> #syz undup
+>
 
