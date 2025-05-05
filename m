@@ -1,132 +1,76 @@
-Return-Path: <linux-kernel+bounces-633106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521E3AAA204
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:53:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD34CAA9EC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7755A37DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00293AFED4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDB22D3A72;
-	Mon,  5 May 2025 22:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66207275103;
+	Mon,  5 May 2025 22:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7OXpQu/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="byIUF+O8"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FD42D3229;
-	Mon,  5 May 2025 22:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD511A2643;
+	Mon,  5 May 2025 22:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483641; cv=none; b=ZVmjdLdW5mW/F3acKTIHcBUoeYY2TwxnfiGYdApokWJ72OkmrzZG/WuhvZzNCrnbXwEG//GEWR2AKV81XMFsvLVBAUmmiTtlsY9GOCGj2I14D/WHH/9790T/F3FgRSMXNofXeTX9XJHkvfsmcXVtrO9isUQ0Tf/tMuJR8ofMy7s=
+	t=1746482780; cv=none; b=Ii+5lFGjBxspActnGlIGCYKX4Z+7e34EfhAFntLGvQcRGJokwjUcMLzaYhmmpPve9BszGlhljhJEBtfvfp1GAL4DwfpeszbzH5h7GKDlrMzkedTGtUhLY2B1SG07gAlJQRGMcSkCf/tEmd3DkAzXjs5sA1q2OBUomyFtzLm+Umc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483641; c=relaxed/simple;
-	bh=i8k4kAuOA12gAeUKPjXuKQ3wEZQVKFo+gD7Ede6jyUQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lxcyxrLzLFw4jK4Q36iBWG4uSs9L1FUYefj4M0cLwWuT+wFi1WBf9Xb/UdABBiKs775sN7OjDFrX3jv+pGLUnNBsMQOXMlIyNIMhmr4HLvC9ECBjl2piBaBYYqf988H8hlxih6qXx9Q+N2z+8cPe/V5/H4kEz+tpoo1K0Lu3RbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7OXpQu/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B13E1C4CEF2;
-	Mon,  5 May 2025 22:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746483640;
-	bh=i8k4kAuOA12gAeUKPjXuKQ3wEZQVKFo+gD7Ede6jyUQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e7OXpQu/mxri18axqEyS8ARu47K1cUkWysOY8d1oLUG/99Z4HGzplDHaBCSNVj12L
-	 ikEfQfDPobeI3ZqDOm3mopMTk4JofZwcSxlsrbzYMr7LAR1O2V64GBr3NqesOvAXiR
-	 0FsxyuxkN1AWUIpFnQBunmeaP0lLJ/GtrkRIKxbyogc7AUksXaOa3CsDg8h5CxH0+D
-	 3DrkCvhn33D4Ma2MA4tchk38tEWeea8/5PSpg/KONIXmncWOFIYgqyA8T/qbDowYNa
-	 tZHUg3nVOwgLQau6FrmAx5wfYPYfRnVWmE9iXmv/iTKYejcTCgrrdG41Glxnd/6dv4
-	 IDrNB1WiSJ67g==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ryan Walklin <ryan@testtoast.com>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Philippe Simons <simons.philippe@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	lgirdwood@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	wens@csie.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	csokas.bence@prolan.hu,
-	andre.przywara@arm.com,
-	mesihkilinc@gmail.com,
-	codekipper@gmail.com,
-	jbrunet@baylibre.com,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.14 154/642] ASoC: sun4i-codec: correct dapm widgets and controls for h616
-Date: Mon,  5 May 2025 18:06:10 -0400
-Message-Id: <20250505221419.2672473-154-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
-References: <20250505221419.2672473-1-sashal@kernel.org>
+	s=arc-20240116; t=1746482780; c=relaxed/simple;
+	bh=QeYxcZ620nIqsAAulu80rzE9jrLBS6DmQ0WJHctbUGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OX/Yl3WplWp4+y0sV1bckrJNe6Xbf953+Fu+BHWe7vb77me2XdU999xMp1Uyajj+kHwrr/y5Y/9yaPpedv0ZHK3eyPq+Yi4Abd7zFb/+rRESODcDl75YvfDdekEjz9sNqxODwQSZAIhm0sHA799ZWZ1eH4w7Zg/IrDgkAaPB3L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=byIUF+O8; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=qf0Fru7cE//Ye6JId65UaMwa0EBbb7eRuVit8alUl+c=; b=byIUF+O8/dLC8WTrmq+XtoILGg
+	DsY5BqPTRbXLyTiDFWPpHIo2kL6vf7y8eHVHd2sVm5tsfwtlrjQsyUoJ1Up3pGqGHJxvV79bCLsAw
+	/rCaj3wSB5iXvkhN+6gERQ6PElSfF3L+wE9BxHFIsn02zKIsj2sWHNeCgN8OIQQ3RQAM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uC3ww-00BdoD-Jj; Tue, 06 May 2025 00:06:10 +0200
+Date: Tue, 6 May 2025 00:06:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Michael Klein <michael@fossekall.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next v7 3/6] net: phy: realtek: add RTL8211F register
+ defines
+Message-ID: <7bf39790-5926-41c3-9513-fe1738d6ebdc@lunn.ch>
+References: <20250504172916.243185-1-michael@fossekall.de>
+ <20250504172916.243185-4-michael@fossekall.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.5
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250504172916.243185-4-michael@fossekall.de>
 
-From: Ryan Walklin <ryan@testtoast.com>
+On Sun, May 04, 2025 at 07:29:13PM +0200, Michael Klein wrote:
+> Add some more defines for RTL8211F page and register numbers.
+> 
+> Signed-off-by: Michael Klein <michael@fossekall.de>
 
-[ Upstream commit ae5f76d4044d1580849316c49290678605e0889d ]
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-The previous H616 support patch added a single LINEOUT DAPM pin switch
-to the card controls. As the codec in this SoC only has a single route,
-this seemed reasonable at the time, however is redundant given the
-existing DAPM codec widget definitions controlling the digital and
-analog sides of the codec.
-
-It is also insufficient to describe the scenario where separate
-components (muxes, jack detection etc) are used to modify the audio
-route external to the SoC. For example the Anbernic RG(##)XX series of
-devices uses a headphone jack detection switch, GPIO-controlled speaker
-amplifier and a passive external mux chip to route audio.
-
-Remove the redundant LINEOUT card control, and add a Speaker pin switch
-control and Headphone DAPM widget to allow control of the above
-hardware.
-
-Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-Signed-off-by: Ryan Walklin <ryan@testtoast.com>
-Tested-by: Philippe Simons <simons.philippe@gmail.com>
-Link: https://patch.msgid.link/20250214220247.10810-3-ryan@testtoast.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/sunxi/sun4i-codec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-index 06e85b34fdf68..3701f56c72756 100644
---- a/sound/soc/sunxi/sun4i-codec.c
-+++ b/sound/soc/sunxi/sun4i-codec.c
-@@ -1962,10 +1962,11 @@ static const struct snd_soc_component_driver sun50i_h616_codec_codec = {
- };
- 
- static const struct snd_kcontrol_new sun50i_h616_card_controls[] = {
--	SOC_DAPM_PIN_SWITCH("LINEOUT"),
-+	SOC_DAPM_PIN_SWITCH("Speaker"),
- };
- 
- static const struct snd_soc_dapm_widget sun50i_h616_codec_card_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("Headphone", NULL),
- 	SND_SOC_DAPM_LINE("Line Out", NULL),
- 	SND_SOC_DAPM_SPK("Speaker", sun4i_codec_spk_event),
- };
--- 
-2.39.5
-
+    Andrew
 
