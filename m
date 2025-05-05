@@ -1,492 +1,164 @@
-Return-Path: <linux-kernel+bounces-632100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921EBAA928C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:58:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BB1AA9289
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC8B3AC0FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:57:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 473691886442
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750A6207A27;
-	Mon,  5 May 2025 11:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A24020B1F4;
+	Mon,  5 May 2025 11:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sfeMtfod"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O7S0bVWS"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A762A1DDC1B;
-	Mon,  5 May 2025 11:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC882066F7
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 11:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746446261; cv=none; b=habyf17ZlwpKDethvjwh4pqDvuw6dMzbadzRvZhUi7++NsX4Ba50UxUKd6Ag/Y8R+MBa6HgcdC5+YZnlQzxhzzFXiCNQZvl6VL8985XcSGQm/+/YEOc+skZdmbMFkgBYcGYpSe3sBKhS8vKj/EO9HDxtylrRMurE7TR70A5/bjM=
+	t=1746446252; cv=none; b=GIua5pHT2Lwzl57zFKeR9DoCaZ+YRSkVZM2z2lqeGonN7RxaktA+NXzDkcGxluO4QSX7JVwt5fqmeNL6gsvdrdGU8G7vDX1s0JqcmMl5c9+sGtNgLiSMsptkaQESqdTcgcdzEoKurvvU4LQ3MyoEHotsq8g9b+7SA1GMdwiIGSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746446261; c=relaxed/simple;
-	bh=v9h8n5Hu4zD+xGqw0zIAxd+iJP7j/KjeKe8bqqrRsIA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pv53KNC9aO/3Ep5YvBlrcFgbtzBWnreFNnee4032PMn+xCjItuX9jeOFSsnqy/HovT5U0Nw+k0q329ax7q++2BA3txl5uPMnxzKPpJ11yIEdXcQa1rTVEqlzy7EztFknmEbjmyVlu5sEk0EvYU0NKV2+055WFgEjRMdaglOnHWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sfeMtfod; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 545BvNt7753533
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 5 May 2025 06:57:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746446243;
-	bh=FghJ+OaapD/XWOZy3Fppzsc6MHEbllXdTcqrPo143bI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=sfeMtfodpQDUqEwBSj2+1QSEcJO07Dngs9t09RQngqbYXuASR1p3odvaCroboulk+
-	 nFqa+g8IsgVdFzxyzKy+GeRqmRYiA9HI/akO7NEfdbbGmnT6Fhem8ejX28i0GYNF53
-	 eUboA0M23NOJK9NXAm8ySqBAi2at6V1W3yOosaLk=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 545BvNFi017950
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 5 May 2025 06:57:23 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 5
- May 2025 06:57:22 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 5 May 2025 06:57:22 -0500
-Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [172.24.227.115])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 545Bv7A1004832;
-	Mon, 5 May 2025 06:57:19 -0500
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <vaishnav.a@ti.com>, <u-kumar1@ti.com>, <r-donadkar@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <jai.luthra@linux.dev>, <linux-kernel@vger.kernel.org>,
-        <y-abhilashchandra@ti.com>
-Subject: [PATCH 2/2] arm64: dts: ti: k3-j722s-evm: Add overlay for TEVI OV5640
-Date: Mon, 5 May 2025 17:27:00 +0530
-Message-ID: <20250505115700.500979-3-y-abhilashchandra@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250505115700.500979-1-y-abhilashchandra@ti.com>
-References: <20250505115700.500979-1-y-abhilashchandra@ti.com>
+	s=arc-20240116; t=1746446252; c=relaxed/simple;
+	bh=qySfuoPl9wV07OnVIwdvGpKvtcyDus4i0vcs8YMKyZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O1MLRxrJsX3flUg7KJ9VS5PCLWJCnxAD19lLAN3nygGpMD+z0pG4ms6rggK6k46G7d6aSic9vGZRbOWB3We1rv4f7rVwycs7JyfV9vTss/b1WDqfKEiSlezjWsgPu13Isi7L1ntwtxHgcXVizb42N9N7nLRYDRXHXq1txvAoqSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O7S0bVWS; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so6372486a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 04:57:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1746446249; x=1747051049; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kMKaPde6OkE/AtVUsHGGgX212tPSCHNNuxA10fp7Sb0=;
+        b=O7S0bVWS8cwnbONviLMaVDXCjDn0VnD9jXBhxRTbZcAttsAkOQ3BOdNYGR8wDl3UHi
+         aCa8VsRTjfKdupB9IkKeBECkrk9KvQ0hXSU+0Z4EUooxZArSjez3dwVGFiVPY/ZIumow
+         3G4oRRiP5B+mcuUDKkf9GVtEUg3eTA3303e/6HpZRYKHqRFFBTZ+sf+yGRfXRPNRiPh9
+         VR2iDuwIVi+KDfJtPL90rLLcrqQlHdgW4a2Oj6wYWrvZgNP1c+pl4Wtz/K9Ts49AcH6I
+         FauBby6+Oh99CQonL/4H1CyFFZpWOAXAotMQ6/kauZxZG4YR9TjVlO3TGwqm3iPYY4Hi
+         VojA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746446249; x=1747051049;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kMKaPde6OkE/AtVUsHGGgX212tPSCHNNuxA10fp7Sb0=;
+        b=CxK+qN6PKzqzM3TMNMjQ10MCraBzLPfgQLJw1kaDI3ZCKXFxAYujTtlzrtv0FgwXBp
+         qqyzYd+jAMDI4h8G07z5nWDIGksT3t5L3ZPElpSdpFB1BPkpNksFur6AOCwXiTwIvUeC
+         hWTgmvSftYJOWyktZ6QkikN8e21cxlpmXizKFUtFP2bRP1S5x1s5WESNvX3fNJx28+ri
+         8YG0U69IO3aYJgWuMTzClcGYSGIXr8qMOmOYVbssRj51zabNXu6h/uYoK/wfvMrsdN2X
+         yyQNlR4qzEfkP+IAv4hECa+1lc/OBwgyGH3xIODCu6tY8L0HZ9aFRVc6VSIMRNvROshA
+         Bskg==
+X-Forwarded-Encrypted: i=1; AJvYcCWacwl0mY7daARGRpqaGordXwxO/v3R32gC6B/mPxbx9rC1NCbcOpqQIRLuype4jL/9QhuRYHfkCJ9dpwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSQauNOJymxAtwfkUIn6DVanC4486ZnPWNKpf7lJUNChzIN3I+
+	7xM+auIhlX9QM+jqwlwMmpVGH4k3FA74rijVo/ccnH8jzJ2TVCYAQwNCewqLS/4=
+X-Gm-Gg: ASbGncsoK0rpyBY0drIhkq+YbrcLmh+qSlR2zJTrwIKt2DdtXic+Ux/FS6P0aTAmYf8
+	k1w5VuxbzHGc5mK52+RhLPxioetrdGtO0GZT1j4MOFQ6GhT/qWcIZf/4ThCBelMSY/x1u1Qe9QI
+	7g8zDwzWsx3ZFf2+QsYhn7ITVNoY1svTC179v+AfF55dYF/llzb7Td0BastILNyONvtaV+uPef3
+	m+NQUnl3xEKGkvv9tW3x7iWXLO7KDR4nMv6wapy4dK5M+DLatDF6Lpi9fpB67vxnSmSXvTpw4T9
+	AJYmGvk4LInMOUVgR0QcGMkD81HB2skzHtCoqtSCFZ4=
+X-Google-Smtp-Source: AGHT+IFiyeoBtX6BSQ4FfqUekWlXlO5jzJ6Ey3HdmksDyNABdshCZwf6dxx6rks8EwQBNJy4ucHIFg==
+X-Received: by 2002:a17:906:c115:b0:ac7:cfcb:c3e3 with SMTP id a640c23a62f3a-ad1a4acc6c3mr639033466b.45.1746446248779;
+        Mon, 05 May 2025 04:57:28 -0700 (PDT)
+Received: from [10.100.51.48] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891478fasm482865566b.26.2025.05.05.04.57.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 04:57:28 -0700 (PDT)
+Message-ID: <0aa0c9b8-2d6a-48e8-9a57-df2583f26d14@suse.com>
+Date: Mon, 5 May 2025 13:57:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] gendwarfksyms: Add a kABI rule to override byte_size
+ attributes
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@samsung.com>,
+ linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250430214049.2658716-6-samitolvanen@google.com>
+ <20250430214049.2658716-8-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250430214049.2658716-8-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Vaishnav Achath <vaishnav.a@ti.com>
+On 4/30/25 23:40, Sami Tolvanen wrote:
+> A data structure can be partially opaque to modules if its
+> allocation is handled by the core kernel, and modules only need
+> to access some of its members. In this situation, it's possible
+> to append new members to the structure without breaking the ABI,
+> as long as the layout for the original members remains unchanged.
+> For example, consider the following struct:
+> 
+>   struct s {
+>           unsigned long a;
+>           void *p;
+>   };
+> 
+> gendwarfksyms --stable --dump-dies produces the following type
+> expansion:
+> 
+>   variable structure_type s {
+>     member base_type long unsigned int byte_size(8) encoding(7) a
+>       data_member_location(0) ,
+>     member pointer_type {
+>       base_type void
+>     } byte_size(8) p data_member_location(8)
+>   } byte_size(16)
+> 
+> To append new members, we can use the KABI_IGNORE() macro to
+> hide them from gendwarfksyms --stable:
+> 
+>   struct s {
+>           /* old members with unchanged layout */
+>           unsigned long a;
+>           void *p;
+> 
+>           /* new members not accessed by modules */
+>           KABI_IGNORE(0, unsigned long n);
+>   };
+> 
+> However, we can't hide the fact that adding new members changes
+> the struct size, as seen in the updated type string:
+> 
+>   variable structure_type s {
+>     member base_type long unsigned int byte_size(8) encoding(7) a
+>       data_member_location(0) ,
+>     member pointer_type {
+>       base_type void
+>     } byte_size(8) p data_member_location(8)
+>   } byte_size(24)
+> 
+> In order to support this use case, add a kABI rule that makes it
+> possible to override the byte_size attribute for types:
+> 
+>   /*
+>    * struct s allocation is handled by the kernel, so
+>    * appending new members without changing the original
+>    * layout won't break the ABI.
+>    */
+>   KABI_BYTE_SIZE(s, 16);
+> 
+> This results in a type string that's unchanged from the original
+> and therefore, won't change versions for symbols that reference
+> the changed structure.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 
-TechNexion TEVI OV5640 camera is a 5MP camera that can be used with
-J722S EVM through the 22-pin CSI-RX connector. Add a reference overlay
-for quad TEVI OV5640 modules on J722S EVM.
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
 
-Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
-Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
----
- arch/arm64/boot/dts/ti/Makefile               |   4 +
- .../k3-j722s-evm-csi2-quad-tevi-ov5640.dtso   | 358 ++++++++++++++++++
- 2 files changed, 362 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
-
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index 829a3b028466..76b750e4b8a8 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -123,6 +123,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j721s2-evm-pcie1-ep.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am67a-beagley-ai.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
-+dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-tevi-ov5640.dtbo
- 
- # Boards with J784s4 SoC
- dtb-$(CONFIG_ARCH_K3) += k3-am69-sk.dtb
-@@ -220,6 +221,8 @@ k3-j742s2-evm-usb0-type-a-dtbs := k3-j742s2-evm.dtb \
- 	k3-j784s4-j742s2-evm-usb0-type-a.dtbo
- k3-j722s-evm-csi2-quad-rpi-cam-imx219-dtbs := k3-j722s-evm.dtb \
- 	k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
-+k3-j722s-evm-csi2-quad-tevi-ov5640-dtbs := k3-j722s-evm.dtb \
-+	k3-j722s-evm-csi2-quad-tevi-ov5640.dtbo
- k3-j784s4-evm-pcie0-pcie1-ep-dtbs := k3-j784s4-evm.dtb \
- 	k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- k3-j784s4-evm-quad-port-eth-exp1-dtbs := k3-j784s4-evm.dtb \
-@@ -258,6 +261,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
- 	k3-j721s2-evm-pcie1-ep.dtb \
- 	k3-j742s2-evm-usb0-type-a.dtb \
- 	k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtb \
-+	k3-j722s-evm-csi2-quad-tevi-ov5640.dtb \
- 	k3-j784s4-evm-pcie0-pcie1-ep.dtb \
- 	k3-j784s4-evm-quad-port-eth-exp1.dtb \
- 	k3-j784s4-evm-usb0-type-a.dtb \
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
-new file mode 100644
-index 000000000000..537224ea60e3
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
-@@ -0,0 +1,358 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * 4 x TEVI OV5640 MIPI Camera module on RPI camera connector.
-+ *
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include "k3-pinctrl.h"
-+
-+&{/} {
-+	clk_ov5640_fixed: clock-24000000 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+	};
-+
-+	reg_2p8v: regulator-2p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "2P8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&vdd_sd_dv>;
-+		regulator-always-on;
-+	};
-+
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vdd_sd_dv>;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vdd_sd_dv>;
-+		regulator-always-on;
-+	};
-+};
-+
-+
-+&main_pmx0 {
-+	cam0_reset_pins_default: cam0-default-reset-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x03c, PIN_OUTPUT, 7)
-+		>;
-+	};
-+
-+	cam1_reset_pins_default: cam1-default-reset-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x044, PIN_OUTPUT, 7)
-+		>;
-+	};
-+
-+	cam2_reset_pins_default: cam2-default-reset-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x04c, PIN_OUTPUT, 7)
-+		>;
-+	};
-+
-+	cam3_reset_pins_default: cam3-default-reset-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x054, PIN_OUTPUT, 7)
-+		>;
-+	};
-+};
-+
-+&exp1 {
-+	p06-hog{
-+		/* P06 - CSI01_MUX_SEL_2 */
-+		gpio-hog;
-+		gpios = <6 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "CSI01_MUX_SEL_2";
-+	};
-+
-+	p07-hog{
-+		/* P01 - CSI23_MUX_SEL_2 */
-+		gpio-hog;
-+		gpios = <7 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "CSI23_MUX_SEL_2";
-+	};
-+};
-+
-+&main_gpio0 {
-+	p15-hog {
-+		/* P15 - CSI2_CAMERA_GPIO1 */
-+		gpio-hog;
-+		gpios = <15 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "CSI2_CAMERA_GPIO1";
-+	};
-+
-+	p17-hog {
-+		/* P17 - CSI2_CAMERA_GPIO2 */
-+		gpio-hog;
-+		gpios = <17 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "CSI2_CAMERA_GPIO2";
-+	};
-+
-+	p19-hog {
-+		/* P19 - CSI2_CAMERA_GPIO3 */
-+		gpio-hog;
-+		gpios = <19 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "CSI2_CAMERA_GPIO3";
-+	};
-+
-+	p21-hog {
-+		/* P21 - CSI2_CAMERA_GPIO4 */
-+		gpio-hog;
-+		gpios = <21 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "CSI2_CAMERA_GPIO4";
-+	};
-+};
-+
-+&pca9543_0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	i2c@0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0>;
-+
-+		ov5640_0: camera@3c {
-+			compatible = "ovti,ov5640";
-+			reg = <0x3c>;
-+			clocks = <&clk_ov5640_fixed>;
-+			clock-names = "xclk";
-+
-+			AVDD-supply = <&reg_2p8v>;
-+			DOVDD-supply = <&reg_1p8v>;
-+			DVDD-supply = <&reg_3p3v>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&cam0_reset_pins_default>;
-+
-+			port {
-+				csi2_cam0: endpoint {
-+					remote-endpoint = <&csi2rx0_in_sensor>;
-+					clock-lanes = <0>;
-+					data-lanes = <1 2>;
-+				};
-+			};
-+		};
-+	};
-+
-+	i2c@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <1>;
-+
-+		ov5640_1: camera@3c {
-+			compatible = "ovti,ov5640";
-+			reg = <0x3c>;
-+			clocks = <&clk_ov5640_fixed>;
-+			clock-names = "xclk";
-+
-+			AVDD-supply = <&reg_2p8v>;
-+			DOVDD-supply = <&reg_1p8v>;
-+			DVDD-supply = <&reg_3p3v>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&cam1_reset_pins_default>;
-+
-+			port {
-+				csi2_cam1: endpoint {
-+					remote-endpoint = <&csi2rx1_in_sensor>;
-+					clock-lanes = <0>;
-+					data-lanes = <1 2>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&pca9543_1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	i2c@0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0>;
-+
-+		ov5640_2: camera@3c {
-+			compatible = "ovti,ov5640";
-+			reg = <0x3c>;
-+			clocks = <&clk_ov5640_fixed>;
-+			clock-names = "xclk";
-+
-+			AVDD-supply = <&reg_2p8v>;
-+			DOVDD-supply = <&reg_1p8v>;
-+			DVDD-supply = <&reg_3p3v>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&cam2_reset_pins_default>;
-+
-+			port {
-+				csi2_cam2: endpoint {
-+					remote-endpoint = <&csi2rx2_in_sensor>;
-+					clock-lanes = <0>;
-+					data-lanes = <1 2>;
-+				};
-+			};
-+		};
-+	};
-+
-+	i2c@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <1>;
-+
-+		ov5640_3: camera@3c {
-+			compatible = "ovti,ov5640";
-+			reg = <0x3c>;
-+			clocks = <&clk_ov5640_fixed>;
-+			clock-names = "xclk";
-+
-+			AVDD-supply = <&reg_2p8v>;
-+			DOVDD-supply = <&reg_1p8v>;
-+			DVDD-supply = <&reg_3p3v>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&cam3_reset_pins_default>;
-+
-+			port {
-+				csi2_cam3: endpoint {
-+					remote-endpoint = <&csi2rx3_in_sensor>;
-+					clock-lanes = <0>;
-+					data-lanes = <1 2>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&cdns_csi2rx0 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi0_port0: port@0 {
-+			reg = <0>;
-+			status = "okay";
-+
-+			csi2rx0_in_sensor: endpoint {
-+				remote-endpoint = <&csi2_cam0>;
-+				bus-type = <4>; /* CSI2 DPHY */
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+};
-+
-+&cdns_csi2rx1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi1_port0: port@0 {
-+			reg = <0>;
-+			status = "okay";
-+
-+			csi2rx1_in_sensor: endpoint {
-+				remote-endpoint = <&csi2_cam1>;
-+				bus-type = <4>; /* CSI2 DPHY */
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+};
-+
-+&cdns_csi2rx2 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi2_port0: port@0 {
-+			reg = <0>;
-+			status = "okay";
-+
-+			csi2rx2_in_sensor: endpoint {
-+				remote-endpoint = <&csi2_cam2>;
-+				bus-type = <4>; /* CSI2 DPHY */
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+};
-+
-+&cdns_csi2rx3 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi3_port0: port@0 {
-+			reg = <0>;
-+			status = "okay";
-+
-+			csi2rx3_in_sensor: endpoint {
-+				remote-endpoint = <&csi2_cam3>;
-+				bus-type = <4>; /* CSI2 DPHY */
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+};
-+
-+&ti_csi2rx0 {
-+	status = "okay";
-+};
-+
-+&dphy0 {
-+	status = "okay";
-+};
-+
-+&ti_csi2rx1 {
-+	status = "okay";
-+};
-+
-+&dphy1 {
-+	status = "okay";
-+};
-+
-+
-+&ti_csi2rx2 {
-+	status = "okay";
-+};
-+
-+&dphy2 {
-+	status = "okay";
-+};
-+
-+
-+&ti_csi2rx3 {
-+	status = "okay";
-+};
-+
-+&dphy3 {
-+	status = "okay";
-+};
--- 
-2.34.1
-
+-- Petr
 
