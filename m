@@ -1,298 +1,210 @@
-Return-Path: <linux-kernel+bounces-632080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26EEAA923F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7EDFAA924A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB4C3A5654
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:43:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB3653B6A44
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C4E204680;
-	Mon,  5 May 2025 11:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73A91FDA6A;
+	Mon,  5 May 2025 11:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gk8ZF53a";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kUgyxaOo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S92r8YRB"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C9C1E5219;
-	Mon,  5 May 2025 11:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7702063F0;
+	Mon,  5 May 2025 11:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746445418; cv=none; b=U9ECi3axbo8/4c1avlj8XM/OhTX2pDiAG1zvgLOX1EfMikkibecoRv9J0AnLymT8ViDUx8bCJd7pHb9CSyMVZQDzxl4+fPLC0yNLDNCuZz+7YBmC7k0dfmd2TfdrRvnE+52InWXm1wr8dU9GfUzmKz5QjhuikL46ZA+Go0n5SQs=
+	t=1746445813; cv=none; b=U2Y8uPlbONp2U7tNR/BeMZLudVfwiB9twFk5oXhxqRBNQLhwIbDNZbhlOhc6oIIpU7WWqXSxvafex8HDnd85nzQ02Nc1PvNjj6muo3mJ4ifEZnlpCJJ6TU/63nBAyfKRgpJr1WSpbXzCvc8m6WFyz6MzC9uYCM85gpFmfV5BUNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746445418; c=relaxed/simple;
-	bh=gUrhLh98uxjh0zegPMm+AoREjmn791EQcGfFdgz6q/Y=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=QcgcI7Y87jd93Qh1VFlpmgyHveaNmAeR03cV07Bq3jNNF1EyKHo0B7N7TigIYrXv22pqoQ9WrCQ2XaqoIcTUPebnKqJebzYAEJjlxggPL15AMrd2VrDTPVcPWKmEq6Qwdvw6XcUJRGVkJk1zXVM4rvi9xApLwARAvBBoT/C4cUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gk8ZF53a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kUgyxaOo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 05 May 2025 11:43:29 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746445413;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E3qV84kubrP8h1aJ/Dasc0vKHhQrScDWYLE25IXJCHE=;
-	b=Gk8ZF53aqyuiAoWnQaCjYe2HZYlX5QXIY9Irxk7ftC44JLgsDJ2lpQ7cEyWWs+hMA5s3wl
-	wvw3FylzQnZig4p1QOpRIrOQ6jopbzMzawwqcq2ZwQRU8mrI3N7f4ygDiTePU5EkSEf2Wd
-	Rn5U/QGVREaV7lay/Q2NarEmoGiDUOkfpPmPUtYEs7w2XDG/g0SxmU4bUwYJj1iJ91uk22
-	1xGl72ekjm5001Vjdnifk9KcYl7fLtdhH01yD3B3OI7o1R8aDaj87NKd9rBMJfoCDibJMN
-	qbXCD4OhFYPVdzvx3ll8hd+a0YhA9Iu5HXz/692biyh3F798+V+xbX/6ahHafA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746445413;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E3qV84kubrP8h1aJ/Dasc0vKHhQrScDWYLE25IXJCHE=;
-	b=kUgyxaOo4hey+ETApz5phpIymhLBUNfr5cBIpOhJ0931axDji12pqW3BfuIpwhTlVXyM1D
-	UdV77ePhZhlfihCw==
-From: "tip-bot2 for Kees Cook" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fpu] x86/fpu: Restore fpu_thread_struct_whitelist() to fix
- CONFIG_HARDENED_USERCOPY=y crash
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Kees Cook <kees@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, "Chang S. Bae" <chang.seok.bae@intel.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Brian Gerst <brgerst@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-hardening@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <202505041418.F47130C4C8@keescook # Discussion #2>
-References: <202505041418.F47130C4C8@keescook # Discussion #2>
+	s=arc-20240116; t=1746445813; c=relaxed/simple;
+	bh=qQexBfIZsy8yop5EiW0+JAI8tUBYSzoNr18NJ7Z56w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKIuNQZ75u8zSmRSXL4sGIf/lz/1zxDt0bo7znjPlz0iKWEEaRdNF4q3Lz4Zc5yuwxtcDCqml9dnd96WdDFABLNtDWdcjlhaXLGbErW5gQMq+Pnrut903BFgyt3cpSgS5GPVSj6g6XKBu8vAUIY2gsZbNkQj0o6I0WucSy+9pjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S92r8YRB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5453iIan017516;
+	Mon, 5 May 2025 11:49:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=NAW+FJ
+	NyjFqwtJqZzMOnDM3E2VP8rF2PoFWySRO3URg=; b=S92r8YRBxAnfsjn2iN0dpN
+	2pjQFzZnj0IWzevPoOONHk3ByWCVxcoOxgz98RsFpIU61VSpaNQt4Wv9UC5gOVnC
+	CkFT0smnrEqWgNf49zRXZaAStWL94AcOmsl5Yb8oHUyPIN2kj7qJGvalOKTEGfPt
+	VOHyGh/bbcA8sURwU5MExkBqQNbi9hLblB+ADcy3uUdYpiQmZrC261A/hrkD9Re4
+	aS8aVwZU4C/GyNtXIzQDT252MdD7WMfBVSavUdwn/6ysPBzMrz3B58/7CM+ze1bT
+	81Spm0d44Hq3ZulSolyMiESntADd/7HrCNBv6xB4pvh/5LEzLwMZ14Us4q+Y9fUA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46eftkjsvx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 11:49:45 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 545BUCvd020358;
+	Mon, 5 May 2025 11:49:44 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46eftkjsvv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 11:49:44 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5459k2O8013880;
+	Mon, 5 May 2025 11:49:43 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46e0625pb7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 11:49:43 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 545BngPp36241730
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 May 2025 11:49:42 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1EB6B20049;
+	Mon,  5 May 2025 11:49:42 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3ECAF20040;
+	Mon,  5 May 2025 11:49:39 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.124.223.112])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  5 May 2025 11:49:39 +0000 (GMT)
+Date: Mon, 5 May 2025 17:19:34 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Ian Rogers <irogers@google.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        maddy@linux.ibm.com
+Subject: Re: [PATCH 3/4] perf python: Add evlist close and next methods
+Message-ID: <wu4cq5jilwtwdle2xuj5vuzz2cc6hx4whrbshkiw2pregk4xdi@lj7i53kssgur>
+References: <20250501093633.578010-1-gautam@linux.ibm.com>
+ <20250501093633.578010-4-gautam@linux.ibm.com>
+ <CAP-5=fX1qodprWrwK7yq2WYZNnLtiEe_rjvw0aJ7gXY2ma+Hzw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174644540908.22196.11861468097053965791.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fX1qodprWrwK7yq2WYZNnLtiEe_rjvw0aJ7gXY2ma+Hzw@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDExMSBTYWx0ZWRfX623FoS93JY6N j0Wymi06tOIr/07dp5Zg6tixKohVEpt8S67YHgmHXGL8RT5ykFRSE/DDKU5YYKKmFNIa8y7tT2h pdoJdG0diAdpSz0ttKbLMxIp7GU5a+CDM0TISRY9RtKhhFY+HwLIpO8KYMDY1MiWSuGnnKsR21V
+ QxpFsgIRg78l5MPQTZpCyTdIX/iYZ880CVmNqmW833LigGNLE35MC8nxy6z9JAyTW1lTiSJdhyc 5Xm3KG+tcGldw14kgn+oaNfMKMMYy5vC3ZE5b5/vOL4IhMoeRkEnyeFoKs6Bid5ok6sCUqEfz0+ 06Nwf3vdFZYVBayTm/mI/LE/OCeBy+kMajRlwCNsBv0Po8jFC43eWdESEsB8JSMsAn2abnR6blR
+ 9TQ3Cx627IXpSMDlpsKMEIkmrd5isXM0JUQIfLrTCr6TXiEUJGzFZcoNqXowdHbOLZSeElO7
+X-Proofpoint-GUID: bn9S-77Tu2AjFxpd8gRXjQGJQZer1yzW
+X-Authority-Analysis: v=2.4 cv=Q7vS452a c=1 sm=1 tr=0 ts=6818a5d9 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=xCs7A96TP6Cw99lmuhcA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: _qiyHADQZzXP0T4p6v3YZPU6F1W5NiFF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-05_05,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 phishscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ suspectscore=0 mlxscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505050111
 
-The following commit has been merged into the x86/fpu branch of tip:
+On Thu, May 01, 2025 at 08:49:08AM -0700, Ian Rogers wrote:
+> On Thu, May 1, 2025 at 2:37 AM Gautam Menghani <gautam@linux.ibm.com> wrote:
+> >
+> > Add support for the evlist close and next methods. The next method
+> > enables iterating over the evsels in an evlist.
+> >
+> > Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> > ---
+> >  tools/perf/util/python.c | 47 ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 47 insertions(+)
+> >
+> > diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> > index 5a4d2c9aaabd..599cb37600f1 100644
+> > --- a/tools/perf/util/python.c
+> > +++ b/tools/perf/util/python.c
+> > @@ -1163,6 +1163,16 @@ static PyObject *pyrf_evlist__open(struct pyrf_evlist *pevlist,
+> >         return Py_None;
+> >  }
+> >
+> > +static PyObject *pyrf_evlist__close(struct pyrf_evlist *pevlist)
+> > +{
+> > +       struct evlist *evlist = &pevlist->evlist;
+> > +
+> > +       evlist__close(evlist);
+> > +
+> > +       Py_INCREF(Py_None);
+> > +       return Py_None;
+> > +}
+> > +
+> >  static PyObject *pyrf_evlist__config(struct pyrf_evlist *pevlist)
+> >  {
+> >         struct record_opts opts = {
+> > @@ -1202,6 +1212,31 @@ static PyObject *pyrf_evlist__enable(struct pyrf_evlist *pevlist)
+> >         return Py_None;
+> >  }
+> >
+> > +static PyObject *pyrf_evlist__next(struct pyrf_evlist *pevlist,
+> > +                                  PyObject *args, PyObject *kwargs)
+> > +{
+> > +       struct evlist *evlist = &pevlist->evlist;
+> > +       PyObject *py_evsel;
+> > +       struct perf_evsel *pevsel;
+> > +       struct evsel *evsel;
+> > +       struct pyrf_evsel *next_evsel = PyObject_New(struct pyrf_evsel, &pyrf_evsel__type);
+> > +       static char *kwlist[] = { "evsel", NULL };
+> > +
+> > +       if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist,
+> > +                                        &py_evsel))
+> > +               return NULL;
+> > +
+> > +       pevsel = (py_evsel == Py_None) ? NULL : &(((struct pyrf_evsel *)py_evsel)->evsel.core);
+> > +       pevsel = perf_evlist__next(&(evlist->core), pevsel);
+> > +       if (pevsel != NULL) {
+> > +               evsel = container_of(pevsel, struct evsel, core);
+> > +               next_evsel = container_of(evsel, struct pyrf_evsel, evsel);
+> > +               return (PyObject *) next_evsel;
+> > +       }
+> > +
+> > +       return Py_None;
+> > +}
+> > +
+> 
+> Thanks for this! Have you looked at the existing iteration support?
+> There's an example here:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/python/tracepoint.py?h=perf-tools-next#n26
+> ```
+>     for ev in evlist:
+>         ev.sample_type = ev.sample_type & ~perf.SAMPLE_IP
+>         ev.read_format = 0
+> ```
+> In the next patch you have:
+> ```
+>         evsel = evlist.next(None)
+>         while evsel != None:
+>             counts = evsel.read(0, 0)
+>             print(counts.val, counts.ena, counts.run)
+>             evsel = evlist.next(evsel)
+> ```
+> I believe the former looks better. It also isn't clear to me if next
+> belongs on evlist or evsel.
 
-Commit-ID:     960bc2bcba5987a82530b9756e1f602a894cffa4
-Gitweb:        https://git.kernel.org/tip/960bc2bcba5987a82530b9756e1f602a894cffa4
-Author:        Kees Cook <kees@kernel.org>
-AuthorDate:    Sun, 04 May 2025 15:30:38 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 05 May 2025 13:24:32 +02:00
+Yes, the existing support would be the right way, I missed that. Will fix in
+v2.
 
-x86/fpu: Restore fpu_thread_struct_whitelist() to fix CONFIG_HARDENED_USERCOPY=y crash
+and regarding the next() function, I think we should keep it for evlist
+because for the C code it's defined in the context of evlist, so would
+avoid confusion. But since it is not needed for the iteration, should
+I keep it in v2?
 
-Borislav Petkov reported the following boot crash on x86-32,
-with CONFIG_HARDENED_USERCOPY=y:
-
-  |  usercopy: Kernel memory overwrite attempt detected to SLUB object 'task_struct' (offset 2112, size 160)!
-  |  ...
-  |  kernel BUG at mm/usercopy.c:102!
-
-So the useroffset and usersize arguments are what control the allowed
-window of copying in/out of the "task_struct" kmem cache:
-
-        /* create a slab on which task_structs can be allocated */
-        task_struct_whitelist(&useroffset, &usersize);
-        task_struct_cachep = kmem_cache_create_usercopy("task_struct",
-                        arch_task_struct_size, align,
-                        SLAB_PANIC|SLAB_ACCOUNT,
-                        useroffset, usersize, NULL);
-
-task_struct_whitelist() positions this window based on the location of
-the thread_struct within task_struct, and gets the arch-specific details
-via arch_thread_struct_whitelist(offset, size):
-
-	static void __init task_struct_whitelist(unsigned long *offset, unsigned long *size)
-	{
-		/* Fetch thread_struct whitelist for the architecture. */
-		arch_thread_struct_whitelist(offset, size);
-
-		/*
-		 * Handle zero-sized whitelist or empty thread_struct, otherwise
-		 * adjust offset to position of thread_struct in task_struct.
-		 */
-		if (unlikely(*size == 0))
-			*offset = 0;
-		else
-			*offset += offsetof(struct task_struct, thread);
-	}
-
-Commit cb7ca40a3882 ("x86/fpu: Make task_struct::thread constant size")
-removed the logic for the window, leaving:
-
-	static inline void
-	arch_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
-	{
-		*offset = 0;
-		*size = 0;
-	}
-
-So now there is no window that usercopy hardening will allow to be copied
-in/out of task_struct.
-
-But as reported above, there *is* a copy in copy_uabi_to_xstate(). (It
-seems there are several, actually.)
-
-	int copy_sigframe_from_user_to_xstate(struct task_struct *tsk,
-					      const void __user *ubuf)
-	{
-		return copy_uabi_to_xstate(x86_task_fpu(tsk)->fpstate, NULL, ubuf, &tsk->thread.pkru);
-	}
-
-This appears to be writing into x86_task_fpu(tsk)->fpstate. With or
-without CONFIG_X86_DEBUG_FPU, this resolves to:
-
-	((struct fpu *)((void *)(task) + sizeof(*(task))))
-
-i.e. the memory "after task_struct" is cast to "struct fpu", and the
-uses the "fpstate" pointer. How that pointer gets set looks to be
-variable, but I think the one we care about here is:
-
-        fpu->fpstate = &fpu->__fpstate;
-
-And struct fpu::__fpstate says:
-
-        struct fpstate                  __fpstate;
-        /*
-         * WARNING: '__fpstate' is dynamically-sized.  Do not put
-         * anything after it here.
-         */
-
-So we're still dealing with a dynamically sized thing, even if it's not
-within the literal struct task_struct -- it's still in the kmem cache,
-though.
-
-Looking at the kmem cache size, it has allocated "arch_task_struct_size"
-bytes, which is calculated in fpu__init_task_struct_size():
-
-        int task_size = sizeof(struct task_struct);
-
-        task_size += sizeof(struct fpu);
-
-        /*
-         * Subtract off the static size of the register state.
-         * It potentially has a bunch of padding.
-         */
-        task_size -= sizeof(union fpregs_state);
-
-        /*
-         * Add back the dynamically-calculated register state
-         * size.
-         */
-        task_size += fpu_kernel_cfg.default_size;
-
-        /*
-         * We dynamically size 'struct fpu', so we require that
-         * 'state' be at the end of 'it:
-         */
-        CHECK_MEMBER_AT_END_OF(struct fpu, __fpstate);
-
-        arch_task_struct_size = task_size;
-
-So, this is still copying out of the kmem cache for task_struct, and the
-window seems unchanged (still fpu regs). This is what the window was
-before:
-
-	void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
-	{
-		*offset = offsetof(struct thread_struct, fpu.__fpstate.regs);
-		*size = fpu_kernel_cfg.default_size;
-	}
-
-And the same commit I mentioned above removed it.
-
-I think the misunderstanding is here:
-
-  | The fpu_thread_struct_whitelist() quirk to hardened usercopy can be removed,
-  | now that the FPU structure is not embedded in the task struct anymore, which
-  | reduces text footprint a bit.
-
-Yes, FPU is no longer in task_struct, but it IS in the kmem cache named
-"task_struct", since the fpstate is still being allocated there.
-
-Partially revert the earlier mentioned commit, along with a
-recalculation of the fpstate regs location.
-
-Fixes: cb7ca40a3882 ("x86/fpu: Make task_struct::thread constant size")
-Reported-by: Borislav Petkov (AMD) <bp@alien8.de>
-Tested-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Kees Cook <kees@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-hardening@vger.kernel.org
-Link: https://lore.kernel.org/all/20250409211127.3544993-1-mingo@kernel.org/ # Discussion #1
-Link: https://lore.kernel.org/r/202505041418.F47130C4C8@keescook             # Discussion #2
----
- arch/x86/include/asm/processor.h | 12 +++++-------
- arch/x86/kernel/fpu/core.c       | 14 ++++++++++++++
- 2 files changed, 19 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index eaa7214..ad33903 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -522,14 +522,12 @@ extern struct fpu *x86_task_fpu(struct task_struct *task);
- # define x86_task_fpu(task)	((struct fpu *)((void *)(task) + sizeof(*(task))))
- #endif
- 
--/*
-- * X86 doesn't need any embedded-FPU-struct quirks:
-- */
--static inline void
--arch_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
-+extern void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size);
-+
-+static inline void arch_thread_struct_whitelist(unsigned long *offset,
-+						unsigned long *size)
- {
--	*offset = 0;
--	*size = 0;
-+	fpu_thread_struct_whitelist(offset, size);
- }
- 
- static inline void
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index fa13129..105b1b8 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -681,6 +681,20 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
- }
- 
- /*
-+ * While struct fpu is no longer part of struct thread_struct, it is still
-+ * allocated after struct task_struct in the "task_struct" kmem cache. But
-+ * since FPU is expected to be part of struct thread_struct, we have to
-+ * adjust for it here.
-+ */
-+void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
-+{
-+	/* The allocation follows struct task_struct. */
-+	*offset = sizeof(struct task_struct) - offsetof(struct task_struct, thread);
-+	*offset += offsetof(struct fpu, __fpstate.regs);
-+	*size = fpu_kernel_cfg.default_size;
-+}
-+
-+/*
-  * Drops current FPU state: deactivates the fpregs and
-  * the fpstate. NOTE: it still leaves previous contents
-  * in the fpregs in the eager-FPU case.
+Thanks,
+Gautam
 
