@@ -1,65 +1,60 @@
-Return-Path: <linux-kernel+bounces-633957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6881EAAAF17
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:10:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7920AAAEFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3696C3B614F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712321BA4E91
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D0E2ECE27;
-	Mon,  5 May 2025 23:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F2E2F2C6C;
+	Mon,  5 May 2025 23:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFldeN3E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvTsmBIP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00F22D86BD;
-	Mon,  5 May 2025 23:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0092E5DEC;
+	Mon,  5 May 2025 23:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486116; cv=none; b=r8quInaTrwYcKCtqvVyEj1uRLi82SOPha6b56Yjm37KeretX6su9cQBzDs/562+lfi82qPw28Ggba42zKWazS86sAZm0pdTE9Ahqtey/u6tUThkTyxcFuXiQCKu/HXeQdaD7KitfXEDwcRAUreUBSuomLV7a53TkjRyAr0rYcBs=
+	t=1746486120; cv=none; b=USELNMhnaN6s8Gfj8khKPpUgkgYvVgSrZLJ1Em6sMW71/afPFMG6GNvsBftJ2/I518PLsDjD0yvcR/yDY16Y96c0d/F7Y+sI/iovBNPwMvlwt+uyZ/6RappSXIDnquu2ClwMCCv1AGEa0nH5v4q3ga1IAy7lRwJjNXoqwNTIEtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486116; c=relaxed/simple;
-	bh=DnTblrR4D/psMAYOP4vqZkz38p2crC2C/s7GtDqO8mw=;
+	s=arc-20240116; t=1746486120; c=relaxed/simple;
+	bh=NhetDVpHwaNtQW9Pf4j1Qjez9peTYB0dwDkouFiyJuA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sG75HfvJ8R02DrGQBHwQUNWbQiUsFnVIYAnYxqd3vTTXYEOomxvB0vi2Is2eBgklhbZFn69ERd6pw8NJiDIiQto3qNCcCitnk6liWmvk4KNbmg1cwsieGJeJ/REr2kFX3kgiQCjJF5ii7hQzW5qaxjWQysPbPcd5vDjBhU0N8yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFldeN3E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1CA4C4CEE4;
-	Mon,  5 May 2025 23:01:52 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Io4mJRdAWc3nveQj82t88NfSu3LVTvVpj+NKkT4rwET1PVyEm/TlQDyN+rsndHckFJZXIQrcuDyYZR45ue7SQOOwKMmaBxrvG9omymt/0vEG61ikgahOtY9rCYIOB0wULD2BBV2QDV4czmw9n26PUK5qzTodm45tWWkMZdYE+TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvTsmBIP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A005C4CEE4;
+	Mon,  5 May 2025 23:01:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486114;
-	bh=DnTblrR4D/psMAYOP4vqZkz38p2crC2C/s7GtDqO8mw=;
+	s=k20201202; t=1746486118;
+	bh=NhetDVpHwaNtQW9Pf4j1Qjez9peTYB0dwDkouFiyJuA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bFldeN3EAtitzpxNglFKjomT4r6ZQLIbEcKmKRON8MST8PozbHCbnuAczx9XuN9gp
-	 cnXU2A3RWE0RZCW6JDUN5bPJHeWuDuJnyj6P+ntw+AG4/o2pKsTQyG50csbQpugT63
-	 Iu07cJ5EcqGM3BKQ3XXi6Z6fWdSggCm3rzUqJ6gsleYmSmWD9a7mfgE72wv+D5lFpl
-	 CUWXHTyUYeuJh1ucK3T5fXJ35YuumZlnzSwVLvuc/+EkRGXo92GrbaAsbHSyZJh9Vi
-	 8+gXXvLLsNUStNeuTJ+jP9wu1WlGnXFudFMUv96pt/jRVrX/xcPSeVUqGks9xx5osI
-	 X3wGipCvyY3hw==
+	b=KvTsmBIPx4fuFqf2ar8PpLMhw+IYtRpbr+xdIArIcu0bu2jc1YXKI07jJ0ne391vn
+	 bOF36nqOXpskVuiNuMyAaskyzjeaoNXOQTtgHzem+TIXGzfcu6uNakBWwyF5r3rDYv
+	 O4uUot6iLrViL5vKk/by1VmKXdUe8/5iv3sJZBL+7s1W5TY8RyXl180v17faCt/iUC
+	 Zv64JcxrmXp1Q7TG8YT8EAOAIFyGAMpAJLKU+qrYmRFMO07ryvgWbGYlYKLxukCkeZ
+	 VztKtZub8eWHeySS+OwPPTgKuiN+zznlZy9Z1yIp8nLFzuodpXORWPyH7OwovEcWhx
+	 7hSM40PUHXzzQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Waiman Long <longman@redhat.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Rik van Riel <riel@surriel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
+Cc: Konstantin Shkolnyy <kshk@linux.ibm.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>,
+	Jason Wang <jasowang@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	kirill.shutemov@linux.intel.com,
-	kai.huang@intel.com,
-	peterz@infradead.org,
-	brgerst@gmail.com,
-	pbonzini@redhat.com
-Subject: [PATCH AUTOSEL 6.6 159/294] x86/nmi: Add an emergency handler in nmi_desc & use it in nmi_shootdown_cpus()
-Date: Mon,  5 May 2025 18:54:19 -0400
-Message-Id: <20250505225634.2688578-159-sashal@kernel.org>
+	eperezma@redhat.com,
+	cratiu@nvidia.com,
+	tariqt@nvidia.com,
+	virtualization@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.6 161/294] vdpa/mlx5: Fix mlx5_vdpa_get_config() endianness on big-endian machines
+Date: Mon,  5 May 2025 18:54:21 -0400
+Message-Id: <20250505225634.2688578-161-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -69,175 +64,52 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Waiman Long <longman@redhat.com>
+From: Konstantin Shkolnyy <kshk@linux.ibm.com>
 
-[ Upstream commit fe37c699ae3eed6e02ee55fbf5cb9ceb7fcfd76c ]
+[ Upstream commit 439252e167ac45a5d46f573aac1da7d8f3e051ad ]
 
-Depending on the type of panics, it was found that the
-__register_nmi_handler() function can be called in NMI context from
-nmi_shootdown_cpus() leading to a lockdep splat:
+mlx5_vdpa_dev_add() doesn’t initialize mvdev->actual_features. It’s
+initialized later by mlx5_vdpa_set_driver_features(). However,
+mlx5_vdpa_get_config() depends on the VIRTIO_F_VERSION_1 flag in
+actual_features, to return data with correct endianness. When it’s called
+before mlx5_vdpa_set_driver_features(), the data are incorrectly returned
+as big-endian on big-endian machines, while QEMU then interprets them as
+little-endian.
 
-  WARNING: inconsistent lock state
-  inconsistent {INITIAL USE} -> {IN-NMI} usage.
+The fix is to initialize this VIRTIO_F_VERSION_1 as early as possible,
+especially considering that mlx5_vdpa_dev_add() insists on this flag to
+always be set anyway.
 
-   lock(&nmi_desc[0].lock);
-   <Interrupt>
-     lock(&nmi_desc[0].lock);
-
-  Call Trace:
-    _raw_spin_lock_irqsave
-    __register_nmi_handler
-    nmi_shootdown_cpus
-    kdump_nmi_shootdown_cpus
-    native_machine_crash_shutdown
-    __crash_kexec
-
-In this particular case, the following panic message was printed before:
-
-  Kernel panic - not syncing: Fatal hardware error!
-
-This message seemed to be given out from __ghes_panic() running in
-NMI context.
-
-The __register_nmi_handler() function which takes the nmi_desc lock
-with irq disabled shouldn't be called from NMI context as this can
-lead to deadlock.
-
-The nmi_shootdown_cpus() function can only be invoked once. After the
-first invocation, all other CPUs should be stuck in the newly added
-crash_nmi_callback() and cannot respond to a second NMI.
-
-Fix it by adding a new emergency NMI handler to the nmi_desc
-structure and provide a new set_emergency_nmi_handler() helper to set
-crash_nmi_callback() in any context. The new emergency handler will
-preempt other handlers in the linked list. That will eliminate the need
-to take any lock and serve the panic in NMI use case.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20250206191844.131700-1-longman@redhat.com
+Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
+Message-Id: <20250204173127.166673-1-kshk@linux.ibm.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/nmi.h |  2 ++
- arch/x86/kernel/nmi.c      | 42 ++++++++++++++++++++++++++++++++++++++
- arch/x86/kernel/reboot.c   | 10 +++------
- 3 files changed, 47 insertions(+), 7 deletions(-)
+ drivers/vdpa/mlx5/net/mlx5_vnet.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/include/asm/nmi.h b/arch/x86/include/asm/nmi.h
-index 5c5f1e56c4048..6f3d145670a95 100644
---- a/arch/x86/include/asm/nmi.h
-+++ b/arch/x86/include/asm/nmi.h
-@@ -59,6 +59,8 @@ int __register_nmi_handler(unsigned int, struct nmiaction *);
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index b56aae3f7be37..9b8b70ffde5a0 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -3420,6 +3420,9 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
+ 	ndev->mvdev.max_vqs = max_vqs;
+ 	mvdev = &ndev->mvdev;
+ 	mvdev->mdev = mdev;
++	/* cpu_to_mlx5vdpa16() below depends on this flag */
++	mvdev->actual_features =
++			(device_features & BIT_ULL(VIRTIO_F_VERSION_1));
  
- void unregister_nmi_handler(unsigned int, const char *);
- 
-+void set_emergency_nmi_handler(unsigned int type, nmi_handler_t handler);
-+
- void stop_nmi(void);
- void restart_nmi(void);
- void local_touch_nmi(void);
-diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-index 6da2cfa23c293..35fd5f1444fdb 100644
---- a/arch/x86/kernel/nmi.c
-+++ b/arch/x86/kernel/nmi.c
-@@ -39,8 +39,12 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/nmi.h>
- 
-+/*
-+ * An emergency handler can be set in any context including NMI
-+ */
- struct nmi_desc {
- 	raw_spinlock_t lock;
-+	nmi_handler_t emerg_handler;
- 	struct list_head head;
- };
- 
-@@ -131,9 +135,22 @@ static void nmi_check_duration(struct nmiaction *action, u64 duration)
- static int nmi_handle(unsigned int type, struct pt_regs *regs)
- {
- 	struct nmi_desc *desc = nmi_to_desc(type);
-+	nmi_handler_t ehandler;
- 	struct nmiaction *a;
- 	int handled=0;
- 
-+	/*
-+	 * Call the emergency handler, if set
-+	 *
-+	 * In the case of crash_nmi_callback() emergency handler, it will
-+	 * return in the case of the crashing CPU to enable it to complete
-+	 * other necessary crashing actions ASAP. Other handlers in the
-+	 * linked list won't need to be run.
-+	 */
-+	ehandler = desc->emerg_handler;
-+	if (ehandler)
-+		return ehandler(type, regs);
-+
- 	rcu_read_lock();
- 
- 	/*
-@@ -223,6 +240,31 @@ void unregister_nmi_handler(unsigned int type, const char *name)
- }
- EXPORT_SYMBOL_GPL(unregister_nmi_handler);
- 
-+/**
-+ * set_emergency_nmi_handler - Set emergency handler
-+ * @type:    NMI type
-+ * @handler: the emergency handler to be stored
-+ *
-+ * Set an emergency NMI handler which, if set, will preempt all the other
-+ * handlers in the linked list. If a NULL handler is passed in, it will clear
-+ * it. It is expected that concurrent calls to this function will not happen
-+ * or the system is screwed beyond repair.
-+ */
-+void set_emergency_nmi_handler(unsigned int type, nmi_handler_t handler)
-+{
-+	struct nmi_desc *desc = nmi_to_desc(type);
-+
-+	if (WARN_ON_ONCE(desc->emerg_handler == handler))
-+		return;
-+	desc->emerg_handler = handler;
-+
-+	/*
-+	 * Ensure the emergency handler is visible to other CPUs before
-+	 * function return
-+	 */
-+	smp_wmb();
-+}
-+
- static void
- pci_serr_error(unsigned char reason, struct pt_regs *regs)
- {
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 830425e6d38e2..456e61070a730 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -908,15 +908,11 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	shootdown_callback = callback;
- 
- 	atomic_set(&waiting_for_crash_ipi, num_online_cpus() - 1);
--	/* Would it be better to replace the trap vector here? */
--	if (register_nmi_handler(NMI_LOCAL, crash_nmi_callback,
--				 NMI_FLAG_FIRST, "crash"))
--		return;		/* Return what? */
-+
- 	/*
--	 * Ensure the new callback function is set before sending
--	 * out the NMI
-+	 * Set emergency handler to preempt other handlers.
- 	 */
--	wmb();
-+	set_emergency_nmi_handler(NMI_LOCAL, crash_nmi_callback);
- 
- 	apic_send_IPI_allbutself(NMI_VECTOR);
- 
+ 	ndev->vqs = kcalloc(max_vqs, sizeof(*ndev->vqs), GFP_KERNEL);
+ 	ndev->event_cbs = kcalloc(max_vqs + 1, sizeof(*ndev->event_cbs), GFP_KERNEL);
 -- 
 2.39.5
 
