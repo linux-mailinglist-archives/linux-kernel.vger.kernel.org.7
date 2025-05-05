@@ -1,58 +1,62 @@
-Return-Path: <linux-kernel+bounces-634051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3C7AAAF46
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:14:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688F1AAAC05
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 539CF1602C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:12:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597AA3B70BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D182F94F5;
-	Mon,  5 May 2025 23:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E782B37DBE5;
+	Mon,  5 May 2025 23:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTRLamoN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="keAJmZkZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1E42ED078;
-	Mon,  5 May 2025 23:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F3B381E93;
+	Mon,  5 May 2025 23:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486516; cv=none; b=puuNSKnID895JuQ9qm/+8LPf5UbkjXaj1wG5l05eL8ZgCHFtimmxuEJm8CswBkFNoXhVcEsJ6mPIptLUGcawlS6hjjq3SgXMcQ0+6/lJrllgZoq2YiWKK183W22uZYUcLeV7imqpVq2/nNg/WUu4jJsWr91MALynbhgksC+qnAs=
+	t=1746486534; cv=none; b=ZHUVA1zfV/w1uOaBLHP+ePzl93cGLZjNGN/VkHytoMcmekSl3tZ57chxGjJFaFMEg++IG9+hahp8A+LGAcNLxxe820B8sqxo2pVp+P9+VbGoblplQ1qHbtzxbkJ+OM8y7psZgTaPVkTQJjygvdMbsaqiIZachjFrsR8lntnmxeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486516; c=relaxed/simple;
-	bh=1WsI8n4+95dOJdFDkqS8MZsGrpgVCwj3w39FA24wZDM=;
+	s=arc-20240116; t=1746486534; c=relaxed/simple;
+	bh=lknYkve/ssLDCR4ZLt5Gu05goNj+CeRKYYC396pQaIs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UbGWRymLyY1US7BTJ3Q60ZsLHIvN8LXJnixUL7/t3JHzFWIF6xcP/eE7ry3fXBlj1Xlw43fGghwt27sqHTuuPTw4dnTF+GbEwAdqK5ppAMELtdboF9QyDYyBd1x2C8dulFbvkX5AiRAxG4YiHhtYVYnM3yWJ8KeFuoY2fQ9F4MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTRLamoN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC58AC4CEEE;
-	Mon,  5 May 2025 23:08:33 +0000 (UTC)
+	 MIME-Version; b=bW7J4/b8u5BA8vpY9qPyFPHtc6EoJ8bNwfAccCH3Rq07WBN4XFAACd5aIwsap0uP89/FnN3P6Uf/SkNeQOF3su2mLbmQnCmKuB20Rfg5NR7pHTHDTIl/7J//KUQowniGI+LhKjG9q7eLMnnFunjSIFVPPo4e35IO4eSewcecXDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=keAJmZkZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B021C4CEED;
+	Mon,  5 May 2025 23:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486514;
-	bh=1WsI8n4+95dOJdFDkqS8MZsGrpgVCwj3w39FA24wZDM=;
+	s=k20201202; t=1746486532;
+	bh=lknYkve/ssLDCR4ZLt5Gu05goNj+CeRKYYC396pQaIs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kTRLamoNmlgjh/p3jY+5KWmjgQVCDl/s8belYcz5qHI3FpV79jqZgtwzkzVTd8yXW
-	 DC5xSPK+eR8sllYeQhJlJmsrR8/kynJBla9zQtYWcRiHXPLu4zz+7mzM3EA/i3kSMv
-	 YkSXexQtWP1D4dgeRNv/eMGSKzZ9nEAX2y54IFrcubM18yJMOsrWtvn6+w9Zxyoo8m
-	 AplZVwtt9euq327hjPfPQts8CazfOtbyBE2WS0GS2gRFrM4kw22j77Cv66e1yl/cGk
-	 lj/BWq0mxhsfHnw4nNM7LYpvkQcUCArRtXyxcy5KnKsKXzGSobWExbRk4fppZtFA7/
-	 1VseoIkSzsXXg==
+	b=keAJmZkZoBM0XSJmpjS12qRZ70BPooL7t7MMYoohVM6eYfRF7+390sxV7yXy+NHV/
+	 SVwgPTnVtYSLWqBOvAH3mrZBCLt+2YMaiezHlGHOLlx6CF9IS4Mgl/1zzbMjKeIW4L
+	 A/YlbKn7s2a1EVWj2Yi5fAKLMT2zoySBXlRfidGhKqihYIX6F/JX+lB6NLKMTvU3fh
+	 LmbpXfopRR4TsNTM/YX3u0654RlUOLIQbrD1/0m40h0PJmpJ3g1f7kvPSLZWhgWGdO
+	 BfW9uCy3EXxCg9pu0B3UsDAXvIbC8H8CSmS6zutDLJAVnspqboEocCRdcfM+5t7W3T
+	 7uDxRdraVNWHA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Erick Shepherd <erick.shepherd@ni.com>,
-	Kyle Roeschley <kyle.roeschley@ni.com>,
-	Brad Mouring <brad.mouring@ni.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+Cc: Aaron Kling <luceoscutum@gmail.com>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Aaron Kling <webgeek1234@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 070/212] mmc: sdhci: Disable SD card clock before changing parameters
-Date: Mon,  5 May 2025 19:04:02 -0400
-Message-Id: <20250505230624.2692522-70-sashal@kernel.org>
+	rafael@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 078/212] cpufreq: tegra186: Share policy per cluster
+Date: Mon,  5 May 2025 19:04:10 -0400
+Message-Id: <20250505230624.2692522-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -62,55 +66,50 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Erick Shepherd <erick.shepherd@ni.com>
+From: Aaron Kling <luceoscutum@gmail.com>
 
-[ Upstream commit fb3bbc46c94f261b6156ee863c1b06c84cf157dc ]
+[ Upstream commit be4ae8c19492cd6d5de61ccb34ffb3f5ede5eec8 ]
 
-Per the SD Host Controller Simplified Specification v4.20 §3.2.3, change
-the SD card clock parameters only after first disabling the external card
-clock. Doing this fixes a spurious clock pulse on Baytrail and Apollo Lake
-SD controllers which otherwise breaks voltage switching with a specific
-Swissbit SD card.
+This functionally brings tegra186 in line with tegra210 and tegra194,
+sharing a cpufreq policy between all cores in a cluster.
 
-Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
-Signed-off-by: Brad Mouring <brad.mouring@ni.com>
-Signed-off-by: Erick Shepherd <erick.shepherd@ni.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Link: https://lore.kernel.org/r/20250211214645.469279-1-erick.shepherd@ni.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 536d21028a116..6822a3249286c 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -2049,10 +2049,15 @@ void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+index 6c88827f4e625..1d6b543037237 100644
+--- a/drivers/cpufreq/tegra186-cpufreq.c
++++ b/drivers/cpufreq/tegra186-cpufreq.c
+@@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
+ {
+ 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
+ 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
++	u32 cpu;
  
- 	host->mmc->actual_clock = 0;
+ 	policy->freq_table = data->clusters[cluster].table;
+ 	policy->cpuinfo.transition_latency = 300 * 1000;
+ 	policy->driver_data = NULL;
  
--	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-+	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+	if (clk & SDHCI_CLOCK_CARD_EN)
-+		sdhci_writew(host, clk & ~SDHCI_CLOCK_CARD_EN,
-+			SDHCI_CLOCK_CONTROL);
- 
--	if (clock == 0)
-+	if (clock == 0) {
-+		sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
- 		return;
++	/* set same policy for all cpus in a cluster */
++	for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
++		if (data->cpus[cpu].bpmp_cluster_id == cluster)
++			cpumask_set_cpu(cpu, policy->cpus);
 +	}
++
+ 	return 0;
+ }
  
- 	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
- 	sdhci_enable_clk(host, clk);
 -- 
 2.39.5
 
