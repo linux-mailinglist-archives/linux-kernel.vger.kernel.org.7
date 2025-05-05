@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-632135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F005BAA92E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:19:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B871AA92DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B3D164D70
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47A891899888
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFFE2550D4;
-	Mon,  5 May 2025 12:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB482252281;
+	Mon,  5 May 2025 12:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVr1Diqx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMcv6qus"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB71254850;
-	Mon,  5 May 2025 12:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB9B24DFED;
+	Mon,  5 May 2025 12:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746447468; cv=none; b=ZVPh1mfI9LPEH71UkI22oIvQfxdsXzcx3+lx3nPFp1840WSpiqcbYdl00IUizgkYdAtk1SfB33Qs4i4oTO8QIXKYCmTtuHlJFa4ZXKtwzkN8ddd7aEzRMvFVF48CgyezTP6+zA0OjCQ/o+sW9VddQeeqqX6GNysPIA8SiZiY+Ec=
+	t=1746447445; cv=none; b=bZxMQLrIaqVu/SuKwn606eUg9+2h+/f7xrxYGtSIOHPW2hUizIbG/1Z9aWmE0aRYqiABctesf7clvJ0Fhj4PzumEMFdEhWsT6l6xQ/cXPpv3eRlAmMeaLUhXbvUOqp5Y6H1aERuH1iB/UTGy9B5amZ6qkwBgIijDUQqjhftqu1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746447468; c=relaxed/simple;
-	bh=+YhA9DA9eW0xSAMFDQ2axhTGzWbesDybuVL94SxkrbY=;
+	s=arc-20240116; t=1746447445; c=relaxed/simple;
+	bh=rzYVWa8T9n45Z4cSfo3JixMLHUxrIRHR2zB8t+Wr27g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hbQOoFV6cD0wBYrHXZ4aj7QnJP1lCu6pKZYC4tooK7CPIrBtPTGpm/Lh8bntJInPBI3+jQwBB1copMogYpWRyM7vF1uhqtq2dl8l1gzTWofSQ5q1sa2HOwENsOP4E/RIwB9+AwQlY8H4Zd+6OjoWTdqe+wsq3NuXWtk5iNFUOE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVr1Diqx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1EBEC4CEE4;
-	Mon,  5 May 2025 12:17:41 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=TiuhQwtrdx+HCLz9ZqBZPtzdZhfKiFD0gbrB4eyoX/FVBKJxGssWUgpxtrKU5DfrZO/zcHxfpDhK4DJQY1D7uBizN2o3ijNTHKeYuee6Xyhpwtwvo3TOY8/byeE5FQGp23RHH63UzhFoMzw8khllsUo71hnWJZ8gDos47HRZxNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMcv6qus; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50AD9C4CEEF;
+	Mon,  5 May 2025 12:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746447466;
-	bh=+YhA9DA9eW0xSAMFDQ2axhTGzWbesDybuVL94SxkrbY=;
+	s=k20201202; t=1746447444;
+	bh=rzYVWa8T9n45Z4cSfo3JixMLHUxrIRHR2zB8t+Wr27g=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cVr1DiqxPGVnYD49Y/m0zZO+4F6Vd2haTl/Yza/oUmLGBaFFYZQXVlYSSZfTe1y0q
-	 3dMjBp43FuCpkPph3cB+vWerarbg6510YxnmxtTPdARbw1NS4neylG+kEZPpXNjaMw
-	 UK0cg4MamUhYsYyBc68BkYjFsD4eUhdNApWeBWy7tdX91gNB3PBv+DFdMPIZWukaWJ
-	 VuqP/EW30jFBHFF17MVDtOaHZiLdtP9KbjP9OnduZOCfIKF7UTH4qWzA1W7D/Ypsug
-	 z4JqxcFg7BKX0TpOABqg3BdV/eMPtjA8JngGqc/cgqDfIH8dSOFDWK15zYiQ1TyU/n
-	 WoSaWG48uFqpA==
+	b=XMcv6qus0M8Eul0W7sK7agNTIMFF+P0ZENMPw0e40x/sJk1e9IdZ3Isj6oiygMIiR
+	 qHZfn7l76j+mdNDodlbyHWxsPLg2GXedprK5A0CdBcZVlU9xpPeP5B790d5wgrlrmL
+	 C9GKLM+xVZI9whoQyWSPFI0GtwRpqBJQDmG6uqEgF0iWMYZ0iTV8/jLE7IKGvDG82W
+	 Zhhe9sy8fMr2vTfe6lGD90zeyh0fbbsTujePI44lkjj1kwHsKJs1ifd8WkrkI3t5mz
+	 2m0fe48KGPRDhHpsw5uiXKXgVAgYXhwYZDt+DpeadNKSQvuzoq7FvO8BGzl/V53F3a
+	 4G3G7gBHeso0Q==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Mon, 05 May 2025 14:16:56 +0200
-Subject: [PATCH v7 1/3] rust: configfs: introduce rust support for configfs
+Date: Mon, 05 May 2025 14:16:57 +0200
+Subject: [PATCH v7 2/3] rust: configfs: add a sample demonstrating configfs
+ usage
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250505-configfs-v7-1-8bcf47c1fb88@kernel.org>
+Message-Id: <20250505-configfs-v7-2-8bcf47c1fb88@kernel.org>
 References: <20250505-configfs-v7-0-8bcf47c1fb88@kernel.org>
 In-Reply-To: <20250505-configfs-v7-0-8bcf47c1fb88@kernel.org>
 To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
@@ -69,1130 +70,265 @@ To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
 Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Andreas Hindborg <a.hindborg@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=41085;
- i=a.hindborg@kernel.org; h=from:subject:message-id;
- bh=+YhA9DA9eW0xSAMFDQ2axhTGzWbesDybuVL94SxkrbY=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoGKxDZI4XxpxZJj87cBZNVX0ZDhpQR9lSuODkA
- ERDphHmDdeJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaBisQwAKCRDhuBo+eShj
- d1rOEACzZAMyV9IaCUsLMe5fJFznaT8nmo9lR7cRPBvvWMBrBFEDqV7O8YxOy1x0vn9CHk1Hg5F
- pm0ys+iOgkESvI5orfXpbxBNMoM0mzLLETe4fF13nw5XWBSAhF4ZRiFR18yBMnyhaym1uK0DH5J
- ACz/do7c6efUAYagG0CjxInCkOkckUO6AciQ/nl8jTVLyCDbHb2uogGsr2CWyUMaawLOLzoSHJB
- mWewSFLXx8gjyqfk1lWSMoFYzdCEhZ7/3SZoSEyKEAIr7T4hjPjV4bJdGIquBqBGYFv/ySMhn2w
- h+luMM4xYK3/YktRfzmrSxJnLktN/MV66Cqv+oX01+U2+bUwlMxg8MimwHDvJO2d3+6TJN6mZRT
- Ir0Ar8ChddOuj9GnliEZG3D9u5yZmM8HByx9S74gHr7KUy8PYO9uLISykkHNJCr6EQQrLVOZh3H
- GD6Wj1KyZsAx6Ixo2Duu0RIJ2Sgk838EQSR5bdRcmqsAJl7w9eCO4zLGACPYK31+Kd2O1SHjAHv
- HF3DJTR/Ahyl1y+s4AabfBbEfNRQPOnxpD6KXEWny8F4GAYr3tlBGuYQnBc3EDcaWAB0x9NDWFL
- hWmcgzipTqfJGQsiAe7RYsSdLrQeTXgnp6dHLIglk5sComzewsznkCG5S+fa/jDt9EBl1EOGMMc
- MjQuV1+0n1kBP9Q==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7356; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=rzYVWa8T9n45Z4cSfo3JixMLHUxrIRHR2zB8t+Wr27g=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoGKxExvuRHZwec4BsCbEsIWMOu6XbleC/AeL3V
+ oK9orrVIayJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaBisRAAKCRDhuBo+eShj
+ d6zVD/9ROTA8f6TlyzQ62mMa8/D/xoR6klzZ2C8b4kX2po0KFAbMbY6lu+UyKeMNdqE9nFaQsZY
+ I79SxRnyTlQVP1SCcqlXeX3rbtKI1Hn20iHlLHP2B9fOiySVIiNGWmwsUW8+VFuTb4Yzymc+D5c
+ +27YyvDKs0chTtEN2VW6Ql0O7pmrL86siuQvZ4H+MJVKbxBmzqkrz5zMzqsXuCtCjNcwzI8tWbH
+ y1TYexNQ97YVY7CBft5ibs0r+sbD9hSwok1ol93JP+19gp6u2Xa99HvF4npSErlQ6KrPsfnwsqT
+ uUI8vo8tCpMFkUxdm1l9gqcZO+7JUfoBAXNKllNqsQC2ezvvDTdF2dkZ/iCpweLxyab936sm4eT
+ Liip4kkaVK4ESnIkeHUqhx3/aIHbtsurDHbuThdeXI2/L2fd85Bu3SJJYirPGqGG4bwK+EWUg0A
+ eXPcJmFTXTZxADYJGad1UcntL/oWVHAvfoGG3ANtfa+esMr0vj1DwR+elKux8Oih1G73tclnMX+
+ L1uFsHkMqniGtUx++m8yrD8PP5IKBI4E2Zdya17B/HqJtiGLX+7PgNkFE9hZ6kWiVgErQDg5Igs
+ IZFp65m6rxeOWMaEnK+tOcOBGiefN/ayDQpK+bZILrxH3TMsQpLHY/vwwsKd3XQPasUVGy4W8Ur
+ S5bGOYZJLNeUHRw==
 X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
  fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Add a Rust API for configfs, thus allowing Rust modules to use configfs for
-configuration. Make the implementation a shim on top of the C configfs
-implementation, allowing safe use of the C infrastructure from Rust.
+Add a sample to the samples folder, demonstrating the intended use of the
+Rust configfs API.
 
 Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-
 ---
+ samples/rust/Kconfig          |  11 +++
+ samples/rust/Makefile         |   1 +
+ samples/rust/rust_configfs.rs | 192 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 204 insertions(+)
 
-This patch is a direct dependency for `rnull`, the rust null block driver.
----
- rust/bindings/bindings_helper.h |    1 +
- rust/helpers/mutex.c            |    5 +
- rust/kernel/configfs.rs         | 1046 +++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs              |    2 +
- 4 files changed, 1054 insertions(+)
-
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index ab37e1d35c70..1a532b83a9af 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -10,6 +10,7 @@
- #include <linux/blk-mq.h>
- #include <linux/blk_types.h>
- #include <linux/blkdev.h>
-+#include <linux/configfs.h>
- #include <linux/cpumask.h>
- #include <linux/cred.h>
- #include <linux/device/faux.h>
-diff --git a/rust/helpers/mutex.c b/rust/helpers/mutex.c
-index 06575553eda5..3e9b910a88e9 100644
---- a/rust/helpers/mutex.c
-+++ b/rust/helpers/mutex.c
-@@ -17,3 +17,8 @@ void rust_helper_mutex_assert_is_held(struct mutex *mutex)
- {
- 	lockdep_assert_held(mutex);
- }
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index cad52b7120b5..be491ad9b3af 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -10,6 +10,17 @@ menuconfig SAMPLES_RUST
+ 
+ if SAMPLES_RUST
+ 
++config SAMPLE_RUST_CONFIGFS
++	tristate "Configfs sample"
++	depends on CONFIGFS_FS
++	help
++	  This option builds the Rust configfs sample.
 +
-+void rust_helper_mutex_destroy(struct mutex *lock)
-+{
-+	mutex_destroy(lock);
-+}
-diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
++	  To compile this as a module, choose M here:
++	  the module will be called rust_configfs.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_MINIMAL
+ 	tristate "Minimal"
+ 	help
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index c6a2479f7d9c..b3c9178d654a 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_SAMPLE_RUST_DMA)			+= rust_dma.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
++obj-$(CONFIG_SAMPLE_RUST_CONFIGFS)		+= rust_configfs.o
+ 
+ rust_print-y := rust_print_main.o rust_print_events.o
+ 
+diff --git a/samples/rust/rust_configfs.rs b/samples/rust/rust_configfs.rs
 new file mode 100644
-index 000000000000..64e59272015f
+index 000000000000..60ddbe62cda3
 --- /dev/null
-+++ b/rust/kernel/configfs.rs
-@@ -0,0 +1,1046 @@
++++ b/samples/rust/rust_configfs.rs
+@@ -0,0 +1,192 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+//! configfs interface: Userspace-driven Kernel Object Configuration
-+//!
-+//! configfs is an in-memory pseudo file system for configuration of kernel
-+//! modules. Please see the [C documentation] for details and intended use of
-+//! configfs.
-+//!
-+//! This module does not support the following configfs features:
-+//!
-+//! - Items. All group children are groups.
-+//! - Symlink support.
-+//! - `disconnect_notify` hook.
-+//! - Default groups.
-+//!
-+//! See the [`rust_configfs.rs`] sample for a full example use of this module.
-+//!
-+//! C header: [`include/linux/configfs.h`](srctree/include/linux/configfs.h)
-+//!
-+//! # Example
-+//!
-+//! ```ignore
-+//! use kernel::alloc::flags;
-+//! use kernel::c_str;
-+//! use kernel::configfs_attrs;
-+//! use kernel::configfs;
-+//! use kernel::new_mutex;
-+//! use kernel::page::PAGE_SIZE;
-+//! use kernel::sync::Mutex;
-+//! use kernel::ThisModule;
-+//!
-+//! #[pin_data]
-+//! struct RustConfigfs {
-+//!     #[pin]
-+//!     config: configfs::Subsystem<Configuration>,
-+//! }
-+//!
-+//! impl kernel::InPlaceModule for RustConfigfs {
-+//!     fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
-+//!         pr_info!("Rust configfs sample (init)\n");
-+//!
-+//!         let item_type = configfs_attrs! {
-+//!             container: configfs::Subsystem<Configuration>,
-+//!             data: Configuration,
-+//!             attributes: [
-+//!                 message: 0,
-+//!                 bar: 1,
-+//!             ],
-+//!         };
-+//!
-+//!         try_pin_init!(Self {
-+//!             config <- configfs::Subsystem::new(
-+//!                 c_str!("rust_configfs"), item_type, Configuration::new()
-+//!             ),
-+//!         })
-+//!     }
-+//! }
-+//!
-+//! #[pin_data]
-+//! struct Configuration {
-+//!     message: &'static CStr,
-+//!     #[pin]
-+//!     bar: Mutex<(KBox<[u8; PAGE_SIZE]>, usize)>,
-+//! }
-+//!
-+//! impl Configuration {
-+//!     fn new() -> impl PinInit<Self, Error> {
-+//!         try_pin_init!(Self {
-+//!             message: c_str!("Hello World\n"),
-+//!             bar <- new_mutex!((KBox::new([0; PAGE_SIZE], flags::GFP_KERNEL)?, 0)),
-+//!         })
-+//!     }
-+//! }
-+//!
-+//! #[vtable]
-+//! impl configfs::AttributeOperations<0> for Configuration {
-+//!     type Data = Configuration;
-+//!
-+//!     fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-+//!         pr_info!("Show message\n");
-+//!         let data = container.message;
-+//!         page[0..data.len()].copy_from_slice(data);
-+//!         Ok(data.len())
-+//!     }
-+//! }
-+//!
-+//! #[vtable]
-+//! impl configfs::AttributeOperations<1> for Configuration {
-+//!     type Data = Configuration;
-+//!
-+//!     fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-+//!         pr_info!("Show bar\n");
-+//!         let guard = container.bar.lock();
-+//!         let data = guard.0.as_slice();
-+//!         let len = guard.1;
-+//!         page[0..len].copy_from_slice(&data[0..len]);
-+//!         Ok(len)
-+//!     }
-+//!
-+//!     fn store(container: &Configuration, page: &[u8]) -> Result {
-+//!         pr_info!("Store bar\n");
-+//!         let mut guard = container.bar.lock();
-+//!         guard.0[0..page.len()].copy_from_slice(page);
-+//!         guard.1 = page.len();
-+//!         Ok(())
-+//!     }
-+//! }
-+//! ```
-+//!
-+//! [C documentation]: srctree/Documentation/filesystems/configfs.rst
-+//! [`rust_configfs.rs`]: srctree/samples/rust/rust_configfs.rs
++//! Rust configfs sample.
 +
-+use crate::alloc::flags;
-+use crate::container_of;
-+use crate::page::PAGE_SIZE;
-+use crate::prelude::*;
-+use crate::str::CString;
-+use crate::sync::Arc;
-+use crate::sync::ArcBorrow;
-+use crate::types::Opaque;
-+use core::cell::UnsafeCell;
-+use core::marker::PhantomData;
++use kernel::alloc::flags;
++use kernel::c_str;
++use kernel::configfs;
++use kernel::configfs_attrs;
++use kernel::new_mutex;
++use kernel::page::PAGE_SIZE;
++use kernel::prelude::*;
++use kernel::sync::Mutex;
 +
-+/// A configfs subsystem.
-+///
-+/// This is the top level entrypoint for a configfs hierarchy. To register
-+/// with configfs, embed a field of this type into your kernel module struct.
-+#[pin_data(PinnedDrop)]
-+pub struct Subsystem<Data> {
-+    #[pin]
-+    subsystem: Opaque<bindings::configfs_subsystem>,
-+    #[pin]
-+    data: Data,
++module! {
++    type: RustConfigfs,
++    name: "rust_configfs",
++    author: "Rust for Linux Contributors",
++    description: "Rust configfs sample",
++    license: "GPL",
 +}
 +
-+// SAFETY: We do not provide any operations on `Subsystem`.
-+unsafe impl<Data> Sync for Subsystem<Data> {}
++#[pin_data]
++struct RustConfigfs {
++    #[pin]
++    config: configfs::Subsystem<Configuration>,
++}
 +
-+// SAFETY: Ownership of `Subsystem` can safely be transferred to other threads.
-+unsafe impl<Data> Send for Subsystem<Data> {}
++#[pin_data]
++struct Configuration {
++    message: &'static CStr,
++    #[pin]
++    bar: Mutex<(KBox<[u8; PAGE_SIZE]>, usize)>,
++}
 +
-+impl<Data> Subsystem<Data> {
-+    /// Create an initializer for a [`Subsystem`].
-+    ///
-+    /// The subsystem will appear in configfs as a directory name given by
-+    /// `name`. The attributes available in directory are specified by
-+    /// `item_type`.
-+    pub fn new(
-+        name: &'static CStr,
-+        item_type: &'static ItemType<Subsystem<Data>, Data>,
-+        data: impl PinInit<Data, Error>,
-+    ) -> impl PinInit<Self, Error> {
++impl Configuration {
++    fn new() -> impl PinInit<Self, Error> {
 +        try_pin_init!(Self {
-+            subsystem <- pin_init::zeroed().chain(
-+                |place: &mut Opaque<bindings::configfs_subsystem>| {
-+                    // SAFETY: We initialized the required fields of `place.group` above.
-+                    unsafe {
-+                        bindings::config_group_init_type_name(
-+                            &mut (*place.get()).su_group,
-+                            name.as_ptr(),
-+                            item_type.as_ptr(),
-+                        )
-+                    };
++            message: c_str!("Hello World\n"),
++            bar <- new_mutex!((KBox::new([0; PAGE_SIZE], flags::GFP_KERNEL)?, 0)),
++        })
++    }
++}
 +
-+                    // SAFETY: `place.su_mutex` is valid for use as a mutex.
-+                    unsafe {
-+                        bindings::__mutex_init(
-+                            &mut (*place.get()).su_mutex,
-+                            kernel::optional_name!().as_char_ptr(),
-+                            kernel::static_lock_class!().as_ptr(),
-+                        )
-+                    }
-+                    Ok(())
-+                }
++impl kernel::InPlaceModule for RustConfigfs {
++    fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
++        pr_info!("Rust configfs sample (init)\n");
++
++        // Define a subsystem with the data type `Configuration`, two
++        // attributes, `message` and `bar` and child group type `Child`. `mkdir`
++        // in the directory representing this subsystem will create directories
++        // backed by the `Child` type.
++        let item_type = configfs_attrs! {
++            container: configfs::Subsystem<Configuration>,
++            data: Configuration,
++            child: Child,
++            attributes: [
++                message: 0,
++                bar: 1,
++            ],
++        };
++
++        try_pin_init!(Self {
++            config <- configfs::Subsystem::new(
++                c_str!("rust_configfs"), item_type, Configuration::new()
 +            ),
-+            data <- data,
-+        })
-+        .pin_chain(|this| {
-+            crate::error::to_result(
-+                // SAFETY: We initialized `this.subsystem` according to C API contract above.
-+                unsafe { bindings::configfs_register_subsystem(this.subsystem.get()) },
-+            )
 +        })
 +    }
 +}
 +
-+#[pinned_drop]
-+impl<Data> PinnedDrop for Subsystem<Data> {
-+    fn drop(self: Pin<&mut Self>) {
-+        // SAFETY: We registered `self.subsystem` in the initializer returned by `Self::new`.
-+        unsafe { bindings::configfs_unregister_subsystem(self.subsystem.get()) };
-+        // SAFETY: We initialized the mutex in `Subsystem::new`.
-+        unsafe { bindings::mutex_destroy(&raw mut (*self.subsystem.get()).su_mutex) };
-+    }
-+}
++#[vtable]
++impl configfs::GroupOperations for Configuration {
++    type Child = Child;
 +
-+/// Trait that allows offset calculations for structs that embed a
-+/// `bindings::config_group`.
-+///
-+/// Users of the configfs API should not need to implement this trait.
-+///
-+/// # Safety
-+///
-+/// - Implementers of this trait must embed a `bindings::config_group`.
-+/// - Methods must be implemented according to method documentation.
-+pub unsafe trait HasGroup<Data> {
-+    /// Return the address of the `bindings::config_group` embedded in [`Self`].
-+    ///
-+    /// # Safety
-+    ///
-+    /// - `this` must be a valid allocation of at least the size of [`Self`].
-+    unsafe fn group(this: *const Self) -> *const bindings::config_group;
-+
-+    /// Return the address of the [`Self`] that `group` is embedded in.
-+    ///
-+    /// # Safety
-+    ///
-+    /// - `group` must point to the `bindings::config_group` that is embedded in
-+    ///   [`Self`].
-+    unsafe fn container_of(group: *const bindings::config_group) -> *const Self;
-+}
-+
-+// SAFETY: `Subsystem<Data>` embeds a field of type `bindings::config_group`
-+// within the `subsystem` field.
-+unsafe impl<Data> HasGroup<Data> for Subsystem<Data> {
-+    unsafe fn group(this: *const Self) -> *const bindings::config_group {
-+        // SAFETY: By impl and function safety requirement this projection is in bounds.
-+        unsafe { &raw const (*(*this).subsystem.get()).su_group }
-+    }
-+
-+    unsafe fn container_of(group: *const bindings::config_group) -> *const Self {
-+        // SAFETY: By impl and function safety requirement this projection is in bounds.
-+        let c_subsys_ptr = unsafe { container_of!(group, bindings::configfs_subsystem, su_group) };
-+        let opaque_ptr = c_subsys_ptr.cast::<Opaque<bindings::configfs_subsystem>>();
-+        // SAFETY: By impl and function safety requirement, `opaque_ptr` and the
-+        // pointer it returns, are within the same allocation.
-+        unsafe { container_of!(opaque_ptr, Subsystem<Data>, subsystem) }
-+    }
-+}
-+
-+/// A configfs group.
-+///
-+/// To add a subgroup to configfs, pass this type as `ctype` to
-+/// [`crate::configfs_attrs`] when creating a group in [`GroupOperations::make_group`].
-+#[pin_data]
-+pub struct Group<Data> {
-+    #[pin]
-+    group: Opaque<bindings::config_group>,
-+    #[pin]
-+    data: Data,
-+}
-+
-+impl<Data> Group<Data> {
-+    /// Create an initializer for a new group.
-+    ///
-+    /// When instantiated, the group will appear as a directory with the name
-+    /// given by `name` and it will contain attributes specified by `item_type`.
-+    pub fn new(
-+        name: CString,
-+        item_type: &'static ItemType<Group<Data>, Data>,
-+        data: impl PinInit<Data, Error>,
-+    ) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self {
-+            group <- pin_init::zeroed().chain(|v: &mut Opaque<bindings::config_group>| {
-+                let place = v.get();
-+                let name = name.as_bytes_with_nul().as_ptr();
-+                // SAFETY: It is safe to initialize a group once it has been zeroed.
-+                unsafe {
-+                    bindings::config_group_init_type_name(place, name.cast(), item_type.as_ptr())
-+                };
-+                Ok(())
-+            }),
-+            data <- data,
-+        })
-+    }
-+}
-+
-+// SAFETY: `Group<Data>` embeds a field of type `bindings::config_group`
-+// within the `group` field.
-+unsafe impl<Data> HasGroup<Data> for Group<Data> {
-+    unsafe fn group(this: *const Self) -> *const bindings::config_group {
-+        Opaque::raw_get(
-+            // SAFETY: By impl and function safety requirements this field
-+            // projection is within bounds of the allocation.
-+            unsafe { &raw const (*this).group },
-+        )
-+    }
-+
-+    unsafe fn container_of(group: *const bindings::config_group) -> *const Self {
-+        let opaque_ptr = group.cast::<Opaque<bindings::config_group>>();
-+        // SAFETY: By impl and function safety requirement, `opaque_ptr` and
-+        // pointer it returns will be in the same allocation.
-+        unsafe { container_of!(opaque_ptr, Self, group) }
-+    }
-+}
-+
-+/// # Safety
-+///
-+/// `this` must be a valid pointer.
-+///
-+/// If `this` does not represent the root group of a configfs subsystem,
-+/// `this` must be a pointer to a `bindings::config_group` embedded in a
-+/// `Group<Parent>`.
-+///
-+/// Otherwise, `this` must be a pointer to a `bindings::config_group` that
-+/// is embedded in a `bindings::configfs_subsystem` that is embedded in a
-+/// `Subsystem<Parent>`.
-+unsafe fn get_group_data<'a, Parent>(this: *mut bindings::config_group) -> &'a Parent {
-+    // SAFETY: `this` is a valid pointer.
-+    let is_root = unsafe { (*this).cg_subsys.is_null() };
-+
-+    if !is_root {
-+        // SAFETY: By C API contact,`this` was returned from a call to
-+        // `make_group`. The pointer is known to be embedded within a
-+        // `Group<Parent>`.
-+        unsafe { &(*Group::<Parent>::container_of(this)).data }
-+    } else {
-+        // SAFETY: By C API contract, `this` is a pointer to the
-+        // `bindings::config_group` field within a `Subsystem<Parent>`.
-+        unsafe { &(*Subsystem::container_of(this)).data }
-+    }
-+}
-+
-+struct GroupOperationsVTable<Parent, Child>(PhantomData<(Parent, Child)>);
-+
-+impl<Parent, Child> GroupOperationsVTable<Parent, Child>
-+where
-+    Parent: GroupOperations<Child = Child>,
-+    Child: 'static,
-+{
-+    /// # Safety
-+    ///
-+    /// `this` must be a valid pointer.
-+    ///
-+    /// If `this` does not represent the root group of a configfs subsystem,
-+    /// `this` must be a pointer to a `bindings::config_group` embedded in a
-+    /// `Group<Parent>`.
-+    ///
-+    /// Otherwise, `this` must be a pointer to a `bindings::config_group` that
-+    /// is embedded in a `bindings::configfs_subsystem` that is embedded in a
-+    /// `Subsystem<Parent>`.
-+    ///
-+    /// `name` must point to a null terminated string.
-+    unsafe extern "C" fn make_group(
-+        this: *mut bindings::config_group,
-+        name: *const kernel::ffi::c_char,
-+    ) -> *mut bindings::config_group {
-+        // SAFETY: By function safety requirements of this function, this call
-+        // is safe.
-+        let parent_data = unsafe { get_group_data(this) };
-+
-+        let group_init = match Parent::make_group(
-+            parent_data,
-+            // SAFETY: By function safety requirements, name points to a null
-+            // terminated string.
-+            unsafe { CStr::from_char_ptr(name) },
-+        ) {
-+            Ok(init) => init,
-+            Err(e) => return e.to_ptr(),
++    fn make_group(&self, name: &CStr) -> Result<impl PinInit<configfs::Group<Child>, Error>> {
++        // Define a group with data type `Child`, one attribute `baz` and child
++        // group type `GrandChild`. `mkdir` in the directory representing this
++        // group will create directories backed by the `GrandChild` type.
++        let tpe = configfs_attrs! {
++            container: configfs::Group<Child>,
++            data: Child,
++            child: GrandChild,
++            attributes: [
++                baz: 0,
++            ],
 +        };
 +
-+        let child_group = <Arc<Group<Child>> as InPlaceInit<Group<Child>>>::try_pin_init(
-+            group_init,
-+            flags::GFP_KERNEL,
-+        );
-+
-+        match child_group {
-+            Ok(child_group) => {
-+                let child_group_ptr = child_group.into_raw();
-+                // SAFETY: We allocated the pointee of `child_ptr` above as a
-+                // `Group<Child>`.
-+                unsafe { Group::<Child>::group(child_group_ptr) }.cast_mut()
-+            }
-+            Err(e) => e.to_ptr(),
-+        }
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// If `this` does not represent the root group of a configfs subsystem,
-+    /// `this` must be a pointer to a `bindings::config_group` embedded in a
-+    /// `Group<Parent>`.
-+    ///
-+    /// Otherwise, `this` must be a pointer to a `bindings::config_group` that
-+    /// is embedded in a `bindings::configfs_subsystem` that is embedded in a
-+    /// `Subsystem<Parent>`.
-+    ///
-+    /// `item` must point to a `bindings::config_item` within a
-+    /// `bindings::config_group` within a `Group<Child>`.
-+    unsafe extern "C" fn drop_item(
-+        this: *mut bindings::config_group,
-+        item: *mut bindings::config_item,
-+    ) {
-+        // SAFETY: By function safety requirements of this function, this call
-+        // is safe.
-+        let parent_data = unsafe { get_group_data(this) };
-+
-+        // SAFETY: By function safety requirements, `item` is embedded in a
-+        // `config_group`.
-+        let c_child_group_ptr = unsafe { container_of!(item, bindings::config_group, cg_item) };
-+        // SAFETY: By function safety requirements, `c_child_group_ptr` is
-+        // embedded within a `Group<Child>`.
-+        let r_child_group_ptr = unsafe { Group::<Child>::container_of(c_child_group_ptr) };
-+
-+        if Parent::HAS_DROP_ITEM {
-+            // SAFETY: We called `into_raw` to produce `r_child_group_ptr` in
-+            // `make_group`.
-+            let arc: Arc<Group<Child>> = unsafe { Arc::from_raw(r_child_group_ptr.cast_mut()) };
-+
-+            Parent::drop_item(parent_data, arc.as_arc_borrow());
-+            arc.into_raw();
-+        }
-+
-+        // SAFETY: By C API contract, we are required to drop a refcount on
-+        // `item`.
-+        unsafe { bindings::config_item_put(item) };
-+    }
-+
-+    const VTABLE: bindings::configfs_group_operations = bindings::configfs_group_operations {
-+        make_item: None,
-+        make_group: Some(Self::make_group),
-+        disconnect_notify: None,
-+        drop_item: Some(Self::drop_item),
-+        is_visible: None,
-+        is_bin_visible: None,
-+    };
-+
-+    const fn vtable_ptr() -> *const bindings::configfs_group_operations {
-+        &Self::VTABLE as *const bindings::configfs_group_operations
++        Ok(configfs::Group::new(name.try_into()?, tpe, Child::new()))
 +    }
 +}
 +
-+struct ItemOperationsVTable<Container, Data>(PhantomData<(Container, Data)>);
-+
-+impl<Data> ItemOperationsVTable<Group<Data>, Data>
-+where
-+    Data: 'static,
-+{
-+    /// # Safety
-+    ///
-+    /// `this` must be a pointer to a `bindings::config_group` embedded in a
-+    /// `Group<Parent>`.
-+    ///
-+    /// This function will destroy the pointee of `this`. The pointee of `this`
-+    /// must not be accessed after the function returns.
-+    unsafe extern "C" fn release(this: *mut bindings::config_item) {
-+        // SAFETY: By function safety requirements, `this` is embedded in a
-+        // `config_group`.
-+        let c_group_ptr = unsafe { kernel::container_of!(this, bindings::config_group, cg_item) };
-+        // SAFETY: By function safety requirements, `c_group_ptr` is
-+        // embedded within a `Group<Data>`.
-+        let r_group_ptr = unsafe { Group::<Data>::container_of(c_group_ptr) };
-+
-+        // SAFETY: We called `into_raw` on `r_group_ptr` in
-+        // `make_group`.
-+        let pin_self: Arc<Group<Data>> = unsafe { Arc::from_raw(r_group_ptr.cast_mut()) };
-+        drop(pin_self);
-+    }
-+
-+    const VTABLE: bindings::configfs_item_operations = bindings::configfs_item_operations {
-+        release: Some(Self::release),
-+        allow_link: None,
-+        drop_link: None,
-+    };
-+
-+    const fn vtable_ptr() -> *const bindings::configfs_item_operations {
-+        &Self::VTABLE as *const bindings::configfs_item_operations
-+    }
-+}
-+
-+impl<Data> ItemOperationsVTable<Subsystem<Data>, Data> {
-+    const VTABLE: bindings::configfs_item_operations = bindings::configfs_item_operations {
-+        release: None,
-+        allow_link: None,
-+        drop_link: None,
-+    };
-+
-+    const fn vtable_ptr() -> *const bindings::configfs_item_operations {
-+        &Self::VTABLE as *const bindings::configfs_item_operations
-+    }
-+}
-+
-+/// Operations implemented by configfs groups that can create subgroups.
-+///
-+/// Implement this trait on structs that embed a [`Subsystem`] or a [`Group`].
 +#[vtable]
-+pub trait GroupOperations {
-+    /// The child data object type.
-+    ///
-+    /// This group will create subgroups (subdirectories) backed by this kind of
-+    /// object.
-+    type Child: 'static;
++impl configfs::AttributeOperations<0> for Configuration {
++    type Data = Configuration;
 +
-+    /// Creates a new subgroup.
-+    ///
-+    /// The kernel will call this method in response to `mkdir(2)` in the
-+    /// directory representing `this`.
-+    ///
-+    /// To accept the request to create a group, implementations should
-+    /// return an initializer of a `Group<Self::Child>`. To prevent creation,
-+    /// return a suitable error.
-+    fn make_group(&self, name: &CStr) -> Result<impl PinInit<Group<Self::Child>, Error>>;
-+
-+    /// Prepares the group for removal from configfs.
-+    ///
-+    /// The kernel will call this method before the directory representing `_child` is removed from
-+    /// configfs.
-+    ///
-+    /// Implementations can use this method to do house keeping before configfs drops its
-+    /// reference to `Child`.
-+    ///
-+    /// NOTE: "drop" in the name of this function is not related to the Rust drop term. Rather, the
-+    /// name is inherited from the callback name in the underlying C code.
-+    fn drop_item(&self, _child: ArcBorrow<'_, Group<Self::Child>>) {
-+        kernel::build_error!(kernel::error::VTABLE_DEFAULT_ERROR)
++    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        pr_info!("Show message\n");
++        let data = container.message;
++        page[0..data.len()].copy_from_slice(data);
++        Ok(data.len())
 +    }
 +}
 +
-+/// A configfs attribute.
-+///
-+/// An attribute appears as a file in configfs, inside a folder that represent
-+/// the group that the attribute belongs to.
-+#[repr(transparent)]
-+pub struct Attribute<const ID: u64, O, Data> {
-+    attribute: Opaque<bindings::configfs_attribute>,
-+    _p: PhantomData<(O, Data)>,
-+}
-+
-+// SAFETY: We do not provide any operations on `Attribute`.
-+unsafe impl<const ID: u64, O, Data> Sync for Attribute<ID, O, Data> {}
-+
-+// SAFETY: Ownership of `Attribute` can safely be transferred to other threads.
-+unsafe impl<const ID: u64, O, Data> Send for Attribute<ID, O, Data> {}
-+
-+impl<const ID: u64, O, Data> Attribute<ID, O, Data>
-+where
-+    O: AttributeOperations<ID, Data = Data>,
-+{
-+    /// # Safety
-+    ///
-+    /// `item` must be embedded in a `bindings::config_group`.
-+    ///
-+    /// If `item` does not represent the root group of a configfs subsystem,
-+    /// the group must be embedded in a `Group<Data>`.
-+    ///
-+    /// Otherwise, the group must be a embedded in a
-+    /// `bindings::configfs_subsystem` that is embedded in a `Subsystem<Data>`.
-+    ///
-+    /// `page` must point to a writable buffer of size at least [`PAGE_SIZE`].
-+    unsafe extern "C" fn show(
-+        item: *mut bindings::config_item,
-+        page: *mut kernel::ffi::c_char,
-+    ) -> isize {
-+        let c_group: *mut bindings::config_group =
-+            // SAFETY: By function safety requirements, `item` is embedded in a
-+            // `config_group`.
-+            unsafe { container_of!(item, bindings::config_group, cg_item) }.cast_mut();
-+
-+        // SAFETY: The function safety requirements for this function satisfy
-+        // the conditions for this call.
-+        let data: &Data = unsafe { get_group_data(c_group) };
-+
-+        // SAFETY: By function safety requirements, `page` is writable for `PAGE_SIZE`.
-+        let ret = O::show(data, unsafe { &mut *(page as *mut [u8; PAGE_SIZE]) });
-+
-+        match ret {
-+            Ok(size) => size as isize,
-+            Err(err) => err.to_errno() as isize,
-+        }
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// `item` must be embedded in a `bindings::config_group`.
-+    ///
-+    /// If `item` does not represent the root group of a configfs subsystem,
-+    /// the group must be embedded in a `Group<Data>`.
-+    ///
-+    /// Otherwise, the group must be a embedded in a
-+    /// `bindings::configfs_subsystem` that is embedded in a `Subsystem<Data>`.
-+    ///
-+    /// `page` must point to a readable buffer of size at least `size`.
-+    unsafe extern "C" fn store(
-+        item: *mut bindings::config_item,
-+        page: *const kernel::ffi::c_char,
-+        size: usize,
-+    ) -> isize {
-+        let c_group: *mut bindings::config_group =
-+        // SAFETY: By function safety requirements, `item` is embedded in a
-+        // `config_group`.
-+            unsafe { container_of!(item, bindings::config_group, cg_item) }.cast_mut();
-+
-+        // SAFETY: The function safety requirements for this function satisfy
-+        // the conditions for this call.
-+        let data: &Data = unsafe { get_group_data(c_group) };
-+
-+        let ret = O::store(
-+            data,
-+            // SAFETY: By function safety requirements, `page` is readable
-+            // for at least `size`.
-+            unsafe { core::slice::from_raw_parts(page.cast(), size) },
-+        );
-+
-+        match ret {
-+            Ok(()) => size as isize,
-+            Err(err) => err.to_errno() as isize,
-+        }
-+    }
-+
-+    /// Create a new attribute.
-+    ///
-+    /// The attribute will appear as a file with name given by `name`.
-+    pub const fn new(name: &'static CStr) -> Self {
-+        Self {
-+            attribute: Opaque::new(bindings::configfs_attribute {
-+                ca_name: name.as_char_ptr(),
-+                ca_owner: core::ptr::null_mut(),
-+                ca_mode: 0o660,
-+                show: Some(Self::show),
-+                store: if O::HAS_STORE {
-+                    Some(Self::store)
-+                } else {
-+                    None
-+                },
-+            }),
-+            _p: PhantomData,
-+        }
-+    }
-+}
-+
-+/// Operations supported by an attribute.
-+///
-+/// Implement this trait on type and pass that type as generic parameter when
-+/// creating an [`Attribute`]. The type carrying the implementation serve no
-+/// purpose other than specifying the attribute operations.
-+///
-+/// This trait must be implemented on the `Data` type of for types that
-+/// implement `HasGroup<Data>`. The trait must be implemented once for each
-+/// attribute of the group. The constant type parameter `ID` maps the
-+/// implementation to a specific `Attribute`. `ID` must be passed when declaring
-+/// attributes via the [`kernel::configfs_attrs`] macro, to tie
-+/// `AttributeOperations` implementations to concrete named attributes.
 +#[vtable]
-+pub trait AttributeOperations<const ID: u64 = 0> {
-+    /// The type of the object that contains the field that is backing the
-+    /// attribute for this operation.
-+    type Data;
++impl configfs::AttributeOperations<1> for Configuration {
++    type Data = Configuration;
 +
-+    /// Renders the value of an attribute.
-+    ///
-+    /// This function is called by the kernel to read the value of an attribute.
-+    ///
-+    /// Implementations should write the rendering of the attribute to `page`
-+    /// and return the number of bytes written.
-+    fn show(data: &Self::Data, page: &mut [u8; PAGE_SIZE]) -> Result<usize>;
++    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        pr_info!("Show bar\n");
++        let guard = container.bar.lock();
++        let data = guard.0.as_slice();
++        let len = guard.1;
++        page[0..len].copy_from_slice(&data[0..len]);
++        Ok(len)
++    }
 +
-+    /// Stores the value of an attribute.
-+    ///
-+    /// This function is called by the kernel to update the value of an attribute.
-+    ///
-+    /// Implementations should parse the value from `page` and update internal
-+    /// state to reflect the parsed value.
-+    fn store(_data: &Self::Data, _page: &[u8]) -> Result {
-+        kernel::build_error!(kernel::error::VTABLE_DEFAULT_ERROR)
++    fn store(container: &Configuration, page: &[u8]) -> Result {
++        pr_info!("Store bar\n");
++        let mut guard = container.bar.lock();
++        guard.0[0..page.len()].copy_from_slice(page);
++        guard.1 = page.len();
++        Ok(())
 +    }
 +}
 +
-+/// A list of attributes.
-+///
-+/// This type is used to construct a new [`ItemType`]. It represents a list of
-+/// [`Attribute`] that will appear in the directory representing a [`Group`].
-+/// Users should not directly instantiate this type, rather they should use the
-+/// [`kernel::configfs_attrs`] macro to declare a static set of attributes for a
-+/// group.
-+///
-+/// # Note
-+///
-+/// Instances of this type are constructed statically at compile by the
-+/// [`kernel::configfs_attrs`] macro.
-+#[repr(transparent)]
-+pub struct AttributeList<const N: usize, Data>(
-+    /// Null terminated Array of pointers to [`Attribute`]. The type is [`c_void`]
-+    /// to conform to the C API.
-+    UnsafeCell<[*mut kernel::ffi::c_void; N]>,
-+    PhantomData<Data>,
-+);
-+
-+// SAFETY: Ownership of `AttributeList` can safely be transferred to other threads.
-+unsafe impl<const N: usize, Data> Send for AttributeList<N, Data> {}
-+
-+// SAFETY: We do not provide any operations on `AttributeList` that need synchronization.
-+unsafe impl<const N: usize, Data> Sync for AttributeList<N, Data> {}
-+
-+impl<const N: usize, Data> AttributeList<N, Data> {
-+    /// # Safety
-+    ///
-+    /// This function must only be called by the [`kernel::configfs_attrs`]
-+    /// macro.
-+    #[doc(hidden)]
-+    pub const unsafe fn new() -> Self {
-+        Self(UnsafeCell::new([core::ptr::null_mut(); N]), PhantomData)
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// This function can only be called by the [`kernel::configfs_attrs`]
-+    /// macro.
-+    #[doc(hidden)]
-+    pub const unsafe fn add<const I: usize, const ID: u64, O>(
-+        &'static self,
-+        attribute: &'static Attribute<ID, O, Data>,
-+    ) where
-+        O: AttributeOperations<ID, Data = Data>,
-+    {
-+        // We need a space at the end of our list for a null terminator.
-+        const { assert!(I < N - 1, "Invalid attribute index") };
-+
-+        // SAFETY: This function is only called through the
-+        // [kernel::`configfs_attrs`] macro. This ensures that we are evaluating
-+        // the function in const context when initializing a static. As such,
-+        // the reference created below will be exclusive.
-+        unsafe {
-+            (&mut *self.0.get())[I] = (attribute as *const Attribute<ID, O, Data>)
-+                .cast_mut()
-+                .cast()
-+        };
-+    }
-+}
-+
-+/// A representation of the attributes that will appear in a [`Group`] or
-+/// [`Subsystem`].
-+///
-+/// Users should not directly instantiate objects of this type. Rather, they
-+/// should use the [`kernel::configfs_attrs`] macro to statically declare the
-+/// shape of a [`Group`] or [`Subsystem`].
++// `pin_data` cannot handle structs without braces.
 +#[pin_data]
-+pub struct ItemType<Container, Data> {
-+    #[pin]
-+    item_type: Opaque<bindings::config_item_type>,
-+    _p: PhantomData<(Container, Data)>,
-+}
++struct Child {}
 +
-+// SAFETY: We do not provide any operations on `ItemType` that need synchronization.
-+unsafe impl<Container, Data> Sync for ItemType<Container, Data> {}
-+
-+// SAFETY: Ownership of `ItemType` can safely be transferred to other threads.
-+unsafe impl<Container, Data> Send for ItemType<Container, Data> {}
-+
-+macro_rules! impl_item_type {
-+    ($tpe:ty) => {
-+        impl<Data> ItemType<$tpe, Data> {
-+            #[doc(hidden)]
-+            pub const fn new_with_child_ctor<const N: usize, Child>(
-+                owner: &'static ThisModule,
-+                attributes: &'static AttributeList<N, Data>,
-+            ) -> Self
-+            where
-+                Data: GroupOperations<Child = Child>,
-+                Child: 'static,
-+            {
-+                Self {
-+                    item_type: Opaque::new(bindings::config_item_type {
-+                        ct_owner: owner.as_ptr(),
-+                        ct_group_ops: GroupOperationsVTable::<Data, Child>::vtable_ptr().cast_mut(),
-+                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>::vtable_ptr().cast_mut(),
-+                        ct_attrs: (attributes as *const AttributeList<N, Data>)
-+                            .cast_mut()
-+                            .cast(),
-+                        ct_bin_attrs: core::ptr::null_mut(),
-+                    }),
-+                    _p: PhantomData,
-+                }
-+            }
-+
-+            #[doc(hidden)]
-+            pub const fn new<const N: usize>(
-+                owner: &'static ThisModule,
-+                attributes: &'static AttributeList<N, Data>,
-+            ) -> Self {
-+                Self {
-+                    item_type: Opaque::new(bindings::config_item_type {
-+                        ct_owner: owner.as_ptr(),
-+                        ct_group_ops: core::ptr::null_mut(),
-+                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>::vtable_ptr().cast_mut(),
-+                        ct_attrs: (attributes as *const AttributeList<N, Data>)
-+                            .cast_mut()
-+                            .cast(),
-+                        ct_bin_attrs: core::ptr::null_mut(),
-+                    }),
-+                    _p: PhantomData,
-+                }
-+            }
-+        }
-+    };
-+}
-+
-+impl_item_type!(Subsystem<Data>);
-+impl_item_type!(Group<Data>);
-+
-+impl<Container, Data> ItemType<Container, Data> {
-+    fn as_ptr(&self) -> *const bindings::config_item_type {
-+        self.item_type.get()
++impl Child {
++    fn new() -> impl PinInit<Self, Error> {
++        try_pin_init!(Self {})
 +    }
 +}
 +
-+/// Define a list of configfs attributes statically.
-+///
-+/// Invoking the macro in the following manner:
-+///
-+/// ```ignore
-+/// let item_type = configfs_attrs! {
-+///     container: configfs::Subsystem<Configuration>,
-+///     data: Configuration,
-+///     child: Child,
-+///     attributes: [
-+///         message: 0,
-+///         bar: 1,
-+///     ],
-+/// };
-+/// ```
-+///
-+/// Expands the following output:
-+///
-+/// ```ignore
-+/// let item_type = {
-+///     static CONFIGURATION_MESSAGE_ATTR: kernel::configfs::Attribute<
-+///         0,
-+///         Configuration,
-+///         Configuration,
-+///     > = unsafe {
-+///         kernel::configfs::Attribute::new({
-+///             const S: &str = "message\u{0}";
-+///             const C: &kernel::str::CStr = match kernel::str::CStr::from_bytes_with_nul(
-+///                 S.as_bytes()
-+///             ) {
-+///                 Ok(v) => v,
-+///                 Err(_) => {
-+///                     core::panicking::panic_fmt(core::const_format_args!(
-+///                         "string contains interior NUL"
-+///                     ));
-+///                 }
-+///             };
-+///             C
-+///         })
-+///     };
-+///
-+///     static CONFIGURATION_BAR_ATTR: kernel::configfs::Attribute<
-+///             1,
-+///             Configuration,
-+///             Configuration
-+///     > = unsafe {
-+///         kernel::configfs::Attribute::new({
-+///             const S: &str = "bar\u{0}";
-+///             const C: &kernel::str::CStr = match kernel::str::CStr::from_bytes_with_nul(
-+///                 S.as_bytes()
-+///             ) {
-+///                 Ok(v) => v,
-+///                 Err(_) => {
-+///                     core::panicking::panic_fmt(core::const_format_args!(
-+///                         "string contains interior NUL"
-+///                     ));
-+///                 }
-+///             };
-+///             C
-+///         })
-+///     };
-+///
-+///     const N: usize = (1usize + (1usize + 0usize)) + 1usize;
-+///
-+///     static CONFIGURATION_ATTRS: kernel::configfs::AttributeList<N, Configuration> =
-+///         unsafe { kernel::configfs::AttributeList::new() };
-+///
-+///     {
-+///         const N: usize = 0usize;
-+///         unsafe { CONFIGURATION_ATTRS.add::<N, 0, _>(&CONFIGURATION_MESSAGE_ATTR) };
-+///     }
-+///
-+///     {
-+///         const N: usize = (1usize + 0usize);
-+///         unsafe { CONFIGURATION_ATTRS.add::<N, 1, _>(&CONFIGURATION_BAR_ATTR) };
-+///     }
-+///
-+///     static CONFIGURATION_TPE:
-+///       kernel::configfs::ItemType<configfs::Subsystem<Configuration> ,Configuration>
-+///         = kernel::configfs::ItemType::<
-+///                 configfs::Subsystem<Configuration>,
-+///                 Configuration
-+///                 >::new_with_child_ctor::<N,Child>(
-+///             &THIS_MODULE,
-+///             &CONFIGURATION_ATTRS
-+///         );
-+///
-+///     &CONFIGURATION_TPE
-+/// }
-+/// ```
-+#[macro_export]
-+macro_rules! configfs_attrs {
-+    (
-+        container: $container:ty,
-+        data: $data:ty,
-+        attributes: [
-+            $($name:ident: $attr:literal),* $(,)?
-+        ] $(,)?
-+    ) => {
-+        $crate::configfs_attrs!(
-+            count:
-+            @container($container),
-+            @data($data),
-+            @child(),
-+            @no_child(x),
-+            @attrs($($name $attr)*),
-+            @eat($($name $attr,)*),
-+            @assign(),
-+            @cnt(0usize),
-+        )
-+    };
-+    (
-+        container: $container:ty,
-+        data: $data:ty,
-+        child: $child:ty,
-+        attributes: [
-+            $($name:ident: $attr:literal),* $(,)?
-+        ] $(,)?
-+    ) => {
-+        $crate::configfs_attrs!(
-+            count:
-+            @container($container),
-+            @data($data),
-+            @child($child),
-+            @no_child(),
-+            @attrs($($name $attr)*),
-+            @eat($($name $attr,)*),
-+            @assign(),
-+            @cnt(0usize),
-+        )
-+    };
-+    (count:
-+     @container($container:ty),
-+     @data($data:ty),
-+     @child($($child:ty)?),
-+     @no_child($($no_child:ident)?),
-+     @attrs($($aname:ident $aattr:literal)*),
-+     @eat($name:ident $attr:literal, $($rname:ident $rattr:literal,)*),
-+     @assign($($assign:block)*),
-+     @cnt($cnt:expr),
-+    ) => {
-+        $crate::configfs_attrs!(
-+            count:
-+            @container($container),
-+            @data($data),
-+            @child($($child)?),
-+            @no_child($($no_child)?),
-+            @attrs($($aname $aattr)*),
-+            @eat($($rname $rattr,)*),
-+            @assign($($assign)* {
-+                const N: usize = $cnt;
-+                // The following macro text expands to a call to `Attribute::add`.
-+                // SAFETY: We are expanding [`kernel::configfs_attrs`].
-+                unsafe {
-+                    $crate::macros::paste!(
-+                        [< $data:upper _ATTRS >]
-+                            .add::<N, $attr, _>(&[< $data:upper _ $name:upper _ATTR >])
-+                    )
-+                };
-+            }),
-+            @cnt(1usize + $cnt),
-+        )
-+    };
-+    (count:
-+     @container($container:ty),
-+     @data($data:ty),
-+     @child($($child:ty)?),
-+     @no_child($($no_child:ident)?),
-+     @attrs($($aname:ident $aattr:literal)*),
-+     @eat(),
-+     @assign($($assign:block)*),
-+     @cnt($cnt:expr),
-+    ) =>
-+    {
-+        $crate::configfs_attrs!(
-+            final:
-+            @container($container),
-+            @data($data),
-+            @child($($child)?),
-+            @no_child($($no_child)?),
-+            @attrs($($aname $aattr)*),
-+            @assign($($assign)*),
-+            @cnt($cnt),
-+        )
-+    };
-+    (final:
-+     @container($container:ty),
-+     @data($data:ty),
-+     @child($($child:ty)?),
-+     @no_child($($no_child:ident)?),
-+     @attrs($($name:ident $attr:literal)*),
-+     @assign($($assign:block)*),
-+     @cnt($cnt:expr),
-+    ) =>
-+    {
-+        $crate::macros::paste!{
-+            {
-+                $(
-+                    // SAFETY: We are expanding `configfs_attrs`.
-+                    static [< $data:upper _ $name:upper _ATTR >]:
-+                        $crate::configfs::Attribute<$attr, $data, $data> =
-+                            unsafe {
-+                                $crate::configfs::Attribute::new(c_str!(::core::stringify!($name)))
-+                            };
-+                )*
++#[vtable]
++impl configfs::GroupOperations for Child {
++    type Child = GrandChild;
 +
++    fn make_group(&self, name: &CStr) -> Result<impl PinInit<configfs::Group<GrandChild>, Error>> {
++        // Define a group with data type `GrandChild`, one attribute `gc`. As no
++        // child type is specified, it will not be possible to create subgroups
++        // in this group, and `mkdir`in the directory representing this group
++        // will return an error.
++        let tpe = configfs_attrs! {
++            container: configfs::Group<GrandChild>,
++            data: GrandChild,
++            attributes: [
++                gc: 0,
++            ],
++        };
 +
-+                // We need space for a null terminator.
-+                const N: usize = $cnt + 1usize;
-+
-+                // SAFETY: We are expanding `configfs_attrs`.
-+                static [< $data:upper _ATTRS >]:
-+                $crate::configfs::AttributeList<N, $data> =
-+                    unsafe { $crate::configfs::AttributeList::new() };
-+
-+                $($assign)*
-+
-+                $(
-+                    const [<$no_child:upper>]: bool = true;
-+
-+                    static [< $data:upper _TPE >] : $crate::configfs::ItemType<$container, $data>  =
-+                        $crate::configfs::ItemType::<$container, $data>::new::<N>(
-+                            &THIS_MODULE, &[<$ data:upper _ATTRS >]
-+                        );
-+                )?
-+
-+                $(
-+                    static [< $data:upper _TPE >]:
-+                        $crate::configfs::ItemType<$container, $data>  =
-+                            $crate::configfs::ItemType::<$container, $data>::
-+                            new_with_child_ctor::<N, $child>(
-+                                &THIS_MODULE, &[<$ data:upper _ATTRS >]
-+                            );
-+                )?
-+
-+                & [< $data:upper _TPE >]
-+            }
-+        }
-+    };
-+
++        Ok(configfs::Group::new(
++            name.try_into()?,
++            tpe,
++            GrandChild::new(),
++        ))
++    }
 +}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index de07aadd1ff5..bcbf5026449d 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -42,6 +42,8 @@
- pub mod block;
- #[doc(hidden)]
- pub mod build_assert;
-+#[cfg(CONFIG_CONFIGFS_FS)]
-+pub mod configfs;
- pub mod cred;
- pub mod device;
- pub mod device_id;
++
++#[vtable]
++impl configfs::AttributeOperations<0> for Child {
++    type Data = Child;
++
++    fn show(_container: &Child, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        pr_info!("Show baz\n");
++        let data = c"Hello Baz\n".to_bytes();
++        page[0..data.len()].copy_from_slice(data);
++        Ok(data.len())
++    }
++}
++
++// `pin_data` cannot handle structs without braces.
++#[pin_data]
++struct GrandChild {}
++
++impl GrandChild {
++    fn new() -> impl PinInit<Self, Error> {
++        try_pin_init!(Self {})
++    }
++}
++
++#[vtable]
++impl configfs::AttributeOperations<0> for GrandChild {
++    type Data = GrandChild;
++
++    fn show(_container: &GrandChild, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        pr_info!("Show grand child\n");
++        let data = c"Hello GC\n".to_bytes();
++        page[0..data.len()].copy_from_slice(data);
++        Ok(data.len())
++    }
++}
 
 -- 
 2.47.2
