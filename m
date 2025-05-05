@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-634428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E54AAB17E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:01:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF7BAAB171
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC0E3AB265
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:56:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 945A17B8E44
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF733E58DD;
-	Tue,  6 May 2025 00:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4503EA8DA;
+	Tue,  6 May 2025 00:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdDU+o2+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKJMoRul"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5292A2D190B;
-	Mon,  5 May 2025 22:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D622749F0;
+	Mon,  5 May 2025 22:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485480; cv=none; b=LnBg8FYWrujm/K6B7mMyypK/eGYskZVGrs5HUr58Ica9A66HghcFrUQcG4D6mGEs55Ckwq2j6AxgY1Vp1cVwNAdnWeCuK0gxt3MaMx+S8lMk+iRw9wfnN1JGA55YFMwhtahvbB+ZJQXTzX0w5OgdhrfPSi599SVqK/Vjn8QFs2A=
+	t=1746485480; cv=none; b=lf3stPeEZxlrPso3T//F3TKuwmCNY9o4CGkr3yfm/qO/k02bNCouw/CppTzMa4HdD5CPPaM8yJBqo8bzuoS5bXdxnJkJxy51dFA22i3Rs/gaNwmilOqTxglIekBwUen5yWKn5r+N/nrKq9DM7VhZ+6ZcVzWKEyQA900WUYUG2Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746485480; c=relaxed/simple;
-	bh=pwIrPYe2moK7L7uJ3vTZLVwNuFiG5U0eZA331dBMFMM=;
+	bh=lFmRf0UqXzAD/H+cDJ45OmX59Qe26LwGgupNtdazpJ0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ba36sJJKFG7tROR/diLtkhYJHaRO5V6gk7XShJHCqXhi5FgvoLmqJMLQCRjzhuBWDhEd6yziDB5EeDuIB8mu2/gxI4mUEvZRZIovsMIoLf4u7L2tOPUoT2r0PVMYlroCNQLzVDlBbgjRm0cBN6ev++3dUW+frTmCCdJ8/uZSEho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdDU+o2+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DDE2C4CEED;
-	Mon,  5 May 2025 22:51:18 +0000 (UTC)
+	 MIME-Version; b=LnFM5b7CVE/oBLoE8d8ytVh842RMKG2DGw90b6rdC05NfSKUzi86ZEUsS74bm55T4zQPhLIMRIjzwD/YqE4lcDHMXv4UvwP9Uy9PbaPIkUXIeFxtyR1DLfTNCJXqyrNxCip8O8z6Px8onkibVmb/WF4IfPHb8aWJh5BPPvfRm5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKJMoRul; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928EDC4CEE4;
+	Mon,  5 May 2025 22:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485479;
-	bh=pwIrPYe2moK7L7uJ3vTZLVwNuFiG5U0eZA331dBMFMM=;
+	s=k20201202; t=1746485480;
+	bh=lFmRf0UqXzAD/H+cDJ45OmX59Qe26LwGgupNtdazpJ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IdDU+o2+t/cNdTob4I+Xs9EdfZOZ7UqYBbHeujMf6/yccnGa3wXLrksGADsIrMnAU
-	 zE8fx8j/apWheZMrpS/ZcMNVPuA8P7Ex/eFPK1+w+fYWjlHlfyUVXP3DOjXmr9jNm8
-	 syJR1RU7XyT5Udg/I5VmOi3zd5RPkLB5PZEwSfekeXmG780/EIEY575wDxoI0SVgkE
-	 VGzm314OZ6YaJT7cwpSR8gdpWLwmp/8wk9bW/2cl46+uoUAfLjcIRRUvL6jn7Q2fL6
-	 Gr8kE93Ik2W4Su/9Oc+rZBNpTQtOYk2WpmQmXpCiuvcikVzuv01G3XGCbNfhCzkhFQ
-	 J9DNYJ2jeoLBw==
+	b=PKJMoRulYn9MPLX0kzFLep1MuNVfyDWb4/5sCYHFX0mYehFW4Pu2HrbfDkf4LsJNz
+	 W3Syo1BGukpYzUrglSIa/7/yWpg343IWZ4LvyGeEkpTwyztHP3RJykWiadXeAWWAJw
+	 ngAiEA+AkA2Hm9zKSJgvc1VvE8b/0HfDoHVlHzp9hW4gNCJyKRmkR1g6HHSHZ9aZj0
+	 Bn3/A3+iIe9T7ei9JG6hAO3JPFlxoK77tFMarovzskQl5LcrI3rXIZ7ZbSLTRdr9Ik
+	 BpMQ0CYHQK2U2tbzBid74zcG5Ek3gYRdERRLrqFciCvjLKmSbRVUTgWXVD5mfQdnVN
+	 Y7Ry0LWfROdhg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -47,9 +47,9 @@ Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Tejun Heo <tj@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 6.12 336/486] kernfs: Acquire kernfs_rwsem in kernfs_node_dentry().
-Date: Mon,  5 May 2025 18:36:52 -0400
-Message-Id: <20250505223922.2682012-336-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 337/486] kernfs: Acquire kernfs_rwsem in kernfs_get_parent_dentry().
+Date: Mon,  5 May 2025 18:36:53 -0400
+Message-Id: <20250505223922.2682012-337-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -66,45 +66,37 @@ Content-Transfer-Encoding: 8bit
 
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 5b2fabf7fe8f745ff214ff003e6067b64f172271 ]
+[ Upstream commit 122ab92dee80582c39740609a627198dd5b6b595 ]
 
-kernfs_node_dentry() passes kernfs_node::name to
-lookup_positive_unlocked().
+kernfs_get_parent_dentry() passes kernfs_node::parent to
+kernfs_get_inode().
 
-Acquire kernfs_root::kernfs_rwsem to ensure the node is not renamed
-during the operation.
+Acquire kernfs_root::kernfs_rwsem to ensure kernfs_node::parent isn't
+replaced during the operation.
 
 Acked-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Link: https://lore.kernel.org/r/20250213145023.2820193-4-bigeasy@linutronix.de
+Link: https://lore.kernel.org/r/20250213145023.2820193-3-bigeasy@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/kernfs/mount.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/kernfs/mount.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-index 1358c21837f1a..0f6379ae258d1 100644
+index 0f6379ae258d1..4a0ff08d589ca 100644
 --- a/fs/kernfs/mount.c
 +++ b/fs/kernfs/mount.c
-@@ -207,6 +207,7 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
+@@ -145,7 +145,9 @@ static struct dentry *kernfs_fh_to_parent(struct super_block *sb,
+ static struct dentry *kernfs_get_parent_dentry(struct dentry *child)
  {
- 	struct dentry *dentry;
- 	struct kernfs_node *knparent;
-+	struct kernfs_root *root;
+ 	struct kernfs_node *kn = kernfs_dentry_node(child);
++	struct kernfs_root *root = kernfs_root(kn);
  
- 	BUG_ON(sb->s_op != &kernfs_sops);
- 
-@@ -216,6 +217,9 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
- 	if (!kn->parent)
- 		return dentry;
- 
-+	root = kernfs_root(kn);
 +	guard(rwsem_read)(&root->kernfs_rwsem);
-+
- 	knparent = find_next_ancestor(kn, NULL);
- 	if (WARN_ON(!knparent)) {
- 		dput(dentry);
+ 	return d_obtain_alias(kernfs_get_inode(child->d_sb, kn->parent));
+ }
+ 
 -- 
 2.39.5
 
