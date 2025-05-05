@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-633941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA949AAAAD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21306AAAB0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9FB04A621C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 360FA98659C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E02F10BD;
-	Mon,  5 May 2025 23:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F0D283CB5;
+	Mon,  5 May 2025 23:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPhY3NYc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OadaC4z7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF893379413;
-	Mon,  5 May 2025 23:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA9D38C427;
+	Mon,  5 May 2025 23:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486086; cv=none; b=fOfWPu5GmdJJXL/DFr7WKd6CA7xNtuWM895cJvFmHA57cU6byO5hKwz5U9ulgdY3SNaoKbqKFyRMf3HFVUSwT5I8a+9PNZdbdD56R0wJwOdzrByGz9n5IuZsqwRAoyMiwDVxIAV3fv5YPNMmLEHuncFKliMunu7kLvc8jielXyo=
+	t=1746486093; cv=none; b=U3cmiCwTQwx9ouaXWAL7rgqetOy+QQ4wRipsg6RFezGUu/1Iwbvl+KhiVpUrxreecgV7w0vplHpejJMqzXE1sG2TO/F8ExSsvw5HKKJB1jLooFJuq/ztLeWCSZSG9MPIJZpZ27RPJVXDlbHLyxb0TUoLC1bS2JofClW4YzQMQXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486086; c=relaxed/simple;
-	bh=jY2bLFrM4OmbAvQoCMBjY6y3zOJ5tAN7yOeLduNkcfk=;
+	s=arc-20240116; t=1746486093; c=relaxed/simple;
+	bh=qWI4Veu+G4Y/XLuv+c8eCI1sefPk1C68m2Dnv+2qFFs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Uk0hf7kRdafD4BuTxcZbCAyKBA07fv5JVUlxDQgJP6CJaJKsadSExQtqpaEOLrrLGprsA3uc2lRtZtWY+jEVKvnGikhVMEcQB6opKw2KumJu3JRYCHa8D5dVQIBhf8y6lvdQ5/6YCPdMsEc4nHLZCQ4AHddfU+NdPXAe6Vx0XUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPhY3NYc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB63C4CEEF;
-	Mon,  5 May 2025 23:01:23 +0000 (UTC)
+	 MIME-Version; b=qzz6yeYEWRP3AwyRVfvCrtfUbsY/d7vxEag6P9J4GO9Xf9UCSwc9QBPd/S+Ximv8j1YGSdxULvl2hOtkAY2036zc99wX+cB8wQNGFCP+1bjm5fiCks2Mm2qIO+SEo4IhEORpKrHIFIwESZHBgSW1itaVlzjJLeum0ZWG7i1j5VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OadaC4z7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1805C4CEE4;
+	Mon,  5 May 2025 23:01:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486084;
-	bh=jY2bLFrM4OmbAvQoCMBjY6y3zOJ5tAN7yOeLduNkcfk=;
+	s=k20201202; t=1746486092;
+	bh=qWI4Veu+G4Y/XLuv+c8eCI1sefPk1C68m2Dnv+2qFFs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XPhY3NYcR8xIsUbBJec5NnmJSCv9bsQ9102qmyB/86lOU/w8l527YFOImpbKbriIM
-	 igp7rznqv+/iXA1Qx2Xjj6RpDwo5kelIJUnMUIwSUz8w9mLqN9L0CUpmaLqhYTN3kn
-	 lCy3fNo0ZTeOYtloeJLBN5CKyIF9S4mMDkTlcAqvoLCEk7OMcSkAI69iygZlmNC+1y
-	 PSoFQL0B7zaWYxiHjY+zkGIloCLlxr0CBgQk6Zdg1JQ4lmEjluXscqpgfqYmSMdJO7
-	 qlrvJyzLXRzNYftAGEMUEgwNzsMeLn+NThz3hkA+3qhVLSB/UkaM3HxDoXy7ExW/hQ
-	 xzM0x38z5XM9Q==
+	b=OadaC4z7llMYP2/bNPVqJDH0faSTrmnX04gb0YjN/Pmb7zZXAFEFPVfSSyl5ouCiG
+	 oI7IfwraQxrlvZ3eix5Gqh5mxzuaznD4FUd8A3AF7/Cy+fflz/wJc3a6PFWKzMubAD
+	 GOVcmvUMqNbYYTgcl9wHvhMmg4ZkiRQVnub+4+PdZCxOSM8BmZ9KEOve6DRI3aBH8O
+	 hcQ1rBcw/NZX32YrKyo3adlllpOefHNdTswzg2q5xE/K9oS+2LNK7mEpjYjFY3KOS/
+	 F6OOvC6Fcls+D0qAP2BXPsQ/TEiRqT2tXGy4Jie/l1iNDvbn62LWZ0+yG/ZC2Q0YQs
+	 L2EFktrRze9wg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Yuanjun Gong <ruc_gongyuanjun@163.com>,
-	Lee Jones <lee@kernel.org>,
+Cc: Ramasamy Kaliappan <quic_rkaliapp@quicinc.com>,
+	Roopni Devanathan <quic_rdevanat@quicinc.com>,
+	Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	pavel@kernel.org,
-	jakob+lkml@paranoidlabs.org,
-	u.kleine-koenig@baylibre.com,
-	linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 147/294] leds: pwm-multicolor: Add check for fwnode_property_read_u32
-Date: Mon,  5 May 2025 18:54:07 -0400
-Message-Id: <20250505225634.2688578-147-sashal@kernel.org>
+	jjohnson@kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.6 151/294] wifi: ath12k: Improve BSS discovery with hidden SSID in 6 GHz band
+Date: Mon,  5 May 2025 18:54:11 -0400
+Message-Id: <20250505225634.2688578-151-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -67,38 +68,57 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Yuanjun Gong <ruc_gongyuanjun@163.com>
+From: Ramasamy Kaliappan <quic_rkaliapp@quicinc.com>
 
-[ Upstream commit 6d91124e7edc109f114b1afe6d00d85d0d0ac174 ]
+[ Upstream commit 27d38bdfd416f4db70e09c3bef3b030c86fd235a ]
 
-Add a check to the return value of fwnode_property_read_u32()
-in case it fails.
+Currently, sometimes, the station is unable to identify the configured
+AP SSID in its scan results when the AP is not broadcasting its name
+publicly and has a hidden SSID.
 
-Signed-off-by: Yuanjun Gong <ruc_gongyuanjun@163.com>
-Link: https://lore.kernel.org/r/20250223121459.2889484-1-ruc_gongyuanjun@163.com
-Signed-off-by: Lee Jones <lee@kernel.org>
+Currently, channel dwell time for an ath12k station is 30 ms. Sometimes,
+station can send broadcast probe request to AP close to the end of dwell
+time. In some of these cases, before AP sends a response to the received
+probe request, the dwell time on the station side would come to an end.
+So, the station will move to scan next channel and will not be able to
+acknowledge the unicast probe response.
+
+Resolve this issue by increasing station's channel dwell time to 70 ms,
+so that the it remains on the same channel for a longer period. This
+would increase the station's chance of receiving probe response from the
+AP. The station will then send a response acknowledgment back to the AP,
+thus leading to successful scan and BSS discovery.
+
+With an increased dwell time, scan would take longer than it takes now.
+But, this fix is an improvement for hidden SSID scan issue.
+
+Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
+
+Signed-off-by: Ramasamy Kaliappan <quic_rkaliapp@quicinc.com>
+Signed-off-by: Roopni Devanathan <quic_rdevanat@quicinc.com>
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+Link: https://patch.msgid.link/20250207060005.153835-1-quic_rdevanat@quicinc.com
+Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/rgb/leds-pwm-multicolor.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath12k/wmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
-index e1a81e0109e8a..c0aa34b1d0e2d 100644
---- a/drivers/leds/rgb/leds-pwm-multicolor.c
-+++ b/drivers/leds/rgb/leds-pwm-multicolor.c
-@@ -135,8 +135,11 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
- 
- 	/* init the multicolor's LED class device */
- 	cdev = &priv->mc_cdev.led_cdev;
--	fwnode_property_read_u32(mcnode, "max-brightness",
-+	ret = fwnode_property_read_u32(mcnode, "max-brightness",
- 				 &cdev->max_brightness);
-+	if (ret)
-+		goto release_mcnode;
-+
- 	cdev->flags = LED_CORE_SUSPENDRESUME;
- 	cdev->brightness_set_blocking = led_pwm_mc_set;
- 
+diff --git a/drivers/net/wireless/ath/ath12k/wmi.c b/drivers/net/wireless/ath/ath12k/wmi.c
+index c977dfbae0a46..d87d5980325e8 100644
+--- a/drivers/net/wireless/ath/ath12k/wmi.c
++++ b/drivers/net/wireless/ath/ath12k/wmi.c
+@@ -2115,8 +2115,8 @@ void ath12k_wmi_start_scan_init(struct ath12k *ar,
+ 	arg->dwell_time_active = 50;
+ 	arg->dwell_time_active_2g = 0;
+ 	arg->dwell_time_passive = 150;
+-	arg->dwell_time_active_6g = 40;
+-	arg->dwell_time_passive_6g = 30;
++	arg->dwell_time_active_6g = 70;
++	arg->dwell_time_passive_6g = 70;
+ 	arg->min_rest_time = 50;
+ 	arg->max_rest_time = 500;
+ 	arg->repeat_probe_time = 0;
 -- 
 2.39.5
 
