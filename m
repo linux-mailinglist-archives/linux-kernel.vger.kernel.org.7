@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-634463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3A3AAB1B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:05:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828F3AAAE98
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7045A179C05
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:04:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86043B5A28
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35DF418D09;
-	Tue,  6 May 2025 00:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772CB38B4C9;
+	Mon,  5 May 2025 23:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dq8U1lWv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qS3OVwQh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F502DA52D;
-	Mon,  5 May 2025 22:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21C2DA53E;
+	Mon,  5 May 2025 22:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485566; cv=none; b=h9CZLkNdUKDNKxEzETU/ggAPZyNAxS2g4Ut41k1N4Yw90FDQqdjFMiWEiwgdqZa4v44cxKrDzMW4i6qLVfiNYr711P9V+AYRaIZd9rTBKfEyx5vAUOzfX3RCDXETfaX/4x9p5KT7YD2K9YTiss5Ys7ANODsFy8Via8eCR51yBS4=
+	t=1746485571; cv=none; b=pna+UKXtiNUdg7p8W/lUXoNWR5EUO8Upot9Isc5tdH+8KW6ef4v+0rPGOLnWJ3FF+nNFxI1AIPNyMchgmKSGx9/oMATsHbY18xB0L3/8DwzRPVSe9x4+BlAzym2nF3Bnni1ysSEc/L1Pe+s7w8v/xlDp9DxNP7OSIemqAfL/Vac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485566; c=relaxed/simple;
-	bh=GXJ3ln4fmVC95xJ/nz54IuqackY6monmNUpFwtpRZj8=;
+	s=arc-20240116; t=1746485571; c=relaxed/simple;
+	bh=tEpnyqxpUwmbm0CU1poVcn8w/flZiQr2S/rIImIpo/E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aE+wpu01HPbKF31B1PjRNBE7/HZGg03w/kC/c/FwCWScijtj3gHXthniQE8hbWCJDRM+Duqph0C1ok0N2+hbnpnpBwrLCEder8PE2hVQOAHgUfMqs/Ynsi3nCIEETlUdAb57SgwK1dSQlBS6f30ZqEfk7AaYDYLcpw9+siEBWc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dq8U1lWv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 752F8C4CEEE;
-	Mon,  5 May 2025 22:52:43 +0000 (UTC)
+	 MIME-Version; b=VbuApivZn6OsciQJvBPJf5N0ga/vDNDgipgbqoNndePJIz1vB5WBUs6IghEnE51GuSDnNASEGO07GhL6wFDbB/jZXw/aSBHkXxJe6I7yOOCtN0MHgrxI+32+ZY3UPUzWIhPtpjE4GLcRwpFCSs8WAPYfk8XXenUN899LkmuxImw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qS3OVwQh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6135DC4CEED;
+	Mon,  5 May 2025 22:52:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485566;
-	bh=GXJ3ln4fmVC95xJ/nz54IuqackY6monmNUpFwtpRZj8=;
+	s=k20201202; t=1746485570;
+	bh=tEpnyqxpUwmbm0CU1poVcn8w/flZiQr2S/rIImIpo/E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Dq8U1lWvOFy14kdkdo2KD20qigjg5pnSkaOZUszkfO7qMkvkW7cTmxlLVzISEO1/e
-	 2O+gUhPwYX//u3aT9osnXzF8HhqRJcTQBmHFuYwoYvXIi8etj/iTMU/7kKmsax3JQS
-	 NVSBEJhepHdQoXJMODBw2KuvHGA27ePHXa+clujhtoumbf9DcfQZCDz6vRIa8nXzwY
-	 y8Qo58wAhiDkBwddSk9eVjhmNsIgpmCjIbe4AO9nvHIb4/R/QSqpz+0XCFkMo1/sU4
-	 QF7tfsLx9bWjMwI9oCkRMYRqzTzMmJo+qHfIu4dQ4UsolT9FReRgBuLIqX0c+jbzM4
-	 /CuOegx0JNiTw==
+	b=qS3OVwQh7BtCvrQLE2l0sAplxMcRFeHH+INgvnHU+GmfyKk5zS3NfyiCQ0w+NEdFq
+	 pSPuHyaaLYndzSEHnlMy63j/UJs6+NGz3hqQKsHZ8VJE/V5OqeJx9nixSVLvFYwUlV
+	 f7aoR+/YwBLTHxAMjJso9utXxoR7RFeNHFyP+SWHXEWB1GLCwUuIo6r5dt9nN6qho7
+	 WFf+D0FcHP8q0ZtGlfZmqFTgvnwKaD9D+HVQxNL8V5GcuwUPPnEJp4sLHpmR0JeCPj
+	 CV8pngSLP6ffRYeyhLrcRG9R+qU2WNuYZK2J0Z3wlXvdARC7RdGUVzPIy9K5r5lFXG
+	 BEowQCdAddyNQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Tom Chung <chiahsuan.chung@amd.com>,
-	Roman Li <roman.li@amd.com>,
-	Zaeem Mohamed <zaeem.mohamed@amd.com>,
+Cc: Joshua Aberback <joshua.aberback@amd.com>,
+	Alvin Lee <alvin.lee2@amd.com>,
+	Wayne Lin <wayne.lin@amd.com>,
 	Daniel Wheeler <daniel.wheeler@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
@@ -54,23 +54,22 @@ Cc: Tom Chung <chiahsuan.chung@amd.com>,
 	christian.koenig@amd.com,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	siqueira@igalia.com,
+	Alvin.Lee2@amd.com,
+	rodrigo.siqueira@amd.com,
 	alex.hung@amd.com,
-	alvin.lee2@amd.com,
-	aurabindo.pillai@amd.com,
-	Austin.Zheng@amd.com,
-	Ilya.Bakoulin@amd.com,
-	mario.limonciello@amd.com,
-	Wayne.Lin@amd.com,
-	Josip.Pavic@amd.com,
 	dillon.varone@amd.com,
-	wenjing.liu@amd.com,
+	Austin.Zheng@amd.com,
+	Samson.Tam@amd.com,
+	rostrows@amd.com,
+	yi-lchen@amd.com,
+	PeiChen.Huang@amd.com,
+	aurabindo.pillai@amd.com,
 	linux@treblig.org,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 370/486] drm/amd/display: Initial psr_version with correct setting
-Date: Mon,  5 May 2025 18:37:26 -0400
-Message-Id: <20250505223922.2682012-370-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 371/486] drm/amd/display: Increase block_sequence array size
+Date: Mon,  5 May 2025 18:37:27 -0400
+Message-Id: <20250505223922.2682012-371-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -85,38 +84,44 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Tom Chung <chiahsuan.chung@amd.com>
+From: Joshua Aberback <joshua.aberback@amd.com>
 
-[ Upstream commit d8c782cac5007e68e7484d420168f12d3490def6 ]
+[ Upstream commit 3a7810c212bcf2f722671dadf4b23ff70a7d23ee ]
 
-[Why & How]
-The initial setting for psr_version is not correct while
-create a virtual link.
+[Why]
+It's possible to generate more than 50 steps in hwss_build_fast_sequence,
+for example with a 6-pipe asic where all pipes are in one MPC chain. This
+overflows the block_sequence buffer and corrupts block_sequence_steps,
+causing a crash.
 
-The default psr_version should be DC_PSR_VERSION_UNSUPPORTED.
+[How]
+Expand block_sequence to 100 items. A naive upper bound on the possible
+number of steps for a 6-pipe asic, ignoring the potential for steps to be
+mutually exclusive, is 91 with current code, therefore 100 is sufficient.
 
-Reviewed-by: Roman Li <roman.li@amd.com>
-Signed-off-by: Tom Chung <chiahsuan.chung@amd.com>
-Signed-off-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
+Reviewed-by: Alvin Lee <alvin.lee2@amd.com>
+Signed-off-by: Joshua Aberback <joshua.aberback@amd.com>
+Signed-off-by: Wayne Lin <wayne.lin@amd.com>
 Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/amd/display/dc/inc/core_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index 762bf04efe7ed..ff189177244bb 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -276,6 +276,7 @@ static bool create_links(
- 		link->link_id.type = OBJECT_TYPE_CONNECTOR;
- 		link->link_id.id = CONNECTOR_ID_VIRTUAL;
- 		link->link_id.enum_id = ENUM_ID_1;
-+		link->psr_settings.psr_version = DC_PSR_VERSION_UNSUPPORTED;
- 		link->link_enc = kzalloc(sizeof(*link->link_enc), GFP_KERNEL);
+diff --git a/drivers/gpu/drm/amd/display/dc/inc/core_types.h b/drivers/gpu/drm/amd/display/dc/inc/core_types.h
+index e1e3142cdc00a..62fb2009b3028 100644
+--- a/drivers/gpu/drm/amd/display/dc/inc/core_types.h
++++ b/drivers/gpu/drm/amd/display/dc/inc/core_types.h
+@@ -621,7 +621,7 @@ struct dc_state {
+ 	 */
+ 	struct bw_context bw_ctx;
  
- 		if (!link->link_enc) {
+-	struct block_sequence block_sequence[50];
++	struct block_sequence block_sequence[100];
+ 	unsigned int block_sequence_steps;
+ 	struct dc_dmub_cmd dc_dmub_cmd[10];
+ 	unsigned int dmub_cmd_count;
 -- 
 2.39.5
 
