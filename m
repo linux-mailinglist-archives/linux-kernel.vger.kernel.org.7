@@ -1,229 +1,250 @@
-Return-Path: <linux-kernel+bounces-632208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48261AA93FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54BEAAA9407
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC115188B3BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7E5E189B135
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A1E2561A3;
-	Mon,  5 May 2025 13:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17312561A7;
+	Mon,  5 May 2025 13:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UXbmpPeU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="45CPe9Wg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UXbmpPeU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="45CPe9Wg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ja9Hcmsy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8359420C02D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 13:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195B21F417E;
+	Mon,  5 May 2025 13:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746450448; cv=none; b=K+BXSdyQmf/QTg0TPrdncFrk3NvGrwL2LvtG8avoB3y4Da5ibd3RLvIEIJrh7NlkDKjP2Guhy2B2IaG6EXyUNgkX8YKbz6OCj8Yi3VlIDJjiEImV2mz4QYhHT1l0VEH4BgeqYTJLBEAd2U16TV51KFivyz4CtKEBsL8Wag3qKaw=
+	t=1746450477; cv=none; b=QEGrGushqoTP+E64r7ZYb+IozyjtDB/m+/L7blcPGNaK/4UDbFCllgC+hVVCxEQBMPIraUJz1P4g7AZKbLOINADwOP76YMiU41H8Bb72sQagmSLMkhgp7IpksX8KFKuB3V7sJD8bKo91yEE9sv2zf6NFOwAlVjgq70es0WieF/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746450448; c=relaxed/simple;
-	bh=mU78H2q2BseXOWGWn0v4UhutJKm1HUV0n1qhznyEM1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o58yq17Mx0l23P1Dg5edaGZjDROlqkYSmuiKB1trRipBNkY9dFyTqQPc068n3be+zNc+6jmuVl6p2AUj8CfnYV7WzUHrhVzgrewYX8akJIcojZZXEy8aN3/1zSnEJoqyq6HbenMxIPfFEucWr4i+COtYWrev3sUsmpWGlNb2pWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UXbmpPeU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=45CPe9Wg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UXbmpPeU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=45CPe9Wg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9D297211EE;
-	Mon,  5 May 2025 13:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746450444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n7bM99N3Kh6W6XwDJeCpv3UvEQyAWW+ApgUPey55Uew=;
-	b=UXbmpPeUdI6RZBQM7QlcUE1bplF6Ccf3krG6pfyeNq5NkeGFzmium+TgD04qDiAUVV0AKh
-	pXgIWwpXoAe8k/GIZxi3pOZRN+OUM4XLo0+jWCQ15Rvx46scwQS1YNAkeqlDxavHegsPvl
-	T5h6gJ68crqGkBQGMGJVZLT45jQe3pw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746450444;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n7bM99N3Kh6W6XwDJeCpv3UvEQyAWW+ApgUPey55Uew=;
-	b=45CPe9WguxqpWyWbrjzPN382WBQ0Baf6JOAShn1QfglbH34CHmrg997AoKo6yMZ4h50gYD
-	gXhG+XoNL0sIL2DA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UXbmpPeU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=45CPe9Wg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746450444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n7bM99N3Kh6W6XwDJeCpv3UvEQyAWW+ApgUPey55Uew=;
-	b=UXbmpPeUdI6RZBQM7QlcUE1bplF6Ccf3krG6pfyeNq5NkeGFzmium+TgD04qDiAUVV0AKh
-	pXgIWwpXoAe8k/GIZxi3pOZRN+OUM4XLo0+jWCQ15Rvx46scwQS1YNAkeqlDxavHegsPvl
-	T5h6gJ68crqGkBQGMGJVZLT45jQe3pw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746450444;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n7bM99N3Kh6W6XwDJeCpv3UvEQyAWW+ApgUPey55Uew=;
-	b=45CPe9WguxqpWyWbrjzPN382WBQ0Baf6JOAShn1QfglbH34CHmrg997AoKo6yMZ4h50gYD
-	gXhG+XoNL0sIL2DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CD65F1372E;
-	Mon,  5 May 2025 13:07:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JPRMLQu4GGjlLQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 05 May 2025 13:07:23 +0000
-Date: Mon, 5 May 2025 15:07:17 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Donet Tom <donettom@linux.ibm.com>, Mike Rapoport <rppt@kernel.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>, rafael@kernel.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] driver/base: Optimize memory block registration
- to reduce boot time
-Message-ID: <aBi4BQAi_zWviDSk@localhost.localdomain>
-References: <b49ed289096643ff5b5fbedcf1d1c1be42845a74.1746250339.git.donettom@linux.ibm.com>
- <aBdK2EIMYYRmmEwA@kernel.org>
- <a1e0cddc-ed38-4f48-b028-f3ab5025c157@linux.ibm.com>
- <188fbfba-afb4-4db7-bbba-7689a96be931@redhat.com>
- <aBhoqpC4Jy-c-74p@localhost.localdomain>
- <74c500dd-8d1c-4177-96c7-ddd51ca77306@redhat.com>
- <aBhva9D6H5BtkSID@localhost.localdomain>
- <0e568e33-34fa-40f6-a20d-ebf653de123d@redhat.com>
- <aBiGquz1Exx8KUqq@localhost.localdomain>
- <da921072-64a8-4ef1-b583-763406e57e8b@redhat.com>
+	s=arc-20240116; t=1746450477; c=relaxed/simple;
+	bh=Ja6gaduoMfpLfx53EIkIq4u5tNzA++ROap/e8Y99wWw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BwcMJjHLmUhdv4EulSzr/OsOBOdfqq+MY5/1YlKuGeotN5vTArSE8n5pf0nETOnxSuOaErjJ7YFC91BZWGBpMHBxzIJvNdeSTGXLHovb+GH4/6AjBNJphfE6fJgmRY0EzldXc/cKOTV2POMOkSyZq/B0CCje7k38X8io+n1p6Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ja9Hcmsy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7897DC4CEE4;
+	Mon,  5 May 2025 13:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746450475;
+	bh=Ja6gaduoMfpLfx53EIkIq4u5tNzA++ROap/e8Y99wWw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ja9HcmsyLfZ19y+WL2iW3vsZK1VE3PJIrJdBemBPgFEftVVt6nxhrg8Q4vTdXfxEZ
+	 7A8iHImTQOsw2JOOZFN2si8oi9WK9ESrdzCTcfDFwa4EO9ZfwvVyISQucBknjXsInM
+	 DLD0ao10+HgE1g3WY0bTr4pbFeCW2eBTsf071MO0+vH9BFyGPVSyDXTaKIKaHEKv7g
+	 7XP4UdfhigzwjfV4+0wrULXeXD9sURFqfajnFS9kh8NlixABzgcegBIciibD4RQc7G
+	 d7U0pnUvIIWEn27/HruVLiS9NUJTquctsBNPtbyW4XzGM+/mRqKZlsC4oEfc5if7/C
+	 bqxMp086S26Vg==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f8ae3ed8adso3168136b6e.3;
+        Mon, 05 May 2025 06:07:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjBKcz39w/9S83wsG4U9Ta2D1GzGkkgxo/gbOhrkwFxbfAWBkYXWvu3cF0Y/ad93N1mrzkD1hrdP8ZPQ==@vger.kernel.org, AJvYcCUntqnj1wsBuZlR0fM8lQEkEvVJRZKhhgBqQ48eINCDef8aKxu6pbBWzMMHUyr1Llw0FlWih9uiGL9t@vger.kernel.org, AJvYcCUq+r5dI1hrW9ujOvzIVX7RqP9wbWGTz2aswSzX9vvlX6HnRgo8GFp9kIfPHQ18b0eOYrYrJUKp6mwMGbxn@vger.kernel.org, AJvYcCVrFO65ewQ9TnBBOI4YH0DqzttmpavraN0Xbdx8b+EkIsVsCZI2YFJMybv71GzQVw8j8GNIcxBltGYxwl/T@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPiZtm1yA+89iUMXL9fc5gq3A7Pn4Fly6fOzuPD6CcofADQ5gL
+	UI4W8vHgmQJUQ3Dg9OVmPNpHzTlnCviCtt4uRCxfLPk0RFcJAtzPrJ2Su70z6HVzHphbAsWcej3
+	KI0jf2Zy8iyygectD1cY06rDwg0M=
+X-Google-Smtp-Source: AGHT+IHafvTUmLP+318TJZovnwvkV7NxuJchj37bOS0+RlXAjCLDey4g2q/qRn3CyHFWlAdadNbnH6Ys4hKJ+xORPyo=
+X-Received: by 2002:a05:6871:6a6:b0:2cc:3586:294f with SMTP id
+ 586e51a60fabf-2dab2fe1391mr7120194fac.9.1746450474755; Mon, 05 May 2025
+ 06:07:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da921072-64a8-4ef1-b583-763406e57e8b@redhat.com>
-X-Rspamd-Queue-Id: 9D297211EE
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux.ibm.com,kernel.org,nvidia.com,linuxfoundation.org,linux-foundation.org,gmail.com,huawei.com,intel.com,kvack.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com> <20250503191515.24041-7-ricardo.neri-calderon@linux.intel.com>
+In-Reply-To: <20250503191515.24041-7-ricardo.neri-calderon@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 5 May 2025 15:07:43 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j262Jorbb5--WY6KedR7CWvdTTYP10ZRZTqXhTNJ1GiA@mail.gmail.com>
+X-Gm-Features: ATxdqUHOe_bTrNgfNcYSdbpuewLh6hfF5OjL2949NofDe1GEt1BvWztbAYVUpwQ
+Message-ID: <CAJZ5v0j262Jorbb5--WY6KedR7CWvdTTYP10ZRZTqXhTNJ1GiA@mail.gmail.com>
+Subject: Re: [PATCH v3 06/13] dt-bindings: reserved-memory: Wakeup Mailbox for
+ Intel processors
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org, 
+	Saurabh Sengar <ssengar@linux.microsoft.com>, Chris Oo <cho@microsoft.com>, 
+	linux-hyperv@vger.kernel.org, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "Ravi V. Shankar" <ravi.v.shankar@intel.com>, 
+	Ricardo Neri <ricardo.neri@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 05, 2025 at 12:36:21PM +0200, David Hildenbrand wrote:
-> My thinking was, whether we can simply move the register_cpu_under_node()
-> after the try_online_node(). See below regarding early.
-> 
-> And then, remove the !node_online check from register_cpu_under_node().
-> 
-> But it's all complicated, because for memory, we link a memory block to the
-> node (+set the node online) when it gets added, not when it gets onlined.
-> 
-> For CPUs, we seem to be creating the link + set the node online when the CPU
-> gets onlined.
+On Sat, May 3, 2025 at 9:10=E2=80=AFPM Ricardo Neri
+<ricardo.neri-calderon@linux.intel.com> wrote:
+>
+> Add DeviceTree bindings for the wakeup mailbox used on Intel processors.
+>
+> x86 platforms commonly boot secondary CPUs using an INIT assert, de-asser=
+t
+> followed by Start-Up IPI messages. The wakeup mailbox can be used when th=
+is
+> mechanism unavailable.
+>
+> The wakeup mailbox offers more control to the operating system to boot
+> secondary CPUs than a spin-table. It allows the reuse of same wakeup vect=
+or
+> for all CPUs while maintaining control over which CPUs to boot and when.
+> While it is possible to achieve the same level of control using a spin-
+> table, it would require to specify a separate cpu-release-addr for each
+> secondary CPU.
+>
+> Originally-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> ---
+> Changes since v2:
+>  - Implemented the mailbox as a reserved-memory node. Add to it a
+>    `compatible` property. (Krzysztof)
+>  - Explained the relationship between the mailbox and the `enable-mehod`
+>    property of the CPU nodes.
+>  - Expanded the documentation of the binding.
+>
+> Changes since v1:
+>  - Added more details to the description of the binding.
+>  - Added requirement a new requirement for cpu@N nodes to add an
+>    `enable-method`.
+> ---
+>  .../reserved-memory/intel,wakeup-mailbox.yaml | 87 +++++++++++++++++++
+>  1 file changed, 87 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reserved-memory/int=
+el,wakeup-mailbox.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/reserved-memory/intel,wake=
+up-mailbox.yaml b/Documentation/devicetree/bindings/reserved-memory/intel,w=
+akeup-mailbox.yaml
+> new file mode 100644
+> index 000000000000..d97755b4673d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reserved-memory/intel,wakeup-mail=
+box.yaml
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/reserved-memory/intel,wakeup-mailbox.=
+yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Wakeup Mailbox for Intel processors
+> +
+> +description: |
+> +  The Wakeup Mailbox provides a mechanism for the operating system to wa=
+ke up
+> +  secondary CPUs on Intel processors. It is an alternative to the INIT-!=
+INIT-
+> +  SIPI sequence used on most x86 systems.
+> +
+> +  Firmware must define the enable-method property in the CPU nodes as
+> +  "intel,wakeup-mailbox" to use the mailbox.
+> +
+> +  Firmware implements the wakeup mailbox as a 4KB-aligned memory region =
+of size
+> +  of 4KB. It is memory that the firmware reserves so that each secondary=
+ CPU can
+> +  have the operating system send a single message to them. The firmware =
+is
+> +  responsible for putting the secondary CPUs in a state to check the mai=
+lbox.
+> +
+> +  The structure of the mailbox is as follows:
+> +
+> +  Field           Byte   Byte  Description
+> +                 Length Offset
+> +  ----------------------------------------------------------------------=
+--------
+> +  Command          2      0    Command to wake up the secondary CPU:
+> +                                        0: Noop
+> +                                        1: Wakeup: Jump to the wakeup_ve=
+ctor
+> +                                        2-0xFFFF: Reserved:
+> +  Reserved         2      2    Must be 0.
+> +  APIC_ID          4      4    APIC ID of the secondary CPU to wake up.
+> +  Wakeup_Vector    8      8    The wakeup address for the secondary CPU.
+> +  ReservedForOs 2032     16    Reserved for OS use.
+> +  ReservedForFW 2048   2048    Reserved for firmware use.
+> +  ----------------------------------------------------------------------=
+--------
+> +
+> +  To wake up a secondary CPU, the operating system 1) prepares the wakeu=
+p
+> +  routine; 2) populates the address of the wakeup routine address into t=
+he
+> +  Wakeup_Vector field; 3) populates the APIC_ID field with the APIC ID o=
+f the
+> +  secondary CPU; 4) writes Wakeup in the Command field. Upon receiving t=
+he
+> +  Wakeup command, the secondary CPU acknowledges the command by writing =
+Noop in
+> +  the Command field and jumps to the Wakeup_Vector. The operating system=
+ can
+> +  send the next command only after the Command field is changed to Noop.
+> +
+> +  The secondary CPU will no longer check the mailbox after waking up. Th=
+e
+> +  secondary CPU must ignore the command if its APIC_ID written in the ma=
+ilbox
+> +  does not match its own.
+> +
+> +  When entering the Wakeup_Vector, interrupts must be disabled and 64-bi=
+t
+> +  addressing mode must be enabled. Paging mode must be enabled. The virt=
+ual
+> +  address of the Wakeup_Vector page must be equal to its physical addres=
+s.
+> +  Segment selectors are not used.
 
-Yes, that is one think we need to align on.
+This interface is defined in the ACPI specification and all of the
+above information is present there.
 
-So, add_memory_resource(), which is part of the hot-add stage, will mark the node
-online if it needs to.
-I guess that this is done this way because further down the road we rely
-on the node to be online for some reason (e.g: online_memory_block() being
-called from add_memory_resource()).
+Why are you copying it without acknowledging the source of it instead
+of just saying where this interface is defined and pointing to its
+definition?
 
-Although from the conceptual point of view, it does not make sense, does
-it?
-I mean, if a node does not have any resources onlined, why should it be
-onlined?
+> +
+> +maintainers:
+> +  - Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> +
+> +allOf:
+> +  - $ref: reserved-memory.yaml
+> +
+> +properties:
+> +  compatible:
+> +    const: intel,wakeup-mailbox
+> +
+> +  alignment:
+> +    description: The mailbox must be 4KB-aligned.
+> +    const: 0x1000
+> +
+> +required:
+> +  - compatible
+> +  - alignment
 
-But let us assume that that is the way to go, then we could in fact
-tweak the cpu-hotplug code to do the same, and online the node whenever
-a cpu gets hot-added, and not really waiting for it to be onlined.
+Why do you need the "alignment" property if the alignment is always the sam=
+e?
 
-I can do some experiments about it and see how it turns out.
-
-> > The first time we hotplug a cpu to the node, note that
-> > register_cpu()->register_cpu_under_node() will bail out as node is still
-> > offline, so only cpu's sysfs will be created but they will not be linked
-> > to the node.
-> > Later, online_store()->...->cpu_subsys_online()->..->cpu_up() will take>
-> care of 1) onlining the node and 2) register the cpu to the node (so,
-> > link the sysfs).
-> 
-> 
-> And only if it actually gets onlined I assume.
-
-Yes, we only register it if we managed to online the node.
-
-> > I think that ideally, we should only be calling register_cpu_under_node()
-> > from register_cpu(), but we have this kinda of (sort of weird?) relation
-> > that even if we hotplug the cpu, but we do not online it, the numa node
-> > will remain online, and so we cannot do the linking part (cpu <-> node),
-> > so we could not really only have register_cpu_under_node() in
-> > register_cpu(), which is the hot-add part, but we also need it in the
-> > cpu_up()->try_online_node() which is the online part.
-> 
-> Maybe one could handle CPUs similar to how we handle it with memory: node
-> gets onlined + link created as soon as we add the CPU, not when we online
-> it.
-
-Yes, indeed, as I stated above I think this is the way to go, to have it
-paired.
-
-> But likely there is a reason why we do it like that today ...
-
-I cannot think of any (Tm), but it is a possibility.
-
-I will take a break from hugetlb stuff and play a little bit with this.
-
-
--- 
-Oscar Salvador
-SUSE Labs
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    reserved-memory {
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <1>;
+> +
+> +        wakeup-mailbox@12340000 {
+> +            compatible =3D "intel,wakeup-mailbox";
+> +            alignment =3D <0x1000>;
+> +            reg =3D <0x0 0x12340000 0x1000>;
+> +        };
+> +    };
+> --
 
