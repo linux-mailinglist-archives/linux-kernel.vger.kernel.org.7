@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-634812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAB1AAB4A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:11:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D8DAAB4AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92FCA1C06428
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9EA74C42E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC8747F9BC;
-	Tue,  6 May 2025 00:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C52480B60;
+	Tue,  6 May 2025 00:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXpR6j6y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJYzoq0w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CF538AF29;
-	Mon,  5 May 2025 23:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6A22F22EB;
+	Mon,  5 May 2025 23:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486785; cv=none; b=alsVhbB337PRVu4VWUyMKzIlT/JNcH5c2uZXR5fBZFQ1A5UpN4Maw1HqeLO8gftEnhJ8zb4Ff+yIRZ4hAbyDEwGRczMOHxA4kc3H3wktIcUAIxiqgDLnYEl3o2/XGlFhDUywrY5GY08IDYmD0mCVDSpi793Xs7S1NQNjGLBK7fI=
+	t=1746486791; cv=none; b=IgwlS7/tyh2ofBD5y0Mg4g2l7ufYPjXa3HtUUkALqY5Z8xLzTydYAkMg274MFd14ka//SW1ZLtAKHyTG0tTyO0/Hg1ALhi25HzmMQ+rAbM6CXmw3iLiYjftTHs4KS4iZH2WA8oVIMHn4RBlFN/yZnHqDbDnKlly0EdTGwwvfqso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486785; c=relaxed/simple;
-	bh=PcV2BqE+9xprFjexaTeDNloDxBNETlh/ROLdahLehJk=;
+	s=arc-20240116; t=1746486791; c=relaxed/simple;
+	bh=YPrXTFG2lpUg6wiT2rhW35aIaDIxdm64SvVqNrB7gVs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CR0Nzp1r73JTF3rNOkc4tSxBpVy5Eu4iYl3uUdsGAt+ySCl6ACBL7zKSwPsvijm2U/7l5roepRsKNywZdlDxz6EP2y5rVrdxUUAwhdw2ixAiQ+vw+oXH1h7JGjzMQtfqR6dw2IwE7o5kxfEWj94LW3p7dbkEGN//FPnxRFoPBL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXpR6j6y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F196BC4CEEF;
-	Mon,  5 May 2025 23:13:02 +0000 (UTC)
+	 MIME-Version; b=I4u9lNOwDiqYYjYqyWCaM1ew1+eJOCQV5ag6pN0C5dlOp9Iuc2/Ap2WGyE15fcH7bLi0edmcLK75aLxULVHeOAvJxpWCFMLSJl3JJ/A+KJisKBX0EVg+b8QSHzMikDC//V5Pqb9zv49wckxNKFaEh2tz8B/QXsTZRcpRzLTsotI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJYzoq0w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F82BC4CEEF;
+	Mon,  5 May 2025 23:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486784;
-	bh=PcV2BqE+9xprFjexaTeDNloDxBNETlh/ROLdahLehJk=;
+	s=k20201202; t=1746486791;
+	bh=YPrXTFG2lpUg6wiT2rhW35aIaDIxdm64SvVqNrB7gVs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oXpR6j6ySd4cByBVTbK7pqYWGuVb5Djr3Rr77CV2Xdku3Nm3Fice2n61VAMX7hOIF
-	 OZ2yiD+5ZHxqb8c5E02sfZSJwxdanZy1vLq+TjJeZburIPt7Fhy01l5EFyIDi8wtUj
-	 Uxodpne8d9jViA/DsfY5wQW4b1QNin3/izYQM2vbSRRiM3djiutDJtnbRyhFShvv2h
-	 WLpb+85PW/9iKsmL06/QMbvLdznxAE5V1kuL8UV0zMRwbUDMB5ATJJeFVcIKc8AFha
-	 SEdokU4jUMSiQkNHGLsvTrbBEiQGOWw2uQejwR5D3OPwMDq9RnKgAuDwitD/QfVb5T
-	 wJ2N0o/GzIfvQ==
+	b=lJYzoq0wiLpYppgTzKuMZ++5i+Qc7bY62tDIsLUqhjlBLBRs/QOrS7XcE5N9Q1mcM
+	 /lCEijdFBXhyyAu5SQ8msFFj3bBFVWPeq79GNSt+TdMBFanMAk5jcrnHq5SRWiI+Ne
+	 kSLftAw2v8WzXkyk2oo0BB0s16mHsYOtRrE700h8JiRzV6aTjxN/2E2Prb0No3lr42
+	 osGkgCfXF5ce0voXTqoWBGC/VuE6hrltoTYvleSspTQ753QrLtD3dq+RKwmseoXRIx
+	 vLXlI72hEE1g9iHuw1do0rmDFeR/3D/w1+/4bRpP1fwVmg7LJ4InFI1GgLMIVO12Ql
+	 2eZF8uUPp6/Jg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Viktor Malik <vmalik@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
+Cc: Sean Anderson <sean.anderson@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	daniel@iogearbox.net,
-	bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 202/212] bpftool: Fix readlink usage in get_fd_type
-Date: Mon,  5 May 2025 19:06:14 -0400
-Message-Id: <20250505230624.2692522-202-sashal@kernel.org>
+	michal.simek@amd.com,
+	linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.1 207/212] spi: zynqmp-gqspi: Always acknowledge interrupts
+Date: Mon,  5 May 2025 19:06:19 -0400
+Message-Id: <20250505230624.2692522-207-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -67,47 +66,70 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Viktor Malik <vmalik@redhat.com>
+From: Sean Anderson <sean.anderson@linux.dev>
 
-[ Upstream commit 0053f7d39d491b6138d7c526876d13885cbb65f1 ]
+[ Upstream commit 89785306453ce6d949e783f6936821a0b7649ee2 ]
 
-The `readlink(path, buf, sizeof(buf))` call reads at most sizeof(buf)
-bytes and *does not* append null-terminator to buf. With respect to
-that, fix two pieces in get_fd_type:
+RXEMPTY can cause an IRQ, even though we may not do anything about it
+(such as if we are waiting for more received data). We must still handle
+these IRQs because we can tell they were caused by the device.
 
-1. Change the truncation check to contain sizeof(buf) rather than
-   sizeof(path).
-2. Append null-terminator to buf.
-
-Reported by Coverity.
-
-Signed-off-by: Viktor Malik <vmalik@redhat.com>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-Reviewed-by: Quentin Monnet <qmo@kernel.org>
-Link: https://lore.kernel.org/bpf/20250129071857.75182-1-vmalik@redhat.com
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Link: https://patch.msgid.link/20250116224130.2684544-6-sean.anderson@linux.dev
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/bpftool/common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-zynqmp-gqspi.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/tools/bpf/bpftool/common.c b/tools/bpf/bpftool/common.c
-index db02b000fbebd..eea00bc15b5cc 100644
---- a/tools/bpf/bpftool/common.c
-+++ b/tools/bpf/bpftool/common.c
-@@ -384,10 +384,11 @@ int get_fd_type(int fd)
- 		p_err("can't read link type: %s", strerror(errno));
- 		return -1;
- 	}
--	if (n == sizeof(path)) {
-+	if (n == sizeof(buf)) {
- 		p_err("can't read link type: path too long!");
- 		return -1;
- 	}
-+	buf[n] = '\0';
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index c89544ae5ed91..fde7c38103596 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -698,7 +698,6 @@ static void zynqmp_process_dma_irq(struct zynqmp_qspi *xqspi)
+ static irqreturn_t zynqmp_qspi_irq(int irq, void *dev_id)
+ {
+ 	struct zynqmp_qspi *xqspi = (struct zynqmp_qspi *)dev_id;
+-	irqreturn_t ret = IRQ_NONE;
+ 	u32 status, mask, dma_status = 0;
  
- 	if (strstr(buf, "bpf-map"))
- 		return BPF_OBJ_MAP;
+ 	status = zynqmp_gqspi_read(xqspi, GQSPI_ISR_OFST);
+@@ -713,27 +712,24 @@ static irqreturn_t zynqmp_qspi_irq(int irq, void *dev_id)
+ 				   dma_status);
+ 	}
+ 
+-	if (mask & GQSPI_ISR_TXNOT_FULL_MASK) {
++	if (!mask && !dma_status)
++		return IRQ_NONE;
++
++	if (mask & GQSPI_ISR_TXNOT_FULL_MASK)
+ 		zynqmp_qspi_filltxfifo(xqspi, GQSPI_TX_FIFO_FILL);
+-		ret = IRQ_HANDLED;
+-	}
+ 
+-	if (dma_status & GQSPI_QSPIDMA_DST_I_STS_DONE_MASK) {
++	if (dma_status & GQSPI_QSPIDMA_DST_I_STS_DONE_MASK)
+ 		zynqmp_process_dma_irq(xqspi);
+-		ret = IRQ_HANDLED;
+-	} else if (!(mask & GQSPI_IER_RXEMPTY_MASK) &&
+-			(mask & GQSPI_IER_GENFIFOEMPTY_MASK)) {
++	else if (!(mask & GQSPI_IER_RXEMPTY_MASK) &&
++			(mask & GQSPI_IER_GENFIFOEMPTY_MASK))
+ 		zynqmp_qspi_readrxfifo(xqspi, GQSPI_RX_FIFO_FILL);
+-		ret = IRQ_HANDLED;
+-	}
+ 
+ 	if (xqspi->bytes_to_receive == 0 && xqspi->bytes_to_transfer == 0 &&
+ 	    ((status & GQSPI_IRQ_MASK) == GQSPI_IRQ_MASK)) {
+ 		zynqmp_gqspi_write(xqspi, GQSPI_IDR_OFST, GQSPI_ISR_IDR_MASK);
+ 		complete(&xqspi->data_completion);
+-		ret = IRQ_HANDLED;
+ 	}
+-	return ret;
++	return IRQ_HANDLED;
+ }
+ 
+ /**
 -- 
 2.39.5
 
