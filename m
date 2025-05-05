@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-633716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D12DAAA970
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:14:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78882AAA953
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975B91886288
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E98A4A6C1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64D3359DEF;
-	Mon,  5 May 2025 22:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E2D36196C;
+	Mon,  5 May 2025 22:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPpGJc4I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/F/8arj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D39299A8F;
-	Mon,  5 May 2025 22:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD2B299A9D;
+	Mon,  5 May 2025 22:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484996; cv=none; b=WqCu2eR+3QEWv55iyWum2CicnguGqQBSBTS74K1F2p1tRMD4haVv5z2RPvembe47RDTKGdCmMUN2oB8J0d8YQ010tL6qRdTLUSza7NJzZUDNVEhhBgrpUEl+M4DdqpPzmHmSzy/RNNKZHhDqwrttpyT6YoVAZknd4b41c/SBqJA=
+	t=1746485001; cv=none; b=Gt6D3/KPgkf4AaLsnKwplybaGGw8dPxv4RLD9zYvZRah2IewSwWnyRSDK/6oVJiCLWSDcGVuDm46aqfeU9pimQrd8hoIgXviT0qHVDFLXtI5jFRw4Tbj5NnP0SjWrdn8CrnZBL9mHdf6zJphNHC1cmD6nHO7hnEIi/fyZk+x12Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484996; c=relaxed/simple;
-	bh=YODJSnivOEZDxjFwX5FgO6CI5awOhrnlo4GZiVdtxTQ=;
+	s=arc-20240116; t=1746485001; c=relaxed/simple;
+	bh=/Yj5XCUNxIaUj4BvHUMPl9F1WanooW4vZ4XhupbUOzY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dcMQd86iVszw0IhtKo83uABDshRKjgcHtd10CwyuZKio1pJ8HZvCFvldvgAxP7yrGNk9XgqoPvRTbjvdRhqBUHnBfa45r2Up39256tKDd5X95vO5j8pNgWMPJb2zah/v71ALj6Hl9+W3Gq8QGLxN8vqKbjBmaKGSCOE5MIIMa+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPpGJc4I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09839C4CEEE;
-	Mon,  5 May 2025 22:43:13 +0000 (UTC)
+	 MIME-Version; b=avegkPpAtdamxgA0pNX0cGZ+xeLK2BONq9huT5Z0ChX21o7vsEk9l9QF9RZp8oIi73a3kMKPRFp899Mcfmoa+wkEo49FpZZd+pbZojbE4bxH4S8mlOw2vHMIc769iOVixnT0oMwPOM8JQrrmVvwxrcXZKotacpgZrdXw7y1y/kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/F/8arj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBBD7C4CEE4;
+	Mon,  5 May 2025 22:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484995;
-	bh=YODJSnivOEZDxjFwX5FgO6CI5awOhrnlo4GZiVdtxTQ=;
+	s=k20201202; t=1746485000;
+	bh=/Yj5XCUNxIaUj4BvHUMPl9F1WanooW4vZ4XhupbUOzY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cPpGJc4IZ7KNISGFSeF9tXCHY9PpZ6F60YKESDa8E2Y6Y8kOIkDhc4jsgo+cdOH4Z
-	 8UUYnzoIoX+v2TpAYcDTPCV84Vbrqs1PamnPhNsfesf08yCLOJ2D0eIyjaPh5VxXP5
-	 OXv52Gm36MCjf9kxafzlabb7B77AuZIBklK2Am6thxU+lMeV8vBiRmDGSf/2SuI73L
-	 q5ScI7bKojb5CRhc1esvNhGKOuDQ91uNO+2aJ/3Rh8P6RHQN5m3NoRNV2JBolYgPIE
-	 02MVmirGbLW4ce2jmSeafMUlCJ4HDVMP2sYumUFpjMa1E/wl7DV+q+fqyX8Z0QRpYM
-	 C5diEw/Wh/5OA==
+	b=W/F/8arjlG34hfOIJ3fikKpX467zUhVWep527NWnYYOiGF9eu/WBDlqXt4jw63vKc
+	 FVKE/Z2M5Wx/SSW8jDABaZ3+uPC+Nh69lhkHv9prbWzpHHgVywo8YVwCoHJZ5EtIzb
+	 7M/IfT8pkMlKdDNSx3YmsnChTBKGp/CvXpiF3Rqt1+PkOTdDvm42PtRpYOYZ66dHZP
+	 wUOoJR+ZGAeWXpQ3FgDN7MNHPF28+ECGVGPCI/EXhTwicWvDKP4AftJjblKERb9vNG
+	 CAjO77/RPrCpMUSxsch1U8FX/tsX/T2ZR1ttmZBp36DjIIDCn1LTw57+krzO0RlF5/
+	 eK5KrEoOSkmQg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Guangguan Wang <guangguan.wang@linux.alibaba.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
+Cc: Prathamesh Shete <pshete@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	jaka@linux.ibm.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 116/486] net/smc: use the correct ndev to find pnetid by pnetid table
-Date: Mon,  5 May 2025 18:33:12 -0400
-Message-Id: <20250505223922.2682012-116-sashal@kernel.org>
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	brgl@bgdev.pl,
+	dan.carpenter@linaro.org,
+	kunwu.chan@linux.dev,
+	peng.fan@nxp.com,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 118/486] pinctrl-tegra: Restore SFSEL bit when freeing pins
+Date: Mon,  5 May 2025 18:33:14 -0400
+Message-Id: <20250505223922.2682012-118-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -72,118 +71,181 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+From: Prathamesh Shete <pshete@nvidia.com>
 
-[ Upstream commit bfc6c67ec2d64d0ca4e5cc3e1ac84298a10b8d62 ]
+[ Upstream commit c12bfa0fee65940b10ff5187349f76c6f6b1df9c ]
 
-When using smc_pnet in SMC, it will only search the pnetid in the
-base_ndev of the netdev hierarchy(both HW PNETID and User-defined
-sw pnetid). This may not work for some scenarios when using SMC in
-container on cloud environment.
-In container, there have choices of different container network,
-such as directly using host network, virtual network IPVLAN, veth,
-etc. Different choices of container network have different netdev
-hierarchy. Examples of netdev hierarchy show below. (eth0 and eth1
-in host below is the netdev directly related to the physical device).
-            _______________________________
-           |   _________________           |
-           |  |POD              |          |
-           |  |                 |          |
-           |  | eth0_________   |          |
-           |  |____|         |__|          |
-           |       |         |             |
-           |       |         |             |
-           |   eth1|base_ndev| eth0_______ |
-           |       |         |    | RDMA  ||
-           | host  |_________|    |_______||
-           ---------------------------------
-     netdev hierarchy if directly using host network
-           ________________________________
-           |   _________________           |
-           |  |POD  __________  |          |
-           |  |    |upper_ndev| |          |
-           |  |eth0|__________| |          |
-           |  |_______|_________|          |
-           |          |lower netdev        |
-           |        __|______              |
-           |   eth1|         | eth0_______ |
-           |       |base_ndev|    | RDMA  ||
-           | host  |_________|    |_______||
-           ---------------------------------
-            netdev hierarchy if using IPVLAN
-            _______________________________
-           |   _____________________       |
-           |  |POD        _________ |      |
-           |  |          |base_ndev||      |
-           |  |eth0(veth)|_________||      |
-           |  |____________|________|      |
-           |               |pairs          |
-           |        _______|_              |
-           |       |         | eth0_______ |
-           |   veth|base_ndev|    | RDMA  ||
-           |       |_________|    |_______||
-           |        _________              |
-           |   eth1|base_ndev|             |
-           | host  |_________|             |
-           ---------------------------------
-             netdev hierarchy if using veth
-Due to some reasons, the eth1 in host is not RDMA attached netdevice,
-pnetid is needed to map the eth1(in host) with RDMA device so that POD
-can do SMC-R. Because the eth1(in host) is managed by CNI plugin(such
-as Terway, network management plugin in container environment), and in
-cloud environment the eth(in host) can dynamically be inserted by CNI
-when POD create and dynamically be removed by CNI when POD destroy and
-no POD related to the eth(in host) anymore. It is hard to config the
-pnetid to the eth1(in host). But it is easy to config the pnetid to the
-netdevice which can be seen in POD. When do SMC-R, both the container
-directly using host network and the container using veth network can
-successfully match the RDMA device, because the configured pnetid netdev
-is a base_ndev. But the container using IPVLAN can not successfully
-match the RDMA device and 0x03030000 fallback happens, because the
-configured pnetid netdev is not a base_ndev. Additionally, if config
-pnetid to the eth1(in host) also can not work for matching RDMA device
-when using veth network and doing SMC-R in POD.
+Each pin can be configured as a Special Function IO (SFIO) or GPIO,
+where the SFIO enables the pin to operate in alternative modes such as
+I2C, SPI, etc.
 
-To resolve the problems list above, this patch extends to search user
--defined sw pnetid in the clc handshake ndev when no pnetid can be found
-in the base_ndev, and the base_ndev take precedence over ndev for backward
-compatibility. This patch also can unify the pnetid setup of different
-network choices list above in container(Config user-defined sw pnetid in
-the netdevice can be seen in POD).
+The current implementation sets all the pins back to SFIO mode
+even if they were initially in GPIO mode. This can cause glitches
+on the pins when pinctrl_gpio_free() is called.
 
-Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Avoid these undesired glitches by storing the pin's SFIO/GPIO
+state on GPIO request and restoring it on GPIO free.
+
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Link: https://lore.kernel.org/20250305104939.15168-2-pshete@nvidia.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_pnet.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++----
+ drivers/pinctrl/tegra/pinctrl-tegra.h |  6 +++
+ 2 files changed, 57 insertions(+), 8 deletions(-)
 
-diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
-index 716808f374a8d..b391c2ef463f2 100644
---- a/net/smc/smc_pnet.c
-+++ b/net/smc/smc_pnet.c
-@@ -1079,14 +1079,16 @@ static void smc_pnet_find_roce_by_pnetid(struct net_device *ndev,
- 					 struct smc_init_info *ini)
- {
- 	u8 ndev_pnetid[SMC_MAX_PNETID_LEN];
-+	struct net_device *base_ndev;
- 	struct net *net;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 3b046450bd3ff..27823e4207347 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -278,8 +278,8 @@ static int tegra_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
  
--	ndev = pnet_find_base_ndev(ndev);
-+	base_ndev = pnet_find_base_ndev(ndev);
- 	net = dev_net(ndev);
--	if (smc_pnetid_by_dev_port(ndev->dev.parent, ndev->dev_port,
-+	if (smc_pnetid_by_dev_port(base_ndev->dev.parent, base_ndev->dev_port,
- 				   ndev_pnetid) &&
-+	    smc_pnet_find_ndev_pnetid_by_table(base_ndev, ndev_pnetid) &&
- 	    smc_pnet_find_ndev_pnetid_by_table(ndev, ndev_pnetid)) {
--		smc_pnet_find_rdma_dev(ndev, ini);
-+		smc_pnet_find_rdma_dev(base_ndev, ini);
- 		return; /* pnetid could not be determined */
+-static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *pctldev,
+-					unsigned int offset)
++static int tegra_pinctrl_get_group_index(struct pinctrl_dev *pctldev,
++					 unsigned int offset)
+ {
+ 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 	unsigned int group, num_pins, j;
+@@ -292,12 +292,35 @@ static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *
+ 			continue;
+ 		for (j = 0; j < num_pins; j++) {
+ 			if (offset == pins[j])
+-				return &pmx->soc->groups[group];
++				return group;
+ 		}
  	}
- 	_smc_pnet_find_roce_by_pnetid(ndev_pnetid, ini, NULL, net);
+ 
+-	dev_err(pctldev->dev, "Pingroup not found for pin %u\n", offset);
+-	return NULL;
++	return -EINVAL;
++}
++
++static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *pctldev,
++							    unsigned int offset,
++							    int group_index)
++{
++	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++
++	if (group_index < 0 || group_index > pmx->soc->ngroups)
++		return NULL;
++
++	return &pmx->soc->groups[group_index];
++}
++
++static struct tegra_pingroup_config *tegra_pinctrl_get_group_config(struct pinctrl_dev *pctldev,
++								    unsigned int offset,
++								    int group_index)
++{
++	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++
++	if (group_index < 0)
++		return NULL;
++
++	return &pmx->pingroup_configs[group_index];
+ }
+ 
+ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
+@@ -306,12 +329,15 @@ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
+ {
+ 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct tegra_pingroup *group;
++	struct tegra_pingroup_config *config;
++	int group_index;
+ 	u32 value;
+ 
+ 	if (!pmx->soc->sfsel_in_mux)
+ 		return 0;
+ 
+-	group = tegra_pinctrl_get_group(pctldev, offset);
++	group_index = tegra_pinctrl_get_group_index(pctldev, offset);
++	group = tegra_pinctrl_get_group(pctldev, offset, group_index);
+ 
+ 	if (!group)
+ 		return -EINVAL;
+@@ -319,7 +345,11 @@ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	if (group->mux_reg < 0 || group->sfsel_bit < 0)
+ 		return -EINVAL;
+ 
++	config = tegra_pinctrl_get_group_config(pctldev, offset, group_index);
++	if (!config)
++		return -EINVAL;
+ 	value = pmx_readl(pmx, group->mux_bank, group->mux_reg);
++	config->is_sfsel = (value & BIT(group->sfsel_bit)) != 0;
+ 	value &= ~BIT(group->sfsel_bit);
+ 	pmx_writel(pmx, value, group->mux_bank, group->mux_reg);
+ 
+@@ -332,12 +362,15 @@ static void tegra_pinctrl_gpio_disable_free(struct pinctrl_dev *pctldev,
+ {
+ 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct tegra_pingroup *group;
++	struct tegra_pingroup_config *config;
++	int group_index;
+ 	u32 value;
+ 
+ 	if (!pmx->soc->sfsel_in_mux)
+ 		return;
+ 
+-	group = tegra_pinctrl_get_group(pctldev, offset);
++	group_index = tegra_pinctrl_get_group_index(pctldev, offset);
++	group = tegra_pinctrl_get_group(pctldev, offset, group_index);
+ 
+ 	if (!group)
+ 		return;
+@@ -345,8 +378,12 @@ static void tegra_pinctrl_gpio_disable_free(struct pinctrl_dev *pctldev,
+ 	if (group->mux_reg < 0 || group->sfsel_bit < 0)
+ 		return;
+ 
++	config = tegra_pinctrl_get_group_config(pctldev, offset, group_index);
++	if (!config)
++		return;
+ 	value = pmx_readl(pmx, group->mux_bank, group->mux_reg);
+-	value |= BIT(group->sfsel_bit);
++	if (config->is_sfsel)
++		value |= BIT(group->sfsel_bit);
+ 	pmx_writel(pmx, value, group->mux_bank, group->mux_reg);
+ }
+ 
+@@ -791,6 +828,12 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	pmx->dev = &pdev->dev;
+ 	pmx->soc = soc_data;
+ 
++	pmx->pingroup_configs = devm_kcalloc(&pdev->dev,
++					     pmx->soc->ngroups, sizeof(*pmx->pingroup_configs),
++					     GFP_KERNEL);
++	if (!pmx->pingroup_configs)
++		return -ENOMEM;
++
+ 	/*
+ 	 * Each mux group will appear in 4 functions' list of groups.
+ 	 * This over-allocates slightly, since not all groups are mux groups.
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index b3289bdf727d8..b97136685f7a8 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -8,6 +8,10 @@
+ #ifndef __PINMUX_TEGRA_H__
+ #define __PINMUX_TEGRA_H__
+ 
++struct tegra_pingroup_config {
++	bool is_sfsel;
++};
++
+ struct tegra_pmx {
+ 	struct device *dev;
+ 	struct pinctrl_dev *pctl;
+@@ -21,6 +25,8 @@ struct tegra_pmx {
+ 	int nbanks;
+ 	void __iomem **regs;
+ 	u32 *backup_regs;
++	/* Array of size soc->ngroups */
++	struct tegra_pingroup_config *pingroup_configs;
+ };
+ 
+ enum tegra_pinconf_param {
 -- 
 2.39.5
 
