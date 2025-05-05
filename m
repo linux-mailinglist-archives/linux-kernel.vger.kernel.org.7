@@ -1,60 +1,62 @@
-Return-Path: <linux-kernel+bounces-633758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF536AAA9B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:19:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B01BAAA9DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 675177B0AE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:18:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA331887D2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183B22BD939;
-	Mon,  5 May 2025 22:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6DB2D3816;
+	Mon,  5 May 2025 22:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufwQ5oSl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udJm84e4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDA029C324;
-	Mon,  5 May 2025 22:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FAB2C2FA4;
+	Mon,  5 May 2025 22:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485109; cv=none; b=HQ5qq8oeq4nnaAs293nEHuaW3KsoJKHsMplufsurmgOhnJ9WCWnAaR1j40Lh/8N5iXg+tCenXjO2juRzDFNjsQBZxnve2o5QT5knyEc7CdgtzAjm2AeNRnWLRaBGIKRlbZCVPaJBtRb99U9zJWeIBuL5Ssn7EnBsgksdfxfPnMk=
+	t=1746485116; cv=none; b=VwHKsAZOXnC7ywwx8eiVieWMn5cOUgStBFFT4Z/pWi2WZTJUCumdmJVYpdtxniy5oXxcx68mM8QjbHIeJ1GmtB6Re5MVgvSGRolJA6yhhuCJoZb2r2Z9lmPTQhg7+/OYw9blydbacXLFhNQroxGRSRttKf7hfNwfYyHDYRWggGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485109; c=relaxed/simple;
-	bh=cBQTAsnfnToP87TSZImPQRuj5zjPXF1wUmXlEY6L/5g=;
+	s=arc-20240116; t=1746485116; c=relaxed/simple;
+	bh=YjpmIakx+Puf8sOQYZdurC/r+cE9C29XfW9VvJmq6JQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Dq5fbuZMw1Cni9f1w/6Igc6mo5gkCMlePGgAPbH0gmrI/mZV1QMPDQwQWjK9Y4nK1RvdyAiiQQU0HO35j+xVDQDrpKyY+EbgOb/TczDVm8ol1PAF4Cl/3r5hclfRp6HwSEkdICjR25VHN76eyhVIiZU/9tXLY/uDqnjKBWAQHyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufwQ5oSl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9492DC4CEED;
-	Mon,  5 May 2025 22:45:06 +0000 (UTC)
+	 MIME-Version:Content-Type; b=W9BW4ae3s36SVtKOvUZgdEmmFTmHk1Wb0OY0cY/VWsVkBf8wTf6tG7WlJlnOjIFBy1uJW5ZYpYyk+ef61WhIdxt5zz8A+R0HsszlNMlQluDmfVWtV0Dhz1HQDCZY5jyvDF9X+TL4fwfSxATroPPh9gqeQERcjXwmhTd50bzR1Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udJm84e4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9A37C4CEE4;
+	Mon,  5 May 2025 22:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485107;
-	bh=cBQTAsnfnToP87TSZImPQRuj5zjPXF1wUmXlEY6L/5g=;
+	s=k20201202; t=1746485115;
+	bh=YjpmIakx+Puf8sOQYZdurC/r+cE9C29XfW9VvJmq6JQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ufwQ5oSlNQOSnhxZBowvH8QU/m+BZKMLjYaCXF5oPyTN8F4oyFX2UtNwf8351mJLv
-	 9G7MOO+xlgpYYr44tp2B2qiEzo/MW/QRJrq+rxiETcdIqi4GaG2eI9JRKnUnsS3zzg
-	 2CXulhPzAN5VAb4yumRO5S47OtyRfO8c1/SojcIWLRDp4D6FWASdQeSbJ5JGAkLMec
-	 cEiNJXJKlbzms1xhetHvf70c2XFzJ+fXDklARatOzAcfj1iC4O6pKzo4bWDrdxyOhj
-	 BIT1f40Jh9QbKxOLcA45Wk+X+Env1q/OjFJDJmOa/JH2KMzgvtSteNuMmARY9woNrG
-	 abBQ4iTY62hWA==
+	b=udJm84e4UjERqUkrY0m+2FU/hCqtRBAJHc4WoHBuLoUUH1niiyRNYk+/jDH+aMFYr
+	 T8ae4sFgWLQ/WN89RkpoHJi3uFp6al+lY1S6wRv6+PiPpleUTYtyjwDahSOIWF/gjj
+	 aoE4EHjyWsNFpTVxNZvtx7UrwOQDA67Kp5VCCY11reC+GBGjkogv4YNlxQhQEIw95w
+	 qTsL2CkM3CW/EaF/yKI0WYjTnIO8Oj9laddLbZiLln53tEUI2cCU/P8VTr7WLPTOow
+	 upvpifMaSWynqTPAGg2xetv7kdDoI23BA+nBpfb+wHJcYGmT3Ct95U9PaFkoKiteU4
+	 GppObzK0vlkwA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Lu Baolu <baolu.lu@linux.intel.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Joerg Roedel <jroedel@suse.de>,
+Cc: Christian Bruel <christian.bruel@foss.st.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	dwmw2@infradead.org,
-	joro@8bytes.org,
-	will@kernel.org,
-	iommu@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.12 165/486] iommu/vt-d: Move scalable mode ATS enablement to probe path
-Date: Mon,  5 May 2025 18:34:01 -0400
-Message-Id: <20250505223922.2682012-165-sashal@kernel.org>
+	kw@linux.com,
+	bhelgaas@google.com,
+	Frank.Li@nxp.com,
+	dlemoal@kernel.org,
+	jiangwang@kylinos.cn,
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 169/486] PCI: endpoint: pci-epf-test: Fix double free that causes kernel to oops
+Date: Mon,  5 May 2025 18:34:05 -0400
+Message-Id: <20250505223922.2682012-169-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -64,168 +66,70 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+From: Christian Bruel <christian.bruel@foss.st.com>
 
-[ Upstream commit 5518f239aff1baf772c5748da3add7243c5fb5df ]
+[ Upstream commit 934e9d137d937706004c325fa1474f9e3f1ba10a ]
 
-Device ATS is currently enabled when a domain is attached to the device
-and disabled when the domain is detached. This creates a limitation:
-when the IOMMU is operating in scalable mode and IOPF is enabled, the
-device's domain cannot be changed.
+Fix a kernel oops found while testing the stm32_pcie Endpoint driver
+with handling of PERST# deassertion:
 
-The previous code enables ATS when a domain is set to a device's RID and
-disables it during RID domain switch. So, if a PASID is set with a
-domain requiring PRI, ATS should remain enabled until the domain is
-removed. During the PASID domain's lifecycle, if the RID's domain
-changes, PRI will be disrupted because it depends on ATS, which is
-disabled when the blocking domain is set for the device's RID.
+During EP initialization, pci_epf_test_alloc_space() allocates all BARs,
+which are further freed if epc_set_bar() fails (for instance, due to no
+free inbound window).
 
-Remove this limitation by moving ATS enablement to the device probe path.
+However, when pci_epc_set_bar() fails, the error path:
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-Tested-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-Link: https://lore.kernel.org/r/20250228092631.3425464-5-baolu.lu@linux.intel.com
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+  pci_epc_set_bar() ->
+    pci_epf_free_space()
+
+does not clear the previous assignment to epf_test->reg[bar].
+
+Then, if the host reboots, the PERST# deassertion restarts the BAR
+allocation sequence with the same allocation failure (no free inbound
+window), creating a double free situation since epf_test->reg[bar] was
+deallocated and is still non-NULL.
+
+Thus, make sure that pci_epf_alloc_space() and pci_epf_free_space()
+invocations are symmetric, and as such, set epf_test->reg[bar] to NULL
+when memory is freed.
+
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+Link: https://lore.kernel.org/r/20250124123043.96112-1-christian.bruel@foss.st.com
+[kwilczynski: commit log]
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel/iommu.c | 51 ++++++++++++++++++++-----------------
- 1 file changed, 27 insertions(+), 24 deletions(-)
+ drivers/pci/endpoint/functions/pci-epf-test.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 038a66388564a..5069a628deea1 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -1284,32 +1284,28 @@ static bool dev_needs_extra_dtlb_flush(struct pci_dev *pdev)
- 	return true;
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 14b4c68ab4e1a..21aa3709e2577 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -703,6 +703,7 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+ 		if (ret) {
+ 			pci_epf_free_space(epf, epf_test->reg[bar], bar,
+ 					   PRIMARY_INTERFACE);
++			epf_test->reg[bar] = NULL;
+ 			dev_err(dev, "Failed to set BAR%d\n", bar);
+ 			if (bar == test_reg_bar)
+ 				return ret;
+@@ -878,6 +879,7 @@ static void pci_epf_test_free_space(struct pci_epf *epf)
+ 
+ 		pci_epf_free_space(epf, epf_test->reg[bar], bar,
+ 				   PRIMARY_INTERFACE);
++		epf_test->reg[bar] = NULL;
+ 	}
  }
  
--static void iommu_enable_pci_caps(struct device_domain_info *info)
-+static void iommu_enable_pci_ats(struct device_domain_info *info)
- {
- 	struct pci_dev *pdev;
- 
--	if (!dev_is_pci(info->dev))
-+	if (!info->ats_supported)
- 		return;
- 
- 	pdev = to_pci_dev(info->dev);
--	if (info->ats_supported && pci_ats_page_aligned(pdev) &&
--	    !pci_enable_ats(pdev, VTD_PAGE_SHIFT))
-+	if (!pci_ats_page_aligned(pdev))
-+		return;
-+
-+	if (!pci_enable_ats(pdev, VTD_PAGE_SHIFT))
- 		info->ats_enabled = 1;
- }
- 
--static void iommu_disable_pci_caps(struct device_domain_info *info)
-+static void iommu_disable_pci_ats(struct device_domain_info *info)
- {
--	struct pci_dev *pdev;
--
--	if (!dev_is_pci(info->dev))
-+	if (!info->ats_enabled)
- 		return;
- 
--	pdev = to_pci_dev(info->dev);
--
--	if (info->ats_enabled) {
--		pci_disable_ats(pdev);
--		info->ats_enabled = 0;
--	}
-+	pci_disable_ats(to_pci_dev(info->dev));
-+	info->ats_enabled = 0;
- }
- 
- static void intel_flush_iotlb_all(struct iommu_domain *domain)
-@@ -1722,12 +1718,19 @@ domain_context_mapping(struct dmar_domain *domain, struct device *dev)
- 	struct device_domain_info *info = dev_iommu_priv_get(dev);
- 	struct intel_iommu *iommu = info->iommu;
- 	u8 bus = info->bus, devfn = info->devfn;
-+	int ret;
- 
- 	if (!dev_is_pci(dev))
- 		return domain_context_mapping_one(domain, iommu, bus, devfn);
- 
--	return pci_for_each_dma_alias(to_pci_dev(dev),
--				      domain_context_mapping_cb, domain);
-+	ret = pci_for_each_dma_alias(to_pci_dev(dev),
-+				     domain_context_mapping_cb, domain);
-+	if (ret)
-+		return ret;
-+
-+	iommu_enable_pci_ats(info);
-+
-+	return 0;
- }
- 
- /* Return largest possible superpage level for a given mapping */
-@@ -1987,8 +1990,6 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
- 	if (ret)
- 		goto out_block_translation;
- 
--	iommu_enable_pci_caps(info);
--
- 	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
- 	if (ret)
- 		goto out_block_translation;
-@@ -3368,6 +3369,7 @@ static void domain_context_clear(struct device_domain_info *info)
- 
- 	pci_for_each_dma_alias(to_pci_dev(info->dev),
- 			       &domain_context_clear_one_cb, info);
-+	iommu_disable_pci_ats(info);
- }
- 
- /*
-@@ -3384,7 +3386,6 @@ void device_block_translation(struct device *dev)
- 	if (info->domain)
- 		cache_tag_unassign_domain(info->domain, dev, IOMMU_NO_PASID);
- 
--	iommu_disable_pci_caps(info);
- 	if (!dev_is_real_dma_subdevice(dev)) {
- 		if (sm_supported(iommu))
- 			intel_pasid_tear_down_entry(iommu, dev,
-@@ -3964,6 +3965,9 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
- 	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
- 		info->pasid_enabled = 1;
- 
-+	if (sm_supported(iommu))
-+		iommu_enable_pci_ats(info);
-+
- 	return &iommu->iommu;
- free_table:
- 	intel_pasid_free_table(dev);
-@@ -3980,6 +3984,8 @@ static void intel_iommu_release_device(struct device *dev)
- 	struct device_domain_info *info = dev_iommu_priv_get(dev);
- 	struct intel_iommu *iommu = info->iommu;
- 
-+	iommu_disable_pci_ats(info);
-+
- 	if (info->pasid_enabled) {
- 		pci_disable_pasid(to_pci_dev(dev));
- 		info->pasid_enabled = 0;
-@@ -4581,13 +4587,10 @@ static int identity_domain_attach_dev(struct iommu_domain *domain, struct device
- 	if (dev_is_real_dma_subdevice(dev))
- 		return 0;
- 
--	if (sm_supported(iommu)) {
-+	if (sm_supported(iommu))
- 		ret = intel_pasid_setup_pass_through(iommu, dev, IOMMU_NO_PASID);
--		if (!ret)
--			iommu_enable_pci_caps(info);
--	} else {
-+	else
- 		ret = device_setup_pass_through(dev);
--	}
- 
- 	return ret;
- }
 -- 
 2.39.5
 
