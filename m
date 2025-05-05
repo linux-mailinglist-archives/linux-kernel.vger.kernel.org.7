@@ -1,199 +1,221 @@
-Return-Path: <linux-kernel+bounces-632978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0763AA9F41
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:21:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FED5AA9F31
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6842A3B62F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:21:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F3A317A64C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBB5280CD2;
-	Mon,  5 May 2025 22:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E06D278175;
+	Mon,  5 May 2025 22:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="e0Aubqhr"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B29dbfds"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2057.outbound.protection.outlook.com [40.107.101.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FA428033D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 22:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483318; cv=none; b=uN1dd3CowzRF5jU0Ao7z9egn313cbpKVt1a0Bipkmfs4RKGKFE1pAb27In3GGLzqQeNNR358CsaOp15+3KE1QzcEyu/0EEg/7sdCjpWyMjH6DA6lox2mPD5ldemx47sh9KUeaDOmBlagDmqgxHc6XL1iOH50p5dWvwfb9hCVFEQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483318; c=relaxed/simple;
-	bh=CR+pLE1ztr65gg7kzvoU5YS0CTmgYB7fdUWiHfpbjWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZNGp78COCZT5+AXC1iCW7iooKR3ybO3f1LSmcqbRavcYQ/EpP4r1TC04LXok7dgZ+gWdwlkI99SgMQAq9wDfxbDQxCjvI7ALEuK6xWYHEFUnC/F1LehTyqOQYnCrc+IMj2xsN0VPEE79e+GWtTBMpi8k/hXos3Pw2N+WnDzEDio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com; spf=pass smtp.mailfrom=kylehuey.com; dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b=e0Aubqhr; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylehuey.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso51412631fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 15:15:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kylehuey.com; s=google; t=1746483314; x=1747088114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TQ5eBrFfOmcah0yJB/jEfTuCEypZVE8gaZUWNHeUUC8=;
-        b=e0Aubqhrbv9a11Pmxr/qel9m+sl+Sn1ztnLgts2XmmnRhb8LFB3mrgAI96Gn2xatXm
-         soHR4zZG3eM8LJO0zucKfGSlT9L1ZfvEttigY7eGzSw5+BXaPVqCfVhz0P3S6u+7BgNi
-         7tqhub+CX6W0oC5CwUCxpy/gNDtDyj8sQMAcuxmB2VarFPIDCN+GTERjEuWMe4gqJm1O
-         FoDFRUOSuL7FlcdiQudmT+QepbO7OJrdkYh+v40fHtOcmIarYHge2ngtE/4/yXABhvE2
-         CS3ZSsCTUBpLZxK/H53QbsZ4dlkidK16k8MHLa0EKjCq1bSRPKdTuEfUAh+yroKxvoei
-         FU2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746483314; x=1747088114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TQ5eBrFfOmcah0yJB/jEfTuCEypZVE8gaZUWNHeUUC8=;
-        b=JF89wD8m8SdruwWUVQ8jubn6paYUazCVsGmVfqJ+JtfG8a48yytQbOPK2VOMse39Zn
-         oNk/YA+1WmkUhtmXrErIfqZtRDqrvPAtn1oZIRbGJiTZjoh8B+3JImqssNXZX3FB4hru
-         cQqmiWK5mRYE6T7SyIBGEX9JX/046WMas0Z30RCoeIVgXdDeuqXPDAIuVEkPqM51oJgx
-         brUQ0YI3NIkP2HujuzYxvm/ONPOl+0DerCsMp9lpaVhantZhYJY1JliUXd29UCvoTzTU
-         WyhiufTuRpyw93cwL/yL+6p86//xp8VwC9G2qFj7up8UefRdtBa/0eE0QHVucmzrwqWk
-         jTVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Yfp5evjgWvDrfFM9sWrmR0mG6L24fnweTiR9gdpWGWs05V280b/WVSxnpI/bFZ6XoT3+07IAZN9raq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgeFI5/V7cdFZZ0IuiFQVm6xDah52f1a2UVvnhNLYRfA2PGtOZ
-	+NDYiMbNR/6SWJYSElgUEYRXLUel8BpRPIvRQcAed2tkNo1ohsVD/YtSXyvDRrVQAhtwCgDYoYA
-	AuPKpMqp7aDlYHRR+wa6esrueagh9Gpo4H81YCv2TEndLYkU=
-X-Gm-Gg: ASbGncvS42TxsppWjSiYf9q0casVXanKIbBtfjWYlOyj7RzcQr51UqxVwiWDlDpDDv9
-	Qu4V44Xjp/B5FpiQOgLVJHuI2nbm4RgwyJbFsfhGKdaZ2iqguKAzizk6vl2c61gg+04PEMpVJxO
-	RnxqQjCHWZRyx1yJDwXfNp6g==
-X-Google-Smtp-Source: AGHT+IFgzVRcS9mdsTk87FEhrDFQ5jFKeoi6nutbirWAHEtPPAbw81TGSNj3TVoWMr7WdMW7l5qoV87uzdF62e4sk08=
-X-Received: by 2002:a2e:be08:0:b0:31a:6644:25c with SMTP id
- 38308e7fff4ca-3264f00f29amr3080161fa.12.1746483313188; Mon, 05 May 2025
- 15:15:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06508376;
+	Mon,  5 May 2025 22:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746483309; cv=fail; b=S1dTV/MAWu7PXFxWrCtPfuTWNCRVbsGd4eeFe511zNtczYij5IxNGMkdWIDOhu+RE23Mu0E9X3XNx/MC92IKoM9z+07UM0ZGKrx4JS0e5a/vM18Zw9UGlkLLGhGOk4F8jlIC2E6Hbappl4g31tqbfo16doA6yQxuHo5GUMVlk5Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746483309; c=relaxed/simple;
+	bh=PTAVov9/xR8MvtwiZd+e/vHuzJLT+soxZFzQiSpniFA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Nt86oA7SOLmypSJjNYUAJBfpEXvhGO9k7t/5b7LkKEaZGiGOU8do1M3pjoQtyT1lxTXg9pDTL26cMYtoXOwcwQ6/55gTbXj7VfhU29pD5e1TB4mAgiNIqrHiBM8Jh31Pa2ABPoLDtCKqwS4Esp2Ts+ic/d5ZEKEtOXqAGLuxxWE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B29dbfds; arc=fail smtp.client-ip=40.107.101.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uEXZTC86yNZXjpkmoe7EqheWamk0Ek9f86wGmFfC8b5P4bgYpQht9BHz/oEaDFYSv/FLhk3GfPQhBIC0HYIh0bWgmOte2xgxCd8lOzrEWm9P1OAzB6i5RPk8ykkjyy/zTk46LuhURb8TbrqFwjHCmfdVBfutiIolR82g6ZUfktjhON/7bhKgIdhevHfXnolegDzu5sVz+pZsFPbZ+0osQ4Mya0Xf6uPMBT3mk3YnmEx/NsZqSmr0vcG4XayiazzImMsid3o+UsDcC+p2NLQlipZSmq0hnpkY+2LWX4Yd+6/fdhCGUKVHHyNS9EbxlRa+dMZ2/J5SGqBkNLuViDHdUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wePDsI8aGAYl6VkKr0UFdvcMhJOlTdkGK5vYEocm2bA=;
+ b=OM8NooAJvKGaSVsXuTZgexPBl+LcmOGTpMqUsLBVe7FvuXxfZk7XHqV5m3dROeo+Oxk+8TARYXfE+1OmuPYteaGBhm0QumTIa/mI5y33ph6fbPEtx2UXz+UJgosX1a8p6R0vLuKDYvi8VlSP9PvbbydKHNYnon82OwPre2gMyFkcF0TCn72GiVXA+aAmlPr75N32NdfyvSPvqCT3gGf8D6IqDVBtm2mwB+IMAEtuS5M0D2Aq8k6hXIWobhoHjeToNvmOhf4MnNGm0tmJv/Eg12JijxLq6Q/k6Tz4DX3LfThwMbs7VXrQcRoK15lWoC0eTYcPp9UOQVRXbratlRDNxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wePDsI8aGAYl6VkKr0UFdvcMhJOlTdkGK5vYEocm2bA=;
+ b=B29dbfdsbDaIhUEeiZ9S8ZUjJnpRU9Fi5mRPpHqtoatVVoudmvMOpBf2qdXT/goUKCMjtvgt017lwTi+HWuLZUM4U2LWi/xTs3rQmsgZielCHlj4B8skNhjtm7Nvd1AgXFjiKiEMMIFmyhyGxkFyyF0Vst4WmyISS/mgPpeOHgR4YJX/6ksnBwHWNQdysVtlBcWwrAk0iWdG+aksbSCiEM3W6jZCVdCoPg8tvMeEMoS+edLu7vQ+9muyiXxEVUT463hZJDbZAlAp6lr+F98bPS02CL/it8Iq3+aPNGo5qoY+NTsqs5RvA5aGbFKnc0Ajbli+7i2WdB8Jte46pEb+0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by MW4PR12MB7216.namprd12.prod.outlook.com (2603:10b6:303:226::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Mon, 5 May
+ 2025 22:15:04 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.8699.021; Mon, 5 May 2025
+ 22:15:04 +0000
+Message-ID: <d7fc2e1c-42ea-43e7-9946-c95f3aaa174a@nvidia.com>
+Date: Mon, 5 May 2025 18:15:01 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] docs: nova-core: Document devinit process
+To: Bagas Sanjaya <bagasdotme@gmail.com>, linux-kernel@vger.kernel.org,
+ Danilo Krummrich <dakr@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ Alexandre Courbot <acourbot@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
+ Shirish Baskaran <sbaskaran@nvidia.com>, Alistair Popple
+ <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Ben Skeggs <bskeggs@nvidia.com>, rust-for-linux@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250503040802.1411285-1-joelagnelf@nvidia.com>
+ <20250503040802.1411285-6-joelagnelf@nvidia.com> <aBg4v1N6R3ryOiLj@archie.me>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <aBg4v1N6R3ryOiLj@archie.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0388.namprd13.prod.outlook.com
+ (2603:10b6:208:2c0::33) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAP045Ap3e6x52TvB8WyBHBjJ8HYtAmnKnGgj_fog3P+F5igP-A@mail.gmail.com>
- <aBkaDN7N_6qDGdIz@x1.local>
-In-Reply-To: <aBkaDN7N_6qDGdIz@x1.local>
-From: Kyle Huey <me@kylehuey.com>
-Date: Mon, 5 May 2025 15:15:00 -0700
-X-Gm-Features: ATxdqUEzTn2NHO1OHMFM-6gWIqCZ6B2vpcStPrXwsgZOLdP2CnJ9U-2q1q9HPeQ
-Message-ID: <CAP045ArAVtR6_Y-WWcqpB54Z+fwNYSWSyrTZKjctocwA0sK5eg@mail.gmail.com>
-Subject: Re: Suppress pte soft-dirty bit with UFFDIO_COPY?
-To: Peter Xu <peterx@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, open list <linux-kernel@vger.kernel.org>, 
-	linux-mm@kvack.org, criu@lists.linux.dev, 
-	"Robert O'Callahan" <robert@ocallahan.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|MW4PR12MB7216:EE_
+X-MS-Office365-Filtering-Correlation-Id: 500d2fde-4046-42bb-cc2c-08dd8c224938
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SFBTaXV3UkpwYnVsZlVJQ0o1dWVjNTI1NlNiK2NkdlB5SFFLVVJ0ZEw1WW93?=
+ =?utf-8?B?cndscjNNSi90a0V5Tlp2MlEzRGh6c24zRWoyZmFOZVA5YnBxYnBsQ2hscmN0?=
+ =?utf-8?B?K0pva3hJN0txY3AxdnpJSzdyT3VYR2c3OXd3dHBndks0dmpkQ3ZYWG5FR2JM?=
+ =?utf-8?B?Z0lCbU9FaHEzWndSQkF2T2QvNkhvWk5NM0lKMWN2TjZwRWl6dk5PaWpmMFlZ?=
+ =?utf-8?B?NExaV0ZuVjVZUEhXblY2TG42cUQwSy9JczN2TG9uZVRnd3lOTDdNM3NnemJa?=
+ =?utf-8?B?ZXQzV3dRWWlOcjFxV0UyS3UzZVVSZitOVDJ0YmVJeVZTYjAzcG0za0tKc05N?=
+ =?utf-8?B?Z015QkNiWkVFbXprY3c2UU5aTURqaWh5VFZmV21NU3lOMUU5QWpFcHRjU2hN?=
+ =?utf-8?B?SDlvYWpqdFA5bkRCNWJ3OVR3bDFHaGs4VVpudVdFcmxGdTAvWEJHS3RuY2Uw?=
+ =?utf-8?B?YmVJUlRkWHZCQ3NpQU4yMXBVUEhJbFp2OUl5QTVLQ3JkL3UzZUJDSll3QU1B?=
+ =?utf-8?B?a0hFK2JnQmlKc1dwU1RsL3ROc0J2RnJJalFuZDJCQ2IzOWEzekQ4dnJ2YmM3?=
+ =?utf-8?B?blllRHNPUUEyTS8zdzRXYlBwZkt1ZldqNExGUlJoVDVkWFlXY3VLR0ozaFdJ?=
+ =?utf-8?B?V0w4cEx3b3U1RFBiNFdnVDdGeFd0RDlWL3ZvYnNLaDJXZENWRHlmM1RGK2ha?=
+ =?utf-8?B?MTd1SERLVTRhNTVCRncxVEZneHBGbkwybWJDbk1QUWFUR3ZETmczd1h4c3RM?=
+ =?utf-8?B?Z29lVHFhOWJxTXJJZzJsaGRrY2M2cE9QdEtQN0o1MTZlVUQ1K1ZYTTRKeUtC?=
+ =?utf-8?B?c2lvVnoweFFNcEtXbTN4cGpjbGszeUlhUlVMTUNUWHd0aysyWWVEMm1ncVFn?=
+ =?utf-8?B?bHZKZms4bGdTWDVxcDVGN2ZIeFBMTUhJd3RneG5PbWJ4bDR2bUZLN1c2VjlL?=
+ =?utf-8?B?NEpCeVI3N2RsS0dpblovNXB6UUxQRm5nZ2xNQzhMSkI1TVFrTS9yTERoaXF4?=
+ =?utf-8?B?UlpzRDZlNy9qVEx2dkczUkY1U1hlZzFBM1dSa3RyMXY3ZW9vWHhrRGVlWGx5?=
+ =?utf-8?B?UEh0dk1LTy9aY1Y5aytkVHpWSUlVT2hITjJEQUxqWVl6bFg3WU4xNnhMZG55?=
+ =?utf-8?B?SkxMcE0xbUF2UURjSkNiRHZsOUhmWmpZSno0UU4yMGlvNk1lb3pGTnV2Y0w1?=
+ =?utf-8?B?K1VteW1uRm9NbU5FbWtPVzhjdjVseUdoUkhmcGcyeitQQ3lKdW5qeWhSM2NP?=
+ =?utf-8?B?NzhLR3J0MjJaeG4xa1cxeVRuNEtYZWwwbkk1aWZ6aTJremo0UTV4dWtVdHJU?=
+ =?utf-8?B?ejZIMzU4dmtGamFQeWMzN0JZbWZZTVhkakJYUHIvQWRaUjF1SUxZekV3U0hW?=
+ =?utf-8?B?RHFUazRGTDVCaW84USs1Q0ozT2FITUZSVkhQbzhMaFk4U3RseXdzb3JFTkdw?=
+ =?utf-8?B?T3puSDhrUlFPVnB1aXppRXU0ZEVMSWd6NEx2VUxSamZGSjI0Rm9ieHlHOUpZ?=
+ =?utf-8?B?VGhwL09XbjJvR0RPNjNIUlFJZlVhWDR4QmdDZUU5ZzJ0bHhxWEhCUEtJTFhX?=
+ =?utf-8?B?VGp0VG4xVG41bHVSTEg2UkdYM2V6KzB1ZldaVUYybktNdTZtM2tBN0tYM3d6?=
+ =?utf-8?B?b3BBaURmMU5pdm1oRlNFelEzOGFsUUlROHFqSGR3RE1yRngyRk1tcHNaN1c5?=
+ =?utf-8?B?NGxmdzRycGIyZzgyYXdDaTNVcVJTTHFLTTJkWkNwSGtLcEphdzFJdlp0b3lv?=
+ =?utf-8?B?eXk5RE5kemFzTzNjazNMOGpSUTFodnZZZlp6d2JDU0sxeURlQkRCbm4vTGNh?=
+ =?utf-8?B?bUE2ZFo1RW9wbmhzVnJsMjBwaTJsMEdybk01R2VlclhRUVk5MlBJd1k4R3A4?=
+ =?utf-8?B?Q0dHY01OZVdQVXp2dWJvanAwWDdraXJjWUNsOG9Ib21aYXhjOHVZYlhPQ0JT?=
+ =?utf-8?Q?AowuhW4A0uE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aUF6cGVmei9yb1dUcUNYdWJRNHVJRDc0WGNsV3Qyc0M1Q0krZFFBbVNEaTgv?=
+ =?utf-8?B?T0hZMm5NazdyUHFmNWxGVy8yUFg2aHd1OU9rcE9CUGVMcGRaT0t0c1h2TWph?=
+ =?utf-8?B?ZTJsUTFKc3Rydk94Z3lCNC85dXZmbVREYVovT2RkQ0J5L0xVMHE5YkRtWTJS?=
+ =?utf-8?B?NFpJbnY4VGFUSElpWlBFblhkU2xlZlBGSkJmdVpyM0lSWFFhd05oMEVIbDRH?=
+ =?utf-8?B?cUtVMWpNci9xTTROOUNoMkRzZWc4aHVxWmJUTElDdzZkVTYyM3Brc25Ec1Vk?=
+ =?utf-8?B?UnY1RjUwRjM3WlZNQ3FKS3pLbW9qcGRUSUtaVS8ya0dlY292VlhXZEt0eWdn?=
+ =?utf-8?B?VE5aanZVOGVUb3NSbDRiL0tuSjVvTlJhN253YmRpYW1ER3JDb3BXT0JmUFlI?=
+ =?utf-8?B?RmF5cUJ6czc5bkNJVi9SUFpXTlU4bExrL25yK01sWjl1dVVxeE0zTXoyUjRx?=
+ =?utf-8?B?MkhtUUNvUXB5amJNZHZKWUk1dm5BdUxscjZzUjBoVkwvVmpRUjB5QmpGRTJI?=
+ =?utf-8?B?WDRTRjMvZXNtRnRZSTBEZ2FPZHBmS1dYYm04eWZ5aEVid0VxN1RqQUNhM3Yv?=
+ =?utf-8?B?NytoTjNkaVJ4THNSYlNYK050WVM4VUNLL2NRbm10NGo3MHJrRnZ2RmpzalVS?=
+ =?utf-8?B?amFNOU92Qlk5UlB0c2FsZ1ZzVWxsdnVyeU5DenkyenN2VHBvU2dUd0hHbTRz?=
+ =?utf-8?B?dHFNa0dCYklhTlkwblZpOW9tNFpYYU1FY3RyVC9Na1JZUHN2b1JJYWlqRlRp?=
+ =?utf-8?B?U0N1bEVCWGxLUTdJQXJiMlhxcUhmZDhOVkxQdGV3MVNoR3dGdlNBVExMNTVy?=
+ =?utf-8?B?SEJJUlNLQVdFbGYrZnp4V1ZYTUpLNm4vNXFiUXBXOUU3b3NSTUhBVkJiVWVq?=
+ =?utf-8?B?S25JN3dtaEQ0SGx3amZGVHNqRkx0b3ZZcDhTSS9YTktnQmRIakNSbXRkVzZ0?=
+ =?utf-8?B?aTA4b2JGc01FclAxNnlXMytGcGtaR2YvN2VMelhLK3F1Y3l3UG9kQWcwamhD?=
+ =?utf-8?B?NklYeHZKMVNsNU5HamJFdTJTajBzQWU4b1hVdHhGcjRmR1pSbVozMXNET2Z5?=
+ =?utf-8?B?U0ZIUE1IcWh1ZFNpK0RweEtnQ3RMV0k5S0dZbkFXR1B6dnNzYzRiMHB1UXpl?=
+ =?utf-8?B?S1RIZVJEaEIzM1h3eGxQQzVjQVJXdXVJbmhhS0RuTENObWRySmRCSzVWSVMz?=
+ =?utf-8?B?aytjczV4UTNsa05nUlR3NGxxRjhlSWY1b2s5T0l0QTZZc0lxZE82Z2k3WU14?=
+ =?utf-8?B?OCtBSDNKLzNPMkRNUitRNmU3a2FEa0pXbFE4QXd1ME1lUlNyaEZzZ3dOVmlt?=
+ =?utf-8?B?VmlLUVRYL0x5YVErK1E2OFlBc3NBUGVCTlBkWi9XV1JGa2ZyUEVEZjcxZjlH?=
+ =?utf-8?B?TDBvM1krRVpKVWo3RWxJOVZia1R3My9ZR2lNRm5XWFZTdlVPTTNpRzZYQnBI?=
+ =?utf-8?B?ZGZkb1hMdUpYYXpmZGozZFh6cEhqano3blcrQTZJd3UrdE9McUFPMk4wMFVN?=
+ =?utf-8?B?UGVEKzBkSzZNK3Z2amgwUjE0d1NVdlBNcEVXajdoeFNDV3c1emFSVzUyUktm?=
+ =?utf-8?B?NTIxZzUzUU5ma2QwR1RWalg0WnZja20rcmxsV0txVExIZm5kTnBTanVvNmlG?=
+ =?utf-8?B?cjJPVEIwTHlQOFRJdmhlLy9Kemt6UDVvd0g3SVFESDZEQnFkUU56L0JTOXBy?=
+ =?utf-8?B?dVpwRUpnT0gxZlFSK2R6cW9lZkdHaVlneG9FUFFBSHdVcU93SUgzcUIyNjdE?=
+ =?utf-8?B?U0VyeFFPN0IzYXhNWEtpZGE0TzB4bkZyRVRiSXEvODVaWUwwckRpTXpwSUdv?=
+ =?utf-8?B?T3dCb21VMmxWVjcrdzY3WHFQeE1PVEpTMmhmNjdudkdvcStaaEJCQkFiNmNv?=
+ =?utf-8?B?UTAvaVUwaTFHVTJNZGhjQU1oMUpTLzM2c0UvMEhyeHp0elhBRkIySHN1RUNj?=
+ =?utf-8?B?WGFqak9DeDBwTVV4SXVtRGNSa1Q1dU4wbVNqQ3VFMUJLYlhvZWdzVzdubjZ0?=
+ =?utf-8?B?Y2pWMWVIQ1ppcWp3bHJFbXlJSGdqbXVLaEFvcU9CVEhrbU5LY0pkTll4U3BR?=
+ =?utf-8?B?Wml0TDNFZlROd2NNSTdKK0JPY0tqSTdNejZRUDJZWXA4NzhVZWU5QUQwVmFj?=
+ =?utf-8?Q?vImLpmT3rzqR4E96mlrcB9J+0?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 500d2fde-4046-42bb-cc2c-08dd8c224938
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 22:15:04.3459
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SWCb5m6OS0PkvoMdzwZMtkUVTO43JCfRo2EcTXf6deIzqioSOmaEa+T69sLK7SgkGdQZ+7zwzH8mFI62OQRmiQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7216
 
-On Mon, May 5, 2025 at 1:05=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> Hi, Kyle,
->
-> On Mon, May 05, 2025 at 09:37:01AM -0700, Kyle Huey wrote:
-> > tl;dr I'd like to add UFFDIO_COPY_MODE_DONTSOFTDIRTY that does not add
-> > the _PAGE_SOFT_DIRTY bit to the relevant pte flags. Any
-> > thoughts/objections?
-> >
-> > The kernel has a "soft-dirty" bit on ptes which tracks if they've been
-> > written to since the last time /proc/pid/clear_refs was used to clear
-> > the soft-dirty bit. CRIU uses this to track which pages have been
-> > modified since a previous checkpoint and reduce the size of the
-> > checkpoints taken. I would like to use this in my debugger[0] to track
-> > which pages a program function dirties when that function is invoked
-> > from the debugger.
-> >
-> > However, the runtime environment for this function is rather unusual.
-> > In my debugger, the process being debugged doesn't actually exist
-> > while it's being debugged. Instead, we have a database of all program
-> > state (including registers and memory values) from when the process
-> > was executed. It's in some sense a giant core dump that spans multiple
-> > points in time. To execute a program function from the debugger we
-> > rematerialize the program state at the desired point in time from our
-> > database.
-> >
-> > For performance reasons, we fill in the memory lazily[1] via
-> > userfaultfd. This makes it difficult to use the soft-dirty bit to
-> > track the writes the function triggers, because UFFDIO_COPY (and
-> > friends) mark every page they touch as soft-dirty. Because we have the
-> > canonical source of truth for the pages we materialize via UFFDIO_COPY
-> > we're only interested in what happens after the userfaultfd operation.
-> >
-> > Clearing the soft-dirty bit is complicated by two things:
-> > 1. There's no way to clear the soft-dirty bit on a single pte, so
-> > instead we have to clear the soft-dirty bits for the entire process.
-> > That requires us to process all the soft-dirty bits on every other pte
-> > immediately to avoid data loss.
-> > 2. We need to clear the soft-dirty bits after the userfaultfd
-> > operation, but in order to avoid racing with the task that triggered
-> > the page fault we have to do a non-waking copy, then clear the bits,
-> > and then separately wake up the task.
-> >
-> > To work around all of this, we currently have a 4 step process:
-> > 1. Read /proc/pid/pagemap and note all ptes that are soft-dirty.
-> > 2. Do the UFFDIO_COPY with UFFDIO_COPY_MODE_DONTWAKE.
-> > 3. Write to /proc/pid/clear_refs to clear soft-dirty bits across the pr=
-ocess.
-> > 4. Do a UFFDIO_WAKE.
-> >
-> > The overhead of all of this (particularly step 1) is a millisecond or
-> > two *per page* that we lazily materialize, and while that's not
-> > crippling for our purposes, it is rather undesirable. What I would
-> > like to have instead is a UFFDIO_COPY mode that leaves the soft-dirty
-> > bit unchanged, i.e. a UFFDIO_COPY_MODE_DONTSOFTDIRTY. Since we clear
-> > all the soft-dirty bits once after setting up all the mmaps in the
-> > process the relevant ptes would then "just do the right thing" from
-> > our perspective.
-> >
-> > But I do want to get some feedback on this before I spend time writing
-> > any code. Is there a reason not to do this? Or an alternate way to
-> > achieve the same goal?
->
-> Have you looked at the wr-protect mode, and UFFDIO_COPY_MODE_WP for _COPY=
-?
->
-> If sync fault is a perf concern for frequent writes, just to mention at
-> least latest Linux also supports async tracking (UFFD_FEATURE_WP_ASYNC),
-> which is almost exactly soft dirty bits to me, though it solves a few
-> issues it has on e.g. false positives over vma merging and swapping, or
-> like you said missing of finer granule reset mechanisms.
->
-> Maybe you also want to have a look at the pagemap ioctl introduced some
-> time ago ("Pagemap Scan IOCTL", which, IIRC was trying to use uffd-wp in
-> soft-dirty-like way):
->
-> https://www.kernel.org/doc/Documentation/admin-guide/mm/pagemap.rst
 
 
-Thanks. This is all very helpful and I think I can construct what I
-need out of these building blocks.
+On 5/5/2025 12:04 AM, Bagas Sanjaya wrote:
+> On Sat, May 03, 2025 at 12:07:57AM -0400, Joel Fernandes wrote:
+>> +.. SPDX-License-Identifier: GPL-2.0
+>> +==================================
+>> +Device Initialization (devinit)
+>> +==================================
+> 
+> Separate SPDX line from title heading.
+> 
+>> +These low-level GPU firmware components are typically:
+>> +1. Located in the VBIOS ROM in the same ROM partition (see vbios.rst and fwsec.rst).
+>> +2. Executed in sequence on different microcontrollers:
+>> +   - The devinit engine typically but not necessarily runs on the PMU.
+>> +   - On an Ampere GPU, the FWSEC typically runs on the GSP (GPU System Processor) in
+>> +     heavy-secure mode.
+> 
+> Please separate numbered list from preceding sentence, and the bullet sublist
+> from parent numbered list by a line.
+> 
+>> +Runtime Considerations
+>> +---------------------
+>> <snipped>...
+>> +Security and Access Control
+>> +--------------------------
+> 
+> Match section underline length with the text.
+Thanks a lot for finding these issues. I have fixed everything and will re-post
+patches end of the week. Please let me know if I can add your Tested-by tag.
 
-- Kyle
+Also here is my tree with the changes for a preview (top 7 patches):
+https://git.kernel.org/pub/scm/linux/kernel/git/jfern/linux.git/log/?h=nova-docs
 
-> > If this is generally sensible, then a couple questions:
-> > 1. Do I need a UFFD_FEATURE flag for this, or is it enough for a
-> > program to be able to detect the existence of a
-> > UFFDIO_COPY_MODE_DONTSOFTDIRTY by whether the ioctl accepts the flag
-> > or returns EINVAL? I would tend to think the latter.
->
-> The latter requires all the setups needed, and an useless ioctl to probe.
-> Not a huge issue, but since userfaultfd is extensible, a feature flag mig=
-ht
-> be better as long as a new feature is well defined.
->
-> > 2. Should I add this mode for the other UFFDIO variants (ZEROPAGE,
-> > MOVE, etc) at the same time even if I don't have any use for them?
->
-> Probably not.  I don't see a need to implement something just to make the
-> API look good..  If any chunk of code in the Linux kernel has no plan to =
-be
-> used, we should probably not adding them since the start..
->
-> Thanks,
->
-> --
-> Peter Xu
->
+thanks,
+
+ - Joel
+
 
