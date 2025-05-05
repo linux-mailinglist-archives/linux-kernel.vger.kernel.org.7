@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-634968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51AB8AAB7BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:17:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53803AAB7F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 097BD7A3EE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1A61C268BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6B134E1BE;
-	Tue,  6 May 2025 00:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7975E3430A0;
+	Tue,  6 May 2025 00:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tPlyNmLX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j55qTF6Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7E43BE0AC;
-	Mon,  5 May 2025 23:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EB63BEEC7;
+	Mon,  5 May 2025 23:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487408; cv=none; b=lg9poEjZc1Kkx6E5AkGzLNX9IGTSJqCYXLj+Y2LiPd/fMXfQEH3Wy+Qpmg7ftO/lioECJPtiaYZvJ0fT433dnxUp95xh1MAlKMPLFweKTvZB9L62fcmmyP/EsHzEL7lOfM+LbztL7fQPHl3vM79KpoYY1wheJcf0GORYS4iV1mc=
+	t=1746487418; cv=none; b=GWpknKurrV9RCkFj1jLFS/9oJjCpbYfZHRUMpnpuaLJTfFQ3majxVkIMGMAj85+fqhOUvxIPd1nMo9eyoeCLGLwDgoWBzFigY5RygBETvfpwx6nptYJavZPcZc50O/qjEzXcPxt6zv2pihjDGMC8o6jz8qXxZriOKkJmSjANb1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487408; c=relaxed/simple;
-	bh=hKUiINuiaux0kf5AuOdaEyHIw81+k5EKGTxhvDeCSao=;
+	s=arc-20240116; t=1746487418; c=relaxed/simple;
+	bh=ymRGSnOUYCVaT5kFAkKEB47zA5IKBa3/u2yKaN1wEKk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZuGo6pJj/I4rovu/IP5i9/hclvlurUsn/5xe4GTSEJAWw4Pad16bfMxQdiIcJhILkXqVwONSwdlVdax/2qcfjPsR83a6ilWCc19ekAj5e63XF7R8YbVCRNwJTV8I/+0G4VNY5j+J1aQvtX6/WMuCQUuEk61ddIVfOFfC9Ova5w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tPlyNmLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D711C4CEE4;
-	Mon,  5 May 2025 23:23:26 +0000 (UTC)
+	 MIME-Version; b=JvDLfRVeVSztlKgXm9myeKpg2YdZIUHkOyXYA/eY0L9dHzg8CwomznQU2E1bdFBdm6dGPDVzzhhcVWeOmTbQi4Uy0NmM/VtcVngG5ZXOQ5lI5tgqzf3RUecirFivqxNOF5meJw/PBPTcAR5zv+DLRG/JZkqQLijNBiXkE2W0XQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j55qTF6Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68AE7C4CEEE;
+	Mon,  5 May 2025 23:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487407;
-	bh=hKUiINuiaux0kf5AuOdaEyHIw81+k5EKGTxhvDeCSao=;
+	s=k20201202; t=1746487417;
+	bh=ymRGSnOUYCVaT5kFAkKEB47zA5IKBa3/u2yKaN1wEKk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tPlyNmLXGvyv5KKrf4+WJ24i6HcaZUL6X9Wgl4kH6ih4hrm8QZOKYDIk3CcRDXty3
-	 182YB57tNuIphdXgd8G6QZP3Z0VHkfcxKI7zCdrv8amH4tI59YGVEVXbnpOaCcSRDd
-	 tWi31kkEICBg3HwtFHLgrIJKZlvHjloq46VP0k3M/yioS48ga5cLRxWbcOA6mKlvo0
-	 5eA73aLoA/ufCr/qX21aWwvvm4qUQpIomgnE6OqhI7boaec8l8vfxSYq9Aa3069qkA
-	 CXP1N3lg4GctAO6Ya8ptwWvHYf8X3MZNuIV+vdLhm1J9UctZwsQFADZKKKbQCVD8nj
-	 9bQW6IIV1HnCA==
+	b=j55qTF6Y4HJZBDKg7HR+pjgqorfAl3PHK56g1m/R12JPQnBz9bmpfrGsO6Dhyqe7Z
+	 ApUyDSwf7tE+wXiwi9ujTeMHFSKFYwtOd5rah/QD67XhIc+XRlVMhGTz8sP9wEClvT
+	 DFCt47XSsWykex35BhOPbunJD/eG091Z5ED51yszrLeAH9w9dmbdZm/g52JGEu30YD
+	 aP3ZRfkgBzKLwkfStkfmjm7VGQ+4Pe2FnkKvHMTUKaixnPwixBMJXeNVzCncIQWjkE
+	 OorRuOFruKmn3BK9dHbTa+CVCkoOkLsD0wxni40e8Iz3TV6AhBjvOXO2gGezhV7FsC
+	 vWBXmf+O+FxYQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Xiaochun Lee <lixc17@lenovo.com>,
+Cc: Kees Cook <kees@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 53/79] PCI: Fix old_size lower bound in calculate_iosize() too
-Date: Mon,  5 May 2025 19:21:25 -0400
-Message-Id: <20250505232151.2698893-53-sashal@kernel.org>
+	tariqt@nvidia.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	yishaih@nvidia.com,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 60/79] net/mlx4_core: Avoid impossible mlx4_db_alloc() order value
+Date: Mon,  5 May 2025 19:21:32 -0400
+Message-Id: <20250505232151.2698893-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505232151.2698893-1-sashal@kernel.org>
 References: <20250505232151.2698893-1-sashal@kernel.org>
@@ -60,49 +66,81 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.4.293
 Content-Transfer-Encoding: 8bit
 
-From: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+From: Kees Cook <kees@kernel.org>
 
-[ Upstream commit ff61f380de5652e723168341480cc7adf1dd6213 ]
+[ Upstream commit 4a6f18f28627e121bd1f74b5fcc9f945d6dbeb1e ]
 
-Commit 903534fa7d30 ("PCI: Fix resource double counting on remove &
-rescan") fixed double counting of mem resources because of old_size being
-applied too early.
+GCC can see that the value range for "order" is capped, but this leads
+it to consider that it might be negative, leading to a false positive
+warning (with GCC 15 with -Warray-bounds -fdiagnostics-details):
 
-Fix a similar counting bug on the io resource side.
+../drivers/net/ethernet/mellanox/mlx4/alloc.c:691:47: error: array subscript -1 is below array bounds of 'long unsigned int *[2]' [-Werror=array-bounds=]
+  691 |                 i = find_first_bit(pgdir->bits[o], MLX4_DB_PER_PAGE >> o);
+      |                                    ~~~~~~~~~~~^~~
+  'mlx4_alloc_db_from_pgdir': events 1-2
+  691 |                 i = find_first_bit(pgdir->bits[o], MLX4_DB_PER_PAGE >> o);                        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                     |                         |                                                   |                     |                         (2) out of array bounds here
+      |                     (1) when the condition is evaluated to true                             In file included from ../drivers/net/ethernet/mellanox/mlx4/mlx4.h:53,
+                 from ../drivers/net/ethernet/mellanox/mlx4/alloc.c:42:
+../include/linux/mlx4/device.h:664:33: note: while referencing 'bits'
+  664 |         unsigned long          *bits[2];
+      |                                 ^~~~
 
-Link: https://lore.kernel.org/r/20241216175632.4175-6-ilpo.jarvinen@linux.intel.com
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Tested-by: Xiaochun Lee <lixc17@lenovo.com>
+Switch the argument to unsigned int, which removes the compiler needing
+to consider negative values.
+
+Signed-off-by: Kees Cook <kees@kernel.org>
+Link: https://patch.msgid.link/20250210174504.work.075-kees@kernel.org
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/setup-bus.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/alloc.c | 6 +++---
+ include/linux/mlx4/device.h                | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 32e34ade736c3..1793e1084aeb3 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -800,11 +800,9 @@ static resource_size_t calculate_iosize(resource_size_t size,
- 	size = (size & 0xff) + ((size & ~0xffUL) << 2);
- #endif
- 	size = size + size1;
--	if (size < old_size)
--		size = old_size;
- 
--	size = ALIGN(max(size, add_size) + children_add_size, align);
--	return size;
-+	size = max(size, add_size) + children_add_size;
-+	return ALIGN(max(size, old_size), align);
+diff --git a/drivers/net/ethernet/mellanox/mlx4/alloc.c b/drivers/net/ethernet/mellanox/mlx4/alloc.c
+index b330020dc0d67..f2bded847e61d 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/alloc.c
++++ b/drivers/net/ethernet/mellanox/mlx4/alloc.c
+@@ -682,9 +682,9 @@ static struct mlx4_db_pgdir *mlx4_alloc_db_pgdir(struct device *dma_device)
  }
  
- static resource_size_t calculate_memsize(resource_size_t size,
+ static int mlx4_alloc_db_from_pgdir(struct mlx4_db_pgdir *pgdir,
+-				    struct mlx4_db *db, int order)
++				    struct mlx4_db *db, unsigned int order)
+ {
+-	int o;
++	unsigned int o;
+ 	int i;
+ 
+ 	for (o = order; o <= 1; ++o) {
+@@ -712,7 +712,7 @@ static int mlx4_alloc_db_from_pgdir(struct mlx4_db_pgdir *pgdir,
+ 	return 0;
+ }
+ 
+-int mlx4_db_alloc(struct mlx4_dev *dev, struct mlx4_db *db, int order)
++int mlx4_db_alloc(struct mlx4_dev *dev, struct mlx4_db *db, unsigned int order)
+ {
+ 	struct mlx4_priv *priv = mlx4_priv(dev);
+ 	struct mlx4_db_pgdir *pgdir;
+diff --git a/include/linux/mlx4/device.h b/include/linux/mlx4/device.h
+index 35b4e324e17f2..7c399831540d7 100644
+--- a/include/linux/mlx4/device.h
++++ b/include/linux/mlx4/device.h
+@@ -1128,7 +1128,7 @@ int mlx4_write_mtt(struct mlx4_dev *dev, struct mlx4_mtt *mtt,
+ int mlx4_buf_write_mtt(struct mlx4_dev *dev, struct mlx4_mtt *mtt,
+ 		       struct mlx4_buf *buf);
+ 
+-int mlx4_db_alloc(struct mlx4_dev *dev, struct mlx4_db *db, int order);
++int mlx4_db_alloc(struct mlx4_dev *dev, struct mlx4_db *db, unsigned int order);
+ void mlx4_db_free(struct mlx4_dev *dev, struct mlx4_db *db);
+ 
+ int mlx4_alloc_hwq_res(struct mlx4_dev *dev, struct mlx4_hwq_resources *wqres,
 -- 
 2.39.5
 
