@@ -1,277 +1,209 @@
-Return-Path: <linux-kernel+bounces-632078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BEDAA9239
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA02DAA9242
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107521898B38
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5CAD3A79DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A653F204840;
-	Mon,  5 May 2025 11:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ELrSYP9b"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012062.outbound.protection.outlook.com [52.101.66.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A41C2066F7;
+	Mon,  5 May 2025 11:43:40 +0000 (UTC)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1D6211C;
-	Mon,  5 May 2025 11:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746445264; cv=fail; b=qKsm95/C0xyRL5EHXZltNzePOx/MktfkgznASAC0nujUrm3Iaeaa75WA+1msvJQ4tzWSH+d6OVpBr6NghddeDp4Q50RejKiC4lOECzm691K+PEbSTUlmdwSAvEFt/78VSI+QCQdKM3Ge+h3AfJSlk9SS0A0+oEG8ZgRE/eBnVSA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746445264; c=relaxed/simple;
-	bh=V4l/I+AoFVha8NcMp4my/vw+SM6y2GMQqPaJLUx1Hmk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dhnUtvYiq5yv/3wMeAqCsTeTGZplGYB44s+WgHEunlNcyM8UedmItXaHsbDLEWA50ZtwXoc9cHh9KS0KEqll1izlGA7G87QdJ+cPpSw5mHGC3jyJR53xwJCriN2j2OyD92SZAyfNoyMMQgPjOS7MT1kCVyAW6sHl4v46OS+xmX4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ELrSYP9b; arc=fail smtp.client-ip=52.101.66.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gmiIlA8YO5pMWS3ji/UhOTPTnbdfKINd1IXfPTNNsWQymx30n3HhnplpeKgh3v2xjIxyDweb41izReU9y3wY0xh1h8nA7ELTRCXoyvgIkEqDrWcTKKvNmsxeAMljMX+B5KShQ1+5PNcvfbq0EGMf9pzOS4gQU6lI2hM/RklLx+BiIHtutYp4kzdTa5FtpDn+x0qDyhsCjFIXD44lRg3FQxwaA606Crw4uS0YnuK17o6R4XJ/BWEn7BcVB/iNi429FqIQ6eR5/ox9mbhf5cWNmAqbSgBnpV1Rl7WKWxwC5wnVLNelvDHWnu5QNLOHH7SpdkPW3eYca5oGsDn1TB1JXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C8T1j6Reqp01Z3ISjy4/euotw90caqRJMOyPLFutVjg=;
- b=N0pFYgX9J9KtfziXZyVl98Io4wAj3eGJOXyIioz1+G6jkRspirisVu/IWVMG29vt4o/OjWgBxbQkKpDP0lEaUPeri3in/xxDdMmM30VUo5IH5YOnKp92aS+InC0DvSP6YLn/jvyjMj9EyNEDfaGdqBnLu8w9UfSD5o1ufdGomzjJTqejXRu0nPGOFxQpGcxNpHP2EO0e5zLSUQgY4EKAoDgbF5Y+8xTpuQn5/sZQUYgiz3iesSQpJJQGcL6kuT+wpCP/asgSeX+xKI5/DW4nOH3rMXuk6AaiFbehuhu/qRFQ2gGD0n9BeePbK5K9diU+htYEtsSqsJFgjeX53GmCHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C8T1j6Reqp01Z3ISjy4/euotw90caqRJMOyPLFutVjg=;
- b=ELrSYP9byQYXmnP3S7b7hjok0U3c5XdWMPo7K9LcHvRkpEQ8B1lh0GD8vHQJXy3CZcGO8cucmXz47RzlqchdSXuELb4wySdzz9PVT180Kr77Jsl8d8JX1G5/PLRtqL+ulpCIKFadarF4g/xXqyX6DIB122bTuMmT8XGNbBQeHkrvlAtY94OOtHho01k0DaZ2alff3fcB20FO/ae4V0P7QkOGohUV/PQhPU05o5RbJxZss/NIJ0u+S388PPZ0jgjmRnyUGh4HlXChIE7G2lncm+pshntqSf6xXooDhS/BYJsTyBKRbev0zTLBMElkV1y6cUkjeNJ0HQ5VeJ2nfazi7Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
- by PA2PR04MB10447.eurprd04.prod.outlook.com (2603:10a6:102:413::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Mon, 5 May
- 2025 11:40:59 +0000
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::84f7:e2c3:ceed:c0a6]) by AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::84f7:e2c3:ceed:c0a6%3]) with mapi id 15.20.8699.019; Mon, 5 May 2025
- 11:40:59 +0000
-From: Daniel Baluta <daniel.baluta@nxp.com>
-To: broonie@kernel.org
-Cc: lgirdwood@gmail.com,
-	kernel@pengutronix.de,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	p.zabel@pengutronix.de,
-	Frank.Li@nxp.com,
-	iuliana.prodan@nxp.com,
-	linux-sound@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kai.vehmanen@linux.intel.com,
-	daniel.baluta@gmail.com,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	=?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
-	Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-Subject: [PATCH] ASoC: SOF: imx8m: Use reset controller API to control the DSP
-Date: Mon,  5 May 2025 14:42:51 +0300
-Message-ID: <20250505114251.57018-1-daniel.baluta@nxp.com>
-X-Mailer: git-send-email 2.43.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR06CA0129.eurprd06.prod.outlook.com
- (2603:10a6:208:ab::34) To AS8PR04MB8247.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1F71F4C9B;
+	Mon,  5 May 2025 11:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746445420; cv=none; b=kgKFL6GVKXSO8XXtwf6VX+SYZ47mZlMUH7DJB/erupL78kVXmkXinEGntvIm93Ef1Dq6viphl3oFjjK2Z5eMvf612/bjlV04ZIWaw0r+xdr0Th/TEdn+xGz77RJlJvFSn6AlEaQd3kyHs4g6SzUeZXcSJTebOBwu5QOTw8pP+ek=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746445420; c=relaxed/simple;
+	bh=LroyPHP++7p+Vgslel/c4KZw8fDFrIhu9uNkaYu9lRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KgiR4dy3T1Dqg3GodFkqu8xD4ayl3yd1QpLcN4usvhgD9lF6QtRvKjVg2KN9DEnPmsfpL1WjVHi8LDhc4ssDuzd9+/vJwjWCrJ7FubO15PRWS/Wvh4LCrg8LEGGUzHcrogbnfarS0tMqi03BkmDIhTl0B/sDKWraqjtzZS0OG2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-877c46ab075so778921241.3;
+        Mon, 05 May 2025 04:43:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746445415; x=1747050215;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TAF5arAbrcK4xPOLwu1J3gN7QYwL2MYYXKtYUP5/0f0=;
+        b=RPrB9n7I3s5XlngBfob6hI4Zl4I2I7Cv/5ES6Wdc6QAAMgf2sJymAHA6Z+HNTOIdGq
+         /JljKt0xI3o0fgfj2X7IE8N8B4V6qpYrYAziACgzTfkmbcUC+jBgAj1ZrGd1CGFSdv5M
+         S7HTm60hvCOcmRQkMjr4n6S4If1w7hiFZzarU5EfCNrrQTBr+rk0RrFiUk4ZNUGfu8Pc
+         Kic5kBZSY6FxYF+XSjgGpYjZnNUA3xb+SpNd0ToLgVK+HGqBUDnRP9LOYVHnhzT4NyYR
+         MBMoIPMYpQp5h7xsqn7pmix/AZE6W3Qy7UBZn7z37YaI+ww78CC9cnGVJAJLWGMqKKpf
+         zUFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUI5+X3WugQgb5CJvc14As0MR30/rwOPfbPksfvTU4OKS+OJn96SkOGu0YiFzPAXGfHJgrGXaTHFi2bZQ==@vger.kernel.org, AJvYcCW+XSmmfIQ/v33GfgyOfhrKgH29WxP82o8yCelb7a22W6IsxmuShzUeKebfS81bX9W2CkxvtHNia0xZDh8=@vger.kernel.org, AJvYcCWEDubAwjbXIA+h+tWjMlFzJ9BojBkThvJ1vM73vuQxrFBv6QYdvKGEVksZwj7t2WELVtN5WntzXyfiuFBb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpuTYrr0WkuNwtNPcbZYuOPHwAJ3f+dQ2kpqZ05T2rH1ALajFf
+	KIrr5WvBpW9PnwgBis4/h+gNEOdXUqFSOxVr6QzhfpZktnP2Po79T18TE+GA
+X-Gm-Gg: ASbGncs8EgHQSSPg4BxEiwvECIYjhZ6GjaJcIIzWUEBJgSJQ7zLdrutJbTB78qi07gG
+	DUdRnmStKkUvH0dIHAJe3Kt7eG2z5kY9elqbvXQUiTp0RWGOlkezrJZjqpSUq352L3VGz17vwbD
+	cyZlnSThRyJpVoSXPBU6Q6YR0Rv1ML5OrZQXwBDmYlN44iFHTTSBPzo2XJAq6TojC7q/YM4j/3n
+	W9PuQO/QUmwxT+TLy7GBEk4OFxGvUDdIKxPJ3BqS6a4Rd/NcVGmnCh6nTVRU7GKMxQ7LxNc8FT2
+	OrUD+nKGAd8Q2Iv1FXGL6WnjQZzFT1irTBwZGO/LfO50lzqquPgauxJhFfQ3MuA1ybXwTdhB8G+
+	0EKI=
+X-Google-Smtp-Source: AGHT+IE7IJ7bv2yj/LcpTrbexPVvKOMqsxHuGF52MSdoIwREL0t7RWCf15deqDhebcghDqBukIaFQg==
+X-Received: by 2002:a05:6102:4a95:b0:4da:e629:58c5 with SMTP id ada2fe7eead31-4db0c42b114mr4244571137.23.1746445415332;
+        Mon, 05 May 2025 04:43:35 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8780b09bc00sm1246606241.27.2025.05.05.04.43.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 04:43:34 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-877c46ab075so778907241.3;
+        Mon, 05 May 2025 04:43:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVROFjN4iybKFHDyGE/K15obyL/cPfyvLhk/YT14CiqVHRC5gyiXmtB/X5+xWqC5qvM7DGaoFGVsNJLNl8u@vger.kernel.org, AJvYcCVfy8lPJ8tnMBa9rH4gXGunRU9Y4/t69cGM4XcoqWI1wnkC/nAUdyniy/EXWVwMMWJjkrFpo4bzssqcPRk=@vger.kernel.org, AJvYcCXen6Yrt3Zq2x1an98TtcAaWmLRdDAIQ8G6H45dVNxvz3/gJR1Qd18XKXte/E6v9Y0qQ7oFV+9N2w1tbA==@vger.kernel.org
+X-Received: by 2002:a05:6102:2c85:b0:4c5:1bea:1c29 with SMTP id
+ ada2fe7eead31-4db0c3de40cmr4336025137.19.1746445414091; Mon, 05 May 2025
+ 04:43:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|PA2PR04MB10447:EE_
-X-MS-Office365-Filtering-Correlation-Id: a79f95b5-9779-44f8-46b5-08dd8bc9b493
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Slg2a29zS1U4RDBDSldqd0szLyt0SXp6a0hmMHhkUmZJS05rcmlQZkJlQ1VH?=
- =?utf-8?B?Z0lwRjVpdTBkdXJZUmgvSVRraXFQaUNCclplb0JyOENzRVE3dnE1dVFWR1pO?=
- =?utf-8?B?cTUzaTYwWkQrcEJ4ODJLVnJEN0ZVUDRxeFdvRGhzUnlJd1BPVERQU2R1TkxC?=
- =?utf-8?B?cWViQTVoS1V3c1ZNemdEYW1qREY5Z3NGbno5alhGaXoxNGNHN3lIMjBmbXBC?=
- =?utf-8?B?WE1JTHgzeW9jNHBSejZhRGYrQ2huN0E1aDlwR0NEb2hyaWpUT01YOXo0eFFa?=
- =?utf-8?B?dThvRFdLa2t4eTVUREppSmpZRVJyM0t5OXVQMWQrT2NaWWFTdDgvOTlKdDJW?=
- =?utf-8?B?QW02WkR2TXVvdjl0enJSZ2RXNm1xUm9iSXJML0Q0YTIxUS9RWjZiS2g4WXVl?=
- =?utf-8?B?VnFYL25XYTFDMk1qdzBtYjQ1Vlo2MjFLQ0d3UmdrbFA2YlR0NWVmcTBnSXlD?=
- =?utf-8?B?UFlkb2VRTE1GWFMwV1BrcFkzdzU2MHlySm5WeEQ2YWRQYllWYy93M3h4SzFu?=
- =?utf-8?B?clFUVU9Va1lFNklhNXNYdmwvT21oQnBBRUpmdTRXdjBqYUU2TzE3YzR0NFh0?=
- =?utf-8?B?ZENVa0ZXRm40VjlyaHRTd2dOcXJvWlRoRVc0T25qSi83V1Z2NmNNQmdiOWlK?=
- =?utf-8?B?azZQWHBGQVVsb2E2b0VLVzdqWC9hbGdWQzBQY0hQbkJTeVREcGhsdGdsY0FX?=
- =?utf-8?B?M0hqS1J2ZmQxS1VBWjZzUVNQQU9KWlVHMHZJNlMyY3JQd2FvY2MwTndjYnRE?=
- =?utf-8?B?bnFiVlNleUN2dUNwYnY5cUJ1alhrd1JJLzZ1NitiV3JHR1A1NUI2aDQ1aENt?=
- =?utf-8?B?Y1dvclBXN3gzK2VhY1dBVWxUcUZpVWtVRlFiSmhnKzZleXFJRWJNUG5OQ3VQ?=
- =?utf-8?B?Q3g2eHBTZUNvaUpCb3pUSzVuZGxnSVFMelptWFR1U1JVbUsxazg4RzJ1UEcz?=
- =?utf-8?B?c2xGQjBZOXA1ekJmSDRFQkY5Z2FoMkdEMWk1a2dFQ016NXo5b05zY0haN2ky?=
- =?utf-8?B?U0s4UWlneXROL3U2a1ZhU3VmcXJXdTdEckhVNGQzVHlNSW5HVElVc0dpckY2?=
- =?utf-8?B?OWtHQnlQWXV0eXFUdkx4V2J2bFNSei9MNW8wMHVUSWcvQWw0dGVVREw4eDZq?=
- =?utf-8?B?enVqUnQzQVJ5anB4UVU5Y1JsdTREb1c2aUlWVmxTcUs1WFhkZEt4bnY0OHlX?=
- =?utf-8?B?TXRQZElsVTRvT3EwVmpFdkVGVzdvcFhxK3dUeFlYMG8xZ08xdWFCckRuTlRR?=
- =?utf-8?B?NU5hR3VEcVZ0clZ5RnlKUWpJb1VkR3lTY05aVTJYYjdNVms1dnlHeWFVV2w5?=
- =?utf-8?B?dTd2a0xmWERlUVMzdnJMV2VPUVZXQWQ1Q2szTUxWNWJhVFVzZ2RVVE55blN3?=
- =?utf-8?B?WDRUWENSR1RZTlAwWjJQNnp5SFNyMUVLVW5DdExRdmEyZWQ4VFNMR2NVRzVi?=
- =?utf-8?B?TjI2U0psNnlKQTY1VFluTkVMYzdrdHd2N0t0bU85eUN4VVBHSnM4SDhHVFBy?=
- =?utf-8?B?SkFLR3hsK01iOTFjQ2llY2FXY2V6cVZyZ0FYY2diZkJnOUpiRENORVdrVmFM?=
- =?utf-8?B?MDFXUnYzUHJtTmVpSExPMWZucTUrQncxbHdpOVpsaXRFeEt1WS9QUllNS2NU?=
- =?utf-8?B?enJNU3lQQ1ptaDJXWjB3NHpPbGtaWWJDWW9GVG9iZXBEZEY0bnJ1ZVVuUTQ0?=
- =?utf-8?B?SFhybXdyTmJsRkZpRUlHNmJKdVFWdmpkdjk5dzZ1U3ZMWkpTVW1jdG9BcFRo?=
- =?utf-8?B?TGxzckIyQUxCK1g2NEt1R3NrVEVPZWR3UVVrekhQT1gwdUF6V05vMkhBTjRB?=
- =?utf-8?B?YUsvWmxnVjdPUTdQeGR0OWU5TzJTaHRhSWp6SVk2VjYyTE9YcXY3eUgrSlc4?=
- =?utf-8?B?UFFpNmZlWThJOWFsN1Fock10QlRHSDg0ZUUvUFYzMW8rOFNHSjFkenA2TkN2?=
- =?utf-8?B?WVJuc2ZXQ24wRmNxdWtnS3ZoSTcwNHRuZTdYZTl5YllXNFVnNHIwdjczUnFx?=
- =?utf-8?B?Z2ZqM2dzVTJ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N09TeHQzVm1uOFNaTzRncEF5bUJEWDZTMTZQbE41TXlIZmMzMTdJaWRUVmdj?=
- =?utf-8?B?VkM2YlV2ckpERFl3eTkxQVF3QXcwY1Y4VzhZWGxzM1BJQTVFU2JGRzZBYzR4?=
- =?utf-8?B?VHUyS2JBRFRjRC9oVWdPL1NDOFcrZFZOUUlMQnZoY1BmRjh5NFFDbW9RYlNZ?=
- =?utf-8?B?T050MENXNkErQ3ZIYW4ycjJkb0RUaGhXNFRNbklIUHR4alpncTltc0Rsb0dC?=
- =?utf-8?B?ZnI1QTZQZ21QOVhQakIxTXIwTE15dGlZcElWdnRMczJOMEVVZ1p3M0NTQktB?=
- =?utf-8?B?MGxyd1VNVFNHL0pVa2Nodkk4LzdEQUh1Z3AzaVBoakZDNlJaTzV6WWZHcE5m?=
- =?utf-8?B?Sy80L1U1SyttZmdReCtXZ2lXa3V0WWVFYzNXcDB0RmNmdEJWcUdKVGlCUlc4?=
- =?utf-8?B?RkxpSHcvemRJQ3Z1L0FvamUydHFVL0dXaSszdmdFaE9idlRicWZkQzlvYWNu?=
- =?utf-8?B?UnJWK0JyVEVQUVBSZmtTL3E0OSswZitlRWYwaWVkVTJlZ3FJNmNUR1lsVmhj?=
- =?utf-8?B?QlY4QUErZGYwVnFUQVl1OWE2RE1NdnZnWDFGeUdPK01CbHBybW42MEpnQVVQ?=
- =?utf-8?B?aU1IMFlmczBNRTh5U2lrTXplRlRpR0pad0RuMEJFenUvZmhzaTdlQW40RzZ0?=
- =?utf-8?B?VXpLRnBmMTFQc3VuUisyZitVZzU2OTVGQ09Qd0lrbnpGRkEvdWVPQzFZQ3pa?=
- =?utf-8?B?Wk9KNDh5Y2I5ODkzK2I2bXNpRmVLZWJJeGFLenl6R1RVdWRoa3FoSWgwWjhF?=
- =?utf-8?B?c3hjWjFKUWRsN0dGVTZrc20xS2NUWGhUNTB2Tlo0d1VaNUhqUFkrSzk5YWNt?=
- =?utf-8?B?WmNGT1U4U0RYNkVuREg4MWxWb0tmek1KWStoYTczR3pRV0l1VVVReVVuVkxG?=
- =?utf-8?B?N0pWZ09vVXl0aU5naXh4M0g2bFQ2YWt1M3l3R3pMUkJseVZhNzg3ejF2RWVa?=
- =?utf-8?B?OTRudUVsd0RkbjUwNTNpcG5kdFgvMUpDUzBKOENrUmRkWUhUM1hWRDVYaXdl?=
- =?utf-8?B?bnhqalkyZjhwN1FZKzBhTjZoVXhVYWFJbGxUbkdtazMyaVJsdW41RXZpT2Nt?=
- =?utf-8?B?ckowR1RaWjI2YTRzOUlSVG4yK3Q3S3lxNnVKenB5SEFKV1htcjRCTXhFNUll?=
- =?utf-8?B?a2xFMzQ5R25qNzMrWCtXSjFWNnZXVzdwNWtXNGZIRHQ0S3ZleVlQczg0c050?=
- =?utf-8?B?My9KMWtUS1AvaDNFSFExd1Z1MEczR1dvVEc4ZXUvT2RVMFl2RDdzUjcvUGRN?=
- =?utf-8?B?eHhFUUVyNkNjMU1hbVBCTnNZS2VwWFVyMCtPRkw3dTRHN2dZdS9NMWV6ZmVs?=
- =?utf-8?B?YklKMndnQlA5SWVBMXYxeHJ1Vi9ZeUlEcU52RFNPbWVNbjNORGp6MSs4ZzBQ?=
- =?utf-8?B?WnhaTmtXNjFDbzYrQnI4aGlidXViajV4bFRtbGpUM0ZXZU5DblRxdUF1RlRq?=
- =?utf-8?B?eUxLeFF6QUc1enhwS2RxTWRUZkFuSStTazV1ZUZNM2wwQy85UFJWaXMyVGJH?=
- =?utf-8?B?Mm44WUlyOGkxMXFGYU1YdlVBc0dQVHdIVlArNWtsaDI3dWhkSFd6Rmpmd09K?=
- =?utf-8?B?U1NQVEZmZThhQVVJWXNBMjBlSE1HQmNTTFphYnJsUVJDVHM3c21MZEN5TFdS?=
- =?utf-8?B?ekxHMkhEQnJET2pHeld4Rlp5c2lJdVU0enpobVd5bUJtVGtJWlNpZDNIOEV1?=
- =?utf-8?B?elp1c2xXNDEyYk03c2RTWHFUK2pTL1lvYUFDNmRuZFBXRitITmYwbTV2cnNU?=
- =?utf-8?B?cStPZGxtUmZENlN3VkdtRCtlZkdWNkphYjIvTDZ2MGh4OGU0dGhJOGIrdC92?=
- =?utf-8?B?QmdJam54dlRsdFBoNTY1c21HalR2L25TMS9lM0xaSk1rZ2loekNQUDdlTldM?=
- =?utf-8?B?ZDZ3ZlBJSTl5bWZaOU5pYXFhamoxZzZyVVpDUkVLcGhaVUFmNVllclQyZlVK?=
- =?utf-8?B?WG1JZGVvQjR1dFRZRVFkcE5KQ0kzcWVkZlZWeGNlNU0xSVdaVHdvVkpZa1BS?=
- =?utf-8?B?MkZWQ01xOXJNWWdFQ3ZVdXphOTcvQjZQSmFLcEpuVUtDbDV1WFRBVFVkdld1?=
- =?utf-8?B?d1RLTCs3T0x2WVU5U3pxM1Q0ZXB2TFRqc0o5UW5OOFJZZ3RkeFlOM2NEYzNu?=
- =?utf-8?Q?nxa5KmDx1cmEZCRK9SSPBBUYT?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a79f95b5-9779-44f8-46b5-08dd8bc9b493
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 11:40:59.2492
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ds1ECxfoWYvmRUl2V3aEz5DbynqcWeSo9cuCr/RSh3LxAZTmZ3RUrcjHDS3OED5ynlhQCnfozwj2resySLR9qA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10447
+References: <20250430163709.15850-1-mans@mansr.com>
+In-Reply-To: <20250430163709.15850-1-mans@mansr.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 May 2025 13:43:22 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUrQjcb7mqTo0EOEDWFSaK3j-_3sumLTjoDEnP8qTvakg@mail.gmail.com>
+X-Gm-Features: ATxdqUHBwbolkuQR-MXBj2JzT0P9vufOLogqeqtvnB3CPASb942XHDr6Mh4LOhU
+Message-ID: <CAMuHMdUrQjcb7mqTo0EOEDWFSaK3j-_3sumLTjoDEnP8qTvakg@mail.gmail.com>
+Subject: Re: [PATCH] tty: serial: 8250_omap: fix tx with dma
+To: Mans Rullgard <mans@mansr.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Kevin Hilman <khilman@baylibre.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, 
+	"open list:TI ETHERNET SWITCH DRIVER (CPSW)" <linux-omap@vger.kernel.org>, Matti Vaittinen <mazziesaccount@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-DSP on i.MX8MP doesn't have a direct reset line so according to hardware
-design team in order to handle assert/deassert/reset functionality we
-need to use a combination of control bits from two modules. Audio block
-control module for Run/Stall control of the DSP and DAP module in order
-to do software reset.
+CC omap
 
-In a first step, for i.MX8MP we are switching on using the reset
-controller API to handle the DSP Run/Stall bits i.MX8MP. This comes with
-the advantage of offering a better probe ordering and a more natural way
-of abstracting the Audio block control bits.
+On Wed, 30 Apr 2025 at 18:45, Mans Rullgard <mans@mansr.com> wrote:
+> Commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+> introduced two errors in the TX DMA handling for 8250_omap.
+>
+> Firstly, kfifo_dma_out_prepare_mapped() needs a scatterlist with two
+> entries whereas only one is provided.  The same error was fixed for
+> 8250_dma in 59449c9dbdaa ("tty: serial: 8250_dma: use sgl with 2 nents
+> to take care of buffer wrap").
+>
+> Secondly, when the OMAP_DMA_TX_KICK flag is set, one byte is pulled from
+> the kfifo and emitted directly in order to start the DMA.  This is done
+> without updating DMA tx_size which leads to uart_xmit_advance() called
+> in the DMA complete callback advancing the kfifo by one too much.
+>
+> In practice, transmitting N bytes has been seen to result in the last
+> N-1 bytes being sent repeatedly.
+>
+> This change fixes both problems.
+>
+> Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+> Signed-off-by: Mans Rullgard <mans@mansr.com>
+> ---
+>  drivers/tty/serial/8250/8250_omap.c | 35 +++++++++++++++--------------
+>  1 file changed, 18 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+> index f1aee915bc02..84a2f013015e 100644
+> --- a/drivers/tty/serial/8250/8250_omap.c
+> +++ b/drivers/tty/serial/8250/8250_omap.c
+> @@ -1152,9 +1152,11 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+>         struct omap8250_priv            *priv = p->port.private_data;
+>         struct tty_port                 *tport = &p->port.state->port;
+>         struct dma_async_tx_descriptor  *desc;
+> -       struct scatterlist sg;
+> +       struct scatterlist *sg;
+> +       struct scatterlist sgl[2];
+>         int skip_byte = -1;
+>         int ret;
+> +       int i;
+>
+>         if (dma->tx_running)
+>                 return 0;
+> @@ -1173,16 +1175,6 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+>                 return 0;
+>         }
+>
+> -       sg_init_table(&sg, 1);
+> -       ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+> -                                          UART_XMIT_SIZE, dma->tx_addr);
+> -       if (ret != 1) {
+> -               serial8250_clear_THRI(p);
+> -               return 0;
+> -       }
+> -
+> -       dma->tx_size = sg_dma_len(&sg);
+> -
+>         if (priv->habit & OMAP_DMA_TX_KICK) {
+>                 unsigned char c;
+>                 u8 tx_lvl;
+> @@ -1207,7 +1199,7 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+>                         ret = -EBUSY;
+>                         goto err;
+>                 }
+> -               if (dma->tx_size < 4) {
+> +               if (kfifo_len(&tport->xmit_fifo) < 4) {
+>                         ret = -EINVAL;
+>                         goto err;
+>                 }
+> @@ -1216,12 +1208,19 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+>                         goto err;
+>                 }
+>                 skip_byte = c;
+> -               /* now we need to recompute due to kfifo_get */
+> -               kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+> -                               UART_XMIT_SIZE, dma->tx_addr);
+>         }
+>
+> -       desc = dmaengine_prep_slave_sg(dma->txchan, &sg, 1, DMA_MEM_TO_DEV,
+> +       sg_init_table(sgl, ARRAY_SIZE(sgl));
+> +
+> +       ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, sgl, ARRAY_SIZE(sgl),
+> +                                          UART_XMIT_SIZE, dma->tx_addr);
+> +
+> +       dma->tx_size = 0;
+> +
+> +       for_each_sg(sgl, sg, ret, i)
+> +               dma->tx_size += sg_dma_len(sg);
+> +
+> +       desc = dmaengine_prep_slave_sg(dma->txchan, sgl, ret, DMA_MEM_TO_DEV,
+>                         DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+>         if (!desc) {
+>                 ret = -EBUSY;
+> @@ -1248,8 +1247,10 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+>  err:
+>         dma->tx_err = 1;
+>  out_skip:
+> -       if (skip_byte >= 0)
+> +       if (skip_byte >= 0) {
+>                 serial_out(p, UART_TX, skip_byte);
+> +               p->port.icount.tx++;
+> +       }
+>         return ret;
+>  }
+>
+> --
+> 2.49.0
 
-Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Reviewed-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-Tested-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- sound/soc/sof/imx/imx8.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
-index ab07512e511d..a40a8047873e 100644
---- a/sound/soc/sof/imx/imx8.c
-+++ b/sound/soc/sof/imx/imx8.c
-@@ -11,6 +11,7 @@
- #include <linux/arm-smccc.h>
- #include <linux/firmware/imx/svc/misc.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/reset.h>
- 
- #include "imx-common.h"
- 
-@@ -23,13 +24,6 @@
- #define IMX8M_DAP_PWRCTL (0x4000 + 0x3020)
- #define IMX8M_PWRCTL_CORERESET BIT(16)
- 
--#define AudioDSP_REG0 0x100
--#define AudioDSP_REG1 0x104
--#define AudioDSP_REG2 0x108
--#define AudioDSP_REG3 0x10c
--
--#define AudioDSP_REG2_RUNSTALL  BIT(5)
--
- /* imx8ulp macros */
- #define FSL_SIP_HIFI_XRDC       0xc200000e
- #define SYSCTRL0                0x8
-@@ -43,6 +37,7 @@
- struct imx8m_chip_data {
- 	void __iomem *dap;
- 	struct regmap *regmap;
-+	struct reset_control *run_stall;
- };
- 
- /*
-@@ -137,8 +132,7 @@ static int imx8m_reset(struct snd_sof_dev *sdev)
- 	/* keep reset asserted for 10 cycles */
- 	usleep_range(1, 2);
- 
--	regmap_update_bits(chip->regmap, AudioDSP_REG2,
--			   AudioDSP_REG2_RUNSTALL, AudioDSP_REG2_RUNSTALL);
-+	reset_control_assert(chip->run_stall);
- 
- 	/* take the DSP out of reset and keep stalled for FW loading */
- 	pwrctl = readl(chip->dap + IMX8M_DAP_PWRCTL);
-@@ -152,9 +146,7 @@ static int imx8m_run(struct snd_sof_dev *sdev)
- {
- 	struct imx8m_chip_data *chip = get_chip_pdata(sdev);
- 
--	regmap_update_bits(chip->regmap, AudioDSP_REG2, AudioDSP_REG2_RUNSTALL, 0);
--
--	return 0;
-+	return reset_control_deassert(chip->run_stall);
- }
- 
- static int imx8m_probe(struct snd_sof_dev *sdev)
-@@ -174,10 +166,10 @@ static int imx8m_probe(struct snd_sof_dev *sdev)
- 		return dev_err_probe(sdev->dev, -ENODEV,
- 				     "failed to ioremap DAP\n");
- 
--	chip->regmap = syscon_regmap_lookup_by_phandle(sdev->dev->of_node, "fsl,dsp-ctrl");
--	if (IS_ERR(chip->regmap))
--		return dev_err_probe(sdev->dev, PTR_ERR(chip->regmap),
--				     "failed to fetch dsp ctrl regmap\n");
-+	chip->run_stall = devm_reset_control_get_exclusive(sdev->dev, "runstall");
-+	if (IS_ERR(chip->run_stall))
-+		return dev_err_probe(sdev->dev, PTR_ERR(chip->run_stall),
-+				     "failed to get dsp runstall reset control\n");
- 
- 	common->chip_pdata = chip;
- 
+                        Geert
+
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
