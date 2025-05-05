@@ -1,128 +1,118 @@
-Return-Path: <linux-kernel+bounces-634624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F99FAAB6C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E60A4AAB1DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451DE465C4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:54:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456F04A1FE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586F1211494;
-	Tue,  6 May 2025 00:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3B841CD1A;
+	Tue,  6 May 2025 00:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFxB9xIU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="bGsJ3rqe"
+Received: from mail-ua1-f98.google.com (mail-ua1-f98.google.com [209.85.222.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9BE381EA4;
-	Mon,  5 May 2025 23:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B207B2D47B4
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 22:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486025; cv=none; b=EIcj20Qp3k0bUSk/shCxWllGzJiEAp88t55AC8euYCZ3UcChf8CLSf8V0Wcqwyxjc6K/nEM0Xhx2iukhWBp1nqDxvPdHLUlfMcfr7D4n2oju4h0zj5nAFXc1SYig91Tm3OUdbJgLhPDy6ZQtxo0fA/tIWI3Gracs/f+ZTJ25Glw=
+	t=1746485625; cv=none; b=BH3eqA5ZshA6YW+WCLQuoY3iuERa8cd7BUkTk4FZBg7VOyZq3r0BX0UXCFV5R3HAQK6u6W4T7gvRnjAnWU6b7fJP2A7J+K2gFhV+PzTwW03zec3oE2dI/+Kdj85z/CmR49oJ1hVRVFl/9aTAnkyKgFRtv4ndel9M6fWXrU42k8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486025; c=relaxed/simple;
-	bh=FDTKH3+ShSHhRFPMJ8xezgRuCyIXgMvtIvlGpDq1aQc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c1G0dHiwvLBRaaWUD/6tA69xq62hQiwRPKVWux9mGGC0LFDAw3ilWow2gby/B1/TXxesqhyR56kxK8tTvjE6/VKca1rLp2xNZffLcOzEmwQsxXjq6QDR4oObp4r6zOKFoVyVfxQxAB/mhkLx8/l3i1h+cvDYzrTjlnGEASHNQcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFxB9xIU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD69C4CEF1;
-	Mon,  5 May 2025 23:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486023;
-	bh=FDTKH3+ShSHhRFPMJ8xezgRuCyIXgMvtIvlGpDq1aQc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YFxB9xIUkXL0i8p24ks2FQaeBo2q7RtG8W3oCQfVE/6MvH3eM08SNeI5W6q6/LZHZ
-	 FO91ePcYqFgrXvfomYz5pP1/DEkCH+zFXCACPgV34kGj70BAxXx/ib4+TMvtVVc/HF
-	 LSJAMAMzWouqM6/0UHYKjKmvD1JgQcpjJvxArvOz8j8e0ZU36sbPVh+8nBOTBjHN7W
-	 wIRLurzXUypqor5WZWRmssjpcrIBG2W+/4R7F0DFN81jC/e34Dwaws0cfyub/TyyHq
-	 dRZ2X/bvC/GuAkFJEnyYmdoG2ztWhD6ckvMbcR63czzLFcVwSPYTN0EUwjcMDa0U5P
-	 rlhzOeMiuVeoA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux@armlinux.org.uk,
-	andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 116/294] net: phylink: use pl->link_interface in phylink_expects_phy()
-Date: Mon,  5 May 2025 18:53:36 -0400
-Message-Id: <20250505225634.2688578-116-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
-References: <20250505225634.2688578-1-sashal@kernel.org>
+	s=arc-20240116; t=1746485625; c=relaxed/simple;
+	bh=oWRWu4J3rOlzeZEZE09NG8G8JVW/wVAOK1aQt+vNBTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rbP/hf0jCI/5X9P4P+9v82w74PY5yqEv3gXdpGpZGvCzCjyL6jxVZv5OXq02zVB7Ph6nLtM38iN0XRszQQGGLZgZpQ9eylHibKPJPPPwhLAXDIzswlciVl8ARsdZCbJyu5WZEXePJQ0PgTr4jIeSN3qM03/QmLEn1A/Y1Hq4YJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=bGsJ3rqe; arc=none smtp.client-ip=209.85.222.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ua1-f98.google.com with SMTP id a1e0cc1a2514c-86c29c0acdfso1289417241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 15:53:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1746485621; x=1747090421; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eiXzmkb8vltyH6u1BZ9L/v+dxL0ZMqO2O1cKAYZNXPs=;
+        b=bGsJ3rqe20V11uU6uC/iGYzpZKh3HRfig0sea/5RoX8n5OVPtHegjGPFD4xu6w4ph8
+         CNqcZh5i/ZG6nnbU74h0d86JJJAmEGTgCmuANFaZEU64iDNBUp7Gi8C84KgQUR9AHgY3
+         vp96z2XM4EPNNvQEGC2Mj6wXlWeNlEFvp9OM5TWArIJL/zhen0wOwN2S6VDlEy/XZHRS
+         S6FmSFPdFJbPxZVBSH96YZY7z3SJx/dd2BC1lLSVXhXKRBNlXorGLuWxJuo6D1J3C3a9
+         F4lYi/djUnNL72zS0b17PZh6RG/2Xj0X3UoG7228wFpagW8Q8kLQW4hAC+p2QB2R4lRP
+         XCZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746485621; x=1747090421;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eiXzmkb8vltyH6u1BZ9L/v+dxL0ZMqO2O1cKAYZNXPs=;
+        b=Ej1SUbmKBAnrRYGY5Pk3fJRnha/0wliZXeBq6dtTF+LQZ9nQJBVyoc6gmb0mo3WPir
+         TCw/qW9BMdZCxIRLgLZfnyPjMMkeQZKZUU3uuTOeGBI8atPiUsqP9p8EW1WxnjUsPkRC
+         T/Ob6DU/meZLd2hqlIJC3a+dx5OD1SuqLVc/yc0i1YN76rNuRCTyKBGDjirKaD05RaZl
+         gOBO7Yu8YlvcgfR8l72gYLpLRivGpOjCPCHhPWTLuC7KEI8Bc/4BsfsKcfy09FrrIbp7
+         h+QnpKI6fE8e4E+6yaCOUslcG/XoJhG2MwUmYncleDxG6ER8qt17IcbIjRj4Aa0Qo5ui
+         2CPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUreJ9SE1IAw+LqU0ACeT6ZzePR9YWbkAq+Koelk68KadLO+8QYcnAnODRAi8+qLvV4CaAUKYFFMk6Tkcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmqX3bsCo7+6bF8yhpaienjbevNxgyeFTsJQ4KohQGk76yP95D
+	S0UHOJ4FFpHqMxYClGqc5jF0GDXZITGsAhYMMkwOQbeSw55uPBjknxOEsggkb7rL6tb4MX56eSa
+	yJPQ3HYWzB/LGXB87zquFqPppJntpY+1U6SuHjPX21bz5Ckam
+X-Gm-Gg: ASbGncsIYq8rOuyCG0XMwobh18XX+SMMl3bwqFX0iMsfiMKsKC0gNpOAqR5wyEBCOV3
+	RTWD6KUTxKKV+XPuXrOj8NZpXMz39HbmiJvnQEKECbZhjq4I8OuKDbfxu+BcC2Q4Xc+jEI4mFuG
+	dJ7t1hu4kf7HGF1owyyS6hantsIHdr8JN+BhmrV480uJZMwq5tuKT7ammrDyy/mZhVdobxYmOnM
+	KhXhdsvwobcpJCTSiRopMekP6bfUPUxgAujNpWR8xj4RNkoZMxb64rcbbkKC96upBUm1TJtff2u
+	FUm/2brz6XXBxPT0i3/6HPuLjRyF8Uo=
+X-Google-Smtp-Source: AGHT+IGuGPu+zNWnKMENBRH1cGq6mvAP2tt0vUVDuY0s1KGIy/+MxU+EJ2xkScan9kLdomgicesqCN/5M43b
+X-Received: by 2002:a05:6102:5681:b0:4da:e631:a472 with SMTP id ada2fe7eead31-4dafb690042mr8174826137.20.1746485621498;
+        Mon, 05 May 2025 15:53:41 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id a1e0cc1a2514c-8780afe9e7esm785191241.3.2025.05.05.15.53.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 15:53:41 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id BCD78340278;
+	Mon,  5 May 2025 16:53:40 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id B0A55E40643; Mon,  5 May 2025 16:53:40 -0600 (MDT)
+Date: Mon, 5 May 2025 16:53:40 -0600
+From: Uday Shankar <ushankar@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Ming Lei <ming.lei@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] selftests: ublk: more misc fixes
+Message-ID: <aBlBdBl8uKCIVOPG@dev-ushankar.dev.purestorage.com>
+References: <20250428-ublk_selftests-v1-0-5795f7b00cda@purestorage.com>
+ <aBkgLOxWLp74TShe@dev-ushankar.dev.purestorage.com>
+ <aBkg0LW5YO6Osdnw@dev-ushankar.dev.purestorage.com>
+ <3a6050b3-03f6-4c22-a2c3-33ab6a453376@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.89
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a6050b3-03f6-4c22-a2c3-33ab6a453376@kernel.dk>
 
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+On Mon, May 05, 2025 at 04:44:19PM -0600, Jens Axboe wrote:
+> On 5/5/25 2:34 PM, Uday Shankar wrote:
+> > On Mon, May 05, 2025 at 02:31:40PM -0600, Uday Shankar wrote:
+> >> Hi Jens,
+> >>
+> >> Can you take a look at Ming's comment on the first patch and merge the
+> >> set if things look good? I can rebase/repost it as needed.
+> > 
+> > Bleh, sorry, I meant to send this as a reply to v2:
+> > 
+> > https://lore.kernel.org/linux-block/20250429-ublk_selftests-v2-0-e970b6d9e4f4@purestorage.com/
+> 
+> Let's give Ming a chance to review v2, then I can get it queued up.
 
-[ Upstream commit b63263555eaafbf9ab1a82f2020bbee872d83759 ]
-
-The phylink_expects_phy() function allows MAC drivers to check if they are
-expecting a PHY to attach. The checking condition in phylink_expects_phy()
-aims to achieve the same result as the checking condition in
-phylink_attach_phy().
-
-However, the checking condition in phylink_expects_phy() uses
-pl->link_config.interface, while phylink_attach_phy() uses
-pl->link_interface.
-
-Initially, both pl->link_interface and pl->link_config.interface are set
-to SGMII, and pl->cfg_link_an_mode is set to MLO_AN_INBAND.
-
-When the interface switches from SGMII to 2500BASE-X,
-pl->link_config.interface is updated by phylink_major_config().
-At this point, pl->cfg_link_an_mode remains MLO_AN_INBAND, and
-pl->link_config.interface is set to 2500BASE-X.
-Subsequently, when the STMMAC interface is taken down
-administratively and brought back up, it is blocked by
-phylink_expects_phy().
-
-Since phylink_expects_phy() and phylink_attach_phy() aim to achieve the
-same result, phylink_expects_phy() should check pl->link_interface,
-which never changes, instead of pl->link_config.interface, which is
-updated by phylink_major_config().
-
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Link: https://patch.msgid.link/20250227121522.1802832-2-yong.liang.choong@linux.intel.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/phy/phylink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index b5f012619e42d..800e8b9eb4532 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -1718,7 +1718,7 @@ bool phylink_expects_phy(struct phylink *pl)
- {
- 	if (pl->cfg_link_an_mode == MLO_AN_FIXED ||
- 	    (pl->cfg_link_an_mode == MLO_AN_INBAND &&
--	     phy_interface_mode_is_8023z(pl->link_config.interface)))
-+	     phy_interface_mode_is_8023z(pl->link_interface)))
- 		return false;
- 	return true;
- }
--- 
-2.39.5
+It looks like he has already reviewed all the patches in the set.
 
 
