@@ -1,51 +1,49 @@
-Return-Path: <linux-kernel+bounces-632891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E0DAA9DFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:22:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3341AA9E06
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60B0C170A08
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4661A818E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301EB2749DE;
-	Mon,  5 May 2025 21:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F9D278E6B;
+	Mon,  5 May 2025 21:22:30 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22672741C0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6682749C3;
 	Mon,  5 May 2025 21:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746480148; cv=none; b=VQeC5CdfOydLaMNvLCQPTYHyOXJlvqA/r9d7/1Yjr02fx2O+o++FBOUuRorBkQTXPMTbTGfCkR8g/9nsPPrKSALGa9d2ILsNGojlxFpQplFaX7qDsbi05HfuBVx9TC5aLopMa6rdjRg5NSUPDydinOaq/8XFklGgn+3DBy2RTZ4=
+	t=1746480149; cv=none; b=dDGoCKeaYZRHX3zNL1JZIf7eZfvjlFOqqxIWKqEqpGYwuWtXTd803Eu02xZ6si0qlLSvC2Rf+pqpJxErs6qcNgDFnrRhzoWVxZ3WTaa5s9QDXifarHTpwtJ5KtuXwGHZom8Jc+a6X/aM+UkB3Yyph3UWDZts9UK/AB02b8d1/s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746480148; c=relaxed/simple;
-	bh=AtbwyqvdErRJG3wewcNLOmRcFKegEF41KY1o+ID/ICI=;
+	s=arc-20240116; t=1746480149; c=relaxed/simple;
+	bh=RxtgXCfcqWA6ooX95AsP5Gn57jVm1MgA5swttk/JuWo=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=cUbh03uUw9pczeWZ9u1P5UaolnOX6+U5oho6tCdUjwfxbcH1GyHxsWkI5IWX0git0ezuMAnIr+7S8hoN1wOI3YMW7XYEQx/khaZSn5hECdOKfRB/M4R6FMsHUqJ8jIgmVsexvSneBS4xPGEVJtVOZKT8CF2qDcLZtSaDjgwWYWs=
+	 Content-Type; b=esLNtEi8SyMKc9gx+7elluFX+9zwK01Yn2yLhIA61e4VWm9VazK6yB98bCwVKIlZ25rUalAPBDNudAKXJ6GFCGg2pg1H8k1xKJ/G9ceBaMJwdb/7QmxtUXcNVIhXMcZWmFX6kK52zHZLWLhCAEoA0IQ0DMAcsz1Ae8p3fZnoJFU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E7DC4CEF5;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE137C4CEED;
 	Mon,  5 May 2025 21:22:28 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uC3Gl-00000000yCj-1VSq;
+	id 1uC3Gl-00000000yDE-2DL1;
 	Mon, 05 May 2025 17:22:35 -0400
-Message-ID: <20250505212235.210330010@goodmis.org>
+Message-ID: <20250505212235.381188238@goodmis.org>
 User-Agent: quilt/0.68
-Date: Mon, 05 May 2025 17:21:08 -0400
+Date: Mon, 05 May 2025 17:21:09 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jason Wessel <jason.wessel@windriver.com>,
- Daniel Thompson <danielt@kernel.org>,
- Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH v2 04/13] tracing: Add tracer_tracing_disable/enable() functions
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2 05/13] tracing: Use tracer_tracing_disable() instead of "disabled" field for
+ ftrace_dump_one()
 References: <20250505212104.986494754@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,84 +55,64 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-Allow a tracer to disable writing to its buffer for a temporary amount of
-time and re-enable it.
+The per CPU "disabled" value was the original way to disable tracing when
+the tracing subsystem was first created. Today, the ring buffer
+infrastructure has its own way to disable tracing. In fact, things have
+changed so much since 2008 that many things ignore the disable flag.
 
-The tracer_tracing_disable() will disable writing to the trace array
-buffer, and requires a tracer_tracing_enable() to re-enable it.
+The ftrace_dump_one() function iterates over all the current tracing CPUs and
+increments the "disabled" counter before doing the dump, and decrements it
+afterward.
 
-The difference between tracer_tracing_disable() and tracer_tracing_off()
-is that the disable version can nest, and requires as many enable() calls
-as disable() calls to re-enable the buffer. Where as the off() function
-can be called multiple times and only requires a singe tracer_tracing_on()
-to re-enable the buffer.
+As the disabled flag can be ignored, doing this today is not reliable.
+Instead use the new tracer_tracing_disable() that calls into the ring
+buffer code to do the disabling.
 
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: Daniel Thompson <danielt@kernel.org>
-Cc: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 33 +++++++++++++++++++++++++++++++++
- kernel/trace/trace.h |  2 ++
- 2 files changed, 35 insertions(+)
+Changes since v1: https://lore.kernel.org/20250502205348.131916206@goodmis.org
+
+- Use tracer_tracing_disable() instead of tracer_tracing_on()
+
+ kernel/trace/trace.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 5b8db27fb6ef..e36b1244fa82 100644
+index e36b1244fa82..490c24271a3d 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -1582,6 +1582,39 @@ void tracer_tracing_off(struct trace_array *tr)
- 	smp_wmb();
+@@ -10481,7 +10481,7 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
+ 	static struct trace_iterator iter;
+ 	unsigned int old_userobj;
+ 	unsigned long flags;
+-	int cnt = 0, cpu;
++	int cnt = 0;
+ 
+ 	/*
+ 	 * Always turn off tracing when we dump.
+@@ -10498,9 +10498,8 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
+ 	/* Simulate the iterator */
+ 	trace_init_iter(&iter, tr);
+ 
+-	for_each_tracing_cpu(cpu) {
+-		atomic_inc(&per_cpu_ptr(iter.array_buffer->data, cpu)->disabled);
+-	}
++	/* While dumping, do not allow the buffer to be enable */
++	tracer_tracing_disable(tr);
+ 
+ 	old_userobj = tr->trace_flags & TRACE_ITER_SYM_USEROBJ;
+ 
+@@ -10559,9 +10558,7 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
+ 
+ 	tr->trace_flags |= old_userobj;
+ 
+-	for_each_tracing_cpu(cpu) {
+-		atomic_dec(&per_cpu_ptr(iter.array_buffer->data, cpu)->disabled);
+-	}
++	tracer_tracing_enable(tr);
+ 	local_irq_restore(flags);
  }
  
-+/**
-+ * tracer_tracing_disable() - temporary disable the buffer from write
-+ * @tr: The trace array to disable its buffer for
-+ *
-+ * Expects trace_tracing_enable() to re-enable tracing.
-+ * The difference between this and tracer_tracing_off() is that this
-+ * is a counter and can nest, whereas, tracer_tracing_off() can
-+ * be called multiple times and a single trace_tracing_on() will
-+ * enable it.
-+ */
-+void tracer_tracing_disable(struct trace_array *tr)
-+{
-+	if (WARN_ON_ONCE(!tr->array_buffer.buffer))
-+		return;
-+
-+	ring_buffer_record_disable(tr->array_buffer.buffer);
-+}
-+
-+/**
-+ * tracer_tracing_enable() - counter part of tracer_tracing_disable()
-+ * @tr: The trace array that had tracer_tracincg_disable() called on it
-+ *
-+ * This is called after tracer_tracing_disable() has been called on @tr,
-+ * when it's safe to re-enable tracing.
-+ */
-+void tracer_tracing_enable(struct trace_array *tr)
-+{
-+	if (WARN_ON_ONCE(!tr->array_buffer.buffer))
-+		return;
-+
-+	ring_buffer_record_enable(tr->array_buffer.buffer);
-+}
-+
- /**
-  * tracing_off - turn off tracing buffers
-  *
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 79be1995db44..74f1fe5788d4 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -665,6 +665,8 @@ bool tracing_is_disabled(void);
- bool tracer_tracing_is_on(struct trace_array *tr);
- void tracer_tracing_on(struct trace_array *tr);
- void tracer_tracing_off(struct trace_array *tr);
-+void tracer_tracing_disable(struct trace_array *tr);
-+void tracer_tracing_enable(struct trace_array *tr);
- struct dentry *trace_create_file(const char *name,
- 				 umode_t mode,
- 				 struct dentry *parent,
 -- 
 2.47.2
 
