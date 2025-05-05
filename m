@@ -1,162 +1,106 @@
-Return-Path: <linux-kernel+bounces-634816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DC1AAB4AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:12:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A0AAAB4B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53EF41C06C4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:08:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6E7616FAD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040F03446C4;
-	Tue,  6 May 2025 00:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6171B4819F9;
+	Tue,  6 May 2025 00:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYCom5IF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rz5lCF3+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0402F2756;
-	Mon,  5 May 2025 23:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7419C283FC2;
+	Mon,  5 May 2025 23:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486796; cv=none; b=YmUDh6OCjVj29AD8XGW2agdRMx1/erXpscWmeRZAcdPCTi6+x4J0HBm89uV2jSfk8pBPcFrzv5vXhkl4ggjHCKU2qm+zh2ja9KgQrDqZOpB4WHZU1D77ECXU6lp6AF2yisIAIva/utYouUUvzgTej1mDIBit2uhK8o7VVPevEts=
+	t=1746486806; cv=none; b=a4O1C6GZvXAailG2RgmjdCh3FXej23e1GuI65GbtkyHmUZwIN1SFFjOeiGJxL4F11sAPqhnBhoZnBERnzFDUfGvww2N3x1WypeVQIvNZxWX9XrgH+shRH//SvqirysEx+N2FJe2JoppGoqy6QSkuoPv5/BPGV0792hJTm5iltzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486796; c=relaxed/simple;
-	bh=QIWVtHA6zF1jcZ5HRpCj+W08TDWiNibpqUUg1w7q4qI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nmUmIjcXetKskI/z2y67O91IAqH34b52Vq6h2FFLzadOf7FXnINC9MUvUN6r0Mw3tRDJpFxMVLb4CzrIIvEMhDf39mQrNU5ESp/hfkc3pr+HfYae9Y1U6+qEJJEg+XtO1T29jv9b6r3O8//ipzzt8hhQ6Kek6O6meTiu9Vul/X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYCom5IF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 111C7C4CEEE;
-	Mon,  5 May 2025 23:13:13 +0000 (UTC)
+	s=arc-20240116; t=1746486806; c=relaxed/simple;
+	bh=50o+LJ1eACnewrVR5dFUb4W6VBBY1lGHoNCIrnReK/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uYwob08nbV+LmBnHni5YBcrOYNq4ijK2TpDvFaYj5MAHOMsiqa/Iw3WAswOyPoX+r1kUQk99sL5OeyES7vlRknpPEFHQwGH+9XWNtKg5B8DFD/vq/riWSgIUeG/ZvgTwPRRsbYrmpo3Qrhkt2kIxxjc7VtAUAeUQtKK8c4Tf1TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rz5lCF3+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94F1FC4CEE4;
+	Mon,  5 May 2025 23:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486796;
-	bh=QIWVtHA6zF1jcZ5HRpCj+W08TDWiNibpqUUg1w7q4qI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JYCom5IFora5qhRyteIYI30mFUW80SAfF78fZ9zX6WZXYfoXrrgGxG/W/HQZ2GSjv
-	 SfOU76g3RPqvfgVCvHOeinIbEbqWEQs7/v9+hh+2BRx85uQWU07eamvXEPSVRtF6vZ
-	 DZqYNWQShbFwg5znvPLabvnSyL30B0VasKbmto1k6wPwa9FjggMvX+6Qx0D1sL1Nv+
-	 se19O1WjGSs6sXP5NKnKDcT708AUQYJpnGSBPxqh5Gy8e/1z1n+St+zX2H+5oqSKQU
-	 mZSUcvOQa3aUlw6Xkk020UrUQUlX2cGSiWBjkfus6RSiceDUHmlbeZ344rMYM7c/bl
-	 OqVUhze+H4seA==
+	s=k20201202; t=1746486805;
+	bh=50o+LJ1eACnewrVR5dFUb4W6VBBY1lGHoNCIrnReK/Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rz5lCF3+JoviKZKE6R5GghkIhPWf08DKqDbaby5o3IZnrJKuwhsc5pc8Z8Oe1xBCh
+	 i3DlVhhELnt/IsHbmDm3PwOwn7kMDzlAyVGF8BxWooirhTzcUWwkGy9H5+K9BUH2zA
+	 pmpWMZvoRso5mchUyraGYexgZZzrvKpbG57wm8gSNB7SCRhRQYv1LBnLoWDZUJ6Xnk
+	 dEpTVyWXfz0XzE2NqbQtYG2LnV7hgjJjXcUjXTILVr7d3XtyzsrAOhL+UUUm7XHbCr
+	 tb6UuMifY6ovOKnb95Je6dmX43g48c+UuCUWXF6IsloaMGPKLOHirDKTCGVz6fEIBc
+	 AgnlYOagsrjXg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Simona Vetter <simona.vetter@ffwll.ch>,
-	Pekka Paalanen <pekka.paalanen@collabora.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Rob Clark <robdclark@gmail.com>,
-	Simon Ser <contact@emersion.fr>,
-	Manasi Navare <navaremanasi@google.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Simona Vetter <simona.vetter@intel.com>,
+Cc: Daniel Gomez <da.gomez@samsung.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.1 210/212] drm/atomic: clarify the rules around drm_atomic_state->allow_modeset
-Date: Mon,  5 May 2025 19:06:22 -0400
-Message-Id: <20250505230624.2692522-210-sashal@kernel.org>
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 001/153] kconfig: merge_config: use an empty file as initfile
+Date: Mon,  5 May 2025 19:10:48 -0400
+Message-Id: <20250505231320.2695319-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
-References: <20250505230624.2692522-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.136
+X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Simona Vetter <simona.vetter@ffwll.ch>
+From: Daniel Gomez <da.gomez@samsung.com>
 
-[ Upstream commit c5e3306a424b52e38ad2c28c7f3399fcd03e383d ]
+[ Upstream commit a26fe287eed112b4e21e854f173c8918a6a8596d ]
 
-msm is automagically upgrading normal commits to full modesets, and
-that's a big no-no:
+The scripts/kconfig/merge_config.sh script requires an existing
+$INITFILE (or the $1 argument) as a base file for merging Kconfig
+fragments. However, an empty $INITFILE can serve as an initial starting
+point, later referenced by the KCONFIG_ALLCONFIG Makefile variable
+if -m is not used. This variable can point to any configuration file
+containing preset config symbols (the merged output) as stated in
+Documentation/kbuild/kconfig.rst. When -m is used $INITFILE will
+contain just the merge output requiring the user to run make (i.e.
+KCONFIG_ALLCONFIG=<$INITFILE> make <allnoconfig/alldefconfig> or make
+olddefconfig).
 
-- for one this results in full on->off->on transitions on all these
-  crtc, at least if you're using the usual helpers. Which seems to be
-  the case, and is breaking uapi
+Instead of failing when `$INITFILE` is missing, create an empty file and
+use it as the starting point for merges.
 
-- further even if the ctm change itself would not result in flicker,
-  this can hide modesets for other reasons. Which again breaks the
-  uapi
-
-v2: I forgot the case of adding unrelated crtc state. Add that case
-and link to the existing kerneldoc explainers. This has come up in an
-irc discussion with Manasi and Ville about intel's bigjoiner mode.
-Also cc everyone involved in the msm irc discussion, more people
-joined after I sent out v1.
-
-v3: Wording polish from Pekka and Thomas
-
-Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Pekka Paalanen <pekka.paalanen@collabora.com>
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Simon Ser <contact@emersion.fr>
-Cc: Manasi Navare <navaremanasi@google.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Simona Vetter <simona.vetter@intel.com>
-Signed-off-by: Simona Vetter <simona.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20250108172417.160831-1-simona.vetter@ffwll.ch
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/drm/drm_atomic.h | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ scripts/kconfig/merge_config.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-index 10b1990bc1f68..36225aedf6138 100644
---- a/include/drm/drm_atomic.h
-+++ b/include/drm/drm_atomic.h
-@@ -372,8 +372,27 @@ struct drm_atomic_state {
- 	 *
- 	 * Allow full modeset. This is used by the ATOMIC IOCTL handler to
- 	 * implement the DRM_MODE_ATOMIC_ALLOW_MODESET flag. Drivers should
--	 * never consult this flag, instead looking at the output of
--	 * drm_atomic_crtc_needs_modeset().
-+	 * generally not consult this flag, but instead look at the output of
-+	 * drm_atomic_crtc_needs_modeset(). The detailed rules are:
-+	 *
-+	 * - Drivers must not consult @allow_modeset in the atomic commit path.
-+	 *   Use drm_atomic_crtc_needs_modeset() instead.
-+	 *
-+	 * - Drivers must consult @allow_modeset before adding unrelated struct
-+	 *   drm_crtc_state to this commit by calling
-+	 *   drm_atomic_get_crtc_state(). See also the warning in the
-+	 *   documentation for that function.
-+	 *
-+	 * - Drivers must never change this flag, it is under the exclusive
-+	 *   control of userspace.
-+	 *
-+	 * - Drivers may consult @allow_modeset in the atomic check path, if
-+	 *   they have the choice between an optimal hardware configuration
-+	 *   which requires a modeset, and a less optimal configuration which
-+	 *   can be committed without a modeset. An example would be suboptimal
-+	 *   scanout FIFO allocation resulting in increased idle power
-+	 *   consumption. This allows userspace to avoid flickering and delays
-+	 *   for the normal composition loop at reasonable cost.
- 	 */
- 	bool allow_modeset : 1;
- 	/**
+diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+index 72da3b8d6f307..151f9938abaa7 100755
+--- a/scripts/kconfig/merge_config.sh
++++ b/scripts/kconfig/merge_config.sh
+@@ -105,8 +105,8 @@ INITFILE=$1
+ shift;
+ 
+ if [ ! -r "$INITFILE" ]; then
+-	echo "The base file '$INITFILE' does not exist.  Exit." >&2
+-	exit 1
++	echo "The base file '$INITFILE' does not exist. Creating one..." >&2
++	touch "$INITFILE"
+ fi
+ 
+ MERGE_LIST=$*
 -- 
 2.39.5
 
