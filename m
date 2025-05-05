@@ -1,65 +1,56 @@
-Return-Path: <linux-kernel+bounces-633985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA4DAAAB3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:54:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2CCAAAB3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13333B3D7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 864DA18898FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCED3A91C7;
-	Mon,  5 May 2025 23:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C242F70D7;
+	Mon,  5 May 2025 23:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wunqb2To"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/NjKlhe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF67286423;
-	Mon,  5 May 2025 23:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3926D286419;
+	Mon,  5 May 2025 23:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486184; cv=none; b=lLOr620+iK7pDc6l9aWpFEZLG7E7j3/jUIxWVuY7h+v6ezdnuKa1BjhRarPcpcnKNesSilzbXv7ucA1UZlUTd2xRijaOexsx55rvkM8C+vsgIeXyXAvUx/gmgH07bcMLHFcTw1SvTHOVNv7P9NEHKWNyQi9egvjb3XlvUp11wpg=
+	t=1746486185; cv=none; b=jbZ6UVbM9mm+8gNoe33JvisZL6VrBfFuxjHm7DHOHkF5bDt8e36FISnH7bDU/U0PcFyT9wQtIN0utkDHKF5pJ+HsSzxNHed7hy7a7us41Oncpr+cN6Jhdp77D6rv92jfLkhL2ZCXCMiBygWDSziNHbROlUCvTPwX3xUDM9ygUVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486184; c=relaxed/simple;
-	bh=epos424aK9x9LhxqU7GJMC9sbp5GjGE5n+DQWUwkP5E=;
+	s=arc-20240116; t=1746486185; c=relaxed/simple;
+	bh=7xVHlKYcGGt9MwEn59ezzkiBU8yGeyaBGkRbkbBHMZM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Mjpdo0ivQ4jYOJM/eEr8YrnDZiuASY8vYMRgS4YNamX+9vDlTaE5Ylv1EXeLnf0D+31zCvkLQkrQoDf5/e4hmOdNM8FgP1tKX/HB5sKdkqa3YSogCK2P8S8FLKbIsyEzo76PMIYers1Sr0uUrtrDWBctCASCCplQu8UzG9mT70E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wunqb2To; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4124AC4CEED;
-	Mon,  5 May 2025 23:03:02 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sVy8xF5QvTiW1UEkPytGvniflSSjx8QPHoX0xuyAGPty1pOazsg0XPglG2R65zP4jRfG3LYy7IyqjIZSSrZGJaFXEQgpje5CTT7dTjx79WAh6rLuhG7L19yLuubRsRZWhufG15rMg0gFVpuiu6xUO2u+nTfrHC1Lrb1FrgLd1R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/NjKlhe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB22C4CEEF;
+	Mon,  5 May 2025 23:03:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486183;
-	bh=epos424aK9x9LhxqU7GJMC9sbp5GjGE5n+DQWUwkP5E=;
+	s=k20201202; t=1746486185;
+	bh=7xVHlKYcGGt9MwEn59ezzkiBU8yGeyaBGkRbkbBHMZM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Wunqb2ToS9CikcwhmdpmmcoRGNIuYz/t5KzFPqTRnOXM80DbYzMqWXTs1X2/nJ+0W
-	 IyXe2k6n7PvJ0L2GY6gf8f9wsIIUgkCSnSRmOecH757ardCUN2RvJ2IkOx072U6IkP
-	 8JY+34gWAFLOnCKotMamZDtftFpbi1tqfmrduNqC/OXyT7Q/7M/OYHr8v7r+8ckUhM
-	 f3y7RKInHtpdNmYaHb/hyp07MrzYe1aqhC491CQ0slgf4RffD5gzSUAAShxmQLJV78
-	 O9CcYUVH2LSsNM+9O8jeOPbtDWsdE6YOnzdazLkTlp6t4CrmdIfoxovRbIdMkXviJu
-	 WKOcOCqvaNbJg==
+	b=t/NjKlheVYLgZSRqZA4nA8k/lgOIqc3NohgaceQBWkRFRu2opkMKKSv78HHQQa1bi
+	 T+ip+VTvLYVCHSF01/QPmYgdLM6jdnRYoswrGvlaE2UFqID5N1XWT9LGri0OTAow75
+	 hnYH2FECx1wSU9yBzWLZmVbJl32jMQgDXlK4JFPjrqqHraOtv0nvo+di4ft3wayIdY
+	 6SvKPVQ/9z9dnOf5w8O3E3cuviNY7dnBY/UvCxn5AFlOoxSTFde3T8ibmAs+g/5GvG
+	 KEf0U7haLOnRjEkLTZtX/DE6vKoUf4avUV944rKPkvDTPvqrwxaSqa9NyZ4vsZfYG0
+	 OAY9hdCE20pgg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Xiaochun Lee <lixc17@lenovo.com>,
 	Sasha Levin <sashal@kernel.org>,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 191/294] eth: mlx4: don't try to complete XDP frames in netpoll
-Date: Mon,  5 May 2025 18:54:51 -0400
-Message-Id: <20250505225634.2688578-191-sashal@kernel.org>
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 192/294] PCI: Fix old_size lower bound in calculate_iosize() too
+Date: Mon,  5 May 2025 18:54:52 -0400
+Message-Id: <20250505225634.2688578-192-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -69,42 +60,49 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-[ Upstream commit 8fdeafd66edaf420ea0063a1f13442fe3470fe70 ]
+[ Upstream commit ff61f380de5652e723168341480cc7adf1dd6213 ]
 
-mlx4 doesn't support ndo_xdp_xmit / XDP_REDIRECT and wasn't
-using page pool until now, so it could run XDP completions
-in netpoll (NAPI budget == 0) just fine. Page pool has calling
-context requirements, make sure we don't try to call it from
-what is potentially HW IRQ context.
+Commit 903534fa7d30 ("PCI: Fix resource double counting on remove &
+rescan") fixed double counting of mem resources because of old_size being
+applied too early.
 
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
-Link: https://patch.msgid.link/20250213010635.1354034-3-kuba@kernel.org
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Fix a similar counting bug on the io resource side.
+
+Link: https://lore.kernel.org/r/20241216175632.4175-6-ilpo.jarvinen@linux.intel.com
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Xiaochun Lee <lixc17@lenovo.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/en_tx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pci/setup-bus.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_tx.c b/drivers/net/ethernet/mellanox/mlx4/en_tx.c
-index 65cb63f6c4658..61a0fd8424a2c 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_tx.c
-@@ -450,6 +450,8 @@ int mlx4_en_process_tx_cq(struct net_device *dev,
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index fba402f4f6330..3f40be417856e 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -802,11 +802,9 @@ static resource_size_t calculate_iosize(resource_size_t size,
+ 	size = (size & 0xff) + ((size & ~0xffUL) << 2);
+ #endif
+ 	size = size + size1;
+-	if (size < old_size)
+-		size = old_size;
  
- 	if (unlikely(!priv->port_up))
- 		return 0;
-+	if (unlikely(!napi_budget) && cq->type == TX_XDP)
-+		return 0;
+-	size = ALIGN(max(size, add_size) + children_add_size, align);
+-	return size;
++	size = max(size, add_size) + children_add_size;
++	return ALIGN(max(size, old_size), align);
+ }
  
- 	netdev_txq_bql_complete_prefetchw(ring->tx_queue);
- 
+ static resource_size_t calculate_memsize(resource_size_t size,
 -- 
 2.39.5
 
