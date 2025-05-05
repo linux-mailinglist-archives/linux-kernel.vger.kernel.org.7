@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-632036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712DAAA91B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:14:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A14DAA91B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9012E170A8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:14:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9858018882BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0548205501;
-	Mon,  5 May 2025 11:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7127C202C26;
+	Mon,  5 May 2025 11:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b69qnpy9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qh8+eQ5Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150B0282EE;
-	Mon,  5 May 2025 11:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D3F1459F7;
+	Mon,  5 May 2025 11:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746443640; cv=none; b=BYtD6ETPs5EA0EsxQcmhVe+eoxTZO5mhENg1kO1KIBRyZ99lLLmzo6bhhYNXFETG08c74Lg+AY4L6ePga8JdB9RK4geuQqTP/0Dh9iMaatD11aWsyEtakxVYE5HHMxRvaxU5Ur8eTQYpQdMXZhL0TYG7vE9XQ7NG2csotYF6JSA=
+	t=1746443629; cv=none; b=JjXrxUV9iFBNCtaSNsOppnLb8r/ah3tBBwJ0sxLiXHVcPxMblNLsRf2rATUbcMHWtbecX3KCSAaiz71hPAN5Eu87z1q3iOgOiZMRm4iyd9rgF2V47p24WW2EnLW7lUqPzmgnuEIXoYF/vDFELtZRRwyUV1yBAUAQeHcPMQ6XUag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746443640; c=relaxed/simple;
-	bh=d48rlIeb55kv9LHwHtfILNbBpVSvS+cV2//Rf2p6cRQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VKPt5ofHSYYhNkuE7EEVef06jUy8qlMdlJj+LXpjiJfxX4Bv74e/78u7UNIFy1fEOHvWUBKty4E4H0gh1DHzg9U1KqOUsbBlJrNHwTo38Sw9y4okYU0Mc5RgOUuYsxN1Bfr6sTSrfyjxMZ6ydd2a3xAt5eBCctByHg+Q4T63nbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b69qnpy9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42654C4CEE9;
-	Mon,  5 May 2025 11:13:55 +0000 (UTC)
+	s=arc-20240116; t=1746443629; c=relaxed/simple;
+	bh=AaQcMocTswbAmkTdEzSSbOG0pVTDoi2WqaauvfNtRiU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WIOrd6YfUr168b0TGoJ5ZhjdZkwDzkJgSBjAGDUfHI/Soq+FN0GbqibNJIG5WcAdPFgOKLWTD3YlCh5LA1geFN4+e+XiqGvHQ0M8sMtVaCo01LZwcBCNAyTuxVVmV08/QBXoqNpJFPiC7aLF1G2kzHeoCW3fyvZszm1tGm6nviY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qh8+eQ5Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E03C4CEE4;
+	Mon,  5 May 2025 11:13:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746443639;
-	bh=d48rlIeb55kv9LHwHtfILNbBpVSvS+cV2//Rf2p6cRQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=b69qnpy93rFsg3bgjnBd3366af2y0CtsY34o0ydOHUORuJaJhvHoYD9e5FJP4oUgb
-	 oDTTX4R3qEW9O1DMiwHutARD8LqajYeCV7QZISa+O7+DLXEu32utgw/r3UT5zlvEh8
-	 qEZFtBPcS+AEkjqyfZVSpY44JbAX2PWyGtSUne/WfQGKgfxi8HIB/sTs/winEAqnwY
-	 /PgOB1dZbbgBXazhjygcja6YsYhIMyLCrsa2hGWdi4x82kMKcq/btzIE7nYbb2ZrHq
-	 SsFIH1g4PfhQ1Tx98Atxwy8TMnHMbWhvLAL5L2/VXuNI9IrPBvBSAX78aKRDsXvVLi
-	 Vs6TQGmNkIfAg==
-From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 05 May 2025 13:13:39 +0200
-Subject: [PATCH RFC v3 01/10] coredump: massage format_corname()
+	s=k20201202; t=1746443629;
+	bh=AaQcMocTswbAmkTdEzSSbOG0pVTDoi2WqaauvfNtRiU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=qh8+eQ5Zxs+DL7I2lSTEzr2M/Xp4Va8NGNtmsExxRy7iE4WqEPapJqKxeeanwLZ4s
+	 1hBtDtGJHqm0dvBQavNFlw+SDzQwPQ4qakIP/eIP4FvVgcvOk8Zm1U6Xx+VWX4WWIe
+	 tk4tAirNRczoolrc7igqmS+UEBLH5dH4thg9J3y/WoPQFmxrUCBrS/I7xU/KQAj6qh
+	 mk4PowqIEVN5uRQpnIA1YXolMFLeNy1VeYRJMglWOEPn+684r4txKfAAMOguRogLEU
+	 13LE/lYCSNQNORShB373VmDatEnoG02Wmqcseo/j72mD7DVkCUJYTScmZtFnAIC0XD
+	 LFVlHWKY8EOAA==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Mon, 05 May 2025 13:13:40 +0200
+Subject: [PATCH] drm/msm/a6xx: Disable rgb565_predicator on Adreno 7c3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,179 +50,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250505-work-coredump-socket-v3-1-e1832f0e1eae@kernel.org>
-References: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
-In-Reply-To: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
-To: Eric Dumazet <edumazet@google.com>, 
- Kuniyuki Iwashima <kuniyu@amazon.com>, Oleg Nesterov <oleg@redhat.com>, 
- linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, 
- David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, 
- Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
- Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>, 
- Alexander Mikhalitsyn <alexander@mihalicyn.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4656; i=brauner@kernel.org;
- h=from:subject:message-id; bh=d48rlIeb55kv9LHwHtfILNbBpVSvS+cV2//Rf2p6cRQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRIzM2ds/Lp7WPLn4TMjA3t2L3c4qSPuFd92xGbj1YGE
- tOW/41+3lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRL1oM/6O2TOh8LiFwLlL9
- nOok+aN/7kcmiLPJFq/RfJj36HNKHCfDH550fg4b041ceb+Psn8K/Hg1eG544Qc1uR+ePffLDzJ
- HsgMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Message-Id: <20250505-topic-7c3_rgb565pred_fix-v1-1-b1aebe890b8e@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAGOdGGgC/x2MUQ5AMBBEryL7rQnaVVxFRLQW+4O0IhLp3W1kv
+ t68zLwQKTBF6LIXAt0c+dgFyjwDv037SopnYaiKCguJuo6TvbJej2F1WOMZaB4XfhRa5xrbmtK
+ gBpmLkPq/7oeUPqxtkKJqAAAA
+X-Change-ID: 20250505-topic-7c3_rgb565pred_fix-57bb87941453
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Rob Clark <robdclark@chromium.org>, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746443624; l=1310;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=IN73Hc5vtHqaf2jmhJG3ZQUQts07NjQLJ9UAoPOD0S4=;
+ b=2LUrEXE0O4fL2lEjHVHF7eqGJ6PVnu0BiFuXGzRVCgA2pvD1Oqj1yL+IW9HG5u8eklH2L+MhC
+ zrv36HIF3tQCsEwij3GbN2WGISEPUbSEFwoszZExE8mQJa/HHKGReB6
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-We're going to extend the coredump code in follow-up patches.
-Clean it up so we can do this more easily.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+This feature is supposed to be enabled with UBWC v4 or later.
+Implementations of this SKU feature an effective UBWC version of 3, so
+disable it, in line with the BSP kernel.
+
+Reported-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Fixes: 192f4ee3e408 ("drm/msm/a6xx: Add support for Adreno 7c Gen 3 gpu")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 ---
- fs/coredump.c | 41 ++++++++++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index d740a0411266..281320ea351f 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -76,9 +76,15 @@ static char core_pattern[CORENAME_MAX_SIZE] = "core";
- static int core_name_size = CORENAME_MAX_SIZE;
- unsigned int core_file_note_size_limit = CORE_FILE_NOTE_SIZE_DEFAULT;
- 
-+enum coredump_type_t {
-+	COREDUMP_FILE = 1,
-+	COREDUMP_PIPE = 2,
-+};
-+
- struct core_name {
- 	char *corename;
- 	int used, size;
-+	enum coredump_type_t core_type;
- };
- 
- static int expand_corename(struct core_name *cn, int size)
-@@ -218,18 +224,21 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
- {
- 	const struct cred *cred = current_cred();
- 	const char *pat_ptr = core_pattern;
--	int ispipe = (*pat_ptr == '|');
- 	bool was_space = false;
- 	int pid_in_pattern = 0;
- 	int err = 0;
- 
- 	cn->used = 0;
- 	cn->corename = NULL;
-+	if (*pat_ptr == '|')
-+		cn->core_type = COREDUMP_PIPE;
-+	else
-+		cn->core_type = COREDUMP_FILE;
- 	if (expand_corename(cn, core_name_size))
- 		return -ENOMEM;
- 	cn->corename[0] = '\0';
- 
--	if (ispipe) {
-+	if (cn->core_type == COREDUMP_PIPE) {
- 		int argvs = sizeof(core_pattern) / 2;
- 		(*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
- 		if (!(*argv))
-@@ -247,7 +256,7 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
- 		 * Split on spaces before doing template expansion so that
- 		 * %e and %E don't get split if they have spaces in them
- 		 */
--		if (ispipe) {
-+		if (cn->core_type == COREDUMP_PIPE) {
- 			if (isspace(*pat_ptr)) {
- 				if (cn->used != 0)
- 					was_space = true;
-@@ -353,7 +362,7 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
- 				 * Installing a pidfd only makes sense if
- 				 * we actually spawn a usermode helper.
- 				 */
--				if (!ispipe)
-+				if (!(cn->core_type != COREDUMP_PIPE))
- 					break;
- 
- 				/*
-@@ -384,12 +393,12 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
- 	 * If core_pattern does not include a %p (as is the default)
- 	 * and core_uses_pid is set, then .%pid will be appended to
- 	 * the filename. Do not do this for piped commands. */
--	if (!ispipe && !pid_in_pattern && core_uses_pid) {
-+	if (!(cn->core_type == COREDUMP_PIPE) && !pid_in_pattern && core_uses_pid) {
- 		err = cn_printf(cn, ".%d", task_tgid_vnr(current));
- 		if (err)
- 			return err;
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index 2289fecbbbf14f7ec02227972049d62408c11dc1..bf3758f010f4079aa86f9c658b52a70acf10b488 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -655,7 +655,6 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
+ 	if (adreno_is_7c3(gpu)) {
+ 		gpu->ubwc_config.highest_bank_bit = 14;
+ 		gpu->ubwc_config.amsbc = 1;
+-		gpu->ubwc_config.rgb565_predicator = 1;
+ 		gpu->ubwc_config.uavflagprd_inv = 2;
+ 		gpu->ubwc_config.macrotile_mode = 1;
  	}
--	return ispipe;
-+	return 0;
- }
- 
- static int zap_process(struct signal_struct *signal, int exit_code)
-@@ -583,7 +592,6 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	const struct cred *old_cred;
- 	struct cred *cred;
- 	int retval = 0;
--	int ispipe;
- 	size_t *argv = NULL;
- 	int argc = 0;
- 	/* require nonrelative corefile path and be extra careful */
-@@ -632,19 +640,18 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 
- 	old_cred = override_creds(cred);
- 
--	ispipe = format_corename(&cn, &cprm, &argv, &argc);
-+	retval = format_corename(&cn, &cprm, &argv, &argc);
-+	if (retval < 0) {
-+		coredump_report_failure("format_corename failed, aborting core");
-+		goto fail_unlock;
-+	}
- 
--	if (ispipe) {
-+	if (cn.core_type == COREDUMP_PIPE) {
- 		int argi;
- 		int dump_count;
- 		char **helper_argv;
- 		struct subprocess_info *sub_info;
- 
--		if (ispipe < 0) {
--			coredump_report_failure("format_corename failed, aborting core");
--			goto fail_unlock;
--		}
--
- 		if (cprm.limit == 1) {
- 			/* See umh_coredump_setup() which sets RLIMIT_CORE = 1.
- 			 *
-@@ -695,7 +702,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 			coredump_report_failure("|%s pipe failed", cn.corename);
- 			goto close_fail;
- 		}
--	} else {
-+	} else if (cn.core_type == COREDUMP_FILE) {
- 		struct mnt_idmap *idmap;
- 		struct inode *inode;
- 		int open_flags = O_CREAT | O_WRONLY | O_NOFOLLOW |
-@@ -823,13 +830,13 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		file_end_write(cprm.file);
- 		free_vma_snapshot(&cprm);
- 	}
--	if (ispipe && core_pipe_limit)
-+	if ((cn.core_type == COREDUMP_PIPE) && core_pipe_limit)
- 		wait_for_dump_helpers(cprm.file);
- close_fail:
- 	if (cprm.file)
- 		filp_close(cprm.file, NULL);
- fail_dropcount:
--	if (ispipe)
-+	if (cn.core_type == COREDUMP_PIPE)
- 		atomic_dec(&core_dump_count);
- fail_unlock:
- 	kfree(argv);
 
+---
+base-commit: 407f60a151df3c44397e5afc0111eb9b026c38d3
+change-id: 20250505-topic-7c3_rgb565pred_fix-57bb87941453
+
+Best regards,
 -- 
-2.47.2
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
