@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-633798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C7FAAAE65
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 043ABAAB0CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2BF73A7208
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12373AC443
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D8F27FD7F;
-	Mon,  5 May 2025 22:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6177A323E64;
+	Tue,  6 May 2025 00:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFyvsR83"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzHaMdgL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498892D2CAD;
-	Mon,  5 May 2025 22:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E714D370B16;
+	Mon,  5 May 2025 22:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485204; cv=none; b=GQMRcm723YceGmqdUDARnjwe8/nsSLNnV3c4xO4bpl/uIri9xtuou9tuvVtR4UJo+PBQexWxFbrSHmwHRDfD6JBG44VDLxm/G6ivV09dyKbzNgkUthqF68wO/TqAXopjLpUkcbvdWTtc6h7hWBn73WLmhfO4xxMtdTmAtM108e4=
+	t=1746485212; cv=none; b=VAQNPZNJYAVb/salNaRwZ7u2opXlSPDfT8Nopzood5FFcD3y/rB4puEiKKIXBZivTNN8w/Qu3AMHqjiZSrlMKlE29BNmNIJIhEQtlBXha1FbplSVns9q7OwT3QOCji7zWrkf9ESZ5MljpWKEloTWYKHkLEdPcwnN7Xkr5mSY0JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485204; c=relaxed/simple;
-	bh=aSLgbfzk2HEG9qUqlIxdd5CqAMFUEsWG6Ay2waY87o8=;
+	s=arc-20240116; t=1746485212; c=relaxed/simple;
+	bh=8S/5I22qd4S0oH7P51ixZiHczSeXqwMQkKM+m4qTrFo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S28tzY+Vdxn+sr4xbiwLiYkKJfQNy0oocq75brfHrywhDKv0yDKIaW+uDeZal0LbSF9kOINgCNcRaFmcanCnI9MqTWBGQvr6sxq2exva3+znF/mR93JGpThFh9Vg24cevIbw5596Q6AGsqG7cYFXp15vj0Plz8hO7JltzTOE0iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFyvsR83; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A111C4CEEE;
-	Mon,  5 May 2025 22:46:43 +0000 (UTC)
+	 MIME-Version; b=q3IEf+Hls3ZMYmDw0dVFC9zDbmKGLz1DteI0SzvHi4tHMXSX9Zjo/TwVVaNd8bSWq81b6RgKZFZ+WSHp0n5q34mu78vILnvWFKYIq0VMdm86oWwEsVcNL9If/voqUEkSCOpH8yQgHcJ5CpXxv8tzGVwZcReev4QLfKwmHAK0cEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzHaMdgL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75A0C4CEEF;
+	Mon,  5 May 2025 22:46:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485204;
-	bh=aSLgbfzk2HEG9qUqlIxdd5CqAMFUEsWG6Ay2waY87o8=;
+	s=k20201202; t=1746485211;
+	bh=8S/5I22qd4S0oH7P51ixZiHczSeXqwMQkKM+m4qTrFo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EFyvsR83v2EBMFs2Wh8xm17aSmJI/AkLC+KNFxeLZZr1Xddm8NeYz7gFQeSBYMfTi
-	 dr7mnKutX7v87lVm7l5O8/3CkNEm2ZVO2aFkasQpQzeemHsoSRSl0oxMvM3MRYPSb0
-	 x0w50tfCP6fZ1YKQTSmr8qhEMEBuvxKbm++qJk8hfa3pLowT7Q5cO9I3VYNMw5ykFE
-	 qH8ZO4WP4ftcx2vaXKeZe4EqcpX1S0PWammmsNbx5rDmuV+/oJBQ3Cf0eKcg8sBjK2
-	 7/a4/Z9BXPg3Nrn5ybpZ047seOZVc2UnEOH+kNahjnzUNioMfNV2fFcvGEFTQSI1fU
-	 UOIjSV6BivFbg==
+	b=AzHaMdgLnZTWxOs3wo+pHODzHkhlxPbxbBuNFxmqVmGrjKcpFmAmE0dh1lRnupjDm
+	 4gZUyQyyMSEumTPNQCs5BEkJEmwyGpiYb7Zau0IZRXVC+8fPc42RulqLYWHFSfRLcG
+	 6F8VO1tI9g6uqaE+Fo1SpakJgDKWqtAKH0kLsH9tzUULKPlOInt10R04eDKkd/W+BG
+	 4NuPVMOjxviy6H5IzeQOAaVPeeWF8IBgmwvkYnUXMVIjMz39a/8OrFBqvKkartSqGe
+	 d3N6mmmOPwU0VUNubI32iB2glJ5mMgCfD7K4Xz98RuOOXHjbO+rd5LArz7C7i+O1iL
+	 WEGluETPRWGog==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Uday Shankar <ushankar@purestorage.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
+Cc: Saket Kumar Bhaskar <skb99@linux.ibm.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Ian Rogers <irogers@google.com>,
+	Frederic Weisbecker <fweisbec@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 209/486] ublk: enforce ublks_max only for unprivileged devices
-Date: Mon,  5 May 2025 18:34:45 -0400
-Message-Id: <20250505223922.2682012-209-sashal@kernel.org>
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 213/486] perf/hw_breakpoint: Return EOPNOTSUPP for unsupported breakpoint type
+Date: Mon,  5 May 2025 18:34:49 -0400
+Message-Id: <20250505223922.2682012-213-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -65,134 +72,52 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Uday Shankar <ushankar@purestorage.com>
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
 
-[ Upstream commit 80bdfbb3545b6f16680a72c825063d08a6b44c7a ]
+[ Upstream commit 061c991697062f3bf87b72ed553d1d33a0e370dd ]
 
-Commit 403ebc877832 ("ublk_drv: add module parameter of ublks_max for
-limiting max allowed ublk dev"), claimed ublks_max was added to prevent
-a DoS situation with an untrusted user creating too many ublk devices.
-If that's the case, ublks_max should only restrict the number of
-unprivileged ublk devices in the system. Enforce the limit only for
-unprivileged ublk devices, and rename variables accordingly. Leave the
-external-facing parameter name unchanged, since changing it may break
-systems which use it (but still update its documentation to reflect its
-new meaning).
+Currently, __reserve_bp_slot() returns -ENOSPC for unsupported
+breakpoint types on the architecture. For example, powerpc
+does not support hardware instruction breakpoints. This causes
+the perf_skip BPF selftest to fail, as neither ENOENT nor
+EOPNOTSUPP is returned by perf_event_open for unsupported
+breakpoint types. As a result, the test that should be skipped
+for this arch is not correctly identified.
 
-As a result of this change, in a system where there are only normal
-(non-unprivileged) devices, the maximum number of such devices is
-increased to 1 << MINORBITS, or 1048576. That ought to be enough for
-anyone, right?
+To resolve this, hw_breakpoint_event_init() should exit early by
+checking for unsupported breakpoint types using
+hw_breakpoint_slots_cached() and return the appropriate error
+(-EOPNOTSUPP).
 
-Signed-off-by: Uday Shankar <ushankar@purestorage.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Link: https://lore.kernel.org/r/20250228-ublks_max-v1-1-04b7379190c0@purestorage.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Link: https://lore.kernel.org/r/20250303092451.1862862-1-skb99@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/ublk_drv.c | 42 ++++++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
+ kernel/events/hw_breakpoint.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 38b9e485e520d..5ec5d580ef506 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -484,15 +484,17 @@ static wait_queue_head_t ublk_idr_wq;	/* wait until one idr is freed */
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 6c2cb4e4f48da..8f3f624419aa9 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -950,9 +950,10 @@ static int hw_breakpoint_event_init(struct perf_event *bp)
+ 		return -ENOENT;
  
- static DEFINE_MUTEX(ublk_ctl_mutex);
+ 	/*
+-	 * no branch sampling for breakpoint events
++	 * Check if breakpoint type is supported before proceeding.
++	 * Also, no branch sampling for breakpoint events.
+ 	 */
+-	if (has_branch_stack(bp))
++	if (!hw_breakpoint_slots_cached(find_slot_idx(bp->attr.bp_type)) || has_branch_stack(bp))
+ 		return -EOPNOTSUPP;
  
-+
-+#define UBLK_MAX_UBLKS UBLK_MINORS
-+
- /*
-- * Max ublk devices allowed to add
-+ * Max unprivileged ublk devices allowed to add
-  *
-  * It can be extended to one per-user limit in future or even controlled
-  * by cgroup.
-  */
--#define UBLK_MAX_UBLKS UBLK_MINORS
--static unsigned int ublks_max = 64;
--static unsigned int ublks_added;	/* protected by ublk_ctl_mutex */
-+static unsigned int unprivileged_ublks_max = 64;
-+static unsigned int unprivileged_ublks_added; /* protected by ublk_ctl_mutex */
- 
- static struct miscdevice ublk_misc;
- 
-@@ -2203,7 +2205,8 @@ static int ublk_add_chdev(struct ublk_device *ub)
- 	if (ret)
- 		goto fail;
- 
--	ublks_added++;
-+	if (ub->dev_info.flags & UBLK_F_UNPRIVILEGED_DEV)
-+		unprivileged_ublks_added++;
- 	return 0;
-  fail:
- 	put_device(dev);
-@@ -2241,12 +2244,17 @@ static int ublk_add_tag_set(struct ublk_device *ub)
- 
- static void ublk_remove(struct ublk_device *ub)
- {
-+	bool unprivileged;
-+
- 	ublk_stop_dev(ub);
- 	cancel_work_sync(&ub->stop_work);
- 	cancel_work_sync(&ub->quiesce_work);
- 	cdev_device_del(&ub->cdev, &ub->cdev_dev);
-+	unprivileged = ub->dev_info.flags & UBLK_F_UNPRIVILEGED_DEV;
- 	ublk_put_device(ub);
--	ublks_added--;
-+
-+	if (unprivileged)
-+		unprivileged_ublks_added--;
- }
- 
- static struct ublk_device *ublk_get_device_from_id(int idx)
-@@ -2495,7 +2503,8 @@ static int ublk_ctrl_add_dev(struct io_uring_cmd *cmd)
- 		return ret;
- 
- 	ret = -EACCES;
--	if (ublks_added >= ublks_max)
-+	if ((info.flags & UBLK_F_UNPRIVILEGED_DEV) &&
-+	    unprivileged_ublks_added >= unprivileged_ublks_max)
- 		goto out_unlock;
- 
- 	ret = -ENOMEM;
-@@ -3123,23 +3132,26 @@ static void __exit ublk_exit(void)
- module_init(ublk_init);
- module_exit(ublk_exit);
- 
--static int ublk_set_max_ublks(const char *buf, const struct kernel_param *kp)
-+static int ublk_set_max_unprivileged_ublks(const char *buf,
-+					   const struct kernel_param *kp)
- {
- 	return param_set_uint_minmax(buf, kp, 0, UBLK_MAX_UBLKS);
- }
- 
--static int ublk_get_max_ublks(char *buf, const struct kernel_param *kp)
-+static int ublk_get_max_unprivileged_ublks(char *buf,
-+					   const struct kernel_param *kp)
- {
--	return sysfs_emit(buf, "%u\n", ublks_max);
-+	return sysfs_emit(buf, "%u\n", unprivileged_ublks_max);
- }
- 
--static const struct kernel_param_ops ublk_max_ublks_ops = {
--	.set = ublk_set_max_ublks,
--	.get = ublk_get_max_ublks,
-+static const struct kernel_param_ops ublk_max_unprivileged_ublks_ops = {
-+	.set = ublk_set_max_unprivileged_ublks,
-+	.get = ublk_get_max_unprivileged_ublks,
- };
- 
--module_param_cb(ublks_max, &ublk_max_ublks_ops, &ublks_max, 0644);
--MODULE_PARM_DESC(ublks_max, "max number of ublk devices allowed to add(default: 64)");
-+module_param_cb(ublks_max, &ublk_max_unprivileged_ublks_ops,
-+		&unprivileged_ublks_max, 0644);
-+MODULE_PARM_DESC(ublks_max, "max number of unprivileged ublk devices allowed to add(default: 64)");
- 
- MODULE_AUTHOR("Ming Lei <ming.lei@redhat.com>");
- MODULE_DESCRIPTION("Userspace block device");
+ 	err = register_perf_hw_breakpoint(bp);
 -- 
 2.39.5
 
