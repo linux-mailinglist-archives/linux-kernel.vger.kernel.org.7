@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-632142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDE1AA92FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:24:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE220AA9302
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73BB1899C7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327DE176B90
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557A524BBEB;
-	Mon,  5 May 2025 12:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F0224BC0A;
+	Mon,  5 May 2025 12:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UGrcD4YR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XvfZe/KV"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001F62472B6
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20B324A043
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746447885; cv=none; b=fsu9EZ8Np9omYP/C7wwjoxA8EnYq+KVF8NquTw6h3ZiXxqK09p2L5K1OVCb7/Mwhq92rM1crfkK/5WhlfZWqndninCqYXslBeRziVi8WOL8zn+8cQyKdYiR1UEV6RhBEwQYHvy+ecULqAPHXDd1fBZAmAHiU0DKNilqYlY9a/Ec=
+	t=1746447895; cv=none; b=jxxprsA0sLAn8jW9rpDeQBzeXC6EITFeVBhNyFrFMeDtN2geJfc6k4pxxEPIZ1FzevjKPG3le1s5G9bvTf++Bkce0Dvb8DbJpgqOVjP6afFU20CDHRAOprkTebZbxrwDImxLvnUX5/6MW+yCDV3YajIt/5eguQdfdCHNSyV7X04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746447885; c=relaxed/simple;
-	bh=1n4N8SV8iYUBKBESdu/oMblCqrUGnJHEzXHOHJjQFP4=;
+	s=arc-20240116; t=1746447895; c=relaxed/simple;
+	bh=5mcW+2YvEmD8YxWkF8mwyimHSVkqId5kgoD9s500qSo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fEzXm1oiBRYpF1k1Ew39NNJoKw7+WMI6Hj/0faxHC2RsOopljmbbn6ki6VDUMt6+fKq8TL/LGxPU7som2CinTgzkRcTU+qN/lDD8AryRRsEY8P7zhgj2ijU73iZFO2miP56pvtPYvMAaExNg38FUrqaXqBCMdeyxmheyMfL7ag8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UGrcD4YR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545BSV71011376
-	for <linux-kernel@vger.kernel.org>; Mon, 5 May 2025 12:24:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jrwG038kdxUPyHEoYbFPB3qB
-	QgkZiGSoqj/0yEoAKXQ=; b=UGrcD4YRberod5zPfWFWWzSj4pz3o/+siba20sxr
-	ypLY4v/gEV/YMnJYVmMEsQYwIpsuQyJjeBAyTBqbm8G1ZAbgRcjmXZkv+w9XM///
-	/dyu7IR0Z97MEDsFJs/v6WhcTz2tyh2PlR5zdMNnOFk//QKksTyjwfwh3z776QET
-	GL0kC37+WU09Ah5Wh4Jr3gYYJgU+KJKkDdqEtfr9Vqse7tVNKNNOOa1ZgbQcDYBl
-	+p2y/PR/7+kAuOaVW59qFKUTMx4IyAMQr3Tfcq6QM9jfyHuRnGCSkFTCZYyFiTyB
-	5PWbOZqzPdwM7hwTxjIOBPWeugjFWr1ANNWhal79FgsRaQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dafg42qy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 12:24:42 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c543ab40d3so104443685a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:24:42 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHae4XBdgLMFALFO6iY8Xah/lwI2UqjEOI2+v6G3yr7WofNVtf5bjnNiORGoJ2xHr/YzIAnlimCLCEfcZN6tCAQB2kzwcJceg9o6tvisxqJqPOZ72aShyT+6XWERxLeNVw/N9wFJwS3Hf3O6oN3KegfIiuyL56sl2IN8dulvmNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XvfZe/KV; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so785268266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:24:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1746447892; x=1747052692; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hCJYSXV9aqquN0sqWVxTNHYONiHzEvamUGNz+jF30PE=;
+        b=XvfZe/KVXxnulSrkmjrUA3AmHGaM5j5vAsEcBAE/dGEdJGhcA/evP+2fCRhDHsQu6L
+         YtSr1AE5L2UJd68MpHt02WY3bR2BZFIzU2b76VFTpH+AVo06O3h38zVI7CJat19Z0l9A
+         FjSqd76S9kP52azA+vTAmWMTGu2NwUd1NM3Ru71Ky1H0oaxTVZkPI+bR6gdBkZDN+nGE
+         VqKJzSTTMSsf15k7y75eZdTXrdfca5gqPCHW/ke9YsiAgfW7JUBgPiDnVF2WlMuon2tL
+         Ic4HdtuoE36gepSlVqYBHj1VfeAGG64nfvQByqwVNVvO3iQxe0mBr8TV1spF0zzUqgoK
+         wQlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746447882; x=1747052682;
+        d=1e100.net; s=20230601; t=1746447892; x=1747052692;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jrwG038kdxUPyHEoYbFPB3qBQgkZiGSoqj/0yEoAKXQ=;
-        b=p9C+gI3h6+AqgIs+vUOXT4ODpVW6SdrmPe/qMKnoJqT0JqXOkrAjkfIxAiDhrR2BUx
-         8bciPE7li1Kh8idBy6s0Az5NoBNrDrc6m++JH19cun4+JHGkcudP+HNfdnSizKMCpcyO
-         zoZ5FUx5wMa/iN8ZQEEpEl1+XjVHcEk5Wx4g6ltdnorWWu7UNeOxOOZoMnsv/GReCp+P
-         s5TMY7SR6qP6Xh1FwJtGccsiBMzV+qZtjB3bZLmPgBZivF1WSCY9RZ4c86lt7PZcP1Jv
-         JK0yVKgS0TTDpcjE/APIDsTCi8eBdqm9Arz+5kO1jlPqOgSjvl3vIk3J+jHgduiGYYg5
-         eiKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtIjyebKSggBcdB9BMwS8b/eobNpL9syZ5mEHjaLVDqChVtbnDy+lgGGCiy9CfKvULmhpiYm5THYtOvfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0yB6g5GbM64KwrYeeHO84UJBirxbciE7sY9L5FPhS//X/tggm
-	dRRcLfM9UNhoIPkKdqh/KNVWSHL8l/EC++ZTe5ji/YTXjf9OWbmG6elrinQz0EKeYMEriRpcR7E
-	26arAX1ER1FesWZXh3uPzTnTVuQJ+7NDKUiHdXQw7LzUj6/u6pLoNNQUG2Ppicv4=
-X-Gm-Gg: ASbGnctHsMem9Yv9Dvsj9jfoEe+ZQGypn6P8dj+TZUc02oZIdGXHm+dJa+Yp3dRVWhY
-	GFdchKyHSyW93pxrxj7ZjmItsJkHV0Xrn1AAWsfVDgCzs3CcvEdsV/GM63DBz1ZGAJQJ6GBwxNm
-	j32dIVnoy99JFGhhY9UPEYqHmf4O2/Wus2yuxKgZ4AgzMNvcAzQbtWcinfuFvx3v5STOM08I3yh
-	CvSr8TlWCf1f663vg4DHeDtYd74gjrxVYTXj3BluIuUEzrAa7s9xLU+BK5JQ8uo989eDrRsbsYz
-	mLbFAkEmjfLM1kDLLtuUUJiUPwcdRzDrdnqS8eT3XjmWjOVXNJCljyMPxlUY95TumDj3Jxan20s
-	=
-X-Received: by 2002:a05:620a:1723:b0:7c8:39ea:5166 with SMTP id af79cd13be357-7cadfeda709mr1534149085a.55.1746447881936;
-        Mon, 05 May 2025 05:24:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQVHNC/X4ldrU2WAdEOvCrJu1jzAs9DRDibWoLBRLHVoPEZe8mcE+qcx8xAVSbPy2Iuw/oTw==
-X-Received: by 2002:a05:620a:1723:b0:7c8:39ea:5166 with SMTP id af79cd13be357-7cadfeda709mr1534144385a.55.1746447881548;
-        Mon, 05 May 2025 05:24:41 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94b16b6sm1706106e87.12.2025.05.05.05.24.40
+        bh=hCJYSXV9aqquN0sqWVxTNHYONiHzEvamUGNz+jF30PE=;
+        b=WifxoLQHMDA4q+TWrVFWJjnUNqRKLwhp5eCQjN8Ty+GP5BHXYrfC1wy2cjCZyPo+AQ
+         dWIRz8vJU9UXaYm932fmccgPdiggpc3kOwx28weZr9FpTzQk3UXNt0y1pdvbcJqOHDP8
+         tY3Bn65tKJfUcJdK7U/EhrGyEcZFPLva4Dn24ST5Ud3ugr2FE9INQ8gWF+KIwgk6q7Yg
+         DDU+4652VYUw09uLSv7u+Vhfd6VGzgatDz+TxLXDna68rBGlxN6v2fdm0ut07th5KeKl
+         5pSccQQw/QJn1BFBpqbWJ3GAXWcuMalxzrjkA9J3m/6tBkGtPj2NErf2/tJvG0KkwrUi
+         xJqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfFAg+Iy1WkPGW0eHe9vbNfSjdJI5m6kz7SzcJh7O6LkGAmdDZNp1okWEYmGDS8VGIlc54bwLyclGAQK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqQxN4OrG31u+RRF8/VClozA03YQ82Hkc+1eGh2c5K2rsfklmU
+	f9YtNxqX1zsumu5MVNcuZy3bz0fYHAE3K/04hWICAxn7Pmx9sWpltd3ZBrxJxiM=
+X-Gm-Gg: ASbGncsHwAXXZb/qHcjshfgpMtJDvBglHRsQN5Y1CXdAbaLUV4jThYQawZ/kbxh4oxr
+	FuAHxrI59shvVo5A2d789EptLnsnKMMP8VZilQeQ/4P558jhVcrzHHv82F4JPbs72unkV7VBh3D
+	XaqAZdg8kogERc61LtJ+Glo5UqDW+K3oS0Tvg8EVFIByR8NYEpZMw8/JJoD10/VaEqbfIKJd5dm
+	P+47vpvhOU4oQm0RWWff0d2paE+Jvh8saa/Id4ig634sGxypFzRKLfEBQDFnU6UAL1zf3JNutm4
+	F8E6QRSi6ElyeGPf3al+HO4hJyTvBBNiEhkKeQfBCJGPUvXJopU=
+X-Google-Smtp-Source: AGHT+IHzMkid4QQ+TxtQuN2mNUWpCWLUm2rIHKQh2Iec3VYNpus1/zEyfeq1TuxjFvz9zpIW1ANtsw==
+X-Received: by 2002:a17:906:f5a4:b0:ac7:81b0:62c8 with SMTP id a640c23a62f3a-ad1a4973136mr706008666b.31.1746447891922;
+        Mon, 05 May 2025 05:24:51 -0700 (PDT)
+Received: from localhost.localdomain ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad189540d6esm482969166b.185.2025.05.05.05.24.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 05:24:40 -0700 (PDT)
-Date: Mon, 5 May 2025 15:24:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
-        Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v5 21/24] drm/msm/dpu: Implement 10-bit color alpha for
- v12.0 DPU
-Message-ID: <ygd6givaigkmypmaufpeidkqauoujcndm2xemi5pm5zue6ou7j@zonusie3tuap>
-References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
+        Mon, 05 May 2025 05:24:51 -0700 (PDT)
+Date: Mon, 5 May 2025 14:24:50 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	john.ogness@linutronix.de,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v6 03/22] panic: Add vpanic()
+Message-ID: <aBiuEnSg7ijbBtwB@localhost.localdomain>
+References: <cover.1745999587.git.namcao@linutronix.de>
+ <390d7357d9b24362fde68d7c9f0fbd5ba740398c.1745999587.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,82 +90,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
-X-Proofpoint-GUID: sQ09qoEYk3WDWA--IPQbb53n7DuVRxDC
-X-Proofpoint-ORIG-GUID: sQ09qoEYk3WDWA--IPQbb53n7DuVRxDC
-X-Authority-Analysis: v=2.4 cv=atqyCTZV c=1 sm=1 tr=0 ts=6818ae0a cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=cHRrv4Hvtu4HjFTugcMA:9
- a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDExOCBTYWx0ZWRfXzBeeHk4P2Rml
- 5/364a0AnA9VcqSJ0Yo4hVArSewr8Ry5+9UyKXZ0VqNdGCHDGkY/IBUDF02lpKToUUe+l9qjMjr
- 723IFrkTApbI6ob3Gv53d8bwb5MEqPzGdWadWvZYFIjfCym+hyjjp+q0hl0WhFDlUjw0VBdzB4P
- jrBBFyYE08xwY1so1FUTO8E1uwx+pv2PWPa0cJPkZ1o8my+KY0ApFOZy7XJpH8v34B1RlJuIrcK
- uFarrY2JlCGV4MNA6qXTeNt4kmJvJAYAmZBqTlDqDu/ccwZTadByzB+KM0TtIkKk60OETNopKWS
- EGW3gl9cln1ZuWeZovdvJ9VMKliD1JrBtT0tBrnUKQIosPR5eRIrzs86HGiwLeTYB3S/LipJz4N
- UXv49NiI9RvcEtBTbirio3dmHvHYEZM/sVE37b/mxDew4mmwlusPUaOkIIJ6uLjnybePsdkq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_05,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0 adultscore=0
- clxscore=1015 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505050118
+In-Reply-To: <390d7357d9b24362fde68d7c9f0fbd5ba740398c.1745999587.git.namcao@linutronix.de>
 
-On Wed, Apr 30, 2025 at 03:00:51PM +0200, Krzysztof Kozlowski wrote:
-> v12.0 DPU on SM8750 comes with 10-bit color alpha.  Add register
-> differences and new implementations of setup_alpha_out(),
-> setup_border_color() and setup_blend_config().
+On Wed 2025-04-30 13:02:18, Nam Cao wrote:
+> vpanic() is useful for implementing runtime verification reactors. Add it.
 > 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
 > ---
-> 
-> Changes in v4:
-> 1. Lowercase hex, use spaces for define indentation
-> 2. _dpu_crtc_setup_blend_cfg(): pass mdss_ver instead of ctl
-> 
-> Changes in v3:
-> 1. New patch, split from previous big DPU v12.0.
+> Cc: John Ogness <john.ogness@linutronix.de>
+> Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
 > ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 19 ++++---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c | 84 +++++++++++++++++++++++++++++--
->  2 files changed, 94 insertions(+), 9 deletions(-)
+>  include/linux/panic.h |  3 +++
+>  kernel/panic.c        | 17 ++++++++++++-----
+>  2 files changed, 15 insertions(+), 5 deletions(-)
 > 
-> @@ -175,12 +246,19 @@ struct dpu_hw_mixer *dpu_hw_lm_init(struct drm_device *dev,
->  	c->idx = cfg->id;
->  	c->cap = cfg;
->  	c->ops.setup_mixer_out = dpu_hw_lm_setup_out;
-> -	if (mdss_ver->core_major_ver >= 4)
-> +	if (mdss_ver->core_major_ver >= 12)
-> +		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config_combined_alpha_v12;
-> +	else if (mdss_ver->core_major_ver >= 4)
->  		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config_combined_alpha;
->  	else
->  		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config;
-> -	c->ops.setup_alpha_out = dpu_hw_lm_setup_color3;
-> -	c->ops.setup_border_color = dpu_hw_lm_setup_border_color;
-> +	if (mdss_ver->core_major_ver < 12) {
-> +		c->ops.setup_alpha_out = dpu_hw_lm_setup_color3;
-> +		c->ops.setup_border_color = dpu_hw_lm_setup_border_color;
-> +	} else {
-> +		c->ops.setup_alpha_out = dpu_hw_lm_setup_color3_v12;
-> +		c->ops.setup_border_color = dpu_hw_lm_setup_border_color_v12;
-> +	}
+> diff --git a/include/linux/panic.h b/include/linux/panic.h
+> index 54d90b6c5f47..3522f8c441f4 100644
+> --- a/include/linux/panic.h
+> +++ b/include/linux/panic.h
+> @@ -3,6 +3,7 @@
+>  #define _LINUX_PANIC_H
+>  
+>  #include <linux/compiler_attributes.h>
+> +#include <linux/stdarg.h>
+>  #include <linux/types.h>
+>  
+>  struct pt_regs;
+> @@ -10,6 +11,8 @@ struct pt_regs;
+>  extern long (*panic_blink)(int state);
+>  __printf(1, 2)
+>  void panic(const char *fmt, ...) __noreturn __cold;
+> +__printf(1, 0)
+> +void vpanic(const char *fmt, va_list args) __noreturn __cold;
+>  void nmi_panic(struct pt_regs *regs, const char *msg);
+>  void check_panic_on_warn(const char *origin);
+>  extern void oops_enter(void);
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index d8635d5cecb2..df799d784b61 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -277,17 +277,16 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
+>  }
+>  
+>  /**
+> - *	panic - halt the system
+> + *	vpanic - halt the system
+>   *	@fmt: The text string to print
+>   *
+I wanted to double check the __printf attributtes and compiled this
+file with W=1:
 
-I tried picking up these patches, and choked on this one. This heavility
-depends on the DPU fetures bits rework patchset (mentioned in the cover
-letter, it's fine), but granted the lack of the reviews / updates on
-that patchset I can neither apply this patch (and its dependencies) nor
-steer Krzysztof away from basing on that patchset (this patch provides a
-perfect example of why that series is useful and correct).
+$> make W=1 kernel/panic.o
+  CC      kernel/panic.o
+kernel/panic.c:288: warning: Function parameter or struct member 'args' not described in 'vpanic'
 
-Abhinav, could you please continue reviewing that patch series?
+So, we should add description of the new @args parameter...
 
--- 
-With best wishes
-Dmitry
+
+>   *	Display a message, then perform cleanups.
+>   *
+>   *	This function never returns.
+>   */
+> -void panic(const char *fmt, ...)
+> +void vpanic(const char *fmt, va_list args)
+>  {
+>  	static char buf[1024];
+> -	va_list args;
+>  	long i, i_next = 0, len;
+>  	int state = 0;
+>  	int old_cpu, this_cpu;
+
+Otherwise, it looks good.
+
+Best Regards,
+Petr
 
