@@ -1,105 +1,276 @@
-Return-Path: <linux-kernel+bounces-631870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A235AA8E92
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:53:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA2EAA8DD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A7F3B8161
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:52:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB897173D10
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF661F4281;
-	Mon,  5 May 2025 08:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15261DFE20;
+	Mon,  5 May 2025 08:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKxpMGUg"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="icdt4AeV"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90DC1DDA14;
-	Mon,  5 May 2025 08:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F66C1E48A;
+	Mon,  5 May 2025 08:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746435138; cv=none; b=BbWAqNQkbXvd1bGPVCwvp/Jj2VX9zjWyKVmQoEpeY2Xq2OpZJfF348ZhER9s4gXDuJH1EUjC3VuglIPOdKu5d7pQxweC5nop0W+9M7l9VzoK6lgLNAi7CR6Fz8kr/3m9/389whyku0zAg8+tgF61U63bOsejoJsvcdIOvB+Bu7c=
+	t=1746432352; cv=none; b=R12zB/kST2EZ8vUWZK7QW7/xEzMCUenORFE9n8Sivqcc/Q5ISp3askF+HwoPlWjsCbjpMf121ZUUPWAOSBX1I0XMCi/YOnF0PEl5n/08iIiFfrT77odHZJ7Gt8KqoULoOmSOVfJH8NOgcV6dJuP5sCymUfStlq99UrI4jcZJFRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746435138; c=relaxed/simple;
-	bh=9zluxNSbXALMLbz2BBvW6HxB3hk8PNHobc7RsItkZOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gC4p1LeMaXw0ox3DulFY+dEK/xaNuaQJ7WZqrm+x9P2wEA6EkmJrWYdyKya8HQty60FW5aARnQj37OUS3mZ7TVX8xP2g2b9yaWkqflBEO0JuHDFWUaDRZs8G0hOeWTpcH0Y4KbJkTmF7aKTmkv3YQzCL/6kuw+97FdQVfAL/eUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKxpMGUg; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1746432352; c=relaxed/simple;
+	bh=sEn0JbLJ+2KtLbxcEixQL7BULeNTdU1w4BNv+zrfAC8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tigdb62GrS5JK6GegQ3piYNGZ1E7Cb3l3b47ieT7brQlGhbgIKQByt3M0S3FkNxKKZIpaRqfa2Ws4Do0rrVnb5VLlPui417c0JeBazkuwNsHlhb979ugQ+jaUDEyM3Y7eT9BubX8mgfmPjGSjfuNIQvn/wfVh9ex6T6sDh+3lpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=icdt4AeV; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746435138; x=1777971138;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9zluxNSbXALMLbz2BBvW6HxB3hk8PNHobc7RsItkZOg=;
-  b=RKxpMGUgb/w0CWCCMCnwrIhlPdqOXcK6DjfUOX24FnCz/xGgBZTzVTev
-   nOfkZkyloHzCZJxu/iivw+QDnr6Cybz7e0O9bz80YhGWsTqcAu86p6zaH
-   loxRvxwLsguifwAnBkEZP2XHSUjegdGIHkiKQwIbenAce9CTgMA7Am0MX
-   5a1pAJU1X7l6nv0qHq9/wz1UBxxBvBYlD+V6xdTwfpOkX137UjZ7XFnni
-   xIjglw8gZDMH/1YFGWgTYSUm4Q3/ZdRk4PvhyvfAy9xbdS0XUsK+qAnlw
-   vqa6anXqnNsiRAFWSv6EksFNRN/qpJfWbehtD2BCs9US9stZbD9Kd1gO8
-   Q==;
-X-CSE-ConnectionGUID: vm+9bIR3S12sDx+ZXz2xrQ==
-X-CSE-MsgGUID: Rsz1xXV3RMuU8UWF2NITIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11423"; a="65438693"
+  t=1746432347; x=1777968347;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=sEn0JbLJ+2KtLbxcEixQL7BULeNTdU1w4BNv+zrfAC8=;
+  b=icdt4AeVIYp9k2OmheG5IHiVmo0dFfPg1Z8N5/LQHT8Mj/1p4Vx6tIGU
+   8S7YhjaR2Xwv+EGlarchQwz5W6euzJ/j11THNp3J1olLg7ll6OBObMkg3
+   z09rWz9YGSuIm5o5JJ+zFI9rso+HkzlMFKtJv1mmFTFYYctMzJGlwwvgv
+   IV2TTAqDYHe59DbGrB40BMg1jt3SdP3FGRP6xmQ3WDm+5wn+uy6UkI0fM
+   K303whK/rfXTgxfkwHY4kYhI2dQi4DxFaCNBD72wybOuS+ik1G5eEoBcj
+   GTXne1AvRrSW351QvJn0hZ8m/532UHunyUUCvhdx/lgx9nmWkZCdqvJiH
+   w==;
+X-CSE-ConnectionGUID: kKeEGmyAR0OeMSNznpfonA==
+X-CSE-MsgGUID: uL8mDdTtRQu3/1bCpjrDow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11423"; a="65433511"
 X-IronPort-AV: E=Sophos;i="6.15,262,1739865600"; 
-   d="scan'208";a="65438693"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 01:52:13 -0700
-X-CSE-ConnectionGUID: E1k0s4QjRsCs+ckMnHFb9Q==
-X-CSE-MsgGUID: Y9XwPmxVQzexINjL9bBPdA==
+   d="scan'208";a="65433511"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 01:05:46 -0700
+X-CSE-ConnectionGUID: WVpB8LTlQ5Gp6D46hzAfvw==
+X-CSE-MsgGUID: ZyvzMFgARIqh2D8utixdPQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,262,1739865600"; 
-   d="scan'208";a="139983927"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.252])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 01:52:08 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 5F40C120B57;
-	Mon,  5 May 2025 11:00:34 +0300 (EEST)
-Date: Mon, 5 May 2025 08:00:34 +0000
+   d="scan'208";a="140172578"
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.232])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 01:05:38 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jeff Layton <jlayton@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Joonas
+ Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, Qasim Ijaz <qasdev00@gmail.com>,
+ Nathan Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, Jeff
+ Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v6 06/10] ref_tracker: automatically register a file in
+ debugfs for a ref_tracker_dir
+In-Reply-To: <20250430-reftrack-dbgfs-v6-6-867c29aff03a@kernel.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Sylvain Petinot <sylvain.petinot@foss.st.com>
-Cc: benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tomm.merciai@gmail.com
-Subject: Re: [PATCH v8 2/2] media: i2c: Add driver for ST VD56G3 camera sensor
-Message-ID: <aBhwIl7G60EJ9k9F@kekkonen.localdomain>
-References: <20250502201849.12588-1-sylvain.petinot@foss.st.com>
- <20250502201849.12588-3-sylvain.petinot@foss.st.com>
+References: <20250430-reftrack-dbgfs-v6-0-867c29aff03a@kernel.org>
+ <20250430-reftrack-dbgfs-v6-6-867c29aff03a@kernel.org>
+Date: Mon, 05 May 2025 11:05:35 +0300
+Message-ID: <87frhjwkhc.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250502201849.12588-3-sylvain.petinot@foss.st.com>
+Content-Type: text/plain
 
-Hi Sylvain,
+On Wed, 30 Apr 2025, Jeff Layton <jlayton@kernel.org> wrote:
+> Currently, there is no convenient way to see the info that the
+> ref_tracking infrastructure collects. Attempt to create a file in
+> debugfs when called from ref_tracker_dir_init().
+>
+> The file is given the name "class@%px", as having the unmodified address
+> is helpful for debugging. This should be safe since this directory is only
+> accessible by root
+>
+> If debugfs file creation fails, a pr_warn will be isssued.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/ref_tracker.h | 14 +++++++++
+>  lib/ref_tracker.c           | 73 +++++++++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 85 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/ref_tracker.h b/include/linux/ref_tracker.h
+> index 2adae128d4b5e45f156af4775a1d184bb596fa91..c6e65d7ef4d4fc74c60fcabd19166c131d4173e2 100644
+> --- a/include/linux/ref_tracker.h
+> +++ b/include/linux/ref_tracker.h
+> @@ -5,6 +5,7 @@
+>  #include <linux/types.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/stackdepot.h>
+> +#include <linux/seq_file.h>
 
-Thanks for the update.
+Nothing here requires seq_file.h as far as I can tell. Please avoid
+superfluous header dependencies.
 
-On Fri, May 02, 2025 at 10:18:49PM +0200, Sylvain Petinot wrote:
-> +static int vd56g3_check_csi_conf(struct vd56g3 *sensor,
-> +				 struct fwnode_handle *endpoint)
+BR,
+Jani.
+
+>  
+>  struct ref_tracker;
+>  
+> @@ -18,12 +19,17 @@ struct ref_tracker_dir {
+>  	struct list_head	list; /* List of active trackers */
+>  	struct list_head	quarantine; /* List of dead trackers */
+>  	const char		*class; /* object classname */
+> +#ifdef CONFIG_DEBUG_FS
+> +	struct dentry		*dentry;
+> +#endif
+>  	char			name[32];
+>  #endif
+>  };
+>  
+>  #ifdef CONFIG_REF_TRACKER
+>  
+> +void ref_tracker_dir_debugfs(struct ref_tracker_dir *dir);
+> +
+>  static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
+>  					unsigned int quarantine_count,
+>  					const char *class,
+> @@ -37,7 +43,11 @@ static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
+>  	refcount_set(&dir->untracked, 1);
+>  	refcount_set(&dir->no_tracker, 1);
+>  	dir->class = class;
+> +#ifdef CONFIG_DEBUG_FS
+> +	dir->dentry = NULL;
+> +#endif
+>  	strscpy(dir->name, name, sizeof(dir->name));
+> +	ref_tracker_dir_debugfs(dir);
+>  	stack_depot_init();
+>  }
+>  
+> @@ -66,6 +76,10 @@ static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
+>  {
+>  }
+>  
+> +static inline void ref_tracker_dir_debugfs(struct ref_tracker_dir *dir)
 > +{
-> +	struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_CSI2_DPHY };
-> +	u32 phy_data_lanes[VD56G3_MAX_CSI_DATA_LANES] = { ~0, ~0 };
-> +	u8 n_lanes;
-> +	u64 frequency;
-> +	int p, l;
-
-unsigned int. There are more cases where you have a loop variable that
-doesn't need to be signed. Please address these in a follow-up patch.
+> +}
+> +
+>  static inline void ref_tracker_dir_exit(struct ref_tracker_dir *dir)
+>  {
+>  }
+> diff --git a/lib/ref_tracker.c b/lib/ref_tracker.c
+> index b69c11e83c18c19aaa2dc23f802291d4a7e82a66..3ee4fd0f33407881cfa140dcb7d8b40e3c2722de 100644
+> --- a/lib/ref_tracker.c
+> +++ b/lib/ref_tracker.c
+> @@ -31,6 +31,14 @@ struct ref_tracker_dir_stats {
+>  	} stacks[];
+>  };
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +static void ref_tracker_debugfs_remove(struct ref_tracker_dir *dir);
+> +#else
+> +static inline void ref_tracker_debugfs_remove(struct ref_tracker_dir *dir)
+> +{
+> +}
+> +#endif
+> +
+>  static struct ref_tracker_dir_stats *
+>  ref_tracker_get_stats(struct ref_tracker_dir *dir, unsigned int limit)
+>  {
+> @@ -197,6 +205,7 @@ void ref_tracker_dir_exit(struct ref_tracker_dir *dir)
+>  	bool leak = false;
+>  
+>  	dir->dead = true;
+> +	ref_tracker_debugfs_remove(dir);
+>  	spin_lock_irqsave(&dir->lock, flags);
+>  	list_for_each_entry_safe(tracker, n, &dir->quarantine, head) {
+>  		list_del(&tracker->head);
+> @@ -313,8 +322,7 @@ EXPORT_SYMBOL_GPL(ref_tracker_free);
+>  #ifdef CONFIG_DEBUG_FS
+>  #include <linux/debugfs.h>
+>  
+> -static __maybe_unused int
+> -ref_tracker_dir_seq_print(struct ref_tracker_dir *dir, struct seq_file *seq)
+> +static int ref_tracker_dir_seq_print(struct ref_tracker_dir *dir, struct seq_file *seq)
+>  {
+>  	struct ostream os = { .func = pr_ostream_seq,
+>  			      .prefix = "",
+> @@ -328,6 +336,67 @@ ref_tracker_dir_seq_print(struct ref_tracker_dir *dir, struct seq_file *seq)
+>  	return os.used;
+>  }
+>  
+> +static int ref_tracker_debugfs_show(struct seq_file *f, void *v)
+> +{
+> +	struct ref_tracker_dir *dir = f->private;
+> +
+> +	return ref_tracker_dir_seq_print(dir, f);
+> +}
+> +
+> +static int ref_tracker_debugfs_open(struct inode *inode, struct file *filp)
+> +{
+> +	struct ref_tracker_dir *dir = inode->i_private;
+> +
+> +	return single_open(filp, ref_tracker_debugfs_show, dir);
+> +}
+> +
+> +static const struct file_operations ref_tracker_debugfs_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= ref_tracker_debugfs_open,
+> +	.read		= seq_read,
+> +	.llseek		= seq_lseek,
+> +	.release	= single_release,
+> +};
+> +
+> +/**
+> + * ref_tracker_dir_debugfs - create debugfs file for ref_tracker_dir
+> + * @dir: ref_tracker_dir to be associated with debugfs file
+> + *
+> + * In most cases, a debugfs file will be created automatically for every
+> + * ref_tracker_dir. If the object was created before debugfs is brought up
+> + * then that may fail. In those cases, it is safe to call this at a later
+> + * time to create the file.
+> + */
+> +void ref_tracker_dir_debugfs(struct ref_tracker_dir *dir)
+> +{
+> +	char name[NAME_MAX + 1];
+> +	int ret;
+> +
+> +	/* No-op if already created */
+> +	if (!IS_ERR_OR_NULL(dir->dentry))
+> +		return;
+> +
+> +	ret = snprintf(name, sizeof(name), "%s@%px", dir->class, dir);
+> +	name[sizeof(name) - 1] = '\0';
+> +
+> +	if (ret < sizeof(name))
+> +		dir->dentry = debugfs_create_file(name, S_IFREG | 0400,
+> +						  ref_tracker_debug_dir, dir,
+> +						  &ref_tracker_debugfs_fops);
+> +	else
+> +		dir->dentry = ERR_PTR(-ENAMETOOLONG);
+> +
+> +	if (IS_ERR(dir->dentry))
+> +		pr_warn("ref_tracker: unable to create debugfs file for %s: %pe\n",
+> +			name, dir->dentry);
+> +}
+> +EXPORT_SYMBOL(ref_tracker_dir_debugfs);
+> +
+> +static void ref_tracker_debugfs_remove(struct ref_tracker_dir *dir)
+> +{
+> +	debugfs_remove(dir->dentry);
+> +}
+> +
+>  static int __init ref_tracker_debugfs_init(void)
+>  {
+>  	ref_tracker_debug_dir = debugfs_create_dir("ref_tracker", NULL);
 
 -- 
-Sakari Ailus
+Jani Nikula, Intel
 
