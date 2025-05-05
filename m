@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-634359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9A5AAB0CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C3FAAB0D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C453A8F7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428863A54F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D66329ACD5;
-	Tue,  6 May 2025 00:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C3D326C0C;
+	Tue,  6 May 2025 00:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDyD300x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMvr6oxX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72252BE7BC;
-	Mon,  5 May 2025 22:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B47375309;
+	Mon,  5 May 2025 22:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485256; cv=none; b=ARxBH5yPwCv1IWHc0gtm6ATuFmXNOF5K1KXYpwYSCfhvov+1+RLwykdENP66zDoY9cNXx03TlvH/Aj0g4FKV5VuDBa0S+6Y7DDlzDPMbGV3Up9lo5KWat4RwnXFqC5uAD9PS8Ghv5tgM07FIpUsuD+/ghX9qeu2IxemPhkhWwTw=
+	t=1746485261; cv=none; b=dBX0VwH2jZWEZZRfrHmvM+8VpIEnv4Qp5TMPP/SqY58EDjZYykqa6kIYL6yY+1eCj5zRuPMYvDicnYAfjZkaLkl1HTioDAJWd9S+sgFjBdbWPsBVHnyuKASWCmZ/7lLl44tmLh1sILAxfQa3PzFdp5sQ6eTOK9JwvqIIf5LBeEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485256; c=relaxed/simple;
-	bh=Z9n9wiIPdC41RfHmTwLHjKY+A1WrsoMrfXOJKYq3Qso=;
+	s=arc-20240116; t=1746485261; c=relaxed/simple;
+	bh=1j4dgteCUSZ7Abj/VzXKM8PzCdf0Yf0zwcztFml+q24=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WAt0c20UcRLrBOhkpyJSkukq/j7fmHw4Us1Oc9YaGN256TGDLXGe9xMUVEonSgj/kxu1qhQZU075BIdBOMtn6J4AuQUkzYLRgcgp4PgFtQTUumHHjxub4RlUOPRLWv7g8ycmdTFqzj9aVbrCzim52mjtdIdLCU6PyOrtUEe498g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDyD300x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66005C4CEF2;
-	Mon,  5 May 2025 22:47:35 +0000 (UTC)
+	 MIME-Version; b=n7l5yBeNfrp6DxCsd0JX7/EFGlOiFsA+mP7ohtenEbwkOGzMEgdftTgDnFUFSwX1ofCD9RfOfif5qsoM/pXtu2WVS7YsGTUzzze2ZkAtAbPx5edr/Lp6STXugHmgLAazSC+YzlAgV9ql/pbToEXxSRw5Yd88R/ITc9xu8EbFUDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMvr6oxX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A955C4CEE4;
+	Mon,  5 May 2025 22:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485256;
-	bh=Z9n9wiIPdC41RfHmTwLHjKY+A1WrsoMrfXOJKYq3Qso=;
+	s=k20201202; t=1746485261;
+	bh=1j4dgteCUSZ7Abj/VzXKM8PzCdf0Yf0zwcztFml+q24=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aDyD300x/mOB4/lsXU4OZyGeOIHIeqSnl02RCN6FGVMEQGZsoontt6+hQZMOs/wTV
-	 qSkHyrczLndDfIetP2ogs4xgRUQim+IlF8rsNlC3fDhOnbq3291S2Pe3tFt+VC1n+K
-	 5gXq/SwVUd6fm1xTZgTsnXuZVeMUL5n0wV3FCk2Mb73JwgRvHlSOeldACRd2XRiaks
-	 Iv6Z7Z3SfbjG9qpwp32loDHhJzlijT8mQFlTQZlYb6tM628h1FBqNiGpAcBQNQCL9k
-	 JVazEfvUE2jFgNyyRbScVbl4qJjOYFuI58TyBSGtNluUt92JdOP191v7IgSyGJpw8N
-	 3DexpyVpF76ew==
+	b=dMvr6oxXpYDLuoyY9B9Jwx57JC1S8d/kZv8HixNa6Ull97iRhBl3C0XMYo8CjfTx7
+	 op6OBVFdOCW6mupn+DDAIZjiuEP03wLxrADakKSl89eb3YZtI9LRoJJ3+uzYpHm6q3
+	 nlF7Y88UejbzwNXn0t9+alc4/ICiozFVcBjQmJSNxQu20b7kwTfqASY1XhDInxYWU5
+	 Xv2mJuVnHSG1MS/o0joVsT+dgOBz6jEnStAw5hNEpW5e2/g7a9j6m/il40dz/ei0ZG
+	 F18wrUfEbN07szCrf2mxFu2TuwX1jPsh+mbkfH+J+RlBv+KosbTOYaQRuLtbEoSpIk
+	 puKxO9NbFvIQA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Kevin Krakauer <krakauer@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 239/486] selftests/net: have `gro.sh -t` return a correct exit code
-Date: Mon,  5 May 2025 18:35:15 -0400
-Message-Id: <20250505223922.2682012-239-sashal@kernel.org>
+	unicorn_wang@outlook.com,
+	harshit.m.mogalapalli@oracle.com,
+	linux-gpio@vger.kernel.org,
+	sophgo@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.12 240/486] pinctrl: sophgo: avoid to modify untouched bit when setting cv1800 pinconf
+Date: Mon,  5 May 2025 18:35:16 -0400
+Message-Id: <20250505223922.2682012-240-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -70,35 +67,159 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Kevin Krakauer <krakauer@google.com>
+From: Inochi Amaoto <inochiama@gmail.com>
 
-[ Upstream commit 784e6abd99f24024a8998b5916795f0bec9d2fd9 ]
+[ Upstream commit ef1a5121ae3da02372fcb66d9632ed3d47ad5637 ]
 
-Modify gro.sh to return a useful exit code when the -t flag is used. It
-formerly returned 0 no matter what.
+When setting pinconf configuration for cv1800 SoC, the driver just writes
+the value. It may zero some bits of the pinconf register and cause some
+unexpected error. Add a mask to avoid this.
 
-Tested: Ran `gro.sh -t large` and verified that test failures return 1.
-Signed-off-by: Kevin Krakauer <krakauer@google.com>
-Reviewed-by: Willem de Bruijn <willemb@google.com>
-Link: https://patch.msgid.link/20250226192725.621969-2-krakauer@google.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Link: https://lore.kernel.org/20250211051801.470800-2-inochiama@gmail.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/net/gro.sh | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sophgo/pinctrl-cv18xx.c | 33 +++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
-diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
-index 02c21ff4ca81f..aabd6e5480b8e 100755
---- a/tools/testing/selftests/net/gro.sh
-+++ b/tools/testing/selftests/net/gro.sh
-@@ -100,5 +100,6 @@ trap cleanup EXIT
- if [[ "${test}" == "all" ]]; then
-   run_all_tests
- else
--  run_test "${proto}" "${test}"
-+  exit_code=$(run_test "${proto}" "${test}")
-+  exit $exit_code
- fi;
+diff --git a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+index 57f2674e75d68..84b4850771ce2 100644
+--- a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
++++ b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+@@ -574,10 +574,10 @@ static int cv1800_pinconf_compute_config(struct cv1800_pinctrl *pctrl,
+ 					 struct cv1800_pin *pin,
+ 					 unsigned long *configs,
+ 					 unsigned int num_configs,
+-					 u32 *value)
++					 u32 *value, u32 *mask)
+ {
+ 	int i;
+-	u32 v = 0;
++	u32 v = 0, m = 0;
+ 	enum cv1800_pin_io_type type;
+ 	int ret;
+ 
+@@ -596,10 +596,12 @@ static int cv1800_pinconf_compute_config(struct cv1800_pinctrl *pctrl,
+ 		case PIN_CONFIG_BIAS_PULL_DOWN:
+ 			v &= ~PIN_IO_PULLDOWN;
+ 			v |= FIELD_PREP(PIN_IO_PULLDOWN, arg);
++			m |= PIN_IO_PULLDOWN;
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_UP:
+ 			v &= ~PIN_IO_PULLUP;
+ 			v |= FIELD_PREP(PIN_IO_PULLUP, arg);
++			m |= PIN_IO_PULLUP;
+ 			break;
+ 		case PIN_CONFIG_DRIVE_STRENGTH_UA:
+ 			ret = cv1800_pinctrl_oc2reg(pctrl, pin, arg);
+@@ -607,6 +609,7 @@ static int cv1800_pinconf_compute_config(struct cv1800_pinctrl *pctrl,
+ 				return ret;
+ 			v &= ~PIN_IO_DRIVE;
+ 			v |= FIELD_PREP(PIN_IO_DRIVE, ret);
++			m |= PIN_IO_DRIVE;
+ 			break;
+ 		case PIN_CONFIG_INPUT_SCHMITT_UV:
+ 			ret = cv1800_pinctrl_schmitt2reg(pctrl, pin, arg);
+@@ -614,6 +617,7 @@ static int cv1800_pinconf_compute_config(struct cv1800_pinctrl *pctrl,
+ 				return ret;
+ 			v &= ~PIN_IO_SCHMITT;
+ 			v |= FIELD_PREP(PIN_IO_SCHMITT, ret);
++			m |= PIN_IO_SCHMITT;
+ 			break;
+ 		case PIN_CONFIG_POWER_SOURCE:
+ 			/* Ignore power source as it is always fixed */
+@@ -621,10 +625,12 @@ static int cv1800_pinconf_compute_config(struct cv1800_pinctrl *pctrl,
+ 		case PIN_CONFIG_SLEW_RATE:
+ 			v &= ~PIN_IO_OUT_FAST_SLEW;
+ 			v |= FIELD_PREP(PIN_IO_OUT_FAST_SLEW, arg);
++			m |= PIN_IO_OUT_FAST_SLEW;
+ 			break;
+ 		case PIN_CONFIG_BIAS_BUS_HOLD:
+ 			v &= ~PIN_IO_BUS_HOLD;
+ 			v |= FIELD_PREP(PIN_IO_BUS_HOLD, arg);
++			m |= PIN_IO_BUS_HOLD;
+ 			break;
+ 		default:
+ 			return -ENOTSUPP;
+@@ -632,17 +638,19 @@ static int cv1800_pinconf_compute_config(struct cv1800_pinctrl *pctrl,
+ 	}
+ 
+ 	*value = v;
++	*mask = m;
+ 
+ 	return 0;
+ }
+ 
+ static int cv1800_pin_set_config(struct cv1800_pinctrl *pctrl,
+ 				 unsigned int pin_id,
+-				 u32 value)
++				 u32 value, u32 mask)
+ {
+ 	struct cv1800_pin *pin = cv1800_get_pin(pctrl, pin_id);
+ 	unsigned long flags;
+ 	void __iomem *addr;
++	u32 reg;
+ 
+ 	if (!pin)
+ 		return -EINVAL;
+@@ -650,7 +658,10 @@ static int cv1800_pin_set_config(struct cv1800_pinctrl *pctrl,
+ 	addr = cv1800_pinctrl_get_component_addr(pctrl, &pin->conf);
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+-	writel(value, addr);
++	reg = readl(addr);
++	reg &= ~mask;
++	reg |= value;
++	writel(reg, addr);
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+ 
+ 	return 0;
+@@ -662,16 +673,17 @@ static int cv1800_pconf_set(struct pinctrl_dev *pctldev,
+ {
+ 	struct cv1800_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	struct cv1800_pin *pin = cv1800_get_pin(pctrl, pin_id);
+-	u32 value;
++	u32 value, mask;
+ 
+ 	if (!pin)
+ 		return -ENODEV;
+ 
+ 	if (cv1800_pinconf_compute_config(pctrl, pin,
+-					  configs, num_configs, &value))
++					  configs, num_configs,
++					  &value, &mask))
+ 		return -ENOTSUPP;
+ 
+-	return cv1800_pin_set_config(pctrl, pin_id, value);
++	return cv1800_pin_set_config(pctrl, pin_id, value, mask);
+ }
+ 
+ static int cv1800_pconf_group_set(struct pinctrl_dev *pctldev,
+@@ -682,7 +694,7 @@ static int cv1800_pconf_group_set(struct pinctrl_dev *pctldev,
+ 	struct cv1800_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct group_desc *group;
+ 	const struct cv1800_pin_mux_config *pinmuxs;
+-	u32 value;
++	u32 value, mask;
+ 	int i;
+ 
+ 	group = pinctrl_generic_get_group(pctldev, gsel);
+@@ -692,11 +704,12 @@ static int cv1800_pconf_group_set(struct pinctrl_dev *pctldev,
+ 	pinmuxs = group->data;
+ 
+ 	if (cv1800_pinconf_compute_config(pctrl, pinmuxs[0].pin,
+-					  configs, num_configs, &value))
++					  configs, num_configs,
++					  &value, &mask))
+ 		return -ENOTSUPP;
+ 
+ 	for (i = 0; i < group->grp.npins; i++)
+-		cv1800_pin_set_config(pctrl, group->grp.pins[i], value);
++		cv1800_pin_set_config(pctrl, group->grp.pins[i], value, mask);
+ 
+ 	return 0;
+ }
 -- 
 2.39.5
 
