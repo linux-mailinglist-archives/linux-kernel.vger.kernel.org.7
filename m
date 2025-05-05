@@ -1,109 +1,138 @@
-Return-Path: <linux-kernel+bounces-631747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D42AA8CE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888C4AA8CE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 846CE172378
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E125E172436
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BDF1C862D;
-	Mon,  5 May 2025 07:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jjN/yH8T";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3kk6zNl3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824611ACEAC;
+	Mon,  5 May 2025 07:16:35 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5A82E62C
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 07:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984E51A5BAE
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 07:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746429286; cv=none; b=NtU8g710Qlu/RRqI+qQNV207zFpU/zaNJBG9ySLlN5/L4iJSNfAB4AukJ2gGsTYJ7zLd4O5cM9OCFJVhuuyQJEz7qe4Q2NtT2hg4mkIbhM4QFAn6HQN+HVTlN196sErE7wj7D4Z2O7nGuDM6QxqVfJGep3ptnN/4xMHKeOlt6Lc=
+	t=1746429395; cv=none; b=V9QgneQcDTjO1TwL9E69TmZ0S9yw1Xynt4cpSzRdfor+iVHgx5bwMmXfBH/iUvOllI82mA6Nx2Vr2+EdTHJLEM81vOujxKTFEGsQxTCNjFKGJNsPlT4Xt0u/lS4lqMWdy2gp6tNkOZMaZQUWir0rFQ//NnehRDpRpyPzR5Vhjis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746429286; c=relaxed/simple;
-	bh=ntvgR+0RhYHXBZFPpk/GytmrkyvhnGwsT0YHZ3OosHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftpAqiMS9gMkNPsQP0C9EjiofbeZqYj7VXIKcAu0aLTe1uUISyvd3h6XoyQwYv7aGZhHBIFVbYbo88mgDHtKJGgYcssPAXeIASkt7U2RIw7602lgp6zllmnbMMLl7FM8AI+YGmZDjmAEMMhUKwtJoE00QuTfkBRqZK0wArgG1yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jjN/yH8T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3kk6zNl3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 5 May 2025 09:14:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746429283;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FHPB3XEe0MVRw2MyKFTBl8Q3rrWxQtgQWTIUHObvouI=;
-	b=jjN/yH8T9vN6zYWCDUPD2t+Mvu0wbNKHloKXenBu3pNKe6gmsoDndMYH5IwcIyYipJoZNw
-	bgK3heiThvOwAoaFA6A/En67btHyHrMTYq+syIlml6kz5uIN7TL9Xd35kM8CNid+HMPfFB
-	zdvw8SI1+ynqDtKk5PglXKEBmhJypttv578P4giulfTi1RjSrLwjAz38wR4QXOTA/jbED7
-	MqVcmj1VVqv3YI3803L5mjLRtlDzbGrjuw6m8Xm3gM7oY0yWJqfqLYYYgvRKDdV0LoD6MJ
-	8qUjjYCHmQAeu9UCGm0ikvve+v6Lj09nhC2GRF7kL+GdWDOVWb6NqAlAKvfybQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746429283;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FHPB3XEe0MVRw2MyKFTBl8Q3rrWxQtgQWTIUHObvouI=;
-	b=3kk6zNl3kE6OD6HkwzWD/cbJVgJjKa6VjMpeH1hAZh7HzM3Pbga1bNAK+7/AdBgzzTFeE3
-	Tch6irunWRWeUOBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>
-Subject: Re: [PATCH v12 15/21] futex: Allow to make the private hash immutable
-Message-ID: <20250505071438.C4_3Mx0S@linutronix.de>
-References: <20250416162921.513656-1-bigeasy@linutronix.de>
- <20250416162921.513656-16-bigeasy@linutronix.de>
- <20250502180154.GY4439@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1746429395; c=relaxed/simple;
+	bh=EMSJKUDzSBAb77SoebBMNvAxBP/EkXe/jQiB+gH+Wts=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uPtB7beebeufxftZmsd0jGJmPCHMxZxkX+xdTRT3giCb1atN/BhYjnwdxQpHyv2mx6WHS2gNo7f1gZce2D6ZSOcQ9jawFiioTUHILIKdDCX0dr/4DTYnNXnZRv1QGc8/H7HzNKMT88WZjwpKDre6aud4mplpbgIWDR8egNqnTRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d6c613bd79so45866585ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 00:16:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746429392; x=1747034192;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MHfdXx64Ba+sX/D56yZyl1OIE6j4n+qi0pYdDMpu7z8=;
+        b=X8+4ka84tigy3vpqTpsVNT0qmOAAoXGW/Rg+B+32Pzltd6vSbhkbkXRLWYT+y6H7ko
+         zicw+czPg2Sy65zsbXbScAlgswtMLhygAEsORjnAwGAIQi9OhnqkCxMRxqlQml+tGvjA
+         CdQreS5OptpEfO/ABXJLNyhaTNpPXckbE20lEACKmsPoZVjiHyv5LnKIOpt5umwHSS9e
+         GXWV78iRGdcax4MKqQ9+1H+PYYA6ScM9Eh8ezEXiHP7Oxo6udXg72s7OAK06PvrOFuZ4
+         fG5qjOgsKWBscj0hrIfq7h+i5TtUxgYoRC5I5UZWjzIIkHBOzGxpZ/lXSZ/bjz07Mnhd
+         C8sg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnSbkQJeiPpxM2IrqdFe4cLpSziNW5PTbyhv3fUpClVlH6vfmW6jPtiPR8y06Eab72+0dEIOcUl021qhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5IPz3UTnF1KYCo+VoYYn/wVnzfeQ3VvwVjN5PgNFzQEaKO3Uc
+	KVdiVGewLzGb37YgEyyTFdxMMRxcR/E+IuLokNZ/wnCMpReqihwJfTZniQpdOkwAI1TvVmEN4uQ
+	8TVAvjWufgzTOiRS2ofTwyaTfG8KyZ1SzTqFOFsv1X5M8L9BQvNF5ACQ=
+X-Google-Smtp-Source: AGHT+IEBTI4+qSrx+O/JX6tEl9JoXNB1Mfqno3SpHuC5+Syea8HBrLMkS77b4J+W3VCYhYrS0ENDfIYvhB1GOX3jphb1pXym/Xz5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250502180154.GY4439@noisy.programming.kicks-ass.net>
+X-Received: by 2002:a05:6e02:250e:b0:3d8:211c:9891 with SMTP id
+ e9e14a558f8ab-3da5b23b7e2mr57455755ab.2.1746429392744; Mon, 05 May 2025
+ 00:16:32 -0700 (PDT)
+Date: Mon, 05 May 2025 00:16:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <681865d0.a70a0220.254cdc.0048.GAE@google.com>
+Subject: [syzbot] [i2c?] KMSAN: uninit-value in __i2c_smbus_xfer
+From: syzbot <syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com>
+To: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, wsa+renesas@sang-engineering.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-05-02 20:01:54 [+0200], Peter Zijlstra wrote:
-> On Wed, Apr 16, 2025 at 06:29:15PM +0200, Sebastian Andrzej Siewior wrote:
-> > My initial testing showed that
-> > 	perf bench futex hash
-> > 
-> > reported less operations/sec with private hash. After using the same
-> > amount of buckets in the private hash as used by the global hash then
-> > the operations/sec were about the same.
-> > 
-> > This changed once the private hash became resizable. This feature added
-> > a RCU section and reference counting via atomic inc+dec operation into
-> > the hot path.
-> > The reference counting can be avoided if the private hash is made
-> > immutable.
-> > Extend PR_FUTEX_HASH_SET_SLOTS by a fourth argument which denotes if the
-> > private should be made immutable. Once set (to true) the a further
-> > resize is not allowed (same if set to global hash).
-> > Add PR_FUTEX_HASH_GET_IMMUTABLE which returns true if the hash can not
-> > be changed.
-> > Update "perf bench" suite.
-> 
-> Does the below make sense? This changes arg4 into a flags field and uses
-> bit0 for immutable.
-> 
-> (the point where I got upset is where arg4==2 was accepted :-)
+Hello,
 
-I see, it makes sense. It makes sense and leaves room for later.
+syzbot found the following issue on:
 
-Sebastian
+HEAD commit:    02ddfb981de8 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1034139b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9dc42c34a3f5c357
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a36c1fec090c67a9885
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c9df74580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1550f1b3980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5ca57f5a3f77/disk-02ddfb98.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3f23cbc11e68/vmlinux-02ddfb98.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/73e63afac354/bzImage-02ddfb98.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in i2c_smbus_xfer_emulated drivers/i2c/i2c-core-smbus.c:481 [inline]
+BUG: KMSAN: uninit-value in __i2c_smbus_xfer+0x23e7/0x2f60 drivers/i2c/i2c-core-smbus.c:607
+ i2c_smbus_xfer_emulated drivers/i2c/i2c-core-smbus.c:481 [inline]
+ __i2c_smbus_xfer+0x23e7/0x2f60 drivers/i2c/i2c-core-smbus.c:607
+ i2c_smbus_xfer+0x31d/0x4d0 drivers/i2c/i2c-core-smbus.c:545
+ i2cdev_ioctl_smbus+0x4a1/0x660 drivers/i2c/i2c-dev.c:389
+ i2cdev_ioctl+0xa14/0xf40 drivers/i2c/i2c-dev.c:478
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0x239/0x400 fs/ioctl.c:892
+ __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:892
+ x64_sys_call+0x1ebe/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable page created at:
+ get_futex_key+0x6f/0x11d0 kernel/futex/core.c:227
+ futex_wake+0xfe/0x890 kernel/futex/waitwake.c:166
+
+CPU: 1 UID: 0 PID: 5795 Comm: syz-executor470 Not tainted 6.15.0-rc3-syzkaller-00094-g02ddfb981de8 #0 PREEMPT(undef) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
