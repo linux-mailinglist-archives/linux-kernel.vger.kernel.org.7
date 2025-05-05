@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-633394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DECAAA622
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162C4AAA623
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0C287B364B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D42489826CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5139331B98A;
-	Mon,  5 May 2025 22:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786AA27B4E6;
+	Mon,  5 May 2025 22:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1zDILF7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGMhYW1K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A527628DF14;
-	Mon,  5 May 2025 22:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9D931CA5B;
+	Mon,  5 May 2025 22:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484292; cv=none; b=ahhB4gOOCV9ZObrmeI4CQxOFALCt+IVoC7NWl1qQroxqAxCUNdNVGJt1mTMxMT7dfty9xZ7SssbJTDAuj5k87G4ieZn9f19DDW3gcOftWH8OSVoC2bv6QaDHCiQvLi8X8UwnzTTwCRoo8Q3UXXSrobmwhV3zeKeib4BM/A0EBhY=
+	t=1746484309; cv=none; b=HXkGurREFFYKr7ldCPaj5Uv+e0h0yO/qvRYjyIX38FpnP6a0OG4GgrRtZZeG9z33zMYH5schJh8DBVYZh+pae7ynAbxOLiWx0Rsvx4m77ffgqxSGV1M0Ew9ULbnPpkswGSceLHrPUPESISGvEph14526cBsxjeMDfGoaVvT2viA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484292; c=relaxed/simple;
-	bh=17sWMnJK8wQ0ABgcK00WwNpqi6OGNfq9XbBRBCz2d0Q=;
+	s=arc-20240116; t=1746484309; c=relaxed/simple;
+	bh=VkWLr//HkI/AkQaCSeR2UXfL1WITTPvtJv/ZrAIgCvY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g8qde5nBbzVeQBcDnKLAat9H9QOSV4lc/kPjRWfv3oViV8hTUGOdjPYbeT4RPfN4vF+fQHSZibtcHJ+SsrBEmLbHN6FO9+bqXHfNWxkN6OO7Udqwk0uSl2e0R/Mq2RQPbHcVOzILC2rV7OlW5MBTcnVNZ2BVpwdJJSvrXfcc3EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1zDILF7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09725C4CEED;
-	Mon,  5 May 2025 22:31:29 +0000 (UTC)
+	 MIME-Version; b=YquDrGrco/zKtd4v2Ym4oR0YQwF5GmkC3Tqeu+4tr4WNuWiR3kcMW/+fr6HkD2su1x6I7uZrCtHxLOr3nuLC0Ohfj01yQJq52fELaTpk20p99W2pNpwQUdJjGcz6XOmgk/MShx5QbyKp2h3cIONEk1mnYhYFVVqzObn9HCcgrGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGMhYW1K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 650F2C4CEEE;
+	Mon,  5 May 2025 22:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484291;
-	bh=17sWMnJK8wQ0ABgcK00WwNpqi6OGNfq9XbBRBCz2d0Q=;
+	s=k20201202; t=1746484309;
+	bh=VkWLr//HkI/AkQaCSeR2UXfL1WITTPvtJv/ZrAIgCvY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=L1zDILF77Yh30+B3LyqDzBpVbtpzWSf43B9CX39pn73H6D1V7FDm7GLkTvuxHvMBV
-	 47VjdNhDM3MHxFuoFWvOb+ph7s90Z+Cqx4RT5dhR1/0rBak3FdhjMHmNQ3rO8HCbFB
-	 /7wiE636fEjbn+H3sI204WlJ1SsZ0GcqVNw5q4+ihau/DVS0bVd3bskVx3g97rI89o
-	 Hc0E8Z0g6nNrAZz65NZY77ybUU38piX0IBWXjGs2ZuU0yHDGzdhMiO0M2/kY9O7p25
-	 acsaaDaJGFT1f6uzrFAQ+St65TN2rINs8kBMyoFFi4VNws6AFJKV0Y+T3sZpT4NEC9
-	 6YC38SMXnvBzQ==
+	b=kGMhYW1KikABhI2JGsMDECZvuFue0OP8L1+dutAZwKz5/g12jPk+fOTnShyGMTlU1
+	 JC5wR/YbVxwBGvZkKarGM3uvBviRe7Ik5jufMFqpb96W0smjJ8/FIOW+jmn9RMowmw
+	 3MZgQawZerfg1c5HQJFPelLQu8ffKHhX2lgoOJnX8NEh06q/fgE91DKm1DPMSMphLN
+	 aBYRSSSZdWpvaAZKBHRfZJSdA0x/rxTdSiwVJjrxU6Xq/qB6j8ZghSVsXvAVg8I5Xr
+	 BBpR8J44wvNLJ6oWCanfFWMD2wJ6NucVoIjNmDgvitEWXlZGJJp6VrXoFTmnCOq76L
+	 fwAidXQVQb3dw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Karl Chan <exxxxkc@getgoogleoff.me>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
+Cc: zihan zhou <15645113830zzh@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 438/642] clk: qcom: ipq5018: allow it to be bulid on arm32
-Date: Mon,  5 May 2025 18:10:54 -0400
-Message-Id: <20250505221419.2672473-438-sashal@kernel.org>
+	mingo@redhat.com,
+	juri.lelli@redhat.com
+Subject: [PATCH AUTOSEL 6.14 446/642] sched: Reduce the default slice to avoid tasks getting an extra tick
+Date: Mon,  5 May 2025 18:11:02 -0400
+Message-Id: <20250505221419.2672473-446-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -68,38 +66,78 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Karl Chan <exxxxkc@getgoogleoff.me>
+From: zihan zhou <15645113830zzh@gmail.com>
 
-[ Upstream commit 5d02941c83997b58e8fc15390290c7c6975acaff ]
+[ Upstream commit 2ae891b826958b60919ea21c727f77bcd6ffcc2c ]
 
-There are some ipq5018 based device's firmware only can able to boot
-arm32 but the clock driver dont allow it to be compiled on arm32.
-Therefore allow GCC for IPQ5018 to be selected when building ARM32
-kernel
+The old default value for slice is 0.75 msec * (1 + ilog(ncpus)) which
+means that we have a default slice of:
 
-Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Link: https://lore.kernel.org/r/20241007163414.32458-4-exxxxkc@getgoogleoff.me
-[bjorn: Updated commit message, per Dmitry's suggestion]
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+  0.75 for 1 cpu
+  1.50 up to 3 cpus
+  2.25 up to 7 cpus
+  3.00 for 8 cpus and above.
+
+For HZ=250 and HZ=100, because of the tick accuracy, the runtime of
+tasks is far higher than their slice.
+
+For HZ=1000 with 8 cpus or more, the accuracy of tick is already
+satisfactory, but there is still an issue that tasks will get an extra
+tick because the tick often arrives a little faster than expected. In
+this case, the task can only wait until the next tick to consider that it
+has reached its deadline, and will run 1ms longer.
+
+vruntime + sysctl_sched_base_slice =     deadline
+        |-----------|-----------|-----------|-----------|
+             1ms          1ms         1ms         1ms
+                   ^           ^           ^           ^
+                 tick1       tick2       tick3       tick4(nearly 4ms)
+
+There are two reasons for tick error: clockevent precision and the
+CONFIG_IRQ_TIME_ACCOUNTING/CONFIG_PARAVIRT_TIME_ACCOUNTING. with
+CONFIG_IRQ_TIME_ACCOUNTING every tick will be less than 1ms, but even
+without it, because of clockevent precision, tick still often less than
+1ms.
+
+In order to make scheduling more precise, we changed 0.75 to 0.70,
+Using 0.70 instead of 0.75 should not change much for other configs
+and would fix this issue:
+
+  0.70 for 1 cpu
+  1.40 up to 3 cpus
+  2.10 up to 7 cpus
+  2.8 for 8 cpus and above.
+
+This does not guarantee that tasks can run the slice time accurately
+every time, but occasionally running an extra tick has little impact.
+
+Signed-off-by: zihan zhou <15645113830zzh@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Link: https://lkml.kernel.org/r/20250208075322.13139-1-15645113830zzh@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 69bbf62ba3cd7..d470ed007854c 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -217,7 +217,7 @@ config IPQ_GCC_4019
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 3d9b68a347b76..eb11650160f7e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -74,10 +74,10 @@ unsigned int sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_LOG;
+ /*
+  * Minimal preemption granularity for CPU-bound tasks:
+  *
+- * (default: 0.75 msec * (1 + ilog(ncpus)), units: nanoseconds)
++ * (default: 0.70 msec * (1 + ilog(ncpus)), units: nanoseconds)
+  */
+-unsigned int sysctl_sched_base_slice			= 750000ULL;
+-static unsigned int normalized_sysctl_sched_base_slice	= 750000ULL;
++unsigned int sysctl_sched_base_slice			= 700000ULL;
++static unsigned int normalized_sysctl_sched_base_slice	= 700000ULL;
  
- config IPQ_GCC_5018
- 	tristate "IPQ5018 Global Clock Controller"
--	depends on ARM64 || COMPILE_TEST
-+	depends on ARM || ARM64 || COMPILE_TEST
- 	help
- 	  Support for global clock controller on ipq5018 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
+ const_debug unsigned int sysctl_sched_migration_cost	= 500000UL;
+ 
 -- 
 2.39.5
 
