@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-632800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EAEAA9C89
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E5CAA9C8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F27F3BBCA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:24:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BDE73BBF20
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C9B279334;
-	Mon,  5 May 2025 19:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BB22798FF;
+	Mon,  5 May 2025 19:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="W4/uDFiJ"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PohMGvrG"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A2927605F
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 19:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A727727603D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 19:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746472956; cv=none; b=m2c3DQgZaC2+r+PKdhyaOlknJ1dOuumrmghoK2/zTrAHzwz+XP3Y4GYEVqejupGTi19uH8pN9pEz4Baf2Q3GPt9NOtZSxEv8uA/FhduesHchUjzqOhvBh+s7rx5kw891ySo3bWBu0DVCgv0tURhGxFEOBRaVA5P2UV2MoZCTIw8=
+	t=1746472958; cv=none; b=YhzzPcLKRuD139hzxtgZ5rqSoyAnjtwObXBfyw+ZL/XQWHu1Qu94GYZVZhpBry7S9AWSy7Ay0538xfIxjmCb/Y1YOzgdKm9Ubczz4DNoiT6GPNbHfVOF2SOw+gsn0Qia7+tfjBdwF89gRXNr+VEov2cjZ8Ou2GuuScHhAmM5WQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746472956; c=relaxed/simple;
-	bh=dExF+ayNEtVJH0j4yAQnVXLvcbS57V3fP2s289ip5jg=;
+	s=arc-20240116; t=1746472958; c=relaxed/simple;
+	bh=beSl6Lb6HBMMUyISUZGe2OSeSgce2QqlsExDTDT+/zc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NqJ3MYg0NGoMNPJ7/vJNNQoIkPUnyD+76dBdl7/08gN+eAQqYX3PVIE5SmPi3+V+M2P04ahpls9/J8yEyT46IvNoMoCcckhgwd1Qs7aXfk/KfeWq3cOBgwMl88zd67j3+qHGut4BSQ7aTw/Ezwmhk+WFPUchi1rrp48Y+ndPwJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=W4/uDFiJ; arc=none smtp.client-ip=209.85.210.46
+	 In-Reply-To:To:Cc; b=BO+rEJymiem3PkUGuM0BKMV57kC06gqgvrOqHR4bCOQc8DkS+Ta7WgPm5qUnb/hpSgi/q13T4K6xAenttGUguPvff7ImJmoOEyXfFU1WIQGiwWoA0v9R25rqdIJ92fX/+nvPDFsJ+dcTT6OkIUUR0+FfZmUcgahxV0dOIFpSpX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PohMGvrG; arc=none smtp.client-ip=209.85.210.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72b82c8230aso1357025a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 12:22:34 -0700 (PDT)
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72c14235af3so3055224a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 12:22:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746472954; x=1747077754; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0tb73dxhhrjuAKHwLRnLQdFPUGNZOt/ge7FPEdJDPFQ=;
-        b=W4/uDFiJ9KEQcw760kDie9PIipusdFzZA8FplOJZGmwVxKzF9TsyjvIqYPmB97bjbS
-         MmA66aNuOuFfY+3M1ScSQru+hO4KoIa4vmkI3yKZBzhO8F9MCwaN6WA30rfD1E6XeqvL
-         H5yK4au1oxu0QrAUHrtetrKeeXUYy4hTLWasp/iYryLf1h/K9Cbm2nB1Ob5zs5cW71di
-         xb6/Rnm+HsnYFiYw6hvpsdbgHs1dAdYuZLKsGXFdq05LGuf5T19iSlCA9P74nJ9RExkb
-         feYbcWdOtnmSyLEB1t82hh8NdNtcs1H461KgrKuuFpgwtb5Tls0fqff3M0h3xI0VT4bv
-         yPhw==
+        bh=G1v/EBjnj9ijFfVtYS8b0uGz6pZOisv69OcNrPJAxR4=;
+        b=PohMGvrGYKsmah9ba9TDQfV3KqQad856s8DvRKkNar55DGPefj7ycX48mymAa/woq/
+         seOVKFVcX6hU94wLxlv2Bxq7gge5K+9IO2gtatlMuVvd8xiJ5q0TWuwd63HmF6Wmcazl
+         TbssbAch5nYqyUlrIG1rP2eI8rff5FesjQDbggCWPELZDP4HzjTm6yn4lLxlASHF4I82
+         HU2oomnfFQB13x+SIplkU2frTmTR8x3fWXt3LDYzKdE0/XD3XcHuaxrxY7FhV8P8DGEb
+         CaVdPRuC4Z7gqh/n65SABZCdJQ5UupKPyJkobMnXteIeYyidK5cqUcUZR6Rj7kXzjW1i
+         OwVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1746472954; x=1747077754;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0tb73dxhhrjuAKHwLRnLQdFPUGNZOt/ge7FPEdJDPFQ=;
-        b=hThwftLlzwC9uUwPTNg7oUbmIpprxOAENLmKYIIgceSqm84xLfCKtvJcg714/p4ida
-         0MyHgXhvhDuJovLwmTtvPsrpdVvuE5/AsgJxx7U+SWLY15GcOxVXxgco9BqmNeJeSX/P
-         UjMqXI2rPYNiEdyM8hsgD98fcrNZnXSL6v4Cs5kA/pPg09u0QAWSxoRpHoCQJvJQEwdA
-         4rEKnMGihSiXdwYEnZxw3xjfbuG8UhMj83HVvNzz1rDBQdG9PhAv/lfLERMMnXOj+bML
-         lBNiipv2DLPSF3y/TtSY09LoYFpMKgcnKFLX5FWvVou05474lUq2xYZEJY/S0Kojplo+
-         UMqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLmcVw25ijP1IRjJjrXdbxXcYX0DMYJ8Y0HfT2v7Zirm6TUtO+8oBwrQ8S/Rxh3s0cc24+xXqHjD0fHJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/m4na+W77v+kfSjU/cragShAi54ly/cIneJ+JfbMK1/Z9PUni
-	LVlVTYYSdVHEmfCpx7hM+uJdt84KvuKdX/9NlhM45OzDRFligj0mCBheqCpNDKU=
-X-Gm-Gg: ASbGnct7dzb2cPqwsSrZJs0qv5wjbHkMQa28mTIyQO+coX2s2xJ2mIT6mtkvAOlVOpP
-	UeVGTzWVctDV5eaHzPORqL3kqkXZvf+ngfe5iaZZ6S0MY6BsvfrpFoAZ6/h+50+nmQB/49GbggS
-	T6YbrC4I7/KOY6JKMABgaGqLwpS5kN2KORI21nu3W8UVp3o3OT8KinQeVx93O9xjcck3wlEqPwL
-	ATe65BXuHUpqd19xUuEoW2/MRuBAwgDWCEikoAIcLBsqbfI7SWmgbrIjBtwIIfGQQ4dnqkt3xmr
-	I9C8Z0hyvDvaoV7a1JimKcdC7X1/sQwtUxZ+kSIGKkKIm2YJcMCNMPb0
-X-Google-Smtp-Source: AGHT+IGtdUPklg3OZMlF4SLcFIpsPetzfRMpGEQ79YKIhwP8b7IkvXGViODJ2c/wuGOwl/orhw3uRg==
-X-Received: by 2002:a9d:4f0e:0:b0:72b:9a2e:7828 with SMTP id 46e09a7af769-73206ea3f04mr75461a34.28.1746472953859;
-        Mon, 05 May 2025 12:22:33 -0700 (PDT)
+        bh=G1v/EBjnj9ijFfVtYS8b0uGz6pZOisv69OcNrPJAxR4=;
+        b=T18PPzF5bqIIg/HdHOCk0pxORLAKPB8XR4GnwA40VGP4b59uHTlHTpUvjYkkCCLwh6
+         r097HWmDwTXVMx3OZLSeT0qNvFVYiac+YjYcwSAzPAY7m5WM/Cvft1awxgpZ1zaRARcW
+         EB8aDU1hgEhg1oJggCW/WwrN7KhTzSJ80svmV/MigSHUtpO3T0sXaSrfLSq1Jv/dgQ7/
+         VR/e4fLujcgdBNiUZeDbXBiAQ66l3ouJJz9K9OCC2T+WN/KRWvjHl1t2g04YEFgeGRzO
+         u+84zsCnZOeyYZs6FAwkZxnHxFVsXbA8TnlP5Yn2g+Jg1ZPzOIx/TJCkwQyZJZZdY/Ux
+         3Vyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUy7jkSUM7sVjhWPcsVTjul+wkVrKGEoQI8HziPusAi+cBwlXCcvUS4Yl794QVTa2CDjOuNTScTfxmYz7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUG4xlVZvqQlUDHO9KMXLDTyo1IPZ2JgHMAMpEQXwZzY2ri2GB
+	I1Z7s1hZgi2CVpU0bv4EoGEeAVU0bZ4ub4PF6ISgrnihrYdZcD24OBieVk254rU=
+X-Gm-Gg: ASbGncvfPtl8rTP8k2Ei+AGg8zZNU1Goq835u3e1W6uLUvLOMfFH8YaQMca4WkOuQx6
+	2vMmEa31YHwzMITExGfZYQuAFF12iZC92hKnZSiX7vDyPTF2gUB8mlJgjOu8Gc9oJ2b5yGuYLfr
+	IRUk7HuIp42Hlf3mOembrK1VwNaxEZZtMW3GGxLpoKTp4+KXU/naUASeG0FtVdZTUdpG/yrL2nN
+	QPv+JZ+X0MXecoVUNwjLli2MEwXe3H8fDBZR6GmGRRMyoR+ESrpbuqfnNRiAwEVosiFXG6EIDpy
+	MIBiWXrY2JUT8SH8qk8CMuKc4VJuH9ZtyiZxjMOrSuAptQ==
+X-Google-Smtp-Source: AGHT+IF8BtXpAP3w3vi9UxwhBLK/EiwG9hZtBJdYuVcyjrCXI/OE4QI5cd5gqCa4uWVXZrslTsf25Q==
+X-Received: by 2002:a05:6830:6313:b0:72b:a009:db44 with SMTP id 46e09a7af769-7320620b70emr397582a34.1.1746472954683;
+        Mon, 05 May 2025 12:22:34 -0700 (PDT)
 Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:2151:6806:9b7:545d])
         by smtp.gmail.com with ESMTPSA id 46e09a7af769-731d34daaedsm1683415a34.51.2025.05.05.12.22.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 12:22:33 -0700 (PDT)
+        Mon, 05 May 2025 12:22:34 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 05 May 2025 14:20:37 -0500
-Subject: [PATCH 10/14] iio: magnetometer: hmc5843_spi: remove bits_per_word
+Date: Mon, 05 May 2025 14:20:38 -0500
+Subject: [PATCH 11/14] iio: magnetometer: rm3100-spi: remove bits_per_word
  = 8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250505-iio-remove-bits_per_word-8-v1-10-341f85fcfe11@baylibre.com>
+Message-Id: <20250505-iio-remove-bits_per_word-8-v1-11-341f85fcfe11@baylibre.com>
 References: <20250505-iio-remove-bits_per_word-8-v1-0-341f85fcfe11@baylibre.com>
 In-Reply-To: <20250505-iio-remove-bits_per_word-8-v1-0-341f85fcfe11@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -95,35 +95,35 @@ To: Lars-Peter Clausen <lars@metafoo.de>,
 Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  David Lechner <dlechner@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=805; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=dExF+ayNEtVJH0j4yAQnVXLvcbS57V3fP2s289ip5jg=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoGQ/LzTzhVlE7HPKpOaXoAEtppmqs+HpC2pqHV
- xVu+iwsYnCJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaBkPywAKCRDCzCAB/wGP
- wMsFB/464qkYwEJafJ6lnV9M2qWu8IWhPyGFaUXtUgAqPWGt8qpT3UR+RhLkHZcPxXGSHYRmriR
- cKEIGAbP6wm1D4BSI3uD+maUWRN3ovg8YlzDs0amCaa106wUyuqWd1/yEIsc7fWJjPZc6h4/4Yb
- Td03PWQQzkjF/LfAgABT2u9Uy8tfL3BmWK8GH11VJPp+CFIMDibT29yHNt0P7qLA0DWk6mJIXLy
- EYnvcioqrnTA/c7MKEp22/jb2mtOfh//aGAG/X+HhmhrVyzIwwW0bRNrL/98v166DxYKwtUcY3i
- 7Us2wPl7H4rdtGjwcYbCpbMwY5XWs00DoVRj87Aww4IC9kBS
+X-Developer-Signature: v=1; a=openpgp-sha256; l=833; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=beSl6Lb6HBMMUyISUZGe2OSeSgce2QqlsExDTDT+/zc=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoGQ/TLHKxnFnTXhNK/eFLB1wz9ye9NBwQAomyQ
+ gH+wPmkAvaJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaBkP0wAKCRDCzCAB/wGP
+ wNDqB/92ucQCqYBTLJiF0WcBF47q9agkoyjlYFEwkKSjZiMrIrGuwyHpI3/MwQsQi0nBw+1+c/w
+ TuF2wfM2p3oO0bx7rHx4Bd1PgCZ5bWx52Ohy2ox4CGUHzK5KubiiCS9UXFbppeViGQ/+kuhnoYn
+ 90gY6jdVLl10UyCF0rgZ7KW0ujyfBOMzcO8eeobJOX/IMywPODI0EV1L0d0AP+X1DL+c3TMv9Js
+ c9ozKR/3JCP1FWEpnVBYqrUDmvA+YaEnIJAwpshbrVKnEU5IMuRCu3perf/hF9qPAFmanvVuH6P
+ lCC3m3CgQLaA05tx9Y93oySixbtKr0soaKaLU5lbqAB9gTy5
 X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
  fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Remove setting bits_per_word = 8 from the hmc5843 driver. This is the
+Remove setting bits_per_word = 8 from the rm3100 driver. This is the
 default value for SPI transfers, so it is not necessary to explicitly
 set it.
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/iio/magnetometer/hmc5843_spi.c | 1 -
+ drivers/iio/magnetometer/rm3100-spi.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/iio/magnetometer/hmc5843_spi.c b/drivers/iio/magnetometer/hmc5843_spi.c
-index b7fde331069d6a3d2f5cd2ecd636318d1e276222..6a55c1559b0d8c0c73b4360a9517707651df49b3 100644
---- a/drivers/iio/magnetometer/hmc5843_spi.c
-+++ b/drivers/iio/magnetometer/hmc5843_spi.c
-@@ -60,7 +60,6 @@ static int hmc5843_spi_probe(struct spi_device *spi)
- 
- 	spi->mode = SPI_MODE_3;
- 	spi->max_speed_hz = 8000000;
+diff --git a/drivers/iio/magnetometer/rm3100-spi.c b/drivers/iio/magnetometer/rm3100-spi.c
+index dd6d48043740c12a45f1d10aa26c732128c7db27..2f60a41c07f7dfdc5e4a083f51b244f677547af8 100644
+--- a/drivers/iio/magnetometer/rm3100-spi.c
++++ b/drivers/iio/magnetometer/rm3100-spi.c
+@@ -32,7 +32,6 @@ static int rm3100_probe(struct spi_device *spi)
+ 	spi->mode = SPI_MODE_0;
+ 	/* Data rates cannot exceed 1Mbits. */
+ 	spi->max_speed_hz = 1000000;
 -	spi->bits_per_word = 8;
  	ret = spi_setup(spi);
  	if (ret)
