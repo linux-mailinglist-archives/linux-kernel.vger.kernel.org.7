@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-634039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8AC5AAABCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:02:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C628AAABDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81E6188B725
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA2818989D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7B2F9275;
-	Mon,  5 May 2025 23:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA113B63D7;
+	Mon,  5 May 2025 23:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMd2u3BK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHJ0NrYN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8DC2EC89C;
-	Mon,  5 May 2025 23:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06C62ECFCF;
+	Mon,  5 May 2025 23:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486481; cv=none; b=AHXG+pRDt1t/UYFO+6iU6RKM0sx9BH3bd5SEuiHg7+YJHUpwiHZrdM53YZgGD9QNHCBeHS/Stc6zcuaRqcwZG0MUa+YqqE0FucY7EkZXZw3EIZm5SqZZmUzGa3+jLBUv/9bVbfKlVsQLpzI/dc6Avf7skM30KMmJaNfEQwfmHYA=
+	t=1746486491; cv=none; b=DaiRvkJs20tdIzWHCqT7/9kl9LdawjMWri0/oXd2Mv6Myxe8nk8icxCOOi82tsT0pOYtBkl/+cPDjm9KGx3TCF16oDimXysYA+YTH+Of9GaDhYm+wWnoa/u54QZJuXraMpNrh1U0XIGLPmOe0QR5j1e0cy9fWJ+XSZ7ZYmPtllA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486481; c=relaxed/simple;
-	bh=q2xlTv9TazkGl3HriXn1u3jGstcVXh45YwIFsfYlfJI=;
+	s=arc-20240116; t=1746486491; c=relaxed/simple;
+	bh=gYgC3uqARkx9Ycx1hG7wwHOFQuipsFmYjvt9NBeP2og=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FGC4wAmSvLVYgaao9aPI7Mh/Tq9Pl3+wM+W2MMZQOYilpmtOjlW1IPOljadYhxmLsEIYB2bhZtJhvwpueNSRu9/JhIW0tN9Ik4hxGfWFO1yDLnHCpB2vSMH2TGAQyD5ED337M0Kt1X8kvdDRP1DyUgcXbedr6iUzupkfk11Sgas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMd2u3BK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98551C4CEEE;
-	Mon,  5 May 2025 23:07:58 +0000 (UTC)
+	 MIME-Version; b=u2oFz3oHs7dxhiIx1EGDvXXQIQb8NnqwKKDe8mVLMQ4AvJTxtM/7YGEfb3t2s6yahuT9sZPo9/oC91pdMTiS1xAZiFfZfz05u5CaoL3m/MAZ5hBPnabnFlMwdt3Ncgk2wlr8GAWPfRv4AwRsE9/+7wOPIFm9zlcrIDMX8OaFeBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHJ0NrYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7A0C4CEED;
+	Mon,  5 May 2025 23:08:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486479;
-	bh=q2xlTv9TazkGl3HriXn1u3jGstcVXh45YwIFsfYlfJI=;
+	s=k20201202; t=1746486489;
+	bh=gYgC3uqARkx9Ycx1hG7wwHOFQuipsFmYjvt9NBeP2og=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LMd2u3BKaQ1hWA8Kw+yLrGyjxp7BpowZe91wxjSjvjmiz9OGBhdcTZOmLOfBex94n
-	 rXW76FofNR71ybknEUb/hWjGajDM2Su63r8V0xK1ZzvJEpqSQK1JrVlM8JSRM7cvte
-	 lzgv8aIn7NZXdlkTPJ15uiDhfJuURBxGnO/x7owurT2Mf5BdguTzJ6mEPb+nOP4+rF
-	 91Qi22ZyMe0s2KgRg/bqZdESHrXzNjbquN1MsBvxTYxej4B8jtPuliICt1uFUsX3fK
-	 +tmcPlnA9l/nKqB2ZMKAHFy0Tm/hOjUnvPheWwok5djgixpNjWrQ/TlzYpeK4du9AK
-	 QgPhcTU+7ccTQ==
+	b=hHJ0NrYNi0+e2TsMjZRSI/VaYLxP/k7VxV6BltnnegHFgiMMM2gq5FwR7dC27sKwI
+	 xnCIfsQ1zAw0FlxE/R3qqzthGqdmTGl1HAKEg0IistKbVdQO7yfLPXqcxUNH3da+qa
+	 vkryKIuq5RM0Paa2KXPKj6sdQVNKWElbf4wwmNCC78YtC7GztBax0QabuSzYV80Hx9
+	 ZbeRXW5+2MljD4aVTdRUha4S59I5y/VJEaxTdBGiYNt5Py8S7LWjHB/Ud3gOgeEjxD
+	 gX5+I2LDqgNOQj5C60TvGaFLKUkeEcccvLNV2qfPQpFqxMne8Uof2K2VA1V7o9UuQq
+	 9kVJ/rq2Hp0ZA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ij@kernel.org>,
-	Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>,
-	"David S . Miller" <davem@davemloft.net>,
+Cc: Mikulas Patocka <mpatocka@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	edumazet@google.com,
-	ncardwell@google.com,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 051/212] tcp: reorganize tcp_in_ack_event() and tcp_count_delivered()
-Date: Mon,  5 May 2025 19:03:43 -0400
-Message-Id: <20250505230624.2692522-51-sashal@kernel.org>
+	agk@redhat.com,
+	snitzer@kernel.org,
+	dm-devel@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.1 057/212] dm: restrict dm device size to 2^63-512 bytes
+Date: Mon,  5 May 2025 19:03:49 -0400
+Message-Id: <20250505230624.2692522-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -65,156 +60,42 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Ilpo Järvinen <ij@kernel.org>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit 149dfb31615e22271d2525f078c95ea49bc4db24 ]
+[ Upstream commit 45fc728515c14f53f6205789de5bfd72a95af3b8 ]
 
-- Move tcp_count_delivered() earlier and split tcp_count_delivered_ce()
-  out of it
-- Move tcp_in_ack_event() later
-- While at it, remove the inline from tcp_in_ack_event() and let
-  the compiler to decide
+The devices with size >= 2^63 bytes can't be used reliably by userspace
+because the type off_t is a signed 64-bit integer.
 
-Accurate ECN's heuristics does not know if there is going
-to be ACE field based CE counter increase or not until after
-rtx queue has been processed. Only then the number of ACKed
-bytes/pkts is available. As CE or not affects presence of
-FLAG_ECE, that information for tcp_in_ack_event is not yet
-available in the old location of the call to tcp_in_ack_event().
+Therefore, we limit the maximum size of a device mapper device to
+2^63-512 bytes.
 
-Signed-off-by: Ilpo Järvinen <ij@kernel.org>
-Signed-off-by: Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/tcp_input.c | 56 +++++++++++++++++++++++++-------------------
- 1 file changed, 32 insertions(+), 24 deletions(-)
+ drivers/md/dm-table.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 3b81f6df829ff..db1a99df29d55 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -404,6 +404,20 @@ static bool tcp_ecn_rcv_ecn_echo(const struct tcp_sock *tp, const struct tcphdr
- 	return false;
- }
- 
-+static void tcp_count_delivered_ce(struct tcp_sock *tp, u32 ecn_count)
-+{
-+	tp->delivered_ce += ecn_count;
-+}
-+
-+/* Updates the delivered and delivered_ce counts */
-+static void tcp_count_delivered(struct tcp_sock *tp, u32 delivered,
-+				bool ece_ack)
-+{
-+	tp->delivered += delivered;
-+	if (ece_ack)
-+		tcp_count_delivered_ce(tp, delivered);
-+}
-+
- /* Buffer size and advertised window tuning.
-  *
-  * 1. Tuning sk->sk_sndbuf, when connection enters established state.
-@@ -1119,15 +1133,6 @@ void tcp_mark_skb_lost(struct sock *sk, struct sk_buff *skb)
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index aabb2435070b8..9e3f8c737c487 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -670,6 +670,10 @@ int dm_table_add_target(struct dm_table *t, const char *type,
+ 		DMERR("%s: zero-length target", dm_device_name(t->md));
+ 		return -EINVAL;
  	}
- }
- 
--/* Updates the delivered and delivered_ce counts */
--static void tcp_count_delivered(struct tcp_sock *tp, u32 delivered,
--				bool ece_ack)
--{
--	tp->delivered += delivered;
--	if (ece_ack)
--		tp->delivered_ce += delivered;
--}
--
- /* This procedure tags the retransmission queue when SACKs arrive.
-  *
-  * We have three tag bits: SACKED(S), RETRANS(R) and LOST(L).
-@@ -3783,12 +3788,23 @@ static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
- 	}
- }
- 
--static inline void tcp_in_ack_event(struct sock *sk, u32 flags)
-+static void tcp_in_ack_event(struct sock *sk, int flag)
- {
- 	const struct inet_connection_sock *icsk = inet_csk(sk);
- 
--	if (icsk->icsk_ca_ops->in_ack_event)
--		icsk->icsk_ca_ops->in_ack_event(sk, flags);
-+	if (icsk->icsk_ca_ops->in_ack_event) {
-+		u32 ack_ev_flags = 0;
-+
-+		if (flag & FLAG_WIN_UPDATE)
-+			ack_ev_flags |= CA_ACK_WIN_UPDATE;
-+		if (flag & FLAG_SLOWPATH) {
-+			ack_ev_flags |= CA_ACK_SLOWPATH;
-+			if (flag & FLAG_ECE)
-+				ack_ev_flags |= CA_ACK_ECE;
-+		}
-+
-+		icsk->icsk_ca_ops->in_ack_event(sk, ack_ev_flags);
++	if (start + len < start || start + len > LLONG_MAX >> SECTOR_SHIFT) {
++		DMERR("%s: too large device", dm_device_name(t->md));
++		return -EINVAL;
 +	}
- }
  
- /* Congestion control has updated the cwnd already. So if we're in
-@@ -3905,12 +3921,8 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
- 		tcp_snd_una_update(tp, ack);
- 		flag |= FLAG_WIN_UPDATE;
- 
--		tcp_in_ack_event(sk, CA_ACK_WIN_UPDATE);
--
- 		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPHPACKS);
- 	} else {
--		u32 ack_ev_flags = CA_ACK_SLOWPATH;
--
- 		if (ack_seq != TCP_SKB_CB(skb)->end_seq)
- 			flag |= FLAG_DATA;
- 		else
-@@ -3922,19 +3934,12 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
- 			flag |= tcp_sacktag_write_queue(sk, skb, prior_snd_una,
- 							&sack_state);
- 
--		if (tcp_ecn_rcv_ecn_echo(tp, tcp_hdr(skb))) {
-+		if (tcp_ecn_rcv_ecn_echo(tp, tcp_hdr(skb)))
- 			flag |= FLAG_ECE;
--			ack_ev_flags |= CA_ACK_ECE;
--		}
- 
- 		if (sack_state.sack_delivered)
- 			tcp_count_delivered(tp, sack_state.sack_delivered,
- 					    flag & FLAG_ECE);
--
--		if (flag & FLAG_WIN_UPDATE)
--			ack_ev_flags |= CA_ACK_WIN_UPDATE;
--
--		tcp_in_ack_event(sk, ack_ev_flags);
- 	}
- 
- 	/* This is a deviation from RFC3168 since it states that:
-@@ -3961,6 +3966,8 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
- 
- 	tcp_rack_update_reo_wnd(sk, &rs);
- 
-+	tcp_in_ack_event(sk, flag);
-+
- 	if (tp->tlp_high_seq)
- 		tcp_process_tlp_ack(sk, ack, flag);
- 
-@@ -3992,6 +3999,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
- 	return 1;
- 
- no_queue:
-+	tcp_in_ack_event(sk, flag);
- 	/* If data was DSACKed, see if we can undo a cwnd reduction. */
- 	if (flag & FLAG_DSACKING_ACK) {
- 		tcp_fastretrans_alert(sk, prior_snd_una, num_dupack, &flag,
+ 	ti->type = dm_get_target_type(type);
+ 	if (!ti->type) {
 -- 
 2.39.5
 
