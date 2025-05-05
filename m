@@ -1,56 +1,61 @@
-Return-Path: <linux-kernel+bounces-633687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DC5AAA92C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:09:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3FFAAA91D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B66D2188C6C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01FB14A5547
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669C1359E0F;
-	Mon,  5 May 2025 22:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F011329A3D3;
+	Mon,  5 May 2025 22:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHPzZqd8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSE+zTCj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A443589F6;
-	Mon,  5 May 2025 22:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E03F35903A;
+	Mon,  5 May 2025 22:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484941; cv=none; b=uq1mr6Qcbzf2Xp8p++VmOYJzVtjJc4ffjJpAlTNtJYnb9VClvlOBLdvJqNCOtbOfoGKuaS35nSXSGlyHgzCkf4j2xkqdDsovBQVMncLtrI1JV23qxWDNaPmBYkK6LxX9h0/ckFNQFQrg1bmayO63amu4PQNVmRLV0MFXWhAJfCc=
+	t=1746484943; cv=none; b=bEzD+87fQjIuRbDnFAsX0j4Dvu7X60jYtTO6poCk8Eopfmcyl+r06mxB8jvn+Mg8pVcsmW6VH3PsF4BiToNRZVBPVMFC2JIIpnR0kFIZWgOcqh+XTMk+X/ctqLm8Qv3JIYnOz2CcaiI59CI8sQCKfMdFrgYowTMQgNqr2622WS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484941; c=relaxed/simple;
-	bh=wXNdFLzonYINIu4i6qQfk8fufoFk6RwZOIDwJfLI4DA=;
+	s=arc-20240116; t=1746484943; c=relaxed/simple;
+	bh=NWrCB9QKWE9LHJw3TZ6TiMGktRwEOC/Vp74f1sAzblg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=O4LX0s7t858pxIAisjbfFBrdfId0AOMtmWl9jOTIPr7IaNhvJbu227eqUZQnKf/jnnMsc/duUaYm/Ne/+f9TW9y3fI/WLOo+OhdUhnJEp+x/PnzjmRu0j5d+NRQQsFwiExKIv5J3q9QkBmZHcYoeQBwdVMwUBHQNq9NFZBe8j7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHPzZqd8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760DDC4CEE4;
-	Mon,  5 May 2025 22:42:20 +0000 (UTC)
+	 MIME-Version; b=l1/ek/P7ZZyWs5eBaxX5FTRg4rPJfH63/xjxkhzAQj8xNGJD4a7ZrPWuVb0OLzLcSvhnMGMwlTvVSOl4TyFu4GON6JnOjhISoZ3/VTJmXOqJrfqKjxt1LvyG2GURSZIDJxXZ+JVnxSsEgBRUNsk8nYVfUjkP1Q29CNW7iJBKAAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSE+zTCj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69BCC4CEEE;
+	Mon,  5 May 2025 22:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484941;
-	bh=wXNdFLzonYINIu4i6qQfk8fufoFk6RwZOIDwJfLI4DA=;
+	s=k20201202; t=1746484942;
+	bh=NWrCB9QKWE9LHJw3TZ6TiMGktRwEOC/Vp74f1sAzblg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jHPzZqd80A44wJQoSZCv7ta7TxPE1xpDSNKw+TCGJhG2+080g7OmDdiAiaFdiGJtq
-	 0a0ky0j/kvo8sc4LAGDr+bB3E8PmKOWIvsTATWthdCppwXiHt+iMabaMWIAqL6Kmw4
-	 xNtaiG+me7NZmd09GTH1kkRaPUv8k5C0dHQ4QUNf3ENHzlIty+WTrhSJRSR+OJdnRR
-	 0NH2t3TaxkV8+PGA8aU+KEyVd9WC/C9qKJFJlA6rpwgYG0BIHtIcy0bATFsD7xoaJp
-	 z1Fvkxr4JrgCfUQHHZdmJ9cGhxXi8i62ijQdYyZY4u+b4Q2tNNGzG9AsqXX5JsRv+n
-	 u4B+wUlOpCzYg==
+	b=pSE+zTCjLJlGfk8mItOdo+seOCE5rZTTvX/I6wR9XZQzOjOfIu12FVeJhyqeb3Nm1
+	 rIg+ePm9hK2EScULUM18mnrgCkC2X2IYbK50U9YKMgG6ElxTQhNieYQ4KG81Am4geO
+	 yel+AXewG28Dk/3vWWYxnALPe2aj4h3YRe5i+DRpSK2O8jr1insaNbC1eXG+5Ooupj
+	 YsS5z0M7YZ27QGzZxVZWc1r8wFksvzzhg1VJ69nL9qHStTjYfvCSZoLf1OiiYYlPc3
+	 83xqtuyY/E9qbFRheIRWsaURDk4iJSSwWXBb9YYD3xqkpc18fD6BJHXK1jqPhdX4Yx
+	 zVr7fp1EEK9dA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Heming Zhao <heming.zhao@suse.com>,
-	David Teigland <teigland@redhat.com>,
+Cc: Nick Hu <nick.hu@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
 	Sasha Levin <sashal@kernel.org>,
-	aahringo@redhat.com,
-	gfs2@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.12 087/486] dlm: make tcp still work in multi-link env
-Date: Mon,  5 May 2025 18:32:43 -0400
-Message-Id: <20250505223922.2682012-87-sashal@kernel.org>
+	tglx@linutronix.de,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.12 088/486] clocksource/drivers/timer-riscv: Stop stimecmp when cpu hotplug
+Date: Mon,  5 May 2025 18:32:44 -0400
+Message-Id: <20250505223922.2682012-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -65,35 +70,43 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Heming Zhao <heming.zhao@suse.com>
+From: Nick Hu <nick.hu@sifive.com>
 
-[ Upstream commit 03d2b62208a336a3bb984b9465ef6d89a046ea22 ]
+[ Upstream commit 70c93b026ed07078e933583591aa9ca6701cd9da ]
 
-This patch bypasses multi-link errors in TCP mode, allowing dlm
-to operate on the first tcp link.
+Stop the timer when the cpu is going to be offline otherwise the
+timer interrupt may be pending while performing power-down.
 
-Signed-off-by: Heming Zhao <heming.zhao@suse.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Suggested-by: Anup Patel <anup@brainfault.org>
+Link: https://lore.kernel.org/lkml/20240829033904.477200-3-nick.hu@sifive.com/T/#u
+Signed-off-by: Nick Hu <nick.hu@sifive.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20250219114135.27764-3-nick.hu@sifive.com
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/lowcomms.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-riscv.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-index f2d88a3581695..10461451185e8 100644
---- a/fs/dlm/lowcomms.c
-+++ b/fs/dlm/lowcomms.c
-@@ -1826,8 +1826,8 @@ static int dlm_tcp_listen_validate(void)
- {
- 	/* We don't support multi-homed hosts */
- 	if (dlm_local_count > 1) {
--		log_print("TCP protocol can't handle multi-homed hosts, try SCTP");
--		return -EINVAL;
-+		log_print("Detect multi-homed hosts but use only the first IP address.");
-+		log_print("Try SCTP, if you want to enable multi-link.");
- 	}
+diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+index 48ce50c5f5e68..4d7cf338824a3 100644
+--- a/drivers/clocksource/timer-riscv.c
++++ b/drivers/clocksource/timer-riscv.c
+@@ -126,7 +126,13 @@ static int riscv_timer_starting_cpu(unsigned int cpu)
  
+ static int riscv_timer_dying_cpu(unsigned int cpu)
+ {
++	/*
++	 * Stop the timer when the cpu is going to be offline otherwise
++	 * the timer interrupt may be pending while performing power-down.
++	 */
++	riscv_clock_event_stop();
+ 	disable_percpu_irq(riscv_clock_event_irq);
++
  	return 0;
+ }
+ 
 -- 
 2.39.5
 
