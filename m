@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-632026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C99AA91A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:11:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E251AAA91A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F97176469
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:11:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDD31896C18
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE90205502;
-	Mon,  5 May 2025 11:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310A9212B3E;
+	Mon,  5 May 2025 11:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArhgLvfi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nf92LAKq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8661D20469E
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 11:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782E821171C
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 11:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746443424; cv=none; b=M4/uj92+kNQ6AsjdqlstfPGzPB/PBgp37FGowleA79/gn2032iusTwRaT+ciCrIqjln/6rHXxKxGr65Nw8v4rhYHRBNDR+vFF6kUoXl5+9Z43gGPBidYYg7l+f67YI8zDfmpqSAP1Lq3sWCv8fjUVODbsJsQJ7sAEnF3x4BX6lI=
+	t=1746443427; cv=none; b=BYI4fNg9t3jjzdpSQNcvWJdG16TKcIOzWYINtCoLLRgN8aQLDd2nnoyomsimHUM2TwoVKwTcswFZrP+se2RKTm8OpDpjAKguKag+lAFlUyxj79YQ2rJQQx+ulcJxXPvbkjwsLPYORF1UFzXAVsPrQkuX/f4mNl5QBKXeJS4YKio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746443424; c=relaxed/simple;
-	bh=uLf8hrlGrsElWYp3/h7aQWzMdEp7sbji39NK31OjpzU=;
+	s=arc-20240116; t=1746443427; c=relaxed/simple;
+	bh=5vtxFt+FDAMG+JqSjXdeN35WJXJGmK1U4No98GdjhRw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QfyTn9qnNfi6ctr6eje9BaCEh5FmkykvhQBRiXZ8A+EgOXWN3KGAPrRsyxdCxPNiRhd39DC4IZSlamjnWzkWiuROcSA2EDv/Q/ORpuLm6RUSvu9oSSujU+1VwzxTuI5Ysn96/p0q14ynNYESzbzhE0txtftAF90RdSx6giahdTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArhgLvfi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D45BBC4CEE4;
-	Mon,  5 May 2025 11:10:20 +0000 (UTC)
+	 MIME-Version; b=eu1ezBVMrBeAyoSh8KOjFElHYwIqGiL5qr/jWBJTr1jeFLbSgsYh5aQsltUEXXXGxUU7hEfb/NzqaV9AgGp5NpqCkXPGWrnuTwLvRWrs857dyUmzpNPtPrLyanu9YTH6Gf23KKtRzpDJoSyFBAy4GQneaMLAlrXEG3qGW937lIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nf92LAKq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D712C4CEEF;
+	Mon,  5 May 2025 11:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746443424;
-	bh=uLf8hrlGrsElWYp3/h7aQWzMdEp7sbji39NK31OjpzU=;
+	s=k20201202; t=1746443427;
+	bh=5vtxFt+FDAMG+JqSjXdeN35WJXJGmK1U4No98GdjhRw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ArhgLvfivl89Mje5cUbdb4wQQ2B9llagBG2XN9SL95ThghJ/Lfa+1V2+i7GRqytWw
-	 RnxKpzqJrv6SZt6eZ9XMnIoawpxZg2mwZbp2p3I5mQSW9xlM94eH79pXncU+cwWcnL
-	 t2Pmy+GYhv30asUCbxiiQkM+N8uO5WUX6lTtasqEtNGMZz395+Z8+LPzB7mBq3LQD0
-	 IUW1GdTwRo5pvWY3VntZIBT+LQbd/z9Ja/kAmNSmrINRbi80r/tQ4p96XVGGCDolzu
-	 YK/crzfAoFVutNZEgKESiZsyuXPmtml6WQZaWPVXIpc/69/ISnBhWfZhN4ZiWyZRAo
-	 0YhR5THRKU0dg==
+	b=nf92LAKqTIV3bCKzPkfjX9f+PlO33a2wILVwiJ/sad8ws8znrVYey2XmpDW3szBGZ
+	 cckgU0q1V1FrCF9dAu0+O8D3PeYTRLQgk9NiQatwhJaGuCuSZ0efhJiuODvTc/xWG/
+	 wEb+QknCQybxYQW5sRJ/2LqtQFR+xZYZbRVFKMVc/pv1H3eWE6C0eqYBeDknpKfwA/
+	 tHIZNNGvZgdVOs1RaO5zgdP/0yA6wtReu5jbTs8V5BTOK0tPBouK6LoPgQVapF2Vgt
+	 5aPp3nXIhDD4y8qKVHKUlAJUxfb2ebey3dAuAtPCfLMIj+Oa1I/p22L3/Jb5ezgaRM
+	 ZJIJ/qpCxqi4Q==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: "H . Peter Anvin" <hpa@zytor.com>,
@@ -48,17 +48,16 @@ Cc: "H . Peter Anvin" <hpa@zytor.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	Ard Biesheuvel <ardb@kernel.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Michal Marek <michal.lkml@markovi.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH 10/15] x86/kconfig/64: Enable BPF support in the defconfig
-Date: Mon,  5 May 2025 13:09:41 +0200
-Message-ID: <20250505110946.1095363-11-mingo@kernel.org>
+	Rik van Riel <riel@surriel.com>
+Subject: [PATCH 11/15] x86/kconfig/64: Enable popular MM options in the defconfig
+Date: Mon,  5 May 2025 13:09:42 +0200
+Message-ID: <20250505110946.1095363-12-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250505110946.1095363-1-mingo@kernel.org>
 References: <20250505110946.1095363-1-mingo@kernel.org>
@@ -71,10 +70,17 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Since the x86 defconfig aims to be a distro kernel work-alike with
-fewer drivers and a shorter build time, enable BPF support, which
-is enabled in all major Linux distributions.
+fewer drivers and a shorter build time, enable the following
+MM options that are typically enabled on major Linux distributions:
+
+- ACPI_HOTPLUG_MEMORY, ZSWAP, SLAB hardening, MEMORY_HOTPLUG,
+  MEMORY_HOTREMOVE, PAGE_REPORTING, KSM, higher DEFAULT_MMAP_MIN_ADDR,
+  MEMORY_FAILURE, HWPOISON_INJECT, TRANSPARENT_HUGEPAGE,
+  TRANSPARENT_HUGEPAGE_MADVISE, IDLE_PAGE_TRACKING, ZONE_DEVICE
+  DEVICE_PRIVATE, ANON_VMA_NAME, USERFAULTFD, multi-gen LRU.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Ard Biesheuvel <ardb@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
@@ -82,38 +88,51 @@ Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
 ---
- arch/x86/configs/defconfig.x86_64 | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/configs/defconfig.x86_64 | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/arch/x86/configs/defconfig.x86_64 b/arch/x86/configs/defconfig.x86_64
-index 514f8fdc2102..9961742fe78c 100644
+index 9961742fe78c..4f2fab465196 100644
 --- a/arch/x86/configs/defconfig.x86_64
 +++ b/arch/x86/configs/defconfig.x86_64
-@@ -4,6 +4,12 @@ CONFIG_POSIX_MQUEUE=y
- CONFIG_AUDIT=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_BPF_SYSCALL=y
-+CONFIG_BPF_JIT=y
-+CONFIG_BPF_JIT_ALWAYS_ON=y
-+CONFIG_BPF_PRELOAD=y
-+CONFIG_BPF_PRELOAD_UMD=y
-+CONFIG_BPF_LSM=y
- CONFIG_PREEMPT_VOLUNTARY=y
- CONFIG_BSD_PROCESS_ACCT=y
- CONFIG_TASKSTATS=y
-@@ -22,6 +28,7 @@ CONFIG_CPUSETS=y
- CONFIG_CGROUP_DEVICE=y
- CONFIG_CGROUP_CPUACCT=y
- CONFIG_CGROUP_PERF=y
-+CONFIG_CGROUP_BPF=y
- CONFIG_CGROUP_MISC=y
- CONFIG_CGROUP_DEBUG=y
- CONFIG_BLK_DEV_INITRD=y
+@@ -58,6 +58,7 @@ CONFIG_HIBERNATION=y
+ CONFIG_PM_DEBUG=y
+ CONFIG_PM_TRACE_RTC=y
+ CONFIG_ACPI_DOCK=y
++CONFIG_ACPI_HOTPLUG_MEMORY=y
+ CONFIG_ACPI_BGRT=y
+ CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
+ CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+@@ -77,7 +78,26 @@ CONFIG_BLK_CGROUP_IOLATENCY=y
+ CONFIG_BLK_CGROUP_IOCOST=y
+ CONFIG_BLK_CGROUP_IOPRIO=y
+ CONFIG_BINFMT_MISC=y
++CONFIG_ZSWAP=y
++CONFIG_SLAB_FREELIST_RANDOM=y
++CONFIG_SLAB_FREELIST_HARDENED=y
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_MEMORY_HOTPLUG=y
++CONFIG_MEMORY_HOTREMOVE=y
++CONFIG_PAGE_REPORTING=y
++CONFIG_KSM=y
++CONFIG_DEFAULT_MMAP_MIN_ADDR=65536
++CONFIG_MEMORY_FAILURE=y
++CONFIG_HWPOISON_INJECT=y
++CONFIG_TRANSPARENT_HUGEPAGE=y
++CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y
++CONFIG_IDLE_PAGE_TRACKING=y
++CONFIG_ZONE_DEVICE=y
++CONFIG_DEVICE_PRIVATE=y
++CONFIG_ANON_VMA_NAME=y
++CONFIG_USERFAULTFD=y
++CONFIG_LRU_GEN=y
++CONFIG_LRU_GEN_ENABLED=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_XFRM_USER=y
 -- 
 2.45.2
 
