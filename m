@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-634376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9C7AAB102
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:51:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F464AAB12D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84053ACDCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:47:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D7E7A4286
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B45432A6F0;
-	Tue,  6 May 2025 00:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02D82BF987;
+	Tue,  6 May 2025 00:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFX23x09"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7PEjqW8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BD32BF3D0;
-	Mon,  5 May 2025 22:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB27A2BF3F2;
+	Mon,  5 May 2025 22:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485307; cv=none; b=UzAVkzwbRvxZAH5Fg3f8RhKkq13t3oT7GXlhHNcJlASoY21JeI1t59Ky4z9/Z6aml0vrOLClpyNFfoVgwwkv4cyA/JGw4A8dU3n3KOfBiPaOGc4ZSRNBWFz/GSK0EMw9oJJbs3KzcxFeI7MUelDr9KJrfEWFNV3fYkOAjMp5FPg=
+	t=1746485310; cv=none; b=HZCeOh++DDVmFmSvOhHy4ESBJ31d8iyGdxwZLlgqf9ogwqrhB3U/f/b21kVo70/rXzdKzHNs8PFFGGQPUznc1mQ4eBmHNrSn/cmvIYjgpHFHT4FJvgX2qAcBqMixq3ev3bgC6dcTxoC/0eU1EwWZ4HDVxi4bWuyOY9FAHLkjHGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485307; c=relaxed/simple;
-	bh=ThMI58tx3Plf6LbcYctJfyvp+twd840+OZ1wM5jYdTU=;
+	s=arc-20240116; t=1746485310; c=relaxed/simple;
+	bh=sA5+9iikc4LH5jdFJudKdSamGAlkuDYDKiR3L7gqSEk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gyg5tKXb5oSXn7GRhz90r26frtFgpap94doLVIFCm82+SuWC99YGR23eQ8dxxoM+m1tjm4DhvysuAm8TrNaKC1h1E5uv772rVl6KmadrbKz/I6E2PgU5YrEXODiwi6zbOOy1tM/vSJ95kMJwZV7U5uzqcp6AqLjcNkb2RM5NVag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFX23x09; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63CE6C4CEE4;
-	Mon,  5 May 2025 22:48:25 +0000 (UTC)
+	 MIME-Version; b=gLsIxUswSkYCyckYPoONVeJduPZ4yLDWEekE64ATFKWopMgPInyqjUzolZLfnsGdX2sguMnoo2+iaEjOQ5Stxdn/Wbe1HmKAxhEas1/yomGzOTJb5Qco2okDo3VVKdSu+KX89WVA3ohWRcgCRB5ib9/U8Z8C4TPlprVK+2PcsPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7PEjqW8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC1EC4CEED;
+	Mon,  5 May 2025 22:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485306;
-	bh=ThMI58tx3Plf6LbcYctJfyvp+twd840+OZ1wM5jYdTU=;
+	s=k20201202; t=1746485308;
+	bh=sA5+9iikc4LH5jdFJudKdSamGAlkuDYDKiR3L7gqSEk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pFX23x094F0y/6vHaVmD8vcn27+0pa2DWbJse0sy88mrIE/8OQytJyQKLNM2NzI7I
-	 yZNzbsnck58aUuIpGF1GwUxJOl2Yr8gdEfNUA0GmupdMZhHyEF11TFUB3A/iEX+mKj
-	 mpiWSfqitarvHX0dcrj902BGpx2rtPh+C7tbDAZrtLjMXGubG2BtEUTNWxjXkvjaf7
-	 E5RWs1OYw+y30zdcCgvCYePE5Ncvxgf5LfZ+vPI4iaYiJYO6w2XjvIjG++TONIFLJW
-	 D9hokaDkFYFHVd5z46mG8C1fYn2gl/9cUEwc4ZmetOYey7968MP2y4HJmyK4dhWdG1
-	 FzJRfJcBfZH/w==
+	b=c7PEjqW8eBVx2wyOtXYNXjA0iHAQqbSZ17WMihJ8tggzULfpJK5Fkc+PLy/PqGNF1
+	 bJnxQr6qbSsVRxb7iAH3Z1h1ID1TCtAnvvefmvpW5hSI/oY+zMJ9IsHhEm+c84vajV
+	 3YrElnXzLU+IyZnblVSiufoUv6z3mC2g9i8I674j1Riu+5fEvt5WScbXdiGeW5Af3o
+	 Wn9y9tvguzmQliq1sKZ0I/HdDkQ8fZYgzc0+r0RddnJ0q+3Iltug859GCjFKqigQuh
+	 pBPOlOxEBGhZmo4mgagZnse2zF9FjpHbwPHcNpnBEWeRi51Pgr9z0LEGunMmqh+OD7
+	 pPp1btXBg7MiQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Konstantin Shkolnyy <kshk@linux.ibm.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	Dragos Tatulea <dtatulea@nvidia.com>,
-	Jason Wang <jasowang@redhat.com>,
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Aboorva Devarajan <aboorvad@linux.ibm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	eperezma@redhat.com,
-	cratiu@nvidia.com,
-	tariqt@nvidia.com,
-	virtualization@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.12 259/486] vdpa/mlx5: Fix mlx5_vdpa_get_config() endianness on big-endian machines
-Date: Mon,  5 May 2025 18:35:35 -0400
-Message-Id: <20250505223922.2682012-259-sashal@kernel.org>
+	rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 260/486] cpuidle: menu: Avoid discarding useful information
+Date: Mon,  5 May 2025 18:35:36 -0400
+Message-Id: <20250505223922.2682012-260-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -64,52 +63,68 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Konstantin Shkolnyy <kshk@linux.ibm.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-[ Upstream commit 439252e167ac45a5d46f573aac1da7d8f3e051ad ]
+[ Upstream commit 85975daeaa4d6ec560bfcd354fc9c08ad7f38888 ]
 
-mlx5_vdpa_dev_add() doesn’t initialize mvdev->actual_features. It’s
-initialized later by mlx5_vdpa_set_driver_features(). However,
-mlx5_vdpa_get_config() depends on the VIRTIO_F_VERSION_1 flag in
-actual_features, to return data with correct endianness. When it’s called
-before mlx5_vdpa_set_driver_features(), the data are incorrectly returned
-as big-endian on big-endian machines, while QEMU then interprets them as
-little-endian.
+When giving up on making a high-confidence prediction,
+get_typical_interval() always returns UINT_MAX which means that the
+next idle interval prediction will be based entirely on the time till
+the next timer.  However, the information represented by the most
+recent intervals may not be completely useless in those cases.
 
-The fix is to initialize this VIRTIO_F_VERSION_1 as early as possible,
-especially considering that mlx5_vdpa_dev_add() insists on this flag to
-always be set anyway.
+Namely, the largest recent idle interval is an upper bound on the
+recently observed idle duration, so it is reasonable to assume that
+the next idle duration is unlikely to exceed it.  Moreover, this is
+still true after eliminating the suspected outliers if the sample
+set still under consideration is at least as large as 50% of the
+maximum sample set size.
 
-Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Message-Id: <20250204173127.166673-1-kshk@linux.ibm.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
+Accordingly, make get_typical_interval() return the current maximum
+recent interval value in that case instead of UINT_MAX.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Tested-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Tested-by: Christian Loehle <christian.loehle@arm.com>
+Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Link: https://patch.msgid.link/7770672.EvYhyI6sBW@rjwysocki.net
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vdpa/mlx5/net/mlx5_vnet.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/cpuidle/governors/menu.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-index 5f581e71e2010..76aedac37a788 100644
---- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-@@ -3884,6 +3884,9 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
- 	ndev->mvdev.max_vqs = max_vqs;
- 	mvdev = &ndev->mvdev;
- 	mvdev->mdev = mdev;
-+	/* cpu_to_mlx5vdpa16() below depends on this flag */
-+	mvdev->actual_features =
-+			(device_features & BIT_ULL(VIRTIO_F_VERSION_1));
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index f3c9d49f0f2a5..97ffadc7e57a6 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -239,8 +239,19 @@ static unsigned int get_typical_interval(struct menu_device *data)
+ 	 * This can deal with workloads that have long pauses interspersed
+ 	 * with sporadic activity with a bunch of short pauses.
+ 	 */
+-	if ((divisor * 4) <= INTERVALS * 3)
++	if (divisor * 4 <= INTERVALS * 3) {
++		/*
++		 * If there are sufficiently many data points still under
++		 * consideration after the outliers have been eliminated,
++		 * returning without a prediction would be a mistake because it
++		 * is likely that the next interval will not exceed the current
++		 * maximum, so return the latter in that case.
++		 */
++		if (divisor >= INTERVALS / 2)
++			return max;
++
+ 		return UINT_MAX;
++	}
  
- 	ndev->vqs = kcalloc(max_vqs, sizeof(*ndev->vqs), GFP_KERNEL);
- 	ndev->event_cbs = kcalloc(max_vqs + 1, sizeof(*ndev->event_cbs), GFP_KERNEL);
+ 	thresh = max - 1;
+ 	goto again;
 -- 
 2.39.5
 
