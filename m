@@ -1,165 +1,170 @@
-Return-Path: <linux-kernel+bounces-634987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F8BAAB82C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:28:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B35CAAB81E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D43001C40747
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:22:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4514E3A3BE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF273110E0;
-	Tue,  6 May 2025 01:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46BB27A477;
+	Tue,  6 May 2025 01:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ad+OBHlr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cD2p2LXu"
+Received: from mail-ot1-f73.google.com (mail-ot1-f73.google.com [209.85.210.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65210312827
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 23:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A807313045
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 23:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746489069; cv=none; b=CNGlJ4n8nS9UR4s+CcJK0f3iXLSBOfkGnIBZnX5/2YDRvYHzaGMYJnDh1nUxBqSjYkA/fLkXXNb/EuxNt9LwWpeVGsenmWLHcguWY1t1pmrIg/iJIvMuWC3mXsJ3siYUtJA9Ti9+hKTkQoT2Kqxb+3dKwrQ6lRjuB6Fuh60NxF0=
+	t=1746489100; cv=none; b=JLvgN1ZqwpuArec7oQBapbbgIuwhjcqG8FyhYdCKh0rU33uH+ppdQpGBJZFrrIKKsSST94QmPPGv/Bv0cDz0ECJOmjkzPZJYF2bV3niszf88aDmEvx80hQEDF/LUn9k2ShSUZkko3tvhO7D7GV34i+psm6HhDCkjHlENBcUwcqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746489069; c=relaxed/simple;
-	bh=0DSF7dHmV17QwKXNCFzP0+mA7qcPG4gxTwIbAzLc++c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3XGHNYjEiZpCTkOnQUa/xQs8TJpb3kiNS6ricBZEAgvGEcar8u4ISJ8N63yzaeE5aOGtvIWJGKd3SpxDHURG6ydRqJptmd4B3O+B34X/rAea2aGWoKCXfrxREyPswuCUfB0BseH7dQlCLq5LOt9o1izRNg/aWJQOvcIbpFL5nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ad+OBHlr; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746489068; x=1778025068;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0DSF7dHmV17QwKXNCFzP0+mA7qcPG4gxTwIbAzLc++c=;
-  b=Ad+OBHlrXTzSfXW6E2CQKDKinCzWZDKtMKzMqGbVZAzqzNaun6SWPRjD
-   gCqsJejkY1C0+eJDvHdQFSzUOk1zbzpPqEo4Iz5VV2eA8WhjnHptoHPTm
-   1hnDPUDpWmyuGfENItSXcFnxdTrhf9nAids8lmzytIM3kyMPTwE4Tu8GV
-   Aos+5yFAMOIFwrA1YnZcpVnT/ZL2M5NIamYPzBGcqnmDaFhPOzbhY10WD
-   4PZ9HtUctPyaGT6YkJcUJXrHskzkUZI5OqsiCLvW4Wr0wYhQudIPyhGwG
-   R4Ka79XpVwfev8IVxaQWBj2lYTB0YV4Hro7X35OiewAUJSp4ilqatrn/3
-   Q==;
-X-CSE-ConnectionGUID: 5NyW45pPQLuGYdGZ4FcW7g==
-X-CSE-MsgGUID: XEfhBtocTPiEWxXujoh/gA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="51939052"
-X-IronPort-AV: E=Sophos;i="6.15,264,1739865600"; 
-   d="scan'208";a="51939052"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 16:51:06 -0700
-X-CSE-ConnectionGUID: B9ereCXyRtKibr91GbHSFA==
-X-CSE-MsgGUID: nRDOwKmBSD+5Q8l7GbvmPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,264,1739865600"; 
-   d="scan'208";a="172617724"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 05 May 2025 16:51:04 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uC5aO-00068L-2k;
-	Mon, 05 May 2025 23:51:00 +0000
-Date: Tue, 6 May 2025 07:50:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ard Biesheuvel <ardb+git@google.com>,
-	linux-arm-kernel@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com,
-	Ard Biesheuvel <ardb@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: Re: [PATCH 1/3] arm64/boot: Move init_pgdir[] into __pi_ namespace
-Message-ID: <202505060740.OIkWGFVZ-lkp@intel.com>
-References: <20250503112137.1962910-6-ardb+git@google.com>
+	s=arc-20240116; t=1746489100; c=relaxed/simple;
+	bh=oH2RxIhmFUSmag5J1kvWxnXU9MlOOp1OHBb0BWblYV0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WBCBLUODoAA4f9/vfO5xnVyOKkheV9UwIddG0N4tj/oGDdTHxIl4miV6PZRZlNZNNZ25+YSPaADvLBwbYq/yzURng2hG1/59M8Fj/Ew6tcoVafENINNQBwEU6FE34Y7CzcVS1vRZyQIXRJMoVlFYhHXOiDyOEuxL15/VwLZetB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cD2p2LXu; arc=none smtp.client-ip=209.85.210.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-ot1-f73.google.com with SMTP id 46e09a7af769-72b881599f6so4629667a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 16:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746489096; x=1747093896; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FDGoua/e8KWqIF27Mp5c33qsl/9R8H4EmsNGwJY/Apc=;
+        b=cD2p2LXu/j++2oNyq4lzpCQBzWnQIKW5I1MjKiF1L5Da+OP84fyRvuik9l8P1f/8KC
+         uQW93fTHcZi5MngQ9G779T6/xTgBFO92DTPv4KdQjUKVDxx/ComxPEnxIqShGcd3Q4lz
+         A74Z7Nze4Lb9S7oOeardBBHQHhnhkaK1GRNa3iK3WdG9dDfi7cPVNbuie7BXH7CmMAcG
+         SF7L0wTYVQ99F7e2rGzVOP3hfWpYo9ewTqeq6Xj8cnKWCNO2O7y3YbpanQfxr991CBZ1
+         GpU4UC7sbsDfe2ceNuZzZK004wLcHJNzve/iZrJmjW1x7SLWTtZqScfoaXrZXhYRQbiI
+         899w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746489096; x=1747093896;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FDGoua/e8KWqIF27Mp5c33qsl/9R8H4EmsNGwJY/Apc=;
+        b=Q73J8Zzcv3Y0MXmCAX5YFEhI6CfDhlEE1EA9dnDrg+TjoadaVysCZ5gwXBbICDySBt
+         Jty4+3MRT7FFzzffOM79OiFRjSxmNZ9iYhiyUInhoYi+B1MevR48w1L1eyD4PAwlLVb1
+         lThMxBURD1zGdYNbwc/+MISELQ3HN68USQMHAJ9nRAU/nxWcHRrh8yN4296C0V4/mZyb
+         Pnm4acA0iVVLlbQIeFuO+GQQ9Kb28Q9okQoZ6acIpz6mypYEH82oM4WQGmXX4V5eIwZo
+         h5lPfHtYwY4judMzF2P5E5NkkoO9q2M441f6YTfF5A36fEkJFKnd1i/dpjcrcrLURvuH
+         9/dg==
+X-Gm-Message-State: AOJu0Ywc8MA10JZ8TdZyeYUO7RNikfDhnhTCKU7c7GbZBAHc51Gfu5p/
+	tt6i1UN1pBV0iqzdGF/2bK4CbhSeq00tAtSPsfnfG7IUVsYbRYXKU8Y2KmYz23qPXsPI9dgXfNF
+	HH7kEIQ==
+X-Google-Smtp-Source: AGHT+IFdNILGYx2as4dzVzS1rhwBE0zNfGJsJV6nVjqTNJ7vWS0WN3DU1uhjpaI4rhOTp1kJDz7mhIcAMuN8
+X-Received: from oabsm3.prod.google.com ([2002:a05:6871:80c3:b0:2d5:5a26:d92])
+ (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:2b0b:b0:727:3664:ca30
+ with SMTP id 46e09a7af769-7320625f60emr879774a34.16.1746489096481; Mon, 05
+ May 2025 16:51:36 -0700 (PDT)
+Date: Mon, 05 May 2025 23:51:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250503112137.1962910-6-ardb+git@google.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAAVPGWgC/2XMSwrCMBSF4a1IxkaSm+blyH2Igya5rQE1ktSiS
+ PduFEStw3Pg+++kYI5YyHpxJxnHWGI61SGXC+L37alHGkPdBBhI1oChAd2l7wrNlzJQ4YP0VqP
+ TgZNKzhm7eH3ltru697EMKd9e9ZE/33fI/oZGThlVTqH2Tluw3aZPqT/gyqcjeZZG+NKCzTRUD WiCsEYaDu5Pi4+WjM+0qNpIZpTtWqc0/OnmW8NMN1VrY1rrlQfU+kdP0/QAlioow2MBAAA=
+X-Change-Id: 20250428-debugfs-rust-3cd5c97eb7d1
+X-Developer-Key: i=mmaurer@google.com; a=ed25519; pk=2Ezhl7+fEjTOMVFpplDeak2AdQ8cjJieLRVJdNzrW+E=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746489094; l=3113;
+ i=mmaurer@google.com; s=20250429; h=from:subject:message-id;
+ bh=oH2RxIhmFUSmag5J1kvWxnXU9MlOOp1OHBb0BWblYV0=; b=COjhn17B0S4RdtTyxEarzqeSXyEkFtw/vyrwt56VVgTmE5u2IgBI/gUjT+Ql9ZfxulTQ0wR2K
+ mZPai76//pODjz9jSNWtMa0HW1DQ6MZkrmcKm+QzlXcYCAxsm2DVtvp
+X-Mailer: b4 0.14.2
+Message-ID: <20250505-debugfs-rust-v5-0-3e93ce7bb76e@google.com>
+Subject: [PATCH v5 0/4] rust: DebugFS Bindings
+From: Matthew Maurer <mmaurer@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Matthew Maurer <mmaurer@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hi Ard,
+This series provides safe DebugFS bindings for Rust, with a sample
+driver using them.
 
-kernel test robot noticed the following build errors:
+This series currently only supports referencing `'static` lifetime
+objects, because we need to know the objects outlive the DebugFS files.
+A subsequent series may be able to relax this.
 
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on arm/for-next arm/fixes linus/master v6.15-rc5 next-20250505]
-[cannot apply to arm64/for-next/core kvmarm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Matthew Maurer <mmaurer@google.com>
+---
+Changes in v5:
+- Made Dir + File wrappers around Entry
+- All functions return owning handles. To discard without drop, use
+  `forget`. To keep a handle without drop, use `ManuallyDrop`.
+- Fixed bugs around `not(CONFIG_DEBUG_FS)`
+- Removed unnecessary `addr_of!`
+- Link to v4: https://lore.kernel.org/r/20250502-debugfs-rust-v4-0-788a9c6c2e77@google.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Biesheuvel/arm64-boot-Move-init_pgdir-into-__pi_-namespace/20250503-192534
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20250503112137.1962910-6-ardb%2Bgit%40google.com
-patch subject: [PATCH 1/3] arm64/boot: Move init_pgdir[] into __pi_ namespace
-config: arm64-allnoconfig (https://download.01.org/0day-ci/archive/20250506/202505060740.OIkWGFVZ-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250506/202505060740.OIkWGFVZ-lkp@intel.com/reproduce)
+Changes in v4:
+- Remove SubDir, replace with type-level constant.
+- Add lifetime to Dir to prevent subdirectories and files from outliving
+  their parents and triggering an Oops when accessed.
+- Split unsafe blocks with two calls into two blocks
+- Access `private` field through direct pointer dereference, avoiding
+  creation of a reference to it.
+- Notably not changed - owning/non-owning handle defaults. The best read
+  I had from the thread was to continue with this mode, but I'm willing
+  to change if need be.
+- Comment changes
+  - More comment markdown
+  - Remove scopes from examples
+  - Put `as_ptr` properties into a `# Guarantees` section.
+- Link to v3: https://lore.kernel.org/r/20250501-debugfs-rust-v3-0-850869fab672@google.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505060740.OIkWGFVZ-lkp@intel.com/
+Changes in v3:
+- Split `Dir` into `Dir`/`SubDir`/`File` to improve API.
+- Add "." to end of all comments.
+- Convert INVARIANT to # Invariants on types.
+- Add backticks everywhere I found variables/types in my comments.
+- Promoted invariant comment to doc comment.
+- Extended sample commenting to make it clearer what is happening.
+- Link to v2: https://lore.kernel.org/r/20250430-debugfs-rust-v2-0-2e8d3985812b@google.com
 
-All errors (new ones prefixed by >>):
+Changes in v2:
+- Drop support for builder / pinned bindings in initial series
+- Remove `ARef` usage to abstract the dentry nature of handles
+- Remove error handling to discourage users from caring whether DebugFS
+  is enabled.
+- Support CONFIG_DEBUG_FS=n while leaving the API available
+- Fixed mistaken decimal/octal mixup
+- Doc/comment cleanup
+- Link to v1: https://lore.kernel.org/r/20250429-debugfs-rust-v1-0-6b6e7cb7929f@google.com
 
-   arch/arm64/kernel/pi/map_kernel.c: In function 'remap_idmap_for_lpa2':
->> arch/arm64/kernel/pi/map_kernel.c:191:37: error: 'init_pg_end' undeclared (first use in this function); did you mean 'init_pg_dir'?
-     191 |         memset(init_pg_dir, 0, (u64)init_pg_end - (u64)init_pg_dir);
-         |                                     ^~~~~~~~~~~
-         |                                     init_pg_dir
-   arch/arm64/kernel/pi/map_kernel.c:191:37: note: each undeclared identifier is reported only once for each function it appears in
-   arch/arm64/kernel/pi/map_kernel.c: In function 'early_map_kernel':
-   arch/arm64/kernel/pi/map_kernel.c:222:37: error: 'init_pg_end' undeclared (first use in this function); did you mean 'init_pg_dir'?
-     222 |         memset(__bss_start, 0, (u64)init_pg_end - (u64)__bss_start);
-         |                                     ^~~~~~~~~~~
-         |                                     init_pg_dir
+---
+Matthew Maurer (4):
+      rust: debugfs: Bind DebugFS directory creation
+      rust: debugfs: Bind file creation for long-lived Display
+      rust: debugfs: Support format hooks
+      rust: samples: Add debugfs sample
 
+ MAINTAINERS                     |   2 +
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/debugfs.rs          | 392 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   1 +
+ samples/rust/Kconfig            |  11 ++
+ samples/rust/Makefile           |   1 +
+ samples/rust/rust_debugfs.rs    |  60 ++++++
+ 7 files changed, 468 insertions(+)
+---
+base-commit: b6a7783d306baf3150ac54cd5124f6e85dd375b0
+change-id: 20250428-debugfs-rust-3cd5c97eb7d1
 
-vim +191 arch/arm64/kernel/pi/map_kernel.c
-
-9684ec186f8fad Ard Biesheuvel 2024-02-14  158  
-9684ec186f8fad Ard Biesheuvel 2024-02-14  159  static void __init remap_idmap_for_lpa2(void)
-9684ec186f8fad Ard Biesheuvel 2024-02-14  160  {
-9684ec186f8fad Ard Biesheuvel 2024-02-14  161  	/* clear the bits that change meaning once LPA2 is turned on */
-9684ec186f8fad Ard Biesheuvel 2024-02-14  162  	pteval_t mask = PTE_SHARED;
-9684ec186f8fad Ard Biesheuvel 2024-02-14  163  
-9684ec186f8fad Ard Biesheuvel 2024-02-14  164  	/*
-9684ec186f8fad Ard Biesheuvel 2024-02-14  165  	 * We have to clear bits [9:8] in all block or page descriptors in the
-9684ec186f8fad Ard Biesheuvel 2024-02-14  166  	 * initial ID map, as otherwise they will be (mis)interpreted as
-9684ec186f8fad Ard Biesheuvel 2024-02-14  167  	 * physical address bits once we flick the LPA2 switch (TCR.DS). Since
-9684ec186f8fad Ard Biesheuvel 2024-02-14  168  	 * we cannot manipulate live descriptors in that way without creating
-9684ec186f8fad Ard Biesheuvel 2024-02-14  169  	 * potential TLB conflicts, let's create another temporary ID map in a
-9684ec186f8fad Ard Biesheuvel 2024-02-14  170  	 * LPA2 compatible fashion, and update the initial ID map while running
-9684ec186f8fad Ard Biesheuvel 2024-02-14  171  	 * from that.
-9684ec186f8fad Ard Biesheuvel 2024-02-14  172  	 */
-9684ec186f8fad Ard Biesheuvel 2024-02-14  173  	create_init_idmap(init_pg_dir, mask);
-9684ec186f8fad Ard Biesheuvel 2024-02-14  174  	dsb(ishst);
-9684ec186f8fad Ard Biesheuvel 2024-02-14  175  	set_ttbr0_for_lpa2((u64)init_pg_dir);
-9684ec186f8fad Ard Biesheuvel 2024-02-14  176  
-9684ec186f8fad Ard Biesheuvel 2024-02-14  177  	/*
-9684ec186f8fad Ard Biesheuvel 2024-02-14  178  	 * Recreate the initial ID map with the same granularity as before.
-9684ec186f8fad Ard Biesheuvel 2024-02-14  179  	 * Don't bother with the FDT, we no longer need it after this.
-9684ec186f8fad Ard Biesheuvel 2024-02-14  180  	 */
-9684ec186f8fad Ard Biesheuvel 2024-02-14  181  	memset(init_idmap_pg_dir, 0,
-ecc54006f158ae Zenghui Yu     2024-06-21  182  	       (u64)init_idmap_pg_end - (u64)init_idmap_pg_dir);
-9684ec186f8fad Ard Biesheuvel 2024-02-14  183  
-9684ec186f8fad Ard Biesheuvel 2024-02-14  184  	create_init_idmap(init_idmap_pg_dir, mask);
-9684ec186f8fad Ard Biesheuvel 2024-02-14  185  	dsb(ishst);
-9684ec186f8fad Ard Biesheuvel 2024-02-14  186  
-9684ec186f8fad Ard Biesheuvel 2024-02-14  187  	/* switch back to the updated initial ID map */
-9684ec186f8fad Ard Biesheuvel 2024-02-14  188  	set_ttbr0_for_lpa2((u64)init_idmap_pg_dir);
-9684ec186f8fad Ard Biesheuvel 2024-02-14  189  
-9684ec186f8fad Ard Biesheuvel 2024-02-14  190  	/* wipe the temporary ID map from memory */
-9684ec186f8fad Ard Biesheuvel 2024-02-14 @191  	memset(init_pg_dir, 0, (u64)init_pg_end - (u64)init_pg_dir);
-9684ec186f8fad Ard Biesheuvel 2024-02-14  192  }
-9684ec186f8fad Ard Biesheuvel 2024-02-14  193  
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Matthew Maurer <mmaurer@google.com>
+
 
