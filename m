@@ -1,208 +1,161 @@
-Return-Path: <linux-kernel+bounces-632464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447FEAA97A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:39:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CED4AA97DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6239F3BAFCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F1216C459
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FA725E450;
-	Mon,  5 May 2025 15:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C474D25DAF7;
+	Mon,  5 May 2025 15:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmG2ckEM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nUWm3bhJ"
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858251C1AB4;
-	Mon,  5 May 2025 15:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091352561C2
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746459570; cv=none; b=ZYnQJgWU1uSAODc6bJEyNqHqgQsSAcGpX11RzDjHQEqXUnHNA0h3v55bP6H2syJgBAFrR+mPbAWVjPE/7QPDLDB55jCoJbP4VR+/FzZT33PYB69ylmY0fSON3P+L5rdYadpTjVSwfDsaq9iVAiV7WSRs6k8sHWQ8if9Mtc8UC6c=
+	t=1746460174; cv=none; b=GuN/jNj+jrtdukxb+WU4NddooPFhJG3RuIHio+tmD1lg0IrumJczmsm0VHUIZvpgpxdiw5+vKAsCd9wW7f+d6WY3p2D593z78rpYCFukfYLgeLvZbnZLSg9wbHB74+l6CDJNrrn/iMYAJXSEecxlhq5Ol5KXeZ30Eh9X5dyRvog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746459570; c=relaxed/simple;
-	bh=wYgReB0pK+wMXRVJVUn5r+S1n4tF9TC5TUM2pA3f6Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JeT6YmhZjMpAAnInoXKoPT6Yce5QMCJ4zvVKHq3+Ov2FEtxhpXvdlsaLzWFlfflq3wqg8cg+8LeCZevlEH8RQRXCU0NioiVwCiyTYOOvL+/R1w3pKaE8y7DS9el9kIuABGtLFE9GDyQOchk1Z5mViY/C9gEGYx+clE/1YTekEm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmG2ckEM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4AB4C4CEEE;
-	Mon,  5 May 2025 15:39:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746459569;
-	bh=wYgReB0pK+wMXRVJVUn5r+S1n4tF9TC5TUM2pA3f6Bg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pmG2ckEMe0MIc2b3MMqlTKYd5PwE1XL3jIIJdZczp5fNBtnqoAGn5UfjwJd0P98wx
-	 KU9uIbtKm4htraYh6sw/8lz4Z9rPsmX74ebZa1s9XXzLOJgDc4Im2VmKjD73f2lOkH
-	 idmrrjPtJaLXcMm5SRWjR8m23ldn+JGZl6MCsp8F46U1WbTedYcgLVQXjXC/wdDNGm
-	 2qfsxHEEX3cxO37zCNivxi/VDY/S7xV1kbd9CBx8q/eSx+5B2ji0XRwvBk6IjfPNIq
-	 E7ftEWB0u9+KCsWhgg6V8M2nzcfR03HiPS0InXNWbFZ3zJ0QEOQyvQ1pDtvx8siYkV
-	 B9VFiGrz/N0TQ==
-Date: Mon, 5 May 2025 16:39:19 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <andy@kernel.org>, <nuno.sa@analog.com>, <Michael.Hennerich@analog.com>,
- <marcelo.schmitt@analog.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
- <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <lgirdwood@gmail.com>,
- <broonie@kernel.org>, <jonath4nns@gmail.com>, <dlechner@baylibre.com>
-Subject: Re: [PATCH v6 02/11] dt-bindings: iio: adc: ad7768-1: add
- trigger-sources property
-Message-ID: <20250505163919.6d805db2@jic23-huawei>
-In-Reply-To: <128de2793d6d5424ad152c394faf1d51f0d56e0b.1745605382.git.Jonathan.Santos@analog.com>
-References: <cover.1745605382.git.Jonathan.Santos@analog.com>
-	<128de2793d6d5424ad152c394faf1d51f0d56e0b.1745605382.git.Jonathan.Santos@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746460174; c=relaxed/simple;
+	bh=HfDy/HkyH9OE4BdyiLFSHkuBVpYPTVkooXLx5f3rZOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPLuh9QOHFd0evloJ8+W69cINE5pBrr87A3HA37iSWTaSJBJsS/jGyKba+IpS7YWe4tfrGLJVJ4UJ6hMl38nvkcChu65kvU51w9x312Wb2PYLYsxeboTLXhA+2N22XsoHf9QJXAot6+ZryD77Q7kRBAX0KbMLCAbkzS+UVkOCYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nUWm3bhJ; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zrm150CSJzYMl;
+	Mon,  5 May 2025 17:39:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1746459576;
+	bh=2rr0NxT3YygR9iTO8oBRTuCPuvHO/u8bPQjZ4fJ4Dmg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nUWm3bhJWq419tUFjizOeRUyHfqL1Ps0Bp0obcoIHzLGMUEs7xv+vVf6XmVNsmKvV
+	 wH9r8SMThoIJnMs9qG2cF5fm99NtOCWlGhihJTREL47QhIulH762DJBS1raj+bSvfd
+	 1Wvsw7/AXtuQSbncvRxa75Y+GzPBAPZ9bWztxg5M=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zrm134TtlzTc8;
+	Mon,  5 May 2025 17:39:35 +0200 (CEST)
+Date: Mon, 5 May 2025 17:39:34 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH RFC v3 00/10] coredump: add coredump socket
+Message-ID: <20250505.ej2ephiNg7Ve@digikod.net>
+References: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
+ <20250505.aFia3choo1aw@digikod.net>
+ <CAG48ez0Ti8y5GzZFhdf5cmZWH1XMmz0Q_3y8RCn6ca8UL-jrcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez0Ti8y5GzZFhdf5cmZWH1XMmz0Q_3y8RCn6ca8UL-jrcA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Sun, 27 Apr 2025 21:12:16 -0300
-Jonathan Santos <Jonathan.Santos@analog.com> wrote:
-
-> In addition to GPIO synchronization, The AD7768-1 also supports
-> synchronization over SPI, which use is recommended when the GPIO
-> cannot provide a pulse synchronous with the base MCLK signal. It
-> consists of looping back the SYNC_OUT to the SYNC_IN pin and send
-> a command via SPI to trigger the synchronization.
+On Mon, May 05, 2025 at 04:59:41PM +0200, Jann Horn wrote:
+> On Mon, May 5, 2025 at 4:41 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Mon, May 05, 2025 at 01:13:38PM +0200, Christian Brauner wrote:
+> > > Coredumping currently supports two modes:
+> > >
+> > > (1) Dumping directly into a file somewhere on the filesystem.
+> > > (2) Dumping into a pipe connected to a usermode helper process
+> > >     spawned as a child of the system_unbound_wq or kthreadd.
+> > >
+> > > For simplicity I'm mostly ignoring (1). There's probably still some
+> > > users of (1) out there but processing coredumps in this way can be
+> > > considered adventurous especially in the face of set*id binaries.
+> > >
+> > > The most common option should be (2) by now. It works by allowing
+> > > userspace to put a string into /proc/sys/kernel/core_pattern like:
+> > >
+> > >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+> > >
+> > > The "|" at the beginning indicates to the kernel that a pipe must be
+> > > used. The path following the pipe indicator is a path to a binary that
+> > > will be spawned as a usermode helper process. Any additional parameters
+> > > pass information about the task that is generating the coredump to the
+> > > binary that processes the coredump.
+> > >
+> > > In the example core_pattern shown above systemd-coredump is spawned as a
+> > > usermode helper. There's various conceptual consequences of this
+> > > (non-exhaustive list):
+> > >
+> > > - systemd-coredump is spawned with file descriptor number 0 (stdin)
+> > >   connected to the read-end of the pipe. All other file descriptors are
+> > >   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
+> > >   already caused bugs because userspace assumed that this cannot happen
+> > >   (Whether or not this is a sane assumption is irrelevant.).
+> > >
+> > > - systemd-coredump will be spawned as a child of system_unbound_wq. So
+> > >   it is not a child of any userspace process and specifically not a
+> > >   child of PID 1. It cannot be waited upon and is in a weird hybrid
+> > >   upcall which are difficult for userspace to control correctly.
+> > >
+> > > - systemd-coredump is spawned with full kernel privileges. This
+> > >   necessitates all kinds of weird privilege dropping excercises in
+> > >   userspace to make this safe.
+> > >
+> > > - A new usermode helper has to be spawned for each crashing process.
+> > >
+> > > This series adds a new mode:
+> > >
+> > > (3) Dumping into an abstract AF_UNIX socket.
+> > >
+> > > Userspace can set /proc/sys/kernel/core_pattern to:
+> > >
+> > >         @linuxafsk/coredump_socket
+> > >
+> > > The "@" at the beginning indicates to the kernel that the abstract
+> > > AF_UNIX coredump socket will be used to process coredumps.
+> > >
+> > > The coredump socket uses the fixed address "linuxafsk/coredump.socket"
+> > > for now.
+> > >
+> > > The coredump socket is located in the initial network namespace. To bind
+> > > the coredump socket userspace must hold CAP_SYS_ADMIN in the initial
+> > > user namespace. Listening and reading can happen from whatever
+> > > unprivileged context is necessary to safely process coredumps.
+> > >
+> > > When a task coredumps it opens a client socket in the initial network
+> > > namespace and connects to the coredump socket. For now only tasks that
+> > > are acctually coredumping are allowed to connect to the initial coredump
+> > > socket.
+> >
+> > I think we should avoid using abstract UNIX sockets, especially for new
+> > interfaces, because it is hard to properly control such access.  Can we
+> > create new dedicated AF_UNIX protocols instead?  One could be used by a
+> > privileged process in the initial namespace to create a socket to
+> > collect coredumps, and the other could be dedicatde to coredumped
+> > proccesses.  Such (coredump collector) file descriptor or new (proxy)
+> > socketpair ones could be passed to containers.
 > 
-> Introduce the 'trigger-sources' property to enable SPI-based
-> synchronization via SYNC_OUT pin, along with additional optional
-> entries for GPIO3 and DRDY pins.
-> 
-> Also create #trigger-source-cells property to differentiate the trigger
-> sources provided by the ADC. To improve readability, create a
-> adi,ad7768-1.h header with the macros for the cell values.
-> 
-> While at it, add description to the interrupts property.
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> I would agree with you if we were talking about designing a pure
+> userspace thing; but I think the limits that Christian added on bind()
+> and connect() to these special abstract names in this series
+> effectively make it behave as if they were dedicated AF_UNIX
+> protocols, and prevent things like random unprivileged userspace
+> processes bind()ing to them.
 
-A few things inline, but minor stuff for if you need to do a respin.
-
-> ---
-> v6 Changes:
-> * Removed references to offload.
-> * Changed trigger-sources-cells description. Each cell value indicates
->   a gpio line from the ADC.
-> * Added adi,ad7768-1.h header with macros for the trigger source cells.
-> * Removed offload trigger entry from trigger-sources.
-> 
-> v5 Changes:
-> * Include START pin and DRDY in the trigger-sources description.
-> * Fixed "#trigger-source-cells" value and description.
-> * sync-in-gpios is represented in the trigger-sources property.
-> 
-> v4 Changes:
-> * none
-> 
-> v3 Changes:
-> * Fixed dt-bindings errors.
-> * Trigger-source is set as an alternative to sync-in-gpios, so we
->   don't break the previous ABI.
-> * increased maxItems from trigger-sources to 2.
-> 
-> v2 Changes:
-> * Patch added as replacement for adi,sync-in-spi patch.
-> * addressed the request for a description to interrupts property.
-> ---
->  .../bindings/iio/adc/adi,ad7768-1.yaml        | 31 ++++++++++++++++++-
->  include/dt-bindings/iio/adc/adi,ad7768-1.h    | 10 ++++++
->  2 files changed, 40 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/iio/adc/adi,ad7768-1.h
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> index 3ce59d4d065f..1f476aa15305 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> @@ -26,7 +26,28 @@ properties:
->    clock-names:
->      const: mclk
->  
-> +  trigger-sources:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    minItems: 1
-> +    maxItems: 2
-> +    description: |
-> +      A list of phandles referencing trigger source providers. Each entry
-> +      represents a trigger source for the ADC:
-> +
-> +        - First entry specifies the device responsible for driving the
-> +          synchronization (SYNC_IN) pin, as an alternative to adi,sync-in-gpios.
-> +          This can be a `gpio-trigger` or another `ad7768-1` device. If the
-> +          device's own SYNC_OUT pin is internally connected to its SYNC_IN pin,
-> +          reference the device itself or omit this property.
-> +        - Second entry optionally defines a GPIO3 pin used as a START signal trigger.
-> +
-> +      Use the accompanying trigger source cell to identify the type of each entry.
-> +
->    interrupts:
-> +    description:
-> +      Specifies the interrupt line associated with the ADC. This refers
-> +      to the DRDY (Data Ready) pin, which signals when conversion results are
-> +      available.
-
-Trivial but this seems overly wordy. The only bit that matters is the datardy bit.
-
-     DRDY (Data Ready) pin, which signals conversion results are available.
-
-is probably enough.  Only bother if you are respining for other reasons however
-as this really doesn't matter!
-
->      maxItems: 1
->  
->    '#address-cells':
-> @@ -57,6 +78,15 @@ properties:
->    "#io-channel-cells":
->      const: 1
->  
-> +  "#trigger-source-cells":
-> +    description: |
-> +      Cell indicates the trigger output signal: 0 = SYNC_OUT, 1 = GPIO3,
-> +      2 = DRDY.
-> +
-> +      For better readability, macros for these values are available in
-> +      dt-bindings/iio/adc/adi,ad7768-1.h.
-> +    const: 1
-> +
->  required:
->    - compatible
->    - reg
-> @@ -65,7 +95,6 @@ required:
->    - vref-supply
->    - spi-cpol
->    - spi-cpha
-> -  - adi,sync-in-gpios
-
-Maybe worth requiring oneOf adi,sync-in-gpios or trigger-sources? 
-
->  
->  patternProperties:
->    "^channel@([0-9]|1[0-5])$":
-> diff --git a/include/dt-bindings/iio/adc/adi,ad7768-1.h b/include/dt-bindings/iio/adc/adi,ad7768-1.h
-> new file mode 100644
-> index 000000000000..34d92856a50b
-> --- /dev/null
-> +++ b/include/dt-bindings/iio/adc/adi,ad7768-1.h
-> @@ -0,0 +1,10 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +
-> +#ifndef _DT_BINDINGS_ADI_AD7768_1_H
-> +#define _DT_BINDINGS_ADI_AD7768_1_H
-> +
-> +#define AD7768_TRIGGER_SOURCE_SYNC_OUT  0
-> +#define AD7768_TRIGGER_SOURCE_GPIO3     1
-> +#define AD7768_TRIGGER_SOURCE_DRDY      2
-> +
-> +#endif /* _DT_BINDINGS_ADI_AD7768_1_H */
-
+OK, so why not create a proper protocol?  That should also simplify the
+interface.
 
