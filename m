@@ -1,164 +1,155 @@
-Return-Path: <linux-kernel+bounces-631807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7435AA8DB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:58:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC37AA8DBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6AF97A2231
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:57:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB32E7A4AE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13C61DEFD6;
-	Mon,  5 May 2025 07:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BE61DEFFE;
+	Mon,  5 May 2025 08:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tgbMITn2"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="qUFSbVlB"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFEE1C549F
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 07:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A291C1E260D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746431921; cv=none; b=oPlYNv091hUkwp/s1Rs/7zLd4G6W3wYzVAtxc8PrKbkazr8HPczPhkXU2uIxPoD+ezmzFi0UZihSg7tx8mnOw4edMoVYyLYoBFH9InonJ0R2leof/AClN23XlbNXBEYAsjTFO/6eVZflg2hroFwGQWJcjZWdMzqeYZnlO5REqiY=
+	t=1746432013; cv=none; b=LduIS76f4AEXcjebuOIgt7Ao9+TxH27Uso/yrFWLHTLtoZoTvTCgv9fBC80dEIuqEl/OGc7Mk+hXkMq8vHRBJ4UHiJtqmH9wIjI/jF4zlVr1WO4gPK/XUZg8udqKIijo1+bDSZvJKghf1XC7BfOCFa9N7jKJAtC9swdho6U4EJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746431921; c=relaxed/simple;
-	bh=AmHa3ycc004iyFGHsYYX4kIfuniFqTXHQQYbVxzJKf8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=RPxU/1EDyVeLWOR2K5oOuN4VhbmUt/lb3woRX8rla6IDxaRppomR/pYezIbsvSQ89Vopn48ngIEkc1YtNwk1mtYXFR+eNkzKOdeMjjPn6NG9fKbPR1D4etGUrLXSWb3l93Ut2urE09f2tLq3kGyo15VsWFnffTwB1gPTkfTeSeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tgbMITn2; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5fafcdac19aso1148658a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 00:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746431917; x=1747036717; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8qy8x2VM4E33zP+Ul3MQgzUGob/DpDmmEpO6CEf26s=;
-        b=tgbMITn2/f2ETTwPFrP93IMlFsLd90+CvfPcVD1QLAFKoBoEeqNFZ15dGAjijEGpya
-         +LmSoF87/BIqjb1f4D+D+/RDVQSG1I4fV3uVktjbqQEb+3Y4xsvjfsewYoOSYYSnDp0m
-         g3Nsy45eP6ZlpWfsY1rLF+0rmzXBcQNTQhvn8TX0dEOOhOjsRz7INF3y2DRzdbyt6ftd
-         FD14xM0bO2yOFSHhzksOuMMTUhl7KOufLk6b1lWIunZq8Iw4Wgm367VkcmJ17+EJNtJo
-         MdwlsIk/Tkp9DDoY6dOVevLFMUcdNtCI+O4/H5ikLHX0d+eIaDE+q1PSWtKXOJjLZfpy
-         GJyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746431917; x=1747036717;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c8qy8x2VM4E33zP+Ul3MQgzUGob/DpDmmEpO6CEf26s=;
-        b=KYP8ac267tgpsPqGVaU58MoWfwSqPfYS/qBvNvEz9YaXjSihOkavpre2+U/hvJ7XjC
-         MQJzALgI0eZph93m9RrMgZChGNAqysP+DrL7X4BrPCoUMhu+0eCqRaQ9VeAlbCX/6HfK
-         y86pa8qpzO6cHpYTGwzJOEaEbzktW086UrLLTRjiRk0NdJlaFB6yau0AFeUDUtFNT76j
-         CCOwYzv1vWwXr9hLbuWdpmW8HOVCwNtfQGIG+BoqMoYuKRrYZQa+WGTDObdxz2aZlNe4
-         xnndQ8aWtjdHECAts//T19PrBjxnTbKcJckhddxOInziKVGsq1JR1xtCmgREAyixI36G
-         A5cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTl/6HX56LtNHj5w/6N1phQXH30pW6h6I45KkSft/eIsWDLpiv4vvc1MqqPjLK5k66dK5j6b7ZVWAyX78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPfSmyP6jv+Z84yf8dOlc+7VsTRcptXBoJ1q6m2P/rAPmKbXbS
-	XQ3/PMev4i2yoK23YTBvYAbsyWU853ZjH2Dx19xygeoi4JzWvErECKGf+/rlY6o=
-X-Gm-Gg: ASbGncs2V7mkdwPNnyPt6MMgpuW2HtzNTGxdrq0hpVDPFeEdHfkMoHLScAw2S68WYmd
-	EMFdacS0ybtyJ7RRVP3VRHxgAjk27OnPQnmLcNn9yq5AmAJDFfvJ05AwB/78hizDKC72wiUh7Dn
-	d6xQ+N/HZdwk1r7AYdQn/Ttd4EkBXUCpEnONuEUv3BtHyxeotl4XOF1lKGWZ6sm1Ijc3xaPFp+X
-	w2S68SxWnQ9V9JSvxTiHsJR1pCGKU/NU5SBBY9L0eaXKu0TysidX/M1t1tBDYmBzB4IbxMh5xpj
-	hWpiXLMn0Yh3OtPz2Ipy97q0qlMyo6GUN1Now99DdbcEKWISpXOIXagkf3Sg2BEcWTanzgtxy4E
-	hOuO7cs+uNw==
-X-Google-Smtp-Source: AGHT+IFZHl2dy4J+tovJB10LLReM42ovfZPhO257ZgiPrn9c3pUOWsbvfuKWtuAGkwm+2riUzR0qbw==
-X-Received: by 2002:a05:6402:35c8:b0:5f8:e07c:7746 with SMTP id 4fb4d7f45d1cf-5fab04bfa83mr4760665a12.0.1746431917138;
-        Mon, 05 May 2025 00:58:37 -0700 (PDT)
-Received: from localhost (dynamic-176-003-040-035.176.3.pool.telefonica.de. [176.3.40.35])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5fa77b8fbadsm5148712a12.50.2025.05.05.00.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 00:58:36 -0700 (PDT)
+	s=arc-20240116; t=1746432013; c=relaxed/simple;
+	bh=A8UtNB0lJZVwOw8RbKz+nI+hjf5xw0t3exJaxERP1Eo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AEIin/RfmhTnK103xNN8fsVeWX4dgJBKmLRuPqPjgT7Ygj86s7Z5dyg76GzoGVEhL8mYqrO74FW+R/AnMYbjvHPYvm0zkDDTJJ5NsMpTjPMrG7SL51/UV2nMy6eosWZ4fE2LDKkkXtPT+WMciIHIOEMMJyaCGTsUVbdgbGFoYnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=qUFSbVlB; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1746432007;
+	bh=A8UtNB0lJZVwOw8RbKz+nI+hjf5xw0t3exJaxERP1Eo=;
+	h=From:Date:Subject:To:Cc:From;
+	b=qUFSbVlBeeWEyVZsN8Gij5NvhF7Lo/f7YAWRcBt6dICkaUk0YQmKPWzkE09TuqzMA
+	 aAHaz1V/RdS9lTqFcke2bgg7haPSZ5bn5wWGWmi7dTUDZ3PhGhasnFhRxki+oSnWX+
+	 uCRJ6o83Ucy/58M0M+V/CzhpiRviZqAqcP2t0tXo=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Mon, 05 May 2025 09:59:37 +0200
+Subject: [PATCH v5] locking/mutex: Mark devm_mutex_init() as __must_check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=8941660c9a8c947b1652ed122688064937432aafddb64f2deaaf508477a9;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Mon, 05 May 2025 09:58:23 +0200
-Message-Id: <D9O2FWGG83V6.L6IQOPRGZL68@baylibre.com>
-Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/3] can: rockchip_canfd: m_can_class_unregister: fix
- order of unregistration calls
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Manivannan Sadhasivam"
- <manivannan.sadhasivam@linaro.org>, "Thomas Kopp"
- <thomas.kopp@microchip.com>, "Vincent Mailhol"
- <mailhol.vincent@wanadoo.fr>, <kernel@pengutronix.de>, "Heiko Stuebner"
- <heiko@sntech.de>, "Chandrasekar Ramakrishnan" <rcsekar@samsung.com>
-X-Mailer: aerc 0.20.1
-References: <20250502-can-rx-offload-del-v1-0-59a9b131589d@pengutronix.de>
- <20250502-can-rx-offload-del-v1-2-59a9b131589d@pengutronix.de>
-In-Reply-To: <20250502-can-rx-offload-del-v1-2-59a9b131589d@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250505-must_check-devm_mutex_init-v5-1-92fa4b793c6e@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAOhvGGgC/33PzWrDMAzA8VcpPs/Dn7Hb096jlBAryixG0hE7X
+ kfJu8/tGBus5CL46/ATurKEM2Fih92VzVgo0XmqYZ92DGI3vSKnvjZTQhkptOTjknILEeGN91j
+ GdlwyXlqaKHPowHod+s4PyCrwPuNAlzt+PNWOlPJ5/rzfKvK2/Wbr2GKL5JJjIzDsXfDg1MsHU
+ koJ4hKfJ8zsZhf141mhhNn0FBfchUY5CSY4bB56+q/nNz1dPWUsGul6gD0+9MyvZ4Tb9Ez913o
+ XuooNTdD/vHVdvwCM5SpuuQEAAA==
+X-Change-ID: 20241031-must_check-devm_mutex_init-cac583bda8fe
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>, 
+ Will Deacon <will@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746432005; l=2993;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=A8UtNB0lJZVwOw8RbKz+nI+hjf5xw0t3exJaxERP1Eo=;
+ b=pe6pxWBIiSGuzsdsD7O24W+Yd1l43xIyslhtyNp1IixG6z2jZKkMURlSxzBzKq+BSpXLUiDEO
+ t6z0zdeSvK1CORoN2XdHfV8z8cSQxPM5hg+a9huglOiZRXNPWNLkIfq
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
---8941660c9a8c947b1652ed122688064937432aafddb64f2deaaf508477a9
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Even if it's not critical, the avoidance of checking the error code
+from devm_mutex_init() call today diminishes the point of using the devm
+variant of it. Tomorrow it may even leak something. Enforce all callers
+checking the return value through the compiler.
 
-On Fri May 2, 2025 at 4:13 PM CEST, Marc Kleine-Budde wrote:
-> If a driver is removed, the driver framework invokes the driver's
-> remove callback. A CAN driver's remove function calls
-> unregister_candev(), which calls net_device_ops::ndo_stop further down
-> in the call stack for interfaces which are in the "up" state.
->
-> The removal of the module causes the a warning, as
-                                   ^^^
-Minor typo here.
+As devm_mutex_init() itself is a macro, it can not be annotated
+directly. Annotate __devm_mutex_init() instead.
+Unfortunately __must_check/warn_unused_result don't propagate through
+statement expression. So move the statement expression into the argument
+list of the call to __devm_mutex_init() through a helper macro.
 
-Otherwise this looks good to me.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+Changes in v5:
+- Pick up review tag from Andy
+- Link to v4: https://lore.kernel.org/r/20250407-must_check-devm_mutex_init-v4-1-587bacc9f6b3@weissschuh.net
 
-Reviewed-by: Markus Schneider-Pargmann
+Changes in v4:
+- Drop already applied leds-1202 driver patch
+- Rebase on v6.15-rc1
+- Link to v3: https://lore.kernel.org/r/20250208-must_check-devm_mutex_init-v3-0-245e417dcc9e@weissschuh.net
 
-> can_rx_offload_del() deletes the NAPI, while it is still active,
-> because the interface is still up.
->
-> To fix the warning, first unregister the network interface, which
-> calls net_device_ops::ndo_stop, which disables the NAPI, and then call
-> can_rx_offload_del().
->
-> Fixes: ff60bfbaf67f ("can: rockchip_canfd: add driver for Rockchip CAN-FD=
- controller")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> ---
->  drivers/net/can/rockchip/rockchip_canfd-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/can/rockchip/rockchip_canfd-core.c b/drivers/net=
-/can/rockchip/rockchip_canfd-core.c
-> index 7107a37da36c..c3fb3176ce42 100644
-> --- a/drivers/net/can/rockchip/rockchip_canfd-core.c
-> +++ b/drivers/net/can/rockchip/rockchip_canfd-core.c
-> @@ -937,8 +937,8 @@ static void rkcanfd_remove(struct platform_device *pd=
-ev)
->  	struct rkcanfd_priv *priv =3D platform_get_drvdata(pdev);
->  	struct net_device *ndev =3D priv->ndev;
-> =20
-> -	can_rx_offload_del(&priv->offload);
->  	rkcanfd_unregister(priv);
-> +	can_rx_offload_del(&priv->offload);
->  	free_candev(ndev);
->  }
-> =20
+Changes in v3:
+- Introduce and use helper macro __mutex_init_ret()
+- Link to v2: https://lore.kernel.org/r/20250204-must_check-devm_mutex_init-v2-0-7b6271c4b7e6@weissschuh.net
 
+Changes in v2:
+- Rebase on 6.14-rc1
+- Fix up leds-1202 driver
+- Link to v1: https://lore.kernel.org/r/20241202-must_check-devm_mutex_init-v1-1-e60eb97b8c72@weissschuh.net
+---
+ include/linux/mutex.h | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---8941660c9a8c947b1652ed122688064937432aafddb64f2deaaf508477a9
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index 2143d05116be1b0ac239951a9d5d0b90ad99062c..d9342341c13fc036dd9257537c85ff61f0f03da0 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -126,11 +126,11 @@ do {							\
+ 
+ #ifdef CONFIG_DEBUG_MUTEXES
+ 
+-int __devm_mutex_init(struct device *dev, struct mutex *lock);
++int __must_check __devm_mutex_init(struct device *dev, struct mutex *lock);
+ 
+ #else
+ 
+-static inline int __devm_mutex_init(struct device *dev, struct mutex *lock)
++static inline int __must_check __devm_mutex_init(struct device *dev, struct mutex *lock)
+ {
+ 	/*
+ 	 * When CONFIG_DEBUG_MUTEXES is off mutex_destroy() is just a nop so
+@@ -141,14 +141,17 @@ static inline int __devm_mutex_init(struct device *dev, struct mutex *lock)
+ 
+ #endif
+ 
+-#define devm_mutex_init(dev, mutex)			\
++#define __mutex_init_ret(mutex)				\
+ ({							\
+ 	typeof(mutex) mutex_ = (mutex);			\
+ 							\
+ 	mutex_init(mutex_);				\
+-	__devm_mutex_init(dev, mutex_);			\
++	mutex_;						\
+ })
+ 
++#define devm_mutex_init(dev, mutex) \
++	__devm_mutex_init(dev, __mutex_init_ret(mutex))
++
+ /*
+  * See kernel/locking/mutex.c for detailed documentation of these APIs.
+  * Also see Documentation/locking/mutex-design.rst.
 
------BEGIN PGP SIGNATURE-----
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20241031-must_check-devm_mutex_init-cac583bda8fe
 
-iIcEABYKAC8WIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaBhvoREcbXNwQGJheWxp
-YnJlLmNvbQAKCRCFwVZpkBVKU4zTAP0Yer+WBSFojQ6DiWBCD/1wd9ENW9dsLm7J
-ZLeShRvCOAEAgIm8MmcoLnCEO11f0Kg+X9mgAKtZb7OpE86RubTnags=
-=jybR
------END PGP SIGNATURE-----
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
---8941660c9a8c947b1652ed122688064937432aafddb64f2deaaf508477a9--
 
