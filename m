@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-634423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CF3AAB162
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A727AAB166
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1CF1760FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D23317CCB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3499E3DFA7E;
-	Tue,  6 May 2025 00:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FC63E3E94;
+	Tue,  6 May 2025 00:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKySiQYZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3YVHrug"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2EA2D1116;
-	Mon,  5 May 2025 22:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0A8361297;
+	Mon,  5 May 2025 22:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485462; cv=none; b=ONYSDZv3CEF6qDJmS+VioZvERImCKAPx0GJ6iTtSm3Xv56oiK8tQ+csUdMgfxRzcWtKXVICcgkl5fn32DOmFCv74p46AEi5Rpn0aPsRnmX/BOLnIh/fW+8lgCZOMRhwEmilVswTs/Nd1gen8JHQ15o/ty6g/OjEyQgYYl1mfY/4=
+	t=1746485465; cv=none; b=Tdr3/ZFLvwNomk4W0IYxYqoyph72hmRqY58qwgVLLJkPVMqMuLgWwmvu5qRvEWlkAdwaCu+n6wfbbFl6cReYLZiLYSRgXrusp5/Mz9R1sJ+7tXKstFc6Jq7Akj9zX0VVSW6NE7XX9VQxKVLm61EEQdAcXIg9xrictAXdbomMVTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485462; c=relaxed/simple;
-	bh=Z9LX6s23ZuIXyzShDrnweBPy3s35tSG0fmfwXhPvyag=;
+	s=arc-20240116; t=1746485465; c=relaxed/simple;
+	bh=BspxrRm5xP067Jizi0UNQpDg1zoW0UIDinj6jv2vCMg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Yahj5VNUndiSUonYU3BoOoxKpAVhPb8jMCYcJRQyMfxlsFFJKOYdXuCOpI4mPV+C7A98ymjIJ/j3oRpz1FKhBm8hb7x31tUhXotzl9xHKHrKeJfA1gMBp2ah2tW8uOzu1O96St0grpWqawDu6VzO3SnI/7d89qWSkYJLlDj5pVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKySiQYZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20982C4CEEF;
-	Mon,  5 May 2025 22:51:00 +0000 (UTC)
+	 MIME-Version:Content-Type; b=f4F+ti/Leha0pi0ReDyHw22KlOUfif1IVfITOjY35fSlJ8m46PCKKVYD0ZbFgDwNkbilE4i0UauJlsknxXTS+1++Wp/KDXvN/nXzMj154Ldkvoej46x19zqImQD9UuQwRCC5R6sgUMsK4m2exLeiZ1Fd91N8ExWnwJLVUVxXhbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3YVHrug; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ED64C4CEEE;
+	Mon,  5 May 2025 22:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485460;
-	bh=Z9LX6s23ZuIXyzShDrnweBPy3s35tSG0fmfwXhPvyag=;
+	s=k20201202; t=1746485464;
+	bh=BspxrRm5xP067Jizi0UNQpDg1zoW0UIDinj6jv2vCMg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EKySiQYZxcB3offOww41/agfyooS+ED8J3qnkljU4ffY+u2WpZ5QZud+VuUr9QmwT
-	 ssal1PrBIG1EYx/WbswjJYDNeedm3iNUcZuPWinxBKxyEl22kDKLKyw5U1X/JSi3IO
-	 O5mIlvbZHMKCYSgRsJh0zI/xGRnqLGkc31cNif5Q4I/DPx9DbUBiBbCPlxynonzmxC
-	 UHmd/XDcqRnDg0Q09NUQ/L23tQQTYOUw+ohUdC1euHdvlBjFS3ujbClT2UGtsgJqf6
-	 RFpPDytPJ9bsK4qKAv8yhsDQXGmK3QFvg9x1f01jfDm0qJ9MetI0hmS9VJuqLU8ds2
-	 Jv6jkqxyMLP0g==
+	b=k3YVHrugGs+OhbhG0J7CbuQvW6xZAU3u1YXEavyE/eK2DqTp54yTOEw8IRSsorCFz
+	 OSMQab9VibqSoEp6vp9C7y9NgsikfAZO3xtXOxKLdPc4e1RhzNuildFVdwbdbKZxa4
+	 7PdoVzNnFSqfJf1QssQwpdf1n87hs887sVJVQQXNnLr8N4epEQHOeSqZicSkxgLXmS
+	 rKsDM54/CV0+LGZhk+/sIwXDrERtJlwSJf9mlyYf6FJqu9tMvcJ7Mi/XcMXTnNWJo6
+	 ULNi6ns79JrqPoNNQi7scZ/6GfemXl0SdFuHCjWjBsEqk9+FCTBcQkasRCDpiRu3+L
+	 2Hw79/EGhw6Iw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
+Cc: =?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 324/486] firmware: arm_ffa: Handle the presence of host partition in the partition info
-Date: Mon,  5 May 2025 18:36:40 -0400
-Message-Id: <20250505223922.2682012-324-sashal@kernel.org>
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 326/486] ASoC: ops: Enforce platform maximum on initial value
+Date: Mon,  5 May 2025 18:36:42 -0400
+Message-Id: <20250505223922.2682012-326-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -59,48 +62,76 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: Martin Povišer <povik+lin@cutebit.org>
 
-[ Upstream commit 2f622a8b0722d332a2a149794a3add47bc9bdcf3 ]
+[ Upstream commit 783db6851c1821d8b983ffb12b99c279ff64f2ee ]
 
-Currently it is assumed that the firmware doesn't present the host
-partition in the list of partitions presented as part of the response
-to PARTITION_INFO_GET from the firmware. However, there are few
-platforms that prefer to present the same in the list of partitions.
-It is not manadatory but not restricted as well.
+Lower the volume if it is violating the platform maximum at its initial
+value (i.e. at the time of the 'snd_soc_limit_volume' call).
 
-So handle the same by making sure to check the presence of the host
-VM ID in the XArray partition information maintained/managed in the
-driver before attempting to add it.
-
-Tested-by: Viresh Kumar <viresh.kumar@linaro.org>
-Message-Id: <20250217-ffa_updates-v3-7-bd1d9de615e7@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
+[Cherry picked from the Asahi kernel with fixups -- broonie]
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://patch.msgid.link/20250208-asoc-volume-limit-v1-1-b98fcf4cdbad@kernel.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/arm_ffa/driver.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/soc-ops.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index e8efa6cfd58cd..52e1cbaab856d 100644
---- a/drivers/firmware/arm_ffa/driver.c
-+++ b/drivers/firmware/arm_ffa/driver.c
-@@ -1448,6 +1448,10 @@ static int ffa_setup_partitions(void)
+diff --git a/sound/soc/soc-ops.c b/sound/soc/soc-ops.c
+index b0e4e4168f38d..fb11003d56cf6 100644
+--- a/sound/soc/soc-ops.c
++++ b/sound/soc/soc-ops.c
+@@ -639,6 +639,33 @@ int snd_soc_get_volsw_range(struct snd_kcontrol *kcontrol,
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_get_volsw_range);
  
- 	kfree(pbuf);
- 
-+	/* Check if the host is already added as part of partition info */
-+	if (xa_load(&drv_info->partition_info, drv_info->vm_id))
++static int snd_soc_clip_to_platform_max(struct snd_kcontrol *kctl)
++{
++	struct soc_mixer_control *mc = (struct soc_mixer_control *)kctl->private_value;
++	struct snd_ctl_elem_value uctl;
++	int ret;
++
++	if (!mc->platform_max)
 +		return 0;
 +
- 	/* Allocate for the host */
- 	info = kzalloc(sizeof(*info), GFP_KERNEL);
- 	if (!info) {
++	ret = kctl->get(kctl, &uctl);
++	if (ret < 0)
++		return ret;
++
++	if (uctl.value.integer.value[0] > mc->platform_max)
++		uctl.value.integer.value[0] = mc->platform_max;
++
++	if (snd_soc_volsw_is_stereo(mc) &&
++	    uctl.value.integer.value[1] > mc->platform_max)
++		uctl.value.integer.value[1] = mc->platform_max;
++
++	ret = kctl->put(kctl, &uctl);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
+ /**
+  * snd_soc_limit_volume - Set new limit to an existing volume control.
+  *
+@@ -663,7 +690,7 @@ int snd_soc_limit_volume(struct snd_soc_card *card,
+ 		struct soc_mixer_control *mc = (struct soc_mixer_control *)kctl->private_value;
+ 		if (max <= mc->max - mc->min) {
+ 			mc->platform_max = max;
+-			ret = 0;
++			ret = snd_soc_clip_to_platform_max(kctl);
+ 		}
+ 	}
+ 	return ret;
 -- 
 2.39.5
 
