@@ -1,155 +1,184 @@
-Return-Path: <linux-kernel+bounces-632397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A15AA96B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:00:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC94AA96D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C474B7A103A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:59:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD37189B069
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC57825C83F;
-	Mon,  5 May 2025 14:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336621F8AD3;
+	Mon,  5 May 2025 15:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGGQgkRs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gn07Fz2j"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E5725C6E8;
-	Mon,  5 May 2025 14:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DD82561D1
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746457163; cv=none; b=FhxrOojyo36aScsP/V05y51RIyVl9ghBUj839HPXCboJlIHd1QN48pA2FfAr1nuh4fU6ybkPNOebk5kdtJr43Yy3IbVBNUoPnlM+tOkAeT8qNOOzpUvTzaNaQOV4jgWzQdVp131rt9Y+t1uPtFrjF6jV560970kCNz/yJGGxcHI=
+	t=1746457221; cv=none; b=JodSmqYUzvzEglE27Ec8W2qlfP0FgkXsvXQr+N+rtNy9mZMQO1OPzVJT3wfaxfsfRrKPf0UZ0FmRZJn4U1iAQoGD65XdFR2swLlnp50AWo/PGreLYtp1+f4yL9M+KnW/kIoPZJeWvoG2tzlpFbON0hHzp+/m+KD9boRrZuzaQeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746457163; c=relaxed/simple;
-	bh=VEbBIXsH7MUvDCOAgVc1q8IYt1rAt9JLlwuSclW3l2A=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KL+XhtKrNqJWx1Eh76G8rbJD6aSEoZgWQya6xUwtFMhISv7U8aiMEoce2b0il5RMvPd5+xXRu6Fylsmq3Q660nGJ5hrT7amJj7IkKKKiu+BlRlomLfDD2P+vQaVpvZnfUexbj+S3VfosdWjjTJmP4kB+yaRJO2BJ8gmsPmX0piM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGGQgkRs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE7DC4CEEE;
-	Mon,  5 May 2025 14:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746457162;
-	bh=VEbBIXsH7MUvDCOAgVc1q8IYt1rAt9JLlwuSclW3l2A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kGGQgkRshNVHr212uas8eJKzVUU61A4BscFMeLplKLWhUMOx75BEjoYLmq5ng73d0
-	 aXgzT11o8Otm3aonbN8TvpjHf3jPWoYGW8GI5p+0iV/5kcvlQwvw7DWT8fjsUPacZ8
-	 nTkftVZBnWrzxmcMDyW+h2B0rC8V6tbmFHS6Ibxp7UsGBTKjYLJC5Rm2aIcH5I5eOW
-	 qodLFjLvWHx9aEkqA2HNQO0gcpFotJTQJndnY79MbKEq8OeuDHJ8SSm+0NXWNEwqHG
-	 ANcdrDcvpX1hGjuYnLY+YPurRrBqDha0/pIUZeJfZpgCv8GDaT7wwQYfey76IGfXrh
-	 1gAlPNrcMkaNQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uBxHr-00Bkz8-AA;
-	Mon, 05 May 2025 15:59:19 +0100
-Date: Mon, 05 May 2025 15:59:18 +0100
-Message-ID: <86ldrbgl2x.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ott <sebott@redhat.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Quentin Perret <qperret@google.com>,
-	Fuad Tabba <tabba@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: LM regression: fce886a60207 KVM: arm64: Plumb the pKVM MMU in KVM
-In-Reply-To: <e1117e68-ef05-9de2-d018-685bb7d86bb5@redhat.com>
-References: <3f5db4c7-ccce-fb95-595c-692fa7aad227@redhat.com>
-	<86msbrguka.wl-maz@kernel.org>
-	<e1117e68-ef05-9de2-d018-685bb7d86bb5@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1746457221; c=relaxed/simple;
+	bh=dBUWsePdK+43bgJYz1/M5xbcGgbXAn2tygzYhdejMy4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q4u/7RxAGhxWFKlS780jQ44K8uAQIQU7MR0LNdT6XOwfkSRlVYIabthWy98xHL/GXGuSGKD7/pT0Jn1ahg6ssRXqf9X7zNfHDo/5iUxVxYr++fGMesSOdwJ71STtfejMwlhC0A2BxpxyIOH3nSVueG0UmuAEY+QY2uDN29VcYkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gn07Fz2j; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso13857a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:00:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746457218; x=1747062018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zgpaiR/N3ioL5/g7+EhtTfAMyKaTCNjdwR/daQulLIQ=;
+        b=Gn07Fz2jjfazVk65MmWu+w5DqmkOODuyVLsw73yFcLLbeiAKG8r5ChTXtLHsliRFFt
+         LgsM8yqx5rgRfY36evT06vDfzMO0Nu5uZs4avDUgsFAUt8LVUlHNy0KsNHg//uaaiCS1
+         V4H4FAmNcrRkanYFTfQki7SfuV4S/IMuSoZz1AIMhr2mPpqrKWgbCIvnb1PlSZ0bDMc9
+         feI8WYEUXf+4QYFqc/loRG4EDKhBvlsPHCFDfXiDrqNveljuxIQfBX8TX7rOkYnrW5TU
+         lg2L0zFW2wK/ZQ6NOVPOWnlpMekRDCueS85fb7SrUXa+XdSUSxc9Q/laIJJziaTJoEkr
+         fKdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746457218; x=1747062018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zgpaiR/N3ioL5/g7+EhtTfAMyKaTCNjdwR/daQulLIQ=;
+        b=R2LAuwTYGwFWd6G8dcVJDzkag/SAAHh0eM4hrplqPfEpe+StnsF2IPIocWgTYGWbjb
+         U569/r+2qofxXAE90DIOMpE9DbkmqJw92QSdM4yoTkxVrmNSgtEZ4I09xDMCrunNpQHC
+         AdZehwAB50bARCe4VbgLFVWSgQb5zfyxTJ6Qgd8NpEX1ARDVkIe/58WvaINdxj9rc3CZ
+         0m0yRhjWkwiD0To6gbpSi+VIeNuMNtZz0yHvYSuuhuouGAV1TrUJ4Ho8bZRBUTY2unSU
+         JlCkEeZPch98bDzDCFQVeLFGFXU10CfqgHtjvIBm/c3FEmvOE4MHWYlD8egv23/d8mQf
+         Htug==
+X-Forwarded-Encrypted: i=1; AJvYcCVdsrWJnW7y6YY907A+/YQEV+1BNCUtBigu/Gutxv++Rppvnea9lTbvyYoZNjhPv1QFYIbbZC7D5nd+Mrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpEeGTqZFHCTyP1ZDGt1vbAFF2Rv53nTs4b0Ro0izq29Zlbv7g
+	c2BHWOoGb6bDmRJ9ajSPvKbEPX0/9T14xw77oCLzl5FG3qpmyxpaC8EU6ETwwLNcXGmquz4HbPT
+	joNeH8Vz6Gz+eSFnVTD3zhTrI0lFxDkYn4l1L
+X-Gm-Gg: ASbGnctMaVR5TDkw1w/iZd/5oYH7MO0anWdjM+Dbtj9GUkjUnOZyrdaSYQ3CX8fXBy1
+	+iqBqe8Fux36KB+e65UAJhn7KZEWP3T+rvCNCqZ6vqeO/s9r0tiRDeE1W0pbNf+tNQZsOIyzO29
+	/6V2lybAU+IsHDVp4jqO60yqFr4t4eW3V7ihbKigjpLvWEm2XAfg==
+X-Google-Smtp-Source: AGHT+IGBV00De7Bvs81up3DiMq5uNMuS1+NaIIw75xqG2AMJ/upMjP5p6RxIZZ1P7Y/Z/+u89lr0EL9heQCbZx6cvAY=
+X-Received: by 2002:a05:6402:1507:b0:5f8:7b57:e5c2 with SMTP id
+ 4fb4d7f45d1cf-5fb566852d6mr2204a12.4.1746457217325; Mon, 05 May 2025 08:00:17
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sebott@redhat.com, oliver.upton@linux.dev, qperret@google.com, tabba@google.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org> <20250505.aFia3choo1aw@digikod.net>
+In-Reply-To: <20250505.aFia3choo1aw@digikod.net>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 5 May 2025 16:59:41 +0200
+X-Gm-Features: ATxdqUEpQd4Wf6EVwtubs_kdKekg1DlIT59sXj-KbDJqdbZPlnBKsnyyATHMsFk
+Message-ID: <CAG48ez0Ti8y5GzZFhdf5cmZWH1XMmz0Q_3y8RCn6ca8UL-jrcA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 00/10] coredump: add coredump socket
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 05 May 2025 15:01:24 +0100,
-Sebastian Ott <sebott@redhat.com> wrote:
-> 
-> On Mon, 5 May 2025, Marc Zyngier wrote:
-> > On Mon, 05 May 2025 11:52:00 +0100,
-> > Sebastian Ott <sebott@redhat.com> wrote:
-> >> Doing back and forth migrations currently fails on arm after a couple iterations.
-> >> During the failing migration KVM_RUN exits via guest_abort and returns -ENOMEM.
-> >> I can reliably reproduce this by migrating between 2 qemu instances on an ampere
-> >> altra machine. This fails after < 5 iterations. In this case qemu would spit out
-> >> smth like this (other than that - nothing in the logs):
-> >> 
-> >> error: kvm run failed Cannot allocate memory
-> >>  PC=0000aaaae7d48590 X00=0000aaaae80a2e00 X01=0000aaaae7ea2fc0
-> >> X02=0000000001d3a5d0 X03=0000aaaae7eace8c X04=000000003b9aca00
-> >> X05=000000000000004a X06=000000000000004a X07=0000000028000000
-> >> X08=0000000000001d70 X09=0000000000000018 X10=000144b7d0000000
-> >> X11=00ffffffffffffff X12=000000008378f367 X13=0000aaab1a202d70
-> >> X14=0000000000000000 X15=0000000000000000 X16=0000ffffa2e2f7a8
-> >> X17=0000ffffa2541f20 X18=000000000000a000 X19=84bfda6288cf2dd6
-> >> X20=0000aaab1a1f1ce0 X21=000000007fffffff X22=0000ffffc5431788
-> >> X23=0000aaab1a17db60 X24=0000ffffc5431770 X25=0000000100000000
-> >> X26=0000004100000000 X27=0000000000000001 X28=0000aaab1a1f1c20
-> >> X29=0000ffffc54316d0 X30=0000aaaae7f8cd24  SP=0000ffffc5431650
-> >> PSTATE=20001000 --C- EL0t
-> >> 
-> >> Guest and host are otherwise idle, kvm is in normal VHE mode.
-> >> 
-> >> Git bisect points to (fce886a60207 "KVM: arm64: Plumb the pKVM MMU in KVM")
-> >> I also double checked that by reverting this commit on top of 6.14.
-> > 
-> > Thanks for find the triggering commit. Can you further identify *what*
-> > causes the -ENOMEM? The only new -ENOMEM in that patch is the one
-> > added to topup_hyp_memcache(), which shouldn't be called.
-> 
-> The kvm_pgtable_stage2_map() call in user_mem_abort() returns -ENOMEM
-> because the memcache pointer was not initialized!
-> 
-> It looks like smth like this without other conditions could do the trick:
-> 
-> if (!is_protected_kvm_enabled())
-> 	memcache = &vcpu->arch.mmu_page_cache;
-> else
-> 	memcache = &vcpu->arch.pkvm_memcache;
-> 
-> (I'll try this now)
+On Mon, May 5, 2025 at 4:41=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+> On Mon, May 05, 2025 at 01:13:38PM +0200, Christian Brauner wrote:
+> > Coredumping currently supports two modes:
+> >
+> > (1) Dumping directly into a file somewhere on the filesystem.
+> > (2) Dumping into a pipe connected to a usermode helper process
+> >     spawned as a child of the system_unbound_wq or kthreadd.
+> >
+> > For simplicity I'm mostly ignoring (1). There's probably still some
+> > users of (1) out there but processing coredumps in this way can be
+> > considered adventurous especially in the face of set*id binaries.
+> >
+> > The most common option should be (2) by now. It works by allowing
+> > userspace to put a string into /proc/sys/kernel/core_pattern like:
+> >
+> >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+> >
+> > The "|" at the beginning indicates to the kernel that a pipe must be
+> > used. The path following the pipe indicator is a path to a binary that
+> > will be spawned as a usermode helper process. Any additional parameters
+> > pass information about the task that is generating the coredump to the
+> > binary that processes the coredump.
+> >
+> > In the example core_pattern shown above systemd-coredump is spawned as =
+a
+> > usermode helper. There's various conceptual consequences of this
+> > (non-exhaustive list):
+> >
+> > - systemd-coredump is spawned with file descriptor number 0 (stdin)
+> >   connected to the read-end of the pipe. All other file descriptors are
+> >   closed. That specifically includes 1 (stdout) and 2 (stderr). This ha=
+s
+> >   already caused bugs because userspace assumed that this cannot happen
+> >   (Whether or not this is a sane assumption is irrelevant.).
+> >
+> > - systemd-coredump will be spawned as a child of system_unbound_wq. So
+> >   it is not a child of any userspace process and specifically not a
+> >   child of PID 1. It cannot be waited upon and is in a weird hybrid
+> >   upcall which are difficult for userspace to control correctly.
+> >
+> > - systemd-coredump is spawned with full kernel privileges. This
+> >   necessitates all kinds of weird privilege dropping excercises in
+> >   userspace to make this safe.
+> >
+> > - A new usermode helper has to be spawned for each crashing process.
+> >
+> > This series adds a new mode:
+> >
+> > (3) Dumping into an abstract AF_UNIX socket.
+> >
+> > Userspace can set /proc/sys/kernel/core_pattern to:
+> >
+> >         @linuxafsk/coredump_socket
+> >
+> > The "@" at the beginning indicates to the kernel that the abstract
+> > AF_UNIX coredump socket will be used to process coredumps.
+> >
+> > The coredump socket uses the fixed address "linuxafsk/coredump.socket"
+> > for now.
+> >
+> > The coredump socket is located in the initial network namespace. To bin=
+d
+> > the coredump socket userspace must hold CAP_SYS_ADMIN in the initial
+> > user namespace. Listening and reading can happen from whatever
+> > unprivileged context is necessary to safely process coredumps.
+> >
+> > When a task coredumps it opens a client socket in the initial network
+> > namespace and connects to the coredump socket. For now only tasks that
+> > are acctually coredumping are allowed to connect to the initial coredum=
+p
+> > socket.
+>
+> I think we should avoid using abstract UNIX sockets, especially for new
+> interfaces, because it is hard to properly control such access.  Can we
+> create new dedicated AF_UNIX protocols instead?  One could be used by a
+> privileged process in the initial namespace to create a socket to
+> collect coredumps, and the other could be dedicatde to coredumped
+> proccesses.  Such (coredump collector) file descriptor or new (proxy)
+> socketpair ones could be passed to containers.
 
-Right, we end-up with an uninitialised memcache variable. Why isn't
-the compiler screaming?
-
-I think you can indeed simply hoist the init of memcache very early
-on, which should solve hopefully solve the issue.
-
-> 
-> > Also, a failure to allocate would leave some nastygram in the kernel
-> > log, so it is unlikely to be an actual failure to allocate.
-> > 
-> > Is it the first KVM_RUN that fails after migration?
-> 
-> Nope, it happens on the side that triggers the migration.
-
-Probably because splitting pages requires allocating some memory, and
-all of a sudden you trigger the allocation from the memcache. Boo.
-
-Thanks for spotting this, I'm looking forward to the fix!
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+I would agree with you if we were talking about designing a pure
+userspace thing; but I think the limits that Christian added on bind()
+and connect() to these special abstract names in this series
+effectively make it behave as if they were dedicated AF_UNIX
+protocols, and prevent things like random unprivileged userspace
+processes bind()ing to them.
 
