@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-633955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7920AAAEFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:08:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9244CAAAF0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712321BA4E91
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:04:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44FF1BC32EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F2E2F2C6C;
-	Mon,  5 May 2025 23:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7A32F401D;
+	Mon,  5 May 2025 23:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvTsmBIP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FeY061rg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0092E5DEC;
-	Mon,  5 May 2025 23:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7B738F182;
+	Mon,  5 May 2025 23:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486120; cv=none; b=USELNMhnaN6s8Gfj8khKPpUgkgYvVgSrZLJ1Em6sMW71/afPFMG6GNvsBftJ2/I518PLsDjD0yvcR/yDY16Y96c0d/F7Y+sI/iovBNPwMvlwt+uyZ/6RappSXIDnquu2ClwMCCv1AGEa0nH5v4q3ga1IAy7lRwJjNXoqwNTIEtY=
+	t=1746486126; cv=none; b=FV4ooqN1/f9/ecR2wJWPC699SaVhjtSHWtAb7PDcWyTh7QOcZJWnE44aNvDQ8bwOfJVx74C5o08qElKpG+HB61UkR+cGp8oem4+wW0bFYOO8jhDemYVSKTIH5UAT1AjPQ4dK6RfJeD7Rt+R/LA/bWU83LhDrdHu++6VBdO+KPfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486120; c=relaxed/simple;
-	bh=NhetDVpHwaNtQW9Pf4j1Qjez9peTYB0dwDkouFiyJuA=;
+	s=arc-20240116; t=1746486126; c=relaxed/simple;
+	bh=ZZUXIkOSS3hS2GknXyh0OcagJMVn6bqVb1rlYQfWut0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Io4mJRdAWc3nveQj82t88NfSu3LVTvVpj+NKkT4rwET1PVyEm/TlQDyN+rsndHckFJZXIQrcuDyYZR45ue7SQOOwKMmaBxrvG9omymt/0vEG61ikgahOtY9rCYIOB0wULD2BBV2QDV4czmw9n26PUK5qzTodm45tWWkMZdYE+TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvTsmBIP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A005C4CEE4;
-	Mon,  5 May 2025 23:01:57 +0000 (UTC)
+	 MIME-Version; b=e7H79piIDDbvRSYLE7AaUoeyrkYdX5NjDIFU3UfYbWyjbzTnWm4lsq1YzfOhg5hCQAzEEvowiXhTbtOfh6u5GzeR/RCW34nZ8vdKKSJcW3g8sjhhbg+gFz7XJYxGcwByVeSJzdcViiYrqp81JnfnU4XzrlPwG+RA1popVyvJTv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FeY061rg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D44A7C4CEF1;
+	Mon,  5 May 2025 23:02:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486118;
-	bh=NhetDVpHwaNtQW9Pf4j1Qjez9peTYB0dwDkouFiyJuA=;
+	s=k20201202; t=1746486125;
+	bh=ZZUXIkOSS3hS2GknXyh0OcagJMVn6bqVb1rlYQfWut0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KvTsmBIPx4fuFqf2ar8PpLMhw+IYtRpbr+xdIArIcu0bu2jc1YXKI07jJ0ne391vn
-	 bOF36nqOXpskVuiNuMyAaskyzjeaoNXOQTtgHzem+TIXGzfcu6uNakBWwyF5r3rDYv
-	 O4uUot6iLrViL5vKk/by1VmKXdUe8/5iv3sJZBL+7s1W5TY8RyXl180v17faCt/iUC
-	 Zv64JcxrmXp1Q7TG8YT8EAOAIFyGAMpAJLKU+qrYmRFMO07ryvgWbGYlYKLxukCkeZ
-	 VztKtZub8eWHeySS+OwPPTgKuiN+zznlZy9Z1yIp8nLFzuodpXORWPyH7OwovEcWhx
-	 7hSM40PUHXzzQ==
+	b=FeY061rg9/17Q27YvTvw2WzTt3ycF2HxCqhupfheopEJyS02coRmcT6f5EgFEJXsd
+	 CXYF0G5YfxQVmcEq9b3d0aJVz9wa5BAY4geJbLbUdCikxC0Q52sVnB2IljFisrrOxp
+	 Kw0ON0yY04z5JxEHDpVNuIWFoRtgItOuQmNq8Fsm0zny8Nwu45hs6VYlw1EZLDcUPN
+	 NU3yXRbTxrsYXdOFxkDQLCzCRxzzbMfoWztxU7Pi+JIJM7BoX3zIYuSD89SZbqMq35
+	 ZJ6X19TFMFUEeX3LZ4tviqW6yPWoOPHsxynKEJBiSn9WiIRSCfSJ7sDhCp3/StOayQ
+	 hMT7FF95MxeQw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Konstantin Shkolnyy <kshk@linux.ibm.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	Dragos Tatulea <dtatulea@nvidia.com>,
-	Jason Wang <jasowang@redhat.com>,
+Cc: Nandakumar Edamana <nandakumar@nandakumar.co.in>,
+	Andrii Nakryiko <andrii@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	eperezma@redhat.com,
-	cratiu@nvidia.com,
-	tariqt@nvidia.com,
-	virtualization@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.6 161/294] vdpa/mlx5: Fix mlx5_vdpa_get_config() endianness on big-endian machines
-Date: Mon,  5 May 2025 18:54:21 -0400
-Message-Id: <20250505225634.2688578-161-sashal@kernel.org>
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 165/294] libbpf: Fix out-of-bound read
+Date: Mon,  5 May 2025 18:54:25 -0400
+Message-Id: <20250505225634.2688578-165-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -64,52 +62,46 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Konstantin Shkolnyy <kshk@linux.ibm.com>
+From: Nandakumar Edamana <nandakumar@nandakumar.co.in>
 
-[ Upstream commit 439252e167ac45a5d46f573aac1da7d8f3e051ad ]
+[ Upstream commit 236d3910117e9f97ebf75e511d8bcc950f1a4e5f ]
 
-mlx5_vdpa_dev_add() doesn’t initialize mvdev->actual_features. It’s
-initialized later by mlx5_vdpa_set_driver_features(). However,
-mlx5_vdpa_get_config() depends on the VIRTIO_F_VERSION_1 flag in
-actual_features, to return data with correct endianness. When it’s called
-before mlx5_vdpa_set_driver_features(), the data are incorrectly returned
-as big-endian on big-endian machines, while QEMU then interprets them as
-little-endian.
+In `set_kcfg_value_str`, an untrusted string is accessed with the assumption
+that it will be at least two characters long due to the presence of checks for
+opening and closing quotes. But the check for the closing quote
+(value[len - 1] != '"') misses the fact that it could be checking the opening
+quote itself in case of an invalid input that consists of just the opening
+quote.
 
-The fix is to initialize this VIRTIO_F_VERSION_1 as early as possible,
-especially considering that mlx5_vdpa_dev_add() insists on this flag to
-always be set anyway.
+This commit adds an explicit check to make sure the string is at least two
+characters long.
 
-Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Message-Id: <20250204173127.166673-1-kshk@linux.ibm.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Nandakumar Edamana <nandakumar@nandakumar.co.in>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Link: https://lore.kernel.org/bpf/20250221210110.3182084-1-nandakumar@nandakumar.co.in
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vdpa/mlx5/net/mlx5_vnet.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/lib/bpf/libbpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-index b56aae3f7be37..9b8b70ffde5a0 100644
---- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-@@ -3420,6 +3420,9 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
- 	ndev->mvdev.max_vqs = max_vqs;
- 	mvdev = &ndev->mvdev;
- 	mvdev->mdev = mdev;
-+	/* cpu_to_mlx5vdpa16() below depends on this flag */
-+	mvdev->actual_features =
-+			(device_features & BIT_ULL(VIRTIO_F_VERSION_1));
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 2fad178949efe..fa2abe56e845d 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -1802,7 +1802,7 @@ static int set_kcfg_value_str(struct extern_desc *ext, char *ext_val,
+ 	}
  
- 	ndev->vqs = kcalloc(max_vqs, sizeof(*ndev->vqs), GFP_KERNEL);
- 	ndev->event_cbs = kcalloc(max_vqs + 1, sizeof(*ndev->event_cbs), GFP_KERNEL);
+ 	len = strlen(value);
+-	if (value[len - 1] != '"') {
++	if (len < 2 || value[len - 1] != '"') {
+ 		pr_warn("extern (kcfg) '%s': invalid string config '%s'\n",
+ 			ext->name, value);
+ 		return -EINVAL;
 -- 
 2.39.5
 
