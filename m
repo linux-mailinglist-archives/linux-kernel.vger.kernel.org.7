@@ -1,119 +1,156 @@
-Return-Path: <linux-kernel+bounces-631980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE0EAA90C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:17:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B06CAA90C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60F71898393
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:17:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC77A3B807B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B451FF1BE;
-	Mon,  5 May 2025 10:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5261FECBD;
+	Mon,  5 May 2025 10:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="pkX+gdLm"
-Received: from outbound.pv.icloud.com (p-west1-cluster1-host7-snip4-5.eps.apple.com [57.103.64.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BQnp8OwS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zg+FqbdN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BQnp8OwS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zg+FqbdN"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048C01FF7CD
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 10:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAA015A8
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 10:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746440244; cv=none; b=FE4v/sdKj15IUqNCgPqC0VgxeIV+kSTewvAAhhOAdbB60dWE4RB8DiXD782l+eFMPqXeNkL7xzFTPkQFuWiSyscsBKDV3Aijj7b0sup72/ewDF0Y21PlWyb7rOxeHxTC+axfLmfR3vvypN1tzw4zmFEyPPM0/vJwL00Q16ZlJc4=
+	t=1746440370; cv=none; b=ZAHOFTQb+mZf648PezTHhjzB2ptZcjHEJsDioKfNQi7SjL1C23IcPHkUNjZNNkjDHEbdJciNU9Icg8hHh3d3sk3lbXaAVdQX58adYI3cJbGe51Alqozv7wL21wKezd2yZUiycMtH383Iu3ftsZDX8ViBoj6EGDnko7tV17GJVsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746440244; c=relaxed/simple;
-	bh=GUGFiV9TE85rK6IJCno2tLTGn6CA49p2TSUwh7TGSUA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r/UhHPkX0CYcILjpraVOcEQwnhxSVZDnP5E+uoofdBT4qcb6EuFrvYlklxwl5omkqyRX4/QKOqT90ZYlHZCVYt7iZB0ChGLt2yMkT6LlVkyYZ9euVAopk/mf3g8jqoLnm9EF4gCsMMWrZrTALuu+rF4XcVjXebL+0dyKa0i9hz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=pkX+gdLm; arc=none smtp.client-ip=57.103.64.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=TpUqnDjaGq9gtGHHOd6VeHOE8qsCo3MZ6iZzx1E1rwk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=pkX+gdLmYCa9UXAzCbE4wSZrAWRiKwFVotAeE4fYEFmgdf5LaWnxAVRAgJEc+yaUL
-	 xEJaghCX2u19oIymLyIQXYbc0/Os0z7y7qoFyURYNKeKVAygDsGKKQ74qvEC52jcyo
-	 BY8dSrObbmQLMphzXeEjAOJlhFQzYtwrSfC4JrV6VT1NP7yyJWL0RPu4Nse2BxxhHQ
-	 G3k2HAtc0h1c/zj4j1XDw0UAoobVR5u+y0lu0ZQ3BrXAmV/acK1tjmft+BQNWQxcOG
-	 Y5PBs3sh/vJMw8T/ZfKckCX/fepP1C6vmb/BTeyUeN1NXRwZoaVCiEIRWxYZ7PBWAi
-	 7/y/p8blwU0dQ==
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 79888180022B;
-	Mon,  5 May 2025 10:17:18 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Mon, 05 May 2025 18:17:04 +0800
-Subject: [PATCH] PM: wakeup: Add missing wakeup source attribute
- relax_count
+	s=arc-20240116; t=1746440370; c=relaxed/simple;
+	bh=fZRJRGBUfeoqYklT8YCLbziPfx9Gg5apvvccvcMpQRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWFCagW9fvwTlSJWf6OcDJLarz3v5gzehWP8oMxvJPfQ3lo8y99Ty6dHHNpo3FqQG4SVhPp/ah4YlEY6fXrTzYnPf4AukhWUqsJNq1t6kRoI0Lp3Dlc1CFs1WGCX8z8js5UYwoRnehzyTzgcjwnkdWpuakq2J3SEPVFukwSHy6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BQnp8OwS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zg+FqbdN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BQnp8OwS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zg+FqbdN; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1A6822118D;
+	Mon,  5 May 2025 10:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746440367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+CuKktiQKfpbKb73Elr0/AnTcjJL/9A/w+U7OWH/LE=;
+	b=BQnp8OwSgqSWoHT+0nVfOx/Lle04WqFl9X9v2XzL0Qx63oU3NH3XL3QGLO5RBaKskvvJou
+	vOXI51ngPXU+jBuKRbbK14OdEmW0EbiKXUm+qbWM5QUjFpXvAmuHl8HM2j3tkoS7Wnx40I
+	/Rlh7vu7whyExnLyK3AwM7zbSRbXd5s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746440367;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+CuKktiQKfpbKb73Elr0/AnTcjJL/9A/w+U7OWH/LE=;
+	b=zg+FqbdN21/EnNl6Bd644y2UX3BPB0TFhpdc/929XHC2jQeEoHi5xU6b8PmPn9HmFOBIqx
+	yOFvhGBAgjrQWXAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BQnp8OwS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zg+FqbdN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746440367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+CuKktiQKfpbKb73Elr0/AnTcjJL/9A/w+U7OWH/LE=;
+	b=BQnp8OwSgqSWoHT+0nVfOx/Lle04WqFl9X9v2XzL0Qx63oU3NH3XL3QGLO5RBaKskvvJou
+	vOXI51ngPXU+jBuKRbbK14OdEmW0EbiKXUm+qbWM5QUjFpXvAmuHl8HM2j3tkoS7Wnx40I
+	/Rlh7vu7whyExnLyK3AwM7zbSRbXd5s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746440367;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+CuKktiQKfpbKb73Elr0/AnTcjJL/9A/w+U7OWH/LE=;
+	b=zg+FqbdN21/EnNl6Bd644y2UX3BPB0TFhpdc/929XHC2jQeEoHi5xU6b8PmPn9HmFOBIqx
+	yOFvhGBAgjrQWXAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 08DEB13883;
+	Mon,  5 May 2025 10:19:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F04nAq+QGGhjewAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 05 May 2025 10:19:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 923C8A0670; Mon,  5 May 2025 12:19:26 +0200 (CEST)
+Date: Mon, 5 May 2025 12:19:26 +0200
+From: Jan Kara <jack@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrey Kriulin <kitotavrik.s@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Andrey Kriulin <kitotavrik.media@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, NeilBrown <neilb@suse.de>, Jan Kara <jack@suse.cz>, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, stable@vger.kernel.org
+Subject: Re: [PATCH] fs: minix: Fix handling of corrupted directories
+Message-ID: <tmrfgsrexyytlgxpsf3xus7w6tv3ake4ogo2b7ul7p6vn36cqv@nv4m6clasxjv>
+References: <20250502165059.63012-1-kitotavrik.media@gmail.com>
+ <aBUAbPum1d5dNrpG@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250505-add_power_attrs-v1-1-10bc3c73c320@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAB+QGGgC/x2MywqAIBAAfyX2nGDSA/qVCDFday8aq1QQ/nsSc
- 5rDzAsJmTDB3LzAeFGiGKp0bQP2MGFHQa46KKkGWRHGOX3GG1mbnDkJv03Wj5vrLSqo1cno6fm
- Py1rKB5l+RRthAAAA
-X-Change-ID: 20250505-add_power_attrs-fb7cf6bd4ce2
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Danilo Krummrich <dakr@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: CNjtgK9LB8I1L7anSHyGRHuoN9xVDyl6
-X-Proofpoint-GUID: CNjtgK9LB8I1L7anSHyGRHuoN9xVDyl6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_05,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxlogscore=999
- bulkscore=0 adultscore=0 malwarescore=0 phishscore=0 spamscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2505050098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBUAbPum1d5dNrpG@casper.infradead.org>
+X-Rspamd-Queue-Id: 1A6822118D
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,toxicpanda.com,suse.de,suse.cz,vger.kernel.org,linuxtesting.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Fri 02-05-25 18:27:08, Matthew Wilcox wrote:
+> On Fri, May 02, 2025 at 07:50:57PM +0300, Andrey Kriulin wrote:
+> > If the directory is corrupted and the number of nlinks is less than 2 
+> 
+> ... so should it be EIO or EFSCORRUPTED?
 
-There is wakeup source attribute 'active_count', but its counterpart
-attribute 'relax_count' is missing.
+Well, EFSCORRUPTED is an internal define (to EUCLEAN) local to several
+filesystems. So we'd need to lift that define to a generic code first.
 
-Add missing 'relax_count' for integrality.
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/power/wakeup_stats.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/base/power/wakeup_stats.c b/drivers/base/power/wakeup_stats.c
-index 6732ed2869f9f38a272faab0044b6eb3edc051f2..3ffd427248e8eebae3c05b5165bd4200a0668339 100644
---- a/drivers/base/power/wakeup_stats.c
-+++ b/drivers/base/power/wakeup_stats.c
-@@ -34,6 +34,7 @@ wakeup_attr(active_count);
- wakeup_attr(event_count);
- wakeup_attr(wakeup_count);
- wakeup_attr(expire_count);
-+wakeup_attr(relax_count);
- 
- static ssize_t active_time_ms_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
-@@ -119,6 +120,7 @@ static struct attribute *wakeup_source_attrs[] = {
- 	&dev_attr_event_count.attr,
- 	&dev_attr_wakeup_count.attr,
- 	&dev_attr_expire_count.attr,
-+	&dev_attr_relax_count.attr,
- 	&dev_attr_active_time_ms.attr,
- 	&dev_attr_total_time_ms.attr,
- 	&dev_attr_max_time_ms.attr,
-
----
-base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
-change-id: 20250505-add_power_attrs-fb7cf6bd4ce2
-
-Best regards,
+								Honza
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
