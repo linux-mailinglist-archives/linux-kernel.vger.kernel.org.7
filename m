@@ -1,195 +1,275 @@
-Return-Path: <linux-kernel+bounces-632851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7118AAA9D64
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:40:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595A7AA9D60
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D8755A02D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4267617EDC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76892701C1;
-	Mon,  5 May 2025 20:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DDD270EA6;
+	Mon,  5 May 2025 20:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="OWmaglKi"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2070.outbound.protection.outlook.com [40.107.249.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (4096-bit key) header.d=david-bauer.net header.i=@david-bauer.net header.b="FB0zDdcf"
+Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2525C6F4;
-	Mon,  5 May 2025 20:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746477614; cv=fail; b=BSE1KG1UHI7qYp6Vw0r3uZ8PX+d1Xc5fXdgdpwuqx3BFOFwVx8Y1h40jcEtoePvqKYXzTKivaUqWEMHGfhMVqA3Of6aY7KUis4hQSmv4iKsTVm5J9fgpRXSuafyWRMMCVTCp0/I5/H2BxOHvw8zP7jNuvusNb0lqzq56rT2ncYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746477614; c=relaxed/simple;
-	bh=mqUw7s+nehNvv8MGGEQ/E9H+tzHgL46W8rcS24G9r+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=WbdwUoOj9BXtfxiXR4+6W5DaV4GCpJ/wrESMuw+GWVFSC870JHI56xU2HwKZQneWXdZf1av65M9k4r7MVatL3/QKcYwP6V1jU7VLYiqRibmgC5PGZEcfE17T5hPY75EYgBUsnTIEyja4eYqOfAqCOklmCfPre3qqE3SdJP3NyM0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=fail smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=OWmaglKi; arc=fail smtp.client-ip=40.107.249.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H4WOyKtNoAKCpAlEh+I/SmsXxVdtO8qRjd/cMQkF5SqSBaE6vjRuoQqg+0tq9WVywtjWZcQfe5yigXWcwSPV7XxEFwCPQ+MVH6uQ2T/oW1VAnTKxNdMU6uWv0jVg9ESQ39KWKZXnyKHTBEKEiUSyc4oqYdL+N41w6FLOUYQfY+xpXv7It6e8OxYV4tZoSOFC0H26/GjlSrp8QpaRH+uc/BpLl0cYiHosiBlnOoYrz9irMDv5PJVN1dH3qbZyXZGHqFxxoZfoNnmYs57omZ8pyPKnt/Wa5N+pU4wo8JYArTpp8dvpFukenU+KZFFB0Q/QW15+BXsMSfwqF9NXI7c00w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d8VaWO1kXooxCo7LnJurz2FjBqrZkUyzdCaPN2PvKOI=;
- b=KPjTZVfI0VCkezBmFgENX6tPMT16atOVtNozbchaEP73owVWWYN9nA25jgUmcGo/vB0KGhAX29J8aQmmSxyAHGKz3zW9gS+Iyz9eo2NesQLkaRIovnxHdM9onMprW6TeyNwLpl+3/H95uUCg7gJdoejhs1lw2+PMrv7h/WiJejk6anep3ZU2ggz36okgu23ZpOyMYsKc5LWcg/VRhR8fZuDnk2OiBNT+wCxJXBMKUr/XIRo0L5L0fju5NTE41kGHXKUyDE8Nzk2+pOn59DJLLm+borblxmrhMX0GaA9hOC6PToSl5hTAldLWxY9ZH4ww5t5n5rTVxGJmsMb+E14/aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d8VaWO1kXooxCo7LnJurz2FjBqrZkUyzdCaPN2PvKOI=;
- b=OWmaglKidjtFMPyCY4nHBOLaFeWTPj3VCGXYDap4StCbuPDPtS8yt8nro2+P9wDLYWP8wRxxNjkqt/VVrCUe/dEx9SrtwXHReUHOR3SktKRfDkNgRLzhv6Y1pfAOdDolQEjlDLwdmDtJs6OPQyGUoaxCHzqLiPB/VQG/eRk4qP80n/USOjSRUv7zpICMdUBMzcQyEApjTdMPyYwTMFRhvd+P7UGBbOxoGRkL+UcoIsAZ7+L0VMbLIYiUNHvQn/zFMdk07VEkPqBKUSJ3hu5FKLqHeZ+LHG2Yiqe8BQE9UiN/OYKt0u8L1SAT9fw3n7Ad5Gn0goKQCObFrvoeAOl1dA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from VI1PR03MB6285.eurprd03.prod.outlook.com (2603:10a6:800:137::14)
- by DU0PR03MB9613.eurprd03.prod.outlook.com (2603:10a6:10:420::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Mon, 5 May
- 2025 20:40:08 +0000
-Received: from VI1PR03MB6285.eurprd03.prod.outlook.com
- ([fe80::e290:ebac:cbe4:198a]) by VI1PR03MB6285.eurprd03.prod.outlook.com
- ([fe80::e290:ebac:cbe4:198a%5]) with mapi id 15.20.8699.026; Mon, 5 May 2025
- 20:40:07 +0000
-From: Markus Burri <markus.burri@mt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Markus Burri <markus.burri@mt.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org,
-	Markus Burri <markus.burri@bbv.ch>
-Subject: [PATCH v3] iio: backend: fix out-of-bound write
-Date: Mon,  5 May 2025 22:38:30 +0200
-Message-Id: <20250505203830.5117-1-markus.burri@mt.com>
-X-Mailer: git-send-email 2.39.5
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MI2P293CA0014.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::13) To VI1PR03MB6285.eurprd03.prod.outlook.com
- (2603:10a6:800:137::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA81B2701DB
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 20:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746477543; cv=none; b=SS50ClcrnjaQafyWMp6RqLja/M5laqIgOk0AyiGjsVVuhjzpcxft12HlkM5xXXqiUE5hDU1GEK/gPWrFp7Koa66XZMfJO1Gc3wtoyAyAP+QMTuCbw5o78LXrV04xWw7krdWdc8o3sDNdwUt/PtRsLCGylHuNXvkcZC6uxHy1Pw0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746477543; c=relaxed/simple;
+	bh=b1VdaxnbTgifyjhmcpWeHl2+iooGjNIhyVLAzp9jU+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fLAqWGtkLuS9nKNuRVwQFu6BnIOHkCPm+BY9tQGBYAdhWI3vCqXv1GsDiCvGdOkWUZcsIEjSFlrAfVD2yFViqyFmIIN7fKBJq/cBPZjZSmfsig8EgAbhGA82iMX3hiWOtoe1NxaPOu74LtDgnIRHCVf9O8tkn3OlTb0Lm10gbrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=david-bauer.net; spf=pass smtp.mailfrom=david-bauer.net; dkim=pass (4096-bit key) header.d=david-bauer.net header.i=@david-bauer.net header.b=FB0zDdcf; arc=none smtp.client-ip=185.26.156.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=david-bauer.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=david-bauer.net
+Received: from perseus.uberspace.de (perseus.uberspace.de [95.143.172.134])
+	by mailgate02.uberspace.is (Postfix) with ESMTPS id 09F9218016A
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 22:38:51 +0200 (CEST)
+Received: (qmail 3330 invoked by uid 988); 5 May 2025 20:38:50 -0000
+Authentication-Results: perseus.uberspace.de;
+	auth=pass (plain)
+Received: from unknown (HELO unkown) (::1)
+	by perseus.uberspace.de (Haraka/3.0.1) with ESMTPSA; Mon, 05 May 2025 22:38:50 +0200
+From: David Bauer <mail@david-bauer.net>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: input: add Semtech SX951x binding
+Date: Mon,  5 May 2025 22:38:44 +0200
+Message-ID: <20250505203847.86714-1-mail@david-bauer.net>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR03MB6285:EE_|DU0PR03MB9613:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91731a82-6fa0-4d75-474b-08dd8c1505bc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EXyVQjXqIFa25KyL7RFnSBOhFyZLQRORDfbEHyMBzZnzhBzefbogud4oKHsf?=
- =?us-ascii?Q?LMZ+9wEsJSewOgvKmc9O30QWw0iJQyQzdQ7g/j2OmOOhEVPV9UzlBw6e8qrs?=
- =?us-ascii?Q?t40wFW/A1yaeJ7SldNJRGxu9/hgLw4cp4qJG4JlvsdQ0H3iYAhXj0mZ/8Oon?=
- =?us-ascii?Q?O+ylFtx/wN5ZgqFbcRAmwIrIsWL9Bxt7jGlHaILcose1Xy6B5yWdj7z9Sta9?=
- =?us-ascii?Q?ZrV4q2Z4Z0z+CRSvjlyGzktCA2v+pcKxtAF/cE3UdV5lO/udjV89dJVIR3uS?=
- =?us-ascii?Q?0+OtqUw4Mopy8YmQI/CouliF56aL0vKYdIubwkTIPXC2kXh/t+OuCpwP4rUf?=
- =?us-ascii?Q?PoMRtkfrMJ9Pv/sfZ+z+tgKkHXfiUaSPcFVDD3ufMCk50oPm+VgvdrQZedDo?=
- =?us-ascii?Q?Ky2pJTD7TLVEUJFdGTEva+BdlAGNW301NHhHKCKB3KSxGmu+qwkp/6pw0woJ?=
- =?us-ascii?Q?wbr9Wb/LI7VUSjCRy7zYJWlIbtVJJGEDbRKavBrf+LqvQNGNMzq06VmSWcbi?=
- =?us-ascii?Q?3AghqCLctEaGQaUoXjU15Sj30Qo0e9NVaTXcSu+nZedHaofHycFXKnxWhqgY?=
- =?us-ascii?Q?0KqR2DACuD8i1F8OkOErIvU5FqlZvoWdQbd9Ru5CGfCYQOiyMtgsl/VVW4LP?=
- =?us-ascii?Q?Oo/7qBZe4k7aefffzpnMUATdo1gR639gBlEO7IlrmMglSnYaHXZpV32LbX7g?=
- =?us-ascii?Q?wtHtnAU/5I4d0BQSSVAvKwCMZJyE3fbL3uWJeHkKgHV9kgUBTtJft19LinnM?=
- =?us-ascii?Q?onClbzyclpSCzmjBEpQUbqjniCRgL9pqcN8r2+lCtAA/62dqYsgDofJ+/aO4?=
- =?us-ascii?Q?Mzse+qVeRccX5ULHqXCYgE6vcUjqIfInFf7KM9BJ1oEaZ2h033YSHg49OJ74?=
- =?us-ascii?Q?1r+7c+NcOK1QEbnfn1G2t1BaLQFBocM66DsL39iyj7KgvsU24Od3/iIpJ/hv?=
- =?us-ascii?Q?eUV1Frr5Pd5lJajhfF/kFGTucMq1Dgm8+1lvOruqG1e0edp2TmFroDVt8U8v?=
- =?us-ascii?Q?du0hgvxkZg/HY3Qys0XbIp/76BB3N3e3rSDYirgXB5yu7ADjlF6OimV4u6gR?=
- =?us-ascii?Q?aAVWf7TzZfOO+6jDLfbBsc+VKGqyKA20BfR+s6HK+sJU436/E+ES50PKxSWz?=
- =?us-ascii?Q?dJz2doNe7xVz2A5HvWvUeIr/KFQLodg3SuVo5kIVyXYT5oEYzHDrJ8hHsW5m?=
- =?us-ascii?Q?YRVWNoRyVLyzqvktn6Vr86+/U5ancb9kRQP61C0R9a70O0yPkoa8tks6KAeq?=
- =?us-ascii?Q?YlKMWeLlvMzDnhipCxPE60vQ6AcGn3uEAWol5OfF/bZBI7E7aK0NrhuxJdvj?=
- =?us-ascii?Q?i+IyCblURitp7lkVNIM+gDN/QOXd2+68HKB74/qIHVGrTeXmE9LMpH+NnnJ+?=
- =?us-ascii?Q?kC7Aps2KUEkw7jmZNpzXtBCWWez8y3RUZrG8W1H5RdlSA4Zd+eahUJ3d7zCS?=
- =?us-ascii?Q?jExqcDA3HPDWQm9wEFdBjb/Pg6oWrqZwaVtBrWRrU/MN7IdK78kdHA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR03MB6285.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tVWQMXj0u0DyCfAd+cxUMEJemjCnnH44Ekty6qLKCilLR24gx5NSoBQ+ube0?=
- =?us-ascii?Q?hIVhe8qokRauAdeuFfy1IUfvsOasqSCXg/OPMu6BdkY2eSRYD5uvnmT7Bav8?=
- =?us-ascii?Q?j3/9migT8fm1d3dFj+zm3PB/tIUBln32uy396qd3l4iodHGNnPTZK0POiQPV?=
- =?us-ascii?Q?Sb2L5w58dGdKOh4e6rY3NkEObUThF9py1JFhD/svgoob2P9D8ZZYDcdy49kV?=
- =?us-ascii?Q?+lVhTgsb08+n5D1suzuFNbsgLLSOLbQDERCCrPdlUlhF/GuEfwr2LZGn63FP?=
- =?us-ascii?Q?aarX8HATzeNWQgftwUMSlLwkt2hNoyb/MkonAZboF05YmHWblf/K0j9hbNk/?=
- =?us-ascii?Q?LAGfCsCGXvpsx/cmZGWZdxz++BQuulRahsRGvHX0bhIA5r6FDeSqhW5TnXEX?=
- =?us-ascii?Q?A618yLimUfuzF3X9NqCT57hTtTSJH3po4hdIba/qNybcoh3PRoIA8uiNWGTP?=
- =?us-ascii?Q?PslgwtAsSlNprrn7Jm2CFPAOEmK2Uw6Zq2oFs2OCfPz+irm5dzHi8RmviKID?=
- =?us-ascii?Q?mlbPmTx3nHwnEGnz4U0v/QPnvXFf4s0RnyfkiLbW9czXhOVoZOWfA3LhD+lg?=
- =?us-ascii?Q?DAstenyyMHGfgq8zzPkBj7htoS7d8De+RmJaoqexFZta0p5XraqxoLPLFoe6?=
- =?us-ascii?Q?6PFkj+1xlfslbdpIGWR94ARC+c/GinaDOg5/2lqLNQ/lXnwkQs/Rev7BPGyc?=
- =?us-ascii?Q?RMMcs+a3v0928W0ozMnMiSB60YTlHRCBp+If6I65AsnJan+B+LF9UOddTrwv?=
- =?us-ascii?Q?3zjwutG2OwtgnJA1lWS7rWNetQum9aeAk5RLJP3rvWJynzqEYKzhF24r+rr1?=
- =?us-ascii?Q?cPGEqYUmWTz82Hkq5D2WEZzl3YUGtdF2KqjHDMX9IFHu4HHcFfES6+qLSK7U?=
- =?us-ascii?Q?i63NggYlvmqI+AdWEj7pkapgemedLdrFqqH5mxpIGOJmv8ikb3AaCQdQWZaT?=
- =?us-ascii?Q?EgPyO8pR8I7I2v5mzjPh0u8+XRsDa4qNStZeryEIMYTMof/zilTeCKIEkF+2?=
- =?us-ascii?Q?1F3Uk37EYKyMwejuC4r3b4zoXEp505XUM/UoviMgJJj1hTQ9q8Br6wmSrl6W?=
- =?us-ascii?Q?Xta9aOKh6Tz7ND/eCkPbiJXEyJvKixuz8vpjYyJIz0vK4o4hWeA+b4KEL118?=
- =?us-ascii?Q?d4Hi8iT/6ivJrp6ak0dgLvNpBINjfr85/v3hdJMIkEcLQnouOM6ijZMCUOVT?=
- =?us-ascii?Q?2oDEi4hnFN2Hcce49T9fz5AffMtzbA9zsWpwkYEwSom9rdlRJXV4RuW0gBnw?=
- =?us-ascii?Q?KWcNAgkxG96ooY+kSGLY2BO0Utu2MiDS1bEiSXlZowyLcOguRmIf/gBba9+m?=
- =?us-ascii?Q?izNrfBiz23OaZeLolnMlRO0V1t0Nbsjw1DfnZ6XZ5ZwuzqCG7j0JB13vJLMJ?=
- =?us-ascii?Q?QmYG90dclE/a5nJzNq5HKufpKx/HG+ZHxeJmbzC/3WcrWc4m5q91aDxEbYJs?=
- =?us-ascii?Q?p1Vhkzxs5AnJHLwCgij0tQiGO1sTpPBKRiC/eYVlIfBFWjXqrWN3brfsFX6o?=
- =?us-ascii?Q?NSPFIx44kEk9z7XIj48+BP5LjHeg3V+5p/larUq9pPWhM9l3EJ5O4n8ZCVOX?=
- =?us-ascii?Q?dYIBdY8l06mhJqzhA/LpwmdlSErCSY2eLG4I8WTJ?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91731a82-6fa0-4d75-474b-08dd8c1505bc
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR03MB6285.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 20:40:07.6310
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WegfZyF2a3q5KVay1P7y+ybG24L+4Hu9pH4aWBcLvUYe1OEz57C/aI52HTfXfVgS9jxNI+NOdlFCYrs181izPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR03MB9613
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Bar: -
+X-Rspamd-Report: MID_CONTAINS_FROM(1) BAYES_HAM(-2.999999) MIME_GOOD(-0.1) R_MISSING_CHARSET(0.5)
+X-Rspamd-Score: -1.599999
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=david-bauer.net; s=uberspace;
+	h=from:to:cc:subject:date;
+	bh=b1VdaxnbTgifyjhmcpWeHl2+iooGjNIhyVLAzp9jU+s=;
+	b=FB0zDdcfEzQWeHyPMJWwSB1vNltbJkgkZnd8fke9nUwvp0KIdH9lbHCvnov+dY8Q/0QobH38zb
+	ka7YFagwCF59umPBdaMm7ySnBfxx1uv3M8zeAwT39tqidVXvmcXLjSA01zj6Kdz4At+1GUIJAE/Y
+	Ft+qS7f/RPK7L3LycGtluRjbp2IoW6bd3MSeVoIPhWuXCu6gsneztKcSxOTPhbjoWinEKhkVRK1l
+	h8D0K18KD/91czo9liakIJ+mjy2Mx6WFqHgWAIjNvi9vULcN1aUI3b2DJ5zIgpqi1bCv5QOlKFqh
+	ZMFN1nB3Qrw62K+WfJTC57CAd0RzTKYqd0ieO0BzhwsrPQIKL0WrIvvzAfLdlOKRCLke+ME0U9Q3
+	V7JoNUlumLppE5gGEAtcNSuNitbwcyl54hSlQx961tU8FFS+WcxJ35bGrXThbdX4iFIqFzS9FD1Y
+	lmjpT3K9kbIvLolV33LpHt8cZSoVy6ogZUCOT0fLcxWhBH0Cwpn6ONP7cHuGqtrl3ajqIij9Fjib
+	juLT5Qgv8jG6gewgR9nePUjbhqUT/uD+jVqihsCi6ZtodWQRra93COCe/nZZ2CBlrKFhh81a7Flo
+	iLhG3rOFj2Hiruq5jLEuBUWX/W5s/2NizAsREGOYjM6kP+CLfM3annRXHjfyTCJCyb+25SzaMMbY
+	k=
 
-The buffer is set to 80 character. If a caller write more characters,
-count is truncated to the max available space in "simple_write_to_buffer".
-But afterwards a string terminator is written to the buffer at offset count
-without boundary check. The zero termination is written OUT-OF-BOUND.
+Add device-tree binding for the Semtech SX9512/SX9513 family of touch
+controllers with integrated LED driver.
 
-Add a check that the given buffer is smaller then the buffer to prevent.
-
-Fixes: 035b4989211d ("iio: backend: make sure to NULL terminate stack buffer")
-Signed-off-by: Markus Burri <markus.burri@mt.com>
+Signed-off-by: David Bauer <mail@david-bauer.net>
 ---
- drivers/iio/industrialio-backend.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../bindings/input/semtech,sx951x.yaml        | 180 ++++++++++++++++++
+ 1 file changed, 180 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/semtech,sx951x.yaml
 
-diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-index a43c8d1bb3d0..4a364e038449 100644
---- a/drivers/iio/industrialio-backend.c
-+++ b/drivers/iio/industrialio-backend.c
-@@ -155,11 +155,14 @@ static ssize_t iio_backend_debugfs_write_reg(struct file *file,
- 	ssize_t rc;
- 	int ret;
- 
-+	if (count >= sizeof(buf) - 1)
-+		return -ENOSPC;
+diff --git a/Documentation/devicetree/bindings/input/semtech,sx951x.yaml b/Documentation/devicetree/bindings/input/semtech,sx951x.yaml
+new file mode 100644
+index 000000000000..e4f938decd86
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/semtech,sx951x.yaml
+@@ -0,0 +1,180 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/semtech,sx951x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	rc = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
- 	if (rc < 0)
- 		return rc;
- 
--	buf[count] = '\0';
-+	buf[rc] = '\0';
- 
- 	ret = sscanf(buf, "%i %i", &back->cached_reg_addr, &val);
- 
-
-base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
++title: Semtech SX9512/SX9513 based capacitive touch sensors
++
++description: |
++  The Semtech SX9512/SX9513 Family of capacitive touch controllers
++  with integrated LED drivers. The device communication is using I2C only.
++
++maintainers:
++  - David Bauer <mail@david-bauer.net>
++
++properties:
++  compatible:
++    enum:
++      - semtech,sx9512
++      - semtech,sx9513
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  poll-interval:
++    default: 100
++    description: |
++      The polling interval for touch events in milliseconds.
++
++patternProperties:
++  "^channel@[0-7]$":
++    $ref: input.yaml#
++    type: object
++    description: |
++      Each node represents a channel of the touch controller.
++      Each channel provides a capacitive touch sensor input and
++      an LED driver output.
++
++    properties:
++      reg:
++        enum: [0, 1, 2, 3, 4, 5, 6, 7]
++
++      linux,keycodes:
++        maxItems: 1
++        description: |
++          Specifies an array of numeric keycode values to
++          be used for the channels. If this property is
++          omitted, the channel is not used as a key.
++
++      semtech,cin-delta:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3
++        default: 3
++        description: |
++          The capacitance delta which is used to detect a touch
++          or release event. The property value is mapped to a
++          farad range between 7pF and 2.3pF internally. The delta
++          becomes smaller the higher the value is.
++
++      semtech,sense-threshold:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 255
++        default: 4
++        description: |
++          The threshold value after which the channel detects a touch.
++          Refer to the datasheet for the internal calculation of the
++          resulting touch sensitivity.
++
++      led:
++        $ref: /schemas/leds/common.yaml#
++        type: object
++        unevaluatedProperties: false
++        description: |
++          Presence of this property indicates the channel
++          is used as an LED driver.
++
++    required:
++      - reg
++
++    additionalProperties: false
++
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/input/input.h>
++    #include <dt-bindings/leds/common.h>
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      touch@2b {
++        compatible = "semtech,sx9512";
++
++        reg = <0x2b>;
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        poll-interval = <100>;
++
++        channel@1 {
++          reg = <1>;
++
++          semtech,cin-delta = <0x3>;
++          semtech,sense-threshold = <0xff>;
++
++          linux,keycodes = <KEY_A>;
++        };
++
++        channel@2 {
++          reg = <2>;
++
++          semtech,cin-delta = <0x3>;
++          semtech,sense-threshold = <0xff>;
++
++          linux,keycodes = <KEY_B>;
++        };
++
++        channel@3 {
++          reg = <3>;
++
++          semtech,cin-delta = <0x3>;
++          semtech,sense-threshold = <0xff>;
++
++          linux,keycodes = <KEY_WPS_BUTTON>;
++        };
++
++        channel@4 {
++          reg = <4>;
++
++          led {
++            color = <LED_COLOR_ID_RED>;
++            function = LED_FUNCTION_WAN;
++          };
++        };
++
++        channel@5 {
++          reg = <5>;
++
++          led {
++            color = <LED_COLOR_ID_GREEN>;
++            function = LED_FUNCTION_WAN;
++          };
++        };
++
++        channel@6 {
++          reg = <6>;
++
++          led {
++            color = <LED_COLOR_ID_GREEN>;
++            function = LED_FUNCTION_WLAN;
++            linux,default-trigger = "phy1tx";
++          };
++        };
++
++        channel@7 {
++          reg = <7>;
++
++          led {
++            color = <LED_COLOR_ID_GREEN>;
++            function = LED_FUNCTION_WLAN;
++            linux,default-trigger = "phy0tx";
++          };
++        };
++      };
++    };
 -- 
-2.39.5
+2.47.2
 
 
