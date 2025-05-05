@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-634821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF417AAB4DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:16:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DFCAAB4C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008F03AE781
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:09:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFEC3B779E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28C6481A00;
-	Tue,  6 May 2025 00:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226D24819F3;
+	Tue,  6 May 2025 00:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mG7AAcCn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZejMIhV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F172F22E9;
-	Mon,  5 May 2025 23:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A962F230E;
+	Mon,  5 May 2025 23:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486810; cv=none; b=AAeL1n32JINQwzzm7ypX1MSpREK5W++RlyjpM4ylUkvV9K5y4R3kEmx1PHLYd11aDAWy78L7HyOVuGsnn/8PBWFQvOqKXG11KD2TImh8GFGiP8NBXAMVErJWl/NKnpsvZlnXEG7Lfk4xF8IctuG8onQSqRAf/13W7csBn5Wae9o=
+	t=1746486811; cv=none; b=mf1HrKMkmdOqTlCjkhKewxtqg6Ppw82tiIR5+KWx96e1vChxtZCh0OjjUS73+78xocUZ4efk13vnU5DLvkEIZxL+xIJ9J1azMHxxu55Qyn1XwTvjqWH/8MTlRQb7RA6i3hqxuTZm8m8mD4ViL5yla9t7ViaYpA+9kD68gBB1zSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486810; c=relaxed/simple;
-	bh=zEWgyvgE0K3/6juLqJn8ugmpW06gemNbsD2fMXiHnzM=;
+	s=arc-20240116; t=1746486811; c=relaxed/simple;
+	bh=dGzUyxuhzvfEM3R/PhIaZ3ZpTDVIzR52pu2g+3tx7Rw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DSeOCeyuOc6IExcXm+uNkGCXTGzxGyiqV0+u5qQF7VoWYTzjpUAq9cDFGN6D2E7Uxwr0ZBLS2MUSINDEM29onHGNZbXsd4WNejBa8UYdUvDv8WHZb4F5F45QxRNr0zKEAEpxAJN7rh2kNFHxoTDAxXazrSpnHWlwNP7LfzYBnBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mG7AAcCn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8F0C4CEED;
-	Mon,  5 May 2025 23:13:28 +0000 (UTC)
+	 MIME-Version; b=lcX1G94ff+LEUX0CnMJcso1+bmajRLT/yS5NsD1kV1r7UM+N7DAuEkU3NWpWtwFCCBXX4RpdHZqMCIxoYQgwgsULCWxkN1p2rp1tqWVtMRAvrFf32VKshOKlxZJBE+xuVCj5aUx4oxYbnQ9S5mTHFxL0wG9K5oRfkcXSeKdKnFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZejMIhV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C0E1C4CEEF;
+	Mon,  5 May 2025 23:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486809;
-	bh=zEWgyvgE0K3/6juLqJn8ugmpW06gemNbsD2fMXiHnzM=;
+	s=k20201202; t=1746486810;
+	bh=dGzUyxuhzvfEM3R/PhIaZ3ZpTDVIzR52pu2g+3tx7Rw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mG7AAcCnTKV10J51E4GRHSz7/XXXyX+ObT9E3gKS6vMf8skw2v4M7+MAcP3mO1yKV
-	 Y90cMNJz6Wmb4SODMTLCYK5ZT+XpX19DCxb6vev/m4ZQA4Tn7OGGOYoBlIMnyvTCRy
-	 4LZ8pJpuUHlfCbtqZHc5aO88sunZgfjTNOKVE+RoJFDSWCwnS+cI+Hn5sQh1sSI3Mp
-	 EOOcq5ubXCDNvj6a2TR135XlITLntuWSjB+WKL3UTvflLUrt38bUh85aOSY7lgxwBk
-	 n42KzIu1RGc0vBfj43UAmXNrl91oO2d9mxnmFns5ZaGmyBl5NoG02yx42SH3FizgDp
-	 X5vtMO/15SehA==
+	b=JZejMIhVFxF1VmTq6oCnYhRW/dXbMoAufMJ5ifvu20NgPiUdrE4VnEe9To3n0iwa1
+	 KG0ujiI6ra1fIbK/aI5pLl44IdooNHyEZWBzKn+YBirG4/ljzDX/4k7nyssGBz7CD3
+	 AELYmrAZtkcq8o8OGpY82zSOAg7yoIrxBDqq+qCuVQOYw/qnvnljsvIALmKwwb7v+U
+	 /RXpmAKYB3il8ZUo+5jKGb7/bnN0xO4bW1bW0unGG8Mq513+0OUB1xy86cvG3b52AP
+	 A6E8c+r5nrNR35M8LUr7VinN0R7OvlZtQsf5AkEnIuaXmixVFQGD1nfl/EUZBjjALY
+	 TG0oIUSdScD5g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.15 004/153] mailbox: use error ret code of of_parse_phandle_with_args()
-Date: Mon,  5 May 2025 19:10:51 -0400
-Message-Id: <20250505231320.2695319-4-sashal@kernel.org>
+Cc: Shixiong Ou <oushixiong@kylinos.cn>,
+	Helge Deller <deller@gmx.de>,
+	Sasha Levin <sashal@kernel.org>,
+	timur@kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.15 005/153] fbdev: fsl-diu-fb: add missing device_remove_file()
+Date: Mon,  5 May 2025 19:10:52 -0400
+Message-Id: <20250505231320.2695319-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -63,43 +66,31 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-[ Upstream commit 24fdd5074b205cfb0ef4cd0751a2d03031455929 ]
+[ Upstream commit 86d16cd12efa547ed43d16ba7a782c1251c80ea8 ]
 
-In case of error, of_parse_phandle_with_args() returns -EINVAL when the
-passed index is negative, or -ENOENT when the index is for an empty
-phandle. The mailbox core overwrote the error return code with a less
-precise -ENODEV. Use the error returned code from
-of_parse_phandle_with_args().
+Call device_remove_file() when driver remove.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/mailbox.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/video/fbdev/fsl-diu-fb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index 4229b9b5da98f..6f54501dc7762 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -350,11 +350,12 @@ struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
+diff --git a/drivers/video/fbdev/fsl-diu-fb.c b/drivers/video/fbdev/fsl-diu-fb.c
+index ce3c5b0b8f4ef..53be4ab374cc3 100644
+--- a/drivers/video/fbdev/fsl-diu-fb.c
++++ b/drivers/video/fbdev/fsl-diu-fb.c
+@@ -1829,6 +1829,7 @@ static int fsl_diu_remove(struct platform_device *pdev)
+ 	int i;
  
- 	mutex_lock(&con_mutex);
+ 	data = dev_get_drvdata(&pdev->dev);
++	device_remove_file(&pdev->dev, &data->dev_attr);
+ 	disable_lcdc(&data->fsl_diu_info[0]);
  
--	if (of_parse_phandle_with_args(dev->of_node, "mboxes",
--				       "#mbox-cells", index, &spec)) {
-+	ret = of_parse_phandle_with_args(dev->of_node, "mboxes", "#mbox-cells",
-+					 index, &spec);
-+	if (ret) {
- 		dev_dbg(dev, "%s: can't parse \"mboxes\" property\n", __func__);
- 		mutex_unlock(&con_mutex);
--		return ERR_PTR(-ENODEV);
-+		return ERR_PTR(ret);
- 	}
- 
- 	chan = ERR_PTR(-EPROBE_DEFER);
+ 	free_irq(data->irq, data->diu_reg);
 -- 
 2.39.5
 
