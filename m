@@ -1,61 +1,69 @@
-Return-Path: <linux-kernel+bounces-634362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A103AAB619
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:43:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BA2AAB621
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADE101BA2F6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:40:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A06887BC96D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10CE3272CC;
-	Tue,  6 May 2025 00:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44A42BE7CA;
+	Tue,  6 May 2025 00:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhw2t/A8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3jSimZ/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098E437532D;
-	Mon,  5 May 2025 22:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1472F2BE114;
+	Mon,  5 May 2025 22:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485266; cv=none; b=lzIpxGdiqslj46OG9jZR7johHhIS0P+xH+tZgeSteyfFeCKW8qr7lITPczO5iS/FrgXnyyMV70xgFxVBS6PFTUDq4FhxObFfpMWeKLQjsAjldoPK/f/zQ33cjknoS7rFVWnEPilEDm6LOrhhuk868kI0eCZE1bQth1HTK82xyLM=
+	t=1746485289; cv=none; b=O4yVb8rNWaYt63N4L0hbL1Bwm330rz8C60hTE+RL/pK1JlF3gBHDVADnDtKQMYExeYLImF7odeq/B6DCEf47SmxVbMvTp7DFGNQLjimqbz+QxwcU+t5oJ1O+8YhTJWk16q3JrsIuHXDYG0HEL+rurmu37KMmtTGso4RXkxmGI0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485266; c=relaxed/simple;
-	bh=uoqatsxnaznUHh7zR9Q6eQtHRh1oWtgPBgbDgbm5Xfs=;
+	s=arc-20240116; t=1746485289; c=relaxed/simple;
+	bh=UJYaaSdAosLjH5lr2Dnr+yXpG1ZNSt1L5gHT7QYyB/w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WHL2hQI+bJwg3Iez0XT1mpqYkzhM5ntJ4ZiqwR8ze8bVVCrK/zsVl5PL4iFeiqdAM0u9YOMHNDhcvOVwHImzbraTQoqZEw5sSEImn1fWrl+3qPBdyLoPBCCrVheFC7XLlEtn2zb5NlVWNCOXOVqYWQLAGlAsyQAAD4PdkODuoFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhw2t/A8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97982C4CEED;
-	Mon,  5 May 2025 22:47:43 +0000 (UTC)
+	 MIME-Version; b=KJhOqdmRVwO4IdymZhXFb1FNYGNwiUCK9wus3oa4u2io7yTtv8cZ2w7FxyrHk3ioSo7jMy7XwN+PZmUNWjnJOgg7xfyXE8SKAqiAmNKMzjFZ4KVZgVQx/v1jyZLVS8fzoW9ENiOrpOVYVYpnpfPozgAgaigt63Rirw/AZD/BPSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3jSimZ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BB7C4CEE4;
+	Mon,  5 May 2025 22:48:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485264;
-	bh=uoqatsxnaznUHh7zR9Q6eQtHRh1oWtgPBgbDgbm5Xfs=;
+	s=k20201202; t=1746485288;
+	bh=UJYaaSdAosLjH5lr2Dnr+yXpG1ZNSt1L5gHT7QYyB/w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jhw2t/A8hsTBGfqj5YyTPYzRb0pX3OTKU3rTc4nrraALssGPZPdPm5RQPBG75OfFc
-	 Sk6lfUknIXg0ioVtkircDlqLJN5EfxwP6sv9RqwR+Hn4vWjF1e5PqT230PwR8vMhsa
-	 5Fe21a3KdA+SeTgTNCJYgudIWFxMXguCCxplRjjPLS3ZNHOHUyfdJpvvt0Z1xqMF7j
-	 6e3xClefsl4eUv3fIZi260KOYwG6/f8IR0wz1fp7pvjNjuhRV0/Zvn8ZpMzOSWX8ZE
-	 yXeZo+j2xAhRmy/MbS0WHl0ep0F/pE4tv+IPyQA408SOYpGxakVafU7hiZLliNew0M
-	 PHBMzcrS/k5jA==
+	b=j3jSimZ/zJuP0WoJHbH/x2ajOxKM2B8WCcOcXlgmPa+Ce4VGPM8vBBf59H++sDCUR
+	 YU5XMJdbaw2l2NZ2Ku/XauEev0paxtMYyS9NNS6nzrPHUeuoCxh6AkdRtmEwDAxJDq
+	 PiOI5rCei35X8B6kjblMzJIsXIf+2aD0bl4G+2/dasu8GdCV+yMf/IN3MUd8j7Ug/g
+	 4CTm45TQjGegIf4SjGauohv3CaOlVXoFPwxzM9/EOLjZPDhgYvFmo4XkY96sL48l9e
+	 MCpiJ8o607OKlscoMUW2S/th2ENpFHDbyfNKU1AE1w3l4237X8kYqnqi5bfgQePc8g
+	 wDZfPt0Vj0nvg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
+Cc: Charlene Liu <Charlene.Liu@amd.com>,
+	Alvin Lee <alvin.lee2@amd.com>,
+	Zaeem Mohamed <zaeem.mohamed@amd.com>,
+	Daniel Wheeler <daniel.wheeler@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	christian.koenig@amd.com,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	intel-xe@lists.freedesktop.org,
+	jun.lei@amd.com,
+	Daniel.Sa@amd.com,
+	alex.hung@amd.com,
+	rostrows@amd.com,
+	Wayne.Lin@amd.com,
+	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 242/486] drm/xe: xe_gen_wa_oob: replace program_invocation_short_name
-Date: Mon,  5 May 2025 18:35:18 -0400
-Message-Id: <20250505223922.2682012-242-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 253/486] drm/amd/display: fix dcn4x init failed
+Date: Mon,  5 May 2025 18:35:29 -0400
+Message-Id: <20250505223922.2682012-253-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -70,56 +78,94 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Daniel Gomez <da.gomez@samsung.com>
+From: Charlene Liu <Charlene.Liu@amd.com>
 
-[ Upstream commit 89eb42b5539f6ae6a0cabcb39e5b6fcc83c106a1 ]
+[ Upstream commit 23ef388a84c72b0614a6c10f866ffeac7e807719 ]
 
-program_invocation_short_name may not be available in other systems.
-Instead, replace it with the argv[0] to pass the executable name.
+[why]
+failed due to cmdtable not created.
+switch atombios cmdtable as default.
 
-Fixes build error when program_invocation_short_name is not available:
-
-drivers/gpu/drm/xe/xe_gen_wa_oob.c:34:3: error: use of
-undeclared identifier 'program_invocation_short_name'    34 |
-program_invocation_short_name);       |                 ^ 1 error
-generated.
-
-Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20250224-macos-build-support-xe-v3-1-d2c9ed3a27cc@samsung.com
-Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Reviewed-by: Alvin Lee <alvin.lee2@amd.com>
+Signed-off-by: Charlene Liu <Charlene.Liu@amd.com>
+Signed-off-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/xe/xe_gen_wa_oob.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/display/dc/bios/command_table2.c     | 9 ---------
+ .../gpu/drm/amd/display/dc/bios/command_table_helper2.c  | 3 +--
+ 2 files changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-index 904cf47925aa1..ed9183599e31c 100644
---- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-+++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-@@ -28,10 +28,10 @@
- 	"\n" \
- 	"#endif\n"
- 
--static void print_usage(FILE *f)
-+static void print_usage(FILE *f, const char *progname)
- {
- 	fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file> <generated-c-header-file>\n",
--		program_invocation_short_name);
-+		progname);
- }
- 
- static void print_parse_error(const char *err_msg, const char *line,
-@@ -144,7 +144,7 @@ int main(int argc, const char *argv[])
- 
- 	if (argc < 3) {
- 		fprintf(stderr, "ERROR: wrong arguments\n");
--		print_usage(stderr);
-+		print_usage(stderr, argv[0]);
- 		return 1;
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/command_table2.c b/drivers/gpu/drm/amd/display/dc/bios/command_table2.c
+index 7d18f372ce7ab..6bc59b7ef007b 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/command_table2.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/command_table2.c
+@@ -101,7 +101,6 @@ static void init_dig_encoder_control(struct bios_parser *bp)
+ 		bp->cmd_tbl.dig_encoder_control = encoder_control_digx_v1_5;
+ 		break;
+ 	default:
+-		dm_output_to_console("Don't have dig_encoder_control for v%d\n", version);
+ 		bp->cmd_tbl.dig_encoder_control = encoder_control_fallback;
+ 		break;
  	}
+@@ -238,7 +237,6 @@ static void init_transmitter_control(struct bios_parser *bp)
+ 		bp->cmd_tbl.transmitter_control = transmitter_control_v1_7;
+ 		break;
+ 	default:
+-		dm_output_to_console("Don't have transmitter_control for v%d\n", crev);
+ 		bp->cmd_tbl.transmitter_control = transmitter_control_fallback;
+ 		break;
+ 	}
+@@ -408,8 +406,6 @@ static void init_set_pixel_clock(struct bios_parser *bp)
+ 		bp->cmd_tbl.set_pixel_clock = set_pixel_clock_v7;
+ 		break;
+ 	default:
+-		dm_output_to_console("Don't have set_pixel_clock for v%d\n",
+-			 BIOS_CMD_TABLE_PARA_REVISION(setpixelclock));
+ 		bp->cmd_tbl.set_pixel_clock = set_pixel_clock_fallback;
+ 		break;
+ 	}
+@@ -554,7 +550,6 @@ static void init_set_crtc_timing(struct bios_parser *bp)
+ 			set_crtc_using_dtd_timing_v3;
+ 		break;
+ 	default:
+-		dm_output_to_console("Don't have set_crtc_timing for v%d\n", dtd_version);
+ 		bp->cmd_tbl.set_crtc_timing = NULL;
+ 		break;
+ 	}
+@@ -671,8 +666,6 @@ static void init_enable_crtc(struct bios_parser *bp)
+ 		bp->cmd_tbl.enable_crtc = enable_crtc_v1;
+ 		break;
+ 	default:
+-		dm_output_to_console("Don't have enable_crtc for v%d\n",
+-			 BIOS_CMD_TABLE_PARA_REVISION(enablecrtc));
+ 		bp->cmd_tbl.enable_crtc = NULL;
+ 		break;
+ 	}
+@@ -864,8 +857,6 @@ static void init_set_dce_clock(struct bios_parser *bp)
+ 		bp->cmd_tbl.set_dce_clock = set_dce_clock_v2_1;
+ 		break;
+ 	default:
+-		dm_output_to_console("Don't have set_dce_clock for v%d\n",
+-			 BIOS_CMD_TABLE_PARA_REVISION(setdceclock));
+ 		bp->cmd_tbl.set_dce_clock = NULL;
+ 		break;
+ 	}
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/command_table_helper2.c b/drivers/gpu/drm/amd/display/dc/bios/command_table_helper2.c
+index 73458e2951034..df8139bda142b 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/command_table_helper2.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/command_table_helper2.c
+@@ -87,8 +87,7 @@ bool dal_bios_parser_init_cmd_tbl_helper2(
+ 		return true;
  
+ 	default:
+-		/* Unsupported DCE */
+-		BREAK_TO_DEBUGGER();
++		*h = dal_cmd_tbl_helper_dce112_get_table2();
+ 		return false;
+ 	}
+ }
 -- 
 2.39.5
 
