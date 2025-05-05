@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-633853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13507AAAE85
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:58:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C311AAAE89
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 671251B62EDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:55:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651FD188494F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D724361289;
-	Mon,  5 May 2025 23:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B951A38CE99;
+	Mon,  5 May 2025 23:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qelmbq78"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6ew2PLO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208CF2D7AF7;
-	Mon,  5 May 2025 22:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3935036AAD0;
+	Mon,  5 May 2025 22:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485762; cv=none; b=fsDBELk9iCXXFYIfbY6moouMC/ZAbrF3Skt8sC+cNOC7LI8P6PXL8/AxEjmVwor1Tc8mAtwG9dc5uDgui1zQCJzSonJErjTCYvpYYRP43UohLMBLQu4n9pYexzADzN7soYebEJoaBwAU0nWr4HHGzlW/p7NczQYQIDUe8pr1oSY=
+	t=1746485776; cv=none; b=WMCHHy5xaGV9FPcnLQFJ4a6JhiJbwqWHZi34Mu3yyIX25s34LQ9wJt96RVruTVnAKSsyKtDZhjZIkvFpWsiiVAZHTsJFSXO0ZNd5PZdofkCk+Ra+RAiEZvSj5jZLTxRc/A/ccctWJN4qSXaPuTcJiQIiXqp0W5j/OQ6eIXudkRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485762; c=relaxed/simple;
-	bh=SgI4QQB3OheU7ULdDzQTMVDQs2Cqi1Nn/noA8ypWu1o=;
+	s=arc-20240116; t=1746485776; c=relaxed/simple;
+	bh=cTQLQC5i8yLJif6gLu/9urK5FsL/5Z55FbEPV4/2QFA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gBYJF4Sk4BIQswNmx+ADFfBdXgRCCI1sqktZgEj0tGroexQsygzYohcV45IlCeR/ulZXQ9fuvijYrtcPdxk+e+t+9nf48GiJrsUmCvCYs3bf5h3A9mMQzfIWl7pHGQmMtG81KCDAglaUd+nyG2je5NsvqF05T0OhnbOGtOHVzp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qelmbq78; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E491C4CEED;
-	Mon,  5 May 2025 22:56:00 +0000 (UTC)
+	 MIME-Version; b=HrYyGUOQA3SIKPbByANM7GEs6bRy+cgyBMG6lR3x77N+hKsfHCHgbvNuZXaS2VWhDK8zwLjsN6363DnsJtxsITbrTcb+0KPbfMTDdISCMW1GjWA33E5dfaQYZhbGyvW5LFNAlLd4gg1pUCnfPYnaJIKDz8YZlk5rlYVk2AeAyVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6ew2PLO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F17DC4CEEF;
+	Mon,  5 May 2025 22:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485761;
-	bh=SgI4QQB3OheU7ULdDzQTMVDQs2Cqi1Nn/noA8ypWu1o=;
+	s=k20201202; t=1746485774;
+	bh=cTQLQC5i8yLJif6gLu/9urK5FsL/5Z55FbEPV4/2QFA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qelmbq78NdC9twjoi+ohkjclGDJUfcykFT73kIoVusj3UlEhmtMNrqGEjMfkr9rGx
-	 pcYEe6zXUqlKIpqkS3lc3CywrdwdTvr4q7tJh+3A6mowCO8hMX0IYkO7qIZ6nn3vpy
-	 i015g/MHfVVdPvARWlkDAPWhZIG3h1a6+cBLEhntKMLZcn6cDx6R5HqOcrs3l2TWMa
-	 BnrGYUvao+gsIaPgK6BENHBicXGyG9YazpaLsAUz1u+LnM43R0e0YszRCAxSpNk4l0
-	 jav14hVCSlIpAx3dYsHnt6AOfHEEgC2XanGowDZ8BiYbiet200AaZv0kb2mmk2qXK+
-	 zAFZFhxDJBdrg==
+	b=V6ew2PLOtFg3vGAKY09xqxd6xDKuLc6ENHqiXuCauoRVGWUVIf5qpIa1HaIKjqoRg
+	 ZgzkuJkcvHXRTDdxgR8qoyYHK1IAFqkrz9Ld9l/AeBuwgh+0iN1oCvoAOqNJXXM6vr
+	 UIN9/2/aiPubPXvBZWhrkAecBznvFsoOGkxPEV9GsbNaXlZ/jCLBCcnIWk9yrYgGvg
+	 9QuMzImYapsTIkvmHP+cYZdgXSMvH5sOu2NEB2of9SaEBSbW2nXAY4bocz5laypNq1
+	 7De4eIvmTXcR/bmRrf7sSsKo8ryz9XdUe6Mip9cPC5ed/dkVmBdINh9JPHBv7k3UGx
+	 YDyFI2x06wxCA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Rosen Penev <rosenp@gmail.com>,
-	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+Cc: Maarten Lankhorst <dev@lankhorst.se>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 470/486] wifi: ath9k: return by of_get_mac_address
-Date: Mon,  5 May 2025 18:39:06 -0400
-Message-Id: <20250505223922.2682012-470-sashal@kernel.org>
+	lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.12 477/486] drm/xe: Move suballocator init to after display init
+Date: Mon,  5 May 2025 18:39:13 -0400
+Message-Id: <20250505223922.2682012-477-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -60,47 +64,85 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Rosen Penev <rosenp@gmail.com>
+From: Maarten Lankhorst <dev@lankhorst.se>
 
-[ Upstream commit dfffb317519f88534bb82797f055f0a2fd867e7b ]
+[ Upstream commit 380b0cdaa76bc8f5c16db16eaf48751e792ff041 ]
 
-When using nvmem, ath9k could potentially be loaded before nvmem, which
-loads after mtd. This is an issue if DT contains an nvmem mac address.
+No allocations should be done before we have had a chance to preserve
+the display fb.
 
-If nvmem is not ready in time for ath9k, -EPROBE_DEFER is returned. Pass
-it to _probe so that ath9k can properly grab a potentially present MAC
-address.
-
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
-Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
-Link: https://patch.msgid.link/20241105222326.194417-1-rosenp@gmail.com
-Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20241210083111.230484-4-dev@lankhorst.se
+Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/init.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/xe/xe_device.c |  6 ++++++
+ drivers/gpu/drm/xe/xe_tile.c   | 12 ++++++++----
+ drivers/gpu/drm/xe/xe_tile.h   |  1 +
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
-index 7fad7e75af6a3..619bebd389bd2 100644
---- a/drivers/net/wireless/ath/ath9k/init.c
-+++ b/drivers/net/wireless/ath/ath9k/init.c
-@@ -691,7 +691,9 @@ static int ath9k_of_init(struct ath_softc *sc)
- 		ah->ah_flags |= AH_NO_EEP_SWAP;
- 	}
+diff --git a/drivers/gpu/drm/xe/xe_device.c b/drivers/gpu/drm/xe/xe_device.c
+index 5c37bed3c948f..23e02372a49db 100644
+--- a/drivers/gpu/drm/xe/xe_device.c
++++ b/drivers/gpu/drm/xe/xe_device.c
+@@ -708,6 +708,12 @@ int xe_device_probe(struct xe_device *xe)
+ 	if (err)
+ 		goto err;
  
--	of_get_mac_address(np, common->macaddr);
-+	ret = of_get_mac_address(np, common->macaddr);
-+	if (ret == -EPROBE_DEFER)
-+		return ret;
++	for_each_tile(tile, xe, id) {
++		err = xe_tile_init(tile);
++		if (err)
++			goto err;
++	}
++
+ 	for_each_gt(gt, xe, id) {
+ 		last_gt = id;
  
- 	return 0;
+diff --git a/drivers/gpu/drm/xe/xe_tile.c b/drivers/gpu/drm/xe/xe_tile.c
+index 349beddf9b383..36c87d7c72fbc 100644
+--- a/drivers/gpu/drm/xe/xe_tile.c
++++ b/drivers/gpu/drm/xe/xe_tile.c
+@@ -167,15 +167,19 @@ int xe_tile_init_noalloc(struct xe_tile *tile)
+ 	if (err)
+ 		return err;
+ 
+-	tile->mem.kernel_bb_pool = xe_sa_bo_manager_init(tile, SZ_1M, 16);
+-	if (IS_ERR(tile->mem.kernel_bb_pool))
+-		return PTR_ERR(tile->mem.kernel_bb_pool);
+-
+ 	xe_wa_apply_tile_workarounds(tile);
+ 
+ 	return xe_tile_sysfs_init(tile);
  }
+ 
++int xe_tile_init(struct xe_tile *tile)
++{
++	tile->mem.kernel_bb_pool = xe_sa_bo_manager_init(tile, SZ_1M, 16);
++	if (IS_ERR(tile->mem.kernel_bb_pool))
++		return PTR_ERR(tile->mem.kernel_bb_pool);
++
++	return 0;
++}
+ void xe_tile_migrate_wait(struct xe_tile *tile)
+ {
+ 	xe_migrate_wait(tile->migrate);
+diff --git a/drivers/gpu/drm/xe/xe_tile.h b/drivers/gpu/drm/xe/xe_tile.h
+index 1c9e42ade6b05..eb939316d55b0 100644
+--- a/drivers/gpu/drm/xe/xe_tile.h
++++ b/drivers/gpu/drm/xe/xe_tile.h
+@@ -12,6 +12,7 @@ struct xe_tile;
+ 
+ int xe_tile_init_early(struct xe_tile *tile, struct xe_device *xe, u8 id);
+ int xe_tile_init_noalloc(struct xe_tile *tile);
++int xe_tile_init(struct xe_tile *tile);
+ 
+ void xe_tile_migrate_wait(struct xe_tile *tile);
+ 
 -- 
 2.39.5
 
