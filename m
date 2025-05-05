@@ -1,196 +1,194 @@
-Return-Path: <linux-kernel+bounces-632829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926D7AA9CFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:05:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6942EAA9D02
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEC31708E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:05:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC4C1A80D62
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE512512C2;
-	Mon,  5 May 2025 20:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78F2270563;
+	Mon,  5 May 2025 20:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N+/ZnJo0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cFEsnu4M"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2060.outbound.protection.outlook.com [40.107.244.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520CB19C546
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 20:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746475541; cv=none; b=HwZMEIekxm2MdUmlsIJ0MynDmAmDY+80YNzU9qnQYkkVAHFQ1C2QpUyInY9FgOL2kcYfQRD/CvTpCRSQVPx6pSBCSkBOey0DOACngJk88za0du4XtIyTUIChUBIxr6LzdYKo0heo4Ol3tCD7zH8r0lu9smLqPY0EhzrrseguMtE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746475541; c=relaxed/simple;
-	bh=nacOnyrBarn+yAqaqC6CGmDtmnRJvYgxOqwOXj1IIc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=liNrF0yoMn65ZFjWGaLoEH0SnV6NQ0vW7C48Gt1qxVuPwuK2QJtWUVNITr4ftauJ4iuL5fHyTOZiD8bB6gpfJjX3zW/ev4Qu14TdlJ8dB3NGqukPplQvjC0Zb4HUojeYWIOp+lOnlRi40VrkI1IT87RzBhdw72J4gLeOTGwjyBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N+/ZnJo0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746475538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YFUdBwtJFHu0IdSQXDQrNEDkNHrYdeA6mBR+yrTNtIk=;
-	b=N+/ZnJo05gKPipR146OvfLspdvcJV+eaImN0AbnYFcgv++6l+RLMsnFiS3+O5UG6HGPrhe
-	DeJOaQfwFY2nzvNpgIUchOa1JBKgknFDkAQ6PahltpO2/ZaffNZy7YpWP5iAN3S/Pnpn++
-	cMRviNFGUUJTR2vylRNutC1084Nwqj0=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-424-knODAdTXP_O4LeEQ12BS4Q-1; Mon, 05 May 2025 16:05:37 -0400
-X-MC-Unique: knODAdTXP_O4LeEQ12BS4Q-1
-X-Mimecast-MFC-AGG-ID: knODAdTXP_O4LeEQ12BS4Q_1746475536
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6ead629f6c6so90129046d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 13:05:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746475536; x=1747080336;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YFUdBwtJFHu0IdSQXDQrNEDkNHrYdeA6mBR+yrTNtIk=;
-        b=AuOpumCcK9Q4Geneg+HWTaKSpAkR2ut3GIwVsGVDBq4avvrUOVJaCaw0rDsPc0UELk
-         sj9XOqedJFAVv+P1SPdRvgHYrV/mijwoRr+j7EDMWnkp+SfwdySh9XC9M/s1FaeQpIDI
-         kkGmtNmotnGXotekL33Goqe1+hFLaA/itn9fceQ0wvBAPhpu3HUaOyqqec6MFEqMiwvG
-         b8kiOJ+eI9+X6PpNXiPLQQ59anmZa+etB1rlEFUid6EkqRu6agnQ34xMCB147atG0Y7z
-         dpbsbulW/y/Rc/dIPfuXd30JaowgiRIM3qYFY2pRA8ZruCcu56eB3t55qTL6noU38cuM
-         lBkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKbq0jZhGiPbwDX0j+nhSCSC2GPUqHuhEN2ubnz0uS47mTUkxRWfhSjs0c38C2BlZt8KfVJj0VfA3Rmno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyypFV0bepoGJNfzXQMjuZLrxdYPJ0psDodLqzqVPIdPkQXxp7G
-	Q8D1Z5pJKNixFV29/zE1ttkNYMz0WSaJWC22k00VrW0mqmhvFqh4Zhr0l17ZloRH+CBhAwp0DcP
-	hYjYb4vLc1D098KH65ow4Gz1qvv2gVSAE0mv6pavQkU03Jdt2I6v2vaenFiD2Sg==
-X-Gm-Gg: ASbGnctOAZ1phDSyWwNTPexBUYPdHjdKRJ+LnUnMHrVm+OXISbMUfjQEG3pkLWa9wi/
-	KtHkF0pwjDOr0oLJPrIV/0F6oxAcZ0lqCskPaFrR28me9od+EteARSLv4vovK4RieYJcd5XyNT0
-	gqAwQzK6uw/BWl1k3T75p5Zy8IzPZXquxcfJeZe0V175cVicZNWXho1GZzj3CuqjSSKiv3I0Yzn
-	Od726jb450buWH/CBJslNGUtGYaaCvsRJZoHYpcu3mJQObafenih6zolLzJqm2IfMTipCGK5k9E
-	Sk8=
-X-Received: by 2002:a05:6214:411a:b0:6f4:c602:806e with SMTP id 6a1803df08f44-6f528c51f14mr123959866d6.13.1746475536599;
-        Mon, 05 May 2025 13:05:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGAX8vD/Mhme2rAizgX3udqaLznlk0blCrJd5nt93pvyI5CBbUh+Ubh3gass9cVF6sOpMENQw==
-X-Received: by 2002:a05:6214:411a:b0:6f4:c602:806e with SMTP id 6a1803df08f44-6f528c51f14mr123959606d6.13.1746475536265;
-        Mon, 05 May 2025 13:05:36 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f4826ddsm59766116d6.101.2025.05.05.13.05.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 13:05:35 -0700 (PDT)
-Date: Mon, 5 May 2025 16:05:32 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Kyle Huey <me@kylehuey.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-	criu@lists.linux.dev, Robert O'Callahan <robert@ocallahan.org>
-Subject: Re: Suppress pte soft-dirty bit with UFFDIO_COPY?
-Message-ID: <aBkaDN7N_6qDGdIz@x1.local>
-References: <CAP045Ap3e6x52TvB8WyBHBjJ8HYtAmnKnGgj_fog3P+F5igP-A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0B625D539;
+	Mon,  5 May 2025 20:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746475719; cv=fail; b=mDA3d/9eTNBUYXptN4uUswwb+i98oiRcSeicQk3BqayICcZuK6g8xQ892jiX4quA34raCDZ0sLm31+PTODTVpQj1Icme8wGthOouaYDvFEYFX8XAyT+YBqfN4/7o33CDwi7qs7XSLqCR4fjzO6cneyTlPzvNAQsRhlNjnrOFQ2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746475719; c=relaxed/simple;
+	bh=W6476yyJ/96afJZKXoRbZ1cboZgfGLgHZyhr0mn8WYg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4lcH9m5BfVFdQNAf1cf6yUyhYynAmHt2AtT9mb4/7/t82csDLtWgawCCa+YcxpFKVxH94w9wqFetCQXKzstnXuVenhs7BvlIhjoNgGwBDxlWxlnR+v2GZxgI5lyaIdqnHfjUviGeIKvMmUy/tNHu9p5U9jVW/bj53ly8YEe4Bk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cFEsnu4M; arc=fail smtp.client-ip=40.107.244.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V3syL2XRARNx3aB5xrM88PvLW3+43jIgr5A92THd9c28JCIxK/mCP3W6qPESSfjkbrm4u5Q74BgJxy0UXIQCbSjaleIn3dqMgjyNBpqeEthZNRxkN7ErLTYcsxEvfpTuReayx+bQCD6SlI+AX+3i9AeFpOHuhzfbbcZrUkoRD0RFvFIuDEUzxVfbGuA4ls1jpsTMcjyruXTtdGxLjbglYAWdVpN9R7vtXa5w0a31prLLmTWLZYo5m/VZmkEDZW/xsYnud5bT7v7L1tpRGI5plTguuEqR0Pzg5YDIkudnq4aoU8P/Qk0AGIicMyDgIESCMu9ztnaTYUJynsAzow6Wzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZJJoV9UUsoeZjNYBuBj8UVPNtIBVXFRgRqB9BC4wL+I=;
+ b=IwTY6lmfoJP12iyuPAJgYTu3yelC+nmn1ZUvjaGWVZjfn9xK7GqYeofxmXyGNh4iIW9WpeoUbMucBS/akxtFHBIbp7F3mS6oL9BbeYOmvO0f3vgoGYLEyPUUrFO4nmoywURuO1TtVY2aG5tHYLLUUqO1CcggCBPQfQn7Q0+Ejd+E5y05IuCitNovpUE0bDmCVxEqX32NcA4odIkomIHhWoIhmdMN3ECxDP2fJ01fDLGwOk/HAdxVQEH9n019gr7fOxoqKKdcw3H5FoeTlpHOCpa8sWj2KuRGnkaNh8QuleZhmMReOP1WNiujrMoioZKQ3iS7kwqPPrghPgrEaJKgTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZJJoV9UUsoeZjNYBuBj8UVPNtIBVXFRgRqB9BC4wL+I=;
+ b=cFEsnu4MTR5Cz65NYbybwcqNw3Ul8Tqqn8tWFCLSd9ZXhouaMaMT+dSqpstD2WibD354E2oPNmg0biS5pWJycE8lVElN8o2iFQ8C+//CPftUDxrPxgR/PEp1vevHVTYbs2TzASngRrgGMSYlU2xdn6+4/LjFz6Dmjrm3QScYNJD0W+3rg13i9KXs6QqnNMwWHGXqf6BThvXO6roAbU+LeAXgk4ze0Qr1oPa8l893c3Zgigo0Go/vidwAmJ5GfvEpbXz8kg6p8Jn9QDLeZtaq3jUJOgsq7qpIWpQPXdCKLJUuityOMrWqgIKpieHTUG0T3dmb07CztcwHSph33XLTWg==
+Received: from CH2PR15CA0027.namprd15.prod.outlook.com (2603:10b6:610:51::37)
+ by CH3PR12MB9148.namprd12.prod.outlook.com (2603:10b6:610:19d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Mon, 5 May
+ 2025 20:08:31 +0000
+Received: from CH2PEPF000000A0.namprd02.prod.outlook.com
+ (2603:10b6:610:51:cafe::e) by CH2PR15CA0027.outlook.office365.com
+ (2603:10b6:610:51::37) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.27 via Frontend Transport; Mon,
+ 5 May 2025 20:08:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH2PEPF000000A0.mail.protection.outlook.com (10.167.244.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 20:08:31 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 5 May 2025
+ 13:08:14 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 5 May
+ 2025 13:08:13 -0700
+Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.129.68.10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 5 May 2025 13:07:44 -0700
+Date: Mon, 5 May 2025 13:07:34 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Baolu Lu <baolu.lu@linux.intel.com>, <kevin.tian@intel.com>,
+	<corbet@lwn.net>, <will@kernel.org>, <bagasdotme@gmail.com>,
+	<robin.murphy@arm.com>, <joro@8bytes.org>, <thierry.reding@gmail.com>,
+	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <shuah@kernel.org>,
+	<jsnitsel@redhat.com>, <nathan@kernel.org>, <peterz@infradead.org>,
+	<yi.l.liu@intel.com>, <mshavit@google.com>, <praan@google.com>,
+	<zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
+	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>
+Subject: Re: [PATCH v2 13/22] iommufd: Add mmap interface
+Message-ID: <aBkahmXQGxFC0Fdw@nvidia.com>
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <7be26560c604b0cbc2fd218997b97a47e4ed11ff.1745646960.git.nicolinc@nvidia.com>
+ <c4d03b52-422e-41ab-845b-1d2eda7ca9e2@linux.intel.com>
+ <20250505165019.GM2260709@nvidia.com>
+ <aBjzf9PrYnwF5uZN@nvidia.com>
+ <20250505172813.GS2260709@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAP045Ap3e6x52TvB8WyBHBjJ8HYtAmnKnGgj_fog3P+F5igP-A@mail.gmail.com>
+In-Reply-To: <20250505172813.GS2260709@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF000000A0:EE_|CH3PR12MB9148:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d72e028-5bc3-4427-27b9-08dd8c109b91
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+qJ91BnoVrz/HUFEM8SsSTbVUkTyTnPxZlYavrAUtvMlflA33dKFexF7rIlS?=
+ =?us-ascii?Q?xqIC7KuaIc050VbqxfoiWQ2LgRaWCS7FLtGyh2N8U4Vu6Rfy32eLRPH4wR3S?=
+ =?us-ascii?Q?cav2IAceYnRhYxdYBm0hW/k8QzwidSmjEfY4bjWZbbFtmAq2Rd6ugYexdts5?=
+ =?us-ascii?Q?dbyjrSEi3hNnu8oHGJLECLnry2s6WM+E945AplMEACO8o3OmFW5Pm/W1DnYY?=
+ =?us-ascii?Q?N/YVB/ISCPcgF05iSQsk/6UR52nDM22UKgd8pawtjTIGYSDZ8TJ4NiAK5kWV?=
+ =?us-ascii?Q?0Gnicwy5GrmdnMrHSUwK46uaAvvB+v7ALpf8Sgy8Ii9j4GKDJpCHt6rZ+ZVR?=
+ =?us-ascii?Q?mkEAP720C5fGj4GCgcAzVSXYQmdeaLtmnDj+OfBtqe+buGZB2u5KdjjE0Oya?=
+ =?us-ascii?Q?SKJjkC4wGllPKkYouYk9Rmh1cNEk/h5umU/8S0OZweqDweNz0cdE/0e6b71F?=
+ =?us-ascii?Q?WJxXgOgoKoGNWmYBf1ewrc3bsM57IM3kTMTp5xchQR4Zdhu7QpelM/R/hy/6?=
+ =?us-ascii?Q?LSNIQYPkehvSfrLhil6/tm0njqQgae1QGYuE+hsBQGeAQWzMUfBOb7pLdAwW?=
+ =?us-ascii?Q?qfRLF1By4WjqDdUUjsMUwJm6c9+N3OTaADzBrsOK86bLGlwVIlc4lj2DmwK3?=
+ =?us-ascii?Q?YpMmZ1EXgJlP8AX+LF2SFvwpdBsLB3IecZ1zfykyi5EoRBoxuXbRTiHAcG/5?=
+ =?us-ascii?Q?Wd0hdw6ARrsIKEO/YUx+OHoH/5aBlqM0G8PkImh3SeOxibubHUE4h72tXIVR?=
+ =?us-ascii?Q?GMiS/27L7AE58gFS4mAbgPBgQPoiaun66zPWtmZP7BlJ6H0nrKzR61qJJ9bi?=
+ =?us-ascii?Q?R43iQyVsmWSAGo4HRKFt5mQysMKBUmu87pg65Ru0Qg36zBdAqtfQsLfwEj9e?=
+ =?us-ascii?Q?fIT4aYxmpAKDNGvMa6JVQdYUGHW4fMkNzCTPGwkKhunCIg3kyQthwUP+H1vn?=
+ =?us-ascii?Q?ThvWGzLLRenG4GnwnPgvifAsZFTCCSeFFwYRogUSp5cgI63703r+pJuJWEHU?=
+ =?us-ascii?Q?VpHTzaX5xAKleBN/A5rHa81WO78sguqcskUPBiM1acoksUHsM3Y0Y1bQL8RP?=
+ =?us-ascii?Q?NGhlpsvtUwY1UXcO45cS0Ci0U5Fss5ZxU7ZWaMycfv+LZux1PahqzMz+PvhN?=
+ =?us-ascii?Q?Ew2BS94aeWNWk4bE+phCSoxicVi5TFLGKduiZAfgRY2cFw6US1XyZhyzU2Pf?=
+ =?us-ascii?Q?E3POKFuTF66e0xM7NKTsTL/wwF+vqtLkArq/N2IUdS33wSY+nR3Flq1H4PMp?=
+ =?us-ascii?Q?ljmQrG/HXO258P7dYEJVVwIYwfKOlafzXkGvSAlcRPWxKycwmX+ZZaH6i18I?=
+ =?us-ascii?Q?ewpBNAqPFxBoUyVFAvlxdnSIpcd+LlJkpCdXebMNLVeYU9eD7uD0lcHSNR2B?=
+ =?us-ascii?Q?1YitqY6zJbb+2q1PdOQddwdfQqcv3GG1DtuqNunEWaN8y6baYsfKm8FfCMSx?=
+ =?us-ascii?Q?HCoUtR2J1gED+GbijMN9/50iBpmuzVcU7b0DLYuQDHwbaIW95thT8i3yrf3q?=
+ =?us-ascii?Q?cRuGu4mqI5UNCSAMPadiGeu+YK8CfJVxTsv9?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 20:08:31.2064
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d72e028-5bc3-4427-27b9-08dd8c109b91
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF000000A0.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9148
 
-Hi, Kyle,
-
-On Mon, May 05, 2025 at 09:37:01AM -0700, Kyle Huey wrote:
-> tl;dr I'd like to add UFFDIO_COPY_MODE_DONTSOFTDIRTY that does not add
-> the _PAGE_SOFT_DIRTY bit to the relevant pte flags. Any
-> thoughts/objections?
+On Mon, May 05, 2025 at 02:28:13PM -0300, Jason Gunthorpe wrote:
+> On Mon, May 05, 2025 at 10:21:03AM -0700, Nicolin Chen wrote:
+> > > > > +void iommufd_ctx_free_mmap(struct iommufd_ctx *ictx, unsigned long immap_id)
+> > > > > +{
+> > > > > +	kfree(mtree_erase(&ictx->mt_mmap, immap_id >> PAGE_SHIFT));
+> > > > 
+> > > > MMIO lifecycle question: what happens if a region is removed from the
+> > > > maple tree (and is therefore no longer mappable), but is still mapped
+> > > > and in use by userspace?
+> > > 
+> > > I think we should probably zap it and make any existing VMAs
+> > > SIGBUS... Otherwise it is hard to reason about from the kernel side
+> > 
+> > I added in v3 a pair of open/close op that would refcount the
+> > vIOMMU object (owner of the mmap region). This would EBUSY the
+> > vIOMMU destroy ioctl that would call this function.
 > 
-> The kernel has a "soft-dirty" bit on ptes which tracks if they've been
-> written to since the last time /proc/pid/clear_refs was used to clear
-> the soft-dirty bit. CRIU uses this to track which pages have been
-> modified since a previous checkpoint and reduce the size of the
-> checkpoints taken. I would like to use this in my debugger[0] to track
-> which pages a program function dirties when that function is invoked
-> from the debugger.
-> 
-> However, the runtime environment for this function is rather unusual.
-> In my debugger, the process being debugged doesn't actually exist
-> while it's being debugged. Instead, we have a database of all program
-> state (including registers and memory values) from when the process
-> was executed. It's in some sense a giant core dump that spans multiple
-> points in time. To execute a program function from the debugger we
-> rematerialize the program state at the desired point in time from our
-> database.
-> 
-> For performance reasons, we fill in the memory lazily[1] via
-> userfaultfd. This makes it difficult to use the soft-dirty bit to
-> track the writes the function triggers, because UFFDIO_COPY (and
-> friends) mark every page they touch as soft-dirty. Because we have the
-> canonical source of truth for the pages we materialize via UFFDIO_COPY
-> we're only interested in what happens after the userfaultfd operation.
-> 
-> Clearing the soft-dirty bit is complicated by two things:
-> 1. There's no way to clear the soft-dirty bit on a single pte, so
-> instead we have to clear the soft-dirty bits for the entire process.
-> That requires us to process all the soft-dirty bits on every other pte
-> immediately to avoid data loss.
-> 2. We need to clear the soft-dirty bits after the userfaultfd
-> operation, but in order to avoid racing with the task that triggered
-> the page fault we have to do a non-waking copy, then clear the bits,
-> and then separately wake up the task.
-> 
-> To work around all of this, we currently have a 4 step process:
-> 1. Read /proc/pid/pagemap and note all ptes that are soft-dirty.
-> 2. Do the UFFDIO_COPY with UFFDIO_COPY_MODE_DONTWAKE.
-> 3. Write to /proc/pid/clear_refs to clear soft-dirty bits across the process.
-> 4. Do a UFFDIO_WAKE.
-> 
-> The overhead of all of this (particularly step 1) is a millisecond or
-> two *per page* that we lazily materialize, and while that's not
-> crippling for our purposes, it is rather undesirable. What I would
-> like to have instead is a UFFDIO_COPY mode that leaves the soft-dirty
-> bit unchanged, i.e. a UFFDIO_COPY_MODE_DONTSOFTDIRTY. Since we clear
-> all the soft-dirty bits once after setting up all the mmaps in the
-> process the relevant ptes would then "just do the right thing" from
-> our perspective.
-> 
-> But I do want to get some feedback on this before I spend time writing
-> any code. Is there a reason not to do this? Or an alternate way to
-> achieve the same goal?
+> That's no good, we can't have VMAs prevent cleaning up iommufd
 
-Have you looked at the wr-protect mode, and UFFDIO_COPY_MODE_WP for _COPY?
+Hmm, would you please elaborate why?
 
-If sync fault is a perf concern for frequent writes, just to mention at
-least latest Linux also supports async tracking (UFFD_FEATURE_WP_ASYNC),
-which is almost exactly soft dirty bits to me, though it solves a few
-issues it has on e.g. false positives over vma merging and swapping, or
-like you said missing of finer granule reset mechanisms.
+> objects, the right thing is to zap it with invalidate_mapping_range()
 
-Maybe you also want to have a look at the pagemap ioctl introduced some
-time ago ("Pagemap Scan IOCTL", which, IIRC was trying to use uffd-wp in
-soft-dirty-like way):
+Also, I can't find much info about invalidate_mapping_range(). Is
+it a user space call?
 
-https://www.kernel.org/doc/Documentation/admin-guide/mm/pagemap.rst
+I do see a few drivers defining a fault op in vm_operations_struct,
+where VM_FAULT_SIGBUS is returned when there is page backing up the
+VMAs. Is it what we need here?
 
-> 
-> If this is generally sensible, then a couple questions:
-> 1. Do I need a UFFD_FEATURE flag for this, or is it enough for a
-> program to be able to detect the existence of a
-> UFFDIO_COPY_MODE_DONTSOFTDIRTY by whether the ioctl accepts the flag
-> or returns EINVAL? I would tend to think the latter.
-
-The latter requires all the setups needed, and an useless ioctl to probe.
-Not a huge issue, but since userfaultfd is extensible, a feature flag might
-be better as long as a new feature is well defined.
-
-> 2. Should I add this mode for the other UFFDIO variants (ZEROPAGE,
-> MOVE, etc) at the same time even if I don't have any use for them?
-
-Probably not.  I don't see a need to implement something just to make the
-API look good..  If any chunk of code in the Linux kernel has no plan to be
-used, we should probably not adding them since the start..
-
-Thanks,
-
--- 
-Peter Xu
-
+Thanks
+Nicolin
 
