@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-634435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BF2AAB163
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:59:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902DBAAB18A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC4D1BC251C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0AC54E0B86
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71733F8A1B;
-	Tue,  6 May 2025 00:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8322E4035FB;
+	Tue,  6 May 2025 00:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGK/Iek4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T15R05P5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8AA361957;
-	Mon,  5 May 2025 22:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29D52D1F44;
+	Mon,  5 May 2025 22:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485484; cv=none; b=ShdRmx5clf6N3d5tPQTNcvjAb5m0PfeOpWNsyZ2KP1Ww5+rs70khIqZnz6dbN9PJle6nuXHH1kp8k7XtkAQkiVvUzcrkKUZ0xy+QhjDpVU5b5f7pbhUkVnaz96zvSg+DGU2lsVzZjDbSzdK5nHejdMmNrbkaDO6wck/Hb0TRTZg=
+	t=1746485488; cv=none; b=bzm+l0q22r+I+NNj/Bg/XhD7UMmSAABUcGSD6WnMQoAfWTn04iKp05mbCykdQj6zPpscS3bqMBHVXpNy7+jLJ0P0NxT9RoDWLaAiRteVjQTrOHySgLSGZ6trI/9ICvJ4n+XwzM28HR6//ptQIBkAnfyz+L5Wh8d6t45hkDrcwXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485484; c=relaxed/simple;
-	bh=9gbYbTE0WZ+udZ9d6dBdYv7OPC+50CcyB2AOMmpKzDY=;
+	s=arc-20240116; t=1746485488; c=relaxed/simple;
+	bh=nGvdlCDrWtO7xRo/70W+vOcOv8cOxCWboXoNzYTDJTI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BOsFP4lf0w7Gdcv4vmfetE96mpneJCtAWhZT5BP7mD8qa098TnwNHBAsAgP+451rpsf0oSNartz6KDJ9MGMDJ/f0WY95CAIDC9BfIJHs0u+eA5+h4iWUYSSwp2i5FXrjTSxti1bFdXibnIdUBUkjlr0WujavzTeGj087tq2tYDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGK/Iek4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F0FC4CEED;
-	Mon,  5 May 2025 22:51:21 +0000 (UTC)
+	 MIME-Version; b=sdh93xZ300NH5LdktZvKw10GWNyvgDre7+727bQnMhcKr3rkfI9Swe+r0jozBCNzspDgGd30M1Vx6ULrdnv4hjl3jJ3QeAs/CFncts/c3Y5ZmqsjhT3T5L3Md1S6vzI4pyp28z+uQf4oz07HzRYslPeyOlWGHTJhVIdbAWaRSK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T15R05P5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA155C4CEE4;
+	Mon,  5 May 2025 22:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485482;
-	bh=9gbYbTE0WZ+udZ9d6dBdYv7OPC+50CcyB2AOMmpKzDY=;
+	s=k20201202; t=1746485486;
+	bh=nGvdlCDrWtO7xRo/70W+vOcOv8cOxCWboXoNzYTDJTI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OGK/Iek4BsL7UpfoxhtSKFlw+7QJmZ3ynE12WHGbF3dWiiMz6d5rt9Mdc0glUfXUx
-	 DiQGnkBRnNpslybcpJ7+5pEon+phbi73+y12KctkXshw+h6BCrI4E1uFWvSuyxytG1
-	 IXSWiXoaFEKWfhsrCP44AqvP02Am2yoZnZCPdyURozOtMNPyz44gXm0aOVbb7X9Swt
-	 yKEs1LQ5Pou5L6+n6Ar0dIxrLOhoMjaqO7oSJ0ibjawUaImYUQhF+0WKn03MqxxV4V
-	 btoBEcg9YoZZ768XzuMW9ps+iddzzNPuguCAjPnY+H1o5IPc2hWJt3jZeqwgyIy6Hf
-	 C79XEeM03xswA==
+	b=T15R05P5h+jbsXQGHaedQtzOqZOgF7mTdMgDjWhvdx+1n8tqssOQ67d3QjRJWft5W
+	 SUpPz26t1Qbl8iakDqTVh7EdVEmehZXPfHQ1ADk2VpNeI7xXD/3/q8aUJSeFA4Yhi6
+	 rNNRlCxX0ejHpMa/n7TUQ1TyLyYVTrdC82JCTja5jz2keDwkduFb7KDXF61di+y467
+	 gVv9mdSG6oWB15JyDc2XYGrZRmjjgqbTarwvo/uNC5YNmlRV1eEwkNdDxSlYcIxXgA
+	 zMzEzLbswpO3gBBv+zhX7NYYprlVbjQhkJTDea9qnuhYifQblsX1QyY4bzH6I1koy4
+	 6UpqEfSfy9obw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: David Plowman <david.plowman@raspberrypi.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	mchehab@kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 339/486] media: i2c: imx219: Correct the minimum vblanking value
-Date: Mon,  5 May 2025 18:36:55 -0400
-Message-Id: <20250505223922.2682012-339-sashal@kernel.org>
+	daniel@iogearbox.net,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 341/486] libbpf: fix LDX/STX/ST CO-RE relocation size adjustment logic
+Date: Mon,  5 May 2025 18:36:57 -0400
+Message-Id: <20250505223922.2682012-341-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -69,38 +67,90 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: David Plowman <david.plowman@raspberrypi.com>
+From: Andrii Nakryiko <andrii@kernel.org>
 
-[ Upstream commit e3b82d49bf676f3c873e642038765eac32ab6d39 ]
+[ Upstream commit 06096d19ee3897a7e70922580159607fe315da7a ]
 
-The datasheet for this sensor documents the minimum vblanking as being
-32 lines. It does fix some problems with occasional black lines at the
-bottom of images (tested on Raspberry Pi).
+Libbpf has a somewhat obscure feature of automatically adjusting the
+"size" of LDX/STX/ST instruction (memory store and load instructions),
+based on originally recorded access size (u8, u16, u32, or u64) and the
+actual size of the field on target kernel. This is meant to facilitate
+using BPF CO-RE on 32-bit architectures (pointers are always 64-bit in
+BPF, but host kernel's BTF will have it as 32-bit type), as well as
+generally supporting safe type changes (unsigned integer type changes
+can be transparently "relocated").
 
-Signed-off-by: David Plowman <david.plowman@raspberrypi.com>
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+One issue that surfaced only now, 5 years after this logic was
+implemented, is how this all works when dealing with fields that are
+arrays. This isn't all that easy and straightforward to hit (see
+selftests that reproduce this condition), but one of sched_ext BPF
+programs did hit it with innocent looking loop.
+
+Long story short, libbpf used to calculate entire array size, instead of
+making sure to only calculate array's element size. But it's the element
+that is loaded by LDX/STX/ST instructions (1, 2, 4, or 8 bytes), so
+that's what libbpf should check. This patch adjusts the logic for
+arrays and fixed the issue.
+
+Reported-by: Emil Tsalapatis <emil@etsalapatis.com>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Link: https://lore.kernel.org/r/20250207014809.1573841-1-andrii@kernel.org
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/imx219.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/lib/bpf/relo_core.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index 906aa314b7f84..eaa1496c71bb2 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -74,7 +74,7 @@
- #define IMX219_REG_VTS			CCI_REG16(0x0160)
- #define IMX219_VTS_MAX			0xffff
- 
--#define IMX219_VBLANK_MIN		4
-+#define IMX219_VBLANK_MIN		32
- 
- /* HBLANK control - read only */
- #define IMX219_PPL_DEFAULT		3448
+diff --git a/tools/lib/bpf/relo_core.c b/tools/lib/bpf/relo_core.c
+index 63a4d5ad12d1a..26cde1b27174b 100644
+--- a/tools/lib/bpf/relo_core.c
++++ b/tools/lib/bpf/relo_core.c
+@@ -683,7 +683,7 @@ static int bpf_core_calc_field_relo(const char *prog_name,
+ {
+ 	const struct bpf_core_accessor *acc;
+ 	const struct btf_type *t;
+-	__u32 byte_off, byte_sz, bit_off, bit_sz, field_type_id;
++	__u32 byte_off, byte_sz, bit_off, bit_sz, field_type_id, elem_id;
+ 	const struct btf_member *m;
+ 	const struct btf_type *mt;
+ 	bool bitfield;
+@@ -706,8 +706,14 @@ static int bpf_core_calc_field_relo(const char *prog_name,
+ 	if (!acc->name) {
+ 		if (relo->kind == BPF_CORE_FIELD_BYTE_OFFSET) {
+ 			*val = spec->bit_offset / 8;
+-			/* remember field size for load/store mem size */
+-			sz = btf__resolve_size(spec->btf, acc->type_id);
++			/* remember field size for load/store mem size;
++			 * note, for arrays we care about individual element
++			 * sizes, not the overall array size
++			 */
++			t = skip_mods_and_typedefs(spec->btf, acc->type_id, &elem_id);
++			while (btf_is_array(t))
++				t = skip_mods_and_typedefs(spec->btf, btf_array(t)->type, &elem_id);
++			sz = btf__resolve_size(spec->btf, elem_id);
+ 			if (sz < 0)
+ 				return -EINVAL;
+ 			*field_sz = sz;
+@@ -767,7 +773,17 @@ static int bpf_core_calc_field_relo(const char *prog_name,
+ 	case BPF_CORE_FIELD_BYTE_OFFSET:
+ 		*val = byte_off;
+ 		if (!bitfield) {
+-			*field_sz = byte_sz;
++			/* remember field size for load/store mem size;
++			 * note, for arrays we care about individual element
++			 * sizes, not the overall array size
++			 */
++			t = skip_mods_and_typedefs(spec->btf, field_type_id, &elem_id);
++			while (btf_is_array(t))
++				t = skip_mods_and_typedefs(spec->btf, btf_array(t)->type, &elem_id);
++			sz = btf__resolve_size(spec->btf, elem_id);
++			if (sz < 0)
++				return -EINVAL;
++			*field_sz = sz;
+ 			*type_id = field_type_id;
+ 		}
+ 		break;
 -- 
 2.39.5
 
