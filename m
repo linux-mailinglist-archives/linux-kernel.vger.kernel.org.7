@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-633850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946BFAAAA38
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:31:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEB8AAAA68
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B33727AEE23
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5443A7C9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E107388C5A;
-	Mon,  5 May 2025 23:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533623899E2;
+	Mon,  5 May 2025 23:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2filjIY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeiaXbwl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1411D3679AD;
-	Mon,  5 May 2025 22:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731542D7AFB;
+	Mon,  5 May 2025 22:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485720; cv=none; b=rJMRev8QP31MmJg/dIUjhQS6QbLNFwCgliZdzuq4fe8t3ZRstP6mBGVDvRGQr18Q6B+6E3+5K7aA9bx6SPnmmEDO3E/bBHEWgMJPANHH4WGxIYvQ+ENEsoiNL+WcF5M2gMRg3utK7oRZ1uCVqa/6kaAla8z5iQSXGThn0nGeAnU=
+	t=1746485762; cv=none; b=s8CNNjczsQP5gQnpq/9vDqUgvBLhb+olOCpWlfmYcoMMk1TjeZ8Ll/tGN5bJ9OE+xJf0fjcNGJKIHIBhjEs01J60Wfbe2L1ospoCgj/8he6kl9rnzUHvf+ereany/1J8Z5yF38/+sK9528lD5rUXKgH3K867lvwbwEKP2yv/80k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485720; c=relaxed/simple;
-	bh=l8Zy72d4X/xvqkb6aby5A1P3K5rRonIL80CZhWrtsPc=;
+	s=arc-20240116; t=1746485762; c=relaxed/simple;
+	bh=qH60v/UBuRVGvBvmQR7xuc+vbvwcpz4hRQkRfR3oOfI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V4FVysy+QTNihSlIbUsrLxudSeLGTWxJLxhGJaeisdiOnwiW29cd/YfqIQB22akyzpSWZAVtbNF4xB28Q+0HNwfLiR6vOXyRkkGT3hTiqLP20T/8rY9pHasrwD76zcZ3nGPMAxE/2974txZuGBpByzKsnCn3LfCmiGv8yDVaPKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2filjIY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8779C4CEEE;
-	Mon,  5 May 2025 22:55:18 +0000 (UTC)
+	 MIME-Version; b=DIxxg2wX1asrZhifHBk5wLMHVXDg7lgGi/kFav62mmUlFJu1K8CNocWT2cscAzPGlM6pYr8y1sd9mTBfxc/G+8gy+4FOBMNJrRKQdZI/Y2RQtxG3kvHdEOKEbzPB37F6lZmRk5G4x7qQxrUAuCAH3qiHJaVYB9vpUbeo0EdXpYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeiaXbwl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E73EC4CEEE;
+	Mon,  5 May 2025 22:56:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485720;
-	bh=l8Zy72d4X/xvqkb6aby5A1P3K5rRonIL80CZhWrtsPc=;
+	s=k20201202; t=1746485762;
+	bh=qH60v/UBuRVGvBvmQR7xuc+vbvwcpz4hRQkRfR3oOfI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U2filjIY7nQ6SSK7BxCoqNyYQHLb1dhGeLrQTM4VSB933uSjQKBWvb9+W/92CWwox
-	 04/zkSj6mCErmeR4MK2UzdhkvYZcdJaJKu1gDVIGHsfQy82/p4NCK7UtTWJHzZcSMb
-	 0FDXQF0bOcRLxzkXrW6Sc7KdnkrubE1zZZgUwgl87ocfxL700KlR5OH6UFwGDpEsyX
-	 qk38tkYqxIq49OT4gZraAZqOACducrLvgJAw03JVn0w2ak4sHuPwaIBmna1KgEBqh1
-	 VRYTnVdYxo0IHIbp+ohHCEpNPOhwWFc0CLZGT9wqMbxOqlfDZsTDggk+dOlWRtbJp+
-	 XyI1fgs5QfV5A==
+	b=UeiaXbwlnBTmRADGCWbbpiPKJOiRpioQIh1VNQh06GShrgR8WOM9OWz4jwf1/0+sm
+	 DcZ7tOo/lpjJwWxH1BnZHZo5Q8+khFo4G11zbiaEl1dae3IDxBnaXwL+PYf+tgnoFg
+	 ToEHZvdjDPHlm0e5wmsHkup8dliyaNLA1ABrZivBxFpbAG3010+uINK6QPlR0SKE1S
+	 tFXoBNur+CNTrZcKRHVTp5dXnwSF0wDkYqCTzNiO6Uo9AlcqZJHR0U47hpn9Llti4e
+	 MeniYnp0f/pocjs72XucNxHgP28I7puNONOdU4jlRhunvJEuOvM1bOmcmOENHcIS8T
+	 9SeMPQwseTH+Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Justin Tee <justin.tee@broadcom.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc: Aaradhana Sahu <quic_aarasahu@quicinc.com>,
+	Aditya Kumar Singh <quic_adisi@quicinc.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	james.smart@broadcom.com,
-	dick.kennedy@broadcom.com,
-	James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 442/486] scsi: lpfc: Ignore ndlp rport mismatch in dev_loss_tmo callbk
-Date: Mon,  5 May 2025 18:38:38 -0400
-Message-Id: <20250505223922.2682012-442-sashal@kernel.org>
+	jjohnson@kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.12 471/486] wifi: ath12k: Fetch regdb.bin file from board-2.bin
+Date: Mon,  5 May 2025 18:39:07 -0400
+Message-Id: <20250505223922.2682012-471-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -67,56 +67,75 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Justin Tee <justin.tee@broadcom.com>
+From: Aaradhana Sahu <quic_aarasahu@quicinc.com>
 
-[ Upstream commit 23ed62897746f49f195d819ce6edeb1db27d1b72 ]
+[ Upstream commit 24f587572acf7509127dbdfcbf1b681ef84eeba0 ]
 
-With repeated port swaps between separate fabrics, there can be multiple
-registrations for fabric well known address 0xfffffe.  This can cause ndlp
-reference confusion due to the usage of a single ndlp ptr that stores the
-rport object in fc_rport struct private storage during transport
-registration.  Subsequent registrations update the ndlp->rport field with
-the newer rport, so when transport layer triggers dev_loss_tmo for the
-earlier registered rport the ndlp->rport private storage is referencing the
-newer rport instead of the older rport in dev_loss_tmo callbk.
+Currently, ath12k_core_fetch_regdb() finds regdb.bin file through
+board id's but in board-2.bin file regdb.bin file is present with
+default board id because of which regdb.bin is not fetched.
 
-Because the older ndlp->rport object is already cleaned up elsewhere in
-driver code during the time of fabric swap, check that the rport provided
-in dev_loss_tmo callbk actually matches the rport stored in the LLDD's
-ndlp->rport field.  Otherwise, skip dev_loss_tmo work on a stale rport.
+Add support to fetch regdb.bin file from board-2.bin through
+default board id.
 
-Signed-off-by: Justin Tee <justin.tee@broadcom.com>
-Link: https://lore.kernel.org/r/20250131000524.163662-4-justintee8345@gmail.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00173-QCAHKSWPL_SILICONZ-1
+
+Signed-off-by: Aaradhana Sahu <quic_aarasahu@quicinc.com>
+Reviewed-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
+Link: https://patch.msgid.link/20250116032835.118397-1-quic_aarasahu@quicinc.com
+Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_hbadisc.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ath/ath12k/core.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index 31dcabebc9b6d..f2e4237ff3d99 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -227,10 +227,16 @@ lpfc_dev_loss_tmo_callbk(struct fc_rport *rport)
- 	if (ndlp->nlp_state == NLP_STE_MAPPED_NODE)
- 		return;
+diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
+index 51252e8bc1ae9..8bb8ee98188bf 100644
+--- a/drivers/net/wireless/ath/ath12k/core.c
++++ b/drivers/net/wireless/ath/ath12k/core.c
+@@ -161,7 +161,7 @@ EXPORT_SYMBOL(ath12k_core_resume);
  
--	/* check for recovered fabric node */
--	if (ndlp->nlp_state == NLP_STE_UNMAPPED_NODE &&
--	    ndlp->nlp_DID == Fabric_DID)
-+	/* Ignore callback for a mismatched (stale) rport */
-+	if (ndlp->rport != rport) {
-+		lpfc_vlog_msg(vport, KERN_WARNING, LOG_NODE,
-+			      "6788 fc rport mismatch: d_id x%06x ndlp x%px "
-+			      "fc rport x%px node rport x%px state x%x "
-+			      "refcnt %u\n",
-+			      ndlp->nlp_DID, ndlp, rport, ndlp->rport,
-+			      ndlp->nlp_state, kref_read(&ndlp->kref));
- 		return;
-+	}
+ static int __ath12k_core_create_board_name(struct ath12k_base *ab, char *name,
+ 					   size_t name_len, bool with_variant,
+-					   bool bus_type_mode)
++					   bool bus_type_mode, bool with_default)
+ {
+ 	/* strlen(',variant=') + strlen(ab->qmi.target.bdf_ext) */
+ 	char variant[9 + ATH12K_QMI_BDF_EXT_STR_LENGTH] = { 0 };
+@@ -192,7 +192,9 @@ static int __ath12k_core_create_board_name(struct ath12k_base *ab, char *name,
+ 			  "bus=%s,qmi-chip-id=%d,qmi-board-id=%d%s",
+ 			  ath12k_bus_str(ab->hif.bus),
+ 			  ab->qmi.target.chip_id,
+-			  ab->qmi.target.board_id, variant);
++			  with_default ?
++			  ATH12K_BOARD_ID_DEFAULT : ab->qmi.target.board_id,
++			  variant);
+ 		break;
+ 	}
  
- 	if (rport->port_name != wwn_to_u64(ndlp->nlp_portname.u.wwn))
- 		lpfc_printf_vlog(vport, KERN_ERR, LOG_TRACE_EVENT,
+@@ -204,19 +206,19 @@ static int __ath12k_core_create_board_name(struct ath12k_base *ab, char *name,
+ static int ath12k_core_create_board_name(struct ath12k_base *ab, char *name,
+ 					 size_t name_len)
+ {
+-	return __ath12k_core_create_board_name(ab, name, name_len, true, false);
++	return __ath12k_core_create_board_name(ab, name, name_len, true, false, false);
+ }
+ 
+ static int ath12k_core_create_fallback_board_name(struct ath12k_base *ab, char *name,
+ 						  size_t name_len)
+ {
+-	return __ath12k_core_create_board_name(ab, name, name_len, false, false);
++	return __ath12k_core_create_board_name(ab, name, name_len, false, false, true);
+ }
+ 
+ static int ath12k_core_create_bus_type_board_name(struct ath12k_base *ab, char *name,
+ 						  size_t name_len)
+ {
+-	return __ath12k_core_create_board_name(ab, name, name_len, false, true);
++	return __ath12k_core_create_board_name(ab, name, name_len, false, true, true);
+ }
+ 
+ const struct firmware *ath12k_core_firmware_request(struct ath12k_base *ab,
 -- 
 2.39.5
 
