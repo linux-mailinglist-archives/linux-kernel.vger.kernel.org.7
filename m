@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-633882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AE3AAAEAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:01:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D074BAAAE93
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F173A7882
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:56:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE6016B14E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F9C36E08B;
-	Mon,  5 May 2025 23:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DF9391A79;
+	Mon,  5 May 2025 23:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1kXA2W+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNuX9KrT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F2A36EF26;
-	Mon,  5 May 2025 22:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D93B2DA0E1;
+	Mon,  5 May 2025 22:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485861; cv=none; b=oalPIUCPM8eBVLp0ugl3oLIdZf4tvbcMhs9Li2uDZvc2CTj9JKGosUf+kd2aa5N7WmPK1UHFWBdd5sxWEkEQHZ2sj5gNgfZU+PUzVStAf/tEjJhrU2IfF3+Tv3BymKB0nJWLr0yIQUKkSoXZvFShU2w7upOFeWNWlAGszOSg5jI=
+	t=1746485878; cv=none; b=NS5aMBSanPI4uPrhkRTPUNZud+n+CVSPWyUlqfAmvY/YELr5lfpj7ePB5/Z4PiK6wWEwwQWj/zPDXZrTenrMk8OCs4TFOQEI/79RhUpXIcfGf0KvT9jlpqslU0ZbQptaoBMY4Vou44Q7jV9L6e4QM4XJuMkCLXnJmHvxePy3Ogc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485861; c=relaxed/simple;
-	bh=n/xcGtcActF4OHLhnY34V8NfaTeXOL8f7VrAboRer90=;
+	s=arc-20240116; t=1746485878; c=relaxed/simple;
+	bh=j+EfqvvBXY4PJGPy+vQBKg7QLVsn7odm62WHCyOitj4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p1hcuIooUjeHy7b9AXaA/u6uP7qhbMofRKlmzgC637Jz5MEJ6PmzgTQ+1HJS4Te5WNHB/qUNLVnwl6wHdnV957g14THYPVnzKP10dSAEgTBxQQYnXofJI+F3HSgNMCJQvHOINVX1P/dPtgP/hv2kxulFw+FZvC/Ke2zOqFjH3cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1kXA2W+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD80EC4CEF2;
-	Mon,  5 May 2025 22:57:39 +0000 (UTC)
+	 MIME-Version; b=Ob8J+HstUr/KqgohV+t3+mnWXQY+IgdeawoF/EYxXAtDwJ1K2hSRlPY+LqbcOKoIFFAKdcHgqMJlrfCuQUixIb2otrnb6bXQY4RqnbGFAef2m0ABh3k8rGdB7Q1dWeGirvHPT5WE9Dps2w6TktcvdCCRzfaZefvRl7may/D+kEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNuX9KrT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 976DCC4CEF1;
+	Mon,  5 May 2025 22:57:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485860;
-	bh=n/xcGtcActF4OHLhnY34V8NfaTeXOL8f7VrAboRer90=;
+	s=k20201202; t=1746485877;
+	bh=j+EfqvvBXY4PJGPy+vQBKg7QLVsn7odm62WHCyOitj4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J1kXA2W+XsRQcPMlD/RON+IQUdniS/IUIDrOwIC3ppMEymYINaOYYqiXkQfw0koTL
-	 mprHNpXHfAtS5bNKuXANb7pVQYCgU4av9pPqtLLbE5uFPyJFb1/7L/uV2O+fpyor3e
-	 ZdTF+GnP4GIl9mXZUTkEyWmuAW9N+Luj2eFgVCuX7HCfWBbX1YqF+ogiIAd+m6THie
-	 xEym3dlZIM9A5eJiZbnbfQxc3lXH7izVr7t/Am8dhvnU1c4G+7jW5l+0bykQtQiEsb
-	 vO52FKOnggh4a/TXgdAbLtPVR+efcmF1WxAHjMS2HPweP0Kki51hhmf8f00n07hmlX
-	 m7SKz4yQFddBg==
+	b=UNuX9KrTtfpLf+QFXqN5inONXHJyCOBk3NeLNq7pHj9GJS9T2k09F742Ryzm4L1W/
+	 sgxXw6vOXlLgWSg+b7TWYGhWnuPJyfO/6Dmmh31xYTWlmFc0C2kXPKqKjHLzAJ3Fxw
+	 o0UUNPguVE6rLNdsfZL8W1KSxwVzvrsT3HPifzguIvgJhIuE82kY6FwKi25DxhbfW1
+	 +PyCeJoBe9zSjgp4crp928Bg9wwACMfyO7BDgHQwbPJ2vogN1e4ZzZJVz/UJXZHc17
+	 yPtgAbzM61iLLdKuuhqVVhUfpthB9FtccYu3adOdkUH8litmrz9lmD48YCD1WqXJH0
+	 TzLnuiltN51GA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Roger Pau Monne <roger.pau@citrix.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Juergen Gross <jgross@suse.com>,
+Cc: Philip Redkin <me@rarity.fan>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Rik van Riel <riel@surriel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
 	Sasha Levin <sashal@kernel.org>,
-	nirmal.patel@linux.intel.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 034/294] PCI: vmd: Disable MSI remapping bypass under Xen
-Date: Mon,  5 May 2025 18:52:14 -0400
-Message-Id: <20250505225634.2688578-34-sashal@kernel.org>
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	x86@kernel.org
+Subject: [PATCH AUTOSEL 6.6 041/294] x86/mm: Check return value from memblock_phys_alloc_range()
+Date: Mon,  5 May 2025 18:52:21 -0400
+Message-Id: <20250505225634.2688578-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -64,79 +67,56 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Roger Pau Monne <roger.pau@citrix.com>
+From: Philip Redkin <me@rarity.fan>
 
-[ Upstream commit 6c4d5aadf5df31ea0ac025980670eee9beaf466b ]
+[ Upstream commit 631ca8909fd5c62b9fda9edda93924311a78a9c4 ]
 
-MSI remapping bypass (directly configuring MSI entries for devices on the
-VMD bus) won't work under Xen, as Xen is not aware of devices in such bus,
-and hence cannot configure the entries using the pIRQ interface in the PV
-case, and in the PVH case traps won't be setup for MSI entries for such
-devices.
+At least with CONFIG_PHYSICAL_START=0x100000, if there is < 4 MiB of
+contiguous free memory available at this point, the kernel will crash
+and burn because memblock_phys_alloc_range() returns 0 on failure,
+which leads memblock_phys_free() to throw the first 4 MiB of physical
+memory to the wolves.
 
-Until Xen is aware of devices in the VMD bus prevent the
-VMD_FEAT_CAN_BYPASS_MSI_REMAP capability from being used when running as
-any kind of Xen guest.
+At a minimum it should fail gracefully with a meaningful diagnostic,
+but in fact everything seems to work fine without the weird reserve
+allocation.
 
-The MSI remapping bypass is an optional feature of VMD bridges, and hence
-when running under Xen it will be masked and devices will be forced to
-redirect its interrupts from the VMD bridge.  That mode of operation must
-always be supported by VMD bridges and works when Xen is not aware of
-devices behind the VMD bridge.
-
-Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Message-ID: <20250219092059.90850-3-roger.pau@citrix.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Philip Redkin <me@rarity.fan>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lore.kernel.org/r/94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/vmd.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/x86/mm/init.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index dfa222e02c4da..ad82feff0405e 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -17,6 +17,8 @@
- #include <linux/rculist.h>
- #include <linux/rcupdate.h>
- 
-+#include <xen/xen.h>
-+
- #include <asm/irqdomain.h>
- 
- #define VMD_CFGBAR	0
-@@ -981,6 +983,24 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	struct vmd_dev *vmd;
- 	int err;
- 
-+	if (xen_domain()) {
-+		/*
-+		 * Xen doesn't have knowledge about devices in the VMD bus
-+		 * because the config space of devices behind the VMD bridge is
-+		 * not known to Xen, and hence Xen cannot discover or configure
-+		 * them in any way.
-+		 *
-+		 * Bypass of MSI remapping won't work in that case as direct
-+		 * write by Linux to the MSI entries won't result in functional
-+		 * interrupts, as Xen is the entity that manages the host
-+		 * interrupt controller and must configure interrupts.  However
-+		 * multiplexing of interrupts by the VMD bridge will work under
-+		 * Xen, so force the usage of that mode which must always be
-+		 * supported by VMD bridges.
-+		 */
-+		features &= ~VMD_FEAT_CAN_BYPASS_MSI_REMAP;
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index 71d29dd7ad761..6cbb5974e4f9e 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -644,8 +644,13 @@ static void __init memory_map_top_down(unsigned long map_start,
+ 	 */
+ 	addr = memblock_phys_alloc_range(PMD_SIZE, PMD_SIZE, map_start,
+ 					 map_end);
+-	memblock_phys_free(addr, PMD_SIZE);
+-	real_end = addr + PMD_SIZE;
++	if (!addr) {
++		pr_warn("Failed to release memory for alloc_low_pages()");
++		real_end = max(map_start, ALIGN_DOWN(map_end, PMD_SIZE));
++	} else {
++		memblock_phys_free(addr, PMD_SIZE);
++		real_end = addr + PMD_SIZE;
 +	}
-+
- 	if (resource_size(&dev->resource[VMD_CFGBAR]) < (1 << 20))
- 		return -ENOMEM;
  
+ 	/* step_size need to be small so pgt_buf from BRK could cover it */
+ 	step_size = PMD_SIZE;
 -- 
 2.39.5
 
