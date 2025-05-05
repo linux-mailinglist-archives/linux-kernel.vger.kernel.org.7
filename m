@@ -1,58 +1,62 @@
-Return-Path: <linux-kernel+bounces-634730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF648AAB40A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:58:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34726AAB3F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3045B3B2BE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:53:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362764A0217
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE54340505;
-	Tue,  6 May 2025 00:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1B7340527;
+	Tue,  6 May 2025 00:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfAMemGA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrGMm+Gu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD222281501;
-	Mon,  5 May 2025 23:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFAD280CEA;
+	Mon,  5 May 2025 23:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486483; cv=none; b=nRLhFEaLQtmDcv8M8oqlAVF1h9WFxjwn3df/hrEomNNM9iXcEAu91uPj2KPyrsn2YGRAc2JYgUPWj2jhlB2F2VC0uaElkqDT4j8SDi7MT6JI9t1PvHzkIzrPSsfQPsjYZlVu9uLQsCo8JXCNcrsqpepKUbP04To4Lf/9vDIMQd4=
+	t=1746486485; cv=none; b=pBkaMTqIEa8Udh9IrkYHvC8bE4UVtSCFckzSulDv86SlgKzzvp/cTtv9LNrUCcSP4hx2XIJHzZNsk43f/jNSmP8boea/WUN1gqsfKUaocA13eGycz+bCWCuVIZ8MdUbm+b6E+ElFaFrDKK/yFlYn+VJowOsjb3x5UfwEc/d1Nik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486483; c=relaxed/simple;
-	bh=6YRcUTK56kXBcBxkiILEyGZQmGqLy6xAnl8/69Hwbgg=;
+	s=arc-20240116; t=1746486485; c=relaxed/simple;
+	bh=QZJg/qnDtIKPDm96Agh/Xj3Gqhe9xZPuYljzuQiAzTY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KWDw37CxsLrsMrR+y7pa3DWb3B9cXWpdLveBDU5GhAW+ENjSXFCXLP/f7n05j6yUqafjZcbCpHWaVfCB/BAkLmaePImsLxTUZ8jcR6zd4t61IaMAXk+Ff97U2TVGgeUHRwDxoJshg/mCscNl3k4IhNbNhnCN6PHj5OkDIVVXHBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfAMemGA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5033CC4CEED;
-	Mon,  5 May 2025 23:08:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=n1nttc+hSTWfrYcE5YABY512/a7N5SaWQHkBccBAx+yTkVOIn5yaf9pjdZvouZynCE3v/QFQG6FtHuqzCVIV37YdzUpLFnLDlmPLtSg9K08TQgPjx5JWW1ohgtPLIJHjhNDG3+++FkhtDkWIqNZ+wdGXHTmWfBX+WEekaC5ckd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrGMm+Gu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57836C4CEE4;
+	Mon,  5 May 2025 23:08:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486482;
-	bh=6YRcUTK56kXBcBxkiILEyGZQmGqLy6xAnl8/69Hwbgg=;
+	s=k20201202; t=1746486484;
+	bh=QZJg/qnDtIKPDm96Agh/Xj3Gqhe9xZPuYljzuQiAzTY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lfAMemGApZ2I4Zv1VfplsQMwuEFVUqJdyR40DTXbw9hlutDGRqxBGyHYF7tnFbNgJ
-	 faGD1Iv5npPqiQ14fzJBWg2wDfyvZPQ1PacXnXy9dwhFXzl7TgJzdnu20FvVl9hJ0S
-	 mWQIPReCn5zdz/ROmxcHxFvDWosVJCD7bmyKQxugRGz5yRe/3tG1EIFbsWTAT1INhh
-	 bMLTYUUaOGjBXXABPVYNx1xevlCGNCrSTnKq3noMv4dPTH4wSccpOZtMmq9WQcj1Cz
-	 L9Mwbj/BUniDTLRQKs5A5Vwz+YQksEZgvCfU2+u6x92s7QuM+27F82G4qhE0AdyUbu
-	 MYOB/FmYpuNwg==
+	b=GrGMm+Gu7A//lbkE1XWiuJuAkKK6lxAa3Jxe2DkV7cPzZpAWvKv5CEaQ2Ugy3A6eR
+	 bBl3ssMSXY3MtM510LGq8C2qqn1LRtZ9KW0F9AJtokfUlmliP4wspv3Tlu/Xwz09Eu
+	 5Ebyks4rGxpGrOT13a5plsWdiFOwzgkKR8JCDsrC4q+h4I+5/tnnMIU6/E6wI0UBtu
+	 CLssR5JSXdnXRcipYik+TlmRwTOWJR8sLiNKQGsawqS3vOOt2hmP+qwzzdKiQ8QFyp
+	 t5RUGm9jAn47tjqql0wJM+oCjX2N4SFQu1G0bmtKZZY0k487Zt27nIEIiFYhSalaQQ
+	 1zczHSa0n9Y/w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+Cc: =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	andreas.noever@gmail.com,
-	michael.jamet@intel.com,
-	westeri@kernel.org,
-	YehezkelShB@gmail.com,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 053/212] thunderbolt: Do not add non-active NVM if NVM upgrade is disabled for retimer
-Date: Mon,  5 May 2025 19:03:45 -0400
-Message-Id: <20250505230624.2692522-53-sashal@kernel.org>
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	matthias.bgg@gmail.com,
+	linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.1 054/212] ASoC: mediatek: mt6359: Add stub for mt6359_accdet_enable_jack_detect
+Date: Mon,  5 May 2025 19:03:46 -0400
+Message-Id: <20250505230624.2692522-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -62,44 +66,49 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-[ Upstream commit ad79c278e478ca8c1a3bf8e7a0afba8f862a48a1 ]
+[ Upstream commit 0116a7d84b32537a10d9bea1fd1bfc06577ef527 ]
 
-This is only used to write a new NVM in order to upgrade the retimer
-firmware. It does not make sense to expose it if upgrade is disabled.
-This also makes it consistent with the router NVM upgrade.
+Add a stub for mt6359_accdet_enable_jack_detect() to prevent linker
+failures in the machine sound drivers calling it when
+CONFIG_SND_SOC_MT6359_ACCDET is not enabled.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Link: https://patch.msgid.link/20250306-mt8188-accdet-v3-3-7828e835ff4b@collabora.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/retimer.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ sound/soc/codecs/mt6359-accdet.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/thunderbolt/retimer.c b/drivers/thunderbolt/retimer.c
-index 5bd5c22a5085d..d2038337ea03b 100644
---- a/drivers/thunderbolt/retimer.c
-+++ b/drivers/thunderbolt/retimer.c
-@@ -89,9 +89,11 @@ static int tb_retimer_nvm_add(struct tb_retimer *rt)
- 	if (ret)
- 		goto err_nvm;
+diff --git a/sound/soc/codecs/mt6359-accdet.h b/sound/soc/codecs/mt6359-accdet.h
+index c234f2f4276a1..78ada3a5bfae5 100644
+--- a/sound/soc/codecs/mt6359-accdet.h
++++ b/sound/soc/codecs/mt6359-accdet.h
+@@ -123,6 +123,15 @@ struct mt6359_accdet {
+ 	struct workqueue_struct *jd_workqueue;
+ };
  
--	ret = tb_nvm_add_non_active(nvm, nvm_write);
--	if (ret)
--		goto err_nvm;
-+	if (!rt->no_nvm_upgrade) {
-+		ret = tb_nvm_add_non_active(nvm, nvm_write);
-+		if (ret)
-+			goto err_nvm;
-+	}
- 
- 	rt->nvm = nvm;
- 	return 0;
++#if IS_ENABLED(CONFIG_SND_SOC_MT6359_ACCDET)
+ int mt6359_accdet_enable_jack_detect(struct snd_soc_component *component,
+ 				     struct snd_soc_jack *jack);
++#else
++static inline int
++mt6359_accdet_enable_jack_detect(struct snd_soc_component *component,
++				 struct snd_soc_jack *jack)
++{
++	return -EOPNOTSUPP;
++}
++#endif
+ #endif
 -- 
 2.39.5
 
