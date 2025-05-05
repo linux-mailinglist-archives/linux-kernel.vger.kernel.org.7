@@ -1,156 +1,118 @@
-Return-Path: <linux-kernel+bounces-632178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CBBAA9387
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:46:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC7AAA938D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082EA177757
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0BB23AA1A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298DE1F4289;
-	Mon,  5 May 2025 12:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5D01AA1DA;
+	Mon,  5 May 2025 12:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJNU5Mbl"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="RXyO3rbI"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1488141C63;
-	Mon,  5 May 2025 12:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285334683
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746449189; cv=none; b=G9RXJwbx23Gl0DuEi39gpwmb6khRJsa6U0DXyyLxfPACvQ+WcL2aloJrZYTT1c5DjX1ncojUNv4syPx7K3EHSUTk/XkvKMeAZWjAFErxe6WigOFAGzJD4L1zph/BcfGereptZ1B8MYV67N3HeuzH09Jc+7010DrpdKE5VC+2v0Q=
+	t=1746449355; cv=none; b=fEcClmVLN1DWiksQzMeUoZ56usDL6SB/H+Gqw8A9CGeuCl8zxnfsMMpK3r3cJx7UxiToAD8g6nE4mdQt85ql/i4bWZsOYlmLzY1NB0vX5dTvarxLh/lrxV56rPtSMNMGt8OVhF9cvklfUVWRLunwLzzAXVPNiUDfZplNKmiediI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746449189; c=relaxed/simple;
-	bh=cjs2jCqJXMQfYbF51ctMl3G4R34SGf9hlFNMrSdrynI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pyBaoyzoyefiPM/AS9bnpcP1qc/EewOc1dggdxOL7p1lcSI6xW8J2qdFmTX3RI2dC6hgacvAsg5MTEiSKeeVsMPTbooEQv4xNP5juGo7n0gPhPUlEuOSSlda5O2V+AtvZTjwQMx8fqc8Xpsym6b2R+mT2t9NCnJtAHkph+X3YMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJNU5Mbl; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-30332dfc820so5052007a91.2;
-        Mon, 05 May 2025 05:46:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746449187; x=1747053987; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObIhRmKcJw0dtYzY3+cwi3lXYPLNgRL97uUh+PSy5rI=;
-        b=TJNU5MblfkjIsZDRTUWM1J6J7meeszHLAAH4yfYBevJwlhS+UbXGieQhnPUIRySBTo
-         M+X6Qw8FU7w1mxVBWNA9KfeJuLCz8hZ/lmj+2DEYKIoqMGLrpV9f7e8AIM1Hm/cZKqLZ
-         4KDJziJRsteIinGnxwzuiLEF99C3NVLNzoUy9ZFbHGJKh+l6ofhjtj6QdWiaPavpEuNY
-         yjuNWbJWLhb9PDZw9JAGjrJXJ/4X7MS+3RpcSv/0S/C4KrRg7a1VpY2n0Atmz6VQ+Ogm
-         LMQVcyZ0OtiGrT5nMV7Y9b3/iRhjQkLMkvZHb++vrEQn8JlT+cuGV8wzmc7+EzwSF7iI
-         INYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746449187; x=1747053987;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ObIhRmKcJw0dtYzY3+cwi3lXYPLNgRL97uUh+PSy5rI=;
-        b=M3knahyztITfmhqCTBdq7GxQ4224UKCTWGNhoieW0XNj+TzDgdzKnWOQ/PO45c3Nnc
-         NcUJN76dZV1vWUeCVEHFWzfkueiR6irGDL3hLDuKS7ee96ETBN9gO78xoXHA5qEeCDgA
-         bqmDR+0WoPqdI2p4T6DROFtwVuc6YOANNfI9hxlqVNTciL17RCDjA9GDV7YATs/RT0qB
-         yvzREpBck+bhze9SGZEUVtztcFFgmq7to5H/K6g4esALXUsOfPEE1284PJj5wxdgvE7o
-         msKNZPWcOZ/KtYzJacluhMw2mR1VznKxRidjLsOb+AKOsy+hyGPg/p8JYHZfMpm+URfm
-         vfrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZBiaxe+aSoXJ000n+IuUF1536usBoypqFW8y5VUyKiTcGiqyr1/ZCGYi7uRK8ZgNzMuVOL5p5aB74svs=@vger.kernel.org, AJvYcCXGwMATA1ovC2VusOqsTFe+WYa9qusG1ew+1Cz0ud5MZOyzQPl9GI8V3W00lBwdx8B4rj7NIW+uQzu6HrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmkFrFeHcLoEVnvBWxqkv+xGvzqJC3+GJu+GG8wAA34FhOWHC9
-	ndM+p79uixX7oZl/ceoZMVicYTKy4QNuXHZ9yZJ44HeuaCwSkaRI
-X-Gm-Gg: ASbGncuVn1Z2eqx1HFJbKXQRyXhmQBQL1QMZpo2nAefaGTTVct/P+IiwXVOWcV/b067
-	Jv7Y6k8Hx5VBCarDsgqQx2mubt9SG4QteydseV2iLkIhH/W/XlrUBEJ4abZ+WuJVIcnvlVaJ8gu
-	JtyPgEReULLsa0Qq2QeGQU5OwYiNMoHljexeTle7rpNP4wo3mP75V4XNDeWZQ1b1YfgSQsVPVgj
-	pQs4GDHC9+dAdx9QhefS57k0zR2Joka894IuhAQbRZlTnaoVKw8m8jKgTxqvlXaEswZeVE2cNUD
-	i5uSLM5nN2KaERGTgd14Yktx6dkziqhWPs7lkRJkjnQ0Yz4bGCKCHXEychyQ/4DrmCs=
-X-Google-Smtp-Source: AGHT+IHOAnEtcmN2lOZxiOYPzW/hfac6lnQDVXkZ8+2ZPV6Olv0JjDd+Pl9EQiy3aPKob3SoII9o2A==
-X-Received: by 2002:a17:90b:57e8:b0:309:fd87:821d with SMTP id 98e67ed59e1d1-30a5aed5520mr14312472a91.29.1746449187115;
-        Mon, 05 May 2025 05:46:27 -0700 (PDT)
-Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:bd19:74c5:b39c:cda])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a34748983sm11450755a91.17.2025.05.05.05.46.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 05:46:26 -0700 (PDT)
-Date: Mon, 5 May 2025 20:46:22 +0800
-From: I Hsin Cheng <richard120310@gmail.com>
-To: "Liao, Bard" <yung-chuan.liao@linux.intel.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	pierre-louis.bossart@linux.dev, Vijendar.Mukunda@amd.com,
-	peter.ujfalusi@linux.intel.com, peterz@infradead.org,
-	christophe.jaillet@wanadoo.fr, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Subject: Re: [RFC PATCH] ASoC: intel/sdw_utils: Assign initial value in
- asoc_sdw_rt_amp_spk_rtd_init()
-Message-ID: <aBizHlY-UxnBsNDs@vaxr-BM6660-BM6360>
-References: <20250505074142.615408-1-richard120310@gmail.com>
- <2933e4c7-fc4c-4161-afee-cd6abcd79ef5@linux.intel.com>
+	s=arc-20240116; t=1746449355; c=relaxed/simple;
+	bh=ymSG9IqEEy4egmcsyUGThJdUOkfEDmimGTb5ZTuNFZQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=mtDWmuHsQG1aVDt32AgSCCt7q9Gk+uUbmTNrfX2ISEAEA0MQsK1DhRMmEfY5fOo/T7XhjPwGXIkOdJ2VcDwt/kfOoW8OrBqW4kfPGRUhVP8d0BHvFdgxVJ99LVQwSOgB8C91727qMCVxtg5GXcgU/7qTlyYTn/PlafPc/WtRKY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=RXyO3rbI; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 545CmbAS275820
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 5 May 2025 05:48:38 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 545CmbAS275820
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1746449319;
+	bh=9xfULg7P/qknoG0MeM2KOWzAXH9jr4Glh04sw3FjIuY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=RXyO3rbIuNBurZ+B2JvjxVn4LzO7AWXc6wOOrU2jKvgQY3bp2/Va/rV7q28ucmTMH
+	 5pn4RMD4U1TF9qA9bc31gDfHCpcRmh7S6WsfqMZJPUgTAPO//HvXDptz9Llv9B0Tu5
+	 d8lLF3tNZgKYAQ8X1Nd+iDKN6MdWAi9iyjCnDGCys027eGIphMNc3hKikvgZmHSLc1
+	 A52yjDbY5Gbjdgcbm/aylj/NxBKu69dHnj+y2PKCmauLYgriydoAvw+oGoHiUVRIet
+	 JWpi9K9gEsXVZbE0MWmeMHIFE2QeX8Y24oWpl83DLFUdvV/lzRKWXBzIOESda5TUHR
+	 5J1ENJbCeWvwQ==
+Date: Mon, 05 May 2025 05:48:37 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>, Ingo Molnar <mingo@kernel.org>
+CC: linux-kernel@vger.kernel.org, "Ahmed S . Darwish" <darwi@linutronix.de>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        John Ogness <john.ogness@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_0/15=5D_x86=3A_Remove_su?=
+ =?US-ASCII?Q?pport_for_TSC-less_and_CX8-less_CPUs?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <alpine.DEB.2.21.2505050944230.31828@angie.orcam.me.uk>
+References: <20250425084216.3913608-1-mingo@kernel.org> <alpine.DEB.2.21.2505050944230.31828@angie.orcam.me.uk>
+Message-ID: <98C88CE8-C3D5-4B75-8545-71DD47C67614@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2933e4c7-fc4c-4161-afee-cd6abcd79ef5@linux.intel.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 05, 2025 at 04:27:04PM +0800, Liao, Bard wrote:
-> 
-> 
-> On 5/5/2025 3:41 PM, I Hsin Cheng wrote:
-> > If strstr() for codec_dai->component->name_prefix doesn't find "-1" nor
-> > "-2", the value of ret will remain uninitialized. Initialized it with
-> > "-EINVAL" representing the component name prefix inside "rtd" is
-> > invalid.
-> 
-> Indeed. Thanks for pointing it out.
-> 
-> > 
-> > If "->name_prefix" is guaranteed to have either "-1" or "-2", we can
-> > remove the second strstr() because we know if "-1" is not in
-> > "->name_prefix", then "-2" is in there. It'll be a waste to do one more
-> > strstr() in that case.
-> 
-> The existing name_prefix is with either "-1" or "-2". But we can't make
-> the assumption in the asoc_sdw_rt_amp_spk_rtd_init() helper. We might
-> have "-3", "-4" etc in the future.
+On May 5, 2025 1:53:04 AM PDT, "Maciej W=2E Rozycki" <macro@orcam=2Eme=2Euk=
+> wrote:
+>On Fri, 25 Apr 2025, Ingo Molnar wrote:
 >
-
-Hi,
-
-Thanks for your kindly review!
-
-> The existing name_prefix is with either "-1" or "-2". But we can't make
-> the assumption in the asoc_sdw_rt_amp_spk_rtd_init() helper. We might
-> have "-3", "-4" etc in the future.
+>>  > I really get the feeling that it's time to leave i486 support behind=
+=2E
+>>  > There's zero real reason for anybody to waste one second of
+>>  > development effort on this kind of issue=2E
+>>=20
+>> This series increases minimum kernel support features to include TSC an=
+d
+>> CX8 (CMPXCHG8B) hardware support, which removes 486 (and derivatives) s=
+upport
+>> and early-586 (and derivatives) support=2E
 >
-I get it, so in that case we should stick with current implementation
-then. For "ret"'s initial value, do you think "-EINVAL" is ok or do you
-prefer other value to be used ?
-I'll refine commit message and send a formal v2 patch with your
-preference.
+> FWIW I'm not happy about that at the very least because this will preven=
+t=20
+>me from using my 486 box for EISA defxx driver maintenance=2E  What exact=
+ly=20
+>is the problem with 486?
+>
+> I know the lack of TSC has security implications, but don't use the=20
+>machine in a way for which it would be an issue and I don't expect anyone=
+=20
+>doing otherwise=2E  We have non-x86 platforms that lack a high-resolution=
+=20
+>timer and nobody's going to drop them=2E
+>
+> We also have platforms that lack atomics, let alone double-precision one=
+s=20
+>and they're fine too, so why is x86 different?
+>
+>  Maciej
 
-Best regards,
-I Hsin Cheng
+Why is x86 different? Because it is a tightly integrated platform with cod=
+e shared across a very large number of generations, without "silly embedded=
+ nonsense hacks=2E"
 
-> > 
-> > Link: https://scan5.scan.coverity.com/#/project-view/36179/10063?selectedIssue=1627120
-> > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> > ---
-> >  sound/soc/sdw_utils/soc_sdw_rt_amp.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/sound/soc/sdw_utils/soc_sdw_rt_amp.c b/sound/soc/sdw_utils/soc_sdw_rt_amp.c
-> > index 0538c252ba69..83c2368170cb 100644
-> > --- a/sound/soc/sdw_utils/soc_sdw_rt_amp.c
-> > +++ b/sound/soc/sdw_utils/soc_sdw_rt_amp.c
-> > @@ -190,7 +190,7 @@ int asoc_sdw_rt_amp_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc
-> >  	const struct snd_soc_dapm_route *rt_amp_map;
-> >  	char codec_name[CODEC_NAME_SIZE];
-> >  	struct snd_soc_dai *codec_dai;
-> > -	int ret;
-> > +	int ret = -EINVAL;
-> >  	int i;
-> >  
-> >  	rt_amp_map = get_codec_name_and_route(dai, codec_name);
-> 
+I think if you have a use case, you need to speak up about it, rather than=
+ for people to guess=2E
 
