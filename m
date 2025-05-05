@@ -1,108 +1,167 @@
-Return-Path: <linux-kernel+bounces-633429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358ABAAA66B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:12:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39B6AAA9B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E1A983C75
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:07:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C0FB188654B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A0E322ABF;
-	Mon,  5 May 2025 22:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4FB35AED2;
+	Mon,  5 May 2025 22:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YNbJQ11E";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f+q9z70S"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhUmf0m3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA3B322A90;
-	Mon,  5 May 2025 22:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB58929A3E7;
+	Mon,  5 May 2025 22:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484416; cv=none; b=aTOJVV3ws5dd+jVSuuHJR/ngkA4WR9NavmtGtdcwKYqUUJlsoLcGk/em0qqFED/8z+X/o55QdNsuLZBBRWeXzXdi29sObLT3v42cbGqUMXKyH0NNP56rPd1rUMkse394vJRA7+pQPJ6yqvz5feG6JiVa0MDYGtBBC8Hjme9ULT0=
+	t=1746485036; cv=none; b=epUVEOzupa35Vec74wp1N5uNgsbfcRycG4rXR1zjhNr4QoahUwGDWf/2eGpTqQAQQDXNmWtcgLBowvT5tribOGarn2Gb2/yHS29LPStguQXPtA/b+7Y7QF6RhZwsyUSgmOm/NxhDd5vLZIXKV9Qv2P3gTNxAIAXHOHatYRem26M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484416; c=relaxed/simple;
-	bh=HatdA9k8dTOZzoALiSAOatm15PguKG74mPF5yaTmjXw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=U0qO5mjDr1ymM6fSu9543fhK0DnvIDuYpO+O5xKq7kb7Hoejp6Oy05BnV2yTQmkp+z21aQ8T9xu+7kMUkVW8uEVRUtz1WUnm6U7aZi1/+PuFVIJ0ZenLObGx/7X9+2PNLcLNkOLXmZ34Xr/tSaKgOmhzCrVGJQUc/tP8Sr/VMnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YNbJQ11E; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f+q9z70S; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746484411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ar+nYY6YvS1JDsf3WZ/fGQw2E8KQPNJ8g1OwVIgR+aM=;
-	b=YNbJQ11E0VmO8C+gqyhlukX676Aov3AgM0pJVFAc4FJgNaleYvU1mCt+jSrgTy00xjZdcY
-	lw5g1mEGYYy2t9gmxGgFkVEo5Xn9LxICd16cbLXdLhaH+lo5UkL7bt28USzil0HKrq15fy
-	zW8p3peJv8DIfogSabh+6tPhKL76cJj2HgNcuMVpP1yL9LQyOUKglw3H7FKhsJTSP9E8l9
-	sN2XkT9RQb5nl4RDyj3Z3u23EuIxjuQfrGqKC6+T0KUkFhQJJN4y4Nub4mO3SUdCRrLJYs
-	qK9CQ+vVfaZ9RSzBw8uYllWzYms2soUc2mGoN5DWyToCHSXwaCnnyaoZ2sMnlA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746484411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ar+nYY6YvS1JDsf3WZ/fGQw2E8KQPNJ8g1OwVIgR+aM=;
-	b=f+q9z70Smk3vOT60407tVIz6Ss+kDH8S/UNUpUYoaE8+VjeoW6/KIMuK5eDqOnEyyebr9T
-	HeK2bY8XrvJ2t6Bg==
-To: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy?=
- =?utf-8?Q?=C5=84ski?=
- <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
- <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel
- Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Aaron Kling
- <webgeek1234@gmail.com>
-Subject: Re: [PATCH v4 1/4] irqdomain: Export irq_domain_free_irqs
-In-Reply-To: <20250505-pci-tegra-module-v4-1-088b552c4b1a@gmail.com>
-References: <20250505-pci-tegra-module-v4-0-088b552c4b1a@gmail.com>
- <20250505-pci-tegra-module-v4-1-088b552c4b1a@gmail.com>
-Date: Tue, 06 May 2025 00:33:30 +0200
-Message-ID: <87o6w6ofgl.ffs@tglx>
+	s=arc-20240116; t=1746485036; c=relaxed/simple;
+	bh=GsP06vD4FZjWpPqVY18NFfEH22WzUTrRhGkODqRlXqQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VgSb/Mp3P/717aI5j+KQkOvP/+M0DqyQJcQTQ8iXc8kNPHJm14D46SeR34JFqYXkJ5tRWdeXTKfXyIbPu1KNbbHmLhCIEKrZB30X8nNI/eqEJJTAJ3NMekl9vfWOa5XW/KBEX5/Q08MYurTadDN1FkI5RkdodZWD+5yaN42uFPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhUmf0m3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0453C4CEE4;
+	Mon,  5 May 2025 22:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746485036;
+	bh=GsP06vD4FZjWpPqVY18NFfEH22WzUTrRhGkODqRlXqQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qhUmf0m3XhXxNDx2J4cvZOSIne6URzlpb1TjesM1a7dlnnNZDdFRn02mgiD9+fNSB
+	 XvbItWbOk1Ma6/J+Kc1scpkCn/uses9POCKQo9Ef4IGAR9nSlov+YKbRQ8SGOtQ8yO
+	 etJEOYa4BqdfY6QrHdV/4SvIjZ2+ej/0/X3IBAY33ox9udB1S0OMkk4AcEp/HTpxBr
+	 IWDHsoz8X2jagEMKdED43R7U4RFs7yAv6yaK1DTvApalkmp7rNGLD/9UGW8ph9CecI
+	 50EiYdPSUS9PZNMNoW8n6V1znVGuE0cG6qr5Fu3dZS05wEdXLbYKWxkk8vYYl0MQh3
+	 oO6PwKNLrQscA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Dian-Syuan Yang <dian_syuan0116@realtek.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 134/486] wifi: rtw89: set force HE TB mode when connecting to 11ax AP
+Date: Mon,  5 May 2025 18:33:30 -0400
+Message-Id: <20250505223922.2682012-134-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
+References: <20250505223922.2682012-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.26
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 05 2025 at 09:58, Aaron Kling via wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
->
-> Add export for irq_domain_free_irqs() so that drivers like pci-tegra can
-> be loaded as a module.
->
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+From: Dian-Syuan Yang <dian_syuan0116@realtek.com>
 
-Seriously?
+[ Upstream commit a9b56f219a0fa550f92e65ac58443a7892380e09 ]
 
-Did you actually sit down for a couple of seconds to read and understand what I
-asked you to do in that initial review and then again:
+Some of 11ax AP set the UL HE-SIG-A2 reserved subfield to all 0s, which
+will cause the 11be chip to recognize trigger frame as EHT. We propose
+a method to bypass the "UL HE-SIG-A2 reserved subfield" and always uses
+HE TB in response to the AP's trigger frame.
 
-    https://lore.kernel.org/all/877c33qxss.ffs@tglx
+Signed-off-by: Dian-Syuan Yang <dian_syuan0116@realtek.com>
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Link: https://patch.msgid.link/20250306021144.12854-6-pkshih@realtek.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/realtek/rtw89/mac.c      | 26 +++++++++++++++++++
+ drivers/net/wireless/realtek/rtw89/mac.h      |  2 ++
+ drivers/net/wireless/realtek/rtw89/mac80211.c |  1 +
+ drivers/net/wireless/realtek/rtw89/reg.h      |  4 +++
+ 4 files changed, 33 insertions(+)
 
-I appreciate your dedication to get this sorted, but please take your
-time to read more than just the _two_ lines which you think to be
-relevant.
+diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wireless/realtek/rtw89/mac.c
+index 4574aa62839b0..04e254bd6b17f 100644
+--- a/drivers/net/wireless/realtek/rtw89/mac.c
++++ b/drivers/net/wireless/realtek/rtw89/mac.c
+@@ -4745,6 +4745,32 @@ void rtw89_mac_set_he_obss_narrow_bw_ru(struct rtw89_dev *rtwdev,
+ 		rtw89_write32_set(rtwdev, reg, mac->narrow_bw_ru_dis.mask);
+ }
+ 
++void rtw89_mac_set_he_tb(struct rtw89_dev *rtwdev,
++			 struct rtw89_vif_link *rtwvif_link)
++{
++	struct ieee80211_bss_conf *bss_conf;
++	bool set;
++	u32 reg;
++
++	if (rtwdev->chip->chip_gen != RTW89_CHIP_BE)
++		return;
++
++	rcu_read_lock();
++
++	bss_conf = rtw89_vif_rcu_dereference_link(rtwvif_link, true);
++	set = bss_conf->he_support && !bss_conf->eht_support;
++
++	rcu_read_unlock();
++
++	reg = rtw89_mac_reg_by_idx(rtwdev, R_BE_CLIENT_OM_CTRL,
++				   rtwvif_link->mac_idx);
++
++	if (set)
++		rtw89_write32_set(rtwdev, reg, B_BE_TRIG_DIS_EHTTB);
++	else
++		rtw89_write32_clr(rtwdev, reg, B_BE_TRIG_DIS_EHTTB);
++}
++
+ void rtw89_mac_stop_ap(struct rtw89_dev *rtwdev, struct rtw89_vif_link *rtwvif_link)
+ {
+ 	rtw89_mac_port_cfg_func_sw(rtwdev, rtwvif_link);
+diff --git a/drivers/net/wireless/realtek/rtw89/mac.h b/drivers/net/wireless/realtek/rtw89/mac.h
+index 0c269961a5731..5ba1133b79d64 100644
+--- a/drivers/net/wireless/realtek/rtw89/mac.h
++++ b/drivers/net/wireless/realtek/rtw89/mac.h
+@@ -1160,6 +1160,8 @@ void rtw89_mac_port_cfg_rx_sync(struct rtw89_dev *rtwdev,
+ 				struct rtw89_vif_link *rtwvif_link, bool en);
+ void rtw89_mac_set_he_obss_narrow_bw_ru(struct rtw89_dev *rtwdev,
+ 					struct rtw89_vif_link *rtwvif_link);
++void rtw89_mac_set_he_tb(struct rtw89_dev *rtwdev,
++			 struct rtw89_vif_link *rtwvif_link);
+ void rtw89_mac_stop_ap(struct rtw89_dev *rtwdev, struct rtw89_vif_link *rtwvif_link);
+ void rtw89_mac_enable_beacon_for_ap_vifs(struct rtw89_dev *rtwdev, bool en);
+ int rtw89_mac_remove_vif(struct rtw89_dev *rtwdev, struct rtw89_vif_link *vif);
+diff --git a/drivers/net/wireless/realtek/rtw89/mac80211.c b/drivers/net/wireless/realtek/rtw89/mac80211.c
+index 8351a70d325d4..3a1a2b243adf0 100644
+--- a/drivers/net/wireless/realtek/rtw89/mac80211.c
++++ b/drivers/net/wireless/realtek/rtw89/mac80211.c
+@@ -669,6 +669,7 @@ static void __rtw89_ops_bss_link_assoc(struct rtw89_dev *rtwdev,
+ 	rtw89_chip_cfg_txpwr_ul_tb_offset(rtwdev, rtwvif_link);
+ 	rtw89_mac_port_update(rtwdev, rtwvif_link);
+ 	rtw89_mac_set_he_obss_narrow_bw_ru(rtwdev, rtwvif_link);
++	rtw89_mac_set_he_tb(rtwdev, rtwvif_link);
+ }
+ 
+ static void __rtw89_ops_bss_assoc(struct rtw89_dev *rtwdev,
+diff --git a/drivers/net/wireless/realtek/rtw89/reg.h b/drivers/net/wireless/realtek/rtw89/reg.h
+index 69678eab23093..9fbcc7fee290f 100644
+--- a/drivers/net/wireless/realtek/rtw89/reg.h
++++ b/drivers/net/wireless/realtek/rtw89/reg.h
+@@ -7093,6 +7093,10 @@
+ #define B_BE_MACLBK_RDY_NUM_MASK GENMASK(7, 3)
+ #define B_BE_MACLBK_EN BIT(0)
+ 
++#define R_BE_CLIENT_OM_CTRL 0x11040
++#define R_BE_CLIENT_OM_CTRL_C1 0x15040
++#define B_BE_TRIG_DIS_EHTTB BIT(24)
++
+ #define R_BE_WMAC_NAV_CTL 0x11080
+ #define R_BE_WMAC_NAV_CTL_C1 0x15080
+ #define B_BE_WMAC_NAV_UPPER_EN BIT(26)
+-- 
+2.39.5
 
-Please don't come back and waste your breath on telling me you are so
-sorry as last time:
-
-    https://lore.kernel.org/all/CALHNRZ_ctL1fJGO5752B6XEEXHwRe-a-Ofv+_=qtdq1WWXLLjw@mail.gmail.com
-
-Just get your act together and do it right.
-
-Thanks,
-
-        tglx
 
