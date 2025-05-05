@@ -1,187 +1,165 @@
-Return-Path: <linux-kernel+bounces-632117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01E6AA92BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:11:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AB6AA92C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561821763B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:11:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BDD71896E4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2366229B2D;
-	Mon,  5 May 2025 12:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D159E2288CB;
+	Mon,  5 May 2025 12:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SMNwABUi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ftxciaVP"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C1922837F;
-	Mon,  5 May 2025 12:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D864B22A1D5
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746447085; cv=none; b=k+QmGY9701DeKNJ1QAIuBqevs6ZaAVmdv16gE89P5DEMMXoHHpY2uz0KPmjzH5w20Uvsf5Wkj10XhxMNPiZ8rr5AVHjUlO8LPk3xa6yG1HOm5QZ5FZGmihi8EZdm2+7cxJPEksbm2LbWhRyS1xB0ZAsO+b9FpHTVTj+ljcEYnt4=
+	t=1746447150; cv=none; b=Tk4WmFDuQkFlI7m3lnXhL1NmakNoY8xo8rD2uK5RogtzE6lBqwLOsefKESoqsLT33XXGs/TDinTO5hJrWq5TY4Y6EiaAFX4Jj/D+SEnp0y/pC3A3IOU2NDR+kXP62UfMRVsegrPWorqTSEZ7BQOUqcAO/t4tu4ZxxoAkDZbmug8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746447085; c=relaxed/simple;
-	bh=bxaZJKzN4o4K93+jRibQUfVTUKlyCaXeSBSGun1gpoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+F9yOY6gPJJD7IukalqrPBtssK2zf6w5hHcYgS4ldu9/XhSV6INSeheD1DkJMukThszzpYJEos71ywPrfD/tqOHWG+Mo9wPgmTlYQv8G69/H3dKOdB24E+ztl0ckbPRNV6l36h2qYA51Q9gpIV1vj77FW/qqGZDGN0iZfYi5JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SMNwABUi; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746447083; x=1777983083;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bxaZJKzN4o4K93+jRibQUfVTUKlyCaXeSBSGun1gpoI=;
-  b=SMNwABUiv/8d047WG8IhnvQ3qp45KngqMjnnlq0XfBlp9iLEV5mOsryN
-   LO6zP7ySPiT0NxGH+lIpULi2qXjUWynMxxwQos9sQ0su+NaeHKjVSYZk3
-   KnwX7W0IXwVqFP0kd0X7SHtYQZiwY5xsQW47xYHuRcnGdfH4J06flXtQW
-   Kjg8bYqmOwuyPINAYPWNIPxj9+rF4XZmaxwvk2ZuX4HIHUMmDWBIb6BUo
-   Kb5J9kPXJ+U541iBrSiZyjrYgl5kSLUbmVSQ/YCyRfiPurNorqS5dtTOZ
-   Tgyrfw+UHpKkUxi9kzTGxke/Ssvegq72a17/RMnCFUOYfTwPcID7OU/7U
-   A==;
-X-CSE-ConnectionGUID: FihaO9qrRJi0vWrePtlPzQ==
-X-CSE-MsgGUID: jv0p2IxaRrKHioYkSVzL0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11423"; a="73445520"
-X-IronPort-AV: E=Sophos;i="6.15,262,1739865600"; 
-   d="scan'208";a="73445520"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 05:11:22 -0700
-X-CSE-ConnectionGUID: O7eKqblEQhGvMWo4WbvYxw==
-X-CSE-MsgGUID: VA9AJlB/RGuacaen0jP/NQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,262,1739865600"; 
-   d="scan'208";a="136182857"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 05 May 2025 05:11:20 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uBufG-0005hx-0U;
-	Mon, 05 May 2025 12:11:18 +0000
-Date: Mon, 5 May 2025 20:11:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH 09/12] tracing: branch: Use trace_tracing_is_on_cpu()
- instead of "disabled" field
-Message-ID: <202505051827.xKU53TzL-lkp@intel.com>
-References: <20250502205349.299144667@goodmis.org>
+	s=arc-20240116; t=1746447150; c=relaxed/simple;
+	bh=1XG/h2T4lsx3Hn2xXWyDE7pDaQKjx/EoGMimfujl5vc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WlNhkD42VGmSprb+QNrbRuayc7kbOPe5u1xho+R+JHz3Xt6XqO+IIuV99a5wA8WeUwxf0EnLzZ+botjIj/nApocfe1xzN6On+SLrfYNzvcm95DVBCG2uSIh17bwDDUoMxFFhJSgLPLrHcQdrSBlYTixqPrZC+zhV+AgPFvAfGlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ftxciaVP; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso7930880a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:12:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1746447146; x=1747051946; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9r8JZDSLey+LPslkTxL3F3CckoUVLzDnaowPZQJUHms=;
+        b=ftxciaVP9UHpr0C4RuKqDi9tbzcviOsJwMNM0a/QyucFIY2/tH8HYXhAcXiWb3z8Q3
+         vHIeKhjlTtioZ4c0oKlXrpsXotEfk9Ia0FIkvYcQnPdJ/Q5dj0bJDCKVYnfzWXHSH+mk
+         euyVJEPVjzjKw6WuGLhGMgqXZNse3kDx6r6lvqto42ZNlLTEzY2QDBH1nQYTtKLMq2PG
+         ZCvgf3HQ/D/BzNCKaLcKy7W5FyzOu1DbbIX+QFIPxifyAPuXB2cZ7ttSQBFwf3G4/l/K
+         iSEXe/LWHdKkHaW4+x9t7OBQI3AtlVx5Ksk9/hi5B+lQ/ZR1x6w8m4a2kHT7ptusQq03
+         Hzbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746447146; x=1747051946;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9r8JZDSLey+LPslkTxL3F3CckoUVLzDnaowPZQJUHms=;
+        b=CdqjZci62Z5rjENhh+SVLwde3ZnPewN9CMm8SbjwkTkmMxFp8z9IBtGVNJ/Sg/eyWC
+         jTGFrkLMl1rAYLpTdblP1qFGpEMN0U2oqFVdZJrOfckY2+vfsLU1vA6jZbDC466jLetW
+         d/Rs/JCj+8oQABNNrwt06SxHwQ3Ks5cNSXt9fO+uAxmILSYXNiMx9CZr1V2q3ifb061w
+         V3iFCMvt7gqBnSJgoyYCVu4UddOVMJ8wXssSPy0HP5ZANwG4WfJwVTHAZ90lWucLJYRr
+         Eye+uXysgwZzuxnrxbX2VH9K3RXjA7FZA4Pk8TbkgtrPLXmjXKrYFFLm8xQAveU5jp5h
+         Jihg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzYV9RUz13Zz/rAkvnqcMR2ioT7JVEwjIAeWjSqqudl31K00waOEKh9uEUimPqAuT8SZiEMk680vECVVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcEkzEl/IIUZ2a1i5ET7/JANLdX6OE+ICmUDcEKqsetA5/E3tN
+	eUcxb0Ag+zxQerxqy5ViDcc8UgcNxMru7Ljj0zL623M1uHc5DYprzR9HDX5KVoHLPE0l9eRij5c
+	9
+X-Gm-Gg: ASbGncs7PM6TzcrPjEQZPIILNmz2vnzt5tb9yjNU679QGt49l5/10l9KFxlvE26RLT6
+	iw0YNUj9Z2L/WkI4HmG5UF19MyLTxhExlwUt+rjbYw1ZcXrzxjf3oWFiPPBUOXvRhQ08/RYwLUT
+	IOF2vMO7j3T6RJxVmDQjnayHsmlXo0OVLp7qGKc8USASsbOXghIQUBcuAdqPkVrYPaI8x66G8tu
+	hCOp2hhjJEGB774BfljfEZgU0cnVlwzeSCz3ZktJXgcDMDNXE5dQcRs25q8PRY2iNERVH72P64u
+	CHINwOhGpRmanpoQJSWz/4XHi+yd1jTp1PHHSiAof54=
+X-Google-Smtp-Source: AGHT+IE/OHvohwyYRi2AzwwzvgyieyFVkqxxZgpAwSf6DvMnqS1szARUl/Rt3CSGxg1XF4uqkSKMwQ==
+X-Received: by 2002:a05:6402:274e:b0:5fb:3ad3:cfb with SMTP id 4fb4d7f45d1cf-5fb3ad31401mr449046a12.31.1746447134850;
+        Mon, 05 May 2025 05:12:14 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa777c7309sm5497180a12.19.2025.05.05.05.12.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 05:12:14 -0700 (PDT)
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chengming Zhou <zhouchengming@bytedance.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tejun Heo <tj@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Chen Ridong <chenridong@huawei.com>
+Subject: [PATCH] kernfs: Relax constraint in draining guard
+Date: Mon,  5 May 2025 14:12:00 +0200
+Message-ID: <20250505121201.879823-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250502205349.299144667@goodmis.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Steven,
+The active reference lifecycle provides the break/unbreak mechanism but
+the active reference is not truly active after unbreak -- callers don't
+use it afterwards but it's important for proper pairing of kn->active
+counting. Assuming this mechanism is in place, the WARN check in
+kernfs_should_drain_open_files() is too sensitive -- it may transiently
+catch those (rightful) callers between
+kernfs_unbreak_active_protection() and kernfs_put_active() as found out by Chen
+Ridong:
 
-kernel test robot noticed the following build errors:
+	kernfs_remove_by_name_ns	kernfs_get_active // active=1
+	__kernfs_remove					  // active=0x80000002
+	kernfs_drain			...
+	wait_event
+	//waiting (active == 0x80000001)
+					kernfs_break_active_protection
+					// active = 0x80000001
+	// continue
+					kernfs_unbreak_active_protection
+					// active = 0x80000002
+	...
+	kernfs_should_drain_open_files
+	// warning occurs
+					kernfs_put_active
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on linus/master v6.15-rc5 next-20250502]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+To avoid the false positives (mind panic_on_warn) remove the check altogether.
+(This is meant as quick fix, I think active reference break/unbreak may be
+simplified with larger rework.)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-mmiotrace-Remove-reference-to-unused-per-CPU-data-pointer/20250503-050317
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250502205349.299144667%40goodmis.org
-patch subject: [PATCH 09/12] tracing: branch: Use trace_tracing_is_on_cpu() instead of "disabled" field
-config: i386-buildonly-randconfig-002-20250505 (https://download.01.org/0day-ci/archive/20250505/202505051827.xKU53TzL-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250505/202505051827.xKU53TzL-lkp@intel.com/reproduce)
+Fixes: bdb2fd7fc56e1 ("kernfs: Skip kernfs_drain_open_files() more aggressively")
+Link: https://lore.kernel.org/r/kmmrseckjctb4gxcx2rdminrjnq2b4ipf7562nvfd432ld5v5m@2byj5eedkb2o/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505051827.xKU53TzL-lkp@intel.com/
+Cc: Chen Ridong <chenridong@huawei.com>
+Signed-off-by: Michal Koutný <mkoutny@suse.com>
+---
+ fs/kernfs/dir.c  | 5 +++--
+ fs/kernfs/file.c | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-All errors (new ones prefixed by >>):
-
->> kernel/trace/trace_branch.c:56:36: error: call to undeclared function 'raw_smp_process_id'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      56 |         if (!tracer_tracing_is_on_cpu(tr, raw_smp_process_id()))
-         |                                           ^
-   kernel/trace/trace_branch.c:56:36: note: did you mean 'safe_smp_processor_id'?
-   arch/x86/include/asm/smp.h:140:12: note: 'safe_smp_processor_id' declared here
-     140 | extern int safe_smp_processor_id(void);
-         |            ^
-   1 error generated.
-
-
-vim +/raw_smp_process_id +56 kernel/trace/trace_branch.c
-
-    29	
-    30	static void
-    31	probe_likely_condition(struct ftrace_likely_data *f, int val, int expect)
-    32	{
-    33		struct trace_array *tr = branch_tracer;
-    34		struct trace_buffer *buffer;
-    35		struct ring_buffer_event *event;
-    36		struct trace_branch *entry;
-    37		unsigned long flags;
-    38		unsigned int trace_ctx;
-    39		const char *p;
-    40	
-    41		if (current->trace_recursion & TRACE_BRANCH_BIT)
-    42			return;
-    43	
-    44		/*
-    45		 * I would love to save just the ftrace_likely_data pointer, but
-    46		 * this code can also be used by modules. Ugly things can happen
-    47		 * if the module is unloaded, and then we go and read the
-    48		 * pointer.  This is slower, but much safer.
-    49		 */
-    50	
-    51		if (unlikely(!tr))
-    52			return;
-    53	
-    54		raw_local_irq_save(flags);
-    55		current->trace_recursion |= TRACE_BRANCH_BIT;
-  > 56		if (!tracer_tracing_is_on_cpu(tr, raw_smp_process_id()))
-    57			goto out;
-    58	
-    59		trace_ctx = tracing_gen_ctx_flags(flags);
-    60		buffer = tr->array_buffer.buffer;
-    61		event = trace_buffer_lock_reserve(buffer, TRACE_BRANCH,
-    62						  sizeof(*entry), trace_ctx);
-    63		if (!event)
-    64			goto out;
-    65	
-    66		entry	= ring_buffer_event_data(event);
-    67	
-    68		/* Strip off the path, only save the file */
-    69		p = f->data.file + strlen(f->data.file);
-    70		while (p >= f->data.file && *p != '/')
-    71			p--;
-    72		p++;
-    73	
-    74		strscpy(entry->func, f->data.func);
-    75		strscpy(entry->file, p);
-    76		entry->constant = f->constant;
-    77		entry->line = f->data.line;
-    78		entry->correct = val == expect;
-    79	
-    80		trace_buffer_unlock_commit_nostack(buffer, event);
-    81	
-    82	 out:
-    83		current->trace_recursion &= ~TRACE_BRANCH_BIT;
-    84		raw_local_irq_restore(flags);
-    85	}
-    86	
-
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index fc70d72c3fe80..43487fa83eaea 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -1580,8 +1580,9 @@ void kernfs_break_active_protection(struct kernfs_node *kn)
+  * invoked before finishing the kernfs operation.  Note that while this
+  * function restores the active reference, it doesn't and can't actually
+  * restore the active protection - @kn may already or be in the process of
+- * being removed.  Once kernfs_break_active_protection() is invoked, that
+- * protection is irreversibly gone for the kernfs operation instance.
++ * being drained and removed.  Once kernfs_break_active_protection() is
++ * invoked, that protection is irreversibly gone for the kernfs operation
++ * instance.
+  *
+  * While this function may be called at any point after
+  * kernfs_break_active_protection() is invoked, its most useful location
+diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+index 66fe8fe41f060..a6c692cac6165 100644
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -778,8 +778,9 @@ bool kernfs_should_drain_open_files(struct kernfs_node *kn)
+ 	/*
+ 	 * @kn being deactivated guarantees that @kn->attr.open can't change
+ 	 * beneath us making the lockless test below safe.
++	 * Callers post kernfs_unbreak_active_protection may be counted in
++	 * kn->active by now, do not WARN_ON because of them.
+ 	 */
+-	WARN_ON_ONCE(atomic_read(&kn->active) != KN_DEACTIVATED_BIAS);
+ 
+ 	rcu_read_lock();
+ 	on = rcu_dereference(kn->attr.open);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
