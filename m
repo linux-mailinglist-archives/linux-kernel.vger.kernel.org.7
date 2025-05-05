@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-634760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2034AAB437
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD87AAB450
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E1817AE6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0862E3B3283
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223A0341BD1;
-	Tue,  6 May 2025 00:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EDD474F57;
+	Tue,  6 May 2025 00:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6uCztHb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnEbR1i1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D05A2EEBD0;
-	Mon,  5 May 2025 23:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2C22EEBDC;
+	Mon,  5 May 2025 23:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486603; cv=none; b=Ve6kscJCw9EN06Pl2UVLvkj+2FAkUT9vpu7Elol7Wu0JCC/cvuC9lOvLyLYReOkyRl3f4sPBQje9ylNwuLfPda7e36Y+MVZfQ7Hl5l1AlbWe+jAYq9rOQW/LzU4f0gwkv6i4polWPEA92SWYnfqdg3E4/RKLrSdL+jIxsModOuo=
+	t=1746486605; cv=none; b=JUxD/Bp1ZNe7YkDPOmXCHesj4KkhnWoUIfeCOwJ+o84RTac9hEKYLca9kg49NSAAuYoTlZSzj0ubfM5xbzSKoF42lN8Ne7b1gc1+mG55/2z/Pc82M56mXwO91fXZoBHWQnWpcrVr45VjieS0sATMOf3PwBQS0873JuE5i9OJ+/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486603; c=relaxed/simple;
-	bh=eRSeHeY46tLQcIFe1Mri11VeNHQat5CRun0NZB+R5wI=;
+	s=arc-20240116; t=1746486605; c=relaxed/simple;
+	bh=ZPRxVU0lKezTbs3m/k602XrKhy1fTRhX9BEl3kW1GfE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tmvULKYHn7xDLKN7pdKfRV6B5nQ5mwFXbD+YnD9wzkeUTjKjXsnxM116kFh6HLjEea0lSKEj6Y0itwSksycbx3mcQGAhN+XQZYtlzqNIPS7eZPA3KHLh4r8MazV4BaDRy8bHymNDMxvjL0r4Xp1uhsFvIxicyEgzPJoucHhBcqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6uCztHb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96314C4CEF3;
-	Mon,  5 May 2025 23:10:02 +0000 (UTC)
+	 MIME-Version; b=pwhoZoQ/CmN0kh+XegbZXAA84aiSaOYo8S/fPIeVecrnRH1YsVS28tN/rLRrnfhCFRg6V+M+wCfd7r6w12rFUkMj/CyqZGoHFgphYDNaj+Km9FLbNYUAKZ5dMIVlge3k9Lxakb8S8k9uPGtgT/kkj583x2bVUb1SGe/yJEMx43o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnEbR1i1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7599C4CEEF;
+	Mon,  5 May 2025 23:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486603;
-	bh=eRSeHeY46tLQcIFe1Mri11VeNHQat5CRun0NZB+R5wI=;
+	s=k20201202; t=1746486605;
+	bh=ZPRxVU0lKezTbs3m/k602XrKhy1fTRhX9BEl3kW1GfE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O6uCztHbxoT+Ca2S3iWsq3ZiowefJiPMyjLFlF0wgGpZp63q4XXQynaL2VCGgtjLq
-	 PrtMAsvupNf4vBU1Ny0NHbJSqJ+TwFJQsRh3hELhtDfIS5QtT+FO9WHbirgauMB2iS
-	 hX8ozZuN+aeAk6u1Dr4qj9v7Th3bQDGS8HJ1cVAHolMSbK8d7MbV8YqntUWc0Ka2N7
-	 p/0NXgfzWlApAdAAzJeVb+d+TZqb/bnddzvgRfZ+LXU/fh/keWs3A0NvjInY0EQXg1
-	 uolmen/cOuxPZRlvxK5gpMlyC7y7nS180tOGJvXcP9QfeEyTS2O46zU2buURzDfnEe
-	 4CCEalrzL30aw==
+	b=WnEbR1i1UbKG8IQ/TRwoUZNuHZ4gmY48q/YCK29IQ5/wV6AB2PGBIuDG9gxPh8uSb
+	 nEYg9gMNT8BZvy/fdZr48MeGvLDN2kjn8tiZaw4B7x/xTnTfst/QH3HX/38ycO33ou
+	 12rZKaDGr6LBVAYYCQ+m4J4uqmzHz8UN8KGFwkbEBjGtkQ/uUiPzFuV95tMAMimotc
+	 j6ZIPLgrpvvN9TwXRJ+hhM8Ez48rOG4PaRp1a63GRVpfxXmYor4BKRbXI+Jgra830Q
+	 YDJ3DZWq3sp/uZuig1MiB5peOQNmV3h3mX58ksjtp9JdwQCAkKWf/8crkvRSYlp4uQ
+	 KtKhoFX3DtyMQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
+Cc: Moshe Shemesh <moshe@nvidia.com>,
+	Shahar Shitrit <shshitrit@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+	"David S . Miller" <davem@davemloft.net>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 113/212] firmware: arm_ffa: Set dma_mask for ffa devices
-Date: Mon,  5 May 2025 19:04:45 -0400
-Message-Id: <20250505230624.2692522-113-sashal@kernel.org>
+	saeedm@nvidia.com,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 114/212] net/mlx5: Avoid report two health errors on same syndrome
+Date: Mon,  5 May 2025 19:04:46 -0400
+Message-Id: <20250505230624.2692522-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -64,35 +73,40 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Moshe Shemesh <moshe@nvidia.com>
 
-[ Upstream commit cc0aac7ca17e0ea3ca84b552fc79f3e86fd07f53 ]
+[ Upstream commit b5d7b2f04ebcff740f44ef4d295b3401aeb029f4 ]
 
-Set dma_mask for FFA devices, otherwise DMA allocation using the device pointer
-lead to following warning:
+In case health counter has not increased for few polling intervals, miss
+counter will reach max misses threshold and health report will be
+triggered for FW health reporter. In case syndrome found on same health
+poll another health report will be triggered.
 
-WARNING: CPU: 1 PID: 1 at kernel/dma/mapping.c:597 dma_alloc_attrs+0xe0/0x124
+Avoid two health reports on same syndrome by marking this syndrome as
+already known.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Message-Id: <e3dd8042ac680bd74b6580c25df855d092079c18.1737107520.git.viresh.kumar@linaro.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Moshe Shemesh <moshe@nvidia.com>
+Reviewed-by: Shahar Shitrit <shshitrit@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/arm_ffa/bus.c | 1 +
+ drivers/net/ethernet/mellanox/mlx5/core/health.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/firmware/arm_ffa/bus.c b/drivers/firmware/arm_ffa/bus.c
-index 248594b59c64d..5bda5d7ade42d 100644
---- a/drivers/firmware/arm_ffa/bus.c
-+++ b/drivers/firmware/arm_ffa/bus.c
-@@ -191,6 +191,7 @@ struct ffa_device *ffa_device_register(const uuid_t *uuid, int vm_id,
- 	dev = &ffa_dev->dev;
- 	dev->bus = &ffa_bus_type;
- 	dev->release = ffa_release_device;
-+	dev->dma_mask = &dev->coherent_dma_mask;
- 	dev_set_name(&ffa_dev->dev, "arm-ffa-%d", id);
- 
- 	ffa_dev->id = id;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/health.c b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+index 65483dab90573..b4faac12789d9 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+@@ -850,6 +850,7 @@ static void poll_health(struct timer_list *t)
+ 	health->prev = count;
+ 	if (health->miss_counter == MAX_MISSES) {
+ 		mlx5_core_err(dev, "device's health compromised - reached miss count\n");
++		health->synd = ioread8(&h->synd);
+ 		print_health_info(dev);
+ 		queue_work(health->wq, &health->report_work);
+ 	}
 -- 
 2.39.5
 
