@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-634054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4B0AAABBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:01:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4005AAABE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9AD04A5470
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B46986C3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61A23B813F;
-	Mon,  5 May 2025 23:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05323B5B32;
+	Mon,  5 May 2025 23:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jz6UImvY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAgj5YuO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A5C3991AE;
-	Mon,  5 May 2025 23:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DC72EC871;
+	Mon,  5 May 2025 23:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486468; cv=none; b=WGnLgYr+ZkzdAsUDp40peGS2sOFfRHWDW5aNCC9iE/BHQE8fIfy59lMjTtbdujlAxTbhb8LvrfKt1XPg4wklHhHdrPwUXlxgIZ8+GpmZ8eRWwYAmL6AXujNQhT3KLoOJ9Y/s2lffmIueCEthjIq6hT2ct7HVU8wbdA6L0wWmDBs=
+	t=1746486479; cv=none; b=ocHznQvWR0axIwQpYvonWZVp0kldmbwiealLll5Nyt91vT16Y/ZR2XzNvEBpjIGlOHsRzQmLrp0p1a8h8/2veA5LwAycglk3g92CUI8c5m7M66regpp+oYxeD5m6Ka3ApvTni1PhH4qCNDW1ysGCX6ZLb34VATDnVhsVYX42dnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486468; c=relaxed/simple;
-	bh=rK8UgpSEnGG6WpUj0pfBe+FyfH9qHFqoFjKvOIgzK70=;
+	s=arc-20240116; t=1746486479; c=relaxed/simple;
+	bh=vtKUXitUTPieHzZ6OsMajJLUSV/qo8vzb6BEFkHPvBA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bxksCudbc3LZM8RPloo2+9dSvLtADKHrgGMnndcOKzzRooNjOln8gdDd2giP3bQeZwSxkkQkvPg9Z6ouDw3McxhFejQ9eoNlU8jcr5UYzZU3RZxkrhyh6++/63w3eOGC4nFf099D4/Sw8UqRFHA5jUDA88EjvDjzvUJ0QZwio/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jz6UImvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5138C4CEE4;
-	Mon,  5 May 2025 23:07:46 +0000 (UTC)
+	 MIME-Version; b=ktYdnKuJM3f4qluvyPIG/n779kxqwQb1N7+G/b4XLuxNjkXbUw1EAlPhQVgB9b3v+w7CoEVNdkIxvqKKA0wNOuf1pFWn8dPJasdb1Zfrf3tAXIjknXQCAlH0W2yIU2T1boobIewX2L3mDtlC2IFTtw55wQcH6n51/oAkyRomSII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAgj5YuO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35DE6C4CEEF;
+	Mon,  5 May 2025 23:07:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486468;
-	bh=rK8UgpSEnGG6WpUj0pfBe+FyfH9qHFqoFjKvOIgzK70=;
+	s=k20201202; t=1746486478;
+	bh=vtKUXitUTPieHzZ6OsMajJLUSV/qo8vzb6BEFkHPvBA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jz6UImvYDtBD0ScAzErGDFaG2YYpR+y9P6O+8fLP0p6vRY7YpbXooqAiH4GEeW1wU
-	 rx8ehehmNok4gTJcoa4dM8FcpvXDQYxRiniOmpO5y8g00S7WTEnJ1UVZ9XAkoqFuFD
-	 UwVjbz3uef7P7HzmsxiBrzkf80XtIqae/Zd0pud5RPvnMZ3CDi+yj12rLKrr/DyDDU
-	 ShCDxbHTqpTFtXceZKnm8IxiqRcU6PNFLl3PdWs7it1fk7yRU2A9ibqtPUqeo3ODLY
-	 AGm/xQZboNC1FfDMbHBeYxUWyI+X01z9Pyhoi61BszcaQRNIjWa1VHZ/IUMkDG9cyC
-	 gDFPs+puk2zPw==
+	b=XAgj5YuO6jhzcB4MNSKKpz7xQnA4Ghpp01WLTH+MnjXvHSbwLLZC0oFjfqzOxm/0e
+	 lk7xXJze91N45dicqSltJQqBr0OdJ+107AnOVTD439JeOLrnGoH8QRZySpGkANuXPA
+	 wKmwuvxikp+x5Pz6TaSdqG/QN9LZfMjbLJcU1Vbn1wu3Tm2+UVcrGAOG1YwijRHn8U
+	 5li/Jomq4lKnMdnd53yH4HvHCW3jR+u7H43lLRwk5vOku9ntB56PjCVSmnzUerC3lq
+	 Ksvbva17InhPEoSmPrUknnJU9EeYpxlKBsu3JDAX1vt41u8s1M0wUesmO3n6MT3ylp
+	 U4QpY+D+lDpdg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Tiwei Bie <tiwei.btw@antgroup.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+Cc: Mykyta Yatsenko <yatsenko@meta.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
 	Sasha Levin <sashal@kernel.org>,
-	richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net,
-	rppt@kernel.org,
-	dave.hansen@linux.intel.com,
-	akpm@linux-foundation.org,
-	richard.weiyang@gmail.com,
-	benjamin.berg@intel.com,
-	kevin.brodsky@arm.com,
-	linux-um@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 045/212] um: Update min_low_pfn to match changes in uml_reserved
-Date: Mon,  5 May 2025 19:03:37 -0400
-Message-Id: <20250505230624.2692522-45-sashal@kernel.org>
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 050/212] bpf: Return prog btf_id without capable check
+Date: Mon,  5 May 2025 19:03:42 -0400
+Message-Id: <20250505230624.2692522-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -73,34 +67,45 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Tiwei Bie <tiwei.btw@antgroup.com>
+From: Mykyta Yatsenko <yatsenko@meta.com>
 
-[ Upstream commit e82cf3051e6193f61e03898f8dba035199064d36 ]
+[ Upstream commit 07651ccda9ff10a8ca427670cdd06ce2c8e4269c ]
 
-When uml_reserved is updated, min_low_pfn must also be updated
-accordingly. Otherwise, min_low_pfn will not accurately reflect
-the lowest available PFN.
+Return prog's btf_id from bpf_prog_get_info_by_fd regardless of capable
+check. This patch enables scenario, when freplace program, running
+from user namespace, requires to query target prog's btf.
 
-Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
-Link: https://patch.msgid.link/20250221041855.1156109-1-tiwei.btw@antgroup.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Mykyta Yatsenko <yatsenko@meta.com>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+Link: https://lore.kernel.org/bpf/20250317174039.161275-3-mykyta.yatsenko5@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/um/kernel/mem.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/bpf/syscall.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
-index 38d5a71a579bc..f6c766b2bdf5e 100644
---- a/arch/um/kernel/mem.c
-+++ b/arch/um/kernel/mem.c
-@@ -68,6 +68,7 @@ void __init mem_init(void)
- 	map_memory(brk_end, __pa(brk_end), uml_reserved - brk_end, 1, 1, 0);
- 	memblock_free((void *)brk_end, uml_reserved - brk_end);
- 	uml_reserved = brk_end;
-+	min_low_pfn = PFN_UP(__pa(uml_reserved));
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 27fdf1b2fc469..b145f3ef3695e 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -4005,6 +4005,8 @@ static int bpf_prog_get_info_by_fd(struct file *file,
+ 	info.recursion_misses = stats.misses;
  
- 	/* this will put all low memory onto the freelists */
- 	memblock_free_all();
+ 	info.verified_insns = prog->aux->verified_insns;
++	if (prog->aux->btf)
++		info.btf_id = btf_obj_id(prog->aux->btf);
+ 
+ 	if (!bpf_capable()) {
+ 		info.jited_prog_len = 0;
+@@ -4151,8 +4153,6 @@ static int bpf_prog_get_info_by_fd(struct file *file,
+ 		}
+ 	}
+ 
+-	if (prog->aux->btf)
+-		info.btf_id = btf_obj_id(prog->aux->btf);
+ 	info.attach_btf_id = prog->aux->attach_btf_id;
+ 	if (attach_btf)
+ 		info.attach_btf_obj_id = btf_obj_id(attach_btf);
 -- 
 2.39.5
 
