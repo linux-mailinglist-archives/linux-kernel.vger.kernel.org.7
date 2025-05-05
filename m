@@ -1,280 +1,212 @@
-Return-Path: <linux-kernel+bounces-632526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1793AA9864
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD21BAA986D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597343B96FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 195F31771BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE149267F59;
-	Mon,  5 May 2025 16:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA4C26AAB5;
+	Mon,  5 May 2025 16:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oKHuvvPg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DtUluaRr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oKHuvvPg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DtUluaRr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pOpXTd3c"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661FD15AF6
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 16:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C81226A0FD
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 16:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746461650; cv=none; b=n4xQI5QvG+GnOl2V11MKDtd3fdmb2oXzqXGJUpq8yQDakM7aaAwR2gDllmAlnBbBAWp7OCXngmR5P3n2LCEkgOtSf3a9Bg4c2NtKOzQRsEzWe9MXcoO7k+5mm65bUntL73Yy+er6jIJc86vkSmGOVOFN6RW+XmfWYjl3A+X+zhA=
+	t=1746461658; cv=none; b=QHm475A664c54/7H4ExUUtfRJ4jSXOv1cOxdjcZVAA51v79rlT63+t1icMPhiHyTf57AlB8Be13LgpKPbNnVfAIoepdyFKcd9HLMJtv+Y4TKAV75RorPZQLO8oC3zdH/YpNt/BRynxWSpuyQbNwxw/5tvy9ZFRLnEgHAu1xkawc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746461650; c=relaxed/simple;
-	bh=MCWhqFbULxo5xbY6Fq33psJuzUih8YIlnGyO9d5LIHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uj8og2ruwSmSRUxKIOuS3E9ZW/JpfT/GWpK3GLuPhrAT/vhH8GcqCMUpo5yF/CCvKDZMjN99YZXIljlEhW/4P2f4zi1AoiMKCeM5nIHyobhQfA0VZ96XfGFE5STbpw1KhvEhxrLQsaWgyu8xlfRy09JwuBI4b4lscWCdtqJbJOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oKHuvvPg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DtUluaRr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oKHuvvPg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DtUluaRr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6464C21995;
-	Mon,  5 May 2025 16:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746461646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OjHxQbu9HdAgaWrOliNNorCvOEEPBNiLd69xje/6Noc=;
-	b=oKHuvvPgCfHd6aphoHyFtSKX5wL8YXjEQyJmjX4DBH/8Uj/Eb7mNCdyaXpyJeTE0AIZm9u
-	Ja39d3mxkzXe1VxmKljl7MhtDC7jRMLxf39OPsypfK8L3c42zcjXIa5ZeP3PGQKy1i5Zbp
-	eoERvZ9O+v9eZWuzfTl9dqbdnEsDcXU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746461646;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OjHxQbu9HdAgaWrOliNNorCvOEEPBNiLd69xje/6Noc=;
-	b=DtUluaRrH/+1PejaGWGLSaWkpIHyzVOaR40upM46+gr0w3nOWzPjgEhypyo74h/hRGjecQ
-	lstibh+yN+sP+qDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oKHuvvPg;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=DtUluaRr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746461646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OjHxQbu9HdAgaWrOliNNorCvOEEPBNiLd69xje/6Noc=;
-	b=oKHuvvPgCfHd6aphoHyFtSKX5wL8YXjEQyJmjX4DBH/8Uj/Eb7mNCdyaXpyJeTE0AIZm9u
-	Ja39d3mxkzXe1VxmKljl7MhtDC7jRMLxf39OPsypfK8L3c42zcjXIa5ZeP3PGQKy1i5Zbp
-	eoERvZ9O+v9eZWuzfTl9dqbdnEsDcXU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746461646;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OjHxQbu9HdAgaWrOliNNorCvOEEPBNiLd69xje/6Noc=;
-	b=DtUluaRrH/+1PejaGWGLSaWkpIHyzVOaR40upM46+gr0w3nOWzPjgEhypyo74h/hRGjecQ
-	lstibh+yN+sP+qDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44B3E13883;
-	Mon,  5 May 2025 16:14:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id V7m+EM7jGGgqawAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 05 May 2025 16:14:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E34D5A0948; Mon,  5 May 2025 18:14:05 +0200 (CEST)
-Date: Mon, 5 May 2025 18:14:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Dave Chinner <david@fromorbit.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH v4 1/5] mm/readahead: Honour new_order in
- page_cache_ra_order()
-Message-ID: <dhn2icty267xinyxxhovnztj2pelcsterpwzodu3tippe55u42@iyz5ndffs2zh>
-References: <20250430145920.3748738-1-ryan.roberts@arm.com>
- <20250430145920.3748738-2-ryan.roberts@arm.com>
- <48b4aa79-943b-46bc-ac24-604fdf998566@redhat.com>
- <mhayjykmkxhvnivthdrc2bb3cvqbdesa42puzimx75xfagcnqn@osy4qeiyfxvn>
- <d4bfefdf-bd87-4d2e-b7bb-4a11e5d32242@redhat.com>
- <12a74640-753a-4116-90f9-42ec0337f751@arm.com>
+	s=arc-20240116; t=1746461658; c=relaxed/simple;
+	bh=46u2XlOILqRiuyiqz9Sifgha9tyJxwuBFrgpc1JvSys=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Q216fFKpSXkq4zsxaofhmjOWReq/u/FrZJkBXT3FHjXyyLKQAer6wO11thkoympMlGMLQaTGwWkzaojJJFIolSQhu4Q80AOqKdjOwtccW7RYz/4kJIXGJpeiyxMN6SqbGszd9Lgx3iYMU5UatJx659btps9+8PSVagAbqE8t1ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pOpXTd3c; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3082946f829so6479041a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 09:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746461656; x=1747066456; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Y6KHT1fuAVM+MkXSINIoI6H3OHOwSneU2VxsD+qo2oQ=;
+        b=pOpXTd3cAg78NwqFwn7gxfttIE32MQThk/V9q8PNal3ZReh92EENk3rRdgV2A5HCFi
+         zVUQWLWR5bg9wD34MuzCWIaG2a2h6bsUGiKfg0WPn3YkpSOVel3wodGL0dsgrnnCSbp1
+         1yjogpMy/veRc1fux98x+y7X7RBXM2co87sGLoIA/BWMvcs805n9lcl/WQVKGGSaMW0g
+         chUMdArQXj+HTyvsQPSdaC3aay4HCbbSo8mbsmnp0rEfwdN9aoldJKdOpKUYl2p9SjBa
+         LZTc51ukqmJJ6Y5feIBOEIQE8IIys/8AT5YMZ9pcaM3TwvejR+vWvEUpMjDnv92Wcik9
+         kZqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746461656; x=1747066456;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y6KHT1fuAVM+MkXSINIoI6H3OHOwSneU2VxsD+qo2oQ=;
+        b=P92enFaxs5nXOxP4gAP2PucNLy48VQtrfYoIMBJZ6AINSTk1sNbAqyaDwvFGXoSGfP
+         loA9L/rw2SjknHcukP7o4c9e5ijBAoqxFtV93D+Lu+EcaTXMbHP/mKN3CTIwMuZw2Upm
+         EDjtURTF8rTTVUw5tXEa6n/yxSdGBRK7vWo4LkKDv0j8x/v2lQ8+OQUXZ2WzY4qCDsbP
+         NTW5cntO/5QG+ndiWuTZbOyZdx7730O/hLomKJTSDAtDazbszL2ZL4lMQYCN8Z2iCF7i
+         UBb/URircI4x5zx1gIEWmP2U4rxEABO8KAt+Qk8wnY5VSXmXw1SPBl5CfGKOchVcAp41
+         iXkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSAFp5j2WQcAv0GV+3LriimS8d7rEPbtixZUdMnLl9Pm67vTMeRcWLQ7vAjUP2nXCjn7bizNSv4+3jkuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUtYzx4FY5++HhPqS91QcWXZ8NSNz8tq+Oce/ikCmDOMZ2BN5b
+	Azf0fB0v1x6auwdURLTC1F4PCRnn63Awx7Z+/JsKxTmQedoaMaPf4cvLuf7KMNOc5afUtkyzLRP
+	N/Nm7FKyJBw==
+X-Google-Smtp-Source: AGHT+IFROwVfZzwUrc47gwt10xGllcKawPs6+PzhuOzeHVlfd+NhQ3axCf6K4h719pvA/HvyBR0gDvS7G15Lqw==
+X-Received: from pji8.prod.google.com ([2002:a17:90b:3fc8:b0:2fc:2ee0:d38a])
+ (user=jiaqiyan job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:4ec7:b0:309:e351:2e3d with SMTP id 98e67ed59e1d1-30a5ae132e5mr18020085a91.12.1746461655808;
+ Mon, 05 May 2025 09:14:15 -0700 (PDT)
+Date: Mon,  5 May 2025 16:14:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <12a74640-753a-4116-90f9-42ec0337f751@arm.com>
-X-Rspamd-Queue-Id: 6464C21995
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	URIBL_BLOCKED(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
+Message-ID: <20250505161412.1926643-1-jiaqiyan@google.com>
+Subject: [PATCH v1 0/6] VMM can handle guest SEA via KVM_EXIT_ARM_SEA
+From: Jiaqi Yan <jiaqiyan@google.com>
+To: maz@kernel.org, oliver.upton@linux.dev
+Cc: joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
+	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	duenwen@google.com, rananta@google.com, jthoughton@google.com, 
+	Jiaqi Yan <jiaqiyan@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon 05-05-25 13:51:48, Ryan Roberts wrote:
-> On 05/05/2025 11:25, David Hildenbrand wrote:
-> > On 05.05.25 12:09, Jan Kara wrote:
-> >> On Mon 05-05-25 11:51:43, David Hildenbrand wrote:
-> >>> On 30.04.25 16:59, Ryan Roberts wrote:
-> >>>> page_cache_ra_order() takes a parameter called new_order, which is
-> >>>> intended to express the preferred order of the folios that will be
-> >>>> allocated for the readahead operation. Most callers indeed call this
-> >>>> with their preferred new order. But page_cache_async_ra() calls it with
-> >>>> the preferred order of the previous readahead request (actually the
-> >>>> order of the folio that had the readahead marker, which may be smaller
-> >>>> when alignment comes into play).
-> >>>>
-> >>>> And despite the parameter name, page_cache_ra_order() always treats it
-> >>>> at the old order, adding 2 to it on entry. As a result, a cold readahead
-> >>>> always starts with order-2 folios.
-> >>>>
-> >>>> Let's fix this behaviour by always passing in the *new* order.
-> >>>>
-> >>>> Worked example:
-> >>>>
-> >>>> Prior to the change, mmaping an 8MB file and touching each page
-> >>>> sequentially, resulted in the following, where we start with order-2
-> >>>> folios for the first 128K then ramp up to order-4 for the next 128K,
-> >>>> then get clamped to order-5 for the rest of the file because pa_pages is
-> >>>> limited to 128K:
-> >>>>
-> >>>> TYPE    STARTOFFS     ENDOFFS       SIZE  STARTPG    ENDPG   NRPG  ORDER
-> >>>> -----  ----------  ----------  ---------  -------  -------  -----  -----
-> >>>> FOLIO  0x00000000  0x00004000      16384        0        4      4      2
-> >>>> FOLIO  0x00004000  0x00008000      16384        4        8      4      2
-> >>>> FOLIO  0x00008000  0x0000c000      16384        8       12      4      2
-> >>>> FOLIO  0x0000c000  0x00010000      16384       12       16      4      2
-> >>>> FOLIO  0x00010000  0x00014000      16384       16       20      4      2
-> >>>> FOLIO  0x00014000  0x00018000      16384       20       24      4      2
-> >>>> FOLIO  0x00018000  0x0001c000      16384       24       28      4      2
-> >>>> FOLIO  0x0001c000  0x00020000      16384       28       32      4      2
-> >>>> FOLIO  0x00020000  0x00030000      65536       32       48     16      4
-> >>>> FOLIO  0x00030000  0x00040000      65536       48       64     16      4
-> >>>> FOLIO  0x00040000  0x00060000     131072       64       96     32      5
-> >>>> FOLIO  0x00060000  0x00080000     131072       96      128     32      5
-> >>>> FOLIO  0x00080000  0x000a0000     131072      128      160     32      5
-> >>>> FOLIO  0x000a0000  0x000c0000     131072      160      192     32      5
-> >>>
-> >>> Interesting, I would have thought we'd ramp up earlier.
-> >>>
-> >>>> ...
-> >>>>
-> >>>> After the change, the same operation results in the first 128K being
-> >>>> order-0, then we start ramping up to order-2, -4, and finally get
-> >>>> clamped at order-5:
-> >>>>
-> >>>> TYPE    STARTOFFS     ENDOFFS       SIZE  STARTPG    ENDPG   NRPG  ORDER
-> >>>> -----  ----------  ----------  ---------  -------  -------  -----  -----
-> >>>> FOLIO  0x00000000  0x00001000       4096        0        1      1      0
-> >>>> FOLIO  0x00001000  0x00002000       4096        1        2      1      0
-> >>>> FOLIO  0x00002000  0x00003000       4096        2        3      1      0
-> >>>> FOLIO  0x00003000  0x00004000       4096        3        4      1      0
-> >>>> FOLIO  0x00004000  0x00005000       4096        4        5      1      0
-> >>>> FOLIO  0x00005000  0x00006000       4096        5        6      1      0
-> >>>> FOLIO  0x00006000  0x00007000       4096        6        7      1      0
-> >>>> FOLIO  0x00007000  0x00008000       4096        7        8      1      0
-> >>>> FOLIO  0x00008000  0x00009000       4096        8        9      1      0
-> >>>> FOLIO  0x00009000  0x0000a000       4096        9       10      1      0
-> >>>> FOLIO  0x0000a000  0x0000b000       4096       10       11      1      0
-> >>>> FOLIO  0x0000b000  0x0000c000       4096       11       12      1      0
-> >>>> FOLIO  0x0000c000  0x0000d000       4096       12       13      1      0
-> >>>> FOLIO  0x0000d000  0x0000e000       4096       13       14      1      0
-> >>>> FOLIO  0x0000e000  0x0000f000       4096       14       15      1      0
-> >>>> FOLIO  0x0000f000  0x00010000       4096       15       16      1      0
-> >>>> FOLIO  0x00010000  0x00011000       4096       16       17      1      0
-> >>>> FOLIO  0x00011000  0x00012000       4096       17       18      1      0
-> >>>> FOLIO  0x00012000  0x00013000       4096       18       19      1      0
-> >>>> FOLIO  0x00013000  0x00014000       4096       19       20      1      0
-> >>>> FOLIO  0x00014000  0x00015000       4096       20       21      1      0
-> >>>> FOLIO  0x00015000  0x00016000       4096       21       22      1      0
-> >>>> FOLIO  0x00016000  0x00017000       4096       22       23      1      0
-> >>>> FOLIO  0x00017000  0x00018000       4096       23       24      1      0
-> >>>> FOLIO  0x00018000  0x00019000       4096       24       25      1      0
-> >>>> FOLIO  0x00019000  0x0001a000       4096       25       26      1      0
-> >>>> FOLIO  0x0001a000  0x0001b000       4096       26       27      1      0
-> >>>> FOLIO  0x0001b000  0x0001c000       4096       27       28      1      0
-> >>>> FOLIO  0x0001c000  0x0001d000       4096       28       29      1      0
-> >>>> FOLIO  0x0001d000  0x0001e000       4096       29       30      1      0
-> >>>> FOLIO  0x0001e000  0x0001f000       4096       30       31      1      0
-> >>>> FOLIO  0x0001f000  0x00020000       4096       31       32      1      0
-> >>>> FOLIO  0x00020000  0x00024000      16384       32       36      4      2
-> >>>> FOLIO  0x00024000  0x00028000      16384       36       40      4      2
-> >>>> FOLIO  0x00028000  0x0002c000      16384       40       44      4      2
-> >>>> FOLIO  0x0002c000  0x00030000      16384       44       48      4      2
-> >>>> FOLIO  0x00030000  0x00034000      16384       48       52      4      2
-> >>>> FOLIO  0x00034000  0x00038000      16384       52       56      4      2
-> >>>> FOLIO  0x00038000  0x0003c000      16384       56       60      4      2
-> >>>> FOLIO  0x0003c000  0x00040000      16384       60       64      4      2
-> >>>> FOLIO  0x00040000  0x00050000      65536       64       80     16      4
-> >>>> FOLIO  0x00050000  0x00060000      65536       80       96     16      4
-> >>>> FOLIO  0x00060000  0x00080000     131072       96      128     32      5
-> >>>> FOLIO  0x00080000  0x000a0000     131072      128      160     32      5
-> >>>> FOLIO  0x000a0000  0x000c0000     131072      160      192     32      5
-> >>>> FOLIO  0x000c0000  0x000e0000     131072      192      224     32      5
-> >>>
-> >>> Similar here, do you know why we don't ramp up earlier. Allocating that many
-> >>> order-0 + order-2 pages looks a bit suboptimal to me for a sequential read.
-> >>
-> >> Note that this is reading through mmap using the mmap readahead code. If
-> >> you use standard read(2), the readahead window starts small as well and
-> >> ramps us along with the desired order so we don't allocate that many small
-> >> order pages in that case.
-> 
-> That does raise an interesting question though; why do we use a fixed size
-> window for mmap? It feels like we could start with a smaller window and ramp it
-> up as order ramps up too, capped to the end of the vma.
-> 
-> Although perhaps that is an investigation for another day... My main motivation
-> here was to be consistent about what page_cache_ra_order()'s new_order means,
-> and to actually implement algorithm that was originally intended - start from 0
-> and ramp up +2 on each readahead marker.
+Problem
+=======
 
-Well, in my opinion the whole mmap readahead logic would deserve some
-remodelling :) because a lot of decisions there are quite disputable for
-contemporary systems. But that's definitely for some other patchset...
+When host APEI is unable to claim synchronous external abort (SEA)
+during stage-2 guest abort, today KVM directly injects an async SError
+into the VCPU then resumes it. The injected SError usually results in
+unpleasant guest kernel panic.
 
-								Honza
+One of the major situation of guest SEA is when VCPU consumes recoverable
+uncorrected memory error (UER), which is not uncommon at all in modern
+datacenter servers with large amounts of physical memory. Although SError
+and guest panic is sufficient to stop the propagation of corrupted memory
+there is still room to recover from memory UER in a more graceful manner.
+
+Proposed Solution
+=================
+
+Alternatively KVM can replay the SEA to the faulting VCPU, via existing
+KVM_SET_VCPU_EVENTS API. If the memory poison consumption or the fault
+that cause SEA is not from guest kernel, the blast radius can be limited
+to the consuming or faulting guest userspace process, so the VM can keep
+running.
+
+In addition, instead of doing under the hood without involving userspace,
+there are benefits to redirect the SEA to VMM:
+
+- VM customers care about the disruptions caused by memory errors, and
+  VMM usually has the responsibility to start the process of notifying
+  the customers of memory error events in their VMs. For example some
+  cloud provider emits a critical log in their observability UI [1], and
+  provides playbook for customers on how to mitigate disruptions to
+  their workloads.
+
+- VMM can protect future memory error consumption or faults by unmapping
+  the poisoned pages from stage-2 page table with KVM userfault [2],
+  which is more performant than splitting the memslot that contains
+  the poisoned guest pages.
+
+- VMM can keep track SEA events in the VM. When VMM thinks the status
+  on the host or the VM is bad enough, e.g. number of distinct SEAs
+  exceeds a threshold, it can restart the VM on another healthy host.
+
+- Behavior parity with x86 architecture. When machine check exception
+  (MCE) is caused by VCPU, kernel or KVM signals userspace SIGBUS to
+  let VMM either recover from the MCE, or terminate itself with VM.
+  The prior RFC proposes to implement SIGBUS on arm64 as well, but
+  Marc preferred VCPU exit over signal [3]. However, implementation
+  aside, returning SEA to VMM is on par with returning MCE to VMM.
+
+Once SEA is redirected to VMM, among other actions, VMM is encouraged
+to inject external aborts into the faulting VCPU, which is already
+supported by KVM on arm64, although not fully supported by
+KVM_SET_VCPU_EVENTS but complemented in this patchset.
+
+New UAPIs
+=========
+
+This patchset introduces following userspace-visiable changes to empower
+VMM to control what happens next for guest SEA:
+
+- KVM_CAP_ARM_SEA_TO_USER. If userspace enables this new capability at VM
+  creation, KVM will not inject SError while taking SEA, but VM exit to
+  userspace.
+
+- KVM_EXIT_ARM_SEA. This is the VM exit reason VMM gets. The details
+  about the SEA is provided in arm_sea as much as possible, including
+  ESR value at EL2, if guest virtual and physical addresses (GPA and GVA)
+  are available and the values if available.
+
+- KVM_CAP_ARM_INJECT_EXT_IABT. VMM today can inject external data abort
+  to VCPU via KVM_SET_VCPU_EVENTS API. However, in case of instruction
+  abort, VMM cannot inject it via KVM_SET_VCPU_EVENTS.
+  KVM_CAP_ARM_INJECT_EXT_IABT is just a natural extend to
+  KVM_CAP_ARM_INJECT_EXT_DABT that tells VMM KVM_SET_VCPU_EVENTS now
+  supports external instruction abort.
+
+Patchset utilizes commit 26fbdf369227 ("KVM: arm64: Don't translate
+FAR if invalid/unsafe") from [4], available already in kvmarm/next.
+[4] makes KVM safely do address translation for HPFAR_EL2, including at
+the event of SEA, and indicate if HPFAR_EL2 is valid in NS bit.
+This patchset depends on [4] to tell userspace if GPA is valid and
+its value if valid.
+
+Patchset is based on commit 68ec8b4e84446 ("Merge branch
+kvm-arm64/pkvm-6.16 into kvmarm-master/next")
+
+[1] https://cloud.google.com/solutions/sap/docs/manage-host-errors
+[2] https://lpc.events/event/18/contributions/1757/attachments/1442/3073/LPC_%20KVM%20Userfault.pdf
+[3] https://lore.kernel.org/kvm/86pljbqqh0.wl-maz@kernel.org
+[4] https://lore.kernel.org/all/174369514508.3034362.13165690020799838042.b4-ty@linux.dev
+
+Jiaqi Yan (5):
+  KVM: arm64: VM exit to userspace to handle SEA
+  KVM: arm64: Set FnV for VCPU when FAR_EL2 is invalid
+  KVM: selftests: Test for KVM_EXIT_ARM_SEA and KVM_CAP_ARM_SEA_TO_USER
+  KVM: selftests: Test for KVM_CAP_INJECT_EXT_IABT
+  Documentation: kvm: new uAPI for handling SEA
+
+Raghavendra Rao Ananta (1):
+  KVM: arm64: Allow userspace to inject external instruction aborts
+
+ Documentation/virt/kvm/api.rst                | 120 ++++++-
+ arch/arm64/include/asm/kvm_emulate.h          |  12 +
+ arch/arm64/include/asm/kvm_host.h             |   8 +
+ arch/arm64/include/asm/kvm_ras.h              |  21 +-
+ arch/arm64/include/uapi/asm/kvm.h             |   3 +-
+ arch/arm64/kvm/Makefile                       |   3 +-
+ arch/arm64/kvm/arm.c                          |   6 +
+ arch/arm64/kvm/guest.c                        |  13 +-
+ arch/arm64/kvm/inject_fault.c                 |   3 +
+ arch/arm64/kvm/kvm_ras.c                      |  54 +++
+ arch/arm64/kvm/mmu.c                          |  12 +-
+ include/uapi/linux/kvm.h                      |  12 +
+ tools/arch/arm64/include/uapi/asm/kvm.h       |   3 +-
+ tools/testing/selftests/kvm/Makefile.kvm      |   2 +
+ .../testing/selftests/kvm/arm64/inject_iabt.c | 100 ++++++
+ .../testing/selftests/kvm/arm64/sea_to_user.c | 324 ++++++++++++++++++
+ tools/testing/selftests/kvm/lib/kvm_util.c    |   1 +
+ 17 files changed, 654 insertions(+), 43 deletions(-)
+ create mode 100644 arch/arm64/kvm/kvm_ras.c
+ create mode 100644 tools/testing/selftests/kvm/arm64/inject_iabt.c
+ create mode 100644 tools/testing/selftests/kvm/arm64/sea_to_user.c
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.49.0.967.g6a0df3ecc3-goog
+
 
