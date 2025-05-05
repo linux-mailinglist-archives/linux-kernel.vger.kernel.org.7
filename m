@@ -1,283 +1,130 @@
-Return-Path: <linux-kernel+bounces-634934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA08AAB5B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:35:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8283DAAB528
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694B3168879
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:30:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FB5F7ADC54
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E144A3459;
-	Tue,  6 May 2025 00:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D4E496E99;
+	Tue,  6 May 2025 00:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPwkP90J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b79HvWEm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115F03AE5CC;
-	Mon,  5 May 2025 23:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814493A80FC;
+	Mon,  5 May 2025 23:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487198; cv=none; b=D2hmmBZ667vuXuZfPcmMMdv/E4SO96tLxU4YyeZqgwpaFOj9Sq4cBJQiQohrHgNhJadu2rcpQaK++KtAVSqm6Hn0ODpoNE53ldqpMuqFT3jjdOkAoih/jgKDkvKh99qAMp7Wg6RwT+HyUKiGzTKb4zZ3RGWC3YhPgjAO9ws7Pas=
+	t=1746487041; cv=none; b=GTjs6arqIBOTpr1myGmxS3POcdeXKLZ48A6xFyNxUckc25SU5W0u24tJemFlgTHzNbZs0JSCRfSrHfUTmSYsiAsAt2KWfcR3EwYFxDS1mgHqmLtcOw+2fr0ypV7mX60RWUF9oj+INBVomioRyg9qZU5Tgyro8gQqdZhMgAw+ZNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487198; c=relaxed/simple;
-	bh=2jBwSyKGM+ef/ZauCGSmnloXly7OEv4EzUDDVBrMu+g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rQUPYdjdrluk3RNiTHy5kr36m8hpywsIaZHl0x0ZtL3fSg6SekmGovaqP2Wqkb+KU0aOxYw0pJ5o2F3eaRx5dmvYaTVCWJdAK5vc/v1u8ndzysfG8KYKyMNJSNXMw9h0WuSsCBJlAqDwHOhkCts/ecYPE3kpEFrKBjj/32DRqro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPwkP90J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C949C4CEE4;
-	Mon,  5 May 2025 23:19:55 +0000 (UTC)
+	s=arc-20240116; t=1746487041; c=relaxed/simple;
+	bh=eUfjuqWwgzc7HEzgfWaIoJCRqEYULkjhX5zB3ZSy8Ts=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iTdBJzp7X6mmUmbvnYE/YXWzqBrTEu69lEbde0nayAQkoHPEkuAzTcrANL+JMEAJx0tqovOMVD+s2mSvDLCuRgGbNQH/WSekN6xWZCu9qKRmyXpivNH/oQHVG4czv+0wpv5eM732+eahh+miQPMq15sFjcKUGk4P/TmZV69x7bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b79HvWEm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 54ABBC4CEEE;
+	Mon,  5 May 2025 23:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487196;
-	bh=2jBwSyKGM+ef/ZauCGSmnloXly7OEv4EzUDDVBrMu+g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PPwkP90JTQ+RezjoONVfTuoYahoblfyyEBsK+qyPN6ON5sxQXdI2wIaDLBdQD/SnN
-	 bIDaTVM298+jCUDqJEjgH4vvVXPsofb/cmGq+lUrTLi/vZr8f+YVcRHIhmCu2irGjA
-	 dc39A6Jbe8S0ptzkR6QPOuz7xYSOxGF8f8+GUGdEfDoho2Swa4ev9yEk432jaCb4L0
-	 H48q9thi03dAV1iXn1Mo4vio1vSxLirgbVQ/Y4dyCLTZuivPjoPcflHc5l1pdeLK/W
-	 joV/etj92U7mXxk/aihaOghdtzkCo/uzpJq0XEBOR1rX81JfQX/IBCPHYLfM8UN+hM
-	 OfvqM1ksaBRCw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Peng Fan <peng.fan@nxp.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	abelvesa@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 052/114] clk: imx8mp: inform CCF of maximum frequency of clocks
-Date: Mon,  5 May 2025 19:17:15 -0400
-Message-Id: <20250505231817.2697367-52-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505231817.2697367-1-sashal@kernel.org>
-References: <20250505231817.2697367-1-sashal@kernel.org>
+	s=k20201202; t=1746487041;
+	bh=eUfjuqWwgzc7HEzgfWaIoJCRqEYULkjhX5zB3ZSy8Ts=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=b79HvWEmOgjvCrM3BDAPa2gI30QcgO4pbzLHgnyJAAZG6R8ww/QoXocZw9202IB7z
+	 mKWiaSbAEh67S40nmAv79NnsYxmQN2d+ST0RqOR+73xPKkhh1QGe5Lfg9twZLhjuJV
+	 Q70UT0noss7qnTlgfgVknkznocX5s4PEHiUZAyQkmIammg5NGBti4zAG0d6GWK3ov9
+	 1xYKzbzYogCtla/YGah9pxFA0X61dsQQCjhihVxR2In79HGi2Hm+MkxN3ncUBbwzd5
+	 e1aMvbYw0MOM9HrTOc8K1nrDUY6THSgngV175I2Yzjw3zGtyRbA3TzjG+YtanKKAo+
+	 KlOgivg3MSvOg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4318FC3ABB6;
+	Mon,  5 May 2025 23:17:21 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v5 0/3] PCI: tegra: Allow building as a module
+Date: Mon, 05 May 2025 18:17:19 -0500
+Message-Id: <20250505-pci-tegra-module-v5-0-827aaac998ba@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.237
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP9GGWgC/23PTQ6CMBAF4KuYrq2Zmc4IuvIexkUpBZuImKJEY
+ 7i7RRf+sXwvme9l7qrzMfhOrWd3FX0futAeU5D5TLm9PdZehzJlRUACBo0+uaDPvo5WN215OXi
+ duaJEJz4DW6l0doq+Ctcnud2lvA/duY2350KPY/vCmOAf61GDdmCxytOYsN3UjQ2HhWsbNWI9f
+ QL5BEAjgGi5WCExL38B8wYEaAIwCRBZWl5lhsoMfgH+BGQC4ARAnhci5LjArxeGYXgAwJpL2HM
+ BAAA=
+X-Change-ID: 20250313-pci-tegra-module-7cbd1c5e70af
+To: Thomas Gleixner <tglx@linutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746487040; l=1598;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=eUfjuqWwgzc7HEzgfWaIoJCRqEYULkjhX5zB3ZSy8Ts=;
+ b=PPOCuy8fWxrudoIzuE1qc7uG79iuQLKGG/jVPH4ve4vcbV36e3ZeLTq9Ho3LNkHHYIoECpcYS
+ oV33CYQ4v5iDW9PE+038JE4R2iUQU/1eoEnSjdQL8SghnA82UDOro5j
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-
-[ Upstream commit 06a61b5cb6a8638fa8823cd09b17233b29696fa2 ]
-
-The IMX8MPCEC datasheet lists maximum frequencies allowed for different
-modules. Some of these limits are universal, but some depend on
-whether the SoC is operating in nominal or in overdrive mode.
-
-The imx8mp.dtsi currently assumes overdrive mode and configures some
-clocks in accordance with this. Boards wishing to make use of nominal
-mode will need to override some of the clock rates manually.
-
-As operating the clocks outside of their allowed range can lead to
-difficult to debug issues, it makes sense to register the maximum rates
-allowed in the driver, so the CCF can take them into account.
-
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Link: https://lore.kernel.org/r/20250218-imx8m-clk-v4-6-b7697dc2dcd0@pengutronix.de
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/clk/imx/clk-imx8mp.c | 151 +++++++++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
+Changes in v5:
+- Copy commit message exactly word for word on patch 1, as required by reviewer
+- Delete remove callback in patch 3, per request
+- Don't clean up debugfs, per request, which drops patch 4 entirely
+- Link to v4: https://lore.kernel.org/r/20250505-pci-tegra-module-v4-0-088b552c4b1a@gmail.com
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 385653fe39660..aebeb4d3c8dd0 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -8,6 +8,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/units.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -417,11 +418,151 @@ static const char * const imx8mp_clkout_sels[] = {"audio_pll1_out", "audio_pll2_
- static struct clk_hw **hws;
- static struct clk_hw_onecell_data *clk_hw_data;
- 
-+struct imx8mp_clock_constraints {
-+	unsigned int clkid;
-+	u32 maxrate;
-+};
-+
-+/*
-+ * Below tables are taken from IMX8MPCEC Rev. 2.1, 07/2023
-+ * Table 13. Maximum frequency of modules.
-+ * Probable typos fixed are marked with a comment.
-+ */
-+static const struct imx8mp_clock_constraints imx8mp_clock_common_constraints[] = {
-+	{ IMX8MP_CLK_A53_DIV,             1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_AXI,             266666667 }, /* Datasheet claims 266MHz */
-+	{ IMX8MP_CLK_NAND_USDHC_BUS,       266666667 }, /* Datasheet claims 266MHz */
-+	{ IMX8MP_CLK_MEDIA_APB,            200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HDMI_APB,             133333333 }, /* Datasheet claims 133MHz */
-+	{ IMX8MP_CLK_ML_AXI,               800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_AHB,                  133333333 },
-+	{ IMX8MP_CLK_IPG_ROOT,              66666667 },
-+	{ IMX8MP_CLK_AUDIO_AHB,            400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_DISP2_PIX,      170 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_DRAM_ALT,             666666667 },
-+	{ IMX8MP_CLK_DRAM_APB,             200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_CAN1,                  80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_CAN2,                  80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_PCIE_AUX,              10 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_I2C5,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_I2C6,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI1,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI2,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI3,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI5,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI6,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_ENET_QOS,             125 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_QOS_TIMER,       200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_REF,             125 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_TIMER,           125 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_PHY_REF,         125 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NAND,                 500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_QSPI,                 400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_USDHC1,               400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_USDHC2,               400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_I2C1,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_I2C2,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_I2C3,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_I2C4,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_UART1,                 80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_UART2,                 80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_UART3,                 80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_UART4,                 80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ECSPI1,                80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ECSPI2,                80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_PWM1,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_PWM2,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_PWM3,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_PWM4,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_GPT1,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT2,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT3,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT4,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT5,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT6,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_WDOG,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_IPP_DO_CLKO1,         200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_IPP_DO_CLKO2,         200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HDMI_REF_266M,        266 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_USDHC3,               400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_MIPI_PHY1_REF,  300 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_DISP1_PIX,      250 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_CAM2_PIX,       277 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_LDB,            595 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE, 200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ECSPI3,                80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_PDM,                  200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_SAI7,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_MAIN_AXI,             400 * HZ_PER_MHZ },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct imx8mp_clock_constraints imx8mp_clock_nominal_constraints[] = {
-+	{ IMX8MP_CLK_M7_CORE,           600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ML_CORE,           800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU3D_CORE,        800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU3D_SHADER_CORE, 800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU2D_CORE,        800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_AUDIO_AXI_SRC,     600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HSIO_AXI,          400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_ISP,         400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_BUS,           600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_AXI,         400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HDMI_AXI,          400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU_AXI,           600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU_AHB,           300 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NOC,               800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NOC_IO,            600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ML_AHB,            300 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_G1,            600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_G2,            500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_CAM1_PIX,    400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_VC8000E,       400 * HZ_PER_MHZ }, /* Datasheet claims 500MHz */
-+	{ IMX8MP_CLK_DRAM_CORE,         800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GIC,               400 * HZ_PER_MHZ },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct imx8mp_clock_constraints imx8mp_clock_overdrive_constraints[] = {
-+	{ IMX8MP_CLK_M7_CORE,            800 * HZ_PER_MHZ},
-+	{ IMX8MP_CLK_ML_CORE,           1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU3D_CORE,        1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU3D_SHADER_CORE, 1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU2D_CORE,        1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_AUDIO_AXI_SRC,      800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HSIO_AXI,           500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_ISP,          500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_BUS,            800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_AXI,          500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HDMI_AXI,           500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU_AXI,            800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU_AHB,            400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NOC,               1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NOC_IO,             800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ML_AHB,             400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_G1,             800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_G2,             700 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_CAM1_PIX,     500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_VC8000E,        500 * HZ_PER_MHZ }, /* Datasheet claims 400MHz */
-+	{ IMX8MP_CLK_DRAM_CORE,         1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GIC,                500 * HZ_PER_MHZ },
-+	{ /* Sentinel */ }
-+};
-+
-+static void imx8mp_clocks_apply_constraints(const struct imx8mp_clock_constraints constraints[])
-+{
-+	const struct imx8mp_clock_constraints *constr;
-+
-+	for (constr = constraints; constr->clkid; constr++)
-+		clk_hw_set_rate_range(hws[constr->clkid], 0, constr->maxrate);
-+}
-+
- static int imx8mp_clocks_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	void __iomem *anatop_base, *ccm_base;
-+	const char *opmode;
- 	int err;
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
-@@ -736,6 +877,16 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 
- 	imx_check_clk_hws(hws, IMX8MP_CLK_END);
- 
-+	imx8mp_clocks_apply_constraints(imx8mp_clock_common_constraints);
-+
-+	err = of_property_read_string(np, "fsl,operating-mode", &opmode);
-+	if (!err) {
-+		if (!strcmp(opmode, "nominal"))
-+			imx8mp_clocks_apply_constraints(imx8mp_clock_nominal_constraints);
-+		else if (!strcmp(opmode, "overdrive"))
-+			imx8mp_clocks_apply_constraints(imx8mp_clock_overdrive_constraints);
-+	}
-+
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
- 	if (err < 0) {
- 		dev_err(dev, "failed to register hws for i.MX8MP\n");
+Changes in v4:
+- Updated commit messages for patches 1 and 2, per review
+- Link to v3: https://lore.kernel.org/r/20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com
+
+Changes in v3:
+- Add patch to drop remove callback, per request
+- Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-0-c11a4b912446@gmail.com
+
+Changes in v2:
+- Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
+  building pci-tegra as a module for arm
+- Drop module exit to prevent module unloading, as requested
+- Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com
+
+---
+Aaron Kling (3):
+      irqdomain: Export irq_domain_free_irqs
+      cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
+      PCI: tegra: Allow building as a module
+
+ drivers/cpuidle/cpuidle-tegra.c    |  1 +
+ drivers/pci/controller/Kconfig     |  2 +-
+ drivers/pci/controller/pci-tegra.c | 29 ++++-------------------------
+ kernel/irq/irqdomain.c             |  1 +
+ 4 files changed, 7 insertions(+), 26 deletions(-)
+---
+base-commit: 18352e73612d60b81790d2437845276ae499b64a
+change-id: 20250313-pci-tegra-module-7cbd1c5e70af
+
+Best regards,
 -- 
-2.39.5
+Aaron Kling <webgeek1234@gmail.com>
+
 
 
