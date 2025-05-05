@@ -1,331 +1,176 @@
-Return-Path: <linux-kernel+bounces-632488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B7BAA97F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598F6AA976C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FCE189C2CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:52:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96F617725C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2DB25FA05;
-	Mon,  5 May 2025 15:51:43 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D4B25D903;
+	Mon,  5 May 2025 15:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NYO3r7UJ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626D01F9F70;
-	Mon,  5 May 2025 15:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FE525D538
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746460303; cv=none; b=tJR58gqIgrytrNtUq+UxNIuwMrO4Xgt5XRfYvPtT1+BQmn1PFPlQACRfVZWrzBbHreCff8UxSWZYn++iheX0wKKEsN4uxGV0NxwCc3r29uKB5vBxVG0y7d1hyi5tSauymNJTvVNJSYcH5t6yBQTyXkop19+7kD37/JyHwVk1Qp4=
+	t=1746458642; cv=none; b=fnzHx1+xuNGq/V1WXqcEYrTLDWcsdoALJPIb088oUJbJqCnHrS2Kwx2wxn0AhCprxCy2aTas3nqexsUkGTYjMPDVTwA9dgED6hP0zAppfTV/XCTIjOm5LvKa4kbXG+pIp85oKpN3nwvlJhL4dvg+ZDtByyIY8w7acG+6UhM75bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746460303; c=relaxed/simple;
-	bh=qHjAcr3nYJoV5hBvliPhfYmGgK0qY2hPpf/DNDCyw3w=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cwbu9Ly9PngMEjaScWFvp7DMMK0hZD7JJOSIFSf0AUpEoWUfOCz+9zdH7InxALa4yJf3vpVuWHJj6Mx0lO6Ux6WexTKXWLPs+Dpw04SPbg85sAp3xIHLqxD4AFCvzpBoQznzB77vX/wDDpFD4zvxyk0VM4LqV0a9YgZXQ/LaSMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <tobias.boehm@hetzner-cloud.de>)
-	id 1uBxep-000NE8-6S; Mon, 05 May 2025 17:23:03 +0200
-Received: from [2003:f6:af22:6538:f6a8:dff:fe1e:4c1d]
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <tobias.boehm@hetzner-cloud.de>)
-	id 1uBxeo-0003en-0Z;
-	Mon, 05 May 2025 17:23:02 +0200
-Message-ID: <1713bf39-2bcb-4a43-94c7-a61ff97e2522@hetzner-cloud.de>
-Date: Mon, 5 May 2025 17:23:02 +0200
+	s=arc-20240116; t=1746458642; c=relaxed/simple;
+	bh=0Hc+EQxJfioQ+A+gYtKFPWTxdD4hKYAgnVL1ELeokBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bCpG4i4X7ylKKRwijrkSdiKLmmGRReo1+7KRknCBufG50BF6TmsCqK/3PTLGvudqvMg18h2OMB1CbqAMUwyIIPHNBFQfxmnaW16azc2xT85W8ShstrLNSp//jpbvKzMoXr7a2zb2bSJWdGT/p6nBX7S8JkDFD7iFO69T7skitfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NYO3r7UJ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2260c91576aso40538185ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:24:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1746458635; x=1747063435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=41acKNPFt0X3b8kDDLPn8SygbWrcPwUb5jtg+E40A3k=;
+        b=NYO3r7UJwq830BNe48tsKwAwa6tHZJfoJug9+q5GkaVx2IH5YMfDpZ9Cf9BHr4t65H
+         PyeZc3NrPtHfrnIN1gZyNDypUD8fB17BcVxPo6mUIM+oCRMfFmKsGxubBeSWB0Oqy+ZY
+         6aRlO8DW4c+WJLN27fBY9F+J2utg/2Fc1itMI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746458635; x=1747063435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=41acKNPFt0X3b8kDDLPn8SygbWrcPwUb5jtg+E40A3k=;
+        b=T1rM6DY4MeMMJjYpLeE+UuRWFvlHxECKCpvVK+WwL+3NXZ8BxD+9iLyEmhTGodp0Ql
+         Jt6fcJS2GyLYRNQ2hHBSkq2yzwm/pA/ejJuiQy8n1FWAYgVAAAgyu8sY/QKHBQwo2xTw
+         5Y00O3WBJiD+ofJlGxKXwUcXSmTcKV83Ghcuin+df+71ybZJtXK2VohcUs5kCRqTd+F0
+         ykwCezKriJq8USGKOzSguiVc/y61aunQFykcvufiY8PG0sSfdrnLamGWop142DBUAuJg
+         c5G/wjkcLBcDBf+jZ5ed3CBSYEDGov+MS8nRsKoU7iETDEiKTr+sehR71AUjAdvoX3vn
+         oZIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuVkHP8J7Uoy0XpKpjGXMUjuCjuxJF8XVA7kdXJHoonv+F2rGzbd+dPMlA7gM8I45CW3USFpljmll+8W0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyHIYj9rbjeytt/uyLvPJ0oxIUT+HYPLkcPZZr81BWApqKYADx
+	onpWdAm+3uWf+ZiSdiU6SUwsUo5OeAWaVZSNJhNGdGGGQ9QWhorLTUXSRVKBdS4wAdX8PRGcD34
+	=
+X-Gm-Gg: ASbGncvpxNkWyJ27fnKWol6ZFGBMcEQoL+2M41eXEIseuVWT/rRV2JXEZDVpymKCtdK
+	wj/oV478PErmip1I63voQNKiccuquQyxfvNotifUUkPcXwZmxA4T2rB92JOLxU72UZ3yPKpALQ5
+	Dev2YcJJiFAQLLKEI4LTtR/vfwlyYHjRygITApHsDHBndM9M6NExMZZN/dkv0hZOFPnwg9bu/RN
+	FpIFV0YFGBCLT8L0TMy2zstRAsHevrpZsryL9z+4dXY/GfliG2gl+GizDj6xxDOORKgYE2AlIS0
+	/1XePqHqJRbX2/6f7o0IxMyWMW+uM/QcO3Oe/4OXIUQJh8y0Cbdlnjby/vVCY7XSEY2FN+RPlS3
+	dkZAm
+X-Google-Smtp-Source: AGHT+IHHV+LPQ/eGyiQUI1JgYsrnmeRI+UpdHyrCw8rfKQqHavdbucf4Y/8eeign5ezDl64zB5JgUQ==
+X-Received: by 2002:a17:902:ce12:b0:224:2717:7992 with SMTP id d9443c01a7336-22e1eae4d3emr111947295ad.33.1746458635625;
+        Mon, 05 May 2025 08:23:55 -0700 (PDT)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com. [209.85.216.42])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e151ea213sm56336755ad.94.2025.05.05.08.23.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 08:23:53 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-308702998fbso4151672a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:23:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvxbtNZtb+2WmeGdohYLrwBEVGsmZJPlA56GErmdNzZKDaEIQjwe/JEyCA63oY/tHKx1i2lgIFp2zkWS8=@vger.kernel.org
+X-Received: by 2002:a17:90b:2692:b0:309:fac6:44f9 with SMTP id
+ 98e67ed59e1d1-30a61a5de18mr11215640a91.31.1746458632939; Mon, 05 May 2025
+ 08:23:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] ixgbe: Detected Tx Unit Hang (XDP)
-From: =?UTF-8?Q?Tobias_B=C3=B6hm?= <tobias.boehm@hetzner-cloud.de>
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Cc: Michal Kubiak <michal.kubiak@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>, Jay Vosburgh <jv@jvosburgh.net>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- sdn@hetzner-cloud.de
-References: <d33f0ab4-4dc4-49cd-bbd0-055f58dd6758@hetzner-cloud.de>
- <Z/fWHYETBYQuCno5@localhost.localdomain>
- <ff7ca6ea-a122-4d7d-9ef2-d091cbdd96d2@hetzner-cloud.de>
- <Z/jPgceDT4gRu9/R@localhost.localdomain> <aAEUcXIRnWolGWnA@boxer>
- <b06ede77-541b-453f-9e7a-79f3e5591f66@hetzner-cloud.de>
- <aAkz/+Rx5w3OHH4/@boxer>
- <eca1880f-253a-4955-afe6-732d7c6926ee@hetzner-cloud.de>
-Content-Language: en-US
-Autocrypt: addr=tobias.boehm@hetzner-cloud.de; keydata=
- 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
- p0ms75naziM=
-Organization: Hetzner Cloud GmbH
-In-Reply-To: <eca1880f-253a-4955-afe6-732d7c6926ee@hetzner-cloud.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: tobias.boehm@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27629/Mon May  5 10:35:28 2025)
-
-Am 24.04.25 um 12:19 schrieb Tobias Böhm:
-> Am 23.04.25 um 20:39 schrieb Maciej Fijalkowski:
->> On Wed, Apr 23, 2025 at 04:20:07PM +0200, Marcus Wichelmann wrote:
->>> Am 17.04.25 um 16:47 schrieb Maciej Fijalkowski:
->>>> On Fri, Apr 11, 2025 at 10:14:57AM +0200, Michal Kubiak wrote:
->>>>> On Thu, Apr 10, 2025 at 04:54:35PM +0200, Marcus Wichelmann wrote:
->>>>>> Am 10.04.25 um 16:30 schrieb Michal Kubiak:
->>>>>>> On Wed, Apr 09, 2025 at 05:17:49PM +0200, Marcus Wichelmann wrote:
->>>>>>>> Hi,
->>>>>>>>
->>>>>>>> in a setup where I use native XDP to redirect packets to a 
->>>>>>>> bonding interface
->>>>>>>> that's backed by two ixgbe slaves, I noticed that the ixgbe 
->>>>>>>> driver constantly
->>>>>>>> resets the NIC with the following kernel output:
->>>>>>>>
->>>>>>>>    ixgbe 0000:01:00.1 ixgbe-x520-2: Detected Tx Unit Hang (XDP)
->>>>>>>>      Tx Queue             <4>
->>>>>>>>      TDH, TDT             <17e>, <17e>
->>>>>>>>      next_to_use          <181>
->>>>>>>>      next_to_clean        <17e>
->>>>>>>>    tx_buffer_info[next_to_clean]
->>>>>>>>      time_stamp           <0>
->>>>>>>>      jiffies              <10025c380>
->>>>>>>>    ixgbe 0000:01:00.1 ixgbe-x520-2: tx hang 19 detected on queue 
->>>>>>>> 4, resetting adapter
->>>>>>>>    ixgbe 0000:01:00.1 ixgbe-x520-2: initiating reset due to tx 
->>>>>>>> timeout
->>>>>>>>    ixgbe 0000:01:00.1 ixgbe-x520-2: Reset adapter
->>>>>>>>
->>>>>>>> This only occurs in combination with a bonding interface and 
->>>>>>>> XDP, so I don't
->>>>>>>> know if this is an issue with ixgbe or the bonding driver.
->>>>>>>> I first discovered this with Linux 6.8.0-57, but kernel 6.14.0 
->>>>>>>> and 6.15.0-rc1
->>>>>>>> show the same issue.
->>>>>>>>
->>>>>>>>
->>>>>>>> I managed to reproduce this bug in a lab environment. Here are 
->>>>>>>> some details
->>>>>>>> about my setup and the steps to reproduce the bug:
->>>>>>>>
->>>>>>>> [...]
->>>>>>>>
->>>>>>>> Do you have any ideas what may be causing this issue or what I 
->>>>>>>> can do to
->>>>>>>> diagnose this further?
->>>>>>>>
->>>>>>>> Please let me know when I should provide any more information.
->>>>>>>>
->>>>>>>>
->>>>>>>> Thanks!
->>>>>>>> Marcus
->>>>>>>>
->>>>>>>
->>>>> [...]
->>>>>
->>>>> Hi Marcus,
->>>>>
->>>>>> thank you for looking into it. And not even 24 hours after my 
->>>>>> report, I'm
->>>>>> very impressed! ;)
->>>>>
->>>>> Thanks! :-)
->>>>>
->>>>>> Interesting. I just tried again but had no luck yet with 
->>>>>> reproducing it
->>>>>> without a bonding interface. May I ask how your setup looks like?
->>>>>
->>>>> For now, I've just grabbed the first available system with the HW
->>>>> controlled by the "ixgbe" driver. In my case it was:
->>>>>
->>>>>    Ethernet controller: Intel Corporation Ethernet Controller X550
->>>>>
->>>>> Also, for my first attempt, I didn't use the upstream kernel - I 
->>>>> just tried
->>>>> the kernel installed on that system. It was the Fedora kernel:
->>>>>
->>>>>    6.12.8-200.fc41.x86_64
->>>>>
->>>>>
->>>>> I think that may be the "beauty" of timing issues - sometimes you 
->>>>> can change
->>>>> just one piece in your system and get a completely different 
->>>>> replication ratio.
->>>>> Anyway, the higher the repro probability, the easier it is to debug
->>>>> the timing problem. :-)
->>>>
->>>> Hi Marcus, to break the silence could you try to apply the diff 
->>>> below on
->>>> your side?
->>>
->>> Hi, thank you for the patch. We've tried it and with your changes we 
->>> can no
->>> longer trigger the error and the NIC is no longer being reset.
->>>
->>>> We see several issues around XDP queues in ixgbe, but before we
->>>> proceed let's this small change on your side.
->>>
->>> How confident are you that this patch is sufficient to make things 
->>> stable enough
->>> for production use? Was it just the Tx hang detection that was 
->>> misbehaving for
->>> the XDP case, or is there an underlying issue with the XDP queues 
->>> that is not
->>> solved by disabling the detection for it?
->>
->> I believe that correct way to approach this is to move the Tx hang
->> detection onto ixgbe_tx_timeout() as that is the place where this logic
->> belongs to. By doing so I suppose we would kill two birds with one stone
->> as mentioned ndo is called under netdev watchdog which is not a subject
->> for XDP Tx queues.
->>
->>>
->>> With our current setup we cannot verify accurately, that we have no 
->>> packet loss
->>> or stuck queues. We can do additional tests to verify that.
-> 
-> 
-> Hi Maciej,
-> 
-> I'm a colleague of Marcus and involved in the testing as well.
->>>> Additional question, do you have enabled pause frames on your setup?
->>>
->>> Pause frames were enabled, but we can also reproduce it after 
->>> disabling them,
->>> without your patch.
->>
->> Please give your setup a go with pause frames enabled and applied patch
->> that i shared previously and let us see the results. As said above I do
->> not think it is correct to check for hung queues in Tx descriptor 
->> cleaning
->> routine. This is a job of ndo_tx_timeout callback.
->>
-> 
-> We have tested with pause frames enabled and applied patch and can not 
-> trigger the error anymore in our lab setup.
-> 
->>>
->>> Thanks!
->>
->> Thanks for feedback and testing. I'll provide a proper fix tomorrow 
->> and CC
->> you so you could take it for a spin.
->>
-> 
-> That sounds great. We'd be happy to test with the proper fix in our 
-> original setup.
+References: <20250503-pinctrl-msm-fix-v1-0-da9b7f6408f4@oss.qualcomm.com> <20250503-pinctrl-msm-fix-v1-1-da9b7f6408f4@oss.qualcomm.com>
+In-Reply-To: <20250503-pinctrl-msm-fix-v1-1-da9b7f6408f4@oss.qualcomm.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 5 May 2025 08:23:40 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VHhND2o_uAaGNe4RzmfbuO5bR6h2hYhs-cfsBzCfR=qg@mail.gmail.com>
+X-Gm-Features: ATxdqUEU--2tfIQF8wAYYjbyZfA85xc3-X-O-5P-ZKl511Bl7WUYcv0F-TnAYZ8
+Message-ID: <CAD=FV=VHhND2o_uAaGNe4RzmfbuO5bR6h2hYhs-cfsBzCfR=qg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] pinctrl: qcom: don't crash on enabling GPIO HOG pins
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Josh Cartwright <joshc@codeaurora.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-During further testing with this patch applied we noticed new warnings 
-that show up. We've also tested with the new patch sent ("[PATCH 
-iwl-net] ixgbe: fix ndo_xdp_xmit() workloads") and see the same warnings.
+On Fri, May 2, 2025 at 10:32=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
+>
+> On Qualcomm platforms if the board uses GPIO hogs msm_pinmux_request()
+> calls gpiochip_line_is_valid(). After commit 8015443e24e7 ("gpio: Hide
+> valid_mask from direct assignments") gpiochip_line_is_valid() uses
+> gc->gpiodev, which is NULL when GPIO hog pins are being processed.
+> Thus after this commit using GPIO hogs causes the following crash. In
+> order to fix this, verify that gpiochip->gpiodev is not NULL.
+>
+> Note: it is not possible to reorder calls (e.g. by calling
+> msm_gpio_init() before pinctrl registration or by splitting
+> pinctrl_register() into _and_init() and pinctrl_enable() and calling the
+> latter function after msm_gpio_init()) because GPIO chip registration
+> would fail with EPROBE_DEFER if pinctrl is not enabled at the time of
+> registration.
+>
+> pc : gpiochip_line_is_valid+0x4/0x28
+> lr : msm_pinmux_request+0x24/0x40
+> sp : ffff8000808eb870
+> x29: ffff8000808eb870 x28: 0000000000000000 x27: 0000000000000000
+> x26: 0000000000000000 x25: ffff726240f9d040 x24: 0000000000000000
+> x23: ffff7262438c0510 x22: 0000000000000080 x21: ffff726243ea7000
+> x20: ffffab13f2c4e698 x19: 0000000000000080 x18: 00000000ffffffff
+> x17: ffff726242ba6000 x16: 0000000000000100 x15: 0000000000000028
+> x14: 0000000000000000 x13: 0000000000002948 x12: 0000000000000003
+> x11: 0000000000000078 x10: 0000000000002948 x9 : ffffab13f50eb5e8
+> x8 : 0000000003ecb21b x7 : 000000000000002d x6 : 0000000000000b68
+> x5 : 0000007fffffffff x4 : ffffab13f52f84a8 x3 : ffff8000808eb804
+> x2 : ffffab13f1de8190 x1 : 0000000000000080 x0 : 0000000000000000
+> Call trace:
+>  gpiochip_line_is_valid+0x4/0x28 (P)
+>  pin_request+0x208/0x2c0
+>  pinmux_enable_setting+0xa0/0x2e0
+>  pinctrl_commit_state+0x150/0x26c
+>  pinctrl_enable+0x6c/0x2a4
+>  pinctrl_register+0x3c/0xb0
+>  devm_pinctrl_register+0x58/0xa0
+>  msm_pinctrl_probe+0x2a8/0x584
+>  sdm845_pinctrl_probe+0x20/0x88
+>  platform_probe+0x68/0xc0
+>  really_probe+0xbc/0x298
+>  __driver_probe_device+0x78/0x12c
+>  driver_probe_device+0x3c/0x160
+>  __device_attach_driver+0xb8/0x138
+>  bus_for_each_drv+0x84/0xe0
+>  __device_attach+0x9c/0x188
+>  device_initial_probe+0x14/0x20
+>  bus_probe_device+0xac/0xb0
+>  deferred_probe_work_func+0x8c/0xc8
+>  process_one_work+0x208/0x5e8
+>  worker_thread+0x1b4/0x35c
+>  kthread+0x144/0x220
+>  ret_from_fork+0x10/0x20
+> Code: b5fffba0 17fffff2 9432ec27 f9400400 (f9428800)
+>
+> Fixes: 8015443e24e7 ("gpio: Hide valid_mask from direct assignments")
+> Reported-by: Doug Anderson <dianders@chromium.org>
+> Closes: https://lore.kernel.org/r/CAD=3DFV=3DVg8_ZOLgLoC4WhFPzhVsxXFC19Nr=
+F38W6cW_W_3nFjbw@mail.gmail.com
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-I'm sending this observation to this thread because I'm not sure if it 
-is related to those patches or if it was already present but hidden by 
-the resets of the original issue reported by Marcus.
+So I guess this is fine because nobody would specify a hog in their
+device tree that's an invalid GPIO?
 
-After processing test traffic (~10kk packets as described in Marcus' 
-reproducer setup) and idling for a minute the following warnings keep 
-being logged as long as the NIC idles:
+In any case, this works for me. Thanks for the fix!
 
-   page_pool_release_retry() stalled pool shutdown: id 968, 2 inflight 
-60 sec
-   page_pool_release_retry() stalled pool shutdown: id 963, 2 inflight 
-60 sec
-   page_pool_release_retry() stalled pool shutdown: id 968, 2 inflight 
-120 sec
-   page_pool_release_retry() stalled pool shutdown: id 963, 2 inflight 
-120 sec
-   page_pool_release_retry() stalled pool shutdown: id 968, 2 inflight 
-181 sec
-   page_pool_release_retry() stalled pool shutdown: id 963, 2 inflight 
-181 sec
-   page_pool_release_retry() stalled pool shutdown: id 968, 2 inflight 
-241 sec
-   page_pool_release_retry() stalled pool shutdown: id 963, 2 inflight 
-241 sec
-
-Just sending a single packet makes the warnings stop being logged.
-
-After sending heavy test traffic again new warnings start to be logged 
-after a minute of idling:
-
-   page_pool_release_retry() stalled pool shutdown: id 987, 2 inflight 
-60 sec
-   page_pool_release_retry() stalled pool shutdown: id 979, 2 inflight 
-60 sec
-   page_pool_release_retry() stalled pool shutdown: id 987, 2 inflight 
-120 sec
-   page_pool_release_retry() stalled pool shutdown: id 979, 2 inflight 
-120 sec
-
-Detaching the XDP program stops the warnings as well.
-
-As before pause frames were enabled.
-
-Just like with the original issue we were not always successful to 
-reproduce those warnings. With more traffic chances seem to be higher to 
-trigger it.
-
-Please let me know if I should provide any further information.
-
-Thanks,
-Tobias
+Tested-by: Douglas Anderson <dianders@chromium.org>
 
