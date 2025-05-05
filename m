@@ -1,62 +1,59 @@
-Return-Path: <linux-kernel+bounces-633814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27F8AAAE68
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:55:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2ECAAAE31
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609AA18830F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:52:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 547737B8C06
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940102DA82E;
-	Mon,  5 May 2025 22:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1D02DF57C;
+	Mon,  5 May 2025 22:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kH2BLxit"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sFl7pGS3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45442BE0E8;
-	Mon,  5 May 2025 22:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD23C2D37EF;
+	Mon,  5 May 2025 22:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485236; cv=none; b=kq7+0s8VVKXdKG9erA06CDLVdzvMKYWwY0kz6a0Uqd2ggzTARexODDjHLSvbXox3+8shJKoLPOydf1MxPd7kcwwTo8aBliQvft9VhB3ti8nIadnnufQZe7Sq/W87DFyHSkO3/Hk0d3s7+p/Sk8EEOI1/hYTprfNoQv7NwhgP6Sg=
+	t=1746485239; cv=none; b=junG3c7sNtGngr537OnS1kRE3vW3vPRCZAsG7WzdAoNre4L4kabX2xTji+H6a77E88/pVt3sg3ZLR7qwyEmp1WafbWv29ry1oracugpycRGnRvBPDr0o1r5SUc1oK+eHXyetW6k4mhHsz6AewXBOQZ6j4qXVMUW8pl+Uiel7BKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485236; c=relaxed/simple;
-	bh=98FQmpAUpXuvUdgOGxz4jofi+Xev3uvncrd6eCdYIKQ=;
+	s=arc-20240116; t=1746485239; c=relaxed/simple;
+	bh=Q6mzvyxCFKn0LYzphUXFPUR4b1GinHCbmTPxZGgDFAI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EX9VB0ymgCZCHJtbdj9laBctyw28PdsNNoPNCWu807nWcXSIUHaIcAnDBmyIatn9fK7l5ESJeSOP7RaZsRkqQWLfAwYz6WmiTEFv7wFXRLBoBb9Gf3rjBNInsmnsHYLMhX8yMGle0Q5AfXbSpNNg77h6yCLg1dVtW6rSY2qgUpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kH2BLxit; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39445C4CEED;
-	Mon,  5 May 2025 22:47:14 +0000 (UTC)
+	 MIME-Version; b=eGTZYkGCPO9n2Ba7CEwXemiwZFx4OYX8jGJGhSlnhZ9k9OfgSVhBfTeX70FLFqseo4BuNpKQLF3paJxZfX1HPLmoU64xXHY01yra8scQ3ck0kpKq+j9lT6yvtT3xO0D0CSKDHjX/w68ndahcHYGxEIN0e8YNKM/HOjiiCXHmD3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sFl7pGS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 706D3C4CEED;
+	Mon,  5 May 2025 22:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485235;
-	bh=98FQmpAUpXuvUdgOGxz4jofi+Xev3uvncrd6eCdYIKQ=;
+	s=k20201202; t=1746485238;
+	bh=Q6mzvyxCFKn0LYzphUXFPUR4b1GinHCbmTPxZGgDFAI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kH2BLxitkNWyzr4GTSJl7wA2DqXLO67aUykwirWEr3Aio+uedQWA2XyDiiZZre599
-	 zIXffCE5NdjsoMkNXmdU2Bn2b9HINYQcobY+ZoEvw+jo81Wpzl/bocRBJLoiqXvLOM
-	 vXj51X/CFb7/MpQx+rOXHqmnQkARwBgTkN+kxrfM82/dvdRGpQjJW8Z8FYuU6hX7u3
-	 hvtMRx5DQYvlaA2a/VkBRNVc+nTHB6GPZEw8jEx10S18V+9hCO5+Q2Pp1AzJ6loiAT
-	 vBX21qluFG4UBgZrx/BuTT+PxTt0V3a+Sfhlpzue+pn5wK+YshppHdofOTkVA3wItL
-	 GQ7G7Hlhmo+jw==
+	b=sFl7pGS3Mp5yRD+wJVWyy5C9CQkpAiJMR1VWSc0LlOQ3TbIDRcGrETxSru5A2JRvf
+	 DB7ribZ42Nzyx4evfGdH9LGZzNm3USUiwQWz4LdDmOhLXE5B7DtXyW0yi0m6gRpHgv
+	 EulKpVDBs43q95u/uOR9Gr1Ioa0xwga1X0iWuKnKGOK1eh8fTYJusb+0AD3h076zoU
+	 LvU12QS7pKzvPPb2oGOmohpTrSM618oXGuxuKx4pI+ANdpCbWslheqyBHUO1RboLOr
+	 t/4MQ929kGsVxqbLjtdNRXtbji2aKTAPGJ2e7Junf+Gt1s94FW4/6dqYLudZv5orfV
+	 xGy5cl0/GdQew==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	CK Hu <ck.hu@mediatek.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	James Clark <james.clark@linaro.org>,
+	Will Deacon <will@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	p.zabel@pengutronix.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 226/486] drm/mediatek: mtk_dpi: Add checks for reg_h_fre_con existence
-Date: Mon,  5 May 2025 18:35:02 -0400
-Message-Id: <20250505223922.2682012-226-sashal@kernel.org>
+	mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 228/486] perf: arm_pmuv3: Call kvm_vcpu_pmu_resync_el0() before enabling counters
+Date: Mon,  5 May 2025 18:35:04 -0400
+Message-Id: <20250505223922.2682012-228-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -71,49 +68,41 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
 
-[ Upstream commit 8c9da7cd0bbcc90ab444454fecf535320456a312 ]
+[ Upstream commit 04bd15c4cbc3f7bd2399d1baab958c5e738dbfc9 ]
 
-In preparation for adding support for newer DPI instances which
-do support direct-pin but do not have any H_FRE_CON register,
-like the one found in MT8195 and MT8188, add a branch to check
-if the reg_h_fre_con variable was declared in the mtk_dpi_conf
-structure for the probed SoC DPI version.
+Counting events related to setup of the PMU is not desired, but
+kvm_vcpu_pmu_resync_el0() is called just after the PMU counters have
+been enabled. Move the call to before enabling the counters.
 
-As a note, this is useful specifically only for cases in which
-the support_direct_pin variable is true, so mt8195-dpintf is
-not affected by any issue.
-
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Link: https://patchwork.kernel.org/project/dri-devel/patch/20250217154836.108895-6-angelogioacchino.delregno@collabora.com/
-Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Tested-by: James Clark <james.clark@linaro.org>
+Link: https://lore.kernel.org/r/20250218-arm-brbe-v19-v20-1-4e9922fc2e8e@kernel.org
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/perf/arm_pmuv3.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 9c11d3158324c..20a50180d4d49 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -410,12 +410,13 @@ static void mtk_dpi_config_swap_input(struct mtk_dpi *dpi, bool enable)
+diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+index 0afe02f879b45..d9b56f0f90942 100644
+--- a/drivers/perf/arm_pmuv3.c
++++ b/drivers/perf/arm_pmuv3.c
+@@ -816,10 +816,10 @@ static void armv8pmu_start(struct arm_pmu *cpu_pmu)
+ 	else
+ 		armv8pmu_disable_user_access();
  
- static void mtk_dpi_config_2n_h_fre(struct mtk_dpi *dpi)
- {
--	mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, H_FRE_2N, H_FRE_2N);
-+	if (dpi->conf->reg_h_fre_con)
-+		mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, H_FRE_2N, H_FRE_2N);
++	kvm_vcpu_pmu_resync_el0();
++
+ 	/* Enable all counters */
+ 	armv8pmu_pmcr_write(armv8pmu_pmcr_read() | ARMV8_PMU_PMCR_E);
+-
+-	kvm_vcpu_pmu_resync_el0();
  }
  
- static void mtk_dpi_config_disable_edge(struct mtk_dpi *dpi)
- {
--	if (dpi->conf->edge_sel_en)
-+	if (dpi->conf->edge_sel_en && dpi->conf->reg_h_fre_con)
- 		mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, 0, EDGE_SEL_EN);
- }
- 
+ static void armv8pmu_stop(struct arm_pmu *cpu_pmu)
 -- 
 2.39.5
 
