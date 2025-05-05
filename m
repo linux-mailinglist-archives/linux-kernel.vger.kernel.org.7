@@ -1,128 +1,145 @@
-Return-Path: <linux-kernel+bounces-632870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF676AA9DB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:02:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A71AA9DC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B68B77A745B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:01:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5342117D9F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9A92741B1;
-	Mon,  5 May 2025 21:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48537270563;
+	Mon,  5 May 2025 21:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Wp7K74D5"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WhgsSo9J"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554AA2701D7;
-	Mon,  5 May 2025 21:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1642701D2
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 21:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746478955; cv=none; b=mcbCVPpimbK69Rn//iLKpMTjs+SNueDcytTBobJ/6uoKYRALsyAEz/j3n+WysxtdsPz+sXFxtvm61b7+8ewqxkl+qG61Sy6B/8RFsaXXCpqECvkuMLFgmRJeufBuw68f3No7c/B3TprRO8SKGQyu8ZiT+ds/gtz8Dk5QDvSGHIQ=
+	t=1746479101; cv=none; b=cxesUHoA31SdLON7zfMK7MYN//1zOgrsmYpngbITmk3sxMAUmqwVKjev5fE4aLDLGUzA54zHf7MZ9BVhH2j78pZNI+gV32jGwzvmx90RwWnvVgYKoGeGT0rxe88nlKAkYIzJBjiSBbi7xcIu16qZWhs6TCK8oNAchLGkRnWjWbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746478955; c=relaxed/simple;
-	bh=3CMcJyEmd1E4H6N8nUT9yDm/nXton5biDGdfHfBjja0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ei10qAmqYUTaGHAqy7Ba9ZbV/1ZVh1raL2S7VB6xdxbWISVhKmVI0uk4FEXRV8JpDVp+aDZGkg+1uWQKaNAtORTa8GFGANNlBkjZy7bcf5JhPFqEaove0Hd0kTm+J92Fgx13TpOlPg6aia85SlH+QrrVMrVTkzpc7dLP+Qw6j1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Wp7K74D5; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=0aNofVwsenyhD0ZZ4hEtlxuqS6aX+md3VKYHUKteKbM=; b=Wp7K74D53WrmNPZl
-	i1bs1soOLv2U6puZTQfoL2lZWpqKjwGGop1t4/fPZ6g3/bRafZKPTxWfd+KZ6aKb0TJ99wR2VAEVZ
-	LAyKQrLNqHsn6z7rFbZU7zvhQRXqumvNQMKzInAsg0Hnj5+V+O84Orq5e/ayyU+6hAMhN3/6m11k+
-	C171rG+FM+5Seo3tBmLfXKIYV4UWdMC0Xw2gKsW1XT3TQdMfsNEC+StHLGu/1lD38UrrhGpo7Q70P
-	xqt//vdoruhOdK8SJijUUD8OWVoUKUWoSk8fNpkvvnI4cilremaXz2+ZrfH9VZusuqqiVYfcRtWmp
-	OKiZ8rRnyUS3M3G08w==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uC2xH-001WSi-1H;
-	Mon, 05 May 2025 21:02:27 +0000
-From: linux@treblig.org
-To: bmt@zurich.ibm.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] RDMA/siw: Remove unused siw_mem_add
-Date: Mon,  5 May 2025 22:02:26 +0100
-Message-ID: <20250505210226.88994-1-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746479101; c=relaxed/simple;
+	bh=pvJm4iJToWGX01vWFAWNiClNkhuZHWWKlI9oy7VPwrk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j0E4dXJcGEFeFnM64IqjO5kkRpQ/kSjEU7IIcCrm4mKbcc7d7DJsroJXGqIXjNGl+UgoOuaUO9kFrz7mrq1U6Yu4AG4lJ5FswVOHl4OPGUN4GlZvO7VKoKSPMGwZyrY0nFDaATFRXPZSXdM+wP7n0uaq+OMvwAJFiUoB4wtHBug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WhgsSo9J; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7080dd5fe92so41027017b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 14:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1746479098; x=1747083898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qV6Ehr5flIzxPNkBJYbjhBPm/Nie/yPzlaQWxf1OGLY=;
+        b=WhgsSo9JWV48EKUKRmgKeuu2vJsYMPLJ1pLf+ibrUGTWn2+WkRrraD+IuzYDCHdsgi
+         TTDKbg3e0i/eTbdgI7l2QVK9n+kI6ObrZPtfmtNfL6qlZz7+41N8oEYLIPnbj2iALqTn
+         Q/Cbc8qsYJ5YdcG1kADDtxqU59toKqXSim9JJDVAhrJ9jSOKR2EUyWklInE1QZftyxzS
+         Xy5L+DZJtUBnNvNxpVf7D0wvIpluIpP8tW0iRyAtZ+KsLBR8uXQ38omd9fXF9QzLJJWM
+         Jm0W5mbRYgTmCH2APZteUpOA4pIIyDAfPbaFAL4S+GSuat4CMUTYEnHGbaXEHzMdZXO3
+         5wfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746479098; x=1747083898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qV6Ehr5flIzxPNkBJYbjhBPm/Nie/yPzlaQWxf1OGLY=;
+        b=wtOmnV3o+XJwlVaZqaAzv+dXchOn239ueevQoBw2R7VdtpRBgcMsZ4QFENQnLBeTd8
+         mGjX9xJGjfc2EPs54g7hV4E4nCQJLo+wS1DvgI4elb0b6HfN9b9fRq++uC86qTcrKiVH
+         zHsipvWbQRkDkCcd/JcxKbq3/S0B+KonxlRskd/m87RXky2cSDKs4sUmMB4B+DkAGf5E
+         8JXiz5MDGbWVUlHp2O0SmdUcHETUyf5NevTTkGKuAq3ctce/QuJrcawfrETy5lh78cC2
+         7WT3QyvWfk9pENO0CRNgSCkUcn9M6lfEApv5wWUTNgBwnWCBg1JoisK5vIv7gf7pRf/p
+         U4gA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUUAcZb1gH/bEUdq62KiYqSuJYNXspjdn5n9CCxMaRxaz7PI7Dy8KuhqTlNTDJLT9YVfa26j/yArupIYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykD6Ue1AhRaKstdV88GaYHcQtRNU8/9EeA6jtcUgnFn1m6SN+0
+	zNXdFN0RaQ4oeIAUTw4+MSUY7laCdIXss5Z/lB34yBFfea07i9Qn12yva8pmNCjD0v6rCT8tsWH
+	xYleCqLJjkz390wMJbj4qaORETy8IlTPjWxDl
+X-Gm-Gg: ASbGncv0otC4m19gCRxglDCbFJzi3mLUfQEbtLV4J/aIdAeL6HFZtKaxiMREpshjR5b
+	3V7F+vfyTKkyRr00rmUSaNGdDk0H8pRR6RzPb5k7o9sK7qJs1YUVz12ZPfKx+HK40XrRsnHIMp+
+	/ufpQ7Fn0N/L2GyPBvAVFoMg==
+X-Google-Smtp-Source: AGHT+IFmAkNEdgI8Usf/OOS6czpCIUfjzjMmDrrLFeB8TbVt16spO751vhSxBgmbdO5FhYFLhIwyiyfP8SeItQ5Z+90=
+X-Received: by 2002:a05:690c:368b:b0:703:c3ed:1f61 with SMTP id
+ 00721157ae682-708eaeef043mr127166017b3.20.1746479098491; Mon, 05 May 2025
+ 14:04:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
+ <20250502210034.284051-1-kpsingh@kernel.org> <87o6w7ge3o.fsf@microsoft.com> <CACYkzJ7Ur4kFaGZTDvcFJpn0ZwJ9V+=3ZefUURtkrQGfa68zLg@mail.gmail.com>
+In-Reply-To: <CACYkzJ7Ur4kFaGZTDvcFJpn0ZwJ9V+=3ZefUURtkrQGfa68zLg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 5 May 2025 17:04:47 -0400
+X-Gm-Features: ATxdqUH7QOdmAmbomuCBMV4FUrVw8a-HbJeWUtKQ1wX8nnex6ppuCCrqNPrIXY8
+Message-ID: <CAHC9VhRwpvQQyMmFTeiQaos0+yJDkuCkt03QcYdnsxUvBXAtVA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
+To: KP Singh <kpsingh@kernel.org>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James.Bottomley@hansenpartnership.com, 
+	bpf@vger.kernel.org, code@tyhicks.com, corbet@lwn.net, davem@davemloft.net, 
+	dhowells@redhat.com, gnoack@google.com, herbert@gondor.apana.org.au, 
+	jarkko@kernel.org, jmorris@namei.org, jstancek@redhat.com, 
+	justinstitt@google.com, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	llvm@lists.linux.dev, masahiroy@kernel.org, mic@digikod.net, morbo@google.com, 
+	nathan@kernel.org, neal@gompa.dev, nick.desaulniers+lkml@gmail.com, 
+	nicolas@fjasle.eu, nkapron@google.com, roberto.sassu@huawei.com, 
+	serge@hallyn.com, shuah@kernel.org, teknoraver@meta.com, 
+	xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, May 5, 2025 at 4:41=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
+> On Mon, May 5, 2025 at 7:30=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+> >
+> > KP Singh <kpsingh@kernel.org> writes:
+> >
+> > [...]
+> >
+> > > Now if you really care about the use-case and want to work with the m=
+aintainers
+> > > and implement signing for the community, here's how we think it shoul=
+d be done:
+> > >
+> > > * The core signing logic and the tooling stays in BPF, something that=
+ the users
+> > >   are already using. No new tooling.
+> > > * The policy decision on the effect of signing can be built into vari=
+ous
+> > >   existing LSMs. I don't think we need a new LSM for it.
+> > > * A simple UAPI (emphasis on UAPI!) change to union bpf_attr in uapi/=
+bpf.h in
+> > >   the BPF_PROG_LOAD command:
+> > >
+> > > __aligned_u64 signature;
+> > > __u32 signature_size;
+> >
+> > I think having some actual details on the various parties' requirements
+> > here would be helpful. KP, I do look forward to seeing your design;
+> > however, having code signing proposals where the capabilities are
+> > dictated from above and any dissent is dismissed as "you're doing it
+> > wrong" isn't going to be helpful to anyone that needs to use this in
+> > practice.
+>
+> Please don't misrepresent the facts ...
 
-siw_mem_add() was added in 2019 by
-commit 2251334dcac9 ("rdma/siw: application buffer management")
-but has remained unused.
+KP, I believe the most constructive thing at this point is to share
+your design idea with this thread as previously requested so everyone
+can review it.  We can continue to argue about how we got to where we
+are at if you like, but that isn't likely to help us move towards a
+solution.  If you are unable to share your design idea, either in a
+couple of paragraphs or in some form of PoC, please let us know.
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/infiniband/sw/siw/siw_mem.c | 24 ------------------------
- drivers/infiniband/sw/siw/siw_mem.h |  1 -
- 2 files changed, 25 deletions(-)
-
-diff --git a/drivers/infiniband/sw/siw/siw_mem.c b/drivers/infiniband/sw/siw/siw_mem.c
-index dcb963607c8b..ac943474d797 100644
---- a/drivers/infiniband/sw/siw/siw_mem.c
-+++ b/drivers/infiniband/sw/siw/siw_mem.c
-@@ -17,30 +17,6 @@
- /* Stag lookup is based on its index part only (24 bits). */
- #define SIW_STAG_MAX_INDEX	0x00ffffff
- 
--/*
-- * The code avoids special Stag of zero and tries to randomize
-- * STag values between 1 and SIW_STAG_MAX_INDEX.
-- */
--int siw_mem_add(struct siw_device *sdev, struct siw_mem *m)
--{
--	struct xa_limit limit = XA_LIMIT(1, SIW_STAG_MAX_INDEX);
--	u32 id, next;
--
--	get_random_bytes(&next, 4);
--	next &= SIW_STAG_MAX_INDEX;
--
--	if (xa_alloc_cyclic(&sdev->mem_xa, &id, m, limit, &next,
--	    GFP_KERNEL) < 0)
--		return -ENOMEM;
--
--	/* Set the STag index part */
--	m->stag = id << 8;
--
--	siw_dbg_mem(m, "new MEM object\n");
--
--	return 0;
--}
--
- /*
-  * siw_mem_id2obj()
-  *
-diff --git a/drivers/infiniband/sw/siw/siw_mem.h b/drivers/infiniband/sw/siw/siw_mem.h
-index e74cfcd6dbc1..8e769d30e2ac 100644
---- a/drivers/infiniband/sw/siw/siw_mem.h
-+++ b/drivers/infiniband/sw/siw/siw_mem.h
-@@ -12,7 +12,6 @@ void siw_umem_release(struct siw_umem *umem);
- struct siw_pbl *siw_pbl_alloc(u32 num_buf);
- dma_addr_t siw_pbl_get_buffer(struct siw_pbl *pbl, u64 off, int *len, int *idx);
- struct siw_mem *siw_mem_id2obj(struct siw_device *sdev, int stag_index);
--int siw_mem_add(struct siw_device *sdev, struct siw_mem *m);
- int siw_invalidate_stag(struct ib_pd *pd, u32 stag);
- int siw_check_mem(struct ib_pd *pd, struct siw_mem *mem, u64 addr,
- 		  enum ib_access_flags perms, int len);
--- 
-2.49.0
-
+--=20
+paul-moore.com
 
