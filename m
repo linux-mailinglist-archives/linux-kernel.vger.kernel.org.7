@@ -1,191 +1,169 @@
-Return-Path: <linux-kernel+bounces-631740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F38AA8CCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:05:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3F6AA8DBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A91D3B4490
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:05:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9EAF168D3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E051F55FB;
-	Mon,  5 May 2025 07:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258194A29;
+	Mon,  5 May 2025 08:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udIyTs1j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="cK9noqLn"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D7B1F4C8A;
-	Mon,  5 May 2025 07:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB081DF733;
+	Mon,  5 May 2025 08:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746428558; cv=none; b=K9PqOFwzWxOalEnbu6uJK0xhYtjEw6nzYSgSQQwsg7Tgn83ksalhp0NqGFjT/OeVdIrAC27TRBf8KVlPag0qF4PHZVQEG1E7Wnbi76JrwoRaB4I6txG97C3LqVQKOtv81KUB7VBMF4/+9fcERTXMMdySMK6I7cSQPigqk+iPyCo=
+	t=1746432007; cv=none; b=bW/H0X0lSSRD5pd4sqrHUXAGFpDAntvFwkt+KnljIKAZ3eLyPhSw+GmIf/kNo985CIH+Gpxbp80dzBJfDhmJlAVAlF0TotrRXlR7HgWAWNTal/WqAxG2Co/INCo37Cs5utKIyRBZuwkIiGCG9OL+eWy/oqvB0MnOx5/V/M2Zf8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746428558; c=relaxed/simple;
-	bh=d1+z79zg+kihe5QDvuiZPuBTqwMqD9eJrziwPARATZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HfvIs/uUAdqD/dz/m/Emmc/NnoUCypT3XeHf6PV3eyA2CULIqoA+PIWlooQO+jM0ZcqPZmlIGAM7qSIDdJ8VkOFvmPOt6hBnBNv6bqPLfHaONCB7BlDw7gDB5U7j1uWWhLzNRHhThUA2PJuJbcci/jgCuDaIQ+5+vVfVZiY2b7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udIyTs1j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA5DBC4CEE4;
-	Mon,  5 May 2025 07:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746428557;
-	bh=d1+z79zg+kihe5QDvuiZPuBTqwMqD9eJrziwPARATZw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=udIyTs1jU0xkkPO2JwNPXSUyJHDJzOGOAJqZEBd18QourGwZw+baXEZ9gTe8BJ0EJ
-	 DKGtIef9GidDihg430dzb3TV4U9nSk0oH0fWDOqZMUUied876JK1wN1He2oUOPQ9+s
-	 4talNO552304u79Njy1LPb0QYEBAPSm4JRnjt0U38ZXHn3uQXTkQ6SLZmvo5VPfcSN
-	 4oQb+HpClX6Qepsm/ir1G8Cf48WpHUEF6GV/yNoKGVauQurcR8AKjzjpLESRp4OM8E
-	 eFEoy59bj9uf5LIDs5y+12okk38f0cZDP+qoR+lYvzBX1noadVlU3+zY/zH2A2FB5S
-	 5rtZiYk4O/uXQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: 
-Cc: Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>,
-	Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: [PATCH v11 9/9] docs: core-api: document the IOVA-based API
-Date: Mon,  5 May 2025 10:01:46 +0300
-Message-ID: <a3a7009a0b75b4087e9edc903f6dc3ed3ff5a0a1.1746424934.git.leon@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1746424934.git.leon@kernel.org>
-References: <cover.1746424934.git.leon@kernel.org>
+	s=arc-20240116; t=1746432007; c=relaxed/simple;
+	bh=yDPy55Cf9Zyk4amT2UFhvK6TEYzPakN4rmyC6eHpXpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NObYbh237zZmdm9cwbz7KqTpTe8P8vzL2P3047XLYNA6UfQmAbw6vZ55T3zUIlcAyhNQguXVW2LS3bxJNpmhhrJcl4UQM2oIJ99/GZiMKYJ9NDniYJnzzVEfY/Y5+YKaK1lubpmuZYZ6cpvZhfk8VL7wgu4nZxN5EvqQHQl9F34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=cK9noqLn; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FWcMhUUAD341x1j4p0TzxNBabdUQcp6F1O3NT2s7Z9I=; b=cK9noqLnLdYH8B5aHwnOVCr3N8
+	aFx1PhEY/AeDmgx30074nqdwSaV2O3JlovBwN6qZ/ncicaMyCEmmS5VH5ez+VuFKd6PT0O1dadn2r
+	wSLeCT/LpfhW2+tGGAd1OHXe6ZHyqa/nGbiRAfRLHCReM+BqRN7kELFx9302k1TmN7zG74MGAjvQS
+	fTQElveeg8b8N6vHKjQVnWT6esJW1+jbbFhJiNuPJfxizo4WtlSeFARU7XnwbnNBrZ7HXJbQArCez
+	rVvQHu/zsoCp0KQ0De/EW7oY711Av6tuCj9lf5vm3d9s6HYfNWrpdq+WpN9MUeeC+mTEiWxp/EEzO
+	zNzibs3g==;
+Received: from [89.212.21.243] (port=58904 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1uBpsB-00BenA-24;
+	Mon, 05 May 2025 09:04:18 +0200
+Message-ID: <282a7e41-97f8-4fd4-9f03-29f70acc4df2@norik.com>
+Date: Mon, 5 May 2025 09:04:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Upstream] [PATCH 2/2] arm64: dts: freescale: Add PHYTEC
+ phyBOARD-Nash-i.MX93 support
+To: Wadim Egorov <w.egorov@phytec.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ upstream@lists.phytec.de
+References: <20250425064107.174548-1-primoz.fiser@norik.com>
+ <20250425064107.174548-2-primoz.fiser@norik.com>
+ <000c1117-81d1-4a74-9d36-f83a2b0fedd3@phytec.de>
+Content-Language: en-US
+From: Primoz Fiser <primoz.fiser@norik.com>
+Autocrypt: addr=primoz.fiser@norik.com; keydata=
+ xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
+ JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
+ ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
+ gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
+ jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
+ 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
+ TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
+ AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
+Organization: Norik systems d.o.o.
+In-Reply-To: <000c1117-81d1-4a74-9d36-f83a2b0fedd3@phytec.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Christoph Hellwig <hch@lst.de>
+Hi Wadim,
 
-Add an explanation of the newly added IOVA-based mapping API.
+On 28. 04. 25 16:31, Wadim Egorov wrote:
+> Hi Primoz,
+> 
+> a few of the node references you are adding are out of alphabetical order.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Tested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- Documentation/core-api/dma-api.rst | 71 ++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+Only &mdio node is out of alphabetical order.
 
-diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api/dma-api.rst
-index 8e3cce3d0a23..2ad08517e626 100644
---- a/Documentation/core-api/dma-api.rst
-+++ b/Documentation/core-api/dma-api.rst
-@@ -530,6 +530,77 @@ routines, e.g.:::
- 		....
- 	}
- 
-+Part Ie - IOVA-based DMA mappings
-+---------------------------------
-+
-+These APIs allow a very efficient mapping when using an IOMMU.  They are an
-+optional path that requires extra code and are only recommended for drivers
-+where DMA mapping performance, or the space usage for storing the DMA addresses
-+matter.  All the considerations from the previous section apply here as well.
-+
-+::
-+
-+    bool dma_iova_try_alloc(struct device *dev, struct dma_iova_state *state,
-+		phys_addr_t phys, size_t size);
-+
-+Is used to try to allocate IOVA space for mapping operation.  If it returns
-+false this API can't be used for the given device and the normal streaming
-+DMA mapping API should be used.  The ``struct dma_iova_state`` is allocated
-+by the driver and must be kept around until unmap time.
-+
-+::
-+
-+    static inline bool dma_use_iova(struct dma_iova_state *state)
-+
-+Can be used by the driver to check if the IOVA-based API is used after a
-+call to dma_iova_try_alloc.  This can be useful in the unmap path.
-+
-+::
-+
-+    int dma_iova_link(struct device *dev, struct dma_iova_state *state,
-+		phys_addr_t phys, size_t offset, size_t size,
-+		enum dma_data_direction dir, unsigned long attrs);
-+
-+Is used to link ranges to the IOVA previously allocated.  The start of all
-+but the first call to dma_iova_link for a given state must be aligned
-+to the DMA merge boundary returned by ``dma_get_merge_boundary())``, and
-+the size of all but the last range must be aligned to the DMA merge boundary
-+as well.
-+
-+::
-+
-+    int dma_iova_sync(struct device *dev, struct dma_iova_state *state,
-+		size_t offset, size_t size);
-+
-+Must be called to sync the IOMMU page tables for IOVA-range mapped by one or
-+more calls to ``dma_iova_link()``.
-+
-+For drivers that use a one-shot mapping, all ranges can be unmapped and the
-+IOVA freed by calling:
-+
-+::
-+
-+   void dma_iova_destroy(struct device *dev, struct dma_iova_state *state,
-+		size_t mapped_len, enum dma_data_direction dir,
-+                unsigned long attrs);
-+
-+Alternatively drivers can dynamically manage the IOVA space by unmapping
-+and mapping individual regions.  In that case
-+
-+::
-+
-+    void dma_iova_unlink(struct device *dev, struct dma_iova_state *state,
-+		size_t offset, size_t size, enum dma_data_direction dir,
-+		unsigned long attrs);
-+
-+is used to unmap a range previously mapped, and
-+
-+::
-+
-+   void dma_iova_free(struct device *dev, struct dma_iova_state *state);
-+
-+is used to free the IOVA space.  All regions must have been unmapped using
-+``dma_iova_unlink()`` before calling ``dma_iova_free()``.
- 
- Part II - Non-coherent DMA allocations
- --------------------------------------
+But this is done by choice to keep it together with &eqos node since
+both nodes are related to the 2nd Ethernet interface (&ethphy2) and thus
+kept logically with each other.
+
+We did the same for phyBOARD-Segin-i.MX93.
+
+> 
+> Am 25.04.25 um 09:41 schrieb Primoz Fiser:
+>> Add initial support for PHYTEC phyBOARD-Nash-i.MX93 board [1] based on
+>> the PHYTEC phyCORE-i.MX93 SoM (System-on-Module) [2].
+>>
+>> Supported board features:
+>>   * ADC
+>>   * CAN
+>>   * Ethernet 2x
+>>   * EEPROM
+>>   * eMMC
+>>   * Heartbeat LED
+>>   * RTC
+> 
+> eMMC and Hearbeat LED are not board features but SoM features.
+
+That's true.
+
+I will remove those from the list in v2 and only list carrier-board
+features.
+
+BR,
+Primoz
+
+> 
+>>   * RS-232/RS-485
+>>   * SD-card
+>>   * TPM 2.0
+>>   * USB
+>>
+>> For more details see the product pages for the development kit and the
+>> SoM:
+>>
+>> [1] https://www.phytec.eu/en/produkte/development-kits/phyboard-nash/
+>> [2]
+>> https://www.phytec.eu/en/produkte/system-on-modules/phycore-imx-91-93/
+>>
+>> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> 
+> With that changed,
+> 
+> Reviewed-by: Wadim Egorov <w.egorov@phytec.de>
+> 
+
 -- 
-2.49.0
-
+Primoz Fiser
+phone: +386-41-390-545
+email: primoz.fiser@norik.com
+--
+Norik systems d.o.o.
+Your embedded software partner
+Slovenia, EU
+phone: +386-41-540-545
+email: info@norik.com
 
