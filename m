@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-634008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61F6AAAF27
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:11:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B514AAAF3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55673169776
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:09:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABE71A827A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94083394A2C;
-	Mon,  5 May 2025 23:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5F63AE5E5;
+	Mon,  5 May 2025 23:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvfEeqKP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAyRMsj8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA0035D7BB;
-	Mon,  5 May 2025 23:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4C639526D;
+	Mon,  5 May 2025 23:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486264; cv=none; b=Dy+E80O54LeIg+UJ+Wxt+JzMqQ2YEmZL77uxKd9hQ7Ue+mS97YYAdS7oo7ejOW2PS+uVLUq+GH5xcpAvb6yNxETNVCdCxkEmrbkWICkqhqOxgL+UpMmDi9aZ5h/0kBmT6TCx+KjO4mfzL5qigbzQDl39JiiT/s1qe9FNBYP8d0E=
+	t=1746486269; cv=none; b=CyML+69CgTOTSEUqnQ+3KZsaifdIT2QcoJzFmqQOEMX6vUxcPffWD4yYSuaUhO0Z0aCzJ7MOLCe41/OpKD4YANWOJsKQJAPguqFL9xokD8p+YK65DHfW5j39lGwN++vzcnPR1j6okcoQXlL9iyt2Oc8UButfCBTu3XWtmKCXGQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486264; c=relaxed/simple;
-	bh=GDlPJhMl4gn4aKlKaypOgYKBK02KYaGy2G5M0NzjaMQ=;
+	s=arc-20240116; t=1746486269; c=relaxed/simple;
+	bh=CeU6s5BbPhsa/BxUt2Sys/rxJHd55eFqxtKzORCPOkc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hvFG03EKlr7LU90BPLw/hIRY77qjxTRLNgdNsSh5suocc+yqjJAKQ6ZAsd7WcrBmy0Ef6UVwuiX2K5v+l3h2VF8S8NK4ri17t7d+B+SMGytUNumwn0V1GghWhP84zeQXKoZCgPLejQGvbmedzcJFu+igIzkCkXIMgT+tPKIC7Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvfEeqKP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2263BC4CEE4;
-	Mon,  5 May 2025 23:04:22 +0000 (UTC)
+	 MIME-Version; b=D+uv04WIP0PDzFTuUjGz7xoVXM4s7W/WjiaDEMzuBdGFalk2TR53Vb/sWEFJMaFtvOJ2hmc2znYQuaLj9klGLE62paypAPy3q8IYISOPtd8zX1r4uPhornq+s+LCFbOfUhQhsgbdFTvCShASmnE0PZxZxk0GUSbYhdw4A/+vuzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAyRMsj8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C25DC4CEE4;
+	Mon,  5 May 2025 23:04:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486263;
-	bh=GDlPJhMl4gn4aKlKaypOgYKBK02KYaGy2G5M0NzjaMQ=;
+	s=k20201202; t=1746486267;
+	bh=CeU6s5BbPhsa/BxUt2Sys/rxJHd55eFqxtKzORCPOkc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nvfEeqKPDWdwcu44QB8fDrPAOsnAhr16LbMhfalB2L/2lb6tzWIB796j9exkvWfMj
-	 pWpVHiGiZugpR5trLBKzHeRVcH9XsYUK/9SlUFE/ZNvedvRWO1Hg2DJNXIlvnETc3J
-	 gFEsJXjpMOECbsLy5me5fURPbOQvl92Wb5lSL9rSBhR5DkTt529AnTPnysmW5WE4fi
-	 bTQqKazAcRdDoCpUkqkSQOAqA5jkgnrYHOfMJ6uTZJsnO9cRue5kBR6a76uFNRdWbx
-	 qTEsdoOoMY2II05VJs8+9YYEtQkOnH+GP2ZlNE/fjeDcXv+//EdoW6KFprc5Oer9ON
-	 TusdXQAHZmltg==
+	b=DAyRMsj8Fpg62uTdcG1B2Oiy8WEhxgTQfFQu+vZJWxVUIoTckiM2kVDBbHNu7kIve
+	 wIWH4jCyC8NE6Cir4FUphC77+up15yIUjeSca7PYrZd9wSRUEiffHTtbqUk9/Nc0qE
+	 9AfqAolcPmMlAQtdQSVLudQMUDzzn89a6ySGtaymmH3IOopQrDUAx1KpTZd1BHi4Pa
+	 jcgjSUYBO0DT4QF9Ggw3ddkHzV4GMY6LdHaEQtuQuoHZErfPulTu4aoG0ZdcuVFTzR
+	 iacTk7nMb4snLkkDNhgW6pAdeZfveCwRjrgX862GgU7YzMMcXnq8MmzXqhaI64Z1qU
+	 E3sqxlx8MaYlw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -50,11 +50,18 @@ Cc: Alex Deucher <alexander.deucher@amd.com>,
 	christian.koenig@amd.com,
 	airlied@gmail.com,
 	simona@ffwll.ch,
+	mario.limonciello@amd.com,
+	alex.hung@amd.com,
+	chiahsuan.chung@amd.com,
+	sunil.khatri@amd.com,
+	aurabindo.pillai@amd.com,
+	Yilin.Chen@amd.com,
+	mwen@igalia.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 229/294] drm/amd/display/dc: enable oem i2c support for DCE 12.x
-Date: Mon,  5 May 2025 18:55:29 -0400
-Message-Id: <20250505225634.2688578-229-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 230/294] drm/amd/display/dm: drop hw_support check in amdgpu_dm_i2c_xfer()
+Date: Mon,  5 May 2025 18:55:30 -0400
+Message-Id: <20250505225634.2688578-230-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -71,66 +78,30 @@ Content-Transfer-Encoding: 8bit
 
 From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 2ed83f2cc41e8f7ced1c0610ec2b0821c5522ed5 ]
+[ Upstream commit 33da70bd1e115d7d73f45fb1c09f5ecc448f3f13 ]
 
-Use the value pulled from the vbios just like newer chips.
+DC supports SW i2c as well.  Drop the check.
 
 Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../drm/amd/display/dc/dce120/dce120_resource.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c b/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-index 18c5a86d2d614..21f10fd8e7025 100644
---- a/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-@@ -67,6 +67,7 @@
- #include "reg_helper.h"
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index e6bc590533194..877cc70ae1e79 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -7468,7 +7468,7 @@ static int amdgpu_dm_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 	int i;
+ 	int result = -EIO;
  
- #include "dce100/dce100_resource.h"
-+#include "link.h"
+-	if (!ddc_service->ddc_pin || !ddc_service->ddc_pin->hw_info.hw_supported)
++	if (!ddc_service->ddc_pin)
+ 		return result;
  
- #ifndef mmDP0_DP_DPHY_INTERNAL_CTRL
- 	#define mmDP0_DP_DPHY_INTERNAL_CTRL		0x210f
-@@ -659,6 +660,12 @@ static void dce120_resource_destruct(struct dce110_resource_pool *pool)
- 
- 	if (pool->base.dmcu != NULL)
- 		dce_dmcu_destroy(&pool->base.dmcu);
-+
-+	if (pool->base.oem_device != NULL) {
-+		struct dc *dc = pool->base.oem_device->ctx->dc;
-+
-+		dc->link_srv->destroy_ddc_service(&pool->base.oem_device);
-+	}
- }
- 
- static void read_dce_straps(
-@@ -1054,6 +1061,7 @@ static bool dce120_resource_construct(
- 	struct dc *dc,
- 	struct dce110_resource_pool *pool)
- {
-+	struct ddc_service_init_data ddc_init_data = {0};
- 	unsigned int i;
- 	int j;
- 	struct dc_context *ctx = dc->ctx;
-@@ -1257,6 +1265,15 @@ static bool dce120_resource_construct(
- 
- 	bw_calcs_data_update_from_pplib(dc);
- 
-+	if (dc->ctx->dc_bios->fw_info.oem_i2c_present) {
-+		ddc_init_data.ctx = dc->ctx;
-+		ddc_init_data.link = NULL;
-+		ddc_init_data.id.id = dc->ctx->dc_bios->fw_info.oem_i2c_obj_id;
-+		ddc_init_data.id.enum_id = 0;
-+		ddc_init_data.id.type = OBJECT_TYPE_GENERIC;
-+		pool->base.oem_device = dc->link_srv->create_ddc_service(&ddc_init_data);
-+	}
-+
- 	return true;
- 
- irqs_create_fail:
+ 	cmd.payloads = kcalloc(num, sizeof(struct i2c_payload), GFP_KERNEL);
 -- 
 2.39.5
 
