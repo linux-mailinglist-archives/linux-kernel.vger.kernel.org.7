@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-634750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85795AAB42D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1183DAAB441
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A9B189D561
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B933AB876
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7CD472DE0;
-	Tue,  6 May 2025 00:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F014382520;
+	Tue,  6 May 2025 00:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMrHudWy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOwGeF3Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C372ED085;
-	Mon,  5 May 2025 23:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0BF381E09;
+	Mon,  5 May 2025 23:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486557; cv=none; b=cNDlgznWCDJ8v/d/hUZYqrOfHGHfT4ORd+KRWQ0F21g23NxGTTORAWFe6hmot6Ggp7Vs81H5ZLO850U0Q66XIlRgrPCpC3+5UW4wrCenSqYvaUmVnk6lXwmXkjjH5kXzu5JsyDbcKy7yXebJ79L5yABvGovGSKWfXyJvfG1nW78=
+	t=1746486574; cv=none; b=S/0gGQPjckHQ139zx4ykH4i5lJ5V0PemD5x0sk6yguxGZVc68tjWazzWb0oP2QTQPSXm5bwoD/MqoToA8L3Ahg8889LOc5AahxxIpJ9iCcy/iLAh3YqPni1q2GoblJJQyTuSyZFlRaqhLGwPKN1ZN0Ek2N6o1hElOM4ZPz+XisA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486557; c=relaxed/simple;
-	bh=M57+MGIitVlZ7L9cTp3dvP1dnfas3v/3MLvR3vJ6H/c=;
+	s=arc-20240116; t=1746486574; c=relaxed/simple;
+	bh=oyX9/AfUmDocp/oR7Rh75st60106+lIgEOrpdFkt5mo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NEFM3QgMioD2LPrVdhB62LEhga0R5cxl5eBFRck5tSdTVu26NUT6okfDmkEYtg+50cWWFknYdPwwXt7BbigKie9aULKIJf8CiHERfLSYy6NknhWu+g9QMQJKT+8Qvy57HIoCgaEl04hGIqbAsLdK5IBKqPTcWDWt1adxpSEZdiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMrHudWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23CC2C4CEEF;
-	Mon,  5 May 2025 23:09:16 +0000 (UTC)
+	 MIME-Version; b=iXkZ1WN2ayqYHwndUP3lungFDATRaQxl5VvoGAbrletK0d2F6moqRodeVhWrA9Gqxb9prjxZ2ECL3V+AcVOlzROsz+HBo8X2RbIVIZ+6HTDnPNumERf5KVtp9PEabDBNAKcLyiGVJuYvz6L/hPSIcHZYHndoXaPw6zT8sReL/3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOwGeF3Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3997C4CEF2;
+	Mon,  5 May 2025 23:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486557;
-	bh=M57+MGIitVlZ7L9cTp3dvP1dnfas3v/3MLvR3vJ6H/c=;
+	s=k20201202; t=1746486573;
+	bh=oyX9/AfUmDocp/oR7Rh75st60106+lIgEOrpdFkt5mo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NMrHudWygExBWmv6CFxQA2cR34+ZrxyOt1+m+c4AZ0NYFeOQFe7Hj6IS8RoDI2sR6
-	 TYH+EtQSnjJtn4wV3iC++N3en86r7GzbwZdIjmxYmxK0pMby5OTkr2LqKnbrr+L8Ew
-	 yScyTMJHLYC0CbXiW2d9KAg7mjTl7y5174SCVg9BIDp7j5hYhcJ4D5b8SbQ1UsoybI
-	 jBot2Y6Sth067esdBfpvhOcTnZzwNHwRkZYgHGBa81lpgS/AG+1/PodEa+YeVGSnRt
-	 dWmxxFQK3vQF2dbpE3mkJEV9BEeY23HmcLPJP0VVuAGMazgzQKV2Hcqrmw1z1qz5Eu
-	 yynhJyGvZeFVw==
+	b=dOwGeF3QkiE1hUDtBWkQo05PmGZzjU94CVakPAxAQykQuLoFoElCHAwE1djqx2xVm
+	 PQ0xqLx4a8ncX/N9Ej9onrlZIAmThnPDhFvQlD62JNKQZYAAKN3+Eji43flu6CUHC1
+	 xMbN7L3ofklBiO7ZJCX9FesM1WGLWZmW3CdfIWlj4hxKyeF24ssNWJhKDvC43mLOVm
+	 Jx1371zPZc5wQLey/7loK+ndN84AuBkGgtj4cezqoxBMHniMr2GsMCTX/KLFhW4twq
+	 WU9vmhq9Sk2f6kaDRK+FOGUc3ULN7idPR2/ZVfSfv2jBUJvhSjj42y2rXljZ5iG97r
+	 UWvRNJ0dy9txA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Saket Kumar Bhaskar <skb99@linux.ibm.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Ian Rogers <irogers@google.com>,
+	Frederic Weisbecker <fweisbec@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux@armlinux.org.uk,
-	andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 090/212] net: phylink: use pl->link_interface in phylink_expects_phy()
-Date: Mon,  5 May 2025 19:04:22 -0400
-Message-Id: <20250505230624.2692522-90-sashal@kernel.org>
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 097/212] perf/hw_breakpoint: Return EOPNOTSUPP for unsupported breakpoint type
+Date: Mon,  5 May 2025 19:04:29 -0400
+Message-Id: <20250505230624.2692522-97-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -71,57 +72,52 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
 
-[ Upstream commit b63263555eaafbf9ab1a82f2020bbee872d83759 ]
+[ Upstream commit 061c991697062f3bf87b72ed553d1d33a0e370dd ]
 
-The phylink_expects_phy() function allows MAC drivers to check if they are
-expecting a PHY to attach. The checking condition in phylink_expects_phy()
-aims to achieve the same result as the checking condition in
-phylink_attach_phy().
+Currently, __reserve_bp_slot() returns -ENOSPC for unsupported
+breakpoint types on the architecture. For example, powerpc
+does not support hardware instruction breakpoints. This causes
+the perf_skip BPF selftest to fail, as neither ENOENT nor
+EOPNOTSUPP is returned by perf_event_open for unsupported
+breakpoint types. As a result, the test that should be skipped
+for this arch is not correctly identified.
 
-However, the checking condition in phylink_expects_phy() uses
-pl->link_config.interface, while phylink_attach_phy() uses
-pl->link_interface.
+To resolve this, hw_breakpoint_event_init() should exit early by
+checking for unsupported breakpoint types using
+hw_breakpoint_slots_cached() and return the appropriate error
+(-EOPNOTSUPP).
 
-Initially, both pl->link_interface and pl->link_config.interface are set
-to SGMII, and pl->cfg_link_an_mode is set to MLO_AN_INBAND.
-
-When the interface switches from SGMII to 2500BASE-X,
-pl->link_config.interface is updated by phylink_major_config().
-At this point, pl->cfg_link_an_mode remains MLO_AN_INBAND, and
-pl->link_config.interface is set to 2500BASE-X.
-Subsequently, when the STMMAC interface is taken down
-administratively and brought back up, it is blocked by
-phylink_expects_phy().
-
-Since phylink_expects_phy() and phylink_attach_phy() aim to achieve the
-same result, phylink_expects_phy() should check pl->link_interface,
-which never changes, instead of pl->link_config.interface, which is
-updated by phylink_major_config().
-
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Link: https://patch.msgid.link/20250227121522.1802832-2-yong.liang.choong@linux.intel.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Link: https://lore.kernel.org/r/20250303092451.1862862-1-skb99@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phylink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/hw_breakpoint.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index fc58e4afb38dd..3069a7df25d3f 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -1566,7 +1566,7 @@ bool phylink_expects_phy(struct phylink *pl)
- {
- 	if (pl->cfg_link_an_mode == MLO_AN_FIXED ||
- 	    (pl->cfg_link_an_mode == MLO_AN_INBAND &&
--	     phy_interface_mode_is_8023z(pl->link_config.interface)))
-+	     phy_interface_mode_is_8023z(pl->link_interface)))
- 		return false;
- 	return true;
- }
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index c3797701339cb..382a3b04f6d33 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -978,9 +978,10 @@ static int hw_breakpoint_event_init(struct perf_event *bp)
+ 		return -ENOENT;
+ 
+ 	/*
+-	 * no branch sampling for breakpoint events
++	 * Check if breakpoint type is supported before proceeding.
++	 * Also, no branch sampling for breakpoint events.
+ 	 */
+-	if (has_branch_stack(bp))
++	if (!hw_breakpoint_slots_cached(find_slot_idx(bp->attr.bp_type)) || has_branch_stack(bp))
+ 		return -EOPNOTSUPP;
+ 
+ 	err = register_perf_hw_breakpoint(bp);
 -- 
 2.39.5
 
