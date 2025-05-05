@@ -1,61 +1,55 @@
-Return-Path: <linux-kernel+bounces-633825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6801AAAA00
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:26:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB62BAAAA2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FEF164D4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750A6188DC96
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B3137BE08;
-	Mon,  5 May 2025 22:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6889376448;
+	Mon,  5 May 2025 22:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cv6slrQ3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVInQ4E1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4BE27F4C9;
-	Mon,  5 May 2025 22:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9739376455;
+	Mon,  5 May 2025 22:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485272; cv=none; b=Vv7JigB5GsPMeqm705mbLKaTMa6R3Rznjaa1x4I5h9pt3csdOdSjZDoMzBODJzAh64Ysii3RUtAIU9LYgwYHk5ySGCFugPhqDp7kMjDh+lqeuHaUf955LPII3DEAx3zow9Mlfqnnd4kU72fEi4zAQEdIkBVU/9HlstZ7b/4Uj2Y=
+	t=1746485334; cv=none; b=eKDQaS0xO8xQT1O5AgRIkyTK0Z+MlNcbniIR0To7THVn7FS62qPrvaBP3vKR7VvUuHtv7j3s6NwHqb0TvZ6w2ViAru4tvG6wrEXnnsTrGrduLZLnA9psZpbQhKNhQMqxIxf9iuKkjB5TsVMsBl/r9mYUsK/Io1Eu6f7Nc8Uv7VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485272; c=relaxed/simple;
-	bh=/SHsAolBGXlNCIBtpLLAkQTtEBGdSSCB4TNjucA5LtI=;
+	s=arc-20240116; t=1746485334; c=relaxed/simple;
+	bh=Cj9pz82UZuBAlcuouMBtIXCTLWVIoxB9T79RQmp21IU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LthaRu5ZEElFKvKjqvWQO12srOQd5phRX/FwcKLeq49G1MS3MmZcUDLRe3vwNAeNMGCR2+GKhWSSN9zjwJbRPfbbB2wOXARSYPQ6Ovq3xoZdd7T77UzoPTHgza3PBdK/MqjvPfabXBEoKqiOnnFKXvJOvFubHboQ9ECgy2QC+Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cv6slrQ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D114C19423;
-	Mon,  5 May 2025 22:47:51 +0000 (UTC)
+	 MIME-Version; b=MK6uxk3zzp+mmKaqf8F6LS4Lja5S1U+LPJkC2p7YA8dcGNfxVla486WHl9w2xpcDG3J1tuXjw5ynX3nRt9PWprFgprT5d/xDnuRBX1ijuYgBt8Y28wU80tuv5BH9i09cV9cZe6nHyISiPFshEfrP57ZFeRWhZEj8zvMqgNJ5SAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVInQ4E1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0250C4CEEE;
+	Mon,  5 May 2025 22:48:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485272;
-	bh=/SHsAolBGXlNCIBtpLLAkQTtEBGdSSCB4TNjucA5LtI=;
+	s=k20201202; t=1746485333;
+	bh=Cj9pz82UZuBAlcuouMBtIXCTLWVIoxB9T79RQmp21IU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cv6slrQ31+e0FE06qHUCG/FgxHzUDzcCAV8tPvtQCelkqenByLVu2BMn0U0zBSnbh
-	 zGDWJZ+Fjjv0PxM6a0tYEzGdUPVvyOopwMrZOr8bMUTMx+0UILy20EmbeFHm3C8n69
-	 tnPEFXZ3b18he1whtpO2jZ1ubl1gE2oc6yKhP+jPFhdPvUohxQTocA/VoFoYu/ZxQz
-	 8po2zWXo1i4zgxj7PNRpaZEwkesb8TlcQ7ekLeh4mV78e7knnj28lv5on8afebzY1z
-	 ylgUusNniBr3vFl1YTXn3k+qx5yJ4P2eXXo9cq/u+usrC4Tw03qKH7ZZguZ1EIZVjj
-	 ui+JgvBhsAVNg==
+	b=YVInQ4E1jUjIjDkbNLQaKB79+JBXnKapoGDrQntK7DQMjb/gklCb7DezrqW7X/aL0
+	 akzwEztXgCSW++JLzamG1AqoPCYSCoeNHzB+2dqwA+Jw5jgZtIqrHWTccGGjb+kqhy
+	 a0WlW3ILG5Zm2njrBQ4+f6j1jjFZL065+AF20TM0HE8Ky6ifb8JmbUS6+aLcvF0De7
+	 iPfcrRdd/ROkj452mK7ZbylyqSRvnvt3CnwvVdKtp4ALzA9MJ3/wYNzNxxc9eyyF0g
+	 D37CkhsVEeqZltFERXrujYNSEwqG7s7sFOjfZTCVXM92J4Or8ngCe1F8mJPXAsewg4
+	 huwS0T5eSyb+A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Hangbin Liu <liuhangbin@gmail.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
 	Sasha Levin <sashal@kernel.org>,
-	jv@jvosburgh.net,
-	andrew+netdev@lunn.ch,
 	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 246/486] bonding: report duplicate MAC address in all situations
-Date: Mon,  5 May 2025 18:35:22 -0400
-Message-Id: <20250505223922.2682012-246-sashal@kernel.org>
+	linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 272/486] crypto: ahash - Set default reqsize from ahash_alg
+Date: Mon,  5 May 2025 18:35:48 -0400
+Message-Id: <20250505223922.2682012-272-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -65,48 +59,69 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-[ Upstream commit 28d68d396a1cd21591e8c6d74afbde33a7ea107e ]
+[ Upstream commit 9e01aaa1033d6e40f8d7cf4f20931a61ce9e3f04 ]
 
-Normally, a bond uses the MAC address of the first added slave as the bond’s
-MAC address. And the bond will set active slave’s MAC address to bond’s
-address if fail_over_mac is set to none (0) or follow (2).
+Add a reqsize field to struct ahash_alg and use it to set the
+default reqsize so that algorithms with a static reqsize are
+not forced to create an init_tfm function.
 
-When the first slave is removed, the bond will still use the removed slave’s
-MAC address, which can lead to a duplicate MAC address and potentially cause
-issues with the switch. To avoid confusion, let's warn the user in all
-situations, including when fail_over_mac is set to 2 or not in active-backup
-mode.
-
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
-Link: https://patch.msgid.link/20250225033914.18617-1-liuhangbin@gmail.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/ahash.c        | 4 ++++
+ include/crypto/hash.h | 3 +++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 4d73abae503d1..4d2e30f4ee250 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -2542,7 +2542,7 @@ static int __bond_release_one(struct net_device *bond_dev,
+diff --git a/crypto/ahash.c b/crypto/ahash.c
+index bcd9de009a91b..fe19bf7f15eb9 100644
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -473,6 +473,7 @@ static int crypto_ahash_init_tfm(struct crypto_tfm *tfm)
+ 	struct ahash_alg *alg = crypto_ahash_alg(hash);
  
- 	RCU_INIT_POINTER(bond->current_arp_slave, NULL);
+ 	crypto_ahash_set_statesize(hash, alg->halg.statesize);
++	crypto_ahash_set_reqsize(hash, alg->reqsize);
  
--	if (!all && (!bond->params.fail_over_mac ||
-+	if (!all && (bond->params.fail_over_mac != BOND_FOM_ACTIVE ||
- 		     BOND_MODE(bond) != BOND_MODE_ACTIVEBACKUP)) {
- 		if (ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
- 		    bond_has_slaves(bond))
+ 	if (tfm->__crt_alg->cra_type == &crypto_shash_type)
+ 		return crypto_init_ahash_using_shash(tfm);
+@@ -638,6 +639,9 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
+ 	if (alg->halg.statesize == 0)
+ 		return -EINVAL;
+ 
++	if (alg->reqsize && alg->reqsize < alg->halg.statesize)
++		return -EINVAL;
++
+ 	err = hash_prepare_alg(&alg->halg);
+ 	if (err)
+ 		return err;
+diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+index 2d5ea9f9ff43e..6692253f0b5be 100644
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -132,6 +132,7 @@ struct ahash_request {
+  *	      This is a counterpart to @init_tfm, used to remove
+  *	      various changes set in @init_tfm.
+  * @clone_tfm: Copy transform into new object, may allocate memory.
++ * @reqsize: Size of the request context.
+  * @halg: see struct hash_alg_common
+  */
+ struct ahash_alg {
+@@ -148,6 +149,8 @@ struct ahash_alg {
+ 	void (*exit_tfm)(struct crypto_ahash *tfm);
+ 	int (*clone_tfm)(struct crypto_ahash *dst, struct crypto_ahash *src);
+ 
++	unsigned int reqsize;
++
+ 	struct hash_alg_common halg;
+ };
+ 
 -- 
 2.39.5
 
