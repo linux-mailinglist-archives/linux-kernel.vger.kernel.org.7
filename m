@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-632416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368A8AA9707
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:11:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DA1AA970C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 344C8188BD1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031553A5375
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4D025A2D2;
-	Mon,  5 May 2025 15:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2334125CC5F;
+	Mon,  5 May 2025 15:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="amPLvqtq"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FbAobK3q"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0B925C70B
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A21315574E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746457911; cv=none; b=EQpGKnSz8D9u6iIIH4TIbQLSm8PzOcVbI7oQd15A+TLLqRQqJQoUGufhrdzW4Gae+dRvTOL8Lf3hoUuBjQkbBR2FlV1V3nhZfP4LFjB4+JrGub7vSZZS3rvPqOK8STQLTQEG7blyBzZrysvblU4pjQrY5Axte2Vmo0C3VBELqlg=
+	t=1746458000; cv=none; b=IHGDN/kISSX06iNyeoRrioovRsD7d2fJ6L6cibXjcMcARN2JHTlyiN7RsimGXa0cBb3pLkZJ3oBnBuWqWbIy/pqm6oOHhMEPfHYAezW4haPIvQDte8onOp0nhFDGeLR9wGpaQdwdDEwT0DvneBF2Tgc+uuI7+ErXXQbC1WHt520=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746457911; c=relaxed/simple;
-	bh=J7f5rkEnnZyDN/Zxk28ty3f8ryplNKQEreYL9blZdyc=;
+	s=arc-20240116; t=1746458000; c=relaxed/simple;
+	bh=JkWMdKtf92P10Lv3EQVC5r+5qoPP30yGbZBfGC5uOi4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=srdUhy9yDphKfkKdvh7VnvsFrPiOe7Fp1WBzwpY+9mvaDjLRDVKfViPmR44o0KEHpvsQ5Hg50b598qej4dSNlelkjAb8CY1Hnj25/3YtvclotO/bosgg9xARuVw9xdJkaZMNgaRTwIV0aKQY9crLY+5HkTootXED+Q8rAXvx6Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=amPLvqtq; arc=none smtp.client-ip=209.85.215.181
+	 To:Cc:Content-Type; b=f1bUrcup3XfT6wsrLPgYL81ge8Y7qVHUoMYqsdgTQGYhJiDdENsZY6+Zcw5TyxW1+p4WGgsgaF5kujzFf7r39VPuGuC0le5HIFIBcTc1uIfaFRhczO3UAoV53psyrWFvI+YZ/nSugeGBTsyM2mDStI16aDqGZDSRAucuJC0rXik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FbAobK3q; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b0b2d1f2845so3161033a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:11:49 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-736ad42dfd6so3704185b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746457909; x=1747062709; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1746457996; x=1747062796; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J7f5rkEnnZyDN/Zxk28ty3f8ryplNKQEreYL9blZdyc=;
-        b=amPLvqtqwjpGoJht11+PudJJXzmgMHfEAYymQfcPnGodoM0gPDnlMk69FoHETEbTO+
-         Z2ov+UcZ0lvNeVUSd/+wjwP9JjmkGy17yvcU3Yuc+Ov9UDIy7v3Xfjy7+mOALe3Rq0am
-         KrMRhlzJ3UXAWKhnCkbUi4BsK3DbVohufA+efn8suPUwqyNkdWStmeea5U2YhbloXi2t
-         tey69mOzfv1wFlPNB+6NMnzISKpGGKlkZapmk8pXV66iu+EEvCFY511Ceop4e0fqZbRi
-         A2DGelyrciy8UlYkk+mUWr517RbS5ZhrzIvH0fhztLmvSbIjVb0FwWJU1fPgOVUdNF6i
-         fvQw==
+        bh=JkWMdKtf92P10Lv3EQVC5r+5qoPP30yGbZBfGC5uOi4=;
+        b=FbAobK3q+AC+FqdaT+VGJj7/N1/2dv0T4EluFQynTHWLZ4eipNlh/Z50Hp1SiisPDv
+         1oiUblBmbIRYafpxWWZmJI0vBvLQuvcLIe+Us4hjNqv8ulpYgpHtj3Ar/0ke+qV9q2yr
+         /yvqnX/F4dlGj8P97RCpdxjXs98C4AmOae832xgSpoUlugnu6EGhAD7qiIckme8pncj+
+         IstuuYDbLPTFjYSl6+72wz2He2TAg4A4hvgXhUh//UPVLZxXPAI3pK6XMdw48m6GGnJ8
+         X+AVvyDfo0fmP8sGIIqa79GWyKwGNaCmEhuXmjXOtmPDtPhVFoEeXfQyoYvww4Z+UWn6
+         pQiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746457909; x=1747062709;
+        d=1e100.net; s=20230601; t=1746457996; x=1747062796;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J7f5rkEnnZyDN/Zxk28ty3f8ryplNKQEreYL9blZdyc=;
-        b=OQpfJ3m/AfNBzyRrnW9rUvPReE6YUc5/fjt/TC6Zj1jdMzQ4113tkCwIlbbuCsVcF2
-         ZNIH/Ap7rKVcCA5WOHkK301pFM4ESRTY5EdOm52DF5sehBPXrC4XYBVUNidHgsz93uLj
-         Q9LyWcgzzfMf/c+Do+tJOGVY538Tglhhsersff/RjaX8vYI66AWn5aNSUmFcuzBbk+u6
-         sr/iWnb9+mmLydsa4cZ1yu+VPWJzNIe1biOdn9bJstEPT6xQp692mJIetZWnq6zjmZyj
-         SxiKCNm0WdW4vjuPTZTI229uivehViJ0vDRr0PkKLLKnxQQLrIIXE1PZ6weMA9znqpIn
-         Jw5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUEqq9dAh39i7Ur/i8dVSz+dnlVXoK/SPSIoKCbn52ORXZ3SUHyHJW21/RYgur3fkhAjyIIPenKWEgdey4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI3aku6xOCk33IFIf/OR9HecNC67Z+5/AqZxH3W0SyrUIUVDJX
-	HkZ9+XDtpYiC0xgtpWisKZrskU2VdNsrdB2J60Irda78eVsEzu8TPZAjyxzJjPzp6f/DApJprkA
-	VCY6cXRSQiaUKbt44/IPBGT7arvVI1/1Lu+Lt
-X-Gm-Gg: ASbGncuQVPSkGlhHg8yuwJoD2sjiW26Yt9FeIVm0OZR2NuGqyYiYvx3i6MxfZqUbgsj
-	T1C1juKqC2YHuUAjPHCEnajvLAcXzkdndNDuWLkij88xZnvxxpYEePHRlzWnsd0st/4zXgWmbyO
-	sXqZiVEU8xwILYVFItMTza1Q==
-X-Google-Smtp-Source: AGHT+IF/DN6Mb9AnQZSO+fGnheiV824IrRTiAYVdybT75nlNooUcBVhmYSMHE5y4Sw6N4a0GayQHjT56d1cqp8glrlQ=
-X-Received: by 2002:a17:90b:2dc4:b0:2fe:955d:cdb1 with SMTP id
- 98e67ed59e1d1-30a4e624af3mr15635710a91.23.1746457908793; Mon, 05 May 2025
- 08:11:48 -0700 (PDT)
+        bh=JkWMdKtf92P10Lv3EQVC5r+5qoPP30yGbZBfGC5uOi4=;
+        b=OkTmrAkb8sjgs/JNnHCjrjcb8/2R/9GSXKEMymIKgkDYGeyqgPeOvhzGywB8OC/JAH
+         CETTxzic/kk6Y0CzVEGHvAGEoJmiHXTWtEdxN1mZc0/Xke7npa9bC2Q355YonCbkBSTL
+         e8dQgQOilM7iizMnSc4/08c7YoDJqfnM+QyrC+1PKGIhsVdHP3QiXzpDqYA3SIsu7L2f
+         N1ZJAGQ/PEdzZOmu1vI/kk0WOx91BX+rxhKoMrt4l0FW6yc7BL2cgfCYidj/OSEOpScy
+         5Y5lq9D1U/qKpu+t2deB5VjePjZIB+USSxP+RXfHivo352BOIn8qK2usvMulcMs90U/d
+         nmew==
+X-Forwarded-Encrypted: i=1; AJvYcCXbf30K2N4//E5/PvRh4ZQser9EQKxtbpmM+elavN4sYlbKgjDMQl97lEGlPtkM7bmNx6f2WJ62SBjcOA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY2rAZCqnyTJgdDBcVEm4zgE70sl5enuniSegD2R7fdZDkmdfa
+	wyAX+ERzoVsJkvQzXoCvP7j3I9zTwfR6nb3xc0RzlZd3FdHVBrbLSnyOgfrPWVuKZqDpXwRD+w8
+	H8esW7BzN1QcW27e6iYNfMebuZJgoIuQtZmxaeZRpAzwgaGSlNAxj
+X-Gm-Gg: ASbGncu5c0zvHpgha63inJprOSPYIUOARYbA5/Qs8S5PnFmQWwvM637Ur1eS0nIAD2W
+	4JRo4tqtkCXbvrJfbWwcr6y1PtCeLAcX9I7/jZ8Bk+j/bOfV2oaxXidwPKrMAO+BzMln+VnjeBl
+	7KGDjOKGhSE+O2OcoT2gs+OA==
+X-Google-Smtp-Source: AGHT+IEX+eK2HwraE/WERStR7Y4uH1ls3UErcCOKiV+sCb+p9IMOVpuegmVB+G0KUdV7lLI2Rky8yPhDUKbVe6dFbBc=
+X-Received: by 2002:a17:90b:4ec7:b0:2ee:c6c8:d89f with SMTP id
+ 98e67ed59e1d1-30a5ae1ae18mr15753022a91.14.1746457996118; Mon, 05 May 2025
+ 08:13:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250505141238.4179623-1-aik@amd.com> <20250505141238.4179623-2-aik@amd.com>
-In-Reply-To: <20250505141238.4179623-2-aik@amd.com>
+References: <20250505141238.4179623-1-aik@amd.com> <20250505141238.4179623-3-aik@amd.com>
+In-Reply-To: <20250505141238.4179623-3-aik@amd.com>
 From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Mon, 5 May 2025 08:11:35 -0700
-X-Gm-Features: ATxdqUGOVLxznNhA7kpNkep_TQimeP0WJO4XqfH67iHU61-gZrKrUYMm-ZJZ5rE
-Message-ID: <CAAH4kHY0NcG8n-CKWjYPSeJf0YxF+D_pycAXTUDza1E-Qy2v0A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] virt: sev-guest: Contain snp_guest_request_ioctl in sev-guest
+Date: Mon, 5 May 2025 08:13:03 -0700
+X-Gm-Features: ATxdqUH-K4bFkhaHamy3SYBKi0X94IdvgpCUWWYgAtqQQ1Oj1ReG4kZPbxuVcng
+Message-ID: <CAAH4kHb97oFRppJgFXHe_m24GYwsY6wW=mSpw692YX-urM6stQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] x86/sev: Allocate request in TSC_INFO_REQ on stack
 To: Alexey Kardashevskiy <aik@amd.com>
 Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
 	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
@@ -96,18 +96,16 @@ Content-Transfer-Encoding: quoted-printable
 On Mon, May 5, 2025 at 7:13=E2=80=AFAM Alexey Kardashevskiy <aik@amd.com> w=
 rote:
 >
-> SNP Guest Request only uses exitinfo2 which is a return value from GHCB,
-> has meaning beyond ioctl and therefore belongs to snp_guest_req.
+> Allocate a 88 byte request structure on stack and skip needless
+> kzalloc/kfree.
 >
-> Move exitinfo2 to snp_guest_req, remove snp_guest_request_ioctl from
-> the SEV platform code.
+> While at this, correct indent.
 >
 > No functional change intended.
 >
 > Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
 
 Reviewed-by: Dionna Glaze <dionnaglaze@google.com>
-
 
 --=20
 -Dionna Glaze, PhD, CISSP, CCSP (she/her)
