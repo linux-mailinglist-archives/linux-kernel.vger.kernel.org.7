@@ -1,127 +1,105 @@
-Return-Path: <linux-kernel+bounces-632549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA05AA98BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:22:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1922EAA98C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B14A17CA8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED03188EF35
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3081625DCEC;
-	Mon,  5 May 2025 16:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC1F17C220;
+	Mon,  5 May 2025 16:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o62aBtRY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="ZPhpFQpD"
+Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D24D1F2BAB;
-	Mon,  5 May 2025 16:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746462159; cv=none; b=gTec71IkPIq6yhcpb4LjDtwJVqkEnS2ZNtltmpPExRzwEJEHZSo7yQmgssY8HIN6YCtU2Y3d39Cklo058EPGriauLr84TS9j3rLIKrxw8yiD+63udewv4x78Xus42YIoCmeDlLVc74PBjjbsPS3lQr2yuxHXNdeuDe4rZpNof2Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746462159; c=relaxed/simple;
-	bh=sFOY+QrXVtBQFRQMgXZC8sVi2S+7f/V7wdC68vwuIG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9npoKwvIFtrE3oIogxRhEsWDeO+SSymqf/+u/HaQDm9lZxv0SA1LisJmuCNX75H4GhfSSUAV/Mp5GD9nf5SxvW1i+xAVWUx4JgN3JYGESeQGBTj4M9yp/w61n942E5pj2dWOijaFvcaRPu5Z/hn5K1vdqixFBoFMQYV+fZO26k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o62aBtRY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 653D3C4CEE4;
-	Mon,  5 May 2025 16:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746462158;
-	bh=sFOY+QrXVtBQFRQMgXZC8sVi2S+7f/V7wdC68vwuIG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o62aBtRYwB/QZFkBq5VWw6vOET5V4UrbPN6zhj7pAtTva3xzMuD28a2HHTRLZ0laM
-	 dLfYzg/v8fwMmIsGsPPfh930Z6aZRa/F2pka1SVBW+4cxHt3EfhOMlFOdNejoC5ZGu
-	 NFmea31JIVuCcOgkoLV6IxrkcI8GmHgK9zvRCOn9l0vOXL9d8wvaGXigUJbXn7NoJK
-	 NbcMNz4W+2j0Yo69r8HVngUnCd1P/+0m44FOeoMmBzofOy5LzxXE2ym7GM8RsBwkdJ
-	 nMMZRsEsYgBc8iI1ZdY3G5sC83VFPh1YU1/xiBamfeaoQzcSVAxRxcCIefeg4cnGTP
-	 vrC2seBRgB0/g==
-Date: Mon, 5 May 2025 18:22:31 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] uaccess: rust: add
- UserSliceReader::strcpy_into_buf
-Message-ID: <aBjlx_AfQCS-pmht@polis>
-References: <20250505-strncpy-from-user-v3-0-85c677fd4f91@google.com>
- <20250505-strncpy-from-user-v3-2-85c677fd4f91@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F961CD1F
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 16:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746462185; cv=pass; b=tF+Hn4REB5U6g/62jGo6vt9rnOpF4Zoa0y4IBSVdPtfXwM0N4vI+Pfu0QA9Kjf0oUi5nJ/tcQDP9yMKs8LQYnGmcDzf2kBCzcVK68IVFMe5SnqG2JfDNp8HlnLjnd1cgpm9aevLSoEaN6Pl2dwOwhUMSR54vjZPV/Tjd906PWKs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746462185; c=relaxed/simple;
+	bh=7OvQ9Fo0tUTXljcF2N+k29uN7bcPhl/8/tSD+MUKVZs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iEv6qQ/LMuX1JOjsVIhjvG0fDe+8v1aCgCoHVQK+55DiA1xTP8LyqGoB0os+9M/Uv+Wo3rxbnfU9oeCdG1sT49AUK9hovEHTX36mes6jzI8FfId4lhaENKhHRbglofEuP7G4v3WH50pX91VF1EbhIx61L9iSiUPtNQ7hCa9f43M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=ZPhpFQpD; arc=pass smtp.client-ip=136.143.184.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1746462161; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z/pEykjnon0LWQmbob4yKSYuKsmWmcHky+HCf9cBweMRAte5XDu0iJpCfRiDeGYGqy3GNi7BRJOi1jD9t+5fD+DL2j1SpFFoirXxwLvBgv5fEhG2atZT5cwFLrUDz7XB1QthxkBfImJpuM5Pf7YczZKBoG/YwNsMOn2qDPHOBdc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1746462161; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Cn34lMEWOSB8EK9h95x7SSV4y9boi8anfMX1Giz4Mis=; 
+	b=jxM6qLSgW54nnqKwt23RPf41T0Bf9oklvHKepYq41mhEalUZQoHNqSgixChXnQ/rFiNIMnLei4k38BjHUHkeMimvnzwH1/tj0ceuo5XSkrhrrg+w95F8OZIrJbNeBfzPnWEPr3ZJAasSNBdw/aOfeUuBDBRvJasTzGgGRrrf+M0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746462161;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Cn34lMEWOSB8EK9h95x7SSV4y9boi8anfMX1Giz4Mis=;
+	b=ZPhpFQpD5dzmzC0l9ZimFix67MJ/zDeGB3W4LKqi1CBXX6ZYiks6l9usZNiwzxq4
+	EQdVM4ipZPIc/rPy90WEJWOCHn7dfM6SP3E9oGSolShBNNZWjLYyVnI163B/zPRxpDI
+	TA1eaLNEvE0wkkNVnNNNnp/FuUafcTC8x132VXqk=
+Received: by mx.zohomail.com with SMTPS id 174646215944673.6589727735876;
+	Mon, 5 May 2025 09:22:39 -0700 (PDT)
+Message-ID: <c3ae2790-20d8-4220-848e-7b02b185e893@collabora.com>
+Date: Mon, 5 May 2025 19:22:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505-strncpy-from-user-v3-2-85c677fd4f91@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] virtgpu: deallocate capsets on device deinit
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+ David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, dri-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250505-virtgpu-queue-cleanup-v1-v1-0-810923da2b1e@linaro.org>
+ <20250505-virtgpu-queue-cleanup-v1-v1-3-810923da2b1e@linaro.org>
+ <5271820d-7afd-45e5-8103-b7d4fc818278@collabora.com>
+Content-Language: en-US
+In-Reply-To: <5271820d-7afd-45e5-8103-b7d4fc818278@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Mon, May 05, 2025 at 12:17:32PM +0000, Alice Ryhl wrote:
-> +    /// Read a NUL-terminated string from userspace and return it.
-> +    ///
-> +    /// The string is read into `buf` and a NUL-terminator is added if the end of `buf` is reached.
-> +    /// Since there must be space to add a NUL-terminator, the buffer must not be empty. The
-> +    /// returned `&CStr` points into `buf`.
-> +    ///
-> +    /// Fails with [`EFAULT`] if the read happens on a bad address (some data may have been
-> +    /// copied).
-> +    #[doc(alias = "strncpy_from_user")]
-> +    pub fn strcpy_into_buf<'buf>(self, buf: &'buf mut [u8]) -> Result<&'buf CStr> {
-> +        if buf.is_empty() {
-> +            return Err(EINVAL);
-> +        }
-> +
-> +        // SAFETY: The types are compatible and `strncpy_from_user` doesn't write uninitialized
-> +        // bytes to `buf`.
-> +        let mut dst = unsafe { &mut *(buf as *mut [u8] as *mut [MaybeUninit<u8>]) };
-> +
-> +        // We never read more than `self.length` bytes.
-> +        if dst.len() > self.length {
-> +            dst = &mut dst[..self.length];
-> +        }
-> +
-> +        let mut len = raw_strncpy_from_user(self.ptr, dst)?;
-> +        if len < dst.len() {
-> +            // Add one to include the NUL-terminator.
-> +            len += 1;
-> +        } else if len < buf.len() {
-> +            // This implies that len == dst.len() < buf.len().
-> +            //
-> +            // This means that we could not fill the entire buffer, but we had to stop reading
-> +            // because we hit the `self.length` limit of this `UserSliceReader`. Since we did not
-> +            // fill the buffer, we treat this case as if we tried to read past the `self.length`
-> +            // limit and received a page fault, which is consistent with other `UserSliceReader`
-> +            // methods that also return page faults when you exceed `self.length`.
-> +            return Err(EFAULT);
-> +        } else {
-> +            // This implies that len == buf.len().
-> +            //
-> +            // This means that we filled the buffer exactly. In this case, we add a NUL-terminator
-> +            // and return it. Unlike the `len < dst.len()` branch, don't modify `len` because it
-> +            // already represents the length including the NUL-terminator.
-> +            //
-> +            // SAFETY: Due to the check at the beginning, the buffer is not empty.
-> +            unsafe { *buf.last_mut().unwrap_unchecked() = 0 };
-> +        }
-> +
-> +        // SAFETY: `raw_strncpy_from_user` guarantees that this range of bytes represents a
-> +        // NUL-terminated string with the only NUL byte being at the end.
+On 5/5/25 18:58, Dmitry Osipenko wrote:
+> On 5/5/25 11:59, Manos Pitsidianakis wrote:
+>> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
+>> index 7b3c4d314f8eee692e2842a7056d6dc64936fc2f..a8b751179332b9ec2fbba1392a6ee0e638a5192e 100644
+>> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
+>> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
+>> @@ -286,6 +286,10 @@ void virtio_gpu_deinit(struct drm_device *dev)
+>>  	flush_work(&vgdev->cursorq.dequeue_work);
+>>  	flush_work(&vgdev->config_changed_work);
+>>  	virtio_reset_device(vgdev->vdev);
+>> +	spin_lock(&vgdev->display_info_lock);
+>> +	drmm_kfree(dev, vgdev->capsets);
+>> +	vgdev->capsets = NULL;
+>> +	spin_unlock(&vgdev->display_info_lock);
+> 
+> Isn't this lock superfluous?
 
-This isn't true if we hit the else case above, no?
+Wait a minute, vgdev->capsets is allocated using drmm, hence it's
+auto-freed when DRM device is freed. This patch shouldn't be needed.
 
-With that fixed,
-
-	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+-- 
+Best regards,
+Dmitry
 
