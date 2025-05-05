@@ -1,173 +1,105 @@
-Return-Path: <linux-kernel+bounces-631855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DF2AA8E5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:38:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A235AA8E92
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F040174836
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A7F3B8161
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6011F4607;
-	Mon,  5 May 2025 08:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF661F4281;
+	Mon,  5 May 2025 08:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="meO40LlA"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKxpMGUg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FDB19F462;
-	Mon,  5 May 2025 08:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90DC1DDA14;
+	Mon,  5 May 2025 08:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746434274; cv=none; b=GGBFlSwkcOgz8nX+HwtV93Hluoz08U6MbDYPJYgEyay3ydHfUDOw1JQjgFGaHz5O27D2NgK7pKWkfeH3kvf8pyHbejCQLwK4LqtLk9+r0YJikTce9W9qP32bQbNF0GBMNFdA/DWfMWNBVqV1zv2mKW16geohdQcBAVhSHJby3XA=
+	t=1746435138; cv=none; b=BbWAqNQkbXvd1bGPVCwvp/Jj2VX9zjWyKVmQoEpeY2Xq2OpZJfF348ZhER9s4gXDuJH1EUjC3VuglIPOdKu5d7pQxweC5nop0W+9M7l9VzoK6lgLNAi7CR6Fz8kr/3m9/389whyku0zAg8+tgF61U63bOsejoJsvcdIOvB+Bu7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746434274; c=relaxed/simple;
-	bh=h6SWjaGTQ6kINLi4KVFeNMMxH06Q2IbIvZeQbpNUIHc=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=TnDTU7kkUDolU5TKq0wyRPdxBeoGahqddFmSWzafhN12eePtQLmqM4qkEMT0gsq5zksWkvXvVuRCiapyBb/oDJ+tz5Ocj6gBTwMUdYDjBYLynU8ez8P/nvHE0IioZ53lHlJFggYtiVbyfc2hPv8yXhwiHl0tW5q/w7A+j/BwDjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=meO40LlA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54580qap022980;
-	Mon, 5 May 2025 08:37:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HjYHCJ
-	hbRLYeVswYwB35b/DJ1fdM5oC6Lp9G8JqiXI8=; b=meO40LlAdpbll/EdEIz01x
-	vTAqHlMX5Ml6TWtiw8fA6rmllm5D4k+tfRO356o6/x6caH9cavzPgLjiDO/ic0+A
-	qnIOk/qhV10eiddq9dkl4BDCFd4v1w6un//Wn4eROOfajh5yNKu2w6OntUYRizwr
-	zyy8ZvEgRra+i4ruYxx8PLau9hBZk+ZXoI6H5OsTUXJHCQGrR9hlvERi9LsBYrej
-	cVnvhU2SBPEdtCJwvUYDzbF6MdHf42rkAp/EU9xniWsaRzWP8Kfkq+y06Un/YLKl
-	B7VlFKdYSAH/HXC2bI8b9aAZ4l3tIBHdJIXholcrheOFmMflwu5B3WpJYRHsLGSg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46e65huf7m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 May 2025 08:37:38 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5458ax2V026700;
-	Mon, 5 May 2025 08:37:37 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46e65huf7h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 May 2025 08:37:37 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 545802OM002728;
-	Mon, 5 May 2025 08:37:36 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dxfnnd9q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 May 2025 08:37:36 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5458bYDQ52822368
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 5 May 2025 08:37:34 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5851E2004D;
-	Mon,  5 May 2025 08:37:34 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E51462004B;
-	Mon,  5 May 2025 08:37:33 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  5 May 2025 08:37:33 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (unknown [9.150.10.164])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id C9E9260241;
-	Mon,  5 May 2025 18:37:26 +1000 (AEST)
-Message-ID: <94b81671ec25c305e0cc6a7d2df0c03cce979d0f.camel@linux.ibm.com>
-Subject: Re: [PATCH 3/3] integrity/platform_certs: Allow loading of keys in
- static key management mode
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: Srish Srinivasan <ssrish@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, zohar@linux.ibm.com,
-        nayna@linux.ibm.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20250430090350.30023-4-ssrish@linux.ibm.com>
-References: <20250430090350.30023-1-ssrish@linux.ibm.com>
-	 <20250430090350.30023-4-ssrish@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 05 May 2025 17:55:02 +1000
+	s=arc-20240116; t=1746435138; c=relaxed/simple;
+	bh=9zluxNSbXALMLbz2BBvW6HxB3hk8PNHobc7RsItkZOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gC4p1LeMaXw0ox3DulFY+dEK/xaNuaQJ7WZqrm+x9P2wEA6EkmJrWYdyKya8HQty60FW5aARnQj37OUS3mZ7TVX8xP2g2b9yaWkqflBEO0JuHDFWUaDRZs8G0hOeWTpcH0Y4KbJkTmF7aKTmkv3YQzCL/6kuw+97FdQVfAL/eUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKxpMGUg; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746435138; x=1777971138;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9zluxNSbXALMLbz2BBvW6HxB3hk8PNHobc7RsItkZOg=;
+  b=RKxpMGUgb/w0CWCCMCnwrIhlPdqOXcK6DjfUOX24FnCz/xGgBZTzVTev
+   nOfkZkyloHzCZJxu/iivw+QDnr6Cybz7e0O9bz80YhGWsTqcAu86p6zaH
+   loxRvxwLsguifwAnBkEZP2XHSUjegdGIHkiKQwIbenAce9CTgMA7Am0MX
+   5a1pAJU1X7l6nv0qHq9/wz1UBxxBvBYlD+V6xdTwfpOkX137UjZ7XFnni
+   xIjglw8gZDMH/1YFGWgTYSUm4Q3/ZdRk4PvhyvfAy9xbdS0XUsK+qAnlw
+   vqa6anXqnNsiRAFWSv6EksFNRN/qpJfWbehtD2BCs9US9stZbD9Kd1gO8
+   Q==;
+X-CSE-ConnectionGUID: vm+9bIR3S12sDx+ZXz2xrQ==
+X-CSE-MsgGUID: Rsz1xXV3RMuU8UWF2NITIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11423"; a="65438693"
+X-IronPort-AV: E=Sophos;i="6.15,262,1739865600"; 
+   d="scan'208";a="65438693"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 01:52:13 -0700
+X-CSE-ConnectionGUID: E1k0s4QjRsCs+ckMnHFb9Q==
+X-CSE-MsgGUID: Y9XwPmxVQzexINjL9bBPdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,262,1739865600"; 
+   d="scan'208";a="139983927"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.252])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 01:52:08 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 5F40C120B57;
+	Mon,  5 May 2025 11:00:34 +0300 (EEST)
+Date: Mon, 5 May 2025 08:00:34 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Sylvain Petinot <sylvain.petinot@foss.st.com>
+Cc: benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tomm.merciai@gmail.com
+Subject: Re: [PATCH v8 2/2] media: i2c: Add driver for ST VD56G3 camera sensor
+Message-ID: <aBhwIl7G60EJ9k9F@kekkonen.localdomain>
+References: <20250502201849.12588-1-sylvain.petinot@foss.st.com>
+ <20250502201849.12588-3-sylvain.petinot@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=UZ1RSLSN c=1 sm=1 tr=0 ts=681878d2 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=Aq5ags53wHl_a6Sg2LMA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: X0nGukAsK2T5V_918jrYKVFHxYn-9pvF
-X-Proofpoint-ORIG-GUID: wWoF-Pp3jSh573gDWcBHqZ4l2c1w4Qdg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA4MSBTYWx0ZWRfX+JXLkQ1DbHhk bTsyzci1/PAbjSxz9okf3kCg0AyqcwsJKLZb/TuN988BiH560wY6ioiN6xnltNoNEkBG76AtHLn 2vSKsac6QxtpPZPEnwZXb/XPRAYBnUq2RDuSb7xMrgThkjjku7yiw1vyQNYGGRWJj/tx5lsA6ZI
- jrn/kT0/a4/PNnnu/0ORISHx9TJwAWj5YwkU4a/YVCvK42Gf74KXluwv908zKVArJt7XaldFkZ3 bZn4L6VPC5N3aKArpCpI4X9QeVD9dghJjpFAQqDxI3IZl/zM2uwcjIWCb6qoP5PbA2Yh0ibW/sQ J0sKHNa/cvXrEx1YwGQLtOJvAu674m4uVKXC+g88ul6mTG26/zSJXDnigf/lntfaA6ZbpXL8r04
- yG2h2QunL2PpkZ3WVriTLsK1bCf9k2GTeIUmJ8iz62D/75a+AY3f0jxsnr+SirjPzLuzxdj7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_04,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 adultscore=0
- spamscore=0 impostorscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505050081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502201849.12588-3-sylvain.petinot@foss.st.com>
 
-On Wed, 2025-04-30 at 14:33 +0530, Srish Srinivasan wrote:
-> On PLPKS enabled PowerVM LPAR, there is no provision to load signed
-> third-party kernel modules when the key management mode is static.
-> This
-> is because keys from secure boot secvars are only loaded when the key
-> management mode is dynamic.
->=20
-> Allow loading of the trustedcadb and moduledb keys even in the static
-> key management mode, where the secvar format string takes the form
-> "ibm,plpks-sb-v0".
->=20
-> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+Hi Sylvain,
 
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+Thanks for the update.
 
-> ---
-> =C2=A0security/integrity/platform_certs/load_powerpc.c | 5 +++--
-> =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/security/integrity/platform_certs/load_powerpc.c
-> b/security/integrity/platform_certs/load_powerpc.c
-> index c85febca3343..714c961a00f5 100644
-> --- a/security/integrity/platform_certs/load_powerpc.c
-> +++ b/security/integrity/platform_certs/load_powerpc.c
-> @@ -75,12 +75,13 @@ static int __init load_powerpc_certs(void)
-> =C2=A0		return -ENODEV;
-> =C2=A0
-> =C2=A0	// Check for known secure boot implementations from OPAL or
-> PLPKS
-> -	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-
-> sb-v1", buf)) {
-> +	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-
-> sb-v1", buf) &&
-> +	=C2=A0=C2=A0=C2=A0 strcmp("ibm,plpks-sb-v0", buf)) {
-> =C2=A0		pr_err("Unsupported secvar implementation \"%s\",
-> not loading certs\n", buf);
-> =C2=A0		return -ENODEV;
-> =C2=A0	}
-> =C2=A0
-> -	if (strcmp("ibm,plpks-sb-v1", buf) =3D=3D 0)
-> +	if (strcmp("ibm,plpks-sb-v1", buf) =3D=3D 0 ||
-> strcmp("ibm,plpks-sb-v0", buf) =3D=3D 0)
-> =C2=A0		/* PLPKS authenticated variables ESL data is
-> prefixed with 8 bytes of timestamp */
-> =C2=A0		offset =3D 8;
-> =C2=A0
+On Fri, May 02, 2025 at 10:18:49PM +0200, Sylvain Petinot wrote:
+> +static int vd56g3_check_csi_conf(struct vd56g3 *sensor,
+> +				 struct fwnode_handle *endpoint)
+> +{
+> +	struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_CSI2_DPHY };
+> +	u32 phy_data_lanes[VD56G3_MAX_CSI_DATA_LANES] = { ~0, ~0 };
+> +	u8 n_lanes;
+> +	u64 frequency;
+> +	int p, l;
 
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
+unsigned int. There are more cases where you have a loop variable that
+doesn't need to be signed. Please address these in a follow-up patch.
+
+-- 
+Sakari Ailus
 
