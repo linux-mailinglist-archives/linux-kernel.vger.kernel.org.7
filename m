@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-632755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8518EAA9BCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7541AA9BCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2ED216D062
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A005B172CD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA97026D4C8;
-	Mon,  5 May 2025 18:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504A42701A1;
+	Mon,  5 May 2025 18:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSMLSwyj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJYqhdlH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C42F1B0F31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F44026F452;
 	Mon,  5 May 2025 18:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746470634; cv=none; b=nF3KK4jZpW7SfQEtqCsPJRafxGYPMrIQbx3d71K2kMsSiV1ZsoWdU3xFe876Cj19R01YsBQfOr8clK57QZhGOh7LKEyEXkF1lJaJyeS7kRcFA9Ub5Uxlfr1zaDsNoUYcPrd508iXH/PcpKYICfnp4ZaAWCYxa3WHbCPNKSZT6RE=
+	t=1746470634; cv=none; b=mwbLEK5ly8TSWcRiUEa7JPvHOD+XuctJKftTzA0yeR0oph9HzvLnWEn/x+hIogEDH/XlF2e6GITnmVox227Va3AWJ8QLU+KZrNfWak2kqd8KyLuQZDMy6PzEKC5LTHFOYGF+AiQ4u1CR8jnGGw4P4ddjFDsS9/sOUpic+UqgWqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746470634; c=relaxed/simple;
-	bh=LbuYk15hVptDZsuRbMqI5YgO3RsvLpjnt+XuoYI2XaI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=R/WTGNmfqvHIo5nhlu/rnRn7GmbJDcs2J4SBZiWWJu7eAJO4jTuTBHrX5N+vXHcpFxVzXGtcTzo3t6FgFJod6+M5q8QEAyIsXIMDB1pLeAu+vXsEjNHTUBLHOkVXp+rN6X14vkKUT1r+DIrBE4oAEg9kQPMiDVq9EmeKMgHge08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSMLSwyj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09A88C4CEE4;
+	bh=CuRxJAOhQzgohcnuM+vUajXfQDkofrkBv5Cgo+Zuu2k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Zj672kq8pKKXYQl5cuZMV3xWmU/hQMzJ4QSgNZIjhZTIFWpbSrEe0XVfwGjnnZTqPnsAVaxx7EPHHrtYLIHa6B1t9Ok5L6I6wTyYyS0hbfVL5XDROTVMC7/49KSOxY9/6Pjgok6N2tV+abj5fG8aKz6Dw12+xvF7sF0QFiNFY+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJYqhdlH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 15EF1C4CEEE;
 	Mon,  5 May 2025 18:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746470634;
-	bh=LbuYk15hVptDZsuRbMqI5YgO3RsvLpjnt+XuoYI2XaI=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=RSMLSwyjuf/aUVLVbsPtvHS5RmZ7MU4VYH4jTbHX7gVskffXjV2gg6oYQxnYSg2qQ
-	 1dONMxyZCLLnqftYqA++ANtfpKwl34+jkF71JqoHIUQfYpcMHYIUf1Hh513Oo3NLBP
-	 5PgXEKkNtfqKfR0vS2Ry7E3XiSeWB90d6z8wsxE6VkDNDk656i58SZnD+OJ78a0QP2
-	 5DItM0+5K9jk91xRoUuussvulN4Zjlpw3tjpbXHjU1eNRm5yNplthc6+YT0ow++Ote
-	 jupZtzZwKiNyD//2SwmoTMTQvqX3k02uXecB3S1iH0Di6JlvLgwWMVCyC+T+JMAMGE
-	 raOkKK1gODx6Q==
+	bh=CuRxJAOhQzgohcnuM+vUajXfQDkofrkBv5Cgo+Zuu2k=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=HJYqhdlHYsZhlOHYpbO1jTCCtYZIKQSxAoR3eg3q+dVeve3wg318royNg5M6WdCGl
+	 rOQPb/Do5/2CAe9IGy5c2SzeBJbBYtmqomBPL5bRvrC0WBCSIwoUeLqrei6frR6vEk
+	 /FHFAYc86M4OiO3GPZ7nVNVKUA63sKzb4Yv2xCherfydalqWjN1Gesz9f4ZqHiGNaS
+	 zCgQafzCchd0u+gCxqoXIkIuMbKjuHuhIweZUDCAGbp3+8pty7brzkdiOKcFSUKpc6
+	 STug1w3tQ8JZ8wy/MwSwbCqWG99F7iWs3fad1/SHOKti/yL1XDn7TFsQI4pcrtkZBh
+	 d6CbYaYCMO6zg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4B4C3ABBC;
-	Mon,  5 May 2025 18:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08160C3ABAA;
+	Mon,  5 May 2025 18:43:54 +0000 (UTC)
 From: Kurt Borja via B4 Relay <devnull+kuurtb.gmail.com@kernel.org>
-Subject: [PATCH v4 0/2] platform/x86: alienware-wmi-wmax: Add support for
- GPIO methods
-Date: Mon, 05 May 2025 15:43:30 -0300
-Message-Id: <20250505-awcc-gpio-v4-0-edda44c3a0dc@gmail.com>
+Date: Mon, 05 May 2025 15:43:31 -0300
+Subject: [PATCH v4 1/2] platform/x86: alienware-wmi-wmax: Expose GPIO debug
+ methods
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,11 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANIGGWgC/13M0QrCIBTG8VcZXmd4jrqxrnqP6MKp24SWQ8OKs
- XfPjSDp8juc338h0QZnIzlVCwk2uej8PQ9xqIge1X2w1Jm8CTKUTACn6qk1HWbnKYoOeqmlqA2
- S/D8H27vX3rpc8x5dfPjw3tMJtuu3gmUlAWUUaqYAOs37Vp2HSbnbUfuJbJWEpWxKiVnqhgNve
- CcNw3/Jf1IyLCXP0qpWtRwNAIpSruv6ARus38EWAQAA
-X-Change-ID: 20250413-awcc-gpio-24b1f5c546d2
+Message-Id: <20250505-awcc-gpio-v4-1-edda44c3a0dc@gmail.com>
+References: <20250505-awcc-gpio-v4-0-edda44c3a0dc@gmail.com>
+In-Reply-To: <20250505-awcc-gpio-v4-0-edda44c3a0dc@gmail.com>
 To: Hans de Goede <hdegoede@redhat.com>, 
  =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
  Armin Wolf <W_Armin@gmx.de>
@@ -67,13 +65,13 @@ Cc: Gabriel Marcano <gabemarcano@yahoo.com>,
  platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
  linux-kernel@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1934; i=kuurtb@gmail.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6088; i=kuurtb@gmail.com;
  h=from:subject:message-id;
- bh=LbuYk15hVptDZsuRbMqI5YgO3RsvLpjnt+XuoYI2XaI=;
- b=owGbwMvMwCUmluBs8WX+lTTG02pJDBmSbFcldaW/3n4TcmjDk3sC+ev23X+1sN7WfxrvCVm+6
- MubvXeEdJSyMIhxMciKKbK0Jyz69igq763fgdD7MHNYmUCGMHBxCsBEXCIYGT7t3LY4znne4d0n
- dVg2hLmLxN6Zr3b97PM8tkqp/LTNPb8ZGV6J+qybV/jl8brFRcabEo/0xEj9dmmasyY10yi7UmQ
- qPzsA
+ bh=VhjdIaye3R/a9OKG1gJhjtj9h7gjZ1ZcB47ONQBNzIg=;
+ b=owGbwMvMwCUmluBs8WX+lTTG02pJDBmSbC9S2+9uPXe29UrO75VfZ6or8vtsND3z7GfwKs4r6
+ lwtNhdfdJSyMIhxMciKKbK0Jyz69igq763fgdD7MHNYmUCGMHBxCsBEDiUy/A/aqK1kWPHkZ2LV
+ qp3vXtxS2/kxwPH/x/x5M9vqzu8RceVm+B8j8Pz5l4kPl8kyHHqRP0t/a3TmT5+frZNmFqmXWyo
+ xKvABAA==
 X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
  fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
 X-Endpoint-Received: by B4 Relay for kuurtb@gmail.com/default with
@@ -81,57 +79,207 @@ X-Endpoint-Received: by B4 Relay for kuurtb@gmail.com/default with
 X-Original-From: Kurt Borja <kuurtb@gmail.com>
 Reply-To: kuurtb@gmail.com
 
-Hi all,
+From: Kurt Borja <kuurtb@gmail.com>
 
-I found a great blog post [1], which described the reverse engineering
-process of the GPIO control methods present on this device.
+Expose GPIO control methods present on the AWCC interface through
+DebugFS.
 
-In summary, these methods expose some debugging capabilities of the RGB
-lighting controller present on Dell gaming laptops. See [Patch 2] for
-more info.
+These models come with an RGB lighting STM32 MCU, which usually has two
+GPIO pins with debug capabilities:
 
-Exposing these methods to DebugFS is useful for developers exploring
-this RGB controllers (myself included).
+ - Pin 0: Device Firmware Update mode (DFU)
+ - Pin 1: Negative Reset (NRST)
 
-Thanks for your feedback!
-
-[1] https://gabriel.marcanobrady.family/blog/2024/12/16/dell-g5-5505-se-acpi-or-figuring-out-how-to-reset-the-rgb-controller/
-
+Suggested-by: Gabriel Marcano <gabemarcano@yahoo.com>
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
-Changes in v4:
-- Reuse name[] for all file a directory names in awcc_debugfs_init()
-- Reword commit message to correctly reflect previous changes
-- Link to v3: https://lore.kernel.org/r/20250502-awcc-gpio-v3-0-ea9a932d1124@gmail.com
-
-Changes in v3:
-- Create pinX files dynamically, based on GPIO pin count
-- Added note on dummy input arguments in Documentation
-- Link to v2: https://lore.kernel.org/r/20250427-awcc-gpio-v2-0-c731373b5d02@gmail.com
-
-Changes in v2:
-- Dropped module parameter
-- Added ABI documentation to Patch 1
-- Small improvements to documentation based on Armin's comments
-- Improved Pin description table format
-- Link to v1: https://lore.kernel.org/r/20250423-awcc-gpio-v1-0-160a11bc3f9a@gmail.com
-
----
-Kurt Borja (2):
-      platform/x86: alienware-wmi-wmax: Expose GPIO debug methods
-      Documentation: wmi: alienware-wmi: Add GPIO control documentation
-
  Documentation/ABI/testing/debugfs-alienware-wmi |  20 +++++
- Documentation/wmi/devices/alienware-wmi.rst     |  82 ++++++++++++++++++-
  drivers/platform/x86/dell/alienware-wmi-wmax.c  | 104 +++++++++++++++++++++++-
- 3 files changed, 201 insertions(+), 5 deletions(-)
----
-base-commit: 67e2635fe0cca5f0383c0780db986d8237e83f0a
-change-id: 20250413-awcc-gpio-24b1f5c546d2
+ 2 files changed, 123 insertions(+), 1 deletion(-)
 
-Best regards,
+diff --git a/Documentation/ABI/testing/debugfs-alienware-wmi b/Documentation/ABI/testing/debugfs-alienware-wmi
+index 48cfd4d0b002efd7b68d9c1d3aa91a3a05f49db5..c7f525d6baac962be82780608f8da5c0368600cc 100644
+--- a/Documentation/ABI/testing/debugfs-alienware-wmi
++++ b/Documentation/ABI/testing/debugfs-alienware-wmi
+@@ -42,3 +42,23 @@ Description:
+ 		details.
+ 
+ 		RO
++
++What:		/sys/kernel/debug/alienware-wmi-<wmi_device_name>/gpio_ctl/total_gpios
++Date:		May 2025
++KernelVersion:	6.16
++Contact:	Kurt Borja <kuurtb@gmail.com>
++Description:
++		Total number of GPIO pins reported by the device.
++
++		RO
++
++What:		/sys/kernel/debug/alienware-wmi-<wmi_device_name>/gpio_ctl/pinX
++Date:		May 2025
++KernelVersion:	6.16
++Contact:	Kurt Borja <kuurtb@gmail.com>
++Description:
++		This file controls GPIO pin X status.
++
++		See Documentation/wmi/devices/alienware-wmi.rst for details.
++
++		RW
+diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
+index f3ad47c9edfac47fae181046acae2190e388306c..f0e6a36abc278d95059dfc007414894dee79b587 100644
+--- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
++++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
+@@ -38,6 +38,9 @@
+ #define AWCC_METHOD_GET_FAN_SENSORS		0x13
+ #define AWCC_METHOD_THERMAL_INFORMATION		0x14
+ #define AWCC_METHOD_THERMAL_CONTROL		0x15
++#define AWCC_METHOD_FWUP_GPIO_CONTROL		0x20
++#define AWCC_METHOD_READ_TOTAL_GPIOS		0x21
++#define AWCC_METHOD_READ_GPIO_STATUS		0x22
+ #define AWCC_METHOD_GAME_SHIFT_STATUS		0x25
+ 
+ #define AWCC_FAILURE_CODE			0xFFFFFFFF
+@@ -281,6 +284,8 @@ struct awcc_priv {
+ 	struct device *hwdev;
+ 	struct awcc_fan_data **fan_data;
+ 	unsigned long temp_sensors[AWCC_ID_BITMAP_LONGS];
++
++	u32 gpio_count;
+ };
+ 
+ static const enum platform_profile_option awcc_mode_to_platform_profile[AWCC_PROFILE_LAST] = {
+@@ -571,6 +576,38 @@ static int awcc_thermal_information(struct wmi_device *wdev, u8 operation, u8 ar
+ 	return awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args, out);
+ }
+ 
++static int awcc_fwup_gpio_control(struct wmi_device *wdev, u8 pin, u8 status)
++{
++	struct wmax_u32_args args = {
++		.operation = pin,
++		.arg1 = status,
++		.arg2 = 0,
++		.arg3 = 0,
++	};
++	u32 out;
++
++	return awcc_wmi_command(wdev, AWCC_METHOD_FWUP_GPIO_CONTROL, &args, &out);
++}
++
++static int awcc_read_total_gpios(struct wmi_device *wdev, u32 *count)
++{
++	struct wmax_u32_args args = {};
++
++	return awcc_wmi_command(wdev, AWCC_METHOD_READ_TOTAL_GPIOS, &args, count);
++}
++
++static int awcc_read_gpio_status(struct wmi_device *wdev, u8 pin, u32 *status)
++{
++	struct wmax_u32_args args = {
++		.operation = pin,
++		.arg1 = 0,
++		.arg2 = 0,
++		.arg3 = 0,
++	};
++
++	return awcc_wmi_command(wdev, AWCC_METHOD_READ_GPIO_STATUS, &args, status);
++}
++
+ static int awcc_game_shift_status(struct wmi_device *wdev, u8 operation,
+ 				  u32 *out)
+ {
+@@ -1317,6 +1354,47 @@ static int awcc_debugfs_pprof_data_read(struct seq_file *seq, void *data)
+ 	return 0;
+ }
+ 
++static int awcc_gpio_pin_show(struct seq_file *seq, void *data)
++{
++	unsigned long pin = debugfs_get_aux_num(seq->file);
++	struct wmi_device *wdev = seq->private;
++	u32 status;
++	int ret;
++
++	ret = awcc_read_gpio_status(wdev, pin, &status);
++	if (ret)
++		return ret;
++
++	seq_printf(seq, "%u\n", status);
++
++	return 0;
++}
++
++static ssize_t awcc_gpio_pin_write(struct file *file, const char __user *buf,
++				   size_t count, loff_t *ppos)
++{
++	unsigned long pin = debugfs_get_aux_num(file);
++	struct seq_file *seq = file->private_data;
++	struct wmi_device *wdev = seq->private;
++	bool status;
++	int ret;
++
++	if (!ppos || *ppos)
++		return -EINVAL;
++
++	ret = kstrtobool_from_user(buf, count, &status);
++	if (ret)
++		return ret;
++
++	ret = awcc_fwup_gpio_control(wdev, pin, status);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
++DEFINE_SHOW_STORE_ATTRIBUTE(awcc_gpio_pin);
++
+ static void awcc_debugfs_remove(void *data)
+ {
+ 	struct dentry *root = data;
+@@ -1326,8 +1404,11 @@ static void awcc_debugfs_remove(void *data)
+ 
+ static void awcc_debugfs_init(struct wmi_device *wdev)
+ {
+-	struct dentry *root;
++	struct awcc_priv *priv = dev_get_drvdata(&wdev->dev);
++	struct dentry *root, *gpio_ctl;
++	u32 gpio_count;
+ 	char name[64];
++	int ret;
+ 
+ 	scnprintf(name, sizeof(name), "%s-%s", "alienware-wmi", dev_name(&wdev->dev));
+ 	root = debugfs_create_dir(name, NULL);
+@@ -1343,6 +1424,27 @@ static void awcc_debugfs_init(struct wmi_device *wdev)
+ 		debugfs_create_devm_seqfile(&wdev->dev, "pprof_data", root,
+ 					    awcc_debugfs_pprof_data_read);
+ 
++	ret = awcc_read_total_gpios(wdev, &gpio_count);
++	if (ret) {
++		dev_dbg(&wdev->dev, "Failed to get total GPIO Pin count\n");
++		goto out_add_action;
++	} else if (gpio_count > AWCC_MAX_RES_COUNT) {
++		dev_dbg(&wdev->dev, "Reported GPIO Pin count may be incorrect: %u\n", gpio_count);
++		goto out_add_action;
++	}
++
++	gpio_ctl = debugfs_create_dir("gpio_ctl", root);
++
++	priv->gpio_count = gpio_count;
++	debugfs_create_u32("total_gpios", 0444, gpio_ctl, &priv->gpio_count);
++
++	for (unsigned int i = 0; i < gpio_count; i++) {
++		scnprintf(name, sizeof(name), "pin%u", i);
++		debugfs_create_file_aux_num(name, 0644, gpio_ctl, wdev, i,
++					    &awcc_gpio_pin_fops);
++	}
++
++out_add_action:
+ 	devm_add_action_or_reset(&wdev->dev, awcc_debugfs_remove, root);
+ }
+ 
+
 -- 
- ~ Kurt
+2.49.0
 
 
 
