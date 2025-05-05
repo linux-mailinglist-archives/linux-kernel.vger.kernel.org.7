@@ -1,56 +1,54 @@
-Return-Path: <linux-kernel+bounces-634846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900C6AAB500
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:20:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074F6AAB4E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160963AA463
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE444C6C02
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034A02F3644;
-	Tue,  6 May 2025 00:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E275486DE6;
+	Tue,  6 May 2025 00:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4gFzp8l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/bMhvMy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB53D279351;
-	Mon,  5 May 2025 23:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9822F3657;
+	Mon,  5 May 2025 23:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486869; cv=none; b=LLuQZPQXLpPJW7Fg5ZaXdjyydrVDRJnWlm8ASZFlrFYtQCMy2Y21B1nPhwrME6qoFsPfOqMGQxGmULsPkzDfMTrzWwHqJYOqTPEM3+qU72Hb28w8ZlRQ0NyFsjaaD01qS/8Ax8zIMwDLDqmz0WSzQxuSwFIBT7ohi1XStzzuKZc=
+	t=1746486881; cv=none; b=mPU78G79Pk7V0MX4/Qqyuo/GYKwKs1Hi6Les/LCVI5dTfeUA7TPpIdgS/E5GXqSDzivVtbydbC/IroGifeno03qAnFRv42dBOrFEHnkwrRqi5Q64Y50iIKCek1p83e9+TZ2LKUtrvScM1FndQOr8ja6jb0Eyq8dA1BMl4UkEOMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486869; c=relaxed/simple;
-	bh=of3eMqWEE8eKPf9UPMc/az9Vx/5h145Vm8Apj9Wf/fw=;
+	s=arc-20240116; t=1746486881; c=relaxed/simple;
+	bh=PnKYlJycEJNsBqUYVwar69zrMIukgXwAyTqvk8IyVXo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H/5UEV4b3PiSRiMUjpW4NPK6ghi+JTEooxKKC/M0pDyREam+D8UyM7vdzCrTW2AlodBjjk3qZ3OzabwMNWqzgos4iwwo5hJ11Pu2X6luYry9OshE+1WqrAW5xeJoacPNL0a9YRLciQ1FG8GFOiCdypCEv5MUWyJVPqbqzzDLqcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4gFzp8l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D99DC4CEED;
-	Mon,  5 May 2025 23:14:27 +0000 (UTC)
+	 MIME-Version; b=i8JtoWZOk8DOucHQQDc6CrRxt0fedKxLuJ3eNsg0/vaXj6nHsJMZJMoEFTdgyJ/CsHl6Wh+FBSofpEs1MLViAf4jmEh1vifF22n2NqO0PjedX8solT3ZdAUC4vNZ+/T91pt4vDoM3ub3bQYgyHRHdoOlb6XxaiegXOKgwwtvzxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/bMhvMy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20316C4CEE4;
+	Mon,  5 May 2025 23:14:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486868;
-	bh=of3eMqWEE8eKPf9UPMc/az9Vx/5h145Vm8Apj9Wf/fw=;
+	s=k20201202; t=1746486880;
+	bh=PnKYlJycEJNsBqUYVwar69zrMIukgXwAyTqvk8IyVXo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H4gFzp8lMm9/rAuiaZtC6pw23OHFIxzoDQvV3fAiKBL7jFfnNGqfUs+tuEZIP9ZC0
-	 Sx7Sf/KS2bn2c2qR6eRBcs3pAsyR2N8N/wqJL8sXXjqtVeDjRMzdEfkW1SHOvN60Fm
-	 o4kWhbzssRqpuOx7aKvp7Qj7vwZVvQB6ow+E7CXkjs6FRS+KeYfB8c/1PkVeSawA5U
-	 4QossshNB8cKqHrC6C15daU52qOIP7DxzegtVSxYaHknmLhojQOQKiKig+zhK6hGGA
-	 epHeDHjVw4LDa5RJgre5zuUaWtg7Frpn+obNHE6sb46ZCr7dsXfgmW6OZtIUxqXT62
-	 I+RAi2112J/hw==
+	b=b/bMhvMysFeUubTxLJ5XTph2toqEfBGTK2TKWT3sbWNQWH9k0m8NQ/jcluxyVu2yd
+	 YWmWnvq7eAcntoIiTpMQtUNtKzvyP5RDU+Hc92etv1Ouz/JlGZCFM5L4bexHwXw8sa
+	 VHjeBCO8oSuRYq/tr53J6XsqfrPDDsAjZbtUOpgjr0ZTfoQY1BQ/CSu5D8VsQ5DSiL
+	 j1ABVbKWSA0SXfZ7V+6lEDwEb5P3bukgCOOncH5s4PFbPuWAcSoY5nJr2xwEODtFGo
+	 4p34eExMPvxvQbXgITpFWxulpPCZwgi5pJzNDXUWjZgv5pm0Al50fXgO+CvRNaB6DR
+	 oQdD2Ql46Af6w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Sasha Levin <sashal@kernel.org>,
-	James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 035/153] scsi: st: ERASE does not change tape location
-Date: Mon,  5 May 2025 19:11:22 -0400
-Message-Id: <20250505231320.2695319-35-sashal@kernel.org>
+Cc: Seyediman Seyedarab <imandevel@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 040/153] kbuild: fix argument parsing in scripts/config
+Date: Mon,  5 May 2025 19:11:27 -0400
+Message-Id: <20250505231320.2695319-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -60,39 +58,85 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Kai Mäkisara <Kai.Makisara@kolumbus.fi>
+From: Seyediman Seyedarab <imandevel@gmail.com>
 
-[ Upstream commit ad77cebf97bd42c93ab4e3bffd09f2b905c1959a ]
+[ Upstream commit f757f6011c92b5a01db742c39149bed9e526478f ]
 
-The SCSI ERASE command erases from the current position onwards.  Don't
-clear the position variables.
+The script previously assumed --file was always the first argument,
+which caused issues when it appeared later. This patch updates the
+parsing logic to scan all arguments to find --file, sets the config
+file correctly, and resets the argument list with the remaining
+commands.
 
-Signed-off-by: Kai Mäkisara <Kai.Makisara@kolumbus.fi>
-Link: https://lore.kernel.org/r/20250311112516.5548-3-Kai.Makisara@kolumbus.fi
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+It also fixes --refresh to respect --file by passing KCONFIG_CONFIG=$FN
+to make oldconfig.
+
+Signed-off-by: Seyediman Seyedarab <imandevel@gmail.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/st.c | 1 -
- 1 file changed, 1 deletion(-)
+ scripts/config | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index a58cb2171f958..26827e94d5e38 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -2884,7 +2884,6 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
- 			timeout = STp->long_timeout * 8;
+diff --git a/scripts/config b/scripts/config
+index ff88e2faefd35..ea475c07de283 100755
+--- a/scripts/config
++++ b/scripts/config
+@@ -32,6 +32,7 @@ commands:
+                              Disable option directly after other option
+ 	--module-after|-M beforeopt option
+                              Turn option into module directly after other option
++	--refresh            Refresh the config using old settings
  
- 		DEBC_printk(STp, "Erasing tape.\n");
--		fileno = blkno = at_sm = 0;
- 		break;
- 	case MTSETBLK:		/* Set block length */
- 	case MTSETDENSITY:	/* Set tape density */
+ 	commands can be repeated multiple times
+ 
+@@ -124,16 +125,22 @@ undef_var() {
+ 	txt_delete "^# $name is not set" "$FN"
+ }
+ 
+-if [ "$1" = "--file" ]; then
+-	FN="$2"
+-	if [ "$FN" = "" ] ; then
+-		usage
++FN=.config
++CMDS=()
++while [[ $# -gt 0 ]]; do
++	if [ "$1" = "--file" ]; then
++		if [ "$2" = "" ]; then
++			usage
++		fi
++		FN="$2"
++		shift 2
++	else
++		CMDS+=("$1")
++		shift
+ 	fi
+-	shift 2
+-else
+-	FN=.config
+-fi
++done
+ 
++set -- "${CMDS[@]}"
+ if [ "$1" = "" ] ; then
+ 	usage
+ fi
+@@ -217,9 +224,8 @@ while [ "$1" != "" ] ; do
+ 		set_var "${CONFIG_}$B" "${CONFIG_}$B=m" "${CONFIG_}$A"
+ 		;;
+ 
+-	# undocumented because it ignores --file (fixme)
+ 	--refresh)
+-		yes "" | make oldconfig
++		yes "" | make oldconfig KCONFIG_CONFIG=$FN
+ 		;;
+ 
+ 	*)
 -- 
 2.39.5
 
