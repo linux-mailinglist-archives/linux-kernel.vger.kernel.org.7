@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-633737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E415AAADEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:46:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BC7AAAE03
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C173B164818
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEDF91BA48D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA4E35AEC4;
-	Mon,  5 May 2025 22:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F90A35B005;
+	Mon,  5 May 2025 22:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fg4qWe+W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z47LkCg3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F20929A3E0;
-	Mon,  5 May 2025 22:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E7029AAE3;
+	Mon,  5 May 2025 22:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485035; cv=none; b=mgufAQjhx8Z/bPYsjJiOyUHCRJl6LgcKPZlONacf5nJy98wvLtA0KJc8ZgADsdpDafdX4LMhEqjdR1icODpanWPf4u/KOpQ96cUjIf0YOmLqSKHOLUkGFA+sgZ0tPijpzd6F3keOqgW9GHHrlCs1DHbzaOAfmKaOPwSjkyATAts=
+	t=1746485046; cv=none; b=JqRGCL0H97SCGcBMozQKVQn+pZ1Z7xrVPQaxJCUbj0NzghL9wwmXCrGX46HCOx+RafvTPQOj4Te3LpjNwzca7CZFNveuw77YTVhaw+fkI/V52v4+0k3OmicJeEcYFqs/YqV+o8No1fsltca1eDZGvd83Tmip/UBCG3RevlqjWb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485035; c=relaxed/simple;
-	bh=jTphWrmv44YP6NtaA/99o5KYTtq/M3BPS0eJY1PDA/U=;
+	s=arc-20240116; t=1746485046; c=relaxed/simple;
+	bh=WrYgjwgr/9o03S6ZhA/vJb4SpUBmDleEkeOL4Gp00bE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m1y4VKvl/cZ3rMbHieyntamvZtkd5g2piW8c/lNPZf8nPRpUQSX7c+YopEq2fCaLr5LTGQfBb27iTQhxojPrR88qiZQ9w38E4vlBQLBpe+vvmI4S4m8MY74yrxk1vXJMX58VimoEQBzwBUo7/ykTOQg337LN4RKDk91rtD1Etbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fg4qWe+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92B0BC4CEE4;
-	Mon,  5 May 2025 22:43:54 +0000 (UTC)
+	 MIME-Version; b=YdEnmrFcF+QsL++BBbbo0xKMdWm/5HkYMehnjUkZLmNQbCoP26L4ezpz/9IMpZ9iCE4tbugfIwzbd1jBgf/5WV3KvQrSSSPBHJt/Jm1tc+nn7o+qw7SHCbJeRW1UQkHDUieTKW2KEhVuGndKRtvhHywY75LsUbvIZCJSAAAJmq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z47LkCg3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97291C4CEE4;
+	Mon,  5 May 2025 22:44:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485035;
-	bh=jTphWrmv44YP6NtaA/99o5KYTtq/M3BPS0eJY1PDA/U=;
+	s=k20201202; t=1746485046;
+	bh=WrYgjwgr/9o03S6ZhA/vJb4SpUBmDleEkeOL4Gp00bE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Fg4qWe+WVSKRfNDKisKSOvunKp7kYcIcm1vnFmmXGG46C0NUapErCtRiGVH8WA9/0
-	 a03u937XGlGGC2CF0E3UshDYuh/VtJnkk7/9K/ti9V/Qb0YiSqOxNIDMXCUzU7rIAX
-	 D0UBYaqMvIg36BUCZY7vXdskH8vrMSSNNDZrCLTmwlSr/TpZcpqmf+B0GLZk6k9VNR
-	 YlxSdXMAwrTQAJrqUKO54ZQ14vDYyMZ/Zz9VeaHdQ0fUVeKdzOMySn+vNcmuX+VDUX
-	 QHZT9/qO74QIy+6qWBsT6Mpgykpz/jPzfbTWXq1/4CzVKPiD4TVDfeiZoMuTtASzHB
-	 GLreHb2sa1SPg==
+	b=Z47LkCg3mGGJr0YlDkA+MAxSntJrBJKjQB944CtOYrHB4bEirpsp2bMMysNPYXwS3
+	 kSlE2qqUwPXXNvdv21D3+xm9Y/4/SwFrK4AIlhYk6Qnk/rozEL58b1PiAJX/yry/Ur
+	 W5Fp02zV7FRUsl32bLgiFOyH0L+oO8EEu/QQtUyFTR0ul9BVzhT9i5v0IWhll2n/pj
+	 hVQA0fdyfQuL+A0LT4VGbdY10t0ZCYOTydAzu+On88RnG0AsmIj8b3MVYkPeD2lCZM
+	 XlTm/IU1UtlCLzDBA2hhF7iIk04TNZgGsrYM6gUnLUVLAUytRttABRD22Qa99kmefE
+	 FtCrEdLZlQhzw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	anna-maria@linutronix.de,
-	frederic@kernel.org
-Subject: [PATCH AUTOSEL 6.12 133/486] timer_list: Don't use %pK through printk()
-Date: Mon,  5 May 2025 18:33:29 -0400
-Message-Id: <20250505223922.2682012-133-sashal@kernel.org>
+	peterx@redhat.com,
+	joey.gouly@arm.com,
+	yangyicong@hisilicon.com,
+	ioworker0@gmail.com
+Subject: [PATCH AUTOSEL 6.12 139/486] arm64/mm: Check PUD_TYPE_TABLE in pud_bad()
+Date: Mon,  5 May 2025 18:33:35 -0400
+Message-Id: <20250505223922.2682012-139-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -60,66 +67,52 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+From: Ryan Roberts <ryan.roberts@arm.com>
 
-[ Upstream commit a52067c24ccf6ee4c85acffa0f155e9714f9adce ]
+[ Upstream commit bfb1d2b9021c21891427acc86eb848ccedeb274e ]
 
-This reverts commit f590308536db ("timer debug: Hide kernel addresses via
-%pK in /proc/timer_list")
+pud_bad() is currently defined in terms of pud_table(). Although for some
+configs, pud_table() is hard-coded to true i.e. when using 64K base pages
+or when page table levels are less than 3.
 
-The timer list helper SEQ_printf() uses either the real seq_printf() for
-procfs output or vprintk() to print to the kernel log, when invoked from
-SysRq-q. It uses %pK for printing pointers.
+pud_bad() is intended to check that the pud is configured correctly. Hence
+let's open-code the same check that the full version of pud_table() uses
+into pud_bad(). Then it always performs the check regardless of the config.
 
-In the past %pK was prefered over %p as it would not leak raw pointer
-values into the kernel log. Since commit ad67b74d2469 ("printk: hash
-addresses printed with %p") the regular %p has been improved to avoid this
-issue.
-
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping looks in atomic contexts.
-
-Switch to the regular pointer formatting which is safer, easier to reason
-about and sufficient here.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
-Link: https://lore.kernel.org/all/20250311-restricted-pointers-timer-v1-1-6626b91e54ab@linutronix.de
+Cc: Will Deacon <will@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Link: https://lore.kernel.org/r/20250221044227.1145393-7-anshuman.khandual@arm.com
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/time/timer_list.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/pgtable.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
-index 1c311c46da507..cfbb46cc4e761 100644
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -46,7 +46,7 @@ static void
- print_timer(struct seq_file *m, struct hrtimer *taddr, struct hrtimer *timer,
- 	    int idx, u64 now)
- {
--	SEQ_printf(m, " #%d: <%pK>, %ps", idx, taddr, timer->function);
-+	SEQ_printf(m, " #%d: <%p>, %ps", idx, taddr, timer->function);
- 	SEQ_printf(m, ", S:%02x", timer->state);
- 	SEQ_printf(m, "\n");
- 	SEQ_printf(m, " # expires at %Lu-%Lu nsecs [in %Ld to %Ld nsecs]\n",
-@@ -98,7 +98,7 @@ print_active_timers(struct seq_file *m, struct hrtimer_clock_base *base,
- static void
- print_base(struct seq_file *m, struct hrtimer_clock_base *base, u64 now)
- {
--	SEQ_printf(m, "  .base:       %pK\n", base);
-+	SEQ_printf(m, "  .base:       %p\n", base);
- 	SEQ_printf(m, "  .index:      %d\n", base->index);
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 8ee56ae999c16..5ba8376735cb0 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -806,7 +806,8 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
+ 	pr_err("%s:%d: bad pmd %016llx.\n", __FILE__, __LINE__, pmd_val(e))
  
- 	SEQ_printf(m, "  .resolution: %u nsecs\n", hrtimer_resolution);
+ #define pud_none(pud)		(!pud_val(pud))
+-#define pud_bad(pud)		(!pud_table(pud))
++#define pud_bad(pud)		((pud_val(pud) & PUD_TYPE_MASK) != \
++				 PUD_TYPE_TABLE)
+ #define pud_present(pud)	pte_present(pud_pte(pud))
+ #ifndef __PAGETABLE_PMD_FOLDED
+ #define pud_leaf(pud)		(pud_present(pud) && !pud_table(pud))
 -- 
 2.39.5
 
