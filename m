@@ -1,183 +1,80 @@
-Return-Path: <linux-kernel+bounces-632372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029E9AA9678
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:54:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9CEAA967C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49AA27A1F65
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFA0A189E474
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C522D264A9C;
-	Mon,  5 May 2025 14:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYxfZQi6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BB82701B8;
+	Mon,  5 May 2025 14:48:27 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7DE264A8E;
-	Mon,  5 May 2025 14:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9552701B1
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 14:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746456513; cv=none; b=BBdEKmjJIIVR7vjNg8coebuMw1qBg98ITO4kg3PmlqWHbtQvo0CQAjYYCK/6+669IV9FgaM5zGNq/efrULiEWn+wtjL+Hb3WILfMSOiAZqcGN00TJTwcHa8AkSj4PjQwLD/J7+3eRnKsZ5792vfKo7JGkKp5A/+KVOpfNcgJw1Y=
+	t=1746456507; cv=none; b=sirQTVMAgkz83+ylYkvu10Z+4YAYn+bLDQiQrcdsz0RDv8QMr1vjz+T4tQcfiNCcV+hvq0QZFg/W3jwnxhF2F1hPTTLmsIqejrv9BHrFkij0V7m1HCMsr1CZ5LeWFq1NTZ1d0/kEORFf+FUF9mMuT472h4vJroUyjvqp6BDaIqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746456513; c=relaxed/simple;
-	bh=OqbGJoUOj8Ika39G6fy9AeTSyJC3yzUd2A6RtIZgu40=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qtig+8U20a12uQHAizdBpsC6xs9ZQMGGJRdqA/nhIrDbyEnF3+EB2ECZIt/S7r0S+XV+A/iYpfywiGXQkNMczGyjxy3Gq6vrehjejn19b9Z5GlRsScH5+ZhoDOOb0kYSTFtl6V3vXf4JIgQvpnATwPWihSnnRuMsaNm1mahRnDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYxfZQi6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D466FC4CEE4;
-	Mon,  5 May 2025 14:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746456513;
-	bh=OqbGJoUOj8Ika39G6fy9AeTSyJC3yzUd2A6RtIZgu40=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SYxfZQi6KH8f2bQ/bF/PWoWGfiW0hASqLeP2mxUSo0g44HvXCn7692ctYZYrwdv9a
-	 FtNzkKrj5RJ+9+49nuCUPv9RB8LCRdMP7Tej/jLhA12y5N0QdHeJTnq0QA8ok2QZ5d
-	 NnYrPhwEf9XwnbTds3ADqYGsUs7ESuHHzJXuJFiez8cF597tuOxFuXUyKujA322ofJ
-	 viDWTL4HOjiA7zg8Irqiac65yQigAQwGRuq5d7ijngWUPzlIaGT0IWNVbmEN+9JGh4
-	 o8eC1Zzexnv5GlY7Y5I7dwC+0Xm4eYVj1xS8EbUaNLOgDWzzJ2T4kXDcFJRr3aDC2t
-	 d6HMspywzN/ug==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Vineet Gupta <vgupta@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-snps-arc@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: interrupt-controller: Convert snps,archs-idu-intc to DT schema
-Date: Mon,  5 May 2025 09:48:29 -0500
-Message-ID: <20250505144830.1292495-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1746456507; c=relaxed/simple;
+	bh=ddNygQOAIU8bWfPaIhPNv582SP0aau5pz5XcxK1GgTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DJjFBsg33VIinqni/gvHBYXfsIYWWVHcSwFZw32n3wyEgWE2vwoytotJh4tBFgDCqmYBTKqUsik7lQ4j1KLcGbNso/V0KSt7eFd0/V0tr2LRuSEUzuxHSBQ5yMq9cNlQvoALXQG9mZpZep2sSxdoCZT92mY3d4NPNJLTKBcnh1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3788C4CEE4;
+	Mon,  5 May 2025 14:48:25 +0000 (UTC)
+Date: Mon, 5 May 2025 10:48:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "mathieu.desnoyers@efficios.com"
+ <mathieu.desnoyers@efficios.com>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+ "kprateek.nayak@amd.com" <kprateek.nayak@amd.com>
+Subject: Re: [PATCH V3 1/4] Sched: Scheduler time slice extension
+Message-ID: <20250505104830.36f22a4d@gandalf.local.home>
+In-Reply-To: <C3F85063-68B5-4C6D-B95F-27B72DBFA178@oracle.com>
+References: <20250502015955.3146733-1-prakash.sangappa@oracle.com>
+	<20250502015955.3146733-2-prakash.sangappa@oracle.com>
+	<20250502090529.GU4198@noisy.programming.kicks-ass.net>
+	<20250502090643.3809b6f5@batman.local.home>
+	<C3F85063-68B5-4C6D-B95F-27B72DBFA178@oracle.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Convert the ARC-HS Interrupt Distribution Unit interrupt controller
-binding to schema format. It's a straight-forward conversion of the
-typical interrupt controller.
+On Mon, 5 May 2025 01:51:39 +0000
+Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../snps,archs-idu-intc.txt                   | 46 ------------------
- .../snps,archs-idu-intc.yaml                  | 48 +++++++++++++++++++
- 2 files changed, 48 insertions(+), 46 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/snps,archs-idu-intc.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/snps,archs-idu-intc.yaml
+> > I countered that this "optimization" would only affect those that use
+> > the extended time slice and would not cause any issues with current
+> > applications that depend on its current semantics. =20
+>=20
+> Still wouldn=E2=80=99t  that affect performance of the application using =
+the extended time slice optimization?
+> A sched_yield()  could end up in do_sched_yield(), if =E2=80=98shed_time_=
+delay' is not set as the thread had been rescheduled.
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/snps,archs-idu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/snps,archs-idu-intc.txt
-deleted file mode 100644
-index a5c1db95b3ec..000000000000
---- a/Documentation/devicetree/bindings/interrupt-controller/snps,archs-idu-intc.txt
-+++ /dev/null
-@@ -1,46 +0,0 @@
--* ARC-HS Interrupt Distribution Unit
--
--  This optional 2nd level interrupt controller can be used in SMP configurations
--  for dynamic IRQ routing, load balancing of common/external IRQs towards core
--  intc.
--
--Properties:
--
--- compatible: "snps,archs-idu-intc"
--- interrupt-controller: This is an interrupt controller.
--- #interrupt-cells: Must be <1> or <2>.
--
--  Value of the first cell specifies the "common" IRQ from peripheral to IDU.
--  Number N of the particular interrupt line of IDU corresponds to the line N+24
--  of the core interrupt controller.
--
--  The (optional) second cell specifies any of the following flags:
--    - bits[3:0] trigger type and level flags
--        1 = low-to-high edge triggered
--        2 = NOT SUPPORTED (high-to-low edge triggered)
--        4 = active high level-sensitive <<< DEFAULT
--        8 = NOT SUPPORTED (active low level-sensitive)
--  When no second cell is specified, the interrupt is assumed to be level
--  sensitive.
--
--  The interrupt controller is accessed via the special ARC AUX register
--  interface, hence "reg" property is not specified.
--
--Example:
--	core_intc: core-interrupt-controller {
--		compatible = "snps,archs-intc";
--		interrupt-controller;
--		#interrupt-cells = <1>;
--	};
--
--	idu_intc: idu-interrupt-controller {
--		compatible = "snps,archs-idu-intc";
--		interrupt-controller;
--		interrupt-parent = <&core_intc>;
--		#interrupt-cells = <1>;
--	};
--
--	some_device: serial@c0fc1000 {
--		interrupt-parent = <&idu_intc>;
--		interrupts = <0>;	/* upstream idu IRQ #24 */
--	};
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/snps,archs-idu-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/snps,archs-idu-intc.yaml
-new file mode 100644
-index 000000000000..286a964f23e1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/snps,archs-idu-intc.yaml
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/snps,archs-idu-intc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ARC-HS Interrupt Distribution Unit
-+
-+maintainers:
-+  - Vineet Gupta <vgupta@kernel.org>
-+
-+description: >
-+  ARC-HS Interrupt Distribution Unit is an optional 2nd level interrupt
-+  controller which can be used in SMP configurations for dynamic IRQ routing,
-+  load balancing of common/external IRQs towards core intc.
-+
-+  The interrupt controller is accessed via the special ARC AUX register
-+  interface, hence "reg" property is not specified.
-+
-+properties:
-+  compatible:
-+    const: snps,archs-idu-intc
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    description: |
-+      Number of interrupt specifier cells:
-+        - 1: only a common IRQ is specified.
-+        - 2: a second cell encodes trigger type and level flags:
-+            1 = low-to-high edge triggered
-+            4 = active high level-sensitive (default)
-+    enum: [1, 2]
-+
-+required:
-+  - compatible
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    interrupt-controller {
-+        compatible = "snps,archs-idu-intc";
-+        interrupt-controller;
-+        #interrupt-cells = <1>;
-+    };
--- 
-2.47.2
+So I haven't taken a deeper look at your patches, but the patches I had,
+one bit was reserved to let the task know that it received an extended time
+slice it should reschedule as soon as possible. The task should only call
+the system call after releasing the critical section IFF the kernel
+extended its time slice.
 
+As it shouldn't have to do a system call if the kernel didn't extend it.
+Otherwise what's the purpose of this feature if it is always doing system
+calls after leaving the critical section.
+
+-- Steve
 
