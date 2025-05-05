@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-631915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C85AA8F62
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:23:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84423AA8F6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664F03A30F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:22:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A34403A6551
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BD51F5834;
-	Mon,  5 May 2025 09:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FAF1F5859;
+	Mon,  5 May 2025 09:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gbAg5WgB"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4FFtXfNH"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7711F5413
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 09:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EDB1F582E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 09:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746436988; cv=none; b=ZBLe76e6I68Ydjp0TM0WZ3a/fccUTy9FJTu4fsG1pHJ9YqbH8AkotiuvY+w4pLqAyg/PvvkPQkIxa9XEkqm6rpSLBpI/dcSpaj2+2Jyy7vTjKkES2g4ExtXvsVA4qgodTG+VI5oltciYeOJXkJ+hiBZ+XcIGMvklUXzlfmya/uE=
+	t=1746437038; cv=none; b=HVR8QfmNycSKwOeT3f8RWG8iUkodF3v8j+JCFlN1tqTVqcYDAI6kvsrZeUbrKkafGPceBal8cuFooN+nHKg6pQntOCSp3H+uyYASWWXUBBLXc5+zuFRRgMQwnH22kYpUJ378ZzRTGhpWEcZc0uWk9cv/XiNk+P0e1U9MlXVrkJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746436988; c=relaxed/simple;
-	bh=VOdVgXxRjUc9ZrK+YEPI5gJ5KQN0O3vZhuF2gL43jZY=;
+	s=arc-20240116; t=1746437038; c=relaxed/simple;
+	bh=2xxpj+2ReE48KbP5KJ11PgdY9Ly28L5Z4eGb6xFarec=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GygBJNXovH3zpbwCstaeKRXOCRG9tbSNyN/XFvMiQamwuBtptlrmL3SHmS9nWI8XdhpIr8lwZVZAdOkEhbvQfnBGHp01MctK1rUMXTD/6b2Mp+k4NJstH61c2GQ8ILOWhb/Mul9QU0fNi0kCXJw3Qv5L+AbnwieM61ECy8xAMi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gbAg5WgB; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=ac6cuu6qswRAA/6U5B+JDuMnjjPGVYBERov0k/KW8ajolzZh2jkM+tBtzZzAlpu/nn7kSRItvilACpQ2jz2bobLIprTbdCcoScqDas2nZ91qHcbve2Dap9VX3X2KhdqlvcUpyu06IZa07Fq6ctr1TnJH1ZfgKTZ6MMh7dxcDHKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4FFtXfNH; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43eea5a5d80so22128655e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 02:23:06 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d209dc2d3so18833515e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 02:23:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746436985; x=1747041785; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1746437035; x=1747041835; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vYhLhqsz0QgAIGtWeBREADtT5U6NplMqh1ZF+EYzXS8=;
-        b=gbAg5WgBMNtVDuWUCSbgxCGk0zPekgmYIDAzLlk714isQeDFzNfISmckcMqh37tL5r
-         45Tk/+7eqw0EAez/ZCwt4nDX65ih6Ttj/1hMRJBNyrPqQJMtBWFC5N+Tq3/C5rf+133S
-         NGnuEJX6Ah/Chk/ZN56ICkltHywauAsB3IEg+jXBZFLsbOz1ppCN5XRJ5JXsEN/bh30a
-         kj7+V/G9ukGoRfYO0GTRsYKZyls5h+3zy1rUb3qft7J1hb2S90Kzdg4MBgjeqyho6pX2
-         UfG4TGZvtk1KOkojwTQdgXtI9lgvDukf4zJKnkRMh00nQ98qIZEIiizOKLfZZ9Kn/I7t
-         u2sQ==
+        bh=UNKpSETC3aRoWs26slbmPYaRhZWnx/HOj+OMKwfNopA=;
+        b=4FFtXfNHVOpQM7Jr4isrJSe+z+VDiBnIBysQtpsEP13Bs+QuNDDQ3nITnhu1f/p8NJ
+         l/SE6uudP+jxg1nXQnETYPZdCnQ7ewTIqU4jbu0rm0jn6RMdy5oXSUb/Aw7r4L0rmP70
+         kOv7A7mTXGxSLlkQTC2FUO4e8lswCGjgJ7iaddAe746FTRkKatN0oqi4yW5lx6dTEioE
+         TO1cBJybvx9NNOtTAJPmp8ulcDNMtXcU2fobHRcnWc78BXpvcWvZM9z/KdpnzUUNfiGE
+         HnrTEJ6qR7ADZvtPyVFpwj9Nk/0WdRQ0f0NfYNawWcKeAUmuZ4MqCU4bFv85+WEczNfc
+         J4Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746436985; x=1747041785;
+        d=1e100.net; s=20230601; t=1746437035; x=1747041835;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vYhLhqsz0QgAIGtWeBREADtT5U6NplMqh1ZF+EYzXS8=;
-        b=VfYxmCnbaLWNzr+FcIyISZpNZaeCPyFuhUofTX6ehaZ69xNrH2T/B65sLsrp2L0dXs
-         JTBdjnW/r5HBKVtsRhVhzi82xvlRbF4SdgDTacM3wQllaNkZteBPScPd5rBrIuYJHjMk
-         maXNZIdubkbvuZDiwasqp7OvoTV1Nd1lj8yokpSY+07/2GrIvi7KhG2b2Ofj3gQyouGp
-         nDXM+/7W4TDlISyh9tRINYbDOgbEOWBRP6Y2cMj81W/lYTdhvZtCsMb5iywv7+tCrQjc
-         3vMyUHzJYo9tkPZLve81nVfq9mYboFQC3Ji43r05dAU0p77Iq8p+OfnzP1dQOwvujJoQ
-         IcoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSQk39csXLSx1OlCqmbBwM0aALhxjqAq/2/TZYZq4WtTPElZyfMtSob6o32IYikWNRDSmH2oEci7oTPDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdyRalqvB8Vz1k4UTJPVi4D0MCJ42X3gQmrPrlfRQ459KxQ0UD
-	xV+sdunHxL9Rxp+qSv2P8csMiQAfaitaExvMIc/al0jK7KHhEVZnAS9cib9sA9Ah+eQUwjmbCQr
-	DZUrEBktLLg/48g==
-X-Google-Smtp-Source: AGHT+IGKmUkyRXUGCux/8W5tzNoSQGrev54dx73LRy4mpzycYZ3R0Lrs7YdSqxCw934omv5QZx/C9TtcgUJDmVo=
-X-Received: from wmbbi5.prod.google.com ([2002:a05:600c:3d85:b0:440:5e10:a5a6])
+        bh=UNKpSETC3aRoWs26slbmPYaRhZWnx/HOj+OMKwfNopA=;
+        b=aUcNeMAk7qDn1Jme4o52zMKYimKSME+N+8xwZdyJYjxF4lYk5gfld6+qX/avWFF+++
+         /3b+1n7gulOoVxf0JH23KUdjOgPEL0XLcSDek8R2037sPwsRP3lNOcCxoORW+IP+RuDc
+         LDjuiroCa6wEriBUgkRVRb78pDeGLyvGFQg3CQRvPZbtgwiuSzbvSHMR1uxnRAPOpYmB
+         a7K25SsgZ55Xe2fQUd/dVe91xgqhg+Gy2Di0KKA2em0Kmmw7FXqzYYW9d0fbo25aJ9fI
+         g2kM3KTIZ0KnwZVAsayNNZCJh2GWixy4p4ogW/UMCNuTIjdTsMpu8ehtGn1sdMKvh5MM
+         NFZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXY2j115cdXJ92QUL7V1zp+hr6C2glvbQciPoEv6/rqU0DS3MLkpRPsI4anDXmlTqO5PJphWh4emVM/T64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIAJC7h6tF3RIeb1PjYGn/MHd9YutGxhY3TZgcZv5VSEUDLp02
+	UnNsQsPgB17UH0wllaApBgPg3C1bTDMg3Bkjalp4sZWWZl8IAFz1FWnxPyk4d2hoyaNnSWYSpM8
+	K7f83RW1sBaJeoQ==
+X-Google-Smtp-Source: AGHT+IHD25Gl0hnIcuOchqaJj6jrQJy3Tcy1tSunT6kxPFMJLsXGIsx+DEdSlsV661NRNl3V8hAe7ZryPPG14R4=
+X-Received: from wmbhh12.prod.google.com ([2002:a05:600c:530c:b0:441:b3fe:b95a])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:a41:b0:43d:94:cfe6 with SMTP id 5b1f17b1804b1-441c48dbdaemr51294055e9.16.1746436985561;
- Mon, 05 May 2025 02:23:05 -0700 (PDT)
-Date: Mon, 5 May 2025 09:23:03 +0000
-In-Reply-To: <20250502140237.1659624-3-ojeda@kernel.org>
+ 2002:a05:600c:3548:b0:43c:e7ae:4bcf with SMTP id 5b1f17b1804b1-441c1c70782mr68477705e9.0.1746437035142;
+ Mon, 05 May 2025 02:23:55 -0700 (PDT)
+Date: Mon, 5 May 2025 09:23:53 +0000
+In-Reply-To: <20250502140237.1659624-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250502140237.1659624-1-ojeda@kernel.org> <20250502140237.1659624-3-ojeda@kernel.org>
-Message-ID: <aBiDd43KSHJJqpge@google.com>
-Subject: Re: [PATCH 2/5] rust: clean Rust 1.87.0's `clippy::ptr_eq` lints
+References: <20250502140237.1659624-1-ojeda@kernel.org>
+Message-ID: <aBiDqQxAzTC4N-n-@google.com>
+Subject: Re: [PATCH 0/5] Rust beta (1.87) and nightly (1.88) lint cleanups
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>
 Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
@@ -81,37 +81,25 @@ Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
 	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
 	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
 	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="utf-8"
 
-On Fri, May 02, 2025 at 04:02:34PM +0200, Miguel Ojeda wrote:
-> Starting with Rust 1.87.0 (expected 2025-05-15) [1], Clippy may expand
-> the `ptr_eq` lint, e.g.:
+On Fri, May 02, 2025 at 04:02:32PM +0200, Miguel Ojeda wrote:
+> Now that Rust 1.87.0 is close to release, clean up the new lints that appeared.
 > 
->     error: use `core::ptr::eq` when comparing raw pointers
->        --> rust/kernel/list.rs:438:12
->         |
->     438 |         if self.first == item {
->         |            ^^^^^^^^^^^^^^^^^^ help: try: `core::ptr::eq(self.first, item)`
->         |
->         = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_eq
->         = note: `-D clippy::ptr-eq` implied by `-D warnings`
->         = help: to override `-D warnings` add `#[allow(clippy::ptr_eq)]`
+> It may be that one of the patches is not needed by the time it releases, but
+> I prefer to not wait much longer since I would like to land this for -rc6 so
+> that it is clean for release.
 > 
-> Thus clean the few cases we have.
+> In addition, clean some nightly (1.88.0) ones too.
 > 
-> This patch may not be actually needed by the time Rust 1.87.0 releases
-> since a PR to relax the lint has been beta nominated [2] due to reports
-> of being too eager (at least by default) [3].
-> 
-> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
-> Link: https://github.com/rust-lang/rust-clippy/pull/14339 [1]
-> Link: https://github.com/rust-lang/rust-clippy/pull/14526 [2]
-> Link: https://github.com/rust-lang/rust-clippy/issues/14525 [3]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Miguel Ojeda (5):
+>   objtool/rust: add one more `noreturn` Rust function for Rust 1.87.0
+>   rust: clean Rust 1.87.0's `clippy::ptr_eq` lints
+>   rust: clean Rust 1.88.0's `unnecessary_transmutes` lint
+>   rust: clean Rust 1.88.0's warning about `clippy::disallowed_macros`
+>     configuration
+>   rust: clean Rust 1.88.0's `clippy::uninlined_format_args` lint
 
-For the list file, it might be nice to import core::ptr instead of using
-the full path each time. Or maybe just disable this lint.
-
-Alice
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
