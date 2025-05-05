@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-631826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239E6AA8E10
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:18:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4796FAA8E08
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 650783A88B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5CD9173A3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6DE1EE7DD;
-	Mon,  5 May 2025 08:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9351E7C24;
+	Mon,  5 May 2025 08:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="rlGnLSJl"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYCKgsgG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7771EE03D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D46154F8C;
+	Mon,  5 May 2025 08:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746433088; cv=none; b=uc/6yYczKT/MVzVG1Qitj/YCm4hCdTn7LHDtH7TcFSYG6dlwIFJrUdphNyAALMJVxyVIkrVJrNAsfBwwauJ66aUgNSUp/uNb/H0LhKaxY5zS/LfnwP9RYdVADPUZgGBwYO/2iVJStU4n+DOdUDnznijBBygPgkPbrpvxMaIrfis=
+	t=1746432972; cv=none; b=q6SUZ+iI2ENmIPYTxoi2E+iwRJ1ZMhTP9cs2Z7oObADdGUlTNR/qxosk50HcQtX/CqfamOt3pTi6fLT3lx8imG/0Rxnpj7OFr38Iat57k2t0iPcRWfmCyIvgcrDopp5e3tAKD6rGZgTt4qoc/gcnEljaK8i/utj1ePHoM/hvo98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746433088; c=relaxed/simple;
-	bh=YHKk9rU1/enVF4zlikIbjl4EE3E1d0Cmb92TgGqDlH0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oa/355MT/jObZjG4kXy0fguL4mhrVFLH2n/4tp5d76AA+q8wMH90I7SZNwrhOiay31qJ5iX2l04mG+Seip284WofqJFaT/uExuac8rPAlUQnbHYw9Qfh8lf1zO/h6EE7k4JCpK5/Y01cdwLUv3o33MgNA9eJ+iINuQuhZbGVLno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=rlGnLSJl; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-	Resent-Message-ID:In-Reply-To:References;
-	bh=yqYrW0kL68U4pB/ROcFLjIt0w7CoMEKnknDWg+6P7ZY=; t=1746433086; x=1747642686; 
-	b=rlGnLSJlHtN19DnAUwV5X1BH1wltt1u7B2lof0pxPEvbfcJLa57SPJHhGPFkqW5yjTfkNWAryyR
-	La/Wf7haaKvzpDuOLYtbJL0KgIicvXgrobzY5O0scZIJrI9NPdYdveWzaQ+DwC9lhOGh2N/GmeDjD
-	uVReXLO87AfdEf3NFUWKBEE4jgjsv4UrUjLUTocU1zIu+iJiE5z1QtIkVwZJzgSaBxiYuTfbq5i5J
-	9mN55xRbuY/BzUlZDecNrInIQAgtkDIxevCSYBjfnEGBKAnXa1dweu9IvOuwZwLHVuJo1I1Kf+hAS
-	o9+iX0HqNq2GsDVR3Hmpw4GzfC4RPaTO/vVA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.1)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uBr1X-000000043hu-2IA3;
-	Mon, 05 May 2025 10:18:03 +0200
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Subject: [GIT PULL] uml 6.15-rc6
-Date: Mon,  5 May 2025 10:15:32 +0200
-Message-ID: <20250505081753.12266-3-johannes@sipsolutions.net>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746432972; c=relaxed/simple;
+	bh=txRJFeqG/VxogXxBmY8Dh9KU8z1bJGtjegmmbsPgJSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ik+2QzzGdPoUTMGHksboCsoV/JjOT4yzZFbrOLDyeYyfT+8C+DO4GsCFIdwe4KzBVBsnajhrqkBFOujbtlGglaKM4lYNZb1zw3COhjC9XUS/PPuSFjmqZvpTovZipb9JrvEpCqExdPVmDAKm66kklQStQQjI7VDjn1QkAOT4Pg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYCKgsgG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E897C4CEE4;
+	Mon,  5 May 2025 08:16:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746432970;
+	bh=txRJFeqG/VxogXxBmY8Dh9KU8z1bJGtjegmmbsPgJSQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hYCKgsgGoCEGWq050qTpv2dkN3TYZDTjoe9ktasYOCoJc7NU4/IxwjcYJ0ULxWp3D
+	 hsu8MX+qJS5GgwVT2J8yJOs9HpnVeukASdAzJKp0pEVZGLLNBpgS9nvtUuZO7Fl69w
+	 PKHxHMFgXZXw54IucfFd2XxaI9SIU2VtkGjDMXNKmDvwK/5P3zJ6SDDlJhgSF2OXG3
+	 aWQh90sIJtCLQnJ4ytp3FHR04zxq3Ldotdf0HpIcPAxJV+PZNf5LqRPLxuhjh39Osl
+	 vv/suhfAfn9/1f4mwar9m7gglJIOwa8TRhLV3Ycxp8yGj7jecxvgSgrfxy93lDwaLI
+	 5srDVbbwP20EA==
+Message-ID: <3d42e605-2526-4eb1-b222-6552629333ef@kernel.org>
+Date: Mon, 5 May 2025 10:16:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: trivial-devices: Document SEN0322
+To: gomba007@gmail.com, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250505-iio-chemical-sen0322-v2-0-217473983b42@gmail.com>
+ <20250505-iio-chemical-sen0322-v2-1-217473983b42@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250505-iio-chemical-sen0322-v2-1-217473983b42@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+On 05/05/2025 09:52, Tóth János via B4 Relay wrote:
+> From: Tóth János <gomba007@gmail.com>
+> 
+> Add documentation for the DFRobot SEN0322 oxygen sensor.
+> 
+> Signed-off-by: Tóth János <gomba007@gmail.com>
 
-We really should've sent this much earlier, apologies.
-There's just a single fix here for the _nofault changes
-that were causing issues with clang, and then when we
-looked at it some other issues seemed to exist.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Please pull and let us know if there's any problem.
-
-Thanks,
-johannes
-
-
-
-The following changes since commit 92a09c47464d040866cf2b4cd052bc60555185fb:
-
-  Linux 6.15-rc5 (2025-05-04 13:55:04 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.15-rc6
-
-for you to fetch changes up to 68025adfc13e6cd15eebe2293f77659f47daf13b:
-
-  um: fix _nofault accesses (2025-05-05 10:06:51 +0200)
-
-----------------------------------------------------------------
-A single fix for _nofault infrastructure.
-
-----------------------------------------------------------------
-Johannes Berg (1):
-      um: fix _nofault accesses
-
- arch/um/include/asm/uaccess.h            |  2 ++
- arch/um/kernel/trap.c                    | 26 +++++++++++++-------------
- arch/x86/um/shared/sysdep/faultinfo_32.h |  2 +-
- arch/x86/um/shared/sysdep/faultinfo_64.h |  2 +-
- 4 files changed, 17 insertions(+), 15 deletions(-)
+Best regards,
+Krzysztof
 
