@@ -1,222 +1,154 @@
-Return-Path: <linux-kernel+bounces-632837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7330AA9D3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:33:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F42AA9D4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D91317C801
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F408D17DB1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEAD1D63E6;
-	Mon,  5 May 2025 20:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22F72701D2;
+	Mon,  5 May 2025 20:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W+oa5OZD"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJFvafyw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF14023CE
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 20:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131521C861D;
+	Mon,  5 May 2025 20:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746477174; cv=none; b=kr73hKM5/4aFhafUGANfLXE8n+1vOfyb+SGv/conxGSxVl0KbSe/WM/siXknLRavJAdEHJg97aB/d9ssaxiUQ0YxORWRKHaKGZMKrV7o5tKUcgbq1MVnOz0msie6Z1rTOI2mGz5mlrpyYqY+shuXG1EsB1zyyDQfO7R5Sqf8W44=
+	t=1746477436; cv=none; b=cesplLLIADCTE2pd1vD7TaM6ZapqJlnXWc00mQhJyHOI85ogHpKT6AJW/rZVz6c0yM/8RYXdjO/qymv9ENb1SndFbMWsPQN2Ncqvxa6kmAJNsDeG4nbKcjrIkqo5GO1H9qv4K/wPtl7m3OmTbxjNOdWOh/pxsWng7hJzumq5cvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746477174; c=relaxed/simple;
-	bh=hY1k1prRW7IVB4XJjuyNWI1CdFgQTA/mSbJYsekIKOw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OBoMZ7HsEM2WyczXB2iqfzu6MqIXJbvZ1db5zYI9btBp0Zv/wD00snOgwuQTEvM1Q3y/FuDohCrj73Ars1uLO17CgO08qYFcmyxZQ5b/4II0fDTi9wYVNbn9gIdab4jLJm6o/wkZgGVAEGcCIjyiAbY488qws3DBTgdWHUoBjfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W+oa5OZD; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4774611d40bso97921cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 13:32:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746477172; x=1747081972; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b60aNM1IIW2gHu1u1BXDFkyrKkhL+q5sIU+nsJ/h7nc=;
-        b=W+oa5OZDHjLPJRxWifpDfmKIU98rmqZKsBlSNsQIWeqTxthtI1FvAUNTVvvASkcLEv
-         3Ijvxxg2vFGny/0Ys3BCvuSW28b87hHg/ZEaxZ8i6+hCmB4TfRJaVEXu0c6m6lzL5vkC
-         Xgh/l3hn/l/rfql5gGgYXh8c/qx85m56zKcyJIRrP1fsJSAEBf9u+O5TKDEAHQfJxFy5
-         XbZSqWFtZb0mOU5aFnt2o79LCkDT6S2vCx5FpjW1ENKbU4yBEQGKy7xyZstUsvVjU9iB
-         q8BqV2lAh5xzCSIlEMGzj7VYIk7TNUU7bAF4X5UBbVijr7ULUMFi+sE1yziAf7Jcgp4M
-         K9Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746477172; x=1747081972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b60aNM1IIW2gHu1u1BXDFkyrKkhL+q5sIU+nsJ/h7nc=;
-        b=P6r65jz0gpuE6llf9dLb/+a7h9b+/YEpgBbgsn0UBPIwgizO9dY6LMPAq5I0mDZfAD
-         FWNkhBzv7YJharlheZcs4r/e41yi29ez+CkWcPTYmrTpzGUEEtwMsxfnxO8akZiMKgVV
-         4QQiw5eIv2vjw5En2F0VUArReq7YdbQSct5LhLXbBGqgYw61M0WWTyMIPNxw9bIrFfaF
-         kv9zzwgEk4qgpi+3yfFLyJT0F0yb7RC7kjGAt1MW6+OwxHLbPRHJGT9JzTILNInVHtTX
-         GVJTtF+ktS3VfUnE98gd/7VPVljJD8zS6F2yWdAFa0+JyioCXTfm3TfEYzaP+k9tKHkw
-         9WFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPDm1tuxXnenHYz3zAJ9F2N/O+8ahg+NINmACaIH9Iytvo7u72xjoEJCsPuO1DeBTNu980bIml4I3+kwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNWKkBtU1OFrqZoqsKSsIVClgmS6AD0OQUgwd6lzPflY06rRjD
-	ypvak04ksuT2+T9KPDRbFXwDPsolm3QZHui0rKUlqzbMySuq0b/qRvLafejL0pLFDHQVTgy0ZWu
-	VKgsJAZNEXb1inLFrgMGMF78V6YQ0fZlCnWKU
-X-Gm-Gg: ASbGncv2F9TnQ68eAzP6Lb7Wa8aC2w80sJZ6c65G8Zl7ek4FX6/bqebvf2v0D2rV37Y
-	OAD5l7SmzN9Adfoy/imauNsFTrRNN7dvKtyJ8fs+LBDRqbD1COD+SifADQKTJos4fTafhhzRO7j
-	XpfRBCGphg604v8h+aoj2Z
-X-Google-Smtp-Source: AGHT+IExD0+D/Gh/tiVJG2j616FTjgtLyRweoYuOWrc3ahMviTXJxn6NhAoONE9V6H0pFC4tZSEH/nxOUU4E7hwnAiU=
-X-Received: by 2002:ac8:5f4e:0:b0:489:7ea9:4263 with SMTP id
- d75a77b69052e-490f47299d0mr1248191cf.10.1746477171425; Mon, 05 May 2025
- 13:32:51 -0700 (PDT)
+	s=arc-20240116; t=1746477436; c=relaxed/simple;
+	bh=Z5BG+wD+9VTRJdR/77ZQahKysplAfS/VV14lSAxIa00=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jsJyMVTIbX8SvH74uyZURiHQcvhL8hIcRqzj8n7cdqvP/NX0A53nNmppCKclQ3gUYwY0tsJ8CV8PhjFQfoDeKrgLWrVEVCm1I0tUK8JeZBqpI0RNFHo3wAAZUTeAqP1B+3vMLcc0Tne5Y9SwiR1GALfkw95urp6xCCUnuzqKOy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJFvafyw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E0EAC4CEE4;
+	Mon,  5 May 2025 20:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746477435;
+	bh=Z5BG+wD+9VTRJdR/77ZQahKysplAfS/VV14lSAxIa00=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XJFvafywt0dfiB050ZvXaC/+mtz/AMzyMs3wp0XVcFsxFUtEalaDm+4EqLrgQb73a
+	 QrXQl7hWzMvgTCJ9oFYC00fdUS8zm4d9wuqXX7cPfFjDyy1jT8oSO7PcpHphBIemKn
+	 TDpL1XprefVfr1G7wresosbiDCKnIvpCd0JRZ9B839cKxPUOJ8TX+qW5VR7BxBYVgF
+	 DUVA/oXQKh3XOKXp7A1JBIRG8MPZ9HxPloF/D90nIQZNfUt8C0O2UwhtFH/1+WIKRk
+	 wiSG/6Cs4aKLI0mq6OHj/P2mkIwBJiZVQzZ1cIE2Dzf3DuuMVx9uy+CHCElBArb58G
+	 nWSgauvqOZJjg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/7] Clean up the crypto testing options
+Date: Mon,  5 May 2025 13:33:38 -0700
+Message-ID: <20250505203345.802740-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJuCfpHKcDkce=no0Uu3UO2ua2GkgkKMZxnctMuDbOqQNKj_KA@mail.gmail.com>
- <20250505193034.91682-1-00107082@163.com>
-In-Reply-To: <20250505193034.91682-1-00107082@163.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 5 May 2025 13:32:40 -0700
-X-Gm-Features: ATxdqUEhMlfOZ2E56ONd4kM08PcZfCSALKCQlhEP-XpTwtnndpLMoHYz45yeM5k
-Message-ID: <CAJuCfpF223aVoxU=wScKTJt-2JxTnpjJjggKm4UzSUUYHmLi8A@mail.gmail.com>
-Subject: Re: [PATCH v3] mm/codetag: move tag retrieval back upfront in __free_pages()
-To: David Wang <00107082@163.com>
-Cc: akpm@linux-foundation.org, vbabka@suse.cz, mhocko@suse.com, 
-	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 5, 2025 at 12:31=E2=80=AFPM David Wang <00107082@163.com> wrote=
-:
->
-> Commit 51ff4d7486f0 ("mm: avoid extra mem_alloc_profiling_enabled()
->  checks") introduces a possible use-after-free scenario, when page
-> is non-compound, page[0] could be released by other thread right
-> after put_page_testzero failed in current thread, pgalloc_tag_sub_pages
-> afterwards would manipulate an invalid page for accounting remaining
-> pages:
->
-> [timeline]   [thread1]                     [thread2]
->   |          alloc_page non-compound
->   V
->   |                                        get_page, rf counter inc
->   V
->   |          in ___free_pages
->   |          put_page_testzero fails
->   V
->   |                                        put_page, page released
->   V
->   |          in ___free_pages,
->   |          pgalloc_tag_sub_pages
->   |          manipulate an invalid page
->   V
->
-> Restore __free_pages() to its state before, retrieve alloc tag
-> beforehand.
->
-> Fixes: 51ff4d7486f0 ("mm: avoid extra mem_alloc_profiling_enabled() check=
-s")
-> Signed-off-by: David Wang <00107082@163.com>
+This series reworks the crypto testing kconfig options to fix some
+longstanding issues:
 
-Acked-by: Suren Baghdasaryan <surenb@google.com>
+- Replace the inverted option CONFIG_CRYPTO_MANAGER_DISABLE_TESTS with a
+  regular option CONFIG_CRYPTO_SELFTESTS.
 
-Thanks!
+- Make CONFIG_CRYPTO_SELFTESTS enable the full set of tests by default,
+  removing CONFIG_CRYPTO_MANAGER_EXTRA_TESTS.
+
+- Automatically enable CONFIG_CRYPTO_MANAGER when needed for the tests.
+
+- Rename cryptomgr.noextratests to cryptomgr.noslowtests.
+
+- Remove cryptomgr.panic_on_fail, as panic_on_warn can be used instead.
+
+- Rename CONFIG_CRYPTO_TEST to CONFIG_CRYPTO_BENCHMARK.
+
+Changed in v3:
+  - Keep options in defconfigs.
+  - Make CRYPTO_SELFTESTS depend on DEBUG_KERNEL.
+
+Changed in v2:
+  - Moved selftest lines in lib/crypto/Makefile to appropriate places.
+  - Fixed a commit message.
+
+Eric Biggers (7):
+  crypto: tcrypt - rename CRYPTO_TEST to CRYPTO_BENCHMARK
+  crypto: testmgr - remove panic_on_fail
+  crypto: testmgr - replace CRYPTO_MANAGER_DISABLE_TESTS with
+    CRYPTO_SELFTESTS
+  crypto: testmgr - make it easier to enable the full set of tests
+  crypto: testmgr - rename noextratests to noslowtests
+  crypto: Kconfig - make CRYPTO_MANAGER a hidden symbol
+  crypto: testmgr - enable CRYPTO_MANAGER when CRYPTO_SELFTESTS
+
+ arch/arm/configs/exynos_defconfig           |   2 +-
+ arch/arm/configs/milbeaut_m10v_defconfig    |   3 +-
+ arch/arm/configs/pxa_defconfig              |   3 +-
+ arch/arm/configs/spitz_defconfig            |   2 +-
+ arch/arm64/configs/defconfig                |   2 +-
+ arch/loongarch/configs/loongson3_defconfig  |   2 +-
+ arch/m68k/configs/amiga_defconfig           |   2 +-
+ arch/m68k/configs/apollo_defconfig          |   2 +-
+ arch/m68k/configs/atari_defconfig           |   2 +-
+ arch/m68k/configs/bvme6000_defconfig        |   2 +-
+ arch/m68k/configs/hp300_defconfig           |   2 +-
+ arch/m68k/configs/mac_defconfig             |   2 +-
+ arch/m68k/configs/multi_defconfig           |   2 +-
+ arch/m68k/configs/mvme147_defconfig         |   2 +-
+ arch/m68k/configs/mvme16x_defconfig         |   2 +-
+ arch/m68k/configs/q40_defconfig             |   2 +-
+ arch/m68k/configs/sun3_defconfig            |   2 +-
+ arch/m68k/configs/sun3x_defconfig           |   2 +-
+ arch/mips/configs/decstation_64_defconfig   |   1 -
+ arch/mips/configs/decstation_defconfig      |   1 -
+ arch/mips/configs/decstation_r4k_defconfig  |   1 -
+ arch/mips/configs/gpr_defconfig             |   2 +-
+ arch/mips/configs/ip28_defconfig            |   1 -
+ arch/mips/configs/lemote2f_defconfig        |   2 +-
+ arch/mips/configs/mtx1_defconfig            |   2 +-
+ arch/mips/configs/rb532_defconfig           |   2 +-
+ arch/parisc/configs/generic-32bit_defconfig |   2 +-
+ arch/parisc/configs/generic-64bit_defconfig |   1 -
+ arch/powerpc/configs/g5_defconfig           |   2 +-
+ arch/powerpc/configs/powernv_defconfig      |   2 +-
+ arch/powerpc/configs/ppc64_defconfig        |   2 +-
+ arch/powerpc/configs/ppc64e_defconfig       |   2 +-
+ arch/powerpc/configs/ppc6xx_defconfig       |   2 +-
+ arch/s390/configs/debug_defconfig           |   4 +-
+ arch/s390/configs/defconfig                 |   4 +-
+ arch/sh/configs/migor_defconfig             |   1 -
+ arch/sparc/configs/sparc64_defconfig        |   2 +-
+ crypto/Kconfig                              |  45 ++++----
+ crypto/Makefile                             |   2 +-
+ crypto/algapi.c                             |   5 +-
+ crypto/algboss.c                            |   2 +-
+ crypto/api.c                                |   3 +-
+ crypto/hkdf.c                               |   2 +-
+ crypto/internal.h                           |   5 +-
+ crypto/kdf_sp800108.c                       |   2 +-
+ crypto/tcrypt.c                             |   8 +-
+ crypto/tcrypt.h                             |   4 +-
+ crypto/testmgr.c                            | 115 +++++---------------
+ include/crypto/internal/simd.h              |   6 +-
+ lib/crypto/Makefile                         |  11 +-
+ lib/crypto/aescfb.c                         |   2 +-
+ lib/crypto/aesgcm.c                         |   2 +-
+ lib/crypto/blake2s.c                        |   2 +-
+ lib/crypto/chacha20poly1305.c               |   2 +-
+ lib/crypto/curve25519.c                     |   2 +-
+ 55 files changed, 111 insertions(+), 183 deletions(-)
 
 
-> ---
->  include/linux/pgalloc_tag.h |  8 ++++++++
->  mm/page_alloc.c             | 15 ++++++---------
->  2 files changed, 14 insertions(+), 9 deletions(-)
->
-> diff --git a/include/linux/pgalloc_tag.h b/include/linux/pgalloc_tag.h
-> index c74077977830..8a7f4f802c57 100644
-> --- a/include/linux/pgalloc_tag.h
-> +++ b/include/linux/pgalloc_tag.h
-> @@ -188,6 +188,13 @@ static inline struct alloc_tag *__pgalloc_tag_get(st=
-ruct page *page)
->         return tag;
->  }
->
-> +static inline struct alloc_tag *pgalloc_tag_get(struct page *page)
-> +{
-> +       if (mem_alloc_profiling_enabled())
-> +               return __pgalloc_tag_get(page);
-> +       return NULL;
-> +}
-> +
->  void pgalloc_tag_split(struct folio *folio, int old_order, int new_order=
-);
->  void pgalloc_tag_swap(struct folio *new, struct folio *old);
->
-> @@ -199,6 +206,7 @@ static inline void clear_page_tag_ref(struct page *pa=
-ge) {}
->  static inline void alloc_tag_sec_init(void) {}
->  static inline void pgalloc_tag_split(struct folio *folio, int old_order,=
- int new_order) {}
->  static inline void pgalloc_tag_swap(struct folio *new, struct folio *old=
-) {}
-> +static inline struct alloc_tag *pgalloc_tag_get(struct page *page) { ret=
-urn NULL; }
->
->  #endif /* CONFIG_MEM_ALLOC_PROFILING */
->
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 5669baf2a6fe..1b00e14a9780 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1151,14 +1151,9 @@ static inline void pgalloc_tag_sub(struct page *pa=
-ge, unsigned int nr)
->                 __pgalloc_tag_sub(page, nr);
->  }
->
-> -static inline void pgalloc_tag_sub_pages(struct page *page, unsigned int=
- nr)
-> +/* When tag is not NULL, assuming mem_alloc_profiling_enabled */
-> +static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned=
- int nr)
->  {
-> -       struct alloc_tag *tag;
-> -
-> -       if (!mem_alloc_profiling_enabled())
-> -               return;
-> -
-> -       tag =3D __pgalloc_tag_get(page);
->         if (tag)
->                 this_cpu_sub(tag->counters->bytes, PAGE_SIZE * nr);
->  }
-> @@ -1168,7 +1163,7 @@ static inline void pgalloc_tag_sub_pages(struct pag=
-e *page, unsigned int nr)
->  static inline void pgalloc_tag_add(struct page *page, struct task_struct=
- *task,
->                                    unsigned int nr) {}
->  static inline void pgalloc_tag_sub(struct page *page, unsigned int nr) {=
-}
-> -static inline void pgalloc_tag_sub_pages(struct page *page, unsigned int=
- nr) {}
-> +static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned=
- int nr) {}
->
->  #endif /* CONFIG_MEM_ALLOC_PROFILING */
->
-> @@ -5065,11 +5060,13 @@ static void ___free_pages(struct page *page, unsi=
-gned int order,
->  {
->         /* get PageHead before we drop reference */
->         int head =3D PageHead(page);
-> +       /* get alloc tag in case the page is released by others */
-> +       struct alloc_tag *tag =3D pgalloc_tag_get(page);
->
->         if (put_page_testzero(page))
->                 __free_frozen_pages(page, order, fpi_flags);
->         else if (!head) {
-> -               pgalloc_tag_sub_pages(page, (1 << order) - 1);
-> +               pgalloc_tag_sub_pages(tag, (1 << order) - 1);
->                 while (order-- > 0)
->                         __free_frozen_pages(page + (1 << order), order,
->                                             fpi_flags);
-> --
-> 2.39.2
->
+base-commit: 64745a9ca890ed60d78162ec511e1983e1946d73
+-- 
+2.49.0
+
 
