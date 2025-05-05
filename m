@@ -1,105 +1,246 @@
-Return-Path: <linux-kernel+bounces-632181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73980AA938F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:49:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1704FAA9394
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A080F3AC5D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70D61897441
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C8822A4E7;
-	Mon,  5 May 2025 12:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9032046A6;
+	Mon,  5 May 2025 12:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="QTiuQjfu"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JCW8JfVX"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1281D175D39
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB28227EBB
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746449364; cv=none; b=nYffgfWtrSOSB1WNl4Y3TmkbSO/Ei+/YNjv/ndNI2wLM9KYi3NCAsC+ZnCtUPRtKhRY73WgwEvUPt3sr9FRGtb32UP3GalWaCW2AdXmbIOr3iw5oaj0JUExWl3qN2c3IJr/zotpp/vs+Hybtjx7h2ZVp6/hhlScVqWD0OJGJxQw=
+	t=1746449505; cv=none; b=DEkOAbelKDGxAzLmEowwist7SOEltiHNMJXKFbZ9YG92tT1f6dZDrdXQ3d6IEJhfT6hK+RRuKrvxS7DnwPEczDup6hrG64+ZRsDkqyBeeugDyY4ZKFEEMDy5/lkun7wxX7AP/s5QO3bxmUqoUUGFaM1z/MyG2REdPOvt5eBB9o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746449364; c=relaxed/simple;
-	bh=h8U5EjZrfZ43MNluZJU7SJSY3c+wYPMqp+iyFq6DTYQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IWmz0cFmknyc0VTerrEgcc5WvtqYyy4IIBZY210Ttl9Pvvmko+0rdzL5fb8eB43wrYVDOG4Euzy8v6hHEsJve6umUKEn5gzD6Az+QAbWM7Qon5+oY77eugHEXPoxr3n7OcUUdSX+sT+Bpaxd+Pa0jHh/kinaydm9CiN2uD2mLaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=QTiuQjfu; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acb5ec407b1so762575566b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1746449360; x=1747054160; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h8U5EjZrfZ43MNluZJU7SJSY3c+wYPMqp+iyFq6DTYQ=;
-        b=QTiuQjfu97S6HjAEBiEp1Wc7QSASiNm7eedJoAN1a7BPZz+WbUqZrdR128wE3dy3Zx
-         UKxVVEKcxdBIlf/6kiptIyq+Uobhwh3IRlyu1iSzSi0SUcaZNguFTGG77s8CC6qyT1rz
-         8to4nPv6jOXK+1iqaWlL5x8CoEwHPcnlqgC/0JYXPJmEopuMMT+4djo2MFZT2KC6uR40
-         ZwkaevAP2/QWPaNNcLCLn1zlKtJYGnUZRmDNOtKXUZM4e+WtEAvFgVgjTiA6chiKXI5d
-         UGjRKEmQKNahRjErjmNxShLoCSMlaAqLGDAmoiVotY0BAS2+wJUTXgHd1exYxrBdxl2G
-         uMJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746449360; x=1747054160;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h8U5EjZrfZ43MNluZJU7SJSY3c+wYPMqp+iyFq6DTYQ=;
-        b=mJhYvoKZky9cbBuqwGmys5SkVzDOpFA+vfvaaYBmJI5HdOh9+Gj4AtCVXLwvdTU9QC
-         2lD+KCI/IKJeoNsrZ8CR/XqfGdPq/OM3lh4r95cESIpQaur8TbwjsbuWxDA24y5dcJGy
-         58SxYPZLcBSqeTWx0NMigsCfbAVQTiO9fAynWBdx82NxZ8eBGfVmxZGP1wCkFu0hqxCG
-         JUvHoWRs+BjpypaWgLRXbSQfC9AhA41bK6qJKu9qyoF2uU3vpyvBvX2fOZClITfbpOsb
-         DWcBf7Mpkz6sEKP9RZN2p8BhLdXP33mhIJ7Gu3RrUIWoOqmERjurhu/YgVpDsytN0lkA
-         F7rA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyAmJBX4FF/qppdtqzC6foeescU7WUs8qvbN7DhA/6/vXbrQSfC180FYkeU2K/tHLOWC/XjlqdlIPEpX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3D4kO7Ugblo5NpWwjmke/SVajM4TF46TquPj0QD7Zt0gzsV9n
-	e5ZNC/E0+oRYEFR3CnQWqnqQV+LIj0QpQ3UhhtnJEj0lKoRwcTsgzMul9mph3Jv1yF7KHb+8zPP
-	d9lOBXHNmNoL4QrAQL9W/9n6iGKukY8HEvkohHA==
-X-Gm-Gg: ASbGncsckcxw1nimef3y9QCh88v2Od/umnyARGOIGZmwD5EdD5/7ouSsBcSuDuwgDc9
-	PDXZGtadN9UvvbILnheSkvVua5iYptOieHPFMLMAnGzQQYJrVAZbeIlbXzWj/PFD0Qy2rjoHyCY
-	cNhz14r51S2tTpshYX8SZoLGD2u6JHDc75qaEXTeu8dGIeAp5ZfAQ=
-X-Google-Smtp-Source: AGHT+IEQEtAmpp+U0f2k8eePl7xd6XBIyArt8z5V5X5PFgIVOlVsppqEAvzfY9M3D0lDOqaLheEog4k1PKphraOtuYs=
-X-Received: by 2002:a17:907:72d1:b0:ac7:1600:ea81 with SMTP id
- a640c23a62f3a-ad1a4b1d6c9mr659162766b.49.1746449360263; Mon, 05 May 2025
- 05:49:20 -0700 (PDT)
+	s=arc-20240116; t=1746449505; c=relaxed/simple;
+	bh=FoBIp4eZZUPth4U6Z8BrTi5mS/VqDvY2PiNsSfCw0IY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nagkrZRSksKg2CKzzW5QCdjmYMiWbWc8l44Di9AJr6OrErRYNBq7bt677oSOW/uJtfICK/Ao26v1humCjnXgVfTGhB8OxipaXOxWMF0eQQCq8gR+r7oNy0yxBxyH7qX/gKVqDbls9nbCJEgjpxhLlb++7KTE3R6RuNemsJ8wC2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JCW8JfVX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545C5DNr007806;
+	Mon, 5 May 2025 12:51:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dyhw/F
+	IP+Ggm5eJ5avMrVAF3kLS/rap+JLAS6WAosgI=; b=JCW8JfVXwhmjO0Rzx6PLAh
+	SbywPWhxcSwR8HLTKaxaMwDwif5X5J+OB6OkIt6T/003Ev9Q9kq/P2BI6lswX03t
+	LO9cUU3s5C8SN0fnTva5PqhkbaHm7/JsWIKysl7i+o49HlePWl1NarLHXXZ76Ixp
+	g5pDYN86wIp4aac1lzI94GoD3U17bfpfdo5oJPfbIVh0yu7fsZzJDQveqbPp0SII
+	O71v0RDkkkK9xmT7YeTf7FenaLaX6mINiqz83bmdxYiIi6uNixCQUnX3JiqChm6n
+	+dFiigDYObszjdlhu6k+R2L6tUlkHYLoGb796LIGix+2sJebYwJf3AqWD/DTs6RA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46egcv2w0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 12:51:20 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 545CnHFa018659;
+	Mon, 5 May 2025 12:51:19 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46egcv2w0c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 12:51:19 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5458gwKP032220;
+	Mon, 5 May 2025 12:51:18 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dxyme4tn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 12:51:18 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 545CpIbw30540396
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 May 2025 12:51:18 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 733E958050;
+	Mon,  5 May 2025 12:51:18 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F34F58054;
+	Mon,  5 May 2025 12:51:13 +0000 (GMT)
+Received: from [9.124.223.213] (unknown [9.124.223.213])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  5 May 2025 12:51:13 +0000 (GMT)
+Message-ID: <b539ce77-e994-422d-92fc-2c9505cc26a1@linux.ibm.com>
+Date: Mon, 5 May 2025 18:21:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502121930.4008251-1-max.kellermann@ionos.com>
- <bbublxzpnqrzjq5rmmbp772w2darjoahlewqky7caanaknglbx@6wuy5nidsnu3>
- <CAKPOu+_8cbUk=8d41GQGOvUrmG9OuaNVuSQrksDcUQMyFc4tiA@mail.gmail.com> <aBUQ7EzmeWYCyLwB@slm.duckdns.org>
-In-Reply-To: <aBUQ7EzmeWYCyLwB@slm.duckdns.org>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 5 May 2025 14:49:09 +0200
-X-Gm-Features: ATxdqUEYQB6USgmiCAV7OU2CKrYQgnrzCesPwZ7-NaiO3m6zeMlp7cMoAYide5M
-Message-ID: <CAKPOu+_Dk7rLgc+5YbMd4xpcjz74XKnR1jkgaTxu81EvE-q1-g@mail.gmail.com>
-Subject: Re: [PATCH] kernel/cgroup/pids: add "pids.forks" counter
-To: Tejun Heo <tj@kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] driver/base: Optimize memory block registration to
+ reduce boot time
+To: David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>
+Cc: Mike Rapoport <rppt@kernel.org>, Zi Yan <ziy@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, rafael@kernel.org,
+        Danilo Krummrich <dakr@kernel.org>,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <b49ed289096643ff5b5fbedcf1d1c1be42845a74.1746250339.git.donettom@linux.ibm.com>
+ <aBdK2EIMYYRmmEwA@kernel.org>
+ <a1e0cddc-ed38-4f48-b028-f3ab5025c157@linux.ibm.com>
+ <188fbfba-afb4-4db7-bbba-7689a96be931@redhat.com>
+ <aBhoqpC4Jy-c-74p@localhost.localdomain>
+ <74c500dd-8d1c-4177-96c7-ddd51ca77306@redhat.com>
+ <aBhva9D6H5BtkSID@localhost.localdomain>
+ <0e568e33-34fa-40f6-a20d-ebf653de123d@redhat.com>
+ <aBiGquz1Exx8KUqq@localhost.localdomain>
+ <da921072-64a8-4ef1-b583-763406e57e8b@redhat.com>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <da921072-64a8-4ef1-b583-763406e57e8b@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: fHabdSf_RQKPP6W4SqXRBmrzMUryeuL0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDEyMSBTYWx0ZWRfX20roR/65sH0s FF0KlBjk6J2d0t8pEQ3XgJo+8ufB6iWh+gClrD1PVrbsxNglzRL8/9sicdDI5aPZ0ph5XqWLRF/ hyJ/yBV70MbhYJZ2xRVJ9PpwVKeeeksL+wfWDhVNhGczROvAQSQmwAev2khPWIjkNIsM1G6+u5q
+ DuR8avyB24XpiaqTTUNMT95lCm3tpW3wG1XFCZ/evcb7xkdYHwkBTdF0NX3H29NlY/ZKJJvCyaT 5WKjV6+nPHP1wTOYVI08x5DzlpH9Hu0Cjgu4zxiEQgJTSdLulb4mkW1JZ2AcyPhZ/vp3QhJFt1y DezIhe6JbVrL8C7OyjJZxUkPGphvmDvAftYoATIP0Fo9E33BixfmeN2pZAuC/o2DVrGAAs1NYiy
+ 5fKGgM1ChMkBKpdQ7n73/92LjHn4NtKSeCjziw1QoE1TvbeAnuJ3AOb6ttDFmzFbk7g2yTdq
+X-Authority-Analysis: v=2.4 cv=O7k5vA9W c=1 sm=1 tr=0 ts=6818b448 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=ndBISzoNWe6kelugQUgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: QKkbnFU8QpeYtmkXTH4Jskx9DvAdOo9l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-05_05,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0
+ adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505050121
 
-On Fri, May 2, 2025 at 8:37=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
-> +1 on pids.stat, and use rstat and avoid the atomic ops?
 
-rstat right now is specific to the "cpu" controller. There is "struct
-cgroup_rstat_cpu". And there is "struct cgroup_base_stat", but that is
-also specific to the "cpu" controller.
-Do you want me to create a whole new subsystem like the "cpu" rstat
-(i.e. copy the syncing code), or do you want to add the new counter to
-cgroup_rstat_cpu? (And maybe drop the "_cpu" suffix from the struct
-name?)
+On 5/5/25 4:06 PM, David Hildenbrand wrote:
+> On 05.05.25 11:36, Oscar Salvador wrote:
+>> On Mon, May 05, 2025 at 10:12:48AM +0200, David Hildenbrand wrote:
+>>> Assume you hotplug the second CPU. The node is already 
+>>> registered/online, so
+>>> who does the register_cpu_under_node() call?
+>>>
+>>> It's register_cpu() I guess? But no idea in which order that is 
+>>> called with
+>>> node onlining.
+>>>
+>>> The code has to be cleaned up such that onlining a node does not 
+>>> traverse
+>>> any cpus / memory.
+>>>
+>>> Whoever adds a CPU / memory *after onlining the node* must register the
+>>> device manually under the *now online* node.
+>>
+>> So, I think this is the sequence of events:
+>>
+>> - hotplug cpu:
+>>    acpi_processor_hotadd_init
+>>     register_cpu
+>>      register_cpu_under_node
+>>
+>>    online_store
+>>     device_online()->dev_bus_online()
+>>      cpu_subsys->online()
+>>       cpu_subsys_online
+>>        cpu_device_up
+>>         cpu_up
+>>          try_online_node  <- brings node online
+>>           ...
+>>           register_one_node <- registers cpu under node
+>>          _cpu_up
+>
+> My thinking was, whether we can simply move the 
+> register_cpu_under_node() after the try_online_node(). See below 
+> regarding early.
+>
+> And then, remove the !node_online check from register_cpu_under_node().
+>
+> But it's all complicated, because for memory, we link a memory block 
+> to the node (+set the node online) when it gets added, not when it 
+> gets onlined.
+>
+> For CPUs, we seem to be creating the link + set the node online when 
+> the CPU gets onlined.
+>
+>>
+>> The first time we hotplug a cpu to the node, note that
+>> register_cpu()->register_cpu_under_node() will bail out as node is still
+>> offline, so only cpu's sysfs will be created but they will not be linked
+>> to the node.
+> > Later, online_store()->...->cpu_subsys_online()->..->cpu_up() will 
+> take> care of 1) onlining the node and 2) register the cpu to the node 
+> (so,
+>> link the sysfs).
+>
+>
+> And only if it actually gets onlined I assume.
+>
+>>
+>> The second time we hotplug a cpu,
+>> register_cpu()->register_cpu_under_node() will do its job as the node is
+>> already onlined.
+>> And we will not be calling register_one_node() from __try_online_node()
+>> because of the same reason.
+>>
+>> The thing that bothers me is having register_cpu_under_node() spread
+>> around.
+>
+> Right.
+>
+>> I think that ideally, we should only be calling 
+>> register_cpu_under_node()
+>> from register_cpu(), but we have this kinda of (sort of weird?) relation
+>> that even if we hotplug the cpu, but we do not online it, the numa node
+>> will remain online, and so we cannot do the linking part (cpu <-> node),
+>> so we could not really only have register_cpu_under_node() in
+>> register_cpu(), which is the hot-add part, but we also need it in the
+>> cpu_up()->try_online_node() which is the online part.
+>
+> Maybe one could handle CPUs similar to how we handle it with memory: 
+> node gets onlined + link created as soon as we add the CPU, not when 
+> we online it.
+>
+> But likely there is a reason why we do it like that today ...
+>
+>>
+>> And we cannot also remove the register_cpu_under_node() from
+>> register_cpu() because it is used in other paths (e.g: at boot time ).
+>
+> Ah, so in that case we don't call cpu_up ... hm.
+>
+> Of course, we can always detect the context (early vs. hotplug). 
+> Maybe, we should split the early vs. hotplug case up much earlier.
+>
+> register_cpu_early() / register_cpu_hotplug() ... maybe
 
-(I have doubts that all the complexity is really worth it for a
-counter that gets updated only on fork/clone. cpu_rstat is designed
-for updating counters on every context switch.)
+Hi David and Oscar,
+
+I was thinking that __try_online_node(nid, true) being called from
+try_online_node() might cause issues with this patch. From the
+discussion above, what I understand is:
+
+When try_online_node() is called, there are no memory resources
+available for the node, so register_memory_blocks_under_node()
+has no effect. Therefore, our patch should work in all cases.
+
+Do you think we need to make any changes to this patch?
+
+Thanks
+Donet
+
 
