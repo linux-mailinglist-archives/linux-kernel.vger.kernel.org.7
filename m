@@ -1,55 +1,65 @@
-Return-Path: <linux-kernel+bounces-632516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E52AA9847
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C465AA9841
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D882C172C2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:04:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 965D617ABF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BF7268684;
-	Mon,  5 May 2025 16:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAC4264FB1;
+	Mon,  5 May 2025 16:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="phy9QWlW"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lvnJ95jt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172DF25D21A;
-	Mon,  5 May 2025 16:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53FF15AF6
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 16:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746461038; cv=none; b=JeY3Mpb2CPAs7ncpLHFPuxLhFHIqvL0BX6xQCKNoXovEnEegvOgnL1uGtLP2AoJQAhsQwoIjJeG6rnFaYG2Cih5WGizYNHjKuVKFpL4639rWGgoYog6SPWDERWFiWKNc/nQUFm34JYy8iFHfGEm2+5dOoDOpWArUd1lrC65q0Lw=
+	t=1746461025; cv=none; b=qafGm/ZCQsu8kaBmkv/JyXpUCkYmpV4/w2c3j6FFVZ0RNozXdmmU3VWFNL1fWWZVUF0UvZXv3ei4zTXx6T8+HA+pCG6y0tBB3LAaTs1IiNycMR9HFMQgFIRQF+XybwLWuO601gqGnMm03JwNWWn5FRfiDHPzbcn550QuBiVFLI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746461038; c=relaxed/simple;
-	bh=qBz3bawuzlenHpbqjj3H7ok1Chrb+oB/l7xvhAJvRVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DWlkdZ/jnEmpU9g93uJq/SH0k9umeFWVfv3NldvnUEWqs910qYi3VBhh6QF2OkGZUKDRwyUMXhDebkuVlJuAMmIYdwfISJBwV7IK+kckSOOFFzG15MNvKsDh00x/1h5063ywjQdhazc/0AvGLwsu/PWovW7kE1Fq2+zxqJLK5ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=phy9QWlW; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1746461010; x=1747065810; i=wahrenst@gmx.net;
-	bh=nspZRGz/i/6mnAvkbCpGKriDSYA1aqeM4ht5VL78W/g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=phy9QWlWuwq/tx6bwA0i1GMAYUNO2WZzQi7h0qAwSjfivZydcP0AVncAN0Io1cyB
-	 ix6MqmBZVF0oyBMw+B9qgmbakbEE5ileo8UiZDtnesw7D1mZsKPkWDEf4aZXluIkb
-	 GAnSeM/uoI/ebSn/u6C1HeUDoFNCcPbmK/x3MVMsNzamTD8SfzX5lk+N/tw7ROAxI
-	 AMjvNGdc9fhBuJcOGFF+iRCjoEjgWHTtsoEx9U8Wx2cOU5O5l0Pib+/1grT4dA02V
-	 R9Bnga2lCc597s1YKARgkekkm/wX62omX0/uEQZ5imMqtP7MRjLhF3sIp3arvlGBp
-	 z5M+jVGcalh0xjdFpQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.101] ([91.41.216.208]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MRTNF-1uQUrf2bWH-00YXr7; Mon, 05
- May 2025 18:03:30 +0200
-Message-ID: <ee082ba2-d452-43a1-bb94-3c04c407ea31@gmx.net>
-Date: Mon, 5 May 2025 18:03:29 +0200
+	s=arc-20240116; t=1746461025; c=relaxed/simple;
+	bh=SXYnJY3tF2IxRxhHTDWj07W6KylW2BVbk6ji61yvPSE=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=sYqarWxHZGP3D+2wB2XK0rg2hO4k6oDrWrwlvsRylYcAaU12hVgIfxbkAcNGK7ws97JPNGwVjXFyGxy9VMAHZHgtEI6+JV3C1LhJUuYAKc74YeNSbrSz1ADpXjdYJSc+yyfZkks64L2pWPBRlfMvk5tv+3zej7gq7uZLFC5EsRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lvnJ95jt; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746461024; x=1777997024;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to;
+  bh=SXYnJY3tF2IxRxhHTDWj07W6KylW2BVbk6ji61yvPSE=;
+  b=lvnJ95jtP2LAf4xK1afXjhLnP983kwUVy9PW4MLRBy3oPdwyrc7yMroL
+   FEe4Zin9ZQHHvWTuOwd8OoZ9Db3/MMrw61nT5kYrbr1EBJ+iHpfRx6R8F
+   F6kd7JH+aNgwUs0WIsAiI9b4iq4s+RlBZ7SnvKG7eMUQdoSXQmuKVzprr
+   HdZviiB/3g6LbcWNXIx4x9bX/DPNfFgDcXrhRKTIjHuAGED4miSeWr7hG
+   G7q226dT3kUo0AFBD9gCC5J32IJia5yVN5DnVwBhrAL3VEfYrHFd5xkCg
+   fFwDVYtCyTypy8jBvm7P/2OlHBNnE+GYdI+5BxLcS+STqcJwbJIQ7eDnA
+   A==;
+X-CSE-ConnectionGUID: 74WuIhk5SO6h65RQeskjgQ==
+X-CSE-MsgGUID: dg1GYtCyQV2yIn92Pwhe5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="47959117"
+X-IronPort-AV: E=Sophos;i="6.15,264,1739865600"; 
+   d="scan'208";a="47959117"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 09:03:43 -0700
+X-CSE-ConnectionGUID: /k34KCj1QaC25Fpa9l6MQA==
+X-CSE-MsgGUID: gn5yZSNkSGODl/OHnFTFNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,264,1739865600"; 
+   d="scan'208";a="139305935"
+Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.221.35]) ([10.124.221.35])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 09:03:41 -0700
+Content-Type: multipart/mixed; boundary="------------isusE2RpYvzDXBbMOK0gUjbC"
+Message-ID: <13dc0d80-5d7f-40ce-be82-8d0f3eb24a1a@intel.com>
+Date: Mon, 5 May 2025 09:03:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,435 +67,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: Convert
- brcm,bcm2835-armctrl-ic to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- kernel-list@raspberrypi.com
-References: <20250505144618.1287539-1-robh@kernel.org>
+Subject: Re: [PATCH 2/4] x86/sev: Allocate request in TSC_INFO_REQ on stack
+To: Alexey Kardashevskiy <aik@amd.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>,
+ Ashish Kalra <ashish.kalra@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Michael Roth <michael.roth@amd.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Liam Merwick <liam.merwick@oracle.com>
+References: <20250505141238.4179623-1-aik@amd.com>
+ <20250505141238.4179623-3-aik@amd.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-Autocrypt: addr=wahrenst@gmx.net; keydata=
- xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
- IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
- NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
- JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
- TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
- f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
- V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
- aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-In-Reply-To: <20250505144618.1287539-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2E1LYcmiqquUyR1NW/BV5KhqR1ABN0uS4PVerjkQBC3ed0wVt+z
- W/C6vKZ47Z0rMYv116JM4B31zpfPoXJCHmezTReTWrw9ZLpdqYgMLjFGvPYcS6QjWvfabHv
- 7b+jYQStS69QR8BzFUBuiCRLKX7tsCJgXzXzyR48ho5fP2Xk6rhUmYZc4+QtKTYt//DlBNu
- bYEZB58UPFbzxLfws0Lhg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nHgtIr0AuXk=;HlbIA1vMwXYDA+1g1WVupQ1f+hP
- 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
- MwAJTeEE5sz10=
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250505141238.4179623-3-aik@amd.com>
 
-Hi Rob,
+This is a multi-part message in MIME format.
+--------------isusE2RpYvzDXBbMOK0gUjbC
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 05.05.25 um 16:46 schrieb Rob Herring (Arm):
-> Convert the Broadcom BCM2835 ARMCTRL interrupt controller binding to
-> schema format. It's a straight-forward conversion of the typical
-> interrupt controller.
-i send a similiar patch on May 2nd:
-https://lore.kernel.org/linux-devicetree/20250502105213.39864-1-wahrenst@g=
-mx.net/
+On 5/5/25 07:12, Alexey Kardashevskiy wrote:
+> Allocate a 88 byte request structure on stack and skip needless
+> kzalloc/kfree.
 
-I would prefer your version, but ...
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->   .../brcm,bcm2835-armctrl-ic.txt               | 131 --------------
->   .../brcm,bcm2835-armctrl-ic.yaml              | 161 ++++++++++++++++++
->   2 files changed, 161 insertions(+), 131 deletions(-)
->   delete mode 100644 Documentation/devicetree/bindings/interrupt-control=
-ler/brcm,bcm2835-armctrl-ic.txt
->   create mode 100644 Documentation/devicetree/bindings/interrupt-control=
-ler/brcm,bcm2835-armctrl-ic.yaml
->
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm=
-,bcm2835-armctrl-ic.txt b/Documentation/devicetree/bindings/interrupt-cont=
-roller/brcm,bcm2835-armctrl-ic.txt
-> deleted file mode 100644
-> index bdd173056f72..000000000000
-> --- a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm283=
-5-armctrl-ic.txt
-> +++ /dev/null
-> @@ -1,131 +0,0 @@
-> -BCM2835 Top-Level ("ARMCTRL") Interrupt Controller
-> -
-> -The BCM2835 contains a custom top-level interrupt controller, which sup=
-ports
-> -72 interrupt sources using a 2-level register scheme. The interrupt
-> -controller, or the HW block containing it, is referred to occasionally
-> -as "armctrl" in the SoC documentation, hence naming of this binding.
-> -
-> -The BCM2836 contains the same interrupt controller with the same
-> -interrupts, but the per-CPU interrupt controller is the root, and an
-> -interrupt there indicates that the ARMCTRL has an interrupt to handle.
-> -
-> -Required properties:
-> -
-> -- compatible : should be "brcm,bcm2835-armctrl-ic" or
-> -                 "brcm,bcm2836-armctrl-ic"
-> -- reg : Specifies base physical address and size of the registers.
-> -- interrupt-controller : Identifies the node as an interrupt controller
-> -- #interrupt-cells : Specifies the number of cells needed to encode an
-> -  interrupt source. The value shall be 2.
-> -
-> -  The 1st cell is the interrupt bank; 0 for interrupts in the "IRQ basi=
-c
-> -  pending" register, or 1/2 respectively for interrupts in the "IRQ pen=
-ding
-> -  1/2" register.
-> -
-> -  The 2nd cell contains the interrupt number within the bank. Valid val=
-ues
-> -  are 0..7 for bank 0, and 0..31 for bank 1.
-> -
-> -Additional required properties for brcm,bcm2836-armctrl-ic:
-> -- interrupts : Specifies the interrupt on the parent for this interrupt
-> -  controller to handle.
-> -
-> -The interrupt sources are as follows:
-> -
-> -Bank 0:
-> -0: ARM_TIMER
-> -1: ARM_MAILBOX
-> -2: ARM_DOORBELL_0
-> -3: ARM_DOORBELL_1
-> -4: VPU0_HALTED
-> -5: VPU1_HALTED
-> -6: ILLEGAL_TYPE0
-> -7: ILLEGAL_TYPE1
-> -
-> -Bank 1:
-> -0: TIMER0
-> -1: TIMER1
-> -2: TIMER2
-> -3: TIMER3
-> -4: CODEC0
-> -5: CODEC1
-> -6: CODEC2
-> -7: VC_JPEG
-> -8: ISP
-> -9: VC_USB
-> -10: VC_3D
-> -11: TRANSPOSER
-> -12: MULTICORESYNC0
-> -13: MULTICORESYNC1
-> -14: MULTICORESYNC2
-> -15: MULTICORESYNC3
-> -16: DMA0
-> -17: DMA1
-> -18: VC_DMA2
-> -19: VC_DMA3
-> -20: DMA4
-> -21: DMA5
-> -22: DMA6
-> -23: DMA7
-> -24: DMA8
-> -25: DMA9
-> -26: DMA10
-> -27: DMA11-14 - shared interrupt for DMA 11 to 14
-> -28: DMAALL - triggers on all dma interrupts (including channel 15)
-> -29: AUX
-> -30: ARM
-> -31: VPUDMA
-> -
-> -Bank 2:
-> -0: HOSTPORT
-> -1: VIDEOSCALER
-> -2: CCP2TX
-> -3: SDC
-> -4: DSI0
-> -5: AVE
-> -6: CAM0
-> -7: CAM1
-> -8: HDMI0
-> -9: HDMI1
-> -10: PIXELVALVE1
-> -11: I2CSPISLV
-> -12: DSI1
-> -13: PWA0
-> -14: PWA1
-> -15: CPR
-> -16: SMI
-> -17: GPIO0
-> -18: GPIO1
-> -19: GPIO2
-> -20: GPIO3
-> -21: VC_I2C
-> -22: VC_SPI
-> -23: VC_I2SPCM
-> -24: VC_SDIO
-> -25: VC_UART
-> -26: SLIMBUS
-> -27: VEC
-> -28: CPG
-> -29: RNG
-> -30: VC_ARASANSDIO
-> -31: AVSPMON
-> -
-> -Example:
-> -
-> -/* BCM2835, first level */
-> -intc: interrupt-controller {
-> -	compatible =3D "brcm,bcm2835-armctrl-ic";
-> -	reg =3D <0x7e00b200 0x200>;
-> -	interrupt-controller;
-> -	#interrupt-cells =3D <2>;
-> -};
-> -
-> -/* BCM2836, second level */
-> -intc: interrupt-controller {
-> -	compatible =3D "brcm,bcm2836-armctrl-ic";
-> -	reg =3D <0x7e00b200 0x200>;
-> -	interrupt-controller;
-> -	#interrupt-cells =3D <2>;
-> -
-> -	interrupt-parent =3D <&local_intc>;
-> -	interrupts =3D <8>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm=
-,bcm2835-armctrl-ic.yaml b/Documentation/devicetree/bindings/interrupt-con=
-troller/brcm,bcm2835-armctrl-ic.yaml
-> new file mode 100644
-> index 000000000000..4edc4c3ff6bd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm283=
-5-armctrl-ic.yaml
-> @@ -0,0 +1,161 @@
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2835-ar=
-mctrl-ic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: BCM2835 ARMCTRL Interrupt Controller
-> +
-> +maintainers:
-> +  - Florian Fainelli <florian.fainelli@broadcom.com>
-I would suggest to add
+Could you maybe take a closer look at _all_ of these rather than poking
+at them one at a time?
 
-- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-> +
-> +description: >
-> +  The BCM2835 contains a custom top-level interrupt controller, which s=
-upports
-> +  72 interrupt sources using a 2-level register scheme. The interrupt
-> +  controller, or the HW block containing it, is referred to occasionall=
-y as
-> +  "armctrl" in the SoC documentation, hence naming of this binding.
-> +
-> +  The BCM2836 contains the same interrupt controller with the same inte=
-rrupts,
-> +  but the per-CPU interrupt controller is the root, and an interrupt th=
-ere
-> +  indicates that the ARMCTRL has an interrupt to handle.
-> +
-> +  The interrupt sources are as follows:
-> +
-> +  Bank 0:
-> +    0: ARM_TIMER
-> +    1: ARM_MAILBOX
-> +    2: ARM_DOORBELL_0
-> +    3: ARM_DOORBELL_1
-> +    4: VPU0_HALTED
-> +    5: VPU1_HALTED
-> +    6: ILLEGAL_TYPE0
-> +    7: ILLEGAL_TYPE1
-> +
-> +  Bank 1:
-> +    0: TIMER0
-> +    1: TIMER1
-> +    2: TIMER2
-> +    3: TIMER3
-> +    4: CODEC0
-> +    5: CODEC1
-> +    6: CODEC2
-> +    7: VC_JPEG
-> +    8: ISP
-> +    9: VC_USB
-> +    10: VC_3D
-> +    11: TRANSPOSER
-> +    12: MULTICORESYNC0
-> +    13: MULTICORESYNC1
-> +    14: MULTICORESYNC2
-> +    15: MULTICORESYNC3
-> +    16: DMA0
-> +    17: DMA1
-> +    18: VC_DMA2
-> +    19: VC_DMA3
-> +    20: DMA4
-> +    21: DMA5
-> +    22: DMA6
-> +    23: DMA7
-> +    24: DMA8
-> +    25: DMA9
-> +    26: DMA10
-> +    27: DMA11-14 - shared interrupt for DMA 11 to 14
-> +    28: DMAALL - triggers on all dma interrupts (including channel 15)
-> +    29: AUX
-> +    30: ARM
-> +    31: VPUDMA
-> +
-> +  Bank 2:
-> +    0: HOSTPORT
-> +    1: VIDEOSCALER
-> +    2: CCP2TX
-> +    3: SDC
-> +    4: DSI0
-> +    5: AVE
-> +    6: CAM0
-> +    7: CAM1
-> +    8: HDMI0
-> +    9: HDMI1
-> +    10: PIXELVALVE1
-> +    11: I2CSPISLV
-> +    12: DSI1
-> +    13: PWA0
-> +    14: PWA1
-> +    15: CPR
-> +    16: SMI
-> +    17: GPIO0
-> +    18: GPIO1
-> +    19: GPIO2
-> +    20: GPIO3
-> +    21: VC_I2C
-> +    22: VC_SPI
-> +    23: VC_I2SPCM
-> +    24: VC_SDIO
-> +    25: VC_UART
-> +    26: SLIMBUS
-> +    27: VEC
-> +    28: CPG
-> +    29: RNG
-> +    30: VC_ARASANSDIO
-> +    31: AVSPMON
-> +
-Don't we need something like
+snp_guest_request_ioctl, for example, looks to be ~32 bytes. Why fix
+'struct snp_guest_req' and leave an even worse offender?
 
-allOf:
- =C2=A0 - $ref: /schemas/interrupt-controller.yaml#
+Or, maybe just be done with it and convert them all over to __free().
+Yeah, some of them don't need to be kmalloc(), but kmalloc()s are cheap
+and consistency is nice, like in the attached patch.
 
-?
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - brcm,bcm2835-armctrl-ic
-> +      - brcm,bcm2836-armctrl-ic
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +    description: >
-> +      The 1st cell is the interrupt bank; 0 for interrupts in the "IRQ =
-basic
-> +      pending" register, or 1/2 respectively for interrupts in the "IRQ=
- pending
-> +      1/2" register.
-> +
-> +      The 2nd cell contains the interrupt number within the bank. Valid=
- values
-> +      are 0..7 for bank 0, and 0..31 for bank 1.
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupt-controller
-> +  - '#interrupt-cells'
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: brcm,bcm2836-armctrl-ic
-> +    then:
-> +      required:
-> +        - interrupts
-> +    else:
-> +      properties:
-> +        interrupts: false
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    interrupt-controller@7e00b200 {
-> +        compatible =3D "brcm,bcm2835-armctrl-ic";
-> +        reg =3D <0x7e00b200 0x200>;
-> +        interrupt-controller;
-> +        #interrupt-cells =3D <2>;
-> +    };
-> +  - |
-> +    interrupt-controller@7e00b200 {
-> +        compatible =3D "brcm,bcm2836-armctrl-ic";
-> +        reg =3D <0x7e00b200 0x200>;
-> +        interrupt-controller;
-> +        #interrupt-cells =3D <2>;
-> +        interrupts =3D <8>;
-> +    };
+It also wouldn't be awful to mix stack and kmalloc() allocations,
+especially when the freeing semantics are the same for stack and
+__free()-annotated allocations.
 
+But it would be really nice to completely eliminate the goto mess.
+--------------isusE2RpYvzDXBbMOK0gUjbC
+Content-Type: text/x-patch; charset=UTF-8;
+ name="snp_get_tsc_info-__free.patch"
+Content-Disposition: attachment; filename="snp_get_tsc_info-__free.patch"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2NvY28vc2V2L2NvcmUuYyBiL2FyY2gveDg2L2NvY28v
+c2V2L2NvcmUuYwppbmRleCBiMGMxYTdhNTc0OTcuLjYxOGVhYWUxOTBlMiAxMDA2NDQKLS0t
+IGEvYXJjaC94ODYvY29jby9zZXYvY29yZS5jCisrKyBiL2FyY2gveDg2L2NvY28vc2V2L2Nv
+cmUuYwpAQCAtMzE3NCw0MSArMzE3NCwzMiBAQCBFWFBPUlRfU1lNQk9MX0dQTChzbnBfc2Vu
+ZF9ndWVzdF9yZXF1ZXN0KTsKIAogc3RhdGljIGludCBfX2luaXQgc25wX2dldF90c2NfaW5m
+byh2b2lkKQogewotCXN0cnVjdCBzbnBfZ3Vlc3RfcmVxdWVzdF9pb2N0bCAqcmlvOwotCXN0
+cnVjdCBzbnBfdHNjX2luZm9fcmVzcCAqdHNjX3Jlc3A7Ci0Jc3RydWN0IHNucF90c2NfaW5m
+b19yZXEgKnRzY19yZXE7Ci0Jc3RydWN0IHNucF9tc2dfZGVzYyAqbWRlc2M7Ci0Jc3RydWN0
+IHNucF9ndWVzdF9yZXEgKnJlcTsKKwlzdHJ1Y3Qgc25wX2d1ZXN0X3JlcXVlc3RfaW9jdGwg
+KnJpbyBfX2ZyZWUoa2ZyZWUpID0gTlVMTDsKKwlzdHJ1Y3Qgc25wX3RzY19pbmZvX3Jlc3Ag
+KnRzY19yZXNwICBfX2ZyZWUoa2ZyZWVfc2Vuc2l0aXZlKSA9IE5VTEw7CisJc3RydWN0IHNu
+cF90c2NfaW5mb19yZXEgKnRzY19yZXEgICAgX19mcmVlKGtmcmVlKSA9IE5VTEw7CisJc3Ry
+dWN0IHNucF9ndWVzdF9yZXEgKnJlcQkgICAgX19mcmVlKGtmcmVlKSA9IE5VTEw7CisJc3Ry
+dWN0IHNucF9tc2dfZGVzYyAqbWRlc2MJICAgIF9fZnJlZShzbnBfbXNnX2ZyZWUpID0gTlVM
+TDsKIAlpbnQgcmMgPSAtRU5PTUVNOwogCi0JdHNjX3JlcSA9IGt6YWxsb2Moc2l6ZW9mKCp0
+c2NfcmVxKSwgR0ZQX0tFUk5FTCk7Ci0JaWYgKCF0c2NfcmVxKQotCQlyZXR1cm4gcmM7Ci0K
+IAkvKgogCSAqIFRoZSBpbnRlcm1lZGlhdGUgcmVzcG9uc2UgYnVmZmVyIGlzIHVzZWQgd2hp
+bGUgZGVjcnlwdGluZyB0aGUKIAkgKiByZXNwb25zZSBwYXlsb2FkLiBNYWtlIHN1cmUgdGhh
+dCBpdCBoYXMgZW5vdWdoIHNwYWNlIHRvIGNvdmVyCiAJICogdGhlIGF1dGh0YWcuCiAJICov
+CiAJdHNjX3Jlc3AgPSBremFsbG9jKHNpemVvZigqdHNjX3Jlc3ApICsgQVVUSFRBR19MRU4s
+IEdGUF9LRVJORUwpOwotCWlmICghdHNjX3Jlc3ApCi0JCWdvdG8gZV9mcmVlX3RzY19yZXE7
+Ci0KKwl0c2NfcmVxID0ga3phbGxvYyhzaXplb2YoKnRzY19yZXEpLCBHRlBfS0VSTkVMKTsK
+IAlyZXEgPSBremFsbG9jKHNpemVvZigqcmVxKSwgR0ZQX0tFUk5FTCk7Ci0JaWYgKCFyZXEp
+Ci0JCWdvdG8gZV9mcmVlX3RzY19yZXNwOwotCiAJcmlvID0ga3phbGxvYyhzaXplb2YoKnJp
+byksIEdGUF9LRVJORUwpOwotCWlmICghcmlvKQotCQlnb3RvIGVfZnJlZV9yZXE7CisJaWYg
+KCEodHNjX3Jlc3AgJiYgdHNjX3JlcSAmJiByZXEgJiYgcmlvKSkKKwkJcmV0dXJuIHJjOwog
+CiAJbWRlc2MgPSBzbnBfbXNnX2FsbG9jKCk7CiAJaWYgKElTX0VSUl9PUl9OVUxMKG1kZXNj
+KSkKLQkJZ290byBlX2ZyZWVfcmlvOworCQlyZXR1cm4gcmM7CiAKIAlyYyA9IHNucF9tc2df
+aW5pdChtZGVzYywgc25wX3ZtcGwpOwogCWlmIChyYykKLQkJZ290byBlX2ZyZWVfbWRlc2M7
+CisJCXJldHVybiByYzsKIAogCXJlcS0+bXNnX3ZlcnNpb24gPSBNU0dfSERSX1ZFUjsKIAly
+ZXEtPm1zZ190eXBlID0gU05QX01TR19UU0NfSU5GT19SRVE7CkBAIC0zMjIxLDcgKzMyMTIs
+NyBAQCBzdGF0aWMgaW50IF9faW5pdCBzbnBfZ2V0X3RzY19pbmZvKHZvaWQpCiAKIAlyYyA9
+IHNucF9zZW5kX2d1ZXN0X3JlcXVlc3QobWRlc2MsIHJlcSwgcmlvKTsKIAlpZiAocmMpCi0J
+CWdvdG8gZV9yZXF1ZXN0OworCQlyZXR1cm4gcmM7CiAKIAlwcl9kZWJ1ZygiJXM6IHJlc3Bv
+bnNlIHN0YXR1cyAweCV4IHNjYWxlIDB4JWxseCBvZmZzZXQgMHglbGx4IGZhY3RvciAweCV4
+XG4iLAogCQkgX19mdW5jX18sIHRzY19yZXNwLT5zdGF0dXMsIHRzY19yZXNwLT50c2Nfc2Nh
+bGUsIHRzY19yZXNwLT50c2Nfb2Zmc2V0LApAQCAtMzIzNSwyMCArMzIyNiw2IEBAIHN0YXRp
+YyBpbnQgX19pbml0IHNucF9nZXRfdHNjX2luZm8odm9pZCkKIAkJcmMgPSAtRUlPOwogCX0K
+IAotZV9yZXF1ZXN0OgotCS8qIFRoZSByZXNwb25zZSBidWZmZXIgY29udGFpbnMgc2Vuc2l0
+aXZlIGRhdGEsIGV4cGxpY2l0bHkgY2xlYXIgaXQuICovCi0JbWVtemVyb19leHBsaWNpdCh0
+c2NfcmVzcCwgc2l6ZW9mKCp0c2NfcmVzcCkgKyBBVVRIVEFHX0xFTik7Ci1lX2ZyZWVfbWRl
+c2M6Ci0Jc25wX21zZ19mcmVlKG1kZXNjKTsKLWVfZnJlZV9yaW86Ci0Ja2ZyZWUocmlvKTsK
+LWVfZnJlZV9yZXE6Ci0Ja2ZyZWUocmVxKTsKLSBlX2ZyZWVfdHNjX3Jlc3A6Ci0Ja2ZyZWUo
+dHNjX3Jlc3ApOwotZV9mcmVlX3RzY19yZXE6Ci0Ja2ZyZWUodHNjX3JlcSk7Ci0KIAlyZXR1
+cm4gcmM7CiB9CiAK
+
+--------------isusE2RpYvzDXBbMOK0gUjbC--
 
