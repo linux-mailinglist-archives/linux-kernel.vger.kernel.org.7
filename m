@@ -1,414 +1,164 @@
-Return-Path: <linux-kernel+bounces-631888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E47AA8EE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2B0AA8EF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2878C1897248
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:07:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0226D174B82
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8711E5B7D;
-	Mon,  5 May 2025 09:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D37F1F582C;
+	Mon,  5 May 2025 09:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nkxK11hg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GFFGnOO3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nkxK11hg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GFFGnOO3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B11R3BxE"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6024B19E819
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 09:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AD21F417E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 09:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746436001; cv=none; b=ZY7rr3mH4dNeGR/nHyV/58mOBYItAA9B9Lrec0mmwvlwDc6hsoGOSnxWbWxd9TVcfZcQ1cJ/ig/w61Nqz10ROb5ciH9jZDb7gENSuPBKIRXWJm8qQDFWH4i61KxwJzmGr3LhgzdNvM3gt3EtwtaqOfkgTINGSe+BKK3kffX6psA=
+	t=1746436032; cv=none; b=d/IlEWXXSeCmdlSaeoj0MSsx7j2a7k2VzyCFIzohv3UtZLt8uMQ2mWXlwoEn1HL5E2UZ9b5bQTFzn+ROfRjCOJS2AJmJcnIWy91eh6a34dofipg4RHka2UklFuVtARe+F/j8dMmA5TndHWVR8yMv48JbvrWzFSg3kbZdm+A5y4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746436001; c=relaxed/simple;
-	bh=2zOPbx/4d5fobmgLm+O7lAZ9Xln/LzKFyAM7D0L46zc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iwA/dbspWkyLWWxYNZm+kJFWMrQt5Gq6lQITCLm7ZwvxjI8UscEECE9AOFtVioswuCtfcJJVeyqO8+Hu4U+rroXhhoAWlQABMmMaojSG2lFjvZgoE3b1fgwaIqTuS48sVXZpHp0UXM/fHKdDnB7Obyjlb1HoSVeoRct26E9m868=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nkxK11hg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GFFGnOO3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nkxK11hg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GFFGnOO3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6F97321265;
-	Mon,  5 May 2025 09:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746435997; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cJgGwcX94y0/ULGhSqyRKu/CwENFIGVHPNo0hYEehTc=;
-	b=nkxK11hgvmXaa+wzuoI4/R6fvRDjI9k/Zu4uf3VQkvzb4pakZAmMs1UaBh5E2CGveT5GOa
-	i+sTWSnL7PMumxgDJI5DwN2Jrsinp2fISMsThvB7LGL6ylnCZnsh9Ws4bG++YTe+E3B1fy
-	F1Iz7UXQw7jrwBZyjwbX/xxmoljFOBc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746435997;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cJgGwcX94y0/ULGhSqyRKu/CwENFIGVHPNo0hYEehTc=;
-	b=GFFGnOO3E/mHW/eTVaPAZqjUiQ0LZ2DxzjK4EdhmBkOp+joYU/V477t/U+nnn8Nj7u3syT
-	ZZszdVNHDy792yBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=nkxK11hg;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=GFFGnOO3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746435997; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cJgGwcX94y0/ULGhSqyRKu/CwENFIGVHPNo0hYEehTc=;
-	b=nkxK11hgvmXaa+wzuoI4/R6fvRDjI9k/Zu4uf3VQkvzb4pakZAmMs1UaBh5E2CGveT5GOa
-	i+sTWSnL7PMumxgDJI5DwN2Jrsinp2fISMsThvB7LGL6ylnCZnsh9Ws4bG++YTe+E3B1fy
-	F1Iz7UXQw7jrwBZyjwbX/xxmoljFOBc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746435997;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cJgGwcX94y0/ULGhSqyRKu/CwENFIGVHPNo0hYEehTc=;
-	b=GFFGnOO3E/mHW/eTVaPAZqjUiQ0LZ2DxzjK4EdhmBkOp+joYU/V477t/U+nnn8Nj7u3syT
-	ZZszdVNHDy792yBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3388E1372E;
-	Mon,  5 May 2025 09:06:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id frUyC51/GGg8ZgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 05 May 2025 09:06:37 +0000
-Message-ID: <27a5f519-de87-4fab-b465-bb89ae5b988b@suse.de>
-Date: Mon, 5 May 2025 11:06:36 +0200
+	s=arc-20240116; t=1746436032; c=relaxed/simple;
+	bh=DKSAlySHx3h3D9zpUBcxrMd3u1LhzK+bGMkaFdM8fys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B7FPhCWu/jiiijyAqvDi3BGSJtFYDqxFHh38J5E98Ao/sVMqVV2N8DV/AjD3gPpCQwXSQW37mqCSPCFyLzVEYp+LOy7B9dG7LMpf31FO5hmjtdl86tnvl54FjQeRqSysj849rMcdxQHl2s8TFQiusZyDYDb5Be83WminsiUTXuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=B11R3BxE; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30beedb99c9so36185061fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 02:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1746436029; x=1747040829; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/GsrYYGdHiHagWAJNMJ4+WIR65DiPU+EFWzyGSzQD9k=;
+        b=B11R3BxE2WX3AAs+NcgXlX+9i16oKvJ1xoZpvvY0OsZ+AlrgJtnKWJY8GBvTFkr135
+         LnxVTg2VKN5/J0EmPSu/9ySeADHie0TEyrlFAuQ2+tYBKrMTQ+DWiWqwwtVqAgIe2rg9
+         WrT2J8gGp3MAOSSNbu4zIBaHKgNLNMGH0l1T8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746436029; x=1747040829;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/GsrYYGdHiHagWAJNMJ4+WIR65DiPU+EFWzyGSzQD9k=;
+        b=rFsHaF4D/g152UEY/dNHOb48J3y2VKOsJg99hDg1nLAQG48BJVEA7yU1YyvMBeKG7z
+         ejMu5N32b4NakTdJvlDUw4b8/BApNGK+W1fyYHQFJTycYIgPIR5ab/4zxPATGnq8WC6t
+         4y3Pxf+lwaMfNnM6Of00idY5blhtYHOp7Fhg+yXX2aTbj8FmMuosOX2IYz2j/u3SmWQE
+         AyavQ1uQ2VXP8DXjsDyj/8TksMmBZtXJGr2bcU8k7CxlNVNghKr1oFt9E8IQyK3kcKnN
+         Gd8V3q9LHSYWMEcbuLCAbt9I9+ShcV/uGDxoWtcplFbooHrmnUs5rbSRwQYeDseH0Rcd
+         26Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFEZ9FULLQsNNv7e/znXLEYJoZW+UEdg41P/QMzcaKwsCV/qaVvUDqrivFpD8e0Ksc5K552ro0K/wVnwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywVgLN2nPw2zXrtv0RwxbAt/Dn0Cwl7aFFWh9H/LBq/P3oCEry
+	bOSRLDFe4FPAdMN4GuTkiM9J+LD1EvRNsad3ZpZ3ah3dQvzQwZ9sFVI+xqrB+IcSPVNCHSEH9dI
+	=
+X-Gm-Gg: ASbGncsxijTVQzqVXLIr28WHcugBJH9fQ73a65z3TvFAtssrf6teRkbbQPLqya15JD9
+	kClAaO56fV+TwZA60IpgmIELZyMcOPiAM4CCUgQ4Kbu7cMG9IfCBvUxbLndPs3dCmMzaCVSjzr/
+	UL5MGUR7+IMqPtcHPh+VNx+uhjwDYCQsYqQue5fLnDrT+WM46mjXjHsav/hl91ZerKfO8fPvLEA
+	9rPk1kFF9TRxCabj+AG7gegMZqPVwYllXco1lHc/OzK5BG4Qm7V6lMD5lIxH1x1rTRclannzvCr
+	MwV7QluP5uIZ5PyrypBiTY40MtawyqwS8pBmWHDTx61AFfh6IaW+xIH5fVJSWvCiT2igDtt2WUN
+	TmD0=
+X-Google-Smtp-Source: AGHT+IHb8IC0fWmAj0jyoOiZ9L+pk8e8Jet2fWO2Hjvt+c/6KPsI9RnR7tkAjzbFoOV9Ze2LKBzSQQ==
+X-Received: by 2002:a05:651c:a0b:b0:30a:448a:467 with SMTP id 38308e7fff4ca-321db695309mr25097131fa.21.1746436028731;
+        Mon, 05 May 2025 02:07:08 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3202901716dsm15666771fa.26.2025.05.05.02.07.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 02:07:07 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54acc0cd458so4856556e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 02:07:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUakhpctNAEzPc66X3nDfk3VyD67yh7jLPZP8ur9fQUk/mERvGb6MFaaqywWkV4C3cdNLL4eE3pQA1lOHY=@vger.kernel.org
+X-Received: by 2002:a05:6512:3c87:b0:545:2300:9256 with SMTP id
+ 2adb3069b0e04-54eb2428303mr1840599e87.12.1746436027276; Mon, 05 May 2025
+ 02:07:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/sitronix: move tiny Sitronix drivers to their own
- subdir
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, David Lechner <david@lechnology.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Javier Martinez Canillas <javierm@redhat.com>
-References: <20250503-sitronix-v2-1-5efbed896be2@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250503-sitronix-v2-1-5efbed896be2@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6F97321265
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch,lechnology.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,gitlab.freedesktop.org:url]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250404-uvc-meta-v5-0-f79974fc2d20@chromium.org>
+In-Reply-To: <20250404-uvc-meta-v5-0-f79974fc2d20@chromium.org>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 5 May 2025 11:06:54 +0200
+X-Gmail-Original-Message-ID: <CANiDSCtNTMb7kDqrRbpMjDiL+vJh97Tm=2s44J46QS8uH+m0bA@mail.gmail.com>
+X-Gm-Features: ATxdqUGQfyylk6QXkXx8f0-VFS2_hwlKvplMAloc_0UYeLmco1yG4YZuTcaOv88
+Message-ID: <CANiDSCtNTMb7kDqrRbpMjDiL+vJh97Tm=2s44J46QS8uH+m0bA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/4] media: uvcvideo: Introduce V4L2_META_FMT_UVC_MSXU_1_5
+ + other meta fixes
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi Mauro, Hi Laurent, Hi Hans
 
-there's one major issue here. You must not change the Kconfig symbols or 
-you'll break kernel updates for a lot of people. So those TINYDRM_* must 
-remain as is.
+Do you have any comments about this version?
 
-Best regards
-Thomas
+Thanks!
 
-Am 03.05.25 um 10:13 schrieb Marcus Folkesson:
-> We start to have support many Sitronix displays in the tiny directory,
-> and we expect more to come.
+On Fri, 4 Apr 2025 at 08:37, Ricardo Ribalda <ribalda@chromium.org> wrote:
 >
-> Move them to their own subdirectory.
+> This series introduces a new metadata format for UVC cameras and adds a
+> couple of improvements to the UVC metadata handling.
 >
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-> Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
+> Changes in v5:
+> - Fix codestyle and kerneldoc warnings reported by media-ci
+> - Link to v4: https://lore.kernel.org/r/20250403-uvc-meta-v4-0-877aa6475975@chromium.org
+>
+> Changes in v4:
+> - Rename format to V4L2_META_FMT_UVC_MSXU_1_5 (Thanks Mauro)
+> - Flag the new format with a quirk.
+> - Autodetect MSXU devices.
+> - Link to v3: https://lore.kernel.org/linux-media/20250313-uvc-metadata-v3-0-c467af869c60@chromium.org/
+>
+> Changes in v3:
+> - Fix doc syntax errors.
+> - Link to v2: https://lore.kernel.org/r/20250306-uvc-metadata-v2-0-7e939857cad5@chromium.org
+>
 > Changes in v2:
-> - Rebase on drm-misc-next
-> - Link to v1: https://lore.kernel.org/r/20250428-sitronix-v1-1-4e7cc0a8195a@gmail.com
-> ---
->   MAINTAINERS                                     |  6 ++--
->   drivers/gpu/drm/Kconfig                         |  2 ++
->   drivers/gpu/drm/Makefile                        |  1 +
->   drivers/gpu/drm/sitronix/Kconfig                | 41 +++++++++++++++++++++++++
->   drivers/gpu/drm/sitronix/Makefile               |  3 ++
->   drivers/gpu/drm/{tiny => sitronix}/st7571-i2c.c |  0
->   drivers/gpu/drm/{tiny => sitronix}/st7586.c     |  0
->   drivers/gpu/drm/{tiny => sitronix}/st7735r.c    |  0
->   drivers/gpu/drm/tiny/Kconfig                    | 41 -------------------------
->   drivers/gpu/drm/tiny/Makefile                   |  3 --
->   10 files changed, 50 insertions(+), 47 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 81b81cc68ca2482f2965b801693ff8a43bbf2053..6b2d3d4c467b8b360317437027e20c4014c97a21 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7680,13 +7680,13 @@ M:	David Lechner <david@lechnology.com>
->   S:	Maintained
->   T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
->   F:	Documentation/devicetree/bindings/display/sitronix,st7586.txt
-> -F:	drivers/gpu/drm/tiny/st7586.c
-> +F:	drivers/gpu/drm/sitronix/st7586.c
->   
->   DRM DRIVER FOR SITRONIX ST7571 PANELS
->   M:	Marcus Folkesson <marcus.folkesson@gmail.com>
->   S:	Maintained
->   F:	Documentation/devicetree/bindings/display/sitronix,st7571.yaml
-> -F:	drivers/gpu/drm/tiny/st7571-i2c.c
-> +F:	drivers/gpu/drm/sitronix/st7571-i2c.c
->   
->   DRM DRIVER FOR SITRONIX ST7701 PANELS
->   M:	Jagan Teki <jagan@amarulasolutions.com>
-> @@ -7707,7 +7707,7 @@ M:	David Lechner <david@lechnology.com>
->   S:	Maintained
->   T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
->   F:	Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
-> -F:	drivers/gpu/drm/tiny/st7735r.c
-> +F:	drivers/gpu/drm/sitronix/st7735r.c
->   
->   DRM DRIVER FOR SOLOMON SSD130X OLED DISPLAYS
->   M:	Javier Martinez Canillas <javierm@redhat.com>
-> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> index 3921772ae61214e6ac0337edc147a46af0010070..cc7385c334eb6ad484688d9eb483c2c6a9c39e11 100644
-> --- a/drivers/gpu/drm/Kconfig
-> +++ b/drivers/gpu/drm/Kconfig
-> @@ -385,6 +385,8 @@ source "drivers/gpu/drm/xlnx/Kconfig"
->   
->   source "drivers/gpu/drm/gud/Kconfig"
->   
-> +source "drivers/gpu/drm/sitronix/Kconfig"
-> +
->   source "drivers/gpu/drm/solomon/Kconfig"
->   
->   source "drivers/gpu/drm/sprd/Kconfig"
-> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> index b5d5561bbe5fd72f3915e6a52f325fdb79c7981e..70510620f29c874e376c795fb05d426a0faae05c 100644
-> --- a/drivers/gpu/drm/Makefile
-> +++ b/drivers/gpu/drm/Makefile
-> @@ -221,6 +221,7 @@ obj-$(CONFIG_DRM_TIDSS) += tidss/
->   obj-y			+= xlnx/
->   obj-y			+= gud/
->   obj-$(CONFIG_DRM_HYPERV) += hyperv/
-> +obj-y			+= sitronix/
->   obj-y			+= solomon/
->   obj-$(CONFIG_DRM_SPRD) += sprd/
->   obj-$(CONFIG_DRM_LOONGSON) += loongson/
-> diff --git a/drivers/gpu/drm/sitronix/Kconfig b/drivers/gpu/drm/sitronix/Kconfig
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..25cae32e5c3ec11399a12f1f2bb2ede91c27d4d4
-> --- /dev/null
-> +++ b/drivers/gpu/drm/sitronix/Kconfig
-> @@ -0,0 +1,41 @@
-> +config DRM_ST7571_I2C
-> +	tristate "DRM support for Sitronix ST7571 display panels (I2C)"
-> +	depends on DRM && I2C && MMU
-> +	select DRM_CLIENT_SELECTION
-> +	select DRM_GEM_SHMEM_HELPER
-> +	select DRM_KMS_HELPER
-> +	select REGMAP_I2C
-> +	help
-> +	  DRM driver for Sitronix ST7571 panels controlled over I2C.
-> +
-> +	  if M is selected the module will be called st7571-i2c.
-> +
-> +config DRM_ST7586
-> +	tristate "DRM support for Sitronix ST7586 display panels"
-> +	depends on DRM && SPI
-> +	select DRM_CLIENT_SELECTION
-> +	select DRM_KMS_HELPER
-> +	select DRM_GEM_DMA_HELPER
-> +	select DRM_MIPI_DBI
-> +	help
-> +	  DRM driver for the following Sitronix ST7586 panels:
-> +	  * LEGO MINDSTORMS EV3
-> +
-> +	  If M is selected the module will be called st7586.
-> +
-> +config DRM_ST7735R
-> +	tristate "DRM support for Sitronix ST7715R/ST7735R display panels"
-> +	depends on DRM && SPI
-> +	select DRM_CLIENT_SELECTION
-> +	select DRM_KMS_HELPER
-> +	select DRM_GEM_DMA_HELPER
-> +	select DRM_MIPI_DBI
-> +	select BACKLIGHT_CLASS_DEVICE
-> +	help
-> +	  DRM driver for Sitronix ST7715R/ST7735R with one of the following
-> +	  LCDs:
-> +	  * Jianda JD-T18003-T01 1.8" 128x160 TFT
-> +	  * Okaya RH128128T 1.44" 128x128 TFT
-> +
-> +	  If M is selected the module will be called st7735r.
-> +
-> diff --git a/drivers/gpu/drm/sitronix/Makefile b/drivers/gpu/drm/sitronix/Makefile
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..bd139e5a6995fa026cc635b3c29782473d1efad7
-> --- /dev/null
-> +++ b/drivers/gpu/drm/sitronix/Makefile
-> @@ -0,0 +1,3 @@
-> +obj-$(CONFIG_DRM_ST7571_I2C)		+= st7571-i2c.o
-> +obj-$(CONFIG_DRM_ST7586)		+= st7586.o
-> +obj-$(CONFIG_DRM_ST7735R)		+= st7735r.o
-> diff --git a/drivers/gpu/drm/tiny/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
-> similarity index 100%
-> rename from drivers/gpu/drm/tiny/st7571-i2c.c
-> rename to drivers/gpu/drm/sitronix/st7571-i2c.c
-> diff --git a/drivers/gpu/drm/tiny/st7586.c b/drivers/gpu/drm/sitronix/st7586.c
-> similarity index 100%
-> rename from drivers/gpu/drm/tiny/st7586.c
-> rename to drivers/gpu/drm/sitronix/st7586.c
-> diff --git a/drivers/gpu/drm/tiny/st7735r.c b/drivers/gpu/drm/sitronix/st7735r.c
-> similarity index 100%
-> rename from drivers/gpu/drm/tiny/st7735r.c
-> rename to drivers/gpu/drm/sitronix/st7735r.c
-> diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
-> index daa1adbb1b43325d644ae13f3cabfc1bb01ff4d8..6d1b3e2cb3fbd8630864824ae985897b9d8095c7 100644
-> --- a/drivers/gpu/drm/tiny/Kconfig
-> +++ b/drivers/gpu/drm/tiny/Kconfig
-> @@ -199,44 +199,3 @@ config TINYDRM_SHARP_MEMORY
->   	  * 4.40" Sharp Memory LCD (LS044Q7DH01)
->   
->   	  If M is selected the module will be called sharp_memory.
-> -
-> -config TINYDRM_ST7586
-> -	tristate "DRM support for Sitronix ST7586 display panels"
-> -	depends on DRM && SPI
-> -	select DRM_CLIENT_SELECTION
-> -	select DRM_KMS_HELPER
-> -	select DRM_GEM_DMA_HELPER
-> -	select DRM_MIPI_DBI
-> -	help
-> -	  DRM driver for the following Sitronix ST7586 panels:
-> -	  * LEGO MINDSTORMS EV3
-> -
-> -	  If M is selected the module will be called st7586.
-> -
-> -config DRM_ST7571_I2C
-> -	tristate "DRM support for Sitronix ST7571 display panels (I2C)"
-> -	depends on DRM && I2C && MMU
-> -	select DRM_CLIENT_SELECTION
-> -	select DRM_GEM_SHMEM_HELPER
-> -	select DRM_KMS_HELPER
-> -	select REGMAP_I2C
-> -	help
-> -	  DRM driver for Sitronix ST7571 panels controlled over I2C.
-> -
-> -	  if M is selected the module will be called st7571-i2c.
-> -
-> -config TINYDRM_ST7735R
-> -	tristate "DRM support for Sitronix ST7715R/ST7735R display panels"
-> -	depends on DRM && SPI
-> -	select DRM_CLIENT_SELECTION
-> -	select DRM_KMS_HELPER
-> -	select DRM_GEM_DMA_HELPER
-> -	select DRM_MIPI_DBI
-> -	select BACKLIGHT_CLASS_DEVICE
-> -	help
-> -	  DRM driver for Sitronix ST7715R/ST7735R with one of the following
-> -	  LCDs:
-> -	  * Jianda JD-T18003-T01 1.8" 128x160 TFT
-> -	  * Okaya RH128128T 1.44" 128x128 TFT
-> -
-> -	  If M is selected the module will be called st7735r.
-> diff --git a/drivers/gpu/drm/tiny/Makefile b/drivers/gpu/drm/tiny/Makefile
-> index 0151590db5cbd80aebde0629afd03f47b83c3045..4a9ff61ec25420e2c0a648c04eaab7ca25dd5407 100644
-> --- a/drivers/gpu/drm/tiny/Makefile
-> +++ b/drivers/gpu/drm/tiny/Makefile
-> @@ -6,7 +6,6 @@ obj-$(CONFIG_DRM_BOCHS)			+= bochs.o
->   obj-$(CONFIG_DRM_CIRRUS_QEMU)		+= cirrus-qemu.o
->   obj-$(CONFIG_DRM_GM12U320)		+= gm12u320.o
->   obj-$(CONFIG_DRM_PANEL_MIPI_DBI)	+= panel-mipi-dbi.o
-> -obj-$(CONFIG_DRM_ST7571_I2C)		+= st7571-i2c.o
->   obj-$(CONFIG_TINYDRM_HX8357D)		+= hx8357d.o
->   obj-$(CONFIG_TINYDRM_ILI9163)		+= ili9163.o
->   obj-$(CONFIG_TINYDRM_ILI9225)		+= ili9225.o
-> @@ -15,5 +14,3 @@ obj-$(CONFIG_TINYDRM_ILI9486)		+= ili9486.o
->   obj-$(CONFIG_TINYDRM_MI0283QT)		+= mi0283qt.o
->   obj-$(CONFIG_TINYDRM_REPAPER)		+= repaper.o
->   obj-$(CONFIG_TINYDRM_SHARP_MEMORY)	+= sharp-memory.o
-> -obj-$(CONFIG_TINYDRM_ST7586)		+= st7586.o
-> -obj-$(CONFIG_TINYDRM_ST7735R)		+= st7735r.o
+> - Add metadata invalid fix
+> - Move doc note to a separate patch
+> - Introuce V4L2_META_FMT_UVC_CUSTOM (thanks HdG!).
+> - Link to v1: https://lore.kernel.org/r/20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org
 >
 > ---
-> base-commit: e782ac936941cff4c5580bb5cc2ec0e91468068c
-> change-id: 20250424-sitronix-2c1f68b46866
+> Ricardo Ribalda (4):
+>       media: uvcvideo: Do not mark valid metadata as invalid
+>       media: Documentation: Add note about UVCH length field
+>       media: uvcvideo: Introduce V4L2_META_FMT_UVC_MSXU_1_5
+>       media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
+>
+>  .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+>  .../media/v4l/metafmt-uvc-msxu-1-5.rst             | 23 +++++
+>  .../userspace-api/media/v4l/metafmt-uvc.rst        |  4 +-
+>  MAINTAINERS                                        |  1 +
+>  drivers/media/usb/uvc/uvc_metadata.c               | 97 ++++++++++++++++++++--
+>  drivers/media/usb/uvc/uvc_video.c                  | 12 +--
+>  drivers/media/usb/uvc/uvcvideo.h                   |  1 +
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+>  include/linux/usb/uvc.h                            |  3 +
+>  include/uapi/linux/videodev2.h                     |  1 +
+>  10 files changed, 131 insertions(+), 13 deletions(-)
+> ---
+> base-commit: 4e82c87058f45e79eeaa4d5bcc3b38dd3dce7209
+> change-id: 20250403-uvc-meta-e556773d12ae
 >
 > Best regards,
+> --
+> Ricardo Ribalda <ribalda@chromium.org>
+>
+
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Ricardo Ribalda
 
