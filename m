@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-633984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3992EAAAF32
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2CCAAAF43
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDF7A3B918E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBBA3A4922
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2563B2F6B53;
-	Mon,  5 May 2025 23:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715AE286404;
+	Mon,  5 May 2025 23:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIPELxxi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZ500TVk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BB7286415;
-	Mon,  5 May 2025 23:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D4439261E;
+	Mon,  5 May 2025 23:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486183; cv=none; b=Ca795aRyc8/oRPrIQZhjMk6RM/IHHQckSA4YyMwlRuY7/zWVaNQWy5fz0Xt8STVRtTC2N8vCjqRf2PiqQX3qjfUA4nTSDq9XOCJMsPua/5MfBo/o+j54SHhfJOe4EsdjhGHg1G2Py9feKo51AIZh4VMa/qNlPc1uh3pnkk6fkAc=
+	t=1746486191; cv=none; b=Nr+liYDnRp7IJwCZlZXBubqngnlpL+UHGlp1Yav1MPaV4gKa/9Km/65Ek3PWwABZW+ioGXZhUtc83ZU85VxDakhX8AkuzT0jZ4GeTk4j9UDk9RKm05Xc5/mb7YJy/OMSO42SmS65dhPmAf+kwV68BKVGdWG95mSwkclmCXnIDac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486183; c=relaxed/simple;
-	bh=1DjXA4xhtAju2JK2yKoFPKHiiEEZ94BApzWqGwJt//w=;
+	s=arc-20240116; t=1746486191; c=relaxed/simple;
+	bh=yctKwRPr9mErDz2aDpiNtK9SI/fSKXIOhr98raWzloA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M0YSLn8ItLVJD6zorcOzEc4JPwNarjCV7Q+e+LsTa/YbXZP1JGTRfzD6KVURzVDvsxApMRjhph2iot6uxjvxv++S4cS/HtSGQYLyTz9oWTp2SrZtHopFZwxPwVkMfZ6Np9tnXqy4grTk/SVM2eo5V8m9jQLpPTMmyOLUFdWVT8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIPELxxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9254C4CEEF;
-	Mon,  5 May 2025 23:03:00 +0000 (UTC)
+	 MIME-Version; b=muC5QORvcm8m5pRJscmGkcEYkwItOWlMN/T8KLVk46qNdF2NYU0YKOqml7aIAadNh0G6M6aeujPr32CLi+kX1t0ZaGKqlpLZDdoyp2UF6DOfTbIi07PuR91PlfTj2qq0qnm3tICZIQ83VMgabfKSvo0qSD45nIbYj0kzBXKnFXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZ500TVk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A380FC4CEE4;
+	Mon,  5 May 2025 23:03:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486181;
-	bh=1DjXA4xhtAju2JK2yKoFPKHiiEEZ94BApzWqGwJt//w=;
+	s=k20201202; t=1746486190;
+	bh=yctKwRPr9mErDz2aDpiNtK9SI/fSKXIOhr98raWzloA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nIPELxxiRq486yvmMlNnp3tLLlZc9nVSAnpgTMg9CAPC71Wb18xTHHgMPbMBLhmVl
-	 EOCQN2JzvAbsFCBCYwhEQ71junsPS/XZu3rOZB0ejcSeXKZwq2nze7ia/U/6/SC3wk
-	 GkPXNw4Mg/jmRZKH2wGzWin4P1RhWWpTX82QqqaowFkINslfjxLEBgAe73CTqGPaE1
-	 zh5Hg+1VIyG2h/6U8B6Lntk9Q/lZDgOF2KS5sPW7LuAF2C3SVu12v90BGiR2h3Aeh2
-	 8a8vNE8tWjo4f3zNPRuyEXO9hacXy4MgeVhbWs6IwY5GZ5v9c9pkmMkpoiLYb0VcPl
-	 Ckum8mSacerew==
+	b=LZ500TVk5ERuF7F7zCJna+LVcHZO9HsVPzTYIt3Q6YY6e3LMZdLCtwvLFf0L9Hu+U
+	 K0Nx/bU+/PYw/ugopKQMjUDPn0nI+1hQIJUuoub3dzpVODoFxgU2F3o0mGaANk8q6u
+	 /X5IF5JVMJUIi4VVn579IxoQt7HIGibVj8duliLzgCtd7+/DOtdr3d8ZX+1ZU2RliE
+	 +6JE3zNfSfSQuuHMfZDT07ODWxvGaavBOi7eoffTmFB3OGeomCsImwvmYYCnvPKnWF
+	 blx4lWtPMG03O8uTsVQM3ZpjRypEqnifkUdF2EOqYHFhfSnOpa+5sP2lrWuyeKzsdc
+	 ryaVHIXGuuOmg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+	"Artem S . Tashkinov" <aros@gmx.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 190/294] bpf: don't do clean_live_states when state->loop_entry->branches > 0
-Date: Mon,  5 May 2025 18:54:50 -0400
-Message-Id: <20250505225634.2688578-190-sashal@kernel.org>
+	mchehab@kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 195/294] media: test-drivers: vivid: don't call schedule in loop
+Date: Mon,  5 May 2025 18:54:55 -0400
+Message-Id: <20250505225634.2688578-195-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -66,102 +67,126 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Eduard Zingerman <eddyz87@gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-[ Upstream commit 9e63fdb0cbdf3268c86638a8274f4d5549a82820 ]
+[ Upstream commit e4740118b752005cbed339aec9a1d1c43620e0b9 ]
 
-verifier.c:is_state_visited() uses RANGE_WITHIN states comparison rules
-for cached states that have loop_entry with non-zero branches count
-(meaning that loop_entry's verification is not yet done).
+Artem reported that the CPU load was 100% when capturing from
+vivid at low resolution with ffmpeg.
 
-The RANGE_WITHIN rules in regsafe()/stacksafe() require register and
-stack objects types to be identical in current and old states.
+This was caused by:
 
-verifier.c:clean_live_states() replaces registers and stack spills
-with NOT_INIT/STACK_INVALID marks, if these registers/stack spills are
-not read in any child state. This means that clean_live_states() works
-against loop convergence logic under some conditions. See selftest in
-the next patch for a specific example.
+while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+       !kthread_should_stop())
+        schedule();
 
-Mitigate this by prohibiting clean_verifier_state() when
-state->loop_entry->branches > 0.
+If there are no other processes running that can be scheduled,
+then this is basically a busy-loop.
 
-This undoes negative verification performance impact of the
-copy_verifier_state() fix from the previous patch.
-Below is comparison between master and current patch.
+Change it to wait_event_interruptible_timeout() which doesn't
+have that problem.
 
-selftests:
-
-File                                Program                       Insns (A)  Insns (B)  Insns    (DIFF)  States (A)  States (B)  States  (DIFF)
-----------------------------------  ----------------------------  ---------  ---------  ---------------  ----------  ----------  --------------
-arena_htab.bpf.o                    arena_htab_llvm                     717        423   -294 (-41.00%)          57          37   -20 (-35.09%)
-arena_htab_asm.bpf.o                arena_htab_asm                      597        445   -152 (-25.46%)          47          37   -10 (-21.28%)
-arena_list.bpf.o                    arena_list_add                     1493       1822   +329 (+22.04%)          30          37    +7 (+23.33%)
-arena_list.bpf.o                    arena_list_del                      309        261    -48 (-15.53%)          23          15    -8 (-34.78%)
-iters.bpf.o                         checkpoint_states_deletion        18125      22154  +4029 (+22.23%)         818         918  +100 (+12.22%)
-iters.bpf.o                         iter_nested_deeply_iters            593        367   -226 (-38.11%)          67          43   -24 (-35.82%)
-iters.bpf.o                         iter_nested_iters                   813        772     -41 (-5.04%)          79          72     -7 (-8.86%)
-iters.bpf.o                         iter_subprog_check_stacksafe        155        135    -20 (-12.90%)          15          14     -1 (-6.67%)
-iters.bpf.o                         iter_subprog_iters                 1094        808   -286 (-26.14%)          88          68   -20 (-22.73%)
-iters.bpf.o                         loop_state_deps2                    479        356   -123 (-25.68%)          46          35   -11 (-23.91%)
-iters.bpf.o                         triple_continue                      35         31     -4 (-11.43%)           3           3     +0 (+0.00%)
-kmem_cache_iter.bpf.o               open_coded_iter                      63         59      -4 (-6.35%)           7           6    -1 (-14.29%)
-mptcp_subflow.bpf.o                 _getsockopt_subflow                 501        446    -55 (-10.98%)          25          23     -2 (-8.00%)
-pyperf600_iter.bpf.o                on_event                          12339       6379  -5960 (-48.30%)         441         286  -155 (-35.15%)
-verifier_bits_iter.bpf.o            max_words                            92         84      -8 (-8.70%)           8           7    -1 (-12.50%)
-verifier_iterating_callbacks.bpf.o  cond_break2                         113        192    +79 (+69.91%)          12          21    +9 (+75.00%)
-
-sched_ext:
-
-File               Program                 Insns (A)  Insns (B)  Insns      (DIFF)  States (A)  States (B)  States    (DIFF)
------------------  ----------------------  ---------  ---------  -----------------  ----------  ----------  ----------------
-bpf.bpf.o          layered_dispatch            11485       9039    -2446 (-21.30%)         848         662    -186 (-21.93%)
-bpf.bpf.o          layered_dump                 7422       5022    -2400 (-32.34%)         681         298    -383 (-56.24%)
-bpf.bpf.o          layered_enqueue             16854      13753    -3101 (-18.40%)        1611        1308    -303 (-18.81%)
-bpf.bpf.o          layered_init              1000001       5549  -994452 (-99.45%)       84672         523  -84149 (-99.38%)
-bpf.bpf.o          layered_runnable             3149       1899    -1250 (-39.70%)         288         151    -137 (-47.57%)
-bpf.bpf.o          p2dq_init                    2343       1936     -407 (-17.37%)         201         170     -31 (-15.42%)
-bpf.bpf.o          refresh_layer_cpumasks      16487       1285   -15202 (-92.21%)        1770         120   -1650 (-93.22%)
-bpf.bpf.o          rusty_select_cpu             1937       1386     -551 (-28.45%)         177         125     -52 (-29.38%)
-scx_central.bpf.o  central_dispatch              636        600       -36 (-5.66%)          63          59       -4 (-6.35%)
-scx_central.bpf.o  central_init                  913        632     -281 (-30.78%)          48          39      -9 (-18.75%)
-scx_nest.bpf.o     nest_init                     636        601       -35 (-5.50%)          60          58       -2 (-3.33%)
-scx_pair.bpf.o     pair_dispatch             1000001       1914  -998087 (-99.81%)       58169         142  -58027 (-99.76%)
-scx_qmap.bpf.o     qmap_dispatch                2393       2187      -206 (-8.61%)         196         174     -22 (-11.22%)
-scx_qmap.bpf.o     qmap_init                   16367      22777    +6410 (+39.16%)         603         768    +165 (+27.36%)
-
-'layered_init' and 'pair_dispatch' hit 1M on master, but are verified
-ok with this patch.
-
-Signed-off-by: Eduard Zingerman <eddyz87@gmail.com>
-Link: https://lore.kernel.org/r/20250215110411.3236773-4-eddyz87@gmail.com
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Reported-by: Artem S. Tashkinov <aros@gmx.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219570
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/test-drivers/vivid/vivid-kthread-cap.c  | 11 ++++++++---
+ drivers/media/test-drivers/vivid/vivid-kthread-out.c  | 11 ++++++++---
+ .../media/test-drivers/vivid/vivid-kthread-touch.c    | 11 ++++++++---
+ drivers/media/test-drivers/vivid/vivid-sdr-cap.c      | 11 ++++++++---
+ 4 files changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index e443506b0a65a..eacb9b160afb0 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -15963,12 +15963,16 @@ static void clean_verifier_state(struct bpf_verifier_env *env,
- static void clean_live_states(struct bpf_verifier_env *env, int insn,
- 			      struct bpf_verifier_state *cur)
- {
-+	struct bpf_verifier_state *loop_entry;
- 	struct bpf_verifier_state_list *sl;
+diff --git a/drivers/media/test-drivers/vivid/vivid-kthread-cap.c b/drivers/media/test-drivers/vivid/vivid-kthread-cap.c
+index 42048727d7ff3..b8cdffc9a1e9e 100644
+--- a/drivers/media/test-drivers/vivid/vivid-kthread-cap.c
++++ b/drivers/media/test-drivers/vivid/vivid-kthread-cap.c
+@@ -765,9 +765,14 @@ static int vivid_thread_vid_cap(void *data)
+ 			next_jiffies_since_start = jiffies_since_start;
  
- 	sl = *explored_state(env, insn);
- 	while (sl) {
- 		if (sl->state.branches)
- 			goto next;
-+		loop_entry = get_loop_entry(&sl->state);
-+		if (loop_entry && loop_entry->branches)
-+			goto next;
- 		if (sl->state.insn_idx != insn ||
- 		    !same_callsites(&sl->state, cur))
- 			goto next;
+ 		wait_jiffies = next_jiffies_since_start - jiffies_since_start;
+-		while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+-		       !kthread_should_stop())
+-			schedule();
++		if (!time_is_after_jiffies(cur_jiffies + wait_jiffies))
++			continue;
++
++		wait_queue_head_t wait;
++
++		init_waitqueue_head(&wait);
++		wait_event_interruptible_timeout(wait, kthread_should_stop(),
++					cur_jiffies + wait_jiffies - jiffies);
+ 	}
+ 	dprintk(dev, 1, "Video Capture Thread End\n");
+ 	return 0;
+diff --git a/drivers/media/test-drivers/vivid/vivid-kthread-out.c b/drivers/media/test-drivers/vivid/vivid-kthread-out.c
+index fac6208b51da8..015a7b166a1e6 100644
+--- a/drivers/media/test-drivers/vivid/vivid-kthread-out.c
++++ b/drivers/media/test-drivers/vivid/vivid-kthread-out.c
+@@ -235,9 +235,14 @@ static int vivid_thread_vid_out(void *data)
+ 			next_jiffies_since_start = jiffies_since_start;
+ 
+ 		wait_jiffies = next_jiffies_since_start - jiffies_since_start;
+-		while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+-		       !kthread_should_stop())
+-			schedule();
++		if (!time_is_after_jiffies(cur_jiffies + wait_jiffies))
++			continue;
++
++		wait_queue_head_t wait;
++
++		init_waitqueue_head(&wait);
++		wait_event_interruptible_timeout(wait, kthread_should_stop(),
++					cur_jiffies + wait_jiffies - jiffies);
+ 	}
+ 	dprintk(dev, 1, "Video Output Thread End\n");
+ 	return 0;
+diff --git a/drivers/media/test-drivers/vivid/vivid-kthread-touch.c b/drivers/media/test-drivers/vivid/vivid-kthread-touch.c
+index fa711ee36a3fb..c862689786b69 100644
+--- a/drivers/media/test-drivers/vivid/vivid-kthread-touch.c
++++ b/drivers/media/test-drivers/vivid/vivid-kthread-touch.c
+@@ -135,9 +135,14 @@ static int vivid_thread_touch_cap(void *data)
+ 			next_jiffies_since_start = jiffies_since_start;
+ 
+ 		wait_jiffies = next_jiffies_since_start - jiffies_since_start;
+-		while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+-		       !kthread_should_stop())
+-			schedule();
++		if (!time_is_after_jiffies(cur_jiffies + wait_jiffies))
++			continue;
++
++		wait_queue_head_t wait;
++
++		init_waitqueue_head(&wait);
++		wait_event_interruptible_timeout(wait, kthread_should_stop(),
++					cur_jiffies + wait_jiffies - jiffies);
+ 	}
+ 	dprintk(dev, 1, "Touch Capture Thread End\n");
+ 	return 0;
+diff --git a/drivers/media/test-drivers/vivid/vivid-sdr-cap.c b/drivers/media/test-drivers/vivid/vivid-sdr-cap.c
+index a81f26b769883..1dd59c710dae7 100644
+--- a/drivers/media/test-drivers/vivid/vivid-sdr-cap.c
++++ b/drivers/media/test-drivers/vivid/vivid-sdr-cap.c
+@@ -206,9 +206,14 @@ static int vivid_thread_sdr_cap(void *data)
+ 			next_jiffies_since_start = jiffies_since_start;
+ 
+ 		wait_jiffies = next_jiffies_since_start - jiffies_since_start;
+-		while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+-		       !kthread_should_stop())
+-			schedule();
++		if (!time_is_after_jiffies(cur_jiffies + wait_jiffies))
++			continue;
++
++		wait_queue_head_t wait;
++
++		init_waitqueue_head(&wait);
++		wait_event_interruptible_timeout(wait, kthread_should_stop(),
++					cur_jiffies + wait_jiffies - jiffies);
+ 	}
+ 	dprintk(dev, 1, "SDR Capture Thread End\n");
+ 	return 0;
 -- 
 2.39.5
 
