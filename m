@@ -1,61 +1,55 @@
-Return-Path: <linux-kernel+bounces-634424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876C8AAB667
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:49:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192DDAAB658
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193A53A856D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7A81BC4283
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EA21FBCBE;
-	Tue,  6 May 2025 00:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4713C3640F9;
+	Tue,  6 May 2025 00:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6UXE1EH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJ5EYRzN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EBC2D111C;
-	Mon,  5 May 2025 22:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396BB2D1134;
+	Mon,  5 May 2025 22:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485464; cv=none; b=mG9zpoJUk+DOBNYgPDy0qJH+BVQgXQh1S8+kuYbW4JKJNN/GL6ek5vQrRINDNDYuNOyf2+ZKrzYYrNJ4/z9ZMcp776NXcEIu0TEK8c7txm4FVzMNvH6Rtyd8RkGmgkUmNKwhEzP1RhFDQSGuPLks66L9lNxSvIN/eOE6sOOtDM8=
+	t=1746485479; cv=none; b=ufcEiZNFdrsGxsIbJQT2x844vpXMQX9st4NT7IoRyAXidpvvrNFqVYK/INvjodoXLnKRHFSFJ+w8/jGTCsVuLYcL5uV7p+sypOz7YWppOnHq4A14xdggBdCgeApE6C4UboCFr2WNcagldKkiGBanpFn+gN/m2zUEu2z1t5X8yVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485464; c=relaxed/simple;
-	bh=qm8pJYqgBS9g9flUCLFZljzZnY4uiLUSesZQ6cB7eEw=;
+	s=arc-20240116; t=1746485479; c=relaxed/simple;
+	bh=/stf3tHvA8s7QEAMakhpG4T94tRsVcqgN7pTpnDXAzM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RR4jZ7GgWUPnz/ho5TanlQ1ThU9DZlPQ64QXMJqE/4jo07IfYmVrLTZTWV/BNOuV435z00PoYIlYIJdXHyINLJtCDAQCU0j7OY9mDXue/miSOcxOKVlJkv7uN/1or+g1Cq6noApUxvuQM15D1qIILz9rRYSEWSlf8LWHUQKcLO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6UXE1EH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06CAC4CEED;
-	Mon,  5 May 2025 22:51:01 +0000 (UTC)
+	 MIME-Version; b=Oltbjuvh5Er/K9QYZ+uKjTjEnpW2t9pcOBoP82TpAZLutsLotmKfH1sAOG/ettWn9vj1yG8kZxo/xvLirLqyoN32BCapI9YNxT3VKKKyLD12/uzYvuTV4l9oxE/GrGLKY2Q9484sl9E+Vgj8ohWZBs+pvAYr/tzrv4/XyQfvaFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJ5EYRzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6850CC4CEEF;
+	Mon,  5 May 2025 22:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485463;
-	bh=qm8pJYqgBS9g9flUCLFZljzZnY4uiLUSesZQ6cB7eEw=;
+	s=k20201202; t=1746485478;
+	bh=/stf3tHvA8s7QEAMakhpG4T94tRsVcqgN7pTpnDXAzM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d6UXE1EHHjNf4DXb919bjcwd7FjnfpvVLp3/X/Ih9E+yFO95vLeHwyERfa8gvPkui
-	 NDwE5CIuFYEWGfu6KxIPt5JBjg5azBPn0zpJbdJjj2NkUfV9+G8aiaF1A3nqdI4RME
-	 EF6nLlIxy2GHmixp3xefSz7nlYPtulUHiStZgOKKNdrgtF+rX0xpfKuL0fY4cRFx4N
-	 R+yJ1f8MlC39uWfiznmbJ0Xk+D0zODBK9v/SyqVHMfJQ1agHQxUxZkkaSPBtDCJj7e
-	 iz5KRl+OW/838/RBWUdNYiTl0la5aBWfJzB2u32PJZ74q9crx4RmyNxtUuaoFklddD
-	 cvds/QeDubPVw==
+	b=bJ5EYRzNU5SYMJwVPQPHjeosfiviRMCJ+Lky881dEVE/B1G9gLod8yuy32b9oDqIn
+	 WKYn/i/HoAB8ln6DBhtMb+0HJSjxOQ2ugLSeOSZK5Vf3c6pO2o9eXUx5n3x/naw/9t
+	 SI5Ehz642ddk5bPBu0VzIpJRAZ8HTnY/1DHtoSscke2/7vlmwQkQHZYj4o+dwn6rMm
+	 Ic+BudIHLJAnQzZOCfwRqraObRiBd88WHWfgtRFVND6fnkSSGnVy+IbUeXTw1Ot/fJ
+	 EyMvRgLmmpQNe02J5XV5AKvW3TI3ipBcvC7Pz/MYyStfajxG1QE9yi9zVXcZccx/vb
+	 xYqjB5L6u2afA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Siva Durga Prasad Paladugu <siva.durga.prasad.paladugu@amd.com>,
-	Nava kishore Manne <nava.kishore.manne@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Sasha Levin <sashal@kernel.org>,
-	ronak.jain@amd.com,
-	jay.buddhabhatti@amd.com,
-	radhey.shyam.pandey@amd.com,
-	gregkh@linuxfoundation.org,
-	u.kleine-koenig@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 325/486] firmware: xilinx: Dont send linux address to get fpga config get status
-Date: Mon,  5 May 2025 18:36:41 -0400
-Message-Id: <20250505223922.2682012-325-sashal@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Tejun Heo <tj@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 335/486] kernfs: Don't re-lock kernfs_root::kernfs_rwsem in kernfs_fop_readdir().
+Date: Mon,  5 May 2025 18:36:51 -0400
+Message-Id: <20250505223922.2682012-335-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -70,49 +64,53 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Siva Durga Prasad Paladugu <siva.durga.prasad.paladugu@amd.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 5abc174016052caff1bcf4cedb159bd388411e98 ]
+[ Upstream commit 9aab10a0249eab4ec77c6a5e4f66442610c12a09 ]
 
-Fpga get config status just returns status through ret_payload and there
-is no need to allocate local buf and send its address through SMC args.
-Moreover, the address that is being passed till now is linux virtual
-address and is incorrect.
-Corresponding modification has been done in the firmware to avoid using the
-address sent by linux.
+The readdir operation iterates over all entries and invokes dir_emit()
+for every entry passing kernfs_node::name as argument.
+Since the name argument can change, and become invalid, the
+kernfs_root::kernfs_rwsem lock should not be dropped to prevent renames
+during the operation.
 
-Signed-off-by: Siva Durga Prasad Paladugu <siva.durga.prasad.paladugu@amd.com>
-Signed-off-by: Nava kishore Manne <nava.kishore.manne@amd.com>
-Link: https://lore.kernel.org/r/20250207054951.1650534-1-nava.kishore.manne@amd.com
-Signed-off-by: Michal Simek <michal.simek@amd.com>
+The lock drop around dir_emit() has been initially introduced in commit
+   1e5289c97bba2 ("sysfs: Cache the last sysfs_dirent to improve readdir scalability v2")
+
+to avoid holding a global lock during a page fault. The lock drop is
+wrong since the support of renames and not a big burden since the lock
+is no longer global.
+
+Don't re-acquire kernfs_root::kernfs_rwsem while copying the name to the
+userpace buffer.
+
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Link: https://lore.kernel.org/r/20250213145023.2820193-5-bigeasy@linutronix.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/xilinx/zynqmp.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/kernfs/dir.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index add8acf66a9c7..5578158f13750 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -1012,17 +1012,13 @@ EXPORT_SYMBOL_GPL(zynqmp_pm_fpga_get_status);
- int zynqmp_pm_fpga_get_config_status(u32 *value)
- {
- 	u32 ret_payload[PAYLOAD_ARG_CNT];
--	u32 buf, lower_addr, upper_addr;
- 	int ret;
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index 458519e416fe7..5a1fea414996e 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -1868,10 +1868,10 @@ static int kernfs_fop_readdir(struct file *file, struct dir_context *ctx)
+ 		file->private_data = pos;
+ 		kernfs_get(pos);
  
- 	if (!value)
- 		return -EINVAL;
- 
--	lower_addr = lower_32_bits((u64)&buf);
--	upper_addr = upper_32_bits((u64)&buf);
--
- 	ret = zynqmp_pm_invoke_fn(PM_FPGA_READ, ret_payload, 4,
--				  XILINX_ZYNQMP_PM_FPGA_CONFIG_STAT_OFFSET, lower_addr, upper_addr,
-+				  XILINX_ZYNQMP_PM_FPGA_CONFIG_STAT_OFFSET, 0, 0,
- 				  XILINX_ZYNQMP_PM_FPGA_READ_CONFIG_REG);
- 
- 	*value = ret_payload[1];
+-		up_read(&root->kernfs_rwsem);
+-		if (!dir_emit(ctx, name, len, ino, type))
++		if (!dir_emit(ctx, name, len, ino, type)) {
++			up_read(&root->kernfs_rwsem);
+ 			return 0;
+-		down_read(&root->kernfs_rwsem);
++		}
+ 	}
+ 	up_read(&root->kernfs_rwsem);
+ 	file->private_data = NULL;
 -- 
 2.39.5
 
