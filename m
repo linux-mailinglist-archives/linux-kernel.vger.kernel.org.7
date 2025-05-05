@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-633954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B027AAAEFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:08:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F2AAAAECC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9011BC2873
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:04:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29FC27ACCA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97062F2C4F;
-	Mon,  5 May 2025 23:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F106F289802;
+	Mon,  5 May 2025 23:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EsAfYVgw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPYpU1iH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1B238CEB3;
-	Mon,  5 May 2025 23:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C73A2DDD0A;
+	Mon,  5 May 2025 23:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486101; cv=none; b=iKqjokPWy4pabgMtNT6GRmwYBZlaHvlFkqqOZvfegUt2jOlJ4U8QWJykM4nckc/Z6d3JxBHCDKlLpYlvGIRZ9pTJIjJUzWdAX92kHeU01rBBYmNAOIUNE/xctrh2Y4cOo6bBqT8luQ13qAeuzS87CW5dPgJYIvkDURjJ4F61HtY=
+	t=1746486111; cv=none; b=B195Vr8KTMkh48FEKzoi723JfpFev5jRaKzjEGmXYCjfj1/RXijjz0IZ7P0ogOqZsYuH2YEqDhdrSKleSjeeax8DWn1+MQ03BeGXD0sj64bSRRFV2VqLLeSXEPX7PmHi/pcfzWj1bonoRaGkYiXSXEdROXQZW22ZJNLoDoffly4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486101; c=relaxed/simple;
-	bh=zPTcb5EF+PZ7SBsevaVplteoZZUfmgwh2tLi1WG3G2E=;
+	s=arc-20240116; t=1746486111; c=relaxed/simple;
+	bh=LrT/BzsEdzbAPHh6GUB5YHHxutK4sZM6h/Bma2CUFEc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bX69CPrgGUdcunUitWNd2HLvvyy6UvRM5MNDpHDXxbTvqGVbeUXnh4scb2DYmwZKwxh99+1zL2/iDiHSICdyJ08/xMvo2H7icamxMgnjyJharQJIFnZpkcW8heIsBvJOaQfgQhJ7HX7G3/v10RRtBMoke2b67335zRUObp1rVgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EsAfYVgw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE437C4CEE4;
-	Mon,  5 May 2025 23:01:38 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Yes12czeFRodiAJl9AZVbMdXORx2nKuSemAh1X3Spxx0qKid8PZf3Mac7Cze6K0x2WSojiPjP7my/4hIvfj6tGHoJdJHbUVJj/AduNVfglUPyWGowayACrv0j0QEpGFLGDNomtL+QY58qimHzdYQ7wTpUC0BJK50uKF6HbOy+Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPYpU1iH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BF9C4CEE4;
+	Mon,  5 May 2025 23:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486100;
-	bh=zPTcb5EF+PZ7SBsevaVplteoZZUfmgwh2tLi1WG3G2E=;
+	s=k20201202; t=1746486110;
+	bh=LrT/BzsEdzbAPHh6GUB5YHHxutK4sZM6h/Bma2CUFEc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EsAfYVgwvR9ueLTcHxCp2N253V9wZRjJftpYqYwg3NnkyozjKpewa0tcSH4sRvYRl
-	 dGk9I6PlWJMQVP0fT3/GioMWkVLKiIelz8VOxzI0xsgwNKOVGxlRJyL4yYMkM7ssaD
-	 qnupt3HeoGSwuUCpnHvxSCGyVLvq6cRXL3Rc6RtHSRTikA1tzUk2Hw4ItM1GdBI7yZ
-	 oLznNjgJBXnRdqa/xRz1OGbcqznJ3SKKJ14FpDWwBoUlLbcrLR66yFPeK205wwcjkZ
-	 emyFif/QUdwlOtbGzuB/7gGsGyy6IGKVF8Z94LhLHRvXI8S2SagPWk6G8tX1LNnXGV
-	 9dxlXj/fTGj6g==
+	b=BPYpU1iHXWbaMXEY6DZVYxDVl2m8+f2FYUa40Ik9MenuVH+9hTSabzMIj3SYPvS0B
+	 cOjvFE9MVV5madyHSYSJKA3NcgD1I8emSdivpGZCWj1K0/4ZRlSzu7Ygzf2R/g3Jme
+	 oZgr78ZfNiWN01mKh6YJkyhyzyw0vf9Grax9vTlT8IKc4W7+0eZUV2FQuW4XQBvtGe
+	 4tmaRVqnygAizCFAK/rRyc5nvQfC0Cm58XOUZCmpDMoT7vqTxZuM25dpmLAHJ+Ccw8
+	 jYqqsV/yy8hsmg63jrlROjHD3UvicXeWu3dckM/TCnT9Bdb1gOctb0JqkrowEo950E
+	 z/gmGjr7fEGzg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Yihan Zhu <Yihan.Zhu@amd.com>,
-	Samson Tam <samson.tam@amd.com>,
-	Zaeem Mohamed <zaeem.mohamed@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 155/294] drm/amd/display: handle max_downscale_src_width fail check
-Date: Mon,  5 May 2025 18:54:15 -0400
-Message-Id: <20250505225634.2688578-155-sashal@kernel.org>
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	matthias.bgg@gmail.com,
+	linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.6 158/294] ASoC: mediatek: mt8188: Add reference for dmic clocks
+Date: Mon,  5 May 2025 18:54:18 -0400
+Message-Id: <20250505225634.2688578-158-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -68,62 +66,69 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Yihan Zhu <Yihan.Zhu@amd.com>
+From: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-[ Upstream commit 02a940da2ccc0cc0299811379580852b405a0ea2 ]
+[ Upstream commit bf1800073f4d55f08191b034c86b95881e99b6fd ]
 
-[WHY]
-If max_downscale_src_width check fails, we exit early from TAP calculation and left a NULL
-value to the scaling data structure to cause the zero divide in the DML validation.
+Add the names for the dmic clocks, aud_afe_dmic* and aud_dmic_hires*, so
+they can be acquired and enabled by the platform driver.
 
-[HOW]
-Call set default TAP calculation before early exit in get_optimal_number_of_taps due to
-max downscale limit exceed.
-
-Reviewed-by: Samson Tam <samson.tam@amd.com>
-Signed-off-by: Yihan Zhu <Yihan.Zhu@amd.com>
-Signed-off-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
-Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Link: https://patch.msgid.link/20250225-genio700-dmic-v2-2-3076f5b50ef7@collabora.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn30/dcn30_dpp.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ sound/soc/mediatek/mt8188/mt8188-afe-clk.c | 8 ++++++++
+ sound/soc/mediatek/mt8188/mt8188-afe-clk.h | 8 ++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_dpp.c b/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_dpp.c
-index 50dc834046446..4ce45f1bdac0f 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_dpp.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_dpp.c
-@@ -392,11 +392,6 @@ bool dpp3_get_optimal_number_of_taps(
- 	int min_taps_y, min_taps_c;
- 	enum lb_memory_config lb_config;
- 
--	if (scl_data->viewport.width > scl_data->h_active &&
--		dpp->ctx->dc->debug.max_downscale_src_width != 0 &&
--		scl_data->viewport.width > dpp->ctx->dc->debug.max_downscale_src_width)
--		return false;
--
- 	/*
- 	 * Set default taps if none are provided
- 	 * From programming guide: taps = min{ ceil(2*H_RATIO,1), 8} for downscaling
-@@ -434,6 +429,12 @@ bool dpp3_get_optimal_number_of_taps(
- 	else
- 		scl_data->taps.h_taps_c = in_taps->h_taps_c;
- 
-+	// Avoid null data in the scl data with this early return, proceed non-adaptive calcualtion first
-+	if (scl_data->viewport.width > scl_data->h_active &&
-+		dpp->ctx->dc->debug.max_downscale_src_width != 0 &&
-+		scl_data->viewport.width > dpp->ctx->dc->debug.max_downscale_src_width)
-+		return false;
-+
- 	/*Ensure we can support the requested number of vtaps*/
- 	min_taps_y = dc_fixpt_ceil(scl_data->ratios.vert);
- 	min_taps_c = dc_fixpt_ceil(scl_data->ratios.vert_c);
+diff --git a/sound/soc/mediatek/mt8188/mt8188-afe-clk.c b/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
+index e69c1bb2cb239..7f411b8577823 100644
+--- a/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
++++ b/sound/soc/mediatek/mt8188/mt8188-afe-clk.c
+@@ -58,7 +58,15 @@ static const char *aud_clks[MT8188_CLK_NUM] = {
+ 	[MT8188_CLK_AUD_ADC] = "aud_adc",
+ 	[MT8188_CLK_AUD_DAC_HIRES] = "aud_dac_hires",
+ 	[MT8188_CLK_AUD_A1SYS_HP] = "aud_a1sys_hp",
++	[MT8188_CLK_AUD_AFE_DMIC1] = "aud_afe_dmic1",
++	[MT8188_CLK_AUD_AFE_DMIC2] = "aud_afe_dmic2",
++	[MT8188_CLK_AUD_AFE_DMIC3] = "aud_afe_dmic3",
++	[MT8188_CLK_AUD_AFE_DMIC4] = "aud_afe_dmic4",
+ 	[MT8188_CLK_AUD_ADC_HIRES] = "aud_adc_hires",
++	[MT8188_CLK_AUD_DMIC_HIRES1] = "aud_dmic_hires1",
++	[MT8188_CLK_AUD_DMIC_HIRES2] = "aud_dmic_hires2",
++	[MT8188_CLK_AUD_DMIC_HIRES3] = "aud_dmic_hires3",
++	[MT8188_CLK_AUD_DMIC_HIRES4] = "aud_dmic_hires4",
+ 	[MT8188_CLK_AUD_I2SIN] = "aud_i2sin",
+ 	[MT8188_CLK_AUD_TDM_IN] = "aud_tdm_in",
+ 	[MT8188_CLK_AUD_I2S_OUT] = "aud_i2s_out",
+diff --git a/sound/soc/mediatek/mt8188/mt8188-afe-clk.h b/sound/soc/mediatek/mt8188/mt8188-afe-clk.h
+index ec53c171c170a..c6c78d684f3ee 100644
+--- a/sound/soc/mediatek/mt8188/mt8188-afe-clk.h
++++ b/sound/soc/mediatek/mt8188/mt8188-afe-clk.h
+@@ -54,7 +54,15 @@ enum {
+ 	MT8188_CLK_AUD_ADC,
+ 	MT8188_CLK_AUD_DAC_HIRES,
+ 	MT8188_CLK_AUD_A1SYS_HP,
++	MT8188_CLK_AUD_AFE_DMIC1,
++	MT8188_CLK_AUD_AFE_DMIC2,
++	MT8188_CLK_AUD_AFE_DMIC3,
++	MT8188_CLK_AUD_AFE_DMIC4,
+ 	MT8188_CLK_AUD_ADC_HIRES,
++	MT8188_CLK_AUD_DMIC_HIRES1,
++	MT8188_CLK_AUD_DMIC_HIRES2,
++	MT8188_CLK_AUD_DMIC_HIRES3,
++	MT8188_CLK_AUD_DMIC_HIRES4,
+ 	MT8188_CLK_AUD_I2SIN,
+ 	MT8188_CLK_AUD_TDM_IN,
+ 	MT8188_CLK_AUD_I2S_OUT,
 -- 
 2.39.5
 
