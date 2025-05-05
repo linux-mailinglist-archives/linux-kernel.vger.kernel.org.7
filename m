@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-632236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7C9AA9473
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:24:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09924AA9461
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6BBD3BC1D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A5841898832
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B8425C6F0;
-	Mon,  5 May 2025 13:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E3F202962;
+	Mon,  5 May 2025 13:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q4Tn2UJQ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXyG+U58"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347E8259C87;
-	Mon,  5 May 2025 13:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7C11A2C25;
+	Mon,  5 May 2025 13:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746451439; cv=none; b=loee0XZwiFFGcH3w2wOxsMQ3D+kY5i7afZEJmB0BvjUynKpRkwYMV4x6DAQSiXA7N6JfchV45t/2WTi7a634HQLF1EC0dkhKUeZuCiklFVTv+GvfU3ONkdKabZCgZ+vEJ3lBWegls3VH0x+PkUNe0w1msHqEmHUeBPYads0CvbY=
+	t=1746451428; cv=none; b=qb7lU8/+nsfx73tWVJOgo6dl9F/+HyZqwPPwdnxrUebSxoAwKAuOlsB6YMo8EKFz8gZN3VB2ybqHGFS2LB9cZXQMMrgnyf8t/f8bJ9sy9RrIg4cr7pFR3WN5wrbzqSzDSuSS7VK+vNWvhHeTn3Dq5v5ndDAY9gTDQWPB4RUO8fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746451439; c=relaxed/simple;
-	bh=UUF6OZ9i9Tm/nhtDH7uONCtGgsGZwxjobJ9R/ceAdZY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SnkvZEBPRitrJ1PoJS1AoyK7H2LHqeP7IKjZY2pu81D1YxryuSgfzimY3ZiOUJzS02kylFb5owxkvGGPjqWtfc3pUU2B4SN/w9MqHgAF+Z8JQHbdF4GCS+xMMHsAR6w6u3mK8YHZx1gP/tCndszru5qV6vZiXO9z4Jry9kv3qOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q4Tn2UJQ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746451435;
-	bh=UUF6OZ9i9Tm/nhtDH7uONCtGgsGZwxjobJ9R/ceAdZY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Q4Tn2UJQV6TYUvvnHDC1FOSpPYqJHiuotCFrAjGc8KzTebBPOAbvcxtRDuQdoInh8
-	 +/Lxh7rarAEDU6kD21+1ssi0Sj2rYOn73U6IYOpCm4bx2ruKwibQQD20zsnKFx3fpW
-	 aplKlKS6leqLBRrHgW8TPONL9E2LkGtFpjriZ2q4pYF42bmtypf+YdDnw4jXyDNOzj
-	 Xi290W50r3DeVEyr4F1t3E3lvMUoSznajHeAPHr/I7uWc5R8FZKVIy8IdW97IlSGg2
-	 dkyCSN6wvs3e9DyBGQt9K2xciTLtgCtJeXnalC9EAgK2jJi2SVYXjIm61Vzy2teSe0
-	 C5PoQCQShMBmQ==
-Received: from apertis-1.home (2a01cb0892F2D600C8f85CF092d4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7920D17E1503;
-	Mon,  5 May 2025 15:23:54 +0200 (CEST)
-From: Julien Massot <julien.massot@collabora.com>
-Date: Mon, 05 May 2025 15:23:39 +0200
-Subject: [PATCH 3/4] arm64: dts: mt6359: Add missing 'compatible' property
- to regulators node
+	s=arc-20240116; t=1746451428; c=relaxed/simple;
+	bh=VKT3aBfYoXH1u6KUim8JNWjyDbLB3L+/vn7uNu6+8DA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h+bnHVFP0PxW4AGpXTpnIZLMVSeOPXZjftVkoBLXElEscvmtSK8ViA7aNKJZwmkZj71jbw8N/WNXWRTvLkYqLjRQZcP+DVAEflRNAD+AdyB1wMza4I4eJxc9NUHwjzzYDN1i/MsdOlpuaVA9Raxm+kxoTqrBm3MOWCKqogvDaoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXyG+U58; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0F5C4CEE4;
+	Mon,  5 May 2025 13:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746451427;
+	bh=VKT3aBfYoXH1u6KUim8JNWjyDbLB3L+/vn7uNu6+8DA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TXyG+U58O2CzMBN8byeno/h7NEDMZkyU/O7G2qCRIuNeyoGG04UAWC72Rwy0SM9DD
+	 4U3fpKoRNHA/IvP9jPiZZyyPjp5Eqd0cxzhzkVM+rulF/qsgM+N9WXX5sVnS5Y9mLW
+	 JHf4YwJGtRiM3PHNtOdWbxPAM8KSry9g2GfKF2azEp0DpkjPKZ61ur/sdc4IKEXpCw
+	 U9rfpYQiNunxn1nCH9ma7c5TiOooGRHqy5aVg7bmnWOoOKnpCQRpjN+jBFXSLur9vX
+	 Mz1xHVtsYB8vB8F+nxwD8FDH61kV2pRPk6fPWZ3Zhzh/sB7N5638CKHIYKG4MsSzj5
+	 JXkCa8gMamBhA==
+Date: Mon, 5 May 2025 14:23:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: =?UTF-8?B?VMOzdGggSsOhbm9z?= <gomba007@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: chemical: Document SEN0322
+Message-ID: <20250505142340.3c74eb23@jic23-huawei>
+In-Reply-To: <vz5ndf6mojowehi5b6cz6ljsknnatxg6iomghndbt2ffdld3iu@nywmhejv6oge>
+References: <20250428-iio-chemical-sen0322-v1-0-9b18363ffe42@gmail.com>
+	<20250428-iio-chemical-sen0322-v1-1-9b18363ffe42@gmail.com>
+	<9463c3b0-ce67-4c67-a8e9-91b4ffd09a58@kernel.org>
+	<uju5lntp3hzibbrw6ej53xhgvkkpjory74l5et2jspwocuj2xr@bbterxtg3ba7>
+	<20250504192701.6ceb9daf@jic23-huawei>
+	<vz5ndf6mojowehi5b6cz6ljsknnatxg6iomghndbt2ffdld3iu@nywmhejv6oge>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250505-mt8395-dtb-errors-v1-3-9c4714dcdcdb@collabora.com>
-References: <20250505-mt8395-dtb-errors-v1-0-9c4714dcdcdb@collabora.com>
-In-Reply-To: <20250505-mt8395-dtb-errors-v1-0-9c4714dcdcdb@collabora.com>
-To: kernel@collabora.com, Sen Chu <sen.chu@mediatek.com>, 
- Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Hui Liu <hui.liu@mediatek.com>, Yong Wu <yong.wu@mediatek.com>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, 
- Tinghan Shen <tinghan.shen@mediatek.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, iommu@lists.linux.dev, 
- Julien Massot <julien.massot@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The 'compatible' property is required by the
-'mfd/mediatek,mt6397.yaml' binding. Add it to fix the following
-dtb-check error:
-mediatek/mt8395-radxa-nio-12l.dtb: pmic: regulators:
-'compatible' is a required property
+On Mon, 5 May 2025 08:32:02 +0200
+T=C3=B3th J=C3=A1nos <gomba007@gmail.com> wrote:
 
-Fixes: 3b7d143be4b7 ("arm64: dts: mt6359: add PMIC MT6359 related nodes")
-Signed-off-by: Julien Massot <julien.massot@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt6359.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+> Hi!
+>=20
+> > > > No other properties like supplies or configuration? If so, this cou=
+ld go
+> > > > to trivial-devices.   =20
+> > >=20
+> > > I don't think so, I'll add it as a trivial-device then. =20
+> >=20
+> > vcc-supply? =20
+>=20
+> It has no switchable VCC supply.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6359.dtsi b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-index 7b10f9c59819a9ad02319f00938f35c931091f9f..0c479404b3fe3adc9789386e34bda4dc580b5abd 100644
---- a/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-@@ -20,6 +20,8 @@ mt6359codec: audio-codec {
- 		};
- 
- 		regulators {
-+			compatible = "mediatek,mt6359-regulator";
-+
- 			mt6359_vs1_buck_reg: buck_vs1 {
- 				regulator-name = "vs1";
- 				regulator-min-microvolt = <800000>;
+Your board may have no switchable vcc-supply. In general someone else's
+board with this part in use may well have a switchable vcc-supply.
+Ideally the DT binding should support that and the driver should just
+turn it on at probe.  A stub / fake regulator will be provided by
+the regulator core so there is no need for special handling of boards
+that don't have switchable vcc-supply - they will just work.
 
--- 
-2.49.0
+Jonathan
+
+>=20
+> Regards,
+> J=C3=A1nos
+>=20
 
 
