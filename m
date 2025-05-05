@@ -1,115 +1,183 @@
-Return-Path: <linux-kernel+bounces-632076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FECAA9236
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:39:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8654FAA923C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20ABD3B1E7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:39:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1A6C3A69AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C7E204840;
-	Mon,  5 May 2025 11:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E5B202C46;
+	Mon,  5 May 2025 11:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TN6+LJud"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hp4EBdh9"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9931F1A316A
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 11:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763633596A;
+	Mon,  5 May 2025 11:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746445188; cv=none; b=WmXu2c9HKO1vEzqk10JeYbzonyl6/3K8znmUSQpe8YofgzO7/IWRBcNOpQ3hH7oQam4juZkRmGTSRAjoi3JsfNDQr1oD6jrWLNqcgZZjSk2tdb8LmLbCiglD7vz79OJxqdEcvcL+7W/++tL+nI+vdSUpgh29gnNd82TFwIPCgFk=
+	t=1746445333; cv=none; b=KBW6x/posg8+tOKG0dwQjIKSKdL59kW9rxSTmpHHoIHTZLsui2/0tyjgWjapbZAkKz9WtjwLAwgItJet41XlCA7AUxqt9V6YGXvqtNZF1KAzOzyjKltEstd9lptQwZRjerRSs+S8Q10BJ/0a2GckNAgbKajsNl94tDsirU/xHog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746445188; c=relaxed/simple;
-	bh=4bKLvDsMPtH7EF9AXDSmtoiw8jurLha7GghprHG3BvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/MQndwX9FDCuvsft3nQV0WYrGeyuejfXuPII8/JWigsxcErpybMV30G+dcTqF3UvMhZTlCkwrREv/SFSsQtS51RfaYxPX6RrjhzZqV9pHuhiBV09iESTLMYR3N2Tu67t/4KYITrStSlRKtgBI9HW/v5VPQ5FJg4vqVJB8nG9kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TN6+LJud; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43ede096d73so25201645e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 04:39:45 -0700 (PDT)
+	s=arc-20240116; t=1746445333; c=relaxed/simple;
+	bh=3ShDgHcrv0si/8F2zUrP8xt3sbXDU6yq8+ErTpjgbbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RG/ENaQl0PjzUwIPeylLrVWezYIa8TqMFvtE59V+MKa1FHxrHygprCnun65Fus73kY9MU1vAPxXAXMjVMtSPD3dDwBdfKLzQTP8eKHvZPxBvNxn9xP08JKBR817zojSddGNBiPLKJ1Mer4mwKKFC/zGSwJTx5sxhAdVkCh/Figg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hp4EBdh9; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c1efc457bso2845571f8f.2;
+        Mon, 05 May 2025 04:42:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746445184; x=1747049984; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mJ5GcmEYYVhQR96gxyM5WKIfvUizOn+pM0wiDy3cDmQ=;
-        b=TN6+LJud85Ylkf8tXRdSjuWZCMG+R80wAhlGd9Q9RRCjzeuZ1s/C3xpVXpkxYUvuFK
-         iJL9DH7KK987kWAtrQ+TtJj9lyQCOmih7JRBjdHUFIVJUQ42MZw6/LD2cWqInT1jdXEB
-         D3BB1OH3mOUmnD6+aj2OXUJEYhwpm2kogzQZofcHWAlpkmo6czoYn0R0I+K6AoXmUlTC
-         +IJX5eQIg5a6iNe0faQkR2/xHOkPadnevNuQ+I3E7Nj/OnSltEapQ0+mscncGe1kHUtc
-         xF3dnT+u7bg/K1eMpMTbm0sEQ7caHL6OxU6t/sqV7QmwwMXZcifcXQudScPqmTKqCIjZ
-         M1yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746445184; x=1747049984;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1746445329; x=1747050129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mJ5GcmEYYVhQR96gxyM5WKIfvUizOn+pM0wiDy3cDmQ=;
-        b=h393lq+SwXvWg51IHPoaXi4hQN4pJsx5PugJFrtB96Essfg7jJrWdkLMRrVeMxTil6
-         WiXmd5FOsI1ODf9yiqYBnfRW+Wk/bFHKDnwd0hjfw6KpQvWWAeEVi9bKdmuehWu+4EBv
-         hSw/PoXJ416+kQfWbKBiCUJlBmjcItjGVTh3hURSrSAyNBhUKEvooYsrqC/LskVDwJG8
-         vd+wR1Beb1Z0FxcUiA9q+UNp81R2DkkE7Dv4+3R7QN5zWxzYdEaZ4qJK2M2dSq9Bv+Np
-         Ur1T0GLgYZuLB2z36WXeFtXyHFFIX9bNuCKTZ0D3bsz2IuXe5KAjewWgNWeuUFp/dNeS
-         3iHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVY66iag/EuCE1H52Hl4k7Uj3OPlYzUdhnXHXEPVVZdDfBEVwo0aF6KdU8ifuJ2/ZMYulq/NHdGD3iqIIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6SdTC9IxfQ4zvv1c+Lb8r1A8PHA1TaugVr/7vECUn4NcK4o5Q
-	eLWy3LW5jw6jmxTCDuaQYoRaoz+YHVC+SMyY2Lwqjl7b5mIXucWBqVKLl0EnA7I=
-X-Gm-Gg: ASbGnctL5C74Gov80K9ZatDvHNg2Fmi3oHHZ3giroVM8fqDswZ9PY1eYXCZflnit8b+
-	DlPR5TkNDmbbybc0D1g1opyCJe+5hCKbJwdN1+vEc1DilRWuXnGnuO5cPzNmyxiID8HWHp+z8mF
-	gxIvYIyG790GXrmtm3RvIrtMv9heAveclmIRyZ0L0gG72SjsyRxV4A8FZbqNXaM/HnR5ZEPJsMu
-	h2JKIHof9ZSDe5+VHnnbhzf6dH3AhAMqQsc/ORGu7aU8xj2nGqp9vdMuqPOvt6SG94qKkH7NyGl
-	TJ26mNKVDeEYCyqFZBKdZLF1+U2gssJyenegMP0eLY/10g==
-X-Google-Smtp-Source: AGHT+IF691cbKdNi4eo7oEzfSp9l49WgI8HMTDJbfgYt7c7D7g1nuGGELzTh8vYSZBETmpZ7y7TCVA==
-X-Received: by 2002:a05:600c:500b:b0:43c:f050:fed3 with SMTP id 5b1f17b1804b1-441c48bdfb7mr51792235e9.11.1746445183903;
-        Mon, 05 May 2025 04:39:43 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b89ee37dsm129618395e9.22.2025.05.05.04.39.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 04:39:43 -0700 (PDT)
-Date: Mon, 5 May 2025 14:39:35 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC 7/7] pinctrl-scmi: remove unused struct member
-Message-ID: <e7a338b653d378b37f8e0a73ebe6750adc1cf280.1746443762.git.dan.carpenter@linaro.org>
-References: <cover.1746443762.git.dan.carpenter@linaro.org>
+        bh=KruIqdPdauGVWjRYCa4lawsGc3EYFEr3EbHiC3ED+fE=;
+        b=Hp4EBdh9ixPBzHy7kPaFpLpFSciYdaZgMNgksVYiBjIL90kcS2k3orzgBClchk/qgB
+         llRaX5Wt5QDr/hV2W+MPpDsYPr+HFWxdIFGmUPMfKE00y2sbVwHA7rgWukARWxP3DSNC
+         Wjc+zSv5fuJcw3NWHVUKXj/2Cc7LRbJwB8QawrxAAqhLsevKoA6/O4uupCZSNrRaMmn+
+         EpyIXcFDzDaQJrCs+ZPyjIKSZQleca/unsXFXqGFqty4WGYTVmjHs5ABR6YXCwBCT07z
+         dgfX56pUZdhwXGhVGuq9FGnDOLMrKhlUisDtsi6M2RimcTkTYtUNxhr7uLywwNCW7OoJ
+         2LUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746445329; x=1747050129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KruIqdPdauGVWjRYCa4lawsGc3EYFEr3EbHiC3ED+fE=;
+        b=L9V5pCFJWfzve+i/I+ZD0fAkpMYpiHt3TILac3D70A3NCEuXnd9GnSU59VUCACTWbq
+         EPI7jW6t2vpwIZkXDBKtYS2iJ9ZmyZbDHPR0X7SHMakL0sYNC++LnV/GhrpBRqBqGrUI
+         LetwfT7vXQEGbUFjXJ/Iv0LfR4YfAzu214UyXqgaNsfkESlCTN6mXMAOWjwES1ncHVgN
+         W85+cvhwp0mupMsxrFA4Gh1TCanEFuHMfnGtd5qMfcnIec1DvPIMcV2BbwTdJOz+vSks
+         NZSGBBXdao2ZXFO1F+5go0DrvU/8A1vjZ5TDMUBXeEn3Kj0vFbQX8cETkbUSJvpkbH7a
+         sJ4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUmpCc5vpUtpwOGfvdkpexb6W/VKX4excVyAeVOYyvS1VYNw5+O97brTzq8sFo9M6lEk/sEowGSo9CENV91@vger.kernel.org, AJvYcCVO4BkAnP0m/8SbuE9rf3r61M9hzLReh/YZ2iqnxwvoinMOPvK7A1OE9Ccw/SZAEFjXAcQUVeHjoUwj@vger.kernel.org
+X-Gm-Message-State: AOJu0YziSw1Jy/g7E9ptGIK19STRdHQ87WVd0KmM5IR+mOMsCEnVJfRE
+	iqsWpQ9qTA0Uo9Ox4TGhf7HU6wNoqnr1mn26b02cKuZctLJ6uy62Wk5Cpx7+2vbzcLQ7fbDyZUH
+	AiO6WYIzDsTSpWRMf9v9JLnczN1Y=
+X-Gm-Gg: ASbGncsDjVG7FiBe82I3EYz3LBmqCn2EHU0lqmYMyPsYsbFX8p/+7w9Dp8tKB4ruiAK
+	Tvn96+N+Q+FgzDLKjOxt0/Q9Xx4N0liRWHNiL9TkfCA5rqdcwJ6u+jbreB07i9FH75MBCdr5wmk
+	1MAv+duwrtrRdDViRDUEq+mJxGke4cddFphA==
+X-Google-Smtp-Source: AGHT+IF0b08rVUeiB6pMpxCseBfmukd/TOtG6DGSWcy45xXCpz3/srzTxmFTfkMiKUYFe9RprpS0sbmx07u7TavER8A=
+X-Received: by 2002:a05:6000:1ac9:b0:39c:1f04:a646 with SMTP id
+ ffacd0b85a97d-3a09fd726camr4763586f8f.13.1746445328440; Mon, 05 May 2025
+ 04:42:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1746443762.git.dan.carpenter@linaro.org>
+References: <20250503094149.29201-1-clamor95@gmail.com> <20250503094149.29201-3-clamor95@gmail.com>
+ <ffac4a1b-5dfa-48e9-8ac4-37939b6a9347@linaro.org>
+In-Reply-To: <ffac4a1b-5dfa-48e9-8ac4-37939b6a9347@linaro.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 5 May 2025 14:41:57 +0300
+X-Gm-Features: ATxdqUG83kxEDJWXfjf1kMB8KKjw9VeaTfQqOHpfaGzkV6Mu-zq0PSNbH5qNHFs
+Message-ID: <CAPVz0n3i7=jM9GB-CggFOJEN7B+oBWvyqsSn8UXav3MH0BQJ5g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] drm: panel: Add support for Renesas R61307 based
+ MIPI DSI panel
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The ->nr_pins is not used so delete that.
+=D0=BF=D0=BD, 5 =D1=82=D1=80=D0=B0=D0=B2. 2025=E2=80=AF=D1=80. =D0=BE 10:50=
+ Neil Armstrong <neil.armstrong@linaro.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 03/05/2025 11:41, Svyatoslav Ryhel wrote:
+> > R61307 is liquid crystal driver for high-definition amorphous silicon
+> > (a-Si) panels and is ideal for tablets and smartphones.
+> >
+> > Supported compatibles are:
+> > - hit,tx13d100vm0eaa
+> > - koe,tx13d100vm0eaa
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >   drivers/gpu/drm/panel/Kconfig                |  13 +
+> >   drivers/gpu/drm/panel/Makefile               |   1 +
+> >   drivers/gpu/drm/panel/panel-renesas-r61307.c | 327 ++++++++++++++++++=
++
+> >   3 files changed, 341 insertions(+)
+> >   create mode 100644 drivers/gpu/drm/panel/panel-renesas-r61307.c
+> >
+>
+> <snip>
+>
+> > +static int renesas_r61307_probe(struct mipi_dsi_device *dsi)
+> > +{
+> > +     struct device *dev =3D &dsi->dev;
+> > +     struct renesas_r61307 *priv;
+> > +     int ret;
+> > +
+> > +     priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +     if (!priv)
+> > +             return -ENOMEM;
+> > +
+> > +     priv->vcc_supply =3D devm_regulator_get(dev, "vcc");
+> > +     if (IS_ERR(priv->vcc_supply))
+> > +             return dev_err_probe(dev, PTR_ERR(priv->vcc_supply),
+> > +                                  "Failed to get vcc-supply\n");
+> > +
+> > +     priv->iovcc_supply =3D devm_regulator_get(dev, "iovcc");
+> > +     if (IS_ERR(priv->iovcc_supply))
+> > +             return dev_err_probe(dev, PTR_ERR(priv->iovcc_supply),
+> > +                                  "Failed to get iovcc-supply\n");
+> > +
+> > +     priv->reset_gpio =3D devm_gpiod_get_optional(dev, "reset",
+> > +                                                GPIOD_OUT_HIGH);
+> > +     if (IS_ERR(priv->reset_gpio))
+> > +             return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
+> > +                                  "Failed to get reset gpios\n");
+> > +
+> > +     if (device_property_read_bool(dev, "renesas,inversion"))
+> > +             priv->inversion =3D true;
+> > +
+> > +     if (device_property_read_bool(dev, "renesas,contrast"))
+> > +             priv->dig_cont_adj =3D true;
+> > +
+> > +     priv->gamma =3D 0;
+> > +     device_property_read_u32(dev, "renesas,gamma", &priv->gamma);
+> > +
+> > +     priv->dsi =3D dsi;
+> > +     mipi_dsi_set_drvdata(dsi, priv);
+> > +
+> > +     dsi->lanes =3D 4;
+> > +     dsi->format =3D MIPI_DSI_FMT_RGB888;
+> > +     dsi->mode_flags =3D MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYN=
+C_PULSE |
+> > +                       MIPI_DSI_CLOCK_NON_CONTINUOUS | MIPI_DSI_MODE_L=
+PM;
+> > +
+> > +     drm_panel_init(&priv->panel, dev, &renesas_r61307_panel_funcs,
+> > +                    DRM_MODE_CONNECTOR_DSI);
+>
+> Please switch to devm_drm_panel_alloc()
+>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pinctrl/pinctrl-scmi.c | 1 -
- 1 file changed, 1 deletion(-)
+This helper is not available as for 6.15-rc5
 
-diff --git a/drivers/pinctrl/pinctrl-scmi.c b/drivers/pinctrl/pinctrl-scmi.c
-index 40b432aa4756..d1f3c126c3cb 100644
---- a/drivers/pinctrl/pinctrl-scmi.c
-+++ b/drivers/pinctrl/pinctrl-scmi.c
-@@ -45,7 +45,6 @@ struct scmi_pinctrl {
- 	struct pinfunction *functions;
- 	unsigned int nr_functions;
- 	struct pinctrl_pin_desc *pins;
--	unsigned int nr_pins;
- 	struct gpio_chip *gc;
- };
- 
--- 
-2.47.2
-
+> > +
+> > +     ret =3D drm_panel_of_backlight(&priv->panel);
+> > +     if (ret)
+> > +             return dev_err_probe(dev, ret, "Failed to get backlight\n=
+");
+> > +
+> > +     drm_panel_add(&priv->panel);
+> > +
+> <snip>
+>
+> With that:
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
