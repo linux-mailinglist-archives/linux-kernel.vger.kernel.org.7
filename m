@@ -1,64 +1,59 @@
-Return-Path: <linux-kernel+bounces-634012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668B6AAAB8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:58:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E207AAAB6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C474A3BDA78
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:53:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1209E465184
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB852F81AA;
-	Mon,  5 May 2025 23:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2813B0249;
+	Mon,  5 May 2025 23:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFkuinXl"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXQQ4ZHC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E639528E;
-	Mon,  5 May 2025 23:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA1337AAA1;
+	Mon,  5 May 2025 23:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486273; cv=none; b=RWgOlgHr/fEyj3lmrgUk0EEYC+SeGALnEaA1IAGQzBsv28YRoSM7Dn5/eIE3D/eD8t59eqyIoWk+vCGiTqZaODkmQJ5UkoJMYWv0yD6y4q/bup4/GGY2VSCTn2mYM8eeSMTkNsgQEvKPNsvbAiYUD65Vxu5JDnnll30CzWhx3QY=
+	t=1746486285; cv=none; b=tytWv7C2TSlcN0JHp70iJsp84Yu75eBiwPDEwKoMaravCOizRUqOkFLPNBfjXGOSL6xeh/BeZxERVHQEPgnDvJYnQvZPNz/ivjOZ8q8xbvfnqT8x/F0afOftnAS4hXnZivXDzC13jWjOifcAm9aPhdVLr3RNzAkC6m8sx4lN3/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486273; c=relaxed/simple;
-	bh=QSnBwefoKA9zTUyEfcBLgAwiovSt8fQxApdO/U2e0Yg=;
+	s=arc-20240116; t=1746486285; c=relaxed/simple;
+	bh=nYl/Y8JZBlavhH1uIkWXXNkXoxUwVdbtcBSrLbSP2tE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=k2rqIhnVcX4PJ6t6hGsqgroC6gFRzLOuRnCOleU0ukSkuLzITv4T6VXRxfjnrce4QTVgQaXNeQlISZVoXzrklKFNzDG6DskddBitLilZK5QBIuEogN4nFiC7pPVDqDekTGupwvYaF0NFd0dKWb6bLj7bEW6GbRNdFrGLFxLjkKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFkuinXl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15B0CC4CEED;
-	Mon,  5 May 2025 23:04:30 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ksz6QoXYE/qwdTuW1LHwEgDtmLB5gS3/3ZdG6Wva1LFq3EeXXp/NmtEuLIZkebUFt7Pk1bst/DStl1ShVxdH694xhRWWl9VC3A3BMMBZF24+I7VnGmhTAqEz3NQR8XICFLExBDNDudYnZCQzxVdGRJUA9ICOBTfKSpVHxHa7oGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXQQ4ZHC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7491BC4CEED;
+	Mon,  5 May 2025 23:04:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486272;
-	bh=QSnBwefoKA9zTUyEfcBLgAwiovSt8fQxApdO/U2e0Yg=;
+	s=k20201202; t=1746486284;
+	bh=nYl/Y8JZBlavhH1uIkWXXNkXoxUwVdbtcBSrLbSP2tE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iFkuinXlfKmNg7QlwxjZIrkNvFac6NuAOTtvaUqTzZZxJhxEawXEfnDnP9mhkFkE8
-	 KdHwuj4diKYdkn31y11gOcabg0UMx+iQTP3Sz6i1qgfhRWd8aXD009pn4pUQ+Bdu6u
-	 IL+XusAJuVAmCGU0ItbZZTWBEXzQq5Bx55BW5xwBSoohWr9OIwSVG2v2cFMDdf6h8+
-	 XOzJMFl0XbtPoilKyRNxU6XoiaOrvVPF7FY/YchI5D5mfIqvXDkf4hrFWO53OeP71B
-	 9ZbycNzUcME5dRixt60GHHj+dH7sP3wxyrdPurTj5+zs/329+ndVZcrMJNdGibvixs
-	 aO9UaKQsXvUQw==
+	b=fXQQ4ZHCJap/lG6mRvjk5E9OSqb78Sq0IgbmHItDYZ8EL7IdyPqY6748w7jdpHpIz
+	 6yeRgu9CZM9G7Lobbt+O3LKGhQfEQiw6Sclh6emoSvu4q2X+s/iBDM8EjhngSm90Fn
+	 5/s8zfWWRsFBede0cxU0YDV8MuYcNafFnLqQkzG2g7GCUKuw6yxNizoZ4QJ9oZZbCN
+	 DCv49RfdJFW/3JuWCQVI0FXvkIdNF+42057hcdbF0+kuOzl7l0qTYW4GsbGy+hkCvD
+	 t5ZPKyMOAecugfmAoWJfG3hWiRT0ZXESmOmn2PQrob4LJIMTjkYCGcP8/pxTNT8Ox+
+	 LcHNidL8ekloQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: William Tu <witu@nvidia.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
+Cc: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>,
 	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	saeedm@nvidia.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 233/294] net/mlx5e: set the tx_queue_len for pfifo_fast
-Date: Mon,  5 May 2025 18:55:33 -0400
-Message-Id: <20250505225634.2688578-233-sashal@kernel.org>
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Simon Horman <horms@kernel.org>, Csókás@web.codeaurora.org,
+	Paolo Abeni <pabeni@redhat.com>, Sasha Levin <sashal@kernel.org>,
+	wei.fang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, imx@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 239/294] net: fec: Refactor MAC reset to function
+Date: Mon,  5 May 2025 18:55:39 -0400
+Message-Id: <20250505225634.2688578-239-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -68,47 +63,119 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: William Tu <witu@nvidia.com>
+From: Csókás, Bence <csokas.bence@prolan.hu>
 
-[ Upstream commit a38cc5706fb9f7dc4ee3a443f61de13ce1e410ed ]
+[ Upstream commit 67800d296191d0a9bde0a7776f99ca1ddfa0fc26 ]
 
-By default, the mq netdev creates a pfifo_fast qdisc. On a
-system with 16 core, the pfifo_fast with 3 bands consumes
-16 * 3 * 8 (size of pointer) * 1024 (default tx queue len)
-= 393KB. The patch sets the tx qlen to representor default
-value, 128 (1<<MLX5E_REP_PARAMS_DEF_LOG_SQ_SIZE), which
-consumes 16 * 3 * 8 * 128 = 49KB, saving 344KB for each
-representor at ECPF.
+The core is reset both in `fec_restart()` (called on link-up) and
+`fec_stop()` (going to sleep, driver remove etc.). These two functions
+had their separate implementations, which was at first only a register
+write and a `udelay()` (and the accompanying block comment). However,
+since then we got soft-reset (MAC disable) and Wake-on-LAN support, which
+meant that these implementations diverged, often causing bugs.
 
-Signed-off-by: William Tu <witu@nvidia.com>
-Reviewed-by: Daniel Jurgens <danielj@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+For instance, as of now, `fec_stop()` does not check for
+`FEC_QUIRK_NO_HARD_RESET`, meaning the MII/RMII mode is cleared on eg.
+a PM power-down event; and `fec_restart()` missed the refactor renaming
+the "magic" constant `1` to `FEC_ECR_RESET`.
+
+To harmonize current implementations, and eliminate this source of
+potential future bugs, refactor implementation to a common function.
+
 Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Link: https://patch.msgid.link/20250209101716.112774-9-tariqt@nvidia.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+Link: https://patch.msgid.link/20250207121255.161146-2-csokas.bence@prolan.hu
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_rep.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/freescale/fec_main.c | 52 +++++++++++------------
+ 1 file changed, 25 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-index 751d3ffcd2f6c..39d8e63e8856d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-@@ -829,6 +829,8 @@ static void mlx5e_build_rep_netdev(struct net_device *netdev,
- 	netdev->ethtool_ops = &mlx5e_rep_ethtool_ops;
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 2d6b50903c923..419df6559492e 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -1074,6 +1074,29 @@ static void fec_enet_enable_ring(struct net_device *ndev)
+ 	}
+ }
  
- 	netdev->watchdog_timeo    = 15 * HZ;
-+	if (mlx5_core_is_ecpf(mdev))
-+		netdev->tx_queue_len = 1 << MLX5E_REP_PARAMS_DEF_LOG_SQ_SIZE;
++/* Whack a reset.  We should wait for this.
++ * For i.MX6SX SOC, enet use AXI bus, we use disable MAC
++ * instead of reset MAC itself.
++ */
++static void fec_ctrl_reset(struct fec_enet_private *fep, bool allow_wol)
++{
++	u32 val;
++
++	if (!allow_wol || !(fep->wol_flag & FEC_WOL_FLAG_SLEEP_ON)) {
++		if (fep->quirks & FEC_QUIRK_HAS_MULTI_QUEUES ||
++		    ((fep->quirks & FEC_QUIRK_NO_HARD_RESET) && fep->link)) {
++			writel(0, fep->hwp + FEC_ECNTRL);
++		} else {
++			writel(FEC_ECR_RESET, fep->hwp + FEC_ECNTRL);
++			udelay(10);
++		}
++	} else {
++		val = readl(fep->hwp + FEC_ECNTRL);
++		val |= (FEC_ECR_MAGICEN | FEC_ECR_SLEEP);
++		writel(val, fep->hwp + FEC_ECNTRL);
++	}
++}
++
+ /*
+  * This function is called to start or restart the FEC during a link
+  * change, transmit timeout, or to reconfigure the FEC.  The network
+@@ -1090,17 +1113,7 @@ fec_restart(struct net_device *ndev)
+ 	if (fep->bufdesc_ex)
+ 		fec_ptp_save_state(fep);
  
- #if IS_ENABLED(CONFIG_MLX5_CLS_ACT)
- 	netdev->hw_features    |= NETIF_F_HW_TC;
+-	/* Whack a reset.  We should wait for this.
+-	 * For i.MX6SX SOC, enet use AXI bus, we use disable MAC
+-	 * instead of reset MAC itself.
+-	 */
+-	if (fep->quirks & FEC_QUIRK_HAS_MULTI_QUEUES ||
+-	    ((fep->quirks & FEC_QUIRK_NO_HARD_RESET) && fep->link)) {
+-		writel(0, fep->hwp + FEC_ECNTRL);
+-	} else {
+-		writel(1, fep->hwp + FEC_ECNTRL);
+-		udelay(10);
+-	}
++	fec_ctrl_reset(fep, false);
+ 
+ 	/*
+ 	 * enet-mac reset will reset mac address registers too,
+@@ -1354,22 +1367,7 @@ fec_stop(struct net_device *ndev)
+ 	if (fep->bufdesc_ex)
+ 		fec_ptp_save_state(fep);
+ 
+-	/* Whack a reset.  We should wait for this.
+-	 * For i.MX6SX SOC, enet use AXI bus, we use disable MAC
+-	 * instead of reset MAC itself.
+-	 */
+-	if (!(fep->wol_flag & FEC_WOL_FLAG_SLEEP_ON)) {
+-		if (fep->quirks & FEC_QUIRK_HAS_MULTI_QUEUES) {
+-			writel(0, fep->hwp + FEC_ECNTRL);
+-		} else {
+-			writel(FEC_ECR_RESET, fep->hwp + FEC_ECNTRL);
+-			udelay(10);
+-		}
+-	} else {
+-		val = readl(fep->hwp + FEC_ECNTRL);
+-		val |= (FEC_ECR_MAGICEN | FEC_ECR_SLEEP);
+-		writel(val, fep->hwp + FEC_ECNTRL);
+-	}
++	fec_ctrl_reset(fep, true);
+ 	writel(fep->phy_speed, fep->hwp + FEC_MII_SPEED);
+ 	writel(FEC_DEFAULT_IMASK, fep->hwp + FEC_IMASK);
+ 
 -- 
 2.39.5
 
