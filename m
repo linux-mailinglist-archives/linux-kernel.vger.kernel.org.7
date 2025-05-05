@@ -1,150 +1,280 @@
-Return-Path: <linux-kernel+bounces-631852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74DDAA8E51
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:36:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCF1AA8E60
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A9AA3A7D88
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C4851748E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088501F4165;
-	Mon,  5 May 2025 08:36:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B689A6D17
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490721F4261;
+	Mon,  5 May 2025 08:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z70BRVGa"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97EC19F462;
+	Mon,  5 May 2025 08:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746434173; cv=none; b=bhBMFOmB91E2Rq+SR4YTAV+Q30vocZ3eXst9R3S/Q4O5LW28oMTAHZDIBLHKveMnbjFK+JpkrLOTKnHOPkQuXuPQygXbB++5TK9/e9b1/a5+uHx2zF0ATORXwMAuR9/4XUDkVKrZNMS1ETbW5t64bKpCr0rVkYqEYyDj2jFgMyg=
+	t=1746434289; cv=none; b=nnnTaDPcuG41vbcoRzN4X4kHPSoplZVdqic6az5/d0Ku0+mo0NWUZX/kwN4YKIxZyixfCMqYSYZbi7SKvmiMbfhDqfsc4RN65vVuK+eFeb/Ksp9vMXmrMo+BCOuHqz+XmpPPk+0cfyAffbm8h7ko6e+OEwYEyoqenazYz8VjCYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746434173; c=relaxed/simple;
-	bh=32KfSBu88ZwZh6BYtGND0biM6qFLWiEmGCKKLPkO7gk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZHdxHI3MTH0JuC+U/wnQ+2H8tZILSvyOPfPBAgOKmaabbMFkzsvXuLweXfm9clhtijysoqAqNcbIJkhjjTlUCv+KUwH9Y04xG49JutgJvV5qunGrium34DEk/i/H8y8RGnBNgVf0Y7hAo02XvU+LU+88rgEcWhL7TvYesIiFH5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C36431007;
-	Mon,  5 May 2025 01:36:00 -0700 (PDT)
-Received: from [10.163.53.144] (unknown [10.163.53.144])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 040D93F5A1;
-	Mon,  5 May 2025 01:36:06 -0700 (PDT)
-Message-ID: <1c285bc1-e345-4757-9803-b62624b3ed27@arm.com>
-Date: Mon, 5 May 2025 14:06:03 +0530
+	s=arc-20240116; t=1746434289; c=relaxed/simple;
+	bh=/ufQj4D5sO/f3IJ2GxUBe6n0UVkYxB3hToEOqDbKUYY=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=G5hhW64Z97uD0qBmCenT6pV5mi0afGR7bgV5lY+3XDXppi1/bP8031Rx29s1YrThExPzORPYzN520BrGKWWidCscTMU4XCydki/zBDW72x87u9dldbjHn9cceRFBGRIGC/ErV5Yvrhrc6kgaG23DOk9UBjBJO+vbn0pr6VKCd7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z70BRVGa; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5453MSMc003688;
+	Mon, 5 May 2025 08:37:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Lywqfg
+	G4de4hJBurtxECn5eIa16W1Bwx6BfjvKmTng4=; b=Z70BRVGapAlp5duTaDomlL
+	1Dqi0ZIj3MaXf0soeNBCfdtQV66bM+6o7UUleooHvq4KEs+OBANjCq3yK+GsY23x
+	O25H/v2sKmCPMile8kKXdiF6lCZ+d8PAbDckJD5Trr1LK33G8Fzj0n/RP1BStJt0
+	5W0cF3L+XQqVNbJJjimh5YM/DVrO9pRUc6WMxvYTmWmLxTVjdZyQGLTxDeinQTK6
+	TIwWST4ZTtHxZ9Ye0i1TeZLirWJdusEqJZcxPUUL9JvPdFIAqGaEeYqc+llmWe4W
+	sE+R2k0X4SX/qU8MkBBRfZiA9cCe/ipy5Gkj60hQoQVcDwnKGOTnNLjtrexWtrNg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46e6prb9w1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 08:37:52 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5458bqfu006030;
+	Mon, 5 May 2025 08:37:52 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46e6prb9w0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 08:37:52 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54585Dve002738;
+	Mon, 5 May 2025 08:37:51 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dxfnndam-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 08:37:51 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5458bn5J42336670
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 May 2025 08:37:49 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 528F020043;
+	Mon,  5 May 2025 08:37:49 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8623920040;
+	Mon,  5 May 2025 08:37:48 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  5 May 2025 08:37:48 +0000 (GMT)
+Received: from jarvis.ozlabs.ibm.com (unknown [9.150.10.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 0DC9560241;
+	Mon,  5 May 2025 18:37:37 +1000 (AEST)
+Message-ID: <87e1185273ce21e5fd69ff071a1be986c2a0301a.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/3] powerpc/pseries: Correct secvar format
+ representation for static key management
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: Srish Srinivasan <ssrish@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, zohar@linux.ibm.com,
+        nayna@linux.ibm.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20250430090350.30023-2-ssrish@linux.ibm.com>
+References: <20250430090350.30023-1-ssrish@linux.ibm.com>
+		 <20250430090350.30023-2-ssrish@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 05 May 2025 18:36:48 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] arm64/mm: Re-organise setting up FEAT_S1PIE registers
- PIRE0_EL1 and PIR_EL1
-To: linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org
-References: <20250429050511.1663235-1-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250429050511.1663235-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Cu2/cm4D c=1 sm=1 tr=0 ts=681878e0 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=1pvdWtJzRr1Y9INs5CoA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: yx3h9ve6ShKO-texLBxnTSRaohqZR4Ku
+X-Proofpoint-ORIG-GUID: VdGR1Qa07CAO3f1MDrLGFO6ai_BUFzNs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA4MSBTYWx0ZWRfX5g3ZjRuJ6sZ2 2NqHrtyk7ynUxkVnTzWp7DZdY9x/ZCZK7QACeBrlgi8lvFjPvekzpTVYxEB+QqSxrTKhcjPMAoE lZRctGyOAKNEdMRYAVMf+PVa25FvvRSdArFsloE5d0HLo4dYEyZMaXgT6GwtvlZMY2FPW9X9rZm
+ 0HQYOYoZm3+VOeV/ghJGXFNV7uRwXFnoyL2aPwJlni847Zvzh5BbznmfwdaCKrddrvVR+m7jzjI KLTv8sL7lnweIZ6SmJodn3moNToqRGjeWIeroycjMbbJ7skRonkDifJq/KihkDuyImzj29uB5gG AwnhLh6BUE7QG8B1i0OUXkqRI9kSdShV5C1z5O+DKsz5yfZOWFnntbahrssR1o7lB5wobJoooj1
+ K7Tdo+wYyrx3qo5Yk/YsFfaHN+Ym6WSfU4PJeE0UX337YzTFSd6otwekW7NIrd8zHVmzqriA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-05_04,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ spamscore=0 mlxlogscore=999 malwarescore=0 phishscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505050081
 
-On 4/29/25 10:35, Anshuman Khandual wrote:
-> mov_q cannot really move PIE_E[0|1] macros into a general purpose register
-> as expected if those macro constants contain some 128 bit layout elements,
-> that are required for D128 page tables. The primary issue is that for D128,
-> PIE_E[0|1] are defined in terms of 128-bit types with shifting and masking,
-> which the assembler can't accommodate.
-> 
-> Instead pre-calculate these PIRE0_EL1/PIR_EL1 constants into asm-offsets.h
-> based PIE_E0_ASM/PIE_E1_ASM which can then be used in arch/arm64/mm/proc.S.
-> 
-> While here also drop PTE_MAYBE_NG/PTE_MAYBE_SHARED assembly overrides which
-> are not required any longer, as the compiler toolchains are smart enough to
-> compute both the PIE_[E0|E1]_ASM constants in all scenarios.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+On Wed, 2025-04-30 at 14:33 +0530, Srish Srinivasan wrote:
+> On a PLPKS enabled PowerVM LPAR, the secvar format property for
+> static
+> key management is misrepresented as "ibm,plpks-sb-unknown", creating
+> reason for confusion.
+>=20
+> Static key management mode uses fixed, built-in keys. Dynamic key
+> management mode allows keys to be updated in production to handle
+> security updates without firmware rebuilds.
+>=20
+> Define a function named plpks_get_sb_keymgmt_mode() to retrieve the
+> key management mode based on the existence of the SB_VERSION property
+> in the firmware.
+>=20
+> Set the secvar format property to either "ibm,plpks-sb-v1" or
+> "ibm,plpks-sb-v0" based on the key management mode, and return the
+> length of the secvar format property.
+>=20
+> Co-developed-by: Souradeep <soura@imap.linux.ibm.com>
+> Signed-off-by: Souradeep <soura@imap.linux.ibm.com>
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 > ---
-> This patch applies on v6.15-rc4
+> =C2=A0arch/powerpc/platforms/pseries/plpks-secvar.c | 70 +++++++++++-----=
+-
+> --
+> =C2=A01 file changed, 40 insertions(+), 30 deletions(-)
+>=20
+> diff --git a/arch/powerpc/platforms/pseries/plpks-secvar.c
+> b/arch/powerpc/platforms/pseries/plpks-secvar.c
+> index 257fd1f8bc19..d57067a733ab 100644
+> --- a/arch/powerpc/platforms/pseries/plpks-secvar.c
+> +++ b/arch/powerpc/platforms/pseries/plpks-secvar.c
+> @@ -152,39 +152,49 @@ static int plpks_set_variable(const char *key,
+> u64 key_len, u8 *data,
+> =C2=A0	return rc;
+> =C2=A0}
+> =C2=A0
+> -// PLPKS dynamic secure boot doesn't give us a format string in the
+> same way OPAL does.
+> -// Instead, report the format using the SB_VERSION variable in the
+> keystore.
+> -// The string is made up by us, and takes the form "ibm,plpks-sb-
+> v<n>" (or "ibm,plpks-sb-unknown"
+> -// if the SB_VERSION variable doesn't exist). Hypervisor defines the
+> SB_VERSION variable as a
+> -// "1 byte unsigned integer value".
+> -static ssize_t plpks_secvar_format(char *buf, size_t bufsize)
+> +/*
+> + * Return the key management mode.
+> + *
+> + * SB_VERSION is defined as a "1 byte unsigned integer value". It is
+> owned by
+> + * the Partition Firmware and its presence indicates that the key
+> management
+> + * mode is dynamic. Only signed variables have null bytes in their
+> names.
+> + * SB_VERSION does not.
+> + *
+> + * Return 1 to indicate that the key management mode is dynamic.
+> Otherwise
+> + * return 0, indicating that the key management mode is static.
+> + */
 
-Gentle ping, any updates on this.
+This description isn't accurate.
 
-> 
-> Changes in V3:
-> 
-> - Dropped off macros PTE_MAYBE_NG and PTE_MAYBE_SHARED as per Ryan
-> 
-> Changes in V2:
-> 
-> https://lore.kernel.org/all/20250416035604.2717188-1-anshuman.khandual@arm.com/
-> 
-> - Added asm-offsets.c based PIE_E0_ASM and PIE_E1_ASM symbols as per Ard
-> - Moved PTE_MAYBE_NG and PTE_MAYBE_SHARED overrides inside asm-offsets.c
->   along with the corresponding comment as per Ard
-> 
-> Changes in V1:
-> 
-> https://lore.kernel.org/linux-arm-kernel/20250410074024.1545768-1-anshuman.khandual@arm.com/
-> 
->  arch/arm64/kernel/asm-offsets.c |  2 ++
->  arch/arm64/mm/proc.S            | 19 ++-----------------
->  2 files changed, 4 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-> index eb1a840e4110..30d4bbe68661 100644
-> --- a/arch/arm64/kernel/asm-offsets.c
-> +++ b/arch/arm64/kernel/asm-offsets.c
-> @@ -182,5 +182,7 @@ int main(void)
->  #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
->    DEFINE(FTRACE_OPS_DIRECT_CALL,	offsetof(struct ftrace_ops, direct_call));
->  #endif
-> +  DEFINE(PIE_E0_ASM, PIE_E0);
-> +  DEFINE(PIE_E1_ASM, PIE_E1);
->    return 0;
->  }
-> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-> index fb30c8804f87..80d470aa469d 100644
-> --- a/arch/arm64/mm/proc.S
-> +++ b/arch/arm64/mm/proc.S
-> @@ -512,26 +512,11 @@ alternative_else_nop_endif
->  	ubfx	x1, x1, #ID_AA64MMFR3_EL1_S1PIE_SHIFT, #4
->  	cbz	x1, .Lskip_indirection
->  
-> -	/*
-> -	 * The PROT_* macros describing the various memory types may resolve to
-> -	 * C expressions if they include the PTE_MAYBE_* macros, and so they
-> -	 * can only be used from C code. The PIE_E* constants below are also
-> -	 * defined in terms of those macros, but will mask out those
-> -	 * PTE_MAYBE_* constants, whether they are set or not. So #define them
-> -	 * as 0x0 here so we can evaluate the PIE_E* constants in asm context.
-> -	 */
+For dynamic mode, it doesn't return 1, it returns whatever version is
+defined in SB_VERSION, which could be 1, or could at some later point be
+a higher version.
+
+Which makes the function name a bit of a misnomer too - it is returning
+the version number, just the version number can now be zero.
+
+> +static u8 plpks_get_sb_keymgmt_mode(void)
+> =C2=A0{
+> -	struct plpks_var var =3D {0};
+> -	ssize_t ret;
+> -	u8 version;
 > -
-> -#define PTE_MAYBE_NG		0
-> -#define PTE_MAYBE_SHARED	0
+> -	var.component =3D NULL;
+> -	// Only the signed variables have null bytes in their names,
+> this one doesn't
+> -	var.name =3D "SB_VERSION";
+> -	var.namelen =3D strlen(var.name);
+> -	var.datalen =3D 1;
+> -	var.data =3D &version;
 > -
-> -	mov_q	x0, PIE_E0
-> +	mov_q	x0, PIE_E0_ASM
->  	msr	REG_PIRE0_EL1, x0
-> -	mov_q	x0, PIE_E1
-> +	mov_q	x0, PIE_E1_ASM
->  	msr	REG_PIR_EL1, x0
->  
-> -#undef PTE_MAYBE_NG
-> -#undef PTE_MAYBE_SHARED
-> -
->  	orr	tcr2, tcr2, TCR2_EL1_PIE
->  	msr	REG_TCR2_EL1, x0
->  
+> -	// Unlike the other vars, SB_VERSION is owned by firmware
+> instead of the OS
+> -	ret =3D plpks_read_fw_var(&var);
+> -	if (ret) {
+> -		if (ret =3D=3D -ENOENT) {
+> -			ret =3D snprintf(buf, bufsize, "ibm,plpks-sb-
+> unknown");
+> -		} else {
+> -			pr_err("Error %ld reading SB_VERSION from
+> firmware\n", ret);
+> -			ret =3D -EIO;
+> -		}
+> -		goto err;
+> +	u8 mode;
+> +	ssize_t rc;
+> +	struct plpks_var var =3D {
+> +		.component =3D NULL,
+> +		.name =3D "SB_VERSION",
+> +		.namelen =3D 10,
+> +		.datalen =3D 1,
+> +		.data =3D &mode,
+> +	};
+> +
+> +	rc =3D plpks_read_fw_var(&var);
+> +	if (rc) {
+> +		pr_info("Error %ld reading SB_VERSION from
+> firmware\n", rc);
+
+We need to check for -ENOENT, otherwise this message is going to be
+printed every time you boot a machine in static mode.
+
+I think you should handle this as the existing code does: if it's
+ENOENT, return 0, and for other codes print an error and return -EIO.
+
+> +		mode =3D 0;
+> =C2=A0	}
+> +	return mode;
+> +}
+> =C2=A0
+> -	ret =3D snprintf(buf, bufsize, "ibm,plpks-sb-v%hhu", version);
+> -err:
+> -	return ret;
+> +// PLPKS dynamic secure boot doesn't give us a format string in the
+> same way
+> +// OPAL does. Instead, report the format using the SB_VERSION
+> variable in the
+> +// keystore. The string, made up by us, takes the form "ibm,plpks-
+> sb-v<n>".Set
+> +// the secvar format property to either "ibm,plpks-sb-v1" or
+> "ibm,plpks-sb-v0",
+> +// based on the key management mode, and return the length of the
+> secvar format
+> +// property.
+> +static ssize_t plpks_secvar_format(char *buf, size_t bufsize)
+> +{
+> +	u8 mode;
+> +
+> +	mode =3D plpks_get_sb_keymgmt_mode();
+> +	return snprintf(buf, bufsize, "ibm,plpks-sb-v%hhu", mode);
+
+It might be better to use something like "ibm,plpks-sb-static" in place
+of "ibm,plpks-sb-v0" to make it instantly clear that static mode
+doesn't use the same version numbering scheme as dynamic mode.
+
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int plpks_max_size(u64 *max_size)
+
+--=20
+Andrew Donnellan    OzLabs, ADL Canberra
+ajd@linux.ibm.com   IBM Australia Limited
 
