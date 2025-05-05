@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-632369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F069AA9677
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:54:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DEBAA967F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53FA3A3266
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:53:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BEFB189E53B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3992701A4;
-	Mon,  5 May 2025 14:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C21264A85;
+	Mon,  5 May 2025 14:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcT8R9vY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+xZogyr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3168F264A6D;
-	Mon,  5 May 2025 14:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8284E2701A8;
+	Mon,  5 May 2025 14:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746456505; cv=none; b=kj8XjN4VhNa/CwIzn9pxVQQzbRctdpiTdxcAf00AFmyg250QAWJYcNN0Ohf3lScZ59OvHB//6SK4vTAfQ1HYJJ86syTP6TDm2pTgCoJ6qY+ztPcXvmdPkgYD8JksJB7ZZjsgffHBxpHZkcZG7pmB3y57s6GzrszenL5ruJLSXV0=
+	t=1746456509; cv=none; b=pHS3l4LiREZchu7VT2QNJ/vK+D3LtHRbhUEBRfbBFkZwfevUjpXAe6KaUwUGIOtBV4nVjUpfzzkkjsejfND0rxV17EZ+4cWgvZed8IsII7XhaxeG/BnRSSyISeQ9zM6Et4pJ/2cwkLw0QEn7DRCnpxuBOnp+B8Lu4SDINQnnedY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746456505; c=relaxed/simple;
-	bh=1EZyDIL5mZmIfOxtW9pAsNtAkKGpD9D94OZvI2EUxpU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c89IaEWwgK+6FUHtOjLz+8KyiL8uhvraQNRXg1Xenw9X16AZEn9whIkcQYsfyi1NNWhQ9Mqd13IMm7o4Ia5vlLAP7L6qw55RfQ0cfEWpm3kvUF1rY+W8uqzqJQ1JRJrvyULoZ+w8jGgdiOn+R7lOdmWY70AX1kF1fpY/rVAt32g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kcT8R9vY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA734C4CEE4;
-	Mon,  5 May 2025 14:48:24 +0000 (UTC)
+	s=arc-20240116; t=1746456509; c=relaxed/simple;
+	bh=iJBGHt/npzUxaGLYucbYNrOJhubSXQWs8CMQPcDC/gI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r9Dgp5bdgnRyePiwKb20jD7VPQPbfSVYXtqMDa8ZLVbIpjEgROjsUZXNdsvI6nzmG9CVicZUTELKXvdwvtNMrH6dVpvMdJ3OEP94tZxo+95TUufbs53l+fm1AR67xk/gF+6QcMo9TQO6X5QJB8DpXjPwzEwr3FnmSB8mSmB2gCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+xZogyr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0F79C4CEE4;
+	Mon,  5 May 2025 14:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746456504;
-	bh=1EZyDIL5mZmIfOxtW9pAsNtAkKGpD9D94OZvI2EUxpU=;
+	s=k20201202; t=1746456509;
+	bh=iJBGHt/npzUxaGLYucbYNrOJhubSXQWs8CMQPcDC/gI=;
 	h=From:To:Cc:Subject:Date:From;
-	b=kcT8R9vYfWkDM1uCfXLD98/UTEGRvulrb7zTYmrDdlvgzgsoJb/dR+97vbeLVorUT
-	 lZnQNEfp5Rm2zTfirUD5B6HRd8H63uTgQA9Ecf8GV5bbQzQWaJC9roGHAwwmJ8o+po
-	 oc87NxYyUzBHP4QDCTb3WH/VE12yhZCtGGyXq1w4SO3ZXgKoUzPXQPWDa06UOJHPEh
-	 C079cKl7teUU7f3uVZQCcPS+Jzkn/C6Mfy9akIC0kjkG+19wTKMArD8lv8aRdYivOA
-	 P38Qos/r/fJd01dCx9LkPS0mTcEIichVwMZPujxJNur1NA28DD0LxcD2raRDordqTb
-	 OWhsCKpq9K0rA==
+	b=o+xZogyr/LVx9m9JH7TLopjZetPVbrgnx3apooVzO0krXivZBYTaRxpvMEXQBBlpn
+	 oDWH0hu4+uzUqZdNn2guVbHE6ByQwJAbQxA2bLZkCgv+8V/GCh/Uq72MDWbna+8LXE
+	 h3QVio3/OaEppAZp5KRFSQz23lHpW7XgkQx+QA+m9kjBJ9oCGOgbWM9Sw3MuCPhjoF
+	 TAEgSIZZfepWcXoMh/YyfSTX7AUQ3hWn8KQ5CYvkqgWHNyQgQtgugkLkz3/JoL9+bS
+	 SeQ3MlGLbWuBraJjYICBR1tcsUeTuNMLnXXyZDVJcGchDpjLfx99/UXLJ7T4xYcXnn
+	 UIMvMpjO5YMWQ==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
+To: Vineet Gupta <vgupta@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alban Bedel <albeu@free.fr>,
-	Alexander Couzens <lynxis@fe80.eu>
-Cc: linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-snps-arc@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: interrupt-controller: Convert qca,ar7100-misc-intc to DT schema
-Date: Mon,  5 May 2025 09:48:20 -0500
-Message-ID: <20250505144821.1292151-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: interrupt-controller: Convert snps,arc700-intc to DT schema
+Date: Mon,  5 May 2025 09:48:25 -0500
+Message-ID: <20250505144826.1292329-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,128 +59,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the Qualcomm Atheros ath79 Misc interrupt controller binding to
-schema format.
-
-Adjust the compatible values to match what's actually in use.
+Convert the Arc Core interrupt controller binding to schema format. It's
+a straight-forward conversion of the typical interrupt controller.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../qca,ar7100-misc-intc.yaml                 | 52 +++++++++++++++++++
- .../qca,ath79-misc-intc.txt                   | 45 ----------------
- 2 files changed, 52 insertions(+), 45 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/qca,ar7100-misc-intc.yaml
- delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/qca,ath79-misc-intc.txt
+ .../interrupt-controller/snps,arc700-intc.txt | 24 -----------
+ .../snps,arc700-intc.yaml                     | 42 +++++++++++++++++++
+ 2 files changed, 42 insertions(+), 24 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/snps,arc700-intc.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/snps,arc700-intc.yaml
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/qca,ar7100-misc-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qca,ar7100-misc-intc.yaml
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/snps,arc700-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/snps,arc700-intc.txt
+deleted file mode 100644
+index 9a5d562435ea..000000000000
+--- a/Documentation/devicetree/bindings/interrupt-controller/snps,arc700-intc.txt
++++ /dev/null
+@@ -1,24 +0,0 @@
+-* ARC700 incore Interrupt Controller
+-
+-  The core interrupt controller provides 32 prioritised interrupts (2 levels)
+-  to ARC700 core.
+-
+-Properties:
+-
+-- compatible: "snps,arc700-intc"
+-- interrupt-controller: This is an interrupt controller.
+-- #interrupt-cells: Must be <1>.
+-
+-  Single Cell "interrupts" property of a device specifies the IRQ number
+-  between 0 to 31
+-
+-  intc accessed via the special ARC AUX register interface, hence "reg" property
+-  is not specified.
+-
+-Example:
+-
+-	intc: interrupt-controller {
+-		compatible = "snps,arc700-intc";
+-		interrupt-controller;
+-		#interrupt-cells = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/snps,arc700-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/snps,arc700-intc.yaml
 new file mode 100644
-index 000000000000..ae813189f5ab
+index 000000000000..000a734d997c
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/qca,ar7100-misc-intc.yaml
-@@ -0,0 +1,52 @@
++++ b/Documentation/devicetree/bindings/interrupt-controller/snps,arc700-intc.yaml
+@@ -0,0 +1,42 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/interrupt-controller/qca,ar7100-misc-intc.yaml#
++$id: http://devicetree.org/schemas/snps,arc700-intc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Qualcomm Atheros AR7xxx/AR9XXX MISC interrupt controller
++title: ARC700 incore Interrupt Controller
 +
 +maintainers:
-+  - Alban Bedel <albeu@free.fr>
-+  - Alexander Couzens <lynxis@fe80.eu>
++  - Vineet Gupta <vgupta@kernel.org>
 +
-+description:
-+  The Qualcomm Atheros AR7xxx/AR9XXX MISC interrupt controller is a secondary
-+  controller for lower priority interrupts.
++description: >
++  The core interrupt controller provides 32 prioritized interrupts (2 levels)
++  to ARC700 core.
++
++  intc accessed via the special ARC AUX register interface, hence "reg" property
++  is not specified.
 +
 +properties:
 +  compatible:
-+    oneOf:
-+      - items:
-+          - const: qca,ar9132-misc-intc
-+          - const: qca,ar7100-misc-intc
-+      - const: qca,ar7240-misc-intc
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
++    const: snps,arc700-intc
 +
 +  interrupt-controller: true
 +
 +  '#interrupt-cells':
++    description: An interrupt number 0-31
 +    const: 1
-+
-+additionalProperties: false
 +
 +required:
 +  - compatible
-+  - reg
-+  - interrupts
 +  - interrupt-controller
-+  - "#interrupt-cells"
++  - '#interrupt-cells'
++
++additionalProperties: false
 +
 +examples:
 +  - |
-+    interrupt-controller@18060010 {
-+        compatible = "qca,ar9132-misc-intc", "qca,ar7100-misc-intc";
-+        reg = <0x18060010 0x4>;
-+        interrupts = <6>;
++    interrupt-controller {
++        compatible = "snps,arc700-intc";
 +        interrupt-controller;
 +        #interrupt-cells = <1>;
 +    };
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/qca,ath79-misc-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/qca,ath79-misc-intc.txt
-deleted file mode 100644
-index ad70006c1848..000000000000
---- a/Documentation/devicetree/bindings/interrupt-controller/qca,ath79-misc-intc.txt
-+++ /dev/null
-@@ -1,45 +0,0 @@
--Binding for Qualcomm Atheros AR7xxx/AR9XXX MISC interrupt controller
--
--The MISC interrupt controller is a secondary controller for lower priority
--interrupt.
--
--Required Properties:
--- compatible: has to be "qca,<soctype>-cpu-intc", "qca,ar7100-misc-intc" or
--  "qca,<soctype>-cpu-intc", "qca,ar7240-misc-intc"
--- reg: Base address and size of the controllers memory area
--- interrupts: Interrupt specifier for the controllers interrupt.
--- interrupt-controller : Identifies the node as an interrupt controller
--- #interrupt-cells : Specifies the number of cells needed to encode interrupt
--		     source, should be 1
--
--Compatible fallback depends on the SoC. Use ar7100 for ar71xx and ar913x,
--use ar7240 for all other SoCs.
--
--Please refer to interrupts.txt in this directory for details of the common
--Interrupt Controllers bindings used by client devices.
--
--Example:
--
--	interrupt-controller@18060010 {
--		compatible = "qca,ar9132-misc-intc", "qca,ar7100-misc-intc";
--		reg = <0x18060010 0x4>;
--
--		interrupt-parent = <&cpuintc>;
--		interrupts = <6>;
--
--		interrupt-controller;
--		#interrupt-cells = <1>;
--	};
--
--Another example:
--
--	interrupt-controller@18060010 {
--		compatible = "qca,ar9331-misc-intc", qca,ar7240-misc-intc";
--		reg = <0x18060010 0x4>;
--
--		interrupt-parent = <&cpuintc>;
--		interrupts = <6>;
--
--		interrupt-controller;
--		#interrupt-cells = <1>;
--	};
 -- 
 2.47.2
 
