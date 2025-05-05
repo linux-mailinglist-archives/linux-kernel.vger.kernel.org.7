@@ -1,78 +1,142 @@
-Return-Path: <linux-kernel+bounces-632676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE83AA9A95
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:32:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991BFAA9A99
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3554171A56
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF44189E790
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD5C26D4C8;
-	Mon,  5 May 2025 17:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEVU4yZr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0F726B942;
+	Mon,  5 May 2025 17:32:48 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE14F17C98
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 17:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2429264A77
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 17:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746466312; cv=none; b=eXa9k07EzOiY/yWM5TgIsdr8zDf+94I0wfcYAV2nDyhouIis2ENFu71O+eo+0Ewmj0sl0rlD73ShYjz/7heKMiT6kdqLVZoyAZxASB7FVoXclgX3Mgj9iNKVJ/JM6cAwPz7kfoNLz96Rh4FQw/HuF8RMpOAEsf+6SjSQDPPGT08=
+	t=1746466368; cv=none; b=mFhl6sQf9RH1YiuLLVYwBTFOYavD+MhM3m2Oi+bEztvUTRKrAUzHIUkuVBLPWqLE8rPCal2qizxMMgeCr48tlyBXQvT+Hctd4E3RGwmJcC9eNSTb/r4fmYhptd7U2ps1oVRkOGmLtPzrwn5VNxlqZXtUoQEhZVXuKWWzcP+jKWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746466312; c=relaxed/simple;
-	bh=kdADjjFy+mNmxeZsV/v3n+fXiF9baLpep1/olt+IprM=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oQrLrF1qP1NFPZqufbY3Ok1A3Raw47gV/rHfvNRSoBRjNRKbzb9K31mO3W9qwxaOUwGT7zYC8G48B5Ye3l38XZLaL5e0VG8dI+8rWwp0Zq0Px8gxSK5D+owNKCxhWr1GFEqnuymH9Gtcj64mZ560XsRjRWZg94UTwkRNMsbwIVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEVU4yZr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF0BC4CEE4;
-	Mon,  5 May 2025 17:31:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746466312;
-	bh=kdADjjFy+mNmxeZsV/v3n+fXiF9baLpep1/olt+IprM=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=IEVU4yZrXD8Nlfi+yScIuMiWZDlpwzZ7tZopYV979Eyr0PJNLh+b1FwYeIkK5Vu3R
-	 PVzYDjiECT0qDxzbEGw+KGL/bQ1VdzQep8e82MsPRIQbuoWlgmcG1isclLLbbjHgcV
-	 tAcuI9s4SctP4/SocIYiavjaPsPFah67idcGr9+sUHGXFD2VHgvQUnIU7B00bvL0wc
-	 ub86hTZVWhq26evXKZJze1e0Udx9J28Ypu/wvjtOdFGnR2ljN3qdKLWl6raw1ekuLb
-	 KnUPmlIJ85kdcedVc0cWZhSCRoicYdp2AbJR7w1TAvspWyuVMcWzhPIKH9nyrtnNas
-	 1JbEdSEsuqICA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE0239D60BC;
-	Mon,  5 May 2025 17:32:32 +0000 (UTC)
-Subject: Re: [GIT PULL] uml 6.15-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250505081753.12266-3-johannes@sipsolutions.net>
-References: <20250505081753.12266-3-johannes@sipsolutions.net>
-X-PR-Tracked-List-Id: <linux-um.lists.infradead.org>
-X-PR-Tracked-Message-Id: <20250505081753.12266-3-johannes@sipsolutions.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.15-rc6
-X-PR-Tracked-Commit-Id: 68025adfc13e6cd15eebe2293f77659f47daf13b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 01f95500a162fca88cefab9ed64ceded5afabc12
-Message-Id: <174646635166.836049.1116985620593938370.pr-tracker-bot@kernel.org>
-Date: Mon, 05 May 2025 17:32:31 +0000
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>
+	s=arc-20240116; t=1746466368; c=relaxed/simple;
+	bh=uXxAR8n0fPcQeh48F1sLbPqGN+YK5mxQPIrLZmz4/4k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fSiqbqvWpd7q9xdc+XFozEukGymijh6ylLRpfCrB0qgysiz9qmyAygOL89Vt//XRJoo2mI1IC6f1MCORqHvz+JZIDgPxf9I26Ivlx0rPG+Mi/hZRh0mY0PuJQZ96kMfW9k0zsLPeKdnnzvQWouODljT+vCU1JmtZ12Bv81oqCD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1uBzgH-00059P-JL; Mon, 05 May 2025 19:32:41 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1uBzgG-001GRL-2G;
+	Mon, 05 May 2025 19:32:40 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1uBzgG-00CHb5-21;
+	Mon, 05 May 2025 19:32:40 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Date: Mon, 05 May 2025 19:32:38 +0200
+Subject: [PATCH v2] usb: typec: tcpm: detect orientation in debug acc mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250505-tcpm-v2-1-71c6a21596b4@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIADX2GGgC/12MOw7DIBAFr2JtHSIW4fyq3CNygfHG3iKAgCBHF
+ ncPcRm9ap5Gs0GiyJTg1m0QqXBi7xqoQwd2MW4mwVNjUFL1sk1kG15C46hHcyYjyUJTQ6Qnr3v
+ mMTReOGUfP3u14O/9CxQUKOiEWl0vvZGo7oHc/M7RO16PE8FQa/0CHmYoX50AAAA=
+To: Badhri Jagan Sridharan <badhri@google.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1967;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=uXxAR8n0fPcQeh48F1sLbPqGN+YK5mxQPIrLZmz4/4k=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBoGPY4bKHqX7zhgErbDMFYIQyl/qA4Ts8N+ZDqF
+ AipRFT94sGJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCaBj2OAAKCRC/aVhE+XH0
+ q9dfEACAVRII2DIau5ppoZOTWIIdr49h+Eii3K9VOKE/M+7ZfsjyV9pd3hei2g3+/W3qONFs/Cr
+ BLPc5GwQNN/vwuwy6XZBBFhlU707/7lZAuSbM0oCQzvHQ981fdfuPgKzX/XAxk3eJGn/+seYxLm
+ yIBK/0H/O+7GNkzhkCGiqdG1KOt50Q6PU6URJVxqm1Q6zMNPCkJcISRC+c4awZlwrJCJwz9pF8x
+ /8bgdYYWIrIh094ka7YtxI3vwMzSOwWrLRxj59CjQdO8s/vZwhA+hGGG/qZdbtuwlfX3OTS+Q/2
+ i994uxCHeZRy0Jj/iAbj8rhwjSffp2l7Ye8+RJ9VIDNvwkZVYFc69Nn8ZlgRfBOTUb/sQM3fGAP
+ roq0KwG7sUfgZNBtG6x7fqnkHIgvUjzLm3q4sokFEITYWp/TZLxOCnqzvLcTKkwlR+4PuymeR9n
+ L8UX1rne9hCTx7zCxKn8dq7LQCu8RomFW/4rf3bIoYD+NCo3ta3VpY7Fb+/vCOQx6p6CHm0UpTA
+ S1zKFbJ45mAVh/3iJTBOab6zgayY0j+xN8T5hIE3z8waGeyKKadKIMBLFbNLnsdTBFFQfqGAF58
+ rLBCQs8dV3wQ+Xou71xPnQGwUorOhCyUHM//F1uDaRYT4EdJODXcIR+2QAW/TJZ9iWSWDVNHk5F
+ PYS/if1/EpnnaBg==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon,  5 May 2025 10:15:32 +0200:
+For the debug accessory case, the orientation can be detected by reading
+the cc resistor values. The will be TYPEC_CC_RP_DEF and TYPEC_CC_RP_1_5
+in sink mode and TYPEC_CC_RA TYPEC_CC_RD in src mode.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.15-rc6
+Fixes: 64843d0ba96 ('usb: typec: tcpm: allow to use sink in accessory mode')
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+Changes in v2:
+- Added fixes tag as suggested by gregkh
+- Link to v1: https://lore.kernel.org/r/20250505-tcpm-v1-1-e6142985a012@pengutronix.de
+---
+ drivers/usb/typec/tcpm/tcpm.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/01f95500a162fca88cefab9ed64ceded5afabc12
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index 784fa23102f90..478e9c80fc8c2 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -611,6 +611,12 @@ static const char * const pd_rev[] = {
+ #define tcpm_port_is_sink(port) \
+ 	(tcpm_cc_is_sink((port)->cc1) || tcpm_cc_is_sink((port)->cc2))
+ 
++#define tcpm_port_is_debug_pol_cc1(port) \
++	((tcpm_port_is_sink(port) && \
++	 (port->cc2 == TYPEC_CC_RP_DEF && port->cc1 == TYPEC_CC_RP_1_5)) || \
++	 (!tcpm_port_is_sink(port) && \
++	 (port->cc2 == TYPEC_CC_RA && port->cc1 == TYPEC_CC_RD)))
++
+ #define tcpm_cc_is_source(cc) ((cc) == TYPEC_CC_RD)
+ #define tcpm_cc_is_audio(cc) ((cc) == TYPEC_CC_RA)
+ #define tcpm_cc_is_open(cc) ((cc) == TYPEC_CC_OPEN)
+@@ -4569,8 +4575,11 @@ static int tcpm_acc_attach(struct tcpm_port *port)
+ 	if (tcpm_port_is_audio(port))
+ 		state = TYPEC_MODE_AUDIO;
+ 
+-	if (tcpm_port_is_debug(port))
++	if (tcpm_port_is_debug(port)) {
++		port->polarity = tcpm_port_is_debug_pol_cc1(port) ?
++					TYPEC_POLARITY_CC1 : TYPEC_POLARITY_CC2;
+ 		state = TYPEC_MODE_DEBUG;
++	}
+ 
+ 	ret = tcpm_set_roles(port, true, state, role, data);
+ 	if (ret < 0)
 
-Thank you!
+---
+base-commit: 588d032e9e566997db3213dee145dbe3bda297b6
+change-id: 20250505-tcpm-41b4ba7ea0ec
 
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Michael Grzeschik <m.grzeschik@pengutronix.de>
+
 
