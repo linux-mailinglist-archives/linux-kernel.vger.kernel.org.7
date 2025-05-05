@@ -1,123 +1,105 @@
-Return-Path: <linux-kernel+bounces-632179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39069AA938C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:49:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73980AA938F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7001F3A887F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A080F3AC5D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF561AA1DA;
-	Mon,  5 May 2025 12:48:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C8822A4E7;
+	Mon,  5 May 2025 12:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="QTiuQjfu"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829BC4683
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1281D175D39
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746449339; cv=none; b=SiK7k66N+uUW4RS+pv3Ns384iuw8/WT+VmM1fgJ3fv3bikKz+2Pn70+2VFIxEN3vs7DE9vcF0OBEYyd83Ao1jj1dIJGiTSVGkfO2SfJnNIxbRzvK6Elm4bbETmtQME9FE0muvqDg5UjtuvNy4s+dP9eA93foOKoJvvKt+gvJkK0=
+	t=1746449364; cv=none; b=nYffgfWtrSOSB1WNl4Y3TmkbSO/Ei+/YNjv/ndNI2wLM9KYi3NCAsC+ZnCtUPRtKhRY73WgwEvUPt3sr9FRGtb32UP3GalWaCW2AdXmbIOr3iw5oaj0JUExWl3qN2c3IJr/zotpp/vs+Hybtjx7h2ZVp6/hhlScVqWD0OJGJxQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746449339; c=relaxed/simple;
-	bh=qOiDsPGyW52iz27gqPAj4k3cSNTm4gcs8TGRaSPcHeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1zCxG+i1wkPWpQm1pQQlcCcEZgIaizPD63J8oQemXw7q+PsrEPOK3kDQuUZPeGYaR2Oi0GOhT+ygcoR9PLFwoU0Gm+w7Fw/0PgpQJbHYRDq7ndfYXxna5jWkOd7m3IKR967fMr5210R1BS26c2DhGoeipClfZp4rIlZ4wlI8Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uBvFe-0000yT-BA; Mon, 05 May 2025 14:48:54 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uBvFd-001ESa-0i;
-	Mon, 05 May 2025 14:48:53 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uBvFd-004cTk-0D;
-	Mon, 05 May 2025 14:48:53 +0200
-Date: Mon, 5 May 2025 14:48:53 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Avri Altman <Avri.Altman@sandisk.com>
-Subject: Re: [PATCH v4 0/4] mmc: handle undervoltage events and prevent eMMC
- corruption
-Message-ID: <aBiztawScUfcLELt@pengutronix.de>
-References: <20250310102229.381887-1-o.rempel@pengutronix.de>
- <CAPDyKFrC56BBJk=YAPWCCNYNqFAoY74_yH0ZXfNQEiDhaA2xJg@mail.gmail.com>
+	s=arc-20240116; t=1746449364; c=relaxed/simple;
+	bh=h8U5EjZrfZ43MNluZJU7SJSY3c+wYPMqp+iyFq6DTYQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IWmz0cFmknyc0VTerrEgcc5WvtqYyy4IIBZY210Ttl9Pvvmko+0rdzL5fb8eB43wrYVDOG4Euzy8v6hHEsJve6umUKEn5gzD6Az+QAbWM7Qon5+oY77eugHEXPoxr3n7OcUUdSX+sT+Bpaxd+Pa0jHh/kinaydm9CiN2uD2mLaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=QTiuQjfu; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acb5ec407b1so762575566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:49:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1746449360; x=1747054160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h8U5EjZrfZ43MNluZJU7SJSY3c+wYPMqp+iyFq6DTYQ=;
+        b=QTiuQjfu97S6HjAEBiEp1Wc7QSASiNm7eedJoAN1a7BPZz+WbUqZrdR128wE3dy3Zx
+         UKxVVEKcxdBIlf/6kiptIyq+Uobhwh3IRlyu1iSzSi0SUcaZNguFTGG77s8CC6qyT1rz
+         8to4nPv6jOXK+1iqaWlL5x8CoEwHPcnlqgC/0JYXPJmEopuMMT+4djo2MFZT2KC6uR40
+         ZwkaevAP2/QWPaNNcLCLn1zlKtJYGnUZRmDNOtKXUZM4e+WtEAvFgVgjTiA6chiKXI5d
+         UGjRKEmQKNahRjErjmNxShLoCSMlaAqLGDAmoiVotY0BAS2+wJUTXgHd1exYxrBdxl2G
+         uMJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746449360; x=1747054160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h8U5EjZrfZ43MNluZJU7SJSY3c+wYPMqp+iyFq6DTYQ=;
+        b=mJhYvoKZky9cbBuqwGmys5SkVzDOpFA+vfvaaYBmJI5HdOh9+Gj4AtCVXLwvdTU9QC
+         2lD+KCI/IKJeoNsrZ8CR/XqfGdPq/OM3lh4r95cESIpQaur8TbwjsbuWxDA24y5dcJGy
+         58SxYPZLcBSqeTWx0NMigsCfbAVQTiO9fAynWBdx82NxZ8eBGfVmxZGP1wCkFu0hqxCG
+         JUvHoWRs+BjpypaWgLRXbSQfC9AhA41bK6qJKu9qyoF2uU3vpyvBvX2fOZClITfbpOsb
+         DWcBf7Mpkz6sEKP9RZN2p8BhLdXP33mhIJ7Gu3RrUIWoOqmERjurhu/YgVpDsytN0lkA
+         F7rA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyAmJBX4FF/qppdtqzC6foeescU7WUs8qvbN7DhA/6/vXbrQSfC180FYkeU2K/tHLOWC/XjlqdlIPEpX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3D4kO7Ugblo5NpWwjmke/SVajM4TF46TquPj0QD7Zt0gzsV9n
+	e5ZNC/E0+oRYEFR3CnQWqnqQV+LIj0QpQ3UhhtnJEj0lKoRwcTsgzMul9mph3Jv1yF7KHb+8zPP
+	d9lOBXHNmNoL4QrAQL9W/9n6iGKukY8HEvkohHA==
+X-Gm-Gg: ASbGncsckcxw1nimef3y9QCh88v2Od/umnyARGOIGZmwD5EdD5/7ouSsBcSuDuwgDc9
+	PDXZGtadN9UvvbILnheSkvVua5iYptOieHPFMLMAnGzQQYJrVAZbeIlbXzWj/PFD0Qy2rjoHyCY
+	cNhz14r51S2tTpshYX8SZoLGD2u6JHDc75qaEXTeu8dGIeAp5ZfAQ=
+X-Google-Smtp-Source: AGHT+IEQEtAmpp+U0f2k8eePl7xd6XBIyArt8z5V5X5PFgIVOlVsppqEAvzfY9M3D0lDOqaLheEog4k1PKphraOtuYs=
+X-Received: by 2002:a17:907:72d1:b0:ac7:1600:ea81 with SMTP id
+ a640c23a62f3a-ad1a4b1d6c9mr659162766b.49.1746449360263; Mon, 05 May 2025
+ 05:49:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFrC56BBJk=YAPWCCNYNqFAoY74_yH0ZXfNQEiDhaA2xJg@mail.gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250502121930.4008251-1-max.kellermann@ionos.com>
+ <bbublxzpnqrzjq5rmmbp772w2darjoahlewqky7caanaknglbx@6wuy5nidsnu3>
+ <CAKPOu+_8cbUk=8d41GQGOvUrmG9OuaNVuSQrksDcUQMyFc4tiA@mail.gmail.com> <aBUQ7EzmeWYCyLwB@slm.duckdns.org>
+In-Reply-To: <aBUQ7EzmeWYCyLwB@slm.duckdns.org>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 5 May 2025 14:49:09 +0200
+X-Gm-Features: ATxdqUEYQB6USgmiCAV7OU2CKrYQgnrzCesPwZ7-NaiO3m6zeMlp7cMoAYide5M
+Message-ID: <CAKPOu+_Dk7rLgc+5YbMd4xpcjz74XKnR1jkgaTxu81EvE-q1-g@mail.gmail.com>
+Subject: Re: [PATCH] kernel/cgroup/pids: add "pids.forks" counter
+To: Tejun Heo <tj@kernel.org>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, hannes@cmpxchg.org, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ulf,
+On Fri, May 2, 2025 at 8:37=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+> +1 on pids.stat, and use rstat and avoid the atomic ops?
 
-Sorry for very late replay,
+rstat right now is specific to the "cpu" controller. There is "struct
+cgroup_rstat_cpu". And there is "struct cgroup_base_stat", but that is
+also specific to the "cpu" controller.
+Do you want me to create a whole new subsystem like the "cpu" rstat
+(i.e. copy the syncing code), or do you want to add the new counter to
+cgroup_rstat_cpu? (And maybe drop the "_cpu" suffix from the struct
+name?)
 
-On Thu, Mar 20, 2025 at 03:36:32PM +0100, Ulf Hansson wrote:
-> Hi Oleksij,
-> 
-> On Mon, 10 Mar 2025 at 11:22, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-> >
-> > changes v4:
-> > - drop HPI and SDHCI related patches
-> >
-> > This patch set introduces a framework for handling undervoltage events
-> > in the MMC subsystem. The goal is to improve system reliability by
-> > ensuring graceful handling of power fluctuations that could otherwise
-> > lead to metadata corruption, potentially rendering the eMMC chip
-> > unusable or causing significant data loss.
-> 
-> Thanks for posting this! I will spend some time reviewing this next
-> week and let you know my comments then.
-> 
-> However, I just wanted to let you know that I just posted a series [1]
-> (forgot to cc you, sorry), which also reworks the way _mmc_suspend()
-> understands what scenario it should be running. I am guessing that
-> re-work is simplifying for your $subject series too. Maybe you would
-> like to have a look?
-
-Ah, very nice. The integration of undervoltage support is easier now.
-
-I rebased by match on top of mmc/next branch and do some testing
-tomorrow. If you have no other comments I'll send updated patches after
-testing.
-
-By the way, are you on embedded recipes this year?
-
-Best Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+(I have doubts that all the complexity is really worth it for a
+counter that gets updated only on fork/clone. cpu_rstat is designed
+for updating counters on every context switch.)
 
