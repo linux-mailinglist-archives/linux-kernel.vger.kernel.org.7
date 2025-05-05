@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-634761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EA2AAB732
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:06:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1BAAAB771
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1699B505171
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F883A6C1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFEB474F24;
-	Tue,  6 May 2025 00:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD45476F7B;
+	Tue,  6 May 2025 00:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcTZsKUi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/N+Ij3F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F342EEBD1;
-	Mon,  5 May 2025 23:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5409B2ECE41;
+	Mon,  5 May 2025 23:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486603; cv=none; b=mh4eRtl/Y5Kglus5BAkLpuQXUVOtTENxWORyOVFkATAMzOy0QfjvgguKlel57QIzcIvcjaezBFn3hn3lv1kU6t1H+035XPdIVfaecPrvDCSfnucx85pMnNyEANvoHMzMzaK1jqfZcrnojBpTqEPlb3+JBrlUOZoMBjU5YTabuNQ=
+	t=1746486642; cv=none; b=SVBs4gOWLKCQ27poj/1pInX+obZC8D2NMwmjx1hB2aI16Vwi9kurizWpGKQNdMF2Zp/JTqwF1OB09H7f1dHNytB7kP0BiD3n0F+kSsCiw//H6WemKnduMEm7/WF5r/DWHU4twCYvvGr68LOqJTsVxqvZt7yduzXrUtUsUzLTHnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486603; c=relaxed/simple;
-	bh=/A2lNNDhMc5Fco9orW1zjWE7iSjabScTNUs6YZMsbcs=;
+	s=arc-20240116; t=1746486642; c=relaxed/simple;
+	bh=4Rhj+XqsDVjOooL4g5+oDRfe5elpg/W4PBMdyfzXDGY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TlADusUeF8tcWpQEnB+qWl9ZdtVoSms9mWNO/NT2C6Yd4Jyew4Vzi3rRPgRq4MJd2CWetZ7sf51/N2/X3nx66TZ0BtK5cYxA3+GqG2eFqhKefKYaeT6ye9c7hmx776IyNmw9puEcNQ+6bcNeGeZkmEeccc3rNnMmCyIHagBa+aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcTZsKUi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C799C4CEEE;
-	Mon,  5 May 2025 23:10:01 +0000 (UTC)
+	 MIME-Version; b=cPuXrA+sHMHodgPjZ3n8I79WqtAPW2Ql/7zEWn+jfFKTIs3X6Gr0j7J14lkcQp59jZ0QDgf9FZmOsGDFSk706AiekqyUpEungDCa6U1+bEzabdPPBmiBqExdqJN/hwugpe6OiVZZcVnEEDlNWROG2HtOVw3JFRhitl2LUBIrBs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/N+Ij3F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31262C4CEE4;
+	Mon,  5 May 2025 23:10:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486602;
-	bh=/A2lNNDhMc5Fco9orW1zjWE7iSjabScTNUs6YZMsbcs=;
+	s=k20201202; t=1746486641;
+	bh=4Rhj+XqsDVjOooL4g5+oDRfe5elpg/W4PBMdyfzXDGY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YcTZsKUiEAJ2VcHMcG+Igda5Mg/8P47PCr6DZhaBgjvYlDDfGi95984Wcr5/g6N9i
-	 D3UABN5gQ0kyTwAJ3m1rva5ZLHMFig7savcRjqhpr5yqCCwgYNnKwf/UZYNNE3WPBe
-	 yXfuT/ChfLrCq9Q4Z0KbvwYtjP1qpVruLZa3E+bG01onSo02OhPcQNjk50yeaGGvoP
-	 zL2iHkftp8zm3y+wSVUtMLD2ebyWLHCoWSdtnipvLbSdNEe8rsPLb/G+HRIfInrWQF
-	 TuaOlJPe+StLT5c/eZ/wfaLHIF3jFeL16dxfFcWKtX3aba/jlgaSPHVzjhjEgSQktY
-	 Q3RZ66RsrXysg==
+	b=n/N+Ij3Fk/ZU6LtXzY3rfbMwtu88UBCMz59keIKivyirHzSMTbvJmQko6SniIdqhx
+	 us0Hiomq8FHP8APgMYv3bki2mSzKv5XicAa39064Fb4OjJBeRR6cKUIkZeNfGDIh5H
+	 Ngzo/llzJLkkWBsaEm3cCicvNOEFTpPt++R97elRN6CTEqJr0niKLjA2aMhXNBkcjN
+	 fQMyf8fgKN+OYUgaxqoPksmqyPzzZkrLVBaiqFXGX6t6Pp/rofTtLO3FA8C9nP9BkC
+	 uo6JYuBIWlIFJgIAzE6nTCEFyAXEBWyxncTGPJJ+MuQr33nvoZ7kPuJbKuox7cALxA
+	 31o4qgCQWeUCA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Xinyu Zhang <xizhang@purestorage.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Ming Lei <ming.lei@redhat.com>,
-	Keith Busch <kbusch@kernel.org>,
+Cc: Bibo Mao <maobibo@loongson.cn>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Sasha Levin <sashal@kernel.org>,
-	sagi@grimberg.me,
-	linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 112/212] nvme: map uring_cmd data even if address is 0
-Date: Mon,  5 May 2025 19:04:44 -0400
-Message-Id: <20250505230624.2692522-112-sashal@kernel.org>
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 131/212] MIPS: Use arch specific syscall name match function
+Date: Mon,  5 May 2025 19:05:03 -0400
+Message-Id: <20250505230624.2692522-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -68,46 +67,53 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Xinyu Zhang <xizhang@purestorage.com>
+From: Bibo Mao <maobibo@loongson.cn>
 
-[ Upstream commit 99fde895ff56ac2241e7b7b4566731d72f2fdaa7 ]
+[ Upstream commit 756276ce78d5624dc814f9d99f7d16c8fd51076e ]
 
-When using kernel registered bvec fixed buffers, the "address" is
-actually the offset into the bvec rather than userspace address.
-Therefore it can be 0.
+On MIPS system, most of the syscall function name begin with prefix
+sys_. Some syscalls are special such as clone/fork, function name of
+these begin with __sys_. Since scratch registers need be saved in
+stack when these system calls happens.
 
-We can skip checking whether the address is NULL before mapping
-uring_cmd data. Bad userspace address will be handled properly later when
-the user buffer is imported.
+With ftrace system call method, system call functions are declared with
+SYSCALL_DEFINEx, metadata of the system call symbol name begins with
+sys_. Here mips specific function arch_syscall_match_sym_name is used to
+compare function name between sys_call_table[] and metadata of syscall
+symbol.
 
-With this patch, we will be able to use the kernel registered bvec fixed
-buffers in io_uring NVMe passthru with ublk zero-copy support.
-
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Xinyu Zhang <xizhang@purestorage.com>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-Link: https://lore.kernel.org/r/20250227223916.143006-4-kbusch@meta.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/include/asm/ftrace.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index acf73a91e87e7..0d84acbdbf6b0 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -541,7 +541,7 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		return PTR_ERR(req);
- 	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
- 
--	if (d.addr && d.data_len) {
-+	if (d.data_len) {
- 		ret = nvme_map_user_request(req, d.addr,
- 			d.data_len, nvme_to_user_ptr(d.metadata),
- 			d.metadata_len, 0, &meta, ioucmd, vec);
+diff --git a/arch/mips/include/asm/ftrace.h b/arch/mips/include/asm/ftrace.h
+index db497a8167da2..e3212f44446fa 100644
+--- a/arch/mips/include/asm/ftrace.h
++++ b/arch/mips/include/asm/ftrace.h
+@@ -87,4 +87,20 @@ struct dyn_arch_ftrace {
+ #endif /*  CONFIG_DYNAMIC_FTRACE */
+ #endif /* __ASSEMBLY__ */
+ #endif /* CONFIG_FUNCTION_TRACER */
++
++#ifdef CONFIG_FTRACE_SYSCALLS
++#ifndef __ASSEMBLY__
++/*
++ * Some syscall entry functions on mips start with "__sys_" (fork and clone,
++ * for instance). We should also match the sys_ variant with those.
++ */
++#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
++static inline bool arch_syscall_match_sym_name(const char *sym,
++					       const char *name)
++{
++	return !strcmp(sym, name) ||
++		(!strncmp(sym, "__sys_", 6) && !strcmp(sym + 6, name + 4));
++}
++#endif /* __ASSEMBLY__ */
++#endif /* CONFIG_FTRACE_SYSCALLS */
+ #endif /* _ASM_MIPS_FTRACE_H */
 -- 
 2.39.5
 
