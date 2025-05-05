@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-634014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7537AAAF16
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:10:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9480FAAAF6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3507B0850
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B20E3BEADD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54DB3AFA6B;
-	Mon,  5 May 2025 23:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F92728B419;
+	Mon,  5 May 2025 23:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qxcQJDkB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hV/Sm3Fi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553F7220F3E;
-	Mon,  5 May 2025 23:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B632DB4BA;
+	Mon,  5 May 2025 23:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486282; cv=none; b=YTdfsHuDWGAW4qVOdUksSCSHzMuTaeKbeaUiD5juAXE6Lq1XT/CXkywVnxCLXZHv3TLB0SyBTP3bQZrKxx6rfJAu2E1PBDVpuJQAkk8BkXvXvJIFW6QkmVS1kRzNdvGNlH60WTWKTWBwHC5TUSEaRtBkAM/APun/XmXt/3E0iK0=
+	t=1746486363; cv=none; b=hbUsxfR7CV++2jkCcSDkXP4UHd9TEaPezDlBZ3/c77t8iw1Ip0Qo3RwXvi74opJbvYMoXOBfGkLO7nr4pTtQCThoT1HY3S4O2UzSpbOtBiE2ixMAXctUbILDdIt1dnQS1vN6j41m0lbXqUmQXpBGcGeLQ4Z6CMkw9uK2kqcpjvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486282; c=relaxed/simple;
-	bh=dUhZDr7JpjGKYrdAPTRe8rGmpcgXB1dXpGUNDT0HF8M=;
+	s=arc-20240116; t=1746486363; c=relaxed/simple;
+	bh=M9P9gXHPKc8muv0zGwNFp9Iica9ZFNy4A4gX/1oT0nQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JeMBgJwkiIe2hwIGuorVg6GgDkGAJRM0uvURG6bG6vkmx4jm34mzNEZjzh03W3f/TT96GVoDOa8oYz9r8dX2AGjGMlXKN0kxkMp+eef3cO8PDrVrqN0zHmzOlYGEzqYM05lmEhqPKHwFX5wGxGYnvzgp5DcqN+r2D8rFgwvUQ1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qxcQJDkB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB6C0C4CEEE;
-	Mon,  5 May 2025 23:04:39 +0000 (UTC)
+	 MIME-Version; b=XDNvx/YNnDV4OcB8tjAakUq5cTbFDwbLPeu+lnevQXdc2tinhwUXxWCS9tZ2KLgUBuCKScJZwpQVWTr052vjJk64XgOZfjIyE48j5pnOFfvc5x8VJh5tL2RNBezNw1ry8VhReOpefr/sSkIp10PfvqS6SqFXiY7C4F4AIG1fHJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hV/Sm3Fi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8726C4CEEE;
+	Mon,  5 May 2025 23:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486280;
-	bh=dUhZDr7JpjGKYrdAPTRe8rGmpcgXB1dXpGUNDT0HF8M=;
+	s=k20201202; t=1746486362;
+	bh=M9P9gXHPKc8muv0zGwNFp9Iica9ZFNy4A4gX/1oT0nQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qxcQJDkBwOYGrOu4sM5RfV19UBA3nMwsj5t40S9zklEHKXSFUKVjB8LvJik+YAIYT
-	 AlB5tK+D5VuYSiQ6YjMOlsFtEnyPb+opHlKW2N5mLVlFDbxlhH75HZBhmTiPqXEe14
-	 nWiTkjDbLL8Ssc1FcHgPt/6P643o5gehYxPiYDDCElg9HXDAj7abjOr9n2YWyNgeqh
-	 9vJFqogQthHPfVYoiPibqqYYFlWRR0ECNHddsBvi6ZLf+gAlQaorEiFuW4ArTwki27
-	 dzmdH/WGM0OnP6FNsKJwfoF0ojTsvoDmB1iqlLZ3OyCg2DcwpIYhrmdTH5jo1e4i+t
-	 rM44IihCZM4XQ==
+	b=hV/Sm3Fik84HFUH9fqRVj+HEbwJIgeKCcAIDeeSfccPyleduiYqVZFYN4mY5y3F4q
+	 mloiKU90tQS5znlcpYTbRKIuXYYJk+uWlkx275wk44KTDYEWgNTjMlqjsFPziqwxJ/
+	 SNf5MHCPMn+BwJDMZ/AzQrbRAwzNrKA7vWDybOmXMLhYzEnauFrPsEx4LiMpOIuq5E
+	 hcF9ETbyjfDIovItgiHwryaUWKwwRk3goeV8zOeywrVfLfPZsQD1AN/eCEjksGlV/Q
+	 WJbOFuzwDUW3FCBijOKgvR5OEzsCMMqGmgrWBd6soC5fKV0/UaNlzRWzYtisKc3SML
+	 UKSSIj3I0ZpKQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+Cc: Bitterblue Smith <rtl8821cerfe2@gmail.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
 	Sasha Levin <sashal@kernel.org>,
-	johannes@sipsolutions.net,
 	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 237/294] wifi: mac80211: don't unconditionally call drv_mgd_complete_tx()
-Date: Mon,  5 May 2025 18:55:37 -0400
-Message-Id: <20250505225634.2688578-237-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 282/294] wifi: rtw88: Don't use static local variable in rtw8822b_set_tx_power_index_by_rate
+Date: Mon,  5 May 2025 18:56:22 -0400
+Message-Id: <20250505225634.2688578-282-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -66,37 +64,75 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Bitterblue Smith <rtl8821cerfe2@gmail.com>
 
-[ Upstream commit 1798271b3604b902d45033ec569f2bf77e94ecc2 ]
+[ Upstream commit 00451eb3bec763f708e7e58326468c1e575e5a66 ]
 
-We might not have called drv_mgd_prepare_tx(), so only call
-drv_mgd_complete_tx() under the same conditions.
+Some users want to plug two identical USB devices at the same time.
+This static variable could theoretically cause them to use incorrect
+TX power values.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Reviewed-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Link: https://patch.msgid.link/20250205110958.e091fc39a351.Ie6a3cdca070612a0aa4b3c6914ab9ed602d1f456@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Move the variable to the caller and pass a pointer to it to
+rtw8822b_set_tx_power_index_by_rate().
+
+Signed-off-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Link: https://patch.msgid.link/8a60f581-0ab5-4d98-a97d-dd83b605008f@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/mlme.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtw88/rtw8822b.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index 42e2c84ed2484..37163d84104fa 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -2959,7 +2959,8 @@ static void ieee80211_set_disassoc(struct ieee80211_sub_if_data *sdata,
- 	if (tx)
- 		ieee80211_flush_queues(local, sdata, false);
+diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822b.c b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
+index 3017a9760da8d..99318a82b43f4 100644
+--- a/drivers/net/wireless/realtek/rtw88/rtw8822b.c
++++ b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
+@@ -975,11 +975,11 @@ static void rtw8822b_query_rx_desc(struct rtw_dev *rtwdev, u8 *rx_desc,
+ }
  
--	drv_mgd_complete_tx(sdata->local, sdata, &info);
-+	if (tx || frame_buf)
-+		drv_mgd_complete_tx(sdata->local, sdata, &info);
+ static void
+-rtw8822b_set_tx_power_index_by_rate(struct rtw_dev *rtwdev, u8 path, u8 rs)
++rtw8822b_set_tx_power_index_by_rate(struct rtw_dev *rtwdev, u8 path,
++				    u8 rs, u32 *phy_pwr_idx)
+ {
+ 	struct rtw_hal *hal = &rtwdev->hal;
+ 	static const u32 offset_txagc[2] = {0x1d00, 0x1d80};
+-	static u32 phy_pwr_idx;
+ 	u8 rate, rate_idx, pwr_index, shift;
+ 	int j;
  
- 	/* clear AP addr only after building the needed mgmt frames */
- 	eth_zero_addr(sdata->deflink.u.mgd.bssid);
+@@ -987,12 +987,12 @@ rtw8822b_set_tx_power_index_by_rate(struct rtw_dev *rtwdev, u8 path, u8 rs)
+ 		rate = rtw_rate_section[rs][j];
+ 		pwr_index = hal->tx_pwr_tbl[path][rate];
+ 		shift = rate & 0x3;
+-		phy_pwr_idx |= ((u32)pwr_index << (shift * 8));
++		*phy_pwr_idx |= ((u32)pwr_index << (shift * 8));
+ 		if (shift == 0x3) {
+ 			rate_idx = rate & 0xfc;
+ 			rtw_write32(rtwdev, offset_txagc[path] + rate_idx,
+-				    phy_pwr_idx);
+-			phy_pwr_idx = 0;
++				    *phy_pwr_idx);
++			*phy_pwr_idx = 0;
+ 		}
+ 	}
+ }
+@@ -1000,11 +1000,13 @@ rtw8822b_set_tx_power_index_by_rate(struct rtw_dev *rtwdev, u8 path, u8 rs)
+ static void rtw8822b_set_tx_power_index(struct rtw_dev *rtwdev)
+ {
+ 	struct rtw_hal *hal = &rtwdev->hal;
++	u32 phy_pwr_idx = 0;
+ 	int rs, path;
+ 
+ 	for (path = 0; path < hal->rf_path_num; path++) {
+ 		for (rs = 0; rs < RTW_RATE_SECTION_MAX; rs++)
+-			rtw8822b_set_tx_power_index_by_rate(rtwdev, path, rs);
++			rtw8822b_set_tx_power_index_by_rate(rtwdev, path, rs,
++							    &phy_pwr_idx);
+ 	}
+ }
+ 
 -- 
 2.39.5
 
