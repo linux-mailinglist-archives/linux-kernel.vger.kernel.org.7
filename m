@@ -1,75 +1,68 @@
-Return-Path: <linux-kernel+bounces-633857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828F3AAAE98
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:59:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80CBAAB1A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86043B5A28
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:54:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D49897B87A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772CB38B4C9;
-	Mon,  5 May 2025 23:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F3F41A041;
+	Tue,  6 May 2025 00:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qS3OVwQh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9c+zyfR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21C2DA53E;
-	Mon,  5 May 2025 22:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E212D3A6B;
+	Mon,  5 May 2025 22:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485571; cv=none; b=pna+UKXtiNUdg7p8W/lUXoNWR5EUO8Upot9Isc5tdH+8KW6ef4v+0rPGOLnWJ3FF+nNFxI1AIPNyMchgmKSGx9/oMATsHbY18xB0L3/8DwzRPVSe9x4+BlAzym2nF3Bnni1ysSEc/L1Pe+s7w8v/xlDp9DxNP7OSIemqAfL/Vac=
+	t=1746485585; cv=none; b=Xa2Cp15bo/Jhh8C05fd1w/OqODG8MgnoKk7kPRSG8Y2Q4fnXDnnH9lRWnv02FV0U43oUy1rsO4gc6/Qrjtq06SwVY2Mibm3zXB47eSCqsHABbGhMgssdHeGhtNa2APRCnQnBowW/knfZs51AhAHav5zm5aeh4OmSMzAf2YyUQNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485571; c=relaxed/simple;
-	bh=tEpnyqxpUwmbm0CU1poVcn8w/flZiQr2S/rIImIpo/E=;
+	s=arc-20240116; t=1746485585; c=relaxed/simple;
+	bh=zXaF4H0DlaWSM8LgDckcp1aSwKz4AvAeHUyzLWuCHc4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VbuApivZn6OsciQJvBPJf5N0ga/vDNDgipgbqoNndePJIz1vB5WBUs6IghEnE51GuSDnNASEGO07GhL6wFDbB/jZXw/aSBHkXxJe6I7yOOCtN0MHgrxI+32+ZY3UPUzWIhPtpjE4GLcRwpFCSs8WAPYfk8XXenUN899LkmuxImw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qS3OVwQh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6135DC4CEED;
-	Mon,  5 May 2025 22:52:47 +0000 (UTC)
+	 MIME-Version; b=sHEHG5kgw0d7i799UJiaFPoA9TFX6E2BIeNLu7BBCshWaBXMFKw6aWpcz9POs2EMI/XiL3hETw+6MybdJPnGABN7UTo4HCxTcN5T2YPnfMdAE4VKIpgA8KXTA6h1GBvDe/PSz5RXbqkPcaS1YcWGWgcuqUx76JqO+uOwHEh/jSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9c+zyfR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45081C4CEEE;
+	Mon,  5 May 2025 22:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485570;
-	bh=tEpnyqxpUwmbm0CU1poVcn8w/flZiQr2S/rIImIpo/E=;
+	s=k20201202; t=1746485585;
+	bh=zXaF4H0DlaWSM8LgDckcp1aSwKz4AvAeHUyzLWuCHc4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qS3OVwQh7BtCvrQLE2l0sAplxMcRFeHH+INgvnHU+GmfyKk5zS3NfyiCQ0w+NEdFq
-	 pSPuHyaaLYndzSEHnlMy63j/UJs6+NGz3hqQKsHZ8VJE/V5OqeJx9nixSVLvFYwUlV
-	 f7aoR+/YwBLTHxAMjJso9utXxoR7RFeNHFyP+SWHXEWB1GLCwUuIo6r5dt9nN6qho7
-	 WFf+D0FcHP8q0ZtGlfZmqFTgvnwKaD9D+HVQxNL8V5GcuwUPPnEJp4sLHpmR0JeCPj
-	 CV8pngSLP6ffRYeyhLrcRG9R+qU2WNuYZK2J0Z3wlXvdARC7RdGUVzPIy9K5r5lFXG
-	 BEowQCdAddyNQ==
+	b=V9c+zyfRGz7ExxraaK8HVQmX299p2Uov393KO8Ypc0L4EclLY7a0hshjeb9j+kHZL
+	 QGKFaXbAbkpcS2YpQNjNQBh6LCna8We8c9U573Ut0O1keEN7R6seex1fhoYKU7uBE6
+	 pKyFDPYMd/uSe/7emIm9DBCubUPosSVvrOycsdDAmiDt22ibKr7sHNQqGNgFFOF9OJ
+	 wVG4En4zCjg/jsmBrbDIWSD2WkF4anAmFCSVRrpGmYmP5VxvB/2aWpWSTN0+ANyXon
+	 nA2jwJlw0uEA4jOBmY/A6k1ER38XB07xizjs0DI8avKPcCj5SNVV/88wD9ABITmNgz
+	 AH9n2+pztpU5g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Joshua Aberback <joshua.aberback@amd.com>,
-	Alvin Lee <alvin.lee2@amd.com>,
-	Wayne Lin <wayne.lin@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
+Cc: Shiwu Zhang <shiwu.zhang@amd.com>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
 	christian.koenig@amd.com,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	Alvin.Lee2@amd.com,
-	rodrigo.siqueira@amd.com,
-	alex.hung@amd.com,
-	dillon.varone@amd.com,
-	Austin.Zheng@amd.com,
-	Samson.Tam@amd.com,
-	rostrows@amd.com,
-	yi-lchen@amd.com,
-	PeiChen.Huang@amd.com,
-	aurabindo.pillai@amd.com,
-	linux@treblig.org,
+	lijo.lazar@amd.com,
+	sunil.khatri@amd.com,
+	le.ma@amd.com,
+	YiPeng.Chai@amd.com,
+	gerry@linux.alibaba.com,
+	candice.li@amd.com,
+	Feifei.Xu@amd.com,
+	kevinyang.wang@amd.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 371/486] drm/amd/display: Increase block_sequence array size
-Date: Mon,  5 May 2025 18:37:27 -0400
-Message-Id: <20250505223922.2682012-371-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 375/486] drm/amdgpu: enlarge the VBIOS binary size limit
+Date: Mon,  5 May 2025 18:37:31 -0400
+Message-Id: <20250505223922.2682012-375-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -84,44 +77,34 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Joshua Aberback <joshua.aberback@amd.com>
+From: Shiwu Zhang <shiwu.zhang@amd.com>
 
-[ Upstream commit 3a7810c212bcf2f722671dadf4b23ff70a7d23ee ]
+[ Upstream commit 667b96134c9e206aebe40985650bf478935cbe04 ]
 
-[Why]
-It's possible to generate more than 50 steps in hwss_build_fast_sequence,
-for example with a 6-pipe asic where all pipes are in one MPC chain. This
-overflows the block_sequence buffer and corrupts block_sequence_steps,
-causing a crash.
+Some chips have a larger VBIOS file so raise the size limit to support
+the flashing tool.
 
-[How]
-Expand block_sequence to 100 items. A naive upper bound on the possible
-number of steps for a 6-pipe asic, ignoring the potential for steps to be
-mutually exclusive, is 91 with current code, therefore 100 is sufficient.
-
-Reviewed-by: Alvin Lee <alvin.lee2@amd.com>
-Signed-off-by: Joshua Aberback <joshua.aberback@amd.com>
-Signed-off-by: Wayne Lin <wayne.lin@amd.com>
-Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Shiwu Zhang <shiwu.zhang@amd.com>
+Reviewed-by: Hawking Zhang <Hawking.Zhang@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/inc/core_types.h | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/inc/core_types.h b/drivers/gpu/drm/amd/display/dc/inc/core_types.h
-index e1e3142cdc00a..62fb2009b3028 100644
---- a/drivers/gpu/drm/amd/display/dc/inc/core_types.h
-+++ b/drivers/gpu/drm/amd/display/dc/inc/core_types.h
-@@ -621,7 +621,7 @@ struct dc_state {
- 	 */
- 	struct bw_context bw_ctx;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+index 31a376f2742a2..48e30e5f83389 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+@@ -44,7 +44,7 @@
+ #include "amdgpu_securedisplay.h"
+ #include "amdgpu_atomfirmware.h"
  
--	struct block_sequence block_sequence[50];
-+	struct block_sequence block_sequence[100];
- 	unsigned int block_sequence_steps;
- 	struct dc_dmub_cmd dc_dmub_cmd[10];
- 	unsigned int dmub_cmd_count;
+-#define AMD_VBIOS_FILE_MAX_SIZE_B      (1024*1024*3)
++#define AMD_VBIOS_FILE_MAX_SIZE_B      (1024*1024*16)
+ 
+ static int psp_load_smu_fw(struct psp_context *psp);
+ static int psp_rap_terminate(struct psp_context *psp);
 -- 
 2.39.5
 
