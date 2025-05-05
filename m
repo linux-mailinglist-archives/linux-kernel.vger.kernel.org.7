@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-634870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E1DAAB4FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:20:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65F2AAB52A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0B427AFDFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE821BA03A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4539489BE0;
-	Tue,  6 May 2025 00:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50630431416;
+	Tue,  6 May 2025 00:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kl6/ndAY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FagQhk8S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97FB2F4961;
-	Mon,  5 May 2025 23:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3EE284685;
+	Mon,  5 May 2025 23:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486973; cv=none; b=YF5jjxhtYEJDEMDjfIXjqt16ecfVwiiLFhKjjRc2VVKKvptL32mAuoKSPlfLuXaJOwovkWlmNLG+2yBdT2GrLsgjH9kmx2JrBSABgCqDa1Qm7oxgMMwAO8Tpq66o9hzvDxJjCC1UcYdGtq7VjW5HpCHnYGxsz8bJDjgHjmrrrG0=
+	t=1746486989; cv=none; b=rTsN0VXvtd/cpMIlYfwD2JnOx//FpYBYGnSCh/uuB0Foa0tKHRKvJ0WRve5EK7W70uXnHOP50SRrZHhwCNAR/o8a1OdYWzrQcfRqkIkrnxIgZ3UkIgTDGwe7rb6DTU1e6ZBKp3UTCU8KQRSQA4HekuglHYW0ZXghhU+aNwamPfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486973; c=relaxed/simple;
-	bh=VoYrOWSuePqP7lmw5BS5TP9vhr4zHmMkmvDx4QLVzKI=;
+	s=arc-20240116; t=1746486989; c=relaxed/simple;
+	bh=VShZx/OtOKuuvh06Jv/lzdqlqBzM61dEtJe8X10rhZI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ePHzQ5akINYI3b+vRGZtJS6XUWjr5DjBFklBX+W6oHUNV/f7jJdr52kJ0CNJTdb1y7jA3p4HR3sAHRROJwoS5NQQk8wWl9zLzfLbqUGllHIJZGDjxnbFylqWrV9Tk6gjj71Sl9qUky8RgrY3GOr3jPGJX4EoAM3CaW+bUMorQWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kl6/ndAY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE5BC4CEE4;
-	Mon,  5 May 2025 23:16:12 +0000 (UTC)
+	 MIME-Version; b=PqedrXHrvdGJIWv4/Q5M7k5a09KyYpaeeg7K1H7SQu6bUF7FmKdx61/GoqeoVuM4nATiro1nNvD6qURUhMBf7Gjz4F9ZxII+1PTjQ7lm7WEWuUGx2ExF5MyYn7mnF8CurtAzzZP0YLFbhC/VmHzErxnvQNoGQUhLQ55BCv9SLIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FagQhk8S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62496C4CEF1;
+	Mon,  5 May 2025 23:16:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486973;
-	bh=VoYrOWSuePqP7lmw5BS5TP9vhr4zHmMkmvDx4QLVzKI=;
+	s=k20201202; t=1746486988;
+	bh=VShZx/OtOKuuvh06Jv/lzdqlqBzM61dEtJe8X10rhZI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Kl6/ndAYzr0I1XyCrLwJEV/bDmbjFNImAUlyobamUKUqCKlI2X6EXaB6AFCr93Rof
-	 DTHMSkKLiUF0VxI9T7lsVqUkEo5cjAVsoqZHpQzB8CB7Q7ZKD2i1pSmG0L529dj+8z
-	 OLc5ngy5Ue8fKFFHzGWs2N13eGaPz8QjzxyqfCiKcT5m0vG7uCk6YdnM4YMbOOQ3YD
-	 EvTDIqgAjVPVHjCrAflXy+j6vGFrcKa1Jy0lIie8pR5yJDfK2pgyZYtiKn3hioOQxO
-	 bJqJrE2XYLm0Mk/iYOqFBpInbfso/ZxGp0VlEP7XK6d4uoJ34S1HaF0n0hnPSW5QBv
-	 wkhOyEPVBnctA==
+	b=FagQhk8SrXYkKyVJErsZdGeN7L+Q7RQ8UlbyL/BIWPoyZjD1PtqThfteBstsr5W2a
+	 pqwbIOUzk4mpu+GLI9W3T4NGQBp2MqvQ+kMXArsbpf9OpkQl3N42S6xJxuN+xWRyAB
+	 7tb5zzmcW8eLpPgJc9K1Su5A0fnbD4NvZxFWP4TeImP1wV0w1eY4Sf67NuQF+zGH/Q
+	 8zTie9bVTjOwkHzYhMCSzxAAKY1MUjpTZlTDvM8x9Fxkl3GhjcykyXA/oWBE38HFwj
+	 kgj2teTFMcPRFfmW4G3vJrpSPglKnJMDtAlQKL60b+I5CR3BQBGU6nGP6OMQ8o7e0G
+	 RiD6Xxq0WO83A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Nir Lichtman <nir@lichtman.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michal Marek <michal.lkml@markovi.net>,
+Cc: Nandakumar Edamana <nandakumar@nandakumar.co.in>,
+	Andrii Nakryiko <andrii@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org
-Subject: [PATCH AUTOSEL 5.15 088/153] x86/build: Fix broken copy command in genimage.sh when making isoimage
-Date: Mon,  5 May 2025 19:12:15 -0400
-Message-Id: <20250505231320.2695319-88-sashal@kernel.org>
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 093/153] libbpf: Fix out-of-bound read
+Date: Mon,  5 May 2025 19:12:20 -0400
+Message-Id: <20250505231320.2695319-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -72,55 +67,41 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Nir Lichtman <nir@lichtman.org>
+From: Nandakumar Edamana <nandakumar@nandakumar.co.in>
 
-[ Upstream commit e451630226bd09dc730eedb4e32cab1cc7155ae8 ]
+[ Upstream commit 236d3910117e9f97ebf75e511d8bcc950f1a4e5f ]
 
-Problem: Currently when running the "make isoimage" command there is an
-error related to wrong parameters passed to the cp command:
+In `set_kcfg_value_str`, an untrusted string is accessed with the assumption
+that it will be at least two characters long due to the presence of checks for
+opening and closing quotes. But the check for the closing quote
+(value[len - 1] != '"') misses the fact that it could be checking the opening
+quote itself in case of an invalid input that consists of just the opening
+quote.
 
-  "cp: missing destination file operand after 'arch/x86/boot/isoimage/'"
+This commit adds an explicit check to make sure the string is at least two
+characters long.
 
-This is caused because FDINITRDS is an empty array.
-
-Solution: Check if FDINITRDS is empty before executing the "cp" command,
-similar to how it is done in the case of hdimage.
-
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Link: https://lore.kernel.org/r/20250110120500.GA923218@lichtman.org
+Signed-off-by: Nandakumar Edamana <nandakumar@nandakumar.co.in>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Link: https://lore.kernel.org/bpf/20250221210110.3182084-1-nandakumar@nandakumar.co.in
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/genimage.sh | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/lib/bpf/libbpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/boot/genimage.sh b/arch/x86/boot/genimage.sh
-index 0673fdfc1a11a..a8a9b1daffac8 100644
---- a/arch/x86/boot/genimage.sh
-+++ b/arch/x86/boot/genimage.sh
-@@ -22,6 +22,7 @@
- # This script requires:
- #   bash
- #   syslinux
-+#   genisoimage
- #   mtools (for fdimage* and hdimage)
- #   edk2/OVMF (for hdimage)
- #
-@@ -250,7 +251,9 @@ geniso() {
- 	cp "$isolinux" "$ldlinux" "$tmp_dir"
- 	cp "$FBZIMAGE" "$tmp_dir"/linux
- 	echo default linux "$KCMDLINE" > "$tmp_dir"/isolinux.cfg
--	cp "${FDINITRDS[@]}" "$tmp_dir"/
-+	if [ ${#FDINITRDS[@]} -gt 0 ]; then
-+		cp "${FDINITRDS[@]}" "$tmp_dir"/
-+	fi
- 	genisoimage -J -r -appid 'LINUX_BOOT' -input-charset=utf-8 \
- 		    -quiet -o "$FIMAGE" -b isolinux.bin \
- 		    -c boot.cat -no-emul-boot -boot-load-size 4 \
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 294fdba9c76f7..40e0d84e3d8ed 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -1567,7 +1567,7 @@ static int set_kcfg_value_str(struct extern_desc *ext, char *ext_val,
+ 	}
+ 
+ 	len = strlen(value);
+-	if (value[len - 1] != '"') {
++	if (len < 2 || value[len - 1] != '"') {
+ 		pr_warn("extern (kcfg) '%s': invalid string config '%s'\n",
+ 			ext->name, value);
+ 		return -EINVAL;
 -- 
 2.39.5
 
