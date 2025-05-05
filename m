@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-633754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D32AAA9B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:20:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF536AAA9B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75CB817FEDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:19:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 675177B0AE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9952BD912;
-	Mon,  5 May 2025 22:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183B22BD939;
+	Mon,  5 May 2025 22:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwV3ah0g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufwQ5oSl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5A029B22B;
-	Mon,  5 May 2025 22:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDA029C324;
+	Mon,  5 May 2025 22:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485078; cv=none; b=nLHJ9oFQ4NcvyFOq860xCOA26BCYYAMUdrATBFi4xjpXc0CEvJrdFt+dKVkaDXWpRHHibOrt/JjJP6lXm0Y36rhtOzhqxEIbh6ozZw1h8t4/XnCKikYKdmC5WQLZ8XpgWT68lCCgxPIpHrmcOQ7khjf7yjupdQiWQbUO+UZIg3A=
+	t=1746485109; cv=none; b=HQ5qq8oeq4nnaAs293nEHuaW3KsoJKHsMplufsurmgOhnJ9WCWnAaR1j40Lh/8N5iXg+tCenXjO2juRzDFNjsQBZxnve2o5QT5knyEc7CdgtzAjm2AeNRnWLRaBGIKRlbZCVPaJBtRb99U9zJWeIBuL5Ssn7EnBsgksdfxfPnMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485078; c=relaxed/simple;
-	bh=pG9jfuldlO2800hDmNAh2x2uJRK3w7OEvUGwAG1O76k=;
+	s=arc-20240116; t=1746485109; c=relaxed/simple;
+	bh=cBQTAsnfnToP87TSZImPQRuj5zjPXF1wUmXlEY6L/5g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pzoq715h5ejH5pwJnvmUab1uGV2yyOH0wCNjsd7CM7QuirBGimFkjC/+GWJNSW0/bboaCPuYwMI0rLqhnwQPSErYdAH8pioTPU+IE3C+Z1G0rDXKllmZ2oLZZLhjvz0OyesMRXaiTBrSK483NgdFmaEQduua5VIgBrvvpqG8yUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwV3ah0g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99064C4CEED;
-	Mon,  5 May 2025 22:44:36 +0000 (UTC)
+	 MIME-Version; b=Dq5fbuZMw1Cni9f1w/6Igc6mo5gkCMlePGgAPbH0gmrI/mZV1QMPDQwQWjK9Y4nK1RvdyAiiQQU0HO35j+xVDQDrpKyY+EbgOb/TczDVm8ol1PAF4Cl/3r5hclfRp6HwSEkdICjR25VHN76eyhVIiZU/9tXLY/uDqnjKBWAQHyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufwQ5oSl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9492DC4CEED;
+	Mon,  5 May 2025 22:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485077;
-	bh=pG9jfuldlO2800hDmNAh2x2uJRK3w7OEvUGwAG1O76k=;
+	s=k20201202; t=1746485107;
+	bh=cBQTAsnfnToP87TSZImPQRuj5zjPXF1wUmXlEY6L/5g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gwV3ah0gm8yL4fRrYi9b8YjZALjLF4ec29m5ehs7ejuVGbJfiwZu/X8TZkcU+hIZs
-	 Rl7/GyZPs8M7kZ1vzUVTEBMijiERoRPVUcO81zwB4xxWPnZGW4iyoUzEkRHbHeUntT
-	 a1T1WEHjoM5t5i1caSqMCfUfvBTELgQOGPLKsYUxjBXDdrLglRqSJNsshwRrU/0yZL
-	 MRNb8SLAeJOQ0PQvCLHoaY5tF8SA0PXL96+xkCl1UKWO/2whLsQwgAwBEfRwZSwz7L
-	 R4vaKarxlzFw7MnmhrYF4STPWkZrR4FmjaLGWiuD7ialfhQk+fxOmdCpafrnFkeC/N
-	 zVKIRjN8CyXDA==
+	b=ufwQ5oSlNQOSnhxZBowvH8QU/m+BZKMLjYaCXF5oPyTN8F4oyFX2UtNwf8351mJLv
+	 9G7MOO+xlgpYYr44tp2B2qiEzo/MW/QRJrq+rxiETcdIqi4GaG2eI9JRKnUnsS3zzg
+	 2CXulhPzAN5VAb4yumRO5S47OtyRfO8c1/SojcIWLRDp4D6FWASdQeSbJ5JGAkLMec
+	 cEiNJXJKlbzms1xhetHvf70c2XFzJ+fXDklARatOzAcfj1iC4O6pKzo4bWDrdxyOhj
+	 BIT1f40Jh9QbKxOLcA45Wk+X+Env1q/OjFJDJmOa/JH2KMzgvtSteNuMmARY9woNrG
+	 abBQ4iTY62hWA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Willem de Bruijn <willemb@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Lu Baolu <baolu.lu@linux.intel.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Joerg Roedel <jroedel@suse.de>,
 	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 155/486] ipv6: save dontfrag in cork
-Date: Mon,  5 May 2025 18:33:51 -0400
-Message-Id: <20250505223922.2682012-155-sashal@kernel.org>
+	dwmw2@infradead.org,
+	joro@8bytes.org,
+	will@kernel.org,
+	iommu@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.12 165/486] iommu/vt-d: Move scalable mode ATS enablement to probe path
+Date: Mon,  5 May 2025 18:34:01 -0400
+Message-Id: <20250505223922.2682012-165-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -68,101 +69,163 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Willem de Bruijn <willemb@google.com>
+From: Lu Baolu <baolu.lu@linux.intel.com>
 
-[ Upstream commit a18dfa9925b9ef6107ea3aa5814ca3c704d34a8a ]
+[ Upstream commit 5518f239aff1baf772c5748da3add7243c5fb5df ]
 
-When spanning datagram construction over multiple send calls using
-MSG_MORE, per datagram settings are configured on the first send.
+Device ATS is currently enabled when a domain is attached to the device
+and disabled when the domain is detached. This creates a limitation:
+when the IOMMU is operating in scalable mode and IOPF is enabled, the
+device's domain cannot be changed.
 
-That is when ip(6)_setup_cork stores these settings for subsequent use
-in __ip(6)_append_data and others.
+The previous code enables ATS when a domain is set to a device's RID and
+disables it during RID domain switch. So, if a PASID is set with a
+domain requiring PRI, ATS should remain enabled until the domain is
+removed. During the PASID domain's lifecycle, if the RID's domain
+changes, PRI will be disrupted because it depends on ATS, which is
+disabled when the blocking domain is set for the device's RID.
 
-The only flag that escaped this was dontfrag. As a result, a datagram
-could be constructed with df=0 on the first sendmsg, but df=1 on a
-next. Which is what cmsg_ip.sh does in an upcoming MSG_MORE test in
-the "diff" scenario.
+Remove this limitation by moving ATS enablement to the device probe path.
 
-Changing datagram conditions in the middle of constructing an skb
-makes this already complex code path even more convoluted. It is here
-unintentional. Bring this flag in line with expected sockopt/cmsg
-behavior.
-
-And stop passing ipc6 to __ip6_append_data, to avoid such issues
-in the future. This is already the case for __ip_append_data.
-
-inet6_cork had a 6 byte hole, so the 1B flag has no impact.
-
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Link: https://patch.msgid.link/20250307033620.411611-3-willemdebruijn.kernel@gmail.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Tested-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+Link: https://lore.kernel.org/r/20250228092631.3425464-5-baolu.lu@linux.intel.com
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/ipv6.h  | 1 +
- net/ipv6/ip6_output.c | 9 +++++----
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/iommu/intel/iommu.c | 51 ++++++++++++++++++++-----------------
+ 1 file changed, 27 insertions(+), 24 deletions(-)
 
-diff --git a/include/linux/ipv6.h b/include/linux/ipv6.h
-index a6e2aadbb91bd..5aeeed22f35bf 100644
---- a/include/linux/ipv6.h
-+++ b/include/linux/ipv6.h
-@@ -207,6 +207,7 @@ struct inet6_cork {
- 	struct ipv6_txoptions *opt;
- 	u8 hop_limit;
- 	u8 tclass;
-+	u8 dontfrag:1;
- };
- 
- /* struct ipv6_pinfo - ipv6 private area */
-diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index 434ddf263b88a..89a61e040e6a1 100644
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1386,6 +1386,7 @@ static int ip6_setup_cork(struct sock *sk, struct inet_cork_full *cork,
- 	}
- 	v6_cork->hop_limit = ipc6->hlimit;
- 	v6_cork->tclass = ipc6->tclass;
-+	v6_cork->dontfrag = ipc6->dontfrag;
- 	if (rt->dst.flags & DST_XFRM_TUNNEL)
- 		mtu = READ_ONCE(np->pmtudisc) >= IPV6_PMTUDISC_PROBE ?
- 		      READ_ONCE(rt->dst.dev->mtu) : dst_mtu(&rt->dst);
-@@ -1417,7 +1418,7 @@ static int __ip6_append_data(struct sock *sk,
- 			     int getfrag(void *from, char *to, int offset,
- 					 int len, int odd, struct sk_buff *skb),
- 			     void *from, size_t length, int transhdrlen,
--			     unsigned int flags, struct ipcm6_cookie *ipc6)
-+			     unsigned int flags)
- {
- 	struct sk_buff *skb, *skb_prev = NULL;
- 	struct inet_cork *cork = &cork_full->base;
-@@ -1471,7 +1472,7 @@ static int __ip6_append_data(struct sock *sk,
- 	if (headersize + transhdrlen > mtu)
- 		goto emsgsize;
- 
--	if (cork->length + length > mtu - headersize && ipc6->dontfrag &&
-+	if (cork->length + length > mtu - headersize && v6_cork->dontfrag &&
- 	    (sk->sk_protocol == IPPROTO_UDP ||
- 	     sk->sk_protocol == IPPROTO_ICMPV6 ||
- 	     sk->sk_protocol == IPPROTO_RAW)) {
-@@ -1843,7 +1844,7 @@ int ip6_append_data(struct sock *sk,
- 
- 	return __ip6_append_data(sk, &sk->sk_write_queue, &inet->cork,
- 				 &np->cork, sk_page_frag(sk), getfrag,
--				 from, length, transhdrlen, flags, ipc6);
-+				 from, length, transhdrlen, flags);
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 038a66388564a..5069a628deea1 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1284,32 +1284,28 @@ static bool dev_needs_extra_dtlb_flush(struct pci_dev *pdev)
+ 	return true;
  }
- EXPORT_SYMBOL_GPL(ip6_append_data);
  
-@@ -2048,7 +2049,7 @@ struct sk_buff *ip6_make_skb(struct sock *sk,
- 	err = __ip6_append_data(sk, &queue, cork, &v6_cork,
- 				&current->task_frag, getfrag, from,
- 				length + exthdrlen, transhdrlen + exthdrlen,
--				flags, ipc6);
-+				flags);
- 	if (err) {
- 		__ip6_flush_pending_frames(sk, &queue, cork, &v6_cork);
- 		return ERR_PTR(err);
+-static void iommu_enable_pci_caps(struct device_domain_info *info)
++static void iommu_enable_pci_ats(struct device_domain_info *info)
+ {
+ 	struct pci_dev *pdev;
+ 
+-	if (!dev_is_pci(info->dev))
++	if (!info->ats_supported)
+ 		return;
+ 
+ 	pdev = to_pci_dev(info->dev);
+-	if (info->ats_supported && pci_ats_page_aligned(pdev) &&
+-	    !pci_enable_ats(pdev, VTD_PAGE_SHIFT))
++	if (!pci_ats_page_aligned(pdev))
++		return;
++
++	if (!pci_enable_ats(pdev, VTD_PAGE_SHIFT))
+ 		info->ats_enabled = 1;
+ }
+ 
+-static void iommu_disable_pci_caps(struct device_domain_info *info)
++static void iommu_disable_pci_ats(struct device_domain_info *info)
+ {
+-	struct pci_dev *pdev;
+-
+-	if (!dev_is_pci(info->dev))
++	if (!info->ats_enabled)
+ 		return;
+ 
+-	pdev = to_pci_dev(info->dev);
+-
+-	if (info->ats_enabled) {
+-		pci_disable_ats(pdev);
+-		info->ats_enabled = 0;
+-	}
++	pci_disable_ats(to_pci_dev(info->dev));
++	info->ats_enabled = 0;
+ }
+ 
+ static void intel_flush_iotlb_all(struct iommu_domain *domain)
+@@ -1722,12 +1718,19 @@ domain_context_mapping(struct dmar_domain *domain, struct device *dev)
+ 	struct device_domain_info *info = dev_iommu_priv_get(dev);
+ 	struct intel_iommu *iommu = info->iommu;
+ 	u8 bus = info->bus, devfn = info->devfn;
++	int ret;
+ 
+ 	if (!dev_is_pci(dev))
+ 		return domain_context_mapping_one(domain, iommu, bus, devfn);
+ 
+-	return pci_for_each_dma_alias(to_pci_dev(dev),
+-				      domain_context_mapping_cb, domain);
++	ret = pci_for_each_dma_alias(to_pci_dev(dev),
++				     domain_context_mapping_cb, domain);
++	if (ret)
++		return ret;
++
++	iommu_enable_pci_ats(info);
++
++	return 0;
+ }
+ 
+ /* Return largest possible superpage level for a given mapping */
+@@ -1987,8 +1990,6 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+ 	if (ret)
+ 		goto out_block_translation;
+ 
+-	iommu_enable_pci_caps(info);
+-
+ 	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
+ 	if (ret)
+ 		goto out_block_translation;
+@@ -3368,6 +3369,7 @@ static void domain_context_clear(struct device_domain_info *info)
+ 
+ 	pci_for_each_dma_alias(to_pci_dev(info->dev),
+ 			       &domain_context_clear_one_cb, info);
++	iommu_disable_pci_ats(info);
+ }
+ 
+ /*
+@@ -3384,7 +3386,6 @@ void device_block_translation(struct device *dev)
+ 	if (info->domain)
+ 		cache_tag_unassign_domain(info->domain, dev, IOMMU_NO_PASID);
+ 
+-	iommu_disable_pci_caps(info);
+ 	if (!dev_is_real_dma_subdevice(dev)) {
+ 		if (sm_supported(iommu))
+ 			intel_pasid_tear_down_entry(iommu, dev,
+@@ -3964,6 +3965,9 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
+ 	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
+ 		info->pasid_enabled = 1;
+ 
++	if (sm_supported(iommu))
++		iommu_enable_pci_ats(info);
++
+ 	return &iommu->iommu;
+ free_table:
+ 	intel_pasid_free_table(dev);
+@@ -3980,6 +3984,8 @@ static void intel_iommu_release_device(struct device *dev)
+ 	struct device_domain_info *info = dev_iommu_priv_get(dev);
+ 	struct intel_iommu *iommu = info->iommu;
+ 
++	iommu_disable_pci_ats(info);
++
+ 	if (info->pasid_enabled) {
+ 		pci_disable_pasid(to_pci_dev(dev));
+ 		info->pasid_enabled = 0;
+@@ -4581,13 +4587,10 @@ static int identity_domain_attach_dev(struct iommu_domain *domain, struct device
+ 	if (dev_is_real_dma_subdevice(dev))
+ 		return 0;
+ 
+-	if (sm_supported(iommu)) {
++	if (sm_supported(iommu))
+ 		ret = intel_pasid_setup_pass_through(iommu, dev, IOMMU_NO_PASID);
+-		if (!ret)
+-			iommu_enable_pci_caps(info);
+-	} else {
++	else
+ 		ret = device_setup_pass_through(dev);
+-	}
+ 
+ 	return ret;
+ }
 -- 
 2.39.5
 
