@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-631885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38D0AA8EDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:06:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62109AA8EE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DA291746FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C68753B731B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D384C1A5BAE;
-	Mon,  5 May 2025 09:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C90C1F461A;
+	Mon,  5 May 2025 09:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MlL7nBW/"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0MeWC9Vi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZzjkqVyJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C74F1A5BB9
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 09:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021801E1DE5;
+	Mon,  5 May 2025 09:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746435956; cv=none; b=RNzns3r93rhNOO1YAcXRBToqvfziAMPT+FZ3/P7l6v+7vNafjEFs00t/NkfUNrl3Je1+h6hYRXHgi64Tsa0NeORgwvlusNHqLQn90io8pHDBuckrCJ8I7zvn5M6fOr3Q6Ks/2uuOO5SnzUZy36z7RFkxGYrtfyJ62r9q1Nq540I=
+	t=1746435987; cv=none; b=S7hnGVIaPCSHJKwJLXrtLunaX6TBGCRDsexoX7UrNUOqZsukgeJUNRSGedD4QW8ATpllHKQKbCW7VlfP3+niHkxkKOft5LCe7k9R0UJ+HWeOrHLtf30HYDAJqdMYTrzTayWS1FtkFUf8t7cuyGLLHl+eqrcV5Q9aW2sh+kWp8aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746435956; c=relaxed/simple;
-	bh=jaVB3sx5ejThu8wEUg5nUqvMM3/yIkqZP4MpKH/Gvus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DbUlOTYwiZLxm/PtVHz94KglojVfZeXxVjHCB83WTsdaW8zt6JsdJf9j75Ul3Xz2QjaOHkTjgWikiu/i08rRPKWmqi3I3kBAOavhsMzH5gbFeCkgmjFXdL+/EAL/cuWpVYu7wMDrncsVK2cpLADbZAJymCO/vfdUnuiG+PvdjPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MlL7nBW/; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54b1095625dso5078297e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 02:05:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746435951; x=1747040751; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jaVB3sx5ejThu8wEUg5nUqvMM3/yIkqZP4MpKH/Gvus=;
-        b=MlL7nBW/px4/CIrOcDVdTNLRXOHn8yS4tkl8gahouAGayJGPJqKG7TovPRz6OZflQ7
-         HrxkSxMMF2EGr29W1/2JgxnxPb/qX9uIb23pv7gXw8tqn0fB/SaqXK1Lp+p0Vk2xU23l
-         LZZRy5uq+6LmDkYfAOtc4U3E8P4ZaMU0hFF6m9aX03TaP3+twc2rXMw+f83YhOABl0S3
-         hB0EUgKimx8KloaODdiVeQ0hw9ejIGmwvHM23m4Jy6jqECJthkTg9Nq4OFj7UcJIREOw
-         ZJUDneEhIBtERekDd9C4bih9FI56DBBCMu2BDfDBp9vbmYYAurypYzemB/N3Co+b9dlc
-         +E7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746435951; x=1747040751;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jaVB3sx5ejThu8wEUg5nUqvMM3/yIkqZP4MpKH/Gvus=;
-        b=K4Rjy8DHJGwYv0zbW6rS18+xmXArZt2dcU/n8dLJR54kmsm3PGWQ5EyMPBjpst9N6r
-         KqSUNgSJkIT4O6DfrEH9yhzNbcCK4mk/fE+Is5C0+zjY442fM0+4pO1UrY7mVZDo4zhu
-         WttBl3q4Vgr8GBZc3b+FVbbcAYlMIo9pSTho5WRG3ra6XbwBI2ZBf/uk9siaAN2jc/lc
-         vw+yWUIBDK8mNFR5pC/1wQhcFTJuxj8a5yf6r3hWFToG+OKHnnxdiSvDZiT+1Tyn4yfN
-         rq9/QPelHzXK3NNcFQXeK9y6bt5M2K4PLRwvyFe5lTSgObr5YyhismoHfZBUhAmxlMbM
-         qwGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVbMmY9qN7OwBfwT42D7x6lXMh97qdyUPYDein4dLxrybLNC4EVwmQU4DuScJVNgEqo1QqFE+Zpf77/LU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5EMxZmPt9w36C2xfMdF/7PsM1pr8bZ2O6pHYrGwAesPXTll69
-	P4K1vxmonrGUyPYuDXqXCbF1h5lz4O7eO8VDYpBB2iNhs3LcsW7ZSGhsOida28q7VtZtvmMDCQh
-	31jwfCQgUIiAhC29ol8YGR8Sr7+EaXYigq7E1Tw==
-X-Gm-Gg: ASbGnctxD50Bk3zgBgI0xVYIqPeLrcwygQRNMTfmS3zPl0CH9k8lFYHEJAUEpbyQ+Ua
-	bQirIGBOzsz4fV3VH92YjJwbY0yfsU6Ng5VsNOyovwCkd1FiWE4eggigHRGzoDY7FILnb2wLrLD
-	4DXngBuka/2n84UFQ6GaJjig==
-X-Google-Smtp-Source: AGHT+IG1Gg4cqaY2027Xkt9vszcojc1RUUWP69uzjNjCzPb0+lNxfxbfad5R/RgzScrc0f+PobFDAQA8A6a3BcrID1g=
-X-Received: by 2002:a05:6512:118d:b0:54a:f76a:6f83 with SMTP id
- 2adb3069b0e04-54eac200d31mr3042013e87.13.1746435951218; Mon, 05 May 2025
- 02:05:51 -0700 (PDT)
+	s=arc-20240116; t=1746435987; c=relaxed/simple;
+	bh=dwiDZndRFyLkL2brJUMP8qqJ8MGyigXi64I7ooe65Go=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8fP4NypiHeIrKYvY72LMkwBVPd/bCMDG0OT3HjEiZAaJChk76eqIhWYGMgQgeX+zENZ5Ohwypb36CfxcyuxZJnY+Zd7t29UnGJriOi79t5/guFg/olFiE88styJhfvKZ2ZaLDdq2ORupSgAckvl7CA7pjcHSEOO4U0fkPfkH1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0MeWC9Vi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZzjkqVyJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 5 May 2025 11:06:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746435983;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hU2mOFIakYu1JXvoaJZnS0pZd0tIlcvrypVKAXkNPt8=;
+	b=0MeWC9VixBL+yIvcu/2Vlj+rC6XYBt0Lwwuj3lI+T3JWTk7UbRlU6/M9YpEreOhCvWu2Qs
+	B88oLp/ncbGh3sUCtOPSFA/rk2AgtwtYIlEnGFFACtfQaCK2ZyZ52kjwggqe3hdfec4gjY
+	5hZh3sm7VvJylzBTo0G3yBviNVhGU1QBdUcmvlM7oo22hKZzut5vZBdUHIc1MFoqvVhUVV
+	s7XDBVITq0Es3ChLniEuXjqIAn/m90t6UMj/LbsZz0cxH+aSLsaRKUxpya5OzxYBEEcjGx
+	BTbdld+hUlBa4WNM4q8VP23PBdjCOQpZrBkWDV8v1VExSWa1ZS+TkuDN7fJUJw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746435983;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hU2mOFIakYu1JXvoaJZnS0pZd0tIlcvrypVKAXkNPt8=;
+	b=ZzjkqVyJrEYAyTAbEVRah1Hmfig2TmjA9h3qEpX0F3TlWJQjVp6+a5ySJH8PjLF0hAfJyy
+	34v9hcGVh2sJizCA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>,
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Meta kernel team <kernel-team@meta.com>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v2 3/3] memcg: no irq disable for memcg stock lock
+Message-ID: <20250505090617.Q6tHb1NH@linutronix.de>
+References: <20250502001742.3087558-1-shakeel.butt@linux.dev>
+ <20250502001742.3087558-4-shakeel.butt@linux.dev>
+ <CAADnVQJ-XEEwVppk-qY2mmGB4R18_nqH-wdv5nuJf2LST5=Aaw@mail.gmail.com>
+ <CAGj-7pWqvtWj2nSOaQwoLbwUrVcLfKc0U2TcmxuSB87dWmZcgQ@mail.gmail.com>
+ <CAADnVQ+dhiuvrmTiKeGCnjDk9=4ygETJXR+E4zQr5H2MzBLBCQ@mail.gmail.com>
+ <CAGj-7pXrKBr+LC_Mbj+xyud=tXpR3bCYwzOQTUgM8aSZ0qNnhA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev> <20250503-smc-6-15-v4-1-500b9b6546fc@svenpeter.dev>
-In-Reply-To: <20250503-smc-6-15-v4-1-500b9b6546fc@svenpeter.dev>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 5 May 2025 11:05:40 +0200
-X-Gm-Features: ATxdqUG40K92Q6cLhA-jiK9adWrE64up9leFqXIiQtBvPLIG9_nqRk1Z9BFEJZw
-Message-ID: <CACRpkdbCfUEZd06yeZTNecGFPwBgJkpMH3hqkvJw4J+iSENG=Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/9] dt-bindings: gpio: Add Apple Mac SMC GPIO block
-To: sven@svenpeter.dev
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGj-7pXrKBr+LC_Mbj+xyud=tXpR3bCYwzOQTUgM8aSZ0qNnhA@mail.gmail.com>
 
-On Sat, May 3, 2025 at 12:07=E2=80=AFPM Sven Peter via B4 Relay
-<devnull+sven.svenpeter.dev@kernel.org> wrote:
+On 2025-05-02 16:40:53 [-0700], Shakeel Butt wrote:
+> On Fri, May 2, 2025 at 4:28=E2=80=AFPM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> [...]
+> > > >
+> > > > I don't think it works.
+> > > > When there is a normal irq and something doing regular GFP_NOWAIT
+> > > > allocation gfpflags_allow_spinning() will be true and
+> > > > local_lock() will reenter and complain that lock->acquired is
+> > > > already set... but only with lockdep on.
+> > >
+> > > Yes indeed. I dropped the first patch and didn't fix this one
+> > > accordingly. I think the fix can be as simple as checking for
+> > > in_task() here instead of gfp_mask. That should work for both RT and
+> > > non-RT kernels.
+> >
+> > Like:
+> > if (in_task())
+> >   local_lock(...);
+> > else if (!local_trylock(...))
+> >
+> > Most of the networking runs in bh, so it will be using
+> > local_trylock() path which is probably ok in !PREEMPT_RT,
+> > but will cause random performance issues in PREEMP_RT,
+> > since rt_spin_trylock() will be randomly failing and taking
+> > slow path of charging. It's not going to cause permanent
+> > nginx 3x regression :), but unlucky slowdowns will be seen.
+> > A task can grab that per-cpu rt_spin_lock and preempted
+> > by network processing.
+>=20
+> Does networking run in bh for PREEMPT_RT as well?
 
-> From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
->
-> Add the DT binding for the Apple Mac System Management Controller GPIOs.
->
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Sven Peter <sven@svenpeter.dev>
+It does but BH is preemptible.
 
-LGTM
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> I think I should get networking & RT folks opinion on this one. I will
+> decouple this irq patch from the decoupling lock patches and start a
+> separate discussion thread.
 
-Yours,
-Linus Walleij
+Sebastian
 
