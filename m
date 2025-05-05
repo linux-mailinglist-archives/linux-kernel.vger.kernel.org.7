@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-634835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBD6AAB4F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:19:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A66AAB4AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454B73A1D51
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:11:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 073797A6C96
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6995339B09B;
-	Tue,  6 May 2025 00:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1686484A0B;
+	Tue,  6 May 2025 00:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBntmlMJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS1Pzm65"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54BA28980A;
-	Mon,  5 May 2025 23:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196FF289826;
+	Mon,  5 May 2025 23:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486849; cv=none; b=mzml01rsz4U6/Q/0Va2xi8mh1RJMuMbu/c084ed8MXqhXgHcfsasoq7wD5oeh+NXm11Ul7j7FhINl2oFSZJrdW7dANK1uNOpU0gdugSK4KC2LF28eWZFfRJRE0wU8NUZ1SPu0hiXgBAn+yPTJKjIlATZJ15k0ea0rGvwk0HCmtE=
+	t=1746486853; cv=none; b=smZd+Uo7vSm+Xvh352ifr57Nk/2jIg3Qd1TAK2MjvVSSS9XL0JUlNtJ7A1ifNsOUuhL8NFd34Ro/qFWcx8qbFwrAabq3wd7w0nIL1kPUriGSX7E7qRsX4jIbALYpO7zKCiMy0JpStfgoF5n+82L/hpUbpmEe1ou/GOS2fa9oH0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486849; c=relaxed/simple;
-	bh=haZOxrIKjcsvGCAXXwzOHv+AfZU0O5AQA1k0Hcb9ffw=;
+	s=arc-20240116; t=1746486853; c=relaxed/simple;
+	bh=6K1W7Zy3vyBKZTLpth2DPhBesAHtGw1EAG+78Ae1Obo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DZvef2xSDAY0X3LYKhMts4s72/KaAS3zZlGcsBsrWusvFUxixijQ/YAUzZnw6BfxT5JmN39Cw2RGuTCfXBmjyFtYb/8tgfVE0OvpIpgxLuxaBsQ6t4QjmfzWwmpCbf/eiu+W3hXDEBfTYvQc90EeE2zy0Ja9r94fHQ6outtsSPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBntmlMJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0BE7C4CEED;
-	Mon,  5 May 2025 23:14:08 +0000 (UTC)
+	 MIME-Version; b=mAI9KpqkOeozh3gYNq7jVi/jLUvEUEayhNDn3Jg+t4TQyKnZhUT9k6lzk+/k2eXOhflU0VZm9nLKRwHd7ODwjlYbUuDfIT8ViFTJ+nMF+VM4jL8BYx/Jjv+BSphO6OHthRLZYLHgTvBC5BzfGw0mraCzxm2HVSiYGClPJHTwxXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MS1Pzm65; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02A04C4CEE4;
+	Mon,  5 May 2025 23:14:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486849;
-	bh=haZOxrIKjcsvGCAXXwzOHv+AfZU0O5AQA1k0Hcb9ffw=;
+	s=k20201202; t=1746486852;
+	bh=6K1W7Zy3vyBKZTLpth2DPhBesAHtGw1EAG+78Ae1Obo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lBntmlMJTZdVWO77y6Owx00N1OxM29tu1XuCHWkAub+NVWGCdQbrv2ro4UaS2Nz/m
-	 u8aUIO4xx9tNQk93iiUu2kku+HAw44OtFqFr857/M9MWhK+vaf0rSC7MMlfPsj0k9/
-	 6qQwV/qlOQ+jeGw6BQbqH87K5rH+kGLFE8I4aU6xvPuQ30waPtvtMLeyhlE4e9GHco
-	 7jHmwlpwFpV27mz370LGjqmcgizzFnWJaICQ2Q0Yk2TTqxr6kpis36+P16KTECrVyB
-	 ZXcQA/VqPoGgcsmIgq1rZ4iX5B0Fa/RxeFeYTP2+vuyWgyBWddUBz9XejSFbooQKt8
-	 aKn5ycUrY4Cjg==
+	b=MS1Pzm65pzvEtTS97JrJGAe4XEAwT7go+JxmHA3xNSUeRTalJxRJPGswQQAdR0wfY
+	 6k85Fs4tubxiqa3GYd3F6O14sQym2U2A+kRq/BJecjoVvAOFYMxZMGRhFIlogBvPuY
+	 6UUuzGNhEDh/8F01Hw/L9j53Awuzlgb4LNkXDIJnvvYdZ4dgBlsAnumW96S7VgJsKD
+	 6qH64yVhrPYUQUBdCUFYy4LFEU0NPDXySqA6w1uTpSigJewRK4MjwyqIUkpYYQrB68
+	 DlRFkysypTg6Ozi18ahYQ9AST+nAJsKsQK1Z/fUBQlrlQrj3zPlfDK06guxHQ698ZH
+	 OUetK0WuisIqg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
+Cc: Boris Burkov <boris@bur.io>,
+	Filipe Manana <fdmanana@suse.com>,
+	David Sterba <dsterba@suse.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 022/153] i2c: qup: Vote for interconnect bandwidth to DRAM
-Date: Mon,  5 May 2025 19:11:09 -0400
-Message-Id: <20250505231320.2695319-22-sashal@kernel.org>
+	clm@fb.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 024/153] btrfs: make btrfs_discard_workfn() block_group ref explicit
+Date: Mon,  5 May 2025 19:11:11 -0400
+Message-Id: <20250505231320.2695319-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -65,137 +67,104 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+From: Boris Burkov <boris@bur.io>
 
-[ Upstream commit d4f35233a6345f62637463ef6e0708f44ffaa583 ]
+[ Upstream commit 895c6721d310c036dcfebb5ab845822229fa35eb ]
 
-When the I2C QUP controller is used together with a DMA engine it needs
-to vote for the interconnect path to the DRAM. Otherwise it may be
-unable to access the memory quickly enough.
+Currently, the async discard machinery owns a ref to the block_group
+when the block_group is queued on a discard list. However, to handle
+races with discard cancellation and the discard workfn, we have a
+specific logic to detect that the block_group is *currently* running in
+the workfn, to protect the workfn's usage amidst cancellation.
 
-The requested peak bandwidth is dependent on the I2C core clock.
+As far as I can tell, this doesn't have any overt bugs (though
+finish_discard_pass() and remove_from_discard_list() racing can have a
+surprising outcome for the caller of remove_from_discard_list() in that
+it is again added at the end).
 
-To avoid sending votes too often the bandwidth is always requested when
-a DMA transfer starts, but dropped only on runtime suspend. Runtime
-suspend should only happen if no transfer is active. After resumption we
-can defer the next vote until the first DMA transfer actually happens.
+But it is needlessly complicated to rely on locking and the nullity of
+discard_ctl->block_group. Simplify this significantly by just taking a
+refcount while we are in the workfn and unconditionally drop it in both
+the remove and workfn paths, regardless of if they race.
 
-The implementation is largely identical to the one introduced for
-spi-qup in commit ecdaa9473019 ("spi: qup: Vote for interconnect
-bandwidth to DRAM") since both drivers represent the same hardware
-block.
-
-Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
-Link: https://lore.kernel.org/r/20231128-i2c-qup-dvfs-v1-3-59a0e3039111@kernkonzept.com
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Boris Burkov <boris@bur.io>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-qup.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ fs/btrfs/discard.c | 34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-index b89eca2398d90..a2fb9dd58c95d 100644
---- a/drivers/i2c/busses/i2c-qup.c
-+++ b/drivers/i2c/busses/i2c-qup.c
-@@ -14,6 +14,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
-+#include <linux/interconnect.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-@@ -150,6 +151,8 @@
- /* TAG length for DATA READ in RX FIFO  */
- #define READ_RX_TAGS_LEN		2
+diff --git a/fs/btrfs/discard.c b/fs/btrfs/discard.c
+index bd9dde374e5d8..3ddd0c24a94ea 100644
+--- a/fs/btrfs/discard.c
++++ b/fs/btrfs/discard.c
+@@ -151,13 +151,7 @@ static bool remove_from_discard_list(struct btrfs_discard_ctl *discard_ctl,
+ 	block_group->discard_eligible_time = 0;
+ 	queued = !list_empty(&block_group->discard_list);
+ 	list_del_init(&block_group->discard_list);
+-	/*
+-	 * If the block group is currently running in the discard workfn, we
+-	 * don't want to deref it, since it's still being used by the workfn.
+-	 * The workfn will notice this case and deref the block group when it is
+-	 * finished.
+-	 */
+-	if (queued && !running)
++	if (queued)
+ 		btrfs_put_block_group(block_group);
  
-+#define QUP_BUS_WIDTH			8
-+
- static unsigned int scl_freq;
- module_param_named(scl_freq, scl_freq, uint, 0444);
- MODULE_PARM_DESC(scl_freq, "SCL frequency override");
-@@ -227,6 +230,7 @@ struct qup_i2c_dev {
- 	int			irq;
- 	struct clk		*clk;
- 	struct clk		*pclk;
-+	struct icc_path		*icc_path;
- 	struct i2c_adapter	adap;
- 
- 	int			clk_ctl;
-@@ -255,6 +259,10 @@ struct qup_i2c_dev {
- 	/* To configure when bus is in run state */
- 	u32			config_run;
- 
-+	/* bandwidth votes */
-+	u32			src_clk_freq;
-+	u32			cur_bw_clk_freq;
-+
- 	/* dma parameters */
- 	bool			is_dma;
- 	/* To check if the current transfer is using DMA */
-@@ -453,6 +461,23 @@ static int qup_i2c_bus_active(struct qup_i2c_dev *qup, int len)
- 	return ret;
- }
- 
-+static int qup_i2c_vote_bw(struct qup_i2c_dev *qup, u32 clk_freq)
-+{
-+	u32 needed_peak_bw;
-+	int ret;
-+
-+	if (qup->cur_bw_clk_freq == clk_freq)
-+		return 0;
-+
-+	needed_peak_bw = Bps_to_icc(clk_freq * QUP_BUS_WIDTH);
-+	ret = icc_set_bw(qup->icc_path, 0, needed_peak_bw);
-+	if (ret)
-+		return ret;
-+
-+	qup->cur_bw_clk_freq = clk_freq;
-+	return 0;
-+}
-+
- static void qup_i2c_write_tx_fifo_v1(struct qup_i2c_dev *qup)
- {
- 	struct qup_i2c_block *blk = &qup->blk;
-@@ -840,6 +865,10 @@ static int qup_i2c_bam_xfer(struct i2c_adapter *adap, struct i2c_msg *msg,
- 	int ret = 0;
- 	int idx = 0;
- 
-+	ret = qup_i2c_vote_bw(qup, qup->src_clk_freq);
-+	if (ret)
-+		return ret;
-+
- 	enable_irq(qup->irq);
- 	ret = qup_i2c_req_dma(qup);
- 
-@@ -1645,6 +1674,7 @@ static void qup_i2c_disable_clocks(struct qup_i2c_dev *qup)
- 	config = readl(qup->base + QUP_CONFIG);
- 	config |= QUP_CLOCK_AUTO_GATE;
- 	writel(config, qup->base + QUP_CONFIG);
-+	qup_i2c_vote_bw(qup, 0);
- 	clk_disable_unprepare(qup->pclk);
- }
- 
-@@ -1745,6 +1775,11 @@ static int qup_i2c_probe(struct platform_device *pdev)
- 			goto fail_dma;
+ 	spin_unlock(&discard_ctl->lock);
+@@ -243,9 +237,10 @@ static struct btrfs_block_group *peek_discard_list(
+ 			block_group->discard_cursor = block_group->start;
+ 			block_group->discard_state = BTRFS_DISCARD_EXTENTS;
  		}
- 		qup->is_dma = true;
-+
-+		qup->icc_path = devm_of_icc_get(&pdev->dev, NULL);
-+		if (IS_ERR(qup->icc_path))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(qup->icc_path),
-+					     "failed to get interconnect path\n");
+-		discard_ctl->block_group = block_group;
  	}
- 
- nodma:
-@@ -1793,6 +1828,7 @@ static int qup_i2c_probe(struct platform_device *pdev)
- 		qup_i2c_enable_clocks(qup);
- 		src_clk_freq = clk_get_rate(qup->clk);
+ 	if (block_group) {
++		btrfs_get_block_group(block_group);
++		discard_ctl->block_group = block_group;
+ 		*discard_state = block_group->discard_state;
+ 		*discard_index = block_group->discard_index;
  	}
-+	qup->src_clk_freq = src_clk_freq;
+@@ -469,9 +464,20 @@ static void btrfs_discard_workfn(struct work_struct *work)
  
- 	/*
- 	 * Bootloaders might leave a pending interrupt on certain QUP's,
+ 	block_group = peek_discard_list(discard_ctl, &discard_state,
+ 					&discard_index, now);
+-	if (!block_group || !btrfs_run_discard_work(discard_ctl))
++	if (!block_group)
+ 		return;
++	if (!btrfs_run_discard_work(discard_ctl)) {
++		spin_lock(&discard_ctl->lock);
++		btrfs_put_block_group(block_group);
++		discard_ctl->block_group = NULL;
++		spin_unlock(&discard_ctl->lock);
++		return;
++	}
+ 	if (now < block_group->discard_eligible_time) {
++		spin_lock(&discard_ctl->lock);
++		btrfs_put_block_group(block_group);
++		discard_ctl->block_group = NULL;
++		spin_unlock(&discard_ctl->lock);
+ 		btrfs_discard_schedule_work(discard_ctl, false);
+ 		return;
+ 	}
+@@ -523,15 +529,7 @@ static void btrfs_discard_workfn(struct work_struct *work)
+ 	spin_lock(&discard_ctl->lock);
+ 	discard_ctl->prev_discard = trimmed;
+ 	discard_ctl->prev_discard_time = now;
+-	/*
+-	 * If the block group was removed from the discard list while it was
+-	 * running in this workfn, then we didn't deref it, since this function
+-	 * still owned that reference. But we set the discard_ctl->block_group
+-	 * back to NULL, so we can use that condition to know that now we need
+-	 * to deref the block_group.
+-	 */
+-	if (discard_ctl->block_group == NULL)
+-		btrfs_put_block_group(block_group);
++	btrfs_put_block_group(block_group);
+ 	discard_ctl->block_group = NULL;
+ 	__btrfs_discard_schedule_work(discard_ctl, now, false);
+ 	spin_unlock(&discard_ctl->lock);
 -- 
 2.39.5
 
