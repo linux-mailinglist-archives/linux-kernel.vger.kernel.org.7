@@ -1,351 +1,195 @@
-Return-Path: <linux-kernel+bounces-632941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F02AA9EB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:03:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7118AAA9D64
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1518E3B1D13
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D8755A02D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7B8276025;
-	Mon,  5 May 2025 22:03:21 +0000 (UTC)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76892701C1;
+	Mon,  5 May 2025 20:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="OWmaglKi"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2070.outbound.protection.outlook.com [40.107.249.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482C01FC0FC;
-	Mon,  5 May 2025 22:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746482601; cv=none; b=A5u9Rems5aBHPbckfq/0IlvnrbPVtKVK6yb2fa3ZlB1yOdLDc5KtaoGtCTsVobZ/EwO2qeSehyovGeFklK94swwHFAlXXav6XfNJpH+jy3QopMzQxDDWhF/BmHRtomo0h7IpQ70oNDCstpK1B3rPVwZHesNyD+yNFgsKJ9XvmxI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746482601; c=relaxed/simple;
-	bh=4tIdy1eNVabgIkyQ/aGtInUI8WyketjcPeyE7XfTSKE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FqA52Axy1SRXjET5+XEPJ4iQ1if2tCbFsBafmylJM0iC5k/eYpex7GPx77CgsrnUEkFoVzCcikLH7w/heR3AKKVNRHa0C2e1ZcWcJNxQdhtC32m7GUhSKSCW5I9jgDmhIJxh66VEVH/QWOzU5Yb+62E72Dt9q35nwAakbcz6nJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7370f389d07so755421b3a.3;
-        Mon, 05 May 2025 15:03:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746482598; x=1747087398;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UyuTRWwa63sgzcu4uOhEilYwscaDbdvjA6+RJR1uCNM=;
-        b=olsBLl+hEyYjEteQVgrsILZkbXWuCC7HiILQbQXQEKmX1RWReALUt7WJzoLS+Uva5k
-         l9D+Emxvxc4hp+0E8zFqhswiBvDCFySLX3RvRLXdvgVC9revALs4NPciA3viu6kFsrPI
-         83s+C+2dRgBnDmot17G0DsThD2l13Mo0JW7JEWL6bit1421xVTzQ4bEwOslOs9p3yheP
-         50z/7MtCM5c9j6g4bfw0/Wwwz6QIoLM5IBJ2kAqGBfqmLg2gR/s03lQUWhuU7GYMcwUz
-         j+OV8gyc2akWYJP2YUhCB9sIsgWna282AvxlQL0ZglSeFNSJW/Ll9aQv8JUZPAPwVTXb
-         7v1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUtppkaTvv9K/CwkkTChvQiUv/76Tn76Gvq+CZ3knjReblbowiaEVKHlkv2dqVYMLcc9AhCYoIOX77/SRep@vger.kernel.org, AJvYcCX1NuhK6xon4SJVO5Qf0xLlK36hreU7/yhKH185WarehL9d9P7kszWpYR39DVZBPWK4snqiskHeS0ysIXcX@vger.kernel.org, AJvYcCXx8+0O9VTPyNNLVZkb+j3eVE00Nupud/AGE+G2QqXU6/zwnwGeCmlnGjzESYFBnP47nAwJuTsrXX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlVLoWb8rftxtDuYSeE6tZRHwPquCj+kHYDA1hSDvfmMt1ExaJ
-	vcV7RcWb6BRbTudRxT/IFEwfxSY4QopRsMpAg3I995LO8xAwkx7bCQsI0w==
-X-Gm-Gg: ASbGncvP60kqagjE/7JkVLyj+4rDE/y6jEtjcwuFXWco+MOEW1/3eH3nyImbCdW9vh5
-	4scn6NVVm9UUvp8kopSW0M/vG2kyiP2kkFIYiXZvWzp/+3IAm0cEE+rVfXiLYZyAdXSF0GBVXvI
-	X2zI4uG5Lnb1jZI94L6O5eRSLKs+AQjMLb0fh5SL49EdWKt+BTzP9leAi/N5I0hxtYWJFfRvaP8
-	kHTc8DQQi5Y5OLzmxkZLu4uwUhioj2nj67OAHpYrV52iNYrz22Sx8o93bpboxcwB/hEpv5+PMp6
-	yYaBupOFigkTAW234B3P/hA4ou5/RA==
-X-Google-Smtp-Source: AGHT+IGJ7q5ChXB+Ie7Ba17UQu8Vj6IELeCByAVztJKx1l+Wr2tbG6+abolop0kGzINjHUa6QwOVcw==
-X-Received: by 2002:a17:90b:4ace:b0:2fe:91d0:f781 with SMTP id 98e67ed59e1d1-30a4e579edemr8085578a91.2.1746482598219;
-        Mon, 05 May 2025 15:03:18 -0700 (PDT)
-Received: from fedora.. ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a476267d5sm9579251a91.33.2025.05.05.15.03.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 15:03:17 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Len Brown <len.brown@intel.com>
-Cc: byungchul@sk.com,
-	max.byungchul.park@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH] fs: Prevent panic from NULL dereference in alloc_fs_context() during do_exit()
-Date: Tue,  6 May 2025 05:38:02 +0900
-Message-ID: <20250505203801.83699-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2525C6F4;
+	Mon,  5 May 2025 20:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746477614; cv=fail; b=BSE1KG1UHI7qYp6Vw0r3uZ8PX+d1Xc5fXdgdpwuqx3BFOFwVx8Y1h40jcEtoePvqKYXzTKivaUqWEMHGfhMVqA3Of6aY7KUis4hQSmv4iKsTVm5J9fgpRXSuafyWRMMCVTCp0/I5/H2BxOHvw8zP7jNuvusNb0lqzq56rT2ncYo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746477614; c=relaxed/simple;
+	bh=mqUw7s+nehNvv8MGGEQ/E9H+tzHgL46W8rcS24G9r+Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=WbdwUoOj9BXtfxiXR4+6W5DaV4GCpJ/wrESMuw+GWVFSC870JHI56xU2HwKZQneWXdZf1av65M9k4r7MVatL3/QKcYwP6V1jU7VLYiqRibmgC5PGZEcfE17T5hPY75EYgBUsnTIEyja4eYqOfAqCOklmCfPre3qqE3SdJP3NyM0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=fail smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=OWmaglKi; arc=fail smtp.client-ip=40.107.249.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mt.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H4WOyKtNoAKCpAlEh+I/SmsXxVdtO8qRjd/cMQkF5SqSBaE6vjRuoQqg+0tq9WVywtjWZcQfe5yigXWcwSPV7XxEFwCPQ+MVH6uQ2T/oW1VAnTKxNdMU6uWv0jVg9ESQ39KWKZXnyKHTBEKEiUSyc4oqYdL+N41w6FLOUYQfY+xpXv7It6e8OxYV4tZoSOFC0H26/GjlSrp8QpaRH+uc/BpLl0cYiHosiBlnOoYrz9irMDv5PJVN1dH3qbZyXZGHqFxxoZfoNnmYs57omZ8pyPKnt/Wa5N+pU4wo8JYArTpp8dvpFukenU+KZFFB0Q/QW15+BXsMSfwqF9NXI7c00w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d8VaWO1kXooxCo7LnJurz2FjBqrZkUyzdCaPN2PvKOI=;
+ b=KPjTZVfI0VCkezBmFgENX6tPMT16atOVtNozbchaEP73owVWWYN9nA25jgUmcGo/vB0KGhAX29J8aQmmSxyAHGKz3zW9gS+Iyz9eo2NesQLkaRIovnxHdM9onMprW6TeyNwLpl+3/H95uUCg7gJdoejhs1lw2+PMrv7h/WiJejk6anep3ZU2ggz36okgu23ZpOyMYsKc5LWcg/VRhR8fZuDnk2OiBNT+wCxJXBMKUr/XIRo0L5L0fju5NTE41kGHXKUyDE8Nzk2+pOn59DJLLm+borblxmrhMX0GaA9hOC6PToSl5hTAldLWxY9ZH4ww5t5n5rTVxGJmsMb+E14/aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
+ header.d=mt.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d8VaWO1kXooxCo7LnJurz2FjBqrZkUyzdCaPN2PvKOI=;
+ b=OWmaglKidjtFMPyCY4nHBOLaFeWTPj3VCGXYDap4StCbuPDPtS8yt8nro2+P9wDLYWP8wRxxNjkqt/VVrCUe/dEx9SrtwXHReUHOR3SktKRfDkNgRLzhv6Y1pfAOdDolQEjlDLwdmDtJs6OPQyGUoaxCHzqLiPB/VQG/eRk4qP80n/USOjSRUv7zpICMdUBMzcQyEApjTdMPyYwTMFRhvd+P7UGBbOxoGRkL+UcoIsAZ7+L0VMbLIYiUNHvQn/zFMdk07VEkPqBKUSJ3hu5FKLqHeZ+LHG2Yiqe8BQE9UiN/OYKt0u8L1SAT9fw3n7Ad5Gn0goKQCObFrvoeAOl1dA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mt.com;
+Received: from VI1PR03MB6285.eurprd03.prod.outlook.com (2603:10a6:800:137::14)
+ by DU0PR03MB9613.eurprd03.prod.outlook.com (2603:10a6:10:420::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Mon, 5 May
+ 2025 20:40:08 +0000
+Received: from VI1PR03MB6285.eurprd03.prod.outlook.com
+ ([fe80::e290:ebac:cbe4:198a]) by VI1PR03MB6285.eurprd03.prod.outlook.com
+ ([fe80::e290:ebac:cbe4:198a%5]) with mapi id 15.20.8699.026; Mon, 5 May 2025
+ 20:40:07 +0000
+From: Markus Burri <markus.burri@mt.com>
+To: linux-kernel@vger.kernel.org
+Cc: Markus Burri <markus.burri@mt.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	linux-iio@vger.kernel.org,
+	Markus Burri <markus.burri@bbv.ch>
+Subject: [PATCH v3] iio: backend: fix out-of-bound write
+Date: Mon,  5 May 2025 22:38:30 +0200
+Message-Id: <20250505203830.5117-1-markus.burri@mt.com>
+X-Mailer: git-send-email 2.39.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI2P293CA0014.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:45::13) To VI1PR03MB6285.eurprd03.prod.outlook.com
+ (2603:10a6:800:137::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR03MB6285:EE_|DU0PR03MB9613:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91731a82-6fa0-4d75-474b-08dd8c1505bc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EXyVQjXqIFa25KyL7RFnSBOhFyZLQRORDfbEHyMBzZnzhBzefbogud4oKHsf?=
+ =?us-ascii?Q?LMZ+9wEsJSewOgvKmc9O30QWw0iJQyQzdQ7g/j2OmOOhEVPV9UzlBw6e8qrs?=
+ =?us-ascii?Q?t40wFW/A1yaeJ7SldNJRGxu9/hgLw4cp4qJG4JlvsdQ0H3iYAhXj0mZ/8Oon?=
+ =?us-ascii?Q?O+ylFtx/wN5ZgqFbcRAmwIrIsWL9Bxt7jGlHaILcose1Xy6B5yWdj7z9Sta9?=
+ =?us-ascii?Q?ZrV4q2Z4Z0z+CRSvjlyGzktCA2v+pcKxtAF/cE3UdV5lO/udjV89dJVIR3uS?=
+ =?us-ascii?Q?0+OtqUw4Mopy8YmQI/CouliF56aL0vKYdIubwkTIPXC2kXh/t+OuCpwP4rUf?=
+ =?us-ascii?Q?PoMRtkfrMJ9Pv/sfZ+z+tgKkHXfiUaSPcFVDD3ufMCk50oPm+VgvdrQZedDo?=
+ =?us-ascii?Q?Ky2pJTD7TLVEUJFdGTEva+BdlAGNW301NHhHKCKB3KSxGmu+qwkp/6pw0woJ?=
+ =?us-ascii?Q?wbr9Wb/LI7VUSjCRy7zYJWlIbtVJJGEDbRKavBrf+LqvQNGNMzq06VmSWcbi?=
+ =?us-ascii?Q?3AghqCLctEaGQaUoXjU15Sj30Qo0e9NVaTXcSu+nZedHaofHycFXKnxWhqgY?=
+ =?us-ascii?Q?0KqR2DACuD8i1F8OkOErIvU5FqlZvoWdQbd9Ru5CGfCYQOiyMtgsl/VVW4LP?=
+ =?us-ascii?Q?Oo/7qBZe4k7aefffzpnMUATdo1gR639gBlEO7IlrmMglSnYaHXZpV32LbX7g?=
+ =?us-ascii?Q?wtHtnAU/5I4d0BQSSVAvKwCMZJyE3fbL3uWJeHkKgHV9kgUBTtJft19LinnM?=
+ =?us-ascii?Q?onClbzyclpSCzmjBEpQUbqjniCRgL9pqcN8r2+lCtAA/62dqYsgDofJ+/aO4?=
+ =?us-ascii?Q?Mzse+qVeRccX5ULHqXCYgE6vcUjqIfInFf7KM9BJ1oEaZ2h033YSHg49OJ74?=
+ =?us-ascii?Q?1r+7c+NcOK1QEbnfn1G2t1BaLQFBocM66DsL39iyj7KgvsU24Od3/iIpJ/hv?=
+ =?us-ascii?Q?eUV1Frr5Pd5lJajhfF/kFGTucMq1Dgm8+1lvOruqG1e0edp2TmFroDVt8U8v?=
+ =?us-ascii?Q?du0hgvxkZg/HY3Qys0XbIp/76BB3N3e3rSDYirgXB5yu7ADjlF6OimV4u6gR?=
+ =?us-ascii?Q?aAVWf7TzZfOO+6jDLfbBsc+VKGqyKA20BfR+s6HK+sJU436/E+ES50PKxSWz?=
+ =?us-ascii?Q?dJz2doNe7xVz2A5HvWvUeIr/KFQLodg3SuVo5kIVyXYT5oEYzHDrJ8hHsW5m?=
+ =?us-ascii?Q?YRVWNoRyVLyzqvktn6Vr86+/U5ancb9kRQP61C0R9a70O0yPkoa8tks6KAeq?=
+ =?us-ascii?Q?YlKMWeLlvMzDnhipCxPE60vQ6AcGn3uEAWol5OfF/bZBI7E7aK0NrhuxJdvj?=
+ =?us-ascii?Q?i+IyCblURitp7lkVNIM+gDN/QOXd2+68HKB74/qIHVGrTeXmE9LMpH+NnnJ+?=
+ =?us-ascii?Q?kC7Aps2KUEkw7jmZNpzXtBCWWez8y3RUZrG8W1H5RdlSA4Zd+eahUJ3d7zCS?=
+ =?us-ascii?Q?jExqcDA3HPDWQm9wEFdBjb/Pg6oWrqZwaVtBrWRrU/MN7IdK78kdHA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR03MB6285.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tVWQMXj0u0DyCfAd+cxUMEJemjCnnH44Ekty6qLKCilLR24gx5NSoBQ+ube0?=
+ =?us-ascii?Q?hIVhe8qokRauAdeuFfy1IUfvsOasqSCXg/OPMu6BdkY2eSRYD5uvnmT7Bav8?=
+ =?us-ascii?Q?j3/9migT8fm1d3dFj+zm3PB/tIUBln32uy396qd3l4iodHGNnPTZK0POiQPV?=
+ =?us-ascii?Q?Sb2L5w58dGdKOh4e6rY3NkEObUThF9py1JFhD/svgoob2P9D8ZZYDcdy49kV?=
+ =?us-ascii?Q?+lVhTgsb08+n5D1suzuFNbsgLLSOLbQDERCCrPdlUlhF/GuEfwr2LZGn63FP?=
+ =?us-ascii?Q?aarX8HATzeNWQgftwUMSlLwkt2hNoyb/MkonAZboF05YmHWblf/K0j9hbNk/?=
+ =?us-ascii?Q?LAGfCsCGXvpsx/cmZGWZdxz++BQuulRahsRGvHX0bhIA5r6FDeSqhW5TnXEX?=
+ =?us-ascii?Q?A618yLimUfuzF3X9NqCT57hTtTSJH3po4hdIba/qNybcoh3PRoIA8uiNWGTP?=
+ =?us-ascii?Q?PslgwtAsSlNprrn7Jm2CFPAOEmK2Uw6Zq2oFs2OCfPz+irm5dzHi8RmviKID?=
+ =?us-ascii?Q?mlbPmTx3nHwnEGnz4U0v/QPnvXFf4s0RnyfkiLbW9czXhOVoZOWfA3LhD+lg?=
+ =?us-ascii?Q?DAstenyyMHGfgq8zzPkBj7htoS7d8De+RmJaoqexFZta0p5XraqxoLPLFoe6?=
+ =?us-ascii?Q?6PFkj+1xlfslbdpIGWR94ARC+c/GinaDOg5/2lqLNQ/lXnwkQs/Rev7BPGyc?=
+ =?us-ascii?Q?RMMcs+a3v0928W0ozMnMiSB60YTlHRCBp+If6I65AsnJan+B+LF9UOddTrwv?=
+ =?us-ascii?Q?3zjwutG2OwtgnJA1lWS7rWNetQum9aeAk5RLJP3rvWJynzqEYKzhF24r+rr1?=
+ =?us-ascii?Q?cPGEqYUmWTz82Hkq5D2WEZzl3YUGtdF2KqjHDMX9IFHu4HHcFfES6+qLSK7U?=
+ =?us-ascii?Q?i63NggYlvmqI+AdWEj7pkapgemedLdrFqqH5mxpIGOJmv8ikb3AaCQdQWZaT?=
+ =?us-ascii?Q?EgPyO8pR8I7I2v5mzjPh0u8+XRsDa4qNStZeryEIMYTMof/zilTeCKIEkF+2?=
+ =?us-ascii?Q?1F3Uk37EYKyMwejuC4r3b4zoXEp505XUM/UoviMgJJj1hTQ9q8Br6wmSrl6W?=
+ =?us-ascii?Q?Xta9aOKh6Tz7ND/eCkPbiJXEyJvKixuz8vpjYyJIz0vK4o4hWeA+b4KEL118?=
+ =?us-ascii?Q?d4Hi8iT/6ivJrp6ak0dgLvNpBINjfr85/v3hdJMIkEcLQnouOM6ijZMCUOVT?=
+ =?us-ascii?Q?2oDEi4hnFN2Hcce49T9fz5AffMtzbA9zsWpwkYEwSom9rdlRJXV4RuW0gBnw?=
+ =?us-ascii?Q?KWcNAgkxG96ooY+kSGLY2BO0Utu2MiDS1bEiSXlZowyLcOguRmIf/gBba9+m?=
+ =?us-ascii?Q?izNrfBiz23OaZeLolnMlRO0V1t0Nbsjw1DfnZ6XZ5ZwuzqCG7j0JB13vJLMJ?=
+ =?us-ascii?Q?QmYG90dclE/a5nJzNq5HKufpKx/HG+ZHxeJmbzC/3WcrWc4m5q91aDxEbYJs?=
+ =?us-ascii?Q?p1Vhkzxs5AnJHLwCgij0tQiGO1sTpPBKRiC/eYVlIfBFWjXqrWN3brfsFX6o?=
+ =?us-ascii?Q?NSPFIx44kEk9z7XIj48+BP5LjHeg3V+5p/larUq9pPWhM9l3EJ5O4n8ZCVOX?=
+ =?us-ascii?Q?dYIBdY8l06mhJqzhA/LpwmdlSErCSY2eLG4I8WTJ?=
+X-OriginatorOrg: mt.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91731a82-6fa0-4d75-474b-08dd8c1505bc
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR03MB6285.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 20:40:07.6310
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WegfZyF2a3q5KVay1P7y+ybG24L+4Hu9pH4aWBcLvUYe1OEz57C/aI52HTfXfVgS9jxNI+NOdlFCYrs181izPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR03MB9613
 
-The function alloc_fs_context() assumes that current->nsproxy and its
-net_ns field are valid. However, this assumption can be violated in
-cases such as task teardown during do_exit(), where current->nsproxy can
-be NULL or already cleared.
+The buffer is set to 80 character. If a caller write more characters,
+count is truncated to the max available space in "simple_write_to_buffer".
+But afterwards a string terminator is written to the buffer at offset count
+without boundary check. The zero termination is written OUT-OF-BOUND.
 
-This issue was triggered during stress-ng's kernel-coverage.sh testing,
-Since alloc_fs_context() can be invoked in various contexts =E2=80=94 inclu=
-ding
-from asynchronous or teardown paths like do_exit() =E2=80=94 it's difficult=
- to
-guarantee that its input arguments are always valid.
+Add a check that the given buffer is smaller then the buffer to prevent.
 
-A follow-up patch will improve the granularity of this fix by moving the
-check closer to the actual mount trigger(e.g., in efivarfs_pm_notify()).
-
-Observed on Apple M2 (fedora 42 asahi remix) during stress-ng-dev:
-
-[  137.769615] Unable to handle kernel NULL pointer dereference at virtual =
-address 0000000000000028
-[  137.769691] Mem abort info:
-[  137.769693]   ESR =3D 0x0000000096000007
-[  137.769694]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[  137.769695]   SET =3D 0, FnV =3D 0
-[  137.769696]   EA =3D 0, S1PTW =3D 0
-[  137.769697]   FSC =3D 0x07: level 3 translation fault
-[  137.769698] Data abort info:
-[  137.769699]   ISV =3D 0, ISS =3D 0x00000007, ISS2 =3D 0x00000000
-[  137.769700]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-[  137.769700]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-[  137.769702] user pgtable: 16k pages, 48-bit VAs, pgdp=3D0000000810df28b0
-[  137.769703] [0000000000000028] pgd=3D08000008ace3c403, p4d=3D08000008ace=
-3c403, pud=3D08000008f7658403, pmd=3D08000008f765c403, pte=3D00000000000000=
-00
-[  137.769743] Internal error: Oops: 0000000096000007 [#1] SMP
-[  137.769745] Modules linked in: uinput rfcomm snd_seq_dummy snd_hrtimer s=
-nd_seq snd_seq_device uas usb_storage nf_conntrack_netbios_ns nf_conntrack_=
-broadcast nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf=
-_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat nf_connt=
-rack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nf_tables qrtr uhid bnep brcmfmac=
-_wcc sunrpc binfmt_misc brcmfmac brcmutil cfg80211 hci_bcm4377 bluetooth mm=
-c_core rfkill aop_als aop_las industrialio macsmc_hid snd_soc_aop apple_isp=
- videobuf2_dma_sg ofpart videobuf2_memops videobuf2_v4l2 spi_nor mtd videod=
-ev snd_soc_cs42l84 snd_soc_tas2764 videobuf2_common snd_soc_apple_mca mc ap=
-ple_soc_cpufreq snd_soc_macaudio snd_soc_core snd_compress ac97_bus leds_pw=
-m joydev loop dm_multipath nfnetlink zram lz4hc_compress lz4_compress hid_a=
-pple nvmem_spmi_mfd tps6598x macsmc_hwmon macsmc_reboot dockchannel_hid mac=
-smc_power rtc_macsmc gpio_macsmc simple_mfd_spmi polyval_ce polyval_generic=
- ghash_ce sha3_ce appledrm dwc3 phy_apple_atc sha512_ce
-[  137.769778]  apple_dcp typec sha512_arm64 aop apple_dockchannel ulpi mac=
-smc_rtkit mux_core apple_wdt macsmc spmi_apple_controller drm_dma_helper nv=
-mem_apple_efuses udc_core apple_rtkit_helper snd_pcm_dmaengine snd_pcm asah=
-i spi_apple clk_apple_nco snd_timer snd i2c_pasemi_platform pwm_apple pinct=
-rl_apple_gpio apple_admac soundcore i2c_pasemi_core apple_dart xhci_plat_hc=
-d vfat fat nvme_apple apple_sart nvme_core nvme_auth scsi_dh_rdac scsi_dh_e=
-mc scsi_dh_alua fuse i2c_dev
-[  137.769796] CPU: 6 UID: 0 PID: 3632 Comm: stress-ng-dev Kdump: loaded Ta=
-inted: G S      W          6.14.2-401.asahi.fc42.aarch64+16k-debug #1
-[  137.769799] Tainted: [S]=3DCPU_OUT_OF_SPEC, [W]=3DWARN
-[  137.769799] Hardware name: Apple MacBook Air (13-inch, M2, 2022) (DT)
-[  137.769801] pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=
-=3D--)
-[  137.769802] pc : alloc_fs_context+0x98/0x2e8
-[  137.769807] lr : alloc_fs_context+0x70/0x2e8
-[  137.769808] sp : ffff80009b5479b0
-[  137.769809] x29: ffff80009b5479b0 x28: ffff5a120e960000 x27: 00000000000=
-00000
-[  137.769811] x26: 0000000000000002 x25: ffffa55a71473000 x24: 00000000000=
-00000
-[  137.769812] x23: 0000000000000000 x22: ffffa55a7170ddc8 x21: 00000000000=
-00000
-[  137.769814] x20: 0000000000000000 x19: ffff5a1284390200 x18: ffffa55a73a=
-de328
-[  137.769815] x17: 0000000000000000 x16: 0000000000000000 x15: ffffa55a739=
-51c70
-[  137.769816] x14: 0000000000000002 x13: 000000000003bb2a x12: 00000000000=
-00002
-[  137.769818] x11: 000000000003bb28 x10: ffffa55a71473000 x9 : ffffa55a6e0=
-56b8c
-[  137.769819] x8 : ffff5a120e960000 x7 : ffffa55a714727b0 x6 : 00000000000=
-00006
-[  137.769821] x5 : 0000000000000040 x4 : 0000000000000001 x3 : ffff5a17dd5=
-bfa28
-[  137.769822] x2 : 0000000000000000 x1 : 0000000000000001 x0 : 00000000000=
-00000
-[  137.769824] Call trace:
-[  137.769825]  alloc_fs_context+0x98/0x2e8 (P)
-[  137.769827]  fs_context_for_mount+0x28/0x40
-[  137.769828]  vfs_kern_mount.part.0+0x28/0xe8
-[  137.769830]  vfs_kern_mount+0x1c/0x38
-[  137.769831]  efivarfs_pm_notify+0xf8/0x2f8
-[  137.769834]  notifier_call_chain+0xb4/0x220
-[  137.769836]  blocking_notifier_call_chain+0x4c/0x78
-[  137.769837]  pm_notifier_call_chain+0x2c/0x40
-[  137.769840]  snapshot_release+0x60/0xa0
-[  137.769841]  __fput+0xf8/0x310
-[  137.769843]  ____fput+0x1c/0x30
-[  137.769845]  task_work_run+0x88/0x120
-[  137.769846]  do_exit+0x19c/0x450
-[  137.769848]  do_group_exit+0x38/0xc0
-[  137.769849]  __arm64_sys_exit_group+0x20/0x28
-[  137.769851]  invoke_syscall.constprop.0+0x64/0xe8
-[  137.769853]  el0_svc_common.constprop.0+0xc0/0xe8
-[  137.769854]  do_el0_svc+0x24/0x38
-[  137.769855]  el0_svc+0x54/0x230
-[  137.769857]  el0t_64_sync_handler+0x10c/0x138
-[  137.769859]  el0t_64_sync+0x1bc/0x1c0
-[  137.769861] Code: f821001f f9006e60 d5384100 f9463c00 (f9401417)
-[  137.769862] ---[ end trace 0000000000000000 ]---
-[  137.769864] Fixing recursive fault but reboot is needed!
-[  137.769866] check_preemption_disabled: 35 callbacks suppressed
-[  137.769867] BUG: using smp_processor_id() in preemptible [00000000] code=
-: stress-ng-dev/3632
-[  137.769869] caller is debug_smp_processor_id+0x20/0x38
-[  137.769871] CPU: 6 UID: 0 PID: 3632 Comm: stress-ng-dev Kdump: loaded Ta=
-inted: G S    D W          6.14.2-401.asahi.fc42.aarch64+16k-debug #1
-[  137.769872] Tainted: [S]=3DCPU_OUT_OF_SPEC, [D]=3DDIE, [W]=3DWARN
-[  137.769873] Hardware name: Apple MacBook Air (13-inch, M2, 2022) (DT)
-[  137.769873] Call trace:
-[  137.769873]  show_stack+0x30/0x98 (C)
-[  137.769874]  dump_stack_lvl+0xa8/0xe8
-[  137.769876]  dump_stack+0x18/0x34
-[  137.769876]  check_preemption_disabled+0x120/0x128
-[  137.769878]  debug_smp_processor_id+0x20/0x38
-[  137.769879]  __schedule+0x4c/0x718
-[  137.769880]  do_task_dead+0x58/0x68
-[  137.769882]  make_task_dead+0xe8/0x150
-[  137.769883]  die+0x210/0x258
-[  137.769884]  die_kernel_fault+0x1ac/0x1c8
-[  137.769885]  __do_kernel_fault+0x1cc/0x1d8
-[  137.769886]  do_page_fault+0x2b4/0x9f0
-[  137.769888]  do_translation_fault+0x54/0xf0
-[  137.769889]  do_mem_abort+0x48/0xa0
-[  137.769890]  el1_abort+0x58/0xc8
-[  137.769891]  el1h_64_sync_handler+0xf0/0x120
-[  137.769892]  el1h_64_sync+0x84/0x88
-[  137.769892]  alloc_fs_context+0x98/0x2e8 (P)
-[  137.769893]  fs_context_for_mount+0x28/0x40
-[  137.769894]  vfs_kern_mount.part.0+0x28/0xe8
-[  137.769895]  vfs_kern_mount+0x1c/0x38
-[  137.769896]  efivarfs_pm_notify+0xf8/0x2f8
-[  137.769897]  notifier_call_chain+0xb4/0x220
-[  137.769897]  blocking_notifier_call_chain+0x4c/0x78
-[  137.769898]  pm_notifier_call_chain+0x2c/0x40
-[  137.769899]  snapshot_release+0x60/0xa0
-[  137.769900]  __fput+0xf8/0x310
-[  137.769901]  ____fput+0x1c/0x30
-[  137.769902]  task_work_run+0x88/0x120
-[  137.769903]  do_exit+0x19c/0x450
-[  137.769904]  do_group_exit+0x38/0xc0
-[  137.769905]  __arm64_sys_exit_group+0x20/0x28
-[  137.769906]  invoke_syscall.constprop.0+0x64/0xe8
-[  137.769907]  el0_svc_common.constprop.0+0xc0/0xe8
-[  137.769907]  do_el0_svc+0x24/0x38
-[  137.769908]  el0_svc+0x54/0x230
-[  137.769909]  el0t_64_sync_handler+0x10c/0x138
-[  137.769910]  el0t_64_sync+0x1bc/0x1c0
-
-Observed on Fedora 42 on Apple Virtualization during the same test:
-
-[  473.893249] Unable to handle kernel NULL pointer dereference at virtual =
-address 0000000000000028
-[  473.893253] Mem abort info:
-[  473.893256]   ESR =3D 0x0000000096000004
-[  473.893258]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[  473.893262]   SET =3D 0, FnV =3D 0
-[  473.893264]   EA =3D 0, S1PTW =3D 0
-[  473.893267]   FSC =3D 0x04: level 0 translation fault
-[  473.893270] Data abort info:
-[  473.893272]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
-[  473.893275]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-[  473.893278]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-[  473.893282] user pgtable: 4k pages, 48-bit VAs, pgdp=3D000000027468e000
-[  473.893285] [0000000000000028] pgd=3D0000000000000000, p4d=3D00000000000=
-00000
-[  473.893294] Internal error: Oops: 0000000096000004 [#1]  SMP
-[  473.893298] Modules linked in: vfio_iommu_type1 vfio cuse vhost_net tun =
-vhost vhost_iotlb tap uhid overlay isofs uinput snd_seq_dummy snd_hrtimer n=
-f_conntrack_netbios_ns nf_conntrack_broadcast nft_fib_inet nft_fib_ipv4 nft=
-_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject =
-nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 rfki=
-ll ip_set nf_tables qrtr sunrpc virtio_snd snd_seq snd_seq_device snd_pcm s=
-nd_timer snd virtio_net net_failover failover virtio_balloon soundcore vfat=
- fat joydev loop nfnetlink vsock_loopback vmw_vsock_virtio_transport_common=
- zram vmw_vsock_vmci_transport lz4hc_compress vmw_vmci lz4_compress vsock u=
-as polyval_ce polyval_generic ghash_ce sha3_ce usb_storage sha512_ce virtio=
-_gpu sha512_arm64 virtio_dma_buf apple_mfi_fastcharge fuse
-[  473.893383] CPU: 2 UID: 0 PID: 4496 Comm: stress-ng-dev Kdump: loaded No=
-t tainted 6.15.0-rc4+ #1 PREEMPT(voluntary)
-[  473.893387] Hardware name: Apple Inc. Apple Virtualization Generic Platf=
-orm, BIOS 2075.101.2.0.0 03/12/2025
-[  473.893390] pstate: 81400005 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=
-=3D--)
-[  473.893394] pc : alloc_fs_context+0xc4/0x460
-[  473.893401] lr : alloc_fs_context+0xa0/0x460
-[  473.893405] sp : ffff80008f01b7d0
-[  473.893406] x29: ffff80008f01b7d0 x28: ffff800084754520 x27: 00000000000=
-00006
-[  473.893411] x26: 0000000000000004 x25: ffff0000cd714a28 x24: ffff0000ca9=
-76540
-[  473.893416] x23: ffff000232890000 x22: ffff80008452aa80 x21: 00000000000=
-00000
-[  473.893420] x20: 0000000000000000 x19: ffff0001215ab200 x18: 00000000000=
-00001
-[  473.893425] x17: ffff00015083bb00 x16: 0f043b79c558efdb x15: 00000000000=
-00000
-[  473.893429] x14: 0000000000000063 x13: 657461747320656c x12: 62616972617=
-62067
-[  473.893434] x11: 0000000000000000 x10: 0000000000ff0100 x9 : 00000000000=
-00000
-[  473.893438] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 00000000000=
-00000
-[  473.893442] x5 : fffffd7fbf054dd8 x4 : ffff00032d538da8 x3 : ffff00032d5=
-38da8
-[  473.893447] x2 : ffff80008f01b440 x1 : ffff800082a4aeb8 x0 : 00000000000=
-00000
-[  473.893452] Call trace:
-[  473.893453]  alloc_fs_context+0xc4/0x460 (P)
-[  473.893458]  fs_context_for_mount+0x40/0x58
-[  473.893462]  vfs_kern_mount+0x44/0x158
-[  473.893468]  efivarfs_pm_notify+0x124/0x320
-[  473.893472]  notifier_call_chain+0x11c/0x300
-[  473.893476]  blocking_notifier_call_chain+0x60/0x98
-[  473.893480]  pm_notifier_call_chain+0x38/0x50
-[  473.893484]  snapshot_release+0x9c/0xc0
-[  473.893489]  __fput+0x1c4/0x4f0
-[  473.893494]  ____fput+0x2c/0x70
-[  473.893497]  task_work_run+0x100/0x150
-[  473.893501]  do_exit+0x2e4/0xfb8
-[  473.893506]  do_group_exit+0xd8/0xe0
-[  473.893511]  __arm64_sys_exit_group+0x24/0x30
-[  473.893515]  invoke_syscall+0x90/0x180
-[  473.893520]  el0_svc_common+0x140/0x178
-[  473.893523]  do_el0_svc+0x38/0x50
-[  473.893527]  el0_svc+0x58/0x158
-[  473.893533]  el0t_64_sync_handler+0x78/0x108
-[  473.893538]  el0t_64_sync+0x1bc/0x1c0
-[  473.893543] Code: 140000ab 97ebb69c f9006e78 f9463ee8 (f9401519)
-[  473.893545] ---[ end trace 0000000000000000 ]---
-[  473.893600] Fixing recursive fault but reboot is needed!
-[  473.893604] check_preemption_disabled: 40 callbacks suppressed
-
-Tested-on: Apple M2 (fedora 42 asahi remix, 16k pages)
-Tested-on: Fedora 42 on Apple Virtualization Generic Platform
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+Fixes: 035b4989211d ("iio: backend: make sure to NULL terminate stack buffer")
+Signed-off-by: Markus Burri <markus.burri@mt.com>
 ---
- fs/fs_context.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/iio/industrialio-backend.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 582d33e81117..529de43b8b5e 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -282,6 +282,9 @@ static struct fs_context *alloc_fs_context(struct file_=
-system_type *fs_type,
- 	struct fs_context *fc;
- 	int ret =3D -ENOMEM;
-=20
-+	if (!current->nsproxy || !current->nsproxy->net_ns)
-+		return ERR_PTR(-EINVAL);
+diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+index a43c8d1bb3d0..4a364e038449 100644
+--- a/drivers/iio/industrialio-backend.c
++++ b/drivers/iio/industrialio-backend.c
+@@ -155,11 +155,14 @@ static ssize_t iio_backend_debugfs_write_reg(struct file *file,
+ 	ssize_t rc;
+ 	int ret;
+ 
++	if (count >= sizeof(buf) - 1)
++		return -ENOSPC;
 +
- 	fc =3D kzalloc(sizeof(struct fs_context), GFP_KERNEL_ACCOUNT);
- 	if (!fc)
- 		return ERR_PTR(-ENOMEM);
---=20
-2.49.0
+ 	rc = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
+ 	if (rc < 0)
+ 		return rc;
+ 
+-	buf[count] = '\0';
++	buf[rc] = '\0';
+ 
+ 	ret = sscanf(buf, "%i %i", &back->cached_reg_addr, &val);
+ 
+
+base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+-- 
+2.39.5
 
 
