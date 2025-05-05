@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-633877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37FEAAAEA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:01:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF669AAAEA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276953BB955
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 384A43A1EBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B0238F198;
-	Mon,  5 May 2025 23:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01EA2E5DD2;
+	Mon,  5 May 2025 23:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGj8H8r3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/NVT//e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417B32D9973;
-	Mon,  5 May 2025 22:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1412B35B92E;
+	Mon,  5 May 2025 22:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485838; cv=none; b=C1OZQ1KVvMUC8UW+H4r/0nS1Of7p8CEG7lfDA6kbOjK+KkLyRwSJx1ezFR6hCfP7GA78MnVnQFCNM5wOHkA95tvQTJMNQW+JCO+Au7gkyjVkWSZDKNptjWGewFv0xdUWI0O5Do26hzUwE01xq0Lly+VGXkcLF7I79+yVTjOALnA=
+	t=1746485841; cv=none; b=DMJ4g3gibpUJ2fIh2tfpHXnoY/hHjth0AYJr8X5l02SVeB1+7KvTZg7PJN+qjJIggLJMWuJKStkqjhtd7kPVq2CbM2lqhwMs23isc+cxSghxAYudji3JiTytElffByCslehO3gCRqcfLZjKjnrAo1gOPodo6AdoVQvgMW3Sq1/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485838; c=relaxed/simple;
-	bh=cVrfxA+o2F1hom7mTW9Fdsnx8mc0URfmqqgfSnowBhI=;
+	s=arc-20240116; t=1746485841; c=relaxed/simple;
+	bh=r0BFMOQNK5XzDChbKZz77n0K6xWYlsbv5PIyw+Iw7nI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rUtBGpPiGvDNndZ9xabQj40Vr1rK0WnCtqw117i2ZDQp8q2KScrgr/kxraNiJkl/L52r+RJYmBIO9CMaK1qH5Iio4N5F6P3H7fg8qvyB7G+gVFPQzlvcZb/Lo/KieErU89fcGEKyZSkpGS/9kmm94MzoxUYoQOmOX5osBfB0IE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGj8H8r3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B6FC4CEED;
-	Mon,  5 May 2025 22:57:16 +0000 (UTC)
+	 MIME-Version; b=iRx0u2g46L1bnrt7hvf9juwpa9APeHSwWcJ+ZTdEpT+MhW/EY9c2fuVd2udYiOcCb/KgIDA4qMTWHSpc/a29zas08+CYx+7PJ0nTeAsRbtmGT7jtLxA7VrE2mkF2tjETFj1WRko6Nflxamy1I7/G/FftdsNS0eHyCVgTr87yVfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/NVT//e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0C4CC4CEF3;
+	Mon,  5 May 2025 22:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485837;
-	bh=cVrfxA+o2F1hom7mTW9Fdsnx8mc0URfmqqgfSnowBhI=;
+	s=k20201202; t=1746485839;
+	bh=r0BFMOQNK5XzDChbKZz77n0K6xWYlsbv5PIyw+Iw7nI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rGj8H8r33qs/4JC4Q+SGXB8N2av3+/w2mJ9Ltz5mIl/B0zaMyTSpwanUADEHyEGbp
-	 axYZZKpcDdDK65wBXU8wPpKUEHwImbRIjC9+/vHX4Cy+Gi8U2yG3VeyIb86KvUPc1c
-	 aBHAXb3m80eXQytIFX1MHNRiHVSD3guxtgsdgSmRb+1LT4VrISIve/RroKjzIqPOqY
-	 9QM4+IoSOjGjrUZCvdH9XqOgtTluvb1EfvAoHdGHGPK+Sha8STODwsqNsOXk6eiPxr
-	 XzlCZKy65OyndRXO4wAmLrX5MTxskaNePh8/cHG8mV52omhcOaTRDeDxA/7TwGoEzW
-	 7pYHOrTNrzpxQ==
+	b=f/NVT//e3Qo6tCHYaadeH/0gB+/gyff4Tv8DhhWPNVwiw1A8BWloA11mHFKxsPXFB
+	 86p9GpotQdfC4hnmojbRYP1s7LSNjIhXwGR/SSXKZPbkY/0JqwDTHI383rU2V3/HHp
+	 w+IgKRqXCY5MGUDq6sirbMnU+tHmAdGFwvsBHhYapwXz+RP8Sk0SKyHDFLfQij4oTN
+	 2UrC+jLkwXZF+xPriq+ekJ+9OWFsxbm63L1mTNX671hxse0vijQ7nx6WPJGg8sQJrM
+	 0AVIuz0GXrfjCZTY7NRtsMGl3oLYeAxGjMXy8ALAFsGfrqwx9bo0nDnexfaiODNbwc
+	 U26nQFf9fs+Gg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <stfrench@microsoft.com>,
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Benjamin Coddington <bcodding@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	sfrench@samba.org,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org
-Subject: [PATCH AUTOSEL 6.6 020/294] cifs: add validation check for the fields in smb_aces
-Date: Mon,  5 May 2025 18:52:00 -0400
-Message-Id: <20250505225634.2688578-20-sashal@kernel.org>
+	trondmy@kernel.org,
+	anna@kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 022/294] NFSv4: Treat ENETUNREACH errors as fatal for state recovery
+Date: Mon,  5 May 2025 18:52:02 -0400
+Message-Id: <20250505225634.2688578-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -66,56 +67,44 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Namjae Jeon <linkinjeon@kernel.org>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit eeb827f2922eb07ffbf7d53569cc95b38272646f ]
+[ Upstream commit 0af5fb5ed3d2fd9e110c6112271f022b744a849a ]
 
-cifs.ko is missing validation check when accessing smb_aces.
-This patch add validation check for the fields in smb_aces.
+If a containerised process is killed and causes an ENETUNREACH or
+ENETDOWN error to be propagated to the state manager, then mark the
+nfs_client as being dead so that we don't loop in functions that are
+expecting recovery to succeed.
 
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/smb/client/cifsacl.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4state.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/fs/smb/client/cifsacl.c b/fs/smb/client/cifsacl.c
-index db9076da2182a..bf32bc22ebd69 100644
---- a/fs/smb/client/cifsacl.c
-+++ b/fs/smb/client/cifsacl.c
-@@ -811,7 +811,23 @@ static void parse_dacl(struct smb_acl *pdacl, char *end_of_acl,
- 			return;
- 
- 		for (i = 0; i < num_aces; ++i) {
-+			if (end_of_acl - acl_base < acl_size)
-+				break;
-+
- 			ppace[i] = (struct smb_ace *) (acl_base + acl_size);
-+			acl_base = (char *)ppace[i];
-+			acl_size = offsetof(struct smb_ace, sid) +
-+				offsetof(struct smb_sid, sub_auth);
-+
-+			if (end_of_acl - acl_base < acl_size ||
-+			    ppace[i]->sid.num_subauth == 0 ||
-+			    ppace[i]->sid.num_subauth > SID_MAX_SUB_AUTHORITIES ||
-+			    (end_of_acl - acl_base <
-+			     acl_size + sizeof(__le32) * ppace[i]->sid.num_subauth) ||
-+			    (le16_to_cpu(ppace[i]->size) <
-+			     acl_size + sizeof(__le32) * ppace[i]->sid.num_subauth))
-+				break;
-+
- #ifdef CONFIG_CIFS_DEBUG2
- 			dump_ace(ppace[i], end_of_acl);
- #endif
-@@ -855,7 +871,6 @@ static void parse_dacl(struct smb_acl *pdacl, char *end_of_acl,
- 				(void *)ppace[i],
- 				sizeof(struct smb_ace)); */
- 
--			acl_base = (char *)ppace[i];
- 			acl_size = le16_to_cpu(ppace[i]->size);
- 		}
- 
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 794bb4aa588d3..9fc71dc090c25 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -2741,7 +2741,15 @@ static void nfs4_state_manager(struct nfs_client *clp)
+ 	pr_warn_ratelimited("NFS: state manager%s%s failed on NFSv4 server %s"
+ 			" with error %d\n", section_sep, section,
+ 			clp->cl_hostname, -status);
+-	ssleep(1);
++	switch (status) {
++	case -ENETDOWN:
++	case -ENETUNREACH:
++		nfs_mark_client_ready(clp, -EIO);
++		break;
++	default:
++		ssleep(1);
++		break;
++	}
+ out_drain:
+ 	memalloc_nofs_restore(memflags);
+ 	nfs4_end_drain_session(clp);
 -- 
 2.39.5
 
