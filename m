@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-634705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906FEAAB724
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:05:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFDEAAB73A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7251B66DE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7D13AEEED
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9920288C2D;
-	Tue,  6 May 2025 00:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8C646BFE9;
+	Tue,  6 May 2025 00:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aqo9dOhO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLr3d4Cw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCD4288C1C;
-	Mon,  5 May 2025 23:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813DC3984B5;
+	Mon,  5 May 2025 23:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486407; cv=none; b=oDLrOJg1foGttVcW/IepYWcqj3MmIcoNXESwgMfrIjDgQa4Pfhg4fOimwU1H2c7DxXsUSLeB5xhTcnGBefxiRql/IYhIm6nvzAZm035Y0qoZWUIiaXt6DdUkSfvJeFXvtbMCDUU2H5u6kM+S4/WbsyuqeJDJiWVodwhyNOaDGzs=
+	t=1746486449; cv=none; b=qS5L4tj/Mh73YWb3Vp6H9N+/DejwCOZh0CJN+QFi/Y3AUId4MJN2lUxtn37Ozgnpzgy+JrwTn6xfyZx+iYUZ2KFC37E53wa+EXKG0C6oKMoYADeAfIEV8bZshfwlNI07tDiCYsrfHAk21J3P3GUoRCsiSQaAF/5XZuSo891Zny0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486407; c=relaxed/simple;
-	bh=dGzUyxuhzvfEM3R/PhIaZ3ZpTDVIzR52pu2g+3tx7Rw=;
+	s=arc-20240116; t=1746486449; c=relaxed/simple;
+	bh=MPF6wWBKzM1USUfhyPEyr7DIB2q8BE1AbSadFY40MF4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HAfKTl7vUedoZTQ8rt/xY5D8wloSvHPfyjAMoITUi3teSgLRenoW6cMBX9jIsb2zWeWPWdLTRvac9/v6oeqNn+0c40hOaOTSL0GNl27Vr5/QbToyLH37CAJkpDSI6T29aYp0nPkpUWUnU6x9WDBosaY+vWfrKcJOa9U8zlRIHUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aqo9dOhO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4287FC4CEE4;
-	Mon,  5 May 2025 23:06:46 +0000 (UTC)
+	 MIME-Version; b=YSaZ6yLHXbLqXrfCUV2etrLErEOSsWMuZ2m4qJcc4b04uy99shdl2x++YUEIq4uDCPn6kzSK0ORzEiM8zz1jy5dm4kBRCbRQmHYQFxX5RyYeFhQBHswfbjaDwOHI7AxPI/Y2OwC7SoLQCgEJtpepSYN3Fwl9qlLIIRUx9NpEyXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLr3d4Cw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63AB8C4CEF1;
+	Mon,  5 May 2025 23:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486407;
-	bh=dGzUyxuhzvfEM3R/PhIaZ3ZpTDVIzR52pu2g+3tx7Rw=;
+	s=k20201202; t=1746486449;
+	bh=MPF6wWBKzM1USUfhyPEyr7DIB2q8BE1AbSadFY40MF4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Aqo9dOhOI9BTrAv2m7BCfIkkwvO6v2+Mz6A8Xo9PDkw9aue2mzBbEiT+OjXCTffDN
-	 XMF2wmsUKuSAKhh2uweD2Y2Fp8U3tuNPSLp76DoJQJJggBd72qay/G2zBJWRkOTrtU
-	 C9NdfIJbm/VkJYJw7P9MSX1bM/ioGTHRNwMBDrDZ8xv8cdVRf/w/UFXP68U5zTLtSX
-	 HKe16RX1V/6yA3ovlqenW0GkY3Fr3Xpi4GLHhu5fQvwurU/x4HkqCCDElUV+gTLhGE
-	 86g5nrEQmloJgD2hjxdHI26ZO5BbTcveqhgY/GjLLXcAaZ7PVX+HU3mJOx+GnykGBT
-	 PaUIcPkErkujQ==
+	b=ZLr3d4CwULH4QzVD7PZzzu906PVHSg7P9dHgTuebpxXGtFOJdTOsHcLXFz/bc9jUP
+	 XoB/GWTUiMnrr7w9pLORAcJFkq3jG6JvYj8RnhNwVMK1yzZ/LIjPiY43hEpFJ6Yw/4
+	 cwx0SH8ahXaZ+D1IfyUdJlHIwBjh0XVyqL1cniEmvly4dq9ZJQXxOucvBKYhfum2OZ
+	 CcnCaGLdnQptbeXsFETGUAtASK52zpu+M66GG2KvhlDZzr70IRRJvlo7cGxtGGFR5T
+	 Fv9yiplBolj5e5tvJ0jr8NyrISa+Hn5GrBUQZnyfDvuFQwKBXtzmH9FijCtE2aZrFz
+	 LGDU35o/iI42g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Shixiong Ou <oushixiong@kylinos.cn>,
-	Helge Deller <deller@gmx.de>,
+Cc: Mark Harmstone <maharmstone@fb.com>,
+	Qu Wenruo <wqu@suse.com>,
+	David Sterba <dsterba@suse.com>,
 	Sasha Levin <sashal@kernel.org>,
-	timur@kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.1 013/212] fbdev: fsl-diu-fb: add missing device_remove_file()
-Date: Mon,  5 May 2025 19:03:05 -0400
-Message-Id: <20250505230624.2692522-13-sashal@kernel.org>
+	clm@fb.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 035/212] btrfs: avoid linker error in btrfs_find_create_tree_block()
+Date: Mon,  5 May 2025 19:03:27 -0400
+Message-Id: <20250505230624.2692522-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -66,31 +67,59 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+From: Mark Harmstone <maharmstone@fb.com>
 
-[ Upstream commit 86d16cd12efa547ed43d16ba7a782c1251c80ea8 ]
+[ Upstream commit 7ef3cbf17d2734ca66c4ed8573be45f4e461e7ee ]
 
-Call device_remove_file() when driver remove.
+The inline function btrfs_is_testing() is hardcoded to return 0 if
+CONFIG_BTRFS_FS_RUN_SANITY_TESTS is not set. Currently we're relying on
+the compiler optimizing out the call to alloc_test_extent_buffer() in
+btrfs_find_create_tree_block(), as it's not been defined (it's behind an
+ #ifdef).
 
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
-Signed-off-by: Helge Deller <deller@gmx.de>
+Add a stub version of alloc_test_extent_buffer() to avoid linker errors
+on non-standard optimization levels. This problem was seen on GCC 14
+with -O0 and is helps to see symbols that would be otherwise optimized
+out.
+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Mark Harmstone <maharmstone@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/fsl-diu-fb.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/extent_io.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/fsl-diu-fb.c b/drivers/video/fbdev/fsl-diu-fb.c
-index ce3c5b0b8f4ef..53be4ab374cc3 100644
---- a/drivers/video/fbdev/fsl-diu-fb.c
-+++ b/drivers/video/fbdev/fsl-diu-fb.c
-@@ -1829,6 +1829,7 @@ static int fsl_diu_remove(struct platform_device *pdev)
- 	int i;
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 72227c0b4b5a1..d5552875f872a 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4459,10 +4459,10 @@ struct extent_buffer *find_extent_buffer(struct btrfs_fs_info *fs_info,
+ 	return eb;
+ }
  
- 	data = dev_get_drvdata(&pdev->dev);
-+	device_remove_file(&pdev->dev, &data->dev_attr);
- 	disable_lcdc(&data->fsl_diu_info[0]);
+-#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
+ 					u64 start)
+ {
++#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+ 	struct extent_buffer *eb, *exists = NULL;
+ 	int ret;
  
- 	free_irq(data->irq, data->diu_reg);
+@@ -4498,8 +4498,11 @@ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
+ free_eb:
+ 	btrfs_release_extent_buffer(eb);
+ 	return exists;
+-}
++#else
++	/* Stub to avoid linker error when compiled with optimizations turned off. */
++	return NULL;
+ #endif
++}
+ 
+ static struct extent_buffer *grab_extent_buffer(
+ 		struct btrfs_fs_info *fs_info, struct page *page)
 -- 
 2.39.5
 
