@@ -1,165 +1,169 @@
-Return-Path: <linux-kernel+bounces-632583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C6EAA9910
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:34:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE6AAA9914
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE0E17A06B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205373B4AEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FF1262FFE;
-	Mon,  5 May 2025 16:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8302690ED;
+	Mon,  5 May 2025 16:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BWq9WfPJ"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PMeVruwr"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11F1268C6B
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 16:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3A61A3163
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 16:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746462771; cv=none; b=O/Jbp3htrBTpxPdTki5L94IQUPCQsEqnG5FUMv0dUBClCspr8cBUDIyoNE0fT859qCppDi8I0QXUplP5bnTKB3Ju4MiVOiwhT2DiEK42zUUmWtRb9Qf+TJy56N3T54u2jmbNyL7ADtw53xS2Q+BEM6plilzWHyOLSbayjZubFXk=
+	t=1746462728; cv=none; b=AlQ4Ak8MvXXMuuMp/sM8ckXffdMKTfcRhWY85bWg3m6tfvBqigpxzAGQ03YKtDwjZ9RdA5Fz8xE78CMJVsj76Xxc+nV8zlmki9f6YZymjyIRxZIoTlwft7kQrpuly3MzYGRf3kyfJIvMnpABDD06TDkoPlhiLZGdNUvjGR/ga+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746462771; c=relaxed/simple;
-	bh=eFnLQvdsVmKraQh8aq+xo4eSFo2W/BSjPzBiG7P/W9k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=riBvUp12CIiPyvU6VWMdPRXeOJetiTruFYKVluUjv1G9+EgpdUdkpvolOH+aQw0tjv7qYF7wg1aZgJ3BDDaZFvNkEVcqdG57cOgKDkKgZPmDLgu9pPBSvE37on6i+HPXHUI4G26ckgeArGOAL6q3cCcDmh16MJkmtfI5OEZ4ftE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BWq9WfPJ; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-401e77e5443so2876162b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 09:32:49 -0700 (PDT)
+	s=arc-20240116; t=1746462728; c=relaxed/simple;
+	bh=shkAZuvCH2RU/ckc8VuwX9a+2DZnjJ7l1ZckrK9OVyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcQT0L0iMryX9YasljYLmV5MyFIDpebXUpyBo1coC0i9ioJMRfEM+eVV3uH9cGhb/lzIcZ90mCo8NAg3W3nN806kC97fujoIbyZZoeYt/AyTMFsVrU24E8S8enzLgFwX8Kkg3el6xkI8WaWj2C29oDpUh2DMae3XDnbDuqDLzf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PMeVruwr; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso5586630a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 09:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746462768; x=1747067568; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NoTdUTbEoyHl0+vrXiyaUVCxUuEGKzeZRmULGNvEl7M=;
-        b=BWq9WfPJVDrGRKTFgS6SvbjdZVaKZTMykdzdeqCq06NPAF0o90PPfmOvOjfgesDhQu
-         YtwIwpOHENxxTdmW3aJhWEzjrzCNxWN44Q1l1HNouWyipYZdVaR26ef+9oEDktoNEuN6
-         Cu2BT6yUHY0omY5jpkkh3863Og6R6JMfA5AtBb96YoS2PvBkpSKrvehasLkLDigR97BN
-         X8QBQix5z/f7uvWeS7jSxbKMCgNe3MnMJdfk2YcJnl5lodjxXZ5opBbU71GD0Qt230g4
-         +qyFIhyuSuQUA0fyNckRZAN3GFHPYZtkKcVCXYjNm6Az9BXLcdBlwNKbF7NhloGGjhVU
-         fwXg==
+        d=linaro.org; s=google; t=1746462725; x=1747067525; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=P8zp6pDtJvcq027DnBZDXmCmCGpXlaf9vo9MS7U/Xtg=;
+        b=PMeVruwrOGDyctAeFNqflnY/WkCJi87BWj9pvpDrCllzWm0IeTmZIVQTfPgohdAUtW
+         NMV/WV2s3q61ItxnNfcKfeDusJ7K5vgaqHIg8ypJSnfTiPvWPB3Ts0G9s9pec3yTAJkJ
+         WxY+y20LkKEC/yPPuLXrTYULeC5zLuD7wYlhHWKWLoCPhPRH11P7AKjVL3ECDCnpkdMO
+         Uar/cLBlvgvYp5cVejUV8R/OO/vXT6OhovycqJ5VSPawMQinQnkPJqGSDApNceJV2Dpg
+         oIXsu7/pMEW/XC8H/T29NWuAFreVTBUQcCEsTmZWX8TgtSyClulOt3+z+z0ZtoilfgFf
+         99Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746462768; x=1747067568;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NoTdUTbEoyHl0+vrXiyaUVCxUuEGKzeZRmULGNvEl7M=;
-        b=OO8WjmKhT4YZxQ+YDUrtsJ3GEk0em5U4lJrJXOC8HDEsusEIVf4jVRtAPwCwW/V7ea
-         a5ZyfTWv9Ma/D9RoULdqpz6+AYxe0DdGK8BnRRQur0yf3cKMRE+P1177YXtQXg0zKXzA
-         4TmkQKioZuTgXz+KchH+A1eF4whC8DX9Uy/i9l7aTaU3q0SILClyA9/hjSKpex5G4etz
-         TckB2pr2I4nA/U3KL7iUWxy6gbYRAiSbOIfy7JlcGcU//KrJerGa05f6X3ooetWqhGnu
-         5AYFcQDOSSxjATvhQ1Fkfm+1yVkqnXw+D/ebjd1Snfd79s6Lqgi+cHpsXXytA2S/elXS
-         Y8Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjrGt+CefuJZWwfjAtFbU0Q4V/wQmVnHxqAwfZViaq07hw+PhlvaUgaQakO5Vyq97sPeec9BKJJuXPCZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4bdtlaXIB8q8hAkGBi2/ZVucbfsRZx5ejmqbw3w0INHCbMGrl
-	Fbb9iwwceosjpsQgwm+phOPY6lpJL3K3vJX9PFrGf7V4PlKH/8xe7eDaDNUnHlg=
-X-Gm-Gg: ASbGncsIOvuoL/93y1V0kxAibq+Y146HHn5/YRvZBi0YzZCJaaBbpgtv0ZXQAtHlaKG
-	stK4J+Y2CB6JHA/RpSYIGWR+vsORa0/2K5UjQdP6uUm+fQL07gIsshFoynK8ZGIeVLLIWnY0Di6
-	FS2+/BH8DTIpfN2zoFjXIQlduA2stuqzbMTmR9a/DDowSnMHlcCB5yvVWXOR/rpkt2+uRCxxadM
-	TSYU6jzokUdiTDlUdkYp/xeiSjb3Qi3/jA1K6s/LgaF2JAzluPeJ0NrtfuHIJPArkflT16/ydD2
-	9hV0Nlr8XNWecVK0V69SFTD7H8paYsN2WRQBMpCOUTFs5Q==
-X-Google-Smtp-Source: AGHT+IHi1BqJMwn2+ePu/bE4tm+OAhNfcyLxdr7TQkYJqCf+3YKLVqRO9ann0RXlkmT0oNmwsKWWAg==
-X-Received: by 2002:a05:6808:444c:b0:3fe:aecb:5c49 with SMTP id 5614622812f47-4035a584bcfmr6037754b6e.21.1746462768685;
-        Mon, 05 May 2025 09:32:48 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:2151:6806:9b7:545d])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4033dae68f7sm1971854b6e.26.2025.05.05.09.32.47
+        d=1e100.net; s=20230601; t=1746462725; x=1747067525;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P8zp6pDtJvcq027DnBZDXmCmCGpXlaf9vo9MS7U/Xtg=;
+        b=hszb+yVMAeV0SKcCF9xJkqIuTZA+c0brJ7YZl4urefLuWvFY62euD85zFDYP4Ci+0B
+         6ejM4J3tj1jEdmCk2MIaDBwgDMMsYO7adHWKX+0nEQYCApsfuk3dvwy6Nt/GHuY23GY7
+         bJxdCgsS2KfS6jUGYZbFfh8IZM4mNtr/H0Vh0Q+gn75y6qpHs3FWR4gCC985WK1y0xgH
+         0t5hr+g5s1sxAeed0MOKw2A2e/HPR7otjNIbhCUMTNhxPe19ycM7YaHL/C4luaSuibh5
+         FcpNoLxrXOaooz/a8X8fD5Q0hMDn0EhU70rF3GgWOWMrx7eCH2cDlJ3Kp+AjNhH3vNWn
+         CpYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjzNVf3WYLSY6TDBc/lCOG6id1RSQJZw1PQ+tX/qL73WXH91KOenU+RujKH6PQ4lTI3uCSZLeOYOyl7VQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDCRX72TrH8GPwaVHQKIZFdvVOHTRkGXVoQtyRa9FuW0zTf5TE
+	0nhZ9Ndf+FnwmdGYEu42YRkYhZW+cla3hLTEjJDkTexUIv8GetfCxhjzaVyaKw==
+X-Gm-Gg: ASbGncuv5r3EZfBsXqOZ0EP06827UcDfhwI3i8qX5L84ikcl7ne2kzK+xsuSBP4d7DJ
+	eviI1lOt1Y0Zeod+tA0YRhbka5A+4XexFPBTlt8mz9Kg0jAVhU22QgLZyJ3qXgLgwpl7TmAdza3
+	1YVdyW7OE6VQibMUEeA3Xrhm+5sN+zfgrkx0agG12ITcuaHbrwHdyLqmTl5+AWnbMYo04YyyVeU
+	LRYAU1jrz2IlvM3nYqjgyqSH7WwZfS0xiUiK5Rk4G/M1d9y/m+fH+NQKxq/UI2aQ3fslNowYUaC
+	FQwcypYbucWRKw+ZF2/XhK7wkV3i2c7qthFla1u+C5aH+hK9tVI=
+X-Google-Smtp-Source: AGHT+IFmJNMq5Zm0Lx/iI+jAiEoLSglq132RPDiKeb9iy7s27eldL13qMLmaPmS7wnylnwCLW1L1wQ==
+X-Received: by 2002:a05:6a21:3a4a:b0:1f5:9175:2596 with SMTP id adf61e73a8af0-20e9660571emr11256518637.13.1746462725573;
+        Mon, 05 May 2025 09:32:05 -0700 (PDT)
+Received: from thinkpad ([120.60.48.235])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fb3c3d6bcsm5794666a12.61.2025.05.05.09.32.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 09:32:48 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 05 May 2025 11:31:48 -0500
-Subject: [PATCH v5 7/7] iio: adc: at91-sama5d2: use
- IIO_DECLARE_BUFFER_WITH_TS
+        Mon, 05 May 2025 09:32:05 -0700 (PDT)
+Date: Mon, 5 May 2025 22:01:54 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: webgeek1234@gmail.com
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] PCI: tegra: Drop unused remove callback
+Message-ID: <idddypjxxtiie3tllfk47krcydlno4lnhbkik4wakekcyu7c2d@iurtu6bjzeey>
+References: <20250505-pci-tegra-module-v4-0-088b552c4b1a@gmail.com>
+ <20250505-pci-tegra-module-v4-4-088b552c4b1a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250505-iio-introduce-iio_declare_buffer_with_ts-v5-7-814b72b1cae3@baylibre.com>
-References: <20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com>
-In-Reply-To: <20250505-iio-introduce-iio_declare_buffer_with_ts-v5-0-814b72b1cae3@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Eugen Hristev <eugen.hristev@linaro.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1736; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=eFnLQvdsVmKraQh8aq+xo4eSFo2W/BSjPzBiG7P/W9k=;
- b=owEBbAGT/pANAwAKAcLMIAH/AY/AAcsmYgBoGOghEdJgEI8ojT+f7QjlFDY6MQvZNWiXIAZEE
- nX4deedFwCJATIEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaBjoIQAKCRDCzCAB/wGP
- wHgbB/ioLShqxO7D+Edwq5N6S/xksypDEeWYWgeqd58uDkS3sWFGok58Ummx8bHd+QSXm4fmNLt
- 7RczIGWSscvNnlTnqXVve8vv0hxKCkoT0oskVJ2J9/6WdrjU69XMJRbOSZn2YcgGTgOQwaWHmHo
- f4Xq9kbDYbkW+QWFtIJ40Ox7fqCK2Mv73rsCrsQeyc0riR7qbsCL2LO/PrZCzRxv08PNHrXvMY4
- gflzTcE8HvZsw9KILWQRiL8HL1U+5ztA97fs7ofw6HmkxalS0rny0fPxaf+e+/j12vO/JaW7ka1
- ROOR8pSMG+DyiD1+fL4zz5CkIQTdQqo6LpT/eXDllIwFABk=
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250505-pci-tegra-module-v4-4-088b552c4b1a@gmail.com>
 
-Use IIO_DECLARE_BUFFER_WITH_TS() to declare the buffer that gets used
-with iio_push_to_buffers_with_ts(). This makes the code a bit easier to
-read and understand.
+On Mon, May 05, 2025 at 09:59:01AM -0500, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
+> 
+> Debugfs cleanup is moved to a new shutdown callback to ensure the
+> debugfs nodes are properly cleaned up on shutdown and reboot.
+> 
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
+Both are separate changes. You should remove the .remove() callback in the
+previous patch itself and add .shutdown() callback in this patch.
 
-v5 changes:
-* Fixed missing space at end of comment.
+And the shutdown callback should quiesce the device by putting it in L2/L3 state
+and turn off the supplies. It is not intended to perform resource cleanup.
 
-This is an alternative to [1].
+- Mani
 
-[1]: https://lore.kernel.org/linux-iio/20250418-iio-prefer-aligned_s64-timestamp-v1-2-4c6080710516@baylibre.com/
----
- drivers/iio/adc/at91-sama5d2_adc.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index 414610afcb2c4128a63cf76767803c32cb01ac5e..c3450246730e08cdacc975ed19f46044dc76848f 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -586,15 +586,6 @@ struct at91_adc_temp {
- 	u16				saved_oversampling;
- };
- 
--/*
-- * Buffer size requirements:
-- * No channels * bytes_per_channel(2) + timestamp bytes (8)
-- * Divided by 2 because we need half words.
-- * We assume 32 channels for now, has to be increased if needed.
-- * Nobody minds a buffer being too big.
-- */
--#define AT91_BUFFER_MAX_HWORDS ((32 * 2 + 8) / 2)
--
- struct at91_adc_state {
- 	void __iomem			*base;
- 	int				irq;
-@@ -616,8 +607,8 @@ struct at91_adc_state {
- 	struct at91_adc_temp		temp_st;
- 	struct iio_dev			*indio_dev;
- 	struct device			*dev;
--	/* Ensure naturally aligned timestamp */
--	u16				buffer[AT91_BUFFER_MAX_HWORDS] __aligned(8);
-+	/* We assume 32 channels for now, has to be increased if needed. */
-+	IIO_DECLARE_BUFFER_WITH_TS(u16, buffer, 32);
- 	/*
- 	 * lock to prevent concurrent 'single conversion' requests through
- 	 * sysfs.
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  drivers/pci/controller/pci-tegra.c | 19 ++-----------------
+>  1 file changed, 2 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index 1539d172d708c11c3d085721ab9416be3dea6b12..cc9ca4305ea2072b7395ee1f1e979c24fdea3433 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -2674,27 +2674,12 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>  	return err;
+>  }
+>  
+> -static void tegra_pcie_remove(struct platform_device *pdev)
+> +static void tegra_pcie_shutdown(struct platform_device *pdev)
+>  {
+>  	struct tegra_pcie *pcie = platform_get_drvdata(pdev);
+> -	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> -	struct tegra_pcie_port *port, *tmp;
+>  
+>  	if (IS_ENABLED(CONFIG_DEBUG_FS))
+>  		tegra_pcie_debugfs_exit(pcie);
+> -
+> -	pci_stop_root_bus(host->bus);
+> -	pci_remove_root_bus(host->bus);
+> -	pm_runtime_put_sync(pcie->dev);
+> -	pm_runtime_disable(pcie->dev);
+> -
+> -	if (IS_ENABLED(CONFIG_PCI_MSI))
+> -		tegra_pcie_msi_teardown(pcie);
+> -
+> -	tegra_pcie_put_resources(pcie);
+> -
+> -	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
+> -		tegra_pcie_port_free(port);
+>  }
+>  
+>  static int tegra_pcie_pm_suspend(struct device *dev)
+> @@ -2800,7 +2785,7 @@ static struct platform_driver tegra_pcie_driver = {
+>  		.pm = &tegra_pcie_pm_ops,
+>  	},
+>  	.probe = tegra_pcie_probe,
+> -	.remove = tegra_pcie_remove,
+> +	.shutdown = tegra_pcie_shutdown,
+>  };
+>  builtin_platform_driver(tegra_pcie_driver);
+>  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+> 
+> -- 
+> 2.48.1
+> 
+> 
 
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
