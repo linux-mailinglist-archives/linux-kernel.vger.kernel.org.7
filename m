@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-632375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86415AA9686
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:55:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4BFAA9682
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE8B16931E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EEEA3A5CAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23529274649;
-	Mon,  5 May 2025 14:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A4B2749E3;
+	Mon,  5 May 2025 14:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DbR0e0cY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXo4iqsF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67706265CAF;
-	Mon,  5 May 2025 14:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A874265CDA;
+	Mon,  5 May 2025 14:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746456535; cv=none; b=O3zCXzW9fn1XoyC9KVc3VUbaUftvJ+ejYpucz471ISqkq5OwyGXh3k+TmeIRJ6SRGiqjPexPI40Q0jtTgw4XWfBbQVEBblrQqxayEgZyHoRXdnK7kmp34DxC9u3U/USuKgYV1bIaTYHlu53VzG/HSfr3DWV7Eb1hwxvPb1dbMzE=
+	t=1746456540; cv=none; b=FYDb5xbJjxNg97m+wIGDedIZdDV92gcCjVTq/AoZwgrOxCbsVwSXgqVLVJjuwq0Om9tT9EErpGFGxNWvUI5r7BTS5FJjEW4hMYI2kHldugtir40Yjr5Q/KzT1V623oEaCmzX3mcvm3oF+GKXHZ2rLpplxKkAO43neRnLIX+jc5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746456535; c=relaxed/simple;
-	bh=T7UZFbjIpNpa2PCnI3E8CNiqBgdb1SekLgRMQ/lfCro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UOpOj14JMlrQfZEhU01gXBBwk3ewgxrhLchBvyc4fItafvelZ6pXNaY1GgUAScNRPvoiEBJxAM/MvhCFiamRPsBDZWzxu+39Zw+hiuX74eWIZSv3QoER6MDGU33DVH2r2OkhifsUesilYUeva2fc3i7W4F4jBVEpvEcubjeKLdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DbR0e0cY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD5BC4CEE4;
-	Mon,  5 May 2025 14:48:54 +0000 (UTC)
+	s=arc-20240116; t=1746456540; c=relaxed/simple;
+	bh=lozRBFVxQQN1nhVsQFYGSiIpmytQJaLRhJd+J1imAZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r6B6lCFsWcko1rwm8oexSQd2E+sdipceoMiWVrQYxNrLupU4mFJ63ogm60gvAtoOTG608dPXxFxbJ1lLrrT59GG3igJIEOdSjgmbJORYPIFCMw4CKfEThZEr0cAGdVoLv1eFYdouACwko8EcYAsngGFhCIwXcMB+XBwSoZkPZX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXo4iqsF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B96F3C4CEE4;
+	Mon,  5 May 2025 14:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746456534;
-	bh=T7UZFbjIpNpa2PCnI3E8CNiqBgdb1SekLgRMQ/lfCro=;
+	s=k20201202; t=1746456539;
+	bh=lozRBFVxQQN1nhVsQFYGSiIpmytQJaLRhJd+J1imAZM=;
 	h=From:To:Cc:Subject:Date:From;
-	b=DbR0e0cYDbTliA3WxegjtFxbyTwa/BzXijMZSZEz1D+VwPC78+ivTdHKUeRUFSyzD
-	 DnNNWzhw+4ZNEAZxlmEYPlfE6no5dBCDE/5MgqUmULsw0GgE3eMWEVvJtSG9b/6cTn
-	 fETH0j40Hl/Z2feoE4tugKcNN1nooYNbbLBQjsbzg4uiuvf/49VgiLYlG9yhvz1743
-	 dUMYW6kHHC6Im8QVm8mxt7LJCS3sufMp7k7pXo/vWimkNjCFbKQxmXGYOjp0NCyU6C
-	 MVlfaHO4ghvkk+LFWXxKPhalTdhUIRkSudH4xHGq86XqNFxSwb7qCsQRfEAXmcjf+4
-	 +ji20YWa2qH9A==
+	b=IXo4iqsFfsx+ZTDvKwpgJgJtebEAWbLMD4mMABQu+4WmH1fp9tjDR6As3tZRLLKdU
+	 mXypz1G/wpGGHL6sRErFSzjthxSp9/fQCssVrB/8YOVYb5fE6EjW8KRCj+gfdzcs2s
+	 JOust+QBbK+Rmd97sZ20ws1f9GjCweCqUsihGUCOMVzjqX/pjniHdDV5T82plOPW9/
+	 XmnlQi0q8dn3gQfGAIhDqJI23nsVqIKtdHBm9EtyjPDV/N2VZ9XXfUYJ8WD7OtNrsQ
+	 Ka4QMoYFx2O7TPl0Jq1bX4+Tq9jk4B5TRLE+ExUiG4zURGjcbDgowHngP2YphjRmhV
+	 fNmxgB5LDzCNg==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+	Damien Riegel <damien.riegel@savoirfairelinux.com>
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: interrupt-controller: Convert st,spear3xx-shirq to DT schema
-Date: Mon,  5 May 2025 09:48:50 -0500
-Message-ID: <20250505144851.1293180-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: interrupt-controller: Convert technologic,ts4800-irqc to DT schema
+Date: Mon,  5 May 2025 09:48:55 -0500
+Message-ID: <20250505144856.1293370-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,59 +58,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the SPEAr3xx Shared interrupt controller binding to schema
-format. It's a straight-forward conversion of the typical interrupt
-controller.
+Convert the TS-4800 FPGA interrupt controller binding to schema format.
+It's a straight-forward conversion of the typical interrupt controller.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../st,spear300-shirq.yaml                    | 67 +++++++++++++++++++
- .../st,spear3xx-shirq.txt                     | 44 ------------
- 2 files changed, 67 insertions(+), 44 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/st,spear300-shirq.yaml
- delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/st,spear3xx-shirq.txt
+ .../technologic,ts4800-irqc.yaml              | 49 +++++++++++++++++++
+ .../technologic,ts4800.txt                    | 14 ------
+ 2 files changed, 49 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800-irqc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800.txt
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,spear300-shirq.yaml b/Documentation/devicetree/bindings/interrupt-controller/st,spear300-shirq.yaml
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800-irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800-irqc.yaml
 new file mode 100644
-index 000000000000..27d36173366a
+index 000000000000..f1a15d725cd6
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/st,spear300-shirq.yaml
-@@ -0,0 +1,67 @@
++++ b/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800-irqc.yaml
+@@ -0,0 +1,49 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/interrupt-controller/st,spear300-shirq.yaml#
++$id: http://devicetree.org/schemas/interrupt-controller/technologic,ts4800-irqc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: SPEAr3xx Shared IRQ controller
++title: TS-4800 FPGA Interrupt Controller
 +
 +maintainers:
-+  - Viresh Kumar <vireshk@kernel.org>
-+  - Shiraz Hashim <shiraz.linux.kernel@gmail.com>
++  - Damien Riegel <damien.riegel@savoirfairelinux.com>
 +
-+description: |
-+  SPEAr3xx architecture includes shared/multiplexed irqs for certain set of
-+  devices. The multiplexor provides a single interrupt to parent interrupt
-+  controller (VIC) on behalf of a group of devices.
-+
-+  There can be multiple groups available on SPEAr3xx variants but not exceeding
-+  4. The number of devices in a group can differ, further they may share same
-+  set of status/mask registers spanning across different bit masks. Also in some
-+  cases the group may not have enable or other registers. This makes software
-+  little complex.
-+
-+  A single node in the device tree is used to describe the shared interrupt
-+  multiplexer (one node for all groups). A group in the interrupt controller
-+  shares config/control registers with other groups. For example, a 32-bit
-+  interrupt enable/disable config register can accommodate up to 4 interrupt
-+  groups.
++description:
++  TS-4800 FPGA has an internal interrupt controller. When one of the interrupts
++  is triggered, the SoC is notified, usually using a GPIO as parent interrupt
++  source.
 +
 +properties:
 +  compatible:
-+    enum:
-+      - st,spear300-shirq
-+      - st,spear310-shirq
-+      - st,spear320-shirq
++    const: technologic,ts4800-irqc
 +
 +  reg:
 +    maxItems: 1
@@ -122,78 +104,46 @@ index 000000000000..27d36173366a
 +  interrupt-controller: true
 +
 +  interrupts:
-+    description: Interrupt specifier array for SHIRQ groups
-+    minItems: 1
-+    maxItems: 4
++    maxItems: 1
 +
 +required:
 +  - compatible
 +  - reg
-+  - '#interrupt-cells'
 +  - interrupt-controller
++  - '#interrupt-cells'
 +  - interrupts
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    interrupt-controller@b3000000 {
-+        compatible = "st,spear320-shirq";
-+        reg = <0xb3000000 0x1000>;
-+        interrupts = <28 29 30 1>;
-+        #interrupt-cells = <1>;
++    interrupt-controller@1000 {
++        compatible = "technologic,ts4800-irqc";
++        reg = <0x1000 0x80>;
 +        interrupt-controller;
++        #interrupt-cells = <1>;
++        interrupts = <10>;
 +    };
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,spear3xx-shirq.txt b/Documentation/devicetree/bindings/interrupt-controller/st,spear3xx-shirq.txt
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800.txt b/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800.txt
 deleted file mode 100644
-index a407c499b3cc..000000000000
---- a/Documentation/devicetree/bindings/interrupt-controller/st,spear3xx-shirq.txt
+index 341ae5909333..000000000000
+--- a/Documentation/devicetree/bindings/interrupt-controller/technologic,ts4800.txt
 +++ /dev/null
-@@ -1,44 +0,0 @@
--* SPEAr Shared IRQ layer (shirq)
+@@ -1,14 +0,0 @@
+-TS-4800 FPGA interrupt controller
 -
--SPEAr3xx architecture includes shared/multiplexed irqs for certain set
--of devices. The multiplexor provides a single interrupt to parent
--interrupt controller (VIC) on behalf of a group of devices.
--
--There can be multiple groups available on SPEAr3xx variants but not
--exceeding 4. The number of devices in a group can differ, further they
--may share same set of status/mask registers spanning across different
--bit masks. Also in some cases the group may not have enable or other
--registers. This makes software little complex.
--
--A single node in the device tree is used to describe the shared
--interrupt multiplexor (one node for all groups). A group in the
--interrupt controller shares config/control registers with other groups.
--For example, a 32-bit interrupt enable/disable config register can
--accommodate up to 4 interrupt groups.
+-TS-4800 FPGA has an internal interrupt controller. When one of the
+-interrupts is triggered, the SoC is notified, usually using a GPIO as
+-parent interrupt source.
 -
 -Required properties:
--  - compatible: should be, either of
--     - "st,spear300-shirq"
--     - "st,spear310-shirq"
--     - "st,spear320-shirq"
--  - interrupt-controller: Identifies the node as an interrupt controller.
--  - #interrupt-cells: should be <1> which basically contains the offset
--    (starting from 0) of interrupts for all the groups.
--  - reg: Base address and size of shirq registers.
--  - interrupts: The list of interrupts generated by the groups which are
--    then connected to a parent interrupt controller. Each group is
--    associated with one of the interrupts, hence number of interrupts (to
--    parent) is equal to number of groups. The format of the interrupt
--    specifier depends in the interrupt parent controller.
--
--Example:
--
--The following is an example from the SPEAr320 SoC dtsi file.
--
--shirq: interrupt-controller@b3000000 {
--	compatible = "st,spear320-shirq";
--	reg = <0xb3000000 0x1000>;
--	interrupts = <28 29 30 1>;
--	#interrupt-cells = <1>;
--	interrupt-controller;
--};
+-- compatible: should be "technologic,ts4800-irqc"
+-- interrupt-controller: identifies the node as an interrupt controller
+-- reg: physical base address of the controller and length of memory mapped
+-  region
+-- #interrupt-cells: specifies the number of cells needed to encode an interrupt
+-  source, should be 1.
+-- interrupts: specifies the interrupt line in the interrupt-parent controller
 -- 
 2.47.2
 
