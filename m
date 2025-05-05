@@ -1,150 +1,122 @@
-Return-Path: <linux-kernel+bounces-632871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA33AA9DBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:05:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C16AA9DCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4284E17D5FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:05:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82A8918890D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE5613B7A3;
-	Mon,  5 May 2025 21:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BBB274668;
+	Mon,  5 May 2025 21:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/ha/J05"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJ4zZa60"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FDC450F2;
-	Mon,  5 May 2025 21:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FE61DC994;
+	Mon,  5 May 2025 21:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746479099; cv=none; b=MG+8RyooDlj85KfV7Ps4OJvt6GSkFCK/AL9rqv8Z8tcjQoA1xM5cK2Hqdd5+fyDEsWiBry/f8UhKgczjKpERmtRIh2QCmYtZtklej4Vg4pZTDhrsKw8cHciW0caAlTG4mitZ6t6V/0hlkevlB5gO0+xNxP4aL3UrJiD4VPg0QcE=
+	t=1746479181; cv=none; b=pZkvYYR8xoli0iN65/t1tGS5euwQkD9coYoqoWsicqix/iBnvJAKnrqhmPLhjuM9HQ2IfRi4LM8Lk2I5SgQmhgiYABT7kyXAM2RdnVPXm4YEsPnKQPio3YTk0TYeSh/CDfYmFkqmEeipxNLPWl7stpMiI87DwyeNAL6ig6y3OCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746479099; c=relaxed/simple;
-	bh=FGiWGc+82PiPbIk6BF5/UnObbgn45qQJgVgN4UIx1T4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LbyXBv0QOZJzEzDhRSyBHFInlgY9gylHMsajPeK3t+8SN0dyI1ewX+PT/yFRp4fXfyN4pGg1hNiBao82c2C84rQ0bvP3sJo/mpPI18BOg2sPepjx4/0H15foadO33xMJZBftG4f425aUugT5T/aXfO1nelARDCLwCSySofn3zlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/ha/J05; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2260c91576aso44187605ad.3;
-        Mon, 05 May 2025 14:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746479097; x=1747083897; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f203cTbIpPkVhyyjjbKF+s15CLqMptv+0eTp+x4sYXs=;
-        b=a/ha/J05zHhQdOwzCQrpJlPm3Z1qrwPEpYCK0f+YSxQqOw/G0OOPHhenWsp3mh0a/2
-         wDp90JNYiVasRFfmvw1o61QmrM3arQm9wfWHH6N3r3sr5yX/8KgSrDfqj5kUd2z54b7R
-         57L9PZNEdo2mOi26wzGuvL4STxQj1yDHgQmpkDRU2Jh+8UvVBoW4jFOkUNHWLh5CyVzH
-         rUrAkgqSA9WKRPhsT+6XpIaBthzKuOOGvgLT5DxGo5CHRQuwsu3Y8aNKIFzTO/c4BenB
-         FfyX03q6QlRksVlh9/utcTfNePjI3+WdC9WVWXcWBr643ET1dRNLfiEDXgxQMUqRAp8o
-         csQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746479097; x=1747083897;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f203cTbIpPkVhyyjjbKF+s15CLqMptv+0eTp+x4sYXs=;
-        b=c2/6mA8aIr5JyBojq47qWpNIL9Fxp3cDScBCpUIv5yefSddjFBKKk2H7CXVOt3zQ4V
-         c2zWRplHP0poQrsyw0EjTTPWX5GU3rqLkjPDwlbKebQv9DxpnsWGjjgOVuVpVDbTJeQa
-         exbXxIukws/HSu0szZBYN+WL//gSlleUR3tGli4kqwLZiuoc+ASios1QQACOMV0KjpVn
-         Lf6DN00O6Fj3YsLGVgRU8vq1NKD/CmfVpjmJX6EOQrLBgtk8yWAL31gLX6RUpifu3a8N
-         //TYWyI4sV+KaKV6fKvAtyAeeFnEWzeEQXEJ7/y+MR2zDTJ5fNbXQPEODvAeZCv6KQUD
-         BOpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCK8hItTB9+E/ZpTuAUIATvH0BMtPMncU4E0t9l8HAZlzJ5OF3CPBMRTe6hNIvvP5/1Xnha8/Erh0=@vger.kernel.org, AJvYcCWtwHA/DqoaL4lNYO5k+wW2P9WTRUlUES6ZZxcTmnCUfFZ/Z3x5j/X5Lzd1n68fNqFNlQZd7PZ8rar+jEiS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhPIwwGr2FgWF7zE8ZlYZf4SrLPRvo0bPH2H/FnDqX7gw8zhQJ
-	Z56TOHW7NLf5m9IZgRW7jhb4XX1sEgMEjwAjXIBFR+OXbrNSA5n4AiysCQ==
-X-Gm-Gg: ASbGncvhcA4Qo8L1QSBw1Dy2nHwqBbn+TwnrZVnzhNUR4A+Zcjn8yxRLLshiQXx+2FJ
-	r2mE/jac7dar5EuiIXMgKN0qb0mRqx0q/opvd8hv4afQYtTaMRsc7ZZznBK0noA2x2c6EvQvN/C
-	ZJp8Ct/MKZQK/vfSCHKZzdFBLK9VVPwayxIyLYgKsblWsIJow+okO07cKuui/aKkJHLj7ekyFBD
-	1VjD3wsnu3hnJCbj1bctQFv9mJYT1hgcDbJcOvw1Gof7MsEYej8RPSEc0h7RMGWuSJVcsyVbuz1
-	tOQ4gBNtrnLf8EG+F8qso6hW7ZMPrPM=
-X-Google-Smtp-Source: AGHT+IEpMlyP16CP04/9tmk3lHcgVxz6nJ39N1Oa0bFBCxZGfdK56DSPwOXRU3TsqUpZZQ+683qOAQ==
-X-Received: by 2002:a17:902:d482:b0:223:67ac:8929 with SMTP id d9443c01a7336-22e1e6ec76amr132240305ad.0.1746479096883;
-        Mon, 05 May 2025 14:04:56 -0700 (PDT)
-Received: from lg ([2607:fb90:87e0:9bc2:145c:221c:4526:62fe])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e151eb3b0sm59890325ad.103.2025.05.05.14.04.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 14:04:56 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Mon, 5 May 2025 14:04:51 -0700
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 01/19] cxl/mbox: Flag support for Dynamic Capacity
- Devices (DCD)
-Message-ID: <aBkn813skYvTv7QC@lg>
-References: <20250413-dcd-type2-upstream-v9-0-1d4911a0b365@intel.com>
- <20250413-dcd-type2-upstream-v9-1-1d4911a0b365@intel.com>
- <20250414151950.00001823@huawei.com>
+	s=arc-20240116; t=1746479181; c=relaxed/simple;
+	bh=am5E7+Utqe8zi5JH7YG5Vf5BHDNKW2H7Tn3z0DNQRQU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=p3VA/LATk/nDAXO/d8WWm2BiGU+lrLEISmenojKX8mfwHAP3iqA7NZJy7/FL4dg5D9NmRd7ZNHXE61WXcUt5VwmP3+mm+U9aj5M4BPPQODL7L8hKFdxcWF5ZIGalH+mmP6FiizRkRyzr6ApIWptutyhIoRdiMJYzO63KKcaQy8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJ4zZa60; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EB185C4CEE4;
+	Mon,  5 May 2025 21:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746479181;
+	bh=am5E7+Utqe8zi5JH7YG5Vf5BHDNKW2H7Tn3z0DNQRQU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=uJ4zZa60O9pseWKTACgMvfJgkOZ8BLFJtzT2sVuRRkShaosUq7GErvFRLY5XsP/Wd
+	 96zWqXXFf1ZGbW2XU7qy1ongTL96h4jALHddrJ2H/DSaHA1BE8gjy3uh4OJTpC4v79
+	 3QrZzXyKbHsLPTfU6OTFKeR1cDcBhjXUqwpoVeOO8C7GXl+dmJUOvEzzcp/nX7Bt7z
+	 KtxvuXUc4uBYNKrnW5HDe4bAx9scDNqP2AE/0opBu2XrgunKt1fd6K9b8XaUeKPmvn
+	 7kmo/ZMvwKWgOGu5qIdKmKfnf4i7KH95xepn2TYpHtGDwAMj/+87eowpD0g3UGiIXQ
+	 /zoOinty6Rg6g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F2AC3ABB6;
+	Mon,  5 May 2025 21:06:20 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH v2 0/4] media: i2c: imx214: Add support for more clock
+ frequencies
+Date: Mon, 05 May 2025 23:05:52 +0200
+Message-Id: <20250505-imx214_ccs_pll-v2-0-f50452061ff1@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414151950.00001823@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADEoGWgC/13MQQ6CMBCF4auQWVvTllbUlfcwhNR2kEkQmhYbl
+ HB3K3Hl8n/J+xaIGAgjnIsFAiaKNA455K4A25nhjoxcbpBcaq74gdFjlkI11sbG9z1DZdBxPKE
+ uJeSTD9jSvIHXOndHcRrDa/OT+K4/Suh/KgnGmStdVakj6vbmLsbT9I622+MT6nVdP2IoWlquA
+ AAA
+X-Change-ID: 20250406-imx214_ccs_pll-e4aed0e9e532
+To: Ricardo Ribalda <ribalda@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746479179; l=1442;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=am5E7+Utqe8zi5JH7YG5Vf5BHDNKW2H7Tn3z0DNQRQU=;
+ b=NvbuxybdvAAlUaRuGYo/IWVQESiEcW3K0U/sph25LQlmsSTSxh0MGK5u6cA+i4fcaHMmDTGp5
+ 2pAPo+eHXqnC10E+3d8D0hG3TP/wgT0FJVhiZKTGEeeOKNAYuQyt/Kg
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Mon, Apr 14, 2025 at 03:19:50PM +0100, Jonathan Cameron wrote:
-> On Sun, 13 Apr 2025 17:52:09 -0500
-> Ira Weiny <ira.weiny@intel.com> wrote:
-> 
-> > Per the CXL 3.1 specification software must check the Command Effects
-> > Log (CEL) for dynamic capacity command support.
-> > 
-> > Detect support for the DCD commands while reading the CEL, including:
-> > 
-> > 	Get DC Config
-> > 	Get DC Extent List
-> > 	Add DC Response
-> > 	Release DC
-> > 
-> > Based on an original patch by Navneet Singh.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> 
-> > +
-> > +static bool cxl_verify_dcd_cmds(struct cxl_memdev_state *mds, unsigned long *cmds_seen)
-> 
-> It's not immediately obvious to me what the right behavior
-> from something called cxl_verify_dcd_cmds() is.  A comment might help with that.
-> 
-> I think all it does right now is check if any bits are set. In my head
-> it was going to check that all bits needed for a useful implementation were
-> set. I did have to go check what a 'logical and' of a bitmap was defined as
-> because that bit of the bitmap_and() return value wasn't obvious to me either!
+The imx214 driver currently supports only a 24 MHz external clock. But
+there are devices, like Qualcomm-MSM8916-based phones, which cannot
+provide this frequency. To make the sensor usable by those devices, add
+support for additional clock frequencies.
 
-The code only checks if any DCD command (48xx) is supported, if any is
-set, it will set "dcd_supported".
-As you mentioned, it seems we should check all the related commands are
-supported, otherwise it is not valid implementation.
+This series supersedes
+https://lore.kernel.org/linux-media/20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu/
 
-Fan
-> 
-> 
-> > +{
-> > +	DECLARE_BITMAP(all_cmds, CXL_DCD_ENABLED_MAX);
-> > +	DECLARE_BITMAP(dst, CXL_DCD_ENABLED_MAX);
-> > +
-> > +	bitmap_fill(all_cmds, CXL_DCD_ENABLED_MAX);
-> > +	return bitmap_and(dst, cmds_seen, all_cmds, CXL_DCD_ENABLED_MAX);
-> > +}
-> > +
-> 
-> 
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+Changes in v2:
+- Add A-b tags
+- Switch to v4l2_ctrl_s_ctrl_int64() to acquire the control handler mutex
+- Add error handling for v4l2_ctrl_s_ctrl_int64() and
+  imx214_pll_update()
+- Replace "read clock frequency from dt" patch by "remove hard-coded
+  external clock frequency" patch
+- Link to v1:
+  https://lore.kernel.org/r/20250415-imx214_ccs_pll-v1-0-d3d7748e5fbd@apitzsch.eu
 
+---
+André Apitzsch (4):
+      media: i2c: imx214: Reorder imx214_parse_fwnode call
+      media: i2c: imx214: Prepare for variable clock frequency
+      media: i2c: imx214: Make use of CCS PLL calculator
+      media: i2c: imx214: Remove hard-coded external clock frequency
+
+ drivers/media/i2c/Kconfig  |   1 +
+ drivers/media/i2c/imx214.c | 266 ++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 204 insertions(+), 63 deletions(-)
+---
+base-commit: 4d4cc73d2632e07451c98c77fdb04aead3f78b00
+change-id: 20250406-imx214_ccs_pll-e4aed0e9e532
+
+Best regards,
 -- 
-Fan Ni
+André Apitzsch <git@apitzsch.eu>
+
+
 
