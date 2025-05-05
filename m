@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-634820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02F3AAB77A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:12:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD7EAAB797
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2A4A1C25878
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2FEA3B25A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35484819EB;
-	Tue,  6 May 2025 00:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25258482D4B;
+	Tue,  6 May 2025 00:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cei1MXXg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBs+TmUk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266772F1CE4;
-	Mon,  5 May 2025 23:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3F02F2C75;
+	Mon,  5 May 2025 23:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486809; cv=none; b=BMkcwmybLIb0e7ELLrEAW6a6/hKKZpEHN5jm81bFz9QPgaOTOO4k35YpRH9tRxqeUryR04dTKwbY3SX3AD1M4hYdMk2qgGdbGHIUZ5BNqQV5iCNMdQeBzkLO1rcOjMjM9AvVd2fNADkzew3myvqAcjraPdZyk9MoLnm+M7TcqGE=
+	t=1746486830; cv=none; b=JFOaFkUJP5kvfIbnB80HtAdYnzwxEs+6LWK5nutAXQExvsKyQNHb06FVmngvgQ6ISfbi3SzIuAldg1qpToQhQQYcgshFtzOaI9XLu6ZzXE6ueCAeEW6Lz1gs1vh7K+0Cfjax+5rqTKoIfateeCP0Pdf6qrkF3uUFHogiOmGtSyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486809; c=relaxed/simple;
-	bh=ZNNamQAsho3m0vJRmz+UD138r3/KRDDQchOLXKGzuao=;
+	s=arc-20240116; t=1746486830; c=relaxed/simple;
+	bh=c/ZRcjt/5odMSgBwPe3ZiTpzNSyYGXxRkVdPpWZtesY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qeHNs2RAIPUpkolYdn8TvZ9eNMN7xVDdVlz3VGA2TsDdLJMsWHzaaQ70zguwm5se1Zghv0rNVh6HNo4kfS5/0n/xYxsUyqcHsKqe7kxhvsgdUYkom4hupFdJO0/3Y0DDh9oLnWd6a5vL31ar8BugtuO1cRYxPspnrBW4sLpHtH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cei1MXXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E6E7C4CEE4;
-	Mon,  5 May 2025 23:13:26 +0000 (UTC)
+	 MIME-Version; b=XX3hQaItL6C14dWvkzC3g6dvfmIRECEaKMeiGfeI361mjJugt779Se6+MO0cycGch1UbQ2+J0HiZC1CL/R3m6L2brqinzSc5c7290/MJ933qjsujnvpdJ3LVngfnCv0MV3Z6Bv1+h8OTHIcvkHNasrhTin8Okg8Zf37mpCKxQfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBs+TmUk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB327C4CEE4;
+	Mon,  5 May 2025 23:13:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486808;
-	bh=ZNNamQAsho3m0vJRmz+UD138r3/KRDDQchOLXKGzuao=;
+	s=k20201202; t=1746486830;
+	bh=c/ZRcjt/5odMSgBwPe3ZiTpzNSyYGXxRkVdPpWZtesY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Cei1MXXghWZefXeapz5dxww/I0nQMDTh5rE3BzSVmkYm1tFNfljtAE4pD/oQqQBs3
-	 X9ePVJE8ZWckTS9EtGf70RFmTJgtq+m80b4x7lHoWKYMRlr+EObfvkX9dAAtoAgwmO
-	 CLznb2wYE3wf4jio8HvgOrRa2mVpFQSDj1B4honujf2CdMOWX/q5UGJr7m4tnUd1W1
-	 JilFyDsC/ZNcop9usimeAbpiRBnEJx25Daz3RIGjtwG+p4BRvv9ZyJaGFSEBZkr6N6
-	 lcYkP389y8aDlFNSXaVcXjA7c6mgDkFTOzZLZ7jZRT6A5GRrCLSA1tBVjmUy+fl+gT
-	 6roBPb0QOoTBg==
+	b=IBs+TmUkcDi7VAKOLDSoclJgodXZhS7ht6BuSB6Ea8y2445GAA54fUFczpR+LTWHH
+	 yBysunE3O4IHDyjk7rFi2/rqLCzWS21Xl7RSpjTWbAgmuWWIFUF+Tq0l//2qMNtCEa
+	 Kg7NWG0WZdnzd3H8TZSHXMcBnefyqBIobyw5Jyqk7rZJfydtt9HWsOfG3QIVOK82Xm
+	 DTaixtnE4XibN4umM+5snDgBTLcYCTL0WIMmEpNfs1CbEPBxCd8fpOa8YClWA0iYoe
+	 SCmfwPuZPm8io6d0yLh3dj+blISIPkK5UM8VxaG5KvEXzXGt+SA1xpDGJO0I9Fb2UK
+	 3j/bdlKG2uz1A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Kees Cook <kees@kernel.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Sasha Levin <sashal@kernel.org>,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 003/153] tracing: Mark binary printing functions with __printf() attribute
-Date: Mon,  5 May 2025 19:10:50 -0400
-Message-Id: <20250505231320.2695319-3-sashal@kernel.org>
+Cc: Jing Su <jingsusu@didiglobal.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 013/153] dql: Fix dql->limit value when reset.
+Date: Mon,  5 May 2025 19:11:00 -0400
+Message-Id: <20250505231320.2695319-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -62,159 +58,49 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Jing Su <jingsusu@didiglobal.com>
 
-[ Upstream commit 196a062641fe68d9bfe0ad36b6cd7628c99ad22c ]
+[ Upstream commit 3a17f23f7c36bac3a3584aaf97d3e3e0b2790396 ]
 
-Binary printing functions are using printf() type of format, and compiler
-is not happy about them as is:
+Executing dql_reset after setting a non-zero value for limit_min can
+lead to an unreasonable situation where dql->limit is less than
+dql->limit_min.
 
-kernel/trace/trace.c:3292:9: error: function ‘trace_vbprintk’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-kernel/trace/trace_seq.c:182:9: error: function ‘trace_seq_bprintf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
+For instance, after setting
+/sys/class/net/eth*/queues/tx-0/byte_queue_limits/limit_min,
+an ifconfig down/up operation might cause the ethernet driver to call
+netdev_tx_reset_queue, which in turn invokes dql_reset.
 
-Fix the compilation errors by adding __printf() attribute.
+In this case, dql->limit is reset to 0 while dql->limit_min remains
+non-zero value, which is unexpected. The limit should always be
+greater than or equal to limit_min.
 
-While at it, move existing __printf() attributes from the implementations
-to the declarations. IT also fixes incorrect attribute parameters that are
-used for trace_array_printk().
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Link: https://lore.kernel.org/r/20250321144822.324050-4-andriy.shevchenko@linux.intel.com
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Jing Su <jingsusu@didiglobal.com>
+Link: https://patch.msgid.link/Z9qHD1s/NEuQBdgH@pilot-ThinkCentre-M930t-N000
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/trace.h     |  4 ++--
- include/linux/trace_seq.h |  8 ++++----
- kernel/trace/trace.c      | 11 +++--------
- kernel/trace/trace.h      | 16 +++++++++-------
- 4 files changed, 18 insertions(+), 21 deletions(-)
+ lib/dynamic_queue_limits.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/trace.h b/include/linux/trace.h
-index 2a70a447184c9..bb4d84f1c58cc 100644
---- a/include/linux/trace.h
-+++ b/include/linux/trace.h
-@@ -72,8 +72,8 @@ static inline int unregister_ftrace_export(struct trace_export *export)
- static inline void trace_printk_init_buffers(void)
+diff --git a/lib/dynamic_queue_limits.c b/lib/dynamic_queue_limits.c
+index fde0aa2441480..a75a9ca46b594 100644
+--- a/lib/dynamic_queue_limits.c
++++ b/lib/dynamic_queue_limits.c
+@@ -116,7 +116,7 @@ EXPORT_SYMBOL(dql_completed);
+ void dql_reset(struct dql *dql)
  {
- }
--static inline int trace_array_printk(struct trace_array *tr, unsigned long ip,
--				     const char *fmt, ...)
-+static inline __printf(3, 4)
-+int trace_array_printk(struct trace_array *tr, unsigned long ip, const char *fmt, ...)
- {
- 	return 0;
- }
-diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
-index 5a2c650d9e1c1..c230cbd25aee8 100644
---- a/include/linux/trace_seq.h
-+++ b/include/linux/trace_seq.h
-@@ -77,8 +77,8 @@ extern __printf(2, 3)
- void trace_seq_printf(struct trace_seq *s, const char *fmt, ...);
- extern __printf(2, 0)
- void trace_seq_vprintf(struct trace_seq *s, const char *fmt, va_list args);
--extern void
--trace_seq_bprintf(struct trace_seq *s, const char *fmt, const u32 *binary);
-+extern __printf(2, 0)
-+void trace_seq_bprintf(struct trace_seq *s, const char *fmt, const u32 *binary);
- extern int trace_print_seq(struct seq_file *m, struct trace_seq *s);
- extern int trace_seq_to_user(struct trace_seq *s, char __user *ubuf,
- 			     int cnt);
-@@ -100,8 +100,8 @@ extern int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
- static inline void trace_seq_printf(struct trace_seq *s, const char *fmt, ...)
- {
- }
--static inline void
--trace_seq_bprintf(struct trace_seq *s, const char *fmt, const u32 *binary)
-+static inline __printf(2, 0)
-+void trace_seq_bprintf(struct trace_seq *s, const char *fmt, const u32 *binary)
- {
- }
- 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 3727a926b7fa9..85e197da34eee 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3402,10 +3402,9 @@ int trace_vbprintk(unsigned long ip, const char *fmt, va_list args)
- }
- EXPORT_SYMBOL_GPL(trace_vbprintk);
- 
--__printf(3, 0)
--static int
--__trace_array_vprintk(struct trace_buffer *buffer,
--		      unsigned long ip, const char *fmt, va_list args)
-+static __printf(3, 0)
-+int __trace_array_vprintk(struct trace_buffer *buffer,
-+			  unsigned long ip, const char *fmt, va_list args)
- {
- 	struct trace_event_call *call = &event_print;
- 	struct ring_buffer_event *event;
-@@ -3458,7 +3457,6 @@ __trace_array_vprintk(struct trace_buffer *buffer,
- 	return len;
- }
- 
--__printf(3, 0)
- int trace_array_vprintk(struct trace_array *tr,
- 			unsigned long ip, const char *fmt, va_list args)
- {
-@@ -3485,7 +3483,6 @@ int trace_array_vprintk(struct trace_array *tr,
-  * Note, trace_array_init_printk() must be called on @tr before this
-  * can be used.
-  */
--__printf(3, 0)
- int trace_array_printk(struct trace_array *tr,
- 		       unsigned long ip, const char *fmt, ...)
- {
-@@ -3530,7 +3527,6 @@ int trace_array_init_printk(struct trace_array *tr)
- }
- EXPORT_SYMBOL_GPL(trace_array_init_printk);
- 
--__printf(3, 4)
- int trace_array_printk_buf(struct trace_buffer *buffer,
- 			   unsigned long ip, const char *fmt, ...)
- {
-@@ -3546,7 +3542,6 @@ int trace_array_printk_buf(struct trace_buffer *buffer,
- 	return ret;
- }
- 
--__printf(2, 0)
- int trace_vprintk(unsigned long ip, const char *fmt, va_list args)
- {
- 	return trace_array_vprintk(&global_trace, ip, fmt, args);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 449a8bd873cf7..49b4353997fad 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -781,13 +781,15 @@ static inline void __init disable_tracing_selftest(const char *reason)
- 
- extern void *head_page(struct trace_array_cpu *data);
- extern unsigned long long ns2usecs(u64 nsec);
--extern int
--trace_vbprintk(unsigned long ip, const char *fmt, va_list args);
--extern int
--trace_vprintk(unsigned long ip, const char *fmt, va_list args);
--extern int
--trace_array_vprintk(struct trace_array *tr,
--		    unsigned long ip, const char *fmt, va_list args);
-+
-+__printf(2, 0)
-+int trace_vbprintk(unsigned long ip, const char *fmt, va_list args);
-+__printf(2, 0)
-+int trace_vprintk(unsigned long ip, const char *fmt, va_list args);
-+__printf(3, 0)
-+int trace_array_vprintk(struct trace_array *tr,
-+			unsigned long ip, const char *fmt, va_list args);
-+__printf(3, 4)
- int trace_array_printk_buf(struct trace_buffer *buffer,
- 			   unsigned long ip, const char *fmt, ...);
- void trace_printk_seq(struct trace_seq *s);
+ 	/* Reset all dynamic values */
+-	dql->limit = 0;
++	dql->limit = dql->min_limit;
+ 	dql->num_queued = 0;
+ 	dql->num_completed = 0;
+ 	dql->last_obj_cnt = 0;
 -- 
 2.39.5
 
