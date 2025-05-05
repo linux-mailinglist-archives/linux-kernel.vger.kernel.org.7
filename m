@@ -1,54 +1,56 @@
-Return-Path: <linux-kernel+bounces-634025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224AFAAAB6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:55:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0674AAABC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F18F7B0585
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0A83BEF42
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D8737AAA1;
-	Mon,  5 May 2025 23:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14732F8BDE;
+	Mon,  5 May 2025 23:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdRQ8ShO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpOB0zzE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD00F35C93E;
-	Mon,  5 May 2025 23:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6345C3745B2;
+	Mon,  5 May 2025 23:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486365; cv=none; b=nLucrqwyrWEcBrzx3+HcL62mr8Dtj2AuG9NxIhrXi5mJ94sV89kri2QhDCr5wvp9WAvPnOUeQoqot4PNuRg+wXEMfJ7IWuiMcL0W+EmZS5ys1MciRaAuDXMTIiX9qxKQtVPI/bmYCVpwEeD6rNGaFivWoxBGA/nX/qN1ZDmeHaU=
+	t=1746486367; cv=none; b=BgWCL/0MFLHU7yMjrnavkSZoxwe7VEM3kQGGReB4OHo50uKE4i2slJVwdnM8U3bS5R7FKo5T0P1yuzpPXDKVZ4yBjSg+gEZd4FjktfQ/KIls/TJPVdlb0Q1MPQhgfXPig42Uv+4hjUhCABRs0srhppMaHyqVomVQu27F9ldbrNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486365; c=relaxed/simple;
-	bh=O0/F7IB7rVhvkUwQ7ooED6FDRzDGO0E0J1ZKYYqH+CE=;
+	s=arc-20240116; t=1746486367; c=relaxed/simple;
+	bh=5fB5oUZhc39xpZeWHqD2PSF7T88HaYAVhdoLWGMnc+o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QAnmCGc6qor9wiert+BhMnSnbKwMhwrDK+yGqbLCGCPi64M/1NaD+E8ituYZ6hf1Hzk7AJb7tKBmOCF/XnZpZyo5oDHeSb9BEUUQn6tF8EUp8L10WZffAyo2e64hntFa7G+LFEVMu7d/UpGxa2t1CKh45/w1PUqKuybzpGLb+j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdRQ8ShO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2121CC4CEF1;
-	Mon,  5 May 2025 23:06:03 +0000 (UTC)
+	 MIME-Version; b=XXprjx5baWM4vur3dd8EdVjVOHg6aB/lIu+jokwQ43mWgvKHwOomo8i2+Eqlr8ofdoM4zQ5cx67mWAcNKmW1KMIQc4VIY5Og4FAHwXn66KR4kwewc30jroQ4syxBAEwN6z/SxKehSmp7RCL9WMN+We2ZQItsgKRFRLCdengaMig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpOB0zzE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F04C4CEEF;
+	Mon,  5 May 2025 23:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486363;
-	bh=O0/F7IB7rVhvkUwQ7ooED6FDRzDGO0E0J1ZKYYqH+CE=;
+	s=k20201202; t=1746486366;
+	bh=5fB5oUZhc39xpZeWHqD2PSF7T88HaYAVhdoLWGMnc+o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hdRQ8ShOzAOpbiNcgyG2h1eoM9zC5eO5R8FzNFRIIkLuHy412s1qSzow/b72JWvrO
-	 R+UaOktBhw8AnfxRUDobsrI7me6Cvf4CboTIo+p+AmKL0IpDVt5veK8Yj+9O3E9PXe
-	 Ck0984awtOxTYQUh5DRRdOimp0VvJV+Mrc93XRgwIpeSVYUYAl5csUaEl2SSjeroWm
-	 P2C1s/jzCOu2jA4SFEAdeygyAhmZteb8uc62kKghuWXdt5X3b3aF8XqBOH0jgLW30L
-	 siqvIHETgJvsGIVLxU5ER1lscBTCRFnmHqzUa0RXBtFMV8bwuBaSJsHXeNhr+SHWEF
-	 znizUGJ/8cItQ==
+	b=mpOB0zzESvka06/Jx4JKj5826rPwD0Oy9RFKMn4HZBUjIsyTrdjZM6YwxfgEOIC0p
+	 6HPGkAWOgLMgaR++yPsqx9sQ4nBljUeYzc2OUo3MItPQawabN122lGFwLU7tSu/7Aw
+	 myUsZ4PIFlMMDMbpatZgiUiY+/gabJEwQ8T7c6HahlOQmop8MqXulbU8LtFezXex/X
+	 gWjhT7OUzpTF2ZvjrBTL2Xq5YRRxUa3M9jF1meMSi1uUvll2cdLwoRoVQ/i0USQ0cJ
+	 aYF5FpVVJ2xsgkYmaqrt8UWU3b/JDPeOHFwfodZSJTkneddBo5QI3HwnTI98YwCRrE
+	 N0+q0ryJ2o8Aw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Ping-Ke Shih <pkshih@realtek.com>,
+Cc: Isaac Scott <isaac.scott@ideasonboard.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 283/294] wifi: rtw89: add wiphy_lock() to work that isn't held wiphy_lock() yet
-Date: Mon,  5 May 2025 18:56:23 -0400
-Message-Id: <20250505225634.2688578-283-sashal@kernel.org>
+	lgirdwood@gmail.com
+Subject: [PATCH AUTOSEL 6.6 285/294] regulator: ad5398: Add device tree support
+Date: Mon,  5 May 2025 18:56:25 -0400
+Message-Id: <20250505225634.2688578-285-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -63,69 +65,61 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+From: Isaac Scott <isaac.scott@ideasonboard.com>
 
-[ Upstream commit ebfc9199df05d37b67f4d1b7ee997193f3d2e7c8 ]
+[ Upstream commit 5a6a461079decea452fdcae955bccecf92e07e97 ]
 
-To ensure where are protected by driver mutex can also be protected by
-wiphy_lock(), so afterward we can remove driver mutex safely.
+Previously, the ad5398 driver used only platform_data, which is
+deprecated in favour of device tree. This caused the AD5398 to fail to
+probe as it could not load its init_data. If the AD5398 has a device
+tree node, pull the init_data from there using
+of_get_regulator_init_data.
 
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Link: https://patch.msgid.link/20250122060310.31976-2-pkshih@realtek.com
+Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+Link: https://patch.msgid.link/20250128173143.959600-4-isaac.scott@ideasonboard.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/realtek/rtw89/regd.c | 2 ++
- drivers/net/wireless/realtek/rtw89/ser.c  | 4 ++++
- 2 files changed, 6 insertions(+)
+ drivers/regulator/ad5398.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw89/regd.c b/drivers/net/wireless/realtek/rtw89/regd.c
-index 9e2328db18656..91f0895d9f540 100644
---- a/drivers/net/wireless/realtek/rtw89/regd.c
-+++ b/drivers/net/wireless/realtek/rtw89/regd.c
-@@ -451,6 +451,7 @@ void rtw89_regd_notifier(struct wiphy *wiphy, struct regulatory_request *request
- 	struct ieee80211_hw *hw = wiphy_to_ieee80211_hw(wiphy);
- 	struct rtw89_dev *rtwdev = hw->priv;
+diff --git a/drivers/regulator/ad5398.c b/drivers/regulator/ad5398.c
+index 40f7dba42b5ad..404cbe32711e7 100644
+--- a/drivers/regulator/ad5398.c
++++ b/drivers/regulator/ad5398.c
+@@ -14,6 +14,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
++#include <linux/regulator/of_regulator.h>
  
-+	wiphy_lock(wiphy);
- 	mutex_lock(&rtwdev->mutex);
- 	rtw89_leave_ps_mode(rtwdev);
+ #define AD5398_CURRENT_EN_MASK	0x8000
  
-@@ -468,6 +469,7 @@ void rtw89_regd_notifier(struct wiphy *wiphy, struct regulatory_request *request
+@@ -221,15 +222,20 @@ static int ad5398_probe(struct i2c_client *client)
+ 	const struct ad5398_current_data_format *df =
+ 			(struct ad5398_current_data_format *)id->driver_data;
  
- exit:
- 	mutex_unlock(&rtwdev->mutex);
-+	wiphy_unlock(wiphy);
- }
+-	if (!init_data)
+-		return -EINVAL;
+-
+ 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+ 	if (!chip)
+ 		return -ENOMEM;
  
- static void __rtw89_reg_6ghz_power_recalc(struct rtw89_dev *rtwdev)
-diff --git a/drivers/net/wireless/realtek/rtw89/ser.c b/drivers/net/wireless/realtek/rtw89/ser.c
-index 01b17b8f4ff9d..45165cf3e824e 100644
---- a/drivers/net/wireless/realtek/rtw89/ser.c
-+++ b/drivers/net/wireless/realtek/rtw89/ser.c
-@@ -156,9 +156,11 @@ static void ser_state_run(struct rtw89_ser *ser, u8 evt)
- 	rtw89_debug(rtwdev, RTW89_DBG_SER, "ser: %s receive %s\n",
- 		    ser_st_name(ser), ser_ev_name(ser, evt));
+ 	config.dev = &client->dev;
++	if (client->dev.of_node)
++		init_data = of_get_regulator_init_data(&client->dev,
++						       client->dev.of_node,
++						       &ad5398_reg);
++	if (!init_data)
++		return -EINVAL;
++
+ 	config.init_data = init_data;
++	config.of_node = client->dev.of_node;
+ 	config.driver_data = chip;
  
-+	wiphy_lock(rtwdev->hw->wiphy);
- 	mutex_lock(&rtwdev->mutex);
- 	rtw89_leave_lps(rtwdev);
- 	mutex_unlock(&rtwdev->mutex);
-+	wiphy_unlock(rtwdev->hw->wiphy);
- 
- 	ser->st_tbl[ser->state].st_func(ser, evt);
- }
-@@ -676,9 +678,11 @@ static void ser_l2_reset_st_hdl(struct rtw89_ser *ser, u8 evt)
- 
- 	switch (evt) {
- 	case SER_EV_STATE_IN:
-+		wiphy_lock(rtwdev->hw->wiphy);
- 		mutex_lock(&rtwdev->mutex);
- 		ser_l2_reset_st_pre_hdl(ser);
- 		mutex_unlock(&rtwdev->mutex);
-+		wiphy_unlock(rtwdev->hw->wiphy);
- 
- 		ieee80211_restart_hw(rtwdev->hw);
- 		ser_set_alarm(ser, SER_RECFG_TIMEOUT, SER_EV_L2_RECFG_TIMEOUT);
+ 	chip->client = client;
 -- 
 2.39.5
 
