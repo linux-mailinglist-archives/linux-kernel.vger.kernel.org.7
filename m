@@ -1,55 +1,65 @@
-Return-Path: <linux-kernel+bounces-633967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EB6AAAB17
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68727AAAB1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D56188C232
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:47:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736C1188CA0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16832F47A7;
-	Mon,  5 May 2025 23:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD852F4975;
+	Mon,  5 May 2025 23:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0Y4C8l4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEcb2D7k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4662DEB97;
-	Mon,  5 May 2025 23:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3172E61E3;
+	Mon,  5 May 2025 23:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486137; cv=none; b=QIq7zsDzsEl3tMUJUbg0suzme13ZHA24IHw0H4iJtdnB7W3vFA5B35/33K14PQqrab3avPAa9v9R+zBnen9CjoCkKzGi7qNj5ctN6XTpFS2rMvmcZ80lX6ZlpgGeb5aUf4Wf8Xgzj3pWZ+26Zsl+gdK/XlWx2dEKjJdWDkg5yxM=
+	t=1746486143; cv=none; b=nSdbbH/yYBOt8TbOyv/vlzNvZyfrbn3tc1wpk48XmKnrRXq+jhJgwkmCgWZW7Pfox9n/gvm1jBrZU10Z3gF8kLF/90nVSubwELwPnKRcdp9l/ZfDzkgCLjOAMag+mlgA9dTRbmjUY53BRssEbEyqhSODKUvoiBcZ/tTLn45Lz8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486137; c=relaxed/simple;
-	bh=1POYf0LwGw6uahw9yIbWbRozUWFElzKFLk8W9wbKX/0=;
+	s=arc-20240116; t=1746486143; c=relaxed/simple;
+	bh=ON+9Xv6FtdHn1tr25poPRH5F6XWaYr6j5CGTqzJfLto=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QclX0ZTs36htxyW9BDQrc+l+PdQTHmgDP9XHrq8C7afQjaXzo6yW7cP5OHaHLESFVWNXytEUPJnF5Vp2ngYJN26KkTeHFjVPPEk1kWot8SYCeUxv9IPAIpwaeSB5m9LXnvIn4fQmQDqQhMSA7EMoZomOfn3JyJwzofxk2oYygPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0Y4C8l4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C29BFC4CEED;
-	Mon,  5 May 2025 23:02:15 +0000 (UTC)
+	 MIME-Version; b=kwaz6Pu2H/71pb+Zvle2pqo848Q1cyCB6D5u3CBDDkSJzzsPkIj3JyyR/vUjfonBoGdzz5LsghteorA+1y0nUCZ/+McGHRKOTgIkYPaQK9R6m0PYs7y+SS8MRBt9UnzIQ1yg5SdbvwP7ENqbCK2ogyfJ2QT0OPD7PS37ymOVw7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEcb2D7k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675CDC4CEE4;
+	Mon,  5 May 2025 23:02:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486136;
-	bh=1POYf0LwGw6uahw9yIbWbRozUWFElzKFLk8W9wbKX/0=;
+	s=k20201202; t=1746486142;
+	bh=ON+9Xv6FtdHn1tr25poPRH5F6XWaYr6j5CGTqzJfLto=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h0Y4C8l4cNVl9SA0/iDB7fwC/nw11kiEdpioaUagTkt3mkYE5oynCWTBTK/968CWL
-	 73vPYFjrX4orNhVUMbUQDMON9q+lSVLqpn/P2zzkGSM2U9LrBxxCTeH+kjrw6Dlnu7
-	 lUzBOZVxygu3gojhBiLhj7lNwLkRMVHkG8yMMEg/mA481lJfToJuHlD6KJolVqXQuR
-	 sx0bleNGj+DLTKBYhb6iK4vjWhEX86OuNPVdbFwVPgbAWlBtT+SiKYBYmHQX4eMNHe
-	 299D33xAFp3TmXKTCRNPL4yPIBlLrWikg/X0N3dwwhj3TOibbhNeHEwyrCXmvinADJ
-	 /ry2xudBXApcA==
+	b=KEcb2D7kpzcsNMpOkwMzAods1PpxiCaE/bl1nRS76OtyoqaBHTVoYPKjuAtZ+98HZ
+	 OypapT7Sgk/XepokdEF8GuBhIWcdS0DV0j2usEi6yxnN9IUv0FrSUdP1xsvYtI5whI
+	 fmqnoWjVKEVwtdbY9bbGaZLWLJt1LOeTiVgOFPu8p5pcddgJSMvWPnuPL37Kt5LXyP
+	 YRdkfY4jM6Twslvn9hirJhta9m7kcBxQWGn03vyzvj+Pb/kYdUfV29d2y+JjICHxcq
+	 PHdHy9vNMcGzCAGfa7CyZMKHg6xdRCReHYQnBoIJaBAgcmSwxh8j9eFgyUoZD6KJsW
+	 2GyPQ/9/ANc2A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 170/294] crypto: ahash - Set default reqsize from ahash_alg
-Date: Mon,  5 May 2025 18:54:30 -0400
-Message-Id: <20250505225634.2688578-170-sashal@kernel.org>
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	bhelgaas@google.com,
+	shivamurthy.shastri@linutronix.de,
+	anna-maria@linutronix.de,
+	jgross@suse.com,
+	jgg@ziepe.ca,
+	yury.norov@gmail.com,
+	iommu@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.6 173/294] genirq/msi: Store the IOMMU IOVA directly in msi_desc instead of iommu_cookie
+Date: Mon,  5 May 2025 18:54:33 -0400
+Message-Id: <20250505225634.2688578-173-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -64,64 +74,172 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Jason Gunthorpe <jgg@nvidia.com>
 
-[ Upstream commit 9e01aaa1033d6e40f8d7cf4f20931a61ce9e3f04 ]
+[ Upstream commit 1f7df3a691740a7736bbc99dc4ed536120eb4746 ]
 
-Add a reqsize field to struct ahash_alg and use it to set the
-default reqsize so that algorithms with a static reqsize are
-not forced to create an init_tfm function.
+The IOMMU translation for MSI message addresses has been a 2-step process,
+separated in time:
 
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+ 1) iommu_dma_prepare_msi(): A cookie pointer containing the IOVA address
+    is stored in the MSI descriptor when an MSI interrupt is allocated.
+
+ 2) iommu_dma_compose_msi_msg(): this cookie pointer is used to compute a
+    translated message address.
+
+This has an inherent lifetime problem for the pointer stored in the cookie
+that must remain valid between the two steps. However, there is no locking
+at the irq layer that helps protect the lifetime. Today, this works under
+the assumption that the iommu domain is not changed while MSI interrupts
+being programmed. This is true for normal DMA API users within the kernel,
+as the iommu domain is attached before the driver is probed and cannot be
+changed while a driver is attached.
+
+Classic VFIO type1 also prevented changing the iommu domain while VFIO was
+running as it does not support changing the "container" after starting up.
+
+However, iommufd has improved this so that the iommu domain can be changed
+during VFIO operation. This potentially allows userspace to directly race
+VFIO_DEVICE_ATTACH_IOMMUFD_PT (which calls iommu_attach_group()) and
+VFIO_DEVICE_SET_IRQS (which calls into iommu_dma_compose_msi_msg()).
+
+This potentially causes both the cookie pointer and the unlocked call to
+iommu_get_domain_for_dev() on the MSI translation path to become UAFs.
+
+Fix the MSI cookie UAF by removing the cookie pointer. The translated IOVA
+address is already known during iommu_dma_prepare_msi() and cannot change.
+Thus, it can simply be stored as an integer in the MSI descriptor.
+
+The other UAF related to iommu_get_domain_for_dev() will be addressed in
+patch "iommu: Make iommu_dma_prepare_msi() into a generic operation" by
+using the IOMMU group mutex.
+
+Link: https://patch.msgid.link/r/a4f2cd76b9dc1833ee6c1cf325cba57def22231c.1740014950.git.nicolinc@nvidia.com
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/ahash.c        | 4 ++++
- include/crypto/hash.h | 3 +++
- 2 files changed, 7 insertions(+)
+ drivers/iommu/dma-iommu.c | 28 +++++++++++++---------------
+ include/linux/msi.h       | 33 ++++++++++++---------------------
+ 2 files changed, 25 insertions(+), 36 deletions(-)
 
-diff --git a/crypto/ahash.c b/crypto/ahash.c
-index 709ef09407991..6168f3532f552 100644
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -427,6 +427,7 @@ static int crypto_ahash_init_tfm(struct crypto_tfm *tfm)
- 	hash->setkey = ahash_nosetkey;
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 2da969fc89900..3f7fcf1801a97 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -1716,7 +1716,7 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
+ 	static DEFINE_MUTEX(msi_prepare_lock); /* see below */
  
- 	crypto_ahash_set_statesize(hash, alg->halg.statesize);
-+	crypto_ahash_set_reqsize(hash, alg->reqsize);
+ 	if (!domain || !domain->iova_cookie) {
+-		desc->iommu_cookie = NULL;
++		msi_desc_set_iommu_msi_iova(desc, 0, 0);
+ 		return 0;
+ 	}
  
- 	if (tfm->__crt_alg->cra_type != &crypto_ahash_type)
- 		return crypto_init_shash_ops_async(tfm);
-@@ -599,6 +600,9 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
- 	if (alg->halg.statesize == 0)
- 		return -EINVAL;
- 
-+	if (alg->reqsize && alg->reqsize < alg->halg.statesize)
-+		return -EINVAL;
+@@ -1728,11 +1728,12 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
+ 	mutex_lock(&msi_prepare_lock);
+ 	msi_page = iommu_dma_get_msi_page(dev, msi_addr, domain);
+ 	mutex_unlock(&msi_prepare_lock);
+-
+-	msi_desc_set_iommu_cookie(desc, msi_page);
+-
+ 	if (!msi_page)
+ 		return -ENOMEM;
 +
- 	err = hash_prepare_alg(&alg->halg);
- 	if (err)
- 		return err;
-diff --git a/include/crypto/hash.h b/include/crypto/hash.h
-index f7c2a22cd776d..c0d472fdc82e6 100644
---- a/include/crypto/hash.h
-+++ b/include/crypto/hash.h
-@@ -153,6 +153,7 @@ struct ahash_request {
-  *	      This is a counterpart to @init_tfm, used to remove
-  *	      various changes set in @init_tfm.
-  * @clone_tfm: Copy transform into new object, may allocate memory.
-+ * @reqsize: Size of the request context.
-  * @halg: see struct hash_alg_common
++	msi_desc_set_iommu_msi_iova(
++		desc, msi_page->iova,
++		ilog2(cookie_msi_granule(domain->iova_cookie)));
+ 	return 0;
+ }
+ 
+@@ -1743,18 +1744,15 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
   */
- struct ahash_alg {
-@@ -169,6 +170,8 @@ struct ahash_alg {
- 	void (*exit_tfm)(struct crypto_ahash *tfm);
- 	int (*clone_tfm)(struct crypto_ahash *dst, struct crypto_ahash *src);
+ void iommu_dma_compose_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
+ {
+-	struct device *dev = msi_desc_to_dev(desc);
+-	const struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
+-	const struct iommu_dma_msi_page *msi_page;
++#ifdef CONFIG_IRQ_MSI_IOMMU
++	if (desc->iommu_msi_shift) {
++		u64 msi_iova = desc->iommu_msi_iova << desc->iommu_msi_shift;
  
-+	unsigned int reqsize;
-+
- 	struct hash_alg_common halg;
- };
+-	msi_page = msi_desc_get_iommu_cookie(desc);
+-
+-	if (!domain || !domain->iova_cookie || WARN_ON(!msi_page))
+-		return;
+-
+-	msg->address_hi = upper_32_bits(msi_page->iova);
+-	msg->address_lo &= cookie_msi_granule(domain->iova_cookie) - 1;
+-	msg->address_lo += lower_32_bits(msi_page->iova);
++		msg->address_hi = upper_32_bits(msi_iova);
++		msg->address_lo = lower_32_bits(msi_iova) |
++				  (msg->address_lo & ((1 << desc->iommu_msi_shift) - 1));
++	}
++#endif
+ }
  
+ static int iommu_dma_init(void)
+diff --git a/include/linux/msi.h b/include/linux/msi.h
+index ddace8c34dcf9..2cf15cf5d060a 100644
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -171,6 +171,10 @@ struct msi_desc_data {
+  * @dev:	Pointer to the device which uses this descriptor
+  * @msg:	The last set MSI message cached for reuse
+  * @affinity:	Optional pointer to a cpu affinity mask for this descriptor
++ * @iommu_msi_iova: Optional shifted IOVA from the IOMMU to override the msi_addr.
++ *                  Only used if iommu_msi_shift != 0
++ * @iommu_msi_shift: Indicates how many bits of the original address should be
++ *                   preserved when using iommu_msi_iova.
+  * @sysfs_attr:	Pointer to sysfs device attribute
+  *
+  * @write_msi_msg:	Callback that may be called when the MSI message
+@@ -189,7 +193,8 @@ struct msi_desc {
+ 	struct msi_msg			msg;
+ 	struct irq_affinity_desc	*affinity;
+ #ifdef CONFIG_IRQ_MSI_IOMMU
+-	const void			*iommu_cookie;
++	u64				iommu_msi_iova : 58;
++	u64				iommu_msi_shift : 6;
+ #endif
+ #ifdef CONFIG_SYSFS
+ 	struct device_attribute		*sysfs_attrs;
+@@ -306,28 +311,14 @@ struct msi_desc *msi_next_desc(struct device *dev, unsigned int domid,
+ 
+ #define msi_desc_to_dev(desc)		((desc)->dev)
+ 
+-#ifdef CONFIG_IRQ_MSI_IOMMU
+-static inline const void *msi_desc_get_iommu_cookie(struct msi_desc *desc)
+-{
+-	return desc->iommu_cookie;
+-}
+-
+-static inline void msi_desc_set_iommu_cookie(struct msi_desc *desc,
+-					     const void *iommu_cookie)
+-{
+-	desc->iommu_cookie = iommu_cookie;
+-}
+-#else
+-static inline const void *msi_desc_get_iommu_cookie(struct msi_desc *desc)
++static inline void msi_desc_set_iommu_msi_iova(struct msi_desc *desc, u64 msi_iova,
++					       unsigned int msi_shift)
+ {
+-	return NULL;
+-}
+-
+-static inline void msi_desc_set_iommu_cookie(struct msi_desc *desc,
+-					     const void *iommu_cookie)
+-{
+-}
++#ifdef CONFIG_IRQ_MSI_IOMMU
++	desc->iommu_msi_iova = msi_iova >> msi_shift;
++	desc->iommu_msi_shift = msi_shift;
+ #endif
++}
+ 
+ int msi_domain_insert_msi_desc(struct device *dev, unsigned int domid,
+ 			       struct msi_desc *init_desc);
 -- 
 2.39.5
 
