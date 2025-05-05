@@ -1,199 +1,353 @@
-Return-Path: <linux-kernel+bounces-632487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041DFAA97F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:52:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAD3AA97F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5EA3A9A32
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8F1818842ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2A225E46E;
-	Mon,  5 May 2025 15:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E121F8EFF;
+	Mon,  5 May 2025 15:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xm40HrPN"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K792Qbc6"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FF125CC62
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784E125DAE1
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746460285; cv=none; b=mLo87bnhf5sK9bkTWRAUv1vqGTbdJU2yiflwWyrBmOmPchg/otyXDgFjknpxTvl8cIgTh4csXmbUmRdKYnOMihizXyEwJaQjPqsgvTdgXbHr0+SBS07NeJj/gUAE6LevWi9j1gt6DQkxLVxamOrSuuAPJdo7qfQ+VjfGY+uyxLE=
+	t=1746460311; cv=none; b=X10FOyPeVsGDk8M9KwEjSrYs6JSeCXjPcEU6kmAMF+w7YuWWiSmfqpnnDSFLrICpp7hu5uU6vI90RItaghzLGzygAlMMgqIRlMESmjOVBT+KM8DZpIsBNhOuVtxpn2J/GL1nhk9ybTGLS1E4k9ndsCwoOkLEyl7oB0AEU+1BMM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746460285; c=relaxed/simple;
-	bh=ajZZgUulqRNQnYH/U78ZrIlZ6v46eCd19mKY/YFXRGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gheKll8RXVwNDZipbFw3aYRbkrMrk1gamo2WzH52c4THVy0hX+9N0jS3fUQHbJfBJbNr18UysE/4Jvddgk1QHKfURhujb5L4qG2KlbgleLKPqMbu6EBzaHeRyxNnb/yUApx/8YmxBvYa+Wkotj0btbZ4y4fRJR+ZI+nmWPKrwNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xm40HrPN; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac6ed4ab410so754996866b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:51:22 -0700 (PDT)
+	s=arc-20240116; t=1746460311; c=relaxed/simple;
+	bh=E/ouETHxCribkFH/l4cIUUThSDdAwv1HuscA6q8cJME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f1ub/RTYnos4svn4TOthycDCOFk+QE81x+iYMnodiMGHXAUyEEpbSSqNXLKKpj3Sw/o0QSBq+KjpQop5orwR1iPp8Qheh3yVzhISYQ9AdMjI9y8OEmb8AnhPNQeWq/ToYL+XRySXl4wJomqjQZVwQ7nhevWUhVGff9ZkTGIC+sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K792Qbc6; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso14587a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:51:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746460281; x=1747065081; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2+3PIdJC3Ht+VlEO5rW2bxgqfN/WfvLUVhrpIT2zCns=;
-        b=Xm40HrPNoWR2GYOF4NuEWym4dNOWB2TjM/D8AT6ASyOI44YTSarEl8olVT6o5QrZVd
-         AnCsg+K6dlG3QZSpA/E2BRWwd9aBF0UHXhpZKissscaSxTFJuzZPebABmyadpPzOFTkM
-         sAGoW2dda6EejF5lCs5TzpKn5AOVc2zHHtCOAO6uXYvmIhwp4+gWSCbrQJheyLK8mpR0
-         6FCGb+cV1LrKOkvdFKemuxXeGF40gXzh0IsgfwRRxPf/N849qR8q4Ndfg7suT8nATI3s
-         bqXvF4OEdQPx0Z4ytinrX/6Wp+baxYswhMEsf0GVhPkByN4gp0gQHr++5sqNnQENULvh
-         +MmQ==
+        d=google.com; s=20230601; t=1746460308; x=1747065108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rfrPNwnin6OLWmMYx+AfwJyrSyct0onk2Si8di7Lblo=;
+        b=K792Qbc6KFvBACvlnzQ5US9weZIBz++omt6/QVXy2GvuX8ZMXTuC0pc+Q9c+Nes0xw
+         ZF1BzvEmDlk72DQv+AU3M+RHzX3Sx2Tv8J79Jjc2qMl+NmAxeKKm8mAbQZnhhl4f/xqY
+         E2FIAS427qc4zp9uGit7O52EbNpOU3iMyAEppQLfWIyAcBvoxcmrphNhzjsJoDA5yomR
+         p3K0Md4ewSE/rA63GIqdYTKT3FGo6fjlCUEOIPTF6FGiAU77mQjg2pUWKeER92PnCEr8
+         jtH9zl3m+FWQfSZTf44dj84MboBN+OuOQ/L4rh5vhjm+on7kU9fFyziNcS/FHwDOny7q
+         pUSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746460281; x=1747065081;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2+3PIdJC3Ht+VlEO5rW2bxgqfN/WfvLUVhrpIT2zCns=;
-        b=XdRZJ/YZFBXn4lgVKo9fMqyQ0ZJTg3wjkhdzrK9RNhz+OXDTaqxRAN01T8ECrrtt/G
-         Y9g5FhE4ycWV/VQsu+xHFJMVkSu2sJN7axVZUK0FihSSx9TtCLrQNGyI5fq0V5YBz69X
-         dO4O6e9x09A3WrYJHHjZGsnZZwjftOI0KKHNKr8diG7QNxmrfl/xMEVFTRYatXpTfqo/
-         LE2uZ7V6ChjbIcHOPHdTW7L6rZxFUHh56RFpU9voNXze8oUxLr4P4Gca4jdPMknWEphE
-         BSncF5v3GggzRFhtu7IgOCJ5N01Z1ZYBe3mT/aKTllUZoW4cMdNMwjQeXhd3KeNi2+Yf
-         26Dg==
-X-Gm-Message-State: AOJu0YzDBhJ0cByO6GUp92g0Zp2H/gMCX8nsVG66qDtTDlTfdYgUjetj
-	9g7D4C1mxJaOEOaiMa0xxy8m8BzOCDZaD8NSkwJrd/oXpU7i0lN7kXMshG35fok=
-X-Gm-Gg: ASbGncu5MiNkT5tDkPlIbkwcvE6AC5Wu87U2irDqLcGzE0jPzMWnTz7WlDOsY+OhuhG
-	XQBRbg2ZuY0G3FYp/BIvCZaET6kYZ/DppJpdrcVU3xY4vhWrP3aYhcXXFgzaR6lUBKRlG6ADsh4
-	E50EJJC69va4nbn1acCJrp0sHOO9bu2MApEaOzfTia45bXBDosYfgu9/h4K4LupPHvzyoIWEajL
-	ewkuTEN25S5QX1TDXMi6NuFrmANwG0Jc08XZYwE9w/JAzg50nTyDjekLcANYjxfN05z4K35q0Qv
-	tFRvdgrDZ2NfPMZK9TcKEvjC4XsOTO3TKIfEOlaU00GvLCTe
-X-Google-Smtp-Source: AGHT+IFeHXSBcW5a6cMPyYFCWSmdfc0Kw0YJs6QfCUivNSYazQwUq3W3k9Emuwo7XD2iieH/6V66Yw==
-X-Received: by 2002:a17:907:8dcb:b0:ac1:f5a4:6da5 with SMTP id a640c23a62f3a-ad1a4a8d95cmr752485666b.37.1746460281158;
-        Mon, 05 May 2025 08:51:21 -0700 (PDT)
-Received: from [192.168.0.32] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1894c01c9sm516621766b.105.2025.05.05.08.51.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 08:51:20 -0700 (PDT)
-Message-ID: <6ce50077-2c64-40b2-82b3-c63c16fa1898@linaro.org>
-Date: Mon, 5 May 2025 18:51:19 +0300
+        d=1e100.net; s=20230601; t=1746460308; x=1747065108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rfrPNwnin6OLWmMYx+AfwJyrSyct0onk2Si8di7Lblo=;
+        b=qroG+/R2Ojho5o4NA4VQKpMM+S7SJutbUpQc7zlTSvSjM3zl/9tcuEnGZCbmbv3JPJ
+         /xLTLu194P2qqA19tdbsNz4HjDLgaqeRw6cKXy1kKiHlXxMFQYwF79ngsgaRJMSt3CDm
+         dwybLXWbZGosfr5DRkUd3hIz4Xlm+CWHSH13XQG70xOaeyHQotxQ3+WKcDYqqZBSvDaU
+         mW5j+WqyojfxEZcRnhd45hICWmJY3bzn435oKQ3jnncvDFjQU1xmKkH81JFq8FwpTvui
+         XzF//eQZfgqrvVfhCYnay8bDdNCh24Y2fXHY0zK7gA4kRLP/oGGZytfI10Eqo3IUWaU6
+         CJ5A==
+X-Gm-Message-State: AOJu0YxtOb4kvUP2xStSZORw259TeOtlsqvL/jFDImTJjlkh8tf47Sq3
+	czmkr4vuTQNt/1rKEIR3l/4LOK+iq0sW46S31tAmBQZ36KK7/YmlOKe+RrvUjKFfMrh94wB7Zps
+	xBaqaVgwdRciLsebw363kn2JMbUY+sEoe0dk8nzYZZEheDN5nDIn2
+X-Gm-Gg: ASbGncsCer/ScG/bK2qvsjgKDT9Eg5SO8D7F4Egk9fj3Uve6O0TIeRZfmTE0rTGJfWv
+	3hsn1JxxeUVYfVBqHFCcOMdMIyqYQpNduOkWEvfcorHbDh67PIvz1TnPNyAxqornkBJ2mXeB35n
+	eDzi3u7j1xZrDRzG3oE0GOQw==
+X-Google-Smtp-Source: AGHT+IEk/oLC58id/Uho8V9/jhtlshoFkjymX27AlthyhCEgesuGdvJ9WKnyLdNmFBJHMMCGrtyrw7tz5tc425zpKpM=
+X-Received: by 2002:a05:6402:d6b:b0:5e0:eaa6:a2b0 with SMTP id
+ 4fb4d7f45d1cf-5fb56694457mr7301a12.5.1746460307575; Mon, 05 May 2025 08:51:47
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH 07/14] printk: add kmsg_kmemdump_register
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- andersson@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
- tglx@linutronix.de, mingo@redhat.com, rostedt@goodmis.org,
- john.ogness@linutronix.de, senozhatsky@chromium.org, peterz@infradead.org,
- mojha@qti.qualcomm.com, linux-arm-kernel@lists.infradead.org,
- vincent.guittot@linaro.org, konradybcio@kernel.org,
- dietmar.eggemann@arm.com, juri.lelli@redhat.com
-References: <20250422113156.575971-1-eugen.hristev@linaro.org>
- <20250422113156.575971-8-eugen.hristev@linaro.org>
- <aBjYbXJL-GJe4Mh8@localhost.localdomain>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <aBjYbXJL-GJe4Mh8@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250321221444.2449974-1-jmattson@google.com> <20250321221444.2449974-2-jmattson@google.com>
+ <aBAIL6oGYJ7IV85X@google.com>
+In-Reply-To: <aBAIL6oGYJ7IV85X@google.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 5 May 2025 08:51:35 -0700
+X-Gm-Features: ATxdqUF8s45XhGILx8sqJ676GY2Xk8LlUB1Fsvc90iMTYiTwy2rWSDMf28VCrxo
+Message-ID: <CALMp9eS7XHpFWMAtnJPQijYO1TVW25-UGmFqc33eAeb1AE_9YA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] KVM: x86: Provide a capability to disable
+ APERF/MPERF read intercepts
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Petr,
+On Mon, Apr 28, 2025 at 3:58=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Fri, Mar 21, 2025, Jim Mattson wrote:
+> > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/ap=
+i.rst
+> > index 2b52eb77e29c..6431cd33f06a 100644
+> > --- a/Documentation/virt/kvm/api.rst
+> > +++ b/Documentation/virt/kvm/api.rst
+> > @@ -7684,6 +7684,7 @@ Valid bits in args[0] are::
+> >    #define KVM_X86_DISABLE_EXITS_HLT              (1 << 1)
+> >    #define KVM_X86_DISABLE_EXITS_PAUSE            (1 << 2)
+> >    #define KVM_X86_DISABLE_EXITS_CSTATE           (1 << 3)
+> > +  #define KVM_X86_DISABLE_EXITS_APERFMPERF       (1 << 4)
+>
+> Might be pre-existing with C-states, but I think the documentation needs =
+to call
+> out that userspace is responsible for enumerating APERFMPERF in guest CPU=
+ID.
+>
+> And more importantly, KVM either needs to honor APERFMPERF in each vCPU's=
+ CPUID,
+> or the documentation needs to call out that KVM doesn't honor guest CPUID=
+ for
+> APERF/MPERF MSRs.  I don't have a strong preference either way, but I'm l=
+eaning
+> toward having KVM honor CPUID so that if someone copy+pastes the KVM self=
+test
+> code for the host enabling, it'll do the right thing.  On the other hand,=
+ KVM
+> doesn't (and shouldn't) fully emulate the MSRs, so I'm a-ok if we ignore =
+CPUID
+> entirely (but document it).
+>
+> Ignoring CPUID entirely would also make it easier to document that KVM do=
+esn't
+> upport loading/saving C-state or APERF/MPERF MSRs via load/store lists on=
+ VM-Enter
+> and VM-Exit.  E.g. we can simply say KVM doesn't emulate the MSRs in any =
+capacity,
+> and that the capability disable the exit/interception, no more no less.
+>
+> Heh, I guess maybe I've talked myself into having KVM ignore guest CPUID =
+:-)
 
-Thank you for your review.
+I concur. I will add a note to that effect.
 
-On 5/5/25 18:25, Petr Mladek wrote:
-> On Tue 2025-04-22 14:31:49, Eugen Hristev wrote:
->> Add kmsg_kmemdump_register, which registers prb, log_buf and infos/descs
->> to kmemdump.
->> This will allow kmemdump to be able to dump specific log buffer areas on
->> demand.
->>
->> --- a/kernel/printk/printk.c
->> +++ b/kernel/printk/printk.c
->> @@ -4650,6 +4651,18 @@ int kmsg_dump_register(struct kmsg_dumper *dumper)
->>  }
->>  EXPORT_SYMBOL_GPL(kmsg_dump_register);
->>  
->> +void kmsg_kmemdump_register(void)
->> +{
->> +	kmemdump_register("log_buf", (void *)log_buf_addr_get(), log_buf_len_get());
->> +	kmemdump_register("prb", (void *)&prb, sizeof(prb));
->> +	kmemdump_register("prb", (void *)prb, sizeof(*prb));
-> 
-> This looks strange. "prb" is a pointer to "struct printk_ringbuffer".
-> It should be enough to register the memory with the structure.
+> > diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> > index ea44c1da5a7c..5b38d5c00788 100644
+> > --- a/arch/x86/kvm/svm/svm.h
+> > +++ b/arch/x86/kvm/svm/svm.h
+> > @@ -44,7 +44,7 @@ static inline struct page *__sme_pa_to_page(unsigned =
+long pa)
+> >  #define      IOPM_SIZE PAGE_SIZE * 3
+> >  #define      MSRPM_SIZE PAGE_SIZE * 2
+> >
+> > -#define MAX_DIRECT_ACCESS_MSRS       48
+> > +#define MAX_DIRECT_ACCESS_MSRS       50
+>
+> Ugh, I really need to get the MSR interception cleanup series posted.
+>
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 4b64ab350bcd..1b3cdca806b4 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -4535,6 +4535,9 @@ static u64 kvm_get_allowed_disable_exits(void)
+> >  {
+> >       u64 r =3D KVM_X86_DISABLE_EXITS_PAUSE;
+> >
+> > +     if (boot_cpu_has(X86_FEATURE_APERFMPERF))
+> > +             r |=3D KVM_X86_DISABLE_EXITS_APERFMPERF;
+> > +
+> >       if (!mitigate_smt_rsb) {
+> >               r |=3D KVM_X86_DISABLE_EXITS_HLT |
+> >                       KVM_X86_DISABLE_EXITS_CSTATE;
+> > @@ -6543,7 +6546,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+> >
+> >               if (!mitigate_smt_rsb && boot_cpu_has_bug(X86_BUG_SMT_RSB=
+) &&
+> >                   cpu_smt_possible() &&
+> > -                 (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
+> > +                 (cap->args[0] & ~(KVM_X86_DISABLE_EXITS_PAUSE |
+> > +                                   KVM_X86_DISABLE_EXITS_APERFMPERF)))
+> >                       pr_warn_once(SMT_RSB_MSG);
+> >
+> >               if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+> > @@ -6554,6 +6558,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+> >                       kvm->arch.hlt_in_guest =3D true;
+> >               if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
+> >                       kvm->arch.cstate_in_guest =3D true;
+> > +             if (cap->args[0] & KVM_X86_DISABLE_EXITS_APERFMPERF)
+> > +                     kvm->arch.aperfmperf_in_guest =3D true;
+>
+> Rather that an ever-growing stream of a booleans, what about tracing the =
+flags
+> as a u64 and providing a builder macro to generate the helper?  The latte=
+r is a
+> bit gratuitous, but this seems like the type of boilerplate that would be
+> embarassingly easy to screw up without anyone noticing.
+>
+> Very lightly tested...
+>
+> --
+> From: Sean Christopherson <seanjc@google.com>
+> Date: Mon, 28 Apr 2025 11:35:47 -0700
+> Subject: [PATCH] KVM: x86: Consolidate DISABLE_EXITS_xxx handling into a
+>  single kvm_arch field
+>
+> Replace the individual xxx_in_guest booleans with a single field to track
+> exits that have been disabled for a VM.  To further cut down on the amoun=
+t
+> of boilerplate needed for each disabled exit, add a builder macro to
+> generate the accessor.
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h |  5 +----
+>  arch/x86/kvm/svm/svm.c          |  2 +-
+>  arch/x86/kvm/vmx/vmx.c          |  2 +-
+>  arch/x86/kvm/x86.c              | 25 ++++++++-----------------
+>  arch/x86/kvm/x86.h              | 28 +++++++++-------------------
+>  5 files changed, 20 insertions(+), 42 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
+ost.h
+> index 6c06f3d6e081..4b174499b29c 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1389,10 +1389,7 @@ struct kvm_arch {
+>
+>         gpa_t wall_clock;
+>
+> -       bool mwait_in_guest;
+> -       bool hlt_in_guest;
+> -       bool pause_in_guest;
+> -       bool cstate_in_guest;
+> +       u64 disabled_exits;
+>
+>         unsigned long irq_sources_bitmap;
+>         s64 kvmclock_offset;
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index cc1c721ba067..0f0c06be85d6 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -5053,7 +5053,7 @@ static int svm_vm_init(struct kvm *kvm)
+>         }
+>
+>         if (!pause_filter_count || !pause_filter_thresh)
+> -               kvm->arch.pause_in_guest =3D true;
+> +               kvm->arch.disabled_exits |=3D KVM_X86_DISABLE_EXITS_PAUSE=
+;
+>
+>         if (enable_apicv) {
+>                 int ret =3D avic_vm_init(kvm);
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index ef2d7208dd20..109ade8fc47b 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -7613,7 +7613,7 @@ int vmx_vcpu_create(struct kvm_vcpu *vcpu)
+>  int vmx_vm_init(struct kvm *kvm)
+>  {
+>         if (!ple_gap)
+> -               kvm->arch.pause_in_guest =3D true;
+> +               kvm->arch.disabled_exits |=3D KVM_X86_DISABLE_EXITS_PAUSE=
+;
+>
+>         if (boot_cpu_has(X86_BUG_L1TF) && enable_ept) {
+>                 switch (l1tf_mitigation) {
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index f6ce044b090a..3800d6cfecce 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6591,27 +6591,18 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+>                         break;
+>
+>                 mutex_lock(&kvm->lock);
+> -               if (kvm->created_vcpus)
+> -                       goto disable_exits_unlock;
+> -
+> +               if (!kvm->created_vcpus) {
+>  #define SMT_RSB_MSG "This processor is affected by the Cross-Thread Retu=
+rn Predictions vulnerability. " \
+>                     "KVM_CAP_X86_DISABLE_EXITS should only be used with S=
+MT disabled or trusted guests."
+>
+> -               if (!mitigate_smt_rsb && boot_cpu_has_bug(X86_BUG_SMT_RSB=
+) &&
+> -                   cpu_smt_possible() &&
+> -                   (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
+> -                       pr_warn_once(SMT_RSB_MSG);
+> +                       if (!mitigate_smt_rsb && cpu_smt_possible() &&
+> +                           boot_cpu_has_bug(X86_BUG_SMT_RSB) &&
+> +                           (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE)=
+)
+> +                               pr_warn_once(SMT_RSB_MSG);
+>
+> -               if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+> -                       kvm->arch.pause_in_guest =3D true;
+> -               if (cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT)
+> -                       kvm->arch.mwait_in_guest =3D true;
+> -               if (cap->args[0] & KVM_X86_DISABLE_EXITS_HLT)
+> -                       kvm->arch.hlt_in_guest =3D true;
+> -               if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
+> -                       kvm->arch.cstate_in_guest =3D true;
+> -               r =3D 0;
+> -disable_exits_unlock:
+> +                       kvm->arch.disabled_exits |=3D cap->args[0];
+> +                       r =3D 0;
+> +               }
+>                 mutex_unlock(&kvm->lock);
+>                 break;
+>         case KVM_CAP_MSR_PLATFORM_INFO:
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index 88a9475899c8..1675017eea88 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -481,25 +481,15 @@ static inline u64 nsec_to_cycles(struct kvm_vcpu *v=
+cpu, u64 nsec)
+>             __rem;                                              \
+>          })
+>
+> -static inline bool kvm_mwait_in_guest(struct kvm *kvm)
+> -{
+> -       return kvm->arch.mwait_in_guest;
+> -}
+> -
+> -static inline bool kvm_hlt_in_guest(struct kvm *kvm)
+> -{
+> -       return kvm->arch.hlt_in_guest;
+> -}
+> -
+> -static inline bool kvm_pause_in_guest(struct kvm *kvm)
+> -{
+> -       return kvm->arch.pause_in_guest;
+> -}
+> -
+> -static inline bool kvm_cstate_in_guest(struct kvm *kvm)
+> -{
+> -       return kvm->arch.cstate_in_guest;
+> -}
+> +#define BUILD_DISABLED_EXITS_HELPER(lname, uname)                       =
+       \
+> +static inline bool kvm_##lname##_in_guest(struct kvm *kvm)              =
+       \
+> +{                                                                       =
+       \
+> +       return kvm->arch.disabled_exits & KVM_X86_DISABLE_EXITS_##uname; =
+       \
+> +}
+> +BUILD_DISABLED_EXITS_HELPER(hlt, HLT);
+> +BUILD_DISABLED_EXITS_HELPER(pause, PAUSE);
+> +BUILD_DISABLED_EXITS_HELPER(mwait, MWAIT);
+> +BUILD_DISABLED_EXITS_HELPER(cstate, CSTATE);
 
-Yes, from my perspective this should be also enough. However, when
-loading the generated core dump into crash tool , the tool first looks
-for the prb pointer itself, and then stops if the pointer is not readable.
-After the prb pointer is being found, the crash tool dereferences it ,
-and looks at the indicated address for the actual memory.
-That is why the pointer is also saved as a kmemdump region in my proof
-of concept.
+The boilerplate is bad, but that's abhorrent.
 
-> 
->> +	kmemdump_register("prb_descs", (void *)_printk_rb_static_descs,
->> +			  sizeof(_printk_rb_static_descs));
->> +	kmemdump_register("prb_infos", (void *)_printk_rb_static_infos,
->> +			  sizeof(_printk_rb_static_infos));
-> 
-> Also this looks wrong. These are static buffers which are used during
-> early boot. They might later be replaced by dynamically allocated
-> buffers when a bigger buffer is requested by "log_buf_len" command
-> line parameter.
-> 
-
-I will double check whether the crash tool looks for these symbols or
-only the memory, and come back with an answer
-
-> I think that we need to register the memory of the structure
-> and 3 more buffers. See how the bigger buffer is allocated in
-> setup_log_buf().
-> 
-> I would expect something like:
-> 
-> 	unsigned int descs_count;
-> 	unsigned long data_size;
-> 
-> 	descs_count = 2 << prb->desc_ring.count_bits;
-> 	data_size = 2 << prb->data_ring.size_bits;
-> 
-> 	kmemdump_register("prb", (void *)prb, sizeof(*prb));
-> 	kmemdump_register("prb_descs", (void *)prb->desc_ring->descs,
-> 			  descs_count * sizeof(struct prb_desc));
-> 	kmemdump_register("prb_infos", (void *)prb->desc_ring->infos,
-> 			  descs_count * sizeof(struct printk_info));
-> 	kmemdump_register("prb_data", (void *)prb->data_ring->data, data_size);
-> 
-> 
-Thank you. It may be that in my test case, the buffer was not
-extended/reallocated with a bigger one.
-
-> But I wonder if this is enough. The current crash dump code also needs
-> to export the format of the used structures, see
-> log_buf_vmcoreinfo_setup().
-
-It appears that crash tool looks for the structures into vmlinux
-symbols. It can be that this information is not available to some tools,
-or vmlinux not available, in which case all the used structures format
-and sizes need to be exported. But right now, the crash tool does not
-work without vmlinux.
-
-> 
-> Is the CONFIG_VMCORE_INFO code shared with the kmemdump, please?
-
-I believe CONFIG_KMEMDUMP_COREIMAGE should select CONFIG_VMCORE_INFO
-indeed, which is not done in my patches. Or I have not fully understood
-your question ?
-
-
-Eugen
-> 
->> +}
->> +EXPORT_SYMBOL_GPL(kmsg_kmemdump_register);
->> +
-> 
-> Best Regards,
-> Petr
-
+>  static inline bool kvm_notify_vmexit_enabled(struct kvm *kvm)
+>  {
+>
+> base-commit: 45eb29140e68ffe8e93a5471006858a018480a45
+> --
 
