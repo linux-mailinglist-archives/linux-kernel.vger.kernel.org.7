@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-634414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A30AAB661
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:49:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876C8AAB667
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5943A7AE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193A53A856D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B59833451E;
-	Tue,  6 May 2025 00:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EA21FBCBE;
+	Tue,  6 May 2025 00:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGr1cWmU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6UXE1EH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0D1283132;
-	Mon,  5 May 2025 22:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EBC2D111C;
+	Mon,  5 May 2025 22:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485439; cv=none; b=Lm0+12cB79RRt1j2vKuuSFG1Ix7AK15vsJXDN8CbKg+Sif1RKbVfunThdt9Rlyte67cB2PN3KP5qlwsz7brdrZf6cTEOGlvQS7z0rJbLNxVYDpjlLrmfKqWQyx2rVQcOH6zJXtKSLxjx5nav/Wghar1sW+n1szulWowH6rGmW+E=
+	t=1746485464; cv=none; b=mG9zpoJUk+DOBNYgPDy0qJH+BVQgXQh1S8+kuYbW4JKJNN/GL6ek5vQrRINDNDYuNOyf2+ZKrzYYrNJ4/z9ZMcp776NXcEIu0TEK8c7txm4FVzMNvH6Rtyd8RkGmgkUmNKwhEzP1RhFDQSGuPLks66L9lNxSvIN/eOE6sOOtDM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485439; c=relaxed/simple;
-	bh=n6wPzmqq6yDqTR9Qn6nCeDPf6OrUYiloNguv2B5DJPY=;
+	s=arc-20240116; t=1746485464; c=relaxed/simple;
+	bh=qm8pJYqgBS9g9flUCLFZljzZnY4uiLUSesZQ6cB7eEw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZNEhpy8CXIbpbtjd7G3Nh/GJcxsJf2kdt4Njl2pPrgLGvMIKzoGDwsbzTG6jPKu5Mk+DCavDlndKRtLW2BipDho++GGP89yJxMUJjqD/xaip8QMWg/7OOkOYOg1WoeazKp0q4J8Ue0h1nyE7DHwkIu61tU+fkCW63gVWdDWU8gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGr1cWmU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4497C4CEEE;
-	Mon,  5 May 2025 22:50:36 +0000 (UTC)
+	 MIME-Version; b=RR4jZ7GgWUPnz/ho5TanlQ1ThU9DZlPQ64QXMJqE/4jo07IfYmVrLTZTWV/BNOuV435z00PoYIlYIJdXHyINLJtCDAQCU0j7OY9mDXue/miSOcxOKVlJkv7uN/1or+g1Cq6noApUxvuQM15D1qIILz9rRYSEWSlf8LWHUQKcLO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6UXE1EH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06CAC4CEED;
+	Mon,  5 May 2025 22:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485437;
-	bh=n6wPzmqq6yDqTR9Qn6nCeDPf6OrUYiloNguv2B5DJPY=;
+	s=k20201202; t=1746485463;
+	bh=qm8pJYqgBS9g9flUCLFZljzZnY4uiLUSesZQ6cB7eEw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uGr1cWmUFZpYYiXsKzgMw0NL/w6MxUbtLEUf3GLmx7Ab+378FByeg9epFMvsaBMpk
-	 UI0QZzTXKdf1JFpQrQBMX+HIdDtHKhxwVYyovZvQbtojmD/xDBCCS2Fnx8Cn1DGfs0
-	 SXWBxKDknFjqf0uXsfH0iBNwiOAKY7UAHgkd2uoDXkwhaQoufHZHM5piMqm8j5Nt08
-	 QbVtwJ9gR0ymHtDCKX19eXVQXYVRnvo/VSwhl3Xelrb46Q8PFn+Q1QAFHQV2APuOKX
-	 tSKtgunqT/sjeGcvHbxUj92EeyO3wB6zSlIoP7YehxluHJdg47iKYgtrvCtP1s1F6N
-	 z63uCG17Vm/rw==
+	b=d6UXE1EHHjNf4DXb919bjcwd7FjnfpvVLp3/X/Ih9E+yFO95vLeHwyERfa8gvPkui
+	 NDwE5CIuFYEWGfu6KxIPt5JBjg5azBPn0zpJbdJjj2NkUfV9+G8aiaF1A3nqdI4RME
+	 EF6nLlIxy2GHmixp3xefSz7nlYPtulUHiStZgOKKNdrgtF+rX0xpfKuL0fY4cRFx4N
+	 R+yJ1f8MlC39uWfiznmbJ0Xk+D0zODBK9v/SyqVHMfJQ1agHQxUxZkkaSPBtDCJj7e
+	 iz5KRl+OW/838/RBWUdNYiTl0la5aBWfJzB2u32PJZ74q9crx4RmyNxtUuaoFklddD
+	 cvds/QeDubPVw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
+Cc: Siva Durga Prasad Paladugu <siva.durga.prasad.paladugu@amd.com>,
+	Nava kishore Manne <nava.kishore.manne@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 311/486] bpf: copy_verifier_state() should copy 'loop_entry' field
-Date: Mon,  5 May 2025 18:36:27 -0400
-Message-Id: <20250505223922.2682012-311-sashal@kernel.org>
+	ronak.jain@amd.com,
+	jay.buddhabhatti@amd.com,
+	radhey.shyam.pandey@amd.com,
+	gregkh@linuxfoundation.org,
+	u.kleine-koenig@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.12 325/486] firmware: xilinx: Dont send linux address to get fpga config get status
+Date: Mon,  5 May 2025 18:36:41 -0400
+Message-Id: <20250505223922.2682012-325-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -66,87 +70,49 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Eduard Zingerman <eddyz87@gmail.com>
+From: Siva Durga Prasad Paladugu <siva.durga.prasad.paladugu@amd.com>
 
-[ Upstream commit bbbc02b7445ebfda13e4847f4f1413c6480a85a9 ]
+[ Upstream commit 5abc174016052caff1bcf4cedb159bd388411e98 ]
 
-The bpf_verifier_state.loop_entry state should be copied by
-copy_verifier_state(). Otherwise, .loop_entry values from unrelated
-states would poison env->cur_state.
+Fpga get config status just returns status through ret_payload and there
+is no need to allocate local buf and send its address through SMC args.
+Moreover, the address that is being passed till now is linux virtual
+address and is incorrect.
+Corresponding modification has been done in the firmware to avoid using the
+address sent by linux.
 
-Additionally, env->stack should not contain any states with
-.loop_entry != NULL. The states in env->stack are yet to be verified,
-while .loop_entry is set for states that reached an equivalent state.
-This means that env->cur_state->loop_entry should always be NULL after
-pop_stack().
-
-See the selftest in the next commit for an example of the program that
-is not safe yet is accepted by verifier w/o this fix.
-
-This change has some verification performance impact for selftests:
-
-File                                Program                       Insns (A)  Insns (B)  Insns   (DIFF)  States (A)  States (B)  States (DIFF)
-----------------------------------  ----------------------------  ---------  ---------  --------------  ----------  ----------  -------------
-arena_htab.bpf.o                    arena_htab_llvm                     717        426  -291 (-40.59%)          57          37  -20 (-35.09%)
-arena_htab_asm.bpf.o                arena_htab_asm                      597        445  -152 (-25.46%)          47          37  -10 (-21.28%)
-arena_list.bpf.o                    arena_list_del                      309        279    -30 (-9.71%)          23          14   -9 (-39.13%)
-iters.bpf.o                         iter_subprog_check_stacksafe        155        141    -14 (-9.03%)          15          14    -1 (-6.67%)
-iters.bpf.o                         iter_subprog_iters                 1094       1003    -91 (-8.32%)          88          83    -5 (-5.68%)
-iters.bpf.o                         loop_state_deps2                    479        725  +246 (+51.36%)          46          63  +17 (+36.96%)
-kmem_cache_iter.bpf.o               open_coded_iter                      63         59     -4 (-6.35%)           7           6   -1 (-14.29%)
-verifier_bits_iter.bpf.o            max_words                            92         84     -8 (-8.70%)           8           7   -1 (-12.50%)
-verifier_iterating_callbacks.bpf.o  cond_break2                         113        107     -6 (-5.31%)          12          12    +0 (+0.00%)
-
-And significant negative impact for sched_ext:
-
-File               Program                 Insns (A)  Insns (B)  Insns         (DIFF)  States (A)  States (B)  States      (DIFF)
------------------  ----------------------  ---------  ---------  --------------------  ----------  ----------  ------------------
-bpf.bpf.o          lavd_init                    7039      14723      +7684 (+109.16%)         490        1139     +649 (+132.45%)
-bpf.bpf.o          layered_dispatch            11485      10548         -937 (-8.16%)         848         762       -86 (-10.14%)
-bpf.bpf.o          layered_dump                 7422    1000001  +992579 (+13373.47%)         681       31178  +30497 (+4478.27%)
-bpf.bpf.o          layered_enqueue             16854      71127     +54273 (+322.02%)        1611        6450    +4839 (+300.37%)
-bpf.bpf.o          p2dq_dispatch                 665        791        +126 (+18.95%)          68          78       +10 (+14.71%)
-bpf.bpf.o          p2dq_init                    2343       2980        +637 (+27.19%)         201         237       +36 (+17.91%)
-bpf.bpf.o          refresh_layer_cpumasks      16487     674760   +658273 (+3992.68%)        1770       65370  +63600 (+3593.22%)
-bpf.bpf.o          rusty_select_cpu             1937      40872    +38935 (+2010.07%)         177        3210   +3033 (+1713.56%)
-scx_central.bpf.o  central_dispatch              636       2687      +2051 (+322.48%)          63         227     +164 (+260.32%)
-scx_nest.bpf.o     nest_init                     636        815        +179 (+28.14%)          60          73       +13 (+21.67%)
-scx_qmap.bpf.o     qmap_dispatch                2393       3580       +1187 (+49.60%)         196         253       +57 (+29.08%)
-scx_qmap.bpf.o     qmap_dump                     233        318         +85 (+36.48%)          22          30        +8 (+36.36%)
-scx_qmap.bpf.o     qmap_init                   16367      17436        +1069 (+6.53%)         603         669       +66 (+10.95%)
-
-Note 'layered_dump' program, which now hits 1M instructions limit.
-This impact would be mitigated in the next patch.
-
-Signed-off-by: Eduard Zingerman <eddyz87@gmail.com>
-Link: https://lore.kernel.org/r/20250215110411.3236773-2-eddyz87@gmail.com
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Siva Durga Prasad Paladugu <siva.durga.prasad.paladugu@amd.com>
+Signed-off-by: Nava kishore Manne <nava.kishore.manne@amd.com>
+Link: https://lore.kernel.org/r/20250207054951.1650534-1-nava.kishore.manne@amd.com
+Signed-off-by: Michal Simek <michal.simek@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/firmware/xilinx/zynqmp.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 592ee3b47635b..1437108f9d7af 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -1447,6 +1447,7 @@ static int copy_verifier_state(struct bpf_verifier_state *dst_state,
- 	dst_state->callback_unroll_depth = src->callback_unroll_depth;
- 	dst_state->used_as_loop_entry = src->used_as_loop_entry;
- 	dst_state->may_goto_depth = src->may_goto_depth;
-+	dst_state->loop_entry = src->loop_entry;
- 	for (i = 0; i <= src->curframe; i++) {
- 		dst = dst_state->frame[i];
- 		if (!dst) {
-@@ -18720,6 +18721,8 @@ static int do_check(struct bpf_verifier_env *env)
- 						return err;
- 					break;
- 				} else {
-+					if (WARN_ON_ONCE(env->cur_state->loop_entry))
-+						env->cur_state->loop_entry = NULL;
- 					do_print_state = true;
- 					continue;
- 				}
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index add8acf66a9c7..5578158f13750 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -1012,17 +1012,13 @@ EXPORT_SYMBOL_GPL(zynqmp_pm_fpga_get_status);
+ int zynqmp_pm_fpga_get_config_status(u32 *value)
+ {
+ 	u32 ret_payload[PAYLOAD_ARG_CNT];
+-	u32 buf, lower_addr, upper_addr;
+ 	int ret;
+ 
+ 	if (!value)
+ 		return -EINVAL;
+ 
+-	lower_addr = lower_32_bits((u64)&buf);
+-	upper_addr = upper_32_bits((u64)&buf);
+-
+ 	ret = zynqmp_pm_invoke_fn(PM_FPGA_READ, ret_payload, 4,
+-				  XILINX_ZYNQMP_PM_FPGA_CONFIG_STAT_OFFSET, lower_addr, upper_addr,
++				  XILINX_ZYNQMP_PM_FPGA_CONFIG_STAT_OFFSET, 0, 0,
+ 				  XILINX_ZYNQMP_PM_FPGA_READ_CONFIG_REG);
+ 
+ 	*value = ret_payload[1];
 -- 
 2.39.5
 
