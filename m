@@ -1,92 +1,93 @@
-Return-Path: <linux-kernel+bounces-632913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7A5AA9E31
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:30:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4752AA9E2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46F6177ED1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:30:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FA8E3A8B13
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCFD1BD01F;
-	Mon,  5 May 2025 21:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4349227467D;
+	Mon,  5 May 2025 21:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dbUOX+p/"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbNP2go3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99197274667
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 21:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05C927465A;
+	Mon,  5 May 2025 21:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746480646; cv=none; b=XWlAjjCSVPkMxiUZ8hF2RmQkXl12PwKYlwNVWuQlBBxfesqyH3u5pMK475+xQXHUIJ3aETWuWSX8/pOSqmgn5eL7v+XI9FE4Npvo3bk4IIFeYJl8QP0StGFazOyZ5EuKcxEaK/XVArOlo2w5Ae0t5pZ5ucixm0irmOA35SbjBWU=
+	t=1746480592; cv=none; b=sIDzEofbWft5kazTpciXrAKs05NfL1KBf3JBzPRprUdycQfaJvh2xgWT3BIhOozFyA5f2n63SNEt2l8b2ISypvsjkKDYB3qjQaIDhYU8wq4TWhA13/CcNBVN53kqkuP2hLDrhvZj5U7s8uTC24DxbuBIjVw9VfkNGiExS5vbJF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746480646; c=relaxed/simple;
-	bh=IK064DxGL6rd2AXReFr8WLkQruOrkwYNSi+SXBiuUcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XraDzHCKz2YLvSH7X0vhm0hmBo58rV0ADdQMcAm8n+qYw0O1fZBqKYJ4duCS/DrwaoMkdNLHeStsRpCZm9PonqlBEOHV8lSJlrNL6a9TpQBX81ughY7B7H3+1EW9dmUyQHmaBYwQ6W8+bC9Ju6nNzbAAV/8H9+Zc1jlrLPxoF4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dbUOX+p/; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 5 May 2025 14:30:25 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746480629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4siW68oDPSIdvipM3gqfjnaQhK22j3W7xRxbXDcucJ0=;
-	b=dbUOX+p/WAESDrw8cbIJP2Y64eqW+Hr9gR8/bt/Boxi8WEj/t+D+2V70gZV+YD5owGLCSh
-	zj3jVcQGXp+ShoQPg5ujhWsAGJrKWxnoS+P6Qcn0iPjvxt7jQgoDEHUynudXexBbNXh5vF
-	ytdXmBB/GN+oSTiX9gl/cnTMEPlHZh4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: xu.xin16@zte.com.cn
-Cc: akpm@linux-foundation.org, david@redhat.com, 
-	linux-kernel@vger.kernel.org, wang.yaxin@zte.com.cn, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, yang.yang29@zte.com.cn
-Subject: Re: [PATCH v2 0/9] support ksm_stat showing at cgroup level
-Message-ID: <ir2s6sqi6hrbz7ghmfngbif6fbgmswhqdljlntesurfl2xvmmv@yp3w2lqyipb5>
-References: <20250501120854885LyBCW0syCGojqnJ8crLVl@zte.com.cn>
+	s=arc-20240116; t=1746480592; c=relaxed/simple;
+	bh=/Ain24s739aGvnZz4WCmIN8M9wK3tBJPtL2EuL9Rocw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=LWVis9zaq6hGzkGbQbqUmZhyYi9+H+wuos0zi2CLOs7n3W4dSFIBfbHaH8EDVE906QfuwjkNxpFQ1FbTjxciDDA8hzFpVb9EOu5JzsxoFo1orQ5T8gVwd6K2TmYqdcB6VamzpKsbya1IIyznSdlDWaZ5flg7uzO6O7nxbWWmg5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbNP2go3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74AB3C4CEE4;
+	Mon,  5 May 2025 21:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746480592;
+	bh=/Ain24s739aGvnZz4WCmIN8M9wK3tBJPtL2EuL9Rocw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YbNP2go344+igjigYBmVrFFPb/jaH7sau9r8GCvfvkYfFTXIlZOZ+/UWLNk9V/2R7
+	 4acG4be9+eLtEIEIiYVXeYCoYRluR5Oy7J/pukSrCNNJrXNwtV2B3B2VVOmeLZVuvS
+	 W7cSXpYyumrLGCnDpf9y+lQha7U2NQ2lEptsAtRgwyuxrsEe/aU9b4ZgaTc1fP6VB7
+	 3B6Tghh4Pdhg3sQqKXEV/c+N4ZkyTEC1HfCcIZzmgz5YzPt60iegFFccyRZfHhYEiY
+	 OddBE0lMpXxhDCSoc70ay7DnJCQjENJnSx1k6VZhDUO6XX5/CA7ubD3r5eKfRV5v8S
+	 8999h0yG6vpBg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADDA39D60BC;
+	Mon,  5 May 2025 21:30:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250501120854885LyBCW0syCGojqnJ8crLVl@zte.com.cn>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next] bpf: Replace offsetof() with struct_size()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174648063174.894801.9510082135983077383.git-patchwork-notify@kernel.org>
+Date: Mon, 05 May 2025 21:30:31 +0000
+References: <20250503151513.343931-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250503151513.343931-2-thorsten.blum@linux.dev>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu, May 01, 2025 at 12:08:54PM +0800, xu.xin16@zte.com.cn wrote:
-> From: xu xin <xu.xin16@zte.com.cn>
-> 
-> With the enablement of container-level KSM (e.g., via prctl [1]), there is
-> a growing demand for container-level observability of KSM behavior. However,
-> current cgroup implementations lack support for exposing KSM-related
-> metrics.
-> 
-> This patch introduces a new interface named ksm_stat
-> at the cgroup hierarchy level, enabling users to monitor KSM merging
-> statistics specifically for containers where this feature has been
-> activated, eliminating the need to manually inspect KSM information for
-> each individual process within the cgroup.
-> 
-> Users can obtain the KSM information of a cgroup just by:
-> 
-> # cat /sys/fs/cgroup/memory.ksm_stat
-> ksm_rmap_items 76800
-> ksm_zero_pages 0
-> ksm_merging_pages 76800
-> ksm_process_profit 309657600
-> 
-> Current implementation supports both cgroup v2 and cgroup v1.
-> 
+Hello:
 
-Before adding these stats to memcg, add global stats for them in
-enum node_stat_item and then you can expose them in memcg through
-memory.stat instead of a new interface.
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Sat,  3 May 2025 17:15:13 +0200 you wrote:
+> Compared to offsetof(), struct_size() provides additional compile-time
+> checks for structs with flexible arrays (e.g., __must_be_array()).
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next] bpf: Replace offsetof() with struct_size()
+    https://git.kernel.org/bpf/bpf-next/c/41948afcf503
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
