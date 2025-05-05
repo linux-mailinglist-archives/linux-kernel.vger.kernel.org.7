@@ -1,111 +1,99 @@
-Return-Path: <linux-kernel+bounces-631653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A050AA8B8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:15:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97084AA8B97
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432EC1892BE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 05:15:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B29517100F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 05:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553B51A840D;
-	Mon,  5 May 2025 05:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5E01ACEAF;
+	Mon,  5 May 2025 05:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8tc37ok"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXvt8n4j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBA11A3142;
-	Mon,  5 May 2025 05:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1581AA7A6;
+	Mon,  5 May 2025 05:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746422104; cv=none; b=IuRn4jeKEu4JlFIIjqJn3PF6xdU+stRnvVGNIs7v8yJxRABYCBc8RfznQ+iKuhm21dG2URUyB3Fs5V5gPxsgbc2tff6WtdjIZOOU25l8l/PSStZhUbPeKaKXbcyo3MlW33yk3dclwV61AmiZqmcZsrtLzrHNQOemHb/3Yr7Bm6E=
+	t=1746422437; cv=none; b=FqnAQyKgrPOaXnZMGjE1Z6V0l8w61sxnRNzigKEBKsPMiPMrWFS23AwAgVe+cqj7XOElFe3C1u72Xc9jJkHs+1pCRGx+f6DCt1MzszQazoJgT7hH1cSgVEI04osS2cQ6SgH48NBJlRGbz5G8F2RY8R+/qYHfZvj5P435VzESH9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746422104; c=relaxed/simple;
-	bh=H94oPEd59fZXSO8leNvc9DZOv8sXbV81m9iZHOwLG3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hG+mZ+fkUIZb6TQMmhuhoqc/o8nvPJY9H6JDtQtq+RcreppHSE3SqiqjEEeTh94ODIISdPqFYjW+4k+xiJPHQzvXQvMD4Pt+ktM6suwCFF2RYaRZ35EkVrYDBVGqsP1CTzN1I3OupSvEOjO2IGmXLdMGZ3Cp40u/m/KRj3xVLl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8tc37ok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBFD8C4CEE4;
-	Mon,  5 May 2025 05:15:02 +0000 (UTC)
+	s=arc-20240116; t=1746422437; c=relaxed/simple;
+	bh=Npt4xYeE5cAR7GRbHzsaDhd0uGoWV1B3qLG1zO+vHYQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l6D4bUM40JhuirzxZIokotx33s3xbs6DmuR6NsfDDHC+lok8B0/Q4+GgpjDwHiMyU9wFn6JkPQrb2nvSRey4+z0HzbRjRhWNSCesgMZg0Ztzb4tPCRnmhXKJf/mz0A0uW5ZFfrPeFedjE6n7yv2Q6OHd2uUA0QSkF/RR5Eh9G8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXvt8n4j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EDA4C4CEE4;
+	Mon,  5 May 2025 05:20:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746422104;
-	bh=H94oPEd59fZXSO8leNvc9DZOv8sXbV81m9iZHOwLG3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f8tc37okeYyS3W6xxYWWtK0Y8Ez6guvSyqydv2YyGWlguu6RpCFjTDZzGcQmD99cE
-	 PAHgbrnEeFxRAxmTRe7Wlbygh1cecnYVYPmFFgtZNJjoE60zEYHIyTzgV8KcaRlr9T
-	 CwCloO58Ool8JO5+/KOm1Ypaa3VGlNtl8ZXy2P50q3IpAt9F38O8BAWVPpYmW9+Vt+
-	 ZTnasZxaHRLzLXzs8AUJM9hGP+xQWP3t7dtq+63eEOi7Zwv8lUPNMCXnRmdvU/wPuJ
-	 IZt2nzs/AEShkJyt46xSx8NGDmzOuiRIVnENWGMeZbiVceKsDFQgOOFQ0pZ3ViQOWB
-	 oeIfjW2ALqGGQ==
-Date: Mon, 5 May 2025 07:15:00 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org,
-	"Borislav Petkov (AMD)" <bp@alien8.de>, stable@kernel.org,
-	x86@kernel.org
-Subject: [PATCH] x86/microcode: Add microcode_loader_disabled() storage class
- for the !CONFIG_MICROCODE case
-Message-ID: <aBhJVJDTlw2Y8owu@gmail.com>
-References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
- <174628529460.22196.11450380316905137027.tip-bot2@tip-bot2>
- <aBcFv6BzmRNWqLY8@gmail.com>
+	s=k20201202; t=1746422436;
+	bh=Npt4xYeE5cAR7GRbHzsaDhd0uGoWV1B3qLG1zO+vHYQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WXvt8n4j1KEzztv3WUglTfs56WruCL0SLlXOPM2TiVvfLtdcoWZkaE2ahW4kGNTsG
+	 PL3TOPqTtLsJkcRAVspyjDWUabzf8huRNAFd80MN/y/auREq9vnbjBc4cR1XMAWpou
+	 SQ0HP8qLnt79tXKe78L+kyYgR6sokyXzVh1m/39Zh6U2EXkVR+HGLDisXC/2dbfQpQ
+	 9EtbDBKS/N5qCzgsTxj52HOUsOoigasF8HxMHXHBBuY8V95fBkjciGJskDXDnrSr7p
+	 f8YtuR5oB1lICWnEn81PFTjS1c7vnQMTI8y4OS77mUT9Cfws7pxRkwr/NY3U+24HVo
+	 cHR9fHNXbDeow==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: usb-audio: qcom: fix USB_XHCI dependency
+Date: Mon,  5 May 2025 07:20:21 +0200
+Message-Id: <20250505052032.1811576-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aBcFv6BzmRNWqLY8@gmail.com>
 
+From: Arnd Bergmann <arnd@arndb.de>
 
-Fix this build bug:
+SND_USB_AUDIO_QMI depends on USB_XHCI_SIDEBAND, but that is a bool symbol
+and allows it to be built-in even when XHCI itself is in a loadable module.
+That configuration causes a link failure:
 
-  ./arch/x86/include/asm/microcode.h:27:13: warning: no previous prototype for ‘microcode_loader_disabled’ [-Wmissing-prototypes]
+arm-linux-gnueabi-ld: sound/usb/qcom/qc_audio_offload.o: in function `uaudio_event_ring_cleanup_free':
+qc_audio_offload.c:(.text+0x7dc): undefined reference to `xhci_sideband_remove_interrupter'
+arm-linux-gnueabi-ld: sound/usb/qcom/qc_audio_offload.o: in function `uaudio_endpoint_setup':
+qc_audio_offload.c:(.text+0xe88): undefined reference to `xhci_sideband_add_endpoint'
 
-by adding the 'static' storage class to the !CONFIG_MICROCODE 
-prototype.
+Add the extra dependency on USB_XHCI itself.
 
-Also, while at it, add all the other storage classes as well for this 
-block of prototypes, 'extern' and 'static', respectively.
-
-( Omitting 'extern' just because it's technically not needed
-  is a bad habit for header prototypes and leads to bugs like
-  this one. )
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 326bbc348298 ("ALSA: usb-audio: qcom: Introduce QC USB SND offloading support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/include/asm/microcode.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ sound/usb/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcode.h
-index 6aa12aecbc95..c23849246d0a 100644
---- a/arch/x86/include/asm/microcode.h
-+++ b/arch/x86/include/asm/microcode.h
-@@ -16,15 +16,15 @@ struct ucode_cpu_info {
- };
+diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
+index 6daa551738da..15bc212cb211 100644
+--- a/sound/usb/Kconfig
++++ b/sound/usb/Kconfig
+@@ -178,7 +178,8 @@ config SND_BCD2000
  
- #ifdef CONFIG_MICROCODE
--void load_ucode_bsp(void);
--void load_ucode_ap(void);
--void microcode_bsp_resume(void);
--bool __init microcode_loader_disabled(void);
-+extern void load_ucode_bsp(void);
-+extern void load_ucode_ap(void);
-+extern void microcode_bsp_resume(void);
-+extern bool __init microcode_loader_disabled(void);
- #else
- static inline void load_ucode_bsp(void)	{ }
- static inline void load_ucode_ap(void) { }
- static inline void microcode_bsp_resume(void) { }
--bool __init microcode_loader_disabled(void) { return false; }
-+static inline bool __init microcode_loader_disabled(void) { return false; }
- #endif
+ config SND_USB_AUDIO_QMI
+ 	tristate "Qualcomm Audio Offload driver"
+-	depends on QCOM_QMI_HELPERS && SND_USB_AUDIO && USB_XHCI_SIDEBAND && SND_SOC_USB
++	depends on QCOM_QMI_HELPERS && SND_USB_AUDIO && SND_SOC_USB
++	depends on USB_XHCI && USB_XHCI_SIDEBAND
+ 	help
+ 	  Say Y here to enable the Qualcomm USB audio offloading feature.
  
- extern unsigned long initrd_start_early;
+-- 
+2.39.5
+
 
