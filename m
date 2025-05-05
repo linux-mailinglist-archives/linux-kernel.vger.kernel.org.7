@@ -1,137 +1,78 @@
-Return-Path: <linux-kernel+bounces-631918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0EFAA8F71
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C692AA8F77
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C383A561E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5341897D5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563BC1F5859;
-	Mon,  5 May 2025 09:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EB31FAC46;
+	Mon,  5 May 2025 09:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aHCjCDc/"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JNHUwpIZ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC3218C011
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 09:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FD51F470E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 09:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746437112; cv=none; b=usMJIRUTFIpxvaAI9iof5ZGmKsIXiIhuOvUXJc9MkZ/M2NRFId1r/bEDZTnNBA4rUMWgPENaoH5DEoFkNBjeIU8Q3Kb9YfvXy2/kWuqd0bPQt7qmT2JbY9Ouj/IHX04PASto/FyM56KHJb+zgPnQ5mSkguZ6NQ2NZLRDiKZd6XM=
+	t=1746437177; cv=none; b=bb0cdu7zHpaDgiuU1jCeCH4j+dbxuzz1PVfrNS1DonwxjNBdaEqpcj368NrK9SodtUDYuEXV/vu20IirM/NnvOLsRWtFU+ocTPIgSh6xBMMypESr18L7PVwujdd40zOYjO+kSiidnbPadsdTx3FE9gyJKZOD5H4fj46CTqo47dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746437112; c=relaxed/simple;
-	bh=QVITToH5qxhFx1BWQg+IbIBAmvkuTWFfapJECTVyxrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oKZcKyvFSVy8OPTA5k4OUlz7bWqLFwJmWfCMJQvul4Ufc+b18ztozmXqZ7WIgg++XJBqas011k6VvYwm6LqEcjzG6+r6LRKZWRlh3RIesexkuAVaHhzF3zlx1mLP6qOL/NVuJSYfy0uvHAjxMhGvW7V8sTBEJQ7QNd2fQShnG90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aHCjCDc/; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a064a3e143so1795151f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 02:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746437109; x=1747041909; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VLHJgN/oyXnrIo0WWcOurE6qrYDtA5nem85zqA8FMgw=;
-        b=aHCjCDc/AH30B5seQBy6xySharzdung8XXfuOP4WwHiCaTbmsZp/UOF95o5CK76E5I
-         4ghbmFTwZo93dUl5tMhc3KBQkkr3b5dlP6D231BmUjy1OdyaWgZn2rAXlX4VhcFenXzG
-         UA+ExOA+39rD3/zgOeONw5bAObv0ZZ2OCR9gZhsPnkre4TtN87dSvZpIDhwKW8ihw49F
-         41nsVnk9UJ/rF+iE+40rc8yiD1d5+28grjdGu756qEU3wWYemfM9zsQwpnxhcGHnZKie
-         XHeHh1PtSEjhE8hmiG5bL11l5IRpkMqe2S1DZLaI4yNKjEo9wlilXEt8qRZKEgl6jnPy
-         e5aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746437109; x=1747041909;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VLHJgN/oyXnrIo0WWcOurE6qrYDtA5nem85zqA8FMgw=;
-        b=pdzIghmFnd+CQvok1E1WtRaMffg9DkD9W8qaWfc5seGCstd54Es8eWRUExfjxh3IKM
-         Hkc69rDtBNVuTM3m2z7oQngOrjP+VwZ2CsxpbTarmvUyFRF2xV/xr4m9nq+nf0XhudE5
-         MznWQDwh1rnlVwU7xvKjzaZU4DdElvZw7jU0EBlwAVNHXGZTX8a9TkilZvKje+l0AKfz
-         t60C2VTkw3DSTB8vVHv3ojXpu26rEQT6BPVEnlVIrGQor9ke6cwZ01MNQjAFEdDu/MZa
-         anFm6iChWYftLecLMBboYE81Y+k6jLfOUT4BjYPfNfkgQx1ruZCuQTQ9nqXBYXY/2m3o
-         w0Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9e6uuF3RPadz/Nwu92Es2PHDX1GZ6QJ7+ivsqlIfjZhxktPi5Zu3fPvfHAVqyhkBRFHdjSJg1tUYUjto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweqJdC2uYEuUXA6sNuzoX3hHovcAZqn+Td7/1uVN7yxh9YbF2v
-	8dsGAkzLmE9nCQ0e2Lkv7WCVAC2XyJdncjMtS7g7yh7MbkwP78bQLjGyAX8THUU=
-X-Gm-Gg: ASbGncumTuNuSaBdrg7k244l32P9rke6hpUPO5elAgW7NIvagmRr78wYoRGxY41Ytg+
-	yQIyJbSvlwXa3So1uOXFaZ2z4zHDJ3sU58IprSDtEwAn+k/KEeTgiIFIxCTUHelx1xZgphMPNwz
-	CS0iqI45qcXOehMlVeQFazCT/FjhwGLAdSWY860pYX3azfb+xWnVkZFhtFjzdz/AOl3xKy0dN18
-	FukZS4GfPaBbrOgdSzQpN60l3G1R/CeH6fonGNs9po8u5h157Ql1fz0dbVcighQwuTKOPYgG9sv
-	sFODJI6ifzVGGQ7ixOhIW6heCvlAa6jVks9OoZmaIGAN9aLUupM=
-X-Google-Smtp-Source: AGHT+IH5gm4r7UQL7/3DyIsJr+nDH1WHtOXFm5HcZGmyx9BEqYlBQHtFS06BthbZ622QOaFlo1+d1A==
-X-Received: by 2002:a05:6000:310f:b0:3a0:90c3:eb0f with SMTP id ffacd0b85a97d-3a09fd6bb68mr4319266f8f.12.1746437109067;
-        Mon, 05 May 2025 02:25:09 -0700 (PDT)
-Received: from localhost (109-81-80-21.rct.o2.cz. [109.81.80.21])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099ae0ca4sm9966523f8f.14.2025.05.05.02.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 02:25:08 -0700 (PDT)
-Date: Mon, 5 May 2025 11:25:08 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Marco Crivellari <marco.crivellari@suse.com>,
-	linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH 0/4] Workqueue: rename system workqueue and add WQ_PERCPU
-Message-ID: <aBiD9C727RSyNtme@tiehlicka>
-References: <20250503082834.49413-1-marco.crivellari@suse.com>
- <20250505065121.dlEw6_SC@linutronix.de>
+	s=arc-20240116; t=1746437177; c=relaxed/simple;
+	bh=xdEqepopFNMt3QfG3qsg4ulBtT9fvVFhq3Xs9bY+g8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mU+8GRYq5jRkysqfcUUn/2xmIbIF5xs4x1uW4yIZjCxtJ//BZsJeGSJS4/5NyobQe6JWBiizjOswkBFw3s4/B8/gHpA2Mwy8uPjPy71kZrId0AJJErh2pEE/3lXdn8ykKQloYffKkrvyF9jTHdWce/kLYFMwKZW86vgA+czYLFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JNHUwpIZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=f1sTMSOBzu0B7rohGVf8pLqnRhw+Xj/rENtZqkY8DwQ=; b=JNHUwpIZHPEPY+YOqZgFuhj1PM
+	IulJ4W5KSjTNyTntfJEuKCKrtRsOHzVxPdZaiMhooiE2cE0UF3GuaBanT8a+wHnfxp/ptQlywliZK
+	vkHwEvwXKUkqxfWoV/4YT4Qckiap6nFqhzR4x/dFLpX3ZkeuCTRpKMnpBWqN45yCOeKVHCH+A5Hr8
+	TQHAl2oRl0Rpqd65APR6z1h6ZBhVw31j6iLESEd2pJ5vYy8OOVVE4HF7K0zN1TrMOwu1P1xa+Xkwg
+	IRXbL50M9JCscIQ2YD5Le1imjSIPUylmqQO1hxikkHQ0pYYYRa3PWWs842OilnyPvXVfOvWjyODDm
+	EZqvLwLg==;
+Received: from 2a02-8389-2341-5b80-c9f7-77ec-522e-47ca.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:c9f7:77ec:522e:47ca] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uBs5X-00000006ukh-17FO;
+	Mon, 05 May 2025 09:26:15 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: cleanup AOP_WRITEPAGE_ACTIVATE use in f2fs
+Date: Mon,  5 May 2025 11:25:57 +0200
+Message-ID: <20250505092613.3451524-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505065121.dlEw6_SC@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon 05-05-25 08:51:21, Sebastian Andrzej Siewior wrote:
-> On 2025-05-03 10:28:30 [+0200], Marco Crivellari wrote:
-> > Hi!
-> Hi,
-> 
-> > This series is the follow up of the discussion from:
-> > 	"workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
-> > 	https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
-> > 
-> > 1)  [P 1-2] system workqueue rename:
-> >  
-> > 	system_wq is a per-CPU workqueue, but his name is not clear.
-> > 	system_unbound_wq is to be used when locality is not required.
-> > 	
-> > 	system_wq renamed in system_percpu_wq, while system_unbound_wq
-> > 	became system_dfl_wq.
-> > 
-> > 2)  [P 3] Introduction of WQ_PERCPU.
-> > 
-> > 	This patch adds a new WQ_PERCPU flag to explicitly request the legacy
-> > 	per-CPU behavior. WQ_UNBOUND will be removed once the migration is
-> > 	complete.
-> > 
-> > 	Every alloc_workqueue() caller should use one among WQ_PERCPU or
-> > 	WQ_UNBOUND. This is actually enforced warning if both or none of them
-> > 	are present at the same time.
-> > 
-> > 3)  [P 4] alloc_workqueue() callee should pass explicitly WQ_PERCPU.
-> > 
-> > 	This patch ensures that every caller that needs per-cpu workqueue
-> > 	will explicitly require it, using the WQ_PERCPU flag.
-> 
-> Sounds like a plan.
-> I assume the huge patches were made with coccinelle?
+Hi all,
 
-Yes, this makes a lot of sense. I think it is worth mentioning why do we
-want/need to go through this major refactoring. From my POV this will
-help cpu isolation in a long term because it reduces unpredictable
-interference from pcp workers. 
--- 
-Michal Hocko
-SUSE Labs
+this almost entirely cleans up usage of AOP_WRITEPAGE_ACTIVATE in f2fs.
+
+f2fs_sync_node_pages can still return it in a way that is not handled
+by any caller and eventually is propagated to userspace.  This does look
+like a bug and needs attention by someone who actually knows the code.
+
+Diffstat:
+ checkpoint.c |   22 +++++++++++-----------
+ compress.c   |    5 +----
+ data.c       |   13 ++++---------
+ node.c       |   43 ++++++++++++++++++++-----------------------
+ 4 files changed, 36 insertions(+), 47 deletions(-)
 
