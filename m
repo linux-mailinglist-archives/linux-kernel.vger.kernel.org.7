@@ -1,174 +1,227 @@
-Return-Path: <linux-kernel+bounces-633032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0469FAAA07C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65809AAA084
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCDD3AABF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1A333AA87A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C6F2918F4;
-	Mon,  5 May 2025 22:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F57E27C146;
+	Mon,  5 May 2025 22:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="qV3SXqIG"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DR74P9QT"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E54229117B
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 22:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6B82741CF;
+	Mon,  5 May 2025 22:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483441; cv=none; b=EvXEqJ1vftePSZs5T87iiT2+f3kzd7vMp7G1qN5m0IYgJTjX668kBXzDBh+RyrWGEex5cjSSbe5cAHYl7iqCcvm5QrDGsY/a4f9lV4AhK7HViyrkOpKlxHcsa3X03SXtva/QrViOiUa0q+Yep8Org12E22bibBwm4zh/BxzCSTo=
+	t=1746483487; cv=none; b=dmxFkpuFWTq+Zl2mw201S0WzexpFudpn36hYSGr4F0r48wKnZJmnHiT/7Qv2wu98k+ER4E+z1kS4Tjaqv04o50TApiW0LWFVR7R/MU3m/wbUI2ufR8EoWvEssLWWg0ekQ6WXMFlOx+oj8kgS7TKQlQQrB0u7dXf01/H4As6B3m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483441; c=relaxed/simple;
-	bh=e+x5rAREwkTIbErn1FtZKoq2Pz1fycajN7srH/QekG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lnoud/pipaO5ZyqFZNNTot3WRCjVZPxCMxgaTz3FGNOZPsbiPuoOsowHOWAWHQMxJfovnFVhcZBso5Bs4dx8kt0qJMTM3Dn3JMWPw9+ABDvKWK8qyNnt/FlrawHnuYpAfZWQwM9na5m0nVCjDuamQfnAeFOI2qPGey70ljPPJgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=qV3SXqIG; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-736b350a22cso4129345b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 15:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1746483439; x=1747088239; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MERLGTHs/RrtUtLm0v7jU2OTI0wGhvJkJK+5yu5RY+8=;
-        b=qV3SXqIG8LOTyNh8LMsmf6TL1js4N26rFfID3fboiAPaafDbrKKC7wU9AJmA8muXm9
-         6JIap6KwzRdUT2qL5WCrY5KYBfo8+VRMsg/R8vYBN6W/323+dvqa8YT7wwWtgTbYIUIr
-         dKIvv9VbMvZczuE+mvCr4o22HPbEZV7OXr8aUJvwS7dcnp/cjXe8MS8GsXptml/9+hB5
-         6Rr0jJvhirFAF5d0+B6CsOCCOBsnJYXIqfUWN+8ace1TdyRaf9jzZrwH0QDGsXUP1dDy
-         ISDTVS5x5srVWybXqqKMFdPvGI2ZIclJjTm/MkwGIfvoD+GrLp0AQ19Eh+nXWE2fFkXL
-         6zGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746483439; x=1747088239;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MERLGTHs/RrtUtLm0v7jU2OTI0wGhvJkJK+5yu5RY+8=;
-        b=KUDwHBpavlHRLO+KUHJDjvEfPf1mJl1467TGr5zzieFUHY2pvfM+SzAD58MapRyGMe
-         SSpg323dMr6eQ+SrGVfph5/SDE+q4KDx37o1AUpNB//FeGNJFhNxksGKYaLE038MbomP
-         aS6Z7tLUpyOZOpSyz2ywvnm3eZtUNkFMZZ0+eG8loYp0Tvsc4Gxcn7TwHbv0kQNfyAPS
-         SXnCgOarME6J5dJYBytHwmZmei5xtraB1bqA+5lBOC1+J+P/Qe4k9SaVURNAST/avBhp
-         xSg4E1vNhzpTny2lI0xyNQCYR8dHRqujnzX54JaWmtN5rBqeJsgVMdVDwnPfgEGu/mFZ
-         mYiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbGFrR5qMW75P9pN7WNziaBlG74tPCMsi1ecnXVb7KO9l53aNu+KXL5vNnw6ttghA0xkWV0EiPykASOIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeQ4BvW6UIFURf9r/U3LblwMxNm5j2pyCgJ9U3hfsQvaPbKY3p
-	aU0DHp1GhtSOu3sImYNjLZeT+NNFLIyO9+d0A87Cy7zijkQ0FhVJFub2ToPvr3Y=
-X-Gm-Gg: ASbGncvsRS2MuTOqFaSFBDYVv/2z9i9cVzsuJpvkotvluayyftXR3v9qFZeJxkq3hN0
-	+QQcqitScJlSPnHUW3zF9k0R+QNtqLDL8cHJ5G9GXal74nCJQK0FDC9cZh8tVncwFhcq/7iEY3t
-	g9Muq5d2w2UmWBW9FCHdIhtsqAYThPpNRJ2Lk/5Dpjl8iN8BzSXoSoV26qbO7wqrJnQ57RISuZC
-	8iPNnlazSKqDq4RwZdkhu7LdcLj7o+qD5K07N1eHKCil1O3GIx2L3FHWDhpPJIfvJ+l5f1KIInz
-	WBT3ILxstQGDIgISby7hvmLODeQz7+lWEGOl4y5zF2xR/liQoYo+6uJaHKA3VjvnCw7Sg+ZcOf4
-	3fysonAuOgtniA1QJVQNU6Qs3
-X-Google-Smtp-Source: AGHT+IHrvwwqSoSlfObVoPWp8AjVunSDrM2JhYnGT2PWGcNQNPXU+yqDU5LcnUBQQVLLeR5E/xxEgw==
-X-Received: by 2002:a17:90b:5824:b0:309:eb44:2a58 with SMTP id 98e67ed59e1d1-30a4e623cb7mr18675373a91.22.1746483439392;
-        Mon, 05 May 2025 15:17:19 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a47625aeasm9535767a91.36.2025.05.05.15.17.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 15:17:18 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uC47g-0000000HSCB-0wDj;
-	Tue, 06 May 2025 08:17:16 +1000
-Date: Tue, 6 May 2025 08:17:16 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Charalampos Mitrodimas <charmitro@posteo.net>
-Cc: Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] xfs: Verify DA node btree hash order
-Message-ID: <aBk47Oqsy63jSBJY@dread.disaster.area>
-References: <20250505-xfs-hash-check-v2-1-226d44b59e95@posteo.net>
+	s=arc-20240116; t=1746483487; c=relaxed/simple;
+	bh=ICQOgm/oxvbMn3j3DrNQVqEImZIBabjshKw7nTcOCxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KO4fkGdgz5CZiHS8oTQ0Uf3gqji0NPb/LZrfe9NHolmX/ocm8ZN6fNZYCUB5zuG8AFhGtbsomjwFgxpZoIvc2BcbPhsmPaoWbzdJV5m0BImeVNXoLsjZe3uLqEH7gZDtopRKvMLm82Slua6CzA803mAzLspOUMrnB9tlZUGraMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DR74P9QT; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B824B41E0D;
+	Mon,  5 May 2025 22:17:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746483482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eKS/cb+SXa/UAIJAbrppHX30ENDfVc1mR64QNynsoJ0=;
+	b=DR74P9QTZJGbK9Z79HPwvtbYGMuId/FJAYXc0xvaA64UZWDmBAagBMoKtWL2xXdl/x079W
+	m63W6CroOIhAM4xgrppK6BouWErcNqQsYWRPi7ampHQbHjX4T9G24pP32Tz6+Mg7q7nWYw
+	X2w6npZ4QLKGezj3R/RWR2SIeH+B16WUP9/sg4EtFE0v1FfYptRGJCoYEKDjOwoCPS/org
+	XXeHAqendbaizLhLpPBFGYhOLBi6lwGoEHwrL9AYWBwD+aLurH175au+kI8pWVoBv+vPGN
+	ohkgBa8r9wMKsiK/C/uth99HI9KGFT18U/5gYwk6xLYiAIBGamkMIb89ZvhUig==
+Date: Tue, 6 May 2025 00:17:58 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Jason Xing <kernelxing@tencent.com>, Richard Cochran
+ <richardcochran@gmail.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, "Russell King (Oracle)"
+ <linux@armlinux.org.uk>
+Subject: Re: [PATCH net-next] net: Add support for providing the PTP
+ hardware source in tsinfo
+Message-ID: <20250506001758.297449f1@kmaincent-XPS-13-7390>
+In-Reply-To: <20250429150657.1f32a10c@kernel.org>
+References: <20250425-feature_ptp_source-v1-1-c2dfe7b2b8b4@bootlin.com>
+ <20250429150657.1f32a10c@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505-xfs-hash-check-v2-1-226d44b59e95@posteo.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkedvvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudelmeekheekjeemjedutddtmedutgelrgemfegusghfmeehrgegugemvgefvggsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkeehkeejmeejuddttdemudgtlegrmeefuggsfhemhegrgegumegvfegvsgdphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtv
+ ghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhgvmhguvggsrhhuihhjnhdrkhgvrhhnvghlsehgmhgrihhlrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Mon, May 05, 2025 at 08:06:39AM +0000, Charalampos Mitrodimas wrote:
-> The xfs_da3_node_verify() function checks the integrity of directory
-> and attribute B-tree node blocks. However, it was missing a check to
-> ensure that the hash values of the btree entries within the node are
-> non-decreasing hash values (allowing equality).
-> 
-> Add a loop to iterate through the btree entries and verify that each
-> entry's hash value is greater than the previous one. If an
-> out-of-order hash value is detected, return failure to indicate
-> corruption.
+Thanks for the review!
 
-Ok, the code is fine, but....
+On Tue, 29 Apr 2025 15:06:57 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-> This addresses the "XXX: hash order check?" comment and improves
-> corruption detection for DA node blocks.
+> On Fri, 25 Apr 2025 19:42:43 +0200 Kory Maincent wrote:
+> > Multi-PTP source support within a network topology has been merged,
+> > but the hardware timestamp source is not yet exposed to users.
+> > Currently, users only see the PTP index, which does not indicate
+> > whether the timestamp comes from a PHY or a MAC.
+> >=20
+> > Add support for reporting the hwtstamp source using a
+> > hwtstamp-source field, alongside hwtstamp-phyindex, to describe
+> > the origin of the hardware timestamp.
+> >=20
+> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> > ---
+> > Not sure moving the hwtstamp_source enum to uapi/linux/net_tstamp.h and
+> > adding this header to ynl/Makefile.deps is the best choice. Maybe it is
+> > better to move the enum directly to ethtool.h header. =20
+>=20
+> Weak preference for the YAML and therefore ethtool.h from my side.
+> That way the doc strings will propagate to more places, like the HTML
+> docs.
 
-.... it doesn't address that comment.
+Ack.
 
-That comment was posed as a question for good reasons.
+> > diff --git a/include/linux/net_tstamp.h b/include/linux/net_tstamp.h
+> > index
+> > ff0758e88ea1008efe533cde003b12719bf4fcd3..1414aed0b6adeae15b56e7a99a7d9=
+eeb43ba0b6c
+> > 100644 --- a/include/linux/net_tstamp.h +++ b/include/linux/net_tstamp.h
+> > @@ -13,12 +13,6 @@
+> >  					 SOF_TIMESTAMPING_TX_HARDWARE | \
+> >  					 SOF_TIMESTAMPING_RAW_HARDWARE)
+> > =20
+> > -enum hwtstamp_source {
+> > -	HWTSTAMP_SOURCE_UNSPEC, =20
+>=20
+> when is unspec used in practice? Only path I could spot that may not
+> set it is if we fetch the data by PHC index?
 
-Ask yourself this question and then do the math: what is the
-overhead of doing this hash order check on a 64kB directory node
-block? How many times does this loop iterate, and how much extra CPU
-does that burn when you are processing tens of thousands of these
-blocks every second?
+Indeed it is not used. I think it get merged in one of the several version
+tackling the "make PTP selectable support" work. As it is finally not used =
+we
+could drop it.
+=20
+> > -	HWTSTAMP_SOURCE_NETDEV,
+> > -	HWTSTAMP_SOURCE_PHYLIB,
+> > -};
+> > -
+> >  /**
+> >   * struct hwtstamp_provider_desc - hwtstamp provider description
+> >   * =20
+>=20
+> > diff --git a/include/uapi/linux/net_tstamp.h
+> > b/include/uapi/linux/net_tstamp.h index
+> > a93e6ea37fb3a69f331b1c90851d4e68cb659a83..bf5fb9f7acf5c03aaa121e0cda3c0=
+b1d83e49f71
+> > 100644 --- a/include/uapi/linux/net_tstamp.h +++
+> > b/include/uapi/linux/net_tstamp.h @@ -13,6 +13,19 @@
+> >  #include <linux/types.h>
+> >  #include <linux/socket.h>   /* for SO_TIMESTAMPING */
+> > =20
+> > +/**
+> > + * enum hwtstamp_source - Source of the hardware timestamp
+> > + * @HWTSTAMP_SOURCE_UNSPEC: Source not specified or unknown
+> > + * @HWTSTAMP_SOURCE_NETDEV: Hardware timestamp comes from the net devi=
+ce =20
+>=20
+> We should probably document that netdev here means that the timestamp
+> comes from a MAC or device which has MAC and PHY integrated together?
 
-IOWs, that comment is posed as a question because the hash order
-check is trivial to implement but we've assumed that it is -too
-expensive to actually implement-. It has never been clear that the
-additional runtime expense is worth the potential gain in corruption
-detection coverage.
+Yes, I will.
 
-In terms of performance and scalability, we have to consider what
-impact this has on directory lookup performance when
-there are millions of entries in a directory. What about when
-there are billions of directory entries in the filesystem? What
-impact does this have on directory modification and writeback speed
-(verifiers are also run prior to writeback, not just on read)?
-What impact does it have on overall directory scalability? etc.
+>=20
+> > + * @HWTSTAMP_SOURCE_PHYLIB: Hardware timestamp comes from one of the P=
+HY
+> > + *			    devices of the network topology
+> > + */
+> > +enum hwtstamp_source {
+> > +	HWTSTAMP_SOURCE_UNSPEC,
+> > +	HWTSTAMP_SOURCE_NETDEV,
+> > +	HWTSTAMP_SOURCE_PHYLIB,
+> > +}; =20
+>=20
+> > --- a/net/ethtool/common.c
+> > +++ b/net/ethtool/common.c
+> > @@ -920,12 +920,20 @@ int ethtool_get_ts_info_by_phc(struct net_device =
+*dev,
+> >  		struct phy_device *phy;
+> > =20
+> >  		phy =3D ethtool_phy_get_ts_info_by_phc(dev, info,
+> > hwprov_desc);
+> > -		if (IS_ERR(phy))
+> > +		if (IS_ERR(phy)) {
+> >  			err =3D PTR_ERR(phy);
+> > -		else
+> > -			err =3D 0;
+> > +			goto out;
+> > +		}
+> > +
+> > +		info->phc_source =3D HWTSTAMP_SOURCE_PHYLIB;
+> > +		info->phc_phyindex =3D phy->phyindex;
+> > +		err =3D 0;
+> > +		goto out; =20
+>=20
+> The goto before the else looks a bit odd now.
+> Can we return directly in the error cases?
+> There is no cleanup to be done.
 
-Now consider the other side of the coin: what is the risk of
-undetected corruptions slipping through because we don't verify the
-hash order? Do we have any other protections against OOO hash
-entries in place? What is the severity of the failure scenarios
-associated with an out-of-order hash entry - can it oops the
-machine, cause a security issue, etc? Have we ever seen an out of
-order hash entry in the wild?
+Yes indeed.
 
-Hence we also need to quantify the risk we are assuming by not
-checking the hash order exhaustively and how it changes by adding
-such checking. What holes in the order checking still exist even
-with the new checks added (e.g. do we check hash orders across
-sibling blocks?).
+> > +	} else {
+> > +		info->phc_source =3D HWTSTAMP_SOURCE_NETDEV;
+> >  	}
+> > =20
+> > +out:
+> >  	info->so_timestamping |=3D SOF_TIMESTAMPING_RX_SOFTWARE |
+> >  				 SOF_TIMESTAMPING_SOFTWARE;
+> > =20
+> > @@ -947,10 +955,14 @@ int __ethtool_get_ts_info(struct net_device *dev,
+> > =20
+> >  		ethtool_init_tsinfo(info);
+> >  		if (phy_is_default_hwtstamp(phydev) &&
+> > -		    phy_has_tsinfo(phydev))
+> > +		    phy_has_tsinfo(phydev)) {
+> >  			err =3D phy_ts_info(phydev, info);
+> > -		else if (ops->get_ts_info)
+> > +			info->phc_source =3D HWTSTAMP_SOURCE_PHYLIB;
+> > +			info->phc_phyindex =3D phydev->phyindex;
+> > +		} else if (ops->get_ts_info) {
+> >  			err =3D ops->get_ts_info(dev, info);
+> > +			info->phc_source =3D HWTSTAMP_SOURCE_NETDEV; =20
+>=20
+> Let's move the assignment before the calls if we can?
+> Otherwise someone adding code below may miss the fact that err may
+> already be carrying an unhandled error.
 
-Are there any other protections on node blocks that already inform
-us of potential ordering issues without needing expensive,
-exhaustive tests?  If not, are there new, lower cost checks we can
-add that will give us the same detection capabilty without the
-IO-time verification overhead? (e.g. in the hash entry binary search
-lookup path.)
+Ack.
 
-i.e. What is the risk profile associated with the status quo of the
-past 30 years (i.e. no hash order verification at IO time) and how
-much does that improve by adding some form of hash order
-verification?
-
-Hence as a first step before we add such hash order checking, we
-need performance and scalability regression testing (especially on
-directories containing millions of entries) to determine the runtime
-hit we will take from adding the check. Once the additional runtime
-overhead has been measured, quantified and analysed, then we can
-balance that against the risk profile improvement and make an
-informed decision on this verification...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
