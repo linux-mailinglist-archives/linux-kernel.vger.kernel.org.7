@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-632213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32530AA9414
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:11:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F61AA941B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63BA7A291D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FFA53A9C6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E9E2561C7;
-	Mon,  5 May 2025 13:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B322522BB;
+	Mon,  5 May 2025 13:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l16GkV3L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QD7GM8TY"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AB041C63;
-	Mon,  5 May 2025 13:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FFD17B50F;
+	Mon,  5 May 2025 13:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746450689; cv=none; b=WruEC0HlPCx/Yt/vnpFtDtSkOOntGegrCEJWiUJJRHa1838GqRIggxtkIr05qNK0lCA6++YbdxNMLrS4yPWIZ0SqrAD3wZCSBRoM47XIwyOhiJjm0Ahnesdyp4467O2bQ1JkDQDgulsIeXk/LXxLKiJJfoiC6k4vk5WnbIuryzw=
+	t=1746450770; cv=none; b=IjOpl7I5AcZJXmVogQGmX4H4E78NdHbJnAyO3eSZBuY8Epsj7llsx+TaqtUtfhicrP+qndrxbqRaR1LdkU7tRS9YwGKSn4/6ruqrV90iblsmKgp853TZAr9c/zDg2PDmgVWG6ee0mDLMooCquyVlpQ6AWMZE4LA9p8AOxAy681M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746450689; c=relaxed/simple;
-	bh=AiE4ZD17aPOaZAPivHMdsvTvdLsANzKVsMl0h1CzKxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WQt4KSYXMjcTdUa8lUl6XvI8qXqywLGFcKu6g24caJqYzd+xOPIv6h9q2xhGxBb7654/zAWxEWXW6c6GdmY/DJYcIx/MsA+W6hkpw//J+p1nrgEoA9zK17HdHBMdFfMuyfx6LjMQ1iQaedDk+gT1UotF12y047tkG93rpa7ww8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l16GkV3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5058C4CEF0;
-	Mon,  5 May 2025 13:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746450688;
-	bh=AiE4ZD17aPOaZAPivHMdsvTvdLsANzKVsMl0h1CzKxE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l16GkV3Ld2+BattRDIXJbk3w/r9clpWMvG402x5q7RD8nn7x0kXSZPgyprKVxrpN4
-	 +7P7dAWCd9ART3bSmImZk6wpBngHX7qic+ioV4bm3XqnKgzh1pbJMuMUDA1DVRXvZm
-	 WZxuhZCFt3+cpYv2p8ZxtWHUZ5ozU2WunK/plugnlKyRctp9dMOANTkfdy3/cP9b7e
-	 VEUmW9fJxyOkOebv4J6I0tkm5B+qT8rxI77R9862v/OodWbx0qB2gVKNSM7D/MpOcS
-	 vHqFNb7YTkWIWmIevDspXquSQBEeKhu5RIKzR3sr/w6pgC7dImq9/Kzh/30q8b0bhP
-	 QSeHnIHN5+bYw==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2d060c62b61so3798079fac.0;
-        Mon, 05 May 2025 06:11:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDjOMJ1UcRyT5pFhQ2pOdGLZE8UWrxqIwr3qEXgBu/jkWmDvqttfjofMIxyHCZWF4lqU8IwKpcfIPL1oL5@vger.kernel.org, AJvYcCWr/8Kh8vG4s4MftKAPJ5LvI1VWeAYHA6DgSgMfojsh3tbqx3hC9gRnVt5BFyDqgDPB244MJCwrBpyA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn4DA+e3T3TQzK13F70qwk55iytkJbF0M92PVFDdnp9MeAAFxC
-	zNFkj++XQhdtMWz9rXjwFM2wD5CMW5D9uiwa3yYaG1FEh/DfLTpFG+dxMwcWJetG/ZD4BQ42YOE
-	lKEPc/DoQZ7UaTwSCK4nyhqhDn4o=
-X-Google-Smtp-Source: AGHT+IEtiEpKVa7HVZWvCw/510Dj6uB2h0Kb40e+MiUAYElqu3q1Q8n0n/uqo9E+TBcQ1QRXY5z5k4nxmZ0sPnnYg1Q=
-X-Received: by 2002:a05:6870:30b:b0:2d4:e29d:529a with SMTP id
- 586e51a60fabf-2dae82e08b1mr4199691fac.5.1746450688029; Mon, 05 May 2025
- 06:11:28 -0700 (PDT)
+	s=arc-20240116; t=1746450770; c=relaxed/simple;
+	bh=wIoatFFvgsMP1WuaOD5gtDxP4rLHaGa3DDS0HmTezAE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTfHwzqG5o/2bWTGoHnK88GX9vaist2sjYde7U2mPmdHUSMzklEwDo6je0hJae124lSFEYQ5+LacW4PWl5cDhX0ki4qNqn7xx2nV3kS/qexQ19qt1kDSNDE4rOJGpt9FfgDHVxuOIKodJG7sFVSDrEbPQbqaOOHN+RLUs042mNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QD7GM8TY; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 545DCU4O946261
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 May 2025 08:12:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746450751;
+	bh=yTfL/fvg5uCjNorELIHZpGNdVVCrNhFU0chckRh1dYo=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=QD7GM8TYI+aQOACJZ30G/WxcP6GgDD7+w7/oPCOh86Zgy813HxmhMEYpqqBBzOb6m
+	 svK3oHoG4S8lKZvG8DOocDIryJidEhr5NUeVQ1EPv7/IB1YJUN0XOPuwO8/W36MQpU
+	 uOWVStRJzfsuj0j2yj8pVtkxk7gSu0+5rFD9Sjuk=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 545DCUGs045176
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 5 May 2025 08:12:30 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 5
+ May 2025 08:12:30 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 5 May 2025 08:12:30 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 545DCUnP108695;
+	Mon, 5 May 2025 08:12:30 -0500
+Date: Mon, 5 May 2025 08:12:30 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Daniel Schultz <d.schultz@phytec.de>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62a: Set Critical Temp. to 105C
+Message-ID: <20250505131230.3ydwgftnqbbmrt5u@opulently>
+References: <20250502142606.2840508-1-d.schultz@phytec.de>
+ <20250502142606.2840508-2-d.schultz@phytec.de>
+ <20250502144934.t6hjiwp2f64ovb34@deeply>
+ <9964aeaa-0169-4596-a33d-c56bdb6edae3@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429202412.380637-1-tony.luck@intel.com> <20250429202412.380637-2-tony.luck@intel.com>
-In-Reply-To: <20250429202412.380637-2-tony.luck@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 5 May 2025 15:11:15 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ju_Xirnft+5C=-GtG3hmT9xGjVqNFPRugXR7o1RzfHrg@mail.gmail.com>
-X-Gm-Features: ATxdqUFw2uXAVVggnwPyHmHSrJuw6ui02s3ht9p5pPI5ZvNwsrVhW-wXCwzpT0U
-Message-ID: <CAJZ5v0ju_Xirnft+5C=-GtG3hmT9xGjVqNFPRugXR7o1RzfHrg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] ACPICA: Define MRRM ACPI table
-To: Tony Luck <tony.luck@intel.com>
-Cc: rafael@kernel.org, lenb@kernel.org, 
-	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9964aeaa-0169-4596-a33d-c56bdb6edae3@phytec.de>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Apr 29, 2025 at 10:24=E2=80=AFPM Tony Luck <tony.luck@intel.com> wr=
-ote:
->
-> Patch for reference, this has already been applied to
-> https://github.com/acpica/acpica and will in due course make its way
-> into Linux when the next ACPICA release is ported over.
->
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  include/acpi/actbl1.h |  7 +++++++
->  include/acpi/actbl2.h | 42 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 49 insertions(+)
->
-> diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
-> index 387fc821703a..4cb36392e9e9 100644
-> --- a/include/acpi/actbl1.h
-> +++ b/include/acpi/actbl1.h
-> @@ -110,6 +110,13 @@ struct acpi_whea_header {
->         u64 mask;               /* Bitmask required for this register ins=
-truction */
->  };
->
-> +/* Larger subtable header (when Length can exceed 255) */
-> +
-> +struct acpi_subtbl_hdr_16 {
-> +       u16 type;
-> +       u16 length;
-> +};
-> +
->  /* https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/acpitab=
-l/ns-acpitabl-aspt_table */
->  #define ASPT_REVISION_ID 0x01
->  struct acpi_table_aspt {
-> diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
-> index 2e917a8f8bca..e7423db6e24b 100644
-> --- a/include/acpi/actbl2.h
-> +++ b/include/acpi/actbl2.h
-> @@ -37,6 +37,7 @@
->  #define ACPI_SIG_MCHI           "MCHI" /* Management Controller Host Int=
-erface table */
->  #define ACPI_SIG_MPAM           "MPAM" /* Memory System Resource Partiti=
-oning and Monitoring Table */
->  #define ACPI_SIG_MPST           "MPST" /* Memory Power State Table */
-> +#define ACPI_SIG_MRRM           "MRRM"      /* Memory Range and Region M=
-apping table */
->  #define ACPI_SIG_MSDM           "MSDM" /* Microsoft Data Management Tabl=
-e */
->  #define ACPI_SIG_NFIT           "NFIT" /* NVDIMM Firmware Interface Tabl=
-e */
->  #define ACPI_SIG_NHLT           "NHLT" /* Non HD Audio Link Table */
-> @@ -1736,6 +1737,47 @@ struct acpi_msct_proximity {
->         u64 memory_capacity;    /* In bytes */
->  };
->
-> +/***********************************************************************=
-********
-> + *
-> + * MRRM - Memory Range and Region Mapping (MRRM) table
-> + * Conforms to "Intel Resource Director Technology Architecture Specific=
-ation"
-> + * Version 1.1, January 2025
-> + *
-> + ***********************************************************************=
-*******/
-> +
-> +struct acpi_table_mrrm {
-> +       struct acpi_table_header header;        /* Common ACPI table head=
-er */
-> +       u8 max_mem_region;                      /* Max Memory Regions sup=
-ported */
-> +       u8 flags;                               /* Region assignment type=
- */
-> +       u8 reserved[26];
-> +       u8 memory_range_entry[];
-> +};
-> +
-> +/* Flags */
-> +#define ACPI_MRRM_FLAGS_REGION_ASSIGNMENT_OS (1<<0)
-> +
-> +/***********************************************************************=
-********
-> +       *
-> +       * Memory Range entry - Memory Range entry in MRRM table
-> +       *
-> +       *****************************************************************=
-*************/
-> +
-> +struct acpi_mrrm_mem_range_entry {
-> +       struct acpi_subtbl_hdr_16 header;
-> +       u32 reserved0;          /* Reserved */
-> +       u64 addr_base;          /* Base addr of the mem range */
-> +       u64 addr_len;           /* Length of the mem range */
-> +       u16 region_id_flags;    /* Valid local or remote Region-ID */
-> +       u8 local_region_id;     /* Platform-assigned static local Region-=
-ID */
-> +       u8 remote_region_id;    /* Platform-assigned static remote Region=
--ID */
-> +       u32 reserved1;          /* Reserved */
-> +       /* Region-ID Programming Registers[] */
-> +};
-> +
-> +/* Values for region_id_flags above */
-> +#define ACPI_MRRM_VALID_REGION_ID_FLAGS_LOCAL   (1<<0)
-> +#define ACPI_MRRM_VALID_REGION_ID_FLAGS_REMOTE  (1<<1)
-> +
->  /***********************************************************************=
-********
->   *
->   * MSDM - Microsoft Data Management table
-> --
+On 21:11-20250502, Daniel Schultz wrote:
+> 
+> On 5/2/25 16:49, Nishanth Menon wrote:
+> > On 07:26-20250502, Daniel Schultz wrote:
+> > > The AM62Ax SoC supports two temperature ranges:
+> > > * A: -40 to 105C - Extended Industrial
+> > > * I: -40 to 125C - Automotive
+> > > 
+> > > By default, use the lower limit (105 °C) so that any AM62A running
+> > > in Extended Industrial mode will shut down safely before overheating.
+> > > 
+> > > If the bootloader detects an Automotive-grade device, it should
+> > > override this and raise the critical trip point to 125 °C.
+> > > 
+> > > Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+> > > ---
+> > >   arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi | 6 +++---
+> > >   1 file changed, 3 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
+> > > index 39ff9118b6c4..40dcb9bab965 100644
+> > > --- a/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
+> > > +++ b/arch/arm64/boot/dts/ti/k3-am62a-thermal.dtsi
+> > Why not create a separate header for industrial grade and rename this as
+> > automotive grade and let the board file pick the right grade used on the
+> > board?
+> 
+> Mostly because I copied this from 10e7bfd8114c207ac and with the most recent
+> temperature fixups in U-Boot, we also have the missing bootloader logic.
+> 
+> I would also prefer an out-of-the-box solution for that.
 
-All of the above definitions should be there in linux-next now.
+Personally, I am not in favor of depending on U-boot (there are other
+bootloaders as well in the ecosystem) monkeying with dt nodes.
 
-Can you please check if they are there and they are correct?
-Alternatively, please check
+I suggest renaming the dtsi and introducing a industrial dtsi. And
+depending on the samples used by the board, use the correct dtsi.
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log=
-/?h=3Dtesting
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
