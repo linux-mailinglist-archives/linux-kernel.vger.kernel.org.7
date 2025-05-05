@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-634331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4B2AAB177
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:01:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069F2AAB09A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2773A369A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290524A6183
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B5A314401;
-	Tue,  6 May 2025 00:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7329B31A0D1;
+	Tue,  6 May 2025 00:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDjIenEc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDY+OE3D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3933829AB1A;
-	Mon,  5 May 2025 22:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10A23579F1;
+	Mon,  5 May 2025 22:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485055; cv=none; b=VCqnSILg4umso3+snNONrDEQVopG1kYyyYGYB1NghJnEPw+FR9j4AclEZgwZhyXxvH8Iy8fKL5SAiO3myJ0JKKViM8XVbLw2GmtatqMQ+XCkfSRpebV6EsW0qXTltbr9NH3qQdyxAxmBHhM22/9vHCBOOH3I2ZnYvg7d/ZvYlzU=
+	t=1746485074; cv=none; b=rj2JSH3UOJuh7T19UF3A/WfYeq5vQw3FSTgEKlX/XneOon/hclzTBrjzBmZ3YpUOGpL/vT+uHoDEL5imYKrz2OQ2i5CXplOXtHvf47hmToehRRDiAmYU8zdyj4x2JUbZuhOOHzjfwwKC1SHL/axUpCurUPnesnGfGoWDi/JBE0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485055; c=relaxed/simple;
-	bh=D7eXuyELba5Og2esZH36Lvj9LlUf/dCO03XC8wf+1jM=;
+	s=arc-20240116; t=1746485074; c=relaxed/simple;
+	bh=5UYltFtK9fHPV7+8c5lZv+Yq4pxdhEUuN2aJzPU8pnA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GLIhbgiB/KLOdfrs3mF+hrCAdqX4MnW2x6W5Y6lJ8lJXNP9/Yv6dyIHTWWsN8N3P0LXb5SsDMtDGFI9Q8+yF4IaJnDuHp/pyde7+SVlg0i9j5JPawpXbIIquigu7zSwSOuctRKU0++ufh79wRFShY0cQYN5JE/qrv/whN8zk5YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDjIenEc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D8AC4CEE4;
-	Mon,  5 May 2025 22:44:12 +0000 (UTC)
+	 MIME-Version; b=jjesD4nmAGeg/LCEFmv2vl7fVRByGTPxQfEwPsp/c6ARy/hqVltiFwUWxr8ZA2LnDZrZEqpJyPmPreh4yjISqt3vCSUzPu0CWjPis4pWtoMMedjvFrggSbK92w7p1mUNvl5KyTzgKFWwd2Lh1Cg8GHPr7s8epGY629idMbuudZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDY+OE3D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44971C4CEFC;
+	Mon,  5 May 2025 22:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485054;
-	bh=D7eXuyELba5Og2esZH36Lvj9LlUf/dCO03XC8wf+1jM=;
+	s=k20201202; t=1746485073;
+	bh=5UYltFtK9fHPV7+8c5lZv+Yq4pxdhEUuN2aJzPU8pnA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DDjIenEc7+SddyqzYhSNLo1Ilcu5Cdjhhj2lHqU0XydVJK5Ehettu/5kZ0LFUyDv4
-	 bof/WZVsX6ab7cQ5YlQ2aSpoxw0bhReRuBaPx05fjLtyOq062yOUAFebUyNgFqrf0b
-	 tJINE/2ILRlsps9zn9JIZaGqdArfaa8nZxUsZA55esEew+P5/Wykqb+XbWjEfvOowa
-	 uUoAm/B7Ol8S3L3es2mNe12jSe7PyeOGMF24hk1fMzZzl4JN2dIDVXUH5d/sePUDUC
-	 BhG7P60PzBiN3gPs3RUrHPEcNaKdr0sSE9HGbKrqXWv6jWxZnpYGKsksLappEb52UE
-	 YtR8eRBKILNHA==
+	b=sDY+OE3DotyCPCpJ+Valb0HjaPk+66UjNbg2xCTUAUeWR9JP92x3ENJtnzX2m4bfb
+	 +x+dwxTjIxLQX6befE7Xvaaj/78ehIJYIPlJ32GHh3NmHCDZjzqJRqKfEd0C5EXsxC
+	 FNvoKdc8lIfA2Sl0kKI/jrM2uweMkrUGxTEWLD2W8ZnXrd7zX4/hBLbNU5oEq27ljb
+	 ESz6vUWATJOeBnxDeWnjm3HmsGTVnrlaqQSPzq88Hx1xF57NbXX2k1+60NVNSMLUrr
+	 plrU3Gwwc9vr6iWVpgEo3B1aCAqVEFpUeQ5Sb71MnQn7t2Shg8olnuR9n1rO7/Irqo
+	 1BA3aBDaZtqpQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Kurt Borja <kuurtb@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	Ilan Peer <ilan.peer@intel.com>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	jdelvare@suse.com,
-	corbet@lwn.net,
-	pali@kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 144/486] hwmon: (dell-smm) Increment the number of fans
-Date: Mon,  5 May 2025 18:33:40 -0400
-Message-Id: <20250505223922.2682012-144-sashal@kernel.org>
+	johannes@sipsolutions.net,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 152/486] wifi: mac80211: fix warning on disconnect during failed ML reconf
+Date: Mon,  5 May 2025 18:33:48 -0400
+Message-Id: <20250505223922.2682012-152-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -68,84 +66,37 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Kurt Borja <kuurtb@gmail.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit dbcfcb239b3b452ef8782842c36fb17dd1b9092f ]
+[ Upstream commit 0e104aa3676d020f6c442cd7fbaeb72adaaab6fc ]
 
-Some Alienware laptops that support the SMM interface, may have up to 4
-fans.
+If multi-link reconfiguration fails, we can disconnect with a local link
+already allocated but the BSS entry not assigned yet, which leads to a
+warning in cfg80211. Add a check to avoid the warning.
 
-Tested on an Alienware x15 r1.
-
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-Link: https://lore.kernel.org/r/20250304055249.51940-2-kuurtb@gmail.com
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reviewed-by: Ilan Peer <ilan.peer@intel.com>
+Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Link: https://patch.msgid.link/20250308225541.699bd9cbabe5.I599d5ff69092a65e916e2acd25137ae9df8debe8@changeid
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/hwmon/dell-smm-hwmon.rst | 14 +++++++-------
- drivers/hwmon/dell-smm-hwmon.c         |  5 ++++-
- 2 files changed, 11 insertions(+), 8 deletions(-)
+ net/mac80211/mlme.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/hwmon/dell-smm-hwmon.rst b/Documentation/hwmon/dell-smm-hwmon.rst
-index 74905675d71f9..5a4edb6565cf9 100644
---- a/Documentation/hwmon/dell-smm-hwmon.rst
-+++ b/Documentation/hwmon/dell-smm-hwmon.rst
-@@ -32,12 +32,12 @@ Temperature sensors and fans can be queried and set via the standard
- =============================== ======= =======================================
- Name				Perm	Description
- =============================== ======= =======================================
--fan[1-3]_input                  RO      Fan speed in RPM.
--fan[1-3]_label                  RO      Fan label.
--fan[1-3]_min                    RO      Minimal Fan speed in RPM
--fan[1-3]_max                    RO      Maximal Fan speed in RPM
--fan[1-3]_target                 RO      Expected Fan speed in RPM
--pwm[1-3]                        RW      Control the fan PWM duty-cycle.
-+fan[1-4]_input                  RO      Fan speed in RPM.
-+fan[1-4]_label                  RO      Fan label.
-+fan[1-4]_min                    RO      Minimal Fan speed in RPM
-+fan[1-4]_max                    RO      Maximal Fan speed in RPM
-+fan[1-4]_target                 RO      Expected Fan speed in RPM
-+pwm[1-4]                        RW      Control the fan PWM duty-cycle.
- pwm1_enable                     WO      Enable or disable automatic BIOS fan
-                                         control (not supported on all laptops,
-                                         see below for details).
-@@ -93,7 +93,7 @@ Again, when you find new codes, we'd be happy to have your patches!
- ---------------------------
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index ad0d040569dcd..f000026ab714a 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -4033,7 +4033,7 @@ static void __ieee80211_disconnect(struct ieee80211_sub_if_data *sdata)
+ 			struct ieee80211_link_data *link;
  
- The driver also exports the fans as thermal cooling devices with
--``type`` set to ``dell-smm-fan[1-3]``. This allows for easy fan control
-+``type`` set to ``dell-smm-fan[1-4]``. This allows for easy fan control
- using one of the thermal governors.
- 
- Module parameters
-diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
-index f5bdf842040e6..b043fbd15c9da 100644
---- a/drivers/hwmon/dell-smm-hwmon.c
-+++ b/drivers/hwmon/dell-smm-hwmon.c
-@@ -73,7 +73,7 @@
- #define DELL_SMM_LEGACY_EXECUTE	0x1
- 
- #define DELL_SMM_NO_TEMP	10
--#define DELL_SMM_NO_FANS	3
-+#define DELL_SMM_NO_FANS	4
- 
- struct smm_regs {
- 	unsigned int eax;
-@@ -1074,11 +1074,14 @@ static const struct hwmon_channel_info * const dell_smm_info[] = {
- 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
- 			   HWMON_F_TARGET,
- 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
-+			   HWMON_F_TARGET,
-+			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
- 			   HWMON_F_TARGET
- 			   ),
- 	HWMON_CHANNEL_INFO(pwm,
- 			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
- 			   HWMON_PWM_INPUT,
-+			   HWMON_PWM_INPUT,
- 			   HWMON_PWM_INPUT
- 			   ),
- 	NULL
+ 			link = sdata_dereference(sdata->link[link_id], sdata);
+-			if (!link)
++			if (!link || !link->conf->bss)
+ 				continue;
+ 			cfg80211_unlink_bss(local->hw.wiphy, link->conf->bss);
+ 			link->conf->bss = NULL;
 -- 
 2.39.5
 
