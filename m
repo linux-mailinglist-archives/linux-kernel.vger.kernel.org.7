@@ -1,63 +1,59 @@
-Return-Path: <linux-kernel+bounces-633781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3504FAAAE1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:50:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F9FAAAE36
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A3E167553
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976DE1A869FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45BC2D2689;
-	Mon,  5 May 2025 22:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08762D323C;
+	Mon,  5 May 2025 22:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSduMmtc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLFhGxn7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534B735AD7B;
-	Mon,  5 May 2025 22:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86121364CE1;
+	Mon,  5 May 2025 22:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485161; cv=none; b=Y2/GOSE+MtCe8cvLMFCGTek1+aEXWQkk57h5Q4S4s4VatRG53HzYDVdhupqNGyhAr8t5BUYNpvwX4XjGw6qXrYPLKxqRALPHYGPePl7VF++Po56QWVRshHKk4f99UiOK4XuSaRDohSCOq6y1hp7ILoVStKTCUzlhEzJU35Xf/0w=
+	t=1746485164; cv=none; b=WjTdUtHJSTrDEg9IA1IefHAfyDgjfDCqaxV+EID/cgXkpFbDxxOoUd4JsCQj2h6BVHAPND2esO6itqrn7xFXt5wBHcBhau7hhU/VJwFXIMrxOotJedyDyOpV8r7jcZszzWfyyDz15uSLOVUlK/zQinaCEG+NUtgRSp3pGz0JGtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485161; c=relaxed/simple;
-	bh=HFyMkUdmp2i1AmcNJKN5YO27sA9goBlPK62HQOiBW00=;
+	s=arc-20240116; t=1746485164; c=relaxed/simple;
+	bh=8QG2JEc/XDbVunCQ1nHXCEhHcU6dQ7rNYCL/gowOj5w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jp4JQm4YnZAmi0PN4M1qIvPOj9D0s8lgL/AOwzid2k6wDluBER/m5gvtyJBtp/BH+lmIdQz9Ao5isb7Bh3oF3uS7+7W00wjdvNqZXlUn82kT7iVVWgRFeJSM2Oy9F1OQZZwo5SIu9MY54c3g2fqTM0ecIOASK38Uf5z2UpPjqB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSduMmtc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE82C4CEEF;
-	Mon,  5 May 2025 22:45:58 +0000 (UTC)
+	 MIME-Version; b=BMhf7wNYKxffA1pTb1Cu4DoKURF5k2gmCGo8JNQ52tzvolapavoOjAIlSYFNsDYW8zAPyG724qI5xrcR7ELzCOs5s83+FszTouiJp3UnehYa2Y1gKZsgyOM5Yqfrgvql7uGKC/Cktbv1KyiKOHLeMW8Lk24dIQiJnN5W2RSiJ5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLFhGxn7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB81CC4CEE4;
+	Mon,  5 May 2025 22:46:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485159;
-	bh=HFyMkUdmp2i1AmcNJKN5YO27sA9goBlPK62HQOiBW00=;
+	s=k20201202; t=1746485163;
+	bh=8QG2JEc/XDbVunCQ1nHXCEhHcU6dQ7rNYCL/gowOj5w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gSduMmtcpMferoCCI3uRF++TuHEq6/GBMqYsiYopuvpCYnc8FekLsSPA4WLkduIHW
-	 VDPheD1LDV57k14SZaHK8C6byHkQkmdVAbpt0nBAl+qC7O8jn3cZWtTM8y47ht6rt7
-	 ESsYg560cateYOrsVS/3uBUj2IvjxzpjfTsf5ww5eIXOSV4e1hJRp2suKfK/2JduZ3
-	 hU1ANlqBH3IGQYLlja6Z1utXv7IIsNEJnsjaUVgO7pT3TSI7YIiLLrH2NeFvgUBAP2
-	 CSajfN0vytK5AneDgNaxXf0jBN4UGt2ipqejHBT/2xFPHmQtPRnk+AQBDZQ5lUvbBA
-	 21ES6uu69H5ZQ==
+	b=OLFhGxn7hRICeORQ+/bG0OJWdnVZwkVom2PHv+aPjJJ79djgbXJhkTFqkDUyAQzXD
+	 T6I3e+NZzEgueRMBeMXUFSdMk3/HM3l94LTTd4v2zRLPH/HLJ/sk/UYgagxELzhwCH
+	 UA4GBZT+da391oc/ZOYsxop+aS+M9Yg9Db0/ohkhEqGmMm1t7vopdfWoIWvghkColm
+	 bjLDnz+37MQFnq9ewZE4NIZdmvwVd3KZDhixBm+WfrVyxvj3hAp9OryuQsLFTBWHSO
+	 qDVPeg2HwLAt+w80I1YVdioeKG2+IhBOoXx3WwKUS2EFZSuLcmgeE/k4XCaxUGC3MW
+	 U8oyKQuw/JLEQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Anusha Srivatsa <asrivats@redhat.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+Cc: Ming Lei <ming.lei@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Yu Kuai <yukuai3@huawei.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	sumit.semwal@linaro.org,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: [PATCH AUTOSEL 6.12 192/486] drm/gem: Test for imported GEM buffers with helper
-Date: Mon,  5 May 2025 18:34:28 -0400
-Message-Id: <20250505223922.2682012-192-sashal@kernel.org>
+	cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 194/486] blk-throttle: don't take carryover for prioritized processing of metadata
+Date: Mon,  5 May 2025 18:34:30 -0400
+Message-Id: <20250505223922.2682012-194-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -67,89 +63,66 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Thomas Zimmermann <tzimmermann@suse.de>
+From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit b57aa47d39e94dc47403a745e2024664e544078c ]
+[ Upstream commit a9fc8868b350cbf4ff730a4ea9651319cc669516 ]
 
-Add drm_gem_is_imported() that tests if a GEM object's buffer has
-been imported. Update the GEM code accordingly.
+Commit 29390bb5661d ("blk-throttle: support prioritized processing of metadata")
+takes bytes/ios carryover for prioritized processing of metadata. Turns out
+we can support it by charging it directly without trimming slice, and the
+result is same with carryover.
 
-GEM code usually tests for imports if import_attach has been set
-in struct drm_gem_object. But attaching a dma-buf on import requires
-a DMA-capable importer device, which is not the case for many serial
-busses like USB or I2C. The new helper tests if a GEM object's dma-buf
-has been created from the GEM object.
-
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Anusha Srivatsa <asrivats@redhat.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20250226172457.217725-2-tzimmermann@suse.de
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Link: https://lore.kernel.org/r/20250305043123.3938491-3-ming.lei@redhat.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_gem.c |  4 ++--
- include/drm/drm_gem.h     | 14 ++++++++++++++
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ block/blk-throttle.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 149b8e25da5bb..426d0867882df 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -322,7 +322,7 @@ int drm_gem_dumb_map_offset(struct drm_file *file, struct drm_device *dev,
- 		return -ENOENT;
- 
- 	/* Don't allow imported objects to be mapped */
--	if (obj->import_attach) {
-+	if (drm_gem_is_imported(obj)) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -1152,7 +1152,7 @@ void drm_gem_print_info(struct drm_printer *p, unsigned int indent,
- 			  drm_vma_node_start(&obj->vma_node));
- 	drm_printf_indent(p, indent, "size=%zu\n", obj->size);
- 	drm_printf_indent(p, indent, "imported=%s\n",
--			  str_yes_no(obj->import_attach));
-+			  str_yes_no(drm_gem_is_imported(obj)));
- 
- 	if (obj->funcs->print_info)
- 		obj->funcs->print_info(p, indent, obj);
-diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-index d8b86df2ec0da..70c0f8c83629d 100644
---- a/include/drm/drm_gem.h
-+++ b/include/drm/drm_gem.h
-@@ -35,6 +35,7 @@
-  */
- 
- #include <linux/kref.h>
-+#include <linux/dma-buf.h>
- #include <linux/dma-resv.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
-@@ -570,6 +571,19 @@ static inline bool drm_gem_object_is_shared_for_memory_stats(struct drm_gem_obje
- 	return (obj->handle_count > 1) || obj->dma_buf;
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 2c4192e12efab..6b82fcbd7e774 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1593,13 +1593,6 @@ static bool tg_within_limit(struct throtl_grp *tg, struct bio *bio, bool rw)
+ 	return tg_may_dispatch(tg, bio, NULL);
  }
  
-+/**
-+ * drm_gem_is_imported() - Tests if GEM object's buffer has been imported
-+ * @obj: the GEM object
-+ *
-+ * Returns:
-+ * True if the GEM object's buffer has been imported, false otherwise
-+ */
-+static inline bool drm_gem_is_imported(const struct drm_gem_object *obj)
-+{
-+	/* The dma-buf's priv field points to the original GEM object. */
-+	return obj->dma_buf && (obj->dma_buf->priv != obj);
-+}
-+
- #ifdef CONFIG_LOCKDEP
- /**
-  * drm_gem_gpuva_set_lock() - Set the lock protecting accesses to the gpuva list.
+-static void tg_dispatch_in_debt(struct throtl_grp *tg, struct bio *bio, bool rw)
+-{
+-	if (!bio_flagged(bio, BIO_BPS_THROTTLED))
+-		tg->carryover_bytes[rw] -= throtl_bio_data_size(bio);
+-	tg->carryover_ios[rw]--;
+-}
+-
+ bool __blk_throtl_bio(struct bio *bio)
+ {
+ 	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+@@ -1636,10 +1629,12 @@ bool __blk_throtl_bio(struct bio *bio)
+ 			/*
+ 			 * IOs which may cause priority inversions are
+ 			 * dispatched directly, even if they're over limit.
+-			 * Debts are handled by carryover_bytes/ios while
+-			 * calculating wait time.
++			 *
++			 * Charge and dispatch directly, and our throttle
++			 * control algorithm is adaptive, and extra IO bytes
++			 * will be throttled for paying the debt
+ 			 */
+-			tg_dispatch_in_debt(tg, bio, rw);
++			throtl_charge_bio(tg, bio);
+ 		} else {
+ 			/* if above limits, break to queue */
+ 			break;
 -- 
 2.39.5
 
