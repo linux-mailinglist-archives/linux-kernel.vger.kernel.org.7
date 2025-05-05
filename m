@@ -1,69 +1,62 @@
-Return-Path: <linux-kernel+bounces-634466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9998AAB1ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E9C8AAB66C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8115B3A3026
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:04:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C29BB1885832
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CC927FB14;
-	Tue,  6 May 2025 00:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396E941A052;
+	Tue,  6 May 2025 00:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QuzWpULR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGmZIQCp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274B627817A;
-	Mon,  5 May 2025 22:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE492D3A8E;
+	Mon,  5 May 2025 22:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485582; cv=none; b=OInS/kVGlByJhd5Z0WVY8fA+ds77xQNcGixGqDjJnqLFByfatHccsw4f4BU3R0014yejYyKl0gx9T7axXb7tUJ2OoK2rKRvL6Za2D/tMjvM/xwi4rQ9Elpmo3GmPlAY9AJf/d79cfMZ9cYKo5r8QhhhxxJC8dz+UV57q6vpMUF8=
+	t=1746485589; cv=none; b=d6TaWuPUE68+vlzele5+jAkD/I4bK3fJmNg5Sex5vHsZj3mc3ePJZnPx7LJU8y/AHhuDYPTwemWh4fgFNDSzLgLf2QHnrRw/XPIbxiB4yjdGbeDtSjRaaRYOt97UEuLmEZ730nZRZ0BsjfuKPWIQ1NFp8qswNf2SvDzXBqEltTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485582; c=relaxed/simple;
-	bh=vyqu2JbcXlkU0NCB9Tw2jod4sLnf5nQdKo912UZla7M=;
+	s=arc-20240116; t=1746485589; c=relaxed/simple;
+	bh=eDTYqeU+oQFr7SWa5485eL3s49zALyACKCo9B5nM0kQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M7GYxw69XKpaFb8QpzyLctKdls3d7Z+cQKqxO62Bb4cb8yngY/I5e9u1Gj3C+uRScClr9t9NrpDV63vSDf3HWOV3Hw+xZDrPzFLnojjQE/qJy5CqHgoSMNAyhn4kUrWwUVy4+oQfGRvXcfCta2ELwMe56poWzqGKpEX6AW39Yow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QuzWpULR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2790C4CEE4;
-	Mon,  5 May 2025 22:52:59 +0000 (UTC)
+	 MIME-Version; b=q425d5a04VYEwNKAdsIZy6t6RpwoIkrlAWbXdz7q14XbCggTRZAFLTSA2Vdgy84b+hFaXdabiOxVFVlTIGKMchCoXx2Q1Txr9Rfqss8yK1YlWRskX4Ugp1bpvXHZwpJcwT9YTAYy1Gj8y81A11ZEimOUVT745uNOiLCmRrGA6uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGmZIQCp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68D2C4CEE4;
+	Mon,  5 May 2025 22:53:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485582;
-	bh=vyqu2JbcXlkU0NCB9Tw2jod4sLnf5nQdKo912UZla7M=;
+	s=k20201202; t=1746485588;
+	bh=eDTYqeU+oQFr7SWa5485eL3s49zALyACKCo9B5nM0kQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QuzWpULRahvqGR3Ve+OBbBaTwYE07UVZyf6MiqoAUf4cBNoHjfjMxzYOwbnlIAxq7
-	 jrSj9nEFkIk4YXWnKUQS9W1lZW/JydssxA7RAlKLhO4h8x5e+ZtxSs3jBy4hkh3Pd6
-	 dmziVaWa5dQBhcid7mwgkBtPLd5GPGplDqjKFd8NFFxW3h091AvFJacXm1jlCbq46H
-	 lj7h0BGnJTvJFIIPaJqy0I2lXCCUI0eB0sInocjH5MKYjgSH+nfKsMyfnh4JicvL2x
-	 ZjvXehy//L3CWeo6uWlvOG+7IXm+3Ke0YTs1VUZEjreFykaPvpnw/bKvb0eB/UOtCs
-	 OKXk5HKPXL1tg==
+	b=oGmZIQCp0QBO6PSYwxw/BT3Z9JTt7N0lBQZ3YpbGg46E4qYjbe4G/QUV7PriMr17b
+	 2oaWe60bGwr5Ghac0hikl8eXNOlZzRPFU748yQMtSeO0XG/dP2E4GnNKC5PR9g4bcN
+	 KXRIJVhixxILqqC1JJ0D1oBpIsgCDdcqMDL4mRJbf/1Y0DhnqSRJq7JOgx9PPaoQeU
+	 bZzQ/Ibqb8YmarXT/gZdvi5w5auYInrnvfuk3fTa0a+VltKRpH1cejZBn+7PqSFh12
+	 nc3Q3YF7tCF6xCCA1yz0U5m9iIa/fzop6Ny67Ern00ffnCJEpH37CKSmniCIevB3Ah
+	 xPxI4JGwBG3gg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Lijo Lazar <lijo.lazar@amd.com>,
-	Hawking Zhang <Hawking.Zhang@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Harry Wentland <harry.wentland@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
+	sunpeng.li@amd.com,
 	christian.koenig@amd.com,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	tao.zhou1@amd.com,
-	YiPeng.Chai@amd.com,
-	zhigang.luo@amd.com,
-	victor.skvortsov@amd.com,
-	sunil.khatri@amd.com,
-	alex.sierra@amd.com,
-	boyuan.zhang@amd.com,
-	le.ma@amd.com,
-	shane.xiao@amd.com,
+	roman.li@amd.com,
+	srinivasan.shanmugam@amd.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 374/486] drm/amdgpu: Use active umc info from discovery
-Date: Mon,  5 May 2025 18:37:30 -0400
-Message-Id: <20250505223922.2682012-374-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 376/486] drm/amd/display/dc: enable oem i2c support for DCE 12.x
+Date: Mon,  5 May 2025 18:37:32 -0400
+Message-Id: <20250505223922.2682012-376-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -78,99 +71,68 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Lijo Lazar <lijo.lazar@amd.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit f7a594e40517fa2ab25d5ca10e7b6a158f529fb5 ]
+[ Upstream commit 2ed83f2cc41e8f7ced1c0610ec2b0821c5522ed5 ]
 
-There could be configs where some UMC instances are harvested. This
-information is obtained through discovery data and populated in
-umc.active_mask. Avoid reassigning this as AID mask, instead use the
-mask directly while iterating through umc instances. This is to avoid
-accesses to harvested UMC instances.
+Use the value pulled from the vbios just like newer chips.
 
-v2: fix warning (Alex)
-
-Signed-off-by: Lijo Lazar <lijo.lazar@amd.com>
-Reviewed-by: Hawking Zhang <Hawking.Zhang@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c | 42 +++++++++++++++++++++++++
- drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c   |  1 -
- 2 files changed, 42 insertions(+), 1 deletion(-)
+ .../dc/resource/dce120/dce120_resource.c        | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
-index bb7b9b2eaac1a..8da0bddab3d23 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
-@@ -383,6 +383,45 @@ int amdgpu_umc_fill_error_record(struct ras_err_data *err_data,
- 	return 0;
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dce120/dce120_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dce120/dce120_resource.c
+index 621825a51f46e..a2ab6776b8855 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dce120/dce120_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dce120/dce120_resource.c
+@@ -67,6 +67,7 @@
+ #include "reg_helper.h"
+ 
+ #include "dce100/dce100_resource.h"
++#include "link.h"
+ 
+ #ifndef mmDP0_DP_DPHY_INTERNAL_CTRL
+ 	#define mmDP0_DP_DPHY_INTERNAL_CTRL		0x210f
+@@ -659,6 +660,12 @@ static void dce120_resource_destruct(struct dce110_resource_pool *pool)
+ 
+ 	if (pool->base.dmcu != NULL)
+ 		dce_dmcu_destroy(&pool->base.dmcu);
++
++	if (pool->base.oem_device != NULL) {
++		struct dc *dc = pool->base.oem_device->ctx->dc;
++
++		dc->link_srv->destroy_ddc_service(&pool->base.oem_device);
++	}
  }
  
-+static int amdgpu_umc_loop_all_aid(struct amdgpu_device *adev, umc_func func,
-+				   void *data)
-+{
-+	uint32_t umc_node_inst;
-+	uint32_t node_inst;
-+	uint32_t umc_inst;
-+	uint32_t ch_inst;
-+	int ret;
-+
-+	/*
-+	 * This loop is done based on the following -
-+	 * umc.active mask = mask of active umc instances across all nodes
-+	 * umc.umc_inst_num = maximum number of umc instancess per node
-+	 * umc.node_inst_num = maximum number of node instances
-+	 * Channel instances are not assumed to be harvested.
-+	 */
-+	dev_dbg(adev->dev, "active umcs :%lx umc_inst per node: %d",
-+		adev->umc.active_mask, adev->umc.umc_inst_num);
-+	for_each_set_bit(umc_node_inst, &(adev->umc.active_mask),
-+			 adev->umc.node_inst_num * adev->umc.umc_inst_num) {
-+		node_inst = umc_node_inst / adev->umc.umc_inst_num;
-+		umc_inst = umc_node_inst % adev->umc.umc_inst_num;
-+		LOOP_UMC_CH_INST(ch_inst) {
-+			dev_dbg(adev->dev,
-+				"node_inst :%d umc_inst: %d ch_inst: %d",
-+				node_inst, umc_inst, ch_inst);
-+			ret = func(adev, node_inst, umc_inst, ch_inst, data);
-+			if (ret) {
-+				dev_err(adev->dev,
-+					"Node %d umc %d ch %d func returns %d\n",
-+					node_inst, umc_inst, ch_inst, ret);
-+				return ret;
-+			}
-+		}
+ static void read_dce_straps(
+@@ -1054,6 +1061,7 @@ static bool dce120_resource_construct(
+ 	struct dc *dc,
+ 	struct dce110_resource_pool *pool)
+ {
++	struct ddc_service_init_data ddc_init_data = {0};
+ 	unsigned int i;
+ 	int j;
+ 	struct dc_context *ctx = dc->ctx;
+@@ -1257,6 +1265,15 @@ static bool dce120_resource_construct(
+ 
+ 	bw_calcs_data_update_from_pplib(dc);
+ 
++	if (dc->ctx->dc_bios->fw_info.oem_i2c_present) {
++		ddc_init_data.ctx = dc->ctx;
++		ddc_init_data.link = NULL;
++		ddc_init_data.id.id = dc->ctx->dc_bios->fw_info.oem_i2c_obj_id;
++		ddc_init_data.id.enum_id = 0;
++		ddc_init_data.id.type = OBJECT_TYPE_GENERIC;
++		pool->base.oem_device = dc->link_srv->create_ddc_service(&ddc_init_data);
 +	}
 +
-+	return 0;
-+}
-+
- int amdgpu_umc_loop_channels(struct amdgpu_device *adev,
- 			umc_func func, void *data)
- {
-@@ -391,6 +430,9 @@ int amdgpu_umc_loop_channels(struct amdgpu_device *adev,
- 	uint32_t ch_inst         = 0;
- 	int ret = 0;
+ 	return true;
  
-+	if (adev->aid_mask)
-+		return amdgpu_umc_loop_all_aid(adev, func, data);
-+
- 	if (adev->umc.node_inst_num) {
- 		LOOP_UMC_EACH_NODE_INST_AND_CH(node_inst, umc_inst, ch_inst) {
- 			ret = func(adev, node_inst, umc_inst, ch_inst, data);
-diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-index 9a212413c6d3a..78c527b56f7c5 100644
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-@@ -1461,7 +1461,6 @@ static void gmc_v9_0_set_umc_funcs(struct amdgpu_device *adev)
- 		adev->umc.umc_inst_num = UMC_V12_0_UMC_INSTANCE_NUM;
- 		adev->umc.node_inst_num /= UMC_V12_0_UMC_INSTANCE_NUM;
- 		adev->umc.channel_offs = UMC_V12_0_PER_CHANNEL_OFFSET;
--		adev->umc.active_mask = adev->aid_mask;
- 		adev->umc.retire_unit = UMC_V12_0_BAD_PAGE_NUM_PER_CHANNEL;
- 		if (!adev->gmc.xgmi.connected_to_cpu && !adev->gmc.is_app_apu)
- 			adev->umc.ras = &umc_v12_0_ras;
+ irqs_create_fail:
 -- 
 2.39.5
 
