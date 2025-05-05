@@ -1,226 +1,193 @@
-Return-Path: <linux-kernel+bounces-632545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A3CAA98AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:21:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01F2AA98A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953C63A2CA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:20:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 596B57A814A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B69E26B2D5;
-	Mon,  5 May 2025 16:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D679268FD5;
+	Mon,  5 May 2025 16:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sJuFbJEn"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bnjc1Qb7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98742698AE;
-	Mon,  5 May 2025 16:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746462016; cv=fail; b=NMZz+bqkwoY7Kfe+TXhOI0pXU9odEqjw1Ag36rFfwKPBUy+ECiZyszdh0N0svXx8UzDuqiutYwDCx8GgfhiUgjrT9R5FW1gJ3oxrFkIH1yQTzVPhJpH3hsNYAb1HMWzVnnyYEaZ4QjUh0szJw3bVP7ZywBK9rWFsBFTLnvivd2c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746462016; c=relaxed/simple;
-	bh=gs428rUVoiqGHYQu/HWyZoiYVLOPQGxccjQz/zkzOZg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=je6uI1sJ7EBb4/tk8HJkswjZNIBYVnqfHgm8hhNonF6ND8vVAEYG1thBEfZmhJPDTI+VnoSMI7qkSEgCLk7Xo5IBeIEt9CHe2yPpMsqIQdtF+36rfGQHqnTyESUUQ4lHF+1o2B11uf4gbpYe9+0xN742e83fdcQ9ms4tQbL5W2E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sJuFbJEn; arc=fail smtp.client-ip=40.107.243.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Rh1e+TIfz5pFqv3PTI3JqkMhGszrNsVXTIN+GwVjV0lnybMS7xPSShQYup59bSpt8veQsmVzJLFHhTEWsXIinNpPx9L/SmXVql0D9bzIcYCtPZg2pJWs4HW061rjUgjyzWdEe4Y1Y6P4c0Ls06+JJ1vCsJIDCW9gAkZhPetJ47scSDOvdRvnimKtvUNva9qivlzXEJK4S/arkoM9VU75fQlWTroUto52EtzOSsa6cu5q+YSvah/Hu+SuwmBMY2jo0NA3E4K2/ty4udQ/X6raTDCh2VnFMRMJzwmHiE74Lqa1svO57bBXIOj2bPF2J/UEuD6cL7Wd3yKbBx9BOnlFvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HEkgr2WLus37bkgsE6QPbcXvCej8msqRGTM41rNeirE=;
- b=iPw1aeCFYBxVzPYyaBjchSWpYvACbS3QmLJk17DMYtOtQSPItwhLgf4lUZ0Yus3dhFDMweE4+2EAWHlyzlnunoSk80HAZnqY1oLtX6CpUb6n1D9pnwkvWzhnBPVgkvT704O98vpCPhm0pETlTHH5s2O90F+CjRf/y6CVd9l5KLCG+O61Leyc9cmhBpjxC1soDzcFRl7H+ev+Te3K3vc9gQKPxu/slBF4xbzRnZIbfFMGzS9uWtg76UzlhCUhRUjxL5eix4EF++suS1Foib4KEoF/TVLzWOr2cBpYCySzIOrmwxB94fMd09yMycPGKSQuyZde0Mfc5JRjZLWhDgVAng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HEkgr2WLus37bkgsE6QPbcXvCej8msqRGTM41rNeirE=;
- b=sJuFbJEnrk+wO3Trt30QHgIiQs/pQHZJVwRISA9ewQd7QHPTvVYTgujLduETIQyQGTpHBlmt6FqA16DHd70oBkOZycxMWrzkf6ubMX95g5/fsI7HoceIGNl1R7/f7saylz05XYCkjhpqNnvr2gLi0u41F45dEXk7jqGdv/ppNhh7+bvMbdmM9GF5OE6YjlhaSKgF5k0v4No1m66w8xHrQfMXQLfCBqPZio+ODnCPTKOLalmyMd8XZWZkPb3X29mb8enxe3r79ybUFc+YRj88UuRlfeR/Ea5VTHD+Ho+4zb0bSYEJXZkETZex3DJA6U+8Y/Fy9XCqJVuHlfNh0bVU9w==
-Received: from SJ2PR07CA0012.namprd07.prod.outlook.com (2603:10b6:a03:505::13)
- by SA1PR12MB9248.namprd12.prod.outlook.com (2603:10b6:806:3a3::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Mon, 5 May
- 2025 16:20:09 +0000
-Received: from SJ5PEPF000001F5.namprd05.prod.outlook.com
- (2603:10b6:a03:505:cafe::52) by SJ2PR07CA0012.outlook.office365.com
- (2603:10b6:a03:505::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.33 via Frontend Transport; Mon,
- 5 May 2025 16:20:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SJ5PEPF000001F5.mail.protection.outlook.com (10.167.242.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 16:20:09 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 5 May 2025
- 09:19:53 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by drhqmail201.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 5 May
- 2025 09:19:53 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 5 May
- 2025 09:19:51 -0700
-Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.129.68.9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 5 May 2025 09:19:50 -0700
-Date: Mon, 5 May 2025 09:19:48 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Baolu Lu <baolu.lu@linux.intel.com>, <kevin.tian@intel.com>,
-	<corbet@lwn.net>, <will@kernel.org>, <bagasdotme@gmail.com>,
-	<robin.murphy@arm.com>, <joro@8bytes.org>, <thierry.reding@gmail.com>,
-	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <shuah@kernel.org>,
-	<jsnitsel@redhat.com>, <nathan@kernel.org>, <peterz@infradead.org>,
-	<yi.l.liu@intel.com>, <mshavit@google.com>, <praan@google.com>,
-	<zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
-	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>
-Subject: Re: [PATCH v2 08/22] iommufd: Abstract iopt_pin_pages and
- iopt_unpin_pages helpers
-Message-ID: <aBjlJA1ZClRHftdD@nvidia.com>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
- <376566b4-6c13-45ad-b1e5-8cfe2de437bc@linux.intel.com>
- <aA+92fNNbDI3Qowk@Asurada-Nvidia>
- <20250505150109.GH2260709@nvidia.com>
- <aBjc1ny0Zs7K7gDX@nvidia.com>
- <20250505155505.GK2260709@nvidia.com>
- <aBjhUL5/n79cJ17f@nvidia.com>
- <20250505160554.GL2260709@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB181F2BAB;
+	Mon,  5 May 2025 16:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746462003; cv=none; b=JNC79U+KpEMX6EmDyGdfwWv4XQPUK9X5hRYO768XaSJfEd2YcRtj6T9ouQegsJGxEPDYIWyPJFrtaso35mpKvyCD8xyVXbJPS4GUfL2TOaWSEe2t8L1Fj2hHH2qvFuvOSgBc3ytO7fn3dr7O7IPpHMWHDLY7RYYopK02pSbdvvM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746462003; c=relaxed/simple;
+	bh=Ql4yD29k+8oXcu+cIJZRrfwbR6JjoLPyA0cvnmWQ3QE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KLuRC8Xna/8ZLeugS9BEpX/Imz1uGD0Wl6luZFFElL2d33lA+yFzlzQDnj5zHstUrtcmc6TzF8w+jXN8cTyrtoUkRyinKJDoKzhpDH+ELAAE0LIGI57w30mQyAlSzwR4a9vNvCA2tXp+2AOq274V4S5TnrjkUfZu5RScWHZwxAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bnjc1Qb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C81C4AF0B;
+	Mon,  5 May 2025 16:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746462002;
+	bh=Ql4yD29k+8oXcu+cIJZRrfwbR6JjoLPyA0cvnmWQ3QE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Bnjc1Qb7XIPGmCE5rtGoYx1qmyMGN/HIbaDxIeow12fQpdQScZYy703jTnzR3w6xA
+	 AAcGfCxR2m3CWIXPNCTQXFE1fkv+z37sWKRTu429LR+x0/4YF5cRko8vXSTtI/ZNZ6
+	 YI1lS0PeH/GesEN/aHDoPUc/8hyqL2grE6dk+Kr+JThHtoyWsXE/X+gpY0FF+COMSs
+	 NLPNisDUuvkzk1CoOYhqDWEjFqybImbAB8L3noyJvuqdM9DiKBDgUiKVv6OTXSzfmu
+	 qqIe9onn3Bhh16m30YpsDB3UHsBpxaC+V1RA2ulU7QTJv1+Qurihs9nsCSdSU2VIgy
+	 8aACccnnXRCtQ==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54b10956398so5402544e87.0;
+        Mon, 05 May 2025 09:20:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVjmfh+GN+j3ynfrX56Oqhc36zMdEYb8+G7PHuYHJNWtVAIeSsMAKsyzlzuF3BqmeBVSPUT7oDQg9Pn6jGznAYNrkU=@vger.kernel.org, AJvYcCXWffxZN5J0OHdV6CEl6fqux9UFmjI4yVtmaThj+09Z9+EsW5Afbt15Fz5ZtOcQ8LZOJthHuVdnU8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc1uW8RHCxbLNjHMQ0KwqOz+l7/HtjZw4IM5g2q5e8y3QprHDy
+	6upfDRdtQ53sk5EIhdxOVij7CBru2SB4+VseZyuBa2mvaSOC9FQc0lwB/kBXvg5OPbjRAz5LSaA
+	msdvg9sbdKvAVb2gWJcwrFx4w6nk=
+X-Google-Smtp-Source: AGHT+IG1PE+h0rYJrR1ass5g/WorMDdPRSIGKJqTv/YLy0WxYgzj/G6JJk8e4XkI5UsirR/+jqlEmroeoDXlbrmtg4I=
+X-Received: by 2002:a05:6512:1154:b0:54d:69fd:3598 with SMTP id
+ 2adb3069b0e04-54fb466e115mr17931e87.18.1746462001120; Mon, 05 May 2025
+ 09:20:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250505160554.GL2260709@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F5:EE_|SA1PR12MB9248:EE_
-X-MS-Office365-Filtering-Correlation-Id: 933fbcf9-d899-4488-6414-08dd8bf0b453
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7n+Ewda8xvVijUV9ayu6gYwJojAZU58NR8X48dFm9lTLcJYxu05v9IaTfbqc?=
- =?us-ascii?Q?fheH9dgnmyL0XuyiEEG4sHnAd2U6g8ZM58F+T7iUAr468ivhWIv4BMBkGJWA?=
- =?us-ascii?Q?lDwpPd/6VIP3BRjF+EjENupIFTK35Dt8aUwzLNYnrNS4opIoiMAAvGjcey0h?=
- =?us-ascii?Q?eXfX18rHpi36M+F3QWOr1DXaoSFQcXQ+bCNiBe7tF+ZLxzPBdILyFhH2lPgH?=
- =?us-ascii?Q?g4TAhiXUsO8ZlwJpMX9PxL9iaoWZblreqi9BE99DAP98aipaFWj9hYxxh/rO?=
- =?us-ascii?Q?mD4BRNSr3KdPfJqpjuvjSczV85T2fb1C6E9V/KGTHYSKq4nLhb0q2JXKfZt6?=
- =?us-ascii?Q?ace/QxleeJ13jrCCOe91Baj4V8dl05ayo4WdY9/R1BX7CNrlfuprLE+IzU9Q?=
- =?us-ascii?Q?DgLTAuoHD1/DNx2KZ/+J4iG91Yof26naGarTIRyPc9poISSMPLXUB845VJ6L?=
- =?us-ascii?Q?olRdYWsnRcteHFKxNS8maoPuv61Aa+E6sFkg5Pooii1gdIWgBakoWFkk45Pd?=
- =?us-ascii?Q?9o2x9QBtow1M4KCKW6nlXaQfBraHhL+X43p3gjMuvKUiJjwJp5igm/Uc7Fm+?=
- =?us-ascii?Q?vvE5OwhQM5eKYmERLFm93m1osNEVAlf2BlzGp4BwkwSwcQhlC+nCoTBzKYA8?=
- =?us-ascii?Q?R0WRB6ZTIqUrZVx64RZZHPu7YAV8yVhW3zGFUJic47qVZReiPig5M9xPmlgt?=
- =?us-ascii?Q?BJ5QW6jM98+p2Z/c4CacSxVVPVH7ak4XnSOcxDZ8CYvL3uj390yVKdyMJVI+?=
- =?us-ascii?Q?RJ/QlP61QtdMCzKlX++2Lb1KrlCM7sgfIpWrxUlkH4/ugSfoag4d7FFMjVCv?=
- =?us-ascii?Q?jTH79ZGd2E1IJOn/VpGoms2RQSzQiML5YJY52xGTd92G4crum45+Uq/xtOW+?=
- =?us-ascii?Q?GvaBYwC/YxLmRFD+wkjPh7GjBOV9NfSMztVOKjRH1AM76exJSqixsHHeOCGi?=
- =?us-ascii?Q?AKC0wQoUGh2mg5RjrRUzY69hxb5Xzc6GNLrGSbcrHiGflijj2IrUWSpBL5fU?=
- =?us-ascii?Q?VyaGn6/wHRL/OhgiROXlHAsnJ6k7l3T6wN+RrXCSGalJvk04lUPYvDvqY6mv?=
- =?us-ascii?Q?Vt5a0y8BRBjaGTiRMlzUxl+XqCvhD6WkEbyLW7iRfdm1lSrvagaMsrCMonuL?=
- =?us-ascii?Q?xIKppl5mLqWePVvvkonloDFG30sm573d6cwefAyJ8vspUj4ZCW9Ayszu7OXg?=
- =?us-ascii?Q?BNPlJUT7LqgILYlqDLjLZlTPzzYYtRfA/vdspHzyxQhLGSKgJySuQfGlTC1R?=
- =?us-ascii?Q?ZZCh3qO3w00HZTp29CNcOkbq/rjZ3Ka74gJLmzGD7YSc/kNY1tvlTTE5bP5J?=
- =?us-ascii?Q?UYKQPmCxnGGDOZttRWX9HdnefbMcckUBhfCgGJKtC9sTiZsVh6cUmpiREyb8?=
- =?us-ascii?Q?SrnyJL21Qt09pjRs4bLp3SXY3aS+0AMl2FqqZR5vuD98vRHJ4OvOduQPRGoE?=
- =?us-ascii?Q?6T9JGbPuqAUKY8vXK76EUMRsyHdUSsPq15wZjNjjxHOFNsZ5HniZ2PCvhB80?=
- =?us-ascii?Q?XP8MMLUtjuYKW6iYkzZeov3FH0NTfEFZ1YDg?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 16:20:09.0043
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 933fbcf9-d899-4488-6414-08dd8bf0b453
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F5.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9248
+References: <20250504095230.2932860-40-ardb+git@google.com>
+ <174636840512.22196.14007684119604658714.tip-bot2@tip-bot2> <20250505160346.GJaBjhYp09sLZ5AyyJ@fat_crate.local>
+In-Reply-To: <20250505160346.GJaBjhYp09sLZ5AyyJ@fat_crate.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 5 May 2025 18:19:49 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGY6GTmm1PCVwyaCieVDDLWF_wEfRGbGooCnVf+o-Pupw@mail.gmail.com>
+X-Gm-Features: ATxdqUEOCtDh3gYdIpeAuxrTyvND72fOX1YKtXJglSxflP9NiayJSv0rjKr4FBg
+Message-ID: <CAMj1kXGY6GTmm1PCVwyaCieVDDLWF_wEfRGbGooCnVf+o-Pupw@mail.gmail.com>
+Subject: Re: [tip: x86/boot] x86/boot: Provide __pti_set_user_pgtbl() to
+ startup code
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Dionna Amalie Glaze <dionnaglaze@google.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Kees Cook <keescook@chromium.org>, Kevin Loughlin <kevinloughlin@google.com>, 
+	Len Brown <len.brown@intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	linux-efi@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 05, 2025 at 01:05:54PM -0300, Jason Gunthorpe wrote:
-> On Mon, May 05, 2025 at 09:03:28AM -0700, Nicolin Chen wrote:
-> > On Mon, May 05, 2025 at 12:55:05PM -0300, Jason Gunthorpe wrote:
-> > > On Mon, May 05, 2025 at 08:44:22AM -0700, Nicolin Chen wrote:
-> > > > On Mon, May 05, 2025 at 12:01:09PM -0300, Jason Gunthorpe wrote:
-> > > > > On Mon, Apr 28, 2025 at 10:41:45AM -0700, Nicolin Chen wrote:
-> > > > > > > I'm uncertain, but perhaps pr_warn_ratelimited() would be a better
-> > > > > > > alternative to WARN_ON() here? WARN_ON_ONCE() generates warning messages
-> > > > > > > with kernel call traces in the kernel messages, which might lead users
-> > > > > > > to believe that something serious has happened in the kernel.
-> > > > > > 
-> > > > > > We already have similar practice, e.g. iommufd_hwpt_nested_alloc.
-> > > > > > 
-> > > > > > In my review, a WARN_ON/WARN_ON_ONCE means there is a kernel bug,
-> > > > > > which shouldn't occur in the first place and isn't something that
-> > > > > 
-> > > > > Right, so it should never happen from any ioctl path and syzkaller
-> > > > > should never trigger it based on system call randomization
-> > > > > 
-> > > > > Is that what this achieves?
-> > > > 
-> > > > The functions would be still used in the kernel path. So, I think
-> > > > we need to retain these warnings for that. But given that an ioctl
-> > > > could trigger a series of WARN_ONs, WARN_ON_ONCE is something that
-> > > > wouldn't bother user space a lot while it provides the kernel path
-> > > > enough info to debug.
-> > > 
-> > > No, it does bother userspace, we must not have ioctl triggerable
-> > > WARN_ON at all.
-> > 
-> > You mean we have to eliminate any WARN_ON in a call path of an
-> > ioctl?
-> 
-> Yes, not one that derives from user information. You can WARN_ON if
-> internal kernel structures are corrupted but not if user ioctl
-> arguments are bad.
-> 
-> > We can drop them, just that would mute any kernel bug.
-> 
-> That maybe the right answer
-> 
-> > Btw, IIRC, the destroy ioctl could trigger some WARN_ON in the
-> > remove() when the object's refcount isn't correctly decreased.
-> > Should that be a problem too?
-> 
-> That is kernel data structures being corrupted.
+On Mon, 5 May 2025 at 18:04, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Sun, May 04, 2025 at 02:20:04PM -0000, tip-bot2 for Ard Biesheuvel wrote:
+> > The following commit has been merged into the x86/boot branch of tip:
+> >
+> > Commit-ID:     5297886f0cc45db5f4a804caf359e6e7874ee864
+> > Gitweb:        https://git.kernel.org/tip/5297886f0cc45db5f4a804caf359e6e7874ee864
+> > Author:        Ard Biesheuvel <ardb@kernel.org>
+> > AuthorDate:    Sun, 04 May 2025 11:52:45 +02:00
+> > Committer:     Ingo Molnar <mingo@kernel.org>
+> > CommitterDate: Sun, 04 May 2025 15:59:43 +02:00
+> >
+> > x86/boot: Provide __pti_set_user_pgtbl() to startup code
+> >
+> > The SME encryption startup code populates page tables using the ordinary
+> > set_pXX() helpers, and in a PTI build, these will call out to
+> > __pti_set_user_pgtbl() to manipulate the shadow copy of the page tables
+> > for user space.
+> >
+> > This is unneeded for the startup code, which only manipulates the
+> > swapper page tables, and so this call could be avoided in this
+> > particular case. So instead of exposing the ordinary
+> > __pti_set_user_pgtblt() to the startup code after its gets confined into
+> > its own symbol space, provide an alternative which just returns pgd,
+> > which is always correct in the startup context.
+> >
+> > Annotate it as __weak for now, this will be dropped in a subsequent
+> > patch.
+> >
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: David Woodhouse <dwmw@amazon.co.uk>
+> > Cc: Dionna Amalie Glaze <dionnaglaze@google.com>
+> > Cc: H. Peter Anvin <hpa@zytor.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Kevin Loughlin <kevinloughlin@google.com>
+> > Cc: Len Brown <len.brown@intel.com>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> > Cc: linux-efi@vger.kernel.org
+> > Link: https://lore.kernel.org/r/20250504095230.2932860-40-ardb+git@google.com
+> > ---
+> >  arch/x86/boot/startup/sme.c |  9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
+> > index 5738b31..753cd20 100644
+> > --- a/arch/x86/boot/startup/sme.c
+> > +++ b/arch/x86/boot/startup/sme.c
+> > @@ -564,3 +564,12 @@ void __head sme_enable(struct boot_params *bp)
+> >       cc_vendor       = CC_VENDOR_AMD;
+> >       cc_set_mask(me_mask);
+> >  }
+> > +
+> > +#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
+> > +/* Local version for startup code, which never operates on user page tables */
+> > +__weak
+> > +pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+> > +{
+> > +     return pgd;
+> > +}
+> > +#endif
+>
+> [    1.227968] smp: Brought up 1 node, 32 CPUs
+> [    1.231576] smpboot: Total of 32 processors activated (191999.61 BogoMIPS)
+> [    1.247644] ------------[ cut here ]------------
+> [    1.248697] WARNING: CPU: 17 PID: 104 at kernel/jump_label.c:276 __static_key_slow_dec_cpuslocked+0x2a/0x80
+> [    1.251592] Modules linked in:
+> [    1.252370] CPU: 17 UID: 0 PID: 104 Comm: kworker/17:0 Not tainted 6.15.0-rc4+ #2 PREEMPT(voluntary)
+> [    1.253173] node 0 deferred pages initialised in 12ms
+> [    1.254539] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
+> [    1.257490] Workqueue: events unaccepted_cleanup_work
+> [    1.258698] RIP: 0010:__static_key_slow_dec_cpuslocked+0x2a/0x80
+> [    1.259574] Code: 0f 1f 44 00 00 53 48 89 fb e8 82 66 e5 ff 8b 03 85 c0 78 16 74 54 83 f8 01 74 11 8d 50 ff f0 0f b1 13 75 ec 5b e9 66 bf 8c 00 <0f> 0b 48 c7 c7 00 44 54 82 e8 a8 5f 8c 00 8b 03 83 f8 ff 74 33 85
+> [    1.266446] Memory: 7574396K/8381588K available (13737K kernel code, 2487K rwdata, 6056K rodata, 3916K init, 3592K bss, 791248K reserved, 0K cma-reserved)
+> [    1.263574] RSP: 0018:ffffc9000048fe40 EFLAGS: 00010286
+> [    1.267573] RAX: 00000000ffffffff RBX: ffffffff82f10d00 RCX: 0000000000000000
+> [    1.269388] RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffffffff82f10d00
+> [    1.275578] RBP: ffff88827b7d4d98 R08: 8080808080808080 R09: ffff888100b59100
+> [    1.277441] R10: ffff888100050cc0 R11: fefefefefefefeff R12: ffff88827326e300
+> [    1.279574] R13: ffff888100bc1940 R14: ffff8881000e2405 R15: ffff8881000e2400
+> [    1.281460] FS:  0000000000000000(0000) GS:ffff8882f0400000(0000) knlGS:0000000000000000
+> [    1.281460] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    1.281460] CR2: 0000000000000000 CR3: 0008000002c22000 CR4: 00000000003506f0
+> [    1.287576] Call Trace:
+> [    1.288381]  <TASK>
+> [    1.289015]  static_key_slow_dec+0x1f/0x40
+> [    1.289980]  process_one_work+0x171/0x330
+> [    1.290988]  worker_thread+0x247/0x390
+> [    1.291576]  ? __pfx_worker_thread+0x10/0x10
+> [    1.292773]  kthread+0x107/0x240
+> [    1.293536]  ? __pfx_kthread+0x10/0x10
+> [    1.295573]  ret_from_fork+0x30/0x50
+> [    1.295575]  ? __pfx_kthread+0x10/0x10
+> [    1.296580]  ret_from_fork_asm+0x1a/0x30
+> [    1.297507]  </TASK>
+> [    1.298085] ---[ end trace 0000000000000000 ]---
+>
+> mingo simply doesn't want to listen and stop queueing untested patches.
+>
+> So lemme whack this one.
+>
+> My SNP guest had CONFIG_MITIGATION_PAGE_TABLE_ISOLATION=y leading to the
+> above.
+>
 
-Oh, then these two WARN_ONs in the unpin() will be only triggered
-in the destroy path when the vcmdq kernel structure is corrupted,
-because the two inputs are not given directly by a destroy ioctl.
+This patch by itself does nothing. The symbol is __weak for the time
+being, and given that this code does not have its __pi_ prefixes yet,
+this function will be superseded by the existing one. (If you remove
+the __weak you will get a linker error)
 
-In this case, I think it's similar, so we should retain them, as
-they were?
-
-Thanks
-Nicolin
+Are you sure this patch is causing the issue?
 
