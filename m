@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-631627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF23AA8B1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 04:30:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64F1AA8B2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 04:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC5F3B0A87
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 02:30:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C36D8171F36
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 02:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5580199FAB;
-	Mon,  5 May 2025 02:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C0318FDD2;
+	Mon,  5 May 2025 02:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Tz+Nte0g"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="fh7uh1Nh"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C92A8C0B;
-	Mon,  5 May 2025 02:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A5319CC37
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 02:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746412248; cv=none; b=ldQdZ4gslzI+niIzYm3oPe6lGkgz3MgU+rtwnCoh/KxAQLLZZRvOwXkMmRoB6ZZDRqA+CncDY7kocmh0hSCBaUjVTDY5TgGpzEC1ySw5w5XLLOlaVXEhiuBsVkDrOpBP5WT0x6zjfMFKiLVIhYeS2eQB8sRIWFJsKPx3cCAWUTc=
+	t=1746413770; cv=none; b=eidQfB8qHx/1C5RoOgZzwvL7H1elva2e6e/9IgnSIyEldOmNSLEfqQ3nxrrg7PMbBP1lhc8sOMI7pyR8Wnvn3zsweJRGSbcr0VqU7bgzVwvZhhD8d9X1BObjl53BEkSLOBG/OsFbljezUpTruKXtIN4dhoxMJNoLBm1mLiuoGqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746412248; c=relaxed/simple;
-	bh=C8B57uqu/wQVB0RnWaFV6CXM92jLHXTZsPoqi3LSeeI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=R8P0/LnaUN7FW5Wj5pDZmDCwuHykmSYLsf9wT7hgKc1kClgLrkeWL1SMBxnAm9DTJYmu/VFYqlV7EQUUtBWtM0fxVzDvnhq5+ZI12EnOSTbj6PS5awyTAXSJNHDxo5TyHw0V6et6WF3Kwmc8f3i/CB33fwA/EXM4gS5C/rDy/UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Tz+Nte0g; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 544NCGMZ017933;
-	Mon, 5 May 2025 02:30:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nr344m6GvzvItLmCFYIihaGaoAf8ur+ME6vEubxLl7U=; b=Tz+Nte0gTHsrO4Ek
-	TsXumT4OnEECCK5GaTxVcxnLb33tvFV7iFwyKVs9QYbBmnMZYE4WrvNTS5SUNdRB
-	BsmvElJAmjA0Gp2RMj+2Tphr75WK635YawRK7dQiBohGCmqWaqPl/kdW3uaR0BOQ
-	duSC4stLOYwLAVYy+HGr2w2nK+xoqvD1EVH0yDJBnzzSPcq9WeDpBTusHweTBslp
-	HJnGin/znaTqsy/bWlDt4PvH+cskEzAKNcmFVPYT+jv//LUo622rwMM0uDH6TWFl
-	cC3bsy4WcdgBVPEO+ie9jtmeBYLY1kqc0BlwWlsS2tuEF6Xknk1BLiUj0zJev7c8
-	md3Fyg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dafg2t66-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 May 2025 02:30:41 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5452UeCU022979
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 May 2025 02:30:40 GMT
-Received: from [10.216.4.22] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 May 2025
- 19:30:34 -0700
-Message-ID: <6f97510c-eb6c-4f3b-b219-aa8d895b060b@quicinc.com>
-Date: Mon, 5 May 2025 08:00:32 +0530
+	s=arc-20240116; t=1746413770; c=relaxed/simple;
+	bh=g8ZfqxQevakSHbP70PF6uZ1nZV4fWjKT0W3WFVvC170=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sY51YwpRQuck30A7e5NZOCDztgymEkAR/QhPqVyHgE+tIg8nVF9WUgBR1MtXRBFpSMK57PD5sFRq3LRant7C2TuYckwP9a1wD7tTX8ZOtV2qOA6btbhBlYL55rM/rwOin0HiedhZHmWNPkKbDNcT4d/tUglDMN8ZUEpU6QSoNBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=fh7uh1Nh; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9485:d39:ba00:6233:b821] ([IPv6:2601:646:8081:9485:d39:ba00:6233:b821])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5452tNYg050455
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 4 May 2025 19:55:24 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5452tNYg050455
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1746413725;
+	bh=qslVJgtxcpM5ATx7UNnEkQm/V3eLMzNA76FVbnTCWCA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fh7uh1NhEbKC1Knf8IhnvzR6C89W0EcP0gHvA5kYJNDebL6z98ui8H8NXhAClcYQH
+	 oFRYf4U5winP29QohbanTBwCgmYxpe2ySy0KgYiuVW5JYLayEfucaYA2WEKHDPw2kd
+	 fixEKXMjoMMjvQ5RYTpAyyeW6IWBtfHAWvLRXGk72NuKsPmv076rTpBr0EnALbZj5v
+	 0dpDVNwNvhY8mTSeYI7VVBE+Eo5weG/9ig4DMqOcSiX/KzNwlPPv+xjVP3d1Obs+q1
+	 nfyC7F9+GIqIy0zraI/NYW+evF3m1PwOqmeY2O6f9lzt2Z7OgU6VF2ul6xuMPDSBqk
+	 youC6Ur4T8FCw==
+Message-ID: <56635437-3ad6-48a8-ac72-0fe7f10a2270@zytor.com>
+Date: Sun, 4 May 2025 19:55:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,95 +55,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/8] dt-bindings: serial: describe SA8255p
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <psodagud@quicinc.com>, <djaggi@quicinc.com>,
-        <quic_msavaliy@quicinc.com>, <quic_vtanuku@quicinc.com>,
-        <quic_arandive@quicinc.com>, <quic_mnaresh@quicinc.com>,
-        <quic_shazhuss@quicinc.com>, Nikunj Kela
-	<quic_nkela@quicinc.com>
-References: <20250502171417.28856-1-quic_ptalari@quicinc.com>
- <20250502171417.28856-2-quic_ptalari@quicinc.com>
- <20250504-hilarious-ultra-grebe-d67e7d@kuoka>
+Subject: Re: [PATCH -tip] x86/asm: Use %a instead of %c(%%rip) in
+ rip_rel_ptr()
+To: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>
+References: <20250504184342.125253-1-ubizjak@gmail.com>
 Content-Language: en-US
-From: Praveen Talari <quic_ptalari@quicinc.com>
-In-Reply-To: <20250504-hilarious-ultra-grebe-d67e7d@kuoka>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20250504184342.125253-1-ubizjak@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DaLww4MffgoS0kUDKdeDQVmWzSk5LkH5
-X-Proofpoint-ORIG-GUID: DaLww4MffgoS0kUDKdeDQVmWzSk5LkH5
-X-Authority-Analysis: v=2.4 cv=atqyCTZV c=1 sm=1 tr=0 ts=681822d1 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
- a=DWH0VXsQTH7N4GD8PysA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDAyMyBTYWx0ZWRfXxRnVZ2ioaPqC
- AZrm7ulqnjzK4HTR786eb+nC6PGorFhQlz1Il9ienZwHdyVKG/aORqc4T+NWvvd/vfEXbE8EezT
- Ta0CcmKr1Eko814L2InYhhJyO7G7olmJnCykEXQ8Y9EpPK2zogdaLEvDQUM01p8XN0cytqxwteF
- Ri/SOcMfCzlChjNMIrTTTRb1Uu8CVoLHOxDV8ocEZw6SCBgeiCXlVSlRnV+YZMvxdIPKTzHFJSX
- ZlFU0Vtw+8I5HKElScIu1s+frM+q1kBjx127ohfQoenh/WLp6pt5Fg0jHj/qR8+uBcjuxa8OEiL
- QwT+6Z3E3UBbp+tsY62TwjlrddCJUodUyrn4l6jZB4XxStZ0GlgkAK176X2o2jaLuHd39j4iHu8
- bBbHoZ3paSrwo75XSRprnHxFMZRPuKlYmRJbXyQTN+YRDbhQ7x+/bt6Ic/Lqak6OTOEPmvYZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_01,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 mlxlogscore=986 mlxscore=0 impostorscore=0 adultscore=0
- clxscore=1015 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505050023
 
-Hi Krzysztof
+On 5/4/25 11:43, Uros Bizjak wrote:
+> The "a" asm operand modifier substitutes a memory reference, with the
+> actual operand treated as address.  For x86_64, when a symbol is
+> provided, the "a" modifier emits "sym(%rip)" instead of "sym".
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>   arch/x86/include/asm/asm.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+> index f963848024a5..d7610b99b8d8 100644
+> --- a/arch/x86/include/asm/asm.h
+> +++ b/arch/x86/include/asm/asm.h
+> @@ -116,7 +116,7 @@
+>   #ifndef __ASSEMBLER__
+>   static __always_inline __pure void *rip_rel_ptr(void *p)
+>   {
+> -	asm("leaq %c1(%%rip), %0" : "=r"(p) : "i"(p));
+> +	asm("leaq %a1, %0" : "=r"(p) : "i"(p));
+>   
+>   	return p;
+>   }
 
-On 5/4/2025 10:39 PM, Krzysztof Kozlowski wrote:
-> On Fri, May 02, 2025 at 10:44:10PM GMT, Praveen Talari wrote:
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - power-domains
->> +  - power-domain-names
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    serial@990000 {
->> +        compatible = "qcom,sa8255p-geni-uart";
->> +        reg = <0x990000 0x4000>;
->> +        interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
-> Why isn't here wakeup interrupt? Commit msg also does not help me to
-> understand why number of interrupts varies.
+Addendum to this: we recently had a discussion about this and it appears 
+that %a should work across i386/x86-64 (with i386 emitting the address 
+without (%rip)).
 
-Currently we are not using wake-irq because it is optional for our 
-current implementation.
-
-this irq configuration is same as sa87750.dtsi.
+	-hpa
 
 
-Thanks,
 
-Praveen talari
-
->
-> Best regards,
-> Krzysztof
->
 
