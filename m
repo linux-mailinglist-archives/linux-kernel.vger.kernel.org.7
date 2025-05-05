@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-633864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C311AAAE89
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:59:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB251AAAEA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651FD188494F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:55:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF4C3B32CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B951A38CE99;
-	Mon,  5 May 2025 23:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4729F37A15B;
+	Mon,  5 May 2025 23:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6ew2PLO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vd5vt1OB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3935036AAD0;
-	Mon,  5 May 2025 22:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F542D86AE;
+	Mon,  5 May 2025 22:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485776; cv=none; b=WMCHHy5xaGV9FPcnLQFJ4a6JhiJbwqWHZi34Mu3yyIX25s34LQ9wJt96RVruTVnAKSsyKtDZhjZIkvFpWsiiVAZHTsJFSXO0ZNd5PZdofkCk+Ra+RAiEZvSj5jZLTxRc/A/ccctWJN4qSXaPuTcJiQIiXqp0W5j/OQ6eIXudkRE=
+	t=1746485785; cv=none; b=fyZRU//+0whopRB+4cSeivabVg2yVHLP0ynQzDxQvqyful8JXOTVp+47+n0Gkhow3Ae3w9EghcdrIHtGmi49knDgT0LGKDUiKg+Q3sLhwb0D8P5/ETQft8uvzIPzV4vl3cV41/GFNJEINxZiGK9AuSzJz9yHhZlJLSAJW404iKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485776; c=relaxed/simple;
-	bh=cTQLQC5i8yLJif6gLu/9urK5FsL/5Z55FbEPV4/2QFA=;
+	s=arc-20240116; t=1746485785; c=relaxed/simple;
+	bh=1RiZHA+OCdayigUJ9WuzS0RIlKabyjr9xW6t/jmqZqc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HrYyGUOQA3SIKPbByANM7GEs6bRy+cgyBMG6lR3x77N+hKsfHCHgbvNuZXaS2VWhDK8zwLjsN6363DnsJtxsITbrTcb+0KPbfMTDdISCMW1GjWA33E5dfaQYZhbGyvW5LFNAlLd4gg1pUCnfPYnaJIKDz8YZlk5rlYVk2AeAyVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6ew2PLO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F17DC4CEEF;
-	Mon,  5 May 2025 22:56:13 +0000 (UTC)
+	 MIME-Version; b=KP9b+4KfATMY7SHCeUOaVN2AUUBc6XgV/I5yE9dcEI4JPGO/v4TnC3L8MRQgPLB0km0VosVCjiuZbdHhKmluhMX/0k8Rcto1QCqetqpVKn5huI24xOVNuhuh8OKnC3jmg7wPSIopJ2t55uRkXwiQl3jpXY/5Jmh9Boora2exH8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vd5vt1OB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED8EC4CEE4;
+	Mon,  5 May 2025 22:56:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485774;
-	bh=cTQLQC5i8yLJif6gLu/9urK5FsL/5Z55FbEPV4/2QFA=;
+	s=k20201202; t=1746485784;
+	bh=1RiZHA+OCdayigUJ9WuzS0RIlKabyjr9xW6t/jmqZqc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V6ew2PLOtFg3vGAKY09xqxd6xDKuLc6ENHqiXuCauoRVGWUVIf5qpIa1HaIKjqoRg
-	 ZgzkuJkcvHXRTDdxgR8qoyYHK1IAFqkrz9Ld9l/AeBuwgh+0iN1oCvoAOqNJXXM6vr
-	 UIN9/2/aiPubPXvBZWhrkAecBznvFsoOGkxPEV9GsbNaXlZ/jCLBCcnIWk9yrYgGvg
-	 9QuMzImYapsTIkvmHP+cYZdgXSMvH5sOu2NEB2of9SaEBSbW2nXAY4bocz5laypNq1
-	 7De4eIvmTXcR/bmRrf7sSsKo8ryz9XdUe6Mip9cPC5ed/dkVmBdINh9JPHBv7k3UGx
-	 YDyFI2x06wxCA==
+	b=Vd5vt1OBkqGan7pDt1gsorzmtFfiEY7sOHuTCTaDd+nSSRTjVZUXriRMdAb+/cds0
+	 skgQXICEK8X6FAoXQ49tSkSj8vHigAse4jvHjUu+OHwpjWd1cB3r1zsL0KyxR+oEWT
+	 22oM+YoEP7tL6sENjPSbpO49vlo7Hga5F7wJ8H1jMfZjEPhOrEFZkZ5QG9vAQZhD7S
+	 OhUL4uu4Efl4LMMAq+oAh4uBuZ50wN8un5NPMum2ZS2Q+kO4hEb3wFaIM6c8tueO0G
+	 G5YUBVxu43L1ESeXtvrHfbj/c8tR7eB+MpuvgLQv8jAXOzR65BTwMpWuDik6zVC530
+	 M94KX6kqunZ8g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Maarten Lankhorst <dev@lankhorst.se>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+Cc: "Lin.Cao" <lincao12@amd.com>,
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	intel-xe@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 477/486] drm/xe: Move suballocator init to after display init
-Date: Mon,  5 May 2025 18:39:13 -0400
-Message-Id: <20250505223922.2682012-477-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 483/486] drm/buddy: fix issue that force_merge cannot free all roots
+Date: Mon,  5 May 2025 18:39:19 -0400
+Message-Id: <20250505223922.2682012-483-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -69,80 +70,52 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Maarten Lankhorst <dev@lankhorst.se>
+From: "Lin.Cao" <lincao12@amd.com>
 
-[ Upstream commit 380b0cdaa76bc8f5c16db16eaf48751e792ff041 ]
+[ Upstream commit 467dce3817bd2b62ccd6fcfd7aae76f242ac907e ]
 
-No allocations should be done before we have had a chance to preserve
-the display fb.
+If buddy manager have more than one roots and each root have sub-block
+need to be free. When drm_buddy_fini called, the first loop of
+force_merge will merge and free all of the sub block of first root,
+which offset is 0x0 and size is biggest(more than have of the mm size).
+In subsequent force_merge rounds, if we use 0 as start and use remaining
+mm size as end, the block of other roots will be skipped in
+__force_merge function. It will cause the other roots can not be freed.
 
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20241210083111.230484-4-dev@lankhorst.se
-Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
+Solution: use roots' offset as the start could fix this issue.
+
+Signed-off-by: Lin.Cao <lincao12@amd.com>
+Signed-off-by: Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>
+Reviewed-by: Matthew Auld <matthew.auld@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20241226070116.309290-1-Arunpravin.PaneerSelvam@amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/xe/xe_device.c |  6 ++++++
- drivers/gpu/drm/xe/xe_tile.c   | 12 ++++++++----
- drivers/gpu/drm/xe/xe_tile.h   |  1 +
- 3 files changed, 15 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_buddy.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_device.c b/drivers/gpu/drm/xe/xe_device.c
-index 5c37bed3c948f..23e02372a49db 100644
---- a/drivers/gpu/drm/xe/xe_device.c
-+++ b/drivers/gpu/drm/xe/xe_device.c
-@@ -708,6 +708,12 @@ int xe_device_probe(struct xe_device *xe)
- 	if (err)
- 		goto err;
- 
-+	for_each_tile(tile, xe, id) {
-+		err = xe_tile_init(tile);
-+		if (err)
-+			goto err;
-+	}
-+
- 	for_each_gt(gt, xe, id) {
- 		last_gt = id;
- 
-diff --git a/drivers/gpu/drm/xe/xe_tile.c b/drivers/gpu/drm/xe/xe_tile.c
-index 349beddf9b383..36c87d7c72fbc 100644
---- a/drivers/gpu/drm/xe/xe_tile.c
-+++ b/drivers/gpu/drm/xe/xe_tile.c
-@@ -167,15 +167,19 @@ int xe_tile_init_noalloc(struct xe_tile *tile)
- 	if (err)
- 		return err;
- 
--	tile->mem.kernel_bb_pool = xe_sa_bo_manager_init(tile, SZ_1M, 16);
--	if (IS_ERR(tile->mem.kernel_bb_pool))
--		return PTR_ERR(tile->mem.kernel_bb_pool);
--
- 	xe_wa_apply_tile_workarounds(tile);
- 
- 	return xe_tile_sysfs_init(tile);
- }
- 
-+int xe_tile_init(struct xe_tile *tile)
-+{
-+	tile->mem.kernel_bb_pool = xe_sa_bo_manager_init(tile, SZ_1M, 16);
-+	if (IS_ERR(tile->mem.kernel_bb_pool))
-+		return PTR_ERR(tile->mem.kernel_bb_pool);
-+
-+	return 0;
-+}
- void xe_tile_migrate_wait(struct xe_tile *tile)
+diff --git a/drivers/gpu/drm/drm_buddy.c b/drivers/gpu/drm/drm_buddy.c
+index 103c185bb1c8a..ca42e6081d27c 100644
+--- a/drivers/gpu/drm/drm_buddy.c
++++ b/drivers/gpu/drm/drm_buddy.c
+@@ -324,7 +324,7 @@ EXPORT_SYMBOL(drm_buddy_init);
+  */
+ void drm_buddy_fini(struct drm_buddy *mm)
  {
- 	xe_migrate_wait(tile->migrate);
-diff --git a/drivers/gpu/drm/xe/xe_tile.h b/drivers/gpu/drm/xe/xe_tile.h
-index 1c9e42ade6b05..eb939316d55b0 100644
---- a/drivers/gpu/drm/xe/xe_tile.h
-+++ b/drivers/gpu/drm/xe/xe_tile.h
-@@ -12,6 +12,7 @@ struct xe_tile;
+-	u64 root_size, size;
++	u64 root_size, size, start;
+ 	unsigned int order;
+ 	int i;
  
- int xe_tile_init_early(struct xe_tile *tile, struct xe_device *xe, u8 id);
- int xe_tile_init_noalloc(struct xe_tile *tile);
-+int xe_tile_init(struct xe_tile *tile);
+@@ -332,7 +332,8 @@ void drm_buddy_fini(struct drm_buddy *mm)
  
- void xe_tile_migrate_wait(struct xe_tile *tile);
+ 	for (i = 0; i < mm->n_roots; ++i) {
+ 		order = ilog2(size) - ilog2(mm->chunk_size);
+-		__force_merge(mm, 0, size, order);
++		start = drm_buddy_block_offset(mm->roots[i]);
++		__force_merge(mm, start, start + size, order);
  
+ 		WARN_ON(!drm_buddy_block_is_free(mm->roots[i]));
+ 		drm_block_free(mm, mm->roots[i]);
 -- 
 2.39.5
 
