@@ -1,241 +1,342 @@
-Return-Path: <linux-kernel+bounces-632415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8279FAA9705
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:11:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB42AA970A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCF73170043
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:11:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF23E170B8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC7F25D525;
-	Mon,  5 May 2025 15:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF0425C6E7;
+	Mon,  5 May 2025 15:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VWu8nO+E"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2074.outbound.protection.outlook.com [40.107.100.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491FF42AA5;
-	Mon,  5 May 2025 15:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746457864; cv=fail; b=gKDta7RgbLZsAy1bnrNjUH193JV8pLcK4M1KMT7Cztv3W4sTG/uI6zeQhS50OPszNIz29ZSJyZdJELeQbqkqEEwHjQU6PYQGqo4Ws6cQWvMWoOVYVfx/J3mnC7bIsY/N425fYzHFCceyWclrPDnd+iUCGcznHJNilGjYOE1498I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746457864; c=relaxed/simple;
-	bh=EqYa5hgGpdOdXRdoTWDAhcIAQJVpbaouZxizB5Obrfk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c4WNH8BWZ0rVmHGtm0NRSB7jTZtiQretRPHmMiEuVF7uliaav/VvW16TUORrv5jCGy/QifbhP++rICjarbQi9I05bRtlObGMVsZcWGJTAsy1XQGgEWmXkrS7seYnbzq3opyPTvf+YJ21NnaBxszyCt+8UvuYU9nxOCa3fiv8sFg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VWu8nO+E; arc=fail smtp.client-ip=40.107.100.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vf5XoXlusq8taRKTwU0xr87eeMgaD6NgH55gPQb2nhQDu8I/hgO9cAWYLF4Wqpn/RATPQT9+XqXstzOB9rySnj40Ghizesh1/uiPzk+xI0aeZqX8jNPXumyo8Q6w9rKsFx0uk/Z2AFPO63HQQMMrV3JrDA+O0YxGbdMbZrc8W2mEe8xtnVcFFHQgQcmTEFRMyXoR0708GI+fIQtVqLHzy7kWFsBSWUsFoOFJiEfRO3EG+R2PyN4e0jNqIVf1BtGgPwdoHoyhlxj2Ts4vA0t6QnTnXaeDzZFR7D/C7QGTP44NvqjPxXmBp10KR/VVfC6wXrzMD6Wi2YlR1SIA3oX5Uw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cNFFE9sIZagEZtpPzr9VAIEZ/9ruuEZoNoR3wiONmGw=;
- b=iTKUq8xhw1I9EWGh5XnEY5hEdUdrmYbPyi7zcjaQbmRecAveI1RUaE54mNDTs28g/l3LDEMbrJLnlAyFo7360Inl/SKwcSLgbayUrCyR4Tq67T7u4wyfkynsLb3UlCkfo/C7BQ5a6i66OS/oWwplgUJiDZgxyr7Weagth6fwM0DibZdFun4+3+RGEGNKzkvN0akc7u22kHuNK2pzbCmQe4BfbDoKhav782bS/IO3y0krtFgyuK0eoOzrpsRBY2Byv3qjHXFyofRpiV+dF3EgwjPe6FtBLXUPYcJyOZ/2CrBsW9DrIN5QW24kTt5Fo5W4AvS3pzJEj4d6W5zLta5o6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cNFFE9sIZagEZtpPzr9VAIEZ/9ruuEZoNoR3wiONmGw=;
- b=VWu8nO+Ep2DIzeHMeck+NC18OqOROZ8c+fR5V5fH3/WKiqrprIErNDr/4IWDyswQtjgATJxHGahracMd5PR/BBQROJZdLiS2H2rvzzQtj2pJAzWHJOi4EWcpi6hKMbBCxVywctPtM1ZICczBm2cqW5IUXM1zcH2tbbFccUOef58=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH3PR12MB8660.namprd12.prod.outlook.com (2603:10b6:610:177::5)
- by DS7PR12MB5765.namprd12.prod.outlook.com (2603:10b6:8:74::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.21; Mon, 5 May
- 2025 15:10:56 +0000
-Received: from CH3PR12MB8660.namprd12.prod.outlook.com
- ([fe80::222c:662:e585:3404]) by CH3PR12MB8660.namprd12.prod.outlook.com
- ([fe80::222c:662:e585:3404%5]) with mapi id 15.20.8699.026; Mon, 5 May 2025
- 15:10:56 +0000
-Message-ID: <b1cc7366-bd30-46ee-ac6e-35c2b08ffdb5@amd.com>
-Date: Mon, 5 May 2025 10:10:53 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/10] Basic SEV-SNP Selftests
-To: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- shuah@kernel.org, pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com,
- pankaj.gupta@amd.com, michael.roth@amd.com, sraithal@amd.com
-References: <20250305230000.231025-1-prsampat@amd.com>
- <174622216534.881262.8086472919667553138.b4-ty@google.com>
-Content-Language: en-US
-From: "Pratik R. Sampat" <prsampat@amd.com>
-In-Reply-To: <174622216534.881262.8086472919667553138.b4-ty@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1P222CA0022.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:22c::19) To CH3PR12MB8660.namprd12.prod.outlook.com
- (2603:10b6:610:177::5)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y2WV2n4t"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8173C22EF5
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746457933; cv=none; b=N2LQ2i1Cw1uOGZSqscWVf9UPwRu6a2OmyxzTSyJWjnvl4zgQe/2UaulS2YD8I4OgwGHyWGm0FdFtP3/STmhNb7ZFhsZD1Y470SNriDX0VU1bzFDUiB9MiH7m5/E+ZNfEP9Mg5/X0Lu8DHuPOS0Gi47ey+wz9fdavDO14tjfqvLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746457933; c=relaxed/simple;
+	bh=iPuIagoPp727bVaobHs2hJco2zhFDkzKwObmdtsXh8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G59f1Sbzjbfun67ymkUAREdzcqyTwTZ1pv1irkeP68MV7PboXKf918FcvAIO0s7/lVDx5BVtxpgw9wNNJ5bPPm2Ocjh4aFAr3ghYAyklBF41B9O5Q5AdfGUHUPfMILBOvLKnxEXqQihPeZ5bTIjcfxkHePxVI8tMKtL+NhFtyLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y2WV2n4t; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=Dz5FWaxlIUnGPXCpQyV/LVl7j+l8EyAaVd4woxGkprg=;
+	b=Y2WV2n4tQHFXx4EkJqih8uqVWtWSOlPeCv1eZMwYrmSSLRoguUHqNwFyYEMADF
+	UPrKt8aoYq7J4iH3u2PnKrKkONlgDFy7AwJOki+6uG725MoVQlMlE832OBJtrEYO
+	NeRUlXuhqtK8fhxtfjEFKXgXTqFVHHY26S2ws+JJudwjc=
+Received: from [192.168.124.17] (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wAHcpYN1Rho035TEw--.29459S2;
+	Mon, 05 May 2025 23:11:10 +0800 (CST)
+Message-ID: <5c91c6ba-0532-4daf-be14-1a9fb077ee47@163.com>
+Date: Mon, 5 May 2025 23:11:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8660:EE_|DS7PR12MB5765:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5925399-ed01-4a8d-48ac-08dd8be708e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eWQ1ODVMMGo5V0lxVE14djZUWWZabytLWUVZTUtxMGlRVGFNWjNOOWI0aHpO?=
- =?utf-8?B?SDNsN3V4azJMMktwM2tHNWN6V2lIdGloWHl1Y3Zkc1NzUkxFR292dVFQQ1c0?=
- =?utf-8?B?YjVDblhYTTFoUXhuSVB0WE5CRFR2WXhlZmtGTDVOOTFUZzhlRmV0ZkZONFcz?=
- =?utf-8?B?ZC9HUlc4RVhVdDFyWDhRUm91NUdlUDF4ZXllSVl5azE3VUR0SE85L2xLVkha?=
- =?utf-8?B?bC85VGZmWmg2aWJ5MEpoYm1NOStBYXRxbnhMUXc1Q0NNMXZVR3dGSnV2NWYv?=
- =?utf-8?B?Y051NzQ1dHJCSFMrMW0yWHR2enVNcDBwTlpMRjlidDJnRnZFQVljUFBKM2ll?=
- =?utf-8?B?VDhxUGJuWjFwdWZLMGV0Z1Nac2h5OFhMb2c0Y0tvZi9YSXhDYXo2elZQYzZn?=
- =?utf-8?B?QnN3c1M4dXRLNGQ0Znpnb3FXME90anVpMXRzSmlOYlhick1LRXI3QTlMQUNL?=
- =?utf-8?B?MS85Nis1K0x1T1Jzb3N0V0ZMWG5aNEZmeVBPMGtKdmZ5bGc3TFovdEpqNFZs?=
- =?utf-8?B?WFNHZU92UGFUSDErRFEybGpEcnUvMXBpR2E0VExieFZMSmdBa1FWVXNRQmc5?=
- =?utf-8?B?KzhteEkwc3N1ditrRXR5bWtNa0hLeGx0VUhTdjV4aHk1MXpNWkoxbkdJYUdF?=
- =?utf-8?B?RVAyd1BMcDRSWitZSVFycTA1RzB4Y1U1K1IxN2RwQW16ZERUU1JCbVhjV25G?=
- =?utf-8?B?Y1lOeUlZQTc2R3hBTDc5SVkwbVppQnJEU3NmQ0dEMDNIeCttd3NYU3luYzNU?=
- =?utf-8?B?MndKR3pYQ2ZIemVnMHZtM3FpUVNCZk1mVkR1UFNBY2FqSjlIaXRhVFJzUHlw?=
- =?utf-8?B?K0QzM1NCbnNRcEVTcUNBTmtxdktBbVh3MmRZNTBydjBxUUh1eHpXZWMxZm0v?=
- =?utf-8?B?Y1dQcDExa1lxL2kxc3dCNmFPYmNvdmRaNzh3NmpIemN3b0ozS3lZWFVQUVRh?=
- =?utf-8?B?NkxrazlLdHQrTWl6eGlyeGVqZFZISGNQSlJHdnRVSGZ4aUxqaGFyMVBPMk4x?=
- =?utf-8?B?NGhJS2NQQmVqWTN1MDVwWlQ1Tmg3UTRQVUd2dDduUy85S1g0VnQ2bkc0VXYv?=
- =?utf-8?B?aUVud2lkQTFBN21WNEdyUy9JVTh2TWNhemhqSnkwQzVwb1BtUEovaG15clNS?=
- =?utf-8?B?VVFoekRkMHZBQ291ZXczNk1VZHpjK2E1U29ySXA1dDVRcUJjSmh3dDVybEx3?=
- =?utf-8?B?YzNHOHdTa0RVV1hFS0llN0cvZmdqM0NWRGxqelNJNDkrN3V1MS9jb2tmU1BH?=
- =?utf-8?B?NU04cmZMRzNKNnZjaVhPb1lTZkM1amp2Z2VlVFBya09aUWo1RGozV0Z6N3Fh?=
- =?utf-8?B?c2wxMnd5RHNLelh4cFIrUXErNnZiMkRaMHV2N05CY05UYTUraGgvcUdSY0Iw?=
- =?utf-8?B?aGNNcUcwZmNhTjFBeFo0U2JtV3NiYjlOQ2ZiQ3lzWlNvb1g2NmdKRUxNZ1Z6?=
- =?utf-8?B?WFlyMkk1Um9Tb0c0cnZtTkNJWXVNNkJodGY0WFFsRUFxc1FYNWVLaStUaHJw?=
- =?utf-8?B?VVEvNnpENVJwSGJhZHFHckZEaGNDR21kL0lVS3NDUWw1RzZ0TjIrek1XVm5D?=
- =?utf-8?B?YytPSlM3bElTbDZDdG9XWVV1QzE5UjlVeUhCa2dHd2M4Q3BNYmJnaFdKMHlv?=
- =?utf-8?B?Zi9oSExVYXBXZ1BZTlFwSW80NzNjWFZ4S1dsa05YNGpzaU9oMzA5bHluQy9Y?=
- =?utf-8?B?SFRseHVqM3QxampuSnB0bzdDQ0FWcGtyV1RWOFJyUTg0THlrTVpvQUZSRzNU?=
- =?utf-8?B?T1I2c2ZNajZBN1JkbGxTb0NwR1hRV2hsVXorNm5TQ0VpaEZWSFpvUk4zVElQ?=
- =?utf-8?B?UzdyNGZIODdsSWNrMkxHempYNGY5NENnVVJDWXVzVUVwM0Z6VzdVL2xWQjdR?=
- =?utf-8?B?NEplNDNIYkNLbi9HaHdwaDFVeURVSkR1Y1gvY1AvZzVxL1lsbXFac1NWamhL?=
- =?utf-8?Q?mBRznBAfJps=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8660.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?djFXUHl1dFBxZmozZDdkNElXTGp5b3VBR3BlcjRhUENtOFQwSXlFbUhRTzl2?=
- =?utf-8?B?SHg0UjJXdDgxWS9ydG9uWWdJaTZsZFYzV2hubWhZN09PVXBOTzgzVjh4NDhH?=
- =?utf-8?B?Vmd6YmxQWUVQcXBRNGZSSFB1R0p3c2ovdXN5ZW4rV3BNWGdlKzJXVVdwWUZZ?=
- =?utf-8?B?VlZPMjkwTmpiTGNBTzR1TWVEZkZ5UlNZQ1R4R04wM2o0NHFvNE0rQ3l1NEVu?=
- =?utf-8?B?OEJwZm0xaWRmN1dHcHRuY0ROajNJcnVpL0w4ajVRTDZ4c0Vkb2o1VTArQU9T?=
- =?utf-8?B?d1R6NGJpdWxucXE1QzkzL1ZLaEFhSEM1SlZwKzA5M2psY1haMTNCZWtCdThX?=
- =?utf-8?B?bHNWRU1RUUx4SFlUQ3JUTXJ2ZHdKSXlCWnBoT0cybHFQcGJZUDMxbEk4Y3dP?=
- =?utf-8?B?NlpxNUIxaENxTlQzaUtrRkl1VVJEODQ3TnQwL1g3N3FmSjExMjhsZXZhVWRt?=
- =?utf-8?B?RFdRaUF2SmZOU29XRDlJN28vKzB2ZExHU0FsQlBkczZLc0NzWUZIK2FGMDNJ?=
- =?utf-8?B?TGZRa3VZM2Z2Y3ZYc2Ntc3g0RE83ZDVLMmh1WVFoT0c3SlBQdHdOc3RNWjV5?=
- =?utf-8?B?eXRCZlJySEwwY1BSMWVpM21ERVBxNFREdzk4THpoV2tCeTVCRk5YZFl3MDcx?=
- =?utf-8?B?c3JqelI0VmNHcVBCOGlzR1E5aUFnNnZPY3N5bGV0a2NYWUhDR2d5cDdqZUEr?=
- =?utf-8?B?MUhndmZtR2w3WHFPWlFVUTVDeFgwMUI3bTgzS3dKNHJlZWk2M2ttb25QSGN3?=
- =?utf-8?B?b1ZVUjVZUDVOM2syOFBHWmcxdXpCOVRZN1lDcFRaWE5uZXVkWWlOQlg3STJT?=
- =?utf-8?B?UjNuQnRSK2VOckwrNThmcFFRcE1JcjI4bXUzV3RBUHAvVzBKUzJTdHZ6NzND?=
- =?utf-8?B?aVdBaU80OU1XYW8ycFYvYTJRZGgyRkFJcDdPTWJndmRmSFFMMUxBQ2dlSk10?=
- =?utf-8?B?NkxSb3l4ZjNxeHBpaGZZdFRFK2J1bDd4cUJNclhTY0RHemRKMDNDQlQzNkdp?=
- =?utf-8?B?U1d2dWhNaGliYzV5OFlQUEoxOS9JTXFidUdROFhUaGNTbS9Bbm1TczdHTkNT?=
- =?utf-8?B?THEvNlA0KzJtYi9Ja3c0YWk4UjlKandUQkNSelhSbk9tSUNOaUxlK1lUVVpE?=
- =?utf-8?B?Wkp1UU84VXFueEtDVTRuajFITmZlYk9weWJwUHlJNG5manRhbUFFaEFYOElE?=
- =?utf-8?B?RmdheFdoZlJYUnRId1JROUFmUm02UG5ZdHhoNThia1RvY0tVNC8vblA0Zkx0?=
- =?utf-8?B?aXFpb2JKbmZjTkFZMVNKRnpSOGdraWpLMTA2c2pFdy8ybWYwNm0vUnliS2tZ?=
- =?utf-8?B?NHBwWkcrM3NXMzhyRFE0SHgzTXpVa01WQ3BudU9Ka2hoZndYV3FLR2JhaGl2?=
- =?utf-8?B?Rm1MSnhrRWFpOFowQ2dIZ0J6QVVhbXYrTmhwTXRhRXRZYlZrMTlLcFhXTGVu?=
- =?utf-8?B?NEgzQWZYbWZhbCs4cTR6Rk9JZURGU3YwaGdVbG9KR0huTlFEMWpFeER1eHJo?=
- =?utf-8?B?U0ZSM2xrOUlhMitwcUVSeHU2LzZ2VTFJNXVQWC8xNFJBWjVpZld2a0RTN2pU?=
- =?utf-8?B?aFYzL0twa0tWcnZjaHpraUpKWm5sN0UyQm1Nb3gyWjNLQ2hEcmtKbEEweWtE?=
- =?utf-8?B?Y0pkRmo2dGhKeERyYXZXbU5xV1h3dlYydkg5dEkvdWduMW9UR2VkRmxOM3Y2?=
- =?utf-8?B?dW9JdnZCMGJMUGkyZDdnSHA3YStuWnc2ZHlqYUZuVHUxWEpOYVRlY2V0YVhz?=
- =?utf-8?B?R3pNSldzZHNBQ0U0akJPNzgzUXlja0h4RVE3WDM3UWRkOUFFaXA2NmY4bVB3?=
- =?utf-8?B?cFJyMFZhYmdmdlNNU0I5MUJuRzQyL3lNZ2w3cmtwbGFCYXVrcmpzck1xUEJD?=
- =?utf-8?B?M2NmY25NZ3VZeWt1d3AyKzVWR3RPNlM2WjZZT0U3cEJYbDhMWWdobHlPSXpi?=
- =?utf-8?B?bnBCaUhTQUtiUXdJRnJGbEVvRlVwTVRLYmtsbnphMFZrQndFVWZFaUF6VnhS?=
- =?utf-8?B?Y0ZxcWFIR3hSNUVMd2cvZW04bDVqT2E0OGRDUUVXZFNXVEg5NWZlbDQwemdm?=
- =?utf-8?B?SENSVzEwSnV6eU10dDAxdCtCUWcyVFo2RTFjM3o5VmgrVmVmWHI0dUswc2Vh?=
- =?utf-8?Q?3m+oiciDZr76Evi/MkJG7/4ix?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5925399-ed01-4a8d-48ac-08dd8be708e8
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8660.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 15:10:56.1883
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dNxiMk3OB3eBOK9UMretERMgM8nZXiCnbJ8bpnsj9rzt/sgDt7wiOXGwYiXvGMkGpYwTE2tWbkoceqJZwhoW+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5765
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] drm/shmem-helper: Import dmabuf without mapping its
+ sg_table
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Sean Paul <sean@poorly.run>,
+ Jocelyn Falempe <jfalempe@redhat.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
+References: <20250501064324.398650-1-oushixiong1025@163.com>
+ <71ec7bd1-be90-462e-8a07-e56fccae4096@suse.de>
+ <8e4f60ec-caa8-431a-88f8-aee8183d96e5@amd.com>
+ <a681cfd8-0c8c-4ffe-9f42-f0e54ee2539d@163.com>
+ <58fb9a49-4f4f-48f6-ad98-8be27ef0c0f7@amd.com>
+From: oushixiong <oushixiong1025@163.com>
+In-Reply-To: <58fb9a49-4f4f-48f6-ad98-8be27ef0c0f7@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAHcpYN1Rho035TEw--.29459S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Cr13ur45Zr1rGF43Wry3Arb_yoWDZF1DpF
+	45AFyUKrW5tryqgrZ2vw1kAasIgw48Kr1xXry3J3y5uF1ktFnrtr1Fkrn8uFyxAr1UGF1Y
+	qr1UCFWfGryYyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U5DGOUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXQBED2gYzL+GZgAAs1
 
-Hi Sean,
+Hi Christian,
 
-On 5/2/25 4:50 PM, Sean Christopherson wrote:
-> On Wed, 05 Mar 2025 16:59:50 -0600, Pratik R. Sampat wrote:
->> This patch series extends the sev_init2 and the sev_smoke test to
->> exercise the SEV-SNP VM launch workflow.
+I don't see strong relevance between my patch and the patches you're 
+referring to.
+Because the drm_gem_prime_import() function imports sg_table by default, 
+my patch provides an alternative
+import callback implementation for SHMEM-based drivers that differs from 
+drm_gem_prime_import().
+drm_gem_shmem_prime_import_sg_table() doesn't need to call 
+dma_buf_map_attachment_unlocked() to import sg_table.
+
+Alternatively, I might not have fully understood the patches you mentioned.
+
+
+Thanks and Regards,
+
+Shixiong.
+
+在 2025/5/5 22:32, Christian König 写道:
+> Hi Shixiong,
+>
+> for drm changes please base your patches on drm-misc-next or drm-next.
+>
+> That is probably fixed by this one here:
+>
+> commit b72f66f22c0e39ae6684c43fead774c13db24e73
+> Author: Christian König <christian.koenig@amd.com>
+> Date:   Tue Feb 11 17:20:53 2025 +0100
+>
+>      dma-buf: drop caching of sg_tables
+>      
+>      That was purely for the transition from static to dynamic dma-buf
+>      handling and can be removed again now.
+>      
+>      Signed-off-by: Christian König <christian.koenig@amd.com>
+>      Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
+>      Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>      Link: https://patchwork.freedesktop.org/patch/msgid/20250211163109.12200-5-christian.koenig@amd.com
+>
+> After this patch SG tables where only created when necessary.
+>
+> Regards,
+> Christian.
+>
+> On 5/5/25 16:22, oushixiong wrote:
+>> Hi Christian,
 >>
->> Primarily, it introduces the architectural defines, its support in the
->> SEV library and extends the tests to interact with the SEV-SNP ioctl()
->> wrappers.
+>> My patch is based on linux-next, so this patch is not based on the latest code. Then, I'd like to ask which patch resolved the issue with sg-tables?
 >>
->> [...]
-> 
-> Applied 2-9 to kvm-x86 selftests.  AIUI, the KVM side of things should already
-> be fixed.  If KVM isn't fixed, I want to take that discussion/patch to a
-> separate thread.
-> 
-
-Thanks for pulling these patches in.
-
-For 1 - Ashish's commit now returns failure for this case [1].
-Although, it appears that the return code isn't checked within
-sev_platform_init()[2], so it shouldn't change existing behavior. In the
-kselftest case, if platform init fails, the selftest will also fail — just as
-it does currently too.
-
-Regardless of what we decide on what the right behavior is, fail vs skip (I
-don't mind the former) we can certainly do that over new patches rebased over
-the new series.
-
-[1]: https://lore.kernel.org/kvm/ab9a028cf232663f9fc839f48cfcf97694846c13.1742850400.git.ashish.kalra@amd.com/
-[2]: https://lore.kernel.org/kvm/d8de6de80c36721ea3eb92ecac81b211f401c3b2.1742850400.git.ashish.kalra@amd.com/
-
-> I made minor changes along the way (some details in the commits' []), please
-> holler if you disagree with the end result.
-
-Thank you for cleaning these up!
-
-Pratik
-
-> 
-> [01/10] KVM: SEV: Disable SEV-SNP support on initialization failure
->         (no commit info)
-> [02/10] KVM: selftests: SEV-SNP test for KVM_SEV_INIT2
->         https://github.com/kvm-x86/linux/commit/68ed692e3954
-> [03/10] KVM: selftests: Add vmgexit helper
->         https://github.com/kvm-x86/linux/commit/c4e1a848d721
-> [04/10] KVM: selftests: Add SMT control state helper
->         https://github.com/kvm-x86/linux/commit/acf064345018
-> [05/10] KVM: selftests: Replace assert() with TEST_ASSERT_EQ()
->         https://github.com/kvm-x86/linux/commit/f694f30e81c4
-> [06/10] KVM: selftests: Introduce SEV VM type check
->         https://github.com/kvm-x86/linux/commit/4a4e1e8e92eb
-> [07/10] KVM: selftests: Add library support for interacting with SNP
->         https://github.com/kvm-x86/linux/commit/3bf3e0a52123
-> [08/10] KVM: selftests: Force GUEST_MEMFD flag for SNP VM type
->         https://github.com/kvm-x86/linux/commit/b73a30cd9caa
-> [09/10] KVM: selftests: Abstractions for SEV to decouple policy from type
->         https://github.com/kvm-x86/linux/commit/a5d55f783fb7
-> [10/10] KVM: selftests: Add a basic SEV-SNP smoke test
->         https://github.com/kvm-x86/linux/commit/ada014f5fc67
-> 
-> --
-> https://github.com/kvm-x86/linux/tree/next
+>>
+>> Thanks and Regards,
+>>
+>> Shixiong.
+>>
+>>
+>> 在 2025/5/5 19:25, Christian König 写道:
+>>> Hi Thomas & Shixiong,
+>>>
+>>> first of all the patch is still based on outdated code. For example the cache_sgt_mapping member is already removed in drm-misc-next.
+>>>
+>>> So if I'm not completely mistaken the issue is already resolved upstream.
+>>>
+>>> Regards,
+>>> Christian.
+>>>
+>>> On 5/5/25 13:12, Thomas Zimmermann wrote:
+>>>> (cc'ing Christian)
+>>>>
+>>>> Hi,
+>>>>
+>>>> I don't feel qualified to fully review this patch.
+>>>>
+>>>> It would be good to have the issue with sg-tables solved, but I dislike the dedicated initializer macros. So my question is if this has any drawbacks. Or could we make this available and the default for all shmem-based drivers?
+>>>>
+>>>> Best regards
+>>>> Thomas
+>>>>
+>>>> Am 01.05.25 um 08:43 schrieb oushixiong1025@163.com:
+>>>>> From: Shixiong Ou <oushixiong@kylinos.cn>
+>>>>>
+>>>>> [WHY]
+>>>>> 1. Drivers using DRM_GEM_SHADOW_PLANE_HELPER_FUNCS and
+>>>>>       DRM_GEM_SHMEM_DRIVER_OPS (e.g., udl, ast) do not require
+>>>>>       sg_table import.
+>>>>>       They only need dma_buf_vmap() to access the shared buffer's
+>>>>>       kernel virtual address.
+>>>>>
+>>>>> 2. On certain Aspeed-based boards, a dma_mask of 0xffff_ffff may
+>>>>>       trigger SWIOTLB during dmabuf import. However, IO_TLB_SEGSIZE
+>>>>>       restricts the maximum DMA streaming mapping memory, resulting in
+>>>>>       errors like:
+>>>>>
+>>>>>       ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
+>>>>>
+>>>>> [HOW]
+>>>>> Provide a gem_prime_import implementation without sg_table mapping
+>>>>> to avoid issues (e.g., "swiotlb buffer is full"). Drivers that do not
+>>>>> require sg_table can adopt this.
+>>>>>
+>>>>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+>>>>> ---
+>>>>>     drivers/gpu/drm/drm_gem_shmem_helper.c | 95 ++++++++++++++++++++++++++
+>>>>>     include/drm/drm_gem_shmem_helper.h     | 24 +++++++
+>>>>>     2 files changed, 119 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+>>>>> index d99dee67353a..9e41e350ff6f 100644
+>>>>> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+>>>>> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+>>>>> @@ -39,6 +39,7 @@ MODULE_IMPORT_NS("DMA_BUF");
+>>>>>     static const struct drm_gem_object_funcs drm_gem_shmem_funcs = {
+>>>>>         .free = drm_gem_shmem_object_free,
+>>>>>         .print_info = drm_gem_shmem_object_print_info,
+>>>>> +    .export = drm_gem_shmem_object_prime_export,
+>>>>>         .pin = drm_gem_shmem_object_pin,
+>>>>>         .unpin = drm_gem_shmem_object_unpin,
+>>>>>         .get_sg_table = drm_gem_shmem_object_get_sg_table,
+>>>>> @@ -799,6 +800,100 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
+>>>>>     }
+>>>>>     EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
+>>>>>     +const struct dma_buf_ops drm_gem_shmem_prime_dmabuf_ops =  {
+>>>>> +    .cache_sgt_mapping = true,
+>>>>> +    .attach = drm_gem_map_attach,
+>>>>> +    .detach = drm_gem_map_detach,
+>>>>> +    .map_dma_buf = drm_gem_map_dma_buf,
+>>>>> +    .unmap_dma_buf = drm_gem_unmap_dma_buf,
+>>>>> +    .release = drm_gem_dmabuf_release,
+>>>>> +    .mmap = drm_gem_dmabuf_mmap,
+>>>>> +    .vmap = drm_gem_dmabuf_vmap,
+>>>>> +    .vunmap = drm_gem_dmabuf_vunmap,
+>>>>> +};
+>>>>> +
+>>>>> +/**
+>>>>> + * drm_gem_shmem_prime_export - implementation of the export callback
+>>>>> + * @shmem: shmem GEM object
+>>>>> + */
+>>>>> +struct dma_buf *drm_gem_shmem_prime_export(struct drm_gem_shmem_object *shmem,
+>>>>> +                       int flags)
+>>>>> +{
+>>>>> +    struct drm_gem_object *obj = &shmem->base;
+>>>>> +    struct drm_device *dev = obj->dev;
+>>>>> +    struct dma_buf_export_info exp_info = {
+>>>>> +        .exp_name = KBUILD_MODNAME, /* white lie for debug */
+>>>>> +        .owner = dev->driver->fops->owner,
+>>>>> +        .ops = &drm_gem_shmem_prime_dmabuf_ops,
+>>>>> +        .size = obj->size,
+>>>>> +        .flags = flags,
+>>>>> +        .priv = obj,
+>>>>> +        .resv = obj->resv,
+>>>>> +    };
+>>>>> +
+>>>>> +    return drm_gem_dmabuf_export(dev, &exp_info);
+>>>>> +}
+>>>>> +
+>>>>> +/**
+>>>>> + * drm_gem_shmem_prime_import - Import dmabuf without mapping its sg_table
+>>>>> + * @dev: Device to import into
+>>>>> + * @dma_buf: dma-buf object to import
+>>>>> + *
+>>>>> + * Drivers that use the shmem helpers but also wants to import dmabuf without
+>>>>> + * mapping its sg_table can use this as their &drm_driver.gem_prime_import
+>>>>> + * implementation.
+>>>>> + */
+>>>>> +struct drm_gem_object *drm_gem_shmem_prime_import(struct drm_device *dev,
+>>>>> +                          struct dma_buf *dma_buf)
+>>>>> +{
+>>>>> +    struct dma_buf_attachment *attach;
+>>>>> +    struct drm_gem_shmem_object *shmem;
+>>>>> +    size_t size;
+>>>>> +    int ret;
+>>>>> +
+>>>>> +    if (dma_buf->ops == &drm_gem_shmem_prime_dmabuf_ops) {
+>>>>> +        struct drm_gem_object *obj;
+>>>>> +
+>>>>> +        obj = dma_buf->priv;
+>>>>> +        if (obj->dev == dev) {
+>>>>> +            /*
+>>>>> +             * Importing dmabuf exported from our own gem increases
+>>>>> +             * refcount on gem itself instead of f_count of dmabuf.
+>>>>> +             */
+>>>>> +            drm_gem_object_get(obj);
+>>>>> +            return obj;
+>>>>> +        }
+>>>>> +    }
+>>>>> +
+>>>>> +    attach = dma_buf_attach(dma_buf, dev->dev);
+>>>>> +    if (IS_ERR(attach))
+>>>>> +        return ERR_CAST(attach);
+>>>>> +
+>>>>> +    get_dma_buf(dma_buf);
+>>>>> +
+>>>>> +    size = PAGE_ALIGN(attach->dmabuf->size);
+>>>>> +
+>>>>> +    shmem = __drm_gem_shmem_create(dev, size, true, NULL);
+>>>>> +    if (IS_ERR(shmem)) {
+>>>>> +        ret = PTR_ERR(shmem);
+>>>>> +        goto fail_detach;
+>>>>> +    }
+>>>>> +
+>>>>> +    drm_dbg_prime(dev, "size = %zu\n", size);
+>>>>> +
+>>>>> +    shmem->base.import_attach = attach;
+>>>>> +    shmem->base.resv = dma_buf->resv;
+>>>>> +
+>>>>> +    return &shmem->base;
+>>>>> +
+>>>>> +fail_detach:
+>>>>> +    dma_buf_detach(dma_buf, attach);
+>>>>> +    dma_buf_put(dma_buf);
+>>>>> +
+>>>>> +    return ERR_PTR(ret);
+>>>>> +}
+>>>>> +EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import);
+>>>>> +
+>>>>>     MODULE_DESCRIPTION("DRM SHMEM memory-management helpers");
+>>>>>     MODULE_IMPORT_NS("DMA_BUF");
+>>>>>     MODULE_LICENSE("GPL v2");
+>>>>> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
+>>>>> index cef5a6b5a4d6..78ef91593a8e 100644
+>>>>> --- a/include/drm/drm_gem_shmem_helper.h
+>>>>> +++ b/include/drm/drm_gem_shmem_helper.h
+>>>>> @@ -110,6 +110,8 @@ int drm_gem_shmem_vmap(struct drm_gem_shmem_object *shmem,
+>>>>>     void drm_gem_shmem_vunmap(struct drm_gem_shmem_object *shmem,
+>>>>>                   struct iosys_map *map);
+>>>>>     int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct vm_area_struct *vma);
+>>>>> +struct dma_buf *drm_gem_shmem_prime_export(struct drm_gem_shmem_object *shmem,
+>>>>> +                          int flags);
+>>>>>       int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem);
+>>>>>     void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem);
+>>>>> @@ -168,6 +170,18 @@ static inline void drm_gem_shmem_object_print_info(struct drm_printer *p, unsign
+>>>>>         drm_gem_shmem_print_info(shmem, p, indent);
+>>>>>     }
+>>>>>     +/**
+>>>>> + * drm_gem_shmem_object_prime_export - GEM object function for export()
+>>>>> + * @obj: GEM object
+>>>>> + *
+>>>>> + */
+>>>>> +static inline struct dma_buf *drm_gem_shmem_object_prime_export(struct drm_gem_object *obj,
+>>>>> +                                int flags)
+>>>>> +{
+>>>>> +    struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+>>>>> +
+>>>>> +    return drm_gem_shmem_prime_export(shmem, flags);
+>>>>> +}
+>>>>>     /**
+>>>>>      * drm_gem_shmem_object_pin - GEM object function for drm_gem_shmem_pin()
+>>>>>      * @obj: GEM object
+>>>>> @@ -276,6 +290,8 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
+>>>>>                         struct sg_table *sgt);
+>>>>>     int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>>>>>                       struct drm_mode_create_dumb *args);
+>>>>> +struct drm_gem_object *drm_gem_shmem_prime_import(struct drm_device *dev,
+>>>>> +                          struct dma_buf *buf);
+>>>>>       /**
+>>>>>      * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
+>>>>> @@ -287,4 +303,12 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>>>>>         .gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table, \
+>>>>>         .dumb_create           = drm_gem_shmem_dumb_create
+>>>>>     +/**
+>>>>> + * This macro provides a shmem GEM operations that implementate a simple
+>>>>> + * gem_prime_import.
+>>>>> + */
+>>>>> +#define DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS \
+>>>>> +    .gem_prime_import    = drm_gem_shmem_prime_import, \
+>>>>> +    .dumb_create        = drm_gem_shmem_dumb_create
+>>>>> +
+>>>>>     #endif /* __DRM_GEM_SHMEM_HELPER_H__ */
 
 
