@@ -1,63 +1,60 @@
-Return-Path: <linux-kernel+bounces-631833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6739BAA8E1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:21:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239E6AA8E10
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D022A17431A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:21:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 650783A88B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50B21EEA3D;
-	Mon,  5 May 2025 08:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6DE1EE7DD;
+	Mon,  5 May 2025 08:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b="iov0e4Xg"
-Received: from forward203b.mail.yandex.net (forward203b.mail.yandex.net [178.154.239.154])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="rlGnLSJl"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435531E7C24;
-	Mon,  5 May 2025 08:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7771EE03D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746433275; cv=none; b=XWvBMKfZh7sc4AkabpfhgvkKumNv7kADeIsQ3VI4Y06mmzet6EGaV8RoiXqzSWLS7cnn1E5uqD+eGxpdURq9px2GPsGFVdHCqeB4c4Q8wCA3MSGz5jQrhqC7QRgA5dITD/i6vBHfgyNGT7d/gdiaHhS0ZxKsoYWa+FDmfK2hpaE=
+	t=1746433088; cv=none; b=uc/6yYczKT/MVzVG1Qitj/YCm4hCdTn7LHDtH7TcFSYG6dlwIFJrUdphNyAALMJVxyVIkrVJrNAsfBwwauJ66aUgNSUp/uNb/H0LhKaxY5zS/LfnwP9RYdVADPUZgGBwYO/2iVJStU4n+DOdUDnznijBBygPgkPbrpvxMaIrfis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746433275; c=relaxed/simple;
-	bh=Ubx4IIN/jFj2W5sWJUDmRo/Czw/KW+u7tWQC4o0VLwY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o/Ct77WSrQIKl10tor2Eat6HFEmXtNoHCteJXa1gutj7Hne/2e6kJDy+1Z25E4Ho9SSDe9pyWY/rhMpByWwOjVV4qCO3Ng3trr+USSQeaU1VAfJMWBviGGJs8NnxZBotH6g9v4/89PyEfX8lsPp+zxIdIwQwF8rlR5z+HM6ARNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru; spf=pass smtp.mailfrom=itb.spb.ru; dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b=iov0e4Xg; arc=none smtp.client-ip=178.154.239.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=itb.spb.ru
-Received: from forward100b.mail.yandex.net (forward100b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d100])
-	by forward203b.mail.yandex.net (Yandex) with ESMTPS id F048A63213;
-	Mon,  5 May 2025 11:14:26 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:2e20:0:640:2132:0])
-	by forward100b.mail.yandex.net (Yandex) with ESMTPS id 5338F60B29;
-	Mon,  5 May 2025 11:14:18 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id xDW2KY8LZqM0-B44wJ027;
-	Mon, 05 May 2025 11:14:17 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=itb.spb.ru; s=mail;
-	t=1746432857; bh=HuQQ0othjGHwBJR53YINjZq8Dpvlg0YbKAb0yWqBg2c=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=iov0e4Xg6B+R6tH1qs104OemT08iTHa6qu1rWMFZwuSe6F7FLA6t5MEA2UHnny8Dt
-	 YCUIlKypQUD2wrty3CmL3SL7k0KI7wYOe68zzs3679vsGMsGNfmgS02JXsnqc132yQ
-	 fCCZRNEqJltC5cGpQyRmLF4cpdQx2ouK2kR9wsC0=
-Authentication-Results: mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net; dkim=pass header.i=@itb.spb.ru
-From: Ivan Stepchenko <sid@itb.spb.ru>
-To: Lee Jones <lee@kernel.org>
-Cc: Ivan Stepchenko <sid@itb.spb.ru>,
-	Pavel Machek <pavel@kernel.org>,
-	David Lechner <david@lechnology.com>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] leds: uleds: fix unchecked copy_to_user() in uleds_read()
-Date: Mon,  5 May 2025 11:13:42 +0300
-Message-Id: <20250505081342.3855-1-sid@itb.spb.ru>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1746433088; c=relaxed/simple;
+	bh=YHKk9rU1/enVF4zlikIbjl4EE3E1d0Cmb92TgGqDlH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oa/355MT/jObZjG4kXy0fguL4mhrVFLH2n/4tp5d76AA+q8wMH90I7SZNwrhOiay31qJ5iX2l04mG+Seip284WofqJFaT/uExuac8rPAlUQnbHYw9Qfh8lf1zO/h6EE7k4JCpK5/Y01cdwLUv3o33MgNA9eJ+iINuQuhZbGVLno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=rlGnLSJl; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
+	Resent-Message-ID:In-Reply-To:References;
+	bh=yqYrW0kL68U4pB/ROcFLjIt0w7CoMEKnknDWg+6P7ZY=; t=1746433086; x=1747642686; 
+	b=rlGnLSJlHtN19DnAUwV5X1BH1wltt1u7B2lof0pxPEvbfcJLa57SPJHhGPFkqW5yjTfkNWAryyR
+	La/Wf7haaKvzpDuOLYtbJL0KgIicvXgrobzY5O0scZIJrI9NPdYdveWzaQ+DwC9lhOGh2N/GmeDjD
+	uVReXLO87AfdEf3NFUWKBEE4jgjsv4UrUjLUTocU1zIu+iJiE5z1QtIkVwZJzgSaBxiYuTfbq5i5J
+	9mN55xRbuY/BzUlZDecNrInIQAgtkDIxevCSYBjfnEGBKAnXa1dweu9IvOuwZwLHVuJo1I1Kf+hAS
+	o9+iX0HqNq2GsDVR3Hmpw4GzfC4RPaTO/vVA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uBr1X-000000043hu-2IA3;
+	Mon, 05 May 2025 10:18:03 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Subject: [GIT PULL] uml 6.15-rc6
+Date: Mon,  5 May 2025 10:15:32 +0200
+Message-ID: <20250505081753.12266-3-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,44 +63,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The copy_to_user() is annotated with __must_check, indicating that
-its return value must be checked by the caller. Currently, uleds_read()
-ignores it. If the userspace buffer is invalid and copy_to_user() fails,
-the userspace application may assume it has received fresh data, while
-in fact copying has failed. This can leave applications out of sync
-with the actual device state.
+Hi Linus,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+We really should've sent this much earlier, apologies.
+There's just a single fix here for the _nofault changes
+that were causing issues with clang, and then when we
+looked at it some other issues seemed to exist.
 
-Fixes: e381322b0190 ("leds: Introduce userspace LED class driver")
-Signed-off-by: Ivan Stepchenko <sid@itb.spb.ru>
----
- drivers/leds/uleds.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Please pull and let us know if there's any problem.
 
-diff --git a/drivers/leds/uleds.c b/drivers/leds/uleds.c
-index 374a841f18c3..41bfce43136c 100644
---- a/drivers/leds/uleds.c
-+++ b/drivers/leds/uleds.c
-@@ -147,10 +147,13 @@ static ssize_t uleds_read(struct file *file, char __user *buffer, size_t count,
- 		} else if (!udev->new_data && (file->f_flags & O_NONBLOCK)) {
- 			retval = -EAGAIN;
- 		} else if (udev->new_data) {
--			retval = copy_to_user(buffer, &udev->brightness,
--					      sizeof(udev->brightness));
--			udev->new_data = false;
--			retval = sizeof(udev->brightness);
-+			if (copy_to_user(buffer, &udev->brightness,
-+					 sizeof(udev->brightness))) {
-+				retval = -EFAULT;
-+			} else {
-+				udev->new_data = false;
-+				retval = sizeof(udev->brightness);
-+			}
- 		}
- 
- 		mutex_unlock(&udev->mutex);
--- 
-2.39.5
+Thanks,
+johannes
 
+
+
+The following changes since commit 92a09c47464d040866cf2b4cd052bc60555185fb:
+
+  Linux 6.15-rc5 (2025-05-04 13:55:04 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.15-rc6
+
+for you to fetch changes up to 68025adfc13e6cd15eebe2293f77659f47daf13b:
+
+  um: fix _nofault accesses (2025-05-05 10:06:51 +0200)
+
+----------------------------------------------------------------
+A single fix for _nofault infrastructure.
+
+----------------------------------------------------------------
+Johannes Berg (1):
+      um: fix _nofault accesses
+
+ arch/um/include/asm/uaccess.h            |  2 ++
+ arch/um/kernel/trap.c                    | 26 +++++++++++++-------------
+ arch/x86/um/shared/sysdep/faultinfo_32.h |  2 +-
+ arch/x86/um/shared/sysdep/faultinfo_64.h |  2 +-
+ 4 files changed, 17 insertions(+), 15 deletions(-)
 
