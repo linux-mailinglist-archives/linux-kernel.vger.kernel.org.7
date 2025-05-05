@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-634401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3E2AAB145
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 046C3AAB136
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCFDA3AEE35
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4103ACFBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3A73316E2;
-	Tue,  6 May 2025 00:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10E93316FD;
+	Tue,  6 May 2025 00:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TH+Yy7EC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRuB0xyS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495782C0334;
-	Mon,  5 May 2025 22:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDA72C0325;
+	Mon,  5 May 2025 22:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485365; cv=none; b=Js0sOMCeQanYsNXcq2IAUH/tXNSP7jy0pTlCQXc24zppVawgEmy12MgK6I7tjz8AW8fnFHfDlZ+ddKv7lPpQ9/N9nPbTMrogH/X6Bnuk30HYG/wHzkNluzwsZfteK6coXermJ8MF/UY2Zmt6LSbqgOMb8QDeYmBmYM9dI6/aksM=
+	t=1746485367; cv=none; b=MFM76Q1vAiaAMON6AX64Bid1GpzBynPK7Oq5eZTq1oF7DUFtgOkZ5DyvPs5PBt/Q6OwpCgeHEPZMHwk/awZRyUChKmHsvDcLPzyV5qW7QVNnlStgHPTO5ljmZ2pjBymEtCMzZfn8/y7qeXYhjY8Nm/QDO1BmiaJ+pjXsCQ3B+Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485365; c=relaxed/simple;
-	bh=LJeuIAC8mQZ7hTP80xxR3vsciw8at9tec+ZC3y33u2I=;
+	s=arc-20240116; t=1746485367; c=relaxed/simple;
+	bh=iQuqLNlbfnoQsokddA345vQSrEYLa7Cz6ZvGPBbtin4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S+gVHk2/4KDplNsT421Dlo89JZQoyrBFyWDbm8sFXCi5giDZ0MTIwS/hd96ynlhWSCZjlA8GBv6LMKG4+ORPVUKwYwQmsoPPHzgpqI3bGCewXUZCpuBjhZzGVujTpC63JJ5x2QZlZBD1oliL2/PFacd92AqS0+2haUrH+hSWDeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TH+Yy7EC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19EE3C4CEE4;
-	Mon,  5 May 2025 22:49:24 +0000 (UTC)
+	 MIME-Version; b=G37mbHsgvqWpEUIX/zyiSV/kXsSLi9mY3aUG8W1V4maKFd555EvUYsLzUXtu+IV3CdKSdvBc8nKzXq1qe5LG/OH19iRX4+fA2CDB54/nJsLmvs8koE2AvT710V+JPOUUCb2f1d0W3Q0rc4M9abobHdN0z+jYdFp9TK8Yj8cJwkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRuB0xyS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EFF8C4CEED;
+	Mon,  5 May 2025 22:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485365;
-	bh=LJeuIAC8mQZ7hTP80xxR3vsciw8at9tec+ZC3y33u2I=;
+	s=k20201202; t=1746485366;
+	bh=iQuqLNlbfnoQsokddA345vQSrEYLa7Cz6ZvGPBbtin4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TH+Yy7ECVaOiRxtCsq1/OwWOXLGtOCP/97u8FXsM7IJVRURXAOBAYfKrrgUA261qP
-	 E9GVncEVXS7fe1ynIg/5/RPJ0DvdqpzPkC4XdEx3bzD7rs6QIaa3Ze/zhIfSKSo6SM
-	 WxKxqTbG04qMeA0Km1ScvxcwnBJo4WzpQjf4/WtJgJ18mj0ygtiuJvVvZpEpjntCGY
-	 Y7MJ2REXfYQYDxjCskuyHXjZ6PJ8dqD7kOZcgp66fWh1XDjLz/MWXb/n/j/dyj8Zif
-	 3qaYPsMehxYa/dbISZaOhLPZCrhWveiKTB85K3JINMxZwWm6p6iFP+xjSLkhGSL57W
-	 Jp1GKjFcUk1Rg==
+	b=eRuB0xySkEibXzLRtI1FGVhu4Ma/viu6DfbOg9UtnC4jsJN+iYZYACh3FFxAq6nNf
+	 ByMIfOBrBEEXikXSrmeNa4fwF/TiwPwNDK/DBEQi8+Mz1ORf2Q82LjSbaOMrWJADKV
+	 SzFp2cL22MvapEzYMEeBa76aYLzBpwqxfX95qWM5zjDrgoxqXmKKi/aUAtCizCITR1
+	 mT0373vWp6laRs4JjIJQ02iFReduM1eeqAN3LSSNm4ggiotsnya9sxDlPWBHzoddBt
+	 8CcsRdbPLl0g5haIN+Y8xACLBp3eWV8R1iKPgMybfUS5h3GtS+eix7KRk6q6ONjaB8
+	 mfawMGUtJ98Lg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Peter Seiderer <ps.report@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Chris Morgan <macromorgan@hotmail.com>,
+	Philippe Simons <simons.philippe@gmail.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
 	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 291/486] net: pktgen: fix access outside of user given buffer in pktgen_thread_write()
-Date: Mon,  5 May 2025 18:36:07 -0400
-Message-Id: <20250505223922.2682012-291-sashal@kernel.org>
+	sre@kernel.org,
+	wens@csie.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 292/486] power: supply: axp20x_battery: Update temp sensor for AXP717 from device tree
+Date: Mon,  5 May 2025 18:36:08 -0400
+Message-Id: <20250505223922.2682012-292-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -68,47 +67,70 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Peter Seiderer <ps.report@gmx.net>
+From: Chris Morgan <macromorgan@hotmail.com>
 
-[ Upstream commit 425e64440ad0a2f03bdaf04be0ae53dededbaa77 ]
+[ Upstream commit bbcfe510ecd47f2db4c8653c7dfa9dc7a55b1583 ]
 
-Honour the user given buffer size for the strn_len() calls (otherwise
-strn_len() will access memory outside of the user given buffer).
+Allow a boolean property of "x-powers,no-thermistor" to specify devices
+where the ts pin is not connected to anything. This works around an
+issue found with some devices where the efuse is not programmed
+correctly from the factory or when the register gets set erroneously.
 
-Signed-off-by: Peter Seiderer <ps.report@gmx.net>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Link: https://patch.msgid.link/20250219084527.20488-8-ps.report@gmx.net
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+Tested-by: Philippe Simons <simons.philippe@gmail.com>
+Link: https://lore.kernel.org/r/20250204155835.161973-4-macroalpha82@gmail.com
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/pktgen.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/power/supply/axp20x_battery.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index 4d87da56c56a0..762ede0278990 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -1898,8 +1898,8 @@ static ssize_t pktgen_thread_write(struct file *file,
- 	i = len;
+diff --git a/drivers/power/supply/axp20x_battery.c b/drivers/power/supply/axp20x_battery.c
+index 57eba1ddb17ba..88fbae613e8bc 100644
+--- a/drivers/power/supply/axp20x_battery.c
++++ b/drivers/power/supply/axp20x_battery.c
+@@ -89,6 +89,8 @@
+ #define AXP717_BAT_CC_MIN_UA		0
+ #define AXP717_BAT_CC_MAX_UA		3008000
  
- 	/* Read variable name */
--
--	len = strn_len(&user_buffer[i], sizeof(name) - 1);
-+	max = min(sizeof(name) - 1, count - i);
-+	len = strn_len(&user_buffer[i], max);
- 	if (len < 0)
- 		return len;
++#define AXP717_TS_PIN_DISABLE		BIT(4)
++
+ struct axp20x_batt_ps;
  
-@@ -1929,7 +1929,8 @@ static ssize_t pktgen_thread_write(struct file *file,
- 	if (!strcmp(name, "add_device")) {
- 		char f[32];
- 		memset(f, 0, 32);
--		len = strn_len(&user_buffer[i], sizeof(f) - 1);
-+		max = min(sizeof(f) - 1, count - i);
-+		len = strn_len(&user_buffer[i], max);
- 		if (len < 0) {
- 			ret = len;
- 			goto out;
+ struct axp_data {
+@@ -117,6 +119,7 @@ struct axp20x_batt_ps {
+ 	/* Maximum constant charge current */
+ 	unsigned int max_ccc;
+ 	const struct axp_data	*data;
++	bool ts_disable;
+ };
+ 
+ static int axp20x_battery_get_max_voltage(struct axp20x_batt_ps *axp20x_batt,
+@@ -983,6 +986,24 @@ static void axp717_set_battery_info(struct platform_device *pdev,
+ 	int ccc = info->constant_charge_current_max_ua;
+ 	int val;
+ 
++	axp_batt->ts_disable = (device_property_read_bool(axp_batt->dev,
++							  "x-powers,no-thermistor"));
++
++	/*
++	 * Under rare conditions an incorrectly programmed efuse for
++	 * the temp sensor on the PMIC may trigger a fault condition.
++	 * Allow users to hard-code if the ts pin is not used to work
++	 * around this problem. Note that this requires the battery
++	 * be correctly defined in the device tree with a monitored
++	 * battery node.
++	 */
++	if (axp_batt->ts_disable) {
++		regmap_update_bits(axp_batt->regmap,
++				   AXP717_TS_PIN_CFG,
++				   AXP717_TS_PIN_DISABLE,
++				   AXP717_TS_PIN_DISABLE);
++	}
++
+ 	if (vmin > 0 && axp717_set_voltage_min_design(axp_batt, vmin))
+ 		dev_err(&pdev->dev,
+ 			"couldn't set voltage_min_design\n");
 -- 
 2.39.5
 
