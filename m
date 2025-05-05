@@ -1,68 +1,56 @@
-Return-Path: <linux-kernel+bounces-633894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60870AAAEA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F7EAAAEAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E051A82368
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:57:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE44189B011
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D33F392615;
-	Mon,  5 May 2025 23:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C1028751E;
+	Mon,  5 May 2025 23:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9e8v6c8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuVcm/+c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9853703B4;
-	Mon,  5 May 2025 22:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C608D35D7BB;
+	Mon,  5 May 2025 22:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485894; cv=none; b=IMIQTF75q8O2TjnuUM26VSejUceS7kVWu3LXCY6MIVdYnkV/8j6pw22IXlbtGVXLTa0hq0joAwdK7WkC7Q28Dq1fcFoU9qElA96dRpCqWlSl2DmEgdy4yz0xfLHV71EROhYbxuhUb96HT/eNVwwOEMViBw/zFkQvZnsgg+S/apQ=
+	t=1746485906; cv=none; b=b1D/lNXqBW+LmuwLC4fdKI10G0iZ1/FnDg5NLisSX7xtmteBWSeyxzB9MZV+8XiQiUJkvKot6h37ZQsLd3am9Kgz48uR+9KjMb/1y6NvNRITnfN87qSBvuu3UVrRDI/Cez5nVywkxPkrg9QLb0/j9hw5zemY9L88wRcT95KSkOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485894; c=relaxed/simple;
-	bh=j7/CYS3VLTNk26/IFzZOFaFw1rjfX5mJX1MXklRtPcQ=;
+	s=arc-20240116; t=1746485906; c=relaxed/simple;
+	bh=ptyUP18uHVTbecN1W1P7sS32RvPDU/5QXcxuPG2yEpE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cLfhH+kq5/YzF+2mp/J1Cfr0bTTNHU6jookfESbkTwEH3utAv7VxPVB7FiHhoL0kx1C7xs8dGZ2DotDO4fvGDK4ZW0W477tzfARe1DOOiIe6c1/Dipgxn3GPNxd3ctcS1PSzFhLjAyHpku/4Uw4QShQGpV2C7Nlf+5GfgBvNSS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9e8v6c8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE92C4CEED;
-	Mon,  5 May 2025 22:58:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=eKR4AKH3OLb4iytZhNrbqrnC0MMB3CrkEh2ZrFS7BZXXaNMuml3Qa5L3pFdPUvzpECw8xLu4XzR+u6y1RheKJWOBME39hAz99tl+08bNa3jFXib+5YxprpRK43/I49wMxnDZLqPoGTXvzRjTQUv3GwTHXGjYY0vQ7bOcrmGKUYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuVcm/+c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4242C4CEF1;
+	Mon,  5 May 2025 22:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485893;
-	bh=j7/CYS3VLTNk26/IFzZOFaFw1rjfX5mJX1MXklRtPcQ=;
+	s=k20201202; t=1746485905;
+	bh=ptyUP18uHVTbecN1W1P7sS32RvPDU/5QXcxuPG2yEpE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H9e8v6c8lZsxJ500EtBadpNtbw4a5NSuPZ6Zua6hYbn7Jbzc6npcUps2kd+tOWl8A
-	 0kDpPk6EOANyzjY6SjovOXDItedHD4ScYPW8G7qKsJSK3WbQuL8G4RvZ3AwP92kVin
-	 Bx4y+8PHGsJ56LQAUnHM4vCmfvjZJQhtHljVvh0HtW2iaxITdwln3gJ8122t0Iebqv
-	 LemgIcOTkeZ5crbAmc+Iva3ODn8AYF7apU+xtQRWvnmX0t6okSdxP4pn0lFa5wBwHF
-	 CRLuxjUAb7Q6opOIUUp2ij+HtJUMa5m66+pm0IzKvH2hIEYmvSIEbBvmY3kqCDaYI+
-	 NYnc7Gihgs+OQ==
+	b=VuVcm/+cmZxQE54NNQGFdMBSxJTS77XGydUJ660M8Zn9r8zhSROjF3ZIK5BXe8ZhB
+	 8Xvax6S0Rrn/hXmNfj+x7+8MklaDkjpiHauQBx62PsChGKBo88nQpfF+UWwwYbFR3q
+	 F6AvGrUl1B1+qMMf23QsErQVQh+9xS7toc/BZRJlsnSX2FTuyuq0kDOOmvQCBkxf0d
+	 yNRuzwRY/jmFzPOXEQ5TyHlvhXv2WmWEbVZIfpqVFmZhh4j3YKAUKbj5oNLdTxzVY/
+	 5Sq0Z8+QlZWarCx9pOm7OBafHaZNs1q9pENxGerzrdZ5ZmjjKewontTh1RR8UhKOgt
+	 ymM/di8b4C79Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Jing Zhou <Jing.Zhou@amd.com>,
-	Charlene Liu <charlene.liu@amd.com>,
-	Chris Park <chris.park@amd.com>,
-	Eric Yang <eric.yang@amd.com>,
-	Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <sashal@kernel.org>,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	Charlene.Liu@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 051/294] drm/amd/display: Guard against setting dispclk low for dcn31x
-Date: Mon,  5 May 2025 18:52:31 -0400
-Message-Id: <20250505225634.2688578-51-sashal@kernel.org>
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 058/294] scsi: st: Tighten the page format heuristics with MODE SELECT
+Date: Mon,  5 May 2025 18:52:38 -0400
+Message-Id: <20250505225634.2688578-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -72,116 +60,48 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Jing Zhou <Jing.Zhou@amd.com>
+From: Kai Mäkisara <Kai.Makisara@kolumbus.fi>
 
-[ Upstream commit 9c2f4ae64bb6f6d83a54d88b9ee0f369cdbb9fa8 ]
+[ Upstream commit 8db816c6f176321e42254badd5c1a8df8bfcfdb4 ]
 
-[WHY]
-We should never apply a minimum dispclk value while in
-prepare_bandwidth or while displays are active. This is
-always an optimizaiton for when all displays are disabled.
+In the days when SCSI-2 was emerging, some drives did claim SCSI-2 but did
+not correctly implement it. The st driver first tries MODE SELECT with the
+page format bit set to set the block descriptor.  If not successful, the
+non-page format is tried.
 
-[HOW]
-Defer dispclk optimization until safe_to_lower = true
-and display_count reaches 0.
+The test only tests the sense code and this triggers also from illegal
+parameter in the parameter list. The test is limited to "old" devices and
+made more strict to remove false alarms.
 
-Since 0 has a special value in this logic (ie. no dispclk
-required) we also need adjust the logic that clamps it for
-the actual request to PMFW.
-
-Reviewed-by: Charlene Liu <charlene.liu@amd.com>
-Reviewed-by: Chris Park <chris.park@amd.com>
-Reviewed-by: Eric Yang <eric.yang@amd.com>
-Signed-off-by: Jing Zhou <Jing.Zhou@amd.com>
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Signed-off-by: Alex Hung <alex.hung@amd.com>
-Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Kai Mäkisara <Kai.Makisara@kolumbus.fi>
+Link: https://lore.kernel.org/r/20250311112516.5548-4-Kai.Makisara@kolumbus.fi
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../dc/clk_mgr/dcn315/dcn315_clk_mgr.c        | 20 +++++++++++--------
- .../dc/clk_mgr/dcn316/dcn316_clk_mgr.c        | 13 +++++++++---
- 2 files changed, 22 insertions(+), 11 deletions(-)
+ drivers/scsi/st.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c
-index d4d3f58a613f7..ebeb969ee180b 100644
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c
-@@ -130,7 +130,7 @@ static void dcn315_update_clocks(struct clk_mgr *clk_mgr_base,
- 	struct clk_mgr_internal *clk_mgr = TO_CLK_MGR_INTERNAL(clk_mgr_base);
- 	struct dc_clocks *new_clocks = &context->bw_ctx.bw.dcn.clk;
- 	struct dc *dc = clk_mgr_base->ctx->dc;
--	int display_count;
-+	int display_count = 0;
- 	bool update_dppclk = false;
- 	bool update_dispclk = false;
- 	bool dpp_clock_lowered = false;
-@@ -204,15 +204,19 @@ static void dcn315_update_clocks(struct clk_mgr *clk_mgr_base,
- 		update_dppclk = true;
- 	}
- 
--	if (should_set_clock(safe_to_lower, new_clocks->dispclk_khz, clk_mgr_base->clks.dispclk_khz)) {
--		/* No need to apply the w/a if we haven't taken over from bios yet */
--		if (clk_mgr_base->clks.dispclk_khz)
--			dcn315_disable_otg_wa(clk_mgr_base, context, true);
-+	if (should_set_clock(safe_to_lower, new_clocks->dispclk_khz, clk_mgr_base->clks.dispclk_khz) &&
-+	    (new_clocks->dispclk_khz > 0 || (safe_to_lower && display_count == 0))) {
-+		int requested_dispclk_khz = new_clocks->dispclk_khz;
- 
-+		dcn315_disable_otg_wa(clk_mgr_base, context, true);
-+
-+		/* Clamp the requested clock to PMFW based on their limit. */
-+		if (dc->debug.min_disp_clk_khz > 0 && requested_dispclk_khz < dc->debug.min_disp_clk_khz)
-+			requested_dispclk_khz = dc->debug.min_disp_clk_khz;
-+
-+		dcn315_smu_set_dispclk(clk_mgr, requested_dispclk_khz);
- 		clk_mgr_base->clks.dispclk_khz = new_clocks->dispclk_khz;
--		dcn315_smu_set_dispclk(clk_mgr, clk_mgr_base->clks.dispclk_khz);
--		if (clk_mgr_base->clks.dispclk_khz)
--			dcn315_disable_otg_wa(clk_mgr_base, context, false);
-+		dcn315_disable_otg_wa(clk_mgr_base, context, false);
- 
- 		update_dispclk = true;
- 	}
-diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c
-index a13ead3d21e31..6f1785715dfb7 100644
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c
-@@ -140,7 +140,7 @@ static void dcn316_update_clocks(struct clk_mgr *clk_mgr_base,
- 	struct clk_mgr_internal *clk_mgr = TO_CLK_MGR_INTERNAL(clk_mgr_base);
- 	struct dc_clocks *new_clocks = &context->bw_ctx.bw.dcn.clk;
- 	struct dc *dc = clk_mgr_base->ctx->dc;
--	int display_count;
-+	int display_count = 0;
- 	bool update_dppclk = false;
- 	bool update_dispclk = false;
- 	bool dpp_clock_lowered = false;
-@@ -211,11 +211,18 @@ static void dcn316_update_clocks(struct clk_mgr *clk_mgr_base,
- 		update_dppclk = true;
- 	}
- 
--	if (should_set_clock(safe_to_lower, new_clocks->dispclk_khz, clk_mgr_base->clks.dispclk_khz)) {
-+	if (should_set_clock(safe_to_lower, new_clocks->dispclk_khz, clk_mgr_base->clks.dispclk_khz) &&
-+	    (new_clocks->dispclk_khz > 0 || (safe_to_lower && display_count == 0))) {
-+		int requested_dispclk_khz = new_clocks->dispclk_khz;
-+
- 		dcn316_disable_otg_wa(clk_mgr_base, context, safe_to_lower, true);
- 
-+		/* Clamp the requested clock to PMFW based on their limit. */
-+		if (dc->debug.min_disp_clk_khz > 0 && requested_dispclk_khz < dc->debug.min_disp_clk_khz)
-+			requested_dispclk_khz = dc->debug.min_disp_clk_khz;
-+
-+		dcn316_smu_set_dispclk(clk_mgr, requested_dispclk_khz);
- 		clk_mgr_base->clks.dispclk_khz = new_clocks->dispclk_khz;
--		dcn316_smu_set_dispclk(clk_mgr, clk_mgr_base->clks.dispclk_khz);
- 		dcn316_disable_otg_wa(clk_mgr_base, context, safe_to_lower, false);
- 
- 		update_dispclk = true;
+diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
+index 900322bad4f3b..293074f30906f 100644
+--- a/drivers/scsi/st.c
++++ b/drivers/scsi/st.c
+@@ -3082,7 +3082,9 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
+ 			   cmd_in == MTSETDRVBUFFER ||
+ 			   cmd_in == SET_DENS_AND_BLK) {
+ 			if (cmdstatp->sense_hdr.sense_key == ILLEGAL_REQUEST &&
+-			    !(STp->use_pf & PF_TESTED)) {
++				cmdstatp->sense_hdr.asc == 0x24 &&
++				(STp->device)->scsi_level <= SCSI_2 &&
++				!(STp->use_pf & PF_TESTED)) {
+ 				/* Try the other possible state of Page Format if not
+ 				   already tried */
+ 				STp->use_pf = (STp->use_pf ^ USE_PF) | PF_TESTED;
 -- 
 2.39.5
 
