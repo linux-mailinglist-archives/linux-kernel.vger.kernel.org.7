@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-633914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB794AAAEBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:03:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C70AAAED6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192391899F27
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EAD33A6C1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FEA2EC005;
-	Mon,  5 May 2025 23:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACDF2ECFEE;
+	Mon,  5 May 2025 23:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8tXl4nA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJh8rE+k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C12376893;
-	Mon,  5 May 2025 22:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41CD377651;
+	Mon,  5 May 2025 23:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485990; cv=none; b=WLAwpfWvag3DXyG5gz51RtPSoHUdVjfO5d8PpLfIZELcXiaDRQn7ksaVdhSL5KxRK8CJqTuN3p4gzm4YxOCQVd3k7uV7Mp9NFhrrsgDtZboo/ibEbhdkmaioM7CsuQiEfKCfaTRReg5WKv3uN4kA67W9tjjv5jRojYEPhLJPvOc=
+	t=1746486006; cv=none; b=dPepPGFjcuGTXFvRB+mnpEN8nJJ1rjOlrAErFXdc4T9n7f1RWMZZLkHbuwaPBGQT1NCGN9VnkHDFKtwCUkvxLYj+wEp8THS9fFE23kEFBnzJ0B1eyleJTQiAoddMGJpXHPg3gTOtx2mgdk37sECbxavu25IzLv8zAi+xD17FL1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485990; c=relaxed/simple;
-	bh=9onfsYXpFGOuv6V3xZe7zRvcKy8UCVXwkVjWMBo2Olo=;
+	s=arc-20240116; t=1746486006; c=relaxed/simple;
+	bh=ZwZ3YGeWzp0VrR/6gg4OpFWFODZyzKKrozm/7+HYum8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LnNx0tHqD1yXjrchOpPCn45+ox7gnCkeumdE3Flq1FOoWw8nabZ6goyOA/eWKZYTM8JfniyJS6sjlj3r7OijE78J34/mD1FMMZ/8NDJcdZdBTRPDZ4L4rlONtqmfsU0XqbRN2M/hePr4QGDYDeUUpu0sycx5l98q+cmsglq+K64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8tXl4nA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A407C4CEE4;
-	Mon,  5 May 2025 22:59:48 +0000 (UTC)
+	 MIME-Version; b=t4rAHnagmyZhpJY7r35TbQfk2ZwPxN6G4a6VjqCV0Xguz7YlcnQfC/fL8K0lIYL7SN7XCbonqbPUGvEcnxeNEqWGtnSGVvlLwglJie5Lr4BQS0AYHPfxrdaCPPByGmAUHsIQYl+YxkeCQfO3jgI2wkBb08/LJivZKisP+b8udEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJh8rE+k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72458C4CEE4;
+	Mon,  5 May 2025 23:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485989;
-	bh=9onfsYXpFGOuv6V3xZe7zRvcKy8UCVXwkVjWMBo2Olo=;
+	s=k20201202; t=1746486006;
+	bh=ZwZ3YGeWzp0VrR/6gg4OpFWFODZyzKKrozm/7+HYum8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o8tXl4nAvwkGYr6Ozte1FoiXrHxSiUK0AdVq4vMUYHKDVts/ggJ0MqpGtzyxER5y3
-	 630ZNSeS1BVe1NkCMTyvOHjhSy/d8vbFL8CE7+rSczxC0bfumsBa/PoQ2B8C2augd7
-	 smw6M60WtZEBFtCgZv24eCJtuqsE9hlXmJii23BSVH7UnIhLQHbCxDomaJIKs14reO
-	 8dVtlXP8JnWhCNXVkfpQYMdXSVUJzPHymlYuYo6f+j+rwX/slfg3vuMNdz+RunTT5a
-	 d1iuwQxfvX7MwHFKVjgcMdFEnse3XhzakdNels3so0NPA4XjMeltQLeCZO0YvkQJZg
-	 3qHt3Bt58PwJQ==
+	b=VJh8rE+k0zo4MMu0KnlOmaA/Ix/zrL+vVcAAp6wSWoHckp0EwqiYY7YedGMNCYVpc
+	 gHuSIX9o2sP8YKuJyLLHxEWdwtS5EldZsNCDMlCgTaGuZVtWtwDOqBHJT3QjOPTdyD
+	 W12oSgT/ugyzIl8eZ7oWB0vOpDp8/SLbQz/yWZ/zhy1pUgiZx0E8EnTT1+GIRbsUFu
+	 E5gZ//cYpNflsPMZwjLi8Z+8/aM81OXVeZqeKYWWAKmNyOZMcUbZ2UdsiPwWOeTT1e
+	 QBDLsGnzs3ch+R162tQaFmt5icM87Gal7xpPykc3VfaRBZjG3kRufkjhjBbAMd23QO
+	 hpMwsf/hV595g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Vasant Hegde <vasant.hegde@amd.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Joerg Roedel <jroedel@suse.de>,
+Cc: Andreas Schwab <schwab@linux-m68k.org>,
+	Rob Herring <robh@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	joro@8bytes.org,
-	will@kernel.org,
-	iommu@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.6 099/294] iommu/amd/pgtbl_v2: Improve error handling
-Date: Mon,  5 May 2025 18:53:19 -0400
-Message-Id: <20250505225634.2688578-99-sashal@kernel.org>
+	mpe@ellerman.id.au,
+	mahesh@linux.ibm.com,
+	sourabhjain@linux.ibm.com,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 6.6 106/294] powerpc/prom_init: Fixup missing #size-cells on PowerBook6,7
+Date: Mon,  5 May 2025 18:53:26 -0400
+Message-Id: <20250505225634.2688578-106-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -67,34 +68,42 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Vasant Hegde <vasant.hegde@amd.com>
+From: Andreas Schwab <schwab@linux-m68k.org>
 
-[ Upstream commit 36a1cfd497435ba5e37572fe9463bb62a7b1b984 ]
+[ Upstream commit 7e67ef889c9ab7246547db73d524459f47403a77 ]
 
-Return -ENOMEM if v2_alloc_pte() fails to allocate memory.
+Similar to the PowerMac3,1, the PowerBook6,7 is missing the #size-cells
+property on the i2s node.
 
-Signed-off-by: Vasant Hegde <vasant.hegde@amd.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Link: https://lore.kernel.org/r/20250227162320.5805-4-vasant.hegde@amd.com
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Depends-on: commit 045b14ca5c36 ("of: WARN on deprecated #address-cells/#size-cells handling")
+Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+[maddy: added "commit" work in depends-on to avoid checkpatch error]
+Signed-off-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+Link: https://patch.msgid.link/875xmizl6a.fsf@igel.home
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd/io_pgtable_v2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/prom_init.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/amd/io_pgtable_v2.c b/drivers/iommu/amd/io_pgtable_v2.c
-index cbf0c46015125..6c0777a3c57b7 100644
---- a/drivers/iommu/amd/io_pgtable_v2.c
-+++ b/drivers/iommu/amd/io_pgtable_v2.c
-@@ -259,7 +259,7 @@ static int iommu_v2_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
- 		pte = v2_alloc_pte(pdom->nid, pdom->iop.pgd,
- 				   iova, map_size, gfp, &updated);
- 		if (!pte) {
--			ret = -EINVAL;
-+			ret = -ENOMEM;
- 			goto out;
- 		}
+diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+index a6090896f7497..ac669e58e2023 100644
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -2974,11 +2974,11 @@ static void __init fixup_device_tree_pmac(void)
+ 	char type[8];
+ 	phandle node;
  
+-	// Some pmacs are missing #size-cells on escc nodes
++	// Some pmacs are missing #size-cells on escc or i2s nodes
+ 	for (node = 0; prom_next_node(&node); ) {
+ 		type[0] = '\0';
+ 		prom_getprop(node, "device_type", type, sizeof(type));
+-		if (prom_strcmp(type, "escc"))
++		if (prom_strcmp(type, "escc") && prom_strcmp(type, "i2s"))
+ 			continue;
+ 
+ 		if (prom_getproplen(node, "#size-cells") != PROM_ERROR)
 -- 
 2.39.5
 
