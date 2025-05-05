@@ -1,214 +1,142 @@
-Return-Path: <linux-kernel+bounces-632129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1399EAA92DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:17:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FEBAA92E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7C5C7A6225
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:16:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 736FF3B7DDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F37724BBFA;
-	Mon,  5 May 2025 12:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B2A253F3D;
+	Mon,  5 May 2025 12:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LQr2tQRx"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PVCwPr3m"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8123224A078
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AB124A051
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746447440; cv=none; b=sGODTuisBVQbdwY3avctDxVEaAe67Hv0c0rj593lfyMqTBC14Y9cVUHgNJm2wUspcGeQlbpIStG1nnEaY0VIQKclcIrHQQyPl0ziZhpKDw1bkIL1zY/5GmSyGi23rYxwHUu9i0YELvNWHnP3n7vKgJOYvDpMA6yNKqstCYh5f4Y=
+	t=1746447467; cv=none; b=RtaT9ejnsItpOiV4SZSuvYPOM3l4/IrBQzYmCoijiOBBwx+GqdoMAfc6TxtO9/LnKQCqF2lRLWcqbDtqg0EMjKlpA3WnlaQZ5zs7+3VxGMX6r8NKiIw6XLzy9eEzL+RY51IexdbrP6F9vhSdLDavOdcl+Z9R7bfVzTwTLmK4q8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746447440; c=relaxed/simple;
-	bh=BREDZXAmaPjM/X5b0tx0owsLlE8OwE6GhnlwAd9vfWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DrlQZJYSBADbAD6dt2+eENGBZBl13rcq+rn3EgMTaV5F++3dphU6R03YsM8ghyIhFkGX5rjgQARlx6V8MZMzSSjyscfCOc87mObu2IYiKYRva0Cf/Yx1RqXyXKDtoTgQQLYf5HyX58me79my4nx0c23USsEPuoYD656NBqOqJRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LQr2tQRx; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb1eso7202387a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:17:17 -0700 (PDT)
+	s=arc-20240116; t=1746447467; c=relaxed/simple;
+	bh=AT8JQLw8EOBIqLg1hsD+PdWTgjTnmcFKPeIxajf3hEQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OU9krvmj5B9RbmLYM/IggdB4iVJw5jVZNvn9hrINl+SD97EESGoswuXYexTFerg1S6psry59zlX2tt4+n2uOpM3Ln2C44CRnjdbJfKT6KUmeI0gTKdF1ouk8coWEY/gQDe7paWpasET8Gt/gj7lMS+ZqkNGIY9UL/dwCMI7pntc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PVCwPr3m; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3912a0439afso1199837f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:17:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746447436; x=1747052236; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=myd943qeytFkxv1f6Nlms25UU0W8wxTEqMD/K5etliY=;
-        b=LQr2tQRxllksAk9+q9e1F57oiRuyE5NSnVS5bhfGcqfw6sfVIEqeZFZ1TJnWO3S9B1
-         hIWxAsng5t3ZRcL8w/qwbmlgg4CQBrOfT/pOw3VSpYjcsgLXbgoBMc8K6G+00j+Qvil1
-         pKK/zHXK2M57C34r0W8XRIYDQ/f/yV8a0Bnc+6JAn39bqhE47+vKS5z+d2S/SIyCGJES
-         WYBfmSwIu6/vl2/DsWqDKYVJhUqs6kBg4QEhCqyWzX1YfuInrTvPpddcdsHhjEb8/thB
-         1mdv3no2z36iHsXPIjEtHXmODY/qBvku/22yROQkL3Y8sDboMeD24B1vYYk6pPbg8tnE
-         9dxg==
+        d=google.com; s=20230601; t=1746447463; x=1747052263; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tUtKJCb9zxzQYcQhaWAG9VNqZWaDz69k5Oi4J/8AuAI=;
+        b=PVCwPr3mb6f1nghKqNe0mJYcel4FXSkBM4nran61asDSd2sCR3vK/WSFzk+jwBlgo+
+         0KPIw+KfR6qWD39LGlKzCKGY2r//khtKBAtgQ18wOSjazhsZjS0f//1qQulM6udIzN5K
+         7XhzF++aiiHFIM9LJXlNXlpkKp2cRPDzwoY8HIlYBupw64h+6ZqnRHYFf1zficwAy4JT
+         CqyJfrmJRvH4t+cR0ugwe0BQymRxgtL4l90ebkzujAFF/SILT7VUOJ41cB2iD7QTXAH3
+         Yzfj10HdvIYHolAYJTWC9btjJydYaMAtk4tEXK0Zvsn17OsHHBOjNB18uagvCDeCuPOl
+         +9bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746447436; x=1747052236;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=myd943qeytFkxv1f6Nlms25UU0W8wxTEqMD/K5etliY=;
-        b=chJBmJnS3q0XOid/zAxbr3l4sjoGBy4aNQl/osRO8BSuef2KACjJ86EcEav+G1cZiM
-         QoHExi6/ryBwh8LLEZKUogdgm5r4y06QDMGCBU/eN2pxOqff94QgL/VmsOkeVVWDDQre
-         jsW8EbcvOvmTuRInZlTcPo+w9lqv2VH7UUU3fXYfYnQNXWA2DHN0S1yexnulM5yIn4OS
-         y5ZsOSQf0OxscKzaLJ0MtsxUflDBEYA3AkCMj2S7oJQ0SqvJPejakCgxMRA6lf9+7y7u
-         7KeQhkvXioG8aLl5bcNkhn6iNtsWcqqY235iaq8fSvzmWPgIfSfKO5vdXSnfY1FWvJrj
-         GgAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWESlLB0B8jMxapXvkkvpg/K0/+cckZaGLe2BAu9NrsYlNspMaLuVtqsazUm6zHwKc6FKzSWw0Xx43MYKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT6tWUVqRzDTcbDNS5rzkZW0wPN3QYdAX7rKJGb0q6PChpeHQB
-	dyAq5Rknc4E/AjmNQh/b3u+RrZm9yle4+PFqCuXTzHIXyIVYnGzzx4kFe3fJl5g=
-X-Gm-Gg: ASbGncsVwWXUcylIWfKFDgK7bQZd+qG7rEdG3NB3NJroNmNGWg2GiLnCRVsWqbfOPxU
-	Dlq0Qa3KmmwBz2qZosiL0WtbDXOP4wMO7g7TKlWCQbPz6Ov+70WhCDN/2yrUokWK+RO91tU5Ji9
-	GHVEyu/gLo+Nw8T7G/tvdLtihGeqmHwhcb086C7eK6UAd6fxLRbHfFSz4nn0BBseAR1tYtZIDTx
-	i5XldGULd5/RQQQTlGo+x1IGLMYtCfpiLG3HBbfDzSm49dOhtgCi5JkuO2WojlI8ciEgxdpMOk1
-	ny9yqKmofso2T8cBFiifABFXGiC/7PeMWm3Pr/PCEBw=
-X-Google-Smtp-Source: AGHT+IEenSjiu4Qhw7WCpvLoQWTwKhG6JMkx8XfTfu1IIxQXweU+ZPuYlCXJzCW60Hm8EzPIKwdd+Q==
-X-Received: by 2002:a05:6402:2793:b0:5f4:3976:66c5 with SMTP id 4fb4d7f45d1cf-5fa73291384mr10824427a12.7.1746447435768;
-        Mon, 05 May 2025 05:17:15 -0700 (PDT)
-Received: from [10.100.51.48] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa77b90080sm5494805a12.52.2025.05.05.05.17.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 05:17:15 -0700 (PDT)
-Message-ID: <5b0fd8c8-8466-437a-95de-581075f8faf5@suse.com>
-Date: Mon, 5 May 2025 14:17:14 +0200
+        d=1e100.net; s=20230601; t=1746447463; x=1747052263;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tUtKJCb9zxzQYcQhaWAG9VNqZWaDz69k5Oi4J/8AuAI=;
+        b=RE9W0UsTSUVRTEcaYBig82Rbn9vXiauhe6aZPCM90urIdML7snGw0j1FbwvKSNU722
+         aVVhjrdpN/srRvyNotBAH0PbvsMdP4w17F3fIM6Hx8EGfTzcQA0UJ+ngVdjr11fAxcX8
+         wF7Ebc+dH4doGDkqbRw70CGYTAncuvMDCxBPK+JVO/WlqLn1RhrLW0B7gBCMLQ8IoyVe
+         JK2qcs+IpKE50NoNUWNYcwCP+8pqHOwpY3QVFZ20B0PM+0QvhPsNxraD0Y1z7BwQwuNH
+         cqjDsA+lM2E8Xcn/2qQlXbBctUVoIeJhZGlguXvewVZ+3h3rp+PDsHj0hlVfTN3NISU+
+         g0OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfHBBFSWqfzkY6hl9GCIUnexY8MZnbifX+gWhdTHnPxmny0A7P7FYy7h065XZ+ZAoqUoMayH3xIGSM5SU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3MbiqHzMQo/EaDjzJrWnMTqjUbtEfQOHm3XNjp1qLSF/nvRDM
+	z7N0/dtfSfLE5n/BEQpLVCkyBsxhdd0vpjyVQy91rjePvyycMQkukyk6izFDAMiPMxRc1imNjqa
+	/9LA8RY16ejC+CQ==
+X-Google-Smtp-Source: AGHT+IEA9C52kPPF6qxConSxBxERklqj6Hl7vrYxzP0AmGH60eFxWxlKTQ+JAbCuorOuBGBO+0IgW9dNOLQSXws=
+X-Received: from wro26.prod.google.com ([2002:a05:6000:41da:b0:39a:bcee:e7a1])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:47a8:0:b0:399:7f44:5c74 with SMTP id ffacd0b85a97d-3a09cf3df66mr7148614f8f.55.1746447463637;
+ Mon, 05 May 2025 05:17:43 -0700 (PDT)
+Date: Mon, 05 May 2025 12:17:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] gendwarfksyms: Add a kABI rule to override type
- strings
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@samsung.com>,
- linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, Giuliano Procida <gprocida@google.com>
-References: <20250430214049.2658716-6-samitolvanen@google.com>
- <20250430214049.2658716-9-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250430214049.2658716-9-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAFqsGGgC/33NTQ6CMBCG4auYrh3Tlh/BlfcwLko7A02EkhYbC
+ eHuFlaaGJfvJN8zCwvoLQZ2OSzMY7TBuiFFdjww3amhRbAmNZNcFjyXOYTJD3qcgbzr4ZnWIEg
+ aXjZcG4Ms7UaPZF+7ebun7myYnJ/3F1Fs139aFCCA6iojlKKsCnVtnWsfeNKuZxsX5SdR/yIkc DhjSUorzRviX8S6rm+ezM8g9gAAAA==
+X-Change-Id: 20250424-strncpy-from-user-1f2d06b0cdde
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1565; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=AT8JQLw8EOBIqLg1hsD+PdWTgjTnmcFKPeIxajf3hEQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoGKxgSg5DtzqlaVnObt7fpY20lByyFUVpTFEKN
+ W8Buuw+L56JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaBisYAAKCRAEWL7uWMY5
+ RksMEACO9sKHWqUgFcihbZJfxagX0rGCiMt2/rX0/70s7EuVAOBqWm3u+f2wdUwZ9eDdc2qsDuF
+ HaQFmfxe0iCHbtecSaY/sIs/p3WNtHtZdLxHlPtfCvYp65mpwwxPBTOE6DIiVIHfl+m+a/oq5Pm
+ 9X85hmin8Bl52kRa0FW3zFapkr7rz60sUfkPjB6NhS5yU0pyMeNBqDCWvfQaVs+PsJ4XNq5bYTg
+ hTMMNENsNzRkFKsLufDtGH5738LNnbR+8c6IkkjJ1gIlsijZRx/8Cb7exbYYFs2aHS81lu/ajkz
+ OOC8/qEptoadFWw/oqE+lS2HCCUzQfsGgD81Fkk7aYkIjzIk0PsVqglD09VwXgmlxTJxc7yJNfo
+ 4cc4HrZjbvkOZY0WhZmFi2YxzqLaIZVbQ8y/cAxAsBndC4a2p8vuXihkuksO1xWtFQULSjp2LR6
+ CcO2XhavUmC2EL8l65OSeRwyGBn/BZaU4/0qgk382K9rIuyx6rvN684TKbdjeDfoACSxPalYhML
+ kEJ7I5nGhHYHNmafp3h1oq1o05MZ1YivCt2iute2rLWPmFf8mFC7v5ofXdnxKEHXqPDim5vBmxa
+ t89EslyWv3t4EFeO9SuVFnnILBPnrItwB+TChhP6zEFsLLRN/t2GiHk5PJY5G/Rg0L8Z52Dezb6 esAC+jbqipzMXPQ==
+X-Mailer: b4 0.14.2
+Message-ID: <20250505-strncpy-from-user-v3-0-85c677fd4f91@google.com>
+Subject: [PATCH v3 0/2] strncpy_from_user for Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 4/30/25 23:40, Sami Tolvanen wrote:
-> In rare situations where distributions must make significant
-> changes to otherwise opaque data structures that have
-> inadvertently been included in the published ABI, keeping
-> symbol versions stable using the existing kABI macros can
-> become tedious.
-> 
-> For example, Android decided to switch to a newer io_uring
-> implementation in the 5.10 GKI kernel "to resolve a huge number
-> of potential, and known, problems with the codebase," requiring
-> "horrible hacks" with genksyms:
-> 
->   "A number of the io_uring structures get used in other core
->   kernel structures, only as "opaque" pointers, so there is
->   not any real ABI breakage.  But, due to the visibility of
->   the structures going away, the CRC values of many scheduler
->   variables and functions were changed."
->     -- https://r.android.com/2425293
-> 
-> While these specific changes probably could have been hidden
-> from gendwarfksyms using the existing kABI macros, this may not
-> always be the case.
-> 
-> Add a last resort kABI rule that allows distribution
-> maintainers to fully override a type string for a symbol or a
-> type. Also add a more informative error message in case we find
-> a non-existent type references when calculating versions.
-> 
-> Suggested-by: Giuliano Procida <gprocida@google.com>
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> [...]
-> @@ -372,9 +405,81 @@ static void type_expand(struct die *cache, struct type_expansion *type,
->  	cache_free(&expansion_cache);
->  }
->  
-> +static void type_parse(const char *name, const char *str,
-> +		       struct type_expansion *type)
-> +{
-> +	char *fragment;
-> +	size_t start = 0;
-> +	size_t end;
-> +	size_t pos;
-> +
-> +	if (!*str)
-> +		error("empty type string override for '%s'", name);
-> +
-> +	type_expansion_init(type);
-> +
-> +	for (pos = 1; str[pos]; ++pos) {
-> +		bool empty;
-> +		char marker = ' ';
-> +
-> +		if (!is_type_prefix(&str[pos - 1]))
-> +			continue;
-> +
-> +		end = pos + 1;
-> +
-> +		/*
-> +		 * Find the end of the type reference. If the type name contains
-> +		 * spaces, it must be in single quotes.
-> +		 */
-> +		if (str[end] == '\'') {
-> +			marker = '\'';
-> +			++end;
-> +		}
-> +		while (str[end] && str[end] != marker)
-> +			++end;
-> +
-> +		/* Check that we have a non-empty type name */
-> +		if (marker == '\'') {
-> +			if (str[end] != marker)
-> +				error("incomplete %c# type reference for '%s' (string : '%s')",
-> +				      str[pos - 1], name, str);
-> +			empty = end == pos + 2;
-> +			++end;
-> +		} else {
-> +			empty = end == pos + 1;
-> +		}
-> +		if (empty)
-> +			error("empty %c# type name for '%s' (string: '%s')",
-> +			      str[pos - 1], name, str);
-> +
-> +		/* Append the part of the string before the type reference */
-> +		if (pos > start + 1) {
-> +			fragment = xstrndup(&str[start], pos - start - 1);
-> +			type_expansion_append(type, fragment, fragment);
-> +		}
-> +
-> +		/*
-> +		 * Append the type reference -- note that if the reference
-> +		 * is invalid, i.e. points to a non-existent type, we will
-> +		 * print out an error when calculating versions.
-> +		 */
-> +		fragment = xstrndup(&str[pos - 1], end - pos + 1);
-> +		type_expansion_append(type, fragment, fragment);
-> +
-> +		pos = start = end;
-> +		if (!str[pos])
-> +			break;
-> +	}
-> +
-> +	/* Append the rest of the type string, if there's any left */
-> +	if (str[start])
-> +		type_expansion_append(type, &str[start], NULL);
-> +}
-> +
+There is currently no easy way to read NUL-terminated strings from
+userspace. Trying to use the ordinary read function on an array of the
+maximum length doesn't work because it could fail with EFAULT when the C
+string is shorter than the maximum length. In this case,
+strncpy_from_user is better because it doesn't return EFAULT even if it
+encounters a page fault on bytes that are after the NUL-terminator but
+before the maximum length.
 
-I'd find this mini-parser more straightforward, if its main loop started at
-pos=0 and looked ahead, instead of starting at pos=1 and looking behind.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v3:
+- Remove pub from raw_strncpy_from_user.
+- Mention that some data may have been copied on EFAULT.
+- Add more comments to strcpy_into_buf about tricky cases.
+- Rewrite documentation of strcpy_into_buf.
+- Pick up Reviewed-by tags.
+- Link to v2: https://lore.kernel.org/r/20250429-strncpy-from-user-v2-0-7e6facac0bf0@google.com
 
-The patch otherwise makes sense to me. It looks similar to the override keyword
-supported by genksyms.
+Changes in v2:
+- Rename the raw wrapper around strncpy_from_user to raw_strncpy_from_user.
+- Add a more convenient helper on top that adds the missing
+  NUL-terminator when necessary.
+- Link to v1: https://lore.kernel.org/r/20250424-strncpy-from-user-v1-1-f983fe21685a@google.com
 
+---
+Alice Ryhl (2):
+      uaccess: rust: add strncpy_from_user
+      uaccess: rust: add UserSliceReader::strcpy_into_buf
+
+ rust/kernel/uaccess.rs | 86 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 85 insertions(+), 1 deletion(-)
+---
+base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
+change-id: 20250424-strncpy-from-user-1f2d06b0cdde
+
+Best regards,
 -- 
-Thanks,
-Petr
+Alice Ryhl <aliceryhl@google.com>
+
 
