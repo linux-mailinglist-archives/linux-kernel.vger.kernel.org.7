@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-633755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECA6AAAE14
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:49:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D52AAADFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77093B4C5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:44:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B6D172502
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAFD3731B5;
-	Mon,  5 May 2025 22:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB401B0F23;
+	Mon,  5 May 2025 22:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hw7nsilh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMIxcF+o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167F635B936;
-	Mon,  5 May 2025 22:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9A235B941;
+	Mon,  5 May 2025 22:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485088; cv=none; b=WRSiozbpYOHwT0Aoio7+qWnCxwLfu8ThJDYt3xPN1LpdrXPdXSt9ymap8Y+PcQnHQOmK9hQMdu0NNkdqB/xRHvlwnQ0mBWhWmSntO9EHUl0mZz0OXLCWUKNvj5ElU2zRPqyICwNP+p81x5GaJz9v9fXWWWCRn6YFvVO/vXdiWHs=
+	t=1746485090; cv=none; b=V8sIt2S6GNYi+YPmSk3BfA/FqnS4hcqVq8lbPFydHeM/afOYWpL6LJEE4D1NkwAbpVFIlqmGlscJiVDZjaGHTcX10cg8O4C85ilAhDMkWtBNXcQKtUF1xViBt+O8cr1b1eyRhSmkEei5SD0KAxy7PfSOElCXTFBDYD8hE09uDI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485088; c=relaxed/simple;
-	bh=SiZIssIutDQbFCY8o8RcEQfIALaoj/xPA6klpsRAGBI=;
+	s=arc-20240116; t=1746485090; c=relaxed/simple;
+	bh=LCnnPAWWj9dD4v3jedrgPS8PzuwhW6mTI4/VpNY/qZk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Hw+RFmutaVbJ71gICVwusVfFTcUKcts6v0eimoK0rX1GdoZHtfnaZHgfeqa6gqFn73QHGxjrIHI6Lvh6r0NomCBk9Empz6eb0oFB6aULguM56UHG4c6SDODeJijqq0Glpg34ToYe6mnY+d8Ca/QQ02DZFw9ia1I2gZabVCKeFHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hw7nsilh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A64C4CEF9;
-	Mon,  5 May 2025 22:44:44 +0000 (UTC)
+	 MIME-Version; b=Qe6KPziVj+Owm62hU+Ar5bAwhhhs8tnMaD8381Tu0VEN2UhpV1xUEwyClqcS7mfxAApXagxVvqJClen/M59zuNWxyb6P6EGu+xLeMjapnBti/VRh1OjRmln1xGSEGTCxbYCG0lBum3GvBKzBdYCpmVQYptXJZBq/+mLraSV/Qw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMIxcF+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3656DC4CEE4;
+	Mon,  5 May 2025 22:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485086;
-	bh=SiZIssIutDQbFCY8o8RcEQfIALaoj/xPA6klpsRAGBI=;
+	s=k20201202; t=1746485090;
+	bh=LCnnPAWWj9dD4v3jedrgPS8PzuwhW6mTI4/VpNY/qZk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hw7nsilh2Vox3qX9vAlZtN4BdVrp7cYWgQpKVCdTirjvMCkU1tLAadnUhKPhVpZqN
-	 NgibrQ60sX4jii0iP3zSVksWDA5ed62KwOonH7ydtYzzhqPEPddK6clWVc92VGlkuU
-	 igPbm8QnMtSY7yoZBp9fcYIb4N2XOpi8FbfHV34ppjgddQUsByNQ/6pHargw7r93lt
-	 YJxWfkxfcrP5KLoxZDsip0V4le2tW5hgMpGFRkGsCRJEf2DqpsNAiD+x8W4TNA9+Ng
-	 htipYdprcSFtF97Y3z05/RoWhp0ViJrcbJ8UakR5syF3COiGbZmOraqHiiBsLhRxL3
-	 h9DWIQUPv31qw==
+	b=FMIxcF+oIvruhNxU/yj2+dfsIgdH9OIVguARj99/Ceeeucwp2WitamSJX0GSYN9d3
+	 lOiZy2DKvod7kDYWn9ndL4zzXT0XTtIh/AmE8M8oiSHgg18I/nKRSdICHIvKv5/zji
+	 +oFPVGUWwmAhMlLJkld4zRcHdoTUTu6Xc/Cs661y7PVj2Ry6Zn+XcKR9aT2KpezY08
+	 csoJzZf2OzGCHCcuGyTSQcoTTLbELSDiLOS9GJ4RhGzqw3Sg8wgLTjarDaPM8DHNNZ
+	 gjIllpAiRqzPNNnykmsvH3GkWHrokrLwX3rz8HiSlXW0GaHNXI4eGeTIx1yBXKUJHR
+	 4JK7JEBRTFWlg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Zhikai Zhai <zhikai.zhai@amd.com>,
-	Charlene Liu <charlene.liu@amd.com>,
+Cc: Peichen Huang <PeiChen.Huang@amd.com>,
+	Cruise Hung <cruise.hung@amd.com>,
+	Meenakshikumar Somasundaram <meenakshikumar.somasundaram@amd.com>,
 	Tom Chung <chiahsuan.chung@amd.com>,
 	Daniel Wheeler <daniel.wheeler@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>,
@@ -54,18 +55,17 @@ Cc: Zhikai Zhai <zhikai.zhai@amd.com>,
 	christian.koenig@amd.com,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	Austin.Zheng@amd.com,
-	aric.cyr@amd.com,
-	alvin.lee2@amd.com,
-	rodrigo.siqueira@amd.com,
+	wenjing.liu@amd.com,
 	alex.hung@amd.com,
-	srinivasan.shanmugam@amd.com,
-	rostrows@amd.com,
+	Jerry.Zuo@amd.com,
+	michael.strauss@amd.com,
+	Brendan.Tam@amd.com,
+	ivlipski@amd.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 157/486] drm/amd/display: calculate the remain segments for all pipes
-Date: Mon,  5 May 2025 18:33:53 -0400
-Message-Id: <20250505223922.2682012-157-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 158/486] drm/amd/display: not abort link train when bw is low
+Date: Mon,  5 May 2025 18:33:54 -0400
+Message-Id: <20250505223922.2682012-158-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -80,93 +80,47 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Zhikai Zhai <zhikai.zhai@amd.com>
+From: Peichen Huang <PeiChen.Huang@amd.com>
 
-[ Upstream commit d3069feecdb5542604d29b59acfd1fd213bad95b ]
+[ Upstream commit 8a21da2842bb22b2b80e5902d0438030d729bfd3 ]
 
 [WHY]
-In some cases the remain de-tile buffer segments will be greater
-than zero if we don't add the non-top pipe to calculate, at
-this time the override de-tile buffer size will be valid and used.
-But it makes the de-tile buffer segments used finally for all of pipes
-exceed the maximum.
+DP tunneling should not abort link train even bandwidth become
+too low after downgrade. Otherwise, it would fail compliance test.
 
-[HOW]
-Add the non-top pipe to calculate the remain de-tile buffer segments.
-Don't set override size to use the average according to pipe count
-if the value exceed the maximum.
+[HOW}
+Do link train with downgrade settings even bandwidth is not enough
 
-Reviewed-by: Charlene Liu <charlene.liu@amd.com>
-Signed-off-by: Zhikai Zhai <zhikai.zhai@amd.com>
+Reviewed-by: Cruise Hung <cruise.hung@amd.com>
+Reviewed-by: Meenakshikumar Somasundaram <meenakshikumar.somasundaram@amd.com>
+Signed-off-by: Peichen Huang <PeiChen.Huang@amd.com>
 Signed-off-by: Tom Chung <chiahsuan.chung@amd.com>
 Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../dc/resource/dcn315/dcn315_resource.c      | 42 +++++++++----------
- 1 file changed, 20 insertions(+), 22 deletions(-)
+ .../gpu/drm/amd/display/dc/link/protocols/link_dp_training.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
-index f2ce687c0e03c..9cb72805b8d1a 100644
---- a/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
-@@ -1699,7 +1699,7 @@ static int dcn315_populate_dml_pipes_from_context(
- 		pipes[pipe_cnt].dout.dsc_input_bpc = 0;
- 		DC_FP_START();
- 		dcn31_zero_pipe_dcc_fraction(pipes, pipe_cnt);
--		if (pixel_rate_crb && !pipe->top_pipe && !pipe->prev_odm_pipe) {
-+		if (pixel_rate_crb) {
- 			int bpp = source_format_to_bpp(pipes[pipe_cnt].pipe.src.source_format);
- 			/* Ceil to crb segment size */
- 			int approx_det_segs_required_for_pstate = dcn_get_approx_det_segs_required_for_pstate(
-@@ -1756,28 +1756,26 @@ static int dcn315_populate_dml_pipes_from_context(
- 				continue;
- 			}
+diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_training.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_training.c
+index 27b881f947e8b..9385a32a471b8 100644
+--- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_training.c
++++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_training.c
+@@ -1769,13 +1769,10 @@ bool perform_link_training_with_retries(
+ 			is_link_bw_min = ((cur_link_settings.link_rate <= LINK_RATE_LOW) &&
+ 				(cur_link_settings.lane_count <= LANE_COUNT_ONE));
  
--			if (!pipe->top_pipe && !pipe->prev_odm_pipe) {
--				bool split_required = pipe->stream->timing.pix_clk_100hz >= dcn_get_max_non_odm_pix_rate_100hz(&dc->dml.soc)
--						|| (pipe->plane_state && pipe->plane_state->src_rect.width > 5120);
+-			if (is_link_bw_low) {
++			if (is_link_bw_low)
+ 				DC_LOG_WARNING(
+ 					"%s: Link(%d) bandwidth too low after fallback req_bw(%d) > link_bw(%d)\n",
+ 					__func__, link->link_index, req_bw, link_bw);
 -
--				if (remaining_det_segs > MIN_RESERVED_DET_SEGS && crb_pipes != 0)
--					pipes[pipe_cnt].pipe.src.det_size_override += (remaining_det_segs - MIN_RESERVED_DET_SEGS) / crb_pipes +
--							(crb_idx < (remaining_det_segs - MIN_RESERVED_DET_SEGS) % crb_pipes ? 1 : 0);
--				if (pipes[pipe_cnt].pipe.src.det_size_override > 2 * DCN3_15_MAX_DET_SEGS) {
--					/* Clamp to 2 pipe split max det segments */
--					remaining_det_segs += pipes[pipe_cnt].pipe.src.det_size_override - 2 * (DCN3_15_MAX_DET_SEGS);
--					pipes[pipe_cnt].pipe.src.det_size_override = 2 * DCN3_15_MAX_DET_SEGS;
--				}
--				if (pipes[pipe_cnt].pipe.src.det_size_override > DCN3_15_MAX_DET_SEGS || split_required) {
--					/* If we are splitting we must have an even number of segments */
--					remaining_det_segs += pipes[pipe_cnt].pipe.src.det_size_override % 2;
--					pipes[pipe_cnt].pipe.src.det_size_override -= pipes[pipe_cnt].pipe.src.det_size_override % 2;
--				}
--				/* Convert segments into size for DML use */
--				pipes[pipe_cnt].pipe.src.det_size_override *= DCN3_15_CRB_SEGMENT_SIZE_KB;
--
--				crb_idx++;
-+			bool split_required = pipe->stream->timing.pix_clk_100hz >= dcn_get_max_non_odm_pix_rate_100hz(&dc->dml.soc)
-+					|| (pipe->plane_state && pipe->plane_state->src_rect.width > 5120);
-+
-+			if (remaining_det_segs > MIN_RESERVED_DET_SEGS && crb_pipes != 0)
-+				pipes[pipe_cnt].pipe.src.det_size_override += (remaining_det_segs - MIN_RESERVED_DET_SEGS) / crb_pipes +
-+						(crb_idx < (remaining_det_segs - MIN_RESERVED_DET_SEGS) % crb_pipes ? 1 : 0);
-+			if (pipes[pipe_cnt].pipe.src.det_size_override > 2 * DCN3_15_MAX_DET_SEGS) {
-+				/* Clamp to 2 pipe split max det segments */
-+				remaining_det_segs += pipes[pipe_cnt].pipe.src.det_size_override - 2 * (DCN3_15_MAX_DET_SEGS);
-+				pipes[pipe_cnt].pipe.src.det_size_override = 2 * DCN3_15_MAX_DET_SEGS;
-+			}
-+			if (pipes[pipe_cnt].pipe.src.det_size_override > DCN3_15_MAX_DET_SEGS || split_required) {
-+				/* If we are splitting we must have an even number of segments */
-+				remaining_det_segs += pipes[pipe_cnt].pipe.src.det_size_override % 2;
-+				pipes[pipe_cnt].pipe.src.det_size_override -= pipes[pipe_cnt].pipe.src.det_size_override % 2;
- 			}
-+			/* Convert segments into size for DML use */
-+			pipes[pipe_cnt].pipe.src.det_size_override *= DCN3_15_CRB_SEGMENT_SIZE_KB;
-+
-+			crb_idx++;
- 			pipe_cnt++;
+-				return false;
+-			}
  		}
- 	}
+ 
+ 		msleep(delay_between_attempts);
 -- 
 2.39.5
 
