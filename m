@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-632247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4DBAA9492
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:30:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E265EAA93E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964BC3B4BAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:30:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C811898E4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210C413777E;
-	Mon,  5 May 2025 13:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E19255E31;
+	Mon,  5 May 2025 13:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rrx/XmeU"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YgBPQDsO"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE67C8FE
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 13:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C252550B3;
+	Mon,  5 May 2025 13:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746451834; cv=none; b=ZXeJv0MzV77aC20ASDN5QjHSo/xHARW/pPJPeysYY810vpKn0aN/CYaxpVdi5MZiB2Q7feHimqpmMppqCgm2PE1QtwTmKjd7QqmCqHHKEQbaqUn2g1W7RFF+S3W76CJPd7RaRmEX/lK/AjRLKUnufiP8kgi0tsm7GJcgC/BIu2I=
+	t=1746450191; cv=none; b=g8gPtUS4PII/0svIq6G9VS7opxZ8jlldWhdTdCaIa7VvTrF7D4QlGL0DP0IvH3h58KjWopkIxtomt32e6OLMf6q7hkKwnXA6ib3DqpYYjnPwA6oj5+VjgKgp4nrgwZrNAnKiRjFGyY7ZsI/ZZDM2l6MA0tiOvcLQeuj8z75Fg0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746451834; c=relaxed/simple;
-	bh=UsRJmxSzX5ZOwpe7JqsYy/4OxjCEXYbODGaUrJyxL2k=;
-	h=Message-ID:From:Date:Subject:MIME-Version:Content-Type:To:Cc; b=aad7EFN5/uscEb1JupffwLMJue8OMSKLLOGnKICLY67O0hGHOyEIZ1w16MyLKgYqfBg5JnQX+fRnx+MxZO9mJX3v/zfa5UdIe90uMZGEuNRDyqqmEwsQ3nUF9T0fZR0Ai/6uPIv1OIZZJsqEECuniqDxUuzY/mypVnaJTFqLK5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rrx/XmeU; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1746451517; bh=2/FFJmk/+fGXLOIPIpdneqACysAwX5YZ9QhmVvofnu0=;
-	h=From:Date:Subject:To:Cc;
-	b=rrx/XmeUqF2EQf0gE3tLWLo6hE+Akf0Z+Xzla3z48cwALG31iOj4sG6FMDmm8spjc
-	 7fRPR53Xqg6ZU37JhNB+kIcj1FvVG8otqfwmvsgJm3Bf37zMAroY4E6w+holHkGBaH
-	 HWmGmm5cQix2adN2V3IgVwslbMEOBQq7rE3AGWLY=
-Received: from [127.0.1.1] ([112.48.12.6])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id AA8426D; Mon, 05 May 2025 21:02:42 +0800
-X-QQ-mid: xmsmtpt1746450162t93d9i15s
-Message-ID: <tencent_593580D8307F26937D7A7AAA0721D8CA8309@qq.com>
-X-QQ-XMAILINFO: OGr48utWQcJErgkr0OisvbP+BNPLpEilUs/bh8G4dbo50M4coI+EkxVcWacsaE
-	 HLrS5+d3BUWV4jrR5k4no9vwv+HRdxh7DsTqkjmSk0/1HZ/bjqEZJISZVvDEUzVldgURLgwSxq+5
-	 aQFrflS+fZWUvZXem0mUfOBhd0U/t5tb2L/6CoN+vQ46NpOtpq96exc1zNJqRn0pi22pv43h8mEG
-	 U6E+3XpygaES3Br5djlUze/DPemnGBgNonmQ48axQuMnDYgQr3YLpzmD/hVYlz1uqtGF7GwcSDgU
-	 HWluplzGCxx65OkcLRgC4B1MvaHFOjpdpIK1LAIGQZqjSV6h1KRbar87faVLPJLrGspikRms9nE9
-	 yCWwdyjJ5bR4MJ/RxDV3p8ZtW7TMXknY9csrCvuDVcWb1CFa5AT8XvdV/x9Mtgo71wudAsle9tjU
-	 aFdgKA9aucGQtukK2qdq/Uhd6pgOuMZADBnvcUxkxb1uFeMueapW3t0RVrf3E4HlB2vf5m8k3QWh
-	 B2x/STGGLEDFbnJVXdaNcecWp6OfS76UY3nPVEs11t/tVqYZVV+5/BXOUzvd/4uJ04KjCQyKfbeN
-	 vjr2RuGfYANUqNtUAMeUEuFyOR57dZ/fYcj+toDBIfHTH2DvXJlOohS20I4WOeHI/KTiqESWF9kK
-	 WZIdyjpr/rLlE/CxT5aBtlbpTQLbC91FGwzrafF3nepa2uSc3iuF/JDzB3WMf2KIpocI7/5/VO3Z
-	 p/3pQU6nYkNQK1PYBllu4T8Z7HjcgKKVXReDb+WrqBTcvwsvEmHAu9YG1l/JQjtC1lZuPJs3mtLi
-	 bnLX7T5fJnPah3WafrWUSOIdg8ifS3NOJPYqWN1uUq2vSFNSAKiAIgVotXxxv/z7ZAQDmF30V4a4
-	 JpCuuZBRFuFw4hZsdtuGzF+us5cccKTjpZ85QWt64dBxOvoQ7+5duLD65lRWaHb6ZMGiTOSb2YG9
-	 dYUH5Zo9cHgaULGqG+CfN4L7JtN9R2B1KsE82doalu/7uef+TmYbyN/NPH2yPd7xkcmJqENXzoev
-	 7sSYxpq7Je8pRtS5u5BEJdEkplfI4eiDm0q6h6wtswGJ32SFgY/CpTyrqEHsc=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Liya Huang <1425075683@qq.com>
-Date: Mon, 05 May 2025 21:02:36 +0800
-Subject: [PATCH] sched/core: Fix missing semicolon in init_task.se.slice
- initialization
+	s=arc-20240116; t=1746450191; c=relaxed/simple;
+	bh=I3du49/zti6vYZR6AKYEZr1VnzwPOVR/3gGU23azqjY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=blfJmuuBpWhwczTEYNihlU3F2M744xAkohqX09mmLaWZ8mMNJ5fox0Pfb6CrT+crsBQUGDO6N+mWyd2q9yvQFDYj0Ede7zMedpgEefvG1SppZly4/Wa56f4IPman+yV845RdRqa0pkCr35rlw7jd74dBdpdawwMyfDkf0DC376w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YgBPQDsO; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 545D33sQ943634
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 May 2025 08:03:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746450184;
+	bh=bCVraN1KmmvdFxDljtPzJDoctV1ha4kdbThoFPLx6v4=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=YgBPQDsOZPJ3bQkSLIVWcdnTs0GfpsEZ2/ZTe04ZSsGkK4fWItgbJ5W0sNgCfDimA
+	 VU2shLyK/bKDKGPSizY9m4qMIdJnYpsKkmAA0UNhHNf+Mx5Zh6Jm0XFyV/sJz3tHof
+	 qv0u3nfMw92xQ2H2tVeX2qfyTtJvzK4hSfBlJeQs=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 545D330n013862
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 5 May 2025 08:03:03 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 5
+ May 2025 08:03:03 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 5 May 2025 08:03:03 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 545D3319097888;
+	Mon, 5 May 2025 08:03:03 -0500
+Date: Mon, 5 May 2025 08:03:03 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Paresh Bhagat <p-bhagat@ti.com>
+CC: <vigneshr@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
+        <afd@ti.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for AM62D2 SoC
+Message-ID: <20250505130303.x56xnmww5mzohahn@reentry>
+References: <20250502153915.734932-1-p-bhagat@ti.com>
+ <20250502153915.734932-2-p-bhagat@ti.com>
+ <20250502160541.azhzbnmghrkory7h@cleaver>
+ <e7ddd359-bf19-4f6a-af32-43bcb5504ab1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-OQ-MSGID: <20250505-sched_core-v1-1-248eb27f0d12@qq.com>
-X-B4-Tracking: v=1; b=H4sIAOu2GGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDINQtTs5ITYlPzi9K1U1ONjc2TzVKMks2NlQCaigoSk3LrAAbFh1bWws
- Asxqar1wAAAA=
-X-Change-ID: 20250505-sched_core-cc737e2b6c31
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Liya Huang <1425075683@qq.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746450163; l=1237;
- i=1425075683@qq.com; s=20250415; h=from:subject:message-id;
- bh=UsRJmxSzX5ZOwpe7JqsYy/4OxjCEXYbODGaUrJyxL2k=;
- b=LfG1oThBX1XHxxECNoSiE/XT9fDmo+AsGJJ4uNPGI/E1zB2/sSfy8jR4zuiO7sOuIHLjVZODd
- YGGw2wZvX/rAunsnztZzpCsvb8jHZlewUNMWFcf/eYVWWfqTJJSX/og
-X-Developer-Key: i=1425075683@qq.com; a=ed25519;
- pk=nSnzeGGcMXBimuyIWYIZpZRN8DboZqwr67IqWALwrGs=
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <e7ddd359-bf19-4f6a-af32-43bcb5504ab1@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The initialization of init_task.se.slice incorrectly ends with a comma
-(`,`), which may lead to unexpected behavior.
-This patch fixes the issue by replacing the comma with a semicolon (`;`).
+On 15:01-20250505, Paresh Bhagat wrote:
+> On 02/05/25 21:35, Nishanth Menon wrote:
+[...]
 
----
-sched/core: Fix missing semicolon in init_task.se.slice initialization
+> > Looking at the board patch in the series, this is am62p5 ? what is the
+> > difference? If there is a difference, why is there no dtsi
+> > file for am62d?
 
-The initialization of init_task.se.slice incorrectly ends with a comma 
-(`,`), which may lead to unexpected behavior.
-This patch fixes the issue by replacing the comma with a semicolon (`;`).
+> AM62d2 SoC is similar to AM62a7 in terms of CPU cores, cache hierarchy and
 
-Signed-off-by: Liya Huang <1425075683@qq.com>
----
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looking at the block diagram side to side, I am unable to see any
+difference - it looks like "similar" is "same" ?
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index c81cf642dba055544704faf4492bd0e053f5ae42..e393aa82399b1f7ef3b4b6a3b3fb3e624bcd031e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8685,7 +8685,7 @@ void __init sched_init(void)
- 	}
- 
- 	set_load_weight(&init_task, false);
--	init_task.se.slice = sysctl_sched_base_slice,
-+	init_task.se.slice = sysctl_sched_base_slice;
- 
- 	/*
- 	 * The boot idle thread does lazy MMU switching as well:
+> other peripherals. https://lore.kernel.org/linux-arm-kernel/20220901141328.899100-5-vigneshr@ti.com/
+> Thus same dtsi file is being reused here.
 
----
-base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
-change-id: 20250505-sched_core-cc737e2b6c31
+So, if there is no difference at all, why this series? Commit message
+does need to specify why exactly what is different and why we are
+re-using. If there is no difference what so ever, then we follow what we
+have done in K3 architecture so far, which is just to introduce a board
+file (assuming there is difference there Vs what is supported already).
 
-Best regards,
 -- 
-Liya Huang <1425075683@qq.com>
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
