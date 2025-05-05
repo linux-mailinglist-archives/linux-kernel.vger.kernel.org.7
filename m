@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-633413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB5DAAA640
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 036BBAAA8F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B83973AC76D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:04:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08F039863F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1241028EA6D;
-	Mon,  5 May 2025 22:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCCB3537D3;
+	Mon,  5 May 2025 22:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAu1JNXo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKPSVwrq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E9631F05A;
-	Mon,  5 May 2025 22:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86B03537C3;
+	Mon,  5 May 2025 22:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484338; cv=none; b=roZkQZKDfE8malsxzmAmRdomkSms5a/77WKWEf5HFguEvIZrhZb13phbx0VMj5AzVUar/I8z2xUOmQs0OKtXqEl8zsf2cKh99w81ksJCjPJx7php8IJjqu7mZDD77nUzv018B1fZ0AXXnT9ceN6SSHjyelruo8qYp4OXEICjt+w=
+	t=1746484858; cv=none; b=LGuvwuR+NgRJ4CWQMXjflTb3z/gBy3UBX+jLVBNqFQH6W0FyW/oQefbMS9zHDuT3nD0dlcQ7BjDF/e1vlwS8ml8gaKWOB6VMOpW1TuHgr6XNBJdcsKW91voeM/E4emDeKLznd8Pxwo+Iu4MG7BB7OlVjvUGtZZIydRE8Q4DFWKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484338; c=relaxed/simple;
-	bh=aWwkPj6JIZPJ12ijNcUYfCCvAOBlK+qnpbAZ0dtBuSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PwjZuQpIhAq6WxehGHjh0IdjEZl3kN6wnS2Nol5u6/0g4XgaIoPJWfkWCEStAklWRy1WqMk+ZVA0TW7Ek3vH85Ai9foKSjxGquGLJr83g99ThdmK4gzNiUqs4Jz8tGfWe6o6C5v6VxpEebqG6jU3q54NqLOXXwsx8sEP7jewhr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAu1JNXo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30D33C4CEED;
-	Mon,  5 May 2025 22:32:18 +0000 (UTC)
+	s=arc-20240116; t=1746484858; c=relaxed/simple;
+	bh=4o1SaIJfbgsIyH2KkZE6s8ppy/CEyUkg5lfmus5W7iE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Uo7Bacr6/HZeHajf/m5sU3aWgshf9tbp20+pUxG/TYlLVpOMRBTlFUlkFfUJHHha7qOQLpz9ODDOX3Z6DNlgp/LH++rlK8U2ZAlDyTIhFvuM3zrZqD41qyfSEQ4LervXEgBsqLuaLinhitWo+qH+AVqeC1Q4aWDfqGcCqXFEAoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKPSVwrq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1F03C4CEE4;
+	Mon,  5 May 2025 22:40:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484338;
-	bh=aWwkPj6JIZPJ12ijNcUYfCCvAOBlK+qnpbAZ0dtBuSw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sAu1JNXotXEwuUsnuvyW/nQiQPS1sZoMx40TpDfz1gpQhfeAiQI+m9754c73hLPdT
-	 OJULor3n7eP1ZSxrvgEK3vftHGEH+IF7Aa733yKEN/Z8cG3zruy6PBV7Beng73M3dF
-	 GHXIodjdDANRZVw2PgCGeR5LzswqTLwMF9Wd0eNTYoYX4P4i693EE7YXsKBaeW8LxX
-	 Yqez9sxZdwoiJz4I4+Gh6aUk187OIKyUpWOuEL9CwM/BFTkovbGdNptSedqV5Qjtrg
-	 TKIqhDXMuMADQ03EP4zYV9MG+GUjLRByTo47EAzSM1jCP7yNDb4aDVRJSQxI02uOML
-	 89SC4u5WM/+PQ==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso47748971fa.2;
-        Mon, 05 May 2025 15:32:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuarNdq8TRW+e+DVU/Rxzbt3Jugwrk0W3+8AMhj4X0r5vkQt25y5NkVAXi+Zr30iUF7mkseLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhioywc/xoiy926pIsiaPfvUF6xm5kGmbQEBQJQznLFosMnOjI
-	/tAjiphH8YVlblVIpF03GQuQ0uHMuu9c9pGBFUJcBpGmSU/X6Qsa1/2TOrPEDQMRN/p86T+9gxK
-	9DU7a4P6SBQ8e1kF9/Ru3v9sGc+E=
-X-Google-Smtp-Source: AGHT+IGZPEdy4d5fs2vkYk9CSAe2Oj8skd9Oz00HKf8ZahGb+jEF8RkEAovv9ahgTsLBUwVJyNy2paElHXC6LQymzcg=
-X-Received: by 2002:a05:6512:234f:b0:54d:6aa1:8f5a with SMTP id
- 2adb3069b0e04-54fb4a5d314mr217077e87.13.1746484336579; Mon, 05 May 2025
- 15:32:16 -0700 (PDT)
+	s=k20201202; t=1746484858;
+	bh=4o1SaIJfbgsIyH2KkZE6s8ppy/CEyUkg5lfmus5W7iE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pKPSVwrqCQYTKz8umWmMnv9ti/f+w+wPxS0W/kxn77l9GnN9H8CVLW03VZXh1y57i
+	 N93l8frgHliZ5xUPgY6oiBIOPFJP0FPQhzbdR14SIx3NFChNHfri2xLfLUDaZc1hsL
+	 ZxAY7CyO4jCuUHUdvR2OH2rc0tANumXBoCMviCkw9MosrVeAIWP3M6Rucydi6h/2rr
+	 l5KxDq5lvcIgk52h27cTEmN5ftKwa2EMFioiOhTZQwEJPM5tKlvcR4jYbCTAH35dI0
+	 NSLsB5uBO0ZXQb9aaTAXELveA45jve1WFYWXO6L9JGjMCU0rVYfURRteY3XcycKmPZ
+	 f7X3SjrhzeG1Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Jonathan Kim <jonathan.kim@amd.com>,
+	Lancelot Six <lancelot.six@amd.com>,
+	Harish Kasiviswanathan <harish.kasiviswanathan@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Felix.Kuehling@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.12 050/486] drm/amdkfd: set precise mem ops caps to disabled for gfx 11 and 12
+Date: Mon,  5 May 2025 18:32:06 -0400
+Message-Id: <20250505223922.2682012-50-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
+References: <20250505223922.2682012-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250505221419.2672473-1-sashal@kernel.org> <20250505221419.2672473-400-sashal@kernel.org>
-In-Reply-To: <20250505221419.2672473-400-sashal@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 6 May 2025 00:32:05 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXF6=t9NoH5Lsh4=RwhUTHtpBt9VmZr3bEVm6=1zGiOf2w@mail.gmail.com>
-X-Gm-Features: ATxdqUErh1T2txHfXNjzmhH5BJ_P7lEmzSx0aae_jJOJZrFCc7iYj59jh6IImPo
-Message-ID: <CAMj1kXF6=t9NoH5Lsh4=RwhUTHtpBt9VmZr3bEVm6=1zGiOf2w@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 6.14 400/642] x86/relocs: Handle
- R_X86_64_REX_GOTPCRELX relocations
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, nathan@kernel.org, 
-	ubizjak@gmail.com, thomas.weissschuh@linutronix.de, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.26
+Content-Transfer-Encoding: 8bit
 
-On Tue, 6 May 2025 at 00:30, Sasha Levin <sashal@kernel.org> wrote:
->
-> From: Brian Gerst <brgerst@gmail.com>
->
-> [ Upstream commit cb7927fda002ca49ae62e2782c1692acc7b80c67 ]
->
-> Clang may produce R_X86_64_REX_GOTPCRELX relocations when redefining the
-> stack protector location.  Treat them as another type of PC-relative
-> relocation.
->
-> Signed-off-by: Brian Gerst <brgerst@gmail.com>
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Link: https://lore.kernel.org/r/20250123190747.745588-6-brgerst@gmail.com
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+From: Jonathan Kim <jonathan.kim@amd.com>
 
-This patch was one of a series of about 20 patches. Did you pick all of them?
+[ Upstream commit f82d27dcff939d3cbecbc60e1b71e2518c37e81d ]
 
+Clause instructions with precise memory enabled currently hang the
+shader so set capabilities flag to disabled since it's unsafe to use
+for debugging.
 
-> ---
->  arch/x86/tools/relocs.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
-> index e937be979ec86..92a1e503305ef 100644
-> --- a/arch/x86/tools/relocs.c
-> +++ b/arch/x86/tools/relocs.c
-> @@ -32,6 +32,11 @@ static struct relocs         relocs32;
->  static struct relocs           relocs32neg;
->  static struct relocs           relocs64;
->  # define FMT PRIu64
-> +
-> +#ifndef R_X86_64_REX_GOTPCRELX
-> +# define R_X86_64_REX_GOTPCRELX 42
-> +#endif
-> +
->  #else
->  # define FMT PRIu32
->  #endif
-> @@ -227,6 +232,7 @@ static const char *rel_type(unsigned type)
->                 REL_TYPE(R_X86_64_PC16),
->                 REL_TYPE(R_X86_64_8),
->                 REL_TYPE(R_X86_64_PC8),
-> +               REL_TYPE(R_X86_64_REX_GOTPCRELX),
->  #else
->                 REL_TYPE(R_386_NONE),
->                 REL_TYPE(R_386_32),
-> @@ -861,6 +867,7 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
->
->         case R_X86_64_PC32:
->         case R_X86_64_PLT32:
-> +       case R_X86_64_REX_GOTPCRELX:
->                 /*
->                  * PC relative relocations don't need to be adjusted unless
->                  * referencing a percpu symbol.
-> --
-> 2.39.5
->
+Signed-off-by: Jonathan Kim <jonathan.kim@amd.com>
+Tested-by: Lancelot Six <lancelot.six@amd.com>
+Reviewed-by: Harish Kasiviswanathan <harish.kasiviswanathan@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+index 3871591c9aec9..bcb5cdc4a9d81 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+@@ -2002,10 +2002,6 @@ static void kfd_topology_set_capabilities(struct kfd_topology_device *dev)
+ 		dev->node_props.debug_prop |= HSA_DBG_WATCH_ADDR_MASK_LO_BIT_GFX10 |
+ 					HSA_DBG_WATCH_ADDR_MASK_HI_BIT;
+ 
+-		if (KFD_GC_VERSION(dev->gpu) >= IP_VERSION(11, 0, 0))
+-			dev->node_props.capability |=
+-				HSA_CAP_TRAP_DEBUG_PRECISE_MEMORY_OPERATIONS_SUPPORTED;
+-
+ 		if (KFD_GC_VERSION(dev->gpu) >= IP_VERSION(12, 0, 0))
+ 			dev->node_props.capability |=
+ 				HSA_CAP_TRAP_DEBUG_PRECISE_ALU_OPERATIONS_SUPPORTED;
+-- 
+2.39.5
+
 
