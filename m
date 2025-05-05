@@ -1,197 +1,263 @@
-Return-Path: <linux-kernel+bounces-631814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F9FAA8DCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:03:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D12AA8E5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E384174228
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0753D174826
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AA31E260D;
-	Mon,  5 May 2025 08:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A4D1F4261;
+	Mon,  5 May 2025 08:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Iq9755XJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ot+ID1JJ"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lEuI0uhE"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F091D8DFB
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99C417A314;
+	Mon,  5 May 2025 08:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746432215; cv=none; b=izBAHMcHbzTY04n9OEhNwSqMh4hLj1oPqESSt5pgxwai5gV7o3ypwgktffNW+uAz2mAYMcUylD2pDsLdpDYsERlqC6l8FZlVYGAzRgYoK8kLB0D5Y4mIHoAAP9YT21wqZgurbbtKyHoJBBdhPszZZKRoLRIlPZJBVRAQKyg1STE=
+	t=1746434273; cv=none; b=JeTxVydLzMTdpv7j7hyLZ6/WF3zmD+nUgii18JCEjqfU8N7ZQaqHTu4sRgj0mtLOCudgM9NO+8dhbgV4qhvTp4o6AOqzro5O9MZQWVncSzdXsrAjM7AgbS7LIIG8ZYNku4/PVOBtnIK70cHzcWgIv5QIeQegLPyuNmF2JPEp6bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746432215; c=relaxed/simple;
-	bh=Sos2AnAItqRrbPjNaTr+ezuNIMT7xXdaV4EYtzNBCvo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=pzYRD8Q0sroMbY19sfJaqS9va2JMeHGmGG96vEl/lOzq1hNW7DdZe29O8ZvQSVqqpw/OuHjdJJ11LWKMLoTAOFI2Tf0zjxtiedsz9xunjhSi3h5iaiDRRZIVqmbWy1iigQ0OALsZsOcqdbZS9ZsV9A4LeF4gGW3cX176Sdq5SRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Iq9755XJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ot+ID1JJ; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2D10713801A0;
-	Mon,  5 May 2025 04:03:31 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-05.internal (MEProxy); Mon, 05 May 2025 04:03:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm2; t=1746432211; x=1746518611; bh=Ru
-	i5mVOszWTl9nD8tHKJPtp+GnylKLvgNMk68Qak7tE=; b=Iq9755XJ9slZfwpsZp
-	6mhzBEikF59TI9nci47XG9RDz7u77pelDBVhoTGtmVPL/gBcEgl08GMwfV8Yt+tc
-	8U5h5xwq0TZd82rgv/hPXnOvffw9a5ZpGeOJgaYPwmpkVz2W63TIzh6kaNDW3GWp
-	4aoy9VYiysthp39DVN0Kv9j4qrP0A7p+RZ6DWfyOScKRdBYiyItoJIwE9Nt29s/m
-	Q70dxKPFdM7mHYnhpQfo8wCG3sP32e+FZujLlkWsmxzn3Rhi/uUogZGg7CiYH39h
-	ijTJaSpdaBlK/5KyLdKumvzhZueOzpQsk6+RMCLGhSrY3DKy9jI0lVPp1lsCfeIi
-	yIlw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1746432211; x=1746518611; bh=Rui5mVOszWTl9nD8tHKJPtp+Gnyl
-	KLvgNMk68Qak7tE=; b=ot+ID1JJWQoB88mzxHWIXGSIfIvrWJslB3TPaBtKtMhk
-	l1c6YlOWiF9h3nt/DJlffCyUxhiPIUNWGdDMJ5OZVGC197SGakvjCSazAjk64zDY
-	BJxW3Jt6aCwqDzmwwXBFu4hxrm3k2BRgkeVlFw4hNhAZHp4Xi6pJBIKks+ydeXb8
-	aCJ8BHxaBoNPyJexoiP8PWTNy1VZhSTN0OfvqpiBqFJ1uuPOKYZGBKmx955uIirj
-	NL0qZVE885Ct/95CQceR5uapJgd+4xlu0Lev+PmbId+Q/CzqQ/uredWmfjlAVWiQ
-	rXSf+F8hUCLIkF0eR4Cnaii8/35EOPtQAliUqmrWsQ==
-X-ME-Sender: <xms:0nAYaEBKioN405oYGv-9UsVC-pqZylewYNn6HmEQf8mitrunopBxGg>
-    <xme:0nAYaGg5jXvEU9juFVf_yLrqLGs6k5CGJ9y6q0He18ySm_78jKcA8LPaSIOAJ5lLz
-    DSS01MjnrEDK9AaMU8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkedtheeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkffutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdeigeeghffhhffguedvvdelvdfftdfgvdfftddv
-    gfeggefhkedtfeeutddvuefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
-    nhgusgdruggvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgrug
-    gvrggurdhorhhgpdhrtghpthhtohepshhotgeslhhishhtshdrlhhinhhugidruggvvhdp
-    rhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:0nAYaHk59Y-qAk-cg5luwpsN-Mk6KGapJqkO4yTGmQR81xsvroE34A>
-    <xmx:0nAYaKyae8s6GxJrDoadQbyLuvuIxwhnZbT4Ot60cYcPBtnOL_26Ng>
-    <xmx:0nAYaJQna6uP1EaLOvXP0-u_P7SnlOjp5AFAfUsNOwY_rACcJY2toA>
-    <xmx:0nAYaFZuhZck2d1jNSH6tNRDElImuNnq4YIGF1eSVV-trZujUIl7Tw>
-    <xmx:03AYaEbE-r-MT_Y0f8qo0gmivHXuCJyBuYDpcNmXeZqX6pFGg0JCF0ry>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9BE1B1C20068; Mon,  5 May 2025 04:03:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1746434273; c=relaxed/simple;
+	bh=/jmpLHgfdFoEFUS2+41jObZbP/NobZmuVHLiVyvLh4I=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=YuBGe5Ik5EkvfpyS2X5cQ83iXoUS084KALyH637XtMVM48NigLo09/Idx/O7JIQnTGaGpq7CZi0lgZlu9cNn5UQPElQ6XTtGomnRMUJ8h9xGFDVtXGdv3h1q9F4mAfRQMYnemtSL8eZYpd5A1uuuDL42Qts4cT3ST7RSSRowqME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lEuI0uhE; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 544Lerbo015954;
+	Mon, 5 May 2025 08:37:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=sJnEdJ
+	mXfgBwSldLZE2cC4O1tLhklRfbkGj7jMDp4Hs=; b=lEuI0uhEbPI7TboxcaMyLH
+	YwGUb4cnN5Z1HhLI+2+sJu/ZmcCWtRt4v8n82LswOUSqlou+vazb8rzaX6Mkwy8A
+	JRLw/qYoPy2y1BNlc7zcYCnqTAbSGaFrzsdVpyn3BjAEfilvSoX51BIMzf146gFn
+	7IQjazzR7a6srsBQrHXhb1LyiqEa+yigOxAX82gJfFD0yOjeaDvJR/YoTtPAjbmZ
+	pFvYSs6ZRRHos1d2DrCYviUck/uAzqaxcLKzho1wegiyhp9WzLT/PqGhrSzBIJAG
+	ReuXvlZBqUMwSPtRSBn1DPQnRcL+pZA8qZjg2x9sucCnOZQCv6pDu4tYiT7GAZ7Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46egb7swxk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 08:37:32 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5458bVwS023491;
+	Mon, 5 May 2025 08:37:31 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46egb7swxj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 08:37:31 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5457T4kS025813;
+	Mon, 5 May 2025 08:37:30 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dwuyngpp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 08:37:30 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5458bSJc41025856
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 May 2025 08:37:28 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3B9C920043;
+	Mon,  5 May 2025 08:37:28 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6DC5D20040;
+	Mon,  5 May 2025 08:37:27 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  5 May 2025 08:37:27 +0000 (GMT)
+Received: from jarvis.ozlabs.ibm.com (unknown [9.150.10.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id BE3C3601F3;
+	Mon,  5 May 2025 18:37:20 +1000 (AEST)
+Message-ID: <43baab5747031ec84100939fe154fa2b071f3789.camel@linux.ibm.com>
+Subject: Re: [PATCH 2/3] powerpc/secvar: Expose secvars relevant to the key
+ management mode
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: Srish Srinivasan <ssrish@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, zohar@linux.ibm.com,
+        nayna@linux.ibm.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20250430090350.30023-3-ssrish@linux.ibm.com>
+References: <20250430090350.30023-1-ssrish@linux.ibm.com>
+		 <20250430090350.30023-3-ssrish@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 05 May 2025 17:23:10 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 05 May 2025 10:03:30 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- soc@lists.linux.dev
-Message-Id: <a080c802-52fb-4601-8178-990494c87e5c@app.fastmail.com>
-Subject: [GIT PULL] soc: fixes for 6.14
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 35tEsaiZ0udvRbn6fwx-PJWiD8x-ogSE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA4MSBTYWx0ZWRfX/DxKSVTpEP4u CpWl+vcdeNJeWg32B7Jw8NrJM/hjZNEiEvDRT6M+slVVr3efcJNkt5XIlNMMUpHfuhPhSApytrl 8yq05jGIKv9D+vNiE+1/eW4chsNIPo2szUW/lVwH6fg/yTQerd8nQ19QQ2WyglHE5P7lkTbGq8K
+ cYK17wsGBUuTI6wD1HHZUHD+jkXBKCT1F5jqvgu3GkHA49biqIrGuIF7v02Gen8MEicbljcNctK mUpn9VvNPO7ePBVd5F6vciQrCo7o0BmD/28mbnZ9UIA0Sv6nSIASoibZiGuOrAF700RdxhaqMgN n+JHmc0H9incqxthapP9N5or/MHK+dpK5pqUCvk+xZVGc8qMoma4I1wPTkT1RvlavDhIbqLU80+
+ gYHShMNgLSHoRk6zqzK4C2Rpkj7ZpNmoOBK2oLFaEaGil1A1WGoHWGG+2/Zj2ZqkPfxXmRnx
+X-Authority-Analysis: v=2.4 cv=YcK95xRf c=1 sm=1 tr=0 ts=681878cc cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=q79MgDi7yVbGD4n-FgcA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: OjVXDvUkOp_ULUg-xePAuknCUwHRtP36
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-05_04,2025-04-30_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 spamscore=0 mlxscore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505050081
 
-The following changes since commit 9c32cda43eb78f78c73aee4aa344b777714e2=
-59b:
+On Wed, 2025-04-30 at 14:33 +0530, Srish Srinivasan wrote:
+> The PLPKS enabled PowerVM LPAR sysfs exposes all of the secure boot
+> secvars irrespective of the key management mode.
+>=20
+> The PowerVM LPAR supports static and dynamic key management for
+> secure
+> boot. The key management option can be updated in the management
+> console. Only in the dynamic key mode can the user modify the secure
+> boot secvars db, dbx, grubdb, grubdbx, and sbat, which are exposed
+> via
+> the sysfs interface. But the sysfs interface exposes these secvars
+> even
+> in the static key mode. This could lead to errors when reading them
+> or
+> writing to them in the static key mode.
+>=20
+> Expose only PK, trustedcadb, and moduledb in the static key mode to
+> enable loading of signed third-party kernel modules.
+>=20
+> Co-developed-by: Souradeep <soura@imap.linux.ibm.com>
+> Signed-off-by: Souradeep <soura@imap.linux.ibm.com>
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-  Linux 6.15-rc3 (2025-04-20 13:43:47 -0700)
+I'm assuming it's been determined that there's no value in letting
+userspace see db/dbx/etc in a read-only way in static mode?
 
-are available in the Git repository at:
+With one comment below:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-f=
-ixes-6.15
+Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
 
-for you to fetch changes up to 2ef5c66cba6171feab05e62e1b22df970b238544:
+> ---
+> =C2=A0Documentation/ABI/testing/sysfs-secvar=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 9 ++++--
+> =C2=A0arch/powerpc/platforms/pseries/plpks-secvar.c | 28 ++++++++++++++++=
+-
+> --
+> =C2=A02 files changed, 30 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-secvar
+> b/Documentation/ABI/testing/sysfs-secvar
+> index 857cf12b0904..2bdc7d9c0c10 100644
+> --- a/Documentation/ABI/testing/sysfs-secvar
+> +++ b/Documentation/ABI/testing/sysfs-secvar
+> @@ -22,9 +22,12 @@ Description:	A string indicating which backend is
+> in use by the firmware.
+> =C2=A0		and is expected to be "ibm,edk2-compat-v1".
+> =C2=A0
+> =C2=A0		On pseries/PLPKS, this is generated by the kernel
+> based on the
+> -		version number in the SB_VERSION variable in the
+> keystore, and
+> -		has the form "ibm,plpks-sb-v<version>", or
+> -		"ibm,plpks-sb-unknown" if there is no SB_VERSION
+> variable.
+> +		existence of the SB_VERSION property in firmware.
+> This string
+> +		takes the form "ibm,plpks-sb-v1" in the presence of
+> SB_VERSION,
+> +		indicating the key management mode is dynamic.
+> Otherwise it
+> +		takes the form "ibm,plpks-sb-v0" in the static key
+> management
+> +		mode. Only secvars relevant to the key management
+> mode are
+> +		exposed.
 
-  arm64: dts: st: Use 128kB size for aliased GIC400 register access on s=
-tm32mp23 SoCs (2025-04-29 18:16:28 +0200)
+Everything except the last sentence here is relevant to the previous
+patch in the series (noting my comments on the previous patch about the
+string).
 
-----------------------------------------------------------------
-soc: fixes for 6.14
+The last sentence is more related to the <variable name> entry than the
+format entry, and perhaps worth including a list of what variables are
+applicable to each mode.
 
-The main changes are once more for the NXP i.MX platform, addressing
-multiple regressions in recent devicetree updates for the i.MX8MM
-and i.MX6ULL SoCs, a PCIe fix for i.MX9 and a MAINTAINERS file update
-to disambiguate NXP i.MX SoCs from Sony IMX image sensors.
+> =C2=A0
+> =C2=A0What:		/sys/firmware/secvar/vars/<variable name>
+> =C2=A0Date:		August 2019
+> diff --git a/arch/powerpc/platforms/pseries/plpks-secvar.c
+> b/arch/powerpc/platforms/pseries/plpks-secvar.c
+> index d57067a733ab..cbcb2c356f2a 100644
+> --- a/arch/powerpc/platforms/pseries/plpks-secvar.c
+> +++ b/arch/powerpc/platforms/pseries/plpks-secvar.c
+> @@ -59,7 +59,14 @@ static u32 get_policy(const char *name)
+> =C2=A0		return PLPKS_SIGNEDUPDATE;
+> =C2=A0}
+> =C2=A0
+> -static const char * const plpks_var_names[] =3D {
+> +static const char * const plpks_var_names_static[] =3D {
+> +	"PK",
+> +	"moduledb",
+> +	"trustedcadb",
+> +	NULL,
+> +};
+> +
+> +static const char * const plpks_var_names_dynamic[] =3D {
+> =C2=A0	"PK",
+> =C2=A0	"KEK",
+> =C2=A0	"db",
+> @@ -207,21 +214,34 @@ static int plpks_max_size(u64 *max_size)
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> +static const struct secvar_operations plpks_secvar_ops_static =3D {
+> +	.get =3D plpks_get_variable,
+> +	.set =3D plpks_set_variable,
+> +	.format =3D plpks_secvar_format,
+> +	.max_size =3D plpks_max_size,
+> +	.config_attrs =3D config_attrs,
+> +	.var_names =3D plpks_var_names_static,
+> +};
+> =C2=A0
+> -static const struct secvar_operations plpks_secvar_ops =3D {
+> +static const struct secvar_operations plpks_secvar_ops_dynamic =3D {
+> =C2=A0	.get =3D plpks_get_variable,
+> =C2=A0	.set =3D plpks_set_variable,
+> =C2=A0	.format =3D plpks_secvar_format,
+> =C2=A0	.max_size =3D plpks_max_size,
+> =C2=A0	.config_attrs =3D config_attrs,
+> -	.var_names =3D plpks_var_names,
+> +	.var_names =3D plpks_var_names_dynamic,
+> =C2=A0};
+> =C2=A0
+> =C2=A0static int plpks_secvar_init(void)
+> =C2=A0{
+> +	u8 mode;
+> +
+> =C2=A0	if (!plpks_is_available())
+> =C2=A0		return -ENODEV;
+> =C2=A0
+> -	return set_secvar_ops(&plpks_secvar_ops);
+> +	mode =3D plpks_get_sb_keymgmt_mode();
+> +	if (mode)
+> +		return set_secvar_ops(&plpks_secvar_ops_dynamic);
+> +	return set_secvar_ops(&plpks_secvar_ops_static);
+> =C2=A0}
+> =C2=A0machine_device_initcall(pseries, plpks_secvar_init);
 
-The stm32 platform devicetree files get some compatibility fixes
-for the interrupt controller node.
-
-Another compatibility fix is done for the Arm Morello platform's
-cache controller node.
-
-The code changes are all for firmware drivers, fixing kernel-side
-bugs on the Arm FF-A and SCMI drivers.
-
-----------------------------------------------------------------
-Ahmad Fatoum (1):
-      arm64: dts: imx8mp: configure GPU and NPU clocks in nominal DTSI
-
-Arnd Bergmann (4):
-      Merge tag 'scmi-fixes-6.15' of https://git.kernel.org/pub/scm/linu=
-x/kernel/git/sudeep.holla/linux into arm/fixes
-      Merge tag 'ffa-fix-6.15' of https://git.kernel.org/pub/scm/linux/k=
-ernel/git/sudeep.holla/linux into arm/fixes
-      Merge tag 'juno-fix-6.15' of https://git.kernel.org/pub/scm/linux/=
-kernel/git/sudeep.holla/linux into arm/fixes
-      Merge tag 'imx-fixes-6.15' of https://git.kernel.org/pub/scm/linux=
-/kernel/git/shawnguo/linux into arm/fixes
-
-Christian Bruel (6):
-      arm64: dts: st: Adjust interrupt-controller for stm32mp25 SoCs
-      arm64: dts: st: Use 128kB size for aliased GIC400 register access =
-on stm32mp25 SoCs
-      arm64: dts: st: Adjust interrupt-controller for stm32mp21 SoCs
-      arm64: dts: st: Use 128kB size for aliased GIC400 register access =
-on stm32mp21 SoCs
-      arm64: dts: st: Adjust interrupt-controller for stm32mp23 SoCs
-      arm64: dts: st: Use 128kB size for aliased GIC400 register access =
-on stm32mp23 SoCs
-
-Cristian Marussi (2):
-      firmware: arm_scmi: Balance device refcount when destroying devices
-      firmware: arm_scmi: Fix timeout checks on polling path
-
-Michael Riesch (1):
-      MAINTAINERS: add exclude for dt-bindings to imx entry
-
-Richard Zhu (1):
-      arm64: dts: imx95: Correct the range of PCIe app-reg region
-
-Rob Herring (Arm) (1):
-      arm64: dts: morello: Fix-up cache nodes
-
-Sudeep Holla (1):
-      firmware: arm_ffa: Skip Rx buffer ownership release if not acquired
-
-S=C3=A9bastien Szymanski (1):
-      ARM: dts: opos6ul: add ksz8081 phy properties
-
-Wojciech Dubowik (1):
-      arm64: dts: imx8mm-verdin: Link reg_usdhc2_vqmmc to usdhc2
-
- MAINTAINERS                                        |  1 +
- .../boot/dts/nxp/imx/imx6ul-imx6ull-opos6ul.dtsi   |  3 +++
- arch/arm64/boot/dts/arm/morello.dtsi               | 22 +++++++++------=
----
- arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi   | 25 +++++++++++++++=
-+-----
- arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi  | 26 +++++++++++++++=
-+++++++
- arch/arm64/boot/dts/freescale/imx95.dtsi           |  8 +++----
- arch/arm64/boot/dts/st/stm32mp211.dtsi             |  8 +++----
- arch/arm64/boot/dts/st/stm32mp231.dtsi             |  9 ++++----
- arch/arm64/boot/dts/st/stm32mp251.dtsi             |  9 ++++----
- drivers/firmware/arm_ffa/driver.c                  |  3 ++-
- drivers/firmware/arm_scmi/bus.c                    |  3 +++
- drivers/firmware/arm_scmi/driver.c                 | 13 ++++++-----
- 12 files changed, 90 insertions(+), 40 deletions(-)
+--=20
+Andrew Donnellan    OzLabs, ADL Canberra
+ajd@linux.ibm.com   IBM Australia Limited
 
