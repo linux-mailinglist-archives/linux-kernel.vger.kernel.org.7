@@ -1,72 +1,64 @@
-Return-Path: <linux-kernel+bounces-633411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623F7AAA631
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:07:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58852AAA641
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 000BE7B1F13
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9748D98457A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37DC31F026;
-	Mon,  5 May 2025 22:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6570331FA62;
+	Mon,  5 May 2025 22:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYG4CV8y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/uLCjoX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0008128EA4E;
-	Mon,  5 May 2025 22:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEF928EA63;
+	Mon,  5 May 2025 22:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484329; cv=none; b=fhQIclxnFrynTVASSAs1EUo07XQwjGnILll8ZuqcgHSbWUXgq6Dn/oFCPyDs0PCiXtXUqrVMQZmIC5RjWPq867X6Mqhp/AhiNcWcPw4UpSB4AIIVfDFMYWzPuGGpeBDm89tBLi9VSja8mMd2Vs9RFCa5qd2Xd2ncWSgXQ64VXmc=
+	t=1746484338; cv=none; b=d46OcitOaiq/f/8sY6dnPwTnMcPO8iWokXKzXRD8ANAYHpannVQPKJPPOJ3mMZrKh9VyiB0MxKG5Ca8yKstI2CYLFvPdQ1T1Fa0jdvH92oRZJCDv7yHWQvcWrTfteVnaoJAoVFFQ/cd2XbFnTA865T4s7AKArjEHQ03HGeNNBgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484329; c=relaxed/simple;
-	bh=mma8tzwZ/NqwWnsXqPq43wQ4tvCGsiw9PyvHomQ17l4=;
+	s=arc-20240116; t=1746484338; c=relaxed/simple;
+	bh=esuW//bFiVJG0otYdfajTGOZfCOzsvAkrpYLsTeDXAk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n48lV6OVnoZAwfACKw7DgP9ursm+18wf9edCDefzzfanwDMHAPD0Pq5+xogkP2iJQL5rlJ6sugJp0uKbjDSUCsdT9DoJt07FRJBP5r+zybqP8NEcGi4fgCfRfoeZORfHChnTZti/mx46POftxXSvqwH/rf7lnc9aEitQuoFalnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYG4CV8y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8971DC4CEEE;
-	Mon,  5 May 2025 22:32:06 +0000 (UTC)
+	 MIME-Version:Content-Type; b=HZBw4MkSQIERUVpgLgefg/T3o5RgLL+u/3ZL2fQ5PvuOl4vD1qcaxzh2vYMf44Nill3nH/oq0nxVyT25OJbOSIyYa+7ARolRZ1KeHQRYAzHl358EWi+MvjPSUAzNrLnKdIO6zFwLvaELPbin0beV+zmStQcHP/Iqh5oez+OEW9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/uLCjoX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F4D0C4CEEE;
+	Mon,  5 May 2025 22:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484328;
-	bh=mma8tzwZ/NqwWnsXqPq43wQ4tvCGsiw9PyvHomQ17l4=;
+	s=k20201202; t=1746484338;
+	bh=esuW//bFiVJG0otYdfajTGOZfCOzsvAkrpYLsTeDXAk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JYG4CV8yg2byv9RZHH6b9s4ar4Ogju745AHK4JvJHnvNFOwOCSJxmagvkPL0BeKJd
-	 IphkUa/J1A+Jjrj6blAZCghi8d1BPhHBLdXh7jU5j5PbPn0PsSjmbMjPdF9BtU1bi7
-	 89pSU+V3JSszCQwQOSGFGo3pBJjKpvX4kpaYIC+UX6UXbdOlvEvMYK/hinNcXKztrI
-	 V/NhgexE7xL4sYGGNzp2ap/Uo2xF2Wt6lFaDPJHVt10GwqL43lbAxCsuzq56nfG+tq
-	 h/XZH9FA7PrVGNcK+R7fMCcep+w07PA5+RqpsbsOnFFGCmVxyjyDDzq1NEZIjgKbdE
-	 F4lv0J+Fn0olA==
+	b=Z/uLCjoXf5y2fbOhRRpxkvOD2WOlQmhjs0r0TT3/chqzMIJ29J3fVn9o1FSV7JFfH
+	 cso+UTvYA/ZdNhF5SHcBuhavs9q/5i+EmDQRqJ/961gjal+9HYvamROe3Dr23hm7lO
+	 Ej9hjX3V6IwQLY6iXxmQYs32kxtVqH/tBULSxaDTizPpUyazqnVeRWsjzkhkdt+wN2
+	 GikIgmg6JI1N2zMSsn09up8+/su8t7tkmOxx9F5NSzAg+eXMn537l3hHgnoaQpeh/G
+	 /9hUWKWyDvadb1G2fceNt2+7nWPi50lnZVYYFzwY5xcQxB61d41gftqC53u+KNzb9F
+	 XfUdj9ooxnWGg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Huacai Chen <chenhuacai@loongson.cn>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Simon Horman <horms@kernel.org>,
-	Chong Qiao <qiaochong@loongson.cn>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	chenhuacai@kernel.org,
-	chenfeiyang@loongson.cn,
-	fancer.lancer@gmail.com,
-	phasta@kernel.org,
-	zhaoqunqin@loongson.cn,
-	rmk+kernel@armlinux.org.uk,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.14 456/642] net: stmmac: dwmac-loongson: Set correct {tx,rx}_fifo_size
-Date: Mon,  5 May 2025 18:11:12 -0400
-Message-Id: <20250505221419.2672473-456-sashal@kernel.org>
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	sunil.khatri@amd.com,
+	Jack.Xiao@amd.com,
+	Hawking.Zhang@amd.com,
+	shaoyun.liu@amd.com,
+	Jiadong.Zhu@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.14 458/642] drm/amdgpu/mes11: fix set_hw_resources_1 calculation
+Date: Mon,  5 May 2025 18:11:14 -0400
+Message-Id: <20250505221419.2672473-458-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -76,55 +68,42 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Huacai Chen <chenhuacai@loongson.cn>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 8dbf0c7556454b52af91bae305ca71500c31495c ]
+[ Upstream commit 1350dd3691b5f757a948e5b9895d62c422baeb90 ]
 
-Now for dwmac-loongson {tx,rx}_fifo_size are uninitialised, which means
-zero. This means dwmac-loongson doesn't support changing MTU because in
-stmmac_change_mtu() it requires the fifo size be no less than MTU. Thus,
-set the correct tx_fifo_size and rx_fifo_size for it (16KB multiplied by
-queue counts).
+It's GPU page size not CPU page size.  In most cases they
+are the same, but not always.  This can lead to overallocation
+on systems with larger pages.
 
-Here {tx,rx}_fifo_size is initialised with the initial value (also the
-maximum value) of {tx,rx}_queues_to_use. So it will keep as 16KB if we
-don't change the queue count, and will be larger than 16KB if we change
-(decrease) the queue count. However stmmac_change_mtu() still work well
-with current logic (MTU cannot be larger than 16KB for stmmac).
-
-Note: the Fixes tag picked here is the oldest commit and key commit of
-the dwmac-loongson series "stmmac: Add Loongson platform support".
-
-Acked-by: Yanteng Si <si.yanteng@linux.dev>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-Link: https://patch.msgid.link/20250210134328.2755328-1-chenhuacai@loongson.cn
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Cc: Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
+Cc: Christian König <christian.koenig@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/mes_v11_0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-index ab7c2750c1042..702ea5a00b56d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-@@ -590,6 +590,9 @@ static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id
- 	if (ret)
- 		goto err_disable_device;
+diff --git a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+index 0f808ffcab943..68bb334393bb6 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+@@ -730,7 +730,7 @@ static int mes_v11_0_set_hw_resources(struct amdgpu_mes *mes)
  
-+	plat->tx_fifo_size = SZ_16K * plat->tx_queues_to_use;
-+	plat->rx_fifo_size = SZ_16K * plat->rx_queues_to_use;
-+
- 	if (dev_of_node(&pdev->dev))
- 		ret = loongson_dwmac_dt_config(pdev, plat, &res);
- 	else
+ static int mes_v11_0_set_hw_resources_1(struct amdgpu_mes *mes)
+ {
+-	int size = 128 * PAGE_SIZE;
++	int size = 128 * AMDGPU_GPU_PAGE_SIZE;
+ 	int ret = 0;
+ 	struct amdgpu_device *adev = mes->adev;
+ 	union MESAPI_SET_HW_RESOURCES_1 mes_set_hw_res_pkt;
 -- 
 2.39.5
 
