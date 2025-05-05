@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-634841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB9CAAB4FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:20:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FB0AAB4DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 438993A8D38
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BBD6165413
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FC9355E06;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B5C3561A2;
 	Tue,  6 May 2025 00:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MO7eDF7N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U55h8hDe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D456428982F;
-	Mon,  5 May 2025 23:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BE7289832;
+	Mon,  5 May 2025 23:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486860; cv=none; b=lNLUwOL7b4Lnx/F3UDnhoIn3+tWGuuJJAtOmdFs2r71oTS+zzjtHhGSd5OcRTk4V0lIkY74NG9oNN+H7I/ks/F7vnWxHLvjmdvh7tNzUuEAchZ4FZQ+Xhdn84uiySjObbsheIq//jGnZWOv9dymQP70UbDvUYxqHizLzFNDc9sU=
+	t=1746486862; cv=none; b=THElrhW6oAJQ4OGH0LjbOiokAkgyR9AUOFSCiLeI9e0FoSdtyLOMbT+OKnK8t9LjDn7eKZQG9N4s3G5tB3K+hFS2TgUydc8H0MfEvf1a9jn0n50B4FYOSc2TiQzA5i0gAL0cH1E9DCTt3tgrKhP3o6EWgZl5o9Dlmmk8YTta1E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486860; c=relaxed/simple;
-	bh=B4/AFmH4EzCm+/gzXspUOA/ZQOae4G4h8zpgvZNFaUI=;
+	s=arc-20240116; t=1746486862; c=relaxed/simple;
+	bh=o6vPQm8ORAMEIjP7fhptjMtwSNq9nMRVlWGY99NWjZw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F46b1Ryrcv9CAtMQjnXHQ8ZDroxgolwy2heDTFJFMJPzDccvRbcnLCL/HTR8xkgXOxS7rYLb6+6HlJrsDZrVhCjpmdRwWJQbEaFfplcBZ1+Sgk9EweDbZdz9JmGpA65nC6t6x+ZxnL2KzhaEspfxUyLhhYHtE8MsT6PiIzMK1qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MO7eDF7N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03528C4CEED;
-	Mon,  5 May 2025 23:14:18 +0000 (UTC)
+	 MIME-Version; b=QtjxyEitVYT5nVXt4RAptYd7V1x72bQx38cy1HoyaaT3NVn8a5cGYfAdiy68P3UcqmgZFvyNFA8OSO5k7WkXPo7u9k65YK5L33MDuWP4Rogmidb7xXOgrbtoLTWAvNO5C50LjCSECJlbydAhtYU1ubuXZ496bfAgYKEbvxRaTnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U55h8hDe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48837C4CEE4;
+	Mon,  5 May 2025 23:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486860;
-	bh=B4/AFmH4EzCm+/gzXspUOA/ZQOae4G4h8zpgvZNFaUI=;
+	s=k20201202; t=1746486862;
+	bh=o6vPQm8ORAMEIjP7fhptjMtwSNq9nMRVlWGY99NWjZw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MO7eDF7Nx1f0WrpHwAd5nrTmkCoVhkCad9iJKRLOSUPrF8/Dj/l2zDdoeEXV7pbIV
-	 fOC8Yu/aBpxQ1Fbku/aWZzhNabiljJx9Ff+X53QehDPTrxomdpwTfTs/FSa1QeNA8z
-	 k/L0Mxpw8V+E0fUnOBp9yfi+fA397lJW8ZSl8M0qzGf2UFmWs3k4t1XVKV0xYUQVpt
-	 0YTbkeXBU/6pEarqk45oOnbMzV1nWMOfCwIPlV9d9FNKAGcwrpQ9e7Nspjc7fwPHNO
-	 oexFm7i8eeR/0Vtxi7CiQrvnwFhRMvBbBJE6bAJp++HDaoFlKYe75gD8Tz45vJ3xPY
-	 jMyudL0nB8nHw==
+	b=U55h8hDeHjc+mM7wHRvh/7REqfjnz8BOK9ZzwcPoILbgqSzg85Omgx3lamDwou017
+	 ad4vNvbrMoG4rMfVdSEQxnLDaTV//0vgl1SsF6uteiG4tQUXWFRdKO4vXloBghgGN7
+	 UPrloEz9S0J5eYvXjhvB11az2Axkya+3MnzQXUQXTA2zDEWBNoYTRhuSGWlEHvIJEg
+	 SAexkoOSabmPFXwrhNTdp9TWXNieBgO6Lt6CRTeSLs5UrZBUHMoBvmBTDg4F4O9hwe
+	 ntkd0pssFLVePBKj9T1VOWAE2ZcakTqeOWJ3oMNeTsFJr2mh9Y7TTHndEZHBDRTqfK
+	 SksTvQ/fLFetg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Nick Hu <nick.hu@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
+Cc: Benjamin Berg <benjamin@sipsolutions.net>,
+	Johannes Berg <johannes.berg@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
+	richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net,
 	tglx@linutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.15 030/153] clocksource/drivers/timer-riscv: Stop stimecmp when cpu hotplug
-Date: Mon,  5 May 2025 19:11:17 -0400
-Message-Id: <20250505231320.2695319-30-sashal@kernel.org>
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	linux-um@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.15 031/153] um: Store full CSGSFS and SS register from mcontext
+Date: Mon,  5 May 2025 19:11:18 -0400
+Message-Id: <20250505231320.2695319-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -70,43 +72,38 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Nick Hu <nick.hu@sifive.com>
+From: Benjamin Berg <benjamin@sipsolutions.net>
 
-[ Upstream commit 70c93b026ed07078e933583591aa9ca6701cd9da ]
+[ Upstream commit cef721e0d53d2b64f2ba177c63a0dfdd7c0daf17 ]
 
-Stop the timer when the cpu is going to be offline otherwise the
-timer interrupt may be pending while performing power-down.
+Doing this allows using registers as retrieved from an mcontext to be
+pushed to a process using PTRACE_SETREGS.
 
-Suggested-by: Anup Patel <anup@brainfault.org>
-Link: https://lore.kernel.org/lkml/20240829033904.477200-3-nick.hu@sifive.com/T/#u
-Signed-off-by: Nick Hu <nick.hu@sifive.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20250219114135.27764-3-nick.hu@sifive.com
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+It is not entirely clear to me why CSGSFS was masked. Doing so creates
+issues when using the mcontext as process state in seccomp and simply
+copying the register appears to work perfectly fine for ptrace.
+
+Signed-off-by: Benjamin Berg <benjamin@sipsolutions.net>
+Link: https://patch.msgid.link/20250224181827.647129-2-benjamin@sipsolutions.net
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/timer-riscv.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/um/os-Linux/mcontext.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
-index c51c5ed15aa75..427c92dd048c4 100644
---- a/drivers/clocksource/timer-riscv.c
-+++ b/drivers/clocksource/timer-riscv.c
-@@ -75,7 +75,13 @@ static int riscv_timer_starting_cpu(unsigned int cpu)
- 
- static int riscv_timer_dying_cpu(unsigned int cpu)
- {
-+	/*
-+	 * Stop the timer when the cpu is going to be offline otherwise
-+	 * the timer interrupt may be pending while performing power-down.
-+	 */
-+	riscv_clock_event_stop();
- 	disable_percpu_irq(riscv_clock_event_irq);
-+
- 	return 0;
+diff --git a/arch/x86/um/os-Linux/mcontext.c b/arch/x86/um/os-Linux/mcontext.c
+index 49c3744cac371..81b9d1f9f4e68 100644
+--- a/arch/x86/um/os-Linux/mcontext.c
++++ b/arch/x86/um/os-Linux/mcontext.c
+@@ -26,7 +26,6 @@ void get_regs_from_mc(struct uml_pt_regs *regs, mcontext_t *mc)
+ 	COPY(RIP);
+ 	COPY2(EFLAGS, EFL);
+ 	COPY2(CS, CSGSFS);
+-	regs->gp[CS / sizeof(unsigned long)] &= 0xffff;
+-	regs->gp[CS / sizeof(unsigned long)] |= 3;
++	regs->gp[SS / sizeof(unsigned long)] = mc->gregs[REG_CSGSFS] >> 48;
+ #endif
  }
- 
 -- 
 2.39.5
 
