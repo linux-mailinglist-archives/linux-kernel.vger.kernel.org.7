@@ -1,107 +1,147 @@
-Return-Path: <linux-kernel+bounces-632469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BA3AA97B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:43:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E720CAA97B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D8417A248
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489C33BB5A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D0A25E458;
-	Mon,  5 May 2025 15:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38CE25E453;
+	Mon,  5 May 2025 15:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HP7Z397R"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoxXpH/s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D0525A64D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA66201004;
+	Mon,  5 May 2025 15:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746459793; cv=none; b=YNrs6RNu1jTVf5e6by3JW6NEkiecmuZ1uOVClcYvXvbkT6aS7mu/p/kCzzjeJm8NQ/7okJCAsiJrt99jOvzMDl9E9mQ/WTdsHOKiO3B8SSidhC/+rpHXfie0JdbHnpmD953B3tTsfP+DDneh3NyWqNjoJBAPuaPhN9MxKd22hPw=
+	t=1746459852; cv=none; b=TSLxG/0OTHyHM/npQl29kATYj3U9VY2vr/8W/dRP+yeO/aYZsVhPB48Fl2NqKgodXfLHPUK+H9B9Aq5lrA296LGKn4z3L40Bno7yhJGHLbu2WfW8WhSw8mFDhhBjZOe/RcVCnrPLiG5kyIZnxyiHcyNGRioT6RTl6MQe0MmnrkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746459793; c=relaxed/simple;
-	bh=QRTbxv6zAHeMDzXhqL8aw35yYIDNThc5twhBqvEaco4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ugiqqtc7ptqg05df32k0rs6QG5ftVhD6P+8Z1GnXbJosEwty456FwqRuYaKmDro7YGlBZlXGgTYeTsJB0O4bt4nJDqTe+vpWdUpb2WIoaar05xD5cMpXXwoGJNBgwd68NREb9eWWo28xzSi26zWL9GMipzNl1/+a3S7lUZX5ibg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HP7Z397R; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-6064d4c14ebso1052378eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:43:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746459790; x=1747064590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jADEHGiMlecVFngKrds8KPNTRKyJX4Rr2PqMnmh5p04=;
-        b=HP7Z397RXibyRH45OVZiWscWZnLDnQIKIkOEAj86AHCkuMW8RT1kxo360dsr1bcdOg
-         udG2Bv+vZHR6yaMcwOUavh174fAv7bbYH5gYOBu/CLnyyv4J3nWkgDK+VyRtuXaoPW2A
-         5lSVIqrod4kVYyR9jBeywUqmqez/ULw8UXXBTIthF60acb6lFRvFPDlnnMCwF00wM9nY
-         X7jrOK4TMBpsELHthudUtJzrZ7SaY/qd3CooyIEQrp485JS+Jquj3P7TrHIQv4lxosww
-         y0Y1NlFMWFaa290hv29txP6Q5Atv6vM/kckxMYqtQMywv5igP/avxoJorXI8tmUfAW1O
-         xsrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746459790; x=1747064590;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jADEHGiMlecVFngKrds8KPNTRKyJX4Rr2PqMnmh5p04=;
-        b=w8wMTZwHE2qfQhJaMqBY65V+hPoyNbNcXivBQyMweCrna/SsraRD+3pcxmZUZQRRzg
-         ErQfhNLnSYKwbFQHt9jwrXpdAUJ7SMzJZk6WLUBurPP4/ZvdeVHxlKikwTwi/pUUShlQ
-         eYLlrUBAagzmsxVnrYm3QWgBhTOr1WdMX5ezlaiegMVc3dHw/z7m0CUfHnRILHSIj58X
-         D6qg1zg44cpOME0CIkNi7A7Obm8r7h0WGhr/6wEFwR+zOTtZu7nlfsIU4DTNoF1WLIMX
-         hEsa10NXOuurMMdYCmw7NIJuJuWjgrEJW9aCas49Tk7/EpH0QTJA4VEehxhTTNDO+/ID
-         IqKA==
-X-Gm-Message-State: AOJu0Yyzl8l+0mrLRRFmMkFQSYvzjTCtQltYSfBI+7zBDkDdjN45PkeO
-	uYhYZcICGkBo47fc5MHegDxBeWWXz9AST6Q/rIS98O/M9XnHd3PXJIyV+qmm2Ig=
-X-Gm-Gg: ASbGncsecnK7BI96wfNNy0iP9E1IdRajATK1HfltzTTOcRL04b9G+dP4tRzKSr81oB6
-	3QKvqLUMRiIXPwVmWfKa6fItOxt1fnHuJIYiidgzWac92LTer+GlrolljUbQlwDOOc4lqFNx/TK
-	mKIpgC4rpLB/+vCHOIKa2BwoebJtOL5x6xD3J2LTqwE+BhpQeL+ctSWN6BPHy/zvmZuM5vJ8EiP
-	jxvVuhLayR3vmzpsS4SLytZMJi0EWTQY/Cu+G1MRCNOsg9xdABqi1AK8JD69vfcLYJxl8YtJe5h
-	AopT6uyf6IZ4szS6+3O2mA1yLQX66c/ByQ85QD5PINxUynbXnJeJ3S4lWcuIYJQqCfegJamiKeC
-	YdJOBImQkn9xN8Mc=
-X-Google-Smtp-Source: AGHT+IFL2btLIVQtJx76CsbwyLNK829LBAKSDjNc/uTEdqP95tY4Xs4YkW2YjtftOF3WDWyRbGLvmg==
-X-Received: by 2002:a05:6820:1f11:b0:5fe:9edb:eafe with SMTP id 006d021491bc7-6080030c637mr4626794eaf.5.1746459790013;
-        Mon, 05 May 2025 08:43:10 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:2151:6806:9b7:545d? ([2600:8803:e7e4:1d00:2151:6806:9b7:545d])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-607e7db20f9sm1668000eaf.16.2025.05.05.08.43.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 08:43:09 -0700 (PDT)
-Message-ID: <a8f47109-f370-49db-abe8-955ba287ab0c@baylibre.com>
-Date: Mon, 5 May 2025 10:43:08 -0500
+	s=arc-20240116; t=1746459852; c=relaxed/simple;
+	bh=QS8dg5Szhy9yOKcqWeqbeXZjnglqgCLYD3ZcvqvMcCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U9n3zbiYS+Z1H5uoskumOXqr0Azah8bEEdyaAd3CZEGqJRwaZrc+nIwid56UPhIOyyMn0KNSGR31r5jYgPtmOtZb3Hk7HPXV6R1VqSb6USzak/HkTwK3khzjwUWdXxz500qBvrlKlXXPFRwTUV+S8w0XlVyo0BhXVmjmTzKd+rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoxXpH/s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF991C4CEF0;
+	Mon,  5 May 2025 15:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746459851;
+	bh=QS8dg5Szhy9yOKcqWeqbeXZjnglqgCLYD3ZcvqvMcCM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hoxXpH/smgixxZOLB0h6+9wBw4YUKoDsFKZMkbhcm75sdDJqdHdm/Ry3geaytxpw6
+	 nAMzU92gh2z5OYXm+mqnIZ79WAu9iHGmXCjMApTJkCH9cunE8YMRhSAd/IXVP5Dvdx
+	 ft8a9nHz8Q/23pZNN0+m+DfeDFSwNki6KttQLWuwzvbQt+x2+gJ87fxPm15yZny4xQ
+	 v+mr1vkhPwLsUQjG9VpkNJLsAdTK9GPg0NrcKTm/punInWGZA/p8/UPA20n5Cy6t2J
+	 6/gJX9WadHwzzCrFCq8DOXD6GlqPBbleWgsTq8sE/GHmk8KLIlz+wy585Ygu8G4FdD
+	 M3YxbZ4tYLL0Q==
+Date: Mon, 5 May 2025 16:44:01 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <andy@kernel.org>, <nuno.sa@analog.com>, <Michael.Hennerich@analog.com>,
+ <marcelo.schmitt@analog.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
+ <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <lgirdwood@gmail.com>,
+ <broonie@kernel.org>, <jonath4nns@gmail.com>, <dlechner@baylibre.com>
+Subject: Re: [PATCH v6 01/11] dt-bindings: trigger-source: add generic GPIO
+ trigger source
+Message-ID: <20250505164401.64cd3da7@jic23-huawei>
+In-Reply-To: <f76579f8aa040125568c044c86761211a2e2f5ae.1745605382.git.Jonathan.Santos@analog.com>
+References: <cover.1745605382.git.Jonathan.Santos@analog.com>
+	<f76579f8aa040125568c044c86761211a2e2f5ae.1745605382.git.Jonathan.Santos@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Signed-off-by missing for commit in the iio tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250505074801.258da03a@canb.auug.org.au>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250505074801.258da03a@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 5/4/25 4:48 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   1a521690c060 ("iio: adc: ad7606: explicit timestamp alignment")
-> 
-> is missing a Signed-off-by from its author.
-> 
+On Sun, 27 Apr 2025 21:12:02 -0300
+Jonathan Santos <Jonathan.Santos@analog.com> wrote:
 
-Thanks for reporting this. The oversight has been fixed.
+> Inspired by pwm-trigger, create a new binding for using a GPIO
+> line as a trigger source.
+> 
+> Link: https://lore.kernel.org/linux-iio/20250207-dlech-mainline-spi-engine-offload-2-v8-3-e48a489be48c@baylibre.com/
+
+David, given you did the pwm one, maybe give this a quick look.
+
+Maybe it's worth generalising to cover all trigger sources in MAINTAINERS?
+
+Thanks. Otherwise I obviously need a DT review before taking this and maybe the GPIO
+element suggests Linus W or Bartosz might be other good reviewers?
+
+Jonathan
+
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+> v6 Changes:
+> * Changed description.
+> * Fixed typos and replaced GPIO pin with GPIO line.
+> * Added link reference for pwm-trigger.
+> 
+> v5 Changes:
+> * New patch in v5.
+> ---
+>  .../bindings/trigger-source/gpio-trigger.yaml | 40 +++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml b/Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml
+> new file mode 100644
+> index 000000000000..1331d153ee82
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/trigger-source/gpio-trigger.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Generic trigger source using GPIO
+> +
+> +description: A GPIO used as a trigger source.
+> +
+> +maintainers:
+> +  - Jonathan Santos <Jonathan.Santos@analog.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: gpio-trigger
+> +
+> +  '#trigger-source-cells':
+> +    const: 0
+> +
+> +  gpios:
+> +    maxItems: 1
+> +    description: GPIO to be used as a trigger source.
+> +
+> +required:
+> +  - compatible
+> +  - '#trigger-source-cells'
+> +  - gpios
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    trigger {
+> +        compatible = "gpio-trigger";
+> +        #trigger-source-cells = <0>;
+> +        gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+> +    };
 
 
