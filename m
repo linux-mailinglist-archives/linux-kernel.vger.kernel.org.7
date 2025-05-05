@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-633889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D074BAAAE93
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A72AAAE8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE6016B14E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:57:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7371616149D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DF9391A79;
-	Mon,  5 May 2025 23:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FEC2DEBA0;
+	Mon,  5 May 2025 23:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNuX9KrT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/XJtHUE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D93B2DA0E1;
-	Mon,  5 May 2025 22:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5AC36F8A9;
+	Mon,  5 May 2025 22:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485878; cv=none; b=NS5aMBSanPI4uPrhkRTPUNZud+n+CVSPWyUlqfAmvY/YELr5lfpj7ePB5/Z4PiK6wWEwwQWj/zPDXZrTenrMk8OCs4TFOQEI/79RhUpXIcfGf0KvT9jlpqslU0ZbQptaoBMY4Vou44Q7jV9L6e4QM4XJuMkCLXnJmHvxePy3Ogc=
+	t=1746485883; cv=none; b=p6tQvD8YkJLd1qlRkw9aF9YgNXdwQut9tKy4r5LYYebIPyJS1kLGtlwc5ACEJRDssf0nDTegZ3AWRhLqkmKg+1C8v1awyIVDQ3OkVIJ5/BWVb1Gkk/1WmMYO9pqmO8pB9C7nMb2dyoOOdzMqqjbMi43uuHddP/mIE9pYrXT723k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485878; c=relaxed/simple;
-	bh=j+EfqvvBXY4PJGPy+vQBKg7QLVsn7odm62WHCyOitj4=;
+	s=arc-20240116; t=1746485883; c=relaxed/simple;
+	bh=f5/B2Mfzq5P2YwMNlv/oDxj8SYgk9gI+Ms84kCduhPo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ob8J+HstUr/KqgohV+t3+mnWXQY+IgdeawoF/EYxXAtDwJ1K2hSRlPY+LqbcOKoIFFAKdcHgqMJlrfCuQUixIb2otrnb6bXQY4RqnbGFAef2m0ABh3k8rGdB7Q1dWeGirvHPT5WE9Dps2w6TktcvdCCRzfaZefvRl7may/D+kEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNuX9KrT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 976DCC4CEF1;
-	Mon,  5 May 2025 22:57:55 +0000 (UTC)
+	 MIME-Version; b=cITcgbvh/9v1ovcBxcrVVnnGaWgMOc0cfpHPFjZlVNYC6Upu0jSrhJcTMLOUYcXHdbwefJnXi769kod4YFG4RAEIzp4/ZNIgWA7pF0jFzeDVWkufR2i/oFBBDr8461pxLDEQdmjRHEnHwQp2JTZOgmoFrithb4qJ0TkoHWn19fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/XJtHUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8F9C4CEEE;
+	Mon,  5 May 2025 22:58:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485877;
-	bh=j+EfqvvBXY4PJGPy+vQBKg7QLVsn7odm62WHCyOitj4=;
+	s=k20201202; t=1746485882;
+	bh=f5/B2Mfzq5P2YwMNlv/oDxj8SYgk9gI+Ms84kCduhPo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UNuX9KrTtfpLf+QFXqN5inONXHJyCOBk3NeLNq7pHj9GJS9T2k09F742Ryzm4L1W/
-	 sgxXw6vOXlLgWSg+b7TWYGhWnuPJyfO/6Dmmh31xYTWlmFc0C2kXPKqKjHLzAJ3Fxw
-	 o0UUNPguVE6rLNdsfZL8W1KSxwVzvrsT3HPifzguIvgJhIuE82kY6FwKi25DxhbfW1
-	 +PyCeJoBe9zSjgp4crp928Bg9wwACMfyO7BDgHQwbPJ2vogN1e4ZzZJVz/UJXZHc17
-	 yPtgAbzM61iLLdKuuhqVVhUfpthB9FtccYu3adOdkUH8litmrz9lmD48YCD1WqXJH0
-	 TzLnuiltN51GA==
+	b=l/XJtHUE44XsxRYtN6rEzRGPYPJWUeIKlQDpG+iCSnhqhMPkZb8cho7MQF2+xxQWl
+	 OcPRhxCBAyCm6SiH9pB8mLhiNjloCrG362IXm3xJZfKFWBglQ+d9q28clnfCLXWOE8
+	 QahmIcLzK6VR6rHBQDmKIHTvKEH4aiBApkpn50Mkz4iXfwhiuKziC5MI9luSDQur7m
+	 h5VpHdPURGLhXrG1/xAJYP2yVtuEJQHdh2Dn29fbqKURHBOJMC0XHV7JQTt3JDJPn0
+	 84P/U5Z58N4tr0l5A+dcEhpQg1YBTcsFMm9FJRScF22HQJRyWxYVketO4P/xyyTJRf
+	 1yiILIT4dNHcw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Philip Redkin <me@rarity.fan>,
-	Ingo Molnar <mingo@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Rik van Riel <riel@surriel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
+Cc: Mark Harmstone <maharmstone@fb.com>,
+	Qu Wenruo <wqu@suse.com>,
+	David Sterba <dsterba@suse.com>,
 	Sasha Levin <sashal@kernel.org>,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	x86@kernel.org
-Subject: [PATCH AUTOSEL 6.6 041/294] x86/mm: Check return value from memblock_phys_alloc_range()
-Date: Mon,  5 May 2025 18:52:21 -0400
-Message-Id: <20250505225634.2688578-41-sashal@kernel.org>
+	clm@fb.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 045/294] btrfs: avoid linker error in btrfs_find_create_tree_block()
+Date: Mon,  5 May 2025 18:52:25 -0400
+Message-Id: <20250505225634.2688578-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -72,51 +67,59 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Philip Redkin <me@rarity.fan>
+From: Mark Harmstone <maharmstone@fb.com>
 
-[ Upstream commit 631ca8909fd5c62b9fda9edda93924311a78a9c4 ]
+[ Upstream commit 7ef3cbf17d2734ca66c4ed8573be45f4e461e7ee ]
 
-At least with CONFIG_PHYSICAL_START=0x100000, if there is < 4 MiB of
-contiguous free memory available at this point, the kernel will crash
-and burn because memblock_phys_alloc_range() returns 0 on failure,
-which leads memblock_phys_free() to throw the first 4 MiB of physical
-memory to the wolves.
+The inline function btrfs_is_testing() is hardcoded to return 0 if
+CONFIG_BTRFS_FS_RUN_SANITY_TESTS is not set. Currently we're relying on
+the compiler optimizing out the call to alloc_test_extent_buffer() in
+btrfs_find_create_tree_block(), as it's not been defined (it's behind an
+ #ifdef).
 
-At a minimum it should fail gracefully with a meaningful diagnostic,
-but in fact everything seems to work fine without the weird reserve
-allocation.
+Add a stub version of alloc_test_extent_buffer() to avoid linker errors
+on non-standard optimization levels. This problem was seen on GCC 14
+with -O0 and is helps to see symbols that would be otherwise optimized
+out.
 
-Signed-off-by: Philip Redkin <me@rarity.fan>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lore.kernel.org/r/94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Mark Harmstone <maharmstone@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/init.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ fs/btrfs/extent_io.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 71d29dd7ad761..6cbb5974e4f9e 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -644,8 +644,13 @@ static void __init memory_map_top_down(unsigned long map_start,
- 	 */
- 	addr = memblock_phys_alloc_range(PMD_SIZE, PMD_SIZE, map_start,
- 					 map_end);
--	memblock_phys_free(addr, PMD_SIZE);
--	real_end = addr + PMD_SIZE;
-+	if (!addr) {
-+		pr_warn("Failed to release memory for alloc_low_pages()");
-+		real_end = max(map_start, ALIGN_DOWN(map_end, PMD_SIZE));
-+	} else {
-+		memblock_phys_free(addr, PMD_SIZE);
-+		real_end = addr + PMD_SIZE;
-+	}
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index b2ae50dcca0fe..ed08d8e5639f5 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -3565,10 +3565,10 @@ struct extent_buffer *find_extent_buffer(struct btrfs_fs_info *fs_info,
+ 	return eb;
+ }
  
- 	/* step_size need to be small so pgt_buf from BRK could cover it */
- 	step_size = PMD_SIZE;
+-#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
+ 					u64 start)
+ {
++#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+ 	struct extent_buffer *eb, *exists = NULL;
+ 	int ret;
+ 
+@@ -3604,8 +3604,11 @@ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
+ free_eb:
+ 	btrfs_release_extent_buffer(eb);
+ 	return exists;
+-}
++#else
++	/* Stub to avoid linker error when compiled with optimizations turned off. */
++	return NULL;
+ #endif
++}
+ 
+ static struct extent_buffer *grab_extent_buffer(
+ 		struct btrfs_fs_info *fs_info, struct page *page)
 -- 
 2.39.5
 
