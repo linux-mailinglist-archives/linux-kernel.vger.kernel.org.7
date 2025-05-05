@@ -1,190 +1,173 @@
-Return-Path: <linux-kernel+bounces-632137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADCDAA92E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:19:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C608EAA92ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E75618998DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:19:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0DBB1899A9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38942255E2E;
-	Mon,  5 May 2025 12:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9E424A066;
+	Mon,  5 May 2025 12:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cT3XxS5X"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VcIPzoF7"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816E12550B0
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FEC1F866B;
+	Mon,  5 May 2025 12:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746447471; cv=none; b=p1yvQyP5iZQV4ht7nHi7zdtBfXKTpFcE4L2T85k/ODgvMVL/fRieemx6FDRFqIvnivFpOmw2LTiBEQ4RUpPpkdRNdP4FK3Ihq9xrLmN1dgdpEbFNNo8PbaOPjm9MHh6M/G2G/XwAyLvOtkrWVIwANhRSdPrdavWSxBkWIWzefZY=
+	t=1746447646; cv=none; b=Zgqo+32P1aq8u+OmU5baL7jAooHDRNJ6JsiUBtPwlVAL9GrSsMpInyV6kHfvklUVT+HwbipakhlPzZvQZTj/rCS/NPEoud6Gbjd7RUIB9Df4apocflYBjCis7ed557d0NxAKM/pm8gpk2WqEEfgLx3wbf9v8rKgQMOsSefpnEck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746447471; c=relaxed/simple;
-	bh=lA7Gkh9jGL4mrigHzmXfNszvqrkSyoDnALirNgDesXs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HPNPUsyZ4ytKNTJJPKjQCjACf9XmmKik1LS1l+yFPn0MJQS8iztRNHKs49ytsWMnS5AaHONr8suzOXyazbdv+fYkz5gJFlfjpqL1GzcGEb8WRIePU5H4HyBDZH+FxlBR5VqzBPMBaAn+QtFqPuwmTcI4MKjgYFuVGtjspKWCxsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cT3XxS5X; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43e9a3d2977so31250955e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746447468; x=1747052268; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aI7ws8iZPwHTtGYkxfXZJ4wq0gS6ufEYiqCRndIOAfc=;
-        b=cT3XxS5XxL72p5/9RJ2CipVe7hu3mF7ilDu/ZFJA9NXW1/4MFGEJY9C3aybipnCXHu
-         NXgCGLnEvp4HqnEDOBLui4tKdzCFG26wSA3npQe/CZoJ12xRqcoBbmaQtazFSSpNNUpA
-         ls6FEBFNwlKUkgBIXhq26UY7hmDk8tPEItQIisj65gDvs8I5tdtsdqD2V/mHG1qEKppz
-         zcTB1TaI9dLkRT2wnQKHGsZu2qiNSZGRM7dWYSll6KSVpd4nLsjTXuqAiGL+VeXlt1hh
-         ZqiFs+fWgK7lduY8fHXz3olf5DFJK1yObKNwzIdUtyM1cBRjI42OBfDGb8d96oBnk3l7
-         8qWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746447468; x=1747052268;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aI7ws8iZPwHTtGYkxfXZJ4wq0gS6ufEYiqCRndIOAfc=;
-        b=Em8RRLJoZGMDsYvTMD7n/5Bb1My27UMNhWWzHZLvI7zwEGnsd23ZlQ2+EfwJkgy9d7
-         FkrWrDqpmHRoLxeUaYvFDHc1vz5vd+QubVb0X4KowYHxVGlNpTlxeqP/Mgw1Qru817H/
-         +qqWfArHst/i4W3PWS9DbZsyqdOM3ubCsLu08otdf4wsHrjlIaWD1nmEhJSjnTj2Cy7J
-         0AfLlDnJldNcxZHgOJWWx9Hfg7tjsc+rWzBbD4vKsC5fOwZrLcwxj9L/3SV34feCdq4Y
-         AIkFMmfR100BbjxokejXvHe3rZd5U7siyVCj2q9T26xFs1ILYbdKpR0cvFU7ggTlMGCG
-         1YMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX32S14OZK4YjT8MBCWdDDBgiYbGxA4/QTiIuyefBiZOduQ5tw6nAhLFNBNq//3IUWx+6x9dDKhgUYTzlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTeJp/y6BLfAQ/+IZXUkNR3p+sp3bVXs+DCCjNkSHiXOMVUAx6
-	m5CBFRYxnZy5FF00o4q5mTP3Ujp31X/v9bj5E9lRen3OQ+/eyot+olTtQKrBZMDs/+ypByqRp0/
-	iTBWheopHpAQL8g==
-X-Google-Smtp-Source: AGHT+IGRlviQWDMm0JA9tB+a5FlOvz3A/Z4hQKhAVSVd7A0c+V+17SbTcKuOwq2RUwtBR0ovkffnvqcRY7oC5LM=
-X-Received: from wmbjb17.prod.google.com ([2002:a05:600c:54f1:b0:441:bf4e:899c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:b96:b0:43c:f64c:447f with SMTP id 5b1f17b1804b1-441c49483c0mr51904745e9.29.1746447467965;
- Mon, 05 May 2025 05:17:47 -0700 (PDT)
-Date: Mon, 05 May 2025 12:17:32 +0000
-In-Reply-To: <20250505-strncpy-from-user-v3-0-85c677fd4f91@google.com>
+	s=arc-20240116; t=1746447646; c=relaxed/simple;
+	bh=s89VJ/1EaCKaePelhYq4jo2czu3Rjni85JG5mwztG/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rueAuGXZGCLsw2d3hCfBs/NOQg5k0Mg3Lt4ytqJadWckK6TJGi3MeEl1i6RDzW1PCrocXWa5BfgtPLgN92gUPBQRur1JcPTQ25u73S/KtcO38anLtQYgeHUjqct4/rsKouGfoQY2cSsroHh8OVx911RB1utbZUelG9yTkBd9D74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VcIPzoF7; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5459iofq026377;
+	Mon, 5 May 2025 14:20:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	vNv4YiLlgQtzs0T1f6YhVskbVHM2VZaXMMv7y7lFYks=; b=VcIPzoF7GvsOd/WZ
+	rsEAtn10/CuuGxpRtZPvKcVSO7L+0Hjoxqjze9wOkJ9oZpbrrxZaHOXoUWI0qxhl
+	5TqA8vbrHSzY4TszLkb9rxuxEC5JqBHyfzuTGQj46DDsopVDxMROJmXHMApay6iY
+	ndorEak3fidDnUd5uf+bp9VwMhDKVc1IJp5KZAg5Vi9bc8h89XpZg4rNnLd6oZqP
+	fLMl5nQp6KMHLwLMGOf8rLK5VrF4OskEJgbJb4IIJszd8dpt3DEUNIXifeP4dBoj
+	/K7j8uKefrb9yibR31mFUYlRxanDfE7YmEBAyxqWzpvo03+OSgsyRkAqgMZ5HDzi
+	u7+SPQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46dbekp93d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 May 2025 14:20:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7B78140048;
+	Mon,  5 May 2025 14:19:11 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7A9A5AF1E53;
+	Mon,  5 May 2025 14:17:39 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 5 May
+ 2025 14:17:39 +0200
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 5 May
+ 2025 14:17:38 +0200
+Message-ID: <c7a1b615-9171-4675-b5d6-fe5741f1ac0b@foss.st.com>
+Date: Mon, 5 May 2025 14:17:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250505-strncpy-from-user-v3-0-85c677fd4f91@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4080; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=lA7Gkh9jGL4mrigHzmXfNszvqrkSyoDnALirNgDesXs=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoGKxl2bSoTcsJCcnQIyuizzBKGVs20krozLvxf
- msQUXTjH0WJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaBisZQAKCRAEWL7uWMY5
- RndXD/oChQWpR+z9zVjQaGvOxyzaRIeKJU038RRe/zOMeiMEDMezfjn4DLPiI3wz0RlKzJFvbCN
- FuPB+HB5GpkD94rp87Q0OOleKxkMtJHhD7IRC1Zdu3BoAUfTQc1nQDuOk84tFt7AOm0arDS3v+X
- efm3d62o4rNhBrp3ejEtc2UOLUDRyEFeTB7hhplhh80vhDYWP5kNksV61vUchG7k244PtsBJkUs
- RF7ryElwzZUrNfP1T4mpFgX64+rWLuSvYwVSnKmoL5+Iruk1QSVYdA3W6I7nKnQXXhIjT1VgGvO
- clQKmJqIs+19jvx8n+QCtEZfhKFAatQO2p0YNd8467Wx9iG754qmMxztHS9C1jfu0D3wYx/j9bj
- ME4FK8k5dDI13kKFl972C8+kxbxVj27A2UrV16jQoM7ZU2uaC0H8UvH2bzMNKfgxBzyUl8heSPm
- eOlemNhRWs0lw4kFBHPyLe4OaWVFEt345eBxdMDK9NmDf1jpTOGe0BtQfPhpdGIFDoPBD1fokX6
- yfHORGu8rkDlEUMpA4Ix67XPK480KLqba4fJHgOkVW4jk40G2y1q821uKm5vubW7ktWKI2mzuVr
- 84jmLSMjSgopzqAB79nfewtQei2rGfbBw9HBB8+ZDnVeOAIAKcj6PtwfShdEKBSmMxodAPbBgOF k42O/qnrvf0ZUPg==
-X-Mailer: b4 0.14.2
-Message-ID: <20250505-strncpy-from-user-v3-2-85c677fd4f91@google.com>
-Subject: [PATCH v3 2/2] uaccess: rust: add UserSliceReader::strcpy_into_buf
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/7] Add STM32MP25 LPTIM support: MFD, PWM, IIO,
+ counter, clocksource
+To: Lee Jones <lee@kernel.org>
+CC: <daniel.lezcano@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <tglx@linutronix.de>, <ukleinek@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <jic23@kernel.org>, <robh@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <devicetree@vger.kernel.org>, <wbg@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>
+References: <20250429125133.1574167-1-fabrice.gasnier@foss.st.com>
+ <20250501131454.GO1567507@google.com>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20250501131454.GO1567507@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-05_05,2025-05-05_01,2025-02-21_01
 
-This patch adds a more convenient method for reading C strings from
-userspace. Logic is added to NUL-terminate the buffer when necessary so
-that a &CStr can be returned.
 
-Note that we treat attempts to read past `self.length` as a fault, so
-this returns EFAULT if that limit is exceeded before `buf.len()` is
-reached.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/uaccess.rs | 53 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
+On 5/1/25 15:14, Lee Jones wrote:
+> On Tue, 29 Apr 2025, Fabrice Gasnier wrote:
+> 
+>> This series adds support for STM32MP25 to MFD PWM, IIO, counter and
+>> clocksource low-power timer (LPTIM) drivers.
+>> This new variant is managed by using a new DT compatible string, hardware
+>> configuration and version registers.
+>> It comes with a slightly updated register set, some new features and new
+>> interconnect signals inside the SoC.
+>> Same feature list as on STM32MP1x is supported currently.
+>> The device tree files add all instances in stm32mp251 dtsi file.
+>>
+>> Changes in V6
+>> ---
+>> - Fixed kernel test robot warning
+>>   https://lore.kernel.org/oe-kbuild-all/202504261456.aCATBoYN-lkp@intel.com/
+>>
+>> Changes in V5
+>> ---
+>> - Add a necessary delay in clocksource driver, when enabling the timer.
+>> - Add collected Acks
+>> - Dropped IIO trigger patch as applied by Jonathan [1] (no dependency)
+>>   [1] https://lore.kernel.org/all/20250331110435.26157ebe@jic23-huawei/
+>>
+>> Changes in V4
+>> ---
+>> - Simplify IIO trigger driver as per Jonathan's comments.
+>> - Rework clocksource driver: encapsulate mp25 changes in separate function
+>>   after Daniel's suggestion.
+>> - Add some definitions to MFD header.
+>>
+>> Changes in V3
+>> ---
+>> - Yaml indentation issue fixed, reported by Rob's bot
+>>
+>> Changes in V2
+>> ---
+>> - Review comments from Krzysztof
+>>   - Adopt compatible fallback in dt-bindings and driver
+>>   - drivers: drop "st,stm32mp25-..." compatibles when unused (e.g. no .data)
+>>   - counter driver: no update (patch dropped)
+>>   - defconfig: only enable the necessary config for upstream board
+>>   - add lptimer DT node in stm32mp257f-ev1 board
+>> - Add missing management of IER access for stm32mp25
+>>
+>> Fabrice Gasnier (7):
+>>   dt-bindings: mfd: stm32-lptimer: add support for stm32mp25
+>>   mfd: stm32-lptimer: add support for stm32mp25
+>>   clocksource: stm32-lptimer: add support for stm32mp25
+>>   pwm: stm32-lp: add support for stm32mp25
+>>   arm64: defconfig: enable STM32 LP timer clockevent driver
+>>   arm64: dts: st: add low-power timer nodes on stm32mp251
+>>   arm64: dts: st: use lptimer3 as tick broadcast source on
+>>     stm32mp257f-ev1
+>>
+>>  .../bindings/mfd/st,stm32-lptimer.yaml        |  40 +++-
+>>  arch/arm64/boot/dts/st/stm32mp251.dtsi        | 177 ++++++++++++++
+>>  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |   8 +
+>>  arch/arm64/configs/defconfig                  |   2 +
+>>  drivers/clocksource/timer-stm32-lp.c          |  61 ++++-
+>>  drivers/mfd/stm32-lptimer.c                   |  33 ++-
+>>  drivers/pwm/pwm-stm32-lp.c                    | 219 +++++++++++++++---
+>>  include/linux/mfd/stm32-lptimer.h             |  37 ++-
+>>  8 files changed, 537 insertions(+), 40 deletions(-)
+> 
+> Is it just the Clocksource Ack that we're waiting on now?
+> 
+Hi Lee,
 
-diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-index a7b123915e9aa2329f376d67cad93e2fc17ae017..978205289d297a4001a51fa40ac29039bff73672 100644
---- a/rust/kernel/uaccess.rs
-+++ b/rust/kernel/uaccess.rs
-@@ -293,6 +293,58 @@ pub fn read_all<A: Allocator>(mut self, buf: &mut Vec<u8, A>, flags: Flags) -> R
-         unsafe { buf.set_len(buf.len() + len) };
-         Ok(())
-     }
-+
-+    /// Read a NUL-terminated string from userspace and return it.
-+    ///
-+    /// The string is read into `buf` and a NUL-terminator is added if the end of `buf` is reached.
-+    /// Since there must be space to add a NUL-terminator, the buffer must not be empty. The
-+    /// returned `&CStr` points into `buf`.
-+    ///
-+    /// Fails with [`EFAULT`] if the read happens on a bad address (some data may have been
-+    /// copied).
-+    #[doc(alias = "strncpy_from_user")]
-+    pub fn strcpy_into_buf<'buf>(self, buf: &'buf mut [u8]) -> Result<&'buf CStr> {
-+        if buf.is_empty() {
-+            return Err(EINVAL);
-+        }
-+
-+        // SAFETY: The types are compatible and `strncpy_from_user` doesn't write uninitialized
-+        // bytes to `buf`.
-+        let mut dst = unsafe { &mut *(buf as *mut [u8] as *mut [MaybeUninit<u8>]) };
-+
-+        // We never read more than `self.length` bytes.
-+        if dst.len() > self.length {
-+            dst = &mut dst[..self.length];
-+        }
-+
-+        let mut len = raw_strncpy_from_user(self.ptr, dst)?;
-+        if len < dst.len() {
-+            // Add one to include the NUL-terminator.
-+            len += 1;
-+        } else if len < buf.len() {
-+            // This implies that len == dst.len() < buf.len().
-+            //
-+            // This means that we could not fill the entire buffer, but we had to stop reading
-+            // because we hit the `self.length` limit of this `UserSliceReader`. Since we did not
-+            // fill the buffer, we treat this case as if we tried to read past the `self.length`
-+            // limit and received a page fault, which is consistent with other `UserSliceReader`
-+            // methods that also return page faults when you exceed `self.length`.
-+            return Err(EFAULT);
-+        } else {
-+            // This implies that len == buf.len().
-+            //
-+            // This means that we filled the buffer exactly. In this case, we add a NUL-terminator
-+            // and return it. Unlike the `len < dst.len()` branch, don't modify `len` because it
-+            // already represents the length including the NUL-terminator.
-+            //
-+            // SAFETY: Due to the check at the beginning, the buffer is not empty.
-+            unsafe { *buf.last_mut().unwrap_unchecked() = 0 };
-+        }
-+
-+        // SAFETY: `raw_strncpy_from_user` guarantees that this range of bytes represents a
-+        // NUL-terminated string with the only NUL byte being at the end.
-+        Ok(unsafe { CStr::from_bytes_with_nul_unchecked(&buf[..len]) })
-+    }
- }
- 
- /// A writer for [`UserSlice`].
-@@ -383,7 +435,6 @@ pub fn write<T: AsBytes>(&mut self, value: &T) -> Result {
- /// initialized and non-zero. Furthermore, if `len < buf.len()`, then `buf[len]` is a NUL byte.
- /// Unsafe code may rely on these guarantees.
- #[inline]
--#[expect(dead_code)]
- fn raw_strncpy_from_user(ptr: UserPtr, buf: &mut [MaybeUninit<u8>]) -> Result<usize> {
-     // CAST: Slice lengths are guaranteed to be `<= isize::MAX`.
-     let len = buf.len() as isize;
+Yes,
 
--- 
-2.49.0.967.g6a0df3ecc3-goog
-
+Best Regards,
+Fabrice
 
