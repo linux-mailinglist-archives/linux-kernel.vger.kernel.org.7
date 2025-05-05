@@ -1,66 +1,61 @@
-Return-Path: <linux-kernel+bounces-633947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B49EAAAF00
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:09:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08A1AAAEF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6D693B3734
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:03:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15D01BC1E2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8159C2F1552;
-	Mon,  5 May 2025 23:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA8538943C;
+	Mon,  5 May 2025 23:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IM2CGwBa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPhNXmyW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20065379432;
-	Mon,  5 May 2025 23:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABD1280CE4;
+	Mon,  5 May 2025 23:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486088; cv=none; b=Ucq59qf+Jt8FdHViT9kSDp+167kBhvzrSha2sUo+eJpB6tI9h+geq0TXbmnIZAC+fg6Tvi3wjeIoXV0UeivholXTvgIO5sECb5+oXDU7igGc0opZVePQbSOKkxfbpCVaal5fFDR+9xemWGEYO/pxXNnlagYY9gl7zb3qiWUdKf0=
+	t=1746486089; cv=none; b=W6niixnNsgt5Bozu+WmB+XD0g2dTNX1+1lj5HPKNc/gghpE96A66/0QLpU+xZH4+cCjJZNVF4X7RefF7ix/0zORqaEAYsKthk7ckuA5UdCRk5llWa3jTnPUzVi4xBdTZTZSp5zVhKznEvyzKpXHgz0pnzkzQ8lpvFQKFoTQtC0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486088; c=relaxed/simple;
-	bh=BpFM42YEpVEK+w9jwsAluXPgJE5xWhTxX355y0AvYwI=;
+	s=arc-20240116; t=1746486089; c=relaxed/simple;
+	bh=Ebq6FPtPss/zzi/u4hlfPYAHa0WLxlQJcAjZnvV3q5I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cDzW8G7WLcgtSvONjrz5g8JHDksWXkDGDcHAFjMN2PJ2rmEqlmOhlhitvrs8OjevwPa3QrwytAnh/tlqDJOpYF3XzHn41shUKJdcqYgsBaT4+F2BeVwmTZqMpGkRHEiELi+9ou/I50KvPgFLkat5urYY0xntcyckEUlcqY22rSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IM2CGwBa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FD6C4CEED;
-	Mon,  5 May 2025 23:01:25 +0000 (UTC)
+	 MIME-Version; b=KjblFVCnhbFwuNMdKwzFlmlEdmdSUMXge9AViKNOdsNkuV5o3/DFJrwrkpiXn2h3kDn/7LExkji6TsFmX4gdhL9llJCiFKIN4PPVI1TQjBxLrg/oSp+7of9XYgfb5cr0oDYP6ZNPnzU0EprCoal3JXpBm1H6BHPM2SCxswTl5bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPhNXmyW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D38C4CEE4;
+	Mon,  5 May 2025 23:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486087;
-	bh=BpFM42YEpVEK+w9jwsAluXPgJE5xWhTxX355y0AvYwI=;
+	s=k20201202; t=1746486088;
+	bh=Ebq6FPtPss/zzi/u4hlfPYAHa0WLxlQJcAjZnvV3q5I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IM2CGwBaDep6UUmNbU1dRkSMGr9nhAUjZ/4Z9rK+/b7J9FD0zmUeFQ1uWDMXlWPwo
-	 0Uv3omaBnl2gJS8hY/nJaA4AgBFXZ3mRGxSfk8LBgtA+bzHf29m8hBR3h7GJGBZxLS
-	 AgqfctebzCRkvKvFMrGAjcg5WIbq4VZUJbyri0Dcx7NXwpPdbWrtFwbBv7nSFEU65W
-	 4plmoibiqsenrjaza7/RQTRm1qaRzDX+5ZHS5Ihx6ulxjNPnd3X4AIBMUjuq7az+2k
-	 4lBBP8wk+b8RTv598SaFXHz90V8+2QQw2eBlT6/nkpRcY/ip624UsTOFPhlYC/mBpe
-	 ySztZpwSgfD5w==
+	b=NPhNXmyWawWeURty/+kcHMCVS0mgDtfxdd/W7HIGSkBx7j3khfR2V4VqlqmdAAelk
+	 EVpSgg0vfZ7BIgyDdVBO+BncLjpgAZc7LTCVPnpSu5TXM72nL+6tYTk28TD5XrvGlO
+	 wnFB2D56GIw3atNt3GZyqPINyFxraXgbWhNj0fPjQCI/5Wj2dOulO+Opc/8HlBtpx5
+	 0k5KBm9RDhsp1vaIecZsUz56ZwQ9DCnhiRanOQeAClrk1VF3HtpxHG3ILKBP+2JV/2
+	 HTnsCiirpCYmu5OFfsy5c6Y8bboCHIr1VPHPFeuI47R0Jvm8gUuNuyvO5LZxqQDM/I
+	 eYXpVbOB3KyxA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Eric Woudstra <ericwouds@gmail.com>,
+Cc: Arnd Bergmann <arnd@arndb.de>,
 	Paolo Abeni <pabeni@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	nbd@nbd.name,
-	sean.wang@mediatek.com,
-	lorenzo@kernel.org,
+	iyappan@os.amperecomputing.com,
+	keyur@os.amperecomputing.com,
 	andrew+netdev@lunn.ch,
 	davem@davemloft.net,
 	edumazet@google.com,
 	kuba@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.6 148/294] net: ethernet: mtk_ppe_offload: Allow QinQ, double ETH_P_8021Q only
-Date: Mon,  5 May 2025 18:54:08 -0400
-Message-Id: <20250505225634.2688578-148-sashal@kernel.org>
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 149/294] net: xgene-v2: remove incorrect ACPI_PTR annotation
+Date: Mon,  5 May 2025 18:54:09 -0400
+Message-Id: <20250505225634.2688578-149-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -75,86 +70,45 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Eric Woudstra <ericwouds@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 7fe0353606d77a32c4c7f2814833dd1c043ebdd2 ]
+[ Upstream commit 01358e8fe922f716c05d7864ac2213b2440026e7 ]
 
-mtk_foe_entry_set_vlan() in mtk_ppe.c already supports double vlan
-tagging, but mtk_flow_offload_replace() in mtk_ppe_offload.c only allows
-for 1 vlan tag, optionally in combination with pppoe and dsa tags.
+Building with W=1 shows a warning about xge_acpi_match being unused when
+CONFIG_ACPI is disabled:
 
-However, mtk_foe_entry_set_vlan() only allows for setting the vlan id.
-The protocol cannot be set, it is always ETH_P_8021Q, for inner and outer
-tag. This patch adds QinQ support to mtk_flow_offload_replace(), only in
-the case that both inner and outer tags are ETH_P_8021Q.
+drivers/net/ethernet/apm/xgene-v2/main.c:723:36: error: unused variable 'xge_acpi_match' [-Werror,-Wunused-const-variable]
 
-Only PPPoE-in-Q (as before) and Q-in-Q are allowed. A combination
-of PPPoE and Q-in-Q is not allowed.
-
-Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
-Link: https://patch.msgid.link/20250225201509.20843-1-ericwouds@gmail.com
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://patch.msgid.link/20250225163341.4168238-2-arnd@kernel.org
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/mediatek/mtk_ppe_offload.c   | 22 +++++++++----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/apm/xgene-v2/main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_ppe_offload.c b/drivers/net/ethernet/mediatek/mtk_ppe_offload.c
-index a4efbeb162084..889fd26843e60 100644
---- a/drivers/net/ethernet/mediatek/mtk_ppe_offload.c
-+++ b/drivers/net/ethernet/mediatek/mtk_ppe_offload.c
-@@ -34,8 +34,10 @@ struct mtk_flow_data {
- 	u16 vlan_in;
+diff --git a/drivers/net/ethernet/apm/xgene-v2/main.c b/drivers/net/ethernet/apm/xgene-v2/main.c
+index 379d19d18dbed..5808e3c73a8f4 100644
+--- a/drivers/net/ethernet/apm/xgene-v2/main.c
++++ b/drivers/net/ethernet/apm/xgene-v2/main.c
+@@ -9,8 +9,6 @@
  
- 	struct {
--		u16 id;
--		__be16 proto;
-+		struct {
-+			u16 id;
-+			__be16 proto;
-+		} vlans[2];
- 		u8 num;
- 	} vlan;
- 	struct {
-@@ -330,18 +332,19 @@ mtk_flow_offload_replace(struct mtk_eth *eth, struct flow_cls_offload *f,
- 		case FLOW_ACTION_CSUM:
- 			break;
- 		case FLOW_ACTION_VLAN_PUSH:
--			if (data.vlan.num == 1 ||
-+			if (data.vlan.num + data.pppoe.num == 2 ||
- 			    act->vlan.proto != htons(ETH_P_8021Q))
- 				return -EOPNOTSUPP;
+ #include "main.h"
  
--			data.vlan.id = act->vlan.vid;
--			data.vlan.proto = act->vlan.proto;
-+			data.vlan.vlans[data.vlan.num].id = act->vlan.vid;
-+			data.vlan.vlans[data.vlan.num].proto = act->vlan.proto;
- 			data.vlan.num++;
- 			break;
- 		case FLOW_ACTION_VLAN_POP:
- 			break;
- 		case FLOW_ACTION_PPPOE_PUSH:
--			if (data.pppoe.num == 1)
-+			if (data.pppoe.num == 1 ||
-+			    data.vlan.num == 2)
- 				return -EOPNOTSUPP;
- 
- 			data.pppoe.sid = act->pppoe.sid;
-@@ -431,12 +434,9 @@ mtk_flow_offload_replace(struct mtk_eth *eth, struct flow_cls_offload *f,
- 	if (offload_type == MTK_PPE_PKT_TYPE_BRIDGE)
- 		foe.bridge.vlan = data.vlan_in;
- 
--	if (data.vlan.num == 1) {
--		if (data.vlan.proto != htons(ETH_P_8021Q))
--			return -EOPNOTSUPP;
-+	for (i = 0; i < data.vlan.num; i++)
-+		mtk_foe_entry_set_vlan(eth, &foe, data.vlan.vlans[i].id);
- 
--		mtk_foe_entry_set_vlan(eth, &foe, data.vlan.id);
--	}
- 	if (data.pppoe.num == 1)
- 		mtk_foe_entry_set_pppoe(eth, &foe, data.pppoe.sid);
- 
+-static const struct acpi_device_id xge_acpi_match[];
+-
+ static int xge_get_resources(struct xge_pdata *pdata)
+ {
+ 	struct platform_device *pdev;
+@@ -733,7 +731,7 @@ MODULE_DEVICE_TABLE(acpi, xge_acpi_match);
+ static struct platform_driver xge_driver = {
+ 	.driver = {
+ 		   .name = "xgene-enet-v2",
+-		   .acpi_match_table = ACPI_PTR(xge_acpi_match),
++		   .acpi_match_table = xge_acpi_match,
+ 	},
+ 	.probe = xge_probe,
+ 	.remove = xge_remove,
 -- 
 2.39.5
 
