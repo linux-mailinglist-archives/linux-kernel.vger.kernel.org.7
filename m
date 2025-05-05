@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-634031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E911AAABB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 809DBAAAAA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9E45189DC4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:57:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C69188AE4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72423B2F5A;
-	Mon,  5 May 2025 23:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UorKPqXM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA5F2874FB;
+	Mon,  5 May 2025 23:03:45 +0000 (UTC)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00094396EA5;
-	Mon,  5 May 2025 23:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE2135D7B0;
+	Mon,  5 May 2025 22:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486384; cv=none; b=AAgVBI0xtr1K4qAmLhOyWQAL6fxHmKw/27hc2qNDLn01N03ohL7WmWVn5/eMokNYzU0h62dyUFjDDqc5PFv2FdIK5g1mrXxVut+FCjnqzH22/qTrYhw6cM03GeUmNyjjufT33uMz07r9ki5U5wYUz9OX2GRZHMwgrakGjaQH2q4=
+	t=1746485907; cv=none; b=NqXndjlF7UXtxwhv5z97T9mG8vtn7fe0UZWKJ2/siY2KfX2elLmjlwiUmF8ldmBJrqIdPV6or73MKZtBsvKdvv0g/ILbbiwvQApe/ohty1SpxZ1X2lHa5+gJoyONuW2GGfov5ldHJ+oYS61pQ4hmnizFB3wA3Msjbw8eMYVzN9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486384; c=relaxed/simple;
-	bh=osrs3CyFZ2f+ksNPpjlzidOtyNYYoswmnpUkwfOmRGQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XJQSzLIns+PKoo3+hOqo1MNSvPVBnL1xXYwtPgOK7mvl8q4ddlPrOzAhLA83v1j2WkLoPYpXDPRKn/JoT+ws+0IbsZU5Vk8q0fDbSPiFYadvMsJ/TrlYcJO0Us7GolmFn10r9CtLqpedcWmVaVmtJocbZdDyhnaShcqMzPMDtc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UorKPqXM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0373C4CEF1;
-	Mon,  5 May 2025 23:06:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486382;
-	bh=osrs3CyFZ2f+ksNPpjlzidOtyNYYoswmnpUkwfOmRGQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UorKPqXMZbrvuqz7thL31WD4l35mAH6KBCk0FTkCueL+dqGwIkfmWZRUx/HovTebv
-	 B264HsnZ2kHn7ZirLyoeLJu9vjHNNkRLxvyB8izM48XRxUPNQ5NTVyvirM8q1wMkAc
-	 WXDQSI5YCz1ZQhWkC58wNIMt0/FV+e9uPKca8qMbOyKNdOzh+AGEA0FQHlGzXwXH/w
-	 GKbgOSdD5ZaM7zXPg8KDmSlPiPv15lVZIx8SoMcFlXB4kN6d2rv9E8Z55LOlfGpuBg
-	 tthmZN7kQwPdGtAC6XoV36QIQC88aZT/cr0H7PBo60ANPOjeO+OHF00o6NK/v4Fx2+
-	 /G4HGSD/eJRmQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	maarten.lankhorst@linux.intel.com,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 294/294] drm: Add valid clones check
-Date: Mon,  5 May 2025 18:56:34 -0400
-Message-Id: <20250505225634.2688578-294-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
-References: <20250505225634.2688578-1-sashal@kernel.org>
+	s=arc-20240116; t=1746485907; c=relaxed/simple;
+	bh=0iA7SnkO+rHs3cH5clhDyFXZGFleV4DrWF4XKWa+sJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uf8qPEEDBUnaZ553HgnSeD5UqVrieQTt3M/dYADeJC30THNN4W6Efhcj34Fk4JGNNoyNsEkUdeZGXENHGrbGjSG3GQe75Ih070Oub1BKk2f8yTEy7nVeMxefOTtvNl15qJsacBp1sgsyv8ZmUsUV5j7Y7p6H2ITyq+P7dgFVe8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-301a8b7398cso562090a91.1;
+        Mon, 05 May 2025 15:58:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746485904; x=1747090704;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E69HBkxQBdEYOvZVGJya06bZ/qelSSQFUZVNp/6hv4Q=;
+        b=lJvzSgtyPnoHiFxUpFmzKiz6URvRZCx33ChApMBAWF5Uz4p1OO6I1sMp03p/ZBPdC5
+         CV2FEGQWEd3E4Adp4bPi2kC2N5bhT/wnoMehzaRNZcemP6lGxUBuNuXGJUsAxryDBtmu
+         Rms+Vn2Z+aN6yYDDw+b7VyapearqB8sxGQpkE2RPvuA2JyH4OsgM4nr9WpzmT+rs2iSx
+         Zj2MoGS+0klurQsSW1GHPX5MzQPmgMQvrU8gPG3aBJGyaf2JBo37mzzWLUbLtjbByi2k
+         NS/qM1NE4n8xIh/SzcACPHBeGSnkHfCG4ORTyK73nAAK5cWAVE35+cQO+tMZDx1WUB+x
+         1fYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy6vXRy3kTbASz93AciySyXYKbLdiB0fKenkW1NjoReB3gmSsA0+oM+nnU8TcJtItGnmBSCEGDFvw=@vger.kernel.org, AJvYcCW3l945nYAP1uoPIEObMwQN5vNaEhUmPxu8fCwGkR7reNSzGJB2C/UR7WjrSTxyWvtuYi48bmNDyL04c0xb@vger.kernel.org, AJvYcCXoIxNff7atlPMw04bMfZJInDljxL1XIH3+HKisiGdAV/xwd5MKP6qrLp+WFnQnk3xxKz5yCEDWQmDZIcDz3A==@vger.kernel.org, AJvYcCXrFlfSJZJopr1GzL9abx1UcVQzAmxI+CxHiaRy9dLHMrTRcmUiisFnyBELekhLrln7Gg2OJ5Yfo+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2Kn69NkgJleSsMj82SLxJRVlEphWtb+4NVeyh1/s+RKJP4GE4
+	IffK3d/+i5+KK9+DvlZTzQSPLfTgkXw/vCtMxJLkG/cXFlwkKdRV
+X-Gm-Gg: ASbGnctmvgOoU12WsfDLDTmS0ysJgv7vV8tlt6/iPrlv89zx67kJ6L6yuwy8UA3XZwd
+	tESQWLnaLzdJQ3W7IaOVVlX7dCwskH4YyihJHfOgPAXWXMVYH7ADSikJdROMI8ytUnFKj78Ob7w
+	F6Cneypm7r9SJBI7peWvFfvgIkXQ+RhzdgwSdiGmmYP3uGakvu7kI1Wz1dvum0L1m9Lcyr9DOKQ
+	ljVFJPmJAtLWdugEkb90rC3kldSorJ/sVj913oybvLSmd8GjRTSyuIyVnQep3efrD9PyD2Gq2Jf
+	oHWZVc00o6lD/qJ8kxHYowJxSSnwxdMxwVUKvkxtr8l/W36k/e+I
+X-Google-Smtp-Source: AGHT+IHJTeyvyyCYbIt/rYD4AuU2+QD3JmkKZhwPhbVCwB3WHS4NZFqPQbdjDVG7wdbKMVf90do5qQ==
+X-Received: by 2002:a17:902:d4c4:b0:224:e0e:e08b with SMTP id d9443c01a7336-22e1022be16mr89698425ad.0.1746485903779;
+        Mon, 05 May 2025 15:58:23 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a347488b0sm12359854a91.16.2025.05.05.15.58.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 15:58:23 -0700 (PDT)
+Message-ID: <81a917f3-fb41-4958-8d76-7cdfa7b60a7c@kzalloc.com>
+Date: Tue, 6 May 2025 07:58:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.89
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Prevent panic from NULL dereference in
+ alloc_fs_context() during do_exit()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Len Brown <len.brown@intel.com>, byungchul@sk.com,
+ max.byungchul.park@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-efi@vger.kernel.org
+References: <20250505203801.83699-2-ysk@kzalloc.com>
+ <20250505223615.GK2023217@ZenIV>
+Content-Language: en-US
+From: Yunseong Kim <ysk@kzalloc.com>
+Organization: kzalloc
+In-Reply-To: <20250505223615.GK2023217@ZenIV>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
+Hi Alexander,
 
-[ Upstream commit 41b4b11da02157c7474caf41d56baae0e941d01a ]
+Thanks for the feedback!
 
-Check that all encoders attached to a given CRTC are valid
-possible_clones of each other.
+On 5/6/25 7:36 오전, Al Viro wrote:
+> On Tue, May 06, 2025 at 05:38:02AM +0900, Yunseong Kim wrote:
+>> The function alloc_fs_context() assumes that current->nsproxy and its
+>> net_ns field are valid. However, this assumption can be violated in
+>> cases such as task teardown during do_exit(), where current->nsproxy can
+>> be NULL or already cleared.
+>>
+>> This issue was triggered during stress-ng's kernel-coverage.sh testing,
+>> Since alloc_fs_context() can be invoked in various contexts — including
+>> from asynchronous or teardown paths like do_exit() — it's difficult to
+>> guarantee that its input arguments are always valid.
+>>
+>> A follow-up patch will improve the granularity of this fix by moving the
+>> check closer to the actual mount trigger(e.g., in efivarfs_pm_notify()).
+> 
+> UGH.
+> 
+>> diff --git a/fs/fs_context.c b/fs/fs_context.c
+>> index 582d33e81117..529de43b8b5e 100644
+>> --- a/fs/fs_context.c
+>> +++ b/fs/fs_context.c
+>> @@ -282,6 +282,9 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
+>>  	struct fs_context *fc;
+>>  	int ret = -ENOMEM;
+>>  
+>> +	if (!current->nsproxy || !current->nsproxy->net_ns)
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>>  	fc = kzalloc(sizeof(struct fs_context), GFP_KERNEL_ACCOUNT);
+>>  	if (!fc)
+>>  		return ERR_PTR(-ENOMEM);
+> 
+> That might paper over the oops, but I very much doubt that this will be
+> a correct fix...  Note that in efivarfs_pm_notify() we have other
+> fun issues when run from such context - have task_work_add() fail in
+> fput() and if delayed_fput() runs right afterwards and
+>         efivar_init(efivarfs_check_missing, sfi->sb, false);
+> in there might end up with UAF...
 
-Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20241216-concurrent-wb-v4-3-fe220297a7f0@quicinc.com
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/drm_atomic_helper.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+I see your point — simply returning early in alloc_fs_context() may just
+paper over a deeper issue, and I agree that this might not be the right
+long-term fix. I wasn’t aware of the potential UAF scenario involving
+efivarfs_pm_notify() and delayed_fput().
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index f3681970887cc..1aa59586c8f81 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -573,6 +573,30 @@ mode_valid(struct drm_atomic_state *state)
- 	return 0;
- }
- 
-+static int drm_atomic_check_valid_clones(struct drm_atomic_state *state,
-+					 struct drm_crtc *crtc)
-+{
-+	struct drm_encoder *drm_enc;
-+	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state,
-+									  crtc);
-+
-+	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask) {
-+		if (!drm_enc->possible_clones) {
-+			DRM_DEBUG("enc%d possible_clones is 0\n", drm_enc->base.id);
-+			continue;
-+		}
-+
-+		if ((crtc_state->encoder_mask & drm_enc->possible_clones) !=
-+		    crtc_state->encoder_mask) {
-+			DRM_DEBUG("crtc%d failed valid clone check for mask 0x%x\n",
-+				  crtc->base.id, crtc_state->encoder_mask);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * drm_atomic_helper_check_modeset - validate state object for modeset changes
-  * @dev: DRM device
-@@ -744,6 +768,10 @@ drm_atomic_helper_check_modeset(struct drm_device *dev,
- 		ret = drm_atomic_add_affected_planes(state, crtc);
- 		if (ret != 0)
- 			return ret;
-+
-+		ret = drm_atomic_check_valid_clones(state, crtc);
-+		if (ret != 0)
-+			return ret;
- 	}
- 
- 	/*
--- 
-2.39.5
+I’ll take a closer look at the call paths involved here, especially
+around efivarfs_pm_notify(), fput(), and delayed_fput() interactions
+during do_exit().
 
+Also, I’ll loop in the EFI mailing list so we can discuss this
+further from the efivarfs side as well.
+
+Thanks again,
+Yunseong
 
