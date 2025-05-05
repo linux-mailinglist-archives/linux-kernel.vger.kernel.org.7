@@ -1,277 +1,193 @@
-Return-Path: <linux-kernel+bounces-631647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0554AAA8B7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 06:59:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECFDAA8B83
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 328C01891297
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 04:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8670E18922B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 05:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099A41A5B92;
-	Mon,  5 May 2025 04:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FAF18DF93;
+	Mon,  5 May 2025 05:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbUl1cR1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UPjWbMQs"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395C2339A1
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 04:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF222566;
+	Mon,  5 May 2025 05:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746421145; cv=none; b=Dy/GSR6FhTBZvP4s210bRqccfKCJ2sAvjv3RQdaivtbpppu+51BpDHyrZbJxDPWc/V+yKBx1SpcAAFGjFMIT3Ko70a4KrPnfAcLPtc4/5fWB4keuvYrYG0QPhrLay6qQIM5JgufgrOtOLpSXCYhIQeUI5i7CPW9GPp9I++WXg5Y=
+	t=1746421318; cv=none; b=BQeMQHbRvX6XS5sN2rKIE/xXHFwdnQ/xEEpy/hZfKtCOjVzDf0UtZm5kzXuMV4DAW2HZsF+nfoTEMBY88rFzgpfCbWnFAVvx0MF9+vJBx1g02fQT1SY6anKtJZ3jNM/hTJpM87gR6zkLmjaP+5MMcHk4EByC9tdhWVVpCkjjFv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746421145; c=relaxed/simple;
-	bh=K7s2g7BUqrF2uhZ/RQRKvPzy15IaDMLWYy/MInMArMQ=;
+	s=arc-20240116; t=1746421318; c=relaxed/simple;
+	bh=4ViT3LXt0QH4SnxsFtW5d7x+CtJEfR+/rZCNUoi7YPw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GCsdquq6m+uSm391y4NrEYyqU6PlIDy72sah9xM6whkHG69OsgO7W+0p4maVjvK/GBE4hEitKu1XTtZ/iZ+DIE23zF3yOL/eQpahIhMT4BxBURHHXOpwSTzP+XsRB8QLwIfqaVoowkt8OVgHH5aveS7cROgZZDoytg9k8XgAFfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbUl1cR1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D495C4CEF5
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 04:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746421144;
-	bh=K7s2g7BUqrF2uhZ/RQRKvPzy15IaDMLWYy/MInMArMQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tbUl1cR1FVBN1yVzkCIZ38U+2oziyEQ4+g5z3n+Jvb+IgRec2lOzkHrhIIbaY72cb
-	 Jlix+qBOpRjodoP5fWl/+C5uZHLA7fb5DkllWDCFlxeQBMEBUa7mJPg6wbEUaV0BiD
-	 ai34i8JMnhinvlfecnvCVxo8Cjvi79ILLXbOD2uXLZxGB/50rpU3srWbCHf0thCxa1
-	 dqFk3Im41MDHqr/a3AHl2UTIRHTafCuQdOF/8/TZ8bQ/GjUCu6eCKrhHmLYoeSP+rT
-	 5bPQX8mh1J8drkSSJTsBu9nl0d8W5kySXNmXhZbCw6VOnauuCQcEAJcuNUkyZE+G0B
-	 wtqmWy3MwAaoQ==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e5cded3e2eso2120672a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 04 May 2025 21:59:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVIqUPtGHbENqPzg/e4wAcuBv+xQ9O/DPvOq0htbeMMTxPAQRsn8z65ZSgOPqdDMRNDrXFdfc55YPFQ6vA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjLXrmnI6EwbF7ZjEMOqBBHtjNC+9bpYjx3/a+vet2MKIwpq42
-	CBstyd4auQ3Vp5L0qARketacR076aF5nOXuRJR/5kDsv/9tC6epYeELJA3BydCBxivw0fxjq5Wp
-	PoquZT+WLszW2KdgZzSJbUS2/+kQ=
-X-Google-Smtp-Source: AGHT+IG1lchCTSmjOeXTlVWNOKDNxSCiMmrVSg+nCFqgnE1LhOpMxr54poigqTD4VYCMVagIlxVTJFY1JBSjJcSej0E=
-X-Received: by 2002:a05:6402:2112:b0:5f4:ade4:88c5 with SMTP id
- 4fb4d7f45d1cf-5faa8031175mr6421508a12.34.1746421143164; Sun, 04 May 2025
- 21:59:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=XGnb460noRNDy/bV5TN9k2I4I+x3qRwRz1eWIS6cOmB2MsBwyxOd0izaiyjp5b+e5uECgiF0BhxcjGpclfaSNWMDkugE4ZPyPnvr88+akCTtgsfFKgPudNsZSb6cOo3yeXSeBx4pb62HZm2lG3kAPQucxuOHLR3FSKQXUE8SHYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UPjWbMQs; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549b116321aso5036748e87.3;
+        Sun, 04 May 2025 22:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746421314; x=1747026114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tmpYbvBMI9AsI/UkcpVBkG0S1uIUBYKbf/+Nv3CsnRI=;
+        b=UPjWbMQsj2/EbaHdG6qv62Dybnbo1UIEt7bs9ZCku0i43qiGXzijIQoKhiHekMmip0
+         UQGBgae0l5N2rB6ZaFhUEQBCF3LR+dI7GzG3AsG9eqWaNlWcqU7RyoevnW4vz/x+cpPM
+         yp+/U7YpsF6EkSgKeG9bfNhuv+o5tW00+RJbTqsHnsiG9/iNxwlxg+J15yLE3Tq2lMsE
+         dwjOI14U8U1mKZAU4YNIk3k+Tg9uHrE03zl/pgBLrBqkLFYgyksiMdmCv+6GV5pNF+Mg
+         AszLwpn5oDe4akpSB52HhM3MPQPap1ZPXvzQO0hGV1JUctud/XszC7bC7AtvThvQrHLg
+         iQvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746421314; x=1747026114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tmpYbvBMI9AsI/UkcpVBkG0S1uIUBYKbf/+Nv3CsnRI=;
+        b=w7uXDSK8XyzgvvGacQ7Qs/WC07Mqb42e+1eiAZFtVcahzQ/QKqIIycU8CTWls4R/z1
+         TVhReYN0S8402lDg0/1WQybslM9QWXga3JmoS2722oOWEh8ZCeRqMIsZ8g8b8GtotC3X
+         QsP1xKHGohZjDUNclYv1J9NHOIkldd1WZ+SMT0pIRZUiVltsZCzfZgDbC7dQqtYbJsrT
+         rJ613AY2UJ9RDFEczqonekmpligT+SSyW3JUQoVBRvUT7ltqqm82IihC6CFZa/lCoUr9
+         igUFQnkc/tYjrfjRrtiiaTeXPE3vQAqvPSddOdH3Pl4Ad1lflVkbNQArALK2S7AG3Y0H
+         +0BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY6A8vImXJ8M0My98570BHHh+TVGBwzD/9QfST/m9YKQkaYm1QHPhIzsHbM1E5M6wALeS9dzud33v7XA==@vger.kernel.org, AJvYcCXx+07Ikss6tiPqLy+w53QCrecDUKT9B5EJLwaGyYFZ+5hAXAs90KCFdvwVGWzL7Ee1h0PU3MZ2A1mvxpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM+P9zyk+IF8zBqiflmMX5NzNgu9CGSJgNm8nW7bGG/UHFIaDr
+	XimNW9V0vDVYHhGeu4kmqpBUHniWnPYYngQD7ncjDuAYGl81MSGp7e3mXrHXysdLg7OMQpubg/D
+	Yd48E3rDOtICefueGemOygcw5YzU=
+X-Gm-Gg: ASbGnctB8M2RmQGywNPv2R+9ZZmJIiC3fKexV4WWamfV9/kchqblgQXtYBe69SSyv5s
+	qHu/vHaItjc94ix5TzTO2p93kFFAZX5yTtp/zvMdHlksNTOP7r/1TFF12ycfZBjIr1y8o15rcBa
+	W8M5ifv26EKEdevx6gUTGzqA==
+X-Google-Smtp-Source: AGHT+IHrGdAczLy6DFk9G7cF7f/Wjb6YJKaCJYrDZu9gByYO98eCuaSMEJtEDxszy3sjSOxmj1HT1u2CQg8duiL2Yoc=
+X-Received: by 2002:a05:6512:3c9a:b0:549:39d8:51ef with SMTP id
+ 2adb3069b0e04-54f9efb8264mr1208726e87.6.1746421313939; Sun, 04 May 2025
+ 22:01:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320-riscv_optimize_entry-v6-0-63e187e26041@rivosinc.com> <20250320-riscv_optimize_entry-v6-3-63e187e26041@rivosinc.com>
-In-Reply-To: <20250320-riscv_optimize_entry-v6-3-63e187e26041@rivosinc.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 5 May 2025 12:58:52 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4qAT-45=vEKDQ9zKWsoN+3XW9Sj5cTdfQwqE-aGJYzjQ@mail.gmail.com>
-X-Gm-Features: ATxdqUFH04W6-dJK9c2_4Fnk38d3i97bZmImDonrAVMLvrJUAQY9c2hxFrmPdus
-Message-ID: <CAAhV-H4qAT-45=vEKDQ9zKWsoN+3XW9Sj5cTdfQwqE-aGJYzjQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] LoongArch: entry: Migrate ret_from_fork() to C
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+References: <20250430115926.6335-1-rand.sec96@gmail.com> <9028680b0d2b7c42d0e990bbdcd247d824e01153.camel@HansenPartnership.com>
+In-Reply-To: <9028680b0d2b7c42d0e990bbdcd247d824e01153.camel@HansenPartnership.com>
+From: Rand Deeb <rand.sec96@gmail.com>
+Date: Mon, 5 May 2025 08:00:00 +0300
+X-Gm-Features: ATxdqUE33cDra2cb2TPeDDpzcgpOt-sUHG0jdy6t6FDlIgtKanNZcP2zerypUIw
+Message-ID: <CAN8dotmt91Kqwrz7e4O71opGX7gK802-WwXOPV1GkQB-KmRHDw@mail.gmail.com>
+Subject: Re: [PATCH] scsi: NCR5380: Prevent potential out-of-bounds read in spi_print_msg()
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Finn Thain <fthain@linux-m68k.org>, Michael Schmitz <schmitzmic@gmail.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, 
+	"open list:NCR 5380 SCSI DRIVERS" <linux-scsi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	deeb.rand@confident.ru, lvc-project@linuxtesting.org, 
+	voskresenski.stanislav@confident.ru
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Charlie,
+On Wed, Apr 30, 2025 at 3:59=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Wed, 2025-04-30 at 14:59 +0300, Rand Deeb wrote:
+> > spi_print_msg() assumes that the input buffer is large enough to
+> > contain the full SCSI message, including extended messages which may
+> > access msg[2], msg[3], msg[7], and beyond based on message type.
+>
+> That's true because it's a generic function designed to work for all
+> parallel card.  However, this card only a narrow non-HVD low frequency
+> one, so it only really speaks a tiny subset of this (in particular it
+> would never speak messages over 3 bytes).
 
-There are some small issues.
+Thank you for clarifying this. I wasn=E2=80=99t aware that the NCR5380 is s=
+o
+strictly limited in terms of message support.I assumed a more generic
+scenario when applying defensive checks, without considering the practical
+behavior of this specific hardware.
 
-On Fri, Mar 21, 2025 at 1:29=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.c=
-om> wrote:
->
-> LoongArch is the only architecture that calls
-> syscall_exit_to_user_mode() from asm. Move the call into C so that this
-> function can be inlined across all architectures.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  arch/loongarch/include/asm/asm-prototypes.h |  8 +++++++
->  arch/loongarch/kernel/entry.S               | 22 +++++++++----------
->  arch/loongarch/kernel/process.c             | 33 +++++++++++++++++++++++=
-------
->  3 files changed, 45 insertions(+), 18 deletions(-)
->
-> diff --git a/arch/loongarch/include/asm/asm-prototypes.h b/arch/loongarch=
-/include/asm/asm-prototypes.h
-> index 51f224bcfc654228ae423e9a066b25b35102a5b9..704066b4f7368be15be960fad=
-bcd6c2574bbf6c0 100644
-> --- a/arch/loongarch/include/asm/asm-prototypes.h
-> +++ b/arch/loongarch/include/asm/asm-prototypes.h
-> @@ -12,3 +12,11 @@ __int128_t __ashlti3(__int128_t a, int b);
->  __int128_t __ashrti3(__int128_t a, int b);
->  __int128_t __lshrti3(__int128_t a, int b);
->  #endif
-> +
-> +asmlinkage void noinstr __no_stack_protector ret_from_fork(struct task_s=
-truct *prev,
-> +                                                          struct pt_regs=
- *regs);
-> +
-> +asmlinkage void noinstr __no_stack_protector ret_from_kernel_thread(stru=
-ct task_struct *prev,
-> +                                                                   struc=
-t pt_regs *regs,
-> +                                                                   int (=
-*fn)(void *),
-> +                                                                   void =
-*fn_arg);
-> diff --git a/arch/loongarch/kernel/entry.S b/arch/loongarch/kernel/entry.=
-S
-> index 48e7e34e355e83eae8165957ba2eac05a8bf17df..2abc29e573810e000f2fef464=
-6ddca0dbb80eabe 100644
-> --- a/arch/loongarch/kernel/entry.S
-> +++ b/arch/loongarch/kernel/entry.S
-> @@ -77,24 +77,22 @@ SYM_CODE_START(handle_syscall)
->  SYM_CODE_END(handle_syscall)
->  _ASM_NOKPROBE(handle_syscall)
->
-> -SYM_CODE_START(ret_from_fork)
-> +SYM_CODE_START(ret_from_fork_asm)
->         UNWIND_HINT_REGS
-> -       bl              schedule_tail           # a0 =3D struct task_stru=
-ct *prev
-> -       move            a0, sp
-> -       bl              syscall_exit_to_user_mode
-> +       move            a1, sp
-> +       bl              ret_from_fork
->         RESTORE_STATIC
->         RESTORE_SOME
->         RESTORE_SP_AND_RET
-> -SYM_CODE_END(ret_from_fork)
-> +SYM_CODE_END(ret_from_fork_asm)
->
-> -SYM_CODE_START(ret_from_kernel_thread)
-> +SYM_CODE_START(ret_from_kernel_thread_asm)
->         UNWIND_HINT_REGS
-> -       bl              schedule_tail           # a0 =3D struct task_stru=
-ct *prev
-> -       move            a0, s1
-> -       jirl            ra, s0, 0
-> -       move            a0, sp
-> -       bl              syscall_exit_to_user_mode
-> +       move            a1, sp
-> +       move            a2, s0
-> +       move            a3, s1
-> +       bl              ret_from_kernel_thread
->         RESTORE_STATIC
->         RESTORE_SOME
->         RESTORE_SP_AND_RET
-> -SYM_CODE_END(ret_from_kernel_thread)
-> +SYM_CODE_END(ret_from_kernel_thread_asm)
-> diff --git a/arch/loongarch/kernel/process.c b/arch/loongarch/kernel/proc=
-ess.c
-> index 6e58f65455c7ca3eae2e88ed852c8655a6701e5c..98bc60d7c550fcc0225e8452f=
-81a7d6cd7888015 100644
-> --- a/arch/loongarch/kernel/process.c
-> +++ b/arch/loongarch/kernel/process.c
-> @@ -14,6 +14,7 @@
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/errno.h>
-> +#include <linux/entry-common.h>
-For alpa-betical order, it should be before errno.h.
+> > NCR5380_reselect() currently allocates a 3-byte buffer for 'msg'
+> > and reads only a single byte from the SCSI bus before passing it to
+> > spi_print_msg(), which can result in a potential out-of-bounds read
+> > if the message is malformed or declares a longer length.
 
->  #include <linux/sched.h>
->  #include <linux/sched/debug.h>
->  #include <linux/sched/task.h>
-> @@ -33,6 +34,7 @@
->  #include <linux/prctl.h>
->  #include <linux/nmi.h>
->
-> +#include <asm/asm-prototypes.h>
-For alpa-betical order, it should be after asm.h.
+That makes sense. My initial assumption was that, even if unlikely, a
+malformed or non-compliant message could theoretically appear. But I now
+see that this isn=E2=80=99t realistic for these devices, and no evidence su=
+ggests
+this has ever occurred in the field.
 
+> The reselect protocol *requires* the next message to be an identify.
+> Since these cards and the devices they attack to are all decades old, I
+> think if they were going to behave like this we'd have seen it by now.
+>
+> The bottom line is we don't add this type of thing to a device facing
+> interface unless there's evidence of an actual negotiation problem.
 
-Huacai
+Understood and I agree. Defensive programming without a known issue on
+hardware-level interfaces introduces unnecessary complexity.
 
->  #include <asm/asm.h>
->  #include <asm/bootinfo.h>
->  #include <asm/cpu.h>
-> @@ -47,6 +49,7 @@
->  #include <asm/pgtable.h>
->  #include <asm/processor.h>
->  #include <asm/reg.h>
-> +#include <asm/switch_to.h>
->  #include <asm/unwind.h>
->  #include <asm/vdso.h>
+> You didn't test this, did you?  The above code instructs the card to
+> wait for 16 bytes on reselection and abort if they aren't found ...
+
+You=E2=80=99re absolutely right. I misjudged the effect of changing the rea=
+d length.
+
+Given this, I=E2=80=99ll drop the patch entirely, as there=E2=80=99s no act=
+ual problem to
+fix. The intent was only to silence static analysis tools, but I now
+realize this isn=E2=80=99t a valid justification for modifying a stable har=
+dware-
+facing path.
+
+Thanks again for the review and your insights.
+
+Best regards,
+Rand Deeb
+
+On Wed, Apr 30, 2025 at 3:59=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
 >
-> @@ -63,8 +66,9 @@ EXPORT_SYMBOL(__stack_chk_guard);
->  unsigned long boot_option_idle_override =3D IDLE_NO_OVERRIDE;
->  EXPORT_SYMBOL(boot_option_idle_override);
+> On Wed, 2025-04-30 at 14:59 +0300, Rand Deeb wrote:
+> > spi_print_msg() assumes that the input buffer is large enough to
+> > contain the full SCSI message, including extended messages which may
+> > access msg[2], msg[3], msg[7], and beyond based on message type.
 >
-> -asmlinkage void ret_from_fork(void);
-> -asmlinkage void ret_from_kernel_thread(void);
-> +asmlinkage void restore_and_ret(void);
-> +asmlinkage void ret_from_fork_asm(void);
-> +asmlinkage void ret_from_kernel_thread_asm(void);
+> That's true because it's a generic function designed to work for all
+> parallel card.  However, this card only a narrow non-HVD low frequency
+> one, so it only really speaks a tiny subset of this (in particular it
+> would never speak messages over 3 bytes).
 >
->  void start_thread(struct pt_regs *regs, unsigned long pc, unsigned long =
-sp)
->  {
-> @@ -138,6 +142,23 @@ int arch_dup_task_struct(struct task_struct *dst, st=
-ruct task_struct *src)
->         return 0;
->  }
+> > NCR5380_reselect() currently allocates a 3-byte buffer for 'msg'
+> > and reads only a single byte from the SCSI bus before passing it to
+> > spi_print_msg(), which can result in a potential out-of-bounds read
+> > if the message is malformed or declares a longer length.
 >
-> +asmlinkage void noinstr __no_stack_protector ret_from_fork(struct task_s=
-truct *prev,
-> +                                                          struct pt_regs=
- *regs)
-> +{
-> +       schedule_tail(prev);
-> +       syscall_exit_to_user_mode(regs);
-> +}
-> +
-> +asmlinkage void noinstr __no_stack_protector ret_from_kernel_thread(stru=
-ct task_struct *prev,
-> +                                                                   struc=
-t pt_regs *regs,
-> +                                                                   int (=
-*fn)(void *),
-> +                                                                   void =
-*fn_arg)
-> +{
-> +       schedule_tail(prev);
-> +       fn(fn_arg);
-> +       syscall_exit_to_user_mode(regs);
-> +}
-> +
->  /*
->   * Copy architecture-specific thread state
->   */
-> @@ -165,8 +186,8 @@ int copy_thread(struct task_struct *p, const struct k=
-ernel_clone_args *args)
->                 p->thread.reg03 =3D childksp;
->                 p->thread.reg23 =3D (unsigned long)args->fn;
->                 p->thread.reg24 =3D (unsigned long)args->fn_arg;
-> -               p->thread.reg01 =3D (unsigned long)ret_from_kernel_thread=
-;
-> -               p->thread.sched_ra =3D (unsigned long)ret_from_kernel_thr=
-ead;
-> +               p->thread.reg01 =3D (unsigned long)ret_from_kernel_thread=
-_asm;
-> +               p->thread.sched_ra =3D (unsigned long)ret_from_kernel_thr=
-ead_asm;
->                 memset(childregs, 0, sizeof(struct pt_regs));
->                 childregs->csr_euen =3D p->thread.csr_euen;
->                 childregs->csr_crmd =3D p->thread.csr_crmd;
-> @@ -182,8 +203,8 @@ int copy_thread(struct task_struct *p, const struct k=
-ernel_clone_args *args)
->                 childregs->regs[3] =3D usp;
+> The reselect protocol *requires* the next message to be an identify.
+> Since these cards and the devices they attack to are all decades old, I
+> think if they were going to behave like this we'd have seen it by now.
 >
->         p->thread.reg03 =3D (unsigned long) childregs;
-> -       p->thread.reg01 =3D (unsigned long) ret_from_fork;
-> -       p->thread.sched_ra =3D (unsigned long) ret_from_fork;
-> +       p->thread.reg01 =3D (unsigned long) ret_from_fork_asm;
-> +       p->thread.sched_ra =3D (unsigned long) ret_from_fork_asm;
+> The bottom line is we don't add this type of thing to a device facing
+> interface unless there's evidence of an actual negotiation problem.
 >
->         /*
->          * New tasks lose permission to use the fpu. This accelerates con=
-text
+> [...]
+> > @@ -2084,7 +2084,7 @@ static void NCR5380_reselect(struct Scsi_Host
+> > *instance)
+> >       msg[0] =3D NCR5380_read(CURRENT_SCSI_DATA_REG);
+> >  #else
+> >       {
+> > -             int len =3D 1;
+> > +             int len =3D sizeof(msg);
 >
-> --
-> 2.43.0
+> You didn't test this, did you?  The above code instructs the card to
+> wait for 16 bytes on reselection and abort if they aren't found ...
+> i.e. every reselection now aborts because the device is only sending a
+> one byte message.
+>
+> Regards,
+>
+> James
 >
 
