@@ -1,135 +1,160 @@
-Return-Path: <linux-kernel+bounces-632454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0498CAA977A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:26:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66ADAA9776
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38BF1188B1C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:26:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F2577AB38E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBC325D1E1;
-	Mon,  5 May 2025 15:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9288825CC77;
+	Mon,  5 May 2025 15:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XJXPDxDN"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="H9JG1gT6"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1763324EAAF;
-	Mon,  5 May 2025 15:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A9F25C6EA
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746458767; cv=none; b=T15YaGR/ze0NrUrOP+nAk7k0GXN4iADFVV/bxjc/eE1cG6eW88gsw7ccJOzdaKTlqxUVHg/ksGontsetClbsZh+yCduAiH+SURN1sn2AlwAah37ukoq+EQ1t9Z4mhXDfLc4hfhYVMjquK89Xe05FB5kpbw8P4sGQmrpyaiRlnJQ=
+	t=1746458739; cv=none; b=YnFNB0qaws1tmQC3eVqIBmqHrES+HadtCWb2V8DtZmy5ou5Z/yG1khqRsmfHUKijQ3CCM9zQat+T/YzTxxwLutLXC1z9R++qp8nyWcMYSSEfL7UilbmGysLGnYqE5ONlO1wW088rGKVFFOew8mfHKJvZD4cdztOHdHKiwv/fBfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746458767; c=relaxed/simple;
-	bh=UOI1l9hXayxU7heQlHejQDTdK48z/ikCPJtKU8eW2Vw=;
+	s=arc-20240116; t=1746458739; c=relaxed/simple;
+	bh=dI4E2Kbf751wzsz59sPzsKmHk4663cGlXUspDFJTyek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hrfZx6qUjQqyP5MlBdhVqMjkjvg6augme/y6ZmKtFAuu6iJXMg3O032cX8ohrpvnMJwL5KPBYq9p0t8or7l5ntBdo00IusUWWrvIzTAH+eduMbUzMdRGQLlAnQXtLjv0hO4X98EoJHQHF99i8XSIBmNuFVRAacoKGQ5RdUvUS04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XJXPDxDN; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 12A9B40E0222;
-	Mon,  5 May 2025 15:25:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CTV22dvS23vv; Mon,  5 May 2025 15:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1746458752; bh=+kOANE/cLZ/tF/AlN+hQkP75TG40P8eKkj9SOzjdBZ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XJXPDxDNLgbs9J094UB1VoMYWWfWifTmV11cLfdscQagTWX2wtgzs2ZLdq24tDozj
-	 /F5jgqSiv6vD5c+U2q3oUPgHW5BzHhoW+hvjES9O6byFdm+AJKbpbq1oQWsgwI633W
-	 3XCrvH+urBOcFd9SzOWf4K+oitussszM8FixNeLKm08TiG4uUWEdtlzsimORGK5gsB
-	 P3OU4Szx2T5o/VhPTeyq61c7UkVmCmD4rXsMstIQqjQ5JXObriRZh/KkKfDQcMQUEj
-	 3gpLX1o0JfRGrKcQjJmovofCnE5h757QfTRw3fSA66j+/C/VRVYQJetEZlFlnbjLOK
-	 tZm5vPFIlEWK7sMOZiD0471bPDvOX70tCwwCH5XYLeNSsCAGdvNRYylVRfqCxLyKLT
-	 1s+jPcpPnNEKTgLJF9qGkRfJ77tSQbRWX5Mt2GZU6zYYYMQfWeXFnx9xYFlYXB1anX
-	 U7s4+A8XGJgYFJvi1RmF+bWxwM++Tusa0g1d+ohpX5XnXpbApbv9rjIvam7Fwhrf6F
-	 xdYzOFVGsIpZEeq/PAWMxJ6g8bMcOEpJJUeUPusSSJehV22MsH4vvlHugMhnTWLJxi
-	 eE03tP/DRDVDPIed38HB0MWqOVUU7kFPjjoE834CLtk8w+yI1+e3gqeGPifkCUjSWc
-	 f3LWLF+CKMpFosY3KuidQHbE=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 09B8140E0196;
-	Mon,  5 May 2025 15:25:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNNYAIjtsjwIEoAOEvJBuW9bdp91j7pecX299r6KD2KWaAuicYi3hD3p/p3cSMeIPIg8BJ4wiryQzuWmNPNQVe5emc/ZbnpMws6zVwho/j2QR4MgavwlfyzTwGMge7UdEztf8aJbYelD2emuc8/LTkRulZGCwHAj4wU9oiIbb/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=H9JG1gT6; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so510564866b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:25:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1746458736; x=1747063536; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ajJLa5miM3AL5goGOKRZtkQ1TmX4V3MyI+Ci8KWiok=;
+        b=H9JG1gT63FNaZObb2fHVq8bmoilOaBq99fb4kqh1fnet2xJZLXkvY9YmfLxEebyOw+
+         sz/FI8pDBJQmWwJM4HrzKc2z3pXB03HFs3FplAqRiutvx0v6QE0BDKXavMWrSKLNg24k
+         j2Mf6Mpmqb0Uqa2jJWjYtMBVwvWR5blal7NzuZVaie98jPBiPCa5pRd5xrEluSzsCZPa
+         iBYmC3imZO40SLOPK8p280Z2CU5REsyO2EuGvUPcxrtFe8DcKllwUctVrn5nkfq35K29
+         W6Xcoe8aSfdIJHAqhdEoTO+Z15atwJiPO/UBDAwqqnAd62MkspJVgdx0n3hrJVHcBpTI
+         7JPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746458736; x=1747063536;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ajJLa5miM3AL5goGOKRZtkQ1TmX4V3MyI+Ci8KWiok=;
+        b=m1N0qLINrpa4b6DqP51eTyWEQnHES+ZJLgXikCVYUzDWsD08hYiXWgNR3zKSvdg8FR
+         /HyVIE+XP8yLLK3BLy3THrM69piNF9+tkuC/oOCMG282mvbb7BFN1NSxM9WX478PHnJG
+         Nzys0kq/kbYPUkhbUjdvzz+dRnRo3ZvddqScR1VoI8paU+9ux2Qn8Jzv5ohpqe1k5D1C
+         vXOHiFjrnT0rIst3GsgsrFXTGR3mLXgrhgwv475WRdxtIk6c1rAoFynzuLkG32hQ3jz/
+         9JHMzP9qkkg9N2cuoJtnQrF5U15rJLPi9tuqYHryt+VU8U29p9tnf2QMuv2yWtPF8vMP
+         izTg==
+X-Gm-Message-State: AOJu0YwavyMuS2D31WXE0btzjlR9NSSwdXljapc6pJ7mGq34LlK6UTcG
+	kh9N1Iiyp5P7BgzncWviyFSYXvLtdlyoznkPyPYJW3csY5eftpdbyKYvP4n7f4s=
+X-Gm-Gg: ASbGncvOLdqhof6H02/27+7j4nzxbRnVts/oGZMgQMTijhOyeAve4b58NZow8F7yYT/
+	o9JqCT6hLZHB/ptBZ3LOvVoilxAnx7aF/tb+DUrrUYWQr4yOwyIN2jLZ1F85ClULRAd2C9wjZtk
+	kge9lzxROSMJ1vyfUdJkMS5HI3Wsn+/qPSShqr5XsRbRLqV5oGQJR7fki8XiOC/16Q9eHPJQ4V/
+	hPlQd3A1mf7t4wiOLX73YZG8BlkjeWh0f7CpP58KWYwRysVmZoqnOG3f+8QDv9cJBhV9wcii4ec
+	t3Wk6W/SsKykFVj7Y92WUrUCgy5TPyfDv1RgYik3CMMpJQMzOUk=
+X-Google-Smtp-Source: AGHT+IGYG7m0T03TgljojHgEjhUKNwr/b12nUjKBhKn/d8sk3hJq1ietBujLlydEzb85jA5VfGNXkw==
+X-Received: by 2002:a17:907:9406:b0:ac6:f6e2:7703 with SMTP id a640c23a62f3a-ad1a48bc5d9mr610686166b.8.1746458735844;
+        Mon, 05 May 2025 08:25:35 -0700 (PDT)
+Received: from localhost.localdomain ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad18914733esm506520166b.33.2025.05.05.08.25.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 08:25:35 -0700 (PDT)
 Date: Mon, 5 May 2025 17:25:33 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Patrick Bellasi <derkling@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>,
-	David Kaplan <David.Kaplan@amd.com>,
-	Michael Larabel <Michael@michaellarabel.com>
-Subject: Re: x86/bugs: KVM: Add support for SRSO_MSR_FIX, back for moar
-Message-ID: <20250505152533.GHaBjYbcQCKqxh-Hzt@fat_crate.local>
-References: <Z7LQX3j5Gfi8aps8@Asmaa.>
- <20250217160728.GFZ7NewJHpMaWdiX2M@fat_crate.local>
- <Z7OUZhyPHNtZvwGJ@Asmaa.>
- <20250217202048.GIZ7OaIOWLH9Y05U-D@fat_crate.local>
- <f16941c6a33969a373a0a92733631dc578585c93@linux.dev>
- <20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local>
- <20250429132546.GAaBDTWqOsWX8alox2@fat_crate.local>
- <aBKzPyqNTwogNLln@google.com>
- <20250501081918.GAaBMuhq6Qaa0C_xk_@fat_crate.local>
- <aBOnzNCngyS_pQIW@google.com>
+From: Petr Mladek <pmladek@suse.com>
+To: Eugen Hristev <eugen.hristev@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	andersson@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
+	tglx@linutronix.de, mingo@redhat.com, rostedt@goodmis.org,
+	john.ogness@linutronix.de, senozhatsky@chromium.org,
+	peterz@infradead.org, mojha@qti.qualcomm.com,
+	linux-arm-kernel@lists.infradead.org, vincent.guittot@linaro.org,
+	konradybcio@kernel.org, dietmar.eggemann@arm.com,
+	juri.lelli@redhat.com
+Subject: Re: [RFC][PATCH 07/14] printk: add kmsg_kmemdump_register
+Message-ID: <aBjYbXJL-GJe4Mh8@localhost.localdomain>
+References: <20250422113156.575971-1-eugen.hristev@linaro.org>
+ <20250422113156.575971-8-eugen.hristev@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aBOnzNCngyS_pQIW@google.com>
+In-Reply-To: <20250422113156.575971-8-eugen.hristev@linaro.org>
 
-On Thu, May 01, 2025 at 09:56:44AM -0700, Sean Christopherson wrote:
-> Heh, I considered that, and even tried it this morning because I thought it wouldn't
-> be as tricky as I first thought, but turns out, yeah, it's tricky.  The complication
-> is that KVM needs to ensure BP_SPEC_REDUCE=1 on all CPUs before any VM is created.
+On Tue 2025-04-22 14:31:49, Eugen Hristev wrote:
+> Add kmsg_kmemdump_register, which registers prb, log_buf and infos/descs
+> to kmemdump.
+> This will allow kmemdump to be able to dump specific log buffer areas on
+> demand.
 > 
-> I thought it wouldn't be _that_ tricky once I realized the 1=>0 case doesn't require
-> ordering, e.g. running host code while other CPUs have BP_SPEC_REDUCE=1 is totally
-> fine, KVM just needs to ensure no guest code is executed with BP_SPEC_REDUCE=0.
-> But guarding against all the possible edge cases is comically difficult.
-> 
-> For giggles, I did get it working, but it's a rather absurd amount of complexity
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -4650,6 +4651,18 @@ int kmsg_dump_register(struct kmsg_dumper *dumper)
+>  }
+>  EXPORT_SYMBOL_GPL(kmsg_dump_register);
+>  
+> +void kmsg_kmemdump_register(void)
+> +{
+> +	kmemdump_register("log_buf", (void *)log_buf_addr_get(), log_buf_len_get());
+> +	kmemdump_register("prb", (void *)&prb, sizeof(prb));
+> +	kmemdump_register("prb", (void *)prb, sizeof(*prb));
 
-Thanks for taking the time to explain - that's, well, funky. :-\
+This looks strange. "prb" is a pointer to "struct printk_ringbuffer".
+It should be enough to register the memory with the structure.
 
-Btw, in talking about this, David had this other idea which sounds
-interesting:
+> +	kmemdump_register("prb_descs", (void *)_printk_rb_static_descs,
+> +			  sizeof(_printk_rb_static_descs));
+> +	kmemdump_register("prb_infos", (void *)_printk_rb_static_infos,
+> +			  sizeof(_printk_rb_static_infos));
 
-How about we do a per-CPU var which holds down whether BP_SPEC_REDUCE is
-enabled on the CPU?
+Also this looks wrong. These are static buffers which are used during
+early boot. They might later be replaced by dynamically allocated
+buffers when a bigger buffer is requested by "log_buf_len" command
+line parameter.
 
-It'll toggle the MSR bit before VMRUN on the CPU when num VMs goes 0=>1. This
-way you avoid the IPIs and you set the bit on time.
+I think that we need to register the memory of the structure
+and 3 more buffers. See how the bigger buffer is allocated in
+setup_log_buf().
 
-You'd still need to do an IPI on VMEXIT when VM count does 1=>0 but that's
-easy.
+I would expect something like:
 
-Dunno, there probably already is a per-CPU setting in KVM so you could add
-that to it...
+	unsigned int descs_count;
+	unsigned long data_size;
 
-Anyway, something along those lines...
+	descs_count = 2 << prb->desc_ring.count_bits;
+	data_size = 2 << prb->data_ring.size_bits;
 
-Thx.
+	kmemdump_register("prb", (void *)prb, sizeof(*prb));
+	kmemdump_register("prb_descs", (void *)prb->desc_ring->descs,
+			  descs_count * sizeof(struct prb_desc));
+	kmemdump_register("prb_infos", (void *)prb->desc_ring->infos,
+			  descs_count * sizeof(struct printk_info));
+	kmemdump_register("prb_data", (void *)prb->data_ring->data, data_size);
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+But I wonder if this is enough. The current crash dump code also needs
+to export the format of the used structures, see
+log_buf_vmcoreinfo_setup().
+
+Is the CONFIG_VMCORE_INFO code shared with the kmemdump, please?
+
+> +}
+> +EXPORT_SYMBOL_GPL(kmsg_kmemdump_register);
+> +
+
+Best Regards,
+Petr
 
