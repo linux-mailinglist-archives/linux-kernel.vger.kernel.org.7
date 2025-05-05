@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-634048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7E9AAABAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:00:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 725DBAAABC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D60E7A4F02
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:59:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47970176E8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAB42F94DD;
-	Mon,  5 May 2025 23:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2332E3B8A0B;
+	Mon,  5 May 2025 23:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvAO0jLb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDGuCnNL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD1F2ECFDC;
-	Mon,  5 May 2025 23:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37AA2ED08C;
+	Mon,  5 May 2025 23:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486494; cv=none; b=coZHvZJsTxVIGnRCoP3I87OFqG+/AHKsikploRrRXYw2pE4leejipgoMzqcyqfLjsDWnILMB+0qznd09bNlnMjuyTcSPMrHWzg4RM5/J2j/27SiAIZsSNO6yd+JSZhKw3sXJoaOAFsaqEeF2NH6WLX1m6dEPfFYVjjdEQvaTFi4=
+	t=1746486521; cv=none; b=Z0A8INPIGpCQZckst2vrf++hqsPqjbN0hLyc620uO8ZthHA/+F6/luLQpKUKwUfqAon9yKthoKsIIGYD7rdkReZpkC9QaI/xydfd8SNb1RyB4MEZrqaiZ5oMFdKCvjcWbF8hft7bBv9qinhts/9F7c3jRkGysY3aPlH1JwFmH7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486494; c=relaxed/simple;
-	bh=1rX1VygvKUtt1fWJvrpYXGnj2mNZwGwmHDPfH9Do8c8=;
+	s=arc-20240116; t=1746486521; c=relaxed/simple;
+	bh=EuB5NR2gHM8CNjROZJazBrCfPXq6HWcrHpmCAuliOP0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qJi55SYnqKpyiK359Raf1HdAheD5Z1FdTUYSHwf+W4kiutGk8YdcSdLdll3r0Us7fbSP/5R+kcquegplMUXwma1HB6ZnC9mG7ryvwKJATG1XbGtVEzsFdlBUcU0QQ/UqUf41iVKbmrkUYVbzhvBCwRfzOHs75HxDMxtmxwxQ4ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvAO0jLb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DDACC4CEEF;
-	Mon,  5 May 2025 23:08:12 +0000 (UTC)
+	 MIME-Version; b=aMwLXIz1N6/w6zsd2KH5JQSDrJlNrCiUhM/NMIbpJ+l06F1sJ+lb0zsj38kdWVTtN8wb1GmZL4Ej0NKJ2ewIFtvg1EGECfnpD44OLkuGy4yYAtr4FIdCeVi1HbetgU/2FjyZoxrgVDgpYQCpU5+GJS+jPdQTE/qSIJr0Q8Y9vgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDGuCnNL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28253C4CEE4;
+	Mon,  5 May 2025 23:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486492;
-	bh=1rX1VygvKUtt1fWJvrpYXGnj2mNZwGwmHDPfH9Do8c8=;
+	s=k20201202; t=1746486520;
+	bh=EuB5NR2gHM8CNjROZJazBrCfPXq6HWcrHpmCAuliOP0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TvAO0jLb25amMByUDLJDhIkH386Nh81qHTFycwZlLzWDph+K+odnbo2eli6r4KdBJ
-	 mEZvE9IksasZyRGZftOWx+PuJc32MH1HkVZG3SqD29IUjmsCPGRRbMfwPRSGIEJtG7
-	 Xdlg0/lIriFlofR+tz70c04WtMq2meSt0cIMJH8LwJNgeu0HPp786Nepwh+/Qjh98L
-	 m0V2k7N+7gkPBOf2F5dozeqJ1cFRkvDcsSuxy0IDC6r4u8y+iCB6wJY8wjH4KE5Oxm
-	 h8FaDwiMzn+PJj7QuyWl10bwcdsPiNg5AURa2PWYRktifweHhATlL1mYGWIzfO96l2
-	 6o7tsYLNlmJpg==
+	b=CDGuCnNLbYNfgHpaBjSjfLljhg0C8UxoQWsms3J/lO6M3UBl0ajHDaga8vDQpDDfi
+	 GjHGQm6vWKRsrEhWoHVGUKiA5pCEbUkcjoB/eRzLSs9IiajkyC4gXWvDkp3z0zn4ni
+	 xMpQK/wiD3FMxmgIip1KrokNcl0lo4Xt1xiQ0GqOhaOLQ2t1PcuyNp4N/Md+BPfKRp
+	 0iNdqA8hJYk7+yFSDE+SWXSkLi6hBPUPXRD+NuFNSoFxg8PHCZURhN28W1TlwR5AGm
+	 3z0bV6jGL+BJK6xjrSaiGh4kSp2qt3P969v5yGkQYQInwlYUrRDHhttxdSc4vVqILT
+	 CtzINi72Mq31g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Frediano Ziglio <frediano.ziglio@cloud.com>,
-	Juergen Gross <jgross@suse.com>,
+Cc: Zhikai Zhai <zhikai.zhai@amd.com>,
+	Charlene Liu <charlene.liu@amd.com>,
+	Tom Chung <chiahsuan.chung@amd.com>,
+	Daniel Wheeler <daniel.wheeler@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	sstabellini@kernel.org,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH AUTOSEL 6.1 059/212] xen: Add support for XenServer 6.1 platform device
-Date: Mon,  5 May 2025 19:03:51 -0400
-Message-Id: <20250505230624.2692522-59-sashal@kernel.org>
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.1 073/212] drm/amd/display: calculate the remain segments for all pipes
+Date: Mon,  5 May 2025 19:04:05 -0400
+Message-Id: <20250505230624.2692522-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -65,63 +73,93 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Frediano Ziglio <frediano.ziglio@cloud.com>
+From: Zhikai Zhai <zhikai.zhai@amd.com>
 
-[ Upstream commit 2356f15caefc0cc63d9cc5122641754f76ef9b25 ]
+[ Upstream commit d3069feecdb5542604d29b59acfd1fd213bad95b ]
 
-On XenServer on Windows machine a platform device with ID 2 instead of
-1 is used.
+[WHY]
+In some cases the remain de-tile buffer segments will be greater
+than zero if we don't add the non-top pipe to calculate, at
+this time the override de-tile buffer size will be valid and used.
+But it makes the de-tile buffer segments used finally for all of pipes
+exceed the maximum.
 
-This device is mainly identical to device 1 but due to some Windows
-update behaviour it was decided to use a device with a different ID.
+[HOW]
+Add the non-top pipe to calculate the remain de-tile buffer segments.
+Don't set override size to use the average according to pipe count
+if the value exceed the maximum.
 
-This causes compatibility issues with Linux which expects, if Xen
-is detected, to find a Xen platform device (5853:0001) otherwise code
-will crash due to some missing initialization (specifically grant
-tables). Specifically from dmesg
-
-    RIP: 0010:gnttab_expand+0x29/0x210
-    Code: 90 0f 1f 44 00 00 55 31 d2 48 89 e5 41 57 41 56 41 55 41 89 fd
-          41 54 53 48 83 ec 10 48 8b 05 7e 9a 49 02 44 8b 35 a7 9a 49 02
-          <8b> 48 04 8d 44 39 ff f7 f1 45 8d 24 06 89 c3 e8 43 fe ff ff
-          44 39
-    RSP: 0000:ffffba34c01fbc88 EFLAGS: 00010086
-    ...
-
-The device 2 is presented by Xapi adding device specification to
-Qemu command line.
-
-Signed-off-by: Frediano Ziglio <frediano.ziglio@cloud.com>
-Acked-by: Juergen Gross <jgross@suse.com>
-Message-ID: <20250227145016.25350-1-frediano.ziglio@cloud.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Charlene Liu <charlene.liu@amd.com>
+Signed-off-by: Zhikai Zhai <zhikai.zhai@amd.com>
+Signed-off-by: Tom Chung <chiahsuan.chung@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/platform-pci.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../amd/display/dc/dcn315/dcn315_resource.c   | 42 +++++++++----------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/xen/platform-pci.c b/drivers/xen/platform-pci.c
-index 544d3f9010b92..1db82da56db62 100644
---- a/drivers/xen/platform-pci.c
-+++ b/drivers/xen/platform-pci.c
-@@ -26,6 +26,8 @@
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn315/dcn315_resource.c b/drivers/gpu/drm/amd/display/dc/dcn315/dcn315_resource.c
+index 958170fbfece7..9d643c79afea6 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn315/dcn315_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn315/dcn315_resource.c
+@@ -1717,7 +1717,7 @@ static int dcn315_populate_dml_pipes_from_context(
+ 		pipes[pipe_cnt].dout.dsc_input_bpc = 0;
+ 		DC_FP_START();
+ 		dcn31_zero_pipe_dcc_fraction(pipes, pipe_cnt);
+-		if (pixel_rate_crb && !pipe->top_pipe && !pipe->prev_odm_pipe) {
++		if (pixel_rate_crb) {
+ 			int bpp = source_format_to_bpp(pipes[pipe_cnt].pipe.src.source_format);
+ 			/* Ceil to crb segment size */
+ 			int approx_det_segs_required_for_pstate = dcn_get_approx_det_segs_required_for_pstate(
+@@ -1768,28 +1768,26 @@ static int dcn315_populate_dml_pipes_from_context(
+ 				continue;
+ 			}
  
- #define DRV_NAME    "xen-platform-pci"
- 
-+#define PCI_DEVICE_ID_XEN_PLATFORM_XS61	0x0002
+-			if (!pipe->top_pipe && !pipe->prev_odm_pipe) {
+-				bool split_required = pipe->stream->timing.pix_clk_100hz >= dcn_get_max_non_odm_pix_rate_100hz(&dc->dml.soc)
+-						|| (pipe->plane_state && pipe->plane_state->src_rect.width > 5120);
+-
+-				if (remaining_det_segs > MIN_RESERVED_DET_SEGS && crb_pipes != 0)
+-					pipes[pipe_cnt].pipe.src.det_size_override += (remaining_det_segs - MIN_RESERVED_DET_SEGS) / crb_pipes +
+-							(crb_idx < (remaining_det_segs - MIN_RESERVED_DET_SEGS) % crb_pipes ? 1 : 0);
+-				if (pipes[pipe_cnt].pipe.src.det_size_override > 2 * DCN3_15_MAX_DET_SEGS) {
+-					/* Clamp to 2 pipe split max det segments */
+-					remaining_det_segs += pipes[pipe_cnt].pipe.src.det_size_override - 2 * (DCN3_15_MAX_DET_SEGS);
+-					pipes[pipe_cnt].pipe.src.det_size_override = 2 * DCN3_15_MAX_DET_SEGS;
+-				}
+-				if (pipes[pipe_cnt].pipe.src.det_size_override > DCN3_15_MAX_DET_SEGS || split_required) {
+-					/* If we are splitting we must have an even number of segments */
+-					remaining_det_segs += pipes[pipe_cnt].pipe.src.det_size_override % 2;
+-					pipes[pipe_cnt].pipe.src.det_size_override -= pipes[pipe_cnt].pipe.src.det_size_override % 2;
+-				}
+-				/* Convert segments into size for DML use */
+-				pipes[pipe_cnt].pipe.src.det_size_override *= DCN3_15_CRB_SEGMENT_SIZE_KB;
+-
+-				crb_idx++;
++			bool split_required = pipe->stream->timing.pix_clk_100hz >= dcn_get_max_non_odm_pix_rate_100hz(&dc->dml.soc)
++					|| (pipe->plane_state && pipe->plane_state->src_rect.width > 5120);
 +
- static unsigned long platform_mmio;
- static unsigned long platform_mmio_alloc;
- static unsigned long platform_mmiolen;
-@@ -174,6 +176,8 @@ static int platform_pci_probe(struct pci_dev *pdev,
- static const struct pci_device_id platform_pci_tbl[] = {
- 	{PCI_VENDOR_ID_XEN, PCI_DEVICE_ID_XEN_PLATFORM,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-+	{PCI_VENDOR_ID_XEN, PCI_DEVICE_ID_XEN_PLATFORM_XS61,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
- 	{0,}
- };
- 
++			if (remaining_det_segs > MIN_RESERVED_DET_SEGS && crb_pipes != 0)
++				pipes[pipe_cnt].pipe.src.det_size_override += (remaining_det_segs - MIN_RESERVED_DET_SEGS) / crb_pipes +
++						(crb_idx < (remaining_det_segs - MIN_RESERVED_DET_SEGS) % crb_pipes ? 1 : 0);
++			if (pipes[pipe_cnt].pipe.src.det_size_override > 2 * DCN3_15_MAX_DET_SEGS) {
++				/* Clamp to 2 pipe split max det segments */
++				remaining_det_segs += pipes[pipe_cnt].pipe.src.det_size_override - 2 * (DCN3_15_MAX_DET_SEGS);
++				pipes[pipe_cnt].pipe.src.det_size_override = 2 * DCN3_15_MAX_DET_SEGS;
++			}
++			if (pipes[pipe_cnt].pipe.src.det_size_override > DCN3_15_MAX_DET_SEGS || split_required) {
++				/* If we are splitting we must have an even number of segments */
++				remaining_det_segs += pipes[pipe_cnt].pipe.src.det_size_override % 2;
++				pipes[pipe_cnt].pipe.src.det_size_override -= pipes[pipe_cnt].pipe.src.det_size_override % 2;
+ 			}
++			/* Convert segments into size for DML use */
++			pipes[pipe_cnt].pipe.src.det_size_override *= DCN3_15_CRB_SEGMENT_SIZE_KB;
++
++			crb_idx++;
+ 			pipe_cnt++;
+ 		}
+ 	}
 -- 
 2.39.5
 
