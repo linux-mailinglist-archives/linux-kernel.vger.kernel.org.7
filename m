@@ -1,60 +1,72 @@
-Return-Path: <linux-kernel+bounces-634449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 951D2AAB65F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:48:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B2AAAB1BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60D0D1C077AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E3673AB386
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C749540435A;
-	Tue,  6 May 2025 00:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0783335210;
+	Tue,  6 May 2025 00:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLZAJxLL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8UHUuAV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22422D903F;
-	Mon,  5 May 2025 22:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBF227F743;
+	Mon,  5 May 2025 22:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485513; cv=none; b=n6XfsXdY777iNO/rLb+VpGU0QmzontLk6RS0rfpWr4A7vMvvv0JOoCuyXvtmnyWNMd8Hn8W3WoPJAxnchSK1yQa1kRa16wqix8NP085dinrcDRM0Hl338xO90uEdmh8x+3TjHblwJltFerORQJDRPx5t1z4HBbnFP5saNmnafRg=
+	t=1746485523; cv=none; b=hHWHs0WatchZCi984WVGR5EsSUHxj7vJGZehYa2AXj0DZgv11iEvPoyvsc3wX7g6qfEnxioKBj6x4yDtYR8R0AUhqMbI3tkMq6Q1kATeugwhUFc2pIP7/VBaDDbkp44qfBmiKbvMeoq9kV/A370SkEQBpXUt36Ma+GhqeA0fzVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485513; c=relaxed/simple;
-	bh=M1+XwD4TJBCVTfUVrmJnm/z+U5fuYjwArQdwgfIsMrw=;
+	s=arc-20240116; t=1746485523; c=relaxed/simple;
+	bh=mma8tzwZ/NqwWnsXqPq43wQ4tvCGsiw9PyvHomQ17l4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bvA36OAWumX5vR0Uy0h1VyUq0OSwWW6BCp/Eq/UxTNWVBQ6h8rKZxcfRMHejiiKn0MVphYajZX2bqwUjdeD413KwlYfkz0w504MdMOfkG2awWOxvgtD3vLqynGSX5r5No9SXE1aiADZYGDZfmr9tb3vqcMzGVn0YxqrYpB5rJvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLZAJxLL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E77C4CEE4;
-	Mon,  5 May 2025 22:51:51 +0000 (UTC)
+	 MIME-Version; b=PLO4qii6IsMAEk6VHBQwz68lvuaRs378zfafXMjSG7a3JMYpVYr7g/btRG/BBIpbJzo1EG0FN9JCMHw+xur8d/wbV8Pt4CfqVSGz+A9HZhgx9NznxpVdo0CKPY3SL6ReaBFB1EYp9OoFmUcyjMtt/dmlmdBkSw/VF61TE2Tp5YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8UHUuAV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD57C4CEEE;
+	Mon,  5 May 2025 22:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485512;
-	bh=M1+XwD4TJBCVTfUVrmJnm/z+U5fuYjwArQdwgfIsMrw=;
+	s=k20201202; t=1746485523;
+	bh=mma8tzwZ/NqwWnsXqPq43wQ4tvCGsiw9PyvHomQ17l4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hLZAJxLL2TVk9MbW3+FAVQKeE2d2S7lcO8m5kXGd0DJb7HZaogYP2odc5guo9HCF/
-	 RC9cT1djMb0izRNbxwn6xlyf6FBE5VBiX/FHfRBhrI4EvE8uJysrAlxWQEJnxRd9JG
-	 y5PBO9mhWMr/AlXAVlAyXPrj4dUj/OUz+QlOSklLzZar13NsO7icVjcp81zEcINZkW
-	 V9wQhXhScIZ6uYkNCMYZBEZmAakMaPGMJNBnNo3Mzjcs5aH+mdgywQ0FEfhgkuW752
-	 +XmYl1h9QI+b7ksjOKi1J74LSQZQKEm32Mkdo20aAuy8lXv6EHPPKDQgk+0i2uxWlE
-	 w0Zu+17OQgw3Q==
+	b=o8UHUuAV+pp8U4nzrTGRW3FafFipWgqRsYr3y82xYCrwmiQgenXntYpbxXN+jj3hl
+	 93lHACaMNuCKUiTjPgdNQz+XknKL5rixeL7R6xGgA4gbsdiqNfOtxkrOrxQVwqJBM3
+	 DpDw80m+k/+Iw7ZEM2Qt21XH+0sCtoTCdqJ9YEcdzzgUULtFJJusThbNm0HyGpiQqG
+	 rAKV7ex2tDHALtwOHoxgaDtlkSZIfRBoIcY2gfq0gAxvzqMvcPNnV9SvFemzkVTQae
+	 6u3oXBv3oOUB6CoUp2E47QnlEzqLhSfn+JOZGIcqs3YuUuCRwOPXzTJHBAgli7CVTQ
+	 pFNWS0X7egAKg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Damon Ding <damon.ding@rock-chips.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
+Cc: Huacai Chen <chenhuacai@loongson.cn>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Simon Horman <horms@kernel.org>,
+	Chong Qiao <qiaochong@loongson.cn>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	kishon@kernel.org,
-	heiko@sntech.de,
-	linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 354/486] phy: phy-rockchip-samsung-hdptx: Swap the definitions of LCPLL_REF and ROPLL_REF
-Date: Mon,  5 May 2025 18:37:10 -0400
-Message-Id: <20250505223922.2682012-354-sashal@kernel.org>
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	chenhuacai@kernel.org,
+	fancer.lancer@gmail.com,
+	chenfeiyang@loongson.cn,
+	phasta@kernel.org,
+	zhaoqunqin@loongson.cn,
+	rmk+kernel@armlinux.org.uk,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.12 359/486] net: stmmac: dwmac-loongson: Set correct {tx,rx}_fifo_size
+Date: Mon,  5 May 2025 18:37:15 -0400
+Message-Id: <20250505223922.2682012-359-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -69,38 +81,50 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Damon Ding <damon.ding@rock-chips.com>
+From: Huacai Chen <chenhuacai@loongson.cn>
 
-[ Upstream commit 2947c8065e9efdd3b6434d2817dc8896234a3fc0 ]
+[ Upstream commit 8dbf0c7556454b52af91bae305ca71500c31495c ]
 
-According to the datasheet, setting the dig_clk_sel bit of CMN_REG(0097)
-to 1'b1 selects LCPLL as the reference clock, while setting it to 1'b0
-selects the ROPLL.
+Now for dwmac-loongson {tx,rx}_fifo_size are uninitialised, which means
+zero. This means dwmac-loongson doesn't support changing MTU because in
+stmmac_change_mtu() it requires the fifo size be no less than MTU. Thus,
+set the correct tx_fifo_size and rx_fifo_size for it (16KB multiplied by
+queue counts).
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Link: https://lore.kernel.org/r/20250205105157.580060-2-damon.ding@rock-chips.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Here {tx,rx}_fifo_size is initialised with the initial value (also the
+maximum value) of {tx,rx}_queues_to_use. So it will keep as 16KB if we
+don't change the queue count, and will be larger than 16KB if we change
+(decrease) the queue count. However stmmac_change_mtu() still work well
+with current logic (MTU cannot be larger than 16KB for stmmac).
+
+Note: the Fixes tag picked here is the oldest commit and key commit of
+the dwmac-loongson series "stmmac: Add Loongson platform support".
+
+Acked-by: Yanteng Si <si.yanteng@linux.dev>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Link: https://patch.msgid.link/20250210134328.2755328-1-chenhuacai@loongson.cn
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index be6f1ca9095aa..dc6e01dff5c74 100644
---- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-+++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -94,8 +94,8 @@
- #define LCPLL_ALONE_MODE		BIT(1)
- /* CMN_REG(0097) */
- #define DIG_CLK_SEL			BIT(1)
--#define ROPLL_REF			BIT(1)
--#define LCPLL_REF			0
-+#define LCPLL_REF			BIT(1)
-+#define ROPLL_REF			0
- /* CMN_REG(0099) */
- #define CMN_ROPLL_ALONE_MODE		BIT(2)
- #define ROPLL_ALONE_MODE		BIT(2)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+index ab7c2750c1042..702ea5a00b56d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+@@ -590,6 +590,9 @@ static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id
+ 	if (ret)
+ 		goto err_disable_device;
+ 
++	plat->tx_fifo_size = SZ_16K * plat->tx_queues_to_use;
++	plat->rx_fifo_size = SZ_16K * plat->rx_queues_to_use;
++
+ 	if (dev_of_node(&pdev->dev))
+ 		ret = loongson_dwmac_dt_config(pdev, plat, &res);
+ 	else
 -- 
 2.39.5
 
