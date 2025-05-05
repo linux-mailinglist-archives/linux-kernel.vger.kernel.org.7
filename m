@@ -1,161 +1,114 @@
-Return-Path: <linux-kernel+bounces-632106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993C6AA92A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:01:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D565AA92E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A4E168583
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F79518998D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A84202C46;
-	Mon,  5 May 2025 12:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13423253933;
+	Mon,  5 May 2025 12:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blgC4oHI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPQrW9iO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4941E32C6
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6E324A066;
+	Mon,  5 May 2025 12:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746446500; cv=none; b=OfEvHRil7kYHtxnweqnVwEhJ3FRm+Bi2rcyJ7zTNJ/ePwyH1yMwX2ZttNKX080uJt7RjnDL2YEFrQM/Y0KfwNpRlO0KYjdgEFB5k9lrYHxVnvvx1GZE3VW2f9GNsBxz3gclcGg/qqqgENXrI0yABmcDbOvwRdGM0wc6SIsWX1kQ=
+	t=1746447463; cv=none; b=deDPCE7smBmwPl+4xLms+tTy51h/yR+SraXw0QYLMZH3r/ZiMNZ4aKk+uf47Y5iBqhG/goBkbxdypfaq6gQVcXsBhzV441op2IMJhyFUpVH5rmO9tlKCD72qIKwBd3lpULXeWGndeORbkkIOemUr12LMUcKCbssj8lg01SCxY2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746446500; c=relaxed/simple;
-	bh=yKXMOm/860GCcP8OoAHCINoXDy4EwSWPW0EDzkxq178=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LQaEF/DaRCTWMBalV+0VkHBfh+yMrQIPViRzvmjjrbwm7DbYdTgxHhMMf+J6+x6ew6/Kas1v4gKPkZS4IL0c82Sf4lvAKA8totf46yv0H3K9L8rui3+tNOYKcatcHF7H5Qd5ugzY/cUUtHqewnxyD1cZhq5lzdkAcTq72BRtr4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blgC4oHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE17C4CEE9
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:01:39 +0000 (UTC)
+	s=arc-20240116; t=1746447463; c=relaxed/simple;
+	bh=+c9qtL1XLrdv0KjM1c64k7CAIhE9e6+G1EbaLs6rza0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ov6GeatfUvlne/abBcgKwvstZfnNb65gppRlmKEU2vq92vvyTD/JdYylXxw6k6JV3JXM24a1RlmM2trquvMSmn2YXwbeYAySoXKdpHapJqkMiITzkcwPahRZO2IJ/+rXEyICZzUCPDC87dZ8MYkdqU5x9VRH4AG7iH7PXg+rDUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPQrW9iO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D32DC4CEE9;
+	Mon,  5 May 2025 12:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746446500;
-	bh=yKXMOm/860GCcP8OoAHCINoXDy4EwSWPW0EDzkxq178=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=blgC4oHIW3wAP8A1QsMnVaof+kTjscjbnt5LtnKStIlkn1n3AMYE6CpRv2nZoLw0I
-	 cM8rLUPe+WUP2EUPzRYSFeKCCyqXfZ0QIph55SbTXsGgxYwQzgt7vH33V6lqG7C1A+
-	 tbhrVH32TUbCB2Nc+HFfTTDvEqRhYbYu3gGxMZVeWGCcBhuohjcuK44P3SP8eT2tmw
-	 ITi/rFVwohdPgEOnUrQFNROOmuOGuD8ayHxQbFFmSUhGyKiIf1izXUvVrTA2+nBUvH
-	 uFXyDeYvNxF1Z3qkaobTDSk31w5+S1AmtshN7z1TYj4peYHOSE0B+jBdcHIQP3v/60
-	 oTv+bNp5JaxHQ==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5499c5d9691so5080902e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 05:01:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWYKS7QtuOva/Zup9C7ipHceo2oxmbnNRFFCZP8rItBOA//j89wcMQuLHs2L5OILKuf87vbfgLV8UsUDAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxao3THflNX4MYNodn7HocahF0+oJjoLo/39N9f1eKWF+2UJqH0
-	q+puLWsEesq/3L3op0d271nRUOYVGo1F2sAU5RYiCpA+2x0SR9PyXSPJQdybUrSxtq+FNMXhr+K
-	YY8MIjSpz0Ym1O9X5vjPMQl0W8vo=
-X-Google-Smtp-Source: AGHT+IHNfl/k0nKX7HHii+yFbjen/cpwNpNeEkkE0EhxxcaZldi84IfCIcrHLIOQSGaQnm60lEF7YLNiGZxwP6wXMi8=
-X-Received: by 2002:a2e:bd0e:0:b0:30b:c569:4689 with SMTP id
- 38308e7fff4ca-32351f257d4mr22226601fa.27.1746446498310; Mon, 05 May 2025
- 05:01:38 -0700 (PDT)
+	s=k20201202; t=1746447460;
+	bh=+c9qtL1XLrdv0KjM1c64k7CAIhE9e6+G1EbaLs6rza0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=lPQrW9iO5alAJxK83Y8+fEo/xiQA+Q+teKxHd3UG23liLxPqpJvSwszf5B9S/hTQS
+	 yslfVuH1Rrb/mZ/2OIuL/NOrCFYwPf+DF3Dn1a6q7EYErzs6GMXjKZ786F7GWq6UPd
+	 VGHA1nN63UgjGIqXe4iHpUiY2EYCbUbaPJcYjS5bbPXynyvbWFEQx6I/2IUvV+zwRC
+	 FR9YAYf1xRxDH4TNH4xkGR/JqE72i/PHcyrrPcHjm6fByDWyb/QrUwiQAv8JKZCUsz
+	 Zo9hAxspt4yNmFepQHoMWN3ZbLqWi0cRWtTRWHxUJeWrLMjYSHF0aemu1WWFnJpDcq
+	 U3+CVYCrAMRfQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
+Cc: <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <a.hindborg@samsung.com>,  <boqun.feng@gmail.com>,
+  <frederic@kernel.org>,  <lyude@redhat.com>,  <tglx@linutronix.de>,
+  <anna-maria@linutronix.de>,  <jstultz@google.com>,  <sboyd@kernel.org>,
+  <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,  <gary@garyguo.net>,
+  <bjorn3_gh@protonmail.com>,  <benno.lossin@proton.me>,
+  <aliceryhl@google.com>,  <tmgross@umich.edu>,
+  <chrisi.schrefl@gmail.com>,  <arnd@arndb.de>,  <linux@armlinux.org.uk>
+Subject: Re: [PATCH v1] rust: time: Avoid 64-bit integer division
+In-Reply-To: <20250505.201004.457132112950898883.fujita.tomonori@gmail.com>
+	(FUJITA Tomonori's message of "Mon, 05 May 2025 20:10:04 +0900")
+References: <20250501015818.226376-1-fujita.tomonori@gmail.com>
+	<8734djxrm0.fsf@kernel.org>
+	<Wa3bx4DMYJMjJ594BFBTdQoD4WJzqhDRxMPUQfyH68XpKhZQ--5WEB8bTYEQuDm-pB1hl_PHqsm5wuv29WuIyg==@protonmail.internalid>
+	<20250505.201004.457132112950898883.fujita.tomonori@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Mon, 05 May 2025 13:51:56 +0200
+Message-ID: <87tt5zwa03.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250504184342.125253-1-ubizjak@gmail.com> <dd4c1795-ee0f-4589-9430-d759e59d5b96@zytor.com>
- <CAMj1kXHLfa2OzT+mo8qFxp5NtLHxaxnO3+skt_we=QOTtPFUqw@mail.gmail.com>
- <79AB4DAE-18EE-4F3C-980F-46304C021EC1@zytor.com> <CAMj1kXHG8JPLR5BjhSh+nJLhFoC-cT+-me4nc5kHXSxFUaw1aQ@mail.gmail.com>
- <D503B59D-AE83-4B2A-BC26-13F01A18C14B@zytor.com>
-In-Reply-To: <D503B59D-AE83-4B2A-BC26-13F01A18C14B@zytor.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 5 May 2025 14:01:26 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXF68cZ1B-hf845x8bkYZJW1kn69QenVoHnrjAeFRrXbsw@mail.gmail.com>
-X-Gm-Features: ATxdqUE_1SqOu31UeqEZ9aqvciZPPMBGKf0BwUcXfuKE72VyHS3naqyuEkdV0UE
-Message-ID: <CAMj1kXF68cZ1B-hf845x8bkYZJW1kn69QenVoHnrjAeFRrXbsw@mail.gmail.com>
-Subject: Re: [PATCH -tip] x86/asm: Use %a instead of %c(%%rip) in rip_rel_ptr()
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Mon, 5 May 2025 at 13:50, H. Peter Anvin <hpa@zytor.com> wrote:
+"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+
+> On Mon, 05 May 2025 12:46:15 +0200
+> Andreas Hindborg <a.hindborg@kernel.org> wrote:
 >
-> On May 5, 2025 3:42:46 AM PDT, Ard Biesheuvel <ardb@kernel.org> wrote:
-> >On Mon, 5 May 2025 at 08:09, H. Peter Anvin <hpa@zytor.com> wrote:
-> >>
-> >> On May 4, 2025 10:48:19 PM PDT, Ard Biesheuvel <ardb@kernel.org> wrote:
-> >> >On Mon, 5 May 2025 at 04:59, H. Peter Anvin <hpa@zytor.com> wrote:
-> >> >>
-> >> >> On 5/4/25 11:43, Uros Bizjak wrote:
-> >> >> > The "a" asm operand modifier substitutes a memory reference, with the
-> >> >> > actual operand treated as address.  For x86_64, when a symbol is
-> >> >> > provided, the "a" modifier emits "sym(%rip)" instead of "sym".
-> >> >> >
-> >> >
-> >> >Clang does not
-> >> >
-> >> >https://godbolt.org/z/5Y58T45f5
-> >> >
-> >> >> > No functional changes intended.
-> >> >> >
-> >> >
-> >> >NAK. There is a functional change with Clang, which does not emit
-> >> >%(rip), and this is the whole point of this thing.
-> >> >
-> >> >> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> >> >> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> >> >> > Cc: Ingo Molnar <mingo@kernel.org>
-> >> >> > Cc: Borislav Petkov <bp@alien8.de>
-> >> >> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> >> >> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> >> >> > Cc: Ard Biesheuvel <ardb@kernel.org>
-> >> >> > ---
-> >> >> >   arch/x86/include/asm/asm.h | 2 +-
-> >> >> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >> >> >
-> >> >> > diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-> >> >> > index f963848024a5..d7610b99b8d8 100644
-> >> >> > --- a/arch/x86/include/asm/asm.h
-> >> >> > +++ b/arch/x86/include/asm/asm.h
-> >> >> > @@ -116,7 +116,7 @@
-> >> >> >   #ifndef __ASSEMBLER__
-> >> >> >   static __always_inline __pure void *rip_rel_ptr(void *p)
-> >> >> >   {
-> >> >> > -     asm("leaq %c1(%%rip), %0" : "=r"(p) : "i"(p));
-> >> >> > +     asm("leaq %a1, %0" : "=r"(p) : "i"(p));
-> >> >> >
-> >> >> >       return p;
-> >> >> >   }
-> >> >>
-> >> >> Also, this function really should be __attribute_const__ rather than __pure.
-> >> >>
-> >> >
-> >> >No it should really not.
-> >> >
-> >> >rip_rel_ptr() will yield different results depending on whether it is
-> >> >called [by the same code] from the 1:1 mapping or the ordinary kernel
-> >> >virtual mapping of memory, and this is basically the entire reason we
-> >> >need it in the first place.
-> >> >
-> >> >Lying to the compiler about this is not a good idea imo.
-> >>
-> >> Goddamnit, another clang bug. Someone fix the damned thing, please...
-> >
-> >How is this a bug? The %a modifier is documented as producing a memory
-> >reference - the fact that GCC on x86_64 always emits a RIP-relative
-> >reference regardless of whether we are generating PIC code or not is
-> >an implementation detail, and not fundamental to yield correct code.
-> >
-> >Clang produces something that matches the constraints that we gave it
-> >- we cannot blame the tools for the mess of our own making where we
-> >call C code from alternative mappings of memory, while we lie to the
-> >compiler that the code is position dependent and non-relocatable.
+>> FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
+>>
+>>> Avoid 64-bit integer division that 32-bit architectures don't
+>>> implement generally. This uses ktime_to_ms() and ktime_to_us()
+>>> instead.
+>>>
+>>> The timer abstraction needs i64 / u32 division so C's div_s64() can be
+>>> used but ktime_to_ms() and ktime_to_us() provide a simpler solution
+>>> for this timer abstraction problem. On some architectures, there is
+>>> room to optimize the implementation of them, but such optimization can
+>>> be done if and when it becomes necessary.
+>>>
+>>> One downside of calling the C's functions is that the as_micros/millis
+>>> methods can no longer be const fn. We stick with the simpler approach
+>>> unless there's a compelling need for a const fn.
+>>>
+>>> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+>>
+>>
+>> Please consult recent MAINTAINERS file when you send patches. If you
+>> intend for me to see a patch, please use my registered email address.
 >
-> It is documented to produce an (%rip) reference in the gcc documentation, and gcc is the reference for inline assembly.
+> Sorry, I did follow that for the last two patchsets (generalizing
+> Instant and hrtimer), but somehow I messed up with this one.
 >
+> Should I resend v2 of this fix to the correct email address?
+>
+> https://lore.kernel.org/lkml/20250502004524.230553-1-fujita.tomonori@gmail.com/
 
-Got a link? The one below documents it as a generic modifier, and does
-not mention rIP at all.
+No I got it from list, so it's fine for this one. But please stop CC'ing
+the the Samsung address.
 
-https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Generic-Operand-Modifiers
 
-> Furthermore, documentation is not reality. Code is.
+Best regards,
+Andreas Hindborg
 
-Not sure I follow your point here. You claim Clang is buggy because
-GCC does not behave according to its own documentation?
+
+
 
