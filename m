@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-633761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E94AAA9E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:24:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C402AAA9DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F242B3A1BB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:20:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9340188D430
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA142D37E1;
-	Mon,  5 May 2025 22:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB8A35F7FB;
+	Mon,  5 May 2025 22:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+9dhAbO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kALxn6md"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A0135C845;
-	Mon,  5 May 2025 22:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2C4298CC2;
+	Mon,  5 May 2025 22:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485126; cv=none; b=KbOYsvgpzXAFqes/Ewe6qD4mdqE6uO3aPHMiw2uUz/7Kru8JaNrQWxYRTx045Ni+da4rKepBWmxmQ1gySYQxQnP5pbBR7VHx35mf0pKXx2fXeq/VR5yglfMyLsaJc5lyrZeeAXtxUu6blO1ARYPLqyANGbaa/dP6RzCKv/f7xyc=
+	t=1746485133; cv=none; b=GMO+EhvZFO3FGnc6Ebp5wglyk6Nsm/S6TDKeyk/FkAoLkPpAAjh+CJReC4qm2wEZJLXJFID4nh8UZO15Xlcb1nxL5ZOk2fTHBskyCcK2pfo8vl4QeibseCkELVlhkSUUIj+V1uvma96gv1aNkz0sWRMOAjJ6LDlQ1K90CYEIDwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485126; c=relaxed/simple;
-	bh=Zr23LXzKAkDJhY/m3Nmdy7bsYe+I8SLFZgwi6J7cX7I=;
+	s=arc-20240116; t=1746485133; c=relaxed/simple;
+	bh=xcTwYq2bMsivseQDA5CYNGoPJpwC7m1P/ITeFcI4upU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CHzhvbvelQirrW7keI/qelTGgGrvsKeBMh4NykJl8PsAopHNzut5emfGDK1vGb4gokDyobByzX6T92kVo67YbCqqZ9dd+Dl27omR0kCh83Gv1reRZGXpEz+FGzkvwTr34xT4tnZR9tpxTw29PSep1nB2wBq+NiOBg8Gc1t1x9GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+9dhAbO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E25C4CEE4;
-	Mon,  5 May 2025 22:45:23 +0000 (UTC)
+	 MIME-Version; b=GPTxPP8nOpVVQvAcajBJcXC3Fxc1MJP0kFvgZtPn6fHUg00n69qFAsQMhATA1b2ir1vc8xasDSMltI02bSwyrCLlAgZJ7Jc33ZYOmP+kSrUR71Te7kgaMYYCm126ZA/aV/i1PdAmjYvh+dKLTQJQXAy4wbIV7pj9jOSKtgzjDJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kALxn6md; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DCDEC4CEE4;
+	Mon,  5 May 2025 22:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485125;
-	bh=Zr23LXzKAkDJhY/m3Nmdy7bsYe+I8SLFZgwi6J7cX7I=;
+	s=k20201202; t=1746485132;
+	bh=xcTwYq2bMsivseQDA5CYNGoPJpwC7m1P/ITeFcI4upU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W+9dhAbOPgizSM9nCX0ND2V7cT7ForAcigWBCtBjAs93jdZS8TLxE2mLfyWcHXg+v
-	 Kui9iWphrwvHyi/0h89e4OAm2eDkLwfalAY3k9zvoJQt/gnx845XrWa2z9v9SSGQvK
-	 4NcbMq2X+JBZxB12EHA3mToAn2eOVUk4zOVfb5Fj/uTSbPmNHdiN4/r1HxmwOcAcJ+
-	 sn5wa8oye9kg0z+7etQOirw9k0kQMsxSzIoFFlUaxHFuY6C6Crb2tZ28/VgJPT0Ura
-	 ONBG3lWu2oIUFxciFsraoAUBDkXfLjpCLx0lhFIjAKerGPrHgKpyRQdpv/yTqt0K3z
-	 kieQFMxvzusfQ==
+	b=kALxn6mdFGJBlgvMAQyB9Y+2tNQ1ssqZy5gvhqHC22hvmTDPlRhVLO6mvzWPX9F7A
+	 sBge1JsRMLbNyUZ6AKePVauGy084UZKZjssSEVNze2xyxq80GOts1ZIUjTW2zJCrzS
+	 D4dZrq03FY3wRqFwSWvuRt65c7ym7yI7qfqp4KBT4h4yFxfvmOOZaVOXne4LodAeVD
+	 f10KGehQ6VgToD86730D3Gna666mYtxnwJNEkUjbT71mjn4JB05xPx2vgo8IKip/1b
+	 OpWg/E9ctGSLcS2KBOxDrXMQKlryN1qKMjtX4nSuzSNWL+0CnlXPx1s0xAqUUzrtnO
+	 ++xm2bIn/wl1g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
-	Amber Lin <Amber.Lin@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>,
-	Felix.Kuehling@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 173/486] drm/amdkfd: Set per-process flags only once for gfx9/10/11/12
-Date: Mon,  5 May 2025 18:34:09 -0400
-Message-Id: <20250505223922.2682012-173-sashal@kernel.org>
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	tmn505@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 176/486] arm64: tegra: p2597: Fix gpio for vdd-1v8-dis regulator
+Date: Mon,  5 May 2025 18:34:12 -0400
+Message-Id: <20250505223922.2682012-176-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -70,290 +71,35 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 
-[ Upstream commit 61972cd93af70738a6ad7f93e17cc7f68a01e182 ]
+[ Upstream commit f34621f31e3be81456c903287f7e4c0609829e29 ]
 
-Define set_cache_memory_policy() for these asics and move all static
-changes from update_qpd() which is called each time a queue is created
-to set_cache_memory_policy() which is called once during process
-initialization
+According to the board schematics the enable pin of this regulator is
+connected to gpio line #9 of the first instance of the TCA9539
+GPIO expander, so adjust it.
 
-Signed-off-by: Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>
-Reviewed-by: Amber Lin <Amber.Lin@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Link: https://lore.kernel.org/r/20250224-diogo-gpio_exp-v1-1-80fb84ac48c6@tecnico.ulisboa.pt
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../amd/amdkfd/kfd_device_queue_manager_v10.c | 41 +++++++++++--------
- .../amd/amdkfd/kfd_device_queue_manager_v11.c | 41 +++++++++++--------
- .../amd/amdkfd/kfd_device_queue_manager_v12.c | 41 +++++++++++--------
- .../amd/amdkfd/kfd_device_queue_manager_v9.c  | 36 +++++++++++++++-
- 4 files changed, 107 insertions(+), 52 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v10.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v10.c
-index 245a90dfc2f6b..b5f5f141353b5 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v10.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v10.c
-@@ -31,10 +31,17 @@ static int update_qpd_v10(struct device_queue_manager *dqm,
- 			 struct qcm_process_device *qpd);
- static void init_sdma_vm_v10(struct device_queue_manager *dqm, struct queue *q,
- 			    struct qcm_process_device *qpd);
-+static bool set_cache_memory_policy_v10(struct device_queue_manager *dqm,
-+				   struct qcm_process_device *qpd,
-+				   enum cache_policy default_policy,
-+				   enum cache_policy alternate_policy,
-+				   void __user *alternate_aperture_base,
-+				   uint64_t alternate_aperture_size);
- 
- void device_queue_manager_init_v10(
- 	struct device_queue_manager_asic_ops *asic_ops)
- {
-+	asic_ops->set_cache_memory_policy = set_cache_memory_policy_v10;
- 	asic_ops->update_qpd = update_qpd_v10;
- 	asic_ops->init_sdma_vm = init_sdma_vm_v10;
- 	asic_ops->mqd_manager_init = mqd_manager_init_v10;
-@@ -49,27 +56,27 @@ static uint32_t compute_sh_mem_bases_64bit(struct kfd_process_device *pdd)
- 		private_base;
- }
- 
--static int update_qpd_v10(struct device_queue_manager *dqm,
--			 struct qcm_process_device *qpd)
-+static bool set_cache_memory_policy_v10(struct device_queue_manager *dqm,
-+				   struct qcm_process_device *qpd,
-+				   enum cache_policy default_policy,
-+				   enum cache_policy alternate_policy,
-+				   void __user *alternate_aperture_base,
-+				   uint64_t alternate_aperture_size)
- {
--	struct kfd_process_device *pdd;
--
--	pdd = qpd_to_pdd(qpd);
--
--	/* check if sh_mem_config register already configured */
--	if (qpd->sh_mem_config == 0) {
--		qpd->sh_mem_config =
--			(SH_MEM_ALIGNMENT_MODE_UNALIGNED <<
--				SH_MEM_CONFIG__ALIGNMENT_MODE__SHIFT) |
--			(3 << SH_MEM_CONFIG__INITIAL_INST_PREFETCH__SHIFT);
--		qpd->sh_mem_ape1_limit = 0;
--		qpd->sh_mem_ape1_base = 0;
--	}
--
--	qpd->sh_mem_bases = compute_sh_mem_bases_64bit(pdd);
-+	qpd->sh_mem_config = (SH_MEM_ALIGNMENT_MODE_UNALIGNED <<
-+			      SH_MEM_CONFIG__ALIGNMENT_MODE__SHIFT) |
-+			      (3 << SH_MEM_CONFIG__INITIAL_INST_PREFETCH__SHIFT);
-+	qpd->sh_mem_ape1_limit = 0;
-+	qpd->sh_mem_ape1_base = 0;
-+	qpd->sh_mem_bases = compute_sh_mem_bases_64bit(qpd_to_pdd(qpd));
- 
- 	pr_debug("sh_mem_bases 0x%X\n", qpd->sh_mem_bases);
-+	return true;
-+}
- 
-+static int update_qpd_v10(struct device_queue_manager *dqm,
-+			 struct qcm_process_device *qpd)
-+{
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v11.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v11.c
-index 2e129da7acb43..f436878d0d621 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v11.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v11.c
-@@ -30,10 +30,17 @@ static int update_qpd_v11(struct device_queue_manager *dqm,
- 			 struct qcm_process_device *qpd);
- static void init_sdma_vm_v11(struct device_queue_manager *dqm, struct queue *q,
- 			    struct qcm_process_device *qpd);
-+static bool set_cache_memory_policy_v11(struct device_queue_manager *dqm,
-+				   struct qcm_process_device *qpd,
-+				   enum cache_policy default_policy,
-+				   enum cache_policy alternate_policy,
-+				   void __user *alternate_aperture_base,
-+				   uint64_t alternate_aperture_size);
- 
- void device_queue_manager_init_v11(
- 	struct device_queue_manager_asic_ops *asic_ops)
- {
-+	asic_ops->set_cache_memory_policy = set_cache_memory_policy_v11;
- 	asic_ops->update_qpd = update_qpd_v11;
- 	asic_ops->init_sdma_vm = init_sdma_vm_v11;
- 	asic_ops->mqd_manager_init = mqd_manager_init_v11;
-@@ -48,28 +55,28 @@ static uint32_t compute_sh_mem_bases_64bit(struct kfd_process_device *pdd)
- 		private_base;
- }
- 
--static int update_qpd_v11(struct device_queue_manager *dqm,
--			 struct qcm_process_device *qpd)
-+static bool set_cache_memory_policy_v11(struct device_queue_manager *dqm,
-+				   struct qcm_process_device *qpd,
-+				   enum cache_policy default_policy,
-+				   enum cache_policy alternate_policy,
-+				   void __user *alternate_aperture_base,
-+				   uint64_t alternate_aperture_size)
- {
--	struct kfd_process_device *pdd;
--
--	pdd = qpd_to_pdd(qpd);
--
--	/* check if sh_mem_config register already configured */
--	if (qpd->sh_mem_config == 0) {
--		qpd->sh_mem_config =
--			(SH_MEM_ALIGNMENT_MODE_UNALIGNED <<
--				SH_MEM_CONFIG__ALIGNMENT_MODE__SHIFT) |
--			(3 << SH_MEM_CONFIG__INITIAL_INST_PREFETCH__SHIFT);
--
--		qpd->sh_mem_ape1_limit = 0;
--		qpd->sh_mem_ape1_base = 0;
--	}
-+	qpd->sh_mem_config = (SH_MEM_ALIGNMENT_MODE_UNALIGNED <<
-+			      SH_MEM_CONFIG__ALIGNMENT_MODE__SHIFT) |
-+			      (3 << SH_MEM_CONFIG__INITIAL_INST_PREFETCH__SHIFT);
- 
--	qpd->sh_mem_bases = compute_sh_mem_bases_64bit(pdd);
-+	qpd->sh_mem_ape1_limit = 0;
-+	qpd->sh_mem_ape1_base = 0;
-+	qpd->sh_mem_bases = compute_sh_mem_bases_64bit(qpd_to_pdd(qpd));
- 
- 	pr_debug("sh_mem_bases 0x%X\n", qpd->sh_mem_bases);
-+	return true;
-+}
- 
-+static int update_qpd_v11(struct device_queue_manager *dqm,
-+			 struct qcm_process_device *qpd)
-+{
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v12.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v12.c
-index 4f3295b29dfb1..62ca1c8fcbaf9 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v12.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v12.c
-@@ -30,10 +30,17 @@ static int update_qpd_v12(struct device_queue_manager *dqm,
- 			 struct qcm_process_device *qpd);
- static void init_sdma_vm_v12(struct device_queue_manager *dqm, struct queue *q,
- 			    struct qcm_process_device *qpd);
-+static bool set_cache_memory_policy_v12(struct device_queue_manager *dqm,
-+				   struct qcm_process_device *qpd,
-+				   enum cache_policy default_policy,
-+				   enum cache_policy alternate_policy,
-+				   void __user *alternate_aperture_base,
-+				   uint64_t alternate_aperture_size);
- 
- void device_queue_manager_init_v12(
- 	struct device_queue_manager_asic_ops *asic_ops)
- {
-+	asic_ops->set_cache_memory_policy = set_cache_memory_policy_v12;
- 	asic_ops->update_qpd = update_qpd_v12;
- 	asic_ops->init_sdma_vm = init_sdma_vm_v12;
- 	asic_ops->mqd_manager_init = mqd_manager_init_v12;
-@@ -48,28 +55,28 @@ static uint32_t compute_sh_mem_bases_64bit(struct kfd_process_device *pdd)
- 		private_base;
- }
- 
--static int update_qpd_v12(struct device_queue_manager *dqm,
--			 struct qcm_process_device *qpd)
-+static bool set_cache_memory_policy_v12(struct device_queue_manager *dqm,
-+				   struct qcm_process_device *qpd,
-+				   enum cache_policy default_policy,
-+				   enum cache_policy alternate_policy,
-+				   void __user *alternate_aperture_base,
-+				   uint64_t alternate_aperture_size)
- {
--	struct kfd_process_device *pdd;
--
--	pdd = qpd_to_pdd(qpd);
--
--	/* check if sh_mem_config register already configured */
--	if (qpd->sh_mem_config == 0) {
--		qpd->sh_mem_config =
--			(SH_MEM_ALIGNMENT_MODE_UNALIGNED <<
--				SH_MEM_CONFIG__ALIGNMENT_MODE__SHIFT) |
--			(3 << SH_MEM_CONFIG__INITIAL_INST_PREFETCH__SHIFT);
--
--		qpd->sh_mem_ape1_limit = 0;
--		qpd->sh_mem_ape1_base = 0;
--	}
-+	qpd->sh_mem_config = (SH_MEM_ALIGNMENT_MODE_UNALIGNED <<
-+			      SH_MEM_CONFIG__ALIGNMENT_MODE__SHIFT) |
-+			      (3 << SH_MEM_CONFIG__INITIAL_INST_PREFETCH__SHIFT);
- 
--	qpd->sh_mem_bases = compute_sh_mem_bases_64bit(pdd);
-+	qpd->sh_mem_ape1_limit = 0;
-+	qpd->sh_mem_ape1_base = 0;
-+	qpd->sh_mem_bases = compute_sh_mem_bases_64bit(qpd_to_pdd(qpd));
- 
- 	pr_debug("sh_mem_bases 0x%X\n", qpd->sh_mem_bases);
-+	return true;
-+}
- 
-+static int update_qpd_v12(struct device_queue_manager *dqm,
-+			 struct qcm_process_device *qpd)
-+{
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v9.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v9.c
-index 210bcc048f4c5..3264509408bc8 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v9.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager_v9.c
-@@ -30,10 +30,17 @@ static int update_qpd_v9(struct device_queue_manager *dqm,
- 			 struct qcm_process_device *qpd);
- static void init_sdma_vm_v9(struct device_queue_manager *dqm, struct queue *q,
- 			    struct qcm_process_device *qpd);
-+static bool set_cache_memory_policy_v9(struct device_queue_manager *dqm,
-+				   struct qcm_process_device *qpd,
-+				   enum cache_policy default_policy,
-+				   enum cache_policy alternate_policy,
-+				   void __user *alternate_aperture_base,
-+				   uint64_t alternate_aperture_size);
- 
- void device_queue_manager_init_v9(
- 	struct device_queue_manager_asic_ops *asic_ops)
- {
-+	asic_ops->set_cache_memory_policy = set_cache_memory_policy_v9;
- 	asic_ops->update_qpd = update_qpd_v9;
- 	asic_ops->init_sdma_vm = init_sdma_vm_v9;
- 	asic_ops->mqd_manager_init = mqd_manager_init_v9;
-@@ -48,10 +55,37 @@ static uint32_t compute_sh_mem_bases_64bit(struct kfd_process_device *pdd)
- 		private_base;
- }
- 
-+static bool set_cache_memory_policy_v9(struct device_queue_manager *dqm,
-+				   struct qcm_process_device *qpd,
-+				   enum cache_policy default_policy,
-+				   enum cache_policy alternate_policy,
-+				   void __user *alternate_aperture_base,
-+				   uint64_t alternate_aperture_size)
-+{
-+	qpd->sh_mem_config = SH_MEM_ALIGNMENT_MODE_UNALIGNED <<
-+				SH_MEM_CONFIG__ALIGNMENT_MODE__SHIFT;
-+
-+	if (dqm->dev->kfd->noretry)
-+		qpd->sh_mem_config |= 1 << SH_MEM_CONFIG__RETRY_DISABLE__SHIFT;
-+
-+	if (KFD_GC_VERSION(dqm->dev->kfd) == IP_VERSION(9, 4, 3) ||
-+		KFD_GC_VERSION(dqm->dev->kfd) == IP_VERSION(9, 4, 4) ||
-+		KFD_GC_VERSION(dqm->dev->kfd) == IP_VERSION(9, 5, 0))
-+		qpd->sh_mem_config |= (1 << SH_MEM_CONFIG__F8_MODE__SHIFT);
-+
-+	qpd->sh_mem_ape1_limit = 0;
-+	qpd->sh_mem_ape1_base = 0;
-+	qpd->sh_mem_bases = compute_sh_mem_bases_64bit(qpd_to_pdd(qpd));
-+
-+	pr_debug("sh_mem_bases 0x%X sh_mem_config 0x%X\n", qpd->sh_mem_bases,
-+		 qpd->sh_mem_config);
-+	return true;
-+}
-+
- static int update_qpd_v9(struct device_queue_manager *dqm,
- 			 struct qcm_process_device *qpd)
- {
--	struct kfd_process_device *pdd;
-+	struct kfd_process_device *pdd = qpd_to_pdd(qpd);
- 
- 	pdd = qpd_to_pdd(qpd);
- 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index 63b94a04308e8..38d49d612c0c1 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1686,7 +1686,7 @@ vdd_1v8_dis: regulator-vdd-1v8-dis {
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
+ 		regulator-always-on;
+-		gpio = <&exp1 14 GPIO_ACTIVE_HIGH>;
++		gpio = <&exp1 9 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 		vin-supply = <&vdd_1v8>;
+ 	};
 -- 
 2.39.5
 
