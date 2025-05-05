@@ -1,92 +1,68 @@
-Return-Path: <linux-kernel+bounces-632639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F4FAA9A04
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:04:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D5DAA9A11
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792AA3A951B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:03:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1851892272
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B350426B08C;
-	Mon,  5 May 2025 17:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700B5265CD8;
+	Mon,  5 May 2025 17:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GH43+Fy6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ventureresearch.com header.i=@ventureresearch.com header.b="dAzBLF60"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA551957FC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 17:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.183
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746464686; cv=none; b=L0TnAfNz55823/DhmaMGpScKZatV0S4Ugw6hQ+suCcAllpNUdvCuJt557zG5VKhFS0Qz77G36PLeajy3llAy/y39gXNXTBLJBkPQiYK5eVgsr0PEPHFSguL3g9XSzRDPBYEV88B3L6HX9t/dlAFaRaRbOAatiZo+IKPf0BDlTgg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746464686; c=relaxed/simple;
+	bh=f1unv9uKWkpLkfv0FcoXEn2Mw9gnEODhyfQHPGruINo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qxS1liyRKXdtmYakl+zPxSUh+OLAEJjNNp7H5MgU2/2wtQxBVxGn30VIYR0LzVILUAb+0WoNxS3KZPjfA0UzMZ4j6k7bymslSd2axC9GUhLD1V7t7jT9B089TDEUlbQ6uOpRFhdUbeeCGJj4O8sd3hTxYeTRO9br4nTqLUUW9xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ventureresearch.com; spf=pass smtp.mailfrom=ventureresearch.com; dkim=pass (2048-bit key) header.d=ventureresearch.com header.i=@ventureresearch.com header.b=dAzBLF60; arc=none smtp.client-ip=67.231.154.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ventureresearch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventureresearch.com
+Received: from engine.ppe-hosted.com (unknown [10.110.50.102])
+	by dispatch1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id E524D602A2;
+	Mon,  5 May 2025 17:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ventureresearch.com;
+ h=cc:cc:content-transfer-encoding:content-transfer-encoding:content-type:content-type:date:date:from:from:in-reply-to:in-reply-to:message-id:message-id:mime-version:mime-version:references:references:subject:subject:to:to;
+ s=selector-1717781956; bh=sruw//HjQB6XJQIxHMRHC9dIAmbSQWjtCq2IsgN/sbI=;
+ b=dAzBLF60Qkk7ahCJWVoinInWp4RsLt0SZWRoUG30RNueTNbgC7Y92Z0AJ+GMmv4suDnqZS9Y0PmhJ33JSxoQEVAZm7LBD+Vte0F9lMlBgvfE29kQXssJS3kxFrARC5PrqkJh4O55mulESP86/VEOOVVHqZnUGuQokmUkxBglT2v1cgvfj2nvXig1WHRnD+nKLZmobq29q4hv1/o91nBXokGmGkA+F5wgXr+xzyhtc2IN/upsmN7pEXPngbfzcPT8JvSztC4IC7OiqsqNSu4zSuPWE3aQwEl7a9+JpFiXE+8oODs+TbxMqqYFh3pNzfnJa8UXF1afUypwC6WiqZs4bQ==
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from Mail2019.crm.ventureresearch.com (unknown [67.210.242.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E3026A0FC
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 17:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746464595; cv=none; b=GbVHvblSXNsy9zv99CSE4OVtd9NS3jZUc1xJ/pwc8BewPVmW4+eSTYIWHCFZFpQLSiQmZDrJgD8GtUEYumMxv6fXsL+v1/NARVxY2k6owriuRmUb1DvbXe/J/bJKv4pPFGxmLdlwEKDbjE8awi7+/5UOE5IIzP//PPVLnak5Gdg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746464595; c=relaxed/simple;
-	bh=/Qvmv8w9ZIfKNOh5CAiInqaoy1vMOODiIViYJFFLuZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rcps90WoMHdkJesCjzZCfhrJ8ZbS1FdcuyB+lqJpky8QfoyQ/k64yoi4TN1x0rWY4yr6P0FU03ndRzd3GKpCkNp7ozYPh9m5Z0cvh+GUR/kP4Pnr/EVitpJMJmsdqMPdzYSjB3gwdQSBIUGtfrRnugH5r8ETRtxgYOA/QMFBaCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GH43+Fy6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746464592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=m9bIHoqbBA5SLNauZMvH1fqOzSiDFcEQEEJ1Jgigji4=;
-	b=GH43+Fy6e/BXAEknzyp7Hb85XTFyMgY59fuXBpLLYrx2ucwnX65epslQTtS8ddIGyt9lHd
-	9xCeFyhf2QmN+l8Cat5aBVGHYyvuFrrbMYQdMpPCqTwxd1G8VobKYpD1GsajRK/wZxZoFx
-	zcc9rCPIyziMkTTWYbG914V6HGJ8bsI=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-212-OshEhb6COy-DfENXyYMoWw-1; Mon, 05 May 2025 13:03:09 -0400
-X-MC-Unique: OshEhb6COy-DfENXyYMoWw-1
-X-Mimecast-MFC-AGG-ID: OshEhb6COy-DfENXyYMoWw_1746464588
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-736fff82264so3435450b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 10:03:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746464588; x=1747069388;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m9bIHoqbBA5SLNauZMvH1fqOzSiDFcEQEEJ1Jgigji4=;
-        b=AkbHSodom7BoOsip6gZC5rXZvcBajTn+fTBjZ4OSPmMNnhItYmuECkS6yYWlc0ymuq
-         2Dzi0aTOpjVWl7/7hS0xhux2wsJ/oVBOig9ugaOajUWKKzzk99Uhzo1oE1nVJjY4Hona
-         N2fPq9owRKp6fAhGgblOJ+/WdbDGN9OacYLVQRDrblS/1CnaCkb4ubm82mk/GEYImwNS
-         vU/gkdsBbQib6VcnhSnsP2nDno+R8qASRr72Ku4DEVIVD9Wifu07fCehQw5Q47nqKHi1
-         8MLXuJS6r+TxEyM+urNKCiLTNbXI+keeHAnn2Gf1gmFQiirwTGduIkAgjizJ+NMBQ8NM
-         YJTw==
-X-Gm-Message-State: AOJu0Yz6PAn6Ux0hZzfd6vDRPxgJ+KikgDUHQ4CHa/Z9J70Q1mhEOyKh
-	hxsY/qRcCbIhG5/deVTf061Hnj31+61gcLueRRF05j4LnUketGMUJ2cn8pm1GDxoaKt2ZC13rbB
-	TXaQh5nDFfn0pU3riUi5+J3mglu1Qh5UR56lKaca7IiSkrpDnAD57GZprg3Ms3w==
-X-Gm-Gg: ASbGncuSiEzcPvG+dC6IChQeMWeLzRjBLyS4MaW4bkGw2/F6fxvvfC+hSm4WTqCasyh
-	pVNWDEQKVCg8leSBzLWcPyL5vUs/xSKZcQFP+C/cppb/laXbK07jnsImyX85Q6G/a6EIWchyOiO
-	q/oHp72VBY874OR8iNOO5ol/Ykh3TcyfDgKp8FDs4b/KpfcLTgjSEnWtIH11FrO15x0OSP2xPq2
-	rIH3jCGwEjrl6R2mEQwICaUsahzCPvInsp1a5tc7H6YZbzT+zFD8siabwRscuiOvhKBATCEiaro
-	EIx09oCbgjkBNT1pKh9hmim7
-X-Received: by 2002:a05:6a00:a20:b0:728:f21b:ce4c with SMTP id d2e1a72fcca58-74090e44996mr379535b3a.5.1746464588197;
-        Mon, 05 May 2025 10:03:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvK3Ppi0BRws/Y5vzuFvx+uQJghZwFuILY/Vgby6wA386en8K1y8EzEX9SHUhWpLGMzv/CMA==
-X-Received: by 2002:a05:6a00:a20:b0:728:f21b:ce4c with SMTP id d2e1a72fcca58-74090e44996mr379499b3a.5.1746464587846;
-        Mon, 05 May 2025 10:03:07 -0700 (PDT)
-Received: from localhost.localdomain ([2804:1b3:a800:6188:b6d7:24aa:ba3f:6cc2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058df2a6csm7072213b3a.81.2025.05.05.10.03.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 10:03:07 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Leonardo Bras <leobras@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/1] local_lock: Minor improvements of local_trylock*() documentation
-Date: Mon,  5 May 2025 14:02:44 -0300
-Message-ID: <20250505170244.253170-1-leobras@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id DB60B340085;
+	Mon,  5 May 2025 17:04:33 +0000 (UTC)
+Received: from build01-deb.crm.ventureresearch.com (2605:ed00:15b3:1::5:1) by
+ mail.ventureresearch.com (2605:ae00:1849:1::1:19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 5 May 2025 12:04:33 -0500
+From: Kevin Baker <kevinb@ventureresearch.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, Sam Ravnborg
+	<sam@ravnborg.org>
+CC: Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Alex Gonzalez <alex.gonzalez@digi.com>,
+	Thierry Reding <treding@nvidia.com>, Rob Herring <robh@kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, Kevin
+ Baker <kevinb@ventureresearch.com>
+Subject: [PATCH v2] drm/panel: simple: Update timings for AUO G101EVN010
+Date: Mon, 5 May 2025 12:02:56 -0500
+Message-ID: <20250505170256.1385113-1-kevinb@ventureresearch.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <dbd8e1bc-bc23-4240-b6b1-321ac6f5ed68@linaro.org>
+References: <dbd8e1bc-bc23-4240-b6b1-321ac6f5ed68@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,67 +70,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MDID: 1746464675-oNH0tDlgHK0m
+X-PPE-STACK: {"stack":"us1"}
+X-MDID-O:
+ us1;at1;1746464675;oNH0tDlgHK0m;<kevinb@ventureresearch.com>;58e32da1f0e7946bb9643c97f392fd2c
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-Fix local_trylock_init() documentation, as it was mentioning the non-try
-helper instead, and use the opportunity to make clear the try_lock*() needs
-to receive a local_trylock_t variable as parameter.
+Switch to panel timings based on datasheet for the AUO G101EVN01.0
+LVDS panel. Default timings were tested on the panel.
 
-Signed-off-by: Leonardo Bras <leobras@redhat.com>
+Previous mode-based timings resulted in horizontal display shift.
+
+Signed-off-by: Kevin Baker <kevinb@ventureresearch.com>
+Fixes: 4fb86404a977 ("drm/panel: simple: Add AUO G101EVN010 panel support")
 ---
+ drivers/gpu/drm/panel/panel-simple.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-Changes since RFC:
-- Replace try-enabled lock with local_trylock{,_t}
-
- include/linux/local_lock.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/local_lock.h b/include/linux/local_lock.h
-index 16a2ee4f8310b..58adaaf98dd74 100644
---- a/include/linux/local_lock.h
-+++ b/include/linux/local_lock.h
-@@ -45,38 +45,38 @@
- /**
-  * local_unlock_irqrestore - Release a per CPU local lock and restore
-  *			      interrupt flags
-  * @lock:	The lock variable
-  * @flags:      Interrupt flags to restore
-  */
- #define local_unlock_irqrestore(lock, flags)			\
- 	__local_unlock_irqrestore(lock, flags)
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index df718c4a86cb..c79dc8581054 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1026,27 +1026,28 @@ static const struct panel_desc auo_g070vvn01 = {
+ 	},
+ };
  
- /**
-- * local_lock_init - Runtime initialize a lock instance
-+ * local_trylock_init - Runtime initialize a local_trylock instance
-  */
- #define local_trylock_init(lock)	__local_trylock_init(lock)
+-static const struct drm_display_mode auo_g101evn010_mode = {
+-	.clock = 68930,
+-	.hdisplay = 1280,
+-	.hsync_start = 1280 + 82,
+-	.hsync_end = 1280 + 82 + 2,
+-	.htotal = 1280 + 82 + 2 + 84,
+-	.vdisplay = 800,
+-	.vsync_start = 800 + 8,
+-	.vsync_end = 800 + 8 + 2,
+-	.vtotal = 800 + 8 + 2 + 6,
++static const struct display_timing auo_g101evn010_timing = {
++	.pixelclock = { 64000000, 68930000, 85000000 },
++	.hactive = { 1280, 1280, 1280 },
++	.hfront_porch = { 8, 64, 256 },
++	.hback_porch = { 8, 64, 256 },
++	.hsync_len = { 40, 168, 767 },
++	.vactive = { 800, 800, 800 },
++	.vfront_porch = { 4, 8, 100 },
++	.vback_porch = { 4, 8, 100 },
++	.vsync_len = { 8, 16, 223 },
+ };
  
- /**
-  * local_trylock - Try to acquire a per CPU local lock
-- * @lock:	The lock variable
-+ * @lock:	The local_trylock_t variable
-  *
-  * The function can be used in any context such as NMI or HARDIRQ. Due to
-  * locking constrains it will _always_ fail to acquire the lock in NMI or
-  * HARDIRQ context on PREEMPT_RT.
-  */
- #define local_trylock(lock)		__local_trylock(lock)
+ static const struct panel_desc auo_g101evn010 = {
+-	.modes = &auo_g101evn010_mode,
+-	.num_modes = 1,
++	.timings = &auo_g101evn010_timing,
++	.num_timings = 1,
+ 	.bpc = 6,
+ 	.size = {
+ 		.width = 216,
+ 		.height = 135,
+ 	},
+ 	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
++	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
+ 	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
  
- /**
-  * local_trylock_irqsave - Try to acquire a per CPU local lock, save and disable
-  *			   interrupts if acquired
-- * @lock:	The lock variable
-+ * @lock:	The local_trylock_t variable
-  * @flags:	Storage for interrupt flags
-  *
-  * The function can be used in any context such as NMI or HARDIRQ. Due to
-  * locking constrains it will _always_ fail to acquire the lock in NMI or
-  * HARDIRQ context on PREEMPT_RT.
-  */
- #define local_trylock_irqsave(lock, flags)			\
- 	__local_trylock_irqsave(lock, flags)
- 
- DEFINE_GUARD(local_lock, local_lock_t __percpu*,
 -- 
-2.49.0
+2.39.5
 
 
