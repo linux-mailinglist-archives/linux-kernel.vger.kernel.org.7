@@ -1,70 +1,63 @@
-Return-Path: <linux-kernel+bounces-633929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F122AAAEE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:06:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34FBAAAEB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15DB3B4618
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:01:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BD5D7A9748
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538792EE44D;
-	Mon,  5 May 2025 23:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7103D2EEBCA;
+	Mon,  5 May 2025 23:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/8AmMjX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyi3Vn79"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442902D0284;
-	Mon,  5 May 2025 23:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ABE3867ED;
+	Mon,  5 May 2025 23:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486032; cv=none; b=UvOBRIrCmnwBoZOwaL0WPBUAhjgVW9eiYEWvLSesXCXW0Cwlhp5Re+PrRIIIJ0CM8bveroCEZIN3dLsDvm/ktdLx8obcp2nC1LigfMazEasZf/d7at25vFAeKtY7o644rqHKesoWYVcPzYM5BSCdd6sW2DVEC4gyt2vt//s2+h4=
+	t=1746486043; cv=none; b=P6dQ3KjrK4PgQAGSF/LZPBzW/lyMCzyTu8NGUXHjYEJn/mrURoA65qLsoyrnQkochwx01qVRiMCv14l2V+LwlDHl6sfI1hvRWVPctpzZin9EwvQF946erNL1ad86INRfzWSD7AjRMJHuBZG/vVJ/GHB464ApEv6FH0uM1tC9+aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486032; c=relaxed/simple;
-	bh=0oolSqsZ1MAxsLhdbgfd9396bqGOYrEmyGV7kZGgazM=;
+	s=arc-20240116; t=1746486043; c=relaxed/simple;
+	bh=8S/5I22qd4S0oH7P51ixZiHczSeXqwMQkKM+m4qTrFo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hbGkEIBV0M9yBfxXp+Jv3+OVbtizK+HCGxttHZN5ECvKc/NxrbycRBlJB0rUc05rexYWC4wo2vzONeBMCjd6LDSwr3IWnn+yRYn8hbfSHxifF0lRilHsrnuMAwCi6cgvlbUKR4Ur5heqC0iuJC4VAQXigJGso0teHD1ru259tnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/8AmMjX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 085A1C4CEE4;
-	Mon,  5 May 2025 23:00:28 +0000 (UTC)
+	 MIME-Version; b=sQhGJJfg0AI7guTYzl8b2gwPomoJJhjeAkH5suwllGMpF1CKpPX+gPbwR/GJuo0/XJzObas9I6OlBuDpuBGC/uZvn92G1OP8i+x87WW/oUqX9PJAH7klrkee7f7BBB+t3ti0YTN6UJ7urO4sxOD06XL+zHlyA6zeNQrAg4SE+Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyi3Vn79; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE05C4CEEF;
+	Mon,  5 May 2025 23:00:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486031;
-	bh=0oolSqsZ1MAxsLhdbgfd9396bqGOYrEmyGV7kZGgazM=;
+	s=k20201202; t=1746486043;
+	bh=8S/5I22qd4S0oH7P51ixZiHczSeXqwMQkKM+m4qTrFo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J/8AmMjXZJbbt33IFaYj72mIL5eZX2qVFW6SQKbuWFNU/m9kWKTMYy6gwo0/WikFT
-	 +iq7x7AEza0lt6IOP4l1VTiq9aFhgokGDF3sXgqyTieiG++nDbqjcF0NR5+Lv/Op6M
-	 dahyWObC+U5TPnjrk2X35vuBxB+rSoaX+A48zvbVOudo52Ki6r3PMGmKhQ8WELCkrb
-	 EyNyM2RrSZUa//tEB5iaTvPzbzKpiuNX2bahzKKq5AnS0kUd+B5s8Mrut/m4iIpOZw
-	 NiMfSwEiFHSUJ2uNp1AzmaTKzb/AKDhd4652susVJO4wuWUqwGZ0RIAlYKHLlfZCyh
-	 9mV4P3GKLf6Fg==
+	b=gyi3Vn79cHk4L0hjx8oPMEqBxGcyv/d0etl95QPj9UYhCogK65HAOwh9txxL5d7Yd
+	 GsTDJWzGahDp91FiB/QQcE5V8YeY7jrfwCjr7yl1OPmgLPE8JNpd3tWKWU98pLLIFT
+	 gO6VKR8xFInas/KkiB78zvS5aidRsE8gLJpyOlOnwubHJXIpHMDJgj6K7eQ7e7lM5/
+	 10vLpPkbLRJIUcxd78POI/6ukc1iltfjxMZ2YMqMS6/64EH1Bbct5tOneUomtZIYoE
+	 GhiO+ub0Gka0SPUSJCIx2Iqu5BtPBioAPZdJrg+KLNObsaa2RnrNJ71tvV1PA5qQf6
+	 uLe0+28fbLB3g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: George Shen <george.shen@amd.com>,
-	Wenjing Liu <wenjing.liu@amd.com>,
-	Wayne Lin <wayne.lin@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Saket Kumar Bhaskar <skb99@linux.ibm.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Ian Rogers <irogers@google.com>,
+	Frederic Weisbecker <fweisbec@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	alex.hung@amd.com,
-	michael.strauss@amd.com,
-	roman.li@amd.com,
-	PeiChen.Huang@amd.com,
-	Ausef.Yousof@amd.com,
-	Cruise.Hung@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 119/294] drm/amd/display: Skip checking FRL_MODE bit for PCON BW determination
-Date: Mon,  5 May 2025 18:53:39 -0400
-Message-Id: <20250505225634.2688578-119-sashal@kernel.org>
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 124/294] perf/hw_breakpoint: Return EOPNOTSUPP for unsupported breakpoint type
+Date: Mon,  5 May 2025 18:53:44 -0400
+Message-Id: <20250505225634.2688578-124-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -79,68 +72,52 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: George Shen <george.shen@amd.com>
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
 
-[ Upstream commit 0584bbcf0c53c133081100e4f4c9fe41e598d045 ]
+[ Upstream commit 061c991697062f3bf87b72ed553d1d33a0e370dd ]
 
-[Why/How]
-Certain PCON will clear the FRL_MODE bit despite supporting the link BW
-indicated in the other bits.
+Currently, __reserve_bp_slot() returns -ENOSPC for unsupported
+breakpoint types on the architecture. For example, powerpc
+does not support hardware instruction breakpoints. This causes
+the perf_skip BPF selftest to fail, as neither ENOENT nor
+EOPNOTSUPP is returned by perf_event_open for unsupported
+breakpoint types. As a result, the test that should be skipped
+for this arch is not correctly identified.
 
-Thus, skip checking the FRL_MODE bit when interpreting the
-hdmi_encoded_link_bw struct.
+To resolve this, hw_breakpoint_event_init() should exit early by
+checking for unsupported breakpoint types using
+hw_breakpoint_slots_cached() and return the appropriate error
+(-EOPNOTSUPP).
 
-Reviewed-by: Wenjing Liu <wenjing.liu@amd.com>
-Signed-off-by: George Shen <george.shen@amd.com>
-Signed-off-by: Wayne Lin <wayne.lin@amd.com>
-Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Link: https://lore.kernel.org/r/20250303092451.1862862-1-skb99@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../dc/link/protocols/link_dp_capability.c    | 30 +++++++++----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ kernel/events/hw_breakpoint.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-index 3d589072fe307..1e621eae9b7da 100644
---- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-+++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-@@ -239,21 +239,21 @@ static uint32_t intersect_frl_link_bw_support(
- {
- 	uint32_t supported_bw_in_kbps = max_supported_frl_bw_in_kbps;
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 6c2cb4e4f48da..8f3f624419aa9 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -950,9 +950,10 @@ static int hw_breakpoint_event_init(struct perf_event *bp)
+ 		return -ENOENT;
  
--	// HDMI_ENCODED_LINK_BW bits are only valid if HDMI Link Configuration bit is 1 (FRL mode)
--	if (hdmi_encoded_link_bw.bits.FRL_MODE) {
--		if (hdmi_encoded_link_bw.bits.BW_48Gbps)
--			supported_bw_in_kbps = 48000000;
--		else if (hdmi_encoded_link_bw.bits.BW_40Gbps)
--			supported_bw_in_kbps = 40000000;
--		else if (hdmi_encoded_link_bw.bits.BW_32Gbps)
--			supported_bw_in_kbps = 32000000;
--		else if (hdmi_encoded_link_bw.bits.BW_24Gbps)
--			supported_bw_in_kbps = 24000000;
--		else if (hdmi_encoded_link_bw.bits.BW_18Gbps)
--			supported_bw_in_kbps = 18000000;
--		else if (hdmi_encoded_link_bw.bits.BW_9Gbps)
--			supported_bw_in_kbps = 9000000;
--	}
-+	/* Skip checking FRL_MODE bit, as certain PCON will clear
-+	 * it despite supporting the link BW indicated in the other bits.
-+	 */
-+	if (hdmi_encoded_link_bw.bits.BW_48Gbps)
-+		supported_bw_in_kbps = 48000000;
-+	else if (hdmi_encoded_link_bw.bits.BW_40Gbps)
-+		supported_bw_in_kbps = 40000000;
-+	else if (hdmi_encoded_link_bw.bits.BW_32Gbps)
-+		supported_bw_in_kbps = 32000000;
-+	else if (hdmi_encoded_link_bw.bits.BW_24Gbps)
-+		supported_bw_in_kbps = 24000000;
-+	else if (hdmi_encoded_link_bw.bits.BW_18Gbps)
-+		supported_bw_in_kbps = 18000000;
-+	else if (hdmi_encoded_link_bw.bits.BW_9Gbps)
-+		supported_bw_in_kbps = 9000000;
+ 	/*
+-	 * no branch sampling for breakpoint events
++	 * Check if breakpoint type is supported before proceeding.
++	 * Also, no branch sampling for breakpoint events.
+ 	 */
+-	if (has_branch_stack(bp))
++	if (!hw_breakpoint_slots_cached(find_slot_idx(bp->attr.bp_type)) || has_branch_stack(bp))
+ 		return -EOPNOTSUPP;
  
- 	return supported_bw_in_kbps;
- }
+ 	err = register_perf_hw_breakpoint(bp);
 -- 
 2.39.5
 
