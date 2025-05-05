@@ -1,99 +1,142 @@
-Return-Path: <linux-kernel+bounces-631763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC461AA8D16
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:33:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6456AA8D19
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 576811892997
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F7B173026
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1256F1DC98B;
-	Mon,  5 May 2025 07:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8971DA60D;
+	Mon,  5 May 2025 07:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="XSwnb6jG"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sX8+DbPY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oI7y3cP8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2648019995E;
-	Mon,  5 May 2025 07:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0E31D5ADC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 07:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746430394; cv=none; b=ZZJIKsau3Kx2zUqvUEBN+AZlc/8qcI/4iSZdmo1AL2/A/jU4NPMTrnO69Cv+F3O3O9kp2StQjZVlnmdSY6CLp5sF7Ce+K6IDz8oiEuypur1SfznnN/G3UtJYtPD24C0/v8ITWgN39/mPYxEmROXkmNpbDi+k7Y3WpdNo722u0LY=
+	t=1746430413; cv=none; b=O+zpEM5KptX2DfeOUdUbNSOIEB+K5w8V4/PEE3izPxFpdLC0+DO5rWajWtMcaPSy9VSsQ8glswCmzcBirGd8wE1qDhIiOrX261oiziQ9aQC3tbQx7qwGwzcBdJt/qRbIOWMQVeTuNt9/ieJet1zWW/eiGSUlIjxF2l8yu7w9vg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746430394; c=relaxed/simple;
-	bh=o9Ua9es+nDQSCTMlF2S5n70GzvrIm3GZj9ppMhDTiO8=;
+	s=arc-20240116; t=1746430413; c=relaxed/simple;
+	bh=0XkG1rhDDdkzr4vxxq+ni5pkurrsCo1DaBkTzd2qMDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gWu3mur00NrRfbx5l3ejOjVnIi0rEucBSBEZj58qkDwtRX8FO3yjv9MBextWEODpq2t/gO3bTpHg1THiDG8zzM224PTT5Pu1/WjINtWNo7/OoOejzZuYpAsBEKYLZu7I13n38dt7FQ6wApdT3I4mul/5qF+W4DpYflQWQq+4980=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=XSwnb6jG; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch [83.173.201.248])
-	by mail11.truemail.it (Postfix) with ESMTPA id 98E3E1F842;
-	Mon,  5 May 2025 09:33:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1746430381;
-	bh=/zksZ8p8UU1t+kGoN2N2Kk+JAb77n7Fw4YIg48JHLvo=; h=From:To:Subject;
-	b=XSwnb6jGDpr1y0ta615f3VPtth08iehvZCxcn5LdnaodpKe+HSAJ3/US6VskIKZMY
-	 1XYDDlYzIhgEUl9KthaarKKGUCgX+22Dnd0z07Py9D7cxW1Pg56W/QooSmwN7UldfL
-	 gu06tdtucnyd/hHvLKe8NbVBucRuLuJHNrE9r5+LaoA8Ficm9rLENY/f3yBLlahn/q
-	 0Utt/4sdkeexqCy1qnAbqkwMaDHcAPqsUhXSJ+g/Otgm6qCdZd3mdCVsYRxaT9btKu
-	 PyAbzMAg9Q+v09LgNmb5v+Nlnq6Y0beou9IC6xmEhQuzimXRTRgDOi9esSaK+qYkQN
-	 aPcBFyz2fSPvw==
-Date: Mon, 5 May 2025 09:32:55 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: "Ivan T. Ivanov" <iivanov@suse.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Jeff Chen <jeff.chen_1@nxp.com>,
-	Pete Hsieh <tsung-hsien.hsieh@nxp.com>,
-	Brian Norris <briannorris@chromium.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org
-Subject: Re: [PATCH do not merge 0/4] wifi: mwifiex: add iw61x support
-Message-ID: <20250505073255.GA12817@francesco-nb>
-References: <20250326-mwifiex-iw61x-v1-0-ff875ed35efc@pengutronix.de>
- <20250331065026.GA12444@francesco-nb>
- <20250429125928.pw7k4raw52jyvyaj@localhost.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qkv9hRjPUcEVGjp9lBUchFTMoQGS95eAedc09g/BfUlnvW9pcb17oreWeCcXYcUz6NV5PGjv7Icspii3UpKNsLNG3IGDZ5zV6aVqkkIZKmM2mf+jp0Afj3CYoMK1aVT0TaZjmnfNuCLbYKGrEoVFjfjmB0aVWdLTGAgLH/8RDpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sX8+DbPY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oI7y3cP8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 5 May 2025 09:33:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746430410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bLwEBdjvQahjJSYq8z8eni9Njb//2FpLv9Dx89BPmLg=;
+	b=sX8+DbPYCsZSXj7XsOakuqLfGLEHw1Nd4nkA5Sw3eN39GsGxZit+wVOw1o6B1Z8QFtKwi8
+	INcFwTn7otcE0y+lCILL6Jm+316FpKRRqqRTLuEzyW/IYFiLKLpCe8nYKpSEtry004/VKf
+	AcCTZaP67YPA+8dkPQqV0jG+q7cSB9gIWKcaZ5dlJNJ4PtWFjkPWVJkQ0fSsh7KC/LyOjj
+	R5DMuYkPzDCsKlxJ8wMAoCijtljQDPnEVQnPD1TSIKUYHPvC9FU4RgPiJRneRr/7C6aepc
+	IY3cZs40OMxZWfkz7m6nHGrWp9xdMXy/scf3i1b8t1aVUSgXlcQfwZUx7iAt+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746430410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bLwEBdjvQahjJSYq8z8eni9Njb//2FpLv9Dx89BPmLg=;
+	b=oI7y3cP8B33FLfDyM7+FCJheUoMRtzra4Mmq6fSZW+D3oLsiQ+SFSZJcffpfAEVRbJFzyQ
+	hMzh8K4p/V38VkDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v12 21/21] selftests/futex: Add futex_numa_mpol
+Message-ID: <20250505073321.7isb-eaO@linutronix.de>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416162921.513656-22-bigeasy@linutronix.de>
+ <20250502190838.GB24078@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250429125928.pw7k4raw52jyvyaj@localhost.localdomain>
+In-Reply-To: <20250502190838.GB24078@noisy.programming.kicks-ass.net>
 
-On Tue, Apr 29, 2025 at 03:59:28PM +0300, Ivan T. Ivanov wrote:
-> On 03-31 08:50, Francesco Dolcini wrote:
-> > Message-ID: <20250331065026.GA12444@francesco-nb>
-> > On Wed, Mar 26, 2025 at 01:18:30PM +0100, Sascha Hauer wrote:
-> > > This series adds iw61x support to the mwifiex driver. It works for me,
-> > > but is not yet ready to be merged. Some people showed interest in it, so
-> > > I am sending it here.
-
-...
-
-> > > Not sure what these are about, I can't see these handled in the
-> > > downstream mwifiex driver as well. Could also be there is some parsing
-> > > error. Nevertheless the driver seems to work.
+On 2025-05-02 21:08:38 [+0200], Peter Zijlstra wrote:
+> On Wed, Apr 16, 2025 at 06:29:21PM +0200, Sebastian Andrzej Siewior wrote:
+> > diff --git a/tools/testing/selftests/futex/include/futex2test.h b/tools/testing/selftests/futex/include/futex2test.h
+> > index 9d305520e849b..b664e8f92bfd7 100644
+> > --- a/tools/testing/selftests/futex/include/futex2test.h
+> > +++ b/tools/testing/selftests/futex/include/futex2test.h
+> > @@ -8,6 +8,11 @@
+> >  
+> >  #define u64_to_ptr(x) ((void *)(uintptr_t)(x))
+> >  
+> > +struct futex32_numa {
+> > +	futex_t futex;
+> > +	futex_t numa;
+> > +};
+> > +
+> >  /**
+> >   * futex_waitv - Wait at multiple futexes, wake on any
+> >   * @waiters:    Array of waiters
+> > @@ -20,3 +25,32 @@ static inline int futex_waitv(volatile struct futex_waitv *waiters, unsigned lon
+> >  {
+> >  	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
+> >  }
+> > +
+> > +static inline int futex2_wait(volatile struct futex_waitv *waiters, unsigned long nr_waiters,
+> > +			      unsigned long flags, struct timespec *timo, clockid_t clockid)
+> > +{
+> > +	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
 > 
-> Yep, it is working. Thank you! I am testing this on FRDM-iMX93, which has
-> IW612 revision 1.0.
+> I'm confused, sure this should be __NR_futex_wait
 > 
-> I have to use nxp/sd_w61x_v1.bin.se on this board and NULL firmware_sdiouart
-> because it seems that firmware return 1 as "strap" value, even if WiFi
-> is definitely connected over SDIO.
+> > +}
+> > +
+> > +/*
+> > + * futex_wait2() - block on uaddr with optional timeout
+> > + * @val:	Expected value
+> > + * @flags:	FUTEX2 flags
+> > + * @timeout:	Relative timeout
+> > + * @clockid:	Clock id for the timeout
+> > + */
+> > +static inline int futex2_wait2(void *uaddr, long val, unsigned int flags,
+> > +			      struct timespec *timeout, clockid_t clockid)
+> 
+> And this should be futex2_wait().
 
-Wi-Fi is always connected over SDIO (for IW61x), the strapping is
-related to the interface used for BT. In the past it was common to have
-options for having BT over SDIO or UART or USB, but for IW61x it seems
-that UART is the only available option.
+Yes. I didn't want to change it right away but yes. There already is a
+futex2_wait() which uses the waitv syscall.
 
-Francesco
+> 
+> > +{
+> > +	return syscall(__NR_futex_wait, uaddr, val, 1, flags, timeout, clockid);
+> > +}
+> > +
+> > +/*
+> > + * futex2_wake() - Wake a number of futexes
+> > + * @nr:		Number of threads to wake at most
+> > + * @flags:	FUTEX2 flags
+> > + */
+> > +static inline int futex2_wake(void *uaddr, int nr, unsigned int flags)
+> > +{
+> > +	return syscall(__NR_futex_wake, uaddr, 1, nr, flags);
+> > +}
 
+Sebastian
 
