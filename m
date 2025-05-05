@@ -1,152 +1,94 @@
-Return-Path: <linux-kernel+bounces-632618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F77AA99C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079EEAA99CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF8E165BB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709FF166F27
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15E726AAB2;
-	Mon,  5 May 2025 16:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AB826A0EB;
+	Mon,  5 May 2025 16:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KZUizA55";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ziQ9SsQA"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kpn6qr1A"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C6E26A083;
-	Mon,  5 May 2025 16:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90D218C322;
+	Mon,  5 May 2025 16:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746464055; cv=none; b=T44Sinu3YwaBbhHb+SM6HOdDtUCOuqZYTK71fugj36D2RIlnF1+/bMOfSqmZmSZM5M1QfOWl9zdSx0k0u9K2KFT5oAg8MQ5+avahc/uB1M2zeM57rSLigeygbtML0LavuqhVIXila3GdinNBP6VQ9kpER7imsPLFbrQ4EwcXQSI=
+	t=1746464112; cv=none; b=Vn2x0VA00beSKwC0nAVzTEP+aos1IitdojfT7+sqLxMUi1kNZiFSsD6zn+19VMtg2SUpe/FeSIBs1YS0DI13pxRSqe9ypacGPsqDSRMi9W7pwq2zpLjteAM2IxvdsQgOZLm0o/JwoYRBUum4j8pnR2I7uJFY3D2de984kU6ihxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746464055; c=relaxed/simple;
-	bh=ttqHVDDDHkBY5vhptujKheHjTcF5u2BkFKS/tkcNWhk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KOGUpe8wV8i+r8qb55j4v6WLVJdCTw/e7ESWZ9ZNAzzbSSYLA8P4LPODPdNwihvapACEeN30KKceXnk71Hfr70CU6ZhuCc8Rj34ObXZ1Rwm6Q6bsL4Gq9M066tYArHSyzTzqkESJ19TSvMtHol7FrtrFxEh3v6Du/d320jgCOno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KZUizA55; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ziQ9SsQA; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 05 May 2025 16:54:10 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746464051;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ep/elUp+vcOIOApnlluNfdGIMIfcz9HW14oEBAc8nNc=;
-	b=KZUizA553FkSk23iJXTBpMXQwBUIoNVr/CRLMrK9cFpa8NAF/090h/fnKvk+iN4c1M+hry
-	WY+HaGXO1nqYzyLYIA9Qax8IgZnJsziJx2XmL4w/FhgARMWEBXWTbB+J+tti6UmsZsIE2R
-	XBj1H7P47qP8c/yRrkk5NWvr+9ShUSHjzJYNwsArjIlgV3ZGKgepPoYBsJOQFHxmYI/zZI
-	hLNkLoh7MHQ7ry58w1rOg0MIBOVWkpN8uIiM5KbDl6nsQMzDtPiIsU7iFKdWEsW++eclhH
-	dbk69/J0qtcNVpeRLMiHlD9zeH1ZHSsGD93uuG1/WbB8Bs/ShFcP13+GQ/bqsw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746464051;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ep/elUp+vcOIOApnlluNfdGIMIfcz9HW14oEBAc8nNc=;
-	b=ziQ9SsQAqkJYQGq7ONXXqLQ4nJmGzTj8TqpYpgd34PnWUkGfDsyBUVLUgshzatPzd4nlMq
-	7MDMyxyANxggO4Dw==
-From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/boot] x86/boot: Provide __pti_set_user_pgtbl() to startup code
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
- David Woodhouse <dwmw@amazon.co.uk>,
- Dionna Amalie Glaze <dionnaglaze@google.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
- Kevin Loughlin <kevinloughlin@google.com>, Len Brown <len.brown@intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Tom Lendacky <thomas.lendacky@amd.com>, linux-efi@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250504095230.2932860-40-ardb+git@google.com>
-References: <20250504095230.2932860-40-ardb+git@google.com>
+	s=arc-20240116; t=1746464112; c=relaxed/simple;
+	bh=KqMqzbRZc4K6m2I2OzYb3S8yTZKb+Bvk5nv6OKBxla4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k4yRYSaU9WpHeS3xPMD/nhXuQH7ssX+QwDlbm2J9wJWKLt+2ZCdWQjTLih6cuJ+TtlDLTeLQ5WxymnMucC0f2viZFKxbEEtuUTYq5BZYuU87+VB7+RBGmDpOFt3pJxnlL638/9Fsc8AXxhUTYpbXzAZam524UJWcL6c4Yw2tksw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kpn6qr1A; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZrnhD66klzlgqxr;
+	Mon,  5 May 2025 16:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1746464106; x=1749056107; bh=KqMqzbRZc4K6m2I2OzYb3S8y
+	TZKb+Bvk5nv6OKBxla4=; b=kpn6qr1Ak4EAZLphiBxb9e+Ur1vrPuJmL5+GCgDX
+	JJXRF0WyA4bGKStuM25pBoTfd7w/m2BWC/imNO+IWLguHw1XU5DcDo5Syt3wk4HY
+	mu1QIyRADZCN3oB9P2aR4dZ0bi3Uu1DfiPXLYZsUhZBqlNrzgOlG3N2OCAKNdUYE
+	d4fgcA69ARpaWdRKsLVNxvQn0Ta+stFEkSMJifIl3Ag5l6rH5cVqNYO8Z8vEMwSM
+	NAn2gDCZXq0GzjUwlidLr72RyHOtTn4PoZZ8a0gVDTERLz6TQ0m3pJrVWo6g7FMa
+	F80omCGBEogfFwAXOY5v2QkrCFzzsNjwTbD2MORxTEIMQA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id S3c9Q-mRkkDm; Mon,  5 May 2025 16:55:06 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4Zrnh25QDJzlgqTs;
+	Mon,  5 May 2025 16:54:57 +0000 (UTC)
+Message-ID: <3743e95f-f900-4646-b82b-67c104174852@acm.org>
+Date: Mon, 5 May 2025 09:54:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174646405074.406.11902047835715348370.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ufs: core: Remove redundant query_complete trace
+To: Avri Altman <Avri.Altman@sandisk.com>,
+ "keosung.park@samsung.com" <keosung.park@samsung.com>,
+ ALIM AKHTAR <alim.akhtar@samsung.com>,
+ "avri.altman@wdc.com" <avri.altman@wdc.com>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+ "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <CGME20250425010605epcms2p67e89b351398832fe0fd547404d3afc65@epcms2p6>
+ <20250425010605epcms2p67e89b351398832fe0fd547404d3afc65@epcms2p6>
+ <PH7PR16MB61962DED035E3F1F5F03B142E5842@PH7PR16MB6196.namprd16.prod.outlook.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <PH7PR16MB61962DED035E3F1F5F03B142E5842@PH7PR16MB6196.namprd16.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/boot branch of tip:
+On 4/24/25 10:38 PM, Avri Altman wrote:
+> Fixes: 71aabb747d5f ("scsi: ufs: core: Reuse exec_dev_cmd")
+> Reviewed-by: Avri Altman <avri.altman@sandisk.com>
+With the Fixes: tag added:
 
-Commit-ID:     f92d3fe32874e83986b9edc330ccc9bc9faaa92a
-Gitweb:        https://git.kernel.org/tip/f92d3fe32874e83986b9edc330ccc9bc9faaa92a
-Author:        Ard Biesheuvel <ardb@kernel.org>
-AuthorDate:    Sun, 04 May 2025 11:52:45 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 05 May 2025 18:48:58 +02:00
-
-x86/boot: Provide __pti_set_user_pgtbl() to startup code
-
-The SME encryption startup code populates page tables using the ordinary
-set_pXX() helpers, and in a PTI build, these will call out to
-__pti_set_user_pgtbl() to manipulate the shadow copy of the page tables
-for user space.
-
-This is unneeded for the startup code, which only manipulates the
-swapper page tables, and so this call could be avoided in this
-particular case. So instead of exposing the ordinary
-__pti_set_user_pgtblt() to the startup code after its gets confined into
-its own symbol space, provide an alternative which just returns pgd,
-which is always correct in the startup context.
-
-Annotate it as __weak for now, this will be dropped in a subsequent
-patch.
-
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Dionna Amalie Glaze <dionnaglaze@google.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Kevin Loughlin <kevinloughlin@google.com>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-efi@vger.kernel.org
-Link: https://lore.kernel.org/r/20250504095230.2932860-40-ardb+git@google.com
----
- arch/x86/boot/startup/sme.c |  9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
-index 5738b31..753cd20 100644
---- a/arch/x86/boot/startup/sme.c
-+++ b/arch/x86/boot/startup/sme.c
-@@ -564,3 +564,12 @@ void __head sme_enable(struct boot_params *bp)
- 	cc_vendor	= CC_VENDOR_AMD;
- 	cc_set_mask(me_mask);
- }
-+
-+#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
-+/* Local version for startup code, which never operates on user page tables */
-+__weak
-+pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
-+{
-+	return pgd;
-+}
-+#endif
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
