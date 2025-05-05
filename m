@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-634469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191BBAAB1AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:05:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5878BAAB1A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B22137B07A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:04:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9A657B33DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E41D41A06D;
-	Tue,  6 May 2025 00:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9962D33661A;
+	Tue,  6 May 2025 00:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3blRtbq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXaqMOwW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9092D3F82;
-	Mon,  5 May 2025 22:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA9A2D3F8B;
+	Mon,  5 May 2025 22:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485593; cv=none; b=d+vmtGgbNqSnQQQ/NdjiGUm6C3eUTP6h05DZ0zD79FPDRNnOJ5bJAw9C4FlyWtPPO8kEl8pFLN44jPsy0qu0j91c+KNq/MHCV7CnTtVwOmD+wKb9JBZDTiaNs9m79heK/zy7oFWeoppsCklKmrl64nvZS2Fi8BsHmOeLDekli2A=
+	t=1746485602; cv=none; b=jABEQwxW54uQ3j5ns/zWEsPWlrn7bFVdVxACU0qJ0iiihfTSP8i2gVSzgbyJ0EtX66jWINJB+qWKojY6v36wgrYlACFL/ji6kyLGwAlKXluNxZLi6goXzPs8sn8ZBMgk0VIKp4euzE1HGAX+mZm8kKhkPpgOZ/8IUC2fbQjubRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485593; c=relaxed/simple;
-	bh=/ZfG5SNQ1bIVbs6hFU7RU8RBy+koTOJxzYhRtYQ7/9A=;
+	s=arc-20240116; t=1746485602; c=relaxed/simple;
+	bh=Lw0xIydd5l3xIY7apqPTJIZSYyZbyUWL+pbDRY5rBDA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oFq+FMkqPgk3V1juc+IIfkCeHhBeLizt7xpmYbIBk9HNsqeMM4ouHDH/YSEMuknTanQkneYgFSXOLL2+KOO+/kZGJp9pwAEHb0oV1l4DFNS4YLb6GkN8IsshFxVqZiOu+54DnqS/hzx33kppNFSXA2vPU8vEUo1nJ1TxYgMiWMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3blRtbq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A13C4CEEE;
-	Mon,  5 May 2025 22:53:11 +0000 (UTC)
+	 MIME-Version; b=pGAKwwbWm0h9aztmefqgYIoWgbXSF7b+tIbKWIV/S5Zhp9H99x3YGk5fUkwk87wjTbdQA7skOrkei6EVaPpaA8mU71F9avjn7RFdLltlz9ucGZZiX3Ikb3yVih+9lJlIggU9L17JuNJnb0v4NiPntO5k6tE5QvpMPU8o31rrqAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXaqMOwW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB558C4CEE4;
+	Mon,  5 May 2025 22:53:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485592;
-	bh=/ZfG5SNQ1bIVbs6hFU7RU8RBy+koTOJxzYhRtYQ7/9A=;
+	s=k20201202; t=1746485602;
+	bh=Lw0xIydd5l3xIY7apqPTJIZSYyZbyUWL+pbDRY5rBDA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N3blRtbqwEmeSiwxKYSQMXGuq9B0OP5htCSql8HePd3fSfp/D4zYDc+5xW50Ukbzl
-	 mRfdlkvnN692mHU1HlOfM2wEWIvSgnlOetzPnmTnwXO9O0jAu5VCE7H0M0O3StQM9c
-	 37cvYpaheT9iVNIY9MDMhTSTB09jPEI9jmGkm7MpfCBMUc0TSU1Jl00KoIj8qiifEi
-	 mt74/brkBfgdnmgSmzhs88vKdZ4Vnr9BsqSCzngKuh1euPhw2pWRcdZIAmhvXsnaad
-	 S4SSYZWo3VfNFr3aftQjlMELvnvE1cd2BMDG/dI+5sWzhpJYZvbBFcCmsPML/7DBnh
-	 IZrEqxDyAm45A==
+	b=CXaqMOwWM/e5jNwy1AL45JB7NAJMHR9sUx36uF82e6588teKGKE2fRqHv3gp7bfoQ
+	 kySzdNlym7/1SPJA6azhDRwMmRyQ6iKu+mrCSmFzH7IW3LltJpcOrFz3LDrcSiM8nH
+	 rR0NQzbISjJnmxNM3kTRqTn3ZTwt/+RpMQy7aBnaL/NzTYNbnqZN3nVPQO3rExTq1W
+	 rAGMwn7T9QdvzJyKzOfGcFpPCLksrXtUP2sleFGQVk93ui4r4Q+IEpYRA5KPQk+PtO
+	 EsmMhvuIUzFEXeU0WCO1yLDyP9PJOAG4WRCi5TEKanBV7zCq43HXFaq6NKpBEhCWUc
+	 YZinB7zpLWstA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Chaohai Chen <wdhh66@163.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc: William Tu <witu@nvidia.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 378/486] scsi: target: spc: Fix loop traversal in spc_rsoc_get_descr()
-Date: Mon,  5 May 2025 18:37:34 -0400
-Message-Id: <20250505223922.2682012-378-sashal@kernel.org>
+	saeedm@nvidia.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 381/486] net/mlx5e: set the tx_queue_len for pfifo_fast
+Date: Mon,  5 May 2025 18:37:37 -0400
+Message-Id: <20250505223922.2682012-381-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -65,66 +73,42 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Chaohai Chen <wdhh66@163.com>
+From: William Tu <witu@nvidia.com>
 
-[ Upstream commit 04ad06e41d1c74cc323b20a7bd023c47bd0e0c38 ]
+[ Upstream commit a38cc5706fb9f7dc4ee3a443f61de13ce1e410ed ]
 
-Stop traversing after finding the appropriate descriptor.
+By default, the mq netdev creates a pfifo_fast qdisc. On a
+system with 16 core, the pfifo_fast with 3 bands consumes
+16 * 3 * 8 (size of pointer) * 1024 (default tx queue len)
+= 393KB. The patch sets the tx qlen to representor default
+value, 128 (1<<MLX5E_REP_PARAMS_DEF_LOG_SQ_SIZE), which
+consumes 16 * 3 * 8 * 128 = 49KB, saving 344KB for each
+representor at ECPF.
 
-Signed-off-by: Chaohai Chen <wdhh66@163.com>
-Link: https://lore.kernel.org/r/20250124085542.109088-1-wdhh66@163.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: William Tu <witu@nvidia.com>
+Reviewed-by: Daniel Jurgens <danielj@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Link: https://patch.msgid.link/20250209101716.112774-9-tariqt@nvidia.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_spc.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/target/target_core_spc.c b/drivers/target/target_core_spc.c
-index 61c065702350e..701dcbd7b63cf 100644
---- a/drivers/target/target_core_spc.c
-+++ b/drivers/target/target_core_spc.c
-@@ -2151,8 +2151,10 @@ spc_rsoc_get_descr(struct se_cmd *cmd, struct target_opcode_descriptor **opcode)
- 			if (descr->serv_action_valid)
- 				return TCM_INVALID_CDB_FIELD;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+index 0657d10765357..fd1f460b7be65 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -885,6 +885,8 @@ static void mlx5e_build_rep_netdev(struct net_device *netdev,
+ 	netdev->ethtool_ops = &mlx5e_rep_ethtool_ops;
  
--			if (!descr->enabled || descr->enabled(descr, cmd))
-+			if (!descr->enabled || descr->enabled(descr, cmd)) {
- 				*opcode = descr;
-+				return TCM_NO_SENSE;
-+			}
- 			break;
- 		case 0x2:
- 			/*
-@@ -2166,8 +2168,10 @@ spc_rsoc_get_descr(struct se_cmd *cmd, struct target_opcode_descriptor **opcode)
- 			if (descr->serv_action_valid &&
- 			    descr->service_action == requested_sa) {
- 				if (!descr->enabled || descr->enabled(descr,
--								      cmd))
-+								      cmd)) {
- 					*opcode = descr;
-+					return TCM_NO_SENSE;
-+				}
- 			} else if (!descr->serv_action_valid)
- 				return TCM_INVALID_CDB_FIELD;
- 			break;
-@@ -2180,13 +2184,15 @@ spc_rsoc_get_descr(struct se_cmd *cmd, struct target_opcode_descriptor **opcode)
- 			 */
- 			if (descr->service_action == requested_sa)
- 				if (!descr->enabled || descr->enabled(descr,
--								      cmd))
-+								      cmd)) {
- 					*opcode = descr;
-+					return TCM_NO_SENSE;
-+				}
- 			break;
- 		}
- 	}
+ 	netdev->watchdog_timeo    = 15 * HZ;
++	if (mlx5_core_is_ecpf(mdev))
++		netdev->tx_queue_len = 1 << MLX5E_REP_PARAMS_DEF_LOG_SQ_SIZE;
  
--	return 0;
-+	return TCM_NO_SENSE;
- }
- 
- static sense_reason_t
+ #if IS_ENABLED(CONFIG_MLX5_CLS_ACT)
+ 	netdev->hw_features    |= NETIF_F_HW_TC;
 -- 
 2.39.5
 
