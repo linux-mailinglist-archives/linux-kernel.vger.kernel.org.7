@@ -1,371 +1,224 @@
-Return-Path: <linux-kernel+bounces-632637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933D5AA99FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:03:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85420AA99CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 18:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8423C188B79D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:03:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A60D7A8DF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 16:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92EE26B0A9;
-	Mon,  5 May 2025 17:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5DB26A0FC;
+	Mon,  5 May 2025 16:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="YTi884bu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wQx1gh+Z"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FqnaI67y"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2085.outbound.protection.outlook.com [40.107.220.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5F826738B;
-	Mon,  5 May 2025 17:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746464481; cv=none; b=Wz855W73GuVRIuiso+loDiz7Sy8VttpoiibxFI1dcKgWGQvVEPLukmcmqgeac8SjsmGP7ReZmPAJpGvIIkpDNknvzgOT2RG1zWneAYzMprewrvWjnixwo6/T6/zcAFfgeaxSAix+EhoiAb3yBlL1L85beumaAp72QGX+UBEJlT0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746464481; c=relaxed/simple;
-	bh=2j5Ofg5BLmtWpoLQrgQksoC/1ql11j2laUy1NR6Udg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CoWhDUtg4bP719Cyi3j4FmkvoS+xK0BBHEqpUEwHjb8VM94zJDf+JaTX5y6wk+q1tde1HLCiXlsLuuAt+PFTAIDRm8BX5dx8u3whz7VYrVdoDxZEr6E44/qcHmA1Me2aw5OrFbkGNUdEIzbep6gLaoJJoX6LLuN2/S1BW4b5e4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=YTi884bu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wQx1gh+Z; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id B1C281140097;
-	Mon,  5 May 2025 13:01:09 -0400 (EDT)
-Received: from phl-frontend-02 ([10.202.2.161])
-  by phl-compute-05.internal (MEProxy); Mon, 05 May 2025 13:01:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1746464469;
-	 x=1746550869; bh=tBKs41Mxkg0h0njmKXsU9oExiVamYbZey9ou+QZlT9M=; b=
-	YTi884bu0DXrEwfBdw2T1RABpG7jegGxsMEJob1Gb3Wt6oGHYuiwg2R+gKIBZypR
-	ZyaGiW9hFDNcdsatR0KYSP2TFV2ZJ5MRTUt7OOUq/CS5FcCbKi4hRtTNSEZ09+tM
-	vbankmp1ileITUww9jFsvE1rLHFZ4Vaur2TdFwxuW9bVWkiNnmhwhO8i1ypaF9a8
-	Q3dNhVqKAOsCKsZaskV9c4ZSy1jI0e1yQOWp7kYD5L4Ugxx6h3hLS5WVaxn+Y1tW
-	8uORCRDuJ7tmbGRfiW77WO/kyN20lBWL2JsGkgL7NidNgRVbsJ2xi48Xt8YkdeDg
-	3ia2w1PfhE6iZKUGioYBvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746464469; x=
-	1746550869; bh=tBKs41Mxkg0h0njmKXsU9oExiVamYbZey9ou+QZlT9M=; b=w
-	Qx1gh+ZBRDGeDJOaOuqyowmBRAdTBB/DxgTntHdNYQfeKyZ97KL7sNcxJ93wOEA/
-	b/4g4lNLaaqRrRnl94O0g0r/GMUP8gOHov/nZghd5E2zB1KXg4umOdkm4n+3GMF9
-	/1h3at4szuoRfu+4QqAlX/AOTLcRy3i2MWGMNCfIvcuqiQGGU9YA8zYxDx8vweG+
-	nKYZHLHtjK+cZA7x7/0d4YISTRtsYmRJ93eSDAhBj5ZXOd41Pi6mYj0FaExaVXCu
-	JMFWDOUppJ+7N/0hWTtgpY2/RLa3Gtd6L6c3yWpt/28A8amD7g1uzJSrxND3LO+S
-	Ts2xmHnoYHahp5UNxnUuQ==
-X-ME-Sender: <xms:1e4YaE6bol-96_UQer7XsqBuvcVJwDo6MCCPncFnE5jDEfJEGgWeTQ>
-    <xme:1e4YaF5QoudjAfdfLPXe4jZ1wIyj496sngIRwM6DI3_OGYQpdQ1ujbfwpcfVOgTEf
-    tPazOVarpY23Pukoqk>
-X-ME-Received: <xmr:1e4YaDcEWQYUE81Du156Q8pX-C8dchjkClzdNfabEvpxNrjonY1FI5LJQ6rGOBAeDpSn8UtgTiJD9tltFPS9BxYUjcs0jbGAwn6331qCNn9D6KqLZw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeduieegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhggtgfgsehtkeertder
-    tdejnecuhfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitghosehflhhugihnih
-    gtrdhnvghtqeenucggtffrrghtthgvrhhnpedufedvleehffethffhffelkeekieekgeev
-    ffelleejteehieeghfeluedvvdehieenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehnihgtohesfhhluhignhhitgdrnhgvthdpnhgspghrtghp
-    thhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhpihhtrhgvsegsrg
-    ihlhhisghrvgdrtghomhdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrgh
-X-ME-Proxy: <xmx:1e4YaJKhR4cKsdVpXX9mq3e2Pl5HmeLmUPV3v-bSaKfqlhUBiOjkpA>
-    <xmx:1e4YaIK7hL9Ok1jv5Dv6LfsYvqGfDf9y5wDlvkzzalfgAnFTvKUoGw>
-    <xmx:1e4YaKw-ueSndkAe1quBPG9o0K73JaXMG0CcG7JKE3LmV1_S1X9AKA>
-    <xmx:1e4YaMLIWzJRWbV5OHVH1SaJVBNQJUB1Jw0WARPc38yJ_TZbg-nIJw>
-    <xmx:1e4YaPYH4rW8m8Tt-n1rnO79uFOM1s1xwmO7wJq_VMex9L7rSCH_zhG3>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 5 May 2025 13:01:09 -0400 (EDT)
-Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 5DE8F1185463;
-	Mon, 05 May 2025 13:01:08 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Nicolas Pitre <npitre@baylibre.com>,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] vt: process the full-width ASCII fallback range programmatically
-Date: Mon,  5 May 2025 12:55:31 -0400
-Message-ID: <20250505170021.29944-9-nico@fluxnic.net>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250505170021.29944-1-nico@fluxnic.net>
-References: <20250505170021.29944-1-nico@fluxnic.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A1B1459F7;
+	Mon,  5 May 2025 16:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746464160; cv=fail; b=GP5fA6BiPCRhlMtSq/kCI5ouHdcckJBWbYFTyjFRuOwv306YlNCZWOmaTw5R44txzHPQ89nnwTeVPQBigdPX0h7gqlaVQx9BE6cHCrEyo8LEwzjAIjTcPJG/E7WdS17WAfpX9ESHtoltgEZUJDO7CSWCFgjyZS49of388sPE1rs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746464160; c=relaxed/simple;
+	bh=q1ljH0dXPLjNFqUF13JzVVjiw4XXMuZaDPVGeESbQPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=FgjHJvAXyOVr4fYOO/MpUXYmuz3z+PaI181SzHD0REE0CuA+t0iEi3+6VLy/FWYI5lYqJSOkJ/DpcVFGxReeAn/E9slrI2nkqNNOaoRrQ6RE5F2I0lKl4FtXd7Y6f7Io3DtUPDpTCZEI6iJWG64WaSox6q1YrMTefPSsbHiC5uE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FqnaI67y; arc=fail smtp.client-ip=40.107.220.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oALTc3Dr+Rv3cCuM6rukfEhYMxXLN0x/u/DOJ4GSvaJjGgty+pKxE8Vcy3szLWdxlO6KKfqFZhlNDGQRminqpx5PtyFFDuEdWFKsKkkkSe+Jof8OusIhUw0J0231I0OTvxUUm5gBw45Ah0qQm3fd/gSOTvyF/RWF0cvxzzJl7qbKeOKb1jGoDt1csGfJ5/js7O9P5IaZ5RD493PObw0cWhFKqlQspB2khO9mBmj9YHUOxZ+YtQ4Vi+6ivizZFs1CDpWPrYBx+Ve2sft0k8fpXSL9s39R4Kr1G498xj8m8oZ90OeS3iKHT3Q98gEdk4xIBCmE8hh7QzgShNrqbibB0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7t/EqPEg/XF45bLN28X/lKk2jdbdTm8YYyLoA3KA4vY=;
+ b=jY0gfIEY+FTGIkcK6vZo1yzyeaIz8eAr/CkS7ksOCSvv6UvElcOm1LQN5FHzYxIYMYBOLcJw3T94DUT/syUCR3JYoA98PDIC3fpSWVfhTkJjBVZLVi1VSy9PL0Wsfy73Z5CnSn6Y/ARYDwx+SpYmxa9pJWqaA0j5YOSacLYqRq4Ab/ecL+fdEHHTVWpt8mNQ6DEnpf90+IIGZmcGcicH2DYFpXA26xXBPOVKkVI14hHTfCd0uh7h3c0TH07Up+GsLG0sriiCWAmiCDsIi3wU8OCz8iGxCtVkHWKJ464tN/riqpFs2e96vVIylLAvvbG/33+74WL5qK1ANWuL+rZDOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7t/EqPEg/XF45bLN28X/lKk2jdbdTm8YYyLoA3KA4vY=;
+ b=FqnaI67y+JcvSeqejnthR2n/6qG9xgqY/3ycaKCavydMHJEI1jvDElf8DyAjQjNKe8eFnsOSL4MCIDoqoxxqeg3nxAPXlKzS6zHp6OCtb3uq03OQM/z2CeJCzE8EgOjZtQdgFHQGTs9v+p0h5vR/1Eruy7HjPo8Ja49mr1raGcHtJ5p31pkde7wyY9yTvFuni2r08L8mo7En7fWMGJcuker7l9lPRlEubvy0xEbdSGlik3Cl5dIgQv1JPbOzWbLL3VN2sW6AfnJuoUkWecEjjp5x8ciDDZijpnWTwf/X6+zZohFBXvfNDVINdg6mGTh1zWRMevc8pLY6Hy14Z+PJDg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CH3PR12MB7740.namprd12.prod.outlook.com (2603:10b6:610:145::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Mon, 5 May
+ 2025 16:55:53 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8699.026; Mon, 5 May 2025
+ 16:55:53 +0000
+Date: Mon, 5 May 2025 13:55:52 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Pranjal Shrivastava <praan@google.com>, kevin.tian@intel.com,
+	corbet@lwn.net, will@kernel.org, bagasdotme@gmail.com,
+	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
+	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
+	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
+	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
+	vasant.hegde@amd.com
+Subject: Re: [PATCH v2 13/22] iommufd: Add mmap interface
+Message-ID: <20250505165552.GN2260709@nvidia.com>
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <7be26560c604b0cbc2fd218997b97a47e4ed11ff.1745646960.git.nicolinc@nvidia.com>
+ <aBE1gUz9y415EuBQ@google.com>
+ <aBE38GwvGBnpRNLc@google.com>
+ <aBE47aySzDp2lsAz@Asurada-Nvidia>
+ <aBE800DsAOOZ4ybv@google.com>
+ <aBE/CD4Ilbydnmud@Asurada-Nvidia>
+ <aBFGCxcTh54pecsk@google.com>
+ <aBFIsYg+ITU8RvTT@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBFIsYg+ITU8RvTT@Asurada-Nvidia>
+X-ClientProxiedBy: BN0PR03CA0058.namprd03.prod.outlook.com
+ (2603:10b6:408:e7::33) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CH3PR12MB7740:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c7802a2-847a-4b49-eb32-08dd8bf5b28c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FZ3UFKWUXJurwJxN20qz/x22G3twc6J0jjxLATXXj9wT7CbuNtQIfEDch7uh?=
+ =?us-ascii?Q?rJruZURUz3xhakfP6croxTsfggVLfUL2vVK64OxsT+Tee24bFvrYkML//Dd4?=
+ =?us-ascii?Q?wqxeiTbZ+J0DAHvykm9HVDnC242lJbvBxYiPoJcmMhkhYovQsPzhMO+ak2nl?=
+ =?us-ascii?Q?Ir5pQudDClTf6VoCgxGlD+e1yeOdFpQY9HkEw7YTQZ4TLlXwRt4ccGfpxB/7?=
+ =?us-ascii?Q?50/mwz7JNTP2ypVktH/Zj4GrBPBzv1wemMF6x8QBSc+S+cuIWnRHBIOv9Odg?=
+ =?us-ascii?Q?9mTeIDINjJzgQREjUMWeoinJPzjKjAhXDRVKeRrprKRMVQN+pE+5pP3GEKNe?=
+ =?us-ascii?Q?JG3zFtglbmRBgFvFfSg/pLVBFutHRizhgqnfpnv71aCPeFAj5m2lmN4j8teT?=
+ =?us-ascii?Q?0D/vQbTN3dIr02v1qN/K3rAu4NqQdJYap3UhE9bXnaDH86Sc4iwxnv5yU12l?=
+ =?us-ascii?Q?m3RFh1yHxXpDeR5vdgs4kAV2vw+T5vSOJxGP65stciwFyuL1dH2qLLdYctck?=
+ =?us-ascii?Q?Aoio2jhJXX43t/mgTCMRvtAJi/gNa3nJLXmiKl/YnycBHgvLcCMCa7Qg5H1G?=
+ =?us-ascii?Q?HSANRLKd06oBfYQymjTZc/+r4D6WIMuNhzdOKrUy3s7f8HkHOUMHmSHO5Utl?=
+ =?us-ascii?Q?SL694+D6SfoYiOdgUvnrOLWgg/d53ubxO5rBVXQCLoMBjMFUbzfWmlqv4Qa3?=
+ =?us-ascii?Q?da+6Gxi2FcjUnACj9GknDTtLTTsyLmRcDnzYL956eCex9fsmCr0gHa5OyWzK?=
+ =?us-ascii?Q?KyM5bow1dTMNb9mdAnmPJvzKmSdj7BmhPJJuhTj1PY7fiGntHy12mTYcjNAE?=
+ =?us-ascii?Q?z4q8/oFUb05JryrE1n9uSSKuNoziBTcDeZFYgha2nuM4ycONSxRGCsRHaVxK?=
+ =?us-ascii?Q?yy8laMCglk01baZ/dFqr32jSNv9AAilz1draJWnAlpSUpnxqVsmKK1G9sSfL?=
+ =?us-ascii?Q?MXYMPpQX57aRJPR5oZAnvlszU2uFArOEhPYTXr3BCYgvuxZKhv2KO8JmhY36?=
+ =?us-ascii?Q?1sFtlHf2fZZ+drj7fTaxu4Qj7utFoAP/k1gnp8Jn2dxpKT4oow0EO/1EgnPD?=
+ =?us-ascii?Q?W3Ka0FYdj+foM5vjw4oQX3XsmRzicJ/Ez/zUQ6OFbA/KC/DdCuuIcwEdqPQY?=
+ =?us-ascii?Q?nA3MV+L83Wl2lJ4x3G8YJxmmlji1agrsklc8jRiZsmjsKEBhRkLsxqyM6Wa5?=
+ =?us-ascii?Q?PT6vznSnxRNoqoOIdsvliYAJUeXl6A8Ucv6kT9xZOdWdf3nB6+WgzOa0/kjU?=
+ =?us-ascii?Q?sv+VP8jsGOrZaF/yGp2kRwzzOuVDFayzzHGQVgJthJB0qAa+ksEQJoWtm4fK?=
+ =?us-ascii?Q?Go6tZJyIyaHfiFGeOnM42b4xmz2pGVF3b/4JvF40xaTpBtuAbluJE8Qr1GRC?=
+ =?us-ascii?Q?y5lUc1Z0oL5YoLA+hErkjjjfRYU7bkWKL6bmELQXtG/WJnpB4CPJN2w77f1b?=
+ =?us-ascii?Q?JaN6KWtOmjc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QkO3F8nNCDlDFAmyAgbi7F7uS9JYGGQ1n5+VelwwXD8Jv5iozrJuOOVUCV6i?=
+ =?us-ascii?Q?gh7vvkpEKZX7WjgaAvvImJY9Ioxk7ULXcuRzE2flKb2EcF2J9hqVaLXMoZvP?=
+ =?us-ascii?Q?CBP+XT3bWxsckUxxyU7RDJA6Q8jgV4aek7Zs/lGsCzQI8gyqklEjBB9GEOPs?=
+ =?us-ascii?Q?uTvT3A85XF1qn4uUo94hicy2RrpBOABpvR1oOGmUROyITKBjVhZAoUlz5vit?=
+ =?us-ascii?Q?Rt2NYPJ9AjXJYTfYOyqlPcIeZ5CeqVww27KKkv9gut/63hsHLcoONGTK0CEl?=
+ =?us-ascii?Q?M9KMDqhfxARw4P2aLr9Dss/R58IW7SrFdQpLY/c2gM1ME2PeFdRDqliKeDsl?=
+ =?us-ascii?Q?/YGa1NA/+7yrOFo1OpoLImAV8nLIGnrWMID/6Yh49FkA2CMY652AWpAIkJdq?=
+ =?us-ascii?Q?occ/IKUJOlv+6Sy5gb8IRdLNbBEdzmmJSQZmun55w5ycZGYBRIHCQCBGJCgl?=
+ =?us-ascii?Q?nhxgoLCKP85t4vLde8QUger7BQPjypBKRvF4KerqierLAM1BfPk8lqjjLG99?=
+ =?us-ascii?Q?ZoxoPg+i3K+x8grjeZ2pwDhaa4ZrcXmrvtW3ZyEzfTTyTEOlzotT9YKixVrh?=
+ =?us-ascii?Q?EZafQKXKpfAfq54TXhSDSBTSPj+rHgG2lZzIwvGQh29sxwv2GzAe9Y/ey5U2?=
+ =?us-ascii?Q?Mu5p8uQ1BhbrsgnXMMMCb4ZQpUMZ3TTYdrGx7O684Y8waNFMsy4hpwY3546E?=
+ =?us-ascii?Q?/+abP8FAkWh1vxnZSH/VXiK0RnmxWBqLdwji02W9HowCKTf+f6yDuG6Tpm7q?=
+ =?us-ascii?Q?6HGVFNv5FoyhwDBNugLMKVk4vo+0vXsjgmr+Z/RAI6ow/hTv8hNhHUc/G9kN?=
+ =?us-ascii?Q?mPp1wwmRDPSPsruzV1KLrMCSR1ORoa7Co/eiHMh9OHWZHClPA9ktvdP54mEq?=
+ =?us-ascii?Q?rdqH7ON6kXo5CU8m9Y4MU9poanpzQcUMIsYsEy5wn1zL4EbJW+fTMMevvwly?=
+ =?us-ascii?Q?3mShVCSbco5T/liAhLeCfcIiicLMZ0ZeUJjNmVau3EyfZJJBxXQeP728dLRN?=
+ =?us-ascii?Q?nB/9StifJLiw7hpT/cpcpb9mbrUbOZydSS9euBAPSP0ZV6T3gOOcrZ12CC0+?=
+ =?us-ascii?Q?x87i9CURxIY2qM3xQ1ImSuTfKq4AxAyMrlaW9SPUGaziiYgFqE84QfHiJOF1?=
+ =?us-ascii?Q?5M2XUNbI53vQI1TXNdTpmeyorIm43vlz7EdJhQpVdhB6HtppNBy2g8QLi/3O?=
+ =?us-ascii?Q?6YMIBrvkmd8C/BEbQklYxTmP0Th0TygKxPPID6bsS2GFJ3ZG3HJCI3SleTow?=
+ =?us-ascii?Q?Zko/jbCneT1ywam5foWQu/J2nI7tOhvTqZjptyOWVJSJ3OZOW9OmmMOebhSK?=
+ =?us-ascii?Q?hUTW0bvjycBV3eubmBNArVxW5LHdIc05MSCXeuuD1ucLHvGGqY+dVu0EOl/o?=
+ =?us-ascii?Q?yD8YL+l9mafvnVir9kyLyuirpHlrPJ7ZyRZlmBz9g5/noXoWKFQ4cPd9pjF6?=
+ =?us-ascii?Q?hj5xJduY0zYn9e5lLlx4IIHWJxLY5YNwEDAemgiyepvA1NJHOSSjHY1wtxMf?=
+ =?us-ascii?Q?JJP9hsJPk2cQJ6Oh2ppk7TVi9qSom+3G98OPI/qyt8wD+RO51UWF5k2lreCS?=
+ =?us-ascii?Q?UhxaEr+13n2S1m7xdg1Q37mshSKbnnSLzuCPUBF2?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c7802a2-847a-4b49-eb32-08dd8bf5b28c
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 16:55:53.7512
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3iQihJyXzoVVdO0Yid0Vw/dqeBmEv7mslfqplcGcLriEgV3V8UkJq3y5Xfzpo+eY
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7740
 
-From: Nicolas Pitre <npitre@baylibre.com>
+On Tue, Apr 29, 2025 at 02:46:25PM -0700, Nicolin Chen wrote:
+> > > > > > > > +	immap = kzalloc(sizeof(*immap), GFP_KERNEL);
+> > > > > > > > +	if (!immap)
+> > > > > > > > +		return -ENOMEM;
+> > > > > > > > +	immap->pfn_start = base >> PAGE_SHIFT;
+> > > > > > > > +	immap->pfn_end = immap->pfn_start + (size >> PAGE_SHIFT) - 1;
+> > > > > > > > +
+> > > > > > > > +	rc = mtree_alloc_range(&ictx->mt_mmap, immap_id, immap, sizeof(immap),
+> > > > > > > 
+> > > > > > > I believe this should be sizeof(*immap) ?
+> > > > > > 
+> > > > > > Ugh, Sorry, shouldn't this be size >> PAGE_SHIFT (num_indices to alloc) ?
+> > > > > 
+> > > > > mtree_load() returns a "struct iommufd_map *" pointer.
+> > > > 
+> > > > I'm not talking about mtree_load. I meant mtree_alloc_range takes in a
+> > > > "size" parameter, which is being passed as sizeof(imap) in this patch.
+> > > > IIUC, the mtree_alloc_range, via mas_empty_area, gets a range that is
+> > > > sufficient for the given "size". 
+> > > > 
+> > > > Now in this case, "size" would be the no. of pfns which are mmap-able.
+> > > > By passing sizeof(immap), we're simply reserving sizeof(ptr) i.e. 8 pfns
+> > > > for a 64-bit machine. Whereas we really, just want to reserve a range
+> > > > for size >> PAGE_SHIFT pfns.
+> > > 
+> > > But we are not storing pfns but the immap pointer..
 
-This saves about 258 bytes of text.
+That doesn't seem right, the entire point of using a maple tree is to
+manage the pfn number space, ie the pgoff argument to mmap.
 
-Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
----
- drivers/tty/vt/gen_ucs_fallback_table.py    |  11 +-
- drivers/tty/vt/ucs.c                        |   8 +
- drivers/tty/vt/ucs_fallback_table.h_shipped | 188 --------------------
- 3 files changed, 13 insertions(+), 194 deletions(-)
+So when calling mtree_alloc_range:
 
-diff --git a/drivers/tty/vt/gen_ucs_fallback_table.py b/drivers/tty/vt/gen_ucs_fallback_table.py
-index cb4e75b454fe..3a725d47366d 100755
---- a/drivers/tty/vt/gen_ucs_fallback_table.py
-+++ b/drivers/tty/vt/gen_ucs_fallback_table.py
-@@ -666,12 +666,11 @@ def collect_drawing_character_mappings():
-     fallback_map[0x2746] = ord('*')  # ❆ HEAVY CHEVRON SNOWFLAKE
-     fallback_map[0x2698] = ord('*')  # ⚘ FLOWER
- 
--    # Add special ASCII characters with full-width equivalents
--    # Map between full-width and ASCII forms
--    for i, cp in enumerate(range(0xFF01, 0xFF5E+1)):
--        # Full-width to ASCII mapping (covering all printable ASCII 33-126)
--        # 0xFF01 (！) to 0xFF5E (～) -> ASCII 33 (!) to 126 (~)
--        fallback_map[cp] = 33 + i
-+    # Full-width to ASCII mapping (covering all printable ASCII 33-126)
-+    # 0xFF01 (！) to 0xFF5E (～) -> ASCII 33 (!) to 126 (~)
-+    # Those are not included here to reduce the table size.
-+    # It is more efficient to process them programmatically in
-+    # ucs.c:ucs_get_fallback().
- 
-     return fallback_map
- 
-diff --git a/drivers/tty/vt/ucs.c b/drivers/tty/vt/ucs.c
-index dcce733b80cb..ae3254302760 100644
---- a/drivers/tty/vt/ucs.c
-+++ b/drivers/tty/vt/ucs.c
-@@ -222,5 +222,13 @@ u32 ucs_get_fallback(u32 cp)
- 	if (single)
- 		return ucs_fallback_singles_subs[single - ucs_fallback_singles];
- 
-+	/*
-+	 * Full-width to ASCII mapping (covering all printable ASCII 33-126)
-+	 * 0xFF01 (！) to 0xFF5E (～) -> ASCII 33 (!) to 126 (~)
-+	 * We process them programmatically to reduce the table size.
-+	 */
-+	if (cp >= 0xFF01 && cp <= 0xFF5E)
-+		return cp - 0xFF01 + 33;
-+
- 	return 0;
- }
-diff --git a/drivers/tty/vt/ucs_fallback_table.h_shipped b/drivers/tty/vt/ucs_fallback_table.h_shipped
-index d528d500ec9d..fe61418497ee 100644
---- a/drivers/tty/vt/ucs_fallback_table.h_shipped
-+++ b/drivers/tty/vt/ucs_fallback_table.h_shipped
-@@ -817,100 +817,6 @@ static const u16 ucs_fallback_singles[] = {
- 	0x2718, /* HEAVY BALLOT X -> LATIN CAPITAL LETTER X */
- 	0x27F8, /* LONG LEFTWARDS DOUBLE ARROW -> LESS-THAN SIGN */
- 	0x27F9, /* LONG RIGHTWARDS DOUBLE ARROW -> GREATER-THAN SIGN */
--	0xFF01, /* FULLWIDTH EXCLAMATION MARK -> EXCLAMATION MARK */
--	0xFF02, /* FULLWIDTH QUOTATION MARK -> QUOTATION MARK */
--	0xFF03, /* FULLWIDTH NUMBER SIGN -> NUMBER SIGN */
--	0xFF04, /* FULLWIDTH DOLLAR SIGN -> DOLLAR SIGN */
--	0xFF05, /* FULLWIDTH PERCENT SIGN -> PERCENT SIGN */
--	0xFF06, /* FULLWIDTH AMPERSAND -> AMPERSAND */
--	0xFF07, /* FULLWIDTH APOSTROPHE -> APOSTROPHE */
--	0xFF08, /* FULLWIDTH LEFT PARENTHESIS -> LEFT PARENTHESIS */
--	0xFF09, /* FULLWIDTH RIGHT PARENTHESIS -> RIGHT PARENTHESIS */
--	0xFF0A, /* FULLWIDTH ASTERISK -> ASTERISK */
--	0xFF0B, /* FULLWIDTH PLUS SIGN -> PLUS SIGN */
--	0xFF0C, /* FULLWIDTH COMMA -> COMMA */
--	0xFF0D, /* FULLWIDTH HYPHEN-MINUS -> HYPHEN-MINUS */
--	0xFF0E, /* FULLWIDTH FULL STOP -> FULL STOP */
--	0xFF0F, /* FULLWIDTH SOLIDUS -> SOLIDUS */
--	0xFF10, /* FULLWIDTH DIGIT ZERO -> DIGIT ZERO */
--	0xFF11, /* FULLWIDTH DIGIT ONE -> DIGIT ONE */
--	0xFF12, /* FULLWIDTH DIGIT TWO -> DIGIT TWO */
--	0xFF13, /* FULLWIDTH DIGIT THREE -> DIGIT THREE */
--	0xFF14, /* FULLWIDTH DIGIT FOUR -> DIGIT FOUR */
--	0xFF15, /* FULLWIDTH DIGIT FIVE -> DIGIT FIVE */
--	0xFF16, /* FULLWIDTH DIGIT SIX -> DIGIT SIX */
--	0xFF17, /* FULLWIDTH DIGIT SEVEN -> DIGIT SEVEN */
--	0xFF18, /* FULLWIDTH DIGIT EIGHT -> DIGIT EIGHT */
--	0xFF19, /* FULLWIDTH DIGIT NINE -> DIGIT NINE */
--	0xFF1A, /* FULLWIDTH COLON -> COLON */
--	0xFF1B, /* FULLWIDTH SEMICOLON -> SEMICOLON */
--	0xFF1C, /* FULLWIDTH LESS-THAN SIGN -> LESS-THAN SIGN */
--	0xFF1D, /* FULLWIDTH EQUALS SIGN -> EQUALS SIGN */
--	0xFF1E, /* FULLWIDTH GREATER-THAN SIGN -> GREATER-THAN SIGN */
--	0xFF1F, /* FULLWIDTH QUESTION MARK -> QUESTION MARK */
--	0xFF20, /* FULLWIDTH COMMERCIAL AT -> COMMERCIAL AT */
--	0xFF21, /* FULLWIDTH LATIN CAPITAL LETTER A -> LATIN CAPITAL LETTER A */
--	0xFF22, /* FULLWIDTH LATIN CAPITAL LETTER B -> LATIN CAPITAL LETTER B */
--	0xFF23, /* FULLWIDTH LATIN CAPITAL LETTER C -> LATIN CAPITAL LETTER C */
--	0xFF24, /* FULLWIDTH LATIN CAPITAL LETTER D -> LATIN CAPITAL LETTER D */
--	0xFF25, /* FULLWIDTH LATIN CAPITAL LETTER E -> LATIN CAPITAL LETTER E */
--	0xFF26, /* FULLWIDTH LATIN CAPITAL LETTER F -> LATIN CAPITAL LETTER F */
--	0xFF27, /* FULLWIDTH LATIN CAPITAL LETTER G -> LATIN CAPITAL LETTER G */
--	0xFF28, /* FULLWIDTH LATIN CAPITAL LETTER H -> LATIN CAPITAL LETTER H */
--	0xFF29, /* FULLWIDTH LATIN CAPITAL LETTER I -> LATIN CAPITAL LETTER I */
--	0xFF2A, /* FULLWIDTH LATIN CAPITAL LETTER J -> LATIN CAPITAL LETTER J */
--	0xFF2B, /* FULLWIDTH LATIN CAPITAL LETTER K -> LATIN CAPITAL LETTER K */
--	0xFF2C, /* FULLWIDTH LATIN CAPITAL LETTER L -> LATIN CAPITAL LETTER L */
--	0xFF2D, /* FULLWIDTH LATIN CAPITAL LETTER M -> LATIN CAPITAL LETTER M */
--	0xFF2E, /* FULLWIDTH LATIN CAPITAL LETTER N -> LATIN CAPITAL LETTER N */
--	0xFF2F, /* FULLWIDTH LATIN CAPITAL LETTER O -> LATIN CAPITAL LETTER O */
--	0xFF30, /* FULLWIDTH LATIN CAPITAL LETTER P -> LATIN CAPITAL LETTER P */
--	0xFF31, /* FULLWIDTH LATIN CAPITAL LETTER Q -> LATIN CAPITAL LETTER Q */
--	0xFF32, /* FULLWIDTH LATIN CAPITAL LETTER R -> LATIN CAPITAL LETTER R */
--	0xFF33, /* FULLWIDTH LATIN CAPITAL LETTER S -> LATIN CAPITAL LETTER S */
--	0xFF34, /* FULLWIDTH LATIN CAPITAL LETTER T -> LATIN CAPITAL LETTER T */
--	0xFF35, /* FULLWIDTH LATIN CAPITAL LETTER U -> LATIN CAPITAL LETTER U */
--	0xFF36, /* FULLWIDTH LATIN CAPITAL LETTER V -> LATIN CAPITAL LETTER V */
--	0xFF37, /* FULLWIDTH LATIN CAPITAL LETTER W -> LATIN CAPITAL LETTER W */
--	0xFF38, /* FULLWIDTH LATIN CAPITAL LETTER X -> LATIN CAPITAL LETTER X */
--	0xFF39, /* FULLWIDTH LATIN CAPITAL LETTER Y -> LATIN CAPITAL LETTER Y */
--	0xFF3A, /* FULLWIDTH LATIN CAPITAL LETTER Z -> LATIN CAPITAL LETTER Z */
--	0xFF3B, /* FULLWIDTH LEFT SQUARE BRACKET -> LEFT SQUARE BRACKET */
--	0xFF3C, /* FULLWIDTH REVERSE SOLIDUS -> REVERSE SOLIDUS */
--	0xFF3D, /* FULLWIDTH RIGHT SQUARE BRACKET -> RIGHT SQUARE BRACKET */
--	0xFF3E, /* FULLWIDTH CIRCUMFLEX ACCENT -> CIRCUMFLEX ACCENT */
--	0xFF3F, /* FULLWIDTH LOW LINE -> LOW LINE */
--	0xFF40, /* FULLWIDTH GRAVE ACCENT -> GRAVE ACCENT */
--	0xFF41, /* FULLWIDTH LATIN SMALL LETTER A -> LATIN SMALL LETTER A */
--	0xFF42, /* FULLWIDTH LATIN SMALL LETTER B -> LATIN SMALL LETTER B */
--	0xFF43, /* FULLWIDTH LATIN SMALL LETTER C -> LATIN SMALL LETTER C */
--	0xFF44, /* FULLWIDTH LATIN SMALL LETTER D -> LATIN SMALL LETTER D */
--	0xFF45, /* FULLWIDTH LATIN SMALL LETTER E -> LATIN SMALL LETTER E */
--	0xFF46, /* FULLWIDTH LATIN SMALL LETTER F -> LATIN SMALL LETTER F */
--	0xFF47, /* FULLWIDTH LATIN SMALL LETTER G -> LATIN SMALL LETTER G */
--	0xFF48, /* FULLWIDTH LATIN SMALL LETTER H -> LATIN SMALL LETTER H */
--	0xFF49, /* FULLWIDTH LATIN SMALL LETTER I -> LATIN SMALL LETTER I */
--	0xFF4A, /* FULLWIDTH LATIN SMALL LETTER J -> LATIN SMALL LETTER J */
--	0xFF4B, /* FULLWIDTH LATIN SMALL LETTER K -> LATIN SMALL LETTER K */
--	0xFF4C, /* FULLWIDTH LATIN SMALL LETTER L -> LATIN SMALL LETTER L */
--	0xFF4D, /* FULLWIDTH LATIN SMALL LETTER M -> LATIN SMALL LETTER M */
--	0xFF4E, /* FULLWIDTH LATIN SMALL LETTER N -> LATIN SMALL LETTER N */
--	0xFF4F, /* FULLWIDTH LATIN SMALL LETTER O -> LATIN SMALL LETTER O */
--	0xFF50, /* FULLWIDTH LATIN SMALL LETTER P -> LATIN SMALL LETTER P */
--	0xFF51, /* FULLWIDTH LATIN SMALL LETTER Q -> LATIN SMALL LETTER Q */
--	0xFF52, /* FULLWIDTH LATIN SMALL LETTER R -> LATIN SMALL LETTER R */
--	0xFF53, /* FULLWIDTH LATIN SMALL LETTER S -> LATIN SMALL LETTER S */
--	0xFF54, /* FULLWIDTH LATIN SMALL LETTER T -> LATIN SMALL LETTER T */
--	0xFF55, /* FULLWIDTH LATIN SMALL LETTER U -> LATIN SMALL LETTER U */
--	0xFF56, /* FULLWIDTH LATIN SMALL LETTER V -> LATIN SMALL LETTER V */
--	0xFF57, /* FULLWIDTH LATIN SMALL LETTER W -> LATIN SMALL LETTER W */
--	0xFF58, /* FULLWIDTH LATIN SMALL LETTER X -> LATIN SMALL LETTER X */
--	0xFF59, /* FULLWIDTH LATIN SMALL LETTER Y -> LATIN SMALL LETTER Y */
--	0xFF5A, /* FULLWIDTH LATIN SMALL LETTER Z -> LATIN SMALL LETTER Z */
--	0xFF5B, /* FULLWIDTH LEFT CURLY BRACKET -> LEFT CURLY BRACKET */
--	0xFF5C, /* FULLWIDTH VERTICAL LINE -> VERTICAL LINE */
--	0xFF5D, /* FULLWIDTH RIGHT CURLY BRACKET -> RIGHT CURLY BRACKET */
--	0xFF5E, /* FULLWIDTH TILDE -> TILDE */
- };
- 
- static const u8 ucs_fallback_singles_subs[] = {
-@@ -1589,98 +1495,4 @@ static const u8 ucs_fallback_singles_subs[] = {
- 	0x58, /* HEAVY BALLOT X -> LATIN CAPITAL LETTER X */
- 	0x3C, /* LONG LEFTWARDS DOUBLE ARROW -> LESS-THAN SIGN */
- 	0x3E, /* LONG RIGHTWARDS DOUBLE ARROW -> GREATER-THAN SIGN */
--	0x21, /* FULLWIDTH EXCLAMATION MARK -> EXCLAMATION MARK */
--	0x22, /* FULLWIDTH QUOTATION MARK -> QUOTATION MARK */
--	0x23, /* FULLWIDTH NUMBER SIGN -> NUMBER SIGN */
--	0x24, /* FULLWIDTH DOLLAR SIGN -> DOLLAR SIGN */
--	0x25, /* FULLWIDTH PERCENT SIGN -> PERCENT SIGN */
--	0x26, /* FULLWIDTH AMPERSAND -> AMPERSAND */
--	0x27, /* FULLWIDTH APOSTROPHE -> APOSTROPHE */
--	0x28, /* FULLWIDTH LEFT PARENTHESIS -> LEFT PARENTHESIS */
--	0x29, /* FULLWIDTH RIGHT PARENTHESIS -> RIGHT PARENTHESIS */
--	0x2A, /* FULLWIDTH ASTERISK -> ASTERISK */
--	0x2B, /* FULLWIDTH PLUS SIGN -> PLUS SIGN */
--	0x2C, /* FULLWIDTH COMMA -> COMMA */
--	0x2D, /* FULLWIDTH HYPHEN-MINUS -> HYPHEN-MINUS */
--	0x2E, /* FULLWIDTH FULL STOP -> FULL STOP */
--	0x2F, /* FULLWIDTH SOLIDUS -> SOLIDUS */
--	0x30, /* FULLWIDTH DIGIT ZERO -> DIGIT ZERO */
--	0x31, /* FULLWIDTH DIGIT ONE -> DIGIT ONE */
--	0x32, /* FULLWIDTH DIGIT TWO -> DIGIT TWO */
--	0x33, /* FULLWIDTH DIGIT THREE -> DIGIT THREE */
--	0x34, /* FULLWIDTH DIGIT FOUR -> DIGIT FOUR */
--	0x35, /* FULLWIDTH DIGIT FIVE -> DIGIT FIVE */
--	0x36, /* FULLWIDTH DIGIT SIX -> DIGIT SIX */
--	0x37, /* FULLWIDTH DIGIT SEVEN -> DIGIT SEVEN */
--	0x38, /* FULLWIDTH DIGIT EIGHT -> DIGIT EIGHT */
--	0x39, /* FULLWIDTH DIGIT NINE -> DIGIT NINE */
--	0x3A, /* FULLWIDTH COLON -> COLON */
--	0x3B, /* FULLWIDTH SEMICOLON -> SEMICOLON */
--	0x3C, /* FULLWIDTH LESS-THAN SIGN -> LESS-THAN SIGN */
--	0x3D, /* FULLWIDTH EQUALS SIGN -> EQUALS SIGN */
--	0x3E, /* FULLWIDTH GREATER-THAN SIGN -> GREATER-THAN SIGN */
--	0x3F, /* FULLWIDTH QUESTION MARK -> QUESTION MARK */
--	0x40, /* FULLWIDTH COMMERCIAL AT -> COMMERCIAL AT */
--	0x41, /* FULLWIDTH LATIN CAPITAL LETTER A -> LATIN CAPITAL LETTER A */
--	0x42, /* FULLWIDTH LATIN CAPITAL LETTER B -> LATIN CAPITAL LETTER B */
--	0x43, /* FULLWIDTH LATIN CAPITAL LETTER C -> LATIN CAPITAL LETTER C */
--	0x44, /* FULLWIDTH LATIN CAPITAL LETTER D -> LATIN CAPITAL LETTER D */
--	0x45, /* FULLWIDTH LATIN CAPITAL LETTER E -> LATIN CAPITAL LETTER E */
--	0x46, /* FULLWIDTH LATIN CAPITAL LETTER F -> LATIN CAPITAL LETTER F */
--	0x47, /* FULLWIDTH LATIN CAPITAL LETTER G -> LATIN CAPITAL LETTER G */
--	0x48, /* FULLWIDTH LATIN CAPITAL LETTER H -> LATIN CAPITAL LETTER H */
--	0x49, /* FULLWIDTH LATIN CAPITAL LETTER I -> LATIN CAPITAL LETTER I */
--	0x4A, /* FULLWIDTH LATIN CAPITAL LETTER J -> LATIN CAPITAL LETTER J */
--	0x4B, /* FULLWIDTH LATIN CAPITAL LETTER K -> LATIN CAPITAL LETTER K */
--	0x4C, /* FULLWIDTH LATIN CAPITAL LETTER L -> LATIN CAPITAL LETTER L */
--	0x4D, /* FULLWIDTH LATIN CAPITAL LETTER M -> LATIN CAPITAL LETTER M */
--	0x4E, /* FULLWIDTH LATIN CAPITAL LETTER N -> LATIN CAPITAL LETTER N */
--	0x4F, /* FULLWIDTH LATIN CAPITAL LETTER O -> LATIN CAPITAL LETTER O */
--	0x50, /* FULLWIDTH LATIN CAPITAL LETTER P -> LATIN CAPITAL LETTER P */
--	0x51, /* FULLWIDTH LATIN CAPITAL LETTER Q -> LATIN CAPITAL LETTER Q */
--	0x52, /* FULLWIDTH LATIN CAPITAL LETTER R -> LATIN CAPITAL LETTER R */
--	0x53, /* FULLWIDTH LATIN CAPITAL LETTER S -> LATIN CAPITAL LETTER S */
--	0x54, /* FULLWIDTH LATIN CAPITAL LETTER T -> LATIN CAPITAL LETTER T */
--	0x55, /* FULLWIDTH LATIN CAPITAL LETTER U -> LATIN CAPITAL LETTER U */
--	0x56, /* FULLWIDTH LATIN CAPITAL LETTER V -> LATIN CAPITAL LETTER V */
--	0x57, /* FULLWIDTH LATIN CAPITAL LETTER W -> LATIN CAPITAL LETTER W */
--	0x58, /* FULLWIDTH LATIN CAPITAL LETTER X -> LATIN CAPITAL LETTER X */
--	0x59, /* FULLWIDTH LATIN CAPITAL LETTER Y -> LATIN CAPITAL LETTER Y */
--	0x5A, /* FULLWIDTH LATIN CAPITAL LETTER Z -> LATIN CAPITAL LETTER Z */
--	0x5B, /* FULLWIDTH LEFT SQUARE BRACKET -> LEFT SQUARE BRACKET */
--	0x5C, /* FULLWIDTH REVERSE SOLIDUS -> REVERSE SOLIDUS */
--	0x5D, /* FULLWIDTH RIGHT SQUARE BRACKET -> RIGHT SQUARE BRACKET */
--	0x5E, /* FULLWIDTH CIRCUMFLEX ACCENT -> CIRCUMFLEX ACCENT */
--	0x5F, /* FULLWIDTH LOW LINE -> LOW LINE */
--	0x60, /* FULLWIDTH GRAVE ACCENT -> GRAVE ACCENT */
--	0x61, /* FULLWIDTH LATIN SMALL LETTER A -> LATIN SMALL LETTER A */
--	0x62, /* FULLWIDTH LATIN SMALL LETTER B -> LATIN SMALL LETTER B */
--	0x63, /* FULLWIDTH LATIN SMALL LETTER C -> LATIN SMALL LETTER C */
--	0x64, /* FULLWIDTH LATIN SMALL LETTER D -> LATIN SMALL LETTER D */
--	0x65, /* FULLWIDTH LATIN SMALL LETTER E -> LATIN SMALL LETTER E */
--	0x66, /* FULLWIDTH LATIN SMALL LETTER F -> LATIN SMALL LETTER F */
--	0x67, /* FULLWIDTH LATIN SMALL LETTER G -> LATIN SMALL LETTER G */
--	0x68, /* FULLWIDTH LATIN SMALL LETTER H -> LATIN SMALL LETTER H */
--	0x69, /* FULLWIDTH LATIN SMALL LETTER I -> LATIN SMALL LETTER I */
--	0x6A, /* FULLWIDTH LATIN SMALL LETTER J -> LATIN SMALL LETTER J */
--	0x6B, /* FULLWIDTH LATIN SMALL LETTER K -> LATIN SMALL LETTER K */
--	0x6C, /* FULLWIDTH LATIN SMALL LETTER L -> LATIN SMALL LETTER L */
--	0x6D, /* FULLWIDTH LATIN SMALL LETTER M -> LATIN SMALL LETTER M */
--	0x6E, /* FULLWIDTH LATIN SMALL LETTER N -> LATIN SMALL LETTER N */
--	0x6F, /* FULLWIDTH LATIN SMALL LETTER O -> LATIN SMALL LETTER O */
--	0x70, /* FULLWIDTH LATIN SMALL LETTER P -> LATIN SMALL LETTER P */
--	0x71, /* FULLWIDTH LATIN SMALL LETTER Q -> LATIN SMALL LETTER Q */
--	0x72, /* FULLWIDTH LATIN SMALL LETTER R -> LATIN SMALL LETTER R */
--	0x73, /* FULLWIDTH LATIN SMALL LETTER S -> LATIN SMALL LETTER S */
--	0x74, /* FULLWIDTH LATIN SMALL LETTER T -> LATIN SMALL LETTER T */
--	0x75, /* FULLWIDTH LATIN SMALL LETTER U -> LATIN SMALL LETTER U */
--	0x76, /* FULLWIDTH LATIN SMALL LETTER V -> LATIN SMALL LETTER V */
--	0x77, /* FULLWIDTH LATIN SMALL LETTER W -> LATIN SMALL LETTER W */
--	0x78, /* FULLWIDTH LATIN SMALL LETTER X -> LATIN SMALL LETTER X */
--	0x79, /* FULLWIDTH LATIN SMALL LETTER Y -> LATIN SMALL LETTER Y */
--	0x7A, /* FULLWIDTH LATIN SMALL LETTER Z -> LATIN SMALL LETTER Z */
--	0x7B, /* FULLWIDTH LEFT CURLY BRACKET -> LEFT CURLY BRACKET */
--	0x7C, /* FULLWIDTH VERTICAL LINE -> VERTICAL LINE */
--	0x7D, /* FULLWIDTH RIGHT CURLY BRACKET -> RIGHT CURLY BRACKET */
--	0x7E, /* FULLWIDTH TILDE -> TILDE */
- };
--- 
-2.49.0
+int mtree_alloc_range(struct maple_tree *mt, unsigned long *startp,
+		void *entry, unsigned long size, unsigned long min,
+		unsigned long max, gfp_t gfp)
 
+size should be the number of PFNs this mmap is going to use, which is
+not sizeof() anything
+
+min should be 0 and max should be uh.. U32_MAX >> PAGE_SHIFT
+IIRC.. There is a different limit for pgof fon 32 bit mmap()
+
+> > Ohh... so we are storing the raw pointer in the mtree.. I got confused
+> > with the `LONG_MAX >> PAGE_SHIFT`.. Sorry about the confusion!
+> 
+> Yes. We want the pointer at mtree_load(). The pfn range is for
+> validation after mtree_load(). And we are likely to stuff more
+> bits into the immap structure for other verifications.
+
+Validation is fine, but you still have to reserve the whole pfn number
+space to get sensible non-overlapping pgoffs out of the allocator.
+
+Jason
 
