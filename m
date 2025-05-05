@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-633840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD739AAAE7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:57:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98294AAB14A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515FF1BA3218
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:54:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2E01BC1F0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44079381EB0;
-	Mon,  5 May 2025 23:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F3D3C4D84;
+	Tue,  6 May 2025 00:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxPr68KW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vw9Nhc4g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9289A2D0ADC;
-	Mon,  5 May 2025 22:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845DC2D0ADF;
+	Mon,  5 May 2025 22:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485454; cv=none; b=fXmBtZ8w6XNqbHgAs+Fga89Bu0AnLIEIUcdx/CJp+JXXppiUUuFsTJdSjTun5qGOl8rsHz7EIfifOa6nN7MFj+fGeYhbHWN4OgXKjlhnnEyCBcdL+MK0eMI8RfxUpJQtuCtm6IU2EwVHmx6/gTx0JKMOPnVEAgBzVVCeqBmvwzw=
+	t=1746485455; cv=none; b=OoZq8z4hqaXMu1oWD77f/Y/ERgUimAdQYdx/cagMnFYXgl+5r+ufdKHlwZ4TJcchIw/xdmolBQI6cpgMR+HpCnQ3EKs+60izrV7dIngg8Z3tLoElNZUFrOvMSO+DkIt2x6jpO5oFhtWuT0o9UOI23ch6tWtYie4mbkFbyrBOzHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485454; c=relaxed/simple;
-	bh=WG6h0YozOTRuKa/hRcDZ+ntlBYNJHMUhoxiLBf1qQVo=;
+	s=arc-20240116; t=1746485455; c=relaxed/simple;
+	bh=278IV81JzT2ECCT9Q16Te2UEzAsRINnmBUFRIBgSpyg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m0XKy08Ef+gUBJ27lPK38r/YVqxgZnKEQjO6FKMCxCdz/ifDMVrwjU0Pg7a4zskgODTqJH328Z1N7DJ9NWfDs/MWaKRW0yWcg5g7850l5y8Q/lEweTVxdiN+SGW4Coe9ztKaXG5yBwcm3HE711ieeTj3BAk0msig3FoPGTUZkrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxPr68KW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F0CC4CEEE;
-	Mon,  5 May 2025 22:50:52 +0000 (UTC)
+	 MIME-Version; b=GrGivIzzJ1wETYwuRT8WoldasJwV7f/dK8q/ryynZxr+wrNahL/YHn0uQQXK9l09c5Lu9UL5JQreL5a+qGxuTL+lLXJT8FcaumAFK0dw7JkUZ+CCAPRoG9OOAmQKNXMomCGrR4smfI+nJ+5O22/nk/YoACAOhnZjJOPr+SM9/n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vw9Nhc4g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003F6C4CEE4;
+	Mon,  5 May 2025 22:50:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485453;
-	bh=WG6h0YozOTRuKa/hRcDZ+ntlBYNJHMUhoxiLBf1qQVo=;
+	s=k20201202; t=1746485455;
+	bh=278IV81JzT2ECCT9Q16Te2UEzAsRINnmBUFRIBgSpyg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CxPr68KW7lBV2ZqgriVyy2JqPGULTNHlUTPn0q/N20pBs4GYCZK3S9aE57XblJhVj
-	 /s6cMnTMwFIvb5NcLM/ivuF1j2LsHt0oQQiuB+h1Gw/zhbIM6WjKPd3KrXNN7zyjo0
-	 AHD2g3t4+sgxEq1AcEtiCE1B/5xYWh1H37mdO0JP88jMPyQHjzU8WgNRjRr+NjyxUF
-	 fjU4QKsfI58IRDrhQAD8/hyyaDsL6FP4zYirdATsC0j1tb2VqcKVhKTzcW22tdhcVn
-	 /omIhMJDUcBJcd1K0Q2eqb/AMTjrgOOzJYznjdIKBkooJaWk88A3QsOEBeKBgWKEfC
-	 MCf+QcDj6GSGw==
+	b=Vw9Nhc4gGlyRBpyf8HFYa9rOOyeTgFTdErpf4/ZBSTKdtYytIrRYRYkRmJy1z6Spy
+	 9vI9KlEaY5zrl5O3fRsDxe9rAm/46anibs8A+7Gse2N9oGS+mttYgU6/kmCifUq99y
+	 5dzMco/NoGdrwmqBamPi7yztRGeYZpdjLezHK9wBzT0QiBnmxa/46Y7CBSh//5ZLqf
+	 vMuZXfDBkf8+IrvhDPVdHbPq6swOXWClxXMA4UPhE6GjtBdtoc1ATRbtfBRTj/gnD6
+	 f9Iur8ez6xHibn5/hwH/fqtEWlXu/DgG6cORGEuWN6DYS7pca8f/Fob+IXxkJMTASq
+	 VO6IDfa3OdC9g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+	"Artem S . Tashkinov" <aros@gmx.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	anup@brainfault.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 319/486] irqchip/riscv-imsic: Set irq_set_affinity() for IMSIC base
-Date: Mon,  5 May 2025 18:36:35 -0400
-Message-Id: <20250505223922.2682012-319-sashal@kernel.org>
+	mchehab@kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 320/486] media: test-drivers: vivid: don't call schedule in loop
+Date: Mon,  5 May 2025 18:36:36 -0400
+Message-Id: <20250505223922.2682012-320-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -69,83 +67,126 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Andrew Jones <ajones@ventanamicro.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-[ Upstream commit 999f458c1771354371ba367dd84f55f9a62a4233 ]
+[ Upstream commit e4740118b752005cbed339aec9a1d1c43620e0b9 ]
 
-The IMSIC driver assigns the IMSIC domain specific imsic_irq_set_affinity()
-callback to the per device leaf MSI domain. That's a layering violation as
-it is called with the leaf domain data and not with the IMSIC domain
-data. This prevents moving the IMSIC driver to the common MSI library which
-uses the generic msi_domain_set_affinity() callback for device MSI domains.
+Artem reported that the CPU load was 100% when capturing from
+vivid at low resolution with ffmpeg.
 
-Instead of using imsic_irq_set_affinity() for leaf MSI domains, use
-imsic_irq_set_affinity() for the non-leaf IMSIC base domain and use
-irq_chip_set_affinity_parent() for leaf MSI domains.
+This was caused by:
 
-[ tglx: Massaged change log ]
+while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+       !kthread_should_stop())
+        schedule();
 
-Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250217085657.789309-2-apatel@ventanamicro.com
+If there are no other processes running that can be scheduled,
+then this is basically a busy-loop.
+
+Change it to wait_event_interruptible_timeout() which doesn't
+have that problem.
+
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Reported-by: Artem S. Tashkinov <aros@gmx.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219570
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-riscv-imsic-platform.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/media/test-drivers/vivid/vivid-kthread-cap.c  | 11 ++++++++---
+ drivers/media/test-drivers/vivid/vivid-kthread-out.c  | 11 ++++++++---
+ .../media/test-drivers/vivid/vivid-kthread-touch.c    | 11 ++++++++---
+ drivers/media/test-drivers/vivid/vivid-sdr-cap.c      | 11 ++++++++---
+ 4 files changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/irqchip/irq-riscv-imsic-platform.c b/drivers/irqchip/irq-riscv-imsic-platform.c
-index c708780e8760f..5d7c30ad8855b 100644
---- a/drivers/irqchip/irq-riscv-imsic-platform.c
-+++ b/drivers/irqchip/irq-riscv-imsic-platform.c
-@@ -96,9 +96,8 @@ static int imsic_irq_set_affinity(struct irq_data *d, const struct cpumask *mask
- 				  bool force)
- {
- 	struct imsic_vector *old_vec, *new_vec;
--	struct irq_data *pd = d->parent_data;
+diff --git a/drivers/media/test-drivers/vivid/vivid-kthread-cap.c b/drivers/media/test-drivers/vivid/vivid-kthread-cap.c
+index 669bd96da4c79..273e8ed8c2a90 100644
+--- a/drivers/media/test-drivers/vivid/vivid-kthread-cap.c
++++ b/drivers/media/test-drivers/vivid/vivid-kthread-cap.c
+@@ -789,9 +789,14 @@ static int vivid_thread_vid_cap(void *data)
+ 			next_jiffies_since_start = jiffies_since_start;
  
--	old_vec = irq_data_get_irq_chip_data(pd);
-+	old_vec = irq_data_get_irq_chip_data(d);
- 	if (WARN_ON(!old_vec))
- 		return -ENOENT;
+ 		wait_jiffies = next_jiffies_since_start - jiffies_since_start;
+-		while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+-		       !kthread_should_stop())
+-			schedule();
++		if (!time_is_after_jiffies(cur_jiffies + wait_jiffies))
++			continue;
++
++		wait_queue_head_t wait;
++
++		init_waitqueue_head(&wait);
++		wait_event_interruptible_timeout(wait, kthread_should_stop(),
++					cur_jiffies + wait_jiffies - jiffies);
+ 	}
+ 	dprintk(dev, 1, "Video Capture Thread End\n");
+ 	return 0;
+diff --git a/drivers/media/test-drivers/vivid/vivid-kthread-out.c b/drivers/media/test-drivers/vivid/vivid-kthread-out.c
+index fac6208b51da8..015a7b166a1e6 100644
+--- a/drivers/media/test-drivers/vivid/vivid-kthread-out.c
++++ b/drivers/media/test-drivers/vivid/vivid-kthread-out.c
+@@ -235,9 +235,14 @@ static int vivid_thread_vid_out(void *data)
+ 			next_jiffies_since_start = jiffies_since_start;
  
-@@ -116,13 +115,13 @@ static int imsic_irq_set_affinity(struct irq_data *d, const struct cpumask *mask
- 		return -ENOSPC;
+ 		wait_jiffies = next_jiffies_since_start - jiffies_since_start;
+-		while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+-		       !kthread_should_stop())
+-			schedule();
++		if (!time_is_after_jiffies(cur_jiffies + wait_jiffies))
++			continue;
++
++		wait_queue_head_t wait;
++
++		init_waitqueue_head(&wait);
++		wait_event_interruptible_timeout(wait, kthread_should_stop(),
++					cur_jiffies + wait_jiffies - jiffies);
+ 	}
+ 	dprintk(dev, 1, "Video Output Thread End\n");
+ 	return 0;
+diff --git a/drivers/media/test-drivers/vivid/vivid-kthread-touch.c b/drivers/media/test-drivers/vivid/vivid-kthread-touch.c
+index fa711ee36a3fb..c862689786b69 100644
+--- a/drivers/media/test-drivers/vivid/vivid-kthread-touch.c
++++ b/drivers/media/test-drivers/vivid/vivid-kthread-touch.c
+@@ -135,9 +135,14 @@ static int vivid_thread_touch_cap(void *data)
+ 			next_jiffies_since_start = jiffies_since_start;
  
- 	/* Point device to the new vector */
--	imsic_msi_update_msg(d, new_vec);
-+	imsic_msi_update_msg(irq_get_irq_data(d->irq), new_vec);
+ 		wait_jiffies = next_jiffies_since_start - jiffies_since_start;
+-		while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+-		       !kthread_should_stop())
+-			schedule();
++		if (!time_is_after_jiffies(cur_jiffies + wait_jiffies))
++			continue;
++
++		wait_queue_head_t wait;
++
++		init_waitqueue_head(&wait);
++		wait_event_interruptible_timeout(wait, kthread_should_stop(),
++					cur_jiffies + wait_jiffies - jiffies);
+ 	}
+ 	dprintk(dev, 1, "Touch Capture Thread End\n");
+ 	return 0;
+diff --git a/drivers/media/test-drivers/vivid/vivid-sdr-cap.c b/drivers/media/test-drivers/vivid/vivid-sdr-cap.c
+index 38cda33dffb2a..97cfc58b70571 100644
+--- a/drivers/media/test-drivers/vivid/vivid-sdr-cap.c
++++ b/drivers/media/test-drivers/vivid/vivid-sdr-cap.c
+@@ -206,9 +206,14 @@ static int vivid_thread_sdr_cap(void *data)
+ 			next_jiffies_since_start = jiffies_since_start;
  
- 	/* Update irq descriptors with the new vector */
--	pd->chip_data = new_vec;
-+	d->chip_data = new_vec;
- 
--	/* Update effective affinity of parent irq data */
--	irq_data_update_effective_affinity(pd, cpumask_of(new_vec->cpu));
-+	/* Update effective affinity */
-+	irq_data_update_effective_affinity(d, cpumask_of(new_vec->cpu));
- 
- 	/* Move state of the old vector to the new vector */
- 	imsic_vector_move(old_vec, new_vec);
-@@ -135,6 +134,9 @@ static struct irq_chip imsic_irq_base_chip = {
- 	.name			= "IMSIC",
- 	.irq_mask		= imsic_irq_mask,
- 	.irq_unmask		= imsic_irq_unmask,
-+#ifdef CONFIG_SMP
-+	.irq_set_affinity	= imsic_irq_set_affinity,
-+#endif
- 	.irq_retrigger		= imsic_irq_retrigger,
- 	.irq_compose_msi_msg	= imsic_irq_compose_msg,
- 	.flags			= IRQCHIP_SKIP_SET_WAKE |
-@@ -245,7 +247,7 @@ static bool imsic_init_dev_msi_info(struct device *dev,
- 		if (WARN_ON_ONCE(domain != real_parent))
- 			return false;
- #ifdef CONFIG_SMP
--		info->chip->irq_set_affinity = imsic_irq_set_affinity;
-+		info->chip->irq_set_affinity = irq_chip_set_affinity_parent;
- #endif
- 		break;
- 	default:
+ 		wait_jiffies = next_jiffies_since_start - jiffies_since_start;
+-		while (time_is_after_jiffies(cur_jiffies + wait_jiffies) &&
+-		       !kthread_should_stop())
+-			schedule();
++		if (!time_is_after_jiffies(cur_jiffies + wait_jiffies))
++			continue;
++
++		wait_queue_head_t wait;
++
++		init_waitqueue_head(&wait);
++		wait_event_interruptible_timeout(wait, kthread_should_stop(),
++					cur_jiffies + wait_jiffies - jiffies);
+ 	}
+ 	dprintk(dev, 1, "SDR Capture Thread End\n");
+ 	return 0;
 -- 
 2.39.5
 
