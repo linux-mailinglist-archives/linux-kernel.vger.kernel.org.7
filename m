@@ -1,114 +1,163 @@
-Return-Path: <linux-kernel+bounces-632133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D565AA92E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:18:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E06AA92A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 14:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F79518998D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AA63AA8EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13423253933;
-	Mon,  5 May 2025 12:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPQrW9iO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063BE204F93;
+	Mon,  5 May 2025 12:04:52 +0000 (UTC)
+Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6E324A066;
-	Mon,  5 May 2025 12:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8212A1ACEAC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 12:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746447463; cv=none; b=deDPCE7smBmwPl+4xLms+tTy51h/yR+SraXw0QYLMZH3r/ZiMNZ4aKk+uf47Y5iBqhG/goBkbxdypfaq6gQVcXsBhzV441op2IMJhyFUpVH5rmO9tlKCD72qIKwBd3lpULXeWGndeORbkkIOemUr12LMUcKCbssj8lg01SCxY2Q=
+	t=1746446691; cv=none; b=VmBxvRvziG2Xsq6x1DaiHSGOxrDCHJj/iEIDnyLrlHQu5z2itlJB5LAl1PD4+8vZHi1SMY/JGdpD332sx2VJdlytpV4pEW4ml7PDPNbKnq4xIe1AcrY1P6KtqjXZtu570EiuNA1dDt6icR83dpNQaNCSGTxjdXexNj7/1vhh/LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746447463; c=relaxed/simple;
-	bh=+c9qtL1XLrdv0KjM1c64k7CAIhE9e6+G1EbaLs6rza0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ov6GeatfUvlne/abBcgKwvstZfnNb65gppRlmKEU2vq92vvyTD/JdYylXxw6k6JV3JXM24a1RlmM2trquvMSmn2YXwbeYAySoXKdpHapJqkMiITzkcwPahRZO2IJ/+rXEyICZzUCPDC87dZ8MYkdqU5x9VRH4AG7iH7PXg+rDUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPQrW9iO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D32DC4CEE9;
-	Mon,  5 May 2025 12:17:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746447460;
-	bh=+c9qtL1XLrdv0KjM1c64k7CAIhE9e6+G1EbaLs6rza0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lPQrW9iO5alAJxK83Y8+fEo/xiQA+Q+teKxHd3UG23liLxPqpJvSwszf5B9S/hTQS
-	 yslfVuH1Rrb/mZ/2OIuL/NOrCFYwPf+DF3Dn1a6q7EYErzs6GMXjKZ786F7GWq6UPd
-	 VGHA1nN63UgjGIqXe4iHpUiY2EYCbUbaPJcYjS5bbPXynyvbWFEQx6I/2IUvV+zwRC
-	 FR9YAYf1xRxDH4TNH4xkGR/JqE72i/PHcyrrPcHjm6fByDWyb/QrUwiQAv8JKZCUsz
-	 Zo9hAxspt4yNmFepQHoMWN3ZbLqWi0cRWtTRWHxUJeWrLMjYSHF0aemu1WWFnJpDcq
-	 U3+CVYCrAMRfQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-Cc: <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <a.hindborg@samsung.com>,  <boqun.feng@gmail.com>,
-  <frederic@kernel.org>,  <lyude@redhat.com>,  <tglx@linutronix.de>,
-  <anna-maria@linutronix.de>,  <jstultz@google.com>,  <sboyd@kernel.org>,
-  <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,  <gary@garyguo.net>,
-  <bjorn3_gh@protonmail.com>,  <benno.lossin@proton.me>,
-  <aliceryhl@google.com>,  <tmgross@umich.edu>,
-  <chrisi.schrefl@gmail.com>,  <arnd@arndb.de>,  <linux@armlinux.org.uk>
-Subject: Re: [PATCH v1] rust: time: Avoid 64-bit integer division
-In-Reply-To: <20250505.201004.457132112950898883.fujita.tomonori@gmail.com>
-	(FUJITA Tomonori's message of "Mon, 05 May 2025 20:10:04 +0900")
-References: <20250501015818.226376-1-fujita.tomonori@gmail.com>
-	<8734djxrm0.fsf@kernel.org>
-	<Wa3bx4DMYJMjJ594BFBTdQoD4WJzqhDRxMPUQfyH68XpKhZQ--5WEB8bTYEQuDm-pB1hl_PHqsm5wuv29WuIyg==@protonmail.internalid>
-	<20250505.201004.457132112950898883.fujita.tomonori@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Mon, 05 May 2025 13:51:56 +0200
-Message-ID: <87tt5zwa03.fsf@kernel.org>
+	s=arc-20240116; t=1746446691; c=relaxed/simple;
+	bh=0arvIUSifnZxahyQL3PgmRS+MaPEBBGATf2lplycaL4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YQnyJVibGl+EeqR4ER/OeTY6g1pE4g/VpNgpM4JK1n0+USGpNhc4+ZrWcUob5FfNUugoxAHWb+ify1qEpvxa4iS07LKeOwtOCutORtr24PIxvl/e135TzadiieE6nj0ApIcLPJxTYeraUHRnSBUw2MYevHlZzVBC5X88tzxhj2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
+Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
+ (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 5 May 2025
+ 13:59:38 +0200
+Received: from lnxdevrm02.bk.prodrive.nl (10.1.1.121) by
+ EXCOP01.bk.prodrive.nl (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4
+ via Frontend Transport; Mon, 5 May 2025 13:59:38 +0200
+Received: from paugeu by lnxdevrm02.bk.prodrive.nl with local (Exim 4.96)
+	(envelope-from <paul.geurts@prodrive-technologies.com>)
+	id 1uBuTy-008B5T-0u;
+	Mon, 05 May 2025 13:59:38 +0200
+From: Paul Geurts <paul.geurts@prodrive-technologies.com>
+To: <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<frieder.schrempf@kontron.de>, <Frank.Li@nxp.com>, <marex@denx.de>,
+	<yibin.gong@nxp.com>, <joy.zou@nxp.com>, <linux-kernel@vger.kernel.org>
+CC: <martijn.de.gouw@prodrive-technologies.com>, Paul Geurts
+	<paul.geurts@prodrive-technologies.com>
+Subject: [PATCH] regulator: pca9450: Add restart handler
+Date: Mon, 5 May 2025 13:59:36 +0200
+Message-ID: <20250505115936.1946891-1-paul.geurts@prodrive-technologies.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+When restarting a CPU powered by the PCA9450 power management IC, it
+is beneficial to use the PCA9450 to power cycle the CPU and all its
+connected peripherals to start up in a known state. The PCA9450 features
+a cold start procedure initiated by an I2C command.
 
-> On Mon, 05 May 2025 12:46:15 +0200
-> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->
->> FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
->>
->>> Avoid 64-bit integer division that 32-bit architectures don't
->>> implement generally. This uses ktime_to_ms() and ktime_to_us()
->>> instead.
->>>
->>> The timer abstraction needs i64 / u32 division so C's div_s64() can be
->>> used but ktime_to_ms() and ktime_to_us() provide a simpler solution
->>> for this timer abstraction problem. On some architectures, there is
->>> room to optimize the implementation of them, but such optimization can
->>> be done if and when it becomes necessary.
->>>
->>> One downside of calling the C's functions is that the as_micros/millis
->>> methods can no longer be const fn. We stick with the simpler approach
->>> unless there's a compelling need for a const fn.
->>>
->>> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
->>
->>
->> Please consult recent MAINTAINERS file when you send patches. If you
->> intend for me to see a patch, please use my registered email address.
->
-> Sorry, I did follow that for the last two patchsets (generalizing
-> Instant and hrtimer), but somehow I messed up with this one.
->
-> Should I resend v2 of this fix to the correct email address?
->
-> https://lore.kernel.org/lkml/20250502004524.230553-1-fujita.tomonori@gmail.com/
+Add a restart handler so that the PCA9450 is used to restart the CPU.
+The restart handler sends command 0x14 to the SW_RST register,
+initiating a cold reset (Power recycle all regulators except LDO1, LDO2
+and CLK_32K_OUT)
 
-No I got it from list, so it's fine for this one. But please stop CC'ing
-the the Samsung address.
+As the PCA9450 is a PMIC specific for the i.MX8M family CPU, the restart
+handler priority is set just slightly higher than imx2_wdt and the PSCI
+restart handler. This makes sure this restart handler takes precedence.
 
+Signed-off-by: Paul Geurts <paul.geurts@prodrive-technologies.com>
+---
+ drivers/regulator/pca9450-regulator.c | 27 +++++++++++++++++++++++++++
+ include/linux/regulator/pca9450.h     |  5 +++++
+ 2 files changed, 32 insertions(+)
 
-Best regards,
-Andreas Hindborg
-
-
+diff --git a/drivers/regulator/pca9450-regulator.c b/drivers/regulator/pca9450-regulator.c
+index a56f3ab754fa..14d19a6d6655 100644
+--- a/drivers/regulator/pca9450-regulator.c
++++ b/drivers/regulator/pca9450-regulator.c
+@@ -9,6 +9,7 @@
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
++#include <linux/reboot.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -33,6 +34,7 @@ struct pca9450 {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	struct gpio_desc *sd_vsel_gpio;
++	struct notifier_block restart_nb;
+ 	enum pca9450_chip_type type;
+ 	unsigned int rcnt;
+ 	int irq;
+@@ -965,6 +967,25 @@ static irqreturn_t pca9450_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static int pca9450_i2c_restart_handler(struct notifier_block *nb,
++				unsigned long action, void *data)
++{
++	struct pca9450 *pca9450 = container_of(nb, struct pca9450, restart_nb);
++	struct i2c_client *i2c = container_of(pca9450->dev, struct i2c_client, dev);
++
++	dev_dbg(&i2c->dev, "Restarting device..\n");
++	if (i2c_smbus_write_byte_data(i2c, PCA9450_REG_SWRST, SW_RST_COMMAND) == 0) {
++		/* tRESTART is 250ms, so 300 should be enough to make sure it happened */
++		mdelay(300);
++		/* When we get here, the PMIC didn't power cycle for some reason. so warn.*/
++		dev_warn(&i2c->dev, "Device didn't respond to restart command\n");
++	} else {
++		dev_err(&i2c->dev, "Restart command failed\n");
++	}
++
++	return 0;
++}
++
+ static int pca9450_i2c_probe(struct i2c_client *i2c)
+ {
+ 	enum pca9450_chip_type type = (unsigned int)(uintptr_t)
+@@ -1107,6 +1128,12 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
+ 	pca9450->sd_vsel_fixed_low =
+ 		of_property_read_bool(ldo5->dev.of_node, "nxp,sd-vsel-fixed-low");
+ 
++	pca9450->restart_nb.notifier_call = pca9450_i2c_restart_handler;
++	pca9450->restart_nb.priority = PCA9450_RESTART_HANDLER_PRIORITY;
++
++	if (register_restart_handler(&pca9450->restart_nb))
++		dev_warn(&i2c->dev, "Failed to register restart handler\n");
++
+ 	dev_info(&i2c->dev, "%s probed.\n",
+ 		type == PCA9450_TYPE_PCA9450A ? "pca9450a" :
+ 		(type == PCA9450_TYPE_PCA9451A ? "pca9451a" : "pca9450bc"));
+diff --git a/include/linux/regulator/pca9450.h b/include/linux/regulator/pca9450.h
+index b427b5873de1..85b4fecc10d8 100644
+--- a/include/linux/regulator/pca9450.h
++++ b/include/linux/regulator/pca9450.h
+@@ -35,6 +35,8 @@ enum {
+ 	PCA9450_DVS_LEVEL_MAX,
+ };
+ 
++#define PCA9450_RESTART_HANDLER_PRIORITY 130
++
+ #define PCA9450_BUCK1_VOLTAGE_NUM	0x80
+ #define PCA9450_BUCK2_VOLTAGE_NUM	0x80
+ #define PCA9450_BUCK3_VOLTAGE_NUM	0x80
+@@ -235,4 +237,7 @@ enum {
+ #define I2C_LT_ON_RUN			0x02
+ #define I2C_LT_FORCE_ENABLE		0x03
+ 
++/* PCA9450_REG_SW_RST command */
++#define SW_RST_COMMAND			0x14
++
+ #endif /* __LINUX_REG_PCA9450_H__ */
+-- 
+2.39.2
 
 
