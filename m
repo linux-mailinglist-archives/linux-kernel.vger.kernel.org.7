@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-631864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AD3AA8E71
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:44:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C0FAA8E6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8043B2737
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F473B1946
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 08:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A1F1F5838;
-	Mon,  5 May 2025 08:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58581DF73D;
+	Mon,  5 May 2025 08:43:52 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0C71F4262
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6901EDA34
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 08:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746434632; cv=none; b=ZO3HaNn9qZsNJGh8lxADRwSoGw07M4egUjWPFQW6E5riKpZgIbWX9+Ym6Bfp/Updk/T5b/4pscM4ejBmyLom6mySPnAl61ntvSJZ/VTz4vKr1M4GJnmCsXYIWn6KGgg5bGgytF5JM+yPOXp+YT7JDVesFImMljK1YfOLGsC4d9E=
+	t=1746434632; cv=none; b=pz9d9KUSaRfKt1FfkCyvGkc1Hu/Qyi+4U37AYjIIYL+3bP0e/ksqHW+J7xj/J+COWd7+uIZl3SA6VGk576WFcFXajp7twCS1RdiPVtRBFMDrQ6r+Ni6BEiD2zkTSmCtrThQBOVYXbKFX9pfp1pj58lrXPALiNCV3uemFqn5FSvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746434632; c=relaxed/simple;
-	bh=qIvteqbLhdwo+nIU5NyrF66lRS0uWtrGhO5U+sF2oso=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m+W0dOKzOBmTjR82sbmDql4rVsS8KBXMS84m1cFerqr7Bh8pLvBkcOoXpT2qFIUtYfvi372f4V25/DkOKTzuQXTxEs/WTN6NctrDFKtloJwKTXGENJhg94Iej7I6dk/E85lMnj0lITnDJO5b6zlB5JqnSvqHEHCHct7jR3aKJFI=
+	bh=PfDu6Fp8KyBjovfjyOpuBNf1DbqZ7wUZxTHJtarXAtU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eTCUfRfzl9j+0ef/FZw+jOVV25xiSEiUWxyM4ysWvOT1gVWen/X9qMB4paoeZZR2mBfwjM3LbHwsiI+U3Ix+waNt21Hi5VMp33Q2Cn4UN9ikaMu5qG5CcKfo9cP2IIH9dLJRphwcniQFdu4qmzIZks+AohN9ZQifqjua5W/1GVY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -31,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1uBrQN-0005W5-Al; Mon, 05 May 2025 10:43:43 +0200
+	id 1uBrQN-0005W6-An; Mon, 05 May 2025 10:43:43 +0200
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1uBrQM-001CS9-11;
+	id 1uBrQM-001CSA-19;
 	Mon, 05 May 2025 10:43:42 +0200
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1uBrQM-003SPb-0k;
+	id 1uBrQM-003SPl-0s;
 	Mon, 05 May 2025 10:43:42 +0200
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -60,10 +61,12 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	Phil Elwell <phil@raspberrypi.org>,
 	Maxime Chevallier <maxime.chevallier@bootlin.com>,
 	Simon Horman <horms@kernel.org>
-Subject: [PATCH net-next v8 0/7]  lan78xx: preparation for PHYLINK conversion
-Date: Mon,  5 May 2025 10:43:34 +0200
-Message-Id: <20250505084341.824165-1-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v8 1/7] net: usb: lan78xx: Improve error handling in PHY initialization
+Date: Mon,  5 May 2025 10:43:35 +0200
+Message-Id: <20250505084341.824165-2-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505084341.824165-1-o.rempel@pengutronix.de>
+References: <20250505084341.824165-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,43 +79,150 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This patch series contains the first part of the LAN78xx driver
-refactoring in preparation for converting the driver to use the PHYLINK
-framework.
+Ensure that return values from `lan78xx_write_reg()`,
+`lan78xx_read_reg()`, and `phy_find_first()` are properly checked and
+propagated. Use `ERR_PTR(ret)` for error reporting in
+`lan7801_phy_init()` and replace `-EIO` with `-ENODEV` where appropriate
+to provide more accurate error codes.
 
-The goal of this initial part is to reduce the size and complexity of
-the final PHYLINK conversion by introducing incremental cleanups and
-logical separation of concerns, such as:
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+changes v6:
+- confirmed with maintainers that fixed_phy_register() leak is acceptable
+  as soon as it is fixed within the patch set
+changes v5:
+- make sure lan7801_phy_init() caller is testing against IS_ERR
+  instead of NULL.
+changes v4:
+- split the patch and move part of it before PHYlink migration
+---
+ drivers/net/usb/lan78xx.c | 47 ++++++++++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 16 deletions(-)
 
-- Improving error handling in the PHY initialization path
-- Refactoring PHY detection and MAC-side configuration
-- Moving LED DT configuration to a dedicated helper
-- Separating USB link power and flow control setup from the main probe logic
-- Extracting PHY interrupt acknowledgment logic
-
-Each patch is self-contained and moves non-PHYLINK-specific logic out of
-the way, setting the stage for the actual conversion in a follow-up
-patch series.
-
-changes v8 (as split from full v7 00/12 series):
-- Split the original series to make review easier
-- This part includes only preparation patches; actual PHYLINK
-  integration will follow
-
-Oleksij Rempel (7):
-  net: usb: lan78xx: Improve error handling in PHY initialization
-  net: usb: lan78xx: remove explicit check for missing PHY driver
-  net: usb: lan78xx: refactor PHY init to separate detection and MAC
-    configuration
-  net: usb: lan78xx: move LED DT configuration to helper
-  net: usb: lan78xx: Extract PHY interrupt acknowledgment to helper
-  net: usb: lan78xx: Refactor USB link power configuration into helper
-  net: usb: lan78xx: Extract flow control configuration to helper
-
- drivers/net/usb/lan78xx.c | 462 ++++++++++++++++++++++++++++----------
- 1 file changed, 343 insertions(+), 119 deletions(-)
-
---
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index e4f1663b6204..19db18cf0504 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2510,14 +2510,13 @@ static void lan78xx_remove_irq_domain(struct lan78xx_net *dev)
+ 
+ static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
+ {
+-	u32 buf;
+-	int ret;
+ 	struct fixed_phy_status fphy_status = {
+ 		.link = 1,
+ 		.speed = SPEED_1000,
+ 		.duplex = DUPLEX_FULL,
+ 	};
+ 	struct phy_device *phydev;
++	int ret;
+ 
+ 	phydev = phy_find_first(dev->mdiobus);
+ 	if (!phydev) {
+@@ -2525,30 +2524,40 @@ static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
+ 		phydev = fixed_phy_register(PHY_POLL, &fphy_status, NULL);
+ 		if (IS_ERR(phydev)) {
+ 			netdev_err(dev->net, "No PHY/fixed_PHY found\n");
+-			return NULL;
++			return ERR_PTR(-ENODEV);
+ 		}
+ 		netdev_dbg(dev->net, "Registered FIXED PHY\n");
+ 		dev->interface = PHY_INTERFACE_MODE_RGMII;
+ 		ret = lan78xx_write_reg(dev, MAC_RGMII_ID,
+ 					MAC_RGMII_ID_TXC_DELAY_EN_);
++		if (ret < 0)
++			return ERR_PTR(ret);
++
+ 		ret = lan78xx_write_reg(dev, RGMII_TX_BYP_DLL, 0x3D00);
+-		ret = lan78xx_read_reg(dev, HW_CFG, &buf);
+-		buf |= HW_CFG_CLK125_EN_;
+-		buf |= HW_CFG_REFCLK25_EN_;
+-		ret = lan78xx_write_reg(dev, HW_CFG, buf);
++		if (ret < 0)
++			return ERR_PTR(ret);
++
++		ret = lan78xx_update_reg(dev, HW_CFG, HW_CFG_CLK125_EN_ |
++					 HW_CFG_REFCLK25_EN_,
++					 HW_CFG_CLK125_EN_ | HW_CFG_REFCLK25_EN_);
++		if (ret < 0)
++			return ERR_PTR(ret);
+ 	} else {
+ 		if (!phydev->drv) {
+ 			netdev_err(dev->net, "no PHY driver found\n");
+-			return NULL;
++			return ERR_PTR(-EINVAL);
+ 		}
+ 		dev->interface = PHY_INTERFACE_MODE_RGMII_ID;
+ 		/* The PHY driver is responsible to configure proper RGMII
+ 		 * interface delays. Disable RGMII delays on MAC side.
+ 		 */
+-		lan78xx_write_reg(dev, MAC_RGMII_ID, 0);
++		ret = lan78xx_write_reg(dev, MAC_RGMII_ID, 0);
++		if (ret < 0)
++			return ERR_PTR(ret);
+ 
+ 		phydev->is_internal = false;
+ 	}
++
+ 	return phydev;
+ }
+ 
+@@ -2562,9 +2571,10 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 	switch (dev->chipid) {
+ 	case ID_REV_CHIP_ID_7801_:
+ 		phydev = lan7801_phy_init(dev);
+-		if (!phydev) {
+-			netdev_err(dev->net, "lan7801: PHY Init Failed");
+-			return -EIO;
++		if (IS_ERR(phydev)) {
++			netdev_err(dev->net, "lan7801: failed to init PHY: %pe\n",
++				   phydev);
++			return PTR_ERR(phydev);
+ 		}
+ 		break;
+ 
+@@ -2573,7 +2583,7 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 		phydev = phy_find_first(dev->mdiobus);
+ 		if (!phydev) {
+ 			netdev_err(dev->net, "no PHY found\n");
+-			return -EIO;
++			return -ENODEV;
+ 		}
+ 		phydev->is_internal = true;
+ 		dev->interface = PHY_INTERFACE_MODE_GMII;
+@@ -2581,7 +2591,7 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 
+ 	default:
+ 		netdev_err(dev->net, "Unknown CHIP ID found\n");
+-		return -EIO;
++		return -ENODEV;
+ 	}
+ 
+ 	/* if phyirq is not set, use polling mode in phylib */
+@@ -2633,7 +2643,10 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 						      sizeof(u32));
+ 		if (len >= 0) {
+ 			/* Ensure the appropriate LEDs are enabled */
+-			lan78xx_read_reg(dev, HW_CFG, &reg);
++			ret = lan78xx_read_reg(dev, HW_CFG, &reg);
++			if (ret < 0)
++				return ret;
++
+ 			reg &= ~(HW_CFG_LED0_EN_ |
+ 				 HW_CFG_LED1_EN_ |
+ 				 HW_CFG_LED2_EN_ |
+@@ -2642,7 +2655,9 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 				(len > 1) * HW_CFG_LED1_EN_ |
+ 				(len > 2) * HW_CFG_LED2_EN_ |
+ 				(len > 3) * HW_CFG_LED3_EN_;
+-			lan78xx_write_reg(dev, HW_CFG, reg);
++			ret = lan78xx_write_reg(dev, HW_CFG, reg);
++			if (ret < 0)
++				return ret;
+ 		}
+ 	}
+ 
+-- 
 2.39.5
 
 
