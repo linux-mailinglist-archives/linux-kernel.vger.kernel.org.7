@@ -1,81 +1,115 @@
-Return-Path: <linux-kernel+bounces-632406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD76AA96E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027EAAA96E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A84EB166749
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D6AE169805
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305BF25C831;
-	Mon,  5 May 2025 15:05:10 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D204024E4AA
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453D625DCE5;
+	Mon,  5 May 2025 15:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBSqCk/x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869FD25D1F5;
+	Mon,  5 May 2025 15:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746457509; cv=none; b=Fe2v45GK1lbhjlc/QrgbHJQguoCirBYIRZvBacygDDEUEAg1GNdraITjSd2t/1/JtK2k1NuZut23LsIRxjC6o6rz2RiSRXGAMFa8kcD08VHgDTC+vrQkiEa1z/a/h+u8C0IpILpXqSN+SjZ66LdxtZgB1Gky1RBL85dmAO9rEXI=
+	t=1746457519; cv=none; b=fjPw9KNB6DpUelc2eekQyoE7rOmOa+PFqnv1936hZEi17naq0/O5ZubgCmPjn6A85pQf6STNJGMfMfHfkDj8QbVMRbmqFdM2aIC5Kqe/o++OC4J1uHjrBqkrMrRsfUJYM55pQfMtAR7eu76VVu6/mVCoLq4/PGwuF6qVVcQXNrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746457509; c=relaxed/simple;
-	bh=FV8Tejqc6V6+uOqyC0GpdhpV7MI/2Ee8pALjv1APlhw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Um5ImZDYZi2qMkt6pA48EvtLZQJe+lCikC6Gq1BHNlJ0uPN4gxTIom6DdzeT8Wv2tywOB2ERHDxngqW8CwVrfdnZ8lu/bGGSYiAVrhmDTQDmrE1ZZKoiB5kE3hOUKDd222RAptIQwi2QvqTzBFcHNmzjj+I3YYwBC/KNyoqYHsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 5014492009C; Mon,  5 May 2025 17:05:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 4904692009B;
-	Mon,  5 May 2025 16:05:06 +0100 (BST)
-Date: Mon, 5 May 2025 16:05:06 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Nathan Chancellor <nathan@kernel.org>, llvm@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: Adding __popcountsi2 and __popcountdi2
-In-Reply-To: <CAHk-=wjDV3nOK34rbU8bdo6OjM=KYoCN92=1eVEVFu=FQr8TNA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.2505051543470.31828@angie.orcam.me.uk>
-References: <20250425003342.GA795313@ax162> <CAHk-=whfT3A8K2Z+WbieGG5Hhc9QAT5s3qsbB19O0Roj2G5tfA@mail.gmail.com> <20250425021138.GA3800209@ax162> <CAHk-=wjDV3nOK34rbU8bdo6OjM=KYoCN92=1eVEVFu=FQr8TNA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1746457519; c=relaxed/simple;
+	bh=tVwY1GhHmqP4tNt6PF7NZ89nMFSpxg7uRS+j8Qo6g3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVnKoSZ4BP//ELveHHVzoAfQwcLXVmsaWre3hvzcF1wI6uCmBQA1CYIlmbEFTAXePVJQwKw+EKVwADfsQJhzGe/PiHyTNPg1ui9AnDNlreU+soTJcfTX6V89eAnC1ha2yr6yTeHh9sb3/5iiEIYzswTsobOJ7vKbeYe9IEwRhFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBSqCk/x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F76CC4CEE4;
+	Mon,  5 May 2025 15:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746457518;
+	bh=tVwY1GhHmqP4tNt6PF7NZ89nMFSpxg7uRS+j8Qo6g3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GBSqCk/xbHGCM6+NNMlpLQtOhHa+ERjy2QkOGRQzAhDpyDdOUa/ne7UZQ4uiH2bGy
+	 utwN7dvaElYocZWWZ8zV+ilIOEUxgzRxIYWDmAyZwGFBzppVTztXR2ITc7/LUHeVaD
+	 l8t58dkIeX9CikCl4ZG3QKczALeaRoEermE6CuDbOzrQ4HKmDj1iZ0sm/egm+N6XFR
+	 2ZagUpMpX52vB/uJ/qVM5cSMENXexwQ60phGkPFo5OGKJ3RyTCmFWi3RjWqZ94j+u1
+	 8s48ANOuF7cnPTaPjlyFVTKMGhFYvV9JmRJLZ482FwgaxRJO6Qa/cJWEc4cH3jxkQq
+	 TN1/EnXSDIdkg==
+Date: Mon, 5 May 2025 17:05:10 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
+	Will Deacon <will@kernel.org>, Robert Richter <rric@kernel.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Marc Zyngier <maz@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>, dingwei@marvell.com,
+	Lukas Wunner <lukas@wunner.de>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, wilfred.mallawa@wdc.com
+Subject: Re: [PATCH v3 5/5] PCI: qcom: Add support for resetting the slot due
+ to link down event
+Message-ID: <aBjTpglI5_P2Q3Aa@ryzen>
+References: <20250417-pcie-reset-slot-v3-0-59a10811c962@linaro.org>
+ <20250417-pcie-reset-slot-v3-5-59a10811c962@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417-pcie-reset-slot-v3-5-59a10811c962@linaro.org>
 
-On Thu, 24 Apr 2025, Linus Torvalds wrote:
+Hello Mani,
 
-> > I will test declaring __popcount{s,d}i2() as aliases of
-> > __sw_hweight{32,64}() to see what effect that has but I figured that
-> > calling the __arch_hweight variants was more correct because some
-> > architectures (at least RISC-V and x86 when I looked) use alternatives
-> > in that path to use hardware instructions and avoid the software path
-> > altogether. While there would still be the overhead from the function
-> > call, I figured not using the software fallback would at least soften
-> > that blow.
-> 
-> Once you have the overhead of a function call - and all the register
-> games etc that involves, you're almost certainly better off with the
-> simple unconditional bitwise games.
+On Thu, Apr 17, 2025 at 10:46:31PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> @@ -1571,6 +1652,9 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>  		pci_unlock_rescan_remove();
+>  
+>  		qcom_pcie_icc_opp_update(pcie);
+> +	} else if (FIELD_GET(PARF_INT_ALL_LINK_DOWN, status)) {
+> +		dev_dbg(dev, "Received Link down event\n");
+> +		pci_host_handle_link_down(pp->bridge);
+>  	} else {
+>  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+>  			      status);
 
- Unless optimising for size, which we do support.
+From debugging an unrelated problem, I noticed that dw-rockchip can
+sometimes have both "link up" bit and "hot reset or link down" bit set
+at the same time, when reading the status register.
 
- Adding another function call to a non-leaf function is usually cheap on 
-RISC platforms as a stack frame must have been created already, so the 
-instructions required have taken their space anyway.  For a leaf function 
--- it depends, but in the cheapest case it's 5 instructions total: 2 pairs 
-to adjust SP both ways and to save/restore the link register respectively, 
-plus one for the actual call.  The result may still be smaller than an 
-open-coded variant.
+Perhaps the link went down very quickly and then was established again
+by the time the threaded IRQ handler gets to run.
 
- I have no opinion though on providing libgcc replacement functions to 
-satisfy libcalls for -Os builds.
+Your code seems to do an if + else if.
 
-  Maciej
+Without knowing how the events work for your platforms, I would guess
+that it should also be possible to have multiple events set.
+
+
+In you code, if both LINK UP and hot reset/link down are set,
+I would assume that you driver will not do the right thing.
+
+Perhaps you want to swap the order? So that link down is handled first,
+and then link up is handled. (If you convert to "if + if "instead of
+"if + else if" that is.)
+
+
+Kind regards,
+Niklas
 
