@@ -1,42 +1,41 @@
-Return-Path: <linux-kernel+bounces-631890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A7BAA8EEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9AD5AA8EF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18338188E2C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:07:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B421A188C2D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD28A1F4CAE;
-	Mon,  5 May 2025 09:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FB21F4161;
+	Mon,  5 May 2025 09:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wSEj2qHz"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sLt5y9gq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCBF1F416C;
-	Mon,  5 May 2025 09:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080F3433A8;
+	Mon,  5 May 2025 09:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746436030; cv=none; b=qJbgrEnfzcphgL1TwMhAgmzk2A6ZC05+59iWtqz7hhao4QRu2OFVZuJWTPp9GuH8tpf7cmsgjrM3XIk+UK0SUykG8wxuCGFTGfYuqgmNtrky8JY3YLuqhGe6SB9ugNj0/vvMmZHuXDPxekQNPnqm1N7Pqn2d1qzOZqslZc1kpqc=
+	t=1746436094; cv=none; b=qibSPcQ8LJZXCTv6GkSB58hsdbTO03D6EncC341XQG8UOQVfyzHr/OsWdnhEfpfk67XLlWnaFHYYZn4tRg0au+cj6ZOxu35yosq/RJoxOS2gHY6+FhZE0r7zscfwc9W2wKbvYgcii5wMtzHEbk2EQ8TiMguz3qjpplAQqKkzkMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746436030; c=relaxed/simple;
-	bh=0qwlBp/VGKPvJIkxcs61jQ3CIUDs6yOaB43o9dWb2ns=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b5c2VdM2zmcmMtabncrX2tNBZjAbAU0qvRlVdkYviOtmHUkuCWGwDYijOep2TYuggrTJpczFxFffzwYkupL+sUKws1m1d0bomOoH+otwoLDpPfDWQIr/MmVG/qDILF+5V5Wnx7jEZROPA1RQiBkXNO0K468JkVIydIAYr9Je/kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wSEj2qHz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC84C4CEE4;
-	Mon,  5 May 2025 09:07:09 +0000 (UTC)
+	s=arc-20240116; t=1746436094; c=relaxed/simple;
+	bh=hZ3Tey/nCg7Ar7Z2kkdEqd3sXQld12eYknMg4AR3kOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oiPivb9mFcRZbkwPcsey+KZkNZAv+mdJ9YNW48qZGSWtlasx64VhCK2EYg1YAsise8OOATLndxtiA/hw5MOgifoMGnLPaBPxzCRkCMJj3ClexlTMWT39CLlzNNyZXGw+WLLzv+x3yJx0h8GXdWd0lxaISCHCx/6fXYSkut90LlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sLt5y9gq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EBECC4CEE9;
+	Mon,  5 May 2025 09:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1746436030;
-	bh=0qwlBp/VGKPvJIkxcs61jQ3CIUDs6yOaB43o9dWb2ns=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=wSEj2qHziWS5Ttg/93h1lWnKFpy3EfisQARQXaM37MnB5CXFlSagUeG1VCTtJVpby
-	 PnzrmCUDEokTKYxN1yzWE4oCer/x1Y7d1zydEssydYOPYt9w7RgyKsLaO31THNBhJI
-	 dMogIHD16CdZ1WecjAAVtpcU6t0cowd/mWVcgOXk=
+	s=korg; t=1746436093;
+	bh=hZ3Tey/nCg7Ar7Z2kkdEqd3sXQld12eYknMg4AR3kOc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sLt5y9gqmigz/91nbb2xwKb3+G8QSctzntCECHdzCcAIGI+NiZHokW35YWOlVp1JT
+	 KPfxSGHVEpOs3k9NuENqU+9stn6ckhusDD7UxWFgxEV934lulsRXURm1V9i2T+LVQw
+	 tawRink4fUvVKRwRzuwtZEmg6eevmII3zbDNTUCs=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
 	akpm@linux-foundation.org,
@@ -45,12 +44,10 @@ To: linux-kernel@vger.kernel.org,
 Cc: lwn@lwn.net,
 	jslaby@suse.cz,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Linux 6.1.137
-Date: Mon,  5 May 2025 11:06:58 +0200
-Message-ID: <2025050528-astronaut-prune-af91@gregkh>
+Subject: Linux 6.12.27
+Date: Mon,  5 May 2025 11:08:08 +0200
+Message-ID: <2025050518-humorous-tricycle-f8d9@gregkh>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <2025050528-kissable-viral-627b@gregkh>
-References: <2025050528-kissable-viral-627b@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,30 +56,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-diff --git a/Makefile b/Makefile
-index 2a22ff32509d..d1994bf77e8f 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 6
- PATCHLEVEL = 1
--SUBLEVEL = 136
-+SUBLEVEL = 137
- EXTRAVERSION =
- NAME = Curry Ramen
- 
-diff --git a/arch/loongarch/mm/hugetlbpage.c b/arch/loongarch/mm/hugetlbpage.c
-index cf3b8785a921..70b4a51885c2 100644
---- a/arch/loongarch/mm/hugetlbpage.c
-+++ b/arch/loongarch/mm/hugetlbpage.c
-@@ -47,7 +47,7 @@ pte_t *huge_pte_offset(struct mm_struct *mm, unsigned long addr,
- 				pmd = pmd_offset(pud, addr);
- 		}
- 	}
--	return pmd_none(pmdp_get(pmd)) ? NULL : (pte_t *) pmd;
-+	return pmd_none(*pmd) ? NULL : (pte_t *) pmd;
- }
- 
- /*
+I'm announcing the release of the 6.12.27 kernel.
+
+This fixes a build problem in the 6.12.26 release.  If you do not have a
+build issue with 6.12.26, there is no need to update.
+
+The updated 6.12.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.12.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                              |    2 +-
+ kernel/bpf/preload/bpf_preload_kern.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+Greg Kroah-Hartman (1):
+      Linux 6.12.27
+
+Xi Ruoyao (1):
+      bpf: Fix BPF_INTERNAL namespace import
+
 
