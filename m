@@ -1,71 +1,59 @@
-Return-Path: <linux-kernel+bounces-633951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018DCAAAB0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:50:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26535AAAAEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964FB3B5724
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:45:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845894A4BDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D9E38AF4E;
-	Mon,  5 May 2025 23:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127AA2F37AE;
+	Mon,  5 May 2025 23:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adHDJEVT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUrgY/at"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BA637A145;
-	Mon,  5 May 2025 23:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1412E36E099;
+	Mon,  5 May 2025 23:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486105; cv=none; b=CiPcSUg55dJ6/UCEB/H57aJ87UVZvfFoW46cOiaRkeXu/grdyDwjBMTkH98o3vErUih780/sgJHiYYEt7TN0sljoyywUurfQCgqE0AXB6Zg0nHQIvhSHf31V+N8X5v860Dykg0uY8y61P42zENJvevLH/JNYTtKaJl+IN4FmOZM=
+	t=1746486117; cv=none; b=eN9FE3VYhTufET/RDNDzmB91Wv3Z510Kv7LAp2YXDDEpxEZHZFW/nmmUL1q1r8lJIb258F15EuT0uIuZQcBX04yHmMwZtGUh6QNma+XmPJA8MyUXIV3jMN2Qx2U1K4jp2EpN9tOQI0rYuviZ4eavq+76shaF75Dbv/ZSDC0gcd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486105; c=relaxed/simple;
-	bh=pD5kfYiJdtuvkaUD/3HrDrFCvRj1sBU4MPXQsYiRKlo=;
+	s=arc-20240116; t=1746486117; c=relaxed/simple;
+	bh=PAZV3TgFo6qGCFziwxdvUIXqDXd56PaqynSudrDxEgU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZB56zA0bc2T21yqIAkLjB3OUrOUTaUfG2chz18Eg5EyCJec5AIs4rkzFr/MlUPXaXR58wWoMTXWpY5rmx+hdnKWwtgHtWIJdXeALjGt1b9u8YaL8EZ09mKRsHsd5/pMoajPlhTs7HURmcX7uYxRbyckqTxX9jThnK+Ai6HAGKsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adHDJEVT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A7CC4CEE4;
-	Mon,  5 May 2025 23:01:42 +0000 (UTC)
+	 MIME-Version; b=p4BBcLfXiFBvYkl5XFuF7HJwXFcR66QmVRSU0bdXxyGwfQLmP46YFqihESFNfUuAc9FdEmxRzpYy639KSdkB0kTxp00jJDuv3YaNPXeewL8qIfqHK+hVYztXM1xfmnnLQZh1I/1rvRXE7fRqunE1UxWTObS16/FF6Xba1NxyFpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUrgY/at; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6E78C4CEF2;
+	Mon,  5 May 2025 23:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486104;
-	bh=pD5kfYiJdtuvkaUD/3HrDrFCvRj1sBU4MPXQsYiRKlo=;
+	s=k20201202; t=1746486116;
+	bh=PAZV3TgFo6qGCFziwxdvUIXqDXd56PaqynSudrDxEgU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=adHDJEVTcLv8Viw74x0KzbiMwiwjIdRBUkC2iSYqziyLP8BeGUgdE83xQS/y69OAm
-	 GlIWF+RDjrXDsgZJ99BhvdnmtunOBOkLGKU6DDSASkKxROe4iwtC6ypakqsedDMyg1
-	 m4eXmO6/XtPlYn7mQnA8BkxTrUamsAp5911XcuaRZOLcNl1Ydo+FkCCP9WHfYyDdWq
-	 5a2X/i80Axzd5j9Yxtefg2UBH8PIBrggKrgG+S8yDiUK2fFqt56CFFMDojCB9lXCIU
-	 wMUyufG/4+y/Robz/FeX6BtM2IZZpsWfJnOU2I0+dVWl0ZvMWiZ8rDnKY29/mXaCZ2
-	 F51pzgYENusKg==
+	b=VUrgY/at7dgk0SfpA+WFXOR8anyvfrpIPQrqniYEwHMlvUmm9QffwmPk1LqEr4NHJ
+	 VHI8dRY5SF0MWLxY8t646Zjt5v/Dq/BDNkVDCaspY7PIdNaW6JhzykC2RLK1B/JVsy
+	 rO/rEWx3Oe0FbAZu7Xa9tUf4Jsr7b36h089z2NrdAhnkZ1ZtnZnZnq/BxqCdAZOEfS
+	 NkoKalXOXK+41jt1AJL2tc/cfBMRtwhvYYSlv8gAYUndFJ0u4zuH6O+9TXmV47Uyk5
+	 /LbOeurpxPChb6WoKDINNPDS4e/elA++6dOjRnhAxiQD38IJL5MVtKddM15Yckci5z
+	 MIvlqRuKSs8Fw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Charlene Liu <Charlene.Liu@amd.com>,
-	Alvin Lee <alvin.lee2@amd.com>,
-	Zaeem Mohamed <zaeem.mohamed@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Mike Christie <michael.christie@oracle.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jun.lei@amd.com,
-	rostrows@amd.com,
-	Daniel.Sa@amd.com,
-	alex.hung@amd.com,
-	Syed.Hassan@amd.com,
-	martin.leung@amd.com,
-	Wayne.Lin@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 156/294] drm/amd/display: fix dcn4x init failed
-Date: Mon,  5 May 2025 18:54:16 -0400
-Message-Id: <20250505225634.2688578-156-sashal@kernel.org>
+	jasowang@redhat.com,
+	virtualization@lists.linux.dev,
+	kvm@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 160/294] vhost-scsi: Return queue full for page alloc failures during copy
+Date: Mon,  5 May 2025 18:54:20 -0400
+Message-Id: <20250505225634.2688578-160-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -80,94 +68,77 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Charlene Liu <Charlene.Liu@amd.com>
+From: Mike Christie <michael.christie@oracle.com>
 
-[ Upstream commit 23ef388a84c72b0614a6c10f866ffeac7e807719 ]
+[ Upstream commit 891b99eab0f89dbe08d216f4ab71acbeaf7a3102 ]
 
-[why]
-failed due to cmdtable not created.
-switch atombios cmdtable as default.
+This has us return queue full if we can't allocate a page during the
+copy operation so the initiator can retry.
 
-Reviewed-by: Alvin Lee <alvin.lee2@amd.com>
-Signed-off-by: Charlene Liu <Charlene.Liu@amd.com>
-Signed-off-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
-Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Mike Christie <michael.christie@oracle.com>
+Message-Id: <20241203191705.19431-5-michael.christie@oracle.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/bios/command_table2.c     | 9 ---------
- .../gpu/drm/amd/display/dc/bios/command_table_helper2.c  | 3 +--
- 2 files changed, 1 insertion(+), 11 deletions(-)
+ drivers/vhost/scsi.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/command_table2.c b/drivers/gpu/drm/amd/display/dc/bios/command_table2.c
-index ab0adabf9dd4c..7dc84b62eb0ac 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/command_table2.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/command_table2.c
-@@ -101,7 +101,6 @@ static void init_dig_encoder_control(struct bios_parser *bp)
- 		bp->cmd_tbl.dig_encoder_control = encoder_control_digx_v1_5;
- 		break;
- 	default:
--		dm_output_to_console("Don't have dig_encoder_control for v%d\n", version);
- 		bp->cmd_tbl.dig_encoder_control = encoder_control_fallback;
- 		break;
- 	}
-@@ -237,7 +236,6 @@ static void init_transmitter_control(struct bios_parser *bp)
- 		bp->cmd_tbl.transmitter_control = transmitter_control_v1_7;
- 		break;
- 	default:
--		dm_output_to_console("Don't have transmitter_control for v%d\n", crev);
- 		bp->cmd_tbl.transmitter_control = transmitter_control_fallback;
- 		break;
- 	}
-@@ -407,8 +405,6 @@ static void init_set_pixel_clock(struct bios_parser *bp)
- 		bp->cmd_tbl.set_pixel_clock = set_pixel_clock_v7;
- 		break;
- 	default:
--		dm_output_to_console("Don't have set_pixel_clock for v%d\n",
--			 BIOS_CMD_TABLE_PARA_REVISION(setpixelclock));
- 		bp->cmd_tbl.set_pixel_clock = set_pixel_clock_fallback;
- 		break;
- 	}
-@@ -553,7 +549,6 @@ static void init_set_crtc_timing(struct bios_parser *bp)
- 			set_crtc_using_dtd_timing_v3;
- 		break;
- 	default:
--		dm_output_to_console("Don't have set_crtc_timing for v%d\n", dtd_version);
- 		bp->cmd_tbl.set_crtc_timing = NULL;
- 		break;
- 	}
-@@ -670,8 +665,6 @@ static void init_enable_crtc(struct bios_parser *bp)
- 		bp->cmd_tbl.enable_crtc = enable_crtc_v1;
- 		break;
- 	default:
--		dm_output_to_console("Don't have enable_crtc for v%d\n",
--			 BIOS_CMD_TABLE_PARA_REVISION(enablecrtc));
- 		bp->cmd_tbl.enable_crtc = NULL;
- 		break;
- 	}
-@@ -863,8 +856,6 @@ static void init_set_dce_clock(struct bios_parser *bp)
- 		bp->cmd_tbl.set_dce_clock = set_dce_clock_v2_1;
- 		break;
- 	default:
--		dm_output_to_console("Don't have set_dce_clock for v%d\n",
--			 BIOS_CMD_TABLE_PARA_REVISION(setdceclock));
- 		bp->cmd_tbl.set_dce_clock = NULL;
- 		break;
- 	}
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/command_table_helper2.c b/drivers/gpu/drm/amd/display/dc/bios/command_table_helper2.c
-index 8538f13e01bfb..8ff139a6b85db 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/command_table_helper2.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/command_table_helper2.c
-@@ -84,8 +84,7 @@ bool dal_bios_parser_init_cmd_tbl_helper2(
- 		return true;
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index 8d8a22504d71f..9a62372bdac32 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -746,7 +746,7 @@ vhost_scsi_copy_iov_to_sgl(struct vhost_scsi_cmd *cmd, struct iov_iter *iter,
+ 	size_t len = iov_iter_count(iter);
+ 	unsigned int nbytes = 0;
+ 	struct page *page;
+-	int i;
++	int i, ret;
  
- 	default:
--		/* Unsupported DCE */
--		BREAK_TO_DEBUGGER();
-+		*h = dal_cmd_tbl_helper_dce112_get_table2();
- 		return false;
+ 	if (cmd->tvc_data_direction == DMA_FROM_DEVICE) {
+ 		cmd->saved_iter_addr = dup_iter(&cmd->saved_iter, iter,
+@@ -759,6 +759,7 @@ vhost_scsi_copy_iov_to_sgl(struct vhost_scsi_cmd *cmd, struct iov_iter *iter,
+ 		page = alloc_page(GFP_KERNEL);
+ 		if (!page) {
+ 			i--;
++			ret = -ENOMEM;
+ 			goto err;
+ 		}
+ 
+@@ -766,8 +767,10 @@ vhost_scsi_copy_iov_to_sgl(struct vhost_scsi_cmd *cmd, struct iov_iter *iter,
+ 		sg_set_page(&sg[i], page, nbytes, 0);
+ 
+ 		if (cmd->tvc_data_direction == DMA_TO_DEVICE &&
+-		    copy_page_from_iter(page, 0, nbytes, iter) != nbytes)
++		    copy_page_from_iter(page, 0, nbytes, iter) != nbytes) {
++			ret = -EFAULT;
+ 			goto err;
++		}
+ 
+ 		len -= nbytes;
  	}
+@@ -782,7 +785,7 @@ vhost_scsi_copy_iov_to_sgl(struct vhost_scsi_cmd *cmd, struct iov_iter *iter,
+ 	for (; i >= 0; i--)
+ 		__free_page(sg_page(&sg[i]));
+ 	kfree(cmd->saved_iter_addr);
+-	return -ENOMEM;
++	return ret;
  }
+ 
+ static int
+@@ -1221,9 +1224,9 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 			 " %d\n", cmd, exp_data_len, prot_bytes, data_direction);
+ 
+ 		if (data_direction != DMA_NONE) {
+-			if (unlikely(vhost_scsi_mapal(cmd, prot_bytes,
+-						      &prot_iter, exp_data_len,
+-						      &data_iter))) {
++			ret = vhost_scsi_mapal(cmd, prot_bytes, &prot_iter,
++					       exp_data_len, &data_iter);
++			if (unlikely(ret)) {
+ 				vq_err(vq, "Failed to map iov to sgl\n");
+ 				vhost_scsi_release_cmd_res(&cmd->tvc_se_cmd);
+ 				goto err;
 -- 
 2.39.5
 
