@@ -1,63 +1,59 @@
-Return-Path: <linux-kernel+bounces-634775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D8BAAB431
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:01:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB071AAB47E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C71187B30EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B8DB3B6516
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4AC4779A8;
-	Tue,  6 May 2025 00:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA20385C80;
+	Tue,  6 May 2025 00:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObaD34Je"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMBNl+W+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC272ECE34;
-	Mon,  5 May 2025 23:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB242EFB80;
+	Mon,  5 May 2025 23:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486648; cv=none; b=g9WSFEnG+qwDNMyupVbpqof23VztHTHq/hQx4sc03cDLvBo4NlIsnixNiGrwmRFaod9DBJPJF1yJSo1LVrYv9lUU37xl0FHD3WkXeoTO5OAa0JqKeRG+B9AlvD1NPkrCDlWUy6pRTpBwjTL0tUvklYqOsDR3Iwq8AiDkzlapRYU=
+	t=1746486656; cv=none; b=RbmJhxBMK9PkiJea1SG4L2l0UbIWcN0Xf++d1/52MJRZDV2xdVoA3s0DES0OLebTmTtuY0v7oIdsKWp7TtVOgvBYOKiWGHWorO3X08GFG7Ub/OfGdTQvvroQLoJS4MD+AWTS4CU+fT+if0WSdkv8Js13fvLQLPSBCNXsY6+5F08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486648; c=relaxed/simple;
-	bh=6R+CjWoSWNOkptTCEyM4s/GgpltNIGtG68+ZjbM+P8k=;
+	s=arc-20240116; t=1746486656; c=relaxed/simple;
+	bh=Pa7L28cijMi8iOzF4/ANZtkfnSuJCas+Gkv0hY5XP1Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YLLnBB1GdrTWoFRvsshT8EVULfPRE3Ia2xFNU2jB8tnNJxlXHuCDTBTqdC9XCCUb00ETpTugiSGNyFEHD3EKMsA8u8ZWAOufbp/swn4ZPcQpiP+P9UhWK+yvyngYTi9A4iPq7Ep7lXhi0BLsuYT9AJWmAd5N8DNo6IyrPmkP3lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObaD34Je; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B84C4CEEF;
-	Mon,  5 May 2025 23:10:46 +0000 (UTC)
+	 MIME-Version; b=PCZ88zA9jblEGGlOT128YG2UUnIM4kCJ9ehNrsCPD8qXXxiAd+8qN/SWWmgwp06zNtBetYOLI+BGqF7g8c1K0OMkZvjmZGh2kPULaoWf7qAeG6HEaH0SWAhpFEo/XQLKwlzUDoEcXoSvJouIPk21QzwUW/TlVJyInAlMV4Jh2iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMBNl+W+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 516F3C4CEED;
+	Mon,  5 May 2025 23:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486648;
-	bh=6R+CjWoSWNOkptTCEyM4s/GgpltNIGtG68+ZjbM+P8k=;
+	s=k20201202; t=1746486656;
+	bh=Pa7L28cijMi8iOzF4/ANZtkfnSuJCas+Gkv0hY5XP1Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ObaD34Jegc1z61HZ4xAVLF7nnpJlO4Zy8CF5cnc9ZvV/ObMXTf9hNyxt37Zyvqoi8
-	 khfSJ8Q8OCXUvuu0sEx26s0zrqA4gqqMSnD2t1xcGsTQB7EcuuoVIKl+Tq211EPwtz
-	 Z3llzr+O9jd9Ke5JUw37DvbgVHoVNQ3EplsooE/GazkVv6wqqLEspXQtLK28AIahPc
-	 47LbkE18MpoouMEtce9cmpT3ZawTgJjZsc2RJHLF6wxuqO8WF/Sd9TiIHidCKZW2Jp
-	 Q58XlZh5b9ifz6uHBr+2hDFCRYqLZDKMl2MWbXlI8akLVJ78W3/IFtjQJdeBZxJU43
-	 3EBlQOKWApXhw==
+	b=vMBNl+W+fTyfYuhJw/vjqaIvcgE99M1m363kh8tSrzF9r9yVTvM3OoIAAxRarvRyI
+	 JEwaZ+kZnrIyAxM6MBF2WKAo6vSJ+9JWm4fx2Gd/9ZghMFQ+perTLNNkVPH6dUKfk/
+	 7lBJcQEd6vlIaxtlFWp/digAobw7WW9HfPV+7jtyt/t2o6OLufOakw8HntRhoXYzWS
+	 iu9MN5mcWyHtZOiDqqBfs7OHuhJ0OZSxdgqvc32tmqrUl+t73HCRsKuwQbdWMftP7c
+	 ofepVELn1pzKhjNdO6U2SGDpmewh/7b91bYYBY/OfKh1ybomFlwUTrE6GCHrqBvFdN
+	 HtkPhOTbbLO1Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Paul Burton <paulburton@kernel.org>,
-	Chao-ying Fu <cfu@wavecomp.com>,
-	Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>,
-	Aleksandar Rikalo <arikalo@gmail.com>,
-	=?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <philmd@linaro.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+Cc: Peter Seiderer <ps.report@gmx.net>,
+	Simon Horman <horms@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	tglx@linutronix.de,
-	linux-mips@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 134/212] clocksource: mips-gic-timer: Enable counter when CPUs start
-Date: Mon,  5 May 2025 19:05:06 -0400
-Message-Id: <20250505230624.2692522-134-sashal@kernel.org>
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 140/212] net: pktgen: fix access outside of user given buffer in pktgen_thread_write()
+Date: Mon,  5 May 2025 19:05:12 -0400
+Message-Id: <20250505230624.2692522-140-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -67,69 +63,52 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Paul Burton <paulburton@kernel.org>
+From: Peter Seiderer <ps.report@gmx.net>
 
-[ Upstream commit 3128b0a2e0cf6e07aa78e5f8cf7dd9cd59dc8174 ]
+[ Upstream commit 425e64440ad0a2f03bdaf04be0ae53dededbaa77 ]
 
-In multi-cluster MIPS I6500 systems there is a GIC in each cluster,
-each with its own counter. When a cluster powers up the counter will
-be stopped, with the COUNTSTOP bit set in the GIC_CONFIG register.
+Honour the user given buffer size for the strn_len() calls (otherwise
+strn_len() will access memory outside of the user given buffer).
 
-In single cluster systems, it has been fine to clear COUNTSTOP once
-in gic_clocksource_of_init() to start the counter. In multi-cluster
-systems, this will only have started the counter in the boot cluster,
-and any CPUs in other clusters will find their counter stopped which
-will break the GIC clock_event_device.
-
-Resolve this by having CPUs clear the COUNTSTOP bit when they come
-online, using the existing gic_starting_cpu() CPU hotplug callback. This
-will allow CPUs in secondary clusters to ensure that the cluster's GIC
-counter is running as expected.
-
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
-Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
-Signed-off-by: Aleksandar Rikalo <arikalo@gmail.com>
-Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
-Tested-by: Serge Semin <fancer.lancer@gmail.com>
-Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Link: https://patch.msgid.link/20250219084527.20488-8-ps.report@gmx.net
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/mips-gic-timer.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/core/pktgen.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
-index b3ae38f367205..39c70b5ac44c9 100644
---- a/drivers/clocksource/mips-gic-timer.c
-+++ b/drivers/clocksource/mips-gic-timer.c
-@@ -114,6 +114,9 @@ static void gic_update_frequency(void *data)
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 5917820f92c3d..a2838c15aa9da 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -1877,8 +1877,8 @@ static ssize_t pktgen_thread_write(struct file *file,
+ 	i = len;
  
- static int gic_starting_cpu(unsigned int cpu)
- {
-+	/* Ensure the GIC counter is running */
-+	clear_gic_config(GIC_CONFIG_COUNTSTOP);
-+
- 	gic_clockevent_cpu_init(cpu, this_cpu_ptr(&gic_clockevent_device));
- 	return 0;
- }
-@@ -248,9 +251,6 @@ static int __init gic_clocksource_of_init(struct device_node *node)
- 			pr_warn("Unable to register clock notifier\n");
- 	}
- 
--	/* And finally start the counter */
--	clear_gic_config(GIC_CONFIG_COUNTSTOP);
+ 	/* Read variable name */
 -
- 	/*
- 	 * It's safe to use the MIPS GIC timer as a sched clock source only if
- 	 * its ticks are stable, which is true on either the platforms with
+-	len = strn_len(&user_buffer[i], sizeof(name) - 1);
++	max = min(sizeof(name) - 1, count - i);
++	len = strn_len(&user_buffer[i], max);
+ 	if (len < 0)
+ 		return len;
+ 
+@@ -1908,7 +1908,8 @@ static ssize_t pktgen_thread_write(struct file *file,
+ 	if (!strcmp(name, "add_device")) {
+ 		char f[32];
+ 		memset(f, 0, 32);
+-		len = strn_len(&user_buffer[i], sizeof(f) - 1);
++		max = min(sizeof(f) - 1, count - i);
++		len = strn_len(&user_buffer[i], max);
+ 		if (len < 0) {
+ 			ret = len;
+ 			goto out;
 -- 
 2.39.5
 
