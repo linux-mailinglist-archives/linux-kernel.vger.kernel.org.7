@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-634819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A0AAAB4B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:12:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF417AAB4DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6E7616FAD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008F03AE781
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6171B4819F9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28C6481A00;
 	Tue,  6 May 2025 00:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rz5lCF3+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mG7AAcCn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7419C283FC2;
-	Mon,  5 May 2025 23:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F172F22E9;
+	Mon,  5 May 2025 23:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486806; cv=none; b=a4O1C6GZvXAailG2RgmjdCh3FXej23e1GuI65GbtkyHmUZwIN1SFFjOeiGJxL4F11sAPqhnBhoZnBERnzFDUfGvww2N3x1WypeVQIvNZxWX9XrgH+shRH//SvqirysEx+N2FJe2JoppGoqy6QSkuoPv5/BPGV0792hJTm5iltzI=
+	t=1746486810; cv=none; b=AAeL1n32JINQwzzm7ypX1MSpREK5W++RlyjpM4ylUkvV9K5y4R3kEmx1PHLYd11aDAWy78L7HyOVuGsnn/8PBWFQvOqKXG11KD2TImh8GFGiP8NBXAMVErJWl/NKnpsvZlnXEG7Lfk4xF8IctuG8onQSqRAf/13W7csBn5Wae9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486806; c=relaxed/simple;
-	bh=50o+LJ1eACnewrVR5dFUb4W6VBBY1lGHoNCIrnReK/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uYwob08nbV+LmBnHni5YBcrOYNq4ijK2TpDvFaYj5MAHOMsiqa/Iw3WAswOyPoX+r1kUQk99sL5OeyES7vlRknpPEFHQwGH+9XWNtKg5B8DFD/vq/riWSgIUeG/ZvgTwPRRsbYrmpo3Qrhkt2kIxxjc7VtAUAeUQtKK8c4Tf1TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rz5lCF3+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94F1FC4CEE4;
-	Mon,  5 May 2025 23:13:24 +0000 (UTC)
+	s=arc-20240116; t=1746486810; c=relaxed/simple;
+	bh=zEWgyvgE0K3/6juLqJn8ugmpW06gemNbsD2fMXiHnzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DSeOCeyuOc6IExcXm+uNkGCXTGzxGyiqV0+u5qQF7VoWYTzjpUAq9cDFGN6D2E7Uxwr0ZBLS2MUSINDEM29onHGNZbXsd4WNejBa8UYdUvDv8WHZb4F5F45QxRNr0zKEAEpxAJN7rh2kNFHxoTDAxXazrSpnHWlwNP7LfzYBnBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mG7AAcCn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8F0C4CEED;
+	Mon,  5 May 2025 23:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486805;
-	bh=50o+LJ1eACnewrVR5dFUb4W6VBBY1lGHoNCIrnReK/Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rz5lCF3+JoviKZKE6R5GghkIhPWf08DKqDbaby5o3IZnrJKuwhsc5pc8Z8Oe1xBCh
-	 i3DlVhhELnt/IsHbmDm3PwOwn7kMDzlAyVGF8BxWooirhTzcUWwkGy9H5+K9BUH2zA
-	 pmpWMZvoRso5mchUyraGYexgZZzrvKpbG57wm8gSNB7SCRhRQYv1LBnLoWDZUJ6Xnk
-	 dEpTVyWXfz0XzE2NqbQtYG2LnV7hgjJjXcUjXTILVr7d3XtyzsrAOhL+UUUm7XHbCr
-	 tb6UuMifY6ovOKnb95Je6dmX43g48c+UuCUWXF6IsloaMGPKLOHirDKTCGVz6fEIBc
-	 AgnlYOagsrjXg==
+	s=k20201202; t=1746486809;
+	bh=zEWgyvgE0K3/6juLqJn8ugmpW06gemNbsD2fMXiHnzM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mG7AAcCnTKV10J51E4GRHSz7/XXXyX+ObT9E3gKS6vMf8skw2v4M7+MAcP3mO1yKV
+	 Y90cMNJz6Wmb4SODMTLCYK5ZT+XpX19DCxb6vev/m4ZQA4Tn7OGGOYoBlIMnyvTCRy
+	 4LZ8pJpuUHlfCbtqZHc5aO88sunZgfjTNOKVE+RoJFDSWCwnS+cI+Hn5sQh1sSI3Mp
+	 EOOcq5ubXCDNvj6a2TR135XlITLntuWSjB+WKL3UTvflLUrt38bUh85aOSY7lgxwBk
+	 n42KzIu1RGc0vBfj43UAmXNrl91oO2d9mxnmFns5ZaGmyBl5NoG02yx42SH3FizgDp
+	 X5vtMO/15SehA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 001/153] kconfig: merge_config: use an empty file as initfile
-Date: Mon,  5 May 2025 19:10:48 -0400
-Message-Id: <20250505231320.2695319-1-sashal@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 004/153] mailbox: use error ret code of of_parse_phandle_with_args()
+Date: Mon,  5 May 2025 19:10:51 -0400
+Message-Id: <20250505231320.2695319-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
+References: <20250505231320.2695319-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,46 +63,43 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Daniel Gomez <da.gomez@samsung.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-[ Upstream commit a26fe287eed112b4e21e854f173c8918a6a8596d ]
+[ Upstream commit 24fdd5074b205cfb0ef4cd0751a2d03031455929 ]
 
-The scripts/kconfig/merge_config.sh script requires an existing
-$INITFILE (or the $1 argument) as a base file for merging Kconfig
-fragments. However, an empty $INITFILE can serve as an initial starting
-point, later referenced by the KCONFIG_ALLCONFIG Makefile variable
-if -m is not used. This variable can point to any configuration file
-containing preset config symbols (the merged output) as stated in
-Documentation/kbuild/kconfig.rst. When -m is used $INITFILE will
-contain just the merge output requiring the user to run make (i.e.
-KCONFIG_ALLCONFIG=<$INITFILE> make <allnoconfig/alldefconfig> or make
-olddefconfig).
+In case of error, of_parse_phandle_with_args() returns -EINVAL when the
+passed index is negative, or -ENOENT when the index is for an empty
+phandle. The mailbox core overwrote the error return code with a less
+precise -ENODEV. Use the error returned code from
+of_parse_phandle_with_args().
 
-Instead of failing when `$INITFILE` is missing, create an empty file and
-use it as the starting point for merges.
-
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/merge_config.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mailbox/mailbox.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
-index 72da3b8d6f307..151f9938abaa7 100755
---- a/scripts/kconfig/merge_config.sh
-+++ b/scripts/kconfig/merge_config.sh
-@@ -105,8 +105,8 @@ INITFILE=$1
- shift;
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index 4229b9b5da98f..6f54501dc7762 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -350,11 +350,12 @@ struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
  
- if [ ! -r "$INITFILE" ]; then
--	echo "The base file '$INITFILE' does not exist.  Exit." >&2
--	exit 1
-+	echo "The base file '$INITFILE' does not exist. Creating one..." >&2
-+	touch "$INITFILE"
- fi
+ 	mutex_lock(&con_mutex);
  
- MERGE_LIST=$*
+-	if (of_parse_phandle_with_args(dev->of_node, "mboxes",
+-				       "#mbox-cells", index, &spec)) {
++	ret = of_parse_phandle_with_args(dev->of_node, "mboxes", "#mbox-cells",
++					 index, &spec);
++	if (ret) {
+ 		dev_dbg(dev, "%s: can't parse \"mboxes\" property\n", __func__);
+ 		mutex_unlock(&con_mutex);
+-		return ERR_PTR(-ENODEV);
++		return ERR_PTR(ret);
+ 	}
+ 
+ 	chan = ERR_PTR(-EPROBE_DEFER);
 -- 
 2.39.5
 
