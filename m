@@ -1,56 +1,54 @@
-Return-Path: <linux-kernel+bounces-634023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07337AAAB72
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:56:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224AFAAAB6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8D916BE76
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:55:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F18F7B0585
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DBB3B17B5;
-	Mon,  5 May 2025 23:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D8737AAA1;
+	Mon,  5 May 2025 23:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jbsv0nd6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdRQ8ShO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4452E62B0;
-	Mon,  5 May 2025 23:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD00F35C93E;
+	Mon,  5 May 2025 23:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486361; cv=none; b=Ea6WsxGKRh8/rFSHoP9CwVKOKCMC+99BtmpRvtSyyXzPJtmOqagTu7bcXEaOAVHT4MZom/nLKOMhCTZfCiRJ4jmJPLu9kfWOamgM8hPbrjIspxBxwnt42bSOwhJKT3Qs1hXb0IUkqjZC+R2+4CdSIOBNWKK9I9b9TuRWpRqPByw=
+	t=1746486365; cv=none; b=nLucrqwyrWEcBrzx3+HcL62mr8Dtj2AuG9NxIhrXi5mJ94sV89kri2QhDCr5wvp9WAvPnOUeQoqot4PNuRg+wXEMfJ7IWuiMcL0W+EmZS5ys1MciRaAuDXMTIiX9qxKQtVPI/bmYCVpwEeD6rNGaFivWoxBGA/nX/qN1ZDmeHaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486361; c=relaxed/simple;
-	bh=/9BGlDgL7w9Q+zIZrKDXUM0AN8AxUkl6CWSvTa3RhDs=;
+	s=arc-20240116; t=1746486365; c=relaxed/simple;
+	bh=O0/F7IB7rVhvkUwQ7ooED6FDRzDGO0E0J1ZKYYqH+CE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UiV3UQoFACIsmwefR1m+BN20r15ZNT7+omySFxzY9yuFWY0/bmYNuufRnDFEtXknD20JcSm3hPqG8jOkMDontSaAOuCCJyrTGgNedplGpzguwhNcyeCk7shg2B8o6BE7iOYxxHywKUJ0ZYjj0Z+vAkx1LHH/vgC8x48l37VvCso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jbsv0nd6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57D3C4CEED;
-	Mon,  5 May 2025 23:06:00 +0000 (UTC)
+	 MIME-Version; b=QAnmCGc6qor9wiert+BhMnSnbKwMhwrDK+yGqbLCGCPi64M/1NaD+E8ituYZ6hf1Hzk7AJb7tKBmOCF/XnZpZyo5oDHeSb9BEUUQn6tF8EUp8L10WZffAyo2e64hntFa7G+LFEVMu7d/UpGxa2t1CKh45/w1PUqKuybzpGLb+j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdRQ8ShO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2121CC4CEF1;
+	Mon,  5 May 2025 23:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486361;
-	bh=/9BGlDgL7w9Q+zIZrKDXUM0AN8AxUkl6CWSvTa3RhDs=;
+	s=k20201202; t=1746486363;
+	bh=O0/F7IB7rVhvkUwQ7ooED6FDRzDGO0E0J1ZKYYqH+CE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Jbsv0nd6VnAtk/r6RJ1APjmGYxGGY/u9GcHY8LjXm9eWdiRUHSo/nNo2KLRt8zOTp
-	 XhHkws6zwVkIs218owj1DHKjyN7J1CJSgsn9/llC2+PHAL6dVwZu2FywnapW3o6mI1
-	 cNf0RiZ7+jbmJU3GurMdEVZjj2Y1bboq7UB6WEnDEV2/uF620XlTAXDcN4RE0z7/ET
-	 +C+Cy95beiwX/J0Nz7HOZXSzwLpTwvKM76cWVsM6VNueeLntHR3XDTJAF93sMJdBR8
-	 W9QyBFWiQ6C7JZ8YwSoisPeGthT68Fq4XyD2NpttWCExXlr+F5pwJtkXl3SCLR/zZ/
-	 +Z2ERovry9KOQ==
+	b=hdRQ8ShOzAOpbiNcgyG2h1eoM9zC5eO5R8FzNFRIIkLuHy412s1qSzow/b72JWvrO
+	 R+UaOktBhw8AnfxRUDobsrI7me6Cvf4CboTIo+p+AmKL0IpDVt5veK8Yj+9O3E9PXe
+	 Ck0984awtOxTYQUh5DRRdOimp0VvJV+Mrc93XRgwIpeSVYUYAl5csUaEl2SSjeroWm
+	 P2C1s/jzCOu2jA4SFEAdeygyAhmZteb8uc62kKghuWXdt5X3b3aF8XqBOH0jgLW30L
+	 siqvIHETgJvsGIVLxU5ER1lscBTCRFnmHqzUa0RXBtFMV8bwuBaSJsHXeNhr+SHWEF
+	 znizUGJ/8cItQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Soeren Moch <smoch@web.de>,
-	Ping-Ke Shih <pkshih@realtek.com>,
+Cc: Ping-Ke Shih <pkshih@realtek.com>,
 	Sasha Levin <sashal@kernel.org>,
-	Jes.Sorensen@gmail.com,
 	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 281/294] wifi: rtl8xxxu: retry firmware download on error
-Date: Mon,  5 May 2025 18:56:21 -0400
-Message-Id: <20250505225634.2688578-281-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 283/294] wifi: rtw89: add wiphy_lock() to work that isn't held wiphy_lock() yet
+Date: Mon,  5 May 2025 18:56:23 -0400
+Message-Id: <20250505225634.2688578-283-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
 References: <20250505225634.2688578-1-sashal@kernel.org>
@@ -65,65 +63,69 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Soeren Moch <smoch@web.de>
+From: Ping-Ke Shih <pkshih@realtek.com>
 
-[ Upstream commit 3d3e28feca7ac8c6cf2a390dbbe1f97e3feb7f36 ]
+[ Upstream commit ebfc9199df05d37b67f4d1b7ee997193f3d2e7c8 ]
 
-Occasionally there is an EPROTO error during firmware download.
-This error is converted to EAGAIN in the download function.
-But nobody tries again and so device probe fails.
+To ensure where are protected by driver mutex can also be protected by
+wiphy_lock(), so afterward we can remove driver mutex safely.
 
-Implement download retry to fix this.
-
-This error was observed (and fix tested) on a tbs2910 board [1]
-with an embedded RTL8188EU (0bda:8179) device behind a USB hub.
-
-[1] arch/arm/boot/dts/nxp/imx/imx6q-tbs2910.dts
-
-Signed-off-by: Soeren Moch <smoch@web.de>
-Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Link: https://patch.msgid.link/20250127194828.599379-1-smoch@web.de
+Link: https://patch.msgid.link/20250122060310.31976-2-pkshih@realtek.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../wireless/realtek/rtl8xxxu/rtl8xxxu_core.c   | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/net/wireless/realtek/rtw89/regd.c | 2 ++
+ drivers/net/wireless/realtek/rtw89/ser.c  | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-index 6e47dde938909..05e77d2bda373 100644
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-@@ -900,9 +900,10 @@ rtl8xxxu_writeN(struct rtl8xxxu_priv *priv, u16 addr, u8 *buf, u16 len)
- 	return len;
+diff --git a/drivers/net/wireless/realtek/rtw89/regd.c b/drivers/net/wireless/realtek/rtw89/regd.c
+index 9e2328db18656..91f0895d9f540 100644
+--- a/drivers/net/wireless/realtek/rtw89/regd.c
++++ b/drivers/net/wireless/realtek/rtw89/regd.c
+@@ -451,6 +451,7 @@ void rtw89_regd_notifier(struct wiphy *wiphy, struct regulatory_request *request
+ 	struct ieee80211_hw *hw = wiphy_to_ieee80211_hw(wiphy);
+ 	struct rtw89_dev *rtwdev = hw->priv;
  
- write_error:
--	dev_info(&udev->dev,
--		 "%s: Failed to write block at addr: %04x size: %04x\n",
--		 __func__, addr, blocksize);
-+	if (rtl8xxxu_debug & RTL8XXXU_DEBUG_REG_WRITE)
-+		dev_info(&udev->dev,
-+			 "%s: Failed to write block at addr: %04x size: %04x\n",
-+			 __func__, addr, blocksize);
- 	return -EAGAIN;
++	wiphy_lock(wiphy);
+ 	mutex_lock(&rtwdev->mutex);
+ 	rtw89_leave_ps_mode(rtwdev);
+ 
+@@ -468,6 +469,7 @@ void rtw89_regd_notifier(struct wiphy *wiphy, struct regulatory_request *request
+ 
+ exit:
+ 	mutex_unlock(&rtwdev->mutex);
++	wiphy_unlock(wiphy);
  }
  
-@@ -4073,8 +4074,14 @@ static int rtl8xxxu_init_device(struct ieee80211_hw *hw)
- 	 */
- 	rtl8xxxu_write16(priv, REG_TRXFF_BNDY + 2, fops->trxff_boundary);
+ static void __rtw89_reg_6ghz_power_recalc(struct rtw89_dev *rtwdev)
+diff --git a/drivers/net/wireless/realtek/rtw89/ser.c b/drivers/net/wireless/realtek/rtw89/ser.c
+index 01b17b8f4ff9d..45165cf3e824e 100644
+--- a/drivers/net/wireless/realtek/rtw89/ser.c
++++ b/drivers/net/wireless/realtek/rtw89/ser.c
+@@ -156,9 +156,11 @@ static void ser_state_run(struct rtw89_ser *ser, u8 evt)
+ 	rtw89_debug(rtwdev, RTW89_DBG_SER, "ser: %s receive %s\n",
+ 		    ser_st_name(ser), ser_ev_name(ser, evt));
  
--	ret = rtl8xxxu_download_firmware(priv);
--	dev_dbg(dev, "%s: download_firmware %i\n", __func__, ret);
-+	for (int retry = 5; retry >= 0 ; retry--) {
-+		ret = rtl8xxxu_download_firmware(priv);
-+		dev_dbg(dev, "%s: download_firmware %i\n", __func__, ret);
-+		if (ret != -EAGAIN)
-+			break;
-+		if (retry)
-+			dev_dbg(dev, "%s: retry firmware download\n", __func__);
-+	}
- 	if (ret)
- 		goto exit;
- 	ret = rtl8xxxu_start_firmware(priv);
++	wiphy_lock(rtwdev->hw->wiphy);
+ 	mutex_lock(&rtwdev->mutex);
+ 	rtw89_leave_lps(rtwdev);
+ 	mutex_unlock(&rtwdev->mutex);
++	wiphy_unlock(rtwdev->hw->wiphy);
+ 
+ 	ser->st_tbl[ser->state].st_func(ser, evt);
+ }
+@@ -676,9 +678,11 @@ static void ser_l2_reset_st_hdl(struct rtw89_ser *ser, u8 evt)
+ 
+ 	switch (evt) {
+ 	case SER_EV_STATE_IN:
++		wiphy_lock(rtwdev->hw->wiphy);
+ 		mutex_lock(&rtwdev->mutex);
+ 		ser_l2_reset_st_pre_hdl(ser);
+ 		mutex_unlock(&rtwdev->mutex);
++		wiphy_unlock(rtwdev->hw->wiphy);
+ 
+ 		ieee80211_restart_hw(rtwdev->hw);
+ 		ser_set_alarm(ser, SER_RECFG_TIMEOUT, SER_EV_L2_RECFG_TIMEOUT);
 -- 
 2.39.5
 
