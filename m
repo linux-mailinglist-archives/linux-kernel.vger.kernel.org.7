@@ -1,270 +1,160 @@
-Return-Path: <linux-kernel+bounces-632812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70746AA9CAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:35:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED52AA9CB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10FB17E6B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:35:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F231E3BCA0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 19:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B951DED5E;
-	Mon,  5 May 2025 19:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1F824887C;
+	Mon,  5 May 2025 19:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYEqpg3c"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="bqBxAAIx"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EF823CB;
-	Mon,  5 May 2025 19:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D3D19CC22;
+	Mon,  5 May 2025 19:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746473697; cv=none; b=XZsIxJGd29HT2gkQjRCe7jBYQh6W6bjaMIG2SK0MP5YcEMu8QFShKFXy9K07e1Hf7V9e2/Bsf+7jqcKSYfLLXXUKd5Q+AWCsjYOFVwVV7+znW4rg3U5YdfUgJCBiMVPk/ykQt7TFUMiHSJiSxYIuTbSBDyatjpId0GO9mZqI1II=
+	t=1746473929; cv=none; b=mcFeDPGIbiHxa2D8ZvN+GRfi2j6818Lu8TMPENQBVjYLldIabYbu0okB0rKkPh7JpCiEAA7gGBLUA59SRbchGVqhy1zuWrCqHTQFkYo8hlDi/gOli6t82YvVhxcu0JoSga5qVpo1uS3QvxmlngdplnoXhkiKJQerTd/A3EWRilg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746473697; c=relaxed/simple;
-	bh=R4UOYAFLSdII7+XphTMNWPVBpYzJxCWHQxa8/SgBsFI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwI6HjYu6PSZEbxMY9Oe2t5v6jAsphvlc5DzTKSk57xTKrgQZGUVEdU1eLmMEz8psBVfFVLl1zO767yhP792M+i+ugOIfTAju6W4uNjMq24XajhDVcSOAffzOJlDnpBtD2G1Bw//CcUeEc4hUvS7vUmSENwjWbK2yzLWSyLAztE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYEqpg3c; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c9376c4dbaso564836585a.0;
-        Mon, 05 May 2025 12:34:55 -0700 (PDT)
+	s=arc-20240116; t=1746473929; c=relaxed/simple;
+	bh=h5+ocRkThM3cFZuVHgdmPoWEi3V+/8Fni2J7OAHsn+A=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e5/1f5T80uMjnPShdw0p92qB/vsmNMLIzNtV1Wzj0zaPHBKVprVLhvDp8i3WokHFbnyCxMQoG/Z3rREtGFqYfvrx4oUtw4fBga6C6hc9MJXsJhP1MhYxLpbxG8ibszIcmWy0MLsDjUTIoLu72KmgCx4oE662BTaieuUq42yvLPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=bqBxAAIx; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746473694; x=1747078494; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GkBn/ab9f6AA7W5UCEebQAelvR/PRTQoq/54e+igHhU=;
-        b=BYEqpg3ci0tL7HuDEHTZa8G54OnqKeV8kkIIFJ7dmra8wfBnoMK9E8jejecxtRyhex
-         SFa6wxWG6qA0BYECaij7N/AoLYUlZTcsBBLnPP25s7YtIZhP8ZZHhDW7J6knP+6LM25N
-         0waZ5XUX/JuoNg5Y0bo3sM037nptGWDetfSiR7q3vB35d+h0Zmb46UXZ9p0nUJOmm4t/
-         BOKNb0l0ZSo+4UtJs6cAYgA9rjUKZAPr5J9PWlu3TDtEOVxLAaL1VYbQE1L+0nDA80/K
-         xcZAGZz/arRFT7xrTJOpjmBWyUjbPJBkuNP5ydOkugCdCzAw7ityVwRoSHaHRs3AZr7K
-         6KIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746473694; x=1747078494;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GkBn/ab9f6AA7W5UCEebQAelvR/PRTQoq/54e+igHhU=;
-        b=OLX9qEFzhjd99urTyUEXJRvB8uJZ9/Ir29FglUbaqCEfrsWZre6Hz07CVq00QRUIDG
-         9eH9dps5nx2/nTv5KQO4/U1ppfgeXv7pNjXBK5MYaCZgbaLBU4KXDOXVYj5RysEKcNfF
-         xavtiM8LcH/ZWXGltDhS+njIb4ztMy1gOBPjoQEadVMaI4bokK+eG3LzHWWYm1EeGAz4
-         1KT78vr3ysfZER8NayUcUo9G3Q9rKWM6vZDzMOxpavhkHz9E2VkYTaB5BLjRio10PxnW
-         sx5/wuRU/EnAftOG0RIr+hw0wksKPThEEZZcGhMwtThHv4I/wBx5PLcSSAUaSEE4bvce
-         eUlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNZPCpWfBpisdNqlnuIuqXKj4PuTi/o6h/O+hZlgre/ApzwI+mkigQW4huoffM8VJNRQVVukDFUHEdVK4=@vger.kernel.org, AJvYcCVVCAtoHriIfSOTW6iA1tbj1a+ZEYpD0OlV7ZgEs4eF7qOON8gyMCmAZJBkt9Txgg041dZJHq1OY80B7YqLrXUQ@vger.kernel.org, AJvYcCXjYxZKljZRcHO/xdg7kr3Zj1bURdM81qNrfySUI6V6pc0WsSTUdJmQT/i2GKt7vp7v9haN/cP48zisP0EDl2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbhcDF841CTa1l4TNcc5JZUNjTy1Or/buV1D8L3SrWgdm4qNiu
-	JNho7BKkPr7+ri3evfBCpUc3pjrYp0RiU844BfDAlT8B8Q5P+F5A
-X-Gm-Gg: ASbGncvOOJapLx7PGAZ7VgLSRy8ykIi5TKPPI1MChqxw8bj57FK8uN6HoJEyZhk4cfC
-	CRExEHvTCrSiSnPWqycJsu043Yc8LmYTR5RLszqG3SMSNrjWEVi+M/D8ZhpAlK5SFnoISlt7Jt9
-	3RfzQnvoEdS0rkbt/oNg1XrW+D+kKPfci0L8u6p0HglZgNUN93mlWOw8cB44uxqvl9q3UBYJqv3
-	D7Yqt33Kw9C0ocvEFegco3SerXRCbnJy8UMkaXLgkOE+OkqlNm2A54AA5g0OATG2rFHBnLsDfyW
-	d/z3FbUwFS0JvqKiCOR2KOdu92R7jfkWZpxn1u841/yj5WYbdxwOtRIONxJNB8zrM1OVZuHEJ4b
-	IdRfKEncb0VqOiNiSra30eCbeFMxm0IQ=
-X-Google-Smtp-Source: AGHT+IFY12NsRRcgW0xx+lO9IySSe0Y4a8h3F+41ev4UQvcjKPFIvM2ToqA8JyqXddvLXXcDLCEXng==
-X-Received: by 2002:a05:620a:6105:b0:7c7:c6e9:963c with SMTP id af79cd13be357-7caf04c142fmr87551785a.4.1746473694490;
-        Mon, 05 May 2025 12:34:54 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cad23b5278sm606919985a.1.2025.05.05.12.34.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 12:34:54 -0700 (PDT)
-Message-ID: <681912de.050a0220.383f17.18c4@mx.google.com>
-X-Google-Original-Message-ID: <aBkS25IAZXiyXeXZ@winterfell.>
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 8B8F3120007E;
-	Mon,  5 May 2025 15:34:53 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 05 May 2025 15:34:53 -0400
-X-ME-Sender: <xms:3RIZaENOKcV_V4pchMDIGpgqOT8XeYyK7jqMEa--H2Sfepw08f8ijg>
-    <xme:3RIZaK-goJa0QuWpIgmKvY5jgUBAc87hW5au3mVlx9jIUH-AYw9c88C3LDlN6Ame6
-    ChzIm-TziuNeJNc_Q>
-X-ME-Received: <xmr:3RIZaLT8dU3hIUe4mBMvj7PC8hJ4ISIQfR0g0qsKehaR0zeBobQnmGEWsA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeduleeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
-    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudekpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgughhofiesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    sghrvghnuggrnhdrhhhighhgihhnsheslhhinhhugidruggvvhdprhgtphhtthhopegrlh
-    gvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhmohgrrhesghho
-    ohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhhsvghlfhhtvghsthesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhhnihhtqdguvghvsehgohhoghhl
-    vghgrhhouhhpshdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvth
-    dprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomh
-X-ME-Proxy: <xmx:3RIZaMu8GU9Ixwt_lnrfB4AOZGU4ehJiJajRp5xMVPmQiJJXIwMR5g>
-    <xmx:3RIZaMeI-x4I7P7SZLXK0Dwz3XQnfvQVaJ_THw1O1SNzSzJBci_P5A>
-    <xmx:3RIZaA2jVlhadXx5BUw9i9mSQsvMTHBgGYZ8_1YVGzakXFGH0f3tqA>
-    <xmx:3RIZaA-s-nsYuLKNr6F4LFSWwXc7q5nZq_aELczlW1uCS0L1ELdSLw>
-    <xmx:3RIZaD-J1ajwYTRjr-wt8yw2pWXopfcpzZwsO8yCWY4bEDWi68U8qru9>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 5 May 2025 15:34:53 -0400 (EDT)
-Date: Mon, 5 May 2025 12:34:51 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: David Gow <davidgow@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH 2/7] rust: kunit: support checked `-> Result`s in KUnit
- `#[test]`s
-References: <20250502215133.1923676-1-ojeda@kernel.org>
- <20250502215133.1923676-3-ojeda@kernel.org>
- <CABVgOSm8T+_kXY78sioUHEcG7rYApfWK2Gfxkrvw94Dz57G0oQ@mail.gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1746473928; x=1778009928;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=EmyOzH4Yr6VUhqnbV3Hao5p1e1RvsY0yslF5wkCHRio=;
+  b=bqBxAAIx7mDq8+szBJAZ/RYnhnYDMHlGmlsnLmkUXHAojKly1bGkDHl8
+   NGI4y4ExCfI9KmMfKV+5wLtGCpXUiMxaaq14HaVk8wC4mmGfzJGFTM60v
+   vKkkFmzK8Qp5NkVvyYPMB33BhCZ03Rtt1u8ZZSEjkJLPhymR9rIundQot
+   8=;
+X-IronPort-AV: E=Sophos;i="6.15,264,1739836800"; 
+   d="scan'208";a="719938196"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 19:38:43 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:3458]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.10.32:2525] with esmtp (Farcaster)
+ id 8e51118b-b34a-40f3-8714-330443b79728; Mon, 5 May 2025 19:38:41 +0000 (UTC)
+X-Farcaster-Flow-ID: 8e51118b-b34a-40f3-8714-330443b79728
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 5 May 2025 19:38:40 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.18) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 5 May 2025 19:38:36 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <jannh@google.com>
+CC: <alexander@mihalicyn.com>, <bluca@debian.org>, <brauner@kernel.org>,
+	<daan.j.demeyer@gmail.com>, <davem@davemloft.net>, <david@readahead.eu>,
+	<edumazet@google.com>, <horms@kernel.org>, <jack@suse.cz>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <lennart@poettering.net>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<me@yhndnzj.com>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
+Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow coredumping tasks to connect to coredump socket
+Date: Mon, 5 May 2025 12:35:50 -0700
+Message-ID: <20250505193828.21759-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <CAG48ez35FN6ka4QtrNQ6aKEycQBOpJKy=VyhQDzKTwey+4KOMg@mail.gmail.com>
+References: <CAG48ez35FN6ka4QtrNQ6aKEycQBOpJKy=VyhQDzKTwey+4KOMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABVgOSm8T+_kXY78sioUHEcG7rYApfWK2Gfxkrvw94Dz57G0oQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D040UWA001.ant.amazon.com (10.13.139.22) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, May 05, 2025 at 02:02:09PM +0800, David Gow wrote:
-> On Sat, 3 May 2025 at 05:51, Miguel Ojeda <ojeda@kernel.org> wrote:
+From: Jann Horn <jannh@google.com>
+Date: Mon, 5 May 2025 21:10:28 +0200
+> On Mon, May 5, 2025 at 8:41 PM Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+> > From: Christian Brauner <brauner@kernel.org>
+> > Date: Mon, 5 May 2025 16:06:40 +0200
+> > > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
+> > > > On Mon, May 5, 2025 at 1:14 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > > > Make sure that only tasks that actually coredumped may connect to the
+> > > > > coredump socket. This restriction may be loosened later in case
+> > > > > userspace processes would like to use it to generate their own
+> > > > > coredumps. Though it'd be wiser if userspace just exposed a separate
+> > > > > socket for that.
+> > > >
+> > > > This implementation kinda feels a bit fragile to me... I wonder if we
+> > > > could instead have a flag inside the af_unix client socket that says
+> > > > "this is a special client socket for coredumping".
+> > >
+> > > Should be easily doable with a sock_flag().
 > >
-> > Currently, return values of KUnit `#[test]` functions are ignored.
-> >
-> > Thus introduce support for `-> Result` functions by checking their
-> > returned values.
-> >
-> > At the same time, require that test functions return `()` or `Result<T,
-> > E>`, which should avoid mistakes, especially with non-`#[must_use]`
-> > types. Other types can be supported in the future if needed.
-> >
-> > With this, a failing test like:
-> >
-> >     #[test]
-> >     fn my_test() -> Result {
-> >         f()?;
-> >         Ok(())
-> >     }
-> >
-> > will output:
-> >
-> >     [    3.744214]     KTAP version 1
-> >     [    3.744287]     # Subtest: my_test_suite
-> >     [    3.744378]     # speed: normal
-> >     [    3.744399]     1..1
-> >     [    3.745817]     # my_test: ASSERTION FAILED at rust/kernel/lib.rs:321
-> >     [    3.745817]     Expected is_test_result_ok(my_test()) to be true, but is false
-> >     [    3.747152]     # my_test.speed: normal
-> >     [    3.747199]     not ok 1 my_test
-> >     [    3.747345] not ok 4 my_test_suite
-> >
-> > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> > ---
+> > This restriction should be applied by BPF LSM.
 > 
-> This is a neat idea. I think a lot of tests will still want to go with
-> the () return value, but having both as an option seems like a good
-> idea to me.
+> I think we shouldn't allow random userspace processes to connect to
+> the core dump handling service and provide bogus inputs; that
+> unnecessarily increases the risk that a crafted coredump can be used
+> to exploit a bug in the service. So I think it makes sense to enforce
+> this restriction in the kernel.
+
+It's already restricted by /proc/sys/kernel/core_pattern.
+We don't need a duplicated logic.
+
+Even when the process holding the listener dies, you can
+still avoid such a leak.
+
+e.g.
+
+1. Set up a listener
+2. Put the socket into a bpf map
+3. Attach LSM at connect()
+
+Then, the LSM checks if the destination socket is
+
+  * listening on the name specified in /proc/sys/kernel/core_pattern
+  * exists in the associated BPF map
+
+So, if the socket is dies and a malicious user tries to hijack
+the core_pattern name, LSM still rejects such connect().
+
+Later, the admin can restart the program with different core_pattern.
+
+
 > 
+> My understanding is that BPF LSM creates fairly tight coupling between
+> userspace and the kernel implementation, and it is kind of unwieldy
+> for userspace. (I imagine the "man 5 core" manpage would get a bit
+> longer and describe more kernel implementation detail if you tried to
+> show how to write a BPF LSM that is capable of detecting unix domain
+> socket connections to a specific address that are not initiated by
+> core dumping.) I would like to keep it possible to implement core
+> userspace functionality in a best-practice way without needing eBPF.
 
-Handling the return value of a test is definitely a good thing, but I'm
-not sure returning `Err` should be treated as assertion failure
-though. Considering:
+I think the untrusted user scenario is paranoia in most cases,
+and the man page just says "if you really care, use BPF LSM".
 
-    #[test]
-    fn foo() -> Result {
-        let b = KBox::new(...)?; // need to allocate memory for the test
-	use_box(b);
-	assert!(...);
-    }
+If someone can listen on a name AND set it to core_pattern, most
+likely something worse already happened.
 
-if the test runs without enough memory, then KBox::new() would return a
-Err(ENOMEM), and technically, it's not a test failure rather the test
-has been skipped because of no enough resource.
 
-I would suggest we handle the `Err` returns specially (mark as "SKIPPED"
-maybe?).
-
-Thoughts?
-
-Regards,
-Boqun
-
-> Reviewed-by: David Gow <davidgow@google.com>
 > 
-> Cheers,
-> -- David
+> > It's hard to loosen such a default restriction as someone might
+> > argue that's unexpected and regression.
 > 
+> If userspace wants to allow other processes to connect to the core
+> dumping service, that's easy to implement - userspace can listen on a
+> separate address that is not subject to these restrictions.
 > 
-> >  rust/kernel/kunit.rs | 25 +++++++++++++++++++++++++
-> >  rust/macros/kunit.rs |  3 ++-
-> >  2 files changed, 27 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-> > index 2659895d4c5d..f43e3ed460c2 100644
-> > --- a/rust/kernel/kunit.rs
-> > +++ b/rust/kernel/kunit.rs
-> > @@ -164,6 +164,31 @@ macro_rules! kunit_assert_eq {
-> >      }};
-> >  }
-> >
-> > +trait TestResult {
-> > +    fn is_test_result_ok(&self) -> bool;
-> > +}
-> > +
-> > +impl TestResult for () {
-> > +    fn is_test_result_ok(&self) -> bool {
-> > +        true
-> > +    }
-> > +}
-> > +
-> > +impl<T, E> TestResult for Result<T, E> {
-> > +    fn is_test_result_ok(&self) -> bool {
-> > +        self.is_ok()
-> > +    }
-> > +}
-> > +
-> > +/// Returns whether a test result is to be considered OK.
-> > +///
-> > +/// This will be `assert!`ed from the generated tests.
-> > +#[doc(hidden)]
-> > +#[expect(private_bounds)]
-> > +pub fn is_test_result_ok(t: impl TestResult) -> bool {
-> > +    t.is_test_result_ok()
-> > +}
-> > +
-> >  /// Represents an individual test case.
-> >  ///
-> >  /// The [`kunit_unsafe_test_suite!`] macro expects a NULL-terminated list of valid test cases.
-> > diff --git a/rust/macros/kunit.rs b/rust/macros/kunit.rs
-> > index eb4f2afdbe43..9681775d160a 100644
-> > --- a/rust/macros/kunit.rs
-> > +++ b/rust/macros/kunit.rs
-> > @@ -105,8 +105,9 @@ pub(crate) fn kunit_tests(attr: TokenStream, ts: TokenStream) -> TokenStream {
-> >      let path = crate::helpers::file();
-> >      for test in &tests {
-> >          let kunit_wrapper_fn_name = format!("kunit_rust_wrapper_{}", test);
-> > +        // An extra `use` is used here to reduce the length of the message.
-> >          let kunit_wrapper = format!(
-> > -            "unsafe extern \"C\" fn {}(_test: *mut kernel::bindings::kunit) {{ {}(); }}",
-> > +            "unsafe extern \"C\" fn {}(_test: *mut kernel::bindings::kunit) {{ use kernel::kunit::is_test_result_ok; assert!(is_test_result_ok({}())); }}",
-> >              kunit_wrapper_fn_name, test
-> >          );
-> >          writeln!(kunit_macros, "{kunit_wrapper}").unwrap();
-> > --
-> > 2.49.0
-> >
-
-
 
