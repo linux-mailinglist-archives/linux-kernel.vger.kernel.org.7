@@ -1,57 +1,74 @@
-Return-Path: <linux-kernel+bounces-634336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896C2AAB5F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:39:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A084AAAB5E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABA71883D8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:37:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AFDE7A9B40
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E035031A0DB;
-	Tue,  6 May 2025 00:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2859431B9A7;
+	Tue,  6 May 2025 00:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h68Y1rEc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoW0+Gzx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD6A298CC7;
-	Mon,  5 May 2025 22:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4876335B943;
+	Mon,  5 May 2025 22:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485075; cv=none; b=MFXVbQOquZF2tVlomjjlMnn3TwIRxusGHKnac4C8L5E/rKM04ao+uhDSf2NT8pzYSIRXhN09UQp8oxtVKOBTEWIAEPGRMqlNFToFL1XPMo9wK97xezsLXFkDp05A//YtXU/hA+ra0OeOt3j+4VQt94W8Yd3p2R0UeNnrdoMNG0I=
+	t=1746485094; cv=none; b=gSb3dfdlE6glHssZi9j9//CtJu2s2DSO47WI90GprMm3YR4igDskJzvVIdYFBTviYjObr77uvMWPf2t4tfQmE/VZSawAOts4oqdDQSdCkPRSNq4mBA1rFsbrf1N1g6VX7ro0SvWhBBttFD23Vs5s8l2FCi3LDsyMFoAFF9vcUwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485075; c=relaxed/simple;
-	bh=uuYJmiuVaYZWxBlp40dGfyJgqpHBTHOU2pQdrpbsmy4=;
+	s=arc-20240116; t=1746485094; c=relaxed/simple;
+	bh=zZiauDy3ZQ0maEJ4+SVMQYd52KbHuDbXb/JLMalbTOg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h1CuKIjiZPHtjsnRKJgxlUufB/vXeEn9Y32zMBzaQpbSmY6XPnrwhIA48qO4S50ET4ZBQFFJloOM9kb9VI9GRYtJu+U/AphYND6O0vbGAGn6tOOQG8qI5XHUw1oczZvtYJROkvylCacfSTL1ik2EOX3jl2CvRjyVsDiDpRqaGh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h68Y1rEc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95086C4CEEE;
-	Mon,  5 May 2025 22:44:33 +0000 (UTC)
+	 MIME-Version; b=SsBPsAM8AuYShK70jqZFFOX6BaSS0kuUq0Hufh/kR856AAZ80K+jTXMzgDtZfZQ4RZpcQb8tlQCnLB+MxYJHZu3FjFscTGPFnRr99FkOyTJERvK4wOtrsiY9nvsUxgBIw55JNSkdgShjxRLQ97hO+41DlyJqfbYUm4Xc1d1wVJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoW0+Gzx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3F7C4CEED;
+	Mon,  5 May 2025 22:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485074;
-	bh=uuYJmiuVaYZWxBlp40dGfyJgqpHBTHOU2pQdrpbsmy4=;
+	s=k20201202; t=1746485094;
+	bh=zZiauDy3ZQ0maEJ4+SVMQYd52KbHuDbXb/JLMalbTOg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h68Y1rEcb1sqcl59VaD3Z/b0o+R57A7QnGuam7N9f57gUpIExX8UBQJrFCsK5WMWU
-	 waorB78YxT9AYZp64d4sVdF1JUoF0dWDLNEtisBaoPiuUek13lFkXvUcSh1qkKDBfj
-	 5JGKnv62D7hALvyarZSDhGB5jSRuZlSTFHimsBLve6zZnxVTL7nqL2ZOXeaswAUWxF
-	 2/8JUd24dpFn5YRw+oN08tbyTyUnHdVz10cxqwwhpObQ3swV8N5ACDT4ojzPpsdAfS
-	 WngQRMy3x0htQB6nflCLOYNBiI6rvXNW+kCdsJr5Dt6dO7fYsutJmxHsqXhH8OxVtp
-	 3Cq4GpxqwG35Q==
+	b=hoW0+GzxJJv5gfHM/ExckbAbEGpcEsN1fWsUUyMw5rDGdLEy2xS/m1GX/TSQUxWiG
+	 2bjKOtgeD644iXge03BjcO7gCh6Cpd1VEX3YQoxWkU9rsznEJj9dbzRTx+HiviqF+j
+	 lXjhYZIo68MuvFkgIv1LKNQtxGDYu7zbAJZ106Mvfv0ceFqvvA0tQ08pRHE39b+32k
+	 TPDpqM8rcRzVgx93vXEOH92Qs+qT9yDYJQRolWUqv7HCT373IRKLtcPAsNA0Y7YmAL
+	 K1CMaFxZH3UElvT9SRcgFoe3VTZ3wk5TikW9cX1JFaq9NkvDKRF/x0dW9fcPG91xQd
+	 APcvX1xbmYzNw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Ilan Peer <ilan.peer@intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+Cc: Leon Huang <Leon.Huang1@amd.com>,
+	Robin Chen <robin.chen@amd.com>,
+	Tom Chung <chiahsuan.chung@amd.com>,
+	Daniel Wheeler <daniel.wheeler@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	johannes@sipsolutions.net,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 153/486] wifi: mac80211_hwsim: Fix MLD address translation
-Date: Mon,  5 May 2025 18:33:49 -0400
-Message-Id: <20250505223922.2682012-153-sashal@kernel.org>
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	wenjing.liu@amd.com,
+	zaeem.mohamed@amd.com,
+	anthony.koo@amd.com,
+	jerry.zuo@amd.com,
+	Kaitlyn.Tse@amd.com,
+	joshua.aberback@amd.com,
+	alex.hung@amd.com,
+	Sungjoon.Kim@amd.com,
+	michael.strauss@amd.com,
+	muyuan.yang@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.12 159/486] drm/amd/display: Fix incorrect DPCD configs while Replay/PSR switch
+Date: Mon,  5 May 2025 18:33:55 -0400
+Message-Id: <20250505223922.2682012-159-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -66,57 +83,78 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Ilan Peer <ilan.peer@intel.com>
+From: Leon Huang <Leon.Huang1@amd.com>
 
-[ Upstream commit 65bff0be9b154621b617fc2e4bd89f1e18e97cdb ]
+[ Upstream commit 0d9cabc8f591ea1cd97c071b853b75b155c13259 ]
 
-Do address translations only between shared links. It is
-possible that while an non-AP MLD station and an AP MLD
-station have shared links, the frame is intended to be sent
-on a link which is not shared (for example when sending a
-probe response).
+[Why]
+When switching between PSR/Replay,
+the DPCD config of previous mode is not cleared,
+resulting in unexpected behavior in TCON.
 
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Link: https://patch.msgid.link/20250308225541.1aa461270bb6.Ic21592e1b1634653f02b80628cb2152f6e9de367@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+[How]
+Initialize the DPCD in setup function
+
+Reviewed-by: Robin Chen <robin.chen@amd.com>
+Signed-off-by: Leon Huang <Leon.Huang1@amd.com>
+Signed-off-by: Tom Chung <chiahsuan.chung@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/virtual/mac80211_hwsim.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ .../link/protocols/link_edp_panel_control.c   | 25 ++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/virtual/mac80211_hwsim.c b/drivers/net/wireless/virtual/mac80211_hwsim.c
-index 3f424f14de4ec..4a2b7c9921bc6 100644
---- a/drivers/net/wireless/virtual/mac80211_hwsim.c
-+++ b/drivers/net/wireless/virtual/mac80211_hwsim.c
-@@ -4,7 +4,7 @@
-  * Copyright (c) 2008, Jouni Malinen <j@w1.fi>
-  * Copyright (c) 2011, Javier Lopez <jlopex@gmail.com>
-  * Copyright (c) 2016 - 2017 Intel Deutschland GmbH
-- * Copyright (C) 2018 - 2024 Intel Corporation
-+ * Copyright (C) 2018 - 2025 Intel Corporation
-  */
+diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_edp_panel_control.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_edp_panel_control.c
+index 3aa05a2be6c09..fa642f4b88c2d 100644
+--- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_edp_panel_control.c
++++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_edp_panel_control.c
+@@ -674,6 +674,18 @@ bool edp_setup_psr(struct dc_link *link,
+ 	if (!link)
+ 		return false;
  
- /*
-@@ -1983,11 +1983,13 @@ static void mac80211_hwsim_tx(struct ieee80211_hw *hw,
- 			return;
- 		}
++	//Clear PSR cfg
++	memset(&psr_configuration, 0, sizeof(psr_configuration));
++	dm_helpers_dp_write_dpcd(
++		link->ctx,
++		link,
++		DP_PSR_EN_CFG,
++		&psr_configuration.raw,
++		sizeof(psr_configuration.raw));
++
++	if (link->psr_settings.psr_version == DC_PSR_VERSION_UNSUPPORTED)
++		return false;
++
+ 	dc = link->ctx->dc;
+ 	dmcu = dc->res_pool->dmcu;
+ 	psr = dc->res_pool->psr;
+@@ -684,9 +696,6 @@ bool edp_setup_psr(struct dc_link *link,
+ 	if (!dc_get_edp_link_panel_inst(dc, link, &panel_inst))
+ 		return false;
  
--		if (sta && sta->mlo) {
--			if (WARN_ON(!link_sta)) {
--				ieee80211_free_txskb(hw, skb);
--				return;
--			}
-+		/* Do address translations only between shared links. It is
-+		 * possible that while an non-AP MLD station and an AP MLD
-+		 * station have shared links, the frame is intended to be sent
-+		 * on a link which is not shared (for example when sending a
-+		 * probe response).
-+		 */
-+		if (sta && sta->mlo && link_sta) {
- 			/* address translation to link addresses on TX */
- 			ether_addr_copy(hdr->addr1, link_sta->addr);
- 			ether_addr_copy(hdr->addr2, bss_conf->addr);
+-
+-	memset(&psr_configuration, 0, sizeof(psr_configuration));
+-
+ 	psr_configuration.bits.ENABLE                    = 1;
+ 	psr_configuration.bits.CRC_VERIFICATION          = 1;
+ 	psr_configuration.bits.FRAME_CAPTURE_INDICATION  =
+@@ -950,6 +959,16 @@ bool edp_setup_replay(struct dc_link *link, const struct dc_stream_state *stream
+ 	if (!link)
+ 		return false;
+ 
++	//Clear Replay config
++	dm_helpers_dp_write_dpcd(link->ctx, link,
++		DP_SINK_PR_ENABLE_AND_CONFIGURATION,
++		(uint8_t *)&(replay_config.raw), sizeof(uint8_t));
++
++	if (!(link->replay_settings.config.replay_supported))
++		return false;
++
++	link->replay_settings.config.replay_error_status.raw = 0;
++
+ 	dc = link->ctx->dc;
+ 
+ 	replay = dc->res_pool->replay;
 -- 
 2.39.5
 
