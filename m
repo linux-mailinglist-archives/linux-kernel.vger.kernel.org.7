@@ -1,114 +1,140 @@
-Return-Path: <linux-kernel+bounces-632479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E87AA97D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:48:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD46BAA97E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892573A8B80
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E103A7EE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE1525DD1E;
-	Mon,  5 May 2025 15:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4D325F992;
+	Mon,  5 May 2025 15:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="T2A/yTdc"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBx9G3Ez"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBB31F540F;
-	Mon,  5 May 2025 15:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDF125E464;
+	Mon,  5 May 2025 15:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746460081; cv=none; b=bkPwprtWveC8BRLd7i+eg3iGCf1L9sO4dQy/ThaUsLcRN3R3zkLpkW51MMLrXi9Zvc/vAE+zHHxD6amWE3n6TS7HDmMLLulpx1e98TMgP0T+DcjU6J0wf/4amv4jNafpy2Wuvp6DEr1ecHDTZQBpd/PFrQ5Wbkxi63LfHsy8cHM=
+	t=1746460191; cv=none; b=qaquadKgHSNy+q+tHdJxt7L9OySmWNN/VDuknx2OWSxFUSMCgsbyU63vbimsF9nV/BuyftrVHL93gtKsUvpsUi1OhOcu3+oxNCDGQyELrZVyNc4aRJdEeuLwVQTSzkttJBIVj4sGrjN0EFFYFau1VS/NXs1yoULexPF2/30Ja7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746460081; c=relaxed/simple;
-	bh=eeAdHTJm6FSrjCZKlfIOq8+Vn3n8V2I6OFBiLTT5iKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTbP9Xyfk87R1yx94T/FPTVrUgm0U5802EhltetkiRvaBRgR6FMkSKQ07AhQo/8k97MLLfQf3j0XFTSTP2eR6i61t71tYFAysbSJDvz6LA5nKwTxy6hNzHM+T9SnDl4hEu8brSlj5VP4vyEMFH1XJ/ZQviUJg5btMRKSq/BzvPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=T2A/yTdc; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AD57140E01FA;
-	Mon,  5 May 2025 15:47:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id YEE7AJJhfvNQ; Mon,  5 May 2025 15:47:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1746460071; bh=Uoj54ZHamcLCff/Dsy1RSXhTMNk3UMUXjW5gx1XCL/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T2A/yTdcAkpsXv56oFoV4TxKUcjztflUlTqG7JatgyVomIj57BznaXSKAM7cy0yAY
-	 17aK3s6HfwmPA0VRaZTR3myWr5sN2hIInJpJpMRA7LsX8L64ls/KPCSAIuyQU166HB
-	 7bv20nmAnDJ4HX9Ux9AV18/CqYAtoCT6Dgsqfhr9KtSdmB1OAGvxJkoCKrxY8ZdMdK
-	 HGlKitBNbH+edAVPiJS0OP+aS2aflUHid1RJZ212bfBsD/wVaLGl/meW5z1Ynp/SLm
-	 BvN+gE+R86rxANyykpVZPGUjpaU0xxHbK1w9fzPj8TJfPC8a6J0G2pHXaCR+suDWF/
-	 4TLX9WbYle0cq7D4yHHE9qayMgvE8uT7KVbbA6yof7adk6N4xApBwLfVfckHjOWudV
-	 kuATfFcS2mONV+dwaPk4IBT9FDSmSPy8HjRKat25Bx50yORxLnqdsvDvAFXLE6ha1d
-	 vEDRtmjYv2unFy7rqHf+LvQNiwQrjcJLzFo6NAa3YRNROOSR4kizFDXX0Ta4GsqUIH
-	 ksQ7lkg/TeSzQJ4GENEVLD/kdt/hH7kb/dt+1x7VL3cPhY1e0nh3Y2s3yYdh9xR4GL
-	 6NV0IojZMWmTgzcFr2JllYdd6KLZmfEYDdlSeO4mZ7m4Ovm64bcRJ2WvAC8aaFVNUA
-	 bJmwxPUdqjQBHdNvLYe0y8wg=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7248040E0196;
-	Mon,  5 May 2025 15:47:38 +0000 (UTC)
-Date: Mon, 5 May 2025 17:47:32 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Patrick Bellasi <derkling@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>,
-	Michael Larabel <Michael@michaellarabel.com>
-Subject: Re: x86/bugs: KVM: Add support for SRSO_MSR_FIX, back for moar
-Message-ID: <20250505154732.GIaBjdlKe_vA9U7gmb@fat_crate.local>
-References: <Z7OUZhyPHNtZvwGJ@Asmaa.>
- <20250217202048.GIZ7OaIOWLH9Y05U-D@fat_crate.local>
- <f16941c6a33969a373a0a92733631dc578585c93@linux.dev>
- <20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local>
- <20250429132546.GAaBDTWqOsWX8alox2@fat_crate.local>
- <aBKzPyqNTwogNLln@google.com>
- <20250501081918.GAaBMuhq6Qaa0C_xk_@fat_crate.local>
- <aBOnzNCngyS_pQIW@google.com>
- <20250505152533.GHaBjYbcQCKqxh-Hzt@fat_crate.local>
- <LV3PR12MB9265E790428699931E58BE8D948E2@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1746460191; c=relaxed/simple;
+	bh=hXB5HIS3f+ZCRt/681Lhw22MgJ3Qq9wuAw99RftnTZU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PNugqv82YcSJWve43RAwI8GXJJwwuaZjvHiKnsa3oMcpZsPPK5FEcLYkUDxEOG5kflKdI5/UEgpoz/RWhugljaok54aOk5zvFfCiWq7DEPeevaHoRqfoOeYH9gtIW03qjRB8CI8BjCy0UaQs3+ykizSdhfzRa8XWX/2dU7pd4iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBx9G3Ez; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-604f0d27c24so1976745eaf.2;
+        Mon, 05 May 2025 08:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746460189; x=1747064989; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TfSasfyNn2QOSv32qDVaYS8lEHvMrqjWB4CpFRqIp8o=;
+        b=ZBx9G3Ez52HAXm6xtsSA66KRYGrPgwQTXrkA0Iq+3QBhEig8xiy/6paG46whKX7laf
+         nmnCRV6M7b5B7bQ/7jeQ4+JSGUndDAdYvh4sun499DgiWuA3qNU5yrbk5NQ+pWbt0XMT
+         80A2UcOUhD8+0a6XEkQraGAKNIHeh/J2NAuEPajRaVeV17z8j3i39yi5a/7sdI4kG6KF
+         vMnQC5Wxp+NiuCl9DSqruACi7UijIHjdLgvFjEBbia509yylA4aO76WFbT3+z6QXWJdn
+         dUbQM0pTMpKxBxYDSAWlkGG481ZCbfFICleJPRAWSQANfjVaczIspyukk5kYmqK1nXeE
+         foKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746460189; x=1747064989;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TfSasfyNn2QOSv32qDVaYS8lEHvMrqjWB4CpFRqIp8o=;
+        b=Wyk6fUeBoVcRDyoZISkfBryoCXxfAtucfTycNN7jBLMXPyXB7W4z9BX0wHrWksTAqO
+         2oWYtTx1tGk/4Tcre2ZgF66/OSeXA3R760UvXYfUCzdydBOZmjRQ+90Pd7IQ2F35I2cw
+         uYvLzBVD5xBeAkhhXldiyP/I6Amfyk15LkCipkd0zuH4u4DBz1cZO6cE0w2yO3xreIoM
+         /jimmGYR68yretkTBicZv2EyNMP5aptpIL4/5OKMA6s2NcQ+W8yfMZtSs5XfKLkU8w95
+         PxyR5zb/6H5ZJ4epooEn9LqBhRbOrqYrgi+oiwkCYFrim2c2h/WiQ5N5wMBSjwZZFm/p
+         GRgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU43l7lDM2ysFqZgjJzLjcTEfpMd87cpuJE0HgHJELLPfY42pnRuxSZpP0ZwdA0fu0KrFG2M4p0MLR6kBk=@vger.kernel.org, AJvYcCUoHOlfC1wmzKRg57YeRKWr2umHmTeW31BksQY1qw729HxMxvv86HwbwYxl+DRag+hz3i0wh5AlZFI=@vger.kernel.org, AJvYcCXoXfIDzw71wut8I/U+fYVw7AZOdezMPabnzBHSrchFkyiOYeOOoNmMuAsqLG/dtCPDdDVJULEKJkFa8G7i4JLucg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+7ZnnqYk7XEJmkBusWESaZCZA6Ly73IfOUo3y5VSw3NZvdABg
+	xVFN2Mq9A85qPjQir45bTLWpBkxfr5E45F73cNmNRWHX6Jg5UJdM
+X-Gm-Gg: ASbGncsObCFDfy27cYMzhkcMrenlTKApfkNDem8eiku+D88TArBo4v9eY0/1HkiZF9D
+	GIusHC8wLMWG1qgCQ4ZCjMdB66vzdUTjLjtn8f2WhF9zqpU8unEU3cCPzJMV8v16QDqdrX7THDJ
+	cW/18hwDxVSc7Ji7mVp4BkEUOQziGQPAb/CWbtixrDcci9RSzc+KOyiTHf3IS/Uc3thzR22BAKU
+	4UXrfzOMzLxvW5laRob94WZ4dJLFFGWNTO+7Yeya4BDxR0ZbG5WR06fIy0MdCz61xsxyQTzYOCq
+	K+AdximZc9yg7H/eI8lSUGCiHBKnxruHQfWwRcuYSjFyBZiNUbBMtuKZpyGPFPNGaKrqM4oRyA=
+	=
+X-Google-Smtp-Source: AGHT+IFxZaRAPndA18lDE7ChWtiEoMGY9mLpWkb2iP4H0PkM0TVxr3eZLsRh+qcaLAy4IFe3PQLjgA==
+X-Received: by 2002:a05:6820:c81:b0:606:8bce:32a0 with SMTP id 006d021491bc7-608002f986dmr5907169eaf.7.1746460188788;
+        Mon, 05 May 2025 08:49:48 -0700 (PDT)
+Received: from hiagof-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-607e7fe84a8sm1606217eaf.36.2025.05.05.08.49.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 08:49:48 -0700 (PDT)
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@oss.nxp.com>,
+	daniel.baluta@nxp.com,
+	iuliana.prodan@oss.nxp.com,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH 0/3] remoteproc: imx_rproc: allow attaching to running core kicked by the bootloader
+Date: Mon,  5 May 2025 12:48:46 -0300
+Message-Id: <20250505154849.64889-1-hiagofranco@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB9265E790428699931E58BE8D948E2@LV3PR12MB9265.namprd12.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 05, 2025 at 03:40:20PM +0000, Kaplan, David wrote:
-> Almost.  My thought was that kvm_run could do something like:
-> 
-> If (!this_cpu_read(bp_spec_reduce_is_set)) {
->    wrmsrl to set BP_SEC_REDUCE
->    this_cpu_write(bp_spec_reduce_is_set, 1)
-> }
+From: Hiago De Franco <hiago.franco@toradex.com>
 
-That's what I meant too. :-)
+For the i.MX8X and i.MX8 family SoCs, currently when the remotecore is
+started by the bootloader and the M core and A core are in the same
+partition, the driver is not capable to detect the remote core and
+report the correct state of it.
+
+This series of patches implement an API call to the SCU which will
+return the power mode of a given resource (M core in this case) and if
+it is already powered on, the driver will attach to it. This SCU API was
+already being used inside pmdomain/imx/scu-pd.c driver, therefore it has
+been moved to firmware/imx/misc.c so it can be accessed by imx_rproc
+driver.
+
+Finally, the imx_rproc_clk_enable() function was also changed to make it
+return before dev_clk_get() is called, as it currently generates an SCU
+fault reset if the remote core is already running and the kernel tries
+to enable the clock again. These changes are a follow up from a v1 sent
+to imx_rproc [1] and from a reported regression [2].
+
+[1] https://lore.kernel.org/lkml/20250423155131.101473-1-hiagofranco@gmail.com/
+[2] https://lore.kernel.org/lkml/20250404141713.ac2ntcsjsf7epdfa@hiago-nb/
+
+Hiago De Franco (3):
+  remoteproc: imx_rproc: skip clock enable when M-core is managed by the
+    SCU
+  firmware: imx: move get power mode function from scu-pd.c to misc.c
+  remoteproc: imx_rproc: add power mode check for remote core attachment
+
+ drivers/firmware/imx/misc.c           | 47 +++++++++++++++++++++++++++
+ drivers/pmdomain/imx/scu-pd.c         | 29 ++++-------------
+ drivers/remoteproc/imx_rproc.c        | 27 +++++++++++++--
+ include/linux/firmware/imx/svc/misc.h |  8 +++++
+ 4 files changed, 87 insertions(+), 24 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.39.5
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
