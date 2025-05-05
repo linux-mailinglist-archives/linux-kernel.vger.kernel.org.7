@@ -1,109 +1,202 @@
-Return-Path: <linux-kernel+bounces-632452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF73AA9778
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:25:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE241AA9779
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3603AA642
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:25:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32AA7167FD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222E325E457;
-	Mon,  5 May 2025 15:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF05E25CC62;
+	Mon,  5 May 2025 15:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tubrorf5"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SG4YBXSN"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1513C25D538;
-	Mon,  5 May 2025 15:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5278025A2C4
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746458741; cv=none; b=Jm6i3LzjZbW/OLPPiO/QcnUEK80iC5hmZT8YmlrlvUbIC0KUhQKhRk1F7WdNmw5tq4HsbSLyS44KSWjxXbDxmei98u4mKUbcy//O7Ni0n97zm8JJQwxWVTPjKbxteucblWum+0Ji5RXSIyGez2Vel1O4CO/BMmAZibDZRkRoaAo=
+	t=1746458745; cv=none; b=tFDeJBplU84OxzcsaoZKdyrI5GKhF0x+y+tnnEhxagHPKi/R4Je7i54toMF74mxTj4OkWobld9KzwzHcKhRlPD1Zfrekxx62nYOSd8MHwJf9ubKZMwwQtvP5sG6bPQvJGCXfasbLRwZiDZazV7BTloKbyQVl6NT2NNwO6eJaTf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746458741; c=relaxed/simple;
-	bh=k3cMIRpP9MAdOLr6JvQVd+B72Rzr+z/tx0HNQDqxZW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IPtN/MBOqjK3pRfzcfFHXHTMSQO1vfrhFlyDL4YXXFM31M3PcfEfdmK3bGJowbBeJ7KbesM0tPVHvyLd/gEISbH8kaKAClC1xx5FIrqVms16V99tlFhfiML3YhjZ1SgiL5c+O5sUGXbJOlYnLTBD0m50sAtUL3Y45NCBkM+LmH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tubrorf5; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-309e54e469cso243844a91.1;
-        Mon, 05 May 2025 08:25:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746458739; x=1747063539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k3cMIRpP9MAdOLr6JvQVd+B72Rzr+z/tx0HNQDqxZW4=;
-        b=Tubrorf5kKJ75I7OoqGNnEJbDGVPRWJaPLHq45y3IKBNHCEBMgYpUYsVtrLPAepSBd
-         PNE0iqG1N8PLDbRSbp2UbJ+83pqsNPqHY0pcdZGnlXH3l/D/wrJIGQ3VCIv7tTOkL8RH
-         3UsLdcSzVnAlMZNM3l9c9+/v1tOjZ5kkj2gZW8D7UwXAdzJqC4nFf3C20tC3rAnO9PKA
-         hOJbzrV4NGdCknrA7e8/jITrw7fq0uXDZgrBjin4I3vSO1vCXV0G01kmqNch5bHLNgkb
-         GCUetTpodAn+s452VzC+WgMJcGA+ImH/GlvboUlfH57R+D081wb1SlC8CSXte5LnuYWs
-         Ae8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746458739; x=1747063539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k3cMIRpP9MAdOLr6JvQVd+B72Rzr+z/tx0HNQDqxZW4=;
-        b=u2A1uHn14JOnTm0FJpyF2JbS/mQK87XF8A31v3MGB1KBOOZEqGg6vXYN5cx4QPEdow
-         5uRYIBAud2cOkytmPe9mt0e55T+KaNCYSs4nZxEgWQ4qmrxr0SKCsMx+gavogxntopV1
-         k8PYZtkIggfUDwBiP+jreZKEVBk+SwtvAIZdhGsz3KJJpUW0+wJ/H7+aN/Yzo5fffBOJ
-         orfvcmb4M+y1popuPtBCTlQbA4z2//FZ8xFWAsAtn8bm0EEyNOew0s9I1NuJMIUKb3LK
-         AGkyXlWDLXJzK92QJLpP/2mSWb+ibtS3sfOvGBPgq4QMAgSX7q6dL2Vh9iii0Jit6cbg
-         eSxg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4NtS7bE+cFvPtgB8Hc6pvU7dIX1Lmnh1l+j7jfcpBn3lGgTMo8BxwBElUofgIY+sI4+V8JUKR@vger.kernel.org, AJvYcCVsAmvRkCHQbcSViqFNj1SHmyZLILP4UbIBKs9RGgIfzYKQJeH/cFPZ3qt/5RmkbGnhni99q1qkDiK9ZJI=@vger.kernel.org, AJvYcCWRhSWmtN24d9peGN92CMyhJSfmtR85UOINqBYzjXMKFGBtFmmSQaGdUjnIuMpW4ZO1TrazGBemn7/7/+fA25c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHPZ3nXeLqUcxnSiar4z+ZTp1BD58rmG9/Kxl3Syit3MrPPVMy
-	frMWeUWE29PpK7iWUAtMMnL8KZeGvOxNN1EDK+tXjvFq/FLUkXGzH5FXd+Uwql8L/QzaVU7o0Sz
-	9DHu+FOEj4G/pV3lkESR+9X+62wmGHUoY95U=
-X-Gm-Gg: ASbGncsTA3Gl2p7EadSwJJnWESp8ij5KVAlvX/kazoTwTNI/sye7Oikvr0HgSHI7UT8
-	TEz01IlL2L3j7ccZOXDSoS+v2WV40LJM/AfqISzBlcKjaRKdqhp2AnRp/4+8ANIEqd1BGM2voxw
-	UWeXRmYuDzbRnARKoc4fXCjw==
-X-Google-Smtp-Source: AGHT+IHRVyTkZMEkrjl1tb+xhWRz+XOO/RG+ywEWuBKUhWxMwlE4Nfhg6SesSBOEedXa+f/GB+dArhcsLbsvmsYMM00=
-X-Received: by 2002:a17:90b:1642:b0:30a:28e2:a003 with SMTP id
- 98e67ed59e1d1-30a4e621a86mr7214089a91.3.1746458739173; Mon, 05 May 2025
- 08:25:39 -0700 (PDT)
+	s=arc-20240116; t=1746458745; c=relaxed/simple;
+	bh=s+fPTgi+PnfcHm8KT9pxFAJyEcOpPBROHIKmCaeZRzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rxWN0GtU1VfcFujqvO1WMVQKepFXVR8cYodwuajFC0wnOht1vHubFBlY1epSjBS35Je6q88OjQoZ85E1+FIKdiGKJL1+IoJPiQyohYIxVBaPRq6miM0waatEqLfdnt2KO2ElyThQpONnnVk6GmObryZCInAe02ZlN6u6ywjX2Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SG4YBXSN; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <dbc1bcdf-144d-44d2-8fc8-77bc2ad58b51@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746458730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Nqp0itdoqW9IkU14n7l4W+RXavOiRNHEeUpgqQ00TM=;
+	b=SG4YBXSNXCYM2O5ykctPWYC11DrwHq3W8DTZZkiQDKAx/rFv/rGrbiU4XxeNhW2e/RTtWk
+	B5I+PX9jUnePayFxers4wMXhzJwcaiteTzK9ka5X/RO2uduwqlVsAarnrImmDDNCWykTE1
+	/RIeJrSyZBmrADF5JnT+b5C8Gv3RPDA=
+Date: Mon, 5 May 2025 17:25:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502140237.1659624-1-ojeda@kernel.org> <20250502140237.1659624-3-ojeda@kernel.org>
- <aBiDd43KSHJJqpge@google.com>
-In-Reply-To: <aBiDd43KSHJJqpge@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 5 May 2025 17:25:25 +0200
-X-Gm-Features: ATxdqUHjO9VoZGiGMnlK5x2FmYOBWwyCMKRYdIXPOYP7wkN06j2ETlj7lPMEaGo
-Message-ID: <CANiq72nLLQcuMou_zLTiDggpnS9pLySax8QSNxD9mU27eZNPUw@mail.gmail.com>
-Subject: Re: [PATCH 2/5] rust: clean Rust 1.87.0's `clippy::ptr_eq` lints
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH for-next v2 2/2] RDMA/rxe: Enable asynchronous prefetch
+ for ODP MRs
+To: Daisuke Matsuda <dskmtsd@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
+ zyjzyj2000@gmail.com
+References: <20250503134224.4867-1-dskmtsd@gmail.com>
+ <20250503134224.4867-3-dskmtsd@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20250503134224.4867-3-dskmtsd@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, May 5, 2025 at 11:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> For the list file, it might be nice to import core::ptr instead of using
-> the full path each time. Or maybe just disable this lint.
+On 03.05.25 15:42, Daisuke Matsuda wrote:
+> Calling ibv_advise_mr(3) with flags other than IBV_ADVISE_MR_FLAG_FLUSH
+> invokes asynchronous requests. It is best-effort, and thus can safely be
+> deferred to the system-wide workqueue.
+> 
+> Signed-off-by: Daisuke Matsuda <dskmtsd@gmail.com>
 
-Since they confirmed they will backport it, I will disable it locally
-when applying so that it is a smaller change, and then we can
-remove/revert the `allow` afterwards if all goes well.
+I have made tests with rdma-core after applying this patch series. It 
+seems that it can work well.
+I read through this commit. Other than the following minor problems, I 
+am fine with this commit.
 
-For the other one, it is a single line already anyway, so it does not
-matter much.
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
 
-Cheers,
-Miguel
+> ---
+>   drivers/infiniband/sw/rxe/rxe_odp.c | 81 ++++++++++++++++++++++++++++-
+>   1 file changed, 80 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
+> index e5c60b061d7e..d98b385a18ce 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_odp.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
+> @@ -425,6 +425,73 @@ enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
+>   	return RESPST_NONE;
+>   }
+>   
+> +struct prefetch_mr_work {
+> +	struct work_struct work;
+> +	u32 pf_flags;
+> +	u32 num_sge;
+> +	struct {
+> +		u64 io_virt;
+> +		struct rxe_mr *mr;
+> +		size_t length;
+> +	} frags[];
+> +};
+
+The struct prefetch_mr_work should be moved into header file? IMO, it is 
+better to move this struct to rxe_loc.h?
+
+> +
+> +static void rxe_ib_prefetch_mr_work(struct work_struct *w)
+> +{
+> +	struct prefetch_mr_work *work =
+> +		container_of(w, struct prefetch_mr_work, work);
+> +	int ret;
+> +	u32 i;
+> +
+> +	/* We rely on IB/core that work is executed if we have num_sge != 0 only. */
+> +	WARN_ON(!work->num_sge);
+> +	for (i = 0; i < work->num_sge; ++i) {
+> +		struct ib_umem_odp *umem_odp;
+> +
+> +		ret = rxe_odp_do_pagefault_and_lock(work->frags[i].mr, work->frags[i].io_virt,
+> +						    work->frags[i].length, work->pf_flags);
+> +		if (ret < 0) {
+> +			rxe_dbg_mr(work->frags[i].mr, "failed to prefetch the mr\n");
+> +			continue;
+> +		}
+> +
+> +		umem_odp = to_ib_umem_odp(work->frags[i].mr->umem);
+> +		mutex_unlock(&umem_odp->umem_mutex);
+
+Obviously this function is dependent on the mutex lock umem_mutex. So in 
+the beginning of this function, it is better to  add 
+lockdep_assert_held(&umem_odp->umem_mutex)?
+
+Zhu Yanjun
+
+> +	}
+> +
+> +	kvfree(work);
+> +}
+> +
+> +static int rxe_init_prefetch_work(struct ib_pd *ibpd,
+> +				  enum ib_uverbs_advise_mr_advice advice,
+> +				  u32 pf_flags, struct prefetch_mr_work *work,
+> +				  struct ib_sge *sg_list, u32 num_sge)
+> +{
+> +	struct rxe_pd *pd = container_of(ibpd, struct rxe_pd, ibpd);
+> +	u32 i;
+> +
+> +	INIT_WORK(&work->work, rxe_ib_prefetch_mr_work);
+> +	work->pf_flags = pf_flags;
+> +
+> +	for (i = 0; i < num_sge; ++i) {
+> +		struct rxe_mr *mr;
+> +
+> +		mr = lookup_mr(pd, IB_ACCESS_LOCAL_WRITE,
+> +			       sg_list[i].lkey, RXE_LOOKUP_LOCAL);
+> +		if (IS_ERR(mr)) {
+> +			work->num_sge = i;
+> +			return PTR_ERR(mr);
+> +		}
+> +		work->frags[i].io_virt = sg_list[i].addr;
+> +		work->frags[i].length = sg_list[i].length;
+> +		work->frags[i].mr = mr;
+> +
+> +		rxe_put(mr);
+> +	}
+> +	work->num_sge = num_sge;
+> +	return 0;
+> +}
+> +
+>   static int rxe_ib_prefetch_sg_list(struct ib_pd *ibpd,
+>   				   enum ib_uverbs_advise_mr_advice advice,
+>   				   u32 pf_flags, struct ib_sge *sg_list,
+> @@ -478,6 +545,8 @@ static int rxe_ib_advise_mr_prefetch(struct ib_pd *ibpd,
+>   				     u32 flags, struct ib_sge *sg_list, u32 num_sge)
+>   {
+>   	u32 pf_flags = RXE_PAGEFAULT_DEFAULT;
+> +	struct prefetch_mr_work *work;
+> +	int rc;
+>   
+>   	if (advice == IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH)
+>   		pf_flags |= RXE_PAGEFAULT_RDONLY;
+> @@ -490,7 +559,17 @@ static int rxe_ib_advise_mr_prefetch(struct ib_pd *ibpd,
+>   		return rxe_ib_prefetch_sg_list(ibpd, advice, pf_flags, sg_list,
+>   					       num_sge);
+>   
+> -	/* Asynchronous call is "best-effort" */
+> +	/* Asynchronous call is "best-effort" and allowed to fail */
+> +	work = kvzalloc(struct_size(work, frags, num_sge), GFP_KERNEL);
+> +	if (!work)
+> +		return -ENOMEM;
+> +
+> +	rc = rxe_init_prefetch_work(ibpd, advice, pf_flags, work, sg_list, num_sge);
+> +	if (rc) {
+> +		kvfree(work);
+> +		return rc;
+> +	}
+> +	queue_work(system_unbound_wq, &work->work);
+>   
+>   	return 0;
+>   }
+
 
