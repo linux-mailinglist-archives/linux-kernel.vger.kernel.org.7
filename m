@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-633779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C32AAAE2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:51:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3504FAAAE1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772C21BC0D1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:48:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A3E167553
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A2935ABAE;
-	Mon,  5 May 2025 22:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45BC2D2689;
+	Mon,  5 May 2025 22:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FujE4nti"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSduMmtc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B629535ABAC;
-	Mon,  5 May 2025 22:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534B735AD7B;
+	Mon,  5 May 2025 22:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485155; cv=none; b=c4BnG8h2bC1Ri5N3EN9/2gfnsLab1eTCEueQOKhwWG5FexmfplV6ctDLd/hh6Ak7jvSuNKre8pGpH2cR1ucdH09CvR/otsu464T+l6JUAzssORp0Ilc2fu8MvylcW+Xixggqx2+/HbsbitSnLvZ70nVfD5xztV9a8H2jHS2TQGY=
+	t=1746485161; cv=none; b=Y2/GOSE+MtCe8cvLMFCGTek1+aEXWQkk57h5Q4S4s4VatRG53HzYDVdhupqNGyhAr8t5BUYNpvwX4XjGw6qXrYPLKxqRALPHYGPePl7VF++Po56QWVRshHKk4f99UiOK4XuSaRDohSCOq6y1hp7ILoVStKTCUzlhEzJU35Xf/0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485155; c=relaxed/simple;
-	bh=Mjdioqz6QMzRk4uwmUI6oyHYF2YUbpHWHuQv2Wo0Q/Q=;
+	s=arc-20240116; t=1746485161; c=relaxed/simple;
+	bh=HFyMkUdmp2i1AmcNJKN5YO27sA9goBlPK62HQOiBW00=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IlGEg0MtJr8bC9SM8fftXoVPoOPJjHllIxO9E0WIvTVmDTRH/ONG/h8Fj39uBxj2xyoMnmvDQyhaerH31leAXA4NzEd0ObhYeTK2Ymz/8e2PxtBnJSbZF+ysYtl8terW2oMPNDChS2o8qgngvc7VOvOH83QCBdus6DqI1I398Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FujE4nti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49AA8C4CEE4;
-	Mon,  5 May 2025 22:45:52 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Jp4JQm4YnZAmi0PN4M1qIvPOj9D0s8lgL/AOwzid2k6wDluBER/m5gvtyJBtp/BH+lmIdQz9Ao5isb7Bh3oF3uS7+7W00wjdvNqZXlUn82kT7iVVWgRFeJSM2Oy9F1OQZZwo5SIu9MY54c3g2fqTM0ecIOASK38Uf5z2UpPjqB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSduMmtc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE82C4CEEF;
+	Mon,  5 May 2025 22:45:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485154;
-	bh=Mjdioqz6QMzRk4uwmUI6oyHYF2YUbpHWHuQv2Wo0Q/Q=;
+	s=k20201202; t=1746485159;
+	bh=HFyMkUdmp2i1AmcNJKN5YO27sA9goBlPK62HQOiBW00=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FujE4ntiAhjr70Hw+0jr+OSXbpDOv+VwivVndXolZ3wcar//TNX6ZkQNsbbPXONzw
-	 5D65CwyEIJeKH/AtY0pvbjo1cD0g3tEQwrbNMn27t7yMSufCDvex0E/RR6stjxeREi
-	 8odLj7qi9QWhc11G8OY6FXw+Gy0irTeuHEz9MN5O6KI4/+dCnnmGsgyhdKWCgYpHZd
-	 bDdG/JYVz9aEZRmxfHDZGXtEc7xGauBdR0bu90gwNV04pTpIVA2hX1LtWI2PUlwQBD
-	 GbQLTXoRcEnMhpxycA6+w/nJMRIIz729Pwwrl6XeR/Wfy4D+xa7qlPJkRoROpNDz0u
-	 iEPXcSZGc9wPg==
+	b=gSduMmtcpMferoCCI3uRF++TuHEq6/GBMqYsiYopuvpCYnc8FekLsSPA4WLkduIHW
+	 VDPheD1LDV57k14SZaHK8C6byHkQkmdVAbpt0nBAl+qC7O8jn3cZWtTM8y47ht6rt7
+	 ESsYg560cateYOrsVS/3uBUj2IvjxzpjfTsf5ww5eIXOSV4e1hJRp2suKfK/2JduZ3
+	 hU1ANlqBH3IGQYLlja6Z1utXv7IIsNEJnsjaUVgO7pT3TSI7YIiLLrH2NeFvgUBAP2
+	 CSajfN0vytK5AneDgNaxXf0jBN4UGt2ipqejHBT/2xFPHmQtPRnk+AQBDZQ5lUvbBA
+	 21ES6uu69H5ZQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Niklas Neronin <niklas.neronin@linux.intel.com>,
-	Mathias Nyman <mathias.nyman@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	Anusha Srivatsa <asrivats@redhat.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	mathias.nyman@intel.com,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 188/486] usb: xhci: set page size to the xHCI-supported size
-Date: Mon,  5 May 2025 18:34:24 -0400
-Message-Id: <20250505223922.2682012-188-sashal@kernel.org>
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	sumit.semwal@linaro.org,
+	dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [PATCH AUTOSEL 6.12 192/486] drm/gem: Test for imported GEM buffers with helper
+Date: Mon,  5 May 2025 18:34:28 -0400
+Message-Id: <20250505223922.2682012-192-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -61,129 +67,89 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Niklas Neronin <niklas.neronin@linux.intel.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
 
-[ Upstream commit 68c1f1671650b49bbd26e6a65ddcf33f2565efa3 ]
+[ Upstream commit b57aa47d39e94dc47403a745e2024664e544078c ]
 
-The current xHCI driver does not validate whether a page size of 4096
-bytes is supported. Address the issue by setting the page size to the
-value supported by the xHCI controller, as read from the Page Size
-register. In the event of an unexpected value; default to a 4K page size.
+Add drm_gem_is_imported() that tests if a GEM object's buffer has
+been imported. Update the GEM code accordingly.
 
-Additionally, this commit removes unnecessary debug messages and instead
-prints the supported and used page size once.
+GEM code usually tests for imports if import_attach has been set
+in struct drm_gem_object. But attaching a dma-buf on import requires
+a DMA-capable importer device, which is not the case for many serial
+busses like USB or I2C. The new helper tests if a GEM object's dma-buf
+has been created from the GEM object.
 
-The xHCI controller supports page sizes of (2^{(n+12)}) bytes, where 'n'
-is the Page Size Bit. Only one page size is supported, with a maximum
-page size of 128 KB.
-
-Signed-off-by: Niklas Neronin <niklas.neronin@linux.intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20250306144954.3507700-10-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Anusha Srivatsa <asrivats@redhat.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20250226172457.217725-2-tzimmermann@suse.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-mem.c | 34 ++++++++++++++++++----------------
- drivers/usb/host/xhci.h     |  8 ++++----
- 2 files changed, 22 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/drm_gem.c |  4 ++--
+ include/drm/drm_gem.h     | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index 8c26275696df9..f9c51e0f2e37c 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1959,7 +1959,6 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
- 	xhci->interrupters = NULL;
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 149b8e25da5bb..426d0867882df 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -322,7 +322,7 @@ int drm_gem_dumb_map_offset(struct drm_file *file, struct drm_device *dev,
+ 		return -ENOENT;
  
- 	xhci->page_size = 0;
--	xhci->page_shift = 0;
- 	xhci->usb2_rhub.bus_state.bus_suspended = 0;
- 	xhci->usb3_rhub.bus_state.bus_suspended = 0;
- }
-@@ -2378,6 +2377,22 @@ xhci_create_secondary_interrupter(struct usb_hcd *hcd, unsigned int segs,
- }
- EXPORT_SYMBOL_GPL(xhci_create_secondary_interrupter);
+ 	/* Don't allow imported objects to be mapped */
+-	if (obj->import_attach) {
++	if (drm_gem_is_imported(obj)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+@@ -1152,7 +1152,7 @@ void drm_gem_print_info(struct drm_printer *p, unsigned int indent,
+ 			  drm_vma_node_start(&obj->vma_node));
+ 	drm_printf_indent(p, indent, "size=%zu\n", obj->size);
+ 	drm_printf_indent(p, indent, "imported=%s\n",
+-			  str_yes_no(obj->import_attach));
++			  str_yes_no(drm_gem_is_imported(obj)));
  
-+static void xhci_hcd_page_size(struct xhci_hcd *xhci)
+ 	if (obj->funcs->print_info)
+ 		obj->funcs->print_info(p, indent, obj);
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index d8b86df2ec0da..70c0f8c83629d 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -35,6 +35,7 @@
+  */
+ 
+ #include <linux/kref.h>
++#include <linux/dma-buf.h>
+ #include <linux/dma-resv.h>
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+@@ -570,6 +571,19 @@ static inline bool drm_gem_object_is_shared_for_memory_stats(struct drm_gem_obje
+ 	return (obj->handle_count > 1) || obj->dma_buf;
+ }
+ 
++/**
++ * drm_gem_is_imported() - Tests if GEM object's buffer has been imported
++ * @obj: the GEM object
++ *
++ * Returns:
++ * True if the GEM object's buffer has been imported, false otherwise
++ */
++static inline bool drm_gem_is_imported(const struct drm_gem_object *obj)
 +{
-+	u32 page_size;
-+
-+	page_size = readl(&xhci->op_regs->page_size) & XHCI_PAGE_SIZE_MASK;
-+	if (!is_power_of_2(page_size)) {
-+		xhci_warn(xhci, "Invalid page size register = 0x%x\n", page_size);
-+		/* Fallback to 4K page size, since that's common */
-+		page_size = 1;
-+	}
-+
-+	xhci->page_size = page_size << 12;
-+	xhci_dbg_trace(xhci, trace_xhci_dbg_init, "HCD page size set to %iK",
-+		       xhci->page_size >> 10);
++	/* The dma-buf's priv field points to the original GEM object. */
++	return obj->dma_buf && (obj->dma_buf->priv != obj);
 +}
 +
- int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
- {
- 	struct xhci_interrupter *ir;
-@@ -2385,7 +2400,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
- 	dma_addr_t	dma;
- 	unsigned int	val, val2;
- 	u64		val_64;
--	u32		page_size, temp;
-+	u32		temp;
- 	int		i;
- 
- 	INIT_LIST_HEAD(&xhci->cmd_list);
-@@ -2394,20 +2409,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
- 	INIT_DELAYED_WORK(&xhci->cmd_timer, xhci_handle_command_timeout);
- 	init_completion(&xhci->cmd_ring_stop_completion);
- 
--	page_size = readl(&xhci->op_regs->page_size);
--	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
--			"Supported page size register = 0x%x", page_size);
--	val = ffs(page_size) - 1;
--	if (val < 16)
--		xhci_dbg_trace(xhci, trace_xhci_dbg_init,
--			"Supported page size of %iK", (1 << (val + 12)) / 1024);
--	else
--		xhci_warn(xhci, "WARN: no supported page size\n");
--	/* Use 4K pages, since that's common and the minimum the HC supports */
--	xhci->page_shift = 12;
--	xhci->page_size = 1 << xhci->page_shift;
--	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
--			"HCD page size set to %iK", xhci->page_size / 1024);
-+	xhci_hcd_page_size(xhci);
- 
- 	/*
- 	 * Program the Number of Device Slots Enabled field in the CONFIG
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 2a954efa53e80..c4d5b90ef90a8 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -211,6 +211,9 @@ struct xhci_op_regs {
- #define CONFIG_CIE		(1 << 9)
- /* bits 10:31 - reserved and should be preserved */
- 
-+/* bits 15:0 - HCD page shift bit */
-+#define XHCI_PAGE_SIZE_MASK     0xffff
-+
+ #ifdef CONFIG_LOCKDEP
  /**
-  * struct xhci_intr_reg - Interrupt Register Set
-  * @irq_pending:	IMAN - Interrupt Management Register.  Used to enable
-@@ -1503,10 +1506,7 @@ struct xhci_hcd {
- 	u16		max_interrupters;
- 	/* imod_interval in ns (I * 250ns) */
- 	u32		imod_interval;
--	/* 4KB min, 128MB max */
--	int		page_size;
--	/* Valid values are 12 to 20, inclusive */
--	int		page_shift;
-+	u32		page_size;
- 	/* MSI-X/MSI vectors */
- 	int		nvecs;
- 	/* optional clocks */
+  * drm_gem_gpuva_set_lock() - Set the lock protecting accesses to the gpuva list.
 -- 
 2.39.5
 
