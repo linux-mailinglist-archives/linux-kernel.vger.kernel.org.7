@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-633728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6498AAA967
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:13:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA5FAAA97F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07CDF4A66CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 713041888FE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E881129DB6B;
-	Mon,  5 May 2025 22:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720B435ABA5;
+	Mon,  5 May 2025 22:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfSL2NyX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOGxJaUO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC262299AB1;
-	Mon,  5 May 2025 22:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CAA27E1C9;
+	Mon,  5 May 2025 22:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485018; cv=none; b=MM+rD3P1Bko6eZi4a+DqlTFdyoc6c4S84kr8PQDm/uvywBlboWbxONLoDXsHwh7ZQULI7gPmymkKA6fp8tGhLJ4o6PPjI2agJVhp8f+E6VgTRM3ydssM5pTX5+jenmi0NXSnO/mQ2wsZvqit/9JDVI174C0mCqgrE6uPxchhFN4=
+	t=1746485021; cv=none; b=MUgcYSAQfrgbGM7EU9uxwqdZ7XPu2/EWPnC1nqceXR29bruAwqhxXWf2/X4ArkQ49kTJje+T1f0IdCu+DGksUnpzbzeuRRANpHuup3+Wwz2HPoiEailZjsyi24ZUDamgixhyIHMhFA/tMSzOWBZSV520gUsidWP4U+EkLj7/iok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485018; c=relaxed/simple;
-	bh=pKZWDRkvVRBjTimgpV36FBBnP2eXPkS+7OxJHRyIvrQ=;
+	s=arc-20240116; t=1746485021; c=relaxed/simple;
+	bh=tEVxtUjgU9X6SNIFS64nms3QrNZHyfQin2c79+iXotA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rRFB2VJ0uKWdWLchQkRLMD10xKkocFEoYP8xZgbuejKfxalvW/6hlw8ReJlLqbhdAwLrZSef6CVtATuGog771q2LdS4AydfqpxfCsp6bzu+43GlPdCzchXV+TpuiyJ4nuK42IwyjCRGDxkBgmyBUNHbfF7sO9M5I1g3XQq/e6+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfSL2NyX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A40C4CEED;
-	Mon,  5 May 2025 22:43:36 +0000 (UTC)
+	 MIME-Version; b=UaReljzY4hsuwwQ89YOeMgmNKywHaR3cD/h99wqiU23HEp/sFpeBEkpw+Qv+BNeYSSUKnCuREL3wMdxy98MQsDW/6mFFq0bKLU1tyxAHTTlwGYj2Z5T6NiYxd5jOQZfqJYl+l6VYWxFx9YEz9tAxXXHXHBasYz59ow4O1m+Oj0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOGxJaUO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99709C4CEED;
+	Mon,  5 May 2025 22:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485017;
-	bh=pKZWDRkvVRBjTimgpV36FBBnP2eXPkS+7OxJHRyIvrQ=;
+	s=k20201202; t=1746485020;
+	bh=tEVxtUjgU9X6SNIFS64nms3QrNZHyfQin2c79+iXotA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IfSL2NyXXJJVsq5pbHKxuzPYk2rzviLVYChGswDI8qJguALSiF70fUFW7VOtAXRC7
-	 kZhST4adGaslYqAL6CCr9mdYs2vmWqPtzJVqJv2nglWphQx19uPj6DeQQo29PCq4EU
-	 hAmwCbMtXc0cnkrOqZnBs6E0u/ptcl9H5TGWpBT75+1dY5QA8qfWczqO/ZOO4eWbQ9
-	 v0qLxG5tdc+F6ERw5BNBu/lfCFYN+B9Xn2kMe5poxb0I9PQumE0OVLSZQgkQJa68cb
-	 2gSmrUTWxaQ1a50P1NzI8+PVL///DWT3Mgo1YDPi7bWNymr9H6jSGqgjXSowBeSl5S
-	 9V7QpoNrMRJmA==
+	b=dOGxJaUOFDTXKb2hL/uAO9ZPJzPas4nzW4LK2IpK4zHtu8YuiY8z8VjZYDt6SVGlG
+	 AQnzPuNek7lciWYHJDQEl8yzuCLL+ifmhPXSF2kBHh/xKds6oo5iad2+j4hsDfY6tw
+	 +WQ917nbefmHHGLVuPA7J+z08D3aJbvaJUVuhU15RgHmVjxi3uRg3wA5q4uCKvaXQU
+	 0iVJsrKeFVrmeQjCTo6vUJj4j5ygMCDJCBBEV3Uo1b8tWHVqekp2hmULmZ9miyIte5
+	 4J/NNUzScIblLDJLrB1nMPpqD2kfH8izCfu89edNalR0p9YQz0+nwjNooHR39elBlU
+	 nqP7TwIurGSjQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Eric Sandeen <sandeen@redhat.com>,
-	Chao Yu <chao@kernel.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
+Cc: Baokun Li <libaokun1@huawei.com>,
+	Jan Kara <jack@suse.cz>,
+	Zhang Yi <yi.zhang@huawei.com>,
+	Theodore Ts'o <tytso@mit.edu>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 6.12 125/486] f2fs: defer readonly check vs norecovery
-Date: Mon,  5 May 2025 18:33:21 -0400
-Message-Id: <20250505223922.2682012-125-sashal@kernel.org>
+	adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 127/486] ext4: do not convert the unwritten extents if data writeback fails
+Date: Mon,  5 May 2025 18:33:23 -0400
+Message-Id: <20250505223922.2682012-127-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -65,54 +67,88 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Eric Sandeen <sandeen@redhat.com>
+From: Baokun Li <libaokun1@huawei.com>
 
-[ Upstream commit 9cca49875997a1a7e92800a828a62bacb0f577b9 ]
+[ Upstream commit e856f93e0fb249955f7d5efb18fe20500a9ccc6d ]
 
-Defer the readonly-vs-norecovery check until after option parsing is done
-so that option parsing does not require an active superblock for the test.
-Add a helpful message, while we're at it.
+When dioread_nolock is turned on (the default), it will convert unwritten
+extents to written at ext4_end_io_end(), even if the data writeback fails.
 
-(I think could be moved back into parsing after we switch to the new mount
-API if desired, as the fs context will have RO state available.)
+It leads to the possibility that stale data may be exposed when the
+physical block corresponding to the file data is read-only (i.e., writes
+return -EIO, but reads are normal).
 
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Therefore a new ext4_io_end->flags EXT4_IO_END_FAILED is added, which
+indicates that some bio write-back failed in the current ext4_io_end.
+When this flag is set, the unwritten to written conversion is no longer
+performed. Users can read the data normally until the caches are dropped,
+after that, the failed extents can only be read to all 0.
+
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+Link: https://patch.msgid.link/20250122110533.4116662-3-libaokun@huaweicloud.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/ext4/ext4.h    |  3 ++-
+ fs/ext4/page-io.c | 16 ++++++++++++++--
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 573cc4725e2e8..280debf2df4f6 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -728,10 +728,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			set_opt(sbi, DISABLE_ROLL_FORWARD);
- 			break;
- 		case Opt_norecovery:
--			/* this option mounts f2fs with ro */
-+			/* requires ro mount, checked in f2fs_default_check */
- 			set_opt(sbi, NORECOVERY);
--			if (!f2fs_readonly(sb))
--				return -EINVAL;
- 			break;
- 		case Opt_discard:
- 			if (!f2fs_hw_support_discard(sbi)) {
-@@ -1406,6 +1404,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		f2fs_err(sbi, "Allow to mount readonly mode only");
- 		return -EROFS;
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index bbffb76d9a904..75df7eeee50d8 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -278,7 +278,8 @@ struct ext4_system_blocks {
+ /*
+  * Flags for ext4_io_end->flags
+  */
+-#define	EXT4_IO_END_UNWRITTEN	0x0001
++#define EXT4_IO_END_UNWRITTEN	0x0001
++#define EXT4_IO_END_FAILED	0x0002
+ 
+ struct ext4_io_end_vec {
+ 	struct list_head list;		/* list of io_end_vec */
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index b7b9261fec3b5..cb023922c93c8 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -181,14 +181,25 @@ static int ext4_end_io_end(ext4_io_end_t *io_end)
+ 		   "list->prev 0x%p\n",
+ 		   io_end, inode->i_ino, io_end->list.next, io_end->list.prev);
+ 
+-	io_end->handle = NULL;	/* Following call will use up the handle */
+-	ret = ext4_convert_unwritten_io_end_vec(handle, io_end);
++	/*
++	 * Do not convert the unwritten extents if data writeback fails,
++	 * or stale data may be exposed.
++	 */
++	io_end->handle = NULL;  /* Following call will use up the handle */
++	if (unlikely(io_end->flag & EXT4_IO_END_FAILED)) {
++		ret = -EIO;
++		if (handle)
++			jbd2_journal_free_reserved(handle);
++	} else {
++		ret = ext4_convert_unwritten_io_end_vec(handle, io_end);
++	}
+ 	if (ret < 0 && !ext4_forced_shutdown(inode->i_sb)) {
+ 		ext4_msg(inode->i_sb, KERN_EMERG,
+ 			 "failed to convert unwritten extents to written "
+ 			 "extents -- potential data loss!  "
+ 			 "(inode %lu, error %d)", inode->i_ino, ret);
  	}
 +
-+	if (test_opt(sbi, NORECOVERY) && !f2fs_readonly(sbi->sb)) {
-+		f2fs_err(sbi, "norecovery requires readonly mount");
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- 
+ 	ext4_clear_io_unwritten_flag(io_end);
+ 	ext4_release_io_end(io_end);
+ 	return ret;
+@@ -344,6 +355,7 @@ static void ext4_end_bio(struct bio *bio)
+ 			     bio->bi_status, inode->i_ino,
+ 			     (unsigned long long)
+ 			     bi_sector >> (inode->i_blkbits - 9));
++		io_end->flag |= EXT4_IO_END_FAILED;
+ 		mapping_set_error(inode->i_mapping,
+ 				blk_status_to_errno(bio->bi_status));
+ 	}
 -- 
 2.39.5
 
