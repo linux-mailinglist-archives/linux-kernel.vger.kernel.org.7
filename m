@@ -1,62 +1,58 @@
-Return-Path: <linux-kernel+bounces-633692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538B8AAADE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A177AAADDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8492B1898C4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F150316F0D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED353579C5;
-	Mon,  5 May 2025 22:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDF23579F6;
+	Mon,  5 May 2025 22:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1ynIDJ0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ci1MNdUY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEB32BDC34;
-	Mon,  5 May 2025 22:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816A6357D6C;
+	Mon,  5 May 2025 22:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484930; cv=none; b=MhH2siKhe2UkcmEYBtw8ctQajIELDkpWW6cWq5WXnADacWISx5VIv0l9BxWTuqF5B3SwDuD4xNuN6TWZFdEPqCDQyme56105rp13CEVS6cZUa2v5ev/krOEdC1Jt1lo8PlSRpWPSdrzEOFycufQm9KPDc5KXiQFG9ZG97PU7Hp0=
+	t=1746484938; cv=none; b=ppF/9yv91bjpoVfELtLmTX3DlsKOEg/qzl5a/c4e7QewWjyy6HOgynRaxMuU186WvUxOWFb771GKxIsXNvRgTF8okW+vccIuwihS85bt3vn7yfmWBIcJImioz5a+1Hq3XLYvtTlNA/iYbRpu9rRjsrqfEC2lhQkDSExfbAtqkbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484930; c=relaxed/simple;
-	bh=SQcrBdDgxw+dhMtgvd5xGs4Las/eqms4Rb/CtpJWtOk=;
+	s=arc-20240116; t=1746484938; c=relaxed/simple;
+	bh=6eFnS680vN2hlxIE2CQ2X6sg5pSvlbguIhhlCewL73M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ed3LPyRZ5okNtThMMabR7Kgh7/n4Q5rEampi11MT7zEMOMsDyhmbaaoPWSgGmSNWbU6gZ9UMVRFm0lNJfdEPsmmJ+mSN2cYigQK7cwKsIg5h6J7BvlO4m+ZXHlI8ji7Pm1VUbBvKgoaNCY2QEByXfEfP+OF9UIxbWFx8+RDC9OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1ynIDJ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772BDC4CEE4;
-	Mon,  5 May 2025 22:42:08 +0000 (UTC)
+	 MIME-Version; b=hT5ffk/9rz5ednr28kL/2/Ufrfy/rc2xvbje2WxAnrsywmIOQxxZkmYTPpZ8RHcLivf3bYaZdd5IaWi6+ymXna2Xs0iSbGKC4tyg4QUNNo4C0jzzm3i+m48CUjnAQjFguDgYSNkhRqXO0MYPLw+mScPlFe4CwtSzxe5vEbOXKgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ci1MNdUY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB4AC4CEE4;
+	Mon,  5 May 2025 22:42:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484929;
-	bh=SQcrBdDgxw+dhMtgvd5xGs4Las/eqms4Rb/CtpJWtOk=;
+	s=k20201202; t=1746484938;
+	bh=6eFnS680vN2hlxIE2CQ2X6sg5pSvlbguIhhlCewL73M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a1ynIDJ0fZLWhcFm8j61z5fah6T/vPZ5AeETRcwtKk8RVyBqD5xKY8g6VyDlZ6zCA
-	 6c+j7GTTX4NDFc4uGTaB62n+Z2CYUFq7grMqQHP8ZxcRTb3Fm5/mW//cfzKSj3nXsn
-	 Nwr7ST5W/T8pRXpfdfo1ZWwQu6lYJES97FW67561swh+zZ2BScQi9gv+0hDPqkZ8K+
-	 UHJ8fafx3kFk2WTOG2lI8UgpvTKS5u3nX2d6OmnNVynVS3S1Lg5ltMtgPr5Ee+VGr1
-	 ryiaJo6NxAkSZ6Z8YeRC+gLJ/hCnd0B0iXnP3AbJn410snU8UfYH4UxuGUKf9Um4mJ
-	 atL4pG/nKEr8g==
+	b=Ci1MNdUYyG4SJ4tx1WRa925jISAPdLyS3NhAeMuuBS4m8fmbSjJ2BXge+AIlNDHJn
+	 QB+J2HGx4LXaNqGzfcXa3nKGq+qUA7R65r0L3TdJ2U3dvAtbNnfzxozu4Lptjnt3ay
+	 q5wA0GZcH+1Ow6X2aOz/2prXXlb1PXCI4+mHZTzsHmifBO3H+6nyNwkr5sbxk1IC45
+	 8sci5uw7tGOU3my2uqT799UP0E/m9hFjPGbxXizOgYOJEmTQ/S8mVmQFgiqV43aFIE
+	 Xufqo5zxmf/CnrKMNfsOvUfuSex1kzWiLCT/ZdFFCwF6/og6cJOPZLaE8S+SLBWzCN
+	 oz9qWdg9RplpA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Flora Cui <flora.cui@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Stanley Chu <yschu@nuvoton.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Sasha Levin <sashal@kernel.org>,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	sunil.khatri@amd.com,
-	Hawking.Zhang@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 082/486] drm/amdgpu: release xcp_mgr on exit
-Date: Mon,  5 May 2025 18:32:38 -0400
-Message-Id: <20250505223922.2682012-82-sashal@kernel.org>
+	miquel.raynal@bootlin.com,
+	linux-i3c@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.12 085/486] i3c: master: svc: Fix missing STOP for master request
+Date: Mon,  5 May 2025 18:32:41 -0400
+Message-Id: <20250505223922.2682012-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -71,34 +67,35 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Flora Cui <flora.cui@amd.com>
+From: Stanley Chu <yschu@nuvoton.com>
 
-[ Upstream commit b5aaa82e2b12feaaa6958f7fa0917ddcc03c24ee ]
+[ Upstream commit 0430bf9bc1ac068c8b8c540eb93e5751872efc51 ]
 
-Free on driver cleanup.
+The controller driver nacked the master request but didn't emit a
+STOP to end the transaction. The driver shall refuse the unsupported
+requests and return the controller state to IDLE by emitting a STOP.
 
-Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
-Signed-off-by: Flora Cui <flora.cui@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Link: https://lore.kernel.org/r/20250318053606.3087121-4-yschu@nuvoton.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/i3c/master/svc-i3c-master.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index ef0aa2dd33aa8..9cc7596688abd 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -4668,6 +4668,9 @@ void amdgpu_device_fini_sw(struct amdgpu_device *adev)
- 	kfree(adev->fru_info);
- 	adev->fru_info = NULL;
- 
-+	kfree(adev->xcp_mgr);
-+	adev->xcp_mgr = NULL;
-+
- 	px = amdgpu_device_supports_px(adev_to_drm(adev));
- 
- 	if (px || (!dev_is_removable(&adev->pdev->dev) &&
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index 7911814ad82ac..6ffe022dbb5b4 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -511,6 +511,7 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
+ 			queue_work(master->base.wq, &master->hj_work);
+ 		break;
+ 	case SVC_I3C_MSTATUS_IBITYPE_MASTER_REQUEST:
++		svc_i3c_master_emit_stop(master);
+ 	default:
+ 		break;
+ 	}
 -- 
 2.39.5
 
