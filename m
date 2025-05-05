@@ -1,138 +1,145 @@
-Return-Path: <linux-kernel+bounces-632062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DFB2AA9215
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB8DAA921A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5EB189534B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:33:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BFC0189522B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D69204680;
-	Mon,  5 May 2025 11:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CDC1DE3DF;
+	Mon,  5 May 2025 11:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="h24SwyKt"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CKk5SApZ"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782C9211C;
-	Mon,  5 May 2025 11:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095F22BAF8
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 11:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746444763; cv=none; b=rRk0rcbYek2pd64lcVLxypBZobV5GGLJHMFQh54d4gYiodCdTJiNyd+R57UdQLO075pjE3fATyjXmHdINhcIu7vdRSBo1jnd2cxWzFROZj6ij+K/9UEbMfEuv95tUIIX5+ECnFBOnhPzy9RXkxrCbJwMyyCl87EBIzv6Lmj36QQ=
+	t=1746444871; cv=none; b=YcFd6YCQWUv/ww8t9VS99QN2cYBJbseegUqcbVLdieYqAotPPhmiy/ymOAB8nu9pgJgCgBVIF3g/ccP5pgafBsmiDKLLh2W9eIPdwoGEkMivCcOHc3+Ai1DSF3VVyT56IpFCZl6cYvktbrnBr3+7zf5+3X5EXwYQDFbC5WYu8cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746444763; c=relaxed/simple;
-	bh=YUZ3RROT7ZWDgsgmiogcO2xFKlJxEiqaLDiSUmPzz+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IT5NttUiJSX6aFVQaV0O/YiqbB2vYJiU6k7BxasfrHVjNL54cdwKiscRXGHtkw8b+D0X33y5L5481sKcuOMaTGgNxQXDNbZt63BWTCf0wsHNYCgleZHBaC4DVgVJBuJXkVOxrUgLVH76ygjkkggplpaCcRBcB43TGEaXh/c/Vr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=h24SwyKt; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 723DA4397B;
-	Mon,  5 May 2025 11:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746444753;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=27+frVTZLDavDIgRvyDzEI+SJCigqcipN27s+IWd2+c=;
-	b=h24SwyKtbK5m/IuOdOwH4g158yXnBrczfdn/bytXN07d85RIVUujdTeOQ8ypD174enIvfa
-	BcnmE14jQd1UsB8aIRzlkPeLuviADzdhp8pMMGS2SFIp+aqTUW7i79rFyRFCL9v9nilgvK
-	VCqfJBIaXlI5iryfKvVnbwtYsjHAwkpQw0d0ZN0o3ILxrGvwGGixRTAkhEZN8+9mhXWkJh
-	DkCbPqAq2Svp19+V0uZG91P1p91kKWB3mvi2NnZSmGI8WFmcPr1ipk5DZuLfjc/hW2bTG+
-	MImw+vDCgUXTBqclaJnLKQZv6QDTRs7dWYNLLWTPimwwbaq3v8lBaLcvVIUQhw==
-Date: Mon, 5 May 2025 13:32:30 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-Subject: Re: [PATCH v4 6/9] i2c: atr: allow replacing mappings in
- attach_addr()
-Message-ID: <20250505133230.57166306@booty>
-In-Reply-To: <312c3e05-13d3-46ad-8231-6d60969b4aa5@gmail.com>
-References: <20250428102516.933571-1-demonsingur@gmail.com>
-	<20250428102516.933571-7-demonsingur@gmail.com>
-	<20250430163356.17eedc2f@booty>
-	<312c3e05-13d3-46ad-8231-6d60969b4aa5@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1746444871; c=relaxed/simple;
+	bh=DtywXT7nOiCZeCGbKRlPTp0nGZw0T4I46KUEBcRogn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ePk5E3qtDVekOA+CFawgkRHtWfBgTntl2xdwRBq1RvcI6qxebzSfuEMFnsoirXYzcibOsvSMpCAL5ZGaHML5pQTAmihZzeJRCUXRigHnFdLJNBTVOSY5qPkajq+0RQN5Xq3w6PHtOCOjQWpN4KbSmvDDjoACDCbjEDxj8YbUuH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CKk5SApZ; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso24715725e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 04:34:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746444867; x=1747049667; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6XhugQLAUiTjEXSojV62+wHll132AeV85P7tE0uK3wI=;
+        b=CKk5SApZvok0ejDMt0CbGzY78NFD16lMuoShbB3eLtoJM/nYTrX9xKsqb24+CdZd5d
+         UH9QoDLcH+usTJejPaxYVx3S8EgITk3Oq3Lo7FB1ilVMr3osM+OVIaja57c5LKRN6ce6
+         lAB74e+m9OTBAI0At5FWMbBVR+YEvnA4WjnlkN1ny1lRVoSgSPazCmYlZeXNjU03IAq4
+         tiq5HHNuFueIS7a86ZIF5xQ9vXYbCRdWLvqTgT56qdCXz0gd30/Yqk3X2dMva4DUwBfD
+         URKCmXlvd6QEzTv9x2r3RMgcTSstlr7amSj0biFjeuv9qwk+qvdSyBNakJ93HZsbBuYF
+         AhCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746444867; x=1747049667;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6XhugQLAUiTjEXSojV62+wHll132AeV85P7tE0uK3wI=;
+        b=O4wtwWzxjoc4n4jV5zFpTgZ79yaS0SZFudty784TS4mq3Hu5Do71TZVpQLX9lkYsbs
+         93IdwGKYqA9jXIJpaEAf/eCY7hJb2UJAGC9nPZZzKxPetlN0DEAokuiheehMWaGWawSj
+         iCdbQ2D4LSliZ2cDH3nR4nH0ILapNlTafeiHuIYMT7OhcWy48LHbUMo0gx1+riDPT22R
+         ohhSU2HuLPVbBfc4ff1UdXBVpiiTbnZHzgwkzgfrxLZ6g6KlxtbTRumKm3H2Qu4F2/fR
+         kOPihGTUw548zZYfz7AK+wNmxIa1tvEYQxZSiiWl3bZKoJ/8wZlwfWUJjhbXZ1QIxjqP
+         hy6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVL9KHsryK77eRmgafYhfFs18Ud4pdVnZqwEEdRyLiNauHuFRp+BSDySTKZ5NnIR7mUM3xSuCHy10sMZpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwheiWdinonjhPAOdLpiSvpmMBAIHt7mQly8cgYwBrfz50VnDa8
+	taq/JizEETdL2FibHbI/WYW3oqAlKP7vXezBuXHN6NinIkJNpVpmyicHEqHrN/o=
+X-Gm-Gg: ASbGncuzIPG4cqDgkMllavIC+UfxS83iQsR/YMXjN3ju8KtdflxUVKd6S1nkWu/s8Qo
+	VSFD9EewVx1pg7ibWi6XbS8g66hgdChYyA0tfmEI+5KdzkAAvTs3oglCMloMIZv28G/0NAi0yVK
+	ySt9WS8I7aXmUDIMTiBcm1mqDgIPgf7xIbD4V+v2nc8S6pafN19nq7z5iCQLvtOGsHAdOJdHW/7
+	hI8XGuMR6eW664Ero6RzHjVmUhyltOAjdmE9tv3FlA0HvGwDw0YRU/qu1AxxHHwO9DL9Mr/jKXw
+	UDUqJ4HxySjp4hXraZ7uOU+l0SSgnSxEDRzU7HZkL6PwhZOVMm/Nvh4jZkEWMwZJtW0n1bS9yBq
+	ZAbnHlr8=
+X-Google-Smtp-Source: AGHT+IFc3WNbIuzpSHvf5EhEDFFev353yEFZ4/59iWu0heuGbRxVu2xM2FS8TA0uICZNl3YBTu9s5Q==
+X-Received: by 2002:a05:600c:1d8f:b0:43d:7de:16e3 with SMTP id 5b1f17b1804b1-441c49237f4mr56899705e9.24.1746444867296;
+        Mon, 05 May 2025 04:34:27 -0700 (PDT)
+Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae35fcsm10318859f8f.32.2025.05.05.04.34.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 04:34:26 -0700 (PDT)
+Date: Mon, 5 May 2025 13:33:16 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] iio: dac: adi-axi-dac: fix for wrong bus read
+Message-ID: <zca24hgtpycx3l2knyqdt3eu7mfyulzxjphsypae2jzxjgvbsu@2kslj4tcihv4>
+References: <20250409-ad3552r-fix-bus-read-v2-0-34d3b21e8ca0@baylibre.com>
+ <ac50109f06d7191549a91779028aca6d639998cc.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkedtleejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeehffejffekudfhkeeklefgjeeuheekffelheejgfeijeehieelkedttdfhjedtnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepuggvmhhonhhsihhnghhurhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepfihsrgdorhgvnhgvs
- hgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ac50109f06d7191549a91779028aca6d639998cc.camel@gmail.com>
 
-On Mon, 5 May 2025 13:33:39 +0300
-Cosmin Tanislav <demonsingur@gmail.com> wrote:
+Hi Jonathan,
 
-> On 4/30/25 5:33 PM, Luca Ceresoli wrote:
-> > On Mon, 28 Apr 2025 13:25:11 +0300
-> > Cosmin Tanislav <demonsingur@gmail.com> wrote:
-> >   
-> >> It is possible for aliases to be exhausted while we are still attaching
-> >> children.
-> >>
-> >> Allow replacing mapping on attach by calling
-> >> i2c_atr_replace_mapping_by_addr() if i2c_atr_create_mapping_by_addr()
-> >> fails.
-> >>
-> >> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> >> ---
-> >>   drivers/i2c/i2c-atr.c | 3 +++
-> >>   1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-> >> index bf7b2ac5e9cf..7214a59ddf15 100644
-> >> --- a/drivers/i2c/i2c-atr.c
-> >> +++ b/drivers/i2c/i2c-atr.c
-> >> @@ -543,6 +543,9 @@ static int i2c_atr_attach_addr(struct i2c_adapter *adapter,
-> >>   	mutex_lock(&chan->alias_pairs_lock);
-> >>   
-> >>   	c2a = i2c_atr_create_mapping_by_addr(chan, addr);
-> >> +	if (!c2a)
-> >> +		c2a = i2c_atr_replace_mapping_by_addr(chan, addr);
-> >> +
-> >>   	if (!c2a) {
-> >>   		dev_err(atr->dev, "failed to find a free alias\n");
-> >>   		ret = -EBUSY;  
+asking info about this patch.
+
+As explained, would not do anything else here, please let me know if it can
+be accepted or how to proceed.
+
+Thanks a lot,
+angelo
+
+On 09.04.2025 14:57, Nuno Sá wrote:
+> On Wed, 2025-04-09 at 11:16 +0200, Angelo Dureghello wrote:
+> > This patchset is intended to fix a random wrong chip ID read, or a
+> > scratchpad test mismatch, tests done in the ad3552r-hs driver probe. The 
+> > bus "read" operation must always check for busy flag before reading.
 > > 
-> > Looks like this should be squashed into patch 5, no? I might be
-> > wrong, but IIUC the change in patch 5 is introducing a "bug" ("It is
-> > possible for aliases to be exhausted while we are still attaching
-> > children") and this patch fixes it.
-> >   
+> > First patch reorganizes a bit the busy-wait polling code, second patch
+> > fixes the wrong bus read occurence. 
+> > 
+> > NOTE: due to ongoing changes in adi-axi-dac.c, this patch is intended to be
+> > applied after the linked "ramp generator" patch.
+> > 
+> > Link:
+> > https://lore.kernel.org/linux-iio/20250408-wip-bl-ad3552r-fixes-v4-0-b33c0264bd78@baylibre.com
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > ---
 > 
-> Patch 5 doesn't introduce a bug, this is just how things were before.
-> If you look at the diff in patch 5, the error case of
-> i2c_atr_reserve_alias() just returns an error.
+> LGTM,
 > 
-> The logic in i2c_atr_attach_addr() didn't handle the case where a
-> mapping is not able to be created, matching the logic in
-> i2c_atr_create_mapping_by_addr().
+> Reviewed-by: Nuno Sá <nuno.sa@analog.com>
 > 
-> This patch adds handling for that case.
-
-Ah, I see now. Makes sense. Thanks for the clarification!
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > Changes in v2:
+> > - invert patch order, fix first.
+> > - Link to v1:
+> > https://lore.kernel.org/r/20250408-ad3552r-fix-bus-read-v1-0-37add66aeb08@baylibre.com
+> > 
+> > ---
+> > Angelo Dureghello (2):
+> >       iio: dac: adi-axi-dac: fix bus read
+> >       iio: dac: adi-axi-dac: use unique bus free check
+> > 
+> >  drivers/iio/dac/adi-axi-dac.c | 40 +++++++++++++++++++++++++---------------
+> >  1 file changed, 25 insertions(+), 15 deletions(-)
+> > ---
+> > base-commit: 6fb85f14853ddde06d57030c753168402bf69cd9
+> > change-id: 20250408-ad3552r-fix-bus-read-1522622fbd2b
+> > 
+> > Best regards,
 
