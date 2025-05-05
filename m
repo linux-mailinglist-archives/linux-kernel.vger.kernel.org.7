@@ -1,55 +1,61 @@
-Return-Path: <linux-kernel+bounces-633829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB62BAAAA2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:31:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2DBAAAA23
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750A6188DC96
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AFAE188B452
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6889376448;
-	Mon,  5 May 2025 22:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81ACD3754CA;
+	Mon,  5 May 2025 22:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVInQ4E1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3pOxHpS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9739376455;
-	Mon,  5 May 2025 22:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8E227F720;
+	Mon,  5 May 2025 22:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485334; cv=none; b=eKDQaS0xO8xQT1O5AgRIkyTK0Z+MlNcbniIR0To7THVn7FS62qPrvaBP3vKR7VvUuHtv7j3s6NwHqb0TvZ6w2ViAru4tvG6wrEXnnsTrGrduLZLnA9psZpbQhKNhQMqxIxf9iuKkjB5TsVMsBl/r9mYUsK/Io1Eu6f7Nc8Uv7VM=
+	t=1746485337; cv=none; b=Yden1RvseqQluh7JJ0qsntyDDJhSFCerUblZb4kiBwyZG6Bfum0eG8Q5kXDiMm6EfZB87Du9Ak6oG7R06TXcJj2PSGJnFSc8pQUe2Ju7Esu2pj2YW3OHkWPdkT+c4JfAaBEjEZhczS9sg8dKnYurNdV0tOCGfpU/lAptbQxaSlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485334; c=relaxed/simple;
-	bh=Cj9pz82UZuBAlcuouMBtIXCTLWVIoxB9T79RQmp21IU=;
+	s=arc-20240116; t=1746485337; c=relaxed/simple;
+	bh=CiudXCoaLhUhsdWhEEEvz/wFxDRaHTPScXpbuel7v40=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MK6uxk3zzp+mmKaqf8F6LS4Lja5S1U+LPJkC2p7YA8dcGNfxVla486WHl9w2xpcDG3J1tuXjw5ynX3nRt9PWprFgprT5d/xDnuRBX1ijuYgBt8Y28wU80tuv5BH9i09cV9cZe6nHyISiPFshEfrP57ZFeRWhZEj8zvMqgNJ5SAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVInQ4E1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0250C4CEEE;
-	Mon,  5 May 2025 22:48:52 +0000 (UTC)
+	 MIME-Version; b=E5JG0AJZb/6cfJ/bBFv5D+FkzQjCrHyYAKi6kxyzfBlByZ5YaE+Ap0m5vRmy93400LW3lbTBUF0eZ5uBpHZdoR/qbvTAScKw8MVD78gcFxUzIBJ5HyxifBwthCKk+rE9FH0GyX44YkuSE1dCKd/K4yP8Qh6HFtil+A+GAoJ1mvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3pOxHpS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51922C4CEEE;
+	Mon,  5 May 2025 22:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485333;
-	bh=Cj9pz82UZuBAlcuouMBtIXCTLWVIoxB9T79RQmp21IU=;
+	s=k20201202; t=1746485336;
+	bh=CiudXCoaLhUhsdWhEEEvz/wFxDRaHTPScXpbuel7v40=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YVInQ4E1jUjIjDkbNLQaKB79+JBXnKapoGDrQntK7DQMjb/gklCb7DezrqW7X/aL0
-	 akzwEztXgCSW++JLzamG1AqoPCYSCoeNHzB+2dqwA+Jw5jgZtIqrHWTccGGjb+kqhy
-	 a0WlW3ILG5Zm2njrBQ4+f6j1jjFZL065+AF20TM0HE8Ky6ifb8JmbUS6+aLcvF0De7
-	 iPfcrRdd/ROkj452mK7ZbylyqSRvnvt3CnwvVdKtp4ALzA9MJ3/wYNzNxxc9eyyF0g
-	 D37CkhsVEeqZltFERXrujYNSEwqG7s7sFOjfZTCVXM92J4Or8ngCe1F8mJPXAsewg4
-	 huwS0T5eSyb+A==
+	b=q3pOxHpSoRhCfY+l2nFRYy3FxpaMxHJi2enlse7Ifj5voCEQoi9TWrmcCymEhbUsE
+	 SOescPl0ip5C1Fekz1BV9xaON24Ubg3itMHJXCxXgGuxzV4fZ94k7CiuFnhsxGanUT
+	 UZnn5Gcc6qZc09UF90Z8aVRpKm65iZPxFnm5TeBBoH+xuk5Yvf6w5yTnJUdbX8YPNs
+	 T8jdPDXpevId0Dpw4+Ji31J0jJ+/MGgpIM13AKLp+C3risCanXNMknhkFp7yopsBrK
+	 VZP933yDv/djwjAb/DwgV5RO65DrDR1o8wYVFa2sNgonzMCGxqL1fma5NKvf+URpEU
+	 VCQmGCwDU8sbw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+Cc: Xiao Liang <shaw.leon@gmail.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	davem@davemloft.net,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 272/486] crypto: ahash - Set default reqsize from ahash_alg
-Date: Mon,  5 May 2025 18:35:48 -0400
-Message-Id: <20250505223922.2682012-272-sashal@kernel.org>
+	dsahern@kernel.org,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	steffen.klassert@secunet.com,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 274/486] net: ipv6: Init tunnel link-netns before registering dev
+Date: Mon,  5 May 2025 18:35:50 -0400
+Message-Id: <20250505223922.2682012-274-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -64,63 +70,154 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Xiao Liang <shaw.leon@gmail.com>
 
-[ Upstream commit 9e01aaa1033d6e40f8d7cf4f20931a61ce9e3f04 ]
+[ Upstream commit db014522f35606031d8ac58b4aed6b1ed84f03d1 ]
 
-Add a reqsize field to struct ahash_alg and use it to set the
-default reqsize so that algorithms with a static reqsize are
-not forced to create an init_tfm function.
+Currently some IPv6 tunnel drivers set tnl->net to dev_net(dev) in
+ndo_init(), which is called in register_netdevice(). However, it lacks
+the context of link-netns when we enable cross-net tunnels at device
+registration time.
 
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Let's move the init of tunnel link-netns before register_netdevice().
+
+ip6_gre has already initialized netns, so just remove the redundant
+assignment.
+
+Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Link: https://patch.msgid.link/20250219125039.18024-8-shaw.leon@gmail.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/ahash.c        | 4 ++++
- include/crypto/hash.h | 3 +++
- 2 files changed, 7 insertions(+)
+ net/ipv6/ip6_gre.c    | 2 --
+ net/ipv6/ip6_tunnel.c | 3 ++-
+ net/ipv6/ip6_vti.c    | 3 ++-
+ net/ipv6/sit.c        | 8 +++++---
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/crypto/ahash.c b/crypto/ahash.c
-index bcd9de009a91b..fe19bf7f15eb9 100644
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -473,6 +473,7 @@ static int crypto_ahash_init_tfm(struct crypto_tfm *tfm)
- 	struct ahash_alg *alg = crypto_ahash_alg(hash);
+diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
+index 235808cfec705..68e9a41eed491 100644
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -1498,7 +1498,6 @@ static int ip6gre_tunnel_init_common(struct net_device *dev)
+ 	tunnel = netdev_priv(dev);
  
- 	crypto_ahash_set_statesize(hash, alg->halg.statesize);
-+	crypto_ahash_set_reqsize(hash, alg->reqsize);
+ 	tunnel->dev = dev;
+-	tunnel->net = dev_net(dev);
+ 	strcpy(tunnel->parms.name, dev->name);
  
- 	if (tfm->__crt_alg->cra_type == &crypto_shash_type)
- 		return crypto_init_ahash_using_shash(tfm);
-@@ -638,6 +639,9 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
- 	if (alg->halg.statesize == 0)
- 		return -EINVAL;
+ 	ret = dst_cache_init(&tunnel->dst_cache, GFP_KERNEL);
+@@ -1882,7 +1881,6 @@ static int ip6erspan_tap_init(struct net_device *dev)
+ 	tunnel = netdev_priv(dev);
  
-+	if (alg->reqsize && alg->reqsize < alg->halg.statesize)
-+		return -EINVAL;
+ 	tunnel->dev = dev;
+-	tunnel->net = dev_net(dev);
+ 	strcpy(tunnel->parms.name, dev->name);
+ 
+ 	ret = dst_cache_init(&tunnel->dst_cache, GFP_KERNEL);
+diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
+index 48fd53b989726..5350c9bb2319b 100644
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1878,7 +1878,6 @@ ip6_tnl_dev_init_gen(struct net_device *dev)
+ 	int t_hlen;
+ 
+ 	t->dev = dev;
+-	t->net = dev_net(dev);
+ 
+ 	ret = dst_cache_init(&t->dst_cache, GFP_KERNEL);
+ 	if (ret)
+@@ -1940,6 +1939,7 @@ static int __net_init ip6_fb_tnl_dev_init(struct net_device *dev)
+ 	struct net *net = dev_net(dev);
+ 	struct ip6_tnl_net *ip6n = net_generic(net, ip6_tnl_net_id);
+ 
++	t->net = net;
+ 	t->parms.proto = IPPROTO_IPV6;
+ 
+ 	rcu_assign_pointer(ip6n->tnls_wc[0], t);
+@@ -2013,6 +2013,7 @@ static int ip6_tnl_newlink(struct net *src_net, struct net_device *dev,
+ 	int err;
+ 
+ 	nt = netdev_priv(dev);
++	nt->net = net;
+ 
+ 	if (ip_tunnel_netlink_encap_parms(data, &ipencap)) {
+ 		err = ip6_tnl_encap_setup(nt, &ipencap);
+diff --git a/net/ipv6/ip6_vti.c b/net/ipv6/ip6_vti.c
+index 590737c275379..0123504691443 100644
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -925,7 +925,6 @@ static inline int vti6_dev_init_gen(struct net_device *dev)
+ 	struct ip6_tnl *t = netdev_priv(dev);
+ 
+ 	t->dev = dev;
+-	t->net = dev_net(dev);
+ 	netdev_hold(dev, &t->dev_tracker, GFP_KERNEL);
+ 	netdev_lockdep_set_classes(dev);
+ 	return 0;
+@@ -958,6 +957,7 @@ static int __net_init vti6_fb_tnl_dev_init(struct net_device *dev)
+ 	struct net *net = dev_net(dev);
+ 	struct vti6_net *ip6n = net_generic(net, vti6_net_id);
+ 
++	t->net = net;
+ 	t->parms.proto = IPPROTO_IPV6;
+ 
+ 	rcu_assign_pointer(ip6n->tnls_wc[0], t);
+@@ -1008,6 +1008,7 @@ static int vti6_newlink(struct net *src_net, struct net_device *dev,
+ 	vti6_netlink_parms(data, &nt->parms);
+ 
+ 	nt->parms.proto = IPPROTO_IPV6;
++	nt->net = net;
+ 
+ 	if (vti6_locate(net, &nt->parms, 0))
+ 		return -EEXIST;
+diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
+index 39bd8951bfca1..3c15a0ae228e2 100644
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -269,6 +269,7 @@ static struct ip_tunnel *ipip6_tunnel_locate(struct net *net,
+ 
+ 	nt = netdev_priv(dev);
+ 
++	nt->net = net;
+ 	nt->parms = *parms;
+ 	if (ipip6_tunnel_create(dev) < 0)
+ 		goto failed_free;
+@@ -1449,7 +1450,6 @@ static int ipip6_tunnel_init(struct net_device *dev)
+ 	int err;
+ 
+ 	tunnel->dev = dev;
+-	tunnel->net = dev_net(dev);
+ 	strcpy(tunnel->parms.name, dev->name);
+ 
+ 	ipip6_tunnel_bind_dev(dev);
+@@ -1563,6 +1563,7 @@ static int ipip6_newlink(struct net *src_net, struct net_device *dev,
+ 	int err;
+ 
+ 	nt = netdev_priv(dev);
++	nt->net = net;
+ 
+ 	if (ip_tunnel_netlink_encap_parms(data, &ipencap)) {
+ 		err = ip_tunnel_encap_setup(nt, &ipencap);
+@@ -1858,6 +1859,9 @@ static int __net_init sit_init_net(struct net *net)
+ 	 */
+ 	sitn->fb_tunnel_dev->netns_local = true;
+ 
++	t = netdev_priv(sitn->fb_tunnel_dev);
++	t->net = net;
 +
- 	err = hash_prepare_alg(&alg->halg);
+ 	err = register_netdev(sitn->fb_tunnel_dev);
  	if (err)
- 		return err;
-diff --git a/include/crypto/hash.h b/include/crypto/hash.h
-index 2d5ea9f9ff43e..6692253f0b5be 100644
---- a/include/crypto/hash.h
-+++ b/include/crypto/hash.h
-@@ -132,6 +132,7 @@ struct ahash_request {
-  *	      This is a counterpart to @init_tfm, used to remove
-  *	      various changes set in @init_tfm.
-  * @clone_tfm: Copy transform into new object, may allocate memory.
-+ * @reqsize: Size of the request context.
-  * @halg: see struct hash_alg_common
-  */
- struct ahash_alg {
-@@ -148,6 +149,8 @@ struct ahash_alg {
- 	void (*exit_tfm)(struct crypto_ahash *tfm);
- 	int (*clone_tfm)(struct crypto_ahash *dst, struct crypto_ahash *src);
+ 		goto err_reg_dev;
+@@ -1865,8 +1869,6 @@ static int __net_init sit_init_net(struct net *net)
+ 	ipip6_tunnel_clone_6rd(sitn->fb_tunnel_dev, sitn);
+ 	ipip6_fb_tunnel_init(sitn->fb_tunnel_dev);
  
-+	unsigned int reqsize;
-+
- 	struct hash_alg_common halg;
- };
+-	t = netdev_priv(sitn->fb_tunnel_dev);
+-
+ 	strcpy(t->parms.name, sitn->fb_tunnel_dev->name);
+ 	return 0;
  
 -- 
 2.39.5
