@@ -1,66 +1,61 @@
-Return-Path: <linux-kernel+bounces-634075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 937DEAAAC0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FCAAAAC34
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92DE11B62DF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:04:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E0113ACF9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6692D2FAEC1;
-	Mon,  5 May 2025 23:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F03A3BE0C1;
+	Mon,  5 May 2025 23:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N35ARArW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qD8T+Bs9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95A32836A2;
-	Mon,  5 May 2025 23:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B766F2EEBEC;
+	Mon,  5 May 2025 23:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486599; cv=none; b=RP6gprwnaVKV3zWfW618QoBIrYun9IQy7xq3Hayw6arKP+DvzyxsqLfAdj58m8XxmKk1Tno3KoLZNINainCuLyQTTK2Plm0Zugq1lzF0ui6KpYwBflb+AOtk2Yp1BKXpQxEkMytk5YoLnF2RccK5qzsOPg0U9uq20FLPaT0uzSE=
+	t=1746486608; cv=none; b=klDJo9YlKdSq2OseXB+tOYVkIsVdxKgLu3NakW0Lqe2nWV9Dl6eE5jdBoHwbGV3rZ3ev9PXF1xGj73n0YHn+sBgpZKpmYZdiI3OWTaCrjQu3B2QCGXKvYCz/UPX02NwZPDLKKeUzLYbxJmbYm5pDZMvz5Yt1a2HuToKAamBm3Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486599; c=relaxed/simple;
-	bh=U/kOHmzvB1lzBJaKYAzAlXmLijrDTnh5CcoN3Fexe8I=;
+	s=arc-20240116; t=1746486608; c=relaxed/simple;
+	bh=6nilLHw0VgDiTs0EsmbNUNsBYV4knhCYP34x5LqIndU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mpa0/oOLymnpKXOnn3WsCDin0UX3dTLHZ/sExBz5G2MUu1lgoVm2AIHNDu3JvOuqbgnOI+HzIJDqdidjhMzRDzMEpWqFHq3KHHBgGcdR0i8eUtACM6/jyXnAH7wBVKj4DzE1vtjE/GrHwLLQXkuxztw1E0YONZdTQLkZFJZoEoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N35ARArW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8992C4CEEE;
-	Mon,  5 May 2025 23:09:56 +0000 (UTC)
+	 MIME-Version; b=ul4xQBL3toBfTam3irTrAeVJm3HhENcpBSeEJi3kspNG4YL1hI67Dscn9ZRAWJSFnP1TRzssP4E41qWV0FxCl7K4qB8XP24dldN5/VdHwNQcpax3Guxfgq58Tphde7r/euKw8JPfsS/CpkbW9qeb15wDovRVtPiDTwr5xbaAhlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qD8T+Bs9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED5DC4CEEE;
+	Mon,  5 May 2025 23:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486598;
-	bh=U/kOHmzvB1lzBJaKYAzAlXmLijrDTnh5CcoN3Fexe8I=;
+	s=k20201202; t=1746486607;
+	bh=6nilLHw0VgDiTs0EsmbNUNsBYV4knhCYP34x5LqIndU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N35ARArWXN+yKccfi47qZobfsgQnG35azhNNeeTo9i+Mf7M1CwHrtPZy0xmGohRWG
-	 ZFSlQ/MIPcnwPGTgQ27M8ly5sGZXOg1x0suSKjaFOKbCHkMODGnH4ancxrqXsRyU4S
-	 TAoUW66obO71spbH1SEKUtG84TKeFI1EFD3YOhReD2CscFezxgoPoJk18FBxVAnkFF
-	 2GcvWJIe3vfVY021hED/XglBAn7o2nOhHIOiB9BWuvseuV4ufrjumJkHTnxwDoEZik
-	 nTbbzMowZLzlHiIPTUp9zuoVVO2RTO/SdxuauUdUZ5j7CHvpcNBGMTb4j6oCJnfDNT
-	 WLJb27mEigTSg==
+	b=qD8T+Bs9MrzhlMi/Zp7AtwJjAbYo1HDSOvV6xO/Ibvad2DkeGdOgFYU4RvhvLHiUb
+	 02KsdtMi4Ilp0bXGUIoAXuM+ZE+mZZaFYlj6WyeWYzbUN3QZxwGfHnOuwEcaPE5qkv
+	 QNDDbxSEPxXBylVE1Ruft3kNTcO+EFzbtHBq8CKoqNq4QV3LJOdbUQtRE1oKftuKUJ
+	 3UrI4dOFHFmU26OKCMORrRskvSn6LrKCkNP1krM8xEZ+QRy/+VzlV3LmKVjf3uA+0Y
+	 /6w+drLPkoyPHx5feeiWqiICksIbTGYaQ83CFq4OZuTWd0T0cTgZBVC34T/CzplXRh
+	 ckS1yHH5chpow==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Stanimir Varbanov <svarbanov@suse.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <james.quinlan@broadcom.com>,
-	"Ivan T . Ivanov" <iivanov@suse.de>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+Cc: Kevin Krakauer <krakauer@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	jim2101024@gmail.com,
-	nsaenz@kernel.org,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	bhelgaas@google.com,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 110/212] PCI: brcmstb: Expand inbound window size up to 64GB
-Date: Mon,  5 May 2025 19:04:42 -0400
-Message-Id: <20250505230624.2692522-110-sashal@kernel.org>
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 115/212] selftests/net: have `gro.sh -t` return a correct exit code
+Date: Mon,  5 May 2025 19:04:47 -0400
+Message-Id: <20250505230624.2692522-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -70,49 +65,40 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Stanimir Varbanov <svarbanov@suse.de>
+From: Kevin Krakauer <krakauer@google.com>
 
-[ Upstream commit 25a98c727015638baffcfa236e3f37b70cedcf87 ]
+[ Upstream commit 784e6abd99f24024a8998b5916795f0bec9d2fd9 ]
 
-The BCM2712 memory map can support up to 64GB of system memory, thus
-expand the inbound window size in calculation helper function.
+Modify gro.sh to return a useful exit code when the -t flag is used. It
+formerly returned 0 no matter what.
 
-The change is safe for the currently supported SoCs that have smaller
-inbound window sizes.
-
-Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Jim Quinlan <james.quinlan@broadcom.com>
-Tested-by: Ivan T. Ivanov <iivanov@suse.de>
-Link: https://lore.kernel.org/r/20250224083559.47645-7-svarbanov@suse.de
-[kwilczynski: commit log]
-Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Tested: Ran `gro.sh -t large` and verified that test failures return 1.
+Signed-off-by: Kevin Krakauer <krakauer@google.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+Link: https://patch.msgid.link/20250226192725.621969-2-krakauer@google.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-brcmstb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/net/gro.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index 425db793080d4..fe37bd28761a8 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -281,8 +281,8 @@ static int brcm_pcie_encode_ibar_size(u64 size)
- 	if (log2_in >= 12 && log2_in <= 15)
- 		/* Covers 4KB to 32KB (inclusive) */
- 		return (log2_in - 12) + 0x1c;
--	else if (log2_in >= 16 && log2_in <= 35)
--		/* Covers 64KB to 32GB, (inclusive) */
-+	else if (log2_in >= 16 && log2_in <= 36)
-+		/* Covers 64KB to 64GB, (inclusive) */
- 		return log2_in - 15;
- 	/* Something is awry so disable */
- 	return 0;
+diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
+index 342ad27f631b1..e771f5f7faa26 100755
+--- a/tools/testing/selftests/net/gro.sh
++++ b/tools/testing/selftests/net/gro.sh
+@@ -95,5 +95,6 @@ trap cleanup EXIT
+ if [[ "${test}" == "all" ]]; then
+   run_all_tests
+ else
+-  run_test "${proto}" "${test}"
++  exit_code=$(run_test "${proto}" "${test}")
++  exit $exit_code
+ fi;
 -- 
 2.39.5
 
