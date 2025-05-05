@@ -1,160 +1,340 @@
-Return-Path: <linux-kernel+bounces-632451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66ADAA9776
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:25:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CD5AA977C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 17:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F2577AB38E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:24:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1A8617112B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 15:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9288825CC77;
-	Mon,  5 May 2025 15:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E8D25F98C;
+	Mon,  5 May 2025 15:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="H9JG1gT6"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="rE4B4F/P"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A9F25C6EA
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 15:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A978E25C6E7;
+	Mon,  5 May 2025 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746458739; cv=none; b=YnFNB0qaws1tmQC3eVqIBmqHrES+HadtCWb2V8DtZmy5ou5Z/yG1khqRsmfHUKijQ3CCM9zQat+T/YzTxxwLutLXC1z9R++qp8nyWcMYSSEfL7UilbmGysLGnYqE5ONlO1wW088rGKVFFOew8mfHKJvZD4cdztOHdHKiwv/fBfY=
+	t=1746458780; cv=none; b=S0lkjWK4lWyYsjnjrP8XLNLh/xY3wVOiKk+ZQD1q5TG4Zjd3sxe6tE4m/JPv2QfK2wtDPep3gYMoDg8lB9Ru83KgwOSV0PJvOOrSadha+mdPdQk5vH/2Mn7Ut2vSsPiFI6Opeh+18vIIX33dJggsnWnaxsVMQY4z2mcgq1ga5Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746458739; c=relaxed/simple;
-	bh=dI4E2Kbf751wzsz59sPzsKmHk4663cGlXUspDFJTyek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNNYAIjtsjwIEoAOEvJBuW9bdp91j7pecX299r6KD2KWaAuicYi3hD3p/p3cSMeIPIg8BJ4wiryQzuWmNPNQVe5emc/ZbnpMws6zVwho/j2QR4MgavwlfyzTwGMge7UdEztf8aJbYelD2emuc8/LTkRulZGCwHAj4wU9oiIbb/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=H9JG1gT6; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so510564866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 08:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746458736; x=1747063536; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ajJLa5miM3AL5goGOKRZtkQ1TmX4V3MyI+Ci8KWiok=;
-        b=H9JG1gT63FNaZObb2fHVq8bmoilOaBq99fb4kqh1fnet2xJZLXkvY9YmfLxEebyOw+
-         sz/FI8pDBJQmWwJM4HrzKc2z3pXB03HFs3FplAqRiutvx0v6QE0BDKXavMWrSKLNg24k
-         j2Mf6Mpmqb0Uqa2jJWjYtMBVwvWR5blal7NzuZVaie98jPBiPCa5pRd5xrEluSzsCZPa
-         iBYmC3imZO40SLOPK8p280Z2CU5REsyO2EuGvUPcxrtFe8DcKllwUctVrn5nkfq35K29
-         W6Xcoe8aSfdIJHAqhdEoTO+Z15atwJiPO/UBDAwqqnAd62MkspJVgdx0n3hrJVHcBpTI
-         7JPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746458736; x=1747063536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ajJLa5miM3AL5goGOKRZtkQ1TmX4V3MyI+Ci8KWiok=;
-        b=m1N0qLINrpa4b6DqP51eTyWEQnHES+ZJLgXikCVYUzDWsD08hYiXWgNR3zKSvdg8FR
-         /HyVIE+XP8yLLK3BLy3THrM69piNF9+tkuC/oOCMG282mvbb7BFN1NSxM9WX478PHnJG
-         Nzys0kq/kbYPUkhbUjdvzz+dRnRo3ZvddqScR1VoI8paU+9ux2Qn8Jzv5ohpqe1k5D1C
-         vXOHiFjrnT0rIst3GsgsrFXTGR3mLXgrhgwv475WRdxtIk6c1rAoFynzuLkG32hQ3jz/
-         9JHMzP9qkkg9N2cuoJtnQrF5U15rJLPi9tuqYHryt+VU8U29p9tnf2QMuv2yWtPF8vMP
-         izTg==
-X-Gm-Message-State: AOJu0YwavyMuS2D31WXE0btzjlR9NSSwdXljapc6pJ7mGq34LlK6UTcG
-	kh9N1Iiyp5P7BgzncWviyFSYXvLtdlyoznkPyPYJW3csY5eftpdbyKYvP4n7f4s=
-X-Gm-Gg: ASbGncvOLdqhof6H02/27+7j4nzxbRnVts/oGZMgQMTijhOyeAve4b58NZow8F7yYT/
-	o9JqCT6hLZHB/ptBZ3LOvVoilxAnx7aF/tb+DUrrUYWQr4yOwyIN2jLZ1F85ClULRAd2C9wjZtk
-	kge9lzxROSMJ1vyfUdJkMS5HI3Wsn+/qPSShqr5XsRbRLqV5oGQJR7fki8XiOC/16Q9eHPJQ4V/
-	hPlQd3A1mf7t4wiOLX73YZG8BlkjeWh0f7CpP58KWYwRysVmZoqnOG3f+8QDv9cJBhV9wcii4ec
-	t3Wk6W/SsKykFVj7Y92WUrUCgy5TPyfDv1RgYik3CMMpJQMzOUk=
-X-Google-Smtp-Source: AGHT+IGYG7m0T03TgljojHgEjhUKNwr/b12nUjKBhKn/d8sk3hJq1ietBujLlydEzb85jA5VfGNXkw==
-X-Received: by 2002:a17:907:9406:b0:ac6:f6e2:7703 with SMTP id a640c23a62f3a-ad1a48bc5d9mr610686166b.8.1746458735844;
-        Mon, 05 May 2025 08:25:35 -0700 (PDT)
-Received: from localhost.localdomain ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad18914733esm506520166b.33.2025.05.05.08.25.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 08:25:35 -0700 (PDT)
-Date: Mon, 5 May 2025 17:25:33 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Eugen Hristev <eugen.hristev@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	andersson@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
-	tglx@linutronix.de, mingo@redhat.com, rostedt@goodmis.org,
-	john.ogness@linutronix.de, senozhatsky@chromium.org,
-	peterz@infradead.org, mojha@qti.qualcomm.com,
-	linux-arm-kernel@lists.infradead.org, vincent.guittot@linaro.org,
-	konradybcio@kernel.org, dietmar.eggemann@arm.com,
-	juri.lelli@redhat.com
-Subject: Re: [RFC][PATCH 07/14] printk: add kmsg_kmemdump_register
-Message-ID: <aBjYbXJL-GJe4Mh8@localhost.localdomain>
-References: <20250422113156.575971-1-eugen.hristev@linaro.org>
- <20250422113156.575971-8-eugen.hristev@linaro.org>
+	s=arc-20240116; t=1746458780; c=relaxed/simple;
+	bh=2eXSth+CeNZ/87C7gc6tAXuFy2lTDK8NwvpHafAW4h0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MIb//Bt1m09auLa9iB78Ap0rbMhrcQEd8ssc4ahV4M0I2TQYhTDEFbC7oT6g5cSCeNSNQmzvHgNZfALgk4HmfCZz1auWUffyydjScb0KHkvXozCXyjCQqqRPPnDPFNYJz1F/wKe2BfCGjCIJVU36fCSczpVgUoyv+QT9a5C2yzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=rE4B4F/P; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=7Tgg85PahfVlbu8AdWGyt+Q4BL1gHdW35PrOPdrVlzI=; b=rE4B4F/PCcz/HWnJ
+	Jxp6aBW6xb0Wa+d+FVWUNaBCUbVXzIz3VKZ4mC0gZdVBy1KRD+8DS8P4TrGxF+BLzM4MUjOt6qh6h
+	Qfs5XAMiXg4WNUz7k3i2ixzI/ZgejXj9IzxWmcxysybnXW9kloZajLHlDWwAELgsqUdrqg9jNTE8D
+	Be13+pPWkkW9o+qNIj4XSsa95GHwwfcMTko1znWtpgWleBQtfb8DtJNt9Ld4cNgjew4UCmOZQOuQk
+	uAS2I893GCWpii3tT9+Ns74VuY3j42eFs1rBmhc30zmiivsmQ7XDGnyJhV4Cg7gL8zAey/bZMjmEZ
+	9/Zc2O4z9QYb0NohZQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1uBxhf-001SvG-0u;
+	Mon, 05 May 2025 15:25:59 +0000
+From: linux@treblig.org
+To: malattia@linux.it,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: hverkuil@xs4all.nl,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH v2] platform/x86/sony-laptop: Remove unused sony laptop camera code
+Date: Mon,  5 May 2025 16:25:58 +0100
+Message-ID: <20250505152558.40526-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422113156.575971-8-eugen.hristev@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue 2025-04-22 14:31:49, Eugen Hristev wrote:
-> Add kmsg_kmemdump_register, which registers prb, log_buf and infos/descs
-> to kmemdump.
-> This will allow kmemdump to be able to dump specific log buffer areas on
-> demand.
-> 
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -4650,6 +4651,18 @@ int kmsg_dump_register(struct kmsg_dumper *dumper)
->  }
->  EXPORT_SYMBOL_GPL(kmsg_dump_register);
->  
-> +void kmsg_kmemdump_register(void)
-> +{
-> +	kmemdump_register("log_buf", (void *)log_buf_addr_get(), log_buf_len_get());
-> +	kmemdump_register("prb", (void *)&prb, sizeof(prb));
-> +	kmemdump_register("prb", (void *)prb, sizeof(*prb));
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-This looks strange. "prb" is a pointer to "struct printk_ringbuffer".
-It should be enough to register the memory with the structure.
+commit ba47652ba655 ("media: meye: remove this deprecated driver")
+removed the meye driver but left behind the code in sony-laptop.c
+which that driver used to call.
 
-> +	kmemdump_register("prb_descs", (void *)_printk_rb_static_descs,
-> +			  sizeof(_printk_rb_static_descs));
-> +	kmemdump_register("prb_infos", (void *)_printk_rb_static_infos,
-> +			  sizeof(_printk_rb_static_infos));
+Remove the sony_pic_camera_command() function, and the set of
+defines (SONY_PIC_COMMAND_*) in a header used for the interface
+and the static helpers it called.
 
-Also this looks wrong. These are static buffers which are used during
-early boot. They might later be replaced by dynamically allocated
-buffers when a bigger buffer is requested by "log_buf_len" command
-line parameter.
+Cleanup remaining #defines.
 
-I think that we need to register the memory of the structure
-and 3 more buffers. See how the bigger buffer is allocated in
-setup_log_buf().
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+v2
+  Removed more #defines after Ilpo's review
 
-I would expect something like:
+ MAINTAINERS                        |   1 -
+ drivers/platform/x86/sony-laptop.c | 167 -----------------------------
+ include/linux/sony-laptop.h        |  39 -------
+ 3 files changed, 207 deletions(-)
+ delete mode 100644 include/linux/sony-laptop.h
 
-	unsigned int descs_count;
-	unsigned long data_size;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2aed76827090..6c865b5d8fae 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22671,7 +22671,6 @@ W:	http://www.linux.it/~malattia/wiki/index.php/Sony_drivers
+ F:	Documentation/admin-guide/laptops/sony-laptop.rst
+ F:	drivers/char/sonypi.c
+ F:	drivers/platform/x86/sony-laptop.c
+-F:	include/linux/sony-laptop.h
+ 
+ SOPHGO DEVICETREES and DRIVERS
+ M:	Chen Wang <unicorn_wang@outlook.com>
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index b52390fbd743..7640929dc996 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -48,7 +48,6 @@
+ #include <linux/acpi.h>
+ #include <linux/slab.h>
+ #include <linux/sonypi.h>
+-#include <linux/sony-laptop.h>
+ #include <linux/rfkill.h>
+ #ifdef CONFIG_SONYPI_COMPAT
+ #include <linux/poll.h>
+@@ -3619,22 +3618,6 @@ static u8 sony_pic_call2(u8 dev, u8 fn)
+ 	return v1;
+ }
+ 
+-static u8 sony_pic_call3(u8 dev, u8 fn, u8 v)
+-{
+-	u8 v1;
+-
+-	wait_on_command(inb_p(spic_dev.cur_ioport->io1.minimum + 4) & 2, ITERATIONS_LONG);
+-	outb(dev, spic_dev.cur_ioport->io1.minimum + 4);
+-	wait_on_command(inb_p(spic_dev.cur_ioport->io1.minimum + 4) & 2, ITERATIONS_LONG);
+-	outb(fn, spic_dev.cur_ioport->io1.minimum);
+-	wait_on_command(inb_p(spic_dev.cur_ioport->io1.minimum + 4) & 2, ITERATIONS_LONG);
+-	outb(v, spic_dev.cur_ioport->io1.minimum);
+-	v1 = inb_p(spic_dev.cur_ioport->io1.minimum);
+-	dprintk("sony_pic_call3(0x%.2x - 0x%.2x - 0x%.2x): 0x%.4x\n",
+-			dev, fn, v, v1);
+-	return v1;
+-}
+-
+ /*
+  * minidrivers for SPIC models
+  */
+@@ -3722,156 +3705,6 @@ static void sony_pic_detect_device_type(struct sony_pic_dev *dev)
+ 		dev->model == SONYPI_DEVICE_TYPE2 ? 2 : 3);
+ }
+ 
+-/* camera tests and poweron/poweroff */
+-#define SONYPI_CAMERA_PICTURE		5
+-#define SONYPI_CAMERA_CONTROL		0x10
+-
+-#define SONYPI_CAMERA_BRIGHTNESS		0
+-#define SONYPI_CAMERA_CONTRAST			1
+-#define SONYPI_CAMERA_HUE			2
+-#define SONYPI_CAMERA_COLOR			3
+-#define SONYPI_CAMERA_SHARPNESS			4
+-
+-#define SONYPI_CAMERA_EXPOSURE_MASK		0xC
+-#define SONYPI_CAMERA_WHITE_BALANCE_MASK	0x3
+-#define SONYPI_CAMERA_PICTURE_MODE_MASK		0x30
+-#define SONYPI_CAMERA_MUTE_MASK			0x40
+-
+-/* the rest don't need a loop until not 0xff */
+-#define SONYPI_CAMERA_AGC			6
+-#define SONYPI_CAMERA_AGC_MASK			0x30
+-#define SONYPI_CAMERA_SHUTTER_MASK 		0x7
+-
+-#define SONYPI_CAMERA_SHUTDOWN_REQUEST		7
+-#define SONYPI_CAMERA_CONTROL			0x10
+-
+-#define SONYPI_CAMERA_STATUS 			7
+-#define SONYPI_CAMERA_STATUS_READY 		0x2
+-#define SONYPI_CAMERA_STATUS_POSITION		0x4
+-
+-#define SONYPI_DIRECTION_BACKWARDS 		0x4
+-
+-#define SONYPI_CAMERA_REVISION 			8
+-#define SONYPI_CAMERA_ROMVERSION 		9
+-
+-static int __sony_pic_camera_ready(void)
+-{
+-	u8 v;
+-
+-	v = sony_pic_call2(0x8f, SONYPI_CAMERA_STATUS);
+-	return (v != 0xff && (v & SONYPI_CAMERA_STATUS_READY));
+-}
+-
+-static int __sony_pic_camera_off(void)
+-{
+-	if (!camera) {
+-		pr_warn("camera control not enabled\n");
+-		return -ENODEV;
+-	}
+-
+-	wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_PICTURE,
+-				SONYPI_CAMERA_MUTE_MASK),
+-			ITERATIONS_SHORT);
+-
+-	if (spic_dev.camera_power) {
+-		sony_pic_call2(0x91, 0);
+-		spic_dev.camera_power = 0;
+-	}
+-	return 0;
+-}
+-
+-static int __sony_pic_camera_on(void)
+-{
+-	int i, j, x;
+-
+-	if (!camera) {
+-		pr_warn("camera control not enabled\n");
+-		return -ENODEV;
+-	}
+-
+-	if (spic_dev.camera_power)
+-		return 0;
+-
+-	for (j = 5; j > 0; j--) {
+-
+-		for (x = 0; x < 100 && sony_pic_call2(0x91, 0x1); x++)
+-			msleep(10);
+-		sony_pic_call1(0x93);
+-
+-		for (i = 400; i > 0; i--) {
+-			if (__sony_pic_camera_ready())
+-				break;
+-			msleep(10);
+-		}
+-		if (i)
+-			break;
+-	}
+-
+-	if (j == 0) {
+-		pr_warn("failed to power on camera\n");
+-		return -ENODEV;
+-	}
+-
+-	wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_CONTROL,
+-				0x5a),
+-			ITERATIONS_SHORT);
+-
+-	spic_dev.camera_power = 1;
+-	return 0;
+-}
+-
+-/* External camera command (exported to the motion eye v4l driver) */
+-int sony_pic_camera_command(int command, u8 value)
+-{
+-	if (!camera)
+-		return -EIO;
+-
+-	mutex_lock(&spic_dev.lock);
+-
+-	switch (command) {
+-	case SONY_PIC_COMMAND_SETCAMERA:
+-		if (value)
+-			__sony_pic_camera_on();
+-		else
+-			__sony_pic_camera_off();
+-		break;
+-	case SONY_PIC_COMMAND_SETCAMERABRIGHTNESS:
+-		wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_BRIGHTNESS, value),
+-				ITERATIONS_SHORT);
+-		break;
+-	case SONY_PIC_COMMAND_SETCAMERACONTRAST:
+-		wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_CONTRAST, value),
+-				ITERATIONS_SHORT);
+-		break;
+-	case SONY_PIC_COMMAND_SETCAMERAHUE:
+-		wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_HUE, value),
+-				ITERATIONS_SHORT);
+-		break;
+-	case SONY_PIC_COMMAND_SETCAMERACOLOR:
+-		wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_COLOR, value),
+-				ITERATIONS_SHORT);
+-		break;
+-	case SONY_PIC_COMMAND_SETCAMERASHARPNESS:
+-		wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_SHARPNESS, value),
+-				ITERATIONS_SHORT);
+-		break;
+-	case SONY_PIC_COMMAND_SETCAMERAPICTURE:
+-		wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_PICTURE, value),
+-				ITERATIONS_SHORT);
+-		break;
+-	case SONY_PIC_COMMAND_SETCAMERAAGC:
+-		wait_on_command(sony_pic_call3(0x90, SONYPI_CAMERA_AGC, value),
+-				ITERATIONS_SHORT);
+-		break;
+-	default:
+-		pr_err("sony_pic_camera_command invalid: %d\n", command);
+-		break;
+-	}
+-	mutex_unlock(&spic_dev.lock);
+-	return 0;
+-}
+-EXPORT_SYMBOL(sony_pic_camera_command);
+-
+ /* gprs/edge modem (SZ460N and SZ210P), thanks to Joshua Wise */
+ static void __sony_pic_set_wwanpower(u8 state)
+ {
+diff --git a/include/linux/sony-laptop.h b/include/linux/sony-laptop.h
+deleted file mode 100644
+index 1e3c92feea6e..000000000000
+--- a/include/linux/sony-laptop.h
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _SONYLAPTOP_H_
+-#define _SONYLAPTOP_H_
+-
+-#include <linux/types.h>
+-
+-#ifdef __KERNEL__
+-
+-/* used only for communication between v4l and sony-laptop */
+-
+-#define SONY_PIC_COMMAND_GETCAMERA		 1	/* obsolete */
+-#define SONY_PIC_COMMAND_SETCAMERA		 2
+-#define SONY_PIC_COMMAND_GETCAMERABRIGHTNESS	 3	/* obsolete */
+-#define SONY_PIC_COMMAND_SETCAMERABRIGHTNESS	 4
+-#define SONY_PIC_COMMAND_GETCAMERACONTRAST	 5	/* obsolete */
+-#define SONY_PIC_COMMAND_SETCAMERACONTRAST	 6
+-#define SONY_PIC_COMMAND_GETCAMERAHUE		 7	/* obsolete */
+-#define SONY_PIC_COMMAND_SETCAMERAHUE		 8
+-#define SONY_PIC_COMMAND_GETCAMERACOLOR		 9	/* obsolete */
+-#define SONY_PIC_COMMAND_SETCAMERACOLOR		10
+-#define SONY_PIC_COMMAND_GETCAMERASHARPNESS	11	/* obsolete */
+-#define SONY_PIC_COMMAND_SETCAMERASHARPNESS	12
+-#define SONY_PIC_COMMAND_GETCAMERAPICTURE	13	/* obsolete */
+-#define SONY_PIC_COMMAND_SETCAMERAPICTURE	14
+-#define SONY_PIC_COMMAND_GETCAMERAAGC		15	/* obsolete */
+-#define SONY_PIC_COMMAND_SETCAMERAAGC		16
+-#define SONY_PIC_COMMAND_GETCAMERADIRECTION	17	/* obsolete */
+-#define SONY_PIC_COMMAND_GETCAMERAROMVERSION	18	/* obsolete */
+-#define SONY_PIC_COMMAND_GETCAMERAREVISION	19	/* obsolete */
+-
+-#if IS_ENABLED(CONFIG_SONY_LAPTOP)
+-int sony_pic_camera_command(int command, u8 value);
+-#else
+-static inline int sony_pic_camera_command(int command, u8 value) { return 0; }
+-#endif
+-
+-#endif	/* __KERNEL__ */
+-
+-#endif /* _SONYLAPTOP_H_ */
+-- 
+2.49.0
 
-	descs_count = 2 << prb->desc_ring.count_bits;
-	data_size = 2 << prb->data_ring.size_bits;
-
-	kmemdump_register("prb", (void *)prb, sizeof(*prb));
-	kmemdump_register("prb_descs", (void *)prb->desc_ring->descs,
-			  descs_count * sizeof(struct prb_desc));
-	kmemdump_register("prb_infos", (void *)prb->desc_ring->infos,
-			  descs_count * sizeof(struct printk_info));
-	kmemdump_register("prb_data", (void *)prb->data_ring->data, data_size);
-
-
-But I wonder if this is enough. The current crash dump code also needs
-to export the format of the used structures, see
-log_buf_vmcoreinfo_setup().
-
-Is the CONFIG_VMCORE_INFO code shared with the kmemdump, please?
-
-> +}
-> +EXPORT_SYMBOL_GPL(kmsg_kmemdump_register);
-> +
-
-Best Regards,
-Petr
 
