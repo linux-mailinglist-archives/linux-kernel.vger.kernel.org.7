@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-634771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF73AAB417
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D8BAAB431
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EC627B2107
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:58:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C71187B30EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519474766D6;
-	Tue,  6 May 2025 00:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4AC4779A8;
+	Tue,  6 May 2025 00:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnlrGXw7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObaD34Je"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C88279340;
-	Mon,  5 May 2025 23:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC272ECE34;
+	Mon,  5 May 2025 23:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486635; cv=none; b=IrmZnwX6x6/bAZ3r4G0uiRP8b5sbmQ9Nj18KKhIGclSpy5yvDfWq1C+4qPvTfwSJYhTwAb+IeWuGsWA8KJ46UeCZSscUz6zHloEfKin1ZYNlUQLH5OU0auWHWS92lvByyn0l8p5yTtleGOPM+fY72R48R6mThUCAbXcwF+uNZdU=
+	t=1746486648; cv=none; b=g9WSFEnG+qwDNMyupVbpqof23VztHTHq/hQx4sc03cDLvBo4NlIsnixNiGrwmRFaod9DBJPJF1yJSo1LVrYv9lUU37xl0FHD3WkXeoTO5OAa0JqKeRG+B9AlvD1NPkrCDlWUy6pRTpBwjTL0tUvklYqOsDR3Iwq8AiDkzlapRYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486635; c=relaxed/simple;
-	bh=iiDhzHdQ/QqScp0AKppkDMN90q3HYcqsMN4wZ5m8cv4=;
+	s=arc-20240116; t=1746486648; c=relaxed/simple;
+	bh=6R+CjWoSWNOkptTCEyM4s/GgpltNIGtG68+ZjbM+P8k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XWMiJGQdvWwuHSRWrYBfYu+c/j3XrsmidY98seu+OKgi1mXDmbrnWISFBzFem9Fj4VdDVp8YDwcWK87KDfNFJlujP34dL+TOwpZhrVU+Zk8mkqxqODHKW9O6mP+hNMgHz9zjZFBm3MFW927tkLHN5+zV4B0kLT0Cke7V3Tiu8H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnlrGXw7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDF2C4CEEF;
-	Mon,  5 May 2025 23:10:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YLLnBB1GdrTWoFRvsshT8EVULfPRE3Ia2xFNU2jB8tnNJxlXHuCDTBTqdC9XCCUb00ETpTugiSGNyFEHD3EKMsA8u8ZWAOufbp/swn4ZPcQpiP+P9UhWK+yvyngYTi9A4iPq7Ep7lXhi0BLsuYT9AJWmAd5N8DNo6IyrPmkP3lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObaD34Je; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B84C4CEEF;
+	Mon,  5 May 2025 23:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486634;
-	bh=iiDhzHdQ/QqScp0AKppkDMN90q3HYcqsMN4wZ5m8cv4=;
+	s=k20201202; t=1746486648;
+	bh=6R+CjWoSWNOkptTCEyM4s/GgpltNIGtG68+ZjbM+P8k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lnlrGXw7IHw8lORrnXGW5YU01MgwYPERpgJ1jaZG1TMvQSHH149PGy+McnSbLqlMv
-	 MBSZc3+vyaAvFDS3sbeABl1WN26kDrsdnfR33cltFo/175OczDFjkW9SdmlKULifwW
-	 ez7iHgpd+uGSrzRHRV0tYvBAl8ABjJlBEpGgsoYFZPzHj9Kr1MbKP/9HZ2dy3K5bb/
-	 57glHjFM0QCPyA/jtFYmmataLrOMm5Hm8EGI+gO0nZfFMcZGR1J4CqmKu5nUnq23Bo
-	 jeCvSKTjWwhXTFYn8soXFFHb9pErC6MKyDjaU5xrYkvko0XQBcMcYPFnWclME02zNa
-	 EeUSMTOpMYVtw==
+	b=ObaD34Jegc1z61HZ4xAVLF7nnpJlO4Zy8CF5cnc9ZvV/ObMXTf9hNyxt37Zyvqoi8
+	 khfSJ8Q8OCXUvuu0sEx26s0zrqA4gqqMSnD2t1xcGsTQB7EcuuoVIKl+Tq211EPwtz
+	 Z3llzr+O9jd9Ke5JUw37DvbgVHoVNQ3EplsooE/GazkVv6wqqLEspXQtLK28AIahPc
+	 47LbkE18MpoouMEtce9cmpT3ZawTgJjZsc2RJHLF6wxuqO8WF/Sd9TiIHidCKZW2Jp
+	 Q58XlZh5b9ifz6uHBr+2hDFCRYqLZDKMl2MWbXlI8akLVJ78W3/IFtjQJdeBZxJU43
+	 3EBlQOKWApXhw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
+Cc: Paul Burton <paulburton@kernel.org>,
+	Chao-ying Fu <cfu@wavecomp.com>,
+	Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>,
+	Aleksandar Rikalo <arikalo@gmail.com>,
+	=?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <philmd@linaro.org>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Sasha Levin <sashal@kernel.org>,
-	lars@metafoo.de,
-	mchehab@kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 127/212] media: adv7180: Disable test-pattern control on adv7180
-Date: Mon,  5 May 2025 19:04:59 -0400
-Message-Id: <20250505230624.2692522-127-sashal@kernel.org>
+	tglx@linutronix.de,
+	linux-mips@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 134/212] clocksource: mips-gic-timer: Enable counter when CPUs start
+Date: Mon,  5 May 2025 19:05:06 -0400
+Message-Id: <20250505230624.2692522-134-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
 References: <20250505230624.2692522-1-sashal@kernel.org>
@@ -67,126 +73,63 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Paul Burton <paulburton@kernel.org>
 
-[ Upstream commit a980bc5f56b0292336e408f657f79e574e8067c0 ]
+[ Upstream commit 3128b0a2e0cf6e07aa78e5f8cf7dd9cd59dc8174 ]
 
-The register that enables selecting a test-pattern to be outputted in
-free-run mode (FREE_RUN_PAT_SEL[2:0]) is only available on adv7280 based
-devices, not the adv7180 based ones.
+In multi-cluster MIPS I6500 systems there is a GIC in each cluster,
+each with its own counter. When a cluster powers up the counter will
+be stopped, with the COUNTSTOP bit set in the GIC_CONFIG register.
 
-Add a flag to mark devices that are capable of generating test-patterns,
-and those that are not. And only register the control on supported
-devices.
+In single cluster systems, it has been fine to clear COUNTSTOP once
+in gic_clocksource_of_init() to start the counter. In multi-cluster
+systems, this will only have started the counter in the boot cluster,
+and any CPUs in other clusters will find their counter stopped which
+will break the GIC clock_event_device.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Resolve this by having CPUs clear the COUNTSTOP bit when they come
+online, using the existing gic_starting_cpu() CPU hotplug callback. This
+will allow CPUs in secondary clusters to ensure that the cluster's GIC
+counter is running as expected.
+
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
+Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
+Signed-off-by: Aleksandar Rikalo <arikalo@gmail.com>
+Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+Tested-by: Serge Semin <fancer.lancer@gmail.com>
+Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/adv7180.c | 34 ++++++++++++++++++++++------------
- 1 file changed, 22 insertions(+), 12 deletions(-)
+ drivers/clocksource/mips-gic-timer.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
-index 216fe396973f2..46912a7b671a8 100644
---- a/drivers/media/i2c/adv7180.c
-+++ b/drivers/media/i2c/adv7180.c
-@@ -194,6 +194,7 @@ struct adv7180_state;
- #define ADV7180_FLAG_V2			BIT(1)
- #define ADV7180_FLAG_MIPI_CSI2		BIT(2)
- #define ADV7180_FLAG_I2P		BIT(3)
-+#define ADV7180_FLAG_TEST_PATTERN	BIT(4)
+diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
+index b3ae38f367205..39c70b5ac44c9 100644
+--- a/drivers/clocksource/mips-gic-timer.c
++++ b/drivers/clocksource/mips-gic-timer.c
+@@ -114,6 +114,9 @@ static void gic_update_frequency(void *data)
  
- struct adv7180_chip_info {
- 	unsigned int flags;
-@@ -673,11 +674,15 @@ static int adv7180_init_controls(struct adv7180_state *state)
- 			  ADV7180_HUE_MAX, 1, ADV7180_HUE_DEF);
- 	v4l2_ctrl_new_custom(&state->ctrl_hdl, &adv7180_ctrl_fast_switch, NULL);
+ static int gic_starting_cpu(unsigned int cpu)
+ {
++	/* Ensure the GIC counter is running */
++	clear_gic_config(GIC_CONFIG_COUNTSTOP);
++
+ 	gic_clockevent_cpu_init(cpu, this_cpu_ptr(&gic_clockevent_device));
+ 	return 0;
+ }
+@@ -248,9 +251,6 @@ static int __init gic_clocksource_of_init(struct device_node *node)
+ 			pr_warn("Unable to register clock notifier\n");
+ 	}
  
--	v4l2_ctrl_new_std_menu_items(&state->ctrl_hdl, &adv7180_ctrl_ops,
--				      V4L2_CID_TEST_PATTERN,
--				      ARRAY_SIZE(test_pattern_menu) - 1,
--				      0, ARRAY_SIZE(test_pattern_menu) - 1,
--				      test_pattern_menu);
-+	if (state->chip_info->flags & ADV7180_FLAG_TEST_PATTERN) {
-+		v4l2_ctrl_new_std_menu_items(&state->ctrl_hdl,
-+					     &adv7180_ctrl_ops,
-+					     V4L2_CID_TEST_PATTERN,
-+					     ARRAY_SIZE(test_pattern_menu) - 1,
-+					     0,
-+					     ARRAY_SIZE(test_pattern_menu) - 1,
-+					     test_pattern_menu);
-+	}
- 
- 	state->sd.ctrl_handler = &state->ctrl_hdl;
- 	if (state->ctrl_hdl.error) {
-@@ -1209,7 +1214,7 @@ static const struct adv7180_chip_info adv7182_info = {
- };
- 
- static const struct adv7180_chip_info adv7280_info = {
--	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_I2P,
-+	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_I2P | ADV7180_FLAG_TEST_PATTERN,
- 	.valid_input_mask = BIT(ADV7182_INPUT_CVBS_AIN1) |
- 		BIT(ADV7182_INPUT_CVBS_AIN2) |
- 		BIT(ADV7182_INPUT_CVBS_AIN3) |
-@@ -1223,7 +1228,8 @@ static const struct adv7180_chip_info adv7280_info = {
- };
- 
- static const struct adv7180_chip_info adv7280_m_info = {
--	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2 | ADV7180_FLAG_I2P,
-+	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2 | ADV7180_FLAG_I2P |
-+		ADV7180_FLAG_TEST_PATTERN,
- 	.valid_input_mask = BIT(ADV7182_INPUT_CVBS_AIN1) |
- 		BIT(ADV7182_INPUT_CVBS_AIN2) |
- 		BIT(ADV7182_INPUT_CVBS_AIN3) |
-@@ -1244,7 +1250,8 @@ static const struct adv7180_chip_info adv7280_m_info = {
- };
- 
- static const struct adv7180_chip_info adv7281_info = {
--	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2,
-+	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2 |
-+		ADV7180_FLAG_TEST_PATTERN,
- 	.valid_input_mask = BIT(ADV7182_INPUT_CVBS_AIN1) |
- 		BIT(ADV7182_INPUT_CVBS_AIN2) |
- 		BIT(ADV7182_INPUT_CVBS_AIN7) |
-@@ -1259,7 +1266,8 @@ static const struct adv7180_chip_info adv7281_info = {
- };
- 
- static const struct adv7180_chip_info adv7281_m_info = {
--	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2,
-+	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2 |
-+		ADV7180_FLAG_TEST_PATTERN,
- 	.valid_input_mask = BIT(ADV7182_INPUT_CVBS_AIN1) |
- 		BIT(ADV7182_INPUT_CVBS_AIN2) |
- 		BIT(ADV7182_INPUT_CVBS_AIN3) |
-@@ -1279,7 +1287,8 @@ static const struct adv7180_chip_info adv7281_m_info = {
- };
- 
- static const struct adv7180_chip_info adv7281_ma_info = {
--	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2,
-+	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2 |
-+		ADV7180_FLAG_TEST_PATTERN,
- 	.valid_input_mask = BIT(ADV7182_INPUT_CVBS_AIN1) |
- 		BIT(ADV7182_INPUT_CVBS_AIN2) |
- 		BIT(ADV7182_INPUT_CVBS_AIN3) |
-@@ -1304,7 +1313,7 @@ static const struct adv7180_chip_info adv7281_ma_info = {
- };
- 
- static const struct adv7180_chip_info adv7282_info = {
--	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_I2P,
-+	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_I2P | ADV7180_FLAG_TEST_PATTERN,
- 	.valid_input_mask = BIT(ADV7182_INPUT_CVBS_AIN1) |
- 		BIT(ADV7182_INPUT_CVBS_AIN2) |
- 		BIT(ADV7182_INPUT_CVBS_AIN7) |
-@@ -1319,7 +1328,8 @@ static const struct adv7180_chip_info adv7282_info = {
- };
- 
- static const struct adv7180_chip_info adv7282_m_info = {
--	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2 | ADV7180_FLAG_I2P,
-+	.flags = ADV7180_FLAG_V2 | ADV7180_FLAG_MIPI_CSI2 | ADV7180_FLAG_I2P |
-+		ADV7180_FLAG_TEST_PATTERN,
- 	.valid_input_mask = BIT(ADV7182_INPUT_CVBS_AIN1) |
- 		BIT(ADV7182_INPUT_CVBS_AIN2) |
- 		BIT(ADV7182_INPUT_CVBS_AIN3) |
+-	/* And finally start the counter */
+-	clear_gic_config(GIC_CONFIG_COUNTSTOP);
+-
+ 	/*
+ 	 * It's safe to use the MIPS GIC timer as a sched clock source only if
+ 	 * its ticks are stable, which is true on either the platforms with
 -- 
 2.39.5
 
