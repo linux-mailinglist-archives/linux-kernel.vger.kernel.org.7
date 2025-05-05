@@ -1,164 +1,122 @@
-Return-Path: <linux-kernel+bounces-632099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BB1AA9289
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:58:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77BCAA9290
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 13:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 473691886442
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:58:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8CD13AB29C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 11:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A24020B1F4;
-	Mon,  5 May 2025 11:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A122063E7;
+	Mon,  5 May 2025 11:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O7S0bVWS"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOqjPlDB"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC882066F7
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 11:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD1A202C31;
+	Mon,  5 May 2025 11:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746446252; cv=none; b=GIua5pHT2Lwzl57zFKeR9DoCaZ+YRSkVZM2z2lqeGonN7RxaktA+NXzDkcGxluO4QSX7JVwt5fqmeNL6gsvdrdGU8G7vDX1s0JqcmMl5c9+sGtNgLiSMsptkaQESqdTcgcdzEoKurvvU4LQ3MyoEHotsq8g9b+7SA1GMdwiIGSo=
+	t=1746446321; cv=none; b=OCAQcyvps/6xvRd2LI7wI0LKf5e7lzv1SJEGc61C+BShuUoXyCculWAs5eTvdm8lRGmeSPliMWEH0q8wMfHTC9255VIT2eflDCWebr+bSDos1zgYqioJSPrFRu532jRVP6700L4P69qpVJ7Jp8dLbPRbKbaKs9KS19PJbrzVGHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746446252; c=relaxed/simple;
-	bh=qySfuoPl9wV07OnVIwdvGpKvtcyDus4i0vcs8YMKyZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O1MLRxrJsX3flUg7KJ9VS5PCLWJCnxAD19lLAN3nygGpMD+z0pG4ms6rggK6k46G7d6aSic9vGZRbOWB3We1rv4f7rVwycs7JyfV9vTss/b1WDqfKEiSlezjWsgPu13Isi7L1ntwtxHgcXVizb42N9N7nLRYDRXHXq1txvAoqSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O7S0bVWS; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so6372486a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 04:57:30 -0700 (PDT)
+	s=arc-20240116; t=1746446321; c=relaxed/simple;
+	bh=PNKJEEVGycdJ+tQ+sEFPJNzy8pM5+OVhBFEET0bQUc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IxbvOY0YdXJI47W1G6CvM4w+DT+X46+hKkNu/KO8ZaqQm5PC0dOolG4tM5e+FIdcbgw0carNkHXDmOmvBeeKv2l5Gz2vUTPrUxrD2g1ts/63widQbRBgkf/zr+eOwDR2Z0bPggq0jUDsTYebqnN1v3etEV70lhmPHHDfvz4re/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOqjPlDB; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so799508566b.1;
+        Mon, 05 May 2025 04:58:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746446249; x=1747051049; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kMKaPde6OkE/AtVUsHGGgX212tPSCHNNuxA10fp7Sb0=;
-        b=O7S0bVWS8cwnbONviLMaVDXCjDn0VnD9jXBhxRTbZcAttsAkOQ3BOdNYGR8wDl3UHi
-         aCa8VsRTjfKdupB9IkKeBECkrk9KvQ0hXSU+0Z4EUooxZArSjez3dwVGFiVPY/ZIumow
-         3G4oRRiP5B+mcuUDKkf9GVtEUg3eTA3303e/6HpZRYKHqRFFBTZ+sf+yGRfXRPNRiPh9
-         VR2iDuwIVi+KDfJtPL90rLLcrqQlHdgW4a2Oj6wYWrvZgNP1c+pl4Wtz/K9Ts49AcH6I
-         FauBby6+Oh99CQonL/4H1CyFFZpWOAXAotMQ6/kauZxZG4YR9TjVlO3TGwqm3iPYY4Hi
-         VojA==
+        d=gmail.com; s=20230601; t=1746446317; x=1747051117; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oj8LqzgywDdLktNaQl2/tPROCtLvy0Eh+7/G4UMG7Lw=;
+        b=MOqjPlDBPmV9McdSMo773NclVtprqMupvmaGJasn+ELXEIYR4IZNwFobZUlU/95IDi
+         d7pYFBxTFI2fQzWhYZb4j56OG8TW00eymnkeEP4mqlY/q7jRPyQDPIyoa2KlF3Aerr1V
+         ll5qNKu05/dNgF3i+jjD26fYRxhXzQNvWoLV/BUF9+3xP3NISe+RpoXFafdqZjHK5wtB
+         /kNbeDNS9jMxIaFSSiXfNJTTagQ8yTEvtqNc2XXROL85t1MHn3CKnRQcFcFg2ruIIHbK
+         Mo0X5sKIrMF7CUPnDHoZ7FX2KlTj1yactiwYY6rrmaRgskXwvwEuFrVc71EkoGumMEJx
+         rzkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746446249; x=1747051049;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kMKaPde6OkE/AtVUsHGGgX212tPSCHNNuxA10fp7Sb0=;
-        b=CxK+qN6PKzqzM3TMNMjQ10MCraBzLPfgQLJw1kaDI3ZCKXFxAYujTtlzrtv0FgwXBp
-         qqyzYd+jAMDI4h8G07z5nWDIGksT3t5L3ZPElpSdpFB1BPkpNksFur6AOCwXiTwIvUeC
-         hWTgmvSftYJOWyktZ6QkikN8e21cxlpmXizKFUtFP2bRP1S5x1s5WESNvX3fNJx28+ri
-         8YG0U69IO3aYJgWuMTzClcGYSGIXr8qMOmOYVbssRj51zabNXu6h/uYoK/wfvMrsdN2X
-         yyQNlR4qzEfkP+IAv4hECa+1lc/OBwgyGH3xIODCu6tY8L0HZ9aFRVc6VSIMRNvROshA
-         Bskg==
-X-Forwarded-Encrypted: i=1; AJvYcCWacwl0mY7daARGRpqaGordXwxO/v3R32gC6B/mPxbx9rC1NCbcOpqQIRLuype4jL/9QhuRYHfkCJ9dpwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSQauNOJymxAtwfkUIn6DVanC4486ZnPWNKpf7lJUNChzIN3I+
-	7xM+auIhlX9QM+jqwlwMmpVGH4k3FA74rijVo/ccnH8jzJ2TVCYAQwNCewqLS/4=
-X-Gm-Gg: ASbGncsoK0rpyBY0drIhkq+YbrcLmh+qSlR2zJTrwIKt2DdtXic+Ux/FS6P0aTAmYf8
-	k1w5VuxbzHGc5mK52+RhLPxioetrdGtO0GZT1j4MOFQ6GhT/qWcIZf/4ThCBelMSY/x1u1Qe9QI
-	7g8zDwzWsx3ZFf2+QsYhn7ITVNoY1svTC179v+AfF55dYF/llzb7Td0BastILNyONvtaV+uPef3
-	m+NQUnl3xEKGkvv9tW3x7iWXLO7KDR4nMv6wapy4dK5M+DLatDF6Lpi9fpB67vxnSmSXvTpw4T9
-	AJYmGvk4LInMOUVgR0QcGMkD81HB2skzHtCoqtSCFZ4=
-X-Google-Smtp-Source: AGHT+IFiyeoBtX6BSQ4FfqUekWlXlO5jzJ6Ey3HdmksDyNABdshCZwf6dxx6rks8EwQBNJy4ucHIFg==
-X-Received: by 2002:a17:906:c115:b0:ac7:cfcb:c3e3 with SMTP id a640c23a62f3a-ad1a4acc6c3mr639033466b.45.1746446248779;
-        Mon, 05 May 2025 04:57:28 -0700 (PDT)
-Received: from [10.100.51.48] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891478fasm482865566b.26.2025.05.05.04.57.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 04:57:28 -0700 (PDT)
-Message-ID: <0aa0c9b8-2d6a-48e8-9a57-df2583f26d14@suse.com>
-Date: Mon, 5 May 2025 13:57:27 +0200
+        d=1e100.net; s=20230601; t=1746446317; x=1747051117;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oj8LqzgywDdLktNaQl2/tPROCtLvy0Eh+7/G4UMG7Lw=;
+        b=QkHU+mBSmkXIz19livO+vR2aUYlsLzmm7JAaDZM3NCerg9qv1d7fwz1rHeQRfG7LXt
+         vkm3qBSO893zIbVVI0VxNo2CpNdRZ/6OKDsn/yWCq6XpxNMPLnz1jG5j288L54Kxop1D
+         7uGQdsM2pnEYlx/sHuzpB1pGFnTZecVg0LKxSxftR1NWPGKg48fzSfQ1qq7VuvpqmdN+
+         1ZrXvQnZbncZvJ5t4qM5aVZo80oL0GtZmr9YYPc+uvUFl1kgS8REllzRJJtCAn5eY0Sc
+         iEN37b63kDc5OwxBEylWdTD2mRmXVrGTi5xq71OJwO7b2jklX9pkolSlpjkEj/mhJVny
+         D4Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXJcGtXy8L91iRCY7GEsTA/svDeYaUm+LMP1sntf8vdtAFXnEVRrQDPdFghtNelPF240da4XeqhGEz@vger.kernel.org, AJvYcCW4ihvC3ul3A4Z3BXCeYpTKXW3WR9yD6e5FH/jAKjt0nNEk8bSkNKQ5RS0QL7kOB6rR5c1qFru2g+QvOdLT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfCJrStIqgdEr2Ef3Jmn5RFD8rd8jNQ3gtuKQjmRmQtdsGthDO
+	8G7E++FrRaXWQ9exiHKgRmr60BrLhp/MmEdDfGU3EHZUP25oCmJVI++Aeg==
+X-Gm-Gg: ASbGnct7S3cemCKfd4Mn/nWTJGPFqUYeuefXkCYWPkZT6tS1zP9pWnuZBJMj0DOlLQ/
+	ec6YA+SwIpoaWwISe18L+/23DJ+YrVy/e5nXCwN2gXjaipgZvNqXUpBLJXcWnwR1LQbTm3y8gWB
+	q60XqdYDTHApdN+UHulAGvlkjZnvmyiW7BDan8g0UcH+uf3ONaZClYXBiB8xuMkRiikcbDaLm5n
+	77NaU14OYYKcJhMo1Y0cd35tQkVVxWvr5lYzMtMb4adlPun+/vohWVHc4tftaT2mRID0u4/laeH
+	ENQFkDrpG3F0lii7RC+8HgY9vaIml8fgvp2B6P5cbOer4HN70bj7MUG2xIpTFTEyiIk8aMIn8Kj
+	2vA==
+X-Google-Smtp-Source: AGHT+IGuLaYqWrpjCf9NhPWgUT6Ez5XxNFvR1TH2aXGRsMBZS60auCYJxL5AZAhLmfPjBLi21bCElw==
+X-Received: by 2002:a17:907:7ea5:b0:aca:c507:a4e8 with SMTP id a640c23a62f3a-ad190654f47mr786056966b.21.1746446317092;
+        Mon, 05 May 2025 04:58:37 -0700 (PDT)
+Received: from wslxew242.ultratronik.de (mail.ultratronik.de. [82.100.224.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a3c53sm489568566b.56.2025.05.05.04.58.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 04:58:36 -0700 (PDT)
+From: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/4] dt-bindings: vendor-prefixes: Add Ultratronik
+Date: Mon,  5 May 2025 13:58:22 +0200
+Message-ID: <20250505115827.29593-2-goran.radni@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250505115827.29593-1-goran.radni@gmail.com>
+References: <20250505115827.29593-1-goran.radni@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] gendwarfksyms: Add a kABI rule to override byte_size
- attributes
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@samsung.com>,
- linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250430214049.2658716-6-samitolvanen@google.com>
- <20250430214049.2658716-8-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250430214049.2658716-8-samitolvanen@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/30/25 23:40, Sami Tolvanen wrote:
-> A data structure can be partially opaque to modules if its
-> allocation is handled by the core kernel, and modules only need
-> to access some of its members. In this situation, it's possible
-> to append new members to the structure without breaking the ABI,
-> as long as the layout for the original members remains unchanged.
-> For example, consider the following struct:
-> 
->   struct s {
->           unsigned long a;
->           void *p;
->   };
-> 
-> gendwarfksyms --stable --dump-dies produces the following type
-> expansion:
-> 
->   variable structure_type s {
->     member base_type long unsigned int byte_size(8) encoding(7) a
->       data_member_location(0) ,
->     member pointer_type {
->       base_type void
->     } byte_size(8) p data_member_location(8)
->   } byte_size(16)
-> 
-> To append new members, we can use the KABI_IGNORE() macro to
-> hide them from gendwarfksyms --stable:
-> 
->   struct s {
->           /* old members with unchanged layout */
->           unsigned long a;
->           void *p;
-> 
->           /* new members not accessed by modules */
->           KABI_IGNORE(0, unsigned long n);
->   };
-> 
-> However, we can't hide the fact that adding new members changes
-> the struct size, as seen in the updated type string:
-> 
->   variable structure_type s {
->     member base_type long unsigned int byte_size(8) encoding(7) a
->       data_member_location(0) ,
->     member pointer_type {
->       base_type void
->     } byte_size(8) p data_member_location(8)
->   } byte_size(24)
-> 
-> In order to support this use case, add a kABI rule that makes it
-> possible to override the byte_size attribute for types:
-> 
->   /*
->    * struct s allocation is handled by the kernel, so
->    * appending new members without changing the original
->    * layout won't break the ABI.
->    */
->   KABI_BYTE_SIZE(s, 16);
-> 
-> This results in a type string that's unchanged from the original
-> and therefore, won't change versions for symbols that reference
-> the changed structure.
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Ultratronik GmbH is a German electronics company:
+https://www.ultratronik-ems.de/
 
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Goran Rađenović <goran.radni@gmail.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
--- Petr
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 86f6a19b28ae..e9f534c21bf5 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1607,6 +1607,8 @@ patternProperties:
+     description: Universal Scientific Industrial Co., Ltd.
+   "^usr,.*":
+     description: U.S. Robotics Corporation
++  "^ultratronik,.*":
++    description: Ultratronik GmbH
+   "^utoo,.*":
+     description: Aigo Digital Technology Co., Ltd.
+   "^v3,.*":
+-- 
+2.43.0
+
 
