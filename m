@@ -1,339 +1,108 @@
-Return-Path: <linux-kernel+bounces-633838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6729AAAA1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:29:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926B5AAA737
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D341169006
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE7B1886406
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1608380944;
-	Mon,  5 May 2025 23:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EDA334509;
+	Mon,  5 May 2025 22:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ry+pjD6Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KODD3dnU"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87906360A4E;
-	Mon,  5 May 2025 22:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8456B2C086E;
+	Mon,  5 May 2025 22:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485377; cv=none; b=c1LavmQix2UzVCly0V428XHad9GDisWms/zS8S8kAu9IvjMKXzOM6pfemme9eOFjEbgvhClsYqPSP2EGIeGdPphMY5Qtnx8jx6FL6r0I/x17sE//54HXB2GZ471gZjC69I/oT9uIBQLDIFN+x006vHwoZaRYaLb/A9m+2mubgPM=
+	t=1746484583; cv=none; b=YTMCMujevoUD2R+YRSK+U60c48+vSif4YjckTx6v4g5Mof+XgvVrF17d5H8vDjCiWilFw5so/zGknmnTVIhVwmvuRn8ozZFhwRUlgHCsz+Wgcgn9tJit7qCDKml+X+QBCCbJojlaWMJsNOUh2V5MdMzsnLF+9n1rRYjkMLPCjow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485377; c=relaxed/simple;
-	bh=IIXK9K2DVzIQoWl91FaWaC67MYNxQPN0H26Z8DZxsgg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a7kPa8V549lK/vNntnF9tj18pjxbtgjq3h2o5cLkci436sVhjrnWUH5dVG/XWEO53HKfKymiom2NSI9xABJcDerneidjdVXp2JvqfsoHKQL86oeivLThzlauumRr2DuAeG6OikZXZgRiKIezJgOwoxw3Mtslv9zW0K4d6hDgiIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ry+pjD6Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B0BC4CEED;
-	Mon,  5 May 2025 22:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485376;
-	bh=IIXK9K2DVzIQoWl91FaWaC67MYNxQPN0H26Z8DZxsgg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ry+pjD6YMpviKAtn30mSSsQi2gJkZEZJcj5Q9SLYvUOXu+cG61VTho7HfliPj/SSP
-	 AtBg2jRgGIbs9EO2u+KH7aq8Hs8t/vdhyGZSYqDndDMrQzCAHz0wh4/4nnGtgncGJX
-	 CG13G4jMVj7as3lVReppNPpEsrVWOuQdXMhyIGYsLJHNvEOn1owvl3BGDYcmZvBoNg
-	 m3jfRg5YVamLzl8a9uqDRF/MdAimf/Mu+Mju4EiZd6AM80QFznZct4a9aYTAq4UjZ8
-	 AVRl2lYMsRa1El2P7BtCTLVe7IF2t8Lxv9oTa5jUUcr0BDHSgprBEQlU4rz3n5wQ+N
-	 4osKjEbvSQMTg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Anup Patel <apatel@ventanamicro.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sasha Levin <sashal@kernel.org>,
-	anup@brainfault.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 298/486] irqchip/riscv-imsic: Separate next and previous pointers in IMSIC vector
-Date: Mon,  5 May 2025 18:36:14 -0400
-Message-Id: <20250505223922.2682012-298-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
-References: <20250505223922.2682012-1-sashal@kernel.org>
+	s=arc-20240116; t=1746484583; c=relaxed/simple;
+	bh=V/as8NAbScpAc7r0jNSjRHgZ4ii7oO7JrW99rb0nMJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KBSD+MgkyX7mLRblRRhfxE0FsyLidXyYwvyhm1GYrzORRnmoNvPIdzN6s3HTFahAe1OoY0MBWQ9a2h8VgM9TQ5NDKVWm1DOm0M+TG8OlO0roNlKhZS4Jp5AeDQrd9CxuuVMs0LrQpueTH5Rvj8ZeHeIVbPUETV0jqgLUY04aT4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KODD3dnU; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=wjv/3kkg8ER8GtdmsC4OfpctOuq/Lbu60oSY4NqUSV4=; b=KODD3dnUFam1+/IYyLJc/CXSLs
+	Gw9rntN2BqtvuXlFEaZG6JhJA6URM/jLipCXwPYSr/YFlP9n4gLuYF2daWvE2rDCC7/vAkm6s0nuN
+	QXiS6iKN3ofsx7PLEDDx6y9jUN9RXgITzSCI4Tsoj5PUIYa/DJBvbFIJhCstkDKqUwbc02C12msB4
+	n2FHQzzYVeE56cAlg2pjy1u1CuD8oPlQuosvbOI+scszXsJeP/LLq1vjB8RGKxpTUp6AmIV81HpQg
+	DIBWC0kfOdO3g7lB20nmxiiE6+K7HJbBWhLw45OAmxaH5ayGw5kNEpepcvcpoKjN9NZz0O6a1JQdr
+	06dZq0rw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uC4Q3-000000073Pb-3xQP;
+	Mon, 05 May 2025 22:36:15 +0000
+Date: Mon, 5 May 2025 23:36:15 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>,
+	byungchul@sk.com, max.byungchul.park@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: Prevent panic from NULL dereference in
+ alloc_fs_context() during do_exit()
+Message-ID: <20250505223615.GK2023217@ZenIV>
+References: <20250505203801.83699-2-ysk@kzalloc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.26
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250505203801.83699-2-ysk@kzalloc.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Anup Patel <apatel@ventanamicro.com>
+On Tue, May 06, 2025 at 05:38:02AM +0900, Yunseong Kim wrote:
+> The function alloc_fs_context() assumes that current->nsproxy and its
+> net_ns field are valid. However, this assumption can be violated in
+> cases such as task teardown during do_exit(), where current->nsproxy can
+> be NULL or already cleared.
+> 
+> This issue was triggered during stress-ng's kernel-coverage.sh testing,
+> Since alloc_fs_context() can be invoked in various contexts — including
+> from asynchronous or teardown paths like do_exit() — it's difficult to
+> guarantee that its input arguments are always valid.
+> 
+> A follow-up patch will improve the granularity of this fix by moving the
+> check closer to the actual mount trigger(e.g., in efivarfs_pm_notify()).
 
-[ Upstream commit 0f67911e821c67ecfccc365a2103ce276a9a56fe ]
+UGH.
 
-Currently, there is only one "move" pointer in struct imsic_vector so
-during vector movement the old vector points to the new vector and new
-vector points to itself.
+> diff --git a/fs/fs_context.c b/fs/fs_context.c
+> index 582d33e81117..529de43b8b5e 100644
+> --- a/fs/fs_context.c
+> +++ b/fs/fs_context.c
+> @@ -282,6 +282,9 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
+>  	struct fs_context *fc;
+>  	int ret = -ENOMEM;
+>  
+> +	if (!current->nsproxy || !current->nsproxy->net_ns)
+> +		return ERR_PTR(-EINVAL);
+> +
+>  	fc = kzalloc(sizeof(struct fs_context), GFP_KERNEL_ACCOUNT);
+>  	if (!fc)
+>  		return ERR_PTR(-ENOMEM);
 
-To support forced cleanup of the old vector, add separate "move_next" and
-"move_prev" pointers to struct imsic_vector, where during vector movement
-the "move_next" pointer of the old vector points to the new vector and the
-"move_prev" pointer of the new vector points to the old vector.
-
-Both "move_next" and "move_prev" pointers are cleared separately by
-__imsic_local_sync() with a restriction that "move_prev" on the new
-CPU is cleared only after the old CPU has cleared "move_next".
-
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250217085657.789309-8-apatel@ventanamicro.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/irqchip/irq-riscv-imsic-early.c |  8 ++-
- drivers/irqchip/irq-riscv-imsic-state.c | 96 +++++++++++++++++--------
- drivers/irqchip/irq-riscv-imsic-state.h |  7 +-
- 3 files changed, 78 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/irq-riscv-imsic-early.c
-index c5c2e6929a2f5..b5def6268936e 100644
---- a/drivers/irqchip/irq-riscv-imsic-early.c
-+++ b/drivers/irqchip/irq-riscv-imsic-early.c
-@@ -77,6 +77,12 @@ static void imsic_handle_irq(struct irq_desc *desc)
- 	struct imsic_vector *vec;
- 	unsigned long local_id;
- 
-+	/*
-+	 * Process pending local synchronization instead of waiting
-+	 * for per-CPU local timer to expire.
-+	 */
-+	imsic_local_sync_all(false);
-+
- 	chained_irq_enter(chip, desc);
- 
- 	while ((local_id = csr_swap(CSR_TOPEI, 0))) {
-@@ -120,7 +126,7 @@ static int imsic_starting_cpu(unsigned int cpu)
- 	 * Interrupts identities might have been enabled/disabled while
- 	 * this CPU was not running so sync-up local enable/disable state.
- 	 */
--	imsic_local_sync_all();
-+	imsic_local_sync_all(true);
- 
- 	/* Enable local interrupt delivery */
- 	imsic_local_delivery(true);
-diff --git a/drivers/irqchip/irq-riscv-imsic-state.c b/drivers/irqchip/irq-riscv-imsic-state.c
-index b97e6cd89ed74..1aeba76d72795 100644
---- a/drivers/irqchip/irq-riscv-imsic-state.c
-+++ b/drivers/irqchip/irq-riscv-imsic-state.c
-@@ -124,10 +124,11 @@ void __imsic_eix_update(unsigned long base_id, unsigned long num_id, bool pend,
- 	}
- }
- 
--static void __imsic_local_sync(struct imsic_local_priv *lpriv)
-+static bool __imsic_local_sync(struct imsic_local_priv *lpriv)
- {
- 	struct imsic_local_config *mlocal;
- 	struct imsic_vector *vec, *mvec;
-+	bool ret = true;
- 	int i;
- 
- 	lockdep_assert_held(&lpriv->lock);
-@@ -143,35 +144,75 @@ static void __imsic_local_sync(struct imsic_local_priv *lpriv)
- 			__imsic_id_clear_enable(i);
- 
- 		/*
--		 * If the ID was being moved to a new ID on some other CPU
--		 * then we can get a MSI during the movement so check the
--		 * ID pending bit and re-trigger the new ID on other CPU
--		 * using MMIO write.
-+		 * Clear the previous vector pointer of the new vector only
-+		 * after the movement is complete on the old CPU.
- 		 */
--		mvec = READ_ONCE(vec->move);
--		WRITE_ONCE(vec->move, NULL);
--		if (mvec && mvec != vec) {
-+		mvec = READ_ONCE(vec->move_prev);
-+		if (mvec) {
-+			/*
-+			 * If the old vector has not been updated then
-+			 * try again in the next sync-up call.
-+			 */
-+			if (READ_ONCE(mvec->move_next)) {
-+				ret = false;
-+				continue;
-+			}
-+
-+			WRITE_ONCE(vec->move_prev, NULL);
-+		}
-+
-+		/*
-+		 * If a vector was being moved to a new vector on some other
-+		 * CPU then we can get a MSI during the movement so check the
-+		 * ID pending bit and re-trigger the new ID on other CPU using
-+		 * MMIO write.
-+		 */
-+		mvec = READ_ONCE(vec->move_next);
-+		if (mvec) {
- 			if (__imsic_id_read_clear_pending(i)) {
- 				mlocal = per_cpu_ptr(imsic->global.local, mvec->cpu);
- 				writel_relaxed(mvec->local_id, mlocal->msi_va);
- 			}
- 
-+			WRITE_ONCE(vec->move_next, NULL);
- 			imsic_vector_free(&lpriv->vectors[i]);
- 		}
- 
- skip:
- 		bitmap_clear(lpriv->dirty_bitmap, i, 1);
- 	}
-+
-+	return ret;
- }
- 
--void imsic_local_sync_all(void)
-+#ifdef CONFIG_SMP
-+static void __imsic_local_timer_start(struct imsic_local_priv *lpriv)
-+{
-+	lockdep_assert_held(&lpriv->lock);
-+
-+	if (!timer_pending(&lpriv->timer)) {
-+		lpriv->timer.expires = jiffies + 1;
-+		add_timer_on(&lpriv->timer, smp_processor_id());
-+	}
-+}
-+#else
-+static inline void __imsic_local_timer_start(struct imsic_local_priv *lpriv)
-+{
-+}
-+#endif
-+
-+void imsic_local_sync_all(bool force_all)
- {
- 	struct imsic_local_priv *lpriv = this_cpu_ptr(imsic->lpriv);
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&lpriv->lock, flags);
--	bitmap_fill(lpriv->dirty_bitmap, imsic->global.nr_ids + 1);
--	__imsic_local_sync(lpriv);
-+
-+	if (force_all)
-+		bitmap_fill(lpriv->dirty_bitmap, imsic->global.nr_ids + 1);
-+	if (!__imsic_local_sync(lpriv))
-+		__imsic_local_timer_start(lpriv);
-+
- 	raw_spin_unlock_irqrestore(&lpriv->lock, flags);
- }
- 
-@@ -190,12 +231,7 @@ void imsic_local_delivery(bool enable)
- #ifdef CONFIG_SMP
- static void imsic_local_timer_callback(struct timer_list *timer)
- {
--	struct imsic_local_priv *lpriv = this_cpu_ptr(imsic->lpriv);
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&lpriv->lock, flags);
--	__imsic_local_sync(lpriv);
--	raw_spin_unlock_irqrestore(&lpriv->lock, flags);
-+	imsic_local_sync_all(false);
- }
- 
- static void __imsic_remote_sync(struct imsic_local_priv *lpriv, unsigned int cpu)
-@@ -216,14 +252,11 @@ static void __imsic_remote_sync(struct imsic_local_priv *lpriv, unsigned int cpu
- 	 */
- 	if (cpu_online(cpu)) {
- 		if (cpu == smp_processor_id()) {
--			__imsic_local_sync(lpriv);
--			return;
-+			if (__imsic_local_sync(lpriv))
-+				return;
- 		}
- 
--		if (!timer_pending(&lpriv->timer)) {
--			lpriv->timer.expires = jiffies + 1;
--			add_timer_on(&lpriv->timer, cpu);
--		}
-+		__imsic_local_timer_start(lpriv);
- 	}
- }
- #else
-@@ -278,8 +311,9 @@ void imsic_vector_unmask(struct imsic_vector *vec)
- 	raw_spin_unlock(&lpriv->lock);
- }
- 
--static bool imsic_vector_move_update(struct imsic_local_priv *lpriv, struct imsic_vector *vec,
--				     bool new_enable, struct imsic_vector *new_move)
-+static bool imsic_vector_move_update(struct imsic_local_priv *lpriv,
-+				     struct imsic_vector *vec, bool is_old_vec,
-+				     bool new_enable, struct imsic_vector *move_vec)
- {
- 	unsigned long flags;
- 	bool enabled;
-@@ -289,7 +323,10 @@ static bool imsic_vector_move_update(struct imsic_local_priv *lpriv, struct imsi
- 	/* Update enable and move details */
- 	enabled = READ_ONCE(vec->enable);
- 	WRITE_ONCE(vec->enable, new_enable);
--	WRITE_ONCE(vec->move, new_move);
-+	if (is_old_vec)
-+		WRITE_ONCE(vec->move_next, move_vec);
-+	else
-+		WRITE_ONCE(vec->move_prev, move_vec);
- 
- 	/* Mark the vector as dirty and synchronize */
- 	bitmap_set(lpriv->dirty_bitmap, vec->local_id, 1);
-@@ -322,8 +359,8 @@ void imsic_vector_move(struct imsic_vector *old_vec, struct imsic_vector *new_ve
- 	 * interrupt on the old vector while device was being moved
- 	 * to the new vector.
- 	 */
--	enabled = imsic_vector_move_update(old_lpriv, old_vec, false, new_vec);
--	imsic_vector_move_update(new_lpriv, new_vec, enabled, new_vec);
-+	enabled = imsic_vector_move_update(old_lpriv, old_vec, true, false, new_vec);
-+	imsic_vector_move_update(new_lpriv, new_vec, false, enabled, old_vec);
- }
- 
- #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
-@@ -386,7 +423,8 @@ struct imsic_vector *imsic_vector_alloc(unsigned int hwirq, const struct cpumask
- 	vec = &lpriv->vectors[local_id];
- 	vec->hwirq = hwirq;
- 	vec->enable = false;
--	vec->move = NULL;
-+	vec->move_next = NULL;
-+	vec->move_prev = NULL;
- 
- 	return vec;
- }
-diff --git a/drivers/irqchip/irq-riscv-imsic-state.h b/drivers/irqchip/irq-riscv-imsic-state.h
-index 391e442808275..f02842b84ed58 100644
---- a/drivers/irqchip/irq-riscv-imsic-state.h
-+++ b/drivers/irqchip/irq-riscv-imsic-state.h
-@@ -23,7 +23,8 @@ struct imsic_vector {
- 	unsigned int				hwirq;
- 	/* Details accessed using local lock held */
- 	bool					enable;
--	struct imsic_vector			*move;
-+	struct imsic_vector			*move_next;
-+	struct imsic_vector			*move_prev;
- };
- 
- struct imsic_local_priv {
-@@ -74,7 +75,7 @@ static inline void __imsic_id_clear_enable(unsigned long id)
- 	__imsic_eix_update(id, 1, false, false);
- }
- 
--void imsic_local_sync_all(void);
-+void imsic_local_sync_all(bool force_all);
- void imsic_local_delivery(bool enable);
- 
- void imsic_vector_mask(struct imsic_vector *vec);
-@@ -87,7 +88,7 @@ static inline bool imsic_vector_isenabled(struct imsic_vector *vec)
- 
- static inline struct imsic_vector *imsic_vector_get_move(struct imsic_vector *vec)
- {
--	return READ_ONCE(vec->move);
-+	return READ_ONCE(vec->move_prev);
- }
- 
- void imsic_vector_move(struct imsic_vector *old_vec, struct imsic_vector *new_vec);
--- 
-2.39.5
-
+That might paper over the oops, but I very much doubt that this will be
+a correct fix...  Note that in efivarfs_pm_notify() we have other
+fun issues when run from such context - have task_work_add() fail in
+fput() and if delayed_fput() runs right afterwards and
+        efivar_init(efivarfs_check_missing, sfi->sb, false);
+in there might end up with UAF...
 
