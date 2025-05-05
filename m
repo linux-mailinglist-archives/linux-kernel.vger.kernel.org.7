@@ -1,92 +1,141 @@
-Return-Path: <linux-kernel+bounces-631759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EC1AA8D0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:30:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87711AA8CEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375D23B4A14
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FBC18828CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E281C84BB;
-	Mon,  5 May 2025 07:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xcz0r9Ny"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316681D5166;
+	Mon,  5 May 2025 07:21:32 +0000 (UTC)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8713C171A1;
-	Mon,  5 May 2025 07:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B679214B965;
+	Mon,  5 May 2025 07:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746430222; cv=none; b=KpJyvCjsPrBhLlA9oT1PVGF6MCd1h+6a9uJuqY5ZdamHSf2q/Kvy+wK1zMKYIpFn1aDyAECBaihH5gmUz80NKGobNrfJl64cxxi6HK1/aoe+Sa0tu8PbohFpTtVkfugLWHZ1grkbdQ0WogPXzYkj05EuGaxbT/y5U1ky6HhB98A=
+	t=1746429691; cv=none; b=L+8cLYlAGO9ExmSQvtDz+7jho5sWwcjLpcQQS6M09emF41zM1DbU8NLT/M0HEmW9f2IyqNv6sSGD098C01Ii3FXxK/qENTx0l3WjIsKVYq1+4fwKmUSK0M/7u+aqUQwBbW2Ly7NK/ovcpA4oDYxii1aWbkegS3Pfw+LFOdaujVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746430222; c=relaxed/simple;
-	bh=9byBrgGiWivV4zXfCGyXLK7u6F5KMMq/Ap3brTL2r8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U/WfMm6Bg2q/zwQ6BYUu+Sl71C2kNKbeglo07w2UeKCn+oUmLvXu9UbCSv2KqDy+oR1U+TCXVmKTzbtPyj/GWpsJRcZJtMkHZJadcukygvzYxz4X+tbWK3uXClc7fgCDsgwSxfvxDaId5chIy8+O8IelFZWKCnMKISvfAkNIUnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xcz0r9Ny; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746429632;
-	bh=9byBrgGiWivV4zXfCGyXLK7u6F5KMMq/Ap3brTL2r8E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xcz0r9Nyr/GBvTffACDxkAv0DCvVxl40GgqtQeif64zW1Jj1VKuW21++n/5L+CwcH
-	 WwsLeAUQhz/pAjv0CSWKcU7esBvAb/PnjPRwW3HWWT66sGH1y/lT3HHHNN18sxHAi5
-	 Q5rH3aDHLE22aoXPw49tTF1UfTC3AP57J/mAOvWopAdLWN9Kx3Qhcg5b2qd7tbFeuD
-	 T9YlnGDey09aUkqj+0axPC7knUJh2m+neJ4fKnOKV25W92xM7w9i9FU6aECdSl7/cX
-	 ZI8HLcMMcMhc+TuKfrn3QGt+7DIHhqTQDmYBvphkcby/PAdUsDQHOM1Z0oVHWckqlu
-	 gvJrP+TM/SUnw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6A81517E0F89;
-	Mon,  5 May 2025 09:20:31 +0200 (CEST)
-Message-ID: <97b93862-8572-45fb-ba02-96a0bb747700@collabora.com>
-Date: Mon, 5 May 2025 09:20:30 +0200
+	s=arc-20240116; t=1746429691; c=relaxed/simple;
+	bh=9uFZoV3PpCUETRaPKf7nDphlzzExlnttykCSW+wfLKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qvz4I/jwuUIiR6gJKp7APNjHYhGyXHGDy7TKEYAeeyNUwfvkWqsmInmQNohW/wCnXBm69yc00jtL/ITGg7DqEgUKrzLaLQ7EsmirVONLdFZ2AY8+4sk1T7F9mrusG9cUx4eCs8MvWSSD9WRM+BHeSgRrpA6VekmIVbSwhfUXlWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86715793b1fso984665241.0;
+        Mon, 05 May 2025 00:21:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746429688; x=1747034488;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mTcqx3y1Zv7wXrZGjPmDovC5D6K+j6ESgW83IpDDNQQ=;
+        b=Q6L6Wu7sYTdtYZ8zJYS06JMdEfjjmN6LaOiExh9KSvoR0cUdpAvyTPkbHe8tj9+Wha
+         HXjvmgn4rUfRgWEIhfq7UzctUDZsZydjd+aNgj1uaRH9jHC8wRb0FW2G8rsBit2/iAXq
+         F8aDoA9NdcsjfpPge8X4Capo3r0OX3tyg0UlP31dxkifkKPtd+hY6kbVaEG9zebyzMSH
+         TDdbtc9a1cLKlbu/Id+GiNUh/m7eUOfr4NEwvUvgyMDg/HLD/A/7hF2741lWRdtXnbAK
+         y551tOdZnFA4G93xqL8ZVSuEa/It84dFpQPKAyEu+/jaBxgVPIzf/nYoM5DFNjr81fEP
+         E8FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWncPIL7lpBonspuhdzl1MrCO1TlJjiVW1K52OIhUWzCABbV8NhuK2dNly71mGWXMLQ5+Zydwlutqghgg==@vger.kernel.org, AJvYcCWo97Qn4FaHsEAKalikVx/1LshCOjFe3kT8cM5gyb7ox1G8y6thjcJxeaF3EX8+y24gUirsfsRPS5G8AL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv23SCY70hpSyTERIu8+A9soBrgVeAhvjz1J9yacLcRN6zYuOd
+	n9J6diLFMT3qsQC1MiuchhN6qRjYrjWiyO4Hvyw4gnQjuQOiXBQtOEyZ1SG/
+X-Gm-Gg: ASbGncvj3kz/tR+8xlTNL97ZkBWxD14AZbhaphd2T4SjcxLGCJsTRb0PC3LcsdeWOqB
+	b74IXhlxEE/11qldBkumZF9FupQPtCvVjU1OyyJzlwGueEWrp9tOUWk1Xa+WIskAUNAboCTxWZ0
+	kBbzCx1Y7TaHn513Gn8v6SQvTDOoB8l7yuGXPGE1Dg4SlqQ+sgJSnGHIuG7Z6BD5cgusrDW4Ydd
+	wsv2JSgr8Dk8WD6Sxj0Gki5p6TmvP6zRc754qdYgsX1te1N99beUm8RSBKNSap8J3eqke8knUT9
+	1xRKg7TvctroSkz1XXP9s1PTVTLDMklmzvKaYTytSK1BfHBQuC55C/b8+owOJev28CHtPBxtlMp
+	JyeQ=
+X-Google-Smtp-Source: AGHT+IEwBxkQfwmjeEsEwT7lsjw85js0L3qfu6ljwpKNa8AK/o5Hs+e7LycJzQqHySMuG6V+OFxl4g==
+X-Received: by 2002:a05:6102:4b18:b0:4c1:774b:3f7a with SMTP id ada2fe7eead31-4db149174d0mr2435354137.16.1746429688168;
+        Mon, 05 May 2025 00:21:28 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4daf26062b0sm1304781137.19.2025.05.05.00.21.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 00:21:28 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-877c48657f9so662113241.1;
+        Mon, 05 May 2025 00:21:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOFMo6swkwkW9X6zDHDlV1OgFWUbkjfZHe23YWq9l66FoAySA/1KG4Qf181u6QKjpLyi3DOcP4U+FLWhc=@vger.kernel.org, AJvYcCUoRgrZ/bMhYL88pg09bkmovsmIIqdn63cBdL9OSsP+lvpltEBOhS4QSyFxGxlpXJ14MWSWT6esRz6/1Q==@vger.kernel.org
+X-Received: by 2002:a05:6102:2c02:b0:4c4:e018:326f with SMTP id
+ ada2fe7eead31-4db147cc599mr2885872137.10.1746429687842; Mon, 05 May 2025
+ 00:21:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: mediatek: mt8188-mt6359: select
- CONFIG_SND_SOC_MT6359_ACCDET
-To: Arnd Bergmann <arnd@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Alexandre Mergnat <amergnat@baylibre.com>,
- Zoran Zhan <zoran.zhan@mediatek.com>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250505052106.1811802-1-arnd@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250505052106.1811802-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250430-misc-test-fixup-v1-1-6f39ed6c733d@igalia.com>
+In-Reply-To: <20250430-misc-test-fixup-v1-1-6f39ed6c733d@igalia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 May 2025 09:21:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUk4UqmZV9zyzRz3S6n6+6vRQOcFymR_5J1A=JxAXUsSw@mail.gmail.com>
+X-Gm-Features: ATxdqUHvcAtG0So1qYVnS8CrzGCWjt_LpzMvW1LAaPVMH4RFAZw14bvBUN7h9d4
+Message-ID: <CAMuHMdUk4UqmZV9zyzRz3S6n6+6vRQOcFymR_5J1A=JxAXUsSw@mail.gmail.com>
+Subject: Re: [PATCH] char: misc: make miscdevice unit test built-in only
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, kernel-dev@igalia.com, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Il 05/05/25 07:20, Arnd Bergmann ha scritto:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The driver support was added without selecting the codec, which leads to
-> a link failure:
-> 
-> aarch64-linux-ld: sound/soc/mediatek/mt8188/mt8188-mt6359.o: in function `mt8188_mt6359_init':
-> mt8188-mt6359.c:(.text+0x19f0): undefined reference to `mt6359_accdet_enable_jack_detect'
-> 
-> Fixes: f35d834d67ad ("ASoC: mediatek: mt8188-mt6359: Add accdet headset jack detect support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi Thadeu,
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+On Wed, 30 Apr 2025 at 18:53, Thadeu Lima de Souza Cascardo
+<cascardo@igalia.com> wrote:
+> Since it uses __init symbols, it cannot be a module. Builds with
+> CONFIG_TEST_MISC_MINOR=m will fail with:
+>
+> ERROR: modpost: "init_mknod" [drivers/misc/misc_minor_kunit.ko] undefined!
+> ERROR: modpost: "init_unlink" [drivers/misc/misc_minor_kunit.ko] undefined!
+>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/linux-next/20250429155404.2b6fe5b1@canb.auug.org.au/
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202504160338.BjUL3Owb-lkp@intel.com/
+> Fixes: 45f0de4f8dc3 ("char: misc: add test cases")
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+
+Thanks for your patch, which is now commit 20acf4dd46e4c090 ("char:
+misc: make miscdevice unit test built-in only") in char-misc-next.
+
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -2512,7 +2512,7 @@ config TEST_IDA
+>         tristate "Perform selftest on IDA functions"
+>
+>  config TEST_MISC_MINOR
+> -       tristate "miscdevice KUnit test" if !KUNIT_ALL_TESTS
+> +       bool "miscdevice KUnit test" if !KUNIT_ALL_TESTS
+>         depends on KUNIT
+>         default KUNIT_ALL_TESTS
+
+This means "default y" if KUNIT_ALL_TESTS=m, which is IMHO not
+what we want.
+
+Perhaps
+
+    default KUNIT_ALL_TESTS=y
+
+?
+
+>         help
 
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
