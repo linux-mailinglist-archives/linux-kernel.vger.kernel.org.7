@@ -1,61 +1,55 @@
-Return-Path: <linux-kernel+bounces-634028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989B1AAAF39
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:13:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D31AAAF26
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951CB16F977
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:10:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 343E77B14D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB9F3B289E;
-	Mon,  5 May 2025 23:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4023B35B0;
+	Mon,  5 May 2025 23:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8Xsg/JF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etzu8Nb5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF36D3745BA;
-	Mon,  5 May 2025 23:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A463396EC3;
+	Mon,  5 May 2025 23:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486368; cv=none; b=RxcfTj/Zy392IwD+2UVNNq3/5yUwUfH6cVPCCrZgupfdMX4ji/Z5aTWVqutaWEkne5WjVAqlhLoZNiX8B3LbaQhd9wrjuERMtvHI9805Ndr1EofzFRxU2kQ1myPLwe4+7t1H8I+jIEmL5jOV0w2BIV3sofQjc9k00hZQtcmkyJg=
+	t=1746486390; cv=none; b=ljbq1RUCCbjK4IJedF9v3IefT7B3uTsx56d9uwr1ukTcRg3P1rz8maahznT7xdx6xOFmJ0murIps7tQ4jIcBoAh6jb5gnGVsZuhog7XYddIuhINR6zURJwM4woFamUvyoEHLS2GWTHjycWUMBq9dllmk6ohZaOwkxvSIVGy7V1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486368; c=relaxed/simple;
-	bh=1KuU1cq5++A1+lXLHU5Be7SugZDxVeCdiTW24JTYsk0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IAIKOU2h0lrQHqyzYM72Rwt83hPNziLLWEO6ceWP05OYi5sN5IPEm3XcawtXseax779KQiMw3rG7kVpzMzYuuxw6pTD7m/Fqsgn6Pc0sIoLwxyjDrVuV9dXaZQI6KEEbFBecnOqmnXHjYmYYdALANXpaA77yu3nsCdbLvluycH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8Xsg/JF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A337CC4CEED;
-	Mon,  5 May 2025 23:06:06 +0000 (UTC)
+	s=arc-20240116; t=1746486390; c=relaxed/simple;
+	bh=50o+LJ1eACnewrVR5dFUb4W6VBBY1lGHoNCIrnReK/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CjxvYluohZ9d0I2foRWXJdH6OhYJuXxb0MGWQMMXj6+ML2A4jSDs7iCbRPc7v4uP5blq6fOydtZoLjV/BIqDPEp/S8dVckV+9hqqsBGRCE7M8nwjr0SsV9vMC4vVaUxT2bf57JFtSrZbpkgdnX2asLw/+joKrXRq/Ki3KedJ1QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=etzu8Nb5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E45BC4CEE4;
+	Mon,  5 May 2025 23:06:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486367;
-	bh=1KuU1cq5++A1+lXLHU5Be7SugZDxVeCdiTW24JTYsk0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=u8Xsg/JFdMIXbCId0ovt0fK5hngFM3y94siw5Jj43q9GTDsUgVV3aAWHUlySDthim
-	 6KqvsO0V+yTuDDOJC1Yx3hv813JM0tRn/fVfTECpf3MnHT0kDiCm3QjxS41UMOitIw
-	 FovB8o3p09UTKt21ux27cYXbI0uMmrzP9c6EkD2BvWrl/5MiuDYdKSjbr9rqIotFQL
-	 7w6zS//+CCzT/mSHH65leURC47n9xhUG/LH3O8k9Nqd54F0hgn3daqQtjemh1MbbZ+
-	 oy/EjdqoW/T8G6uUyVoan3KW7kc/WAE8E5SeJtZwFYLTemrFc3oYK66hHh8n+oqptD
-	 iVQBcjjt32iBQ==
+	s=k20201202; t=1746486389;
+	bh=50o+LJ1eACnewrVR5dFUb4W6VBBY1lGHoNCIrnReK/Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=etzu8Nb5n5pRod/wQsEZ/Y133g9HODWtIR6F0NaLyto6SFRvfpazv+ACVnbdEG7cP
+	 57hQnMWZYU7fqJ6wF02UUdsky0IcZ6Zagrcve0/TqoovD7ja2SlIwIEQcNW1IostK7
+	 RI3llLdXGjuZ02ZSCGbZxpyAJP6MPu6+Ox4ls709FGOove9AU0n8W1lWWQZ6GjYVwN
+	 JR74XlO44HOfgYp+FUSKY887UaAoSQXHc02z+LQiYvjoUtCYlUf7jITj2dhFmlF4Io
+	 XqO+8lMQsShIbJr+9g52IsOs4shBQdYs39eOWR8di2ktRPVwjMpmlYi26ebTEZsxTy
+	 EGCvdGPSceeGQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Nicolas Escande <nico.escande@gmail.com>,
-	Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+Cc: Daniel Gomez <da.gomez@samsung.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	jjohnson@kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.6 286/294] wifi: ath12k: fix ath12k_hal_tx_cmd_ext_desc_setup() info1 override
-Date: Mon,  5 May 2025 18:56:26 -0400
-Message-Id: <20250505225634.2688578-286-sashal@kernel.org>
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 001/212] kconfig: merge_config: use an empty file as initfile
+Date: Mon,  5 May 2025 19:02:53 -0400
+Message-Id: <20250505230624.2692522-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
-References: <20250505225634.2688578-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,42 +58,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.89
+X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-From: Nicolas Escande <nico.escande@gmail.com>
+From: Daniel Gomez <da.gomez@samsung.com>
 
-[ Upstream commit df11edfba49e5fb69f4c9e7cb76082b89c417f78 ]
+[ Upstream commit a26fe287eed112b4e21e854f173c8918a6a8596d ]
 
-Since inception there is an obvious typo laying around in
-ath12k_hal_tx_cmd_ext_desc_setup(). Instead of initializing + adding
-flags to tcl_ext_cmd->info1, we initialize + override. This will be needed
-in the future to make broadcast frames work with ethernet encapsulation.
+The scripts/kconfig/merge_config.sh script requires an existing
+$INITFILE (or the $1 argument) as a base file for merging Kconfig
+fragments. However, an empty $INITFILE can serve as an initial starting
+point, later referenced by the KCONFIG_ALLCONFIG Makefile variable
+if -m is not used. This variable can point to any configuration file
+containing preset config symbols (the merged output) as stated in
+Documentation/kbuild/kconfig.rst. When -m is used $INITFILE will
+contain just the merge output requiring the user to run make (i.e.
+KCONFIG_ALLCONFIG=<$INITFILE> make <allnoconfig/alldefconfig> or make
+olddefconfig).
 
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
+Instead of failing when `$INITFILE` is missing, create an empty file and
+use it as the starting point for merges.
 
-Signed-off-by: Nicolas Escande <nico.escande@gmail.com>
-Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-Link: https://patch.msgid.link/20250127071306.1454699-1-nico.escande@gmail.com
-Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath12k/dp_tx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/kconfig/merge_config.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath12k/dp_tx.c b/drivers/net/wireless/ath/ath12k/dp_tx.c
-index 25a9d4c4fae76..474e0d4d406ea 100644
---- a/drivers/net/wireless/ath/ath12k/dp_tx.c
-+++ b/drivers/net/wireless/ath/ath12k/dp_tx.c
-@@ -118,7 +118,7 @@ static void ath12k_hal_tx_cmd_ext_desc_setup(struct ath12k_base *ab, void *cmd,
- 			       le32_encode_bits(ti->data_len,
- 						HAL_TX_MSDU_EXT_INFO1_BUF_LEN);
+diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+index 72da3b8d6f307..151f9938abaa7 100755
+--- a/scripts/kconfig/merge_config.sh
++++ b/scripts/kconfig/merge_config.sh
+@@ -105,8 +105,8 @@ INITFILE=$1
+ shift;
  
--	tcl_ext_cmd->info1 = le32_encode_bits(1, HAL_TX_MSDU_EXT_INFO1_EXTN_OVERRIDE) |
-+	tcl_ext_cmd->info1 |= le32_encode_bits(1, HAL_TX_MSDU_EXT_INFO1_EXTN_OVERRIDE) |
- 				le32_encode_bits(ti->encap_type,
- 						 HAL_TX_MSDU_EXT_INFO1_ENCAP_TYPE) |
- 				le32_encode_bits(ti->encrypt_type,
+ if [ ! -r "$INITFILE" ]; then
+-	echo "The base file '$INITFILE' does not exist.  Exit." >&2
+-	exit 1
++	echo "The base file '$INITFILE' does not exist. Creating one..." >&2
++	touch "$INITFILE"
+ fi
+ 
+ MERGE_LIST=$*
 -- 
 2.39.5
 
