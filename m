@@ -1,61 +1,71 @@
-Return-Path: <linux-kernel+bounces-634924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E684AAB7A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:15:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF33AAB7EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C669E4E7F96
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFD5F3B670E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548594A173B;
-	Tue,  6 May 2025 00:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139293AEE18;
+	Tue,  6 May 2025 00:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFx/OxTm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaPSPlZQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909102F7C31;
-	Mon,  5 May 2025 23:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39DD3AE5DA;
+	Mon,  5 May 2025 23:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487172; cv=none; b=kXpBfrEmN7/tyMHrUfoSVI4jsHMVPDO6BYajgR+YqnPccDjplzCcmLrWfbxUHC0mSV0CDiXzhJFO0XYH2pt2zPgf5TtuEHLh6qEkYMVCMehBZRMUHu9NwL41suRALAaJRKFpd88YyokyMpkZQAlLPzF8SIK2GXPLcoVDH5v3BXQ=
+	t=1746487201; cv=none; b=ZlKBjxNRsTn2s9+h4TBg3FTvyTgIxy66B8bTIeJCzoZqhnpanFGJ3avwKvAvscYngCKdTF2yKq/TwxF1usulrxGj8Aj60z63zhusnaA/6SieEqofj1uBpGwtAlefyoit/gbBGplEbujhxqfw0U52amBmgcWKvO6hsZXDVqMXk2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487172; c=relaxed/simple;
-	bh=81Th+zx9z9nFX6KUCm0gksr1wiLFd9LYLWv6qaS25ns=;
+	s=arc-20240116; t=1746487201; c=relaxed/simple;
+	bh=m5oFdYjah0zImpFPmJoRoTirj9V9MipWEIBX4AF1Ht0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HeXiSiGaBNKZvOZ24Ctv6NE1esenDT335JpiVzDj7RVK1vhIfKm2nxKdIOLD4g/R3WmRLSR+pgFhRXzfbzoh6UoW7trBrJ0vumvr+9ciNzhLnzFS/dulBc6Z2swfMG0YomcFmS5Evznoho3PXOzGVbKHjZgt6E0b4BBvdfwpRY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFx/OxTm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5E02C4CEEF;
-	Mon,  5 May 2025 23:19:29 +0000 (UTC)
+	 MIME-Version; b=QmCZ8FK2b5RdKEE6I3F3jtW+G7JK7NkXHsSvjoOUPEiYAEx6QMPZnW41IAXXg40mdGqi6rWTmcZaWM7+ww4TKq/hNGZ2XjZLA10am9JvGpHyFx1Fo8mILaOTya1fGgrXXbqIMENduhHkCJeHlNXEb6BEsJj3+sFJ7g22D5AK+iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaPSPlZQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CB6C4CEE4;
+	Mon,  5 May 2025 23:19:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487171;
-	bh=81Th+zx9z9nFX6KUCm0gksr1wiLFd9LYLWv6qaS25ns=;
+	s=k20201202; t=1746487200;
+	bh=m5oFdYjah0zImpFPmJoRoTirj9V9MipWEIBX4AF1Ht0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rFx/OxTmmBgI/lTyxwEk7PxkvGWktoSM2Z1mdjkHoA4YySXZslheo4ihWcDiErRSx
-	 ijFD5l2Aa6T+k9ggLFPrtRJqr48U5d74crbdB970s7aMmJd3awRByzB18GolskucCW
-	 z7zgsSf52JHPjD+DE9sQLk2jX7Tqk97yPafjdTKi1DeLB6bCUIiEZSbxwqaZt4vbd9
-	 Sf7cOnRMXjZFQGUBSa0RQfseLJzVuORfvREL9/mVy9AJzPUo3bwLB3eOHFPtj+hlEH
-	 dafP8XoUwWrDb2qysl3HCPYAjIfZj7d2cbDjmTOJukGsEBH8X5KcaKlpf7pc4KydmE
-	 sBp7byvWs8Jew==
+	b=qaPSPlZQejUTW7GqD9FJpG1q1xZbfLP15qQF/0TrRTtmXWGh+z0wWX1eGcXgk73iI
+	 3VevHVzskorIF0fvEG2tqMJQJJ+GlnKowJV/Z6ciq7Ci7LWwEz62mLsZ8k3wGyCO5e
+	 lIggvdrqpmA3uUy0o+mK72pcVu1uIruHKKJ0zMcoPIP0TYjA4wfvhB8ppfCbmya3Ny
+	 loZnh2ObAjDB2qSwx6KDi7wGntw6uR5qcM6lNBfg3wpdnurMj/N9frMQJwcuTbXS7w
+	 P5MAwOXhXnyu/GtfbNjeh0lIit1KVZrOZTnxPXx9SPxOrKO5vG6uvOdfvsXYL7LzvD
+	 n3T6F8jEWVMhg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Breno Leitao <leitao@debian.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Kaplan <David.Kaplan@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	ncardwell@google.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 039/114] tcp: bring back NUMA dispersion in inet_ehash_locks_alloc()
-Date: Mon,  5 May 2025 19:17:02 -0400
-Message-Id: <20250505231817.2697367-39-sashal@kernel.org>
+	corbet@lwn.net,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	akpm@linux-foundation.org,
+	paulmck@kernel.org,
+	rostedt@goodmis.org,
+	thuth@redhat.com,
+	ardb@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 053/114] x86/bugs: Make spectre user default depend on MITIGATION_SPECTRE_V2
+Date: Mon,  5 May 2025 19:17:16 -0400
+Message-Id: <20250505231817.2697367-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231817.2697367-1-sashal@kernel.org>
 References: <20250505231817.2697367-1-sashal@kernel.org>
@@ -70,103 +80,94 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.10.237
 Content-Transfer-Encoding: 8bit
 
-From: Eric Dumazet <edumazet@google.com>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit f8ece40786c9342249aa0a1b55e148ee23b2a746 ]
+[ Upstream commit 98fdaeb296f51ef08e727a7cc72e5b5c864c4f4d ]
 
-We have platforms with 6 NUMA nodes and 480 cpus.
+Change the default value of spectre v2 in user mode to respect the
+CONFIG_MITIGATION_SPECTRE_V2 config option.
 
-inet_ehash_locks_alloc() currently allocates a single 64KB page
-to hold all ehash spinlocks. This adds more pressure on a single node.
+Currently, user mode spectre v2 is set to auto
+(SPECTRE_V2_USER_CMD_AUTO) by default, even if
+CONFIG_MITIGATION_SPECTRE_V2 is disabled.
 
-Change inet_ehash_locks_alloc() to use vmalloc() to spread
-the spinlocks on all online nodes, driven by NUMA policies.
+Set the spectre_v2 value to auto (SPECTRE_V2_USER_CMD_AUTO) if the
+Spectre v2 config (CONFIG_MITIGATION_SPECTRE_V2) is enabled, otherwise
+set the value to none (SPECTRE_V2_USER_CMD_NONE).
 
-At boot time, NUMA policy is interleave=all, meaning that
-tcp_hashinfo.ehash_locks gets hash dispersion on all nodes.
+Important to say the command line argument "spectre_v2_user" overwrites
+the default value in both cases.
 
-Tested:
+When CONFIG_MITIGATION_SPECTRE_V2 is not set, users have the flexibility
+to opt-in for specific mitigations independently. In this scenario,
+setting spectre_v2= will not enable spectre_v2_user=, and command line
+options spectre_v2_user and spectre_v2 are independent when
+CONFIG_MITIGATION_SPECTRE_V2=n.
 
-lack5:~# grep inet_ehash_locks_alloc /proc/vmallocinfo
-0x00000000d9aec4d1-0x00000000a828b652   69632 inet_ehash_locks_alloc+0x90/0x100 pages=16 vmalloc N0=2 N1=3 N2=3 N3=3 N4=3 N5=2
-
-lack5:~# echo 8192 >/proc/sys/net/ipv4/tcp_child_ehash_entries
-lack5:~# numactl --interleave=all unshare -n bash -c "grep inet_ehash_locks_alloc /proc/vmallocinfo"
-0x000000004e99d30c-0x00000000763f3279   36864 inet_ehash_locks_alloc+0x90/0x100 pages=8 vmalloc N0=1 N1=2 N2=2 N3=1 N4=1 N5=1
-0x00000000d9aec4d1-0x00000000a828b652   69632 inet_ehash_locks_alloc+0x90/0x100 pages=16 vmalloc N0=2 N1=3 N2=3 N3=3 N4=3 N5=2
-
-lack5:~# numactl --interleave=0,5 unshare -n bash -c "grep inet_ehash_locks_alloc /proc/vmallocinfo"
-0x00000000fd73a33e-0x0000000004b9a177   36864 inet_ehash_locks_alloc+0x90/0x100 pages=8 vmalloc N0=4 N5=4
-0x00000000d9aec4d1-0x00000000a828b652   69632 inet_ehash_locks_alloc+0x90/0x100 pages=16 vmalloc N0=2 N1=3 N2=3 N3=3 N4=3 N5=2
-
-lack5:~# echo 1024 >/proc/sys/net/ipv4/tcp_child_ehash_entries
-lack5:~# numactl --interleave=all unshare -n bash -c "grep inet_ehash_locks_alloc /proc/vmallocinfo"
-0x00000000db07d7a2-0x00000000ad697d29    8192 inet_ehash_locks_alloc+0x90/0x100 pages=1 vmalloc N2=1
-0x00000000d9aec4d1-0x00000000a828b652   69632 inet_ehash_locks_alloc+0x90/0x100 pages=16 vmalloc N0=2 N1=3 N2=3 N3=3 N4=3 N5=2
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Tested-by: Jason Xing <kerneljasonxing@gmail.com>
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Link: https://patch.msgid.link/20250305130550.1865988-1-edumazet@google.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: David Kaplan <David.Kaplan@amd.com>
+Link: https://lore.kernel.org/r/20241031-x86_bugs_last_v2-v2-2-b7ff1dab840e@debian.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/inet_hashtables.c | 37 ++++++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 11 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  2 ++
+ arch/x86/kernel/cpu/bugs.c                      | 10 +++++++---
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
-index 0fb5d758264fe..fea74ab2a4bec 100644
---- a/net/ipv4/inet_hashtables.c
-+++ b/net/ipv4/inet_hashtables.c
-@@ -934,22 +934,37 @@ int inet_ehash_locks_alloc(struct inet_hashinfo *hashinfo)
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 88110e74b3f7a..12af5b0ecc8e3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5122,6 +5122,8 @@
+ 
+ 			Selecting 'on' will also enable the mitigation
+ 			against user space to user space task attacks.
++			Selecting specific mitigation does not force enable
++			user mitigations.
+ 
+ 			Selecting 'off' will disable both the kernel and
+ 			the user space protections.
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 045ab6d0a98bb..9b3611e4cb80c 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1231,9 +1231,13 @@ static __ro_after_init enum spectre_v2_mitigation_cmd spectre_v2_cmd;
+ static enum spectre_v2_user_cmd __init
+ spectre_v2_parse_user_cmdline(void)
  {
- 	unsigned int locksz = sizeof(spinlock_t);
- 	unsigned int i, nblocks = 1;
-+	spinlock_t *ptr = NULL;
++	enum spectre_v2_user_cmd mode;
+ 	char arg[20];
+ 	int ret, i;
  
--	if (locksz != 0) {
--		/* allocate 2 cache lines or at least one spinlock per cpu */
--		nblocks = max(2U * L1_CACHE_BYTES / locksz, 1U);
--		nblocks = roundup_pow_of_two(nblocks * num_possible_cpus());
-+	if (locksz == 0)
-+		goto set_mask;
- 
--		/* no more locks than number of hash buckets */
--		nblocks = min(nblocks, hashinfo->ehash_mask + 1);
-+	/* Allocate 2 cache lines or at least one spinlock per cpu. */
-+	nblocks = max(2U * L1_CACHE_BYTES / locksz, 1U) * num_possible_cpus();
- 
--		hashinfo->ehash_locks = kvmalloc_array(nblocks, locksz, GFP_KERNEL);
--		if (!hashinfo->ehash_locks)
--			return -ENOMEM;
-+	/* At least one page per NUMA node. */
-+	nblocks = max(nblocks, num_online_nodes() * PAGE_SIZE / locksz);
++	mode = IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?
++		SPECTRE_V2_USER_CMD_AUTO : SPECTRE_V2_USER_CMD_NONE;
 +
-+	nblocks = roundup_pow_of_two(nblocks);
-+
-+	/* No more locks than number of hash buckets. */
-+	nblocks = min(nblocks, hashinfo->ehash_mask + 1);
+ 	switch (spectre_v2_cmd) {
+ 	case SPECTRE_V2_CMD_NONE:
+ 		return SPECTRE_V2_USER_CMD_NONE;
+@@ -1246,7 +1250,7 @@ spectre_v2_parse_user_cmdline(void)
+ 	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
+ 				  arg, sizeof(arg));
+ 	if (ret < 0)
+-		return SPECTRE_V2_USER_CMD_AUTO;
++		return mode;
  
--		for (i = 0; i < nblocks; i++)
--			spin_lock_init(&hashinfo->ehash_locks[i]);
-+	if (num_online_nodes() > 1) {
-+		/* Use vmalloc() to allow NUMA policy to spread pages
-+		 * on all available nodes if desired.
-+		 */
-+		ptr = vmalloc_array(nblocks, locksz);
-+	}
-+	if (!ptr) {
-+		ptr = kvmalloc_array(nblocks, locksz, GFP_KERNEL);
-+		if (!ptr)
-+			return -ENOMEM;
+ 	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
+ 		if (match_option(arg, ret, v2_user_options[i].option)) {
+@@ -1256,8 +1260,8 @@ spectre_v2_parse_user_cmdline(void)
+ 		}
  	}
-+	for (i = 0; i < nblocks; i++)
-+		spin_lock_init(&ptr[i]);
-+	hashinfo->ehash_locks = ptr;
-+set_mask:
- 	hashinfo->ehash_locks_mask = nblocks - 1;
- 	return 0;
+ 
+-	pr_err("Unknown user space protection option (%s). Switching to AUTO select\n", arg);
+-	return SPECTRE_V2_USER_CMD_AUTO;
++	pr_err("Unknown user space protection option (%s). Switching to default\n", arg);
++	return mode;
  }
+ 
+ static inline bool spectre_v2_in_eibrs_mode(enum spectre_v2_mitigation mode)
 -- 
 2.39.5
 
