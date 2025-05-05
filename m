@@ -1,129 +1,199 @@
-Return-Path: <linux-kernel+bounces-632948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBAEAA9EC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0763AA9F41
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2803BB9F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:12:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6842A3B62F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5487275113;
-	Mon,  5 May 2025 22:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBB5280CD2;
+	Mon,  5 May 2025 22:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZANMyNE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="e0Aubqhr"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170C313AF2;
-	Mon,  5 May 2025 22:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FA428033D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 22:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483184; cv=none; b=M8l1J34WuGV1NWXI2C8kKPJ5Vur2cth6fypfVmAtqypJnElwo+afZZYUWwrA1sw0PUJTW4JmDCBcqvkABP2fkdExkpZjx/45Fc2YcKJKtLP6B3JNmb0CfSoPisWCe8/8VQt193n8IOJg3EYVxI8RL+FMP/sw2t8fHziV2ISZVn4=
+	t=1746483318; cv=none; b=uN1dd3CowzRF5jU0Ao7z9egn313cbpKVt1a0Bipkmfs4RKGKFE1pAb27In3GGLzqQeNNR358CsaOp15+3KE1QzcEyu/0EEg/7sdCjpWyMjH6DA6lox2mPD5ldemx47sh9KUeaDOmBlagDmqgxHc6XL1iOH50p5dWvwfb9hCVFEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483184; c=relaxed/simple;
-	bh=wyVv8r87sFQD3h4JxZbcpjjhi07POlfuqfD61jwf/WE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r4/sVdu9SciKf7uJEk7JnhWb0LwQCBNUd5WgzZSIKbHwgpyMySmX4ZUCwaQt3WxMDdZAAeOtyT+KtU/lu21uKXlV1hchl931vTBVRE+Eb+9WA78x2mIJrohLwPqjEvRJMnRfjXUE31GyeEqGDmo4qQxMCHiJvT9enUbXENiZI0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZANMyNE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E369AC4CEE4;
-	Mon,  5 May 2025 22:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746483183;
-	bh=wyVv8r87sFQD3h4JxZbcpjjhi07POlfuqfD61jwf/WE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EZANMyNEI1oG7oG8Lbnk5GKx+kYRPd8c8oPqrO9lTzLaEamqD+IznbrSMUeVs9yuh
-	 nNDSW3vIph88Xbc0VVlZ0+dZLABQaupc/jqipV2tosqfK/66kDlNDI3L8P1vmD1leu
-	 jgNiYfmoJ0y/hApMjRcRod2/FCSIev2PLpY3PSXKg7tF+rysIVI5xIjzODARRUAjxk
-	 MV2CJSPY3T9VKAGWFAUNMU71o5yFphGWaiMP5mSTSItTQzQL0+S8IvYtCBhWVtzZdQ
-	 gzVL7qxqOFHr6qEmBRPF8zFnrcKtOmtlQA8U11VJ//lldEf80oTMQMKyRp6Q+OtnUm
-	 I2FGI/wEY8jIQ==
-Date: Tue, 6 May 2025 00:13:00 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Vignesh R <vigneshr@ti.com>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
-	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jayesh Choudhary <j-choudhary@ti.com>
-Subject: Re: [PATCH] i2c: omap: fix deprecated of_property_read_bool() use
-Message-ID: <6nn2l75kkbkdu3wf3kta4mezno6cy4e3zzwzdc4cpmujjhr6lp@ct7w72zwbrhu>
-References: <20250415075230.16235-1-johan+linaro@kernel.org>
- <vcwjwrjgzwoil5ydds4findhcgl2ujoxwia7eh7yrbdc45yx26@kmpmvataffzr>
- <aAIiJQVAUdWJFVy7@hovoldconsulting.com>
- <hn3gsrizar6xbr4seclnb6xot4fo4ztryks4w7exvztsdzj4f6@jhobhujf3ezi>
- <aBiMJ0z5q4K2xTGT@hovoldconsulting.com>
+	s=arc-20240116; t=1746483318; c=relaxed/simple;
+	bh=CR+pLE1ztr65gg7kzvoU5YS0CTmgYB7fdUWiHfpbjWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZNGp78COCZT5+AXC1iCW7iooKR3ybO3f1LSmcqbRavcYQ/EpP4r1TC04LXok7dgZ+gWdwlkI99SgMQAq9wDfxbDQxCjvI7ALEuK6xWYHEFUnC/F1LehTyqOQYnCrc+IMj2xsN0VPEE79e+GWtTBMpi8k/hXos3Pw2N+WnDzEDio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com; spf=pass smtp.mailfrom=kylehuey.com; dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b=e0Aubqhr; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylehuey.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso51412631fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 15:15:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kylehuey.com; s=google; t=1746483314; x=1747088114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TQ5eBrFfOmcah0yJB/jEfTuCEypZVE8gaZUWNHeUUC8=;
+        b=e0Aubqhrbv9a11Pmxr/qel9m+sl+Sn1ztnLgts2XmmnRhb8LFB3mrgAI96Gn2xatXm
+         soHR4zZG3eM8LJO0zucKfGSlT9L1ZfvEttigY7eGzSw5+BXaPVqCfVhz0P3S6u+7BgNi
+         7tqhub+CX6W0oC5CwUCxpy/gNDtDyj8sQMAcuxmB2VarFPIDCN+GTERjEuWMe4gqJm1O
+         FoDFRUOSuL7FlcdiQudmT+QepbO7OJrdkYh+v40fHtOcmIarYHge2ngtE/4/yXABhvE2
+         CS3ZSsCTUBpLZxK/H53QbsZ4dlkidK16k8MHLa0EKjCq1bSRPKdTuEfUAh+yroKxvoei
+         FU2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746483314; x=1747088114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TQ5eBrFfOmcah0yJB/jEfTuCEypZVE8gaZUWNHeUUC8=;
+        b=JF89wD8m8SdruwWUVQ8jubn6paYUazCVsGmVfqJ+JtfG8a48yytQbOPK2VOMse39Zn
+         oNk/YA+1WmkUhtmXrErIfqZtRDqrvPAtn1oZIRbGJiTZjoh8B+3JImqssNXZX3FB4hru
+         cQqmiWK5mRYE6T7SyIBGEX9JX/046WMas0Z30RCoeIVgXdDeuqXPDAIuVEkPqM51oJgx
+         brUQ0YI3NIkP2HujuzYxvm/ONPOl+0DerCsMp9lpaVhantZhYJY1JliUXd29UCvoTzTU
+         WyhiufTuRpyw93cwL/yL+6p86//xp8VwC9G2qFj7up8UefRdtBa/0eE0QHVucmzrwqWk
+         jTVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Yfp5evjgWvDrfFM9sWrmR0mG6L24fnweTiR9gdpWGWs05V280b/WVSxnpI/bFZ6XoT3+07IAZN9raq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgeFI5/V7cdFZZ0IuiFQVm6xDah52f1a2UVvnhNLYRfA2PGtOZ
+	+NDYiMbNR/6SWJYSElgUEYRXLUel8BpRPIvRQcAed2tkNo1ohsVD/YtSXyvDRrVQAhtwCgDYoYA
+	AuPKpMqp7aDlYHRR+wa6esrueagh9Gpo4H81YCv2TEndLYkU=
+X-Gm-Gg: ASbGncvS42TxsppWjSiYf9q0casVXanKIbBtfjWYlOyj7RzcQr51UqxVwiWDlDpDDv9
+	Qu4V44Xjp/B5FpiQOgLVJHuI2nbm4RgwyJbFsfhGKdaZ2iqguKAzizk6vl2c61gg+04PEMpVJxO
+	RnxqQjCHWZRyx1yJDwXfNp6g==
+X-Google-Smtp-Source: AGHT+IFgzVRcS9mdsTk87FEhrDFQ5jFKeoi6nutbirWAHEtPPAbw81TGSNj3TVoWMr7WdMW7l5qoV87uzdF62e4sk08=
+X-Received: by 2002:a2e:be08:0:b0:31a:6644:25c with SMTP id
+ 38308e7fff4ca-3264f00f29amr3080161fa.12.1746483313188; Mon, 05 May 2025
+ 15:15:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBiMJ0z5q4K2xTGT@hovoldconsulting.com>
+References: <CAP045Ap3e6x52TvB8WyBHBjJ8HYtAmnKnGgj_fog3P+F5igP-A@mail.gmail.com>
+ <aBkaDN7N_6qDGdIz@x1.local>
+In-Reply-To: <aBkaDN7N_6qDGdIz@x1.local>
+From: Kyle Huey <me@kylehuey.com>
+Date: Mon, 5 May 2025 15:15:00 -0700
+X-Gm-Features: ATxdqUEzTn2NHO1OHMFM-6gWIqCZ6B2vpcStPrXwsgZOLdP2CnJ9U-2q1q9HPeQ
+Message-ID: <CAP045ArAVtR6_Y-WWcqpB54Z+fwNYSWSyrTZKjctocwA0sK5eg@mail.gmail.com>
+Subject: Re: Suppress pte soft-dirty bit with UFFDIO_COPY?
+To: Peter Xu <peterx@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, open list <linux-kernel@vger.kernel.org>, 
+	linux-mm@kvack.org, criu@lists.linux.dev, 
+	"Robert O'Callahan" <robert@ocallahan.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Johan,
+On Mon, May 5, 2025 at 1:05=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> Hi, Kyle,
+>
+> On Mon, May 05, 2025 at 09:37:01AM -0700, Kyle Huey wrote:
+> > tl;dr I'd like to add UFFDIO_COPY_MODE_DONTSOFTDIRTY that does not add
+> > the _PAGE_SOFT_DIRTY bit to the relevant pte flags. Any
+> > thoughts/objections?
+> >
+> > The kernel has a "soft-dirty" bit on ptes which tracks if they've been
+> > written to since the last time /proc/pid/clear_refs was used to clear
+> > the soft-dirty bit. CRIU uses this to track which pages have been
+> > modified since a previous checkpoint and reduce the size of the
+> > checkpoints taken. I would like to use this in my debugger[0] to track
+> > which pages a program function dirties when that function is invoked
+> > from the debugger.
+> >
+> > However, the runtime environment for this function is rather unusual.
+> > In my debugger, the process being debugged doesn't actually exist
+> > while it's being debugged. Instead, we have a database of all program
+> > state (including registers and memory values) from when the process
+> > was executed. It's in some sense a giant core dump that spans multiple
+> > points in time. To execute a program function from the debugger we
+> > rematerialize the program state at the desired point in time from our
+> > database.
+> >
+> > For performance reasons, we fill in the memory lazily[1] via
+> > userfaultfd. This makes it difficult to use the soft-dirty bit to
+> > track the writes the function triggers, because UFFDIO_COPY (and
+> > friends) mark every page they touch as soft-dirty. Because we have the
+> > canonical source of truth for the pages we materialize via UFFDIO_COPY
+> > we're only interested in what happens after the userfaultfd operation.
+> >
+> > Clearing the soft-dirty bit is complicated by two things:
+> > 1. There's no way to clear the soft-dirty bit on a single pte, so
+> > instead we have to clear the soft-dirty bits for the entire process.
+> > That requires us to process all the soft-dirty bits on every other pte
+> > immediately to avoid data loss.
+> > 2. We need to clear the soft-dirty bits after the userfaultfd
+> > operation, but in order to avoid racing with the task that triggered
+> > the page fault we have to do a non-waking copy, then clear the bits,
+> > and then separately wake up the task.
+> >
+> > To work around all of this, we currently have a 4 step process:
+> > 1. Read /proc/pid/pagemap and note all ptes that are soft-dirty.
+> > 2. Do the UFFDIO_COPY with UFFDIO_COPY_MODE_DONTWAKE.
+> > 3. Write to /proc/pid/clear_refs to clear soft-dirty bits across the pr=
+ocess.
+> > 4. Do a UFFDIO_WAKE.
+> >
+> > The overhead of all of this (particularly step 1) is a millisecond or
+> > two *per page* that we lazily materialize, and while that's not
+> > crippling for our purposes, it is rather undesirable. What I would
+> > like to have instead is a UFFDIO_COPY mode that leaves the soft-dirty
+> > bit unchanged, i.e. a UFFDIO_COPY_MODE_DONTSOFTDIRTY. Since we clear
+> > all the soft-dirty bits once after setting up all the mmaps in the
+> > process the relevant ptes would then "just do the right thing" from
+> > our perspective.
+> >
+> > But I do want to get some feedback on this before I spend time writing
+> > any code. Is there a reason not to do this? Or an alternate way to
+> > achieve the same goal?
+>
+> Have you looked at the wr-protect mode, and UFFDIO_COPY_MODE_WP for _COPY=
+?
+>
+> If sync fault is a perf concern for frequent writes, just to mention at
+> least latest Linux also supports async tracking (UFFD_FEATURE_WP_ASYNC),
+> which is almost exactly soft dirty bits to me, though it solves a few
+> issues it has on e.g. false positives over vma merging and swapping, or
+> like you said missing of finer granule reset mechanisms.
+>
+> Maybe you also want to have a look at the pagemap ioctl introduced some
+> time ago ("Pagemap Scan IOCTL", which, IIRC was trying to use uffd-wp in
+> soft-dirty-like way):
+>
+> https://www.kernel.org/doc/Documentation/admin-guide/mm/pagemap.rst
 
-On Mon, May 05, 2025 at 12:00:07PM +0200, Johan Hovold wrote:
-> On Tue, Apr 29, 2025 at 03:10:13PM +0200, Andi Shyti wrote:
-> > On Fri, Apr 18, 2025 at 11:57:57AM +0200, Johan Hovold wrote:
-> > > On Thu, Apr 17, 2025 at 11:41:51PM +0200, Andi Shyti wrote:
-> > > > On Tue, Apr 15, 2025 at 09:52:30AM +0200, Johan Hovold wrote:
-> > > > > Using of_property_read_bool() for non-boolean properties is deprecated
-> > > > > and results in a warning during runtime since commit c141ecc3cecd ("of:
-> > > > > Warn when of_property_read_bool() is used on non-boolean properties").
-> > > > > 
-> > > > > Fixes: b6ef830c60b6 ("i2c: omap: Add support for setting mux")
-> > > > > Cc: Jayesh Choudhary <j-choudhary@ti.com>
-> > > > > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > > > 
-> > > > Thanks for your patch! I'm going to drop the Fixes tag, as this
-> > > > isn't really a bug fix but rather a warning suppression during
-> > > > boot time.
-> > > 
-> > > Thanks, but I think you should have kept the Fixes tag and merged this
-> > > for 6.15 (i2c-host-fixes) since this is a new warning in 6.15-rc1 (and
-> > > that does warrant a Fixes tag). Perhaps I should have highlighted that
-> > > better.
-> > > 
-> > > If the offending patch had been posted or merged before such uses
-> > > started generating warnings in 6.14-rc1 then that would have been a
-> > > different matter.
-> > 
-> > I'm sorry, but as I understand it, the Fixes tag should be used
-> > only when an actual bug is being fixed. I've seen stable
-> > maintainers getting annoyed when it's used for non-bug issues.
-> 
-> You seem to confuse the Fixes tag with a CC stable tag. A Fixes tag is
-> used to indicate which commit introduced an issue, while the CC stable
-> tag is used to flag a commit for backporting (and the fact that autosel
-> tends to pick up patches with just a Fixes doesn't change this).
 
-(the Cc tag for fixes is not mandatory, it's more a courtesy)
+Thanks. This is all very helpful and I think I can construct what I
+need out of these building blocks.
 
-> It's perfectly fine to fix an issue and use a Fixes tag when doing so
-> even if the fix itself does not qualify for backporting (for whatever
-> reason).
+- Kyle
 
-Oh yes, I forgot that patch was part of the 6.15 merge window. I
-will then move it to the -fixes and send it for this week's merge
-request.
-
-Thanks and sorry for the confusion,
-Andi
-
-> > The system works perfectly fine even with the warning printed.
-> > It might confuse CI systems, but that shouldn't really be our
-> > concern.
-> 
-> You should not knowingly be introducing new warnings. The Fixes tag I
-> added showed that this was an issue introduced in 6.15-rc1, and, unless
-> discovered really late in the cycle, it should be fixed before 6.15 is
-> out.
-> 
-> Johan
+> > If this is generally sensible, then a couple questions:
+> > 1. Do I need a UFFD_FEATURE flag for this, or is it enough for a
+> > program to be able to detect the existence of a
+> > UFFDIO_COPY_MODE_DONTSOFTDIRTY by whether the ioctl accepts the flag
+> > or returns EINVAL? I would tend to think the latter.
+>
+> The latter requires all the setups needed, and an useless ioctl to probe.
+> Not a huge issue, but since userfaultfd is extensible, a feature flag mig=
+ht
+> be better as long as a new feature is well defined.
+>
+> > 2. Should I add this mode for the other UFFDIO variants (ZEROPAGE,
+> > MOVE, etc) at the same time even if I don't have any use for them?
+>
+> Probably not.  I don't see a need to implement something just to make the
+> API look good..  If any chunk of code in the Linux kernel has no plan to =
+be
+> used, we should probably not adding them since the start..
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
 
