@@ -1,125 +1,92 @@
-Return-Path: <linux-kernel+bounces-631751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E935DAA8CEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EC1AA8D0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 09:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DCB43A7531
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375D23B4A14
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255F81C863D;
-	Mon,  5 May 2025 07:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E281C84BB;
+	Mon,  5 May 2025 07:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dA4hCuh7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xcz0r9Ny"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB40014B965
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 07:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8713C171A1;
+	Mon,  5 May 2025 07:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746429592; cv=none; b=mqtDAVxKsnXSj6RfLF/OGglNX0kPVMGrulwNUeOG70yVm1tMUjVHB33KGwygYlu7ioAQtyeTpGDaXVllPn1P2QPZhLdDnTDT2+Lx79oO1b82aNRDZxBnLs4vmRtQUVEVp97yyTft/GiPPzRfRwqsu6kCtwLYqzoXm39byIIlvWI=
+	t=1746430222; cv=none; b=KpJyvCjsPrBhLlA9oT1PVGF6MCd1h+6a9uJuqY5ZdamHSf2q/Kvy+wK1zMKYIpFn1aDyAECBaihH5gmUz80NKGobNrfJl64cxxi6HK1/aoe+Sa0tu8PbohFpTtVkfugLWHZ1grkbdQ0WogPXzYkj05EuGaxbT/y5U1ky6HhB98A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746429592; c=relaxed/simple;
-	bh=GCVcV9cmXnhnwDKYMrvd8V8TZ/YtoG0CcBg/cQyXd9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E8UsclAdibOkHn0C7a2fRDA6RwPzj8iWvr8PX8AjL47oG9Lk22O73OVxeB1EN61l4mMMZB/S7TYZTxNQCstvpghrn8a/EHythFZBzhE1M0Y4QEvUxFqRvtG9HXz5igPcqVgJAf0WNMK6TnqmQf1VAJp/vAYjWArfTRYG/1grjCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dA4hCuh7; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746429591; x=1777965591;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GCVcV9cmXnhnwDKYMrvd8V8TZ/YtoG0CcBg/cQyXd9Y=;
-  b=dA4hCuh75jYUSTYQXzM8z2Wa9Zwzwy2xAEw1pyxibMyxhXPw++dox2ML
-   uX9UXFH69WPAuI4QficWPdgQ0gxCG04lo6CrCK/x7l5S4OIw9gk6ot7tK
-   vB+CJXzvSWISeF7skFrboZWqqPk2mWmNatyrbAhfgngoxggC4Mm+g62xJ
-   t2oNsrUApM7MIpXOn+EYsLY+cRqNi2Z9Ri7blUK/ESlrSV/kUqo3Xfqzl
-   bMqlY4AfxvAhkjkeilkb2sSvnNGGaSLozcpu+GuJTbex53QByQuxmdA9L
-   lCdADgTPUbiAfvrQRBUOhZJd4qmwCSkB26ov/ZgkgbbbjW2arOav7XlEA
-   g==;
-X-CSE-ConnectionGUID: Fuj6ihthQYS/CEvKY5zalg==
-X-CSE-MsgGUID: qeTEGpWCQZ2Na6cicAfi6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11423"; a="48161239"
-X-IronPort-AV: E=Sophos;i="6.15,262,1739865600"; 
-   d="scan'208";a="48161239"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 00:19:50 -0700
-X-CSE-ConnectionGUID: 7zEKmKkYS8KpOTVJn+V6Qg==
-X-CSE-MsgGUID: L7lH3OlWS5Kg5hEahriibg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,262,1739865600"; 
-   d="scan'208";a="140164637"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 05 May 2025 00:19:48 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uBq77-0005cj-2l;
-	Mon, 05 May 2025 07:19:45 +0000
-Date: Mon, 5 May 2025 15:19:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, Gabriele Monaco <gmonaco@redhat.com>
-Subject: Re: [PATCH v3 3/3] timers: Exclude isolated cpus from timer migation
-Message-ID: <202505051319.949TVTy3-lkp@intel.com>
-References: <20250428125417.102741-8-gmonaco@redhat.com>
+	s=arc-20240116; t=1746430222; c=relaxed/simple;
+	bh=9byBrgGiWivV4zXfCGyXLK7u6F5KMMq/Ap3brTL2r8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U/WfMm6Bg2q/zwQ6BYUu+Sl71C2kNKbeglo07w2UeKCn+oUmLvXu9UbCSv2KqDy+oR1U+TCXVmKTzbtPyj/GWpsJRcZJtMkHZJadcukygvzYxz4X+tbWK3uXClc7fgCDsgwSxfvxDaId5chIy8+O8IelFZWKCnMKISvfAkNIUnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xcz0r9Ny; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1746429632;
+	bh=9byBrgGiWivV4zXfCGyXLK7u6F5KMMq/Ap3brTL2r8E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xcz0r9Nyr/GBvTffACDxkAv0DCvVxl40GgqtQeif64zW1Jj1VKuW21++n/5L+CwcH
+	 WwsLeAUQhz/pAjv0CSWKcU7esBvAb/PnjPRwW3HWWT66sGH1y/lT3HHHNN18sxHAi5
+	 Q5rH3aDHLE22aoXPw49tTF1UfTC3AP57J/mAOvWopAdLWN9Kx3Qhcg5b2qd7tbFeuD
+	 T9YlnGDey09aUkqj+0axPC7knUJh2m+neJ4fKnOKV25W92xM7w9i9FU6aECdSl7/cX
+	 ZI8HLcMMcMhc+TuKfrn3QGt+7DIHhqTQDmYBvphkcby/PAdUsDQHOM1Z0oVHWckqlu
+	 gvJrP+TM/SUnw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6A81517E0F89;
+	Mon,  5 May 2025 09:20:31 +0200 (CEST)
+Message-ID: <97b93862-8572-45fb-ba02-96a0bb747700@collabora.com>
+Date: Mon, 5 May 2025 09:20:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428125417.102741-8-gmonaco@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: mediatek: mt8188-mt6359: select
+ CONFIG_SND_SOC_MT6359_ACCDET
+To: Arnd Bergmann <arnd@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Alexandre Mergnat <amergnat@baylibre.com>,
+ Zoran Zhan <zoran.zhan@mediatek.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250505052106.1811802-1-arnd@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250505052106.1811802-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Gabriele,
+Il 05/05/25 07:20, Arnd Bergmann ha scritto:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The driver support was added without selecting the codec, which leads to
+> a link failure:
+> 
+> aarch64-linux-ld: sound/soc/mediatek/mt8188/mt8188-mt6359.o: in function `mt8188_mt6359_init':
+> mt8188-mt6359.c:(.text+0x19f0): undefined reference to `mt6359_accdet_enable_jack_detect'
+> 
+> Fixes: f35d834d67ad ("ASoC: mediatek: mt8188-mt6359: Add accdet headset jack detect support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on b4432656b36e5cc1d50a1f2dc15357543add530e]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Gabriele-Monaco/timers-Rename-tmigr-online-bit-to-available/20250428-221704
-base:   b4432656b36e5cc1d50a1f2dc15357543add530e
-patch link:    https://lore.kernel.org/r/20250428125417.102741-8-gmonaco%40redhat.com
-patch subject: [PATCH v3 3/3] timers: Exclude isolated cpus from timer migation
-config: x86_64-randconfig-074-20250503 (https://download.01.org/0day-ci/archive/20250505/202505051319.949TVTy3-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250505/202505051319.949TVTy3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505051319.949TVTy3-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> kernel/time/timer.c:2171: warning: Function parameter or struct member 'cpu' not described in 'timer_base_remote_is_idle'
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
-vim +2171 kernel/time/timer.c
-
-  2164	
-  2165	/**
-  2166	 * timer_base_remote_is_idle() - Return whether timer base is set idle for cpu
-  2167	 *
-  2168	 * Returns value of local timer base is_idle value for remote cpu.
-  2169	 */
-  2170	bool timer_base_remote_is_idle(unsigned int cpu)
-> 2171	{
-  2172		return per_cpu(timer_bases[BASE_LOCAL].is_idle, cpu);
-  2173	}
-  2174	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
