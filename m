@@ -1,94 +1,112 @@
-Return-Path: <linux-kernel+bounces-632001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF689AA9153
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E4DAA9172
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 12:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58EE13AA104
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7EF63AC1DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 10:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170941FDE09;
-	Mon,  5 May 2025 10:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6732202962;
+	Mon,  5 May 2025 10:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQ1Yy1lE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="krBvQ8Yz"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F5FEAC6;
-	Mon,  5 May 2025 10:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4B11FFC77;
+	Mon,  5 May 2025 10:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746441989; cv=none; b=M0iScjvPftl41tU7PxxCUJGUwI7bvWkxUvO6ILoPZVYUCCWPXvdwy+kEGW4qt2wUufddja4wYDFD0OEbGgWfZaqndapo0IuloYsegpPXnFokM9sKvQikvmvL9Ib9a6XU5eWBzx9/NARov7bF4dHVB7cUM26iBwSJLpP1XfJWYic=
+	t=1746442564; cv=none; b=JsiPQMbDOm1KTAoaH4kalg4inYu7082iaVD4pHXkAdUBNh6w9acRH2YEADT0/YF3yAlmcdyn5Kbth4SxOkkFf6zZDtS94kAaw1txh+q7Z9xNc7DxEhbvPspUX0U+gBq0wCnS3nmKY2qxz/hW3P3sBNZmKmpu8pagAnHhy29xmZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746441989; c=relaxed/simple;
-	bh=lsQkno84P43PZsgutAUcrmLB0VMjgFprSkr3lAzLdAw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rI2hFmnu2F4xLQNPou+AXuVqCsK/hB55JOKuKBrvbjN06SH4NSpBdCOew7QicEj3MfnkwnpVNHZPEyuzxCFrIQu+n/s6eITgjOHCruQXdVD9alpzP6qzEhZqs4giUwIL5vsHxvqiI5Dxo6KbBJpk85wj9zopxwoXqUdCVur325s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQ1Yy1lE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E99C4CEE4;
-	Mon,  5 May 2025 10:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746441988;
-	bh=lsQkno84P43PZsgutAUcrmLB0VMjgFprSkr3lAzLdAw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=QQ1Yy1lEaC7RKpoKfxl258v7VFl++nlMDlEDu1l9Z6FHPUbVMV79LzShzDiJat6he
-	 FmVg1Yk9GcPs92j9BGkz9gn2xtSgLW9kRyboPsappotIwIiWYN7mu5GytkljbzShjD
-	 zTZsRg8jv1MGBDFHheK2bDFBpCv91oyNw1fJKPjYmvHzhT64vqsG6760qRRrGW6F2b
-	 P19uosBnZk4Ic06pwkCJGBVlbdv7v0SvaH5b6nakrQjxj7N4qS5FhRcIgUYyY9g4lO
-	 2R9aCl0Gv6yPzynoENTU95Tv7JVQVk+jVsZFU8y8V9x8UllSOlsoal+0FKZfft+1dA
-	 OmHAcsoca1l9A==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  a.hindborg@samsung.com,  boqun.feng@gmail.com,  frederic@kernel.org,
-  lyude@redhat.com,  tglx@linutronix.de,  anna-maria@linutronix.de,
-  jstultz@google.com,  sboyd@kernel.org,  ojeda@kernel.org,
-  alex.gaynor@gmail.com,  gary@garyguo.net,  bjorn3_gh@protonmail.com,
-  benno.lossin@proton.me,  aliceryhl@google.com,  tmgross@umich.edu,
-  chrisi.schrefl@gmail.com,  arnd@arndb.de,  linux@armlinux.org.uk
-Subject: Re: [PATCH v1] rust: time: Avoid 64-bit integer division
-In-Reply-To: <20250501015818.226376-1-fujita.tomonori@gmail.com> (FUJITA
-	Tomonori's message of "Thu, 1 May 2025 10:58:18 +0900")
-References: <20250501015818.226376-1-fujita.tomonori@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Mon, 05 May 2025 12:46:15 +0200
-Message-ID: <8734djxrm0.fsf@kernel.org>
+	s=arc-20240116; t=1746442564; c=relaxed/simple;
+	bh=CAZkqTrf3vuwVVZ8Yi7oZF4/3gVK/FVyrNM7VkCn8JQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tol2G8YsA7JN+66y1cMttTmJAWwpBHhuG+AqaAr2KjMMVCUUYif4O9+wih9J2IUdBs+oN9/DdIkNdkB8wbbHmI51mJJzqRt8HbU+hcP/1l41Mp4gO+lRCHPrnFbxc9XCja/oDY8zsWhMSfq/24ORYl9riYYU4De6e+voLRpXsiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=krBvQ8Yz; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.20])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 335955275411;
+	Mon,  5 May 2025 10:47:20 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 335955275411
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1746442040;
+	bh=DKvKJquAe6MHxZhbf2CyR/75h4tUXGMGTF6XDeIHYfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=krBvQ8YzuWbbmzTHYZkutLugMRFD+sB/PJo70cdTwJ/kIrFq+K0nx1I4seAZAqnCB
+	 gjzsCxaM7yrqHvjgtoOjNXyRLWAoMuP4vUuEC7UalRI0eLbYoYZuqF8PqzKfYvBgnb
+	 kxr+V9nZnkSjOJXF5aauOHnVAqLqpdZwaVUEWUF8=
+Date: Mon, 5 May 2025 13:47:20 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Carlos Maiolino <cem@kernel.org>, 
+	Chandan Babu R <chandanbabu@kernel.org>, Brian Foster <bfoster@redhat.com>, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, Alexey Nepomnyashih <sdl@nppct.ru>, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] xfs: fix diff_two_keys calculation for cnt btree
+Message-ID: <hy6ulcxbyvxh6nfx66gzmgzvzwpqvnkmp4hxlyie2bceucfxgb@ifrsvgrpjqro>
+References: <20250426134232.128864-1-pchelkin@ispras.ru>
+ <20250426150359.GQ25675@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250426150359.GQ25675@frogsfrogsfrogs>
 
-FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
+On Sat, 26. Apr 08:03, Darrick J. Wong wrote:
+> On Sat, Apr 26, 2025 at 04:42:31PM +0300, Fedor Pchelkin wrote:
+> > Currently the difference is computed on 32-bit unsigned values although
+> > eventually it is stored in a variable of int64_t type. This gives awkward
+> > results, e.g. when the diff _should_ be negative, it is represented as
+> > some large positive int64_t value.
+> > 
+> > Perform the calculations directly in int64_t as all other diff_two_keys
+> > routines actually do.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org) with Svace static
+> > analysis tool.
+> > 
+> > Fixes: 08438b1e386b ("xfs: plumb in needed functions for range querying of the freespace btrees")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> > ---
+> >  fs/xfs/libxfs/xfs_alloc_btree.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
+> > index a4ac37ba5d51..b3c54ae90e25 100644
+> > --- a/fs/xfs/libxfs/xfs_alloc_btree.c
+> > +++ b/fs/xfs/libxfs/xfs_alloc_btree.c
+> > @@ -238,13 +238,13 @@ xfs_cntbt_diff_two_keys(
+> >  	ASSERT(!mask || (mask->alloc.ar_blockcount &&
+> >  			 mask->alloc.ar_startblock));
+> >  
+> > -	diff =  be32_to_cpu(k1->alloc.ar_blockcount) -
+> > -		be32_to_cpu(k2->alloc.ar_blockcount);
+> > +	diff = (int64_t)be32_to_cpu(k1->alloc.ar_blockcount) -
+> > +			be32_to_cpu(k2->alloc.ar_blockcount);
+> 
+> Perhaps it's time to hoist cmp_int to include/ and refactor all these
+> things to use it?
+> 
+> #define cmp_int(l, r)          ((l > r) - (l < r))
+> 
+> --D
 
-> Avoid 64-bit integer division that 32-bit architectures don't
-> implement generally. This uses ktime_to_ms() and ktime_to_us()
-> instead.
->
-> The timer abstraction needs i64 / u32 division so C's div_s64() can be
-> used but ktime_to_ms() and ktime_to_us() provide a simpler solution
-> for this timer abstraction problem. On some architectures, there is
-> room to optimize the implementation of them, but such optimization can
-> be done if and when it becomes necessary.
->
-> One downside of calling the C's functions is that the as_micros/millis
-> methods can no longer be const fn. We stick with the simpler approach
-> unless there's a compelling need for a const fn.
->
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+No need to apply this one as a fix (e.g. for further inclusion into stable
+releases) ?
 
-
-Please consult recent MAINTAINERS file when you send patches. If you
-intend for me to see a patch, please use my registered email address.
-
-
-Best regards,
-Andreas Hindborg
-
-
+I'll send out the refactoring patches for review when the cmp_int()-moving
+one hits Linus' tree - it's currently in mm-nonmm-unstable branch of
+akpm/mm.git and in linux-next repo. Though I'm not aware of how xfs trees
+interact with linux-next.
 
