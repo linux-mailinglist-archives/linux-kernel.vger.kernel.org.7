@@ -1,186 +1,120 @@
-Return-Path: <linux-kernel+bounces-634110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC27AAAC84
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:17:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85677AAAFAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1CB03AF1F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEE7C4669E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FC13C39A0;
-	Mon,  5 May 2025 23:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1BB288C84;
+	Mon,  5 May 2025 23:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="b9uGeWfK"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEnjdhbc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A140D389433
-	for <linux-kernel@vger.kernel.org>; Mon,  5 May 2025 23:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18932F54AF;
+	Mon,  5 May 2025 23:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486759; cv=none; b=IP3gs75WG0x7g5C0qauXIgSydy9K1muC2ZNd3Uu3JhMX/TpDTj/F2AzkHvoj9QHag/BgIAGURfrY1CZfc3QmzDUzSW90rz2shSFi2tCbR9wCOPneo+AONMOvIdd0ZPOmmAa6xFvRHupjMNE/akbQzjr0isjzHl7iHs/h6j4uymg=
+	t=1746486993; cv=none; b=jlI+rGkMOOuAAq57TzCxQOPFTFrc77lyA6NgZDEgc+QjloWuCphTLA1vpRZHGtKqoFb4CvO8fYPIZwHtNE6bH5W0USOWigWqbVahsDL+O8Ke3sKQWvkS5RHMGSa/U0hD3i1VWqn3B9ntdRGEXcPeQi3YYmyn4uXabHb6wDi+wRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486759; c=relaxed/simple;
-	bh=lz2pThmn6jDvLYZjSPfyW+a4aysWXG3+csCcjZG7tNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SuNPsvEv+Gj9GuKd8HA0JEVZlZMocNdenXnzCtL2GAi8tEp7128AkELG39ynagmhuxQaVC8nm3zZCm8PAm/YFyvwjcRMLst01tgep4PVVmZwDJTlcuEdhq50QGnYKkyfPmqjBujCWBVdReiTva9OYpT2zOIaF1mzw5hLN5LzEFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=b9uGeWfK; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1746486756;
- bh=l4rp0/SxPnRxOKd8Baxv0WdngnSWxD3d0vtqD/ab/C8=;
- b=b9uGeWfKjnsZ9AMtNmp37ot38v55DrMSsyrRybIymDGhTBdWhRYC84kEs/ekrVVuwvHLr6m3G
- 5anUcRKLdVDMd9Ueuo7a9w54TkpskOwjU75c6nkh+qs63fB9KOYv3u4xX4cGOtpHYVlIWNA6ppe
- v9BcA0wRRBcGC4yMgUDT/eY+i4IZ41IfRKjIZxthM9XCK0A+GphHIVE4f2YAwd9S42uYLocQcM3
- q9YjkTCZvqt9BO2GRC3gmH8E4VdLFtuLD0bxgDDc/yVGKshln9c1xm+VwxVL0YHyPQ5XRulu1/0
- uEvWsMx5ocn7fpRZEKMf/adX1unJXLseYx09XcpvifTQ==
-X-Forward-Email-ID: 681945da46c37f8647c22e2a
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.0.2
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <4e00a764-23df-4bd9-85d3-f32cb153a9b6@kwiboo.se>
-Date: Tue, 6 May 2025 01:12:21 +0200
+	s=arc-20240116; t=1746486993; c=relaxed/simple;
+	bh=4Rhj+XqsDVjOooL4g5+oDRfe5elpg/W4PBMdyfzXDGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=t5UN6cO+DkfWXujvIa9zcPvP/vAoO1OQrmynxk80GyBJEfNyQ5e98vQSMkRscrfIXiVYtoJ6cCuvSaaeVE1eqZyzhd1LDQKNIPauYF2ssHCytj9R6WGCksDfjFIrJJGn0CGe514YFiWiImze5OCYZYLAjlI2cvUJhCGzWhpX1eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEnjdhbc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC96C4AF09;
+	Mon,  5 May 2025 23:16:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746486991;
+	bh=4Rhj+XqsDVjOooL4g5+oDRfe5elpg/W4PBMdyfzXDGY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AEnjdhbcNWzdC8UCLBskd8csIlPM9zDUYOcPggpZburAzqSsstvRCD2oCetGRMTV1
+	 cofweO6GAZ5zei13MnmuTbvTFAidz1Vshj7icU3aUhRCwKCE9ilZgOLHuT54YUS+bo
+	 HGEP/HM5d5yPxGRGjsY0a3SCN/a+ZQ7qIWH9+Tz1oNHyN0LV8DgXes8FpQaFC/IpED
+	 dOoYcJq/vRemJv/QKENN/KtteNq1ybAG1FeulxjbXpfpPnBlFGksQnps76FOYsK85e
+	 +9/u7e34UhW2+7ZwwLAeQM2pmJ2pT23AZt3G0nNukBeU9hXozgzTU6FdlXWIiwpDxA
+	 B1OPVlOsq0sRA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Bibo Mao <maobibo@loongson.cn>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Sasha Levin <sashal@kernel.org>,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 095/153] MIPS: Use arch specific syscall name match function
+Date: Mon,  5 May 2025 19:12:22 -0400
+Message-Id: <20250505231320.2695319-95-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
+References: <20250505231320.2695319-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: dts: rockchip: Add pwm nodes for RK3528
-To: Chukun Pan <amadeus@jmu.edu.cn>, Heiko Stuebner <heiko@sntech.de>
-Cc: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250401120020.976343-1-amadeus@jmu.edu.cn>
- <20250401120020.976343-2-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250401120020.976343-2-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.15.181
+Content-Transfer-Encoding: 8bit
 
-On 2025-04-01 14:00, Chukun Pan wrote:
-> Add pwm nodes for RK3528. The PWM core on RK3528 is the same as
-> RK3328, but the driver does not support interrupts yet.
-> 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+From: Bibo Mao <maobibo@loongson.cn>
 
-pwm0-pwm2 has been verified working on my rk3528 boards and remaining
-seem to be correct, I have also dropped my prior attempt of looking into
-multi-channel handling as mentioned in v2, so this is:
+[ Upstream commit 756276ce78d5624dc814f9d99f7d16c8fd51076e ]
 
-Reviewed-by: Jonas Karlman <jonas@kwiboo.se>
+On MIPS system, most of the syscall function name begin with prefix
+sys_. Some syscalls are special such as clone/fork, function name of
+these begin with __sys_. Since scratch registers need be saved in
+stack when these system calls happens.
 
-Regards,
-Jonas
+With ftrace system call method, system call functions are declared with
+SYSCALL_DEFINEx, metadata of the system call symbol name begins with
+sys_. Here mips specific function arch_syscall_match_sym_name is used to
+compare function name between sys_call_table[] and metadata of syscall
+symbol.
 
-> ---
->  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 80 ++++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> index 35704d0be37a..47d4f63f11d3 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> @@ -465,6 +465,86 @@ uart7: serial@ffa28000 {
->  			status = "disabled";
->  		};
->  
-> +		pwm0: pwm@ffa90000 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa90000 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm1: pwm@ffa90010 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa90010 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm2: pwm@ffa90020 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa90020 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm3: pwm@ffa90030 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa90030 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm4: pwm@ffa98000 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa98000 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm5: pwm@ffa98010 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa98010 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm6: pwm@ffa98020 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa98020 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm7: pwm@ffa98030 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa98030 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
->  		saradc: adc@ffae0000 {
->  			compatible = "rockchip,rk3528-saradc";
->  			reg = <0x0 0xffae0000 0x0 0x10000>;
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/mips/include/asm/ftrace.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/mips/include/asm/ftrace.h b/arch/mips/include/asm/ftrace.h
+index db497a8167da2..e3212f44446fa 100644
+--- a/arch/mips/include/asm/ftrace.h
++++ b/arch/mips/include/asm/ftrace.h
+@@ -87,4 +87,20 @@ struct dyn_arch_ftrace {
+ #endif /*  CONFIG_DYNAMIC_FTRACE */
+ #endif /* __ASSEMBLY__ */
+ #endif /* CONFIG_FUNCTION_TRACER */
++
++#ifdef CONFIG_FTRACE_SYSCALLS
++#ifndef __ASSEMBLY__
++/*
++ * Some syscall entry functions on mips start with "__sys_" (fork and clone,
++ * for instance). We should also match the sys_ variant with those.
++ */
++#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
++static inline bool arch_syscall_match_sym_name(const char *sym,
++					       const char *name)
++{
++	return !strcmp(sym, name) ||
++		(!strncmp(sym, "__sys_", 6) && !strcmp(sym + 6, name + 4));
++}
++#endif /* __ASSEMBLY__ */
++#endif /* CONFIG_FTRACE_SYSCALLS */
+ #endif /* _ASM_MIPS_FTRACE_H */
+-- 
+2.39.5
 
 
