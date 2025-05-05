@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-634852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4DDAAB7A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:15:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CEA6AAB76E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1593B3A7CE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BAC34679B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FB034544F;
-	Tue,  6 May 2025 00:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5713A0C44;
+	Tue,  6 May 2025 00:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kK2k9FLT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBgeLj9n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98D32F3A8E;
-	Mon,  5 May 2025 23:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6643A0139;
+	Mon,  5 May 2025 23:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486893; cv=none; b=IbbWKS6qCjoklZflWKdcKPhuy5GSt1AmclodG1s//d2026vWISdkazQZgXspJJnAP7nXCRCnJ+IqD0rs9q+PEfHcm4jTN4YWlrWOTdX5FJakpJ/xh4P2l+T/dLCsifp75eJB2ddDELEz4L3INvpmFylyAqhUHoGCRMQH3YdtiEU=
+	t=1746486926; cv=none; b=TBJq/+q3aJgDmjNyqyBsizP3D2TzmXeu0u0w/0CLoh67koOevaQQXSPaKu6YvnmPlXqTJztDBi3PvrQaK+O+IiHt+r9kwC4+wsRhBJxEQ6wdpGrMwRG4IAjoEU/JY9GqoT0VM5g4l6rp9TdMBDRuxKwEqcg7D+vI89fNMye6QAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486893; c=relaxed/simple;
-	bh=k7U5ZkxStIoJ2OWerJ26c5Smu0n+lwx1QJs5hxu2pMw=;
+	s=arc-20240116; t=1746486926; c=relaxed/simple;
+	bh=CqHcQIWR4iyhbZvCN/kp/XjBSWLQYmqi5+nM57fKEq8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P+Ipl2+LZXb6bH7V0sIYwkl8qBVqpmo5fTSGzuNq3cyzTOhnRZcm2oFPP1cA+VaRj8ckaHH3+OOj5+V7uwowHycdqH3G4XNj63B8Wdq7Ng3wXSZV9DP0P9DJsS44CwAqznj8tJuGnmIsVB6PTgJEsQnvcp5h+U8k5VPnH6g+kmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kK2k9FLT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C44A7C4CEE4;
-	Mon,  5 May 2025 23:14:51 +0000 (UTC)
+	 MIME-Version; b=Y48I75laJ0o27LR1lzhUPnhszowv2+Pdvu9yZ2oywA/c0U/Tk5faDqQ9YCT39z+cCFnGgEwHaraSteDCgnDr1AwmaPvQyod4BxoWLHaGwzbkj1FfllUiP/Bez18IlQXCQX7qMIB0Yri+mF5hRyr0MyC7cK3G8vM1yGSCsVKWDX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qBgeLj9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C132AC4CEED;
+	Mon,  5 May 2025 23:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486893;
-	bh=k7U5ZkxStIoJ2OWerJ26c5Smu0n+lwx1QJs5hxu2pMw=;
+	s=k20201202; t=1746486925;
+	bh=CqHcQIWR4iyhbZvCN/kp/XjBSWLQYmqi5+nM57fKEq8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kK2k9FLTxsNu2Rrx6XwooisGfWpTcO3pXFZSfSe9Zj4CSxwUSnfYmX4MCDNyMf9no
-	 IDvjQUevSBVe1wDv+qwNJ2cY19EirBMCJxyO83XvqtTFRUol+12FatHPJ59XhqL3a3
-	 XNjRVvqPsTqDHwG99lTK0I/mNleohAHGoROUsNlcDWK4tKmfEWu2n/EBEEw9ShjJWd
-	 sNr0UYSGHfJxTqaPEnYXI6CFprUJlumeCkHrqEe0OVSqzO9TRJYYSIL81/hX7sM82X
-	 sFMlihL5yexdvmBeO1+IBHsoKeFxLKbPC5quHsxaU4m0Ic8kNmuZI6cG4Lvszh5LEV
-	 IvzqiGkO/p2Ew==
+	b=qBgeLj9nO5qAGc1ffchrpk9Et4youUdN9EOuqGm5SIFCg1fvBD6g42/cIEVqn4xxs
+	 7l5zq0U+Egq/BASf5BrwZUECkxDuf/KxgbFpofLsvOTZjI9kyxgIAOkbluAjxkldLP
+	 i3x77Nl6Y6jdw/l3msBNYR/fiaHL/Smh66O9vEgJG9yc+QmDNeEPRjXRksHef1Nl/r
+	 DWqM16ELCkCLlkmqs0dvkMg0YRkcKIJgmopNQvWhhn2NNETiZp8p2w2DMWKvP3SGiW
+	 PqLDDq06Z9hLzGuFcpQBTeruxYwSYXhpqAXrPOWOEi9qooBxlbaIV5g+WvvL6CoNFR
+	 a1rYDk2iFCtqw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc: Markus Elfring <elfring@users.sourceforge.net>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
 	Sasha Levin <sashal@kernel.org>,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 048/153] netfilter: conntrack: Bound nf_conntrack sysctl writes
-Date: Mon,  5 May 2025 19:11:35 -0400
-Message-Id: <20250505231320.2695319-48-sashal@kernel.org>
+	mchehab@kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 062/153] media: c8sectpfe: Call of_node_put(i2c_bus) only once in c8sectpfe_probe()
+Date: Mon,  5 May 2025 19:11:49 -0400
+Message-Id: <20250505231320.2695319-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
 References: <20250505231320.2695319-1-sashal@kernel.org>
@@ -71,83 +65,42 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
-From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-[ Upstream commit 8b6861390ffee6b8ed78b9395e3776c16fec6579 ]
+[ Upstream commit b773530a34df0687020520015057075f8b7b4ac4 ]
 
-nf_conntrack_max and nf_conntrack_expect_max sysctls were authorized to
-be written any negative value, which would then be stored in the
-unsigned int variables nf_conntrack_max and nf_ct_expect_max variables.
+An of_node_put(i2c_bus) call was immediately used after a pointer check
+for an of_find_i2c_adapter_by_node() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-While the do_proc_dointvec_conv function is supposed to limit writing
-handled by proc_dointvec proc_handler to INT_MAX. Such a negative value
-being written in an unsigned int leads to a very high value, exceeding
-this limit.
+This issue was transformed by using the Coccinelle software.
 
-Moreover, the nf_conntrack_expect_max sysctl documentation specifies the
-minimum value is 1.
-
-The proc_handlers have thus been updated to proc_dointvec_minmax in
-order to specify the following write bounds :
-
-* Bound nf_conntrack_max sysctl writings between SYSCTL_ZERO
-  and SYSCTL_INT_MAX.
-
-* Bound nf_conntrack_expect_max sysctl writings between SYSCTL_ONE
-  and SYSCTL_INT_MAX as defined in the sysctl documentation.
-
-With this patch applied, sysctl writes outside the defined in the bound
-will thus lead to a write error :
-
-```
-sysctl -w net.netfilter.nf_conntrack_expect_max=-1
-sysctl: setting key "net.netfilter.nf_conntrack_expect_max": Invalid argument
-```
-
-Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conntrack_standalone.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index 7515705583bcf..770590041c549 100644
---- a/net/netfilter/nf_conntrack_standalone.c
-+++ b/net/netfilter/nf_conntrack_standalone.c
-@@ -629,7 +629,9 @@ static struct ctl_table nf_ct_sysctl_table[] = {
- 		.data		= &nf_conntrack_max,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_INT_MAX,
- 	},
- 	[NF_SYSCTL_CT_COUNT] = {
- 		.procname	= "nf_conntrack_count",
-@@ -665,7 +667,9 @@ static struct ctl_table nf_ct_sysctl_table[] = {
- 		.data		= &nf_ct_expect_max,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ONE,
-+		.extra2		= SYSCTL_INT_MAX,
- 	},
- 	[NF_SYSCTL_CT_ACCT] = {
- 		.procname	= "nf_conntrack_acct",
-@@ -976,7 +980,9 @@ static struct ctl_table nf_ct_netfilter_table[] = {
- 		.data		= &nf_conntrack_max,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_INT_MAX,
- 	},
- 	{ }
- };
+diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
+index 88d0188397e7b..28aab5a8336e0 100644
+--- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
++++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
+@@ -811,13 +811,12 @@ static int c8sectpfe_probe(struct platform_device *pdev)
+ 		}
+ 		tsin->i2c_adapter =
+ 			of_find_i2c_adapter_by_node(i2c_bus);
++		of_node_put(i2c_bus);
+ 		if (!tsin->i2c_adapter) {
+ 			dev_err(&pdev->dev, "No i2c adapter found\n");
+-			of_node_put(i2c_bus);
+ 			ret = -ENODEV;
+ 			goto err_node_put;
+ 		}
+-		of_node_put(i2c_bus);
+ 
+ 		tsin->rst_gpio = of_get_named_gpio(child, "reset-gpios", 0);
+ 
 -- 
 2.39.5
 
