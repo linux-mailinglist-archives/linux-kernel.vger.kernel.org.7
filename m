@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-634366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B26EDAAB0B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:45:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA23AAB0CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 05:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC00B1BA1EA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:45:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70699460865
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA14A32808F;
-	Tue,  6 May 2025 00:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DD0328A70;
+	Tue,  6 May 2025 00:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dD20EV+U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/2eIm1d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B742BE7BB;
-	Mon,  5 May 2025 22:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72182BD93C;
+	Mon,  5 May 2025 22:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485275; cv=none; b=DmYDoEOfLZZYG6Iugc64q3DAS9aH3bpKZLnIFLTXWujUPXpr0LrXSAI1M1QDc6MGZs6qnGtz8dEIJu3yQw/xspkcOTjevANEnQACQvLkU++lFPIjWmxqZTDJDH7DUmxDdgIytsnePjtzKZCD2k8Fgh45YVA4EkXbQ90PqkG4oEo=
+	t=1746485276; cv=none; b=EEaIXN1dkBmPOgPvOXEiP0xLnI9bAc17wLKo+fePpaeDwbqRQxocKe2tn/Jh7KPn+y5feoM1FCoT6ptQ0OY0OcK+RjaLsXTT3Ix0uYOTeJogWw7bkv/sJr2VbQ2lxHyKhQLA3u5UKyfubl0E0pr42Avg2Ff3XT6gDnE+KMNstBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485275; c=relaxed/simple;
-	bh=sxEgw4/xPQat4lCQR+i4/CUFUKOYT7PxqtHzO2BYxog=;
+	s=arc-20240116; t=1746485276; c=relaxed/simple;
+	bh=AnJiToNCPr/S/WOOBUm3yVZqa2oZ2oRMSRSFdaJ7JeM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RBlJGPG4yMerDnoVtR+OidqPPAoCYQydJCO6gE5m9wS/z3G7t8UPYgnM2kZiVmR/6d/XRaykg6KNE+NnqxkLvmPLcQwf0+s50UKGqWyxxZet1lO1Ty4JFv06pe+8Zg7KuhplVFChSBkK/J83Qnz+e1pbMXqIT2VDX+9YtXF+DxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dD20EV+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78157C4CEED;
-	Mon,  5 May 2025 22:47:54 +0000 (UTC)
+	 MIME-Version; b=f6urNId3Cw5JYA+Xju3q7XB8R5XnxDSc5Ye8SCVtxzAxG1TltRKkcjHINgq0LXlMPNAs7TC6aIQAPsHgyzQsUwGWhH2/ryhe2lsJzvX9b0/56Sm4T7sHZZ1iIF/+dSJNW2s8Ji4PdHIsobgdsYB3xaMeY49DRya9D/nEhW7BIUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/2eIm1d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A3BC4CEF1;
+	Mon,  5 May 2025 22:47:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485275;
-	bh=sxEgw4/xPQat4lCQR+i4/CUFUKOYT7PxqtHzO2BYxog=;
+	s=k20201202; t=1746485276;
+	bh=AnJiToNCPr/S/WOOBUm3yVZqa2oZ2oRMSRSFdaJ7JeM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dD20EV+UT43X+4tIH80Zv+vA0dw2Ud2OwePSsog0j1GM0XS3GINd9JPHbZvsnm0a4
-	 z5wgjtB1h81EJauAW7F7MhNQXE4ZNHZJYhrDcwbt7uVuGPgHrbjSB7l5Q2zvzUHY1W
-	 LTKznKyXceBy86PwygHFvCUi9uHk67TbcaOeG4tonwaCBUpfND3migyzTQU5Bbv7fN
-	 XXIHCPMTlflc7OHLGpT+GtVi+OkzIKwpLrhl7gdhUqz8iUVFF/KsJyhsnQxYWjbGWe
-	 oXI5KlZgfhA25are17ySGbIMewFCoycRxghKYuq2VXKiYyxuTLjcEAterUKfXbJazd
-	 vfHAHgE9W+gng==
+	b=G/2eIm1dJD2x0BaHTrz5wur0sgDJzyJWisoFLU/T3+OKjuh4/qEWtttstaxGtOH7X
+	 q84By2xbLB/QkgdoWaYfB9kQoK7rQSe+/U3KN+x8ARv16k2/rlfAqu3+HQ8HGg1QmR
+	 kZ0fS5ruu0M2iIi3/7OLALuECZTyIhsdF1RiERDlCT8rRzE+kPHxy5gG5/ic3/Jh19
+	 x9gVaUwi1z3WflTy95bfvEla/m3knLjfjSvJRFzJnv55dsTU9sC40ZC+5vTgOq4j6z
+	 4lE9XRhpbSXsamuLPJXWN3yfCte0kRgpRzhchCK49mCVky3S6c6OqpVX6rkOgh9cHd
+	 I32obbP32M2tQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Andrew Davis <afd@ti.com>,
-	Nishanth Menon <nm@ti.com>,
+Cc: Amery Hung <amery.hung@bytedance.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 248/486] soc: ti: k3-socinfo: Do not use syscon helper to build regmap
-Date: Mon,  5 May 2025 18:35:24 -0400
-Message-Id: <20250505223922.2682012-248-sashal@kernel.org>
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 249/486] bpf: Search and add kfuncs in struct_ops prologue and epilogue
+Date: Mon,  5 May 2025 18:35:25 -0400
+Message-Id: <20250505223922.2682012-249-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -64,65 +68,83 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Andrew Davis <afd@ti.com>
+From: Amery Hung <amery.hung@bytedance.com>
 
-[ Upstream commit a5caf03188e44388e8c618dcbe5fffad1a249385 ]
+[ Upstream commit d519594ee2445d7cd1ad51f4db4cee58f8213400 ]
 
-The syscon helper device_node_to_regmap() is used to fetch a regmap
-registered to a device node. It also currently creates this regmap
-if the node did not already have a regmap associated with it. This
-should only be used on "syscon" nodes. This driver is not such a
-device and instead uses device_node_to_regmap() on its own node as
-a hacky way to create a regmap for itself.
+Currently, add_kfunc_call() is only invoked once before the main
+verification loop. Therefore, the verifier could not find the
+bpf_kfunc_btf_tab of a new kfunc call which is not seen in user defined
+struct_ops operators but introduced in gen_prologue or gen_epilogue
+during do_misc_fixup(). Fix this by searching kfuncs in the patching
+instruction buffer and add them to prog->aux->kfunc_tab.
 
-This will not work going forward and so we should create our regmap
-the normal way by defining our regmap_config, fetching our memory
-resource, then using the normal regmap_init_mmio() function.
-
-Signed-off-by: Andrew Davis <afd@ti.com>
-Link: https://lore.kernel.org/r/20250123181726.597144-1-afd@ti.com
-Signed-off-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Amery Hung <amery.hung@bytedance.com>
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Acked-by: Martin KaFai Lau <martin.lau@kernel.org>
+Link: https://lore.kernel.org/r/20250225233545.285481-1-ameryhung@gmail.com
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/ti/k3-socinfo.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/ti/k3-socinfo.c b/drivers/soc/ti/k3-socinfo.c
-index 4fb0f0a248288..704039eb3c078 100644
---- a/drivers/soc/ti/k3-socinfo.c
-+++ b/drivers/soc/ti/k3-socinfo.c
-@@ -105,6 +105,12 @@ k3_chipinfo_variant_to_sr(unsigned int partno, unsigned int variant,
- 	return -ENODEV;
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 8656208aa4bbb..294fbafbeba75 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2987,6 +2987,21 @@ bpf_jit_find_kfunc_model(const struct bpf_prog *prog,
+ 	return res ? &res->func_model : NULL;
  }
  
-+static const struct regmap_config k3_chipinfo_regmap_cfg = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+};
++static int add_kfunc_in_insns(struct bpf_verifier_env *env,
++			      struct bpf_insn *insn, int cnt)
++{
++	int i, ret;
 +
- static int k3_chipinfo_probe(struct platform_device *pdev)
++	for (i = 0; i < cnt; i++, insn++) {
++		if (bpf_pseudo_kfunc_call(insn)) {
++			ret = add_kfunc_call(env, insn->imm, insn->off);
++			if (ret < 0)
++				return ret;
++		}
++	}
++	return 0;
++}
++
+ static int add_subprog_and_kfunc(struct bpf_verifier_env *env)
  {
- 	struct device_node *node = pdev->dev.of_node;
-@@ -112,13 +118,18 @@ static int k3_chipinfo_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct soc_device *soc_dev;
- 	struct regmap *regmap;
-+	void __iomem *base;
- 	u32 partno_id;
- 	u32 variant;
- 	u32 jtag_id;
- 	u32 mfg;
- 	int ret;
- 
--	regmap = device_node_to_regmap(node);
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
+ 	struct bpf_subprog_info *subprog = env->subprog_info;
+@@ -19768,7 +19783,7 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ {
+ 	struct bpf_subprog_info *subprogs = env->subprog_info;
+ 	const struct bpf_verifier_ops *ops = env->ops;
+-	int i, cnt, size, ctx_field_size, delta = 0, epilogue_cnt = 0;
++	int i, cnt, size, ctx_field_size, ret, delta = 0, epilogue_cnt = 0;
+ 	const int insn_cnt = env->prog->len;
+ 	struct bpf_insn *epilogue_buf = env->epilogue_buf;
+ 	struct bpf_insn *insn_buf = env->insn_buf;
+@@ -19797,6 +19812,10 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 				return -ENOMEM;
+ 			env->prog = new_prog;
+ 			delta += cnt - 1;
 +
-+	regmap = regmap_init_mmio(dev, base, &k3_chipinfo_regmap_cfg);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
++			ret = add_kfunc_in_insns(env, epilogue_buf, epilogue_cnt - 1);
++			if (ret < 0)
++				return ret;
+ 		}
+ 	}
+ 
+@@ -19817,6 +19836,10 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 
+ 			env->prog = new_prog;
+ 			delta += cnt - 1;
++
++			ret = add_kfunc_in_insns(env, insn_buf, cnt - 1);
++			if (ret < 0)
++				return ret;
+ 		}
+ 	}
  
 -- 
 2.39.5
