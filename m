@@ -1,83 +1,71 @@
-Return-Path: <linux-kernel+bounces-632852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89FCAA9D68
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:41:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E88EAA9D1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 855587A39D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:40:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D750917C0B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 20:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01EE2701CF;
-	Mon,  5 May 2025 20:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5510526F452;
+	Mon,  5 May 2025 20:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b="jQvavoer"
-Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kmn94N9G"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D671C861D;
-	Mon,  5 May 2025 20:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F2C1B07AE;
+	Mon,  5 May 2025 20:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746477675; cv=none; b=urM1egfPagXBXzbGQqSAH+fgC8aKAP3I9HVEKpAUuDehmZM8KJ1ZjVT9kKEmzYConfgj1poIdq6Hj1/9wi3g/rNHgwEunQ7MATsyD7HUZhXzq7PiY4OYBrH4GLjfweR8eiRC8aOfJ58N47yMxEpTC6EacLcE0OwL9CipJ6d2u3k=
+	t=1746476861; cv=none; b=BOTInNqBfP8lf4AVD3cB5A1Amlbj+IPGDjvaUDKzpsJsoOWGAREeurU7bJnSlLS2p8IG9PqKXEeY/VXKJsWnhiah+2oVCKiRCuYc+AClM7X77d0gwKyAgnY/pVZcSvAp8/2v9P1spP5JmdbSIQKTdZN2YHYAB+OfEETHTFLccT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746477675; c=relaxed/simple;
-	bh=589Hn1DPR3SMZqcj1xdFXKuu2fkuVK1aK4umKujMxbQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f6cwiWHUt3/zah84HoewRoaQopT4Lv2xlh1nakJZnbLR7DTua1X6YA6UiHUtug7gmD5NbgPt03bvIEvOKBlsZovJyJnzkGQiCbPzqER0aUPI9LYoZ91Yvc14QLBURW3yEqrr0bmqAjHA9GWU573zwZRlStru/hLfXZJ6jvG5sxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b=jQvavoer; arc=none smtp.client-ip=78.46.3.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=it-klinger.de; s=default2502; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=RLLmBY44/y5KBdQ1WbhdNwP7F87SY18V5DdwbRBE1/s=; b=jQvavoercZhQcDAvMyi74bxNIB
-	jh0wpTF/ZQxv32KguxpLWNWmByiii4mRW0JK7d7ZxZVGNghbYVxOBTcNFq9KYL64hb+uilA5VQWAB
-	pOeXdDOyCGvYtQv0YOxEgppPbGLkFfx/y8GGiR3yqsMgrVql6Czls7NZVT9hLjXJsj7X0vT6Acz9F
-	YqKDtI7Fxhxvq4EmxYyhh7D1gOIjf6VRhnPBCjE0Fnzatj/XRIIf/Jg+Xyh50Y6d90oqLMOjHSoh3
-	5IsoUB5EzuwdwkMukwjH2AZAzIN6m4wG2/6rHpyefgZrpWZp2QSN5bt24u6X6OexsaYtJ8MoRvWPX
-	RxAx2f4w==;
-Received: from sslproxy08.your-server.de ([78.47.166.52])
-	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <ak@it-klinger.de>)
-	id 1uC2Ma-000DpQ-2z;
-	Mon, 05 May 2025 22:24:32 +0200
-Received: from [31.220.118.240] (helo=anderl.fritz.box)
-	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ak@it-klinger.de>)
-	id 1uC2MZ-0007So-22;
-	Mon, 05 May 2025 22:24:32 +0200
-From: Andreas Klinger <ak@it-klinger.de>
-To: jic23@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: Andreas Klinger <ak@it-klinger.de>,
-	lars@metafoo.de,
-	javier.carrasco.cruz@gmail.com,
-	mazziesaccount@gmail.com,
-	andriy.shevchenko@linux.intel.com,
-	muditsharma.info@gmail.com,
-	perdaniel.olsson@axis.com,
-	emil.gedenryd@axis.com,
-	mgonellabolduc@dimonoff.com,
-	arthur.becker@sentec.com,
-	clamor95@gmail.com,
+	s=arc-20240116; t=1746476861; c=relaxed/simple;
+	bh=GZI/2kXleNIKAhFS6SRpG5Ac7biLKJWtwxngru8qIYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e/5hxFlioBHIjtFMQWhvcibIZGjAMZjIQmq1bONgA0B60NQy4XkBt9RIYPB1BcnJUZihS9GmhNO1uhFDbZpsqf5TbR+tVn8XSwVmLIxGJnZq3MbtkYTYoJr4JfeXKWKyVaWWTWRvzCYZyptw7bB1CHguAeKPDb8M3Rt2ezqgovo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kmn94N9G; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746476860; x=1778012860;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GZI/2kXleNIKAhFS6SRpG5Ac7biLKJWtwxngru8qIYg=;
+  b=kmn94N9GHfdRaMYP1LOoellP7lNAsMVMyHKcZxxFS7dXVt2QcfHwwJrt
+   zfvdwQrOZx04604drG+U/SQIO/RwdrdM0r8pgA/eAl0Ji3kt3piCnJlFG
+   c7PawjvUEJ5Iot0N/s8pHF4Xpmi0vqUIenkD7gu1gXqMOMJhVGrslVI9h
+   iZjPMxxGNsHp2SlC+wGQ58QYw8kc+WMx7AZpx2A/ayiIxi3aFYZ+ctPSf
+   C72gaucnazE3bKubVUm/G++8+B2y3FYq0wcHK3LPFg9Zutr6knV+KzEkj
+   nJdOPRyWzDQOWFKIZCFFGHxYRValfoq3LxKZsoueTx2Hdgh9d7RFmBr3M
+   A==;
+X-CSE-ConnectionGUID: z1+8rSfSSAGQ68+OuiMZXQ==
+X-CSE-MsgGUID: ZJ+bcq2kTBiTGabBiwAZwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="48244513"
+X-IronPort-AV: E=Sophos;i="6.15,264,1739865600"; 
+   d="scan'208";a="48244513"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 13:27:26 -0700
+X-CSE-ConnectionGUID: hhvept1FQmqpbiyFFDwP5g==
+X-CSE-MsgGUID: AfXkKI65RxyAUMgMUcnJyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,264,1739865600"; 
+   d="scan'208";a="166429633"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
+  by fmviesa001.fm.intel.com with ESMTP; 05 May 2025 13:27:24 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 3/3] MAINTAINER: add maintainer for veml6046x00
-Date: Mon,  5 May 2025 22:23:13 +0200
-Message-Id: <20250505202313.205522-4-ak@it-klinger.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505202313.205522-1-ak@it-klinger.de>
-References: <20250505202313.205522-1-ak@it-klinger.de>
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] platform/x86: ISST: Do Not Restore SST MSRs on CPU Online Operation
+Date: Mon,  5 May 2025 13:27:22 -0700
+Message-ID: <20250505202722.1048675-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,35 +73,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: ak@it-klinger.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27629/Mon May  5 10:35:28 2025)
 
-Add maintainer for Vishay veml6046x00 RGBIR color sensor driver and dt
-binding.
+During CPU offline/online operations, the hardware retains MSR settings.
+Even if all CPUs are offlined, the package does not lose its MSR
+settings.
 
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+Therefore, it is unnecessary to restore MSRs which are modified during
+the online operation, and this extra step can be removed.
+
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../intel/speed_select_if/isst_if_common.c    | 21 -------------------
+ 1 file changed, 21 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 69511c3b2b76..297c01e2357f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25800,6 +25800,12 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/iio/light/vishay,veml6030.yaml
- F:	drivers/iio/light/veml6030.c
+diff --git a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
+index 31239a93dd71..3c4198ce17f2 100644
+--- a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
++++ b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
+@@ -198,25 +198,6 @@ void isst_resume_common(void)
+ }
+ EXPORT_SYMBOL_GPL(isst_resume_common);
  
-+VISHAY VEML6046X00 RGBIR COLOR SENSOR DRIVER
-+M:	Andreas Klinger <ak@it-klinger.de>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
-+F:	drivers/iio/light/veml6046x00.c
-+
- VISHAY VEML6075 UVA AND UVB LIGHT SENSOR DRIVER
- M:	Javier Carrasco <javier.carrasco.cruz@gmail.com>
- S:	Maintained
+-static void isst_restore_msr_local(int cpu)
+-{
+-	struct isst_cmd *sst_cmd;
+-	int i;
+-
+-	mutex_lock(&isst_hash_lock);
+-	for (i = 0; i < ARRAY_SIZE(punit_msr_white_list); ++i) {
+-		if (!punit_msr_white_list[i])
+-			break;
+-
+-		hash_for_each_possible(isst_hash, sst_cmd, hnode,
+-				       punit_msr_white_list[i]) {
+-			if (!sst_cmd->mbox_cmd_type && sst_cmd->cpu == cpu)
+-				wrmsrl_safe(sst_cmd->cmd, sst_cmd->data);
+-		}
+-	}
+-	mutex_unlock(&isst_hash_lock);
+-}
+-
+ /**
+  * isst_if_mbox_cmd_invalid() - Check invalid mailbox commands
+  * @cmd: Pointer to the command structure to verify.
+@@ -434,8 +415,6 @@ static int isst_if_cpu_online(unsigned int cpu)
+ set_punit_id:
+ 	isst_cpu_info[cpu].punit_cpu_id = data;
+ 
+-	isst_restore_msr_local(cpu);
+-
+ 	return 0;
+ }
+ 
 -- 
-2.39.5
+2.49.0
 
 
