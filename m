@@ -1,77 +1,107 @@
-Return-Path: <linux-kernel+bounces-632945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE0AAA9EBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:05:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C619FAA9ECA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 00:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7E25A1111
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D99601A812D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 22:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5378A275106;
-	Mon,  5 May 2025 22:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845BC27510B;
+	Mon,  5 May 2025 22:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BfL3hmzp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILzqhfNb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044B113AF2;
-	Mon,  5 May 2025 22:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D830B13AF2;
+	Mon,  5 May 2025 22:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746482723; cv=none; b=ircdaHqaSpAGxK7me0hQnvvOLCBFER1CrQjXWKMsmRyUjhUD8scgk8CRzE/NcadEoijhN5cv16Js5Kf9IXbZxNpyv8IVB/z03ueZ0HkHWzlQLXuSZk5PVkWEN1z/QDHTzM0A12JaOURbdpMZ7uFj/PwDI5mavwFgxJOCqh6mf1c=
+	t=1746483264; cv=none; b=R2mInjPDozHKxQoZgZuCDrErOOO+6/x1kFryT8Bbd//x/Q4oPqH6dyQP/wgxP7pgDbw5FFZgRZSuf/1yPxLMcZrlWpjRSNsjc7B4YgXxBcQmlU3qg6nXhUNU1i8tqBjVO+m7w+DDLfImX3X0HJtfRqMKvFzqi5wtliaFCR9CbTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746482723; c=relaxed/simple;
-	bh=IcH+kFFKNJEttIlni6BtPWD7JxTQica0GiYy4Ea2eJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AkDggN5S3wZpdznM2fcqmZnvdyxwV/SyHQI1v5FSB9bB2QBJmzVD9XNWmkeuXp0xOsFT55Skx08WxCmtJNToow5BftaZhwcHP/dbtyUDD/WZ1n7TX7GrxtcAJY9r4rPQfRIVPQm6DGQHCrEX0HDJV+LVOatnjaOhaK5FIdyWkYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BfL3hmzp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Al3ttpxqk7lpqbfhltra66AcN7imVV0ima0VDtkjJdo=; b=BfL3hmzp2UtBbL3ZW7H1VVLTta
-	AN+6xj8cSbSTfY3ZKH72CGcBMtnBjWXtexRrsbzbs0KmktH8UgqJSWB1PDx4u3uvXFK6RtfAwfd9y
-	lvo2zBOb3wtoXZeHnS8EcbadSyRrsX34GLjQo9kMFzrnHdIvA4PJB8jmnRnUIOxW0Na8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uC3vy-00Bdn3-Nn; Tue, 06 May 2025 00:05:10 +0200
-Date: Tue, 6 May 2025 00:05:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Klein <michael@fossekall.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next v7 2/6] net: phy: realtek: Clean up RTL821x ExtPage
- access
-Message-ID: <3b84469c-8ea3-4355-89f6-7efb90b8bc7e@lunn.ch>
-References: <20250504172916.243185-1-michael@fossekall.de>
- <20250504172916.243185-3-michael@fossekall.de>
+	s=arc-20240116; t=1746483264; c=relaxed/simple;
+	bh=JCdTVHeAiF0SMN4hqWeIRsGnSNa8+AKoDVxqQWbHrto=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c5JV0ZtwyE0loEVarhEW8z2xqGyWCCCXEIQLmHME398C0n5bQc/ggAhw0N/jCdzenUBkW0Af+hHEMCIdJIWMR3JUa3vgfSmbYyGe9L3cY0uwCxYw2kFqdtq2XRc5fDztCeR9nnhH4sMsX6ySBud1pV52mG7C3EBLTcO+CUBDz/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILzqhfNb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3503C4CEE4;
+	Mon,  5 May 2025 22:14:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746483263;
+	bh=JCdTVHeAiF0SMN4hqWeIRsGnSNa8+AKoDVxqQWbHrto=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ILzqhfNbvYCWWYNei9NySyINnqmj+vX4Uo4YCwnNjClRr+XCNFhMeTFETL/nNN7e1
+	 JawE5UF1X0oD/0SlVRr46MxRg2t/6Z9RjHT9z2Iv9jdRtJXfMbEezwQQp1vxJV2Lgt
+	 S5fhTEbcCpfMZ+1tp9hc1shvXu2OTvSSkfKHVEizmU4nvQExX4U/6hhNpHGXNqgsMy
+	 w9oKV2vLfyQqu8erislSZuZVh5SaJfO4JBzSkfakvlZ7J4LYvR4+iWrHbeBTN2i0pN
+	 OSqO+q8mwASWIrUVK1aJthDGNs6GzEvE5o+ZxNvzC/moA8SMovng1b2pveMOUROC/i
+	 ltKIztPq4E/PA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Daniel Gomez <da.gomez@samsung.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 001/642] kconfig: merge_config: use an empty file as initfile
+Date: Mon,  5 May 2025 18:03:37 -0400
+Message-Id: <20250505221419.2672473-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250504172916.243185-3-michael@fossekall.de>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.14.5
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 04, 2025 at 07:29:12PM +0200, Michael Klein wrote:
-> Factor out RTL8211E extension page access code to
-> rtl821x_modify_ext_page() and clean up rtl8211e_config_init()
-> 
-> Signed-off-by: Michael Klein <michael@fossekall.de>
+From: Daniel Gomez <da.gomez@samsung.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+[ Upstream commit a26fe287eed112b4e21e854f173c8918a6a8596d ]
 
-    Andrew
+The scripts/kconfig/merge_config.sh script requires an existing
+$INITFILE (or the $1 argument) as a base file for merging Kconfig
+fragments. However, an empty $INITFILE can serve as an initial starting
+point, later referenced by the KCONFIG_ALLCONFIG Makefile variable
+if -m is not used. This variable can point to any configuration file
+containing preset config symbols (the merged output) as stated in
+Documentation/kbuild/kconfig.rst. When -m is used $INITFILE will
+contain just the merge output requiring the user to run make (i.e.
+KCONFIG_ALLCONFIG=<$INITFILE> make <allnoconfig/alldefconfig> or make
+olddefconfig).
+
+Instead of failing when `$INITFILE` is missing, create an empty file and
+use it as the starting point for merges.
+
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ scripts/kconfig/merge_config.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+index 0b7952471c18f..79c09b378be81 100755
+--- a/scripts/kconfig/merge_config.sh
++++ b/scripts/kconfig/merge_config.sh
+@@ -112,8 +112,8 @@ INITFILE=$1
+ shift;
+ 
+ if [ ! -r "$INITFILE" ]; then
+-	echo "The base file '$INITFILE' does not exist.  Exit." >&2
+-	exit 1
++	echo "The base file '$INITFILE' does not exist. Creating one..." >&2
++	touch "$INITFILE"
+ fi
+ 
+ MERGE_LIST=$*
+-- 
+2.39.5
+
 
