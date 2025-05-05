@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-632897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-632899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C45AA9DFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67375AA9E01
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 23:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADBED17F48E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:23:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B2D17F643
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 21:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA564278E7B;
-	Mon,  5 May 2025 21:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED49279334;
+	Mon,  5 May 2025 21:22:31 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7283275868;
-	Mon,  5 May 2025 21:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13816276046;
+	Mon,  5 May 2025 21:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746480150; cv=none; b=Rbj7xJ4Cm5rJDYiMcqtwix8tbDZvyj9IFxaAWrlsnIax9Zfq/KS4jF+Z2Wk5CQquTGZ6RxoG1aABJsyxfdtRSvNG1qXC9Ll7/qMLt7Bg/3LbyiT01XGjS6OzGo1vXY3eFKdTcXOCZcYbiL19TYyDOsJMH/JA6ThQncNIjcNTnoM=
+	t=1746480150; cv=none; b=DRnALTZN6L6xHnnG+mZKkGr0s+8fUMNilKa/8/JMeTWSrWHT0U/db859DSj1oMnoNSwiCCB4gIQWDd0EnjsVIhYQKqW+6M2uqmL9b04dMqWn+jyuTBStf4y8ktb5K7FbXld1oZ52sg9KCHO7dqV9VjloS3UD0sL4Dqw+68WzouY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746480150; c=relaxed/simple;
-	bh=LfbYZrkrwSHhr03nwF7TAzWMZMSOM7lGFrPKQJo3J/Y=;
+	bh=DBxt4t6Rrj4G2JNo0WXoN5xIbZVuiCWQuVMsCr/1jl4=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=VNykoLMHSCmuvjPHvsE+7cQ6KbeKEHVPD3lb0+yKKkT3Mk6ohsPQ7urP0hpxt6CHq3qxhiANq9ivQyCarJbtaO4kMsp4dC+B8pzufohw8ni8kNr2VIzxgGLmMMTHNK6qYje9mtGNFfqCY1QNxdmbw2Iyy/7cYVz40FdLeIjA8s4=
+	 Content-Type; b=S+a0VIQFh69dcl8K3HVIGtRebr6jUt+qv3DGKL50HI7KeT4eXAuX57M5YkDqkFXKDQufHiM+1ugh9icOgRU5iLJXV9p+0fhTT0XDwAYA7rEFv7Z3UlvvuiG7r1zdpeqaaKWuDre8hoHYMwHOGwqGqO9d4rU2oFkjWC2KMvLKlY8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C3AC4CEEE;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3EF4C4CEED;
 	Mon,  5 May 2025 21:22:29 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uC3Gm-00000000yGk-2zaX;
+	id 1uC3Gm-00000000yHF-3ipV;
 	Mon, 05 May 2025 17:22:36 -0400
-Message-ID: <20250505212236.567884756@goodmis.org>
+Message-ID: <20250505212236.738849456@goodmis.org>
 User-Agent: quilt/0.68
-Date: Mon, 05 May 2025 17:21:16 -0400
+Date: Mon, 05 May 2025 17:21:17 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -42,8 +42,8 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 12/13] tracing: Use atomic_inc_return() for updating "disabled" counter in
- irqsoff tracer
+Subject: [PATCH v2 13/13] tracing: Remove unused buffer_page field from trace_array_cpu
+ structure
 References: <20250505212104.986494754@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,81 +55,29 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The irqsoff tracer uses the per CPU "disabled" field to prevent corruption
-of the accounting when it starts to trace interrupts disabled, but there's
-a slight race that could happen if for some reason it was called twice.
-Use atomic_inc_return() instead.
+The trace_array_cpu had a "buffer_page" field that was originally going to
+be used as a backup page for the ring buffer. But the ring buffer has its
+own way of reusing pages and this field was never used.
+
+Remove it.
 
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_irqsoff.c | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ kernel/trace/trace.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index 0b6d932a931e..5496758b6c76 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -397,6 +397,7 @@ start_critical_timing(unsigned long ip, unsigned long parent_ip)
- 	int cpu;
- 	struct trace_array *tr = irqsoff_trace;
- 	struct trace_array_cpu *data;
-+	long disabled;
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 188032d4ab69..4e67ee92e05c 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -184,7 +184,6 @@ struct trace_array;
+  */
+ struct trace_array_cpu {
+ 	local_t			disabled;
+-	void			*buffer_page;	/* ring buffer spare */
  
- 	if (!tracer_enabled || !tracing_is_enabled())
- 		return;
-@@ -411,15 +412,17 @@ start_critical_timing(unsigned long ip, unsigned long parent_ip)
- 	if (unlikely(!data) || local_read(&data->disabled))
- 		return;
- 
--	local_inc(&data->disabled);
-+	disabled = local_inc_return(&data->disabled);
- 
--	data->critical_sequence = max_sequence;
--	data->preempt_timestamp = ftrace_now(cpu);
--	data->critical_start = parent_ip ? : ip;
-+	if (disabled == 1) {
-+		data->critical_sequence = max_sequence;
-+		data->preempt_timestamp = ftrace_now(cpu);
-+		data->critical_start = parent_ip ? : ip;
- 
--	__trace_function(tr, ip, parent_ip, tracing_gen_ctx());
-+		__trace_function(tr, ip, parent_ip, tracing_gen_ctx());
- 
--	per_cpu(tracing_cpu, cpu) = 1;
-+		per_cpu(tracing_cpu, cpu) = 1;
-+	}
- 
- 	local_dec(&data->disabled);
- }
-@@ -431,6 +434,7 @@ stop_critical_timing(unsigned long ip, unsigned long parent_ip)
- 	struct trace_array *tr = irqsoff_trace;
- 	struct trace_array_cpu *data;
- 	unsigned int trace_ctx;
-+	long disabled;
- 
- 	cpu = raw_smp_processor_id();
- 	/* Always clear the tracing cpu on stopping the trace */
-@@ -448,12 +452,15 @@ stop_critical_timing(unsigned long ip, unsigned long parent_ip)
- 	    !data->critical_start || local_read(&data->disabled))
- 		return;
- 
--	local_inc(&data->disabled);
-+	disabled = local_inc_return(&data->disabled);
-+
-+	if (disabled == 1) {
-+		trace_ctx = tracing_gen_ctx();
-+		__trace_function(tr, ip, parent_ip, trace_ctx);
-+		check_critical_timing(tr, data, parent_ip ? : ip, cpu);
-+		data->critical_start = 0;
-+	}
- 
--	trace_ctx = tracing_gen_ctx();
--	__trace_function(tr, ip, parent_ip, trace_ctx);
--	check_critical_timing(tr, data, parent_ip ? : ip, cpu);
--	data->critical_start = 0;
- 	local_dec(&data->disabled);
- }
- 
+ 	unsigned long		entries;
+ 	unsigned long		saved_latency;
 -- 
 2.47.2
 
