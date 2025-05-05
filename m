@@ -1,62 +1,58 @@
-Return-Path: <linux-kernel+bounces-633766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC6DAAAE1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEBEAAAE26
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 04:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 378B93B5B84
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E073A75F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 02:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89A12BEC24;
-	Mon,  5 May 2025 22:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFCC2D610D;
+	Mon,  5 May 2025 22:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQIa9X2i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTczwMtu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BFA35EB97;
-	Mon,  5 May 2025 22:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4427D3602EA;
+	Mon,  5 May 2025 22:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485131; cv=none; b=V2cqb5mfrsRQAZU5rh8lmDl172DNQCpLPRsKbDa4U2w014JzSf+h1KYV8TRTsLlMtgcsHwaBE1FLUIHMyY0kzMNN9VxkJ6/uwEL6RwF8sc1kU1FvvknjOpkXZummdOmDuqVRE6EbTrdz73MM/779ZNgEhsyEfRTylMDQeDaoxQ0=
+	t=1746485140; cv=none; b=e6LV5V5X/IVp9stVM5+Ycf9uH9F89gCzDbUravgu2VppxgphyPliT5FKPO/UZjwwXUdY38VTHxJHjug+Bw1wAoOyg/OqqdlsvraiXIXQrtRCFsh7sc4UL5t9TsegkgNq7wu+IDhHUvHYH9OQTfam35DQjI9D4uzfKOAooejJE4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485131; c=relaxed/simple;
-	bh=lc72sPJbWErzoLgpkVfiGzYcvLU0to7rF3tdX552Lls=;
+	s=arc-20240116; t=1746485140; c=relaxed/simple;
+	bh=eYnGd+MTzDvMbzNFHVf56BTjUQYAvOdN/Fe7fP7U1Ng=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WHO1OGCV3jM64h/BrUd6k6ShPu4EDpNZCtF61hLsqV5M1njsdzjT4nPbBDvVG3D8yhROJlorYi+1GrsG99rgs2EikMEElUnXruEKIV34JrX5FeM2twrr2/eOvNbRi4UMku24FXLJylzHkl/Zckovm4syFIlDRa8UhYaTm2OZZ58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQIa9X2i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48148C4CEF2;
-	Mon,  5 May 2025 22:45:28 +0000 (UTC)
+	 MIME-Version; b=AOHSe7B5c+zJuMIFbz21N85LqYJQLTp5L1SVcB5dFLGHtkCwFTNUoZExXGNljQml5fIvTah7e26FImWu3GKvtvPwFR+sQ7KZxgf9jYgfeAYRhSFeUSiDAgt5T6wxV+OdBYq/XrlEHHXHsL9LaxyYCzK6aiP0z/hbKcXZX8sHBnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTczwMtu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3016BC4CEE4;
+	Mon,  5 May 2025 22:45:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485129;
-	bh=lc72sPJbWErzoLgpkVfiGzYcvLU0to7rF3tdX552Lls=;
+	s=k20201202; t=1746485139;
+	bh=eYnGd+MTzDvMbzNFHVf56BTjUQYAvOdN/Fe7fP7U1Ng=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VQIa9X2iZm8bws++5SJp7c7NCVCUdSsljobwEgNmO0Au7+OlIHQx4MbMl4zkpxoid
-	 K9Jyc1EK24QvBL5yEa9ZgslArnKO8sx7dmgMOxZWbMTG+2RP9TNXBtZUDjEeIQmeSM
-	 PyyKyJId09gLbe2OBFsIGhz45AF5OYKLTm+EZcHhnAP8RXfOZA5snBLVVjQZoig/5A
-	 jKr1053kzxhTmVpnfNn1lbzcLu6k8lfLcDCS3HVkH+4hnvO8UKqt4uvpxxyW8LSgC6
-	 0vr9kPpq8zivWXzpEzuUPdRZkAjMhsylBv6nLICmjIPcEpxeO7E5v76kkTUNAB8zev
-	 SiFjUXQVDg3Cg==
+	b=jTczwMtu4reIKvifyS6T6azBVyFJ/6FluxGW2jAZZMxCwLyMRL8mrecuLMjkewk2b
+	 SpQc6OaYgJmgfE3wDS2akbnkJR8985PmMCeyXXEDUlvyLjdf/Bo0An4KP7IGAWznZl
+	 uER3owoczs/6iSTeJuiJLzP22Y8D8WcxjE/hWT40FY1CVb89n7E0RAcMIiOzyBSnID
+	 HD6D9c/lSnA8wP2x2+QwAAhq1iljbZIbdZ3DrAHWdf8Q/od550bcY1bUkfXF03HwAT
+	 ICNUQdHG/td/B5K6HLVr68ipglzpjsHptUTSwxPs7oBkajJRoh8/QiqWO9k7mEWuk/
+	 uEl2TIVJ1BNRw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Emily Deng <Emily.Deng@amd.com>,
-	Xiaogang Chen <xiaogang.chen@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Takashi Iwai <tiwai@suse.de>,
+	syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com,
 	Sasha Levin <sashal@kernel.org>,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	Felix.Kuehling@amd.com,
-	Philip.Yang@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 175/486] drm/amdgpu: Fix missing drain retry fault the last entry
-Date: Mon,  5 May 2025 18:34:11 -0400
-Message-Id: <20250505223922.2682012-175-sashal@kernel.org>
+	perex@perex.cz,
+	tiwai@suse.com,
+	viro@zeniv.linux.org.uk,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 179/486] ALSA: seq: Improve data consistency at polling
+Date: Mon,  5 May 2025 18:34:15 -0400
+Message-Id: <20250505223922.2682012-179-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -71,53 +67,68 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Emily Deng <Emily.Deng@amd.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit fe2fa3be3d59ba67d6de54a0064441ec233cb50c ]
+[ Upstream commit e3cd33ab17c33bd8f1a9df66ec83a15dd8f7afbb ]
 
-While the entry get in svm_range_unmap_from_cpu is the last entry, and
-the entry is page fault, it also need to be dropped. So for equal case,
-it also need to be dropped.
+snd_seq_poll() calls snd_seq_write_pool_allocated() that reads out a
+field in client->pool object, while it can be updated concurrently via
+ioctls, as reported by syzbot.  The data race itself is harmless, as
+it's merely a poll() call, and the state is volatile.  OTOH, the read
+out of poll object info from the caller side is fragile, and we can
+leave it better in snd_seq_pool_poll_wait() alone.
 
-v2:
-Only modify the svm_range_restore_pages.
+A similar pattern is seen in snd_seq_kernel_client_write_poll(), too,
+which is called from the OSS sequencer.
 
-Signed-off-by: Emily Deng <Emily.Deng@amd.com>
-Reviewed-by: Xiaogang Chen<xiaogang.chen@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This patch drops the pool checks from the caller side and add the
+pool->lock in snd_seq_pool_poll_wait() for better data consistency.
+
+Reported-by: syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/67c88903.050a0220.15b4b9.0028.GAE@google.com
+Link: https://patch.msgid.link/20250307084246.29271-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ih.h | 3 +++
- drivers/gpu/drm/amd/amdkfd/kfd_svm.c   | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ sound/core/seq/seq_clientmgr.c | 5 +----
+ sound/core/seq/seq_memory.c    | 1 +
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ih.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ih.h
-index 508f02eb0cf8f..7de10208e8dde 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ih.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ih.h
-@@ -78,6 +78,9 @@ struct amdgpu_ih_ring {
- #define amdgpu_ih_ts_after(t1, t2) \
- 		(((int64_t)((t2) << 16) - (int64_t)((t1) << 16)) > 0LL)
+diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
+index b30faf731da72..067bf531e6b5f 100644
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1150,8 +1150,7 @@ static __poll_t snd_seq_poll(struct file *file, poll_table * wait)
+ 	if (snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_OUTPUT) {
  
-+#define amdgpu_ih_ts_after_or_equal(t1, t2) \
-+		(((int64_t)((t2) << 16) - (int64_t)((t1) << 16)) >= 0LL)
-+
- /* provided by the ih block */
- struct amdgpu_ih_funcs {
- 	/* ring read/write ptr handling, called from interrupt context */
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-index b50283864dcd2..f00d41be7fca2 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-@@ -3014,7 +3014,7 @@ svm_range_restore_pages(struct amdgpu_device *adev, unsigned int pasid,
+ 		/* check if data is available in the pool */
+-		if (!snd_seq_write_pool_allocated(client) ||
+-		    snd_seq_pool_poll_wait(client->pool, file, wait))
++		if (snd_seq_pool_poll_wait(client->pool, file, wait))
+ 			mask |= EPOLLOUT | EPOLLWRNORM;
+ 	}
  
- 	/* check if this page fault time stamp is before svms->checkpoint_ts */
- 	if (svms->checkpoint_ts[gpuidx] != 0) {
--		if (amdgpu_ih_ts_after(ts,  svms->checkpoint_ts[gpuidx])) {
-+		if (amdgpu_ih_ts_after_or_equal(ts,  svms->checkpoint_ts[gpuidx])) {
- 			pr_debug("draining retry fault, drop fault 0x%llx\n", addr);
- 			r = -EAGAIN;
- 			goto out_unlock_svms;
+@@ -2569,8 +2568,6 @@ int snd_seq_kernel_client_write_poll(int clientid, struct file *file, poll_table
+ 	if (client == NULL)
+ 		return -ENXIO;
+ 
+-	if (! snd_seq_write_pool_allocated(client))
+-		return 1;
+ 	if (snd_seq_pool_poll_wait(client->pool, file, wait))
+ 		return 1;
+ 	return 0;
+diff --git a/sound/core/seq/seq_memory.c b/sound/core/seq/seq_memory.c
+index 20155e3e87c6a..ccde0ca3d2082 100644
+--- a/sound/core/seq/seq_memory.c
++++ b/sound/core/seq/seq_memory.c
+@@ -427,6 +427,7 @@ int snd_seq_pool_poll_wait(struct snd_seq_pool *pool, struct file *file,
+ 			   poll_table *wait)
+ {
+ 	poll_wait(file, &pool->output_sleep, wait);
++	guard(spinlock_irq)(&pool->lock);
+ 	return snd_seq_output_ok(pool);
+ }
+ 
 -- 
 2.39.5
 
