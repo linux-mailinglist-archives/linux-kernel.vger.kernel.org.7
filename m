@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-631656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-631659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A038AA8B98
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:21:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E052CAA8BA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 07:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F66E1892E77
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 05:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 541B41715C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 May 2025 05:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6461A5B90;
-	Mon,  5 May 2025 05:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3961AD403;
+	Mon,  5 May 2025 05:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5Kr3f55"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+gVblwb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C284194A67;
-	Mon,  5 May 2025 05:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECBC1A3056;
+	Mon,  5 May 2025 05:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746422471; cv=none; b=RCthrD17wwMeo8AKnPXZX0j2OSLN0g6rFxHmqnQ3bglOnLA9PwPZ++9IcmP8tbUkXm8zNHPramQyLq103SVFAZgCmnpfOh1+8+0ExhsRDQa2jWKZrpF86kkDLfCZO9QUwFBpRC2Zv0Dez2FCCfH+Qc2gkxzCyC8IJIUoadAlcw0=
+	t=1746422588; cv=none; b=ZE+9OenSNwFMYZ3HyqUdXEaPE1zmzeHRtFCLFIBT0XEP1ZS5xJQxp6qWAALP2+i5wx0IpCxpD7gpD1G+NakpieUgJ8n+BsT7lWGydBgSmJdrlMw83WlghhfgKRslmKTpNqnDdRUmRhB2Vk8ryMu0artjRVV/S7d7gDJxqktF+y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746422471; c=relaxed/simple;
-	bh=eFUNJz44umhXOHrb3M8tG09Hn9kgygwm89YtP0GIyOk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yg7HtM9KpJiqQt0m7WBfFRc45owDgs0cehD6j2CZVSS59ZVPMtZnb8GL0nEMsNT32avw6IUa4e7a6tZzhB6DDOpXXQ6e64SgGUOj/5PV/kPKCTdYah0L5Fvf9WzQbGJDqBMaEqVcHskf0a6JYD8K3HLT+PgJbK0Z1qoMC70XMzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5Kr3f55; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9358DC4CEE4;
-	Mon,  5 May 2025 05:21:08 +0000 (UTC)
+	s=arc-20240116; t=1746422588; c=relaxed/simple;
+	bh=dQVaf1cnvda5ZxCt/F2DCOLIgjM50oOzDMkhmfbkQI4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k7MY7OT0XbkJZqIC7r4rShHbcS3tFfmORH06ov1GPEBDBeK6NWrxLhnnh2M2fYjn9fQ0SHoYLklZFICIZh4aFzMnOjnXxzJ2Y3eM5PvBfzKpZyrP/Zo0aIdvqz2hVadSISMrS9CGyTDJpucb8qaGEX2ZxTZJnqFmnchGLAp13V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+gVblwb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 101E5C4CEE4;
+	Mon,  5 May 2025 05:23:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746422471;
-	bh=eFUNJz44umhXOHrb3M8tG09Hn9kgygwm89YtP0GIyOk=;
+	s=k20201202; t=1746422587;
+	bh=dQVaf1cnvda5ZxCt/F2DCOLIgjM50oOzDMkhmfbkQI4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=j5Kr3f5558Cu0uGP7jS1QGHwsAcFOt5cbr8JZHzqZq21yX1qU6YrdAJU/GWazYj4m
-	 PrGK6QZXEy3ZE+uW89sYOQruR6G+9IyPPwyigS3IXgx/98Cc2+Otpl3y1+zLO/bWHI
-	 exIiGxegMJaCQX6GXkIN1YUGy8eR6oFJoswGvXSh84uUCuysabLEhngAcUyBIHr2jl
-	 O3dxTQiRQeVIZe5GW6lBfEyJPO18wGHQQOSXB9wwlUkjoz8oWvOW4Ne8c2wYpE3nes
-	 24XB7cdY1kk9nhYBaG53d3LKuZubPEgAJRdVN8oR1p/tpwl5ECoMKDYMErd3c93TKq
-	 WqQc2KQQLhWXg==
+	b=E+gVblwbL92g3x7hlclyidOfykEFS6RyPQ+lkOQ6mocIPgw9Uji0PLoaXdFkxlFux
+	 LmFsGS6I9i6L5nU6JfsBC6XSvtZob+vpetxRHATkvDjiXCDF3FYHMeN0uO5u4khivM
+	 D6hA5ssBI3pSAI8flxa5tFGJb3VqWJzBjyQcvGueH+rsS5YAJdJvSnXTf6fWgVX82z
+	 p3XAXdX2J1sTcNFpFW+mXXhaZgn112Pqu78vqsZJlPVurXjx6myunZWjrWIvYZcRWc
+	 QgCp8G7G1Qv0+XZJl8M/bVotPEvhtvZjNypWW/XH+y1Dln8kAdjl+PWdr+ng0IGOO/
+	 D/+0/pewOcBQQ==
 From: Arnd Bergmann <arnd@kernel.org>
 To: Mark Brown <broonie@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
 	Liam Girdwood <lgirdwood@gmail.com>,
 	Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Zoran Zhan <zoran.zhan@mediatek.com>,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	Shenghao Ding <shenghao-ding@ti.com>,
 	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] ASoC: mediatek: mt8188-mt6359: select CONFIG_SND_SOC_MT6359_ACCDET
-Date: Mon,  5 May 2025 07:20:52 +0200
-Message-Id: <20250505052106.1811802-1-arnd@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: hda/tas2781: select CONFIG_CRC8 for SND_HDA_SCODEC_TAS2781_I2C
+Date: Mon,  5 May 2025 07:21:21 +0200
+Message-Id: <20250505052303.1812002-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,30 +62,29 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The driver support was added without selecting the codec, which leads to
-a link failure:
+The crc8 function is used by the common fmwlib module, so this has
+to be selected directly to avoid a link failure:
 
-aarch64-linux-ld: sound/soc/mediatek/mt8188/mt8188-mt6359.o: in function `mt8188_mt6359_init':
-mt8188-mt6359.c:(.text+0x19f0): undefined reference to `mt6359_accdet_enable_jack_detect'
+ERROR: modpost: "crc8" [sound/soc/codecs/snd-soc-tas2781-fmwlib.ko] undefined!
 
-Fixes: f35d834d67ad ("ASoC: mediatek: mt8188-mt6359: Add accdet headset jack detect support")
+Fixes: 9fa6a693ad8d ("ALSA: hda/tas2781: Remove tas2781_spi_fwlib.c and leverage SND_SOC_TAS2781_FMWLIB")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- sound/soc/mediatek/Kconfig | 1 +
+ sound/soc/codecs/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
-index 3033e2d3fe16..e148d4d94160 100644
---- a/sound/soc/mediatek/Kconfig
-+++ b/sound/soc/mediatek/Kconfig
-@@ -229,6 +229,7 @@ config SND_SOC_MT8188_MT6359
- 	tristate "ASoC Audio driver for MT8188 with MT6359 and I2S codecs"
- 	depends on SND_SOC_MT8188 && MTK_PMIC_WRAP
- 	depends on I2C
-+	select SND_SOC_MT6359_ACCDET
- 	select SND_SOC_MT6359
- 	select SND_SOC_HDMI_CODEC
- 	select SND_SOC_DMIC
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index d97ec8176ad5..21df6783dc26 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -2026,6 +2026,7 @@ config SND_SOC_TAS2781_COMLIB_I2C
+ 
+ config SND_SOC_TAS2781_FMWLIB
+ 	select SND_SOC_TAS2781_COMLIB
++	select CRC8
+ 	tristate
+ 	default n
+ 
 -- 
 2.39.5
 
