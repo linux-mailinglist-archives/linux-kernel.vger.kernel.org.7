@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-633827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-633832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E806AAAA0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4345AAAAA3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 03:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6651634FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90ED53B5C3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 01:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D38837C751;
-	Mon,  5 May 2025 22:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446663768A7;
+	Mon,  5 May 2025 22:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiSv/zCH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZY90ImYk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490C02C0329;
-	Mon,  5 May 2025 22:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC23F2D60F9;
+	Mon,  5 May 2025 22:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485346; cv=none; b=cXXUkIcfQYOS0HxzzHWchBwN0HVoHB22LvfZ8HSfwJ7qlS6y5TZw4O7oO8CtrN36xyVVhFse8Uv0V8q9cjLZL8/vQLvevikVhlSRSdWkOE2REnum4hrFF62XUO9BIzBZBbmU9VtCFAJtj9BxgsVP115dxB+kiy8HFuKaLqCPxuk=
+	t=1746485354; cv=none; b=LHoUsNQI6QF7B/XFu7JOhHF0xMY06NQbWgcBZ/xkXheagdLFAXcVQuVDNFzV+guS+NzQBlZGG7t1UDFzBIN9RiMD7huJbFhCxxPXtJtuAPcWby359bH4kYc7VRbzMLuSrNciSfyTTUgHQo58m1EWRm7OFYWq8+KSu2JkP/L5d7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485346; c=relaxed/simple;
-	bh=6OcSanAB1MDnq10VVZ/IraBnmb8NqcMQqhsFA04BXu0=;
+	s=arc-20240116; t=1746485354; c=relaxed/simple;
+	bh=LJNC1WGx3PsFqhoiIj4US5ok4Nl0wwbQHNr9rljz7+s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AQnjfv2zbJcw8IPGbE7AAD9oTs3+ji9sQ9UdC0+fzf0e7gurH8K1QFzea6UpQKW70RZP1Tu0PPhcKOhN6A3hjazf/K/jHxDdGoRQX1q3p3aBdhJYl4aDcHtTW3gcasQf7X8yuwHxps1aGtcQlz88VHPxjVlgxbltUhymjdFfCrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qiSv/zCH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A6AAC4CEEE;
-	Mon,  5 May 2025 22:49:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=goSNcYCuSHLwLg8Jad4hCAyH0UGh46JH8utR4Q6iZiPB7KR909WfMEKpNpGujjR9QDAULrsgtEZH8lr4OtD/zT+UvTa0kFdFduDWcHT7zoqKJ88rFQ33Tr/qSBLrBNh31yeuY0rw2TH9ECChWbT2SJy4OpWyv6j+lgH8Fc13gBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZY90ImYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 822D9C4CEEE;
+	Mon,  5 May 2025 22:49:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485345;
-	bh=6OcSanAB1MDnq10VVZ/IraBnmb8NqcMQqhsFA04BXu0=;
+	s=k20201202; t=1746485353;
+	bh=LJNC1WGx3PsFqhoiIj4US5ok4Nl0wwbQHNr9rljz7+s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qiSv/zCHb6zrQCLwe5ShQ5oG0O2UNc5Uob4gKfK3lPULRfwS/9e9ajooAoaEMoQYz
-	 sJLduKdAhvkU+40faw8V1dNvqBYJXDY32MXG3cYmBeg9fAi3wIZp3Bo8dwejY3qp8R
-	 NcYV7erR2Fw3vua1UGWUenv8UwnVVyrs95TlraYrURmBi2dQT4/83ixDisIqgGyFW3
-	 e75oXkUgGKIPvKVbk+zBgE740WhzdAsBCdUESJwpRq5GCIRVr7iTXsOULdgPAR7hO+
-	 E5hFnqy2UfI+1BdS8lpwI28BaiKUNtyL3elhJpK5mQmWM5Ru9R6FDLMR5MyootzEc8
-	 CK5atFrh9CEug==
+	b=ZY90ImYk6nTsMSNl3osw9xWnuWTuprcNBCIcAeriYif2UkV+KJDx2FrB7Z40NHqXO
+	 qtDcZlJCpItuzNQ9Vpf+69NREjwlPZN2pyR8x0kW5i7YcKjyz8A/vNw+3zfr2/kONt
+	 +zwY7QBfsIFOlVW2G6607UxxeaehUt5zrH4Dj1r4n1FeBa+6C87Axsm6yUivYWbJF2
+	 qOUOoKO7yL2zfp6mLuqf2cOWl3/ndvMxHnYEiRv7qz81v82F3P9ZxFrf99YKJX3cpa
+	 8QqZePWUOt4j4tlhjKdNh9u2TVNavwP+tqMZpmjh7+gO40f5jLpLdR0x4W078quAcp
+	 nyJqm4Rlc2v+g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+Cc: Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	dennis@kernel.org,
-	tj@kernel.org,
-	cl@linux.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 6.12 278/486] x86/locking: Use ALT_OUTPUT_SP() for percpu_{,try_}cmpxchg{64,128}_op()
-Date: Mon,  5 May 2025 18:35:54 -0400
-Message-Id: <20250505223922.2682012-278-sashal@kernel.org>
+	manivannan.sadhasivam@linaro.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 282/486] PCI: epf-mhi: Update device ID for SA8775P
+Date: Mon,  5 May 2025 18:35:58 -0400
+Message-Id: <20250505223922.2682012-282-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
 References: <20250505223922.2682012-1-sashal@kernel.org>
@@ -68,95 +64,40 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Uros Bizjak <ubizjak@gmail.com>
+From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
 
-[ Upstream commit 4087e16b033140cf2ce509ec23503bddec818a16 ]
+[ Upstream commit 4f13dd9e2b1d2b317bb36704f8a7bd1d3017f7a2 ]
 
-percpu_{,try_}cmpxchg{64,128}() macros use CALL instruction inside
-asm statement in one of their alternatives. Use ALT_OUTPUT_SP()
-macro to add required dependence on %esp register.
+Update device ID for the Qcom SA8775P SoC.
 
-ALT_OUTPUT_SP() implements the above dependence by adding
-ASM_CALL_CONSTRAINT to its arguments. This constraint should be used
-for any inline asm which has a CALL instruction, otherwise the
-compiler may schedule the asm before the frame pointer gets set up
-by the containing function, causing objtool to print a "call without
-frame pointer save/setup" warning.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250214150929.5780-1-ubizjak@gmail.com
+Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+Link: https://lore.kernel.org/r/20241205065422.2515086-3-quic_msarkar@quicinc.com
+[kwilczynski: commit log]
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/percpu.h | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/pci/endpoint/functions/pci-epf-mhi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index c55a79d5feaeb..2d9c250b3c8d8 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -349,9 +349,9 @@ do {									\
- 									\
- 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
- 			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
--		  : [var] "+m" (__my_cpu_var(_var)),			\
--		    "+a" (old__.low),					\
--		    "+d" (old__.high)					\
-+		  : ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
-+				  "+a" (old__.low),			\
-+				  "+d" (old__.high))			\
- 		  : "b" (new__.low),					\
- 		    "c" (new__.high),					\
- 		    "S" (&(_var))					\
-@@ -380,10 +380,10 @@ do {									\
- 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
- 			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
- 		  CC_SET(z)						\
--		  : CC_OUT(z) (success),				\
--		    [var] "+m" (__my_cpu_var(_var)),			\
--		    "+a" (old__.low),					\
--		    "+d" (old__.high)					\
-+		  : ALT_OUTPUT_SP(CC_OUT(z) (success),			\
-+				  [var] "+m" (__my_cpu_var(_var)),	\
-+				  "+a" (old__.low),			\
-+				  "+d" (old__.high))			\
- 		  : "b" (new__.low),					\
- 		    "c" (new__.high),					\
- 		    "S" (&(_var))					\
-@@ -420,9 +420,9 @@ do {									\
- 									\
- 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
- 			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
--		  : [var] "+m" (__my_cpu_var(_var)),			\
--		    "+a" (old__.low),					\
--		    "+d" (old__.high)					\
-+		  : ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
-+				  "+a" (old__.low),			\
-+				  "+d" (old__.high))			\
- 		  : "b" (new__.low),					\
- 		    "c" (new__.high),					\
- 		    "S" (&(_var))					\
-@@ -451,10 +451,10 @@ do {									\
- 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
- 			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
- 		  CC_SET(z)						\
--		  : CC_OUT(z) (success),				\
--		    [var] "+m" (__my_cpu_var(_var)),			\
--		    "+a" (old__.low),					\
--		    "+d" (old__.high)					\
-+		  : ALT_OUTPUT_SP(CC_OUT(z) (success),			\
-+				  [var] "+m" (__my_cpu_var(_var)),	\
-+				  "+a" (old__.low),			\
-+				  "+d" (old__.high))			\
- 		  : "b" (new__.low),					\
- 		    "c" (new__.high),					\
- 		    "S" (&(_var))					\
+diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+index 54286a40bdfbf..6643a88c7a0ce 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
++++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+@@ -125,7 +125,7 @@ static const struct pci_epf_mhi_ep_info sm8450_info = {
+ 
+ static struct pci_epf_header sa8775p_header = {
+ 	.vendorid = PCI_VENDOR_ID_QCOM,
+-	.deviceid = 0x0306,               /* FIXME: Update deviceid for sa8775p EP */
++	.deviceid = 0x0116,
+ 	.baseclass_code = PCI_CLASS_OTHERS,
+ 	.interrupt_pin = PCI_INTERRUPT_INTA,
+ };
 -- 
 2.39.5
 
