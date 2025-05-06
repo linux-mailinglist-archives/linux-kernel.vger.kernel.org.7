@@ -1,122 +1,129 @@
-Return-Path: <linux-kernel+bounces-635461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D981EAABDA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:47:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB089AABE32
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3637D7B7166
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09DD25036C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3710215F6A;
-	Tue,  6 May 2025 08:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNlGCw84"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926DA266B72;
+	Tue,  6 May 2025 09:02:56 +0000 (UTC)
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D983F4B1E47
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 08:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B39264F88
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746521209; cv=none; b=mpRzERuPCfa7ard4jYrDkZL3UuyFDQW6c9tpag4c+L1d+xouqQShANjjvs6hVOKQwhIO4K0E70juT5kbtNuPvoWluP50XAs2KBfxaCG1vEiUeNjWLrMONKEUaLq7Pg3AcRXQg3kvb9WIaKS3W5Xn2cji+6N+i1MrN8JEi5R7n1c=
+	t=1746522176; cv=none; b=cHYmyARSRpzlmRcmZGGbcmYXz9qtCCx3Rz8S2G8JSCD8lhGl1F5PWb5nR5jhTPQwCuSg9ZNYeMkO5Wp51BB0BdPgk9ieA65xivG5WU9c7NLg9Wra2Zoznq/GOUyAYGAgdt7kxC/t0caGU+hV3/THrXirvtEYgV28/xMWuiYdX5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746521209; c=relaxed/simple;
-	bh=JaF4HJ/DNDxWc7mYVleeWmEFWB04gncRwOOvOd0VtyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GC2uBq+CBG768YUeODj4UBZJ/v1NmfvNTF4kv5FunYksr6ALyxtPzW0iGR+8YxhDJ+MpAmzAdniFERRNwIlzI0mF62+gYcKMZuoMmDUuRHOIG3PKRGWdsd22BbjlPkpM4XkdcF3jljuJwj6iXoKSTW2xgwTfT48Fdhp/wf5vhD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNlGCw84; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-476977848c4so71010291cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 01:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746521207; x=1747126007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JaF4HJ/DNDxWc7mYVleeWmEFWB04gncRwOOvOd0VtyU=;
-        b=NNlGCw84wV7tum/4MYGBdGPaZAk9TdE9cc5/ae+gRPkhh6+JzncZJpWKkd77M4Ae6r
-         LPvmQ3OKgDEB6iMsXku7Qx3ET1zv2fF6Yjrl3WsmIUI2wuZURC88QXCkY2yMGkV1sRVP
-         oEIYubuV0PVqr/osHRDLQ4g/zakPtj8skW4vgcP/pLo0KZ+sH1Fhgtgzo/Rinwg/o6at
-         3eGjIN52H1QdMz4ajvBTbjcODP6c10/o4qH2Vdv2NQzlp0gFfeDAQthEvwVFJJYQkUsK
-         MmJBq1VTvWkB058geRTw9Hz0PyLK7qLDtAbx1r3UALks13baCLnb7FFjeFnfZrd9BBtU
-         Kvcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746521207; x=1747126007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JaF4HJ/DNDxWc7mYVleeWmEFWB04gncRwOOvOd0VtyU=;
-        b=A2BmLK2lPfx+DULzmvqtgxcoiQwgxJ64CHtws053zF4GClfsLuy6t9P4BZH0kwzsOK
-         0wxGNPJqbaEKNYGJwRdcG8uZosn1jFnthPkndtR3i3wp7AWnthADlRqVhxlNTnG8JBDO
-         s/s4S2yRS1kNevXe44pAG42975q90H+5OCIrb3D/sVKEPhjglEavGVHNg81jKF1+I/B4
-         mxXYQJu2RNk+ajKBuwtmgc/al7wnjKYF7x3lTjEvXosGCGqzkCMeCa9ZjRigVBLHSjVV
-         p8zUO3GSUDnnk1YOXwPhbSl5rWoI5L8ctSJZ1iHvXpLTHAh0gTET5DSjzopWhce52G9M
-         Bhpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMl5XMK8Joe4Q+Goft0dMyGh0/AWMFGTpmqelxrRpOMas6MHt973+mYXCZtprJFilr698UK0f3MwaaOJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkAGP8KYw7i5UZxUyXuxb0xDhtpNl3CxBqReW1gy2e59+r6erJ
-	ZSsfyeLXJKveQskSUnMCDKEoFo3zAWAlYBVPK6rzKl2LyGWrV+vADA8gxcG6lkvZ8qmIXUIyuax
-	qQqfJL3bhsknhEzuiFfsCd1Qjz0NGdG9uyCg=
-X-Gm-Gg: ASbGncvtHJcHgZJyv/zq8VdIYpjraLicV/H2s8WnGuxbT8qW32CZB7ryEiDLF+ZKcDD
-	ivEV1GMVexePM0ecrOoc5A2L76nb9NOE2IAlL6RCjNa3k0L50uO5W8O9ihRcGcowC3WQZnHk+CM
-	EtrZlUTkldcv7l2hS9E4ov
-X-Google-Smtp-Source: AGHT+IGlEuItqzObUKcbXYxxDqx46QQtqpueW7Pn73XKkWFGhrY8Qavv/aSA1QhLFO/Kf1hJqBGFC2xioJ+yt8j06DE=
-X-Received: by 2002:a05:622a:14f:b0:48d:4887:982f with SMTP id
- d75a77b69052e-48dff3e0ac5mr130626621cf.8.1746521206742; Tue, 06 May 2025
- 01:46:46 -0700 (PDT)
+	s=arc-20240116; t=1746522176; c=relaxed/simple;
+	bh=12vh6IK8I0AkdMWsFqMov1eE4gd1N/LKfwlbPkUGbk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KeP5cu9T3BSxViJnl7UvM2fPYxPHfqQoZZ9ohoAYELFxLkIT3/Tf7RmyaKIAOKR3ykG5X62M4cEs0CqlbJDfcKwaP2ayd9hKYNliYH8728DneTJ7bv4KuOt8bKV/ckpG8A0jjt3YW/KcM2O3YneA4oPyKtfRApNAAdW32NXSzTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id B25F4404A1;
+	Tue,  6 May 2025 10:47:14 +0200 (CEST)
+Date: Tue, 6 May 2025 10:47:13 +0200
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <lumag@kernel.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3 1/8] drm/msm/dpu: don't overwrite CTL_MERGE_3D_ACTIVE
+ register
+Message-ID: <wykubtbdukui3lmqraq2yklu3obeutcczuw24idhslyaunyb2e@iandx2xswmu6>
+References: <20250307-dpu-active-ctl-v3-0-5d20655f10ca@linaro.org>
+ <20250307-dpu-active-ctl-v3-1-5d20655f10ca@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424-vt8500-intc-updates-v1-0-4ab7397155b3@gmail.com>
- <20250424-vt8500-intc-updates-v1-1-4ab7397155b3@gmail.com> <87ldranq87.ffs@tglx>
-In-Reply-To: <87ldranq87.ffs@tglx>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Tue, 6 May 2025 12:46:35 +0400
-X-Gm-Features: ATxdqUGKBoSj_e6rwt1rEvtM0FWrRpwvATKmpnJREd3tdfy5PfkFv7VRK23vf54
-Message-ID: <CABjd4Yx5O-ivpyZ3ewx5dfLPR2q7N9HU5t9-uOoEDZa3y2woFQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] irqchip: vt8500: Split up ack/mask functions
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307-dpu-active-ctl-v3-1-5d20655f10ca@linaro.org>
 
-On Tue, May 6, 2025 at 11:38=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Thu, Apr 24 2025 at 22:35, Alexey Charkov wrote:
->
-> Please do not make up subject prefixes. See
->
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-=
-submission-notes
+On 2025-03-07 08:24:49, Dmitry Baryshkov wrote:
+> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> In case of complex pipelines (e.g. the forthcoming quad-pipe) the DPU
+> might use more that one MERGE_3D block for a single output.  Follow the
+> pattern and extend the CTL_MERGE_3D_ACTIVE active register instead of
+> simply writing new value there. Currently at most one MERGE_3D block is
+> being used, so this has no impact on existing targets.
 
-Thanks for the pointer Thomas. Will change the prefix to
-"irqchip/irq-vt8500:" in v2.
+Too late now that this patch has already been merged, but good to
+track for posterity: it'd be nice if the commit message mentions that
+dpu_hw_ctl_reset_intf_cfg_v1() already takes this approach, and only unsets the
+merge_3d bit provided in dpu_hw_intf_cfg, and doesn't clear the whole register
+to zero :)
 
-Looks like the older commits I was relying on for the preferred prefix
-didn't follow the prescribed format themselves - oh well :)
+- Marijn
 
-Ref:
-0953fb263714 ("irq: remove handle_domain_{irq,nmi}()")
-1a59d1b8e05e ("treewide: Replace GPLv2 boilerplate/reference with SPDX
-- rule 156")
-d17cab4451df ("irqchip: Kill off set_irq_flags usage")
-d2aa914d27f1 ("irqchip/vt8500: Use irq_set_handler_locked()")
-41a83e06e2bb ("irqchip: Prepare for local stub header removal")
-9600973656c6 ("irqchip: Constify irq_domain_ops")
-0beb65041e86 ("irqchip: vt8500: Convert to handle_domain_irq")
-8783dd3a37a5 ("irqchip: Remove asmlinkage from static functions")
-e658718e478f ("irqchip: vt8500: Staticize local symbols")
-06ff14c05426 ("irqchip: vt8500: Convert arch-vt8500 to new irqchip
-infrastructure")
-
-Best regards,
-Alexey
+> 
+> Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> index 411a7cf088eb72f856940c09b0af9e108ccade4b..cef3bfaa4af82ebc55fb8cf76adef3075c7d73e3 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> @@ -563,6 +563,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
+>  	u32 wb_active = 0;
+>  	u32 cwb_active = 0;
+>  	u32 mode_sel = 0;
+> +	u32 merge_3d_active = 0;
+>  
+>  	/* CTL_TOP[31:28] carries group_id to collate CTL paths
+>  	 * per VM. Explicitly disable it until VM support is
+> @@ -578,6 +579,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
+>  	wb_active = DPU_REG_READ(c, CTL_WB_ACTIVE);
+>  	cwb_active = DPU_REG_READ(c, CTL_CWB_ACTIVE);
+>  	dsc_active = DPU_REG_READ(c, CTL_DSC_ACTIVE);
+> +	merge_3d_active = DPU_REG_READ(c, CTL_MERGE_3D_ACTIVE);
+>  
+>  	if (cfg->intf)
+>  		intf_active |= BIT(cfg->intf - INTF_0);
+> @@ -591,15 +593,15 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
+>  	if (cfg->dsc)
+>  		dsc_active |= cfg->dsc;
+>  
+> +	if (cfg->merge_3d)
+> +		merge_3d_active |= BIT(cfg->merge_3d - MERGE_3D_0);
+> +
+>  	DPU_REG_WRITE(c, CTL_TOP, mode_sel);
+>  	DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
+>  	DPU_REG_WRITE(c, CTL_WB_ACTIVE, wb_active);
+>  	DPU_REG_WRITE(c, CTL_CWB_ACTIVE, cwb_active);
+>  	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
+> -
+> -	if (cfg->merge_3d)
+> -		DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE,
+> -			      BIT(cfg->merge_3d - MERGE_3D_0));
+> +	DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE, merge_3d_active);
+>  
+>  	if (cfg->cdm)
+>  		DPU_REG_WRITE(c, CTL_CDM_ACTIVE, cfg->cdm);
+> 
+> -- 
+> 2.39.5
+> 
 
