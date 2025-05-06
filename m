@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-635643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11324AAC052
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B81AAC065
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426021894DDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:49:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A1FD3A66F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00FA269830;
-	Tue,  6 May 2025 09:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3DF268FF9;
+	Tue,  6 May 2025 09:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AuYYxBwo"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IrCHrp50"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1382438DEC
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7C41E1DE2
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746524933; cv=none; b=Q2jZ8uwoghx3t053uM/+e1MJoEbEXOSbNuJzr78ocYRppKG1CD1Q0IcPgvqNyY+LHcdbzwCeiIfZ2mvXc/jbv0gtTrcyWmwACqOD++QwAS+244P3sqLTLWxkr0nQDYqRRzlj7X/7csZ5qjg4m2UbPIw2u8JZdnW7JnjfHobvDsI=
+	t=1746524925; cv=none; b=kbQUpkazyq8X3Rn249/ILs5lGlec5DUW4c29OIuVJpMgJSGRijoByjWTtZJupYkl+P9/Ss2EQ1CcX7hhs9jEIYwEYgEjCXb+DS2MBptVhmp9BXFdAOOwhfYVOsHyvLJrv7Km1o8w9rCJxKjbxi+GUYEiLYXfy1ivU2dXbiKWXkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746524933; c=relaxed/simple;
-	bh=kRb/5X69aPRwuLvRz0/p0QXcuCk16tK+mbqgcWpPvwU=;
+	s=arc-20240116; t=1746524925; c=relaxed/simple;
+	bh=yARVJ3xJ3JgrRQ2uEW2EIYoT+XDNijkk4+OGd3BX42I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t8eq6wcNhPa4bPgezB30BZKMcTQr478F9ryyOA/yAdXtt6AuhJmQzrI1XzVxhNlEVlQTHWnIhr2omFCpE0HW15NgB2pZxTG3X5lg1U6rXIdi2AwvEby5to8W9ZTalPxVBHjmQRzBur6eAXGCazKT04zVB2yiGVxCVq7+AnOdvQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AuYYxBwo; arc=none smtp.client-ip=220.197.31.4
+	 MIME-Version; b=M/Q/AWw0/tH+8HazkEmM/TvNmyWzVgoVg9F2sfKdRrJ1PVFZrMbv5dPz8xUT0B/VWqpsZsE/7IFfn06JXXQQTR5qgd08AM4o/zBMOe/j0OL8LnNOtmsYgqezJKwt3iJt1p9PoxozQfj/QLKw2iOJd6VaPM7bYCxaA1T9oiS8B8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IrCHrp50; arc=none smtp.client-ip=220.197.31.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=jj6Ka
-	z/NNsOVgJjQ3fg3cdWpuwGqwGBbfxNLd5/qzxw=; b=AuYYxBwoxPcDI/DXm5YaK
-	lXLDODOa6BO7kkjqnC8UcJsvL8ZNDJc/01b53yssYvWtsj4YXLbObl29pHnjXlEk
-	OaZVbbx6stVuwjl7k3UhxdgfrmMt1aokacsidqDGL3TBlrJw309qjsrBIRBbZyiJ
-	U2xB8V6ECLZ4nJrv+y8g1Q=
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Wx3gy
+	NU/yA0NxmdhOD2r8ZlEsWhxsPF9Y05S/IbtjvU=; b=IrCHrp50xjLBv8SYchE9p
+	wCDv+iD0DukM5BY3ujh8ZedWghiyCU6Ia3U+Jos8yqtpH4jURlOLapMtVV2jkiZM
+	difcBOo3PJ7FegAmK6mkxlg0VQbOaz5QjAKdyeGbvwosD7C/BIFZ8VvUbAwEqply
+	iYsB+lS/D2Fv29sGhz5qO0=
 Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wAHzmK_2hloI9kMFA--.14234S3;
-	Tue, 06 May 2025 17:47:47 +0800 (CST)
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wAHzmK_2hloI9kMFA--.14234S4;
+	Tue, 06 May 2025 17:47:48 +0800 (CST)
 From: oushixiong1025@163.com
 To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -51,9 +51,9 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH v2 2/3] drm/ast: use DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS
-Date: Tue,  6 May 2025 17:47:39 +0800
-Message-Id: <20250506094740.621420-2-oushixiong1025@163.com>
+Subject: [PATCH v2 3/3] drm/udl: use DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS
+Date: Tue,  6 May 2025 17:47:40 +0800
+Message-Id: <20250506094740.621420-3-oushixiong1025@163.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250506094740.621420-1-oushixiong1025@163.com>
 References: <20250506094740.621420-1-oushixiong1025@163.com>
@@ -64,39 +64,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAHzmK_2hloI9kMFA--.14234S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWfCrWfKr15Gw4rXw1fZwb_yoW3KrXEkF
-	10qan3WrWDua4Duw1Iyay3ZryIvr15WrWfGF1Utasxtw47Jr4UZ34v9rW0vF1j9F4xZF90
-	yw1DWF43CFsakjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8b_-PUUUUU==
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYwlFD2gZ2bcW-gABsW
+X-CM-TRANSID:_____wAHzmK_2hloI9kMFA--.14234S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWDtrWrArykJF13Xw4fZrb_yoW3tFX_GF
+	4ftwsrWFZ8uw4Dur1xAFW5Aryj934ruF48WF1Uta4Syw4xJw1Uury2vryvv3WUKF45AF9x
+	J3yDXFsxAr4kCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8YsjUUUUUU==
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYwlFD2gZ2bcW-gACsV
 
 From: Shixiong Ou <oushixiong@kylinos.cn>
 
 Import dmabuf without mapping its sg_table to avoid issues likes:
-  ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
+   udl 2-1.4:1.0: swiotlb buffer is full (sz: 2097152 bytes), total 65536 (slots), used 1 (slots)
 
 Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 ---
 v1->v2:
         patch rebase.
 
- drivers/gpu/drm/ast/ast_drv.c | 2 +-
+ drivers/gpu/drm/udl/udl_drv.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
-index 6fbf62a99c48..2dac6acf79e7 100644
---- a/drivers/gpu/drm/ast/ast_drv.c
-+++ b/drivers/gpu/drm/ast/ast_drv.c
-@@ -64,7 +64,7 @@ static const struct drm_driver ast_driver = {
- 	.minor = DRIVER_MINOR,
- 	.patchlevel = DRIVER_PATCHLEVEL,
+diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
+index 1922988625eb..b5fa5854c051 100644
+--- a/drivers/gpu/drm/udl/udl_drv.c
++++ b/drivers/gpu/drm/udl/udl_drv.c
+@@ -57,7 +57,7 @@ static const struct drm_driver driver = {
  
+ 	/* GEM hooks */
+ 	.fops = &udl_driver_fops,
 -	DRM_GEM_SHMEM_DRIVER_OPS,
 +	DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS,
  	DRM_FBDEV_SHMEM_DRIVER_OPS,
- };
  
+ 	.name = DRIVER_NAME,
 -- 
 2.17.1
 
