@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-635236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374B4AABAB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:27:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B4FAABAE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFE6E7B0F41
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4B05028AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D711E27F160;
-	Tue,  6 May 2025 05:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BB127C16A;
+	Tue,  6 May 2025 05:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fIRgVAd3"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661CE27BF9A;
-	Tue,  6 May 2025 05:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EGT2q7gL"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D082920BA
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 05:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746509948; cv=none; b=IajYhBsBAYeFRXRvam01W4eVPjy5ev2de9fVNSsEHuFQm0ShERMC767PNdcnZ3sXFIXIX2lBTQQyjqN5eEJtf10AeFAIJREoZDkz/EU3eqC765t/pwJrGaiGk+K2iNnhWMMwagwfnNNPvlk+v+hjepnFAlCoZpI7kvMlnEKSdbU=
+	t=1746509978; cv=none; b=cN4fX3braNjgbpXe/PzXGIAuXQYdrCkuwWeQcaeHxVsVIByqmtF2VqHw1/Ayo1hxif2Vbw+Q8DJfzJh+iQjy8dOhbALWOUIb8VFD2x0W9wgqpTxB9zVx8FAiW6kzPh/Qq5jb+RUKMh8ovwLXmqAwzedurEgZBGdWbgHcGL2o/z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746509948; c=relaxed/simple;
-	bh=jS6WcRUZ5LMlqt/v3lxpcWGgtkNFOwJfvXYwfqfFbi4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=abdFgEBTpdt6u9n9fNkiUWgrCkEX0RF/ZazA7fCtLHpNmgRyxRYeiTDKPVJC2MO6oundOMxFJZP6vol4NRJvp+EeUAR0tDTx7xo/Yh4JyAu7gPT/kLG1ZO/YIO6GTUx0TjTgj7/4vcP06t+g5IHRNtJX0nzmGRHoZSNfSFWr5Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fIRgVAd3; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=SEKm99PurVmtrNTupP
-	5Lg3cHjShnygrGqkE6bVv/E7I=; b=fIRgVAd3fMVfzNtZrUHMKm4X5GSFt8lgWi
-	9njtbfBxHMQhvRTM4ntJlB65BvfuWlTqWy8Ys+YmtCU90kEmfBKhadOclNKvdA8a
-	fQGUsQvJVLZCBWOVCnU2xkf61BfP7bcQdkIpdaBhmJb0GfKbfztdrjwQtoXTCEyU
-	WkyuG1TeM=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wBHxSpEoBloZ2M1Ew--.50689S6;
-	Tue, 06 May 2025 13:38:28 +0800 (CST)
-From: Wenliang Yan <wenliang202407@163.com>
-To: linux@roeck-us.net,
-	Jean Delvare <jdelvare@suse.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Wenliang Yan <wenliang202407@163.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr,
-	derek.lin@silergycorp.com,
-	miguel.lee@silergycorp.com,
-	chris.ho@silergycorp.com,
-	eason.liao@silergycorp.com
-Subject: [PATCH v7 4/4] dt-bindings:Add SQ52206 to ina2xx devicetree bindings
-Date: Tue,  6 May 2025 01:37:41 -0400
-Message-Id: <20250506053741.4837-5-wenliang202407@163.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250506053741.4837-1-wenliang202407@163.com>
-References: <20250506053741.4837-1-wenliang202407@163.com>
-X-CM-TRANSID:_____wBHxSpEoBloZ2M1Ew--.50689S6
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CF18Kr4fWF45uF4UWF43Awb_yoW8XF17p3
-	9xCF1jqryFqF13u3y7t3Z5G34Uu3Wv9F48KF1DJr1a93WkZa4Fq39xKr18Kr17Cr1fZFWf
-	uFn2grW8X340yaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRVnmiUUUUU=
-X-CM-SenderInfo: xzhqzxhdqjjiisuqlqqrwthudrp/1tbiMAZF02gZnOxMHwAAsy
+	s=arc-20240116; t=1746509978; c=relaxed/simple;
+	bh=9gJ4yAcq26FIHkoEbruT91j1gPvTkb1gC00d9MWpnQ8=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=PPSm0oCk3Hp/pGOAV0rpusPS/fGTx32CsLR7xLrLCoULRNlGBw3iYEsEgLqj45g9p/bH/E8+/DJtwv2XUyLqYCKwgkZ1hLgcfjRPyyRKsfKzbdTuQok/8qHlGhJF88ntwSFy68qGcfGrm7coTJhes4FExsIgx6NmpyxgS2GkTpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EGT2q7gL; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545Lcwpv002195;
+	Tue, 6 May 2025 05:39:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Ts/lpY
+	gRvVW3tUCks4eC9rvGcvaiNAjci7VsczPQ+oc=; b=EGT2q7gLjEK8wrzTLibyFA
+	tI4LbyhPF6wFVkdvlmO+QYwrdwZIyyodrhB/bjecmPPcnT8JjDGPdUPGgoy7ao8Q
+	+LwPy3tlo1TNsTaZRyI0l1b0fbSejlEb/XRt40XMSwWNVK3FQjFlpVfhuUtAwj5E
+	bSpcDufKn/kVURGgibQmRXrV+Q4TnraC4t7dqT3o7fC6jYVCEGJxVRUl//3GrDk3
+	RS8J/8ypDFgK/P96VNj2Gkf2KEXcsbl/6GYYidKEamDqEgGwLDJY0eXOBu50iA4b
+	w2QdvnIJ0O0nm9Z9DRoKsbcjyp2nYbVxrpEoZGTdEKt6T6Mz6WVLTG/X7MzRZ0Xg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46f5e8hdng-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 05:39:03 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5465ZZVQ023969;
+	Tue, 6 May 2025 05:39:03 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46f5e8hdna-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 05:39:03 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54636dYd001353;
+	Tue, 6 May 2025 05:39:02 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46dwfta50f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 05:39:02 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5465d1Td28115502
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 6 May 2025 05:39:01 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 75F1558060;
+	Tue,  6 May 2025 05:39:01 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E0C325803F;
+	Tue,  6 May 2025 05:39:00 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  6 May 2025 05:39:00 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Date: Tue, 06 May 2025 11:09:00 +0530
+From: Misbah Anjum N <misanjum@linux.ibm.com>
+To: Ritesh Harjani <riteshh@linux.ibm.com>, senozhatsky@chromium.org,
+        yosry.ahmed@linux.dev
+Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, maddy@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [BUG][powerpc] OOPs: Kernel access of bad area during zram swap
+ write - kswapd0 crash
+In-Reply-To: <87ldrujhr5.fsf@gmail.com>
+References: <89bfdedb74416156423d36d28c5b92e9@linux.ibm.com>
+ <87ldrujhr5.fsf@gmail.com>
+Message-ID: <3374b7cf6a68364c389a260d7ec9067f@linux.ibm.com>
+X-Sender: misanjum@linux.ibm.com
+Organization: IBM
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=X4ZSKHTe c=1 sm=1 tr=0 ts=6819a078 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=NEAV23lmAAAA:8 a=xe_K4BuX0dQdScSaYpsA:9 a=CjuIK1q_8ugA:10 a=QQLMaIiM1wwA:10
+X-Proofpoint-GUID: e--iastPlMmjXy9FL-UQycqA02G4JAZ1
+X-Proofpoint-ORIG-GUID: 4Gwlx4U90MbmYYcnk0a4-ytVh4HX2e7a
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDA1MSBTYWx0ZWRfXzj/UyGbhywwb RLwbZzJ2n/P7SjvOG20klsZCiGuA84n+tZGLeGRmdZz2h2+IxQqel7GtRkQp+Zv+nBWUyZlORPq tXXungA72HjLoIcNpvDDnZY2/NdDKyW6zHptjVuqCpm0Wx+iuU5sPrDmejCuUnwMNXKOPXMV+2j
+ zU23p8Zj+bolJOw/YM+skyVNUGnCihMlMNOm4YXjoA0GRsg6idvQYkIdqHYC+DV6L7UZeQ0D3vS mQRbKddIctZm6uyGbdz6Jg+OLzK4NYUVKVX5CJ17hPIl2g1HbIz/5oV9sUcffM5xf8KnxNzBCuJ WRUwjdstbImlnOCUcka4Tx7vP9R/yqwowMusswyw3Xz5iyJLICvX23Ac4ab8rzWb6ThWSDdZh6u
+ ZPQUVxPmnSosvw+pA5njXdawkSYdhZ7UoB4fDN7PMdRvfVfFvNt9LkZwmYFNUM49LJ2ndjpX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_03,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ suspectscore=0 phishscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505060051
 
-Add the sq52206 compatible to the ina2xx.yaml
+Hi,
 
-Signed-off-by: Wenliang Yan <wenliang202407@163.com>
----
+I am facing this issue even with the latest kernel: 
+6.15.0-rc4-g5721cf0b9352
+The suspecting commit is: 44f76413496ec343da0d8292ceecdcabe3e6ec16. The 
+commit introduces zs_obj_write() function.
+Link: 
+https://github.com/torvalds/linux/commit/44f76413496ec343da0d8292ceecdcabe3e6ec16
 
-Add the meaning of 'shunt-gain' in SQ52206.
+I was not able to reproduce the issue by reverting to the prior commit: 
+e27af3f9360ee130b7ab0b274088f92146a0855b
+I would like to request assistance in debugging the issue.
 
-v6->v7: Change 'silergy,sy24655' to 'silergy,sq52206' so that
-the make dt_binding_check' command can be successfully passed
-
-v5->v6:add content to meet the update requirements of the ina2xx.yaml
-
- Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-index bc03781342c0..d1fb7b9abda0 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-@@ -19,6 +19,7 @@ description: |
- properties:
-   compatible:
-     enum:
-+      - silergy,sq52206
-       - silergy,sy24655
-       - ti,ina209
-       - ti,ina219
-@@ -58,6 +59,9 @@ properties:
-       shunt voltage, and a value of 4 maps to ADCRANGE=0 such that a wider
-       voltage range is used.
- 
-+      For SQ52206,the shunt-gain value 1 mapps to ADCRANGE=10/11, the value 2
-+      mapps to ADCRANGE=01, and the value 4 mapps to ADCRANGE=00.
-+
-       The default value is device dependent, and is defined by the reset value
-       of PGA/ADCRANGE in the respective configuration registers.
-     $ref: /schemas/types.yaml#/definitions/uint32
-@@ -97,6 +101,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - silergy,sq52206
-               - silergy,sy24655
-               - ti,ina209
-               - ti,ina219
--- 
-2.17.1
-
+Thank you,
+Misbah Anjum N
 
