@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-636181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DF3AAC764
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:05:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C43AAC768
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79B4E4C17D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16DF03BC76A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDEA2820D7;
-	Tue,  6 May 2025 14:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8F728136B;
+	Tue,  6 May 2025 14:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aRGHdycu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fpT56CkV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VEmeUbNf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584F281505;
-	Tue,  6 May 2025 14:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9017262D1D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 14:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746540271; cv=none; b=Q4uL4tisNYvbGyluP6Ptf/epCR4xIFUNfu0v66qy2VL4f9DIo0mpsQl2hBddOqK2sycfzBxKsf1KKXBDoh8F/U3747iwYY935Cn/MgAXpyWOS7iLuSVRhPZW7B/YZ+gKrH/viLP0y+68gKdIcAU0F6KdlL37LhcVndzRdbVi/jY=
+	t=1746540337; cv=none; b=EDUQNCK5EQgq79WJgnjSuP63TNFqtCf1XCFUdIBz+E43X0mzgpAR17X66aZQ9meDMXrEGEX3uK68LHd0YN+QvM/05iitT6H8nAChFcLx0fd96nEwH5tni4EQNLzeLMopiNent6pTrkipl26cpxQqZE+iZpOPDFPh+lN0PESjthc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746540271; c=relaxed/simple;
-	bh=183Yv4whGMMqTu7SqQuVBYEZrGjDNendfoAb53Sscwo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=IWv0jSlbIQ8cxDyl3xMAGIBPmhPQEEpjk6G8U7Uo3+GHuxOk9ImrX157h2oXsVApKZtF4/K0KL+sFtySH/RdQS/cwlnGF1d5xeeZtql5JesWbOWNLhMV0FT149Pt9bjSFAhuOqVubTasbhgQCC4UpB0L7uAJM7AI/cVNpEuKnBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aRGHdycu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fpT56CkV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 06 May 2025 14:04:26 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746540267;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ektE/Bx0tnonjAotJ0LY2YfxwjzIvhTNB7TrrlOpqo=;
-	b=aRGHdycuoNikwAM7MClc6zrAu/Qx8lNXaA5HVp8oT1Fg+cjOxA+ncICc4MPhl4Vv66hMQT
-	bF2u+Tjoqi2CVd94f0S98WWTJgw4khZaTfCNlLR89baJ75wRk8IhkD8cEtZ5uJFrHp68Rn
-	V5lXKxh5yhZzPbGkQs9rth9LP/xa6Njy82grj4XrJ6X06Cpr9YJWNNg1xK5jkkuRiAUMPC
-	MC5wZARjKOVyOVBayw1aeg/r45HOabQJq6Q4fG4ZDMa0NLVSejN+EYX8u+tNPbVg4xEgOc
-	j/4zZTrpLeoXHh4Rqo3s/HxpLwl2kc4kJgJn94pdq0x/CjlbrYc2BEnkHrYHgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746540267;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ektE/Bx0tnonjAotJ0LY2YfxwjzIvhTNB7TrrlOpqo=;
-	b=fpT56CkVCTXj4dCO3bzVcMnNG3E1UcybsxED+LEF1RRPBjWj2cbhEJApywRNbeeMb9Cp9v
-	igZARV3mf6RigqAQ==
-From: "tip-bot2 for Alexey Charkov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/irq-vt8500: Drop redundant copy of the
- device node pointer
-Cc: Alexey Charkov <alchark@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250506-vt8500-intc-updates-v2-2-a3a0606cf92d@gmail.com>
-References: <20250506-vt8500-intc-updates-v2-2-a3a0606cf92d@gmail.com>
+	s=arc-20240116; t=1746540337; c=relaxed/simple;
+	bh=z+YYjJdtpjDJcpCz9atFWbn4uZAT4qMkpTew9VCqKPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FafSqWSw5iKl7rfNuq6nuJg+SXoNw7r0H+Ha0kbrj0cHsGasNaZFVIaD8DUaOGXc2E8wdX0ueUyPf/xpbOpe0zc3wN4gqKf3lZA4KPbsjlHAGgjKHXr3OQWsU/QTmIoXCbXxXwep2f6qf2sbln/5sBCToLo2FoSQjtwHCr8aev8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VEmeUbNf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 546DkWA3022968
+	for <linux-kernel@vger.kernel.org>; Tue, 6 May 2025 14:05:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Nqo89KoPeU/jHGAvsQlxSAm7hqWIb/0/DUR64k0qV7U=; b=VEmeUbNfO+EEM0vd
+	5Ex5sKaW4+wl2BcTZxn9ZN/vsrYm0rOW+V3fDKMsKnfkp0IKgMQ0tS3oi/tQ2STv
+	FTnrRpprXFw7quccvZ47lpz6iovDhfUrBAkB1hKzsztMGsyicJidkd6ThY7Qjei5
+	y774KtEPT3+BP9GvSnTYg7pWND7u7H7EuQdNIaaVrpw8MIDqNBoKxDBJgmqdOgOU
+	M7QzAitxM70lJlFlLAXjUkKwSIrTWELWD/273nkF5rM16Yv1TwpSocJuXhLVHMjt
+	eADHfwcoD00as6/1SVMo+K3gQ1zG6i1hBfOkQNyQaQODHCOuazw8IQeQAtA2DMIC
+	Yd6AHQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5tbagur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 14:05:34 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22e540fa2d0so2778205ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 07:05:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746540333; x=1747145133;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nqo89KoPeU/jHGAvsQlxSAm7hqWIb/0/DUR64k0qV7U=;
+        b=PdU+FWnNjVlcc8AYKoLQxfjGl7zlqmub2AVnfZHfszU367T0UpslLZNpfye/sdp5vP
+         9BMcNv+iy3+tY6zNkKOII5BE+DppVj2NvmCuob70+qxPmLnxWnmYHwRfEBpxVdhBulQV
+         ZRSoM7j0uWR8iMUp4bxirIAq8WbimQiH43XmVYLCzU9Zfq8V4tdMoHXEhPvjYOqOSezT
+         qKLvzyvTLAeLyf0oOdTDPTYyjlFOiWTICBJfBcSLNPSmkKRQ8EBTLClPQGCs+uSgnxXh
+         /SLHRsY4y4fL5sT0Wy6iQdCP+Xe5k3M5OYOt+EGzB/IEJt4K6B7bSsopFr6gm6+G+3LN
+         4fVA==
+X-Forwarded-Encrypted: i=1; AJvYcCV24NT6af0jSY9Qda+JHvHb/xpdUxRskRBzb2FUGcj1liild0a1JK2+KNMN2VsR/WB2uHnEeXrNQPHz4gU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZR+eZxf6PbzkUwjjIFLyEfJ1aGZemktayMbUz/LWg5eJM4BcM
+	dud4+J34h6vuSjkSiSujTcRVhPiisw8tq665p5C+9V5Pj4AuyE00GDKPMMIVPydXPFSCQBF4guZ
+	H6rm+U/CrmP/LmiDIaXh3mzyl7JKnDqCzT4/yYhStQXNCltKLCLstjf6HMjOpYtN3TOVtodg=
+X-Gm-Gg: ASbGncuRZiaMvUedUcMW0R/zW2nS75tAB4CC27WpbxwZ7IHkKrHzB+NFSIfQrp1T9OT
+	hF156elLHIHbJ7VU584NsPZn9M5Y2e8RKJcy9ta6kBg1hebvv+7KL4OQ3cs/coNPasDMlS0rMQY
+	pG6QrptLG/8UIjMjF9XvL26IJOnDXBJRZs6w0/7kVsMnkYmCFpN3f1H1VdVil/yC/D8wgkAx9aH
+	RKuLa85WIH6RuiO4VQSE0a2CDhgREu+CRVCFFKUcQfKHJlgGPB8G9NaSxW854E67UtfvTFQkXqp
+	NFJiseiXQ2uDGPPcCezfLF4C6MTrYOoUpE90ojWi7ZPdPTg7XTmp
+X-Received: by 2002:a17:902:d0ca:b0:22e:421b:49a9 with SMTP id d9443c01a7336-22e421b49f3mr22608125ad.2.1746540332947;
+        Tue, 06 May 2025 07:05:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFaPU7TnNNrMU+sFCQmddsKzkRJQkm7RaeBhQ42pJxberjeqn1t0GJ/J7mR3858IiblZb7Xcg==
+X-Received: by 2002:a17:902:d0ca:b0:22e:421b:49a9 with SMTP id d9443c01a7336-22e421b49f3mr22607785ad.2.1746540332584;
+        Tue, 06 May 2025 07:05:32 -0700 (PDT)
+Received: from [192.168.1.3] ([122.164.81.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058dc768dsm8902906b3a.72.2025.05.06.07.05.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 07:05:31 -0700 (PDT)
+Message-ID: <0b65ea70-561e-443d-983b-6d3db31d1d48@oss.qualcomm.com>
+Date: Tue, 6 May 2025 19:35:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174654026693.406.15699843662832408162.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: ipq6018: drop standalone 'smem' node
+Content-Language: en-US
+To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250506-ipq6018-drop-smem-v1-1-af99d177be2f@gmail.com>
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <20250506-ipq6018-drop-smem-v1-1-af99d177be2f@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 4_uUu7S93lLXyMu_v-_as2okBolUqoUY
+X-Proofpoint-GUID: 4_uUu7S93lLXyMu_v-_as2okBolUqoUY
+X-Authority-Analysis: v=2.4 cv=doXbC0g4 c=1 sm=1 tr=0 ts=681a172e cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=IecdNnqt5cXURf/0i7SmSw==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
+ a=jcYIDdlXSa86HvzLazoA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDEzNiBTYWx0ZWRfX7bOP0xv1rRr6
+ wTMs0rvmqVPO/X9OmerKFhA65rS4PeUisgL83i8Dn6S5q4EsakDbsaIYKT1g3aFuoVTn5wssL2R
+ JMR2i6WSzE2cTRxO8PElOiRsjeW2h5QF0Dv/YCmQfP9QdtuyuOkluGYdn60vFJ7b7bSkPBZZPvv
+ c4LGRpPdC0WhdwKNAKiH8Hapw42Fto9wsHUjWWtZSLfAcCctvBP2G5ntDTX5Unl2CL8BgA3E5Gy
+ EqbnR+kPRT5YoEiKFAEkz9LIfR0OHxtGTocROVm/EiEw134PpjqkQUr4S4fJ/OzMMUAvvViD+lK
+ HJsn/XkugoKd2k712Siyw6d3NLyVCzjzRhsx2Ex5OkQH2u9SJrOkFT2ZopGHkG4hUYuuOnuXXqJ
+ QkD0tZ+tzZFk63Tm/FkpGNz1ziNOu2cmzbL2TBhNDpVddX6/kEtnjTlNwsddBB1pdd9ke42i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_06,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
+ mlxlogscore=702 impostorscore=0 clxscore=1015 mlxscore=0 priorityscore=1501
+ spamscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505060136
 
-The following commit has been merged into the irq/drivers branch of tip:
 
-Commit-ID:     45453df7f69b0157a14478f635c99216821faeee
-Gitweb:        https://git.kernel.org/tip/45453df7f69b0157a14478f635c99216821faeee
-Author:        Alexey Charkov <alchark@gmail.com>
-AuthorDate:    Tue, 06 May 2025 16:46:15 +04:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 06 May 2025 15:58:26 +02:00
+On 5/6/2025 7:07 PM, Gabor Juhos wrote:
+> Since commit b5af64fceb04 ("soc: qcom: smem: Support reserved-memory
+> description") the SMEM device can be instantiated directly from a
+> reserved-memory node.
+>
+> The 'smem' node is defined in this way for each modern IPQ SoCs except for
+> IPQ6018. In order to make it inline with the others, move the 'compatible'
+> and the 'hwlock' properties into the respective reserved-memory node, and
+> drop the standalone 'smem' node.
+>
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> ---
 
-irqchip/irq-vt8500: Drop redundant copy of the device node pointer
+Reviewed-by: Kathiravan Thirumoorthy 
+<kathiravan.thirumoorthy@oss.qualcomm.com>
 
-Inside vt8500_irq_init(), np is the same as node. Drop it.
-
-Signed-off-by: Alexey Charkov <alchark@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250506-vt8500-intc-updates-v2-2-a3a0606cf92d@gmail.com
-
----
- drivers/irqchip/irq-vt8500.c |  9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/irqchip/irq-vt8500.c b/drivers/irqchip/irq-vt8500.c
-index 9fb9d37..c88aa64 100644
---- a/drivers/irqchip/irq-vt8500.c
-+++ b/drivers/irqchip/irq-vt8500.c
-@@ -191,7 +191,6 @@ static int __init vt8500_irq_init(struct device_node *node,
- 				  struct device_node *parent)
- {
- 	int irq, i;
--	struct device_node *np = node;
- 
- 	if (active_cnt == VT8500_INTC_MAX) {
- 		pr_err("%s: Interrupt controllers > VT8500_INTC_MAX\n",
-@@ -199,7 +198,7 @@ static int __init vt8500_irq_init(struct device_node *node,
- 		goto out;
- 	}
- 
--	intc[active_cnt].base = of_iomap(np, 0);
-+	intc[active_cnt].base = of_iomap(node, 0);
- 	intc[active_cnt].domain = irq_domain_add_linear(node, 64,
- 			&vt8500_irq_domain_ops,	&intc[active_cnt]);
- 
-@@ -222,16 +221,16 @@ static int __init vt8500_irq_init(struct device_node *node,
- 	active_cnt++;
- 
- 	/* check if this is a slaved controller */
--	if (of_irq_count(np) != 0) {
-+	if (of_irq_count(node) != 0) {
- 		/* check that we have the correct number of interrupts */
--		if (of_irq_count(np) != 8) {
-+		if (of_irq_count(node) != 8) {
- 			pr_err("%s: Incorrect IRQ map for slaved controller\n",
- 					__func__);
- 			return -EINVAL;
- 		}
- 
- 		for (i = 0; i < 8; i++) {
--			irq = irq_of_parse_and_map(np, i);
-+			irq = irq_of_parse_and_map(node, i);
- 			enable_irq(irq);
- 		}
- 
 
