@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-636253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403BEAAC8A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:51:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6198AAC8C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9894A4A80E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28DF3B0910
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F4C283156;
-	Tue,  6 May 2025 14:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F12B283FFB;
+	Tue,  6 May 2025 14:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fy8H/APi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q9BTVn+Y"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6109D28313B;
-	Tue,  6 May 2025 14:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADA4283C94
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 14:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746543083; cv=none; b=ZWWytL71lDtpCC4eAArw70CdvnpzYxXls3/yt9h8BcAx0ZjToI/TPpcZlRc4T70ooRYWl8wO0YIMzsWgvJ6vprBCpswAO0W3o35ckZcnHC4j5e4NiyC4fG7WP/mR6/BmL6rsX6md4iY/5qzuXzNW1vUCP7kOtQCwN+XpBLrwk/0=
+	t=1746543126; cv=none; b=VpSBWNjo78rCmJ9WSIB59di+E1YSCEhNXmI0jwsQzXPz3b8/IRe0yRQIC/grgNMC7usZxnwrURJyVVZi9c+phk0HO4KBD0O03CJMHXEaar/v462qWnM8vnkHBswhsH8VDyTCZYC15fLGXVa5oySI9zMW/9qXAh9shGeN5nUoJRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746543083; c=relaxed/simple;
-	bh=H1RU2TFta5qVhuP759fDl2byXWnRF3dMO2JmE8/xmu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HZB9FDgPolO7Z6/Qv7qvF50FN5xa57xgV8henetcBCtoNCIS3tpiqaxvGOpj4c6Mr+uigfKxeIERUGcwtrZdaAmlfhPauNHGuNG4kUEW2lIi4ruldEsPRO93j1LLIwQiWkkac23HsNdi2aH/qyXCrb//3nnsU4bPb8vYyzXovTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fy8H/APi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE1B8C4CEEF;
-	Tue,  6 May 2025 14:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746543083;
-	bh=H1RU2TFta5qVhuP759fDl2byXWnRF3dMO2JmE8/xmu4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fy8H/APiiH3kr5ecCxBpDON0xhV1ZG+bEyQj19BqwvXK9fT0U9tK/jjsvM6orHAal
-	 3Nw1q9gYGNI//ZzCjxGRrVhCyLaHOOlomtYkpcwIR89JMpT8F3ptDGhIPDtvMvse+r
-	 kDNAg9y9UNDDF+/H3jA7YneEadzdZ0Nh7foRyn7tHkFQhIxC+BxOSpZqnGa8P3LKMg
-	 NzM02Zhd4Y5q/z+0wRL5aaVczASue7ytVOytgdr7I0eVGwQ8kyp6SyXsjITOzoYzWw
-	 hhX7WPmPBDTdio2xJemj8XSZ8+XpcKD4plUlqGzMj38bETmGPIaWgHPc0Ro+C0Mztm
-	 kStapH7Owpi5Q==
-Message-ID: <05cff759-34e3-4401-935e-ae7cce761aed@kernel.org>
-Date: Tue, 6 May 2025 16:51:18 +0200
+	s=arc-20240116; t=1746543126; c=relaxed/simple;
+	bh=x9hPRiKZTwD/NdReE9abUiOntHFDdU4cLMKbdDazvmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NjM566QRdqoQzXGFwhYqWgSFiTcDwSU2n7cX1vl/XaiZtL6JhLLz25e41wIl0mpfacS4oTQsLdgW6bQ9ah3VsyAYs4NX/viUnrFAV01q8ggaTVA8TWBFVBO0V4ZHYY0FPneju4YK6ieOtoYU5Sy2hpebr886/gyL9S/BJ0AIoIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q9BTVn+Y; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5fab85c582fso12035a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 07:52:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746543123; x=1747147923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x9hPRiKZTwD/NdReE9abUiOntHFDdU4cLMKbdDazvmk=;
+        b=Q9BTVn+YlmEf5cCv62m8neZmOklT7cqsnk1gcTsFsX5mOYjTyINhcLuEwEdgk5LDcn
+         FwUVIc844rVCfyWGEpdtX+7nKuydsV6tKUE8xOOEqe0wnxTayjda48FcnfPh7x0O/Py4
+         suu8ZRF3j6A6SZXCZb6vpKM3mCIKeXyXF7+HZZ2m1w7iaTKx1vW6rxbaUeLOYjUSpnV/
+         IHEstSBJiRgwAAptTQVYWsQVGwq1IAxKZGjb50OcV7uPZdBeYhmbC7FHUe25DiAFPO8o
+         R1zsYUQ4EFP0kgQPK/C+FkDFFfjfbxDZM1Af2XCLWzepAcZ9uX3c6jTZS/I1/Am8U7Kf
+         98mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746543123; x=1747147923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x9hPRiKZTwD/NdReE9abUiOntHFDdU4cLMKbdDazvmk=;
+        b=pQX6sh0z4pMD5zgLQokVf9bP18f7sQ3TQLqL3ohY52nY9ilhu//EdGn00BbW+KDLTK
+         Lcn4n9qc5WHIxCC9bCCvryg0ucFSLEB/kofwdg3EqIVs8Yn67qzJD2ZNBPwDHEditteB
+         mFCb/81opyACT6G9C+QcnXcDnUhA1qZW0ZllH9F8ctlN9fQUbNkpuFt+gVBk56YjwHVK
+         EYgvAraNsAReVVJEEWMU3seTVbZNe7HtfQawE1DQM7wPVgksm6b5xtHyRFk/M/28P9me
+         cYBcET9CFXuusiApTm9sRKPJKugT3yNctjWX3Gj67aeYxfiCJMBaDwJVEkWpp+BYVieu
+         PijA==
+X-Forwarded-Encrypted: i=1; AJvYcCUogRYYNERSov6TE7e3AlF5GzMiQoVRqva1aO1l397sV+6V22hiJwHU7vN+LX4vIgbnzWgL0Y+XpPdHn80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvPy34pUvqwyNOv1hkPiOeZ3Uj5mgDd/Jv4iAjt5dQTiQdMThw
+	4S+HnDhedBSkgSTdFbMtdNU/r9BB4M2MFBqdHIouBRjUm+4gZPkBkyoNt0XIB3z8Z6dr2V+SQ4t
+	tnWFt743kpWNj3H7tjYdzdEh4bCNc9hVgRccQ
+X-Gm-Gg: ASbGnctZOtLiJCrckXSllMWFDH9fvNMtrRM93tXsPYZGjmIY3p0hWz6wDIbH9HvZOXA
+	/My7onHL3zWewXSkg7o8tGbDNeVpa7rNwol++smKvidtOUamnMI4Joyq1TQTUJ2tq4xQkgDCAwp
+	EfETbpuI/b62K9t9uv/kj+aEH+kHUiXfYk7a1gg/7XXV4k+gpKTg==
+X-Google-Smtp-Source: AGHT+IHLzZqsyxKnFOlVbanhCF6K+dSqiXmiGykJHfhgZkYJbBPhDSJj+AaO+At+BG53ifRemilin7/tcbsNCn+/UW8=
+X-Received: by 2002:a05:6402:34b:b0:5f8:7b57:e5c2 with SMTP id
+ 4fb4d7f45d1cf-5fbe76e3f1amr2232a12.4.1746543123157; Tue, 06 May 2025 07:52:03
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] rtc: pm8xxx: drop unused module alias
-To: Johan Hovold <johan+linaro@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Paul Cercueil <paul@crapouillou.net>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Sebastian Reichel <sre@kernel.org>, linux-rtc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250423130318.31244-1-johan+linaro@kernel.org>
- <20250423130318.31244-6-johan+linaro@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250423130318.31244-6-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250505193828.21759-1-kuniyu@amazon.com> <20250505194451.22723-1-kuniyu@amazon.com>
+ <CAG48ez2YRJxDmAZEOSWVvCyz0fkHN2NaC=_mLzcLibVKVOWqHw@mail.gmail.com> <20250506-zertifikat-teint-d866c715291a@brauner>
+In-Reply-To: <20250506-zertifikat-teint-d866c715291a@brauner>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 6 May 2025 16:51:25 +0200
+X-Gm-Features: ATxdqUHI--OKwW_7qiujfbC9sS_wAultDtuvkQ3Tg-rFn9ttA_E9C5i8WH_N6MI
+Message-ID: <CAG48ez25gm3kgrS_q3jPiN0k6+-AMbNG4p9MPAD4E1WByc=VBA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow coredumping
+ tasks to connect to coredump socket
+To: Christian Brauner <brauner@kernel.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, alexander@mihalicyn.com, bluca@debian.org, 
+	daan.j.demeyer@gmail.com, davem@davemloft.net, david@readahead.eu, 
+	edumazet@google.com, horms@kernel.org, jack@suse.cz, kuba@kernel.org, 
+	lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, me@yhndnzj.com, netdev@vger.kernel.org, 
+	oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/04/2025 15:03, Johan Hovold wrote:
-> The driver only support OF probe so drop the unused platform module
-> alias.
-> 
-> Fixes: 5a418558cdae ("rtc: pm8xxx: add support for devicetree")
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+On Tue, May 6, 2025 at 9:39=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+> > ("a kernel socket" is not necessarily the same as "a kernel socket
+> > intended for core dumping")
+>
+> Indeed. The usermodehelper is a kernel protocol. Here it's the task with
+> its own credentials that's connecting to a userspace socket. Which makes
+> this very elegant because it's just userspace IPC. No one is running
+> around with kernel credentials anywhere.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+To be clear: I think your current patch is using special kernel
+privileges in one regard, because kernel_connect() bypasses the
+security_socket_connect() security hook. I think it is a good thing
+that it bypasses security hooks in this way; I think we wouldn't want
+LSMs to get in the way of this special connect(), since the task in
+whose context the connect() call happens is not in control of this
+connection; the system administrator is the one who decided that this
+connect() should happen on core dumps. It is kind of inconsistent
+though that that separate security_unix_stream_connect() LSM hook will
+still be invoked in this case, and we might have to watch out to make
+sure that LSMs won't end up blocking such connections... which I think
+is related to what Mickael was saying on the other thread. Landlock
+currently doesn't filter abstract connections at that hook, so for now
+this would only be relevant for SELinux and Smack. I guess those are
+maybe less problematic in this regard because they work on full-system
+policies rather than app-specific policies; but still, with the
+current implementation, SELinux/Smack policies would need to be
+designed to allow processes to connect to the core dumping socket to
+make core dumping work.
 
