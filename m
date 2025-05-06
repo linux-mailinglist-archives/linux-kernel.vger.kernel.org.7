@@ -1,313 +1,207 @@
-Return-Path: <linux-kernel+bounces-636699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9521AACEF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:50:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1344CAACEDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF6B8982371
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 20:50:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F294A1C07A1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 20:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905F11DE3BB;
-	Tue,  6 May 2025 20:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F9015530C;
+	Tue,  6 May 2025 20:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="DVgMwE1g"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="D56GcaL0"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36C215442A;
-	Tue,  6 May 2025 20:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746564584; cv=none; b=sYcqT3tZCZX4rua3u5TXR2/R3eQgYeZI7ltVnUy3X6gkzsgyI30fnMlnGtB6enVwM0GSjX0XqzJdrBqrVCucug6WJOhmX7kwM53RKredcF2Tdqo/DEqacDxZ8h+HZ5pZU730+Wy0K1v/62wLUnMq4u70AtTbyAeqobsspBiXUzo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746564584; c=relaxed/simple;
-	bh=y9O0cKWr/GhlP3nisOVEX/6jmqzzdahTsgDvin4Izz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lwMrWm3DMENdakHfO8UacLxwTmTZNkAF1z4xpOIWEABObaf8LFr7wYHlR4fvc9VWtNyptsbHVT1F6Q15kh7O4bF9/g7FUHW5Ngpva+bsL3RfaYopGzFhyhhf8CeM8DyRqbZxido9EokWQMsjysNo0SZtGijFz5HA6KdIat12Oxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=DVgMwE1g; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [217.114.34.19])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8D04C666BAC;
-	Tue,  6 May 2025 22:49:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1746564574;
-	bh=y9O0cKWr/GhlP3nisOVEX/6jmqzzdahTsgDvin4Izz0=;
-	h=From:Subject:Date;
-	b=DVgMwE1gPNPtDts3zflWnnaNsIydvFucL/gIiLIamonNDsjMGj8ebtXMRMjcNKh5x
-	 ePTRApCGbGeSfxcSQM/e2ed6PES0i6ilBy04vaFLjjb9J+jTghtA7AtUyVZFKXWDcJ
-	 eiWQO0HuJYVXcsEeKX6pRU5pfkNAWKbBWdxe70nudX/AFZZ9Ebd8JcH1GX9zzE/P9K
-	 3nKHEaFoTtdxnOuWMiUE878CMNQI+DGfL5tgRM4+7D33t3LP3H2hSZd63FAhECkcRX
-	 BszCrr0sdF4qYBz3Bob5VGyRzg3GAKtsohup1fWVm2q+BUdus1I+Yv05VOmIqb0eWx
-	 KV3Q+6+2EFaOg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Christian Loehle <christian.loehle@arm.com>
-Subject:
- [PATCH v2 5/7] cpufreq: intel_pstate: EAS support for hybrid platforms
-Date: Tue, 06 May 2025 22:44:30 +0200
-Message-ID: <6057101.MhkbZ0Pkbq@rjwysocki.net>
-In-Reply-To: <2999205.e9J7NaK4W3@rjwysocki.net>
-References: <2999205.e9J7NaK4W3@rjwysocki.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159BB1388
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 20:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746564302; cv=fail; b=TAXELTPPmeYR5HLIXB8YNy/SoULdMuCGh6LjJrATJ0uXFXSmaGeNie+K4wWjXJdr/KCSVcnwwOWj8roD8O5f2lK0exF72+4kHf9NiY3Z7O5LsuJrcLmQ7UB+QtcZ95SKPbQ7x5cjeiH0zd0ehUSfNeJ7mnV8oDpj80sStT85BWY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746564302; c=relaxed/simple;
+	bh=J1t1liO7kP+15jMmg9yDvyVhy54zAdMoquULSicjm7c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lrQ5UmiQiDFuPPAif49xJKizqj6cX5B2Fyqv1+ybgbqU5/9mC2fMW9pGe8NfiALGroi6qIgsspzOI04KRgxMd0BcO9gTh/rFMGR8MvZqddaoyq3my+KsOrMWrX5NbXcU3Sx6G2GGauKiwtNNRI9ytpqH4Y0frRRZkLj/a+7IkgM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=D56GcaL0; arc=fail smtp.client-ip=40.107.92.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aJrjXxWuuq2A59bZ72Tqu9LmeZ43/Z0oSpEvzYPa7rmKkThK3XP/epGQPR24U1XxLMw3rrsadA4lRA3L0xqd7p2LArdx7scK6Z7nN/qLoeGgZuqcIZMlipmw97X/HBK7YGkhysfYvk4acHC4KooVGzg+saKan21adhDQu4IwCGqO8qUuD4jnmONUyXT0K5XFi1ryewHgK+reNu3sD2WUolDETNHI1PDXjXabebVVhEqEnGUVmb5vEO0mIKSDFDr/lYWsbMsWHlOg3IXaevEiDjXgaxtGL4pq0feq6G1kqfSJKmT599hoAISOWQ4Q4hspeZFTRxIYrDkaReYJR1CFyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5tH2aBzTLtGyOv5D7f7OeME/gvHNM1uvC6mzTtLdJQE=;
+ b=CpyV7sroFdumwDXSmtPHzBSHmm7DwplpqEaBwWs54ed8ykyG3XCYy6U0TIn0ZFlsJPZ6DmZn9oZcl5nD0r8lgpJvDLVmhbhpMJpcEehOZHx5FmL9Kb9B6PCdka02GjKXJlE7+6tVZmf/ACkUm83SzL/nOMQn7+3wh8tzhWWqER4QWxn25l4hbKy/42/+UHagD0TqMt5tk8SbcV0Mfa6IFEYZlrxxjHZmNf26TgF04VWagKoY/IYOBGn262V9HaiRFewTto8HWTuh/llDHCSCC3efVdoq16mwrsEjD4D+jW6PFplDB4YHDV+HDtzFnhJOjt2tSp3KU4FIs1vevcXPVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5tH2aBzTLtGyOv5D7f7OeME/gvHNM1uvC6mzTtLdJQE=;
+ b=D56GcaL05AACcrNACB521xL6fWRlmqSAfX7krICDSHO8grFn0hR3KSach5heMMriZdAI8F23OZrGkHnOIVj95U0gTzcN0e3+7fWuluSR3seP8aMmaLYSyiYlpGyAHsX0NBkUrbG5/jc3R8oefHMGTEUjPCCN+vjr25Lzz4R+uZA=
+Received: from BLAPR03CA0086.namprd03.prod.outlook.com (2603:10b6:208:329::31)
+ by CY5PR12MB6036.namprd12.prod.outlook.com (2603:10b6:930:2c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Tue, 6 May
+ 2025 20:44:52 +0000
+Received: from BN3PEPF0000B076.namprd04.prod.outlook.com
+ (2603:10b6:208:329:cafe::41) by BLAPR03CA0086.outlook.office365.com
+ (2603:10b6:208:329::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.30 via Frontend Transport; Tue,
+ 6 May 2025 20:44:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN3PEPF0000B076.mail.protection.outlook.com (10.167.243.121) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 20:44:51 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 May
+ 2025 15:44:51 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 May
+ 2025 15:44:51 -0500
+Received: from amd-BIRMANPLUS.mshome.net (10.180.168.240) by
+ SATLEXMB03.amd.com (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39
+ via Frontend Transport; Tue, 6 May 2025 15:44:50 -0500
+From: Jason Andryuk <jason.andryuk@amd.com>
+To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
+	<sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>
+CC: Jason Andryuk <jason.andryuk@amd.com>, <xen-devel@lists.xenproject.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] xenbus: Allow PVH dom0 a non-local xenstore
+Date: Tue, 6 May 2025 16:44:56 -0400
+Message-ID: <20250506204456.5220-1-jason.andryuk@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 217.114.34.19
-X-CLIENT-HOSTNAME: 217.114.34.19
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeegleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppedvudejrdduudegrdefgedrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddujedruddugedrfeegrdduledphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B076:EE_|CY5PR12MB6036:EE_
+X-MS-Office365-Filtering-Correlation-Id: 054fefcc-122c-473c-6933-08dd8cded9b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kq7VJbIXgT0QVpxbz4uqZUDZPrzqKCRkf3HWW0vaFIlRkUNwhI00rKYNOAWZ?=
+ =?us-ascii?Q?hCqTyf6mOiUn4uuQ0zkP5DziDGCjltqwjL54ZCnnvaTkHl/KEwnaV9VM8fHT?=
+ =?us-ascii?Q?rwdXNCyY+7RI4z0CJXTeU3PsnNSt9gFwXm7llnBZF9esRsKO96pPyKOM4LNu?=
+ =?us-ascii?Q?bv9zEX/Hw5/oMgnp4oPz8ys4D5ZrmQ/Azj4x4ep/FIgZrg2vAjwfZUGclJl5?=
+ =?us-ascii?Q?H8MGlLOftrBNnoWfSPP48+NS7yci8SwWL/2+7mOoJa+fH7uQq+9YQavQ3RZ7?=
+ =?us-ascii?Q?nnsaxjxhg/6tgO+EdXWPf9uKcEfNTDnMrerXuwmueLxLngYOgml2wp6RTu4q?=
+ =?us-ascii?Q?TlJA5JMQ2ohH+y4GulHaVw7/VwYey/5o6UPty78zdf1ANzemYrDiC6v9nakV?=
+ =?us-ascii?Q?n86Tq07kyYDMPMLOuGe7+lz0/SqpZxoaJoRbOlhLFC/qj+mjst97jJjrS/xl?=
+ =?us-ascii?Q?CaEpR/TYOtK9R//cV9yyMYHxhBpRCRwESBL9xBqox/vtK9lfsOJk77ePsYwk?=
+ =?us-ascii?Q?IULzCzXZk8uUhrQPuinLmcBXM6FxxNkVYQ5JhbASqPn7n04iabX+KPglaKpg?=
+ =?us-ascii?Q?6SCaVJZNGe0qXO7w+mlAxdfssTWOsgt4QjzXRwBytmp+yOkcyclyGwJMncky?=
+ =?us-ascii?Q?ZNsDFwMnhSGJNFDwCR47VJm+1BLsIf3aUlzSrOCxXtmgEfLP/LObx0qRkMGq?=
+ =?us-ascii?Q?Po4TP2CHGfBr944HtEvkQEjNrOkA4aNRajorLvDCzjZcVlnBmRuIfKMGBsY0?=
+ =?us-ascii?Q?uIL/J06m3vKA+K+JF+nq8MQQZ2mAx4RW090zSjAbkmdC2tk0GUCaf6FwyZ/i?=
+ =?us-ascii?Q?zWeQRQVkh6Wu/Kmy0SFquTYsFdZAghuUabASxN76hbU6u/iRl+uESPf1sZsn?=
+ =?us-ascii?Q?LHrTZdYc225RU3LieR2DxIpHFQ+W4jZ+W5WZO2iZyiSh3Ow9s0m70d8mt6YY?=
+ =?us-ascii?Q?AxWLUeCHhskOPHenomR6Pxe5czH0Y7o9SMFri9WOkmSvr267Dzp58wrNrBnV?=
+ =?us-ascii?Q?Jb4u1XhS2u0GeowFxdvSQ9oadazb9FAbCXAqO146n3IZqCYrDLD9mxVzsNFw?=
+ =?us-ascii?Q?l5LgNiWPmHOSOdnYJZY+KJtf4gZUZq6Jwuw/VFrW5kM9wSLZ2TE3c8roRuZm?=
+ =?us-ascii?Q?FmfMkMJEBY1a3vXfXqZIuMV5I/fuUuZZL9OS61pVoFjJQXVvYMmdXMRDVz91?=
+ =?us-ascii?Q?2GEb5eKQYgfPHgCc7R3uKCVuonhXLa/FOqwcy930LXJxVGG/eIq5bFg/mvi9?=
+ =?us-ascii?Q?Cm4kaDLlVAs+PmNp7U/JydPmaTdFSzsmYNFATZN+hKrYuNots7n0ZUTeef1w?=
+ =?us-ascii?Q?l0WD4KuN8qtFIjBr8wmFBLfSjEpbMpD0S3o1SDY0sEIGDZer4dLjAEUb7vaX?=
+ =?us-ascii?Q?MvE7yW4TYa/6dr7S8GnQMdC4F0dbXn510YLDl8lfMUDly/Xyh/LH57xJz06V?=
+ =?us-ascii?Q?zP94PL/0SvA4RgNYL0Gvmlmy4znpt+DYoJS9ypWdzExwpn2QIgLfjE/FZYWD?=
+ =?us-ascii?Q?5SLRz5zt1izzkGo/+XRxl2CJZux1NewJbAJK?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 20:44:51.8897
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 054fefcc-122c-473c-6933-08dd8cded9b0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B076.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6036
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Make xenbus_init() allow a non-local xenstore for a PVH dom0 - it is
+currently forced to XS_LOCAL.  With Hyperlaunch booting dom0 and a
+xenstore stubdom, dom0 can be handled as a regular XS_HVM following the
+late init path.
 
-Modify intel_pstate to register EM perf domains for CPUs on hybrid
-platforms without SMT which causes EAS to be enabled on them when
-schedutil is used as the cpufreq governor (which requires intel_pstate
-to operate in the passive mode).
+Ideally we'd drop the use of xen_initial_domain() and just check for the
+event channel instead.  However, ARM has a xen,enhanced no-xenstore
+mode, where the event channel and PFN would both be 0.  Retain the
+xen_initial_domain() check, and use that for an additional check when
+the event channel is 0.
 
-This change is targeting platforms (for example, Lunar Lake) where the
-"little" CPUs (E-cores) are always more energy-efficient than the "big"
-or "performance" CPUs (P-cores) when run at the same HWP performance
-level, so it is sufficient to tell EAS that E-cores are always preferred
-(so long as there is enough spare capacity on one of them to run the
-given task).  However, migrating tasks between CPUs of the same type
-too often is not desirable because it may hurt both performance and
-energy efficiency due to leaving warm caches behind.
+Check the full 64bit HVM_PARAM_STORE_EVTCHN value to catch the off
+chance that high bits are set for the 32bit event channel.
 
-For this reason, register a separate perf domain for each CPU and choose
-the cost values for them so that the cost mostly depends on the CPU type,
-but there is also a small component of it depending on the performance
-level (utilization) which helps to balance the load between CPUs of the
-same type.
-
-The cost component related to the CPU type is computed with the help of
-the observation that the IPC metric value for a given CPU is inversely
-proportional to its performance-to-frequency scaling factor and the cost
-of running code on it can be assumed to be roughly proportional to that
-IPC ratio (in principle, the higher the IPC ratio, the more resources
-are utilized when running at a given frequency, so the cost should be
-higher).
-
-For all CPUs that are online at the system initialization time, EM perf
-domains are registered when the driver starts up, after asymmetric
-capacity support has been enabled.  For the CPUs that become online
-later, EM perf domains are registered after setting the asymmetric
-capacity for them.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Tested-by: Christian Loehle <christian.loehle@arm.com>
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+Change-Id: I5506da42e4c6b8e85079fefb2f193c8de17c7437
 ---
+v2:
+Re-add xen_initial_domain() check to avoid breaking ARM's xen,enhanced
+no-xenstore mode where event channel and PFN are both 0.
 
-v1 -> v2:
-   * Drop changes that were needed for EAS to work without schedutil.
-   * Rename em_registered to pd_registered.
-   * Adjust the changelog.
-   * Pick up tags.
+ drivers/xen/xenbus/xenbus_probe.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
----
- drivers/cpufreq/intel_pstate.c |  115 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 113 insertions(+), 2 deletions(-)
-
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -221,6 +221,7 @@
-  * @sched_flags:	Store scheduler flags for possible cross CPU update
-  * @hwp_boost_min:	Last HWP boosted min performance
-  * @suspended:		Whether or not the driver has been suspended.
-+ * @pd_registered:	Set when a perf domain is registered for this CPU.
-  * @hwp_notify_work:	workqueue for HWP notifications.
-  *
-  * This structure stores per CPU instance data for all CPUs.
-@@ -260,6 +261,9 @@
- 	unsigned int sched_flags;
- 	u32 hwp_boost_min;
- 	bool suspended;
-+#ifdef CONFIG_ENERGY_MODEL
-+	bool pd_registered;
-+#endif
- 	struct delayed_work hwp_notify_work;
- };
- 
-@@ -303,6 +307,7 @@
- 
- static struct cpufreq_driver *intel_pstate_driver __read_mostly;
- 
-+#define INTEL_PSTATE_CORE_SCALING	100000
- #define HYBRID_SCALING_FACTOR_ADL	78741
- #define HYBRID_SCALING_FACTOR_MTL	80000
- #define HYBRID_SCALING_FACTOR_LNL	86957
-@@ -311,7 +316,7 @@
- 
- static inline int core_get_scaling(void)
- {
--	return 100000;
-+	return INTEL_PSTATE_CORE_SCALING;
- }
- 
- #ifdef CONFIG_ACPI
-@@ -948,12 +953,105 @@
-  */
- static DEFINE_MUTEX(hybrid_capacity_lock);
- 
-+#ifdef CONFIG_ENERGY_MODEL
-+#define HYBRID_EM_STATE_COUNT	4
-+
-+static int hybrid_active_power(struct device *dev, unsigned long *power,
-+			       unsigned long *freq)
-+{
-+	/*
-+	 * Create "utilization bins" of 0-40%, 40%-60%, 60%-80%, and 80%-100%
-+	 * of the maximum capacity such that two CPUs of the same type will be
-+	 * regarded as equally attractive if the utilization of each of them
-+	 * falls into the same bin, which should prevent tasks from being
-+	 * migrated between them too often.
-+	 *
-+	 * For this purpose, return the "frequency" of 2 for the first
-+	 * performance level and otherwise leave the value set by the caller.
-+	 */
-+	if (!*freq)
-+		*freq = 2;
-+
-+	/* No power information. */
-+	*power = EM_MAX_POWER;
-+
-+	return 0;
-+}
-+
-+static int hybrid_get_cost(struct device *dev, unsigned long freq,
-+			   unsigned long *cost)
-+{
-+	struct pstate_data *pstate = &all_cpu_data[dev->id]->pstate;
-+
-+	/*
-+	 * The smaller the perf-to-frequency scaling factor, the larger the IPC
-+	 * ratio between the given CPU and the least capable CPU in the system.
-+	 * Regard that IPC ratio as the primary cost component and assume that
-+	 * the scaling factors for different CPU types will differ by at least
-+	 * 5% and they will not be above INTEL_PSTATE_CORE_SCALING.
-+	 *
-+	 * Add the freq value to the cost, so that the cost of running on CPUs
-+	 * of the same type in different "utilization bins" is different.
-+	 */
-+	*cost = div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->scaling) + freq;
-+
-+	return 0;
-+}
-+
-+static bool hybrid_register_perf_domain(unsigned int cpu)
-+{
-+	static const struct em_data_callback cb
-+			= EM_ADV_DATA_CB(hybrid_active_power, hybrid_get_cost);
-+	struct cpudata *cpudata = all_cpu_data[cpu];
-+	struct device *cpu_dev;
-+
-+	/*
-+	 * Registering EM perf domains without enabling asymmetric CPU capacity
-+	 * support is not really useful and one domain should not be registered
-+	 * more than once.
-+	 */
-+	if (!hybrid_max_perf_cpu || cpudata->pd_registered)
-+		return false;
-+
-+	cpu_dev = get_cpu_device(cpu);
-+	if (!cpu_dev)
-+		return false;
-+
-+	if (em_dev_register_perf_domain(cpu_dev, HYBRID_EM_STATE_COUNT, &cb,
-+					cpumask_of(cpu), false))
-+		return false;
-+
-+	cpudata->pd_registered = true;
-+
-+	return true;
-+}
-+
-+static void hybrid_register_all_perf_domains(void)
-+{
-+	unsigned int cpu;
-+
-+	for_each_online_cpu(cpu)
-+		hybrid_register_perf_domain(cpu);
-+}
-+
-+static void hybrid_update_perf_domain(struct cpudata *cpu)
-+{
-+	if (cpu->pd_registered)
-+		em_adjust_cpu_capacity(cpu->cpu);
-+}
-+#else /* !CONFIG_ENERGY_MODEL */
-+static inline bool hybrid_register_perf_domain(unsigned int cpu) { return false; }
-+static inline void hybrid_register_all_perf_domains(void) {}
-+static inline void hybrid_update_perf_domain(struct cpudata *cpu) {}
-+#endif /* CONFIG_ENERGY_MODEL */
-+
- static void hybrid_set_cpu_capacity(struct cpudata *cpu)
- {
- 	arch_set_cpu_capacity(cpu->cpu, cpu->capacity_perf,
- 			      hybrid_max_perf_cpu->capacity_perf,
- 			      cpu->capacity_perf,
- 			      cpu->pstate.max_pstate_physical);
-+	hybrid_update_perf_domain(cpu);
- 
- 	pr_debug("CPU%d: perf = %u, max. perf = %u, base perf = %d\n", cpu->cpu,
- 		 cpu->capacity_perf, hybrid_max_perf_cpu->capacity_perf,
-@@ -1042,6 +1140,11 @@
- 	guard(mutex)(&hybrid_capacity_lock);
- 
- 	__hybrid_refresh_cpu_capacity_scaling();
-+	/*
-+	 * Perf domains are not registered before setting hybrid_max_perf_cpu,
-+	 * so register them all after setting up CPU capacity scaling.
-+	 */
-+	hybrid_register_all_perf_domains();
- }
- 
- static void hybrid_init_cpu_capacity_scaling(bool refresh)
-@@ -1069,7 +1172,7 @@
- 		hybrid_refresh_cpu_capacity_scaling();
- 		/*
- 		 * Disabling ITMT causes sched domains to be rebuilt to disable asym
--		 * packing and enable asym capacity.
-+		 * packing and enable asym capacity and EAS.
- 		 */
- 		sched_clear_itmt_support();
- 	}
-@@ -1147,6 +1250,14 @@
- 	}
- 
- 	hybrid_set_cpu_capacity(cpu);
-+	/*
-+	 * If the CPU was offline to start with and it is going online for the
-+	 * first time, a perf domain needs to be registered for it if hybrid
-+	 * capacity scaling has been enabled already.  In that case, sched
-+	 * domains need to be rebuilt to take the new perf domain into account.
-+	 */
-+	if (hybrid_register_perf_domain(cpu->cpu))
-+		em_rebuild_sched_domains();
- 
- unlock:
- 	mutex_unlock(&hybrid_capacity_lock);
-
-
+diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+index 22d3f90ee205..b12cbd9663e3 100644
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -969,9 +969,15 @@ static int __init xenbus_init(void)
+ 	if (xen_pv_domain())
+ 		xen_store_domain_type = XS_PV;
+ 	if (xen_hvm_domain())
++	{
+ 		xen_store_domain_type = XS_HVM;
+-	if (xen_hvm_domain() && xen_initial_domain())
+-		xen_store_domain_type = XS_LOCAL;
++		err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
++		if (err)
++			goto out_error;
++		xen_store_evtchn = (int)v;
++		if (!v && xen_initial_domain())
++			xen_store_domain_type = XS_LOCAL;
++	}
+ 	if (xen_pv_domain() && !xen_start_info->store_evtchn)
+ 		xen_store_domain_type = XS_LOCAL;
+ 	if (xen_pv_domain() && xen_start_info->store_evtchn)
+@@ -990,10 +996,6 @@ static int __init xenbus_init(void)
+ 		xen_store_interface = gfn_to_virt(xen_store_gfn);
+ 		break;
+ 	case XS_HVM:
+-		err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
+-		if (err)
+-			goto out_error;
+-		xen_store_evtchn = (int)v;
+ 		err = hvm_get_parameter(HVM_PARAM_STORE_PFN, &v);
+ 		if (err)
+ 			goto out_error;
+-- 
+2.34.1
 
 
