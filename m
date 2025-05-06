@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-635544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB5BAABEFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E7AAABF0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A48CE3AB575
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:17:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E73D3AFAA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E94C26C389;
-	Tue,  6 May 2025 09:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A8926FD8B;
+	Tue,  6 May 2025 09:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OGyt8rjK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsLyrCFr"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE339269830;
-	Tue,  6 May 2025 09:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6873A26FA4F;
+	Tue,  6 May 2025 09:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746522970; cv=none; b=ga+ClPI/DY8HhahOqlFzFGXgcg1hvBJ22XcOOiIz4XWnwVGM9iyJBYhOy8cdzAZU7XRixIFDUhiRIqw3JZbHxC9AF24ob02iNEiL9q/5JIu9EZYAiBDeG2SX/T8t67xOPNwtwU6Y6E69E6EPRFCQYmJdy4PSeBMk9ps++FgfHhg=
+	t=1746523006; cv=none; b=nWWKjdbN7BMDGwagGXG8YBxm1CptOGiIxBL6melryFPJ0dIBc3ByzW28zEvQcbm0RorgAiz7OvP6orbIZfTu4w4WLglkOWhh8i8Wuh+bEL33/4k/3+uy5hUovPmGA544sBhC9Upjj28d8I+lW8Y7fTw2+lfqA4v7pzji/xfqWg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746522970; c=relaxed/simple;
-	bh=S7/3VLDA1RIND7UxaCcCDA0lsvj7M51DW3YboxGIO4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=j8C0PwVdbgiatvCvvTp8CgIIr4art93rHHBtitNeC9ITe6tskR+1UGhAP5cH1vV1VjZTqUasHQ8OgXMcHZdvW2xnn3q1Vt7yzOUuATxuJCEdMep4k2pEYGbiFJXEAZ7byBc2A22mEQkVKxUGSGgWprwANVJc7AwfqW1cg8pQGpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OGyt8rjK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54689Mo2016421;
-	Tue, 6 May 2025 09:16:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H+i9i8ImRxA46EYRIDvhu1IXJYbczbMrTh8b7hdd0O4=; b=OGyt8rjKAgYVEwMZ
-	E370siuhcmjKECxUgkbiu6BKm2wl+T1Zef8XzHSZYCJ8W/53W8CBxPNkM8zltwld
-	SgY6LIe5C0c+YjFPCCn0WfwE9HnfaCUZT+uMFQVs2IR0HhzLhBHrLMroMvxDReC0
-	iAY5xTQK8m4WUv265wnpJp5j7Km+flVKjfMdj/rBLIN7n4vKH+8LosgxRxmwBike
-	lhmJFKWUnuoS/WgAifFSyjiJqG+HSBW9NtODme+IPBuKgd5698fEwrpAiCwb9CKk
-	yEifYqXXAnhDB+GaGzwgU+wsXaiLcu/kiEz17EJwPhOLyLR84VQf+kX/nQ1Dn32V
-	uGCsPw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46e0xswh2r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 09:16:03 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5469G1WU004379
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 May 2025 09:16:01 GMT
-Received: from [10.216.1.69] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 May 2025
- 02:15:55 -0700
-Message-ID: <a7d84f8b-84c7-43db-9771-643ebec3edc1@quicinc.com>
-Date: Tue, 6 May 2025 14:45:52 +0530
+	s=arc-20240116; t=1746523006; c=relaxed/simple;
+	bh=nRFtA0I4OFRgZKas2V+4TF+RIvrJztMih/WYQj0oNJA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LNG2hQ7IprFkyubiPCY7cVs3kYOddoySALCQjfhk8Ktjpml1WzufSTfqGJIMWA6tk5C8EfjML5DulP/++LjvmOnK0/O+3JEONb6fj5cV/znQd27DXhYmkrCAbD0DQGfh6CytEXQtP75vmcLwCOSNHjiFE7W0N0g/7MXX4fMciRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LsLyrCFr; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54af20849bbso6198146e87.0;
+        Tue, 06 May 2025 02:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746523001; x=1747127801; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dFhdrQg9VjOK5o+w3dNEthEuz25cmcD0YW5MAF0oO54=;
+        b=LsLyrCFrS/nt6hiLE69QHY1IqIm14mu2aZWh19yfQ6R6iWe9x39A9cs33oW5RHso5V
+         TdYRCiWQZrv1hMMeU/8dA4HrgMqwQqddZjM1ln4FSglDHI55B0d2A7pkJj8+rKvDa7DU
+         yUCL+OuDz+90qvLhqFNZvJocds/msacJ+xdXY1CIrU9nU9sYg06VMhMCxhqwz45pvt/l
+         7LNyWmO1Rlp4rjEP2s4YMuDuweGAdefCKLM2dsx5dQKoFpAKMlkwGUfEbnw1ys++0gjC
+         JgVIZyy+GfaNI5cIqB3tof/yOnQRh0vjSJEWJQcptkdgOSMjt+FxaOwsRJzEhIqGBHs3
+         s0cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746523001; x=1747127801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dFhdrQg9VjOK5o+w3dNEthEuz25cmcD0YW5MAF0oO54=;
+        b=J9jLz+HSwT+2Em/mZydcH9LbgDEAUJr2/amuBFHqOBEkw4/QDA/rYQZaRpRcZ/3/25
+         4Y8H2LhUV13l8nqLfEmN63cnxT4nZ0D7nx8NeG0ewDdyBjQ0aaXf4vbxHB2zBtlt7MuK
+         FKq1GGn47Iu13wLy6Ir6+0G9XBvdf/4rK7awFcDeUJL17xk8qCX/8WzbQvCURJt41FMR
+         w71Tj7IJAEUq0McvWJdyT3MesRFribBUvCu25WoXoAPd35dsK/nsnolD7sGmIPXNgEvF
+         7qvy1H/Zs+JtSyBkPKUt4sQRcQ3R6zl0x/TMxjfSwx4gAae4EGPAPWBhUT/U+5rvP5lM
+         i/ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoUuJoNTLvudEHQR9ZHO9i1E4PdE5u0H5y22wxlGlq9FgQKhHOKdkpfzBJOcKtAnzJlJpZTnjL5FIUPg==@vger.kernel.org, AJvYcCVtHLBMxcefth8a4OSGQLi33jU+KfNBL2D2zrthd20i5qwWYx8lWRa2S1c/72OXS69mZv4Dc9uSyj+QXgNmwyo=@vger.kernel.org, AJvYcCW72zmi8s0o/kg7TF8+8jzXSkVtjV9U+NCjy+hz95+JfMdzc9zKSmWDn/A2dprI+dgvfYFOBioaRliyc3c1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7liRQrGdctgQgPnJp3AaOA6aqsZpKsV53kPhmHmvX++qOgdac
+	fUwy3zGWMppFiPIfzPs8jGSY6CCpGIJJGwsxQL8053t0lOl2cavRBWbAGUcwr6xj/q6b+6dv1Kv
+	zR/FDg78bU/ns1LzkDGnmlL/xy7VYYAqZilg=
+X-Gm-Gg: ASbGncvoOwKncG4Eyo/y7p0C9zHDuO+wgNo85sHCuIZOkvhoeNwlV+XN1a6MqmeOc8L
+	JhQhCyN5+P/62PsOcrl1YR84BcOgOBGO00dHlVHAxK787CEdRbOI4wMCFH1NfY/egKa/PXQdiEC
+	DBiRUSE+Ng7w0nMvVEMiKw5uU=
+X-Google-Smtp-Source: AGHT+IFg6WE7j8FSGTac7AwWN6IfBm6BGTQTRX79tY25IYyGnXzIH3FUSkGCAyHgyH2w/ZukrNan9JItD5yPEyQJP8U=
+X-Received: by 2002:a05:6512:6cc:b0:545:a2f:22ba with SMTP id
+ 2adb3069b0e04-54fb4a67cb6mr724690e87.37.1746523001039; Tue, 06 May 2025
+ 02:16:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/5] Add support to load QUP SE firmware from
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andi.shyti@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <johan+linaro@kernel.org>, <dianders@chromium.org>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>
-CC: <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
-References: <20250503111029.3583807-1-quic_vdadhani@quicinc.com>
- <64268903-fec1-4418-95ac-665738435366@oss.qualcomm.com>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <64268903-fec1-4418-95ac-665738435366@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZvaWsEvcUWVpURK_FQfOeIwb63Ezxn6Y
-X-Proofpoint-ORIG-GUID: ZvaWsEvcUWVpURK_FQfOeIwb63Ezxn6Y
-X-Authority-Analysis: v=2.4 cv=bdprUPPB c=1 sm=1 tr=0 ts=6819d353 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
- a=_d-tbIjX12GQMK_ZyKIA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDA4OCBTYWx0ZWRfX9J2E3+4KW4hg
- 3jEEpUDjnJjtp1/2Fi/oKP7luW4zapQThO3SJtG+tnvyg5rINKlDWeZo2B2t/b5xt5GKp2Efcj+
- TgkE9+cghTl0rWDLXkegq2005Ko/pqFm1dYxYfgWrQalHJLQfqkkWzErycAZF5PxpHn5Ou9+7BB
- qDfhB+PDPV3+7jf3cvkLm5b6KOcQn8HI7CbJn0diT/Wk+wyQjjAC0sqqUOkMbhHq+vK/1lDbvyo
- SJ4kyddwpB/E2xYQGSMpLpl+oAeP4ZCbvNdDoqwKoMANo8w/vfRGKrrD8sd3yxSgIeEBL7aB7II
- tWlHwl+NfdNvEErS+VWWi0if40Z1/wAtRB4TfMhAvWxoPRa0UyiaU4V/TX7i/cnbtMvPS4czrJM
- rAxHGFol0PfKWBrAGeVhqHuJkMUxA5Lb9vD7vuKpKbF6CocrFysF4mxKNQEFIqWWxwMVwBd9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_04,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
- mlxlogscore=999 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505060088
+References: <aBSEwag_ducqOwy7@stanley.mountain>
+In-Reply-To: <aBSEwag_ducqOwy7@stanley.mountain>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+Date: Tue, 6 May 2025 17:16:03 +0800
+X-Gm-Features: ATxdqUFNvs-6aP2yLuFUCy6zY-YKCHM9vIIJ1LromY7V5gmh-56UOb_wQLCMNr8
+Message-ID: <CAJhJPsUZz2kwMyWPDrc_ktb5O6ECcAyO1OrXXVWh9yvkrKRidg@mail.gmail.com>
+Subject: Re: [PATCH next] mtd: rawnand: loongson1: Fix error code in ls1x_nand_dma_transfer()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, May 2, 2025 at 4:39=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> The "desc" variable is NULL and PTR_ERR(NULL) is zero/success.  Return
+> a negative error code instead.
+>
+> Fixes: d2d10ede04b1 ("mtd: rawnand: Add Loongson-1 NAND Controller Driver=
+")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> It's hard to know what the patch prefix should be here.  Ideally when we
+> add a new driver we would use the patch prefix for the driver.
+>
+> Tired: subsystem: Add driver XXX
+> Wired: subsystem: XXX: Add driver for XXX
+>
+>  drivers/mtd/nand/raw/loongson1-nand-controller.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mtd/nand/raw/loongson1-nand-controller.c b/drivers/m=
+td/nand/raw/loongson1-nand-controller.c
+> index 6a369b1c7d86..8754bb4f8b56 100644
+> --- a/drivers/mtd/nand/raw/loongson1-nand-controller.c
+> +++ b/drivers/mtd/nand/raw/loongson1-nand-controller.c
+> @@ -371,7 +371,7 @@ static int ls1x_nand_dma_transfer(struct ls1x_nand_ho=
+st *host, struct ls1x_nand_
+>         desc =3D dmaengine_prep_slave_single(chan, dma_addr, op->len, xfe=
+r_dir, DMA_PREP_INTERRUPT);
+>         if (!desc) {
+>                 dev_err(dev, "failed to prepare DMA descriptor\n");
+> -               ret =3D PTR_ERR(desc);
+> +               ret =3D -ENOMEM;
+
+Thank you for fixing this issue.
+However, I believe -EIO is more appropriate than -ENOMEM, since
+dmaengine_prep_slave_single() can return errors other than -ENOMEM.
+
+>                 goto err;
+>         }
+>         desc->callback =3D ls1x_nand_dma_callback;
+> --
+> 2.47.2
+>
 
 
+--=20
+Best regards,
 
-On 5/3/2025 4:50 PM, Konrad Dybcio wrote:
-> On 5/3/25 1:10 PM, Viken Dadhaniya wrote:
-> 
-> You sent this series at 1:10 PM and replied to review comments on the
-> previous revision at 1:11 PM - please refrain from doing that, as
-> you're effectively stalling your submission because of lingering
-> unsolved problems that ultimately still need to be solved before
-> the patches are merged.
-> 
-> Konrad
-
-Sure, I will take care of it in future patches.
+Keguang Zhang
 
