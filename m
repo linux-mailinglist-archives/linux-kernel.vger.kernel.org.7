@@ -1,61 +1,68 @@
-Return-Path: <linux-kernel+bounces-635092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 109C9AAB99D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:00:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E859BAAB961
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE653A31F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:52:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 194F8170F33
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9842BFC62;
-	Tue,  6 May 2025 04:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63C027E7D4;
+	Tue,  6 May 2025 04:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="h3AzWpOn"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TuBAV8i0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5437F30916E;
-	Tue,  6 May 2025 02:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9783103F7
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 02:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498831; cv=none; b=Cpm62BY5i9rS1YzxhmagJeFlXdFJvBoG7c6BhzpxzFp915ZUjZk7f2q1gePYfA+wm0aaFa+2vdT22K2pllx6ZJAGYwvxyDQkqq1cJr3QznvV4aDzL2cFA88SQYXQkZkg7kOHr7xpKbtq55KBElPCmZVtsqCLbG/wSTepA5xKB5o=
+	t=1746499213; cv=none; b=ls0M9rKyHw2TgIdCRO5RE5eEQxYQUfjeeoWLkI/ABZx7z6hKAIRj7kvb58AzSTC8oycGMLZtHrHdqwW0EmJJB9S+I2JhjRBR4IIF/Kkbr3gHe8pjF/nodGlroZMRzlP4bC2FpDCbXgnqnIkqwKrH0h3+9ZKEmIR3CJ5fE6uSDCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498831; c=relaxed/simple;
-	bh=xVlNlU4XQoRh4d4EOhjr3P9ThvWqnSPcN2Gd0m7hlgM=;
+	s=arc-20240116; t=1746499213; c=relaxed/simple;
+	bh=CTbLsyl58iltfZZfRBi+FNlAbbyFqCv8E4mvbDWbueA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R10jx+dfv4RmsypHVJpx/BrxUf4en55O8lBhK4l7MXxPgP+aKDd/IFU0ObV7vT02RpyuIlLFXvh6a+xTyYFfmsep6xR9TJ9PRwWPYJYEE1xY+CtCbMOrmvJsuRNT6jo0cfdVGYtBj2m5e/WtWc+feyv00OO4lgGu4pzBkIvOV8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=h3AzWpOn; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=nxrM5dMhPcSwrVYbGQa0JbLBq2iuzf/yihTR/MkMTc8=; b=h3AzWpOnnleKePJmJrJtIjaTy0
-	QYS/X0mNwevFaZIHMwAuJT81OygmdER+/ycBtOmW/DsT1/Q/TSkF/6h1zfZAIxEMKdTSfxwFnr0mA
-	kywQBwyzfYo6jWU/YQWSa7nLRLwlWsCSMa/rhptPVYgoknpYSdIHESn5ggxHSHwpFjmBmQVgQYJv6
-	bx4X2gGEoceBMEGc9spZUgehux0sMIZEarmmDxNW05K8RWs53QzqE9fyo5jYgATA+H4sS2JCTKiXG
-	SeIVDOPehY+dggYBgTRa7kDh9+uCvOHgCUsOIpKH6b1bYf7ZEz1jQ/ihSfUnrEqcA1MKazOwJ38kQ
-	jV+Zyf9w==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uC87r-003lkJ-2f;
-	Tue, 06 May 2025 10:33:44 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 06 May 2025 10:33:43 +0800
-Date: Tue, 6 May 2025 10:33:43 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Crypto List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Message-ID: <aBl1BwLiK-gzQyoz@gondor.apana.org.au>
-References: <20250506122222.2a910820@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUrdE3eZ8mCcNtrCCs74kO0YaS2ZBVa7obc4MY+YeLEcojkeEj9a9pVWSR7AD7JtHNbG2TE5eF4Y48Du10drsd3lecW1WQuIomPJzLMlYbXGWLJZ3sHlFmo3XEM02Jzqopl8d8tORawyGfir7b1kspx30+4TFggNSRqACdnwFrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TuBAV8i0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746499208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cEYYbJsPFV36ejeonpvfPVQlMdzMST330wtCWmXF40w=;
+	b=TuBAV8i0Bn5T7wtBP37C1r1RSJhtKP/LbWt06yAryv67naTeohcNChpt1j9A3Kqfsfn2b3
+	3t0/z178w3ZAL5nEgAD87V3fNj3CVHweoFkIm03lbGbbdIwbpFisKmgAWr12uYNXR+BVzz
+	Jwc1x19/bUNB9cNj5Gs288Z/Q9mB3W4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-606-dzS3dgcLMEuTTv1vBNJieQ-1; Mon,
+ 05 May 2025 22:40:07 -0400
+X-MC-Unique: dzS3dgcLMEuTTv1vBNJieQ-1
+X-Mimecast-MFC-AGG-ID: dzS3dgcLMEuTTv1vBNJieQ_1746499206
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 02EBA1956088;
+	Tue,  6 May 2025 02:40:06 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.13])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A7F0830001AB;
+	Tue,  6 May 2025 02:40:02 +0000 (UTC)
+Date: Tue, 6 May 2025 10:39:58 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ublk: consolidate UBLK_IO_FLAG_OWNED_BY_SRV checks
+Message-ID: <aBl2fkjRwh3SJqWE@fedora>
+References: <20250505172624.1121839-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,26 +71,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250506122222.2a910820@canb.auug.org.au>
+In-Reply-To: <20250505172624.1121839-1-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, May 06, 2025 at 12:22:22PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Mon, May 05, 2025 at 11:26:23AM -0600, Caleb Sander Mateos wrote:
+> Every ublk I/O command except UBLK_IO_FETCH_REQ checks that the ublk_io
+> has UBLK_IO_FLAG_OWNED_BY_SRV set. Consolidate the separate checks into
+> a single one in __ublk_ch_uring_cmd(), analogous to those for
+> UBLK_IO_FLAG_ACTIVE and UBLK_IO_FLAG_NEED_GET_DATA.
 > 
-> After merging the crypto tree, today's linux-next build (x86_64
-> allmocdonfig) failed like this:
-> 
-> x86_64-linux-gnu-ld: vmlinux.o: in function `__chacha20poly1305_encrypt':
-> chacha20poly1305.c:(.text+0x1a690e1): undefined reference to `poly1305_init'
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+> v2: rebase
 
-Thanks Stephen.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-I've just pushed out a fix for this:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/commit/?id=43d9d3e84ee1bc1ca98a964e0963bab39de36a44
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks,
+Ming
+
 
