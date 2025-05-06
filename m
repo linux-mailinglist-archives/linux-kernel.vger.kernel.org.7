@@ -1,189 +1,446 @@
-Return-Path: <linux-kernel+bounces-635677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4E8AAC0A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:01:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6258FAAC0B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48013502CF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:01:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D76097B4079
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0294F27511F;
-	Tue,  6 May 2025 10:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD6126C3B0;
+	Tue,  6 May 2025 10:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M1XAp5+C";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CwwNwgIv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B64dQsdk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7178A27585E;
-	Tue,  6 May 2025 10:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAC22701BD;
+	Tue,  6 May 2025 10:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746525639; cv=none; b=ZB8VCMnx7+xeyvwm3R57XgK5EDqeMzGzgQcZXMqIiDdf7FIMORs4B3RSdrWj4qCYLGgEisKMZhKJ23Gz8zkOxfLpRTKh9MdRa/8UrgpPVZPjIJRxfgEJSovc/H8prgwmw/HYLDjlCPPPqaMOk3YsWu48a8uI5m1GR5RhN8528Uc=
+	t=1746525697; cv=none; b=LCQhYMnZri73ZqHyPWUFhLu0OvMbeo7cqgBA69Lrlk+eEjdU8715pL5LW883vwaqJ1bc+HJOMD9vMmuApiJYpFxnQwSk30oxbCOfNkspJ1IA4noiFNEBCLKRdFBiuhhALwyrDUwQ6sgWzs2LM8peLJNSPCK/seVXKaGZh5PxrJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746525639; c=relaxed/simple;
-	bh=LcBMFkhasJc971Tz04TX1N3XqhKT5s31zVenJZH5N88=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=kqrcegZCV/D7bjugpJaNRtJ3QYGPQd+fxtc7F0FAgWah9zxsRRGdHPPHTNt9mIpWRLC3mXkCuOQWElWKMtpRQQ1glIs7lFpc6dplUmFdU1GW4DgMRdHZuz8JUsbBh37zoAalh8jh4ZbYrXJToaZta4hVCVWI0vH8vdsTJM92cmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M1XAp5+C; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CwwNwgIv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 06 May 2025 10:00:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746525635;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zcmS+q78ENUBjWEzIBDQ84QsT8wWNZGNer2Dnj1RXp4=;
-	b=M1XAp5+CFIhrok+ZLNA4H78VxQ+42xpR9W+99SfEnYBjpR3Ozbm/HI1eqK/OEPQTbNE0wJ
-	pxOnGFHi+NXICcZ+EqSFRo9gF2l4zXHnP3kMuqzElrVxUd8/xaXYwwErlT+v2xCrK3KZjr
-	6RHsbDrnhNfH0rgc+S9u3ajeYt8DCVWoZ2B9RZmxg0KGNT3mkIutbxd/nEkpwBgg95nHJx
-	ejxHWhhIaLTKehggFafGpJbaYgtyWSFr+LoEDpezT8r2SAqFuZApg/89a1t+KpFz7AsaKn
-	jcdLEQysgK45y4RwQTQjJi0XN7ICxt0Z/AxNf7Q+9lw2rn+CpiOoTJtvdYB2Sw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746525635;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zcmS+q78ENUBjWEzIBDQ84QsT8wWNZGNer2Dnj1RXp4=;
-	b=CwwNwgIvKFC+PEMmnEm7owDYQHi06YXcT2PYNk9/soaRMW0fp+RyRYYP18yUo8DV8ICrfi
-	qqDhwSU7tv0rkpCw==
-From: "tip-bot2 for Chao Gao" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fpu] x86/fpu: Drop @perm from guest pseudo FPU container
-Cc: Maxim Levitsky <mlevitsk@redhat.com>, Chao Gao <chao.gao@intel.com>,
- Ingo Molnar <mingo@kernel.org>, "Chang S. Bae" <chang.seok.bae@intel.com>,
- Andy Lutomirski <luto@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
- Eric Biggers <ebiggers@google.com>, Fenghua Yu <fenghua.yu@intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Mitchell Levy <levymitchell0@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Sean Christopherson <seanjc@google.com>,
- Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250506093740.2864458-3-chao.gao@intel.com>
-References: <20250506093740.2864458-3-chao.gao@intel.com>
+	s=arc-20240116; t=1746525697; c=relaxed/simple;
+	bh=E/SK5xohk3qoIf6eJg0u0qkAqShBG6KdrfnyrVTrXDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Rh7wbJrdTBDsRao5ML5LLytnKQtEwjYl/OVA9bixIbFzfMhUE/akHv6F4vfP4CgSYroVIMsPqGvilh02OOdl424atJqUqzOSoe4lnngAjvJsU9BjF2JmU/uOmvrLK9h5K8gWf2BB7eSmby18p3r+PkaPHdRrZUBoOoqDZR0fhlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B64dQsdk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5468avQ9027642;
+	Tue, 6 May 2025 10:01:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BP6MXv/px388FKK/4Qo/qTUksnvTJw+tLho8gS88zQA=; b=B64dQsdkmZdG5/NK
+	ySYTiH+oAIfIw7NjlMcbLZ3ZoaEjlfiW/SqduJRUDWFTO4vUwetqa9ekHz9ZJoec
+	ZWxcBeDTf1UC20O1nnYEqOPGRAg2PHobEubuivhQapyFAJ11wq+QvvbDZbmI1aPi
+	ofw+l8agg41ygze1upan589Kk2Z6Tk7syx400Riw4FYCOGfe3okKt6rda40ofgth
+	lRQkSkIFvQbg4bPAiDTIQyJIjmAC/idLhbMPj7eoVFrh3t5abYhfwaUlf+RJ3BYw
+	nFgWFRKAzAJ6nYiGzsw1ODrF7muUuUWvLQQ3ekdaK2O8GMCNcz1m+hrthNK43t+T
+	CUBCKA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5sv1tk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 10:01:21 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 546A1KcX002794
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 6 May 2025 10:01:20 GMT
+Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 May 2025
+ 03:01:17 -0700
+Message-ID: <8a9e1d41-3a75-4f67-b47b-4874c2706f8f@quicinc.com>
+Date: Tue, 6 May 2025 18:00:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174652563422.406.4328703554427720603.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] coresight: add coresight Trace Network On Chip
+ driver
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>
+CC: <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250415-trace-noc-v4-0-979938fedfd8@quicinc.com>
+ <20250415-trace-noc-v4-2-979938fedfd8@quicinc.com>
+Content-Language: en-US
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+In-Reply-To: <20250415-trace-noc-v4-2-979938fedfd8@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2BO2gH0kAuSkZexp2U07LXhT57raLB54
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDA5MyBTYWx0ZWRfXxiSvdYz2SKIP
+ HW35yl0nb5bDn2yep0JZMGX8SwrtND/JV27SixL46FH+4wXkR3z51lAnUIwupP87nCxT+M1Z+Bc
+ UbzJeySSCaBLhX6UVlJrhWYGtEb88r1yNI/k8UuVW9cu9VkVMESimPd9flz6imDdZH8UiZlXv7K
+ Wu3JDqWrHNAsCcX9LdjOnUYJ8erdEAtnzYAWeCB0t0VHvkON29VdjiTIOt0HiWjz3FPwAbWmqtu
+ sUstfG8SPnrnt1AtLLmDiAblNhja5Sbn7ZDKNdNks2lO2gHJch7OH20Tl+idSiXmBfMYwYMRTy9
+ Z14qi+R7fdh/CFBzEvdqLRT2uUvoHjncFhU/ZXjOd/AIFz99/TuyxWGabMbSUMro86Dk7sfL4Kn
+ 99OnRjEPoq3m4SPBgjBLHs+8Y52k2q/Dv3LYETUQjuQjoFuZVVT1uX1u+fRafOWM0xzWPvYz
+X-Authority-Analysis: v=2.4 cv=cOXgskeN c=1 sm=1 tr=0 ts=6819ddf1 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=Sfw9CCg1thp9Ib4EHVEA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 2BO2gH0kAuSkZexp2U07LXhT57raLB54
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_04,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 bulkscore=0
+ mlxlogscore=999 adultscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505060093
 
-The following commit has been merged into the x86/fpu branch of tip:
 
-Commit-ID:     32d5fa804dc9bd7cf6651a1378ba616d332e7444
-Gitweb:        https://git.kernel.org/tip/32d5fa804dc9bd7cf6651a1378ba616d332e7444
-Author:        Chao Gao <chao.gao@intel.com>
-AuthorDate:    Tue, 06 May 2025 17:36:07 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 06 May 2025 11:52:22 +02:00
 
-x86/fpu: Drop @perm from guest pseudo FPU container
+On 4/15/2025 5:25 PM, Yuanfang Zhang wrote:
+> Add a driver to support Coresight device Trace Network On Chip (TNOC),
+> which is an integration hierarchy integrating functionalities of TPDA
+> and funnels. It aggregates the trace and transports to coresight trace
+> bus.
+> 
+> Compared to current configuration, it has the following advantages:
+> 1. Reduce wires between subsystems.
+> 2. Continue cleaning the infrastructure.
+> 3. Reduce Data overhead by transporting raw data from source to target.
+> 
+>   +------------------------+                +-------------------------+
+>   | Video Subsystem        |                |Video Subsystem          |
+>   |       +-------------+  |                |       +------------+    |
+>   |       | Video TPDM  |  |                |       | Video TPDM |    |
+>   |       +-------------+  |                |       +------------+    |
+>   |            |           |                |              |          |
+>   |            v           |                |              v          |
+>   |   +---------------+    |                |        +-----------+    |
+>   |   | Video funnel  |    |                |        |Video TNOC |    |
+>   |   +---------------+    |                |        +-----------+    |
+>   +------------|-----------+                +------------|------------+
+>                |                                         |
+>                v-----+                                   |
+> +--------------------|---------+                         |
+> |  Multimedia        v         |                         |
+> |  Subsystem   +--------+      |                         |
+> |              |  TPDA  |      |                         v
+> |              +----|---+      |              +---------------------+
+> |                   |          |              |   Aggregator  TNOC  |
+> |                   |          |              +----------|----------+
+> |                   +--        |                         |
+> |                     |        |                         |
+> |                     |        |                         |
+> |              +------v-----+  |                         |
+> |              |  Funnel    |  |                         |
+> |              +------------+  |                         |
+> +----------------|-------------+                         |
+>                  |                                       |
+>                  v                                       v
+>       +--------------------+                    +------------------+
+>       |   Coresight Sink   |                    |  Coresight Sink  |
+>       +--------------------+                    +------------------+
+> 
+>        Current Configuration                            TNOC
+> 
+> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> ---
+>  drivers/hwtracing/coresight/Kconfig          |  13 ++
+>  drivers/hwtracing/coresight/Makefile         |   1 +
+>  drivers/hwtracing/coresight/coresight-tnoc.c | 191 +++++++++++++++++++++++++++
+>  drivers/hwtracing/coresight/coresight-tnoc.h |  34 +++++
+>  4 files changed, 239 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+> index ecd7086a5b83e86b6bc8ea039d6d26a628334ed3..f20600d58f38568f8178f69d3f678c2df2cbca7e 100644
+> --- a/drivers/hwtracing/coresight/Kconfig
+> +++ b/drivers/hwtracing/coresight/Kconfig
+> @@ -259,4 +259,17 @@ config CORESIGHT_DUMMY
+>  
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called coresight-dummy.
+> +
+> +config CORESIGHT_TNOC
+> +	tristate "Coresight Trace Network On Chip driver"
+> +	help
+> +	  This driver provides support for Trace Network On Chip (TNOC) component.
+> +	  TNOC is an interconnect used to collect traces from various subsystems
+> +	  and transport to a coresight trace sink. It sits in the different
+> +	  tiles of SOC and aggregates the trace local to the tile and transports
+> +	  it another tile or to coresight trace sink eventually.
+> +
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called coresight-tnoc.
+> +
+>  endif
+> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+> index 8e62c3150aebd1e82b445fafc97a0a9b44397b0e..880e9ed6bfe9c711492c6a2cd972751f56dd8010 100644
+> --- a/drivers/hwtracing/coresight/Makefile
+> +++ b/drivers/hwtracing/coresight/Makefile
+> @@ -34,6 +34,7 @@ obj-$(CONFIG_CORESIGHT_SINK_TPIU) += coresight-tpiu.o
+>  obj-$(CONFIG_CORESIGHT_SINK_ETBV10) += coresight-etb10.o
+>  obj-$(CONFIG_CORESIGHT_LINKS_AND_SINKS) += coresight-funnel.o \
+>  					   coresight-replicator.o
+> +obj-$(CONFIG_CORESIGHT_TNOC) += coresight-tnoc.o
+>  obj-$(CONFIG_CORESIGHT_SOURCE_ETM3X) += coresight-etm3x.o
+>  coresight-etm3x-y := coresight-etm3x-core.o coresight-etm-cp14.o \
+>  		     coresight-etm3x-sysfs.o
+> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..112dca865f80aa29afa5a3fec2fa6b72ef2ebb0b
+> --- /dev/null
+> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
+> @@ -0,0 +1,191 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> + #include <linux/amba/bus.h>
+> + #include <linux/coresight.h>
+> + #include <linux/device.h>
+> + #include <linux/io.h>
+> + #include <linux/kernel.h>
+> + #include <linux/module.h>
+> + #include <linux/of.h>
+> + #include <linux/platform_device.h>
+> +
+> +#include "coresight-priv.h"
+> +#include "coresight-tnoc.h"
+> +#include "coresight-trace-id.h"
+> +
+> +DEFINE_CORESIGHT_DEVLIST(trace_noc_devs, "traceNoc");
+> +
+> +static void trace_noc_enable_hw(struct trace_noc_drvdata *drvdata)
+> +{
+> +	u32 val;
+> +
+> +	/* Set ATID */
+> +	writel_relaxed(drvdata->atid, drvdata->base + TRACE_NOC_XLD);
+> +
+> +	/* Set the data word count between 'SYNC' packets */
+> +	writel_relaxed(TRACE_NOC_SYNC_INTERVAL, drvdata->base + TRACE_NOC_SYNCR);
+> +
+> +	/* Set the Control register:
+> +	 * - Set the FLAG packets to 'FLAG' packets
+> +	 * - Set the FREQ packets to 'FREQ_TS' packets
+> +	 * - Enable generation of output ATB traffic
+> +	 */
+> +
+> +	val = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
+> +
+> +	val = val & ~TRACE_NOC_CTRL_FLAGTYPE;
+> +	val = val | TRACE_NOC_CTRL_FREQTYPE;
+> +	val = val | TRACE_NOC_CTRL_PORTEN;
+> +
+> +	writel(val, drvdata->base + TRACE_NOC_CTRL);
+> +}
+> +
+> +static int trace_noc_enable(struct coresight_device *csdev, struct coresight_connection *inport,
+> +			    struct coresight_connection *outport)
+> +{
+> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +
+> +	spin_lock(&drvdata->spinlock);
+> +	if (csdev->refcnt == 0)
+> +		trace_noc_enable_hw(drvdata);
+> +
+> +	csdev->refcnt++;
+> +	spin_unlock(&drvdata->spinlock);
+> +
+> +	dev_dbg(drvdata->dev, "Trace NOC is enabled\n");
+> +	return 0;
+> +}
+> +
+> +static void trace_noc_disable_hw(struct trace_noc_drvdata *drvdata)
+> +{
+> +	writel(0x0, drvdata->base + TRACE_NOC_CTRL);
+> +}
+> +
+> +static void trace_noc_disable(struct coresight_device *csdev, struct coresight_connection *inport,
+> +			      struct coresight_connection *outport)
+> +{
+> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +
+> +	spin_lock(&drvdata->spinlock);
+> +	if (--csdev->refcnt == 0)
+> +		trace_noc_disable_hw(drvdata);
+> +
+> +	spin_unlock(&drvdata->spinlock);
+> +	dev_dbg(drvdata->dev, "Trace NOC is disabled\n");
+> +}
+> +
+> +static int trace_noc_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
+> +			__maybe_unused struct coresight_device *sink)
+> +{
+> +	struct trace_noc_drvdata *drvdata;
+> +
+> +	drvdata = dev_get_drvdata(csdev->dev.parent);
+> +
+> +	return drvdata->atid;
+> +}
+> +
+> +static const struct coresight_ops_link trace_noc_link_ops = {
+> +	.enable		= trace_noc_enable,
+> +	.disable	= trace_noc_disable,
+> +};
+> +
+> +static const struct coresight_ops trace_noc_cs_ops = {
+> +	.trace_id	= trace_noc_id,
+> +	.link_ops	= &trace_noc_link_ops,
+> +};
+> +
+> +static int trace_noc_init_default_data(struct trace_noc_drvdata *drvdata)
+> +{
+> +	int atid;
+> +
+> +	atid = coresight_trace_id_get_system_id();
+> +	if (atid < 0)
+> +		return atid;
+> +
+> +	drvdata->atid = atid;
+> +
+> +	return 0;
+> +}
+> +
+> +static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
+> +{
+> +	struct device *dev = &adev->dev;
+> +	struct coresight_platform_data *pdata;
+> +	struct trace_noc_drvdata *drvdata;
+> +	struct coresight_desc desc = { 0 };
+> +	int ret;
+> +
+> +	desc.name = coresight_alloc_device_name(&trace_noc_devs, dev);
+> +	if (!desc.name)
+> +		return -ENOMEM;
+> +	pdata = coresight_get_platform_data(dev);
+> +	if (IS_ERR(pdata))
+> +		return PTR_ERR(pdata);
+> +	adev->dev.platform_data = pdata;
+> +
+> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> +	if (!drvdata)
+> +		return -ENOMEM;
+> +
+> +	drvdata->dev = &adev->dev;
+> +	dev_set_drvdata(dev, drvdata);
+> +
+> +	drvdata->base = devm_ioremap_resource(dev, &adev->res);
+> +	if (!drvdata->base)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&drvdata->spinlock);
+> +
+> +	ret = trace_noc_init_default_data(drvdata);
+> +	if (ret)
+> +		return ret;
+> +
+> +	desc.ops = &trace_noc_cs_ops;
+> +	desc.type = CORESIGHT_DEV_TYPE_LINK;
+> +	desc.subtype.link_subtype = CORESIGHT_DEV_SUBTYPE_LINK_MERG;
+> +	desc.pdata = adev->dev.platform_data;
+> +	desc.dev = &adev->dev;
+> +	desc.access = CSDEV_ACCESS_IOMEM(drvdata->base);
+> +	drvdata->csdev = coresight_register(&desc);
+> +	if (IS_ERR(drvdata->csdev))
+> +		return PTR_ERR(drvdata->csdev);
+> +
+> +	pm_runtime_put(&adev->dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static void trace_noc_remove(struct amba_device *adev)
+> +{
+> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(&adev->dev);
+> +
+> +	coresight_trace_id_put_system_id(drvdata->atid);
+> +	coresight_unregister(drvdata->csdev);
+> +}
+> +
+> +static struct amba_id trace_noc_ids[] = {
+> +	{
+> +		.id     = 0x000f0c00,
+> +		.mask   = 0x00ffff00,
+> +	},
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(amba, trace_noc_ids);
+> +
+> +static struct amba_driver trace_noc_driver = {
+> +	.drv = {
+> +		.name   = "coresight-trace-noc",
+> +		.suppress_bind_attrs = true,
+> +	},
+> +	.probe          = trace_noc_probe,
+> +	.remove		= trace_noc_remove,
+> +	.id_table	= trace_noc_ids,
+> +};
+> +
+> +module_amba_driver(trace_noc_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Trace NOC driver");
+> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.h b/drivers/hwtracing/coresight/coresight-tnoc.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..34c696965ec50e3664d55e04e22d5b854d6937a7
+> --- /dev/null
+> +++ b/drivers/hwtracing/coresight/coresight-tnoc.h
+> @@ -0,0 +1,34 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#define TRACE_NOC_CTRL      0x008
+> +#define TRACE_NOC_XLD       0x010
+> +#define TRACE_NOC_FREQVAL   0x018
+> +#define TRACE_NOC_SYNCR     0x020
+> +
+> +/* Enable generation of output ATB traffic.*/
+> +#define TRACE_NOC_CTRL_PORTEN   BIT(0)
+> +/* Sets the type of issued ATB FLAG packets.*/
+> +#define TRACE_NOC_CTRL_FLAGTYPE BIT(7)
+> +/* Sets the type of issued ATB FREQ packet*/
+> +#define TRACE_NOC_CTRL_FREQTYPE BIT(8)
+> +
+> +#define TRACE_NOC_SYNC_INTERVAL	0xFFFF
+> +
+> +/*
+> + * struct trace_noc_drvdata - specifics associated to a trace noc component
+> + * @base:	memory mapped base address for this component.
+> + * @dev:	device node for trace_noc_drvdata.
+> + * @csdev:	component vitals needed by the framework.
+> + * @spinlock:	only one at a time pls.
+> + * @atid:	id for the trace packet.
+> + */
+> +struct trace_noc_drvdata {
+> +	void __iomem		*base;
+> +	struct device		*dev;
+> +	struct coresight_device	*csdev;
+> +	spinlock_t		spinlock; /* lock for the drvdata. */
+> +	u32			atid;
+> +};
+> 
 
-Remove @perm from the guest pseudo FPU container. The field is
-initialized during allocation and never used later.
-
-Rename fpu_init_guest_permissions() to show that its sole purpose is to
-lock down guest permissions.
-
-Suggested-by: Maxim Levitsky <mlevitsk@redhat.com>
-Signed-off-by: Chao Gao <chao.gao@intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mitchell Levy <levymitchell0@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Samuel Holland <samuel.holland@sifive.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Link: https://lore.kernel.org/kvm/af972fe5981b9e7101b64de43c7be0a8cc165323.camel@redhat.com/
-Link: https://lore.kernel.org/r/20250506093740.2864458-3-chao.gao@intel.com
----
- arch/x86/include/asm/fpu/types.h | 7 -------
- arch/x86/kernel/fpu/core.c       | 7 ++-----
- 2 files changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-index e64db0e..1c94121 100644
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -536,13 +536,6 @@ struct fpu_guest {
- 	u64				xfeatures;
- 
- 	/*
--	 * @perm:			xfeature bitmap of features which are
--	 *				permitted to be enabled for the guest
--	 *				vCPU.
--	 */
--	u64				perm;
--
--	/*
- 	 * @xfd_err:			Save the guest value.
- 	 */
- 	u64				xfd_err;
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 105b1b8..1cda5b7 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -212,7 +212,7 @@ void fpu_reset_from_exception_fixup(void)
- #if IS_ENABLED(CONFIG_KVM)
- static void __fpstate_reset(struct fpstate *fpstate, u64 xfd);
- 
--static void fpu_init_guest_permissions(struct fpu_guest *gfpu)
-+static void fpu_lock_guest_permissions(void)
- {
- 	struct fpu_state_perm *fpuperm;
- 	u64 perm;
-@@ -228,8 +228,6 @@ static void fpu_init_guest_permissions(struct fpu_guest *gfpu)
- 	WRITE_ONCE(fpuperm->__state_perm, perm | FPU_GUEST_PERM_LOCKED);
- 
- 	spin_unlock_irq(&current->sighand->siglock);
--
--	gfpu->perm = perm & ~FPU_GUEST_PERM_LOCKED;
- }
- 
- bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
-@@ -250,7 +248,6 @@ bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
- 
- 	gfpu->fpstate		= fpstate;
- 	gfpu->xfeatures		= fpu_kernel_cfg.default_features;
--	gfpu->perm		= fpu_kernel_cfg.default_features;
- 
- 	/*
- 	 * KVM sets the FP+SSE bits in the XSAVE header when copying FPU state
-@@ -265,7 +262,7 @@ bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
- 	if (WARN_ON_ONCE(fpu_user_cfg.default_size > gfpu->uabi_size))
- 		gfpu->uabi_size = fpu_user_cfg.default_size;
- 
--	fpu_init_guest_permissions(gfpu);
-+	fpu_lock_guest_permissions();
- 
- 	return true;
- }
+gently reminder
 
