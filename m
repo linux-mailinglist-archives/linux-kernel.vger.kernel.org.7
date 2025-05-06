@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-635000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 665B9AAB85E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:33:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049EFAAB835
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1B51C4044B
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064614C292A
 	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306402F15E3;
-	Tue,  6 May 2025 03:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278152F2773;
+	Tue,  6 May 2025 03:04:44 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0914E3AE02A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0504A2B60
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746492487; cv=none; b=TL6rU2Cm294ewIy1UcmTTpw07No0V4xiggcm7zVg1rI5Lv2I5RokVP2SsnhyXRnrU8QoQDAnUjCNzaVdd05BLvmGRv3YzHldLlHuSrUhKzBcQtLEV1jMA3s/us3zCuIp/ejWV+xmvba5vyfFhxMNxt65i/EcWidSbF9NrpcFCZQ=
+	t=1746492495; cv=none; b=CfuGXHYd4J9AKmmu9MeBYuTCoMrlnBccsiBvppNq7vaJoBpzCAd1VKCHk29J3hDyKCK4bND1BfTgXlNdIYgvME8jdbKwqFJrRdhuzNfZyQpjVMvXJYmZSbwDkddozT2dgwKYJOJQb0HKRtYRLbwsrqHovM1fLDoEDlF4gzvf4QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746492487; c=relaxed/simple;
-	bh=I6AHPVPJ770usgMpjdF5XaUduLmPorK9XNl7ZIB872s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q+ogozNvrz/s5tOHqObHAovXLZPhZY2dXQQeVzt/Nn6fJg91xlr4s2FlaIJBUGqWpiYspZyU/LeWtjWUuAAfI/NmG1SV6XXexraxGO2SXB6a31usp3fU+ofjxu0AuUIjysnJuKfjX4tBpPm49lDuyA8JqlxFIHf55rY66NwDb+w=
+	s=arc-20240116; t=1746492495; c=relaxed/simple;
+	bh=+wIbL1X55MSJzHqFS9CRNQXdCUM1VY3bZFOCVZqzNQA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qMz/AiI24g9XxML/t05WpiYlsKSh8B2hxX3HZeWsvHmgixqih0s3BQwYV66DY2kA9i2JGEGOnMni1DbeI+Au7jWai6Ts3HDBnQDBVpVD7ZkEAxg4OaBQJHEoJOzLW9zmMiLGTf97T7+EujC5E3bGlmUOLzWFY+UkdnP3bUPr+eA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -31,7 +32,7 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1uC6K6-000000000IF-32G6;
+	id 1uC6K6-000000000IF-3CQ2;
 	Mon, 05 May 2025 20:38:14 -0400
 From: Rik van Riel <riel@surriel.com>
 To: linux-kernel@vger.kernel.org
@@ -44,11 +45,15 @@ Cc: linux-mm@kvack.org,
 	tglx@linutronix.de,
 	mingo@redhat.com,
 	bp@alien8.de,
-	hpa@zytor.com
-Subject: [RFC PATCH 0/9] Intel RAR TLB invalidation
-Date: Mon,  5 May 2025 20:37:38 -0400
-Message-ID: <20250506003811.92405-1-riel@surriel.com>
+	hpa@zytor.com,
+	Yu-cheng Yu <yu-cheng.yu@intel.com>,
+	Rik van Riel <riel@surriel.com>
+Subject: [RFC PATCH 1/9] x86/mm: Introduce MSR_IA32_CORE_CAPABILITIES
+Date: Mon,  5 May 2025 20:37:39 -0400
+Message-ID: <20250506003811.92405-2-riel@surriel.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250506003811.92405-1-riel@surriel.com>
+References: <20250506003811.92405-1-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,43 +63,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: riel@surriel.com
 
-This patch series adds support for IPI-less TLB invalidation
-using Intel RAR technology.
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
 
-Intel RAR differs from AMD INVLPGB in a few ways:
-- RAR goes through (emulated?) APIC writes, not instructions
-- RAR flushes go through a memory table with 64 entries
-- RAR flushes can be targeted to a cpumask
-- The RAR functionality must be set up at boot time before it can be used
+MSR_IA32_CORE_CAPABILITIES indicates the existence of other MSRs.
+Bit[1] indicates Remote Action Request (RAR) TLB registers.
 
-The cpumask targeting has resulted in Intel RAR and AMD INVLPGB having
-slightly different rules:
-- Processes with dynamic ASIDs use IPI based shootdowns
-- INVLPGB: processes with a global ASID 
-   - always have the TLB up to date, on every CPU
-   - never need to flush the TLB at context switch time
-- RAR: processes with global ASIDs
-   - have the TLB up to date on CPUs in the mm_cpumask
-   - can skip a TLB flush at context switch time if the CPU is in the mm_cpumask
-   - need to flush the TLB when scheduled on a cpu not in the mm_cpumask,
-     in case it used to run there before and the TLB has stale entries
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Signed-off-by: Rik van Riel <riel@surriel.com>
+---
+ arch/x86/include/asm/msr-index.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-RAR functionality is present on Sapphire Rapids and newer CPUs.
-
-Information about Intel RAR can be found in this whitepaper.
-
-https://www.intel.com/content/dam/develop/external/us/en/documents/341431-remote-action-request-white-paper.pdf
-
-This patch series is based off a 2019 patch series created by
-Intel, with patches later in the series modified to fit into
-the TLB flush code structure we have after AMD INVLPGB functionality
-was integrated.
-
-This first version of the code still has issues with segfaults
-and kernel oopses. Clearly something is still wrong with how or
-when flushes are done, but the code could use more eyeballs.
-
-I have some idas for additional code cleanups as well, but would
-like to get the last bugs sorted out first...
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index ac21dc19dde2..0828b891fe2e 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -212,6 +212,12 @@
+ 						 * File.
+ 						 */
+ 
++#define MSR_IA32_CORE_CAPABILITIES	0x000000cf
++#define CORE_CAP_RAR			BIT(1)	/*
++						 * Remote Action Request. Used to directly
++						 * flush the TLB on remote CPUs.
++						 */
++
+ #define MSR_IA32_FLUSH_CMD		0x0000010b
+ #define L1D_FLUSH			BIT(0)	/*
+ 						 * Writeback and invalidate the
+-- 
+2.49.0
 
 
