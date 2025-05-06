@@ -1,185 +1,187 @@
-Return-Path: <linux-kernel+bounces-635302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8751AABB9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:44:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C8EAABBB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0DD2170207
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:41:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B171C24F86
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ED6224AF0;
-	Tue,  6 May 2025 06:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D1C79C4;
+	Tue,  6 May 2025 06:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4iT62VN4"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wv4ZsJPy"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D42221725
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 06:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C2522D9FB
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 06:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746513913; cv=none; b=KRZm5UxVtCA1FfwmtxB4K7xs8zpr+XQIV9XbhA+Sbw+22dA4G/5f1Tvpyqjm0eCkB6c8OrIGhcUsCeCQNhZMaaEINRR6EK9hDiZBYWKdtxi2fGulBYQC7pn+KMUwo1hqNXURiW8FDFxRDdrUn4yuCeMDRCPcJFQsuzpRDJYwTRc=
+	t=1746513995; cv=none; b=DgLGg4uq5dqiOaNK1Zv9HxCKCZ9qvvq9XiDlQtuA8U6pvc7eCF9ld5J77VWKpL0Q/P2wR+AjOGt6Ew0TqEQROcVcr07h+K2fr0Et7k7Vi1McYHx+xu6seuI3pm0Ipx1Xj0RsDtO+gRxKgnlH2KDG8oAYDdkUkYrLOLVoiltE4TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746513913; c=relaxed/simple;
-	bh=h5rXKj1nXHsCqzdzy6AYHkfyrpuYGZSD/7bDYQj+e1U=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Qs0hIIiU2Jv5UCTqw1RhbasaQ+YDi88xtNMsIvKlCoSpjq/fuWUdDFvL/Ju2RX3cuC6dNLyKkK3DGRmUXbgRG9rf6uMihOwdlTGz0A/QXk28BsuHm427cMuDXAhuTtvg6j5/+YiHsgAm3qCmkpP9fthrFTWFPs0/ATf1+fijsX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4iT62VN4; arc=none smtp.client-ip=209.85.167.182
+	s=arc-20240116; t=1746513995; c=relaxed/simple;
+	bh=5Xi6j//R02dpub/R7xxHcBfZMhj1LSXeBKp5n05nTvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mnEB5E5/9bF9s17AxOV78aGMvoOPgNS3c/3ScDVDv6SwXkuHprwY/sadk4DsuhDwx/8lvUMyxPABQYEFwRwc/1EtmObgKZLOJbF5nnUEgLjeSTjCycxA9Qfna2Os4Ti3k0CcfDtkJwzcCOJnh+wVzUgpGFPWEIc6p2pD0s62EKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wv4ZsJPy; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4034118aeb7so949892b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 23:45:11 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30de488cf81so54232291fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 23:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746513911; x=1747118711; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pOy7LO18ZOVs0lu6y78gTLGQOe6Je3TlNtuMcY0wQFI=;
-        b=4iT62VN4lQoYtfBrZ3PBky7mx1XUpQXgOrxp3NwzEbLIAottbHs4O40uoFjk6MYf2L
-         z2PJ4aHXgZ1bFfRw6wuvs6RTPQmpa+bOtxGThnb5ubT9Y80tnO26v3HnBl6/9x6IqkSg
-         qiscqBCGh12qHtnf9Fwlu7m2jET1nrmEsfvBKpj/YMmwIA1XPUix4l4BW84NO6Recska
-         J4TfNqTR7BA3TK2lvs13h2SiQvHH+KpEqsYezfrZLUSLMHx2Uq74OMcxz1TComvdUnRF
-         HbFPZiDwJvZnBlF32OpM6HHaBw6Y2RgtjNr23ZPwhetQ/+Ba34AN+FH9EGHQJkm0GYsw
-         DYeA==
+        d=google.com; s=20230601; t=1746513992; x=1747118792; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+TkT8CQai/ZWtD1K5cF0ad1w9jdiTtki3uhfACJlgto=;
+        b=wv4ZsJPy78qW2Ry7u6LbEeFyNfoBXAks1HWIXRhWF4dcMRKvydWJw6OBlbbK//QSr9
+         3Nnz1fwBqKmM9rqdD6uAqlvs6v5pLDy6bytsx4HrWiNQjb0N7F3A6capq2AT/vJ4Tl4l
+         ExFnEL7Q/JpN5G3dHxtEEYUgZeDrBR+4izajKEN0UCG2lQxBC85wmhG0g6IB0JgsXiTW
+         7CfqgLFOAcIwVmHLmulUkDPcmGdU4GwR7MoOADCIUcXdwny0r4pVeR2tM9zc297Rxc0u
+         NiEcq6Gt9r34ZmzAaxu4GHROTQw3JjYuSGtE84hKO9y+jglOfEawcj2JLNEP2TJTUJtR
+         KXMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746513911; x=1747118711;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pOy7LO18ZOVs0lu6y78gTLGQOe6Je3TlNtuMcY0wQFI=;
-        b=HGz5e0WOzhWYicG10srFv4jC+nfGVBsam8N1Yg8DdyC8njEp4Zu/SEUqM2k30l3cCH
-         /7HfzODJ0U4TrFF5vUDGpCKzqpCF3HHvIzmwpvmeekRoWsY52yDTbD4Esg498thX34ko
-         zXmkg0Unloq5ITup8gohcIoHDll6gwUHX0BlJjIprDdxKDZk4yOYI3uzyA8cKz5qQBzY
-         WqO0Q48lGOsuXY8uELqc44fYpU8nicmhNvw1boT3chqP+WJxJWxTn8rUNrqlL+jDoLhZ
-         ghWvC7umJmW8y4bmsKx2yjI06M1mNRZYZsoXDT4EJttKpzCxSpe4Hbr1jJnQFUjYCaWt
-         PA5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVaPi6xJ93AuDJ6ObSXXMYn7ds23r0eQZW6hRFAawE9RZriLi34AMNncrT0nNLMJtiUklB1ZCazBMuWwg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN2hlRSMvoHorifBOlOYtt0zl1CV9eIA2Q0/7H6fXm3G3W7n+z
-	Zp0KPOgEDw7GEp5a6BPtZt9FJjGhK3G4SYnFZlR28Wx8nGg0YN7qDnvxKTurkw==
-X-Gm-Gg: ASbGncvaYpCWkzrEDhcsOnQZucPMHBf9Zsw9g5QEWVlL914q5KiJQ9BYqYjH8KfRgqo
-	3EZo5DkeMyuM9+S3FyGIDJ0ttYkLZqVu6d93tKzw2XO56yBBhZPSwnUhOgTrUoPHrPUi2QttjXI
-	/tPr2eCARubYr4uZMciBoe2+basbr8x7SfV35VL3J76sdwc2GqnclaTGlyR/OTSsuXi45dhuZ55
-	8p8Rpy7iuAZH7+itHVkvt2JHR/YFcQSS/ijaa2++N8aRIN95VoxXaW4PujvqOlDHWrA3aMVWTVp
-	zJ5NEVWhp8R1VQ9F/mZQ9Bcj+bu49QTr7+IIPfdNtr0OEDbgPnwy4+/KrpGqhzfiX3Potys5/8p
-	aCdaHsFRf2vMOpf/WbSpRtEw5
-X-Google-Smtp-Source: AGHT+IHI3FvBIxrRJdUZJwJ+nd8eUirpcwZEVNZHwxBf+/mwHrhWJ1GNsR+1w55ZqfJ9e1Y3jae2fA==
-X-Received: by 2002:a05:6808:1a1b:b0:3fe:aedb:19ea with SMTP id 5614622812f47-4035a5cb6acmr5761585b6e.25.1746513910524;
-        Mon, 05 May 2025 23:45:10 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4033dae6f2dsm2354235b6e.29.2025.05.05.23.45.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 23:45:09 -0700 (PDT)
-Date: Mon, 5 May 2025 23:44:55 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Johannes Weiner <hannes@cmpxchg.org>, 
-    Muchun Song <songmuchun@bytedance.com>
-cc: mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-    muchun.song@linux.dev, akpm@linux-foundation.org, david@fromorbit.com, 
-    zhengqi.arch@bytedance.com, yosry.ahmed@linux.dev, nphamcs@gmail.com, 
-    chengming.zhou@linux.dev, linux-kernel@vger.kernel.org, 
-    cgroups@vger.kernel.org, linux-mm@kvack.org, 
-    hamzamahfooz@linux.microsoft.com, apais@linux.microsoft.com, 
-    Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH RFC 07/28] mm: thp: use folio_batch to handle THP splitting
- in deferred_split_scan()
-In-Reply-To: <20250430143714.GA2020@cmpxchg.org>
-Message-ID: <235f2616-99dd-abfa-f6d1-c178d8ffb363@google.com>
-References: <20250415024532.26632-1-songmuchun@bytedance.com> <20250415024532.26632-8-songmuchun@bytedance.com> <20250430143714.GA2020@cmpxchg.org>
+        d=1e100.net; s=20230601; t=1746513992; x=1747118792;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+TkT8CQai/ZWtD1K5cF0ad1w9jdiTtki3uhfACJlgto=;
+        b=vjUpe1Y3TMvA9e1ws//trAt4Cy7VK75CJFpPEqyXLDqUsdgJy9fVmG05iPh8kmUdlV
+         NV1qTK8V32BS42VVj0u5YDykifz2aXOidgSD2AURhKfEm4LUqF3vQIojrAMcUW1tB0Rp
+         0JGKxRAlXl0KEsB53k/CEHWpLCyC4Bmc24c82Xmbp+wvHi9+EPGO6+1m1Qtz2UGUU4pr
+         3to7OS8pgb26esj2TG0TcBsegxAqkRtFEMRuCUmrU8MvyUFSKMNMR+rzBNs3j3GQ4zNn
+         sA2yQlZbMU7qg8YR900WjiTDD+RSuRqU4ZQTLdWc321E2MFKYP3Gs9cTCJMQAG7kxHOO
+         6Y7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUiqsvbrEY4YOhEdxHh+0Y76wWrH2uP9CEe1x4pMZTZ7hVMGsbF6GWARq80ykTUEoWWq00ls15qIEJI0x4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC0MrGXhh6Z7C0CtneMv8ypa75MryqHnzVR4YzBy8Vy4ALhIwE
+	s8GCZcBn3OsmleP4FOZi81MJnzjxyCJGwuAkcfRsjdkjSaTUvYMEYli4f9Xl4MXZqKDTuogW+O3
+	91Mli4rdoZqJbXcbM0weiq6Yeu5ez2OkRVNrQ
+X-Gm-Gg: ASbGncuexSfErST9s48wV1sHtXHbEFfWHtzVqLFtw0aEGb4YnGYicQIl13NFtIK/M6V
+	nVSDS2NkKl4MgbRwsAgnUoTY0mlX/qtRCRaSSfz0TPdau7hsG9SEvKb7GvVxpfVFIS9+n0u7RiZ
+	RitgJZj/0pWo8/XfcpdPDrSDvjc8TL/MGs+8v52/yWqzP42FqGpFu9Fxg=
+X-Google-Smtp-Source: AGHT+IF/1cJ0gn0VbpuxAups41aSoda4aMlkyRVuVVCTnyySXdE5xjS3ApovhcJGPqcHbWgerPHgZOwlWlSuLsCbw5o=
+X-Received: by 2002:a05:651c:b2a:b0:319:d856:c2f3 with SMTP id
+ 38308e7fff4ca-3266b59789emr4354901fa.10.1746513991522; Mon, 05 May 2025
+ 23:46:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250503003620.45072-1-namhyung@kernel.org> <CACT4Y+Yr7vffLYG+YmyB=9Vn_oxdQqR_6U4d-_WeQoOtPXZ6iw@mail.gmail.com>
+ <aBmei7cMf-MzzX5W@google.com> <CACT4Y+ameQFd3n=u+bjd+vKR6svShp3NNQzjsUo_UUBCZPzrBw@mail.gmail.com>
+ <aBmvmmRKpeVd6aT3@google.com>
+In-Reply-To: <aBmvmmRKpeVd6aT3@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 6 May 2025 08:46:20 +0200
+X-Gm-Features: ATxdqUEgdDVnyyriKiX9pDQDs3z8t8w0Gd3KuZT0JW1dkH5BkkyNq1pTZnz9pko
+Message-ID: <CACT4Y+bm4gCO_sGvEkxLQfw8JyrWvCzqV_H5h+oebt8kk1_Hwg@mail.gmail.com>
+Subject: Re: [RFC/PATCH] perf report: Support latency profiling in system-wide mode
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 30 Apr 2025, Johannes Weiner wrote:
-> On Tue, Apr 15, 2025 at 10:45:11AM +0800, Muchun Song wrote:
-> > The maintenance of the folio->_deferred_list is intricate because it's
-> > reused in a local list.
-> > 
-> > Here are some peculiarities:
-> > 
-> >    1) When a folio is removed from its split queue and added to a local
-> >       on-stack list in deferred_split_scan(), the ->split_queue_len isn't
-> >       updated, leading to an inconsistency between it and the actual
-> >       number of folios in the split queue.
-> > 
-> >    2) When the folio is split via split_folio() later, it's removed from
-> >       the local list while holding the split queue lock. At this time,
-> >       this lock protects the local list, not the split queue.
-> > 
-> >    3) To handle the race condition with a third-party freeing or migrating
-> >       the preceding folio, we must ensure there's always one safe (with
-> >       raised refcount) folio before by delaying its folio_put(). More
-> >       details can be found in commit e66f3185fa04. It's rather tricky.
-> > 
-> > We can use the folio_batch infrastructure to handle this clearly. In this
-> > case, ->split_queue_len will be consistent with the real number of folios
-> > in the split queue. If list_empty(&folio->_deferred_list) returns false,
-> > it's clear the folio must be in its split queue (not in a local list
-> > anymore).
-> > 
-> > In the future, we aim to reparent LRU folios during memcg offline to
-> > eliminate dying memory cgroups. This patch prepares for using
-> > folio_split_queue_lock_irqsave() as folio memcg may change then.
-> > 
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> 
-> This is a very nice simplification. And getting rid of the stack list
-> and its subtle implication on all the various current and future
-> list_empty(&folio->_deferred_list) checks should be much more robust.
-> 
-> However, I think there is one snag related to this:
->...
-> There IS a list_empty() check in the splitting code that we actually
-> relied on, for cleaning up the partially_mapped state and counter:
-> 
-> 		    !list_empty(&folio->_deferred_list)) {
-> 			ds_queue->split_queue_len--;
-> 			if (folio_test_partially_mapped(folio)) {
-> 				folio_clear_partially_mapped(folio);
-> 				mod_mthp_stat(folio_order(folio),
-> 					      MTHP_STAT_NR_ANON_PARTIALLY_MAPPED, -1);
-> 			}
-> 			/*
-> 			 * Reinitialize page_deferred_list after removing the
-> 			 * page from the split_queue, otherwise a subsequent
-> 			 * split will see list corruption when checking the
-> 			 * page_deferred_list.
-> 			 */
-> 			list_del_init(&folio->_deferred_list);
-> 
-> With the folios isolated up front, it looks like you need to handle
-> this from the shrinker.
+On Tue, 6 May 2025 at 08:43, Namhyung Kim <namhyung@kernel.org> wrote:
+>
+> On Tue, May 06, 2025 at 07:55:25AM +0200, Dmitry Vyukov wrote:
+> > On Tue, 6 May 2025 at 07:30, Namhyung Kim <namhyung@kernel.org> wrote:
+> > >
+> > > Hello,
+> > >
+> > > On Mon, May 05, 2025 at 10:08:17AM +0200, Dmitry Vyukov wrote:
+> > > > On Sat, 3 May 2025 at 02:36, Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > >
+> > > > > When it profile a target process (and its children), it's
+> > > > > straight-forward to track parallelism using sched-switch info.  The
+> > > > > parallelism is kept in machine-level in this case.
+> > > > >
+> > > > > But when it profile multiple processes like in the system-wide mode,
+> > > > > it might not be clear how to apply the (machine-level) parallelism to
+> > > > > different tasks.  That's why it disabled the latency profiling for
+> > > > > system-wide mode.
+> > > > >
+> > > > > But it should be able to track parallelism in each process and it'd
+> > > > > useful to profile latency issues in multi-threaded programs.  So this
+> > > > > patch tries to enable it.
+> > > > >
+> > > > > However using sched-switch info can be a problem since it may emit a lot
+> > > > > more data and more chances for losing data when perf cannot keep up with
+> > > > > it.
+> > > > >
+> > > > > Instead, it can maintain the current process for each CPU when it sees
+> > > > > samples.
+> > > >
+> > > > Interesting.
+> > > >
+> > > > Few questions:
+> > > > 1. Do we always see a CPU sample when a CPU becomes idle? Otherwise we
+> > > > will think that the last thread runs on that CPU for arbitrary long,
+> > > > when it's actually not.
+> > >
+> > > No, it's not guaranteed to have a sample for idle tasks.  So right, it
+> > > can mis-calculate the parallelism for the last task.  If we can emit
+> > > sched-switches only when it goes to the idle task, it'd be accurate.
+> >
+> > Then I think the profile can be significantly off if the system wasn't
+> > ~100% loaded, right?
+>
+> Yep, it can be.
+>
+> >
+> > > > 2. If yes, can we also lose that "terminating" even when a CPU becomes
+> > > > idle? If yes, then it looks equivalent to missing a context switch
+> > > > event.
+> > >
+> > > I'm not sure what you are asking.  When it lose some records because the
+> > > buffer is full, it'll see the task of the last sample on each CPU.
+> > > Maybe we want to reset the current task after PERF_RECORD_LOST.
+> >
+> > This probably does not matter much if the answer to question 1 is No.
+> >
+> > But what I was is the following:
+> >
+> > let's say we have samples:
+> > Sample 1 for Pid 42 on Cpu 10
+> > Sample 2 for idle task on Cpu 10
+> > ... no samples for some time on Cpu 10 ...
+> >
+> > When we process sample 2, we decrement the counter for running tasks
+> > for Pid 42, right.
+> > Now if sample 2 is lost, then we don't do decrement and the accounting
+> > becomes off.
+> > In a sense this is equivalent to the problem of losing context switch event.
+>
+> Right.  But I think it's hard to be correct once it loses something.
+>
+> >
+> >
+> > > > 3. Does this mode kick in even for non system-wide profiles (collected
+> > > > w/o context switch events)? If yes, do we properly understand when a
+> > > > thread stops running for such profiles? How do we do that? There won't
+> > > > be samples for idle/other tasks.
+> > >
+> > > For non system-wide profiles, the problem is that it cannot know when
+> > > the current task is scheduled out so that it can decrease the count of
+> > > parallelism.  So this approach cannot work and sched-switch info is
+> > > required.
+> >
+> > Where does the patch check that this mode is used only for system-wide profiles?
+> > Is it that PERF_SAMPLE_CPU present only for system-wide profiles?
+>
+> Basically yes, but you can use --sample-cpu to add it.
 
-Good catch.  I loaded up patches 01-07/28 on top of 6.15-rc5 yesterday,
-and after a good run of 12 hours on this laptop, indeed I can see
-vmstat nr_anon_partially_mapped 78299, whereas it usually ends up at 0.
+Are you sure? --sample-cpu seems to work for non-system-wide profiles too.
 
-> 
-> Otherwise this looks correct to me. But this code is subtle, I would
-> feel much better if Hugh (CC-ed) could take a look as well.
-
-However... I was intending to run it for 12 hours on the workstation,
-but after 11 hours and 35 minutes, that crashed with list_del corruption,
-kernel BUG at lib/list_debug.c:65! from deferred_split_scan()'s
-list_del_init().
-
-I've not yet put together the explanation: I am deeply suspicious of
-the change to when list_empty() becomes true (the block Hannes shows
-above is not the only such: (__)folio_unqueue_deferred_split() and
-migrate_pages_batch() consult it too), but each time I think I have
-the explanation, it's ruled out by folio_try_get()'s reference.
-
-And aside from the crash (I don't suppose 6.15-rc5 is responsible,
-or that patches 08-28/28 would fix it), I'm not so sure that this
-patch is really an improvement (folio reference held for longer, and
-list lock taken more often when split fails: maybe not important, but
-I'm also not so keen on adding in fbatch myself).  I didn't spend very
-long looking through the patches, but maybe this 07/28 is not essential?
-
-Let me try again to work out what's wrong tomorrow,
-Hugh
+> In util/evsel.c::evsel__config():
+>
+>         if (target__has_cpu(&opts->target) || opts->sample_cpu)
+>                 evsel__set_sample_bit(evsel, CPU);
 
