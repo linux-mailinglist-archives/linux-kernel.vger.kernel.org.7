@@ -1,114 +1,178 @@
-Return-Path: <linux-kernel+bounces-636408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA75AACB1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:36:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D43AACB22
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AC96980B42
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4931BC3322
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2761E285404;
-	Tue,  6 May 2025 16:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07AA283FE8;
+	Tue,  6 May 2025 16:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AjHm8GHG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2CCsXtvZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qC982Qq8";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2CCsXtvZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qC982Qq8"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205E428468D;
-	Tue,  6 May 2025 16:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54764220F59
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 16:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746549340; cv=none; b=NpcrUJFo6njXPGzTS/of2vIarY0ciZcoVS5g3S4RRrodojvsv1fGLcVSUh5aCmi9eQyTo068WFf4tnN4oaFZDDCLOW/KXRL27hP++Szd4kvKvN8gR1xv7r5jWpk5/zAZvoevmHk+un1rPz1I0hU9WGU4CBXCtmQ/ShugQz+uRYs=
+	t=1746549379; cv=none; b=rbeCwhX7YbNab68IJvRhnmvjzYK2qLZ7yNn8ZuSyH7DRnYumWhQb+eOmeqwjxwjmqett+VoAzYNa+5LG3FVUT9rrwkbRROtT7fwM11TZ6cW3IlTmRn9qZ4OTxQGn8zoQcfj0moR5PxAD9+6CLghDxdcBfx9qXHOjLD8Y5ANy/FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746549340; c=relaxed/simple;
-	bh=xEyDh7R3iimg8qhthUTNDtfy2HRx25zYMJ0fSuF7Gik=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M4HqySK1zXSsy8RFO+f+uOSfsAhUaDIU3G5LAcB/28fI2ZOnHUuUBEvrVU4AoYKx4cq7zHVdVCpC0sfto5iPYz34ZJ9RdaISk0wL+GrjUFVmNJNxjwIYkibMVipWphkkO1zv3ETXoKRIcPYz+/xcHcYYZpaw7mdTOi0m2YiY+QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AjHm8GHG; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746549339; x=1778085339;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xEyDh7R3iimg8qhthUTNDtfy2HRx25zYMJ0fSuF7Gik=;
-  b=AjHm8GHGsfP6wWZyyX4CTUvlgRUl5ZHTUjqk+WuxAoSq5k9oGw6B4IFC
-   24WfF/Nzo9y/1Hw90S+5abGJenM2HO5EePIZFRgVNDp0t891YcGMOQfPN
-   snKM8XQBSJm/dJxi4/SbtAacFuSdVIAhAQ0k00qiei73mQF/i4YvTi8ld
-   8YOcfydwnYzX28qrfKa6aN7jMVavQBuQ5d7FLlNn/4vKEWx4FWUfC5x8f
-   i8RFVhFNL25h3BzOtgaxcqxOPprALyUtmsA73lO8DukAmp7CkWaN+rAzY
-   KWTYBUVh46s2dugieWO/sH8LKmQcWPGJdCirDRR9qgfXkNBOmiGZ1AQG9
-   A==;
-X-CSE-ConnectionGUID: Zh4si/zKQmyJ92EPYVQYkA==
-X-CSE-MsgGUID: CGPzo5OFThe9XKV7i3Xjtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="70736095"
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="70736095"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 09:35:36 -0700
-X-CSE-ConnectionGUID: WNtvefjmQfO9T+rsuqFH/g==
-X-CSE-MsgGUID: M+9K9x6STu+PYVCkFBLRxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="136636284"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by orviesa008.jf.intel.com with ESMTP; 06 May 2025 09:35:35 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2 3/3] platform/x86: ISST: Update minor version
-Date: Tue,  6 May 2025 09:35:31 -0700
-Message-ID: <20250506163531.1061185-4-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250506163531.1061185-1-srinivas.pandruvada@linux.intel.com>
-References: <20250506163531.1061185-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1746549379; c=relaxed/simple;
+	bh=tUMH77MHsK8Qrrdw/Nfp3fcPeq3fsjxxnl6U0Dn26+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iUvQBAo5InPSuJKqn+nqtLDqB6fxR+GtmrOtFLm7FSUGh/NXmUal73640LDrJePRf5VNUKZuEzlV/umtrgPUdd30KS8GXJVJRSqm+RpjTQIjlrY+AAfqgegRQFWJe3f4rd7EsnidRp4s//yOvloyIv/2r+ptxD5yzu8PxRlyxcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2CCsXtvZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qC982Qq8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2CCsXtvZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qC982Qq8; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 32D1A1F393;
+	Tue,  6 May 2025 16:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746549375; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CVgOF5htGgXTxeqgootQCNOyXhH1t1T2eIGBUtemh/I=;
+	b=2CCsXtvZxAqDQMljkijEpYnKLjkj/hjiZjJwy52pIHG0NbxFSee8ePByzN1mA7f1Ci+W2S
+	sJTKC+lCk3A0+3NjsQ+YBw/ESclXN3Vp3oogG/OP/ZbAO8jo+md5P+N6LriugGzbCkgjYH
+	lmvq9U/IFG/qUKeueiqEu8zwCwbRbZk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746549375;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CVgOF5htGgXTxeqgootQCNOyXhH1t1T2eIGBUtemh/I=;
+	b=qC982Qq8299An0TUOWoGF03gIjt7Jkhv8DJgLEemPumVieFVTx9o+25AqzS228Fq3K/zzB
+	thN7SeRLiTFk05DQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=2CCsXtvZ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qC982Qq8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746549375; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CVgOF5htGgXTxeqgootQCNOyXhH1t1T2eIGBUtemh/I=;
+	b=2CCsXtvZxAqDQMljkijEpYnKLjkj/hjiZjJwy52pIHG0NbxFSee8ePByzN1mA7f1Ci+W2S
+	sJTKC+lCk3A0+3NjsQ+YBw/ESclXN3Vp3oogG/OP/ZbAO8jo+md5P+N6LriugGzbCkgjYH
+	lmvq9U/IFG/qUKeueiqEu8zwCwbRbZk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746549375;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CVgOF5htGgXTxeqgootQCNOyXhH1t1T2eIGBUtemh/I=;
+	b=qC982Qq8299An0TUOWoGF03gIjt7Jkhv8DJgLEemPumVieFVTx9o+25AqzS228Fq3K/zzB
+	thN7SeRLiTFk05DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1861513687;
+	Tue,  6 May 2025 16:36:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qHqUA386GmjydAAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Tue, 06 May 2025 16:36:15 +0000
+Date: Tue, 6 May 2025 18:36:14 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: linux-nvme@lists.infradead.org
+Cc: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
+	Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/14] nvmet-fcloop: track resources via reference
+ counting
+Message-ID: <144a314b-75b8-4d0c-ae19-40680cb681d1@flourine.local>
+References: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
+X-Rspamd-Queue-Id: 32D1A1F393
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Update SST minor version after supporting SST-PP and SST-TF version 2.
+On Wed, Apr 23, 2025 at 03:21:43PM +0200, Daniel Wagner wrote:
+> Note blktests nvme/030 test is likely to fail if the
+> 70-nvmf-autoconnect.rules is active. In this case two discovery are
+> running in parallel and nvme-cli/libnvme gets out of sync. I don't see a
+> problem in blktests, but maybe I am just blind:
+> 
+> nvme/030 (tr=fc) (ensure the discovery generation counter is updated appropriately) [failed]
+>     runtime  1.843s  ...  1.719s
+>     --- tests/nvme/030.out      2023-08-30 08:39:08.428409596 +0000
+>     +++ /tmp/blktests/nodev_tr_fc/nvme/030.out.bad      2025-04-10 10:56:05.146372112 +0000
+>     @@ -1,2 +1,6 @@
+>      Running nvme/030
+>     +Failed to open ctrl nvme1, errno 11
+>     +Failed to open ctrl nvme1, errno 11
+>     +failed to get discovery log: Bad file descriptor
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
-New patch in this series.
+It turns out that nvme/030 uncovered a bunch of bugs. First the kernel
+returned EAGAIN consistently for a while and could easily reproduce it.
+But after updating something it went away. I think the EAGAIN was issued
+because in my test setup the udev rule is active and triggers a discover
+(creates a discover ctrl) which runs in parallel with the test, also
+running a discover. I think EAGAIN was alwasys there but it is hard to
+hit.
 
- drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I've added a workaround to handle EINTR to libnvme but after reading up
+on signals, I came to the conclusion, nvme-cli needs to handle EAGAIN
+and EINTR. The EINTR case might be entered with Ctrl-C and in this case
+we want to terminate the loop. Installing a signal handler in a library
+is a no go from my understanding:
 
-diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-index f56bb63f7947..f08d78536839 100644
---- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-+++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-@@ -34,7 +34,7 @@
- 
- /* Supported SST hardware version by this driver */
- #define ISST_MAJOR_VERSION	0
--#define ISST_MINOR_VERSION	1
-+#define ISST_MINOR_VERSION	2
- 
- /*
-  * Used to indicate if value read from MMIO needs to get multiplied
-@@ -380,7 +380,7 @@ static int sst_main(struct auxiliary_device *auxdev, struct tpmi_per_power_domai
- 		return -ENODEV;
- 	}
- 
--	if (TPMI_MINOR_VERSION(pd_info->sst_header.interface_version) != ISST_MINOR_VERSION)
-+	if (TPMI_MINOR_VERSION(pd_info->sst_header.interface_version) > ISST_MINOR_VERSION)
- 		dev_info(dev, "SST: Ignore: Unsupported minor version:%lx\n",
- 			 TPMI_MINOR_VERSION(pd_info->sst_header.interface_version));
- 
--- 
-2.49.0
+  https://github.com/linux-nvme/nvme-cli/pull/2797
 
+After getting this out of the way, I figured out that nvmet-fc is not
+able to handle more than on in flight async, and there is a nested
+locking issue in nvme-fc.
+
+The tests get more and more reliable, though I thought I saw a KASAN
+report but now it's not reproducing. Yeah, everyone loves heisenbugs.
 
