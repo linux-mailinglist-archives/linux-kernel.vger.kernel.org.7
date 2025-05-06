@@ -1,142 +1,96 @@
-Return-Path: <linux-kernel+bounces-636083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F23AAC5CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:24:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21102AAC5D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C05671C209EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:23:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32461C20693
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E14E280A4F;
-	Tue,  6 May 2025 13:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170732857DC;
+	Tue,  6 May 2025 13:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l8/rhDTU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TO1/nfi7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f1mHoExS"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DCB283FF3;
-	Tue,  6 May 2025 13:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC6E284B37
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 13:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746537629; cv=none; b=PmATIW+kdXx1vM5unja/EzLyxn1ZtKZaQsmK0abPlLkocy8NbUPu//bJoPmQZSq7rlxgeTwObX/l89B96zR5gnwu2bQwfXxAdYZUuULKXTXODwFwd3i7toHMWX0wLh+QPR4rzRLbk8OwxPBuO0cOVd6aU6/5SsQk+5CKoCKn3y4=
+	t=1746537631; cv=none; b=RDCCp8eRdP9OSHcafzROFYiuQUdrSULNqYRhSwSF0sV/5h8hBKou1/wSdUVV7INFh6N7CjHW2xntvoVC7k3225Q3Cgf9ElUkQmxZvXfxub54C8ssYYi8r9XeKlRDAQpDT7zPFBa557GB5ADPjZtBvjBCryXpRBEWSYoZCjtnIsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746537629; c=relaxed/simple;
-	bh=TXiPladwXzUiKBTajy7N/0YiYVe8QEgDPpCFNfxjewk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Waos6kUUW7FsoWlheLCo6vENMPQVUGXqyeiyvb3s/VWKKqvaWwhmmUujrTiFeliSZM+R5gjSkZcubR/JLiCYjppN5w/H756+bggrEVTnw9rG4hMgbp4iqLshQGQlc8BHewVVQQwM0Jjh0JdIyUX2MZ1V+pCsKUCQ0JOgXZpWkWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l8/rhDTU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TO1/nfi7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 06 May 2025 13:20:24 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746537625;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zs+j75kWmDaoqr7sMlTZvuHx83j1/yQXPt8JaHxgDag=;
-	b=l8/rhDTUn+OxYj2lGSmG2dmFw6pIUR9uFZHHKvfKybzkCWyyjaGXTJgPZ91NG+jzgGXUzb
-	jukhBQDB/TTIoYLwuw3CjpHZj133eevj/fA5HPDPokccVWjX0rXCNTW+AT5f74yL7TOveg
-	fNMq6hSTIylqqHirxcqa6OpRRk9ySLJhA2Drzu8RZCsuJ24Y+fPCyUzE+G8BtIs9fX/Cgy
-	6X+Zdvbj/aNRoawoVcQRCaI/Fwgi2dNNz4As1WfK1NW1Y/Wto83/bN40nh2pWqlaEd6CIK
-	YQb7w7rJlyivGoYbya6AGZYK6uOw+AeoG7tTfWWZQ1LpBbMev3H5fquZn+WDrw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746537625;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zs+j75kWmDaoqr7sMlTZvuHx83j1/yQXPt8JaHxgDag=;
-	b=TO1/nfi7REE1DtX59Wir4y53SyWifsVX1mQ/YGRgHkqK1c/tmN/MICop0F9T0djDskNWaU
-	Ry592dfNbp9z3iDA==
-From: "tip-bot2 for Jiri Slaby (SUSE)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/cleanups] thermal: Switch to irq_domain_create_linear()
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250319092951.37667-39-jirislaby@kernel.org>
-References: <20250319092951.37667-39-jirislaby@kernel.org>
+	s=arc-20240116; t=1746537631; c=relaxed/simple;
+	bh=4DeN/DPKw5wRuHPLDO0TZYd7KmFT2iB1A89ex9ARX5Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lL0m5ATaEBA/edQumUaaSjwGhoFKSeIBZdPTL7VYql0p+uvnwxO7DP2E9J44iWR7d6+zAcCX/SJPjF7Lpp4W4gAVNgDTLhwKV7am1T1Eek4CUxoKxztjJu5bbs/f3NfqxhkN8RQ1tfoJNWlP7gl7m8Y6RVztM+trEgWBOH2XIvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f1mHoExS; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d00017e9dso30050185e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 06:20:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746537627; x=1747142427; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oIiqBCWX5MzqP0t3XcVAZebiA0Ed8DRzeZF9xiXf3Ao=;
+        b=f1mHoExS12v/NMYUmhq8pfz8YhfgyBVbDf7zu1NTk+DMUQAVi4qvpvJfFzmFMetQg2
+         KinJmYCU1htuG9ofGwTCJaSrVRpuiRZcByvuTlHgJ6XSd2LwzCU78gMZZJXFLCQQhq65
+         AMFicP9gJkWbS8t21A8aS5QWbplA5C6vhk5unHs6mxwJ/Zkhdqvmpsdm5xfeRIX/EN68
+         Snm10g2i0uCxl1tHBjUrWdNuh3066f6KsxJ1LwR2drybZXJ3mZKinj+eIks+NhR4034s
+         LNLKzo3T1WxI+Yhoj5YLFqpFzMGH6btwaz/RyH1dPJsFG+t6k9XLFYGnh/R2tZoc0FKF
+         u8uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746537627; x=1747142427;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oIiqBCWX5MzqP0t3XcVAZebiA0Ed8DRzeZF9xiXf3Ao=;
+        b=U0YzxSmngRdt18O/rk78g4DBhiADrD9pneYYVoIvMStlVkPzOewILfROlukmAYkc66
+         5sNfwckBhMg86tugDMFBCxPdDZUH/Ez4ys01PGpKG+phPxoSoPK2wRooubsgFQv5Pgp9
+         1QKKfPieCm/b6SxSjnSIUdFnH9r0HbZNIY2HHXFWkixhxIFRn4fSaG67cS3WSsdHd0Kc
+         uB5bU0sW4Cl7Nlf0nqhcNEbM19joSNmBuLegS6F3Erbhxu4ZcJ8d2hnmF7k1IsaWi3ZV
+         VVmnB0TKa4iVIsd8+5Y2nZANOD4wpeCEatpGHanuxRKNBrgF9x9PyvwGnyLhIaJIoUgY
+         HYxw==
+X-Forwarded-Encrypted: i=1; AJvYcCV25RbJ4Q8NYChG5R8sfewT/ztMA3LjlYxVL7fKPYTpujQM06D0RNQuvrSpZEi5kXW2+LaJBjw1Tx4JtyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwIoEF0KgmeL4FMTGeq5I+iYFbQb3o1YvARgqPK9WaCPebmwkv
+	3+6uuvSAWu5KSLrEdmJHbAEUsDblJ1SF/GiqdDlzKNKp7vcfVxYHW1VSQQCY9Pi10rQFZxJ9YEb
+	nelDeaa6Zbw==
+X-Google-Smtp-Source: AGHT+IFY78pcCTbbccXODWSDVdP1qDT1isRm3G/s4SH8FJC+JVpZUwNfnB50fPQ1ngFDis6ebOiU9A1BaDFDbw==
+X-Received: from wmbjg12.prod.google.com ([2002:a05:600c:a00c:b0:43c:eaf6:525e])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3e05:b0:43c:e467:d6ce with SMTP id 5b1f17b1804b1-441d0fbd329mr28022185e9.4.1746537627644;
+ Tue, 06 May 2025 06:20:27 -0700 (PDT)
+Date: Tue, 06 May 2025 13:20:25 +0000
+In-Reply-To: <20250506112509.905147-2-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <174653762483.406.16842771657994935456.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250506112509.905147-1-kirill.shutemov@linux.intel.com> <20250506112509.905147-2-kirill.shutemov@linux.intel.com>
+X-Mailer: aerc 0.20.0
+Message-ID: <D9P3X0NLQMW5.1J74MJ7FDRBFB@google.com>
+Subject: Re: [PATCH 1/2] mm/page_alloc: Ensure try_alloc_pages() plays well
+ with unaccepted memory
+From: Brendan Jackman <jackmanb@google.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, <akpm@linux-foundation.org>, 
+	<vbabka@suse.cz>, <surenb@google.com>, <mhocko@suse.com>, 
+	<hannes@cmpxchg.org>, <bp@alien8.de>, <tglx@linutronix.de>, 
+	<david@redhat.com>
+Cc: <ast@kernel.org>, <linux-mm@kvack.org>, <linux-coco@lists.linux.dev>, 
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the irq/cleanups branch of tip:
+On Tue May 6, 2025 at 11:25 AM UTC, Kirill A. Shutemov wrote:
+> +	/* Bailout, since try_to_accept_memory_one() needs to take a lock */
+> +	if (alloc_flags & ALLOC_TRYLOCK)
+> +		return false;
+> +
 
-Commit-ID:     02ca56b022b20db9adf3ece846b6b103b829855e
-Gitweb:        https://git.kernel.org/tip/02ca56b022b20db9adf3ece846b6b103b829855e
-Author:        Jiri Slaby (SUSE) <jirislaby@kernel.org>
-AuthorDate:    Wed, 19 Mar 2025 10:29:31 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 06 May 2025 14:59:07 +02:00
-
-thermal: Switch to irq_domain_create_linear()
-
-irq_domain_add_linear() is going away as being obsolete now. Switch to
-the preferred irq_domain_create_linear(). That differs in the first
-parameter: It takes more generic struct fwnode_handle instead of struct
-device_node. Therefore, of_fwnode_handle() is added around the
-parameter.
-
-Note some of the users can likely use dev->fwnode directly instead of
-indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
-guaranteed to be set for all, so this has to be investigated on case to
-case basis (by people who can actually test with the HW).
-
-[ tglx: Fixed up subject prefix ]
-
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250319092951.37667-39-jirislaby@kernel.org
-
----
- drivers/thermal/qcom/lmh.c       | 3 ++-
- drivers/thermal/tegra/soctherm.c | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/thermal/qcom/lmh.c b/drivers/thermal/qcom/lmh.c
-index d2d4926..991d157 100644
---- a/drivers/thermal/qcom/lmh.c
-+++ b/drivers/thermal/qcom/lmh.c
-@@ -209,7 +209,8 @@ static int lmh_probe(struct platform_device *pdev)
- 	}
- 
- 	lmh_data->irq = platform_get_irq(pdev, 0);
--	lmh_data->domain = irq_domain_add_linear(np, 1, &lmh_irq_ops, lmh_data);
-+	lmh_data->domain = irq_domain_create_linear(of_fwnode_handle(np), 1, &lmh_irq_ops,
-+						    lmh_data);
- 	if (!lmh_data->domain) {
- 		dev_err(dev, "Error adding irq_domain\n");
- 		return -EINVAL;
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 2c5ddf0..926f105 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -1234,7 +1234,7 @@ static int soctherm_oc_int_init(struct device_node *np, int num_irqs)
- 	soc_irq_cdata.irq_chip.irq_set_type = soctherm_oc_irq_set_type;
- 	soc_irq_cdata.irq_chip.irq_set_wake = NULL;
- 
--	soc_irq_cdata.domain = irq_domain_add_linear(np, num_irqs,
-+	soc_irq_cdata.domain = irq_domain_create_linear(of_fwnode_handle(np), num_irqs,
- 						     &soctherm_oc_domain_ops,
- 						     &soc_irq_cdata);
- 
+Quick lazy question: why don't we just trylock it like we do for the zone
+lock?
 
