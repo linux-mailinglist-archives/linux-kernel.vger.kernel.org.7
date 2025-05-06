@@ -1,206 +1,148 @@
-Return-Path: <linux-kernel+bounces-635700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5344AAC0F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:10:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0757AAC0F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D334A848A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:10:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1ED31C25255
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF132749FB;
-	Tue,  6 May 2025 10:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ieg6V+jx"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0B226560B
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 10:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8F7274FE8;
+	Tue,  6 May 2025 10:10:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46665201270
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 10:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746526233; cv=none; b=dBMhzhqOys6BQFQBhFBWQTbc0zGrPO+VGUN5Q5uthyn98X7T7s3T7JccCWs9eo9Cu2T22ZKuk2TYCQ/64DG4jQ06vKYdlh4UxoXOCYBxvo8rK6v/Dyoqj1tws/Eis+qsxQcaz+h3YM6NZf1vBtzDdGHgHR7YRLx9nrOMczPR4d4=
+	t=1746526257; cv=none; b=XS0RjjS0MWxLO2h2HQte/3ObBNDtP/Bt/XjXxq68cBakwzXFgPrbALvJqqmkk4JHInHxcmgEq5HTLQH0/d4w0L6dxrj8j6+EYhNw8lRcYXaq57N+F0l/rSb+bhbNhGUKEhcLGBqkqTmkZ29qyBnbrYA7e2RSp6YY0YRxWBocQ/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746526233; c=relaxed/simple;
-	bh=gGGmxUbk8vrtJ1Mmr4cCd7hWM2vCgRBh42AoFwpNydQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=piX0RF2H/ns6+FsXqwJrT5ccywoT8S/C8REynWpnCj9kUxNDEdHqvQZWv/vqls6nftsjxiROUyGaNQYCKlmG45o/H3/DMtf18sjRnv4ixRy5Om0zUr3yFpfHVIAxrXTMZq31PaIOlNw2tRHDacxl6QrJb6qL61gUknV4hqMeIGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ieg6V+jx; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30c2d427194so48030451fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 03:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746526229; x=1747131029; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vx8i6SIIlfpmbQpS4R1+ncEn9UEtN+IsuQ5slgbwHa4=;
-        b=Ieg6V+jx4qkmEBhBkCeuiVPfg88plHKv8N7rUnWJ9nwMEc2+GeQF/6OhbWw2DJ5D23
-         KuY93gwXcwpfSkoadD668Jc9nBkw4PKKH2udAkgbH2ro8igDuK+BYEhubdkOcQaLsP95
-         2UYNUkeHLORFP9jql0ZGjeVKjBt7xyBngCid2+qcNcLKp8Vsl/gRjiXgvybHScmMN3Wt
-         rniz2UHSi0piXZ5gm7jlPRjckx0DPfOJHjKgHBeSDf3UU39v2g3HYxx2/rFzCNiEpk2V
-         YvlVOeVQDK/3ydvm6etlmdg+VJ+kNvonh49z51hl71fd5zIj5F15O16No6HlqgFPy7Cx
-         81sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746526229; x=1747131029;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vx8i6SIIlfpmbQpS4R1+ncEn9UEtN+IsuQ5slgbwHa4=;
-        b=evlYWti74BhNIYIkkDMGbWSntOeKGkgz3Ef/cr+Baxs0Uc7r1O/THGgLMdtp8ri/9W
-         8mEoJ8U9zGVnruxwZRBN6Pxz2+3eoXW7KMGVyTBSV+l01l33SxSwkuv+AeOvpO8eCOXF
-         fAywoBy3TLh8eJnZFxlRCrmccldu/+FY3rrYOxpfSjbMwg4rh89ofX9XfN6Sa2yYnXZu
-         XOZkdz5+GOZujYsgxK7Qcx73iewg6IjMZR9yRkiSdLYVyZdfAXIYVCb1Ag1QtkkS/jFR
-         DUCo+Te4K5qcrtL+gDtAz90+ybk2+E/pO1Vpe5xL0UG35jHkq8qZZ8RXanr6nhnFQyqf
-         06MQ==
-X-Gm-Message-State: AOJu0YxUTU4+efaboM7TI9KRXRoyTi8stzqPrYbJMgNJ5P/6VNcB2jLo
-	uvVfVeF5gi5HXwWLB4OzMwVULtF3esCNnxrSBY1OrUBNWlKmQ1YEvIJ8NjRkN+xM4oyMY+JDA8k
-	cN7cxSgJ/Od1YwRFSo6KiRFq9RPe+00WGjPqWOw==
-X-Gm-Gg: ASbGncubpCH6dclr45qEh8qqvhxYaww2PwBVAfJrLbb4QYqHHo+PcvWafTc5V+lCMxq
-	PfiTIqrPRJ40SoF71gzx65nzZjj78rDY2WpqeXMXXKqzF3YjqRKyPHpkX4Ffhs+z+EuY702S3io
-	k8fYk2x5+M+PKhC+rJltnd0O3lMT9xWn4II2JU6DA3C665qRiSpdBSTtewJ1Tv8DGhjg==
-X-Google-Smtp-Source: AGHT+IFDAP9Lw/1+lUDPydOLzcnkxY2RUFDk8XdLLkCRbTD/DPDm1yFAPqG4/nwE/cuM/8hV2OnR0x24rkbUQomMHqw=
-X-Received: by 2002:a2e:b887:0:b0:30b:f274:d1e2 with SMTP id
- 38308e7fff4ca-320c3af0581mr50762521fa.1.1746526228731; Tue, 06 May 2025
- 03:10:28 -0700 (PDT)
+	s=arc-20240116; t=1746526257; c=relaxed/simple;
+	bh=ngpPPqPmSUtxwjz/4sB2Ojab/DbrjWjgZ9X6H9z1WTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IMdhE/ZprXe+70gnl7By0BBzsNeGLC53K85L05THYiXaEi2Y81JXe66wQRR8ikFzz+oa5cC+3DiTStK39sKxS+xabz0QdtLz5J0Nx3Q1HXwYUudf6BFv2Gs/WD2u2V2q79X5k7DMM1lO9x5TuP1+Lq0LzHANNLqmur7JXjXUwDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC3C8113E;
+	Tue,  6 May 2025 03:10:44 -0700 (PDT)
+Received: from [10.163.53.181] (unknown [10.163.53.181])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBDCC3F5A1;
+	Tue,  6 May 2025 03:10:44 -0700 (PDT)
+Message-ID: <e430344b-76b9-43be-b497-0152a8910faf@arm.com>
+Date: Tue, 6 May 2025 15:40:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250503082834.49413-1-marco.crivellari@suse.com> <aBlMLQl504ThYbnf@slm.duckdns.org>
-In-Reply-To: <aBlMLQl504ThYbnf@slm.duckdns.org>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Tue, 6 May 2025 12:10:18 +0200
-X-Gm-Features: ATxdqUHovGAhlVBNhE5_utEiR3kJaiFKcCVPTtgunFIAQUNvOfwgQ4cahsSLjFk
-Message-ID: <CAAofZF60A82utmB2LiVw910cdFDiHd+fPaozUKpQwfXUqv7R_g@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Workqueue: rename system workqueue and add WQ_PERCPU
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] mm: Optimize mremap() by PTE batching
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com,
+ ryan.roberts@arm.com, mingo@kernel.org, libang.li@antgroup.com,
+ maobibo@loongson.cn, zhengqi.arch@bytedance.com, baohua@kernel.org,
+ willy@infradead.org, ioworker0@gmail.com, yang@os.amperecomputing.com
+References: <20250506050056.59250-1-dev.jain@arm.com>
+ <20250506050056.59250-4-dev.jain@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250506050056.59250-4-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 5/6/25 10:30, Dev Jain wrote:
+> Use folio_pte_batch() to optimize move_ptes(). Use get_and_clear_full_ptes()
+> so as to elide TLBIs on each contig block, which was previously done by
+> ptep_get_and_clear().
+> 
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>  mm/mremap.c | 24 +++++++++++++++++++-----
+>  1 file changed, 19 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 1a08a7c3b92f..3621c07d8eea 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -176,7 +176,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  	struct vm_area_struct *vma = pmc->old;
+>  	bool need_clear_uffd_wp = vma_has_uffd_without_event_remap(vma);
+>  	struct mm_struct *mm = vma->vm_mm;
+> -	pte_t *old_ptep, *new_ptep, pte;
+> +	pte_t *old_ptep, *new_ptep, old_pte, pte;
+>  	pmd_t dummy_pmdval;
+>  	spinlock_t *old_ptl, *new_ptl;
+>  	bool force_flush = false;
+> @@ -185,6 +185,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  	unsigned long old_end = old_addr + extent;
+>  	unsigned long len = old_end - old_addr;
+>  	int err = 0;
+> +	int nr;
+>  
+>  	/*
+>  	 * When need_rmap_locks is true, we take the i_mmap_rwsem and anon_vma
+> @@ -237,10 +238,14 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  
+>  	for (; old_addr < old_end; old_ptep++, old_addr += PAGE_SIZE,
+>  				   new_ptep++, new_addr += PAGE_SIZE) {
+> -		if (pte_none(ptep_get(old_ptep)))
+> +		const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+> +		int max_nr = (old_end - old_addr) >> PAGE_SHIFT;
+> +
+> +		nr = 1;
+> +		old_pte = ptep_get(old_ptep);
+> +		if (pte_none(old_pte))
+>  			continue;
+>  
+> -		pte = ptep_get_and_clear(mm, old_addr, old_ptep);
+>  		/*
+>  		 * If we are remapping a valid PTE, make sure
+>  		 * to flush TLB before we drop the PTL for the
+> @@ -252,8 +257,17 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  		 * the TLB entry for the old mapping has been
+>  		 * flushed.
+>  		 */
+> -		if (pte_present(pte))
+> +		if (pte_present(old_pte)) {
+> +			if ((max_nr != 1) && maybe_contiguous_pte_pfns(old_ptep, old_pte)) {
 
-> Can you please make a summary of the discussion here? Referring to old
-> thread is useful but it'd be nice to have the rationales laid out in the
-> patchset - why this is desirable, what is the transition plan and what ar=
-e
-> the rationales for it? Also, please include a short summary in the patche=
-s.
+maybe_contiguous_pte_pfns() cost will be applicable for memory
+areas greater than a single PAGE_SIZE (i.e max_nr != 1) ? This
+helper extracts an additional consecutive pte, ensures that it
+is valid mapped and extracts pfn before comparing for the span.
 
-Sure, thanks for the advice.
+There is some cost associated with the above code sequence which
+looks justified for sequential access of memory buffers that has
+consecutive physical memory backing. But what happens when such
+buffers are less probable, will those buffers take a performance
+hit for all the comparisons that just turn out to be negative ?
 
-> Let's keep the old names for a release or two and trigger printk_once()
-> warnings about the renames. These are pretty widely used, so I think it
-> warrants a bit of extra effort.
-
-Good, sounds fine.
-But I don't understand where printk_once() should be placed.
-Can you give me some further guidance?
-
-> Similarly, let's warn about violations and assume the old behavior at fir=
-st.
-
-Ok, so warn (printk_once()) if both flags are present but if none among
-WQ_UNBOUND nor WQ_PERCPU are present, assume WQ_PERCPU.
-
-Did I understand correctly?
-
-> Do you mean caller?
-
-Yes, sorry. I meant "every alloc_workqueue() caller".
-
-> How is 3) different from 2)?
-
-I get your point, I will use a single patch.
-
-Many thanks in advance, about my questions.
-
-
-On Tue, May 6, 2025 at 1:39=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello,
->
-> On Sat, May 03, 2025 at 10:28:30AM +0200, Marco Crivellari wrote:
-> > Hi!
-> >
-> > This series is the follow up of the discussion from:
-> >       "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOU=
-ND."
-> >       https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de=
-/
->
-> Can you please make a summary of the discussion here? Referring to old
-> thread is useful but it'd be nice to have the rationales laid out in the
-> patchset - why this is desirable, what is the transition plan and what ar=
-e
-> the rationales for it? Also, please include a short summary in the patche=
-s.
->
-> > 1)  [P 1-2] system workqueue rename:
-> >
-> >       system_wq is a per-CPU workqueue, but his name is not clear.
-> >       system_unbound_wq is to be used when locality is not required.
-> >
-> >       system_wq renamed in system_percpu_wq, while system_unbound_wq
-> >       became system_dfl_wq.
->
-> Let's keep the old names for a release or two and trigger printk_once()
-> warnings about the renames. These are pretty widely used, so I think it
-> warrants a bit of extra effort.
->
-> > 2)  [P 3] Introduction of WQ_PERCPU.
-> >
-> >       This patch adds a new WQ_PERCPU flag to explicitly request the le=
-gacy
-> >       per-CPU behavior. WQ_UNBOUND will be removed once the migration i=
-s
-> >       complete.
->
-> I wouldn't call per-cpu behavior legacy. There are plenty of cases that n=
-eed
-> per-cpu behavior for correctness and/or performance.
->
-> >       Every alloc_workqueue() caller should use one among WQ_PERCPU or
-> >       WQ_UNBOUND. This is actually enforced warning if both or none of =
-them
-> >       are present at the same time.
->
-> Similarly, let's warn about violations and assume the old behavior at fir=
-st.
->
-> > 3)  [P 4] alloc_workqueue() callee should pass explicitly WQ_PERCPU.
->
-> Do you mean caller?
->
-> >
-> >       This patch ensures that every caller that needs per-cpu workqueue
-> >       will explicitly require it, using the WQ_PERCPU flag.
->
-> How is 3) different from 2)?
->
-> Thanks.
->
-> --
-> tejun
-
-
-
---
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-
-
-
-marco.crivellari@suse.com
+> +				struct folio *folio = vm_normal_folio(vma, old_addr, old_pte);
+> +
+> +				if (folio && folio_test_large(folio))
+> +					nr = folio_pte_batch(folio, old_addr, old_ptep,
+> +					old_pte, max_nr, fpb_flags, NULL, NULL, NULL);
+> +			}
+>  			force_flush = true;
+> +		}
+> +		pte = get_and_clear_full_ptes(mm, old_addr, old_ptep, nr, 0);
+>  		pte = move_pte(pte, old_addr, new_addr);
+>  		pte = move_soft_dirty_pte(pte);
+>  
+> @@ -266,7 +280,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  				else if (is_swap_pte(pte))
+>  					pte = pte_swp_clear_uffd_wp(pte);
+>  			}
+> -			set_pte_at(mm, new_addr, new_ptep, pte);
+> +			set_ptes(mm, new_addr, new_ptep, pte, nr);
+>  		}
+>  	}
+>  
 
