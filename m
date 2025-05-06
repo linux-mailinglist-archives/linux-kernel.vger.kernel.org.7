@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-635420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B213AABD15
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E19AABD5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C5241C221AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8742D3B6E9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B784424C069;
-	Tue,  6 May 2025 08:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E67524BBF0;
+	Tue,  6 May 2025 08:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PSEM0vsc"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RyLGBYPq"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DD324886E;
-	Tue,  6 May 2025 08:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E2422DFB1;
+	Tue,  6 May 2025 08:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746520015; cv=none; b=Zoz//LUDy80Axr5BoqihOxx+yLHDa99o0y99/O1CMHcv0RQ8dAy5/HrJGj6QH5BCiVWa1yCisjHb+L9zTrtAomntuJqkDeCRMS/Vmm23WZTmxO0nvI1Le+5ewDyBhf5LHEvMT6jtklkN7CtqgTN1ax8rVnVj6Zgssgt1iEpzyTo=
+	t=1746520119; cv=none; b=Zj+HSk4fVL6Z75MHSc03hbeOX+GXsc4Yj40EH5zGSyxkhK6HTor6Y2UQbV8PEl4ngv7BcUAfqzD4q2+NFK43VJ9oa5OklG4+MCT4MZmRI967m6yM7wlSnd3t2TbjQN1QDUhpvjrjzmUppE4GBrsoH41kWvnswevL++ySAluYBig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746520015; c=relaxed/simple;
-	bh=ad97OQP3nn2YqrRFzD02fywEVWGG5tYkx4QSKxSCpwA=;
+	s=arc-20240116; t=1746520119; c=relaxed/simple;
+	bh=aKexJcbDf7RX3F6f/GBWM3WTi6g2qAawNgd8dqWrYnk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rkgklBddBJ5vwq7qIloxbU2PYkMAAlmdxtnhQQ4uo0H3L0cX5rJNMXzsPOuBG7VYzrXejdOdAsd69PjuPM5yfKyXtGo/N709RBuxWc/btPq8pPnEnkjtalliEA+VrJxo+Q+qO+w7v69yoaGDLU//aKkXVmvh94vm4GgXNLgA354=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PSEM0vsc; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=GdstRSswwVdbo3d6oJ6gGCsHvaAbRBPecwUXrwuYBzBhI4IqHx1aY50rX42450Vvlb6I4KvwEpyNO5izdvULUO8jfICsoOJDinzS+DHhpVOVdPBJxcjUpBllHgRuqNy1cU6pKHH85ipbLIyGckt5K8u9B8OxmujR9ph/GgpPeqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RyLGBYPq; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746520011;
-	bh=ad97OQP3nn2YqrRFzD02fywEVWGG5tYkx4QSKxSCpwA=;
+	s=mail; t=1746520115;
+	bh=aKexJcbDf7RX3F6f/GBWM3WTi6g2qAawNgd8dqWrYnk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PSEM0vscIDZEYCJakmdi0kRAntYLb0wMyGU6c9qz0Juc7BWnKyWS47x+iU8c6Iohq
-	 YNODsLJ15zrpgMeWLJOoCUzdgAuLr+q6xr3Cd3rVYej9uPvt7R14fVfitnc3XNH5YH
-	 u9asjHeS1kTlgc1VNkOh0ik7QLr31oqHKgi3ZZ9GCZMTP/ogpjkZobGQjZSrZ7RZzE
-	 24JCQMsyeV3fO6G7LEKxUC8MmK5UpZ+kTtdbrFtzA64OzEkuNPrVK0jY5qrFjh4C6G
-	 65tYIaZBsZoxBK51I2o1rLf59muGHUeWdKxrJnyeOIjYst0loXUOvSA1mOFj9Ul/CD
-	 cU4Bbklzo2WWw==
+	b=RyLGBYPq8471eD7UwJB9vj9G6r0qqaxS65kOUFBDqw4QGrLM+TnxnFTJN+X5G8rCB
+	 jpTZttf+CjjWZ+4e2eHvWo6HmZUhunROKFqnYnCkSfjMJaqPtNdVao1Hwjtzgp+FYx
+	 8OCxe0CdGaD2rNtlSQMHryGzRCQpSJzGETCwxwXmScintUXPD0wFiIRuf8NYGxW0CQ
+	 IFobyEtwrMLHWKwYZQTImV1iwTvsEV/l1ObZuo/rkVWicL3HoUlBIn2TO5aUw7BmI1
+	 1CscvnNxDbjzOIyl4dnmkLvTI7sTUJMprgVoLAtmJv7Ns1sZxVONyQnX4KtKStkHpN
+	 sGxLjhXmUp6og==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B3CE117E0B46;
-	Tue,  6 May 2025 10:26:50 +0200 (CEST)
-Message-ID: <ce48bcb3-1881-41bb-aafe-bf90b78d47e4@collabora.com>
-Date: Tue, 6 May 2025 10:26:49 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 720E217E09BE;
+	Tue,  6 May 2025 10:28:34 +0200 (CEST)
+Message-ID: <65012c1f-9888-4231-8e7f-c96b7f09053a@collabora.com>
+Date: Tue, 6 May 2025 10:28:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,36 +56,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: Add
- mediatek,mt8365-infracfg-nao
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Alexandre Mergnat <amergnat@baylibre.com>,
- Amjad Ouled-Ameur <aouledameur@baylibre.com>,
- =?UTF-8?Q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>,
- Fabien Parent <fparent@baylibre.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250502-mt8365-infracfg-nao-compatible-v1-0-e40394573f98@collabora.com>
- <20250502-mt8365-infracfg-nao-compatible-v1-1-e40394573f98@collabora.com>
+Subject: Re: [PATCH v5 2/3] drm/panfrost: Add support for Mali on the MT8370
+ SoC
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250502-mt8370-enable-gpu-v5-0-98e247b30151@collabora.com>
+ <20250502-mt8370-enable-gpu-v5-2-98e247b30151@collabora.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20250502-mt8365-infracfg-nao-compatible-v1-1-e40394573f98@collabora.com>
+In-Reply-To: <20250502-mt8370-enable-gpu-v5-2-98e247b30151@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Il 02/05/25 18:43, Nícolas F. R. A. Prado ha scritto:
-> The register space described by DT node of compatible
-> mediatek,mt8365-infracfg-nao exposes a variety of unrelated registers,
-> including registers for controlling bus protection on the MT8365 SoC,
-> which is used by the power domain controller through a syscon.
+Il 02/05/25 14:17, Louis-Alexis Eyraud ha scritto:
+> Add a compatible for the MediaTek MT8370 SoC, with an integrated ARM
+> Mali G57 MC2 GPU (Valhall-JM, dual core), with new platform data for
+> its support in the panfrost driver.
+> It uses the same data as MT8186 for the power management features to
+> describe power supplies, pm_domains and enablement (one regulator, two
+> power domains) but also sets the FORCE_AARCH64_PGTABLE flag in the GPU
+> configuration quirks bitfield to enable AARCH64 4K page table format
+> mode.
+> As MT8186 and MT8370 SoC have different GPU architecture (Mali G52 2EE
+> MC2 for MT8186), making them not compatible, and this mode is only
+> enabled for Mediatek SoC that are Mali G57 based (compatible with
+> mediatek,mali-mt8188 or mediatek,mali-8192), having specific platform
+> data allows to set this flag for MT8370 without modifying MT8186
+> configuration and behaviour.
 > 
-> Add this compatible to the syscon binding.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
