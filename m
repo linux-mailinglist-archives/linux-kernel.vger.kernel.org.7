@@ -1,249 +1,402 @@
-Return-Path: <linux-kernel+bounces-635908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68007AAC371
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:10:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F05CEAAC381
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E570A4E2224
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:09:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C44807B4C08
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDDE27F192;
-	Tue,  6 May 2025 12:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBBA27FB24;
+	Tue,  6 May 2025 12:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LxCXDU9n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="C4jMA2PZ"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2065.outbound.protection.outlook.com [40.107.236.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E42A27E7DC;
-	Tue,  6 May 2025 12:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746533381; cv=none; b=ls7hg1u7NLvNRVhQ0e+kvSOUFsgh8NbVroFxC6M6fjXboS5Z5a0qxHVND1eo+DVzYh8jcVtx1f/3+eK7YAf2beH1lLGGYCQ20gOOxIwJ+x5rQccE9fTiCyrCiI3ZQY8TojG2DLQw8PoibwIxilIBU3zn+ZcyjObbBQwfurYnY5M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746533381; c=relaxed/simple;
-	bh=C1cNc1T1EZTLsEqWLlQZ4HP/ZrBdzYD7Gj1Q5X2lVgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aJFkf+DKZ+aIh2W7D0q5syZ0+TP0LVcDDZ0FFH+nmiGyDS8HSxDY+l+G0oBPaLNylKEQEQqauY/X3RUDTFSMl9Ln8GVi2tD9OuiAhpOnNWBot4pvbVd3pd3vnO50z0dbRgTrh5SfzpiGTLP6mIhS6NOES62sweRg1jkEXZ2gvms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LxCXDU9n; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746533379; x=1778069379;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=C1cNc1T1EZTLsEqWLlQZ4HP/ZrBdzYD7Gj1Q5X2lVgk=;
-  b=LxCXDU9nvZUIIEkIba5hhP/VBcVFFGU47vCWbPlamV5gfBrgvNcGR5Y0
-   e6boY7OoLJKpbmWH6t70wQj0eDyYjXc1eYF6ECcqqxzgUfi3QdWnUiXTc
-   /mbnUXHwGWOLGg7CIhGJnlq0MHZHbnOC49soALAKoeag0pp74VB4/0R9k
-   wkApKMFs97EZXUrha9DaGpjfPHLYkLvwPVKqzxgtVKm0G/sKzLCr89Zpa
-   yNb0ReYe4w0P6ZxevvUOPSob+27/1+kku6PtUAVXPCvky7bxMjnk7T0Rm
-   P1D0MB+Qs8WopUJKg5Cxq895015f+jOqcXJhj/7KWKiJfOaOBBYcKsX4Q
-   Q==;
-X-CSE-ConnectionGUID: Tmd3iPVeSRuGQPPaIctcCg==
-X-CSE-MsgGUID: SZBiTcwvT+22q/su0G8tGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52007845"
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="52007845"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 05:09:38 -0700
-X-CSE-ConnectionGUID: 2HCngJfPS4OtN3NFDHOPUQ==
-X-CSE-MsgGUID: AkdwN2B/RO2PGMjkHhJ6nA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="136595874"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.245.251])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 05:09:33 -0700
-Date: Tue, 6 May 2025 14:09:24 +0200
-From: Mehdi Djait <mehdi.djait@linux.intel.com>
-To: michael.riesch@collabora.com
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, Gerald Loacker <gerald.loacker@wolfvision.net>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Kever Yang <kever.yang@rock-chips.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Collabora Kernel Team <kernel@collabora.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Alexander Shiyan <eagle.alexander923@gmail.com>, Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	Michael Riesch <michael.riesch@wolfvision.net>
-Subject: Re: [PATCH v6 05/13] media: dt-bindings: add rockchip rk3568 mipi
- csi receiver
-Message-ID: <wxwzca4i36hdhdx5ehjqvq5ljpsb7lcvzermkhqyvufsr47au4@3qcth2vawwju>
-References: <20240220-rk3568-vicap-v6-0-d2f5fbee1551@collabora.com>
- <20240220-rk3568-vicap-v6-5-d2f5fbee1551@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A12327F727
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746533424; cv=fail; b=SGMbyKmvVJn4paASkAX747vi8PgkoyN7OnRAnNI5TB3qOoMKwGrs3kiSxdDGL3ZggngRxB+3/5Fxlg3/KGSU8KaxU8QhWBjwwEmRTPkQmpDVHM5aKeFeiKFuj8eeOFvICl9flbw1dfamHSD6PbzXrqiljgaREvd9/cPA458Kg0w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746533424; c=relaxed/simple;
+	bh=paTRoQ7KGi6CZEB3l2j9GKBfRoeoBSYeYANqnAXqn3Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uo/8Yd2Xt9oTL0GLZIm/B/ypw6QvjTqZfHuBJ+s4bzkXcKIcBwMt2WIow4dVPAaihtwdg3L1IErgphzVFoLSroVwoYBZ1vsaU0+CuKf+285YI1BF8xzZh3pC+Xoudww74+1p9706sFmd3SLHbSAlfHuguXNnNon5YbPUuToyBZI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=C4jMA2PZ; arc=fail smtp.client-ip=40.107.236.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qcbRH2zKB3/tHn8Xt3kZKdyYSXJ1y5eZ3YIpaOPjdKCpmvIVmTWbyu3e6JZnExTAZPR28TPFd0zvTs/KGXMnEKyJWDJkxhLHbUig6MRWZeHiWSjHnJ9P42EqPGCbL9/FuK/2O/nIDjEdFpMfAvnsLxAYVhgk1D2fj+yrJNOJGkT/DzrN18MdI97qMD8x0+4gMalYVNPJGfYzBMzdMBwuuMexXF65iPwlmRj7wTTHZKNEVsoH0QEkiWSI1IBWx1PtFEQ/7IEWjodANsg3/2NqO5aaUFfVdeR0bfuV84zy+mVRsJDK0DybjsCChgEZe6vNRwaMqS/fooh1bGNKCJ5HkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fLPHNer5QEHmEJz/JlCK6DF/mvTJC9Sg8jVgqAVmoD0=;
+ b=k2QrjiKspUGVgJqOz24RWOTuIVTqukMAbgARAaA9VN5n0upWCTDUlUruGDrxRqDFceC5SzICc8uIjnjp6hbSKPQ3DOCeLCd73YeFNUZnJhUhzRPXdhExZp9EDujTjQXnqUP11VnnEqTPdMZnLINP0QGZR8XZM81jre2wq1kftyLfDiiYWlycYte40EVYDsJXF+f/3VhEOF1fCS7ddZAWvpeuU3if4lqP4MNR/5z7ndiOy8PM6t3bMhdXwclWsZN0QqzGVW8Hk1OU+Rdg7agWOw+r9qRZjqeguJzRZMv682FwCUnsAm7kUevWlrceqeKU2SI32PI+0Su3TsmjJl+78g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fLPHNer5QEHmEJz/JlCK6DF/mvTJC9Sg8jVgqAVmoD0=;
+ b=C4jMA2PZdmF0difVRDL21fwubHlemULglj0kB2vSMkZW3dpYQHpp1258GM04a1do0TC6KnJwk+n3j4mIkFl7NQBr1Ywyciue7FX2YhlwirN6kM87HEe28Igh9Z7oDgehmgsCdGb2VpWQ3hydD/qZNHqLvm0JmJidxqsPV1opRnw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DM4PR12MB6469.namprd12.prod.outlook.com (2603:10b6:8:b6::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8699.23; Tue, 6 May 2025 12:10:14 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8678.028; Tue, 6 May 2025
+ 12:10:14 +0000
+Message-ID: <7cfa2fb3-f419-4037-8c86-7559570582e3@amd.com>
+Date: Tue, 6 May 2025 14:10:07 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] drm/shmem-helper: Import dmabuf without mapping
+ its sg_table
+To: oushixiong1025@163.com
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sean Paul <sean@poorly.run>, Jocelyn Falempe <jfalempe@redhat.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Shixiong Ou <oushixiong@kylinos.cn>
+References: <20250506094740.621420-1-oushixiong1025@163.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250506094740.621420-1-oushixiong1025@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0231.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e9::11) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240220-rk3568-vicap-v6-5-d2f5fbee1551@collabora.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM4PR12MB6469:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9493404-48fa-4090-6556-08dd8c96f4cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3RQZi9YOXhEUnVzWDZRbUVYY05vaHo5TVg0Q214UVVmRDc5emhpTzExV2Ji?=
+ =?utf-8?B?UmdPY3pab3ZFQy9vRlpwWXZsZGhTTncrLzBCTmNkYXR5NG1LalkveVlGMVhP?=
+ =?utf-8?B?UWhaZWJyamV6bm5ZRjNGTGdTdXZVcVJtZ1JuaWdrNXFXNlJTK1lTNDRJQWsy?=
+ =?utf-8?B?QmIrdWFNUmY1WVNoY3ZYbTRmMUkvMGswVCtpaWc2cU13Q1F5L1Zma3loQk0w?=
+ =?utf-8?B?RmhkQnhPUEpxcU1ac1ZrdVNhY3RCYUg5QXB4NTdWQ1g0MnByQk90MjFCV0p3?=
+ =?utf-8?B?OUNnRjZXZWdUcFhtWS9Nb2pVRnZkWEJZZmY0QkhpRlMvSi9hMEhzR2lhYkFm?=
+ =?utf-8?B?OE1iTFNzeUc2ejA3UVA0TG5teGFBZlhQTkJpbVREbDBHM0ZVaG9xVjRHcEVP?=
+ =?utf-8?B?TXQzWW9BajE3YTcxYUhyV0M3SDVLWUxueVNxQmE0bHB1VEFHRU1RdXVoUng4?=
+ =?utf-8?B?SmFoMG5wQVNna3RCK3RsYnFValY1ZXNzd3o0OUVGRUczUEFwWDNNR0xYWVhn?=
+ =?utf-8?B?cXMxa1RNQVJjbkF2Nmc5SzB6S01UMzdlV2Zmci9mWW92SDFBa01zWGlac1or?=
+ =?utf-8?B?VFRnTXJjbitxcmtRTExhMUVoMEZzWmU3ekNtUVRPdDg3TU1PY1VNdkR4b1dn?=
+ =?utf-8?B?ZS9iOXAwbnAxQjJuN205Z25kWWY3cUNnT0dFcThYOG12bTZ3MzVrU1htODBo?=
+ =?utf-8?B?UkFzQU5KcXhLbisvaDlCWVUvancwL21NMGNmSjNMQ0ZINHhzMGpYbURyM1VG?=
+ =?utf-8?B?SVRZRTZwS1lGWnJhSStWUXc3cDJCMlF3SGhHZ2wyOGw3Vmt6WG9vNFNvaURX?=
+ =?utf-8?B?cjVaU2wxVnp6anFoNHExQTFDbkhrM2x0RjZJRWRLOVMrM2RyemhXbVJrZTRz?=
+ =?utf-8?B?MUhuTEVreXpQNEVHN3hHVk94S1ovRWZBd2tvcDFobmtleTJGb2Qxd1BYN0pR?=
+ =?utf-8?B?L25IaDByR3NuWUEzejRzNXRhWHF2VkxrYmFIeEFvK2paK2xOaklyL3h2RXo3?=
+ =?utf-8?B?ZUVKVmRHNzZ6MUdHYnhodm1MSGgxQkdCemVpWGRpT0hsY2dqQVgxM2g2dlBk?=
+ =?utf-8?B?eUtjQ1F4WWFIV2FIOEhLNDVaMktLalRnN21HOGNWek9QVmZVbnBQZlZyNXor?=
+ =?utf-8?B?U3IxOXMyUnJhcStvUkRsRDhFOFhua0ZkeDl6OHk4REdrdlJRNEljcnc3a29h?=
+ =?utf-8?B?bGY4azJWNWFCYVhaVGdlMDF1YjlDVkdPY2FSMXArQmszZ0pZbEk0OFQ5ZHJD?=
+ =?utf-8?B?V1ZjUG56eTZrcUlNelQ4WFZQOC9ZT1A0NndjWHlQdFFwY2pLQ295amYvY3R3?=
+ =?utf-8?B?M1JvRHJWVitSS05aaHB1VXZnMmxmZkNkMVRWbUxNc1RQcnlwMm1sc29RbDlM?=
+ =?utf-8?B?ejExYkZZeER5WnhrU285aUx6Y1dzSENURGZJa3FPTm5uNmdrMzlycnVweHVC?=
+ =?utf-8?B?TmJ4SXZwSDdCZldHaks1U1RtY0E3bGpPM3l4bHlYN2hYN1cwaGNuZDlPQUJG?=
+ =?utf-8?B?eGpyNWloTDI5Q3kxMCtvUG0xZ2ZkdnZjRThFU2lGZi92VkNQSGFCRmtsT0pM?=
+ =?utf-8?B?elJkbDV3T2FZUFNLUGJ2bWZsMzUwcm5JNDhETzc3R04ydGNMdGd2bVRtU3Jh?=
+ =?utf-8?B?aVRWdkZrRmZMWHZldTBVQU4rNVF0UytwalNxZ2pUYkNQc1cweCswU0dCbXZ5?=
+ =?utf-8?B?WFlaY3lUaUJMWU44TXZBZm5iaFpNdkVkM28rOEc2M3JBY3R5M09LbFh0TWpr?=
+ =?utf-8?B?MmRCZ2Z1T3lyMnN5bTlFWGtNQ0JUdVh2MS9xUEJVTi90TGdYV29pd1drUGZp?=
+ =?utf-8?B?elJZTldZVHBRL0wzMnVHMStubDBaempsOGFyWld1RE1ETzg3Q3FQbk5CdENY?=
+ =?utf-8?B?L0hJQlBSakV2alJuenBvOUNTeURzRU9PZnFTdFY2cGIxQ3psZjArWHpISEtw?=
+ =?utf-8?Q?QTaPJCxw2FM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UmNSYjV2M2hadTh1R0NuTmNubTIwSk1nMHVpMmJBdTJpL3lONldiNTl1aGx4?=
+ =?utf-8?B?eHhNTXdwVTcxSktsRXpQZEY2dTBva3g5VE0rSCtSRGtYLzU0dFZzTEZ1M1k0?=
+ =?utf-8?B?anBvYmFvemJUQjVOeW91U3IramlKWGI0cVdyVGRicmkvQ2Q2NThyYk94dDcv?=
+ =?utf-8?B?bTB4eVZjZ09UVGhyU0FrTVo4MjJBcjd4YWpxWU4xZjBRL2RNaFR4alFlR2Jy?=
+ =?utf-8?B?elRHa21BVExvU1N5UGNaMXZ5UGFtak11c2xicUhqUTNyZUtGdmJab3ZaL2dt?=
+ =?utf-8?B?L2ZLcUx2SjNjQlYwa2RDbTl0MDRwNlZBL2NLZmFsaEI5ZzA0UnFJNnNxM2ky?=
+ =?utf-8?B?Q0xJcTV0UmhybkdlZ2czZnlQZG5VbkpjeGtlQjRUTVVpLzJaQkhISWlPZkE0?=
+ =?utf-8?B?WEFLUjVobFZYWXFWbTF4VWNwQ0ZJS0VVcDhnVDF6eHp6eTlNRWdSV3orUW9F?=
+ =?utf-8?B?N1JHMWNldThqQzZmU1dqMjhuL2NtcEFvTWlYNm4rTndIZzR6WldPUlk2SUNh?=
+ =?utf-8?B?bm5ndlRCSVI1VHhBcDFzWG1tRnhjcjhRMEpyQWNkM3VYdkFya3ByTXRIZmI1?=
+ =?utf-8?B?dU4vQ1FVZkRmQVF3dCsyKzVQVGo2VXBiYTFseTZkdlNubnlDUitPU0ZDYmhH?=
+ =?utf-8?B?K1JVRG1GUVM5S1NNK0tNdzR3bkU5ZUFTR004eU44U3ZRUkM3bVNTNmhYRUJx?=
+ =?utf-8?B?K1hsN01HY3haRFNyazUyaS9CL3NGU01BMnlkWXcyUDlEQ2RFZFB2ZFRhc0dr?=
+ =?utf-8?B?NDlBYTdLQW1PUDVOOUdDY1ZIZ1pVYU1MUDV0Kzk3UC91QmJ2MjJCbG10SERF?=
+ =?utf-8?B?M1Jpa2pmYWV0aTkxRklaaGNoZ3dYelFaR202L3ZsVlB3VFAzbFFPZ1N6N3ov?=
+ =?utf-8?B?TDBTY0VSMWVBeEFVeGpyMkJCdVM3dUxRb3dWQXV5cGQrb2hCMGVCWElRWGZD?=
+ =?utf-8?B?QTNJbG5WdzFoRi85MUUvcjNUaklNQ3lLSExEWjYySkVBR1ZYaldsb2dIY2RN?=
+ =?utf-8?B?UlNTWUxNSU1SNjZvdnB6WjZmRXJQWmhSZUNaSHl6dDh0ZGR3ZExna3VWOTdY?=
+ =?utf-8?B?bE1TMUJ5bHk4aFFPR3hOcHpnR3h2WlZpcks3R25iR3RPKy9zRXRxd0g2WGlF?=
+ =?utf-8?B?alpCd0JkaEFTKzFHMFFUR0RiVHFrTDhabk81UlgydDY1UkhwYWhIOVcwbFo0?=
+ =?utf-8?B?M3FnWnoyUGJEakhnaVd1M280Y0ZncGQwWW1aUzJuNVVtanp4VHI0SEsrdXY0?=
+ =?utf-8?B?K3FkQTYrUElOWFArZ2RjZUx3eTQ5QjhSLzdwV3pUclJhQ1JTbnBWYjNkUGp6?=
+ =?utf-8?B?eDFVNjJ3bTM1elJoS3hQc2VRaDY4aGxiWVRmL3FNUnRCTG5wRldsSFc4YTNr?=
+ =?utf-8?B?QU0xajdyS1M5S3ZORnFXcmZLVTkwZkI0VG9udlVIVGdPOGpSMUlpZ1lEOWps?=
+ =?utf-8?B?QUpIcWlXZEpqZC9PSGFDVzZNWkVSNEJXcVhBOUNnWUg0V3I1aFQ2cVp5MUJy?=
+ =?utf-8?B?cCtEYzVvR0IrWFBsQTF6UEVLRTJLdFUzc0RoRHZhTXVjclIyUTlpcStCYVVj?=
+ =?utf-8?B?b0t6L1NGN0trMXUrYkhuUzI2TTZMMllyL25NNE84d0xlL3kyMVN0Q2svRVBM?=
+ =?utf-8?B?NG1ueGxqMVQ4NEc0L1o2aTBCUmhhY3RhKzlOUHMxYzlpcW8rSmRRYTFLaXlm?=
+ =?utf-8?B?Z0t4dklWeTduYmNxTE9DeUkwTUFpd0tTaEhhN0JMdmhoQUp2SCt4SXJKSEFW?=
+ =?utf-8?B?QXVZdUdMTmI0VXdMZUhlQW81QkxvejRuSkx6d2swY2ZyWk9yc1NkYitBaEIx?=
+ =?utf-8?B?K0YxdGdtdVJyNDloMEtsVm54S29ZeGlRNkcwTjNJcWc4RW5vMXFhSGtBdktE?=
+ =?utf-8?B?WUYzN09pZzFRV1FPd3V5YmwwY3F6ZWU3SUx4Z2dmdkVaVDAyaEpNa2xQYWcx?=
+ =?utf-8?B?YllReG9HSTZ2eWpRSFFpeno5WXVVWjdaaFdvQUg1QUxiWE5xQ2NWVDUyUnVk?=
+ =?utf-8?B?UnpGSkVtN2dOcEo5Y0lWVjZRdUh3K1lLMEZEZnZySTJRYTVOU1g0ak4zRE5C?=
+ =?utf-8?B?QUl5MGJrdkplVWUvMHQrd1pFYTBtSzViRE9LbDNMWEYvWlc2QjRLKzkxWGl6?=
+ =?utf-8?Q?fFq97aLJGQ3/S9Qn9M1me4QUj?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9493404-48fa-4090-6556-08dd8c96f4cd
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 12:10:13.8606
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mAEfVLsQSuO5IylkzkdB+Yu7XgAJwRrVE+qtcUk7GZxeuv/mOEKhxHQE4TUtkeDK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6469
 
-Hi Michael,
-
-thank you for the patch!
-
-On Wed, Apr 30, 2025 at 11:15:54AM +0200, Michael Riesch via B4 Relay wrote:
-> From: Michael Riesch <michael.riesch@wolfvision.net>
+On 5/6/25 11:47, oushixiong1025@163.com wrote:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
 > 
-> Add documentation for the Rockchip RK3568 MIPI CSI-2 Receiver.
+> [WHY]
+> 1. Drivers using DRM_GEM_SHADOW_PLANE_HELPER_FUNCS and
+>    DRM_GEM_SHMEM_DRIVER_OPS (e.g., udl, ast) do not require
+>    sg_table import.
+>    They only need dma_buf_vmap() to access the shared buffer's
+>    kernel virtual address.
 > 
-> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+> 2. On certain Aspeed-based boards, a dma_mask of 0xffff_ffff may
+>    trigger SWIOTLB during dmabuf import. However, IO_TLB_SEGSIZE
+>    restricts the maximum DMA streaming mapping memory, resulting in
+>    errors like:
+> 
+>    ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
+> 
+> [HOW]
+> Provide a gem_prime_import implementation without sg_table mapping
+> to avoid issues (e.g., "swiotlb buffer is full"). Drivers that do not
+> require sg_table can adopt this.
+> 
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 > ---
->  .../bindings/media/rockchip,rk3568-mipi-csi.yaml   | 113 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 114 insertions(+)
+> v1->v2:
+> 	patch rebase.
 > 
-> diff --git a/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
-> new file mode 100644
-> index 000000000000..d5004cb288dd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
-> @@ -0,0 +1,113 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/rockchip,rk3568-mipi-csi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip RK3568 MIPI CSI-2 Receiver
-> +
-> +maintainers:
-> +  - Michael Riesch <michael.riesch@collabora.com>
-> +
-> +description:
-> +  The Rockchip RK3568 MIPI CSI-2 Receiver is a CSI-2 bridge with one input port
-> +  and one output port. It receives the data with the help of an external
-> +  MIPI PHY (C-PHY or D-PHY) and passes it to the Rockchip RK3568 Video Capture
-> +  (VICAP) block.
-> +
-> +properties:
-> +  compatible:
-> +    const: rockchip,rk3568-mipi-csi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: MIPI C-PHY or D-PHY.
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: Input port node. Connect to e.g., a MIPI CSI-2 image sensor.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              bus-type:
-> +                enum: [1, 4]
+>  drivers/gpu/drm/drm_gem_shmem_helper.c | 95 ++++++++++++++++++++++++++
+>  include/drm/drm_gem_shmem_helper.h     | 25 +++++++
+>  2 files changed, 120 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> index aa43265f4f4f..0c81a4f97684 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -39,6 +39,7 @@ MODULE_IMPORT_NS("DMA_BUF");
+>  static const struct drm_gem_object_funcs drm_gem_shmem_funcs = {
+>  	.free = drm_gem_shmem_object_free,
+>  	.print_info = drm_gem_shmem_object_print_info,
+> +	.export = drm_gem_shmem_object_prime_export,
+>  	.pin = drm_gem_shmem_object_pin,
+>  	.unpin = drm_gem_shmem_object_unpin,
+>  	.get_sg_table = drm_gem_shmem_object_get_sg_table,
+> @@ -800,6 +801,100 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
+>  
+> +const struct dma_buf_ops drm_gem_shmem_prime_dmabuf_ops =  {
+> +	.attach = drm_gem_map_attach,
+> +	.detach = drm_gem_map_detach,
+> +	.map_dma_buf = drm_gem_map_dma_buf,
+> +	.unmap_dma_buf = drm_gem_unmap_dma_buf,
+> +	.release = drm_gem_dmabuf_release,
+> +	.mmap = drm_gem_dmabuf_mmap,
+> +	.vmap = drm_gem_dmabuf_vmap,
+> +	.vunmap = drm_gem_dmabuf_vunmap,
+> +};
 
-shouldn't you add data-lanes property here ?
+Ok, I think I got it now.
 
-                 data-lanes:
-                   minItems: 1
-                   maxItems: 4
-> +
-> +            required:
-> +              - bus-type
+You basically don't want to block providing the sg_table, but rather just avoid that it is created al the time.
 
-and add it to required:
-                 - data-lanes
-
-you are actually checking for data-lanes when you enable the stream in:
-
-rkcif-mipi-csi-receiver.c +226
-
-	u32 lanes = csi_dev->vep.bus.mipi_csi2.num_data_lanes;
-
-	if (lanes < 1 || lanes > 4)
-		return -EINVAL;
+In that case duplicating the exporting side indeed doesn't make much sense.
 
 > +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Output port connected to a RK3568 VICAP port.
+> +/**
+> + * drm_gem_shmem_prime_export - implementation of the export callback
+> + * @shmem: shmem GEM object
+> + */
+> +struct dma_buf *drm_gem_shmem_prime_export(struct drm_gem_shmem_object *shmem,
+> +					   int flags)
+> +{
+> +	struct drm_gem_object *obj = &shmem->base;
+> +	struct drm_device *dev = obj->dev;
+> +	struct dma_buf_export_info exp_info = {
+> +		.exp_name = KBUILD_MODNAME, /* white lie for debug */
+> +		.owner = dev->driver->fops->owner,
+> +		.ops = &drm_gem_shmem_prime_dmabuf_ops,
+> +		.size = obj->size,
+> +		.flags = flags,
+> +		.priv = obj,
+> +		.resv = obj->resv,
+> +	};
 > +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - phys
-> +  - phy-names
-> +  - ports
-> +  - power-domains
-> +  - resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rk3568-cru.h>
-> +    #include <dt-bindings/power/rk3568-power.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        csi: csi@fdfb0000 {
-> +            compatible = "rockchip,rk3568-mipi-csi";
-> +            reg = <0x0 0xfdfb0000 0x0 0x10000>;
-> +            clocks = <&cru PCLK_CSI2HOST1>;
-> +            phys = <&csi_dphy>;
-> +            power-domains = <&power RK3568_PD_VI>;
-> +            resets = <&cru SRST_P_CSI2HOST1>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                csi_in: port@0 {
-> +                    reg = <0>;
-> +                };
-> +
-> +                csi_out: port@1 {
-> +                    reg = <1>;
-> +
-> +                    csi_output: endpoint {
-> +                        remote-endpoint = <&vicap_mipi_input>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
+> +	return drm_gem_dmabuf_export(dev, &exp_info);
+> +}
+> +EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_export);
 
---
-Kind Regards
-Mehdi Djait
+And that here is then identical to drm_gem_prime_export().
+
+> +
+> +/**
+> + * drm_gem_shmem_prime_import - Import dmabuf without mapping its sg_table
+> + * @dev: Device to import into
+> + * @dma_buf: dma-buf object to import
+> + *
+> + * Drivers that use the shmem helpers but also wants to import dmabuf without
+> + * mapping its sg_table can use this as their &drm_driver.gem_prime_import
+> + * implementation.
+> + */
+> +struct drm_gem_object *drm_gem_shmem_prime_import(struct drm_device *dev,
+> +						  struct dma_buf *dma_buf)
+> +{
+
+This is the only function which actually has some functional difference.
+
+> +	struct dma_buf_attachment *attach;
+> +	struct drm_gem_shmem_object *shmem;
+> +	size_t size;
+> +	int ret;
+> +
+
+
+> +	if (dma_buf->ops == &drm_gem_shmem_prime_dmabuf_ops) {
+> +		struct drm_gem_object *obj;
+> +
+> +		obj = dma_buf->priv;
+> +		if (obj->dev == dev) {
+> +			/*
+> +			 * Importing dmabuf exported from our own gem increases
+> +			 * refcount on gem itself instead of f_count of dmabuf.
+> +			 */
+> +			drm_gem_object_get(obj);
+> +			return obj;
+> +		}
+> +	}
+
+And you have the other two just to be able to check the dma_buf->ops in this chunk here.
+
+I suggest that you either expose drm_gem_prime_dmabuf_ops to drm_gem_shmem_helper.c or make this chunk a separate function which is called from drm_gem_shmem_prime_import().
+
+And BTW you need a better name than drm_gem_shmem_prime_import(), something which makes clear that only vmap is supported on the buffer.
+
+Apart from that this seems to make sense to me now,
+Christian.
+
+> +
+> +	attach = dma_buf_attach(dma_buf, dev->dev);
+> +	if (IS_ERR(attach))
+> +		return ERR_CAST(attach);
+> +
+> +	get_dma_buf(dma_buf);
+> +
+> +	size = PAGE_ALIGN(attach->dmabuf->size);
+> +
+> +	shmem = __drm_gem_shmem_create(dev, size, true, NULL);
+> +	if (IS_ERR(shmem)) {
+> +		ret = PTR_ERR(shmem);
+> +		goto fail_detach;
+> +	}
+> +
+> +	drm_dbg_prime(dev, "size = %zu\n", size);
+> +
+> +	shmem->base.import_attach = attach;
+> +	shmem->base.resv = dma_buf->resv;
+> +
+> +	return &shmem->base;
+> +
+> +fail_detach:
+> +	dma_buf_detach(dma_buf, attach);
+> +	dma_buf_put(dma_buf);
+> +
+> +	return ERR_PTR(ret);
+> +}
+> +EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import);
+> +
+>  MODULE_DESCRIPTION("DRM SHMEM memory-management helpers");
+>  MODULE_IMPORT_NS("DMA_BUF");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
+> index b4f993da3cae..f2b4cc85b7f9 100644
+> --- a/include/drm/drm_gem_shmem_helper.h
+> +++ b/include/drm/drm_gem_shmem_helper.h
+> @@ -121,6 +121,8 @@ int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
+>  void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem,
+>  				 struct iosys_map *map);
+>  int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct vm_area_struct *vma);
+> +struct dma_buf *drm_gem_shmem_prime_export(struct drm_gem_shmem_object *shmem,
+> +					   int flags);
+>  
+>  int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem);
+>  void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem);
+> @@ -179,6 +181,19 @@ static inline void drm_gem_shmem_object_print_info(struct drm_printer *p, unsign
+>  	drm_gem_shmem_print_info(shmem, p, indent);
+>  }
+>  
+> +/**
+> + * drm_gem_shmem_object_prime_export - GEM object function for export()
+> + * @obj: GEM object
+> + *
+> + */
+> +static inline struct dma_buf *drm_gem_shmem_object_prime_export(struct drm_gem_object *obj,
+> +								int flags)
+> +{
+> +	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+> +
+> +	return drm_gem_shmem_prime_export(shmem, flags);
+> +}
+> +
+>  /**
+>   * drm_gem_shmem_object_pin - GEM object function for drm_gem_shmem_pin()
+>   * @obj: GEM object
+> @@ -287,6 +302,8 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
+>  				    struct sg_table *sgt);
+>  int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>  			      struct drm_mode_create_dumb *args);
+> +struct drm_gem_object *drm_gem_shmem_prime_import(struct drm_device *dev,
+> +						  struct dma_buf *buf);
+>  
+>  /**
+>   * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
+> @@ -298,4 +315,12 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table, \
+>  	.dumb_create		   = drm_gem_shmem_dumb_create
+>  
+> +/**
+> + * This macro provides a shmem GEM operations that implementate a simple
+> + * gem_prime_import.
+> + */
+> +#define DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS \
+> +	.gem_prime_import       = drm_gem_shmem_prime_import, \
+> +	.dumb_create            = drm_gem_shmem_dumb_create
+> +
+>  #endif /* __DRM_GEM_SHMEM_HELPER_H__ */
+
 
