@@ -1,145 +1,197 @@
-Return-Path: <linux-kernel+bounces-635826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C25EAAC275
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:24:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF11AAC26B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18F751C27696
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:24:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CEA1C25D1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928DC27AC52;
-	Tue,  6 May 2025 11:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879D927AC20;
+	Tue,  6 May 2025 11:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="XISo3Ikk"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZlchsCGD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DC827AC42
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8DC2798EC
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746530630; cv=none; b=I8ryZR3ghlBnwimsjIXW2Bznev+I/bJ/1BAuQZmbpb3V8EtNBkmAzNgzrH3FbAeGyn7WWxwaDVRetzD594CIBc4NPDAUjHj05eYI9x0x0iMH9z874BDlYp2r3AmcJMP33BHiAFNDVIWv51rUzJdbZ/8izux1VoBp8CVpnZwUWpA=
+	t=1746530609; cv=none; b=H0CDBS5BL0asyTAJT2EKdmSYICsDRgugSpN8hwF0JfBqWMV292Bwpfef6uBFG7Q7nkhuMSwYYlB3UvRhU7g95nBzWQ8IIrX8Oxf3UWIMWJ5OxrIj9+wCh7UlE/cbL4TZE1vvD+hXvZWbiEkUQBBUjJe1e8DetuVcKhkUgLpN7Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746530630; c=relaxed/simple;
-	bh=tqLDKDef5O6cJ4keWnJtbG4x/2kNRBP1ukrtog92iYs=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AxBGUcW2FjyN1wtOhmlzveLYHBLHB6xI73f0AxSdjKkIlkMzzmWaWd3zkg0kLzEs4Tf4fgS7jWoZSwLH15qBCUfX2p6sWh8ubZB48a1N54ZKPNgi233Ooe6xosODbPymCUZEfTk6eH/41L/1ds6szRdbMGZeRxbWsSK7/SFKw48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=XISo3Ikk; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-afc857702d1so5325717a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 04:23:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1746530628; x=1747135428; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BUMYg6viYOA1qi+ywdeJSO+n/kzbTJsKc7vLbt7F+/g=;
-        b=XISo3IkkncqT0Uwe++4YFrS11kFHbkEmw6ZHlWyLtGrlKUGQwQk9XMK/2Vzxt981TU
-         ULsVTRjifUjpp5bXTUjHtXOlIwH5Gav42hk8ENmisRxg/J5GHDx6qKQ3pj/zBFwEED/z
-         gTOcZJL8zI83N+I2D5n29Wi7P6x/TOXVzeXaaMUeNR5DrhQzURUELZ6IQAKSuaVEo2kY
-         6kzTYmXMyxatPiEHwJQvqE/zzTxVOk90kr3JXrdKVhWn1QlOCUX7jfOIIfUIODqed4Vb
-         MO0RCClJEEhOVL7ROJ7GuZdS5BH1Fc72pzHe/1iM01/QIg5UV81OpgGuNzNjmgohkX/S
-         DobA==
+	s=arc-20240116; t=1746530609; c=relaxed/simple;
+	bh=G+3WkQcpdcfeKfUTIqHj8xX8ZAGYDA7fG744ILMAolo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IEKlMqfVFJ9t609IH1zzCcfxFHBN2yVIHpjy/4IVtzYzQfMHNlE4iBrl5OnQ2TGQLdEN8oP+NMETVpxoGf4ygxmXJWO9iHF8u8QRpoikQqThygZsznEPTDNXou/JVEM3MjPE1Ohocqw5vjlhD5OgdaTflpq4kU9g6clJ2bmuz74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZlchsCGD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746530607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fBp4p4deqUzAG3SrieVeuIkuCgjpw2beSF6aI8YLfpc=;
+	b=ZlchsCGDCvYjsFXBsUkqoT7CqqozQWk9aTwSL/EqLbWJSamcpyDNmUwGs152IpmXamtcvL
+	HX7tR+YoKhTSuSSPCxvW2OQQh/PSR/quxAiZARHX3V+8180PqKtwu2Km3ze9puissY+pcl
+	oML0qRXp1VbjBIFNEpyFMMqNpqWzphw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-528-ilMwxmQaOW-v-ExS-8dFBg-1; Tue, 06 May 2025 07:23:25 -0400
+X-MC-Unique: ilMwxmQaOW-v-ExS-8dFBg-1
+X-Mimecast-MFC-AGG-ID: ilMwxmQaOW-v-ExS-8dFBg_1746530604
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d209dc2d3so25384295e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 04:23:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746530628; x=1747135428;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BUMYg6viYOA1qi+ywdeJSO+n/kzbTJsKc7vLbt7F+/g=;
-        b=DXs0IV9XlnkBEMD/y164H6oxvieJQGzFtgoDQwNq9QdtVt9itbP9pYS8Gc6amHSFbh
-         MCg0Yb12jLx12kDSyCENc45uKJIQC/NPMBUuJXbyuWUKthYEFktlvEQZJgm1++fAYV6w
-         tY7S3S+96F0xG6Hj6/hDpWixKxnvSjrgx+JwS6d0oIRgJ1LxCBRxF/H8ltQTOvlY3A5S
-         hEQoQLu6Fula5wHssvCSAk3kQS/7Xo31A9f3AThZ8JhZGfF6maGHd0TF/7ZiHqPqC/XF
-         SmilhQ08E3rTtieyyDsYJ9WRqY9zs8cUeAQGqh4o3zYMPULD7VY7QrGsqN0As6CwyL34
-         PAhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgMO1ozXYwTknbWEf61OlsXe+PX/FWxUcKDehzuFob4HhgBEdOhVkxMdwzAOtI1yWf5Vx1SrJTMFtGYBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqMb+nk3ktifw6y1hULstFO8b8SUm3U1R+zdQgHkGU7KLIqlBd
-	dRFzjkyjoIJWjjMJLR9bKFNv60fQYgt4f2wo2h8dYz0URgccBTQTdRR5H4HYryc=
-X-Gm-Gg: ASbGncuszWRt8cwsyy+6dFQYPD43OwweBbcdLAxU1decfWzt5FSkbrn8vjdzh9U3G4h
-	34764I7k6mVD/hKo9RDL3kCjwT1TR63qhYf8SNf7tMylj+bu0omaabgpmF5tNJ2ktc5AwXPgD9q
-	hKdlLqfM4qT5DOpB+K1CBBQpSpBB7K47nXIWJCBxfi9//iJX5nCzF87Ei89nZC50hvWrj+VkbLj
-	al8DBvl6eERa8gVTyqp/52wI87FiUpjVrhAt9qrZGMmwqE2hanBtJbF4y+pkB872FitI1Oc+4/1
-	tTdZxtL7SA57Oy2KHPwEZOuI/NELvJopEaCukO621QwewlMWtQ3vz/p/eXUl9AqoIx++/rECbIO
-	91SGwIaY=
-X-Google-Smtp-Source: AGHT+IFIpS3jKbFdovjmPaz6TQujDc77vnxGWRHeMmuNuGEMYq/uCxYu8Y3tDR8UjdI1Raunfojh2w==
-X-Received: by 2002:a17:90b:3909:b0:309:eb54:9ea2 with SMTP id 98e67ed59e1d1-30a7e1af162mr3039230a91.20.1746530627764;
-        Tue, 06 May 2025 04:23:47 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([61.213.176.14])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a3480ea0dsm13630303a91.37.2025.05.06.04.23.42
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 06 May 2025 04:23:47 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: arnd@arndb.de,
-	andriy.shevchenko@linux.intel.com,
-	benjamin.larsson@genexis.eu,
-	cuiyunhui@bytedance.com,
-	gregkh@linuxfoundation.org,
-	heikki.krogerus@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	jirislaby@kernel.org,
-	jkeeping@inmusicbrands.com,
-	john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	markus.mayer@linaro.org,
-	matt.porter@linaro.org,
-	namcao@linutronix.de,
-	paulmck@kernel.org,
-	pmladek@suse.com,
-	schnelle@linux.ibm.com,
-	sunilvl@ventanamicro.com,
-	tim.kryger@linaro.org
-Subject: [PATCH v5 4/4] serial: 8250_dw: fix PSLVERR on RX_TIMEOUT
-Date: Tue,  6 May 2025 19:23:21 +0800
-Message-Id: <20250506112321.61710-4-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
-In-Reply-To: <20250506112321.61710-1-cuiyunhui@bytedance.com>
-References: <20250506112321.61710-1-cuiyunhui@bytedance.com>
+        d=1e100.net; s=20230601; t=1746530604; x=1747135404;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fBp4p4deqUzAG3SrieVeuIkuCgjpw2beSF6aI8YLfpc=;
+        b=C+I/NvfO9d1klWDmSBhA5GCgL9er5O6F8Ju2r9xxPZrtLaiAwXHtRMGtdZlZtb3x8T
+         ntK1sxuIJnPJ3kY1xok6ZDn5H8A7lltj/Vfv29JW/NP3j2Cc+oacIsegwCt8Qyb6FwEQ
+         S2BujA/1XnRK5zILuIvfqSPS2EAf1V7JvdGKDLNLAmFd0v2qIGdJ0kUPPyO6F6l1qjs3
+         ax41QcFGCddkY51OQHh2GfTOoTSFQg12iye4LwagFT8w5ttRwnmkfhbINs+UGHBGUMBH
+         p/9NJAaLUZNyJeySuX5DI9/eKkBy0r9QqMzLxzFmRkTS1B0T0OY1DJY7w0SCW6U0PRij
+         3WFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUQCcjppsVhGv1J2hEjfhZGWlkO4paejZAZqo3dGfWM5As0Uc51Djzd7eQ3xGok9UZbU0Q8MMJxBfPP6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwLvoAx3v8bzufoRUKzwFlo8biuq3wtx6J8erp4CgVhM8l6799
+	UtzVJGGOR/sBmo/fzPM+wAJzleFbVt/+8G40gASDYQlh0BEzyQmxnnXC4FgIjJdmAETXtBLdAqT
+	qiJSdVwet90vcxvm7H+4RV6b3BAJFr77n+6ZOBE9MxwmDATD+kKNaSODTYqwR3g==
+X-Gm-Gg: ASbGncuFc/maLyaB2t3fmSvj5flRdJXbaq8t/YqMDxDAKC3xiakRZZX7vyFDyp2hKvZ
+	EARK8hjPBo8vi2i7hSBl0jBXDbBMuw4dQLNcy3vYh1taoYD6rbepGq+3Gsp4pF3W097hMb83afX
+	FjAyeNhBEwHC5XfxOlSKHzl7D9eB151aZor6S7r0DRsCJgaSpq6C5OLGUIGOQFxGAAk3e+RIvrB
+	lE6ZGclsarais0t0b73unbT+dB4GCaK7KlivKi4xh7BwnsklCw5MClcuO0QMvlFH/ynhHWKm9tk
+	ylr4NE7xZwT21MXNstzrDO9HxgKFUfOwDVO2YFd/MF8PnqVXKkE7Y/cKoUQ=
+X-Received: by 2002:a05:600c:1d1f:b0:43d:24d:bbe2 with SMTP id 5b1f17b1804b1-441d1014fcfmr16250085e9.28.1746530604242;
+        Tue, 06 May 2025 04:23:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeYO2F4emx5hXi1uWB9URVLSGX9o9e7D7vvbT0onpTpSIZrGfufwgIJiasWRhRjn91m92mTQ==
+X-Received: by 2002:a05:600c:1d1f:b0:43d:24d:bbe2 with SMTP id 5b1f17b1804b1-441d1014fcfmr16249785e9.28.1746530603759;
+        Tue, 06 May 2025 04:23:23 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2706:e010:b099:aac6:4e70:6198? ([2a0d:3344:2706:e010:b099:aac6:4e70:6198])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2ad7ab1sm212836775e9.4.2025.05.06.04.23.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 04:23:23 -0700 (PDT)
+Message-ID: <3e91e070-24a2-4dab-bca5-157fea921bf0@redhat.com>
+Date: Tue, 6 May 2025 13:23:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next v11 4/7] net: mtip: The L2 switch driver for imx287
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ Stefan Wahren <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>
+References: <20250504145538.3881294-1-lukma@denx.de>
+ <20250504145538.3881294-5-lukma@denx.de>
+ <61ebe754-d895-47cb-a4b2-bb2650b9ff7b@redhat.com>
+ <20250506130438.149c137e@wsk>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250506130438.149c137e@wsk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In the case of RX_TIMEOUT, to avoid PSLVERR, disable the FIFO
-before reading UART_RX when UART_LSR_DR is not set.
+On 5/6/25 1:04 PM, Lukasz Majewski wrote:
+>> On 5/4/25 4:55 PM, Lukasz Majewski wrote:
+>>> +		/* This does 16 byte alignment, exactly what we
+>>> need.
+>>> +		 * The packet length includes FCS, but we don't
+>>> want to
+>>> +		 * include that when passing upstream as it messes
+>>> up
+>>> +		 * bridging applications.
+>>> +		 */
+>>> +		skb = netdev_alloc_skb(pndev, pkt_len +
+>>> NET_IP_ALIGN);
+>>> +		if (unlikely(!skb)) {
+>>> +			dev_dbg(&fep->pdev->dev,
+>>> +				"%s: Memory squeeze, dropping
+>>> packet.\n",
+>>> +				pndev->name);
+>>> +			pndev->stats.rx_dropped++;
+>>> +			goto err_mem;
+>>> +		} else {
+>>> +			skb_reserve(skb, NET_IP_ALIGN);
+>>> +			skb_put(skb, pkt_len);      /* Make room */
+>>> +			skb_copy_to_linear_data(skb, data,
+>>> pkt_len);
+>>> +			skb->protocol = eth_type_trans(skb, pndev);
+>>> +			napi_gro_receive(&fep->napi, skb);
+>>> +		}
+>>> +
+>>> +		bdp->cbd_bufaddr = dma_map_single(&fep->pdev->dev,
+>>> data,
+>>> +						  bdp->cbd_datlen,
+>>> +						  DMA_FROM_DEVICE);
+>>> +		if (unlikely(dma_mapping_error(&fep->pdev->dev,
+>>> +					       bdp->cbd_bufaddr)))
+>>> {
+>>> +			dev_err(&fep->pdev->dev,
+>>> +				"Failed to map descriptor rx
+>>> buffer\n");
+>>> +			pndev->stats.rx_errors++;
+>>> +			pndev->stats.rx_dropped++;
+>>> +			dev_kfree_skb_any(skb);
+>>> +			goto err_mem;
+>>> +		}  
+>>
+>> This is doing the mapping and ev. dropping the skb _after_ pushing the
+>> skb up the stack, you must attempt the mapping first.
+>>
+>>> +static void mtip_free_buffers(struct net_device *dev)
+>>> +{
+>>> +	struct mtip_ndev_priv *priv = netdev_priv(dev);
+>>> +	struct switch_enet_private *fep = priv->fep;
+>>> +	struct sk_buff *skb;
+>>> +	struct cbd_t *bdp;
+>>> +	int i;
+>>> +
+>>> +	bdp = fep->rx_bd_base;
+>>> +	for (i = 0; i < RX_RING_SIZE; i++) {
+>>> +		skb = fep->rx_skbuff[i];
+>>> +
+>>> +		if (bdp->cbd_bufaddr)
+>>> +			dma_unmap_single(&fep->pdev->dev,
+>>> bdp->cbd_bufaddr,
+>>> +					 MTIP_SWITCH_RX_FRSIZE,
+>>> +					 DMA_FROM_DEVICE);
+>>> +		if (skb)
+>>> +			dev_kfree_skb(skb);  
+>>
+>> I suspect that on error paths mtip_free_buffers() can be invoked
+>> multiple consecutive times with any successful allocation in between:
+>> skb will be freed twice. Likely you need to clear fep->rx_skbuff[i]
+>> here.
+> 
+> I don't know what I shall say now.... really... 
 
-Fixes: 424d79183af0 ("serial: 8250_dw: Avoid "too much work" from bogus rx timeout interrupt")
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- drivers/tty/serial/8250/8250_dw.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+I suspect my email was not clear. AFAICS the current code contains at
+least 2 serious issues, possibly more not yet discovered due to the
+patch size. You need to submit (at least) a new revision coping with the
+provided feedback.
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index f41c4a9ed58b..ffa8cb10b39c 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -288,9 +288,17 @@ static int dw8250_handle_irq(struct uart_port *p)
- 		uart_port_lock_irqsave(p, &flags);
- 		status = serial_lsr_in(up);
- 
--		if (!(status & (UART_LSR_DR | UART_LSR_BI)))
-+		if (!(status & (UART_LSR_DR | UART_LSR_BI))) {
-+			/* To avoid PSLVERR, disable the FIFO first. */
-+			if (up->fcr & UART_FCR_ENABLE_FIFO)
-+				serial_out(up, UART_FCR, 0);
-+
- 			(void) p->serial_in(p, UART_RX);
- 
-+			if (up->fcr & UART_FCR_ENABLE_FIFO)
-+				serial_out(up, UART_FCR, up->fcr);
-+		}
-+
- 		uart_port_unlock_irqrestore(p, flags);
- 	}
- 
--- 
-2.39.2
+Thanks,
+
+Paolo
 
 
