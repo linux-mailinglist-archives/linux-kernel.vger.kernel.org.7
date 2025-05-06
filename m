@@ -1,114 +1,136 @@
-Return-Path: <linux-kernel+bounces-635039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB63AAB8E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A43BAAB8CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D35050672A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:43:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36770170911
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E577255250;
-	Tue,  6 May 2025 04:00:30 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDED82641C3;
-	Tue,  6 May 2025 01:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556452BD5B2;
+	Tue,  6 May 2025 03:59:14 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFDE198823
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 01:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746495079; cv=none; b=tRjdmUWcADU2u8hbyXlDt0RUHRtRXTDmQyZEjhMer1e2mG+Q7lhTZNfFneYmCQ63u7T80Irf9R9qf8ktVzvoAnykddBAxvmLxLC1QB77Ws0o7XIVCtDWecQa6i3VDs1fZILPn2tvDUmbREatFt9GMyXN7/IABZ7O2hfXjRf/C4o=
+	t=1746494541; cv=none; b=ZFTjcQtIC/LFDpVv5SMzzELa4NB6bNoJlY+3gBaoUrTXndyO2QT0orRZzsL9Ko8hqx1w9WBlns9DMvjpg2dC48G0fds4uRqgiE5WjJmsVBq7bhdSe0ShY2fYr/s4MN5atofOceXbAjaZF18AbM+h6lGB38ZlnM0PE++B5duF0XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746495079; c=relaxed/simple;
-	bh=IgTqTn1SmhN+56W5viaEzU+LRmWnaKsRb9zCEEzz+xU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qcShJco1KRCCTVzd1tMJ1FrtfUCfoqzDZP26ge8Xf9g5W21fgvQPvEocB9orharLyZxVz5N7xvQ5/vERVF19woUYEtXPg4ZCTh+2iOJWP9eyDfg9broyJBVUS5L6W3+kere4WQnZ10AvE9KTKGnKk/ZU2c0YP2zv97H5AC033ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4Zs17n103WzKHMTY;
-	Tue,  6 May 2025 09:31:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id E7C3F1A1A9B;
-	Tue,  6 May 2025 09:31:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP3 (Coremail) with SMTP id _Ch0CgAne8VbZhloHx2MLQ--.59787S7;
-	Tue, 06 May 2025 09:31:15 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	wanghaichi0403@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v2 4/4] ext4: ensure i_size is smaller than maxbytes
-Date: Tue,  6 May 2025 09:20:09 +0800
-Message-ID: <20250506012009.3896990-4-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250506012009.3896990-1-yi.zhang@huaweicloud.com>
-References: <20250506012009.3896990-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1746494541; c=relaxed/simple;
+	bh=JfbMqOgKa807whHUusnnPM1sxQC4+hvuDSEV5c4e/QU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AbC9mfDL0D0S8HPtFtSwRL0PJVcGbSivYqU77Qc/kxUbU8GtFMCSG7b5W0XjpzpsAlht1cJWciqpgyUuyOi0vIhbSRVeQDWjt+37C6f1sAVl2sWfwlUBpjtNkx/ylVh/0I7PEKtrmgC2r4TQrz4KfCfilXT1YelmDjDjciHK4lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+	by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwBXXXk6ZBlozYyiAg--.12934S2;
+	Tue, 06 May 2025 09:22:02 +0800 (CST)
+Received: from localhost (unknown [123.150.8.50])
+	by mail (Coremail) with SMTP id AQAAfwD3iyU4ZBlozLoTAA--.13091S2;
+	Tue, 06 May 2025 09:22:01 +0800 (CST)
+Date: Tue, 6 May 2025 09:22:00 +0800
+From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Huacai Chen <chenhuacai@loongson.cn>,
+	loongarch@lists.linux.dev, Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: Re: [PATCH V2] LoongArch: Introduce the numa_memblks conversion
+Message-ID: <aBlkOBwIjvUDE0hY@phytium.com.cn>
+References: <20250415072118.3774454-1-chenhuacai@loongson.cn>
+ <aANVMaepni3KeABI@kernel.org>
+ <CAAhV-H65jh29ccYzcaJf1=QpDuV5xZfBd-1Kr0=in_nk-Z4h7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAne8VbZhloHx2MLQ--.59787S7
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrWrCr1kCr18Jw1fuFW5GFg_yoWfCFbEva
-	4Ivr48Wr45Z3Z2krZ3Ar13Kr1qkw48Gr15uF1Ikr15urW8Za9xCrn5ZryIkr1UW3yjgrZ8
-	Ar18JFy7tr1IgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbkxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWwA2048vs2IY02
-	0Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kfnx
-	nUUI43ZEXa7VUbN6pPUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+In-Reply-To: <CAAhV-H65jh29ccYzcaJf1=QpDuV5xZfBd-1Kr0=in_nk-Z4h7Q@mail.gmail.com>
+X-CM-TRANSID:AQAAfwD3iyU4ZBlozLoTAA--.13091S2
+X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAQAWgRLLwIYwBFsX
+Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=wangyuquan
+	1236@phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvJXoW7CrWDGrWUZr1DXr1xtF4ktFb_yoW5Jr4kpF
+	WS9a1DCF48CrWrA3Z2v34UWryYvwn7GrnFqFnxKry09ry2v345Zr40qwsY9FyDX3y8JFy0
+	vFn8J3ZxW3WUAFDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
+	UUUUU
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Sat, Apr 19, 2025 at 03:57:16PM +0800, Huacai Chen wrote:
+> Hi, Mike,
+> 
+> On Sat, Apr 19, 2025 at 3:48 PM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > Hi Huacai,
+> >
+> > On Tue, Apr 15, 2025 at 03:21:18PM +0800, Huacai Chen wrote:
+> > > Commit 87482708210ff3333a ("mm: introduce numa_memblks") has moved
+> > > numa_memblks from x86 to the generic code, but LoongArch was left out
+> > > of this conversion.
+> > >
+> > > This patch introduces the generic numa_memblks for LoongArch.
+> > >
+> > > In detail:
+> > > 1. Enable NUMA_MEMBLKS (but disable NUMA_EMU) in Kconfig;
+> > > 2. Use generic definition for numa_memblk and numa_meminfo;
+> > > 3. Use generic implementation for numa_add_memblk() and its friends;
+> > > 4. Use generic implementation for numa_set_distance() and its friends;
+> > > 5. Use generic implementation for memory_add_physaddr_to_nid() and its
+> > >    friends.
+> > >
+> > > Note: Disable NUMA_EMU because it needs more efforts and no obvious
+> > > demand now.
+> > >
+> > > Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> > > Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+> > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > ---
+> > >  arch/loongarch/Kconfig                 |   1 +
+> > >  arch/loongarch/include/asm/numa.h      |  14 ----
+> > >  arch/loongarch/include/asm/sparsemem.h |   5 --
+> > >  arch/loongarch/include/asm/topology.h  |   7 +-
+> > >  arch/loongarch/kernel/acpi.c           |  11 ---
+> > >  arch/loongarch/kernel/numa.c           | 108 +++----------------------
+> > >  arch/loongarch/mm/init.c               |   8 --
+> > >  mm/Kconfig                             |   1 +
+> > >  8 files changed, 16 insertions(+), 139 deletions(-)
+> >
+> > This is really cool simplification!
+> >
+> > I wonder if maybe we can take a step or two further and make loongarch to
+> > share more code with other architectures.
+> >
+> > Is there a strong reason not to call numa_memblks_init() from
+> > init_numa_memory()?
+> > And more broadly, maybe loongarch can be even switched to arch_numa?
+> This is a minimal change for Yuquan, I will make it in linux-next as
+> soon as possible so Yuquan can continue his work.
+> 
+Hi, Huacai & Mike
 
-The inode i_size cannot be larger than maxbytes, check it while loading
-inode from the disk.
+Where could I know this has been merged in linux-next? After that, should I
+re-push my commit "introduce numa_add_reserved_memblk"?
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Sorry for my unfamiliarity with the community rules.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5691966a19e1..072b61140d12 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4922,7 +4922,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		ei->i_file_acl |=
- 			((__u64)le16_to_cpu(raw_inode->i_file_acl_high)) << 32;
- 	inode->i_size = ext4_isize(sb, raw_inode);
--	if ((size = i_size_read(inode)) < 0) {
-+	size = i_size_read(inode);
-+	if (size < 0 || size > ext4_get_maxbytes(inode)) {
- 		ext4_error_inode(inode, function, line, 0,
- 				 "iget: bad i_size value: %lld", size);
- 		ret = -EFSCORRUPTED;
--- 
-2.46.1
+Yuquan
+> Switching to numa_memblks_init() or arch_numa will be done in future,
+> but need some time because some machines seem to need some hacks.
+> 
+> Huacai
+> 
+> >
+> > --
+> > Sincerely yours,
+> > Mike.
 
 
