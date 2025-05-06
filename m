@@ -1,177 +1,138 @@
-Return-Path: <linux-kernel+bounces-636764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B14AACFB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:39:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3A2AACFB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7BDC1C04C18
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:39:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94354985147
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4201221F33;
-	Tue,  6 May 2025 21:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB328221F2E;
+	Tue,  6 May 2025 21:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiA25YaO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMEhu4ae"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9FF21ABC2;
-	Tue,  6 May 2025 21:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B52221734;
+	Tue,  6 May 2025 21:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746567371; cv=none; b=WPEwF1t/QdFOPKEJdZObTbBUOS3jzakqeLjpBUbOO8lETfUqgY5/zDERzBpPCXZoNOBVXZChrFF838DZsZlQamTx+xpMHw/hrgO63aJaDWK1d9WDxeiuNPm56Jkbc4A3GS1IMw8FgU2dPO7D8vBs9T+/aLqXfNLmrubybdweVMk=
+	t=1746567361; cv=none; b=cIxybZxWdCZjh+cuUJrbGESnnhdrbopyYpeBF0yJhquLwQJL+XCP/55qnuyBFDEJHOiedOWRcY/wAU5cW5QxbRyf4HDyO67zCxvX7yaAujZBdjWMOSVaczq3xdu+n+vyMdxS8CQSfueb9PWF9q8UQgpvi2aR86t8++p96ybXda8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746567371; c=relaxed/simple;
-	bh=Eoezmwc1mQuw/h1zpgZmj0kj/x9SlLTyaWjd2qTeR6o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QmPqqH9t9dRr0x23f04NxYbde//T2DXjCSP/4f/KGz6csG2j8Sx3akpTJ6er/tlq5q224dygn6eywLenUaiJYAA1Epf2OOcZCb5k6wtn5a2lf7guEcrxLH6ezFaqVT4wFLv54hOQqxO5VWJuZdFelbcJp4g/9q/9HTXuzr6z+N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiA25YaO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8217C4CEE4;
-	Tue,  6 May 2025 21:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746567369;
-	bh=Eoezmwc1mQuw/h1zpgZmj0kj/x9SlLTyaWjd2qTeR6o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZiA25YaOh/BHnB77qeL6WjIL0hEQTbtt7Ucvtr3J+7Yx/EGvA+SB0T8AHL+Fs+HlV
-	 4+aJSMvwkmQydU+M3hDCZ57yqpgcL1GdXMm/njLO9styeEoFlGzqPihfhbRamQFxEq
-	 ip4En614z1mY07pX15hMdQ0mRxZ0ADuyC7RSNuBEyNJXaiwYPdRAcYIFUdlL21G00y
-	 1csEgYy4eqsemm68aaCqshY1c86860+/f06kT44QwE9LhTzWZ7ragibGIf0DyydP4o
-	 lcQFq475ZPJD+wHfrrjLUHnrFzHNuCbpSvMDty4LF5PJFQWc2VUcm+UE7dB+qucEE1
-	 l4WEUHU6Tq/Ww==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Stefan Binding <sbinding@opensource.cirrus.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	lgirdwood@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	Vijendar.Mukunda@amd.com,
-	yung-chuan.liao@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	peterz@infradead.org,
-	peter.ujfalusi@linux.intel.com,
-	rf@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 20/20] ASoC: intel/sdw_utils: Add volume limit to cs35l56 speakers
-Date: Tue,  6 May 2025 17:35:23 -0400
-Message-Id: <20250506213523.2982756-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250506213523.2982756-1-sashal@kernel.org>
-References: <20250506213523.2982756-1-sashal@kernel.org>
+	s=arc-20240116; t=1746567361; c=relaxed/simple;
+	bh=I+Fx8q3goyJx2Gxb/9/UOHkYu+kY2IGAKZZIg6IZzSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nLBBxeTYnJ3P/xQBR2cY0E5ZyxT5StD9P2Bu65A9rr8QRhsAfdGN+bprBilbyGu/F1bVH5yFP5AE1MHTfTiE4RFAl3v8TXi6wqEgesKgtCTOtnNrMmAHSp2P9uRX2VuGJUo8b7aGCtSai/rKzBTZCJy7BjsFPNvw18dzzYGBtSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMEhu4ae; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22c33ac23edso67850025ad.0;
+        Tue, 06 May 2025 14:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746567358; x=1747172158; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eIsa1bhwZTWpZl9eNabO08QufObEhVlhwC0HW+Z0IKg=;
+        b=JMEhu4aeA4oXPWvzDsWVnQWTzGVwvNRBi9jE+phEOjGMZoPxFg5UIWdPHRo6ZLtZZf
+         5tmaAyC7Hh0l0ZOJosxMMzn2Zl1PnoVkdEXFbTbOhLyZjRb/gCMCOAbTIrltrFqAe9Cc
+         JcqMAeE25RiM8AnG5741MzuFeLc5kRYOlOXSm/UR84YYlG1zp28KxFqNy5AoLxz7CW4l
+         vCy9cC+fA/00Xl419Hyf3G7Ef0IKMS32JNHzeRyJAv2MjE57SBK8Uqafr5FXS7heTnP2
+         C8npHxtzjHlzL8YkTClywVUnOAWpI2nE0hfAZWvMc0OyF6A+s6JJT90UEfPW4SfpzP69
+         GS5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746567358; x=1747172158;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eIsa1bhwZTWpZl9eNabO08QufObEhVlhwC0HW+Z0IKg=;
+        b=fUUBNkLIKhd0Yd3qtZsULUIC2VIT2PaCxXUBkjE8cMxwRzxq2wMYUXgdHbbLo2Yhmv
+         ZxzwVng5ACv1Q01aoo6id2lp4ijj1jYBI2CWdC5TBDEVBP7mTdi06Mz6RVSJ2Bq/R0U7
+         RPTMTtxEvPp4ntnQ6LIbAGb8bo0N6nhIMbHd29LJqJabksB66wR2HkuqVW83LkSYl+/g
+         +s9XWh4wIYMxhiaFt2BK85VOhugskujC5muER+ebEXRxz8znqBqH2Bd9CQTTft/FDl/U
+         Xcx5MQTbTGXgWNRtK0pzDLdegTMD+2Q1URygszsUKjkg0pCbhDKx4/fnjtS+LYGZycR+
+         5B9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ7dKDGSe4iqRi3qXfqOgAZht7Zzp14Mzd76RlAGy3BFJcuVZZBpBaxKsOGrDpKeOURNfUxtn4HshPcNuGk+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi9rm/hUK5RalCLmW8vHz/UzKC9c9m2ilBxyVibWoDUc4S3c4q
+	BfzdfXM06121NPSMXF6Zpx0Q8m9RG6JW5Ez4Pggkn9FzcUNJW0d1
+X-Gm-Gg: ASbGnct6a48oJczBMgfD7oUS7vw+se0bK5Z5NXLJtHY+jVIpB4uz2NqdVXPeZUtBi9j
+	+yO8cqVYbDCDMoC28GUzqGX81fqEg72ezcAyesDTwS7mqYhjWR+rDrc9vE+2jy4YsNJ3CuXICzf
+	vg37v8XG4esD5nnJNfDPg67LfeJNq/l2Af9cyItwQ3E1/KLinJXIAG3fjtV0El5G+TTM5d1uhaP
+	smBbGlkEARrP8b6b3v3XygagjhhhLEA99Lv+MVAOYlP+NQxpYmNpmg//HslIpWO6ALosiarFzYc
+	5WpVtW5MD+ItTmLkY/xC3IAGOjyn2c5yYaPAUaZDd4KGQFw2XlVHPCmuLBcni74E4K9sL0kNZ/U
+	zvjmBP22kvuAQn/VDkPHx0lWqWMUKNPMaEw8=
+X-Google-Smtp-Source: AGHT+IE0dnaFFX5Qnoy2VbjG0XY7suKj3R2ErvmlpliCrYY2tLb235jAN3MLyeBZ63WibuaxM+zj6w==
+X-Received: by 2002:a17:902:e849:b0:22e:5389:67fb with SMTP id d9443c01a7336-22e5ea2dc51mr9571055ad.7.1746567358092;
+        Tue, 06 May 2025 14:35:58 -0700 (PDT)
+Received: from server-kernel.moonheelee.internal (d173-180-147-14.bchsia.telus.net. [173.180.147.14])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e150eaf91sm78933155ad.1.2025.05.06.14.35.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 14:35:57 -0700 (PDT)
+From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+To: brauner@kernel.org,
+	shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Subject: [PATCH v2] selftests: pid_namespace: Fix missing mount headers in pid_max.c
+Date: Tue,  6 May 2025 14:35:35 -0700
+Message-ID: <20250506213535.5235-1-moonhee.lee.ca@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.5
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Stefan Binding <sbinding@opensource.cirrus.com>
+Fix compilation errors in pid_max.c by including <sys/mount.h>, which
+provides definitions for mount(), umount2(), MS_PRIVATE, MS_REC, and
+MNT_DETACH.
 
-[ Upstream commit d5463e531c128ff1b141fdba2e13345cd50028a4 ]
+Without this header, the build fails with implicit declarations and
+undefined constants during selftest compilation.
 
-The volume control for cs35l56 speakers has a maximum gain of +12 dB.
-However, for many use cases, this can cause distorted audio, depending
-various factors, such as other signal-processing elements in the chain,
-for example if the audio passes through a gain control before reaching
-the amp or the signal path has been tuned for a particular maximum
-gain in the amp.
+Changes since v1:
+- Included example build errors below for clarity
 
-In the case of systems which use the soc_sdw_* driver, audio will
-likely be distorted in all cases above 0 dB, therefore add a volume
-limit of 400, which is 0 dB maximum volume inside this driver.
+Compile error:
+pid_max.c: In function ‘pid_max_cb’:
+pid_max.c:42:15: warning: implicit declaration of function ‘mount’ [-Wimplicit-function-declaration]
+   42 |         ret = mount("", "/", NULL, MS_PRIVATE | MS_REC, 0);
+      |               ^~~~~
+pid_max.c:42:36: error: ‘MS_PRIVATE’ undeclared; did you mean ‘MAP_PRIVATE’?
+pid_max.c:42:49: error: ‘MS_REC’ undeclared
+pid_max.c:48:9: warning: implicit declaration of function ‘umount2’
+pid_max.c:48:26: error: ‘MNT_DETACH’ undeclared
 
-The volume limit should be applied to both soundwire and soundwire
-bridge configurations.
+[...output trimmed for brevity...]
 
-Signed-off-by: Stefan Binding <sbinding@opensource.cirrus.com>
-Link: https://patch.msgid.link/20250430103134.24579-3-sbinding@opensource.cirrus.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+make: *** [../lib.mk:222: /linux_mainline/tools/testing/selftests/pid_namespace/pid_max] Error 1
+
+Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
 ---
- include/sound/soc_sdw_utils.h                |  1 +
- sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c |  4 ++++
- sound/soc/sdw_utils/soc_sdw_cs_amp.c         | 24 ++++++++++++++++++++
- 3 files changed, 29 insertions(+)
+ tools/testing/selftests/pid_namespace/pid_max.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/sound/soc_sdw_utils.h b/include/sound/soc_sdw_utils.h
-index 36a4a1e1d8ca2..d8bd5d37131aa 100644
---- a/include/sound/soc_sdw_utils.h
-+++ b/include/sound/soc_sdw_utils.h
-@@ -226,6 +226,7 @@ int asoc_sdw_cs_amp_init(struct snd_soc_card *card,
- 			 bool playback);
- int asoc_sdw_cs_spk_feedback_rtd_init(struct snd_soc_pcm_runtime *rtd,
- 				      struct snd_soc_dai *dai);
-+int asoc_sdw_cs35l56_volume_limit(struct snd_soc_card *card, const char *name_prefix);
+diff --git a/tools/testing/selftests/pid_namespace/pid_max.c b/tools/testing/selftests/pid_namespace/pid_max.c
+index 51c414faabb0..972bedc475f1 100644
+--- a/tools/testing/selftests/pid_namespace/pid_max.c
++++ b/tools/testing/selftests/pid_namespace/pid_max.c
+@@ -11,6 +11,7 @@
+ #include <string.h>
+ #include <syscall.h>
+ #include <sys/wait.h>
++#include <sys/mount.h>
  
- /* MAXIM codec support */
- int asoc_sdw_maxim_init(struct snd_soc_card *card,
-diff --git a/sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c b/sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c
-index 246e5c2e0af55..c7e55f4433514 100644
---- a/sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c
-+++ b/sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c
-@@ -60,6 +60,10 @@ static int asoc_sdw_bridge_cs35l56_asp_init(struct snd_soc_pcm_runtime *rtd)
- 
- 	/* 4 x 16-bit sample slots and FSYNC=48000, BCLK=3.072 MHz */
- 	for_each_rtd_codec_dais(rtd, i, codec_dai) {
-+		ret = asoc_sdw_cs35l56_volume_limit(card, codec_dai->component->name_prefix);
-+		if (ret)
-+			return ret;
-+
- 		ret = snd_soc_dai_set_tdm_slot(codec_dai, tx_mask, rx_mask, 4, 16);
- 		if (ret < 0)
- 			return ret;
-diff --git a/sound/soc/sdw_utils/soc_sdw_cs_amp.c b/sound/soc/sdw_utils/soc_sdw_cs_amp.c
-index 4b6181cf29716..35b550bcd4ded 100644
---- a/sound/soc/sdw_utils/soc_sdw_cs_amp.c
-+++ b/sound/soc/sdw_utils/soc_sdw_cs_amp.c
-@@ -16,6 +16,25 @@
- 
- #define CODEC_NAME_SIZE	8
- #define CS_AMP_CHANNELS_PER_AMP	4
-+#define CS35L56_SPK_VOLUME_0DB 400 /* 0dB Max */
-+
-+int asoc_sdw_cs35l56_volume_limit(struct snd_soc_card *card, const char *name_prefix)
-+{
-+	char *volume_ctl_name;
-+	int ret;
-+
-+	volume_ctl_name = kasprintf(GFP_KERNEL, "%s Speaker Volume", name_prefix);
-+	if (!volume_ctl_name)
-+		return -ENOMEM;
-+
-+	ret = snd_soc_limit_volume(card, volume_ctl_name, CS35L56_SPK_VOLUME_0DB);
-+	if (ret)
-+		dev_err(card->dev, "%s limit set failed: %d\n", volume_ctl_name, ret);
-+
-+	kfree(volume_ctl_name);
-+	return ret;
-+}
-+EXPORT_SYMBOL_NS(asoc_sdw_cs35l56_volume_limit, "SND_SOC_SDW_UTILS");
- 
- int asoc_sdw_cs_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai)
- {
-@@ -40,6 +59,11 @@ int asoc_sdw_cs_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai
- 
- 		snprintf(widget_name, sizeof(widget_name), "%s SPK",
- 			 codec_dai->component->name_prefix);
-+
-+		ret = asoc_sdw_cs35l56_volume_limit(card, codec_dai->component->name_prefix);
-+		if (ret)
-+			return ret;
-+
- 		ret = snd_soc_dapm_add_routes(&card->dapm, &route, 1);
- 		if (ret)
- 			return ret;
+ #include "../kselftest_harness.h"
+ #include "../pidfd/pidfd.h"
 -- 
-2.39.5
+2.43.0
 
 
