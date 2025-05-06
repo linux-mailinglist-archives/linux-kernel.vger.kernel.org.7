@@ -1,188 +1,161 @@
-Return-Path: <linux-kernel+bounces-635729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CE2AAC149
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFD1AAC130
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7376D1C27CFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:24:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7F31C27BC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5F6278748;
-	Tue,  6 May 2025 10:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lWhqYa8n"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3B626B956
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 10:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA04274FD0;
+	Tue,  6 May 2025 10:20:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C63212B04
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 10:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746527067; cv=none; b=K8BnNI+JDNuH82cq2q60N2ilSeiMb8zpQC0GL8jTU9CLqXSuoNlCCOlRSXEMNKuDleslEpxYcn99WwZButyI9czqCVNwRHtHy7GvqVrohffo00CmqdaGe0dwDWqB/iPBoHwWO+TMyDrsQC+8YwOdOQHiCZYZykxJcH/FOjblP7g=
+	t=1746526826; cv=none; b=g965ODypmp4iGuFgqdHRSPi4Njnxiji1NqBHPgukUrdKJKvrbBnPXdMC/P/NDsXdJQ2U3zDhvW/9MGfzz/NB5JxELo5UfnmQauIFIvkIGBTAG405Ihg/LNjSOTr4jm+CX+ufZtIOYBMn+FqzacOXsdLmL1krh0shc3dJoQzQE7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746527067; c=relaxed/simple;
-	bh=dDdXzFYjbgqP4CK2I4LRvHZilWDZtx2zws9/9E2m+n4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T6cq/lXgHTeivuhv5KTpGiBwoVFfvDi9CGWNqTM9VUb+mISmmb+jVU0VgFL0kVH83AaHvkzjLXlHXfNO6arF8gHUHyXkNOfOCdSSJetfSD+ONfAk1tLNgPlXuys73Woxtfxd9VnGGbiLhe77FH95JSEKctQbY5KW/OF9k0D33y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lWhqYa8n; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1746527054; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=6hlGv60zt643L8hENoGWYQs5XN30zIHiFR6c1sWi65I=;
-	b=lWhqYa8ncKCalAHEcjIS6Ltr2rjL6ql33COYezqD4kPhKUPRohKLA2vSupCu50qWAWMVHtOc7sivw8sL6MGqDApZ0oB7jc7hlO2KWgw1gI7jPera72BzEt43YgqtmaT1pD+sGSDpI0aJI7T64/MM3avJr7dCQuJcmt/EoL1pIvY=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WZSt-3o_1746526730 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 06 May 2025 18:18:56 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH] erofs: ensure the extra temporary copy is valid for shortened bvecs
-Date: Tue,  6 May 2025 18:18:50 +0800
-Message-ID: <20250506101850.191506-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1746526826; c=relaxed/simple;
+	bh=+1pd1hUFweb7CCwtak3nlYPflslSIxDWfznZ7NCj4Z4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AoAz1n/SxVHFWAm9uRAjLQnaMrqFyaQy8YGoJqTTqdu24PEcETsy7BA8qi0RNFgvWrTHzn1Z0fnJ9RkrVXVBHPv2B4olY9d6nhmSn0MDQ/z0BLGxw3m/0gEoNydbU2es21inaxe0aEy2dO4KEkWzorKHsgyfoCvPWhe4sI7Gocc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BBC6113E;
+	Tue,  6 May 2025 03:20:14 -0700 (PDT)
+Received: from [10.162.43.13] (K4MQJ0H1H2.blr.arm.com [10.162.43.13])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1A813F5A1;
+	Tue,  6 May 2025 03:20:18 -0700 (PDT)
+Message-ID: <35966495-6922-4e18-a852-efb5d159a343@arm.com>
+Date: Tue, 6 May 2025 15:50:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] mm: Optimize mremap() by PTE batching
+To: Anshuman Khandual <anshuman.khandual@arm.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com,
+ ryan.roberts@arm.com, mingo@kernel.org, libang.li@antgroup.com,
+ maobibo@loongson.cn, zhengqi.arch@bytedance.com, baohua@kernel.org,
+ willy@infradead.org, ioworker0@gmail.com, yang@os.amperecomputing.com
+References: <20250506050056.59250-1-dev.jain@arm.com>
+ <20250506050056.59250-4-dev.jain@arm.com>
+ <e430344b-76b9-43be-b497-0152a8910faf@arm.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <e430344b-76b9-43be-b497-0152a8910faf@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When compressed data deduplication is enabled, multiple logical extents
-may reference the same compressed physical cluster.
 
-The previous commit 94c43de73521 ("erofs: fix wrong primary bvec
-selection on deduplicated extents") already avoids using shortened
-bvecs.  However, in such cases, the extra temporary buffers also
-need to be preserved for later use in z_erofs_fill_other_copies() to
-to prevent data corruption.
 
-IOWs, extra temporary buffers have to be retained not only due to
-varying start relative offsets (`pageofs_out`, as indicated by
-`pcl->multibases`) but also because of shortened bvecs.
+On 06/05/25 3:40 pm, Anshuman Khandual wrote:
+> On 5/6/25 10:30, Dev Jain wrote:
+>> Use folio_pte_batch() to optimize move_ptes(). Use get_and_clear_full_ptes()
+>> so as to elide TLBIs on each contig block, which was previously done by
+>> ptep_get_and_clear().
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   mm/mremap.c | 24 +++++++++++++++++++-----
+>>   1 file changed, 19 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/mm/mremap.c b/mm/mremap.c
+>> index 1a08a7c3b92f..3621c07d8eea 100644
+>> --- a/mm/mremap.c
+>> +++ b/mm/mremap.c
+>> @@ -176,7 +176,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   	struct vm_area_struct *vma = pmc->old;
+>>   	bool need_clear_uffd_wp = vma_has_uffd_without_event_remap(vma);
+>>   	struct mm_struct *mm = vma->vm_mm;
+>> -	pte_t *old_ptep, *new_ptep, pte;
+>> +	pte_t *old_ptep, *new_ptep, old_pte, pte;
+>>   	pmd_t dummy_pmdval;
+>>   	spinlock_t *old_ptl, *new_ptl;
+>>   	bool force_flush = false;
+>> @@ -185,6 +185,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   	unsigned long old_end = old_addr + extent;
+>>   	unsigned long len = old_end - old_addr;
+>>   	int err = 0;
+>> +	int nr;
+>>   
+>>   	/*
+>>   	 * When need_rmap_locks is true, we take the i_mmap_rwsem and anon_vma
+>> @@ -237,10 +238,14 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   
+>>   	for (; old_addr < old_end; old_ptep++, old_addr += PAGE_SIZE,
+>>   				   new_ptep++, new_addr += PAGE_SIZE) {
+>> -		if (pte_none(ptep_get(old_ptep)))
+>> +		const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+>> +		int max_nr = (old_end - old_addr) >> PAGE_SHIFT;
+>> +
+>> +		nr = 1;
+>> +		old_pte = ptep_get(old_ptep);
+>> +		if (pte_none(old_pte))
+>>   			continue;
+>>   
+>> -		pte = ptep_get_and_clear(mm, old_addr, old_ptep);
+>>   		/*
+>>   		 * If we are remapping a valid PTE, make sure
+>>   		 * to flush TLB before we drop the PTL for the
+>> @@ -252,8 +257,17 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   		 * the TLB entry for the old mapping has been
+>>   		 * flushed.
+>>   		 */
+>> -		if (pte_present(pte))
+>> +		if (pte_present(old_pte)) {
+>> +			if ((max_nr != 1) && maybe_contiguous_pte_pfns(old_ptep, old_pte)) {
+> 
+> maybe_contiguous_pte_pfns() cost will be applicable for memory
+> areas greater than a single PAGE_SIZE (i.e max_nr != 1) ? This
+> helper extracts an additional consecutive pte, ensures that it
+> is valid mapped and extracts pfn before comparing for the span.
+> 
+> There is some cost associated with the above code sequence which
+> looks justified for sequential access of memory buffers that has
+> consecutive physical memory backing.
 
-android.hardware.graphics.composer@2.1.so : 270696 bytes
-   0:        0..  204185 |  204185 :  628019200.. 628084736 |   65536
--> 1:   204185..  225536 |   21351 :  544063488.. 544129024 |   65536
-   2:   225536..  270696 |   45160 :          0..         0 |       0
+I did not see any regression for the simple case of mremapping base pages.
 
-com.android.vndk.v28.apex : 93814897 bytes
-...
-   364: 53869896..54095257 |  225361 :  543997952.. 544063488 |   65536
--> 365: 54095257..54309344 |  214087 :  544063488.. 544129024 |   65536
-   366: 54309344..54514557 |  205213 :  544129024.. 544194560 |   65536
-...
+> But what happens when such
+> buffers are less probable, will those buffers take a performance
+> hit for all the comparisons that just turn out to be negative ?
 
-Both 204185 and 54095257 have the same start relative offset of 3481,
-but the logical page 55 of `android.hardware.graphics.composer@2.1.so`
-ranges from 225280 to 229632, forming a shortened bvec [225280, 225536)
-that cannot be used for decompressing the range from 54095257 to
-54309344 of `com.android.vndk.v28.apex`.
+When would that be the case? We are remapping consecutive ptes to 
+consecutive ptes.
 
-Since `pcl->multibases` is already meaningless, just mark `keepxcpy`
-on demand for simplicity.
-
-Again, this issue can only lead to data corruption if `-Ededupe` is on.
-
-Fixes: 94c43de73521 ("erofs: fix wrong primary bvec selection on deduplicated extents")
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/zdata.c | 31 ++++++++++++++-----------------
- 1 file changed, 14 insertions(+), 17 deletions(-)
-
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 5c061aaeeb45..b8e6b76c23d5 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -79,9 +79,6 @@ struct z_erofs_pcluster {
- 	/* L: whether partial decompression or not */
- 	bool partial;
- 
--	/* L: indicate several pageofs_outs or not */
--	bool multibases;
--
- 	/* L: whether extra buffer allocations are best-effort */
- 	bool besteffort;
- 
-@@ -1046,8 +1043,6 @@ static int z_erofs_scan_folio(struct z_erofs_frontend *f,
- 				break;
- 
- 			erofs_onlinefolio_split(folio);
--			if (f->pcl->pageofs_out != (map->m_la & ~PAGE_MASK))
--				f->pcl->multibases = true;
- 			if (f->pcl->length < offset + end - map->m_la) {
- 				f->pcl->length = offset + end - map->m_la;
- 				f->pcl->pageofs_out = map->m_la & ~PAGE_MASK;
-@@ -1093,7 +1088,6 @@ struct z_erofs_backend {
- 	struct page *onstack_pages[Z_EROFS_ONSTACK_PAGES];
- 	struct super_block *sb;
- 	struct z_erofs_pcluster *pcl;
--
- 	/* pages with the longest decompressed length for deduplication */
- 	struct page **decompressed_pages;
- 	/* pages to keep the compressed data */
-@@ -1102,6 +1096,8 @@ struct z_erofs_backend {
- 	struct list_head decompressed_secondary_bvecs;
- 	struct page **pagepool;
- 	unsigned int onstack_used, nr_pages;
-+	/* indicate if temporary copies should be preserved for later use */
-+	bool keepxcpy;
- };
- 
- struct z_erofs_bvec_item {
-@@ -1112,18 +1108,20 @@ struct z_erofs_bvec_item {
- static void z_erofs_do_decompressed_bvec(struct z_erofs_backend *be,
- 					 struct z_erofs_bvec *bvec)
- {
-+	int poff = bvec->offset + be->pcl->pageofs_out;
- 	struct z_erofs_bvec_item *item;
--	unsigned int pgnr;
--
--	if (!((bvec->offset + be->pcl->pageofs_out) & ~PAGE_MASK) &&
--	    (bvec->end == PAGE_SIZE ||
--	     bvec->offset + bvec->end == be->pcl->length)) {
--		pgnr = (bvec->offset + be->pcl->pageofs_out) >> PAGE_SHIFT;
--		DBG_BUGON(pgnr >= be->nr_pages);
--		if (!be->decompressed_pages[pgnr]) {
--			be->decompressed_pages[pgnr] = bvec->page;
-+	struct page **page;
-+
-+	if (!(poff & ~PAGE_MASK) && (bvec->end == PAGE_SIZE ||
-+			bvec->offset + bvec->end == be->pcl->length)) {
-+		DBG_BUGON((poff >> PAGE_SHIFT) >= be->nr_pages);
-+		page = be->decompressed_pages + (poff >> PAGE_SHIFT);
-+		if (!*page) {
-+			*page = bvec->page;
- 			return;
- 		}
-+	} else {
-+		be->keepxcpy = true;
- 	}
- 
- 	/* (cold path) one pcluster is requested multiple times */
-@@ -1289,7 +1287,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_backend *be, int err)
- 					.alg = pcl->algorithmformat,
- 					.inplace_io = overlapped,
- 					.partial_decoding = pcl->partial,
--					.fillgaps = pcl->multibases,
-+					.fillgaps = be->keepxcpy,
- 					.gfp = pcl->besteffort ? GFP_KERNEL :
- 						GFP_NOWAIT | __GFP_NORETRY
- 				 }, be->pagepool);
-@@ -1346,7 +1344,6 @@ static int z_erofs_decompress_pcluster(struct z_erofs_backend *be, int err)
- 
- 	pcl->length = 0;
- 	pcl->partial = true;
--	pcl->multibases = false;
- 	pcl->besteffort = false;
- 	pcl->bvset.nextpage = NULL;
- 	pcl->vcnt = 0;
--- 
-2.43.5
+> 
+>> +				struct folio *folio = vm_normal_folio(vma, old_addr, old_pte);
+>> +
+>> +				if (folio && folio_test_large(folio))
+>> +					nr = folio_pte_batch(folio, old_addr, old_ptep,
+>> +					old_pte, max_nr, fpb_flags, NULL, NULL, NULL);
+>> +			}
+>>   			force_flush = true;
+>> +		}
+>> +		pte = get_and_clear_full_ptes(mm, old_addr, old_ptep, nr, 0);
+>>   		pte = move_pte(pte, old_addr, new_addr);
+>>   		pte = move_soft_dirty_pte(pte);
+>>   
+>> @@ -266,7 +280,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   				else if (is_swap_pte(pte))
+>>   					pte = pte_swp_clear_uffd_wp(pte);
+>>   			}
+>> -			set_pte_at(mm, new_addr, new_ptep, pte);
+>> +			set_ptes(mm, new_addr, new_ptep, pte, nr);
+>>   		}
+>>   	}
+>>   
 
 
