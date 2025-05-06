@@ -1,169 +1,141 @@
-Return-Path: <linux-kernel+bounces-635984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1947EAAC484
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:48:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F309AAC4C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333E03B2F0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:48:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C25522272
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74134269820;
-	Tue,  6 May 2025 12:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QSfxMzlT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8TItqUap";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dVX6yepa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1/PorQBd"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4796280309;
+	Tue,  6 May 2025 12:57:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590271DE883
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9FF28000E;
+	Tue,  6 May 2025 12:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746535703; cv=none; b=oioNpvK+UQcNM2yoVXK0pUyhv9+P2sveyvFAXBbeyq3VW4vdAdrvi7flTuNiRukDSdAEPRD/8cmTH/O/vabnk64TQNREf4ZJXn5s+MUarjxIlME4aounTfgTJKnh0VY6KLle374rD54Y9uLw7KL2XqGFEwWbwW2jBp3rL0VZcto=
+	t=1746536240; cv=none; b=UaEjCT70xqN7809+4gFaPjsjjs9TxB+EqkGci/QULC9RGmn1Z3nH3FkLy7Wgku75xv8INWkQ/R+jqYULMVvNcdy3PEnwlF7tuPD01Gw+6hjuVctTjWW3iRZ29Uog52dvwc4TK2TtwX+uzSlnNNmONKHwECoj59R8V40EUQtKWNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746535703; c=relaxed/simple;
-	bh=8ubOWI8+2mUl2eaNqwg0k/WqOEL9YcUblXgwsyAtyo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uw8d7VdlOyy0BLW/37LxvqNVpEiHSE7oTOGH+G48JSfUErC8ebdFqnOMpAHDXfOgodKZH3rCoZi8R+0tujUy+n9QZ1I/LaS1pU9ETrN3eXI7CAPxzUUQRbihL+xP0CZ7SBif0PXq0zN0rmKNZwSM1Xg22/dpKktxamyz011z+Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QSfxMzlT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8TItqUap; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dVX6yepa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1/PorQBd; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7953C1F390;
-	Tue,  6 May 2025 12:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746535700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5K/N/0WLkbc+DdrII6oye3X6T8Ni1CdM9Ifo6jBFaF0=;
-	b=QSfxMzlTxlx/0DcSc0Q/Iw2mZ6eLIHjzK5HZqDXAjMHPDH8qJ9BD8v1nPZ12wn7icoXTL0
-	JTJAY6PjnZvJb8pzWBdrd6Ql6ZXJMP9BPe+np11Q5Ewjm4SgdRl42a5J+ibdsLFPxyiycq
-	uywjCKexqJhsp7FXRpJ8jd9lLYcAD1c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746535700;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5K/N/0WLkbc+DdrII6oye3X6T8Ni1CdM9Ifo6jBFaF0=;
-	b=8TItqUaplNDt0Wh9r9FOWtrzKNMcFn2ZHVEDyp+JNpx/P1LMdEaWRfHt/AtzMIE9Iw6p95
-	TNwAo+TboQbcxxDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746535699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5K/N/0WLkbc+DdrII6oye3X6T8Ni1CdM9Ifo6jBFaF0=;
-	b=dVX6yepaOsEz2V8wDOPXqEFaw5e9i++/fW/bsz58A44B6rwiwXYQ50bo64MyOjbXDlr4nZ
-	mWR8Xq+v9dfvxlm7QbG0c983qrkuB3CFeHfhMYCPHue7x9uvY1ZCERsMQ9HkcSBMdqrYxh
-	D+wdwBsQyuyrVThUgiR3NLOW1ok9fKY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746535699;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5K/N/0WLkbc+DdrII6oye3X6T8Ni1CdM9Ifo6jBFaF0=;
-	b=1/PorQBdQXDlzKYyY+e2WKbk7dhTiv5GobGnvxKOCVFUMy4d1niEK6oaJCyCrSke7MeqiH
-	mbzaEKCgaeR1ZaCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5582313687;
-	Tue,  6 May 2025 12:48:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qfWIFBMFGmizLwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 06 May 2025 12:48:19 +0000
-Message-ID: <baeb1200-5293-4fe0-aa76-b1d41875af58@suse.cz>
-Date: Tue, 6 May 2025 14:48:19 +0200
+	s=arc-20240116; t=1746536240; c=relaxed/simple;
+	bh=saEcFj+KXFIN8lSpRxf00Xv6969suwf4SqX88dg2bPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=alddMlzJ1ofqSKHvcJtQvxMdZk0FjJ5mtkecrQGDiYUMiZW6m9jwmjWO4nnSjvG9TcA+5U5k94zY+IaAWuO0s6s3sPCTnwn4urSlyYrwZgd/6OVPGda2wvA9TRjzTE5EFtd7GU/LIjahYq1SkmTzYV+8z7vORCBPCZ17C8w5Qh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZsJLw0gqVz4f3jq5;
+	Tue,  6 May 2025 20:56:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4FE531A0359;
+	Tue,  6 May 2025 20:57:15 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDXOl8pBxpoilNvLg--.37994S4;
+	Tue, 06 May 2025 20:57:14 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	agk@redhat.com,
+	song@kernel.org,
+	hch@lst.de,
+	john.g.garry@oracle.com,
+	hare@suse.de,
+	xni@redhat.com,
+	pmenzel@molgen.mpg.de
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v3 1/9] blk-mq: remove blk_mq_in_flight()
+Date: Tue,  6 May 2025 20:48:54 +0800
+Message-Id: <20250506124903.2540268-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250506124658.2537886-1-yukuai1@huaweicloud.com>
+References: <20250506124658.2537886-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block
- order
-To: Andrew Morton <akpm@linux-foundation.org>,
- Juan Yescas <jyescas@google.com>
-Cc: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, tjmercier@google.com,
- isaacmanjarres@google.com, surenb@google.com, kaleshsingh@google.com,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
- Minchan Kim <minchan@kernel.org>
-References: <20250506002319.513795-1-jyescas@google.com>
- <20250506000133.ba44539dd517e4f54515751b@linux-foundation.org>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250506000133.ba44539dd517e4f54515751b@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.990];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXOl8pBxpoilNvLg--.37994S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ary7AFykKrW3Ww1xWw17KFg_yoW8Xw18pF
+	W3Ga15CrW2gr18uFyxtanxXayakwsrKryxXan3A345Kr18Kry3ZF10qr4kXrZYvrZ3AFsr
+	uF1ayFy8GF18K37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
+	sGvfC2KfnxnUUI43ZEXa7sRRKZX5UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 5/6/25 09:01, Andrew Morton wrote:
-> On Mon,  5 May 2025 17:22:58 -0700 Juan Yescas <jyescas@google.com> wrote:
-> 
->> Problem: On large page size configurations (16KiB, 64KiB), the CMA
->> alignment requirement (CMA_MIN_ALIGNMENT_BYTES) increases considerably,
->> and this causes the CMA reservations to be larger than necessary.
->> This means that system will have less available MIGRATE_UNMOVABLE and
->> MIGRATE_RECLAIMABLE page blocks since MIGRATE_CMA can't fallback to them.
->> 
->> The CMA_MIN_ALIGNMENT_BYTES increases because it depends on
->> MAX_PAGE_ORDER which depends on ARCH_FORCE_MAX_ORDER. The value of
->> ARCH_FORCE_MAX_ORDER increases on 16k and 64k kernels.
->> 
->> ...
->>
->> +config PAGE_BLOCK_ORDER
->> +	int "Page Block Order"
->> +	range 1 10 if !ARCH_FORCE_MAX_ORDER
->> +	default 10 if !ARCH_FORCE_MAX_ORDER
->> +	range 1 ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER
->> +	default ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER
-> 
-> Do we really need to do this arithmetic within Kconfig?  Would it be
-> cleaner to do this at runtime, presumably when calculating
-> pageblock_order?
+From: Yu Kuai <yukuai3@huawei.com>
 
-AFAIK pageblock_order is compile-time constant. Making this a boot parameter
-was proposed in v1 but explained as not useful. That explanation could be
-added in the changelog?
+After commit 7be835694dae ("block: fix that util can be greater than
+100%"), it's not used and can be removed.
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: John Garry <john.g.garry@oracle.com>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+---
+ block/blk-mq.c | 10 ----------
+ block/blk-mq.h |  2 --
+ 2 files changed, 12 deletions(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 83c651a7facd..45989960a89d 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -101,16 +101,6 @@ static bool blk_mq_check_inflight(struct request *rq, void *priv)
+ 	return true;
+ }
+ 
+-unsigned int blk_mq_in_flight(struct request_queue *q,
+-		struct block_device *part)
+-{
+-	struct mq_inflight mi = { .part = part };
+-
+-	blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight, &mi);
+-
+-	return mi.inflight[0] + mi.inflight[1];
+-}
+-
+ void blk_mq_in_flight_rw(struct request_queue *q, struct block_device *part,
+ 		unsigned int inflight[2])
+ {
+diff --git a/block/blk-mq.h b/block/blk-mq.h
+index d15ff1e130c8..eeac0d47c878 100644
+--- a/block/blk-mq.h
++++ b/block/blk-mq.h
+@@ -246,8 +246,6 @@ static inline bool blk_mq_hw_queue_mapped(struct blk_mq_hw_ctx *hctx)
+ 	return hctx->nr_ctx && hctx->tags;
+ }
+ 
+-unsigned int blk_mq_in_flight(struct request_queue *q,
+-		struct block_device *part);
+ void blk_mq_in_flight_rw(struct request_queue *q, struct block_device *part,
+ 		unsigned int inflight[2]);
+ 
+-- 
+2.39.2
+
 
