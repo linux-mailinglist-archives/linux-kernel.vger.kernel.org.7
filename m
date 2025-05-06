@@ -1,126 +1,170 @@
-Return-Path: <linux-kernel+bounces-635817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C72AAAC261
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:20:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B2FAAC264
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946D21B68785
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A29950527F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A04927A445;
-	Tue,  6 May 2025 11:20:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A01C278750;
-	Tue,  6 May 2025 11:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715D327991B;
+	Tue,  6 May 2025 11:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dYgpZm+2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32309277817
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746530450; cv=none; b=RvIQoEiNN1s3sbYLbEf65TH4b7b9qTk3b6hPkYrGlLM9uMyP6cbGEFpl0TYqDmo55I0196a9CzO6G2Fzxi4ZlV9pwPF9Q5MTpvBF9aP+JTyMKLygbUsdW7Uset4uN5yxOODvSixGEjIfZqZUcg7lZ6aDoHv+L2INbjWNNbz+sik=
+	t=1746530503; cv=none; b=Iit8bkXbrjhLUBqJmpdEswduUvug6bEfLDIt/29iDxNqwr41J+d3Diq7aLjL7JUF+cQhkUz9LXa8GIlSHWI9MFtueg5OGeaHyAdar5vEdE7iB/YkBWzp/8eJuxogX57G7TEfvF1d+FIhSAo3woF4aampBVSUIWP3bsamdkkaikE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746530450; c=relaxed/simple;
-	bh=DldxK1O2FUBIV+IGAEiHrzXvmL3t/OtYlTTuOZu0ExM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VHy7UGhxd4Sn5XruCYNOD4le42V5i6HoWlfuYqhlaunf1hQM9W+UcJ8UXYvZEil+5vkouCfEy2u1ttLC8YHOcVADbShRGluW7FW07/Z+f0i9rEtEo8onujPXL70UmalMLx2b8tcnqbLVlj9rdAMtseKJ0RyyN6LJpB2vqXIOz0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C94A9113E;
-	Tue,  6 May 2025 04:20:36 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00BD13F58B;
-	Tue,  6 May 2025 04:20:44 -0700 (PDT)
-Message-ID: <9b75b9d1-a9ed-46c9-9dba-8e3eb261dcc0@arm.com>
-Date: Tue, 6 May 2025 12:20:42 +0100
+	s=arc-20240116; t=1746530503; c=relaxed/simple;
+	bh=s1Ixm6WMboKTsvNooKb2pfTDDOcMCS2D4cfDtbIsAKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tavuza4+tOHRjg2fmVs2d9QNDT5F6QeUKEWbxq3TrZar8mSscQ7Bpnzd05QYHtS+6ym9BBk5MVMNZPmQPlRFKK7/6nquFqYD1sftIuHmS1GoJ+MBSly3C+IzOJmGFXTtvKMtVNAck/j8VGfIEah2MXNl0je7ryVFDJCIOkftcqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dYgpZm+2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746530500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QOvRLaP63gYOR03XxNVBF5K4WBSkpnVksFuYLM7tkcI=;
+	b=dYgpZm+2pXRdVVUt3GFSe9xzOairzE4lPDNSv5z+QbZuEU95t8hFyBehyNbfYO5nhrS4Jx
+	3UrNGAh29ve4N12k3WWy4k0JOKnsfqzegr+M843nEngbS4LNY2P/vRCgyiyMon1kM97HYc
+	OgXIEBsJ4WJETAKKVE5Bu2rDiGMO02I=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-3ONevib6Nti5-C1YLuD3Ow-1; Tue,
+ 06 May 2025 07:21:36 -0400
+X-MC-Unique: 3ONevib6Nti5-C1YLuD3Ow-1
+X-Mimecast-MFC-AGG-ID: 3ONevib6Nti5-C1YLuD3Ow_1746530494
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D44718009A1;
+	Tue,  6 May 2025 11:21:33 +0000 (UTC)
+Received: from fedora (unknown [10.44.33.231])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 24E85180045B;
+	Tue,  6 May 2025 11:21:28 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  6 May 2025 13:21:33 +0200 (CEST)
+Date: Tue, 6 May 2025 13:21:27 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, akpm@linux-foundation.org,
+	mhocko@suse.com, Liam.Howlett@oracle.com, mjguzik@gmail.com,
+	pasha.tatashin@soleen.com, alexjlzheng@tencent.com
+Subject: Re: [PATCH AUTOSEL 5.4 66/79] exit: change the release_task() paths
+ to call flush_sigqueue() lockless
+Message-ID: <aBnwt9cbww5R6TnN@redhat.com>
+References: <20250505232151.2698893-1-sashal@kernel.org>
+ <20250505232151.2698893-66-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] coresight: add coresight Trace Network On Chip
- driver
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: kernel@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250411-trace-noc-v3-0-1f19ddf7699b@quicinc.com>
- <20250411-trace-noc-v3-2-1f19ddf7699b@quicinc.com>
- <23d02991-3bc6-41e2-bb8b-a38786071c43@arm.com>
- <257fb0a5-7bf7-4a04-9f8d-d8759351584c@quicinc.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <257fb0a5-7bf7-4a04-9f8d-d8759351584c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250505232151.2698893-66-sashal@kernel.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 14/04/2025 10:16, Yuanfang Zhang wrote:
-> 
-> 
-> On 4/11/2025 5:59 PM, Suzuki K Poulose wrote:
->> On 11/04/2025 09:57, Yuanfang Zhang wrote:
->>> Add a driver to support Coresight device Trace Network On Chip (TNOC),
->>> which is an integration hierarchy integrating functionalities of TPDA
->>> and funnels. It aggregates the trace and transports to coresight trace
->>> bus.
->>>
->>> Compared to current configuration, it has the following advantages:
->>> 1. Reduce wires between subsystems.
->>> 2. Continue cleaning the infrastructure.
->>> 3. Reduce Data overhead by transporting raw data from source to target.
->>>
->>>     +------------------------+                +-------------------------+
->>>     | Video Subsystem        |                |Video Subsystem          |
->>>     |       +-------------+  |                |       +------------+    |
->>>     |       | Video TPDM  |  |                |       | Video TPDM |    |
->>>     |       +-------------+  |                |       +------------+    |
->>>     |            |           |                |              |          |
->>>     |            v           |                |              v          |
->>>     |   +---------------+    |                |        +-----------+    |
->>>     |   | Video funnel  |    |                |        |Video TNOC |    |
->>>     |   +---------------+    |                |        +-----------+    |
->>>     +------------|-----------+                +------------|------------+
->>>                  |                                         |
->>>                  v-----+                                   |
->>> +--------------------|---------+                         |
->>> |  Multimedia        v         |                         |
->>> |  Subsystem   +--------+      |                         |
->>> |              |  TPDA  |      |                         v
->>> |              +----|---+      |              +---------------------+
->>> |                   |          |              |    Aggregator TNOC  |
->>> |                   |          |              +----------|----------+
->>> |                   +--        |                         |
->>> |                     |        |                         |
->>> |                     |        |                         |
->>> |              +------v-----+  |                         |
->>> |              |  Funnel    |  |                         |
->>> |              +------------+  |                         |
->>> +----------------|-------------+                         |
->>>                    |                                       |
->>>                    v                                       v
->>>         +--------------------+                    +------------------+
->>>         |   Coresight Sink   |                    |  Coresight Sink  |
->>>         +--------------------+                    +------------------+
->>
->> If each NOC has TraceID, how do you reliably decode the trace ?
->> Is there a single NOC/TPDA in the path from Source to sink ?
-> 
-> Not each TNOC has TraceID, there is only one TNOC has TraceID for one path
-> from Source to sink. In the example, only the aggregator TNOC has traceID.
-> Decode trace relying on TraceID + Inport number.
-> It can has mutiple TNOC/TPDA in one path.
+I'm on PTO until May 15, can't read the code.
 
-So do we only describe the TNOCs that need traceId in the DT ? (e.g., 
-Aggregator TNOC above ?) How about Video TNOC ? Don't we allocate a
-trace id for it by default, when it is described ?
+Did you verify that 5.14 has all the necessary "recent" posixtimer changes?
 
-Suzuki
+Oleg.
+
+On 05/05, Sasha Levin wrote:
+>
+> From: Oleg Nesterov <oleg@redhat.com>
+> 
+> [ Upstream commit fb3bbcfe344e64a46574a638b051ffd78762c12d ]
+> 
+> A task can block a signal, accumulate up to RLIMIT_SIGPENDING sigqueues,
+> and exit. In this case __exit_signal()->flush_sigqueue() called with irqs
+> disabled can trigger a hard lockup, see
+> https://lore.kernel.org/all/20190322114917.GC28876@redhat.com/
+> 
+> Fortunately, after the recent posixtimer changes sys_timer_delete() paths
+> no longer try to clear SIGQUEUE_PREALLOC and/or free tmr->sigq, and after
+> the exiting task passes __exit_signal() lock_task_sighand() can't succeed
+> and pid_task(tmr->it_pid) will return NULL.
+> 
+> This means that after __exit_signal(tsk) nobody can play with tsk->pending
+> or (if group_dead) with tsk->signal->shared_pending, so release_task() can
+> safely call flush_sigqueue() after write_unlock_irq(&tasklist_lock).
+> 
+> TODO:
+> 	- we can probably shift posix_cpu_timers_exit() as well
+> 	- do_sigaction() can hit the similar problem
+> 
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> Link: https://lore.kernel.org/r/20250206152314.GA14620@redhat.com
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  kernel/exit.c | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index 5015ecdda6d95..69deb2901ec55 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -204,20 +204,13 @@ static void __exit_signal(struct task_struct *tsk)
+>  	__unhash_process(tsk, group_dead);
+>  	write_sequnlock(&sig->stats_lock);
+>  
+> -	/*
+> -	 * Do this under ->siglock, we can race with another thread
+> -	 * doing sigqueue_free() if we have SIGQUEUE_PREALLOC signals.
+> -	 */
+> -	flush_sigqueue(&tsk->pending);
+>  	tsk->sighand = NULL;
+>  	spin_unlock(&sighand->siglock);
+>  
+>  	__cleanup_sighand(sighand);
+>  	clear_tsk_thread_flag(tsk, TIF_SIGPENDING);
+> -	if (group_dead) {
+> -		flush_sigqueue(&sig->shared_pending);
+> +	if (group_dead)
+>  		tty_kref_put(tty);
+> -	}
+>  }
+>  
+>  static void delayed_put_task_struct(struct rcu_head *rhp)
+> @@ -277,6 +270,16 @@ void release_task(struct task_struct *p)
+>  
+>  	write_unlock_irq(&tasklist_lock);
+>  	release_thread(p);
+> +	/*
+> +	 * This task was already removed from the process/thread/pid lists
+> +	 * and lock_task_sighand(p) can't succeed. Nobody else can touch
+> +	 * ->pending or, if group dead, signal->shared_pending. We can call
+> +	 * flush_sigqueue() lockless.
+> +	 */
+> +	flush_sigqueue(&p->pending);
+> +	if (thread_group_leader(p))
+> +		flush_sigqueue(&p->signal->shared_pending);
+> +
+>  	put_task_struct_rcu_user(p);
+>  
+>  	p = leader;
+> -- 
+> 2.39.5
+> 
 
 
