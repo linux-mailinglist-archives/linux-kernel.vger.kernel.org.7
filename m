@@ -1,342 +1,231 @@
-Return-Path: <linux-kernel+bounces-635888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D85AAC32E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5030AAC322
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51EBD4E8751
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:58:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997204E75FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8A427CB30;
-	Tue,  6 May 2025 11:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F8127C872;
+	Tue,  6 May 2025 11:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mJU+wIMb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4zMR8zo"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72C827CB07;
-	Tue,  6 May 2025 11:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746532693; cv=fail; b=cNKFDAvMwoFfd/v95BnNQ0bMreVf4AonVVbHCwzdNqYI2fsHqXJ9kyyFp6e9Ut+f9HpwAn9EeWT5Nilo/JQwBw+8Kn2PpdUzkjnl9nNr87Qs9TS/sT/HqtHY02A6q62LQM2Ir0GzsplZsAlCGLcdGxhOT2lOgXa2y1wmbC/J0zU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746532693; c=relaxed/simple;
-	bh=uJvBORdjMdPPZc5naPtG2ELhLu/9sT7wj00OVXOsYxI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=vDKbume/9fehKMLh5Mg2Tx7rCNgYx71SCUrRHowxNyl2gs2tOu4Kehs53UxVppabl5mcc0rzr9mSsR48XCqS4RXAtwII+B1b8+hQRF7gCjir5CrgVlO3HAQrfw/YC6JboF+izvhbGUVGDNqzKQuvbqaWfmmrNx2M8BD4e8KJRUE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mJU+wIMb; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746532691; x=1778068691;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=uJvBORdjMdPPZc5naPtG2ELhLu/9sT7wj00OVXOsYxI=;
-  b=mJU+wIMblTR2Yw5ymU5zB44wFMW7P9RjkOAZd7XIje8u8ffH7t/d67tW
-   m8RB9/tngUF+r/pJDNMXEfIhutnBXus9xDMYfVsBNnUUIVlGKC1Rlj7yP
-   BU04KiMsDXc9nyt7C8ixx9kWJy1SOyJwIZ2OFipZ0qtIEwU5wD4/WQ3Ge
-   jAB9ujn/LL9DhPsUXnXCB32xyWrWhJKVkws3LKEp+wGZbCPq1t4SXNrjE
-   wosqH7BTfjDhmgR9KmBepof72f7n545iAHcQfbRpnM4e0Wwh9+5zNX4JW
-   yayLn4W1JF4peERKbcdR5NHU583sKrM89Y8kxUUdLXae2GFOt2DkszNX0
-   A==;
-X-CSE-ConnectionGUID: WXpds4zURKqLCv79c3pTrQ==
-X-CSE-MsgGUID: +OQRGT3CSiiKkzWRvrTbIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="48324602"
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="48324602"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 04:58:10 -0700
-X-CSE-ConnectionGUID: AuqmrXVfSyyE6eAjE5/M2A==
-X-CSE-MsgGUID: CBZZGB49TqO+93NW9/DqWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="135574811"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 04:58:09 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 6 May 2025 04:58:07 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Tue, 6 May 2025 04:58:07 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.171)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 6 May 2025 04:58:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XFNRL2VhUNYJnfwY+IkV2Q0Qzes9eRRaaajVCk5BGizo6h37ofPkm7tT0mXoUffoV75oKjXhZGskYLHhnMNeeX89T6hhgU1iTtchEljMtVohRfsHMtcpYjGi8I2uhJSNTbUDvBw3otYvl7Q9mqqjhZzh+fKRWwr/DXdooVv/1aJfivVQcLRcFU9aJVDqPtriuWj8UxkWQtcqndL53uwM4BBON2BM7kzz52VqdqCdtwrPXp2oqkpKmf1goCKU0LOYikthQ591KvS/0iVDhfLbn7WRNRqBZMvj7OJKVzHX/WcRP0q0Afn/L2RSrrXt7uDGgDf35oHwqa541E/Q+UAW8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4TKUe6qreuXaGFuDvYK/jA1QRBA0cbR5nJ3I+wUg7rU=;
- b=EllX7BINezf1PjtFpYDFGytcdhOcAYNSsEfDb8Xqlg9IQ532X3xK5YcW1DTfIFEC/DR1+QvoGiZKrtnhXJbknQAmucHPiSvCBsSEtMUiEVixqnvX0DHEJ1zEnq40QydSYYrFddAeVnAhMgzsJvUo6Z3nL//N4qU/AnzLwICaNSYYbMI61A9DHmoVbFw0rXzpzD+ILbRusGM85NFjVyla8TwUrWwT1FuB2RXjA3FHwsngbBcArUe1p6J+wsLQtn21X07v+cryQjRJbbtv4fUbeJLnKjyHTTySRLSe40jZgGM/pfrARNmgqhoyHFuHRst+9d4klfj8OeLq1bUs0iNUXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- PH7PR11MB6056.namprd11.prod.outlook.com (2603:10b6:510:1d4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Tue, 6 May
- 2025 11:57:18 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.8699.024; Tue, 6 May 2025
- 11:57:18 +0000
-Date: Tue, 6 May 2025 19:55:17 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-CC: <pbonzini@redhat.com>, <seanjc@google.com>, <rick.p.edgecombe@intel.com>,
-	<isaku.yamahata@intel.com>, <kai.huang@intel.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<kvm@vger.kernel.org>, <x86@kernel.org>, <linux-coco@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [RFC, PATCH 08/12] KVM: x86/tdp_mmu: Add phys_prepare() and
- phys_cleanup() to kvm_x86_ops
-Message-ID: <aBn4pfn4aMXcFHd7@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20250502130828.4071412-1-kirill.shutemov@linux.intel.com>
- <20250502130828.4071412-9-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250502130828.4071412-9-kirill.shutemov@linux.intel.com>
-X-ClientProxiedBy: KU2P306CA0009.MYSP306.PROD.OUTLOOK.COM
- (2603:1096:d10:14::16) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4733B27C150
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746532546; cv=none; b=IPzPBdGN6BpCU2qUqyK2zRWHnPUSJec6IXjrpl3Yl/e1di6QDsqZF5g4J9ug+qpJX+3vaESNyLX5qnwOCfdb+TM/GlD3jqnWHYqWX2zyAnpWqIA565rwI3sC8op5StGdDoHjr74wYksR+G3B+gm1oZ1XylUJ6HK/qMd9YC6/Gcc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746532546; c=relaxed/simple;
+	bh=Ju78M2uASabNhZvnSg+EamWDDI7twx0IX8YzmrF1b3U=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MqvU9K/STf1qBNKw2rc3nkz9dWQ+rgoQhTfj80i192tkh/e/RN9VX4GR8rM//E2aepI6bxMkRAaySW8H3EucDYvEvrITDFMUlBh5HhVTEalqo2tPQL0p4MN+OHGjpSFIXs4hCskSDUib5uAXsBa+4aJTT8CXG+ZWTqAydzK+4Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4zMR8zo; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bf1d48843so50084891fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 04:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746532542; x=1747137342; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Crh33s5odmDcmUH7zaHEyWwCZ73pPpLq4AVQUaMDOP4=;
+        b=Y4zMR8zoYFJqSMqENUmTxS5T4UmRBd2UC00colgeX7TNUGhk9CE8xElWocNttoXHnZ
+         zlxMDoAlaLqLXOA8Dhp/wa8Uj4Z/yv+BQdPTK2euKG6xfclgBiCyRbE2gCRD9FZH5ZyI
+         Fqz2u3q+yNimN+b0v6Gkh04zKNMpPfraQDbcO3FW6bavlNhiZOwzCRtf7tdkrfWCa0iy
+         5g1mp7xnXLgUyWwEFun42sq3diDKaSk9R+PyR1qda1Ue3tXG7SepygUawSw9LeSwMBdE
+         n2VChTq98Xnz4bB92Q9MOjr2ssnbExRmcZhGsrrhUEQPC7WcIjFWD+VoIHsiepy29Mud
+         hOcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746532542; x=1747137342;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Crh33s5odmDcmUH7zaHEyWwCZ73pPpLq4AVQUaMDOP4=;
+        b=t6biZVXT6N3Dgd50ADZfOE2z8SzAd3h5nROPnVscWfIYFB2Aw8I+jTAfU87M7fpep8
+         xlHA4+4HinDOWpJE9xLayBH8UJXoEejyhVtSZxPndOYAM1P8bDpYruYe7xS5pOUl0uzb
+         6yCdb3zIt+2oUZasv3Mm1Iv1VbzL5Wb0q9ZTBXKN+PA9F75HxkP8EPIxw7j0ey2TDMiA
+         CjXOcneqtmdRssHYJX8O5G7TpCezii/CZ15SybIVYTWZxAyVSpfyUMd6r7+TBEDQ3kAt
+         8wFo4fjTpaBeXXE2z9qhBZxbXEzEBNwok1IgAnphYvW8NTs5TV5zyFBXsr93wew3WxmB
+         4bQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnn5W0ZCf6S6j9o+nUXrpvXb0AzbKbnLWAQtKCVo+7IoDaeTsGGBVbi5ljdEuTV7IpaZDwp4lX2fjtX/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3p8O6GXYSsNJbrlS9Vc1xFsBBOIts49oupnIg7Kv8j4C3/8cT
+	Es2K6wGNstV7ekA0pzVENuX9ZlGyG1c4hWJ3HRZRIDoBVFQClR8Y
+X-Gm-Gg: ASbGncsFHEBYNSYnKjvGPOHgp1C0khHROh9+cQxY/2IVMayD80ouebk3S2gqPGvRDMj
+	3aRTOODktoxOI1skT9GBX/CaAhN6Mq8UxC2ae9s2phdU3TgQGN2mGFDmuq/TBCNJaixJSvg92cy
+	8P7LKslkI2JQHcC+Nfn/kxsvtex6FFNbCakVs7Vppf8idoAprLlc2Hm4v7kJncVr/Ly+TShOBnK
+	kyDMINSs0lfm5J2QVWt7sWxz7CRSJPJvpMNTnsLzs9xj5BoX0eCtn1mW56ZgXgsK2M3Ls2wysK+
+	hIqKYh8kow+sKopkzlkWL2IoZ91qr9Pwb6fRLebySjJKozebAZXWgN91WgpigGQFsXP0ITMZdNa
+	qH+0=
+X-Google-Smtp-Source: AGHT+IGVVspd/1uOxqE6l9hGFvhjEDKvNt/3J+RFEmbCQXyzg7F2oN/Dg1ndiK5dW2/9Z4+UR9isfw==
+X-Received: by 2002:a2e:7019:0:b0:30a:2a8a:e4b5 with SMTP id 38308e7fff4ca-3235201a3c7mr26588281fa.27.1746532541900;
+        Tue, 06 May 2025 04:55:41 -0700 (PDT)
+Received: from pc636 (host-95-203-26-253.mobileonline.telia.com. [95.203.26.253])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3202a89f33bsm21226421fa.72.2025.05.06.04.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 04:55:40 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 6 May 2025 13:55:38 +0200
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: akpm@linux-foundation.org, urezki@gmail.com, edumazet@google.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/vmalloc: fix data race in show_numa_info()
+Message-ID: <aBn4uqA7hnLBH2kL@pc636>
+References: <20250506082520.84153-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|PH7PR11MB6056:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0eda7573-0b3d-4708-d832-08dd8c952695
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PXFeOg14Bp6NAZms9FabD8uoIyuWF8C51cjocxbox+wKkNNB4y/5a4ic5KZn?=
- =?us-ascii?Q?2oww+uIpOvG9jdUXcemUY7dVj1PCb2ByNFixo6oDxRFV0Yd3g0OMTLUB+BGW?=
- =?us-ascii?Q?0fHN4dAPh0gNOaRixOr0OGeuw+Btk8T7m6QB79SyZaYYqKGnliEfyUXsFC6L?=
- =?us-ascii?Q?is/OwgkDSp09+/qw+4Hi4eNcGTKsNj+mOLXvfVlQsJRnq9mc77QRUI0OKsx8?=
- =?us-ascii?Q?ePVwjsrgX99fN1ch5wDX/yNxrXzc07PzrN2+EK2QS3u1AM1Hk/uy6XS+FKiq?=
- =?us-ascii?Q?6HC9UTN9GOLAtGdugw6ulJXhNXBKk8yxZHf8ZRpL7c+MDQEK4yRGWrwu/87e?=
- =?us-ascii?Q?MdJ9q0+ej/OYCmOSr9NIVhc46sWLPdCpOpkQJh1yl7XYVEeoqjiURdK/y5Xz?=
- =?us-ascii?Q?1IgualnA4BuwYCojDyMsdV4i2vfOZbKTmLeiKtZUaZRH3HXm1hMm52rbxIe+?=
- =?us-ascii?Q?3jP4KSNZ4rjcJB7gCj9s/hdJZCtYZTvfiGsfSL5s7wLAEl4RQox7KMRpmQVL?=
- =?us-ascii?Q?sNb/OZ74TSvujucz3hMaqJ/4hFpOww6B3JczLhr6lK9jVAXC3N2HNC1Xz97E?=
- =?us-ascii?Q?8r7XOnM4BK1D/kX/eohIyrPiB47O6zSOViK/UcevhurKlUYP/t6zRAxDmgu7?=
- =?us-ascii?Q?Fa5y5bNE4QrxQoLAUeR0Dez0goMvIAl0RbpxFtnDgi6+vFLfzwglMcDpz5er?=
- =?us-ascii?Q?5kbdwXddPz7uUV9ZsUWf45fuGo124hhu9eSEgysNqfKSaPV2oX7qxfccXKPg?=
- =?us-ascii?Q?AOR5D98yj1UxPsV4Cfj1IXtojv8yaES8LzaIlvQH+c9frKvEYkQnq/4CNRIn?=
- =?us-ascii?Q?4O8s/CKjPex2+9psL7Mcadta7Ui3f16VRxhI+fU1ANV9TX9qugAoPWUW/Tqu?=
- =?us-ascii?Q?JP84TlY3HE/anekIsMkKWSp1BWmbZzPY572wlQYJBT5p9qq9KxyBoyI6FYlo?=
- =?us-ascii?Q?aNY0ii3WHajQPEFz2oUwww3Hfk+TcRfaokOxf6VRfacIUukKuikh5AVfRtUT?=
- =?us-ascii?Q?uTF1n/2rxZ7vpmGJR/1zJEeguHj+aVZBiwPZ1DUAejdJ1a/PEnRb7glqVWtc?=
- =?us-ascii?Q?CH12e2BjelSwaVrfF9UocnQ0qzFgsMBUg8qasFBeNqDoo2pkWHWOdexSz277?=
- =?us-ascii?Q?76iVsMC2M7uJAdS1bm10voizz3wXb4Z4ZeeXUUPj3KFta8qY1A4B6YyhvZ8J?=
- =?us-ascii?Q?fSCCRp5wsxCZarEO1ggllc72HqcQN6lL9aJXN/cZOknZhjwoXiaC26yd0VeA?=
- =?us-ascii?Q?lI+ayqrQuPuabPcid/d91AHti5d/9VV93ZG7FZdBkWU6/+6dUgCMx2MUCKtz?=
- =?us-ascii?Q?92clDb5PlLWZf44zIzx0jt66pNz8FIzzH9a834r6b3dGRwM1Yh8XpHjLIN/H?=
- =?us-ascii?Q?04UjhhBgJJ0EBNwSoQcNQkjxhrrwTRwJeciY6TkzNMXBirQZKoRA96l3GgIc?=
- =?us-ascii?Q?OF3aeuh7uUQ=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bV72K1QmfTh0KBgY71m9JKbb2hkIaRvvIDp9OSWc9f8okwYUv6ULblEew4gR?=
- =?us-ascii?Q?op85opTPI1gf7iYYtPP4YZkxLSYw7oqBWdhSD+cdiAdkchsrz/oWZ3KBkM9/?=
- =?us-ascii?Q?F6qnYc0jjY0FoNvOy5qr8bjNyp2Cq+uI+Pe+9SsZ0j7FNQR5bIePlMt0bpf5?=
- =?us-ascii?Q?MBuJwDhMTdO+oToasXrbhPNEgIFSzPq2aI3Gu9xaMB2+8AFUTQioe95argyL?=
- =?us-ascii?Q?Jwrs5Ag+X5kororOZHScMkCkN8ayWYCH9maLvuDGS95Gp+U2Dl7S5yYmB8WC?=
- =?us-ascii?Q?/HIDJM37VX9HLvI5xbe/PS1zS4KVfNW6E44z1CRcNgGn2J43MLRXn8PmsHsU?=
- =?us-ascii?Q?kE6y6BgsVygOzOANSR/y2wK7Rx4MPJaBskPqQ5QkEjFZyuMV+wwJnIWOUZAv?=
- =?us-ascii?Q?Np4v6K5hYnYHsL+e2xRdKfXVbIn8W0qZe//c0wPf6TyDSTU7off0tALEAYIg?=
- =?us-ascii?Q?d1CaUQZRJK/TKT6iKTqWDubXp8J66qsSvgXSMjMPYRmC2q0VaPUzRneDxGpe?=
- =?us-ascii?Q?kY+ufzlLn58nXyg9NqUtwqSAxIPgGHFgsuScQiI+r2djS6nZKO+t27v2ZvbK?=
- =?us-ascii?Q?a5tMdgVgGJdpF2hz9Rh0s24ppkGQd5kfdfOa6kQ4nJPe6wY/3MxxLDVPeNLp?=
- =?us-ascii?Q?rc+aoAc0U5ldf6kTPyHtZZACMpp6LhqGVsq6q1STRXwUhQYrI2qaZymBs6df?=
- =?us-ascii?Q?a5NldgC9sErWAIIiutiu6JK5GW2qePnloEo5ImDCPDRg+JgklaeagPUnYxyG?=
- =?us-ascii?Q?X1vcWSeH43E/6GPZjgOLocOi4wjbZWRJv5DTPxRmbWT0syvkAWn0AMn8PqY4?=
- =?us-ascii?Q?CjjhkiQzjhIbjgyCE8eVAu2VMDerY+puS3SJaDS/18HLw9CEk5ugBFB5OvHQ?=
- =?us-ascii?Q?ox4CZ2AzAYK5EDBTqVoYKXaPRJM3zr2zhH2J/0z0Vluc0GVHzgXw1qkDJ+lI?=
- =?us-ascii?Q?ZRIpGHaA67BnIJM7jY1/nOVC2xAYubnP7+tk5zNAI9FHEOy+C7D2+TOdhnpa?=
- =?us-ascii?Q?tc/YdnYa3qOP6kTYpvhX1Kfz/jEJFG8Mp19ELIKZbfmmZJ1cAJTHVReGXczw?=
- =?us-ascii?Q?3/0fYdFeHoLStB+rvwsoOq8uG3fWAXehY8BzC1nyvu0PEBaEaeb09mB5O6j+?=
- =?us-ascii?Q?dGOeYUgFPdUgxUUhJF1vN4v7SAxLuMGDl5Y0KBTigAV2BgxOTv2TTlz3cyZV?=
- =?us-ascii?Q?KNOEAYzJ+lQ40FQmKQ0rn5wqIVedeTq9ogGvv8sW5gd6zuDV3OJYb3Z5nnIm?=
- =?us-ascii?Q?f28fUsffR6lk6rLvyyonkSLMozoM/M/71v1imyZWN+JsYTVpXfUH2CPy6IoH?=
- =?us-ascii?Q?gt0pHmQuIv+AHG8jdwbOnVA/0yL2MZlhkzZqi9VfNnRF5P0AJbuqGwD9Gvmj?=
- =?us-ascii?Q?z2PFwWESpdxPRJ3GxUQnsDXijg/BOSUlSMTM4SydOma3a93ZL87w+9FvUkTB?=
- =?us-ascii?Q?Qypaa6J/A+VKtQ3Gb5awDPVI03/3bT1pF/tsqZpW+BdR67GfwUjcLmuf2DIq?=
- =?us-ascii?Q?MR+6romTgqcXSgFotnQdvM8XmtMjntQ4tUauF81lcqaBbu2JzQ/1jVfYbrdl?=
- =?us-ascii?Q?NDBoWgBqIIBj/CqqIirFNZotqFgV20jDTNwgBSKi?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0eda7573-0b3d-4708-d832-08dd8c952695
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 11:57:18.3867
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cBZIxxNKfjQmZA1qu3aNk6Jx73lgAjzE2Yw3LPfEB8shSjFGge29EKsZGGYzfvSRKIL9oWmDC432djygvVWMvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6056
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506082520.84153-1-aha310510@gmail.com>
 
-On Fri, May 02, 2025 at 04:08:24PM +0300, Kirill A. Shutemov wrote:
-> The functions kvm_x86_ops::link_external_spt() and
-> kvm_x86_ops::set_external_spte() are used to assign new memory to a VM.
-> When using TDX with Dynamic PAMT enabled, the assigned memory must be
-> covered by PAMT.
+On Tue, May 06, 2025 at 05:25:19PM +0900, Jeongjun Park wrote:
+> The following data-race was found in show_numa_info():
 > 
-> The new function kvm_x86_ops::phys_prepare() is called before
-> link_external_spt() and set_external_spte() to ensure that the memory is
-> ready to be assigned to the virtual machine. In the case of TDX, it
-> makes sure that the memory is covered by PAMT.
+> ==================================================================
+> BUG: KCSAN: data-race in vmalloc_info_show / vmalloc_info_show
 > 
-> kvm_x86_ops::phys_prepare() is called in a context where struct kvm_vcpu
-> is available, allowing the implementation to allocate memory from a
-> per-VCPU pool.
+> read to 0xffff88800971fe30 of 4 bytes by task 8289 on cpu 0:
+>  show_numa_info mm/vmalloc.c:4936 [inline]
+>  vmalloc_info_show+0x5a8/0x7e0 mm/vmalloc.c:5016
+>  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
+>  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
+>  new_sync_read fs/read_write.c:489 [inline]
+>  vfs_read+0x5b4/0x740 fs/read_write.c:570
+>  ksys_read+0xbe/0x190 fs/read_write.c:713
+>  __do_sys_read fs/read_write.c:722 [inline]
+>  __se_sys_read fs/read_write.c:720 [inline]
+>  __x64_sys_read+0x41/0x50 fs/read_write.c:720
+>  x64_sys_call+0x1729/0x1fd0 arch/x86/include/generated/asm/syscalls_64.h:1
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xa6/0x1b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
-Why not invoke phys_prepare() and phys_cleanup() in set_external_spte_present()?
-Or in tdx_sept_set_private_spte()/tdx_sept_link_private_spt()?
-
-> The function kvm_x86_ops::phys_cleanup() frees PAMT memory in case of
-> failure.
+> write to 0xffff88800971fe30 of 4 bytes by task 8287 on cpu 1:
+>  show_numa_info mm/vmalloc.c:4934 [inline]
+>  vmalloc_info_show+0x38f/0x7e0 mm/vmalloc.c:5016
+>  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
+>  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
+>  new_sync_read fs/read_write.c:489 [inline]
+>  vfs_read+0x5b4/0x740 fs/read_write.c:570
+>  ksys_read+0xbe/0x190 fs/read_write.c:713
+>  __do_sys_read fs/read_write.c:722 [inline]
+>  __se_sys_read fs/read_write.c:720 [inline]
+>  __x64_sys_read+0x41/0x50 fs/read_write.c:720
+>  x64_sys_call+0x1729/0x1fd0 arch/x86/include/generated/asm/syscalls_64.h:1
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xa6/0x1b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> value changed: 0x0000008f -> 0x00000000
+> ==================================================================
+> 
+> According to this report, there is a read/write data-race because m->private
+> is accessible to multiple CPUs. To fix this, instead of allocating the heap
+> in proc_vmalloc_init() and passing the heap address to m->private,
+> show_numa_info() should allocate the heap.
+> 
+> One thing to note is that show_numa_info() is called in a critical section
+> of a spinlock, so it must be allocated on the heap with GFP_ATOMIC flag.
+> 
+> Fixes: a47a126ad5ea ("vmallocinfo: add NUMA information")
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 > ---
->  arch/x86/include/asm/kvm-x86-ops.h |  2 ++
->  arch/x86/include/asm/kvm_host.h    |  3 ++
->  arch/x86/kvm/mmu/tdp_mmu.c         | 47 +++++++++++++++++++++++++++---
->  3 files changed, 48 insertions(+), 4 deletions(-)
+> v2: Refactoring some functions and fix patch as per Eric Dumazet suggestion
+> - Link to v1: https://lore.kernel.org/all/20250505171948.24410-1-aha310510@gmail.com/
+> ---
+>  mm/vmalloc.c | 50 +++++++++++++++++++++++++-------------------------
+>  1 file changed, 25 insertions(+), 25 deletions(-)
 > 
-> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
-> index 79406bf07a1c..37081d04e82f 100644
-> --- a/arch/x86/include/asm/kvm-x86-ops.h
-> +++ b/arch/x86/include/asm/kvm-x86-ops.h
-> @@ -99,6 +99,8 @@ KVM_X86_OP_OPTIONAL(link_external_spt)
->  KVM_X86_OP_OPTIONAL(set_external_spte)
->  KVM_X86_OP_OPTIONAL(free_external_spt)
->  KVM_X86_OP_OPTIONAL(remove_external_spte)
-> +KVM_X86_OP_OPTIONAL(phys_prepare)
-> +KVM_X86_OP_OPTIONAL(phys_cleanup)
->  KVM_X86_OP(has_wbinvd_exit)
->  KVM_X86_OP(get_l2_tsc_offset)
->  KVM_X86_OP(get_l2_tsc_multiplier)
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 6c06f3d6e081..91958c55f918 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1813,6 +1813,9 @@ struct kvm_x86_ops {
->  	int (*remove_external_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
->  				    kvm_pfn_t pfn_for_gfn);
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 3ed720a787ec..a5e795346141 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -4914,28 +4914,32 @@ bool vmalloc_dump_obj(void *object)
+>  #endif
 >  
-> +	int (*phys_prepare)(struct kvm_vcpu *vcpu, kvm_pfn_t pfn);
-> +	void (*phys_cleanup)(kvm_pfn_t pfn);
+>  #ifdef CONFIG_PROC_FS
 > +
->  	bool (*has_wbinvd_exit)(void);
->  
->  	u64 (*get_l2_tsc_offset)(struct kvm_vcpu *vcpu);
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index 405874f4d088..f6c836b2e6fc 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -1137,6 +1137,26 @@ void kvm_tdp_mmu_invalidate_roots(struct kvm *kvm,
->  	}
->  }
->  
-> +static int tdp_mmu_install_spte(struct kvm_vcpu *vcpu,
-> +				struct tdp_iter *iter,
-> +				u64 spte)
-> +{
-> +	kvm_pfn_t pfn = 0;
-> +	int ret = 0;
-> +
-> +	if (is_mirror_sptep(iter->sptep) && !is_frozen_spte(spte)) {
-> +		pfn = spte_to_pfn(spte);
-> +		ret = static_call(kvm_x86_phys_prepare)(vcpu, pfn);
-> +	}
-> +	if (ret)
-> +		return ret;
-> +	ret = tdp_mmu_set_spte_atomic(vcpu->kvm, iter, spte);
-> +	if (pfn && ret)
-> +		static_call(kvm_x86_phys_cleanup)(pfn);
-> +
-> +	return ret;
-> +}
-> +
->  /*
->   * Installs a last-level SPTE to handle a TDP page fault.
->   * (NPT/EPT violation/misconfiguration)
-> @@ -1170,7 +1190,7 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
->  
->  	if (new_spte == iter->old_spte)
->  		ret = RET_PF_SPURIOUS;
-> -	else if (tdp_mmu_set_spte_atomic(vcpu->kvm, iter, new_spte))
-> +	else if (tdp_mmu_install_spte(vcpu, iter, new_spte))
->  		return RET_PF_RETRY;
->  	else if (is_shadow_present_pte(iter->old_spte) &&
->  		 (!is_last_spte(iter->old_spte, iter->level) ||
-> @@ -1211,7 +1231,7 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
->   * Returns: 0 if the new page table was installed. Non-0 if the page table
->   *          could not be installed (e.g. the atomic compare-exchange failed).
->   */
-> -static int tdp_mmu_link_sp(struct kvm *kvm, struct tdp_iter *iter,
-> +static int __tdp_mmu_link_sp(struct kvm *kvm, struct tdp_iter *iter,
->  			   struct kvm_mmu_page *sp, bool shared)
+> +/*
+> + * Print number of pages allocated on each memory node.
+> + *
+> + * This function can only be called if CONFIG_NUMA is enabled
+> + * and VM_UNINITIALIZED bit in v->flags is disabled.
+> + */
+>  static void show_numa_info(struct seq_file *m, struct vm_struct *v)
 >  {
->  	u64 spte = make_nonleaf_spte(sp->spt, !kvm_ad_enabled);
-> @@ -1230,6 +1250,25 @@ static int tdp_mmu_link_sp(struct kvm *kvm, struct tdp_iter *iter,
->  	return 0;
+> -	if (IS_ENABLED(CONFIG_NUMA)) {
+> -		unsigned int nr, *counters = m->private;
+> -		unsigned int step = 1U << vm_area_page_order(v);
+> +	unsigned int nr, *counters;
+> +	unsigned int step = 1U << vm_area_page_order(v);
+>  
+> -		if (!counters)
+> -			return;
+> +	counters = kcalloc(nr_node_ids, sizeof(unsigned int), GFP_ATOMIC);
+> +	if (!counters)
+> +		return;
+>  
+> -		if (v->flags & VM_UNINITIALIZED)
+> -			return;
+> -		/* Pair with smp_wmb() in clear_vm_uninitialized_flag() */
+> -		smp_rmb();
+> +	/* Pair with smp_wmb() in clear_vm_uninitialized_flag() */
+> +	smp_rmb();
+>  
+> -		memset(counters, 0, nr_node_ids * sizeof(unsigned int));
+> +	for (nr = 0; nr < v->nr_pages; nr += step)
+> +		counters[page_to_nid(v->pages[nr])] += step;
+> +	for_each_node_state(nr, N_HIGH_MEMORY)
+> +		if (counters[nr])
+> +			seq_printf(m, " N%u=%u", nr, counters[nr]);
+>  
+> -		for (nr = 0; nr < v->nr_pages; nr += step)
+> -			counters[page_to_nid(v->pages[nr])] += step;
+> -		for_each_node_state(nr, N_HIGH_MEMORY)
+> -			if (counters[nr])
+> -				seq_printf(m, " N%u=%u", nr, counters[nr]);
+> -	}
+> +	kfree(counters);
 >  }
 >  
-> +static int tdp_mmu_link_sp(struct kvm_vcpu *vcpu, struct tdp_iter *iter,
-> +			   struct kvm_mmu_page *sp, bool shared)
-> +{
-> +	kvm_pfn_t pfn = 0;
-> +	int ret = 0;
-> +
-> +	if (sp->external_spt) {
-> +		pfn = __pa(sp->external_spt) >> PAGE_SHIFT;
-> +		ret = static_call(kvm_x86_phys_prepare)(vcpu, pfn);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +	ret = __tdp_mmu_link_sp(vcpu->kvm, iter, sp, shared);
-> +	if (pfn && ret)
-> +		static_call(kvm_x86_phys_cleanup)(pfn);
-> +
-> +	return ret;
-> +}
-> +
->  static int tdp_mmu_split_huge_page(struct kvm *kvm, struct tdp_iter *iter,
->  				   struct kvm_mmu_page *sp, bool shared);
+>  static void show_purge_info(struct seq_file *m)
+> @@ -5013,7 +5017,10 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
+>  			if (is_vmalloc_addr(v->pages))
+>  				seq_puts(m, " vpages");
 >  
-> @@ -1288,7 +1327,7 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
->  			KVM_BUG_ON(is_mirror_sptep(iter.sptep), vcpu->kvm);
->  			r = tdp_mmu_split_huge_page(kvm, &iter, sp, true);
->  		} else {
-> -			r = tdp_mmu_link_sp(kvm, &iter, sp, true);
-> +			r = tdp_mmu_link_sp(vcpu, &iter, sp, true);
->  		}
->  
->  		/*
-> @@ -1514,7 +1553,7 @@ static int tdp_mmu_split_huge_page(struct kvm *kvm, struct tdp_iter *iter,
->  	 * correctness standpoint since the translation will be the same either
->  	 * way.
->  	 */
-> -	ret = tdp_mmu_link_sp(kvm, iter, sp, shared);
-> +	ret = __tdp_mmu_link_sp(kvm, iter, sp, shared);
->  	if (ret)
->  		goto out;
->  
-> -- 
-> 2.47.2
-> 
+> -			show_numa_info(m, v);
+> +			if (!(v->flags & VM_UNINITIALIZED) &&
+>
+I think it makes sense to move the VM_UNINITIALIZED check before:
+
+<snip>
+			v = va->vm;
+
+			seq_printf(m, "0x%pK-0x%pK %7ld",
+				v->addr, v->addr + v->size, v->size);
+<snip>
+
+because it can be still un-initialized, thus flags like "nr_pages", etc
+will not be valid.
+
+Any thoughts? It has nothing to do with a patch, because it fixes other
+race issue and what i propose might well be a separate patch if we agree.
+
+Thanks!
+
+--
+Uladzislau Rezki
 
