@@ -1,104 +1,202 @@
-Return-Path: <linux-kernel+bounces-635354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35666AABCCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:14:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257A8AABCB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26505A09F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:55:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442843A5AD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D031547CC;
-	Tue,  6 May 2025 07:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB72217657;
+	Tue,  6 May 2025 07:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cfUJ/MV/"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nKcRjC3u"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB7386348
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 07:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746516982; cv=none; b=drWzSlsWpGP50o/nCeu/TErbtXuQ31fLKxfGGdqwb+i7NpzehP/EluX19FK1V6ShTm+1/sNIVMMHDjKAmitik8KMKrPGW9JIiQFgxVnhpKKKVtBP9dweR6enhiOM6L0fV9a06qjrf18LDW3F450tFHi8Y9/ctjjO3dnrWIQCtWc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746516982; c=relaxed/simple;
-	bh=FIGxv3Nl1qoX+HHto5vOpS4BavolNZCrwovwQ56Wm24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDRQQWVoxF9Ks9IKmDQQ1baV4biBj8/gSLX/UHuEhV/oA+TxcU7LlPVUj7hEbxrU03/Imx8hv+5TzwiXOZBqZ5yjoUUzwKA3+lOl/UoGpjpGy7vq9X0rQZBq0wfsm0XyP2j+fsbAFvPv5nss9EgAKKY+4WNDfGvQiMXoBUTxrjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cfUJ/MV/; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=slDuu3UwzS1T40il7HNohQSp3mAaqyfTPZpK0mxQMvQ=; b=cfUJ/MV/CS0qCPkTlTNFNJJl4r
-	UxOn+S3xF1+WIOxkE72UuA5Tl50mgxIKmJjbykPECMsqYIMSE7ciNb6OoupQVPdLzot/DkdE1dJ1r
-	QdO1WjTm1Nv9XtZ3ypvJC6xEr9zr9LjMM1zsud630RlMYkpTp75FrDxSWXan7v25BCPsw2saMvN2d
-	tihzOW465VwlWt+ztcQtuMwL9ccx7wPIWM4/NYQmBANta5PHPjXZ+TxHEJ/gAXx+xp3UznmmGXhp1
-	wMc2f/O53ngL2/oxBiRQph99jiW5KWM49CC1qz9jIOuBHriJ7EdPHCyG2GcyQnJzHu7P9FCkgC5Ot
-	E/bYRtbw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uCCqZ-0000000FbzI-2SUZ;
-	Tue, 06 May 2025 07:36:13 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 20524300321; Tue,  6 May 2025 09:36:11 +0200 (CEST)
-Date: Tue, 6 May 2025 09:36:11 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v12 00/21] futex: Add support task local hash maps,
- FUTEX2_NUMA and FUTEX2_MPOL
-Message-ID: <20250506073611.GH4198@noisy.programming.kicks-ass.net>
-References: <20250416162921.513656-1-bigeasy@linutronix.de>
- <20250416163142.aKBzQeqK@linutronix.de>
- <20250502194807.GD24078@noisy.programming.kicks-ass.net>
- <20250503100905.GG4356@noisy.programming.kicks-ass.net>
- <20250505073036.ikHE6K4T@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC7C218838
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 07:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746517155; cv=fail; b=Fu7EqPw2xU/+OgvwpGO33EbK6CGFDtaSxKBo+FlT4C9Qnvmj6/UgSGx+vE8ToJh4sGpwuhXVTzy5sFwetXvF89Otrtja5gHNjWIqA84783NT0hXpB4o2klxWi4dZS2dDCtWQ9ZZi0zTj+0EsTtOXoiT1jWBUsDnRwDeeG/ut7Bs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746517155; c=relaxed/simple;
+	bh=89wk3F+DHf4ZvHBsATrYJqNohItpzF/vH2Es58AswkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cdIjxypu4EeMBqHp7Mjb1gkrlIK/GsYRLUd54oKRfU1JEcxxmit/BAnOhT6vQCOIVf6vPDWOPR3bgSQ7DdLtZsciMXuD42G9LboC30RLpwMrjfGgmUev53nSGKJY8wR/izKpFGUKvZ7csz+sxPLATcJ4YHwVjEcFlYaPQwu7ouU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nKcRjC3u; arc=fail smtp.client-ip=40.107.93.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jn3//kPeT0wA2D8gp/fQUJDWePlMOblZ2DfwfuMjpj7/azSY+M82niutd6B/s85f7umdm7gwqFKNK1jdVANqFe9IiaJ+N2S3zODufpbaXa1nL7BUw2mKOlq0m3g/dcWujd7FTejyIdL3dw91I8VTYo2yh0PYT2SGSoltOshNNcjXEyTWus+TdTiwBqNTklFh1yASTeCcypClVQGxQch0s84wmyVPT81HJbTyER/kkZsOpfJdI87fBnIRp45D32dg3ZZyCWRHh2zUPrxhMfLJHhw0xp3BZByfFsOPx3TzFTiqTuWtFF0kGgks7aFBW4c+kX65gxvYiIKdUGz07hcA3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vyrUm/7DtDdHBx1rgeQ0W2fofnlZg+i8IlqIi2BJZIw=;
+ b=QTzbtUMBwo3F9jng+fiRjJgcEGQQA17e2LsnkGJS2Iaoe6zdyhxgMc/Z4aaWXM0uv+98JWk0KXCdYljeLcrPRTb2U9G/qpLwtHe95PiteLvqa+Nf7DJlXTXynrV4zzO1rqT3jeCk9xuDCmlmLQiUaufJj31+lyNRXpOWMb4M570sjlO8WPp1q7btfGMQVsCHmGI4eaXNMKCYesCxJmu3jg8GUL/F/aAp5WokQtshyntolKkmMTX1nGDTDTR2ShpbLh90tYZFp2VQA/AeqBwzTOO8w+LcwmiFXZ2NwCyRfE/eBMgLlTe+0e+eUbZZ3ZHgqgLnzpBCCFFMrTJ/tSHu4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vyrUm/7DtDdHBx1rgeQ0W2fofnlZg+i8IlqIi2BJZIw=;
+ b=nKcRjC3u39V9IiH0eezWBe/jSd2wAK4tQaBy0amYY1qkxLEAZfFOc/T/UnZJAE/JREJQpMnBSV12UUpgYGbWUv3e09GPK5vNDQV7paiZQQlOqsUFG4VrGewfgmmVWHNS/ZpD8oH+uUSyjJ3+SHbmg7dYB/HiKaliXZrlZJ/y4lgsIm0rMYZ2MjxaFY4D/C8Tm0ETnBJ3S20GTDUNm86i8SjOWuSXwVqR7MomXVm6TEqXEn3LPEi8kzCS9y7EOl1ejZQp21f7cvxD1p1NuWKtOVRpTVmz+9u8wR6gRmj577B9k4olbu3L1J+cNz5vJSSWZiE2I+pLoNYrpxREBC14lA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by IA0PR12MB8350.namprd12.prod.outlook.com (2603:10b6:208:40d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Tue, 6 May
+ 2025 07:39:07 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8699.024; Tue, 6 May 2025
+ 07:39:06 +0000
+Date: Tue, 6 May 2025 09:38:58 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Bing Huang <huangbing@kylinos.cn>
+Cc: tj@kernel.org, void@manifault.com, changwoo@igalia.com,
+	joshdon@google.com, brho@google.com, haoluo@google.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tools/sched_ext: Fix errors when running make mrproper
+Message-ID: <aBm8ksy5IQAbhga1@gpd3>
+References: <20250506073432.2291120-1-huangbing@kylinos.cn>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506073432.2291120-1-huangbing@kylinos.cn>
+X-ClientProxiedBy: MI0P293CA0003.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:44::9) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250505073036.ikHE6K4T@linutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|IA0PR12MB8350:EE_
+X-MS-Office365-Filtering-Correlation-Id: a108b98f-7945-471b-0f0b-08dd8c7114f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x5DgLBmPDcK0ryZqv9TPrCVMqwLjt31zaGP+UVxk65yv8JpQQSGSPCfAses3?=
+ =?us-ascii?Q?Zwrz7tVvtemI9Dq4100J1MwaErj9duJjX9+p8bs+qbshD8sqfIQNQ2tdIaai?=
+ =?us-ascii?Q?yALaRfm+UDkGXJpc52RO4TSUhhcbSsSiS4kh8biB/27+ppnyOcqF3nnUBNbQ?=
+ =?us-ascii?Q?eKtHcuYrHIiS/T0WOGish4OjVK0XYvWvLicB75utJIcj89XjEXFQESVsHQbC?=
+ =?us-ascii?Q?uy4rreYI9C6jBf7d4h5VFcdjVJQALRH9U5STiE91irRj2dHtgyCY79lKazMU?=
+ =?us-ascii?Q?rlxYXYN7npI5LsdDjA8lc5gkO+R9JLsDwjureu8Kg9YOzzZezRFDgWgT7SkV?=
+ =?us-ascii?Q?gSv0nxXtw2UEAUNV6i6Yh/jXHE/DKXQnBSqoxbWdDD1ddSZ7h5pVEUBZ0dbF?=
+ =?us-ascii?Q?MkQOco1Z92Vwr7uXD+z+382x69FzvfJpOHIUBeuqHuCUXfwpIkhp/H4p+PcB?=
+ =?us-ascii?Q?kAw6AIGmF31Gu/P4wb1zxFX0I21cAFL3NpCweW4KkRkkMulwtkl+p9FjyNnQ?=
+ =?us-ascii?Q?mFGzoizyMg53EaU2+pTSIqjjdzyPX01k6s4jLWvL4ONACXcOS0oHOAsmspSd?=
+ =?us-ascii?Q?8zRGOKDd7ViMnc969npdHDPak3wyb4xXisbbH4vB5K1iQinXgC2v8nWHw8K3?=
+ =?us-ascii?Q?rQ8ttTfn89UoXmFEdrluu7FD7zm1pORwyGpPTjY7NusFkVm1dYGs6ZipCPD+?=
+ =?us-ascii?Q?jm+xTiw76BYUQj7tESGv7e/ae5CeyaLGcyAKQvQL2/bY2XA0AlV5uj6Vj5mU?=
+ =?us-ascii?Q?NuefqpdRKonKNhLx4JKEe6SIlHpI+DXQ2lKIcVy5qTo6Aet5vftViD7WkHXe?=
+ =?us-ascii?Q?38iW7a7CDGOAyShwMwdWxu40Wqx4ykaf7UC+NXtGaW32lSlE0qT0rp73o1g8?=
+ =?us-ascii?Q?UjOkU/bYw8aFMBph6m6BBBfm5mnLqPCe/8SsOFcXI+0ZaeV0Fcrz828l0LlL?=
+ =?us-ascii?Q?zd03A1GhgvBHzbvRgx7cuCt9Ex3i7fb9PDITWWaMKfIeOpptzCIGUVF3ImKv?=
+ =?us-ascii?Q?UCQkZOSClR8hoOHSOHazztg0imre6vC1qDAob+m4IO8rZ2uoveafj/EjlGHr?=
+ =?us-ascii?Q?AJ3345yDBoYxCTSZouzrOWdhO60EAXtF2UBDCiq1kQWtKbmP4JGIw9BcyD3Z?=
+ =?us-ascii?Q?4nGFdTKxCgakakKmeG0PZkTSWLv2N2nH5Ge1J2MxS3FotAdsBQz/0OFH1nSj?=
+ =?us-ascii?Q?/CXMcNbKrtt3mJ59yzoZGVBQQbYIvW0a9/GkmBDbsbfMINLZ6TVrZm0Z3kZG?=
+ =?us-ascii?Q?40SJPVqOpN158j1SlcZbJG8LfyMRb3BvF37cKdL/kH9ccjhneelQjofma786?=
+ =?us-ascii?Q?BYQw08wyFQvq0p9qdBJz6zP37UUo8u5kyx8JnnoPp77wPVrig3ac/Lou2Ail?=
+ =?us-ascii?Q?CnCSNDH9P8JUKqZdkkaSrZrzUNKzPDyFgt5gZLG7A9JFINOe/YxNBK1llVBe?=
+ =?us-ascii?Q?eVD2AUaB1JE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XAQRpMfxXzwx+a+SjslbvVD//AkiopRyHyXwIlvVyF0cSV1XZzq++nu+hJll?=
+ =?us-ascii?Q?ZCLsZFjrrFegRWS2kZGwO2cd+Mufr6xNyR1Vipevrqd5hlXIUrRianTM3NVS?=
+ =?us-ascii?Q?6ZV4hVBTH9fg6t2aUiNqHhJoHNj6gRQkd9YH9ycDDVdzYJy45RNYOZ6kLbON?=
+ =?us-ascii?Q?BTRtvHNp269wuhBco3C3fRkd6qhioZDkpwfO0+5/OhlFbvjcvTAW8RvlTqwb?=
+ =?us-ascii?Q?4UCV70ZpHzCafmmDJrBIx6koJGRROfabHGW0EO9wiqUlo2N534kIOtxv60j7?=
+ =?us-ascii?Q?i9g5tIJPIdes2sl0qcfH0DQZnWGGU0iDjOeHv1PQ4Tn3l7q4QTzDyYfEMR7N?=
+ =?us-ascii?Q?rE0ZS23Od2I7kIUbaAp6BnV3k1Nkx9l3iLpFlrapQKptmDA17kFD0Mr4ZIth?=
+ =?us-ascii?Q?i7W/9Xb95VLUdSI9Y4ccRZwVVWKdHqq1Wth29Lz7+UnkzlMe4VM9CiU4zYM8?=
+ =?us-ascii?Q?aUlMTdfu84Kuz0oWl/0FKpBaNV6DnQAXRm2KWxJbKquhbKqeSHOw11gbfhc5?=
+ =?us-ascii?Q?nfYNVwrv8DPgQ6Bi4BTGhvGtHfb5HcRPHW6WGOjSnTlX4I7kQEhG6/Voss/G?=
+ =?us-ascii?Q?2l0ZsMNCN1TvB0nOK5KZSJlN5YfdajNMkkKROZ67hl+T7vqSlkVa3GgP2vRe?=
+ =?us-ascii?Q?LNEvSGn26ig75ZzMCBX7iJJXIIZ78pxPVJ1eVWwadeqWHqYONHsBy65iDsIO?=
+ =?us-ascii?Q?9ue606I6pTYXqLvDCp2IEnOAhc5ntMNMTRvqv+mc1EQ5Nfu6KIZnzI4fSm18?=
+ =?us-ascii?Q?mPDenzcOP8ry3Tom+NyCizoDgc+bE6z4AkepLvuKHNtl1f5HAHrZBuHjKWAO?=
+ =?us-ascii?Q?MpPLCXLiETxefvMR27tG0mjGLrGYJMVJasn6Th5GSIEwYOiGgNVeSNVHufdM?=
+ =?us-ascii?Q?cH7Uk471zggx1Ud4atmqvy5e3Z1bqT7ds5SLVUHsI6MYmkBaBCZ59idAJa5c?=
+ =?us-ascii?Q?IbSh63/p8nudURuGT3t65Aj7zvjsywploePTbappvv65G0N6vCVjJkh3kuiB?=
+ =?us-ascii?Q?ffkSo5N9O6wNuEP9CXuyAAYjFOtGyh6gv1FCXxY6ZlH9clZAQFyQKbtSvFXC?=
+ =?us-ascii?Q?NcsmEuujSx8rJmkK30Ha63Jcf3AHcO2MylXidUFkXzxNV6y9MoWYYTsZNi2O?=
+ =?us-ascii?Q?JfvJ2iWV1ffH7KH6CYAymkWOBviAZ+nZctjxAV8pGGo3ajS6y8rFOkWKdISI?=
+ =?us-ascii?Q?+/lOu26Ik2fWkeqRlSssovPYY7hZE4vQGzDzpdUNlH2DP3/17uVH267Fkpq3?=
+ =?us-ascii?Q?TQ1K9uFkINEj+MvSSUdr8Bw4HEW2xCWwe3YyTow7YR8oQmgK5+1BEQmlkUpc?=
+ =?us-ascii?Q?y+tSMHsR0q3U+fJkoIU6icounndTotM6JAilbtFha/lY7qPBx86DRhFfe034?=
+ =?us-ascii?Q?7odA+5QRJ/SfM0WoD4e9SQY60CXdrVxagBE3cJhsj5btpD6BRvWKx23VubQF?=
+ =?us-ascii?Q?092CxPn+BoydDAou2zgk5XFYNvSN5X6NFZhhDsguoDAKP272xbRLmLSzZQZd?=
+ =?us-ascii?Q?Wd4HjFzsaOgmiHlCVB/tHI8BS2hVW3EzFy2YDlqZxBeGwSiUtF+nPDcGSzNd?=
+ =?us-ascii?Q?V+PeLb4KweJ1l9kv7PUdwVVbwn49xHbYY5ZHgVRt?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a108b98f-7945-471b-0f0b-08dd8c7114f0
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 07:39:06.7958
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: a2EuVxT0AGglClj5moTv6V6wp5/kUnj0ApNTPu2rMPVkwxnhi1UqOw68GNJAfw/HIahyhrhnwYNZmiES1U3kZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8350
 
-On Mon, May 05, 2025 at 09:30:36AM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-05-03 12:09:05 [+0200], Peter Zijlstra wrote:
-> > On Fri, May 02, 2025 at 09:48:07PM +0200, Peter Zijlstra wrote:
-> > > On Wed, Apr 16, 2025 at 06:31:42PM +0200, Sebastian Andrzej Siewior wrote:
-> > > > On 2025-04-16 18:29:00 [+0200], To linux-kernel@vger.kernel.org wrote:
-> > > > > v11…v12: https://lore.kernel.org/all/20250407155742.968816-1-bigeasy@linutronix.de
-> > > 
-> > > I made a few changes (mostly the stuff I mailed about) and pushed out to
-> > > queue/locking/futex.
-> > 
-> > And again, with hopefully less build errors included :-)
+On Tue, May 06, 2025 at 03:34:32PM +0800, Bing Huang wrote:
+> If the system environment used to compile the kernel code does not
+> have the BTF feature enabled, running make mrproper will result in
+> errors similar to the following:
 > 
-> Okay. I guess the NUMA part where the nodeid is written back to userland
-> if 0 was supplied is not an issue. I was worried that if you fire
-> multiple threads which end up in the sys_futex_wait() at the same time,
-> waiting on the same addr on two nodes and the "current" nodeid is used
-> then the variable might be written back twice with two node ids. The
-> mpol interface should report always the same one.
+> Makefile:84: *** Cannot find a vmlinux for VMLINUX_BTF at any of "  ../../vmlinux /sys/kernel/btf/vmlinux /boot/vmlinux-4.4.131-20190505.kylin.server-generic".  Stop.
+> make[2]: *** [Makefile:192: sched_ext_clean] Error 2
+> make[1]: *** [/home/huangbing/klinux/Makefile:1374: sched_ext] Error 2
+> make: *** [Makefile:236: __sub-make] Error 2
+> 
+> Signed-off-by: Bing Huang <huangbing@kylinos.cn>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-Well, if you do stupid things, you get to keep the pieces or something
-along those lines. Same as when userspace goes scribble the node value
-while another thread is waiting and all that.
+You can just add Suggested-by here, no need to add my SoB line. Apart than
+that, looks good to me.
 
-Even with the unconditional write back you're going to have a problem
-with concurrent wait on the same futex.
+Reviewed-by: Andrea Righi <arighi@nvidia.com>
+
+Thanks,
+-Andrea
+
+> ---
+> 
+> v1->v2: Sort MAKECMDGOALS and check for clean target
+> 
+>  tools/sched_ext/Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/sched_ext/Makefile b/tools/sched_ext/Makefile
+> index ca3815e572d8..212717aa78af 100644
+> --- a/tools/sched_ext/Makefile
+> +++ b/tools/sched_ext/Makefile
+> @@ -79,9 +79,11 @@ VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)					\
+>  		     /sys/kernel/btf/vmlinux					\
+>  		     /boot/vmlinux-$(shell uname -r)
+>  VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
+> +ifneq ($(sort $(MAKECMDGOALS)),clean)
+>  ifeq ($(VMLINUX_BTF),)
+>  $(error Cannot find a vmlinux for VMLINUX_BTF at any of "$(VMLINUX_BTF_PATHS)")
+>  endif
+> +endif
+>  
+>  BPFTOOL ?= $(DEFAULT_BPFTOOL)
+>  
+> -- 
+> 2.25.1
+> 
 
