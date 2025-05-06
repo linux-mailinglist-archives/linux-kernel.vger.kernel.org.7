@@ -1,163 +1,149 @@
-Return-Path: <linux-kernel+bounces-635404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1546FAABCF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:21:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692E3AABDAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E893ABC5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:15:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60104A6CF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F8424166B;
-	Tue,  6 May 2025 08:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8D222F169;
+	Tue,  6 May 2025 08:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZpnZZB5y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BbU/mhxl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00A623D295;
-	Tue,  6 May 2025 08:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CCF7260D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 08:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746519321; cv=none; b=ZdOYjqONX4xpG0OPRyPWqYYDM3lAH4Um7rLKY+Gt+lcdjv2NEyEg9ArD89kDZIFQKI60v48tZGauXvMS/UcsxwkbJyP5rRJOPxPvDpXPoXBjp6WhzikjbCrPiioqQtAVYcC40A5loLcTB4PeHLNc9CS2c59f8WcKLc6harF9o3Q=
+	t=1746521349; cv=none; b=GM7H0eioazg8ZBmU25QN0AO8MS+D2anDiKSmTpH55U9HGcbH+Le42ZnaSTK4IRho7mB+1OgZ2sFwaDIavksFQsmhv6ubuESfxgfiFgYKhJeoH9kQVvNIjGJRCqTud7piES5BDy1rkjwgFKyL/qBzKthusRPgqVCbCMwTWoidGWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746519321; c=relaxed/simple;
-	bh=rOvLY2UBX5VIVd+N+Q/F3fAiEXOo/Fm9hbn+UA/ZmeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dNbuLTMNVuKIQ07ddK6g4sR2QDE3918et+3Shi6HUgCrSy0FEedlKObbiTE9DPAG1aXItbL25UBSun1jyGp62NCF4sBJLsQznnKa0fJsc4yeyIK2K3xyFrswyzjWHCg1ke458lW0P06FrpkcUbttpyt91iRKNRR36S/77DPQrNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZpnZZB5y; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746519320; x=1778055320;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=rOvLY2UBX5VIVd+N+Q/F3fAiEXOo/Fm9hbn+UA/ZmeU=;
-  b=ZpnZZB5y9Wv9xC9Wm4Diz49QwO49PUeYWoutQM0rc6fYx7uCXbRoyiKN
-   9ug0eAsVhoHrj06Cf19vaZJnUqTPUCGAYM5CzrQTv7cdnFwRYllSqaIKF
-   3ymCaSFEgZBFr3uFjSwrYYGLRihWaPj9FJXmnJUjqiiQrRAvucAF7zT9f
-   agSXxwovy/P88TvgepPPCZIN8GccvFUQ47a9mgQQKykPsp8/eyAQ8p7JU
-   1vdRIBHk7wwh3+enjd7BKRYKACW/HoERnZWFY+a7a1uUW1tOpFyUBnDrG
-   D39JgyOmzXzRF/zQwmTuiiveURMJYvLFET0/eg6xf+K4MO+/hrd6KewAb
-   A==;
-X-CSE-ConnectionGUID: PbGa6bhKQ/K5BYp9SNQGcw==
-X-CSE-MsgGUID: qjsa8UM1TvK7VD1BnSs/9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="73571685"
-X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
-   d="scan'208";a="73571685"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 01:15:20 -0700
-X-CSE-ConnectionGUID: 7Z9qjoEfStSILJ6gJBGPcg==
-X-CSE-MsgGUID: EOPOD1WASyuhcqOAgw3PSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
-   d="scan'208";a="158795600"
-Received: from oandoniu-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.165])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 01:15:16 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 5A9EB122F00;
-	Tue,  6 May 2025 10:45:24 +0300 (EEST)
-Date: Tue, 6 May 2025 07:45:24 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "Nirujogi, Pratap" <pnirujog@amd.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
-	hverkuil@xs4all.nl, dave.stevenson@raspberrypi.com, krzk@kernel.org,
-	dan.carpenter@linaro.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, benjamin.chan@amd.com, bin.du@amd.com,
-	grosikop@amd.com, king.li@amd.com, dantony@amd.com,
-	Venkata Narendra Kumar Gutta <vengutta@amd.com>
-Subject: Re: [PATCH v2] media: i2c: Add OV05C10 camera sensor driver
-Message-ID: <aBm-FEdHqERKj9Am@kekkonen.localdomain>
-References: <MhUYQD7uWnfZQAPq7VslFWPHOmx2B2UfAIpbMhLq1-7GC_i5bI2hhns_-ov_AAVpEH_VmDDFYkS5aOKBwnY61g==@protonmail.internalid>
- <20250328214706.1516566-1-pratap.nirujogi@amd.com>
- <fef11ce6-b3b6-4677-9387-13332b9a9d43@linaro.org>
- <6ba024ef-4757-4db0-b12a-d56622329bb0@amd.com>
- <20250402012052.GG4845@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1746521349; c=relaxed/simple;
+	bh=sO3XYb3gf+ICEOeAQkWr8anDFJq9z5MkqR98xG0MSIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ssmebnQsKYR0OyoZRYsA5J3wt9I6wHPYmfy2U/8Kn1o5tTPmlgoziU1URFRLDY1r+j4SfEL0K98LzX6r6RuLgRblROI4luMNnnBTGPp+EaW1RCEslRjcEHHLiqNJwdz9Jw9x9h0iSTrjXEoTfzq6/0RfdXXeKuNk8F8lhuoXd8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BbU/mhxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899C7C4CEE4;
+	Tue,  6 May 2025 08:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746521348;
+	bh=sO3XYb3gf+ICEOeAQkWr8anDFJq9z5MkqR98xG0MSIQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BbU/mhxlIgECerDtCHPYRzBs1dV8YYilW33RsWFedw5bO7aKVak1IAzWOMFgbNVw2
+	 PzRZJl3I+SUMGC0LjP1ukg7hNDxW5pNm9AT06C/kmGiTrLLPzgnpusn5XJPhf+lFIY
+	 52Q0ibu3nRHhjDu7tJnMaItEgtJYceT7hsw8DAqVmKd9H39A6U5LvxF2cQ+ODkUPpx
+	 OzySxsOuXzvJDeWuvVPZ33zSQlMKkrroKgakfKGy9XGDz5ZTkes9gnmHDCx8txJkWb
+	 fE9IST6CmTontFixXlLGfGioX7qvI1oZvu1u98Iqw5WZ6Ml/HywCnUsyiWVMJPTvzR
+	 Equ32FL5fV6RQ==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v2 1/2] f2fs: sysfs: add encoding_flags entry
+Date: Tue,  6 May 2025 15:47:25 +0800
+Message-Id: <20250506074725.12315-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250402012052.GG4845@pendragon.ideasonboard.com>
 
-Hi Laurent,
+This patch adds a new sysfs entry /sys/fs/f2fs/<disk>/encoding_flags,
+it is a read-only entry to show the value of sb.s_encoding_flags, the
+value is hexadecimal.
 
-On Wed, Apr 02, 2025 at 04:20:52AM +0300, Laurent Pinchart wrote:
-> On Mon, Mar 31, 2025 at 03:17:22PM -0400, Nirujogi, Pratap wrote:
-> > On 3/28/2025 9:18 PM, Bryan O'Donoghue wrote:
-> > > On 28/03/2025 21:42, Pratap Nirujogi wrote:
-> > >> From: Bin Du <Bin.Du@amd.com>
-> > > 
-> > >> +static const struct i2c_device_id ov05c10_id[] = {
-> > >> +     {"ov05c10", 0 },
-> > >> +     { }
-> > >> +};
-> > > 
-> > > There's an IPU6/IPU7 version of this driver.
-> > > 
-> > > https://github.com/intel/ipu6-drivers/blob/master/drivers/media/i2c/ 
-> > > ov05c10.c
-> > > 
-> > > Perhaps you could import the Intel ACPI name contained in there too.
-> > > 
-> > sure, will add Intel ACPI names too in V3. To be specific, I'm going to 
-> > add the below table in addition to the existing "struct i2c_device_id 
-> > ov05c10_id[]" table:
-> > 
-> > static const struct acpi_device_id ov05c10_acpi_ids[] = {
-> > 	{ "OVTI05C1" },
-> > 	{}
-> > };
-> 
-> You could drop the i2c_device_id table if you added an OF device ID
-> table, but you'll need DT bindings for that. Sakari, any best practice
-> rule in this area ?
+============================     ==========
+Flag_Name                        Flag_Value
+============================     ==========
+SB_ENC_STRICT_MODE_FL            0x00000001
+SB_ENC_NO_COMPAT_FALLBACK_FL     0x00000002
+============================     ==========
 
-I don't think there should be a need for an I²C ID in any case, having just
-ACPI _HID is fine.
+case#1
+mkfs.f2fs -f -O casefold -C utf8:strict /dev/vda
+mount /dev/vda /mnt/f2fs
+cat /sys/fs/f2fs/vda/encoding_flags
+1
 
-DT bindings would of course be a plus.
+case#2
+mkfs.f2fs -f -O casefold -C utf8 /dev/vda
+fsck.f2fs --nolinear-lookup=1 /dev/vda
+mount /dev/vda /mnt/f2fs
+cat /sys/fs/f2fs/vda/encoding_flags
+2
 
-> 
-> > >> +
-> > >> +MODULE_DEVICE_TABLE(i2c, ov05c10_id);
-> > >> +
-> > >> +static struct i2c_driver ov05c10_i2c_driver = {
-> > >> +     .driver = {
-> > >> +             .name = DRV_NAME,
-> > >> +             .pm = pm_ptr(&ov05c10_pm_ops),
-> > >> +     },
-> > >> +     .id_table = ov05c10_id,
-> > >> +     .probe = ov05c10_probe,
-> > >> +     .remove = ov05c10_remove,
-> > >> +};
-> > >> +
-> > >> +module_i2c_driver(ov05c10_i2c_driver);
-> > >> +
-> > >> +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
-> > >> +MODULE_AUTHOR("Venkata Narendra Kumar Gutta <vengutta@amd.com>");
-> > >> +MODULE_AUTHOR("Bin Du <bin.du@amd.com>");
-> > >> +MODULE_DESCRIPTION("OmniVision OV05C1010 sensor driver");
-> > >> +MODULE_LICENSE("GPL v2");
-> > > 
-> > > Why v2 ? Checkpatch will complain about v2 and BTW the IPU6 driver above
-> > > is GPL not GPL v2.
-> > 
-> > sure, will replace "GPL v2" with "GPL" in V3.
-> 
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- fix compile warning of htmldocs
+ Documentation/ABI/testing/sysfs-fs-f2fs | 13 +++++++++++++
+ fs/f2fs/sysfs.c                         |  9 +++++++++
+ 2 files changed, 22 insertions(+)
 
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 59adb7dc6f9e..1fa140da5a1a 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -846,3 +846,16 @@ Description:	For several zoned storage devices, vendors will provide extra space
+ 		reserved_blocks. However, it is not enough, since this extra space should
+ 		not be shown to users. So, with this new sysfs node, we can hide the space
+ 		by substracting reserved_blocks from total bytes.
++
++What:		/sys/fs/f2fs/<disk>/encoding_flags
++Date:		April 2025
++Contact:	"Chao Yu" <chao@kernel.org>
++Description:	This is a read-only entry to show the value of sb.s_encoding_flags, the
++		value is hexadecimal.
++
++		============================     ==========
++		Flag_Name                        Flag_Value
++		============================     ==========
++		SB_ENC_STRICT_MODE_FL            0x00000001
++		SB_ENC_NO_COMPAT_FALLBACK_FL     0x00000002
++		============================     ==========
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 3a3485622691..cf98c5cbb98a 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -274,6 +274,13 @@ static ssize_t encoding_show(struct f2fs_attr *a,
+ 	return sysfs_emit(buf, "(none)\n");
+ }
+ 
++static ssize_t encoding_flags_show(struct f2fs_attr *a,
++		struct f2fs_sb_info *sbi, char *buf)
++{
++	return sysfs_emit(buf, "%x\n",
++		le16_to_cpu(F2FS_RAW_SUPER(sbi)->s_encoding_flags));
++}
++
+ static ssize_t mounted_time_sec_show(struct f2fs_attr *a,
+ 		struct f2fs_sb_info *sbi, char *buf)
+ {
+@@ -1158,6 +1165,7 @@ F2FS_GENERAL_RO_ATTR(features);
+ F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
+ F2FS_GENERAL_RO_ATTR(unusable);
+ F2FS_GENERAL_RO_ATTR(encoding);
++F2FS_GENERAL_RO_ATTR(encoding_flags);
+ F2FS_GENERAL_RO_ATTR(mounted_time_sec);
+ F2FS_GENERAL_RO_ATTR(main_blkaddr);
+ F2FS_GENERAL_RO_ATTR(pending_discard);
+@@ -1270,6 +1278,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(reserved_blocks),
+ 	ATTR_LIST(current_reserved_blocks),
+ 	ATTR_LIST(encoding),
++	ATTR_LIST(encoding_flags),
+ 	ATTR_LIST(mounted_time_sec),
+ #ifdef CONFIG_F2FS_STAT_FS
+ 	ATTR_LIST(cp_foreground_calls),
 -- 
-Regards,
+2.40.1
 
-Sakari Ailus
 
