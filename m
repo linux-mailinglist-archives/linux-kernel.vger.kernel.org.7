@@ -1,70 +1,51 @@
-Return-Path: <linux-kernel+bounces-635471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0073AABDC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:52:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33167AABDDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76B51C23A0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:52:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D25B57A5A0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E401F256C7D;
-	Tue,  6 May 2025 08:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DB4264A7A;
+	Tue,  6 May 2025 08:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWnoo6Xe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtRIponA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4228C216399;
-	Tue,  6 May 2025 08:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ACC25E822;
+	Tue,  6 May 2025 08:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746521521; cv=none; b=kA45cyeNp4WaDu15KKufu052+aMDqS8i/IInhH/6Y6jH+wljLO6mcsfB4/S4XLzK2PV7EGlqUCaUgRRQTLRd6KzPWfJpb3QbWQXAzSrTwbfpguFAMAt2XvqzrQk6ag8j2mC1vSiCeC7UoeZbq3p0rqu/vb2Lwlt8lCyEpSXmzjA=
+	t=1746521635; cv=none; b=kftPzTBuKYdCkf9dV0HQivdCSZq3GIBTlaF/AcynaKKeWe3PaVUz4tRdfpz5N1MNhTp5HDEogwWjoeNOcKEH8fAERv+5NuxHRMCab4p/wzdnCr/t80jf/VUmiZLpwwxZStPBCyDn68j4iNJWhVv/Q4JwnMILykJ/74e/PEhO9Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746521521; c=relaxed/simple;
-	bh=6NUiTuauuVTTWDJGRfLdUgLEoCQtYK+fPlsDsFdb7uc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jKxXKSggSaWl1c0n4U7Wpvzaz7BfiMsfSE5mc51zlQ8ONjN12Iu67aTvcJ0AzLEFiOLanyppChKhEIxgRIQVlHuGaZ9oCM6VVsAhcl2I/Ty3zWvU7M7PQUsxXQlbURJfmy4A3zg5DBEnfrdPj74KaPJ5tbcU7PiNxDG8ReW7lls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWnoo6Xe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C5BAC4CEE4;
-	Tue,  6 May 2025 08:52:00 +0000 (UTC)
+	s=arc-20240116; t=1746521635; c=relaxed/simple;
+	bh=jn9lLGkSG4V3RG7ST7Gwm3kBhuCTAbYEo25iK3E0KCM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=p37z2u9rdAYTaHGIkHWdkjsWN+EXNkVqd9r79xnjrXTi/QUwxM7P5hRcbikS3CDHQfNe+KOW/+AOUk8LyDl4Batx1PW6ijIQTNso8SImdk7UlfQETCT3FJlJIlv+y69ntzbjhTJ9uTaJqfH6hPz3/KGCai68jFHSVEWTY/+Ri6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtRIponA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E5EE9C4CEF4;
+	Tue,  6 May 2025 08:53:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746521520;
-	bh=6NUiTuauuVTTWDJGRfLdUgLEoCQtYK+fPlsDsFdb7uc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OWnoo6XeiUf/E7X7aaYO2Wh16ejc7WkatxpgR04nnkXPUwev+4plNxTx6AYD5nZry
-	 rKM5g+jeKlRdWscq5qD9QuHgGejaznVxNuVahZB8tbRLOSOtCcriS1DBKNtC8nPp7n
-	 Yhr0itoXjoEC1WXwb6dV/fmLDkXGL5Qps4iB1cs8/vwE4U8zA1XMSSNw6/XAot22of
-	 5eW9RpWWKKK2ccdoPRbYq6gA3RgyNjcGcEIvLvhTayFjr+xpCq21j7JUVq/7jT7jYG
-	 4qWECc9C0iWGt3L/HFnyJx6/+c16osgt56vPofuA1hNnZXbSbTBiQ6L7WQRHgqOMEM
-	 +gAyGHTaKAP6Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uCE1u-00C9X1-O6;
-	Tue, 06 May 2025 09:51:58 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH] KVM: selftests: add test for SVE host corruption
-Date: Tue,  6 May 2025 09:51:54 +0100
-Message-Id: <174652150331.339671.16106130205951028954.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250417-kvm-selftest-sve-signal-v1-1-6330c2f3da0c@kernel.org>
-References: <20250417-kvm-selftest-sve-signal-v1-1-6330c2f3da0c@kernel.org>
+	s=k20201202; t=1746521635;
+	bh=jn9lLGkSG4V3RG7ST7Gwm3kBhuCTAbYEo25iK3E0KCM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=JtRIponAkT8pY5/4dDK4M7B8K+8C0XF8DI/3VDDpRoKu00Msz2XlIy3nhUMX4AAnN
+	 hAqHjRUOf+s+CXgy5sAsPy15glLwpIyf6cJNU1AAE42KAvmUAckhwofbcj6bbGPem2
+	 qTNSb1EeqzKnmnAYjz/JaFojdaFPzwJT2dgBuayv+S8zID/EP749mP9ZBPPFU/6kSf
+	 hGNHxq+ORWQaQbGEgS8Kmrxld8BgOpOW6LuS9NdNNcNFBQreiq+ilDt9jhUcor+JLk
+	 InC1j8yd2u/ObBYnFodqozjFDz7oma/2C5r+mLUZESP3UAacUOKBRAYkVub/ReYrzw
+	 HT8ZTFjDzbI1g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3642C3ABAC;
+	Tue,  6 May 2025 08:53:54 +0000 (UTC)
+From: =?utf-8?q?T=C3=B3th_J=C3=A1nos_via_B4_Relay?= <devnull+gomba007.gmail.com@kernel.org>
+Subject: [PATCH v3 0/2] Add support for the DFRobot SEN0322 oxygen sensor
+Date: Tue, 06 May 2025 10:53:43 +0200
+Message-Id: <20250506-iio-chemical-sen0322-v3-0-d6aa4acd00e0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,33 +54,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: pbonzini@redhat.com, shuah@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, broonie@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+X-B4-Tracking: v=1; b=H4sIABfOGWgC/4XNwQ6CMAyA4VchOzszugHDk+9hPLDZQRNgZjOLh
+ vDuDi7GgzE9/U36dWERA2Fkp2JhARNF8nMOeSiYHbq5R0633AwEVEKB5kSe2wEnst3II85CAnD
+ rtDPGYFOpmuXTe0BHz529XHMPFB8+vPYvqdy2f8BUcsFbU2pZS+dQwbmfOhqP1k9sAxN8kDw/E
+ MgIlI1qZKul+UbWdX0Dd78Xtf0AAAA=
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746521633; l=1219;
+ i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
+ bh=jn9lLGkSG4V3RG7ST7Gwm3kBhuCTAbYEo25iK3E0KCM=;
+ b=zzKWNLKdpwAFUG0SCqPlYIR+2sJPsAXk73dOfjot8Z+i8Z6zUF4Gnmj7zrEZ/VdWRqxc+ki5n
+ wfvW5DQqeRNCXqxK/oIKVvR34nwvfX4FS0GRZUbv23zPman353F562M
+X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
+ pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
+X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with
+ auth_id=60
+X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
+Reply-To: gomba007@gmail.com
 
-On Thu, 17 Apr 2025 00:32:49 +0100, Mark Brown wrote:
-> This test program, originally written by Mark Rutland and lightly modified
-> by me for upstream, verifies that we do not have the issues with host SVE
-> state being discarded which were fixed in
-> 
->    fbc7e61195e2 ("KVM: arm64: Unconditionally save+flush host FPSIMD/SVE/SME state")
-> 
-> by running a simple VM while checking the SVE register state for
-> corruption.
-> 
-> [...]
+This patchset adds a driver and the documentation for the
+DFRobot SEN0322 oxygen sensor.
 
-Applied to kvm-arm64/misc-6.16, thanks!
+Signed-off-by: Tóth János <gomba007@gmail.com>
+---
+Changes in v3:
+- Refactor based on reviewer's suggestions.
+- Link to v2: https://lore.kernel.org/r/20250505-iio-chemical-sen0322-v2-0-217473983b42@gmail.com
 
-[1/1] KVM: selftests: add test for SVE host corruption
-      commit: e0ccc45b056d626d4b271820faeedf3837337ceb
+Changes in v2:
+- Add SEN0322 to trivial-devices.
+- Use _RAW and _SCALE instead of fixed-point math.
+- Refactor based on reviewer's suggestions.
+- Link to v1: https://lore.kernel.org/r/20250428-iio-chemical-sen0322-v1-0-9b18363ffe42@gmail.com
 
-Cheers,
+---
+Tóth János (2):
+      dt-bindings: trivial-devices: Document SEN0322
+      iio: chemical: Add driver for SEN0322
 
-	M.
+ .../devicetree/bindings/trivial-devices.yaml       |   2 +
+ MAINTAINERS                                        |   6 +
+ drivers/iio/chemical/Kconfig                       |  10 ++
+ drivers/iio/chemical/Makefile                      |   1 +
+ drivers/iio/chemical/sen0322.c                     | 163 +++++++++++++++++++++
+ 5 files changed, 182 insertions(+)
+---
+base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+change-id: 20250428-iio-chemical-sen0322-cf8fbbbe7546
+
+Best regards,
 -- 
-Without deviation from the norm, progress is not possible.
+Tóth János <gomba007@gmail.com>
 
 
 
