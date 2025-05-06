@@ -1,326 +1,327 @@
-Return-Path: <linux-kernel+bounces-635474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F5BAABDDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DB5AABDE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E2B1C23B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:54:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3EDB1C23C70
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6336A264A94;
-	Tue,  6 May 2025 08:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E8A26659D;
+	Tue,  6 May 2025 08:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itTox3iQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lMG7BHUh";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lMG7BHUh"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2045.outbound.protection.outlook.com [40.107.20.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6AB262804;
-	Tue,  6 May 2025 08:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746521635; cv=none; b=iZzC2+IsLGnsD5rvRCokgEpJKzp6NBY0LhecjiP8xh64EYOKDWCzTynP9dn/oV2SJ5+DwFblgHjuAbHFNJTaKwAKYWh2cMXf84JO0in+RxErJh1sRYul3DCaiNBGy2HwCxmheTR7Kw6EdQ32nXst+0EoUDSHaHionA/q8JWzyKc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746521635; c=relaxed/simple;
-	bh=nw6d/SZSKNLBkkU8aJfTtZbRWP1PXjimyeHTGPVYBYc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JDdK0eX3QmbD1OKXRD9AXu5kEKw8bxTqrBU0F1qZZb8xvGlR6vHHvm5hMkLdHFKkg4ajQWVX7SwBanoIA6C3eS0LxpJLC96JUamkbcaP1ynagOHhy3l9KByUL1zSZ9JCi1rCF6NGgcUDl9dSBw7e8i7Npz8C5UzHO8Y35+NAfxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itTox3iQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 10197C4CEF3;
-	Tue,  6 May 2025 08:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746521635;
-	bh=nw6d/SZSKNLBkkU8aJfTtZbRWP1PXjimyeHTGPVYBYc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=itTox3iQGQNBLBkeBw5OI0lEZBlea+ylhlYu2Aq7NtZaetHCYOHvta/Chu97AHueo
-	 stGO+Sjfp3rbgnHK5KmnF8nhRJT77mWADxNom83uWkNXS599oM0nRl8733iMjop7Yo
-	 PlR4VQ0lvH62a7cU+FnDvNNWwyQT1903DYvRHTCvj09LxVpQObkVY68WBYCOz+vPVa
-	 SuaH7eTeG7LwPXbdPCRONg7W6+zzcxCstSnpsUi37+QgH2ColWAmXQmnf3DS5SlhIp
-	 qxUk72sSF6AJANR8Im2Kac3YOA3Y5Th9cIHo4MLxa44OuT0j+3rOjpSVLEVJn6HFYW
-	 E/CuAVa3VXbBQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F310FC3ABC4;
-	Tue,  6 May 2025 08:53:54 +0000 (UTC)
-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos_via_B4_Relay?= <devnull+gomba007.gmail.com@kernel.org>
-Date: Tue, 06 May 2025 10:53:45 +0200
-Subject: [PATCH v3 2/2] iio: chemical: Add driver for SEN0322
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3790264A96;
+	Tue,  6 May 2025 08:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.45
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746521684; cv=fail; b=usEBcZJ9WlvkNAnSmfJe9SwV2+jyKvTmAx3mQa07RPZns/tTA1y78zTXB8fqRHXtFk0B2AEhPD4OxWm3caKtyGYQ2PPRrkIzlUXoUZ6x4FRE0q+XzC2Pu5XiIrH/s7nV0WEy27zBAoQaQ0DEEcOGdYOKjcLXUGuPcUBkFz7Z0oo=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746521684; c=relaxed/simple;
+	bh=7oUbluevvv/YCiyqGEAqZvTVYWi+Rke5izaDcSZ/GMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=p+Xi0tF3kvfIsVOv1EnGGrjUR/3R+lQVt0N5mmSxJmFyG6pZS/RtM1+hwN9akdiVjfYC3h6mPKiT78L/Ajydg/xB9d2q4R4pbB0tgc+r7sGmH+Glh4R2yzie00Y/gFc0QsWf1TFFWtk3y6wsdxt2oKrQpiS8R4pBVOHzilnWnxw=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lMG7BHUh; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lMG7BHUh; arc=fail smtp.client-ip=40.107.20.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=JfkgBvL1WhK5Lcu5Hg0+9JipN6a9VwCqRsfIFxoM4davJSnPKrvDhe6bUGnF7x6fzFyKHnQnWnXx1lQVWTUNM2WWzVz6WHWpeKrdZqHFfZv04RYasUXObQJbK3KI/OvlK1UapCSFCwpGve29mFn49WkRGaRs3Uo9EtH9KhVj7MOSVTdx3j6hWQHQC03J9X6bvFWH397PvAiLaBkF6nVYiVrA/+BXbc2LKOpkJnifC9x5b5ml6+RaUhc5ntsUoWrXYn3dg2lGhrkWVQIhEQXuI8+s6U4jjBPmc1PNGJSWRSLHCXy/ytlcMYSSmQc1B2pLsZZ0mzBFW4bkio7hTLUtlA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GEhAzNb+VK2xh0zSzy8Fdomx9+wPRSDGd1Pa/KWtp/g=;
+ b=QTllhMTgnDt2xPJLI9AX18nrEnubRzOjf0Rs1LeYr4HxRNmtJCUuvCkY+drfyJXY1mP2sWzcS4gm7Swo6kCdrcZIQLrGGXGirOsWcK7Q/a30PDHSUzoTH6Sxsza6v8kIb4AgcG5JsaNVtD8x3gVp4iqBOkkljU8Zduua22VMgRjWddJ8CA9Kqn5cP2KOxX60RzIu20Ob6ZvglDbUGXbo/+r/FqFJjFipZ1biat3H9aFmXlYySfFw7ZNJdVpu7QvnQCQLpI3Pz2oz9ywOB+FPScT+x5Pjtgg7Ewt2wT++GIUym1qTiRLDrEkQ7q8zqUYqyxkaebL4OysWYpmbtwpdlA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GEhAzNb+VK2xh0zSzy8Fdomx9+wPRSDGd1Pa/KWtp/g=;
+ b=lMG7BHUhLlKE0vbywBdcKlym0Yu7s5n9Lp/11XAfG//6Lly2xJoBSfY91B8xRYU12bv2bQ3AkcTkST0D0tsQAJWPFiDxlkFYXR769J+Nw1UDnMaPkd9G0bZjwfkobc+x3QdfA2/c/3Mb/1S2/uaZ4LhqWZM4z3Yll2tki6+CaUo=
+Received: from DUZPR01CA0061.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:3c2::19) by AS8PR08MB10027.eurprd08.prod.outlook.com
+ (2603:10a6:20b:63b::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Tue, 6 May
+ 2025 08:54:36 +0000
+Received: from DU6PEPF0000B620.eurprd02.prod.outlook.com
+ (2603:10a6:10:3c2:cafe::f2) by DUZPR01CA0061.outlook.office365.com
+ (2603:10a6:10:3c2::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.20 via Frontend Transport; Tue,
+ 6 May 2025 08:54:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DU6PEPF0000B620.mail.protection.outlook.com (10.167.8.136) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.18
+ via Frontend Transport; Tue, 6 May 2025 08:54:36 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oPrTM/zzYXEi7x3wBf3Y9tt1VafiNciCSPI/whFB9kVFGmULGe4I3NuM4Mc94UFFmnQKQKONmaFRd+taeu1bw/LLdiUbTF7Xxi93eVBHX7XWjkIIK0Y4gNd3/KMfrzoPF7fPZfU9/yXHpEhKGGdjuVZcIMe3CUL/RxigrrjyYTR+GNb5KP/UnOavAEqPEU6Wzb8I88OckNrPo3LeIQrTX7ttX4nCfsranYizwDzff4uN/w50iOXf6hTBerLlRKJhEXAlPvAOUq8n1S/0BYA28O6nTULLnI3P803SM/IuiYHMl7RhDOC/L9/TH9r5E6Z6x1/lSK6IPIDC0++H3UTSHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GEhAzNb+VK2xh0zSzy8Fdomx9+wPRSDGd1Pa/KWtp/g=;
+ b=e2MkcJh2V6PVcpvsfftI6ZoTP25GzsaRFYWPxlDsL8HTufa/xqle8zLm11aIRVuYrjzcS39W5/sp0QWsHlYcG42uTZPxch7VSiesNzfo8SVFEm1TRxNg9YoUL7UKBOg6QC4PW0s0VNsBVy+X9lOsrxbDykCI/bQzAleugoCsljQdDKBUoAY5Neqticg5iTn4IE2xVI3BvuyapywRz5PtGXOzczKIvl+MKwtSMJir+tYAKut5E5oAX8eKXbr6sJFvGPHHeCPt8/1zOsFPdNprTd92wIxzwamw38xYXL6S5oh8sUtVYS1HI98jaEeOHhLGP9gUk0Yfnl5Jwk7GMQQNug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GEhAzNb+VK2xh0zSzy8Fdomx9+wPRSDGd1Pa/KWtp/g=;
+ b=lMG7BHUhLlKE0vbywBdcKlym0Yu7s5n9Lp/11XAfG//6Lly2xJoBSfY91B8xRYU12bv2bQ3AkcTkST0D0tsQAJWPFiDxlkFYXR769J+Nw1UDnMaPkd9G0bZjwfkobc+x3QdfA2/c/3Mb/1S2/uaZ4LhqWZM4z3Yll2tki6+CaUo=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by AS2PR08MB8456.eurprd08.prod.outlook.com
+ (2603:10a6:20b:55c::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Tue, 6 May
+ 2025 08:54:00 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%4]) with mapi id 15.20.8699.024; Tue, 6 May 2025
+ 08:54:00 +0000
+Date: Tue, 6 May 2025 09:53:57 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+	nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
+	morbo@google.com, justinstitt@google.com, broonie@kernel.org,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	shameerali.kolothum.thodi@huawei.com, james.morse@arm.com,
+	hardevsinh.palaniya@siliconsignals.io, ardb@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH v2] arm64/cpufeature: annotate arm64_use_ng_mappings with
+ ro_after_init to prevent wrong idmap generation
+Message-ID: <aBnOJS6TZxlZiYQ/@e129823.arm.com>
+References: <20250502180412.3774883-1-yeoreum.yun@arm.com>
+ <174626735218.2189871.10298017577558632540.b4-ty@arm.com>
+ <aBYkGJmfWDZHBEzp@arm.com>
+ <aBZ7P3/dUfSjB0oV@e129823.arm.com>
+ <aBkL-zUpbg7_gCEp@arm.com>
+ <aBnDqvY5c6a3qQ4H@e129823.arm.com>
+ <fbfded61-cfe2-4416-9098-ef39ef3e2b62@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbfded61-cfe2-4416-9098-ef39ef3e2b62@arm.com>
+X-ClientProxiedBy: LO4P123CA0627.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:294::15) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250506-iio-chemical-sen0322-v3-2-d6aa4acd00e0@gmail.com>
-References: <20250506-iio-chemical-sen0322-v3-0-d6aa4acd00e0@gmail.com>
-In-Reply-To: <20250506-iio-chemical-sen0322-v3-0-d6aa4acd00e0@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746521633; l=6662;
- i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
- bh=+Ezp/DsTUmLfMfPAYh8WgNX/9ol2LZWhHTJ8ACAmRtg=;
- b=lNJ3POaMp6+ymQM46/7mICY7Rt3Y7H3fBjsRIdZ10PvabqxzECDaYBbp6jWGR7F6SOSgNwEjI
- k6MjKiCLXLNDHExDX7cGAYdj6+silja5np2SgL4m/GSdTbjahLhLvbh
-X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
- pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
-X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with
- auth_id=60
-X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-Reply-To: gomba007@gmail.com
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|AS2PR08MB8456:EE_|DU6PEPF0000B620:EE_|AS8PR08MB10027:EE_
+X-MS-Office365-Filtering-Correlation-Id: d0a2bb6d-2971-43ee-7d74-08dd8c7ba0f2
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?qlEma0jMyGrl8QoFToUhFnE53JasxjDkidZVK1sf3ipNhWAGIidD+addNhmu?=
+ =?us-ascii?Q?UZF0gUawZmhPCkcCFG+z3tdxaEEw4vtF5G2mtEiucaIXD7avNHyl7CPXgR9/?=
+ =?us-ascii?Q?EvW0SLE1k+PC9L/cg1t6Z4Y1TyyixKugIlYarM2v5YeOeTJCc8VSJRw1OK/j?=
+ =?us-ascii?Q?YLekZmJK5EDNnW2S1T4eFF5vl1xNlEo/qdyINn2AjSFs/C2w5GcwKeQA+Y82?=
+ =?us-ascii?Q?0GZiylAf3ZCFkLbWuWH1jCtUYmz/kYz61E+pU3maBSjbM4toVtPRmTacy36P?=
+ =?us-ascii?Q?2GE4OKeg5sfLAghn/ad7XSveOdOMrAXa6ntFUdyBAgciXclDz6P9aQ7FB7tK?=
+ =?us-ascii?Q?P4pOJvlEcEp8Vas/+dBOd31fK2QVSZOVT+8VGwEYD1BsG68HJIkh/5Xl0KTg?=
+ =?us-ascii?Q?WQidAWlczI8tgv/8hxHaTCVBX15c+XLDHxhzn6GzMzpv0hsDNJy/6OIfaqZC?=
+ =?us-ascii?Q?Rbp+MyzKkx9WTSku2q5NLQ1Wa7ICUX1Oy+a+0GWvjGkohCc38Z9j+JCUmSzc?=
+ =?us-ascii?Q?PhwuJFb0K34/lwvVW4O8avxnw8F5hCO0BvZfCjNz/LZVvCUIzx5/7sKtBnQo?=
+ =?us-ascii?Q?GuqdE2Ye52G46BiNIhR3w0VDqaRsbuWsKfwV0Xjwa7g2Y+giCWzmEeUXHY/W?=
+ =?us-ascii?Q?0NpTzUgLwVu5juNfFevA54op9h4vVm9c4jqY6lrvtHxxhqve9xmRuudcXhXM?=
+ =?us-ascii?Q?DNXPN+ehBCunypLxWnxkinRMVC/oEudkJd50U23KJ3iN6v6sVidIfAFdlAbj?=
+ =?us-ascii?Q?Un+aQzgqR3MPSEYA2JPnY9AqeyqJK0AJ524l0179TXlUNz7pYAf0Mpcpaqvp?=
+ =?us-ascii?Q?+miR8qUREGTgG4A/3e9c6EXVp3Wk9vep8NOxuLIwKAmZeo8BmxKBskak7mH8?=
+ =?us-ascii?Q?aURZk652sDrR7vY3lY3zu6Q17PWnjK7xr9RMDuLy8hBuQStzO/koZccatPgs?=
+ =?us-ascii?Q?7MWilZg+P3GZZbkGk6KS38N3CjEU799mCmiuVMwwZ1eNagNGyZ6sMJSyCts2?=
+ =?us-ascii?Q?+XNu2FilKV0fHbsZzvpUu3EaHj9yZuJ1ZFEH6oo3Kmfe5s4/FHbkGau2Jod7?=
+ =?us-ascii?Q?sVzHeQBrAucPM/z9JFwQI50+xSI0mnZIiUFv5TqLNC6GIy7YeKJIp7FJB2rt?=
+ =?us-ascii?Q?l866sOlEliT1IMYZPHy1A835xnSeeHk3uNbbQ4gPYXFjKOZ/8/uQQ3+q5CFK?=
+ =?us-ascii?Q?tpjdHdtRUutaGaWfUfn53HIY5E95FEEMnAFEmC1OVYNUdJEMXM5A4v1Zp4JX?=
+ =?us-ascii?Q?jax9D8MdWb+fJkUbnrP6EyGVxTUsotm5aWNJHKNvu8XAJ8S7EF6Yt8NlktR1?=
+ =?us-ascii?Q?UiHm81W2D1Ycb8o06eoWPBuKyauSTZnhXJeYTBG164npjaGmrjz8wyfEssKz?=
+ =?us-ascii?Q?fMdXhVs=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB8456
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DU6PEPF0000B620.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	61f139ef-5196-412e-4ceb-08dd8c7b8b55
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|1800799024|82310400026|7416014|376014|36860700013|35042699022;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?we6Gi+Dbq/qrs1EIOYZSSSc42rsWx/FrF72A5O9wS37Vz1iw2CDAY+bum9hr?=
+ =?us-ascii?Q?nykO4BSGQ6nBW5Mjt+k+xZClxCcTNetr/Kt23XT4gwykexcqJlBFRVKBekVm?=
+ =?us-ascii?Q?tn7R9zhPCK6XFpXE9rnBCFUFzizA0Cc4hyN5YymQPtEnqG8zOhFH5fDmExIs?=
+ =?us-ascii?Q?SFTY3EmIjYkBpwN6SHBYOnTnEo6JBIpIHyAtzSa+1x0a3MbXAScBT9Xod3ea?=
+ =?us-ascii?Q?Drl3irjRu4SgcVIiSwxd2yyQfZKLlipLLp9036WlH+fOIhlcYk7//KHXF5Iy?=
+ =?us-ascii?Q?+AY3iQo4YHTYYosdP35HGa0o1MAHLe/hT0SbAxOcyxGJbhUFMM5tttnxL/Nu?=
+ =?us-ascii?Q?YIR1GBmCrDf52BwVbLhcX8jJMVQH9HaB6TGtoHcsQHXwTvJEdyD05HsMCcng?=
+ =?us-ascii?Q?eJsAB9VycWom5Vs/O2UvcG0BrZe6Ck4zQncUTEdHfqJmr6g4jTtCWFcxCGpD?=
+ =?us-ascii?Q?LYIZRqhiBzauYjuNCD6eTxhxeS/NNfnso/D4Z1S4ZOybWbmsckR28d/Op4eX?=
+ =?us-ascii?Q?hZvWNcMW217fQnJcTC4LWjXoqO7MRM4CMwUKVN7I18PVU1iovllnoJH5QjH9?=
+ =?us-ascii?Q?ibDKwIbBbeFK+T1K5U3cl9S96hQuyaNWSAe4GiOGbpYsAGqO1klV2LwzTeEm?=
+ =?us-ascii?Q?8zoc+b13CCC3DHpwr+1UXLPc0k3ED30H90HLIoBvNtA8xoAaHCOaQii3M2ar?=
+ =?us-ascii?Q?MgtJxK6YntAugti1Kc3DFAAec+3WHHYvPCL8/xKYLMq0GtDswzdgvI+Wvjnz?=
+ =?us-ascii?Q?ovaMKtQuE+a60mL+A3EQMmFO+xTb7bTYsStb84uql39Oa0Se34266xSfLIuT?=
+ =?us-ascii?Q?CsK7miF2eXxJc99GbsWf4TxmCfkpxh2zHXUXtz3GiELG3QNUZZjkUK5P41Om?=
+ =?us-ascii?Q?7ENIDGTZS94dnEiKOQX5o6uQkhiSF14pfyBw+7jIs17TDrHJ2dyEnKdEuLU0?=
+ =?us-ascii?Q?KcbUfbVpdO00dlaPzCzuRLGnrSzNrTNZGmyP2Wr8+sDfCfoL7v6cgaSpNoiS?=
+ =?us-ascii?Q?VPW8T/yzvw45I7HkeIwBju5s6wY53dYlbs8VigDWRCgH8LJ3LQATAuL96nZy?=
+ =?us-ascii?Q?JYFey7nO6Id6xRlQfJE7elj2+Vo1jAjBguXy2WKBViqg9YbZHYHfvS4vJXDE?=
+ =?us-ascii?Q?u3NWdHVrcv1Wve21Zknki4D7Y1ZW/nPHwlsjA0e18rPEf8pMFfJWGS8KL7yQ?=
+ =?us-ascii?Q?1gwlMrOvr/zSOo+nZQ0+x6i5ISGHAQrhe3x2akMf+zzBp94/ak0MsTD06SNP?=
+ =?us-ascii?Q?Q1qT7mO9+1JZ+m1h5eC4AabFcG5X8A1f9aTWp7Z3st2bB5UYwwSNEyOY56v3?=
+ =?us-ascii?Q?ohT9MkfsetjO1zyh1cGwcz0epHLco5mm82fanleK8aUTxM0kenMpbXSs8fDz?=
+ =?us-ascii?Q?ANsjum16EK+2MD6dZrhBq4+c3GLOlE51LT65bgh+iNX8k+zIIcACrJAQjRWE?=
+ =?us-ascii?Q?oYlEHLlEZoHsmhsmvbdUGFL3XepE1QXNeztNEds1mlbb7spp9wtGIQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(1800799024)(82310400026)(7416014)(376014)(36860700013)(35042699022);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 08:54:36.4482
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0a2bb6d-2971-43ee-7d74-08dd8c7ba0f2
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF0000B620.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB10027
 
-From: Tóth János <gomba007@gmail.com>
+Hi Ryan,
 
-Add support for the DFRobot SEN0322 oxygen sensor.
+> On 06/05/2025 09:09, Yeoreum Yun wrote:
+> > Hi Catalin,
+> >
+> >> On Sat, May 03, 2025 at 09:23:27PM +0100, Yeoreum Yun wrote:
+> >>> Hi Catalin,
+> >>>
+> >>>> On Sat, May 03, 2025 at 11:16:12AM +0100, Catalin Marinas wrote:
+> >>>>> On Fri, 02 May 2025 19:04:12 +0100, Yeoreum Yun wrote:
+> >>>>>> create_init_idmap() could be called before .bss section initialization
+> >>>>>> which is done in early_map_kernel().
+> >>>>>> Therefore, data/test_prot could be set incorrectly by PTE_MAYBE_NG macro.
+> >>>>>>
+> >>>>>> PTE_MAYBE_NG macro set NG bit according to value of "arm64_use_ng_mappings".
+> >>>>>> and this variable places in .bss section.
+> >>>>>>
+> >>>>>> [...]
+> >>>>>
+> >>>>> Applied to arm64 (for-next/fixes), with some slight tweaking of the
+> >>>>> comment, thanks!
+> >>>>>
+> >>>>> [1/1] arm64/cpufeature: annotate arm64_use_ng_mappings with ro_after_init to prevent wrong idmap generation
+> >>>>>       https://git.kernel.org/arm64/c/12657bcd1835
+> >>>>
+> >>>> I'm going to drop this for now. The kernel compiled with a clang 19.1.5
+> >>>> version I have around (Debian sid) fails to boot, gets stuck early on:
+> >>>>
+> >>>> $ clang --version
+> >>>> Debian clang version 19.1.5 (1)
+> >>>> Target: aarch64-unknown-linux-gnu
+> >>>> Thread model: posix
+> >>>> InstalledDir: /usr/lib/llvm-19/bin
+> >>>>
+> >>>> I didn't have time to investigate, disassemble etc. I'll have a look
+> >>>> next week.
+> >>>
+> >>> Just for your information.
+> >>> When I see the debian package, clang 19.1.5-1 doesn't supply anymore:
+> >>>  - https://ftp.debian.org/debian/pool/main/l/llvm-toolchain-19/
+> >>>
+> >>> and the default version for sid is below:
+> >>>
+> >>> $ clang-19 --version
+> >>> Debian clang version 19.1.7 (3)
+> >>> Target: aarch64-unknown-linux-gnu
+> >>> Thread model: posix
+> >>> InstalledDir: /usr/lib/llvm-19/bin
+> >>>
+> >>> When I tested with above version with arm64-linux's for-next/fixes
+> >>> including this patch. it works well.
+> >>
+> >> It doesn't seem to be toolchain related. It fails with gcc as well from
+> >> Debian stable but you'd need some older CPU (even if emulated, e.g.
+> >> qemu). It fails with Cortex-A72 (guest on Raspberry Pi 4) but not
+> >> Neoverse-N2. Also changing the annotation from __ro_after_init to
+> >> __read_mostly also works.
+>
+> I think this is likely because __ro_after_init is also "ro before init" - i.e.
+> if you try to write to it in the PI code an exception is generated due to it
+> being mapped RO. Looks like early_map_kernel() is writiing to it.
+>
+> I've noticed a similar problem in the past and it would be nice to fix it so
+> that PI code maps __ro_after_init RW.
+>
 
-To instantiate (assuming device is connected to I2C-2):
-	echo 'sen0322 0x73' > /sys/class/i2c-dev/i2c-2/device/new_device
+Personally, I don't believe this because the create_init_idmap()
+maps the the .rodata section with PAGE_KERNEL pgprot
+from __initdata_begin to _end.
 
-To get the oxygen concentration (assuming device is iio:device0) multiply
-the values read from:
-	/sys/bus/iio/devices/iio:device0/in_concentration_raw
-	/sys/bus/iio/devices/iio:device0/in_concentration_scale
+and at the mark_readonly() the pgprot is changed to PAGE_KERNEL_RO
+But, arm64_use_ng_mappings is accessed with write before mark_readonly()
+only via smp_cpus_done().
 
-Datasheet: https://wiki.dfrobot.com/Gravity_I2C_Oxygen_Sensor_SKU_SEN0322
+JFYI here is map information:
 
-Signed-off-by: Tóth János <gomba007@gmail.com>
----
- MAINTAINERS                    |   6 ++
- drivers/iio/chemical/Kconfig   |  10 +++
- drivers/iio/chemical/Makefile  |   1 +
- drivers/iio/chemical/sen0322.c | 163 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 180 insertions(+)
+// mark_readlonly() changes to ro perm below ranges:
+ffff800081b30000 g       .rodata	0000000000000000 __start_rodata
+ffff800082560000 g       .rodata.text	0000000000000000 __init_begin
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3cbf9ac0d83f..6fda7a2f1248 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6852,6 +6852,12 @@ L:	linux-rtc@vger.kernel.org
- S:	Maintained
- F:	drivers/rtc/rtc-sd2405al.c
- 
-+DFROBOT SEN0322 DRIVER
-+M:	Tóth János <gomba007@gmail.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	drivers/iio/chemical/sen0322.c
-+
- DH ELECTRONICS DHSOM SOM AND BOARD SUPPORT
- M:	Christoph Niedermaier <cniedermaier@dh-electronics.com>
- M:	Marek Vasut <marex@denx.de>
-diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
-index 330fe0af946f..60a81863d123 100644
---- a/drivers/iio/chemical/Kconfig
-+++ b/drivers/iio/chemical/Kconfig
-@@ -166,6 +166,16 @@ config SCD4X
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called scd4x.
- 
-+config SEN0322
-+	tristate "SEN0322 oxygen sensor"
-+	depends on I2C
-+	select REGMAP_I2C
-+	help
-+	  Say Y here to build support for the DFRobot SEN0322 oxygen sensor.
-+
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called sen0322.
-+
- config SENSIRION_SGP30
- 	tristate "Sensirion SGPxx gas sensors"
- 	depends on I2C
-diff --git a/drivers/iio/chemical/Makefile b/drivers/iio/chemical/Makefile
-index 4866db06bdc9..deeff0e4e6f7 100644
---- a/drivers/iio/chemical/Makefile
-+++ b/drivers/iio/chemical/Makefile
-@@ -20,6 +20,7 @@ obj-$(CONFIG_SCD30_CORE) += scd30_core.o
- obj-$(CONFIG_SCD30_I2C) += scd30_i2c.o
- obj-$(CONFIG_SCD30_SERIAL) += scd30_serial.o
- obj-$(CONFIG_SCD4X) += scd4x.o
-+obj-$(CONFIG_SEN0322)	+= sen0322.o
- obj-$(CONFIG_SENSEAIR_SUNRISE_CO2) += sunrise_co2.o
- obj-$(CONFIG_SENSIRION_SGP30)	+= sgp30.o
- obj-$(CONFIG_SENSIRION_SGP40)	+= sgp40.o
-diff --git a/drivers/iio/chemical/sen0322.c b/drivers/iio/chemical/sen0322.c
-new file mode 100644
-index 000000000000..088f8947083e
---- /dev/null
-+++ b/drivers/iio/chemical/sen0322.c
-@@ -0,0 +1,163 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for the DFRobot SEN0322 oxygen sensor.
-+ *
-+ * Datasheet:
-+ *	https://wiki.dfrobot.com/Gravity_I2C_Oxygen_Sensor_SKU_SEN0322
-+ *
-+ * Possible I2C slave addresses:
-+ *	0x70
-+ *	0x71
-+ *	0x72
-+ *	0x73
-+ *
-+ * Copyright (C) 2025 Tóth János <gomba007@gmail.com>
-+ */
-+
-+#include <linux/i2c.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/iio/iio.h>
-+
-+#define SEN0322_REG_DATA	0x03
-+#define SEN0322_REG_COEFF	0x0A
-+
-+struct sen0322 {
-+	struct regmap	*regmap;
-+};
-+
-+static int sen0322_read_data(struct sen0322 *sen0322)
-+{
-+	u8 data[3] = { 0 };
-+	int ret;
-+
-+	ret = regmap_bulk_read(sen0322->regmap, SEN0322_REG_DATA, data,
-+			       sizeof(data));
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * The actual value in the registers is:
-+	 *	val = data[0] + data[1] / 10 + data[2] / 100
-+	 * but it is multiplied by 100 here to avoid floating-point math
-+	 * and the scale is divided by 100 to compensate this.
-+	 */
-+	ret = data[0] * 100 + data[1] * 10 + data[2];
-+
-+	return ret;
-+}
-+
-+static int sen0322_read_scale(struct sen0322 *sen0322, int *num, int *den)
-+{
-+	u32 val;
-+	int ret;
-+
-+	ret = regmap_read(sen0322->regmap, SEN0322_REG_COEFF, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (val) {
-+		*num = val;
-+		*den = 100000;	/* Coeff is scaled by 1000 at calibration. */
-+	} else { /* The device is not calibrated, using the factory-defaults. */
-+		*num = 209;	/* Oxygen content in the atmosphere is 20.9%. */
-+		*den = 120000;	/* Output of the sensor at 20.9% is 120 uA. */
-+	}
-+
-+	dev_dbg(regmap_get_device(sen0322->regmap), "scale: %d/%d\n",
-+		*num, *den);
-+
-+	return 0;
-+}
-+
-+static int sen0322_read_raw(struct iio_dev *iio_dev,
-+			    const struct iio_chan_spec *chan,
-+			    int *val, int *val2, long mask)
-+{
-+	struct sen0322 *sen0322 = iio_priv(iio_dev);
-+	int ret;
-+
-+	if (chan->type != IIO_CONCENTRATION)
-+		return -EINVAL;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret = sen0322_read_data(sen0322);
-+		if (ret < 0)
-+			return ret;
-+
-+		*val = ret;
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		ret = sen0322_read_scale(sen0322, val, val2);
-+		if (ret < 0)
-+			return ret;
-+
-+		return IIO_VAL_FRACTIONAL;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_info sen0322_info = {
-+	.read_raw = sen0322_read_raw,
-+};
-+
-+static const struct regmap_config sen0322_regmap_conf = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
-+static const struct iio_chan_spec sen0322_channel = {
-+	.type = IIO_CONCENTRATION,
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+			      BIT(IIO_CHAN_INFO_SCALE),
-+};
-+
-+static int sen0322_probe(struct i2c_client *client)
-+{
-+	struct sen0322 *sen0322;
-+	struct iio_dev *iio_dev;
-+
-+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
-+		return -ENODEV;
-+
-+	iio_dev = devm_iio_device_alloc(&client->dev, sizeof(*sen0322));
-+	if (!iio_dev)
-+		return -ENOMEM;
-+
-+	sen0322 = iio_priv(iio_dev);
-+
-+	sen0322->regmap = devm_regmap_init_i2c(client, &sen0322_regmap_conf);
-+	if (IS_ERR(sen0322->regmap))
-+		return PTR_ERR(sen0322->regmap);
-+
-+	iio_dev->info = &sen0322_info;
-+	iio_dev->name = "sen0322";
-+	iio_dev->channels = &sen0322_channel;
-+	iio_dev->num_channels = 1;
-+	iio_dev->modes = INDIO_DIRECT_MODE;
-+
-+	return devm_iio_device_register(&client->dev, iio_dev);
-+}
-+
-+static const struct of_device_id sen0322_of_match[] = {
-+	{ .compatible = "dfrobot,sen0322" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sen0322_of_match);
-+
-+static struct i2c_driver sen0322_driver = {
-+	.driver = {
-+		.name = "sen0322",
-+		.of_match_table = sen0322_of_match,
-+	},
-+	.probe = sen0322_probe,
-+};
-+module_i2c_driver(sen0322_driver);
-+
-+MODULE_AUTHOR("Tóth János <gomba007@gmail.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("SEN0322 oxygen sensor driver");
+// create_init_idmap() maps below range with PAGE_KERNEL.
+ffff8000826d0000 g       .altinstructions	0000000000000000 __initdata_begin
+ffff800082eb0000 g       .bss	0000000000000000 _end
 
--- 
-2.34.1
+ffff8000824596d0 g     O .rodata	0000000000000001 arm64_use_ng_mappings
+
+Thanks.
 
 
+> Thanks,
+> Ryan
+>
+> >
+> > Thanks to let me know. But still I've failed to reproduce this
+> > on Cortex-a72 and any older cpu on qeum.
+> > If you don't mind, would you share your Kconfig?
+> >
+> >> I haven't debugged it yet but I wonder whether something wants to write
+> >> this variable after it was made read-only (well, I couldn't find any by
+> >> grep'ing the code, so it needs some step-by-step debugging).
+> >>
+> > [...]
+> >
+> > Thanks!
+> >
+> > --
+> > Sincerely,
+> > Yeoreum Yun
+>
+
+--
+Sincerely,
+Yeoreum Yun
 
