@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-635684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE03AAC0BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:03:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C414DAAC0C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824775034B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FEF11C25570
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB85270EB9;
-	Tue,  6 May 2025 10:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A632749FB;
+	Tue,  6 May 2025 10:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M+Q0Dwmr"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Be55V0rD"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54C126B2BE;
-	Tue,  6 May 2025 10:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA9026B95D;
+	Tue,  6 May 2025 10:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746525786; cv=none; b=plCSHIQCRL8dD/bQQrKM8Nw5Y9c+kA9XupKEnjiAEQggBvQDaNBGrT0uHPnKrMp9nc2ZjuORqpsgE4JXHzK3sr7V4jjYKgbKif3VNuPYKC4xceBtfJza9bI3DSRNawfPD7j8ROB5NVvqQQ1Q+LYZBHsdK7xGlxhVE/5z+oJt8rc=
+	t=1746525815; cv=none; b=iOWTY7lvObNj5KZy02/wnqWYKhRvHlhhMPho5mecHtm0N1w6LHzHEZU5z+Kl1qzIZlVTYmJYdMjDG7NHRZi257HM1RzKnf2SC3vhgdHjI9SK9iP6G3FjISzOwZVik/ivPM9BXm1IQr5+a3g+MYZNLGqgMarrSa9iuPYQpeMQCqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746525786; c=relaxed/simple;
-	bh=HNvC7chIMUCf+eLtdgJrsw7EYKebD5ZZ7y6+jFNr4bc=;
+	s=arc-20240116; t=1746525815; c=relaxed/simple;
+	bh=MxnViS69kuYRBZqmiBVGvz9US82SL6FSaAqDmq8DgCM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LmqSm94beh2ueQ/kD8x/OWE+rjXG2DxulCATvXOeYnXqJm0FXxDzgPD7Mc9cM5rJcAqXy0ytOt7bwZPXQ3UBkty26+ijSGqu6zvoDGMwLkDf8jntb/MbRhbozm/1Sq985CNmaQf4tYrumKGALbBI6kzZ6bMnspSUJdkthRfTKHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M+Q0Dwmr; arc=none smtp.client-ip=198.47.19.246
+	 In-Reply-To:Content-Type; b=BiGEap8tsZ4GQtZn7kDHZVSDZ0VoYGPeQ7szsxlKSxw5ihC00qF/TU/PIWC6C9PgY+88MePZglnExuHttYT/WEqzFGE7Qljx9Wgoqx/puh3hpd5lQu+Se4HeA6dfOf6ba5BunSYtZDLmscxiNcnsTB5qyQXrcOQGteeCRsEfTI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Be55V0rD; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 546A2V781021792
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 546A3ClT476718
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 6 May 2025 05:02:31 -0500
+	Tue, 6 May 2025 05:03:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746525751;
-	bh=uXd56OTPxUK4c8gyOAWnjcBnDWmR+fNLSHoUdNUfEac=;
+	s=ti-com-17Q1; t=1746525792;
+	bh=H0XzuvKr2H3izEYnq/eQQn05fht77syXyK4//sspygU=;
 	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=M+Q0DwmrXRJVL9eH/7gbY/c7b+MKcJddn3mSAu32V74XDlBQhJZwb06XjIRwneCdq
-	 Jg7YDR7XUhJFI9hCKosN9fFDdUelgTZiPk+UoCZMdNUMt7eF6Q0NjtD72uaN8kviWK
-	 7ip+OScU6ed6LwFfRZNJscQXyDAgoTgVOJIDTX70=
+	b=Be55V0rDPHXa2bT6htWlKcICO4EnqPapDcm4Tpg50HWcwBJXB3FxXiXAlcaFddQCs
+	 lZYXU8XMESkw2LYm3cHjfaaaEQPRJJjkS9FR7WIgQTTs/NKiFrWzWl5J+f9qUqxWwh
+	 AxIjiXqaVWSAU3UX9rHqrr4Pqae3vJfZfQ1IC/LM=
 Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 546A2VAJ022628
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 546A3CnD020417
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 May 2025 05:02:31 -0500
+	Tue, 6 May 2025 05:03:12 -0500
 Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
  (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- May 2025 05:02:30 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ May 2025 05:03:11 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
  (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 May 2025 05:02:30 -0500
+ Frontend Transport; Tue, 6 May 2025 05:03:12 -0500
 Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 546A2QYp059866;
-	Tue, 6 May 2025 05:02:26 -0500
-Message-ID: <07611c06-2acf-46ce-b32a-b3a8b28ea227@ti.com>
-Date: Tue, 6 May 2025 15:32:25 +0530
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 546A37dW120035;
+	Tue, 6 May 2025 05:03:08 -0500
+Message-ID: <575fdd99-a7a9-430b-bc94-5809edd42fa4@ti.com>
+Date: Tue, 6 May 2025 15:33:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,8 +65,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Betterbird (Linux)
-Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am625-beagleplay: Add required
- voltage supplies for OV5640
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am625-beagleplay: Add required
+ voltage supplies for TEVI-OV5640
 To: Rishikesh Donadkar <r-donadkar@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
 CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <y-abhilashchandra@ti.com>,
@@ -74,21 +74,21 @@ CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <jai.luthra@ideasonboard.com>, <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <20250506045225.1246873-1-r-donadkar@ti.com>
- <20250506045225.1246873-2-r-donadkar@ti.com>
+ <20250506045225.1246873-3-r-donadkar@ti.com>
 Content-Language: en-US
 From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <20250506045225.1246873-2-r-donadkar@ti.com>
+In-Reply-To: <20250506045225.1246873-3-r-donadkar@ti.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 On 06/05/25 10:22, Rishikesh Donadkar wrote:
-> The device tree overlay for OV5640 requires following voltage
+> The device tree overlay for TEVI-OV5640 requires following voltage
 > supplies:
 > 
 > AVDD-supply: Analog voltage supply, 2.8 volts
 > DOVDD-supply: Digital I/O voltage supply, 1.8 volts
-> DVDD-supply: Digital core voltage supply, 1.5 volts
+> DVDD-supply: Digital core voltage supply, 3.3 volts
 > 
 > Add them in the overlay.
 > 
@@ -99,16 +99,16 @@ Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
 Regards
 Devarsh
 > ---
->  .../ti/k3-am625-beagleplay-csi2-ov5640.dtso   | 31 +++++++++++++++++++
+>  .../k3-am625-beagleplay-csi2-tevi-ov5640.dtso | 31 +++++++++++++++++++
 >  1 file changed, 31 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-ov5640.dtso
-> index 3b4643b7d19c9..000305c9e3662 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-ov5640.dtso
-> +++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-ov5640.dtso
+> diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtso
+> index 81a2763d43c65..8a7a9ece08af6 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtso
+> +++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtso
 > @@ -15,6 +15,33 @@ clk_ov5640_fixed: ov5640-xclk {
 >  		#clock-cells = <0>;
->  		clock-frequency = <12000000>;
+>  		clock-frequency = <24000000>;
 >  	};
 > +
 > +	reg_2p8v: regulator-2p8v {
@@ -129,11 +129,11 @@ Devarsh
 > +		regulator-always-on;
 > +	};
 > +
-> +	reg_1p5v: regulator-1p5v {
+> +	reg_3p3v: regulator-3p3v {
 > +		compatible = "regulator-fixed";
-> +		regulator-name = "1P5V";
-> +		regulator-min-microvolt = <1500000>;
-> +		regulator-max-microvolt = <1500000>;
+> +		regulator-name = "3P3V";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
 > +		vin-supply = <&vdd_3v3>;
 > +		regulator-always-on;
 > +	};
@@ -146,7 +146,7 @@ Devarsh
 >  
 > +		AVDD-supply = <&reg_2p8v>;
 > +		DOVDD-supply = <&reg_1p8v>;
-> +		DVDD-supply = <&reg_1p5v>;
+> +		DVDD-supply = <&reg_3p3v>;
 > +
 >  		port {
 >  			csi2_cam0: endpoint {
