@@ -1,334 +1,152 @@
-Return-Path: <linux-kernel+bounces-635759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FF5AAC1A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6055AAC1A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A02B17D567
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6D25007CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3490A2459D8;
-	Tue,  6 May 2025 10:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC73278768;
+	Tue,  6 May 2025 10:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="azqPc7Q5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kWUa4gLB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfGkfnk0"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A79B278156;
-	Tue,  6 May 2025 10:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0583E278E5D;
+	Tue,  6 May 2025 10:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746528278; cv=none; b=NjqPFhztZTr8Eqhavnba/kbd6qbrgmcmNByl8rgN1VrZ7Lw4jqCOwG1rHekGK10gpwq7T55oHVmVIHV1K2tXHxk/AIUOVD++zknyPuKw3zio/IO4UNxncE9ut596IpOEJh0EHC+Z2g+CUNmJgqYchJGPFqWD0SFI6PuRoescF1M=
+	t=1746528309; cv=none; b=d+Ev55zQJ8LA0BnhDNbIyt5aVXRpXDi/8Z1X/6UDj+LUMW253kwWfeJCdZ5NZjZUaRbBiZ9eV1YgRX5meSyuQNorhMjeyCuWhZdtsZfL3jEsVPCfb3BL2d+J4NCQr0s/ZkQF1rV3YaRx/5INZMmVj4levDjqw1CDCewbRqhu5Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746528278; c=relaxed/simple;
-	bh=PM8nfntNyeJKBz7qhwyVbvj3dlee+llSko/PbC1Cyaw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=WY8M4Vu2DFxG1iTQb3KT5vaWVzWjewLk0xcMZr0P8yPjTP23Rl7tWVrajiFdnVDa7JOcgI1hsRiaM9geKmSRpYTcdttzb6BiMr+biAsHyIyx/Frg1zXQWZU1rhpaN4jp7cdldgqC+Zw4a9FnDSJVUcikriGPN1wBTwfO7gv8zlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=azqPc7Q5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kWUa4gLB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 06 May 2025 10:44:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746528274;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SgIz1JwcXGF6FAbLSvx5tHnVQfGIW4vlInbGjBjY9GU=;
-	b=azqPc7Q52JqaJnurvuzFRoGc1ayXvBkllNf6CVnc5fXWwqbF9Z6jdzsQYiy/kVGELIc00W
-	Vsp5PlsFPEB4srrHApUOO3IIi1Hvf8bQ8Y7lw/gFl66q3nVlhSjM6xX+rAma79lWjfJrju
-	2yoixQt3WU3osk8W7jEjGxZ4s37E+/k8ua8DA66aW5I3UbgpwI0g7eaCVLXAG141ahZNyq
-	PwZ49af+eCquil8ByhbklU2zzD+wc32hJoFQiCIKuq9qQfQEB6A4PAzjAwO7aHMwAz188B
-	lhxmj9PqIVi/hnSv2iJLDE+Nk8p2Xes8KLimjZ/2zKgrtv6oatmGsagS6MOxJQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746528274;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SgIz1JwcXGF6FAbLSvx5tHnVQfGIW4vlInbGjBjY9GU=;
-	b=kWUa4gLBThn18SsrwHrD94VkVMDNC9DhK5ctsop4HmgyYnqPYAfuF8lnAPuCdiuJgOI6qz
-	GrlMokR4w4S6ORBA==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/microcode: Consolidate the loader enablement checking
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-  <stable@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To:
- <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
-References:
- <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
+	s=arc-20240116; t=1746528309; c=relaxed/simple;
+	bh=NhZjj1rkjbCtGqFTYpEpAiOJI09NTrv2LMv9LzYCFxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DefD5YqqLsQDc8AoxzXIvXUddXK10creyizJkHojdN7H7T9MGDJNO5EFlU1YJxDwS9Kxfr+q64fqG/RBuJ8rhMEGLd7yWX+keJjIHeUkRyxKO6dRLtV/izEgd1wAKwYUouHfpa1GU0D5xvpT72FYDMSlUkRtcRbzsCQM2bifOO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hfGkfnk0; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-549963b5551so6098152e87.2;
+        Tue, 06 May 2025 03:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746528306; x=1747133106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0S0fj9pxRR8b5jSD6MLFbjyTm1j4w1pUjEF4KfpSSsM=;
+        b=hfGkfnk018PLewHy82znyTxiSsgRqmgaeCbdgJsGGRhuY88jxfG7InzNnVHqDGWZR5
+         XAqF0vCLhgvFvc0KJ2SYq7n4lv0VKHqMblSOip69oL/XqqqwenkjcxvmMIi72+adKUMt
+         1jhbdM/T2LJcbeMVWNrJgP9/vP8A705erK5xKX9KGl78GAP7Jl7fpD0h/9kX9Hur0YHw
+         194VYafj6YjXvdOivMCM1WILLj8E2kWdtER/RaxcW9lqL7pUtQBfGCULTKd/O006UqlO
+         l1ApUzer0dU1TvS7Dy21aIz2S0LD97YvQMt7viW8AsLBf31HSXCxxc75oQvUggMgdckw
+         CPHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746528306; x=1747133106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0S0fj9pxRR8b5jSD6MLFbjyTm1j4w1pUjEF4KfpSSsM=;
+        b=MMd3M8IK/oEkM+Et7xDkKXQ70Oe0r1/Apl1PSy6upH9bpFdmb9Fja0YCl+bCUIuGku
+         w71MYi1YRQWnqQdEUeYe6ktephY0f5FaTxwT6dsYaSRc85UwidL9dG07VU9mQkiKvpgO
+         7eGMSL/l3wSd+Nzp8JHK9NpGYQG/8NMkUahDL4kNA/XaTd1HldfZT/pt5mNlZAUzopOP
+         h4aNZb/C/Fc233uovU8//vcDM2ih0WmBfKu/rrnRfXtyvANWa3o3AfQs8Yhpl+jvsA8U
+         oQQ38mGghaA60LPDXo0oOwXo2yGxGFXmc+XMqe48Qou/Fkm+bBu/GPdEb1b6NNWGkzYd
+         xFOw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1O4u+WX0evrnl2HULUY/fL6L3EwWjPqPb3cznFQa6fbzrhXtLHRkq1IlfLl/RsfOawCywyW0mkmM4OXs=@vger.kernel.org, AJvYcCW3A0UE/kJ28J1dFzqwAMcEFOG3h4MhVkVKDkmN9ZLXjeYVOpNJPJEui7KY39+Fqp/KbZmfJ+fpcF+CM9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd6sZI+tnP3VuwTsg9wO3m+LcZc+VJi9tE4Y1acc/t4hBqdyMt
+	w/PoN64IplfyKJy2ESyGn0Rg6BiteQt3kHGrmUU+MBn+ZrHHMRsGX/zyWEh2teFU+7yMC5tngZ7
+	HlPnZTX31c4GfbzjQx1D/08yoju8=
+X-Gm-Gg: ASbGncsBtCIZ6xEdklArSk1C4L69h1HlY5TTzOA+Lpng9Qg7+gn7Y/sNp9ryUIFk7Ut
+	yCs+ZlqfpKuUYHor+b/XndZ8EkALy/+rYNsBT6nJTzzmuXzJavBLbW2Tu8Tu/gePVznS4kSA6PL
+	6+UzWKBVbltgxrZh67O5W8EA3l1b9+uxxG0A==
+X-Google-Smtp-Source: AGHT+IH9PNd8hlxiWlK5qk2aXHbk+UNbCg3lFJraFSfHUkRwwn4of15fI+cwgYdFXfyeSGxNFfF+9OOqcNwyb29hug4=
+X-Received: by 2002:a05:6512:3c99:b0:544:ffbe:cd22 with SMTP id
+ 2adb3069b0e04-54fb4a9804dmr786783e87.46.1746528305662; Tue, 06 May 2025
+ 03:45:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174652827365.406.14578389386584457710.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+References: <20250404-xusb-peripheral-v1-1-99c184b9bf5f@gmail.com>
+ <CALHNRZ_QUY7NPH87RYqFWEy4PkTgV5uZVZ6hh3sbe=U_8ga2jQ@mail.gmail.com>
+ <CALHNRZ9s5EdL3vapyJS4TdT=v5v_QG-=n8ABNJDLU4B-7w+wRw@mail.gmail.com>
+ <CALHNRZ96Cs8+gyyb=_jTpvCq--uF3P1s8_m7t25nN_vPx0ELXA@mail.gmail.com>
+ <66776953-ef1d-40ac-9d4b-a35a6ebae20c@nvidia.com> <CALHNRZ8uXZQObwQBC-sLudUdtprM24qU5yYdb4D3FEP2AQVkmQ@mail.gmail.com>
+ <b96ab3b0-3afb-4918-8db8-f6cab45576fd@nvidia.com>
+In-Reply-To: <b96ab3b0-3afb-4918-8db8-f6cab45576fd@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 6 May 2025 05:44:53 -0500
+X-Gm-Features: ATxdqUFydWW4ew7f9iRG9xOkB-y1i5aCY8W2iNBRJzuaeuS8Q9cA-ObsrH6XuA4
+Message-ID: <CALHNRZ9tgWTo8tUB1+Whf68CYu+qiMhO_S+KC2R0kFbDAjT9OQ@mail.gmail.com>
+Subject: Re: [PATCH] phy: tegra: xusb: Default otg mode to peripheral
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Tue, May 6, 2025 at 5:30=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> wr=
+ote:
+>
+>
+> On 06/05/2025 11:03, Aaron Kling wrote:
+>
+> ...
+>
+> >> Sorry for the delay. I have had a look at this patch and I am not sure
+> >> about this. The function you are changing is called
+> >> 'tegra_xusb_parse_usb_role_default_mode' and it is doing precisely wha=
+t
+> >> it was intended to do. In other words, parse device-tree and set the
+> >> mode accordingly. So forcing the mode in this function does not feel
+> >> correct.
+> >>
+> >> Also from the description it is not 100% clear to me the exact scenari=
+o
+> >> where this is really a problem.
+> >
+> > My specific use case is booting AOSP/Android on Tegra devices using
+> > mainline support. Android debug bridge is configured to use xudc on
+> > the otg ports. As mainline is currently set up, the default usb role
+> > is 'none'. So if I boot a unit with a usb cable already plugged into
+> > the debug port, I cannot access adb.
+> >
+> > I originally fixed this by setting role-switch-default-mode in the
+> > device tree for every device I'm targeting. Then I looked at just
+> > defaulting to peripheral mode in code. And as mentioned in the commit
+> > message, other usb drivers already default to peripheral mode instead
+> > of none. I'm open to other solutions, but requiring every device tree
+> > to set a default role doesn't seem like a good solution either.
+>
+> Thanks for the background. I see that the
+> Documentation/devicetree/bindings/usb/usb-drd.yaml states that ...
+>
+>    role-switch-default-mode:
+>      description:
+>        Indicates if usb-role-switch is enabled, the device default operat=
+ion
+>        mode of controller while usb role is USB_ROLE_NONE.
+>      $ref: /schemas/types.yaml#/definitions/string
+>      enum: [host, peripheral]
+>      default: peripheral
+>
+> Rather than reference 'synopsys dwc3' which is not related to the Tegra,
+> it would be better to update the binding doc for Tegra XUSB padctl device
+> to list this property and define the default mode.
 
-Commit-ID:     5214a9f6c0f56644acb9d2cbb58facf1856d322b
-Gitweb:        https://git.kernel.org/tip/5214a9f6c0f56644acb9d2cbb58facf1856=
-d322b
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Mon, 14 Apr 2025 11:59:33 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 05 May 2025 10:51:00 +02:00
+Let me make sure I understand you correctly. You're requesting to
+update the binding as above, listing peripheral as default when unset;
+fix my commit message; and leave my code change as-is? I'm unclear on
+if the code is okay as-is or not.
 
-x86/microcode: Consolidate the loader enablement checking
-
-Consolidate the whole logic which determines whether the microcode loader
-should be enabled or not into a single function and call it everywhere.
-
-Well, almost everywhere - not in mk_early_pgtbl_32() because there the kernel
-is running without paging enabled and checking dis_ucode_ldr et al would
-require physical addresses and uglification of the code.
-
-But since this is 32-bit, the easier thing to do is to simply map the initrd
-unconditionally especially since that mapping is getting removed later anyway
-by zap_early_initrd_mapping() and avoid the uglification.
-
-In doing so, address the issue of old 486er machines without CPUID
-support, not booting current kernels.
-
-  [ mingo: Fix no previous prototype for =E2=80=98microcode_loader_disabled=
-=E2=80=99 [-Wmissing-prototypes] ]
-
-Fixes: 4c585af7180c1 ("x86/boot/32: Temporarily map initrd for microcode load=
-ing")
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: <stable@kernel.org>
-Link: https://lore.kernel.org/r/CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvq=
-X0UoVQ@mail.gmail.com
----
- arch/x86/include/asm/microcode.h         |  2 +-
- arch/x86/kernel/cpu/microcode/amd.c      |  6 +-
- arch/x86/kernel/cpu/microcode/core.c     | 58 +++++++++++++----------
- arch/x86/kernel/cpu/microcode/intel.c    |  2 +-
- arch/x86/kernel/cpu/microcode/internal.h |  1 +-
- arch/x86/kernel/head32.c                 |  4 +--
- 6 files changed, 41 insertions(+), 32 deletions(-)
-
-diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcod=
-e.h
-index 695e569..be7cddc 100644
---- a/arch/x86/include/asm/microcode.h
-+++ b/arch/x86/include/asm/microcode.h
-@@ -17,10 +17,12 @@ struct ucode_cpu_info {
- void load_ucode_bsp(void);
- void load_ucode_ap(void);
- void microcode_bsp_resume(void);
-+bool __init microcode_loader_disabled(void);
- #else
- static inline void load_ucode_bsp(void)	{ }
- static inline void load_ucode_ap(void) { }
- static inline void microcode_bsp_resume(void) { }
-+static inline bool __init microcode_loader_disabled(void) { return false; }
- #endif
-=20
- extern unsigned long initrd_start_early;
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microc=
-ode/amd.c
-index 4a10d35..96cb992 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -1098,15 +1098,17 @@ static enum ucode_state load_microcode_amd(u8 family,=
- const u8 *data, size_t siz
-=20
- static int __init save_microcode_in_initrd(void)
- {
--	unsigned int cpuid_1_eax =3D native_cpuid_eax(1);
- 	struct cpuinfo_x86 *c =3D &boot_cpu_data;
- 	struct cont_desc desc =3D { 0 };
-+	unsigned int cpuid_1_eax;
- 	enum ucode_state ret;
- 	struct cpio_data cp;
-=20
--	if (dis_ucode_ldr || c->x86_vendor !=3D X86_VENDOR_AMD || c->x86 < 0x10)
-+	if (microcode_loader_disabled() || c->x86_vendor !=3D X86_VENDOR_AMD || c->=
-x86 < 0x10)
- 		return 0;
-=20
-+	cpuid_1_eax =3D native_cpuid_eax(1);
-+
- 	if (!find_blobs_in_containers(&cp))
- 		return -EINVAL;
-=20
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/micro=
-code/core.c
-index b3658d1..079f046 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -41,8 +41,8 @@
-=20
- #include "internal.h"
-=20
--static struct microcode_ops	*microcode_ops;
--bool dis_ucode_ldr =3D true;
-+static struct microcode_ops *microcode_ops;
-+static bool dis_ucode_ldr =3D false;
-=20
- bool force_minrev =3D IS_ENABLED(CONFIG_MICROCODE_LATE_FORCE_MINREV);
- module_param(force_minrev, bool, S_IRUSR | S_IWUSR);
-@@ -84,6 +84,9 @@ static bool amd_check_current_patch_level(void)
- 	u32 lvl, dummy, i;
- 	u32 *levels;
-=20
-+	if (x86_cpuid_vendor() !=3D X86_VENDOR_AMD)
-+		return false;
-+
- 	native_rdmsr(MSR_AMD64_PATCH_LEVEL, lvl, dummy);
-=20
- 	levels =3D final_levels;
-@@ -95,27 +98,29 @@ static bool amd_check_current_patch_level(void)
- 	return false;
- }
-=20
--static bool __init check_loader_disabled_bsp(void)
-+bool __init microcode_loader_disabled(void)
- {
--	static const char *__dis_opt_str =3D "dis_ucode_ldr";
--	const char *cmdline =3D boot_command_line;
--	const char *option  =3D __dis_opt_str;
-+	if (dis_ucode_ldr)
-+		return true;
-=20
- 	/*
--	 * CPUID(1).ECX[31]: reserved for hypervisor use. This is still not
--	 * completely accurate as xen pv guests don't see that CPUID bit set but
--	 * that's good enough as they don't land on the BSP path anyway.
-+	 * Disable when:
-+	 *
-+	 * 1) The CPU does not support CPUID.
-+	 *
-+	 * 2) Bit 31 in CPUID[1]:ECX is clear
-+	 *    The bit is reserved for hypervisor use. This is still not
-+	 *    completely accurate as XEN PV guests don't see that CPUID bit
-+	 *    set, but that's good enough as they don't land on the BSP
-+	 *    path anyway.
-+	 *
-+	 * 3) Certain AMD patch levels are not allowed to be
-+	 *    overwritten.
- 	 */
--	if (native_cpuid_ecx(1) & BIT(31))
--		return true;
--
--	if (x86_cpuid_vendor() =3D=3D X86_VENDOR_AMD) {
--		if (amd_check_current_patch_level())
--			return true;
--	}
--
--	if (cmdline_find_option_bool(cmdline, option) <=3D 0)
--		dis_ucode_ldr =3D false;
-+	if (!have_cpuid_p() ||
-+	    native_cpuid_ecx(1) & BIT(31) ||
-+	    amd_check_current_patch_level())
-+		dis_ucode_ldr =3D true;
-=20
- 	return dis_ucode_ldr;
- }
-@@ -125,7 +130,10 @@ void __init load_ucode_bsp(void)
- 	unsigned int cpuid_1_eax;
- 	bool intel =3D true;
-=20
--	if (!have_cpuid_p())
-+	if (cmdline_find_option_bool(boot_command_line, "dis_ucode_ldr") > 0)
-+		dis_ucode_ldr =3D true;
-+
-+	if (microcode_loader_disabled())
- 		return;
-=20
- 	cpuid_1_eax =3D native_cpuid_eax(1);
-@@ -146,9 +154,6 @@ void __init load_ucode_bsp(void)
- 		return;
- 	}
-=20
--	if (check_loader_disabled_bsp())
--		return;
--
- 	if (intel)
- 		load_ucode_intel_bsp(&early_data);
- 	else
-@@ -159,6 +164,11 @@ void load_ucode_ap(void)
- {
- 	unsigned int cpuid_1_eax;
-=20
-+	/*
-+	 * Can't use microcode_loader_disabled() here - .init section
-+	 * hell. It doesn't have to either - the BSP variant must've
-+	 * parsed cmdline already anyway.
-+	 */
- 	if (dis_ucode_ldr)
- 		return;
-=20
-@@ -810,7 +820,7 @@ static int __init microcode_init(void)
- 	struct cpuinfo_x86 *c =3D &boot_cpu_data;
- 	int error;
-=20
--	if (dis_ucode_ldr)
-+	if (microcode_loader_disabled())
- 		return -EINVAL;
-=20
- 	if (c->x86_vendor =3D=3D X86_VENDOR_INTEL)
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/micr=
-ocode/intel.c
-index 819199b..2a397da 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -389,7 +389,7 @@ static int __init save_builtin_microcode(void)
- 	if (xchg(&ucode_patch_va, NULL) !=3D UCODE_BSP_LOADED)
- 		return 0;
-=20
--	if (dis_ucode_ldr || boot_cpu_data.x86_vendor !=3D X86_VENDOR_INTEL)
-+	if (microcode_loader_disabled() || boot_cpu_data.x86_vendor !=3D X86_VENDOR=
-_INTEL)
- 		return 0;
-=20
- 	uci.mc =3D get_microcode_blob(&uci, true);
-diff --git a/arch/x86/kernel/cpu/microcode/internal.h b/arch/x86/kernel/cpu/m=
-icrocode/internal.h
-index 5df6217..50a9702 100644
---- a/arch/x86/kernel/cpu/microcode/internal.h
-+++ b/arch/x86/kernel/cpu/microcode/internal.h
-@@ -94,7 +94,6 @@ static inline unsigned int x86_cpuid_family(void)
- 	return x86_family(eax);
- }
-=20
--extern bool dis_ucode_ldr;
- extern bool force_minrev;
-=20
- #ifdef CONFIG_CPU_SUP_AMD
-diff --git a/arch/x86/kernel/head32.c b/arch/x86/kernel/head32.c
-index de001b2..375f2d7 100644
---- a/arch/x86/kernel/head32.c
-+++ b/arch/x86/kernel/head32.c
-@@ -145,10 +145,6 @@ void __init __no_stack_protector mk_early_pgtbl_32(void)
- 	*ptr =3D (unsigned long)ptep + PAGE_OFFSET;
-=20
- #ifdef CONFIG_MICROCODE_INITRD32
--	/* Running on a hypervisor? */
--	if (native_cpuid_ecx(1) & BIT(31))
--		return;
--
- 	params =3D (struct boot_params *)__pa_nodebug(&boot_params);
- 	if (!params->hdr.ramdisk_size || !params->hdr.ramdisk_image)
- 		return;
+Sincerely,
+Aaron Kling
 
