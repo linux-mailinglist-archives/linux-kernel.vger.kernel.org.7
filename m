@@ -1,314 +1,194 @@
-Return-Path: <linux-kernel+bounces-636715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5260AACF26
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:01:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C69AACF42
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C827522E5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4583B9834
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD31F1C84DF;
-	Tue,  6 May 2025 21:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F44217642;
+	Tue,  6 May 2025 21:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQvNfVwE"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVl+SE4T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F3F4B1E69;
-	Tue,  6 May 2025 21:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD7019AA63;
+	Tue,  6 May 2025 21:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746565282; cv=none; b=Hr7JnLs1RWKLR9voj09z3/EhbN06/WYvU7bs6D/7x+u0MDy+xQn89IQcrwQxVUOxtAPNXH1+AjMEbF/qnTnN2WgteLGpJJo+HutWA6oMkh2DmcbtwhrY3fm8HIWdt2GBUXHkQp13E9VwqRqEosiuzmITXJbLWIVJ5NhM1l7KcE0=
+	t=1746565594; cv=none; b=e584S1sf13TAX3RmP3elSrbzKIIBPxPdStLg5ivkqkZStpwFO2QtyxRLn0TKCvTu5Vuvr05T5zFMBDU/vWmYSv2mNi7vW2QnS97Gvcl46gMAL7hhMaq3GtJIHecqHaRbV+BOJwiDnNQX0w7iW81xdTNPVkVd0ZwN/eR7fRE69zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746565282; c=relaxed/simple;
-	bh=IZ8gS0GxIwUMAAKTiujecI6rI4dddYCLKZaC9yCele0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SKr4EcTzf7kBEpmI+pmuog1tvV2kgSd6Dh8ZW5RtKyHOtGn1XkBEp2CLK63Qpi5JeWER11c2Pw/lsHQx80fmXgoQffG0xb+hRm/66DlLOpfmvY9Twk/DxU0GWjqdfEHfgRBHoy1E+41Oj//TV3ZyZvH2cIdETV+IThpjR4YOUf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nQvNfVwE; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3081f72c271so6139757a91.0;
-        Tue, 06 May 2025 14:01:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746565279; x=1747170079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MGpCXrvVakHiYqEKJnZ4rQZ11p4odiFi497LdndPBz0=;
-        b=nQvNfVwE0guKsL3HPBehovUfP6HjV+LcnHi8KFJ3komjp0cFXufR09VMQod3D3Stpl
-         lK1U/H7Kn3Zb6KJgJOlBZtjtn19zY7Bs6Yrw82RykzjhgTHMshIta7o2jh1RKrnJGJTl
-         wMYqZravkbyLdvzbIkcfE0vxbtfcyQrgUownN93g3utG4Lh1XQWpA9NcRVjxQ+Bs2hIa
-         +xGbfytkb/ZzeBJ94FX4DhWJxPZLydtPFgpXUMNiepTI0YAfzGHnxrafwq6horW1nWMP
-         PzFm5umjsh20flXPxX/ygxn6RTNMgWa0a5H7K9q5ZhuflCDolnY8aNfGgEvOIfdyGQKh
-         JjwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746565279; x=1747170079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MGpCXrvVakHiYqEKJnZ4rQZ11p4odiFi497LdndPBz0=;
-        b=nVfKGU/CKN2iT/f0BgvCLnAjuMOu5XdfUGn/WoL9ZHku+apLBafj9/DRghB6zDPk3T
-         xeEG3kAwndS0puNtnNCQiebmmB+WCjvyEVD079DyKjGYdEBDquUNUzxbHAwgQlsriuYP
-         PasBE7DxDI2R1FHZ/hYXNbNQJJGxysrQy326kcjvBgXIMEAUSr4HXSglfqQQ15gzfEe2
-         fntWBuOEZcn/fbmjA+fDXCt2VAjcjOUEnfNVYEUfxzTNK5RKrZoIEo6JVCDRIwm1J+HC
-         11oHpYTXZD8ago5XQoLsSHmJwz1fsUqlEceNl8jHzlT94fjJb9Z9ho4BIrHFIF495o6o
-         utMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK6Un7yYXsVNeFzlULlNJNwt7YzRwaIT8RNtKXzrhmwaMi2zE46ns5/+oW+1OZ4+tXSABRHpOdD4xs3VOwiK4/qiBc@vger.kernel.org, AJvYcCUdiie15BAfUGXSgBwmtqMwwmE/57FuCKxMLECQ7kkV9iEKRFpARFS+p9K/ldjITTU+uNxS1RLNpz1MI5AR@vger.kernel.org, AJvYcCVRmPZ4tDtEKZhw53ma8Ru6TYCoFqv1dNZu7E9FoiMWtYXWQf31RVT4ju6JrwCpEOPNQsLITN7fLD72QisNvTWB@vger.kernel.org, AJvYcCXRkwAE8MJCTZLoSnpXRgAfqiybaekTBYKIU2lOPKpADn/ed7o41r9GRvPs38oAocsiG+5YfWkV@vger.kernel.org, AJvYcCXX0rypdUHYnZTT7Tb2tlFpja98+qica4/f+ABV/7s+2kiUr42Q6ZzTdig5D77ChN/7Bz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkwCbgeyr58bSEe3n1KkKfJUes4XnQbS7DJPHvHhh97un9qs+t
-	XGCPCkyapgpfDWr1xybZ9Mr4dL/Pndt36tqp8f8z9rlb3vzLGpuWD8O26MtvpOqr+mZCApQ1gPe
-	ptrTRfROjrwOC5oBhbo35Zj3NyD5OvXwF
-X-Gm-Gg: ASbGncvpHKbFDWPFNzfIL3P5uxRO+E42BfMOBnw7SibXR72Bg/ixXN2T9w7kXwAAYpV
-	GL80ehnXU6pz2UzPt+ZbBl0wtmFzBeNQpsvoMqot7aq4Zd/UIpetmWJzDYFWEjjdagWCu9sljkL
-	KJweWYYQoU0F0DoOwOBiZdhfkSRtvRLHvnNuYhbGfL9ER5a2J9
-X-Google-Smtp-Source: AGHT+IFMcyh4aXFPcfQujordcZVIHNjq/wxigDu2SLJkT2sBX0naL1Q0JPVAhGhhuKjF3m/Sxj0NE1i3H1F25gqXN1Y=
-X-Received: by 2002:a17:90b:2d06:b0:2ee:e113:815d with SMTP id
- 98e67ed59e1d1-30aac19b522mr1382746a91.8.1746565279421; Tue, 06 May 2025
- 14:01:19 -0700 (PDT)
+	s=arc-20240116; t=1746565594; c=relaxed/simple;
+	bh=74lje376FlTSuXCICkSnr8qOkLged5xjB5xPmh1n+yc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=X2J3wRhGWt6f655dEY/1GoAwSM3frx0tvzGXug/UBmA+J7CMkU/HyfBv4pJD2EIQ5/4oCGVHthSKdRsugzfgk0TPmUbqQ6a3+ckjZBKuiB9iUgXoV0eK1Ol37jj11eilIZxOStMnI4yjFbD3Q5YPjsLed9uSSrSZ38lFdQIyD3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVl+SE4T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CAF1C4CEE4;
+	Tue,  6 May 2025 21:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746565593;
+	bh=74lje376FlTSuXCICkSnr8qOkLged5xjB5xPmh1n+yc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=aVl+SE4TL/+aQ4RxUww9NntBllXCHmZe2GcxFp1ljeqowgPN7Wue3GOb+J/bndWNZ
+	 Pox0FmI+TlEN6PEeQjzjedMI6kRLJZMj7pDK0J2yw1GItskOI2cIt35pvlIdNQazgZ
+	 nnJYdHPhEEFHVIkRCXNvwEaOd8mG47+yvE2XzZrzkf8loaPPBGmMvX1CjX/EyRpZJB
+	 OXAXKDjqKQ9KTvzp4gijrXrk09lWY7Um+bTYvn1StVp6t+e0ya9FUyOlrDYpWlJmWZ
+	 DPQSuGPOlL7ZuqwjexXQO6csbMBePfW9d8a4sv0bqPPRg4Dcm5UxktiLXWpJn9/qfa
+	 6nf4BMfYHtlBg==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Tue, 06 May 2025 14:02:01 -0700
+Subject: [PATCH v2] kbuild: Disable -Wdefault-const-init-unsafe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250426160027.177173-1-mannkafai@gmail.com> <20250426160027.177173-2-mannkafai@gmail.com>
- <CAADnVQ+DF18nKEf9i1RKEQN+ybH+duu7U-91YZDaa_PiqUx17g@mail.gmail.com>
- <CALqUS-6XtJ0Bb9jiykdC3jAY_OHjGuirj06Kzssjvo7eW_so2A@mail.gmail.com>
- <f951b81f-1b46-4219-82fd-0839e27ab3f3@linux.dev> <CAADnVQ+FANha0fO_BF+iHJ4iZSCPtDfoUkzR8mMFwOakw8+eCg@mail.gmail.com>
- <f1f23c1a-f4a8-4807-8028-87e247775ec8@linux.dev>
-In-Reply-To: <f1f23c1a-f4a8-4807-8028-87e247775ec8@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 6 May 2025 14:01:07 -0700
-X-Gm-Features: ATxdqUF8ebtWDuYIV69M8X_0fqB0M8DpSL5JRmslRryRsSdSpdPkgSOf-2FIwi8
-Message-ID: <CAEf4BzZcuCrK4UVv2qpp7LAL=uXg+YqFopNW3EzCCpUBNPq-ag@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/4] bpf: Allow get_func_[arg|arg_cnt] helpers in
- raw tracepoint programs
-To: Leon Hwang <leon.hwang@linux.dev>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Kafai Wan <mannkafai@gmail.com>, 
-	Song Liu <song@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250506-default-const-init-clang-v2-1-fcfb69703264@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMh4GmgC/3WNyw6CMBBFf4XM2jF9CCGu/A/CgrYDTCStaZFoS
+ P/dimt3c27uPbNDosiU4FrtEGnjxMEXUKcK7Dz4iZBdYVBC1eKiBToah+eyog0+rciey7mUIpq
+ GlDStE9o0UOaPSCO/DnXXF545rSG+j0+b/KY/aS3kf+kmUaB2yjZWtrUz5nan6Gk5hzhBn3P+A
+ P1JxFLBAAAA
+X-Change-ID: 20250430-default-const-init-clang-b6e21b8d03b6
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nicolas Schier <nicolas.schier@linux.dev>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Linus Torvalds <torvalds@linux-foundation.org>, 
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, patches@lists.linux.dev, stable@vger.kernel.org, 
+ Linux Kernel Functional Testing <lkft@linaro.org>, 
+ Marcus Seyfarth <m.seyfarth@gmail.com>, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6468; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=74lje376FlTSuXCICkSnr8qOkLged5xjB5xPmh1n+yc=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBlSlddEjFj3Top9qLKz+JuF2bVnW4yWNRUvtF/qnr4vc
+ bLpNN9dHaUsDGJcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAiDnKMDIv81zbtfiQ2Wb2E
+ Lc1V/df79pNTnO4/r71TdnEnY49W2n2G/xFMhfnaF6ZP0e7QftXdNqsw/eGJ/sTInkPnU6z0bjy
+ 0YwAA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Fri, May 2, 2025 at 7:26=E2=80=AFAM Leon Hwang <leon.hwang@linux.dev> wr=
-ote:
->
->
->
-> On 2025/5/1 00:53, Alexei Starovoitov wrote:
-> > On Wed, Apr 30, 2025 at 8:55=E2=80=AFAM Leon Hwang <leon.hwang@linux.de=
-v> wrote:
-> >>
-> >>
-> >>
-> >> On 2025/4/30 20:43, Kafai Wan wrote:
-> >>> On Wed, Apr 30, 2025 at 10:46=E2=80=AFAM Alexei Starovoitov
-> >>> <alexei.starovoitov@gmail.com> wrote:
-> >>>>
-> >>>> On Sat, Apr 26, 2025 at 9:00=E2=80=AFAM KaFai Wan <mannkafai@gmail.c=
-om> wrote:
-> >>>>>
-> >>
->
-> [...]
->
-> >>
-> >>
-> >> bpf_get_func_arg() will be very helpful for bpfsnoop[1] when tracing t=
-p_btf.
-> >>
-> >> In bpfsnoop, it can generate a small snippet of bpf instructions to us=
-e
-> >> bpf_get_func_arg() for retrieving and filtering arguments. For example=
-,
-> >> with the netif_receive_skb tracepoint, bpfsnoop can use
-> >> bpf_get_func_arg() to filter the skb argument using pcap-filter(7)[2] =
-or
-> >> a custom attribute-based filter. This will allow bpfsnoop to trace
-> >> multiple tracepoints using a single bpf program code.
-> >
-> > I doubt you thought it through end to end.
-> > When tracepoint prog attaches we have this check:
-> >         /*
-> >          * check that program doesn't access arguments beyond what's
-> >          * available in this tracepoint
-> >          */
-> >         if (prog->aux->max_ctx_offset > btp->num_args * sizeof(u64))
-> >                 return -EINVAL;
-> >
-> > So you cannot have a single bpf prog attached to many tracepoints
-> > to read many arguments as-is.
-> > You can hack around that limit with probe_read,
-> > but the values won't be trusted and you won't be able to pass
-> > such untrusted pointers into skb and other helpers/kfuncs.
->
-> I understand that a single bpf program cannot be attached to multiple
-> tracepoints using tp_btf. However, the same bpf code can be reused to
-> create multiple bpf programs, each attached to a different tracepoint.
->
-> For example:
->
-> SEC("fentry")
-> int BPF_PROG(fentry_fn)
-> {
->         /* ... */
->         return BPF_OK;
-> }
->
-> The above fentry code can be compiled into multiple bpf programs to
-> trace different kernel functions. Each program can then use the
-> bpf_get_func_arg() helper to access the arguments of the traced function.
->
-> With this patch, tp_btf will gain similar flexibility. For example:
->
-> SEC("tp_btf")
-> int BPF_PROG(tp_btf_fn)
-> {
->         /* ... */
->         return BPF_OK;
-> }
->
-> Here, bpf_get_func_arg() can be used to access tracepoint arguments.
->
-> Currently, due to the lack of bpf_get_func_arg() support in tp_btf,
-> bpfsnoop[1] uses bpf_probe_read_kernel() to read tracepoint arguments.
-> This is also used when filtering specific argument attributes.
->
-> For instance, to filter the skb argument of the netif_receive_skb
-> tracepoint by 'skb->dev->ifindex =3D=3D 2', the translated bpf instructio=
-ns
-> with bpf_probe_read_kernel() would look like this:
->
-> bool filter_arg(__u64 * args):
-> ; filter_arg(__u64 *args)
->  209: (79) r1 =3D *(u64 *)(r1 +0) /* all tracepoint's argument has been
-> read into args using bpf_probe_read_kernel() */
->  210: (bf) r3 =3D r1
->  211: (07) r3 +=3D 16
->  212: (b7) r2 =3D 8
->  213: (bf) r1 =3D r10
->  214: (07) r1 +=3D -8
->  215: (85) call bpf_probe_read_kernel#-125280
->  216: (79) r3 =3D *(u64 *)(r10 -8)
->  217: (15) if r3 =3D=3D 0x0 goto pc+10
->  218: (07) r3 +=3D 224
->  219: (b7) r2 =3D 8
->  220: (bf) r1 =3D r10
->  221: (07) r1 +=3D -8
->  222: (85) call bpf_probe_read_kernel#-125280
->  223: (79) r3 =3D *(u64 *)(r10 -8)
->  224: (67) r3 <<=3D 32
->  225: (77) r3 >>=3D 32
->  226: (b7) r0 =3D 1
->  227: (15) if r3 =3D=3D 0x2 goto pc+1
->  228: (af) r0 ^=3D r0
->  229: (95) exit
->
-> If bpf_get_func_arg() is supported in tp_btf, the bpf program will
-> instead look like:
->
-> static __noinline bool
-> filter_skb(void *ctx)
-> {
->     struct sk_buff *skb;
->
->     (void) bpf_get_func_arg(ctx, 0, (__u64 *) &skb);
->     return skb->dev->ifindex =3D=3D 2;
-> }
->
-> This will simplify the generated code and eliminate the need for
-> bpf_probe_read_kernel() calls. However, in my tests (on kernel
-> 6.8.0-35-generic, Ubuntu 24.04 LTS), the pointer returned by
-> bpf_get_func_arg() is marked as a scalar rather than a trusted pointer:
->
->         0: R1=3Dctx() R10=3Dfp0
->         ; if (!filter_skb(ctx))
->         0: (85) call pc+3
->         caller:
->          R10=3Dfp0
->         callee:
->          frame1: R1=3Dctx() R10=3Dfp0
->         4: frame1: R1=3Dctx() R10=3Dfp0
->         ; filter_skb(void *ctx)
->         4: (bf) r3 =3D r10                      ; frame1: R3_w=3Dfp0 R10=
-=3Dfp0
->         ;
->         5: (07) r3 +=3D -8                      ; frame1: R3_w=3Dfp-8
->         ; (void) bpf_get_func_arg(ctx, 0, (__u64 *) &skb);
->         6: (b7) r2 =3D 0                        ; frame1: R2_w=3D0
->         7: (85) call bpf_get_func_arg#183     ; frame1: R0_w=3Dscalar()
->         ; return skb->dev->ifindex =3D=3D 2;
->         8: (79) r1 =3D *(u64 *)(r10 -8)         ; frame1: R1_w=3Dscalar()=
- R10=3Dfp0
-> fp-8=3Dmmmmmmmm
->         ; return skb->dev->ifindex =3D=3D 2;
->         9: (79) r1 =3D *(u64 *)(r1 +16)
->         R1 invalid mem access 'scalar'
->         processed 7 insns (limit 1000000) max_states_per_insn 0 total_sta=
-tes 0
-> peak_states 0 mark_read 0
->
-> If the returned skb is a trusted pointer, the verifier will accept
-> something like:
->
-> static __noinline bool
-> filter_skb(struct sk_buff *skb)
-> {
->     return skb->dev->ifindex =3D=3D 2;
-> }
->
-> Which will compile into much simpler and more efficient instructions:
->
-> bool filter_skb(struct sk_buff * skb):
-> ; return skb->dev->ifindex =3D=3D 2;
->   92: (79) r1 =3D *(u64 *)(r1 +16)
-> ; return skb->dev->ifindex =3D=3D 2;
->   93: (61) r1 =3D *(u32 *)(r1 +224)
->   94: (b7) r0 =3D 1
-> ; return skb->dev->ifindex =3D=3D 2;
->   95: (15) if r1 =3D=3D 0x2 goto pc+1
->   96: (b7) r0 =3D 0
-> ; return skb->dev->ifindex =3D=3D 2;
->   97: (95) exit
->
-> In conclusion:
->
-> 1. It will be better if the pointer returned by bpf_get_func_arg() is
-> trusted, only when the argument index is a known constant.
+A new on by default warning in clang [1] aims to flags instances where
+const variables without static or thread local storage or const members
+in aggregate types are not initialized because it can lead to an
+indeterminate value. This is quite noisy for the kernel due to
+instances originating from header files such as:
 
-bpf_get_func_arg() was never meant to return trusted arguments, so
-this, IMO, is pushing it too far.
+  drivers/gpu/drm/i915/gt/intel_ring.h:62:2: error: default initialization of an object of type 'typeof (ring->size)' (aka 'const unsigned int') leaves the object uninitialized [-Werror,-Wdefault-const-init-var-unsafe]
+     62 |         typecheck(typeof(ring->size), next);
+        |         ^
+  include/linux/typecheck.h:10:9: note: expanded from macro 'typecheck'
+     10 | ({      type __dummy; \
+        |              ^
 
-> 2. Adding bpf_get_func_arg() support to tp_btf will significantly
-> simplify and improve tools like bpfsnoop.
+  include/net/ip.h:478:14: error: default initialization of an object of type 'typeof (rt->dst.expires)' (aka 'const unsigned long') leaves the object uninitialized [-Werror,-Wdefault-const-init-var-unsafe]
+    478 |                 if (mtu && time_before(jiffies, rt->dst.expires))
+        |                            ^
+  include/linux/jiffies.h:138:26: note: expanded from macro 'time_before'
+    138 | #define time_before(a,b)        time_after(b,a)
+        |                                 ^
+  include/linux/jiffies.h:128:3: note: expanded from macro 'time_after'
+    128 |         (typecheck(unsigned long, a) && \
+        |          ^
+  include/linux/typecheck.h:11:12: note: expanded from macro 'typecheck'
+     11 |         typeof(x) __dummy2; \
+        |                   ^
 
-"Significantly simplify and improve" is a bit of an exaggeration,
-given BPF cookies can be used for getting number of arguments of
-tp_btf, as for the getting rid of bpf_probe_read_kernel(), tbh, more
-generally useful addition would be an untyped counterpart to
-bpf_core_cast(), which wouldn't need BTF type information, but will
-treat all accessed memory as raw bytes (but will still install
-exception handler just like with bpf_core_cast()).
+  include/linux/list.h:409:27: warning: default initialization of an object of type 'union (unnamed union at include/linux/list.h:409:27)' with const member leaves the object uninitialized [-Wdefault-const-init-field-unsafe]
+    409 |         struct list_head *next = smp_load_acquire(&head->next);
+        |                                  ^
+  include/asm-generic/barrier.h:176:29: note: expanded from macro 'smp_load_acquire'
+    176 | #define smp_load_acquire(p) __smp_load_acquire(p)
+        |                             ^
+  arch/arm64/include/asm/barrier.h:164:59: note: expanded from macro '__smp_load_acquire'
+    164 |         union { __unqual_scalar_typeof(*p) __val; char __c[1]; } __u;   \
+        |                                                                  ^
+  include/linux/list.h:409:27: note: member '__val' declared 'const' here
 
->
-> [1] https://github.com/bpfsnoop/bpfsnoop
->
-> Thanks,
-> Leon
->
->
+  crypto/scatterwalk.c:66:22: error: default initialization of an object of type 'struct scatter_walk' with const member leaves the object uninitialized [-Werror,-Wdefault-const-init-field-unsafe]
+     66 |         struct scatter_walk walk;
+        |                             ^
+  include/crypto/algapi.h:112:15: note: member 'addr' declared 'const' here
+    112 |                 void *const addr;
+        |                             ^
+
+  fs/hugetlbfs/inode.c:733:24: error: default initialization of an object of type 'struct vm_area_struct' with const member leaves the object uninitialized [-Werror,-Wdefault-const-init-field-unsafe]
+    733 |         struct vm_area_struct pseudo_vma;
+        |                               ^
+  include/linux/mm_types.h:803:20: note: member 'vm_flags' declared 'const' here
+    803 |                 const vm_flags_t vm_flags;
+        |                                  ^
+
+Silencing the instances from typecheck.h is difficult because '= {}' is
+not available in older but supported compilers and '= {0}' would cause
+warnings about a literal 0 being treated as NULL. While it might be
+possible to come up with a local hack to silence the warning for
+clang-21+, it may not be worth it since -Wuninitialized will still
+trigger if an uninitialized const variable is actually used.
+
+In all audited cases of the "field" variant of the warning, the members
+are either not used in the particular call path, modified through other
+means such as memset() / memcpy() because the containing object is not
+const, or are within a union with other non-const members.
+
+Since this warning does not appear to have a high signal to noise ratio,
+just disable it.
+
+Cc: stable@vger.kernel.org
+Link: https://github.com/llvm/llvm-project/commit/576161cb6069e2c7656a8ef530727a0f4aefff30 [1]
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Closes: https://lore.kernel.org/CA+G9fYuNjKcxFKS_MKPRuga32XbndkLGcY-PVuoSwzv6VWbY=w@mail.gmail.com/
+Reported-by: Marcus Seyfarth <m.seyfarth@gmail.com>
+Closes: https://github.com/ClangBuiltLinux/linux/issues/2088
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+Changes in v2:
+- Disable -Wdefault-const-init-var-unsafe as well, as '= {}' does not
+  work in typecheck() for all supported compilers and it may not be
+  worth a local hack.
+- Link to v1: https://lore.kernel.org/r/20250501-default-const-init-clang-v1-0-3d2c6c185dbb@kernel.org
+---
+ scripts/Makefile.extrawarn | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index d88acdf40855..fd649c68e198 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -37,6 +37,18 @@ KBUILD_CFLAGS += -Wno-gnu
+ # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=111219
+ KBUILD_CFLAGS += $(call cc-disable-warning, format-overflow-non-kprintf)
+ KBUILD_CFLAGS += $(call cc-disable-warning, format-truncation-non-kprintf)
++
++# Clang may emit a warning when a const variable, such as the dummy variables
++# in typecheck(), or const member of an aggregate type are not initialized,
++# which can result in unexpected behavior. However, in many audited cases of
++# the "field" variant of the warning, this is intentional because the field is
++# never used within a particular call path, the field is within a union with
++# other non-const members, or the containing object is not const so the field
++# can be modified via memcpy() / memset(). While the variable warning also gets
++# disabled with this same switch, there should not be too much coverage lost
++# because -Wuninitialized will still flag when an uninitialized const variable
++# is used.
++KBUILD_CFLAGS += $(call cc-disable-warning, default-const-init-unsafe)
+ else
+ 
+ # gcc inanely warns about local variables called 'main'
+
+---
+base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+change-id: 20250430-default-const-init-clang-b6e21b8d03b6
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
 
