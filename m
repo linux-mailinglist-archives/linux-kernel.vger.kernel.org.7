@@ -1,211 +1,251 @@
-Return-Path: <linux-kernel+bounces-635519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EECAABEA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879E1AABEA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77061C263A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:11:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0BB6505A68
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23B026B2C5;
-	Tue,  6 May 2025 09:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D1gmcXbi"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34E127814C;
+	Tue,  6 May 2025 09:08:01 +0000 (UTC)
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023140.outbound.protection.outlook.com [52.101.127.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD5921B9F4
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746522467; cv=none; b=Foome6azz0+On7+7O6eP3wQ6jKHhRNDNy7bKyzL9i46HFfy+7bC2/yfEUih/HTZA5lxt0lEcDXYhErh/3WPTmCAwdbIt+VYyyIhPiJlSzAWhwUZSek9uySHSt5MEH3yFDFqgFH8DC3JNEHfUMlAuFwJBXpZLh4CxmfRs45vBztI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746522467; c=relaxed/simple;
-	bh=y4psligqOOOcGinyIsgA2Br7W2c62BO7w90ZuvurxOU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pJT/2q4ojLz8E54FBQH7Pmelx852+UY/CLi0N1FjUIv/CXhWsF0yYbgZyG9obBBACZVy1IRntFmo5pKYuZT38/gZ+p95C4HEMkH1Bhqlm1hrObIITgfql+qxQf3juyO2kl2rmcmgCIqcKZ8mpIOosLKkfxS9fNJ1fz3fu1JrHn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D1gmcXbi; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6f0cfbe2042so70384186d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 02:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746522463; x=1747127263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X51Rrkwx3opz4kS9+2PJYedHgMCaMvzr8QLzl3Vlb0w=;
-        b=D1gmcXbiKNnO9cB4Cu/wqqvDUasFhhCtdoetHyVNBlVsVNdlV7yUiuDGe3d4Wm5n5b
-         rwXvzRvXrB1+G1Q62Xa+O/TX5kbc4YypyE3dsUX1BN7tjSpwXNRigFqIRrrLTPvQwdBE
-         ALXXt67FgQzM+Ac5R7QnqRwxHH1YX/dZJ3OwZYu+UM4RQrYtlV74QQCIiaDeZtfjci21
-         xhqKA98fHkEmXDJp5yl10MfWSaaQvsBELZNIUiJOqMkHu0JMnzvcrj24pfBa4uw+w2xx
-         GE7BBY2Axf6tLqSA1KumUb8uTaMtwSnDdZWA0XQ2YnKHFPdG1N3leg8OYpwzLewsauDb
-         3vUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746522463; x=1747127263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X51Rrkwx3opz4kS9+2PJYedHgMCaMvzr8QLzl3Vlb0w=;
-        b=dLeT5TatZASCL9aoJQZ8IA0KwZyRAz1tkjQXpez78HJecmz9CnFV8WDNmrsFqhWy4U
-         WHmKCAgeoSMH3hYudD1Ylv9DbjsxOi0QzEjM42O5R/ORz7G8Apcbsuns/mS/qDF9uVMI
-         A6aovZTT8Uq0xJMa3Lz1Dbg91KC262Ah4lY45fw60Kiix3LJsdVw7CDOf37ZfTIkgEUe
-         GHSRExRwmXh+iq0oRJzK0z/as28saoe/uBtP+I7U5LQ2XDh8PcIRTpnBGddme2HorCce
-         6YYIcqh1/coV1uIBS949xz4Vk5pq4eMgrHlfiPTDBE/r0+lWK5A1r3DX5YXaVmEgQJ8s
-         VfqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0K/iqCImhrinEkVqxhm80s9FGtEmnd/bDTiod17UcKyR1WCogV6n9pJ0wjCOFyU/WmEJNwUOhxnZpoQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr5DwVcTxOG+DX1gam1aRiSfWHLswggI2XZH3VdUhVtxFNQwJ/
-	NpUjgUXadhrMAAcArWpVaRth1w3uTjj/c+XIs0LAaOVN2kxCJX6Exnth+TTFk4gfuQZ0GnkYmtD
-	2sx0nlILitAaj/F5tMGLYJ9NEQOoT+6NEms01
-X-Gm-Gg: ASbGncuK3tin3WOlECwpcbIFuodDR0lBuM+/JAXsTBIfnceSB6vyW/4YJWOXblLzwTh
-	e5A10C1DyFBo5HtoFEA9A+LE5TOhWxQPjfQPHlZ7Xx+iphAec97RVrQVYv1O7O6A8klS62b98ub
-	8Hg3h6w5qbdFklFmn522a2elLTWylJMhpCohdY2M08eIfCXq7ruvUx
-X-Google-Smtp-Source: AGHT+IF5P4VPj6x/BAHYBz9itbJYgSSIaKPeilE1Y/IPx0Ey2fzjkCnq/QJ5zyEjR7XocjYZi2V568epC3iTVtWPGWc=
-X-Received: by 2002:a05:6214:5012:b0:6e2:383f:4acd with SMTP id
- 6a1803df08f44-6f535347dbbmr43800436d6.7.1746522462705; Tue, 06 May 2025
- 02:07:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2EE2741B2;
+	Tue,  6 May 2025 09:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.140
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746522480; cv=fail; b=oQ7itfrV9hNeMDSqdAFikdFs/vkGXH+vK9OodxsYCc6Z6eEGZZWSGlfh3RBYtrniJDD4zNG/ioBYAtD71Z/7avMwtKRpSGOrGb6rqu/iRbBtyEOA3HSBcblpLA8++hr7Npby2ktc2yxRY3vUEo9qcHS2Z57NkCMci4D6RjBDPuc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746522480; c=relaxed/simple;
+	bh=wDXRbzFkkmHLKI+X5+I8vTWtK2MIATjWCqomVnEsMHE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BToCwGCidPkVUEmQgWXb0Q1eb19RxE/i87FXz9PJvoHIBtGQQYv4xVvp/lpmDczrQRaTLBR9su3/D+uRWbJ/1tC+Qz82llwttDkEkIvtKhmuTCvUQowGy8WAUBv1YoQonjV1o/HwdU6WuJVOsQqfZenZibp0GEBjwosTqE3OGqs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R+5QcFZQFjRymT/Xis6b75CjF4dnHYBvZu3D4ggMMcKkYnQAevKeG5opxwfauVJFZFXEKdmXXz4NuNjqo6BEkkwVaZmCpAEo5Fqj0Q+AmBAZ9eIKCbbXw4MwnYOCKuTv62UKiad6yZEFqjiQHn53dCmUlCboI32nelZguuYV0x18kLrqzv7pyk+0BRE0SuCtXOAOPhLwOjIhMibsivk+BIfudKHYz8q1OFt7z+gKAHpvKYK9JvQswCcVSJXB2q6194R1qOvumiwi++5zsOByy7ZrdmyV+8AN3IxwX4LZ8N48z7fhHsQrKSvdqalDgVuaJDjVayAz+S710hlm3c3Tsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=efxSTTnSmUEMP2pEqMRS9bR+QQ+9pjnjM9QZYHVEHDk=;
+ b=tj/nKcozeCWqTQWrQsoOv1218Pfz/WTMvMU0rAiJC6fkbb9HFwB2Tgafl3Up35zzpey5CA5z87hZu9ifkmVfSIOaJFHxl5x3eiZaq4XEtKg5BVB0XNIbQGmDvs+h0QQuVDeTXXWrOQ1Ak0opFs+zkXMnFNDZrU+mF/u9TmwbOFCspw+h95IFzdP8XonnWppxRv4n4U4owWrvHbBgUyR+ao7mhRWeQ1kvnQBVVU1U4kQgqmU9exFYQHYFAqiyQdAqbAj8p25w9jmsLuOasEgAaxrZfohih5LMtvxtHP7p73kuwcE+8Bvlo5oNi0bkM9x8E7WaEsuByJy6Y+P34E/1fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from TYAPR01CA0105.jpnprd01.prod.outlook.com (2603:1096:404:2a::21)
+ by TYZPR06MB7093.apcprd06.prod.outlook.com (2603:1096:405:ac::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.29; Tue, 6 May
+ 2025 09:07:53 +0000
+Received: from TY2PEPF0000AB87.apcprd03.prod.outlook.com
+ (2603:1096:404:2a:cafe::29) by TYAPR01CA0105.outlook.office365.com
+ (2603:1096:404:2a::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.30 via Frontend Transport; Tue,
+ 6 May 2025 09:07:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ TY2PEPF0000AB87.mail.protection.outlook.com (10.167.253.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 09:07:53 +0000
+Received: from localhost.localdomain (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 2A3014160CA0;
+	Tue,  6 May 2025 17:07:52 +0800 (CST)
+From: Peter Chen <peter.chen@cixtech.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com,
+	maz@kernel.org,
+	kajetan.puchalski@arm.com,
+	sudeep.holla@arm.com,
+	eballetb@redhat.com,
+	Peter Chen <peter.chen@cixtech.com>
+Subject: [PATCH v7 0/9] arm64: Introduce CIX P1 (SKY1) SoC
+Date: Tue,  6 May 2025 17:07:43 +0800
+Message-Id: <20250506090752.3695666-1-peter.chen@cixtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6819cce1.050a0220.37980e.038e.GAE@google.com>
-In-Reply-To: <6819cce1.050a0220.37980e.038e.GAE@google.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 6 May 2025 11:07:05 +0200
-X-Gm-Features: ATxdqUGXqJf9_gQwVbq2SDoD6PNekFw9ekQXHfFNCh-hwwTSkOIDFCop0KSkUaQ
-Message-ID: <CAG_fn=XiU7YOsj40X3m-ZOrdHnFY-5nuJaL_OXeH3Ha26u3t0Q@mail.gmail.com>
-Subject: Re: [syzbot] [kernel?] upstream test error: KASAN: invalid-access
- Write in binder_add_device
-To: syzbot <syzbot+10ed5e36a416a32f127e@syzkaller.appspotmail.com>
-Cc: arve@android.com, brauner@kernel.org, cmllamas@google.com, 
-	gregkh@linuxfoundation.org, joel@joelfernandes.org, 
-	linux-kernel@vger.kernel.org, maco@android.com, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, tkjos@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB87:EE_|TYZPR06MB7093:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: da7fbdaf-95e1-45b2-263d-08dd8c7d7bdf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Pd/GHLkP0/n1wxM5o/yna7rRNn6F0d4AwwVJOb4503fD5F37R+nzBw0XI197?=
+ =?us-ascii?Q?sFgeIMbz5Ki7bwAIOZag5Qp8qmCRuvrzFZCDRTH2Y5Rp9fWN+EXAlP8scwxS?=
+ =?us-ascii?Q?Yelltus51Fx0euWOP1jvANTfnyszcbH1uUYMl2vAje1PsjARd98cLeji9NwT?=
+ =?us-ascii?Q?al2410h2VmqVjHPagvLFg4NoNpcrWIqBdnrbde5i8dQ/k9qlmRU9K7JoCZI2?=
+ =?us-ascii?Q?qT8batqLmvCrDTG1nb9gsb1+HTCfUcuvD3/aGHwyH4RZrC2BHHtUNQ6HKhpQ?=
+ =?us-ascii?Q?JgQdi4njLMQNBzFpa+tw70tMd+WNT1jycBxAb8tjm8/8zDcYr/fAQOSBUoAA?=
+ =?us-ascii?Q?H8qxjonNAUonsIUOBXs8nhBEQZjvlk/Sj9LaCsVfp6SNRuG22Kei8TIThHeS?=
+ =?us-ascii?Q?2eOtyaQeUcqbiRAy6M5UXdo/mChkbPUN99y5do0nPTomEDmtJ2S1nAuyL2lM?=
+ =?us-ascii?Q?+0aUjRFbKFCFxnyq77DlQgylKAnts5FF5BEa+Bnc/XHAVwJn6bfjhiXODA1+?=
+ =?us-ascii?Q?NjTjt1k3Lvga6vNyMZbVcyXIXUhyAktEUPI/8qBxandZMsHQi2EXsOc31IyL?=
+ =?us-ascii?Q?V0BoPCyQSC/9yzRW1/LptKEGmS02ehIsWU5F1B3jFaeCuvR0xoptvzyDS8fI?=
+ =?us-ascii?Q?hhJGJeg19faoHLjPoYP5PKkld4AST/IUe4Vdr30Lp5DqQfnO1ffcj9vYHLuG?=
+ =?us-ascii?Q?e0gVJPhLAI2+hsuM8oNOqbq0a8reqb1s2NokKUk0hn0MZ6T25dBsR95HIpp6?=
+ =?us-ascii?Q?mOH9QIivoN7J3mlYYL5hpM1hhocrX8OItuvZFrykYfCn/TfqltA0ypkoYmrz?=
+ =?us-ascii?Q?Psd1+9+GarR7AkARY8bC2rnr+ijAr8a5LxXDvoaPPGvWE6WzyktMs6J1/SzA?=
+ =?us-ascii?Q?NUBzpHfPH+ZAmgiTTHLjrwoVtu4pY9VW5FXQDehhF9YRfzqIikobSaPYe3si?=
+ =?us-ascii?Q?uHVDPYbTTouetJwMuEoOsjaryw860mVQZl81p219IGTLvsjdrjzWg6/FtfoG?=
+ =?us-ascii?Q?zNRUx8oVEcHLl4xrK67DT7Me+00StDkzNjnw5e7J9WmjBQwOUbgAoBbt7Yfs?=
+ =?us-ascii?Q?0NuqC74fjdmFEL/hDpc4uLUYZJK02WAJgkLBEU63y/yVYPVsxo2/4vQOEv5l?=
+ =?us-ascii?Q?dk1JT/tJZtuH924lf8KtH/VmFMsotmohbBa7Q9Poqx1jMVeAVkA6kkyqW9+4?=
+ =?us-ascii?Q?3orZCyeJPCijtMKLWBbrQhyn3b1h1uz6rF5RYdFNAj7lu1uGzwc3f7sNy5E2?=
+ =?us-ascii?Q?5Uft5omdN5Tw/WPWNDOD6C252TVBAgkjXObz+OBDecSKt2o1BGT3U3CxH16T?=
+ =?us-ascii?Q?Rqmm22u8iCW/KFIU5pQNfype8IcYQwfTyWIxwBGX8YwGHXPB2dXs3QDtj+eq?=
+ =?us-ascii?Q?Pu0r1KTfO1ZxwNKwgsBzqlAlF8dLK10xxchhTXDn6hN5VJ24+m8CGFuwVzoZ?=
+ =?us-ascii?Q?gGYnKrqnxg5D2J40cvVYyJgJl5Y3+r4UqhWPGzPLkiyeyPjojyPsuw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 09:07:53.1037
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: da7fbdaf-95e1-45b2-263d-08dd8c7d7bdf
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF0000AB87.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7093
 
-On Tue, May 6, 2025 at 10:48=E2=80=AFAM syzbot
-<syzbot+10ed5e36a416a32f127e@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    29281a76709c Merge tag 'kvmarm-fixes-6.14-2' into kvmarm-=
-m..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvma=
-rm.git fuzzme
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16921f7458000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D22c3bbf92fcca=
-116
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D10ed5e36a416a32=
-f127e
-> compiler:       Debian clang version 20.1.3 (++20250415083350+2131242240f=
-7-1~exp1~20250415203523.103), Debian LLD 20.1.3
-> userspace arch: arm64
->
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/3=
-84ffdcca292/non_bootable_disk-29281a76.raw.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+10ed5e36a416a32f127e@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: invalid-access in hlist_add_head include/linux/list.h:1026 [i=
-nline]
-> BUG: KASAN: invalid-access in binder_add_device+0xf4/0xf8 drivers/android=
-/binder.c:6932
-> Write of size 8 at addr d9f000001772ec08 by task syz-executor/3290
-> Pointer tag: [d9], memory tag: [85]
->
-> CPU: 0 UID: 0 PID: 3290 Comm: syz-executor Not tainted 6.14.0-rc2-syzkall=
-er-g29281a76709c #0
-> Hardware name: linux,dummy-virt (DT)
-> Call trace:
->  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
->  __dump_stack+0x30/0x40 lib/dump_stack.c:94
->  dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
->  print_address_description+0xac/0x290 mm/kasan/report.c:378
->  print_report+0x84/0xa0 mm/kasan/report.c:489
->  kasan_report+0xb0/0x110 mm/kasan/report.c:602
->  kasan_tag_mismatch+0x28/0x3c mm/kasan/sw_tags.c:175
->  __hwasan_tag_mismatch+0x30/0x60 arch/arm64/lib/kasan_sw_tags.S:55
->  hlist_add_head include/linux/list.h:1026 [inline]
->  binder_add_device+0xf4/0xf8 drivers/android/binder.c:6932
->  binderfs_binder_device_create+0xbfc/0xc28 drivers/android/binderfs.c:210
->  binderfs_fill_super+0xb30/0xe20 drivers/android/binderfs.c:729
->  vfs_get_super fs/super.c:1280 [inline]
->  get_tree_nodev+0xdc/0x1cc fs/super.c:1299
->  binderfs_fs_context_get_tree+0x28/0x38 drivers/android/binderfs.c:749
->  vfs_get_tree+0xc4/0x3cc fs/super.c:1814
->  do_new_mount+0x2a0/0x988 fs/namespace.c:3560
->  path_mount+0x650/0x101c fs/namespace.c:3887
->  do_mount fs/namespace.c:3900 [inline]
->  __do_sys_mount fs/namespace.c:4111 [inline]
->  __se_sys_mount fs/namespace.c:4088 [inline]
->  __arm64_sys_mount+0x36c/0x468 fs/namespace.c:4088
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x90/0x2b4 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x180/0x2f4 arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x58/0x74 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x134 arch/arm64/kernel/entry-common.c:744
->  el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:762
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x4df000001772=
-e000 pfn:0x5772e
-> flags: 0x1ffde8000000000(node=3D0|zone=3D0|lastcpupid=3D0x7ff|kasantag=3D=
-0x7a)
-> page_type: f2(table)
-> raw: 01ffde8000000000 0000000000000000 dead000000000122 0000000000000000
-> raw: 4df000001772e000 0000000000000000 00000001f2000000 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  fff000001772ea00: 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85
->  fff000001772eb00: 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85
-> >fff000001772ec00: 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85
->                    ^
->  fff000001772ed00: 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85
->  fff000001772ee00: 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85 85
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+Cixtech P1 (internal name sky1) is high performance generic Armv9 SoC.
+Orion O6 is the Arm V9 Motherboard built by Radxa. You could find brief
+introduction for SoC and related boards at:
+https://radxa.com/products/orion/o6#overview
 
-#syz invalid
+In this series, we add initial SoC and board support for Kernel building.
+Patch 1-2: add dt-binding doc for CIX and its sky1 SoC
+Patch 3: add Arm64 build support
+Patch 4-5: add CIX mailbox driver which needs to support SCMI clock protocol.
+Patch 6: add Arm64 defconfig support
+Patch 7-8: add initial dts support for SoC and Orion O6 board
+Patch 9: add MAINTAINERS entry
 
-This bug was found on an obsolete kernel branch.
+Currently, to run upstream kernel at Orion O6 board, you need to
+use BIOS released by Radxa, and add "clk_ignore_unused=1" at bootargs.
+https://docs.radxa.com/en/orion/o6/bios/install-bios
+
+Changes for v7:
+- Patch 8:
+	- Refine *_scmi_mem nodes for their properties ordering
+	- Delete Krzysztof Kozlowski and Fugang Duan's tag due to substantial changes
+	- Add two Tested-by tags from Enric Balletbo i Serra and Kajetan Puchalski
+- Patch 4: Add Krzysztof Kozlowski's Reviewed-by tag
+- Squash two patches as one for arm64 defconfig
+- Rename clock binding file from sky1-clk.h to cix,sky1.h
+- Some of my Sob are missing, add them
+
+Changes for v6:
+- Rebase to v6.15-rc2
+- Add mailbox driver
+- Add device tree description for uart, mailbox and scmi firmware (for clock).
+
+Changes for v5:
+- Patch 5: Delete pmu-spe node which need to refine, and add it in future
+- Patch 6: Refine MAINTAINERS for all CIX SoC and adding code tree location
+
+Changes for v4:
+- Move add MAINTAINERS entry patch to the last, and add two dts files entry in it. 
+- Add three Krzysztof Kozlowski's Reviewed-by Tags
+- For sky1.dtsi, makes below changes:
+	- Add ppi-partition entry for gic-v3 node, and let pmu-a520 and pmu-a720's interrupt entry
+	get its handle
+	- Remove gic-v3's #redistributor-regions and redistributor-stride properties
+	- Change gic-v3's #interrupt-cells as 4, and change all interrupt specifiers accordingly
+	- Remove "arm,no-tick-in-suspend" for timer due to global counter is at always-on power domain
+	- Remove timer's clock frequency due to firmware has already set it
+
+Changes for v3:
+- Patch 1: Add Krzysztof Kozlowski's Acked-by Tag
+- Patch 2: Add Krzysztof Kozlowski's Reviewed-by Tag
+- Patch 6: Fix two dts coding sytle issues
+
+Changes for v2:
+- Pass dts build check with below commands:
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=vendor-prefixes.yaml
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=arm/cix.yaml
+make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+- Re-order the patch set, and move vendor-perfixes to the 1st patch.
+- Patch 4: Ordered Kconfig config entry by alpha-numerically
+- Patch 5: Corrects the Ack tag's name
+- Patch 6: see below.
+1) Corrects the SoF tag's name
+2) Fix several coding sytle issues
+3) move linux,cma node to dts file
+4) delete memory node, memory size is passed by firmware
+5) delete uart2 node which will be added in future patches
+6) Improve for pmu and cpu node to stands for more specific cpu model
+7) Improve the timer node and add hypervisor virtual timer irq
+
+Fugang Duan (1):
+  arm64: Kconfig: add ARCH_CIX for cix silicons
+
+Gary Yang (1):
+  dt-bindings: clock: cix: Add CIX sky1 scmi clock id
+
+Guomin Chen (2):
+  dt-bindings: mailbox: add cix,sky1-mbox
+  mailbox: add CIX mailbox driver
+
+Peter Chen (5):
+  dt-bindings: vendor-prefixes: Add CIX Technology Group Co., Ltd.
+  dt-bindings: arm: add CIX P1 (SKY1) SoC
+  arm64: defconfig: Enable CIX SoC
+  arm64: dts: cix: Add sky1 base dts initial support
+  MAINTAINERS: Add CIX SoC maintainer entry
+
+ .../devicetree/bindings/arm/cix.yaml          |  26 +
+ .../bindings/mailbox/cix,sky1-mbox.yaml       |  71 ++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |  11 +
+ arch/arm64/Kconfig.platforms                  |   6 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/cix/Makefile              |   2 +
+ arch/arm64/boot/dts/cix/sky1-orion-o6.dts     |  39 ++
+ arch/arm64/boot/dts/cix/sky1.dtsi             | 331 +++++++++
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/mailbox/Kconfig                       |  10 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/cix-mailbox.c                 | 632 ++++++++++++++++++
+ include/dt-bindings/clock/cix,sky1.h          | 279 ++++++++
+ 14 files changed, 1414 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/cix.yaml
+ create mode 100644 Documentation/devicetree/bindings/mailbox/cix,sky1-mbox.yaml
+ create mode 100644 arch/arm64/boot/dts/cix/Makefile
+ create mode 100644 arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+ create mode 100644 arch/arm64/boot/dts/cix/sky1.dtsi
+ create mode 100644 drivers/mailbox/cix-mailbox.c
+ create mode 100644 include/dt-bindings/clock/cix,sky1.h
+
+-- 
+2.25.1
+
 
