@@ -1,47 +1,63 @@
-Return-Path: <linux-kernel+bounces-635794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CFBAAC212
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:07:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20A4AAC215
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8310B4C3E5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2773B4C7F0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42C52798FC;
-	Tue,  6 May 2025 11:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B15127A449;
+	Tue,  6 May 2025 11:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHspKYof"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x1pZMaNA"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD09A1F55F8;
-	Tue,  6 May 2025 11:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AF327934A;
+	Tue,  6 May 2025 11:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746529609; cv=none; b=mR9gcOL+Vv0Qct5s4bg20qanyDR0bPa+R2HVaCktQvU2P+iLOpzJuYzjtVsz1NZvhGT629kcCnMOat4f0OLvR7FOhYYNeaCyFvpsS4XnflptXzzAXrmbT2DUG9SvEPpIRDNTaseotVYzhczCVR5enbIHwios870pUrTWiKES4KA=
+	t=1746529649; cv=none; b=l5LYbyYQ2QdMdbxeOlapofldX28keZ2L+AF4ifs4oN2OslxsUKZZb/lM9LKyi/y7nQ/vwnI0KjXWCcgjX/FKALqsr3PxRU/lsCWgjhhj8tqRW3vhm1qVd4OFBi8svjtx+BNbz8916Rgz9h50Ch1ukzaD+PK9mIw9XYGamI7ts7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746529609; c=relaxed/simple;
-	bh=IsJ4knD6xjH5ocv5Yne+kV9PRiqyTgJ8O5upyfZ3XeI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K/7U+OncLlRLCDxzw9RQ0qAa/s6QEvLyzx+w32ucaeQEsSok2bma6xmKZTfSLxr3M5q6fCgyYcsO8KDc4yvJspei8NOhhMVJgrqZK3FCxOAIPLnEgquqdYfyHZvjpkSGDy3yVVTB/91zFDOU/b8ehSC51earX9wdiN2LXGwQXU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHspKYof; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4103C4CEE4;
-	Tue,  6 May 2025 11:06:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746529609;
-	bh=IsJ4knD6xjH5ocv5Yne+kV9PRiqyTgJ8O5upyfZ3XeI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VHspKYofF/Nbn6SlNqc2bfQfo93MlLP2GC3foMiOYd3Eiklnd7rPNpcz52HrTTAxA
-	 RyOMCgF2bin4Y8P0OrTQIb5EQeEgkHW3+gQzPvDMY4AMlhLwZHRf3dzgiDVuKQtI9n
-	 Xbvo2y8+aEPxn7KaGqIDiWQHWVwgGaUi7DKj6ygp32Gq4/ERY+0i+etHbnoRVXX2gM
-	 t0LIY7mrqL7hfNKX7G7DVo6vTecO+n4f5Nr3XCkjDW29nYsmTunY0y+nhh9uvh1Dga
-	 fTUu5paF0JAum7VGi/TnSR2miv1EvODG+xg2kAAWzlMhfOdeoKOtfYwyjPuUHemdFe
-	 5TeIRD8PRCSRQ==
-Message-ID: <9015e10e-effb-4dc8-b100-1906db731f57@kernel.org>
-Date: Tue, 6 May 2025 13:06:42 +0200
+	s=arc-20240116; t=1746529649; c=relaxed/simple;
+	bh=ZGk8xVX+SMQH+PYczLHfPC9dhi83nvOI/amtGjGFsVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FUStV0kxAdWd2yGShafnmfFB+8GtemClHM3L3yeGOWIrECbV2tdOS2rym2mbNNr/E4TPtqZ7VV/tbtfjLOEJo5BqBzckkha4WJyySUhuz7wn9667F58mIEhCaKOMsF+qcweeC/E28otV1x2P47duJm35LnyyTbjjK6SV5jv7tLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x1pZMaNA; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 546B750E1215346
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 6 May 2025 06:07:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746529625;
+	bh=C/2tsiBiKyY1SNEK607kAAwSZhrjibW/VFrV2LYMH+4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=x1pZMaNAqHja54w3PHQn0fVhsNfufNW40oUV4yjx84JyKW5276DZsLkIoUASQ7kr/
+	 lvmPsoDBVThdElrqUEulCY59DUt9pGB06N/SBgGeqeYqQEe1GeoEYfz4yPfFsNKzhU
+	 ZvzXQNWt2Q4h3/I9vheeO6XKzA8fw1SAikyYEIgk=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 546B75uc024933
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 6 May 2025 06:07:05 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
+ May 2025 06:07:04 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 6 May 2025 06:07:04 -0500
+Received: from [10.24.69.232] (ws.dhcp.ti.com [10.24.69.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 546B6wQq056921;
+	Tue, 6 May 2025 06:06:59 -0500
+Message-ID: <f181148c-5ce6-45d8-b379-73f08455a22e@ti.com>
+Date: Tue, 6 May 2025 16:36:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,288 +65,657 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: eswin: Document for eic7700 SoC
-To: luyulin <luyulin@eswincomputing.com>, linus.walleij@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kees@kernel.org, gustavoars@kernel.org,
- brgl@bgdev.pl, linux-hardening@vger.kernel.org
-Cc: zhengyu@eswincomputing.com, ningyu@eswincomputing.com,
- huangyifeng@eswincomputing.com, linmin@eswincomputing.com,
- fenglin@eswincomputing.com, lianghujun@eswincomputing.com,
- Samuel Holland <samuel.holland@sifive.com>
-References: <20250506090844.1516-1-luyulin@eswincomputing.com>
- <20250506091145.1953-1-luyulin@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 10/13] media: cadence: csi2rx: Enable multi-stream
+ support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: <jai.luthra@linux.dev>, <mripard@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <devarsht@ti.com>,
+        <y-abhilashchandra@ti.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vaishnav.a@ti.com>,
+        <s-jain1@ti.com>, <vigneshr@ti.com>, <sakari.ailus@linux.intel.com>,
+        <hverkuil-cisco@xs4all.nl>, <tomi.valkeinen@ideasonboard.com>,
+        <jai.luthra@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
+        <jack.zhu@starfivetech.com>
+References: <20250417065554.437541-1-r-donadkar@ti.com>
+ <20250417065554.437541-11-r-donadkar@ti.com>
+ <20250421135702.GJ29483@pendragon.ideasonboard.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250506091145.1953-1-luyulin@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8
+From: Rishikesh Donadkar <r-donadkar@ti.com>
+In-Reply-To: <20250421135702.GJ29483@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-
-On 06/05/2025 11:11, luyulin wrote:
-> This commit adds Device Tree binding documentation for the
-
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
-> ESWIN EIC7700 pinctrl controller module. The document describes
-> the required properties, compatible strings, and usage examples
-> in the device tree configuration when applying this module.
-
-Do not explain what DT binding is. We all know. Explain the hardware.
-See also other comits as examples.
-
-> 
-> Co-developed-by: Samuel Holland <samuel.holland@sifive.com>
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> Signed-off-by: luyulin <luyulin@eswincomputing.com>
+On 21/04/25 19:27, Laurent Pinchart wrote:
+> Hi Rishikesh,
+>
+> Thank you for the patch.
 
 
-Looks like you used login name as full name. Use rather latin
-transcription or your name in your native language.
+Hi Laurent,
 
-> ---
->  .../pinctrl/eswin,eic7700-pinctrl.yaml        | 156 ++++++++++++++++++
+Thank you for the review !
 
-
-This was already send and reviewed. Implement previous feedback
-
-https://lore.kernel.org/all/20250326-owl-of-algebraic-wealth-61aeda@krzk-bin/
-
-Then please version your patches correctly, e.g. use b4 or git
-format-patch -vX, and add changelog in cover letter or under '---' of
-individual patches describing changes from previous version.
-
-
->  1 file changed, 156 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..d8811a8e0a51
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
-> @@ -0,0 +1,156 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/eswin,eic7700-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Eswin Eic7700 Pinctrl
-> +
-> +maintainers:
-> +  - LuYuLin <luyulin@eswincomputing.com>
-> +
-> +description: |
-> +  Please refer to pinctrl-bindings.txt in this directory for details of the
-> +  common pinctrl bindings used by client devices, including the meaning of the
-> +  phrase "pin configuration node".
-
-Drop this paragraph, redundant.
-
-> +
-> +  eic7700 pin configuration nodes act as a container for an arbitrary number of
-> +  subnodes. Each of these subnodes represents some desired configuration for one or
-> +  more pins. This configuration can include the mux function to select on those pin(s),
-> +  and various pin configuration parameters, such as input-enable, pull-up, etc.
-> +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-pinctrl
-> +
-> +  reg:
-> +    description: Specifies the base address and size of the SLCR space.
-
-Drop description, redundant.
-
-> +    maxItems: 1
-> +
-> +  "vrgmii-supply":
-
-Open existing bindings. Do you see any property written like that? No,
-therefore do not come with own syntax,
-
-Drop quotes,
-
-> +    description:
-> +      Regulator supply for the RGMII interface IO power domain.
-> +      This property should reference a regulator that provides either 1.8V or 3.3V,
-> +      depending on the board-level voltage configuration required by the RGMII interface.
-> +
-> +patternProperties:
-> +  '^(.*-)?(pins)$':
-
-Weirdly complicated pattern. Why not just "-pins$"? For which case do
-you need "pins" name?
+>
+> On Thu, Apr 17, 2025 at 12:25:51PM +0530, Rishikesh Donadkar wrote:
+>> From: Jai Luthra <j-luthra@ti.com>
+>>
+>> Cadence CSI-2 bridge IP supports capturing multiple virtual "streams"
+>> of data over the same physical interface using MIPI Virtual Channels.
+>>
+>> The V4L2 subdev APIs should reflect this capability and allow per-stream
+>> routing and controls.
+>>
+>> While the hardware IP supports usecases where streams coming in the sink
+>> pad can be broadcasted to multiple source pads, the driver will need
+>> significant re-architecture to make that possible. The two users of this
+>> IP in mainline linux are TI Shim and StarFive JH7110 CAMSS, and both
+>> have only integrated the first source pad i.e stream0 of this IP. So for
+>> now keep it simple and only allow 1-to-1 mapping of streams from sink to
+>> source, without any broadcasting.
+>>
+>> With stream routing now supported in the driver, implement the
+>> enable_stream and disable_stream hooks in place of the stream-unaware
+>> s_stream hook.
+>>
+>> This allows consumer devices like a DMA bridge or ISP, to enable
+>> particular streams on a source pad, which in turn can be used to enable
+>> only particular streams on the CSI-TX device connected on the sink pad.
+>>
+>> Implement a fallback s_stream hook that internally calls enable_stream
+>> on each source pad, for consumer drivers that don't use multi-stream
+>> APIs to still work.
+> Can't you use v4l2_subdev_s_stream_helper() ? If not, please briefly
+> explain why in the commit message.
 
 
-> +    type: object
-> +    description:
-> +      Pinctrl node's client devices use subnodes for pin muxes,
-> +      which in turn use below standard properties.
-> +
-> +    properties:
-> +      pins:
-> +        description:
-> +          For eic7700, specifies the name(s) of one or more pins to be configured by
-> +          this node.
-> +        items:
-> +          enum: [ chip_mode, mode_set0, mode_set1, mode_set2, mode_set3, xin,
-> +                  rst_out_n, key_reset_n, gpio0, por_sel, jtag0_tck, jtag0_tms,
-> +                  jtag0_tdi, jtag0_tdo, gpio5, spi2_cs0_n, jtag1_tck, jtag1_tms,
-> +                  jtag1_tdi, jtag1_tdo, gpio11, spi2_cs1_n, pcie_clkreq_n,
-> +                  pcie_wake_n, pcie_perst_n, hdmi_scl, hdmi_sda, hdmi_cec,
-> +                  jtag2_trst, rgmii0_clk_125, rgmii0_txen, rgmii0_txclk,
-> +                  rgmii0_txd0, rgmii0_txd1, rgmii0_txd2, rgmii0_txd3, i2s0_bclk,
-> +                  i2s0_wclk, i2s0_sdi, i2s0_sdo, i2s_mclk, rgmii0_rxclk,
-> +                  rgmii0_rxdv, rgmii0_rxd0, rgmii0_rxd1, rgmii0_rxd2, rgmii0_rxd3,
-> +                  i2s2_bclk, i2s2_wclk, i2s2_sdi, i2s2_sdo, gpio27, gpio28, gpio29,
-> +                  rgmii0_mdc, rgmii0_mdio, rgmii0_intb, rgmii1_clk_125, rgmii1_txen,
-> +                  rgmii1_txclk, rgmii1_txd0, rgmii1_txd1, rgmii1_txd2, rgmii1_txd3,
-> +                  i2s1_bclk, i2s1_wclk, i2s1_sdi, i2s1_sdo, gpio34, rgmii1_rxclk,
-> +                  rgmii1_rxdv, rgmii1_rxd0, rgmii1_rxd1, rgmii1_rxd2, rgmii1_rxd3,
-> +                  spi1_cs0_n, spi1_clk, spi1_d0, spi1_d1, spi1_d2, spi1_d3, spi1_cs1_n,
-> +                  rgmii1_mdc, rgmii1_mdio, rgmii1_intb, usb0_pwren, usb1_pwren,
-> +                  i2c0_scl, i2c0_sda, i2c1_scl, i2c1_sda, i2c2_scl, i2c2_sda,
-> +                  i2c3_scl, i2c3_sda, i2c4_scl, i2c4_sda, i2c5_scl, i2c5_sda,
-> +                  uart0_tx, uart0_rx, uart1_tx, uart1_rx, uart1_cts, uart1_rts,
-> +                  uart2_tx, uart2_rx, jtag2_tck, jtag2_tms, jtag2_tdi, jtag2_tdo,
-> +                  fan_pwm, fan_tach, mipi_csi0_xvs, mipi_csi0_xhs, mipi_csi0_mclk,
-> +                  mipi_csi1_xvs, mipi_csi1_xhs, mipi_csi1_mclk, mipi_csi2_xvs,
-> +                  mipi_csi2_xhs, mipi_csi2_mclk, mipi_csi3_xvs, mipi_csi3_xhs,
-> +                  mipi_csi3_mclk, mipi_csi4_xvs, mipi_csi4_xhs, mipi_csi4_mclk,
-> +                  mipi_csi5_xvs, mipi_csi5_xhs, mipi_csi5_mclk, spi3_cs_n, spi3_clk,
-> +                  spi3_di, spi3_do, gpio92, gpio93, s_mode, gpio95, spi0_cs_n,
-> +                  spi0_clk, spi0_d0, spi0_d1, spi0_d2, spi0_d3, i2c10_scl,
-> +                  i2c10_sda, i2c11_scl, i2c11_sda, gpio106, boot_sel0, boot_sel1,
-> +                  boot_sel2, boot_sel3, gpio111, lpddr_ref_clk ]
-> +
-> +      function:
-> +        description:
-> +          Specify the alternative function to be configured for the
-> +          given pins.
-> +        enum: [ disabled, boot_sel, chip_mode, emmc, fan_tach,
-> +                gpio, hdmi, i2c, i2s, jtag, ddr_ref_clk_sel,
-> +                lpddr_ref_clk, mipi_csi, osc, pcie, pwm,
-> +                rgmii, reset, sata, sdio, spi, s_mode, uart, usb ]
-> +
-> +      input-schmitt-enable: true
-> +
-> +      input-schmitt-disable: true
-> +
-> +      bias-disable: true
-> +
-> +      bias-pull-down: true
-> +
-> +      bias-pull-up: true
-> +
-> +      input-enable: true
-> +
-> +      input-disable: true
-> +
-> +      drive-strength-microamp: true
-> +
-> +    allOf:
-> +      - $ref: pincfg-node.yaml#
-> +      - $ref: pinmux-node.yaml#
-> +
-> +      - if:
-> +          properties:
-> +            pins:
-> +              anyOf:
-> +                - pattern: '^rgmii'
-> +                - const: lpddr_ref_clk
-> +        then:
-> +          properties:
-> +            drive-strength-microamp:
-> +              enum: [3000, 6000, 9000, 12000, 15000, 18000, 21000, 24000]
-> +        else:
-> +          properties:
-> +            drive-strength-microamp:
-> +              enum: [6000, 9000, 12000, 15000, 18000, 21000, 24000, 27000]
-> +
-> +    required:
-> +      - pins
-> +
-> +    additionalProperties: false
-> +
-> +allOf:
-> +  - $ref: pinctrl.yaml#
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pinctrl@51600080 {
-> +      compatible = "eswin,eic7700-pinctrl";
-> +      reg = <0x51600080 0x1fff80>;
-> +      vrgmii-supply = <&vcc_1v8>;
-> +      gpio10_pins: gpio10-pins {
+The v4l2_subdev_s_stream_helper() can only be used by subdevs that have 
+a single source pad, This IP is used by TI Shim and StarFive JH7110 
+CAMSS, currently both of them use only the first source pad (stream0) 
+but the driver can be re-architectured to use have more than one source 
+pad, this is the reason v4l2_subdev_s_stream_helper() is not used.
 
-Drop label.
-
-> +          pins = "jtag1_tdo";
-> +          function = "gpio";
-> +          input-enable;
-> +          bias-pull-up;
-> +      };
-> +    };
-> +
-> +    i2c2 {
-
-Drop this node, not relevant.
+I will mention this in the commit message as well.
 
 
-Best regards,
-Krzysztof
+>
+>> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+>> Co-developed-by: Rishikesh Donadkar <r-donadkar@ti.com>
+>> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+>> ---
+>>   drivers/media/platform/cadence/cdns-csi2rx.c | 378 ++++++++++++++-----
+>>   1 file changed, 288 insertions(+), 90 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
+>> index df05d278df379..95beb6623de8c 100644
+>> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
+>> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
+>> @@ -90,6 +90,7 @@ struct csi2rx_priv {
+>>   	struct reset_control		*pixel_rst[CSI2RX_STREAMS_MAX];
+>>   	struct phy			*dphy;
+>>   
+>> +	u32				vc_select[CSI2RX_STREAMS_MAX];
+>>   	u8				lanes[CSI2RX_LANES_MAX];
+>>   	u8				num_lanes;
+>>   	u8				max_lanes;
+>> @@ -179,29 +180,36 @@ static void csi2rx_reset(struct csi2rx_priv *csi2rx)
+>>   
+>>   static int csi2rx_configure_ext_dphy(struct csi2rx_priv *csi2rx)
+>>   {
+>> -	struct media_pad *src_pad =
+>> -		&csi2rx->source_subdev->entity.pads[csi2rx->source_pad];
+>> +	struct v4l2_ctrl_handler *handler = csi2rx->source_subdev->ctrl_handler;
+>>   	union phy_configure_opts opts = { };
+>>   	struct phy_configure_opts_mipi_dphy *cfg = &opts.mipi_dphy;
+>> -	struct v4l2_subdev_format sd_fmt = {
+>> -		.which	= V4L2_SUBDEV_FORMAT_ACTIVE,
+>> -		.pad	= CSI2RX_PAD_SINK,
+>> -	};
+>> +	struct v4l2_mbus_framefmt *framefmt;
+>> +	struct v4l2_subdev_state *state;
+>>   	const struct csi2rx_fmt *fmt;
+>>   	s64 link_freq;
+>>   	int ret;
+>>   
+>> -	ret = v4l2_subdev_call_state_active(&csi2rx->subdev, pad, get_fmt,
+>> -					    &sd_fmt);
+>> -	if (ret < 0)
+>> -		return ret;
+>> -
+>> -	fmt = csi2rx_get_fmt_by_code(sd_fmt.format.code);
+>> +	if (v4l2_ctrl_find(handler, V4L2_CID_LINK_FREQ)) {
+>> +		link_freq = v4l2_get_link_freq(handler, 0, 0);
+>> +	} else {
+>> +		state = v4l2_subdev_get_locked_active_state(&csi2rx->subdev);
+>> +		framefmt = v4l2_subdev_state_get_format(state, CSI2RX_PAD_SINK,
+>> +							0);
+>> +		fmt = csi2rx_get_fmt_by_code(framefmt->code);
+>> +
+>> +		link_freq = v4l2_get_link_freq(handler, fmt->bpp,
+>> +					       2 * csi2rx->num_lanes);
+>> +
+>> +		dev_warn(csi2rx->dev,
+>> +			 "Guessing link frequency using bitdepth of stream 0.\n");
+>> +		dev_warn(csi2rx->dev,
+>> +			 "V4L2_CID_LINK_FREQ control is required for multi format sources.\n");
+>> +	}
+> Why do you need this complexity, instead of calling the
+> v4l2_get_link_freq() variant that takes the source pad as its first
+> argument ?
+
+
+This was introduced to not break support for the single-stream 
+transmitters that do not implement V4L2_CID_LINK_FREQ. But now I realize 
+that v4l2_get_link_freq() checks if V4L2_CID_LINK_FREQ is present, if 
+not falls back to V4L2_CID_PIXEL_RATE for single-stream transmitters.
+
+
+For multistream transmitters, V4L2_CID_LINK_FREQ should be implemented 
+as PIXEL_RATE does not make any sense, so I will call 
+v4l2_get_link_freq(handler, 0, 0) in multi-stream case.
+
+This will force the multi-stream transmitter to implement 
+V4L2_CID_LINK_FREQ or else give an error.
+
+
+>
+>>   
+>> -	link_freq = v4l2_get_link_freq(src_pad,
+>> -				       fmt->bpp, 2 * csi2rx->num_lanes);
+>> -	if (link_freq < 0)
+>> +	if (link_freq < 0) {
+>> +		dev_err(csi2rx->dev, "Unable to calculate link frequency\n");
+>>   		return link_freq;
+>> +	}
+>>   
+>>   	ret = phy_mipi_dphy_get_default_config_for_hsclk(link_freq,
+>>   							 csi2rx->num_lanes, cfg);
+>> @@ -224,18 +232,10 @@ static int csi2rx_configure_ext_dphy(struct csi2rx_priv *csi2rx)
+>>   static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>>   {
+>>   	unsigned int i;
+>> -	struct media_pad *remote_pad;
+>>   	unsigned long lanes_used = 0;
+>>   	u32 reg;
+>>   	int ret;
+>>   
+>> -	remote_pad = media_pad_remote_pad_first(&csi2rx->pads[CSI2RX_PAD_SINK]);
+>> -	if (!remote_pad) {
+>> -		dev_err(csi2rx->dev,
+>> -			"Failed to find connected source\n");
+>> -		return -ENODEV;
+>> -	}
+>> -
+>>   	ret = clk_prepare_enable(csi2rx->p_clk);
+>>   	if (ret)
+>>   		return ret;
+>> @@ -302,11 +302,7 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>>   		writel(CSI2RX_STREAM_CFG_FIFO_MODE_LARGE_BUF,
+>>   		       csi2rx->base + CSI2RX_STREAM_CFG_REG(i));
+>>   
+>> -		/*
+>> -		 * Enable one virtual channel. When multiple virtual channels
+>> -		 * are supported this will have to be changed.
+>> -		 */
+>> -		writel(CSI2RX_STREAM_DATA_CFG_VC_SELECT(0),
+>> +		writel(csi2rx->vc_select[i],
+>>   		       csi2rx->base + CSI2RX_STREAM_DATA_CFG_REG(i));
+>>   
+>>   		writel(CSI2RX_STREAM_CTRL_START,
+>> @@ -319,17 +315,10 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>>   
+>>   	reset_control_deassert(csi2rx->sys_rst);
+>>   
+>> -	ret = v4l2_subdev_enable_streams(csi2rx->source_subdev,
+>> -					 remote_pad->index, BIT(0));
+>> -	if (ret)
+>> -		goto err_disable_sysclk;
+>> -
+>>   	clk_disable_unprepare(csi2rx->p_clk);
+>>   
+>>   	return 0;
+>>   
+>> -err_disable_sysclk:
+>> -	clk_disable_unprepare(csi2rx->sys_clk);
+>>   err_disable_pixclk:
+>>   	for (; i > 0; i--) {
+>>   		reset_control_assert(csi2rx->pixel_rst[i - 1]);
+>> @@ -348,7 +337,6 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>>   
+>>   static void csi2rx_stop(struct csi2rx_priv *csi2rx)
+>>   {
+>> -	struct media_pad *remote_pad;
+>>   	unsigned int i;
+>>   	u32 val;
+>>   	int ret;
+>> @@ -377,13 +365,6 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
+>>   	reset_control_assert(csi2rx->p_rst);
+>>   	clk_disable_unprepare(csi2rx->p_clk);
+>>   
+>> -	remote_pad = media_pad_remote_pad_first(&csi2rx->pads[CSI2RX_PAD_SINK]);
+>> -	if (!remote_pad ||
+>> -	    v4l2_subdev_disable_streams(csi2rx->source_subdev,
+>> -					remote_pad->index, BIT(0))) {
+>> -		dev_warn(csi2rx->dev, "Couldn't disable our subdev\n");
+>> -	}
+>> -
+>>   	if (csi2rx->dphy) {
+>>   		writel(0, csi2rx->base + CSI2RX_DPHY_LANE_CTRL_REG);
+>>   
+>> @@ -392,37 +373,153 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
+>>   	}
+>>   }
+>>   
+>> -static int csi2rx_s_stream(struct v4l2_subdev *subdev, int enable)
+>> +static void csi2rx_update_vc_select(struct csi2rx_priv *csi2rx,
+>> +				    struct v4l2_subdev_state *state)
+>> +{
+>> +	struct v4l2_mbus_frame_desc fd = {0};
+>> +	struct v4l2_subdev_route *route;
+>> +	unsigned int i;
+>> +	int ret;
+>> +
+>> +	/* Capture VC=0 by default */
+>> +	for (i = 0; i < CSI2RX_STREAMS_MAX; i++)
+>> +		csi2rx->vc_select[i] = CSI2RX_STREAM_DATA_CFG_VC_SELECT(0);
+>> +
+>> +	ret = csi2rx_get_frame_desc_from_source(csi2rx, &fd);
+>> +	if (ret || fd.type != V4L2_MBUS_FRAME_DESC_TYPE_CSI2) {
+>> +		dev_dbg(csi2rx->dev,
+>> +			"Failed to get source frame desc, allowing only VC=0\n");
+>> +		return;
+>> +	}
+>> +
+>> +	/* If source provides per-stream VC info, use it to filter by VC */
+>> +	memset(csi2rx->vc_select, 0, sizeof(csi2rx->vc_select));
+>> +
+>> +	for_each_active_route(&state->routing, route) {
+>> +		u32 cdns_stream = route->source_pad - CSI2RX_PAD_SOURCE_STREAM0;
+>> +
+>> +		for (i = 0; i < fd.num_entries; i++) {
+>> +			if (fd.entry[i].stream != route->sink_stream)
+>> +				continue;
+>> +
+>> +			csi2rx->vc_select[cdns_stream] |=
+>> +				CSI2RX_STREAM_DATA_CFG_VC_SELECT(fd.entry[i].bus.csi2.vc);
+>> +		}
+>> +	}
+>> +}
+>> +
+>> +static int csi2rx_enable_streams(struct v4l2_subdev *subdev,
+>> +				 struct v4l2_subdev_state *state, u32 pad,
+>> +				 u64 streams_mask)
+>>   {
+>>   	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
+>> -	int ret = 0;
+>> +	struct media_pad *remote_pad;
+>> +	u64 sink_streams;
+>> +	int ret;
+>> +
+>> +	remote_pad = media_pad_remote_pad_first(&csi2rx->pads[CSI2RX_PAD_SINK]);
+>> +	if (!remote_pad) {
+>> +		dev_err(csi2rx->dev,
+>> +			"Failed to find connected source\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	sink_streams = v4l2_subdev_state_xlate_streams(state, pad,
+>> +						       CSI2RX_PAD_SINK,
+>> +						       &streams_mask);
+>>   
+>>   	mutex_lock(&csi2rx->lock);
+> Can you use lock guards ? It will simplify error handling.
+
+
+Sure.
+
+
+>
+>> +	/*
+>> +	 * If we're not the first users, there's no need to
+>> +	 * enable the whole controller.
+>> +	 */
+>> +	if (!csi2rx->count) {
+> I would have stored the bitmask of enabled streams instead of a count,
+> but it doesn't matter that much.
+>
+>> +		ret = csi2rx_start(csi2rx);
+>> +		if (ret)
+>> +			goto err_stream_start;
+>> +	}
+>>   
+>> -	if (enable) {
+>> -		/*
+>> -		 * If we're not the first users, there's no need to
+>> -		 * enable the whole controller.
+>> -		 */
+>> -		if (!csi2rx->count) {
+>> -			ret = csi2rx_start(csi2rx);
+>> -			if (ret)
+>> -				goto out;
+>> -		}
+>> +	/* Start streaming on the source */
+>> +	ret = v4l2_subdev_enable_streams(csi2rx->source_subdev, remote_pad->index,
+>> +					 sink_streams);
+>> +	if (ret) {
+>> +		dev_err(csi2rx->dev,
+>> +			"Failed to start streams %#llx on subdev\n",
+>> +			sink_streams);
+>> +		goto err_subdev_enable;
+>> +	}
+>>   
+>> -		csi2rx->count++;
+>> -	} else {
+>> -		csi2rx->count--;
+>> +	csi2rx->count++;
+>> +	mutex_unlock(&csi2rx->lock);
+>> +
+>> +	return 0;
+>> +
+>> +err_subdev_enable:
+>> +	if (!csi2rx->count)
+>> +		csi2rx_stop(csi2rx);
+>> +err_stream_start:
+>> +	mutex_unlock(&csi2rx->lock);
+>> +	return ret;
+>> +}
+>> +
+>> +static int csi2rx_disable_streams(struct v4l2_subdev *subdev,
+>> +				  struct v4l2_subdev_state *state, u32 pad,
+>> +				  u64 streams_mask)
+>> +{
+>> +	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
+>> +	struct media_pad *remote_pad;
+>> +	u64 sink_streams;
+>> +
+>> +	sink_streams = v4l2_subdev_state_xlate_streams(state, pad,
+>> +						       CSI2RX_PAD_SINK,
+>> +						       &streams_mask);
+>>   
+>> -		/*
+>> -		 * Let the last user turn off the lights.
+>> -		 */
+>> -		if (!csi2rx->count)
+>> -			csi2rx_stop(csi2rx);
+>> +	remote_pad = media_pad_remote_pad_first(&csi2rx->pads[CSI2RX_PAD_SINK]);
+>> +	if (!remote_pad ||
+>> +	    v4l2_subdev_disable_streams(csi2rx->source_subdev,
+>> +					remote_pad->index, sink_streams)) {
+>> +		dev_err(csi2rx->dev, "Couldn't disable our subdev\n");
+>>   	}
+>>   
+>> -out:
+>> +	mutex_lock(&csi2rx->lock);
+>> +	csi2rx->count--;
+>> +	/*
+>> +	 * Let the last user turn off the lights.
+>> +	 */
+> This can become a single line.
+
+
+Will fix.
+
+
+>
+>> +	if (!csi2rx->count)
+>> +		csi2rx_stop(csi2rx);
+>>   	mutex_unlock(&csi2rx->lock);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int csi2rx_s_stream_fallback(struct v4l2_subdev *sd, int enable)
+>> +{
+>> +	struct v4l2_subdev_state *state;
+>> +	struct v4l2_subdev_route *route;
+>> +	u64 mask[CSI2RX_PAD_MAX] = {0};
+>> +	int i, ret;
+>> +
+>> +	/* Find the stream mask on all source pads */
+>> +	state = v4l2_subdev_lock_and_get_active_state(sd);
+>> +	for (i = CSI2RX_PAD_SOURCE_STREAM0; i < CSI2RX_PAD_MAX; i++) {
+>> +		for_each_active_route(&state->routing, route) {
+>> +			if (route->source_pad == i)
+>> +				mask[i] |= BIT_ULL(route->source_stream);
+>> +		}
+>> +	}
+>> +	v4l2_subdev_unlock_state(state);
+>> +
+>> +	/* Start streaming on each pad */
+>> +	for (i = CSI2RX_PAD_SOURCE_STREAM0; i < CSI2RX_PAD_MAX; i++) {
+>> +		if (enable)
+>> +			ret = v4l2_subdev_enable_streams(sd, i, mask[i]);
+>> +		else
+>> +			ret = v4l2_subdev_disable_streams(sd, i, mask[i]);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>>   	return ret;
+>>   }
+>>   
+>> @@ -438,12 +535,58 @@ static int csi2rx_enum_mbus_code(struct v4l2_subdev *subdev,
+>>   	return 0;
+>>   }
+>>   
+>> +static int _csi2rx_set_routing(struct v4l2_subdev *subdev,
+>> +			       struct v4l2_subdev_state *state,
+>> +			       struct v4l2_subdev_krouting *routing)
+>> +{
+>> +	static const struct v4l2_mbus_framefmt format = {
+>> +		.width = 640,
+>> +		.height = 480,
+>> +		.code = MEDIA_BUS_FMT_UYVY8_1X16,
+>> +		.field = V4L2_FIELD_NONE,
+>> +		.colorspace = V4L2_COLORSPACE_SRGB,
+>> +		.ycbcr_enc = V4L2_YCBCR_ENC_601,
+>> +		.quantization = V4L2_QUANTIZATION_LIM_RANGE,
+>> +		.xfer_func = V4L2_XFER_FUNC_SRGB,
+>> +	};
+>> +	int ret;
+>> +
+>> +	if (routing->num_routes > V4L2_FRAME_DESC_ENTRY_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	ret = v4l2_subdev_routing_validate(subdev, routing,
+>> +					   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return v4l2_subdev_set_routing_with_fmt(subdev, state, routing, &format);
+>> +}
+>> +
+>> +static int csi2rx_set_routing(struct v4l2_subdev *subdev,
+>> +			      struct v4l2_subdev_state *state,
+>> +			      enum v4l2_subdev_format_whence which,
+>> +			      struct v4l2_subdev_krouting *routing)
+>> +{
+>> +	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
+>> +	int ret;
+>> +
+>> +	if (which == V4L2_SUBDEV_FORMAT_ACTIVE && csi2rx->count)
+>> +		return -EBUSY;
+>> +
+>> +	ret = _csi2rx_set_routing(subdev, state, routing);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	csi2rx_update_vc_select(csi2rx, state);
+> When setting routing on the TRY state this will update the active state,
+> which isn't correct. Can you call this function when starting the device
+> instead ?
+
+
+Yes, this can be called at stream start, before configuring the VC data 
+in the registers.
+
+Will do this in the next revision.
+
+
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int csi2rx_set_fmt(struct v4l2_subdev *subdev,
+>>   			  struct v4l2_subdev_state *state,
+>>   			  struct v4l2_subdev_format *format)
+>>   {
+>>   	struct v4l2_mbus_framefmt *fmt;
+>> -	unsigned int i;
+>>   
+>>   	/* No transcoding, source and sink formats must match. */
+>>   	if (format->pad != CSI2RX_PAD_SINK)
+>> @@ -455,14 +598,16 @@ static int csi2rx_set_fmt(struct v4l2_subdev *subdev,
+>>   	format->format.field = V4L2_FIELD_NONE;
+>>   
+>>   	/* Set sink format */
+>> -	fmt = v4l2_subdev_state_get_format(state, format->pad);
+>> +	fmt = v4l2_subdev_state_get_format(state, format->pad, format->stream);
+>>   	*fmt = format->format;
+>>   
+>> -	/* Propagate to source formats */
+>> -	for (i = CSI2RX_PAD_SOURCE_STREAM0; i < CSI2RX_PAD_MAX; i++) {
+>> -		fmt = v4l2_subdev_state_get_format(state, i);
+>> -		*fmt = format->format;
+>> -	}
+>> +	/* Propagate to source format */
+>> +	fmt = v4l2_subdev_state_get_opposite_stream_format(state, format->pad,
+>> +							   format->stream);
+>> +	if (!fmt)
+>> +		return -EINVAL;
+>> +
+>> +	*fmt = format->format;
+>>   
+>>   	return 0;
+>>   }
+>> @@ -470,40 +615,92 @@ static int csi2rx_set_fmt(struct v4l2_subdev *subdev,
+>>   static int csi2rx_init_state(struct v4l2_subdev *subdev,
+>>   			     struct v4l2_subdev_state *state)
+>>   {
+>> -	struct v4l2_subdev_format format = {
+>> -		.pad = CSI2RX_PAD_SINK,
+>> -		.format = {
+>> -			.width = 640,
+>> -			.height = 480,
+>> -			.code = MEDIA_BUS_FMT_UYVY8_1X16,
+>> -			.field = V4L2_FIELD_NONE,
+>> -			.colorspace = V4L2_COLORSPACE_SRGB,
+>> -			.ycbcr_enc = V4L2_YCBCR_ENC_601,
+>> -			.quantization = V4L2_QUANTIZATION_LIM_RANGE,
+>> -			.xfer_func = V4L2_XFER_FUNC_SRGB,
+>> +	struct v4l2_subdev_route routes[] = {
+>> +		{
+>> +			.sink_pad = CSI2RX_PAD_SINK,
+>> +			.sink_stream = 0,
+>> +			.source_pad = CSI2RX_PAD_SOURCE_STREAM0,
+>> +			.source_stream = 0,
+>> +			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
+>>   		},
+>>   	};
+>>   
+>> -	return csi2rx_set_fmt(subdev, state, &format);
+>> +	struct v4l2_subdev_krouting routing = {
+>> +		.num_routes = ARRAY_SIZE(routes),
+>> +		.routes = routes,
+>> +	};
+>> +
+>> +	return _csi2rx_set_routing(subdev, state, &routing);
+>>   }
+>>   
+>>   static int csi2rx_get_frame_desc(struct v4l2_subdev *subdev, unsigned int pad,
+>>   				 struct v4l2_mbus_frame_desc *fd)
+>>   {
+>>   	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
+>> +	struct v4l2_mbus_frame_desc source_fd = {0};
+>> +	struct v4l2_subdev_route *route;
+>> +	struct v4l2_subdev_state *state;
+>> +	int ret;
+>>   
+>> -	return csi2rx_get_frame_desc_from_source(csi2rx, fd);
+>> +	ret = csi2rx_get_frame_desc_from_source(csi2rx, &source_fd);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
+>> +
+>> +	state = v4l2_subdev_lock_and_get_active_state(subdev);
+>> +
+>> +	for_each_active_route(&state->routing, route) {
+>> +		struct v4l2_mbus_frame_desc_entry *source_entry = NULL;
+>> +		unsigned int i;
+>> +
+>> +		if (route->source_pad != pad)
+>> +			continue;
+>> +
+>> +		for (i = 0; i < source_fd.num_entries; i++) {
+>> +			if (source_fd.entry[i].stream == route->sink_stream) {
+>> +				source_entry = &source_fd.entry[i];
+>> +				break;
+>> +			}
+>> +		}
+>> +
+>> +		if (!source_entry) {
+>> +			dev_err(csi2rx->dev,
+>> +				"Failed to find stream from source frame desc\n");
+>> +			ret = -EPIPE;
+>> +			goto err_missing_stream;
+>> +		}
+>> +
+>> +		fd->entry[fd->num_entries].stream = route->source_stream;
+>> +		fd->entry[fd->num_entries].flags = source_entry->flags;
+>> +		fd->entry[fd->num_entries].length = source_entry->length;
+>> +		fd->entry[fd->num_entries].pixelcode = source_entry->pixelcode;
+>> +		fd->entry[fd->num_entries].bus.csi2.vc =
+>> +			source_entry->bus.csi2.vc;
+>> +		fd->entry[fd->num_entries].bus.csi2.dt =
+>> +			source_entry->bus.csi2.dt;
+>> +
+>> +		fd->num_entries++;
+>> +	}
+>> +
+>> +err_missing_stream:
+>> +	v4l2_subdev_unlock_state(state);
+>> +
+>> +	return ret;
+>>   }
+>>   
+>>   static const struct v4l2_subdev_pad_ops csi2rx_pad_ops = {
+>> -	.enum_mbus_code	= csi2rx_enum_mbus_code,
+>> -	.get_fmt	= v4l2_subdev_get_fmt,
+>> -	.set_fmt	= csi2rx_set_fmt,
+>> -	.get_frame_desc	= csi2rx_get_frame_desc,
+>> +	.enum_mbus_code		= csi2rx_enum_mbus_code,
+>> +	.get_fmt		= v4l2_subdev_get_fmt,
+>> +	.set_fmt		= csi2rx_set_fmt,
+>> +	.get_frame_desc		= csi2rx_get_frame_desc,
+>> +	.set_routing		= csi2rx_set_routing,
+>> +	.enable_streams		= csi2rx_enable_streams,
+>> +	.disable_streams	= csi2rx_disable_streams,
+>>   };
+>>   
+>>   static const struct v4l2_subdev_video_ops csi2rx_video_ops = {
+>> -	.s_stream	= csi2rx_s_stream,
+>> +	.s_stream	= csi2rx_s_stream_fallback,
+>>   };
+>>   
+>>   static const struct v4l2_subdev_ops csi2rx_subdev_ops = {
+>> @@ -735,7 +932,8 @@ static int csi2rx_probe(struct platform_device *pdev)
+>>   	csi2rx->pads[CSI2RX_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
+>>   	for (i = CSI2RX_PAD_SOURCE_STREAM0; i < CSI2RX_PAD_MAX; i++)
+>>   		csi2rx->pads[i].flags = MEDIA_PAD_FL_SOURCE;
+>> -	csi2rx->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+>> +	csi2rx->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE |
+>> +		V4L2_SUBDEV_FL_STREAMS;
+>>   	csi2rx->subdev.entity.ops = &csi2rx_media_ops;
+>>   
+>>   	ret = media_entity_pads_init(&csi2rx->subdev.entity, CSI2RX_PAD_MAX,
+
+
+Regards,
+
+Rishikesh
+
 
