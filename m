@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-635468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40157AABDBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:49:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85992AABDC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F463AD9C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5AB1C23701
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FFB24A064;
-	Tue,  6 May 2025 08:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7TA1r1e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039ED21B9F4
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 08:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40366265CDC;
+	Tue,  6 May 2025 08:50:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA46256C7D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 08:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746521389; cv=none; b=ZeW/k+e/6EFyMUea+sm4OgPAe4ee4Ud8m+evQIBtfPOjRWlzcY77hHXnvqEk1IQu4zJRF+13awWIh3rc33fxxnEQ8H22mGIV5K/xMa/VHZVrcEYgOJu9UYocU54uny3/Lil+2mwaJawU9/zB/Bws+/jZbUe65bUeZXler9UpwCU=
+	t=1746521415; cv=none; b=KpN4nX3vknagH1mMDMEuBv/bf8ZiMqL/hSS5Y/cEK7/gUPiV0tv37pqRc06NCXVR0Qqm5uzuODts7c8AxqRs0A5OeNLMjErKbkQ1BkcT8zBkrYxfI6Rmms5c5qQaZgAUAjSdiQF+MLj5FQATmHkwTxmjDMx4S39v3Hc+KNqaeN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746521389; c=relaxed/simple;
-	bh=IkiVXT+PKsh4llC2LahuhaCyBWw4ngnV5q8E2WfJgNk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cpHBmtp4ZBCv9m9ifc+ecVYA41pNN+QsJvM4XYkseiyC1jmpLKzr9vz3Q1YSHMfrcjsDcqDRi8JZScXjIFVCXQoBHdaKhj7rH7JJoD3MTukLxuExG4n98qnhryamw7A923nXLL0sA4f5JvnsZIXXDJsrelZrs754YLvjNWLsb60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7TA1r1e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C005C4CEED;
-	Tue,  6 May 2025 08:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746521388;
-	bh=IkiVXT+PKsh4llC2LahuhaCyBWw4ngnV5q8E2WfJgNk=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=t7TA1r1eekcd4AQUTFcIYbnAof8tnisy+NVn6hS2z0jBl9iSKZfdYtJUQ5P06BQEb
-	 grmXkBwPOfgtj+bQp2ntSwbIU4vfGRKcR8r9Oud16BqipjOSr8+iJTxIjzUQyh82CP
-	 RxhL8VFHoXELpVV1VTDQo9vohCCuvsiAwzrymewqW35nFu2/IEDbn0xD26GwMFRIDM
-	 20vSvdnl6l6RHDomCJJth11nQj2x8JsYjKWubCKEac5Q9wS80KP6G67s5TuW0JJPwe
-	 ZjvsOm8A1l4ehn7qsdVIsXBWqFOMJbHZvQi72BS+2mep106XFSoLztEoEWXuaXGjK9
-	 4G/Ku4VKDn7Ig==
-Message-ID: <45f54805-b357-4391-8a43-5825e8dcbd56@kernel.org>
-Date: Tue, 6 May 2025 16:49:45 +0800
+	s=arc-20240116; t=1746521415; c=relaxed/simple;
+	bh=3RvPLD8Bc/MghdA2heAQ7y4RvOnnzNfb+rU6nieE8e8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hLZzO7ygAyv+kinA2XxwN0wRlGBuMtk7LU4JfQQsVqRogIn971RmhSK2ziqbT/942+8p5Pi5uxHjC3dG9fsDcYxrEpvEc6Yo5tstO5bQHB+Tss3sQRfr/RZUY4QCCNdf7LcSzj8jGbaHwMcYR4eOdgVrx8acDAamgzIstaPs/FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7381D113E;
+	Tue,  6 May 2025 01:50:03 -0700 (PDT)
+Received: from [10.163.54.208] (unknown [10.163.54.208])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C04EC3F673;
+	Tue,  6 May 2025 01:50:04 -0700 (PDT)
+Message-ID: <4cee3168-cb9f-4b73-a2f5-51ac177c35dc@arm.com>
+Date: Tue, 6 May 2025 14:20:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,40 +41,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Chris Li <chrisl@kernel.org>, David Hildenbrand <david@redhat.com>,
- Yosry Ahmed <yosryahmed@google.com>,
- "Huang, Ying" <ying.huang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>,
- Johannes Weiner <hannes@cmpxchg.org>, linux-kernel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v3 3/6] f2fs: drop usage of folio_index
-To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
-References: <20250430181052.55698-1-ryncsn@gmail.com>
- <20250430181052.55698-4-ryncsn@gmail.com>
+Subject: Re: [PATCH 1/3] mm: Call pointers to ptes as ptep
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com,
+ ryan.roberts@arm.com, mingo@kernel.org, libang.li@antgroup.com,
+ maobibo@loongson.cn, zhengqi.arch@bytedance.com, baohua@kernel.org,
+ willy@infradead.org, ioworker0@gmail.com, yang@os.amperecomputing.com
+References: <20250506050056.59250-1-dev.jain@arm.com>
+ <20250506050056.59250-2-dev.jain@arm.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250430181052.55698-4-ryncsn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250506050056.59250-2-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2025/5/1 2:10, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
+On 5/6/25 10:30, Dev Jain wrote:
+> Avoid confusion between pte_t* and pte_t data types by appending pointer
+> type variables by p. No functional change.
 > 
-> folio_index is only needed for mixed usage of page cache and swap
-> cache, for pure page cache usage, the caller can just use
-> folio->index instead.
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>  mm/mremap.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
 > 
-> It can't be a swap cache folio here.  Swap mapping may only call into fs
-> through `swap_rw` but f2fs does not use that method for swap.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org> (maintainer:F2FS FILE SYSTEM)
-> Cc: Chao Yu <chao@kernel.org> (maintainer:F2FS FILE SYSTEM)
-> Cc: linux-f2fs-devel@lists.sourceforge.net (open list:F2FS FILE SYSTEM)
-> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 7db9da609c84..1a08a7c3b92f 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -176,7 +176,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  	struct vm_area_struct *vma = pmc->old;
+>  	bool need_clear_uffd_wp = vma_has_uffd_without_event_remap(vma);
+>  	struct mm_struct *mm = vma->vm_mm;
+> -	pte_t *old_pte, *new_pte, pte;
+> +	pte_t *old_ptep, *new_ptep, pte;
+>  	pmd_t dummy_pmdval;
+>  	spinlock_t *old_ptl, *new_ptl;
+>  	bool force_flush = false;
+> @@ -211,8 +211,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  	 * We don't have to worry about the ordering of src and dst
+>  	 * pte locks because exclusive mmap_lock prevents deadlock.
+>  	 */
+> -	old_pte = pte_offset_map_lock(mm, old_pmd, old_addr, &old_ptl);
+> -	if (!old_pte) {
+> +	old_ptep = pte_offset_map_lock(mm, old_pmd, old_addr, &old_ptl);
+> +	if (!old_ptep) {
+>  		err = -EAGAIN;
+>  		goto out;
+>  	}
+> @@ -223,10 +223,10 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  	 * mmap_lock, so this new_pte page is stable, so there is no need to get
+>  	 * pmdval and do pmd_same() check.
+>  	 */
+> -	new_pte = pte_offset_map_rw_nolock(mm, new_pmd, new_addr, &dummy_pmdval,
+> +	new_ptep = pte_offset_map_rw_nolock(mm, new_pmd, new_addr, &dummy_pmdval,
+>  					   &new_ptl);
+> -	if (!new_pte) {
+> -		pte_unmap_unlock(old_pte, old_ptl);
+> +	if (!new_ptep) {
+> +		pte_unmap_unlock(old_ptep, old_ptl);
+>  		err = -EAGAIN;
+>  		goto out;
+>  	}
+> @@ -235,12 +235,12 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  	flush_tlb_batched_pending(vma->vm_mm);
+>  	arch_enter_lazy_mmu_mode();
+>  
+> -	for (; old_addr < old_end; old_pte++, old_addr += PAGE_SIZE,
+> -				   new_pte++, new_addr += PAGE_SIZE) {
+> -		if (pte_none(ptep_get(old_pte)))
+> +	for (; old_addr < old_end; old_ptep++, old_addr += PAGE_SIZE,
+> +				   new_ptep++, new_addr += PAGE_SIZE) {
+> +		if (pte_none(ptep_get(old_ptep)))
+>  			continue;
+>  
+> -		pte = ptep_get_and_clear(mm, old_addr, old_pte);
+> +		pte = ptep_get_and_clear(mm, old_addr, old_ptep);
+>  		/*
+>  		 * If we are remapping a valid PTE, make sure
+>  		 * to flush TLB before we drop the PTL for the
+> @@ -258,7 +258,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  		pte = move_soft_dirty_pte(pte);
+>  
+>  		if (need_clear_uffd_wp && pte_marker_uffd_wp(pte))
+> -			pte_clear(mm, new_addr, new_pte);
+> +			pte_clear(mm, new_addr, new_ptep);
+>  		else {
+>  			if (need_clear_uffd_wp) {
+>  				if (pte_present(pte))
+> @@ -266,7 +266,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  				else if (is_swap_pte(pte))
+>  					pte = pte_swp_clear_uffd_wp(pte);
+>  			}
+> -			set_pte_at(mm, new_addr, new_pte, pte);
+> +			set_pte_at(mm, new_addr, new_ptep, pte);
+>  		}
+>  	}
+>  
+> @@ -275,8 +275,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>  		flush_tlb_range(vma, old_end - len, old_end);
+>  	if (new_ptl != old_ptl)
+>  		spin_unlock(new_ptl);
+> -	pte_unmap(new_pte - 1);
+> -	pte_unmap_unlock(old_pte - 1, old_ptl);
+> +	pte_unmap(new_ptep - 1);
+> +	pte_unmap_unlock(old_ptep - 1, old_ptl);
+>  out:
+>  	if (pmc->need_rmap_locks)
+>  		drop_rmap_locks(vma);
 
-Reviewed-by: Chao Yu <chao@kernel.org>
-
-Thanks,
+Although this makes sense, mm/mremap.c might not be the only place with such
+naming confusions regarding page table entry and page table pointers. Rather
+than fixing this in just a single file, I guess generic MM wide change will
+be better.
 
