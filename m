@@ -1,59 +1,44 @@
-Return-Path: <linux-kernel+bounces-635371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A5BAABCBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:12:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98C6AABC8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D36D13A7F71
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BADF91C262DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8828854F81;
-	Tue,  6 May 2025 07:50:07 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D1772628;
+	Tue,  6 May 2025 07:51:23 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C2526AEC
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 07:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BEF4B1E6B;
+	Tue,  6 May 2025 07:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746517807; cv=none; b=Ele38rTDt3nilnX621Qj/UHmpaIfbZuhWJllpeZcHNJ3HjuG5lTF3GkCCWLN/zk7XNOvmcIxWpO4v4cmJxBDItZnQoYF2Bv6MuzKk+W695xxkXw2Ktw9NAQfqXiCMgcOR79QyW0Dhe5/vEiOrAeL2j5wQ1nyJ3mHce2OO6WDCQg=
+	t=1746517883; cv=none; b=BaxwbXjyh7CAKHPtpfrT1CZdxEIkftbfOMmkXqWq4lmb5bRTKNMzfZo8pzKBZkM8S3L514z5A4px/vdmFGqQceD5XU1rhVHBfqRp2rpfel+1s0pdiNdf+8t4MUifZRZAIOOWLZikG0RLR8kXjg0UMfGNBUFOnGDmWT4kP3S4x1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746517807; c=relaxed/simple;
-	bh=Tsv8HLmROnKwY1//B4jmslP8r2buTeYlf1eAWRUOm+E=;
+	s=arc-20240116; t=1746517883; c=relaxed/simple;
+	bh=1CX/lfJBBRj/7Bkzs8EaPt98CGd3E61b+7bPWFKLsdI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YCDGvCatlPoAE8JSHKqEj/in0barG60BsnNdXE0d/LZVUyxP+0nzcH1riQHv2SRk9uedbJSkzGmuDAd1aOc1/NMWfiEWnEJchvcBULwI3yZBsClJ+dsb8e2ubGjBHfJLJv34QSpp12KOcJlyU5euCUQm9fNrbeFY/eG2JOu0xlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b5578d002a4e11f0b29709d653e92f7d-20250506
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:cb29c965-2077-4190-aee9-9240cac32254,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:ea5e65c498a5b89f7f91986f7daa7aa2,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b5578d002a4e11f0b29709d653e92f7d-20250506
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <huangbing@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 521657902; Tue, 06 May 2025 15:49:58 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 71D19B804EBD;
-	Tue,  6 May 2025 15:49:58 +0800 (CST)
-X-ns-mid: postfix-6819BF26-379280122
-Received: from [10.42.12.196] (unknown [10.42.12.196])
-	by node2.com.cn (NSMail) with ESMTPA id DA6B4B80758A;
-	Tue,  6 May 2025 07:49:57 +0000 (UTC)
-Message-ID: <20cf7a95-68c0-4e18-ab24-9112b07a2697@kylinos.cn>
-Date: Tue, 6 May 2025 15:49:57 +0800
+	 In-Reply-To:Content-Type; b=bTgHqQpo8kNbM5mWksZVCQbMA6JYrQIfL4tymVgN9LgtYWjjIE+Aq2ThtsJAff2dbYf7OKjlcfSd9hR6a7xKYqnprjqibEXRPyy7u6DcxkJ9zYknf2+Itd8sj1oyhlnv5VBp17xrlYhwYMbWgoGU6Kbp3RIKSrzcwvPvn8dylKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zs9Ym0TKjz4f3jXs;
+	Tue,  6 May 2025 15:50:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 798ED1A1C5E;
+	Tue,  6 May 2025 15:51:16 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXe19yvxlod1paLg--.34192S3;
+	Tue, 06 May 2025 15:51:16 +0800 (CST)
+Message-ID: <52c1dd13-1a04-4d9a-b687-639ed348474e@huaweicloud.com>
+Date: Tue, 6 May 2025 15:51:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,66 +46,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] tools/sched_ext: Fix errors when running make mrproper
-To: Andrea Righi <arighi@nvidia.com>
-Cc: tj@kernel.org, void@manifault.com, changwoo@igalia.com,
- joshdon@google.com, brho@google.com, haoluo@google.com,
- linux-kernel@vger.kernel.org
-References: <20250506073432.2291120-1-huangbing@kylinos.cn>
- <aBm8ksy5IQAbhga1@gpd3>
+Subject: Re: [RFC PATCH v4 01/11] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP
+ to queue limits features
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
+ tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
+ bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
+ brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
+ <20250421021509.2366003-2-yi.zhang@huaweicloud.com>
+ <yq18qnav4zj.fsf@ca-mkp.ca.oracle.com>
 Content-Language: en-US
-From: Bing Huang <huangbing@kylinos.cn>
-In-Reply-To: <aBm8ksy5IQAbhga1@gpd3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <yq18qnav4zj.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXe19yvxlod1paLg--.34192S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF4rtF4kur4rCryrKF15Arb_yoW5AF1rp3
+	yjv3W8tr9xGF17uw1kZw1vqry5uws3CFW3Gw48X3s09ws8XF1xtFySqFyYg3yxGr1fGa4j
+	vFWvqa47Aan8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
+Hi, Martin!
 
-On 5/6/25 15:38, Andrea Righi wrote:
-> On Tue, May 06, 2025 at 03:34:32PM +0800, Bing Huang wrote:
->> If the system environment used to compile the kernel code does not
->> have the BTF feature enabled, running make mrproper will result in
->> errors similar to the following:
->>
->> Makefile:84: *** Cannot find a vmlinux for VMLINUX_BTF at any of "  ../../vmlinux /sys/kernel/btf/vmlinux /boot/vmlinux-4.4.131-20190505.kylin.server-generic".  Stop.
->> make[2]: *** [Makefile:192: sched_ext_clean] Error 2
->> make[1]: *** [/home/huangbing/klinux/Makefile:1374: sched_ext] Error 2
->> make: *** [Makefile:236: __sub-make] Error 2
->>
->> Signed-off-by: Bing Huang <huangbing@kylinos.cn>
->> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> You can just add Suggested-by here, no need to add my SoB line. Apart than
-> that, looks good to me.
->
-> Reviewed-by: Andrea Righi <arighi@nvidia.com>
->
-> Thanks,
-> -Andrea
->
-OK. Thanks! v3 will sent.
->> ---
->>
->> v1->v2: Sort MAKECMDGOALS and check for clean target
->>
->>   tools/sched_ext/Makefile | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/tools/sched_ext/Makefile b/tools/sched_ext/Makefile
->> index ca3815e572d8..212717aa78af 100644
->> --- a/tools/sched_ext/Makefile
->> +++ b/tools/sched_ext/Makefile
->> @@ -79,9 +79,11 @@ VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)					\
->>   		     /sys/kernel/btf/vmlinux					\
->>   		     /boot/vmlinux-$(shell uname -r)
->>   VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
->> +ifneq ($(sort $(MAKECMDGOALS)),clean)
->>   ifeq ($(VMLINUX_BTF),)
->>   $(error Cannot find a vmlinux for VMLINUX_BTF at any of "$(VMLINUX_BTF_PATHS)")
->>   endif
->> +endif
->>   
->>   BPFTOOL ?= $(DEFAULT_BPFTOOL)
->>   
->> -- 
->> 2.25.1
->>
+On 2025/5/6 12:21, Martin K. Petersen wrote:
+> 
+> Hi Zhang!
+> 
+>> +		[RO] Devices that explicitly support the unmap write zeroes
+>> +		operation in which a single write zeroes request with the unmap
+>> +		bit set to zero out the range of contiguous blocks on storage
+>> +		by freeing blocks, rather than writing physical zeroes to the
+>> +		media. If the write_zeroes_unmap is set to 1, this indicates
+>> +		that the device explicitly supports the write zero command.
+>> +		However, this may be a best-effort optimization rather than a
+>> +		mandatory requirement, some devices may partially fall back to
+>> +		writing physical zeroes due to factors such as receiving
+>> +		unaligned commands. If the parameter is set to 0, the device
+>> +		either does not support this operation, or its support status is
+>> +		unknown.
+> 
+> I am not so keen on mixing Write Zeroes (which is NVMe-speak) and Unmap
+> (which is SCSI). Also, Deallocate and Unmap reflect block provisioning
+> state on the device but don't really convey what is semantically
+> important for your proposed change (zeroing speed and/or media wear
+> reduction).
+> 
+
+Since this flag doesn't strictly guarantee zeroing speed or media wear
+reduction optimizations, but rather reflects typical optimization
+behavior across most supported devices and cases. Therefore, I propose
+using a name that accurately indicates the function of the block device.
+However, also can't think of a better name either. Using the name
+WRITE_ZEROES_UNMAP seems appropriate to convey that the block device
+supports this type of Deallocate and Unmap state.
+
+> That said, I'm having a hard time coming up with a better term.
+> WRITE_ZEROES_OPTIMIZED, maybe? Naming is hard...
+
+Using WRITE_ZEROES_OPTIMIZED feels somewhat too generic to me, and
+users may not fully grasp the specific optimizations it entails based
+on the name.
+
+> 
+> For the description, perhaps something like the following which tries to
+> focus on the block layer semantics without using protocol-specific
+> terminology?
+> 
+> [RO] This parameter indicates whether a device supports zeroing data in
+> a specified block range without incurring the cost of physically writing
+> zeroes to media for each individual block. This operation is a
+> best-effort optimization, a device may fall back to physically writing
+> zeroes to media due to other factors such as misalignment or being asked
+> to clear a block range smaller than the device's internal allocation
+> unit. If write_zeroes_unmap is set to 1, the device implements a zeroing
+> operation which opportunistically avoids writing zeroes to media while
+> still guaranteeing that subsequent reads from the specified block range
+> will return zeroed data. If write_zeroes_unmap is set to 0, the device
+> may have to write each logical block media during a zeroing operation.
+> 
+
+Thank you for optimizing the description, it looks good to me. I'd like
+to this one in my next iteration. :)
+
+Thanks,
+Yi.
+
 
