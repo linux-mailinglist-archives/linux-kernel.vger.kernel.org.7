@@ -1,163 +1,363 @@
-Return-Path: <linux-kernel+bounces-635808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348E4AAC23A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71945AAC24A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E18F4E7352
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1072E4C46AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB2B279903;
-	Tue,  6 May 2025 11:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F28279902;
+	Tue,  6 May 2025 11:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q8h74pHz"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wlakhSX1"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E316E27875F
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDD61474B8;
+	Tue,  6 May 2025 11:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746530166; cv=none; b=TPEv82JVuoTl0rgXk0/+Lg8QFWWaqYEyDlcGapIPQprSDvlNo+cAYwGe1xySAg0CwgwvKixOXZBRiPdbx4i2SAn+dqDV3m6Ofnd3pW/7uwvb/op/zz7ArEYcU1ZAMmA/wWXMSX8vj/gSGxu0qwJ7ftyEgP84bv7maHyo2ucKAsg=
+	t=1746530335; cv=none; b=Ph6jsrx+3M6kELyMf2IZlDOhElO2V/uy4FzPnRKW69YAa1+W3Xz31K5HIonp+lyjwtsdnjM/nm2HslVdRJBqHCzuyqGn4zjl2FXBQdgOU9yjA/uqyzQQ3+Wc900h11EVzPUed+4qMCNQOoV9DurEAjmNMGLbACBfKIx8IXcCXaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746530166; c=relaxed/simple;
-	bh=Ic6iSBqqOYzgqBs0HWZuf5LIeAmlU/Dk/nOP/28CaHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUEJ8STTk9PYUUr2ZcVxsXThNcL8qUIZHHMeriVLYVec2wWwYcz9esL7/tAHW9KF/EvKyyTLH/NYMGGl8Aa+NnlWrphRx8nOQK2vYz3C6XeVF7d84FpjibbPTZuEHZ95XnrS/DCIR6ZyCHk25mAuMXWISl/re/jBl7UIHspufwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q8h74pHz; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso50367625e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 04:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746530162; x=1747134962; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AZCwgOWOOCWTlbTNg+Glm3yWO7Px7uzRJr4qQIo37HE=;
-        b=q8h74pHzgCsX2aFWHKuI7jWS0k5ifTSuGh+hdR6G4sVgVqHRmD1nLZVAyQUfUYq96e
-         IsNxObUHqkcVkzSJM+sg+NtKaa7b4SxyC1/i8voGv7GDeCApBd12VY+NUmdvNXn3EVcU
-         NercAKKrONxgUJetuGfmvQnIzbYgXWgawWRu2Pm9OOy5bw5aOeO/YrYppAXRS4okSHzg
-         /B00IqjDsFL7OSQqw6rWVuLyddk3duXdNt075YOQh9NYu6Wa/XhVKLfB+NOtpVjWO+Gg
-         d/wQjO298/WcGJmABbtOoU29QmhdXDjU1CET7U5dHIRKOXZrmr3k1jaTvdXRvL1aiRYl
-         k3oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746530162; x=1747134962;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AZCwgOWOOCWTlbTNg+Glm3yWO7Px7uzRJr4qQIo37HE=;
-        b=emeWtkSZExPJ//Ak1swLK8GBF9dgasWPWd6USo2H6aKFhkyNJ6rA0v3eeCbVD9K3bg
-         uH685Q121zkA3jsLwPKa2TJyhbKCAH4bl5NHIkWK1kEb2tmowUCHa1Crqe3iQg38OhxJ
-         cxcPXJRMnp2fJ/r97A8Oz0g8kkGcC8HniY5lDDx2IkzanjRtnN3fvI6wmwzungH3htn0
-         2ieGpf+Sxfpu7fwA+gUNmtDHQRkA7IoG4afYRFPDHSBJzvsAHqNmekT8ymv4vYYVjtbX
-         X9btOrqgljqZAe9lts8OZjP255nX98aUUdwlVoSYgbuGycGGd+b3pa/YkJAwGb4etYLE
-         zfNg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4f9Fl6e7bifW/uHUv3pVR7dDrgpZj9LiL4lrzB+j0jEXuURin8A3eXDYRxcsUtZqMAT9KsbNikKBWKvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwylDRuc/HjUoFVAp2LrBV2GeeZlLV+Yuy2Acus+SPwr73Q4uKu
-	zTYEJXjY6IgedOJT/GQrlcjYUfN/bAEyw+UOEGCNDDzpFBxlJwElpUp4sXBCxGA=
-X-Gm-Gg: ASbGncvMtfgzy0tQ8E3ZxQ008bXz77XzW2IkJQsy8TE2jVE5u7bejoLO17S4Ngpnt5r
-	Dl+dbABH+7Yh6SRT3YeY7gDiIeYOzuSJAyiwH+wGMS9s7BEMcqVPLtMOEMyt0ltNdM5CI9KNItT
-	MRHmk7wrBcO8/VMeDcdk+MapPL14KdpdQF8/2ZidzGycNlvfvKFEs3UG06RBDxOsTqEI5FNzwxW
-	KUsM9hn9vq9h8fx2U8WB/5cVp1Cb2T0mbvB8FGccyk3/aYtlNtuO22VpR7ANKFYCxKeHAMq4mJg
-	cR5zEw544qiLK8MRMHodLpP1KB5VTch0F/e3mjbJ2L3hu8rxHke/4unz
-X-Google-Smtp-Source: AGHT+IEb/FzHjC2BdixzCZvpPpVp5jderqE1DM9mJQuUaUitas1wO3yPRwuVgog0ub9hO25i19Te4w==
-X-Received: by 2002:a05:600c:4ec6:b0:43c:e8a5:87a with SMTP id 5b1f17b1804b1-441c48dc0a1mr103108985e9.16.1746530162207;
-        Tue, 06 May 2025 04:16:02 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b8a286b9sm164637705e9.28.2025.05.06.04.16.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 04:16:01 -0700 (PDT)
-Date: Tue, 6 May 2025 14:15:57 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] mtd: rawnand: loongson1: Fix error code in
- ls1x_nand_dma_transfer()
-Message-ID: <aBnvbYaE-tud_o0x@stanley.mountain>
-References: <aBSEwag_ducqOwy7@stanley.mountain>
- <CAJhJPsUZz2kwMyWPDrc_ktb5O6ECcAyO1OrXXVWh9yvkrKRidg@mail.gmail.com>
- <aBnXPYLSNJASR51f@stanley.mountain>
- <CAJhJPsX2-Q+Yq86_Vdyxe-_SVR0j1e5buE8Yw+RbJgp6Kadh8Q@mail.gmail.com>
+	s=arc-20240116; t=1746530335; c=relaxed/simple;
+	bh=wtRQ4XQBaMQmvOwsZOh6o7ClrKrzaIGqwwsEjf66U4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aad1zRrMw9MEodsrjzzhYHv8Ewdc8pCIDsXG3+jCVLT+0UgJeOBqQRhebJZBB28CIAwy2tYuda6Q8DVWDfbT6nEjmwnV7VPiJuOMMgSbhIYqOok4PhJ4AawB4G60v5TdBdEVRc1/Po3jXFq1f3r+g0uVjuMvmqD1ZvyPunT+T+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wlakhSX1; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5467UZHj021792;
+	Tue, 6 May 2025 13:18:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	WxmcLrwGcqc7QpVv6acAd0gwXsrDP5fqTcYOjQ8D9+0=; b=wlakhSX1t7nqDwZS
+	JjTrcRTqDaTRp69fMCys7ZY7eh7oS03D3w7Fbve4fg7cEuyEbNHG3YZHxqt2BUSS
+	Smt5G9wwa0GAwbWc9c+kgyLJqChn5VFL6LfC2hhSUZiCYCF1fbolm+2uk0JqjLZ/
+	Hbru7zzKocFnFKbq9tHvPIvphmq+5/RhbpjYUUyda2UMdxaen9cSeXBkGiLHPXAK
+	8EqbkLgedveMbKl1KdgUHuX/nGqj8z2uyjdArY/UuEubiGmTwmO41gBtOGoWs1Iz
+	rpee5Zl6HyN0g4fgqmYnRpKA9ThIZsaLJQAJlx2Se4q+s8T6i5QRiBt0voFlvDsl
+	yrAYFw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46dx3m937d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 13:18:22 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0DAA74004C;
+	Tue,  6 May 2025 13:17:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7A381AA8119;
+	Tue,  6 May 2025 13:16:23 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 May
+ 2025 13:16:22 +0200
+Message-ID: <ad80e3b8-4f62-4c58-8dbd-762f0b268713@foss.st.com>
+Date: Tue, 6 May 2025 13:16:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJhJPsX2-Q+Yq86_Vdyxe-_SVR0j1e5buE8Yw+RbJgp6Kadh8Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/3] memory: Add STM32 Octo Memory Manager driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250506-upstream_ospi_v6-v12-0-e3bb5a0d78fb@foss.st.com>
+ <20250506-upstream_ospi_v6-v12-2-e3bb5a0d78fb@foss.st.com>
+ <88b463b2-6cd3-4b92-acc5-447bbfadabde@kernel.org>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <88b463b2-6cd3-4b92-acc5-447bbfadabde@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_05,2025-05-05_01,2025-02-21_01
 
-On Tue, May 06, 2025 at 06:01:15PM +0800, Keguang Zhang wrote:
-> On Tue, May 6, 2025 at 5:32 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > On Tue, May 06, 2025 at 05:16:03PM +0800, Keguang Zhang wrote:
-> > > On Fri, May 2, 2025 at 4:39 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > > >
-> > > > The "desc" variable is NULL and PTR_ERR(NULL) is zero/success.  Return
-> > > > a negative error code instead.
-> > > >
-> > > > Fixes: d2d10ede04b1 ("mtd: rawnand: Add Loongson-1 NAND Controller Driver")
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > > ---
-> > > > It's hard to know what the patch prefix should be here.  Ideally when we
-> > > > add a new driver we would use the patch prefix for the driver.
-> > > >
-> > > > Tired: subsystem: Add driver XXX
-> > > > Wired: subsystem: XXX: Add driver for XXX
-> > > >
-> > > >  drivers/mtd/nand/raw/loongson1-nand-controller.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/mtd/nand/raw/loongson1-nand-controller.c b/drivers/mtd/nand/raw/loongson1-nand-controller.c
-> > > > index 6a369b1c7d86..8754bb4f8b56 100644
-> > > > --- a/drivers/mtd/nand/raw/loongson1-nand-controller.c
-> > > > +++ b/drivers/mtd/nand/raw/loongson1-nand-controller.c
-> > > > @@ -371,7 +371,7 @@ static int ls1x_nand_dma_transfer(struct ls1x_nand_host *host, struct ls1x_nand_
-> > > >         desc = dmaengine_prep_slave_single(chan, dma_addr, op->len, xfer_dir, DMA_PREP_INTERRUPT);
-> > > >         if (!desc) {
-> > > >                 dev_err(dev, "failed to prepare DMA descriptor\n");
-> > > > -               ret = PTR_ERR(desc);
-> > > > +               ret = -ENOMEM;
-> > >
-> > > Thank you for fixing this issue.
-> > > However, I believe -EIO is more appropriate than -ENOMEM, since
-> > > dmaengine_prep_slave_single() can return errors other than -ENOMEM.
-> > >
-> >
-> > It's not an I/O error so -EIO isn't correct.
-> >
-> > There are a bunch of reasons it could fail but most likely
-> > dma_pool_alloc() failed.  I think -ENOMEM is correct.
-> >
+
+
+On 5/6/25 10:02, Krzysztof Kozlowski wrote:
+> On 06/05/2025 09:52, Patrice Chotard wrote:
+>> Octo Memory Manager driver (OMM) manages:
+>>   - the muxing between 2 OSPI busses and 2 output ports.
+>>     There are 4 possible muxing configurations:
+>>       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
+>>         output is on port 2
+>>       - OSPI1 and OSPI2 are multiplexed over the same output port 1
+>>       - swapped mode (no multiplexing), OSPI1 output is on port 2,
+>>         OSPI2 output is on port 1
+>>       - OSPI1 and OSPI2 are multiplexed over the same output port 2
+>>   - the split of the memory area shared between the 2 OSPI instances.
+>>   - chip select selection override.
+>>   - the time between 2 transactions in multiplexed mode.
+>>   - check firewall access.
+>>
+>> Signed-off-by: Christophe Kerello <christophe.kerello@foss.st.com>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>> ---
+>>  drivers/memory/Kconfig     |  18 ++
+>>  drivers/memory/Makefile    |   1 +
+>>  drivers/memory/stm32_omm.c | 476 +++++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 495 insertions(+)
+>>
+>> diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
+>> index c82d8d8a16eaf154c247c0dbb9aff428b7c81402..bc7ab46bd8b98a89f0d9173e884a99b778cdc9c4 100644
+>> --- a/drivers/memory/Kconfig
+>> +++ b/drivers/memory/Kconfig
+>> @@ -225,6 +225,24 @@ config STM32_FMC2_EBI
+>>  	  devices (like SRAM, ethernet adapters, FPGAs, LCD displays, ...) on
+>>  	  SOCs containing the FMC2 External Bus Interface.
+>>  
+>> +config STM32_OMM
+>> +	tristate "STM32 Octo Memory Manager"
+>> +	depends on ARCH_STM32 || COMPILE_TEST
+>> +	depends on SPI_STM32_OSPI
 > 
-> Have you reviewed the implementation of ls1x_dma_prep_slave_sg()?
+> I don't think you tested for the reported issue. I reported that
+> firewall symbols are missing and you add dependency on ospi. How is that
+> related? How does this solve any problem?
 
-The ls1x_dma_prep_slave_sg() has basically two error cases, buggy drivers
-and allocation errors.  Someone could argue that if people pass invalid
-data then the correct return is -EINVAL but in these cases it's a buggy
-driver and we fix bugs, we don't work around them.  So the correct
-return is -ENOMEM.
+Hi Krzysztof
 
-> Errors in this function can be caused not only by -ENOMEM, but also by -EINVAL.
-> Moreover, in most cases, the error handling logic for
-> dmaengine_prep_slave_single() returns -EIO when the function returns
-> NULL.
+The dependency with SPI_STM32_OSPI was already present since the beginning.
+I just added dependency on ARCH_STM32 on this current version to avoid issue on x86_64 arch.
 
-There are some that return -EIO but hardly the majority.  Other places
-return -ENOMEM or -EINVAL.  It's not worth going back and fixing all of
-these but really -ENOMEM is the correct return.
+On my side i tested compilation on arm, arm64 and x86_64 without any issue.
 
-regards,
-dan carpenter
+I tried to reproduce your build process:
 
+
+
+make -j16 defconfig
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/confdata.o
+  HOSTCC  scripts/kconfig/expr.o
+  LEX     scripts/kconfig/lexer.lex.c
+  YACC    scripts/kconfig/parser.tab.[ch]
+  HOSTCC  scripts/kconfig/menu.o
+  HOSTCC  scripts/kconfig/preprocess.o
+  HOSTCC  scripts/kconfig/symbol.o
+  HOSTCC  scripts/kconfig/util.o
+  HOSTCC  scripts/kconfig/lexer.lex.o
+  HOSTCC  scripts/kconfig/parser.tab.o
+  HOSTLD  scripts/kconfig/conf
+*** Default configuration is based on 'x86_64_defconfig'
+#
+# configuration written to .config
+#
+
+scripts/config --file .config -e COMPILE_TEST -e OF -e SRAM -e MEMORY -e PM_DEVFREQ -e FPGA -e FPGA_DFL
+
+scripts/config --file .config -e SAMSUNG_MC
+scripts/config --file .config -e EXYNOS5422_DMC
+scripts/config --file .config -e EXYNOS_SROM
+scripts/config --file .config -e TEGRA_MC
+scripts/config --file .config -e TEGRA20_EMC
+scripts/config --file .config -e TEGRA30_EMC
+scripts/config --file .config -e TEGRA124_EMC
+scripts/config --file .config -e TEGRA210_EMC_TABLE
+scripts/config --file .config -e TEGRA210_EMC
+scripts/config --file .config -e MEMORY
+scripts/config --file .config -e DDR
+scripts/config --file .config -e ARM_PL172_MPMC
+scripts/config --file .config -e ATMEL_EBI
+scripts/config --file .config -e BRCMSTB_DPFE
+scripts/config --file .config -e BRCMSTB_MEMC
+scripts/config --file .config -e BT1_L2_CTL
+scripts/config --file .config -e TI_AEMIF
+scripts/config --file .config -e TI_EMIF
+scripts/config --file .config -e OMAP_GPMC
+scripts/config --file .config -e OMAP_GPMC_DEBUG
+scripts/config --file .config -e TI_EMIF_SRAM
+scripts/config --file .config -e FPGA_DFL_EMIF
+scripts/config --file .config -e MVEBU_DEVBUS
+scripts/config --file .config -e FSL_CORENET_CF
+scripts/config --file .config -e FSL_IFC
+scripts/config --file .config -e JZ4780_NEMC
+scripts/config --file .config -e MTK_SMI
+scripts/config --file .config -e DA8XX_DDRCTL
+scripts/config --file .config -e PL353_SMC
+scripts/config --file .config -e RENESAS_RPCIF
+scripts/config --file .config -e STM32_FMC2_EBI
+scripts/config --file .config -e STM32_OMM
+
+make -j16 olddefconfig
+
+#
+# configuration written to .config
+#
+
+make -j16
+
+SYNC    include/config/auto.conf.cmd
+  GEN     arch/x86/include/generated/asm/orc_hash.h
+  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+  WRAP    arch/x86/include/generated/uapi/asm/errno.h
+  WRAP    arch/x86/include/generated/uapi/asm/fcntl.h
+  WRAP    arch/x86/include/generated/uapi/asm/ioctl.h
+  WRAP    arch/x86/include/generated/uapi/asm/ioctls.h
+  WRAP    arch/x86/include/generated/uapi/asm/ipcbuf.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_32.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_64.h
+  WRAP    arch/x86/include/generated/uapi/asm/param.h
+  WRAP    arch/x86/include/generated/uapi/asm/poll.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_x32.h
+  WRAP    arch/x86/include/generated/uapi/asm/resource.h
+  SYSTBL  arch/x86/include/generated/asm/syscalls_32.h
+  UPD     include/generated/uapi/linux/version.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_32_ia32.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_64_x32.h
+  WRAP    arch/x86/include/generated/uapi/asm/socket.h
+  SYSTBL  arch/x86/include/generated/asm/syscalls_64.h
+  WRAP    arch/x86/include/generated/uapi/asm/sockios.h
+  WRAP    arch/x86/include/generated/uapi/asm/termbits.h
+  UPD     arch/x86/include/generated/asm/cpufeaturemasks.h
+  WRAP    arch/x86/include/generated/uapi/asm/termios.h
+  HOSTCC  scripts/dtc/dtc.o
+
+[...]
+
+ CC      drivers/gpu/drm/i915/i915_vgpu.o
+  AR      drivers/gpu/drm/i915/built-in.a
+  AR      drivers/gpu/drm/built-in.a
+  AR      drivers/gpu/built-in.a
+  AR      drivers/built-in.a
+  AR      built-in.a
+  AR      vmlinux.a
+  LD      vmlinux.o
+  OBJCOPY modules.builtin.modinfo
+  GEN     modules.builtin
+  MODPOST Module.symvers
+  CC      .vmlinux.export.o
+  CC [M]  fs/efivarfs/efivarfs.mod.o
+  CC [M]  .module-common.o
+  CC [M]  drivers/thermal/intel/x86_pkg_temp_thermal.mod.o
+  CC [M]  drivers/cpufreq/mediatek-cpufreq-hw.mod.o
+  CC [M]  drivers/perf/thunderx2_pmu.mod.o
+  CC [M]  net/netfilter/xt_mark.mod.o
+  CC [M]  net/netfilter/nf_log_syslog.mod.o
+  CC [M]  net/netfilter/xt_nat.mod.o
+  CC [M]  net/netfilter/xt_LOG.mod.o
+  CC [M]  net/netfilter/xt_MASQUERADE.mod.o
+  CC [M]  net/netfilter/xt_addrtype.mod.o
+  CC [M]  net/ipv4/netfilter/iptable_nat.mod.o
+  LD [M]  fs/efivarfs/efivarfs.ko
+  LD [M]  drivers/cpufreq/mediatek-cpufreq-hw.ko
+  LD [M]  drivers/thermal/intel/x86_pkg_temp_thermal.ko
+  LD [M]  drivers/perf/thunderx2_pmu.ko
+  LD [M]  net/netfilter/xt_mark.ko
+  LD [M]  net/netfilter/nf_log_syslog.ko
+  LD [M]  net/ipv4/netfilter/iptable_nat.ko
+  LD [M]  net/netfilter/xt_MASQUERADE.ko
+  LD [M]  net/netfilter/xt_addrtype.ko
+  LD [M]  net/netfilter/xt_LOG.ko
+  LD [M]  net/netfilter/xt_nat.ko
+  UPD     include/generated/utsversion.h
+  CC      init/version-timestamp.o
+  KSYMS   .tmp_vmlinux0.kallsyms.S
+  AS      .tmp_vmlinux0.kallsyms.o
+  LD      .tmp_vmlinux1
+  NM      .tmp_vmlinux1.syms
+  KSYMS   .tmp_vmlinux1.kallsyms.S
+  AS      .tmp_vmlinux1.kallsyms.o
+  LD      .tmp_vmlinux2
+  NM      .tmp_vmlinux2.syms
+  KSYMS   .tmp_vmlinux2.kallsyms.S
+  AS      .tmp_vmlinux2.kallsyms.o
+  LD      vmlinux.unstripped
+  NM      System.map
+  SORTTAB vmlinux.unstripped
+  RSTRIP  vmlinux
+  CC      arch/x86/boot/a20.o
+  AS      arch/x86/boot/bioscall.o
+  CC      arch/x86/boot/cmdline.o
+  AS      arch/x86/boot/copy.o
+  HOSTCC  arch/x86/boot/mkcpustr
+  CC      arch/x86/boot/cpuflags.o
+  CC      arch/x86/boot/cpucheck.o
+  CC      arch/x86/boot/edd.o
+  CC      arch/x86/boot/early_serial_console.o
+  CC      arch/x86/boot/main.o
+  CC      arch/x86/boot/memory.o
+  CC      arch/x86/boot/pm.o
+  AS      arch/x86/boot/pmjump.o
+  CC      arch/x86/boot/printf.o
+  CC      arch/x86/boot/regs.o
+  CC      arch/x86/boot/string.o
+  CC      arch/x86/boot/tty.o
+  CC      arch/x86/boot/video.o
+  CC      arch/x86/boot/video-mode.o
+  CC      arch/x86/boot/version.o
+  CC      arch/x86/boot/video-vga.o
+  CC      arch/x86/boot/video-vesa.o
+  CC      arch/x86/boot/video-bios.o
+  CPUSTR  arch/x86/boot/cpustr.h
+  CC      arch/x86/boot/cpu.o
+  LDS     arch/x86/boot/compressed/vmlinux.lds
+  AS      arch/x86/boot/compressed/kernel_info.o
+  AS      arch/x86/boot/compressed/head_64.o
+  VOFFSET arch/x86/boot/compressed/../voffset.h
+  CC      arch/x86/boot/compressed/string.o
+  CC      arch/x86/boot/compressed/error.o
+  CC      arch/x86/boot/compressed/cmdline.o
+  OBJCOPY arch/x86/boot/compressed/vmlinux.bin
+  RELOCS  arch/x86/boot/compressed/vmlinux.relocs
+  HOSTCC  arch/x86/boot/compressed/mkpiggy
+  CC      arch/x86/boot/compressed/cpuflags.o
+  CC      arch/x86/boot/compressed/early_serial_console.o
+  CC      arch/x86/boot/compressed/kaslr.o
+  CC      arch/x86/boot/compressed/ident_map_64.o
+  CC      arch/x86/boot/compressed/idt_64.o
+  AS      arch/x86/boot/compressed/idt_handlers_64.o
+  CC      arch/x86/boot/compressed/pgtable_64.o
+  AS      arch/x86/boot/compressed/la57toggle.o
+  CC      arch/x86/boot/compressed/acpi.o
+  CC      arch/x86/boot/compressed/efi.o
+  GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
+  CC      arch/x86/boot/compressed/misc.o
+  MKPIGGY arch/x86/boot/compressed/piggy.S
+  AS      arch/x86/boot/compressed/piggy.o
+  LD      arch/x86/boot/compressed/vmlinux
+  ZOFFSET arch/x86/boot/zoffset.h
+  OBJCOPY arch/x86/boot/vmlinux.bin
+  AS      arch/x86/boot/header.o
+  LD      arch/x86/boot/setup.elf
+  OBJCOPY arch/x86/boot/setup.bin
+  BUILD   arch/x86/boot/bzImage
+Kernel: arch/x86/boot/bzImage is ready  (#1)
+
+
+As shown there is no issue, i don't know what is missing to reproduce the issue ?
+
+Thanks
+Patrice
+
+> 
+> And to be sure, I applied this and obviously - as expected - same errors.
+> 
+> Best regards,
+> Krzysztof
 
