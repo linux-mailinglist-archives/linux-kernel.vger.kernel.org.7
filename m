@@ -1,222 +1,144 @@
-Return-Path: <linux-kernel+bounces-636239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C22FAAC83F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:38:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81430AAC860
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 343693B9493
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:38:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D12C07B9945
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27B2283129;
-	Tue,  6 May 2025 14:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA812820CB;
+	Tue,  6 May 2025 14:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CRxKH3Pk"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jm+aKk81"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1977822A4F0
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 14:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9908A280A5F
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 14:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746542311; cv=none; b=h15KFOrW1nJ52mtWJBwN16xJ/whFr0r87WIWK3kQYe4okRyLvWWlzXiBLJ0HghLxKxwRMmG8QACXIckHiOW+Cacgzc8/imY+T1dzxWo4G1ocm5JMfvUg68OUSdz+CLcp9BdRaKhXmEzpfOhO3HOjiffJIL/QxFO84nqPtbozdpc=
+	t=1746542557; cv=none; b=HuhO+43Wm13Ckckpagu5UKlsHiR8NlK1/WywdTX6m6nYiC6+rNGvnY2h2zRCHv2MA6tpkcWKQndSzt8zO1cmvVCG9cHTgmlQsFzdQgam86spF9XosuO/kx3UIFQgnqCWEC/YvedspPzQbP3Ct8arWeHLtwPkXQELCLCeqPv1haI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746542311; c=relaxed/simple;
-	bh=Ma83b15qnnbFaueFtEvSpUdw/TKvSFOJHfOZe78Fr4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uMB01eC0MLSJSrLasrfUWG95CTakEvDTnNkkif8WdIRYSRdQeMLiitfgkZnFzviVYdKc94QwAdFZOL1BLtRKrHW2a+sM4OIwYpDVaSV2RStA2TPJz/wT01YQQj+xIuNpQmkfBPZuqVpBz3ojwc+ymEdg7FeYkOxhjqITY9efl24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CRxKH3Pk; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5f632bada3bso9378a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 07:38:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746542307; x=1747147107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WS0cqO7mEX8JBUGkY5ZSym9XPagAwEGfVvGLKmJF5sY=;
-        b=CRxKH3PkApshm30WZX8T9D4ebFVa2DK7zxt1/b5UuPL7Un040C1U04ni6pt6wn4EUz
-         5jx1dasvgSqPUAApV3udF1A/6C+nUlyypZIjBlpCM0dEuoRq7fICJSpaB2UhsFtOvRan
-         cgQZYs6G4UwwFepUYX64nBp1bhYcLI2CFkrti2s0X0fJmnym8e6wcNm1nbXBgHxxU4DO
-         73DjIY+ZRiUL8YZ58MzUU1ACZJE2e8eq3/y6W2agirsIrZFZiItiW8MF9e73oHUvzxHh
-         hKax1ddqHIzpONWeLztbYaFGdnyw3RTmNcKMUjTpBsKxrrazzPA+4XJ0EXcghTL4bPa9
-         UEJA==
+	s=arc-20240116; t=1746542557; c=relaxed/simple;
+	bh=NVuxPtmNgFRLLO/QEEuCdsEnIPhYSYgqnwTKkSkHlB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W8Z+3D0qD+/4hSDgBYkBSd6xwzavWPeIr3WdQTmBYWUjYzDCKOCHQLje69RSksZ91kSn/v9+lNXBaOgyHRVFzbOFSPJXn+QvwndFb+sAcRZQmx0o+dRaPTbkv8Oyx0F5YCx/fkfrWaD4AlAUkc1weAga/A1LBW9CMDK7Qjt+K2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jm+aKk81; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5468njdp007590
+	for <linux-kernel@vger.kernel.org>; Tue, 6 May 2025 14:42:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3VjgACMnGXxy3UlT5YxgJrb2cSeHYPLeC1Xee4gzTH8=; b=jm+aKk81D9yzSpwd
+	P+4aDZBe+cSFF1NF3Zx7gJM3FR6Cs9rjarzoTcGmjaRWYStMzUTYIoKnj2kmTZHs
+	vV+R0te18Pw37vbGoYoHP2SmAN9WXe82s+aFqL8mc1y9phhTfl2hBXUMTBWvNxyl
+	/aqwGbxEay0HI/BLPNYR5bB6YD0joIQV0FInFDwBaCBpolrEiWaSnqKqiRcVaigI
+	xfi9WCxzltMntgZcZyWo6dYBroSVeKkEaWnBR5HLvK4wPc3MsPyREHBUIgm9i3Qs
+	Cb3iD6WeBuAvPJpFbza3Svk5/+dHS0u/UtyS2rfMeTd0sPNf22hU9/kvbXob7pYD
+	EzVgTw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5wg2jxs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 14:42:34 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7395095a505so3958414b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 07:42:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746542307; x=1747147107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WS0cqO7mEX8JBUGkY5ZSym9XPagAwEGfVvGLKmJF5sY=;
-        b=rtIzJ05gTQ6QDGwkoK3oTlkjUc9FrGiwgdR4X10rEoeFGBUQAgi4RkxHcWN/+rhkyn
-         9/NO5dK7BCEmItuMT+hjP1RzR2nuiaewJbpr4xmiKJv6TGcA6EIG3tL/YVJcc/TqhKD7
-         TwZHyfll44iZaGGtYkXqHycCEqAjX+boscFrltAwwdiGv0/PRxFdgA+Ozqy44+xYSkA7
-         xy15oIeU72em/sPcU9HtqxloZQN1xIfqsx+vS8Wa2ACwmyB3oUnTwZg2GDLk92mPMIIB
-         5OpXz9YMwUIzTMUFI8jzfm3Hqc2pQzJ5l0sIUMTy8W/OHYa1mYdvbwv7TUmsRzuRVGti
-         +Lgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUH9Cdw/lFMyiukv7vH5oE6auy4R+w5yvVxQCsBwX04LGW8OWt3v3TGwFcqxc7+YpXAJqdyv/Q6t8xK15E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvaYu899CeMfYxr6ZsOpqW21OPlqXAseJjD2k4HvovnERct/J+
-	oqhQMh4YR+wxoddjgdWZo9CyEm7bDpESx5cVXkvCKh7Ro3w2ARLUG4jN0yISbWrb3NK0JKJOLc9
-	TdnrY/Piy1DuvV21OHReKnOQnoOA6vYU0edcJ
-X-Gm-Gg: ASbGncsRh6hkyJIakRg2VBRXNficdSVrYjrzhNvpWyvfQJpdqfJVhhAfUzbbRu1tX8B
-	bEmu9VmfSzdeO3Jz9UobH9kVe31EI/vWRJKsZtKLA9HhLD+QCoKGqKVoj0XrMZaJ4EHlgukes/1
-	jDFBL+fQRDWpvKXTAzTu6t2qFLz0HEHZPySi1fRqfP3LROKl/h3A==
-X-Google-Smtp-Source: AGHT+IEKBtQbqHTSi7RTxOlTKbd2L3krdaRx+iHlrQhBUxrpFEHfioEBlUhMAatv2Ff4k8wWL2KQK5USpqhewEIPDcg=
-X-Received: by 2002:aa7:d1d9:0:b0:5f8:d6b1:71ba with SMTP id
- 4fb4d7f45d1cf-5fbe76ccb80mr239a12.4.1746542307024; Tue, 06 May 2025 07:38:27
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746542553; x=1747147353;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3VjgACMnGXxy3UlT5YxgJrb2cSeHYPLeC1Xee4gzTH8=;
+        b=kjgrZB3CMZ7Bfd8pCckpUaS6TCm+Yz0kQtQL0SgZWsdMiPa5afXMiuM2XXRfi7AOKH
+         zLvqqzwrDwkL9zesR4opd0F2XlR9uVvuWrOzkQF4x+aCOuIAUVQvvqjwENC7kjy5oQ2y
+         kHvlMzfUu2frCMbWqj29e+WUuyLE+U0jfN7AwHR/BPUlOQB50GomajncnWLcTUEeozs0
+         fRuWrjwp0xw4rO4HTCngeT7AI27NfxQ5F55phevdHOO1Kwg79UZUIHcdWE4USSRb7VAj
+         2fi6omUsNMt4duspaBGZ8Mnrni/9GoJDo1i56cDuuvJx2pArHrRytulSwC8q9vUCnIcv
+         a/2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXtNL8avOOsknO6KfX7BQ7D4VWVZM+S4IGCMGkiK/BB6OniCa+Srqu9kMZQzNAmVKXP6RvHjbMChwLrOCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1R+TuWs8TaeL3IY2Pu52vfvvFvwiMjvVCUGcS2C7lcQLkNjx6
+	8bpSDiz6iG4n1UvWN4ICebA/Qb1rq6Nfcu0JGtXKwO7Nm8Z99xCjK7Yj3U/a7rT9lJRZyKLvyIM
+	fQZ6m6C85nK5PqLEoFOdrI8YCaXc59G6I2whOYeqc5O1heEM+oJQwVWuTDu2sRtM=
+X-Gm-Gg: ASbGncs3/tDQyBIVosJTo6cJ97nMHewnyUWL/7AEYqGW2dd8ql6v5N4sVDXKgk5v7hL
+	YsaTAvkriXJeneLV2424ci/SBZlRmE/3hNcjjoXgjdC1jlkys9K3b3mC7gjmmXo+hEZX0y9Hya+
+	knoJv++0HyuODjfKQeSIOK4itdS9NubBl0Rwk2B0YEqT481Fzere5Ll1v6b+zQETIKxa/OPryEL
+	67rh0G7gCjhvlQ7BT/aX8R6U27QeWR/UTOqAifTMnyiBjlzdfFe8bqmb0msNd9yMy52Qlchjfgo
+	J9RNa1+z2rsnTnS5Ii5rSWKE9IE4xdLf/8Zkyvv9JJajxDY36fZNQ0ml3StlLLm3vKs=
+X-Received: by 2002:a05:6a00:2a07:b0:740:6615:33c7 with SMTP id d2e1a72fcca58-74091a937b2mr4842335b3a.23.1746542553023;
+        Tue, 06 May 2025 07:42:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGENE7YHnc3ggGxLX9mbaGNGvNws07uOv9xUg5kw47zlhrUsZlSNkxEzxWCz8ioV3P51rTswQ==
+X-Received: by 2002:a05:6a00:2a07:b0:740:6615:33c7 with SMTP id d2e1a72fcca58-74091a937b2mr4842304b3a.23.1746542552655;
+        Tue, 06 May 2025 07:42:32 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058dedcc4sm8989298b3a.79.2025.05.06.07.42.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 07:42:32 -0700 (PDT)
+Message-ID: <2b85ccce-70c5-44c2-b598-d148358843c8@oss.qualcomm.com>
+Date: Tue, 6 May 2025 07:42:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250505-dompteur-hinhalten-204b1e16bd02@brauner>
- <20250505184136.14852-1-kuniyu@amazon.com> <CAG48ez35FN6ka4QtrNQ6aKEycQBOpJKy=VyhQDzKTwey+4KOMg@mail.gmail.com>
- <20250506-zugabe-bezog-f688fbec72d3@brauner>
-In-Reply-To: <20250506-zugabe-bezog-f688fbec72d3@brauner>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 6 May 2025 16:37:49 +0200
-X-Gm-Features: ATxdqUG1RLsm5I44mZFoXDEOhGLmKo0PIMKTKhu327qv26lJZYIhQ2B6edAN2po
-Message-ID: <CAG48ez0Pc+QzxgAnT25KqyvjC8n0=diL6DnxBe7CcdQ32u9GcA@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow coredumping
- tasks to connect to coredump socket
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, alexander@mihalicyn.com, bluca@debian.org, 
-	daan.j.demeyer@gmail.com, davem@davemloft.net, david@readahead.eu, 
-	edumazet@google.com, horms@kernel.org, jack@suse.cz, kuba@kernel.org, 
-	lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, me@yhndnzj.com, netdev@vger.kernel.org, 
-	oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
-	zbyszek@in.waw.pl
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] wifi: ath11k: Fix memory reuse logic
+To: Baochen Qiang <quic_bqiang@quicinc.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Jeff Johnson <jjohnson@kernel.org>
+Cc: kernel@collabora.com, linux-wireless@vger.kernel.org,
+        ath11k@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250428080242.466901-1-usama.anjum@collabora.com>
+ <f58075f7-f643-4e47-b774-dc529aaa01e5@oss.qualcomm.com>
+ <3732e542-5b8c-4351-8e41-f9f0cdeb4643@quicinc.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <3732e542-5b8c-4351-8e41-f9f0cdeb4643@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: doBeIMO5iZSswjhdcvNAAipwWQb-qa21
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDE0MSBTYWx0ZWRfX33gzyYXKX4Lq
+ O0JslpV8UF7vPIds/5lP8OxKghSTVE+9pbZYaMUz3mvZQkQq+tZRXkLt9qaHD6Kj4V/5OATnsK0
+ TPScT2SJQCcoQWJ8pVeqhm/97dx/Ki5UQbPM14NG1i97OxOwrehEA3opnjII0wjXe5y+eta2hNH
+ ZOqKS9X4mzC6QckEQKijpA8w12Q5saTN1Qcel254TOCxHoKlr73U/M+nOlALeDvSnMiJKDO0HhY
+ jGzV9f7pT5lxaQRvidSyP1uV5teXk11Unt0f8Bxl9FNENl2axyUZKGepcNvlwhkY8CFQSX2iRSp
+ l7lU2mN/CruwgSJB1mKmjccxHbhmHj6wkADw6lxvQxrSN6dEK3VLijsasn4nyy/SRucOzRXYaYz
+ BS0ROoRsweGgnhRG8N1XAb1lhsNZzv/ARHIwCgEz/AJeZx9sa5BYr1j/GYUVihnW/C82jPhN
+X-Authority-Analysis: v=2.4 cv=dPemmPZb c=1 sm=1 tr=0 ts=681a1fda cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=X3YIGVxls8OrOZudXCwA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: doBeIMO5iZSswjhdcvNAAipwWQb-qa21
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_06,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 malwarescore=0
+ mlxscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505060141
 
-On Tue, May 6, 2025 at 10:06=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> On Mon, May 05, 2025 at 09:10:28PM +0200, Jann Horn wrote:
-> > On Mon, May 5, 2025 at 8:41=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon=
-.com> wrote:
-> > > From: Christian Brauner <brauner@kernel.org>
-> > > Date: Mon, 5 May 2025 16:06:40 +0200
-> > > > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
-> > > > > On Mon, May 5, 2025 at 1:14=E2=80=AFPM Christian Brauner <brauner=
-@kernel.org> wrote:
-> > > > > > Make sure that only tasks that actually coredumped may connect =
-to the
-> > > > > > coredump socket. This restriction may be loosened later in case
-> > > > > > userspace processes would like to use it to generate their own
-> > > > > > coredumps. Though it'd be wiser if userspace just exposed a sep=
-arate
-> > > > > > socket for that.
-> > > > >
-> > > > > This implementation kinda feels a bit fragile to me... I wonder i=
-f we
-> > > > > could instead have a flag inside the af_unix client socket that s=
-ays
-> > > > > "this is a special client socket for coredumping".
-> > > >
-> > > > Should be easily doable with a sock_flag().
-> > >
-> > > This restriction should be applied by BPF LSM.
-> >
-> > I think we shouldn't allow random userspace processes to connect to
-> > the core dump handling service and provide bogus inputs; that
-> > unnecessarily increases the risk that a crafted coredump can be used
-> > to exploit a bug in the service. So I think it makes sense to enforce
-> > this restriction in the kernel.
-> >
-> > My understanding is that BPF LSM creates fairly tight coupling between
-> > userspace and the kernel implementation, and it is kind of unwieldy
-> > for userspace. (I imagine the "man 5 core" manpage would get a bit
-> > longer and describe more kernel implementation detail if you tried to
-> > show how to write a BPF LSM that is capable of detecting unix domain
-> > socket connections to a specific address that are not initiated by
-> > core dumping.) I would like to keep it possible to implement core
-> > userspace functionality in a best-practice way without needing eBPF.
-> >
-> > > It's hard to loosen such a default restriction as someone might
-> > > argue that's unexpected and regression.
-> >
-> > If userspace wants to allow other processes to connect to the core
-> > dumping service, that's easy to implement - userspace can listen on a
-> > separate address that is not subject to these restrictions.
->
-> I think Kuniyuki's point is defensible. And I did discuss this with
-> Lennart when I wrote the patch and he didn't see a point in preventing
-> other processes from connecting to the core dump socket. He actually
-> would like this to be possible because there's some userspace programs
-> out there that generate their own coredumps (Python?) and he wanted them
-> to use the general coredump socket to send them to.
->
-> I just found it more elegant to simply guarantee that only connections
-> are made to that socket come from coredumping tasks.
->
-> But I should note there are two ways to cleanly handle this in
-> userspace. I had already mentioned the bpf LSM in the contect of
-> rate-limiting in an earlier posting:
->
-> (1) complex:
->
->     Use a bpf LSM to intercept the connection request via
->     security_unix_stream_connect() in unix_stream_connect().
->
->     The bpf program can simply check:
->
->     current->signal->core_state
->
->     and reject any connection if it isn't set to NULL.
+On 5/5/2025 11:43 PM, Baochen Qiang wrote:
+> 
+> 
+> On 5/6/2025 3:17 AM, Jeff Johnson wrote:
+>> v2 feedback was not incorporated:
+>> For starters, can we make the subject a bit more specific, i.e.
+>> Fix MHI target memory reuse logic
+>>
+> 
+> Ideally I prefer below subject
+> 
+> wifi: ath12k: Fix QMI target memory reuse logic
 
-I think that would be racy, since zap_threads sets that pointer before
-ensuring that the other threads under the signal_struct are killed.
+Done:
+https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git/commit/?h=pending&id=ec570013de60b8b0bfa3cafd516ba323e6e29a8d
 
->     The big downside is that bpf (and security) need to be enabled.
->     Neither is guaranteed and there's quite a few users out there that
->     don't enable bpf.
->
-> (2) simple (and supported in this series):
->
->     Userspace accepts a connection. It has to get SO_PEERPIDFD anyway.
->     It then needs to verify:
->
->     struct pidfd_info info =3D {
->             info.mask =3D PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
->     };
->
->     ioctl(pidfd, PIDFD_GET_INFO, &info);
->     if (!(info.mask & PIDFD_INFO_COREDUMP)) {
->             // Can't be from a coredumping task so we can close the
->             // connection without reading.
->             close(coredump_client_fd);
->             return;
->     }
->
->     /* This has to be set and is only settable by do_coredump(). */
->     if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
->             // Can't be from a coredumping task so we can close the
->             // connection without reading.
->             close(coredump_client_fd);
->             return;
->     }
->
->     // Ok, this is a connection from a task that has coredumped, let's
->     // handle it.
->
->     The crux is that the series guarantees that by the time the
->     connection is made the info whether the task/thread-group did
->     coredump is guaranteed to be available via the pidfd.
->
-> I think if we document that most coredump servers have to do (2) then
-> this is fine. But I wouldn't mind a nod from Jann on this.
-
-I wouldn't recommend either of these as a way to verify that the data
-coming over the socket is a core dump generated by the kernel, since
-they both look racy in that regard.
-
-But given that you're saying the initial userspace user wouldn't
-actually want such a restriction, and that we could later provide a
-separate way for userspace to check what initiated the connection, I
-guess this is fine for now.
 
