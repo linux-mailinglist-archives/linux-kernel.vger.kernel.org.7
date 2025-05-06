@@ -1,164 +1,157 @@
-Return-Path: <linux-kernel+bounces-635065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A564DAAB88E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1C8AAB886
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC7B3A8A22
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEDA83AFC91
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179B4288CA9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9055328C2C0;
 	Tue,  6 May 2025 04:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vu4CTjRa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QKNCGEE5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42757288CA3;
-	Tue,  6 May 2025 02:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DDF3002BE;
+	Tue,  6 May 2025 02:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498144; cv=none; b=iMWowXj5mqindvHv6HEQSojhe27X5H0TScNSxOkfnySoQT5TAChEfikqSNukw6s8xrW4cEo67DaqzzAki0DL/gGhMLD0nQpMrmpfbA3wq7gz6yBWXpj00Y5hgKkfKi7L9WfQvn4W+veUWM2aBGr/k7luyFKYSwOJ+Sr4ww3lVRw=
+	t=1746498150; cv=none; b=DFA3a6PBovByedIy7i4lWXawQ3QhCRct+8LQMiwk21MpKPO0fm0T2DsTvn38wv7/O1v14SrbsQ27AJZTDlf2rbLvV9llendcODgXFSUtbeGjIwlF2X18uRdC4erihkONBQ1sJRqT64anIZM98CxeudrORKcNRXzDaSYV6SKxsOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498144; c=relaxed/simple;
-	bh=7ef2pJBKAZeVrG/4t6fNBbsvtcjSVP4jrJFlRb13DSE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ULHknOqc4pLZJdlu0q086J0oSd1QHlrtjfWOGP7DRbku71kpk1UiMzUDPUx78ING1oIfDqPrmcG4YgzcYacsBoAFovOSYIOaxDT5eKxEAsLHrwU/xy4saXUhShk0jaRVQwvtRoRUKSdQm1CzIU3kKZdubBF3F1Ilie+2ReeWDpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vu4CTjRa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90661C4CEE4;
-	Tue,  6 May 2025 02:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746498142;
-	bh=7ef2pJBKAZeVrG/4t6fNBbsvtcjSVP4jrJFlRb13DSE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Vu4CTjRabuy/Nkbz67AX9G2bX29g7y+31s67ITUOhZ0dXv9fVy2RHYbi7Xmhm2XkV
-	 bcu1Mn/yFjh7TuV295Fo+oDpwtdl0W5oe21lmvHALSeiNk/+yKIWRUON9F7wN3L/OX
-	 H3jd5RUQtwah+1cL4PtZUFTSg2E2cr2aVTwqdiOtZ4+lbG0ekjJ0EHg5DwdNjt4e4a
-	 jvCQd6X4KRLegepoW6DOPJ5Lkt1CJqjq5wYwQcLSzHJsclv9oHIrsA6ouqE6f/aWhy
-	 tkTim2h77DlmWz2zg/NYsvRzif+ePzRNrMOUE4xzPP3FlaR6FXIHHNQwiS5CnE5xJp
-	 LwJJI7Nm9ORUQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexander Shiyan <shc_work@mail.ru>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: timer: Convert cirrus,clps711x-timer to DT schema
-Date: Mon,  5 May 2025 21:22:14 -0500
-Message-ID: <20250506022215.2586595-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1746498150; c=relaxed/simple;
+	bh=ISoOrhO6ZcvDNVxFY75Ue3gOfPZtfLJNwCTvo+6IKCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nQ3M183NJjPB11Jwzk8ODTTTZb+VwcycRkOCraXiEUyEjU2StfBL9GmT2JBBtYUOuhkPJCjAzBJMurD1gYzbbA7oi6xFxY6kub7akI/mKoNT6LhEvy+NvdKBVS9la4zV2+uasjVadOJlIX5qJPeGxn3VC4bC8bfN5E26YYExGsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QKNCGEE5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1746498143;
+	bh=v+uGUtGJ32z0FgIlZfhka6lWrnQk6smEFdDaYfbWoH8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QKNCGEE5fbWsEPrRdOMjiE/wjz+7Z4Z/lhBRWDuN8ogsHL9zdVXLS4F3Qp8yagddJ
+	 e5ZHn5jthJnzIJC+ik/sZgtzbXqj72IpIglLhpgICyZ7el2RuQ77QXWqb5bIcdibNq
+	 LCpXSr4zwv2mrttduH9iXe+3yrpylGeSmsv9Vkj00tk6eiySknhbMIChiqdAcG/vdU
+	 3KClsGBbqzENvTCr0BRE0DW3m/iOBRsQYzq2ssln4roaUAueIhvRjS9jtxPJ+KZEiF
+	 WTVu7J6P86HjXDSzmN2vEJ2NIcW+tPC5R/6erowG4pjI81AIWsltwui/egn+79nVjd
+	 xndpmWxr6u+wQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zs2Gl47pBz4wcD;
+	Tue,  6 May 2025 12:22:23 +1000 (AEST)
+Date: Tue, 6 May 2025 12:22:22 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Crypto List <linux-crypto@vger.kernel.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the crypto tree
+Message-ID: <20250506122222.2a910820@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/non9b/L3zyiXLRua3DSV_Sr";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Convert the Cirrus CLPS711x timer binding to DT schema format. It's a
-straight-forward conversion.
+--Sig_/non9b/L3zyiXLRua3DSV_Sr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Drop the aliases node and second example which aren't relevant.
+Hi all,
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/timer/cirrus,clps711x-timer.txt  | 29 ------------
- .../bindings/timer/cirrus,clps711x-timer.yaml | 45 +++++++++++++++++++
- 2 files changed, 45 insertions(+), 29 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/cirrus,clps711x-timer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/cirrus,clps711x-timer.yaml
+After merging the crypto tree, today's linux-next build (x86_64
+allmocdonfig) failed like this:
 
-diff --git a/Documentation/devicetree/bindings/timer/cirrus,clps711x-timer.txt b/Documentation/devicetree/bindings/timer/cirrus,clps711x-timer.txt
-deleted file mode 100644
-index d4c62e7b1714..000000000000
---- a/Documentation/devicetree/bindings/timer/cirrus,clps711x-timer.txt
-+++ /dev/null
-@@ -1,29 +0,0 @@
--* Cirrus Logic CLPS711X Timer Counter
--
--Required properties:
--- compatible: Shall contain "cirrus,ep7209-timer".
--- reg       : Address and length of the register set.
--- interrupts: The interrupt number of the timer.
--- clocks    : phandle of timer reference clock.
--
--Note: Each timer should have an alias correctly numbered in "aliases" node.
--
--Example:
--	aliases {
--		timer0 = &timer1;
--		timer1 = &timer2;
--	};
--
--	timer1: timer@80000300 {
--		compatible = "cirrus,ep7312-timer", "cirrus,ep7209-timer";
--		reg = <0x80000300 0x4>;
--		interrupts = <8>;
--		clocks = <&clks 5>;
--	};
--
--	timer2: timer@80000340 {
--		compatible = "cirrus,ep7312-timer", "cirrus,ep7209-timer";
--		reg = <0x80000340 0x4>;
--		interrupts = <9>;
--		clocks = <&clks 6>;
--	};
-diff --git a/Documentation/devicetree/bindings/timer/cirrus,clps711x-timer.yaml b/Documentation/devicetree/bindings/timer/cirrus,clps711x-timer.yaml
-new file mode 100644
-index 000000000000..507b777e16bc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/cirrus,clps711x-timer.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/timer/cirrus,clps711x-timer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cirrus Logic CLPS711X Timer Counter
-+
-+maintainers:
-+  - Alexander Shiyan <shc_work@mail.ru>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - cirrus,ep7312-timer
-+          - const: cirrus,ep7209-timer
-+      - const: cirrus,ep7209-timer
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    timer@80000300 {
-+        compatible = "cirrus,ep7312-timer", "cirrus,ep7209-timer";
-+        reg = <0x80000300 0x4>;
-+        interrupts = <8>;
-+        clocks = <&clks 5>;
-+    };
--- 
-2.47.2
+x86_64-linux-gnu-ld: vmlinux.o: in function `__chacha20poly1305_encrypt':
+chacha20poly1305.c:(.text+0x1a690e1): undefined reference to `poly1305_init'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a690f1): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a69145): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a69182): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a69192): undefined refere=
+nce to `poly1305_final'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6922d): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a69246): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: vmlinux.o: in function `__chacha20poly1305_decrypt':
+chacha20poly1305.c:(.text+0x1a69480): undefined reference to `poly1305_init'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a69490): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a694c8): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a69505): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a69510): undefined refere=
+nce to `poly1305_final'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a695eb): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a69604): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: vmlinux.o: in function `chacha20poly1305_crypt_sg_inpl=
+ace':
+chacha20poly1305.c:(.text+0x1a6c3f6): undefined reference to `poly1305_init'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c555): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c576): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c5af): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c5d8): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c617): undefined refere=
+nce to `poly1305_final'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c7c6): undefined refere=
+nce to `poly1305_final'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c7f9): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c822): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c854): undefined refere=
+nce to `poly1305_update'
+x86_64-linux-gnu-ld: chacha20poly1305.c:(.text+0x1a6c888): undefined refere=
+nce to `poly1305_final'
 
+Caused by commit
+
+  10a6d72ea355 ("crypto: lib/poly1305 - Use block-only interface")
+
+and maybe
+
+  a298765e28ad ("crypto: chacha20poly1305 - Use lib/crypto poly1305")
+
+I have used the crypto tree from next-20250505 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/non9b/L3zyiXLRua3DSV_Sr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgZcl4ACgkQAVBC80lX
+0GxexwgAjqdJDJ/bEJ2Jeg4q2RHlaTHwHhYqF5q2nqYUQV4HYjSdU+iq8VOp+O0Y
+95SzLLL3dhF4hlHFgbEXQbSeye/SCoz7rWvhdMYf2UrNuEciw1/BCFWM8+yUrmNR
+q/RG81Vsmt28al5eH9Tzrhwqokykro7WMVSkp/b0tl3/eDqYGs72qPm/CzpucNNV
+wn9R+4+5z4ZPzuWmUj/UKaxSjsmWZ/qxxFdORWC/pHNqRJC8ppnlnKKf1gG4Zsm5
+fpLEHC94te2tMvy70vvu/mTISenUFBE0cgw4OOEt+CX7djoxR6lAy9XGsf8OrNlq
+xtSWIcYIMLJbjMuSdUZ8mUpPDMc2WA==
+=iKS9
+-----END PGP SIGNATURE-----
+
+--Sig_/non9b/L3zyiXLRua3DSV_Sr--
 
