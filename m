@@ -1,125 +1,188 @@
-Return-Path: <linux-kernel+bounces-636692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568B2AACED6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:33:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF553AACEFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4FDE7A6155
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 20:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50AB982496
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 20:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EA5EAC7;
-	Tue,  6 May 2025 20:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DFD1F8EFA;
+	Tue,  6 May 2025 20:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tp/MS5JM"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="YwQlPv5u"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0FCF9D6;
-	Tue,  6 May 2025 20:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEE01BC099;
+	Tue,  6 May 2025 20:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746563608; cv=none; b=Bmp7Q9K5WAhNnKZ70OoJChqsRO6vCJwBqs//bC/d0u2hxJ0RknAoW3tteip8ho73hONzUpiOQxqltlWgff2WvAIMp3R1+/rytCIrOlyi6zHnVKv1Xbdy/d7Bld6Pb1pg+iqUfRaD4Mu/+srnuUFP4p85H0i+PcmEf/6JxVzt5K8=
+	t=1746564586; cv=none; b=TXdIgAJtwNYIBa4hwt81HjoskiTu3W7TOlupZVxcGUGW5YZ4+s+YIShP/jwkpo5hTo+G/KBrAfncLQtu3FXXr5FynJXOiLwwUGJVA15Wx7jSeE1BMgx2/C5xDxcM6A+lyGGq982C8hrg27PG317PY4N1iCpucTS2r8XLt8Hovvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746563608; c=relaxed/simple;
-	bh=GU/0QWzYrVSXft65qatATHb9UdRCKocqAo8RojTRjHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4vEnIHtwBckMJVjMwJqo0SjnPjsNDs+vDwQAnTYz4IvpLuluWeH6hS9h1qFzsJUNHt+BxEupZiHyjMQHmfP1JZXrEZgWAtLkGs990DrRMDdr4m/QF5VyAeXlt43/hGvNxA7+73Va8RHnlDOi3qBZuqJ6Db9rLTDBakm6EoduOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tp/MS5JM; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so708148366b.0;
-        Tue, 06 May 2025 13:33:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746563605; x=1747168405; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zgHemNWtqa8k4AyF6DtlkqCjI8OhMDy1+rer4Kv1t4w=;
-        b=Tp/MS5JMppH7tRQuSHcwGnO+5SqCroaE4xUZ71iDZ9B9o+CnNACoLgBvID5+R8tuPG
-         xAJ0gSpSp7AMJ37B8FcY0D4+0G3SSEMGUGDxzpwoaTCRzjOlHWdIKiPxq9Ny2z68gVQn
-         IfsCwZi48YWtclukgV5kAqXpsI29nGu5XZfSIyZCcoJEIO0s6aEWxg/Aoeqa/dkTULwr
-         iNgGsKJZUdkWLY8jnLsjYZPAbH9mlJpJjbIsIz7UiOPRChEhdzPYGoqp18qSfKgvBs+u
-         S0ZqcSL86xVhcCcgnFl6CkqtTRwOmHdpsZs0An0MFi7+rPRoGA0qPbMwAN84S3zQaltc
-         I6/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746563605; x=1747168405;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zgHemNWtqa8k4AyF6DtlkqCjI8OhMDy1+rer4Kv1t4w=;
-        b=f2xjQHVXgR3T6nbHTV1NHw0sdbO6NX+b+eTc+U40raldO5pVp0w2q/+KSRnPIONs6M
-         ZTMabCmxSoF4yPjaYaa8VC3b8DMg9HOptLaX7z/0uE6CePeAtvpdqWIcxdE2a7AuAJPO
-         GAafJaAkM0WyDd72fdwVoMzGC45qO4O9mjD4pi9FOeZurrtuN+ViveXvcb9rad61kf+i
-         F/+hIj0RiqeJ9UC2jNGMk15tqTqSlrIY2sJ5ulAQjuc7+sRlYOOV+2sHDB//Lu2FnZG0
-         oo+vAYILpGChsCYXn5eKxUwi0XDE2VH0Dgp8G8IATNaKgmFa3HIO7M4szEpnWvTEHvEL
-         LKDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmTcAGMoEP5bNLc/qxSfWjkiM7XpBFpYtSHrTN6gvZn7gMrSnBsuQuu2I1O6fjMqwCNDuSw/izVms+@vger.kernel.org, AJvYcCXxjHVIET21IQGjpQ+lP7Dzit1C184hIHz+qDroxkOs+jgX9TaGQfX6Jj6UA8hHuPfxTh7OwcPTVRNeva86@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFdz3YCgDLQfhqh+67sXz6SRaVlsIQC5IR14+NO34F2UCJPC7f
-	eHebHljHyqMF6yNL/NjC6PM79BFfAub5qGcnS0NkaV4NTWPmKDWOIMSHrg==
-X-Gm-Gg: ASbGncuBZk5pPcXO9sXZtETQY3cQM5ZzwxCnkdVgSlgvmLFG1SLzS7fMA43Vo2Ya6BR
-	+Bdnz80bKY4kAvBzG84j8mEzHy+hcGTEwnReNJMa7oHiRs/zgI5ep6MM1EpuVJdLqdBR0jKZ7uR
-	2/Ngu1WhSfmaD9geuRkHaWEEHLRvacOM01C3jRr6Qn95AGlLiuqWU3DS2LJ4NdIx0eKPmhQqV3z
-	aY9bErwgomJ9J+6zCy/Osxz3eDwFj+XiQEjREzJ5q2xIRWd1MahQMi2p9DqF/CGesgG3+Zzl/zo
-	qhL4UPz4FQEs3PM1/5P1cRhrrLVr9NhSxD2gStyecNKuVQJJN915FO2u2LNckQaL6VP10eqTLpJ
-	AaMuL
-X-Google-Smtp-Source: AGHT+IHQmjfRpINHsgz9ShdGUI4kDJEPSLEEfjV+MOKkEjV1f+crGBhCrNB3BbnYjWe8s6Rm/a27nw==
-X-Received: by 2002:a17:907:7207:b0:acb:32c5:43ff with SMTP id a640c23a62f3a-ad1e89f8dc3mr78243466b.0.1746563604672;
-        Tue, 06 May 2025 13:33:24 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad189540da0sm759259366b.165.2025.05.06.13.33.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 13:33:24 -0700 (PDT)
-Date: Tue, 6 May 2025 22:33:22 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v8 0/9] mfd: bcm590xx: Add support for BCM59054
-Message-ID: <aBpyEo8SHFq7SDf4@standask-GA-A55M-S2HP>
-References: <20250430-bcm59054-v8-0-e4cf638169a4@gmail.com>
+	s=arc-20240116; t=1746564586; c=relaxed/simple;
+	bh=RpxsMctV1jrsDxcHCIc3Gn9iSl/41S+1uDF9v0s8jeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ncT3STN2vHrAXC4dcMKJJqgBM0m6tcvfNryq35LPFXMmiHepc9N8f+IjTYj8Iz9dxWvq1nI/FadyX+zTYNt750Cf5OZh8zUsU7ksrtPDDxwidOhR1Ug78dsp7v5M6siRrdqhCiU3XvbAsbM0Mm5ASVJyLryZQpccSP2uc0xRfVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=YwQlPv5u; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [217.114.34.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3CB24666BB3;
+	Tue,  6 May 2025 22:49:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1746564577;
+	bh=RpxsMctV1jrsDxcHCIc3Gn9iSl/41S+1uDF9v0s8jeg=;
+	h=From:Subject:Date;
+	b=YwQlPv5ukebRlsVl2efKN6GTenU9JpNZnvmJhKq+wJsa6HXdUQiX++My/3I+6b7vs
+	 2nJus3ne6UhMvmKjJ36/0kKyAh3VH34Au6C/H7ielmAEF0b7IKSuzgZ0XUi20bQhbc
+	 i1UmK94w7e6XQCdMgcEA90DIfqnInBtys3A5K38MYpyGYbyKZ8Ly4ELnqV/eHY5Sgd
+	 zesgNxLUs6HZyiqYB5Bxt2BXmkMMHgAS3oTSk5XwvftwTHGTTCc7CA+2Z8kkvtjau+
+	 BI/wt2KKbEqo+ngkPdMR1ZXDzpUnWh8LuHD1eCp+NoF8dYtwBto9MuCL88X64Joy9M
+	 08DblzFhSwaKQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject:
+ [PATCH v2 1/7] cpufreq/sched: schedutil: Add helper for governor checks
+Date: Tue, 06 May 2025 22:34:31 +0200
+Message-ID: <3365956.44csPzL39Z@rjwysocki.net>
+In-Reply-To: <2999205.e9J7NaK4W3@rjwysocki.net>
+References: <2999205.e9J7NaK4W3@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430-bcm59054-v8-0-e4cf638169a4@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 217.114.34.19
+X-CLIENT-HOSTNAME: 217.114.34.19
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeegleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppedvudejrdduudegrdefgedrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddujedruddugedrfeegrdduledphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
 
-On Wed, Apr 30, 2025 at 09:07:04AM +0200, Artur Weber wrote:
-> Add support for the BCM59054 MFD to the bcm590xx driver (mfd and
-> regulator) and fix a couple of small bugs in it that also affected
-> the already supported BCM59056.
-> 
-> While we're at it - convert the devicetree bindings to YAML format
-> and drop the bcm59056 DTS in favor of describing the PMU in users'
-> DTS files, as is done for most other MFDs.
-> 
-> The BCM59054 is fairly similar to the BCM59056, with the primary
-> difference being the different number and layout of regulators.
-> It is primarily used in devices using the BCM21664 and BCM23550
-> chipsets.
-> 
-> This patchset has been tested on a Samsung Galaxy Grand Neo
-> (baffinlite rev02; DTS not in mainline yet) with a BCM59054 PMIC.
-> Testing on a BCM59056 would be appreciated.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Other than the already applied patch 3, the whole series is
+Add a helper for checking if schedutil is the current governor for
+a given cpufreq policy and use it in sched_is_eas_possible() to avoid
+accessing cpufreq policy internals directly from there.
 
-Reviewed-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Tested-by: Christian Loehle <christian.loehle@arm.com>
+Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+
+v1 -> v2: Pick up tags
+
+---
+ include/linux/cpufreq.h          |    9 +++++++++
+ kernel/sched/cpufreq_schedutil.c |    9 +++++++--
+ kernel/sched/sched.h             |    2 --
+ kernel/sched/topology.c          |    6 +++---
+ 4 files changed, 19 insertions(+), 7 deletions(-)
+
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -650,6 +650,15 @@
+ struct cpufreq_governor *cpufreq_default_governor(void);
+ struct cpufreq_governor *cpufreq_fallback_governor(void);
+ 
++#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
++bool sugov_is_governor(struct cpufreq_policy *policy);
++#else
++static inline bool sugov_is_governor(struct cpufreq_policy *policy)
++{
++	return false;
++}
++#endif
++
+ static inline void cpufreq_policy_apply_limits(struct cpufreq_policy *policy)
+ {
+ 	if (policy->max < policy->cur)
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -630,7 +630,7 @@
+ 
+ /********************** cpufreq governor interface *********************/
+ 
+-struct cpufreq_governor schedutil_gov;
++static struct cpufreq_governor schedutil_gov;
+ 
+ static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+ {
+@@ -909,7 +909,7 @@
+ 	WRITE_ONCE(sg_policy->limits_changed, true);
+ }
+ 
+-struct cpufreq_governor schedutil_gov = {
++static struct cpufreq_governor schedutil_gov = {
+ 	.name			= "schedutil",
+ 	.owner			= THIS_MODULE,
+ 	.flags			= CPUFREQ_GOV_DYNAMIC_SWITCHING,
+@@ -927,4 +927,9 @@
+ }
+ #endif
+ 
++bool sugov_is_governor(struct cpufreq_policy *policy)
++{
++	return policy->governor == &schedutil_gov;
++}
++
+ cpufreq_governor_init(schedutil_gov);
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3509,8 +3509,6 @@
+ 	return static_branch_unlikely(&sched_energy_present);
+ }
+ 
+-extern struct cpufreq_governor schedutil_gov;
+-
+ #else /* ! (CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
+ 
+ #define perf_domain_span(pd) NULL
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -213,7 +213,7 @@
+ {
+ 	bool any_asym_capacity = false;
+ 	struct cpufreq_policy *policy;
+-	struct cpufreq_governor *gov;
++	bool policy_is_ready;
+ 	int i;
+ 
+ 	/* EAS is enabled for asymmetric CPU capacity topologies. */
+@@ -258,9 +258,9 @@
+ 			}
+ 			return false;
+ 		}
+-		gov = policy->governor;
++		policy_is_ready = sugov_is_governor(policy);
+ 		cpufreq_cpu_put(policy);
+-		if (gov != &schedutil_gov) {
++		if (!policy_is_ready) {
+ 			if (sched_debug()) {
+ 				pr_info("rd %*pbl: Checking EAS, schedutil is mandatory\n",
+ 					cpumask_pr_args(cpu_mask));
+
+
+
 
