@@ -1,150 +1,159 @@
-Return-Path: <linux-kernel+bounces-635903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519D6AAC366
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20A3AAC36E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506775040F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:08:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B793B6E51
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B3C27C16B;
-	Tue,  6 May 2025 12:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC6727F73C;
+	Tue,  6 May 2025 12:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E3J1lOd7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GEvW4hTI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7790427EC91
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFC627F4C9;
+	Tue,  6 May 2025 12:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746533303; cv=none; b=kGje9IqvPyU8NhjXM9eNNxcFatf2hsJuA7xNE9vAOsSPA5k/QqGDnrqwtcAcES41FP1/7oJUTPKbS4o4yh14X3J8VIlSjs/6jrON1hpe46v7wDprA/fWJkkUfbwlNImdhmVYTNT94W2gzIF95BY2okK/0CY/h2tDa3QsuJkYx2Q=
+	t=1746533338; cv=none; b=deWqiIoqpAVCSPDyzqV67uvJnEuozRcdyw9kTX9CTM3IqoYktQmNO0geEcD8ySlIjn+uERnA6JL6Pj0+kx1f8LjSl0jQt+xXAX3FK4HlC5mTxgJqSwRY1rFhxxieUdwcqKUYESb0/jN8PL5wJTpc/mXW7c48YTS1YgEFJ94+36k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746533303; c=relaxed/simple;
-	bh=DdbmmhonCetUBZsFTlekD4aubGPPFIJ9ItkmtXG5bpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d9EyWwC54lUwvRISgnJS6071X7S/3cPqHZ+O6SwvHlxRzUDBhhEpSu/nus014/yrhWGEQoQ3a+4oNtGwM1nCa3H30b9PATGFQJgvyMUWkV/JHuCGrZxcaMz+tbRCssQFbQtnvFMoI+IBvJSIemQk8eS8dBtfiEu4wSetU+HaIfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E3J1lOd7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54690i1G002690
-	for <linux-kernel@vger.kernel.org>; Tue, 6 May 2025 12:08:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=GD4lMZs5a3pKzd5cggQ3wq6Y
-	VdqPYIs1t4O/gynZcKE=; b=E3J1lOd7/umRoIoyHPXx+HWv+BhAjFG2wgSGRs3h
-	4REjvf6kVGrZ4z/9aFucBCebJg+hkZWhWeKtJ/pvf+eXKNYW8Mz+Hn3TVzzCPHVr
-	GpAiYsTReVbH0TfZbMWJ79HPUWDamy+npijq06Fp5wgSIAVsSq6mriISUQUf0wxh
-	FAbhD38u1N9kQRyH1+3iWKXX8pau6ucut1uB5RlTSn4ARqo4fSLlpfn7HFPpdpzz
-	LGTFLLo+ghwWRLGOLbyHoktz6neYZZJ4G3o/ZGxEy5OYD8PShvIehuJJkEBe/smm
-	Qeg54HJborZn1OskGXcRmpjNSxsuhHjqpLVx+sXsCKbWiA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5w3a4ve-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 12:08:21 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5d608e6f5so1434968185a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 05:08:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746533300; x=1747138100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GD4lMZs5a3pKzd5cggQ3wq6YVdqPYIs1t4O/gynZcKE=;
-        b=h6maistFFLoSo85T5Nl3vgrvWw8Vxe/W4/YYUTq1IhQqFjSMt8ie/i0NP/4G2b7Sev
-         l/+WONCpyBS82eY2AwyBjzsnLeR/jF7VNgVEe8rDAXuFMmvsG8WJQ8crLERQLYq2+ZsA
-         CUpJdQ9HdHLRBpTcwCM1xdO6+58p3MYb+BZe8i2zLJHJpfBjksYCxvMT0WbVdcZglpXB
-         Rc1APgz1wAXsy0TUCfJtohPDhvuS8arKOeVcHn+svM7sakvRAMWO7Cc5U/w9IfAqz2tr
-         dXh8kxdQyQ0AEPstENBHE5OAdMTYySBT2ylZo6gtADQ4rbq6zUL9eUzlywQotQ8v+jxQ
-         yzYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfiDJ5PF9CXWCqIylV63c62juxo5dWGrzWhyDkskmnkaC1pdtocM52ze9colPki2OA2HZZ/pWL2pY+htE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu5Q56PFmMByxg+E2nTWJSu1epNDz87oLnbifRS55LW2HVS3N+
-	ipGzgIOh1SATOg/zbE9ch7OdWOMt7dkYRAByB6ixEt9W0HFSd1Aux3uoLM6X921z3trbD7KV9zc
-	D8R2TL+1lx54CgvK4yUrnOQqy5E2Bpb0Po+Wq3+v6JZEPYsiUnKHUKhHNOVsfeaI=
-X-Gm-Gg: ASbGncuncFAh9rTlRRxt1sIOMz+9Qa86oPtGa7N6yw1K3FnAXgSAg8FgcvvPcd/US6M
-	vyAaTbLspoopyue/+NSbHnDCyUzSfstl0m9Nuvgytcn9SpUaU2VlcmAV5+a3cV29VQ4bF+OKtYR
-	bmGmZs8tpkhMi+TRZfmKWp950qMJWIghCc6dahAlMMzt24VJBhCayiwJ0FZcH/eV8blVRRR+0QL
-	NhVrUYg2YV4o7b5oautWZfUYcnfUDW5ndgIv70Ey/5xFhF12PTLzOKZ7X9z8KBExOXTjM9UDCEq
-	RYke97C63tDyleVx7sB4S1W81Kc63BCIaXyy2p0S0cgrzJgdSeQZx/Def2qrljp2XwqZ+I1B7FA
-	=
-X-Received: by 2002:a05:620a:4629:b0:7ca:df98:2f6 with SMTP id af79cd13be357-7caf09bf07emr524577685a.43.1746533300208;
-        Tue, 06 May 2025 05:08:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGz6fgxkf8GCZyugOKLOyYO6nxMMiDaVer/gkboErci2Inurno93UgLLdfrFIxkKoZ4FWDdkg==
-X-Received: by 2002:a05:620a:4629:b0:7ca:df98:2f6 with SMTP id af79cd13be357-7caf09bf07emr524572085a.43.1746533299797;
-        Tue, 06 May 2025 05:08:19 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32028b38e2csm19391601fa.13.2025.05.06.05.08.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 05:08:18 -0700 (PDT)
-Date: Tue, 6 May 2025 15:08:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@quicinc.com, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v5 4/6] arm64: dts: qcom: Add support for QCS9075 RB8
-Message-ID: <vr3q2c47ht5iebf7nvy3qywoxlquwma3p2tffswrefpmxqy24h@wrfecu6mcqcn>
-References: <20241229152332.3068172-1-quic_wasimn@quicinc.com>
- <20241229152332.3068172-5-quic_wasimn@quicinc.com>
+	s=arc-20240116; t=1746533338; c=relaxed/simple;
+	bh=qWEQKN50Sfhev29R+1iiRJnG9Ap2n+NOPh3MBXCQJgg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QzBp/i4a9iKfsEtmLzjPBiEBFK6Ct5JlBAJlp7MO4gdXJ090Ue3OE7uQLFa4Zfb8ylAhaG+2nDWmVqwyOLkvwY9EoPI2W+HPMlgQZCMF+/5DWT/nn+5QqJOVaJq3d3yprpgYFjBbkwK4LTnG/aUMCkDkyewALfdzcVuf3D4fKJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GEvW4hTI; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746533337; x=1778069337;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=qWEQKN50Sfhev29R+1iiRJnG9Ap2n+NOPh3MBXCQJgg=;
+  b=GEvW4hTIcb8YgGnDbL0QkQuWF9UkEbckf2RAJbrBd12pYkJP1SzqeDDH
+   u4gfMIqj+Ji4ZN/UUS0JzZ/Xs6empqr4bVFUEKPDMf476DKg1+pvmkx5g
+   SaY1zyEZY8kL12gtNNB+JBGKqXRS19TNkISwsl5gA5fR12qqSKVpVaKbJ
+   9mPG5xxF6ipZ/yNLoTOOeyVJ6EayVqBnixqS1Ck6kp8BTsWJE1pchlEKp
+   tIXw8RtxNDEW3nQrxZYSe8RikgrVbLmyE/FJJYqNtyjzLQG7NdP3iwI7g
+   WVyn+71OrE2rvkaSvYzJXMPi8Ya+F4qnmB0wNrHHC0LVL3Q4Ew0sQCtnc
+   Q==;
+X-CSE-ConnectionGUID: 2d71jEmDQqKv6zwcJBkfkg==
+X-CSE-MsgGUID: rw0UmB39SteVvhISkmoU8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="48106480"
+X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
+   d="scan'208";a="48106480"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 05:08:56 -0700
+X-CSE-ConnectionGUID: 43eUpEGxTxibNHy2EkAEag==
+X-CSE-MsgGUID: ggD0ZOv0TrOdeUhfCxxZtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
+   d="scan'208";a="136537055"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.207])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 05:08:50 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 6 May 2025 15:08:46 +0300 (EEST)
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+cc: arnd@arndb.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    benjamin.larsson@genexis.eu, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    heikki.krogerus@linux.intel.com, Jiri Slaby <jirislaby@kernel.org>, 
+    jkeeping@inmusicbrands.com, john.ogness@linutronix.de, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, markus.mayer@linaro.org, 
+    matt.porter@linaro.org, namcao@linutronix.de, paulmck@kernel.org, 
+    pmladek@suse.com, schnelle@linux.ibm.com, sunilvl@ventanamicro.com, 
+    tim.kryger@linaro.org
+Subject: Re: [PATCH v5 3/4] serial: 8250_dw: warning on entering dw8250_force_idle
+ unlocked
+In-Reply-To: <71a295db-72ea-bf2a-338f-416b178f5305@linux.intel.com>
+Message-ID: <f4fe790b-8dcd-1002-f6cd-0fbf451d28e1@linux.intel.com>
+References: <20250506112321.61710-1-cuiyunhui@bytedance.com> <20250506112321.61710-3-cuiyunhui@bytedance.com> <71a295db-72ea-bf2a-338f-416b178f5305@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241229152332.3068172-5-quic_wasimn@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDExNyBTYWx0ZWRfX6gnjMs9ZYTOD
- BQ6l/qhcXlVMB5NPfmeoJOjbQl7+lflrWt1PqC3y+HUH29Mv7boEiKD31n9ykU9DotrATEGeGDe
- LZTCqXkl0BRLnD3ESTBejjApVMzJtuIg8eovAggpmMB8PlHnoPVJZMUHLEouKVAc8u76H8Oiztj
- xQ5IvqnnwjrBYhMmqjBowC9802dcHyG+EoDAlsvNZ1DACwV4ggeG+H3AfMIVnOwcovA6U7MqKA5
- vjh7qTpUKeNEaSSbgBoWUrBe8DRcJEjeHsIyuuO2Rb7iFRNXQpFxjwsairrnCrHBxz1z4A4X3kI
- X3eiTZK4Zgif8+avpF0AA/hPbKhBCY6f0lYRoqGV/qvYkyKaN4IQEnKBIhNffWevK4mSmurLxR4
- o4hnbjJGLuGJSycx5wEOuKiiqAVbRkooiFLhlYpo9pntSZlBwRAxxI7xKrqvGLOMUXUaazNq
-X-Proofpoint-GUID: AK-Ojzn5SHrqGPeegxXMAUYiIK88klbR
-X-Proofpoint-ORIG-GUID: AK-Ojzn5SHrqGPeegxXMAUYiIK88klbR
-X-Authority-Analysis: v=2.4 cv=W+s4VQWk c=1 sm=1 tr=0 ts=6819fbb5 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
- a=q-whWVftEaYGax-JpAIA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
- a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_05,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 clxscore=1015 adultscore=0 phishscore=0
- mlxlogscore=800 spamscore=0 bulkscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505060117
+Content-Type: multipart/mixed; boundary="8323328-505674580-1746533326=:1921"
 
-On Sun, Dec 29, 2024 at 08:53:30PM +0530, Wasim Nazir wrote:
-> Add initial device tree support for the RB8 board
-> based on Qualcomm's QCS9075 SoC.
-> 
-> Basic changes are supported for boot to shell.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile        |   1 +
->  arch/arm64/boot/dts/qcom/qcs9075-rb8.dts | 281 +++++++++++++++++++++++
->  2 files changed, 282 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-rb8.dts
-> 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-For the next submission please include at least the UFS support. The
-board is pretty useless without the actual storage support.
+--8323328-505674580-1746533326=:1921
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
--- 
-With best wishes
-Dmitry
+Also, you should also improve the shortlog (in Subject) to something less=
+=20
+vague, e.g.:
+
+serial: 8250_dw: assert port->lock is held in dw8250_force_idle()
+
+On Tue, 6 May 2025, Ilpo J=E4rvinen wrote:
+> On Tue, 6 May 2025, Yunhui Cui wrote:
+>=20
+> > Read UART_RX and check UART_LSR_DR in critical section. Unsure if
+>=20
+> Unsure if -> Ensure the
+>=20
+> > caller of dw8250_force_idle() holds port->lock. Don't acquire it
+> > directly to avoid deadlock. Use lockdep_assert_held_once for warning.
+>=20
+> Add (), although the last two sentences don't seem that useful, IMO.
+>=20
+> >=20
+> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > ---
+> >  drivers/tty/serial/8250/8250_dw.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >=20
+> > diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/825=
+0/8250_dw.c
+> > index af24ec25d976..f41c4a9ed58b 100644
+> > --- a/drivers/tty/serial/8250/8250_dw.c
+> > +++ b/drivers/tty/serial/8250/8250_dw.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/delay.h>
+> >  #include <linux/device.h>
+> >  #include <linux/io.h>
+> > +#include <linux/lockdep.h>
+> >  #include <linux/mod_devicetable.h>
+> >  #include <linux/module.h>
+> >  #include <linux/notifier.h>
+> > @@ -112,6 +113,13 @@ static void dw8250_force_idle(struct uart_port *p)
+> >  =09struct uart_8250_port *up =3D up_to_u8250p(p);
+> >  =09unsigned int lsr;
+> > =20
+> > +=09/*
+> > +=09 * The serial_in(p, UART_RX) should be under port->lock, but we can=
+'t add
+> > +=09 * it to avoid AA deadlock as we're unsure if serial_out*(...UART_L=
+CR)
+> > +=09 * is under port->lock.
+>=20
+> I'm left to wonder who/what "we" is here? Could you change it something=
+=20
+> more precise.
+>=20
+> > +=09 */
+> > +=09lockdep_assert_held_once(&p->lock);
+> > +
+> >  =09serial8250_clear_and_reinit_fifos(up);
+> > =20
+> >  =09/*
+> >=20
+>=20
+>=20
+
+--=20
+ i.
+
+--8323328-505674580-1746533326=:1921--
 
