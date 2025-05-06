@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-636762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3A2AACFB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:39:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86940AACFBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94354985147
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:38:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760961C043E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB328221F2E;
-	Tue,  6 May 2025 21:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1E921C174;
+	Tue,  6 May 2025 21:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMEhu4ae"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKl6VUYJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B52221734;
-	Tue,  6 May 2025 21:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B0E21B183;
+	Tue,  6 May 2025 21:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746567361; cv=none; b=cIxybZxWdCZjh+cuUJrbGESnnhdrbopyYpeBF0yJhquLwQJL+XCP/55qnuyBFDEJHOiedOWRcY/wAU5cW5QxbRyf4HDyO67zCxvX7yaAujZBdjWMOSVaczq3xdu+n+vyMdxS8CQSfueb9PWF9q8UQgpvi2aR86t8++p96ybXda8=
+	t=1746567376; cv=none; b=pzWbA8V7LdBrEmg97dMyccd7EZgLOpOdMj6EhbacXp31IN6wmkqXCszyeU+ZeaFpdxTjnxh7B7u3zgH24TtzT95ZBRdNjN1ULtUhQ4Fc99KjspRUzJ7Pmnl9AQNU2a9meWhgtdC/vXcjoPAul2Y+rkrunAUewAgy8TOTQrsDtMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746567361; c=relaxed/simple;
-	bh=I+Fx8q3goyJx2Gxb/9/UOHkYu+kY2IGAKZZIg6IZzSM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nLBBxeTYnJ3P/xQBR2cY0E5ZyxT5StD9P2Bu65A9rr8QRhsAfdGN+bprBilbyGu/F1bVH5yFP5AE1MHTfTiE4RFAl3v8TXi6wqEgesKgtCTOtnNrMmAHSp2P9uRX2VuGJUo8b7aGCtSai/rKzBTZCJy7BjsFPNvw18dzzYGBtSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMEhu4ae; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22c33ac23edso67850025ad.0;
-        Tue, 06 May 2025 14:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746567358; x=1747172158; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eIsa1bhwZTWpZl9eNabO08QufObEhVlhwC0HW+Z0IKg=;
-        b=JMEhu4aeA4oXPWvzDsWVnQWTzGVwvNRBi9jE+phEOjGMZoPxFg5UIWdPHRo6ZLtZZf
-         5tmaAyC7Hh0l0ZOJosxMMzn2Zl1PnoVkdEXFbTbOhLyZjRb/gCMCOAbTIrltrFqAe9Cc
-         JcqMAeE25RiM8AnG5741MzuFeLc5kRYOlOXSm/UR84YYlG1zp28KxFqNy5AoLxz7CW4l
-         vCy9cC+fA/00Xl419Hyf3G7Ef0IKMS32JNHzeRyJAv2MjE57SBK8Uqafr5FXS7heTnP2
-         C8npHxtzjHlzL8YkTClywVUnOAWpI2nE0hfAZWvMc0OyF6A+s6JJT90UEfPW4SfpzP69
-         GS5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746567358; x=1747172158;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eIsa1bhwZTWpZl9eNabO08QufObEhVlhwC0HW+Z0IKg=;
-        b=fUUBNkLIKhd0Yd3qtZsULUIC2VIT2PaCxXUBkjE8cMxwRzxq2wMYUXgdHbbLo2Yhmv
-         ZxzwVng5ACv1Q01aoo6id2lp4ijj1jYBI2CWdC5TBDEVBP7mTdi06Mz6RVSJ2Bq/R0U7
-         RPTMTtxEvPp4ntnQ6LIbAGb8bo0N6nhIMbHd29LJqJabksB66wR2HkuqVW83LkSYl+/g
-         +s9XWh4wIYMxhiaFt2BK85VOhugskujC5muER+ebEXRxz8znqBqH2Bd9CQTTft/FDl/U
-         Xcx5MQTbTGXgWNRtK0pzDLdegTMD+2Q1URygszsUKjkg0pCbhDKx4/fnjtS+LYGZycR+
-         5B9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ7dKDGSe4iqRi3qXfqOgAZht7Zzp14Mzd76RlAGy3BFJcuVZZBpBaxKsOGrDpKeOURNfUxtn4HshPcNuGk+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi9rm/hUK5RalCLmW8vHz/UzKC9c9m2ilBxyVibWoDUc4S3c4q
-	BfzdfXM06121NPSMXF6Zpx0Q8m9RG6JW5Ez4Pggkn9FzcUNJW0d1
-X-Gm-Gg: ASbGnct6a48oJczBMgfD7oUS7vw+se0bK5Z5NXLJtHY+jVIpB4uz2NqdVXPeZUtBi9j
-	+yO8cqVYbDCDMoC28GUzqGX81fqEg72ezcAyesDTwS7mqYhjWR+rDrc9vE+2jy4YsNJ3CuXICzf
-	vg37v8XG4esD5nnJNfDPg67LfeJNq/l2Af9cyItwQ3E1/KLinJXIAG3fjtV0El5G+TTM5d1uhaP
-	smBbGlkEARrP8b6b3v3XygagjhhhLEA99Lv+MVAOYlP+NQxpYmNpmg//HslIpWO6ALosiarFzYc
-	5WpVtW5MD+ItTmLkY/xC3IAGOjyn2c5yYaPAUaZDd4KGQFw2XlVHPCmuLBcni74E4K9sL0kNZ/U
-	zvjmBP22kvuAQn/VDkPHx0lWqWMUKNPMaEw8=
-X-Google-Smtp-Source: AGHT+IE0dnaFFX5Qnoy2VbjG0XY7suKj3R2ErvmlpliCrYY2tLb235jAN3MLyeBZ63WibuaxM+zj6w==
-X-Received: by 2002:a17:902:e849:b0:22e:5389:67fb with SMTP id d9443c01a7336-22e5ea2dc51mr9571055ad.7.1746567358092;
-        Tue, 06 May 2025 14:35:58 -0700 (PDT)
-Received: from server-kernel.moonheelee.internal (d173-180-147-14.bchsia.telus.net. [173.180.147.14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e150eaf91sm78933155ad.1.2025.05.06.14.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 14:35:57 -0700 (PDT)
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-To: brauner@kernel.org,
-	shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Subject: [PATCH v2] selftests: pid_namespace: Fix missing mount headers in pid_max.c
-Date: Tue,  6 May 2025 14:35:35 -0700
-Message-ID: <20250506213535.5235-1-moonhee.lee.ca@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1746567376; c=relaxed/simple;
+	bh=yBu1az8/OZoi8PDKYPnp/10aiX5KHCwBplGq28w4TsA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t7mLJrIdQcsigY8SS4Sm6tn25ZBSBOUYQ+0/DJV9gFtgWtabtplThHvUIXhy7pzPcIe6VbUY8bJu3QwBzRuGe7Xw+qAveYrL1hx94z9AiffgcFrb5WHrxH/EOBBlTQpZvZ5q7TuGGrv1j/NJrW0Q9X+gBCyh07VHCcwOn8hdSmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKl6VUYJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E20E3C4CEE4;
+	Tue,  6 May 2025 21:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746567375;
+	bh=yBu1az8/OZoi8PDKYPnp/10aiX5KHCwBplGq28w4TsA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dKl6VUYJMX/9CDIRIxh4vgqSY6j7YnuwWCtY00dsO63ca5MXGUmNHEi+pIBV8Ed6v
+	 Xx0nX0J1fXsa32qQa7du82v/3d+mR4Jfw+7nB9igMxxgzIZrKcXgWNYs/66tLZlzN5
+	 o6/mw0NtkejhOGrMQims4ChvY4JoDgkFmyDddnNsBkr+pzdtg9D4CQvTiCng4RzPMU
+	 H8VcYre60/8HIcTI+a9Xhe3r0Lub4LItq8Bj1YVELSAR84fCGCF7SaCmZF1fgF69VB
+	 Vgs8zeaB7g0FU3uvPfTkvUS5x3j3+ZKr5jqIJdYQc3q0nhh+DGpr+gKs7Ejlu7FMKH
+	 S3SoVOm/sKk8g==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Chenyuan Yang <chenyuan0y@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shawnguo@kernel.org,
+	linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 01/18] ASoC: imx-card: Adjust over allocation of memory in imx_card_parse_of()
+Date: Tue,  6 May 2025 17:35:53 -0400
+Message-Id: <20250506213610.2983098-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.27
 Content-Transfer-Encoding: 8bit
 
-Fix compilation errors in pid_max.c by including <sys/mount.h>, which
-provides definitions for mount(), umount2(), MS_PRIVATE, MS_REC, and
-MNT_DETACH.
+From: Chenyuan Yang <chenyuan0y@gmail.com>
 
-Without this header, the build fails with implicit declarations and
-undefined constants during selftest compilation.
+[ Upstream commit a9a69c3b38c89d7992fb53db4abb19104b531d32 ]
 
-Changes since v1:
-- Included example build errors below for clarity
+Incorrect types are used as sizeof() arguments in devm_kcalloc().
+It should be sizeof(dai_link_data) for link_data instead of
+sizeof(snd_soc_dai_link).
 
-Compile error:
-pid_max.c: In function ‘pid_max_cb’:
-pid_max.c:42:15: warning: implicit declaration of function ‘mount’ [-Wimplicit-function-declaration]
-   42 |         ret = mount("", "/", NULL, MS_PRIVATE | MS_REC, 0);
-      |               ^~~~~
-pid_max.c:42:36: error: ‘MS_PRIVATE’ undeclared; did you mean ‘MAP_PRIVATE’?
-pid_max.c:42:49: error: ‘MS_REC’ undeclared
-pid_max.c:48:9: warning: implicit declaration of function ‘umount2’
-pid_max.c:48:26: error: ‘MNT_DETACH’ undeclared
+This is found by our static analysis tool.
 
-[...output trimmed for brevity...]
-
-make: *** [../lib.mk:222: /linux_mainline/tools/testing/selftests/pid_namespace/pid_max] Error 1
-
-Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+Link: https://patch.msgid.link/20250406210854.149316-1-chenyuan0y@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/pid_namespace/pid_max.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/fsl/imx-card.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/pid_namespace/pid_max.c b/tools/testing/selftests/pid_namespace/pid_max.c
-index 51c414faabb0..972bedc475f1 100644
---- a/tools/testing/selftests/pid_namespace/pid_max.c
-+++ b/tools/testing/selftests/pid_namespace/pid_max.c
-@@ -11,6 +11,7 @@
- #include <string.h>
- #include <syscall.h>
- #include <sys/wait.h>
-+#include <sys/mount.h>
+diff --git a/sound/soc/fsl/imx-card.c b/sound/soc/fsl/imx-card.c
+index 93dbe40008c00..e5ae435171d68 100644
+--- a/sound/soc/fsl/imx-card.c
++++ b/sound/soc/fsl/imx-card.c
+@@ -516,7 +516,7 @@ static int imx_card_parse_of(struct imx_card_data *data)
+ 	if (!card->dai_link)
+ 		return -ENOMEM;
  
- #include "../kselftest_harness.h"
- #include "../pidfd/pidfd.h"
+-	data->link_data = devm_kcalloc(dev, num_links, sizeof(*link), GFP_KERNEL);
++	data->link_data = devm_kcalloc(dev, num_links, sizeof(*link_data), GFP_KERNEL);
+ 	if (!data->link_data)
+ 		return -ENOMEM;
+ 
 -- 
-2.43.0
+2.39.5
 
 
