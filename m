@@ -1,124 +1,230 @@
-Return-Path: <linux-kernel+bounces-635918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3EEAAC3A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:16:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01A9AAC3AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002114E848B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00BFC3AC5EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34CF27FB15;
-	Tue,  6 May 2025 12:16:15 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883E51DDE9;
-	Tue,  6 May 2025 12:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709D227FB20;
+	Tue,  6 May 2025 12:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUp8e5Hh"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9CC27F18F;
+	Tue,  6 May 2025 12:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746533775; cv=none; b=C/9Qaa8pwAiudLCSn8FKDZJA5OcUDuS1TfhmfsqtEKCVvc+2R3Ln0RfD1MXqyes0M4FPGoeCH+Tu0J9TRwnll/Z5u2ZWxetYoFnzZqm1lGWJZk8EBSJ0GE9+SupMbdnQSc4D3sGkwo7XNEkxLzdcjPT+DGtTexgV/jvLDsmSNIE=
+	t=1746533814; cv=none; b=BMtA0BOIHyDGnNPdp09bILH8Zm6MrsSr3TKO2yfveqZDrm85MyNE0LE0IAZUdQrizuPc3GKR4WmmrZ1JUVhPDEHGQNp9QJVxpqIQdXf2AqXbtib/Mo4/iF4jpg8Dc9oc9JgH26DMTVlZqeal7F87UotDKEATaPAz3UoVu+hbRrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746533775; c=relaxed/simple;
-	bh=oEwS2B/SEVhvr/PEsjOt8P75XFO79S+SKeaI3RLVp/w=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=W8VxrriwXm7SjHwc5DgGc0Z+WV4qJ20E5ZnUeWIgiYxlsHyp3vneARLU0jRCEB7GpmoRJQbdBaygRkoiXJVfHQcOBS32baCIcWAezpos2XLypN1dw9GNKl520YIzVUfk0RZzx+EG6mgxYVCf+S0Gj0bQrziTxDlMNSe2F/+Aj6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8DxvnOJ_Rlo+rPWAA--.57490S3;
-	Tue, 06 May 2025 20:16:09 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front1 (Coremail) with SMTP id qMiowMCxvMaE_RloXPG2AA--.50748S2;
-	Tue, 06 May 2025 20:16:06 +0800 (CST)
-Subject: Re: [PATCH v9 5/5] MAINTAINERS: Add tpm_loongson.c to LOONGSON CRYPTO
- DRIVER entry
-To: Yanteng Si <si.yanteng@linux.dev>
-Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- peterhuewe@gmx.de, jarkko@kernel.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, linux-crypto@vger.kernel.org, jgg@ziepe.ca,
- linux-integrity@vger.kernel.org, pmenzel@molgen.mpg.de,
- Huacai Chen <chenhuacai@loongson.cn>
-References: <20250506032053.11147-1-zhaoqunqin@loongson.cn>
- <a03b4963-55aa-4a75-b795-1e8f0db7ec89@linux.dev>
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Message-ID: <00196f77-1060-fe67-3e6b-6721092207d6@loongson.cn>
-Date: Tue, 6 May 2025 20:14:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1746533814; c=relaxed/simple;
+	bh=uR+b9SUDz3kDfrZfVAV0AjkzWD/ARG9NGY/tJWaZ00k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MfnX05hq28IDMle+wyTZ6BC5qZdTt49S5srHeXcfq2p7NXzr0mPB2RiQeJ7vYhbquQgyWKF8Ko9P5MwijYojTv887JsGh50kosUJeT3Xv4L4BLS8nm97tVEUuK3IwgV8gd4kfQh8bK0SJjV3f86LH95c447ypBVOZln3Flqi8Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUp8e5Hh; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2255003f4c6so57137115ad.0;
+        Tue, 06 May 2025 05:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746533812; x=1747138612; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZddEGrogZHEGNQ7pcvcEYKUf9gM+B46KqH5Pfb6SAvs=;
+        b=QUp8e5Hhmmxh2PnQQgopG332W7FEarARts7AlUH8yyEhtYzDWRX5zRyZ9qcGUWitFp
+         Kh6ap68eAl2lnN5Mtp+/Pt3aOLBrmqAVWXO3X9YVYMpiFWldOmmoRHL9AJdqgqddzdtV
+         2BIz8lCXtcDUs8l3OY+EtKiLJusiX+H+ldVL2SmCDIHWdzaclTvHdkcSFrAv0rsrxuyi
+         Y6QjVfkETqxqryFGCkHYhxecqqTo0TRaRm/RcK+JU/TpjlSroJGiU+/S9E9vWXoKnbuI
+         enYi+HZEsc75JmG941TQYX4AdKgdBVqxMr06TBUXPX3hpjD4FhxFCmh44aS8R4m828C8
+         3A6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746533812; x=1747138612;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZddEGrogZHEGNQ7pcvcEYKUf9gM+B46KqH5Pfb6SAvs=;
+        b=CeVhFnk0LbOwolL/dSSdmLd1wFZy/w+i63yuqYjJdYsiGyszaBpp9AL+odpYgfh8PY
+         BKubMPVjIIIXZfwfH1n3g6Z/hlhQD/8tTarjRaLroBt0VWEkHxo4fZ70WhQ590iPQcAB
+         PlKrRtdqgvdKAkwBCNcPY596hpeJf2gv1/xDXhF3xnV7jz3SdAgsrC+iCFtt0r87I/lA
+         FU8dDVB3g8SI7qfcMD+Cpw/RzP9gVd7hkRZd53pKg4uMB+6w4bBBPOzBYqS0e0aBodbi
+         DHkefH8iDObBkewra6sw7hnL0qOkWsJsc2FMuxAMZ1iqiPpGwu+RDGXODhOQO4OSXAX+
+         93kA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9mH3xZEqPvmNYsFiy969JnZO3ucTGQzerjUuLnUegt7uxKbLxvCuj+z4BDyU582UoOcDsUEg+qmUF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkXYCGjUDzPu++8WLsmMOxOcoDLJn4gH2Wjjvh+1jiGeFjyAZt
+	ePAbCqU14T3KLzHxdcLculehItpcyEX7JQdjwcaq5NOeZI88mfm8
+X-Gm-Gg: ASbGncucG/YRJkxX3esorfxdpDd6Vx6vaS8h+p5Aod603JcR8+lNsskvhHflzNVde/+
+	QeRSpoTwRyVZbrajjwzEYKn8NNeGDudilqHu8vpfnY5b/S81sOM7PRAYbQ6aSIhS6nenTMFLoZu
+	2FZqvAagZwrQWy6oQG543jwQA8lkG6prDjz9X4InTHFCWcMHISIZcqpn7zHPHk3vlOIUrlkk0KS
+	XMOCizRDaq91jHFiNPolSXvvaCawvpo1rsdnT/gmevocLlw7EVtL0D+NHVEvWEuHs13iAFiH46m
+	sSx/y42B2uD1bBXBADbBcryO0J/jp4y3TUdFux8h8EUfRSkYP10L
+X-Google-Smtp-Source: AGHT+IHs+N0P22tjESMxWzTw9WBCdtsKHjx3p4pCRUDRfRHmJozPUqCA7yfh3OLcbsU9gVjS2h5X4A==
+X-Received: by 2002:a17:902:ccc5:b0:223:5124:a16e with SMTP id d9443c01a7336-22e102b8549mr257960995ad.5.1746533812345;
+        Tue, 06 May 2025 05:16:52 -0700 (PDT)
+Received: from NB-GIGA003.letovo.school ([5.194.95.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e2356741asm45354235ad.35.2025.05.06.05.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 05:16:51 -0700 (PDT)
+From: Alexey Charkov <alchark@gmail.com>
+Date: Tue, 06 May 2025 16:16:32 +0400
+Subject: [PATCH v3] dt-bindings: timer: via,vt8500-timer: Convert to YAML
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a03b4963-55aa-4a75-b795-1e8f0db7ec89@linux.dev>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMCxvMaE_RloXPG2AA--.50748S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw4fJFy7ZF48ury7WFWUKFX_yoWkKFg_Ca
-	yIkr1kGr18Jrn2g3W2gr97XwnxWa98Xa4rW3WUtw1fWw1jvFyDGFs7Cw1fA3WfWFWkGFnx
-	Jrn7WFZ7Ary2vosvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbDAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
-	oVCq3wAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa02
-	0Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1l
-	Yx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI
-	0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC2
-	0s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr
-	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250506-via_vt8500_timer_binding-v3-1-88450907503f@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJ/9GWgC/42Nyw6CMBBFf4V0bc10sFpd+R+GEB4DTCJF29poC
+ P9uxYVbl+ck955ZeHJMXpyyWTiK7HmyCfJNJpqhsj1JbhMLBNSwU0ZGrsoYjAYoA4/kyppty7a
+ XR0BVtwejyYBI85ujjp/r9aX4sqP7IxXCTw7sw+Reaz7ix/5RiiiVzBuFWu9NB2jO/VjxddtMo
+ yiWZXkDgJ5u09UAAAA=
+X-Change-ID: 20250418-via_vt8500_timer_binding-9021bd785e80
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Alexey Charkov <alchark@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746533807; l=4585;
+ i=alchark@gmail.com; s=20250416; h=from:subject:message-id;
+ bh=uR+b9SUDz3kDfrZfVAV0AjkzWD/ARG9NGY/tJWaZ00k=;
+ b=aSHwcym8c/ttItjanuxGpA+6h1oLBP/EYSQzDhjHPEU4SLfpu6MgvCnubLuKEuUcXIKz2tYV+
+ 27X78Tr+pTZB8dUZOdijpnZGauJ7xfHmqx7MnENiD0RYY7nNQwdTY7E
+X-Developer-Key: i=alchark@gmail.com; a=ed25519;
+ pk=ltKbQzKLTJPiDgPtcHxdo+dzFthCCMtC3V9qf7+0rkc=
 
+Rewrite the textual description for the VIA/WonderMedia timer
+as YAML schema.
 
-在 2025/5/6 下午5:03, Yanteng Si 写道:
-> 在 5/6/25 11:20 AM, Qunqin Zhao 写道:
->> Changes to Loongson TPM driver would be best reviewed by the Loongson
->> crypto driver maintainers.
->>
->> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
->> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
->> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->> ---
->> v8-v9: None
->> v7: Added tag from Jarkko and Huacai
->> v6: "tpm_lsse.c" -> "tpm_loongson"
->> v4-v5: None
->>
->>   MAINTAINERS | 1 +
->>   1 file changed, 1 insertion(+)
-> I'm just curious. Why is this patch kept outside the tmp_loongson 
-> patch set?
+The IP can generate up to four interrupts from four respective match
+registers, so reflect that in the schema.
 
-Hi, Yanteng. Thanks for your reply.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Alexey Charkov <alchark@gmail.com>
+---
+Changes in v3:
+- Added Rob's review tag (thanks Rob)
+- Rebased on top of next-20250506 to pull in MAINTAINERS updates
+- Link to v2: https://lore.kernel.org/r/20250418-via_vt8500_timer_binding-v2-1-3c125568f028@gmail.com
 
+Changes in v2:
+- split out this binding change from the big series affecting multiple
+  subsystems unnecessarily (thanks Rob)
+- added description for the four possible interrupts (thanks Rob)
+- added overall description of the IC block
 
-When sending this patch, git send-email prompted "too many commands"
+Link to v1: https://lore.kernel.org/all/20250416-wmt-updates-v1-6-f9af689cdfc2@gmail.com/
+---
+ .../devicetree/bindings/timer/via,vt8500-timer.txt | 15 -------
+ .../bindings/timer/via,vt8500-timer.yaml           | 51 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 3 files changed, 52 insertions(+), 15 deletions(-)
 
-and disconnected from the server. Then I sent this patch separately.
+diff --git a/Documentation/devicetree/bindings/timer/via,vt8500-timer.txt b/Documentation/devicetree/bindings/timer/via,vt8500-timer.txt
+deleted file mode 100644
+index 901c73f0d8ef05fb54d517b807d04f80eef2e736..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/timer/via,vt8500-timer.txt
++++ /dev/null
+@@ -1,15 +0,0 @@
+-VIA/Wondermedia VT8500 Timer
+------------------------------------------------------
+-
+-Required properties:
+-- compatible : "via,vt8500-timer"
+-- reg : Should contain 1 register ranges(address and length)
+-- interrupts : interrupt for the timer
+-
+-Example:
+-
+-	timer@d8130100 {
+-		compatible = "via,vt8500-timer";
+-		reg = <0xd8130100 0x28>;
+-		interrupts = <36>;
+-	};
+diff --git a/Documentation/devicetree/bindings/timer/via,vt8500-timer.yaml b/Documentation/devicetree/bindings/timer/via,vt8500-timer.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..e748149948f3140d4a158f800b91e70bf9c4f042
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/via,vt8500-timer.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/via,vt8500-timer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: VIA/Wondermedia VT8500 Timer
++
++description:
++  This is the timer block that is a standalone part of the system power
++  management controller on VIA/WonderMedia SoCs (VIA VT8500 and alike).
++  The hardware has a single 32-bit counter running at 3 MHz and four match
++  registers, each of which is associated with a dedicated match interrupt,
++  and the first of which can also serve as the system watchdog (if the
++  watchdog function is enabled, it will reset the system upon match instead
++  of triggering its respective interrupt)
++
++maintainers:
++  - Alexey Charkov <alchark@gmail.com>
++
++properties:
++  compatible:
++    const: via,vt8500-timer
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    minItems: 1
++    items:
++      - description: Channel 0 match. Note that if the watchdog function
++          is enabled, this interrupt will not fire and the system will
++          reboot instead once the counter reaches match register 0 value
++      - description: Channel 1 match
++      - description: Channel 2 match
++      - description: Channel 3 match
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    timer@d8130100 {
++        compatible = "via,vt8500-timer";
++        reg = <0xd8130100 0x28>;
++        interrupts = <36>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 16037aaa770fc35efb45fc26555afaa5102e2640..5c38a60eb3bddc47106509d6cc6450ae93e50191 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3467,6 +3467,7 @@ F:	Documentation/devicetree/bindings/hwinfo/via,vt8500-scc-id.yaml
+ F:	Documentation/devicetree/bindings/i2c/i2c-wmt.txt
+ F:	Documentation/devicetree/bindings/interrupt-controller/via,vt8500-intc.yaml
+ F:	Documentation/devicetree/bindings/pwm/via,vt8500-pwm.yaml
++F:	Documentation/devicetree/bindings/timer/via,vt8500-timer.yaml
+ F:	arch/arm/boot/dts/vt8500/
+ F:	arch/arm/mach-vt8500/
+ F:	drivers/clocksource/timer-vt8500.c
 
-Even after setting sendemail.smtpBatchSize to 100, I still have this 
-problem.
+---
+base-commit: 0a00723f4c2d0b273edd0737f236f103164a08eb
+change-id: 20250418-via_vt8500_timer_binding-9021bd785e80
 
-Now I am trying to find  Loongson SMTP server administrator to solve it.
-
-Have you ever encountered this kind of problem?
-
-
-BR, Qunqin.
-
->
-> <https://lore.kernel.org/loongarch/20250506031947.11130-1-zhaoqunqin@loongson.cn/T/#mf09225c286a8e2b92a677720afafb9e20be57a18> 
->
->
-> Thanks,
-> Yanteng
+Best regards,
+-- 
+Alexey Charkov <alchark@gmail.com>
 
 
