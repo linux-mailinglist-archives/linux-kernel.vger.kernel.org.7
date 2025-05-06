@@ -1,226 +1,239 @@
-Return-Path: <linux-kernel+bounces-635659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC825AAC073
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:54:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11390AAC08A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6544E2E97
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:54:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4083B4625
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C250927874A;
-	Tue,  6 May 2025 09:53:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17065278142;
-	Tue,  6 May 2025 09:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B51272E75;
+	Tue,  6 May 2025 09:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mwiq0lH0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645E82701D7
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746525195; cv=none; b=aFvOESmv0512yuOSVz9ULJL+K3MJyiZpDQOc7LGCC1rR6Eu6puQ9IzpzOIBjn7Bacb2KoCGtDJdYrgsqoxYIHYSmQW8SestO3O9XkRyq+ihzTE6mnzXdWeSi8ECzdX99hn+IpMFqfhwlC9XmsqQx/5sqPzByqaSPpaOUkUEKEfE=
+	t=1746525245; cv=none; b=t1yJT/OP9cJTDTtP0+xef3LnmVhn+wUxcO4gfG/TV3uqSa8wLuRqOOxXqhtLxtXNUIP4Lk0gk4ux2MiYLdMpXxhsggskq+8AF5CJHl2HSmQzL70UujvnXgOgAv5dcZZ1H1QrI05yFUBVZmVdoxVLIvnPe3o4q7tHN68xa8OlSZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746525195; c=relaxed/simple;
-	bh=mF1A3vX/n2fU9RBpzMdEW5F0yNbhrXJTL4Pr32b2H4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DCashHbhs3oMfVSwPkArvIfALCOMu4dPKit8bNpE6MIVsf5XYtRFffzHuUV9bLiCRsCJaKiUt3LkuecZNAqNOs15cQFwXd8Buf5+M2E1z4G5ZJYNSArPRowgdCQ2I16muOmdzoKpIWPZDoxZJzvM+1dflZf2xRxhAfUV/FsMrYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 962BF113E;
-	Tue,  6 May 2025 02:53:02 -0700 (PDT)
-Received: from [10.57.93.118] (unknown [10.57.93.118])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3ED6E3F5A1;
-	Tue,  6 May 2025 02:53:09 -0700 (PDT)
-Message-ID: <df09f0f4-fd23-469e-94d7-864b3bdb17c6@arm.com>
-Date: Tue, 6 May 2025 10:53:07 +0100
+	s=arc-20240116; t=1746525245; c=relaxed/simple;
+	bh=WZ64pm8mCn6WauOvEK5LHUkaP/YAEqtWPN8ZVB3/f58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BOE/L430c/yrhllRw8yHAvbU9hUjHBCHAN6QWdgaRKsnSAWfAmJMU0zlxl7ob4vhtcSJ4ec1kZoax2ZW4iyjlQtumHIgektqrlQz5QNedGR3gd5nl0ECg1HpbG9MpRnPuEmgFR1qsnxDKO6jOJNokAV3snTKOXF+GDuZg7NEbHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mwiq0lH0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746525242;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E6B1xjoScf7bsPJTh7xEGagDYN0nDoGDFYe9DHlpFOg=;
+	b=Mwiq0lH0P4jffVY+V/d3llJPsV8wIedPkaMJTpKOGI2DHmTpHGW/2xMFJKJ7Zm9AMThwSA
+	TEaZEwEsYVes1jkx1BPSbMxfJIlZbJdHEGKqPBSuBO3lErmX+UtpzKlXhaOTmIps7fk08/
+	aW8kENlmHIQVjjL/Qtrn8lBJNYIECdU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-686-Fa_gl7rkNjycsAFoxAjYJQ-1; Tue, 06 May 2025 05:54:01 -0400
+X-MC-Unique: Fa_gl7rkNjycsAFoxAjYJQ-1
+X-Mimecast-MFC-AGG-ID: Fa_gl7rkNjycsAFoxAjYJQ_1746525240
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac6ebab17d8so467326566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 02:54:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746525240; x=1747130040;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E6B1xjoScf7bsPJTh7xEGagDYN0nDoGDFYe9DHlpFOg=;
+        b=rt60VtbkWVybzo5NcMdOwr2dwtk2R7zZnwPZ0NvmzafepDwlC3cCfn33cYC/M/XkTa
+         IQf6wAL7IlEFQEU65QD/se51LMqpUx+xdcHsTsyyQ3YS8bNJFrZqoSXO6IVHyh+fwF/E
+         o6xZVJxm6/xdpGqpLFEJqRzhTIBlte6EtYYVXxZ2B9XxXj2f5fC7IwY2Dx6srk+91vve
+         CtfWIZdc64ymFwGsDUcyRXYf0F14nLhcGSyU/Z+GdwtGRtTuchQSRa2bdzc0ITtqHzLJ
+         RQwb9C+RSSCvt+7vluNiU6cfz89dwWPclrwm5ruMCApa1HXfcPb41EHKUyVaBsffQci8
+         aQuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDcKUeyq7SRHfj9kKy56+VfX8bk7UISpZJTLZeSkm6ZMFyTvsajZHtPnciwhsu1w8Drd7PfOe5kysgiQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrjA5D7/vWFg0AK4fjy2gYcRxjRloMk1xkBDeeMZLduNalAuDu
+	jM7M45QIWL0NG6Xk14p3UrCL04nS2uWWYUClaZHg9dlwX6XdG92m9npNhe5qufhFHIEpjFwT6rG
+	CFMHF6SgEBkZGkxn40QFVU+nUFaNH7poOMN3PrBKK1xg8WMwTrXh4Os1jxpfP6w==
+X-Gm-Gg: ASbGncseuSRyhK2lj8d2vLxNJNHvIfsuEZYXBcdRQzPAUBqturkqlNSBALD0Y26YCSO
+	1c2hUjZ3NUcQEhOWqHHPShxMxjXhi7MWyGqE+7oXy4ig1WBHPOYqOelMc1cVOYD7VNU/yKv4ziL
+	PHyQHFSSURppRA8WA6ZJIvGYwtSHO8vtJvTkXGgSEgbXqowDS6cgKH2VYuHzhIW7P7Yc3QyOBPG
+	OpG0Z6tEASr8jpVTM2UxAg/Eqj+/f5Tlp99DcaVCxKYW103p354dG9R81nlVsLwtv2E4YFa0Knf
+	+xxCipjci8CjfVa7ig==
+X-Received: by 2002:a17:907:8d87:b0:aca:de15:f2ad with SMTP id a640c23a62f3a-ad1d46ddad0mr219299166b.60.1746525239836;
+        Tue, 06 May 2025 02:53:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/1oV0zciKaW3O1wacg9c1zps+3AHOJS/RUO5rgbV5p2b2yw5R1zfs8RHPWnIxlOh3Hh5OJQ==
+X-Received: by 2002:a17:907:8d87:b0:aca:de15:f2ad with SMTP id a640c23a62f3a-ad1d46ddad0mr219295266b.60.1746525239247;
+        Tue, 06 May 2025 02:53:59 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.219.197])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa77b8fe52sm7425752a12.55.2025.05.06.02.53.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 02:53:58 -0700 (PDT)
+Date: Tue, 6 May 2025 11:53:51 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH net-next v4 2/3] vsock: Move lingering logic to af_vsock
+ core
+Message-ID: <hcme242wm3h33zvbo6g6xinhbsjkeaawhsjjutxrhkjoh6xhin@gm5yvzv4ao7k>
+References: <20250501-vsock-linger-v4-0-beabbd8a0847@rbox.co>
+ <20250501-vsock-linger-v4-2-beabbd8a0847@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/5] mm/readahead: Store folio order in struct
- file_ra_state
-Content-Language: en-GB
-To: Jan Kara <jack@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, David Hildenbrand
- <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20250430145920.3748738-1-ryan.roberts@arm.com>
- <20250430145920.3748738-5-ryan.roberts@arm.com>
- <hsh7gqrzzxmgihjnud6p6iqbysustua3rv7vkfgknz4vho4hhx@jvzfztjk4cc4>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <hsh7gqrzzxmgihjnud6p6iqbysustua3rv7vkfgknz4vho4hhx@jvzfztjk4cc4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250501-vsock-linger-v4-2-beabbd8a0847@rbox.co>
 
-On 05/05/2025 10:52, Jan Kara wrote:
-> On Wed 30-04-25 15:59:17, Ryan Roberts wrote:
->> Previously the folio order of the previous readahead request was
->> inferred from the folio who's readahead marker was hit. But due to the
->> way we have to round to non-natural boundaries sometimes, this first
->> folio in the readahead block is often smaller than the preferred order
->> for that request. This means that for cases where the initial sync
->> readahead is poorly aligned, the folio order will ramp up much more
->> slowly.
->>
->> So instead, let's store the order in struct file_ra_state so we are not
->> affected by any required alignment. We previously made enough room in
->> the struct for a 16 order field. This should be plenty big enough since
->> we are limited to MAX_PAGECACHE_ORDER anyway, which is certainly never
->> larger than ~20.
->>
->> Since we now pass order in struct file_ra_state, page_cache_ra_order()
->> no longer needs it's new_order parameter, so let's remove that.
->>
->> Worked example:
->>
->> Here we are touching pages 17-256 sequentially just as we did in the
->> previous commit, but now that we are remembering the preferred order
->> explicitly, we no longer have the slow ramp up problem. Note
->> specifically that we no longer have 2 rounds (2x ~128K) of order-2
->> folios:
->>
->> TYPE    STARTOFFS     ENDOFFS        SIZE  STARTPG    ENDPG   NRPG  ORDER  RA
->> -----  ----------  ----------  ----------  -------  -------  -----  -----  --
->> HOLE   0x00000000  0x00001000        4096        0        1      1
->> FOLIO  0x00001000  0x00002000        4096        1        2      1      0
->> FOLIO  0x00002000  0x00003000        4096        2        3      1      0
->> FOLIO  0x00003000  0x00004000        4096        3        4      1      0
->> FOLIO  0x00004000  0x00005000        4096        4        5      1      0
->> FOLIO  0x00005000  0x00006000        4096        5        6      1      0
->> FOLIO  0x00006000  0x00007000        4096        6        7      1      0
->> FOLIO  0x00007000  0x00008000        4096        7        8      1      0
->> FOLIO  0x00008000  0x00009000        4096        8        9      1      0
->> FOLIO  0x00009000  0x0000a000        4096        9       10      1      0
->> FOLIO  0x0000a000  0x0000b000        4096       10       11      1      0
->> FOLIO  0x0000b000  0x0000c000        4096       11       12      1      0
->> FOLIO  0x0000c000  0x0000d000        4096       12       13      1      0
->> FOLIO  0x0000d000  0x0000e000        4096       13       14      1      0
->> FOLIO  0x0000e000  0x0000f000        4096       14       15      1      0
->> FOLIO  0x0000f000  0x00010000        4096       15       16      1      0
->> FOLIO  0x00010000  0x00011000        4096       16       17      1      0
->> FOLIO  0x00011000  0x00012000        4096       17       18      1      0
->> FOLIO  0x00012000  0x00013000        4096       18       19      1      0
->> FOLIO  0x00013000  0x00014000        4096       19       20      1      0
->> FOLIO  0x00014000  0x00015000        4096       20       21      1      0
->> FOLIO  0x00015000  0x00016000        4096       21       22      1      0
->> FOLIO  0x00016000  0x00017000        4096       22       23      1      0
->> FOLIO  0x00017000  0x00018000        4096       23       24      1      0
->> FOLIO  0x00018000  0x00019000        4096       24       25      1      0
->> FOLIO  0x00019000  0x0001a000        4096       25       26      1      0
->> FOLIO  0x0001a000  0x0001b000        4096       26       27      1      0
->> FOLIO  0x0001b000  0x0001c000        4096       27       28      1      0
->> FOLIO  0x0001c000  0x0001d000        4096       28       29      1      0
->> FOLIO  0x0001d000  0x0001e000        4096       29       30      1      0
->> FOLIO  0x0001e000  0x0001f000        4096       30       31      1      0
->> FOLIO  0x0001f000  0x00020000        4096       31       32      1      0
->> FOLIO  0x00020000  0x00021000        4096       32       33      1      0
->> FOLIO  0x00021000  0x00022000        4096       33       34      1      0
->> FOLIO  0x00022000  0x00024000        8192       34       36      2      1
->> FOLIO  0x00024000  0x00028000       16384       36       40      4      2
->> FOLIO  0x00028000  0x0002c000       16384       40       44      4      2
->> FOLIO  0x0002c000  0x00030000       16384       44       48      4      2
->> FOLIO  0x00030000  0x00034000       16384       48       52      4      2
->> FOLIO  0x00034000  0x00038000       16384       52       56      4      2
->> FOLIO  0x00038000  0x0003c000       16384       56       60      4      2
->> FOLIO  0x0003c000  0x00040000       16384       60       64      4      2
->> FOLIO  0x00040000  0x00050000       65536       64       80     16      4
->> FOLIO  0x00050000  0x00060000       65536       80       96     16      4
->> FOLIO  0x00060000  0x00080000      131072       96      128     32      5
->> FOLIO  0x00080000  0x000a0000      131072      128      160     32      5
->> FOLIO  0x000a0000  0x000c0000      131072      160      192     32      5
->> FOLIO  0x000c0000  0x000e0000      131072      192      224     32      5
->> FOLIO  0x000e0000  0x00100000      131072      224      256     32      5
->> FOLIO  0x00100000  0x00120000      131072      256      288     32      5
->> FOLIO  0x00120000  0x00140000      131072      288      320     32      5  Y
->> HOLE   0x00140000  0x00800000     7077888      320     2048   1728
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> 
-> ...
-> 
->> @@ -469,6 +469,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
->>  	int err = 0;
->>  	gfp_t gfp = readahead_gfp_mask(mapping);
->>  	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
->> +	unsigned int new_order = ra->order;
->>  
->>  	/*
->>  	 * Fallback when size < min_nrpages as each folio should be
->> @@ -483,6 +484,8 @@ void page_cache_ra_order(struct readahead_control *ractl,
->>  	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
->>  	new_order = max(new_order, min_order);
->>  
->> +	ra->order = new_order;
->> +
->>  	/* See comment in page_cache_ra_unbounded() */
->>  	nofs = memalloc_nofs_save();
->>  	filemap_invalidate_lock_shared(mapping);
->> @@ -525,6 +528,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
->>  	 * ->readahead() may have updated readahead window size so we have to
->>  	 * check there's still something to read.
->>  	 */
->> +	ra->order = 0;
-> 
-> Hum, so you reset desired folio order if readahead hit some pre-existing
-> pages in the page cache. Is this really desirable? Why not leave the
-> desired order as it was for the next request?
+On Thu, May 01, 2025 at 10:05:23AM +0200, Michal Luczaj wrote:
+>Lingering should be transport-independent in the long run. In preparation
+>for supporting other transports, as well the linger on shutdown(), move
+>code to core.
+>
+>Generalize by querying vsock_transport::unsent_bytes(), guard against the
+>callback being unimplemented. Do not pass sk_lingertime explicitly. Pull
+>SOCK_LINGER check into vsock_linger().
+>
+>Flatten the function. Remove the nested block by inverting the condition:
+>return early on !timeout.
+>
+>Suggested-by: Stefano Garzarella <sgarzare@redhat.com>
+>Signed-off-by: Michal Luczaj <mhal@rbox.co>
+>---
+> include/net/af_vsock.h                  |  1 +
+> net/vmw_vsock/af_vsock.c                | 30 ++++++++++++++++++++++++++++++
+> net/vmw_vsock/virtio_transport_common.c | 23 ++---------------------
+> 3 files changed, 33 insertions(+), 21 deletions(-)
+>
+>diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
+>index 9e85424c834353d016a527070dd62e15ff3bfce1..d56e6e135158939087d060dfcf65d3fdaea53bf3 100644
+>--- a/include/net/af_vsock.h
+>+++ b/include/net/af_vsock.h
+>@@ -221,6 +221,7 @@ void vsock_for_each_connected_socket(struct vsock_transport *transport,
+> 				     void (*fn)(struct sock *sk));
+> int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock 
+> *psk);
+> bool vsock_find_cid(unsigned int cid);
+>+void vsock_linger(struct sock *sk);
+>
+> /**** TAP ****/
+>
+>diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>index fc6afbc8d6806a4d98c66abc3af4bd139c583b08..a31ad6b141cd38d1806df4b5d417924bb8607e32 100644
+>--- a/net/vmw_vsock/af_vsock.c
+>+++ b/net/vmw_vsock/af_vsock.c
+>@@ -1013,6 +1013,36 @@ static int vsock_getname(struct socket *sock,
+> 	return err;
+> }
+>
+>+void vsock_linger(struct sock *sk)
+>+{
+>+	DEFINE_WAIT_FUNC(wait, woken_wake_function);
+>+	ssize_t (*unsent)(struct vsock_sock *vsk);
+>+	struct vsock_sock *vsk = vsock_sk(sk);
+>+	long timeout;
+>+
+>+	if (!sock_flag(sk, SOCK_LINGER))
+>+		return;
+>+
+>+	timeout = sk->sk_lingertime;
+>+	if (!timeout)
+>+		return;
+>+
+>+	/* unsent_bytes() may be unimplemented. */
 
-My aim was to not let order grow unbounded. When the filesystem doesn't support
-large folios we end up here (from the "goto fallback") and without this, order
-will just grow and grow (perhaps it doesn't matter though). I think we should
-keep this.
+This comment IMO should be enriched, as it is now it doesn't add much to 
+the code. I'm thinking on something like this:
+     Transports must implement `unsent_bytes` if they want to support
+     SOCK_LINGER through `vsock_linger()` since we use it to check when
+     the socket can be closed.
 
-But I guess your point is that we can also end up here when the filesystem does
-support large folios but there is an error. In thta case, yes, I'll change to
-not reset order to 0; it has already been fixed up earlier in this path.
-
-How's this:
-
----8<---
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 18972bc34861..0054ca18a815 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -475,8 +475,10 @@ void page_cache_ra_order(struct readahead_control *ractl,
-         * Fallback when size < min_nrpages as each folio should be
-         * at least min_nrpages anyway.
-         */
--       if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size)
-+       if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size) {
-+               ra->order = 0;
-                goto fallback;
-+       }
-
-        limit = min(limit, index + ra->size - 1);
-
-@@ -528,7 +530,6 @@ void page_cache_ra_order(struct readahead_control *ractl,
-         * ->readahead() may have updated readahead window size so we have to
-         * check there's still something to read.
-         */
--       ra->order = 0;
-        if (ra->size > index - start)
-                do_page_cache_ra(ractl, ra->size - (index - start),
-                                 ra->async_size);
----8<---
+The rest LGTM!
 
 Thanks,
-Ryan
+Stefano
 
-> 
->>  	if (ra->size > index - start)
->>  		do_page_cache_ra(ractl, ra->size - (index - start),
->>  				 ra->async_size);
-> 
-> 								Honza
+>+	unsent = vsk->transport->unsent_bytes;
+>+	if (!unsent)
+>+		return;
+>+
+>+	add_wait_queue(sk_sleep(sk), &wait);
+>+
+>+	do {
+>+		if (sk_wait_event(sk, &timeout, unsent(vsk) == 0, &wait))
+>+			break;
+>+	} while (!signal_pending(current) && timeout);
+>+
+>+	remove_wait_queue(sk_sleep(sk), &wait);
+>+}
+>+EXPORT_SYMBOL_GPL(vsock_linger);
+>+
+> static int vsock_shutdown(struct socket *sock, int mode)
+> {
+> 	int err;
+>diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+>index 
+>045ac53f69735e1979162aea8c9ab5961407640c..aa308f285bf1bcf4c689407033de854c6f85a639 
+>100644
+>--- a/net/vmw_vsock/virtio_transport_common.c
+>+++ b/net/vmw_vsock/virtio_transport_common.c
+>@@ -1192,25 +1192,6 @@ static void virtio_transport_remove_sock(struct vsock_sock *vsk)
+> 	vsock_remove_sock(vsk);
+> }
+>
+>-static void virtio_transport_wait_close(struct sock *sk, long timeout)
+>-{
+>-	if (timeout) {
+>-		DEFINE_WAIT_FUNC(wait, woken_wake_function);
+>-		struct vsock_sock *vsk = vsock_sk(sk);
+>-
+>-		add_wait_queue(sk_sleep(sk), &wait);
+>-
+>-		do {
+>-			if (sk_wait_event(sk, &timeout,
+>-					  virtio_transport_unsent_bytes(vsk) == 0,
+>-					  &wait))
+>-				break;
+>-		} while (!signal_pending(current) && timeout);
+>-
+>-		remove_wait_queue(sk_sleep(sk), &wait);
+>-	}
+>-}
+>-
+> static void virtio_transport_cancel_close_work(struct vsock_sock *vsk,
+> 					       bool cancel_timeout)
+> {
+>@@ -1280,8 +1261,8 @@ static bool virtio_transport_close(struct vsock_sock *vsk)
+> 	if ((sk->sk_shutdown & SHUTDOWN_MASK) != SHUTDOWN_MASK)
+> 		(void)virtio_transport_shutdown(vsk, SHUTDOWN_MASK);
+>
+>-	if (sock_flag(sk, SOCK_LINGER) && !(current->flags & PF_EXITING))
+>-		virtio_transport_wait_close(sk, sk->sk_lingertime);
+>+	if (!(current->flags & PF_EXITING))
+>+		vsock_linger(sk);
+>
+> 	if (sock_flag(sk, SOCK_DONE)) {
+> 		return true;
+>
+>-- 
+>2.49.0
+>
 
 
