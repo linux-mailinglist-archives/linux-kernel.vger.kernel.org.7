@@ -1,147 +1,303 @@
-Return-Path: <linux-kernel+bounces-636863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAC9AAD101
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:31:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AE1AAD106
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65474982DB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:30:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808054E5A9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D45921ABAA;
-	Tue,  6 May 2025 22:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573A921ABAA;
+	Tue,  6 May 2025 22:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jelULrxF"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c++79TcM"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E443A4B1E7D;
-	Tue,  6 May 2025 22:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FC2218ADD
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 22:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746570655; cv=none; b=leWWxq7v3FoKUOIg94O1y0wFi7ZUEjgoVDVgzgIlBd3aBcCn3/U0k1A+390mVuKRmReIZB7e324XAmVFVElLq6eL3j4sv/DysjwSk7DSdmL6UDna+vYRa3MDaTlEQOZHWsSE0VK9ijH307pPZ3LavaqU3U9gAs2/zjcdjF+9hos=
+	t=1746570893; cv=none; b=a9rXLRyadoqNXe1J3FVKF3347ML9ZDRQXfj/jCOB5fhIfQ7AS7DA029zSy3iCmqY4yqIazKWsrdbXfDUgXb7Fh9hPfbaad6tsVLwg9aAORuhRBVGJGC1UofmW60j0gaX2JueeQECdnIKss9HddRuuJWFJ3yv1Ey1r9GOSFHJrFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746570655; c=relaxed/simple;
-	bh=M6LPnQq+WZYUyd/hIR9a4L+W+SEAzNA+KptcRWHRs2w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kRvebPRNrX5eK8zruHm+oyvJIrWgSo2LrmkDiZuFjS4wC73R4ipT31gBnNDp2wBqip1jNECYGmyNUVcmHveROKM+G79c/gOTJIo3DmMLoVrkNVMZzNwTi4kn9pWAsy7HEzBRdShbdteelYt2NBI9CtxCot+yoJXRtRDF9JPVGlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jelULrxF; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-736b350a22cso5192137b3a.1;
-        Tue, 06 May 2025 15:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746570652; x=1747175452; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RGwmKF5kjz2CGDdNgVyzlfucliVOYpgZZQ98I4N81Zs=;
-        b=jelULrxFiOwsgHIvuMbYc4HwMJMbjQVbDkURwqCYfSL6lsgEb7B8JXxZzT+SDgIskM
-         POzmUR+WyFC88WBQ9M3xK1+Rn2eq9LbPKtbVnTozk2Dbtr/8HHEf6UZjhAeyaT9n76XM
-         Hsp0S6sgEZjFTf/jUSEfTX9Ni95WTEPEfb/gFzk0d//ezJJrpQvUzz99I57CUSHaU85o
-         V/Z7fz3C7TToX0pMiT2vNS46XKOzktj+BVrgxgMeG6k0Yzds2njCX+ZxnWlxPrBYd1bV
-         QDKL714X8sp89ec3sQ4bPAqpeZ7mubYNwKHlrVHtpsuMtemC/friNXLJw/dUxMK1kfbg
-         3QrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746570652; x=1747175452;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RGwmKF5kjz2CGDdNgVyzlfucliVOYpgZZQ98I4N81Zs=;
-        b=uqwB0jACQatIoj1V7O4UtytMQ9tk4K5m/I2bmmoKZWgAomwfc8mZcFDp9pZ5Pia+GU
-         5LXt5w2xnCLAF2ZrzBWP/K/j5d24hCk9ZHWQ/i/MP9XgglhSJ5rlbN+kLguaGRNrmrgo
-         JJP5jos/hljkRayaxRgQ5X4n47ylKU4Qqt7kb5nvmCqHrYpdhzjxhuUfUpS2RM23OZfD
-         xHc2DbVeTUwyXIT2YrjzDYWPV3M5drTdweIgFIteS2dQEwLyPbQWdPpm6QqCgerxyvzx
-         p1v+R004+7sjO4jNDRDWxJ5ovVBYxSHmtlf8ScRCI+yqhQPLC/kDUuJ0Cd87L/Ls0MCr
-         uZew==
-X-Forwarded-Encrypted: i=1; AJvYcCUIwLYuhm7wCSjuIlnmNUCARWvpL7RUlWn/x2xSCLA2Nmg2xBpINI/jhu8Fm+oFLPApBgn8jZDUKpLh2+SkOzBoPaFT@vger.kernel.org, AJvYcCVlwXGeWtCB6pDuvSGGFvXdt1smin3GcvctCc4ulFJP7iL8RXetsRHf6wojawQ0t3lTZ2VXuwGYKcmZu3rn@vger.kernel.org, AJvYcCW7Zy22mL/d3BhEoPAKq8QgBkt6HuzhD2zqnEACgX/lCYVYpmmgprMWkz/X+2+T6zgWyMQ3Tf/i@vger.kernel.org, AJvYcCXUoz0Q4JbMrOJHTRFY5THFhKw4KA9IcZ7J1LebRI76WaRFXJlYlk43Mn59AOPrZ738slY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9ihxq7NkGNWufX6OxEM+oIvZjjz9jjd9G1/q/MrdN+QBVLUv5
-	a6OIy3F18K9UYf+eGbYWBe4KqBllgJmTxjcGtJxl27Z5KwY/Y96fHEgNfOICtvyFowgLex7LVJ9
-	PQncs78MfzRKSD1T+D4JEO4JGP8U=
-X-Gm-Gg: ASbGncsIzE4Elqr3GUKXtt0BRVX+YRwQnkrk0UyktH2aAVR52s/7OEo3DlsLIoNwTuC
-	iOHp32fgi6cpfHPOTbIAb/uZ0O+n2MUSYaM5YNmFdlyTVOQUG1pauHNvAToAdC3FINL8nxCpZuW
-	8lVvyf0mbGxAqq7E8ECVD/z35AU6OkqUChUJ8PBQ==
-X-Google-Smtp-Source: AGHT+IFRT4bPAgK8JDFFq+i2BzaYK8yMh7nBwFrls+mABRH23bU5PRPSRFhkLVlyskG4/ta/vyXqg25SsaMHZwnf+KI=
-X-Received: by 2002:a05:6a20:6f87:b0:203:c461:dd36 with SMTP id
- adf61e73a8af0-2148b113868mr1327166637.6.1746570652156; Tue, 06 May 2025
- 15:30:52 -0700 (PDT)
+	s=arc-20240116; t=1746570893; c=relaxed/simple;
+	bh=7FiQFw0htw/k7PeAFWnJY445mbkU+AWLhZMUElnjbDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ONnyLaOcB2jDHVi/NAihvS3NI4TqYF37wSkzB9uJG/t9S3RTQDqYNI2j/rLmuZuCosZOLiLqmwCJzH6S45BeVAAMgq78St+bCm49eFvCMhceRjOjKwXpDBvnJnOCxPnm6rxUieWn9zMPtrAhPcPVElBuNGcqtKjHaJUNLVEBj1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c++79TcM; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f5084334-d3d4-4e4c-94aa-30afc9e87a11@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746570888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h07s3C6UB1DBwL0iC2nHUyp7lKmxW6PTQ955Zo+K6l8=;
+	b=c++79TcMhoJjZx8bmIDRUtrR3egHBDg/oh641dQqZljpaxrc1vqjWEHpE4OMeK/mwvtmh9
+	L4TkvugNYnug019+Qhwh+6mCU6rCaiUAFoJ9CeCzkLkqzZvz3PIJncGc0zLyRYxMlkCI/v
+	QXYI8GSOQ+o192A2kSCpjdz/Miqq7ZU=
+Date: Tue, 6 May 2025 15:34:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506061434.94277-1-yangfeng59949@163.com> <20250506061434.94277-3-yangfeng59949@163.com>
-In-Reply-To: <20250506061434.94277-3-yangfeng59949@163.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 6 May 2025 15:30:39 -0700
-X-Gm-Features: ATxdqUETSD4zY0Brjmdir8LRxVrgW6L6sBojvZaIC7oDoprK2jltvmYBmRuBIeI
-Message-ID: <CAEf4BzbqrvgD11M5nTwP=oJeNph6n63qAZfW8Qu=MB9k3h_-ow@mail.gmail.com>
-Subject: Re: [PATCH v3 sched_ext 2/2] sched_ext: Remove bpf_scx_get_func_proto
-To: Feng Yang <yangfeng59949@163.com>, tj@kernel.org
-Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, davem@davemloft.net, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] bpftool: build bpf bits with -std=gnu11
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250502085710.3980-1-holger@applied-asynchrony.com>
+ <7326223e-0cb9-4d22-872f-cbf1ff42227d@kernel.org>
+ <913f66a8-6745-0e30-b5b8-96d23bf05b90@applied-asynchrony.com>
+ <CAADnVQLpyNiyghWLMq5AxkBgZX4J9VfX5j4ToNh6UsrQ=4yndg@mail.gmail.com>
+ <2a8208af-bc4b-f1bd-af0b-f5db485ed1f0@applied-asynchrony.com>
+ <CAEf4BzYLYJtcehZhB22YsxRXZBcVnunNx-rm9CfTcDZFiY10jQ@mail.gmail.com>
+ <e5122286-68f0-4173-8549-a0705c4ca4b1@linux.dev>
+ <CAEf4BzZKKd+0Hwok=BxyBsWMUnBBTUGj-ZfJK-voMXowRKPgNQ@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ihor Solodrai <ihor.solodrai@linux.dev>
+In-Reply-To: <CAEf4BzZKKd+0Hwok=BxyBsWMUnBBTUGj-ZfJK-voMXowRKPgNQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, May 5, 2025 at 11:15=E2=80=AFPM Feng Yang <yangfeng59949@163.com> w=
-rote:
->
-> From: Feng Yang <yangfeng@kylinos.cn>
->
-> task_storage_{get,delete} has been moved to bpf_base_func_proto.
->
-> Suggested-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-> ---
->  kernel/sched/ext.c | 15 +--------------
->  1 file changed, 1 insertion(+), 14 deletions(-)
->
+On 2025-05-06 3:23 p.m., Andrii Nakryiko wrote:
+> On Tue, May 6, 2025 at 2:41 PM Ihor Solodrai <ihor.solodrai@linux.dev> wrote:
+>>
+>> On 2025-05-06 2:04 p.m., Andrii Nakryiko wrote:
+>>   > On Sun, May 4, 2025 at 3:24 AM Holger Hoffstätte
+>>   > <holger@applied-asynchrony.com> wrote:
+>>   >>
+>>   >> On 2025-05-03 04:36, Alexei Starovoitov wrote:
+>>   >>> On Fri, May 2, 2025 at 2:53 AM Holger Hoffstätte
+>>   >>> <holger@applied-asynchrony.com> wrote:
+>>   >>>>
+>>   >>>> On 2025-05-02 11:26, Quentin Monnet wrote:
+>>   >>>>> On 02/05/2025 09:57, Holger Hoffstätte wrote:
+>>   >>>>>> A gcc-15-based bpf toolchain defaults to C23 and fails to
+>> compile various
+>>   >>>>>> kernel headers due to their use of a custom 'bool' type.
+>>   >>>>>> Explicitly using -std=gnu11 works with both clang and bpf-toolchain.
+>>   >>>>>>
+>>   >>>>>> Signed-off-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+>>   >>>>>
+>>   >>>>> Thanks! I tested that it still works with clang.
+>>   >>>>>
+>>   >>>>> Acked-by: Quentin Monnet <qmo@kernel.org>
+>>   >>>>
+>>   >>>> Thanks!
+>>   >>>>
+>>   >>>>> I didn't manage to compile with gcc, though. I tried with gcc
+>> 15.1.1 but
+>>   >>>>> option '--target=bpf' is apparently unrecognised by the gcc
+>> version on
+>>   >>>>> my setup.
+>>   >>>>>
+>>   >>>>> Out of curiosity, how did you build using gcc for the skeleton?
+>> Was it
+>>   >>>>> enough to run "CLANG=gcc make"? Does it pass the clang-bpf-co-re
+>> build
+>>   >>>>> probe successfully?
+>>   >>>>
+>>   >>>> I'm on Gentoo where we have a gcc-14/15 based "bpf-toolchain" package,
+>>   >>>> which is just gcc configured & packaged for the bpf target.
+>>   >>>> Our bpftool package can be built with clang (default) or without, in
+>>   >>>> which case it depend on the bpf-toolchain. The idea is to gradually
+>>   >>>> allow bpf/xdp tooling to build/run without requiring clang.
+>>   >>>>
+>>   >>>> The --target definition is conditional and removed when not using
+>> clang:
+>>   >>>>
+>> https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/bpftool/bpftool-7.5.0.ebuild?id=bf70fbf7b0dc97fbc97af579954ea81a8df36113#n94
+>>   >>>>
+>>   >>>> The bug for building with the new gcc-15 based toolchain where this
+>>   >>>> patch originated is here: https://bugs.gentoo.org/955156
+>>   >>>
+>>   >>> So you're fixing this build error:
+>>   >>>
+>>   >>> bpf-unknown-none-gcc \
+>>   >>>           -I. \
+>>   >>>
+>> -I/var/tmp/portage/dev-util/bpftool-7.5.0/work/bpftool-libbpf-v7.5.0-sources/include/uapi/
+>>   >>> \
+>>   >>>
+>> -I/var/tmp/portage/dev-util/bpftool-7.5.0/work/bpftool-libbpf-v7.5.0-sources/src/bootstrap/libbpf/include
+>>   >>> \
+>>   >>>           -g -O2 -Wall -fno-stack-protector \
+>>   >>>            -c skeleton/profiler.bpf.c -o profiler.bpf.o
+>>   >>> In file included from skeleton/profiler.bpf.c:3:
+>>   >>> ./vmlinux.h:5: warning: ignoring '#pragma clang attribute'
+>> [-Wunknown-pragmas]
+>>   >>>       5 | #pragma clang attribute push
+>>   >>> (__attribute__((preserve_access_index)), apply_to = record)
+>>   >>> ./vmlinux.h:9845:9: error: cannot use keyword 'false' as
+>> enumeration constant
+>>   >>>    9845 |         false = 0,
+>>   >>>         |         ^~~~~
+>>   >>> ./vmlinux.h:9845:9: note: 'false' is a keyword with '-std=c23' onwards
+>>   >>> ./vmlinux.h:31137:15: error: 'bool' cannot be defined via 'typedef'
+>>   >>> 31137 | typedef _Bool bool;
+>>   >>>         |               ^~~~
+>>   >>>
+>>   >>> with -std=gnu11 flag and
+>>   >>
+>>   >> Yes, correct. This is the same as all over the kernel or the bpf tests
+>>   >> for handling C23. I fully understand that this particular patch is only
+>>   >> one piece of the puzzle.
+>>   >>
+>>   >
+>>   > What's the best way to detect (at compile time) whether bool, false,
+>>   > and true are treated as reserved keywords? To solve this properly
+>>   > vmlinux.h would have to be adjusted by vmlinux.h to avoid emitting
+>>   > bool/false/true *iff* compiler version/mode doesn't like that
+>>
+>> I ran into this when adding GCC BPF to CI [1].
+>>
+>> One can do something like:
+>>
+>>        #if __STDC_VERSION__ < 202311L
+>>        enum {
+>>            false = 0,
+>>            true = 1,
+>>        };
+>>        #endif
+>>
+>> But in case of vmlinux.h this would require hacking bpftool, and so for
+>> selftests/bpf we decided to pass -std=gnu11 [2].
+> 
+> We can adjust btf_dump_is_blacklisted() to ignore bool typedef
+> (unconditionally), and we'll need to ignore anon enum with false/true
+> (which is annoying), and then bpftool will unconditionally add the
+> above block plus typedef _Bool bool.
+> 
+> Would that work?
 
-Given this has dependency on patch #1, we should either route this
-patch through bpf-next, or we'll have to delay and resend it after
-merge window.
+I think yes, but then the question is why do all this work in bpftool 
+instead of passing -std=gnu11 to the compiler? Especially given that 
+kernel is built with such flags:
 
-Tejun, any preferences?
+$ grep -r --include="[Mm]akefile" 'std=gnu'
 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index fdbf249d1c68..cc628b009e11 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -5586,21 +5586,8 @@ static int bpf_scx_btf_struct_access(struct bpf_ve=
-rifier_log *log,
->         return -EACCES;
->  }
->
-> -static const struct bpf_func_proto *
-> -bpf_scx_get_func_proto(enum bpf_func_id func_id, const struct bpf_prog *=
-prog)
-> -{
-> -       switch (func_id) {
-> -       case BPF_FUNC_task_storage_get:
-> -               return &bpf_task_storage_get_proto;
-> -       case BPF_FUNC_task_storage_delete:
-> -               return &bpf_task_storage_delete_proto;
-> -       default:
-> -               return bpf_base_func_proto(func_id, prog);
-> -       }
-> -}
-> -
->  static const struct bpf_verifier_ops bpf_scx_verifier_ops =3D {
-> -       .get_func_proto =3D bpf_scx_get_func_proto,
-> +       .get_func_proto =3D bpf_base_func_proto,
->         .is_valid_access =3D bpf_scx_is_valid_access,
->         .btf_struct_access =3D bpf_scx_btf_struct_access,
->  };
-> --
-> 2.43.0
->
+     arch/arm64/kernel/vdso32/Makefile:               -std=gnu11
+     arch/loongarch/vdso/Makefile:   -std=gnu11 -O2 -g 
+-fno-strict-aliasing -fno-common -fno-builtin \
+     arch/s390/Makefile:KBUILD_CFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) 
+-m64 -O2 -mpacked-stack -std=gnu11
+     arch/s390/purgatory/Makefile:KBUILD_CFLAGS := -std=gnu11 
+-fno-strict-aliasing -Wall -Wstrict-prototypes
+     arch/x86/Makefile:REALMODE_CFLAGS       := -std=gnu11 -m16 -g -Os 
+-DDISABLE_BRANCH_PROFILING -D__DISABLE_EXPORTS \
+     arch/x86/boot/compressed/Makefile:KBUILD_CFLAGS += -std=gnu11
+     drivers/firmware/efi/libstub/Makefile:cflags-$(CONFIG_X86) 
+     += -m$(BITS) -D__KERNEL__ -std=gnu11 \
+     tools/build/feature/Makefile:   $(BUILDXX) -std=gnu++11
+     tools/build/feature/Makefile:   $(BUILDXX) -std=gnu++17 
+                     \
+     tools/build/feature/Makefile:   $(BUILDXX) -std=gnu++17 
+                     \
+     tools/build/feature/Makefile:   $(BUILDXX) -std=gnu++17 
+                     \
+     tools/lib/api/Makefile:CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 
+-U_FORTIFY_SOURCE -fPIC
+     tools/lib/bpf/Makefile:override CFLAGS += -std=gnu89
+     tools/lib/subcmd/Makefile:CFLAGS := -ggdb3 -Wall -Wextra -std=gnu99 
+-fPIC
+     tools/lib/symbol/Makefile:CFLAGS += -ggdb3 -Wall -Wextra -std=gnu11 
+-U_FORTIFY_SOURCE -fPIC
+     tools/net/ynl/generated/Makefile:CFLAGS += -std=gnu11 -O2 -W -Wall 
+-Wextra -Wno-unused-parameter -Wshadow \
+     tools/net/ynl/lib/Makefile:CFLAGS += -std=gnu11 -O2 -W -Wall 
+-Wextra -Wno-unused-parameter -Wshadow
+     tools/net/ynl/samples/Makefile:CFLAGS += -std=gnu11 -O2 -W -Wall 
+-Wextra -Wno-unused-parameter -Wshadow \
+     tools/testing/selftests/arm64/gcs/Makefile:             -std=gnu99 
+-I../.. -g \
+     tools/testing/selftests/arm64/mte/Makefile:CFLAGS += -std=gnu99 -I. 
+-pthread
+     tools/testing/selftests/arm64/signal/Makefile:CFLAGS += -std=gnu99 -I.
+     tools/testing/selftests/bpf/Makefile:CFLAGS += -g $(OPT_FLAGS) 
+-rdynamic -std=gnu11                             \
+     tools/testing/selftests/bpf/Makefile:        -std=gnu11 
+                                     \
+     tools/testing/selftests/bpf/Makefile:CXXFLAGS := $(subst 
+-std=gnu11,-std=gnu++11,$(CXXFLAGS))
+     tools/testing/selftests/capabilities/Makefile:CFLAGS += -O2 -g 
+-std=gnu99 -Wall $(KHDR_INCLUDES)
+     tools/testing/selftests/clone3/Makefile:CFLAGS += -g -std=gnu99 
+$(KHDR_INCLUDES)
+     tools/testing/selftests/riscv/mm/Makefile:CFLAGS += -std=gnu99 -I.
+     tools/testing/selftests/sync/Makefile:CFLAGS += -O2 -g -std=gnu89 
+-pthread -Wall -Wextra
+     tools/testing/selftests/vDSO/Makefile:CFLAGS := -std=gnu99 -O2
+     tools/testing/selftests/wireguard/qemu/Makefile:        $(CC) -o $@ 
+$(CFLAGS) $(LDFLAGS) -std=gnu11 $<
+     tools/testing/selftests/x86/Makefile:CFLAGS := -O2 -g -std=gnu99 
+-pthread -Wall $(KHDR_INCLUDES)
+     Makefile:                        -O2 -fomit-frame-pointer -std=gnu11
+     Makefile:KBUILD_CFLAGS += -std=gnu11
+
+> 
+>>
+>> [1]
+>> https://lore.kernel.org/bpf/CAADnVQKNqdLW1bpvCpVV3yNizwra0cCkBnAbsNp3rTmi8WFcvQ@mail.gmail.com/
+>> [2]
+>> https://lore.kernel.org/bpf/20250107235813.2964472-1-ihor.solodrai@pm.me/
+>>
+>>   >
+>>   >>> ignoring an important warning ?
+>>   >>
+>>   >> Nobody is (or was) ignoring the warning - it was under discussion when
+>>   >> I posted the patch. After reaching out to Oracle to verify, we have now
+>>   >> added the BPF_NO_PRESERVE_ACCESS_INDEX define when building with
+>> gcc-bpf;
+>>   >> this resolves the warning, just like in the bpf self-tests.
+>>   >>
+>>   >> You are right that such an addition to the in-kernel bpftool build is
+>>   >> still missing. If you have a suggestion on how best to do that via the
+>>   >> existing Makefile I'm all ears.
+>>   >>
+>>   >> As for the remaining warnings - we are also very aware of the ongoing
+>>   >> upstream work to support btf_type_tag:
+>>   >> https://gcc.gnu.org/pipermail/gcc-patches/2025-April/682340.html.
+>>   >>
+>>   >>> End result: partially functional bpftool,
+>>   >>> and users will have no idea why some features of bpftool are not
+>> working.
+>>   >>
+>>   >> First of all this is never shipped to any users; using gcc-bpf requires
+>>   >> active opt-in by developers or users, and now also warns that such a
+>> setup
+>>   >> may result in unexpected bugs due to ongoing work in both Linux and
+>> bpftool.
+>>   >> Like I said before, by default everyone builds with clang and that
+>> is also
+>>   >> true for our distributed binaries.
+>>   >>
+>>   >> If you think adding the -std=gnu11 bit is inappropriate at this time
+>> then
+>>   >> just ignore this patch for now. Sooner or later the bpftool build
+>> will have
+>>   >> to be adapted with BPF_CFLAGS (liek in the selftests) and hopefuilly an
+>>   >> abstracted BPF_CC so that we no longer have to pretend to be clang when
+>>   >> using gcc.
+>>   >>
+>>   >> cheers
+>>   >> Holger
+
 
