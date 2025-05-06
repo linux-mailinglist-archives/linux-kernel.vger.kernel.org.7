@@ -1,151 +1,172 @@
-Return-Path: <linux-kernel+bounces-635769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA43DAAC1BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:50:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66512AAC1C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4060C4673CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8DC3B8107
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79921278776;
-	Tue,  6 May 2025 10:50:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214172750F8;
+	Tue,  6 May 2025 10:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t307A4Tw"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F7D277021;
-	Tue,  6 May 2025 10:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E08201270
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 10:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746528600; cv=none; b=Nb1jMHncvzWVt2xQnwu0IvDM332Tl9Vx169ggQI8hFvBPsvYIfnYH8wWe3zhk6zf+Pi6kofpUH1oOHict/FniEtubqChHI7kSKwq8oMu4VIOOqPcI0wxRUHnovVMIo100xP3/pICgwAocf7mPFwsnTuoopKOyJVe6eo078+9vt4=
+	t=1746528738; cv=none; b=f7eDTvZcpdKIZHkaiPuaO227Fg7a/kS7/pwcUsLN3/AAXKhSuVu9s057LWvKIXP2aWEndbhQJoZj8DtqESX+DkmHW2j+jwDgsy3ZLYdbDOie5UzVTV+BzXABfgoGzxoise62hbcP+AQcUMBuR5BjtrA3bvlnMS2p6hxV+OWdrKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746528600; c=relaxed/simple;
-	bh=Yl8x0S4VxmXIn6uRpFGrPJ5DjxjPXmgnerWYsgAOvmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdiKJgJf2YlPn6zp+1SwiYpGS+Dvk2CRzer/CZEsODgf2mHNuvuwFrSp/et/MZ4nDi/pchixvWG29BbOBgAlGqmZn4ZpQGYuDbaq8LGlXQL5hoF4FPVpt8KxcrwVcTjKCorVB9Okb0dV2CYOMiRI9tRL4k6ajENcTnoPyUkg/oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71191C4CEF0;
-	Tue,  6 May 2025 10:49:56 +0000 (UTC)
-Date: Tue, 6 May 2025 11:49:54 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
-	will@kernel.org, nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
-	morbo@google.com, justinstitt@google.com, broonie@kernel.org,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	shameerali.kolothum.thodi@huawei.com, james.morse@arm.com,
-	hardevsinh.palaniya@siliconsignals.io,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, stable@vger.kernel.org
-Subject: Re: [PATCH v2] arm64/cpufeature: annotate arm64_use_ng_mappings with
- ro_after_init to prevent wrong idmap generation
-Message-ID: <aBnpUqapTghz6E1R@arm.com>
-References: <20250502180412.3774883-1-yeoreum.yun@arm.com>
- <174626735218.2189871.10298017577558632540.b4-ty@arm.com>
- <aBYkGJmfWDZHBEzp@arm.com>
- <aBZ7P3/dUfSjB0oV@e129823.arm.com>
- <aBkL-zUpbg7_gCEp@arm.com>
- <aBnDqvY5c6a3qQ4H@e129823.arm.com>
- <fbfded61-cfe2-4416-9098-ef39ef3e2b62@arm.com>
- <CAMj1kXFAYDeCgtPspQubkY688tcqwCMzCD+jEXb6Ea=9mBcdcQ@mail.gmail.com>
- <aa4241ce-02ea-4931-b60c-5ad0deba202d@arm.com>
- <aBno0C2RPQ2x8DG1@e129823.arm.com>
+	s=arc-20240116; t=1746528738; c=relaxed/simple;
+	bh=LdcTZ1d3zrApl9FJ/dU20RsasAiXDH6rOUrl3yUMVZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZMAEB8DM4gi/h9ldUV7n6/CVdMJc9FfjHyC/ncO6mN0PtEKQ/exjm1PZfHgWvINI0Vzo+N6+gisU2ldMDO2pS1wlKD7oPDWr49+1EmVB6/Orx0+Pb1muwFTl52nHIA+p4w0ifFI3eQUqEu2D5u6+vqFT4Pjb/FCryPntk1ZB2V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t307A4Tw; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a0b0dd3b5bso27217f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 03:52:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746528735; x=1747133535; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=DCQGBPsfO5vWFkl0A0zD/MgOqOEpO+/052K/NE4TDl0=;
+        b=t307A4Tw6uXqCylZRmdpJgsgmAescxrpL9rymZoYr+LajDTroYzuxykMhX4+Hl9NLk
+         6ENwyP3GYqWZY5R4vcrw8zo7wZGSr/CvKxNrCIsx9Zz1+ZWYKt0aAsGx5CXmre6mlrYF
+         UPN/o88diO15Ytv9YHWxeHdEXM6U3MM4gnL9ns5xlRO57+FcigZttqqyQ+hegr57iqIY
+         w8sFCDto/DJwORWlzXlVoxo9cCiyXKl5guZU10kpGoxDuGQEnZHzo0zh52EHWbEqXeBq
+         Ig8saV6j4HI68VLRANZcLi8C1W+LAxH8WGstAQPZ5cfhavTWQcnvLBvciOYosPKFMead
+         xDqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746528735; x=1747133535;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DCQGBPsfO5vWFkl0A0zD/MgOqOEpO+/052K/NE4TDl0=;
+        b=ilYfjVvP8Vj1cnJPLtj8HEmHcxAYsfcTWVZ8EBjFzodXrhapYyXCi5MD20IfACHoTV
+         3f5HabXDxB5o27vzzlkueC9YHD+cSV4rregZBuH+ErQwbBXpK9wEk/irAfT7OLv3l/iz
+         ARDvvm1pYIYT4dVluq78Y/Jco4+T9un7KKOjT1FsSrXHliRFJ7kDJm4FaSeY61RMAUVk
+         j9XPOT2CKVvx4PhUFwz+zfaQc8ZAjaXyTZ+h+C1zFUX45pwPiiWVa6db2EUtDsadzHIs
+         vbiP6jBH/sP55a5WzyAFlzJ1J6BWPK/WEk0RhE0yJ8dAaL7XU8zD/AH4m1O408mspdv4
+         /z5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXuvlyYWkOZNZfcTYcFCB/gXjkhTJioEGUzgxkECNm3M3yOARu/jf57y1RpUmmLBNL1Kin5W6ov9cDN4g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxELOhe8I7fXCFaMrEqVsfBLBvOg3coUMd6vHSlOeVQ4ygfW2/9
+	xu6RbBea8hBDF2gsHNBBS0UO8AL4K3HBnjsFv+eHI07wJeUrfpwS7xaF4dM5DiI=
+X-Gm-Gg: ASbGncsx/9cLPemFtXZo2JllCXOeK60gdV9DaisW5wUTpVTRx8elMe5jseGQ3AU0UbX
+	qtBD0Kd+GX0rKUPNP45NrLwIhh+Rax0PpG7rAJWpfs1gGfn69ZPQAjinJjy+utApeV6OY9Z7oFx
+	M3JLM3RITSwHmIkySlnf5auNwUp3tdhNoL6q7nEC2Q8KysHJt4cRcDMdPHX3mmyyhLYpBI2HUOP
+	E6EkhygoKIex/ZSw0TE7oFqw1z7a/LZ/fj26/EOvT7DZ3adWzgP/x7wkFYbFAm/q2Z1dgRIuHY+
+	hWD0uVvGsp/tLnq4VrH3V53yqWyuLRJKFjkS+rNKrktByPvyDgEFs6UkJ1E=
+X-Google-Smtp-Source: AGHT+IG+AWKFdW1c3BWzDe6zKGQh1cg2/RqGRVWCUYPzqFEaMQKAz07sa0MgSDalD2L/4cnUy4wIWA==
+X-Received: by 2002:a5d:5f87:0:b0:39c:2663:6c23 with SMTP id ffacd0b85a97d-3a099adf5e6mr4448569f8f.9.1746528734779;
+        Tue, 06 May 2025 03:52:14 -0700 (PDT)
+Received: from [192.168.1.28] ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b170b8sm12995727f8f.82.2025.05.06.03.52.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 03:52:14 -0700 (PDT)
+Message-ID: <3a11ba8a-a9f4-4829-8bcd-56f1702bee8f@linaro.org>
+Date: Tue, 6 May 2025 12:52:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBno0C2RPQ2x8DG1@e129823.arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Build STMMAC Ethernet driver into the
+ kernel for NFS boot
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250506104731.111876-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250506104731.111876-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 06, 2025 at 11:47:44AM +0100, Yeoreum Yun wrote:
-> > On 06/05/2025 10:41, Ard Biesheuvel wrote:
-> > > On Tue, 6 May 2025 at 10:16, Ryan Roberts <ryan.roberts@arm.com> wrote:
-> > >>
-> > >> On 06/05/2025 09:09, Yeoreum Yun wrote:
-> > >>> Hi Catalin,
-> > >>>
-> > >>>> On Sat, May 03, 2025 at 09:23:27PM +0100, Yeoreum Yun wrote:
-> > >>>>> Hi Catalin,
-> > >>>>>
-> > >>>>>> On Sat, May 03, 2025 at 11:16:12AM +0100, Catalin Marinas wrote:
-> > >>>>>>> On Fri, 02 May 2025 19:04:12 +0100, Yeoreum Yun wrote:
-> > >>>>>>>> create_init_idmap() could be called before .bss section initialization
-> > >>>>>>>> which is done in early_map_kernel().
-> > >>>>>>>> Therefore, data/test_prot could be set incorrectly by PTE_MAYBE_NG macro.
-> > >>>>>>>>
-> > >>>>>>>> PTE_MAYBE_NG macro set NG bit according to value of "arm64_use_ng_mappings".
-> > >>>>>>>> and this variable places in .bss section.
-> > >>>>>>>>
-> > >>>>>>>> [...]
-> > >>>>>>>
-> > >>>>>>> Applied to arm64 (for-next/fixes), with some slight tweaking of the
-> > >>>>>>> comment, thanks!
-> > >>>>>>>
-> > >>>>>>> [1/1] arm64/cpufeature: annotate arm64_use_ng_mappings with ro_after_init to prevent wrong idmap generation
-> > >>>>>>>       https://git.kernel.org/arm64/c/12657bcd1835
-> > >>>>>>
-> > >>>>>> I'm going to drop this for now. The kernel compiled with a clang 19.1.5
-> > >>>>>> version I have around (Debian sid) fails to boot, gets stuck early on:
-> > >>>>>>
-> > >>>>>> $ clang --version
-> > >>>>>> Debian clang version 19.1.5 (1)
-> > >>>>>> Target: aarch64-unknown-linux-gnu
-> > >>>>>> Thread model: posix
-> > >>>>>> InstalledDir: /usr/lib/llvm-19/bin
-> > >>>>>>
-> > >>>>>> I didn't have time to investigate, disassemble etc. I'll have a look
-> > >>>>>> next week.
-> > >>>>>
-> > >>>>> Just for your information.
-> > >>>>> When I see the debian package, clang 19.1.5-1 doesn't supply anymore:
-> > >>>>>  - https://ftp.debian.org/debian/pool/main/l/llvm-toolchain-19/
-> > >>>>>
-> > >>>>> and the default version for sid is below:
-> > >>>>>
-> > >>>>> $ clang-19 --version
-> > >>>>> Debian clang version 19.1.7 (3)
-> > >>>>> Target: aarch64-unknown-linux-gnu
-> > >>>>> Thread model: posix
-> > >>>>> InstalledDir: /usr/lib/llvm-19/bin
-> > >>>>>
-> > >>>>> When I tested with above version with arm64-linux's for-next/fixes
-> > >>>>> including this patch. it works well.
-> > >>>>
-> > >>>> It doesn't seem to be toolchain related. It fails with gcc as well from
-> > >>>> Debian stable but you'd need some older CPU (even if emulated, e.g.
-> > >>>> qemu). It fails with Cortex-A72 (guest on Raspberry Pi 4) but not
-> > >>>> Neoverse-N2. Also changing the annotation from __ro_after_init to
-> > >>>> __read_mostly also works.
-> > >>
-> > >> I think this is likely because __ro_after_init is also "ro before init" - i.e.
-> > >> if you try to write to it in the PI code an exception is generated due to it
-> > >> being mapped RO. Looks like early_map_kernel() is writiing to it.
-> > >>
-> > >
-> > > Indeed.
-> > >
-> > >> I've noticed a similar problem in the past and it would be nice to fix it so
-> > >> that PI code maps __ro_after_init RW.
-> > >>
-> > >
-> > > The issue is that the store occurs via the ID map, which only consists
-> > > of one R-X and one RW- section. I'm not convinced that it's worth the
-> > > hassle to relax this.
-> > >
-> > > If moving the variable to .data works, then let's just do that.
-> >
-> > Yeah, fair enough.
+On 06/05/2025 12:47, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Thanks.
-> I've success to reproduce. and after check, Sending with this fix.
+> Enable `CONFIG_STMMAC_ETH` as built-in (`y`) instead of a module (`m`) to
+> ensure the Ethernet driver is available early in the boot process. This
+> is necessary for platforms mounting the root filesystem via NFS, as the
+> driver must be available before the root filesystem is accessed.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-No need to resend, I modified it locally. Thanks.
+Same comments as for previous patches like this (even the same?): you
+are supposed to use initramfs for your arm74 boards. Even armv7 boards
+use initramfs, so network driver does not have to be built in.
 
--- 
-Catalin
+For example all of our setups use it thus we do not have to populate all
+other vendors with our own drivers.
+
+Sorry, but I am strongly against such change. Kernel is already way too
+big and with KASAN it does not fit to boot partitions in some of the
+devices (and I cannot change the boot partition size, at least not
+without big effort).
+
+
+Nacked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
