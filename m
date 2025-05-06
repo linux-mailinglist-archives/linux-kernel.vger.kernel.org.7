@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-635071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFF8AAB8BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:41:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688DEAAB8B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF9C3A6F78
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:30:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E32923A9227
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0AA28C2AD;
-	Tue,  6 May 2025 04:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F1B29114F;
+	Tue,  6 May 2025 04:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IX2absoE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFN5h4MG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7B6300366;
-	Tue,  6 May 2025 02:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8128301150;
+	Tue,  6 May 2025 02:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498205; cv=none; b=puU+RgRbBIP+AF3L6GFVroXEYZh134+4kf0n18EFcYy218IHAMQcMCYW7dt1PHRldRyJIE3h5PC3N5Vb+XdacA57tkv1gtx++SyAZ7yDP9FlfdksdV8aLER9ceg2nnBU0p//ir/OXAULuhbZEFSxQdGfu3KrMxNIVqNENosHkzM=
+	t=1746498209; cv=none; b=TSlWX+0KheJuj3CZXzSRhEX7Le7mFhYjZjXSuWELlVPgmHOfSDt5deT4lTxifBv78DIvBQZdU33f8/ogc2vf4H6u78XzE+NF1Jf4hDdVo8EDHY8bEOysPvVEIdjeW8WP4qmQSEgvVdCPRhwzj87BAXnCoaabRGvgtn5mA/+QUZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498205; c=relaxed/simple;
-	bh=VYqt9DWjk14rZvscK0rSZmyFfhPRc7UasEOv2asQgE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TDhQQnzd4D9KWEADNILo9vrOJ6WjHyrRrfGqT8uEbthB/YK1X28GwOZHlNx4G/e9KbPKo3B4iAt+4oLxijZNQI8a9EqXGyXY/VPWGmOSFj1oU/K4hfds7WA7TnCzNiWFtPSInZV+saGt6xVE5ZpHtUDlEEqsYJTPYTwwjfBwEeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IX2absoE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77979C4CEE4;
-	Tue,  6 May 2025 02:23:24 +0000 (UTC)
+	s=arc-20240116; t=1746498209; c=relaxed/simple;
+	bh=RB+hhkLv2Sp7aE3uPYIl7FW8uMozzf5yTNpONKxH3ZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u4Ut8ysIlzAvB0gUALQl58HwNAgbN3Fiqx1c5IeAylEavsm3NMAax7ZLWNibpb97/gtvchrmbduhAZ8pOs8A5jJDKF+OsaY8qXV5MPV7sVjFgToL2bBhov6VLYmdJrLzm3JGpP3D+sIcMyNp6R9e9MjaQrFPsafnaaZQPKKj/zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFN5h4MG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A374DC4CEE9;
+	Tue,  6 May 2025 02:23:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746498204;
-	bh=VYqt9DWjk14rZvscK0rSZmyFfhPRc7UasEOv2asQgE0=;
+	s=k20201202; t=1746498208;
+	bh=RB+hhkLv2Sp7aE3uPYIl7FW8uMozzf5yTNpONKxH3ZE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=IX2absoElCxa0lrfcxKxpXMMm3r/7y7tKfSFFK+snkogVDpKeTPLx0uOG8fX7tHza
-	 dNjDvkkLGHieTF0LV3Nv+NUmuKCnZMwt0r30RqaAzWgJaYyXn/uKlE5GYiphePB/b7
-	 gtbKoZf6hFem3dv5EXFyPa8iUczbdlRujZVa8zNcWUNNR+gwiVack78/xnwk3r6UMV
-	 90CrheoiBjqwdFlk4etxy0vb2VwrUqqc6pHO6Qw0GqAfXrbyfP6EB7zRKwuIFRfnKT
-	 eyxPJldC34Tyrmugk8gDAmL9ZaFYUMOmEHMBekac9EY+dB3ZxCZybZebNpwVPP5U+B
-	 UdXBwaXo5LsDA==
+	b=EFN5h4MGn/vLqXesC7rzG5Ym4/Zdw58n5oZPxijBsJPB8TCRG6V3NEez5QScEErmr
+	 zojmGlwFwBQWOcSuHJ/u7McEYpXEgWEBrR8G1zy7RQarIUNNCF9A0geA2yeMHJCYly
+	 R8WrAvKqPeqTDudWBaqtsVRu+DIxL+1dO+zuqoF51eAhcUK9jN9m6Orla43xV4K3lx
+	 NnCs2Xky8vV5HKr52nSsOOT4yBq43Cexq2DO2sIjWlbZPC21/N6SrdjzFSYWGqIfGI
+	 NWlGpL0lcuNrGbHJS2FdCQQno5DqRSXEPq1PtEHjQxe/a9ZO1L4jXYpi1hyOJlNMsv
+	 8xpnsu9ldPrEw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] dt-bindings: timer: Convert socionext,milbeaut-timer to DT schema
-Date: Mon,  5 May 2025 21:23:20 -0500
-Message-ID: <20250506022322.2589193-1-robh@kernel.org>
+	devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: timer: Convert st,spear-timer to DT schema
+Date: Mon,  5 May 2025 21:23:25 -0500
+Message-ID: <20250506022326.2589389-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,60 +60,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the Socionext Milbeaut Timer binding to DT schema format.
-It's a straight-forward conversion.
+Convert the ST SPEAr Timer binding to DT schema format. It's a
+straight-forward conversion.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../timer/socionext,milbeaut-timer.txt        | 17 --------
- .../timer/socionext,milbeaut-timer.yaml       | 40 +++++++++++++++++++
- 2 files changed, 40 insertions(+), 17 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.yaml
+ .../bindings/timer/st,spear-timer.txt         | 16 ---------
+ .../bindings/timer/st,spear-timer.yaml        | 36 +++++++++++++++++++
+ 2 files changed, 36 insertions(+), 16 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/timer/st,spear-timer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/st,spear-timer.yaml
 
-diff --git a/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
+diff --git a/Documentation/devicetree/bindings/timer/st,spear-timer.txt b/Documentation/devicetree/bindings/timer/st,spear-timer.txt
 deleted file mode 100644
-index ac44c4b67530..000000000000
---- a/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
+index b5238a07da17..000000000000
+--- a/Documentation/devicetree/bindings/timer/st,spear-timer.txt
 +++ /dev/null
-@@ -1,17 +0,0 @@
--Milbeaut SoCs Timer Controller
+@@ -1,16 +0,0 @@
+-* SPEAr ARM Timer
 -
--Required properties:
+-** Timer node required properties:
 -
--- compatible : should be "socionext,milbeaut-timer".
--- reg : Specifies base physical address and size of the registers.
--- interrupts : The interrupt of the first timer.
--- clocks: phandle to the input clk.
+-- compatible : Should be:
+-	"st,spear-timer"
+-- reg: Address range of the timer registers
+-- interrupt: Should contain the timer interrupt number
 -
 -Example:
 -
--timer {
--	compatible = "socionext,milbeaut-timer";
--	reg = <0x1e000050 0x20>
--	interrupts = <0 91 4>;
--	clocks = <&clk 4>;
--};
-diff --git a/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.yaml b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.yaml
+-	timer@f0000000 {
+-		compatible = "st,spear-timer";
+-		reg = <0xf0000000 0x400>;
+-		interrupts = <2>;
+-	};
+diff --git a/Documentation/devicetree/bindings/timer/st,spear-timer.yaml b/Documentation/devicetree/bindings/timer/st,spear-timer.yaml
 new file mode 100644
-index 000000000000..9ab72b762314
+index 000000000000..9f26b5f2b38a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.yaml
-@@ -0,0 +1,40 @@
++++ b/Documentation/devicetree/bindings/timer/st,spear-timer.yaml
+@@ -0,0 +1,36 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/socionext,milbeaut-timer.yaml#
++$id: http://devicetree.org/schemas/timer/st,spear-timer.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Milbeaut SoCs Timer Controller
++title: SPEAr ARM Timer
 +
 +maintainers:
-+  - Sugaya Taichi <sugaya.taichi@socionext.com>
++  - Viresh Kumar <vireshk@kernel.org>
++  - Shiraz Hashim <shiraz.linux.kernel@gmail.com>
 +
 +properties:
 +  compatible:
-+    const: socionext,milbeaut-timer
++    const: st,spear-timer
 +
 +  reg:
 +    maxItems: 1
@@ -122,24 +121,19 @@ index 000000000000..9ab72b762314
 +  interrupts:
 +    maxItems: 1
 +
-+  clocks:
-+    maxItems: 1
-+
 +required:
 +  - compatible
 +  - reg
 +  - interrupts
-+  - clocks
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    timer@1e000050 {
-+        compatible = "socionext,milbeaut-timer";
-+        reg = <0x1e000050 0x20>;
-+        interrupts = <0 91 4>;
-+        clocks = <&clk 4>;
++    timer@f0000000 {
++        compatible = "st,spear-timer";
++        reg = <0xf0000000 0x400>;
++        interrupts = <2>;
 +    };
 -- 
 2.47.2
