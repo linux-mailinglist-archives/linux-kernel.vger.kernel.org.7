@@ -1,136 +1,97 @@
-Return-Path: <linux-kernel+bounces-635031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A43BAAB8CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:42:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F68AAB921
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36770170911
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F3FB3BD042
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556452BD5B2;
-	Tue,  6 May 2025 03:59:14 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFDE198823
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 01:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418ED381C4;
+	Tue,  6 May 2025 03:59:50 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FD224B28;
+	Tue,  6 May 2025 01:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746494541; cv=none; b=ZFTjcQtIC/LFDpVv5SMzzELa4NB6bNoJlY+3gBaoUrTXndyO2QT0orRZzsL9Ko8hqx1w9WBlns9DMvjpg2dC48G0fds4uRqgiE5WjJmsVBq7bhdSe0ShY2fYr/s4MN5atofOceXbAjaZF18AbM+h6lGB38ZlnM0PE++B5duF0XI=
+	t=1746494602; cv=none; b=MBShooi3bRhLEBrMZkPUq79o2sY1stmN0mY0xETlkY4Ei20XfDPFMssKeK6IZfwFaZDIcmqJjaybF/RnxMNavy2DJRglOfBkqXJwsqGWDOtKGhPTiDAQJdogEGpAqUSPncZE+efv9jF1DRHLHRsRX1A3xzNzZ1DbWmCapasSiGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746494541; c=relaxed/simple;
-	bh=JfbMqOgKa807whHUusnnPM1sxQC4+hvuDSEV5c4e/QU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbC9mfDL0D0S8HPtFtSwRL0PJVcGbSivYqU77Qc/kxUbU8GtFMCSG7b5W0XjpzpsAlht1cJWciqpgyUuyOi0vIhbSRVeQDWjt+37C6f1sAVl2sWfwlUBpjtNkx/ylVh/0I7PEKtrmgC2r4TQrz4KfCfilXT1YelmDjDjciHK4lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwBXXXk6ZBlozYyiAg--.12934S2;
-	Tue, 06 May 2025 09:22:02 +0800 (CST)
-Received: from localhost (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwD3iyU4ZBlozLoTAA--.13091S2;
-	Tue, 06 May 2025 09:22:01 +0800 (CST)
-Date: Tue, 6 May 2025 09:22:00 +0800
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Huacai Chen <chenhuacai@loongson.cn>,
-	loongarch@lists.linux.dev, Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: Re: [PATCH V2] LoongArch: Introduce the numa_memblks conversion
-Message-ID: <aBlkOBwIjvUDE0hY@phytium.com.cn>
-References: <20250415072118.3774454-1-chenhuacai@loongson.cn>
- <aANVMaepni3KeABI@kernel.org>
- <CAAhV-H65jh29ccYzcaJf1=QpDuV5xZfBd-1Kr0=in_nk-Z4h7Q@mail.gmail.com>
+	s=arc-20240116; t=1746494602; c=relaxed/simple;
+	bh=Rz5mAkcAfO2eGMS9ePIIhXXsMu0PG+vS7H048NPddfY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JeFrgEqPc2Ql8IIUd3BI2WWuZWp/A0nSQYyG5ZDLsxdQL+1RhD7jfsePRmmjQ9X8GP1BjCVIFVUuNb7u2H0xi2XBrIGHK/XdnVq9Pc076FudDIeIyhkRZBB09tObGOh6QNZtgYJEFwTg8qiyCxMdLi8vWwlNmUvNJU+l0PrrQEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <seanjc@google.com>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH][v2] KVM: Remove obsolete comment about locking for kvm_io_bus_read/write
+Date: Tue, 6 May 2025 09:22:51 +0800
+Message-ID: <20250506012251.2613-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H65jh29ccYzcaJf1=QpDuV5xZfBd-1Kr0=in_nk-Z4h7Q@mail.gmail.com>
-X-CM-TRANSID:AQAAfwD3iyU4ZBlozLoTAA--.13091S2
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAQAWgRLLwIYwBFsX
-Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW7CrWDGrWUZr1DXr1xtF4ktFb_yoW5Jr4kpF
-	WS9a1DCF48CrWrA3Z2v34UWryYvwn7GrnFqFnxKry09ry2v345Zr40qwsY9FyDX3y8JFy0
-	vFn8J3ZxW3WUAFDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+Content-Type: text/plain
+X-ClientProxiedBy: BC-Mail-Ex14.internal.baidu.com (172.31.51.54) To
+ BJHW-Mail-Ex15.internal.baidu.com (10.127.64.38)
+X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex15_2025-05-06 09:22:59:713
+X-FEAS-Client-IP: 10.127.64.38
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Sat, Apr 19, 2025 at 03:57:16PM +0800, Huacai Chen wrote:
-> Hi, Mike,
-> 
-> On Sat, Apr 19, 2025 at 3:48 PM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > Hi Huacai,
-> >
-> > On Tue, Apr 15, 2025 at 03:21:18PM +0800, Huacai Chen wrote:
-> > > Commit 87482708210ff3333a ("mm: introduce numa_memblks") has moved
-> > > numa_memblks from x86 to the generic code, but LoongArch was left out
-> > > of this conversion.
-> > >
-> > > This patch introduces the generic numa_memblks for LoongArch.
-> > >
-> > > In detail:
-> > > 1. Enable NUMA_MEMBLKS (but disable NUMA_EMU) in Kconfig;
-> > > 2. Use generic definition for numa_memblk and numa_meminfo;
-> > > 3. Use generic implementation for numa_add_memblk() and its friends;
-> > > 4. Use generic implementation for numa_set_distance() and its friends;
-> > > 5. Use generic implementation for memory_add_physaddr_to_nid() and its
-> > >    friends.
-> > >
-> > > Note: Disable NUMA_EMU because it needs more efforts and no obvious
-> > > demand now.
-> > >
-> > > Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> > > Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-> > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > ---
-> > >  arch/loongarch/Kconfig                 |   1 +
-> > >  arch/loongarch/include/asm/numa.h      |  14 ----
-> > >  arch/loongarch/include/asm/sparsemem.h |   5 --
-> > >  arch/loongarch/include/asm/topology.h  |   7 +-
-> > >  arch/loongarch/kernel/acpi.c           |  11 ---
-> > >  arch/loongarch/kernel/numa.c           | 108 +++----------------------
-> > >  arch/loongarch/mm/init.c               |   8 --
-> > >  mm/Kconfig                             |   1 +
-> > >  8 files changed, 16 insertions(+), 139 deletions(-)
-> >
-> > This is really cool simplification!
-> >
-> > I wonder if maybe we can take a step or two further and make loongarch to
-> > share more code with other architectures.
-> >
-> > Is there a strong reason not to call numa_memblks_init() from
-> > init_numa_memory()?
-> > And more broadly, maybe loongarch can be even switched to arch_numa?
-> This is a minimal change for Yuquan, I will make it in linux-next as
-> soon as possible so Yuquan can continue his work.
-> 
-Hi, Huacai & Mike
+From: Li RongQing <lirongqing@baidu.com>
 
-Where could I know this has been merged in linux-next? After that, should I
-re-push my commit "introduce numa_add_reserved_memblk"?
+Nobody is actually calling these functions with slots_lock held, The
+srcu_dereference() in kvm_io_bus_read/write() precisely communicates
+both what is being protected, and what provides the protection. so the
+comments are no longer needed
 
-Sorry for my unfamiliarity with the community rules.
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+Diff with v1: Remove comments, instead of fixing
 
-Yuquan
-> Switching to numa_memblks_init() or arch_numa will be done in future,
-> but need some time because some machines seem to need some hacks.
-> 
-> Huacai
-> 
-> >
-> > --
-> > Sincerely yours,
-> > Mike.
+ virt/kvm/kvm_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index e85b33a..d9fe087 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -5774,7 +5774,6 @@ static int __kvm_io_bus_write(struct kvm_vcpu *vcpu, struct kvm_io_bus *bus,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-/* kvm_io_bus_write - called under kvm->slots_lock */
+ int kvm_io_bus_write(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+ 		     int len, const void *val)
+ {
+@@ -5795,7 +5794,6 @@ int kvm_io_bus_write(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+ }
+ EXPORT_SYMBOL_GPL(kvm_io_bus_write);
+ 
+-/* kvm_io_bus_write_cookie - called under kvm->slots_lock */
+ int kvm_io_bus_write_cookie(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx,
+ 			    gpa_t addr, int len, const void *val, long cookie)
+ {
+@@ -5845,7 +5843,6 @@ static int __kvm_io_bus_read(struct kvm_vcpu *vcpu, struct kvm_io_bus *bus,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-/* kvm_io_bus_read - called under kvm->slots_lock */
+ int kvm_io_bus_read(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+ 		    int len, void *val)
+ {
+-- 
+2.9.4
 
 
