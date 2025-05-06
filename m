@@ -1,162 +1,205 @@
-Return-Path: <linux-kernel+bounces-635378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C52BDAABC9B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36903AABC9A
 	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7903A4CF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:01:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DECE1B649ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209AE214A88;
-	Tue,  6 May 2025 07:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ED91F462D;
+	Tue,  6 May 2025 07:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bsNCwFWH"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJSlwgth"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556D3214221
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 07:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6C342A97;
+	Tue,  6 May 2025 07:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746518042; cv=none; b=uVRbrEtz925UCBnk6CMFvaRkD8+Qzoei1oXIzQiWMkFrHCoFBC3lQ3/cN3ecu4zLdjCXhm1HN+qa/SslztPW9VUGwJEhIRAqyNs5kTNm+C/3LEYmiE7K9fhSuHLVae4BEkC6WkUKJumMyee6L85X2oGjoi1VGyeR/rzo/45j+lw=
+	t=1746518133; cv=none; b=hYrpxs6iasd4fzKuvE9+8SxJaz6Rgd9Hi4kCBAZ9g0B45eIP8m6lSKHf+gAeVODkCsu7LJfM04bh8KgrBnC3JZJgdIadz1cvIT++2rGqeMZRDThPtIVtyRoPBk9ONp/hnK0O1VkSW0mBBXdbXLa4Io24c28wRbhDBQCZj/gPDS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746518042; c=relaxed/simple;
-	bh=2pceY21HXPtPw8/ljmmoL68c5jWxfiDJhxApfHam9Jk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rJFWX7vwiBkHDsvvnENvKd02IvedZo2keBrq7I38peq5h1oB0WpK1QXRFy8Fm7+Ow2v4iny8kOfevxiZhTcK95i5IWVN0/PC2QQ5UK86dwqrTjmaSRIdyKIfge3xrKc9Zh9rIwTt8G6AkK5ClGvWrowFiACk38AJgB9PU1txIdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bsNCwFWH; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso50792941fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 00:53:59 -0700 (PDT)
+	s=arc-20240116; t=1746518133; c=relaxed/simple;
+	bh=OPEQGm9twHkeLYvcOQQiJ+q57DW74pMD+FcroAYkp/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cRjMidh/cp1Ly3juQo8OYZVXg4cwpvO/Xqss9hzOzVcVncFS2e/GOrs4pMSuHjOtrtsiYzsUpiy6HFeLXpjed96lO+6tWjZkjrh3T7ckRrGgF5a+LCRrJMpg96lD3PpaIrKxt8a+IS7+QBgb+xHftG+j0CuRdnQKkSyxDxbJMu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJSlwgth; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-30a509649e3so2930433a91.2;
+        Tue, 06 May 2025 00:55:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746518038; x=1747122838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=01kJ9UREWk6Z8MO8rJuNtGQkQCdgEUCbi3nLRVMNP0k=;
-        b=bsNCwFWHW1Kjh8amSh7O3HlaJP+SIhe7lY7Tp7giGN55SYUAGxB+gl7IoDmOi02WMT
-         0cfOE2gbIZ4dIgfDaDq6Pg7FwbCndE1kazuwW37W4gWIcJ4Z+D+Mt9QLUWAhjUaCV3GZ
-         auHL452BqaVTR12TiPVqsuKfSqWff5W4G/5xvxitWaDhSZnLMqu62a9s9w1PNLb20kjg
-         /A5VHt/hI1hs14vbcc0L5mJXdwodMITD/7uqcFJFI8eeysDGp4Ins8Cjp4ehWJmeJUbO
-         +V8zeR3zptJIQfm214JhEH5P3OxpSI7sNjlu13uUA3UEXbUILgA2UYh+wwt1n7L0nXHt
-         w10A==
+        d=gmail.com; s=20230601; t=1746518131; x=1747122931; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=66epj9ldhbkZiocYYYQJR85+8m9i5bAmQQnmrLIVqrk=;
+        b=aJSlwgth7ryOBpZMtd44sbMnDl3uBenmANNes5w2N9CEaJ/qL0uBVmhvgET4nybt4X
+         DqzZnaOQgMzldxy0BjMGB0lR+fEO1JEOjhNd+g1uKTp4AIWhgicpwNNcEcceY947p8sg
+         aYaHPdwSuyV7HUr1clgvneLI0HrDHQuEjrbcy/EI1PTdiNAhG3mSkh6gUOPwIYYNruKR
+         8dqXlcw8dWsuhf6yO0Q1QTQOIhJdi8VDagCvejfqqQeMp/Qep9vvNOO9o8lyTcQt5uUj
+         HfAMOAJ8LBKdKD+sYrw3WrvGABVIux9E/8n4nr3YhoPCQXhYL8LkyqHD+Z4iUF/qZvF+
+         Wc3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746518038; x=1747122838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=01kJ9UREWk6Z8MO8rJuNtGQkQCdgEUCbi3nLRVMNP0k=;
-        b=DeQI9nbMfPePQCF5M9rh3ernhNx68fmhUhMtGHt9yBtj7rVcjQh9lcIwOUvpwpwR8/
-         4fwv4XLr8vWpx3OalEhwdAX0ymAPwME8fFWrNM5gOU8P9FbqPEvQDQVFvE+x/mbFGFFb
-         uZebP3ZP3/Gt+fvwLqI+sMGRuJzRZycQPbS5CXAkf2wH+cOGlla6gRvSdk11v5FlSOFx
-         zHMLXxc+UFxDEMMwKNh+eoEhYTcmdQGAIGvzum3Vq/3yJBcY0xYf+PzQ6g9ECNWPq5bq
-         MCDcpkr9/VHMFfKK6nQ0BA0866ZQj41L1W17wLnHK2bu29wSew3wKZJDbMHs3v3GsJBv
-         4bgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKNw0itI9sEYEa1ouDUm746M1VoAizuPtiJDs3UilgyA1Yif+A8YDpPnAjl+hk2C3sl55Mtx0qqAThR5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWOHjF5heu/ujN3pB+Ikufon94gqIphJcgZgXfU+P5CQBMksmt
-	kWwIdYl8JTOHiowHm2LWl7W2Iwye7G0pSy8Mo/q40K30BO6+QczEECH99t2Q2nI4EMjJWXR6nsZ
-	quNZDxPA6s25JcgCTnOjnsYSJfDFnaNY8mrWQ/1hSfaPZc1Wm
-X-Gm-Gg: ASbGncuYFbC/XJ66D2Hg+vYUF2TSgzuJ3zy9fSdDmMxRU9ubWvc/rH+8d+BuQwMoCa3
-	ppTCndfL6F1m36+WW3kd2IXYuUIcBukDD/iDIgZa8fuEyqUsnD2kbMRxltnr7GQHzgCwGo9VhkH
-	QZ5cQxDsc2DcHe+zd+jHD9LOro5DhDGMtnZ5E9KaxkLo8M9VWFLayN260=
-X-Google-Smtp-Source: AGHT+IHycczXOp0YLcooZNerTLlbSq9H7Wn2zHlB9IvVn/LG+26tFESGOVxKi2vt2XlyGdxVkr6VpNWi09X2wzGONjA=
-X-Received: by 2002:a2e:be25:0:b0:30d:e104:d64b with SMTP id
- 38308e7fff4ca-3266d0f0218mr5543611fa.39.1746518038436; Tue, 06 May 2025
- 00:53:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746518131; x=1747122931;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=66epj9ldhbkZiocYYYQJR85+8m9i5bAmQQnmrLIVqrk=;
+        b=uBaLIvUq2XNhNLsKQGi8A5wkApywaj4CqaXDmAIp/82ygPJDLXq8t7Tza3Yo9jZqO3
+         SoLBI8JaUT2ym7fobiihv0INT2DZPzqBiQQlvJj0MWVwjq+Ja5SZrKLwr2qJskl3/Mc6
+         AT3tqrtO2B5Oi0GrOGrn+Q78IZJm3ZLT8e/zHkwOASh9IoFjFl3sLTm6D+u+dQIlk8xx
+         zyUEP8sAnFcyqPlf2k3l3Dr35MLqaof+h58SgthJKydti1ybfAKGORgFcg0Wa8KIWfWN
+         UVS0mDh94BMJqz4xLFhZOkUo+/qynjbgNBroaF3GFpF2UxvRAWICehZUUCo5XsNQOxn0
+         jj9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVvK+8Yvtd6+t2YqnmpBu2vd6BWEVn+Y0556m/ZAFmKkyb9a/fFYO05YHbFpry/Z6MAqv+dmODJ+t2Z9I8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymJ8LxeOoS2gZDUaq8njFt+z1R9Pm9g5icm2tlM1FzfEbXrJj2
+	I39tvDiJYH4w8K3DoSJrTxT+a64GWjCab70de0SMRIFnQz17i++q
+X-Gm-Gg: ASbGnctMen5E1JD5YEmsc6GxkJ/qX05vVvpq/KOrPajvRtaB0d3n6YC1hqfZKnENE2T
+	wu1UWEqY90TJ3EHCon1J9cv3ihQrs9drYbJCzXjhlV44FTuOpmzZqTaydQ/ujptyQ/6jyMYHZ99
+	UrFM7LT5rlUqYaMzevomq+K0NzJNFzjsOUXlGovOQAoYMRNYXAeRhyJXMahCsz4cjgP3OanNFnK
+	Ox7qvn5J1jdDlsjN31xeKgPCPzFwN7nFBF2bl3xfIJ70ppIGnqpYvOZ5L2ndHNqkFWfJg2tf3FB
+	Lz7qePGvw15GkyOh9DdUyvqTYDHwDct6tYLllF/1SGbelqO+eg0pq1yl1MUR1HVM5sbRhdlPQ56
+	NxI40NMTGrpdjqN0XCWFjvns7V/81BQ==
+X-Google-Smtp-Source: AGHT+IF7FCujFKis/lz2bBHgYPvrTrY1yaAzTQ30k/86PIMZ+khZxcJApvcsDO6gUh+aARCiPhJuvg==
+X-Received: by 2002:a17:90b:3b8b:b0:2ff:5a9d:937f with SMTP id 98e67ed59e1d1-30a7f32ccd0mr2796932a91.24.1746518130842;
+        Tue, 06 May 2025 00:55:30 -0700 (PDT)
+Received: from [192.168.1.123] (92-184-98-114.mobile.fr.orangecustomers.net. [92.184.98.114])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a3476f51asm13247384a91.22.2025.05.06.00.55.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 00:55:29 -0700 (PDT)
+Message-ID: <66917c53-3315-42a0-a301-1be2483efd5d@gmail.com>
+Date: Tue, 6 May 2025 09:55:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250503082834.49413-1-marco.crivellari@suse.com>
- <20250505065121.dlEw6_SC@linutronix.de> <aBiD9C727RSyNtme@tiehlicka>
-In-Reply-To: <aBiD9C727RSyNtme@tiehlicka>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Tue, 6 May 2025 09:53:47 +0200
-X-Gm-Features: ATxdqUFeODjIYzcZXHjLF9gfCe4oZRSuKJTl9U7qtkMsreCjJ2xo2V6T_YnUNXQ
-Message-ID: <CAAofZF5ZJ36vr_8exeMrnLXxD1u6aaTR3kp+oEztKQYe4f0__Q@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Workqueue: rename system workqueue and add WQ_PERCPU
-To: Michal Hocko <mhocko@suse.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Michal,
-
-I will integrate the cover letter with more information
-(also pointed out by Tejun, I noticed).
-
-Thanks!
-
-
-On Mon, May 5, 2025 at 11:25=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
-e:
->
-> On Mon 05-05-25 08:51:21, Sebastian Andrzej Siewior wrote:
-> > On 2025-05-03 10:28:30 [+0200], Marco Crivellari wrote:
-> > > Hi!
-> > Hi,
-> >
-> > > This series is the follow up of the discussion from:
-> > >     "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOU=
-ND."
-> > >     https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de=
-/
-> > >
-> > > 1)  [P 1-2] system workqueue rename:
-> > >
-> > >     system_wq is a per-CPU workqueue, but his name is not clear.
-> > >     system_unbound_wq is to be used when locality is not required.
-> > >
-> > >     system_wq renamed in system_percpu_wq, while system_unbound_wq
-> > >     became system_dfl_wq.
-> > >
-> > > 2)  [P 3] Introduction of WQ_PERCPU.
-> > >
-> > >     This patch adds a new WQ_PERCPU flag to explicitly request the le=
-gacy
-> > >     per-CPU behavior. WQ_UNBOUND will be removed once the migration i=
-s
-> > >     complete.
-> > >
-> > >     Every alloc_workqueue() caller should use one among WQ_PERCPU or
-> > >     WQ_UNBOUND. This is actually enforced warning if both or none of =
-them
-> > >     are present at the same time.
-> > >
-> > > 3)  [P 4] alloc_workqueue() callee should pass explicitly WQ_PERCPU.
-> > >
-> > >     This patch ensures that every caller that needs per-cpu workqueue
-> > >     will explicitly require it, using the WQ_PERCPU flag.
-> >
-> > Sounds like a plan.
-> > I assume the huge patches were made with coccinelle?
->
-> Yes, this makes a lot of sense. I think it is worth mentioning why do we
-> want/need to go through this major refactoring. From my POV this will
-> help cpu isolation in a long term because it reduces unpredictable
-> interference from pcp workers.
-> --
-> Michal Hocko
-> SUSE Labs
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 09/11] net: dsa: b53: fix toggling vlan_filtering
+To: Paolo Abeni <pabeni@redhat.com>, Jonas Gorski <jonas.gorski@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Kurt Kanzenbach <kurt@linutronix.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250429201710.330937-1-jonas.gorski@gmail.com>
+ <20250429201710.330937-10-jonas.gorski@gmail.com>
+ <89c05b7f-cc3b-4274-a983-0cd867239ae1@redhat.com>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <89c05b7f-cc3b-4274-a983-0cd867239ae1@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
---=20
+On 5/6/2025 9:51 AM, Paolo Abeni wrote:
+> On 4/29/25 10:17 PM, Jonas Gorski wrote:
+>> @@ -789,26 +805,39 @@ int b53_configure_vlan(struct dsa_switch *ds)
+>>   	 * entry. Do this only when the tagging protocol is not
+>>   	 * DSA_TAG_PROTO_NONE
+>>   	 */
+>> +	v = &dev->vlans[def_vid];
+>>   	b53_for_each_port(dev, i) {
+>> -		v = &dev->vlans[def_vid];
+>> -		v->members |= BIT(i);
+>> +		if (!b53_vlan_port_may_join_untagged(ds, i))
+>> +			continue;
+>> +
+>> +		vl.members |= BIT(i);
+>>   		if (!b53_vlan_port_needs_forced_tagged(ds, i))
+>> -			v->untag = v->members;
+>> -		b53_write16(dev, B53_VLAN_PAGE,
+>> -			    B53_VLAN_PORT_DEF_TAG(i), def_vid);
+>> +			vl.untag = vl.members;
+>> +		b53_write16(dev, B53_VLAN_PAGE, B53_VLAN_PORT_DEF_TAG(i),
+>> +			    def_vid);
+>>   	}
+>> +	b53_set_vlan_entry(dev, def_vid, &vl);
+>>   
+>> -	/* Upon initial call we have not set-up any VLANs, but upon
+>> -	 * system resume, we need to restore all VLAN entries.
+>> -	 */
+>> -	for (vid = def_vid; vid < dev->num_vlans; vid++) {
+>> -		v = &dev->vlans[vid];
+>> +	if (dev->vlan_filtering) {
+>> +		/* Upon initial call we have not set-up any VLANs, but upon
+>> +		 * system resume, we need to restore all VLAN entries.
+>> +		 */
+>> +		for (vid = def_vid + 1; vid < dev->num_vlans; vid++) {
+>> +			v = &dev->vlans[vid];
+>>   
+>> -		if (!v->members)
+>> -			continue;
+>> +			if (!v->members)
+>> +				continue;
+>> +
+>> +			b53_set_vlan_entry(dev, vid, v);
+>> +			b53_fast_age_vlan(dev, vid);
+>> +		}
+>>   
+>> -		b53_set_vlan_entry(dev, vid, v);
+>> -		b53_fast_age_vlan(dev, vid);
+>> +		b53_for_each_port(dev, i) {
+>> +			if (!dsa_is_cpu_port(ds, i))
+>> +				b53_write16(dev, B53_VLAN_PAGE,
+>> +					    B53_VLAN_PORT_DEF_TAG(i),
+>> +					    dev->ports[i].pvid);
+> 
+> Just if you have to repost for other reasons:
+> 			if (dsa_is_cpu_port(ds, i))
+> 				continue;
+> 
+> 			b53_write16(dev, B53_VLAN_PAGE, //...
+> 
+> should probably be more readable.
+> 
+> BTW, @Florian: any deadline for testing feedback on this?
 
-Marco Crivellari
+Trying to enjoy some time off until May 17th, depending upon the weather 
+I might be able to get this tested before the end of this week.
+-- 
+Florian
 
-L3 Support Engineer, Technology & Product
-
-
-
-
-marco.crivellari@suse.com
 
