@@ -1,95 +1,78 @@
-Return-Path: <linux-kernel+bounces-636386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5961AACACD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:22:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910BAAACAD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9E647BC069
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:21:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58FC41687A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A522D284679;
-	Tue,  6 May 2025 16:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948F02853E2;
+	Tue,  6 May 2025 16:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZYRKCiR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CGcmUjZz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7C5283FC7;
-	Tue,  6 May 2025 16:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6982283FFA
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 16:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746548525; cv=none; b=tQ0E3Gnf71zqFvES+zPMG3R4tr8OQE5zHuqoK+RZJqZJJeK/YFVeYqJoRJJc7DKU1Pyw/4Pvt4Owy3LDe4bZKMHCef/QWi2+yjARHV32RdfDSoQ9m6OPGA/oeRS/9AZDChBn2bQbuRiY8g5k3H5NgAPYFoNlZj+e/h7d2N0G2FY=
+	t=1746548620; cv=none; b=M5YXee3VEGsMJlWSOoCMX2XjfGiaoxTTeCsOgdcJDFHZXTqH2tdDen+ieeTUa8NJsxXia64yCntzPQefPKVzYmXYP6uHnx/Il6l5QuFJtgT2YgoranG3sjXjW2GFxJ68UtcKLRBRnaykH3SfO1xMzFnk7xoMJPGZKr5WgpRHggQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746548525; c=relaxed/simple;
-	bh=a7CrHfM/6OUIx5WLKSIBCgdXg/9zZ/Qq+T8aEmLIPMM=;
+	s=arc-20240116; t=1746548620; c=relaxed/simple;
+	bh=701UnYDcVbEDGaRQY7wmhFr+nJp1bCiPUr2hODKeX98=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NtrmXWQKUu6V55N6VAji6hCnze8cF9yhLL3oGEfRfmMdfQTcPjMFULtF4QgpFdbVfXFziBsRzfGy6RIPxBw6kegxYTtwj6p/R3U1yHPnjRTZJcgw+6mLtspAyPm2Y8bZYtYbeTBZC3hxeITAPYGw5VVciHmffiNlsvLkLcPuc/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZYRKCiR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C306C4CEE4;
-	Tue,  6 May 2025 16:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746548524;
-	bh=a7CrHfM/6OUIx5WLKSIBCgdXg/9zZ/Qq+T8aEmLIPMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kZYRKCiRG0cNb0qTnUb0L7aSdnYxnSRoliCi2wVa2VKts9Rs/iOzAinmPnkNZRNsg
-	 k9zwqWQkQ3kNUU6aF/Fa2/iW/mph+bDSIIRoqpgmmCZSWMnfF4C4SeN96+gVVPidad
-	 ruHmYRfZ3WbRlgggodJwX3FZMBVh305QRVIIZ2jH57ptrwRNTklXSeZu03+Q24dE5W
-	 uQSgD+TpZa0GLkJUxm6KcRLlrKnjoHA4ldza3O1RjorSsNk57+14B/DIP6MetF2zqG
-	 cM+wJhYXLL/1ITq1D4Vap4SKKjR0ruNqMkYq9sB866F9VbVq7/HMZapZFQqj1FU0Sa
-	 AnePo3W+bn4RA==
-Date: Tue, 6 May 2025 17:22:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: phy: rockchip,inno-usb2phy: add rk3036
- compatible
-Message-ID: <20250506-ahead-angelfish-7dd7ad36f17a@spud>
-References: <20250503201512.991277-1-heiko@sntech.de>
- <20250503201512.991277-2-heiko@sntech.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QOjE1kfy9B12KJaDOo8mq+dfEMqQ2XVxuzKQivEZHHv2BBLqGaOFND1mHmCrfpPPCeuiZ4Ji30MpxoTEVTa1GfXQBrQmw/arnhtM6U6m6Uxa1vg0rJY0gkTxSSIf2Q4otVxjvBZvfR9a7oTK0iuACSY+IY7HF6G7SZzVOIJHs8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CGcmUjZz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=btB7v32iOtkPnjE82G1pR3gHE5orNYbXznqK0OzF1Tk=; b=CGcmUjZz4iKAFYVIoj/eD2mJpL
+	vvNG+xtJ1NIHDZLBjQXkDzN2K21pIJ/EeB5lM/IYnUEu/5+T+vcDY4+XvJ1gLD/uOcxOnF4tBdZ7J
+	MhhM90EQ9VL7Y+cspNK6tvPc5KkdSU4P2yC3gBq6bCqXC1/z0XtjKUNQFbtXnopq3Oa5QnZMD8UI7
+	AlEMjBTVaHEJS4OQJuQv18tPsTMCtv4QKdz453+KSmAphCh647WUs8sRP3yeCDlniHGCOhBhH2/sr
+	DnGc5vC89wAomqBPRFc7zuKPLpeN/zbRv6SW+cHZC31Sx1WD+b9uPGmujCrsZ1TLYif89mGqPw67C
+	056b79tg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uCL4F-00000006KQn-1RbP;
+	Tue, 06 May 2025 16:22:51 +0000
+Date: Tue, 6 May 2025 17:22:51 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, yuzhao@google.com,
+	stevensd@chromium.org, kaleshsingh@google.com,
+	zhanjun@uniontech.com, niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: Re: [PATCH] mm: vmscan: Avoid signedness error for GCC 5.4
+Message-ID: <aBo3W5HNMxLdtV2p@casper.infradead.org>
+References: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hWu723nQy6Wtc/+2"
-Content-Disposition: inline
-In-Reply-To: <20250503201512.991277-2-heiko@sntech.de>
-
-
---hWu723nQy6Wtc/+2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
 
-On Sat, May 03, 2025 at 10:15:10PM +0200, Heiko Stuebner wrote:
-> Add compatible for the USB2 phy in the Rockchip RK3036 SoC.
->=20
-> Apart from some bits that got swapped around in the phy registers, the
-> block is nearly the same as the one on the rk3128.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Wed, May 07, 2025 at 12:02:38AM +0800, WangYuli wrote:
+> To the compiler, (MAX_NR_TIERS - 1) (i.e., (4U - 1)) is unsigned,
+> whereas tier is a signed integer.
+> 
+> GCC 5.4 does not permit the minimum operation on such
+> type-inconsistent operands.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---hWu723nQy6Wtc/+2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBo3KAAKCRB4tDGHoIJi
-0koTAQCvRx1zKgbUctLAI7tbaIgn0fC5wRNKHgdGi0S651g4PgD8DTVPMRGZrbsi
-MP1Jqz9wxZbZ51bzr8wSTkDJUnsDTAo=
-=V5Tq
------END PGP SIGNATURE-----
-
---hWu723nQy6Wtc/+2--
+1. This has nothing to do with the compiler version; the type-checking
+is built into min().
+2. We have min_t for a reason
+3. Why is a signed min the right answer instead of an unsigned min?
 
