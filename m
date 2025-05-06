@@ -1,141 +1,140 @@
-Return-Path: <linux-kernel+bounces-635231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CACBAABBD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF4EAABBDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73EA43BF515
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77A5B3BB3D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA06228E562;
-	Tue,  6 May 2025 05:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF869291174;
+	Tue,  6 May 2025 05:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mcI8Pe0A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2170F28DF47;
-	Tue,  6 May 2025 05:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SelWjaF+"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE5828FFE5;
+	Tue,  6 May 2025 05:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746509546; cv=none; b=XBlu6nlVSWbngX2bEJGquWwCWryoJo3Bmqk8sfUl5gQ27mg2LQQE0b37sl/dCALXda7oV/vfegRXXITgXyw6j0sc8igLxePMIhG62N6JeD5BiFLDdziOior4D9BU5Wne3mNmiZTnL3mGZb2tPQrtm9nEwEnmQ6tVHE8v9SXpA7M=
+	t=1746509953; cv=none; b=lbZ6ngEnkgVmtoUzW3FVUJuRo66JAwcwLisepOC4LewEBcBhU4OFBT3BIeRtaBZa7oVnY7LPyasyG9OChlnES3pwq3z86Asy47xeNnRQ5puS0LfREBpECOh6YxjD4JNZx9d0sHxlj/925M7osi86QORsg5ksXGU9Rma0EeAWd+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746509546; c=relaxed/simple;
-	bh=remPqthXLp54OhP3D7Lc9RtMDdogPoIvT5KHNV5kIjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YrZRKuvoKEO0T3HNW4pSd+L3UVmG2HIseUxeMO4wC2xSxehzL4VmIOzWSTglk/FHoWjMdfUL1bh8euEo2ceufrq6RMFLuZsQSWlpsrk0eT3JYlcpATfpUoWSWPmYE//jp33RxWyqq6pHynV2iTt5d1AmF1BAEOqEgwZ+nIMYmEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mcI8Pe0A; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746509544; x=1778045544;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=remPqthXLp54OhP3D7Lc9RtMDdogPoIvT5KHNV5kIjM=;
-  b=mcI8Pe0AnvS8rvzSFy7mdSSpuuT05Ke55DzTjk4Aj8v79dwvP23Q7Nga
-   X8Ogwr3KziOw9bYefTuT4O71wdtkdF1Fn997PoYzaop86vhcSfH07gD8I
-   LgmVs9ouBMNVyAy3dpSizJxhwaglvmBaVjJjpXHc86egr0DPJ14vmzYNj
-   A+tvmJ26bOp8E9xW+X533TliBFPBu2FHHfP4VD2ylY2Yjv+QxP5Tmfh2b
-   Lw09HE3UAjjcIoyGwLfv0KLJsFTAcCSDl19zT9fTfknslHQfZoof1Ieyq
-   yS8fHmZLP1Q7bVCRYjeazNinzajcSRVgkErQO38k6LxCmxyjQ8bKP2Kbw
-   g==;
-X-CSE-ConnectionGUID: EOG2YerGSh2Llr+1WNL3LQ==
-X-CSE-MsgGUID: AR7YbiIIRyOkw6bjv8slQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="59544505"
-X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
-   d="scan'208";a="59544505"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 22:32:24 -0700
-X-CSE-ConnectionGUID: FTuGaNbgRhiyzQpmGqK8LA==
-X-CSE-MsgGUID: Tdb3wdcaS5KMnHepMukgsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
-   d="scan'208";a="135389730"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 22:32:23 -0700
-Date: Mon, 5 May 2025 22:37:26 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 03/13] x86/acpi: Move acpi_wakeup_cpu() and helpers to
- smpboot.c
-Message-ID: <20250506053726.GF25533@ranerica-svr.sc.intel.com>
-References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
- <20250503191515.24041-4-ricardo.neri-calderon@linux.intel.com>
- <CAJZ5v0h_QcH72COEU-cnHUMfXj2grHv1EoLuBJnxm7_AeRteWw@mail.gmail.com>
+	s=arc-20240116; t=1746509953; c=relaxed/simple;
+	bh=04094zyspNSRtg8USfAABByNKw3qw1PdaemydQ7+VOQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=qkrXGGQ7ImRVzxLTpiHFii3P0Bya1jaJnjoUZI7orjchjdqNgg1jzR5jR8KjHaU6704nDvejsDq2Pk/gTQCZhBgaLgScsXrWZ1ZZnmBJBnALzFGFJRLz50DjJSqISq9DzvHdwAxTtY/IdRgGRIIf43RJPMABQlJTaquP3DiXdwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SelWjaF+; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=SD3ZuwBOYac4wfrQfn
+	qfNDjWyHTA4zEWUmnB4zwmEZo=; b=SelWjaF+H11jq/7K3qSHj4V3Z1LLHGjWDY
+	VIZ+AhBJvJM8suOYacd3VHM8DzpxcyysyHOygRlL2+Knivr1jzSwEnJ8XeBkt+RS
+	94Oa4FMqxg9ljWCenNCNPLAjScsNShi4uOwlawfYVZfU1N5PivGfwaeQBMdO7wXh
+	k0AHJCCcI=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wBHxSpEoBloZ2M1Ew--.50689S2;
+	Tue, 06 May 2025 13:38:14 +0800 (CST)
+From: Wenliang Yan <wenliang202407@163.com>
+To: linux@roeck-us.net,
+	jdelvare@suse.com,
+	christophe.jaillet@wanadoo.fr
+Cc: Wenliang Yan <wenliang202407@163.com>,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	derek.lin@silergycorp.com,
+	miguel.lee@silergycorp.com,
+	chris.ho@silergycorp.com,
+	eason.liao@silergycorp.com
+Subject: [PATCH v7 0/4]  hwmon:(ina238)Add support for SQ52206
+Date: Tue,  6 May 2025 01:37:37 -0400
+Message-Id: <20250506053741.4837-1-wenliang202407@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:_____wBHxSpEoBloZ2M1Ew--.50689S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGF18Zr17Ar4fKFyUCF4DJwb_yoW5Xw4kp3
+	yfCFZ5Wr98Gr17XrZIkr4I9r1rW3WkJF18Ww1xJw1Fva45ZF10v3yIkr4Yya1DtrZxZFZ8
+	ta4SqFn7KF17ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pR_uctUUUUU=
+X-CM-SenderInfo: xzhqzxhdqjjiisuqlqqrwthudrp/1tbibgNF02gZnfc1tAAAsh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0h_QcH72COEU-cnHUMfXj2grHv1EoLuBJnxm7_AeRteWw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Mon, May 05, 2025 at 12:03:13PM +0200, Rafael J. Wysocki wrote:
-> On Sat, May 3, 2025 at 9:10 PM Ricardo Neri
-> <ricardo.neri-calderon@linux.intel.com> wrote:
-> >
-> > The bootstrap processor uses acpi_wakeup_cpu() to indicate to firmware that
-> > it wants to boot a secondary CPU using a mailbox as described in the
-> > Multiprocessor Wakeup Structure of the ACPI specification.
-> >
-> > The wakeup mailbox does not strictly require support from ACPI.
-> 
-> Well, except that it is defined by the ACPI specification.
+Add support for Silergy i2c power monitor SQ52206 to the ina238
+driver as those two are similar.
 
-That is true.
+Signed-off-by: Wenliang Yan <wenliang202407@163.com>
+---
 
-> 
-> > The platform firmware can implement a mailbox compatible in structure and
-> > operation and enumerate it using other mechanisms such a DeviceTree graph.
-> 
-> So is there a specification defining this mechanism?
-> 
-> It is generally not sufficient to put the code and DT bindings
-> unilaterally into the OS and expect the firmware to follow suit.
-> 
+Add new chip SQ52206, the datasheet depends on 
+https://us1.silergy.com/cloud/index/uniqid/676b659b4a503
+The password is fx6NEe.
 
-This mechanism is described in the section 4.3.5 of the Intel TDX
-Virtual Firmware Design Guide [1], but it refeers to the ACPI
-specification for the interface.
+Changes in v7:
+- Modify the yaml file in PATCH 4
+- Link to v6: https://lore.kernel.org/linux-hwmon/20250327131841.15013-1-wenliang202407@163.com/
 
-> > Move the code used to setup and use the mailbox out of the ACPI
-> > directory to use it when support for ACPI is not available or needed.
-> 
-> I think that the code implementing interfaces defined by the ACPI
-> specification is not generic and so it should not be built when the
-> kernel is configured without ACPI support.
+Changes in v6:
+- Split the patch and explain in detail how the formula changes and the reasons for adding content.
+- Link to v5: https://lore.kernel.org/linux-hwmon/20250313075501.5435-1-wenliang202407@163.com/
 
-Support for ACPI would not be used on systems describing hardware using
-a DeviceTree graph. My goal is to have a common interface that both
-DT and ACPI can use. I think what is missing is that common interface.
+Changes in v5:
+- Add the description of change log in PATCH 0 and PATCH 2.
+- Link to v4: https://lore.kernel.org/linux-hwmon/20250125030300.1230967-1-wenliang202407@163.com/
 
-Would it be preferred to have a separate implementation that is
-functionally equivalent?
+Changes in v4:
+- Add 'Acked-by: Krzysztof Kozlowski' information to PATCH 1.
 
-Thanks and BR,
-Ricardo
+- Formatting adjustments have been made to ina2xx.c in PATCH 2.
+Including:
+1.Change 'sprintf()' in the 'energy1_input_show()' to 'sysfs_emit()'.
+2.Move up the "enum ina238_ids chip" line in the 'ina238_probe()' to keep RCT style.
+3.Remove the last comma when describing 'ina238_of_match[]' to keep the
+format consistent with the 'i2c_device_id ina238_id[]' structure.
+4.Change the '5bytes' in the description to '5 bytes'.
 
+- Link to v3: https://lore.kernel.org/linux-hwmon/20250117082017.688212-1-wenliang202407@163.com/
 
-[1]. https://cdrdv2-public.intel.com/733585/tdx-virtual-firmware-design-guide-rev-004-20231206.pdf
+Changes in v3:
+- Add the description of the different features of SQ52206 in the ina2xx.yaml(PATCH 1).
+
+- Change program logic errors in ina238.c(PATCH 2).
+Including:
+1.Change 'break' to 'return 0' after 'if (has_power_highest)'.
+2.Add {} after 'if (chip == sq52206)' in 'ina238_probe(struct i2c_client *client)'.
+3.Change 'data->config->has_energy ? NULL : ina238_groups' to 
+'data->config->has_energy ? ina238_groups : NULL'
+
+- Link to v2: https://lore.kernel.org/linux-hwmon/20250113035023.365697-1-wenliang202407@163.com/
+
+Changes in v2:
+- Explain why sq52206 compatibility has been added to ina2xx.yaml.
+
+- addressed various review comments.
+
+- Link to v1: https://lore.kernel.org/linux-hwmon/20241224063559.391061-1-wenliang202407@163.com/
+
+Wenliang Yan (4):
+  hwmon:(ina238)Add ina238_config to save configurations for different
+    chips
+  hwmon:(ina238)Add support for SQ52206
+  hwmon:(ina238)Modify the calculation formula to adapt to different
+    chips
+  dt-bindings:Add SQ52206 to ina2xx devicetree bindings
+
+ .../devicetree/bindings/hwmon/ti,ina2xx.yaml  |   5 +
+ Documentation/hwmon/ina238.rst                |  15 ++
+ drivers/hwmon/ina238.c                        | 211 +++++++++++++++---
+ 3 files changed, 198 insertions(+), 33 deletions(-)
+
+-- 
+2.17.1
 
 
