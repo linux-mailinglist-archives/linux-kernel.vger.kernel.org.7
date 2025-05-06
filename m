@@ -1,129 +1,173 @@
-Return-Path: <linux-kernel+bounces-635372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3619AABC4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE81AABC51
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2773F5067F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:00:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03C950699C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FB02367BE;
-	Tue,  6 May 2025 07:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B21523A9AD;
+	Tue,  6 May 2025 07:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcrDvkpi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ug8zVkKs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E304B1E6B;
-	Tue,  6 May 2025 07:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EB74B1E6B
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 07:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746517861; cv=none; b=hlOgQTEP8wcZAQfuB5zEwSaCY10ZLlCKnZtKD8hLTwqzVBjsRvFLGvPQtoUZFj4RkoJvhvZalXKyUzZ4zGI0Uckf9kgYuQx1GprH/m3X/Ph69ZtW5GlaXlvN44moGay89+eYnRyiGYVUGRZuNe/pDNHA3SdZJ3Oj0dXHE86U3Tc=
+	t=1746517903; cv=none; b=vBjVfOP8UOp2HY/mo1/OWnEo4T6bxvppGKcirte+22u3vmpsjoZHTicA9ffL+o0PUfhC/fI4fmQ9v9LOQ0Q1IOYEAPHWd4+uMKHENHVGSrpQ+GIF/Wv1VDJTCewcUQwQ8WigBK5g1LFCNGgT+c4Z52VPzm7U+xzuKX+WBT+TCdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746517861; c=relaxed/simple;
-	bh=CiWo4tHmSCuZxPGbxlsgtwSE8g8q6sXdBq2GUKBlkH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GAm3HTlWMOAoNGrNU8CDi04Lei9+2Nb5ra8blj/TMFyOJUwMH8l+2h5U3mkSBXZktZtuJ2knIL6IslpbP7HVR7gOeIrslrZ9x8oAVcgdPVIcyypOUbWH57IWduKbwIac0rHCS4koNVsfhihJGwvjBLQP4t6HxoSVjQtn6pRswUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcrDvkpi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7283CC4CEED;
-	Tue,  6 May 2025 07:51:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746517860;
-	bh=CiWo4tHmSCuZxPGbxlsgtwSE8g8q6sXdBq2GUKBlkH4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hcrDvkpi8oXvWPuyFNgGbSCm1E46NiLcwjEuIkxTQf9QPpRYLTnnnvaNzt0395CaG
-	 1gVff77rttYoTE10sAJjHXnNrjVeiujumvBY4I6VC5tgGYoyb9/V0LgbbpZvPLjjou
-	 0rXK9mWyKWwgKiGUox1GQOSsPaHANOBFaRyqDYpeFfbOBdrduyyNypTiULmcoPJ8Vr
-	 9yaXKBZhnMU0mNruwq+NCTRiXjRcZo3uOmZX8NLBj6n0qLvOtmRjw7kRgMyFcgVEPN
-	 bbxD5z4Bi9kXGxKq8CcXsSdudppc/AlWwgbL9+bUx3cU5Uty44Ix76yRJ4bHQJ/Eeb
-	 px7gjk9tQ5gkQ==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30de488cf81so54757231fa.1;
-        Tue, 06 May 2025 00:51:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVubpHoqEB9hFWZcP1gNMkiOV4hksP7rGmpm1eNZmfSvBWeVVBzh/CxmneBjfayBIcnKukZSxZMB534VbM=@vger.kernel.org, AJvYcCXfJZSd9akJ3A4y9CFffullmVzV7GlSiN9PYsvj+pxMTb9x9HM7xsdktPCUCYW5MlyHqwNUz9XXUEYjStrB@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgp2N34tgp0K0LbqaS5BevkX2RrWOtEt+IX+uYbV1sbMo7OAcV
-	EPOQpmTonS7UmQhQxwS2sn2mpyXBuhh+adBkPX5Hu2QuMt0G2luWHaihkeHPdgYE7ss4ISSv/wk
-	c4BsniEiz9OqQXBdTYaEbyskE5GQ=
-X-Google-Smtp-Source: AGHT+IHsrtKAgEh9ZdN0GLbxFeIjywak6bphQQylGI5PYxQjY4XXC09pHpt2Oin/zpnBbFLlFoHZ4cXNeP3NC14Fp+o=
-X-Received: by 2002:a2e:be06:0:b0:30b:d656:1485 with SMTP id
- 38308e7fff4ca-3266cc05b9emr6724851fa.32.1746517859167; Tue, 06 May 2025
- 00:50:59 -0700 (PDT)
+	s=arc-20240116; t=1746517903; c=relaxed/simple;
+	bh=pl5OPutyKsg+Z1sBcUP+StmoSWV1JUI7XfC+CTyUjxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e0moWqJUm2U6B09iKJAB6a4WcJ4peCcfwkJpd++rt3shhCPVtkIZwiDEyOfYxjNL8m1wNApXhuan57r4gQqtAiG7seDvsV1pIGSJ6jnq1IYljBzshO6EYCYjj1fI+rpLVDZvYweklbiC1L8c+MnxAU8posyyzu4ZC3gyqKiPEps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ug8zVkKs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746517899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5HBVspWdQ+Fl1RGFmbNa4oPmFUDDRVe4VvohOGLQ5VY=;
+	b=Ug8zVkKsXLnMafOEn0EFu0KGQLjLX2Iz+ZDCwjHvQ+uFTzJudVla0GPW5uQ2D1x+axJlbr
+	ncso5wO2ZrOL+xbRcy1Wq/7/K52CYQPAHfySHUMJOEfD1GocQClz1Xk5lkFzMLs3vUmlX7
+	+/puUI8TXmxjTxof9TD7tgJnmYf0TOk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-216-hiCLPCAxPdmOOH1hP5nNVw-1; Tue, 06 May 2025 03:51:38 -0400
+X-MC-Unique: hiCLPCAxPdmOOH1hP5nNVw-1
+X-Mimecast-MFC-AGG-ID: hiCLPCAxPdmOOH1hP5nNVw_1746517897
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d00017e9dso27803505e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 00:51:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746517897; x=1747122697;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5HBVspWdQ+Fl1RGFmbNa4oPmFUDDRVe4VvohOGLQ5VY=;
+        b=nvmWjdwyXQRyPYW5qzfeYpFtQ3g9WlO00CaDHvdAXvguhEMQtJKVFLAsMRFPQhq6sy
+         YSU1HbNeSwUtJLn4ZTXJ5LSvZ8N7i0TSUwY8358A3xFQBGbS3VO4kvDl9H90Rjd2wUDo
+         tBZ2B90oId3DNE+MMR68cH+y/Ri+6PQL0yZtOOK52g7SXyVLRY4E8HsCUaTyOZAq4m38
+         BCgNxasZWDP7HsOrM5QjX3MhkXiRSUleHSv+s5/8gfhbhRVxr9kMfye4XlKJHY8a1A6O
+         PhM4f0wJM6LvJHolJ7+Wfb6TxXWmTqZujGLqKjT+K4Rm0ZJIF/wspN3Q2ghfA2gOxp7Q
+         TmBA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3BI9c6h8hmsiHlkBO91ZN/FGlCqOJ8K10x4iEPeHLrirRV/BuOpPsWu/bj4Ie8AhOJQyd4FXOUK2d9WY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhAEvTAOGlL3PzBC/oXyc2PBSXmJN9DOAK5oPnbQV//Ck70cOn
+	vQK7dRERbt6cYL9OVPltRTDfHCW3+tKkM+rDfrRgnCW2/SPftl6WbIDvh9hc4dAe3m6ojXSMAMO
+	t7o3YlNTqTMb871RkjeANeeYUcBCMi7RLJG0MlWNwRFMjNUEw0CAc2qk7MLIVlQ==
+X-Gm-Gg: ASbGnct9XkW+RUnO78F+d1H3kzKigNbeAajskpBDt2X/K7z/0tYr30IqdSct6KLrZyI
+	dSa0BI7QvRTHMc6Qs2+wdvwxxP+MpMUsf17BpBg7S74IZ/xXed3sMJInw6fI07mp7/6tTIwgsyE
+	vFCBUVfjU0ON2O4hGYWHJFnmBjaRcXYKnM6zpd0o2fD4Ybkuix9fAZ9WyCNJ42GCSxbvZYAWG6/
+	g8bYTq8+aEWiVtHT8aQ9sg+NlMA3HZlbyAzsUmThYsrRkGoUIZVFn/FAQ1XGx3ppgdpPpvUNE9u
+	uZROy/EQDKNn/NNoU2QUQ8759yILXyg1443aZdfQYCq+bUJtATDe8cNwuvE=
+X-Received: by 2002:a05:600c:1da6:b0:43d:209:21fd with SMTP id 5b1f17b1804b1-441d101530emr16668405e9.30.1746517897141;
+        Tue, 06 May 2025 00:51:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4JCCBzyq6jjjPZ85Ct7gO4cXiSXJScVK2314x0EXxLsegTrsV4ue0Tzlfjo9FY9dHlO703g==
+X-Received: by 2002:a05:600c:1da6:b0:43d:209:21fd with SMTP id 5b1f17b1804b1-441d101530emr16668135e9.30.1746517896823;
+        Tue, 06 May 2025 00:51:36 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2706:e010:b099:aac6:4e70:6198? ([2a0d:3344:2706:e010:b099:aac6:4e70:6198])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2b28045sm202937545e9.35.2025.05.06.00.51.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 00:51:36 -0700 (PDT)
+Message-ID: <89c05b7f-cc3b-4274-a983-0cd867239ae1@redhat.com>
+Date: Tue, 6 May 2025 09:51:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <79C925DCE2E963FF+20250422104927.144252-1-wangyuli@uniontech.com> <70C0FECF7A9A7B62+20250422105402.145635-1-wangyuli@uniontech.com>
-In-Reply-To: <70C0FECF7A9A7B62+20250422105402.145635-1-wangyuli@uniontech.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 6 May 2025 16:50:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQSMaz32vQPRr4tCkSLoDzwh6Z+A0KPvE9ig8ofwk2DHQ@mail.gmail.com>
-X-Gm-Features: ATxdqUGxD0mhajBqiO0ocZNOivk_QYJg2X6X_VnV44mXXKR7x48ZtwSWjbzIE7Q
-Message-ID: <CAK7LNAQSMaz32vQPRr4tCkSLoDzwh6Z+A0KPvE9ig8ofwk2DHQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] kbuild: deb-pkg: Add libdw-dev:native to Build-Depends-Arch
-To: WangYuli <wangyuli@uniontech.com>
-Cc: guanwentao@uniontech.com, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
-	niecheng1@uniontech.com, petr.pavlu@suse.com, samitolvanen@google.com, 
-	zhanjun@uniontech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 09/11] net: dsa: b53: fix toggling vlan_filtering
+To: Jonas Gorski <jonas.gorski@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Kurt Kanzenbach <kurt@linutronix.de>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250429201710.330937-1-jonas.gorski@gmail.com>
+ <20250429201710.330937-10-jonas.gorski@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250429201710.330937-10-jonas.gorski@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 22, 2025 at 7:55=E2=80=AFPM WangYuli <wangyuli@uniontech.com> w=
-rote:
->
-> The dwarf.h header, which is included by
-> scripts/gendwarfksyms/gendwarfksyms.h, resides within the libdw-dev
-> package.
->
-> This portion of the code is compiled under the condition that
-> CONFIG_GENDWARFKSYMS is enabled.
->
-> Consequently, add libdw-dev to Build-Depends-Arch to prevent
-> unforeseen compilation failures.
->
-> Fix follow possible error:
->   In file included from scripts/gendwarfksyms/symbols.c:6:
->   scripts/gendwarfksyms/gendwarfksyms.h:6:10: fatal error: 'dwarf.h' file=
- not found
->       6 | #include <dwarf.h>
->         |          ^~~~~~~~~
->
-> Fixes: f28568841ae0 ("tools: Add gendwarfksyms")
-> Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
+On 4/29/25 10:17 PM, Jonas Gorski wrote:
+> @@ -789,26 +805,39 @@ int b53_configure_vlan(struct dsa_switch *ds)
+>  	 * entry. Do this only when the tagging protocol is not
+>  	 * DSA_TAG_PROTO_NONE
+>  	 */
+> +	v = &dev->vlans[def_vid];
+>  	b53_for_each_port(dev, i) {
+> -		v = &dev->vlans[def_vid];
+> -		v->members |= BIT(i);
+> +		if (!b53_vlan_port_may_join_untagged(ds, i))
+> +			continue;
+> +
+> +		vl.members |= BIT(i);
+>  		if (!b53_vlan_port_needs_forced_tagged(ds, i))
+> -			v->untag = v->members;
+> -		b53_write16(dev, B53_VLAN_PAGE,
+> -			    B53_VLAN_PORT_DEF_TAG(i), def_vid);
+> +			vl.untag = vl.members;
+> +		b53_write16(dev, B53_VLAN_PAGE, B53_VLAN_PORT_DEF_TAG(i),
+> +			    def_vid);
+>  	}
+> +	b53_set_vlan_entry(dev, def_vid, &vl);
+>  
+> -	/* Upon initial call we have not set-up any VLANs, but upon
+> -	 * system resume, we need to restore all VLAN entries.
+> -	 */
+> -	for (vid = def_vid; vid < dev->num_vlans; vid++) {
+> -		v = &dev->vlans[vid];
+> +	if (dev->vlan_filtering) {
+> +		/* Upon initial call we have not set-up any VLANs, but upon
+> +		 * system resume, we need to restore all VLAN entries.
+> +		 */
+> +		for (vid = def_vid + 1; vid < dev->num_vlans; vid++) {
+> +			v = &dev->vlans[vid];
+>  
+> -		if (!v->members)
+> -			continue;
+> +			if (!v->members)
+> +				continue;
+> +
+> +			b53_set_vlan_entry(dev, vid, v);
+> +			b53_fast_age_vlan(dev, vid);
+> +		}
+>  
+> -		b53_set_vlan_entry(dev, vid, v);
+> -		b53_fast_age_vlan(dev, vid);
+> +		b53_for_each_port(dev, i) {
+> +			if (!dsa_is_cpu_port(ds, i))
+> +				b53_write16(dev, B53_VLAN_PAGE,
+> +					    B53_VLAN_PORT_DEF_TAG(i),
+> +					    dev->ports[i].pvid);
 
-Applied to linux-kbuild.
-Thanks.
+Just if you have to repost for other reasons:
+			if (dsa_is_cpu_port(ds, i))
+				continue;
 
+			b53_write16(dev, B53_VLAN_PAGE, //...
 
+should probably be more readable.
 
->  scripts/package/mkdebian | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 744ddba01d93..d4b007b38a47 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -210,7 +210,7 @@ Rules-Requires-Root: no
->  Build-Depends: debhelper-compat (=3D 12)
->  Build-Depends-Arch: bc, bison, flex,
->   gcc-${host_gnu} <!pkg.${sourcename}.nokernelheaders>,
-> - kmod, libelf-dev:native,
-> + kmod, libdw-dev:native, libelf-dev:native,
->   libssl-dev:native, libssl-dev <!pkg.${sourcename}.nokernelheaders>,
->   python3:native, rsync
->  Homepage: https://www.kernel.org/
-> --
-> 2.49.0
->
+BTW, @Florian: any deadline for testing feedback on this?
 
+Thanks,
 
---=20
-Best Regards
-Masahiro Yamada
+Paolo
+
 
