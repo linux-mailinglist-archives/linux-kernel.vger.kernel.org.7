@@ -1,269 +1,224 @@
-Return-Path: <linux-kernel+bounces-636723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D3EAACF3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB0FAACF2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58CA33BE0D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:06:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07CB1B65D4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05EE21B182;
-	Tue,  6 May 2025 21:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C37215F52;
+	Tue,  6 May 2025 21:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tuFG8mL8"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bE/utUxq"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A391E2153DA
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 21:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341A41487F4;
+	Tue,  6 May 2025 21:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746565532; cv=none; b=NVJKFQArpwmX7p60CATCulhq6yF725TpT3mb4/jtb0ImDO9YcGH0EaG0cEGN9v3VJo9UhPBG6uQX437deI1a3WMxla/pY7q7HJB30MCbJOEsK7FFOoEqsEjhlPwOtVE45oj1UfS06rVM809HOCif6CkWnZ1RUnOpz66D/dsAn9w=
+	t=1746565512; cv=none; b=h6pBl7qcN9Z/OMvLtlGd/BD6w0yWZLZXWBX/ian/HyRTyIKvCVKzi4viBjsImx4g33nMKT0gifNdC17Yzw7reLU9wt63rrD9oS/sD6vvU7EqEFtrdGrQgqlfxh8m4YGK5KWOw48inoxyrAjscIFnwvWbibEHrHaQexi7URaQBhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746565532; c=relaxed/simple;
-	bh=z7O+cJ2s2VXn/7thHiJDbQY7RdvV9lwOOzqK+FZqCpw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EVHs1bf2PlucdTbvil+gpdknKzTIV0BFf9NvYnX/EeQptsb42bLEHqYGPsotbWnQCA+vGWTFJTB3T4R1+Rzw+coWs+fA8qMClothoIdtnlUqATn9EgPq0grR4zNOp2s6afcrb4jjMwucaFrXhvOFa8AF42RDPxKla5xsXKFqqgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tuFG8mL8; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso50763835e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 14:05:29 -0700 (PDT)
+	s=arc-20240116; t=1746565512; c=relaxed/simple;
+	bh=e1qHEgJ4EBKnE6gLzmeR5RPFCj9U6szUNm8w/lrJ8Us=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B7ITFeRrb/SVIWlAYYxMRGVU3emQ+rmD9Yv7OOdd9ulvvCecv5+rkqwE/PevXYPKm8QpcS1PXNvpM8KgesOz9BACAUJ5is6toWUrj7dedMryfZHXBaG/gnfgs8AAxObt8Tq8ReL8rdn/tYIVpEp5xZ11KvbiM3E4eLF5cPIPQ7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bE/utUxq; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7370a2d1981so5165553b3a.2;
+        Tue, 06 May 2025 14:05:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746565528; x=1747170328; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IxjDKD+JKSiLqw8gK8zG+KrBnxfs5SYwuaGv7cdl5fk=;
-        b=tuFG8mL84FquZoOheVVBWxOFQasfvzWViWkaacoMAJyXImsAIJQrTDp9ow8oSf3ZeM
-         cpQpVs1Jak/bo1BBSkTEgyf9qmS401GUmcND2oByYzbTfa9JdkzB4+5+QBa5PXLraczV
-         vxnKPBD0Aw4I1CG3nhwI8XLtKyFs2Zg9Tn1UJcMdoeZii2jfBeNHK/J5HHobQlOgUyj8
-         YmrOboTw+wUlWhTWlfKidYQU5O39yhtxUOjX4ZRTjZs3PPxhpI8J7NKskuG1XUOtvGC0
-         gfSvw1vRw6Lni3O8C8ig7lsJzcpPt0ofO5THHvCs28PSm4uazrHFIi9ziWuxvFT1PRhD
-         +jwg==
+        d=gmail.com; s=20230601; t=1746565510; x=1747170310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RSEhCjYjnsEXr9UG7zTvIDQr3+9PxPuO34pFmbrJ5vc=;
+        b=bE/utUxqObzSZk8Cyp9UsX6MHQDXn0IV4Um4VWz5SOdDc4bhWDEaJjFpvkJO40/oLg
+         IIseRxPqoVm5w3wFaSEQ52d+j5/Nm+Zl0t4SYVelZ1tZscPLwu5mHSbDGzTHvIZdjkSD
+         AX/xaSkru8w9w2ITHco9Iz90lkwW/k0Go5AzREW9+kNP0v99KiR6lTBHhpKzxKyzMfNq
+         cPZLSFvvrU65kH0YtYUABhmNKL3lxu98cpkjruq25yxbK6HpLnc7nQS3eo3yIeD6jBXA
+         QSlwcvHbuJR7biPqICfXgdBWYBmtXV73sBMReZrPgV+IDkTgPQ60870T+iOZEr9gQfWS
+         c6+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746565528; x=1747170328;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1746565510; x=1747170310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IxjDKD+JKSiLqw8gK8zG+KrBnxfs5SYwuaGv7cdl5fk=;
-        b=fqHq/dCOXzOkDAFSPIMV7nN9xaJqLO7mlGcThenn8XA6Gb/mRCHtWTi7P1kFXn1jxt
-         u/Adq7HyizcCn3wrIAhbdfiAySjs5tMTpJw4yM7rsQCcuI5Sn6Db+2YezyHUMfHnQits
-         SoAYZzawsgsw9g09YaYOIDiQenY8DGa/lVsIQkLYnDPejPMOOE/EHpXFVcWaNIqJ7g5d
-         I4FdXKFM4kM1aJG2+eAw1D334lQEssDykSwxxRH7KMVPBv0NtFhxMYZ0fjmghBHJVYcW
-         b14ctqgqMZJWQ63P1Jedp+E2z58JSPLKjTqO9oiRxwvh9tXJF9uqlYh4IQU4daQ8FmSv
-         1Luw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQnsQ29lI9JbM9++7XWHyce6V18/PaTEAhhjqq2fqAfZR7UOIoMSdWqaAukBHfVEqi18JktimX6kYXLa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYnaoFaEXr73Jyq/K5MkFXHR83uIaVu5rsxkl6veF1eGyrGpWS
-	UtHAKe3Y6r0s1m1nrt69dTcj/WbxQXqWmY47CXEtpM8ZK91Z+S0YHgY1tvhmVic=
-X-Gm-Gg: ASbGncsAl1Zp1T3crvUYD9b3rAtHBEOAGLc0giTQN/jOGj6r+XXljTMfDzxt8/SU9Yy
-	v/u2pbPzTByM7jCfGCtnb6WpNV2HqcpQonHoEXVc84fwNNzQ5+/qHvihoHHDcRXqvRe3GOnQqx5
-	obW2wg6d2eAk6cLMCXlcmzrducSH2WL5LmvyPLq0grn+i3U03HljUm4/FuDI1nE0jIpDLQTFupt
-	ZbO5nZ/ASeuvq8HML4hoWzzsliDuzwidZSTOubLGN61DtgqW8VcSANcwJ/V3nX+oZbhH+h9CPiv
-	UzQcC0UOorFAnvPfrI1siS4O7DLHvnkrBHPTAtKaIwSVFha2Po04vt15mLIJSNDVXgmURCletWe
-	kyu5M451FMMLqzg1TPNc6F1M=
-X-Google-Smtp-Source: AGHT+IH/I6vCXS+EzMw3gIbUrM+QZJy17d3GmYqQtggUh+d00T+nsunpp1HkxxkyT/ZZ+4Ldp/Ngiw==
-X-Received: by 2002:a05:600c:5006:b0:43c:ea36:9840 with SMTP id 5b1f17b1804b1-441d44de12dmr3049785e9.22.1746565527940;
-        Tue, 06 May 2025 14:05:27 -0700 (PDT)
-Received: from [192.168.0.2] (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441d4351abdsm6794475e9.23.2025.05.06.14.05.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 14:05:27 -0700 (PDT)
-From: Angelo Dureghello <adureghello@baylibre.com>
-X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Tue, 06 May 2025 23:03:51 +0200
-Subject: [PATCH v3 5/5] iio: adc: ad7606: add gain calibration support
+        bh=RSEhCjYjnsEXr9UG7zTvIDQr3+9PxPuO34pFmbrJ5vc=;
+        b=RNO4DNteVhtoGVoXHtTvQscBk3NIsVTbECT6oUp0+CVaPPjK/18B6A8nmvbabZFTwO
+         HsfDSwNhFCdOxEBvDNzsyz92RfRQy597nX6NdI2vMZoWMkFYgtgTvvuVaWvlaRFG+CoH
+         d85i9wPoQGxxhYy74PPiD10S2RHYu1UZdqCuW2vxlhaLnfDqAUmkBvhC7OAVHeS5AIhw
+         Q6VIjhmXcgsElvbk5N11/2j2L9/UBVZD/N87wSYU9IBeIEP+a5qDCyQHL4i369XyDXAW
+         VvGrx/ScTnTPoifAfej2PLpp/w1f8csc/oVM+irb9RWRd8Ki+ffGdWVo/EefxZ0RAzL3
+         SJoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyF0/uL1T8FQSFVtZizHFSnu4IqvpLYSIB3RcIrQZIlN8EzwhXAmnJbnhtA+TT8SscQwR9jyJ3GepXZ9F5@vger.kernel.org, AJvYcCVpAhqq85wzxOMfCnBRO6Zlwe1ou43tzjCcMd8bZWVYg3NeYCOA1w4cfaD2i3sLHdEceuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhWo5HmDzFXgYLUPLWZLpHVGKuO5wE1xKPJtZPE3HFxoZvzfCm
+	b5SbXqie1Q9CZyRYayzmBB/vONjuTi4Pw6L+83gaNvyq/51B+bWcr9zdDpOfm8jpZBtU9jNVw/7
+	MqkT5OJM+ffUqzOq4eqbGgVa89UEFV87G
+X-Gm-Gg: ASbGncshwXoT3UgEpOFYjEFhwK5dGtEE7zsw8gXK8+L0AgPPbI36ye9gE2WZFXPZX4d
+	J3GA8yHcOePAy1Fn4rZ+uEiKoOzTxtQ44BVK4xDTNCMLCl2jbz7rTBonqhGpldtr5zifPdGEfN4
+	5UQEAR0dSzDUQ8WrcD59BAka4xw/tSvzXD9EXitg==
+X-Google-Smtp-Source: AGHT+IEGbzaclPrSNLbpwY1OjJoztl6kRb0Wac9OKLNnw72VNagCJqiXskWxYP1WEfrIg74zt+O0FI62KRgHtD8He0Y=
+X-Received: by 2002:a05:6a00:2a08:b0:73e:96f:d4c1 with SMTP id
+ d2e1a72fcca58-7409cf15e7fmr865953b3a.13.1746565510404; Tue, 06 May 2025
+ 14:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250506-wip-bl-ad7606-calibration-v3-5-6eb7b6e72307@baylibre.com>
-References: <20250506-wip-bl-ad7606-calibration-v3-0-6eb7b6e72307@baylibre.com>
-In-Reply-To: <20250506-wip-bl-ad7606-calibration-v3-0-6eb7b6e72307@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5739;
- i=adureghello@baylibre.com; h=from:subject:message-id;
- bh=P/FuxJZA+9kES7o8SpZCT2TnVHvYO5j9LvTN2jJFlis=;
- b=owGbwMvMwCXGf3bn1e/btlsznlZLYsiQqvSYb7upmDlGwPPAjCt+jzb1+BmrOz3byPtZXjL22
- xdt5d08HaUsDGJcDLJiiix1iREmobdDpZQXMM6GmcPKBDKEgYtTACZiKM/w39XKa/n7HcWltiHn
- 3DYW79QLWLLIjffi7mmB6gmCEU2pbxn+B+twGNwW4WFwFilxef0w4veF/t6tPT3noo+nbmB93vm
- BHQA=
-X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
- fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
+References: <20250502085710.3980-1-holger@applied-asynchrony.com>
+ <7326223e-0cb9-4d22-872f-cbf1ff42227d@kernel.org> <913f66a8-6745-0e30-b5b8-96d23bf05b90@applied-asynchrony.com>
+ <CAADnVQLpyNiyghWLMq5AxkBgZX4J9VfX5j4ToNh6UsrQ=4yndg@mail.gmail.com> <2a8208af-bc4b-f1bd-af0b-f5db485ed1f0@applied-asynchrony.com>
+In-Reply-To: <2a8208af-bc4b-f1bd-af0b-f5db485ed1f0@applied-asynchrony.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 6 May 2025 14:04:58 -0700
+X-Gm-Features: ATxdqUECGu980ouGjP2nCihP-TZ97sK48XyTR3etD-Bc401zNqeE7OzjIFc_omc
+Message-ID: <CAEf4BzYLYJtcehZhB22YsxRXZBcVnunNx-rm9CfTcDZFiY10jQ@mail.gmail.com>
+Subject: Re: [PATCH] bpftool: build bpf bits with -std=gnu11
+To: =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Quentin Monnet <qmo@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Angelo Dureghello <adureghello@baylibre.com>
+On Sun, May 4, 2025 at 3:24=E2=80=AFAM Holger Hoffst=C3=A4tte
+<holger@applied-asynchrony.com> wrote:
+>
+> On 2025-05-03 04:36, Alexei Starovoitov wrote:
+> > On Fri, May 2, 2025 at 2:53=E2=80=AFAM Holger Hoffst=C3=A4tte
+> > <holger@applied-asynchrony.com> wrote:
+> >>
+> >> On 2025-05-02 11:26, Quentin Monnet wrote:
+> >>> On 02/05/2025 09:57, Holger Hoffst=C3=A4tte wrote:
+> >>>> A gcc-15-based bpf toolchain defaults to C23 and fails to compile va=
+rious
+> >>>> kernel headers due to their use of a custom 'bool' type.
+> >>>> Explicitly using -std=3Dgnu11 works with both clang and bpf-toolchai=
+n.
+> >>>>
+> >>>> Signed-off-by: Holger Hoffst=C3=A4tte <holger@applied-asynchrony.com=
+>
+> >>>
+> >>> Thanks! I tested that it still works with clang.
+> >>>
+> >>> Acked-by: Quentin Monnet <qmo@kernel.org>
+> >>
+> >> Thanks!
+> >>
+> >>> I didn't manage to compile with gcc, though. I tried with gcc 15.1.1 =
+but
+> >>> option '--target=3Dbpf' is apparently unrecognised by the gcc version=
+ on
+> >>> my setup.
+> >>>
+> >>> Out of curiosity, how did you build using gcc for the skeleton? Was i=
+t
+> >>> enough to run "CLANG=3Dgcc make"? Does it pass the clang-bpf-co-re bu=
+ild
+> >>> probe successfully?
+> >>
+> >> I'm on Gentoo where we have a gcc-14/15 based "bpf-toolchain" package,
+> >> which is just gcc configured & packaged for the bpf target.
+> >> Our bpftool package can be built with clang (default) or without, in
+> >> which case it depend on the bpf-toolchain. The idea is to gradually
+> >> allow bpf/xdp tooling to build/run without requiring clang.
+> >>
+> >> The --target definition is conditional and removed when not using clan=
+g:
+> >> https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/bpftool/bpftoo=
+l-7.5.0.ebuild?id=3Dbf70fbf7b0dc97fbc97af579954ea81a8df36113#n94
+> >>
+> >> The bug for building with the new gcc-15 based toolchain where this
+> >> patch originated is here: https://bugs.gentoo.org/955156
+> >
+> > So you're fixing this build error:
+> >
+> > bpf-unknown-none-gcc \
+> >          -I. \
+> >          -I/var/tmp/portage/dev-util/bpftool-7.5.0/work/bpftool-libbpf-=
+v7.5.0-sources/include/uapi/
+> > \
+> >          -I/var/tmp/portage/dev-util/bpftool-7.5.0/work/bpftool-libbpf-=
+v7.5.0-sources/src/bootstrap/libbpf/include
+> > \
+> >          -g -O2 -Wall -fno-stack-protector \
+> >           -c skeleton/profiler.bpf.c -o profiler.bpf.o
+> > In file included from skeleton/profiler.bpf.c:3:
+> > ./vmlinux.h:5: warning: ignoring '#pragma clang attribute' [-Wunknown-p=
+ragmas]
+> >      5 | #pragma clang attribute push
+> > (__attribute__((preserve_access_index)), apply_to =3D record)
+> > ./vmlinux.h:9845:9: error: cannot use keyword 'false' as enumeration co=
+nstant
+> >   9845 |         false =3D 0,
+> >        |         ^~~~~
+> > ./vmlinux.h:9845:9: note: 'false' is a keyword with '-std=3Dc23' onward=
+s
+> > ./vmlinux.h:31137:15: error: 'bool' cannot be defined via 'typedef'
+> > 31137 | typedef _Bool bool;
+> >        |               ^~~~
+> >
+> > with -std=3Dgnu11 flag and
+>
+> Yes, correct. This is the same as all over the kernel or the bpf tests
+> for handling C23. I fully understand that this particular patch is only
+> one piece of the puzzle.
+>
 
-Add gain calibration support, using resistor values set on devicetree,
-values to be set accordingly with ADC external RFilter, as explained in
-the ad7606c-16 datasheet, rev0, page 37.
+What's the best way to detect (at compile time) whether bool, false,
+and true are treated as reserved keywords? To solve this properly
+vmlinux.h would have to be adjusted by vmlinux.h to avoid emitting
+bool/false/true *iff* compiler version/mode doesn't like that
 
-Usage example in the fdt yaml documentation.
-
-Tested-by: David Lechner <dlechner@baylibre.com>
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
----
- drivers/iio/adc/ad7606.c | 56 ++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/iio/adc/ad7606.h |  4 ++++
- 2 files changed, 60 insertions(+)
-
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index a986eb1284106da4980ac36cb0b5990e4e3bd948..049fd8616769d32778aa238b348b2fb82fa83745 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -33,6 +33,10 @@
- 
- #include "ad7606.h"
- 
-+#define AD7606_CALIB_GAIN_MIN	0
-+#define AD7606_CALIB_GAIN_STEP	1024
-+#define AD7606_CALIB_GAIN_MAX	(63 * AD7606_CALIB_GAIN_STEP)
-+
- /*
-  * Scales are computed as 5000/32768 and 10000/32768 respectively,
-  * so that when applied to the raw values they provide mV values.
-@@ -125,6 +129,8 @@ static int ad7609_chan_scale_setup(struct iio_dev *indio_dev,
- 				   struct iio_chan_spec *chan);
- static int ad7616_sw_mode_setup(struct iio_dev *indio_dev);
- static int ad7606b_sw_mode_setup(struct iio_dev *indio_dev);
-+static int ad7606_chan_calib_gain_setup(struct iio_dev *indio_dev,
-+					struct iio_chan_spec *chan);
- 
- const struct ad7606_chip_info ad7605_4_info = {
- 	.max_samplerate = 300 * KILO,
-@@ -180,6 +186,7 @@ const struct ad7606_chip_info ad7606b_info = {
- 	.scale_setup_cb = ad7606_16bit_chan_scale_setup,
- 	.sw_setup_cb = ad7606b_sw_mode_setup,
- 	.offload_storagebits = 32,
-+	.calib_gain_setup_cb = ad7606_chan_calib_gain_setup,
- 	.calib_offset_avail = ad7606_calib_offset_avail,
- 	.calib_phase_avail = ad7606b_calib_phase_avail,
- };
-@@ -195,6 +202,7 @@ const struct ad7606_chip_info ad7606c_16_info = {
- 	.scale_setup_cb = ad7606c_16bit_chan_scale_setup,
- 	.sw_setup_cb = ad7606b_sw_mode_setup,
- 	.offload_storagebits = 32,
-+	.calib_gain_setup_cb = ad7606_chan_calib_gain_setup,
- 	.calib_offset_avail = ad7606_calib_offset_avail,
- 	.calib_phase_avail = ad7606c_calib_phase_avail,
- };
-@@ -246,6 +254,7 @@ const struct ad7606_chip_info ad7606c_18_info = {
- 	.scale_setup_cb = ad7606c_18bit_chan_scale_setup,
- 	.sw_setup_cb = ad7606b_sw_mode_setup,
- 	.offload_storagebits = 32,
-+	.calib_gain_setup_cb = ad7606_chan_calib_gain_setup,
- 	.calib_offset_avail = ad7606c_18bit_calib_offset_avail,
- 	.calib_phase_avail = ad7606c_calib_phase_avail,
- };
-@@ -357,6 +366,49 @@ static int ad7606_get_chan_config(struct iio_dev *indio_dev, int ch,
- 	return 0;
- }
- 
-+static int ad7606_chan_calib_gain_setup(struct iio_dev *indio_dev,
-+					struct iio_chan_spec *chan)
-+{
-+	struct ad7606_state *st = iio_priv(indio_dev);
-+	unsigned int num_channels = st->chip_info->num_adc_channels;
-+	struct device *dev = st->dev;
-+	int ret;
-+
-+	device_for_each_child_node_scoped(dev, child) {
-+		u32 reg, r_gain;
-+
-+		ret = fwnode_property_read_u32(child, "reg", &reg);
-+		if (ret)
-+			return ret;
-+
-+		/* channel number (here) is from 1 to num_channels */
-+		if (reg < 1 || reg > num_channels) {
-+			dev_warn(dev, "wrong ch number (ignoring): %d\n", reg);
-+			continue;
-+		}
-+
-+		ret = fwnode_property_read_u32(child, "adi,rfilter-ohms",
-+					       &r_gain);
-+		if (ret == -EINVAL)
-+			/* Keep the default register value. */
-+			continue;
-+		if (ret)
-+			return ret;
-+
-+		if (r_gain > AD7606_CALIB_GAIN_MAX)
-+			return dev_err_probe(st->dev, -EINVAL,
-+					     "wrong gain calibration value.");
-+
-+		/* Chan reg is 1-based index. */
-+		ret = st->bops->reg_write(st, AD7606_CALIB_GAIN(reg - 1),
-+			DIV_ROUND_CLOSEST(r_gain, AD7606_CALIB_GAIN_STEP));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int ad7606c_18bit_chan_scale_setup(struct iio_dev *indio_dev,
- 					  struct iio_chan_spec *chan)
- {
-@@ -1410,6 +1462,10 @@ static int ad7606_probe_channels(struct iio_dev *indio_dev)
- 				chan->info_mask_separate_available |=
- 					BIT(IIO_CHAN_INFO_CALIBBIAS) |
- 					BIT(IIO_CHAN_INFO_CONVDELAY);
-+				ret = st->chip_info->calib_gain_setup_cb(
-+					indio_dev, chan);
-+				if (ret)
-+					return ret;
- 			}
- 
- 			/*
-diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-index f613583a7fa4095115b0b28e3f8e51cd32b93524..94165d217b69d54cbce9109b8c0f9dc0237cf304 100644
---- a/drivers/iio/adc/ad7606.h
-+++ b/drivers/iio/adc/ad7606.h
-@@ -50,6 +50,8 @@ struct ad7606_state;
- typedef int (*ad7606_scale_setup_cb_t)(struct iio_dev *indio_dev,
- 				       struct iio_chan_spec *chan);
- typedef int (*ad7606_sw_setup_cb_t)(struct iio_dev *indio_dev);
-+typedef int (*ad7606_calib_gain_setup_cb_t)(struct iio_dev *indio_dev,
-+					    struct iio_chan_spec *chan);
- 
- /**
-  * struct ad7606_chip_info - chip specific information
-@@ -66,6 +68,7 @@ typedef int (*ad7606_sw_setup_cb_t)(struct iio_dev *indio_dev);
-  * @init_delay_ms:	required delay in milliseconds for initialization
-  *			after a restart
-  * @offload_storagebits: storage bits used by the offload hw implementation
-+ * @calib_gain_setup_cb: callback to setup of gain calibration for each channel
-  * @calib_offset_avail: pointer to offset calibration range/limits array
-  * @calib_phase_avail:  pointer to phase calibration range/limits array
-  */
-@@ -81,6 +84,7 @@ struct ad7606_chip_info {
- 	bool				os_req_reset;
- 	unsigned long			init_delay_ms;
- 	u8				offload_storagebits;
-+	ad7606_calib_gain_setup_cb_t	calib_gain_setup_cb;
- 	const int			*calib_offset_avail;
- 	const int			(*calib_phase_avail)[2];
- };
-
--- 
-2.49.0
-
+> > ignoring an important warning ?
+>
+> Nobody is (or was) ignoring the warning - it was under discussion when
+> I posted the patch. After reaching out to Oracle to verify, we have now
+> added the BPF_NO_PRESERVE_ACCESS_INDEX define when building with gcc-bpf;
+> this resolves the warning, just like in the bpf self-tests.
+>
+> You are right that such an addition to the in-kernel bpftool build is
+> still missing. If you have a suggestion on how best to do that via the
+> existing Makefile I'm all ears.
+>
+> As for the remaining warnings - we are also very aware of the ongoing
+> upstream work to support btf_type_tag:
+> https://gcc.gnu.org/pipermail/gcc-patches/2025-April/682340.html.
+>
+> > End result: partially functional bpftool,
+> > and users will have no idea why some features of bpftool are not workin=
+g.
+>
+> First of all this is never shipped to any users; using gcc-bpf requires
+> active opt-in by developers or users, and now also warns that such a setu=
+p
+> may result in unexpected bugs due to ongoing work in both Linux and bpfto=
+ol.
+> Like I said before, by default everyone builds with clang and that is als=
+o
+> true for our distributed binaries.
+>
+> If you think adding the -std=3Dgnu11 bit is inappropriate at this time th=
+en
+> just ignore this patch for now. Sooner or later the bpftool build will ha=
+ve
+> to be adapted with BPF_CFLAGS (liek in the selftests) and hopefuilly an
+> abstracted BPF_CC so that we no longer have to pretend to be clang when
+> using gcc.
+>
+> cheers
+> Holger
 
