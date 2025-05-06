@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-635168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972C9AABA17
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:12:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B4FAABA06
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FF024A5603
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:09:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99E717FB9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71D6263F2C;
-	Tue,  6 May 2025 04:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30454248863;
+	Tue,  6 May 2025 04:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cyF0SES3"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xltf+vph"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDB42D4B4B;
-	Tue,  6 May 2025 04:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3701F2D47AF
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 04:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746505589; cv=none; b=GgmRF+NzoWHknrRYlAfuzykmWWnSoeFyLKssRCIGIsDcp32mKQZ5xZ40WJgOXhQXs4WjepX/x8Rddz7GFdMv+h+C63eek5xT0mgqW+R6EzaTmCGBE7DV+pwqKUajnaB4B1rgcIwJvUZqJAjb8PQE+HE22bJaHhfQQ/MnXiwegj8=
+	t=1746505566; cv=none; b=gyle6UD3Xk1H7gujSPdETtWbARQQy/vyEP1owwaDR1dnBUXSqHthPn0sEzKxwWAUoW6CXM3B4B7b2UmN1d1gP1K8s8E5QJUT8DqHJUKEnZvb99k8fVBHMmopk8ObP8+qY9PSFUW9pmKqXWOH4yyy7jEumTZoezkuXDKRQzxGqxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746505589; c=relaxed/simple;
-	bh=HNDYxx6P6wwl5aKjocJibMY/OlhkGWjSlZ2BBiRn6wU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NKRSlVNnxjLH6zi7/YnmuyJZuXhMxmMU2C0Rmf57HZqerNmHBfJ7OdE+g/k7VvQXPySV82xB+aJhGf6p9g2/M5ul7B+tAEE3rHkvAyjGtHvV+RGhIKnPBI0bTfwviMe9pS3f1Ujyg6G6cNrWJQvddX8LIJzakNP42eATSPYO6k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cyF0SES3; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5464FUBP024266;
-	Tue, 6 May 2025 04:26:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=npmnctiMC9I3wzlrU/UooY6pvVe/mtSmv/LlwfOAMC4=; b=
-	cyF0SES3x1+ARFlrJ0NaTO9DdIFIh1QX6+FY1R5bUlphVFN/XeGJpSCb+Qyh/zHx
-	0ibEec/X27rsdsWYXXctqzywrgaGHvtOmqSccxyc2l7H40y/dUtw5BkPgV0ngFlQ
-	CFzST7Ogut52djXs3U6VTec70uyjneAVQgZXMA1g02WjNb5Y/1exyJnZcPfjltqw
-	hejDTFtVwdfs9xnCZSh2rcUrpjXXeBhhf6yyz6q/IpdJUFSUGEGnPG/hicQL0z46
-	/eRoypOJq1Br+dskOigdvrn/iZ82JQqc4dvt/RzNG+tMpuheC5kKo6GwaD101D0t
-	nO7Qk09NesKX19zfY1z+5A==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46fb7h00be-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 06 May 2025 04:26:03 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5462wYJO035335;
-	Tue, 6 May 2025 04:26:03 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46d9k8gprh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 06 May 2025 04:26:03 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5464Pr4M012838;
-	Tue, 6 May 2025 04:26:02 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 46d9k8gpmt-9;
-	Tue, 06 May 2025 04:26:02 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: lpfc: Use secs_to_jiffies() instead of msecs_to_jiffies()
-Date: Tue,  6 May 2025 00:25:27 -0400
-Message-ID: <174649624837.3806817.17844248608124491552.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250428171625.2499-2-thorsten.blum@linux.dev>
-References: <20250428171625.2499-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1746505566; c=relaxed/simple;
+	bh=TccdsHTZ4zEQ0BZo6VZ3JHzZ41BfCgq+4cveb1ajcCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDuWNgazpnhRoDmFnaX533jww0JmlgxWkh3CCTfeEhNfjIydfbMAW8RLP9XY7dKQltUvlA7sGhauOAIXTbyjxBInGwMv8snvSUkHLtCJFH+BQ6up8Gp0FFbAf6Prs3aqf0dAdi821m2RuczE6VfK9h/N3PADTmfORAjUas80vR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Xltf+vph; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7403f3ece96so6852493b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 21:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1746505563; x=1747110363; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lpTvVcHQ5NB5y7+VuyI90vpjgAMkQ7kpY0hgN5edgAQ=;
+        b=Xltf+vphv0gOIcjcd2mLmcQ86u9Fc6vsEsGtar/Jc9kKCI4JIr6YO5G1OK9Jy9DIaO
+         8Lp1IxaK4vvs4k7YroILo/29FZlkubBF4mVoXHRcXBhPCQ4JYptsNtbSEjx1LOsg54Dm
+         cK64NPPm3ZGRuTAKR+fGCYKl/31xl/TqMvDIY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746505563; x=1747110363;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lpTvVcHQ5NB5y7+VuyI90vpjgAMkQ7kpY0hgN5edgAQ=;
+        b=KEW5uBkUtEnqdNLuU+e4Hi6HhbON+dwQiDfDpI2gqmjHqFCzwSxxGJKx0ElfFsdVoM
+         XvaixJQA9gKNRvcuGQLSSxlAbNOMPkap+O7jMfwOjDpIthRTgbmfnriUhH6VzR4LMe7Z
+         ciWKI17ccwfpkoFjntTZeqtPCkURfmqE6dNVJSCkfyyfIwHFOWQ2mx8NIK+DmjIRka++
+         Jjw4VHZTQdrEtXHbN43s+J7ZY1bwwGQ82ckHfaBFZ4NUYiVWA6he0M/kqHBsljP7G4YY
+         Q5W7c+C9NO8NpBa/E3j4p+EWoKRvNneLoRb39T1ttbOwS9Kvzd57FHsUzkewaLC3iQvl
+         sXkg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5//fqaKEeF4U9AeaNETCHNsJeAxg+wnIV3jpcWGyitQGHjAvbjLU5mo19uzDOSvFFNv2b7RyJQmYom44=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu9gvzosJoHl8ZislWyGMitICAqIanqKphpisyU3fyiAjvXxmF
+	2WTdalweu9t/T9I8RMAouBLopmrrlY2ZWyert71HmeaqWLRN17CESkVbk25JCg==
+X-Gm-Gg: ASbGncvtQjaNibBLgxhNwPQpxrZ5CiEHKfkmBZwt/KC+phtZngcnzEED8pWlIaAMz3a
+	OqMIWbkO5xi1JohuK0tfJVbeUySiNyCW/hS55ls7iGWEV64RIPUS5KPanjm+9txyOAhBFVxuIAV
+	i1GSpWb9/6v6ttDEkiMkZXoxbyBh63pCpBZJeGLrTdscoqaLrLqkD3mjpyqKQV61sLvxGE5/8Xi
+	yW4px9tf07eGcRnCaVgHnyPd4dTNe5fcbwd6zj4qMrHIewxX9rhAyEcdoQc2yt7SOK3d7+lVo9A
+	wCrDhau6Tzk4sWV4IXkCxERvbaL2JVk2d75YJg5oiNb0xv6cEBy+MQ==
+X-Google-Smtp-Source: AGHT+IH2lUDpOcji/4HaHFx3QdH6baMYj7NqZym6Fql1fkgTO/Dhci0Df2ouxUuviW5c8PoLDQ9qGQ==
+X-Received: by 2002:a05:6a00:8d82:b0:736:34a2:8a18 with SMTP id d2e1a72fcca58-74091acd3f4mr2575582b3a.24.1746505563516;
+        Mon, 05 May 2025 21:26:03 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:761:97e0:917d:ad1e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74059020de2sm8063478b3a.103.2025.05.05.21.26.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 21:26:03 -0700 (PDT)
+Date: Tue, 6 May 2025 13:25:58 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Minchan Kim <minchan@kernel.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	Vitaly Wool <vitaly.wool@konsulko.se>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Igor Belousov <igor.b@beldev.am>, stable@vger.kernel.org, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] zsmalloc: don't underflow size calculation in
+ zs_obj_write()
+Message-ID: <rp5x24bqoaiopfnbjee2f3n7nrg4vh6mt2j4ewutjj42n6dmn7@exl7zdf7pvwx>
+References: <20250504110650.2783619-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_02,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- malwarescore=0 spamscore=0 mlxlogscore=767 bulkscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2504070000 definitions=main-2505060039
-X-Proofpoint-GUID: IpkI4UnbpTFVuURZim2Wf20oB_MofDcc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDAzOSBTYWx0ZWRfX4LfR+H35z/s8 72WWRTtK+QZQPltUnp2qU4AvYOVNnI/G7nFGAEoH4dSsT4N2xMADqlO0x3+lVTxjCbNjmSIxpLR ncI1rwkX9DnQVjmfRhh8JrS4bMeLYzN21P0yeUWb4vHXQop0bWUP0TidihWRRotn4UdMhQ+KvLO
- dpjfEOi+vxuitBkmpWgstBVjQ48eb4LNtnDhX7eGOP29iTAvvE48SzHoCw18egGuyphjYIFvThf xFQUaBI/Agm6QgfagpbLT4MLVUswkxc/xC2W1xxOiuZOCkXVPT0n/XYA/Deqo5cbLtxaRlePl2k ask+Hz0YYR0duRrY9RTQOCNRjNdtOLuUfZCXLTHm5cJp+2Ip1e0oYMbwJUG+t2gK+F8N3uIuh/q
- 862AIP9xmDB3Ouong+Ds8zHsghDFVstDNabNmaQrKdO5jXnOnie6sxKrJ4ihg5eLbkE6X6gs
-X-Authority-Analysis: v=2.4 cv=e6AGSbp/ c=1 sm=1 tr=0 ts=68198f5c b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=ZRFplKR--klOF1cwjjcA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
-X-Proofpoint-ORIG-GUID: IpkI4UnbpTFVuURZim2Wf20oB_MofDcc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250504110650.2783619-1-senozhatsky@chromium.org>
 
-On Mon, 28 Apr 2025 19:16:26 +0200, Thorsten Blum wrote:
-
-> Use secs_to_jiffies() instead of msecs_to_jiffies() and avoid scaling
-> the timeouts to milliseconds.
+On (25/05/04 20:00), Sergey Senozhatsky wrote:
+> Do not mix class->size and object size during offsets/sizes
+> calculation in zs_obj_write().  Size classes can merge into
+> clusters, based on objects-per-zspage and pages-per-zspage
+> characteristics, so some size classes can store objects
+> smaller than class->size.  This becomes problematic when
+> object size is much smaller than class->size - we can determine
+> that object spans two physical pages, because we use a larger
+> class->size for this, while the actual object is much smaller
+> and fits one physical page, so there is nothing to write to
+> the second page and memcpy() size calculation underflows.
 > 
-> No functional changes intended.
-> 
-> 
+> We always know the exact size in bytes of the object
+> that we are about to write (store), so use it instead of
+> class->size.
 
-Applied to 6.16/scsi-queue, thanks!
+I think it's
 
-[1/1] scsi: lpfc: Use secs_to_jiffies() instead of msecs_to_jiffies()
-      https://git.kernel.org/mkp/scsi/c/edf147e215c6
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Fixes: 44f76413496e ("zsmalloc: introduce new object mapping API")
 
