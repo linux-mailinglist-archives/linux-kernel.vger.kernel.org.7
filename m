@@ -1,112 +1,143 @@
-Return-Path: <linux-kernel+bounces-635141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5575AAB9C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:04:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B81AABA0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 809A07B4EF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:02:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083E83BEF3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B7E235BE5;
-	Tue,  6 May 2025 04:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCC52165F3;
+	Tue,  6 May 2025 04:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hlbj2G1z"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WGln8P2b"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41CC28E583
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 03:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F42B28DF2A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 03:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746502453; cv=none; b=Q6E1seoQtygvMz/A5POYMJ8u6e7OTcX7WZIoMHt1hpdCgubLaAzATIW4XrWYawfpRfOzyiY3d1yrnRU0dam7uDwevSywZ7npLiKaB0qaLj/eW+2qCUv2wYAIxPTLI9negsXicgws+s10o/tXTFwliITLF+INUN7TMOvNbqbTcEQ=
+	t=1746502227; cv=none; b=in5FVrawaQak5PRpfxAW+xwGjM5LcrKNmI/LOFRtsHkxuFf/3bC259hlcBaW1VVZFccl91ND8zoJ6wkZoxGIg7j3Rhc6C/wvg8U3KcYYGipqvyKXuHnUHURrpQMsIyv+TaqFP6GeEloaNb5eeD8ettpoEOkebdqoxSkEx4k6MX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746502453; c=relaxed/simple;
-	bh=QYL9iza8qksAkCLYKPMeAryX0p4dodMnCX2txJs3q0I=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sBruHXQFbQpoP/kM8tF1wSl5NtXH6uZhvtJ1K4UF6Sa+H0phdp6GaPJ6i8E6MkXm5FGoEps++PoLP/26dKe3ZFA36FrSOIXWj8d1RC6BbtZnbP9MnecNxRcz4GGXwOuWd45KGy4trRAKTUjZbLKpAeAzV+tsnqxoeLjajyAhZfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ericflorin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hlbj2G1z; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ericflorin.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22e39ff4ad4so4323555ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 20:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746502451; x=1747107251; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OTniG7IE3xX9P3zbqpr3aXl5LjPn9JBb3AM8ohKnBMI=;
-        b=Hlbj2G1zR3SHjf4TNCSLOpKOWvKVbw6w9mO/sPEyctDv1WJUlWU1+VF9UXRGOeqGbD
-         J2UdzbNoeioyvz9hWa2AsEh8c71keCkKAHtD1QlMfxYzWC58ICWmWiNTwDsc5xYC1wjS
-         gP8Jn2INXtj8rm/1WDY9TDYzExjV7ugolAXb4ctMcfFQ8MpyZBudxTcLvD8J+l6i9TGd
-         0zYp/pcGKvOt/lElus3JAxk5S8TzlNzMAcuYJ4huMhDzNz2B7jL/pezkPD8wYnaDmL79
-         m7AfhrQbCGOVcm0io6qbtDnSeKO7oIJktJNiGHwX3vciEmF+G0RlI/faDnz8IpAiyqvq
-         lZVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746502451; x=1747107251;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OTniG7IE3xX9P3zbqpr3aXl5LjPn9JBb3AM8ohKnBMI=;
-        b=qqkHDHjN4CchiFWcuV7Ynhs2IPoDrpH4iEnrymKEiRycKM24MtGOmSbDSPdSDOHNF4
-         wG4b1cxyzkgzh8ctATc+c9emaMaMPbAr4QRi9zZnhTuc7Rm9z3j6psqQtCYZF3w/43QV
-         nPhUZNTOwIV97G1tmBOdqfj0TuIpnxdnSX08uAiRIUEMme9PzyH2I++1kIpUEXVNFwG2
-         2MpZcd6Ik1ECKBOpRUKuBhEYbZlsJk4QdzY0i6wg0lYjllehdsXBb4VV8yPfEa12C7lQ
-         j1SIp84a9PcUJXUJFalcSQENYIkb2YfaN6b6tqvYA8zPNXtrvGPGwkPCB6TLbC8Ria3L
-         DNtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPtygYG3JXyO1r61egKYu39BH/xxlARhjqHXCXkFw8HgOFqyHTqv0bb2QQRo7fANv9FIRSuQ5rrDJQEWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkEUiwf9sLtx7KJrfMClxJsqss13Uqj0FJAqyTQCLRd8JLmCMr
-	PNng55OuOleEeALPJnxLlL2RblsFGzCuw7U87Y454WoSHgIWZjR+MvWgmiibESxIci1VkBVXEWw
-	GF2t2OE5srh3HicAfcg==
-X-Google-Smtp-Source: AGHT+IFWjZYRJEiXFLhjLTzrSR4D3ISD/0V6bYvA5Eq+ZhoMPEht1Ky7kdvoBWJ/wlHcTS6E0fkbiRswi0eStTHz
-X-Received: from plsd10.prod.google.com ([2002:a17:902:b70a:b0:220:d81a:8975])
- (user=ericflorin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:1aa3:b0:224:a96:e39 with SMTP id d9443c01a7336-22e1e8e9f54mr138686135ad.9.1746502451339;
- Mon, 05 May 2025 20:34:11 -0700 (PDT)
-Date: Mon,  5 May 2025 20:30:13 -0700
+	s=arc-20240116; t=1746502227; c=relaxed/simple;
+	bh=uQ2m9taISz9kgdzKcaOZy7/AGaZmKNDvMtyrnRVo8Ek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EaEG2HI4WX6Pk3HMYCmzcOu+notbOisfOpop8yoZDGZjEwEjqrF1PQ0FNuJdqaSjeiUqr7LrCph2W3d0rc9oSTwMc0bJ0HtEydr1j7yaF+jwtPiFvh5S8cVFzMYnPV6xFj0ehQiwej5FvmLmaC2YHE8hsYTRt3OENGI66qvlWEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WGln8P2b; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1746502215; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=qVR8T8FmyXrwS8bihvMwLtX38nPsMBJYh/Ep2JgBEjU=;
+	b=WGln8P2btndWqDmvzk/Wd109WtLZOxO1+o/6HxAjtgveEcEMzmGzfS/9jHnQLqWof+miirVxRxXMNUdKt1NcnE/ZSJYJHcZEfz4T6vJ6XeoejH033KbRlWnC9oKZQERUC+p8goop3k/PUpcUJDJSIL52JQ8d4dGv0yEyP7z2IN4=
+Received: from 30.221.130.226(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WZJNpx4_1746502214 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 06 May 2025 11:30:15 +0800
+Message-ID: <8de6a220-45a3-4885-890f-0538522e620c@linux.alibaba.com>
+Date: Tue, 6 May 2025 11:30:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
-Message-ID: <20250506033340.3689818-1-ericflorin@google.com>
-Subject: [PATCH] staging: sm750fb: rename `regValue` to `reg_value`
-From: Eric Florin <ericflorin@google.com>
-To: teddy.wang@siliconmotion.com
-Cc: sudipm.mukherjee@gmail.com, gregkh@linuxfoundation.org, 
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Eric Florin <ericflorin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] erofs: lazily initialize per-CPU workers and CPU
+ hotplug hooks
+To: Sandeep Dhavale <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org
+References: <20250501183003.1125531-1-dhavale@google.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20250501183003.1125531-1-dhavale@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Rename `regValue` to `reg_value` in `write_dpr` to conform with style
-guidelines as reported by checkpatch.pl
+Hi Sandeep,
 
-CHECK: Avoid CamelCase: <regValue>
+On 2025/5/2 02:30, Sandeep Dhavale wrote:
+> Currently, when EROFS is built with per-CPU workers, the workers are
+> started and CPU hotplug hooks are registered during module initialization.
+> This leads to unnecessary worker start/stop cycles during CPU hotplug
+> events, particularly on Android devices that frequently suspend and resume.
+> 
+> This change defers the initialization of per-CPU workers and the
+> registration of CPU hotplug hooks until the first EROFS mount. This
+> ensures that these resources are only allocated and managed when EROFS is
+> actually in use.
+> 
+> The tear down of per-CPU workers and unregistration of CPU hotplug hooks
+> still occurs during z_erofs_exit_subsystem(), but only if they were
+> initialized.
+> 
+> Signed-off-by: Sandeep Dhavale <dhavale@google.com>
+> ---
+> v4: https://lore.kernel.org/linux-erofs/20250423061023.131354-1-dhavale@google.com/
+> Changes since v4:
+> - remove redundant blank line as suggested by Gao
+> - add a log for failure path as suggested by Chao
+> - also add success log which will help in case there was a failure
+>    before, else stale failure log could cause unnecessary concern
+> 
+>   fs/erofs/zdata.c | 65 ++++++++++++++++++++++++++++++++++++------------
+>   1 file changed, 49 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+> index 0671184d9cf1..a5d3aef319b2 100644
+> --- a/fs/erofs/zdata.c
+> +++ b/fs/erofs/zdata.c
+> @@ -291,6 +291,9 @@ static struct workqueue_struct *z_erofs_workqueue __read_mostly;
+>   
+>   #ifdef CONFIG_EROFS_FS_PCPU_KTHREAD
+>   static struct kthread_worker __rcu **z_erofs_pcpu_workers;
+> +static atomic_t erofs_percpu_workers_initialized = ATOMIC_INIT(0);
+> +static int erofs_cpu_hotplug_init(void);
+> +static void erofs_cpu_hotplug_destroy(void);
 
-Signed-off-by: Eric Florin <ericflorin@google.com>
----
- drivers/staging/sm750fb/sm750_accel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+We could move downwards to avoid those forward declarations;
 
-diff --git a/drivers/staging/sm750fb/sm750_accel.c b/drivers/staging/sm750fb/sm750_accel.c
-index 44b9e3fe3a41..5648476a8f3c 100644
---- a/drivers/staging/sm750fb/sm750_accel.c
-+++ b/drivers/staging/sm750fb/sm750_accel.c
-@@ -17,9 +17,10 @@
- 
- #include "sm750.h"
- #include "sm750_accel.h"
--static inline void write_dpr(struct lynx_accel *accel, int offset, u32 regValue)
-+static inline void write_dpr(struct lynx_accel *accel, int offset,
-+			     u32 reg_value)
- {
--	writel(regValue, accel->dprBase + offset);
-+	writel(reg_value, accel->dprBase + offset);
- }
- 
- static inline u32 read_dpr(struct lynx_accel *accel, int offset)
--- 
-2.49.0.967.g6a0df3ecc3-goog
+>   
+>   static void erofs_destroy_percpu_workers(void)
+>   {
+> @@ -336,9 +339,45 @@ static int erofs_init_percpu_workers(void)
+>   	}
+>   	return 0;
+>   }
+> +
+> +static int z_erofs_init_pcpu_workers(void)
 
+How about passing in `struct super_block *` here?
+Since print messages are introduced, it's much better to
+know which instance caused the error/info.
+
+> +{
+> +	int err;
+> +
+> +	if (atomic_xchg(&erofs_percpu_workers_initialized, 1))
+> +		return 0;
+> +
+> +	err = erofs_init_percpu_workers();
+> +	if (err) {
+> +		erofs_err(NULL, "per-cpu workers: failed to allocate.");
+> +		goto err_init_percpu_workers;
+> +	}
+> +
+> +	err = erofs_cpu_hotplug_init();
+> +	if (err < 0) {
+> +		erofs_err(NULL, "per-cpu workers: failed CPU hotplug init.");
+> +		goto err_cpuhp_init;
+> +	}
+> +	erofs_info(NULL, "initialized per-cpu workers successfully.");
+
+
+Otherwise it looks good to me know.
+
+Thanks,
+Gao Xiang
 
