@@ -1,100 +1,227 @@
-Return-Path: <linux-kernel+bounces-636134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC64AAC68A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:38:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333EEAAC67E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7A187BEBF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:34:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00F2E7BFA5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFD3281529;
-	Tue,  6 May 2025 13:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2E9281341;
+	Tue,  6 May 2025 13:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e/MI7J5d"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cp1vnhLH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NtsyAuyG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cp1vnhLH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NtsyAuyG"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F8E280A58
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 13:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498F0264620
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 13:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746538502; cv=none; b=AGFvcXWB2UIicEXziU/STF9NjxZAMvYaFxPRqXv3BTiRscJqMkNYneS7w28HKYxKW2vb9U67VEmKWzQmI2okeZbEiVsckBUa1uFxfPlIabrP3aiKi4a7BdlhaNiNa96XhsAX8KsWM3XTwNHn7lpbSVnnp1QdimkQ/2+ztx/09aE=
+	t=1746538554; cv=none; b=QrG8BjR9GOuxUKRxuZH1W7g11NDyFsZv4TwHk+x9LASPqmlPmJ791f9iucRSkHsca8DdkDm/dp+19/CnJjpCSJYKhzQtv+sv8eJpz4asYF6z8EzpgXlBcnT6Ws+vFiNa56e7dg+TGsrlC6AHP57GTSfWo5HShc1tBMkyHAztlqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746538502; c=relaxed/simple;
-	bh=2kMQEO2OriJkGJpX55hEsYnmu+hvezoN+vmiLvl+mpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bB/kVVGxiYaB60KCEmzib5In24qdQAy/Z9OdcPGna2ICFmxT5bV35eSH8y1H3zm4Y+1H0nMkFvkkDBbth4TGbWzBjZQfWS7eAq5ktDc6kXzH/+zka+xewtkZGR6i7UyrrFONaAcibiOzKFUS3bKtWUGJ5BjEhUiZeKj/msxv6EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e/MI7J5d; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746538501; x=1778074501;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2kMQEO2OriJkGJpX55hEsYnmu+hvezoN+vmiLvl+mpU=;
-  b=e/MI7J5dqvz1B2r2p4FV5pErv5S/NzKMJJ6I3/14sRYILcC61UCIAiTR
-   oLJWRQiU1T4OuMJXI0sQSS9ljqqVE3UhyF+UdEDDvi5sYxnaLhGVo9sYI
-   kQLheQQxFsGMyFT/J3MZpQt99gTct/eGqKrUHHDpYEP0QZFihuk79i1y9
-   0QaLN53kYPl8xa9lQHBExdTCWN0gkk4fp5U07IDr7VLbolHLt4ZwEcocS
-   0DZr2IxUVf3DIHcid7nd2czy/OLccHMTUH/cFsDUK7Gr/Ws3S6sjBApw0
-   4ZcDbYsOLfkd8OmPpuSzhR/ro0ZrMStXsbrGC4eSMNb+7RMwiVBPuiZvc
-   Q==;
-X-CSE-ConnectionGUID: 8gEDoW2RScytIah4QRk2KA==
-X-CSE-MsgGUID: jV+RJw3ETjyQI3itYxHz3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="59597953"
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="59597953"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 06:35:01 -0700
-X-CSE-ConnectionGUID: 9ewK3vwlT7GxsMFqB+rx2Q==
-X-CSE-MsgGUID: lUjOG8a8Qg+oFT5g5xbqFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="135503705"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 06 May 2025 06:34:57 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id D5F4C172; Tue, 06 May 2025 16:34:55 +0300 (EEST)
-Date: Tue, 6 May 2025 16:34:55 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com, 
-	mhocko@suse.com, hannes@cmpxchg.org, bp@alien8.de, tglx@linutronix.de, 
-	david@redhat.com, ast@kernel.org, linux-mm@kvack.org, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm/page_alloc: Ensure try_alloc_pages() plays well
- with unaccepted memory
-Message-ID: <hqd7h7elpou6mohkdr2rqcz6u7xuanezuq3ti56ibsnccsb2d2@yokitckdkwqo>
-References: <20250506112509.905147-1-kirill.shutemov@linux.intel.com>
- <20250506112509.905147-2-kirill.shutemov@linux.intel.com>
- <D9P3X0NLQMW5.1J74MJ7FDRBFB@google.com>
+	s=arc-20240116; t=1746538554; c=relaxed/simple;
+	bh=iZrgeron6Cqvp1kEY9K+rRUAaOidFrAksi9FyWEtYrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=kj+iLElqNmtNR+rL+Hdp9csrZPRambOO9hBSknxxArU8JDJjNiUFP/K4efcyLOGe9ENxF3eVYbT6Zzz50PifT7R+KSh/VtkItSTAbZJdCPp8ce2u+pWyGCEVi9sRPx2ztY70WV6JcXH329gcrQh/Q5E867zTSae92m5WfV9gegU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cp1vnhLH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NtsyAuyG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cp1vnhLH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NtsyAuyG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 69EC31F390;
+	Tue,  6 May 2025 13:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746538549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Kf2qlPVKBPnGs/ymgdbL7yBajSD8Z56Twgoh8/KFYPQ=;
+	b=cp1vnhLHC845m4HyHWp5NwLU121C1R2EDqTvtfWoeT+7ahEp4yzGafuYwMKlLIWgA+Xxfy
+	JHtDSMDIib4ZNv+HVHcvi8aAk3BqDAtJu/5nUHfVYaj8NQNOgxg9tBieIjmrftZVn6oIXN
+	a+87hCGHQ9fvUpB675T4R3U5CwGFx4E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746538549;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Kf2qlPVKBPnGs/ymgdbL7yBajSD8Z56Twgoh8/KFYPQ=;
+	b=NtsyAuyGYpsh8tkkzuM2FQhJWb4nf6jBFfVZSkju6MbI+NKDYWNKCQdv1C6gWlLgvpCnwm
+	WjEPR9ppGtEld5Dw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746538549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Kf2qlPVKBPnGs/ymgdbL7yBajSD8Z56Twgoh8/KFYPQ=;
+	b=cp1vnhLHC845m4HyHWp5NwLU121C1R2EDqTvtfWoeT+7ahEp4yzGafuYwMKlLIWgA+Xxfy
+	JHtDSMDIib4ZNv+HVHcvi8aAk3BqDAtJu/5nUHfVYaj8NQNOgxg9tBieIjmrftZVn6oIXN
+	a+87hCGHQ9fvUpB675T4R3U5CwGFx4E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746538549;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Kf2qlPVKBPnGs/ymgdbL7yBajSD8Z56Twgoh8/KFYPQ=;
+	b=NtsyAuyGYpsh8tkkzuM2FQhJWb4nf6jBFfVZSkju6MbI+NKDYWNKCQdv1C6gWlLgvpCnwm
+	WjEPR9ppGtEld5Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2DEBC137CF;
+	Tue,  6 May 2025 13:35:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id a/CMCTUQGmj8PwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 06 May 2025 13:35:49 +0000
+Message-ID: <de05aae1-9b1a-49a4-b4f6-abce4fc7daa5@suse.de>
+Date: Tue, 6 May 2025 15:35:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D9P3X0NLQMW5.1J74MJ7FDRBFB@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Add entries for drm_panic, drm_panic_qr_code
+ and drm_log
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250506133143.156447-1-jfalempe@redhat.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250506133143.156447-1-jfalempe@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[gitlab.freedesktop.org:url,suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Tue, May 06, 2025 at 01:20:25PM +0000, Brendan Jackman wrote:
-> On Tue May 6, 2025 at 11:25 AM UTC, Kirill A. Shutemov wrote:
-> > +	/* Bailout, since try_to_accept_memory_one() needs to take a lock */
-> > +	if (alloc_flags & ALLOC_TRYLOCK)
-> > +		return false;
-> > +
-> 
-> Quick lazy question: why don't we just trylock it like we do for the zone
-> lock?
 
-It is not only zone lock. There's also unaccepted_memory_lock inside
-accept_memory().
+
+Am 06.05.25 um 15:29 schrieb Jocelyn Falempe:
+> Add myself and Javier as maintainer for drm_panic, drm_panic_qr_code
+> and drm_log.
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+>   MAINTAINERS | 28 ++++++++++++++++++++++++++++
+>   1 file changed, 28 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 38df6b159a3b..df3abdcf1767 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8177,6 +8177,34 @@ F:	drivers/gpu/drm/drm_panel.c
+>   F:	drivers/gpu/drm/panel/
+>   F:	include/drm/drm_panel.h
+>   
+> +DRM PANIC
+> +M:	Jocelyn Falempe <jfalempe@redhat.com>
+> +M:	Javier Martinez Canillas <javierm@redhat.com>
+> +L:	dri-devel@lists.freedesktop.org
+> +S:	Supported
+> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> +F:	drivers/gpu/drm/drm_draw.c
+> +F:	drivers/gpu/drm/drm_draw_internal.h
+> +F:	drivers/gpu/drm/drm_panic*.c
+> +F:	include/drm/drm_panic*
+> +
+> +DRM PANIC QR CODE
+> +M:	Jocelyn Falempe <jfalempe@redhat.com>
+> +M:	Javier Martinez Canillas <javierm@redhat.com>
+> +L:	dri-devel@lists.freedesktop.org
+> +L:	rust-for-linux@vger.kernel.org
+> +S:	Supported
+> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> +F:	drivers/gpu/drm/drm_panic_qr.rs
+> +
+> +DRM LOG
+> +M:	Jocelyn Falempe <jfalempe@redhat.com>
+> +M:	Javier Martinez Canillas <javierm@redhat.com>
+> +L:	dri-devel@lists.freedesktop.org
+> +S:	Supported
+> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> +F:	drivers/gpu/drm/clients/drm_log.c
+> +
+>   DRM PRIVACY-SCREEN CLASS
+>   M:	Hans de Goede <hdegoede@redhat.com>
+>   L:	dri-devel@lists.freedesktop.org
+>
+> base-commit: 258aebf100540d36aba910f545d4d5ddf4ecaf0b
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
