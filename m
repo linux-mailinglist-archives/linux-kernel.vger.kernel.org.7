@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-635124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BED9AAB9CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:04:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4616CAABA26
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57E11C4076B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719683A0881
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDB72C2FC6;
-	Tue,  6 May 2025 04:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cGHqq5Qg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7712147ED;
+	Tue,  6 May 2025 04:08:44 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7B42882BF
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 03:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0792121CC46;
+	Tue,  6 May 2025 03:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746501504; cv=none; b=NqRMLqYQLx8jyZKeUd+PbHKNnbnuRh17lrv8PVKCHXg4rFVgxG1CFINj8oQPlcUOJ71OX7+ZoeE+DWlod7Jp5Scytd6o6WGAwoPTTzg2LQTut7CmT6tvRIKXQ8GhdSsf2waeTdKvie4iNl6yy6bZOiDxAG2UdAhic+FckjkOm5s=
+	t=1746502259; cv=none; b=lqC2mUcPAodwuR5s81WDJgHg9Mz/ITNjso0vC2tJG7aLUYB2XUZIZs0x9nn1T/qPS98MkvlbXqf757I4nRWg3SOXDJ2q25ZK06n6L80G+oVuXXmmN8yYynuEJ+TaKHIf5faWNTDcxqq0GolwQ6CC9OvgPMIlHEOgDWMLzPdQOt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746501504; c=relaxed/simple;
-	bh=hRLVacyamiMBXkbrXkozw5cwrH3nRoNQATSfeWPw/rE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3RzZD3ek9/OUVoyqcoJwh4I5qONekLcHzzRPIIbjiErXsl4crmiigMTX0eQjbZhNt2urj3woWfazXSLIF87u0w9VM/0Hkd+jtRRKn4iv/B0MOx6Rx7AzzxZlKFBIEjSF2PjQL5mZDsW1Czg27sgGDDnWflUnNHxyYaDR7RNap4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cGHqq5Qg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746501501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sch28xP6WEwnIvUBxG3RgJ58EIQ3AtVfphEVYn+3Nl4=;
-	b=cGHqq5QgNFyKMk/smC1OS6noyk5eg4ZzW6tlBUhWznP2oToaLlsvxPudXnwnUqEYkwjhtm
-	QNFflW+RJr07wfAJiO71vtyzVRxhUK9woEPG93j6Vn8qL6BiZ2uXgHUaIM63+SwsmKF1Gv
-	IGPOV/T28eo8iLCz7lDaPYyH3DE2oek=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-nA-B1ofkMX2faPg98ufcOw-1; Mon,
- 05 May 2025 23:18:18 -0400
-X-MC-Unique: nA-B1ofkMX2faPg98ufcOw-1
-X-Mimecast-MFC-AGG-ID: nA-B1ofkMX2faPg98ufcOw_1746501496
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C8EC7180048E;
-	Tue,  6 May 2025 03:18:15 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.13])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 44F2A19560A3;
-	Tue,  6 May 2025 03:18:02 +0000 (UTC)
-Date: Tue, 6 May 2025 11:17:58 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <wagi@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <llong@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org, storagedev@microchip.com,
-	virtualization@lists.linux.dev,
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v6 0/9] blk: honor isolcpus configuration
-Message-ID: <aBl_Zn7aHbUTmPSE@fedora>
-References: <20250424-isolcpus-io-queues-v6-0-9a53a870ca1f@kernel.org>
+	s=arc-20240116; t=1746502259; c=relaxed/simple;
+	bh=FQeEv8mzsne1Ekkhh4vm4/236JXt/QQUApEcOzWKQHI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TuJp/5WlTbd86bPtbVZyt2Kw9DLl9hP8Aq1yZhn1UUd78FMRZ+wGj1gdQRuQFCy3JjWYJjhWVXMLJPcz2ipLofleDKU4JAFrLABM+me/14ostUeyr1ycp/MRUcMiesI7h8eNJkkmYiLQTgbD/o6qG82+asQW0jtGMCKLEengCqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Zs3n816cFz2TSDR;
+	Tue,  6 May 2025 11:30:20 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 01CE81402CA;
+	Tue,  6 May 2025 11:30:53 +0800 (CST)
+Received: from kwepemq200017.china.huawei.com (7.202.195.228) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 6 May 2025 11:30:52 +0800
+Received: from hulk-vt.huawei.com (10.67.174.72) by
+ kwepemq200017.china.huawei.com (7.202.195.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 6 May 2025 11:30:52 +0800
+From: Cai Xinchen <caixinchen1@huawei.com>
+To: <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>
+CC: <paul@paul-moore.com>, <stephen.smalley.work@gmail.com>,
+	<omosnace@redhat.com>, <ericsu@linux.microsoft.com>, <caixinchen1@huawei.com>
+Subject: [PATCH] SELinux: Add check for the user data passed to kcalloc in hashtab_init
+Date: Tue, 6 May 2025 03:18:33 +0000
+Message-ID: <20250506031833.6107-1-caixinchen1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424-isolcpus-io-queues-v6-0-9a53a870ca1f@kernel.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemq200017.china.huawei.com (7.202.195.228)
 
-On Thu, Apr 24, 2025 at 08:19:39PM +0200, Daniel Wagner wrote:
-> I've added back the isolcpus io_queue agrument. This avoids any semantic
-> changes of managed_irq.
+When the user writes some data to the file /sys/fs/selinux/policy,
+there is no check for the user buf passed to kcalloc. Syzkaller shows
+ this warning:
+WARNING: CPU: 1 PID: 6642 at mm/page_alloc.c
 
-IMO, this is correct thing to do.
+__alloc_pages_noprof
+___kmalloc_large_node
+__kmalloc_large_node_noprof
+__kmalloc_noprof
+hashtab_init
+common_read
+policydb_read
+security_load_policy
+sel_write_load
+vfs_write
+ksys_write
+do_syscall_64
 
-> I don't like it but I haven't found a
-> better way to deal with it. Ming clearly stated managed_irq should not
-> change.
+This warning can be reproduced by writing this content to
+/sys/fs/selinux/policy
+8cff7cf9 08000000 5345204c 696e7578 15000000 e0ff962a 08000000 07000000
+4cf523cd 7eec2688 6d70a6b7 c78b496f 1a0a192c ea34ff41 70581a74 3ff0cfb9
+7ea0f0d1 70d1fe14 41c2f7c8 ea1c78dd 17a19249 35210081 a83c30ec 4171450b
+fc1de12c fe1ff342 a887
 
-Precisely, we can't cause io hang and break existing managed_irq applications,
-especially you know there isn't kernel solution for it, same for v5, v6 or
-whatever.
+Add check to prevent the size passed to kcalloc larger than MAX_PAGE_ORDER
+after get_order.
 
-I will look at v6 this week.
+Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
+---
+ security/selinux/ss/hashtab.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Thanks, 
-Ming
+diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
+index 383fd2d70878..18bcf3978c9e 100644
+--- a/security/selinux/ss/hashtab.c
++++ b/security/selinux/ss/hashtab.c
+@@ -30,6 +30,21 @@ static u32 hashtab_compute_size(u32 nel)
+ 	return nel == 0 ? 0 : roundup_pow_of_two(nel);
+ }
+ 
++static bool is_order_out_of_range(u32 size, struct hashtab *h)
++{
++	size_t bytes;
++	u32 order;
++
++	if (unlikely(check_mul_overflow(size, sizeof(*h->htable), &bytes)))
++		return true;
++
++	order = get_order(bytes);
++	if (order > MAX_PAGE_ORDER)
++		return true;
++
++	return false;
++}
++
+ int hashtab_init(struct hashtab *h, u32 nel_hint)
+ {
+ 	u32 size = hashtab_compute_size(nel_hint);
+@@ -40,6 +55,9 @@ int hashtab_init(struct hashtab *h, u32 nel_hint)
+ 	h->htable = NULL;
+ 
+ 	if (size) {
++		if (is_order_out_of_range(size, h))
++			return -ENOMEM;
++
+ 		h->htable = kcalloc(size, sizeof(*h->htable), GFP_KERNEL);
+ 		if (!h->htable)
+ 			return -ENOMEM;
+-- 
+2.34.1
 
 
