@@ -1,156 +1,200 @@
-Return-Path: <linux-kernel+bounces-635314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73BAAABC2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 269DEAABC1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96CFF3A882E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:44:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242483B1D0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE8F215168;
-	Tue,  6 May 2025 07:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D514620F076;
+	Tue,  6 May 2025 06:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="Q1NrcROw";
-	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="F6XpS7iy"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OLT5cdvo"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDD320CCCC;
-	Tue,  6 May 2025 07:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746514909; cv=pass; b=U4oy+yeS5dW3HgY++ofW7ENgUV37w9PnVqiUjE6SH+aFGCM2zFWVzLoQNU6sr7Ej/WsHjHRXl8ReRQP3ztsnpK4z4E/UJf/9u725BsuXmAoVruFDT3ifgrrb96zCnPXk7tMOQ8MM97Xakqof3frI2HQ5LYkglxOVp5118FgBz1k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746514909; c=relaxed/simple;
-	bh=XllqbI3xJZhAiQ/dxjHZbOg942lK7BhoDvXxGnARJaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eOSQx66YhRim/gjgPJQA7UlRjAOuF0umNTDOr7Ct26B21tWNkomiDMKx/snKCff8jNzGqZcztSZ4YyFDnCap0a40zzxvO/7oDuDRbZbHgQT3cSVw9fzgPiy8xihkzXCi9xZLk2irarIiNSW8H71qHPsRqQphtz7228VJHkqcL8w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=Q1NrcROw; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=F6XpS7iy; arc=pass smtp.client-ip=85.215.255.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
-ARC-Seal: i=1; a=rsa-sha256; t=1746514183; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Hycpp/T+UZi/gwGWyEmRY6gRmxIojPuMFFe17ZwKRczYDeByJYkfSiRCJXlY+Q+wmU
-    Qn4wf+Nrn8v1dkPKy2Lpj6jszMyfbQU55TWKojPIACOcy1y2WO6jg/3w4OoihdmiuLvI
-    s8SFYfScge1EqK5/yvpevlPg8varD6ytkDDSqjhthXRM0RWv8l8JKFy2ANo63c5gdn1n
-    AEfpGvtd4l0Fy9+GBerbAh1mG4tiN1rMV4jBebFSMtjpwFJJfE3loIGPLgaduLGzVEtY
-    vG1cHC0+FKZ2fHIK8LdxOagEl+M1wlbiXUU3KjSlEac8JkphVOf0TUXVMGe6Lw0kIQZO
-    OHPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1746514183;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=tfvTTDkinxycvawfTo7uNlXeAUnWjeraRoE1Ewjs8zA=;
-    b=KIyQaTGyA0GB4Nq8xPwiq2Fp+mVrlNB1P9FHJjJ80E8FpvttCj9MqFf6KB4jeznum/
-    jM9+aoRUADy5aBiq1039NUC1E0MPsr71XrQHTxDsqL39yEWFEYzrwUFcsRI8WdolznHe
-    mpdL3WEHeHaR7FbaI6KwNa2YBnw/i+G4hCZvb8eV7z7QYzNU5XDjzysNTiQolc+QsTka
-    FL40UoZGBErBI2QzRuuKo5moX0GYBdbRTqOg6CqVHXOizGnBrdMxqoqnolPGg9OIPqTX
-    AilpKsXWZEDR2/upNDMArqJth6hMq/Q4Qw14RubGlk2zeZ8ZSt6Ryr9kQIMfluVCehjB
-    37Yg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1746514183;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=tfvTTDkinxycvawfTo7uNlXeAUnWjeraRoE1Ewjs8zA=;
-    b=Q1NrcROwAMHCnphs4inv02ZqDuO3WFSQfzwkoAboHDMCJv5JtblduSfa7AJjcq3cQE
-    lFb53lSpAQ6Zb5iNbzR6bPqY9W1cgi87Xd/cgGoRDoWAjSK9zp8aggBR9S4Al/dxxu9q
-    R6AorzODGMtqUU2Q3tF8w03XSJbQbQfCKQ4OJLneFVJh1ohcKhRIYCShpDeVRDlNXz93
-    A2w8ne7ejJBC8U/O5qYOKFGc2GkJga4B6M8lSHS/SixCSTQixcTNa8iHeWKov5QCmYXa
-    DPaTanupyHzxTMsNTVCJJUNW10n1UNYeDpW65f/gC2AZF1ZiPvzzGNbVyRme/tl6tcIy
-    5KuA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1746514183;
-    s=strato-dkim-0003; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=tfvTTDkinxycvawfTo7uNlXeAUnWjeraRoE1Ewjs8zA=;
-    b=F6XpS7iyfC1Ycs4ONSH0mhvf0HEFAs/L1upsREmm1qt6UO+eN3GhGLTB2rVHeyiekP
-    Vmcy/HTYO7Rg+wdA8TDQ==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/vMMcFB+5xtv9aJntXA=="
-Received: from [IPV6:2a00:6020:4a8e:5000::9ae]
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id K2a3e51466ngmpo
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Tue, 6 May 2025 08:49:42 +0200 (CEST)
-Message-ID: <640538cd-d1b6-46aa-9ef8-76aaa0e05609@hartkopp.net>
-Date: Tue, 6 May 2025 08:49:37 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D68C76410
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 06:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746514234; cv=none; b=X51Eot9bGnlTTfdOTT1iXBjNdOb+VOQRSkC+LE/sTGf3/m9EfGtmkBNbz85PJyic8eIWlv3EK9MLrZh1Qa0xs5dQiZHRkJ1xL63HMHG3BI673/e0HdshVb2lzhWVNJ2rzcOd8o1jbfK3qXgmfnFohlgXm9Sctcg1cRuUJdil1Po=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746514234; c=relaxed/simple;
+	bh=ep43/qWrZUzx9hnGwWmsp/LpXI1rag15V9ecAQ+cc+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aqKAl5GfpgaVuLHm3yU0ZpKOoYcX5PJ+uet/0CDaYeKA4YKCvnctSZ+LB1/6g6qABapR7PkANt65isZNhEqPuzJ2xtv/2/xEc1RKnXfhYfWr6mh4f330OkYOfFHKylT1r7bipWzD3XHTisAQmG/NWU3+wrt12vYOaHAip5ztStE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OLT5cdvo; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7301c227512so3705422a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 23:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746514231; x=1747119031; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P+rnsBrnSg8rRMbhF6ZzJCKOKKucd9+x+mvQiH4XndI=;
+        b=OLT5cdvoBuaRrrA8qutLjPJsFehLz7FzJr0voag8pJQsAmmn2rFdH7n3l3rpdUt/J2
+         NrW+ztktVpfhGEP4CoBMfwjJNNqtzBTH3Zi96iST1GnuRHDzi6r77iiGGlE1LuwOSNBH
+         f0rnyezAfEMHytcekQkyz5Np41fsubOhfGjx5s6PWRnGTXyWa98AmLMF8KGFxpALeEC2
+         IGGrZutfuz14mHxlkBwd6pYal6vFmwBVxWSTz+LtcMZI6sEVDnU85/55rz7GHkn/0Fyk
+         47HDzszd6orfGWWBQBXm1CpNpu0/dfdgh5id61p9Kv8R2nnVeMMdOTBBIE2owcvt3nn4
+         94SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746514231; x=1747119031;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P+rnsBrnSg8rRMbhF6ZzJCKOKKucd9+x+mvQiH4XndI=;
+        b=f1uF1ZKIonv5c8M2pUZKcJ+fKZ1R5OEzr0Ua+gABRXWMhQEoVjdGZdA9kiK+JDBwdX
+         C2sDX9DgqO07tpP/LgUOu19NucXYdOFNhkcPo7TYHA+MMThtPCMxHp5F1PVIyiu2Df4t
+         HPdjPKrZrJAlxCFodnhvR2amTAS33EMS+Q8syF+64kGS89NvoQsfAJC2rT6pW8jZZnei
+         +53FTaq+tDIXG2PsG9np2nioZfq1fu792Mv9f48oXASA14YsOvqwA9h/7qZsVokgEndO
+         vQIkg45wJQ5A5sloMcdDCMdTTI1mgDnNjp3IyiGBxkkjsU53ADicCgWDz0/aGdVOsuLS
+         YuLw==
+X-Gm-Message-State: AOJu0YxtEnOKP0zR4ACq5DjO9JqoS2h5lzXVaM1YUOZuS/ogtZ6mOBZJ
+	MGbYpFcmt83ON/sbg6/PVinjLYkhMNZfjblG+IiJsaeAQacjwEv73EGaIYGlM4P7UlSN3CRVdST
+	MCrdBazv+U1nrKlJSs4vCO8tGxMgEttACJfwPCmkH/425bgkzOls=
+X-Gm-Gg: ASbGncuIGhZQIF5YkygU4VXedTXS7SNv6b5uACW/VWc+Ti+c4eAB5dIlgH0x5AWx6Wi
+	z6dfTkg7du1uIhgLqJP/bjTPOQeIO6uJJArgVXfXxgWTAO1dCAaUW99GNhIybVuyewE3+KYxF2e
+	SfD2Udf2OIJSAPg7pcRBc3Fog=
+X-Google-Smtp-Source: AGHT+IHNm5GVjhXN3B45lmCfKthx/G+NZUk5+CRKyT+Ba0DNEGI76r0X6+RqWLQrptXlWXRbeCBTBu5IP8WF2QNe6QA=
+X-Received: by 2002:a05:6870:a1a3:b0:2d4:e8fd:7ffb with SMTP id
+ 586e51a60fabf-2db3ccf9c7emr900510fac.1.1746514231320; Mon, 05 May 2025
+ 23:50:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH AUTOSEL 6.14 624/642] can: fix missing decrement of
- j1939_proto.inuse_idx
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Cc: Davide Caratti <dcaratti@redhat.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- Marc Kleine-Budde <mkl@pengutronix.de>, robin@protonic.nl,
- linux-can@vger.kernel.org
-References: <20250505221419.2672473-1-sashal@kernel.org>
- <20250505221419.2672473-624-sashal@kernel.org>
-Content-Language: en-US
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-In-Reply-To: <20250505221419.2672473-624-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250502100049.1746335-1-jens.wiklander@linaro.org>
+ <20250502100049.1746335-7-jens.wiklander@linaro.org> <6a33e85f-6b60-4260-993d-974dd29cf8e6@arm.com>
+In-Reply-To: <6a33e85f-6b60-4260-993d-974dd29cf8e6@arm.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Tue, 6 May 2025 08:50:20 +0200
+X-Gm-Features: ATxdqUHZrVfop0JU0rG-vcdbXQsIPujzLICkuywbLk5p8m1md7a0mES_eJcPprM
+Message-ID: <CAHUa44EQV5O+KZbE19-d-Z6Wu=HAQuGQmZe+mXZRpmdvRDbmSA@mail.gmail.com>
+Subject: Re: [PATCH v8 06/14] tee: implement protected DMA-heap
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sumit Garg <sumit.garg@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>, 
+	Rouven Czerwinski <rouven.czerwinski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sasha,
+Hi,
 
-this fix is needed for this commit
+On Fri, May 2, 2025 at 3:59=E2=80=AFPM Robin Murphy <robin.murphy@arm.com> =
+wrote:
+>
+> On 02/05/2025 10:59 am, Jens Wiklander wrote:
+> > Implement DMA heap for protected DMA-buf allocation in the TEE
+> > subsystem.
+> >
+> > Restricted memory refers to memory buffers behind a hardware enforced
+> > firewall. It is not accessible to the kernel during normal circumstance=
+s
+> > but rather only accessible to certain hardware IPs or CPUs executing in
+> > higher or differently privileged mode than the kernel itself. This
+> > interface allows to allocate and manage such protected memory buffers
+> > via interaction with a TEE implementation.
+> >
+> > The protected memory is allocated for a specific use-case, like Secure
+> > Video Playback, Trusted UI, or Secure Video Recording where certain
+> > hardware devices can access the memory.
+> >
+> > The DMA-heaps are enabled explicitly by the TEE backend driver. The TEE
+> > backend drivers needs to implement protected memory pool to manage the
+> > protected memory.
+>
+> [...]> +static struct sg_table *
+> > +tee_heap_map_dma_buf(struct dma_buf_attachment *attachment,
+> > +                  enum dma_data_direction direction)
+> > +{
+> > +     struct tee_heap_attachment *a =3D attachment->priv;
+> > +     int ret;
+> > +
+> > +     ret =3D dma_map_sgtable(attachment->dev, &a->table, direction,
+> > +                           DMA_ATTR_SKIP_CPU_SYNC);
+>
+> If the memory is inaccessible to the kernel, what does this DMA mapping
+> even mean? What happens when it tries to perform cache maintenance or
+> bounce-buffering on inaccessible memory (which presumably doesn't even
+> have a VA if it's not usable as normal kernel memory)?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/net/can?id=6bffe88452dbe284747442f10a7ac8249d6495d7
+Doesn't DMA_ATTR_SKIP_CPU_SYNC say that the kernel shouldn't perform
+cache maintenance on the buffer since it's already in the device
+domain? The device is expected to be permitted to access the memory.
 
-6bffe88452db ("can: add protocol counter for AF_CAN sockets")
+>
+> If we're simply housekeeping the TEE's resources on its behalf, and
+> giving it back some token to tell it which resource to go do its thing
+> with, then that's really not "DMA" as far as the kernel is concerned.
 
-which has been introduced in 6.15
+These buffers are supposed to be passed to devices that might be under
+only partial control of the kernel.
 
-It must not be applied to 6.14-stable.
+>
+> [...]
+> > +static int protmem_pool_op_static_alloc(struct tee_protmem_pool *pool,
+> > +                                     struct sg_table *sgt, size_t size=
+,
+> > +                                     size_t *offs)
+> > +{
+> > +     struct tee_protmem_static_pool *stp =3D to_protmem_static_pool(po=
+ol);
+> > +     phys_addr_t pa;
+> > +     int ret;
+> > +
+> > +     pa =3D gen_pool_alloc(stp->gen_pool, size);
+> > +     if (!pa)
+> > +             return -ENOMEM;
+> > +
+> > +     ret =3D sg_alloc_table(sgt, 1, GFP_KERNEL);
+> > +     if (ret) {
+> > +             gen_pool_free(stp->gen_pool, pa, size);
+> > +             return ret;
+> > +     }
+> > +
+> > +     sg_set_page(sgt->sgl, phys_to_page(pa), size, 0);
+>
+> Where does "pa" come from here (i.e. what's the provenance of the
+> initial "paddr" passed to tee_protmem_static_pool_alloc())? In general
+> we can't call {phys,pfn}_to_page() an arbitrary addresses without
+> checking pfn_valid() first. A bogus address might even crash
+> __pfn_to_page() itself under CONFIG_SPARSEMEM.
 
-Best regards,
-Oliver
+That's a good point. Would it be enough to check the address with
+pfn_valid() in tee_protmem_static_pool_alloc()?
+
+I expect that the memory is normally carved out of DDR and made secure
+or protected in a platform-specific way, either at boot with a static
+carveout or dynamically after boot.
+
+Thanks,
+Jens
 
 
-On 06.05.25 00:14, Sasha Levin wrote:
-> From: Davide Caratti <dcaratti@redhat.com>
-> 
-> [ Upstream commit 8b1879491472c145c58c3cbbaf0e05ea93ee5ddf ]
-> 
-> Like other protocols on top of AF_CAN family, also j1939_proto.inuse_idx
-> needs to be decremented on socket dismantle.
-> 
-> Fixes: 6bffe88452db ("can: add protocol counter for AF_CAN sockets")
-> Reported-by: Oliver Hartkopp <socketcan@hartkopp.net>
-> Closes: https://lore.kernel.org/linux-can/7e35b13f-bbc4-491e-9081-fb939e1b8df0@hartkopp.net/
-> Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-> Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Link: https://patch.msgid.link/09ce71f281b9e27d1e3d1104430bf3fceb8c7321.1742292636.git.dcaratti@redhat.com
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->   net/can/j1939/socket.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-> index 17226b2341d03..6fefe7a687611 100644
-> --- a/net/can/j1939/socket.c
-> +++ b/net/can/j1939/socket.c
-> @@ -655,6 +655,7 @@ static int j1939_sk_release(struct socket *sock)
->   	sock->sk = NULL;
->   
->   	release_sock(sk);
-> +	sock_prot_inuse_add(sock_net(sk), sk->sk_prot, -1);
->   	sock_put(sk);
->   
->   	return 0;
-
+>
+> Thanks,
+> Robin.
+>
+> > +     *offs =3D pa - stp->pa_base;
+> > +
+> > +     return 0;
+> > +}
 
