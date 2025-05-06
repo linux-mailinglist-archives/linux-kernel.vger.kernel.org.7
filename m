@@ -1,142 +1,233 @@
-Return-Path: <linux-kernel+bounces-635395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6522BAABCDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 887ACAABD20
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F273B914A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:07:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F1C3AF0F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21739192B81;
-	Tue,  6 May 2025 08:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C59323F40D;
+	Tue,  6 May 2025 08:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="H4qZA6D/"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lgVLBYi1"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2079.outbound.protection.outlook.com [40.107.20.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B69227E94
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 08:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746518836; cv=none; b=c/FIJTNVIjB+elzUq6mOHDilTpU637bVJ513QXUx/F0Tn9Xh2h+u/3AoUk7caGkdlBg/pe3FfQ/xpeYlh8pegYz4txwEYLN0wBKFEyNPAd1VfPDM0GJx5pFCHUz3gZ20ltmNLMd2C7775bOhPyu8Gk5UVTjDBPuoXCR7iRTCsWk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746518836; c=relaxed/simple;
-	bh=/i/S7NDpaV/eqwKPT4Y4crlS4XLw5APJiQbbcfUmI+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFYTpjdvKJEVi1Z6CbvOM2M75Fs7tcpSydIBlk2AVjc8uT64Hxj6SkNicQs/OVcMRUIAxN/w65Rc3dZ8ZF/u51iDn5PPSOLqWm+LY6vjKiFDoWLcHgTvt9nqXyEgGdPbs0v3cRJiezkDEKz8gO8nN/De8b6KxJH6+IoOx4bCi00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=H4qZA6D/; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-549b159c84cso5910565e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 01:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746518832; x=1747123632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IWjI1WdrW4fw1LjYjyn2MNuK0dU9SDM3EHaXeQ0QWpk=;
-        b=H4qZA6D/mTJunFcq2f15O0aC5SYL/RVC7lMYPpknaxX4IiUbxtiVRbwWed0TUPnag6
-         hDnXvBa9LsAT/K1enliHJolXi75dGDBPD86VP2BduRYMXrvHOf0y3qibuVK/1qHOUXAw
-         sJQQe/kt0gURiAuWB2LZUCNJWP/4wtkEDbF6h2WhIaX/NDcw3K6a5HSql0EquHK/CyX7
-         fbpqwu907nYqTr1TkwrVUx8TzrKs148S89nsQo70GrHpmCocUK13sNIEAhK9ypAlNEyA
-         8ufOUhXn/utzWcd7FXb6sFDcf7Ky+XXURhJ07E5kP0uBNNZiXpO4Iix8bK90AskmjtFO
-         Vvgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746518832; x=1747123632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IWjI1WdrW4fw1LjYjyn2MNuK0dU9SDM3EHaXeQ0QWpk=;
-        b=tyygBLOg3s8YPlg2BdYzchDFUQoHWGvJiOUxJ0bxhxbabYXEHr1HZDhLS+3W1sn4vY
-         kzSBGnH8JcxubuA5okFMjdepK3pK5na+0eW8rTWkrDXUU4vZt1nPK8aqRKrDjjHL7FYj
-         qIR46xQIeZRUJXz4/2qVyku0KlQASt6nMctNHVxBpmvWRYLUdMCTTOU/2rNbhVypDe8F
-         E/7k3XWBGTT3uzqYvR9hSDSjMwQuXtBjXkKsOWd6OSf2PUn3OEqz/zFZyqoLxVkTodRI
-         29Q4IsAWIw39vZeG8f4XOw74SDtFy2QnavTzmaGDQZj3U199S7uvlrTNC0RYcW0bd1zA
-         wgXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfXVGXy3DeNY/Zos3vbZidX/ReYWkazXWwP5eMj5h4UvFj+5rNuaxmQwT/Lz6go15ZGoNr6fX21/onysc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHpbdPVdiT8REOzzk5VGHE6vQhVRLpuAPZPAtNlpcQSoTsRf0t
-	7esxj/TZylq5pvjSKFi5Xg3NThArpbqmbt5Pd5LokLVzB3oKk3b6sOhMeZPlxSKXUIdE/ulhD6Z
-	UEQEfJYhC6EJywa70GIZdj+Lg3nRm/+q4m3/cjA==
-X-Gm-Gg: ASbGncubtIu+jz0OboTP936EOb0wr4JK3+Zl7engXoBWglf6u3DkLRC1VbYNUgHpYYl
-	VfJV9CWSzqYjJZwqSDd9GgDDukeYsSa+JDz5+pG3wEHZHVmNAWAriwuj25bcmo41nrZ7R6Oqf79
-	+A68lPkFibWOzN+kCIxHWiZBFnE1+LWEODF2dF48zG9tSqI+TKszfG8w==
-X-Google-Smtp-Source: AGHT+IHqoCICO9862R9K2Lm84ouPAwINr3VP7krJifWUL5WSBoQ4Kvr33P34RfQvhWkjHIDMgMqYGqtI1g5tPyBwgtk=
-X-Received: by 2002:a05:6512:1048:b0:545:aa5:d44f with SMTP id
- 2adb3069b0e04-54fb4a14406mr712084e87.30.1746518831752; Tue, 06 May 2025
- 01:07:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DB61F2C3B;
+	Tue,  6 May 2025 08:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746520011; cv=fail; b=upbR3o5w6exg2wHT5N12+9uQUsoOBpRPgiOg30y2bbSJJuoIIkvTJFSfWHdFQrwUTOm1iWAE4mNM4ThcWGuvM1PNSdzyCireVYD2hwfSR2h4COWLmB+RA2g1h6t3KDq49gxyiXjzr3pLz9sbpSSQli4H9FFnyyj0uaxaBgaSMJ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746520011; c=relaxed/simple;
+	bh=FzhTZ1bZkxvqjH6KZOKjD7LBNWrfH/MJ2pXHPBoTj6A=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rbrL4lOjihqranx9JdxqX0VAC/KIJCkri3XBS6qE2UOHErXRBbRd5SaGcQLiJWRZxZ6QHuWxnc87Rcvt0bkrWvIuRe5j8+PeJOlhkurmyYyx0f1H9JjGw0mUV0a5JCpGAgWG3If9wKzhWqwgoUnPSfgzWtGIwRHKognaH53GLiI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lgVLBYi1; arc=fail smtp.client-ip=40.107.20.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LTIHwZhqm8giOEKHh/XjOvGmjOqbrrwtKiNXEO3sIHrYwj5DnQOsNVT0E3mXxoPJoTr5V+yDN0iyre//TU3VRX9VQI7ZxTUf9OluSudiasoNI2Wx0w1gTb+TWEh6cbDoQEJiYVbO3//D91gDmfCx8exu54yrjzSVLGMPxlsznm7V8XMdsyo8U7hbLwFxMzCMN/8kNYu2aU1G/xHoB40uw1SCvFXVTNXQqXROhx4WqLUQKxd6FTHVZROy5W5DGmp0yF9nDxCa5yC3lkQWzzMGNcF0ipElLpnXmFRammEp2LHOscDxVByGFYGyrFeTuf2AlPqrgR0lz7pji/S5Ya4hUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zssKaXKfPOtcDGKX1NK6o8nnTs7rAayFHXgJuHOE3zo=;
+ b=BmSwYFLZzkwHsVuEpCUJYuPG0T/f+5bMDsMQ5Ff/lCTVomJafbkslkeu4KOZ36nNkwmrJWkqypa4/38OXsJYlizpxLfRket8uXbCWSc1xLwP6fDls/kMvsM38Ymy0ITbdOqKUu4Woat76XSq+c8gX0VATrs89TD06MXk5/ZgI+xSKB1SdbPtGf7DeiEyzimxRou8WL1pAfON9ohfpko5gpENHyLwdgUvq2Jk1eZD+k7PvrEYnmYRIxTSoh1AiQ0nkVsyvL/PB2IheShoxliLAuLd64xDrn0Pmur9fjpTvbsVm9paPM2Yd6YxjH4949/kGiPrCyqHD2niAnuZLI83mg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zssKaXKfPOtcDGKX1NK6o8nnTs7rAayFHXgJuHOE3zo=;
+ b=lgVLBYi134+nQMMKTZugNxYE+O+CztZBGglVbI88khGHh899VGOVcpbcnMUroFOoNNhPcMRo8qmKXyCW8BRJq+4yV4Z/M4dlF3eGqkaY2+8k67Ju16zpELUf440134TstzHy4qYlCLx32T4IyUO+mJ5yp4qD9cokrxQFr5cYADANy7tk3gBK4eOS19MhWvAeJRDltmxXrKIbhBPd25G6DVZJcZFIuE0veBz/LFn+GTnYgpnWQRQwPnZtJZcEdlAFPltbpCzvyN+Erjw4Kfh4C01tEOTBso5zZ2OmtLnZc8iBNaEBQKWYUBoZ+yW3Gsg9OdhwhSBkwclmCpmzbU9+oA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PA2PR04MB10158.eurprd04.prod.outlook.com (2603:10a6:102:404::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Tue, 6 May
+ 2025 08:26:45 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.8699.022; Tue, 6 May 2025
+ 08:26:45 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: christophe.leroy@csgroup.eu,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	timur@kernel.org
+Subject: [PATCH v7 net-next 00/14] Add more features for ENETC v4 - round 2
+Date: Tue,  6 May 2025 16:07:21 +0800
+Message-Id: <20250506080735.3444381-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0249.apcprd06.prod.outlook.com
+ (2603:1096:4:ac::33) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev> <20250503-smc-6-15-v4-5-500b9b6546fc@svenpeter.dev>
-In-Reply-To: <20250503-smc-6-15-v4-5-500b9b6546fc@svenpeter.dev>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 6 May 2025 10:07:00 +0200
-X-Gm-Features: ATxdqUE_9uM4g2e9vDQcwVZ74pJhDseN0shdJbJ2G8cWvYqvkY72EGPX5Nyfbec
-Message-ID: <CAMRc=MebFf-DBh_=H0J4ORStaxBYhOnfY+jSk2d4UpdyS=m1LA@mail.gmail.com>
-Subject: Re: [PATCH v4 5/9] gpio: Add new gpio-macsmc driver for Apple Macs
-To: sven@svenpeter.dev
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|PA2PR04MB10158:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7553e49-90b4-4af7-c93b-08dd8c77bce4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|1800799024|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CJApqH2fr0lbLhB2EKl5buNAvxjRTzQg+f/cPigguEQavfphGn7qJK5jp/Xl?=
+ =?us-ascii?Q?uJ3aBsJpbdkDBwjLhL97BvX1MIr+3t019ARkQand+xkj/WfJdscNruXb+8T/?=
+ =?us-ascii?Q?SixEfTVhlpwo71FBrbk+0MewrEb2cGeNGBksFZLGEEFeDcrrnIDvtW1+sWVe?=
+ =?us-ascii?Q?k6/AvHrTS/fskv0dYTwRUHD9TQHcPA5lmHP8Z5j1+tPxjuT0G8GTratmzDt2?=
+ =?us-ascii?Q?yqmxrPNe1/fvZB9SlzgcRKjCgxWuLKKhJKuMPBxfkKQKRT2hq5N2KAEIs3gx?=
+ =?us-ascii?Q?1EcV/xiTcgDX5115+Au2/xtfLAEtfh51d1lb2F0XFctNrLXFqC1OTPLkWdy5?=
+ =?us-ascii?Q?hQh830rNihtw6Zoe006FAXwqpWz3zBC6FjzBGV8eINO/sMDpFgIXoq0sXboT?=
+ =?us-ascii?Q?/t7p9+/Lfwnn1+3IPtpepgHvMyTUZ/lMGjgw2Ie+dErqHKpEx0k9Faos8oEs?=
+ =?us-ascii?Q?e3oXXqm+DFwJUdM3e6JdtjsAV8itmybMyU2UpootFT1/VEIo9kFpSXeSLRfN?=
+ =?us-ascii?Q?4dCUUhXvBx4KuaUejZBIzueITxl1X5nQ9I97vYQJRhwtYV4+yuwmfTXszaMY?=
+ =?us-ascii?Q?ysmO14gds2lLUOAi3S11huQcV+yXaKMn3HIvkWbf5hfh1nGlICXoMsD75ln1?=
+ =?us-ascii?Q?bRovi+kS2Eh7E2b3Rr8ULaf3Lpc2jpcKwVbLdRaR02vR5wj39AsoYY1mDY1L?=
+ =?us-ascii?Q?cyaRqEnGNYfG9VT+rur6c5z4fB/zD84qLwgOQH+cMY2woXYN7dta/UNcc9mz?=
+ =?us-ascii?Q?yONJsTJ1IEyFGfCrghp7JEauB0hdGnaAUKEk5Hj1f9PTibnxk9JazF2r6YFB?=
+ =?us-ascii?Q?dL79buLvCq2DVHOjWIdojqIw7XIFFtuzlZPPwxr8MZIDxeXoSqzZFArQEX3c?=
+ =?us-ascii?Q?QyiZTPKJPEkyORkyyosY3285syTF4SutHiiTLsKh6Mc3V8KuruIFgGdH4xRL?=
+ =?us-ascii?Q?ZcNfI/UCgc4jw5dBrRk6MQSKFKgolHVgwvMHU13dq/jTMdRL87sRDngX7Ojh?=
+ =?us-ascii?Q?NeZZPGAc4EjQN/51ATVr7pvPfPbQXDv5nnpbsGZybt+NR4BSW9Ka6swjgswY?=
+ =?us-ascii?Q?9kDpSdG/cBlWm5J3P2pOwkVOPJl5QQntZ4WlPxHiDR0AhlE5zbo0Qd30W9Ag?=
+ =?us-ascii?Q?WCM28YhwqpRV8/zpVy+SKJ+S3ArrcQubAG0QDbVvxnQkJX3Z78rmYB7ONFMq?=
+ =?us-ascii?Q?P+4ZrYN4uqArPftWqeGr/c1JborInf7/cu5waenyDNaL7+wjiwAAWK96ScjE?=
+ =?us-ascii?Q?1umzdgbxnuPaYkP8zWyxDzCGMIE4iuJ6jZ8bdEadgjLYfdh1hzshwba0EDBy?=
+ =?us-ascii?Q?vgMjgoq3k+/aWTo5YuRZ9penE3PYiSvdvDbuo+/vcCp9PWHXS06s+m8xDeF+?=
+ =?us-ascii?Q?Jx6V/N+Yx8O8zUtfha0Ii82YJHdeozPCMEkxf2HVx2bjxdIzqAJAw3kuiSoF?=
+ =?us-ascii?Q?Qynf/RpgrDNulB6DqporDF8jXWllU0W0vlHtyrQPAJv7c7JLrRZUvI6vdOFk?=
+ =?us-ascii?Q?7y84BwA8AwuK+HM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(1800799024)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8lnctn+lp4W/zKvNPH0JZPcO2PfesphT2JJ1aX2eGDWkK2SNzAuCqFp/r+Pm?=
+ =?us-ascii?Q?npAI7JVYpghGRVCC1cKOlE2rJQnqiKfrxyiTW2OCdwMmkPYIV5RucedBhT+K?=
+ =?us-ascii?Q?YDsepDWiMwOU3cZ9HWUggaeRVuIQbNGBpu5xsEsSWCV/XJNkdRV/5Q1YWpDT?=
+ =?us-ascii?Q?HgHx0QtpwJFxc8dVuVfK7l5jub0eMRwRSCH5eHGXC8UAHkYQOGJVZ0hR+fCg?=
+ =?us-ascii?Q?rKWAIXLxaJpocnn099N1gu2qHiKgpIBuf2/AeQJP29bw48b2YyqoKgMy2U/w?=
+ =?us-ascii?Q?XuU02YiugITSOYoM438GwGnrTGkEjeUgZpZi8AmMH7LomuvKA5KloQUgazgt?=
+ =?us-ascii?Q?VnZd/aQ4jTpq7ld7YpJLL5QLQ2diV318I3RiHhfUsmLLbFuAXjWLUg8sNdUe?=
+ =?us-ascii?Q?4wT5TgSTRvfFnaut62kLWTNHO4xnFqgmtnx/2EV3SRA/Sm2KpAmIqdx6CNw4?=
+ =?us-ascii?Q?IPxaooxdE+F95ty/5KyRSO7OSEQ+cfDabtZ40NYQ7dANxIZwJJuwXxEb5XLO?=
+ =?us-ascii?Q?YhNDWB5Eug/5Qr3ZRxLCFn9kVI4ufiXxWcNvZButMKTyy3jJN8J9qwqkgAM+?=
+ =?us-ascii?Q?D4/5MmXBiRZXYTQ54zLLBILWIXPYxzjAQQ0Pvacnp+5hfrw/xz6VI7ueneMd?=
+ =?us-ascii?Q?8vCtUzOykAC8pR6p2bowHktm8C7reyfVBRwjemWu6ivc4BZfUt981ADWTuqm?=
+ =?us-ascii?Q?zWYoJB0rutMG/7TMHguuOp5DnZT6MlsNOUfVynlrANbkx6M9QaeaHTc4pQbK?=
+ =?us-ascii?Q?CmM6m3KxF7y7XY4w26m8wGCfWsIfTBUDT0lkj52US27BK9vDAZ2W2EKhjmFM?=
+ =?us-ascii?Q?H7Xa1B9U2Q+GK39sskAOK+57jq2UKaV6QuMzRni0nVzSvBB8megD9FLAQg1T?=
+ =?us-ascii?Q?ISmH/LGGEufK+Vb6ZymmVcOhtdxVCZEDy2axEWDiwl3YBaZCZHYnEY4nNmOq?=
+ =?us-ascii?Q?76brgSa0HIS5lg9hDKNx0VoK9xFrwHW1zUp5rdW6NOVGrXUYZ+2OooAJY/O7?=
+ =?us-ascii?Q?ngGr6e/KwCAe5b398lOtas/EBqsJcbXWlulKGDFLZ0veqawlF4mO386OKNVe?=
+ =?us-ascii?Q?Rxp0EaGz2JC6EnZkvSxub9DP4CJvEatbuP7a/PexRITYG9OeVsd+P8FqJrnp?=
+ =?us-ascii?Q?O9rTjiITGIQpDFqs/GyA3da1cdVctCFx5fBGCmKmcUtOhY4xLOGb158T4yqS?=
+ =?us-ascii?Q?6OZ2ix2asVzMAQG/DQRL6NJC6qGUz+F1t3CEx+KtDvE7q9MKrgVV9MWkJgQ7?=
+ =?us-ascii?Q?it6JkgU3aNJo+Gx9WPRmwk5DzfuOvKLbcY5laEXvSrlgcnZfGezjkf47dabC?=
+ =?us-ascii?Q?1kEo3zB4ttjE+61D6lTn+RjRSpnnpVI+hwatEVarHsdjgW6y6h0IutNQ4Rtq?=
+ =?us-ascii?Q?41YgbunK9E7BGe5joNhnrswydDaYiE8EyaQH57jZPueu+Km6fKFUm4oCZrda?=
+ =?us-ascii?Q?UpFoAKL4+E8H4MW4bx6KjHOS86T1twx5HDCRO1ccDQuZsx/lCsmCPBl9XAzO?=
+ =?us-ascii?Q?M/AZ9ANfIGgHoQHvuUuRz8xBHK3m3nNZRgQf1U0kFtODhA6cUQYaQf2vvsiY?=
+ =?us-ascii?Q?vVXBH+QlKdMbodwvZA4dsL7dD/WtAmKNQezkgwmf?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7553e49-90b4-4af7-c93b-08dd8c77bce4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 08:26:45.6851
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 205axA5XidHqTbCXLiELaRgRQfy4LcH+kAEvo5s7UK/jL0S1BKSmx+7lBRhKDuADfd0c/zjAdv25tyf3TVB7/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10158
 
-On Sat, May 3, 2025 at 12:07=E2=80=AFPM Sven Peter via B4 Relay
-<devnull+sven.svenpeter.dev@kernel.org> wrote:
->
-> From: Hector Martin <marcan@marcan.st>
->
-> This driver implements the GPIO service on top of the SMC framework
-> on Apple Mac machines. In particular, these are the GPIOs present in the
-> PMU IC which are used to control power to certain on-board devices.
->
-> Although the underlying hardware supports various pin config settings
-> (input/output, open drain, etc.), this driver does not implement that
-> functionality and leaves it up to the firmware to configure things
-> properly. We also don't yet support interrupts/events. This is
-> sufficient for device power control, which is the only thing we need to
-> support at this point. More features will be implemented when needed.
->
-> To our knowledge, only Apple Silicon Macs implement this SMC feature.
->
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Sven Peter <sven@svenpeter.dev>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Sven Peter <sven@svenpeter.dev>
-> ---
+This patch set adds the following features.
+1. Compared with ENETC v1, the formats of tables and command BD of ENETC
+v4 have changed significantly, and the two are not compatible. Therefore,
+in order to support the NETC Table Management Protocol (NTMP) v2.0, we
+introduced the netc-lib driver and added support for MAC address filter
+table and RSS table.
+2. Add MAC filter and VLAN filter support for i.MX95 ENETC PF.
+3. Add RSS support for i.MX95 ENETC PF.
+4. Add loopback support for i.MX95 ENETC PF.
 
-[snip]
+---
+v1 Link: https://lore.kernel.org/imx/20250103060610.2233908-1-wei.fang@nxp.com/
+v2 Link: https://lore.kernel.org/imx/20250113082245.2332775-1-wei.fang@nxp.com/
+v3 Link: https://lore.kernel.org/imx/20250304072201.1332603-1-wei.fang@nxp.com/
+v4 Link: https://lore.kernel.org/imx/20250311053830.1516523-1-wei.fang@nxp.com/
+v5 Link: https://lore.kernel.org/imx/20250411095752.3072696-1-wei.fang@nxp.com/
+v6 Link: https://lore.kernel.org/imx/20250428105657.3283130-1-wei.fang@nxp.com/ 
+v7 changes:
+1. Replace debugfs_remove_recursive() with debugfs_remove()
+2. Collect tags
+---
 
-> +
-> +       smcgp->gc.label =3D "macsmc-pmu-gpio";
-> +       smcgp->gc.owner =3D THIS_MODULE;
-> +       smcgp->gc.get =3D macsmc_gpio_get;
-> +       smcgp->gc.set =3D macsmc_gpio_set;
+Wei Fang (14):
+  net: enetc: add initial netc-lib driver to support NTMP
+  net: enetc: add command BD ring support for i.MX95 ENETC
+  net: enetc: move generic MAC filtering interfaces to enetc-core
+  net: enetc: add MAC filtering for i.MX95 ENETC PF
+  net: enetc: add debugfs interface to dump MAC filter
+  net: enetc: add set/get_rss_table() hooks to enetc_si_ops
+  net: enetc: make enetc_set_rss_key() reusable
+  net: enetc: add RSS support for i.MX95 ENETC PF
+  net: enetc: change enetc_set_rss() to void type
+  net: enetc: enable RSS feature by default
+  net: enetc: extract enetc_refresh_vlan_ht_filter()
+  net: enetc: move generic VLAN hash filter functions to
+    enetc_pf_common.c
+  net: enetc: add VLAN filtering support for i.MX95 ENETC PF
+  net: enetc: add loopback support for i.MX95 ENETC PF
 
-I must have given my Reviewed-by under this driver before we started
-the conversion to the new GPIO driver setters. Could you please
-replace this with set_rv() as the old set() is now deprecated?
+ MAINTAINERS                                   |   1 +
+ drivers/net/ethernet/freescale/enetc/Kconfig  |   8 +
+ drivers/net/ethernet/freescale/enetc/Makefile |   4 +
+ drivers/net/ethernet/freescale/enetc/enetc.c  |  76 ++-
+ drivers/net/ethernet/freescale/enetc/enetc.h  |  45 +-
+ .../ethernet/freescale/enetc/enetc4_debugfs.c |  90 ++++
+ .../ethernet/freescale/enetc/enetc4_debugfs.h |  20 +
+ .../net/ethernet/freescale/enetc/enetc4_hw.h  |  12 +
+ .../net/ethernet/freescale/enetc/enetc4_pf.c  | 368 +++++++++++++-
+ .../net/ethernet/freescale/enetc/enetc_cbdr.c |  50 ++
+ .../ethernet/freescale/enetc/enetc_ethtool.c  |  74 ++-
+ .../net/ethernet/freescale/enetc/enetc_pf.c   | 105 +---
+ .../net/ethernet/freescale/enetc/enetc_pf.h   |  14 +-
+ .../freescale/enetc/enetc_pf_common.c         |  93 +++-
+ .../freescale/enetc/enetc_pf_common.h         |   3 +
+ .../net/ethernet/freescale/enetc/enetc_vf.c   |  10 +-
+ drivers/net/ethernet/freescale/enetc/ntmp.c   | 462 ++++++++++++++++++
+ .../ethernet/freescale/enetc/ntmp_private.h   | 103 ++++
+ include/linux/fsl/ntmp.h                      | 121 +++++
+ 19 files changed, 1485 insertions(+), 174 deletions(-)
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc4_debugfs.c
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc4_debugfs.h
+ create mode 100644 drivers/net/ethernet/freescale/enetc/ntmp.c
+ create mode 100644 drivers/net/ethernet/freescale/enetc/ntmp_private.h
+ create mode 100644 include/linux/fsl/ntmp.h
 
-> +       smcgp->gc.get_direction =3D macsmc_gpio_get_direction;
-> +       smcgp->gc.init_valid_mask =3D macsmc_gpio_init_valid_mask;
-> +       smcgp->gc.can_sleep =3D true;
-> +       smcgp->gc.ngpio =3D MAX_GPIO;
-> +       smcgp->gc.base =3D -1;
-> +       smcgp->gc.parent =3D &pdev->dev;
-> +
+-- 
+2.34.1
 
-Bart
 
