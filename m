@@ -1,152 +1,183 @@
-Return-Path: <linux-kernel+bounces-635810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73B1AAC247
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:18:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE0CAAC253
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C209D3A95EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883291B685E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECC02798F2;
-	Tue,  6 May 2025 11:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CB327A93E;
+	Tue,  6 May 2025 11:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FuqASAEY"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TgMSa8gh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019DB8F66;
-	Tue,  6 May 2025 11:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD9427A939;
+	Tue,  6 May 2025 11:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746530327; cv=none; b=axXbC+J52WeUjn4NiS2Uc0a7lBWGtk2mjQnJakEH7aJBs2ZjLgYmp6igKD3zb+zuj4pf3yUpPBxHMhsFbJYXpGTj0FTDmQuEOzD1gE8x46ivCKxsBMe89xQHqpIVObH5RTAuvypbxmEtwe8I6FgWsUOTUziA9S0qC4+DqM+4qbo=
+	t=1746530355; cv=none; b=Te5l53kVPVgI43kCQs8zU2vsccs5+lZ0HrPaKiPjxd7BqYMeI1UiBeMIf+bIBlbQ9td/GRbDnDmDWlMKruDFDTbD1DD63UMoiYOnXq8T/RSCL4QJ8+IiLhBg11MusaugSxRit2lD/BHZjOFIy07K0QcM81Ti55fxIuTzkEzAaRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746530327; c=relaxed/simple;
-	bh=YvNBY0Ps4akcWEgCN/IAs0lFkOXnfxNdZvQc4xvgLMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S7Ruy7TfPXj2v8UUS6rsYuy3DFZGrx8NFpVlt3hM14XzkHfCY0xgl1Kt5JSkYcoH3bDs4ULSZ1u8KnrHC7PI+oz3po1pkGVq+NfGw5E5gOnhYBTswTtQCz1mvVh2QZbag4Ym9QsmIXZKUjFCT5Ax10jpOs+EB5KJjSAKliINVmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FuqASAEY; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-af90510be2eso553131a12.3;
-        Tue, 06 May 2025 04:18:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746530325; x=1747135125; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HRpeckz8pShVDypGXyJGOnSLEbZFu2aGaUPEjsNeRyg=;
-        b=FuqASAEYKlYzLXD8KO0V9jdzuj+oLsOwE2mXhTVHq3nRY6nznBfMkmeu4Th5IX5v+K
-         mXT/GqLch4X1kERS7mQFHv+PWJw6ZIzNDCFxniTfw4sVzd54T34gbLajIzUea9cFrfy/
-         iVgNlip7E3Aw0l0JUaTndQvFx2ADfUgOYN0nsTS3LhvSacPMEUZ3SRc0/mSaF2Bq+8UA
-         osR9BXa+XajcCwnZZ9qobChVPGQ4rrnDiQ6QLyWXZqy2Po+zMmxB3RDAyCz+jtA/Xk6L
-         SdJi195zo7JG6tQkHqOgF2/sgL2q1InCuHAQER3t4PHrhTNc4Dc6l89i2JG0Z+S1WxuC
-         p1Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746530325; x=1747135125;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HRpeckz8pShVDypGXyJGOnSLEbZFu2aGaUPEjsNeRyg=;
-        b=UyNtJczDgASTfz6pQExrni25fmqXgZFCj1joKyn2guc2D+TJSxQosMdKUeFViD0I1l
-         ETm10c3QDbcGNeavGyvZqgooQroGdHEWWj8PxsG5kHaCANFNGx+z6OalG5dtqOu7jka/
-         Q0cbEbSaP67u4SCIIA9WqlVKZ7Ks+mY5iH0W5N4nvYb2ixgmz0DhIL0UdKS3B6IdlGH6
-         4DB/uKqHoh93q61ozreekan95n/+JP8BqojZnfsJqRqhWKEeFv62NKEhmNX9yotUbC7W
-         VmA5Jn0kVcc5kDRo0ifS9bj5WZvQ5CL6h2MvpG1wC/5OhvsJnp2CYB5WlEDwBj37085H
-         mOFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7ak5gb7xNhx/tbOBr9w1Rx+NbLr+rDDHsP4L9CicgGCIcP6x7YGyHUqP6EjQ1+wkCWGVN7snJmAv48lQ=@vger.kernel.org, AJvYcCVG7dAdHP0pkIhu9HLcf0d1HYsNkoedSJhROr5jm1K9gLrhWJQxxlqrzUUq2IkcG6INDdkqqZz8p3/vB2UznR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOd56MHIstlDYop1F1Yd+mJh/a3WaqxAWEDCQaVPwyHehD4kBM
-	YvTIeC3VPx+J86ToJwkrt2EDjwFTG+ENBLR6NvDmXt895QKSodgOSjV8mQwSxcVLZyvs8WJltQO
-	c6jW7AA/lqI+qTdsWfJOo6ClrBN0=
-X-Gm-Gg: ASbGncsHzudH12Zq61+BdY1wJ3feJIRHzrJcWymqCl54HTLH2gB/zte1pW8Ef2suFIT
-	yY99S8oa/L734gf2dFkyh+apBT6M/NjUlWM1LQhWpTzZ3TSthUb0cfuxp6S/F8C7zVJseKbv854
-	sj05LgWUyk/k0jO1NOh/FiD5VJggzdVo4=
-X-Google-Smtp-Source: AGHT+IF0A8X7TKL/5b/MTu3H0JRvBU4yLKp10ldMQJuWkLJDB/QpF0Nj+hZHgQcmBCBaWpAZ6/ycuZG4dhGpTJR/184=
-X-Received: by 2002:a17:90b:1b4e:b0:2ff:7b41:c3cf with SMTP id
- 98e67ed59e1d1-30a4e621c63mr9103953a91.4.1746530325095; Tue, 06 May 2025
- 04:18:45 -0700 (PDT)
+	s=arc-20240116; t=1746530355; c=relaxed/simple;
+	bh=Q4ptrZzuR6AE70wnRLbBNjV7Y8kpiJ7rLfEo5P+D7tE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mbgt2fsb1nJXJYsaHIMLv4eu0debk6VuiW5bJ6cWG3tRkR8tBhJhBXGvr+m7OtOBeZAx1l1/9ks877MHAjOBgnBHMWVg8ojTgPqwD7FPBhRyrihSU4/Fqku+Fjv6a3fI3HAauM9YlUeJx275yOjwD7eZzv1doyO5cfe1h/kQ+PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TgMSa8gh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54690pSb025917;
+	Tue, 6 May 2025 11:19:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=sq/XukGZUXYYVsOD5xL/hcID5GPFU2bSXyfbBAjjLZQ=; b=Tg
+	MSa8gh90nq3spjC+Ckx4XFniKRuAZCzGOrN/nms9OvsrmQ3GlcG5OqUbhv0I4bsw
+	bCvDnaABoTnHsKgBtAW9BwQQmjIxKzyHgse+sCebdMZ84aMiR+OpwShH+WvUsDdw
+	iowhf67S22/7C5zpTU1zC+bRXR0vJtlCPvw+zRssx2ifKq2LoJjEv1mhUtEvnM0u
+	PrhsJZ5NxoNk0QPgXkzEvcQViUPPfxqz1Wiuh/TKO1a/byK1txPXRE2Y17WPKpYV
+	JlAznmF1SmnK9PzLKiTnnRd6lwPvBisAN1L5V/7EGQMkI3aAKaRg3yI2OJlYmT0k
+	9RDVH5shT15WPkfP/ABg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5sv22cs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 11:19:05 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 546BJ4TZ020004
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 6 May 2025 11:19:04 GMT
+Received: from hu-jseerapu-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 6 May 2025 04:19:00 -0700
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>,
+        Mukesh Kumar Savaliya
+	<quic_msavaliy@quicinc.com>,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <quic_vtanuku@quicinc.com>
+Subject: [PATCH v6 0/2] Add Block event interrupt support for I2C protocol
+Date: Tue, 6 May 2025 16:48:42 +0530
+Message-ID: <20250506111844.1726-1-quic_jseerapu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250501-configfs-v6-0-66c61eb76368@kernel.org>
- <20250501-configfs-v6-1-66c61eb76368@kernel.org> <ELsEgktE6XbGxDyusumtuVzyX-eotyYuQdviHTZaIxN7KZaGFr0fNqrv5tac_gYWfbDZYNTC-wQyQuxnmufA2g==@protonmail.internalid>
- <CANiq72mS_HV5rDjP+t+k0jX9QeAgF2SB9_xX54iEBTH-GoPuEg@mail.gmail.com>
- <87msbw1s9e.fsf@kernel.org> <86-cT9dBPpEIyQXWVCeEmj3TRvBm6Ta0p1B20sSngRGOqOuC96i6hG3Q9Hg3bN8AQTCPXlsxg_C5Ok0G4JJzpQ==@protonmail.internalid>
- <CANiq72nd0Pfv4TrpULGQ_fZkyBpHyVVZ1H45_RJBgBxkJuzCJQ@mail.gmail.com>
- <87h62419r5.fsf@kernel.org> <FLMJjrvUlrMEWy7KzihcYUt-V1IFyP8nt9KYysmVPsWdxUR9dRVXsRoSBw4Z0oFX8tzfWieBDkP7YPAHOXtFcg==@protonmail.internalid>
- <CANiq72miL3eZ40ujmA-pXCqMS8y2AzJQ1UKpL1_hX03AJ0fteQ@mail.gmail.com>
- <87bjsc154u.fsf@kernel.org> <CANiq72=SD9ogr+RpPK7E+cFmn2qAVu+MBCoChdp8-hw7JFu6zA@mail.gmail.com>
- <TbTextfZAMlWFS5cWlUE-Wtnp1bv8P783IQQbWUcnHvEgBjpIxukMngLdPkqNR9jWT9O_OtOY1ejin9JoOnsww==@protonmail.internalid>
- <CANiq72m8VWKRyFai0Xg8AZUTjG0eUVG8nY-ZCQOqOnvwsW0ZaA@mail.gmail.com>
- <875xij1ouy.fsf@kernel.org> <m9-XLEt04AwLCzToZZoXspXzPC6RJkp8ht7DnkVuEEPHQ02CjS0SNIKyKM1gsH-QfZruoYixHlsAHzfYyNEykw==@protonmail.internalid>
- <CANiq72m0cuf5YKfOY8oNg83dzWEqqyddGKKh_6fwQQ4hoCp+yQ@mail.gmail.com> <87ecx3xzqd.fsf@kernel.org>
-In-Reply-To: <87ecx3xzqd.fsf@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 6 May 2025 13:18:31 +0200
-X-Gm-Features: ATxdqUHdMDblEh-0NHJk5v64ga_hltalfD0ejiteX-MhcryQrsXXQBo8t4zMhec
-Message-ID: <CANiq72nPMH06HURgZJN-o0GMmGdQQpFetm=S5SDEB+B+f0wefA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] rust: configfs: introduce rust support for configfs
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Joel Becker <jlbec@evilplan.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Fiona Behrens <me@kloenk.dev>, 
-	Charalampos Mitrodimas <charmitro@posteo.net>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Breno Leitao <leitao@debian.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Qavxbg1SzTLizwsNslDnoj8DnphgRz2O
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDEwOCBTYWx0ZWRfX6h0ajjpsTg3W
+ KaSMEsGpYYIzjVxLfx5meXqX/NLhwV4fqUHaC+X7Z739wf9FNlTlIBY0gqB/Llu62/BefPv5hTK
+ B1SYJDyxHLZEjZZN4IfIWDxHNJkRk/VaSDLAyiHvwLZebKWqfAKoeFecppUgDhbZ1Ly/N3qQACW
+ nnWx3Q+gKEzjAX5KshNuG5N9+jliNE0FetYtRqOgEMvZhpcpp8ZMwVek+f3N8wlPweKeYcqvYnL
+ jFk0YmOdSd9qNYElqj5SsVawuxGNpHvVfnCWrK+of9UcQVX06qxQMZmIrW+K9/OEIMHBQKPP7De
+ VfCqDuTjRQtnFTI6s88xapyAC33RXEnFkRK9w/Hz1lkblyovaj025oHMsfuBNBdEOKZvCbmhG45
+ E767CYDU8M/4bUUrt1WvPc6FVQEpqwxX9fFcSk33n2/ZkDy3wawJP2K3uu9kbo2H9vHC0ni/
+X-Authority-Analysis: v=2.4 cv=cOXgskeN c=1 sm=1 tr=0 ts=6819f029 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=dt9VzEwgFbYA:10 a=Bp52wIM_v22GRZO56cAA:9
+X-Proofpoint-ORIG-GUID: Qavxbg1SzTLizwsNslDnoj8DnphgRz2O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_05,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1011 suspectscore=0 priorityscore=1501 bulkscore=0
+ mlxlogscore=999 adultscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505060108
 
-On Mon, May 5, 2025 at 9:51=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel.=
-org> wrote:
->
-> So I was thinking that because I am initializing a static with a let
-> statement, it would run in const context. But I see that it is not
-> actually guaranteed.
+The I2C driver gets an interrupt upon transfer completion.
+When handling multiple messages in a single transfer, this
+results in N interrupts for N messages, leading to significant
+software interrupt latency.
 
-No, that is actually guaranteed, i.e. when initializing a static. But
-you aren't initializing a static here, no? Which static are you
-referring to? If you were, then the "normal" `assert!` would work,
-because it would be a const context.
+To mitigate this latency, utilize Block Event Interrupt (BEI)
+mechanism. Enabling BEI instructs the hardware to prevent interrupt
+generation and BEI is disabled when an interrupt is necessary.
 
-The `add` calls I see are just in the `let` statement, not
-initializing any static:
+Large I2C transfer can be divided into chunks of 8 messages internally.
+Interrupts are not expected for the first 7 message completions, only
+the last message triggers an interrupt, indicating the completion of
+8 messages. This BEI mechanism enhances overall transfer efficiency.
 
-            {
-                const N: usize =3D 0usize;
-                unsafe { CONFIGURATION_ATTRS.add::<N, 0,
-_>(&CONFIGURATION_MESSAGE_ATTR) };
-            }
+This optimization reduces transfer time from 168 ms to 48 ms for a
+series of 200 I2C write messages in a single transfer, with a
+clock frequency support of 100 kHz.
 
-So it also means this comment is wrong:
+BEI optimizations are currently implemented for I2C write transfers only,
+as there is no use case for multiple I2C read messages in a single transfer
+at this time.
 
-+        // SAFETY: This function is only called through the `configfs_attr=
-s`
-+        // macro. This ensures that we are evaluating the function in cons=
-t
-+        // context when initializing a static. As such, the reference crea=
-ted
-+        // below will be exclusive.
+v5 -> v6:
+   - Instead of using bei_flag, moved the logic to use with DMA
+     supported flags like DMA_PREP_INTERRUPT.
+   - Additional parameter comments removed from geni_i2c_gpi_multi_desc_unmap
+     function documentation.
 
-Please double-check all this... :)
+v4 -> v5:
+   -  BEI flag naming changed from flags to bei_flag.
+   -  QCOM_GPI_BLOCK_EVENT_IRQ macro is removed from qcom-gpi-dma.h
+      file, and Block event support is checked with bei_flag.
+   -  Documentation added for "struct geni_i2c_dev".
 
-> Right. Which is why I opted for `build_error`. But with the `const`
-> block solution you suggested is better.
+v3 -> v4:
+  - API's added for Block event interrupt with multi descriptor support is
+    moved from qcom-gpi-dma.h file to I2C geni qcom driver file.
+  - gpi_multi_xfer_timeout_handler function is moved from GPI driver to
+    I2C driver.
+  - geni_i2c_gpi_multi_desc_xfer structure is added as a member of
+    struct geni_i2c_dev.
+  - Removed the changes of making I2C driver is dependent on GPI driver.
 
-I thought you opted for that because you thought the `assert!` would
-only work if not refactored. What I tried to point out was that the
-`assert!` wouldn't have worked even before the refactoring.
+v2 -> v3:
+  - Updated commit description
+  - In I2C GENI driver, for i2c_gpi_cb_result moved the logic of
+    "!is_tx_multi_xfer" to else part.
+  - MIN_NUM_OF_MSGS_MULTI_DESC changed from 4 to 2
+  - Changes of I2C GENI driver to depend on the GPI driver moved
+    to patch3.
+  - Renamed gpi_multi_desc_process to gpi_multi_xfer_timeout_handler
+  - Added description for newly added changes in "qcom-gpi-dma.h" file.
 
-I hope that helps.
+v1 -> v2:
+  - DT changes are reverted for adding dma channel size as a new arg of
+    dma-cells property.
+  - DT binding change reveted for dma channel size as a new arg of
+    dma-cells property.
+  - In GPI driver, reverted the changes to parse the channel TRE size
+    from device tree.
+  - Made the changes in QCOM I2C geni driver to support the BEI
+    functionality with the existing TRE size of 64.
+  - Made changes in QCOM I2C geni driver as per the review comments.
+  - Fixed Kernel test robot reported compiltion issues.
 
-Cheers,
-Miguel
+Jyothi Kumar Seerapu (2):
+  dmaengine: qcom: gpi: Add GPI Block event interrupt support
+  i2c: i2c-qcom-geni: Add Block event interrupt support
+
+ drivers/dma/qcom/gpi.c             |   3 +
+ drivers/i2c/busses/i2c-qcom-geni.c | 307 ++++++++++++++++++++++++++---
+ include/linux/dma/qcom-gpi-dma.h   |   2 +
+ 3 files changed, 285 insertions(+), 27 deletions(-)
+
+-- 
+base-commit: 55bcd2e0d04c1171d382badef1def1fd04ef66c5
+2.17.1
+
 
