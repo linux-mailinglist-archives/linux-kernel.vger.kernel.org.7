@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-635074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FF0AAB8BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:41:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C32AAB953
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AEA13A56E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:29:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BE41C413AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2D7290BCA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71EF2918D0;
 	Tue,  6 May 2025 04:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EUcpS5c6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXXwZyQ/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AFE335204;
-	Tue,  6 May 2025 02:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C88A3365E9;
+	Tue,  6 May 2025 02:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498155; cv=none; b=i4JrjJCg/kSw0cuEFZ6Ux0ugx2hPE6ewGtcX21ddINddaB65v5N1pLEcQgpgjo2/prlZGqbjs/L3pOGZQS/HgeVChVX0pxO1v/QawBd3f7/2PuLV7p1vgTEuyIA9eK7cBhFYA27G5yChKOjSgHTiC9THjRUQQXVfR3j1PRP4GLU=
+	t=1746498162; cv=none; b=Vdj7yZwROgvWcR48MBbRC4nJgmCiNRrC14PC2EG495j/67vkhdBTMUCpogNtXR+bmjrU3NDjDlxsXJ0JzKcRPYwXUwI4udR8kE1A8J2eI8a9qsTjcU9GqMz1h1AmRopS/cES7vR/6QIi1H6vaSACOMDVHBIVJS0SssgcbVNAZsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498155; c=relaxed/simple;
-	bh=EMvHJm6AlZw7vnabYT6ymwxOGXfXeVxYv1w37tTq9J0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yhv5ztl3ipNMK9y8c+T8ON7PVk96PMrjZvfNHueFWmp2iq1bKFBccirUnFPiUJahU3aD2zLsWRXRDev9ycelJ4NhLJi9akWVlLkLvzSayBqdcz8VS3RERYMyk1tIXni00cfLiglfcoQT8P7zWt4Xn2IYEwEBvCwhJT3wYmJ9CNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EUcpS5c6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02DB0C4CEE9;
-	Tue,  6 May 2025 02:22:34 +0000 (UTC)
+	s=arc-20240116; t=1746498162; c=relaxed/simple;
+	bh=s8mhfLhCGAtF0bguEvGQoujlaMzsaSBRGrkTBQxcYzM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m1uhysxgm8VVxYQo9vGzQqaLh5+Jc38M20YQcEYFQk57z2p4eJeP2Le/rqEQqOKc2UIdAayLxWJRy0BckQW6qES9XFAsAgTxsOJILWO7tvw6dg9Sra8p2yEA049L4ELm9eQOgz5Jx5vLqC+wD10BGSrasqCz+KMyhRrSghF+Kk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXXwZyQ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C59C4CEE4;
+	Tue,  6 May 2025 02:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746498155;
-	bh=EMvHJm6AlZw7vnabYT6ymwxOGXfXeVxYv1w37tTq9J0=;
+	s=k20201202; t=1746498159;
+	bh=s8mhfLhCGAtF0bguEvGQoujlaMzsaSBRGrkTBQxcYzM=;
 	h=From:To:Cc:Subject:Date:From;
-	b=EUcpS5c6eg3gU0f+X9VzsnwVt0utXOzG5yD7Cap00EXM+Bl7sgzcXdaAxiPdtjiDJ
-	 WVUfEAntQSmaylLM/ydMklMceDgX2n/kYSHdsNoNYJrkAGrlSeqpm/A5Pqgm3x2xY6
-	 WA+lGR15Psucq5Ucf6MnGDUkE98Gd9rmEWqXUU+ozJ5TlKA//rPVbCYo3T0T2jVeB4
-	 T1ztMsvZY5NSPWaSiRHV2lbxodLevHHZbD/G4wcSkBuK54ColdVVxVJKA+rAuaBn2G
-	 LU7rlIleXIY+ru3cGZJd6cLlarT18QNina/fReoRucIXHEch0o07LSYscC4kWmE9IK
-	 JrhgrsJdV2AoA==
+	b=aXXwZyQ/th0UCAFKK6yzRASnv9wK9gwMuwohX6tOq0m8bchsYzqN8ZXZR1KlZnTND
+	 02Q6jlKLz3XUGyo2Eq33Kj+4zSphf4srHXbYaiVr0CXw0BtNXWvYy0yjlm2ERU4sc4
+	 iBGrA46+p9zWiZTn4JYLx15NPQHz3NQGyLRS8JDr68VR+MFhj2URVNQ0NR0z/sgp2u
+	 BCdXyMnE1KCMJWqU0Pbqavh3FIN1ssID0JlE1HNLr90SFa+mx1SxQfbGU4lM7lC4Ax
+	 VEqTHJweUeq5pASmfiKXXiEzUc77v5InrzzW1RB7KDVF6W4aZrlEdEXUzCMjmDKOfi
+	 0Wvb7Ioarqvhw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Baruch Siach <baruch@tkos.co.il>
+	Noam Camus <noamca@mellanox.com>
 Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] dt-bindings: timer: Convert cnxt,cx92755-timer to DT schema
-Date: Mon,  5 May 2025 21:22:31 -0500
-Message-ID: <20250506022232.2587186-1-robh@kernel.org>
+	devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: timer: Convert ezchip,nps400-timer to DT schema
+Date: Mon,  5 May 2025 21:22:35 -0500
+Message-ID: <20250506022237.2587355-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,96 +59,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the Conexant Digicolor SoCs Timer binding to DT schema format.
-It's a straight-forward conversion.
+Convert the EZChip NPS400 Timer bindings to DT schema format. It's a
+straight-forward conversion. The 2 bindings only differ in compatible
+and one required property, so the schemas can be combined.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/timer/cnxt,cx92755-timer.yaml    | 49 +++++++++++++++++++
- .../bindings/timer/digicolor-timer.txt        | 18 -------
- 2 files changed, 49 insertions(+), 18 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/timer/cnxt,cx92755-timer.yaml
- delete mode 100644 Documentation/devicetree/bindings/timer/digicolor-timer.txt
+ .../bindings/timer/ezchip,nps400-timer.yaml   | 45 +++++++++++++++++++
+ .../bindings/timer/ezchip,nps400-timer0.txt   | 17 -------
+ .../bindings/timer/ezchip,nps400-timer1.txt   | 15 -------
+ 3 files changed, 45 insertions(+), 32 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/ezchip,nps400-timer.yaml
+ delete mode 100644 Documentation/devicetree/bindings/timer/ezchip,nps400-timer0.txt
+ delete mode 100644 Documentation/devicetree/bindings/timer/ezchip,nps400-timer1.txt
 
-diff --git a/Documentation/devicetree/bindings/timer/cnxt,cx92755-timer.yaml b/Documentation/devicetree/bindings/timer/cnxt,cx92755-timer.yaml
+diff --git a/Documentation/devicetree/bindings/timer/ezchip,nps400-timer.yaml b/Documentation/devicetree/bindings/timer/ezchip,nps400-timer.yaml
 new file mode 100644
-index 000000000000..8f1a5af32a36
+index 000000000000..317c5010c4c1
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/cnxt,cx92755-timer.yaml
-@@ -0,0 +1,49 @@
++++ b/Documentation/devicetree/bindings/timer/ezchip,nps400-timer.yaml
+@@ -0,0 +1,45 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/cnxt,cx92755-timer.yaml#
++$id: http://devicetree.org/schemas/ezchip,nps400-timer.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Conexant Digicolor SoCs Timer Controller
++title: EZChip NPS400 Timers
 +
 +maintainers:
-+  - Baruch Siach <baruch@tkos.co.il>
++  - Noam Camus <noamca@mellanox.com>
 +
 +properties:
 +  compatible:
-+    const: cnxt,cx92755-timer
-+
-+  reg:
-+    maxItems: 1
++    enum:
++      - ezchip,nps400-timer0
++      - ezchip,nps400-timer1
 +
 +  interrupts:
-+    description: Contains 8 interrupts, one for each timer
-+    items:
-+      - description: interrupt for timer 0
-+      - description: interrupt for timer 1
-+      - description: interrupt for timer 2
-+      - description: interrupt for timer 3
-+      - description: interrupt for timer 4
-+      - description: interrupt for timer 5
-+      - description: interrupt for timer 6
-+      - description: interrupt for timer 7
++    maxItems: 1
 +
 +  clocks:
 +    maxItems: 1
 +
 +required:
 +  - compatible
-+  - reg
-+  - interrupts
 +  - clocks
 +
 +additionalProperties: false
 +
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: ezchip,nps400-timer0
++    then:
++      required: [ interrupts ]
++
 +examples:
 +  - |
-+    timer@f0000fc0 {
-+      compatible = "cnxt,cx92755-timer";
-+      reg = <0xf0000fc0 0x40>;
-+      interrupts = <19>, <31>, <34>, <35>, <52>, <53>, <54>, <55>;
-+      clocks = <&main_clk>;
++    timer {
++        compatible = "ezchip,nps400-timer0";
++        interrupts = <3>;
++        clocks = <&sysclk>;
 +    };
-diff --git a/Documentation/devicetree/bindings/timer/digicolor-timer.txt b/Documentation/devicetree/bindings/timer/digicolor-timer.txt
+diff --git a/Documentation/devicetree/bindings/timer/ezchip,nps400-timer0.txt b/Documentation/devicetree/bindings/timer/ezchip,nps400-timer0.txt
 deleted file mode 100644
-index d1b659bbc29f..000000000000
---- a/Documentation/devicetree/bindings/timer/digicolor-timer.txt
+index e3cfce8fecc5..000000000000
+--- a/Documentation/devicetree/bindings/timer/ezchip,nps400-timer0.txt
 +++ /dev/null
-@@ -1,18 +0,0 @@
--Conexant Digicolor SoCs Timer Controller
+@@ -1,17 +0,0 @@
+-NPS Network Processor
 -
 -Required properties:
 -
--- compatible : should be "cnxt,cx92755-timer"
--- reg : Specifies base physical address and size of the "Agent Communication"
--  timer registers
--- interrupts : Contains 8 interrupts, one for each timer
--- clocks: phandle to the main clock
+-- compatible :	should be "ezchip,nps400-timer0"
+-
+-Clocks required for compatible = "ezchip,nps400-timer0":
+-- interrupts : The interrupt of the first timer
+-- clocks : Must contain a single entry describing the clock input
 -
 -Example:
 -
--	timer@f0000fc0 {
--		compatible = "cnxt,cx92755-timer";
--		reg = <0xf0000fc0 0x40>;
--		interrupts = <19>, <31>, <34>, <35>, <52>, <53>, <54>, <55>;
--		clocks = <&main_clk>;
--	};
+-timer {
+-	compatible = "ezchip,nps400-timer0";
+-	interrupts = <3>;
+-	clocks = <&sysclk>;
+-};
+diff --git a/Documentation/devicetree/bindings/timer/ezchip,nps400-timer1.txt b/Documentation/devicetree/bindings/timer/ezchip,nps400-timer1.txt
+deleted file mode 100644
+index c0ab4190b8fb..000000000000
+--- a/Documentation/devicetree/bindings/timer/ezchip,nps400-timer1.txt
++++ /dev/null
+@@ -1,15 +0,0 @@
+-NPS Network Processor
+-
+-Required properties:
+-
+-- compatible :	should be "ezchip,nps400-timer1"
+-
+-Clocks required for compatible = "ezchip,nps400-timer1":
+-- clocks : Must contain a single entry describing the clock input
+-
+-Example:
+-
+-timer {
+-	compatible = "ezchip,nps400-timer1";
+-	clocks = <&sysclk>;
+-};
 -- 
 2.47.2
 
