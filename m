@@ -1,154 +1,146 @@
-Return-Path: <linux-kernel+bounces-635575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1FCAABF56
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:25:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33378AABF35
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8D03B75F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:24:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E94F4A4840
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B9726AAB2;
-	Tue,  6 May 2025 09:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94952627E5;
+	Tue,  6 May 2025 09:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="bzbc8dF8"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rRQ2WK6O"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67367252906;
-	Tue,  6 May 2025 09:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5447A2165E4
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746523454; cv=none; b=s4FN4L9N9mTKSzvK305Kxv1iQe93pWkxsDpWH/PEctvWcacP34LR88QqeePJN35Zg3nrLTvXtj/+A4eDb5OLOCobv4pf2hB/5/5lQCcHlvRZeVIOHrd1VBOIVMqgiNDJNuhwxhaE8wNW8AK5Gp5uTFLKYD70ykUd3uOPn+RGIus=
+	t=1746523362; cv=none; b=NsfvBq1Y6zjTa3mSjeUb4QhrpXRRjmhF0fdu8gNpOyt/7RyBZJjdKHbh6qC312P5odI1kQ9pq5yihqnm8ZTwrtQ3BaKqFK9uEs6yrIVyovgT7pVBF3uQb+GbGQyD1rYtF4y0Ze1kdcUCEw5RDAeCj6URoiNd2Le4kAq6Rs/Izvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746523454; c=relaxed/simple;
-	bh=6w+tXU7Z8tsTcrJtTb1oifhiSkHhaVbmuA7KCza1/rU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hmQUVqTO8YUUxKoSvKlUoiOjlM7rxrZtXRp5/ZShqY71i2xWfg1APzhMbuSRK7b9K3KZ5+L+1aZb9ieW+lQ+Zl7GKxOKRk7zsNPlUAjLjhc337fKTAz/1W6rPHOyBUPcwYqpCqdWh/OzQgOMZ1pVHHg6R4fut3x7qGEdV2z9yY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=bzbc8dF8; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id C4B0D25A88;
-	Tue,  6 May 2025 11:24:11 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id WKdrIXse09H6; Tue,  6 May 2025 11:24:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746523451; bh=6w+tXU7Z8tsTcrJtTb1oifhiSkHhaVbmuA7KCza1/rU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=bzbc8dF8Okg0jQcz0QdqchtwqlD3B9UslylP0fk1n1d5FBGEkvutT0d8W4eJNXQJp
-	 xKFKGRt2BSraG+16zvoDmsfHw/0nFYFq1pifYO5yLZtPuiexBZkYhsJOV56Tdquq18
-	 oWCheiEZx2zZJipHA3i6NoPNS/2OSsQGklUwWl+Ktj4eiRMqhV69WvJbMWaGSbIZJw
-	 mQeKwLFHbrL5e/gEQxW6viSh18SIMd4gae70pV1gJYR5WouacHRjLh0Pf+IDSNpU3G
-	 BRq6s47TGxGF2eY9Nsbk+nFGd0yh0AYoElMHoq+No+E5ytm6IjQxBDOvklbi9J77N0
-	 N8Rnrktmetqug==
-From: Yao Zi <ziyao@disroot.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v5 5/5] arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
-Date: Tue,  6 May 2025 09:22:06 +0000
-Message-ID: <20250506092206.46143-6-ziyao@disroot.org>
-In-Reply-To: <20250506092206.46143-1-ziyao@disroot.org>
-References: <20250506092206.46143-1-ziyao@disroot.org>
+	s=arc-20240116; t=1746523362; c=relaxed/simple;
+	bh=IXbem8G2R35AAr+aAT8vVVC/AjXI63AKfjNdsXUs0Sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PGxiwa4RtUz6r7xBgdZOZvxiwI5V+jC1cUpUMb1tPZsqtwdx23EsIc7eYYM8dovcVU996tqP/pO05MsDzRgcyGkTWI8438I6xfZZOGf4MP/lRRPBKryew9GsQjHxGQtEj48/dV4XlvYlXKwlDuzyzBJ5UrtV9Yi68qUj4xljPJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rRQ2WK6O; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43ef83a6bfaso33935e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 02:22:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746523358; x=1747128158; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6PKyiTW7t9VlHIC0Fir8qyHkI243/6y/pnmH8hpJckY=;
+        b=rRQ2WK6OdP+KLUAzdynzJJT+jLRA5D9KNnTXCz8TKWT+90igkuIYnFtD3SeuDtG7Sq
+         KGDXNO91CgS/OzSBP8znNh+4EUAT9w4AMWGVGEn9ITxwQoz/PeSgwzV346/GopTfMFZ9
+         EhpnzJtZ4G5z2eNyUIniawRYKQwOfoVlW9MNnyf78taTSxfTrTLv9/yAg+pNyTzqXc5f
+         U3Dvat2jTJSG5H1Qqb3rW8j3EBwQm779r4yDekmE9nhCv0xUxm50/VWTc65g98bPnpqA
+         CnBEQj4mAHwr0/HKnThGglIlWzLMrHFIbmklFmEQv+K0uhyx1iZPu1N4AgcJJpaSU7t/
+         XzyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746523358; x=1747128158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6PKyiTW7t9VlHIC0Fir8qyHkI243/6y/pnmH8hpJckY=;
+        b=etLPpvmXMaZ2dRgNEJzg2VJYmWJXAKnWb2bgcqA3jHNpPhwVV14utr2tPmHnDokMj4
+         OVsuMH3LJV/seI6tOAa6DRgzh5dDLJrOdxhXZkC6N5t9Ou12qDYn7tN9PePtwIaMIWKe
+         MCknLHoSJyLeUhtun6jkBuPgro+FiyWdZQyHBbGS5LCtpVutPMwBTbdTpMMs/9B//gnr
+         E/QG2qGYYgLBJsfVerqOy1T2CuQ9JFBdIi+QWMPIx1B0adT1DO8N20GytSDUqyRYkKk/
+         gAfDuQzzj94gRBDWLRXBReGanU2hBtWy3aus2zXof0TMXMmWZ/oaSKgucdOFJpNlkakt
+         n8ZQ==
+X-Gm-Message-State: AOJu0Yze4MkqHcBq8UHjDTMhZH11JxxHy1NGrPvkptbhIFE8Mxhz62A4
+	1XOw2twT52DIKJh5JBfcg5r1YAW+SlFX8J6wUpSwdb9pCs3f0E6kY3FenOQUGQ==
+X-Gm-Gg: ASbGncveoHpeHXzNHjnDcSZA4tUtDtF81M2ckz5WG4+9ghFdSfkPgo9p8lIXsaFIuEy
+	P7p7+RQgpo7y47FdVRljbGQjB0Rl8pThioz8AYJlqidaPl/9Y4q9KkhtLdb4AheNiy72/qaVAEl
+	xLsUCKcYvbOGJThBgCbzXwWH0RpzfKhU11nkQwi+rDRL6nBT6014OL+6piSK1A4Hf9dahMBNmXA
+	AC03V7ZNH1IER6lRCAQLkZlliT5edqDdJaKOG8URz/W+mFNUEc8n21frfD2CavnwGMa2jZTN0/9
+	VRpMzXmzCK2J19seGyYsEYZUeaW9YV8LcAuQslTpiZT2f/GnGYmzq1cYxiQBdP7ChZWr+kxh7CV
+	HVyo=
+X-Google-Smtp-Source: AGHT+IHDtwlAgJFzUnwiJ122yccBNhS4YJpQ3qlNsrd7r09OaCmmMYMxQB11yASqxuqK4r8lQg5APg==
+X-Received: by 2002:a7b:c04d:0:b0:43b:bf3f:9664 with SMTP id 5b1f17b1804b1-441d123cfd5mr707515e9.5.1746523358264;
+        Tue, 06 May 2025 02:22:38 -0700 (PDT)
+Received: from google.com (202.88.205.35.bc.googleusercontent.com. [35.205.88.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2b287desm208303605e9.38.2025.05.06.02.22.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 02:22:37 -0700 (PDT)
+Date: Tue, 6 May 2025 09:22:33 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, qperret@google.com
+Subject: Re: [PATCH] KVM: arm64: Fix memory check in
+ host_stage2_set_owner_locked()
+Message-ID: <aBnU2aXDvznmGU2l@google.com>
+References: <20250501162450.2784043-1-smostafa@google.com>
+ <86ikmegmw9.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86ikmegmw9.wl-maz@kernel.org>
 
-SD-card is available on Radxa E20C board.
+On Tue, May 06, 2025 at 09:32:22AM +0100, Marc Zyngier wrote:
+> On Thu, 01 May 2025 17:24:50 +0100,
+> Mostafa Saleh <smostafa@google.com> wrote:
+> > 
+> > I found this simple bug while preparing some patches for pKVM.
+> > AFAICT, it should be harmless (besides crashing the kernel if it
+> > was misbehaving)
+> > 
+> > Fixes: e94a7dea2972 ("KVM: arm64: Move host page ownership tracking to the hyp vmemmap")
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/nvhe/mem_protect.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > index 2a5284f749b4..e80f3ebd3e2a 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > @@ -503,7 +503,7 @@ int host_stage2_set_owner_locked(phys_addr_t addr, u64 size, u8 owner_id)
+> >  {
+> >  	int ret;
+> >  
+> > -	if (!addr_is_memory(addr))
+> > +	if (!range_is_memory(addr, addr + size))
+> >  		return -EPERM;
+> >  
+> >  	ret = host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt,
+> 
+> I vaguely seem to remember that there was an assumption around
+> addr/size representing a single page, and therefore addr_is_memory()
+> was doing the right thing.
+> 
+> Has this assumption changed? Or is this only a figment of my imagination?
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+From what I see, this might have size exceeding page size in the
+following cases:
+1- When creating a VM with 4K kernel as the struct pkvm_hyp_vm size
+   is at least 0x1130 (without vCPUs)
+2- When creating a VM and PGD size is bigger than one page (for cases
+   with concatenation as 52 bits and 4K would have 64K PGD)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index 6e77f7753ff7..d0b194b7e66e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -17,6 +17,7 @@ / {
- 
- 	aliases {
- 		mmc0 = &sdhci;
-+		mmc1 = &sdmmc;
- 	};
- 
- 	chosen {
-@@ -108,6 +109,18 @@ vcc5v0_sys: regulator-5v0-vcc-sys {
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
- 	};
-+
-+	vccio_sd: regulator-vccio-sd {
-+		compatible = "regulator-gpio";
-+		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
-+		regulator-name = "vccio_sd";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		states = <1800000 0x0>, <3300000 0x1>;
-+		vin-supply = <&vcc5v0_sys>;
-+	};
- };
- 
- &i2c1 {
-@@ -144,6 +157,12 @@ wan_led_g: wan-led-g {
- 			rockchip,pins = <4 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
-+	sdmmc {
-+		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
-+			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &saradc {
-@@ -162,6 +181,17 @@ &sdhci {
- 	status = "okay";
- };
- 
-+&sdmmc {
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	disable-wp;
-+	sd-uhs-sdr104;
-+	vmmc-supply = <&vcc_3v3>;
-+	vqmmc-supply = <&vccio_sd>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0m0_xfer>;
--- 
-2.49.0
+Thanks,
+Mostafa
 
+> 
+> Thanks,
+> 
+> 	M.
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
 
