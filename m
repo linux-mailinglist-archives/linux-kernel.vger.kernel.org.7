@@ -1,115 +1,157 @@
-Return-Path: <linux-kernel+bounces-635820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5D8AAC267
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:23:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E9EAAC26F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098BA1C256CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A227B4C6716
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C449A282EE;
-	Tue,  6 May 2025 11:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D4B27AC40;
+	Tue,  6 May 2025 11:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozIVVOGo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eRXQ5XhT"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA95277817
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C0A27AC5D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746530592; cv=none; b=UNswF/np4BSFzkgqkkZjKLK6R3nsZ4yvGfB0C6IEMPS16PqS9QIfGC0WLzdr8atlVS03kUfdeIpklkGNhxCLn3zloO2hQyhJgIcEtDJ7IX8ikzHPGQjklgBEGNndKtrgejWPMJUsK5OAW2jWmUtmceSRcPYf1OzRnWbYq5UK3so=
+	t=1746530613; cv=none; b=nJYf/z/FNdbk5f4RriTdXCRd7jCMcYFV0l2n/ZehUuiwXeKLUjo0MK1Z7H+o9/FcyqduPo1UqIl1gGMhCEegnRK1+DZNw7AU0MbsyT7np1c9b0Z041pjaY9y7bRHGlC/Xf/QQpDkXs7SA6y02X7F6Pg7VciLu2bzcG8yHYqfjek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746530592; c=relaxed/simple;
-	bh=az4dYZs3gVYsnvm6V0lUq0ENtKxG51OEc0gHDvBf3eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PfjePxw00cV4fwEAxdeoZKCB8c6VpWYxVHgefjI+HGPz4yN30amxlvdPgf1h40KgldL2dJkhfln+XClxkdsHihly/S+hdnqfHCfoesUdk6LJEex0CEPZopMoIXm7PG7eEM3qSWi64Vu5MnD1sfIv1nS/oEvaZJvvL4r2RkIHUW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozIVVOGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D395AC4CEE4;
-	Tue,  6 May 2025 11:23:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746530591;
-	bh=az4dYZs3gVYsnvm6V0lUq0ENtKxG51OEc0gHDvBf3eo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ozIVVOGoTBtZBXvgiyRaQ+SN4Wb6jvTQURoTF7NJylU9Y8eZ53M8/EvzfPinh2H+9
-	 aqv9K4rTl4GF9OS2/D7VIkXm1dmxlSR6H04ge0M/vJx8FZLYYWZ6J1zANZj5QTdv1x
-	 W0rjvwfWFc3/lKMnJHKZFLCXgwx98X9b2e8tsvaWU1v3KMJuy9phmNdc6zZUzDZqTY
-	 R1KbYRizXX2woFodKABMSKDzbM/7O5hIzqyOEs0DBdVrBY8Xvy5pVuDYfI0MzWV8ts
-	 GsAwY0dW3SBe5PujYoDBBq1YQBqpjTDMenTNPl9fjwQlml1s2n8FM4r9tdnHEZHwd7
-	 LxKP8fqNDoIOA==
-Date: Tue, 6 May 2025 13:23:06 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Ivan Shapovalov <intelfx@intelfx.name>
-Cc: linux-kernel@vger.kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH 12/15] x86/kconfig/64: Enable popular kernel debugging
- options in the defconfig
-Message-ID: <aBnxGuJDCteDU70Y@gmail.com>
-References: <20250505110946.1095363-1-mingo@kernel.org>
- <20250505110946.1095363-13-mingo@kernel.org>
- <9b1d18baf8d6839630073058a3b33c31d1b4649f.camel@intelfx.name>
+	s=arc-20240116; t=1746530613; c=relaxed/simple;
+	bh=xjL65vzHaYnd2+Zu9zg+UVvkfoWrRNrqH2KTKvwr7nk=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=RVDKO6WH/GKHkMHik4leuITQFFnyey9M4MbrH2/edMYcgVY119A5eIi8CKMirpUMqX425IGMabj3f7FveX6seoB93rbjRvqtrcOBWDvAMqj19iOkQp6BdEgTWgFqyUeqguQLsEDLlgnvMjznvZh3GFwsCVh6+ZEEnMpeQRE/lDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eRXQ5XhT; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3035858c687so4108813a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 04:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1746530611; x=1747135411; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lj+Ua/fxMyjIfoIv2F4j22EXalsnM7wsPJwCRLC9/bk=;
+        b=eRXQ5XhT6sobBVK6SdyeCkzoJBQY+Uj9EA8VYsyVTDRZ2E6zgvPcYkMdkcbIqipQuF
+         RktkxhUk+zROq9iv+XmdDDxaqWZS3bjVcS8wRH1fr2InH1XyXJECwWNQvF6ytCtUz0zu
+         zFyO5J6sppKI7XThFy5Fj+A1plCuyhMyJC6aUUEPBY7ReH/O8U/bi/fjE2ROGaLn12wj
+         RZLXHXLWKHY9SSsr+q+oBnXLF5YFvCirU9d6rD1ESqmMHCl1OoSMd+OJFisG4q6i2f9e
+         o3vgeGI1SyACrluZ/+z/Za4ZxZxi6Ia9N2+vc41t6hn5NpGIFjRd9FcY8FdnxkYMYlE6
+         WPcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746530611; x=1747135411;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lj+Ua/fxMyjIfoIv2F4j22EXalsnM7wsPJwCRLC9/bk=;
+        b=Y8iK2h0B1I8h/vKmdrO+BD7px9ME0pYosq0FOxPzgWMbUd7imSFXqUZ6tuemTkARv2
+         S+Gwj1oHd+gOSulC2iqko0QFZnHpzovM3TKCACH8OP/z+H2+854wnN49ztSPTcSXSdqH
+         IRWSO8stREPfUyUydFS7S4LR1sf0WIsZhQNmZrTlDJUItC/gsiJlKoW1yOfuqse7d5ws
+         DO9UXxI5HATmeCAch5DOFZLZ8cb2/+8CbM5FZBQlhoqi5wLvOdrCugyBKO141906jnDa
+         /QIexi+P2FrFxbh77FcAZKT0PyFAYEPj8Wq8vPoCHu/VOHeB/UVELdv/fAAdnKpjmSN5
+         hTVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+aDBvG0j98m7zk8V8vVKXlRiiEY3+IjwWIRYrO5CbHbOA5FT0Usd5WTbkm4JiNmfg6t+hvfYAMJWixkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz42mk7SGweI1nDTwDXFUx7bgTROHbbpL2IeMExk4PPS+MXyB4G
+	bCmRFE8DqlcUd1tpGEsKIFfY927xw5TBsB45kGpKWpW/5p/6Fl7x16tINGiskq8=
+X-Gm-Gg: ASbGncsuFtQ9YzdZ0ZDIj4SBljvFe2dW7YycsZO8ZPKmJQ76yG39leu/3NwkYcuj1/s
+	23OHvUO5j0uhCKcC+ve96MKBIZhAQcU+HKISmWquspwualZLIQgbnU0CReyjMOTbNqftr3DpTtn
+	yLDYmVZW7T6t0o96Vq1bjpZjetXAzC1spl/XCFs73aL/xHYNHerX10BlrCCwzSuULTfLG5rmqRM
+	+Qmnvk13a4y9xFU6SZFhhGUqt4sPXf1GcM3F5PRvQFFY3e+9Vu/C1ykN7um5g3mxxWUghaXKT4y
+	VDkdHwhsFq9xXCgkeqqUY7cFrFWJm8SPmJuR0dpsNqQT7+Kl+zFf+54mVgeZObgTxmSWTTkV
+X-Google-Smtp-Source: AGHT+IEOXeQAPiRigAJRM+ag8kVULH/CPzkxnG0tEFjbXvabNNYE6kFbgeM+fhK2lrsDJD43flM35w==
+X-Received: by 2002:a17:90b:2703:b0:308:6d7a:5d30 with SMTP id 98e67ed59e1d1-30a619ab240mr19584577a91.18.1746530611028;
+        Tue, 06 May 2025 04:23:31 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([61.213.176.14])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a3480ea0dsm13630303a91.37.2025.05.06.04.23.25
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 06 May 2025 04:23:30 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: arnd@arndb.de,
+	andriy.shevchenko@linux.intel.com,
+	benjamin.larsson@genexis.eu,
+	cuiyunhui@bytedance.com,
+	gregkh@linuxfoundation.org,
+	heikki.krogerus@linux.intel.com,
+	ilpo.jarvinen@linux.intel.com,
+	jirislaby@kernel.org,
+	jkeeping@inmusicbrands.com,
+	john.ogness@linutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	markus.mayer@linaro.org,
+	matt.porter@linaro.org,
+	namcao@linutronix.de,
+	paulmck@kernel.org,
+	pmladek@suse.com,
+	schnelle@linux.ibm.com,
+	sunilvl@ventanamicro.com,
+	tim.kryger@linaro.org
+Subject: [PATCH v5 1/4] serial: 8250: fix panic due to PSLVERR
+Date: Tue,  6 May 2025 19:23:18 +0800
+Message-Id: <20250506112321.61710-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9b1d18baf8d6839630073058a3b33c31d1b4649f.camel@intelfx.name>
+Content-Transfer-Encoding: 8bit
 
+When the PSLVERR_RESP_EN parameter is set to 1, the device generates
+an error response if an attempt is made to read an empty RBR (Receive
+Buffer Register) while the FIFO is enabled.
 
-* Ivan Shapovalov <intelfx@intelfx.name> wrote:
+In serial8250_do_startup(), calling serial_port_out(port, UART_LCR,
+UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
+dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
+function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
+Execution proceeds to the dont_test_tx_en label:
+...
+serial_port_in(port, UART_RX);
+This satisfies the PSLVERR trigger condition.
 
-> On 2025-05-05 at 13:09 +0200, Ingo Molnar wrote:
-> > 
-> >  - CONFIG_DEBUG_LIST=y:
-> > 
-> >      Fedora/RHEL have it enabled, while Ubuntu has it disabled.
-> 
-> (Please forgive my potential ignorance.)
-> 
-> If I'm guessing right, the point of CONFIG_DEBUG_LIST being enabled
-> everywhere is probably more about hardening than debugging, and given
-> that since 6.6 we have a CONFIG_LIST_HARDENED[1], wouldn't it make more
-> sense to use that instead?
+Because another CPU(e.g., using printk()) is accessing the UART (UART
+is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) ==
+(lcr & ~UART_LCR_SPAR), causing it to enter dw8250_force_idle().
 
-Yeah, I agree, and I've just changed it to CONFIG_LIST_HARDENED=y, 
-which I agree is the more sensible default.
+Put serial_port_out(port, UART_LCR, UART_LCR_WLEN8) under the port->lock
+to fix this issue.
 
-> Or is the point here to exactly follow the typical distro config,
-> without regard to whether it's actually the optimal thing to do?
-> 
-> [1]: https://lore.kernel.org/all/20230811151847.1594958-3-elver@google.com/
+Panic backtrace:
+[    0.442336] Oops - unknown exception [#1]
+[    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
+[    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
+...
+[    0.442416] console_on_rootfs+0x26/0x70
 
-So Ubuntu doesn't have it:
+Fixes: c49436b657d0 ("serial: 8250_dw: Improve unwritable LCR workaround")
+Link: https://lore.kernel.org/all/84cydt5peu.fsf@jogness.linutronix.de/T/
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ drivers/tty/serial/8250/8250_port.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  /boot/config-6.11.0-25-generic:# CONFIG_LIST_HARDENED is not set
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index 3f256e96c722..a913135d5217 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -2380,9 +2380,10 @@ int serial8250_do_startup(struct uart_port *port)
+ 	/*
+ 	 * Now, initialize the UART
+ 	 */
+-	serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
+ 
+ 	uart_port_lock_irqsave(port, &flags);
++	serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
++
+ 	if (up->port.flags & UPF_FOURPORT) {
+ 		if (!up->port.irq)
+ 			up->port.mctrl |= TIOCM_OUT1;
+-- 
+2.39.2
 
-While Fedora has it:
-
-  .config.fedora.generic:CONFIG_LIST_HARDENED=y
-
-in which case it's basically a judgement call whether to do it in the 
-defconfig. I agree that DEBUG_LIST=y is pretty heavy-handed, 
-LIST_HARDENED=y looks better to me.
-
-But when all major distros have an option enabled then I think in most 
-cases the right policy is to enable it in our defconfig as well, 
-because the option has become ubiquitous and we'd be denying reality by 
-not having it in our regular tests.
-
-Thanks,
-
-	Ingo
 
