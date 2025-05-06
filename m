@@ -1,165 +1,113 @@
-Return-Path: <linux-kernel+bounces-635687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAB1AAC0C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEFFAAC345
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6604B1C26523
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:04:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046CF1C0826E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E399F27703D;
-	Tue,  6 May 2025 10:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F7E27E1A3;
+	Tue,  6 May 2025 12:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OePdelaL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="POqrcbhW"
+Received: from mail-m1973172.qiye.163.com (mail-m1973172.qiye.163.com [220.197.31.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD6B26560B;
-	Tue,  6 May 2025 10:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93F127D77F
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746525826; cv=none; b=tlM5C4+VdW9t+e9SWsSStY3P7ThdSbl6stYg7eo+v0uysBNyowbCyuhpgVh2VUobqbW2nU1CihFAMtgqe7Y72nZofuoi+yMdUWJXZZsYSNkQn6WmBr329ifBHtQsh9JHP2a/L/w8lgPu/rJ281GsUIDKHfjNhr/xFhYl7GVoeDM=
+	t=1746532839; cv=none; b=g3d7Bm44FK5c2sUEpdCqGRGz4xBFK3PscCbb9T+D+pfmL1k5FzO6e6wxD5yVKlGWBOXrnMZH4XQOWbPv2Utlva0+QBx/h/iPQJuWBAercVZnKY9X9ttIw3biNhKT31cTveDRLkTyRfMDC7XRwtAzA+GJ1YOWQwEV0QzOyMM8jMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746525826; c=relaxed/simple;
-	bh=4JKKox/gkNup5/ZUjddwfEl3PWXPEEdg4i1CKPn9FS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q2WccBIlcJRCxRmWhJWTXddCPoI8yvKsE9vLgTfzTlNgaVSx2bwbqkoKSp3b8GE6kS1VhGyydrKOUooqcMWnmTYPmRjta7zfs44V60ii9QYafH2KGoAzsSGpTN2mXOpupxAdthljNdU5OQOp39b51HqZ/P2UBsv87DrJufMELP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OePdelaL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5468t4Fn024870;
-	Tue, 6 May 2025 10:03:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4NczKeVkfrsG4oocFhRG8smHteaY3Yg3Jf/r6vK27jI=; b=OePdelaLB7ev/2ZM
-	dZypRBOK2Y1qr9M4dO/vdn5CWzs45+dOLMfJnjd+GuwvdvRvtkpVLZ9UOWMSJBFm
-	0L4OdnrMaM/T3w6Y3JF1n0Z1SCk7AOAUjICyD/EEg9b7aha/bxsQUF7EYOehdhjS
-	VRlYNVvbdNHchXDlCsGP7aYk5+NLruAIUeofZf3PAvKyXjK8oZRWtw15JioCzjOh
-	v0OGAcvQ8XqIgFS4bWdtx9JobJr9FIMShpBdJueXAy4KA/lfZ0ZqI/NhUROS3Hby
-	k/ToTI3qlVZBqslAzfKWlFWXTMv7tLvUm8WI/a2R1iNoWnkf29je5xj0GVHvDmoj
-	5DTDkw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5uustbp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 10:03:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 546A3cTT017805
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 May 2025 10:03:38 GMT
-Received: from [10.50.35.75] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 May 2025
- 03:03:31 -0700
-Message-ID: <f15280a5-deba-89b0-5a0f-f4e3adb562c3@quicinc.com>
-Date: Tue, 6 May 2025 15:33:28 +0530
+	s=arc-20240116; t=1746532839; c=relaxed/simple;
+	bh=H3nSmQofOPbyGH9/LAxyApDbeSy3bZQ2QhgMQtZHcJY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ec+GSUwkgTCyqlemRstuyiYhJcrpXbYkUOWN8kpdwO6z8JtOJ5eO/gK+fqboJOyBqn+bz8NQtzDWzo9+Wo0Y6wI3rkfxKXUoPVrIU7/xARdiyH543cLxrhNE0DJdujTYpIU0bfk0n1OUaiQOPkdtDAEtI0FAnfMCdM9StIUwLto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=POqrcbhW; arc=none smtp.client-ip=220.197.31.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 140c6eaec;
+	Tue, 6 May 2025 10:57:22 +0800 (GMT+08:00)
+From: Kever Yang <kever.yang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Rob Herring <robh@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jamie Iles <jamie@jamieiles.com>,
+	linux-watchdog@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH v5 1/6] dt-bindings: watchdog: Add rk3562 compatible
+Date: Tue,  6 May 2025 10:57:10 +0800
+Message-Id: <20250506025715.33595-2-kever.yang@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250506025715.33595-1-kever.yang@rock-chips.com>
+References: <20250506025715.33595-1-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 05/23] media: iris: Prevent HFI queue writes when core
- is in deinit state
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Hans
- Verkuil" <hverkuil@xs4all.nl>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <20250417-topic-sm8x50-iris-v10-v7-0-f020cb1d0e98@linaro.org>,
-        <20250424-qcs8300_iris-v5-0-f118f505c300@quicinc.com>,
-        <stable@vger.kernel.org>
-References: <20250502-qcom-iris-hevc-vp9-v3-0-552158a10a7d@quicinc.com>
- <20250502-qcom-iris-hevc-vp9-v3-5-552158a10a7d@quicinc.com>
- <250cdec3-1437-4c45-aab1-0428218b9437@linaro.org>
- <afd7c1c7-dade-4343-8e2f-1eea0e403c9c@oss.qualcomm.com>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <afd7c1c7-dade-4343-8e2f-1eea0e403c9c@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=L9cdQ/T8 c=1 sm=1 tr=0 ts=6819de7b cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
- a=G9j-nl7CaHHCvT6p390A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=zgiPjhLxNE0A:10
-X-Proofpoint-GUID: qz1itZ5mVduT5oRTuYApYoXaLwQoErqJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDA5NiBTYWx0ZWRfX+TR7AVFTgml6
- Kxu1si14wvtPftTfIFrdtUdFvgBhJZtcduN3rkePcH+HFyrB5KwdZouuI1PXn+3ptWtG9WP8eMf
- dqz/um1goWrIKoxK8RIKrKaks0BTw0jRQYNfPtiKGhH27coi8Xq5qopwGaAojDR34qWne3FWUVq
- wnEqcKUV2emnvIQ9tHu9cadDKq3pZPisvuBicEhre/2JXSBZVYKf8AyYvWuwMR+DOZ68oglC9YC
- nypkoOwsGhjBbEe6xlVAPekVuUjZZhiugTBD4xC5ahiQcdpD5lXikJvbeiHAoaa7XL8q65Ttny7
- k7s+jdCL8iHttBbD1aXq0C0s6gIZYCnpKuKx502UJ7H1Ef1Y237iZLXETYdNqLKUczmCQD2IhMT
- N+B4vVHgV2qIZJVuMzsbg4CmJkh3orinhS+H9kB9i4VqwwMvqceDlNa63e9fbIBQqqadAHY/
-X-Proofpoint-ORIG-GUID: qz1itZ5mVduT5oRTuYApYoXaLwQoErqJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_04,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 mlxlogscore=999 spamscore=0 suspectscore=0 impostorscore=0
- mlxscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 lowpriorityscore=0
- adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505060096
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQx8ZGFZKTUpMGExIQkxCGBpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a96a386ca9703afkunm140c6eaec
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mww6Dxw6ETJRCRE6Ij4jMD8e
+	DylPCklVSlVKTE9NTktLSU9IT0xLVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJS0tLNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=POqrcbhWPq/szZJhg5FtRNV3pU+U2EtZcabw4xkutZdrqY2EVN8+tAxVgIV8WfvIdK+G3YrIqKoFsJ8WYBc3Dhxq4sw/CZVQngIhJgHw/B8ZqwBqhC/v6Vapz3g6N5u7t0XuARFArD1RTUCDz3YHiXE5rgltCybZ8pTikKBnmZw=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=1taHNHL+bdAlejzIloZs57RLJBN6GLNLvJDGZdKJmkI=;
+	h=date:mime-version:subject:message-id:from;
 
+Add rockchip,rk3562-wdt for rk3562.
 
+Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+---
 
-On 5/2/2025 7:24 PM, Konrad Dybcio wrote:
-> On 5/2/25 2:22 PM, Bryan O'Donoghue wrote:
->> On 01/05/2025 20:13, Dikshita Agarwal wrote:
->>> -    if (core->state == IRIS_CORE_ERROR)
->>> +    if (core->state == IRIS_CORE_ERROR || core->state == IRIS_CORE_DEINIT)
->>>           return -EINVAL;
->>
->> Instead of checking for 2/3 of the states why not just check for the 1/3 ?
->>
->> enum iris_core_state {
->>         IRIS_CORE_DEINIT,
->>         IRIS_CORE_INIT,
->>         IRIS_CORE_ERROR,
->> };
->>
->> if (core->state != IRIS_CORE_INIT)
->>     return -EINVAL;
->>
->> Cleaner and more explicit - declaring the state you must be in, as opposed to a list of states you should not be in.
-> 
-> Being explicit in state machines helps maintainability - if we get
-> e.g. IRIS_CORE_LIGHT_SLEEP down the line, this could easily fail
-> 
-Agree, would prefer to keep the check as is
-if (core->state == IRIS_CORE_ERROR || core->state == IRIS_CORE_DEINIT)
+Changes in v5:
+- Collect review tag
 
-Thanks,
-Dikshita
+Changes in v4:
+- Collect ack tag
 
-> Konrad
+Changes in v3:
+- Collect reveiw tag
+
+Changes in v2: None
+
+ Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+index 1efefd741c06..ef088e0f6917 100644
+--- a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+@@ -28,6 +28,7 @@ properties:
+               - rockchip,rk3328-wdt
+               - rockchip,rk3368-wdt
+               - rockchip,rk3399-wdt
++              - rockchip,rk3562-wdt
+               - rockchip,rk3568-wdt
+               - rockchip,rk3576-wdt
+               - rockchip,rk3588-wdt
+-- 
+2.25.1
+
 
