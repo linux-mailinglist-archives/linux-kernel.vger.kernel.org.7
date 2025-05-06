@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-635079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C89FAAB89E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42E6AAB8AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5B31C41E49
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:31:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EC0189DB30
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0241F542A;
-	Tue,  6 May 2025 04:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A641828C847;
+	Tue,  6 May 2025 04:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZ0iIMLx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6G1mz5x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0FC336B6F;
-	Tue,  6 May 2025 02:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAE22F6B33;
+	Tue,  6 May 2025 02:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498167; cv=none; b=rex4+o6Moagw+AySRxKHmmU1ajbvUKW2yCNK6VXtDOZfVU+IpDbxYdGTSSPB99YaQpBuuBgd6P45K+fP64MknLhscWdqmtsjWEeBfIXqdAuTbdQMqo7RLKo3x0tsw2U1l5z9aCDNfTdyrRmlXvrwNrTKhzP1uL6FgykNjIZebNw=
+	t=1746498173; cv=none; b=IPkxMWBprMRvMrH4xH4WEEIiPuCeYtXhpwfiow0D6fMP65K0uleM/9gBGx9JO2uG9j0K+9IvX8jlCHszWgAQbjKmx/wEXZwd1fJZf1lGrcxqi2WzI8y99kjaKPn8uDzfNfSyfGYfose8PKI2RDh4spPrGbsl+tpvxqB92Z8E87Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498167; c=relaxed/simple;
-	bh=YtU3XhtrGdmElcr5Xcinm5PmM5Cdi+2rz477+giBWBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AmEkYdeyaC/YdjVmdRCTZhlastvWTwPotog9kxdsKaaW6StrP0WwdBwgKfFqRS6iswH+B2g6ULIPse+n1nnZTy50PQOZgrN1sNHWnh3mlyLjdTKMBH7dcsCw1Ju60QzDMPZ7vSIZ610qZs924wsB45CdMwAFlr74sko00/W4Vm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZ0iIMLx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E30C4CEE4;
-	Tue,  6 May 2025 02:22:47 +0000 (UTC)
+	s=arc-20240116; t=1746498173; c=relaxed/simple;
+	bh=OVS58OrZMlpnGd1U59nNCwXNQd1FABRJ80V4eflMctI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s7AH9W6jFMh9xbhJtTMDIIoS9OTYkdvd70OLYFT7uxwpCa+mzzt7gJplRqy65mBJ0gtKxRI2oUJXLf8rN0EclWsVQgWK42TakmDQ6gA3GiNYhduFPDdnY0zAxSbQXCdFihoyX3jLNYmluPGvREHk3Jr3KZ5E9U20lNYQ7K6MpXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6G1mz5x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB00C4CEE4;
+	Tue,  6 May 2025 02:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746498167;
-	bh=YtU3XhtrGdmElcr5Xcinm5PmM5Cdi+2rz477+giBWBk=;
+	s=k20201202; t=1746498172;
+	bh=OVS58OrZMlpnGd1U59nNCwXNQd1FABRJ80V4eflMctI=;
 	h=From:To:Cc:Subject:Date:From;
-	b=QZ0iIMLxwv4A5naKrIqerjqtlib7aHiGzl3zD5ojpJQlThm9ZpvvMhY5eoo6bsIOt
-	 JjwDju2PEFHRqY9gHy0sWajHkDMhR4mGVjwJL5lKH7BiIVy1xbkWuMwgvzOnZ6dCNq
-	 EQHHXJqGvkobVIoC7HsX06uPUe4fjEPsrjdB+eY5xHSq8eJftxrPBvarAqezSJzXFW
-	 0sMX+aFdkaRwFRfmaDOYuygohWlLNmtLZvAp0QDYgUkNjHnbkTQLMJRjhhS00Ny9+0
-	 HOaig3EU+A7SoGvgFr895b0s/VE/MKri+D63DAYW4ZohPU3Zb+MUUSegHrVyF2gFNS
-	 /TFGOiJ/3YNFg==
+	b=A6G1mz5xnknNExr1GswC1HdJWSkyYAXcnd9U4UGIlnD2RXJ6RKvBSbunoWGBL36TQ
+	 GCVY2qcok7w7fiVxFyI+lkfMDQOM82v5uRmm3Z3Z9oYgQLRq9Atx5H6ySiKhcMmjuK
+	 s28mH4MH1R1Jrd5dXMBIrf40ucMrru+SL1AdhqWnAzEg3P7zQ4Jsib4+KbOT43Safo
+	 hCV4CQX2sxI3mj2IW0PZKxEw/uf5SA7kQE7JOOdiWRoSUF2Eg0TOcXP2YjH8aZ5Me7
+	 RVIjmDJpBvygdbyhcBiv7ZkP+gsiWxqy85/E3FBCJxwbI4RP9iFvgod4ocHOCoyJx7
+	 Ot7wwq6ntKTyw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Ezequiel Garcia <ezequiel.garcia@imgtec.com>
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: timer: Convert fsl,gtm to DT schema
-Date: Mon,  5 May 2025 21:22:43 -0500
-Message-ID: <20250506022245.2587662-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: timer: Convert img,pistachio-gptimer to DT schema
+Date: Mon,  5 May 2025 21:22:48 -0500
+Message-ID: <20250506022249.2587839-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,115 +59,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the Freescale General Purpose Timer binding to DT schema format.
-Add the specific compatibles in use. Drop the "fsl,cpm2-gtm" compatible
-which is not used. The examples are all similar, so just leave 1
-example.
+Convert the ImgTec Pistachio Timer binding to DT schema format. It's a
+straight-forward conversion.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../devicetree/bindings/timer/fsl,gtm.txt     | 30 ----------
- .../devicetree/bindings/timer/fsl,gtm.yaml    | 55 +++++++++++++++++++
- 2 files changed, 55 insertions(+), 30 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/fsl,gtm.txt
- create mode 100644 Documentation/devicetree/bindings/timer/fsl,gtm.yaml
+ .../bindings/timer/img,pistachio-gptimer.txt  | 28 --------
+ .../bindings/timer/img,pistachio-gptimer.yaml | 69 +++++++++++++++++++
+ 2 files changed, 69 insertions(+), 28 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/timer/img,pistachio-gptimer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/img,pistachio-gptimer.yaml
 
-diff --git a/Documentation/devicetree/bindings/timer/fsl,gtm.txt b/Documentation/devicetree/bindings/timer/fsl,gtm.txt
+diff --git a/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.txt b/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.txt
 deleted file mode 100644
-index fc1c571f7412..000000000000
---- a/Documentation/devicetree/bindings/timer/fsl,gtm.txt
+index 7afce80bf6a0..000000000000
+--- a/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.txt
 +++ /dev/null
-@@ -1,30 +0,0 @@
--* Freescale General-purpose Timers Module
+@@ -1,28 +0,0 @@
+-* Pistachio general-purpose timer based clocksource
 -
 -Required properties:
--  - compatible : should be
--    "fsl,<chip>-gtm", "fsl,gtm" for SOC GTMs
--    "fsl,<chip>-qe-gtm", "fsl,qe-gtm", "fsl,gtm" for QE GTMs
--    "fsl,<chip>-cpm2-gtm", "fsl,cpm2-gtm", "fsl,gtm" for CPM2 GTMs
--  - reg : should contain gtm registers location and length (0x40).
--  - interrupts : should contain four interrupts.
--  - clock-frequency : specifies the frequency driving the timer.
+- - compatible: "img,pistachio-gptimer".
+- - reg: Address range of the timer registers.
+- - interrupts: An interrupt for each of the four timers
+- - clocks: Should contain a clock specifier for each entry in clock-names
+- - clock-names: Should contain the following entries:
+-                "sys", interface clock
+-                "slow", slow counter clock
+-                "fast", fast counter clock
+- - img,cr-periph: Must contain a phandle to the peripheral control
+-		  syscon node.
 -
 -Example:
--
--timer@500 {
--	compatible = "fsl,mpc8360-gtm", "fsl,gtm";
--	reg = <0x500 0x40>;
--	interrupts = <90 8 78 8 84 8 72 8>;
--	interrupt-parent = <&ipic>;
--	/* filled by u-boot */
--	clock-frequency = <0>;
--};
--
--timer@440 {
--	compatible = "fsl,mpc8360-qe-gtm", "fsl,qe-gtm", "fsl,gtm";
--	reg = <0x440 0x40>;
--	interrupts = <12 13 14 15>;
--	interrupt-parent = <&qeic>;
--	/* filled by u-boot */
--	clock-frequency = <0>;
--};
-diff --git a/Documentation/devicetree/bindings/timer/fsl,gtm.yaml b/Documentation/devicetree/bindings/timer/fsl,gtm.yaml
+-	timer: timer@18102000 {
+-		compatible = "img,pistachio-gptimer";
+-		reg = <0x18102000 0x100>;
+-		interrupts = <GIC_SHARED 60 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SHARED 61 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SHARED 62 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SHARED 63 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&clk_periph PERIPH_CLK_COUNTER_FAST>,
+-		         <&clk_periph PERIPH_CLK_COUNTER_SLOW>,
+-			 <&cr_periph SYS_CLK_TIMER>;
+-		clock-names = "fast", "slow", "sys";
+-		img,cr-periph = <&cr_periph>;
+-	};
+diff --git a/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.yaml b/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.yaml
 new file mode 100644
-index 000000000000..31d8534ac868
+index 000000000000..a8654bcf68a9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/fsl,gtm.yaml
-@@ -0,0 +1,55 @@
++++ b/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.yaml
+@@ -0,0 +1,69 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/timer/fsl,gtm.yaml#
++$id: http://devicetree.org/schemas/img,pistachio-gptimer.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Freescale General-purpose Timers Module
++title: Pistachio general-purpose timer
 +
 +maintainers:
-+  - Rob Herring <robh@kernel.org>
++  - Ezequiel Garcia <ezequiel.garcia@imgtec.com>
 +
 +properties:
 +  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - fsl,mpc8308-gtm
-+              - fsl,mpc8313-gtm
-+              - fsl,mpc8315-gtm
-+          - const: fsl,gtm
-+      - items:
-+          - enum:
-+              - fsl,mpc8569-qe-gtm
-+              - fsl,mpc8360-qe-gtm
-+          - const: fsl,qe-gtm
-+          - const: fsl,gtm
++    const: img,pistachio-gptimer
 +
 +  reg:
 +    maxItems: 1
 +
 +  interrupts:
-+    maxItems: 4
-+    description:
-+      One interrupt for each timer
++    items:
++      - description: Timer0 interrupt
++      - description: Timer1 interrupt
++      - description: Timer2 interrupt
++      - description: Timer3 interrupt
 +
-+  clock-frequency:
-+    description: Specifies the frequency driving the timer.
-+    default: 0
++  clocks:
++    items:
++      - description: Fast counter clock
++      - description: Slow counter clock
++      - description: Interface clock
++
++  clock-names:
++    items:
++      - const: fast
++      - const: slow
++      - const: sys
++
++  img,cr-periph:
++    description: Peripheral control syscon phandle
++    $ref: /schemas/types.yaml#/definitions/phandle
 +
 +required:
 +  - compatible
 +  - reg
 +  - interrupts
-+  - clock-frequency
++  - clocks
++  - clock-names
++  - img,cr-periph
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    timer@440 {
-+        compatible = "fsl,mpc8360-qe-gtm", "fsl,qe-gtm", "fsl,gtm";
-+        reg = <0x440 0x40>;
-+        interrupts = <12>, <13>, <14>, <15>;
-+        clock-frequency = <0>;
++    #include <dt-bindings/interrupt-controller/mips-gic.h>
++    #include <dt-bindings/clock/pistachio-clk.h>
++
++    timer@18102000 {
++        compatible = "img,pistachio-gptimer";
++        reg = <0x18102000 0x100>;
++        interrupts = <GIC_SHARED 60 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SHARED 61 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SHARED 62 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SHARED 63 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clk_periph PERIPH_CLK_COUNTER_FAST>,
++                 <&clk_periph PERIPH_CLK_COUNTER_SLOW>,
++                 <&cr_periph SYS_CLK_TIMER>;
++        clock-names = "fast", "slow", "sys";
++        img,cr-periph = <&cr_periph>;
 +    };
 -- 
 2.47.2
