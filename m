@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-635064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265C8AAB857
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B62AAB841
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0A69174C7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:30:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18EA316209B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EC728C2A9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027D5288C8E;
 	Tue,  6 May 2025 04:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="LGeMnYHh"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZe1fasu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A073828A73C;
-	Tue,  6 May 2025 02:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC25300292;
+	Tue,  6 May 2025 02:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498136; cv=none; b=ILoPmZuKX/haSKWA7kUyFYguI5xfCe86jUGaiBDrQSr9rXYfqP3APmuTyXKZ3hu6eNwaG1TNU9Yb6sQJnei+TTRAYIoveNf6h/O1+TsigP2mhTDdlapnXOz/uS7qka3kR6L/M2QPFkUDXnyI0eFtli2+Bb/93pKsnuZg5by2xIE=
+	t=1746498133; cv=none; b=ejm6PwMNqNTZ7y4B2x96wMqBBh2Z67H56Kb6lu05eAyFEsHMRASiXnAH5NDV9dFvD+JayXnmmeLRFvuiZGb5+2cjDrCJ73B+kD+kbD5+IJ0+Pt2bddgAMz0yPHv52pOyCS+t42XZ1iNfWzX5SnYILzh3nsjPYDo5pXuAjwu5DwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498136; c=relaxed/simple;
-	bh=RzobY4XVcgkDJ0doe1YwuuhTaZEvjGgriYp4dbdw2KY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=un8hYaRZnsyY19BwtfOzTlOdLj12b2eyXtf6CnMkv8p8PwIfdUEnIPYh2abteasoECbULiCLVNX3NyjN7iNPfTsmcGvxl5eKPsb9UJ4rIKPZ9pzbukyKwqYhI5DRbDiYOAsAvIee427YrIDxNkWPbx8mIg3NmH9DXO74TZNVGc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=LGeMnYHh; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id CDEBD257FC;
-	Tue,  6 May 2025 04:22:05 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 4JOhvh70GMPC; Tue,  6 May 2025 04:22:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746498124; bh=RzobY4XVcgkDJ0doe1YwuuhTaZEvjGgriYp4dbdw2KY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LGeMnYHh13eXvQTo6b7jVRLViK27EHHbt6IGVuHYYHpsIFoAkHvSmHGbngDO7cfAz
-	 wAsobVQPuGvv4+GR4WyjeK9NNLXQMp4Ov1vGVlIpk4dtb2liJA3MXhc38OlFxaMU9j
-	 oAEUu46pPkg24ZfAdG7sMr8L4CLSgOzPjJMjKhDWKB7y4JjZiJopx5LtZLzPHqWnDT
-	 UDaPlS9B27kMd8W9tEo0PLmUBQtLqFyGDJ7dtc2EY/YdGr9pzXMluLcTsHdPUw8yCk
-	 xArCj1nQZ7LzlKsbwlRfcStwfM25FiVr7y5bIMV+7hpL7JRqgXEHbYIub5rU9vq1lj
-	 C51EJbsxNlGmg==
-Date: Tue, 6 May 2025 02:21:48 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1746498133; c=relaxed/simple;
+	bh=RiJq8QEBNv4xAQ1Xr1EM5XwHlybZfqBM4JI17uR/log=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NIg66kVO6/ojyhLJ1l//8TlPOJ3MXsjoTXm7sza2MpyYMWhsW49sZd4npIshIYpqEUk0AeQDzR+qb4DfEo9c3VvaFXccXh7EmfQpoDS8ulTjhASkImprdmXnbUR8p8IIIXZtFZRwca38sJ1nTNw6a+eywZ9VRpfaSNWkmrQ+iRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZe1fasu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25543C4CEE4;
+	Tue,  6 May 2025 02:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746498129;
+	bh=RiJq8QEBNv4xAQ1Xr1EM5XwHlybZfqBM4JI17uR/log=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EZe1fasuCnW8lOPKSir4NGHK6ZGkRUMnfzRC+6wHK1fgHBHo4kHGMkWcSFe/Vvs9o
+	 pEOtE7PGEx1s89TIOnHwRG+0jh8ejKQU9PX8ieIedxuJUOo3ktpf/T/QuwT0r2PmpO
+	 vwxk8gPzRWXMMTUovqPtp7OrJHaNtx7wQlAWsHX6cVpQxzsXs92GIgd9issCCWeSoG
+	 C7orTRy6cIqoXg3wJyEct4xvn/CnBn5OYIlNKMcYXqhPSaqq3Pfb1HzcelRhvJg0ed
+	 q/n38dQTZfWg1a4T2jBkFmizbRrBai97uvh2WUgpgaIVfX8DTGDgFmWaDYbJy5jLDA
+	 SXFkQmyDc1LGQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject: Re: [PATCH v4 2/5] clk: rockchip: Support MMC clocks in GRF region
-Message-ID: <aBlyPL_1TFh9lNr3@pie.lan>
-References: <20250417143647.43860-1-ziyao@disroot.org>
- <20250417143647.43860-3-ziyao@disroot.org>
- <2737556.Isy0gbHreE@diego>
+	Dinh Nguyen <dinguyen@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: timer: Convert altr,timer-1.0 to DT schema
+Date: Mon,  5 May 2025 21:22:01 -0500
+Message-ID: <20250506022202.2586157-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2737556.Isy0gbHreE@diego>
 
-On Mon, May 05, 2025 at 11:39:05PM +0200, Heiko Stübner wrote:
-> Hi,
-> 
-> Am Donnerstag, 17. April 2025, 16:36:44 Mitteleuropäische Sommerzeit schrieb Yao Zi:
-> > Registers of MMC drive/sample clocks in Rockchip RV1106 and RK3528
-> > locate in GRF regions. Adjust MMC clock code to support register
-> > operations through regmap. Also add a helper to ease registration of GRF
-> > clocks.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> 
-> > diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> > index cbf93ea119a9..ce2f3323d84e 100644
-> > --- a/drivers/clk/rockchip/clk.c
-> > +++ b/drivers/clk/rockchip/clk.c
-> > @@ -590,6 +590,7 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
-> >  				list->name,
-> >  				list->parent_names, list->num_parents,
-> >  				ctx->reg_base + list->muxdiv_offset,
-> > +				NULL, 0,
-> >  				list->div_shift
-> >  			);
-> >  			break;
-> > @@ -619,6 +620,11 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
-> >  			break;
-> >  		case branch_linked_gate:
-> >  			/* must be registered late, fall-through for error message */
-> > +		case branch_mmc_grf:
-> > +			/*
-> > +			 * must be registered through rockchip_clk_register_grf_branches,
-> > +			 * fall-through for error message
-> > +			 */
-> >  			break;
-> 
-> please don't create separate structures for specific clock-types.
-> Being able to "just define" clock branches is helpful and starting
-> to require separate blocks just causes issues down the road.
-> 
-> For handling multiple GRF sources, I just merged Nicolas' patches for
-> handling auxiliary GRFs [0] and GRF-gate clock type [1] .
+Convert the Altera Timer binding to DT schema format. It's a
+straight-forward conversion.
 
-Thanks for the hint, it does look like a better style which I'll adapt
-in the next version.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/timer/altr,timer-1.0.txt         | 18 ---------
+ .../bindings/timer/altr,timer-1.0.yaml        | 39 +++++++++++++++++++
+ 2 files changed, 39 insertions(+), 18 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/timer/altr,timer-1.0.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/altr,timer-1.0.yaml
 
-> So ideally, please base off from there.
-> 
-> Thanks a lot
-> Heiko
-> 
+diff --git a/Documentation/devicetree/bindings/timer/altr,timer-1.0.txt b/Documentation/devicetree/bindings/timer/altr,timer-1.0.txt
+deleted file mode 100644
+index e698e3488735..000000000000
+--- a/Documentation/devicetree/bindings/timer/altr,timer-1.0.txt
++++ /dev/null
+@@ -1,18 +0,0 @@
+-Altera Timer
+-
+-Required properties:
+-
+-- compatible : should be "altr,timer-1.0"
+-- reg : Specifies base physical address and size of the registers.
+-- interrupts : Should contain the timer interrupt number
+-- clock-frequency : The frequency of the clock that drives the counter, in Hz.
+-
+-Example:
+-
+-timer {
+-	compatible = "altr,timer-1.0";
+-	reg = <0x00400000 0x00000020>;
+-	interrupt-parent = <&cpu>;
+-	interrupts = <11>;
+-	clock-frequency = <125000000>;
+-};
+diff --git a/Documentation/devicetree/bindings/timer/altr,timer-1.0.yaml b/Documentation/devicetree/bindings/timer/altr,timer-1.0.yaml
+new file mode 100644
+index 000000000000..576260c72d42
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/altr,timer-1.0.yaml
+@@ -0,0 +1,39 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/altr,timer-1.0.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Altera Timer
++
++maintainers:
++  - Dinh Nguyen <dinguyen@kernel.org>
++
++properties:
++  compatible:
++    const: altr,timer-1.0
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clock-frequency:
++    description: Frequency of the clock that drives the counter, in Hz.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    timer@400000 {
++        compatible = "altr,timer-1.0";
++        reg = <0x00400000 0x00000020>;
++        interrupts = <11>;
++        clock-frequency = <125000000>;
++    };
+-- 
+2.47.2
 
-Regards,
-Yao Zi
-
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?id=70a114daf2077472e58b3cac23ba8998e35352f4
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?id=e277168cabe9fd99e647f5dad0bc846d5d6b0093
-> 
-> 
 
