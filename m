@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-635971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBECAAC466
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:41:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61207AAC46F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72AFC521F95
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:41:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F593ACA1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CDA27FB20;
-	Tue,  6 May 2025 12:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QKSOfD4B"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F030C27FB1D;
+	Tue,  6 May 2025 12:42:26 +0000 (UTC)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8669D27A478;
-	Tue,  6 May 2025 12:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6542527F198;
+	Tue,  6 May 2025 12:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746535270; cv=none; b=qVDacWzz2gCOFNLSoyM4ruEDw24kAySX4pJCm7SmkrNVdeQqvxNh66KGVA5IibmOxBbnBMzR7sttGQpJNAuD/vz7lp0BCmG3SnG19HshXkzBgllMLiPBBuaZFMkMq7167L3SY6e2fxlGe04oyLc79oWlFd9N2j1SfxSFvLgBwA4=
+	t=1746535346; cv=none; b=HMxPzL6D2TPjciXqHmbsSfOPFg2gi9yxDXtWSkFhujn6q272eNJa6YJD7fOkwDURVbkqKcpUkEfMIUCOOOXVWIbtXEew5Q9ujm9y6jYO8rYa9KnnhROxL+LHl7cAtmXklVRGGMGAPrUZH3J+TJceVjnUIx0dstUVIXceUqvboqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746535270; c=relaxed/simple;
-	bh=fKAjeUu7aJ2cAoUuZNbRM4pTCnVbVDOkQZPM/+G+pdE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=XluRxXYjiGJmxKmFQCpM4vgtWyqK/Qo8N+KqH972pH85zthIco1zv+BUjAssbgw8O95JJKpA6UNFtatUc5vq0ETZqOBIsokq09VZBRhKhsATiR8QjaXWpvhos+tzy5HRgxAbgS188VorUmHU7JKoApUMHMr4gPiaBae7LBZdA2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QKSOfD4B; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AD73B43B04;
-	Tue,  6 May 2025 12:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746535264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0sqKVcBEt6pQmMwRIYYIzEuUV/01lrMK0Zw8BI9CN/k=;
-	b=QKSOfD4BfheMezgztCkjPf4/2L/rXlXNBI6VznfgOptD6RjikLqYOqRBLdlu4UdwlUw+uA
-	YQWgQh5Mb8hGO8Qlod4DrEOyTSzUmPPk7YATMA7PvL/Yg9n/RCE01u/1vCdFqx4Yhx3VHl
-	8PLnIt645r6+EF3G2mGcERTp89/Mq0vKccIh09vNzcC12JQTNKh1fN4ZgXTUvMdqYfqS8n
-	+ILvwpmYyLZxipsa8SADLUYEPNZBqBZa6gaIRLBCik/BSZjvfxvvaeGA91PFBUIDsKoyRi
-	d/7uHyDA76WT2xZ524HjSpFIDI1uTldbpg2zGODJ03l3qv3Pu1lWtA3D61Q0Rw==
+	s=arc-20240116; t=1746535346; c=relaxed/simple;
+	bh=HU9EGDp322J7O4wXqzbIkr8Ft6u6cjgXLOxMbhO4bvY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o7kjhq5xbbsAgCfgs6C11joNkaZ3g1+EmVNaPx+He0DGGyXIfsTfMGl7iyAlPjZ2w2oJJKzU20SZmX0/xdAEEiuvVSfKrsZP4zTADd2t8mzDVnC/oNQtbNigpgFxCLFHkEeWD/JhfaFKcQWO+PxSJLUd3Wgyyz0Hukz1lm50HGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4c32190386eso4674646137.1;
+        Tue, 06 May 2025 05:42:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746535342; x=1747140142;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5KktmeAFh0iInvvBLcrYESanNohFTS/OHe3yXdSHV54=;
+        b=YGVeKVo8QXHEp7pP+/9+9JJzBfx+E54msuRN3o1soeW+P2lkdWSSCo2wn27Emh+JoI
+         vW6dkCJqFAsOvwGIfQnoxRCuZQS5UqxY/9EW2sN45ddfJF/9yE09mKK8asjJQO8yXVQf
+         ZMeGM0SGQ273YJUUy3FKK3aEHhEdnchMmBJtP++PwLTdjVNvK1Qp1hgmPsG+ZMxoketi
+         IZ7CR3Yeg/adRL3SRmMdT/MGiefSmOzX7SHeuh2qsRiStrPynyNWwHwHDwfiO+mfhZaO
+         pKGC49gn0VDCAjV8trpJ1a7RgJ6IaqoRwOXyUcMk+DaYzt4rZdubO03LEdBD47uXZH5e
+         Ch9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVJxcRx7hTC5P6GLlkVOVc8RZp2T81hhxtnrbxe9lSm3JzBDHP6MESVemr/EHBDgTCiozrjwe1KRIP1x1s=@vger.kernel.org, AJvYcCVir0BpKW2se6WJva3Ovd8ni1++jAgVo/4dDYsbRNYT/QQ9Z34c+1iEcvYwcm/k+e59ZUfwImdVwc9wMB8iygZ0Mc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS1lOHS/hD0ANt4qJRoQFrm3cAlLoXRUXAA4P1h3oLqgMh52yX
+	OuLyTy13wCTjPRJKCg33+q3ZEBvs1PM2HxXiDnehSwKJYbKXH9ONNaTdwfxR
+X-Gm-Gg: ASbGnctnkt8BRpOrDCFGgcrWmal6nSJCMneC66NF324lr9BHvFObJ9Fly+5mPbBNiJx
+	qh8maxOIdnR7mj6yIXXjKrdwqKG46quEmUaQU665aOy+cLnR+MD13d0DRlStEbLJlWpHxqB0GXL
+	TFspskjWTuOXrIlq+w5SFVpIRpWaOfXrAfjnmF17dMLueEhdT+xPci9z1Ow+ZWtw/9bldyK24BS
+	2dJEFwEX2TRgRA9VvePd5AXdJMhkmrv2K61x3eVcCSxnFZzgOUJzVoM5+oSIvU/LfHS4cdXsRN/
+	yrzOZ5ITOYppIYoe9zb721o+eefzwc6m/IZdo+VyWdt8Aw1xqCzuAkqrPD/HvJn4yPVU96qbwdq
+	YE836BgiphjDJXmzKiA==
+X-Google-Smtp-Source: AGHT+IEa1NpEOt1JGhC9oLcld+t2aLwJFMEXOyDxhX+GCs4A+AA5T6pMxd1dNAURlhWxMzxYuUfYrA==
+X-Received: by 2002:a05:6102:91c:b0:4bd:39c7:804d with SMTP id ada2fe7eead31-4dc628034e8mr1995725137.0.1746535342250;
+        Tue, 06 May 2025 05:42:22 -0700 (PDT)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4daf2671776sm1734251137.26.2025.05.06.05.42.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 05:42:21 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5240a432462so3559356e0c.1;
+        Tue, 06 May 2025 05:42:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWplitGPHteppr8mYggyU6PDWi8qU3CQlsgDZzxeQY30RxvUZgjwELr8jX9XOL/pk6KbB+W23ObtPFFnnzK36eH5c=@vger.kernel.org, AJvYcCWukJbmqZRnD3RKvj148zqKxG7nuZP9SHlMIfBAQoZgYJmFb+byHDWef31pA69/BxeF9OOqvPnP4UabULE=@vger.kernel.org
+X-Received: by 2002:a05:6122:3663:b0:521:b3ee:4970 with SMTP id
+ 71dfb90a1353d-52b2637e2edmr1645488e0c.2.1746535340941; Tue, 06 May 2025
+ 05:42:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 06 May 2025 14:41:03 +0200
-Message-Id: <D9P32VIGJX5V.1VV0F5MZ17QDW@bootlin.com>
-To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Andy Shevchenko"
- <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH v7 09/11] input: keyboard: Add support for MAX7360
- keypad
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com>
- <20250428-mdb-max7360-support-v7-9-4e0608d0a7ff@bootlin.com>
- <aBSii0rHox72GM5Y@smile.fi.intel.com>
- <aggrss4doko5scdlmyzdsujkifryzuzqdnpkh6sd33rg5ibqmm@aiikzv732rkq>
-In-Reply-To: <aggrss4doko5scdlmyzdsujkifryzuzqdnpkh6sd33rg5ibqmm@aiikzv732rkq>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeegtdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvffuvefhofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeethfeiheehheegheekueeigfekffdvheegfeeivefgkeeftdehhfdthfehueejfeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgth
- hgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhg
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+References: <20250506104731.111876-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <3a11ba8a-a9f4-4829-8bcd-56f1702bee8f@linaro.org>
+In-Reply-To: <3a11ba8a-a9f4-4829-8bcd-56f1702bee8f@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 May 2025 14:42:08 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWmvHZPwppQR5OxB7QB9NOWxRWoVkiMFS-6ScdYw=ywTg@mail.gmail.com>
+X-Gm-Features: ATxdqUHw7Q2NW_6-Xmvb7jxJeESiwPHSgjGO1YW2JZ65Esp2QlMbSSehpB67yV4
+Message-ID: <CAMuHMdWmvHZPwppQR5OxB7QB9NOWxRWoVkiMFS-6ScdYw=ywTg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Build STMMAC Ethernet driver into the
+ kernel for NFS boot
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Prabhakar <prabhakar.csengg@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue May 6, 2025 at 7:14 AM CEST, Dmitry Torokhov wrote:
-> On Fri, May 02, 2025 at 01:46:35PM +0300, Andy Shevchenko wrote:
->> On Mon, Apr 28, 2025 at 01:57:27PM +0200, Mathieu Dubois-Briand wrote:
->> > +	error =3D matrix_keypad_build_keymap(&keymap_data, NULL,
->> > +					   max7360_keypad->rows, max7360_keypad->cols,
->> > +					   max7360_keypad->keycodes, max7360_keypad->input);
->> > +
->> > +	return error;
->>=20
->> 	return matrix_...(...);
+Hi Krzysztof,
+
+CC arnd
+
+On Tue, 6 May 2025 at 12:52, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 06/05/2025 12:47, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Enable `CONFIG_STMMAC_ETH` as built-in (`y`) instead of a module (`m`) to
+> > ensure the Ethernet driver is available early in the boot process. This
+> > is necessary for platforms mounting the root filesystem via NFS, as the
+> > driver must be available before the root filesystem is accessed.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Because that function has multiple failure points please
+> Same comments as for previous patches like this (even the same?): you
+> are supposed to use initramfs for your arm74 boards. Even armv7 boards
+> use initramfs, so network driver does not have to be built in.
+
+Are we? When has that policy changed? Why are lots of network drivers
+still built-in?  Making network drivers built-in for systems where
+development is done using nfsroot has always been acceptable for the
+arm64 defconfig before.  For things not critical for booting, modular
+is indeed the preferred way.
+
+arm64/defconfig is for development and testing, not for production
+(which famous kernel developer said that before?)
+
+> For example all of our setups use it thus we do not have to populate all
+> other vendors with our own drivers.
 >
-> 	if (error)
-> 		return error; // or return dev_err_probe()
->
-> 	return 0;
->
-> Thanks.
+> Sorry, but I am strongly against such change. Kernel is already way too
 
+The kernel will grow without this (it will just take a few more weeks ;-),
+so that is IMHO not a good argument.
 
-Noted, I will change this.
+> big and with KASAN it does not fit to boot partitions in some of the
+> devices (and I cannot change the boot partition size, at least not
+> without big effort).
 
-Thanks for your review.
-Mathieu
+arm64/defconfig does not have KASAN enabled?
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Nacked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Doh...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
