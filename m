@@ -1,200 +1,383 @@
-Return-Path: <linux-kernel+bounces-635097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA61AABA42
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097CFAAB97B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4413A1C5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E131416D1EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FF727FD7F;
-	Tue,  6 May 2025 04:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CA01FFC5C;
+	Tue,  6 May 2025 04:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KTjtg1OE"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wS5wZpD8"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB4E2D4B68
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 02:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA242DA104
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 02:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746499785; cv=none; b=Htp0evWft2Sp+wq3UOE0coaKtwJnncVEw3kjSPjZEHzmc8QiDnDyXJq4Wa1gX1uVgx7Sef1iGlZcnMr5cqu+znp9BxuWjuJG5xqZ/67qyIfUqfaV6DCGvfxgNI6x3wDFu7xWK8inBdJEOb7s3rYHeK6ARM7LMVuRNAnMqJ4jxIY=
+	t=1746499964; cv=none; b=qCXfvZqDFoozdqwRg+YpqZfNFFXego45pDTtY8YN2kiaxZ3HsRm47Ys9C7nTCa4crWVEx0SKtcorD2HWVJmGXftv12zIFDvG+UNQGgbPh3/K4YxmdqfnFql0XTpNyzJx/PVLl5Ff5cFBPVxO+WjrX35MeTR39CjattHPaUS6qb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746499785; c=relaxed/simple;
-	bh=BVcS6y/RkytdfYbg6aiFphNw4k53SlFmqyW2ahlf+8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ufzjUcwhQpmXQHR1LvyCzCXalyuGKVtx0hhD3hkCBN+cSVEcEvvKRUnP+nmxD4EaBTiByo/oJC0kfIErg22JTr/vm/VumJjyjOKUlAiDa0ApNtoXU28E7jkUoX3Nc03PKxd0HK/YQvLj7i7jcwRB83ja0QQlOYpsGEeYUUx9XA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KTjtg1OE; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736c1cf75e4so4599527b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 19:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1746499782; x=1747104582; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=q0+JSDpYT5BNX3k6gPTP+QpNOml9kj6YJgCfvY0JCRs=;
-        b=KTjtg1OEHaijcvjo+g0DgZpMEWvryOFq4uOnmLvDSZPE3l2KjSX2P4zaX2XVZosm+J
-         NyeEkECA21eh5/ct5hV+99+fu76Oymt6THZe40hSXSO9eYiCB6okRSEZjhNzUZr5TVt/
-         +ZllpcB7MgSLRdW0LAbb9J5lLI90bV2245AYY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746499782; x=1747104582;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0+JSDpYT5BNX3k6gPTP+QpNOml9kj6YJgCfvY0JCRs=;
-        b=nUkitu7d105rYO2bjDHNwviPy/LdkxRHSp7KDINVzVI9sZv4EeDwlC4G/v4KY4ZPr1
-         oh0LlKbwAFyPzq/YK7B35nhhaIjAEhQQ5W2t0sKeK4dkqCke9AB1RJR2a6JFicJAv1QF
-         KH96+8vDkflhy9XcFG1/K3TFO71Dj+5SoOv3D8UK3SlZBWzJK+UoxSbJEYSosc1BtGxK
-         ajMLjLr048F7u2DymYnKus9NaBLBOMeXQ+/VReoCk4ScJqgRUiLm4jy3IOarlkyRjPn1
-         ZRf2TZ6d/O0t/1gIRk6+2x5ouhCmzbBltmv9m+LLdDzpkzi7qma5Vz5Tjy70bRdlMj+k
-         f34Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVEe/aKNBI8HT4uu+T0OInlqftUes+/12NOB5Mk6dYb7g5cFqeMfVyPRV3F9AVhGL27Xpd0jmDiwTKe2co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN+/tTlFT2i89qb5IQMKfsiOiiSO06u+/a5aZiA6xArSeVSkfu
-	KfBu1YXRJaqq9wbTDhE0BRqPdZrzUUhNl14rbGtgQTyQaAQ7/tYxOVwQqV1NRg==
-X-Gm-Gg: ASbGncs/tKTWvfARypqL7Hbt4PjK0Q6KQGk2OexPEcYMEfN8Xl2w51pusEMmUm04Rdl
-	kbXxodVSriHvZIVYcRol/jDPRxtyh4I9lkGyImaAWPEmdmcKczyxzH/9WpiQfVkBZ9U+i2VeEnz
-	uPr0QcDt7xvPBl8Cx9OlFmKi8TrSR2QUpUBFb+CXHldCI24wJOD9i71eNFYKiqFUINYmhMSwKBm
-	sAtRmVZPQYthcUl3kwMNv4AiaLZUMP18fawsKBEVnuVuBH/K1o8nbXahb0zjwCXIW/O2kIP1s7L
-	tG6qTQOE/JUC2tprR77bDmo0X6LZIqrSrQ==
-X-Google-Smtp-Source: AGHT+IEEZ1PfoCNd1C1LjNnH37ZRF5k8qCVtLcVSMSDNAUIZcoEsuzle0aPuWxV/v0FJ4LrYSFQ+Ew==
-X-Received: by 2002:a05:6a20:2d2b:b0:1f5:619a:8f75 with SMTP id adf61e73a8af0-20e96108b51mr15452923637.2.1746499782489;
-        Mon, 05 May 2025 19:49:42 -0700 (PDT)
-Received: from google.com ([2401:fa00:1:10:d4bd:e7e5:608:dbd7])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fb3c6b6d8sm6384494a12.69.2025.05.05.19.49.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 19:49:42 -0700 (PDT)
-Date: Tue, 6 May 2025 10:49:37 +0800
-From: Sung-Chi Li <lschyi@chromium.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] hwmon: (cros_ec) register fans into thermal
- framework cooling devices
-Message-ID: <aBl4wcX889otz_ms@google.com>
-References: <20250502-cros_ec_fan-v2-0-4d588504a01f@chromium.org>
- <20250502-cros_ec_fan-v2-3-4d588504a01f@chromium.org>
- <b2432c5c-2589-4cfe-821f-47e5128af2d0@t-8ch.de>
+	s=arc-20240116; t=1746499964; c=relaxed/simple;
+	bh=N83Kro7Y2XtsKpOONGV1KN6BYEqm6Jl1PZg1n14gdU4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=szluutzQMJXPZ9P7adUurL2Gk5nWnvIpvGKadrlbO+Ki2T8D3ROxaZJ0cpjSRpJH5k00KhORFt5Nhx6fmRiBcur8lQQgetQNbpY7THlM+siPLJm1VJYnndvRaMZgiMRKZ8X24c9+73IZP6Rg8YXo3Ztl6oP0F0Vi8B5L03/Q3BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wS5wZpD8; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746499950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Bo3lIpRR00+ll9v2+aoNEhfA1Cz5vfi98qdkLpEWVVs=;
+	b=wS5wZpD8EktTtX8dwjpiSexQ44rV0fO47MZHFmcFikQRgV/wboV7lp2MMqRoSy6myQzvRz
+	WaEXRceB8tFDP9HH+eYr8sl//Vtk7OFysjm0jQd/CKFRS7x5qxqTrgZxUvJ56QggE6o9kq
+	hj9Ziaog5NC8DL/Ztoq6XgwBlvtrfd8=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: vger.kernel.org@web.codeaurora.org
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [RESEND PATCH bpf-next v4 1/2] bpf, sockmap: Introduce tracing capability for sockmap
+Date: Tue,  6 May 2025 10:51:24 +0800
+Message-ID: <20250506025131.136929-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b2432c5c-2589-4cfe-821f-47e5128af2d0@t-8ch.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, May 03, 2025 at 09:27:18AM +0200, Thomas Weißschuh wrote:
-> On 2025-05-02 13:34:47+0800, Sung-Chi Li via B4 Relay wrote:
-> > From: Sung-Chi Li <lschyi@chromium.org>
-> > 
-> > Register fans connected under EC as thermal cooling devices as well, so
-> > these fans can then work with the thermal framework.
-> > 
-> > During the driver probing phase, we will also try to register each fan
-> > as a thermal cooling device based on previous probe result (whether the
-> > there are fans connected on that channel, and whether EC supports fan
-> > control). The basic get max state, get current state, and set current
-> > state methods are then implemented as well.
-> > 
-> > Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-> > ---
-> >  Documentation/hwmon/cros_ec_hwmon.rst |  2 ++
-> >  drivers/hwmon/cros_ec_hwmon.c         | 66 +++++++++++++++++++++++++++++++++++
-> >  2 files changed, 68 insertions(+)
-> > 
-> > diff --git a/Documentation/hwmon/cros_ec_hwmon.rst b/Documentation/hwmon/cros_ec_hwmon.rst
-> > index 5b802be120438732529c3d25b1afa8b4ee353305..82c75bdaf912a116eaafa3149dc1252b3f7007d2 100644
-> > --- a/Documentation/hwmon/cros_ec_hwmon.rst
-> > +++ b/Documentation/hwmon/cros_ec_hwmon.rst
-> > @@ -27,3 +27,5 @@ Fan and temperature readings are supported. PWM fan control is also supported if
-> >  the EC also supports setting fan PWM values and fan mode. Note that EC will
-> >  switch fan control mode back to auto when suspended. This driver will restore
-> >  the fan state before suspended.
-> > +If a fan is controllable, this driver will register that fan as a cooling device
-> > +in the thermal framework as well.
-> > diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-> > index c5e42e2a03a0c8c68d3f8afbb2bb45b93a58b955..abfcf44fb7505189124e78c651b0eb1e0533b4e8 100644
-> > --- a/drivers/hwmon/cros_ec_hwmon.c
-> > +++ b/drivers/hwmon/cros_ec_hwmon.c
-> > @@ -13,6 +13,7 @@
-> >  #include <linux/platform_device.h>
-> >  #include <linux/platform_data/cros_ec_commands.h>
-> >  #include <linux/platform_data/cros_ec_proto.h>
-> > +#include <linux/thermal.h>
-> 
-> Needs a dependency on CONFIG_THERMAL.
-> 
+Sockmap has the same high-performance forwarding capability as XDP, but
+operates at Layer 7.
 
-I think adding the `if (!IS_ENABLED(CONFIG_THERMAL))` you suggested is
-sufficient, and turning on or off CONFIG_THERMAL both can compile, so I'll only
-add the guarding statement in the `cros_ec_hwmon_register_fan_cooling_devices`.
+Introduce tracing capability for sockmap, to trace the execution results
+of BPF programs without modifying the programs themselves, similar to
+the existing trace_xdp_redirect{_map}.
 
-> > +
-> > +	if (!priv->fan_control_supported)
-> > +		return;
-> > +
-> > +	for (i = 0; i < EC_FAN_SPEED_ENTRIES; i++) {
-> > +		if (!(priv->usable_fans & BIT(i)))
-> > +			continue;
-> > +
-> > +		cpriv = devm_kzalloc(dev, sizeof(*cpriv), GFP_KERNEL);
-> > +		if (!cpriv)
-> > +			return;
-> > +
-> > +		cpriv->hwmon_priv = priv;
-> > +		cpriv->index = i;
-> > +		devm_thermal_of_cooling_device_register(
-> > +			dev, NULL, devm_kasprintf(dev, GFP_KERNEL, "cros-ec-fan%zu", i), cpriv,
-> 
-> What happens for multiple/chained ECs? If both provide sensors the
-> thermal device names will collide.
-> 
+It is crucial for debugging sockmap programs, especially in production
+environments.
 
-How about changing the "cros-ec-fan%zu" to "%s-fan%zu", which prefixes the
-`dev_name()`? Here is an example from a device: cros-ec-hwmon.12.auto-fan0.
+Additionally, the new header file has to be added to bpf_trace.h to
+automatically generate tracepoints.
 
-> Error handling for devm_kasprintf() is missing.
-> 
+Test results:
+$ echo "1" > /sys/kernel/tracing/events/sockmap/enable
 
-Thank you for catching this, I will skip registering that device if the
-devm_kasprintf() fails.
+msg/skb:
+'''
+sockmap_redirect: sk=000000000ec02a93, netns=4026531840, inode=318, \
+family=2, protocol=6, prog_id=59, len=8192, type=msg, action=REDIRECT, \
+redirect_type=ingress
 
-> > +			&cros_ec_thermal_cooling_ops);
-> 
-> Error handling for devm_thermal_of_cooling_device_register() is missing.
-> 
+sockmap_redirect: sk=00000000d5d9c931, netns=4026531840, inode=64731, \
+family=2, protocol=6, prog_id=91, len=8221, type=skb, action=REDIRECT, \
+redirect_type=egress
 
-I think we should continue registering other fans, so maybe we add a warning
-here if the registration fails?
+sockmap_redirect: sk=00000000106fc281, netns=4026531840, inode=64729, \
+family=2, protocol=6, prog_id=94, len=8192, type=msg, action=PASS, \
+redirect_type=none
+'''
 
-> > +	}
-> > +}
-> > +
-> >  static int cros_ec_hwmon_probe(struct platform_device *pdev)
-> >  {
-> >  	struct device *dev = &pdev->dev;
-> > @@ -402,6 +467,7 @@ static int cros_ec_hwmon_probe(struct platform_device *pdev)
-> >  	cros_ec_hwmon_probe_fans(priv);
-> >  	priv->fan_control_supported =
-> >  		cros_ec_hwmon_probe_fan_control_supported(priv->cros_ec);
-> > +	cros_ec_hwmon_register_fan_cooling_devices(dev, priv);
-> >  
-> >  	hwmon_dev = devm_hwmon_device_register_with_info(dev, "cros_ec", priv,
-> >  							 &cros_ec_hwmon_chip_info, NULL);
-> > 
-> > -- 
-> > 2.49.0.906.g1f30a19c02-goog
-> > 
-> > 
+strparser:
+'''
+sockmap_strparser: sk=00000000f15fc1c8, netns=4026531840, inode=52396, \
+family=2, protocol=6, prog_id=143, in_len=1000, full_len=10
+'''
+
+Reviewed-by: Cong Wang <xiyou.wangcong@gmail.com>
+Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
+Suggested-by: Cong Wang <xiyou.wangcong@gmail.com>
+Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+
+---
+v3 -> v4: Resending this patch as v3 was incorrectly closed by Patchwork.
+          Additionally, carrying the Reviewed-by tag.
+v3: https://lore.kernel.org/all/20250414161153.14990-1-jiayuan.chen@linux.dev
+
+v1 -> v2: Print more valuable information as suggested by the maintainer.
+---
+ MAINTAINERS                    |   1 +
+ include/linux/bpf_trace.h      |   1 +
+ include/trace/events/sockmap.h | 158 +++++++++++++++++++++++++++++++++
+ net/core/skmsg.c               |   6 ++
+ 4 files changed, 166 insertions(+)
+ create mode 100644 include/trace/events/sockmap.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3cbf9ac0d83f..76d742b7fbd6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4429,6 +4429,7 @@ L:	netdev@vger.kernel.org
+ L:	bpf@vger.kernel.org
+ S:	Maintained
+ F:	include/linux/skmsg.h
++F:	include/trace/events/sockmap.h
+ F:	net/core/skmsg.c
+ F:	net/core/sock_map.c
+ F:	net/ipv4/tcp_bpf.c
+diff --git a/include/linux/bpf_trace.h b/include/linux/bpf_trace.h
+index ddf896abcfb6..d559be0a79c5 100644
+--- a/include/linux/bpf_trace.h
++++ b/include/linux/bpf_trace.h
+@@ -3,5 +3,6 @@
+ #define __LINUX_BPF_TRACE_H__
+ 
+ #include <trace/events/xdp.h>
++#include <trace/events/sockmap.h>
+ 
+ #endif /* __LINUX_BPF_TRACE_H__ */
+diff --git a/include/trace/events/sockmap.h b/include/trace/events/sockmap.h
+new file mode 100644
+index 000000000000..79784e8d5866
+--- /dev/null
++++ b/include/trace/events/sockmap.h
+@@ -0,0 +1,158 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM sockmap
++
++#if !defined(_TRACE_SOCKMAP_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_SOCKMAP_H
++
++#include <linux/tracepoint.h>
++#include <linux/bpf.h>
++#include <linux/skmsg.h>
++
++#ifndef __TRACE_SOCKMAP_HELPER_ONCE_ONLY
++#define __TRACE_SOCKMAP_HELPER_ONCE_ONLY
++
++enum sockmap_direct_type {
++	SOCKMAP_REDIR_NONE	= 0,
++	SOCKMAP_REDIR_INGRESS,
++	SOCKMAP_REDIR_EGRESS,
++};
++
++enum sockmap_data_type {
++	SOCKMAP_MSG		= 0,
++	SOCKMAP_SKB,
++};
++
++#endif /* end __TRACE_SOCKMAP_HELPER_ONCE_ONLY */
++
++TRACE_DEFINE_ENUM(SOCKMAP_MSG);
++TRACE_DEFINE_ENUM(SOCKMAP_SKB);
++TRACE_DEFINE_ENUM(SOCKMAP_REDIR_NONE);
++TRACE_DEFINE_ENUM(SOCKMAP_REDIR_INGRESS);
++TRACE_DEFINE_ENUM(SOCKMAP_REDIR_EGRESS);
++
++TRACE_DEFINE_ENUM(__SK_DROP);
++TRACE_DEFINE_ENUM(__SK_PASS);
++TRACE_DEFINE_ENUM(__SK_REDIRECT);
++TRACE_DEFINE_ENUM(__SK_NONE);
++
++#define show_redirect_type(x)					\
++	__print_symbolic(x,					\
++		{ SOCKMAP_REDIR_NONE,		"none" },	\
++		{ SOCKMAP_REDIR_INGRESS,	"ingress" },	\
++		{ SOCKMAP_REDIR_EGRESS,		"egress" })
++
++#define show_act(x)						\
++	__print_symbolic(x,					\
++		{ __SK_DROP,			"DROP" },	\
++		{ __SK_PASS,			"PASS" },	\
++		{ __SK_REDIRECT,		"REDIRECT" },	\
++		{ __SK_NONE,			"NONE" })
++
++#define show_data_type(x)					\
++	__print_symbolic(x,					\
++		{ SOCKMAP_MSG,			"msg" },	\
++		{ SOCKMAP_SKB,			"skb" })
++
++#define trace_sockmap_skmsg_redirect(sk, prog, msg, act)	\
++	trace_sockmap_redirect((sk), SOCKMAP_MSG, (prog),	\
++			       (msg)->sg.size, (act),		\
++			       sk_msg_to_ingress(msg))
++
++#define trace_sockmap_skb_redirect(sk, prog, skb, act)		\
++	trace_sockmap_redirect((sk), SOCKMAP_SKB, (prog),	\
++			       (skb)->len, (act),		\
++			       skb_bpf_ingress(skb))
++
++#define trace_sockmap_skb_strp_parse(sk, prog, skb, ret)	\
++	trace_sockmap_strparser((sk), (prog), (skb)->len, (ret))
++
++TRACE_EVENT(sockmap_redirect,
++
++	TP_PROTO(const struct sock *sk, enum sockmap_data_type type,
++		 const struct bpf_prog *prog, int len, int act,
++		 bool ingress),
++
++	TP_ARGS(sk, type, prog, len, act, ingress),
++
++	TP_STRUCT__entry(
++		__field(const void *, sk)
++		__field(unsigned long, ino)
++		__field(unsigned int, netns_ino)
++		__field(__u16, family)
++		__field(__u16, protocol)
++		__field(int, prog_id)
++		__field(int, len)
++		__field(int, act)
++		__field(enum sockmap_data_type, type)
++		__field(enum sockmap_direct_type, redir)
++	),
++
++	TP_fast_assign(
++		/* 'redir' is undefined if action is not REDIRECT */
++		enum sockmap_direct_type redir = SOCKMAP_REDIR_NONE;
++
++		if (act == __SK_REDIRECT) {
++			if (ingress)
++				redir = SOCKMAP_REDIR_INGRESS;
++			else
++				redir = SOCKMAP_REDIR_EGRESS;
++		}
++		__entry->sk		= sk;
++		__entry->ino		= sock_i_ino((struct sock *)sk);
++		__entry->netns_ino	= sock_net(sk)->ns.inum;
++		__entry->type		= type;
++		__entry->family		= sk->sk_family;
++		__entry->protocol	= sk->sk_protocol;
++		__entry->prog_id	= prog->aux->id;
++		__entry->len		= len;
++		__entry->act		= act;
++		__entry->redir		= redir;
++	),
++
++	TP_printk("sk=%p, netns=%u, inode=%lu, family=%u, protocol=%u,"
++		  " prog_id=%d, len=%d, type=%s, action=%s, redirect_type=%s",
++		  __entry->sk, __entry->netns_ino, __entry->ino,
++		  __entry->family, __entry->protocol, __entry->prog_id,
++		  __entry->len, show_data_type(__entry->type),
++		  show_act(__entry->act), show_redirect_type(__entry->redir))
++);
++
++TRACE_EVENT(sockmap_strparser,
++
++	TP_PROTO(const struct sock *sk, const struct bpf_prog *prog,
++		 int in_len, int full_len),
++
++	TP_ARGS(sk, prog, in_len, full_len),
++
++	TP_STRUCT__entry(
++		__field(const void *, sk)
++		__field(unsigned long, ino)
++		__field(unsigned int, netns_ino)
++		__field(__u16, family)
++		__field(__u16, protocol)
++		__field(int, prog_id)
++		__field(int, in_len)
++		__field(int, full_len)
++	),
++
++	TP_fast_assign(
++		__entry->sk		= sk;
++		__entry->ino		= sock_i_ino((struct sock *)sk);
++		__entry->netns_ino	= sock_net(sk)->ns.inum;
++		__entry->family		= sk->sk_family;
++		__entry->protocol	= sk->sk_protocol;
++		__entry->prog_id	= prog->aux->id;
++		__entry->in_len		= in_len;
++		__entry->full_len	= full_len;
++	),
++
++	TP_printk("sk=%p, netns=%u, inode=%lu, family=%u, protocol=%u,"
++		  " prog_id=%d, in_len=%d, full_len=%d",
++		  __entry->sk, __entry->netns_ino, __entry->ino,
++		  __entry->family, __entry->protocol, __entry->prog_id,
++		  __entry->in_len, __entry->full_len)
++);
++#endif /* _TRACE_SOCKMAP_H */
++
++#include <trace/define_trace.h>
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index 276934673066..517596efafa8 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -9,6 +9,7 @@
+ #include <net/tcp.h>
+ #include <net/tls.h>
+ #include <trace/events/sock.h>
++#include <trace/events/sockmap.h>
+ 
+ static bool sk_msg_try_coalesce_ok(struct sk_msg *msg, int elem_first_coalesce)
+ {
+@@ -910,6 +911,7 @@ int sk_psock_msg_verdict(struct sock *sk, struct sk_psock *psock,
+ 		sock_hold(psock->sk_redir);
+ 	}
+ out:
++	trace_sockmap_skmsg_redirect(sk, prog, msg, ret);
+ 	rcu_read_unlock();
+ 	return ret;
+ }
+@@ -981,6 +983,7 @@ int sk_psock_tls_strp_read(struct sk_psock *psock, struct sk_buff *skb)
+ 		ret = bpf_prog_run_pin_on_cpu(prog, skb);
+ 		ret = sk_psock_map_verd(ret, skb_bpf_redirect_fetch(skb));
+ 		skb->sk = NULL;
++		trace_sockmap_skb_redirect(psock->sk, prog, skb, ret);
+ 	}
+ 	sk_psock_tls_verdict_apply(skb, psock, ret);
+ 	rcu_read_unlock();
+@@ -1090,6 +1093,7 @@ static void sk_psock_strp_read(struct strparser *strp, struct sk_buff *skb)
+ 		skb_bpf_set_strparser(skb);
+ 		ret = sk_psock_map_verd(ret, skb_bpf_redirect_fetch(skb));
+ 		skb->sk = NULL;
++		trace_sockmap_skb_redirect(sk, prog, skb, ret);
+ 	}
+ 	sk_psock_verdict_apply(psock, skb, ret);
+ out:
+@@ -1113,6 +1117,7 @@ static int sk_psock_strp_parse(struct strparser *strp, struct sk_buff *skb)
+ 		skb->sk = psock->sk;
+ 		ret = bpf_prog_run_pin_on_cpu(prog, skb);
+ 		skb->sk = NULL;
++		trace_sockmap_skb_strp_parse(psock->sk, prog, skb, ret);
+ 	}
+ 	rcu_read_unlock();
+ 	return ret;
+@@ -1217,6 +1222,7 @@ static int sk_psock_verdict_recv(struct sock *sk, struct sk_buff *skb)
+ 		skb_bpf_redirect_clear(skb);
+ 		ret = bpf_prog_run_pin_on_cpu(prog, skb);
+ 		ret = sk_psock_map_verd(ret, skb_bpf_redirect_fetch(skb));
++		trace_sockmap_skb_redirect(psock->sk, prog, skb, ret);
+ 	}
+ 	ret = sk_psock_verdict_apply(psock, skb, ret);
+ 	if (ret < 0)
+-- 
+2.47.1
+
 
