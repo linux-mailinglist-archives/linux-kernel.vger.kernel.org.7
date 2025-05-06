@@ -1,157 +1,200 @@
-Return-Path: <linux-kernel+bounces-635637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB411AAC045
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:47:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F73BAAC03E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1E04A4A42
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DA881C27A3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DA5267721;
-	Tue,  6 May 2025 09:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LXn2TU4D"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56267266576;
+	Tue,  6 May 2025 09:45:24 +0000 (UTC)
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFFC269830
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B021EFF93;
+	Tue,  6 May 2025 09:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746524705; cv=none; b=mqCFxCZs7wFkeUnIXm+izNwoMxC8y6WUn0/+AUJFSlj6JR9xwkQdJVx8OEHdQuLtCebqgB/4Reiauz16gkRFImYOTV7afcBhtSI9ocOEDS0czQ7ghRkwkQqyPNGsnq52GU9/lv9ZKikkKmQ1VfLMPLWVBIsKj8KJxT88Zjfhp4I=
+	t=1746524723; cv=none; b=X9d3pH5dbRA3FV/NrVygD2anERT3U7/gI/v7VJxqEV2OrDx7vGAAm9mNT92aicbB8PaqTEeIGVZ4JZ8zN1aL/Y2Wqj+8doY2mV5DPvV5r5mdDG4Ymo/jCqzoDbHiLlfdgqX4LrLYChzFAK5/jnAb4lhDw7YmQMDh3iQRi2UPyvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746524705; c=relaxed/simple;
-	bh=XtmhV9BRgG8S3EP7Ij8mgx59xV75hcQcMAEky/2dcT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8z4D4pDCQKTHan3/4jBraX0+YmNGcgpu4Q/SOgh2FJOsvejgeCTWG8jxnk37D+UUIMvZ75FJzUAqGBy2xjZLeOPXCuv0HDTLhWJoR8INISSCH3qrJ64J3zwUPRHbhMJNTB3fFM5WaAO7z1eimCOXwkw7/iYxQIlAasiynakQcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LXn2TU4D; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746524699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ywb7zRNx3vPc7CyeVZadCCnMzE2V02v3OC1ITxjbuEs=;
-	b=LXn2TU4DHABlMpmsCyXkxAMIAwg9JkYX755mUqS0McUHALfnNuoSRNQWDPTKGJNAxldAkr
-	GTK9p9XiEy+8ULjJIHW6FkXugc/4q1GGmEOay8FCkZfobGh2MsOTEsKevw5k6+tBFfAwjK
-	rdbwxGik2fPB2UOAO5Z0W/A0X5hHAw8=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-150-tSedMWvdMkCTyQAXHaMFog-1; Tue, 06 May 2025 05:44:57 -0400
-X-MC-Unique: tSedMWvdMkCTyQAXHaMFog-1
-X-Mimecast-MFC-AGG-ID: tSedMWvdMkCTyQAXHaMFog_1746524694
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-acb23361d73so612190466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 02:44:55 -0700 (PDT)
+	s=arc-20240116; t=1746524723; c=relaxed/simple;
+	bh=EpuZPyUJ9zmAZ2c9BUZMxQY/UUSab85EVy6d2dzX2JA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c4xPJabNXIVVfWTU0RQWklXssYfAFZt3uzChyNnGW2jQwlK8pauWbcI9CFsIbeS9uTNRhkNR0XlhoQOUKpS4xz0ElRhJE6l3YbK7iRJoNYOVrgPxavrfJQshVQw0HMuqfTiV9pfgo82QnB7jMKDrXCGEEeATlP6sr5riUbWPyZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b1faa09bae7so342821a12.1;
+        Tue, 06 May 2025 02:45:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746524694; x=1747129494;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ywb7zRNx3vPc7CyeVZadCCnMzE2V02v3OC1ITxjbuEs=;
-        b=sqs72lcdyqNhRiqTAhlJXdCVDBx5SlJV13jzSQy3+z2Do9aUBUa84EdDC4FfSaenHj
-         6boXsxHcvl8Q1o/oKT+c+xdFd06YYGimN33e/lX2/XPxwXak8tiQ3zx6lJprEUgDE9SX
-         orTiSKFFt+CZ1IAJLPouEpwiz+3DFwDYjZvL+uqZF0nb4YWOCFt+bf5opXgSfm/r9Boo
-         ASpAh9bj18nZqEWU6527C47Ye+tIj7KZR+OGQLCCCMZ0pte9rdA3DAjckuN3/lQK85VM
-         7JVqAoFdTKchOCRqyP+1TKYWj+CjaRahGAr0lW6E/bzt5bMpRe7w8gUdHFWl67HlUjN7
-         GjJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrEvMXFoanQNytaZLHk7Rlb0fA8icTX7A/M+WpfGgl+9Yde+sLkKAWJNAVvQcjPRsvsS44G2/U0hf0Ups=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdYywslOkpWLfjfcD2s6U2cb3f9AJZHjfKR7q1LwdeofZhHNAw
-	eCTG+GoP7m2LIcDHFMmig5BqyNWI26rh9hInNsJHr46Erfk4CLv2WpAzOBeDalnfALnWAxlyGj1
-	vZZ2GIGiamN7496HHGm5I+6Zy1QxlEVf7e54hXbHQDdTEBBKoSPtzgqeomMIBmA==
-X-Gm-Gg: ASbGncs0IbvZl2Hb4tCLm9J5x6K0/YT0JGrkmmlFizgGOgpyYGCQMn+odN0md3IDkKW
-	Sw4obxCFC2k57UP2oeA72zVAH5mPbUslaFbobJuTO9vJ1myvW4yEsN150hSztviNqL2hXRJeMW8
-	g5KkHzdRlC5DM2zJqnY2cKB2nntud7ZuBYGG9fdY6gDl3F5LoOr3CT6lC9XZDf4us/0WbOUJDhM
-	D/r+N6B2hPh5vvFC1172Dsr2CyYVs4RLeo+gVztqW9hqB97OLIHtLWpwbmGUPt2eMX/bm9AaT4z
-	TtM5bchLxzba+oOy5w==
-X-Received: by 2002:a17:907:720e:b0:ace:c47c:d05 with SMTP id a640c23a62f3a-ad1d2edb5a8mr271263866b.17.1746524694205;
-        Tue, 06 May 2025 02:44:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEy3Ipkv1JwfR8lsrwW2awsV3Xlbn5tYIVtWI1ItVLrYmS6wlQhRVbeVxW3XdsKsaomx8V8tg==
-X-Received: by 2002:a17:907:720e:b0:ace:c47c:d05 with SMTP id a640c23a62f3a-ad1d2edb5a8mr271260366b.17.1746524693669;
-        Tue, 06 May 2025 02:44:53 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.219.197])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad189146991sm676458966b.14.2025.05.06.02.44.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 02:44:53 -0700 (PDT)
-Date: Tue, 6 May 2025 11:44:44 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH net-next v4 1/3] vsock/virtio: Linger on unsent data
-Message-ID: <2latqq7jrneyimj6okjbarofnksmgwddwq2eie4mforjrjaxwv@jjbru7irkyyi>
-References: <20250501-vsock-linger-v4-0-beabbd8a0847@rbox.co>
- <20250501-vsock-linger-v4-1-beabbd8a0847@rbox.co>
+        d=1e100.net; s=20230601; t=1746524721; x=1747129521;
+        h=content-transfer-encoding:organization:in-reply-to:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cSOD+puqL/4XqSHD2xH6JjKVLDIWqct4rkla2JcDmy0=;
+        b=NPg3PEb6Saxoy5ndGmdaWw+Rqs+4bhuchUcX/eIKSDNgYByOshQYeKy1HJQAQZKIbp
+         5Qi5f8oxH27JSdQcEHgJdpRmumLUL0L/EoKPjkGIRpS5yrVjtS1I+o6kRQ1f9rOruwam
+         dJ1MR781QkCfSMI89QkF5bcuE5HNv/OnnOJelVCbJMG35CBQGxGK3ih29XsnGhAILNeT
+         NfPsWnVhZ2j3ECedM4B/WNHtf4rOq9RyxjiXCattMeVunAlW+2dWcv3z7hZq2NHkEJCB
+         0LOkKpb8kvvtrFMrEa/J65s8Tm1bCrSZRGZINaMbFB1ffisR9seTFFLs404YUrPE/Mia
+         PJ2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWbbHnWtXRQRSxWxaWoVGP2PwUSCYipiJQt9TJ6IgV379WtNlEMpzFVHygeF5D7uNW0KbiU@vger.kernel.org, AJvYcCXSk7hpPKNXK0ngckFGJmv/LqFapf+fVp2jg2ZvX7lxsZMwh2VyWoy9bm/TtiKkIwxCF51Cyq2STDGoraI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGU8oQZi3FVGEt302GJt9lX96P/JLI0G+uCmODLNc8mjl0TG2X
+	lzOy1bG/XSsyke6iH509ULxQ6Gbf1D7CuApSoJlmUBELKNkqyHim
+X-Gm-Gg: ASbGncs+po18ocqI8/6CC54hvvGlY7A0JgcIekiVmspjUb7BO9D1EyhKa+3PCy1hiL8
+	Ba7gVF9mzf6PEXg51svhCG++ddqbqPUGtnlZx8v1Vz+lC1rsAPgHcZ41sL1YNPvoG7Z64GwMo/N
+	Uug/X7afOrBBhAonEV+BnYgD6DiCnChSw51lxj9vtKS6+4qYOiVbfYMRODrEuWugZSJXWnMS/dZ
+	/ccg9IGcLE+mTEke6rY1iSIfOb11I9Xz5rkuxA0jH6RM2yQduT7YIJWo52SvnI4tsgcOax7b2mu
+	lpTsUoDt4aiO2uPGPgHYRQPi0nBhmj4+4Jhm46eyKxOxdHcyAbg3
+X-Google-Smtp-Source: AGHT+IE4XN8fGk6NVgA2xZFj7lr1LVIAwTygyFZpdvp0wgim1KjlAv8Y9fJz8VT968dhSyQepqbBKQ==
+X-Received: by 2002:a17:90b:2247:b0:2fe:b77a:2eba with SMTP id 98e67ed59e1d1-30a4e574bffmr8928554a91.1.1746524721121;
+        Tue, 06 May 2025 02:45:21 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a4763f992sm10672445a91.40.2025.05.06.02.45.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 02:45:20 -0700 (PDT)
+Message-ID: <2aaa078a-100c-4974-be5b-b58a7f3a6dbb@kzalloc.com>
+Date: Tue, 6 May 2025 18:45:14 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250501-vsock-linger-v4-1-beabbd8a0847@rbox.co>
+User-Agent: Mozilla Thunderbird
+From: Yunseong Kim <ysk@kzalloc.com>
+Subject: Re: [BUG] RCU: Kernel panic on execute from non-executable memory
+ (binderfs + stress-ng)
+To: "Colin King (gmail)" <colin.i.king@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Uladzislau Rezki <urezki@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ byungchul@sk.com, max.byungchul.park@gmail.com, rcu@vger.kernel.org,
+ =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+ Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>,
+ Suren Baghdasaryan <surenb@google.com>, LKML <linux-kernel@vger.kernel.org>
+References: <8bdfa4fc-0e4a-4965-bc29-6ab6c1573ef6@kzalloc.com>
+ <6b5d7f21-459c-48c8-9fa2-d494b01bc5d8@gmail.com>
+ <4eaaaf62-40a6-43f8-bcce-6e23b475e12f@kzalloc.com>
+Content-Language: en-US
+In-Reply-To: <4eaaaf62-40a6-43f8-bcce-6e23b475e12f@kzalloc.com>
+Organization: kzalloc
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 01, 2025 at 10:05:22AM +0200, Michal Luczaj wrote:
->Currently vsock's lingering effectively boils down to waiting (or timing
->out) until packets are consumed or dropped by the peer; be it by receiving
->the data, closing or shutting down the connection.
->
->To align with the semantics described in the SO_LINGER section of man
->socket(7) and to mimic AF_INET's behaviour more closely, change the logic
->of a lingering close(): instead of waiting for all data to be handled,
->block until data is considered sent from the vsock's transport point of
->view. That is until worker picks the packets for processing and decrements
->virtio_vsock_sock::bytes_unsent down to 0.
->
->Note that (some interpretation of) lingering was always limited to
->transports that called virtio_transport_wait_close() on transport release.
->This does not change, i.e. under Hyper-V and VMCI no lingering would be
->observed.
->
->The implementation does not adhere strictly to man page's interpretation of
->SO_LINGER: shutdown() will not trigger the lingering. This follows AF_INET.
->
->Signed-off-by: Michal Luczaj <mhal@rbox.co>
->---
-> net/vmw_vsock/virtio_transport_common.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
+Hi,
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+I attached the vmcore with vmlinux symbol for further analysis and will share it at the following link.
 
->
->diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
->index 7f7de6d8809655fe522749fbbc9025df71f071bd..045ac53f69735e1979162aea8c9ab5961407640c 100644
->--- a/net/vmw_vsock/virtio_transport_common.c
->+++ b/net/vmw_vsock/virtio_transport_common.c
->@@ -1196,12 +1196,14 @@ static void virtio_transport_wait_close(struct sock *sk, long timeout)
-> {
-> 	if (timeout) {
-> 		DEFINE_WAIT_FUNC(wait, woken_wake_function);
->+		struct vsock_sock *vsk = vsock_sk(sk);
->
-> 		add_wait_queue(sk_sleep(sk), &wait);
->
-> 		do {
-> 			if (sk_wait_event(sk, &timeout,
->-					  sock_flag(sk, SOCK_DONE), &wait))
->+					  virtio_transport_unsent_bytes(vsk) == 0,
->+					  &wait))
-> 				break;
-> 		} while (!signal_pending(current) && timeout);
->
->
->-- 
->2.49.0
->
+Link: https://drive.google.com/file/d/1_RFdpdWNuLdO-Yx6d7vIX-WAFX4X_msH/view?usp=drive_link
 
+On 5/6/25 9:30 오전, Yunseong Kim wrote:
+> Hi Colin,
+> 
+>>> The crash seems to originate from rcu_do_batch(), jumping to a pointer (0xffff00003a114000) that appears to be non-executable.
+>>> The PTE for the address confirms XN=1. Given the heavy binderfs workload, I suspect there may be a use-after-free or dangling pointer involved in a callback invocation.
+>>>
+>>> Platform:
+>>>   Architecture: arm64
+>>>   Virtualized environment: Apple Silicon M2 (Apple Virtualization Framework)
+>>>   Kernel version: 6.15.0-rc4+
+>>>   Attached Config: CONFIG_PREEMPT_VOLUNTARY=y, CONFIG_KASAN=y
+>>>
+>>> Reproducer:
+>>>   sudo ./stress-ng --binderfs 8 --binderfs-ops 10000 -t 15 \
+>>>    --pathological --timestamp --tz --syslog --perf --no-rand-seed \
+>>>    --times --metrics --klog-check --status 5 -x smi -v --interrupts --change-cpu
+>>
+>>
+>> I suspect --change-cpu is required to trigger this issue. Does it trigger without this option?  Can you reproduce the issue when reducing the number of --binderfs intances?
+> 
+> As you suggested, I've been testing combinations of enabling and disabling '--binderfs' and '--change-cpu' separately.
+> 
+> While I'm not deeply familiar with the internal mechanisms of binderfs,
+> I found that the panic still occurs consistently with --binderfs, even without the --change-cpu option.
+> However, the panic occurred when I used 4 instances.
+> 
+> Reproducer with reduced instance from 8 to 4 and without change-cpu option:
+>  sudo ./stress-ng --binderfs 4 --binderfs-ops 10000 -t 15 \
+>   --pathological --timestamp --tz --syslog --perf --no-rand-seed \
+>   --times --metrics --klog-check --status 5 -x smi -v --interrupts
+
+[  194.911021] Unable to handle kernel execute from non-executable memory at virtual address ffff0000312ebe00
+[  194.911043] Mem abort info:
+[  194.911056]   ESR = 0x000000008600000f
+[  194.911065]   EC = 0x21: IABT (current EL), IL = 32 bits
+[  194.911118]   SET = 0, FnV = 0
+[  194.911130]   EA = 0, S1PTW = 0
+[  194.911139]   FSC = 0x0f: level 3 permission fault
+[  194.911149] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000163388000
+[  194.911160] [ffff0000312ebe00] pgd=180000016ffff403, p4d=180000016ffff403, pud=180000016fffe403, pmd=180000016fff4403, pte=00680000712eb707
+[  194.911201] Internal error: Oops: 000000008600000f [#1]  SMP
+[  194.911211] Modules linked in: overlay isofs uinput snd_seq_dummy snd_hrtimer nf_conntrack_netbios_ns nf_conntrack_broadcast nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 rfkill ip_set nf_tables qrtr sunrpc virtio_snd snd_seq snd_seq_device snd_pcm snd_timer snd virtio_net soundcore net_failover virtio_balloon failover vfat fat joydev loop nfnetlink vsock_loopback vmw_vsock_virtio_transport_common zram vmw_vsock_vmci_transport lz4hc_compress vmw_vmci lz4_compress vsock uas polyval_ce polyval_generic ghash_ce usb_storage sha3_ce sha512_ce virtio_gpu sha512_arm64 virtio_dma_buf apple_mfi_fastcharge fuse
+[  194.911440] CPU: 2 UID: 0 PID: 27 Comm: ksoftirqd/2 Kdump: loaded Not tainted 6.15.0-rc4+ #1 PREEMPT(voluntary) 
+[  194.911452] Hardware name: Apple Inc. Apple Virtualization Generic Platform, BIOS 2075.101.2.0.0 03/12/2025
+[  194.911459] pstate: 21400805 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=-c)
+[  194.911469] pc : 0xffff0000312ebe00
+[  194.911492] lr : rcu_do_batch+0x2dc/0x860
+[  194.911506] sp : ffff800080143c90
+[  194.911512] x29: ffff800080143cb0 x28: ffff00003059e600 x27: ffff0000312ebe00
+[  194.911534] x26: ffff800084442000 x25: 0000000000000000 x24: ffff8000843d9b18
+[  194.911549] x23: ffff800082150ac0 x22: 0000000000000003 x21: 000000000000000a
+[  194.911563] x20: ffff0000c11233c0 x19: ffff00012f0e1e00 x18: 0000000000000000
+[  194.911578] x17: ffff80008214506c x16: 002c7c955b9d7f7c x15: 0000000000000000
+[  194.911592] x14: 0000000000000002 x13: 0000000000ff0100 x12: ffff8000801c3410
+[  194.911607] x11: 0000000000180017 x10: 0000000000ff0100 x9 : ffff80008385a580
+[  194.911621] x8 : 0000000100000100 x7 : 7f7f7f7f7f7f7f7f x6 : ffff8000803f89bc
+[  194.911636] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000002
+[  194.911650] x2 : 0000000000000000 x1 : ffff800082a4aeb8 x0 : ffff00003059e600
+[  194.911744] Call trace:
+[  194.911747]  0xffff0000312ebe00 (P)
+[  194.911759]  rcu_core+0x2a0/0x4e8
+[  194.911767]  rcu_core_si+0x1c/0x30
+[  194.911773]  handle_softirqs+0x1b4/0x588
+[  194.911782]  run_ksoftirqd+0x5c/0xf8
+[  194.911787]  smpboot_thread_fn+0x27c/0x490
+[  194.911794]  kthread+0x2ac/0x318
+[  194.911802]  ret_from_fork+0x10/0x20
+[  194.911811] Code: 00000000 00000000 00000000 00000000 (00000000) 
+[  194.911821] SMP: stopping secondary CPUs
+[  194.912168] Starting crashdump kernel...
+[  194.912171] Bye!
+
+crash> kmem ffff0000312ebe00
+CACHE             OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE  NAME
+ffff0000c000cc00      512        185       576     36     8k  kmalloc-rnd-10-512
+  SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
+  fffffd7fc0f5e920  ffff0000312ea000     0     16          0    16
+  FREE / [ALLOCATED]
+   ffff0000312ebe00  
+
+The address ffff0000312ebe00 is listed in the FREE list, meaning this memory slot has already been freed.
+
+      PAGE        PHYSICAL      MAPPING       INDEX CNT FLAGS
+fffffd7fc0f5e970  712eb000         ffffffff ffffffffffffffff  0 1 locked
+
+This memory page itself no longer has any valid page mapping (MAPPING=ffffffff), and its reference count (CNT) is also 0. it is completely freed.
+
+It appears that a struct rcu_head object, which had already been freed, remained in the RCU callback list, and an attempt was made to call a function using this invalid (freed) slot through the rcu_head, resulting in the error.
+
+I think it is unusual that this memory bug was not detected even with KASAN enabled, especially since it has not been caught despite the issue occurring repeatedly.
+
+I'll check if there are any potential issues with improper RCU usage in otherside.
+
+
+Best regards,
+Yunseong Kim
 
