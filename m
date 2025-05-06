@@ -1,79 +1,136 @@
-Return-Path: <linux-kernel+bounces-635162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D74AABA1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:12:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33111AAB9FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DB21C22E45
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:08:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1419D164832
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E988232365;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F4022E418;
 	Tue,  6 May 2025 04:39:29 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="wyMyww7o"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575552BD03F;
-	Tue,  6 May 2025 04:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71812798E9
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 04:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746505371; cv=none; b=HSt/selic8ZyCwwwPoMDYiw0f9S4sYRFzv7qKjrHBg7ab+/W0cvR/bhlqWyXt0aXDfUOx1h9qInOFrwAAM22ex+LQ6tXZDXpzbD9M7fA5KF3ChJXzy+bNFZlGwe28xC0ymefoCzTjbCliioRuzylFyMHNyk+AZRcT782++Ns3Sg=
+	t=1746505418; cv=none; b=iH4SeTPkiYVvKCpyjKOy+d5x5q8YOINyP9oEETIFUqP4bTKfGOPQok52xvpTVzexSaquY2XbqkHA2psLN6ritnza9Oa2bXa11jUKMR2MNnHXopWGOf/15qAV7SyqN2Zwkenb3vRY3THN0rv5rDtc119UtOY4ni/Btte28bnTNgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746505371; c=relaxed/simple;
-	bh=dUnyonXps9Hj2gJJF9TI4PC9uOAgo51Hbpb/TfEXCBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ls2v2gBnoRlb+pFExutUJVrzvdLnQ/JbAPyuK71ASj/7Oo3GmDMeFxc8Og7uSAU1U8VXYOw9ySgoKICR+ULi/z/UB65NgDxRX7QdnoqjfFibc/62ePneRTsWJRn10C9k5cToSwVXRzNlec/L8zvP0PzOP0nTcPTynINOQqTqdv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id BB4C667373; Tue,  6 May 2025 06:22:42 +0200 (CEST)
-Date: Tue, 6 May 2025 06:22:42 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH v11 02/16] xfs: only call xfs_setsize_buftarg once per
- buffer target
-Message-ID: <20250506042242.GA26378@lst.de>
-References: <20250504085923.1895402-1-john.g.garry@oracle.com> <20250504085923.1895402-3-john.g.garry@oracle.com> <20250505054031.GA20925@lst.de> <8ea91e81-9b96-458e-bd4e-64eada31e184@oracle.com> <20250505104901.GA10128@lst.de> <bb8efa28-19e6-42f5-9a26-cdc0bc48926e@oracle.com> <20250505142234.GG1035866@frogsfrogsfrogs> <40def355-38db-4424-b9f0-b82bba62462b@oracle.com> <200d855d-550d-4207-9118-6a0c10d14f8a@oracle.com>
+	s=arc-20240116; t=1746505418; c=relaxed/simple;
+	bh=hn9c591dXJgjp1caC2arr6sOqTPBu/Sc8oYI1nnrfhs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BIg7Pq9ciiSBbWpCzneYDxwnw2BVceMfOC9I7qMSWTSe1W9nl2PxGhnXibw58NswS4QrCTIm04otbDpBfN+XhYwHkulvccXnfewt7oUDw0O8i3hIs0WDwu7wcYVAHg/o2/bXlEPinRNvoh2c9mkB6UF6TwvjGe64RNQNNYMIHXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=wyMyww7o; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=byte-forge.io
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7081165a238so37230037b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 21:23:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1746505415; x=1747110215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kk0rHIP824tzYSJd/wcdfmqz9sqjrngOzbFuZVahSig=;
+        b=wyMyww7oVuoSHfIbHaQN31ZjFvVLsEkkh1UigINhxrJdg+2rrH+WK9v/6CdFhgsQG9
+         Vcju+28T1CJxfTl8bxazhFwq4sNZ9d3daxaPMRRziyhVMeuO3EMa0W3tLQpsQmN1ijNr
+         WQENFLoqJbsT4JcrRybyr82QbsuAm178stgTMsNJSatDJtUVbSdh0JXe4/N/3OFNy2AM
+         My/Zs7kFLz4RaBP20Q9lWee/FmZVR83jkrMv+JHVLE7IwSgHfe+uBMkBWTTieL16nHru
+         C3cDsgWvjoCwku/Wm2BbyrVANC8Cdbb5OpYEaYI9UslRErnWC5+5OBFs8h5T8j9NhN2y
+         myiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746505415; x=1747110215;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kk0rHIP824tzYSJd/wcdfmqz9sqjrngOzbFuZVahSig=;
+        b=eWcsqWKnjm5hMOBTfCuqEytdZOWP5brZnON3z5AP4w3idZkG75DrDBK6hkHA8rZODS
+         NT3lKUHjoDNClC2CNOKNsn6Nu37cCoKRrH6BjLPKpq0WVP3f4FRbZfdpl0m3r38f/Irm
+         dSvHDzDFmxzIOSX4VcafRzRDaBgndPGlGwutn71Xk1JFegtAS9TVW7GG+J/5ygfRrDEF
+         EHocPDOOuBL8/6TVhdaps+b9BgYF0/o3Gp+xfMB7VVYblildtq8Mub0PsctY/zvgZ4/g
+         M47rvhqIkD20Ljgq21wFEoO7mxp3PfPhWPxT//+V9SER7B1E4WeV/bkt3oiUsLvySs14
+         zPrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhr1F2F6zNBBwq5ZPr7ZHTa39LpTqhAQH7R3PxDW3LV2U1AqozJgAQK18pfyqN6z2TNWngLCatuiVj1f4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrZwtNtaiwakEppKsdpBLULFYgOP4YnriulGhdD8wwB76McKby
+	1gItEfKWGPINBpMhnJYTcw1sKFfcM51D92SPpEqThtuXvq5OOXbKxfeluvldKdg=
+X-Gm-Gg: ASbGncvINXHvcnxBT2KJNIgRi/vH5ur72zr+hCHLFHWKi8PYuFYd46lFyDE/Vh2G14f
+	V7KlOAl2V/qLj2y5sQRv0+S6vY9ZK13qhMUHKkD2924P2mb/Vcbwin2udpxQeQ55dOw+A7zPo98
+	fhV4M3M/AghyybOjTO7eG+iTKU8hF9/y+u0qdV+jv47V6C/jU+SaIScihTQEz7SiyH5V6InrUS4
+	wCjDtjsxFDwLif7OLAKrfd+WSr6/RTx3byxoZWiUHGMiOeDyAeeyGVmwkS7P7mfLRDwF7PFWbVC
+	V59XuFw/NwIXkNQ4+qNHs27aQtsc7Cg86kQjAtaMeI4ol2mnidE0ABDJ0QsSdvQ3Re/MgLUz25i
+	27xt26qxOKtevRp1oGSVdp93B//Cbk3LElyrv
+X-Google-Smtp-Source: AGHT+IGauOMcdmDl7gE3jT1FrLe8gRcfpx/0h850sWX5FJCsvFHooQ2WBnw1X6kYbTtIVDUjYEjHTQ==
+X-Received: by 2002:a05:690c:7084:b0:706:cc34:daaf with SMTP id 00721157ae682-708eaefed5fmr142349547b3.20.1746505415634;
+        Mon, 05 May 2025 21:23:35 -0700 (PDT)
+Received: from Machine.localdomain (107-219-75-226.lightspeed.wepbfl.sbcglobal.net. [107.219.75.226])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-708c3f0a86esm25385877b3.14.2025.05.05.21.23.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 21:23:35 -0700 (PDT)
+From: Antonio Hickey <contact@antoniohickey.com>
+To: miguel.ojeda.sandonis@gmail.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	contact@antoniohickey.com,
+	dakr@kernel.org,
+	gary@garyguo.net,
+	linux-kernel@vger.kernel.org,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu
+Subject: Re: [PATCH v2 1/1] rust: kernel: create `overflow_assert!`
+Date: Tue,  6 May 2025 00:23:30 -0400
+Message-ID: <20250506042330.281501-1-contact@antoniohickey.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <CANiq72mvu54B=U+YCUmbFctj_wXgF5zjeE-BB-vHVnAP+3mPcQ@mail.gmail.com>
+References: <CANiq72mvu54B=U+YCUmbFctj_wXgF5zjeE-BB-vHVnAP+3mPcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <200d855d-550d-4207-9118-6a0c10d14f8a@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, May 05, 2025 at 04:27:56PM +0100, John Garry wrote:
-> On 05/05/2025 15:48, John Garry wrote:
->>>> @Darrick, please comment on whether happy with changes discussed.
->>> I put the sync_blockdev calls in a separate function so that the
->>> EIO/ENOSPC/whatever errors that come from the block device sync don't
->>> get morphed into ENOMEM by xfs_alloc_buftarg before being passed up.  I
->>> suppose we could make that function return an ERR_PTR, but I was trying
->>> to avoid making even more changes at the last minute, again.
->>
->> It seems simpler to just have the individual sync_blockdev() calls from 
->> xfs_alloc_buftarg(), rather than adding ERR_PTR() et al handling in both 
->> xfs_alloc_buftarg() and xfs_open_devices().
->
-> Which of the following is better:
+On Sun, May 04, 2025 at 09:41:36PM +0200, Miguel Ojeda wrote:
+> I was thinking of just allowing any expression here. I can see the
+> value in printing the values, but it makes it a bit harder to remember
+> the comparison and is less flexible -- I can imagine we will have
+> other operators being used, or even things that are not tested via an
+> operator.
 
-To me version 2 looks much better.  I had initial reservations as
-ERR_PTR doesn't play well with userspace, but none of this code is
-in libxfs, so that should be fine.
+Oh wow yea this could be so much more flexible allowing any expression,
+didn't even think of this now my approach feels so naive haha.
 
+> By the way, would it be possible to have the `cfg` attribute inside
+> the macro, so that we share the docs and so on? i.e. to make the
+> conditional compilation as local as possible even here :)
+> 
+> i.e. as it is currently done, we can have mistake like not sharing the
+> "signature", and the generated docs will not have the actual docs of
+> the macro if it is disabled.
+
+I originally thought we couldn't do conditional compilation in macros,
+but I'm looking into it now and it seems possible, I'll have to test 
+this.
+
+> We could also consider using the `cfg!` macro to force it to be always
+> valid code -- not sure about whether we want that in all cases though.
+> The standard library does that, though, so perhaps we should do the
+> same for consistency. If someone really wants to skip it, they can
+> always do it on the caller side.
+
+I do like the idea utilizing the `cfg!` macro, it's cleaner as it 
+reduces the empty boilerplate currently required. I do wonder though
+could that potentially cause warnings like unreachable code or 
+unused variables?
 
