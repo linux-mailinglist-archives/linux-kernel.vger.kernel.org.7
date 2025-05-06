@@ -1,257 +1,141 @@
-Return-Path: <linux-kernel+bounces-636009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B6BAAC500
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:02:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DC9AAC48B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923D21BC3383
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415883B3816
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCC82836BE;
-	Tue,  6 May 2025 12:57:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A26227FB3A;
+	Tue,  6 May 2025 12:50:13 +0000 (UTC)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38C92820CF;
-	Tue,  6 May 2025 12:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEA9266B46;
+	Tue,  6 May 2025 12:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746536246; cv=none; b=XBwG2ZqGXMfIQsfQKqeV9rCzRL7gx+s2Wu4389Qw/vcs1dKS0AtqrBkmweoFIk52F8H6GoohENorMsbt1docYL90PgnknUkycU4OrPan8SB529CQ1QXV1xuos128vK+2sIZ9bLEYj+c0viNBBpFQ7ZJSJOhNW+GSH4gqamm0Yjk=
+	t=1746535812; cv=none; b=Yq9fPED9p9Lu3tE/Bjz2D8u9WUO8tUmzvBdiawMJGqMmzkFUpiNVhVnzkonFIc4KePy9mVX+EdZVE4kUhvJv5KarQPibnke+zQ20rhDR3/3JhOkPtucweeSU4FDuKqZQbn6l4n24Ee0pQ5KVC1XbQ17vdemFIfpQIHl0Li4wCSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746536246; c=relaxed/simple;
-	bh=291YgrRrDX2L7RnUzNvKg6qJD/12zkD8b7D7rol9xPI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CwbbWpkNaXfZf/WXdCOEeS6T+RLyy7bz5b02Y84rg8u05iexKO6Ifx6fxQItLccoMy4Y/p94qwzX1rYfmr0FhAoOi0itz5jEfuULwvIHBZEpCgSHeOr2mS91U+eILj5wDazwq4aEGPgdKMfGt+BXisEMdbvP4KJcg/BlYwtKiis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZsJM16K0cz4f3jt8;
-	Tue,  6 May 2025 20:57:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1A9461A1B4B;
-	Tue,  6 May 2025 20:57:21 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDXOl8pBxpoilNvLg--.37994S13;
-	Tue, 06 May 2025 20:57:20 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	agk@redhat.com,
-	song@kernel.org,
-	hch@lst.de,
-	john.g.garry@oracle.com,
-	hare@suse.de,
-	xni@redhat.com,
-	pmenzel@molgen.mpg.de
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-raid@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v3 9/9] md: clean up accounting for issued sync IO
-Date: Tue,  6 May 2025 20:49:03 +0800
-Message-Id: <20250506124903.2540268-10-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250506124903.2540268-1-yukuai1@huaweicloud.com>
-References: <20250506124658.2537886-1-yukuai1@huaweicloud.com>
- <20250506124903.2540268-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1746535812; c=relaxed/simple;
+	bh=gZPKHu3de39xnOaBWrciTA9P8WQ95TdpqCBYRonCb9Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Je0NhOJpo94cUyzSbvo8BxoAJRRv3OR0piu7wzCvT3OxLtR4BCvUO67DbLoKtI2GdV3poFDhOTnmMuGwbE9mvRfvfF7LG6zYAtWQYl/6cVf2k9gQv95W/zeRFqFARoNM9IE/yRM774g4LgUgYkOnHJ9u/ZIt96+5v+Np7noH5rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523dc190f95so1976192e0c.1;
+        Tue, 06 May 2025 05:50:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746535809; x=1747140609;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dR5SLyEuVXCgzfFmFtCWiF+tB6qj8RmfZjai3JkMnSo=;
+        b=NKymZdQF+X0MyTVh5BK9ADyi8/v0DItG/bMeA8RkbTcvjmumlKrQ7cz7kS35qUlDjO
+         1mfFb4btEECb1NyLk6RBMEUDE21gXREC8tWg7lDZhH8vMiuZ/QcbMO39XWnG4mCHhSJz
+         AlL2xV7OMxCIIGgcASOA3dW7X2pI/Bakpsuw1aXMkZEYvf1PuP1F/w+VZzGcc8T9troM
+         fYU38zQu9viMqo49VTvCykIuqETfFV/aOg4bNCcPNOLzBUccGLR0kfe48kdzqvI7FbBM
+         tZXEMCkhU2meYzTbiwXUNKTENSja4FgXUh7TAJh3nJDzETXGJhvCx3fPe1MjntI5MAc+
+         n44w==
+X-Forwarded-Encrypted: i=1; AJvYcCUHQdpzX8zkfGzyqK+NtO+vmNI4Naak/ggAo2EBstHTbvooSXHtjOSeNZ9MvtvtpVEIbvLMes1picz2vJ7SkxoLH6Y=@vger.kernel.org, AJvYcCXU9wp4kvgjiR9b6eNQ4YnIerny3e9cQvUHyGhdv0MqI7xP/qIdJr3y4UTb8ZuJAl9/d/sT8Gz+guJoBxlg@vger.kernel.org, AJvYcCXW/hHWk23xnvzC1f+5H50NrE8CEK14cBSlhcEEtLRWGpOGsM/aiPUV+C9PeH6ez99WIE8xLqM466cK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk+tqhIJLbEUriCz46HYHpm5Sc6fN1Pk7K2uJIa62nzjmrFlc+
+	hIKPsVt1OrGhlB5+7nxE0osr2PZCi60TiQJE8JJv0b1oCmPbJi0paQFjg9pN
+X-Gm-Gg: ASbGnctU83e9iMm4KlzgCRYif4/bq9N9b30Mmg/ICZKXpW/HVHpAhXJl2hltbaRysn7
+	d3p2K/ccoVbB1tTwY+DP3/Y5xUZri9T8mPigwKiMr3FknrzzBc0/pI0AK+b3QtAEIMnyM045Xlw
+	fIYQtewydTbTP1UlFpTFeDfZp+uzAypXZwMqJzle4dLQgB1/D2eGAETnM2aAO0jdihm8beHFdC5
+	kzAED05QZ3oPXqOrLX4iU5WCvNSFIe95GmMyd212F7eVb2p70x5NCOxdn8OTfJAy/iN0gUrMsJv
+	xdtzJzm+LmymjYgZssGpRIApxsTzL1BJ+8z64y9HjEDf0Ty3RsoYIWeMmP37qCCtUDXij6+s8EC
+	5Thg=
+X-Google-Smtp-Source: AGHT+IECORAsJK5HvLlJTaOdwp7I0foTM1+mbT8X2l+6rUCgGE5LQYJWmc0WnSYxP89YzvMtamuCRg==
+X-Received: by 2002:a05:6122:d99:b0:520:42d3:91b7 with SMTP id 71dfb90a1353d-52b2790458fmr1306031e0c.1.1746535809099;
+        Tue, 06 May 2025 05:50:09 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae41f3ed2sm1900053e0c.48.2025.05.06.05.50.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 05:50:08 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4c32d6ddd50so1603746137.0;
+        Tue, 06 May 2025 05:50:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUMStV/iZ3wIB3mqUvbeMF6ldoouNlwdy3boGRz/3RBD+B27KGHhkjC4IsfYv7n9Ha3GY70SQn3p6Jcj5xe@vger.kernel.org, AJvYcCW+28Pfy/9b+8yGD+a5sFyaRdANVT/6lOahTgBwi0out2hbPtdYGLK7Mbx+5J/4B3W1x4lJSVXb0e8o@vger.kernel.org, AJvYcCXeegIiCirwNaE8M1VgEbFrASZMylxZTFzo4QEaWPDASiuJfDVnhTdo3R1VvfiUtQpQQIml9BSV3WTAayOAx+7YxdM=@vger.kernel.org
+X-Received: by 2002:a05:6102:330c:b0:4bb:dba6:99cd with SMTP id
+ ada2fe7eead31-4dc64fe3d40mr1513226137.8.1746535808032; Tue, 06 May 2025
+ 05:50:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXOl8pBxpoilNvLg--.37994S13
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ww13JrWrJF4fKFW5AFyfXrb_yoW7ur47pa
-	9xXa4xAFWUGrWF93WDJrWqk3ZY9347KrW7ArW7u393u3WFyryDZF1UJFWYqF98AFW5urW5
-	Xa4kGan8CFZ7tFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0pRiF4iUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20250506103152.109525-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250506103152.109525-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250506103152.109525-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 May 2025 14:49:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXbeZPCCxqqU2O3J5K38ygJb2zMbuNq7mD0CCjLEgtPxw@mail.gmail.com>
+X-Gm-Features: ATxdqUGlzOJWAzAM_swPtywTszF9Wt5U6k2_C5syW23x2Dms_5uimTdgJSqV7NE
+Message-ID: <CAMuHMdXbeZPCCxqqU2O3J5K38ygJb2zMbuNq7mD0CCjLEgtPxw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clocksource/drivers/renesas-ostm: Unconditionally
+ enable reprobe support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Chris Brandt <chris.brandt@renesas.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Tue, 6 May 2025 at 12:32, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Previously, the OSTM driver's platform probe path was only enabled for
+> selected SoCs (e.g., RZ/G2L and RZ/V2H) due to issues on RZ/Ax (ARM32)
+> SoCs, which encountered IRQ conflicts like:
+>
+>     /soc/timer@e803b000: used for clock events
+>     genirq: Flags mismatch irq 16. 00215201 (timer@e803c000) vs. 00215201 (timer@e803c000)
+>     Failed to request irq 16 for /soc/timer@e803c000
+>     renesas_ostm e803c000.timer: probe with driver renesas_ostm failed with error -16
+>
+> These issues have since been resolved by commit 37385c0772a4
+> ("clocksource/drivers/renesas-ostm: Avoid reprobe after successful early
+> probe"), which prevents reprobe on successfully initialized early timers.
+>
+> With this fix in place, there is no longer a need to restrict platform
+> probing based on SoC-specific configs. This change unconditionally enables
+> reprobe support for all SoCs, simplifying the logic and avoiding the need
+> to update the configuration for every new Renesas SoC with OSTM.
+>
+> RZ/A1 and RZ/A2 remain unaffected with this change.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3:
+> - Dropped config check and unconditionally enabled reprobe support for all
+>   SoCs.
+> - Dropped Reviewed-by tag from Geert
 
-It's no longer used and can be removed, also remove the field
-'gendisk->sync_io'.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Xiao Ni <xni@redhat.com>
----
- drivers/md/md.h        | 11 -----------
- drivers/md/raid1.c     |  3 ---
- drivers/md/raid10.c    |  9 ---------
- drivers/md/raid5.c     |  8 --------
- include/linux/blkdev.h |  1 -
- 5 files changed, 32 deletions(-)
+Boots fine on RSK+RZA1 and RZA2MEVB.
 
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 1982f1f18627..d45a9e6ead80 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -717,17 +717,6 @@ static inline int mddev_trylock(struct mddev *mddev)
- }
- extern void mddev_unlock(struct mddev *mddev);
- 
--static inline void md_sync_acct(struct block_device *bdev, unsigned long nr_sectors)
--{
--	if (blk_queue_io_stat(bdev->bd_disk->queue))
--		atomic_add(nr_sectors, &bdev->bd_disk->sync_io);
--}
--
--static inline void md_sync_acct_bio(struct bio *bio, unsigned long nr_sectors)
--{
--	md_sync_acct(bio->bi_bdev, nr_sectors);
--}
--
- struct md_personality
- {
- 	struct md_submodule_head head;
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index de9bccbe7337..657d481525be 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2382,7 +2382,6 @@ static void sync_request_write(struct mddev *mddev, struct r1bio *r1_bio)
- 
- 		wbio->bi_end_io = end_sync_write;
- 		atomic_inc(&r1_bio->remaining);
--		md_sync_acct(conf->mirrors[i].rdev->bdev, bio_sectors(wbio));
- 
- 		submit_bio_noacct(wbio);
- 	}
-@@ -3055,7 +3054,6 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
- 			bio = r1_bio->bios[i];
- 			if (bio->bi_end_io == end_sync_read) {
- 				read_targets--;
--				md_sync_acct_bio(bio, nr_sectors);
- 				if (read_targets == 1)
- 					bio->bi_opf &= ~MD_FAILFAST;
- 				submit_bio_noacct(bio);
-@@ -3064,7 +3062,6 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
- 	} else {
- 		atomic_set(&r1_bio->remaining, 1);
- 		bio = r1_bio->bios[r1_bio->read_disk];
--		md_sync_acct_bio(bio, nr_sectors);
- 		if (read_targets == 1)
- 			bio->bi_opf &= ~MD_FAILFAST;
- 		submit_bio_noacct(bio);
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index ba32bac975b8..dce06bf65016 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -2426,7 +2426,6 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 
- 		atomic_inc(&conf->mirrors[d].rdev->nr_pending);
- 		atomic_inc(&r10_bio->remaining);
--		md_sync_acct(conf->mirrors[d].rdev->bdev, bio_sectors(tbio));
- 
- 		if (test_bit(FailFast, &conf->mirrors[d].rdev->flags))
- 			tbio->bi_opf |= MD_FAILFAST;
-@@ -2448,8 +2447,6 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 			bio_copy_data(tbio, fbio);
- 		d = r10_bio->devs[i].devnum;
- 		atomic_inc(&r10_bio->remaining);
--		md_sync_acct(conf->mirrors[d].replacement->bdev,
--			     bio_sectors(tbio));
- 		submit_bio_noacct(tbio);
- 	}
- 
-@@ -2583,13 +2580,10 @@ static void recovery_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 	d = r10_bio->devs[1].devnum;
- 	if (wbio->bi_end_io) {
- 		atomic_inc(&conf->mirrors[d].rdev->nr_pending);
--		md_sync_acct(conf->mirrors[d].rdev->bdev, bio_sectors(wbio));
- 		submit_bio_noacct(wbio);
- 	}
- 	if (wbio2) {
- 		atomic_inc(&conf->mirrors[d].replacement->nr_pending);
--		md_sync_acct(conf->mirrors[d].replacement->bdev,
--			     bio_sectors(wbio2));
- 		submit_bio_noacct(wbio2);
- 	}
- }
-@@ -3757,7 +3751,6 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
- 		r10_bio->sectors = nr_sectors;
- 
- 		if (bio->bi_end_io == end_sync_read) {
--			md_sync_acct_bio(bio, nr_sectors);
- 			bio->bi_status = 0;
- 			submit_bio_noacct(bio);
- 		}
-@@ -4880,7 +4873,6 @@ static sector_t reshape_request(struct mddev *mddev, sector_t sector_nr,
- 	r10_bio->sectors = nr_sectors;
- 
- 	/* Now submit the read */
--	md_sync_acct_bio(read_bio, r10_bio->sectors);
- 	atomic_inc(&r10_bio->remaining);
- 	read_bio->bi_next = NULL;
- 	submit_bio_noacct(read_bio);
-@@ -4940,7 +4932,6 @@ static void reshape_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 			continue;
- 
- 		atomic_inc(&rdev->nr_pending);
--		md_sync_acct_bio(b, r10_bio->sectors);
- 		atomic_inc(&r10_bio->remaining);
- 		b->bi_next = NULL;
- 		submit_bio_noacct(b);
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 6389383166c0..ca5b0e8ba707 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -1240,10 +1240,6 @@ static void ops_run_io(struct stripe_head *sh, struct stripe_head_state *s)
- 		}
- 
- 		if (rdev) {
--			if (s->syncing || s->expanding || s->expanded
--			    || s->replacing)
--				md_sync_acct(rdev->bdev, RAID5_STRIPE_SECTORS(conf));
--
- 			set_bit(STRIPE_IO_STARTED, &sh->state);
- 
- 			bio_init(bi, rdev->bdev, &dev->vec, 1, op | op_flags);
-@@ -1300,10 +1296,6 @@ static void ops_run_io(struct stripe_head *sh, struct stripe_head_state *s)
- 				submit_bio_noacct(bi);
- 		}
- 		if (rrdev) {
--			if (s->syncing || s->expanding || s->expanded
--			    || s->replacing)
--				md_sync_acct(rrdev->bdev, RAID5_STRIPE_SECTORS(conf));
--
- 			set_bit(STRIPE_IO_STARTED, &sh->state);
- 
- 			bio_init(rbi, rrdev->bdev, &dev->rvec, 1, op | op_flags);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 5ccb961ee2ae..d3fab37e4daa 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -182,7 +182,6 @@ struct gendisk {
- 	struct list_head slave_bdevs;
- #endif
- 	struct timer_rand_state *random;
--	atomic_t sync_io;		/* RAID */
- 	struct disk_events *ev;
- 
- #ifdef CONFIG_BLK_DEV_ZONED
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.39.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
