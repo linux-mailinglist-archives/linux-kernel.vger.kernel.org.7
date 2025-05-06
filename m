@@ -1,87 +1,71 @@
-Return-Path: <linux-kernel+bounces-636409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C0BAACB1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:36:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95BCFAACB17
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C491BC2B46
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:36:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84D4505301
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1952D2857DA;
-	Tue,  6 May 2025 16:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62B9283FC1;
+	Tue,  6 May 2025 16:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTwRICpZ"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ln2+NDnR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0B4284B49;
-	Tue,  6 May 2025 16:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF371917D0;
+	Tue,  6 May 2025 16:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746549341; cv=none; b=IeIYgYtFRIsjD/SytTVxHU//GTtPd42cyWM4F11BqXaWAiQZ84mX/7SPkm2ObmKcpi4O5AVTc/1hX7J7jy3WBONrj8hcSKPzPOtD5NaKWIFouaM5/SHymZ3KAbGC08bXsY/lEqCf72hT90lYbtk4B4B4TT7eWlJf7ljg5YRLT/w=
+	t=1746549337; cv=none; b=MDjqTSEXOjDdfEm+d+DSgfzwKbvkEtODsGxQ8ieuvr1wF1JHBf9kFYig1XKwYYXT/V4AqZquXbXWg0SBZMSg45ErrRQFETfoCDKtxxxfbfBZOO8+uypO3gu9enyksPDQMMpANkCmWAe2XKluMPPnm8a4sHNHggrEGrY7OZ0lLTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746549341; c=relaxed/simple;
-	bh=hx2GmfBEs3YVwCNE28DAdxss5g0w8K0I8FdV8jDQkp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJCTSByWSHlB97ZEJImCIDv7odnX6RHHPkCQvRMeId7fgugli1/W50V6eGVSwn5okLmwDsNiUE/Ax4CFGMpoHfRLiTU9BqtGnqGKBVkAElhjh+S72OobH2XUjnPUJ1G80YAu/Vo3bwoztbKRhQoqZu+C8WaQRGa7dCxQZ2omXnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTwRICpZ; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6f5365bdbaeso8879946d6.3;
-        Tue, 06 May 2025 09:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746549338; x=1747154138; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RvT+lXwAZdK17G8fy8dtsIjqoMmINzyyTp6bNm9ENFU=;
-        b=CTwRICpZE5UQr33dXWSVQm3PIoYtkz48J7J+6WQjY4Pw10gSLNazR/PQj03amu0yxS
-         eEF5o3rC4Z5j1ibVxLMVDD7sSOZ/ZwyG2sRJrQT1DtHlDNHj5JjMnC6peoM1m+0p/ROy
-         BhSgF2SiBRN/sjkp1thHfElOdG19PO0yzFntvUdkjpibLwpe/hy9sNlZN30xjdAVCang
-         WY487wJQq+dYgIjGLxsCRyzX+q8dniNi42Zfb/smIjNT7VmLHZBUPa2N2KqnH9GrqKe4
-         PpG5ziIP2EjQ2+Ceirozmt67f1MvkWLaXPIHPAMt4lu/EeAdnayn2zgQs7TDvBtaedEm
-         m7hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746549338; x=1747154138;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RvT+lXwAZdK17G8fy8dtsIjqoMmINzyyTp6bNm9ENFU=;
-        b=rYaXTEl6u+uMbkIgay+k/vJkxcXEV+ZDQh7GL21pNaJFxwqPs/qGnOHldL2v8V7ddZ
-         crjd6XsnvlyrkNs8GeZbKDwch8ZY25jbHvkqfBHHrhFuuxtn7mPhjd9+OiSUd+i6GJO1
-         /+LElDexcUF/DJetu1hYQcALqDRUMJZxx7qj045/9xCzMjM5m7ehm0z0EH5hbKlNgJ3c
-         yMRcUnCKyWSnIWMVOGjxlx7Kh2wkCwH5IwztpJBhYAExWdPqMb9RoSowWbPdD4lrOCxK
-         9HY3eyke/Puv0M5iYC3PswAUlbSPLOZh331ljZJAOB/GmDHwuQTmRGTy6zJ04p53CM/Y
-         DQBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdqQgUO3uzsc3yx/ebJtBMzzhh7R+5VDo0OHffzbTKNFEGb9p1/X2lSCyagArCVRZbDdg49YZCgBI=@vger.kernel.org, AJvYcCVkQalhRM27OpUf5Hvv4IzN6KQW1au2IZ5YjKP2+zRqQtSRsNHcIP7Qd6b9ONAcD8AsoTnzMhfNolWPyDxx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzffpKFbyvwVcB7K6CMMPizVASXu/JWXFMgMPLLwq1ST5yzkWhJ
-	NqWotjr49kVrh/dPR/vgdQf6GceKpB7cX2xCIx6cmmvsijL9RFmb
-X-Gm-Gg: ASbGncsqHjtb75xDZFS5e05wgW97ms34eSAOaqQ8e1aFFXzpO+LYT2yMcu4loxigS9T
-	dsU7XChHElTearMMBu36cHMOxMcm1XBcIiOYRh/1MUoN3azVwVGRLeKRCpziCcNVmRPg09UoUhL
-	1asbCwU3S7KM8Z7BZ5esNqBbuJ1cd+eyBrohYEBQRtyqaPKC4XIT+hDvB8sQLhBIIPHQ2oH7asb
-	/qIdNaitF12bmWyCF+Al0bP+1LHtSXY6/MNpImYpaZByhx2hKVd7PXeagWf16sC1MW0GOKe2PcX
-	ZgGmQVpnCKbUXV+hul2qnDk2qpTlsBPgJU9FhSS68L7Aj+4mG8rEjLN3NEhXQg==
-X-Google-Smtp-Source: AGHT+IE8E1nnlrLB/Gb2SXRckPO/voZepjzp7qWkwi6b3Lmh+d9W75XhkFp+uX9L+AEakgV84zNREw==
-X-Received: by 2002:a05:6214:496:b0:6e8:f4e2:26ef with SMTP id 6a1803df08f44-6f5354174ecmr64482786d6.31.1746549338554;
-        Tue, 06 May 2025 09:35:38 -0700 (PDT)
-Received: from c65201v1.fyre.ibm.com ([129.41.87.7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b030fsm72331396d6.13.2025.05.06.09.35.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 09:35:38 -0700 (PDT)
-From: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	jic23@kernel.org,
-	srinivas.pandruvada@linux.intel.com
-Cc: linux-input@vger.kernel.org,
-	linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1746549337; c=relaxed/simple;
+	bh=v6Itnp1G5LphqWttVBNTnAaNLzUOuYnCneRQuBD8SoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=achm3b5VQ/2rbYhe7F08hrZ3aIyT0TZqEUkHpnSShbEiT+IHZGwO6LL0Va8GDi/xyUzSPWZI9t1yAPy9QnTM+3jcdH6/KHNvsepFuZ2ZMMPdIbEOla7WSBlCydKaEsFq/FhtV9mkfMRn7/bxBzVXydyQ1XOwe1egT/azTtylO7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ln2+NDnR; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746549336; x=1778085336;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=v6Itnp1G5LphqWttVBNTnAaNLzUOuYnCneRQuBD8SoM=;
+  b=Ln2+NDnR/aibpFf4NM++kFYM+n/euM4vx3BhTZfjP057cqP030Ku0X6c
+   fNbUYkl4h1TOKBfC8FgUxereot5PfS7kbVKOZbVyloU59+fJ4lZtvcgF4
+   awTVx1S8mcRHtSlCcw/aHvPs4Sde3G33fkc6xZi571ukICpbC5dTVyJ3w
+   RRqVk4RUBP1YPA4PCP5hom4cYRcr2orVQH0j+rnXFMGKwtHhXoi6Gs4pI
+   UI7oVzDBmtzyPEi/Geu4L71DxiDqw2CZlmZFeOrJwNEdA/B3qAyF0nRYE
+   drZirWLW4AE+ak8uL9G9gX7sRG+PrBchWT8G6vT5Za5mxVo7cuHjN2hJE
+   A==;
+X-CSE-ConnectionGUID: 6SV1GmflRPqXRW5icj3kQQ==
+X-CSE-MsgGUID: sQB9xLyFTq22rW2qs7mpZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="70736089"
+X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
+   d="scan'208";a="70736089"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 09:35:35 -0700
+X-CSE-ConnectionGUID: tXM5XiClT6q/bBXNFEXQ3A==
+X-CSE-MsgGUID: /2H47fQfTPOGe0I8IUa51Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
+   d="scan'208";a="136636279"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
+  by orviesa008.jf.intel.com with ESMTP; 06 May 2025 09:35:35 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-Subject: [PATCH] HID: sensor-hub: Fix typo and improve documentation
-Date: Tue,  6 May 2025 09:35:23 -0700
-Message-ID: <20250506163523.3262037-1-chelsyratnawat2001@gmail.com>
-X-Mailer: git-send-email 2.43.5
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v2 0/3] platform/x86: ISST: SST PP and TF revision 2
+Date: Tue,  6 May 2025 09:35:28 -0700
+Message-ID: <20250506163531.1061185-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,54 +74,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Includes the following corrections -
- - Changed Measurment -> Measurement
- - Changed clode -> close
- - Gyro -> gyro
+Add support for SST PP and TF revison 2 support.
 
-Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
----
- include/linux/hid-sensor-hub.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Changes:
+- Minor change related to variable name and change to define
+- Add additional patch to update minor rev
 
-diff --git a/include/linux/hid-sensor-hub.h b/include/linux/hid-sensor-hub.h
-index 0f9f7df865db..3621d35a00d6 100644
---- a/include/linux/hid-sensor-hub.h
-+++ b/include/linux/hid-sensor-hub.h
-@@ -17,7 +17,7 @@
-  * @attrib_id:		Attribute id for this attribute.
-  * @report_id:		Report id in which this information resides.
-  * @index:		Field index in the report.
-- * @units:		Measurment unit for this attribute.
-+ * @units:		Measurement unit for this attribute.
-  * @unit_expo:		Exponent used in the data.
-  * @size:		Size in bytes for data size.
-  * @logical_minimum:	Logical minimum value for this attribute.
-@@ -39,8 +39,8 @@ struct hid_sensor_hub_attribute_info {
-  * struct sensor_hub_pending - Synchronous read pending information
-  * @status:		Pending status true/false.
-  * @ready:		Completion synchronization data.
-- * @usage_id:		Usage id for physical device, E.g. Gyro usage id.
-- * @attr_usage_id:	Usage Id of a field, E.g. X-AXIS for a gyro.
-+ * @usage_id:		Usage id for physical device, e.g. gyro usage id.
-+ * @attr_usage_id:	Usage Id of a field, e.g. X-AXIS for a gyro.
-  * @raw_size:		Response size for a read request.
-  * @raw_data:		Place holder for received response.
-  */
-@@ -104,10 +104,10 @@ struct hid_sensor_hub_callbacks {
- int sensor_hub_device_open(struct hid_sensor_hub_device *hsdev);
- 
- /**
--* sensor_hub_device_clode() - Close hub device
-+* sensor_hub_device_close() - Close hub device
- * @hsdev:	Hub device instance.
- *
--* Used to clode hid device for sensor hub.
-+* Used to close hid device for sensor hub.
- */
- void sensor_hub_device_close(struct hid_sensor_hub_device *hsdev);
- 
+Srinivas Pandruvada (3):
+  platform/x86: ISST: Support SST-TF revision 2
+  platform/x86: ISST: Support SST-PP revision 2
+  platform/x86: ISST: Update minor version
+
+ .../intel/speed_select_if/isst_tpmi_core.c    | 103 +++++++++++++++++-
+ include/uapi/linux/isst_if.h                  |  26 +++++
+ 2 files changed, 127 insertions(+), 2 deletions(-)
+
 -- 
-2.43.5
+2.49.0
 
 
