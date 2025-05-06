@@ -1,168 +1,152 @@
-Return-Path: <linux-kernel+bounces-636870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B03AAD116
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE2CAAD17D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 01:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96DC91C02056
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 033551C2086D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D605321C9E3;
-	Tue,  6 May 2025 22:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDF821CA02;
+	Tue,  6 May 2025 23:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjVyPuq4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="QfaO9SCT"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302674B1E7B;
-	Tue,  6 May 2025 22:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7861A23A9;
+	Tue,  6 May 2025 23:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746571521; cv=none; b=iz7N8xRaL14PlHFsuy9Ak55c9WR5z6CirTPb1Mv5PT/6vSaoxNgZABIjJRMOA42SA+ZvL08sM67LBe/uvQFbEN6mmHFb7+pg0JaNGVRuNKP6adi4aHxUvYZ3rIX58XXyQT19PLDwDA/Wj0tLupdnOCKng4tqD31ZKlpTDRVeG1k=
+	t=1746573301; cv=none; b=T1mCsE+Qa/z+TCenTXvzWP+Loe/6WSEgpyYF+UBqt7kC5hRYY5ioV2gjVNnmnXLZJleRdqelr57S4Nb6/JPSNe4p6PFgUV2e5wONmFcDsLtvGhWRbklU5h3qpP+F3el53ywTSx9Y7NVXNa6Lr3NRMznCpjalkL3jvRuTPolir2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746571521; c=relaxed/simple;
-	bh=1dvlnqYsecpUo9pwUMnCVzZ/m+Jv+YQscZRphjofhN4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=soPdc8ahljzLSZjSYJoRVl1Kr4f59cWo7eBukVCoC1FCq+EJCjFi7MU3/fJ3Kl2Gfy22hy9UgU5MrJKYvgnRPAk17kOwHblQc3rHLoD9wd3tusrDS/21P/HDE6GzEO+ukdCGYOOyklr0dM5OPandpwTVdml/BjaukSGdTySHLJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjVyPuq4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C82C4CEEF;
-	Tue,  6 May 2025 22:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746571519;
-	bh=1dvlnqYsecpUo9pwUMnCVzZ/m+Jv+YQscZRphjofhN4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fjVyPuq4XKL3s9VatmaT0mMpeD3eZlMCpntqD0JThWu/Xw/EXm8uqFcGFPXiRJbnd
-	 I1/66bfMU4+b8mySYP9GJfQBS8MU+adCgGk/GscaEEop7k0a0fiektJwQT/8SJLr1J
-	 LUxjPVHSprwXA6kl9sj7k3ber9oSdNPFLeRvlHwtg+akN8A2QbiVGYISaUC3sQhvXu
-	 3m2Aj/JeGkBsSFYvzaXggtyrJz8AiyObfNuzqVtj6jEVORxhFNg7amsbV5GM8MPLcV
-	 ACJA1JoSijFpc7iqpfP1wpQE8LWd9KrlVgZFyrAQcQ5iW7gGwNwhycrPnc6fWkbV3Y
-	 It4DUXxdRJrwA==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f4ca707e31so10032586a12.2;
-        Tue, 06 May 2025 15:45:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVe3x3YxJF2ah6kOoq/S5Mzw+h1OiSzTmuUZ3cEzrUR8c3yluPKoHD6XunO966iyNQqsjSu+jaHqVh/oyZw@vger.kernel.org, AJvYcCVqFRlR6iK8pgXidUWTPvci0hniaBur6RaX8pLPRGKEc13J24JWqxstDvmu3/3SB/Cvq1SnXvEzOQa7dlfF@vger.kernel.org, AJvYcCXi0YJuhAtJFM+QkKgcmOdJm8GNJI/5I+RRF08h6tKCwFULISu6RnbDJ2O25AT8HZolBbc1U2+Ym/27@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJg0ihtWR4W9vDqsMce6keN4NmMdxY4NhNG/xs38QyejPWWtud
-	Oa8dNTp937LjJaOfAVw1vgJALnKxzeDfOhVSbF+ytczwnSJViueWwsi3d8sS/kH9GCFhwf9WZj+
-	cXT8LUjrCL5XQqri/SWp9LhVcXQ==
-X-Google-Smtp-Source: AGHT+IGM3HfyPBRSSoNpCu9csErC2rnv60HCqPbdFjrsw9xOdMGNTWOymyb3x+Dvi7cgeDRWJfU56lfe8iJhazULcJM=
-X-Received: by 2002:a05:6402:35c3:b0:5f4:d4e7:3c37 with SMTP id
- 4fb4d7f45d1cf-5fbe9d47899mr799186a12.6.1746571518264; Tue, 06 May 2025
- 15:45:18 -0700 (PDT)
+	s=arc-20240116; t=1746573301; c=relaxed/simple;
+	bh=0APPBYsT8cIqi0gvG0DV20fanKAT7WzukD/B32mb0z4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=S+AHn8t7C4HHYeskUjmhPV0fCWdXzVeik+biZw8jv1tdeUx2GOMrfphXlLr509v2fsmeSd+ZWc3q51p8LcyncL7OEAZQ1eeJmK+5nDf5AR/OpjRbqv3RpENEdT4WfS10EXN9Bd9ETLecynY9v6Iyr8RmYVr5CbuVmdyCDw/wzDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=QfaO9SCT; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uCR4T-007tJK-2w; Wed, 07 May 2025 00:47:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=BMq0rqR/Z/Nu+2i3yDlis9NI97iG+saHQkwWMHw8sw0=; b=QfaO9SCT4A3ryrokVq0tNv2Ie2
+	Jb8lnps96YvimNQOJvx9Nl8/eT8AFAFTYBlN95CQfx3p2oG4EvTHjvie1JPaOplGPfmetkwP2ZWvy
+	3d13IpFuEusdcv35+zYSAaB2J+429FqjE5otK1KCXupg5PqLIRfqSs5buokqa4Y8kNRY6tTSF9lcj
+	rKBFnADYjurMWzlu2WpsrxiTy4+jSDEWlazkUiuM29/h1wHoWAe5GPdzrDlA3Y07fNeLmb2s4KEzP
+	3F5mk8nExShIi/bWKum/TISh5BngU6aXcSKaz4tCIdl+545PBUGAFykCSPdREnA8oxFr6WiziKbu/
+	SI72Cj5Q==;
+Received: from [10.9.9.72] (helo=submission01.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uCR4R-0006Gd-Rg; Wed, 07 May 2025 00:47:28 +0200
+Received: by submission01.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uCR4A-00FMcb-5o; Wed, 07 May 2025 00:47:10 +0200
+Message-ID: <6a818cc6-f26c-417b-ad06-0686b698b2fe@rbox.co>
+Date: Wed, 7 May 2025 00:47:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506220044.2546706-1-robh@kernel.org> <20250506221751.t3iwqquzjgysjaai@pali>
-In-Reply-To: <20250506221751.t3iwqquzjgysjaai@pali>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 6 May 2025 17:45:06 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+T-NZE1--VN7J2c5GbpG8d4nWpfceKE=ZGg3wfXn5iFQ@mail.gmail.com>
-X-Gm-Features: ATxdqUFiJ50th5PWc3bVyidIL9UXE1B-QZu3aTbehYousZMT6MMcxddc8PgW7yk
-Message-ID: <CAL_Jsq+T-NZE1--VN7J2c5GbpG8d4nWpfceKE=ZGg3wfXn5iFQ@mail.gmail.com>
-Subject: Re: [PATCH] irq-names dt-bindings: serial: Convert
- marvell,armada-3700-uart to DT schema
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH net-next v4 2/3] vsock: Move lingering logic to af_vsock
+ core
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250501-vsock-linger-v4-0-beabbd8a0847@rbox.co>
+ <20250501-vsock-linger-v4-2-beabbd8a0847@rbox.co>
+ <hcme242wm3h33zvbo6g6xinhbsjkeaawhsjjutxrhkjoh6xhin@gm5yvzv4ao7k>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <hcme242wm3h33zvbo6g6xinhbsjkeaawhsjjutxrhkjoh6xhin@gm5yvzv4ao7k>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 6, 2025 at 5:17=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> wr=
-ote:
->
-> On Tuesday 06 May 2025 17:00:41 Rob Herring (Arm) wrote:
-> > Convert the Marvell Armada-3700 UART binding to DT schema. It is a
-> > straight-forward conversion.
-> >
-> > Drop the long deprecated single interrupt support.
-> >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> >  .../serial/marvell,armada-3700-uart.yaml      | 102 ++++++++++++++++++
-> >  .../devicetree/bindings/serial/mvebu-uart.txt |  56 ----------
-> >  MAINTAINERS                                   |   2 +-
-> >  3 files changed, 103 insertions(+), 57 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/serial/marvell,ar=
-mada-3700-uart.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/serial/mvebu-uart=
-.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/serial/marvell,armada-37=
-00-uart.yaml b/Documentation/devicetree/bindings/serial/marvell,armada-3700=
--uart.yaml
-> > new file mode 100644
-> > index 000000000000..fa454337f06f
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/serial/marvell,armada-3700-uart=
-.yaml
-> > @@ -0,0 +1,102 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/serial/marvell,armada-3700-uart.yam=
-l#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Marvell Armada-3700 UART
-> > +
-> > +maintainers:
-> > +  - Pali Roh=C3=A1r <pali@kernel.org>
-> > +
-> > +description:
-> > +  Marvell UART is a non standard UART used in some of Marvell EBU SoCs=
- (e.g.
-> > +  Armada-3700).
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - marvell,armada-3700-uart
-> > +      - marvell,armada-3700-uart-ext
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +    description:
-> > +      UART reference clock used to derive the baud rate. If absent, on=
-ly fixed
-> > +      baud rate from the bootloader is supported.
-> > +
-> > +  interrupts:
-> > +    minItems: 2
-> > +    items:
-> > +      - description: UART sum interrupt (deprecated single-element for=
-m)
-> > +      - description: UART TX interrupt
-> > +      - description: UART RX interrupt
->
-> I think that this is wrong description and does not match the old txt
-> description:
+On 5/6/25 11:53, Stefano Garzarella wrote:
+> On Thu, May 01, 2025 at 10:05:23AM +0200, Michal Luczaj wrote:
+>> Lingering should be transport-independent in the long run. In preparation
+>> for supporting other transports, as well the linger on shutdown(), move
+>> code to core.
+>>
+>> Generalize by querying vsock_transport::unsent_bytes(), guard against the
+>> callback being unimplemented. Do not pass sk_lingertime explicitly. Pull
+>> SOCK_LINGER check into vsock_linger().
+>>
+>> Flatten the function. Remove the nested block by inverting the condition:
+>> return early on !timeout.
+>>
+>> Suggested-by: Stefano Garzarella <sgarzare@redhat.com>
+>> Signed-off-by: Michal Luczaj <mhal@rbox.co>
+>> ---
+>> include/net/af_vsock.h                  |  1 +
+>> net/vmw_vsock/af_vsock.c                | 30 ++++++++++++++++++++++++++++++
+>> net/vmw_vsock/virtio_transport_common.c | 23 ++---------------------
+>> 3 files changed, 33 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
+>> index 9e85424c834353d016a527070dd62e15ff3bfce1..d56e6e135158939087d060dfcf65d3fdaea53bf3 100644
+>> --- a/include/net/af_vsock.h
+>> +++ b/include/net/af_vsock.h
+>> @@ -221,6 +221,7 @@ void vsock_for_each_connected_socket(struct vsock_transport *transport,
+>> 				     void (*fn)(struct sock *sk));
+>> int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock 
+>> *psk);
+>> bool vsock_find_cid(unsigned int cid);
+>> +void vsock_linger(struct sock *sk);
+>>
+>> /**** TAP ****/
+>>
+>> diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>> index fc6afbc8d6806a4d98c66abc3af4bd139c583b08..a31ad6b141cd38d1806df4b5d417924bb8607e32 100644
+>> --- a/net/vmw_vsock/af_vsock.c
+>> +++ b/net/vmw_vsock/af_vsock.c
+>> @@ -1013,6 +1013,36 @@ static int vsock_getname(struct socket *sock,
+>> 	return err;
+>> }
+>>
+>> +void vsock_linger(struct sock *sk)
+>> +{
+>> +	DEFINE_WAIT_FUNC(wait, woken_wake_function);
+>> +	ssize_t (*unsent)(struct vsock_sock *vsk);
+>> +	struct vsock_sock *vsk = vsock_sk(sk);
+>> +	long timeout;
+>> +
+>> +	if (!sock_flag(sk, SOCK_LINGER))
+>> +		return;
+>> +
+>> +	timeout = sk->sk_lingertime;
+>> +	if (!timeout)
+>> +		return;
+>> +
+>> +	/* unsent_bytes() may be unimplemented. */
+> 
+> This comment IMO should be enriched, as it is now it doesn't add much to 
+> the code. I'm thinking on something like this:
+>      Transports must implement `unsent_bytes` if they want to support
+>      SOCK_LINGER through `vsock_linger()` since we use it to check when
+>      the socket can be closed.
 
-It's correct that a single irq entry is deprecated, but I did say I
-dropped that. So "(deprecated single-element form)" should be dropped
-here.
+OK, will do.
 
-> - Must contain three elements for the standard variant of the IP
->   (marvell,armada-3700-uart): "uart-sum", "uart-tx" and "uart-rx",
->
-> - Must contain two elements for the extended variant of the IP
->   (marvell,armada-3700-uart-ext): "uart-tx" and "uart-rx",
+Thanks,
+Michal
 
-Note that the descriptions don't really match this either. Expressing
-it correctly makes the schema worse (using a oneOf) and doesn't
-improve validation. We have interrupt-names correct, so I think it is
-fine.
-
-Really, no one has cared for 6 years about this binding and converting
-it, so I'm not going to spend a lot of time worrying about
-descriptions. There's a 1000 more to do.
-
-Rob
 
