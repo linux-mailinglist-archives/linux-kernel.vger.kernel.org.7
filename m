@@ -1,211 +1,158 @@
-Return-Path: <linux-kernel+bounces-636355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9A2AACA37
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE35DAACA4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172263B074E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62053520ABF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7AF283FF6;
-	Tue,  6 May 2025 15:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B95D284690;
+	Tue,  6 May 2025 16:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E9Vab5f0"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGt6rFDo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6165325DB1E
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 15:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB5D283FF6;
+	Tue,  6 May 2025 16:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746547059; cv=none; b=ZPbRhhWcTOQqmQCwIR7t2IcHngNSAepVPj0GuZZj8D7BD18fKgV1UA92YAf9S1wX+vAi8SmKchruXySdjofj19X74CahqxjiGgMUJJMLYP0QXDxi8o5degGqX+sbU+BGCF1E/cCbAcdIqoCsMdgR9uli9sdiQ0ae2cJISRNXuls=
+	t=1746547207; cv=none; b=VSmZAQQU82fVS+Dv9y7WKZ7syBvFmrmj9KKBlmDYf+ydf7Kf3wVwCP8d9OpmLuZ6CMHNdI2Rwl95+ZbLY8zz0koXwxm9ZQ9RVOi1qs4HRDVGK3Y3tek7C1BKS2ONc6UAH+MgIfVGEtdzwx4oBaRYCwDvS2GllCbVSUXqipx48GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746547059; c=relaxed/simple;
-	bh=H6t/LyVC2tH9tYFL7kkla4lrUFrql+BZCxnd6PfxDCg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J5E0qxzfZnXTInRlgaCzEResOw7+zd757jGEGPSbAcUO2lrP1XvWIJalDbH9cNpgAIh5OLBFdf9FHPBOJobZFieG4G/vXvyu1kFZ2nGuSxlQEFpg7taCaAmfJ8xR/S2O8UlSRbATR3F4MuxJ2u5EicmvHOPb+UVGlhX492mznBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E9Vab5f0; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30a4627dd0dso5115402a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 08:57:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746547057; x=1747151857; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=82szPLcDXXwvSQ58Vad6wi1SQt/unX3NlA9/tZXFxs4=;
-        b=E9Vab5f0FwUPadAxTTsGtOJpRWVeETQ3tnUpRhMlesOKrKTN0ri7KBGDD5HwbR8R6p
-         AJiPqrYCcmDmR2CXWx8PjRH+rKGvYfO5C61sHqAArSSnspZVz2DK8TjAVU3sTcV6lqqj
-         QKKYlLElX1VPC1UIAZEjccnHfhvtgmp5wG9Ow6T/EF9mkxdxh4f59KuGEZT8JjjR7Pzq
-         z4ROMetl0z69+C2muYN9+dOKsEEzUT8AMB/XA3zyyBdFTtLXLgIGVPNhodoaI9cmkSaJ
-         hVh16p/L/ohtFCwEcYFREcTXwxGdVg0TVfDFvPMVvJDZU2ZXEJAWfpppSboxivcyC4NO
-         fn9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746547057; x=1747151857;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=82szPLcDXXwvSQ58Vad6wi1SQt/unX3NlA9/tZXFxs4=;
-        b=JQsXossewjFA3qm6S8+5zjFIuSeROSmE7DUlvstdWMovWI24U/U9gu7vpotatABdZ4
-         neaA3E5A0ziDJt/mdO3QJzJMLIW4sm5yuUXRgb6i3FsZPoXvjGa1wvfyVY0pvI24+e9b
-         UA+77VlmIAVrfo95b+pFety6yMSiDpBwR3CYbxXWMSZeUDiwiQiCZ24VxRimgxQdMepF
-         SPPg0KJKKHS7ixQtmnb1EGl8M3u806pcr0Hi+l+yUYxjXYjQk3Kw7m05wdHv0KmxlwTy
-         8NV2EUHonYYPoSDtGn/V27whaIbIZ/Hc/JactKOhA7PbVCUVrZ7FialxgtLdo3v3rVZT
-         XW7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHW9KmKHb5XL/myS71mpjtbPAqy5/jKjAckhMYcNiHNRqivOiSliaJSEreMUxXfcXz0zfagnAKhwpy+Zc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5u92vd7LsNlOgccnU5y4ERordzp1hiN6xz11xB8JVoLC6w8z1
-	BX+82SV3LR+jVnpVIUAHbypoFLB6/MdwQsFeBcVqi9upcZjRXnopPyVj2z7BuHP3EIPy1E7lQ5s
-	qwQ==
-X-Google-Smtp-Source: AGHT+IG2VFH1wSD18xRDddv0hgK00HGNoXLRAE7B72u0/t9CQiIyb6Bq2SPEZzRGzlMmuQ/W/U0QS1Iq0fw=
-X-Received: from pjbpm5.prod.google.com ([2002:a17:90b:3c45:b0:2ff:5516:6add])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5245:b0:2ff:58a4:9db3
- with SMTP id 98e67ed59e1d1-30a7c0e41c1mr5310957a91.35.1746547057607; Tue, 06
- May 2025 08:57:37 -0700 (PDT)
-Date: Tue, 6 May 2025 08:57:36 -0700
-In-Reply-To: <aBoc0MhlvO4hR03u@google.com>
+	s=arc-20240116; t=1746547207; c=relaxed/simple;
+	bh=szbW/T48e07o7nsdAtspJ3TqCa91gXQ5dwM1QNp7ZX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0d4Hh5r+g9mkyMeI2NaWOuisu9tMNsPi6ioQp1/JosDRvDw9cqVD+iNz8/dzFXnPobnxAQoWthRd74L2vDQsRMcp+ohqnWvTzxP+3KC4SWuJFK1rZLKG4XLA1VUnGi/kZwok15HHBoNlUrQMuxbmAz+4lrQf066OlYTLqMBmVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGt6rFDo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E42C4CEE4;
+	Tue,  6 May 2025 16:00:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746547206;
+	bh=szbW/T48e07o7nsdAtspJ3TqCa91gXQ5dwM1QNp7ZX4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MGt6rFDota1d2WLpw7YKaQYlev1YgRkYOc97GjSpPzuQaqANHfObtJFxL0NbA9jpV
+	 fqrNNUZV6D7tKBJK6R5rWmTPS9NmzWrBJuGVo32+kLhVmLb41NkVmC1cWPEmfC4y3Q
+	 DcDYZDkvzEftF40AffVwywKhmBK5CyHg3Ka1heSiEfTi6SGf+mgEe63VThumLnTS0d
+	 NMiksZH4+DB/niW4uVrKhq+W5sayApdu9lNAXx8fPSdFSBLf1s+e9ErWFxTYPlJ9uS
+	 R54vHMJTjmcSfkDO3TsLYJazLU29CDW04BydjOh/w93ZxqsULPkQZsCJ9OPvz+FxZd
+	 1JOwKPeANPx8g==
+Date: Tue, 6 May 2025 16:59:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Larysa Zaremba <larysa.zaremba@intel.com>
+Cc: Jacob Keller <jacob.e.keller@intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Lee Trager <lee@trager.us>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Sridhar Samudrala <sridhar.samudrala@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Karlsson, Magnus" <magnus.karlsson@intel.com>,
+	Emil Tantilov <emil.s.tantilov@intel.com>,
+	Madhu Chittim <madhu.chittim@intel.com>,
+	Josh Hay <joshua.a.hay@intel.com>,
+	Milena Olech <milena.olech@intel.com>, pavan.kumar.linga@intel.com,
+	"Singhai, Anjali" <anjali.singhai@intel.com>
+Subject: Re: [Intel-wired-lan] [PATCH iwl-next v2 01/14] virtchnl: create
+ 'include/linux/intel' and move necessary header files
+Message-ID: <20250506155958.GT3339421@horms.kernel.org>
+References: <20250424113241.10061-1-larysa.zaremba@intel.com>
+ <20250424113241.10061-2-larysa.zaremba@intel.com>
+ <20250428161542.GD3339421@horms.kernel.org>
+ <10fd9a4b-f071-47eb-bdde-13438218aee9@intel.com>
+ <20250430085545.GT3339421@horms.kernel.org>
+ <aBhvNfWP-Rmec3Ci@soc-5CG4396X81.clients.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250505180300.973137-1-seanjc@google.com> <aBnbBL8Db0rHXxFX@google.com>
- <aBoZpr2HNPysavjd@google.com> <aBoc0MhlvO4hR03u@google.com>
-Message-ID: <aBoxcOPWRWyFIgVE@google.com>
-Subject: Re: [PATCH v2] KVM: SVM: Set/clear SRSO's BP_SPEC_REDUCE on 0 <=> 1
- VM count transitions
-From: Sean Christopherson <seanjc@google.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Michael Larabel <Michael@michaellarabel.com>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBhvNfWP-Rmec3Ci@soc-5CG4396X81.clients.intel.com>
 
-On Tue, May 06, 2025, Yosry Ahmed wrote:
-> On Tue, May 06, 2025 at 07:16:06AM -0700, Sean Christopherson wrote:
-> > On Tue, May 06, 2025, Yosry Ahmed wrote:
-> > > On Mon, May 05, 2025 at 11:03:00AM -0700, Sean Christopherson wrote:
-> > > > +static void svm_srso_vm_destroy(void)
-> > > > +{
-> > > > +	if (!cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-> > > > +		return;
-> > > > +
-> > > > +	if (atomic_dec_return(&srso_nr_vms))
-> > > > +		return;
-> > > > +
-> > > > +	guard(spinlock)(&srso_lock);
-> > > > +
-> > > > +	/*
-> > > > +	 * Verify a new VM didn't come along, acquire the lock, and increment
-> > > > +	 * the count before this task acquired the lock.
-> > > > +	 */
-> > > > +	if (atomic_read(&srso_nr_vms))
-> > > > +		return;
-> > > > +
-> > > > +	on_each_cpu(svm_srso_clear_bp_spec_reduce, NULL, 1);
+On Mon, May 05, 2025 at 09:56:37AM +0200, Larysa Zaremba wrote:
+> On Wed, Apr 30, 2025 at 09:55:45AM +0100, Simon Horman wrote:
+> > On Tue, Apr 29, 2025 at 11:47:58AM -0700, Jacob Keller wrote:
+> > > On 4/28/2025 9:15 AM, Simon Horman wrote:
+> > > > On Thu, Apr 24, 2025 at 01:32:24PM +0200, Larysa Zaremba wrote:
+
+...
+
+> > > >> diff --git a/MAINTAINERS b/MAINTAINERS
+> > > >> index 657a67f9031e..2e2a57dfea8f 100644
+> > > >> --- a/MAINTAINERS
+> > > >> +++ b/MAINTAINERS
+> > > >> @@ -11884,8 +11884,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/next-queue.git
+> > > >>  F:	Documentation/networking/device_drivers/ethernet/intel/
+> > > >>  F:	drivers/net/ethernet/intel/
+> > > >>  F:	drivers/net/ethernet/intel/*/
+> > > >> -F:	include/linux/avf/virtchnl.h
+> > > >> -F:	include/linux/net/intel/iidc.h
+> > > >> +F:	include/linux/intel/iidc.h
+> > > >> +F:	include/linux/intel/virtchnl.h
+> > > > 
+> > > > I'm not sure that I understand the motivation for moving files out of
+> > > > include/linux/net, but I guess the answer is that my suggestion, which
+> > > > would be to move files into include/linux/net, is somehow less good.
+> > > > 
+> > > > But if file are moving out of include/linux/net then I think it would
+> > > > make sense to make a corresponding update to NETWORKING DRIVERS.
+> > > > 
+> > > > Also, include/linux/intel, does feel a bit too general. These files
+> > > > seem to relate to NICs (of some sort of flavour or another). But Intel
+> > > > does a lot more than make NICs.
+> > > > 
 > > > 
-> > > Just a passing-by comment. I get worried about sending IPIs while
-> > > holding a spinlock because if someone ever tries to hold that spinlock
-> > > with IRQs disabled, it may cause a deadlock.
+> > > 'include/linux/net/intel' seems fine to me. I agree with moving
+> > > virtchnl.h there since it is quite clear that any historical ambitions
+> > > about AVF being vendor agnostic are long dead, so having it in its own
+> > > 'non-intel' folder is silly.
 > > > 
-> > > This is not the case for this lock, but it's not obvious (at least to
-> > > me) that holding it in a different code path that doesn't send IPIs with
-> > > IRQs disabled could cause a problem.
-> > > 
-> > > You could add a comment, convert it to a mutex to make this scenario
-> > > impossible,
+> > > Strictly speaking, I think the goal of moving the files is due to the
+> > > fact that a lot of the core ixd code is not really network layer but
+> > > instead PCI layer.
 > > 
-> > Using a mutex doesn't make deadlock impossible, it's still perfectly legal to
-> > disable IRQs while holding a mutex.
+> > Sure. I was more thinking out loud in my previous email than requesting any
+> > action. Thanks for filling in my understanding of the situation.
+> >
 > 
-> Right, but it's illegal to hold a mutex while disabling IRQs.
-
-Nit on the wording: it's illegal to take a mutex while IRQs are disabled.  Disabling
-IRQs while already holding a mutex is fine.
-
-And it's also illegal to take a spinlock while IRQs are disabled, becauase spinlocks
-become sleepable mutexes with PREEMPT_RT=y.  While PREEMPT_RT=y isn't super common,
-people do run KVM with PREEMPT_RT=y, and I'm guessing bots/CI would trip any such
-violation quite quickly.
-
-E.g. with IRQs disabled around the guard(spinlock)(&srso_lock):
-
- BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
- in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 2799, name: qemu
- preempt_count: 0, expected: 0
- RCU nest depth: 0, expected: 0
- 1 lock held by qemu/2799:
-  #0: ffffffff8263f898 (srso_lock){....}-{3:3}, at: svm_vm_destroy+0x47/0xa0
- irq event stamp: 9090
- hardirqs last  enabled at (9089): [<ffffffff81414087>] vprintk_store+0x467/0x4d0
- hardirqs last disabled at (9090): [<ffffffff812fd1ce>] svm_vm_destroy+0x5e/0xa0
- softirqs last  enabled at (0): [<ffffffff8137585c>] copy_process+0xa1c/0x29f0
- softirqs last disabled at (0): [<0000000000000000>] 0x0
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0x57/0x80
-  __might_resched.cold+0xcc/0xde
-  rt_spin_lock+0x5b/0x170
-  svm_vm_destroy+0x47/0xa0
-  kvm_destroy_vm+0x180/0x310
-  kvm_vm_release+0x1d/0x30
-  __fput+0x10d/0x2f0
-  task_work_run+0x58/0x90
-  do_exit+0x325/0xa80
-  do_group_exit+0x32/0xa0
-  get_signal+0xb5b/0xbb0
-  arch_do_signal_or_restart+0x29/0x230
-  syscall_exit_to_user_mode+0xea/0x180
-  do_syscall_64+0x7a/0x220
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- RIP: 0033:0x7fb50ae7fc4e
-  </TASK>
-
-> In this case, if the other CPU is already holding the lock then there's no
-> risk of deadlock, right?
-
-Not on srso_lock, but there's still deadlock potential on the locks used to protect
-the call_function_data structure.
-
-> > Similarly, I don't want to add a comment, because there is absolutely nothing
-> > special/unique about this situation/lock.  E.g. KVM has tens of calls to
-> > smp_call_function_many_cond() while holding a spinlock equivalent, in the form
-> > of kvm_make_all_cpus_request() while holding mmu_lock.
+> Olek suggested this because intel was the only resident in include/linux/net and 
+> include/linux/intel was vacant.
+>  
+> > But could we please consider updating NETWORKING DRIVERS so
+> > that get_maintainers.pl can help people to CC netdev and it's maintainers
+> > as appropriate?
 > 
-> Agreed that it's not a unique situation at all. Ideally we'd have some
-> debugging (lockdep?) magic that identifies that an IPI is being sent
-> while a lock is held, and that this specific lock is never spinned on
-> with IRQs disabled.
+> I am not sure what kind of update do you mean, include/linux/net directory was 
 
-Sleepable spinlocks aside, the lockdep_assert_irqs_enabled() in
-smp_call_function_many_cond() already provides sufficient of coverage for that
-case.  And if code is using some other form of IPI communication *and* taking raw
-spinlocks, then I think it goes without saying that developers would need to be
-very, very careful.
+Thanks I missed that.
 
-> > smp_call_function_many_cond() already asserts that IRQs are disabled, so I have
-> > zero concerns about this flow breaking in the future.
+> not under any maintainer. include/linux/mlx5 and include/linux/mlx4 are only 
+> under vendor maintainers.
 > 
-> That doesn't really help tho, the problem is if another CPU spins on the
-> lock with IRQs disabled, regardless of whether or not it. Basically if
-> CPU 1 acquires the lock and sends an IPI while CPU 2 disables IRQs and
-> spins on the lock.
+> For sure I should add include/linux/intel/* under Tony.
+> Do you think it also should be added to general networking maintainers?
 
-Given that svm_srso_vm_destroy() is guaranteed to call on_each_cpu() with the
-lock held at some point, I'm completely comfortable relying on its lockdep
-assertion.
-
-> > > or dismiss my comment as being too paranoid/ridiculous :)
-> > 
-> > I wouldn't say your thought process is too paranoid; when writing the code, I had
-> > to pause and think to remember whether or not using on_each_cpu() while holding a
-> > spinlock is allowed.  But I do think the conclusion is wrong :-)
-> 
-> That's fair. I think protection against this should be done more generically
-> as I mentioned earlier, but it felt like it would be easy-ish to side-step it
-> in this case.
-
-Eh, modifying this code in such a way that it could deadlock without lockdep
-noticing would likely send up a comincal number of red flags during code review.
+I think it would make sense to add it to general networking, or at least
+those files that would tend to be updated via netdev. But at least let's
+put the directory under Tony so it's maintained by somebody.
 
