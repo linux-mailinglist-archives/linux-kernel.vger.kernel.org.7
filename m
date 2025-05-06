@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-635788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6DEAAC200
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:05:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A8CAAC209
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E3567B00A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D201C2308F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BAA279327;
-	Tue,  6 May 2025 11:05:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCA71474B8
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B5E27A44C;
+	Tue,  6 May 2025 11:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OJkJakUP"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105CE2797AA;
+	Tue,  6 May 2025 11:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746529543; cv=none; b=WENkPPry9v0LPkwIPj6UrInglq8+NoxYsHhpIchiEIFw6a1xYQddbvqdZj+/JYQ1ySy6lea7XiPaYFT6c1Gw2YqWJcvlowpmABIhS1siokyObaGBb0bC22E+M8cfF+p06wTAxWeGIiOD+CDCcc05X1gbryvQpo77xkpPxffMUAg=
+	t=1746529592; cv=none; b=EFqknGxHNIvzsQF1sh3OgM8vuSOT61YXhmBQUaGAzOh9LOd4ds2FZufFGVzQixt2zCL/6orugJbFKsQyBCZ8Qd//DkIWZA1oUKyE4wYauLalI3dPrTknJcMsxa73Z/v9beqww++2kniB7HX2Zb5wK5XlGewzj92+TfmrqhVnhrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746529543; c=relaxed/simple;
-	bh=C6D2Qs77TfFaEEkGAb3RmEHmCZ2E02PUE4L+fd6eAak=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QNnrIcRVZel842XYztDbYLQlOSL6roMuOZJUk90UVMffiGehGi7YyBdrg34hcBA0JjHdHTg/lVOUgM+d5fz371r66AbzxKXg2Ak4AvyJYinyeOQBQAzRyBCxfDGo71RIJ+1mMw/WuaFenF231VdSVcXxuJE7GGyAh3TVH5DV9wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0B7A113E;
-	Tue,  6 May 2025 04:05:31 -0700 (PDT)
-Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 363B33F58B;
-	Tue,  6 May 2025 04:05:40 -0700 (PDT)
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Leo Yan <leo.yan@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH] coresight: replicator: Fix panic for clearing claim tag
-Date: Tue,  6 May 2025 12:05:26 +0100
-Message-ID: <174652950905.248615.15182322345223514612.b4-ty@arm.com>
+	s=arc-20240116; t=1746529592; c=relaxed/simple;
+	bh=zr6B6BHk0ijs+WAE8Za6/YddqsXcbPx2EntaO/pYqLI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L272JSbroX2ezYKzzT9RyA1uv4uTPQx8MCBQcLIxSTNPja8XbfmYGWCnRriXLQhBt7rAMlP3kn+hSpzD7xZ9ccThyRa6nX+PGAOtwCMmNtEM/3sdeSQHk7dmeJh75tpZOutdpsJI9xKWx85PlCyuDuEGFZXMyrAYGL/JWM2y4ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OJkJakUP; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 546B5pWU505365
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 6 May 2025 06:05:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746529551;
+	bh=kvvixGItnP8EXItNCvGOcFRVOXqkBwtBwhbiCKvfChM=;
+	h=From:To:CC:Subject:Date;
+	b=OJkJakUPKklp+XK+d4qOPDKY+LCananYXCsGJaA1/TdIVSIKFfSoswF9F7OpHsTI/
+	 ORP9UfQF/aqrRQygaVlpP8RHpMyw70xLn2J1YivG3sCgG22bjnVTBPTf1QYjxnud0Y
+	 mXPIljeRcBY9n7GYpEYMXw18zYVNi65xV9yWlONg=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 546B5pVS024284
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 6 May 2025 06:05:51 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
+ May 2025 06:05:51 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 6 May 2025 06:05:51 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 546B5prY127657;
+	Tue, 6 May 2025 06:05:51 -0500
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 546B5no5010330;
+	Tue, 6 May 2025 06:05:50 -0500
+From: Meghana Malladi <m-malladi@ti.com>
+To: <namcao@linutronix.de>, <horms@kernel.org>, <m-malladi@ti.com>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net v2 0/3] Bug fixes from XDP patch series
+Date: Tue, 6 May 2025 16:35:43 +0530
+Message-ID: <20250506110546.4065715-1-m-malladi@ti.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250502111108.2726217-1-leo.yan@arm.com>
-References: <20250502111108.2726217-1-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+
+This patch series fixes the bugs introduced while adding
+xdp support in the icssg driver, and were reproduced while
+running xdp-trafficgen to generate xdp traffic on icssg interfaces.
+
+v1: https://lore.kernel.org/all/20250428120459.244525-1-m-malladi@ti.com/
+
+Meghana Malladi (3):
+  net: ti: icssg-prueth: Set XDP feature flags for ndev
+  net: ti: icssg-prueth: Fix kernel panic during concurrent Tx queue
+    access
+  net: ti: icssg-prueth: Report BQL before sending XDP packets
+
+ drivers/net/ethernet/ti/icssg/icssg_common.c | 15 +++++++++++++--
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 16 ++++++++++------
+ 2 files changed, 23 insertions(+), 8 deletions(-)
 
 
-On Fri, 02 May 2025 12:11:08 +0100, Leo Yan wrote:
-> On platforms with a static replicator, a kernel panic occurs during boot:
-> 
->   [    4.999406]  replicator_probe+0x1f8/0x360
->   [    5.003455]  replicator_platform_probe+0x64/0xd8
->   [    5.008115]  platform_probe+0x70/0xf0
->   [    5.011812]  really_probe+0xc4/0x2a8
->   [    5.015417]  __driver_probe_device+0x80/0x140
->   [    5.019813]  driver_probe_device+0xe4/0x170
->   [    5.024032]  __driver_attach+0x9c/0x1b0
->   [    5.027900]  bus_for_each_dev+0x7c/0xe8
->   [    5.031769]  driver_attach+0x2c/0x40
->   [    5.035373]  bus_add_driver+0xec/0x218
->   [    5.039154]  driver_register+0x68/0x138
->   [    5.043023]  __platform_driver_register+0x2c/0x40
->   [    5.047771]  coresight_init_driver+0x4c/0xe0
->   [    5.052079]  replicator_init+0x30/0x48
->   [    5.055865]  do_one_initcall+0x4c/0x280
->   [    5.059736]  kernel_init_freeable+0x1ec/0x3c8
->   [    5.064134]  kernel_init+0x28/0x1f0
->   [    5.067655]  ret_from_fork+0x10/0x20
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] coresight: replicator: Fix panic for clearing claim tag
-      https://git.kernel.org/coresight/c/f42df204
-
-Best regards,
+base-commit: 8c2e6b26ffe243be1e78f5a4bfb1a857d6e6f6d6
 -- 
-Suzuki K Poulose <suzuki.poulose@arm.com>
+2.43.0
+
 
