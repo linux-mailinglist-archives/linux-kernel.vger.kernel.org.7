@@ -1,131 +1,144 @@
-Return-Path: <linux-kernel+bounces-636565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1570EAACCFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 20:17:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC8DAACD0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 20:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F1D1C409B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:17:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2605F3ABB7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB12C2857C9;
-	Tue,  6 May 2025 18:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1899E2868B4;
+	Tue,  6 May 2025 18:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TVudDeC6"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHvdqk+R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0002A221FBC
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 18:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACCE278778;
+	Tue,  6 May 2025 18:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746555453; cv=none; b=FCDwPApygp8M1RKTPRi+Pg1DmeG1nxQ+6fLoB27Fr0+XqvKAx7D3WQrUEX3NTEULli0Uv26pPx3U4jvLQo3fJTAcAeSncDrQWY8sornSK+Srs/252nyu5DQ78TOviVGrLmEgQFpPxxAVCpjfat4hP+7v5eJo1L5CW3V5WWcdbyo=
+	t=1746555529; cv=none; b=Mqv55+IEo0ywp/uih69/gSnlX2C3dJuQLJ8CplZ/fqNA6AuwN7eWtRRN1QAPsMYN2IL+FuhACcrHXlYfEPVJxfUZjb1gxWCwa6PIDWHLUiCRPI0NpX4drISkIvoWyL4fRHaWLQY2TLIaKEvYw02AKcf1+wr0yL9yOzcs7faO220=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746555453; c=relaxed/simple;
-	bh=y7Y9d+RzANox2+qqaCL+MzxUJmPb7O8ZAsLwLLyIZyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KIp+lDem7qrrD8x263hXj/VJiLktWElzy/U8bpNnYK8XTlqNqYNA2qEmWJ46m090/mBrl8PygVOoj61UE/Tv+ugU9tIB0EAH1vDX3oX4VKJ4mrxMMkWthbusg77yDQGHwl7UN4i5KfLjUhKWyssQKbOZupj8EmuyaKxyfMozrMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TVudDeC6; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso377858266b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 11:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1746555448; x=1747160248; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FPIulgxlKuYRMZuK6xb/XllU+vIpireS36cyNGgbuCQ=;
-        b=TVudDeC6Jk3hf7XB7WRNyL68HBT27bEEcTjisSfrfwo8be+ILtqyuonfAg3e6uzz52
-         l5VGIMzv12XrOh7sk4PYJJ3MYkUIVhKebbKoWYgBthGRs+67w3tCl4hYM4TLKY5Pq2Gw
-         oBeXDW4idy+YOoMyNehc6t1phB82wV1Tt/kWc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746555448; x=1747160248;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FPIulgxlKuYRMZuK6xb/XllU+vIpireS36cyNGgbuCQ=;
-        b=s1mINy2o2D8ElEjUK9EbBLp4vhANkFFz/BRlYVvJ58JPxShns33v8O5wmzYO1NvBQH
-         INAG8xgC5W1X95/7cwUVWDYX6FqkCEpxtcQzCbmRGn1fNgi5bcO0gLzU77zbMs9BZcJA
-         5m4h+FCoNomd14W2fWB0pTjFyWW1dBd7p+6tdxf1tONzqiCIcHIKQFP9f84iQV/yc4Dx
-         1iQOQM6CPIsA8yiFQZN/4+PzMl8BDMc06v70QGzCSefE3FvZUhrA2kCXOFMSFHgnd9Fn
-         NvyNFx4jcBH0FBh2wz9P4MFB/f0vgRK9WJLmoc3Vlh9mieV7zUD9eN5wi/w/5uQ6DXA/
-         +Utw==
-X-Forwarded-Encrypted: i=1; AJvYcCWF57PgkUjPheMWKmPJkUKjHeBciK8tr9RZf+fth3AlkA/XaBLfGTQWsuaiYmPLd96rZ45oBl//KZIzrew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXxsyYn7X9V0xFv93KLpFp2I7qA5j3OwVbLguj83/JSq6nPx6I
-	vyoW3BY2TD+Z5yCyPBvncCXZuo/XRGC7RMbloBgaawJgHZk3bLJy+9ZS1TdnI++YlWSsph4zTpp
-	di4I=
-X-Gm-Gg: ASbGncs1JH9Y993iHYxpJuZ3skZg5FpRwQswwzczYVhRrgaq5zrc1aigPYV3gJ3lu0b
-	/SxvIAtEo+nXOQlW3KKlV6HuDVRKw9KEc79rsP8qBnRMkayVY6otHLwySj482WorO7jCAmewHB6
-	HQ3Ytmgvy1VvPz6Vbb7C6H2m4U43vt7jtSULzXL3FlNnFnylfpHzSTYG5Ii4qxVS8A3Ygo3KYbg
-	aPLaaD7zduJ29ApjzUzQ/TWjczWvnv+LDj6vPm7N8eFCCbM/OmUNVSxT0SiCvy+whIJK+ETqMW6
-	I3/m8E3pytyPVkT+iSfBsFEMPq/tzGqk9KxtXrvkUfPcoYL/EHc/NZKuzkWp6wpHNhKZfXXVYjw
-	rildx3JXbyHJINca6XN5SzUuROA==
-X-Google-Smtp-Source: AGHT+IHsb17krWAFYm1+d8t8jZqsWwugqHrbdFZvS4xrwb6j+r4YWVY637BJOwRIpJ15TtDlBW02xw==
-X-Received: by 2002:a17:906:dc8b:b0:ac3:b12c:b1f2 with SMTP id a640c23a62f3a-ad1e8bf70damr42494366b.35.1746555447721;
-        Tue, 06 May 2025 11:17:27 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad189508afdsm749829166b.140.2025.05.06.11.17.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 May 2025 11:17:27 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so1062758a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 11:17:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXxYSBjYARMTYpkq3IdqgVKjWqpEj6ePYkdJXHgPV7CZtpv57dO1InGBvpUkjqq843XjNveWAdrp9HR3ME=@vger.kernel.org
-X-Received: by 2002:a05:6402:26c6:b0:5de:39fd:b2f5 with SMTP id
- 4fb4d7f45d1cf-5fbe9d77dbemr236721a12.1.1746555446640; Tue, 06 May 2025
- 11:17:26 -0700 (PDT)
+	s=arc-20240116; t=1746555529; c=relaxed/simple;
+	bh=AAwL5uoOTe6wCwpJpDywIRpKXFmiHBgm7TpEJavHXSQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=f2m8+FDVRSFkGj09QA8ffWvi/dqwGmm9wBlW/h8i8aIxSCLG8jDonZkaOp2ivNKxaIDL+het5xBqDBQ032IEAdtyM4THjUVzpTvfZ4zAWgyYoH+5MHkxNQwNIhZi8bAFblDKx0hTRZjJcY8uAJvXUsL20VpsMEVj2T9JdyAvQK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHvdqk+R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C15ABC4CEE4;
+	Tue,  6 May 2025 18:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746555528;
+	bh=AAwL5uoOTe6wCwpJpDywIRpKXFmiHBgm7TpEJavHXSQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=dHvdqk+R7rdmoZ9kFh+KjtQ1zUblgOvfZCiBYbKbDX/JONpmEdwpFfISCL69w3YWK
+	 ++DIbe+3bUNJ+sdCqMe68Vf/Q9qZNKvo/OuN6dWNO8RdNTTRsUPc8iOp2mxEzO86Du
+	 G9aH735ezk6iHbnmKRR/OHGyWjcR5351ALAVqFTM1LJzzqOyAMu2nj8FJh5hz5zwDt
+	 FWV4qzrk78a8n0MUSrLgZ/ZOptScAFoFD9qaft0kSeg+Xuv26Wj5GQFvp7FHBenjWi
+	 BNlWPfIEpk87NqF6aNFVZ4eLSDuTI7/1mYocYuNVt8RRBx3els0zBCg9rKRvXPG9sT
+	 kHig0wjF/l31A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF040C3ABBC;
+	Tue,  6 May 2025 18:18:48 +0000 (UTC)
+From: Joel Selvaraj via B4 Relay <devnull+foss.joelselvaraj.com@kernel.org>
+Subject: [PATCH RESEND v4 0/4] Add Xiaomi Poco F1 touchscreen support
+Date: Tue, 06 May 2025 13:18:37 -0500
+Message-Id: <20250506-pocof1-touchscreen-support-v4-0-bfb53da52945@joelselvaraj.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506154532.1281909-5-ardb+git@google.com> <20250506154532.1281909-8-ardb+git@google.com>
- <CAHk-=whrcutH0LcMmaeJxxMeYpw2R5T80yoQAXbrRHNSTCB0Pw@mail.gmail.com>
- <CAMj1kXFSae=stazUv8doka-zLOnDdXXR4ASxHKe5f97ikg3V2A@mail.gmail.com>
- <CAHk-=whxP5Ywpv-U=2NPFhk929VHB9_kdp10+HFJQ4VxEGdX9A@mail.gmail.com>
- <CAMj1kXGwYXXpjPgDwjKMEZJkuGJ8ZuCpMpc7fTvo58PNtu-czA@mail.gmail.com>
- <CAHk-=wiz5oXq2f_87hHViN2TZQO9VHpaWb5fWWGJbUWQw1ChVw@mail.gmail.com> <CAMj1kXEtW2bAQK4hN-S5C=Po5dk1q14+GJjzEJsjfz9OeOMoCg@mail.gmail.com>
-In-Reply-To: <CAMj1kXEtW2bAQK4hN-S5C=Po5dk1q14+GJjzEJsjfz9OeOMoCg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 6 May 2025 11:17:09 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whRNPK7hTtPYh3SEe0WXEHR=aedc3bc-y_e08ujOxmgJg@mail.gmail.com>
-X-Gm-Features: ATxdqUEG8NOjdijJRZScifQxyyYMRZQH35uZ19B1EyOlpH1dvcullkaUKFQgYZg
-Message-ID: <CAHk-=whRNPK7hTtPYh3SEe0WXEHR=aedc3bc-y_e08ujOxmgJg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] x86/boot: Use alternatives based selector for
- 5-level paging constants
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH1SGmgC/43RPU/DMBAG4L9SecbIn3HciYGuDDAiBvtyIa7aO
+ NhJBKr63zEBBAON2O5Dek5670QypoCZbDcnknAOOcS+NOpqQ6Bz/TPS0JSeCCYUZ8zQIUJsOR3
+ jBF2GhNjTPA1DTCMFo4XjlYAGBCnAkLANrwv+SO53D7u7W/JU5l3IY0xvy82ZL9v/8DOnjDZec
+ i94zWvQN/uIh4yH2SW3v4Z4XPRZ/IiC1auiKKJ2FRojLbbqkii/Rc0k46uiLKJrGQfpJfP6kqh
+ +i3JVVEUsiUqPHqRV4g/x/Bl2wpepPHD8Sty7jLTsj2HcboChr7SyCrVtbC2Vaw1491FWwqJl3
+ HihHS/Y+R3Z4NAbFQIAAA==
+X-Change-ID: 20241007-pocof1-touchscreen-support-c752a162cdc2
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+ Joel Selvaraj <foss@joelselvaraj.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746555528; l=2842;
+ i=foss@joelselvaraj.com; s=20250506; h=from:subject:message-id;
+ bh=AAwL5uoOTe6wCwpJpDywIRpKXFmiHBgm7TpEJavHXSQ=;
+ b=INuU4+qYGCE/v6P5oMl5xtD0ThiZimqH3pLqAa6TCOiX0ZoDbVdCM1e4NImNyO0ctlVed4g0M
+ hbERnbpVHQsD5B6sUs9tlg3rRW1vCour20TigfYe5jd2MBnHgYkIOKM
+X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
+ pk=/jk63vyofgC3YCat+t/kcBv+rlSEVcI4PLN/LN0SQlQ=
+X-Endpoint-Received: by B4 Relay for foss@joelselvaraj.com/20250506 with
+ auth_id=399
+X-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
+Reply-To: foss@joelselvaraj.com
 
-On Tue, 6 May 2025 at 10:53, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> The very first thing we do when entering the core kernel is populate
-> the page tables, and this uses all the macros and #define's that are
-> based on pgtable_l5_enabled(). Alternatives patching occurs *much*
-> later.
+In the first patch, I have updated the edt-ft5x06 touchscreen binding 
+documentation. In Xiaomi Poco F1(qcom/sdm845-xiaomi-beryllium-ebbg.dts),
+the FocalTech FT8719 touchscreen is integrally connected to the display 
+panel (EBBG FT8719) and thus should be power sequenced together with 
+display panel for proper functioning using the panel property. Since the
+edt-ft5x06 touchscreen binding uses almost all the properties present in 
+touchscreen.yaml, let's remove additionalProperties: false and use 
+unevaluatedProperties to include all the properties, including the needed
+panel property.
 
-.. but that's my *point*.
+In the second patch, I have enabled the qupv3_id_1 and gpi_dma1 as they
+are required for configuring touchscreen. Also added the pinctrl
+configurations. These are common for both the Poco F1 Tianma and EBBG
+panel variant.
 
-If you depend on pgtable_l5_enabled() when you set up early paging,
-you likely also depend on ptrs_per_p4d.
+In the subsequent patches, I have enabled support for the Novatek NT36672a
+touchscreen and FocalTech FT8719 touchscreen that are used in the Poco F1
+Tianma and EBBG panel variant respectively.
 
-And if you depend on that, then you depend on having run check_la57_support().
+Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+---
+Changes in v4:
+- Update the dt-binding patch's commit message to be more accurate
+- Link to v3: https://lore.kernel.org/r/20250301-pocof1-touchscreen-support-v3-0-af01c3b30b55@joelselvaraj.com
 
-And we should have some way to *verify* that, rather than say "you can
-use pgtable_l5_enabled randomly early".
+Changes in v3:
+- Fix SoB email id mismatch (suggested by Krzysztof Kozlowski)
+- Use unevaluatedProperties instead additionalProperties in dt-binding (suggested by Krzysztof Kozlowski)
+- Link to v2: https://lore.kernel.org/r/20241208-pocof1-touchscreen-support-v2-0-5a6e7739ef45@joelselvaraj.com
 
-Maybe we could have a "early alternatives fixup" for this. I thnk
-RISC-V does something like that, where it has separate early
-alternatives fixup.
+Changes in v2:
+- Fixed the missing "panel" property dt-binding error reported by Rob Herring's bot.
+- Change the "input-enable" property to "output-disable" in qcom/sdm845-xiaomi-beryllium-common.dtsi
+  (Based on a patch suggested by Konrad Dybcio).
+- Link to v1: https://lore.kernel.org/r/20241007-pocof1-touchscreen-support-v1-0-db31b21818c5@joelselvaraj.com
 
-The early boot alternatives code fixup should be really easy - no need
-to worry about IPIs and things like that.
+---
+Joel Selvaraj (4):
+      dt-bindings: input: touchscreen: edt-ft5x06: use unevaluatedProperties
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-common: add touchscreen related nodes
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-tianma: introduce touchscreen support
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-ebbg: introduce touchscreen support
 
-Hmm?
+ .../bindings/input/touchscreen/edt-ft5x06.yaml     |  9 +----
+ .../dts/qcom/sdm845-xiaomi-beryllium-common.dtsi   | 39 ++++++++++++++++++++++
+ .../boot/dts/qcom/sdm845-xiaomi-beryllium-ebbg.dts | 23 +++++++++++++
+ .../dts/qcom/sdm845-xiaomi-beryllium-tianma.dts    | 23 +++++++++++++
+ 4 files changed, 86 insertions(+), 8 deletions(-)
+---
+base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
+change-id: 20241007-pocof1-touchscreen-support-c752a162cdc2
 
-              Linus
+Best regards,
+-- 
+Joel Selvaraj <foss@joelselvaraj.com>
+
+
 
