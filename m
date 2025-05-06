@@ -1,157 +1,108 @@
-Return-Path: <linux-kernel+bounces-635536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4819FAABED8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:16:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3729BAABED5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F6B1C2789D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:15:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E99B5212ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93270265CDE;
-	Tue,  6 May 2025 09:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0BE26B2D3;
+	Tue,  6 May 2025 09:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QOg8GFlK"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Zmzz+fch"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E260B26659D
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DDF269B08;
+	Tue,  6 May 2025 09:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746522658; cv=none; b=fPRwjGbyNnG18JXGLMtvo97bw1y94Gcd4OfAsoiWB9CDc0YJ9DZMRK9G3A5jMODZL+huGbEPYLQVME4L2YyOwrooo2N4lDdXtEXGPetEI4bK63dn89rx7wlOBMA/f0QT+3jEozp1k42Kg73Zx0Zwze38dsgh0yHha5SmmKQxMBk=
+	t=1746522685; cv=none; b=GyaBJB/LuEtCbgTPJhrdxXXjw6XwY4TrBJJeIKSqWOMzOIzNYjEAV4pzepcC2DUd7O+Ohn89wfk5U91qr5u8WDPI6JUx4UadsLOlrZzCfR6KYszXuQk0EpC1PQqasWgWfPdKvuDnlnKElsQtitnuHoQ/sf5E8qYrMUAAEjTfnyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746522658; c=relaxed/simple;
-	bh=+gd3EFD3tIRaf8uZxUpcsQzp9JqRZMQZZXab+O+Anys=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UAccTsZiaPiC0D/VX5dH0nUdlJdtkgBKrP6EkQu7J52i9B9F11nTKCAu0KCZUM2zhL+XRwQrjpclfNfK9d7PtCj69AkCqlOeOY/CupSJxG/zp4S+rJB84+FHKm0M0GFGf9Q0PXpsw3IbkOHgNXkW5X8a9b6I71cbG0hh9Ret9eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QOg8GFlK; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-39134c762ebso1594369f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 02:10:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746522655; x=1747127455; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jz3a5HwxM73VUsygopVsk7ADqOlPWS+1Glxw6UncPHk=;
-        b=QOg8GFlKzLlIYbJbNCx9niKrqxskzXZq35hZx+RjOIVf1H1tt+4q3V8n1gFE0i9Cdp
-         fLAnWfEogHvJsz9tQZ5OukCMykiVYfJwN/WmAFmeAHCHCykQ5lu7LEmDlln1BrF5bMGk
-         GVRKHN665Himf0jgzvG9hrEaKIpl0Le7KJOWxqKnB09x7s7o44BokZNctANY6ulOcnmP
-         bcwVdaXnJZRsqanE9QBLgZEdAcERTUqYT41SOFiHBl8lu7MI4LCCXahvdKK01MmUGBZ2
-         zK8MCos9Ao0Rk3dTPa5UFy6ttKvDBXHG5ihbkSnOwNr2lGNqhS3rpqdnwNbdTD5qBNcm
-         tSfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746522655; x=1747127455;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jz3a5HwxM73VUsygopVsk7ADqOlPWS+1Glxw6UncPHk=;
-        b=NBbTjWqU59HyjB9Y6j0gKnOXhUW232xUwwGi9GPD1ZNi8T2e6f1MTYKtlp8RG4uI0Z
-         Hwrut6XguiXg8K3n/YS7kE1eHiKag9yPVfDHsahU8nhpVFnLSmwtKfpfhXYTYYMSZugH
-         SuXRUATU/J8SznfGE+f768Ou3BpR6TuTgKur3L9vkZ6l0mi3VMdq0IV8UuacEuuguawC
-         KjExT+NDd/FHoBVp8ISSGoZkQQXntHJx14Av2WPIwulNcL5nrGzHraBojz/6wfOjKtYF
-         yUgPOW5SWJcblMUcebUueQzT1sBDV/0ddpcC38NgA4gtdzZX2oj/SSjrDDe3PPR+4+Yh
-         ndEg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0ObjsjrkuVaVgIJFV3B3+bOzIpbcVKyu93NdYb240a63qZnTP7vA+lxP0dBEM4T9bBTUEMCpnfmizbAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEMJRcFpW2kEl+evVzxpIkumcGqIc7z0mLPEckGjPJzjg8fWWB
-	/JmW6DAHbVmb4UNHOYw/V9t9FMkPqRV49PisdWJCAt1dx2C/gYcneHmNezNU0q7pxnuRNMOOrOq
-	1jtsFRrtogRqeRw==
-X-Google-Smtp-Source: AGHT+IGyiMkYwbaMmB8dqPMDkvSFdJCivatLGhIBQhLPFZ0JT3dRMRjM3/jxKXeyS5cJ9gy5621ZK8OdcyZ3mWo=
-X-Received: from wrbay3.prod.google.com ([2002:a5d:6f03:0:b0:3a0:6fdd:fcab])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2404:b0:39c:142c:e889 with SMTP id ffacd0b85a97d-3a0ac0ec30emr1669780f8f.27.1746522655314;
- Tue, 06 May 2025 02:10:55 -0700 (PDT)
-Date: Tue, 6 May 2025 09:10:53 +0000
-In-Reply-To: <aBjlx_AfQCS-pmht@polis>
+	s=arc-20240116; t=1746522685; c=relaxed/simple;
+	bh=xWCBXfZXchEREz413z0ufZfBuYmDssLsk+IROdV/hZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A4SQSxQm4lXkDeztKECUqZfpKGdBgmMLFPfj2D8TSMfPgBc1b4xMp6GyWWoqiinSfXYk6MtMr5VmLwN/p/nCvDU1UaxxaX8qB9E17Pvrr1BUtzWWPcNQ4RJA3zF9XRFwdQFTT6JiDBZL3i1ZXXa14913J07sZdeBnpEdtfyKwxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Zmzz+fch; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1746522677;
+	bh=2OrIKvQnwifqLz45NIG2Uk6cBVnTx26dfgxe8rVv4BY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Zmzz+fchmUp2kNmwGun/zD85bJzTC1bTRmcihypqPsTL/rrvj4ZwVBr5aPzKDIFH3
+	 yYlYcdKnxgYzAU4hNoGPZ/a8Fqa/5rabjJ/7EYPM/f9k4fZK5Q1P3P8hNAVNSe1C3l
+	 27Y4nI9QDp+09F4RJZKVAamAlt+OpSiGBS9vNzJ3033V8AYgreZOIvw2yV6wTEU3LL
+	 3E2iqtNCMUIa8Sw2Be7jegee4tvxnNldy2ugsgD1DhOGoztlho5K/7Q0XDuqfVcWAs
+	 kwHcqPkvVAztXlf+TZItFtiUliSC8GsthMZQSWyq6II5yjoo9VP6ovX7VbkspBjklT
+	 qh+vwgl4qIVIg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZsCLX73tnz4x8f;
+	Tue,  6 May 2025 19:11:16 +1000 (AEST)
+Date: Tue, 6 May 2025 19:11:14 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: "Yo-Jung (Leo) Lin" <leo.lin@canonical.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the i2c-host tree
+Message-ID: <20250506191114.1809d6ba@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250505-strncpy-from-user-v3-0-85c677fd4f91@google.com>
- <20250505-strncpy-from-user-v3-2-85c677fd4f91@google.com> <aBjlx_AfQCS-pmht@polis>
-Message-ID: <aBnSHfFGAyMxAtQa@google.com>
-Subject: Re: [PATCH v3 2/2] uaccess: rust: add UserSliceReader::strcpy_into_buf
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Ei/rubxB65Qyctt.=RJhlI+";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, May 05, 2025 at 06:22:31PM +0200, Danilo Krummrich wrote:
-> On Mon, May 05, 2025 at 12:17:32PM +0000, Alice Ryhl wrote:
-> > +    /// Read a NUL-terminated string from userspace and return it.
-> > +    ///
-> > +    /// The string is read into `buf` and a NUL-terminator is added if the end of `buf` is reached.
-> > +    /// Since there must be space to add a NUL-terminator, the buffer must not be empty. The
-> > +    /// returned `&CStr` points into `buf`.
-> > +    ///
-> > +    /// Fails with [`EFAULT`] if the read happens on a bad address (some data may have been
-> > +    /// copied).
-> > +    #[doc(alias = "strncpy_from_user")]
-> > +    pub fn strcpy_into_buf<'buf>(self, buf: &'buf mut [u8]) -> Result<&'buf CStr> {
-> > +        if buf.is_empty() {
-> > +            return Err(EINVAL);
-> > +        }
-> > +
-> > +        // SAFETY: The types are compatible and `strncpy_from_user` doesn't write uninitialized
-> > +        // bytes to `buf`.
-> > +        let mut dst = unsafe { &mut *(buf as *mut [u8] as *mut [MaybeUninit<u8>]) };
-> > +
-> > +        // We never read more than `self.length` bytes.
-> > +        if dst.len() > self.length {
-> > +            dst = &mut dst[..self.length];
-> > +        }
-> > +
-> > +        let mut len = raw_strncpy_from_user(self.ptr, dst)?;
-> > +        if len < dst.len() {
-> > +            // Add one to include the NUL-terminator.
-> > +            len += 1;
-> > +        } else if len < buf.len() {
-> > +            // This implies that len == dst.len() < buf.len().
-> > +            //
-> > +            // This means that we could not fill the entire buffer, but we had to stop reading
-> > +            // because we hit the `self.length` limit of this `UserSliceReader`. Since we did not
-> > +            // fill the buffer, we treat this case as if we tried to read past the `self.length`
-> > +            // limit and received a page fault, which is consistent with other `UserSliceReader`
-> > +            // methods that also return page faults when you exceed `self.length`.
-> > +            return Err(EFAULT);
-> > +        } else {
-> > +            // This implies that len == buf.len().
-> > +            //
-> > +            // This means that we filled the buffer exactly. In this case, we add a NUL-terminator
-> > +            // and return it. Unlike the `len < dst.len()` branch, don't modify `len` because it
-> > +            // already represents the length including the NUL-terminator.
-> > +            //
-> > +            // SAFETY: Due to the check at the beginning, the buffer is not empty.
-> > +            unsafe { *buf.last_mut().unwrap_unchecked() = 0 };
-> > +        }
-> > +
-> > +        // SAFETY: `raw_strncpy_from_user` guarantees that this range of bytes represents a
-> > +        // NUL-terminated string with the only NUL byte being at the end.
-> 
-> This isn't true if we hit the else case above, no?
-> 
-> With that fixed,
-> 
-> 	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+--Sig_/Ei/rubxB65Qyctt.=RJhlI+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I guess the wording is a bit off. I will update to this:
+Hi all,
 
-// SAFETY: There are two cases:
-// * If we hit the `len < dst.len()` case, then `raw_strncpy_from_user`
-//   guarantees that this slice contains exactly one NUL byte at the end
-//   of the string.
-// * Otherwise, `raw_strncpy_from_user` guarantees that the string
-//   contained no NUL bytes, and we have since added a NUL byte at the
-//   end.
+After merging the i2c-host tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-Alice
+drivers/i2c/busses/i2c-i801.c: In function 'i801_probe_optional_targets':
+drivers/i2c/busses/i2c-i801.c:1180:54: error: 'struct i801_priv' has no mem=
+ber named 'mux_pdev'
+ 1180 |         if (!IS_ENABLED(CONFIG_I2C_I801_MUX) || !priv->mux_pdev) {
+      |                                                      ^~
+
+Caused by commit
+
+  27f4a0d6938a ("i2c: i801: don't instantiate spd5118 under SPD Write Disab=
+le")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Ei/rubxB65Qyctt.=RJhlI+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgZ0jIACgkQAVBC80lX
+0GwazAf/Y7g/QeciJBcsQwQ80bHzyaL/ULLiaSi63eiGOgxu8+s9fNSsMzOBu3dK
+AXz4N8i1aIZH1G+WTGoRIZrkUSESFk8BDcwhSKmTJmoodeDMQQof92ApYLxEqees
+E7x2mMUQ5vzN606qkZaUfydoAObbE17i070uJZhtiVn/333ZINbDOLn3rak6r6j0
+i0xCvyUTZqawj27GWY2uR+ym38t22LZF6EKIbgPfskbQ6FSMgVXD4PLv9oFGU+xK
+L5OMc82N+Fz4CodG5d/XEQXT/jMBFpoQADiZwbr7ZwK/9MVwhJ2RghFivowoAwcy
+ynyppmPQIYt7Qhl0YIEYF3c8lI10fA==
+=zWZb
+-----END PGP SIGNATURE-----
+
+--Sig_/Ei/rubxB65Qyctt.=RJhlI+--
 
