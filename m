@@ -1,89 +1,164 @@
-Return-Path: <linux-kernel+bounces-636318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8247DAAC9B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:40:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C2DAAC9C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96FF63BC935
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F3C93B0EBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EEB283FCB;
-	Tue,  6 May 2025 15:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A52283FE0;
+	Tue,  6 May 2025 15:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="xQ+5fhAc"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="Qnl8UiwP"
+Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72042283C82
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 15:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135AA502BE;
+	Tue,  6 May 2025 15:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746546043; cv=none; b=dk+q9fVJ3hBK5Q01KQl9FfFpOcNYNjgXH+/Tzgao5IIRqJsbMnNbYPhXGo14NZX2LwUk6rU3+IUD/cJzbGFaiqiCXHmi4XYQAqUjIY3GpI2iiltAARkhsiODZPGh/UwLXy/W9dRsro0eoRzt5+XCuCDWMy+m6ZfBPO5nQDWNwmc=
+	t=1746546193; cv=none; b=OrAUfWr28R19JhiDu6wHe9KHm8KjcEJ4MiJmnhNdoCUiSwG0mQJROZlCBXSN/p742HUaVjcdMuZR5YZH1lAElbH3mDUk6xG1zR+bu7qDjluzJ+ZzQJ38GxIz5HPqPHE8nTd2p/dlWvIybDtdyZk45hPPtu6YRvf6iOfYsIsLpkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746546043; c=relaxed/simple;
-	bh=082OGFd0YtRtIFtzua/WfoyrO3HoRqs1mD/Tio99ZG4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ME80Hv98p8fO3q4Z2NV3/kdRX4e1ieST3oeTts93zPudgmWvrFgJpdC1La5eILZELFsuTfyTdXceLAVZTmqcPw6OLekXs2BNIEBKEvT3+Wvu/pb7lqnLFVnGvyWJk5cqdmeo26/j7x08fCd8j1+SDuosyOUSX0EbDEMYxF8IOy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=xQ+5fhAc; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1746546036;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gwv48sU9PJ4+7zMEwJ0xKCOMMLiUiKmC1HBLpcwOGag=;
-	b=xQ+5fhAcVue/iuF+8Br2AfJk+F2PNrGTIFtgtSGXlv969wK3d7A5JS8CAPN7x83oaZcj98
-	Fjgf/tD6zhi22M7GdSK5hnUi2xVCKYcjPxZ9TojP6acImQOMyTBHo8YWcOfSntpWUymZnx
-	/M0TCEFPng0lJNhGpqKSOG+t7oDZUkm4TiaLo7e/XUn9Kz9GV0oPL4oBrXuBCXMcFp8sQM
-	vpxhdMdu2zG+kzoe0fbODuMiQ2c1RX/8+DvKZ9N2c+hrT5IpQdKUUsdtnStDtV/Wp/ULPp
-	SQ1zrqlFWqLZi3jpaui/RZscTMVxLApJrYUeGsmfpHoFZ/yAFokQgICfO2k8NQ==
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: pmladek@suse.com, Aditya Garg <gargaditya08@live.com>
-Cc: admin@kodeit.net, airlied@redhat.com, akpm@linux-foundation.org, 
- andriy.shevchenko@linux.intel.com, apw@canonical.com, asahi@lists.linux.dev, 
- corbet@lwn.net, dri-devel@lists.freedesktop.org, dwaipayanray1@gmail.com, 
- geert@linux-m68k.org, joe@perches.com, kees@kernel.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux@rasmusvillemoes.dk, lukas.bulwahn@gmail.com, marcan@marcan.st, 
- mripard@kernel.org, rostedt@goodmis.org, senozhatsky@chromium.org, 
- simona@ffwll.ch, sven@svenpeter.dev, tamird@gmail.com, tzimmermann@suse.de
-In-Reply-To: <PN3PR01MB959760B89BF7E4B43852700CB8832@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <20250428123132.578771-1-pmladek@suse.com>
- <PN3PR01MB95971954FC5E026C59B6F8EDB8802@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <PN3PR01MB959760B89BF7E4B43852700CB8832@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH v3] checkpatch: remove %p4cn
-Message-Id: <174654603220.12228.11601081754262000250.b4-ty@rosenzweig.io>
-Date: Tue, 06 May 2025 11:40:32 -0400
+	s=arc-20240116; t=1746546193; c=relaxed/simple;
+	bh=trOYAQt+u6g/+0ca/NPoUGlmZxBIAH+K7WGNZur1uT8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GnuOm9276O+OZXnIacky1Z1ThB1vACYVtLaGKCeKc6nnARufFcyCeafiaA1mrmkl1DOi645erTTrUWN3eTaqF/19wOLcZYDfiuwgFyJ9DghMzViQLJR9FtbDyHr5z2CtAlJIgCvMaKR1SCLO6QrD/1lKB7JeMdCzEHVY8mFReZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=Qnl8UiwP; arc=none smtp.client-ip=178.154.239.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-68.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-68.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:921:0:640:f23d:0])
+	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id EBBC1611F9;
+	Tue,  6 May 2025 18:41:28 +0300 (MSK)
+Received: from alex-shalimov-osx.yandex.net (unknown [2a02:6b8:b081:b12d::1:42])
+	by mail-nwsmtp-smtp-corp-main-68.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id Lfe9O40FZiE0-e7d4r06C;
+	Tue, 06 May 2025 18:41:27 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1746546088;
+	bh=6Nj69zDpsZrIMdvpl4cIIhICll/FusHh4GXSyJ8JWdI=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=Qnl8UiwPDF4i7rvKqTXbsfWLqfcc8qi93odLfmP8eWVAEGU0lKONAzkaaBp/lm36H
+	 ypEPFflClA/oT1zX53MX/BOP0ajoRmDF70wDCvfqoAzeiLVaDewdQYBkEPFoHn5JNS
+	 2iAC6c3Ip1+jE6UkEX+7BfUrb++h/VMfM65Y3aTQ=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-68.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Alexander Shalimov <alex-shalimov@yandex-team.ru>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com,
+	jasowang@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	Alexander Shalimov <alex-shalimov@yandex-team.ru>
+Subject: [PATCH] net/tun: expose queue utilization stats via ethtool
+Date: Tue,  6 May 2025 18:41:17 +0300
+Message-Id: <20250506154117.10651-1-alex-shalimov@yandex-team.ru>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+TUN/TAP devices are heavily used in network virtualization scenarios
+such as QEMU/KVM with "-netdev tap" and are commonly paired with virtio-net
+or vhost-net backends. Under high network load, queues of the tuntap device
+may become saturated, resulting in TX drops.
 
-On Wed, 30 Apr 2025 19:19:08 +0530, Aditya Garg wrote:
-> %p4cn was recently removed and replaced by %p4chR in vsprintf. So,
-> remove the check for %p4cn from checkpatch.pl.
-> 
-> 
+Existing aggregated drop counters alone are often insufficient during
+complex debugging and performance tuning, especially in high-throughput
+environments. Visibility of real-time queue utilization is critical for
+understanding why guest VMs might be unable to dequeue packets in time.
 
-Applied, thanks!
+This patch exposes per-queue utilization statistics via ethtool -S,
+allowing on-demand inspection of queue fill levels. Utilization metrics are
+captured at the time of the ethtool invocation, providing a snapshot useful
+for correlation with guest and host behavior.
 
-[1/1] checkpatch: remove %p4cn
-      commit: a6c0a91ccb257eaec2aee080df06863ce7601315
+Signed-off-by: Alexander Shalimov <alex-shalimov@yandex-team.ru>
+---
+ drivers/net/tun.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-Best regards,
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 7babd1e9a378..122327e591a5 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -3537,6 +3537,57 @@ static void tun_get_channels(struct net_device *dev,
+ 	channels->max_combined = tun->flags & IFF_MULTI_QUEUE ? MAX_TAP_QUEUES : 1;
+ }
+ 
++static void tun_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
++{
++	char *p = (char *)buf;
++	int i;
++
++	switch (stringset) {
++	case ETH_SS_STATS:
++		for (i = 0; i < dev->real_num_tx_queues; i++) {
++			snprintf(p, ETH_GSTRING_LEN, "tx_queue_usage_%u", i);
++			p += ETH_GSTRING_LEN;
++		}
++		break;
++	}
++}
++
++static int tun_get_sset_count(struct net_device *dev, int sset)
++{
++	switch (sset) {
++	case ETH_SS_STATS:
++		return dev->real_num_tx_queues;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static void tun_get_ethtool_stats(struct net_device *dev,
++				  struct ethtool_stats *stats, u64 *data)
++{
++	struct tun_struct *tun = netdev_priv(dev);
++	struct tun_file *tfile;
++	int i;
++	int producer, consumer, size, usage;
++
++	rcu_read_lock();
++	for (i = 0; i < dev->real_num_tx_queues; i++) {
++		tfile = rcu_dereference(tun->tfiles[i]);
++
++		producer = READ_ONCE(tfile->tx_ring.producer);
++		consumer = READ_ONCE(tfile->tx_ring.consumer_head);
++		size = READ_ONCE(tfile->tx_ring.size);
++
++		if (producer >= consumer)
++			usage = producer - consumer;
++		else
++			usage = size - (consumer - producer);
++
++		data[i] = usage;
++	}
++	rcu_read_unlock();
++}
++
+ static const struct ethtool_ops tun_ethtool_ops = {
+ 	.supported_coalesce_params = ETHTOOL_COALESCE_RX_MAX_FRAMES,
+ 	.get_drvinfo	= tun_get_drvinfo,
+@@ -3549,6 +3600,9 @@ static const struct ethtool_ops tun_ethtool_ops = {
+ 	.set_coalesce   = tun_set_coalesce,
+ 	.get_link_ksettings = tun_get_link_ksettings,
+ 	.set_link_ksettings = tun_set_link_ksettings,
++	.get_strings	    = tun_get_strings,
++	.get_sset_count	    = tun_get_sset_count,
++	.get_ethtool_stats  = tun_get_ethtool_stats,
+ };
+ 
+ static int tun_queue_resize(struct tun_struct *tun)
 -- 
-Alyssa Rosenzweig <alyssa@rosenzweig.io>
+2.39.5 (Apple Git-154)
 
 
