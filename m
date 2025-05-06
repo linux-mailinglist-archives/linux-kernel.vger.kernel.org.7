@@ -1,165 +1,652 @@
-Return-Path: <linux-kernel+bounces-636846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62485AAD0BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:04:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D85AAD0C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B96E37BDEB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:02:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64CC1C414A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EE5219319;
-	Tue,  6 May 2025 22:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C71E7262C;
+	Tue,  6 May 2025 22:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="etknP7v8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="4Yk6w6Il";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="E8YhMDpQ"
+Received: from mailrelay6-3.pub.mailoutpod2-cph3.one.com (mailrelay6-3.pub.mailoutpod2-cph3.one.com [46.30.212.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250E217642;
-	Tue,  6 May 2025 22:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB333D3B8
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 22:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746568957; cv=none; b=Pa0IkHlx62n3bT+InhtrTwnQAdiV8mQGC4qX+kGxgXkOdQIGoDJkiFyaJNYCVRTK3+HCkWto4YkXJm3DUvN2uO4+sUoPRPXFy6LZiFaTmRHt4VCwK1RLdK5rNCa2mPKXQ4HtgSTu/U3SBdlgUY5ZHY9PXSGR0U4uCwP/iByj3PM=
+	t=1746569094; cv=none; b=a156wUWomlSzyv68EY6+h7ug4H2nVXkT8qUcmdsgyXLZGdJ9SJ70exbOn912Eq7hoSNF/COZkJ4QyPlPdpbmDosOlB2zqNBb3A26tyGzyhCom2kUy7xbvsg+K5qhkIG29AUAsSEBLSivHBRpGVkotukZQP1IzwffBxv9TChJnWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746568957; c=relaxed/simple;
-	bh=6f2XaoEPQjuDD6adSGksKK7wmca+6Fxd/tpXeq5wd1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CrFQRATCcJSR3RBgTwq/uEAXNnx+IxVTq6GlY1Va9KoOiLCRQAgmTz8qf9FXbecC9luYPyU0sq/ImTajMyQ8+gJ68rzDhztDrZIH4BrMwWC9C4Hcf6z6BTaA2f9NU0IwG2oaougxSnjRj6GiwRJ5picSsj/Onm/57wlOBQe88Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=etknP7v8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 546AdQMM015737;
-	Tue, 6 May 2025 22:02:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S4OvY+jEnTpuGhaZupsI0euhEx/0eYlZ2z4uuDEHxpE=; b=etknP7v850ieAviU
-	1orsEWvTfzYqCkII4pGWAXlu9QvxMdUqvCxM8Pq0Sx0jeyoaXPnU8s7FlZcA258B
-	ktLInRGxqysfxfKbfgCPC6CB2BD0LbTqxOIQ3Zevz19ejhnCZXu7snANznHrFert
-	JMTYVloULg7BUkQJDuSnp+BpmLzY9EmLsPUbcATokTOSy3jDDNqD4FQEJkbY1Ca1
-	5tx5YU8F1Zr4n18Mufnnj+lh/NLylt6cQTpA5cKe8JbzUHGecJ+qT2eNt2vkuoJX
-	1E/+ZQcj/uam4Lgqy+oAz5MLAm7QQ3BZW6987LnibIqkKLt8r2VHKY0DPWtLv6Cl
-	w3yosw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46fguuht8g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 22:02:25 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 546M2ORm018435
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 May 2025 22:02:24 GMT
-Received: from [10.134.71.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 May 2025
- 15:02:24 -0700
-Message-ID: <3122e357-6d27-4b5e-97d3-365dccd91367@quicinc.com>
-Date: Tue, 6 May 2025 15:02:23 -0700
+	s=arc-20240116; t=1746569094; c=relaxed/simple;
+	bh=XAyrdC/vQG8uMXOw9KeB2oj4ZtUVVcNUhVcx5+yfC/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WOFKhD/SuNzOrmPFIgVX5Bxh9lCL5/+b6sgP9cj0yC25np1A2aGSQwhwCvj3emCKXUzm3DP1evSw+Xs8RV1CmdD+ZokWpb3hnlfV5EcCTBVPXqSWebvmBfCKPBYoxHueBNV16sZfxITic+ILnnwSje6cc1iixm9rfhx8VWM8yPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=4Yk6w6Il; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=E8YhMDpQ; arc=none smtp.client-ip=46.30.212.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1746569020; x=1747173820;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=9AWCutgnv1SBv47K+me3J5hWmci6aKUDoA8AXWYa0is=;
+	b=4Yk6w6IlhzU4fgWwR6uE/G17HlFcDQlaof8shf82GzsEFKqjHIPNZf521eqNTE2V6I39402CUatB+
+	 hlMViL4NNtzckvzVCTIfVlD7j2H9l7s7bn1A/h4xm6KIjJv+sFV4uxW1BmxAtpKPJ3fjYaj0BELP74
+	 MLc6MOKGY5IcpLsCpfGmphRYA0TRHMQNO0cmOLpg7Ai8HURBDUtIj/acvELnfXPFpd1Roql7gZGKYK
+	 haCNf6OIrlxmSD8rRSgJgdM5rvuDUUNMf5p2+36z+AxysMPbV7nWp4hvQujvZgyhTsh+wi7ru7fWJU
+	 hUSwv6o6N97bUEkd3J9OUhDZLzzi2jw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1746569020; x=1747173820;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=9AWCutgnv1SBv47K+me3J5hWmci6aKUDoA8AXWYa0is=;
+	b=E8YhMDpQSs42AKVoOqJldVQtQ5Wpvd1WH5GsWXUPHc4EJ44u4YSVXiNYveN4mYp/f2e4CYrL88XEX
+	 A7IhXMxBw==
+X-HalOne-ID: f603dcdc-2ac5-11f0-a539-15d104443858
+Received: from localhost.localdomain (host-90-233-217-8.mobileonline.telia.com [90.233.217.8])
+	by mailrelay6.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id f603dcdc-2ac5-11f0-a539-15d104443858;
+	Tue, 06 May 2025 22:03:39 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Nhat Pham <nphamcs@gmail.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Igor Belousov <igor.b@beldev.am>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v2] mm/zblock: use vmalloc for page allocations
+Date: Wed,  7 May 2025 00:03:29 +0200
+Message-Id: <20250506220329.2355482-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dpu: remove DPU_CTL_SPLIT_DISPLAY from SAR2130P
- CTL blocks
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250506-dpu-sar2130p-no-split-display-v1-1-b619c0fddea5@oss.qualcomm.com>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20250506-dpu-sar2130p-no-split-display-v1-1-b619c0fddea5@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=UJPdHDfy c=1 sm=1 tr=0 ts=681a86f1 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=3CHTtLT0FruqgAMyr9AA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: l5Shj5WPXuseW8ES2pZ9aIEklZvZvgUZ
-X-Proofpoint-GUID: l5Shj5WPXuseW8ES2pZ9aIEklZvZvgUZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDIwOCBTYWx0ZWRfXygGfxX4djkF2
- QZ8zCIhwEugDmSOT5mMszhvaPahR+i7Fi6EQ1LRC+qYw0BH5Lr21N1tOLhE01MZlKSOBGU7m0g5
- 3ED4CWMCbbKZODkcNL6A2X/JIRyWFumOzdrJBo2kSO5Zs8Y1ViO6vCvnti8sPy5neKAqfbc+onX
- bioXyNmXqiK0/VKuUPhHlAEiKOV8JL/QdQFBuueaRk3DDicIo1Y1V43YgwZS+jli70BaseYRZ9u
- z47aWp57Yf2jVzbNHkwYJUc57lqiwoS4UXBJeYdtSIA1mYYOxU4yaLor/bHGKw+s/MAwvJwUlJ3
- zdH+/CtA2r7jD1uwvcy4hlTTQUS4z7IxlI1YTCaBF1JKk3b2947/Pqcby6OyKWsw2L86bPW+zF7
- r0EYdxAcwo5NvrmBDUPaQjbqu0aSBa4/6Gf9eIAXTRqVDFAZcFrghJ1sXG6gBu73LT0AGHMq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_08,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 spamscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0 bulkscore=0
- malwarescore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505060208
+Content-Transfer-Encoding: 8bit
 
+From: Igor Belousov <igor.b@beldev.am>
 
+Use vmalloc for page allocations for zblock blocks to avoid extra pressure
+on the memmory subsystem with multiple higher order allocations.
 
-On 5/6/2025 5:53 AM, Dmitry Baryshkov wrote:
-> From: Dmitry Baryshkov <lumag@kernel.org>
-> 
-> Follow the changes in the commit a2649952f66e ("drm/msm/dpu: remove
-> DPU_CTL_SPLIT_DISPLAY from CTL blocks on DPU >= 5.0") and remove
-> DPU_CTL_SPLIT_DISPLAY from the CTL blocks on the SAR2130P platform.
-> Single CTL is used for all interfaces used by a single path
-> 
-> Fixes: 178575173472 ("drm/msm/dpu: add catalog entry for SAR2130P")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Since vmalloc works fine with non-power of 2 numbers of pages, rewrite the
+block size tables to use that opportunity.
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+Signed-off-by: Igor Belousov <igor.b@beldev.am>
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+---
+ mm/zblock.c | 119 +++++++++++++++++++-------------------
+ mm/zblock.h | 160 ++++++++++++++++++++++++++++++----------------------
+ 2 files changed, 153 insertions(+), 126 deletions(-)
 
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h
-> index 22dd16c6e210e9520ecb7a851bee402032fa1ee2..5667d055fbd1d8125c3231302daa3e05de5944c9 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h
-> @@ -27,17 +27,16 @@ static const struct dpu_mdp_cfg sar2130p_mdp = {
->   	},
->   };
->   
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->   static const struct dpu_ctl_cfg sar2130p_ctl[] = {
->   	{
->   		.name = "ctl_0", .id = CTL_0,
->   		.base = 0x15000, .len = 0x290,
-> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = CTL_SM8550_MASK,
->   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->   	}, {
->   		.name = "ctl_1", .id = CTL_1,
->   		.base = 0x16000, .len = 0x290,
-> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = CTL_SM8550_MASK,
->   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->   	}, {
->   		.name = "ctl_2", .id = CTL_2,
-> 
-> ---
-> base-commit: 0a00723f4c2d0b273edd0737f236f103164a08eb
-> change-id: 20250506-dpu-sar2130p-no-split-display-442eb0b85165
-> 
-> Best regards,
+diff --git a/mm/zblock.c b/mm/zblock.c
+index 9216325d2456..d77eb98c042e 100644
+--- a/mm/zblock.c
++++ b/mm/zblock.c
+@@ -24,6 +24,7 @@
+ #include <linux/preempt.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/vmalloc.h>
+ #include <linux/zpool.h>
+ #include "zblock.h"
+ 
+@@ -31,19 +32,16 @@ static struct rb_root block_desc_tree = RB_ROOT;
+ static struct dentry *zblock_debugfs_root;
+ 
+ /* Encode handle of a particular slot in the pool using metadata */
+-static inline unsigned long metadata_to_handle(struct zblock_block *block,
+-				unsigned int block_type, unsigned int slot)
++static inline unsigned long metadata_to_handle(struct zblock_block *block, unsigned int slot)
+ {
+-	return (unsigned long)(block) | (block_type << SLOT_BITS) | slot;
++	return (unsigned long)(block) | slot;
+ }
+ 
+ /* Return block, block type and slot in the pool corresponding to handle */
+-static inline struct zblock_block *handle_to_metadata(unsigned long handle,
+-				unsigned int *block_type, unsigned int *slot)
++static inline struct zblock_block *handle_to_metadata(unsigned long handle, unsigned int *slot)
+ {
+-	*block_type = (handle & (PAGE_SIZE - 1)) >> SLOT_BITS;
+ 	*slot = handle & SLOT_MASK;
+-	return (struct zblock_block *)(handle & PAGE_MASK);
++	return (struct zblock_block *)(handle & ~SLOT_MASK);
+ }
+ 
+ /*
+@@ -56,13 +54,14 @@ static inline struct zblock_block *find_and_claim_block(struct block_list *b,
+ 	struct list_head *l = &b->active_list;
+ 	unsigned int slot;
+ 
+-	if (!list_empty(l)) {
++	spin_lock(&b->lock);
++	if (likely(!list_empty(l))) {
+ 		struct zblock_block *z = list_first_entry(l, typeof(*z), link);
+ 
+ 		if (--z->free_slots == 0)
+-			list_move(&z->link, &b->full_list);
++			__list_del_clearprev(&z->link);
+ 		/*
+-		 * There is a slot in the block and we just made sure it would
++		 * There is a slot in the block and we just made sure it will
+ 		 * remain.
+ 		 * Find that slot and set the busy bit.
+ 		 */
+@@ -74,13 +73,13 @@ static inline struct zblock_block *find_and_claim_block(struct block_list *b,
+ 					slot)) {
+ 			if (!test_and_set_bit(slot, z->slot_info))
+ 				break;
+-			barrier();
+ 		}
++		spin_unlock(&b->lock);
+ 
+-		WARN_ON(slot >= block_desc[block_type].slots_per_block);
+-		*handle = metadata_to_handle(z, block_type, slot);
++		*handle = metadata_to_handle(z, slot);
+ 		return z;
+ 	}
++	spin_unlock(&b->lock);
+ 	return NULL;
+ }
+ 
+@@ -89,22 +88,23 @@ static inline struct zblock_block *find_and_claim_block(struct block_list *b,
+  */
+ static struct zblock_block *alloc_block(struct zblock_pool *pool,
+ 					int block_type, gfp_t gfp,
+-					unsigned long *handle)
++					unsigned long *handle,
++					unsigned int nid)
+ {
++	struct block_list *block_list = &pool->block_lists[block_type];
++	unsigned int num_pages = block_desc[block_type].num_pages;
+ 	struct zblock_block *block;
+-	struct block_list *block_list;
+ 
+-	block = (void *)__get_free_pages(gfp, block_desc[block_type].order);
++	block = __vmalloc_node(PAGE_SIZE * num_pages, PAGE_SIZE, gfp, nid, NULL);
+ 	if (!block)
+ 		return NULL;
+ 
+-	block_list = &pool->block_lists[block_type];
+-
+-	/* init block data  */
++	/* init block data */
++	block->block_type = block_type;
+ 	block->free_slots = block_desc[block_type].slots_per_block - 1;
+ 	memset(&block->slot_info, 0, sizeof(block->slot_info));
+ 	set_bit(0, block->slot_info);
+-	*handle = metadata_to_handle(block, block_type, 0);
++	*handle = metadata_to_handle(block, 0);
+ 
+ 	spin_lock(&block_list->lock);
+ 	list_add(&block->link, &block_list->active_list);
+@@ -122,8 +122,8 @@ static int zblock_blocks_show(struct seq_file *s, void *v)
+ 		struct block_list *block_list = &pool->block_lists[i];
+ 
+ 		seq_printf(s, "%d: %ld blocks of %d pages (total %ld pages)\n",
+-			i, block_list->block_count, 1 << block_desc[i].order,
+-			block_list->block_count << block_desc[i].order);
++			i, block_list->block_count, block_desc[i].num_pages,
++			block_list->block_count * block_desc[i].num_pages);
+ 	}
+ 	return 0;
+ }
+@@ -141,26 +141,34 @@ DEFINE_SHOW_ATTRIBUTE(zblock_blocks);
+  */
+ static struct zblock_pool *zblock_create_pool(gfp_t gfp)
+ {
+-	struct zblock_pool *pool;
+-	struct block_list *block_list;
++	struct zblock_pool *pool = kmalloc(sizeof(struct zblock_pool), gfp);
+ 	int i;
+ 
+-	pool = kmalloc(sizeof(struct zblock_pool), gfp);
+ 	if (!pool)
+ 		return NULL;
+ 
+ 	/* init each block list */
+ 	for (i = 0; i < ARRAY_SIZE(block_desc); i++) {
+-		block_list = &pool->block_lists[i];
++		struct block_list *block_list = &pool->block_lists[i];
++
+ 		spin_lock_init(&block_list->lock);
+-		INIT_LIST_HEAD(&block_list->full_list);
+ 		INIT_LIST_HEAD(&block_list->active_list);
+ 		block_list->block_count = 0;
+ 	}
+ 
++	pool->block_header_cache = kmem_cache_create("zblock",
++						     sizeof(struct zblock_block),
++						     (1 << SLOT_BITS), 0, NULL);
++	if (!pool->block_header_cache)
++		goto out;
++
+ 	debugfs_create_file("blocks", S_IFREG | 0444, zblock_debugfs_root,
+ 			    pool, &zblock_blocks_fops);
+ 	return pool;
++
++out:
++	kfree(pool);
++	return NULL;
+ }
+ 
+ /**
+@@ -170,6 +178,7 @@ static struct zblock_pool *zblock_create_pool(gfp_t gfp)
+  */
+ static void zblock_destroy_pool(struct zblock_pool *pool)
+ {
++	kmem_cache_destroy(pool->block_header_cache);
+ 	kfree(pool);
+ }
+ 
+@@ -186,7 +195,7 @@ static void zblock_destroy_pool(struct zblock_pool *pool)
+  * a new slot.
+  */
+ static int zblock_alloc(struct zblock_pool *pool, size_t size, gfp_t gfp,
+-			unsigned long *handle)
++			unsigned long *handle, unsigned int nid)
+ {
+ 	int block_type = -1;
+ 	struct zblock_block *block;
+@@ -195,7 +204,7 @@ static int zblock_alloc(struct zblock_pool *pool, size_t size, gfp_t gfp,
+ 	if (!size)
+ 		return -EINVAL;
+ 
+-	if (size > PAGE_SIZE)
++	if (size > block_desc[ARRAY_SIZE(block_desc) - 1].slot_size)
+ 		return -ENOSPC;
+ 
+ 	/* find basic block type with suitable slot size */
+@@ -219,19 +228,15 @@ static int zblock_alloc(struct zblock_pool *pool, size_t size, gfp_t gfp,
+ 	}
+ 	if (WARN_ON(block_type < 0))
+ 		return -EINVAL;
+-	if (block_type >= ARRAY_SIZE(block_desc))
+-		return -ENOSPC;
+ 
+ 	block_list = &pool->block_lists[block_type];
+ 
+-	spin_lock(&block_list->lock);
+ 	block = find_and_claim_block(block_list, block_type, handle);
+-	spin_unlock(&block_list->lock);
+ 	if (block)
+ 		return 0;
+ 
+ 	/* not found block with free slots try to allocate new empty block */
+-	block = alloc_block(pool, block_type, gfp & ~(__GFP_MOVABLE | __GFP_HIGHMEM), handle);
++	block = alloc_block(pool, block_type, gfp, handle, nid);
+ 	return block ? 0 : -ENOMEM;
+ }
+ 
+@@ -247,20 +252,23 @@ static void zblock_free(struct zblock_pool *pool, unsigned long handle)
+ 	struct zblock_block *block;
+ 	struct block_list *block_list;
+ 
+-	block = handle_to_metadata(handle, &block_type, &slot);
++	block = handle_to_metadata(handle, &slot);
++	block_type = block->block_type;
+ 	block_list = &pool->block_lists[block_type];
+ 
++	/* clear bit early, this will shorten the search */
++	clear_bit(slot, block->slot_info);
++
+ 	spin_lock(&block_list->lock);
+-	/* if all slots in block are empty delete whole block */
++	/* if all slots in block are empty delete the whole block */
+ 	if (++block->free_slots == block_desc[block_type].slots_per_block) {
+ 		block_list->block_count--;
+-		list_del(&block->link);
++		__list_del_clearprev(&block->link);
+ 		spin_unlock(&block_list->lock);
+-		free_pages((unsigned long)block, block_desc[block_type].order);
++		vfree(block);
+ 		return;
+ 	} else if (block->free_slots == 1)
+-		list_move_tail(&block->link, &block_list->active_list);
+-	clear_bit(slot, block->slot_info);
++		list_add(&block->link, &block_list->active_list);
+ 	spin_unlock(&block_list->lock);
+ }
+ 
+@@ -274,15 +282,11 @@ static void zblock_free(struct zblock_pool *pool, unsigned long handle)
+  */
+ static void *zblock_map(struct zblock_pool *pool, unsigned long handle)
+ {
+-	unsigned int block_type, slot;
+-	struct zblock_block *block;
+-	unsigned long offs;
+-	void *p;
++	unsigned int slot;
++	struct zblock_block *block = handle_to_metadata(handle, &slot);
++	unsigned long offs = ZBLOCK_HEADER_SIZE + slot * block_desc[block->block_type].slot_size;
+ 
+-	block = handle_to_metadata(handle, &block_type, &slot);
+-	offs = ZBLOCK_HEADER_SIZE + slot * block_desc[block_type].slot_size;
+-	p = (void *)block + offs;
+-	return p;
++	return (void *)block + offs;
+ }
+ 
+ /**
+@@ -304,15 +308,11 @@ static void zblock_unmap(struct zblock_pool *pool, unsigned long handle)
+ static void zblock_write(struct zblock_pool *pool, unsigned long handle,
+ 			 void *handle_mem, size_t mem_len)
+ {
+-	unsigned int block_type, slot;
+-	struct zblock_block *block;
+-	unsigned long offs;
+-	void *p;
++	unsigned int slot;
++	struct zblock_block *block = handle_to_metadata(handle, &slot);
++	unsigned long offs = ZBLOCK_HEADER_SIZE + slot * block_desc[block->block_type].slot_size;
+ 
+-	block = handle_to_metadata(handle, &block_type, &slot);
+-	offs = ZBLOCK_HEADER_SIZE + slot * block_desc[block_type].slot_size;
+-	p = (void *)block + offs;
+-	memcpy(p, handle_mem, mem_len);
++	memcpy((void *)block + offs, handle_mem, mem_len);
+ }
+ 
+ /**
+@@ -328,7 +328,7 @@ static u64 zblock_get_total_pages(struct zblock_pool *pool)
+ 
+ 	total_size = 0;
+ 	for (i = 0; i < ARRAY_SIZE(block_desc); i++)
+-		total_size += pool->block_lists[i].block_count << block_desc[i].order;
++		total_size += pool->block_lists[i].block_count * block_desc[i].num_pages;
+ 
+ 	return total_size;
+ }
+@@ -350,7 +350,7 @@ static void zblock_zpool_destroy(void *pool)
+ static int zblock_zpool_malloc(void *pool, size_t size, gfp_t gfp,
+ 			unsigned long *handle, const int nid)
+ {
+-	return zblock_alloc(pool, size, gfp, handle);
++	return zblock_alloc(pool, size, gfp, handle, nid);
+ }
+ 
+ static void zblock_zpool_free(void *pool, unsigned long handle)
+@@ -406,6 +406,7 @@ static int __init create_rbtree(void)
+ {
+ 	int i;
+ 
++	BUILD_BUG_ON(ARRAY_SIZE(block_desc) > MAX_TABLE_SIZE);
+ 	for (i = 0; i < ARRAY_SIZE(block_desc); i++) {
+ 		struct block_desc_node *block_node = kmalloc(sizeof(*block_node),
+ 							GFP_KERNEL);
+@@ -424,7 +425,7 @@ static int __init create_rbtree(void)
+ 		block_node->this_slot_size = block_desc[i].slot_size;
+ 		block_node->block_idx = i;
+ 		if (i == ARRAY_SIZE(block_desc) - 1)
+-			block_node->next_slot_size = PAGE_SIZE;
++			block_node->next_slot_size = PAGE_SIZE * 2;
+ 		else
+ 			block_node->next_slot_size = block_desc[i+1].slot_size;
+ 		while (*new) {
+diff --git a/mm/zblock.h b/mm/zblock.h
+index 9af11f392f97..afbb9c99e284 100644
+--- a/mm/zblock.h
++++ b/mm/zblock.h
+@@ -10,13 +10,9 @@
+ #include <linux/rbtree.h>
+ #include <linux/types.h>
+ 
+-#define SLOT_FREE 0
+-#define BIT_SLOT_OCCUPIED 0
+-#define BIT_SLOT_MAPPED 1
+-
+ #if PAGE_SIZE == 0x1000
+-/* max 128 slots per block, max table size 32 */
+-#define SLOT_BITS 7
++/* max 64 slots per block, max table size 64 */
++#define SLOT_BITS 6
+ #elif PAGE_SIZE == 0x4000
+ /* max 256 slots per block, max table size 64 */
+ #define SLOT_BITS 8
+@@ -25,25 +21,29 @@
+ #define SLOT_BITS 8
+ #endif
+ 
++#define MAX_TABLE_SIZE (1 << (PAGE_SHIFT - SLOT_BITS))
++
+ #define MAX_SLOTS (1 << SLOT_BITS)
+ #define SLOT_MASK ((0x1UL << SLOT_BITS) - 1)
+ 
+ #define ZBLOCK_HEADER_SIZE	round_up(sizeof(struct zblock_block), sizeof(long))
+-#define BLOCK_DATA_SIZE(order) ((PAGE_SIZE << order) - ZBLOCK_HEADER_SIZE)
+-#define SLOT_SIZE(nslots, order) (round_down((BLOCK_DATA_SIZE(order) / nslots), sizeof(long)))
+-
++#define BLOCK_DATA_SIZE(num) ((PAGE_SIZE * (num)) - ZBLOCK_HEADER_SIZE)
++#define SLOT_SIZE(nslots, num) (round_down((BLOCK_DATA_SIZE(num) / nslots), sizeof(long)))
++#define ZBLOCK_MAX_PAGES_PER_BLOCK	8
++
+ /**
+  * struct zblock_block - block metadata
+- * Block consists of several (1/2/4/8) pages and contains fixed
++ * Block consists of several pages and contains fixed
+  * integer number of slots for allocating compressed pages.
+  *
+  * free_slots:	number of free slots in the block
+  * slot_info:	contains data about free/occupied slots
+  */
+ struct zblock_block {
+-	struct list_head link;
+ 	DECLARE_BITMAP(slot_info, 1 << SLOT_BITS);
+-	u32 free_slots;
++	struct list_head link;
++	unsigned short block_type;
++	unsigned short free_slots;
+ };
+ 
+ /**
+@@ -54,12 +54,12 @@ struct zblock_block {
+  *
+  * slot_size:		size of slot for this list
+  * slots_per_block:	number of slots per block for this list
+- * order:		order for __get_free_pages
++ * num_pages:		number of pages per block
+  */
+ struct block_desc {
+ 	unsigned int slot_size;
+ 	unsigned short slots_per_block;
+-	unsigned short order;
++	unsigned short num_pages;
+ };
+ 
+ struct block_desc_node {
+@@ -71,78 +71,105 @@ struct block_desc_node {
+ 
+ static const struct block_desc block_desc[] = {
+ #if PAGE_SIZE == 0x1000
+-	{ SLOT_SIZE(63, 0), 63, 0 },
+-	{ SLOT_SIZE(32, 0), 32, 0 },
+-	{ SLOT_SIZE(21, 0), 21, 0 },
+-	{ SLOT_SIZE(15, 0), 15, 0 },
+-	{ SLOT_SIZE(12, 0), 12, 0 },
+-	{ SLOT_SIZE(10, 0), 10, 0 },
+-	{ SLOT_SIZE(9, 0), 9, 0 },
+-	{ SLOT_SIZE(8, 0), 8, 0 },
+-	{ SLOT_SIZE(29, 2), 29, 2 },
+-	{ SLOT_SIZE(13, 1), 13, 1 },
+-	{ SLOT_SIZE(6, 0), 6, 0 },
+-	{ SLOT_SIZE(11, 1), 11, 1 },
+-	{ SLOT_SIZE(5, 0), 5, 0 },
+-	{ SLOT_SIZE(9, 1), 9, 1 },
+-	{ SLOT_SIZE(8, 1), 8, 1 },
+-	{ SLOT_SIZE(29, 3), 29, 3 },
++	{ SLOT_SIZE(28, 1), 28, 1 },
++	{ SLOT_SIZE(18, 1), 18, 1 },
++	{ SLOT_SIZE(12, 1), 12, 1 },
++	{ SLOT_SIZE(10, 1), 10, 1 },
++	{ SLOT_SIZE(17, 2), 17, 2 },
++	{ SLOT_SIZE(15, 2), 15, 2 },
+ 	{ SLOT_SIZE(13, 2), 13, 2 },
+-	{ SLOT_SIZE(12, 2), 12, 2 },
++	{ SLOT_SIZE(6, 1), 6, 1 },
+ 	{ SLOT_SIZE(11, 2), 11, 2 },
+-	{ SLOT_SIZE(10, 2), 10, 2 },
++	{ SLOT_SIZE(5, 1), 5, 1 },
++	{ SLOT_SIZE(19, 4), 19, 4 },
+ 	{ SLOT_SIZE(9, 2), 9, 2 },
+-	{ SLOT_SIZE(17, 3), 17, 3 },
+-	{ SLOT_SIZE(8, 2), 8, 2 },
+-	{ SLOT_SIZE(15, 3), 15, 3 },
+-	{ SLOT_SIZE(14, 3), 14, 3 },
+-	{ SLOT_SIZE(13, 3), 13, 3 },
+-	{ SLOT_SIZE(6, 2), 6, 2 },
++	{ SLOT_SIZE(17, 4), 17, 4 },
++	{ SLOT_SIZE(4, 1), 4, 1 },
++	{ SLOT_SIZE(23, 6), 23, 6 },
+ 	{ SLOT_SIZE(11, 3), 11, 3 },
++	{ SLOT_SIZE(7, 2), 7, 2 },
+ 	{ SLOT_SIZE(10, 3), 10, 3 },
+-	{ SLOT_SIZE(9, 3), 9, 3 },
+-	{ SLOT_SIZE(4, 2), 4, 2 },
++	{ SLOT_SIZE(19, 6), 19, 6 },
++	{ SLOT_SIZE(6, 2), 6, 2 },
++	{ SLOT_SIZE(14, 5), 14, 5 },
++	{ SLOT_SIZE(8, 3), 8, 3 },
++	{ SLOT_SIZE(5, 2), 5, 2 },
++	{ SLOT_SIZE(12, 5), 12, 5 },
++	{ SLOT_SIZE(9, 4), 9, 4 },
++	{ SLOT_SIZE(15, 7), 15, 7 },
++	{ SLOT_SIZE(2, 1), 2, 1 },
++	{ SLOT_SIZE(15, 8), 15, 8 },
++	{ SLOT_SIZE(9, 5), 9, 5 },
++	{ SLOT_SIZE(12, 7), 12, 7 },
++	{ SLOT_SIZE(13, 8), 13, 8 },
++	{ SLOT_SIZE(6, 4), 6, 4 },
++	{ SLOT_SIZE(11, 8), 11, 8 },
++	{ SLOT_SIZE(9, 7), 9, 7 },
++	{ SLOT_SIZE(6, 5), 6, 5 },
++	{ SLOT_SIZE(9, 8), 9, 8 },
++	{ SLOT_SIZE(4, 4), 4, 4 },
+ #else
+-	{ SLOT_SIZE(255, 0), 255, 0 },
+-	{ SLOT_SIZE(185, 0), 185, 0 },
+-	{ SLOT_SIZE(145, 0), 145, 0 },
+-	{ SLOT_SIZE(113, 0), 113, 0 },
+-	{ SLOT_SIZE(92, 0), 92, 0 },
+-	{ SLOT_SIZE(75, 0), 75, 0 },
+-	{ SLOT_SIZE(60, 0), 60, 0 },
+-	{ SLOT_SIZE(51, 0), 51, 0 },
+-	{ SLOT_SIZE(43, 0), 43, 0 },
+-	{ SLOT_SIZE(37, 0), 37, 0 },
+-	{ SLOT_SIZE(32, 0), 32, 0 },
+-	{ SLOT_SIZE(27, 0), 27, 0 },
+-	{ SLOT_SIZE(23, 0), 23, 0 },
+-	{ SLOT_SIZE(19, 0), 19, 0 },
+-	{ SLOT_SIZE(17, 0), 17, 0 },
+-	{ SLOT_SIZE(15, 0), 15, 0 },
+-	{ SLOT_SIZE(13, 0), 13, 0 },
+-	{ SLOT_SIZE(11, 0), 11, 0 },
+-	{ SLOT_SIZE(10, 0), 10, 0 },
+-	{ SLOT_SIZE(9, 0), 9, 0 },
+-	{ SLOT_SIZE(8, 0), 8, 0 },
+-	{ SLOT_SIZE(15, 1), 15, 1 },
+-	{ SLOT_SIZE(14, 1), 14, 1 },
+-	{ SLOT_SIZE(13, 1), 13, 1 },
++	{ SLOT_SIZE(185, 1), 185, 1 },
++	{ SLOT_SIZE(113, 1), 113, 1 },
++	{ SLOT_SIZE(86, 1), 86, 1 },
++	{ SLOT_SIZE(72, 1), 72, 1 },
++	{ SLOT_SIZE(58, 1), 58, 1 },
++	{ SLOT_SIZE(49, 1), 49, 1 },
++	{ SLOT_SIZE(42, 1), 42, 1 },
++	{ SLOT_SIZE(37, 1), 37, 1 },
++	{ SLOT_SIZE(33, 1), 33, 1 },
++	{ SLOT_SIZE(59, 2), 59, 2 },
++	{ SLOT_SIZE(27, 1), 27, 1 },
++	{ SLOT_SIZE(25, 1), 25, 1 },
++	{ SLOT_SIZE(23, 1), 23, 1 },
++	{ SLOT_SIZE(21, 1), 21, 1 },
++	{ SLOT_SIZE(39, 2), 39, 2 },
++	{ SLOT_SIZE(37, 2), 37, 2 },
++	{ SLOT_SIZE(35, 2), 35, 2 },
++	{ SLOT_SIZE(33, 2), 33, 2 },
++	{ SLOT_SIZE(31, 2), 31, 2 },
++	{ SLOT_SIZE(29, 2), 29, 2 },
++	{ SLOT_SIZE(27, 2), 27, 2 },
++	{ SLOT_SIZE(25, 2), 25, 2 },
+ 	{ SLOT_SIZE(12, 1), 12, 1 },
+ 	{ SLOT_SIZE(11, 1), 11, 1 },
++	{ SLOT_SIZE(21, 2), 21, 2 },
+ 	{ SLOT_SIZE(10, 1), 10, 1 },
++	{ SLOT_SIZE(19, 2), 19, 2 },
+ 	{ SLOT_SIZE(9, 1), 9, 1 },
++	{ SLOT_SIZE(17, 2), 17, 2 },
+ 	{ SLOT_SIZE(8, 1), 8, 1 },
+ 	{ SLOT_SIZE(15, 2), 15, 2 },
+ 	{ SLOT_SIZE(14, 2), 14, 2 },
++	{ SLOT_SIZE(27, 4), 27, 4 },
+ 	{ SLOT_SIZE(13, 2), 13, 2 },
++	{ SLOT_SIZE(25, 4), 25, 4 },
+ 	{ SLOT_SIZE(12, 2), 12, 2 },
++	{ SLOT_SIZE(23, 4), 23, 4 },
+ 	{ SLOT_SIZE(11, 2), 11, 2 },
++	{ SLOT_SIZE(21, 4), 21, 4 },
+ 	{ SLOT_SIZE(10, 2), 10, 2 },
++	{ SLOT_SIZE(19, 4), 19, 4 },
+ 	{ SLOT_SIZE(9, 2), 9, 2 },
+-	{ SLOT_SIZE(8, 2), 8, 2 },
++	{ SLOT_SIZE(17, 4), 17, 4 },
++	{ SLOT_SIZE(4, 1), 4, 1 },
++	{ SLOT_SIZE(23, 6), 23, 6 },
++	{ SLOT_SIZE(11, 3), 11, 3 },
+ 	{ SLOT_SIZE(7, 2), 7, 2 },
++	{ SLOT_SIZE(10, 3), 10, 3 },
++	{ SLOT_SIZE(16, 5), 16, 5 },
+ 	{ SLOT_SIZE(6, 2), 6, 2 },
++	{ SLOT_SIZE(11, 4), 11, 4 },
++	{ SLOT_SIZE(8, 3), 8, 3 },
+ 	{ SLOT_SIZE(5, 2), 5, 2 },
++	{ SLOT_SIZE(7, 3), 7, 3 },
++	{ SLOT_SIZE(11, 5), 11, 5 },
++	{ SLOT_SIZE(4, 2), 4, 2 },
++	{ SLOT_SIZE(9, 5), 9, 5 },
++	{ SLOT_SIZE(8, 5), 8, 5 },
++	{ SLOT_SIZE(3, 2), 3, 2 },
++	{ SLOT_SIZE(7, 6), 7, 6 },
++	{ SLOT_SIZE(4, 4), 4, 4 },
+ #endif /* PAGE_SIZE */
+ };
+ 
+@@ -150,13 +177,11 @@ static const struct block_desc block_desc[] = {
+  * struct block_list - stores metadata of particular list
+  * lock:		protects the list of blocks
+  * active_list:		linked list of active (non-full) blocks
+- * full_list:		linked list of full blocks
+  * block_count:		total number of blocks in the list
+  */
+ struct block_list {
+ 	spinlock_t lock;
+ 	struct list_head active_list;
+-	struct list_head full_list;
+ 	unsigned long block_count;
+ };
+ 
+@@ -170,6 +195,7 @@ struct block_list {
+  */
+ struct zblock_pool {
+ 	struct block_list block_lists[ARRAY_SIZE(block_desc)];
++	struct kmem_cache *block_header_cache;
+ 	struct zpool *zpool;
+ };
+ 
+-- 
+2.39.2
 
 
