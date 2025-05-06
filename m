@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-635348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8860FAABC34
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C34AABC22
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3A01B201F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:53:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED68504480
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D676D1FECDD;
-	Tue,  6 May 2025 07:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXEQhvyA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3398C20E719;
+	Tue,  6 May 2025 07:38:06 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9911B87D5;
-	Tue,  6 May 2025 07:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC0A20AF62;
+	Tue,  6 May 2025 07:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746516745; cv=none; b=FW+QBOkdtwVSUFwqm4VPCwREDv3FkWBAQ8het/lud99fdF2zLTtRTeueA0ss4IX2XJdlKhemkWBMU9/pSs191TCIWVaES0qsLYHOLtRNcTZr58i8AiikIRFOScn/GBb9lZeAmFZln1r1WZy7UAoJwIjip1+vFSX2EeLxjU94yS0=
+	t=1746517085; cv=none; b=I9vHuxPWIIqD4+Q1Reah+GjG3qSxfNmBiCH7/2aEGEAdNe1pOPvpEwkdBenLjUCtLxKku8kljO1sKqXTPbH0M2jEHArhb/V07eYqVCpwokv92V3fptJQppDjWAtKE1F1i6P4x2Vl5aZfx6BeBxOA2dHjXUcolYswA+Jm6R2HP14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746516745; c=relaxed/simple;
-	bh=OZ+817j3f4ap3ciSYtXNhpzUyN6ZWEuAU+9/pHf4lCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kCe3WAQMtJrvpQ1XGkWGyXRGpel+KKevyKpsaFjDB4uJDwx0xkV2LV6aV5nPBDP3fp9Iu/hXjWnoZYIxsLaISsrg3T9X1cAOeu6314FVrDohBVqyYC3zvyjitHj1pRxUujfBv3Pd5mWVQrhC9GdzqVYDC/5z2jWPaWiZmTjXkD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXEQhvyA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C97C4CEEB;
-	Tue,  6 May 2025 07:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746516744;
-	bh=OZ+817j3f4ap3ciSYtXNhpzUyN6ZWEuAU+9/pHf4lCM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KXEQhvyAE6H3yr0cAjm0ZCd8bzQU5YeUOhzY6VnpxRnZEd6cGYABBJ6+3fV+E17Va
-	 ZBol3J9puJE1Azne5e0tMYVmqBBHgeC19U8udesyzs8pxwXSVUFkOWWayuUTG6uW8a
-	 hsSxVQSn48DHLODGZ53Ha+0Y7cTEpVXEnFd/8J7IudC5RnevLPhUhy6K1luIDOj+xn
-	 ZYLHtgVPAYWXREWQAPhvrgB6g80YOH8gxEni8mDkf81wXjWBTVHfebM5GqFlIIZZC/
-	 2yAeeF6lOegaFwQnNLQ9j8EAAsv9lm5Z1w9DTJFNnQb1TauXVS2CnWwqm0gN52IgWQ
-	 Q+mHkoLCAIbJg==
-Message-ID: <7a814f93-49b5-4b62-ae2c-dc28f174b11a@kernel.org>
-Date: Tue, 6 May 2025 09:32:21 +0200
+	s=arc-20240116; t=1746517085; c=relaxed/simple;
+	bh=tZIO+EQRo+626MNrPTrnWNLtIsRmHwA8dCHXaINz9v8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B79QXiY5WGdgjlzf7qv9M4ch1XWiSj14TRNslSNWRAvrpvdgdjTt2E6PcfSOQ6ydED+Fg4tYSJpBtpJYHAQL+jablO5XlfZ2ZbFog3mMb8CTsHlhlaCmvA41HV68qNIC48GGsgls6N7Yt9LmsjPGRLFpNvKHFSBeSPmdWnvxG0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Zs9B02zsPzyVFB;
+	Tue,  6 May 2025 15:33:44 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 580D6180B5F;
+	Tue,  6 May 2025 15:37:59 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 6 May
+ 2025 15:37:58 +0800
+Message-ID: <1aa40b1f-9d61-4cde-8414-6920609cff2f@huawei.com>
+Date: Tue, 6 May 2025 15:37:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,104 +47,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: serial: 8250_omap: fix tx with dma
-To: Mans Rullgard <mans@mansr.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250430163709.15850-1-mans@mansr.com>
+Subject: Re: [PATCH v2 1/4] ext4: fix out of bounds punch offset
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+CC: <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<jack@suse.cz>, <wanghaichi0403@gmail.com>, <yi.zhang@huawei.com>,
+	<yukuai3@huawei.com>, <yangerkun@huawei.com>
+References: <20250506012009.3896990-1-yi.zhang@huaweicloud.com>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250430163709.15850-1-mans@mansr.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250506012009.3896990-1-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On 30. 04. 25, 18:37, Mans Rullgard wrote:
-> Commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
-> introduced two errors in the TX DMA handling for 8250_omap.
-> 
-> Firstly, kfifo_dma_out_prepare_mapped() needs a scatterlist with two
-> entries whereas only one is provided.  The same error was fixed for
-> 8250_dma in 59449c9dbdaa ("tty: serial: 8250_dma: use sgl with 2 nents
-> to take care of buffer wrap").
+On 2025/5/6 9:20, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+>
+> Punching a hole with a start offset that exceeds max_end is not
+> permitted and will result in a negative length in the
+> truncate_inode_partial_folio() function while truncating the page cache,
+> potentially leading to undesirable consequences.
+>
+> A simple reproducer:
+>
+>    truncate -s 9895604649994 /mnt/foo
+>    xfs_io -c "pwrite 8796093022208 4096" /mnt/foo
+>    xfs_io -c "fpunch 8796093022213 25769803777" /mnt/foo
+>
+>    kernel BUG at include/linux/highmem.h:275!
+>    Oops: invalid opcode: 0000 [#1] SMP PTI
+>    CPU: 3 UID: 0 PID: 710 Comm: xfs_io Not tainted 6.15.0-rc3
+>    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40 04/01/2014
+>    RIP: 0010:zero_user_segments.constprop.0+0xd7/0x110
+>    RSP: 0018:ffffc90001cf3b38 EFLAGS: 00010287
+>    RAX: 0000000000000005 RBX: ffffea0001485e40 RCX: 0000000000001000
+>    RDX: 000000000040b000 RSI: 0000000000000005 RDI: 000000000040b000
+>    RBP: 000000000040affb R08: ffff888000000000 R09: ffffea0000000000
+>    R10: 0000000000000003 R11: 00000000fffc7fc5 R12: 0000000000000005
+>    R13: 000000000040affb R14: ffffea0001485e40 R15: ffff888031cd3000
+>    FS:  00007f4f63d0b780(0000) GS:ffff8880d337d000(0000)
+>    knlGS:0000000000000000
+>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>    CR2: 000000001ae0b038 CR3: 00000000536aa000 CR4: 00000000000006f0
+>    DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>    Call Trace:
+>     <TASK>
+>     truncate_inode_partial_folio+0x3dd/0x620
+>     truncate_inode_pages_range+0x226/0x720
+>     ? bdev_getblk+0x52/0x3e0
+>     ? ext4_get_group_desc+0x78/0x150
+>     ? crc32c_arch+0xfd/0x180
+>     ? __ext4_get_inode_loc+0x18c/0x840
+>     ? ext4_inode_csum+0x117/0x160
+>     ? jbd2_journal_dirty_metadata+0x61/0x390
+>     ? __ext4_handle_dirty_metadata+0xa0/0x2b0
+>     ? kmem_cache_free+0x90/0x5a0
+>     ? jbd2_journal_stop+0x1d5/0x550
+>     ? __ext4_journal_stop+0x49/0x100
+>     truncate_pagecache_range+0x50/0x80
+>     ext4_truncate_page_cache_block_range+0x57/0x3a0
+>     ext4_punch_hole+0x1fe/0x670
+>     ext4_fallocate+0x792/0x17d0
+>     ? __count_memcg_events+0x175/0x2a0
+>     vfs_fallocate+0x121/0x560
+>     ksys_fallocate+0x51/0xc0
+>     __x64_sys_fallocate+0x24/0x40
+>     x64_sys_call+0x18d2/0x4170
+>     do_syscall_64+0xa7/0x220
+>     entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> Fix this by filtering out cases where the punching start offset exceeds
+> max_end.
+>
+> Fixes: 982bf37da09d ("ext4: refactor ext4_punch_hole()")
+> Reported-by: Liebes Wang <wanghaichi0403@gmail.com>
+> Closes: https://lore.kernel.org/linux-ext4/ac3a58f6-e686-488b-a9ee-fc041024e43d@huawei.com/
+> Tested-by: Liebes Wang <wanghaichi0403@gmail.com>
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+Looks good to me.
 
-It's not an error. This is how it used to work since ever. Providing two 
-is an optimization, right?
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>   fs/ext4/inode.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 94c7d2d828a6..4ec4a80b6879 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4016,7 +4016,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>   	WARN_ON_ONCE(!inode_is_locked(inode));
+>   
+>   	/* No need to punch hole beyond i_size */
+> -	if (offset >= inode->i_size)
+> +	if (offset >= inode->i_size || offset >= max_end)
+>   		return 0;
+>   
+>   	/*
 
-> Secondly, when the OMAP_DMA_TX_KICK flag is set, one byte is pulled from
-> the kfifo and emitted directly in order to start the DMA.
 
-> This is done without updating DMA tx_size
-
-Ah, that's an error, of course.
-
-> which leads to uart_xmit_advance() called
-> in the DMA complete callback advancing the kfifo by one too much.
-> 
-> In practice, transmitting N bytes has been seen to result in the last
-> N-1 bytes being sent repeatedly.
-> 
-> This change fixes both problems.
-
-I am not sure you want to mix fixups with features.
-
-> Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
-> Signed-off-by: Mans Rullgard <mans@mansr.com>
-...
-> @@ -1248,8 +1247,10 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
->   err:
->   	dma->tx_err = 1;
->   out_skip:
-> -	if (skip_byte >= 0)
-> +	if (skip_byte >= 0) {
->   		serial_out(p, UART_TX, skip_byte);
-> +		p->port.icount.tx++;
-
-This is unrelated (but correct) too.
-
-thanks,
--- 
-js
-suse labs
 
