@@ -1,86 +1,138 @@
-Return-Path: <linux-kernel+bounces-635911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B96AAC37A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:11:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6412AAC35E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CE21C23735
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27C11C08618
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B6427FB19;
-	Tue,  6 May 2025 12:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C3327E7FF;
+	Tue,  6 May 2025 12:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b="EzH712X9"
-Received: from mail.flokli.de (mail.flokli.de [116.203.226.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eIzU+cPg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3C927F4C7;
-	Tue,  6 May 2025 12:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.226.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EBE27C157;
+	Tue,  6 May 2025 12:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746533423; cv=none; b=S5mHXouIF3ibVi8ojvk2mCw6YC0rjkr9e8DvhQcLeR4DzYQvCqg9lMfAveiXduTWIfWcINPS2no3rxLMqPg/mdUVJjMwjbdqBtLfrtREnzEH/QE8KPnL+cEMiYTmQXb2UmZiY90J5keo6H8VX5tjq5snTWINjbXE7BtpGXF8urE=
+	t=1746533190; cv=none; b=eKE64nNkRGtCfALgAhu0isYdjbPgLM4KMU9XLX0DoDocxuc2nW8PTpu6tNFxhVPVAyTmpwXVt6JOGT697fq/arCYTvR2Xugpd2yl1eGjojeDddm/0+QBrAendhN4q+j1Z4JovZWarfPtnk34uumWp2aPBHtp8iH1kmXG2kMiR24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746533423; c=relaxed/simple;
-	bh=Tclhj7K2o0qscg5Xlp0QaoSdW3G2rXoO87FsXVbbCMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rzI+ha+PSNMgQoPD85cFYeh8HQGalMP1YUW3DdbSAZ5zzWyBdudyQN4HjS47vPPg6pZw58DJYAiiRKVkc/fY5KYlDr9gA209L7KmrOFBprlczrVf6U6IktmbTHc7mx5fhzXoF2O8LD4Z5KZc0R45eB/FBGE1oJaLk9ELQqN2GS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de; spf=pass smtp.mailfrom=flokli.de; dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b=EzH712X9; arc=none smtp.client-ip=116.203.226.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flokli.de
-From: Florian Klink <flokli@flokli.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flokli.de; s=mail;
-	t=1746532878; bh=7vx3gTnF+9ahlm0p7+sai6tkLNM+xCZ1j9YbAf2oUVc=;
-	h=From:To:Cc:Subject:Date;
-	b=EzH712X94uyLi8KHDF4HR75ZtlptuAaX+mEtBNxAHklGWYZ0wL6/rBtFARGqD+4sQ
-	 oLbFeAYhfhKmcbjFZlvkHlhGiDtyM5LiZ++TQ+R/bN0pg58TByCwo+2uWzY0w+pVED
-	 ph3JdA0vt+7ZiirIxIQ2W50CybkxknmpV5qcnF44=
-To: Sven Peter <sven@svenpeter.dev>,
-	Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Florian Klink <flokli@flokli.de>
-Subject: [PATCH] watchdog: apple: set max_hw_heartbeat_ms instead of max_timeout
-Date: Tue,  6 May 2025 15:01:11 +0300
-Message-ID: <20250506120111.5041-1-flokli@flokli.de>
+	s=arc-20240116; t=1746533190; c=relaxed/simple;
+	bh=yrApMg2Q1BCISMtqxwlIotBwEopk5QQD4jpgaUv6yKY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cYDAe+2U9MTgfVn888aKjDyZNYvgEZQKegUMVLIFIWa6YXKfsr4fZ3aL2r16DsrKPGMe8ab1vtOrx5EwowQr3aOn/8tkYk6uYi2ZSQN3cc47SJaibEpVxzXOqVWJjeBGodwVrJ9qRbKL+X0vTn5WIZJOYygTbENny9DqZ6+g/is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eIzU+cPg; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746533188; x=1778069188;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=yrApMg2Q1BCISMtqxwlIotBwEopk5QQD4jpgaUv6yKY=;
+  b=eIzU+cPgIIi5ZKJHNxpHx+KWa4Pvf1eGGQAwCQpyvBi/RQ/2jFgIHEzY
+   uRx14GcLhtL1MvECS5HIAGQItiYML6pr+TVgznGSJqhH/Bwmdb6eqK3vh
+   CUxxnw8lnnW/gUjvvg+H7S9CBhl4ryYoxqK2lr2ka9ugiEvvP8rmptMR7
+   tK2H2HPTwBS/fcdYFyucaP3FhxYLR42f+KVO8kJE4lCZ6myzgvpTsATZa
+   Fx5Eb2tglGj8I3p/zvC1o/NLihPmDnSBvHQqLih/vfUIL8P8fmqYdUW1p
+   6NJj62uxqJeyCZNsl7SWPU9wzCXfQOFodCUOVdtqsjDLhfXqlkBM+GBq2
+   g==;
+X-CSE-ConnectionGUID: 6Rm264A3R9qlIt5upV+h3g==
+X-CSE-MsgGUID: ahV1/4CLRaqPuSk2Bj7yGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52007532"
+X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
+   d="scan'208";a="52007532"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 05:06:27 -0700
+X-CSE-ConnectionGUID: zhgYECvEQTK5zEuXRNcezw==
+X-CSE-MsgGUID: 1tjypfTPTVe3wRdYITSyIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
+   d="scan'208";a="136594290"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.207])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 05:06:21 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 6 May 2025 15:06:18 +0300 (EEST)
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+cc: arnd@arndb.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    benjamin.larsson@genexis.eu, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    heikki.krogerus@linux.intel.com, Jiri Slaby <jirislaby@kernel.org>, 
+    jkeeping@inmusicbrands.com, john.ogness@linutronix.de, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, markus.mayer@linaro.org, 
+    matt.porter@linaro.org, namcao@linutronix.de, paulmck@kernel.org, 
+    pmladek@suse.com, schnelle@linux.ibm.com, sunilvl@ventanamicro.com, 
+    tim.kryger@linaro.org
+Subject: Re: [PATCH v5 3/4] serial: 8250_dw: warning on entering dw8250_force_idle
+ unlocked
+In-Reply-To: <20250506112321.61710-3-cuiyunhui@bytedance.com>
+Message-ID: <71a295db-72ea-bf2a-338f-416b178f5305@linux.intel.com>
+References: <20250506112321.61710-1-cuiyunhui@bytedance.com> <20250506112321.61710-3-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-The hardware only supports timeouts slightly below 3mins, but by using
-max_hw_heartbeat_ms we can let the kernel take care of supporting larger
-timeouts than that requested from userspace.
+On Tue, 6 May 2025, Yunhui Cui wrote:
 
-Signed-off-by: Florian Klink <flokli@flokli.de>
----
- drivers/watchdog/apple_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Read UART_RX and check UART_LSR_DR in critical section. Unsure if
 
-diff --git a/drivers/watchdog/apple_wdt.c b/drivers/watchdog/apple_wdt.c
-index 95d9e37df41c..6088a7554312 100644
---- a/drivers/watchdog/apple_wdt.c
-+++ b/drivers/watchdog/apple_wdt.c
-@@ -177,7 +177,7 @@ static int apple_wdt_probe(struct platform_device *pdev)
- 
- 	wdt->wdd.ops = &apple_wdt_ops;
- 	wdt->wdd.info = &apple_wdt_info;
--	wdt->wdd.max_timeout = U32_MAX / wdt->clk_rate;
-+	wdt->wdd.max_hw_heartbeat_ms = U32_MAX / wdt->clk_rate * 1000;
- 	wdt->wdd.timeout = APPLE_WDT_TIMEOUT_DEFAULT;
- 
- 	wdt_ctrl = readl_relaxed(wdt->regs + APPLE_WDT_WD1_CTRL);
+Unsure if -> Ensure the
+
+> caller of dw8250_force_idle() holds port->lock. Don't acquire it
+> directly to avoid deadlock. Use lockdep_assert_held_once for warning.
+
+Add (), although the last two sentences don't seem that useful, IMO.
+
+> 
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>  drivers/tty/serial/8250/8250_dw.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+> index af24ec25d976..f41c4a9ed58b 100644
+> --- a/drivers/tty/serial/8250/8250_dw.c
+> +++ b/drivers/tty/serial/8250/8250_dw.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/io.h>
+> +#include <linux/lockdep.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+>  #include <linux/notifier.h>
+> @@ -112,6 +113,13 @@ static void dw8250_force_idle(struct uart_port *p)
+>  	struct uart_8250_port *up = up_to_u8250p(p);
+>  	unsigned int lsr;
+>  
+> +	/*
+> +	 * The serial_in(p, UART_RX) should be under port->lock, but we can't add
+> +	 * it to avoid AA deadlock as we're unsure if serial_out*(...UART_LCR)
+> +	 * is under port->lock.
+
+I'm left to wonder who/what "we" is here? Could you change it something 
+more precise.
+
+> +	 */
+> +	lockdep_assert_held_once(&p->lock);
+> +
+>  	serial8250_clear_and_reinit_fifos(up);
+>  
+>  	/*
+> 
+
 -- 
-2.49.0
+ i.
 
 
