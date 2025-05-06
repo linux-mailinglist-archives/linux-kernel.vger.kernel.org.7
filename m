@@ -1,162 +1,166 @@
-Return-Path: <linux-kernel+bounces-636472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A92AACBCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:03:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4256AACBD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6998816A102
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:03:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53FF16ABBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433D8284681;
-	Tue,  6 May 2025 17:03:08 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05DC283FD9;
+	Tue,  6 May 2025 17:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TGxcufOI"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F30280003;
-	Tue,  6 May 2025 17:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92EF283FE8
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 17:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746550987; cv=none; b=agoIJe70KINe4oKv3zpL17H5s0Mmu41TeQedRyutdaSVC6el9U0Az1tpUqqzR4TOndZgnLjfI/e8y1334qSu5a9c1UEuWhdoqL5W8iCNaNFNxgeRskf0IEWIa1QrdG3lDHgvtRhXFlX3EN64W/2gJtqyBR84DEjP9q6aUuQYZ8k=
+	t=1746551018; cv=none; b=ur0KYnJIURAoGu8vHgPZAeeY5Yii8CE5AaKOHsxtTkdkQaYpWo1kuX8iB4nw14NahI+twjtp61Ip4PrzfznIpCb1t4a+c4nBhMe4Gh8Bm2Z65HC3y6iy30iHGw9NJBUyDI0BhooO0SSqWupdfquXIpfnFmWKaCW6inITcGV6OXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746550987; c=relaxed/simple;
-	bh=0WOaw5RZ043+rJnJTVHll4zM5aaNrrkCl4+hWKBWnZA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fJFEPP/u5m8aie1rdn4dqnsHOCIlk3lDMCrMxFRvms9/5quFgCX8e4BMCpyZM5b4EORFYxFN108m3e9M2l/XxjTSsuvvnuMfo+JSQkMkVlJZtKqLv5c1SkpbbUVNJLUga6sTH/p6d0Ft745rfdAIFoyqpeg0CAyDHPrOQZso4J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZsPm619ypz6L52x;
-	Wed,  7 May 2025 01:00:38 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9D90C1402ED;
-	Wed,  7 May 2025 01:03:02 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 6 May
- 2025 19:03:01 +0200
-Date: Tue, 6 May 2025 18:03:00 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Karolina Stolarek <karolina.stolarek@oracle.com>
-CC: Bjorn Helgaas <helgaas@kernel.org>, "Shen, Yijun" <Yijun.Shen@dell.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, Jon Pan-Doh
-	<pandoh@google.com>, Terry Bowman <terry.bowman@amd.com>, Len Brown
-	<lenb@kernel.org>, James Morse <james.morse@arm.com>, Tony Luck
-	<tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Ben Cheatham
-	<Benjamin.Cheatham@amd.com>, Ira Weiny <ira.weiny@intel.com>, Shuai Xue
-	<xueshuai@linux.alibaba.com>, Liu Xinpeng <liuxp11@chinatelecom.cn>, "Darren
- Hart" <darren@os.amperecomputing.com>, Dan Williams
-	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] PCI/AER: Consolidate CXL, ACPI GHES and native AER
- reporting paths
-Message-ID: <20250506180300.00006527@huawei.com>
-In-Reply-To: <1fb6b57b-4317-404d-8361-19e1c3bd499c@oracle.com>
-References: <20250424172809.GA492728@bhelgaas>
-	<61d3f860-9411-4c86-b9c4-a4524ec8ea6d@oracle.com>
-	<20250425141401.0000067b@huawei.com>
-	<0f4944a4-fd05-4365-9416-378a7385547b@oracle.com>
-	<20250429165410.00002c86@huawei.com>
-	<1fb6b57b-4317-404d-8361-19e1c3bd499c@oracle.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1746551018; c=relaxed/simple;
+	bh=S36e/AfvMii+zYLLY4uuHcRj6uHTGDzxO9akAzlMCEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qnnBQcBNB7ryVXbSaItdQeXdIauiwKyZ6irAIWmyd3oW2+IL9qgQd7MzOInxuG39PyolmnNbWR0cU48Odb+lKKANmE+AqnlWUt00SjOrrg1GgUM/nbp707Tcf/j72Cm60orqvyR2fA0/zPkhqIVSMlk6JO7KY4PWwhHcQUqxs8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TGxcufOI; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso937610466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 10:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1746551014; x=1747155814; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9tsrXetGcHXhlhDD75jAH1r6uQJobxHanpR51VAuyMw=;
+        b=TGxcufOIFLu0AI7Xg65mcYE0TOk8/HYSHJ6PuTKz3jPDBghs62fZypxYZcym2ynFuQ
+         geQs4D+zyrDWXPYQqrC4+8kugxI7Vld5otIEsnisnXfVhdhsPAGEUf2j4LrgkPSmJCy8
+         nLbdc6XligG0LXkLfWc/iwAYSb6nz7WTuyJFA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746551014; x=1747155814;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9tsrXetGcHXhlhDD75jAH1r6uQJobxHanpR51VAuyMw=;
+        b=nxaDDmxIxkqX7wMmF0A/+HEY811Ypx4fZRvX5yuGqDkAAwaD6cWtsEc27rEsyC8uQa
+         1MyIJjiR+2QoJmcHZXayOpV7TuOJ4/90BEtIoYNpSOaV+DPeLLYhbvsA8T+j1LfIAAZ0
+         yTgCptw7kooacI/OHrQNCrjPSIplHA8xzYuJYOZa4KzzP/Z5aayrXZwGYzmmSeaq0Sks
+         aDEXPJhRJkmh7MQJzEYxf5xrtv8mkwLR4JhXqkmMEav3BSgcQm131LiY9pUTou8kyxwx
+         20+lio7iCN2P0EBzmirUryvell2NSKDx3TBtA1fnQYx1Fqh2wwaIEkTsDW0ntDs0YCpf
+         PFBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnhZfQLbxOOxjSDp6/XS6o4TBHlJgtyWVVuImS3LZ8yEHqEapTx8Ac1ISILOR+zhfzCxl6ZcVpBfd2Ihg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT+Inm/nA4Ouy4SOpoqvhXHWiU5Dj7/vLpr88qkOy9aAAe9uL8
+	57hXoUz3rshaWa9m0pWfIBDUkKClbcDS1cjny5Y+Y3Zq0cpKXBTnyTtDMVtxWipXKv51COnLIkA
+	Ph/Y=
+X-Gm-Gg: ASbGnctgN3GTtgzQL4XoppVBHxjiSxoHU9gfmwJyEtLuzlRvx12cXAwZSJcx9fPrWwb
+	67lFrlPGDsGWOBkeMYHnBs69ZMWTfV2cFhP5rZ41EmUUTAI+jznvQZELiEmSLobzIVLb2tGwJOL
+	w3EujGGhY2dvlyoTugwB/LwAKG48HR+CEVlRxikW61yH/KYA2QyIwwv5/+X0xSPGlkqhGcGGGna
+	1TdveiNR/mr1V/RBsenpTYqcc6t0talVEHZAxZOP2ASfP6iFGCSImomKcOX4erYnlx6pOzXSVb4
+	ZOx2VtnmSGQazsOW3R8tQcA7mwzRbKrv7UcawXFLPjv7xnYZcNBBNp7iofLQFwX2RWNQPIKfEAq
+	QiRAUOMlCNW9GttMtQWewfEVi0w==
+X-Google-Smtp-Source: AGHT+IHZeIn3M0qVUoOcEY4wQg34jzIBzbFf6CIdav704+eg2jdwa3X94HFVPXlGN46HOTZX6hEgOw==
+X-Received: by 2002:a17:907:3f92:b0:ac2:6910:a12f with SMTP id a640c23a62f3a-ad1e8cd6ab6mr23745966b.46.1746551013699;
+        Tue, 06 May 2025 10:03:33 -0700 (PDT)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1894c024asm722439066b.117.2025.05.06.10.03.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 10:03:33 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso937604566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 10:03:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWVQdbFdxxv2M3WD4OV2GHQJkzWss9/tLE/UekXZSSXPPjj9Jf10trpJwf8GFh4SqzG9ZPFLJ/ohiqY8DQ=@vger.kernel.org
+X-Received: by 2002:a17:906:ba90:b0:acb:63a4:e8e5 with SMTP id
+ a640c23a62f3a-ad1e8b92457mr27316766b.6.1746551012621; Tue, 06 May 2025
+ 10:03:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250506154532.1281909-5-ardb+git@google.com> <20250506154532.1281909-8-ardb+git@google.com>
+ <CAHk-=whrcutH0LcMmaeJxxMeYpw2R5T80yoQAXbrRHNSTCB0Pw@mail.gmail.com> <CAMj1kXFSae=stazUv8doka-zLOnDdXXR4ASxHKe5f97ikg3V2A@mail.gmail.com>
+In-Reply-To: <CAMj1kXFSae=stazUv8doka-zLOnDdXXR4ASxHKe5f97ikg3V2A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 May 2025 10:03:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whxP5Ywpv-U=2NPFhk929VHB9_kdp10+HFJQ4VxEGdX9A@mail.gmail.com>
+X-Gm-Features: ATxdqUEevwtOmN_Ygu0D9Ha17vaJcrOoRxli3ahIdE2x69cQoMke62jq9Birbdk
+Message-ID: <CAHk-=whxP5Ywpv-U=2NPFhk929VHB9_kdp10+HFJQ4VxEGdX9A@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] x86/boot: Use alternatives based selector for
+ 5-level paging constants
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 5 May 2025 11:58:25 +0200
-Karolina Stolarek <karolina.stolarek@oracle.com> wrote:
+On Tue, 6 May 2025 at 09:35, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> I think the first two patches are important, though, as they are about
+> robustness/consistency rather than optimization.
 
-> On 29/04/2025 17:54, Jonathan Cameron wrote:
-> > On Fri, 25 Apr 2025 16:12:26 +0200
-> > Karolina Stolarek <karolina.stolarek@oracle.com> wrote:  
-> >>
-> >> OK, that means even if we manage to inject a PCIe error, AER wouldn't be
-> >> able to look up the Source ID and other values it needs to report an
-> >> error, which is not quite the solution I was looking for.  
-> > 
-> > Isn't the source ID in the CPER record? (Device ID field) or do
-> > you mean something else?  
-> 
-> Ah, sorry, I got confused on the way. I meant that even if we have the 
-> Device ID in CPER set, the specific device has no data in aer_regs if we 
-> inject an error using the GHES error injection script. We probably would 
-> end up with !info->status in aer_print_error(), thus printing only a 
-> line about "Inaccessible" agent and return early.
+That first patch already has another copy of that insane inline asm
+optimization.
 
-If you were feeling creative with scripts you might be able to make this
-work today...  Qemu does allow native aer injection via pcie_aer_inject_error
-which will fill in the stuff in the device and 'try' to trigger an interrupt.
-That last bit will fail (I think) if we are doing fw first handling.
-(you might need to just prevent the interrupt generation in a similar fashion
-to this code did here:
+Let's fix this properly, not this disgusting way.
 
-https://gitlab.com/jic23/qemu/-/commit/ce801e4d5b5cc5417cc7c7e5ecdaaa2ca5d6efe3#8eeec1fb38fa7149cc37b7a56dc193d69281ee96_704_708
+Let's get rid of that USE_EARLY_PGTABLE_L5 crazy case entirely, and
+fix the few places where it is currently used.
 
-At that point if you were to inject GHES error using Mauro's stuff it will work
-and find that pre injected hardware info.
+That code is bogus *anyway*, because your argument for these patches
+is "one single truth", but the fact is, there's at least *SIX*
+different values that get set depending on this value: pgdir_shift,
+ptrs_per_p4d, vmalloc_base, etc. All of those change depending on
+whether we do 5-level page tables or not, so the whole argument that
+"pgtable_l5_enabled() is special" is just wrong to begin with.
 
-If not we need a refresh of that patch to hook up record generation with
-Mauro's new handling. That's what I plan to get to but will be a while yet.
+Any code that makes pgtable_l5_enabled() will fundamentally then just
+have *another* inconsistency, namely the inconsistency between that
+"is_enabled" and all the other values that L5 paging actually
+modifies.
 
-J
+So I don't think your patches even fix anything. They only paper over
+one very particular issue.
 
+For example, as far as I can tell, the only real reason for it in
+arch/x86/kernel/cpu/common.c is *one* single use where we do that
 
+        if (!pgtable_l5_enabled())
+                setup_clear_cpu_cap(X86_FEATURE_LA57);
 
-> 
-> >>> The aim is specifically to allow exercising FW first error handling
-> >>> paths because it's a pain to get real systems that have firmware to inject
-> >>> the full range of what the kernel etc need to handle.  
-> >>
-> >> Does this include PCIe errors? If so, that probably doesn't make sense
-> >> to try to test my patch on an actual system?  
-> > 
-> > Ideally test it on a real system as well, but indeed the intent is to
-> > allow testing of PCI errors on emulation.  
-> 
-> I understand. Do you have pointers on how to inject it on a real system? 
-> All info I could find about FW error injection pointed to the qemu 
-> scripts I mentioned.
+in early_identify_cpu().
 
-Sorry no.  It maybe system specific and disabled on production bios.
+And then we have __early_make_pgtable(), but that's the SAME FILE that
+has all the magical special __pgtable_l5_enabled logic anyway. So that
+damn well could just write out the actual real logic, instead of using
+that "is L5 enabled" helper function THAT IT IS ITSELF INITIALIZING.
 
-> 
-> >>> x86 support for emulated injection is a work in progress (more of a mess wrt
-> >>> to the different ways the event signaling is handled than it is on arm64).
-> >>>
-> >>> I did have an earlier version of that work wired up to the same
-> >>> hooks as the native CXL error injection but I dropped it from my QEMU
-> >>> CXL staging tree for now as it was a pain to rebase whilst Mauro was rapidly
-> >>> revising the infrastructure.  I'll bring it back when I get time.  
-> >>
-> >> I understand, I saw some of your series while looking for ways to test
-> >> my patch. Thank you very much for your work. As you can see, there are
-> >> people actually looking forward to it :)  
-> > 
-> > Great!  I'll try and get back to wiring it all up again sometime soon.  
-> 
-> Awesome, thanks.
-> 
-> Bjorn, is this patch blocking the ratelimiting series? Would it be 
-> acceptable to use public logs in the commit message? I'm asking because 
-> it looks like there's no easy way to trigger the GHES path, or it would 
-> take some time, further delaying the ratelimiting work.
-> 
-> All the best,
-> Karolina
-> 
-> > 
-> > Jonathan
-> >   
-> 
+So I reall ythink this whole issue goes much deeper, and is much more
+broken than your patches imply. And I think your patches in many ways
+make it *worse*, because they may make that pgtable_l5_enabled() be
+set up early, but that just hides all the *other* issues that aren't.,
 
+As a very real example of that, just look at what happens in
+arch/x86/mm/mem_encrypt_identity.c
+
+It does all that page table setup, but if __pgtable_l5_enabled hassn't
+been set up yet, then all those *othger* values that go with it also
+haven't been set up yet, so now it uses the *wrong* value for
+ptrs_per_p4d etc.
+
+And I just checked: that code very much does use ptrs_per_p4d,
+although it's hidden by
+
+                memset(p4d, 0, sizeof(*p4d) * PTRS_PER_P4D);
+
+so I really think this is all papering over things. That code CANNOT
+WORK before __pgtable_l5_enabled hass been initialized in its
+*current* location.
+
+IOW, I think your patches only make things *less* consistent, not more.
+
+               Linus
 
