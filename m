@@ -1,89 +1,115 @@
-Return-Path: <linux-kernel+bounces-635313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7B0AABC6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 153D4AABC4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5ED3AB1EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2BB53BE1BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A95E1A23A9;
-	Tue,  6 May 2025 07:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5799F2153C9;
+	Tue,  6 May 2025 07:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Z2sKxBHG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNnbg1RP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12CC1E493C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 07:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABCC2153E8;
+	Tue,  6 May 2025 07:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746514894; cv=none; b=gGdOa5f4eSR7YYa/3GmipUMJuoUpKtoi6JqqFOvZ1t+55FhKG2WUDPDmC7ANpAzJ9JtIOt0Ijm3heQcgpz9lQZenzlv+bdlvII2M1cTeiJPbHabh8qzS/GqkLYr6hzjzuwrn2bdYs7y+WxiDCvjXo9alnXhPpuD4JhOgt71SW4I=
+	t=1746514911; cv=none; b=uK4o49KMGkj615RziDQdCYbLAX4pxvocZT3/b53ZHtmiMad0HJuTr0CcqHja5Qo31HYKlESpxEYZGACCzvhgzfKZFCI/GNr8fB+PRtfkhNfH0pzKsYAGyivu1E3q7szd32n6/eO1qpfsEzZc7hl7Blhnz6nfNlHnDGEw5FcHwd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746514894; c=relaxed/simple;
-	bh=w9uxW/9oeSFU7jsO6s9mzRWQ4gOuUHQwYzTuGEWVL9o=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ixkkGD7i8eY7WoJqsP1uYNcyLwDUFYhXeVL+SeN6QlTPh053enNSW7dJqFbOtNkBTf10OPca8YeQEKKGSs3dNTRwjD0FBVewoXWvD7924uy45BihRJJ5tjmyKD+oQwHZfmLiUCA+Lfn1sLyUKAPUVuAJrJQiBngkSau8rgYcLQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Z2sKxBHG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF136C4CEE4;
-	Tue,  6 May 2025 07:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1746514894;
-	bh=w9uxW/9oeSFU7jsO6s9mzRWQ4gOuUHQwYzTuGEWVL9o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z2sKxBHGWSNf5nAr2gfqkZHaiqJbxdeG6vfjhfSsQ4BRL8KQ+qGKAPA5cV60+gjBF
-	 3ih0N/yDF+NkQaMsBnlSt+2KOpIk8Lp8dRozkE+Q+xumyhpCsSffxzhzI1SXLlCw47
-	 8+n+JFNfheL+OU2U7IWsvnAI9tMKShYL+aS6miZE=
-Date: Tue, 6 May 2025 00:01:33 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Juan Yescas <jyescas@google.com>
-Cc: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, tjmercier@google.com,
- isaacmanjarres@google.com, surenb@google.com, kaleshsingh@google.com,
- Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
- Minchan Kim <minchan@kernel.org>
-Subject: Re: [PATCH v3] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block
- order
-Message-Id: <20250506000133.ba44539dd517e4f54515751b@linux-foundation.org>
-In-Reply-To: <20250506002319.513795-1-jyescas@google.com>
-References: <20250506002319.513795-1-jyescas@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746514911; c=relaxed/simple;
+	bh=3e+bXisIVgWVW5HiHUl8/1fadTRryB6P+vRz6FYW0m8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUG888kXqGAD7uaQdPUSr087E7cs5vOJVKMWOd/R60KYxOShM8oIgwJr9GLkVfSZNYUQsklRti7/b7YaSLiwaHcql3vDG60//hnqZ1JLFwEI8930TuaMl73gKiwkKU/LdjLj3Ow01yYXIrENu1+jRI3mXU63y+oTz/tO1Dh1354=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNnbg1RP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 188A8C4CEED;
+	Tue,  6 May 2025 07:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746514911;
+	bh=3e+bXisIVgWVW5HiHUl8/1fadTRryB6P+vRz6FYW0m8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lNnbg1RP+v6AaxdDJ0aFA4TWtGcGpc6wqQgXuji88MvtJv6q++0/k3JWsLEpSF0PB
+	 iG1xEe/z3hYd/iUYCbp2OTFyWT6UgI5Kqaox8j+MqSEVdg3MO8/U4UkeHYKlYXLA2A
+	 RhpFKe6BT8JW0mlKs7pBmZSrCYduS1YwnmNle8UYtI+Od1Cp9pdYEDjIg680+rCCCD
+	 0zgFU/a/Zo7P8Ij3B1yn1L66z2SVE7xlNRsdk08pSRflVjly59euY/5rVZbJygWjJX
+	 kQnqv92FUBVNJsOdRztnWkvsh09II9WxZZItN/CpwkyArno8WfrH7J355DykJmtkd0
+	 C3kPvHfnD0JAg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uCCJG-000000006rV-2OBA;
+	Tue, 06 May 2025 09:01:46 +0200
+Date: Tue, 6 May 2025 09:01:46 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Vignesh R <vigneshr@ti.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jayesh Choudhary <j-choudhary@ti.com>
+Subject: Re: [PATCH] i2c: omap: fix deprecated of_property_read_bool() use
+Message-ID: <aBmz2iDObAgendMc@hovoldconsulting.com>
+References: <20250415075230.16235-1-johan+linaro@kernel.org>
+ <vcwjwrjgzwoil5ydds4findhcgl2ujoxwia7eh7yrbdc45yx26@kmpmvataffzr>
+ <aAIiJQVAUdWJFVy7@hovoldconsulting.com>
+ <hn3gsrizar6xbr4seclnb6xot4fo4ztryks4w7exvztsdzj4f6@jhobhujf3ezi>
+ <aBiMJ0z5q4K2xTGT@hovoldconsulting.com>
+ <6nn2l75kkbkdu3wf3kta4mezno6cy4e3zzwzdc4cpmujjhr6lp@ct7w72zwbrhu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6nn2l75kkbkdu3wf3kta4mezno6cy4e3zzwzdc4cpmujjhr6lp@ct7w72zwbrhu>
 
-On Mon,  5 May 2025 17:22:58 -0700 Juan Yescas <jyescas@google.com> wrote:
+On Tue, May 06, 2025 at 12:13:00AM +0200, Andi Shyti wrote:
+> On Mon, May 05, 2025 at 12:00:07PM +0200, Johan Hovold wrote:
+> > On Tue, Apr 29, 2025 at 03:10:13PM +0200, Andi Shyti wrote:
 
-> Problem: On large page size configurations (16KiB, 64KiB), the CMA
-> alignment requirement (CMA_MIN_ALIGNMENT_BYTES) increases considerably,
-> and this causes the CMA reservations to be larger than necessary.
-> This means that system will have less available MIGRATE_UNMOVABLE and
-> MIGRATE_RECLAIMABLE page blocks since MIGRATE_CMA can't fallback to them.
+> > > I'm sorry, but as I understand it, the Fixes tag should be used
+> > > only when an actual bug is being fixed. I've seen stable
+> > > maintainers getting annoyed when it's used for non-bug issues.
+> > 
+> > You seem to confuse the Fixes tag with a CC stable tag. A Fixes tag is
+> > used to indicate which commit introduced an issue, while the CC stable
+> > tag is used to flag a commit for backporting (and the fact that autosel
+> > tends to pick up patches with just a Fixes doesn't change this).
 > 
-> The CMA_MIN_ALIGNMENT_BYTES increases because it depends on
-> MAX_PAGE_ORDER which depends on ARCH_FORCE_MAX_ORDER. The value of
-> ARCH_FORCE_MAX_ORDER increases on 16k and 64k kernels.
-> 
-> ...
->
-> +config PAGE_BLOCK_ORDER
-> +	int "Page Block Order"
-> +	range 1 10 if !ARCH_FORCE_MAX_ORDER
-> +	default 10 if !ARCH_FORCE_MAX_ORDER
-> +	range 1 ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER
-> +	default ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER
+> (the Cc tag for fixes is not mandatory, it's more a courtesy)
 
-Do we really need to do this arithmetic within Kconfig?  Would it be
-cleaner to do this at runtime, presumably when calculating
-pageblock_order?
+You should still add it as described by the stable tree docs:
+
+	To have a patch you submit for mainline inclusion later
+	automatically picked up for stable trees, add this tag in the
+	sign-off area::
+
+	Cc: stable@vger.kernel.org
+
+The stable team also scans through patches with just a Fixes tag because
+some people forget to add the tag, don't know that they should, or don't
+care about stable, but you should not rely on that (as I alluded to
+above).
+
+> > It's perfectly fine to fix an issue and use a Fixes tag when doing so
+> > even if the fix itself does not qualify for backporting (for whatever
+> > reason).
+> 
+> Oh yes, I forgot that patch was part of the 6.15 merge window. I
+> will then move it to the -fixes and send it for this week's merge
+> request.
+
+Perfect, thanks.
+
+Johan
 
