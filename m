@@ -1,125 +1,109 @@
-Return-Path: <linux-kernel+bounces-636037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A22AAC55A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:12:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DF3AAC568
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1EBD3BBE8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F5E1BC3EF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A8527FD6F;
-	Tue,  6 May 2025 13:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C93428001A;
+	Tue,  6 May 2025 13:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uGSdB/HE"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="a5lmD3tX";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="VtIs0gGs"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2035F266B46;
-	Tue,  6 May 2025 13:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3176D28000E
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 13:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746536975; cv=none; b=uAFHKDOrAi5uTvV0/fEuzxVjtdu5w+s5qrd1hnyOia1zr93z9AfvjIy3yg4jxZZKK0/tdS+9nAB0kLpnvpPfhe80ZGZot+WSTPU7afd8nygeEm4nfkNzjYAIjkuwI2L1YIsoLMsHp5XqZDhr8co1jrOeIhLkq3kmj+w4JOxMxKA=
+	t=1746537016; cv=none; b=NMdwcBxrRcppEQTItsHfdzfhel/Cm+WWKOtcWpa8P97Nr21zj9wM4MqY8+fJCYPTV7vvfNnebTU0Q3iGeOG3jWXhEpUHTle5PzeY3173trK0pVK/yX21F/4xNsIQ0znBbCPINXIKXemJVFw/z7a3Tk1rgKCGOTPr6pHgG6jpS7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746536975; c=relaxed/simple;
-	bh=XuNLYwv4I44qXXWDUCcJGd1BTZ9XbotdJQFOKxuUXHI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kAMNouYc+F7KD5//6rx2M4XtxVdMcVXFUuGVSb/Ln785RRyHuHjRS7KcwmWA6+XvLG4oaLioKs1hyC8lvFmlgMgTJEIMpHwpjy1H/kExsB6esvW0m7hwCy3Qh6l0+ekQFPm/xjGTYQYj1izkMvurbcvBM/BMTHYjp288d/8uIzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uGSdB/HE; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 546D9NTJ508993
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 6 May 2025 08:09:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746536963;
-	bh=a+oEfF96Z/IiSXPjQsuXB8B1jzzW8U5OwiYJRhUIYhk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=uGSdB/HEXLCHA3Ql0Kker3N+x/wSFZvA6xsPquc3iqjnps8qWr0R9IQuohuVvhthQ
-	 neNG2TU2mw3sNZxC/bkHaeGLclduM9t7M1QFlMOrBtpDKyN6PJkLVKphQ7q3zpziMb
-	 kTLFdz7tRJprwLg9nwhrWKYjr7d+H1xfAn5U0YBc=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 546D9N7Z007559
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 May 2025 08:09:23 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- May 2025 08:09:22 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 May 2025 08:09:22 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 546D9M1Y014931;
-	Tue, 6 May 2025 08:09:22 -0500
-From: Nishanth Menon <nm@ti.com>
-To: <vigneshr@ti.com>, Rishikesh Donadkar <r-donadkar@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vaishnav.a@ti.com>,
-        <devarsht@ti.com>, <y-abhilashchandra@ti.com>, <s-jain1@ti.com>,
-        <jai.luthra@linux.dev>, <jai.luthra@ideasonboard.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] Fix dtbs_check warnings in ov5640 sensor overlays
-Date: Tue, 6 May 2025 08:09:21 -0500
-Message-ID: <174653691513.707452.7671570412184180977.b4-ty@ti.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250506045225.1246873-1-r-donadkar@ti.com>
-References: <20250506045225.1246873-1-r-donadkar@ti.com>
+	s=arc-20240116; t=1746537016; c=relaxed/simple;
+	bh=oqnUxremHISOuVzgXJvUlTaqJdS7J1eS94fmp04NNlc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nk0rEDj6K54T/TuWueJvglwuiw5D3U15ci4Ecgm1Dqi4tCWcmrEsigB6o/mRG7jIZEwQzHFB9xMqoPnON1iIS8j4PtTCoFgohQ6Q6ZSiP4Dj5sjyGa68LTNcwFBKyTSocZFuxW2HvvMZsEV88Msf1egNX4QhD8t0z6BEE/CBDXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=a5lmD3tX; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=VtIs0gGs reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1746537012; x=1778073012;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7flR5DbV9pTvWMtb7j8Zpa3VQSCSW81rsjiKSP4Ot58=;
+  b=a5lmD3tXtbmwDQk0ow7Sb44qo3k6vji7C6hUJrWOmhL10H/cTmzrFoL3
+   LhRyEBigyP+hMMs7RnwHzcfp3DMXyHQHwgUvz3qPvDATQ57f9zEwyjeXU
+   CGGNU60r6xyQtWgYKEJKXdeeRlOO//ACd9iCqQouxmEiSS/9Us9XOYDCf
+   2nysfGAMwaESqLSWLpC26+g6k5bBK/V4GfQurQVpj9NJbh0kRWbXG2DjI
+   nq75yTH3z3hp7NF6dnecNAxKo2ii4nkWw7hQhvktrah32e+sPnAAJWf9Q
+   Brye7kDBEPpd+8MYpr54IpotHkeNlBzlfgimM1JEM4DATFU1AM+bIgzfq
+   Q==;
+X-CSE-ConnectionGUID: Q1eSLSEGSGyRrPEtnwsZ6Q==
+X-CSE-MsgGUID: 4ZaVbCIiRfWnTqXBDzDuJg==
+X-IronPort-AV: E=Sophos;i="6.15,266,1739833200"; 
+   d="scan'208";a="43909028"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 06 May 2025 15:10:03 +0200
+X-CheckPoint: {681A0A2B-A-68AAF6F9-E177A1A4}
+X-MAIL-CPID: 98129684B7364D902E833F2BF2B8F45D_2
+X-Control-Analysis: str=0001.0A006398.681A0A3B.005C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A04A51636AD;
+	Tue,  6 May 2025 15:09:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1746536994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7flR5DbV9pTvWMtb7j8Zpa3VQSCSW81rsjiKSP4Ot58=;
+	b=VtIs0gGsg/LpVTSw0QA4nX1HA9u92HuNFdEq/6irbAg0c84cqHiVnauSV4RZ6jRV5eVrc/
+	p3avYSnxmb0PFc9eyZ4AczU4DOWnsWy75/tjaI2b83wnx+f7yUo25cAWo+2lbU7iO3SxDf
+	K0RVnXnT7TScEzzZAU/eijrG4GVOrOcIR+2FBGFBoec7MoRpZKXAJQNbExKFtKBJjuMqFE
+	DkzBjW327IWkdI2l+CVi4RTe+5DV+eXurf4H4KsTLb+pyq2+PsvTk9OOcxynXC/NrNhppz
+	M8yFYLhwM9JGGUjTpFSXn4HlWHA1RyWwbyhKUXYIGuKib3v5nZneQ2vaTlf8aA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB driver
+Date: Tue,  6 May 2025 15:09:39 +0200
+Message-ID: <20250506130940.2621554-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Rishikesh Donadkar,
+This driver is used on imx93-tqma9352-mba91xxca.dts.
 
-On Tue, 06 May 2025 10:22:23 +0530, Rishikesh Donadkar wrote:
-> Fix the follwoing dtbs_check warnings:
-> https://gist.github.com/Rishikesh-D/2f6e0a11f2f72ce70f75058d0caedc9f
-> 
-> Test Logs:
-> beagleplay + tevi-ov5640: https://gist.github.com/Rishikesh-D/38ac71408f108147f4de596f260ad7c3
-> beagleplay + ov5640: https://gist.github.com/Rishikesh-D/7911f4efdc935c22a2c97ff502c73189
-> 
-> [...]
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
-
-[1/2] arm64: dts: ti: k3-am625-beagleplay: Add required voltage supplies for OV5640
-      commit: a5da12f37b8532b7ea9196ae7c7927a535883194
-[2/2] arm64: dts: ti: k3-am625-beagleplay: Add required voltage supplies for TEVI-OV5640
-      commit: cabe662bd54b37deb7ebf0a4dbaabc7812fa411c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 8691f0ee44e66..550b2505b5658 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -437,6 +437,7 @@ CONFIG_IWLMVM=m
+ CONFIG_MWIFIEX=m
+ CONFIG_MWIFIEX_SDIO=m
+ CONFIG_MWIFIEX_PCIE=m
++CONFIG_MWIFIEX_USB=m
+ CONFIG_MT7921E=m
+ CONFIG_RSI_91X=m
+ CONFIG_WL18XX=m
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+2.43.0
 
 
