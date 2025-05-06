@@ -1,261 +1,176 @@
-Return-Path: <linux-kernel+bounces-636364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A2CAACA6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:05:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C2FAACA6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19D6F524703
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C0A3BC1BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CD5284678;
-	Tue,  6 May 2025 16:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA3928468D;
+	Tue,  6 May 2025 16:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nGmdfCnz"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6dKHrZi"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E398280A47
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 16:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B7D280A29
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 16:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746547519; cv=none; b=UcthZf4v8+VVN5g7vylY22+taJINe/XOw8e0p1vSUS3Q4gh84/oxZdiTIHZ7eV/AA9ndMRbs/sG3zWzMapKc+Uubk1x5GquwlyDP28D5qriWwlbRPcnubqREA1Q5+oUQAdgwa16+xDEbkwDc5AYQYJ5Jca6jdaQab9TBSTi+R/U=
+	t=1746547636; cv=none; b=aOay13igqBXMEwvaZ8p5m29HgpMeHcSlVdQkN15MC3no7jsW/6jPtcP2JN4mnYlVLpAmEnCTvnOkOE4z+iw7kdek4bgupMCS9O9tZJf2Fumz3ndBb1+2cDBBHGCHodTN+wp7uJq4+uITSvWJSmCYa2g6VErnXwUMaODKuVgcY8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746547519; c=relaxed/simple;
-	bh=kRp4IxyzyS/awOzFbebOHY+i3kmMtE/y4muUCSNf6Qs=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=qS6Ri/FXlXd1Yx+eX0RWfgTrqg5vgrFzY2sLh6nrGOLOJ0SCSRHIuLfKCEb4iQGosiYrPNmWCHgd7F6fWU++AujGLwCoozrKmmSnpgkeSoNq+MYAO0vacn73NsNXHvYNkDs9b0xMu2fciP0GQphNveoTPNnQqkZ7xGLDYw0hWOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nGmdfCnz; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-225429696a9so79290535ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 09:05:17 -0700 (PDT)
+	s=arc-20240116; t=1746547636; c=relaxed/simple;
+	bh=PmtruktTMNBXbr2aasJC5meNw+18Vu3EtIDq4xONd5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I72buWKKh7Kesw2UUt56W5XuKDANWSetF/dWL/lVp5+E8yktxrk4XazzrMbvbbTFOFVaktqu5W1tovwXIrjoCAYCc2a61V9H29fidfy0UDlFF/IwfDW9bOfFtvfvDFEUaMG18QpLYHv1J111D7TXfkKbh65inutctWhpSdcTOnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6dKHrZi; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22e09f57ed4so290245ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 09:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746547516; x=1747152316; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=i1mo/Wo+ejg//AUbVLPWXwjlsnYrBMoTR6luF4u3TZs=;
-        b=nGmdfCnz+COlgoDiCBZ4UxH91Q+YuEodJGv9wtVqdpiIvLNSlDfUTRAs8HuSuKPjhd
-         gw9Vm1n+EAihd951/Ry+258AVq7nZCBBZTSpb7IJZzWWLhKw9pQvq/pxYeCRKzkFutCT
-         p1aMwSmrxFo0koMwu3Sg7vHEVuqtFeCFZy4CWBYdmtKRG6apxCkwnlKOJJHM99diSmPP
-         IcGXSMr0gV1cjBy7RiPArUqKCMQR1DzBFOtMRKPzVzbQwLlToJPLDNGthiR0RPiJW57R
-         ga9N+SWSYc3O8h/Mqg5ZIi0MiGKlZuFY9whPeOAtCxLi+witiFBW4EFs0q90ea1L2Zud
-         S5Jg==
+        d=gmail.com; s=20230601; t=1746547634; x=1747152434; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=+VZZVGzbcYYx5hdX5nvsFRseHivi3VPKSjmAFBb2pNs=;
+        b=G6dKHrZiSZirmtEcupeuC5kuHPWv7mV4TljhDykjW7V3Wrrq055jow5DRCe3OBNMRU
+         bLhlUD+uheoNNycbkD94klt0b/0ifyqonJ+1RTq7qxFpG7zDfS14xSgcIVCejsU9ykVY
+         zT6PBWL6jxN3lbdgxQMGXJnRDPix+1NbM05tBAKxyv8R+humk9QkWiaF/EaxxZOgAl+w
+         tDgdFXhPF+5pbL4LTp9/b2+xNud8Ri5QtzIpBywdZacjN060PR91Xd0iR0y82Y65gXaq
+         VAtiP1oKXGMbtgucSh3Xvfq7SteM+T5KJnfftV2r64Ie8Gv/XG3DgBz7X0BnBLxf29+6
+         MURg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746547516; x=1747152316;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i1mo/Wo+ejg//AUbVLPWXwjlsnYrBMoTR6luF4u3TZs=;
-        b=tUCtOXLg/bHYl3JwSz8ulfNHv+iNkIGd7igHdDHJzc597d6J1Uu6vIxnXvYm7vaWXi
-         OKlruLi/niRryW17GfS3arrLhckCQLFUlVifphe7OXVPc79l9QKFbi58r/wnWNwpKEpp
-         FqqjQB3iFjV2Dhx8vU3lOKcoLmuEUX3J5muqveGu8qeAHUnyiYK1glE4JvGcQJnnPw4W
-         ioESEr13HFle1qOYgh5J44YpcpQv5GSpFyM1/WsqEyfQWCPMN8wzRCd0697Td6urb3w8
-         04nIX/Rvic66K0Le+hrHrn8dORWUHCE6Tiy3BFKBIMHjHhmUmwzPvSZLNsJEdBMXPYUf
-         Bxbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpJuzK1TXDgvn2jhgsjLeDLi1s/cy4e1Sqyc+8TGcvAPsp2TC5hHVoE1F4/DPM7wTAcxZNjFP8XKM+rDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHObgKTYkWzOhY+2PSBxZahPTNFjYq4laB8S7hoZZMf7zbkesJ
-	C4r6J52m8f3yQnWJvbxvx2l52Qw6FLAFcSGaWJpUU+bIoRvvTrK1rM6exUXqc+eeFdrVU5o5Os5
-	m1KRNUR2UJfNISQyV0F4isg==
-X-Google-Smtp-Source: AGHT+IH5eiqM+GukGy4eHAEU6Tq2FHVB00BdiyUDeaIE6OKI+9mYaTJy4CBBv+vaOD5LVB3g3ewfS67gEdx2/54B0w==
-X-Received: from pfbid12.prod.google.com ([2002:a05:6a00:8a8c:b0:73b:bbec:17e9])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2408:b0:223:37ec:63d5 with SMTP id d9443c01a7336-22e32ba8292mr60504445ad.28.1746547516646;
- Tue, 06 May 2025 09:05:16 -0700 (PDT)
-Date: Tue, 06 May 2025 09:05:15 -0700
-In-Reply-To: <ZN/81KNAWofRCaQK@google.com> (message from Sean Christopherson
- on Fri, 18 Aug 2023 16:20:52 -0700)
+        d=1e100.net; s=20230601; t=1746547634; x=1747152434;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+VZZVGzbcYYx5hdX5nvsFRseHivi3VPKSjmAFBb2pNs=;
+        b=R9XvgnvjeRrQjOp/n1K8Wjt/mg0GMBNa/ZU84RJ7sG9964IqMwcxeZ2wRytzlK/Vsm
+         PV0cE5PxdLlXLaerU/JfmJb2hLQCWTe96/718RILFjAgVQhqLdxjK0TbGgdtQcPeK2XL
+         246Km8bsw7DXah8GYmvi4HEaZsKyCTBd79nqNR8nSJ9DIiTN+GhkWULg3dpIr2C5jJGY
+         d2STaBFZgKi9nfh4TRYTvxHCPc8p3X99VM1gu5cqTi+vqIJ8TnDjIivdC4KllnU32N6B
+         ZYl0jJOpxUGLULYyZj+FuXEy6alljDWJ0wQGqyf3PKy2O8ShDvd9mkc8dmI20SdvrpnS
+         Lr5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVcfTHc7JPnuEX8j19u3fBOvTbsUcXuZmtIXlkrZTgfdm91MiUskpiT/IlZMWOSH3iaJwx+br+5nDFs28U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuO4xctOLzZDtTp/gO2nQR0BRcSn9vpzrTaj6xkqTGbs2evTRn
+	1KK56n9fBSZj7w9+Oi5ZmStZY0e8/3yTqSowonF9qTXigGpMQ33J4zv5jg==
+X-Gm-Gg: ASbGnctBhgcWMYodVY4enXRhr2kMTZ1xWQD69BMaaK9TL3QDcpvXbMfkXe8qN31qkC6
+	B0lbhL7av6SmEYAFOymaL5fOBfoyZW09sajQqg22pooadpanJWyhnPCFuX6ckVyxhFxIQxbN5cD
+	1FBzaThR+jV1pXk9VkFy3OsIz6P6yShX2wj0RovTabqeN2/KT/V+xneg7vGosNbar7PDNX3X+bh
+	LILM/Pl9MozTa5Vjr6nuzESfaWjG4PFrh753YxotWmQqvEzySj+dnIwPiOSgzLs1dJmDs6Fx28o
+	yWSWY3veG7UcV53mkr2I9eUwokeH2Rp1fZ+8f7O8qxX0+s+0HoqtzRpU7050IAeZOfw+Ve7KdoL
+	Rhrh0xg4itefOAQ==
+X-Google-Smtp-Source: AGHT+IEDY9vBp/pIzu68i4CFkgzkeq79wAIqKzRU7oNMRLAhiQ/uElBDfTlVuqGc6Qc1+lNzWzKU2Q==
+X-Received: by 2002:a17:903:41c1:b0:22e:5a9c:2853 with SMTP id d9443c01a7336-22e5d667e5bmr4368905ad.12.1746547633893;
+        Tue, 06 May 2025 09:07:13 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058db91dasm9091614b3a.44.2025.05.06.09.07.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 09:07:12 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <d7af43e4-6892-4f8b-a2a6-0c121429af32@roeck-us.net>
+Date: Tue, 6 May 2025 09:07:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqzbjs5k9ms.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 02/11] KVM: guest_mem: Add ioctl KVM_LINK_GUEST_MEMFD
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, shuah@kernel.org, 
-	andrew.jones@linux.dev, ricarkol@google.com, chao.p.peng@linux.intel.com, 
-	tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com, 
-	vannapurve@google.com, erdemaktas@google.com, mail@maciej.szmigiero.name, 
-	vbabka@suse.cz, david@redhat.com, qperret@google.com, michael.roth@amd.com, 
-	wei.w.wang@intel.com, liam.merwick@oracle.com, isaku.yamahata@gmail.com, 
-	kirill.shutemov@linux.intel.com, Ryan Afranji <afranji@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Fix up memory allocation tracing
+To: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>
+Cc: David Rientjes <rientjes@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Russell King <linux@armlinux.org.uk>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20250506144531.3434190-1-linux@roeck-us.net>
+ <62cf4450-c765-4641-b042-66cca71d5912@suse.cz>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <62cf4450-c765-4641-b042-66cca71d5912@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Sean Christopherson <seanjc@google.com> writes:
+On 5/6/25 08:13, Vlastimil Babka wrote:
+> On 5/6/25 16:45, Guenter Roeck wrote:
+>> intcp_init_early() calls syscon_regmap_lookup_by_compatible() which in
+>> turn calls of_syscon_register(). This function allocates memory.
+> 
+> CCing people for intcp_init_early()
+> 
+>> intcp_init_early() is called well before kmalloc caches are initialized.
+>> As consequence, kmalloc_caches[] entries are NULL, and NULL is passed as
+>> kmem_cache argument to __kmalloc_cache_noprof(). While slab_alloc_node()
+>> handles this just fine, the trace code unconditionally dereferences it.
+>> This results in crashes such as
+> 
+> OK, so we have crashes that are not deterministic. But also
+> intcp_init_early() deterministically fails, right? This means it's called
+> before mm_core_init(), and given the "_early" part of the name that's
+> probably expected (i.e. I don't think it's due to some random initcall
 
-> On Mon, Aug 07, 2023, Ackerley Tng wrote:
->> KVM_LINK_GUEST_MEMFD will link a gmem fd's underlying inode to a new
->> file (and fd).
->>
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> ---
->>  include/uapi/linux/kvm.h |  8 +++++
->>  virt/kvm/guest_mem.c     | 73 ++++++++++++++++++++++++++++++++++++++++
->>  virt/kvm/kvm_main.c      | 10 ++++++
->>  virt/kvm/kvm_mm.h        |  7 ++++
->>  4 files changed, 98 insertions(+)
->>
->> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->> index eb900344a054..d0e2a2ce0df2 100644
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@ -2299,4 +2299,12 @@ struct kvm_create_guest_memfd {
->>  	__u64 reserved[6];
->>  };
->>
->> +#define KVM_LINK_GUEST_MEMFD	_IOWR(KVMIO,  0xd5, struct kvm_link_guest_memfd)
->> +
->> +struct kvm_link_guest_memfd {
->> +	__u64 fd;
->> +	__u64 flags;
->> +	__u64 reserved[6];
->> +};
->> +
->>  #endif /* __LINUX_KVM_H */
->> diff --git a/virt/kvm/guest_mem.c b/virt/kvm/guest_mem.c
->> index 30d0ab8745ee..1b3df273f785 100644
->> --- a/virt/kvm/guest_mem.c
->> +++ b/virt/kvm/guest_mem.c
->> @@ -477,6 +477,79 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
->>  	return __kvm_gmem_create(kvm, size, flags, kvm_gmem_mnt);
->>  }
->>
->> +static inline void __kvm_gmem_do_link(struct inode *inode)
->> +{
->> +	/* Refer to simple_link() */
->> +
->> +	inode->i_ctime = current_time(inode);
->> +	inc_nlink(inode);
->> +
->> +	/*
->> +	 * ihold() to add additional reference to inode for reference in dentry,
->> +	 * created in kvm_gmem_alloc_file() -> alloc_file_pseudo(). This is not
->> +	 * necessary when creating a new file because alloc_inode() creates
->> +	 * inodes with i_count = 1, which is the refcount for the dentry in the
->> +	 * file.
->> +	 */
->> +	ihold(inode);
->> +
->> +	/*
->> +	 * dget() and d_instantiate() complete the setup of a dentry, but those
->> +	 * have already been done in kvm_gmem_alloc_file() ->
->> +	 * alloc_file_pseudo()
->> +	 */
->> +}
+Yes, it is called before mm_core_init(), from setup_arch(). And, yes,
+you are correct, the call to syscon_regmap_lookup_by_compatible() from
+intcp_init_early() does indeed fail with -ENOMEM. That is interesting;
+I did not realize that. Thanks a lot for noticing.
 
-Thanks Sean, we're just circling back to this series, working on a next
-revision.
+Please forget this patch; I'll submit an alternative specifically th address
+the integratorcp problem. Sorry for the noise.
 
->
-> Does this have to be done before the fd is exposed to userspace, or can it be
-> done after?
+Guenter
 
-Does "exposed to userspace" mean the call to get_unused_fd_flags(),
-where an fd is reserved?
-
-Do you mean to make this reservation as late as possible?
-
-> If it can be done after, I'd prefer to have the allocation helper
-> also install the fd, and also rename it to something that better conveys that
-> it's allocating more than just the file, e.g. that it allocates and initialize
-> kvm_gmem too.
->
-> Completely untested, but this is what I'm thinkin/hoping.
->
-> static int kvm_gmem_alloc_view(struct kvm *kvm, struct inode *inode,
-> 			       struct vfsmount *mnt)
-
-Will rename this kvm_gmem_alloc_view(), that naming totally makes
-sense, and attaches a meaning to the struct file as a view into the
-memory.
-
-> {
-> 	struct file *file;
-> 	struct kvm_gmem *gmem;
->
-> 	gmem = kzalloc(sizeof(*gmem), GFP_KERNEL);
-> 	if (!gmem)
-> 		return -ENOMEM;
->
-> 	fd = get_unused_fd_flags(0);
-> 	if (fd < 0) {
-> 		r = fd;
-> 		goto err_fd;
-> 	}
-
-Do you see the fd as part of the view? I thought the fd is just a handle
-to the view (struct file).
-
->
-> 	file = alloc_file_pseudo(inode, mnt, "kvm-gmem", O_RDWR, &kvm_gmem_fops);
-> 	if (IS_ERR(file)) {
-> 		r = PTR_ERR(file);
-> 		goto err_file;
-> 	}
->
-> 	file->f_flags |= O_LARGEFILE;
-> 	file->f_mapping = inode->i_mapping;
->
-> 	kvm_get_kvm(kvm);
-> 	gmem->kvm = kvm;
-> 	xa_init(&gmem->bindings);
->
-> 	file->private_data = gmem;
->
-> 	list_add(&gmem->entry, &inode->i_mapping->private_list);
->
-> 	fd_install(fd, file);
->
-> 	return 0;
-> err:
-> 	put_unused_fd(fd);
-> err_fd:
-> 	kfree(gmem);
-> 	return r;
-> }
->
-> static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags,
-> 			     struct vfsmount *mnt)
-> {
-> 	const char *anon_name = "[kvm-gmem]";
-> 	const struct qstr qname = QSTR_INIT(anon_name, strlen(anon_name));
-> 	struct inode *inode;
-> 	struct file *file;
-> 	int fd, err;
->
-> 	inode = alloc_anon_inode(mnt->mnt_sb);
-> 	if (IS_ERR(inode))
-> 		return PTR_ERR(inode);
->
-> 	err = security_inode_init_security_anon(inode, &qname, NULL);
-> 	if (err)
-> 		goto err;
->
-> 	inode->i_private = (void *)(unsigned long)flags;
-> 	inode->i_op = &kvm_gmem_iops;
-> 	inode->i_mapping->a_ops = &kvm_gmem_aops;
-> 	inode->i_mode |= S_IFREG;
-> 	inode->i_size = size;
-> 	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> 	mapping_set_large_folios(inode->i_mapping);
-> 	mapping_set_unevictable(inode->i_mapping);
-> 	mapping_set_unmovable(inode->i_mapping);
->
-> 	fd = kvm_gmem_alloc_view(kvm, inode, mnt);
-> 	if (fd < 0) {
-> 		err = fd;
-> 		goto err;
-> 	}
-> 	return fd;
-> err:
-> 	iput(inode);
-> 	return err;
-> }
 
