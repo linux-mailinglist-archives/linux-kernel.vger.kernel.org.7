@@ -1,199 +1,131 @@
-Return-Path: <linux-kernel+bounces-636218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2276FAAC7DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:25:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5382BAAC7EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8353A69E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:25:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A7CB2129F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D08728137A;
-	Tue,  6 May 2025 14:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3771628315C;
+	Tue,  6 May 2025 14:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPcvafjG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="irxMbsQt"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4370A27FB22;
-	Tue,  6 May 2025 14:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC22427FD57;
+	Tue,  6 May 2025 14:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746541518; cv=none; b=X4JYxRyLMf19ofDTYz8ov6h8Q74gSLnJfZnGhyztWyjqpPhCo4FNNr5D5wA2/UyYDa91heT1A5VkhSLVN7OYorMYZteQN1Icyw4muqMzZw7S07eYeXQrchXDkptVRi7M43i6agZZEczJtO/rDBg5a5E+2TtESk4cqAzhRX4JXAE=
+	t=1746541550; cv=none; b=MkX+IlsEimnbhGWiY8j0cq6EFDOTWcObMaFj3AhOXev1oDLTm6R7GWwy9J7teXz3kolb/PWN6nvDZ0cfxsZ2oaANbKtZybbsVFPYnDq33qfRyjELB4zYZjt3omrIPODZSLr5Mgvsj08XjaI0D8W2TJXWzoklz1rMCLAoPzHIjZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746541518; c=relaxed/simple;
-	bh=McmkAcIkslRMJrw+jewMVQZv98MXR3pnDjXXdxwIM6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPPHxrqsJynLsv0V7SMhzCSmlM5cxko0F5C1rp26KC6HKDsyFoG3dFUwwRkyFxvkFqTjpDCF7G3aPyuPDkWnNyQCI5za8P2DZ9u46wv4CBIMa2/ZZBbtR4e+Cd8diukbN2yMv/49KRoarH8RmU/qGpJwZMLFeuP+fa+lqsVRMhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPcvafjG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66D6C4CEEB;
-	Tue,  6 May 2025 14:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746541517;
-	bh=McmkAcIkslRMJrw+jewMVQZv98MXR3pnDjXXdxwIM6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TPcvafjGwbgNkBe3KWOrtBUTneUje3MA13kR4Ca0hHa42/L0xcPLow0jATDqFaTrk
-	 4KVZSU9reYbz/Ax6HrXB4fbMrM/tCNm0baDln0laVnQZj2Xl1G8swFX5oAfibFuW1w
-	 ycJJfTvnJeeAXfiKLVUQY7bOdg0v02Ul4zaRVVHYVBRAiATKrvHQYn+RPDAjEYwV3j
-	 AszdVS3Y46tlbRDyI0WWfqRr+tB66lTFfFwsIBLkgfDHKs23oym0g/fyc6+cxpisFA
-	 1SGdC3wsRJOYqZdg2SHkhUMMMHSSj8dXRDZeWcMUMfRIpADgmYzZjSuq3eSYIBFfOh
-	 Yjlgcvy86uCDg==
-Date: Tue, 6 May 2025 15:25:09 +0100
-From: Will Deacon <will@kernel.org>
-To: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
-Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com, corbet@lwn.net,
-	catalin.marinas@arm.com, jean-philippe@linaro.org,
-	robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
-	paulmck@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com,
-	maz@kernel.org, james.morse@arm.com, broonie@kernel.org,
-	oliver.upton@linux.dev, baohua@kernel.org, david@redhat.com,
-	ioworker0@gmail.com, jgg@ziepe.ca, nicolinc@nvidia.com,
-	mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
-	kevin.tian@intel.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev
-Subject: Re: [RESEND PATCH v6 1/3] arm64: Add BBM Level 2 cpu feature
-Message-ID: <20250506142508.GB1197@willie-the-truck>
-References: <20250428153514.55772-2-miko.lenczewski@arm.com>
- <20250428153514.55772-4-miko.lenczewski@arm.com>
+	s=arc-20240116; t=1746541550; c=relaxed/simple;
+	bh=bfhs5TMIO9WwVex3wgkVyM47F2j9OE9qbP0G/kaOvoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NXSC6qzLNXxNWyUV63hjBO5fjhqdMP9RjRSFlUTLyKNXaYEnSUELJVrDtmCPKdKIwMB22hjUPn79OGudaqD+PznnoLKaMABUI1cRYwLtke+vfGDi7J2QSdB24fopWPMRYJJrSUyfqu+4RMbgdQCWkfiPlq70jIIxDJx+THMvm+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=irxMbsQt; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EED13E9408;
+	Tue,  6 May 2025 16:25:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1746541545; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=BIis3C4CFWwe/Nb/WYKe4dImQBx542mXba7Be46nPPk=;
+	b=irxMbsQt3aIZkBTMYNb71ndZxm2HmV49EHtCrCq4sSmN4VC6qVpAuQcT8r6vSO/XEtW/CT
+	hJSyvmpYsZwcUDDclOCyzxEx9ZpBvkOpuovMINSWZlUhmZb7ES9nDS3ZF7VnUuQb1eJTLT
+	H+Jpv153lHJuk6CN8be32XLeoAfKtBAtM8vbYxZW+/jN2ZEyeJgW99NUbtylN4/OjNYyWc
+	/GiO6cAF+wPBAQkkKj6CByIhE9DgqkvJoFGIcEKY+uP+tY6GV7hROBKfsug/psWVwvLrUO
+	jLnCxRUI6sOzyeEYU9Z0d7v2fhlnt/HMtiHjMwokS4LsS6hazjaOthyjAxkU9w==
+Message-ID: <ea17e686-68c7-463c-bb9e-bcc9e59a929d@cjdns.fr>
+Date: Tue, 6 May 2025 16:25:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v4 2/7] clocksource/drivers: Add EcoNet Timer HPT driver
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-mips@vger.kernel.org, tglx@linutronix.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, tsbogend@alpha.franken.de,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.larsson@genexis.eu, linux-mediatek@lists.infradead.org
+References: <20250430133433.22222-1-cjd@cjdns.fr>
+ <20250430133433.22222-3-cjd@cjdns.fr> <aBjpBpJAIP89oiit@mai.linaro.org>
+ <92cd3689-3409-4d43-8db1-8633d35f779a@cjdns.fr>
+ <7c08cc9e-f39f-490c-85fe-5738656380e5@linaro.org>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <7c08cc9e-f39f-490c-85fe-5738656380e5@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250428153514.55772-4-miko.lenczewski@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Apr 28, 2025 at 03:35:14PM +0000, Mikołaj Lenczewski wrote:
-> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
-> and this commit adds a dedicated BBML2 cpufeature to test against
-> support for, as well as a kernel commandline parameter to optionally
-> disable BBML2 altogether.
-> 
-> This is a system feature as we might have a big.LITTLE architecture
-> where some cores support BBML2 and some don't, but we want all cores to
-> be available and BBM to default to level 0 (as opposed to having cores
-> without BBML2 not coming online).
-> 
-> To support BBML2 in as wide a range of contexts as we can, we want not
-> only the architectural guarantees that BBML2 makes, but additionally
-> want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
-> us having to prove that no recursive faults can be induced in any path
-> that uses BBML2, allowing its use for arbitrary kernel mappings.
-> Support detection of such CPUs.
-> 
-> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  3 +
->  arch/arm64/Kconfig                            | 19 +++++
->  arch/arm64/include/asm/cpucaps.h              |  2 +
->  arch/arm64/include/asm/cpufeature.h           |  5 ++
->  arch/arm64/kernel/cpufeature.c                | 71 +++++++++++++++++++
->  arch/arm64/kernel/pi/idreg-override.c         |  2 +
->  arch/arm64/tools/cpucaps                      |  1 +
->  7 files changed, 103 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index d9fd26b95b34..2749c67a4f07 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -449,6 +449,9 @@
->  	arm64.no32bit_el0 [ARM64] Unconditionally disable the execution of
->  			32 bit applications.
->  
-> +	arm64.nobbml2	[ARM64] Unconditionally disable Break-Before-Make Level
-> +			2 support
 
-Hmm, I'm not sure we really want this. It opens up the door for folks to
-pass 'id_aa64mmfr2.bbm=2' without updating the allow-list which feels
-like it's going to make crashes harder to reason about.
+On 06/05/2025 10:54, Daniel Lezcano wrote:
+> On 05/05/2025 20:09, Caleb James DeLisle wrote:
+>>
+>> On 05/05/2025 18:36, Daniel Lezcano wrote:
+>>> On Wed, Apr 30, 2025 at 01:34:28PM +0000, Caleb James DeLisle wrote:
+>>>> Introduce a clocksource driver for the so-called high-precision 
+>>>> timer (HPT)
+>>>> in the EcoNet EN751221 MIPS SoC.
+>>> As a new driver, please document the timer (up - down ?, SPI/PPI, etc
+>>> ...) that will help to understand the code more easily, especially the
+>>> reg_* functions (purposes?).
+>>
+>>
+>> Sure thing, I can elaborate the comment in the header of
+>> timer-econet-en751221.c. Let me know if you'd like it described
+>> somewhere else as well, such as the help of config 
+>> ECONET_EN751221_TIMER.
+>
+> It is ok in the changelog, so it is possible to get the description 
+> when looking for the patch introducing the new timer.
 
-Is there a compelling reason to add this right now?
 
->  	arm64.nobti	[ARM64] Unconditionally disable Branch Target
->  			Identification support
->  
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index a182295e6f08..613b4925ca06 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -2070,6 +2070,25 @@ config ARM64_TLB_RANGE
->  	  The feature introduces new assembly instructions, and they were
->  	  support when binutils >= 2.30.
->  
-> +config ARM64_BBML2_NOABORT
-> +	bool "Enable support for Break-Before-Make Level 2 detection and usage"
-> +	default y
+Sounds good.
 
-I don't think we need a new Kconfig option for this. It's a
-kernel-internal detail and I'd prefer not to fragment the testing base.
 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 9c4d6d552b25..7a85a1bdc6e9 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2200,6 +2200,70 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
->  	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
->  }
->  
-> +static bool cpu_has_bbml2_noabort(unsigned int cpu_midr)
-> +{
-> +	/*
-> +	 * We want to allow usage of bbml2 in as wide a range of kernel contexts
-> +	 * as possible. This list is therefore an allow-list of known-good
-> +	 * implementations that both support bbml2 and additionally, fulfill the
-> +	 * extra constraint of never generating TLB conflict aborts when using
-> +	 * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
-> +	 * kernel contexts difficult to prove safe against recursive aborts).
-> +	 *
-> +	 * Note that implementations can only be considered "known-good" if their
-> +	 * implementors attest to the fact that the implementation never raises
-> +	 * TLBI conflict aborts for bbml2 mapping granularity changes.
-> +	 */
-> +	static const struct midr_range supports_bbml2_noabort_list[] = {
-> +		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
-> +		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
-> +		{}
-> +	};
-> +
-> +	return is_midr_in_range_list(cpu_midr, supports_bbml2_noabort_list);
+>
+> [ ... ]
+>
+>>>> +
+>>>> +    cpuhp_setup_state(CPUHP_AP_MIPS_GIC_TIMER_STARTING,
+>>>> +              "clockevents/en75/timer:starting",
+>>>> +              cevt_init_cpu, NULL);
+>>> cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, ... ) ?
+>>
+>> I see that Ingenic does this. This is the only timer so until it's up,
+>> sleeping causes a hang. If sleeping is prior to CPUHP_AP_ONLINE_DYN is
+>> considered a bug then this should be okay, but I'm not informed enough
+>> to say whether that is the case so I'll follow your guidance here.
+>
+> Hmm, hard to say without the platform. May be just give a try with 
+> CPUHP_AP_ONLINE_DYN to check if it works otherwise stick on 
+> CPUHP_AP_MIPS_GIC_TIMER_STARTING as it is already defined ?
 
-This doesn't compile against latest mainline as is_midr_in_range_list()
-no longer takes the midr.
 
-> +static bool has_bbml2_noabort(const struct arm64_cpu_capabilities *caps, int scope)
-> +{
-> +	if (!IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT))
-> +		return false;
-> +
-> +	if (scope & SCOPE_SYSTEM) {
-> +		int cpu;
-> +
-> +		/*
-> +		 * We are a boot CPU, and must verify that all enumerated boot
-> +		 * CPUs have MIDR values within our allowlist. Otherwise, we do
-> +		 * not allow the BBML2 feature to avoid potential faults when
-> +		 * the insufficient CPUs access memory regions using BBML2
-> +		 * semantics.
-> +		 */
-> +		for_each_online_cpu(cpu) {
-> +			if (!cpu_has_bbml2_noabort(cpu_read_midr(cpu)))
-> +				return false;
-> +		}
+I need a little time for this because I only got SMP on this processor
 
-This penalises large homogeneous systems and it feels unnecessary given
-that we have the ability to check this per-CPU. Can you use
-ARM64_CPUCAP_BOOT_CPU_FEATURE instead of ARM64_CPUCAP_SYSTEM_FEATURE
-to solve this?
+some time ago in a PoC so I'll need to put that back together in order
 
-Will
+to validate the change.
+
+
+Thanks,
+
+Caleb
+
+
+>
+> [ ... ]
+>
+>
 
