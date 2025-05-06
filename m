@@ -1,106 +1,235 @@
-Return-Path: <linux-kernel+bounces-636286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A9CAAC938
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5C9AAC941
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7537D7B6183
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:15:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61C01BA0F20
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC202836BE;
-	Tue,  6 May 2025 15:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZHWO0Xo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009FE283695;
+	Tue,  6 May 2025 15:17:58 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914802820AD;
-	Tue,  6 May 2025 15:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6932283137
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 15:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746544580; cv=none; b=XZ1XSNl0vz2vUynkEj65fTpIl0DG2nVws8BUgsQCmCLS/C2KVFp067HfvVNyAkj2NSbdkOHvKwuUxiQeHlWCftgfkE3gT+xhzcpF0dkMw2hEYxkd7bltSbzhgmFHiM7vgUOJ9mPP9rUDadxZFU8CxUEirwVgDQvmnc9r5Z0TAkI=
+	t=1746544677; cv=none; b=Tb9J6LT+C/+L0bf1C8QRb3oKaThZ/BVvvPxmh/ieuQvjFOwGbS2C7ZYuC8gzhA+IZtFOFdoyP8MHDk45PrRm1y2DKH0waUXnq5PcU+IQbn2+li0lBuhnyzE9UQcoCcPu8UqrgCSZoanj4FVnQ6zvTS55UzDDZ1bsOvP81yDPIjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746544580; c=relaxed/simple;
-	bh=naRIGT9bNmnyTwCeYsDh26MXmT+E8I5q52WbiTq7jDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqxa2yaMTWaiHzNTVp2+0rlrWFdW18dYIuPK4BSVH1re8r6DII2wttwAemx8wMsCBgBaBcSf4jsbTbRDeR864+YzsxI29Gmcg02xnpX1EBuSwZXyu3RHBzj58DV7Bf17Vd9R0bXf1VsvcA7RTs2XxOPYh8l+HmjD7F9PcNab7R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZHWO0Xo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C126AC4CEE4;
-	Tue,  6 May 2025 15:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746544580;
-	bh=naRIGT9bNmnyTwCeYsDh26MXmT+E8I5q52WbiTq7jDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YZHWO0XozeoojF9UoUCYbQyQ2FQ4xWRYcrK044hkRHan4feYYOV6LyOER+Fqx/nl/
-	 ivRry4m80z+BRFZ5SGbzwx3YqhOhJWOLOU/wVMOZa+wmUTpDAPiodp8WaFB7H1iMoZ
-	 lLzChHbyRGgA+PyevcK02CTEZasoRQEMLqkOJHIirfeyvmJmBGDMgmROiDDjZDudPr
-	 +GSmvqmh9hdCPUJLVBQ6xODHKygrlI+TGIhOiP1QzsJW8+vrnFT9aL3lPOvBNfiT0u
-	 8qngz+axQ7vMWI63VtCQ/9k++i1mnsxI+DkLDaINiAY7OIaqfNF3fIY8/PqssVNHU/
-	 UphYrlGrHl/pQ==
-Date: Tue, 6 May 2025 17:16:13 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, alexander@mihalicyn.com, 
-	bluca@debian.org, daan.j.demeyer@gmail.com, davem@davemloft.net, 
-	david@readahead.eu, edumazet@google.com, horms@kernel.org, jack@suse.cz, 
-	kuba@kernel.org, lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, me@yhndnzj.com, netdev@vger.kernel.org, oleg@redhat.com, 
-	pabeni@redhat.com, viro@zeniv.linux.org.uk, zbyszek@in.waw.pl
-Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow
- coredumping tasks to connect to coredump socket
-Message-ID: <20250506-buchmacher-gratulant-9960af036671@brauner>
-References: <20250505193828.21759-1-kuniyu@amazon.com>
- <20250505194451.22723-1-kuniyu@amazon.com>
- <CAG48ez2YRJxDmAZEOSWVvCyz0fkHN2NaC=_mLzcLibVKVOWqHw@mail.gmail.com>
- <20250506-zertifikat-teint-d866c715291a@brauner>
- <CAG48ez25gm3kgrS_q3jPiN0k6+-AMbNG4p9MPAD4E1WByc=VBA@mail.gmail.com>
+	s=arc-20240116; t=1746544677; c=relaxed/simple;
+	bh=TRLHS5DHdkXVLGYsZY/+Ck3dcrPceACBq41I7wF89gE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eAuTIIWrJYoFlKBGhUwLu21rk7f0bMKbJqPCwg4YGmdsmdSYzB5/6h2XPkQrxvxwLa85t/k88jsEpAVa1RZv2Alxnpa2XAFLjbp5FuqNGdsRXuJJSVOMDgkOyHFk1l7sqbK/T3Iwk+TNkh7EMEG/3K6JSW2h4yfPnDfxPZhP9eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1uCK1p-000000003cL-1EgT;
+	Tue, 06 May 2025 11:16:17 -0400
+Message-ID: <09b6eb12ede47b2e2be69bdd68a8732104b26eb0.camel@surriel.com>
+Subject: Re: [RFC PATCH 7/9] x86/mm: Introduce Remote Action Request
+From: Rik van Riel <riel@surriel.com>
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open
+ list:MEMORY MANAGEMENT"	 <linux-mm@kvack.org>, the arch/x86 maintainers
+ <x86@kernel.org>, 	kernel-team@meta.com, Dave Hansen
+ <dave.hansen@linux.intel.com>, luto@kernel.org, 	peterz@infradead.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar	 <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"	 <hpa@zytor.com>, Yu-cheng
+ Yu <yu-cheng.yu@intel.com>
+Date: Tue, 06 May 2025 11:16:17 -0400
+In-Reply-To: <03E5F4D7-3E3F-4809-87FE-6BD0B792E90F@gmail.com>
+References: <20250506003811.92405-1-riel@surriel.com>
+	 <20250506003811.92405-8-riel@surriel.com>
+	 <03E5F4D7-3E3F-4809-87FE-6BD0B792E90F@gmail.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez25gm3kgrS_q3jPiN0k6+-AMbNG4p9MPAD4E1WByc=VBA@mail.gmail.com>
+Sender: riel@surriel.com
 
-On Tue, May 06, 2025 at 04:51:25PM +0200, Jann Horn wrote:
-> On Tue, May 6, 2025 at 9:39 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > ("a kernel socket" is not necessarily the same as "a kernel socket
-> > > intended for core dumping")
-> >
-> > Indeed. The usermodehelper is a kernel protocol. Here it's the task with
-> > its own credentials that's connecting to a userspace socket. Which makes
-> > this very elegant because it's just userspace IPC. No one is running
-> > around with kernel credentials anywhere.
-> 
-> To be clear: I think your current patch is using special kernel
-> privileges in one regard, because kernel_connect() bypasses the
-> security_socket_connect() security hook. I think it is a good thing
-> that it bypasses security hooks in this way; I think we wouldn't want
-> LSMs to get in the way of this special connect(), since the task in
-> whose context the connect() call happens is not in control of this
-> connection; the system administrator is the one who decided that this
-> connect() should happen on core dumps. It is kind of inconsistent
-> though that that separate security_unix_stream_connect() LSM hook will
-> still be invoked in this case, and we might have to watch out to make
-> sure that LSMs won't end up blocking such connections... which I think
+On Tue, 2025-05-06 at 09:59 +0300, Nadav Amit wrote:
+>=20
+>=20
+> > On 6 May 2025, at 3:37, Rik van Riel <riel@surriel.com> wrote:
+> >=20
+> > +void smp_call_rar_many(const struct cpumask *mask, u16 pcid,
+> > +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long start, unsigned l=
+ong end)
+> > +{
+> > +	unsigned long pages =3D (end - start + PAGE_SIZE) /
+> > PAGE_SIZE;
+> > +	int cpu, next_cpu, this_cpu =3D smp_processor_id();
+> > +	cpumask_t *dest_mask;
+> > +	unsigned long idx;
+> > +
+> > +	if (pages > RAR_INVLPG_MAX_PAGES || end =3D=3D TLB_FLUSH_ALL)
+> > +		pages =3D RAR_INVLPG_MAX_PAGES;
+> > +
+> > +	/*
+> > +	 * Can deadlock when called with interrupts disabled.
+> > +	 * We allow cpu's that are not yet online though, as no
+> > one else can
+> > +	 * send smp call function interrupt to this cpu and as
+> > such deadlocks
+> > +	 * can't happen.
+> > +	 */
+> > +	WARN_ON_ONCE(cpu_online(this_cpu) && irqs_disabled()
+> > +		=C2=A0=C2=A0=C2=A0=C2=A0 && !oops_in_progress &&
+> > !early_boot_irqs_disabled);
+>=20
+> To ease it for the reader, consider using the updated version from
+> smp.c
+> (or - even better - refactor into common inline function):
+>=20
+> 	if (cpu_online(this_cpu) && !oops_in_progress &&
+> 	=C2=A0=C2=A0=C2=A0 !early_boot_irqs_disabled)
+> 		lockdep_assert_irqs_enabled();
 
-Right, it is the same as for the usermode helper. It calls
-kernel_execve() which invokes at least security_bprm_creds_for_exec()
-and security_bprm_check(). Both of which can be used to make the
-usermodehelper execve fail.
+Nice cleanup. I will change this. Thank you.
 
-Fwiw, it's even the case for dumping directly to a file as in that case
-it's subject to all kinds of lookup and open security hooks like
-security_file_open() and then another round in do_truncate().
+>=20
+>=20
+> > +
+> > +	/* Try to fastpath.=C2=A0 So, what's a CPU they want?=C2=A0 Ignoring
+> > this one. */
+> > +	cpu =3D cpumask_first_and(mask, cpu_online_mask);
+> > +	if (cpu =3D=3D this_cpu)
+> > +		cpu =3D cpumask_next_and(cpu, mask,
+> > cpu_online_mask);
+> > +
+> > +	/* No online cpus?=C2=A0 We're done. */
+> > +	if (cpu >=3D nr_cpu_ids)
+> > +		return;
+> > +
+> > +	/* Do we have another CPU which isn't us? */
+> > +	next_cpu =3D cpumask_next_and(cpu, mask, cpu_online_mask);
+> > +	if (next_cpu =3D=3D this_cpu)
+> > +		next_cpu =3D cpumask_next_and(next_cpu, mask,
+> > cpu_online_mask);
+> > +
+> > +	/* Fastpath: do that cpu by itself. */
+>=20
+> If you follow my comment (suggestion) about the concurrent flushes,
+> then=20
+> this part should be moved to be in the same was as done in the
+> updated
+> smp_call_function_many_cond().
+>=20
+> IOW, the main difference between this path and the =E2=80=9Cslow path=E2=
+=80=9D is=20
+> arch_send_rar_ipi_mask() vs arch_send_rar_single_ipi() (and maybe
+> =E2=80=9Cand=E2=80=9D with cpu_online_mask).
 
-All of that happens fully in the task's context as well via
-file_open()/file_open_root() or do_truncate().
+It gets better. Page 8 of the RAR whitepaper tells
+us that we can simply use RAR to have a CPU send
+itself TLB flush instructions, and the microcode
+will do the flush at the same time the other CPUs
+handle theirs.
 
-So there's nothing special here.
+"At this point, the ILP may invalidate its own TLB by=C2=A0
+ signaling RAR to itself in order to invoke the RAR handler
+ locally as well"
+
+I tried this, but things blew up very early in
+boot, presumably due to the CPU trying to send
+itself a RAR before it was fully configured to
+handle them.
+
+The code may need a better decision point than
+cpu_feature_enabled(X86_FEATURE_RAR) to decide
+whether or not to use RAR.
+
+Probably something that indicates RAR is actually
+ready to use on all CPUs.
+
+>=20
+> Since 2019 we have move into =E2=80=9Cmulti=E2=80=9D TLB flush instead of=
+ =E2=80=9Cmany=E2=80=9D.
+>=20
+> This means that try to take advantage of the time between sending the
+> IPI
+> and the indication it was completed to do the local TLB flush.=20
+
+I think we have 3 cases here:
+
+1) Only the local TLB needs to be flushed.
+   In this case we can INVPCID locally, and skip any
+   potential contention on the RAR payload table.
+
+2) Only one remote CPU needs to be flushed (no local).
+   This can use the arch_rar_send_single_ipi() thing.
+
+3) Multiple CPUs need to be flushed. This could include
+   the local CPU, or be only multiple remote CPUs.
+   For this case we could just use arch_send_rar_ipi_mask(),
+   including sending a RAR request to the local CPU, which
+   should handle it concurrently with the other CPUs.
+
+Does that seem like a reasonable way to handle things?
+
+> > +
+> > +	for_each_cpu(cpu, dest_mask)
+> > +		wait_for_done(idx, cpu);
+> > +
+> > +	free_payload(idx);
+> > +	unlock(this_cpu_ptr(&rar_lock));
+>=20
+> We don=E2=80=99t do lock/unlock on kernel/smp.c . So I would expect at le=
+ast
+> a
+> comment as for why it is required.
+>=20
+That is a very good question!
+
+It is locking a per-cpu lock, which no other code
+path takes.
+
+It looks like it could protect against preemption,
+on a kernel with full preemption enabled, but that
+should not be needed since the code in arch/x86/mm/tlb.c
+disables preemption around every call to the RAR code.
+
+I suspect that lock is no longer needed, but maybe
+somebody at Intel has a reason why we still do?
+
+--=20
+All Rights Reversed.
 
