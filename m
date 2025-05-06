@@ -1,96 +1,68 @@
-Return-Path: <linux-kernel+bounces-635957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3BFAAC403
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:29:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D3DAAC405
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2DDE1C26782
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81F50171B00
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14117284B37;
-	Tue,  6 May 2025 12:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dq5cTMty"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC6028466C;
+	Tue,  6 May 2025 12:25:48 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60241284B27;
-	Tue,  6 May 2025 12:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363A0280A21
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746534351; cv=none; b=iWVnrDgKMKn6KS6DgCsxb9tQV6iKsHYnndMucoCEQ4e0Krzv1gNZqifAmbBAmmNGuaN+58x8H2z12gJZctLoMmxiM1pbMQA+g4KdNpm5chIVPNLkwVoxpt/5j2gUQKVBnpVsI9ehS3nLmxYS7QPrBwiL1YqFvUd3bBhvfZGaXag=
+	t=1746534348; cv=none; b=sU0PRm2yklkCvyIxPxGT0sKCEJRLWRJ2vAe1Nu1pWv96gfarVW/ByAdP+IJB23TeLZWa+mrSN8+Jo9BMLA/ckhQeAHfbWPyNGLK5NB2PpcRKBV2tMICInwN+43+L8wi5m267FO5l0yis59K7VDMTr0TloWoAApCslPWEyA+XnD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746534351; c=relaxed/simple;
-	bh=Dhr0rsx9WpeMa8aspdbgl7YO+d4d6KcEE2+waQCoYbI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DUIkXyAPVasPMzdab9bY7M2Lu/syAIFSmTOl/ssn8PbR+x1Db2uVinoDODUm30pyY7HA/zGis6kiiO5Bvdrr2y14W6MZBlSecJZCc7ADYXt+tzKEumEV9p2zB1ILz7ygTwWI4/SXjH92m4pWAXV58g4ZdHv6nXHuWBUnh+EBjZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dq5cTMty; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A11C4CEF0;
-	Tue,  6 May 2025 12:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746534351;
-	bh=Dhr0rsx9WpeMa8aspdbgl7YO+d4d6KcEE2+waQCoYbI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Dq5cTMtyj0wHuo1T5aHKQkBcSlr+6GhC/2Qcc90isxK0fDRSfA0/Qo/GQnLnu53YZ
-	 6S/53TJ5C1EXGWuq4Qd55nzieRvN0xzjjM3zme/3EvAv4Wj3tLhELaUTdAMAidfbFd
-	 kIbLU6kV4uSUVi8DAvFe09ZzCOdtMaL8hHvY51pQKaTND8dkWddz1nSt6/ZiBZ90+8
-	 uK2I0XBLiZ7PxGSEZFtnHWlCj1BsFMF9AXFId2lfnYLepQi8xtoX+EyKVmoF7H2krc
-	 T24abHve5ye3qgA806xvLjWw+4bjpPF648cjcMWeaQ982/BBEa3ZbF+LAkI0/8E+ro
-	 6WBwFb1pMheHA==
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Date: Tue, 06 May 2025 14:23:54 +0200
-Subject: [PATCH v3 25/25] arm64: Kconfig: Enable GICv5
+	s=arc-20240116; t=1746534348; c=relaxed/simple;
+	bh=UtIHtwimS87wBISqHycmaSw4ya7wBNI9V90q0Hg2LBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mqZbctYAitV1OeL8aiFrwXzMUZJr3qTgYBuJ6CkUmCbbWaXUo/B3ZNQxDCr2c/zsojQEMw2MkPDoBEHYlWw+bmWvN9VpJCQN7V29Qda6+gDL4xRBFKyKdDUmX4sWMat9xX9EwL45qRfYe/tCM5xkoynBu4uIEMiYAIDYaFKQHyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZsHfD2FR2z2TS7j;
+	Tue,  6 May 2025 20:25:08 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8AE301A0188;
+	Tue,  6 May 2025 20:25:41 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 6 May 2025 20:25:40 +0800
+Message-ID: <2f8c960b-7d0b-4aa2-bade-4668d753757f@huawei.com>
+Date: Tue, 6 May 2025 20:25:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250506-gicv5-host-v3-25-6edd5a92fd09@kernel.org>
-References: <20250506-gicv5-host-v3-0-6edd5a92fd09@kernel.org>
-In-Reply-To: <20250506-gicv5-host-v3-0-6edd5a92fd09@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- Sascha Bischoff <sascha.bischoff@arm.com>, 
- Timothy Hayes <timothy.hayes@arm.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Mark Rutland <mark.rutland@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] dma mapping benchmark: add support for dma_map_sg
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>, <baohua@kernel.org>
+CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
+	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
+References: <20250506030100.394376-1-xiaqinxin@huawei.com>
+ <fd0dfb53-127f-4529-adf8-db03269d5798@oracle.com>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <fd0dfb53-127f-4529-adf8-db03269d5798@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-Enable GICv5 driver code for the ARM64 architecture.
+Okay, I'll fix this in the next version.
 
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>
----
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a182295e6f08bfa0f3e6f630dc4adfe797a4d273..f1b3c695b376717979ae864865238ae12ad65ca2 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -128,6 +128,7 @@ config ARM64
- 	select ARM_GIC_V2M if PCI
- 	select ARM_GIC_V3
- 	select ARM_GIC_V3_ITS if PCI
-+	select ARM_GIC_V5
- 	select ARM_PSCI_FW
- 	select BUILDTIME_TABLE_SORT
- 	select CLONE_BACKWARDS
-
--- 
-2.48.0
-
+在 2025/5/6 20:20, ALOK TIWARI 写道:
+> Could we make them consistent
 
