@@ -1,125 +1,103 @@
-Return-Path: <linux-kernel+bounces-635416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7354AABD06
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:25:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55ACEAABD14
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2113E5045B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:25:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708DA1C22170
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E886C2459FB;
-	Tue,  6 May 2025 08:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4CD24BBEE;
+	Tue,  6 May 2025 08:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3WAxl3z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LLveXn7h"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5066C17A2EB;
-	Tue,  6 May 2025 08:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8212824169A;
+	Tue,  6 May 2025 08:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746519936; cv=none; b=eS+5E+qvfMHuoyI1BX/YrWOKxmUo5UhakH3COCstLEaZ1erNsSX0/EXybwm8tuU2/mAnH+NUDP5sDKE5lCJgHymicAaaxSsviGdNS7n/wFETd2PUcibT6sFV5KpdvDkCEBO2IYQQleJhC4154XhpWVd53qQXF6LVrFdfmnx11l0=
+	t=1746520014; cv=none; b=pDScQtklVF7u5i1tYDrs7GqL9EMrtA405/PMWz/vbaO5L3LJgW3ZCqNIRupNd/tq64z1doQ4UrIBg14znzIFAp5A8oFokHTPvCJheF0gKI2k6KBfRjZVRC5jr9tROlXCcODMxlYvHOrOPndOL8qv43GaeKJ+Hb/sknDpBkWpvSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746519936; c=relaxed/simple;
-	bh=9yV3LyzeKiUxHwUxf6m0FaczSx9+xCpgWW08Je15hHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fzrK2xzo+IUnp+e15bR4lXhP3Yd0oltIXX+RqFy3x3vvZowgqKJjO65oF3n4zQAv5uMCJFvRwpVFfOxgbof5gZpEuHnJQrrhjEyWo/L3Ao2Xzcdp8Fty4Rw+UITVWW6MrOzvYkHJ2B1BDsrJXnTMYV+xaC57ahxfFcsBv9M1x6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3WAxl3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32A3CC4CEE4;
-	Tue,  6 May 2025 08:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746519935;
-	bh=9yV3LyzeKiUxHwUxf6m0FaczSx9+xCpgWW08Je15hHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J3WAxl3z/Pwil/YaDsUwVuDG6aEWoNq6ULh0of+ysCaU8Ogyo1CeFNFUmmnLfKm5G
-	 6YZ+7kwkYRsyaF1dXjcfzcW1dor4cAKPm9aCR1jtWXcRyyD8ke3Yv2R0IMh+KMK6YB
-	 uCq3nKodtAwH2fyXWhuVUZ3GAyqXnsbGzexfa0FjnQWH/AMmG6TkWK0cyGNy3PhXVb
-	 mOLQqg8X3TrUwoidmWz3w4Ooh0CHljcn5nQixiz3N4hPMkyXYYrzIDXimapT7vmqzb
-	 81TOvLgZPqwNdpFouSOVM0lQks8ztT8m7DT/4W4gYp144uxxufYJeV2UHWBdvk3u/A
-	 lf6jfrLBARCkw==
-Date: Tue, 6 May 2025 10:25:30 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 12/26] x86/cpu: Use scanned CPUID(0x1)
-Message-ID: <aBnHeoNq_LBY0xxj@gmail.com>
-References: <20250506050437.10264-1-darwi@linutronix.de>
- <20250506050437.10264-13-darwi@linutronix.de>
+	s=arc-20240116; t=1746520014; c=relaxed/simple;
+	bh=5/lvtCn4OfSHJYnftDRpHjKKhmJr21mm7IievYxQBb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=da0A9/t4xBNAdalclYWhPl/1dEs7yoCJj8lxWLzRIvhIA6CSYKex7/2qFd+reU+R+CLvNY91txn+PUKm0e11J9ef3wMRAL8MaPdStTKs74BMhduyhks7sf/7omhO5eY+IJK8+I7lYqz3nZIYJwWkrQGIR1IsCc1Tp8RWZBYNXr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LLveXn7h; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1746520010;
+	bh=5/lvtCn4OfSHJYnftDRpHjKKhmJr21mm7IievYxQBb4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LLveXn7h/ttAVVmYwDGRrcsuwvaMPFlND0X+9PymIKVpGY20nEPS/SOtUWocGhMis
+	 7ec5hu4g0fshcIjQPVGzrE0II1HTjZxR6Qe+ppNCOrzSQIub7nB6LuNK46YxGW+V1g
+	 6Gr0sfbALi2/RauvU+s2UKJL5pXFQKItXY+SltPSNK+BJQ7/4FncvJaaRwIww4Abah
+	 RB6dDSSunYddR92XjWVNOTSRdQET3BT+tLlW/a1hZd87yD7AwLE22XP3WbTAkR3RDZ
+	 fwdqJGlEAscui8Rrc9a204xzE8CLP/z/w7Ra/wEHikAfyYkrAbeLEq5W6DiJxh07dD
+	 f2L8HyqDzScJA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 82DA017E09BE;
+	Tue,  6 May 2025 10:26:49 +0200 (CEST)
+Message-ID: <0fd0c066-d203-437f-940e-ca355100bbc6@collabora.com>
+Date: Tue, 6 May 2025 10:26:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506050437.10264-13-darwi@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: mediatek: mt8365: Describe infracfg-nao
+ as a pure syscon
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Alexandre Mergnat <amergnat@baylibre.com>,
+ Amjad Ouled-Ameur <aouledameur@baylibre.com>,
+ =?UTF-8?Q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>,
+ Fabien Parent <fparent@baylibre.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250502-mt8365-infracfg-nao-compatible-v1-0-e40394573f98@collabora.com>
+ <20250502-mt8365-infracfg-nao-compatible-v1-2-e40394573f98@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250502-mt8365-infracfg-nao-compatible-v1-2-e40394573f98@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-* Ahmed S. Darwish <darwi@linutronix.de> wrote:
-
-> Use scanned CPUID(0x1) access, instead of a direct CPUID query, at early
-> boot CPU detection code.
+Il 02/05/25 18:43, Nícolas F. R. A. Prado ha scritto:
+> The infracfg-nao register space at 0x1020e000 has different registers
+> than the infracfg space at 0x10001000, and most importantly, doesn't
+> contain any clock controls. Therefore it shouldn't use the same
+> compatible used for the mt8365 infracfg clocks driver:
+> mediatek,mt8365-infracfg. Since it currently does, probe errors are
+> reported in the kernel logs:
 > 
-> Beside the centralization benefits of the scanned CPUID API, this allows
-> using the auto-generated <cpuid/leaves.h> CPUID leaf data types and their
-> full C99 bitfields instead of performing ugly bitwise operations on CPUID
-> register output.
+>    [    0.245959] Failed to register clk ifr_pmic_tmr: -EEXIST
+>    [    0.245998] clk-mt8365 1020e000.infracfg: probe with driver clk-mt8365 failed with error -17
 > 
-> Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
-> ---
->  arch/x86/kernel/cpu/common.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
+> This register space is used only as a syscon for bus control by the
+> power domain controller, so in order to properly describe it and fix the
+> errors, set its compatible to a distinct compatible used exclusively as
+> a syscon, drop the clock-cells, and while at it rename the node to
+> 'syscon' following the naming convention.
 > 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 59ddf6b074f2..a08340a5e6a5 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -895,6 +895,7 @@ void get_cpu_vendor(struct cpuinfo_x86 *c)
->  void cpu_detect(struct cpuinfo_x86 *c)
->  {
->  	const struct leaf_0x0_0 *l0 = cpudata_cpuid(c, 0x0);
-> +	const struct leaf_0x1_0 *l1 = cpudata_cpuid(c, 0x1);
->  
->  	c->cpuid_level = l0->max_std_leaf;
->  	*(u32 *)&c->x86_vendor_id[0] = l0->cpu_vendorid_0;
-> @@ -902,17 +903,14 @@ void cpu_detect(struct cpuinfo_x86 *c)
->  	*(u32 *)&c->x86_vendor_id[8] = l0->cpu_vendorid_2;
->  
->  	c->x86 = 4;
-> -	/* Intel-defined flags: level 0x00000001 */
-> -	if (c->cpuid_level >= 0x00000001) {
-> -		u32 junk, tfms, cap0, misc;
->  
-> -		cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
-> -		c->x86		= x86_family(tfms);
-> -		c->x86_model	= x86_model(tfms);
-> -		c->x86_stepping	= x86_stepping(tfms);
-> +	if (l1) {
-> +		c->x86		= cpuid_family(l1);
-> +		c->x86_model	= cpuid_model(l1);
-> +		c->x86_stepping	= l1->stepping;
->  
-> -		if (cap0 & (1<<19)) {
-> -			c->x86_clflush_size = ((misc >> 8) & 0xff) * 8;
-> +		if (l1->clflush) {
-> +			c->x86_clflush_size = l1->clflush_size * 8;
->  			c->x86_cache_alignment = c->x86_clflush_size;
->  		}
+> Fixes: 6ff945376556 ("arm64: dts: mediatek: Initial mt8365-evk support")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Nice patch, it really nicely demonstrates the maintainability 
-advantages of the new CPUID parser.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Thanks,
 
-	Ingo
 
