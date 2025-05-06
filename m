@@ -1,271 +1,143 @@
-Return-Path: <linux-kernel+bounces-636260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E330EAAC8C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A367AAC8BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05770982109
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC60981635
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A1128315B;
-	Tue,  6 May 2025 14:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8914B283FD5;
+	Tue,  6 May 2025 14:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a+5JjxOv"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVNAFcGx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8422F280006;
-	Tue,  6 May 2025 14:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC0E283FC0;
+	Tue,  6 May 2025 14:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746543139; cv=none; b=Masmr7QFlsuaFO2pVxbf+DhOmYY4ViEeN+862/RgZuYxB5oSLNC/3ZmajsFqbm1MKakdwJvHUF4UR9m4T5+L+FDcDY2NE4rZif6C6VdUU2jHixWRIdeHzZPGuvQwIr4Yw4+GQv5t3PMldYyR6b9QrHA5dr/kn8juB/Z/UltjYt0=
+	t=1746543123; cv=none; b=LWQ9jvRc8vaQ+eowKouBty7Ze92+Whp1pxjVuZ4GIRweDcNNrmtZ6ivBKJ15TPiJ2sI7v7JA+va7oeHM3yxKMkuuMkt0+2rV9uVZwzPwBVFIlsrb6/OU58K5Dx4Uaj4yn/xg877DulXmGgv/ZIdEGHvUUdzW8gH2NSQhveXRFrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746543139; c=relaxed/simple;
-	bh=Xc8uV93DtLs7S8IMFtDcMlDXGM60gIa3A536pCU0bWA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OEOmDgpuJAINsimJEcMyN/v3qr4eVexOchjpxo6ttz8AsnQp72hIOM+MnKMBnDDJlHQjZMhBLySudrtguKyyjQGu6IS1QTG1sxsVL09+H9i3IW6S0OhMMNdgjn4mwWNVWMOIB8LuihhKsxAwihr2qEBTXubnR9PeV69Q5oude88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a+5JjxOv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5468e2fb014186;
-	Tue, 6 May 2025 14:52:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=XEcBsARco6QpGU97OKN38n
-	oBlqXGcNH/7Y9jiSHXa3w=; b=a+5JjxOvgmw0IAJ+T9ro7IfwK6ukRB0Q9MFhxK
-	eXfReiOk7JUOTOwUSuSnlxMk+BE4ux7rmNmePzBDvWnfAhNFOOBIxlJqAPTtStdC
-	oM1j5lCE/jwODeBWpLCRGIDdXlErJvcsseQa9G0Le7IYgu0boupVn6xEgbPSVz7V
-	J7Na+Va492LnHIYjT0OVyPjIZxNVV06VR12e94olaiq9a0LL1TpA3v6XaMgbEfH7
-	r/PAUi10X2iZEYNqSep/7ciUVJt/UdnF3OosAtXForrdhDElUgQ/aE6fHu/+6wkp
-	3PEL/injLqt6yaGcm6HMPLuR29IoxkavM9sOop7YliXmbcmw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5u42pc6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 14:52:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 546EqCgU016570
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 May 2025 14:52:12 GMT
-Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 6 May 2025 07:52:12 -0700
-From: Mike Tipton <quic_mdtipton@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_aiquny@quicinc.com>, <quic_okukatla@quicinc.com>,
-        Mike Tipton
-	<quic_mdtipton@quicinc.com>
-Subject: [PATCH v2] interconnect: Use rt_mutex for icc_bw_lock
-Date: Tue, 6 May 2025 07:51:59 -0700
-Message-ID: <20250506145159.1951159-1-quic_mdtipton@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746543123; c=relaxed/simple;
+	bh=K+msrNcjslK8gX9r4hYRpdwGYgkStkMVQt+IJpV0k90=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sb5AnwafSHMEQBHtvSVeXrcSF34YH3qW/ytA2fB5ZiYga8W/jwPzW3A83g0LftuMUfeqZiXpUroRiWB0bHecxEaWUi5BcUykG/hSMvsmkftjWMg8AjbrK9eOQqvru0IotpBw6lltaXVNnKIcGp9HtTUuCWXRhe7zbeXjAz1Ovyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVNAFcGx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49002C4CEE4;
+	Tue,  6 May 2025 14:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746543123;
+	bh=K+msrNcjslK8gX9r4hYRpdwGYgkStkMVQt+IJpV0k90=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RVNAFcGxw3dHYXOyVRXh5fivxKa/N2jk5eKMAvqLohOS4UebVRQrVGdWVHoZgRJTv
+	 eVq6S9v7qPUlLp7O8jG2nR0PfRuQQZn4IG4n8Ftb4ml38TzmSYyqa4YwBI0wfGTkaC
+	 X4lbuLwA01LMCckukXI1VbLv38F57prx/ajNK0b/ez39T2+d4ZhxYdgq5D1ly9Gmw2
+	 +9IG3wM2dnjxxMFiVrKJhwZcb3ptz9+ga3aMhBTKeFQMhGMbhZMPLoMD4S2LQwJkXq
+	 OAAY4auq4X0QFYWLpPi3+HrDs2nzjIC8sdXdPoM2ehDVO5Asj84WtfcCvz7VfbN5Tx
+	 Sb/tZQ1xVT76g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uCJeK-00CHhs-JT;
+	Tue, 06 May 2025 15:52:00 +0100
+Date: Tue, 06 May 2025 15:51:59 +0100
+Message-ID: <86cyclhjw0.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>,
+	ryan.roberts@arm.com,	suzuki.poulose@arm.com,	yang@os.amperecomputing.com,
+	corbet@lwn.net,	catalin.marinas@arm.com,	jean-philippe@linaro.org,
+	robin.murphy@arm.com,	joro@8bytes.org,	akpm@linux-foundation.org,
+	paulmck@kernel.org,	mark.rutland@arm.com,	joey.gouly@arm.com,
+	james.morse@arm.com,	broonie@kernel.org,	oliver.upton@linux.dev,
+	baohua@kernel.org,	david@redhat.com,	ioworker0@gmail.com,	jgg@ziepe.ca,
+	nicolinc@nvidia.com,	mshavit@google.com,	jsnitsel@redhat.com,
+	smostafa@google.com,	kevin.tian@intel.com,	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev
+Subject: Re: [RESEND PATCH v6 1/3] arm64: Add BBM Level 2 cpu feature
+In-Reply-To: <20250506142508.GB1197@willie-the-truck>
+References: <20250428153514.55772-2-miko.lenczewski@arm.com>
+	<20250428153514.55772-4-miko.lenczewski@arm.com>
+	<20250506142508.GB1197@willie-the-truck>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=KcfSsRYD c=1 sm=1 tr=0 ts=681a221d cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=3H110R4YSZwA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=COk6AnOGAAAA:8 a=KKAgPzKmHZGUr0HHQOcA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: E99k0zjUfBrwcWG18iapbR3Gj7wivgLU
-X-Proofpoint-ORIG-GUID: E99k0zjUfBrwcWG18iapbR3Gj7wivgLU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDE0MyBTYWx0ZWRfX4uA8awaLCExb
- b12WrXAvTy9fpA13NSJL1IRBEGEFA9NjicJ+pggjcxobmA2byqFS2hZ7CvIcUyDin78zfqKszRP
- i7cUJL7ND45wSlzbAZZh7Thuw6LBRPmdlWCIDSY3L6Qd4PYTokehb2s24wl7Yza4uGSGfI7MKsi
- F0zUmFcZaHkgjpPj8CILO0antMfE7a8kbpnZg4JdE6mCXH0rJwSxHMX0JdXLfclZGvzZxAwZv7P
- esafO3lC6DeIxm8hag9Tftzm0PcKMZIInDQWaeq1Mg6HeLdV9eZcGir+xikuh2pxQMiDBzl2yMQ
- Li7cuanvEiXlaErWb5QDZlZYFKaN9hOFiiaH0TDXplaZQva6OE0CiPIwu5xDyOeNKlm4t/H+Um4
- kmZvYYEhx3h9CWRigPwkJ4tDmjC3k33I3rpMY+WQtNFioxsIcl+Cy/MsQOyS/FR6bRcSEVHj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_06,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- clxscore=1015 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505060143
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: will@kernel.org, miko.lenczewski@arm.com, ryan.roberts@arm.com, suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net, catalin.marinas@arm.com, jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org, paulmck@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com, james.morse@arm.com, broonie@kernel.org, oliver.upton@linux.dev, baohua@kernel.org, david@redhat.com, ioworker0@gmail.com, jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com, kevin.tian@intel.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The icc_set_bw() function is often used in latency sensitive paths to
-scale BW on a per-frame basis by high priority clients such as GPU and
-display. However, there are many low priority clients of icc_set_bw() as
-well. This can lead to priority inversion and unacceptable delays for
-the high priority clients. Which in the case of GPU and display can
-result in frame drops and visual glitches.
+On Tue, 06 May 2025 15:25:09 +0100,
+Will Deacon <will@kernel.org> wrote:
+>=20
+> On Mon, Apr 28, 2025 at 03:35:14PM +0000, Miko=C5=82aj Lenczewski wrote:
+> > The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
+> > and this commit adds a dedicated BBML2 cpufeature to test against
+> > support for, as well as a kernel commandline parameter to optionally
+> > disable BBML2 altogether.
+> >=20
+> > This is a system feature as we might have a big.LITTLE architecture
+> > where some cores support BBML2 and some don't, but we want all cores to
+> > be available and BBM to default to level 0 (as opposed to having cores
+> > without BBML2 not coming online).
+> >=20
+> > To support BBML2 in as wide a range of contexts as we can, we want not
+> > only the architectural guarantees that BBML2 makes, but additionally
+> > want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
+> > us having to prove that no recursive faults can be induced in any path
+> > that uses BBML2, allowing its use for arbitrary kernel mappings.
+> > Support detection of such CPUs.
+> >=20
+> > Signed-off-by: Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com>
+> > Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |  3 +
+> >  arch/arm64/Kconfig                            | 19 +++++
+> >  arch/arm64/include/asm/cpucaps.h              |  2 +
+> >  arch/arm64/include/asm/cpufeature.h           |  5 ++
+> >  arch/arm64/kernel/cpufeature.c                | 71 +++++++++++++++++++
+> >  arch/arm64/kernel/pi/idreg-override.c         |  2 +
+> >  arch/arm64/tools/cpucaps                      |  1 +
+> >  7 files changed, 103 insertions(+)
+> >=20
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
+ation/admin-guide/kernel-parameters.txt
+> > index d9fd26b95b34..2749c67a4f07 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -449,6 +449,9 @@
+> >  	arm64.no32bit_el0 [ARM64] Unconditionally disable the execution of
+> >  			32 bit applications.
+> > =20
+> > +	arm64.nobbml2	[ARM64] Unconditionally disable Break-Before-Make Level
+> > +			2 support
+>=20
+> Hmm, I'm not sure we really want this. It opens up the door for folks to
+> pass 'id_aa64mmfr2.bbm=3D2' without updating the allow-list which feels
+> like it's going to make crashes harder to reason about.
 
-To prevent this priority inversion, switch to using rt_mutex for
-icc_bw_lock. This isn't needed for icc_lock since that's not used in the
-critical, latency-sensitive voting paths.
+Passing id_aa64mmfr2.bbm=3D2 shouldn't have any effect if the HW doesn't
+advertise it already, as you can only downgrade features. Trying to
+upgrade features should leave a nastygram in the kernel log.
 
-Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
----
+	M.
 
-Since the original patch was posted a couple years ago, we've continued
-to hit this for display and now for GPU as well. How frequently depends
-heavily on the specific chip, product, and use case. Different
-configurations hit it easier than others. But for both cases it results
-in obvious visual glitches.
-
-The paths being voted for (primarily DDR) are fundamentally shared
-between clients of all types and priority levels. We can't control their
-priorities, so aside from having those priorities inherited we're always
-subject to these sorts of inversions.
-
-The motivation isn't really for general performance improvement, but
-instead to fix the rare cases of visual glitches and artifacts.
-
-A similar patch was posted last year [1] to address similar problems.
-
-[1] https://lore.kernel.org/all/20240220074300.10805-1-wangrumeng@xiaomi.corp-partner.google.com/
-
-Changes in v2:
-- Rebase onto linux-next.
-- Select RT_MUTEXES in Kconfig.
-- Only use rt_mutex for icc_bw_lock since now there are separate locks
-  and icc_lock isn't in the critical path.
-- Reword commit text.
-- Link to v1: https://lore.kernel.org/all/20220906191423.30109-1-quic_mdtipton@quicinc.com/
-
- drivers/interconnect/Kconfig |  1 +
- drivers/interconnect/core.c  | 23 ++++++++++++-----------
- 2 files changed, 13 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
-index f2e49bd97d31..f6fd5f2d7d40 100644
---- a/drivers/interconnect/Kconfig
-+++ b/drivers/interconnect/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- menuconfig INTERCONNECT
- 	bool "On-Chip Interconnect management support"
-+	select RT_MUTEXES
- 	help
- 	  Support for management of the on-chip interconnects.
- 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 1a41e59c77f8..2e86a3c95d1a 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -14,6 +14,7 @@
- #include <linux/interconnect-provider.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
-+#include <linux/rtmutex.h>
- #include <linux/slab.h>
- #include <linux/of.h>
- #include <linux/overflow.h>
-@@ -30,7 +31,7 @@ static LIST_HEAD(icc_providers);
- static int providers_count;
- static bool synced_state;
- static DEFINE_MUTEX(icc_lock);
--static DEFINE_MUTEX(icc_bw_lock);
-+static DEFINE_RT_MUTEX(icc_bw_lock);
- static struct dentry *icc_debugfs_dir;
- 
- static void icc_summary_show_one(struct seq_file *s, struct icc_node *n)
-@@ -178,7 +179,7 @@ static struct icc_path *path_init(struct device *dev, struct icc_node *dst,
- 
- 	path->num_nodes = num_nodes;
- 
--	mutex_lock(&icc_bw_lock);
-+	rt_mutex_lock(&icc_bw_lock);
- 
- 	for (i = num_nodes - 1; i >= 0; i--) {
- 		node->provider->users++;
-@@ -190,7 +191,7 @@ static struct icc_path *path_init(struct device *dev, struct icc_node *dst,
- 		node = node->reverse;
- 	}
- 
--	mutex_unlock(&icc_bw_lock);
-+	rt_mutex_unlock(&icc_bw_lock);
- 
- 	return path;
- }
-@@ -704,7 +705,7 @@ int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
- 	if (WARN_ON(IS_ERR(path) || !path->num_nodes))
- 		return -EINVAL;
- 
--	mutex_lock(&icc_bw_lock);
-+	rt_mutex_lock(&icc_bw_lock);
- 
- 	old_avg = path->reqs[0].avg_bw;
- 	old_peak = path->reqs[0].peak_bw;
-@@ -736,7 +737,7 @@ int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
- 		apply_constraints(path);
- 	}
- 
--	mutex_unlock(&icc_bw_lock);
-+	rt_mutex_unlock(&icc_bw_lock);
- 
- 	trace_icc_set_bw_end(path, ret);
- 
-@@ -798,7 +799,7 @@ void icc_put(struct icc_path *path)
- 		pr_err("%s: error (%d)\n", __func__, ret);
- 
- 	mutex_lock(&icc_lock);
--	mutex_lock(&icc_bw_lock);
-+	rt_mutex_lock(&icc_bw_lock);
- 
- 	for (i = 0; i < path->num_nodes; i++) {
- 		node = path->reqs[i].node;
-@@ -807,7 +808,7 @@ void icc_put(struct icc_path *path)
- 			node->provider->users--;
- 	}
- 
--	mutex_unlock(&icc_bw_lock);
-+	rt_mutex_unlock(&icc_bw_lock);
- 	mutex_unlock(&icc_lock);
- 
- 	kfree(path->name);
-@@ -1023,7 +1024,7 @@ void icc_node_add(struct icc_node *node, struct icc_provider *provider)
- 		return;
- 
- 	mutex_lock(&icc_lock);
--	mutex_lock(&icc_bw_lock);
-+	rt_mutex_lock(&icc_bw_lock);
- 
- 	node->provider = provider;
- 	list_add_tail(&node->node_list, &provider->nodes);
-@@ -1056,7 +1057,7 @@ void icc_node_add(struct icc_node *node, struct icc_provider *provider)
- 	node->avg_bw = 0;
- 	node->peak_bw = 0;
- 
--	mutex_unlock(&icc_bw_lock);
-+	rt_mutex_unlock(&icc_bw_lock);
- 	mutex_unlock(&icc_lock);
- }
- EXPORT_SYMBOL_GPL(icc_node_add);
-@@ -1182,7 +1183,7 @@ void icc_sync_state(struct device *dev)
- 		return;
- 
- 	mutex_lock(&icc_lock);
--	mutex_lock(&icc_bw_lock);
-+	rt_mutex_lock(&icc_bw_lock);
- 	synced_state = true;
- 	list_for_each_entry(p, &icc_providers, provider_list) {
- 		dev_dbg(p->dev, "interconnect provider is in synced state\n");
-@@ -1195,7 +1196,7 @@ void icc_sync_state(struct device *dev)
- 			}
- 		}
- 	}
--	mutex_unlock(&icc_bw_lock);
-+	rt_mutex_unlock(&icc_bw_lock);
- 	mutex_unlock(&icc_lock);
- }
- EXPORT_SYMBOL_GPL(icc_sync_state);
--- 
-2.34.1
-
+--=20
+Without deviation from the norm, progress is not possible.
 
