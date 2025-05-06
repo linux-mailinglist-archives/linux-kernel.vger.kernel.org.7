@@ -1,185 +1,110 @@
-Return-Path: <linux-kernel+bounces-635081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42E6AAB8AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E60AAAB8AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EC0189DB30
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:32:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B326D1C26097
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A641828C847;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3E3297B89;
 	Tue,  6 May 2025 04:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6G1mz5x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wyzwk1q/"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAE22F6B33;
-	Tue,  6 May 2025 02:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC0533842F
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 02:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498173; cv=none; b=IPkxMWBprMRvMrH4xH4WEEIiPuCeYtXhpwfiow0D6fMP65K0uleM/9gBGx9JO2uG9j0K+9IvX8jlCHszWgAQbjKmx/wEXZwd1fJZf1lGrcxqi2WzI8y99kjaKPn8uDzfNfSyfGYfose8PKI2RDh4spPrGbsl+tpvxqB92Z8E87Q=
+	t=1746498178; cv=none; b=tESFqtWEUb2noUU+WTQ5067Pkairm7YYEs9Lx3aCXI8UxgTs0tptEqcjk1qwpNk9hpDrD2fj3is/A0ImKClK/xGR15vG2qZPgyb39xl6uXYO21/N6rwv6PmK0Ax5nURj06CFybSj+0lVrxdRNkdVPKQfZp8ctn/9lsAH6/6OJ4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498173; c=relaxed/simple;
-	bh=OVS58OrZMlpnGd1U59nNCwXNQd1FABRJ80V4eflMctI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s7AH9W6jFMh9xbhJtTMDIIoS9OTYkdvd70OLYFT7uxwpCa+mzzt7gJplRqy65mBJ0gtKxRI2oUJXLf8rN0EclWsVQgWK42TakmDQ6gA3GiNYhduFPDdnY0zAxSbQXCdFihoyX3jLNYmluPGvREHk3Jr3KZ5E9U20lNYQ7K6MpXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6G1mz5x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB00C4CEE4;
-	Tue,  6 May 2025 02:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746498172;
-	bh=OVS58OrZMlpnGd1U59nNCwXNQd1FABRJ80V4eflMctI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=A6G1mz5xnknNExr1GswC1HdJWSkyYAXcnd9U4UGIlnD2RXJ6RKvBSbunoWGBL36TQ
-	 GCVY2qcok7w7fiVxFyI+lkfMDQOM82v5uRmm3Z3Z9oYgQLRq9Atx5H6ySiKhcMmjuK
-	 s28mH4MH1R1Jrd5dXMBIrf40ucMrru+SL1AdhqWnAzEg3P7zQ4Jsib4+KbOT43Safo
-	 hCV4CQX2sxI3mj2IW0PZKxEw/uf5SA7kQE7JOOdiWRoSUF2Eg0TOcXP2YjH8aZ5Me7
-	 RVIjmDJpBvygdbyhcBiv7ZkP+gsiWxqy85/E3FBCJxwbI4RP9iFvgod4ocHOCoyJx7
-	 Ot7wwq6ntKTyw==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: timer: Convert img,pistachio-gptimer to DT schema
-Date: Mon,  5 May 2025 21:22:48 -0500
-Message-ID: <20250506022249.2587839-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1746498178; c=relaxed/simple;
+	bh=CGwm+uClyM68lDdLpAKcYoogMH1nK0BFJ9x04hZGAXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLgTRijo7EJDzmfFiMFWC/NsfwZpdVIUCGE5XhrzV1rsGbXZGV2cgak/DN1c7/eghaKyNO0dLZIJfwkoPXMJCRCb7iQDbh9wESloPEyL1+yEnpYEILodAWcVZsixCOPi4ts9KGIVjhulcf4xBZDBTcL/qHDmm6hovzWiUqQdDT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wyzwk1q/; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7396f13b750so6190625b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 19:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1746498175; x=1747102975; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wcToqMHkDpTdLEXjKroWxHP95+TmEN3Q5daky/KBWzI=;
+        b=Wyzwk1q/ckeyL4Lg+Vc9WZ6BEhaouRchAGmJ2B/E8N9RA7Oy04VPw9gLUcbTDV9lv6
+         wiYMzlQ412vCOgr67IyUIX4MHRVtZmsb7/N15J2bniJP9psvkTKKr5WY8uAJGDxB6NUs
+         l5/USR3LpsSlsfAU7RSETB3i2hv7ahOg+kr94=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746498175; x=1747102975;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wcToqMHkDpTdLEXjKroWxHP95+TmEN3Q5daky/KBWzI=;
+        b=LTMqPJZTNsUPukRu/F+lCXeNlg0Ll5AldfNUYf4+NwX6HWgkY+HKpT0NPCTooxp72e
+         paBseKkYBwlzlsy5Cw2sHozilaXQkOtATJ7VeNVNbMtD2tVZhTtsQWnvHj5zJejZJShg
+         ciVVfIP4HfLyOrDHqahYuvK8i3aBcIjpmv9P1Uq8W1p9kk10CNlEyUjRWDJ1ZQyyTRa8
+         Bvg9r7LYaUCMBzlt5v45Uek1iFUoFEoDOpqP2YEnqCYRM4Nr/Ml6vhJI9nbqNzD6zCt7
+         ABUhw5uoZf1lEWZSF+Swcuj0qpgSpDTcVxv+9aIPbS9+lh1foUZg1cC30/gdg7qrtxUo
+         RKqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ7S6skReZLMaEwlAwgq7KxAStFiuROgJrkm9Rnd4xbBgIRymlZp1y9iNq6P0Idprcmuy619LjEerfT5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeoPTOrTI/7VdENwT2KtwBh5B8012UIEHbDXZEYYCajVxqXrbc
+	cOq+11yqb59H6hQaTQuXuQdBWho8VLfehd6T4NbveBEZCuuuD3gjHlpnnAGE6g==
+X-Gm-Gg: ASbGncvCaiC6aXvLLOabRUwxpUqFpHcjgoAOqywYV++zLCPr7AM1d5GjlERxKVWS9OQ
+	ls0WUzg+/gEi+41q/vlgF48YfQtztX6xcplAO2FWethKIQYMmtrFplusyMPbLvBKSDhzuMltmnT
+	UWxDNmJToD1MUB9tdvrepb14UxzPs464otskRdmHt0MSZ0kmYMSIHGLs7ksvy0goq4ybdJTqQ8C
+	CYY8KnnVDqLyaqS5Du/HSr0KU+pLAiuTRV5w5kzMXSIwwAfDeGlDdPjvRgjWEY57ipBHY93qBun
+	FwvZBHvGu3tonHynQnHC5KAQROhqrI6sRQlVyerNSmZhOhyeYFj0VHQ=
+X-Google-Smtp-Source: AGHT+IFc6wz2lLiTovWw/lmIDOLnGErdPqyw+m3UEoeaabqxUpsithWSUC6r2ammWN8skoKVjYaQ0w==
+X-Received: by 2002:a05:6a20:3953:b0:203:bb65:995a with SMTP id adf61e73a8af0-211834a9d45mr2119227637.30.1746498175296;
+        Mon, 05 May 2025 19:22:55 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:4dd5:88f9:86cd:18ef])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fb3b57e2asm5261813a12.26.2025.05.05.19.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 19:22:54 -0700 (PDT)
+Date: Tue, 6 May 2025 11:22:50 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Song Liu <song@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bpf: add bpf_msleep_interruptible()
+Message-ID: <bianejll3uuual7ffytpuraphcgr4xysmnuapk74x3owx4m45c@vwxgbzkwkt5x>
+References: <20250505063918.3320164-1-senozhatsky@chromium.org>
+ <aBiJnR5MEL5hVXXC@google.com>
+ <wzxhhoiczrhsosf5bkwqf2yypdrhgrm6wskiusfg7iumpgk7ew@rcegtieelqco>
+ <CAPhsuW4Q7cHyMHemnLtoys6uNgd-tzKARx9gX177PimAEwpszg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPhsuW4Q7cHyMHemnLtoys6uNgd-tzKARx9gX177PimAEwpszg@mail.gmail.com>
 
-Convert the ImgTec Pistachio Timer binding to DT schema format. It's a
-straight-forward conversion.
+On (25/05/05 12:01), Song Liu wrote:
+[..]
+> > + * unsigned long bpf_msleep_interruptible(unsigned int msecs)
+> > + *     Description
+> > + *             Make the current task sleep until *msecs* milliseconds have
+> > + *             elapsed or until a signal is received.
+> > + *
+> > + *     Return
+> > + *             The remaining time of the sleep duration in milliseconds.
+> >   */
+> >  #define ___BPF_FUNC_MAPPER(FN, ctx...)                 \
+> >         FN(unspec, 0, ##ctx)                            \
+> 
+> kfunc shouldn't have any changes in include/uapi/linux/bpf.h.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/timer/img,pistachio-gptimer.txt  | 28 --------
- .../bindings/timer/img,pistachio-gptimer.yaml | 69 +++++++++++++++++++
- 2 files changed, 69 insertions(+), 28 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/img,pistachio-gptimer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/img,pistachio-gptimer.yaml
-
-diff --git a/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.txt b/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.txt
-deleted file mode 100644
-index 7afce80bf6a0..000000000000
---- a/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.txt
-+++ /dev/null
-@@ -1,28 +0,0 @@
--* Pistachio general-purpose timer based clocksource
--
--Required properties:
-- - compatible: "img,pistachio-gptimer".
-- - reg: Address range of the timer registers.
-- - interrupts: An interrupt for each of the four timers
-- - clocks: Should contain a clock specifier for each entry in clock-names
-- - clock-names: Should contain the following entries:
--                "sys", interface clock
--                "slow", slow counter clock
--                "fast", fast counter clock
-- - img,cr-periph: Must contain a phandle to the peripheral control
--		  syscon node.
--
--Example:
--	timer: timer@18102000 {
--		compatible = "img,pistachio-gptimer";
--		reg = <0x18102000 0x100>;
--		interrupts = <GIC_SHARED 60 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SHARED 61 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SHARED 62 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SHARED 63 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clk_periph PERIPH_CLK_COUNTER_FAST>,
--		         <&clk_periph PERIPH_CLK_COUNTER_SLOW>,
--			 <&cr_periph SYS_CLK_TIMER>;
--		clock-names = "fast", "slow", "sys";
--		img,cr-periph = <&cr_periph>;
--	};
-diff --git a/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.yaml b/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.yaml
-new file mode 100644
-index 000000000000..a8654bcf68a9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/img,pistachio-gptimer.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/img,pistachio-gptimer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Pistachio general-purpose timer
-+
-+maintainers:
-+  - Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-+
-+properties:
-+  compatible:
-+    const: img,pistachio-gptimer
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    items:
-+      - description: Timer0 interrupt
-+      - description: Timer1 interrupt
-+      - description: Timer2 interrupt
-+      - description: Timer3 interrupt
-+
-+  clocks:
-+    items:
-+      - description: Fast counter clock
-+      - description: Slow counter clock
-+      - description: Interface clock
-+
-+  clock-names:
-+    items:
-+      - const: fast
-+      - const: slow
-+      - const: sys
-+
-+  img,cr-periph:
-+    description: Peripheral control syscon phandle
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - img,cr-periph
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/mips-gic.h>
-+    #include <dt-bindings/clock/pistachio-clk.h>
-+
-+    timer@18102000 {
-+        compatible = "img,pistachio-gptimer";
-+        reg = <0x18102000 0x100>;
-+        interrupts = <GIC_SHARED 60 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SHARED 61 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SHARED 62 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SHARED 63 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clk_periph PERIPH_CLK_COUNTER_FAST>,
-+                 <&clk_periph PERIPH_CLK_COUNTER_SLOW>,
-+                 <&cr_periph SYS_CLK_TIMER>;
-+        clock-names = "fast", "slow", "sys";
-+        img,cr-periph = <&cr_periph>;
-+    };
--- 
-2.47.2
-
+Ack.
 
