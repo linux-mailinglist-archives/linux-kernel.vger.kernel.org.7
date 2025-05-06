@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-635969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE84AAC455
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:37:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B68AAC45D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65361C23291
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:37:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69AD87AF872
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D320227CCF8;
-	Tue,  6 May 2025 12:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6D527FB01;
+	Tue,  6 May 2025 12:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fGYG4vYS"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QH8h8kv5"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55AC24A064;
-	Tue,  6 May 2025 12:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73672264A94;
+	Tue,  6 May 2025 12:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746535057; cv=none; b=S3cHSaJjCYLf8kYt+mZSZ2m/PtU3dJZPSXLhulhN3fXJgQX5HN7EQYwv6YNh274F9TTdjJCWCnlNsCaLdit+8sm9frfNMKHYcjJw++tvvIayl+pQsVqMa1ycT/m0vSWa9tQgSBzLxKrUYxT2U4ZP5n27ZXHJFuP2r0rvAIgvS50=
+	t=1746535082; cv=none; b=jbV9pIEmfOXHP5kc4xNRQksewPwGEmR+hp4hNoUzD7zsb+M9JjchfifwAsJBRsb85zl9yYtNt0+XUVEKbg/YbapulzxKsz/nJTz3hsYXPUWxdjanT1aWj2qZX9l0IaOEB/FX7F92tYg2iIal63GgVqJmC2SypXp+RPbylOXGXDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746535057; c=relaxed/simple;
-	bh=I+2eKrQLZP2DktThj9h8LYNIUQt34+aCdKTbE44HRVE=;
+	s=arc-20240116; t=1746535082; c=relaxed/simple;
+	bh=8pEwVmxSd5/k9VwZONa5T9VOsEUR7lsS4AVBM+/xJaI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ytk8vPt77rMgSuLHCA5FfViU5roIDLLum/P1c1RfqQEyhwnP3L5ffdnUpyNV8ihtlV7fdvI89ugoXUT0emU5BT1bf3a3nemj4VEYbEQVIlrcpz7iemJaPRh+UlLi/aIm33VbgZcwRJwkxnzAyC2Tk1F5etKDjlTEvMLwVsMX4vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fGYG4vYS; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCvOzXvFw1LCIOArJkr7DxnOaytl92TPZ7E+2sox2mIpzvpMFJeN29nYAtYHOKKiWSKoCQBFkOYPGAlmYZqhdti9EoYf2XOJ0u8fT1/ThY1Eig/ZbGlMXyVB1v/zNR7veIVJlTXA0NvsqP+0LJi3u8quCiw7hGZ4nFbWODcVWJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QH8h8kv5; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hpU3Fs30fri5vrglId+87d6nQjF1xeJFd95WxWLr/+g=; b=fGYG4vYSBL1+J5asSJyNLkr308
-	VqxviKmxj1TydKlsg6ZHMUgt/O7s3U8irhv8eLbmug7FXvpa0h4MuXOXmIXwqzETZcHK/emDHATeX
-	pYM6tBV4Ag0kFq6+bH12cdb3i2/ZKXUWu776I7mXKvtDthCJWO8yevPYjMH44UX+nr9E=;
+	bh=fX4hC4wtwnpA4kRyTNVi9k79+L9Hkq8xM6nbvmPzJh0=; b=QH8h8kv5xgI1oMVh74eElxJ7k7
+	afhVIZ1zohVuyXzsiwUEEpcKbldcCARqE45e3/4AXnwJnkcM8KUg0/EN2LnDlIaRRAhn5gAU+TDtV
+	uo6k3OtdoyQYNZS114EkR999xtSbFrCMnDA6tx8b2xqu2vKys6ORyaQnMOFjxkobLIgY=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1uCHYA-00BlGO-1Z; Tue, 06 May 2025 14:37:30 +0200
-Date: Tue, 6 May 2025 14:37:30 +0200
+	id 1uCHYb-00BlGs-PS; Tue, 06 May 2025 14:37:57 +0200
+Date: Tue, 6 May 2025 14:37:57 +0200
 From: Andrew Lunn <andrew@lunn.ch>
 To: "Rob Herring (Arm)" <robh@kernel.org>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -50,10 +50,10 @@ Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Gregory Clement <gregory.clement@bootlin.com>,
 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: timer: Convert marvell,armada-370-timer to
- DT schema
-Message-ID: <be41f0f2-cc21-4786-acf9-a19cdae5d873@lunn.ch>
-References: <20250506022301.2588282-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: timer: Convert marvell,orion-timer to DT
+ schema
+Message-ID: <f6c8731c-6d8c-481d-a359-cbd628fa4748@lunn.ch>
+References: <20250506022305.2588431-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,12 +62,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250506022301.2588282-1-robh@kernel.org>
+In-Reply-To: <20250506022305.2588431-1-robh@kernel.org>
 
-On Mon, May 05, 2025 at 09:23:00PM -0500, Rob Herring (Arm) wrote:
-> Convert the Marvell Armada 37x/380/XP Timer binding to DT schema format.
-> Update the compatible entries to match what is in use.
-> "marvell,armada-380-timer" in particular was missing.
+On Mon, May 05, 2025 at 09:23:04PM -0500, Rob Herring (Arm) wrote:
+> Convert the Marvell Orion Timer binding to DT schema format. It's a
+> straight-forward conversion.
 > 
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
