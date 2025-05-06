@@ -1,139 +1,159 @@
-Return-Path: <linux-kernel+bounces-635015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD4A9AAB883
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8678DAAB8C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FF107B5D8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9F91C4184D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465FA32AB9F;
-	Tue,  6 May 2025 03:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4887A2980AA;
+	Tue,  6 May 2025 03:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="LAHLp1/z"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251CC34FAFD;
-	Tue,  6 May 2025 00:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GC0W/wrL"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD29350149
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746493010; cv=none; b=YQzJM7PcGnNTQKOHLS3cndDVyQGoqGHRBKj0oSpWuExCCA1fwKDq3ck54YvONUGEjvZxY6a3t8dj/nXdJpZMUqHh7W70AhutkMVAV41DraLKUCsSDe4WcIsOWD2KTDBK2R4KrcwQmnR2dw68yQpwgtd++Qja8vDdTSrEMX+hfyk=
+	t=1746493019; cv=none; b=XqU61a7NvduK6n6WbB0YhsA+xf/fOPtJ8AIva8Wcvo7LGfCJw1bn234/aZH3f4Ig9QZPSpxHcrAfK+dIlpIPEt7kIFg2Akd3BUR8ZmvFsPnREnPoLA+Xej9w2de0I4rzOyQmn7Jazpo1eaCg9zfXnW2KeHu5PqIIBBChJP6mk10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746493010; c=relaxed/simple;
-	bh=JruDkI3GXfZf4tHR86VsgRMY60DqpXC3BKMs+rXCqF8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=f4qQM50VV4kQoTAuvedr25cYtR7yVd8PqUJxxqOLLC7Ms/2ctfR/BLwoCQnNnwHkV2beIzPbk1vjgUnFoQ/Drc7MHTQFFmqmx2gdVto3C7xc8AoXtZ3CUnye0mVfjz2+RsK+EI+ku1mCpQ0eBe9WItwso0sTG4053csUOHc5jwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=LAHLp1/z; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1202)
-	id EE4FB2115DC7; Mon,  5 May 2025 17:56:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EE4FB2115DC7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
-	s=default; t=1746493008;
-	bh=trr1tx7SJkPMB80H3ADWZz7ZMck5EyVgqKue45Oc6PI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LAHLp1/zxAngy3CbIhfsUJrm3vw2IhYMUe8iWEySu3BHdBoXx+Uxn0BwCDD8tEzL2
-	 LQIWHuOBUX7TsVp3xY42AsuI09/j3AAvb7vy7yEW6ZLKDn064BJdma2uk0elZTfTSV
-	 /FXoqyunXy57V3R9KuZSBxqtGjEHSPncsVh83NJI=
-From: longli@linuxonhyperv.com
-To: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Long Li <longli@microsoft.com>
-Subject: [Patch v3 5/5] Drivers: hv: Remove hv_alloc/free_* helpers
-Date: Mon,  5 May 2025 17:56:37 -0700
-Message-Id: <1746492997-4599-6-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1746492997-4599-1-git-send-email-longli@linuxonhyperv.com>
-References: <1746492997-4599-1-git-send-email-longli@linuxonhyperv.com>
+	s=arc-20240116; t=1746493019; c=relaxed/simple;
+	bh=ngL4kRBDSkUECBjfvf99fVbKuQB+N/pMrty5zeTZWKc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OAKmfzDJrBYovc+eoFwjB4aAoiNTl7ymKU1EFXnntOATZMDlIi+xG4U9mADtgO/FopdO1+jl+s+I5jMmwsdaxxv/IrI3zNP8IFu1KkEV3agwEvTgP57mj/A4d9StqkpU856Mxr7/O3rB9DeWPq4PA1kIaPfAVqAc4C59bLG+3i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GC0W/wrL; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7391d68617cso5380230b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 17:56:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746493017; x=1747097817; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6g8LwLWU5GDBk+Jxwq24ldANiEHpbz8sPHgcvAyac8A=;
+        b=GC0W/wrL5IPTmN4CQdjePsy54ZP1W36G5lL5Fqp/fFfaHayyIehzFz53KNiyJ+v0w2
+         5HY1xlr4gDBdr2S6LF4gyjBvlYfRQ3p0hOOvf/KPIddIq3mBkx4RXu6p4jUMGJKHUGQM
+         5/m1dMRyQDE+5i0vhu4ip5e3ffd9mvoHnuGAbQBi8bwaAxt3UW5lInrLi7rVdV349neW
+         NHIFpOh1DpoDjyInaR4FXcv6LFdZv0d43b3qU5mdp9kXxJT0blfzLHjS/HJv5s1p3XHH
+         1QRZXRFyn+opFohhzDQ8BS2+pE2Fb3Lxj4NUCoABWSzjTgWYwSm+NAEyOjKhUT+94IwG
+         02vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746493017; x=1747097817;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6g8LwLWU5GDBk+Jxwq24ldANiEHpbz8sPHgcvAyac8A=;
+        b=ji9fjybzxozpQPiu3SKd4f3oRvnYfcicVnuheJIKrXl6n9ybSpro54hlEJ22GRBPag
+         sY4YdhMfOcJF3mcKQB6VxpYhPVVW7lj14WeR2I3Zo+GRK6HvAN6Ze0Rho+MPi6/pShuS
+         Pnuz4LLn+jot8O/Ny4uWyc7/3EzLWOOqF2rVNfTkfr0enad5HqmrG31eVlVzNbyVrz0M
+         OzZ/QYh0kB4q4WAhRNvPggkyikpU99ZKlslLuH+y4dRK1gj6zHaDaIXwpHZPYP8P3der
+         SJvn1ko72BHyD7cehGL7EApAQYndUIOHGEwdIsIscI+LOlyO/0icCFEm+PxZeEwMU5DD
+         Cj2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUlgy5bSgei6YUZDatl/e/Hz70D2N3LFMXJoKOiUkSrjdhg4iiC+DXeZStZtjVmb+hbrKhVzJgRLf7L8gI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS2rxwqyS6ooRAYooGDBt6kMG3p6z6sTwzmvgVJSZnrpo7fywu
+	QWJx/DDxu6Qt2MjC/uk/sKHX3St19WodA9zuIM++WBgmeFJuRx0+kMBuzrRsZ80MbImXM2UVurb
+	GDg==
+X-Google-Smtp-Source: AGHT+IHFmda6X8o9RIOywhrl2OVnmBig/U1gYTcE5RpM7e9/kZR0UFvMp2Wr8+1YMfiISVdVsUDJl6tvD78=
+X-Received: from pgnb2.prod.google.com ([2002:a63:7142:0:b0:b1f:8cc1:95c1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:d04c:b0:1e1:a449:ff71
+ with SMTP id adf61e73a8af0-2116f13cb94mr2312715637.1.1746493017283; Mon, 05
+ May 2025 17:56:57 -0700 (PDT)
+Date: Mon, 5 May 2025 17:56:55 -0700
+In-Reply-To: <34890707-201a-44f9-afb3-b065ae71b246@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <20250305230000.231025-1-prsampat@amd.com> <174622216534.881262.8086472919667553138.b4-ty@google.com>
+ <b1cc7366-bd30-46ee-ac6e-35c2b08ffdb5@amd.com> <aBlGp8i_zzGgKeIl@google.com> <34890707-201a-44f9-afb3-b065ae71b246@amd.com>
+Message-ID: <aBleV3TlvA1QwcSZ@google.com>
+Subject: Re: [PATCH v8 00/10] Basic SEV-SNP Selftests
+From: Sean Christopherson <seanjc@google.com>
+To: Ashish Kalra <ashish.kalra@amd.com>
+Cc: "Pratik R. Sampat" <prsampat@amd.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, pbonzini@redhat.com, 
+	thomas.lendacky@amd.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, shuah@kernel.org, pgonda@google.com, 
+	nikunj@amd.com, pankaj.gupta@amd.com, michael.roth@amd.com, sraithal@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-From: Long Li <longli@microsoft.com>
+On Mon, May 05, 2025, Ashish Kalra wrote:
+> On 5/5/2025 6:15 PM, Sean Christopherson wrote:
+> > @@ -3067,12 +3075,6 @@ void __init sev_hardware_setup(void)
+> >  
+> >         if (!sev_enabled)
+> >                 return;
+> > -
+> > -       /*
+> > -        * Do both SNP and SEV initialization at KVM module load.
+> > -        */
+> > -       init_args.probe = true;
+> > -       sev_platform_init(&init_args);
+> >  }
+> >  
+> >  void sev_hardware_unsetup(void)
+> > --
+> > 
+> > Ashish, what am I missing?
+> > 
+> 
+> As far as setting sev*_enabled is concerned, i believe they are more specific
+> to SNP/SEV/SEV-ES being enabled in the system, which is separate from
+> SEV_INIT/SNP_INIT (SNP_INIT success indicates that RMP been initialized, SNP
+> has to be already enabled via MSR_SYSCFG before SNP_INIT is called), though
+> SEV_INIT/SNP_INIT may fail but SEV/SNP support will still be enabled on the
+> system.
 
-There are no users for those functions, remove them.
+No, if SNP_INIT fails and has zero chance of succeeding, then SNP is *NOT*
+supported *by KVM*.  The platform may be configured to support SNP, but that
+matters not at all if KVM can't actually use the functionality.
 
-Signed-off-by: Long Li <longli@microsoft.com>
----
- drivers/hv/hv_common.c         | 39 ----------------------------------
- include/asm-generic/mshyperv.h |  4 ----
- 2 files changed, 43 deletions(-)
+> Additionally as SEV_INIT/SNP_INIT during sev_platform_init() have failed, so
+> any SEV/SEV-ES/SNP VM launch will fail as the firmware will return invalid
+> platform state as INITs have failed.
 
-diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-index a5a6250b1a12..421376cea17e 100644
---- a/drivers/hv/hv_common.c
-+++ b/drivers/hv/hv_common.c
-@@ -105,45 +105,6 @@ void __init hv_common_free(void)
- 	hv_synic_eventring_tail = NULL;
- }
- 
--/*
-- * Functions for allocating and freeing memory with size and
-- * alignment HV_HYP_PAGE_SIZE. These functions are needed because
-- * the guest page size may not be the same as the Hyper-V page
-- * size. We depend upon kmalloc() aligning power-of-two size
-- * allocations to the allocation size boundary, so that the
-- * allocated memory appears to Hyper-V as a page of the size
-- * it expects.
-- */
--
--void *hv_alloc_hyperv_page(void)
--{
--	BUILD_BUG_ON(PAGE_SIZE <  HV_HYP_PAGE_SIZE);
--
--	if (PAGE_SIZE == HV_HYP_PAGE_SIZE)
--		return (void *)__get_free_page(GFP_KERNEL);
--	else
--		return kmalloc(HV_HYP_PAGE_SIZE, GFP_KERNEL);
--}
--EXPORT_SYMBOL_GPL(hv_alloc_hyperv_page);
--
--void *hv_alloc_hyperv_zeroed_page(void)
--{
--	if (PAGE_SIZE == HV_HYP_PAGE_SIZE)
--		return (void *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
--	else
--		return kzalloc(HV_HYP_PAGE_SIZE, GFP_KERNEL);
--}
--EXPORT_SYMBOL_GPL(hv_alloc_hyperv_zeroed_page);
--
--void hv_free_hyperv_page(void *addr)
--{
--	if (PAGE_SIZE == HV_HYP_PAGE_SIZE)
--		free_page((unsigned long)addr);
--	else
--		kfree(addr);
--}
--EXPORT_SYMBOL_GPL(hv_free_hyperv_page);
--
- static void *hv_panic_page;
- 
- /*
-diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-index ccccb1cbf7df..4033508fbb11 100644
---- a/include/asm-generic/mshyperv.h
-+++ b/include/asm-generic/mshyperv.h
-@@ -236,10 +236,6 @@ int hv_common_cpu_init(unsigned int cpu);
- int hv_common_cpu_die(unsigned int cpu);
- void hv_identify_partition_type(void);
- 
--void *hv_alloc_hyperv_page(void);
--void *hv_alloc_hyperv_zeroed_page(void);
--void hv_free_hyperv_page(void *addr);
--
- /**
-  * hv_cpu_number_to_vp_number() - Map CPU to VP.
-  * @cpu_number: CPU number in Linux terms
--- 
-2.34.1
+Yeah, and that's *awful* behavior for KVM.  Imagine if KVM did that for every
+feature, i.e. enumerated hardware support irrespective of KVM support.
 
+The API is KVM_GET_SUPPORTED_CPUID, not KVM_GET_MOSTLY_SUPPORTED_CPUID.
+
+> >From my understanding, sev*_enabled indicates the user support to
+> >enable/disable support for SEV/SEV-ES/SEV-SNP, 
+
+Yes, and they're also used to reflect and enumerate KVM support:
+
+	if (sev_enabled) {
+		kvm_cpu_cap_set(X86_FEATURE_SEV);
+		kvm_caps.supported_vm_types |= BIT(KVM_X86_SEV_VM);
+	}
+	if (sev_es_enabled) {
+		kvm_cpu_cap_set(X86_FEATURE_SEV_ES);
+		kvm_caps.supported_vm_types |= BIT(KVM_X86_SEV_ES_VM);
+	}
+	if (sev_snp_enabled) {
+		kvm_cpu_cap_set(X86_FEATURE_SEV_SNP);
+		kvm_caps.supported_vm_types |= BIT(KVM_X86_SNP_VM);
+	}
+
+> as the sev*_enabled are the KVM module parameters, while sev*_supported
+> indicates if platform has that support enabled.
+
+sev*_supported are completely irrelevant.  They are function local scratch variables
+that exist so that KVM doesn't clobber userspace's inputs while computing what is
+fully supported and enabled.
+
+> And before the SEV/SNP init support was moved to KVM from CCP module, doing
+> SEV/SNP INIT could fail but that still had KVM detecting SEV/SNP support
+> enabled, so this moving SEV/SNP init stuff to KVM module from CCP driver is
+> consistent with the previous behavior.
+
+And one of my driving motivations for getting the initialization into KVM was to
+fix that previous behavior.
 
