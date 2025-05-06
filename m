@@ -1,62 +1,98 @@
-Return-Path: <linux-kernel+bounces-636527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402C7AACC63
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:41:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC32AACC67
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 583411C05F4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238061C052A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7155284B20;
-	Tue,  6 May 2025 17:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CBD284B20;
+	Tue,  6 May 2025 17:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQ13y8A2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O/b0SHEF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4L7lLh8C";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QxJYwosG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YuguyMLI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA081FF5E3;
-	Tue,  6 May 2025 17:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0133248881
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 17:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746553274; cv=none; b=unYh3VgCy9bGy3SW0ZU2VcRKu3OblMZWGS/dSznQdU5mHjN/kyBoDncsoFAtmPMeAxUx2td/o5tVpbFteFQXLXQGCKPTWCku8He2+8U4GKICR5P3paM8glIuzw4XFXlwMXvJCKrwRBqf8RUVS2J+sG+sUWXeK9HmG277jlUyEMY=
+	t=1746553370; cv=none; b=uwAV7w/j35ozTfYuLk7Vv8DWtsgNQ1c3i/QQTjooXDJfKmexcR9l8Lyja0TZwL2krNPylcJgjOlqBSMRmAykf4lqg/f4/wrM9Z+MBK+F4LBSpsNdOcJTmvrEq/GCFDtXu2BVjYg/Aw1V6+X9s4W4PDeOcACHB3498++3Zjf0xQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746553274; c=relaxed/simple;
-	bh=addtd2tD+DOVZOCpE3AbYsDQUYIQPT10US31SZtt2d8=;
+	s=arc-20240116; t=1746553370; c=relaxed/simple;
+	bh=x42flrj+dijeYhVuFWP1vdUfhPscp6CiZ38EXW7PYDs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pWlGh8a6gLLempF5cgSpIFd8yj/BiRINxbIlkj3dzPj//rEztWDQQnfKxeFv8q4l9pnpW6EUodfhEyikXZegL/N9uslpWNMGhCr1SIxsmf0bN10Hq8OZ6eOaHoZ9sOMK61UhizoK+P86Sy0rw0Ku3y3vukONvHKAfP6Dz/suMWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQ13y8A2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D5E3C4CEEB;
-	Tue,  6 May 2025 17:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746553273;
-	bh=addtd2tD+DOVZOCpE3AbYsDQUYIQPT10US31SZtt2d8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qQ13y8A2z2q3OM1MObsbWCM3zla4VJlDmuJTvyfkO9aLQ99ypDNhNEN5oIxX8/CF2
-	 L7PE7DWzOZPp8ZoJDpDZlpxNWTk5Ih4sWfsD84tNapMnA3Y2KOw5B9Y4QZvvndl1mh
-	 OaqinBL3jRrAXKDx1+2yyGAihpf5tY7CMaH3ajYjdYUoCrccekKFDzi+RY471N+O6g
-	 DLNKlwl5z4KVODs9zh9AM0Y9QIoVY2JiKb7Wvkg8siHRf9KFynN7ZtDScFTVNASztZ
-	 HHcK779OBDwABXOTxQ233HRRs0qXWSGtkHiFvT9ZytMwZVGnlGYVjBiQXW/Wq4izM5
-	 uuVjbbjUkI0dw==
-Received: by pali.im (Postfix)
-	id B53EE67E; Tue,  6 May 2025 19:41:10 +0200 (CEST)
-Date: Tue, 6 May 2025 19:41:10 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	heiko@sntech.de, manivannan.sadhasivam@linaro.org,
-	yue.wang@Amlogic.com, neil.armstrong@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, khilman@baylibre.com, jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 3/3] PCI: aardvark: Remove redundant MPS configuration
-Message-ID: <20250506174110.63ayeqc4scmwjj6e@pali>
-References: <20250506173439.292460-1-18255117159@163.com>
- <20250506173439.292460-4-18255117159@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hl0gS3kdQjp216QWagOPKClFbdqb62+gQnVOr1hEyjtb33c00F/Kj3Xs3UUhvysT89wSaThgAGlhLzY4zXuYNzRnRWITK4TfeGm6vNHZ7d6doOa2bpBgM4kQOSeatS1ZikxobxzNBE/mKIa6jHPN/nfDDiZz9EG4lT/3rr7AP3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=O/b0SHEF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4L7lLh8C; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QxJYwosG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YuguyMLI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EDF2F1F38D;
+	Tue,  6 May 2025 17:42:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746553367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SQqVSoZZjQ072CuOxG4Mh6ggdo11NHBNTXMYW2HsWnM=;
+	b=O/b0SHEFzL9ceURxcgaaTn5lSDtQPOhwQ0lM++7fT9n8cxZuTWN7sUJ55RDXCGmNpLtYh3
+	MgShcMZlT5B79ffHg3JFEy+3IkPjRT7A3YejCW5iCcI/TykV5Lc5Oc+lsD2d6/N4yP1VWI
+	qA8owOZmTewx8KaHKd6ComWo7Kz1BRc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746553367;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SQqVSoZZjQ072CuOxG4Mh6ggdo11NHBNTXMYW2HsWnM=;
+	b=4L7lLh8CQRNAl1IssumZsv3FyRPjgFL8M76JrQg1FCZYtMwjPeeL569jqphlQedSzC1XSF
+	D8z6/uzCai1gxMCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1746553366; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SQqVSoZZjQ072CuOxG4Mh6ggdo11NHBNTXMYW2HsWnM=;
+	b=QxJYwosGBWXlnS0EDm4WJHd4l3jg1WTsjjp9/FYEPDZ9RBE/7WaRQ4xJFCPWo2CjFwwMd8
+	w4kiOQNDkK3UkI3ngc8MQHoXBiuCWiabQjA+mj6CQpTCpYyUFKzOk20v7ozmuC+22H8b43
+	52tnQk/EmoMVin3EhzmoJwIo5GDZGEM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1746553366;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SQqVSoZZjQ072CuOxG4Mh6ggdo11NHBNTXMYW2HsWnM=;
+	b=YuguyMLIlXmawd+w6app4YOkm2KgIVeFA6rp/RhA9KZCP/1twuP7tVb/Bt2dP4Jsj3Iv+s
+	ygCeMYRUZN74kDAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 948C0137CF;
+	Tue,  6 May 2025 17:42:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MjZOIRZKGmhPBwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 06 May 2025 17:42:46 +0000
+Date: Tue, 6 May 2025 19:42:44 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm,mm_init: Mark set_high_memory as _init
+Message-ID: <aBpKFEQeVezYLsAH@localhost.localdomain>
+References: <20250506111012.108743-1-osalvador@suse.de>
+ <aBnuzKw-zYDPwLE3@localhost.localdomain>
+ <aBpB-dtL1hvd0TDi@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,51 +101,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250506173439.292460-4-18255117159@163.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <aBpB-dtL1hvd0TDi@kernel.org>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.990];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wednesday 07 May 2025 01:34:39 Hans Zhang wrote:
-> The Aardvark PCIe controller enforces a fixed 512B payload size via
-> PCI_EXP_DEVCTL_PAYLOAD_512B, overriding hardware capabilities and PCIe
-> core negotiations.
-> 
-> Remove explicit MPS overrides (PCI_EXP_DEVCTL_PAYLOAD and
-> PCI_EXP_DEVCTL_PAYLOAD_512B). MPS is now determined by the PCI core
-> during device initialization, leveraging root port configurations and
-> device-specific capabilities.
-> 
-> Aligning Aardvark with the unified MPS framework ensures consistency,
-> avoids artificial constraints, and allows the hardware to operate at
-> its maximum supported payload size while adhering to PCIe specifications.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->  drivers/pci/controller/pci-aardvark.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> index a29796cce420..d8852892994a 100644
-> --- a/drivers/pci/controller/pci-aardvark.c
-> +++ b/drivers/pci/controller/pci-aardvark.c
-> @@ -549,9 +549,7 @@ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
->  	reg = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
->  	reg &= ~PCI_EXP_DEVCTL_RELAX_EN;
->  	reg &= ~PCI_EXP_DEVCTL_NOSNOOP_EN;
-> -	reg &= ~PCI_EXP_DEVCTL_PAYLOAD;
->  	reg &= ~PCI_EXP_DEVCTL_READRQ;
-> -	reg |= PCI_EXP_DEVCTL_PAYLOAD_512B;
->  	reg |= PCI_EXP_DEVCTL_READRQ_512B;
->  	advk_writel(pcie, reg, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
->  
-> -- 
-> 2.25.1
-> 
+On Tue, May 06, 2025 at 08:08:09PM +0300, Mike Rapoport wrote:
+> I'll pick this one and add the tags, thanks Oscar.
 
-Please do not remove this code. It is required part of the
-initialization of the aardvark PCI controller at the specific phase,
-as defined in the Armada 3700 Functional Specification.
+thank you Mike, appreciated ;-)!
+ 
 
-There were reported more issues with those Armada PCIe controllers for
-which were already sent patches to mailing list in last 5 years. But
-unfortunately not all fixes were taken / applied yet.
+-- 
+Oscar Salvador
+SUSE Labs
 
