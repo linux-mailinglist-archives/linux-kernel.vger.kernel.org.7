@@ -1,230 +1,165 @@
-Return-Path: <linux-kernel+bounces-635256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA14AABB8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:43:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAC5AABB54
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494B03BCB7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89CDF4C79C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C792989D4;
-	Tue,  6 May 2025 05:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F5327FD75;
+	Tue,  6 May 2025 05:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xpfumamv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OKtjI1mQ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFC627CB07;
-	Tue,  6 May 2025 05:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7D922A4D6;
+	Tue,  6 May 2025 05:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746510361; cv=none; b=hvTfbZH+6n8HIU1ygNBVQHrjdxKIBmFK8LNz33xv+yiOiaD59PDRJq3usVNKzQGcRT3SVPxbMm4Qdt5LzHIu3ejR0zdRTdF/k/vsVQlmjuC+Rx3XDlr07VvzGytf740/rJY3WZzV2BWMi6J+vnNKC78G+EIU9hG3kAAiBbxLEmQ=
+	t=1746510697; cv=none; b=OY1SFTmbogiHEIA/4jL8iZF38Mbt86cRQiQRNwKHddCeKU/yYToQChSZblSIZsVJT9rBI7XWHHaH4j3KplU5LvxHXViOxjqVNR91+un4siSEJ8vW5aEEhrsYl3K2CilFQfoockU4Xo01CYdSRp4atNXjnLzi+MPkNY6fkXT2lBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746510361; c=relaxed/simple;
-	bh=1pTUMMBmmGrUl18o6lTYIrN6ae2baZpzpctFsnYjvn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjSq+JlZ9Q7LsspYHcPcvSLIj0mCUQid6C/gKox8/IfZMI93X1Oyz82GHqIxR6GC/WY9dyxnVpxhKTm1EulolAY/U8k+isQ/Ha5wsAtIx2bPp7aIv5ncZGxXZouTJ4W5rUdvoSlsn5IO9LFJDdx98kdUmpXFMEQo/SICMhUFmug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xpfumamv; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746510359; x=1778046359;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=1pTUMMBmmGrUl18o6lTYIrN6ae2baZpzpctFsnYjvn8=;
-  b=XpfumamvzZMXGiLbzOL/0M6kAnLUzVHSpNUSTNeKv10WO2w+mOuj4K8S
-   PJyvdMPEdrNL+JETfADPyNXH77SEQeCPodDzcp+Ohv+iWSXFHMLD4L4EW
-   NVTv2NcCPLbS8lPAi5z4mbZKAZOMgzGPzqOv+bZ2o5B0Qzzr5U6IvXxX5
-   rA0xfhR/5uwAE1iX9Y7ZfMEe2jjMnZcje6v/zUi+h4eZpVL6ZvDlzinkJ
-   a9DenGymv93fLD5TTSZEhezU+Li1OlrrXsqmtdfTRIeZLDLQKFCQI8+Si
-   Af/PHjB3WLQampi0fHQQh3O01p3/rdwji84lUw8Q9N8Ya/GFa21c1ebGm
-   Q==;
-X-CSE-ConnectionGUID: x6tabt+3QI+65OQnGc4FhQ==
-X-CSE-MsgGUID: xpvbVLV/QWW+l7i9uX6UHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="58818057"
-X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
-   d="scan'208";a="58818057"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 22:45:51 -0700
-X-CSE-ConnectionGUID: ckmI1OsUSseamkCyLdCW6w==
-X-CSE-MsgGUID: 0aGtqpf7RdyTUpr3vx8MDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
-   d="scan'208";a="139537640"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 22:45:50 -0700
-Date: Mon, 5 May 2025 22:50:54 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 06/13] dt-bindings: reserved-memory: Wakeup Mailbox
- for Intel processors
-Message-ID: <20250506055054.GG25533@ranerica-svr.sc.intel.com>
-References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
- <20250503191515.24041-7-ricardo.neri-calderon@linux.intel.com>
- <CAJZ5v0j262Jorbb5--WY6KedR7CWvdTTYP10ZRZTqXhTNJ1GiA@mail.gmail.com>
+	s=arc-20240116; t=1746510697; c=relaxed/simple;
+	bh=s6cBSkVGsEFxwDWF90N1a+nEVWSskSv7ojPB+C5dVbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=m/PdVSUeEYXEv7ROXFIxvMgQle985VA0h0R5i77EMrAVbT1Fdq1vq/diNZzW3OJtY241cq+0Nc1RJUpq23JNV9V8IpwM6ak5yH9HKxZE0ZbQaDdNSMoD9eTn9hMHu5uxqh6FIlb5i8upek9686EOUrnWxasO0W5dlhJeeqEMNaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OKtjI1mQ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1746510688;
+	bh=YpZZTtpWmhtS6HWeWM6IrwvDGHJJlAXrxq0GquhCK0k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=OKtjI1mQKaopMFJMTG824D3RkNTeXmC7MS0cTn3bsAndDgCVu2XJ11uZq86+VNlWU
+	 xiw8pTk3fy46ICSmQGXMZyxvOW1TRSbYlrhswV3GfaYGBPoLqQYESn1dnvLyVXZVHn
+	 SVv43ZPJcgXwknY5xsi99wH56QYeLz3hvDqxn912+FtOcfG0leivYusdVldrTcCu1u
+	 7m5IEQoNi3IsSiEuOcdaK9+cEcNmwulcblWL/0BvufAgfQNuoz0oPY1i4hMmJd7B/e
+	 +mnKfYM3pnbZePOcxgPVy+Va3zg/j4IFJu35HLhnkzTwryxHtYgEtmTwzsqjKYMdK6
+	 xqmz3hEjSoYrw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zs6w00Gngz4wyh;
+	Tue,  6 May 2025 15:51:27 +1000 (AEST)
+Date: Tue, 6 May 2025 15:51:26 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Arthur-Prince <r2.arthur.prince@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Mariana =?UTF-8?B?VmFsw6lyaW8=?=
+ <mariana.valerio2@hotmail.com>, Tobias Sperling
+ <tobias.sperling@softing.com>
+Subject: linux-next: manual merge of the iio tree with the iio-fixes tree
+Message-ID: <20250506155126.50ba1efb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0j262Jorbb5--WY6KedR7CWvdTTYP10ZRZTqXhTNJ1GiA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="Sig_/Nsy2QQUnWclVhEC+H18FDAT";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, May 05, 2025 at 03:07:43PM +0200, Rafael J. Wysocki wrote:
-> On Sat, May 3, 2025 at 9:10 PM Ricardo Neri
-> <ricardo.neri-calderon@linux.intel.com> wrote:
-> >
-> > Add DeviceTree bindings for the wakeup mailbox used on Intel processors.
-> >
-> > x86 platforms commonly boot secondary CPUs using an INIT assert, de-assert
-> > followed by Start-Up IPI messages. The wakeup mailbox can be used when this
-> > mechanism unavailable.
-> >
-> > The wakeup mailbox offers more control to the operating system to boot
-> > secondary CPUs than a spin-table. It allows the reuse of same wakeup vector
-> > for all CPUs while maintaining control over which CPUs to boot and when.
-> > While it is possible to achieve the same level of control using a spin-
-> > table, it would require to specify a separate cpu-release-addr for each
-> > secondary CPU.
-> >
-> > Originally-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > ---
-> > Changes since v2:
-> >  - Implemented the mailbox as a reserved-memory node. Add to it a
-> >    `compatible` property. (Krzysztof)
-> >  - Explained the relationship between the mailbox and the `enable-mehod`
-> >    property of the CPU nodes.
-> >  - Expanded the documentation of the binding.
-> >
-> > Changes since v1:
-> >  - Added more details to the description of the binding.
-> >  - Added requirement a new requirement for cpu@N nodes to add an
-> >    `enable-method`.
-> > ---
-> >  .../reserved-memory/intel,wakeup-mailbox.yaml | 87 +++++++++++++++++++
-> >  1 file changed, 87 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/reserved-memory/intel,wakeup-mailbox.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/reserved-memory/intel,wakeup-mailbox.yaml b/Documentation/devicetree/bindings/reserved-memory/intel,wakeup-mailbox.yaml
-> > new file mode 100644
-> > index 000000000000..d97755b4673d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/reserved-memory/intel,wakeup-mailbox.yaml
-> > @@ -0,0 +1,87 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/reserved-memory/intel,wakeup-mailbox.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Wakeup Mailbox for Intel processors
-> > +
-> > +description: |
-> > +  The Wakeup Mailbox provides a mechanism for the operating system to wake up
-> > +  secondary CPUs on Intel processors. It is an alternative to the INIT-!INIT-
-> > +  SIPI sequence used on most x86 systems.
-> > +
-> > +  Firmware must define the enable-method property in the CPU nodes as
-> > +  "intel,wakeup-mailbox" to use the mailbox.
-> > +
-> > +  Firmware implements the wakeup mailbox as a 4KB-aligned memory region of size
-> > +  of 4KB. It is memory that the firmware reserves so that each secondary CPU can
-> > +  have the operating system send a single message to them. The firmware is
-> > +  responsible for putting the secondary CPUs in a state to check the mailbox.
-> > +
-> > +  The structure of the mailbox is as follows:
-> > +
-> > +  Field           Byte   Byte  Description
-> > +                 Length Offset
-> > +  ------------------------------------------------------------------------------
-> > +  Command          2      0    Command to wake up the secondary CPU:
-> > +                                        0: Noop
-> > +                                        1: Wakeup: Jump to the wakeup_vector
-> > +                                        2-0xFFFF: Reserved:
-> > +  Reserved         2      2    Must be 0.
-> > +  APIC_ID          4      4    APIC ID of the secondary CPU to wake up.
-> > +  Wakeup_Vector    8      8    The wakeup address for the secondary CPU.
-> > +  ReservedForOs 2032     16    Reserved for OS use.
-> > +  ReservedForFW 2048   2048    Reserved for firmware use.
-> > +  ------------------------------------------------------------------------------
-> > +
-> > +  To wake up a secondary CPU, the operating system 1) prepares the wakeup
-> > +  routine; 2) populates the address of the wakeup routine address into the
-> > +  Wakeup_Vector field; 3) populates the APIC_ID field with the APIC ID of the
-> > +  secondary CPU; 4) writes Wakeup in the Command field. Upon receiving the
-> > +  Wakeup command, the secondary CPU acknowledges the command by writing Noop in
-> > +  the Command field and jumps to the Wakeup_Vector. The operating system can
-> > +  send the next command only after the Command field is changed to Noop.
-> > +
-> > +  The secondary CPU will no longer check the mailbox after waking up. The
-> > +  secondary CPU must ignore the command if its APIC_ID written in the mailbox
-> > +  does not match its own.
-> > +
-> > +  When entering the Wakeup_Vector, interrupts must be disabled and 64-bit
-> > +  addressing mode must be enabled. Paging mode must be enabled. The virtual
-> > +  address of the Wakeup_Vector page must be equal to its physical address.
-> > +  Segment selectors are not used.
-> 
-> This interface is defined in the ACPI specification and all of the
-> above information is present there.
-> 
-> Why are you copying it without acknowledging the source of it instead
-> of just saying where this interface is defined and pointing to its
-> definition?
+--Sig_/Nsy2QQUnWclVhEC+H18FDAT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There was a discussion in the past about preferring a full description of
-the mailbox instead of references to ACPI [1]. I am happy to acknowledge
-the source in the changeset description. I explicitly acknowledge the ACPI
-specification in the cover letter.
+Hi all,
 
-[1]. https://lore.kernel.org/all/20240809232928.GB25056@yjiang5-mobl.amr.corp.intel.com/
+Today's linux-next merge of the iio tree got a conflict in:
 
-> 
-> > +
-> > +maintainers:
-> > +  - Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > +
-> > +allOf:
-> > +  - $ref: reserved-memory.yaml
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: intel,wakeup-mailbox
-> > +
-> > +  alignment:
-> > +    description: The mailbox must be 4KB-aligned.
-> > +    const: 0x1000
-> > +
-> > +required:
-> > +  - compatible
-> > +  - alignment
-> 
-> Why do you need the "alignment" property if the alignment is always the same?
+  drivers/iio/adc/Kconfig
 
-I want to enforce a 4KB alignment. It can also be inferred from the
-address of the mailbox.
+between commit:
 
-Thanks and BR,
-Ricardo
+  169eaf9ccfb0 ("iio: adc: ti-ads1298: Kconfig: add kfifo dependency to fix=
+ module build")
+
+from the iio-fixes tree and commit:
+
+  0de3748d80f3 ("iio: adc: sort TI drivers alphanumerical")
+
+from the iio tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/iio/adc/Kconfig
+index b7aac84e5224,ad06cf556785..000000000000
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@@ -1512,6 -1546,41 +1547,42 @@@ config TI_ADS111
+           This driver can also be built as a module. If so, the module wil=
+l be
+           called ti-ads1119.
+ =20
++ config TI_ADS124S08
++ 	tristate "Texas Instruments ADS124S08"
++ 	depends on SPI
++ 	select IIO_BUFFER
++ 	select IIO_TRIGGERED_BUFFER
++ 	help
++ 	  If you say yes here you get support for Texas Instruments ADS124S08
++ 	  and ADS124S06 ADC chips
++=20
++ 	  This driver can also be built as a module. If so, the module will be
++ 	  called ti-ads124s08.
++=20
++ config TI_ADS1298
++ 	tristate "Texas Instruments ADS1298"
++ 	depends on SPI
++ 	select IIO_BUFFER
+++	select IIO_KFIFO_BUF
++ 	help
++ 	  If you say yes here you get support for Texas Instruments ADS1298
++ 	  medical ADC chips
++=20
++ 	  This driver can also be built as a module. If so, the module will be
++ 	  called ti-ads1298.
++=20
++ config TI_ADS131E08
++ 	tristate "Texas Instruments ADS131E08"
++ 	depends on SPI
++ 	select IIO_BUFFER
++ 	select IIO_TRIGGERED_BUFFER
++ 	help
++ 	  Say yes here to get support for Texas Instruments ADS131E04, ADS131E06
++ 	  and ADS131E08 chips.
++=20
++ 	  This driver can also be built as a module. If so, the module will be
++ 	  called ti-ads131e08.
++=20
+  config TI_ADS7138
+  	tristate "Texas Instruments ADS7128 and ADS7138 ADC driver"
+  	depends on I2C
+
+--Sig_/Nsy2QQUnWclVhEC+H18FDAT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgZo14ACgkQAVBC80lX
+0Gwp4gf/cVuCd2T9TwoQYAaS4D2BsGgbf5QCgTBfOTOqmds04e3XUmzrOpDwNabb
+gu8hYDM//1M0rQuTW975+4gxcIls3dhDoEncim741ZIPKN7CKl4IP8Zszoq2EImP
+012ULkukC7/J+ZShpZWI+yYubciKADYtolgX+sKZD2tgX7rg/wx/Q8OblYSHyP+Z
+Y86IvWZlSpfbv2kNCtj1nuIhs315rjXdi2+jyzcQ8dPWRXKr7WxS45v1rIKyIGD1
+u3c/VdBM0dANfZLiChp2gF9fUSmMh8d6xU147IvkqeNuNHzSLE8zHHm1UE0eQmng
+fdUfRzpkesQNX/Z/yHTkL4mM/hJ8fQ==
+=5wle
+-----END PGP SIGNATURE-----
+
+--Sig_/Nsy2QQUnWclVhEC+H18FDAT--
 
