@@ -1,52 +1,70 @@
-Return-Path: <linux-kernel+bounces-635498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB089AABE32
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:05:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D93AABDA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09DD25036C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:04:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E914B3ACD29
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926DA266B72;
-	Tue,  6 May 2025 09:02:56 +0000 (UTC)
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698B22165E4;
+	Tue,  6 May 2025 08:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QgV3Zq27";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="acUoLxzx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B39264F88
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFBD1474B8
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 08:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746522176; cv=none; b=cHYmyARSRpzlmRcmZGGbcmYXz9qtCCx3Rz8S2G8JSCD8lhGl1F5PWb5nR5jhTPQwCuSg9ZNYeMkO5Wp51BB0BdPgk9ieA65xivG5WU9c7NLg9Wra2Zoznq/GOUyAYGAgdt7kxC/t0caGU+hV3/THrXirvtEYgV28/xMWuiYdX5I=
+	t=1746521259; cv=none; b=Xur144P3E0pcCZeOnkUskG6P3O6z33/JYXS/jJ4wAuk+Vay/tjnSQxfbeLyRZuHklUixi2rPq6QSeIQHRqXsrMAycatdq74ucCqUMfEffwjwU8u+5I6naDTjZn3JLRPgd1MOiWupfySgCfjpgXJNUvVrBeEyVlcqumQuz5N9bH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746522176; c=relaxed/simple;
-	bh=12vh6IK8I0AkdMWsFqMov1eE4gd1N/LKfwlbPkUGbk0=;
+	s=arc-20240116; t=1746521259; c=relaxed/simple;
+	bh=uFE8YL2UMZqE3KxHbYLbjg+9Xj10CmA10qs4ssDv458=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KeP5cu9T3BSxViJnl7UvM2fPYxPHfqQoZZ9ohoAYELFxLkIT3/Tf7RmyaKIAOKR3ykG5X62M4cEs0CqlbJDfcKwaP2ayd9hKYNliYH8728DneTJ7bv4KuOt8bKV/ckpG8A0jjt3YW/KcM2O3YneA4oPyKtfRApNAAdW32NXSzTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id B25F4404A1;
-	Tue,  6 May 2025 10:47:14 +0200 (CEST)
-Date: Tue, 6 May 2025 10:47:13 +0200
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <lumag@kernel.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v3 1/8] drm/msm/dpu: don't overwrite CTL_MERGE_3D_ACTIVE
- register
-Message-ID: <wykubtbdukui3lmqraq2yklu3obeutcczuw24idhslyaunyb2e@iandx2xswmu6>
-References: <20250307-dpu-active-ctl-v3-0-5d20655f10ca@linaro.org>
- <20250307-dpu-active-ctl-v3-1-5d20655f10ca@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KS+gNAmQOufBZVCm4HW0OYts5/F/iJeI5MGbCleSajOyEDc69YTHhhLtagN3jRuyPxGYZiecNgp9JoJJFloG5uZGdfU6O8caFW/X0zgC+8jfK8QP1CdFIZRjJB/9P5dh1nXYDE64cTlzpd2wHrJsne+XtP6OyIXTcIwWxwKD2Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QgV3Zq27; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=acUoLxzx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 6 May 2025 10:47:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746521256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uFE8YL2UMZqE3KxHbYLbjg+9Xj10CmA10qs4ssDv458=;
+	b=QgV3Zq27gjvTHZ9NaQUkn51LjN7jy3mKrDGUfOQ9zUpq9W/t46fIp4bvPERo8eofkvj04q
+	+UCUliANGMt+jJjxsTWX6ZKMhGnkSuuv8hPO94a+dhtFPcG8nIN+lAqq6ZW02ynQ1CPhnt
+	cTMrgfchtbS7nUGKydz1du/5v0rBB7PD4XQL/FJqPsk2q3MSEX9wc0yCAU25Rl0W+XKa1T
+	VzyAWXeZVbtEdJRKSPlSBs1DC3QaV/1yTyF9nAvcDG0bzLzzPYECE1QzZYFtwXbvsZBLDW
+	BGGuJoHoCIodKPONlpKqpqq//xX95bAfYdpIJgvADJccfhZB+se7yj/UCI7caw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746521256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uFE8YL2UMZqE3KxHbYLbjg+9Xj10CmA10qs4ssDv458=;
+	b=acUoLxzxwX82j4KymZWPScMF9pA/j5iMXdjkbqdQL81QJxr5/vH9EdjmI72LwbG194tkBz
+	EPFQRWF1gnNAozDw==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 13/26] x86/cpuid: Scan CPUID(0x2)
+Message-ID: <aBnMprnsFmPJDqaW@lx-t490>
+References: <20250506050437.10264-1-darwi@linutronix.de>
+ <20250506050437.10264-14-darwi@linutronix.de>
+ <aBnFRrnZQ9HwwULK@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,75 +73,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307-dpu-active-ctl-v3-1-5d20655f10ca@linaro.org>
+In-Reply-To: <aBnFRrnZQ9HwwULK@gmail.com>
 
-On 2025-03-07 08:24:49, Dmitry Baryshkov wrote:
-> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-> In case of complex pipelines (e.g. the forthcoming quad-pipe) the DPU
-> might use more that one MERGE_3D block for a single output.  Follow the
-> pattern and extend the CTL_MERGE_3D_ACTIVE active register instead of
-> simply writing new value there. Currently at most one MERGE_3D block is
-> being used, so this has no impact on existing targets.
+On Tue, 06 May 2025, Ingo Molnar wrote:
+>
+> Could we please emit a one-time syslog warning & diagnostic when we run
+> across invalid or otherwise weird looking CPUID data, instead of just
+> silently skipping and sanitizing it?
+>
 
-Too late now that this patch has already been merged, but good to
-track for posterity: it'd be nice if the commit message mentions that
-dpu_hw_ctl_reset_intf_cfg_v1() already takes this approach, and only unsets the
-merge_3d bit provided in dpu_hw_intf_cfg, and doesn't clear the whole register
-to zero :)
+Sure; will do.
 
-- Marijn
-
-> 
-> Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> index 411a7cf088eb72f856940c09b0af9e108ccade4b..cef3bfaa4af82ebc55fb8cf76adef3075c7d73e3 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> @@ -563,6 +563,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->  	u32 wb_active = 0;
->  	u32 cwb_active = 0;
->  	u32 mode_sel = 0;
-> +	u32 merge_3d_active = 0;
->  
->  	/* CTL_TOP[31:28] carries group_id to collate CTL paths
->  	 * per VM. Explicitly disable it until VM support is
-> @@ -578,6 +579,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->  	wb_active = DPU_REG_READ(c, CTL_WB_ACTIVE);
->  	cwb_active = DPU_REG_READ(c, CTL_CWB_ACTIVE);
->  	dsc_active = DPU_REG_READ(c, CTL_DSC_ACTIVE);
-> +	merge_3d_active = DPU_REG_READ(c, CTL_MERGE_3D_ACTIVE);
->  
->  	if (cfg->intf)
->  		intf_active |= BIT(cfg->intf - INTF_0);
-> @@ -591,15 +593,15 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->  	if (cfg->dsc)
->  		dsc_active |= cfg->dsc;
->  
-> +	if (cfg->merge_3d)
-> +		merge_3d_active |= BIT(cfg->merge_3d - MERGE_3D_0);
-> +
->  	DPU_REG_WRITE(c, CTL_TOP, mode_sel);
->  	DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
->  	DPU_REG_WRITE(c, CTL_WB_ACTIVE, wb_active);
->  	DPU_REG_WRITE(c, CTL_CWB_ACTIVE, cwb_active);
->  	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
-> -
-> -	if (cfg->merge_3d)
-> -		DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE,
-> -			      BIT(cfg->merge_3d - MERGE_3D_0));
-> +	DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE, merge_3d_active);
->  
->  	if (cfg->cdm)
->  		DPU_REG_WRITE(c, CTL_CDM_ACTIVE, cfg->cdm);
-> 
-> -- 
-> 2.39.5
-> 
+Thanks,
+Ahmed
 
