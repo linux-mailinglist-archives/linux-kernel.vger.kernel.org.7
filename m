@@ -1,112 +1,80 @@
-Return-Path: <linux-kernel+bounces-635048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164CBAAB8E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:45:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B7BAAB8E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7CAE7BBE85
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:44:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A38187BBF5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1139C220F20;
-	Tue,  6 May 2025 04:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70FC289819;
+	Tue,  6 May 2025 04:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FkEPTSGK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oILyJBcK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54522DDD0F;
-	Tue,  6 May 2025 01:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3E82F15C6;
+	Tue,  6 May 2025 01:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746495849; cv=none; b=Lk7Gp4/UkrnvVP2V8Qn3G/vSBS+ASA4YXST4sLE3YcalSrJ/AXW7U41t8SbrRORRuFSjaczuTXDGXn6ZlUDn+91dKeGEt1ooOPgtu1VWny9QibrJUTbjgSq1ma7u9cI0dipWqPTZHaeyLFuEvJKlp2F+23/jaS8QzpLRms0OXy4=
+	t=1746496188; cv=none; b=CUWiruFhGOca9LpgueTiTIGDTIC3wS6O+gT7gH8lZfJRGOFjr4MggW/UEkG7Q0kSbj/oPmHMdW71jpz1IWT+meYMigcBDDoOQ6iqrf1kn2c/gwYzgkY3iVTu/J2GYLvuS7adRZSA/NYxDl6Zu/sPW9/R3r/PwoIXNkUZ0x7EBxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746495849; c=relaxed/simple;
-	bh=19mZVmvZgZMCUKu150c5NZpMhyd/9wxKXQgCFRWNu6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RxFHIBdYYtr+LuCtCewkDrVKvDVA9Sl9VrNF/5akHrE/kl+vb1q0D8j0W7Dmb21xFWdnkGKiMWs7Rl0TskN2i5rg2l7jDdGExex2ThVSwl0p0yXtSAnIvHzMOwsnrHx22p69Q+q7HD2RzLM9Ida5ptKWhbF8jaXFEh6brFYz2N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FkEPTSGK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1746495843;
-	bh=CDn02VoIaa3g7/37mOMgvjVmAv8sbq9dp57lDEXRR+w=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FkEPTSGKKujzbsGctR5pmGDIPh8IFI+/Oqh/P/fKkqacFT5boeMor+b8PcErdosaa
-	 p5m4Aqjn7qJgivsYNU8DdegmNdQfkkHxGvuQYBKSVgb3WT/ywFofIyjMko4UTUOp5T
-	 uq1tgwogG2qzjiCCcBDjAg3od76xSjZ6QNr3ofsfjIhYnh8MV2xz6dMyXiu4Suks/F
-	 sfFhBOXaK8QvHQ1OCyPr0tGNLF4KYkkBjTc+QuZt0BhZ0Sd6OmyjfoNkMH5bJOiNJr
-	 gR1EcJL4vS8q06//BjEF3uDFX93sxn3Of3llHxlfqdz+1Z8JSAR/gq/9yzzF8t7WHv
-	 k2gaVQ8S4fVgA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zs1QV6LfBz4wbY;
-	Tue,  6 May 2025 11:44:02 +1000 (AEST)
-Date: Tue, 6 May 2025 11:44:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>, Johannes
- Berg <johannes@sipsolutions.net>
-Cc: Johannes Berg <johannes.berg@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the iwlwifi-next tree with Linus' tree
-Message-ID: <20250506114402.2f440664@canb.auug.org.au>
+	s=arc-20240116; t=1746496188; c=relaxed/simple;
+	bh=t3xhsc8cHlLfdU3Sihp5X0hn3szSOG3sA+OfTUgaocE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sS7DbVDd2X+G4CmRUum+lkmHcOj7Ww8eeu41pIpEmcWjbrb2xfiGzLanwijKJeypzCY8XJIeotIei7CXZ92bzuZn2RoPE3CAajW7ZQCJBpj4ITOgD7mcKY3yQAqU8zZNcySWVMhb1ecTEaaSviQHo+QZuBVq3mM+ZFNporx0qrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oILyJBcK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3714C4CEE4;
+	Tue,  6 May 2025 01:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746496186;
+	bh=t3xhsc8cHlLfdU3Sihp5X0hn3szSOG3sA+OfTUgaocE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oILyJBcKTZFM3+EQT9Hsp0+r7OuHCdRp1PheWXVcR/mwn0OLY1LyD2CtA+WhvP+c+
+	 xu/1pxQti2uuuBiCQWUWlo6yMCBZze60Ts9hVNJEFk5OengC0ANFKX6ZwhfCw0ILsr
+	 tmgdHjkyQPAVKj/A0j0TCoUkYZrckvGVz9m9nBIek9x0i0RNV6RfI5y09gWZz+HERU
+	 cNZ9ruF86fGWyEiuLhuiLkzd4yhjFXRwb3CBoY4bKbouHdqOlQ0mllfBA0Extto09Q
+	 5S6Ec2pFT9hI0b3u/9nl89pJwCnI+ZpwlfBSzvPo3VYj9fbDizteMfvcYD5o7oDWoX
+	 nyWYpv7ys+WPQ==
+Date: Mon, 5 May 2025 18:49:45 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Moon Yeounsu <yyyynoom@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] net: dlink: add synchronization for stats
+ update
+Message-ID: <20250505184945.5adcac55@kernel.org>
+In-Reply-To: <CAAjsZQwymBUvn67+jWJ1WRG2iJHyQFLwWEh8+3O_ryfX31mesw@mail.gmail.com>
+References: <20250425231352.102535-2-yyyynoom@gmail.com>
+	<20250429143503.5a44a94f@kernel.org>
+	<CAAjsZQwymBUvn67+jWJ1WRG2iJHyQFLwWEh8+3O_ryfX31mesw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CpVNzigQ+dlP6JgH3+Y6GNi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/CpVNzigQ+dlP6JgH3+Y6GNi
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Sat, 3 May 2025 08:50:49 +0900 Moon Yeounsu wrote:
+> Also, I believe that `spin_lock_irq()` in `get_stats()` should be
+> changed to `spin_lock_irqsave()` since `get_stats()` can be called
+> from IRQ context (via `rio_interrupt()` -> `rio_error()` ->
+> `get_stats()`).  In my view, calling `spin_unlock_irq()` in this
+> context could be risky, as it would re-enable local IRQs via
+> local_irq_enable().
+> 
+> There are two ways to lock the `get_stats()` function: either add a
+> new parameter to check whether it's in IRQ context, or simply use
+> `spin_lock_irqsave()`. I found that `rio_free_tx()` behaves like the
+> first case. I'd appreciate your opinion on which approach would be
+> preferable here.
 
-Today's linux-next merge of the iwlwifi-next tree got conflicts in:
-
-  drivers/net/wireless/intel/iwlwifi/cfg/sc.c
-  drivers/net/wireless/intel/iwlwifi/iwl-config.h
-  drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-  drivers/net/wireless/intel/iwlwifi/iwl-trans.c
-  drivers/net/wireless/intel/iwlwifi/iwl-trans.h
-  drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-  drivers/net/wireless/intel/iwlwifi/tests/devinfo.c
-
-between various commits from Linus' tree and various commits from the
-iwlwifi-next tree.
-
-At least one of the commits in Linus' tree is duplicated in the
-iwlwifi-next tree.
-
-I couldn't figure out how to fix it up, so I dropped the iwlwifi tree
-for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CpVNzigQ+dlP6JgH3+Y6GNi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgZaWIACgkQAVBC80lX
-0GzTDwgAi/B1fZO3XzlOPl5bX9Hge71EbuNjjoDQCcFQFxUGCXTzB85I0MBWhTZU
-SoYML9ecb9ocgmfCxqqQWolV/NbzoyfUdyvBwjF6cq9AhX0NK/Qev6Grv+s+eymj
-CINTdM9JNhpx+PLD/D2Gr2b33d7Q5lj6pN40j4g5GSUDrdc96cOET7Qg0pYOA7C7
-D7I54LruVFQtnKoSJoD8oOQ/5tWgOdU/+b+Y0veC+N/LhT2yyDJ9NifJXFOw7ALV
-d4oh7s+W6v2ApH1GzReDITzt0WBYslBAUyWNNyp+YntFtgUt5hu0R8fsIQhxRNdr
-ClD8TNhKKgBRIBFkIKF5eHwzrMHd6g==
-=8N2k
------END PGP SIGNATURE-----
-
---Sig_/CpVNzigQ+dlP6JgH3+Y6GNi--
+If there's a call path from the IRQ I'd go with spin_lock_irqsave()
 
