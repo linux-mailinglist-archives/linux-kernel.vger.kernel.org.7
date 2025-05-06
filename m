@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-635006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4060AAB8D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:44:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50B8AAB838
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C995A3A9E13
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:34:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC68B4E068D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E41326085;
-	Tue,  6 May 2025 03:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EDE2F4967;
+	Tue,  6 May 2025 03:06:54 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688F74A4E62
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747E14A6539
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746492525; cv=none; b=a28ByPSIDPv8vYS2eSevfw0jk/RlNb4MNLAsVoPDilXZi40krx98r7gUykaw/t/qbJeXswq6oVVrxm5s9gFyF6doNE7OOoT3FWAyjMty5b7uJrekcynaR7UIqZH117GhcQRp1ZNs9fUCD9+zT5qJ4tVnr6Onz6BlJfmrQdiA/yA=
+	t=1746492553; cv=none; b=aQfuqyyMmntHl/PB49YZOrebTL7VkwEZ+Cfi2btmir3GjVyV83DZ3mAk9VHuf4y6BoBQvw5nwYcxIwGhTSEt20UIpKO/8LegYwv5eYX73gh/LcTJrbW7yHZPLcK/7M826jEKypbM8GtAt5/Z5NT9WoMIngH8Vv7SrOnfZrHWPC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746492525; c=relaxed/simple;
-	bh=6V+cb9MTePAxf7N7XVuHjske1yK2Lk8LFcjCNXlCz3I=;
+	s=arc-20240116; t=1746492553; c=relaxed/simple;
+	bh=6u/tJ3IaLwF0dUse1JpxumzgYcS9QpDg2Qj+cUBlQPw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AEprnuJcMMBYyMn2fHqr69ClyvS1+dgDzFMViNk6OkJQO3vrBLYe+3jhGCQTdXiPM9ISixWIZS04C9GFjKUGVaEtc0hbeo9kSHTFat8Wqm/HlX7P8VsHOQRa/A+Ih2q0erJZTD/fP1Mu+CbjqiTUeTz2fM0EeGW5u/I9bHARp6w=
+	 MIME-Version; b=TkaoeMQH3ENKEiv2RlfO9APeseC6LtDglo8TUKMh3cV9S1yVr8yoY3BMCiCBX2CYdroGXxqsn68/DWoKrCq4KgMiAnRQuXfV7UVDeayUEckg/D0scT1DMgAtMwD4SeKv1AsUBWoP9xvST9EEJ5EuEYCchG0krZ4MxNdQvGkYjKQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -32,7 +32,7 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1uC6K6-000000000IF-3ncU;
+	id 1uC6K6-000000000IF-3uS9;
 	Mon, 05 May 2025 20:38:14 -0400
 From: Rik van Riel <riel@surriel.com>
 To: linux-kernel@vger.kernel.org
@@ -46,11 +46,11 @@ Cc: linux-mm@kvack.org,
 	mingo@redhat.com,
 	bp@alien8.de,
 	hpa@zytor.com,
-	Yu-cheng Yu <yu-cheng.yu@intel.com>,
+	Rik van Riel <riel@fb.com>,
 	Rik van Riel <riel@surriel.com>
-Subject: [RFC PATCH 7/9] x86/mm: Introduce Remote Action Request
-Date: Mon,  5 May 2025 20:37:45 -0400
-Message-ID: <20250506003811.92405-8-riel@surriel.com>
+Subject: [RFC PATCH 8/9] x86/mm: use RAR for kernel TLB flushes
+Date: Mon,  5 May 2025 20:37:46 -0400
+Message-ID: <20250506003811.92405-9-riel@surriel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250506003811.92405-1-riel@surriel.com>
 References: <20250506003811.92405-1-riel@surriel.com>
@@ -63,371 +63,106 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: riel@surriel.com
 
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+From: Rik van Riel <riel@fb.com>
 
-Remote Action Request (RAR) is a TLB flushing broadcast facility.
-To start a TLB flush, the initiator CPU creates a RAR payload and
-sends a command to the APIC.  The receiving CPUs automatically flush
-TLBs as specified in the payload without the kernel's involement.
+Use Intel RAR for kernel TLB flushes, when enabled.
 
-[ riel:
-  - add pcid parameter to smp_call_rar_many so other mms can be flushed
-  - ensure get_payload only allocates valid indices
-  - make sure rar_cpu_init does not write reserved bits
-  - fix overflow in range vs full flush decision ]
+Pass in PCID 0 to smp_call_rar_many() to flush kernel memory.
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Unfortunately RAR_INVPCID_ADDR excludes global PTE mappings, so only
+full flushes with RAR_INVPCID_ALL will flush kernel mappings.
+
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- arch/x86/include/asm/rar.h   |  69 +++++++++++
- arch/x86/kernel/cpu/common.c |   4 +
- arch/x86/mm/Makefile         |   1 +
- arch/x86/mm/rar.c            | 226 +++++++++++++++++++++++++++++++++++
- 4 files changed, 300 insertions(+)
- create mode 100644 arch/x86/include/asm/rar.h
- create mode 100644 arch/x86/mm/rar.c
+ arch/x86/mm/tlb.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/arch/x86/include/asm/rar.h b/arch/x86/include/asm/rar.h
-new file mode 100644
-index 000000000000..b5ba856fcaa8
---- /dev/null
-+++ b/arch/x86/include/asm/rar.h
-@@ -0,0 +1,69 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_RAR_H
-+#define _ASM_X86_RAR_H
-+
-+/*
-+ * RAR payload types
-+ */
-+#define RAR_TYPE_INVPG		0
-+#define RAR_TYPE_INVPG_NO_CR3	1
-+#define RAR_TYPE_INVPCID	2
-+#define RAR_TYPE_INVEPT		3
-+#define RAR_TYPE_INVVPID	4
-+#define RAR_TYPE_WRMSR		5
-+
-+/*
-+ * Subtypes for RAR_TYPE_INVLPG
-+ */
-+#define RAR_INVPG_ADDR			0 /* address specific */
-+#define RAR_INVPG_ALL			2 /* all, include global */
-+#define RAR_INVPG_ALL_NO_GLOBAL		3 /* all, exclude global */
-+
-+/*
-+ * Subtypes for RAR_TYPE_INVPCID
-+ */
-+#define RAR_INVPCID_ADDR		0 /* address specific */
-+#define RAR_INVPCID_PCID		1 /* all of PCID */
-+#define RAR_INVPCID_ALL			2 /* all, include global */
-+#define RAR_INVPCID_ALL_NO_GLOBAL	3 /* all, exclude global */
-+
-+/*
-+ * Page size for RAR_TYPE_INVLPG
-+ */
-+#define RAR_INVLPG_PAGE_SIZE_4K		0
-+#define RAR_INVLPG_PAGE_SIZE_2M		1
-+#define RAR_INVLPG_PAGE_SIZE_1G		2
-+
-+/*
-+ * Max number of pages per payload
-+ */
-+#define RAR_INVLPG_MAX_PAGES 63
-+
-+typedef struct {
-+	uint64_t for_sw : 8;
-+	uint64_t type : 8;
-+	uint64_t must_be_zero_1 : 16;
-+	uint64_t subtype : 3;
-+	uint64_t page_size: 2;
-+	uint64_t num_pages : 6;
-+	uint64_t must_be_zero_2 : 21;
-+
-+	uint64_t must_be_zero_3;
-+
-+	/*
-+	 * Starting address
-+	 */
-+	uint64_t initiator_cr3;
-+	uint64_t linear_address;
-+
-+	/*
-+	 * Padding
-+	 */
-+	uint64_t padding[4];
-+} rar_payload_t;
-+
-+void rar_cpu_init(void);
-+void smp_call_rar_many(const struct cpumask *mask, u16 pcid,
-+		       unsigned long start, unsigned long end);
-+
-+#endif /* _ASM_X86_RAR_H */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 5666620e7153..75b43db0b129 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -71,6 +71,7 @@
- #include <asm/tdx.h>
- #include <asm/posted_intr.h>
- #include <asm/runtime-const.h>
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 7c61bf11d472..a4f3941281b6 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -21,6 +21,7 @@
+ #include <asm/apic.h>
+ #include <asm/msr.h>
+ #include <asm/perf_event.h>
 +#include <asm/rar.h>
+ #include <asm/tlb.h>
  
- #include "cpu.h"
- 
-@@ -2395,6 +2396,9 @@ void cpu_init(void)
- 	if (is_uv_system())
- 		uv_cpu_init();
- 
-+	if (cpu_feature_enabled(X86_FEATURE_RAR))
-+		rar_cpu_init();
-+
- 	load_fixmap_gdt(cpu);
+ #include "mm_internal.h"
+@@ -1451,6 +1452,18 @@ static void do_flush_tlb_all(void *info)
+ 	__flush_tlb_all();
  }
  
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index cebe5812d78d..d49d16412569 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -54,6 +54,7 @@ obj-$(CONFIG_ACPI_NUMA)		+= srat.o
- obj-$(CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)	+= pkeys.o
- obj-$(CONFIG_RANDOMIZE_MEMORY)			+= kaslr.o
- obj-$(CONFIG_MITIGATION_PAGE_TABLE_ISOLATION)	+= pti.o
-+obj-$(CONFIG_BROADCAST_TLB_FLUSH)		+= rar.o
++static void rar_full_flush(const cpumask_t *cpumask)
++{
++	guard(preempt)();
++	smp_call_rar_many(cpumask, 0, 0, TLB_FLUSH_ALL);
++	invpcid_flush_all();
++}
++
++static void rar_flush_all(void)
++{
++	rar_full_flush(cpu_online_mask);
++}
++
+ void flush_tlb_all(void)
+ {
+ 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+@@ -1458,6 +1471,8 @@ void flush_tlb_all(void)
+ 	/* First try (faster) hardware-assisted TLB invalidation. */
+ 	if (cpu_feature_enabled(X86_FEATURE_INVLPGB))
+ 		invlpgb_flush_all();
++	else if (cpu_feature_enabled(X86_FEATURE_RAR))
++		rar_flush_all();
+ 	else
+ 		/* Fall back to the IPI-based invalidation. */
+ 		on_each_cpu(do_flush_tlb_all, NULL, 1);
+@@ -1487,15 +1502,36 @@ static void do_kernel_range_flush(void *info)
+ 	struct flush_tlb_info *f = info;
+ 	unsigned long addr;
  
- obj-$(CONFIG_X86_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_amd.o
-diff --git a/arch/x86/mm/rar.c b/arch/x86/mm/rar.c
-new file mode 100644
-index 000000000000..77a334f1e212
---- /dev/null
-+++ b/arch/x86/mm/rar.c
-@@ -0,0 +1,226 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * RAR Tlb shootdown
-+ */
-+
-+#include <linux/kgdb.h>
-+#include <linux/sched.h>
-+#include <linux/bug.h>
-+#include <asm/current.h>
-+#include <asm/io.h>
-+#include <asm/sync_bitops.h>
-+#include <asm/rar.h>
-+#include <asm/tlbflush.h>
-+
-+static DEFINE_PER_CPU(int, rar_lock);
-+static DEFINE_PER_CPU(struct cpumask, rar_cpu_mask);
-+
-+#define RAR_ACTION_OK		0x00
-+#define RAR_ACTION_START	0x01
-+#define RAR_ACTION_ACKED	0x02
-+#define RAR_ACTION_FAIL		0x80
-+
-+#define RAR_MAX_PAYLOADS 32UL
-+
-+static unsigned long rar_in_use = ~(RAR_MAX_PAYLOADS - 1);
-+static rar_payload_t rar_payload[RAR_MAX_PAYLOADS] __page_aligned_bss;
-+static DEFINE_PER_CPU_ALIGNED(u64[(RAR_MAX_PAYLOADS + 8) / 8], rar_action);
-+
-+static __always_inline void lock(int *lock)
-+{
-+	smp_cond_load_acquire(lock, !(VAL & 1));
-+	*lock |= 1;
-+
 +	/*
-+	 * prevent CPU from reordering the above assignment
-+	 * to ->flags with any subsequent assignments to other
-+	 * fields of the specified call_single_data structure:
++	 * With PTI kernel TLB entries in all PCIDs need to be flushed.
++	 * With RAR the PCID space becomes so large, we might as well flush it all.
++	 *
++	 * Either of the two by itself works with targeted flushes.
 +	 */
-+	smp_wmb();
-+}
-+
-+static __always_inline void unlock(int *lock)
-+{
-+	WARN_ON(!(*lock & 1));
-+
-+	/*
-+	 * ensure we're all done before releasing data:
-+	 */
-+	smp_store_release(lock, 0);
-+}
-+
-+static unsigned long get_payload(void)
-+{
-+	while (1) {
-+		unsigned long bit;
-+
-+		/*
-+		 * Find a free bit and confirm it with
-+		 * test_and_set_bit() below.
-+		 */
-+		bit = ffz(READ_ONCE(rar_in_use));
-+
-+		if (bit >= RAR_MAX_PAYLOADS)
-+			continue;
-+
-+		if (!test_and_set_bit((long)bit, &rar_in_use))
-+			return bit;
-+	}
-+}
-+
-+static void free_payload(unsigned long idx)
-+{
-+	clear_bit(idx, &rar_in_use);
-+}
-+
-+static void set_payload(unsigned long idx, u16 pcid, unsigned long start,
-+			uint32_t pages)
-+{
-+	rar_payload_t *p = &rar_payload[idx];
-+
-+	p->must_be_zero_1	= 0;
-+	p->must_be_zero_2	= 0;
-+	p->must_be_zero_3	= 0;
-+	p->page_size		= RAR_INVLPG_PAGE_SIZE_4K;
-+	p->type			= RAR_TYPE_INVPCID;
-+	p->num_pages		= pages;
-+	p->initiator_cr3	= pcid;
-+	p->linear_address	= start;
-+
-+	if (pcid) {
-+		/* RAR invalidation of the mapping of a specific process. */
-+		if (pages >= RAR_INVLPG_MAX_PAGES)
-+			p->subtype = RAR_INVPCID_PCID;
-+		else
-+			p->subtype = RAR_INVPCID_ADDR;
-+	} else {
-+		/*
-+		 * Unfortunately RAR_INVPCID_ADDR excludes global translations.
-+		 * Always do a full flush for kernel invalidations.
-+		 */
-+		p->subtype = RAR_INVPCID_ALL;
-+	}
-+
-+	smp_wmb();
-+}
-+
-+static void set_action_entry(unsigned long idx, int target_cpu)
-+{
-+	u8 *bitmap = (u8 *)per_cpu(rar_action, target_cpu);
-+
-+	WRITE_ONCE(bitmap[idx], RAR_ACTION_START);
-+}
-+
-+static void wait_for_done(unsigned long idx, int target_cpu)
-+{
-+	u8 status;
-+	u8 *bitmap = (u8 *)per_cpu(rar_action, target_cpu);
-+
-+	status = READ_ONCE(bitmap[idx]);
-+
-+	while ((status != RAR_ACTION_OK) && (status != RAR_ACTION_FAIL)) {
-+		cpu_relax();
-+		status = READ_ONCE(bitmap[idx]);
-+	}
-+
-+	WARN_ON_ONCE(bitmap[idx] == RAR_ACTION_FAIL);
-+}
-+
-+void rar_cpu_init(void)
-+{
-+	u64 r;
-+	u8 *bitmap;
-+	int this_cpu = smp_processor_id();
-+
-+	per_cpu(rar_lock, this_cpu) = 0;
-+	cpumask_clear(&per_cpu(rar_cpu_mask, this_cpu));
-+
-+	rdmsrl(MSR_IA32_RAR_INFO, r);
-+	pr_info_once("RAR: support %lld payloads\n", r >> 32);
-+
-+	bitmap = (u8 *)per_cpu(rar_action, this_cpu);
-+	memset(bitmap, 0, RAR_MAX_PAYLOADS);
-+	wrmsrl(MSR_IA32_RAR_ACT_VEC, (u64)virt_to_phys(bitmap));
-+	wrmsrl(MSR_IA32_RAR_PAYLOAD_BASE, (u64)virt_to_phys(rar_payload));
-+
-+	r = RAR_CTRL_ENABLE | RAR_CTRL_IGNORE_IF;
-+	// reserved bits!!! r |= (RAR_VECTOR & 0xff);
-+	wrmsrl(MSR_IA32_RAR_CTRL, r);
-+}
-+
-+/*
-+ * This is a modified version of smp_call_function_many() of kernel/smp.c,
-+ * without a function pointer, because the RAR handler is the ucode.
-+ */
-+void smp_call_rar_many(const struct cpumask *mask, u16 pcid,
-+		       unsigned long start, unsigned long end)
-+{
-+	unsigned long pages = (end - start + PAGE_SIZE) / PAGE_SIZE;
-+	int cpu, next_cpu, this_cpu = smp_processor_id();
-+	cpumask_t *dest_mask;
-+	unsigned long idx;
-+
-+	if (pages > RAR_INVLPG_MAX_PAGES || end == TLB_FLUSH_ALL)
-+		pages = RAR_INVLPG_MAX_PAGES;
-+
-+	/*
-+	 * Can deadlock when called with interrupts disabled.
-+	 * We allow cpu's that are not yet online though, as no one else can
-+	 * send smp call function interrupt to this cpu and as such deadlocks
-+	 * can't happen.
-+	 */
-+	WARN_ON_ONCE(cpu_online(this_cpu) && irqs_disabled()
-+		     && !oops_in_progress && !early_boot_irqs_disabled);
-+
-+	/* Try to fastpath.  So, what's a CPU they want?  Ignoring this one. */
-+	cpu = cpumask_first_and(mask, cpu_online_mask);
-+	if (cpu == this_cpu)
-+		cpu = cpumask_next_and(cpu, mask, cpu_online_mask);
-+
-+	/* No online cpus?  We're done. */
-+	if (cpu >= nr_cpu_ids)
-+		return;
-+
-+	/* Do we have another CPU which isn't us? */
-+	next_cpu = cpumask_next_and(cpu, mask, cpu_online_mask);
-+	if (next_cpu == this_cpu)
-+		next_cpu = cpumask_next_and(next_cpu, mask, cpu_online_mask);
-+
-+	/* Fastpath: do that cpu by itself. */
-+	if (next_cpu >= nr_cpu_ids) {
-+		lock(this_cpu_ptr(&rar_lock));
-+		idx = get_payload();
-+		set_payload(idx, pcid, start, pages);
-+		set_action_entry(idx, cpu);
-+		arch_send_rar_single_ipi(cpu);
-+		wait_for_done(idx, cpu);
-+		free_payload(idx);
-+		unlock(this_cpu_ptr(&rar_lock));
++	if (cpu_feature_enabled(X86_FEATURE_RAR) &&
++	    cpu_feature_enabled(X86_FEATURE_PTI)) {
++		invpcid_flush_all();
 +		return;
 +	}
 +
-+	dest_mask = this_cpu_ptr(&rar_cpu_mask);
-+	cpumask_and(dest_mask, mask, cpu_online_mask);
-+	cpumask_clear_cpu(this_cpu, dest_mask);
-+
-+	/* Some callers race with other cpus changing the passed mask */
-+	if (unlikely(!cpumask_weight(dest_mask)))
-+		return;
-+
-+	lock(this_cpu_ptr(&rar_lock));
-+	idx = get_payload();
-+	set_payload(idx, pcid, start, pages);
-+
-+	for_each_cpu(cpu, dest_mask)
-+		set_action_entry(idx, cpu);
-+
-+	/* Send a message to all CPUs in the map */
-+	arch_send_rar_ipi_mask(dest_mask);
-+
-+	for_each_cpu(cpu, dest_mask)
-+		wait_for_done(idx, cpu);
-+
-+	free_payload(idx);
-+	unlock(this_cpu_ptr(&rar_lock));
+ 	/* flush range by one by one 'invlpg' */
+ 	for (addr = f->start; addr < f->end; addr += PAGE_SIZE)
+ 		flush_tlb_one_kernel(addr);
+ }
+ 
++static void rar_kernel_range_flush(struct flush_tlb_info *info)
++{
++	guard(preempt)();
++	smp_call_rar_many(cpu_online_mask, 0, info->start, info->end);
++	do_kernel_range_flush(info);
 +}
-+EXPORT_SYMBOL(smp_call_rar_many);
++
+ static void kernel_tlb_flush_all(struct flush_tlb_info *info)
+ {
+ 	if (cpu_feature_enabled(X86_FEATURE_INVLPGB))
+ 		invlpgb_flush_all();
++	else if (cpu_feature_enabled(X86_FEATURE_RAR))
++		rar_flush_all();
+ 	else
+ 		on_each_cpu(do_flush_tlb_all, NULL, 1);
+ }
+@@ -1504,6 +1540,8 @@ static void kernel_tlb_flush_range(struct flush_tlb_info *info)
+ {
+ 	if (cpu_feature_enabled(X86_FEATURE_INVLPGB))
+ 		invlpgb_kernel_range_flush(info);
++	else if (cpu_feature_enabled(X86_FEATURE_RAR))
++		rar_kernel_range_flush(info);
+ 	else
+ 		on_each_cpu(do_kernel_range_flush, info, 1);
+ }
 -- 
 2.49.0
 
