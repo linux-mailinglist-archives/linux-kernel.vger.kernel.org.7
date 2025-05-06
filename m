@@ -1,162 +1,226 @@
-Return-Path: <linux-kernel+bounces-635848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3011FAAC2C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:33:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF58AAC2BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3AE27B9763
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E9A1C40289
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D2227B511;
-	Tue,  6 May 2025 11:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2D927A11D;
+	Tue,  6 May 2025 11:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="btJjgamw"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KTvKmk9K"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9809C27AC52
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCCA233D9C
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 11:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746531119; cv=none; b=vCtGkrLaKgAdItJLVolU1hat4Od/3Hg8C06Si9pUZsPs29W3sMxRDOBtsGLdMbHnRsR9kROKfAuOwSVa+HWI/fo1yLR5yBYYMFz89gCgW795vIcu9EHkKLZvVseJ60skPm0JKbMDIeQBPLvjNpF4pIx2diiN4c0B+PYLV0BTus4=
+	t=1746531156; cv=none; b=omTTKfO31th1/XO98hengW0/IQt3JSRh4vOsU+pPTRIgYE4JzcVPrqPbkjQdJ1gfCWYenVBnee2Zszpe1iQ5B3xzirkDCGtFklgGAu24ZdGuKGliT+bejlikwvUJsgskmqheoWxSox6CpWEfZEwNNAuPkvHs6qjBMW//N2kJjGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746531119; c=relaxed/simple;
-	bh=dZOxThEKY/19fDb1atsCAd4vX2SSIiVfbJuNFdfhc6g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k3M3StzKz1PrFOKWCfymLz/Stz2qqZXa1lCw0OS0VkRkJz+Is7yRVilds6O+dUjgFrI0dRtdTbPbhLKf1j2/Tg7sr6zjoPfrCbF65LEDVGUjm1MhMX+bL4zRqdqomwtw9fYFns/ArOzCYiR0ry9up2YxBChXz+yVBWnXKSrktDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=btJjgamw; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so36498225e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 04:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746531115; x=1747135915; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xVYMaT82isRrkpK15HHVNBbc3e0novaLvbWmbpyFIOE=;
-        b=btJjgamwaPMIkqoGeqCUwJxMbsrXe+ax6aHgMu1gvdxjoxNrTHRXu1FnVN+FJi9ey5
-         E8Z2aufoTkRU4xRYBPSuOKve/r+gimZ23CbWOANicn6eSfFSw4xzNxTlDvtil0bVSwIM
-         tkhwVOnry/pEjBbZQkfRoNosxJVcIy6tClo9OnVm9rWWOKDOT/zDe2psEs0TRc8N5zFJ
-         wUKU/lJ+owD72z/r0DDhK3rTtn7iIQwA9zKrdRcqtQ1EINLJjqYyPSUqnW3fzUwULrsk
-         z0s+UsqDSkOojUN2bZvvuV7eVWAIigIiKmodnSmpiXuFCCPNZLENAacoEsI5THfcPytZ
-         PZYg==
+	s=arc-20240116; t=1746531156; c=relaxed/simple;
+	bh=wgdAEoTSiOxWP+EKRKfL5Lx5Umr33FPeJxeC6izneu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=muBvMueOR/9LvOH6b12k2KQNK9wzFAVOQxVAJrk6Cbp4I365JybIzMvTJa+ypOJfvIhQPWd98Nczpi+BZp9JzFcdcgY+2PZT4/pKRl5B3/Ozm0UNz4Fxmxi9ELk0S2zOm0UOIYC3Cgxz8eLdXO/SFTRXzK1cqgA930KLzmX5KQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KTvKmk9K; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54684sIT020770
+	for <linux-kernel@vger.kernel.org>; Tue, 6 May 2025 11:32:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=fwl7sL+33/f+eH9L4tdGLHOE
+	I3/YzHIvUjaSA4mATTQ=; b=KTvKmk9K+OE0l3LiE+I2xJI5LLXAXDQORpHxQXel
+	CDhBIsjrUo7truGbI7eoVJ9L5pKyt/BsNcA5ye6UKiUe5vfdT0ybVmrjQE/9rYrg
+	7+PMrAJ5Ar/zsZGyNAmkkDiU9eJnuuPleQ+PTMcRvI+F8VWBkDLdkGp879GxVJzg
+	Bf0/ChKVzesdbW+zHFjKL8Kx2cT3JVfCRpre2aGhDNN1U0BZZYBBCIlJcBBChpx3
+	D4MQ5dN6D5UJViMSwg2PMa44dBNc9UoDQRyJydVJ8ouLc4IuO5QvkiJzWIC7z3Tl
+	c1cWLYeW019GLMkF7fugxOLzFAy/bnn9ROWNO9Xb9L6lyA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dbwfqa7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 11:32:34 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5cd0f8961so1204630385a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 04:32:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746531115; x=1747135915;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xVYMaT82isRrkpK15HHVNBbc3e0novaLvbWmbpyFIOE=;
-        b=Y9FhZwrywu0QqDTT3o06urfELmfB/dkuUh+EL+J5uJ05WQ6ALwYIOUxpjFsQ9uuIGX
-         eRwX4CNjpUCERi5eh6KYsK0z5tmFBa9cb+GDW2Ex/+vXILTz0TpwggG75EA0rWVGqCTd
-         Yh7bKC+ZRvrMGmdYp0Ou5j85964EeD6BHVcQAQFVOj5EKIIHh0im9c0knffMdIdv+QBf
-         Luqu/s1C7ilAKq+hOvH4COr/VhnbhN+woJf11yHCegiAg3JyF0AsLcfnF2aETXqGPqDa
-         7AqFVQFJU5AiPkq4sUK1esN+AgpYsVmTiMlvGrIa9O0z3IXvyVWyv9uSRFxhqDyFFlPk
-         oYrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUY1Hvv/BbRCX/soBp8AdKUKfB3TWoqknMS8sJUMCFrKi1031QSknNdgEk4wZEXvGAmLQO9UlUczi0s0r0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw4RE3KRSYTkqAB5pPTDGDUEs4LvfBxIz2VB7JbRDnPtoo3Pxc
-	LDkl6FmRsRwOF/HZjLs9G9c4izpFym6Gjf8k/tYLOxkqXbI0Xy0vcAj56uZmNQnkBsrr9YlJVy5
-	pWQtb6g==
-X-Gm-Gg: ASbGncsmR56kOmJDPTglTHCxGQgKPjbaSNWAD3M5Fk2ObTH8+5pZiEFvo/fdXA9/le8
-	bKnfckrCLoNyaOxAjLgXyRX1vw8JWAe6DsDGfoKRk2qr4nfCoeVZzvKEXEdYaMkUgn6+vN/M8Ei
-	cSnE2NeFffznk2eiUNCYadGxhdox8lD4rfop4yUTdYnB1gf1K4ZwH6AKutcafgWVyNDDUWWzTIa
-	UOHb60EV1n6uicUcbahZEsYbqvoZqt67PXGDiiBmiyEZYsb6JxzylXZrLqbjwXUgNGj5v+bmxZ9
-	q5ZChHbTEJu93SgUMVZFF64k/Lf5rG/qTw2zoj2uV0nZjn228GeJKN2q56g1vqbfxAfxDwtVnr8
-	r/3RwOw9yh/sBOpW9EoSE
-X-Google-Smtp-Source: AGHT+IFB+/2+pwJwZIBD0b2yLu++CXDbSzQgzqM1gVS70tv5Bksn6acNtQIMSaKWzYmIjz1xXAmFYA==
-X-Received: by 2002:a05:600c:8012:b0:434:fa55:eb56 with SMTP id 5b1f17b1804b1-441c48b05cdmr93122945e9.7.1746531115575;
-        Tue, 06 May 2025 04:31:55 -0700 (PDT)
-Received: from ta2.c.googlers.com (92.221.190.35.bc.googleusercontent.com. [35.190.221.92])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2aecedcsm213723495e9.15.2025.05.06.04.31.54
+        d=1e100.net; s=20230601; t=1746531153; x=1747135953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fwl7sL+33/f+eH9L4tdGLHOEI3/YzHIvUjaSA4mATTQ=;
+        b=BtWh0rKmnF3LhRDIBBfRuOaPvGKRE/FL0AaHdZmH5mlbzYM5cJ1Uu3k7U5BwUjiOer
+         k2ypfYcGBv6QJux0RZGp4j0NQa0csFuT70x1pZpAiLaua6hsTcpHoimHT4/26frZCLHi
+         zi+vfgXenyKDlOKwg+HLMQihpLMQGn1XziaNwmXkKh6gIaLjquGTWp5z5bjwskhOTJu5
+         mn4jpRNjylUhVhdO7M9tbeXqpZr+V2X1ETqJWyXU73EeCtXELrULtY0Tf68cKpbpxK1Z
+         E3SXm+IMWUq1i/PHh+xL5XLsZqHWzicUnmKlvnGyFDcA1dJwlux/M2sGBLuhoDng1/nF
+         mifQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvAOAfzwPVjf8e7Z85VuIlrRP62j99pDNUVlZ2WqbOltUBExyCeWvZwii1Y4bjZ2RgwvkSZOFXwfE7Ocs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5acjQXmb1lQbt0P0er9xrb0OcT+oW2GtZS+Xtzxw83pYmQEYW
+	mgr2bswlcunPKnJV81KWgDoaZYjlJDY+n4BBcn4kvye029cS5p1g0M68nYjMhqYqjNfptwBqsWk
+	e/b75yWsH7FDHnUxRJzs3J3Fl1E3n7ZHOJmr28OT2gRRQn6GJMzrqiyjj/elNKFg=
+X-Gm-Gg: ASbGncsank+w0kXDuwn9N55fBccnkb0vB5T66AIpGeWoUR+/TDofwin7cWVOmRf/XSK
+	EPAwymiiXGARfDxdcTu+n+7ZXqvbCkaWyIlwS5m7xGIUT5g55LG/qwUmKjboP02K7vE6cmBAQr9
+	LMaG55K4ET1G5F0J86OtUF6koCJI32e+xSBKv/Bway0LiuGU/TDTYQQUcA7WuF6vj0AQR2vLqtw
+	L2HWOEiAi4x/ZpL7mXesByWvLUS98rb+uubz0Q0d72FQT5MSdxyKannPjNFBEYCJx3Svd3JVzRk
+	nJzpCyK55PkUHjnKxBR9/b7pWYrjc+QeYcIbbM8OIqFvf93Jy9MsctP8ztg9BVGqRWf5IljJxac
+	=
+X-Received: by 2002:a05:620a:170a:b0:7c5:4d2e:4d2d with SMTP id af79cd13be357-7cae3b0ca45mr1565853685a.50.1746531152634;
+        Tue, 06 May 2025 04:32:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGh5sYkZSzYvTbugryEFcZleW6v/iZDEThUuz+Ah7LtSsuWl3cmvTZ0zKAiaQcydSJfq0ywvQ==
+X-Received: by 2002:a05:620a:170a:b0:7c5:4d2e:4d2d with SMTP id af79cd13be357-7cae3b0ca45mr1565849285a.50.1746531152291;
+        Tue, 06 May 2025 04:32:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94c0897sm2039490e87.83.2025.05.06.04.32.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 04:31:54 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 06 May 2025 11:31:50 +0000
-Subject: [PATCH] dm: fix copying after src array boundaries
+        Tue, 06 May 2025 04:32:31 -0700 (PDT)
+Date: Tue, 6 May 2025 14:32:29 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v6 1/2] dmaengine: qcom: gpi: Add GPI Block event
+ interrupt support
+Message-ID: <ze5y6llgo2qx4nvilaqcmkam5ywqa76d6uetn34iblz4nefpeu@ozbgzwbyd54u>
+References: <20250506111844.1726-1-quic_jseerapu@quicinc.com>
+ <20250506111844.1726-2-quic_jseerapu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250506-dm-past-array-boundaries-v1-1-b5b1bb8b2b34@linaro.org>
-X-B4-Tracking: v=1; b=H4sIACXzGWgC/x3MMQ6DMAxA0asgz7XkpAoDV0Ed3MYBDwTkFARC3
- L0p4xv+P6GIqRTomhNMNi065wr3aOAzch4ENVaDJx8oUItxwoXLF9mMD3zPa478P6BL4lNgR09
- KUPPFJOl+r/vXdf0A3b3cymoAAAA=
-X-Change-ID: 20250506-dm-past-array-boundaries-1fe2f5a1030f
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
- Mikulas Patocka <mpatocka@redhat.com>, 
- Benjamin Marzinski <bmarzins@redhat.com>
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746531114; l=2250;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=dZOxThEKY/19fDb1atsCAd4vX2SSIiVfbJuNFdfhc6g=;
- b=zmVLAtKGrgYT4MKv8fchYAAkjBVI+UyBexEDHXyQc+1hENewYZaxjQ/O7Yyxoc9/n9JVBYPEH
- CQGMUpu2v34AhJlKIfbHG/UUXKSDuWiMsqKYs7NhYIRppYDE2xyBeFm
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506111844.1726-2-quic_jseerapu@quicinc.com>
+X-Proofpoint-ORIG-GUID: nOngTzDMAWr04BJ5xLADhluX_6MmVtOD
+X-Proofpoint-GUID: nOngTzDMAWr04BJ5xLADhluX_6MmVtOD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDExMCBTYWx0ZWRfX9z6Aqhtplf4q
+ xtxk6qPUr4xifWP8LAyFJqsF3eTK18lBi4Iuhf9AyEXtiFqfKkYt6N49GTiwSCiKhs1Gl3rAY8F
+ ofZyIJHY4JtvBnXNLzgdU1gTJSJufihveWFqgrCygltpzkqYvN3lomfXjFDv8yYWmUbMY3qtXFJ
+ DOifGZpRVT2BQQk23ud4WiPJ29klJEdSNcZS9k8mh6LxyICf6QI3NmyB/fCltC2LyVwp+GMgeHu
+ lbnX9YUq18znthb2LHSOCfQeZ/Olopfw3pB5lsI5q2U6J08oHIvDBrPZKquJgzgOYsohMLERH9o
+ q5suxoAJZqY6Taw+dgNtRTbgnGIAX+aBJ8YXtlvuIkz4FWaSa1wdbEOpBcBdwCCO3BOsspkOivy
+ y6itRV4CmO9JVUI5KzpM1VOM3UkKfUT8OhGuA85wub3jmrFCnl1PzvYEJ00yLoud9dUazccF
+X-Authority-Analysis: v=2.4 cv=AfqxH2XG c=1 sm=1 tr=0 ts=6819f352 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=QOsQMPsNCkuRs1RMv08A:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_05,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 phishscore=0 impostorscore=0
+ mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
+ spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505060110
 
-The blammed commit copied to argv the size of the reallocated argv,
-instead of the size of the old_argv, thus reading and copying from
-past the old_argv allocated memory.
+On Tue, May 06, 2025 at 04:48:43PM +0530, Jyothi Kumar Seerapu wrote:
+> GSI hardware generates an interrupt for each transfer completion.
+> For multiple messages within a single transfer, this results in
+> N interrupts for N messages, leading to significant software
+> interrupt latency.
+> 
+> To mitigate this latency, utilize Block Event Interrupt (BEI) mechanism.
+> Enabling BEI instructs the GSI hardware to prevent interrupt generation
+> and BEI is disabled when an interrupt is necessary.
+> 
+> When using BEI, consider splitting a single multi-message transfer into
+> chunks of 8 messages internally and so interrupts are not expected for
+> the first 7 message completions, only the last message triggers
+> an interrupt, indicating the completion of 8 messages.
+> 
+> This BEI mechanism enhances overall transfer efficiency.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
+> v5 ->v6:
+>   - For updating the block event interrupt bit, instead of relying on
+>     bei_flag, decision check is moved with DMA_PREP_INTERRUPT flag.
+>  
+> v4 -> v5:
+>   - BEI flag naming changed from flags to bei_flag.
+>   - QCOM_GPI_BLOCK_EVENT_IRQ macro is removed from qcom-gpi-dma.h
+>     file, and Block event interrupt support is checked with bei_flag.
+> 
+> v3 -> v4:
+>   - API's added for Block event interrupt with multi descriptor support for
+>     I2C is moved from qcom-gpi-dma.h file to I2C geni qcom driver file.
+>   - gpi_multi_xfer_timeout_handler function is moved from GPI driver to
+>     I2C driver.
+> 
+> v2-> v3:
+>    - Renamed gpi_multi_desc_process to gpi_multi_xfer_timeout_handler
+>    - MIN_NUM_OF_MSGS_MULTI_DESC changed from 4 to 2
+>    - Added documentation for newly added changes in "qcom-gpi-dma.h" file
+>    - Updated commit description.
+> 
+> v1 -> v2:
+>    - Changed dma_addr type from array of pointers to array.
+>    - To support BEI functionality with the TRE size of 64 defined in GPI driver,
+>      updated QCOM_GPI_MAX_NUM_MSGS to 16 and NUM_MSGS_PER_IRQ to 4.
+> 
+>  drivers/dma/qcom/gpi.c           | 3 +++
+>  include/linux/dma/qcom-gpi-dma.h | 2 ++
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+> index b1f0001cc99c..7e511f54166a 100644
+> --- a/drivers/dma/qcom/gpi.c
+> +++ b/drivers/dma/qcom/gpi.c
+> @@ -1695,6 +1695,9 @@ static int gpi_create_i2c_tre(struct gchan *chan, struct gpi_desc *desc,
+>  
+>  		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+>  		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
+> +
+> +		if (!(i2c->dma_flags & DMA_PREP_INTERRUPT))
+> +			tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_BEI);
+>  	}
+>  
+>  	for (i = 0; i < tre_idx; i++)
+> diff --git a/include/linux/dma/qcom-gpi-dma.h b/include/linux/dma/qcom-gpi-dma.h
+> index 6680dd1a43c6..ebac0d3edff2 100644
+> --- a/include/linux/dma/qcom-gpi-dma.h
+> +++ b/include/linux/dma/qcom-gpi-dma.h
+> @@ -65,6 +65,7 @@ enum i2c_op {
+>   * @rx_len: receive length for buffer
+>   * @op: i2c cmd
+>   * @muli-msg: is part of multi i2c r-w msgs
+> + * @dma_flags: Flags indicating DMA capabilities
+>   */
+>  struct gpi_i2c_config {
+>  	u8 set_config;
+> @@ -78,6 +79,7 @@ struct gpi_i2c_config {
+>  	u32 rx_len;
+>  	enum i2c_op op;
+>  	bool multi_msg;
+> +	unsigned int dma_flags;
 
-Following BUG_ON was hit:
-[    3.038929][    T1] kernel BUG at lib/string_helpers.c:1040!
-[    3.039147][    T1] Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-...
-[    3.056489][    T1] Call trace:
-[    3.056591][    T1]  __fortify_panic+0x10/0x18 (P)
-[    3.056773][    T1]  dm_split_args+0x20c/0x210
-[    3.056942][    T1]  dm_table_add_target+0x13c/0x360
-[    3.057132][    T1]  table_load+0x110/0x3ac
-[    3.057292][    T1]  dm_ctl_ioctl+0x424/0x56c
-[    3.057457][    T1]  __arm64_sys_ioctl+0xa8/0xec
-[    3.057634][    T1]  invoke_syscall+0x58/0x10c
-[    3.057804][    T1]  el0_svc_common+0xa8/0xdc
-[    3.057970][    T1]  do_el0_svc+0x1c/0x28
-[    3.058123][    T1]  el0_svc+0x50/0xac
-[    3.058266][    T1]  el0t_64_sync_handler+0x60/0xc4
-[    3.058452][    T1]  el0t_64_sync+0x1b0/0x1b4
-[    3.058620][    T1] Code: f800865e a9bf7bfd 910003fd 941f48aa (d4210000)
-[    3.058897][    T1] ---[ end trace 0000000000000000 ]---
-[    3.059083][    T1] Kernel panic - not syncing: Oops - BUG: Fatal exception
+Why do you need extra field instead of using
+dma_async_tx_descriptor.flags?
 
-Fix it by copying the size of src, and not the size of dst, as it was.
+>  };
+>  
+>  #endif /* QCOM_GPI_DMA_H */
+> -- 
+> 2.17.1
+> 
 
-Fixes: 5a2a6c428190 ("dm: always update the array size in realloc_argv on success")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/md/dm-table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 9e175c5e0634b49b990436898f63c2b1e696febb..6dae73ee49dbb36d89341ff09556876d0973c4ff 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -524,9 +524,9 @@ static char **realloc_argv(unsigned int *size, char **old_argv)
- 	}
- 	argv = kmalloc_array(new_size, sizeof(*argv), gfp);
- 	if (argv) {
--		*size = new_size;
- 		if (old_argv)
- 			memcpy(argv, old_argv, *size * sizeof(*argv));
-+		*size = new_size;
- 	}
- 
- 	kfree(old_argv);
-
----
-base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
-change-id: 20250506-dm-past-array-boundaries-1fe2f5a1030f
-
-Best regards,
 -- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
-
+With best wishes
+Dmitry
 
