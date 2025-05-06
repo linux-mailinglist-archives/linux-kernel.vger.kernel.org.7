@@ -1,177 +1,127 @@
-Return-Path: <linux-kernel+bounces-636491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4748AACBF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:12:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C072AACBE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C7A4E35F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:11:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2801C274FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD912857E4;
-	Tue,  6 May 2025 17:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A154A2857EB;
+	Tue,  6 May 2025 17:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnm1ULKg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcDx68d5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAF32857E1
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 17:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFF028151D;
+	Tue,  6 May 2025 17:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746551400; cv=none; b=kCshOH/5Q0qGtGMA6D5XDy76d6uSchXRL0+PwQFJvvSg2AunjuqUT+9pRRiZMwvUWZDksNcuYeTB9Hl86GWo86YmgXpBxz9qiTOI7tV8XB5x/w8nBWw0giXaSRh9CBUms6CWx0wUgk7Y554ZXMr/ypWiPHMA9bRV0FWELZos8+8=
+	t=1746551375; cv=none; b=iE5AG3t+HKmbAd9Lw3HqhGYVzSpdZO6GJ8ejIt8OXuIAoRlVgGiq0TmWppgpNy2mo5c6xVQK5g7R/luqARf1zipoCR5ptU57ByZXDOikCiD4fOiVmJTEp4zqCkdpprC8xQUcGlGwsHeqETn/LAmv846SvTiz9jxOhBU9DRQB5Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746551400; c=relaxed/simple;
-	bh=DFfoShgVkEkIsFxJFg434ErnE+bybpRnZjrAXwYnsVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XJfS+ul8pqGlnPBaPWMeKsvzBNf2BmjvEc4tl8Ot01o0bcfSLVSsDiiy5Od7CiQsWtehrqc4oJaILmOTUwf76JLUhlZr+PL4SblUj/AgweckgIJHzxTxuuiCubMaFBjZg++mtEHxeRDEz1VLvlPc+bjLcEHG86FfrZG9XaGIbQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnm1ULKg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F9DC4CEE4;
-	Tue,  6 May 2025 17:09:55 +0000 (UTC)
+	s=arc-20240116; t=1746551375; c=relaxed/simple;
+	bh=k+gZ1pxmpGXcLHj2TLw4nLia4cr2GC0EuPxS3YjpOCg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=EKHco1pGoZ87Ww7V5HrXRPMysq69Ef4g0JaMdIEFaynsRpizxeoaC+TSacIoZyAd2FsarL4K0IfoKLurDoxVyyNkRckIsQJhGza+XlJuZpVs6hcJ2HDbYB1JFKgBz8qJAgEP+UzhB4YLZWiDd3YSMXgLx+sZkIfZqZdNlnakJTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcDx68d5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58F7CC4CEF3;
+	Tue,  6 May 2025 17:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746551400;
-	bh=DFfoShgVkEkIsFxJFg434ErnE+bybpRnZjrAXwYnsVM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lnm1ULKgOgr5sLQAD4vMhTaoFy4FGWBE6G3rzU2PmrS8JFymwPD9H72yTjbX/ZMxJ
-	 jCFK4/FDl4oNkvoKjywp94cNxv+ZMJU41bgs5mcAE9YtIU2ruY4n5rvptmWYhQknNl
-	 lD426Kl0z8ClhXPPdBiSxmRfVJosl7Le8K+UNnaSagI4kROxBhcS5yUz/udZGcZfD1
-	 +hq3pcczIMsbP33rIZPM6Pdpu4rdGZ/41eA8LVkaTjjdW2FO1ujzme87yMCTqfRucz
-	 GOsrka+NH2Vkljj0xzcR9Bf25YhCgxQw+MjsVq+uMeO6LNcrWPMYrUtEQD6986BnV/
-	 twNO9r+0pvdOQ==
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: "H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Carlos Bilbao <carlos.bilbao@kernel.org>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	Fei Li <fei1.li@intel.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Juergen Gross <jgross@suse.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michal Marek <michal.lkml@markovi.net>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Stefano Stabellini <sstabellini@kernel.org>
-Subject: [PATCH 09/15] x86/kconfig/64: Enable more virtualization guest options in the defconfig: enable Xen, Xen_PVH, Jailhouse, ACRN, Intel TDX and Hyper-V
-Date: Tue,  6 May 2025 19:09:18 +0200
-Message-ID: <20250506170924.3513161-10-mingo@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250506170924.3513161-1-mingo@kernel.org>
-References: <20250506170924.3513161-1-mingo@kernel.org>
+	s=k20201202; t=1746551374;
+	bh=k+gZ1pxmpGXcLHj2TLw4nLia4cr2GC0EuPxS3YjpOCg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=VcDx68d5Wc2yLUlRvccpd/myN1moA5pKE7H4f4f0ib88r7j1fENwvw70NQSonwxgT
+	 CoE7MGXOHwDCwuIbSm/A2O46wmnjfivqwDUitiIa0y+7kxPeWTaIManccTNRWz2/0f
+	 VtYWfG1NK1BQEZZ+omAqXCAyT2yy7lnwcYvf7T/lCurvR/bf5djhiHe9SZ4Po6ZlFR
+	 jOObMVTZ0NSuKZH0M4+qy09FQyLibIE2v6Jz0uZG0NkmJdg0JODLYztSIpljgwOKaf
+	 0yCl9OjzkYWmiNwj/2OyGxUfVsU5jkw1l/muai+Mju8ETfY06KbzZlijB4bu+YcNKy
+	 1RbOH1vM0675g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4942DC3ABC5;
+	Tue,  6 May 2025 17:09:34 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Tue, 06 May 2025 12:09:18 -0500
+Subject: [PATCH v2 2/2] phy: tegra: xusb: Default otg mode to peripheral
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250506-xusb-peripheral-v2-2-bfbe00671389@gmail.com>
+References: <20250506-xusb-peripheral-v2-0-bfbe00671389@gmail.com>
+In-Reply-To: <20250506-xusb-peripheral-v2-0-bfbe00671389@gmail.com>
+To: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746551373; l=1618;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=WY090858pJtzoKww7YaC7Z9JTjET1bec4L1964gg6J4=;
+ b=NaDOg+nVQv05p86Ta/79J6j2EU3M3vcxowUBXmQydstuVgGIULGpaJycP9oGlAbZopQhyWfpF
+ OWzO8bM+nO6Cp/bxIk33uX0ce/QeUjBV6iUHqoiGfgtc3beuBTn+vi1
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Since the x86 defconfig aims to be a distro kernel work-alike with
-fewer drivers and a shorter build time, refresh all the virtualization
-guest Kconfig features, enabling paravirt spinlocks, and
-enabling the guest support code for the following guests:
+From: Aaron Kling <webgeek1234@gmail.com>
 
- - Xen
- - Xen_PVH
- - Jailhouse
- - ACRN
- - Intel TDX
- - Hyper-V
+Currently, if usb-role-switch is set and role-switch-default-mode is
+not, a xusb port will be inoperable until that port is hotplugged,
+because the driver defaults to role none. Instead of requiring all
+devices to set the default mode, assume that the port is primarily
+intended for use in device mode.
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Carlos Bilbao <carlos.bilbao@kernel.org>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Elena Reshetova <elena.reshetova@intel.com>
-Cc: Fei Li <fei1.li@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- arch/x86/configs/defconfig.x86_64 | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/phy/tegra/xusb.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/configs/defconfig.x86_64 b/arch/x86/configs/defconfig.x86_64
-index 156e9490e29b..df786b8b4e85 100644
---- a/arch/x86/configs/defconfig.x86_64
-+++ b/arch/x86/configs/defconfig.x86_64
-@@ -30,7 +30,12 @@ CONFIG_PROFILING=y
- CONFIG_KEXEC=y
- CONFIG_SMP=y
- CONFIG_HYPERVISOR_GUEST=y
--CONFIG_PARAVIRT=y
-+CONFIG_PARAVIRT_SPINLOCKS=y
-+CONFIG_XEN=y
-+CONFIG_XEN_PVH=y
-+CONFIG_JAILHOUSE_GUEST=y
-+CONFIG_ACRN_GUEST=y
-+CONFIG_INTEL_TDX_GUEST=y
- CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
- CONFIG_X86_MSR=y
- CONFIG_X86_CPUID=y
-@@ -128,6 +133,7 @@ CONFIG_NET_9P=y
- CONFIG_NET_9P_VIRTIO=y
- CONFIG_PCI=y
- CONFIG_PCIEPORTBUS=y
-+CONFIG_PCI_HYPERV=y
- CONFIG_HOTPLUG_PCI=y
- CONFIG_PCCARD=y
- CONFIG_YENTA=y
-@@ -168,6 +174,7 @@ CONFIG_SKY2=y
- CONFIG_FORCEDETH=y
- CONFIG_8139TOO=y
- CONFIG_R8169=y
-+CONFIG_HYPERV_NET=y
- CONFIG_INPUT_EVDEV=y
- CONFIG_INPUT_JOYSTICK=y
- CONFIG_INPUT_TABLET=y
-@@ -198,6 +205,7 @@ CONFIG_AGP_INTEL=y
- CONFIG_DRM=y
- CONFIG_DRM_I915=y
- CONFIG_DRM_VIRTIO_GPU=y
-+CONFIG_DRM_HYPERV=y
- CONFIG_SOUND=y
- CONFIG_SND=y
- CONFIG_SND_HRTIMER=y
-@@ -214,6 +222,7 @@ CONFIG_HID_PETALYNX=y
- CONFIG_HID_SAMSUNG=y
- CONFIG_HID_SONY=y
- CONFIG_HID_SUNPLUS=y
-+CONFIG_HID_HYPERV_MOUSE=y
- CONFIG_HID_TOPSEED=y
- CONFIG_HID_PID=y
- CONFIG_USB_HIDDEV=y
-@@ -231,6 +240,9 @@ CONFIG_RTC_CLASS=y
- CONFIG_DMADEVICES=y
- CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_INPUT=y
-+CONFIG_HYPERV=y
-+CONFIG_HYPERV_UTILS=y
-+CONFIG_HYPERV_BALLOON=y
- CONFIG_EEEPC_LAPTOP=y
- CONFIG_AMD_IOMMU=y
- CONFIG_INTEL_IOMMU=y
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 79d4814d758d5e1f0e8200d61e131606adbb0e2d..22338f3f24a0794c22544a0e16e0fc706c4fb6d7 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -726,18 +726,15 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
+ 
+ static void tegra_xusb_parse_usb_role_default_mode(struct tegra_xusb_port *port)
+ {
+-	enum usb_role role = USB_ROLE_NONE;
++	/* Most switchable usb ports are normally used in device mode */
++	enum usb_role role = USB_ROLE_DEVICE;
+ 	enum usb_dr_mode mode = usb_get_role_switch_default_mode(&port->dev);
+ 
+ 	if (mode == USB_DR_MODE_HOST)
+ 		role = USB_ROLE_HOST;
+-	else if (mode == USB_DR_MODE_PERIPHERAL)
+-		role = USB_ROLE_DEVICE;
+ 
+-	if (role != USB_ROLE_NONE) {
+-		usb_role_switch_set_role(port->usb_role_sw, role);
+-		dev_dbg(&port->dev, "usb role default mode is %s", modes[mode]);
+-	}
++	usb_role_switch_set_role(port->usb_role_sw, role);
++	dev_dbg(&port->dev, "usb role default mode is %s", modes[mode]);
+ }
+ 
+ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+
 -- 
-2.45.2
+2.48.1
+
 
 
