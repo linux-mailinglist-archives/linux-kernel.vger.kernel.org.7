@@ -1,223 +1,293 @@
-Return-Path: <linux-kernel+bounces-636815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E64AAD048
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:52:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F83AAD026
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB689A0B34
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C1DA1882DDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E28F23D285;
-	Tue,  6 May 2025 21:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7C823C8A1;
+	Tue,  6 May 2025 21:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="DOM5eKdO"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2109.outbound.protection.outlook.com [40.107.100.109])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0bAqhaD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98440221294;
-	Tue,  6 May 2025 21:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.109
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746567513; cv=fail; b=eSrCD5wX3eULwms/EQzIqPjaUnDmIGnIw+da6TL73c0Cu2S4RH5MaSGwTRZpjxERpF1N6kaferkfFDITwIcy1j6Q2fD/2Vc3re/r2XteevZCAQTxAw9ESd1aTOxbVz3EiasFen7/MrAj8U4cFQl8FY6pCJ7ozXVsm13E+EZqBcw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746567513; c=relaxed/simple;
-	bh=N82lQgw0OOtW3DNeHdfoRKpC2j5SqL3vrku7Px3ILqg=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hO4w9IcuQ7nqkSJGVlgCXHZ16V0WubeDX6XD89dflfEBqZTcj2vHJyZgNDy3YJTO71pKFb3EjerkDSkSociu9oLKz0eCDvSI7OQqUxgqnOwdx4KJhlzqUtsuR8bzLla8bv6Jc/TDcmqv2GiAhsGsxlbvWk/F+zfEZ3Ne2PfEimk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=DOM5eKdO; arc=fail smtp.client-ip=40.107.100.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hQATr6n/cqCMuDFN6clcmOQrHLrD66UiyZunL2pC+ww3QENcc8ZoyZUVi4ezWj7aKcZ7iPw+StTbydmRepUZVycmOVdEEupg2AGGUKYKDuJJ5AZ8zWyrT2c1BtLThgHKrIlTEVK4aY7J0uBPhbc3DviSC1zFzxs8e2UB4SxyGZoWqMTbN8lFECDRAYJEicnjL/MZX9FCvUS4h1xi9tAfFA9ZLalzmKTLpk8E10jqBDfVCIXvc3q7He8PTWIRY4vwoQT6VexHPt9XE80v3bOnegiAFA8xPsffOKHKCEhv0VKHwwfqMh7GvrRFMOEIQL+aC2oPjyo/awDyUlPgme5iVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7I6WwV15YtJvLaqmzSPZuA7F+ZEjQ4z8qExpNmVFSgQ=;
- b=fXwtwkAWia3BNbjvWRy/FjxwHM8euzfbDllLd/Okg1lLYYQaRmyiIzCJ2I4QlEYD7I9Z/g7dLEPP7tawwJXouBrdpjELgrvX0junLP7CsynGRRr59d/2zWXWWgCif2YZWASehcT/K7ZsAqIzTT8wOdSzxdEVsBLNA6xJAfH4PG2/I34gHizTVt00rnCcS39fguXA7/RIwxHVvWjxRhRPVIVl2HKba585+YHJsrhci0UbAPJWd6SXHQgaZDCspXse5s12VrtD88BKbQDtUKPWw96D/tyM9TjHK81GBOiRRIWg7DxoCZk8xkWvyF7jUAQkl+/fQEqHD5K9iqFhqt6Vww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7I6WwV15YtJvLaqmzSPZuA7F+ZEjQ4z8qExpNmVFSgQ=;
- b=DOM5eKdOOiIXyD8gh/TnjwCzRjYzN62DBDv0eHpS2eKCZM5dLUwVtCE6iLsUxP9d/5a4XQzJIRW4stdtZNzmiv20/OVkM4Efq84TNpvfGPvexFZdDEI4//U8obcGntE0Xx0tF/U4QtCy3Vl+zYoklmuIX3zEdeIVAqVovDF1mrg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from SN7PR01MB7903.prod.exchangelabs.com (2603:10b6:806:34f::17) by
- DS1PR01MB8717.prod.exchangelabs.com (2603:10b6:8:214::12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8699.26; Tue, 6 May 2025 21:38:28 +0000
-Received: from SN7PR01MB7903.prod.exchangelabs.com
- ([fe80::cf45:9855:a64e:382f]) by SN7PR01MB7903.prod.exchangelabs.com
- ([fe80::cf45:9855:a64e:382f%6]) with mapi id 15.20.8699.022; Tue, 6 May 2025
- 21:38:28 +0000
-From: Zaid Alali <zaidal@os.amperecomputing.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	james.morse@arm.com,
-	tony.luck@intel.com,
-	bp@alien8.de,
-	robert.moore@intel.com,
-	Jonathan.Cameron@huawei.com,
-	ira.weiny@intel.com,
-	Benjamin.Cheatham@amd.com,
-	dan.j.williams@intel.com,
-	arnd@arndb.de,
-	Avadhut.Naik@amd.com,
-	u.kleine-koenig@pengutronix.de,
-	john.allen@amd.com,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	acpica-devel@lists.linux.dev
-Subject: [PATCH v7 1/9] ACPICA: Update values to hex to follow ACPI specs
-Date: Tue,  6 May 2025 14:38:05 -0700
-Message-ID: <20250506213814.2365788-2-zaidal@os.amperecomputing.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250506213814.2365788-1-zaidal@os.amperecomputing.com>
-References: <20250506213814.2365788-1-zaidal@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR03CA0102.namprd03.prod.outlook.com
- (2603:10b6:303:b7::17) To SN7PR01MB7903.prod.exchangelabs.com
- (2603:10b6:806:34f::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD1B23BD1F;
+	Tue,  6 May 2025 21:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746567495; cv=none; b=OXoe5soVDON7Ce5SM+9VaZWtOKDrltnFeyAJXrbCJJ/C4pW9U4OqxKwnEvkVXCY20pkkbLPJ5FrgqLvgtTyzH4Ulpnm5FvpbYj23SCHTd4ysDa2PUPZzW0lRaI+jII+GCVl59nj2ZiGY4rlHAEsp2S+Vb/MeuoGIQLJn8qrqrww=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746567495; c=relaxed/simple;
+	bh=4bEhfC7cIkwf06OeSU6GXLBBjgl7lVeWSVlpBrfPtwg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FtQIoQMYoDHebCcsr5bUCzythZR7JFiI82LKrGcPG81Z8aHI7TXBZyvpAoRANucnd0cEjapw0DO5T0SgzutXIRGz0sIXXEaF2iZwbtz9LM6X3nUv5m8zoxkJymeVpnVVlmufSNzqKNy9DGtflw6XCeRRs6uScwsveuO/VyrWGRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0bAqhaD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD26C4CEE4;
+	Tue,  6 May 2025 21:38:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746567495;
+	bh=4bEhfC7cIkwf06OeSU6GXLBBjgl7lVeWSVlpBrfPtwg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=s0bAqhaDGHWvsH/bj17B1tT/5tWxDiQphCXayvcouYy8cIp/7DlaZ9waCQ8q55QMF
+	 vMYQpaIfZCaY/2/IhEoeQpPpwuJgGLj1e11mrmCUmAi9LBIZa4N20TTHOb7NwjKwlv
+	 hLJrql+hx5qwkCUrNlL7NMSu9OTJoahq96stz8UrhBVgPR6ArNr4EpplGt/ZD7qJTb
+	 3dm2wG7q5Yswyp8hvqUOqTUXMDgp7cJzG4WgpJSoaPeR2P1qUu47hDKrsZaSxIrJd3
+	 MrDj2GlQ7mHgmGACHkLLBVBXUif9GZtTL+IAtGnxHeN7K35As2Rmp4ApNgTNs1pJcI
+	 7j2xhvScgtkPQ==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Alistair Francis <alistair.francis@wdc.com>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Sasha Levin <sashal@kernel.org>,
+	kch@nvidia.com,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 3/3] nvmet-tcp: don't restore null sk_state_change
+Date: Tue,  6 May 2025 17:38:05 -0400
+Message-Id: <20250506213805.2983809-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250506213805.2983809-1-sashal@kernel.org>
+References: <20250506213805.2983809-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR01MB7903:EE_|DS1PR01MB8717:EE_
-X-MS-Office365-Filtering-Correlation-Id: aba635a7-ea30-4912-c9ee-08dd8ce65690
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PoEaZsTAMxMD1naTiI5SaptFxqxlx+A4itX6Eq8CvrnjPhMHMmenNgGOOBBk?=
- =?us-ascii?Q?R2VMkYWBXJHbINudGaa0b6OWIxUN3MZRYksfhI5kAQHgiimQdnOStoIaVPO4?=
- =?us-ascii?Q?GgpUpYm6H9QMLdNQxXfharNHpvNsvIES9sgpyKJDcr2e2xu6VSFg3lWL8ka0?=
- =?us-ascii?Q?HYkBIGnp1FdMt/AiCgiMEC/1Gfthe+MooBC7+Q7gFQqA7+VrAA1cD3C/X54I?=
- =?us-ascii?Q?ZGRgWtNPJg/unsbKjjYF1mwzLY+271CxrQK6mOpKxdIgtmKcZjUJMwB26PHC?=
- =?us-ascii?Q?80/MJq4HuGQ/avMYgAMO5M3qGHLK86ywildjOTgZCF+ncFv1Ep7RpeC0e5qR?=
- =?us-ascii?Q?s0z46YrJRQcADxJlf20uV2EqqvRqx7Bg9KSKztbHOVR0lWOn6fFLaIwn09SF?=
- =?us-ascii?Q?oBgXfEufFGNFqPBMXasbFSG+WhI6HcnmC8HpQ3wat/xAFilmv8s9x6mXb2S3?=
- =?us-ascii?Q?v4Hgzk0m9Ce7iUNNDCVLV5d3NN+JjAwA222vCIuRqKNBgnXnkXZxexMgIFl1?=
- =?us-ascii?Q?y9w3weQB2zhwZz6scRXRhGkCbx484QMWmA5vrZb42EWwQoNzeVrhvlDxOnci?=
- =?us-ascii?Q?seV3TnOwbsyx7H8gKHagsdTWqhZuZqerusBVxu53vRSWRnUC86mH402Rtryi?=
- =?us-ascii?Q?pGyDsYUYzmzYdujeoy8MFPDR3yx/IyLSTrjNCKWywTCICo0BlNYFgCEur4rg?=
- =?us-ascii?Q?Mesdms/wIkv5YCQVxJmamfNOCUSrLTpXTANOJ2raQb4AN6IqwIlRC6KzZ1gt?=
- =?us-ascii?Q?WAZe+sGXFuKCzXVbX84rut7XqReO/TWlM9w6g3Vv+ro1nakW8dKhrfH+SQjG?=
- =?us-ascii?Q?zd+TjMOfdi6dBjTaofsBKYtyxdphUzx3WOWtOyZ5F2Y0QvbbIILsUFvB9S/Q?=
- =?us-ascii?Q?tYp3iHFg/mFmB+/8jG8gyfGrv7qfKlFp3wO9NjEuwEmj24EiAupf/xyhSbEF?=
- =?us-ascii?Q?fFqGT7cir22YxOLMmTr7SnUQHAaeTk9J/L4fY2PYKYpZuR7m82YSkBQBWOnr?=
- =?us-ascii?Q?MzX85MlcAb7sqhDZpPsH0JPAODJOdnPoZSHiupgpOli+xjfGd76zn2f0kdWu?=
- =?us-ascii?Q?Y1XUi1omIvbb26t1Iln3DBA2krRUC1f547j9YaZEp16zrkQOFUQzOnOLJffu?=
- =?us-ascii?Q?qoAqUX3PnCr4jo+rBwLzwaWlv7/bP84DWIYq6I7wG3t2WRPJMAdffQwiTMhY?=
- =?us-ascii?Q?I5yCiZHXtuELlC0CPoZBqHALc0bZ08b8+hWTQ5r+atzGqI1XJC89GiSGaHPj?=
- =?us-ascii?Q?Wajo85ggrb8wo5hi7wjDlj0xEiZ/iC6wWD4m85OEZz9tB1pobKnr6jbKH4LJ?=
- =?us-ascii?Q?Dstn5krBSYPU7GPVohJMi6CYM/BD3OU2k+nVBdTZN4BKd1dKn61v8wTQcefS?=
- =?us-ascii?Q?e5KqCXC1Tl+lVCG3fv3on8M8W+dhkXsa3KcCbETIoY+H4n5o6bGj0KjabrE8?=
- =?us-ascii?Q?I2/OS9vqoUuCRHVmtgtvcbuJN53B23MO1GoR1MXUFUQI2H1mcaUZeVtT4jPg?=
- =?us-ascii?Q?q12ioROc1CyC6Ds=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR01MB7903.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8J10jEJSaHSj28n/uLxzDKwrg0NZL8yFUUJuYvViFrzpGzQTQckIMwbpiatz?=
- =?us-ascii?Q?8dPmqXOKyO94u/21WZahnZjzCjB2ESfQJP1ipj8NQusTfNmKObIx0MxoUvTm?=
- =?us-ascii?Q?mSDlBsFcsr9CEbHndwykNoiB/85gtxlhPRmYei+ZYedL2fx1SvTn4FULiXZ+?=
- =?us-ascii?Q?zfBgwss/b2fKKON90j6B4HllBeB9IkXmexr40lg5ip24fZnIe9z0OFvYUAZU?=
- =?us-ascii?Q?B8Vdc9vWzEHc2dUEfwfhpcagp1zvZyF+hRWt8xir5E3pUOJ+LvlqsqhGVha9?=
- =?us-ascii?Q?DjGjuMavf/nU//Ch8Tr8UTKMHTNF4hwzANkOVx9kM68AULPoh9mP2f9Tjov0?=
- =?us-ascii?Q?AwRRYrjaMSR26naPFfUIOZwyyJZkv/31PT+SwwTzYzV7G9S/cTft/RFF1Awm?=
- =?us-ascii?Q?7V+kF5GnxY4z21KXOingytnKnZBsDu25xL1nR73c84tz3J7xCoJuabllLnF5?=
- =?us-ascii?Q?LmmhhQAwoKGVJZY4iwLd35LUQdiocYlR9nWeqqhIQQkoZSLrzPJnz6Tnjbi7?=
- =?us-ascii?Q?EFTa4ajCGndmH84K70TC3YvDPfdPszVCxtsdU0KtLdtIVfMhyMhUd5lZI5F3?=
- =?us-ascii?Q?MvR3yPLpPFjEDddL19wdxjZ+0TljCB16vCFMe/CFLorFxQu4R6LApPOJfjLe?=
- =?us-ascii?Q?8Qj3H4Pt1ZfdfihXjTFeaNoaja9cs59ybXkZi1cyoVLLj12psjF6rRJtzHmq?=
- =?us-ascii?Q?8CrLWG1LexrIS4qLBo7UANpwkp2vijOI1kg+cDFwLdLagBgIgN5Uy4Nhhj0D?=
- =?us-ascii?Q?ACl5fzIaJhtrfx5cyPoimFEMdgwv69MDYnRuxRsIw+LwRRhTiaVmq+na4Ttt?=
- =?us-ascii?Q?NX4QnlrrpKoZBgttHhLUCkGbJj1pG1vHjP6oWUuSMeSIh7WtALMbjMi90b2n?=
- =?us-ascii?Q?FLzH8Lt/AdEBKPr52916LR9vGVmsRmI4fNX2LpAGiJd9kiKHHj/baIMYcePq?=
- =?us-ascii?Q?HjGbwceVM0GLzrG4PrK2cAek1B1DqqfP9IYQo3o0AW8l6rOG9otgW9d0+gkP?=
- =?us-ascii?Q?d/SqG7O+5bEdjuauWD7ghV3iM7qVjmF8sWI4l0WwNbo/1Y7kWVKBxS7Vf8ro?=
- =?us-ascii?Q?XFD967olN1GSRbVITbR4KEFVDnSc6DCSoG61mvJb3Auib9sajpcHtlC5vM+B?=
- =?us-ascii?Q?OT5LQprMbo2lcXO702ZxVP1IPhz/2ZH9dnmf9HNWq3BWIjcj/zm0R1CwtjAL?=
- =?us-ascii?Q?kLMzeHfpjcxR5S4PlQYjthiqaFnqFtndYSd+vevRWuVegEVb2sPhPNCojxjE?=
- =?us-ascii?Q?ZOdPxUE9IYTKoXZIIkRIRNn6F9f05O5A38/VwXfK3FYdtsPOL2ar24RY0cKF?=
- =?us-ascii?Q?KTCtsriWRp3cJ6z238TuyNX4yN1LRHtNViO7u8rijZULZtgH75vdPjbpW8Xn?=
- =?us-ascii?Q?qywI/+ncHy2LCBuvBkzEetS5HcsLzOk45gK9ZfuWL5cLUd57JOYu++UclVxL?=
- =?us-ascii?Q?zP+J7dyEQVddlGYrA46rfy+wTXTn1o2Ervh1chpMtTHm7oiKggHiL2DUuDxp?=
- =?us-ascii?Q?3uE7Hx+PzdBIG6zksVxDNDstJmD6FMAv1pztpFId64MKVYmyMUt5p6CpU96E?=
- =?us-ascii?Q?D/Adj1S+J8vMgxt/6kD647QOLRMz4c+LEp50SY5NRaHhCPrCCQM9ry+aDzQ6?=
- =?us-ascii?Q?pu7x9uNSKOAs/D+LS+/8au0=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aba635a7-ea30-4912-c9ee-08dd8ce65690
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR01MB7903.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 21:38:28.0699
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: f/2gmFkk8/lb2QNMaPL1kA3QuRmaI+ox6PyYbkUIjyUHT1QIX3kF/aJHG4SPYX7Yw3+kvUgqXiMjYIlJbTXshYUHOLeQVdmnYZV42zLK23ZJPltt1ljAqktu4ZxqcMlW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR01MB8717
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.293
+Content-Transfer-Encoding: 8bit
 
-ACPI specs[1] define Error Injection Actions in hex values.
-This commit intends to update values from decimal to hex to be
-consistent with ACPI specs. This commit and the following one are
-not to be merged and will come form ACPICA project see pull request[2].
+From: Alistair Francis <alistair.francis@wdc.com>
 
-Link: https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html [1]
-Link: https://github.com/acpica/acpica/pull/977 [2]
+[ Upstream commit 46d22b47df2741996af277a2838b95f130436c13 ]
 
-Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+queue->state_change is set as part of nvmet_tcp_set_queue_sock(), but if
+the TCP connection isn't established when nvmet_tcp_set_queue_sock() is
+called then queue->state_change isn't set and sock->sk->sk_state_change
+isn't replaced.
+
+As such we don't need to restore sock->sk->sk_state_change if
+queue->state_change is NULL.
+
+This avoids NULL pointer dereferences such as this:
+
+[  286.462026][    C0] BUG: kernel NULL pointer dereference, address: 0000000000000000
+[  286.462814][    C0] #PF: supervisor instruction fetch in kernel mode
+[  286.463796][    C0] #PF: error_code(0x0010) - not-present page
+[  286.464392][    C0] PGD 8000000140620067 P4D 8000000140620067 PUD 114201067 PMD 0
+[  286.465086][    C0] Oops: Oops: 0010 [#1] SMP KASAN PTI
+[  286.465559][    C0] CPU: 0 UID: 0 PID: 1628 Comm: nvme Not tainted 6.15.0-rc2+ #11 PREEMPT(voluntary)
+[  286.466393][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+[  286.467147][    C0] RIP: 0010:0x0
+[  286.467420][    C0] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+[  286.467977][    C0] RSP: 0018:ffff8883ae008580 EFLAGS: 00010246
+[  286.468425][    C0] RAX: 0000000000000000 RBX: ffff88813fd34100 RCX: ffffffffa386cc43
+[  286.469019][    C0] RDX: 1ffff11027fa68b6 RSI: 0000000000000008 RDI: ffff88813fd34100
+[  286.469545][    C0] RBP: ffff88813fd34160 R08: 0000000000000000 R09: ffffed1027fa682c
+[  286.470072][    C0] R10: ffff88813fd34167 R11: 0000000000000000 R12: ffff88813fd344c3
+[  286.470585][    C0] R13: ffff88813fd34112 R14: ffff88813fd34aec R15: ffff888132cdd268
+[  286.471070][    C0] FS:  00007fe3c04c7d80(0000) GS:ffff88840743f000(0000) knlGS:0000000000000000
+[  286.471644][    C0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  286.472543][    C0] CR2: ffffffffffffffd6 CR3: 000000012daca000 CR4: 00000000000006f0
+[  286.473500][    C0] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  286.474467][    C0] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
+[  286.475453][    C0] Call Trace:
+[  286.476102][    C0]  <IRQ>
+[  286.476719][    C0]  tcp_fin+0x2bb/0x440
+[  286.477429][    C0]  tcp_data_queue+0x190f/0x4e60
+[  286.478174][    C0]  ? __build_skb_around+0x234/0x330
+[  286.478940][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.479659][    C0]  ? __pfx_tcp_data_queue+0x10/0x10
+[  286.480431][    C0]  ? tcp_try_undo_loss+0x640/0x6c0
+[  286.481196][    C0]  ? seqcount_lockdep_reader_access.constprop.0+0x82/0x90
+[  286.482046][    C0]  ? kvm_clock_get_cycles+0x14/0x30
+[  286.482769][    C0]  ? ktime_get+0x66/0x150
+[  286.483433][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.484146][    C0]  tcp_rcv_established+0x6e4/0x2050
+[  286.484857][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.485523][    C0]  ? ipv4_dst_check+0x160/0x2b0
+[  286.486203][    C0]  ? __pfx_tcp_rcv_established+0x10/0x10
+[  286.486917][    C0]  ? lock_release+0x217/0x2c0
+[  286.487595][    C0]  tcp_v4_do_rcv+0x4d6/0x9b0
+[  286.488279][    C0]  tcp_v4_rcv+0x2af8/0x3e30
+[  286.488904][    C0]  ? raw_local_deliver+0x51b/0xad0
+[  286.489551][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.490198][    C0]  ? __pfx_tcp_v4_rcv+0x10/0x10
+[  286.490813][    C0]  ? __pfx_raw_local_deliver+0x10/0x10
+[  286.491487][    C0]  ? __pfx_nf_confirm+0x10/0x10 [nf_conntrack]
+[  286.492275][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.492900][    C0]  ip_protocol_deliver_rcu+0x8f/0x370
+[  286.493579][    C0]  ip_local_deliver_finish+0x297/0x420
+[  286.494268][    C0]  ip_local_deliver+0x168/0x430
+[  286.494867][    C0]  ? __pfx_ip_local_deliver+0x10/0x10
+[  286.495498][    C0]  ? __pfx_ip_local_deliver_finish+0x10/0x10
+[  286.496204][    C0]  ? ip_rcv_finish_core+0x19a/0x1f20
+[  286.496806][    C0]  ? lock_release+0x217/0x2c0
+[  286.497414][    C0]  ip_rcv+0x455/0x6e0
+[  286.497945][    C0]  ? __pfx_ip_rcv+0x10/0x10
+[  286.498550][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.499137][    C0]  ? __pfx_ip_rcv_finish+0x10/0x10
+[  286.499763][    C0]  ? lock_release+0x217/0x2c0
+[  286.500327][    C0]  ? dl_scaled_delta_exec+0xd1/0x2c0
+[  286.500922][    C0]  ? __pfx_ip_rcv+0x10/0x10
+[  286.501480][    C0]  __netif_receive_skb_one_core+0x166/0x1b0
+[  286.502173][    C0]  ? __pfx___netif_receive_skb_one_core+0x10/0x10
+[  286.502903][    C0]  ? lock_acquire+0x2b2/0x310
+[  286.503487][    C0]  ? process_backlog+0x372/0x1350
+[  286.504087][    C0]  ? lock_release+0x217/0x2c0
+[  286.504642][    C0]  process_backlog+0x3b9/0x1350
+[  286.505214][    C0]  ? process_backlog+0x372/0x1350
+[  286.505779][    C0]  __napi_poll.constprop.0+0xa6/0x490
+[  286.506363][    C0]  net_rx_action+0x92e/0xe10
+[  286.506889][    C0]  ? __pfx_net_rx_action+0x10/0x10
+[  286.507437][    C0]  ? timerqueue_add+0x1f0/0x320
+[  286.507977][    C0]  ? sched_clock_cpu+0x68/0x540
+[  286.508492][    C0]  ? lock_acquire+0x2b2/0x310
+[  286.509043][    C0]  ? kvm_sched_clock_read+0xd/0x20
+[  286.509607][    C0]  ? handle_softirqs+0x1aa/0x7d0
+[  286.510187][    C0]  handle_softirqs+0x1f2/0x7d0
+[  286.510754][    C0]  ? __pfx_handle_softirqs+0x10/0x10
+[  286.511348][    C0]  ? irqtime_account_irq+0x181/0x290
+[  286.511937][    C0]  ? __dev_queue_xmit+0x85d/0x3450
+[  286.512510][    C0]  do_softirq.part.0+0x89/0xc0
+[  286.513100][    C0]  </IRQ>
+[  286.513548][    C0]  <TASK>
+[  286.513953][    C0]  __local_bh_enable_ip+0x112/0x140
+[  286.514522][    C0]  ? __dev_queue_xmit+0x85d/0x3450
+[  286.515072][    C0]  __dev_queue_xmit+0x872/0x3450
+[  286.515619][    C0]  ? nft_do_chain+0xe16/0x15b0 [nf_tables]
+[  286.516252][    C0]  ? __pfx___dev_queue_xmit+0x10/0x10
+[  286.516817][    C0]  ? selinux_ip_postroute+0x43c/0xc50
+[  286.517433][    C0]  ? __pfx_selinux_ip_postroute+0x10/0x10
+[  286.518061][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.518606][    C0]  ? ip_output+0x164/0x4a0
+[  286.519149][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.519671][    C0]  ? ip_finish_output2+0x17d5/0x1fb0
+[  286.520258][    C0]  ip_finish_output2+0xb4b/0x1fb0
+[  286.520787][    C0]  ? __pfx_ip_finish_output2+0x10/0x10
+[  286.521355][    C0]  ? __ip_finish_output+0x15d/0x750
+[  286.521890][    C0]  ip_output+0x164/0x4a0
+[  286.522372][    C0]  ? __pfx_ip_output+0x10/0x10
+[  286.522872][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.523402][    C0]  ? _raw_spin_unlock_irqrestore+0x4c/0x60
+[  286.524031][    C0]  ? __pfx_ip_finish_output+0x10/0x10
+[  286.524605][    C0]  ? __ip_queue_xmit+0x999/0x2260
+[  286.525200][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.525744][    C0]  ? ipv4_dst_check+0x16a/0x2b0
+[  286.526279][    C0]  ? lock_release+0x217/0x2c0
+[  286.526793][    C0]  __ip_queue_xmit+0x1883/0x2260
+[  286.527324][    C0]  ? __skb_clone+0x54c/0x730
+[  286.527827][    C0]  __tcp_transmit_skb+0x209b/0x37a0
+[  286.528374][    C0]  ? __pfx___tcp_transmit_skb+0x10/0x10
+[  286.528952][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.529472][    C0]  ? seqcount_lockdep_reader_access.constprop.0+0x82/0x90
+[  286.530152][    C0]  ? trace_hardirqs_on+0x12/0x120
+[  286.530691][    C0]  tcp_write_xmit+0xb81/0x88b0
+[  286.531224][    C0]  ? mod_memcg_state+0x4d/0x60
+[  286.531736][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.532253][    C0]  __tcp_push_pending_frames+0x90/0x320
+[  286.532826][    C0]  tcp_send_fin+0x141/0xb50
+[  286.533352][    C0]  ? __pfx_tcp_send_fin+0x10/0x10
+[  286.533908][    C0]  ? __local_bh_enable_ip+0xab/0x140
+[  286.534495][    C0]  inet_shutdown+0x243/0x320
+[  286.535077][    C0]  nvme_tcp_alloc_queue+0xb3b/0x2590 [nvme_tcp]
+[  286.535709][    C0]  ? do_raw_spin_lock+0x129/0x260
+[  286.536314][    C0]  ? __pfx_nvme_tcp_alloc_queue+0x10/0x10 [nvme_tcp]
+[  286.536996][    C0]  ? do_raw_spin_unlock+0x54/0x1e0
+[  286.537550][    C0]  ? _raw_spin_unlock+0x29/0x50
+[  286.538127][    C0]  ? do_raw_spin_lock+0x129/0x260
+[  286.538664][    C0]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  286.539249][    C0]  ? nvme_tcp_alloc_admin_queue+0xd5/0x340 [nvme_tcp]
+[  286.539892][    C0]  ? __wake_up+0x40/0x60
+[  286.540392][    C0]  nvme_tcp_alloc_admin_queue+0xd5/0x340 [nvme_tcp]
+[  286.541047][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.541589][    C0]  nvme_tcp_setup_ctrl+0x8b/0x7a0 [nvme_tcp]
+[  286.542254][    C0]  ? _raw_spin_unlock_irqrestore+0x4c/0x60
+[  286.542887][    C0]  ? __pfx_nvme_tcp_setup_ctrl+0x10/0x10 [nvme_tcp]
+[  286.543568][    C0]  ? trace_hardirqs_on+0x12/0x120
+[  286.544166][    C0]  ? _raw_spin_unlock_irqrestore+0x35/0x60
+[  286.544792][    C0]  ? nvme_change_ctrl_state+0x196/0x2e0 [nvme_core]
+[  286.545477][    C0]  nvme_tcp_create_ctrl+0x839/0xb90 [nvme_tcp]
+[  286.546126][    C0]  nvmf_dev_write+0x3db/0x7e0 [nvme_fabrics]
+[  286.546775][    C0]  ? rw_verify_area+0x69/0x520
+[  286.547334][    C0]  vfs_write+0x218/0xe90
+[  286.547854][    C0]  ? do_syscall_64+0x9f/0x190
+[  286.548408][    C0]  ? trace_hardirqs_on_prepare+0xdb/0x120
+[  286.549037][    C0]  ? syscall_exit_to_user_mode+0x93/0x280
+[  286.549659][    C0]  ? __pfx_vfs_write+0x10/0x10
+[  286.550259][    C0]  ? do_syscall_64+0x9f/0x190
+[  286.550840][    C0]  ? syscall_exit_to_user_mode+0x8e/0x280
+[  286.551516][    C0]  ? trace_hardirqs_on_prepare+0xdb/0x120
+[  286.552180][    C0]  ? syscall_exit_to_user_mode+0x93/0x280
+[  286.552834][    C0]  ? ksys_read+0xf5/0x1c0
+[  286.553386][    C0]  ? __pfx_ksys_read+0x10/0x10
+[  286.553964][    C0]  ksys_write+0xf5/0x1c0
+[  286.554499][    C0]  ? __pfx_ksys_write+0x10/0x10
+[  286.555072][    C0]  ? trace_hardirqs_on_prepare+0xdb/0x120
+[  286.555698][    C0]  ? syscall_exit_to_user_mode+0x93/0x280
+[  286.556319][    C0]  ? do_syscall_64+0x54/0x190
+[  286.556866][    C0]  do_syscall_64+0x93/0x190
+[  286.557420][    C0]  ? rcu_read_unlock+0x17/0x60
+[  286.557986][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.558526][    C0]  ? lock_release+0x217/0x2c0
+[  286.559087][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.559659][    C0]  ? count_memcg_events.constprop.0+0x4a/0x60
+[  286.560476][    C0]  ? exc_page_fault+0x7a/0x110
+[  286.561064][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.561647][    C0]  ? lock_release+0x217/0x2c0
+[  286.562257][    C0]  ? do_user_addr_fault+0x171/0xa00
+[  286.562839][    C0]  ? do_user_addr_fault+0x4a2/0xa00
+[  286.563453][    C0]  ? irqentry_exit_to_user_mode+0x84/0x270
+[  286.564112][    C0]  ? rcu_is_watching+0x11/0xb0
+[  286.564677][    C0]  ? irqentry_exit_to_user_mode+0x84/0x270
+[  286.565317][    C0]  ? trace_hardirqs_on_prepare+0xdb/0x120
+[  286.565922][    C0]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  286.566542][    C0] RIP: 0033:0x7fe3c05e6504
+[  286.567102][    C0] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d c5 8b 10 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
+[  286.568931][    C0] RSP: 002b:00007fff76444f58 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+[  286.569807][    C0] RAX: ffffffffffffffda RBX: 000000003b40d930 RCX: 00007fe3c05e6504
+[  286.570621][    C0] RDX: 00000000000000cf RSI: 000000003b40d930 RDI: 0000000000000003
+[  286.571443][    C0] RBP: 0000000000000003 R08: 00000000000000cf R09: 000000003b40d930
+[  286.572246][    C0] R10: 0000000000000000 R11: 0000000000000202 R12: 000000003b40cd60
+[  286.573069][    C0] R13: 00000000000000cf R14: 00007fe3c07417f8 R15: 00007fe3c073502e
+[  286.573886][    C0]  </TASK>
+
+Closes: https://lore.kernel.org/linux-nvme/5hdonndzoqa265oq3bj6iarwtfk5dewxxjtbjvn5uqnwclpwt6@a2n6w3taxxex/
+Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/acpi/actbl1.h | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/nvme/target/tcp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
-index 387fc821703a..c701c434976c 100644
---- a/include/acpi/actbl1.h
-+++ b/include/acpi/actbl1.h
-@@ -1024,18 +1024,18 @@ struct acpi_einj_entry {
- /* Values for Action field above */
+diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
+index 11c8506e04ca3..bac81baa49c13 100644
+--- a/drivers/nvme/target/tcp.c
++++ b/drivers/nvme/target/tcp.c
+@@ -1338,6 +1338,9 @@ static void nvmet_tcp_restore_socket_callbacks(struct nvmet_tcp_queue *queue)
+ {
+ 	struct socket *sock = queue->sock;
  
- enum acpi_einj_actions {
--	ACPI_EINJ_BEGIN_OPERATION = 0,
--	ACPI_EINJ_GET_TRIGGER_TABLE = 1,
--	ACPI_EINJ_SET_ERROR_TYPE = 2,
--	ACPI_EINJ_GET_ERROR_TYPE = 3,
--	ACPI_EINJ_END_OPERATION = 4,
--	ACPI_EINJ_EXECUTE_OPERATION = 5,
--	ACPI_EINJ_CHECK_BUSY_STATUS = 6,
--	ACPI_EINJ_GET_COMMAND_STATUS = 7,
--	ACPI_EINJ_SET_ERROR_TYPE_WITH_ADDRESS = 8,
--	ACPI_EINJ_GET_EXECUTE_TIMINGS = 9,
--	ACPI_EINJ_ACTION_RESERVED = 10,	/* 10 and greater are reserved */
--	ACPI_EINJ_TRIGGER_ERROR = 0xFF	/* Except for this value */
-+	ACPI_EINJ_BEGIN_OPERATION =		0x0,
-+	ACPI_EINJ_GET_TRIGGER_TABLE =		0x1,
-+	ACPI_EINJ_SET_ERROR_TYPE =		0x2,
-+	ACPI_EINJ_GET_ERROR_TYPE =		0x3,
-+	ACPI_EINJ_END_OPERATION =		0x4,
-+	ACPI_EINJ_EXECUTE_OPERATION =		0x5,
-+	ACPI_EINJ_CHECK_BUSY_STATUS =		0x6,
-+	ACPI_EINJ_GET_COMMAND_STATUS =		0x7,
-+	ACPI_EINJ_SET_ERROR_TYPE_WITH_ADDRESS =	0x8,
-+	ACPI_EINJ_GET_EXECUTE_TIMINGS =		0x9,
-+	ACPI_EINJ_ACTION_RESERVED =		0xA,	/* 0xA and greater are reserved */
-+	ACPI_EINJ_TRIGGER_ERROR =		0xFF	/* Except for this value */
- };
- 
- /* Values for Instruction field above */
++	if (!queue->state_change)
++		return;
++
+ 	write_lock_bh(&sock->sk->sk_callback_lock);
+ 	sock->sk->sk_data_ready =  queue->data_ready;
+ 	sock->sk->sk_state_change = queue->state_change;
 -- 
-2.43.0
+2.39.5
 
 
