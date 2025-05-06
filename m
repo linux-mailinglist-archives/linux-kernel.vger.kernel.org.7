@@ -1,113 +1,119 @@
-Return-Path: <linux-kernel+bounces-634989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-634996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A39BAAB84B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:31:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF57AAB867
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100E63B6757
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:22:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5761C2603B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAC42D37E1;
-	Tue,  6 May 2025 01:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7C02DBB1A;
+	Tue,  6 May 2025 01:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIJalOYb"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TuiD+9YA"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818F4326BE8;
-	Tue,  6 May 2025 00:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06B141A04C
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746491097; cv=none; b=csYkaNM2Hz7Mkl/5pyxIPh2nT0bzjK4Zpkwd4yyEtyH4+V7byAuDrPpBASXHedSx38rV4zwYVsklI2G/0HOm0lMTHt8fjQo9+nFnwcCMJQqi67euLcdr/jPfqbSxCBdiygRe/JMnmuDlq1QufqB3urD+aZaIb5zdzjfa+uhGmjw=
+	t=1746491297; cv=none; b=br0PjERba5ipHgZ8pytw/hWM4KZLitkrHajhETDap4lYOPKpFVM/76Lq0qRnoxcyJWtbOm8JyD7D930ti+SplRbGDHCNUjEpA/PaHeG5yEouQo31A/5SWM2PA/uccW3mWqpqTB2645wDXO80hirxG95xrvxjncL7JzhWBX2B/wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746491097; c=relaxed/simple;
-	bh=alMo7B+Sr/59Du5rvegXFc8Zcs/QVVYNwTJ/hgL1bz8=;
+	s=arc-20240116; t=1746491297; c=relaxed/simple;
+	bh=mQjcSWXrYmkl7Twom4W/YYd1ZCn+aco0xVfANaVeuBY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PaHD4yvV8wNVCidc8PXh6VuITBFqmA15BJmAUOOVikWlxC6hwv2sK2HMv/MZRWQxiYNXE578iJe33Y/kFlUeBwwRYcrBcqQfrSG6e7ZuejF+5g7sfp8sjaOZld21FMS6VrxcDPMYaBR8/LEQK6qCluDZEmtQsleidF66THToX1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIJalOYb; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3913b539aabso2267308f8f.2;
-        Mon, 05 May 2025 17:24:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=qdJd6QnmHKZRXcTzUywOHA6DjJJ6vPCTVCX0gTgNYRU55Qy4tQG0vo4kAcaxx2dExsjgsFJbmhvewMABGHXuAL6UMLZvfjyzYoOweSkSTX0Y+Ic5f0PHbvMjN78ObKRdmVVllvgWiwjhTwLZ1GpV3zlmLW5Ryejj2tnVTJvzkj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TuiD+9YA; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-48b7747f881so73741cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 17:28:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746491092; x=1747095892; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1746491293; x=1747096093; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=alMo7B+Sr/59Du5rvegXFc8Zcs/QVVYNwTJ/hgL1bz8=;
-        b=YIJalOYbzRWgk80kCCjkNqfC7uXUYe+sVV24eYXH4eCuTbaLW3Zj55SRfEf6/wFuIw
-         HdTYIEUOVs52rEChr8fNimUd8T+K0uIEGFzJ+OSS8jYikOb7bpqHdGXlqGz536b3A1pf
-         aQk0yrdaUNyS9XT0sruJkg2ps4jJLEhV+hAUIwuzhEBl5DKRfK2RO2L27s4yUW4ihRbJ
-         QDPgcMNToy6aVnEiwg+N+0Ceb+Oh9YhETrPgdumbi8IE+2jC+ildWIpDL0epyevY29Bh
-         RQVj5dyVGwfqEc4ybjJNdFlRQDcwCaty9Ue1Fq79BO8jMJt6XTkiEM1FfDZyuB4kM8qC
-         jl3A==
+        bh=gy72gz7BkdTupt7lwSehvFyBx0hxLF/ZczFwTE53HNQ=;
+        b=TuiD+9YAB6Ks9sDgv3XVmGVcYMKCYHx5XrBeSyNJqV6FNlEIMFzoY8XqkBa31gXm29
+         dkwFxoQSZvzw4fPDzYi0T/yVQGYKbT8C5zGKs9B+6mYrGVaCiFJxkDsjn+NsbqErcSC5
+         sbujXA/fpoNmRPvnWqNmDQLQSbWHjMLASFv0R0yaF+MD6jsdnVOaaq+HVwcR37F+xnrk
+         FPHYQoQlXnxW3eo1gm0F9su+FuOIy57st6YDORGPxUz0zx/ToLEPDDTFphpF1+NIaf4V
+         5tbpsgLI8tm+BuMkLSBHNP2uwbIMza5GwL+ZvOfWN2lgo3d3a/Bmb4JkFtofQsYPvAtx
+         T7og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746491092; x=1747095892;
+        d=1e100.net; s=20230601; t=1746491293; x=1747096093;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=alMo7B+Sr/59Du5rvegXFc8Zcs/QVVYNwTJ/hgL1bz8=;
-        b=sQmiyDWQQNEPVkECMP1FrIBEuvpq2MZBHLc7qKpeNvQ+CZ+MZGb7ahk0BqIoSYZrmi
-         zIQrCSe0b0nOGEZdmHfXxkx+y+ZM8jRf2xQdKmu+litw3U8rc6qbZ2wd2Bi1VbVmppvM
-         om/nIPJkvxLa+elLIw3wmONStqjddLxyxvVRzOa1zCUrGkr/7IVAgr1IQxymcTVJJH05
-         kvfcHqQ61/Vgdad1fdj+R7SXkM1/xXYGl0jCyQPkts4U5KdISn2ImxT8Q2dltLfPDdKi
-         /wMODgL/vYefuVesr7GAs1izHDPcB6Gi5sid9wFZ1F1S5+Erfjvx3CF3Rb0qgEJhiACl
-         fW8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUP/l36bA9+ibx/LrLBGMM4azQnUGPfNFqAK69Uch1p4ZtsKGoPvO0w3sAq1iV5/Tr58ik0nk83rc0d0/o4@vger.kernel.org, AJvYcCVPMLYGNucWvOr/HEnuR1OqxKDQ3I3RgWmXV/83WOb7ksZHmyexSK3VflgBrvOBJJY/sOfJH67rLQtU5ss=@vger.kernel.org, AJvYcCVWHCMrijRj7N0PGthivbT1nRvPT/sHhqVN0/p8Sy9SDaeSDTc4F1zz/tCnZcPaDX6cm6MKwwtud3f+NG9CgdX9@vger.kernel.org, AJvYcCWy5/6b+CD/yTGE+HFqfIL3RbPgkSbCDrDUgOpapPB2RselaafWwtpkS5nUgERA6NTTu6g=@vger.kernel.org, AJvYcCXeY0J1cTHKn7vqHIuf8ywhy3w5izDZKyPCDsADxXLB7QKnhiWKHhBlr8pgi+ytUPwQiwcGA6Kobkwn@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAwAo5wume++6Rp8E4d5SpIAyEobwG1Jzl17EVSIdKoKtbZqZz
-	JcIhbmvootvMEdkLve+iZPfQAk5NhC1cijwn872bxCnIex21Y2IrDeTvdNFUKjPxmDh4+2Gn0jr
-	0oyGMCkCi+715gzetgeWQmZXbGpQ=
-X-Gm-Gg: ASbGncseS/Vjsk/ldQqXoaBo2XViaQjmk1o3PkoDpJLWd8qvdUF/umFe7fs2lui9vsv
-	ziqJ9MOmS2GoQP423yWGXlSHNV2Z7FsvqsbdxYoHCB7vY+sNYbZR2fFdIx3Ig7x98FgOl+6AO+s
-	qQa2NFtX7aCjxSK0M/SbPYB0LP+997ini8YwUFkgBPi2T1iJclEQ==
-X-Google-Smtp-Source: AGHT+IFpisAarDVCqmL4SQ9gwYM4+gMG4oHDBZFnZvyt5pgd5IHINbs0VFd1mFStWTTZZvgPPgIuW+AiPJw4Ajhtqw8=
-X-Received: by 2002:a05:6000:2289:b0:391:4095:49b7 with SMTP id
- ffacd0b85a97d-3a09fd89e32mr6735387f8f.25.1746491091758; Mon, 05 May 2025
- 17:24:51 -0700 (PDT)
+        bh=gy72gz7BkdTupt7lwSehvFyBx0hxLF/ZczFwTE53HNQ=;
+        b=aYzdzza6NFL116xNhZnO1KYiKRJZV/UyytyuVBzDMid/arvTtgTvNxPfNUjsRunU2F
+         SohVeVE9bVKMtZfJqKZIp81G4rpMo5Hh8GTjHePmNFxK3+yxmRi2bbyEGFROw3J9UHAi
+         8g4FCEfdx9SMJEaNKbnXWbUirLTOF3zbYg/Ne+gls5L/4HOeELVvLRenW3NsuMih24yV
+         oeZbAcoLPLi60tlSD/IN6SmISCcPcy/gS2S62+YHL+4NjZJ3YaEg4vcwtC4zbvoNDRw6
+         wb20khL90gC2yUhHtJM8JN9xNaLDvFPNj28996bj8xK3/usUCB2/EbK5Rtp3DObOwE2F
+         Selg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGJmHd0Lbcv1T4pcOzNlMB71vM4GmXV1wRKtSiL5m34vqc3+q7isQHC4MFwYAezTqsP/uqhFC93mZjFgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxENpnM7ZUg+MqpMp6n+kcTMPWoaR7+xKeP2yko0D9MzQ4x+uhg
+	4s/CReGHFXAsRxbVZqnrtGpYIV1Z8c5ZiENCMsT9oJrgoNAWMc+TjqNSC5kspOUwDfT0bbjVAzB
+	lI2TKGGECBsgTMB5b9GtmaxPD4VZnGn8TGXbg
+X-Gm-Gg: ASbGncvOOVorV9S/T4tAGDJbP+2/jpEkEvHyb/b9Iqm07qV8KaygSi1HykPB9iRS6O8
+	jeWS7ss3mpdd2a98QONJPjtqeKw4AxgvldpdkXritRaRyqn7FDYB+Sam6Vys1oLIjcLV879FBlx
+	Xtn3ygBomz1QRjwEWvB377QCopwufAnXEcRs75wry86pQnhVbK4T2G+Sg=
+X-Google-Smtp-Source: AGHT+IEzNzwtMpw0ak4BnC5/aECrxVBAC8ctyO1ioeLdEWQkCTIKbPFUc7QuRFMJnrKW/g98BAgaRG1cX4q+SScFjR0=
+X-Received: by 2002:ac8:59c5:0:b0:477:2c12:9253 with SMTP id
+ d75a77b69052e-490f4c1292cmr1619021cf.16.1746491293370; Mon, 05 May 2025
+ 17:28:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250504224149.1033867-1-tjmercier@google.com>
- <20250504224149.1033867-3-tjmercier@google.com> <26ca8ddf-0d78-462f-a47d-a1128b2e058f@amd.com>
- <CABdmKX2iNk22h-KxUr4yvZO80yeRRjMfoC7yjiZ-aR_f1k402g@mail.gmail.com>
- <ec43f447-095e-4baf-8610-8279b565f162@amd.com> <CABdmKX2Tpv8vpDDZ+wcdrWuijfC1wkNhJQxVSC9trPkzBLN4tA@mail.gmail.com>
-In-Reply-To: <CABdmKX2Tpv8vpDDZ+wcdrWuijfC1wkNhJQxVSC9trPkzBLN4tA@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 5 May 2025 17:24:40 -0700
-X-Gm-Features: ATxdqUHDB7Y3bq86ORp3ezfiMZIn0_EShKe0qk7UMyPGPboNnGF9l2fKY3gc3nw
-Message-ID: <CAADnVQLqv-ZpoQEhk2UwvSZorSLcjgF7qLD76oHguH5-GcSXxA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] bpf: Add dmabuf iterator
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Song Liu <song@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, android-mm@google.com, simona@ffwll.ch, 
-	Jonathan Corbet <corbet@lwn.net>, Eduard <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Jiri Olsa <jolsa@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>
+References: <20250505185642.2377724-1-jyescas@google.com> <aBkXvB2jcxVf95uN@casper.infradead.org>
+In-Reply-To: <aBkXvB2jcxVf95uN@casper.infradead.org>
+From: Juan Yescas <jyescas@google.com>
+Date: Mon, 5 May 2025 17:28:02 -0700
+X-Gm-Features: ATxdqUFoGXZ_gkx3ceuSKYDuT6fwhmHmdBxGlaOENbPfzOY0jRlPH5_CbTHCLlc
+Message-ID: <CAJDx_rhi_-ovE8AyxeC317y9vCV2NGEs1ffAcN2rWP2P7qA-xA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Add ARCH_FORCE_PAGE_BLOCK_ORDER to select page
+ block order
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, tjmercier@google.com, isaacmanjarres@google.com, 
+	surenb@google.com, kaleshsingh@google.com, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>, Zi Yan <ziy@nvidia.com>, 
+	Minchan Kim <minchan@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 5, 2025 at 10:08=E2=80=AFAM T.J. Mercier <tjmercier@google.com>=
- wrote:
+On Mon, May 5, 2025 at 12:55=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
 >
+> On Mon, May 05, 2025 at 11:56:21AM -0700, Juan Yescas wrote:
+> > Solution: Add a new config ARCH_FORCE_PAGE_BLOCK_ORDER that
+> > allows to set the page block order in all the architectures.
 >
-> Sounds good, will do. Thanks.
+> ... but it's no longer per-ARCH, so this should not be in the ARCH_
+> namespace.
+>
 
-looks like the majority of the code will be touching various bpf bits,
-so let's route the first 5 patches via bpf-next.
-When you respin, please mention [PATCH bpf-next] in the subject,
-so that CI can pick it up.
+Good point. The changes are in [PATCH v3] mm: Add
+CONFIG_PAGE_BLOCK_ORDER to select page block order
+
+> >  /* If huge pages are not used, group by MAX_ORDER_NR_PAGES */
+> > -#define pageblock_order              MAX_PAGE_ORDER
+> > +#define pageblock_order              PAGE_BLOCK_ORDER
+>
+> You need to update the comment too.
+>
+
+Done.
+
+Thanks
+Juan
 
