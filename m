@@ -1,119 +1,112 @@
-Return-Path: <linux-kernel+bounces-636365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C8AAACA6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:07:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D1FFAACA71
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA500525A02
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8079B3BD127
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407B6283CB5;
-	Tue,  6 May 2025 16:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49EA284667;
+	Tue,  6 May 2025 16:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEj6fCgO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5p/kv0rM"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2337280A29
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 16:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F3E280A29;
+	Tue,  6 May 2025 16:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746547631; cv=none; b=c+BONKsRwahGzuK1J/2rSUGwOZu7Vvt8qzBpKonxviFZ8KYa91+kzOjfomzRN7PW8LtOwn4EdHR26qKxOzxJR54tZ2qeAJpp+pkFkA4G8fPdRdLwufWmfKp94+HgZRMh5GONsgDKaJOTA9SXT818otiCd4Aukv15UY9zXHcQRNI=
+	t=1746547664; cv=none; b=OYNaOQKt1Ia7aEfcQxAmWis1CJDoIDapRbE8T9dcHqYpV7zToNzw7oMv7orh27qMGKBpCr2XLRYom4Sou+u6U2iFlSbjHGe50i0cZ/0FPzHEAh5m9rrOhTxfSX1jk9/jvl2KQu4FiqDHuqPsF0/e26Ok/taqIvSkXG+nsPsPGqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746547631; c=relaxed/simple;
-	bh=zS+Ot369NOytTIYKYVR0UEWEYha70OWsfEk07mgYWN8=;
+	s=arc-20240116; t=1746547664; c=relaxed/simple;
+	bh=R57uE80QHeIxF/beQ/FwZmTbYeEK5J1gOynGnagEdr8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LlBpYA+16QyBH1tttQD+u7JoU3pYkaxCNB4LIPdTmoinHJaxIyo4QrwiBk67komHH6RUldy2Fa4D/cHqq6Xa/XWUC0BBUhs3X5oAGAwiPS48wqPvbGv0iG8yqKyNI/t8Obml+z16XU8w3MXEqOqH27W7gbGtPPvhs6wl26qiI2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEj6fCgO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F87C4CEE4;
-	Tue,  6 May 2025 16:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746547631;
-	bh=zS+Ot369NOytTIYKYVR0UEWEYha70OWsfEk07mgYWN8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NEj6fCgOm1vX9hV9mYqnRQ6ZUy/n/Bqy7hW7QR6PsXgWEQ95GaoS0yTChJkV2io2X
-	 nKr2Qhzv0A5RA5viaNm0aBnIsodd3fa8VjOx2JZcpvC0IzIh5kd9D11xEAJqCzFgZ+
-	 wfxavSHCzag2MPXfoIoN1ZAOM23aAhrhqiEyziqusdunCNDz/CAXwg7/xfCQV7Tk7V
-	 oK2bRRfSVWiDgBMs3ooYtJFJsH4yymfIaUjlfDJnyVzo/+rrAt8QbGNtHxmjVfFGMy
-	 txwRm+9YoRom4UwOBH6HBwgcPtyUWIPbYpaOh9LieWN5oG3tN6lchVIKbOttlEZzwP
-	 WAJXVVZN31n1Q==
-Date: Tue, 6 May 2025 18:07:08 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v4 2/5] timers: Add the available mask in timer migration
-Message-ID: <aBozrJ0C6yzW7oB_@localhost.localdomain>
-References: <20250506091534.42117-7-gmonaco@redhat.com>
- <20250506091534.42117-9-gmonaco@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IUCwlrwVFFiQpgnkIzwVELucM83YUez3lSZDZIMlrvGfqMj1iTtHrui6OjZGiO1VxzmzuFFTvpqFZ+hEacqwV4Ad2eXl8ZQ0AjcTF4N6VsomaRt6U/3RyReSOwaWXXfmWsfJpNTNX7/gGbxOM98/axJebCKuM66nlmccxd2wIJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5p/kv0rM; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=o7khUtuXqkV12JSbjwJ8x1EVYWn6Fhstp775RFxlELY=; b=5p/kv0rMi9GpXe3Pn03TSlFekd
+	HhGxmjvOC9EnUnrbDizJhCGgBQePk+h0yjY6mSSqJEjOrYygCNsN/dAT1+mP1Rk44kDdhzFttRXTy
+	JO52Dn85kBMF/xtIfRY+mErY/izASMwAfHKg52XDgdNcnQFpfLCe7KL4CGXN5/6yB3gw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uCKpP-00BmaD-GB; Tue, 06 May 2025 18:07:31 +0200
+Date: Tue, 6 May 2025 18:07:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexander Shalimov <alex-shalimov@yandex-team.ru>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com
+Subject: Re: [PATCH] net/tun: expose queue utilization stats via ethtool
+Message-ID: <c02e519b-8b7d-414c-b602-5575c9382101@lunn.ch>
+References: <20250506154117.10651-1-alex-shalimov@yandex-team.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250506091534.42117-9-gmonaco@redhat.com>
+In-Reply-To: <20250506154117.10651-1-alex-shalimov@yandex-team.ru>
 
-Le Tue, May 06, 2025 at 11:15:37AM +0200, Gabriele Monaco a écrit :
-> Keep track of the CPUs available for timer migration in a cpumask. This
-> prepares the ground to generalise the concept of unavailable CPUs.
+On Tue, May 06, 2025 at 06:41:17PM +0300, Alexander Shalimov wrote:
+> TUN/TAP devices are heavily used in network virtualization scenarios
+> such as QEMU/KVM with "-netdev tap" and are commonly paired with virtio-net
+> or vhost-net backends. Under high network load, queues of the tuntap device
+> may become saturated, resulting in TX drops.
 > 
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->  kernel/time/timer_migration.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+> Existing aggregated drop counters alone are often insufficient during
+> complex debugging and performance tuning, especially in high-throughput
+> environments. Visibility of real-time queue utilization is critical for
+> understanding why guest VMs might be unable to dequeue packets in time.
 > 
-> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-> index 7efd897c7959..25439f961ccf 100644
-> --- a/kernel/time/timer_migration.c
-> +++ b/kernel/time/timer_migration.c
-> @@ -422,6 +422,9 @@ static unsigned int tmigr_crossnode_level __read_mostly;
->  
->  static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
->  
-> +/* CPUs available for timer migration */
-> +static cpumask_var_t tmigr_available_cpumask;
+> This patch exposes per-queue utilization statistics via ethtool -S,
+> allowing on-demand inspection of queue fill levels. Utilization metrics are
+> captured at the time of the ethtool invocation, providing a snapshot useful
+> for correlation with guest and host behavior.
+
+This does not fit the usual statistics pattern, which are simple
+incremental counters. Are there any other drivers doing anything like
+this?
+
+Maybe devlink resources would be a better API? That would also allow
+you to report the size of the ring.
+
+> +static void tun_get_ethtool_stats(struct net_device *dev,
+> +				  struct ethtool_stats *stats, u64 *data)
+> +{
+> +	struct tun_struct *tun = netdev_priv(dev);
+> +	struct tun_file *tfile;
+> +	int i;
+> +	int producer, consumer, size, usage;
 > +
->  #define TMIGR_NONE	0xFF
->  #define BIT_CNT		8
->  
-> @@ -1449,6 +1452,7 @@ static int tmigr_cpu_unavailable(unsigned int cpu)
->  	raw_spin_lock_irq(&tmc->lock);
->  	tmc->available = false;
->  	WRITE_ONCE(tmc->wakeup, KTIME_MAX);
-> +	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
->  
->  	/*
->  	 * CPU has to handle the local events on his own, when on the way to
-> @@ -1459,7 +1463,7 @@ static int tmigr_cpu_unavailable(unsigned int cpu)
->  	raw_spin_unlock_irq(&tmc->lock);
->  
->  	if (firstexp != KTIME_MAX) {
-> -		migrator = cpumask_any_but(cpu_online_mask, cpu);
-> +		migrator = cpumask_any(tmigr_available_cpumask);
+> +	rcu_read_lock();
+> +	for (i = 0; i < dev->real_num_tx_queues; i++) {
+> +		tfile = rcu_dereference(tun->tfiles[i]);
+> +
+> +		producer = READ_ONCE(tfile->tx_ring.producer);
+> +		consumer = READ_ONCE(tfile->tx_ring.consumer_head);
+> +		size = READ_ONCE(tfile->tx_ring.size);
+> +
+> +		if (producer >= consumer)
+> +			usage = producer - consumer;
+> +		else
+> +			usage = size - (consumer - producer);
 
-Considering nohz_full CPUs should be still available.
+It seems like this belongs in ptr_ring.h along with all the other
+methods which deal with insides of the ring.
 
-I don't think there is anything ensuring that, in nohz_full mode,
-there must be at least one housekeeping CPU that is not domain
-isolated.
-
-For example if we have two CPUs with CPU 0 being domain isolated
-and CPU 1 being nohz_full, then there is no migrator to handle CPU 1's
-global timers.
-
-Thanks.
-
->  		work_on_cpu(migrator, tmigr_trigger_active, NULL);
->  	}
-
--- 
-Frederic Weisbecker
-SUSE Labs
+	Andrew
 
