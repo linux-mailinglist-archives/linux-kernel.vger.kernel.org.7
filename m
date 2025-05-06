@@ -1,175 +1,284 @@
-Return-Path: <linux-kernel+bounces-636250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B26AAAC888
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:47:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB4AAAC8AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757353AB123
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:46:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036CD4A83C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BA028314D;
-	Tue,  6 May 2025 14:47:10 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF0B28368E;
+	Tue,  6 May 2025 14:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="MY3xtd23"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8283428135A;
-	Tue,  6 May 2025 14:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746542830; cv=none; b=riF9i06nqdBTcd0Jhh1QV295bk9dJI45Ju/GUmYEhIcEl1XNJACldUGHvJ44PPqlxrc6EFTPmmhIN7HjuzxIFSvOkt+J6ZXeQASAWPCTqsdGf0gD9MRctO1x2gt3XR4VL2D5FQ5mB46bO18vbwiV7B1VtCq/t9oFN/U1M9Tyf/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746542830; c=relaxed/simple;
-	bh=NMQ6gHoepk2Hh+GE5YhvmtUey4N6usZn6VaPR71gppg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k1v4k7V8zQVtxlQaQoIi1lWBDbhv0fAe37pfIx9HSGZkT5rTl7rscKQLKtQ4ofdJamXrBKYmVmiOmYKNB7JtmJduiYnGPSxEV91KgAjxoH/tqfxoTBX0PamNF/H6yLtBVOaatR6szKLRqYGfUoB/HuXehULilmsSCDDYuqmGkFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZsLnp0cdTz6K5kv;
-	Tue,  6 May 2025 22:46:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0994E14011D;
-	Tue,  6 May 2025 22:47:05 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 6 May
- 2025 16:47:04 +0200
-Date: Tue, 6 May 2025 15:47:02 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Joey
- Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>, Leo Yan <leo.yan@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v21 0/4] arm64/perf: Enable branch stack sampling
-Message-ID: <20250506154702.00002b57@huawei.com>
-In-Reply-To: <20250407-arm-brbe-v19-v21-0-ff187ff6c928@kernel.org>
-References: <20250407-arm-brbe-v19-v21-0-ff187ff6c928@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DC3255E37;
+	Tue,  6 May 2025 14:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746543098; cv=pass; b=kFDZSMK4PK75HnWcLsuB6d4Lrw5VdMeveFDFJtUIX+rUtPgfEyhaV99A1G0yFHvsyGnOhXajfNNCt0G81/G+ZHJmD7HH2ar0e7DzWl/iQ1WzIedw5VqrwKsqOR6K/PDZ3DpUl6rZwrKh7D/QMSj6OfxbipkwM3n/XqHSHFiwRj4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746543098; c=relaxed/simple;
+	bh=UYP07GBClAMU0pKc9jto39bAfvQmXjsbcF+MgijDaPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o4RCjCUi1tBVXEccRBav0bTH4x3r9zPFjRO2Cm26gev3EVd+WyWOJin3hA8EmrTny7P3gAZPj8YU+jOz1ZVYk/kJ6j6u6sVJfAEw5MOJGeKH5XdAkSnSckg8Pyb9ptNO8HOBjamJ4+OiiMe7LlouujUwFiy4+4++NqV75hXB2pI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=MY3xtd23; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1746543056; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JlENvj1DtQ6vDPp1Tt5aSSXxs0r3fAzGHGo3h86pbX9rB1/W8lP24PEkqATdqQMNDBv0koWbBKsvQSeu9+OToP2qHihgUi+IjtqXNlpOJyG6/aq7wxceEnVPw1iG1oaIVgqiBxv4h+2AVisNANp9cMy5e27w6P48AunfIUmaDr4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1746543056; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hzNcysWgeznsB2udfNycSzXTF9lLlaxaY04PxZPeNe8=; 
+	b=ILYVQRkwLMcQj7Xb4ASNjQ0z7k8kzkTogY8qspSFLcidbgQe56l1f6FmfTB3X9q/aVdgaBwSRHQ2L0n91i7GY4aH6PsAWXVd/qJCLZnf4Y/FrHH+GjX4FM4xUZtcbHc7Zix/bgzT+igFq2xYleCrIrQnkMbDWbcLcYHlMkBgaM8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746543056;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=hzNcysWgeznsB2udfNycSzXTF9lLlaxaY04PxZPeNe8=;
+	b=MY3xtd23dXiQ8NsA89LyI/Gj2f6XOeOfOs6DvB2ilriH/COuyXYtOqlWCXPZEIHo
+	BGjnHs4LMZBa+E5I3LUkLZQFddY67opZaRH0HSs7DOhcszH1s1nytY4qSzuP/Jpj0HT
+	ngWvmDbdGrqAzhppfWB3x78kSd+z73ltlGDH9JC0=
+Received: by mx.zohomail.com with SMTPS id 1746543054682438.2320888768767;
+	Tue, 6 May 2025 07:50:54 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+	Youssef Samir <quic_yabdulra@quicinc.com>,
+	Matthew Leung <quic_mattleun@quicinc.com>,
+	Yan Zhen <yanzhen@vivo.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+	Kunwu Chan <chentao@kylinos.cn>,
+	Troy Hanson <quic_thanson@quicinc.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: kernel@collabora.com,
+	sebastian.reichel@collabora.com,
+	Carl Vanderlip <quic_carlv@quicinc.com>,
+	Alex Elder <elder@kernel.org>,
+	mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	ath12k@lists.infradead.org
+Subject: [PATCH v4] bus: mhi: host: don't free bhie tables during suspend/hibernation
+Date: Tue,  6 May 2025 19:49:23 +0500
+Message-ID: <20250506144941.2715345-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Mon, 07 Apr 2025 12:41:29 -0500
-"Rob Herring (Arm)" <robh@kernel.org> wrote:
+Fix dma_direct_alloc() failure at resume time during bhie_table
+allocation because of memory pressure. There is a report where at
+resume time, the memory from the dma doesn't get allocated and MHI
+fails to re-initialize.
 
-> This series enables perf branch stack sampling support on arm64 via a 
-> v9.2 arch feature called Branch Record Buffer Extension (BRBE). Details 
-> on BRBE can be found in the Arm ARM[1] chapter D18.
-> 
-> I've picked up this series from Anshuman. v19 and v20 versions have been 
-> reworked quite a bit by Mark and myself. The bulk of those changes are 
-> in patch 4.
-> 
-> A git branch is here[2].
-> 
-> [1] https://developer.arm.com/documentation/ddi0487/latest/
-> [2] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git arm/brbe-v21
+To fix it, don't free the memory at power down during suspend /
+hibernation. Instead, use the same allocated memory again after every
+resume / hibernation. This patch has been tested with resume and
+hibernation both.
 
-Hi Rob,
+The rddm is of constant size for a given hardware. While the fbc_image
+size depends on the firmware. If the firmware changes, we'll free and
+allocate new memory for it.
 
-Expecting any changes on this?  Anything specific we can do to help then shout.
+Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
 
-We need to pull in the reworked version into openeuler that is carrying older
-code and would rather not do it more than once. 
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+Changes since v1:
+- Don't free bhie tables during suspend/hibernation only
+- Handle fbc_image changed size correctly
+- Remove fbc_image getting set to NULL in *free_bhie_table()
 
-Jonathan
+Changes since v2:
+- Remove the new mhi_partial_unprepare_after_power_down() and instead
+  update mhi_power_down_keep_dev() to use
+  mhi_power_down_unprepare_keep_dev() as suggested by Mani
+- Update all users of this API such as ath12k (previously only ath11k
+  was updated)
+- Define prev_fw_sz in docs
+- Do better alignment of comments
 
-> 
-> v21:
-> - Drop clean-up patches 1-7 already applied
-> - Rebase on v6.15-rc1
-> 
-> v20:
->  - https://lore.kernel.org/r/20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org
->  - Added back some of the arm64 specific exception types. The x86 IRQ 
->    branches also include other exceptions like page faults. On arm64, we 
->    can distinguish the exception types, so we do. Also, to better 
->    align with x86, we convert 'call' branches which are user to kernel 
->    to 'syscall'.
->  - Only enable exceptions and exception returns if recording kernel
->    branches (matching x86)
->  - Drop requiring event and branch privileges to match
->  - Add "branches" caps sysfs attribute like x86
->  - Reword comment about FZP and MDCR_EL2.HPMN interaction
->  - Rework BRBE invalidation to avoid invalidating in interrupt handler
->    when no handled events capture the branch stack (i.e. when there are 
->    multiple users).
->  - Also clear BRBCR_ELx bits in brbe_disable(). This is for KVM nVHE 
->    checks if BRBE is enabled.
->  - Document that MDCR_EL3.SBRBE can be 0b01 also
-> 
-> v19:
->  - https://lore.kernel.org/all/20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org/
->  - Drop saving of branch records when task scheduled out (Mark). Make 
->    sched_task() callback actually get called. Enabling requires a call 
->    to perf_sched_cb_inc(). So the saving of branch records never 
->    happened.
->  - Got rid of added armpmu ops. All BRBE support is contained within 
->    pmuv3 code.
->  - Fix freeze on overflow for VHE
->  - The cycle counter doesn't freeze BRBE on overflow, so avoid assigning
->    it when BRBE is enabled.
->  - Drop all the Arm specific exception branches. Not a clear need for
->    them.
->  - Fix handling of branch 'cycles' reading. CC field is
->    mantissa/exponent, not an integer.
->  - Rework s/w filtering to better match h/w filtering
->  - Reject events with disjoint event filter and branch filter or with 
->    exclude_host set
->  - Dropped perf test patch which has been applied for 6.14
->  - Dropped patch "KVM: arm64: Explicitly handle BRBE traps as UNDEFINED"
->    which has been applied for 6.14
-> 
-> v18:
->  - https://lore.kernel.org/all/20240613061731.3109448-1-anshuman.khandual@arm.com/
-> 
-> For v1-v17, see the above link. Not going to duplicate it all here...
-> 
-> Signed-off-by: "Rob Herring (Arm)" <robh@kernel.org>
-> ---
-> Anshuman Khandual (4):
->       arm64/sysreg: Add BRBE registers and fields
->       arm64: Handle BRBE booting requirements
->       KVM: arm64: nvhe: Disable branch generation in nVHE guests
->       perf: arm_pmuv3: Add support for the Branch Record Buffer Extension (BRBE)
-> 
->  Documentation/arch/arm64/booting.rst |  21 +
->  arch/arm64/include/asm/el2_setup.h   |  86 +++-
->  arch/arm64/include/asm/kvm_host.h    |   2 +
->  arch/arm64/include/asm/sysreg.h      |  17 +-
->  arch/arm64/kvm/debug.c               |   4 +
->  arch/arm64/kvm/hyp/nvhe/debug-sr.c   |  32 ++
->  arch/arm64/kvm/hyp/nvhe/switch.c     |   2 +-
->  arch/arm64/tools/sysreg              | 132 ++++++
->  drivers/perf/Kconfig                 |  11 +
->  drivers/perf/Makefile                |   1 +
->  drivers/perf/arm_brbe.c              | 802 +++++++++++++++++++++++++++++++++++
->  drivers/perf/arm_brbe.h              |  47 ++
->  drivers/perf/arm_pmu.c               |  15 +-
->  drivers/perf/arm_pmuv3.c             | 129 +++++-
->  include/linux/perf/arm_pmu.h         |   8 +
->  15 files changed, 1287 insertions(+), 22 deletions(-)
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250129-arm-brbe-v19-24d5d9e5e623
-> 
-> Best regards,
+Changes since v3:
+- Fix state machine of ath12k by setting ATH12K_MHI_DEINIT with
+  ATH12K_MHI_POWER_OFF_KEEP_DEV state (Thanks Sebastian for testing and
+  finding the problem)
+- Use static with mhi_power_down_unprepare_keep_dev()
+- Remove crash log as it was showing that kworker wasn't able to
+  allocate memory.
+
+This patch doesn't have fixes tag as we are avoiding error in case of
+memory pressure. We are just making this driver more robust by not
+freeing the memory and using the same after resuming.
+---
+ drivers/bus/mhi/host/boot.c           | 15 +++++++++++----
+ drivers/bus/mhi/host/init.c           |  5 +++--
+ drivers/bus/mhi/host/pm.c             |  9 +++++++++
+ drivers/net/wireless/ath/ath11k/mhi.c |  8 ++++----
+ drivers/net/wireless/ath/ath12k/mhi.c | 14 ++++++++++----
+ include/linux/mhi.h                   |  2 ++
+ 6 files changed, 39 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
+index efa3b6dddf4d2..bc8459798bbee 100644
+--- a/drivers/bus/mhi/host/boot.c
++++ b/drivers/bus/mhi/host/boot.c
+@@ -584,10 +584,17 @@ void mhi_fw_load_handler(struct mhi_controller *mhi_cntrl)
+ 	 * device transitioning into MHI READY state
+ 	 */
+ 	if (fw_load_type == MHI_FW_LOAD_FBC) {
+-		ret = mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->fbc_image, fw_sz);
+-		if (ret) {
+-			release_firmware(firmware);
+-			goto error_fw_load;
++		if (mhi_cntrl->fbc_image && fw_sz != mhi_cntrl->prev_fw_sz) {
++			mhi_free_bhie_table(mhi_cntrl, mhi_cntrl->fbc_image);
++			mhi_cntrl->fbc_image = NULL;
++		}
++		if (!mhi_cntrl->fbc_image) {
++			ret = mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->fbc_image, fw_sz);
++			if (ret) {
++				release_firmware(firmware);
++				goto error_fw_load;
++			}
++			mhi_cntrl->prev_fw_sz = fw_sz;
+ 		}
+ 
+ 		/* Load the firmware into BHIE vec table */
+diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
+index 13e7a55f54ff4..a7663ad16bfc6 100644
+--- a/drivers/bus/mhi/host/init.c
++++ b/drivers/bus/mhi/host/init.c
+@@ -1173,8 +1173,9 @@ int mhi_prepare_for_power_up(struct mhi_controller *mhi_cntrl)
+ 		/*
+ 		 * Allocate RDDM table for debugging purpose if specified
+ 		 */
+-		mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->rddm_image,
+-				     mhi_cntrl->rddm_size);
++		if (!mhi_cntrl->rddm_image)
++			mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->rddm_image,
++					     mhi_cntrl->rddm_size);
+ 		if (mhi_cntrl->rddm_image) {
+ 			ret = mhi_rddm_prepare(mhi_cntrl,
+ 					       mhi_cntrl->rddm_image);
+diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
+index e6c3ff62bab1d..107d71b4cc51a 100644
+--- a/drivers/bus/mhi/host/pm.c
++++ b/drivers/bus/mhi/host/pm.c
+@@ -1259,10 +1259,19 @@ void mhi_power_down(struct mhi_controller *mhi_cntrl, bool graceful)
+ }
+ EXPORT_SYMBOL_GPL(mhi_power_down);
+ 
++static void __mhi_power_down_unprepare_keep_dev(struct mhi_controller *mhi_cntrl)
++{
++	mhi_cntrl->bhi = NULL;
++	mhi_cntrl->bhie = NULL;
++
++	mhi_deinit_dev_ctxt(mhi_cntrl);
++}
++
+ void mhi_power_down_keep_dev(struct mhi_controller *mhi_cntrl,
+ 			       bool graceful)
+ {
+ 	__mhi_power_down(mhi_cntrl, graceful, false);
++	__mhi_power_down_unprepare_keep_dev(mhi_cntrl);
+ }
+ EXPORT_SYMBOL_GPL(mhi_power_down_keep_dev);
+ 
+diff --git a/drivers/net/wireless/ath/ath11k/mhi.c b/drivers/net/wireless/ath/ath11k/mhi.c
+index acd76e9392d31..c5dc776b23643 100644
+--- a/drivers/net/wireless/ath/ath11k/mhi.c
++++ b/drivers/net/wireless/ath/ath11k/mhi.c
+@@ -460,12 +460,12 @@ void ath11k_mhi_stop(struct ath11k_pci *ab_pci, bool is_suspend)
+ 	 * workaround, otherwise ath11k_core_resume() will timeout
+ 	 * during resume.
+ 	 */
+-	if (is_suspend)
++	if (is_suspend) {
+ 		mhi_power_down_keep_dev(ab_pci->mhi_ctrl, true);
+-	else
++	} else {
+ 		mhi_power_down(ab_pci->mhi_ctrl, true);
+-
+-	mhi_unprepare_after_power_down(ab_pci->mhi_ctrl);
++		mhi_unprepare_after_power_down(ab_pci->mhi_ctrl);
++	}
+ }
+ 
+ int ath11k_mhi_suspend(struct ath11k_pci *ab_pci)
+diff --git a/drivers/net/wireless/ath/ath12k/mhi.c b/drivers/net/wireless/ath/ath12k/mhi.c
+index 08f44baf182a5..3af524ccf4a5a 100644
+--- a/drivers/net/wireless/ath/ath12k/mhi.c
++++ b/drivers/net/wireless/ath/ath12k/mhi.c
+@@ -601,6 +601,12 @@ static int ath12k_mhi_set_state(struct ath12k_pci *ab_pci,
+ 
+ 	ath12k_mhi_set_state_bit(ab_pci, mhi_state);
+ 
++	/* mhi_power_down_keep_dev() has been updated to DEINIT without
++	 * freeing bhie tables
++	 */
++	if (mhi_state == ATH12K_MHI_POWER_OFF_KEEP_DEV)
++		ath12k_mhi_set_state_bit(ab_pci, ATH12K_MHI_DEINIT);
++
+ 	return 0;
+ 
+ out:
+@@ -635,12 +641,12 @@ void ath12k_mhi_stop(struct ath12k_pci *ab_pci, bool is_suspend)
+ 	 * workaround, otherwise ath12k_core_resume() will timeout
+ 	 * during resume.
+ 	 */
+-	if (is_suspend)
++	if (is_suspend) {
+ 		ath12k_mhi_set_state(ab_pci, ATH12K_MHI_POWER_OFF_KEEP_DEV);
+-	else
++	} else {
+ 		ath12k_mhi_set_state(ab_pci, ATH12K_MHI_POWER_OFF);
+-
+-	ath12k_mhi_set_state(ab_pci, ATH12K_MHI_DEINIT);
++		ath12k_mhi_set_state(ab_pci, ATH12K_MHI_DEINIT);
++	}
+ }
+ 
+ void ath12k_mhi_suspend(struct ath12k_pci *ab_pci)
+diff --git a/include/linux/mhi.h b/include/linux/mhi.h
+index dd372b0123a6d..6fd218a877855 100644
+--- a/include/linux/mhi.h
++++ b/include/linux/mhi.h
+@@ -306,6 +306,7 @@ struct mhi_controller_config {
+  *           if fw_image is NULL and fbc_download is true (optional)
+  * @fw_sz: Firmware image data size for normal booting, used only if fw_image
+  *         is NULL and fbc_download is true (optional)
++ * @prev_fw_sz: Previous firmware image data size, when fbc_download is true
+  * @edl_image: Firmware image name for emergency download mode (optional)
+  * @rddm_size: RAM dump size that host should allocate for debugging purpose
+  * @sbl_size: SBL image size downloaded through BHIe (optional)
+@@ -382,6 +383,7 @@ struct mhi_controller {
+ 	const char *fw_image;
+ 	const u8 *fw_data;
+ 	size_t fw_sz;
++	size_t prev_fw_sz;
+ 	const char *edl_image;
+ 	size_t rddm_size;
+ 	size_t sbl_size;
+-- 
+2.43.0
 
 
