@@ -1,95 +1,91 @@
-Return-Path: <linux-kernel+bounces-635018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE9EAAB89F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:39:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C102AAB958
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572BB170B8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0323AC110
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E33529D03C;
-	Tue,  6 May 2025 03:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465752980C9;
+	Tue,  6 May 2025 03:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fa9XyYup"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJbg0MqW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0FA3507EF;
-	Tue,  6 May 2025 00:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98432353108;
+	Tue,  6 May 2025 01:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746493189; cv=none; b=DOPK9uhL8gyNuJoW5/4B88E3tEAuNe+ah6vY90B3KFQFSmpiiTkBgdLe4ja0hMSddobI7klaR4WGbSiy3QYZRJSU0NPk5WRKm2zgKtAwl+yj5W6BXDvGsC1brJI/DfrSUhHFqsJtb41vRK0xqYYs0Ny1T6u8hvMf4tJXZqQ+LeE=
+	t=1746493317; cv=none; b=ghnpX8Jcj2LKrsEY9xlmr6je9pjA838oJxcI9mbyZaLoePnslkwYRtmCnK0zNl+oF/EthN0sWcu98HjYbTc41M7FK/GYmgN8OAdVlwA0v6hqvCg2hKDMdOwyCkq30Fa1R8xpvsAGaIm7P7GePnKwxApGLar+ZxBFNkKlknkOu1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746493189; c=relaxed/simple;
-	bh=2QUNPdvPmZlydnPDCRCXr7/Fn9MjlbeS1E1q///KdoM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hi2VpBchYMhmCacp0cd2Z411UOjmB+Qvbp1hGojmSFxxY3Y7dMtSYAPSQRCEh1PA+Vy9HVJnPr5ELsgU7ZYSmX0raxBLx+3EEU8CY9fcme+WtF+HTp3I4O4EOL5Nz6cZwg35VYj5S1bbphL2OI57+j1v6MC1rcy6X7LJVFK9+iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fa9XyYup; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FDE9C4CEE4;
-	Tue,  6 May 2025 00:59:47 +0000 (UTC)
+	s=arc-20240116; t=1746493317; c=relaxed/simple;
+	bh=Q7sf4DCZ7/YCbSs+WNWgVbrWK8nZx3UuEcr6fvAaq7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ca3ko4lmm7sEE7jmGh+svOYSwDaZpukauTeX8/uFhWOTgnD9ld5Ecn0T8CIw/rHtnvAKmmfIbzNLAD37IM8VkSlHcGKYZW6stq2hMkvG37NTGWP90kLoSVa1871EKPLHhJ8KJlw+KUC86PcHW9DOhZIxRyEpCLkD+Ewc7qfFZzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJbg0MqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7156C4CEEE;
+	Tue,  6 May 2025 01:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746493187;
-	bh=2QUNPdvPmZlydnPDCRCXr7/Fn9MjlbeS1E1q///KdoM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fa9XyYup/nsKloTGMlwGBPQRvnl+HzCMXPuAj2wds782Rks36WkRzyXJFk6eNK/TZ
-	 AXdXuW5LrHlWhIZ+G4kG67ltWX2j7262qr8WGVmncgy0TpiAAzSe0xvMt6CjUE+lCB
-	 2CVwdBHItmOVaR2TTD1UCXkScI7+Hj8WnaQZLVW4D//ZUOyXfcov7D0D+GEL0IRxJz
-	 dZz1vt2g2gnVCmZTNFVSyCQfB55YGIEzoxVyKTINR3lPLTtYf0C3SGeZUG7cLa632k
-	 P3+OtmbnGii+geIkHMY3agAx5NOY+vhzxxtwnEDLzi2pFLaSa+0dBzIjMBKE+QCixw
-	 KXcRQpDgI5usw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAC8C380CFD9;
-	Tue,  6 May 2025 01:00:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1746493317;
+	bh=Q7sf4DCZ7/YCbSs+WNWgVbrWK8nZx3UuEcr6fvAaq7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eJbg0MqWMi4z/ikUODUOJ2SQNtVEMS1Pi4gt/AWGNP2Imnki22QI0mTOI6pBOX0e0
+	 ks1uCPTEWTf7ZkOdOocF+hNgmYE9Jro0LHIFdpQpeevz+KqRPmr390NujC7N14NSEE
+	 eDv3vOdIAweUp3OoK1w6xMO4MZx68YDzqLhHFJuJIewOQe+LcCNDryyG6lb6aN9d8w
+	 eTgn+McM1W5mYyd7/hZrnz20m/XNGly9+pnoAlP2vvCbtuRlrP7a+9EQUpEgVfNJai
+	 WkXdrHB3uz2bUvnaJQOwfUy8PspA8M/rR87Jq7iSEvmZcY/7ecn5TmDdWcusWQCnKW
+	 z/Ey237rbhOWw==
+Date: Mon, 5 May 2025 18:01:55 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Hannes Reinecke <hare@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.14 342/642] fs/mpage: avoid negative shift for
+ large blocksize
+Message-ID: <aBlfg8tuWY1_GVPJ@bombadil.infradead.org>
+References: <20250505221419.2672473-1-sashal@kernel.org>
+ <20250505221419.2672473-342-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] selftests: iou-zcrx: Clean up build warnings for
- error format
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174649322675.999857.16419366433840326813.git-patchwork-notify@kernel.org>
-Date: Tue, 06 May 2025 01:00:26 +0000
-References: <20250502175136.1122-1-haiyuewa@163.com>
-In-Reply-To: <20250502175136.1122-1-haiyuewa@163.com>
-To: Haiyue Wang <haiyuewa@163.com>
-Cc: netdev@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org,
- dw@davidwei.uk, axboe@kernel.dk, horms@kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250505221419.2672473-342-sashal@kernel.org>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat,  3 May 2025 01:50:25 +0800 you wrote:
-> Clean up two build warnings:
+On Mon, May 05, 2025 at 06:09:18PM -0400, Sasha Levin wrote:
+> From: Hannes Reinecke <hare@kernel.org>
 > 
-> [1]
+> [ Upstream commit 86c60efd7c0ede43bd677f2eee1d84200528df1e ]
 > 
-> iou-zcrx.c: In function ‘process_recvzc’:
-> iou-zcrx.c:263:37: warning: too many arguments for format [-Wformat-extra-args]
->   263 |                         error(1, 0, "payload mismatch at ", i);
->       |                                     ^~~~~~~~~~~~~~~~~~~~~~
+> For large blocksizes the number of block bits is larger than PAGE_SHIFT,
+> so calculate the sector number from the byte offset instead. This is
+> required to enable large folios with buffer-heads.
 > 
-> [...]
+> Reviewed-by: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Hannes Reinecke <hare@kernel.org>
+> Link: https://lore.kernel.org/r/20250221223823.1680616-4-mcgrof@kernel.org
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-Here is the summary with links:
-  - [net-next,v2] selftests: iou-zcrx: Clean up build warnings for error format
-    https://git.kernel.org/netdev/net-next/c/953d9480f7d1
+This is not relevant to older kernels as we had no buffer-head usage of
+large folios before v6.15. So this is just creating noise / drama for
+older kernels.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Where's that code for  auto-sel again?
 
-
+  Luis
 
