@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-636321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C10AAC9C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:44:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D52AACA07
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756181C07022
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0AB41C28035
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC758502BE;
-	Tue,  6 May 2025 15:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AACD284B26;
+	Tue,  6 May 2025 15:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N+GyyHUV"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LYErRW7T"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FB3C8FE;
-	Tue,  6 May 2025 15:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E40233739
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 15:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746546262; cv=none; b=hg1DEpEiL6yeZzHRZr4vES+zpwkb5/t4Zc/8CQWTQyFp4nNj4egoEi6Pfh26Ezcm7NOk+wfVTrn4I59ahvQ7sm1+GYctDM++3x5k+UbRtYVKqIRLycq6Or1kfPOof8G0tUeD75+OMBsWywQih2F0auApQT0ivqYZj7jJu8g/E6Y=
+	t=1746546545; cv=none; b=oEh1MXeDkYFbvdOTfqBy6MisyUwdT3WhW+XST8Pv9YWCKon3BKlG83zn3EzDAJ96Vf1BWXhp+25CzjfiW5e1AYcpOCjmqJEH+NSArYN+VEfddklDuEsmB3gk+CfMdhTrTdSYaLOCDHYeq3MemhoLlvW87lq6N9HoQSGLl9i8rug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746546262; c=relaxed/simple;
-	bh=tPzB4Cr5GgKl89ad8RCRlDRGcX8EwjgQuP1Ms+e8B4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hmb2YoCtk+/ge/r4U1fqyONGEktWPqg/aAW6pKuk5z5PXgWNiSOElTLX9nOSFRKvmLEaLhllLQiSc2Tro+i9bVgyGljamWjyaOq5V4aHnWrStW/SenymRs2BTphHh3OvuxZ/Af2D4AgbRH5hS2YJm9KFY2qe92x2/9VSkrZ4j+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N+GyyHUV; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-73c17c770a7so8267426b3a.2;
-        Tue, 06 May 2025 08:44:20 -0700 (PDT)
+	s=arc-20240116; t=1746546545; c=relaxed/simple;
+	bh=UARF0lPC1EgqEyWogaTtRAWdzkCpuJQTtUJwEt1KEqE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=roisb4gw4RaHlevrZhNHvsblnm6l28BM91eCmkpLpWtymM8qMUy9KZ3XhE5d8GqvPYe88lEC+CUhS7LapQHvV59wZ5wa1yfTfFoJ+cpP45ROr3nb8sO3vKY4V/Zyxne5bRujyRKZ3DDwZGrWFlpXIGFd5Vcek07bYaf/02hHB68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LYErRW7T; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d5ca7c86aso34367355e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 08:49:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746546260; x=1747151060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W92479e3GDwcVekSJ+6iNPM/4aDW6S7waFt19f/PGiQ=;
-        b=N+GyyHUVO2560hGgcmNz5VHdkYMhvtfa06NhlpqqdQ9eywilBDPmcyquIIcQI5fQy6
-         kXiFq6q7hdrgSRFBvYwUhYAL+jbe/jaJNvi/d+Yg3j6zOZEOMz4VchNFsgWcfzqtzRyI
-         N9C9QgWo8T+3NdwhKIJRisx8DznvJSWsjG6adQc2zHQcV0ddL8cOWBrhlaRJ9RmEXeO3
-         1BX8zqk0p6mkd4ieBQm/8aF1T8redf5lalHzywf7dhVI/rCGgamBLeQB9ldi9Ac6i+y2
-         9b2Nh7GyI7VsjOc57kt+CBg0Y2AfvY5B2+yevUpVX25a9dVy8AVZQj0PYmrL1Q5GJOri
-         btjQ==
+        d=google.com; s=20230601; t=1746546542; x=1747151342; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gK5YYsEddwXo7K+PVd1vswKQw5Ntnh4pwifpdx+QGmM=;
+        b=LYErRW7TifPfuOyaXu+24CO4zrdibI35fOEtn/RRq8LrY4DB+UpNwHfCjO2jmFncbc
+         qifCSLORe1R56eZA2nNkXAMPu0p1gyk7FbwGLP+bcRZ8GNXTlUsNYSN564yZKiHk8N0F
+         Xyw8En/J0ZGN40piYCnDQMyLyC4drDPZQ5++R9mtNIQoINe4vEsQpCeba2SxKEaYEIb6
+         ahIcufaCnXILh5axXyNXJr+GINc9RrRwM/AIyo/iZGwYo1N5RrWHJdLGH9EmBbzLEAxo
+         3lySB6fObn2IMkNYCmUlwYSo3dv8un3ofYjXyyXlP6jXwIheeoVgkhejz4eVFSgkKP/e
+         CRgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746546260; x=1747151060;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W92479e3GDwcVekSJ+6iNPM/4aDW6S7waFt19f/PGiQ=;
-        b=Wb7kMitTHcmhyDiuf8Lvv/DhDMltIY/zNwWnZ8Us0yGeCJCWT224BwFfEkhZKQLT8W
-         +N4ZSOgdEkAw5OK3JH7SumcKhDITDqn0u1zz9vF8M67fe+w3k7BWtxPnQsnwwuChJLwd
-         Vj+hCdM2zqzPQyYx+QE3EXrQISUOqEKlxpWnzMx1g1KD2vc7nyIXbDAN1tQ2NgANEqSN
-         nNRb0fw69/RoxrQ93sFfJL4B9f8/0R9TzVkHW13zIeulZu/gzP7HcqNrN21MzAoQatWW
-         8MdQ4tCjFWHpamUFTyd0YDPFWc6yg3Lu1n8Xmn2KsUKF4P9UmflFQtLtQc7ZDDVOFoZn
-         cC1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX4QFir/LuWOflxV9rqcBVz2ZTuSaMO4TfW6M+FqRDQHSWGNgS6OT5n8EYrggzd9HHH5VCF9WguLJfbwjtn564=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGLqN2Jq6/VS8YrH7p3eWHoFDGHGd51BkxQirAbBVpUTLfiudb
-	IAx0p6FAYnS8M2ryWDXyh28AHAyho5MY4leDBZGmydhPzp24M+KFytMmkAMq
-X-Gm-Gg: ASbGncszd8CJK5d/syC30aIAvHjyXtykmxYcecDZUiN7W3/24Th4PWuGWr3vh1S3Lx9
-	QsDd/bajtEcM1u8qqSwtgts5K2SgbcrrFQpN8gzlU5PnIIfBNsaL4we1c5M8j/yyJo25EMsB6I3
-	EGfBs/1AaeyPRQyH73VZ6wxqXkmIa86QqyDWwWQaXO55mgYuGVJiUd2dlj/46Vf7khbjex0kHR2
-	/+nNU4mq+uJmM2PlraWUsrs5UdFdsGoQ7UaBgsoA4jduSLjGRbCTx045po+raNs+AXarXEeRjUu
-	KMy2RFkM8paPyokSVw0kN9aG7lvDTiD4cuqJW8Z4hPjnvOtqI0TgLftRkcKcRbdxtaZEiyX8VEv
-	FslO/wwHUUvp1HxocRqn/Czj6idMCFGP1ipg=
-X-Google-Smtp-Source: AGHT+IHVsHgCGhiIOVqITpHBM3uC93n8OV65My3h+37NXsLGcvJQsk08vps7/EQokyGbCmT/2HP9dA==
-X-Received: by 2002:a05:6a21:9102:b0:1f5:931d:ca6d with SMTP id adf61e73a8af0-20e962058fdmr17563250637.1.1746546259972;
-        Tue, 06 May 2025 08:44:19 -0700 (PDT)
-Received: from server-kernel.moonheelee.internal (d173-180-147-14.bchsia.telus.net. [173.180.147.14])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fb391fff6sm7715747a12.6.2025.05.06.08.44.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 08:44:19 -0700 (PDT)
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-To: brauner@kernel.org,
-	shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Subject: [PATCH] selftests: pid_namespace: Fix missing mount headers in pid_max.c
-Date: Tue,  6 May 2025 08:44:16 -0700
-Message-ID: <20250506154416.3102-1-moonhee.lee.ca@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1746546542; x=1747151342;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gK5YYsEddwXo7K+PVd1vswKQw5Ntnh4pwifpdx+QGmM=;
+        b=Wd4BG3qh1fOQBExlaaHB6yjzeS5f6QIgZSJV/Ft+KU3atgPEv6LUrSMJCIfQXTYkSJ
+         UBngPnPc87qOq5JnodKl5Ws/iHoR+YKPcZxSPg2u2ezSVArWRM4M8JZFCLvRI6lnySW7
+         D0fewT8gLOJaktqK1OrFd88pAcKd4r0s8iMCB/ywqV0NfOH7N12yUowwbUWVNybBCqoD
+         HD5J//DRS06yyeUMNAqoQzUUq1aNCBqNMS/l9UdbY7gtKOrl09m6VyZa43PKBF2S06J9
+         1xv9I9UmpxKOikw3irHd+GEbeUcc95zf8RJO+oIb8LAB8jsRfDzhLLip2unfOBBv4BJw
+         NpoQ==
+X-Gm-Message-State: AOJu0Yx86TbpZSvmFx7s3K/Sg2YZXb4lP3DGeaX0KccVlPLBePUx/8iv
+	muI2jK2A9etHGFiAoYRuXEMrzfMAyNUocti/fg21UuRApmIY+PH3zU8yqyx6s2X91ughvMAPW13
+	u9mQzXlsrpjxh+OSkE3kOEfMlRbPo1mfe5sh0cRYfDjNnJxrTpkACRUjPmlCjQ76FzSXEL57BeC
+	lGo8ufmM9y1s5ji/R0iCHZcSLzr+7oIg==
+X-Google-Smtp-Source: AGHT+IH8asEO33RG7HIEzO6SHVvsnrxlEmfN+IjZQpkLJsr8uJztEAG4pk/eWJ4oxoCwTyYPk5Rel9B7
+X-Received: from wmbfl15.prod.google.com ([2002:a05:600c:b8f:b0:441:b38b:9cc3])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3ca5:b0:43b:cc42:c54f
+ with SMTP id 5b1f17b1804b1-441bbed4726mr161333125e9.14.1746546542017; Tue, 06
+ May 2025 08:49:02 -0700 (PDT)
+Date: Tue,  6 May 2025 17:45:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2376; i=ardb@kernel.org;
+ h=from:subject; bh=tAfsWs9fcPLcgMGHyakjWB8jEBYqibaK6ilnBZu6r94=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIUNKb27e3TMrNr8+xXqCpfkp35e5Si827Gw//sjHv8TB7
+ YbN769LOkpZGMQ4GGTFFFkEZv99t/P0RKla51myMHNYmUCGMHBxCsBEsjYxMjxcd9bnnqT6GanQ
+ oGIZxyM/X62t3WQ3b+ryYNv2eUqiPe8YGV6u/HLj66sF8UWGwZ8z91TuCzO+lqF/Ndm08enfDdZ Ln/MCAA==
+X-Mailer: git-send-email 2.49.0.987.g0cc8ee98dc-goog
+Message-ID: <20250506154532.1281909-5-ardb+git@google.com>
+Subject: [RFC PATCH 0/3] x86: Robustify pgtable_l5_enabled()
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix compilation error in pid_max.c by including <sys/mount.h> to define
-mount(), umount2(), MS_PRIVATE, MS_REC, and MNT_DETACH.
+From: Ard Biesheuvel <ardb@kernel.org>
 
-The test now builds successfully.
+This is a follow-up to the discussion at [0], broken out of that series
+so we can progress while the SEV are being reviewed and tested.
 
-Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
----
- tools/testing/selftests/pid_namespace/pid_max.c | 1 +
- 1 file changed, 1 insertion(+)
+The current implementation of pgtable_l5_enabled() is a bit problematic
+because it has two implementations, and source files need to opt into
+the correct one if they contain code that might be called very early.
 
-diff --git a/tools/testing/selftests/pid_namespace/pid_max.c b/tools/testing/selftests/pid_namespace/pid_max.c
-index 51c414faabb0..972bedc475f1 100644
---- a/tools/testing/selftests/pid_namespace/pid_max.c
-+++ b/tools/testing/selftests/pid_namespace/pid_max.c
-@@ -11,6 +11,7 @@
- #include <string.h>
- #include <syscall.h>
- #include <sys/wait.h>
-+#include <sys/mount.h>
- 
- #include "../kselftest_harness.h"
- #include "../pidfd/pidfd.h"
+pgtable_l5_enabled() is widely used in functions for control flow, but
+also hidden in global expressions exposed via all caps macros, which
+typically denote true constants, and not expressions that change value
+based on whether some global variable is set.
+
+So merge the two definitions into a single one that always produces the
+correct value and is as efficient as the runtime one it replace. Then,
+set the underlying __pgtable_l5_enabled variable before calling into C
+code, so that inconsistencies are no longer possible.
+
+Finally, replace some of these global expressions with an ALTERNATIVE()
+based selector that does not use control flow to choose between the
+values used for 4-level and 5-level paging.
+
+Build and boot tested using QEMU with LA57 emulation.
+
+[0] https://lore.kernel.org/all/20250504095230.2932860-28-ardb+git@google.com/
+
+Cc: Ingo Molnar <mingo@kernel.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+
+Ard Biesheuvel (3):
+  x86/boot: Use a single source of truth for pgtable_l5_enabled()
+  x86/boot: Set __pgtable_l5_enabled correctly before calling into C
+    code
+  x86/boot: Use alternatives based selector for 5-level paging constants
+
+ arch/x86/boot/compressed/head_64.S      |  6 +++
+ arch/x86/boot/compressed/misc.h         |  3 --
+ arch/x86/boot/compressed/pgtable_64.c   |  6 +--
+ arch/x86/boot/compressed/vmlinux.lds.S  |  2 +
+ arch/x86/boot/startup/map_kernel.c      |  1 -
+ arch/x86/boot/startup/sme.c             |  9 ----
+ arch/x86/include/asm/page_64_types.h    |  2 +-
+ arch/x86/include/asm/pgtable_64_types.h | 54 +++++++++++++++-----
+ arch/x86/kernel/alternative.c           | 12 -----
+ arch/x86/kernel/cpu/common.c            |  2 -
+ arch/x86/kernel/head64.c                |  5 +-
+ arch/x86/kernel/head_64.S               |  7 +++
+ arch/x86/mm/kasan_init_64.c             |  3 --
+ 13 files changed, 61 insertions(+), 51 deletions(-)
+
+
+base-commit: ed4d95d033e359f9445e85bf5a768a5859a5830b
 -- 
-2.43.0
+2.49.0.987.g0cc8ee98dc-goog
 
 
