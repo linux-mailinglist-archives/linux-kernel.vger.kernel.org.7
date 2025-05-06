@@ -1,81 +1,110 @@
-Return-Path: <linux-kernel+bounces-636907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16239AAD1A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 01:43:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6469AAD1A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 01:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4DE67B608B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E28982392
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 23:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC90921D5AA;
-	Tue,  6 May 2025 23:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E4B21D5B5;
+	Tue,  6 May 2025 23:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="uwxv3ati"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UYPRQbx7"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F543D994;
-	Tue,  6 May 2025 23:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368E454F81
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 23:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746574992; cv=none; b=uCKFk2fZE9P7fFiMb97+aFvTI9PeU8RqS9zw53kdsbRSslaxPmSE9NePHfFPIgts5a5ihSm+d1P/Rtut6EQoB5Vjc4MuyVSUK2TulVCTGpjdbTHA0SYzEO2BFAhWArhZADJCfyuqXlGCsrBRHkRzLry8CKYheafbhBCuGi6/+tg=
+	t=1746575124; cv=none; b=Qs1zxFWQgNtGKnr0W80SWG8439X0Wr4OcqaZcaCSUuUZyGfwFqD1kpTOpGCPUmhgM+D7SyceshVAKRVNAA1P00KGc66LjcVbMLEaMovyQY/dtQnDsLfi87mgsskhgu7RtAzoCYZE7qwzMJJt7oih87k08DtJWNRkcI429jPRKIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746574992; c=relaxed/simple;
-	bh=oCAAxRSKxCl3OliVJxB6uq7ZBUIz9pnLzCnTMe+Q+qo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FMMk2Jj7Gb77bAIa5gIcagGs+EACxXP0ed4HVitKqlo90mlbjKhOBEHqe0MyYiZxiMLKGb1WaT7O3sh7IpLh9a/X+qhJum8AXPhjs7NIzL3uoif7t4P90dl0GSAxNsEllTtWavEeY04Y82H5d477ngK4KQwpDVVVAlVb7+Cmcg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=uwxv3ati; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53841C4CEE4;
-	Tue,  6 May 2025 23:43:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1746574991;
-	bh=oCAAxRSKxCl3OliVJxB6uq7ZBUIz9pnLzCnTMe+Q+qo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uwxv3ati+NxPCpR2eIIU10Fu15XbUGEXJVM+M3OoDFd1opl2fdbQPXjKAoNCZC3io
-	 JNZy0INRkKIADC6/lwSpxz833Tzx6xyLkuER/F6mPRpSH4RGLNvMNJNOYCXmobgJI6
-	 +bP8gR/uPfr0WqfRZ/OHEFRvGzI2VNo5VZciH2g4=
-Date: Tue, 6 May 2025 16:43:10 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ignacio.MorenoGonzalez@kuka.com
-Cc: Ignacio Moreno Gonzalez via B4 Relay
- <devnull+Ignacio.MorenoGonzalez.kuka.com@kernel.org>,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- yang@os.amperecomputing.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mm: mmap: map MAP_STACK to VM_NOHUGEPAGE only if
- THP is enabled
-Message-Id: <20250506164310.ff91ff53bb8295921d19cd19@linux-foundation.org>
-In-Reply-To: <20250506-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v2-1-f11f0c794872@kuka.com>
-References: <20250506-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v2-0-f11f0c794872@kuka.com>
-	<20250506-map-map_stack-to-vm_nohugepage-only-if-thp-is-enabled-v2-1-f11f0c794872@kuka.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746575124; c=relaxed/simple;
+	bh=zHiUTmLLiz0q8t1kQb1yuEr/uPC2Myjkv9uq+t3B7h4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ccjqk7adWMhgJqDd+NdhOiCaQeVcNq2pfMoLxIYkmIALwEx+i+Z20LqIqYe5y94Utdw8JKzMdYodIwAFjvnbKfz07N3rdSEfaPns8oMPHkB/f1LAklzyoOcTNDNUi1NNrXvts90UxtVewJ5Ul0+1hyBLXM5mRmDJ63qfChMFk70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UYPRQbx7; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=20Q8sqhfJirUEAK8dAkIMl6JCoz06DQ0g/rjGFp6HMs=; b=UYPRQbx7MgU7YVcRDlhYAEEOmh
+	aJ3sRhx0UbcquZ7SMmI2GusIaW9/5Pydk2yyqR6lkHGgpLqAInap/fs+rPwbXNp3MvkpT2nZvkYLF
+	bzVp41lv913GLTLam9+urpb4d6EeTHJ26Ak3hCaw9GRKRlU5gIfs00ZNXT9pbV5dod+tqhjGBnrHJ
+	xhmJQB8cQXZU9MRmZcOv5xWvgMTGI882XwmmW/zXev7MdcapRpEGgbM2VRiFj+RLa2HmvbV9MYTLn
+	Hjlex+oXohbCYc9srHhDD3lpoEp6nb192o/PGCr9Na595UCnGptLsYs7Egq0NbjJGwa3WQDlUZXkT
+	gZ7kqeUg==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uCRuk-004RhB-Dk; Wed, 07 May 2025 01:45:15 +0200
+Message-ID: <4b41236e-b4dc-43e1-922a-4bb9dcc318aa@igalia.com>
+Date: Tue, 6 May 2025 20:45:06 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 05/21] futex: Create hb scopes
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Cc: Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long <longman@redhat.com>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416162921.513656-6-bigeasy@linutronix.de>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20250416162921.513656-6-bigeasy@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 06 May 2025 15:44:32 +0200 Ignacio Moreno Gonzalez via B4 Relay <devnull+Ignacio.MorenoGonzalez.kuka.com@kernel.org> wrote:
-
-> commit c4608d1bf7c6 ("mm: mmap: map MAP_STACK to VM_NOHUGEPAGE") maps
-> the mmap option MAP_STACK to VM_NOHUGEPAGE. This is also done if
-> CONFIG_TRANSPARENT_HUGETABLES is not defined. But in that case, the
-> VM_NOHUGEPAGE does not make sense.
+Em 16/04/2025 13:29, Sebastian Andrzej Siewior escreveu:
+> From: Peter Zijlstra <peterz@infradead.org>
 > 
-> Fixes: c4608d1bf7c6 ("mm: mmap: map MAP_STACK to VM_NOHUGEPAGE")
-> Cc: stable@vger.kernel.org
+> Create explicit scopes for hb variables; almost pure re-indent.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>   kernel/futex/core.c     |  81 ++++----
+>   kernel/futex/pi.c       | 282 +++++++++++++-------------
+>   kernel/futex/requeue.c  | 433 ++++++++++++++++++++--------------------
+>   kernel/futex/waitwake.c | 193 +++++++++---------
+>   4 files changed, 504 insertions(+), 485 deletions(-)
+> 
+> diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+> index 7adc914878933..e4cb5ce9785b1 100644
+> --- a/kernel/futex/core.c
+> +++ b/kernel/futex/core.c
+> @@ -944,7 +944,6 @@ static void exit_pi_state_list(struct task_struct *curr)
+>   {
+>   	struct list_head *next, *head = &curr->pi_state_list;
+>   	struct futex_pi_state *pi_state;
+> -	struct futex_hash_bucket *hb;
+>   	union futex_key key = FUTEX_KEY_INIT;
+>   
+>   	/*
+> @@ -957,50 +956,54 @@ static void exit_pi_state_list(struct task_struct *curr)
+>   		next = head->next;
+>   		pi_state = list_entry(next, struct futex_pi_state, list);
+>   		key = pi_state->key;
+> -		hb = futex_hash(&key);
+> +		if (1) {
 
-Mixing -stable and non-stable patches in a single series is
-troublesome, because the timing and targeting of these patches are
-quite different.  I usually have to split them apart, munge around the
-changelogging and generally do things which I'd prefer you had done in
-the original!
+Couldn't those explict scopes be achive without the if (1), just {}?
 
-So please consider presenting these as two standalone patches.
+> +			struct futex_hash_bucket *hb;
+
 
