@@ -1,180 +1,112 @@
-Return-Path: <linux-kernel+bounces-635530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F5CAABEB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:13:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE80AABEC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CA35520464
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:13:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08DEB3B7521
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED60227CCF8;
-	Tue,  6 May 2025 09:08:03 +0000 (UTC)
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023085.outbound.protection.outlook.com [40.107.44.85])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19FF27511F;
+	Tue,  6 May 2025 09:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJnLKHHt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B0927780E;
-	Tue,  6 May 2025 09:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746522483; cv=fail; b=koOa9YFtqzEhsL4GqNl3TBORm13EJ3HwA0v8uTINSNKXqMkAuJNhdynVXfyLCfxkZyztrN4RwG3MI6IgfvNSWVJQ+ReBXqmb/LhkByxJwkQpUemPlDhVHSxFt1KNJMrF0yNO6kySQ+HbKvArWsGVjhN84VibePl9VEWScznwMfM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746522483; c=relaxed/simple;
-	bh=DNYizCvaZ6i7fVwuojFYWz1orJJTT7xhbzT0ypr22yE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501AE2749FA;
+	Tue,  6 May 2025 09:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746522479; cv=none; b=R33Y8JFxBSGAJe+fNdBIZaTSU9cUomw6OGGvwNV9Hu1BuvmjizYKcfTBHlX9III5AYG0gYWnp050JSqiixv9dXKrxPSgd3UK5AMW83ediJTZc0wHTmBdKBD1lPHzpfNzw61mmMJRFAPNZhYu2F0jrr6crsNtaSQTe0HHkpJD2zk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746522479; c=relaxed/simple;
+	bh=j31e8lcl30uAslMTPj/lN5w+liDEy+pA614g2Hzy8sw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FaHllvFO9CUh8cPBmn490L6iv5/VeSiVFlXDFmZOPh7VTeaWlK8i+j8nQdDuw47f+m9yI1f0vJVgKagWgp45cRzZ1xiQBP+CmIpPzEE/7VEys2MqrkcWMHqYhpAaCQz0XnfhTrbuznM1/VBJJQlHPcFr7fqFeM4r5cWhzV5VaPA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dG+eoFgNKMmJdPqOb4Rph+5ZmIyzt2qMyciGALPhLc5ZIoU9CsOc3nsRQnzqcAu1dDoGpoRM05ppAmOK8nFD/5+HITurJLDjpqZg9ReJvPTi3yXBYdF51qouZUVR7iju8oSBWfXf2CZJln1ql1QzA/juPjj3P63y6yalM1PFf3ZS1aRPZS8PAGNdMbNZ/11waYjeXXdyqvZbp6cSc0XA9EJpeYbKqdIGK4dq+1j3DPbZs5SygSzNPW13jU79+zDr8V9AqOQp2uChlEp8FppyjkJ+ouoL1ZHw+JMOV2tZrTA6+ZKHSVPJL7TsgsOWlAQD45kW70hX760Sbc+PZhVofA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q1oCys3d8NKlQhxZmLaAz+O3aeymKPZkXfTaGXcfL3I=;
- b=Kpn1O6LYrXbwboXCMERqHZYWW/ljhdx9DaB0Qe7NkJUUnQ3nw0EsqWDu8HH4U8m7kZqZnVZw1VDPRm++kr06TfnUv6DAMswQgvNBHV5wxPFdUFIG96HU1MCm77zPdiTMhKOe/yAnoGz78eDmeo6/dc6i92SzSddF5O3SugPN7PkpyqNMsJ60iPCgq7d96HL0UG+kxcyMuDOFvFs9iIOB97bctPKZ2KIJFWi6QIlCAZEhgHyQee9ZqbpN+jFtPzWMVG1efNDWWqsVKUdYkGMiZ1BcT54s1AUld/LcmxhUC5XrPU3y3Gy1OOUJVl1oTyltL7Ijm0x7uZ3zk7/Gd/922w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SG2PR02CA0116.apcprd02.prod.outlook.com (2603:1096:4:92::32) by
- TYUPR06MB5979.apcprd06.prod.outlook.com (2603:1096:400:356::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Tue, 6 May
- 2025 09:07:55 +0000
-Received: from SG2PEPF000B66D0.apcprd03.prod.outlook.com
- (2603:1096:4:92:cafe::e8) by SG2PR02CA0116.outlook.office365.com
- (2603:1096:4:92::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.32 via Frontend Transport; Tue,
- 6 May 2025 09:07:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG2PEPF000B66D0.mail.protection.outlook.com (10.167.240.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 09:07:54 +0000
-Received: from localhost.localdomain (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 8BBFC4160CA8;
-	Tue,  6 May 2025 17:07:52 +0800 (CST)
-From: Peter Chen <peter.chen@cixtech.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de
+	 MIME-Version:Content-Type; b=Hxe7S9XybiEeXdvABNEJdgVdt3V/9yYB/gTy24yGFCO4e43hz5x81yW0pYQAAL2VGpYwsqAFuPjJiwA+A20sPxKPhMh42E2hTKMkPwLkkwDKz7aWHnpyZp8CMCRE92ZOqHb204vT9Q0iIyr4FOqIB0ZEgRzLEwT1ETkHz4BvcZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJnLKHHt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6776C4CEE4;
+	Tue,  6 May 2025 09:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746522478;
+	bh=j31e8lcl30uAslMTPj/lN5w+liDEy+pA614g2Hzy8sw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JJnLKHHtHYU4BaA4zZ1CuOfgF4Wo62bsGVQG0zV6WPhIlXTOc3LfqPvVc4K5XmQyb
+	 1pbV9Ul5k1OAnyepdlWtjUfq3hwyGWwIJTUYaX+EAG3VPfO6KeLX4MLjiKPOCnqZrg
+	 xDwDxJq8403qq7tbu7W2/hFVzsshN+7fnHmWJmUn6bIhHWf2kyVOmrcAGpq8NzFTFS
+	 ShWN0HG4FiLEp73mxWsMaF9NaiN8fC+gjhF09umy+uO6SOI10I00i5j8/XHMF07lyG
+	 2oZL1EiBOMrCWcydGbrjoZ28IpPN42fH4Csim19QQjXYxzovbxdFNeSMwkIwxWfVFL
+	 AvPYBOJUq8drg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uCEHM-00CA0o-Kp;
+	Tue, 06 May 2025 10:07:56 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Quentin Perret <qperret@google.com>
 Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cix-kernel-upstream@cixtech.com,
-	maz@kernel.org,
-	kajetan.puchalski@arm.com,
-	sudeep.holla@arm.com,
-	eballetb@redhat.com,
-	Peter Chen <peter.chen@cixtech.com>
-Subject: [PATCH v7 6/9] arm64: defconfig: Enable CIX SoC
-Date: Tue,  6 May 2025 17:07:49 +0800
-Message-Id: <20250506090752.3695666-7-peter.chen@cixtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250506090752.3695666-1-peter.chen@cixtech.com>
-References: <20250506090752.3695666-1-peter.chen@cixtech.com>
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Selftest for pKVM ownership transitions
+Date: Tue,  6 May 2025 10:07:50 +0100
+Message-Id: <174652245698.339986.17396989011310666690.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250416160900.3078417-1-qperret@google.com>
+References: <20250416160900.3078417-1-qperret@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66D0:EE_|TYUPR06MB5979:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 1c7b1920-0ed1-48dc-bde1-08dd8c7d7cc7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+X7Dq1CAUtMNy/lZxFlkzdLTLPemV/kXq4ZoND0cRk9Y0pqSoD2aaDkI18uu?=
- =?us-ascii?Q?GUTulvZB6ALXAQGTXXpTjaLEO4GJ0U4ovWygQR1BSylQjBtuVfBqNX8TT1mD?=
- =?us-ascii?Q?dL9fr+xgPAd5aOzXTmOIKu6v+enlpIak+8Btm8A15flJP6URnkswh0tqipcN?=
- =?us-ascii?Q?IGyDe9/sX5P8aDOs4aDVTULg9EUAp8Gki1+gcNG0snD8t5/2M1aUlq6bXUt6?=
- =?us-ascii?Q?/FCMQZY1Xeb/1XdTssZ/IsdQ0GOdHZ/Df6WEOmDfnpDN3sShC8cTdKO98pDC?=
- =?us-ascii?Q?Mv7KrAJ2CUCrll3NJhchCJgrT0N/PZvXx9dozYvtAwzJlSkx0ADXNB/FfTbk?=
- =?us-ascii?Q?Fl44/LuxzqCY4xC4YvnqwGrW0f57WA33kWdDHFyNDhz0sA15L6JNQnHHQP0A?=
- =?us-ascii?Q?v9R+mVFZdcmRNSBewxGgrnVoxy0kMr+Mxw9p0zVX40GqS5j859SJeyutoM9T?=
- =?us-ascii?Q?m/vn4sRXquRyQ/g9pQ/ZXCUdW4gpM5CSNWaxFyOEk+7bWDvwZI5LalkQDGdq?=
- =?us-ascii?Q?iHwIVWGVJB5szGFrFNCPYFy20kYOKo5euOEtqmT2gfLyQCgUQVEsNIgTF45H?=
- =?us-ascii?Q?gNxwnVlq+FcWQtLa5t4oq4ajrKWp4sNDmQeqEmPEZ3SM61ChBf9fDuraQFsg?=
- =?us-ascii?Q?/SBUc19N8bMg1Cm45kbmwmfxWrDYCFduM/nzkpuFaV4HFzMBUu4JdsPGsY2C?=
- =?us-ascii?Q?oaU6NWs8zV9SPZvN2e0NzCsVWtTTfGgWJy05epEUk3MiK/a5tJT3YpQmaseJ?=
- =?us-ascii?Q?G69SmShpVUhJG4GFs3PiBDQAJJQgAgyW5mckQv2qcmh6EzN/WnvNjIjiQb5x?=
- =?us-ascii?Q?y8ZJu77pJzsn+/BwrbrEC8U1GuIuq1QhAOPaDA5RgN6xbyA9UYBwWptfnYFr?=
- =?us-ascii?Q?6g8At1UuslXkY/JdHODH65CEPp6rjmAkNCtGG+VcKRKUAWZbRbfZxYV0ZL8H?=
- =?us-ascii?Q?Eaifr0t+Q2DoMvYqgEUw/MBBRY167P5XS16drxr5H1PqtOm0khOsmSEg4LrV?=
- =?us-ascii?Q?9lCyqApdvWqWIxxKWPkPpJtlv87d/zcB87V9h05590vAoCXG/VB5dSYE3qDa?=
- =?us-ascii?Q?2eokFR+1WjIHtRqe/JtAh326ZniPOODWkNgigkVftlJq/5AmHRN/t+Tl5nOk?=
- =?us-ascii?Q?KLJHSYoDIGVmbFmHUtmM6EJax0TCDBBkF/+7SK2qLeGl//qemKRPEc/0ZXUH?=
- =?us-ascii?Q?2tDdPbxTghh3WftZ95SOQw1TM7QwjrHuV6qSpUir+r49fA9V5cEkhgBX+Oqm?=
- =?us-ascii?Q?SBEBKfgrazefEc9PFasK/Xjf0MdVkdSjLbQ2nCLI8/Gv072xv4KHCQu3GedZ?=
- =?us-ascii?Q?uXCmNayNMoO/R+a3X++hBo54QlWWn0IbbrMwfoYpOW31r9bM7Eq0JU1QOVBd?=
- =?us-ascii?Q?2hTeAeNL4vBd5hi+kWNhdXfXiNJmE3BMkWu6w7eE2s5rXQp52mq8ckzZfwPo?=
- =?us-ascii?Q?2vSDkRQtRk5OsQDT9mCLHYqhYValz4qXYz42ntnllVnmSbkLNWts66HN62yg?=
- =?us-ascii?Q?usQKRdxJBkIDAw003/aFqw/jk+C5qIzjQj0W?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 09:07:54.6943
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c7b1920-0ed1-48dc-bde1-08dd8c7d7cc7
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66D0.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB5979
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-- Enable CIX SoC support at ARM64 defconfig
-- Enable CIX mailbox
-At CIX SoC platforms, the clock handling uses Arm SCMI protocol,
-the physical clock access is at sub processor, so it needs to enable
-mailbox by default.
+On Wed, 16 Apr 2025 16:08:56 +0000, Quentin Perret wrote:
+> This is the v3 of the pKVM selftest series, v2 was here [1]. This series
+> depends on [2] which moves the hyp tracking to the vmemmap. A full
+> stack on top of v6.15-rc2 with everything applied is available here:
+> 
+>     https://android-kvm.googlesource.com/linux qperret/pkvm-selftest-v3
+> 
+> Changes since v2:
+>  - rebased on top of v2 of the hyp-state-in-vmemmap series [2];
+>  - thanks to above rebase, dropped the PKVM_SELFTEST kconfig option and
+>    folded the selftest under the existing NVHE_EL2_DEBUG;
+>  - fixed commit message of patch 02
+> 
+> [...]
 
-Signed-off-by: Peter Chen <peter.chen@cixtech.com>
----
-Changes for v7:
-- Add both CIX SoC and mailbox configuration at one patch
+Applied to kvm-arm64/pkvm-selftest-6.16, thanks!
 
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+[1/4] KVM: arm64: Add .hyp.data section
+      commit: 74b13d5816c9389381e937b218f49f03921f87fe
+[2/4] KVM: arm64: Don't WARN from __pkvm_host_share_guest()
+      commit: 845f126732a8126dee3f15855487121f4836131a
+[3/4] KVM: arm64: Selftest for pKVM transitions
+      commit: 6c2d4c319c7db7be883428ae1161502f3f690e60
+[4/4] KVM: arm64: Extend pKVM selftest for np-guests
+      commit: 48d564507293082c370a5fc1eb3d73ad3de30561
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5bb8f09422a2..4e9805c5bcc3 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -45,6 +45,7 @@ CONFIG_ARCH_BCMBCA=y
- CONFIG_ARCH_BRCMSTB=y
- CONFIG_ARCH_BERLIN=y
- CONFIG_ARCH_BLAIZE=y
-+CONFIG_ARCH_CIX=y
- CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_SPARX5=y
- CONFIG_ARCH_K3=y
-@@ -1423,6 +1424,7 @@ CONFIG_BCM2835_MBOX=y
- CONFIG_QCOM_APCS_IPC=y
- CONFIG_MTK_ADSP_MBOX=m
- CONFIG_QCOM_IPCC=y
-+CONFIG_CIX_MBOX=y
- CONFIG_ROCKCHIP_IOMMU=y
- CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_ARM_SMMU=y
+Cheers,
+
+	M.
 -- 
-2.25.1
+Without deviation from the norm, progress is not possible.
+
 
 
