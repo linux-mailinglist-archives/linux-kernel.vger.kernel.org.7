@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-634998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B0DAAB86D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:34:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9806FAAB863
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6271C2375F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44AA41C2752E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E5A2EE171;
-	Tue,  6 May 2025 03:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712E82F4F69;
+	Tue,  6 May 2025 03:07:12 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C9E49FA33
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EA034AA88
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746492458; cv=none; b=s+Clr+Cx7UL5PCq8ab89NKoSjX3rbTVA48fqesuGM31F+SQg+h+jEYi3DFjOL3MULZJyZtn6YVmsXmWzTk5lUDEh3oOLGrbxwjlkbbirwK9r157tYnDzOKGyxbhbxVaPkaS23Kud4LSNKIut8gQKmDwNRNuW+ZtfaJjbb72pLGc=
+	t=1746492569; cv=none; b=eTZa1kPymNvJZFoQA/grmGAk7RWiIT2xCb+lBd6+9wUgOyWw3BotGd6nqHCErcAhhEjqj32rw0SLwiaAL8/EbjukK0OvskvAGEx5LAOy1ScfIdZoflrxCm91IlPNLKGYkyEzoNOEZ+2PLOtajOmIaAzJklk1+J6S+aHO4/fpRDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746492458; c=relaxed/simple;
-	bh=+pC0MyfYnCdcvbMCgpYsaCP5hIslJP7GASUOkIvSzuw=;
+	s=arc-20240116; t=1746492569; c=relaxed/simple;
+	bh=NPJNsGlptd0n6PNy0NgeClvR6xPjLXuDITIWdR/228E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NMuoydgiHxFNnpvo5g6M8fsS2KHgZpMffHNFiuJdYuPGwg3JZmV59sfoazXHECy0YKWEJBNq1W2/ttosWYuVcL9HWnOBrFeynx9qLzIhVIN7IBrDyTQZziJBXupmHHn29NYFvJAyN5doPAwc/geWDlV6HkJhhPf1o8DhiNT5+FQ=
+	 MIME-Version; b=qlUTWgwNATecdBafL++B631n5ocOb/FjbRO4ihxUDNuz+j3TLosqhDfAOW4V+oeJOQH+CAjG1/iI+T1L7vSbrZUAJSs7e9C+WF+hAOjoVr7ID0pHLfpfkhyDFSSn52VTuSRR79nHdZfhkveff9uKlEN619NEael/8xkLbZAinf8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -32,7 +32,7 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1uC6K6-000000000IF-3UXR;
+	id 1uC6K6-000000000IF-3aS7;
 	Mon, 05 May 2025 20:38:14 -0400
 From: Rik van Riel <riel@surriel.com>
 To: linux-kernel@vger.kernel.org
@@ -49,9 +49,9 @@ Cc: linux-mm@kvack.org,
 	Rik van Riel <riel@fb.com>,
 	Yu-cheng Yu <yu-cheng.yu@intel.com>,
 	Rik van Riel <riel@surriel.com>
-Subject: [RFC PATCH 4/9] x86/mm: Introduce X86_FEATURE_RAR
-Date: Mon,  5 May 2025 20:37:42 -0400
-Message-ID: <20250506003811.92405-5-riel@surriel.com>
+Subject: [RFC PATCH 5/9] x86/mm: Change cpa_flush() to call flush_kernel_range() directly
+Date: Mon,  5 May 2025 20:37:43 -0400
+Message-ID: <20250506003811.92405-6-riel@surriel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250506003811.92405-1-riel@surriel.com>
 References: <20250506003811.92405-1-riel@surriel.com>
@@ -66,74 +66,84 @@ Sender: riel@surriel.com
 
 From: Rik van Riel <riel@fb.com>
 
-Introduce X86_FEATURE_RAR and enumeration of the feature.
+The function cpa_flush() calls __flush_tlb_one_kernel() and
+flush_tlb_all().
 
-[riel: move disabling to Kconfig.cpufeatures]
+Replacing that with a call to flush_tlb_kernel_range() allows
+cpa_flush() to make use of INVLPGB or RAR without any additional
+changes.
+
+Initialize invlpgb_count_max to 1, since flush_tlb_kernel_range()
+can now be called before invlpgb_count_max has been initialized
+to the value read from CPUID.
+
+[riel: remove now unused __cpa_flush_tlb]
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- arch/x86/Kconfig.cpufeatures       |  4 ++++
- arch/x86/include/asm/cpufeatures.h |  2 +-
- arch/x86/kernel/cpu/common.c       | 13 +++++++++++++
- 3 files changed, 18 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/amd.c    |  2 +-
+ arch/x86/mm/pat/set_memory.c | 20 +++++++-------------
+ 2 files changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
-index e12d5b7e39a2..60042f8c2837 100644
---- a/arch/x86/Kconfig.cpufeatures
-+++ b/arch/x86/Kconfig.cpufeatures
-@@ -199,3 +199,7 @@ config X86_DISABLED_FEATURE_SEV_SNP
- config X86_DISABLED_FEATURE_INVLPGB
- 	def_bool y
- 	depends on !BROADCAST_TLB_FLUSH
-+
-+config X86_DISABLED_FEATURE_RAR
-+	def_bool y
-+	depends on !BROADCAST_TLB_FLUSH
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 7642310276a8..06732c872998 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -75,7 +75,7 @@
- #define X86_FEATURE_CENTAUR_MCR		( 3*32+ 3) /* "centaur_mcr" Centaur MCRs (= MTRRs) */
- #define X86_FEATURE_K8			( 3*32+ 4) /* Opteron, Athlon64 */
- #define X86_FEATURE_ZEN5		( 3*32+ 5) /* CPU based on Zen5 microarchitecture */
--/* Free                                 ( 3*32+ 6) */
-+#define X86_FEATURE_RAR			( 3*32+ 6) /* Intel Remote Action Request */
- /* Free                                 ( 3*32+ 7) */
- #define X86_FEATURE_CONSTANT_TSC	( 3*32+ 8) /* "constant_tsc" TSC ticks at a constant rate */
- #define X86_FEATURE_UP			( 3*32+ 9) /* "up" SMP kernel running on UP */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index b73e09315413..5666620e7153 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1502,6 +1502,18 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 	setup_force_cpu_bug(X86_BUG_L1TF);
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 13a48ec28f32..c85ecde786f3 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -31,7 +31,7 @@
+ 
+ #include "cpu.h"
+ 
+-u16 invlpgb_count_max __ro_after_init;
++u16 invlpgb_count_max __ro_after_init = 1;
+ 
+ static inline int rdmsrq_amd_safe(unsigned msr, u64 *p)
+ {
+diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+index 30ab4aced761..2454f5249329 100644
+--- a/arch/x86/mm/pat/set_memory.c
++++ b/arch/x86/mm/pat/set_memory.c
+@@ -399,15 +399,6 @@ static void cpa_flush_all(unsigned long cache)
+ 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
  }
  
-+static void __init detect_rar(struct cpuinfo_x86 *c)
-+{
-+	u64 msr;
-+
-+	if (cpu_has(c, X86_FEATURE_CORE_CAPABILITIES)) {
-+		rdmsrl(MSR_IA32_CORE_CAPABILITIES, msr);
-+
-+		if (msr & CORE_CAP_RAR)
-+			setup_force_cpu_cap(X86_FEATURE_RAR);
-+	}
-+}
-+
- /*
-  * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
-  * unfortunately, that's not true in practice because of early VIA
-@@ -1728,6 +1740,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 		setup_clear_cpu_cap(X86_FEATURE_LA57);
+-static void __cpa_flush_tlb(void *data)
+-{
+-	struct cpa_data *cpa = data;
+-	unsigned int i;
+-
+-	for (i = 0; i < cpa->numpages; i++)
+-		flush_tlb_one_kernel(fix_addr(__cpa_addr(cpa, i)));
+-}
+-
+ static int collapse_large_pages(unsigned long addr, struct list_head *pgtables);
  
- 	detect_nopl();
-+	detect_rar(c);
- }
+ static void cpa_collapse_large_pages(struct cpa_data *cpa)
+@@ -444,6 +435,7 @@ static void cpa_collapse_large_pages(struct cpa_data *cpa)
  
- void __init init_cpu_devs(void)
+ static void cpa_flush(struct cpa_data *cpa, int cache)
+ {
++	unsigned long start, end;
+ 	unsigned int i;
+ 
+ 	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
+@@ -453,10 +445,12 @@ static void cpa_flush(struct cpa_data *cpa, int cache)
+ 		goto collapse_large_pages;
+ 	}
+ 
+-	if (cpa->force_flush_all || cpa->numpages > tlb_single_page_flush_ceiling)
+-		flush_tlb_all();
+-	else
+-		on_each_cpu(__cpa_flush_tlb, cpa, 1);
++	start = fix_addr(__cpa_addr(cpa, 0));
++	end = fix_addr(__cpa_addr(cpa, cpa->numpages));
++	if (cpa->force_flush_all)
++		end = TLB_FLUSH_ALL;
++
++	flush_tlb_kernel_range(start, end);
+ 
+ 	if (!cache)
+ 		goto collapse_large_pages;
 -- 
 2.49.0
 
