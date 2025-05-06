@@ -1,127 +1,121 @@
-Return-Path: <linux-kernel+bounces-636483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C072AACBE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:09:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E0DAACBF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2801C274FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:10:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713B74E8214
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A154A2857EB;
-	Tue,  6 May 2025 17:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAA82874E1;
+	Tue,  6 May 2025 17:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcDx68d5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGJ16Fwo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFF028151D;
-	Tue,  6 May 2025 17:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D7C2857F7
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 17:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746551375; cv=none; b=iE5AG3t+HKmbAd9Lw3HqhGYVzSpdZO6GJ8ejIt8OXuIAoRlVgGiq0TmWppgpNy2mo5c6xVQK5g7R/luqARf1zipoCR5ptU57ByZXDOikCiD4fOiVmJTEp4zqCkdpprC8xQUcGlGwsHeqETn/LAmv846SvTiz9jxOhBU9DRQB5Ew=
+	t=1746551404; cv=none; b=sm5xuRU1KXZn4McvwDel3ji4V6+c7+/KK3NcGmJTw3N7xNGmknPPxrRCtlpKV6/2/wXkoH+GWvnx/IFJp1ug3Mm/d0zo9pEUqN1ZARKmNjFco5ZeA28SrxGD6RFi/jhM79ikxX4bW9PvJbcGQm9H/QfLsJEtnJYpPBj4yAmDlXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746551375; c=relaxed/simple;
-	bh=k+gZ1pxmpGXcLHj2TLw4nLia4cr2GC0EuPxS3YjpOCg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EKHco1pGoZ87Ww7V5HrXRPMysq69Ef4g0JaMdIEFaynsRpizxeoaC+TSacIoZyAd2FsarL4K0IfoKLurDoxVyyNkRckIsQJhGza+XlJuZpVs6hcJ2HDbYB1JFKgBz8qJAgEP+UzhB4YLZWiDd3YSMXgLx+sZkIfZqZdNlnakJTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcDx68d5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 58F7CC4CEF3;
-	Tue,  6 May 2025 17:09:34 +0000 (UTC)
+	s=arc-20240116; t=1746551404; c=relaxed/simple;
+	bh=7w+B3BnSAOt9aZff8G0TKHHwKXTbtM3d3heYLOXQjyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y/hNv4EKVN3dq7XbTu8whWdwKkRzDjDLbFNBvdKSY6R3+WEPpLvHqxxhdPRo/j8sKje6qJmKWbbTPkdKPwya25j181OBrcM6Lw2exe8sZENJr5gRfg+Bl4Sjhb8IgycFQJsAZ7mn5rdevo2WIEIHABU0n5zMur5XxYrG6VX7rEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGJ16Fwo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92AA3C4CEE4;
+	Tue,  6 May 2025 17:10:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746551374;
-	bh=k+gZ1pxmpGXcLHj2TLw4nLia4cr2GC0EuPxS3YjpOCg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VcDx68d5Wc2yLUlRvccpd/myN1moA5pKE7H4f4f0ib88r7j1fENwvw70NQSonwxgT
-	 CoE7MGXOHwDCwuIbSm/A2O46wmnjfivqwDUitiIa0y+7kxPeWTaIManccTNRWz2/0f
-	 VtYWfG1NK1BQEZZ+omAqXCAyT2yy7lnwcYvf7T/lCurvR/bf5djhiHe9SZ4Po6ZlFR
-	 jOObMVTZ0NSuKZH0M4+qy09FQyLibIE2v6Jz0uZG0NkmJdg0JODLYztSIpljgwOKaf
-	 0yCl9OjzkYWmiNwj/2OyGxUfVsU5jkw1l/muai+Mju8ETfY06KbzZlijB4bu+YcNKy
-	 1RbOH1vM0675g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4942DC3ABC5;
-	Tue,  6 May 2025 17:09:34 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 06 May 2025 12:09:18 -0500
-Subject: [PATCH v2 2/2] phy: tegra: xusb: Default otg mode to peripheral
+	s=k20201202; t=1746551404;
+	bh=7w+B3BnSAOt9aZff8G0TKHHwKXTbtM3d3heYLOXQjyk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qGJ16FwopXdGHOf6AJdwMHy5hta1HsEERoNGtGzH7QWVZ9SFdEvE0eE6MAGtJeChU
+	 ChEIs+0BT3GEY3GoI6+3rCcRd6y5vWTK7qYe7WXwQ7pk5L/ctJHmfopP7UEzDTK6VN
+	 BpTolu9vKrzmBM0mJD/+eb3uXEKH+XfmBYISZXFpsnngb4C+NoRk3SXHI4Nv/e8nJx
+	 V4x7MklvWaYxTPlG/Fgf+pkiU5aTOnw2KEpOvlzDzQn+SlBFklFLWUGAiTP/oJM6t0
+	 CifXL1JGFLPH+BRkK60mqtDrxwUwqx46Zwy/TIWfRElYIBpWoc+lSFouCH/RE5ZTNK
+	 VA+wYR4E/3qkg==
+From: Ingo Molnar <mingo@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Michal Marek <michal.lkml@markovi.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH 10/15] x86/kconfig/64: Enable BPF support in the defconfig
+Date: Tue,  6 May 2025 19:09:19 +0200
+Message-ID: <20250506170924.3513161-11-mingo@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250506170924.3513161-1-mingo@kernel.org>
+References: <20250506170924.3513161-1-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250506-xusb-peripheral-v2-2-bfbe00671389@gmail.com>
-References: <20250506-xusb-peripheral-v2-0-bfbe00671389@gmail.com>
-In-Reply-To: <20250506-xusb-peripheral-v2-0-bfbe00671389@gmail.com>
-To: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746551373; l=1618;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=WY090858pJtzoKww7YaC7Z9JTjET1bec4L1964gg6J4=;
- b=NaDOg+nVQv05p86Ta/79J6j2EU3M3vcxowUBXmQydstuVgGIULGpaJycP9oGlAbZopQhyWfpF
- OWzO8bM+nO6Cp/bxIk33uX0ce/QeUjBV6iUHqoiGfgtc3beuBTn+vi1
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Since the x86 defconfig aims to be a distro kernel work-alike with
+fewer drivers and a shorter build time, enable BPF support, which
+is enabled in all major Linux distributions.
 
-Currently, if usb-role-switch is set and role-switch-default-mode is
-not, a xusb port will be inoperable until that port is hotplugged,
-because the driver defaults to role none. Instead of requiring all
-devices to set the default mode, assume that the port is primarily
-intended for use in device mode.
-
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Andrii Nakryiko <andrii@kernel.org>
 ---
- drivers/phy/tegra/xusb.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ arch/x86/configs/defconfig.x86_64 | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 79d4814d758d5e1f0e8200d61e131606adbb0e2d..22338f3f24a0794c22544a0e16e0fc706c4fb6d7 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -726,18 +726,15 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
- 
- static void tegra_xusb_parse_usb_role_default_mode(struct tegra_xusb_port *port)
- {
--	enum usb_role role = USB_ROLE_NONE;
-+	/* Most switchable usb ports are normally used in device mode */
-+	enum usb_role role = USB_ROLE_DEVICE;
- 	enum usb_dr_mode mode = usb_get_role_switch_default_mode(&port->dev);
- 
- 	if (mode == USB_DR_MODE_HOST)
- 		role = USB_ROLE_HOST;
--	else if (mode == USB_DR_MODE_PERIPHERAL)
--		role = USB_ROLE_DEVICE;
- 
--	if (role != USB_ROLE_NONE) {
--		usb_role_switch_set_role(port->usb_role_sw, role);
--		dev_dbg(&port->dev, "usb role default mode is %s", modes[mode]);
--	}
-+	usb_role_switch_set_role(port->usb_role_sw, role);
-+	dev_dbg(&port->dev, "usb role default mode is %s", modes[mode]);
- }
- 
- static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
-
+diff --git a/arch/x86/configs/defconfig.x86_64 b/arch/x86/configs/defconfig.x86_64
+index df786b8b4e85..a32ed372e5bd 100644
+--- a/arch/x86/configs/defconfig.x86_64
++++ b/arch/x86/configs/defconfig.x86_64
+@@ -4,6 +4,12 @@ CONFIG_POSIX_MQUEUE=y
+ CONFIG_AUDIT=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_BPF_SYSCALL=y
++CONFIG_BPF_JIT=y
++CONFIG_BPF_JIT_ALWAYS_ON=y
++CONFIG_BPF_PRELOAD=y
++CONFIG_BPF_PRELOAD_UMD=y
++CONFIG_BPF_LSM=y
+ CONFIG_PREEMPT_VOLUNTARY=y
+ CONFIG_BSD_PROCESS_ACCT=y
+ CONFIG_TASKSTATS=y
+@@ -22,6 +28,7 @@ CONFIG_CPUSETS=y
+ CONFIG_CGROUP_DEVICE=y
+ CONFIG_CGROUP_CPUACCT=y
+ CONFIG_CGROUP_PERF=y
++CONFIG_CGROUP_BPF=y
+ CONFIG_CGROUP_MISC=y
+ CONFIG_CGROUP_DEBUG=y
+ CONFIG_BLK_DEV_INITRD=y
 -- 
-2.48.1
-
+2.45.2
 
 
