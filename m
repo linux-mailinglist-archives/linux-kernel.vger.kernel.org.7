@@ -1,175 +1,202 @@
-Return-Path: <linux-kernel+bounces-635905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DEAAAC36A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:09:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67839AAC363
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C69E3B5988
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D540F1C21473
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7945527F167;
-	Tue,  6 May 2025 12:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A5727F165;
+	Tue,  6 May 2025 12:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nDm76nL8"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="cusdtxba"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2961827F188;
-	Tue,  6 May 2025 12:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746533334; cv=fail; b=Oj7Ul92FWcH7AbYIzt30K69Ft4z4yNPNJDuOUO1IB+5wvmxjFt8xZQm1QwGw5dTq5TZ0CFHmMJtysVfTzneK+vNJ4ge5GLkq8uOxG8zYmuNdU8nftOiRPm2mw+CKdlACQMQJXissLL6ARBs7WGVuu7wMynRdvPnMARQHViu8GZ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746533334; c=relaxed/simple;
-	bh=NllLLE5h9OdVXdAYGNJ1eiDR2YAg/8OkwS5uDwlDtUE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PeqrFLuyrkWP49qUU+A9ypOxpDvUPYSMLn+VJ8vJsU16Dw1UetLA83M9l9TclL3tnNN4jqkASqpxNHeovf966IGyVHkFQoo4KVb1NlFhd8nE5Q0NouTCTtNGXYVXt1uDVfuD0WVD9f5WLBPeFRdX2v9S+xuNazO0ynVbCmQS+Ts=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nDm76nL8; arc=fail smtp.client-ip=40.107.92.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EeC48WOPwJXON2dySpd/9SzCJX8XPNTOLkpLIn6dIfNHDHJFF9K4IsRT9TBhZLB6+C1kxYfFoO8P4wf/qIn1kN8rDRhKxxRCscvSg1TszFTX5Z5mBbA8uvOfNPWSRxrpM/LMKEy9MfIYv5Lo2giHE/WfYO+Qk1vqYJbetkMq2KvMmiMll1nlqFavcvDLXa/smppiSDBPCng0+WsO/Pf7M+fc2Me+d/XK+AFPYoijUHR2m2cDxUoNt2zHdKUJx+nX5cjmwHrjuGZsmbHIOW2ZwALQqIOOxwCfhhULeUzOi7YFCP7ArNEuaoA+qR5Co6N5Q4Sf1eo/f01hOEDYifNO4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9aqYST0AuQlIRnbeZVWJy8P60wjrX02LDLf5YB79KP4=;
- b=K1KV8vH+f+zVdGIaNYAsFY4Ny00/CVtiktEI2ToFE+mHGO/hTLP9zR+blJea4X+GOobxUyASBsaV3t8DRXSiG9XQZQ/WBRsvK64Indk3ASv/Kljk9i+Cb+9obo7fynfJdgjmqKOqp1AaEEtUDPMkOSacLj6u6EokkM86V8VJDeCDrtL4aPWeVJl7sjSg9zkTW/1ugVBTwZHvZZf/looNuSLExklvuvAny31mkr1pRSwjtGD3CoIAaviWwGk9rZ53bHVVCw2RDAMWsL9dRmq8I95gfvZNmemY3XP9ieWDC+BtoqeXcjxhWYOYIEOMAaRkPGQdBd+R83oQqkWmHhPseQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9aqYST0AuQlIRnbeZVWJy8P60wjrX02LDLf5YB79KP4=;
- b=nDm76nL88E3D4spQBhDwXjOmGIpuyeCCSu+Y0h97xEYp9TQY/wD7nqfb54d3Wjar0Yiwu6u7W3VTe5NYeD+lQvrQptTTdiKSDtS2ue8tjDk9N+Fsq2ILkkCD6IQ8uk4qNc/Qdqy1rNdTMng+/Prp71YbfHKWGrGtczVE2bFDg6Y=
-Received: from SJ0PR05CA0096.namprd05.prod.outlook.com (2603:10b6:a03:334::11)
- by DS7PR12MB6069.namprd12.prod.outlook.com (2603:10b6:8:9f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Tue, 6 May
- 2025 12:08:49 +0000
-Received: from CO1PEPF000075F3.namprd03.prod.outlook.com
- (2603:10b6:a03:334:cafe::68) by SJ0PR05CA0096.outlook.office365.com
- (2603:10b6:a03:334::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.24 via Frontend Transport; Tue,
- 6 May 2025 12:08:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000075F3.mail.protection.outlook.com (10.167.249.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 12:08:48 +0000
-Received: from vijendar-linux.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 May
- 2025 07:08:43 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-	<tiwai@suse.com>, <yung-chuan.liao@linux.intel.com>,
-	<ranjani.sridharan@linux.intel.com>, <pierre-louis.bossart@linux.dev>,
-	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
-	<venkataprasad.potturu@amd.com>, <Mario.Limonciello@amd.com>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
- Mukunda" <Vijendar.Mukunda@amd.com>
-Subject: [PATCH 3/3] ASoC: amd: sof_amd_sdw: add logic to get cpu_pin_id for ACP7.0/ACP7.1 platforms
-Date: Tue, 6 May 2025 17:37:24 +0530
-Message-ID: <20250506120823.3621604-3-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250506120823.3621604-1-Vijendar.Mukunda@amd.com>
-References: <20250506120823.3621604-1-Vijendar.Mukunda@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D1827EC6A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746533255; cv=none; b=qJMDRAwwWNPtGnNx29xuWJqYXKc1wDTzyTBzSkPkenuWCbDKyWMJNN89sce6rwi65zG5zrSXyYag/0USEVXTFQfMcL48J0dkLOlo4GfeZ2t93Q7V8nfBW855VB3jIuRF5gaSb1cID2aO1G+yxDhV5CHnA9zJeEGe14FjUe538+M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746533255; c=relaxed/simple;
+	bh=SeRmzyMcT6JX37/ImDnhvHk8HNSqfqzsFYexZDstrTc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=fD7ZTW/89FRaCg68peISvmO2c57dsQINKXc/mSMhL/PXU5LFq1PEbaNIz8++7vBFnTdQp5T3f6a747sISy+Qm0YyrUzn7XywfbW5KOSZ24umpFKcLR8L1SLVeyO0A3B5BSTWp2YgB6rbNMHKwvkxf0W0VjzGjffwlq9DvhHpq5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=cusdtxba; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso2296018a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 05:07:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1746533252; x=1747138052; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M7v7vpdvOuhIP8be0gZZCUIgIPmqxbVGMYXTijnoryU=;
+        b=cusdtxbaM55uSkeGT6mg39KJxRPo+aL8KfVGdhhHfRpJhL8wfwON1RPyv7yi1LPyqL
+         nmnLp/IHdUnnG7l6n3DW1CyN2n649CiPCxGhxTcWCEgklVcvTor0muHnbd+a9KcKy6Gd
+         P+JPojGHdB982humWyFyvtzX4UFEWlIwKOVmRam9QdaZKCtDyuQLRCaRmkaun4fsyK5J
+         NuVVHnFAEjQuZA7y+qnmJRIkB8tm11aflTU7BRrkOVRLrveyqOYmonzoNKUQtLYkQuLN
+         r1b8IwWSSJv1jvwHfwPHvH98CqwlAxcQKYsO6SxzZCkYpZS9e6w4zqvHdWUYLgPZG14s
+         h0rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746533252; x=1747138052;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M7v7vpdvOuhIP8be0gZZCUIgIPmqxbVGMYXTijnoryU=;
+        b=UIUg3IIhtXiMnn2auxVnfN9a1TVeIV5VT6VMNMqhUsYs7YKsrj0qhfFOUyriQrgqkl
+         JJtXTp/gsIFh72UCjwvTZIqUmLx83CwnkHBxk1wEPLcNiKPUlNJYkqnFxPOUFIGyghAI
+         chGRpJFZBe73VP5kBBstMXJGtNe6qjHK9KJBqUN5HZ5sRDhC86PQBwQ1BclXvEYhdbKU
+         Kpgupb5uQfUlkCAZdrqzxjgk58kyWoVt1SJ6kSHuney9skX8KhO0kWxBvMmKuN+aGqp+
+         jVCgaaevv0tFWOtO4DbOMJbjotj6k7smFZ2f59bJUCfRMeZ/aNDM38QabrTom5mDp0AP
+         r07w==
+X-Forwarded-Encrypted: i=1; AJvYcCVk/a+JxHdMJ74hsBQqp55T++G6XlSVP95SLh9OM5um2QyY6/QRflADPzFioTRb3mn8bI7PMgtd1weZ2Ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg7BdkZSRXDHKWfsCs3iWQPZlE5uXRARPbrDS0mfBWjffRxEwY
+	JvH1vxc/WuzLnev1Txj/ra27ERgm2SFHHexE2Sz9+F4zJPJMo5Y10htb3+HDNr0=
+X-Gm-Gg: ASbGncs5mhWryIOWU5tBo+Nb1+pvefn1Z8YsjDVZXIAoeuDedqo/3pgbufc91mg1m2H
+	FfZwkz0hZqqQWBDOgRU0/YFJp5JhDijqwLWHXPVgbWBvQxBTmG52N+VDVH96aG6Xnj4Q+gPhW+u
+	33hMIG4iNZILfZFGJWsFI5b3639wAKGYjycBNb3rojJwVeDWbdem1pBa0DdpFlHIsY/o6vVS4L0
+	+w0BZVXbqg6cMhIds9GRxMxfzGA/rclecui8ZuEtXda/R6YBw3jqnqg0tF5bCJkLoCxYUV//0W8
+	1dfs7fJwIzIYdTqupA1L0SUFHCFXtf1XnFaLH1Wcy9eyBu0LP095clsylmB9VmEUVG7GAM3vDfN
+	xP5tWoqqINhjtqbfpRgVWw/PJY6AvdrjAD2cHAhoiCz0snmXXjA==
+X-Google-Smtp-Source: AGHT+IFBdvqmi68ta2wRWiT+FRzasDJ5pBCULv7R/+BuR+Ax+JNv4/CaLyds47/kxsM107rKwn7PFw==
+X-Received: by 2002:a17:907:868e:b0:ac2:49b1:166f with SMTP id a640c23a62f3a-ad1a4b36f20mr1047373266b.52.1746533251536;
+        Tue, 06 May 2025 05:07:31 -0700 (PDT)
+Received: from localhost (2001-1c00-3b8a-ea00-c4de-d39d-05f4-c77a.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:c4de:d39d:5f4:c77a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a5e1dsm704170466b.55.2025.05.06.05.07.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 05:07:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075F3:EE_|DS7PR12MB6069:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b9ba34d-1b22-4120-c668-08dd8c96c266
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BitL0ZTsa19HfTICjjV+p+4gqqaiviErOj2nHmz7Rp6xitr3AN4TZxUomiuj?=
- =?us-ascii?Q?OK+s9pANLHHG4Z+e512cSeGQHhl1H/PEo1PKzpT2CZkojZJioCjmbwdZGyLs?=
- =?us-ascii?Q?K/8GnwNZcwMy3zE/9WYLrn/iffO/MWZcgnppHjw4uvkJEPTqIjqlFeiCv54l?=
- =?us-ascii?Q?l4ZVokXSFrF5mJO0gc/rLtgw9HWwKOWpYLrjrURG0tNahr9Jbe9jPvIJoZjz?=
- =?us-ascii?Q?NnbzvjGRu3xxDcNXyjqeWUV+U0Wj5YJUx3cA7Ews/ZdsGbGpuwlaTMLIdVrr?=
- =?us-ascii?Q?L5zH3vpEQ7AfMIIlD9CG79TH+XkEexzGe1PBA/215csk3lhrlJnY36czPFJ0?=
- =?us-ascii?Q?ZOS5bASrEtU4amZMiOW0wqJaA+d+I6K3brXLgVPETHIoEPfKgMVx9gKaE8TN?=
- =?us-ascii?Q?XhN3q65bX/EHayD18yPt5nGxAW3Gd/biEUD7hEYxQLZUUrpqQ6mOCjJgeVxK?=
- =?us-ascii?Q?j7Zg193kCI415CoCEmzCaeSKYy62dFcpXS5Kf79uqg0vGMiMc9uPstVkKt0z?=
- =?us-ascii?Q?OiwCMEKmcEHaNfpkAnh6TpdZRpZ+DkL9omcTfQDd/I++0cL4Jx8pz71lXVu3?=
- =?us-ascii?Q?xU2v3jPck8/lSMrNyJy2QNWErWHX0II/1oYuhH3FLYoIUwTUytUXn1Ix8J7R?=
- =?us-ascii?Q?YytrYzcywIsZztmoKi9HAaacm9VB1r/VD39rSqbYj7xLCyQaYOcA60ew/Z30?=
- =?us-ascii?Q?zhycU0utUmDBH4xs9BichTmqpSH0bBdA5RJHnGFaALGLgOjpT/mwMIDcUNKj?=
- =?us-ascii?Q?Yw8B9qiunpe2Q1iVlopoEVen+wtE11GpNHL9AdVAfTtOvhpvHhuD5jP39deA?=
- =?us-ascii?Q?19sEIfL2Y1WW2c6rqIVVd29ryYNwfHKfsmMhSBITIwK0Kh2mw9NW1duTdGxX?=
- =?us-ascii?Q?t2oDqVG2pnMWgtSR+Fx13oASwE6H3SD+I9QOe3ydg8hzarqV7tPpRwI0Mn3E?=
- =?us-ascii?Q?UFrlcEh7dMbR20mkB590zzix3+mh3j0LKpyu4jmNQU4MAxr5QmXIwSkgYzXp?=
- =?us-ascii?Q?zI289deKNtwq1YtrNHMIHlgP4gECEuMU3nxw4KCXBuDJuQfeFPtsAT3V8mV/?=
- =?us-ascii?Q?XzXLkULeQ9zPJ57+GqMgoQrpQi8f0MbVWAyG1mVYoKbtBB9QM4ab8MDIR3my?=
- =?us-ascii?Q?7iRNzC+PN37vpRxjgaOHpvUKRi/o9o7srqnM/k5QC/+HsJ+g5gry8W0NPP7h?=
- =?us-ascii?Q?2uRcYLlvZNSydve4HzciUbaC956pTSqfYGZPLit/nuXv6yZ8Nw52r6Vi4Mzl?=
- =?us-ascii?Q?+WcZJco+P0R/qv8zCu1GTBJTMi9NTzWcZvzFwfeBC7XEffYLDjb3mdr6PQAj?=
- =?us-ascii?Q?oei/CfjeAFDQkJXwY4Q29aMuTPUxD+r7FsGnBPnhXS46KnjDv6af7WNi9Id/?=
- =?us-ascii?Q?zkYmtnlUu5d/r7U1FsVUj5ZwL8/8VlNvEQEwty2auepnUmVoyUPqGIqr2wLc?=
- =?us-ascii?Q?c1n/S/tCdg9eBGbMTyozmNUrtA1QikxofOvgHva3bL46vVC6H/+uowcRSIqH?=
- =?us-ascii?Q?Ki5CRuTGjVDOYYtclzRtfxo7BFFzF+7suCux?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 12:08:48.9533
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b9ba34d-1b22-4120-c668-08dd8c96c266
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075F3.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6069
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 06 May 2025 14:07:30 +0200
+Message-Id: <D9P2D6PG7420.N4T2UBGAOFMR@fairphone.com>
+Cc: "Banajit Goswami" <bgoswami@quicinc.com>, "Liam Girdwood"
+ <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>, "Bjorn Andersson" <andersson@kernel.org>, "Konrad
+ Dybcio" <konradybcio@kernel.org>, <phone-devel@vger.kernel.org>,
+ <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3 2/5] ASoC: qcom: sm8250: set card driver name from
+ match data
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>, "Luca
+ Weiss" <luca@lucaweiss.eu>, <~postmarketos/upstreaming@lists.sr.ht>,
+ "Srinivas Kandagatla" <srini@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250425-fp5-dp-sound-v3-0-7cb45180091b@fairphone.com>
+ <20250425-fp5-dp-sound-v3-2-7cb45180091b@fairphone.com>
+ <aBNdCRk_fP2q1vxQ@srini-hackbase>
+ <91110CA9-6E83-4811-AA04-C0312B99B95E@lucaweiss.eu>
+ <0d094cec-0a2e-4e21-845f-977f3a77993d@oss.qualcomm.com>
+In-Reply-To: <0d094cec-0a2e-4e21-845f-977f3a77993d@oss.qualcomm.com>
 
-Add logic to get cpu_pin_id for creating SoundWire dai link for
-ACP7.0/ACP7.1 platforms.
+Hi Srini,
 
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/amd/acp/acp-sdw-sof-mach.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Fri May 2, 2025 at 1:06 PM CEST, Srinivas Kandagatla wrote:
+> On 5/1/25 15:13, Luca Weiss wrote:
+>> Hi Srini,
+>>=20
+>> Srinivas Kandagatla <srini@kernel.org> schreef op 1 mei 2025 13:37:45 CE=
+ST:
+>>> On Fri, Apr 25, 2025 at 10:07:26AM +0200, Luca Weiss wrote:
+>>>> Sound machine drivers for Qualcomm SoCs can be reused across multiple
+>>>> SoCs. But user space ALSA UCM files depend on the card driver name whi=
+ch
+>>>> should be set per board/SoC.
+>>>>
+>>>> Allow such customization by using driver match data as sound card driv=
+er
+>>>> name.
+>>>>
+>>>> Also while we're already touching these lines, sort the compatibles
+>>>> alphabetically.
+>>>>
+>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>>> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>> ---
+>>>>  sound/soc/qcom/sm8250.c | 9 ++++-----
+>>>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/sound/soc/qcom/sm8250.c b/sound/soc/qcom/sm8250.c
+>>>> index b70b2a5031dfbf69024666f8a1049c263efcde0a..e920b413b762c803cfcc40=
+49f35deba828275478 100644
+>>>> --- a/sound/soc/qcom/sm8250.c
+>>>> +++ b/sound/soc/qcom/sm8250.c
+>>>> @@ -16,7 +16,6 @@
+>>>>  #include "usb_offload_utils.h"
+>>>>  #include "sdw.h"
+>>>> =20
+>>>> -#define DRIVER_NAME		"sm8250"
+>>>>  #define MI2S_BCLK_RATE		1536000
+>>>> =20
+>>>>  struct sm8250_snd_data {
+>>>> @@ -200,15 +199,15 @@ static int sm8250_platform_probe(struct platform=
+_device *pdev)
+>>>>  	if (ret)
+>>>>  		return ret;
+>>>> =20
+>>>> -	card->driver_name =3D DRIVER_NAME;
+>>>> +	card->driver_name =3D of_device_get_match_data(dev);
+>>>>  	sm8250_add_be_ops(card);
+>>>>  	return devm_snd_soc_register_card(dev, card);
+>>>>  }
+>>>> =20
+>>>>  static const struct of_device_id snd_sm8250_dt_match[] =3D {
+>>>> -	{.compatible =3D "qcom,sm8250-sndcard"},
+>>>> -	{.compatible =3D "qcom,qrb4210-rb2-sndcard"},
+>>>> -	{.compatible =3D "qcom,qrb5165-rb5-sndcard"},
+>>>> +	{ .compatible =3D "qcom,qrb4210-rb2-sndcard", .data =3D "sm8250" },
+>>>
+>>> sm4250 for rb2?
+>>=20
+>> Since this name is visible to user space and used for picking the UCM co=
+nfig, I don't think it's a good idea to change it.
+>>=20
+> It is not correct to pretend that rb2 is sm8250 for ucm cases, I agree pr=
+evious code was
+> already doing this, Good thing is that we do not have a ucm written yet f=
+or RB2.
+>
+> Lets fix this as you are already doing this for other compatibles.
 
-diff --git a/sound/soc/amd/acp/acp-sdw-sof-mach.c b/sound/soc/amd/acp/acp-sdw-sof-mach.c
-index 75bdd843ca36..9e4a36d703ab 100644
---- a/sound/soc/amd/acp/acp-sdw-sof-mach.c
-+++ b/sound/soc/amd/acp/acp-sdw-sof-mach.c
-@@ -128,6 +128,13 @@ static int create_sdw_dailink(struct snd_soc_card *card,
- 			if (ret)
- 				return ret;
- 			break;
-+		case ACP70_PCI_REV:
-+		case ACP71_PCI_REV:
-+			ret = get_acp70_cpu_pin_id(ffs(sof_end->link_mask - 1),
-+						   *be_id, &cpu_pin_id, dev);
-+			if (ret)
-+				return ret;
-+			break;
- 		default:
- 			return -EINVAL;
- 		}
--- 
-2.45.2
+Okay, will change this in v4.
+
+Regards
+Luca
+
+>
+> --srini
+>
+>> Regards
+>> Luca
+>>=20
+>>>
+>>>> +	{ .compatible =3D "qcom,qrb5165-rb5-sndcard", .data =3D "sm8250" },
+>>>> +	{ .compatible =3D "qcom,sm8250-sndcard", .data =3D "sm8250" },
+>>>>  	{}
+>>>>  };
+>>>> =20
+>>>>
+>>>> --=20
+>>>> 2.49.0
+>>>>
 
 
