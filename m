@@ -1,111 +1,110 @@
-Return-Path: <linux-kernel+bounces-636481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E65AAACBE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:10:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24557AACBF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0617B7BEF62
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1133E3A2B9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B622857E0;
-	Tue,  6 May 2025 17:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B60286D53;
+	Tue,  6 May 2025 17:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bD8tec4A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XfOUMI7d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D332853F6;
-	Tue,  6 May 2025 17:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761BA285418
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 17:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746551374; cv=none; b=TQEWSRw2NZ0W1qjPFwuHcUo260/ixzKP71IdzDSwzf+wUKC1Zi2cBUrHlC/cFoESUKF+etfrhItIgE2r6rP4fG5BJ66uPxvOX8O3Aq77cXjWEMVAgsZZu8g7WIs0eTMqsZDLhiRkQolTQKUbyB2MtutjuQuiFhz8CcAxJrYg0t4=
+	t=1746551392; cv=none; b=bSuyUvA16S8RLmhM/Be2UgLHL/lqfULoUa3F0FUnDt0tc9757knupLmPZWLE96HvBj9S7FKZZuDzXJCEUuaJV9OYt5T/pB7AEx6clWjOErYPDeSdcPELa6Ge0WLUV04m+GNLSf5jipogh/K7K2PEvHuRDExZpbfkn2uSbY+WG34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746551374; c=relaxed/simple;
-	bh=FNA2gsRQTdJsloAcS3RRSgVH0l+51ZiDBDeK6njOiz8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZuAyxT+dbmUTMBx/NB9bSG4b8c+BGvZisOTIAylH8BdVou04A9JfuAVIArLskMzs9tmaI1sNyXbTwcA93/0DypanPvnz+4aMxOq/tV+LVp7aQN1P0PQpIanEsqse/HnsqQbTRy7Pura36DrSjBty682LsebFH8hB45sk9CVixIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bD8tec4A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4066BC4CEF0;
-	Tue,  6 May 2025 17:09:34 +0000 (UTC)
+	s=arc-20240116; t=1746551392; c=relaxed/simple;
+	bh=MA5YI8z/iGWOl3p8sOB/lvDqAGhCyqXI6W1Vls0V+d8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DlG/ZcSkKnX9uoRDOJrflQ21Y8FrFIlmBClKzIApBSXFwXTUqmTzXfCrPcOTSi1kJox/UBEFLiViWRaQCXa97YI4bM9O8v11YqK+cbU3IHmlMG8GDmmmMIlWQ0GZc7sqD4s1FaGOTBL1zjMhuWvP9lad9IYI+PLaZRxSOUFQibw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XfOUMI7d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17805C4CEE4;
+	Tue,  6 May 2025 17:09:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746551374;
-	bh=FNA2gsRQTdJsloAcS3RRSgVH0l+51ZiDBDeK6njOiz8=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=bD8tec4A0etJw6u2v9BYQfdDu4z4+U8FKKfYI+sQQyoqCTwtGl5z91W4lkHQGojA5
-	 VQI4JZTQyamjMzZyeRGfje0BkyBnHdLhEsf9xxIqSBBeUwFhd42sZLI/cENmB71L3q
-	 zT7hBr7/SnEBJj8jcTU3BgOd/mzgBHI7JC3MrP0P0Sg5hWm9VrBH6AO9/l960amG2m
-	 e/iGktH5Cki9ZlUUgqFkYlT9Upuq44FsjrYxP/WQMiQaFRbb/pd3cOTQ6zsOSC5Zol
-	 SFrKnEDxjCKCs8oYAFHOWPOy/8m3VrdV5TYt4E92DHr8ymcbiwmLdoGIeroykSnuqr
-	 9OX5kXOBB4GDA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C584C3ABBE;
-	Tue,  6 May 2025 17:09:34 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Subject: [PATCH v2 0/2] phy: tegra: xusb: Default otg mode to peripheral
-Date: Tue, 06 May 2025 12:09:16 -0500
-Message-Id: <20250506-xusb-peripheral-v2-0-bfbe00671389@gmail.com>
+	s=k20201202; t=1746551391;
+	bh=MA5YI8z/iGWOl3p8sOB/lvDqAGhCyqXI6W1Vls0V+d8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XfOUMI7dwzeL8d2vC5bpEJF+80UZWAUbqRYIOdrUeW9BGpHFDChoYmis4ZBEsVi+G
+	 pwQCwQN+vX9YLjlpD1o5Ik7Btrud5XQNmmi1JBECm1nMqhsWk7N8DXNOUE0za6gEXp
+	 EMBKL6UYX1msLnwT5xuuwa3PHuRaVEsqRKFplbj/+XCdn/apFqo40/HoURQWTqQ41R
+	 2ks2qzRtZd8+mLs7ajWIKcDRH49xV2Rvkw7Mp4qKluGWpHG9KcBUbm1k4MktjxjR/+
+	 4sR9PTi0TtPvZZ2vZNogifkTMboq1GcZbf7ufRKqRy0uj7a3KPN/z6uN8vvZipvEK4
+	 WNTYNI0lbz+ag==
+From: Ingo Molnar <mingo@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH 07/15] x86/tools: insn_sanity.c: Emit standard build success messages
+Date: Tue,  6 May 2025 19:09:16 +0200
+Message-ID: <20250506170924.3513161-8-mingo@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250506170924.3513161-1-mingo@kernel.org>
+References: <20250506170924.3513161-1-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADxCGmgC/3WNyw7CIBBFf6WZtWMKpSpd+R+mC0Aok/RBQElN0
- 38Xu3d5bnLO3SDZSDZBV20QbaZEy1yAnyowXs2DRXoWBl7ztha1wPWdNIYiBW+jGtGIVrNLc3V
- No6FYIVpH61F89IU9pdcSP8dBZr/1fyszZCilYTehpXatuw+TovFslgn6fd+/RSnzeq4AAAA=
-X-Change-ID: 20250404-xusb-peripheral-c45b1637f33b
-To: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746551373; l=1076;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=FNA2gsRQTdJsloAcS3RRSgVH0l+51ZiDBDeK6njOiz8=;
- b=+Y2xZC3OosSjaAuY4rTFVw/J7gz3zpQ3FqXfBcXxUM2W6VcJmlJ40WuayQMLyyTmMC4TMJ8RA
- SWaNIMRmfzmDzYzt0EQkphgtJmhgwPVpVdguGVVDKbzt3j7q+lCQC2r
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+The standard 'success' output of insn_decoder_test spams build logs with:
+
+  arch/x86/tools/insn_sanity: Success: decoded and checked 1000000 random instructions with 0 errors (seed:0x2e263877)
+
+Prefix the message with the standard '  ' (two spaces) used by kbuild
+to denote regular build messages, making it easier for tools to
+filter out warnings and errors.
+
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
 ---
-Changes in v2:
-- Add new patch to document role-switch-default-mode in xusb padctl
-- Simplify code change, per review
-- Comment in code why device mode is default
-- Link to v1: https://lore.kernel.org/r/20250404-xusb-peripheral-v1-1-99c184b9bf5f@gmail.com
+ arch/x86/tools/insn_sanity.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
----
-Aaron Kling (2):
-      dt-bindings: phy: tegra-xusb: Document role-switch-default-mode
-      phy: tegra: xusb: Default otg mode to peripheral
-
- .../bindings/phy/nvidia,tegra124-xusb-padctl.yaml  | 33 ++++++++++++++++++++
- .../bindings/phy/nvidia,tegra186-xusb-padctl.yaml  | 27 ++++++++++++++++
- .../bindings/phy/nvidia,tegra194-xusb-padctl.yaml  | 36 ++++++++++++++++++++++
- .../bindings/phy/nvidia,tegra210-xusb-padctl.yaml  | 36 ++++++++++++++++++++++
- drivers/phy/tegra/xusb.c                           | 11 +++----
- 5 files changed, 136 insertions(+), 7 deletions(-)
----
-base-commit: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
-change-id: 20250404-xusb-peripheral-c45b1637f33b
-
-Best regards,
+diff --git a/arch/x86/tools/insn_sanity.c b/arch/x86/tools/insn_sanity.c
+index 213f35f94feb..e743f0ea01ee 100644
+--- a/arch/x86/tools/insn_sanity.c
++++ b/arch/x86/tools/insn_sanity.c
+@@ -253,9 +253,9 @@ int main(int argc, char **argv)
+ 	}
+ 
+ 	fprintf((errors) ? stderr : stdout,
+-		"%s: %s: decoded and checked %d %s instructions with %d errors (seed:0x%x)\n",
++		"  %s: %s: Decoded and checked %d %s instructions with %d errors (seed:0x%x)\n",
+ 		prog,
+-		(errors) ? "Failure" : "Success",
++		(errors) ? "failure" : "success",
+ 		insns,
+ 		(input_file) ? "given" : "random",
+ 		errors,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
-
+2.45.2
 
 
