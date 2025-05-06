@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-636410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D43AACB22
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:36:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B80AAAACB30
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 18:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4931BC3322
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A719831A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07AA283FE8;
-	Tue,  6 May 2025 16:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2125B28540C;
+	Tue,  6 May 2025 16:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2CCsXtvZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qC982Qq8";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2CCsXtvZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qC982Qq8"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EhpirLcY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54764220F59
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 16:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91A5284B5B;
+	Tue,  6 May 2025 16:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746549379; cv=none; b=rbeCwhX7YbNab68IJvRhnmvjzYK2qLZ7yNn8ZuSyH7DRnYumWhQb+eOmeqwjxwjmqett+VoAzYNa+5LG3FVUT9rrwkbRROtT7fwM11TZ6cW3IlTmRn9qZ4OTxQGn8zoQcfj0moR5PxAD9+6CLghDxdcBfx9qXHOjLD8Y5ANy/FI=
+	t=1746549466; cv=none; b=n+d5QQ4UbJ+It012APu0n+jZfVslTfu+8kZMx4ppFyXDfiM1D3upyI9zVRmnZiOpuK4Gyu6oyjaA6uhSXLlu4NR3492I1Ph3EbOcqsxt1+9NGm44gdud/al/QzyZbZGpbUHefxm/EJR3CjtCCa7Ae3JNT/e2E0gOk9q/ZghNldg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746549379; c=relaxed/simple;
-	bh=tUMH77MHsK8Qrrdw/Nfp3fcPeq3fsjxxnl6U0Dn26+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iUvQBAo5InPSuJKqn+nqtLDqB6fxR+GtmrOtFLm7FSUGh/NXmUal73640LDrJePRf5VNUKZuEzlV/umtrgPUdd30KS8GXJVJRSqm+RpjTQIjlrY+AAfqgegRQFWJe3f4rd7EsnidRp4s//yOvloyIv/2r+ptxD5yzu8PxRlyxcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2CCsXtvZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qC982Qq8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2CCsXtvZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qC982Qq8; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 32D1A1F393;
-	Tue,  6 May 2025 16:36:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746549375; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CVgOF5htGgXTxeqgootQCNOyXhH1t1T2eIGBUtemh/I=;
-	b=2CCsXtvZxAqDQMljkijEpYnKLjkj/hjiZjJwy52pIHG0NbxFSee8ePByzN1mA7f1Ci+W2S
-	sJTKC+lCk3A0+3NjsQ+YBw/ESclXN3Vp3oogG/OP/ZbAO8jo+md5P+N6LriugGzbCkgjYH
-	lmvq9U/IFG/qUKeueiqEu8zwCwbRbZk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746549375;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CVgOF5htGgXTxeqgootQCNOyXhH1t1T2eIGBUtemh/I=;
-	b=qC982Qq8299An0TUOWoGF03gIjt7Jkhv8DJgLEemPumVieFVTx9o+25AqzS228Fq3K/zzB
-	thN7SeRLiTFk05DQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=2CCsXtvZ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qC982Qq8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1746549375; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CVgOF5htGgXTxeqgootQCNOyXhH1t1T2eIGBUtemh/I=;
-	b=2CCsXtvZxAqDQMljkijEpYnKLjkj/hjiZjJwy52pIHG0NbxFSee8ePByzN1mA7f1Ci+W2S
-	sJTKC+lCk3A0+3NjsQ+YBw/ESclXN3Vp3oogG/OP/ZbAO8jo+md5P+N6LriugGzbCkgjYH
-	lmvq9U/IFG/qUKeueiqEu8zwCwbRbZk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1746549375;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CVgOF5htGgXTxeqgootQCNOyXhH1t1T2eIGBUtemh/I=;
-	b=qC982Qq8299An0TUOWoGF03gIjt7Jkhv8DJgLEemPumVieFVTx9o+25AqzS228Fq3K/zzB
-	thN7SeRLiTFk05DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1861513687;
-	Tue,  6 May 2025 16:36:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qHqUA386GmjydAAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Tue, 06 May 2025 16:36:15 +0000
-Date: Tue, 6 May 2025 18:36:14 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: linux-nvme@lists.infradead.org
-Cc: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
-	Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/14] nvmet-fcloop: track resources via reference
- counting
-Message-ID: <144a314b-75b8-4d0c-ae19-40680cb681d1@flourine.local>
-References: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
+	s=arc-20240116; t=1746549466; c=relaxed/simple;
+	bh=ZZLYZRqalGJH9EAXC5H7UDkMrkHsVeFSxTdaPceNAig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ChrPE4rujm7NYC3zm37Vi/NUefWSd7hhhDXA3gB9WSC//IQ2o5h9Vf+9bsMi/GT5TNwStlOCTad6vQPgUdD9oAVcsJt426MfWdiLEx2qKxbGzyvt/Nk/Ann/TsH30gL7PSbxtnRXRgFAHEupNHXhIYpARgGlmHLFauK76Wos3c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EhpirLcY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5468npYU007245;
+	Tue, 6 May 2025 16:37:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=yc2RUdCvkXOSy1TyTmx0o2WlO+CFm9kYTZ9
+	ABmGDDAk=; b=EhpirLcYCFJa8yPw7UeNefeozzx4MGSJma9LK+C+Dy+5uQiv9km
+	krajxdCWNg30p3xY4idzqKukLW/35uI//F5Q0c3NxoSxaM2Y6WDyLmqFFE7xFgAL
+	XIKmrsmsVqed54pil7v4mTk/7nNKdvQVxdyf4B4F9DMl3gVfUlYge3tWR4lwQSMD
+	D8qX+8HKKevm7tYYxLY29Dv/MvlRAJtnj7NQkwBGc2/apJNaTtRZnorV0q1LTfAU
+	HWFiTvv/dS6H5C6knVBd4l5TJaRZ3euehNI6ouCfvFmMzLQdE84lSgpYujjoSGg6
+	TCfIq+gl4ftW84zDUV5GTDzyVvHziwBZ5Qg==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5wg2w12-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 16:37:12 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 546Gb8TQ003105;
+	Tue, 6 May 2025 16:37:08 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 46dc7kx4m1-1;
+	Tue, 06 May 2025 16:37:08 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 546Gb8Yw003100;
+	Tue, 6 May 2025 16:37:08 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 546Gb8jb003099;
+	Tue, 06 May 2025 16:37:08 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id 7CA6A5015A9; Tue,  6 May 2025 22:07:07 +0530 (+0530)
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        krzk+dt@kernel.org, robh@kernel.org, mani@kernel.org,
+        conor+dt@kernel.org, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, beanhuo@micron.com,
+        peter.wang@mediatek.com
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: [PATCH V2 0/3] Add support to disable UFS LPM
+Date: Tue,  6 May 2025 22:07:02 +0530
+Message-ID: <20250506163705.31518-1-quic_nitirawa@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org>
-X-Rspamd-Queue-Id: 32D1A1F393
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: b2DvvsqmjbUmr2U_S87zoWaWCBXfa1ic
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDE1NyBTYWx0ZWRfX4T/A3BJQPQx8
+ XMS4V4Z/adm2zLYd5FQ1pK/UVbXv+e2lVi40tjct3iC3aD64TKyC/IbM+9PkAaMgxjF6Wz7Vu4U
+ ydZEFtzY4xss9WdIgaXc50M5wNhUiRGaTDGMURT5E7FGFKbyOTqv6+Kjz4khezwonyVdNqtPjMf
+ P/rGpoj/oevWrvA6E13DvvJcxaT/LJJP4SmS2mmZKPlv8vPqW1JT5sKY2vr2K4Gw7Q2iOPhKdVS
+ WAYvFH2YC+5N0zun69dHlFd2KqfrGYCUCs2wupedsvMWd2LIgslxrx67FUlsAtnGNYHACbdlywN
+ iLKsWCDHa/RevUwrJ+NxDQUUdfuKyxdcnzq1d+ZjQyoIBryoeRUE8oilc8eTQMLYZudA0t5Eq1z
+ Tgc+CUIwfUz/psL7jYm0O4th96brcaSDPk6VIgHtNCjdjIKArWJAWZUejww4roFT8XPBLhKQ
+X-Authority-Analysis: v=2.4 cv=dPemmPZb c=1 sm=1 tr=0 ts=681a3ab8 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=dt9VzEwgFbYA:10 a=DcltoM30VHtk37mhClIA:9
+X-Proofpoint-GUID: b2DvvsqmjbUmr2U_S87zoWaWCBXfa1ic
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_07,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 mlxlogscore=942 priorityscore=1501 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 malwarescore=0
+ mlxscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505060157
 
-On Wed, Apr 23, 2025 at 03:21:43PM +0200, Daniel Wagner wrote:
-> Note blktests nvme/030 test is likely to fail if the
-> 70-nvmf-autoconnect.rules is active. In this case two discovery are
-> running in parallel and nvme-cli/libnvme gets out of sync. I don't see a
-> problem in blktests, but maybe I am just blind:
-> 
-> nvme/030 (tr=fc) (ensure the discovery generation counter is updated appropriately) [failed]
->     runtime  1.843s  ...  1.719s
->     --- tests/nvme/030.out      2023-08-30 08:39:08.428409596 +0000
->     +++ /tmp/blktests/nodev_tr_fc/nvme/030.out.bad      2025-04-10 10:56:05.146372112 +0000
->     @@ -1,2 +1,6 @@
->      Running nvme/030
->     +Failed to open ctrl nvme1, errno 11
->     +Failed to open ctrl nvme1, errno 11
->     +failed to get discovery log: Bad file descriptor
+Add support to disable UFS Low Power Mode (LPM) for platforms
+that doesn't support LPM.
 
-It turns out that nvme/030 uncovered a bunch of bugs. First the kernel
-returned EAGAIN consistently for a while and could easily reproduce it.
-But after updating something it went away. I think the EAGAIN was issued
-because in my test setup the udev rule is active and triggers a discover
-(creates a discover ctrl) which runs in parallel with the test, also
-running a discover. I think EAGAIN was alwasys there but it is hard to
-hit.
+Changes in v2:
+1. Addressed peter wang's comment to exclude write booster from
+   ufs lpm check.
+2. Addressed rob herring's comment to remove ufs lpm debug print
+   in ufshcd-pltr.c
 
-I've added a workaround to handle EINTR to libnvme but after reading up
-on signals, I came to the conclusion, nvme-cli needs to handle EAGAIN
-and EINTR. The EINTR case might be entered with Ctrl-C and in this case
-we want to terminate the loop. Installing a signal handler in a library
-is a no go from my understanding:
+Nitin Rawat (3):
+  scsi: ufs: dt-bindings: Document UFS Disable LPM property
+  scsi: ufs: pltfrm: Add parsing support for disable LPM property
+  scsi: ufs: qcom: Add support to disable UFS LPM Feature
 
-  https://github.com/linux-nvme/nvme-cli/pull/2797
+ .../devicetree/bindings/ufs/ufs-common.yaml         |  5 +++++
+ drivers/ufs/host/ufs-qcom.c                         | 13 ++++++++-----
+ drivers/ufs/host/ufshcd-pltfrm.c                    | 13 +++++++++++++
+ include/ufs/ufshcd.h                                |  1 +
+ 4 files changed, 27 insertions(+), 5 deletions(-)
 
-After getting this out of the way, I figured out that nvmet-fc is not
-able to handle more than on in flight async, and there is a nested
-locking issue in nvme-fc.
+--
+2.48.1
 
-The tests get more and more reliable, though I thought I saw a KASAN
-report but now it's not reproducing. Yeah, everyone loves heisenbugs.
 
