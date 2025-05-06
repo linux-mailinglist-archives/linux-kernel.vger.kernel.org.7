@@ -1,224 +1,502 @@
-Return-Path: <linux-kernel+bounces-636234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F0DFAAC829
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:36:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972AAAAC8CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 16:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D074C55DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:36:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871A5188AA2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C03D28313B;
-	Tue,  6 May 2025 14:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9C0283686;
+	Tue,  6 May 2025 14:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="zODD1vgX";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="JjRwhiEG"
-Received: from mx0a-002c1b01.pphosted.com (mx0a-002c1b01.pphosted.com [148.163.151.68])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UaeJyoM7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8179F145B3E;
-	Tue,  6 May 2025 14:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.151.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746542173; cv=fail; b=rTN+8Kffazqa63vHL/yzkxqKAWG7E5W6wcGrpUfyEoHozBWaGxRmq83fBngxfQAdtq36dLd8lIriC0Tbmt9AQ9KwjAklQIK6ETBLo5Q3VBX7u9f3CifQZEHsf9ab7RSXqfqw4GCM6cIBpAD/8VVuwtxPFVio25NVmmagYoQ1hsY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746542173; c=relaxed/simple;
-	bh=X9BptfYbkhnnBCz9NB4o3KRO/MBl12ZimdzPfIdLG2g=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fmPo/oIqtd/8vSbgqxrVIGL2oXTDEAJkrxA230NclcFFVyGiC3JobRdrI9TR/yiFuIUsLlJ5WZLPhqzMqJW+o8UKbwjoreqY2cULCB0C0AwpU8VYRWUHN5G5awjtHN7elsNVUYJ5AgS4sGmQDDow3eyjPA1Y3NpdeJf6yAVIpj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=zODD1vgX; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=JjRwhiEG; arc=fail smtp.client-ip=148.163.151.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127837.ppops.net [127.0.0.1])
-	by mx0a-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 546BMuen009138;
-	Tue, 6 May 2025 07:25:25 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	proofpoint20171006; bh=equ0BDpJGoRz1bpyUm1mpHb7FI/84acJvSBXhjh/4
-	Qo=; b=zODD1vgXq/WxhhUOVUDT2nkQb7SfKgtqPmk3US9r9zel/8fB/ISWQ0n3R
-	fU1tYicrpk8wzGP76pR3pm7+Y3DGI5ejt5x1FJvQgXfmzCUlWrTJtzVwVk9kHOq/
-	72Mydz184aeETDxWm1nbK4xk46pLscE6/ROItgKsJBIP85wPsCxg2IfA4bMg9wOp
-	wXYyFOIVswSJe/hzvSj+FKyLwhvHEqD1wCPhM1hF0Didzg2RsahpFbEFWfYetssA
-	FW3qvNLNU36figrjbcT7ejPvsvw5mX50V/9icoNZPZvBTzbAa9fsYiWUrn+v33UQ
-	JnIr5QZNfJ0rSHfFZNiT/RGAL6Mow==
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2177.outbound.protection.outlook.com [104.47.57.177])
-	by mx0a-002c1b01.pphosted.com (PPS) with ESMTPS id 46df29664m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 07:25:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aH2TfruktDk8RMuhTcC75IUKp0/ZnsD7PEBYzh5CVUWGsgD7ASzJ65uWUdvhD9kT5yFvz5G3YQ0LQAcPZVAsFMtj1Qt8Uz6a+Sy8UxlQlay+aJ9G34FrsYAY2T8Kd66rXtJfCx9m6x1ZYnk+20wchzJPIVb+I0FX5VHWVdDGX/fB7kVAq/NIPqwXoF5DRPqoxwRjR1LWitFqb5YAxLd8QlRXQgvOfFIFKtbqM9AMpjsdzOk5MWBZvdPMRDLx6T7Jav7WV+0H+QpxpmwLe1/BJfY33GydoIhclTLaIYLOqVPG2jeaJue4yy4gbKduwFjSLx8EsGkPMWyFayInZZ/osg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=equ0BDpJGoRz1bpyUm1mpHb7FI/84acJvSBXhjh/4Qo=;
- b=oDhqz5U027ZKhXKPhKnhO5W34YjaPsY58OjxcdpClDdOuPVX2JPQp1R1KpWVwuxG+TrCqcDHNljpaSYAXSfYeQRX+lIBSeWILVMMGVEGZ5fuwz4sf5ILFIRwa1vbfvfB0MlMWipgHubH1bj4Z6FKCidRM/WzIeqsizOy90woX2jQDcUxoyZuFnCF1BnRe5Hi7figX68j+c2LhKpq449kZqqZmX+E1K7nK4MIIhcffo3tJZDByzp2rMevG7124o8Y2fUVDCO2d2F5K/rw/mWbnasHR1csr3tiLjKbNnAUXBzOUvYdlsrQFxHZ4BLoKfEdHKlZ4V6aCagRmIinh4nS7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=equ0BDpJGoRz1bpyUm1mpHb7FI/84acJvSBXhjh/4Qo=;
- b=JjRwhiEGSuLtTR5BsM9JIFDm3SxeDs0ROBVzevS/y2cw70bzrMcZSxUiph2ubtDKU9sCVYT9BMn3PBKOaZOZf8AltxrL6SUdkxgg6AMhzUWF+fXUL3aNxUNBgJXAWuIQYbK+E88PnA38RS3mAtPwQfR3x8lZ8yfSzSE+XkIlMqhYXlzm2OSt8G5iDywOaadoWqR9QOgOFI+ct1Bkz17wEVazr+o/310r7WfZxdSlZK2MBT33NpvX2gCIA1TRremmJd5bticV2z+R+wksoijDWRIWsE1irZ7q6C6jc8F8lCGcIG3M6n6VLITwm4hfvJTaUViMw0wGPPdDN0RWbsuRXw==
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- (2603:10b6:408:1fa::10) by IA1PR02MB9181.namprd02.prod.outlook.com
- (2603:10b6:208:42b::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.20; Tue, 6 May
- 2025 14:25:23 +0000
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054]) by LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054%4]) with mapi id 15.20.8699.012; Tue, 6 May 2025
- 14:25:23 +0000
-From: Jon Kohler <jon@nutanix.com>
-To: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org,
-        hawk@kernel.org, john.fastabend@gmail.com, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, jon@nutanix.com, aleksander.lobakin@intel.com,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        Jason Wang <jasowang@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-        Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next 4/4] tun: use napi_consume_skb in tun_do_read
-Date: Tue,  6 May 2025 07:55:29 -0700
-Message-ID: <20250506145530.2877229-5-jon@nutanix.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250506145530.2877229-1-jon@nutanix.com>
-References: <20250506145530.2877229-1-jon@nutanix.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR04CA0006.namprd04.prod.outlook.com
- (2603:10b6:a03:40::19) To LV8PR02MB10287.namprd02.prod.outlook.com
- (2603:10b6:408:1fa::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248D128315A;
+	Tue,  6 May 2025 14:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746543375; cv=none; b=dx1IuRYR8dXyEfugJf+mroBlytUWfDks9aH/jNR4/1lQraKAn3yz1PLm3NgS8aP5ka1ay2iaoInHnwS46jbbTf99AvjCIdXqkcIdkRPE0u0FYh9Rmf2dmFxqsmAYHqpsYJwboDdvsrUWlVCJ6ZG+Xt9LxYHdj3ApNPce7o+Ey3c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746543375; c=relaxed/simple;
+	bh=RaTze8x8kzSMIknkSx1RfFAasQSt9WqSxf0a82wmZjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUJtA7Wnx9uAsty8uHWU9YEwNtZ2AUzZHDrdZvxZ6Qi4Gynfx0HNy4BVG8iP/GgX6Uyw/6lZTMviu99UYZwqqO4HTZf4zfxa5nerJGaHH1Jmp98tM+6bd8jMBZ7/MEWfCx98AWoaxkPfyKySXhnpxf+h3bDeqizdL3gadmyDkis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UaeJyoM7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0E63D40E01FA;
+	Tue,  6 May 2025 14:56:10 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id STieFCEFpfK0; Tue,  6 May 2025 14:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1746543360; bh=c3L4mYom9X9hwlsxPlVhWzUGEUxKUppk4dse2bLCitk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UaeJyoM7gTN17GLPoLsn1hmvYKjfv3ZpFG4WP5bT7LYmRgWLc0fpdpc0cNHj0jklb
+	 k3Dd5JYkbhaB5FwYf0hPa0O2KXhDSEUlTYHGkfBdeaN/KasqnZgUXB6/GObs05Hyk/
+	 JuTnfpvokg/RS4A7qg6dsdv/GXOk/vZGFFS5Nv+BrgmqGqwdROi9OiS++fM46Iohu8
+	 zDPaThp0Me2uuS9RncWNLCx2eNMG9H+SaE3rrCVQGyVCptB8vLNV7EgQURv3piSyn1
+	 5Lw5wOWeZoz8FSidEsBOnq/SPPsFJcPW8lTyBn/zYDEsQ+99o4gWpcpNy0cVmyMjTq
+	 457/mm9GSML6lm7zX89X7M8kjiB+zJwCR4S9GWwYILmx4XfIVOqQEVHiEJbhzLWCyl
+	 ZYRhX2J7fWWpQUNY0gLsQbJBZ9nWgGelouS/mXLKcsYSjrdVJ0HI62XB/lUZTuaMea
+	 sPFhQRvQNV4QakM7xRQw8tqsLXU8Rx3d7rji0tTeGAsl/I03aTMrEDwaTncLAk0nil
+	 Mjex/RpfFGAyzM3a92vVsBno1i3ZU01ev3ffGt5oBQvs4yFPhDTggBarA8FGmsuOww
+	 QfsoFM6fcUboSZcreLfMgXrKIpyNPmD2fWF+Y0q6iur3B9e/BwLx0umTOcR0xyjM6t
+	 l1nfD7mvJlklqAgPewjyc5xs=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 659DB40E01CF;
+	Tue,  6 May 2025 14:55:54 +0000 (UTC)
+Date: Tue, 6 May 2025 16:55:48 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: bugzilla-daemon@kernel.org, i@rong.moe,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Bug 220083] New: [REGRESSION, BISECTED] x86 ASM changes make
+ dispatch_hid_bpf_output_report access not-present page
+Message-ID: <20250506145548.GGaBoi9Jzp3aeJizTR@fat_crate.local>
+References: <bug-220083-6385@https.bugzilla.kernel.org/>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR02MB10287:EE_|IA1PR02MB9181:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6d1db6d-c2dd-46a9-7ffd-08dd8ca9d64e
-x-proofpoint-crosstenant: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lKRkSttFf3MLjn362oD9p6ul4PMcFmlGI4k44NeV0SCLc/pTrCzHzK/ayy25?=
- =?us-ascii?Q?UYUBeoROTllhZsHsnsGjzqFJH7RrFo/+7nHhDX6iVr1uy4a+DX0mTfvBaxXy?=
- =?us-ascii?Q?k0CcmQeNg+QTkErJwEdsbsox+fJvwaX3O+F3gMdMZZEx2F1UKHLWQQrPAQbX?=
- =?us-ascii?Q?cGJsP69VqeTJVLqF9ntfiYyWhuuDCevI9Pk5VAO/T89wDdfR268H982gaUgQ?=
- =?us-ascii?Q?M81z+FrsyViVhHRtBL3urEUMA/Ibj2X/sp8eukfgX2RL89TBpsbRCjQGqxFd?=
- =?us-ascii?Q?ptQQNKBXca4+5k1VZAELC+/4ug8z5rv24h9qZKe05T1oAL31H5wdUt7O89TV?=
- =?us-ascii?Q?Tus6mDWyMeACKfBeWtee/KKTFMCS6MYKA7tCDMFGPm4/CikkP28VEKMR75Rl?=
- =?us-ascii?Q?24nN+09DdwpFerYGg3s3z9+rlo6eeLhHceOXTmzTF8fD/gMeswGNJP9lxBpv?=
- =?us-ascii?Q?vxyHtc6hKEMBgpNykCvxiOXom5a2aMsi5ChgO875jkYpEu130Zl4mzzd6Nv8?=
- =?us-ascii?Q?4zmGUC8WHZ2ZAGvhvmSTm97maUiZw279X36Lai6NMAwgxw//asS+Chkc6Hu3?=
- =?us-ascii?Q?gVY6kUm27qBjKKKpPVdlq5Eo+w1aBZwxChWWcs6sjRYlJVsUYO96rp/UuY7V?=
- =?us-ascii?Q?9Ohv2itw2ezwpiXpH1UtCPLBKaDXxazDNoMOd8JOr309DYojCkWgTYeOlmTG?=
- =?us-ascii?Q?omaWBiQ7jRpOXMfRaEhWg0R3d4v9FK6D8rk5Nj2AQkDM2/wMCFgUieTE92ys?=
- =?us-ascii?Q?0HJ3q2fqGCAu5l8roIp9bXT9wCktMotH3m487j56winPwNlFaf59q87vsXqv?=
- =?us-ascii?Q?9AXc5EDQq1iMHg+StlnbQFUqiOayMwS0yY8zQh6fX0sAsFelGiBvdADNHf2l?=
- =?us-ascii?Q?2OD20G8Iya3sn5Apb9Uv3RnxJTJ/WbeQEschlqhRUKD+3Uwsh2U+7LLpzFdv?=
- =?us-ascii?Q?O+/XCsa27z3GDSOCtfYmzKI8a8qgYsLM21M55iK5R+e44giccU+fXaYfSFao?=
- =?us-ascii?Q?DcHIxt+o6HBcNXyymVS6tiw2Hjtyg9cDuQeqT/uAAjJdkDSalJ842DuTT7rR?=
- =?us-ascii?Q?Ej7GqWr2JJ7TETGjoa6blfVM3kkFqysya10YC/G0XpSaV73mOi9ounwy1m8D?=
- =?us-ascii?Q?pRCouvvX9DGVs179AW7Wr/WJpbJx477XfH/YFmC7bgR42FDRVvBjx4oMdq70?=
- =?us-ascii?Q?vP4GPlShwCE6U0qAi9801I8zp35KRdKp57FrKRC+kRBYDVOz8WDcnKIFooyL?=
- =?us-ascii?Q?6mvv13ux+gbyjB8uTHjTXjHV5xZOC6FKuCCk2jQi0+lZ0BILj/17+C1L3yGh?=
- =?us-ascii?Q?GAl4avyZ6b7166uXxSZOv1mf3DFFCoYf9U4OzdPeQmzzfgRS56fA2OzexuTc?=
- =?us-ascii?Q?jfPb2HWriT+nFHI1kAE+8+32FV0b3+VHRLQItbu2NpQOPtYqN3olv54df1HM?=
- =?us-ascii?Q?92LeglOt8DQzH4tOaB0KDTHmXgj6lDx2rxoNUBmR/CzPQhj/BAD0Ge3rIvL6?=
- =?us-ascii?Q?b2g0H9q9XMecdAM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR02MB10287.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YJdG1OMtRm7XKZnYR+xEA2Od/ITLHr/EYBU0skeL7RBeFOY+lkvtnjt8mUeN?=
- =?us-ascii?Q?XrHgvQm1matT/9/sl6UR2prOhEMPOgu9FKTq/O3bFh8ZGdBdj7viuB2Fh7su?=
- =?us-ascii?Q?csblSoVYED1lbQnQxN0nT2NWxwRyLwDyWJX7e8tcI3Vt1nbL1yrPE/vFA6Fs?=
- =?us-ascii?Q?IAB+SE4RW6zvPrOThwpMIrqUij5IwiXuFV0/3uZDzkTR/6DLQwBsCm5MP1K+?=
- =?us-ascii?Q?Rjdx8JuFeKX9YuZJI5wNqs/BdSTbyOWnA0NhAbrk1WG9NNIqVoKFH4kl55Us?=
- =?us-ascii?Q?iqC9aqSO+SMSqu53ZxD+IjySR0BaQ5zX3UreuWH0MR/KTvlyvv6yF4aMeBbc?=
- =?us-ascii?Q?mGuCHJqUCY9V9HvfIAY4QMU8yuUiUd06b3nMAfQPRMXGcyXMb931X3+QQFPx?=
- =?us-ascii?Q?QEJb7d/Dq/mku7O5/C3a5xghp/CKUjtS/rIqkFjz6RADsiVgWQGQCzt4uNu4?=
- =?us-ascii?Q?CO+uf+hQcvKfAR1oGHDn1EfOysUeCUgVyMUxSZ74sNGANUzCK6YFG3VaW1Hh?=
- =?us-ascii?Q?DjHcEwZ52KS6r3jh2NhHZsGuepC8rbpoD3d8rSf7Xlrf5onkQqxCv2D3Z9/y?=
- =?us-ascii?Q?iNHTFnwviDaDC9IYvoFJ+WnALRADaLxUO+ldyopBpdrbGz0gAm3qAbQUyCPC?=
- =?us-ascii?Q?Re0G1Bt7VV4uMwQttBfGSvKv/Ob8AKFW1vkKXiEQYDyMhj7rbMwDFaVs07Km?=
- =?us-ascii?Q?6Hftb+HCklHSN1a5IwHfV65jqfriXbtzD90lXGU8236KQi2zl/cs/nnWMCM1?=
- =?us-ascii?Q?dUrNAyqG45DpUmBhz1MBkk9/HKyxvcTA7q6PS+oAtQI4Sxgh7ql3Se/hUlf6?=
- =?us-ascii?Q?8zU3+TQKonawXvvm4hgANQK7w0yR0ZgQh1FQDqgTxm8cnf34Zy5cOOLg5G4m?=
- =?us-ascii?Q?cVkCdPwMRN+VuFuiAkCNhzGNcxn6HqO284EwjfEaOhGCh2T9+qMp2eQGHLEr?=
- =?us-ascii?Q?suoajlkzMsJcK+LRyz4mm2Lrrks1+Wdfpp6rR5VxXcd3xbgouPGtsECiza5G?=
- =?us-ascii?Q?8jqMrvi2gjgJSE+1VYus2mofy75kBHTNWmrXka+mB3scZaMpXV8fXue39YcA?=
- =?us-ascii?Q?GvcEKA94X+fyaeGNRTRlucfgIphZYwqpjCdLHadmsdWHXwhcUiuiX/wiYQtH?=
- =?us-ascii?Q?N2gbBC9cUvvkR0syAzRYt8CWuo6Q3ECaSAH2KTYjHXq4MEaf9SO7CMVRbIGw?=
- =?us-ascii?Q?JyWV4UQEKYjsC+Ld0omnB7VSbiQ+SuRwWyMyB4BMlyWQP1r622NKkg6X56h0?=
- =?us-ascii?Q?fqennQF11uVOmsuYAwOoGqWdG0Ayu6JeLLquKDXP9ZJcjgYHziOXDw4k5igq?=
- =?us-ascii?Q?3C0OAbK8q1Sr/p8Z1jQFEUuKTgTsmfi1pyOVzK9/BWC+ROH9LE1jMuWPiOcJ?=
- =?us-ascii?Q?o7pHuaXO5zr9fxhEOluDkqa59pHpZ0wGqbe8OBtxjSggubnrHZ93JrP7u8mx?=
- =?us-ascii?Q?dIpW0v1aMikVhoUDoQ4dcwKOX//yMncsRPaH8rFmztvTxZbaDo056jcBfAaI?=
- =?us-ascii?Q?t6GiiX5Ew9SSQaEyJuE2T/cs7j+Wd38+wrErgxRtKET9weTfp0/Uhr7422L/?=
- =?us-ascii?Q?TxutgpI9ESB7Nv7KG7roE6ZahWb9JOPQbTTBx7Fl791zEjvikrO5eOLEWSiH?=
- =?us-ascii?Q?3A=3D=3D?=
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6d1db6d-c2dd-46a9-7ffd-08dd8ca9d64e
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR02MB10287.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 14:25:23.2737
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iolsSJ18qIlIOhMMFqmruRNtygXSqdPhkHJb5s53DXR5lvxmgmG1Sad0BI/sXVhqyEf63Ab0JalTDqzEAEF/UYGxjH7Ack4jX+xmeSRCjfY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR02MB9181
-X-Authority-Analysis: v=2.4 cv=WtErMcfv c=1 sm=1 tr=0 ts=681a1bd5 cx=c_pps a=XlWNgFwcAB8XWrBhwjv7Vg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10
- a=0kUYKlekyDsA:10 a=64Cc0HZtAAAA:8 a=b33TgMU32a3rZkJSB7EA:9
-X-Proofpoint-GUID: 2jMf_MzjJx_2fX8WmaYfT5kjYkeOwEoC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDEzOSBTYWx0ZWRfX8p62AOECIUcE NbMxQzCDECxfvQj/r1/8Pjz6fo7ZvQPGRNQ0spVM4YkdEmieD8n/xCtsfYdW+y8B6o6wh92zvwV e3yhtKjDCfFm9BiNpWIC1g9WdEdiG6UMETSYZfP9h70WNxNkZO3stNE8Fmv+FzM77Awp6EZdqCJ
- rZ9yJaqtY7CrIn/c8MwSdYr4kQmKRCvvzbIhnuNiUzcRHiMPBj/zdBUodJjDcW+qiqEZc9O9JXu rwZ3cDC8RUbwVdi86m+RLM8xbsIJTeTN5PHc/h2UN6pLRFrR8ktDIMoyE0RIXjCxGrstNTaVuI2 PNk09fucTKXssZnry4NqeYwohmeuopqmkyeMCpvrJ0oMHjxQRYER60rHhm++o8RowQNOSjldJhP
- m1uOoAuQJuzt08GdWS2GEiaeUIwCNRNyQvNN/cyyc9u8pmzliDDn4yPE08esx2kkuEyXi2WI
-X-Proofpoint-ORIG-GUID: 2jMf_MzjJx_2fX8WmaYfT5kjYkeOwEoC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_06,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <bug-220083-6385@https.bugzilla.kernel.org/>
 
-Now that we have the build_skb paths using local NAPI cache, use
-napi_consume_skb in tun_do_read, so that the local cache gets refilled
-on read. This is especially useful in the vhost worker use case where
-the RX and TX paths are running on the same worker kthread.
+Switching to mail.
 
-Signed-off-by: Jon Kohler <jon@nutanix.com>
----
- drivers/net/tun.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Hi Benjamin,
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 7b13d4bf5374..f85115383667 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -2163,10 +2163,13 @@ static ssize_t tun_do_read(struct tun_struct *tun, struct tun_file *tfile,
- 		struct sk_buff *skb = ptr;
- 
- 		ret = tun_put_user(tun, tfile, skb, to);
--		if (unlikely(ret < 0))
-+		if (ret >= 0) {
-+			local_bh_disable();
-+			napi_consume_skb(skb, 1);
-+			local_bh_enable();
-+		} else {
- 			kfree_skb(skb);
--		else
--			consume_skb(skb);
-+		}
- 	}
- 
- 	return ret;
+take a look at the below pls.
+
+The RIP points to:
+
+  22:   48 c1 e6 04             shl    $0x4,%rsi
+  26:   48 03 77 08             add    0x8(%rdi),%rsi
+  2a:*  65 48 ff 46 08          incq   %gs:0x8(%rsi)            <-- trapping instruction
+  2f:   c3                      ret
+
+which really is a %gs-based access and the reporter has bisected this to
+
+  9d7de2aa8b41 ("x86/percpu/64: Use relative percpu offsets")
+
+which looks related.
+
+My silly guess would be some bpf program does per-cpu accesses but it doesn't
+know about this change so it tramples over registers. I mean, my fix would be
+to disable BPF but you young kids love to play with that...
+
+:-)
+
+Thx.
+
+On Sat, May 03, 2025 at 06:40:41PM +0000, bugzilla-daemon@kernel.org wrote:
+> https://bugzilla.kernel.org/show_bug.cgi?id=220083
+> 
+>             Bug ID: 220083
+>            Summary: [REGRESSION, BISECTED] x86 ASM changes make
+>                     dispatch_hid_bpf_output_report access not-present page
+>            Product: Platform Specific/Hardware
+>            Version: 2.5
+>           Hardware: All
+>                 OS: Linux
+>             Status: NEW
+>           Severity: high
+>           Priority: P3
+>          Component: x86-64
+>           Assignee: platform_x86_64@kernel-bugs.osdl.org
+>           Reporter: i@rong.moe
+>         Regression: No
+> 
+> After upgrading from 6.14.x to 6.15-rc3, not-present page PF occurs each time I
+> unplug any of my Logitech Unifying receivers.
+> 
+> Upgrading to 6.15-rc4 did not fix the issue.
+> 
+> dmesg:
+> ```
+> [   48.726588] usb 7-1.4: USB disconnect, device number 7
+> [   48.856531] BUG: unable to handle page fault for address: ffff8a510ee72018
+> [   48.856543] #PF: supervisor write access in kernel mode
+> [   48.856547] #PF: error_code(0x0002) - not-present page
+> [   48.856550] PGD 365c01067 P4D 365c01067 PUD 0
+> [   48.856558] Oops: Oops: 0002 [#1] SMP NOPTI
+> [   48.856566] CPU: 0 UID: 0 PID: 7237 Comm: kworker/0:3 Tainted: G     U      
+>        6.15.0-rc4 #1 PREEMPT(lazy)  b3a8ad1950c71c15317e5ea614db6e274ecb0913
+> [   48.856574] Tainted: [U]=USER
+> [   48.856577] Hardware name: LENOVO 21Q4/LNVNB161216, BIOS PXCN24WW 03/11/2025
+> [   48.856579] Workqueue: events hidinput_led_worker
+> [   48.856589] RIP: 0010:__srcu_read_unlock+0x1a/0x30
+> [   48.856595] Code: c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e
+> fa 0f 1f 44 00 00 f0 83 44 24 fc 00 48 63 f6 48 c1 e6 04 48 03 77 08 <65> 48 ff
+> 46 08 c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90
+> [   48.856598] RSP: 0018:ffffd037cc29fd88 EFLAGS: 00010202
+> [   48.856602] RAX: 0000000000000000 RBX: ffff8a4c6b16fe08 RCX:
+> 0000000000000000
+> [   48.856604] RDX: 0000000000000002 RSI: 0000000000000010 RDI:
+> ffff8a4c6b16fe38
+> [   48.856606] RBP: ffffd037cc29fdf8 R08: 0000000000000000 R09:
+> 00000000fffffffd
+> [   48.856607] R10: 0000000000000001 R11: 00000000ffffffff R12:
+> 0000000000000000
+> [   48.856609] R13: ffff8a4ac182dbc0 R14: 0000000000000001 R15:
+> 0000000000000000
+> [   48.856611] FS:  0000000000000000(0000) GS:ffff8a510ee72000(0000)
+> knlGS:0000000000000000
+> [   48.856613] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   48.856614] CR2: ffff8a510ee72018 CR3: 0000000364c24000 CR4:
+> 0000000000f50ef0
+> [   48.856617] PKRU: 55555554
+> [   48.856618] Call Trace:
+> [   48.856621]  <TASK>
+> [   48.856623]  dispatch_hid_bpf_output_report+0xc5/0x100
+> [   48.856631]  hid_hw_output_report+0x46/0x90
+> [   48.856635]  hidinput_led_worker+0xa9/0xe0
+> [   48.856640]  process_one_work+0x18f/0x350
+> [   48.856646]  worker_thread+0x2d3/0x400
+> [   48.856650]  ? rescuer_thread+0x550/0x550
+> [   48.856654]  kthread+0xf9/0x240
+> [   48.856657]  ? kthreads_online_cpu+0x120/0x120
+> [   48.856661]  ret_from_fork+0x31/0x50
+> [   48.856665]  ? kthreads_online_cpu+0x120/0x120
+> [   48.856668]  ret_from_fork_asm+0x11/0x20
+> [   48.856674]  </TASK>
+> [   48.856675] Modules linked in: xt_mark tcp_diag inet_diag snd_hrtimer
+> snd_seq_dummy snd_seq_midi snd_seq_oss snd_seq_midi_event snd_seq uhid rfcomm
+> cmac algif_hash algif_skcipher af_alg xt_CHECKSUM xt_MASQUERADE xt_conntrack
+> ipt_REJECT nf_reject_ipv4 xt_tcpudp nft_compat nft_chain_nat nf_nat
+> nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 tun snd_usb_audio snd_usbmidi_lib
+> snd_ump snd_rawmidi snd_seq_device bridge stp llc nf_tables qrtr bnep overlay
+> sunrpc vfat fat uvcvideo videobuf2_vmalloc uvc videobuf2_memops videobuf2_v4l2
+> videobuf2_common btusb videodev btrtl btintel mc btbcm btmtk bluetooth amd_atl
+> intel_rapl_msr intel_rapl_common snd_acp_legacy_mach snd_acp_mach
+> snd_soc_nau8821 snd_acp3x_rn snd_acp70 snd_acp_i2s snd_acp_pdm snd_soc_dmic
+> snd_acp_pcm snd_sof_amd_acp70 snd_sof_amd_acp63 snd_sof_amd_vangogh
+> snd_sof_amd_rembrandt snd_sof_amd_renoir snd_sof_amd_acp snd_sof_pci
+> snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_pci_ps snd_soc_acpi_amd_match
+> snd_amd_sdw_acpi soundwire_amd snd_hda_codec_realtek
+> [   48.856732]  soundwire_generic_allocation soundwire_bus
+> snd_hda_codec_generic snd_soc_sdca snd_hda_scodec_component snd_hda_codec_hdmi
+> snd_soc_core mt7925e snd_compress mt7925_common snd_hda_intel ac97_bus
+> mt792x_lib snd_intel_dspcfg snd_pcm_dmaengine mt76_connac_lib
+> snd_intel_sdw_acpi snd_rpl_pci_acp6x kvm_amd mt76 snd_hda_codec snd_acp_pci
+> think_lmi snd_amd_acpi_mach kvm snd_hda_core snd_acp_legacy_common
+> snd_pci_acp6x snd_hwdep mac80211 snd_pcm_oss snd_mixer_oss irqbypass
+> snd_pci_acp5x snd_ctl_led snd_pcm libarc4 rapl pcspkr firmware_attributes_class
+> snd_timer lenovo_wmi_hotkey_utilities snd_rn_pci_acp3x wmi_bmof cfg80211
+> snd_acp_config snd snd_soc_acpi k10temp hid_sensor_als spd5118 amdxdna amd_pmf
+> snd_pci_acp3x rfkill soundcore hid_sensor_trigger industrialio_triggered_buffer
+> amdtee kfifo_buf joydev hid_sensor_iio_common ccp industrialio amd_pmc
+> platform_profile mousedev mac_hid sch_fq_codel uinput i2c_dev parport_pc ppdev
+> lp parport nvme_fabrics nfnetlink ip_tables x_tables dm_crypt encrypted_keys
+> trusted
+> [   48.856786]  asn1_encoder tee dm_mod raid10 raid456 async_raid6_recov
+> async_memcpy async_pq async_xor async_tx raid1 raid0 linear md_mod igc ptp
+> pps_core uas usb_storage hid_logitech_hidpp r8153_ecm cdc_ether usbnet
+> hid_logitech_dj r8152 mii usbhid amdgpu i2c_algo_bit drm_ttm_helper ttm
+> drm_panel_backlight_quirks polyval_clmulni polyval_generic drm_exec
+> ghash_clmulni_intel drm_suballoc_helper amdxcp sha512_ssse3 sdhci_pci drm_buddy
+> sha256_ssse3 thunderbolt hid_sensor_custom r8169 sha1_ssse3 serio_raw
+> sp5100_tco sdhci_uhs2 gpu_sched nvme sdhci hid_multitouch realtek
+> hid_sensor_hub aesni_intel atkbd ucsi_acpi drm_display_helper hid_generic
+> nvme_core cqhci crypto_simd mdio_devres libps2 video typec_ucsi i2c_piix4
+> vivaldi_fmap cryptd nvme_keyring typec libphy mmc_core i2c_smbus i8042 cec
+> i2c_hid_acpi amd_sfh nvme_auth roles wmi serio i2c_hid
+> [   48.856843] CR2: ffff8a510ee72018
+> [   48.856846] ---[ end trace 0000000000000000 ]---
+> [   50.304586] RIP: 0010:__srcu_read_unlock+0x1a/0x30
+> [   50.304601] Code: c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e
+> fa 0f 1f 44 00 00 f0 83 44 24 fc 00 48 63 f6 48 c1 e6 04 48 03 77 08 <65> 48 ff
+> 46 08 c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90
+> [   50.304603] RSP: 0018:ffffd037cc29fd88 EFLAGS: 00010202
+> [   50.304606] RAX: 0000000000000000 RBX: ffff8a4c6b16fe08 RCX:
+> 0000000000000000
+> [   50.304607] RDX: 0000000000000002 RSI: 0000000000000010 RDI:
+> ffff8a4c6b16fe38
+> [   50.304608] RBP: ffffd037cc29fdf8 R08: 0000000000000000 R09:
+> 00000000fffffffd
+> [   50.304609] R10: 0000000000000001 R11: 00000000ffffffff R12:
+> 0000000000000000
+> [   50.304610] R13: ffff8a4ac182dbc0 R14: 0000000000000001 R15:
+> 0000000000000000
+> [   50.304611] FS:  0000000000000000(0000) GS:ffff8a510ee72000(0000)
+> knlGS:0000000000000000
+> [   50.304612] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   50.304613] CR2: ffff8a510ee72018 CR3: 0000000121904000 CR4:
+> 0000000000f50ef0
+> [   50.304615] PKRU: 55555554
+> [   50.304616] note: kworker/0:3[7237] exited with irqs disabled
+> ```
+> 
+> Bisect log:
+> 
+> ```
+> # good: [38fec10eb60d687e30c8c6b5420d86e8149f7557] Linux 6.14
+> git bisect good 38fec10eb60d687e30c8c6b5420d86e8149f7557
+> # bad: [9c32cda43eb78f78c73aee4aa344b777714e259b] Linux 6.15-rc3
+> git bisect bad 9c32cda43eb78f78c73aee4aa344b777714e259b
+> # bad: [4a4b30ea80d8cb5e8c4c62bb86201f4ea0d9b030] Merge tag
+> 'bcachefs-2025-03-24' of git://evilpiepirate.org/bcachefs
+> git bisect bad 4a4b30ea80d8cb5e8c4c62bb86201f4ea0d9b030
+> # bad: [1e1ba8d23dae91e6a9cfeb1236b02749e8a49ab3] Merge tag
+> 'timers-clocksource-2025-03-26' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> git bisect bad 1e1ba8d23dae91e6a9cfeb1236b02749e8a49ab3
+> # skip: [21e0ff5b10ec1b61fda435d42db4ba80d0cdfded] Merge tag 'acpi-6.15-rc1' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+> git bisect skip 21e0ff5b10ec1b61fda435d42db4ba80d0cdfded
+> # good: [47c4f9b1722fd883c9745d7877cb212e41dd2715] Tidy up ASoC control get and
+> put handlers
+> git bisect good 47c4f9b1722fd883c9745d7877cb212e41dd2715
+> # bad: [2899aa3973efa3b0a7005cb7fb60475ea0c3b8a0] Merge tag
+> 'x86_cache_for_v6.15' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> git bisect bad 2899aa3973efa3b0a7005cb7fb60475ea0c3b8a0
+> # good: [5a658afd468b0fb55bf5f45c9788ee8dc87ba463] Merge tag
+> 'objtool-core-2025-03-22' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> git bisect good 5a658afd468b0fb55bf5f45c9788ee8dc87ba463
+> # bad: [a49a879f0ac19ed0a562e220019741857b261551] Merge tag
+> 'x86-cleanups-2025-03-22' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> git bisect bad a49a879f0ac19ed0a562e220019741857b261551
+> # bad: [9a93e29f16bbba90a63faad0abbc6dea3b2f0c63] x86/syscall: Move
+> sys_ni_syscall()
+> git bisect bad 9a93e29f16bbba90a63faad0abbc6dea3b2f0c63
+> # bad: [cfdaa618defc5ebe1ee6aa5bd40a7ccedffca6de] Merge branch 'x86/cpu' into
+> x86/asm, to pick up dependent commits
+> git bisect bad cfdaa618defc5ebe1ee6aa5bd40a7ccedffca6de
+> # good: [c4a8b7116b9927f7b00bd68140e285662a03068e] perf/x86/intel: Use cache
+> cpu-type for hybrid PMU selection
+> git bisect good c4a8b7116b9927f7b00bd68140e285662a03068e
+> # good: [4f2a0b765c9731d2fa94e209ee9ae0e96b280f17] <linux/sizes.h>: Cover all
+> possible x86 CPU cache sizes
+> git bisect good 4f2a0b765c9731d2fa94e209ee9ae0e96b280f17
+> # bad: [95b0916118106054e1f3d5d7f8628ef3dc0b3c02] percpu: Remove
+> PER_CPU_FIRST_SECTION
+> git bisect bad 95b0916118106054e1f3d5d7f8628ef3dc0b3c02
+> # skip: [78c4374ef8b842c6abf195d6f963853c7ec464d2] x86/module: Deal with GOT
+> based stack cookie load on Clang < 17
+> git bisect skip 78c4374ef8b842c6abf195d6f963853c7ec464d2
+> # bad: [b5c4f95351a097a635c1a7fc8d9efa18308491b5] x86/percpu/64: Remove
+> fixed_percpu_data
+> git bisect bad b5c4f95351a097a635c1a7fc8d9efa18308491b5
+> # skip: [cb7927fda002ca49ae62e2782c1692acc7b80c67] x86/relocs: Handle
+> R_X86_64_REX_GOTPCRELX relocations
+> git bisect skip cb7927fda002ca49ae62e2782c1692acc7b80c67
+> # skip: [80d47defddc000271502057ebd7efa4fd6481542] x86/stackprotector/64:
+> Convert to normal per-CPU variable
+> git bisect skip 80d47defddc000271502057ebd7efa4fd6481542
+> # skip: [f58b63857ae38b4484185b799a2759274b930c92] x86/pvh: Use
+> fixed_percpu_data for early boot GSBASE
+> git bisect skip f58b63857ae38b4484185b799a2759274b930c92
+> # good: [0ee2689b9374d6fd5f43b703713a532278654749] x86/stackprotector: Remove
+> stack protector test scripts
+> git bisect good 0ee2689b9374d6fd5f43b703713a532278654749
+> # bad: [9d7de2aa8b41407bc96d89a80dc1fd637d389d42] x86/percpu/64: Use relative
+> percpu offsets
+> git bisect bad 9d7de2aa8b41407bc96d89a80dc1fd637d389d42
+> # good: [a9a76b38aaf577887103e3ebb41d70e6aa5a4b19] x86/boot: Disable stack
+> protector for early boot code
+> git bisect good a9a76b38aaf577887103e3ebb41d70e6aa5a4b19
+> # only skipped commits left to test
+> # possible first bad commit: [9d7de2aa8b41407bc96d89a80dc1fd637d389d42]
+> x86/percpu/64: Use relative percpu offsets
+> # possible first bad commit: [80d47defddc000271502057ebd7efa4fd6481542]
+> x86/stackprotector/64: Convert to normal per-CPU variable
+> # possible first bad commit: [78c4374ef8b842c6abf195d6f963853c7ec464d2]
+> x86/module: Deal with GOT based stack cookie load on Clang < 17
+> # possible first bad commit: [cb7927fda002ca49ae62e2782c1692acc7b80c67]
+> x86/relocs: Handle R_X86_64_REX_GOTPCRELX relocations
+> # possible first bad commit: [f58b63857ae38b4484185b799a2759274b930c92]
+> x86/pvh: Use fixed_percpu_data for early boot GSBASE
+> ```
+> 
+> There is a typo in commit f58b63857ae3 ("x86/pvh: Use fixed_percpu_data for
+> early boot GSBASE"), resulting in compilation failure.
+> With the patch below, I bisected again:
+> 
+> ```
+> diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
+> index 723f181b222a..f1a8392a4835 100644
+> --- a/arch/x86/platform/pvh/head.S
+> +++ b/arch/x86/platform/pvh/head.S
+> @@ -180,7 +180,7 @@ SYM_CODE_START(pvh_start_xen)
+>          */
+>         movl $MSR_GS_BASE,%ecx
+>         leaq INIT_PER_CPU_VAR(fixed_percpu_data)(%rip), %rdx
+> -       movq %edx, %eax
+> +       movl %edx, %eax
+>         shrq $32, %rdx
+>         wrmsr
+> ```
+> 
+> New bisect log:
+> 
+> ```
+> [...]
+> # good: [a9a76b38aaf577887103e3ebb41d70e6aa5a4b19] x86/boot: Disable stack
+> protector for early boot code
+> git bisect good a9a76b38aaf577887103e3ebb41d70e6aa5a4b19
+> # good: [78c4374ef8b842c6abf195d6f963853c7ec464d2] x86/module: Deal with GOT
+> based stack cookie load on Clang < 17
+> git bisect good 78c4374ef8b842c6abf195d6f963853c7ec464d2
+> # good: [80d47defddc000271502057ebd7efa4fd6481542] x86/stackprotector/64:
+> Convert to normal per-CPU variable
+> git bisect good 80d47defddc000271502057ebd7efa4fd6481542
+> # first bad commit: [9d7de2aa8b41407bc96d89a80dc1fd637d389d42] x86/percpu/64:
+> Use relative percpu offsets
+> ```
+> 
+> The bad commit 9d7de2aa8b41 ("x86/percpu/64: Use relative percpu offsets")
+> first appeared in v6.15-rc1.
+> 
+> Got dmesg below by building and booting the bad commit, then unplugging the
+> receiver:
+> 
+> ```
+> [  560.223095] BUG: unable to handle page fault for address: ffff9acf2b889008
+> [  560.223174] #PF: supervisor write access in kernel mode
+> [  560.223299] #PF: error_code(0x0002) - not-present page
+> [  560.223332] PGD 43e401067 P4D 43e401067 PUD 0
+> [  560.223353] Oops: Oops: 0002 [#1] PREEMPT SMP NOPTI
+> [  560.223359] CPU: 0 UID: 0 PID: 8212 Comm: kworker/0:3 Tainted: G     U      
+>       6.14.0-rc3+ #1 ab962f3b7921227b62db2503d8ec7411fa694628
+> [  560.223364] Tainted: [U]=USER
+> [  560.223369] Hardware name: LENOVO 21Q4/LNVNB161216, BIOS PXCN24WW 03/11/2025
+> [  560.223378] Workqueue: events hidinput_led_worker
+> [  560.223382] RIP: 0010:__srcu_read_lock+0x14/0x30
+> [  560.223387] Code: 0f 0b eb bc 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 84 00 00
+> 00 00 00 f3 0f 1e fa 0f 1f 44 00 00 8b 07 48 8b 57 08 83 e0 01 89 c1 <65> 48 ff
+> 04 ca f0 83 44 24 fc 00 c3 cc cc cc cc 66 66 2e 0f 1f 84
+> [  560.223392] RSP: 0018:ffffb7df8d24fd88 EFLAGS: 00010202
+> [  560.223396] RAX: 0000000000000001 RBX: ffff9ac82f80de08 RCX:
+> 0000000000000001
+> [  560.223401] RDX: 0000000000000000 RSI: ffff9ac8fd276f40 RDI:
+> ffff9ac82f80de38
+> [  560.223407] RBP: ffffb7df8d24fdf8 R08: 0000000000000000 R09:
+> 00000000fffffffd
+> [  560.223412] R10: 0000000000000001 R11: 00000000ffffffff R12:
+> 0000000000000000
+> [  560.223417] R13: ffff9ac8fd276f40 R14: 000000000000000e R15:
+> 0000000000000000
+> [  560.223421] FS:  0000000000000000(0000) GS:ffff9acf2b889000(0000)
+> knlGS:0000000000000000
+> [  560.223426] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  560.223430] CR2: ffff9acf2b889008 CR3: 00000001e1c40000 CR4:
+> 0000000000f50ef0
+> [  560.223434] PKRU: 55555554
+> [  560.223439] Call Trace:
+> [  560.223444]  <TASK>
+> [  560.223449]  ? __die_body.cold+0x19/0x29
+> [  560.223453]  ? page_fault_oops+0x15a/0x2e0
+> [  560.223458]  ? search_bpf_extables+0x5f/0x80
+> [  560.223462]  ? exc_page_fault+0x1a3/0x1b0
+> [  560.223466]  ? asm_exc_page_fault+0x26/0x30
+> [  560.223471]  ? __srcu_read_lock+0x14/0x30
+> [  560.223475]  ? psi_task_switch+0xb7/0x200
+> [  560.223480]  dispatch_hid_bpf_output_report+0x73/0x100
+> [  560.223485]  hid_hw_output_report+0x46/0x90
+> [  560.223490]  hidinput_led_worker+0xa9/0xe0
+> [  560.223494]  process_one_work+0x17b/0x330
+> [  560.223498]  worker_thread+0x2ce/0x3f0
+> [  560.223503]  ? rescuer_thread+0x530/0x530
+> [  560.223507]  kthread+0xeb/0x230
+> [  560.223512]  ? kthreads_online_cpu+0x120/0x120
+> [  560.223516]  ret_from_fork+0x31/0x50
+> [  560.223522]  ? kthreads_online_cpu+0x120/0x120
+> [  560.223528]  ret_from_fork_asm+0x11/0x20
+> [  560.223532]  </TASK>
+> [  560.223538] Modules linked in: tcp_diag inet_diag xt_mark snd_hrtimer
+> snd_seq_dummy snd_seq_midi snd_seq_oss snd_seq_midi_event snd_seq uhid rfcomm
+> cmac algif_hash algif_skcipher af_alg xt_CHECKSUM xt_MASQUERADE xt_conntrack
+> ipt_REJECT nf_reject_ipv4 xt_tcpudp nft_compat nft_chain_nat nf_nat
+> nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 tun bridge stp llc nf_tables
+> snd_usb_audio snd_usbmidi_lib snd_ump snd_rawmidi snd_seq_device qrtr bnep
+> overlay sunrpc vfat fat uvcvideo videobuf2_vmalloc uvc videobuf2_memops btusb
+> videobuf2_v4l2 btrtl videobuf2_common btintel btbcm videodev btmtk mc bluetooth
+> snd_acp_legacy_mach snd_acp_mach snd_soc_nau8821 snd_acp3x_rn snd_acp70
+> snd_acp_i2s snd_acp_pdm snd_soc_dmic snd_acp_pcm snd_sof_amd_acp70
+> snd_sof_amd_acp63 snd_sof_amd_vangogh snd_sof_amd_rembrandt snd_sof_amd_renoir
+> snd_sof_amd_acp intel_rapl_msr amd_atl snd_sof_pci intel_rapl_common
+> snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_pci_ps snd_soc_acpi_amd_match
+> snd_amd_sdw_acpi soundwire_amd soundwire_generic_allocation snd_ctl_led
+> [  560.223612]  soundwire_bus snd_soc_sdca snd_hda_codec_realtek
+> snd_hda_codec_generic snd_soc_core mt7925e snd_hda_scodec_component
+> mt7925_common snd_compress mt792x_lib snd_hda_codec_hdmi ac97_bus snd_hda_intel
+> mt76_connac_lib snd_pcm_dmaengine snd_intel_dspcfg mt76 snd_rpl_pci_acp6x
+> snd_intel_sdw_acpi snd_hda_codec kvm_amd snd_acp_pci think_lmi snd_hda_core
+> snd_acp_legacy_common mac80211 kvm snd_pci_acp6x snd_hwdep snd_pcm_oss
+> snd_mixer_oss snd_pci_acp5x libarc4 amd_pmf rapl pcspkr
+> firmware_attributes_class wmi_bmof hid_sensor_als amdtee snd_pcm
+> hid_sensor_trigger snd_rn_pci_acp3x cfg80211 industrialio_triggered_buffer
+> snd_timer joydev snd_acp_config kfifo_buf spd5118 snd snd_soc_acpi
+> hid_sensor_iio_common ccp soundcore snd_pci_acp3x rfkill platform_profile
+> amdxdna k10temp industrialio amd_pmc mousedev mac_hid sch_fq_codel uinput
+> i2c_dev parport_pc ppdev lp parport nvme_fabrics nvme_keyring nfnetlink
+> ip_tables x_tables dm_crypt encrypted_keys trusted asn1_encoder tee dm_mod
+> raid10 raid456 async_raid6_recov
+> [  560.223631]  async_memcpy async_pq async_xor async_tx raid1 raid0 linear
+> md_mod igc ptp pps_core uas usb_storage hid_logitech_hidpp r8153_ecm cdc_ether
+> usbnet hid_logitech_dj r8152 mii usbhid amdgpu i2c_algo_bit drm_ttm_helper ttm
+> drm_panel_backlight_quirks polyval_clmulni drm_exec polyval_generic
+> ghash_clmulni_intel drm_suballoc_helper sha512_ssse3 amdxcp hid_sensor_custom
+> serio_raw sha256_ssse3 drm_buddy sdhci_pci ucsi_acpi atkbd nvme hid_multitouch
+> r8169 sha1_ssse3 sp5100_tco hid_sensor_hub typec_ucsi libps2 gpu_sched
+> sdhci_uhs2 vivaldi_fmap aesni_intel nvme_core sdhci hid_generic realtek typec
+> drm_display_helper video i8042 crypto_simd i2c_piix4 mdio_devres cqhci cryptd
+> thunderbolt mmc_core libphy cec amd_sfh nvme_auth roles i2c_smbus serio
+> i2c_hid_acpi wmi i2c_hid
+> [  560.223646] CR2: ffff9acf2b889008
+> [  560.223650] ---[ end trace 0000000000000000 ]---
+> [  560.223655] RIP: 0010:__srcu_read_lock+0x14/0x30
+> [  560.223660] Code: 0f 0b eb bc 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 84 00 00
+> 00 00 00 f3 0f 1e fa 0f 1f 44 00 00 8b 07 48 8b 57 08 83 e0 01 89 c1 <65> 48 ff
+> 04 ca f0 83 44 24 fc 00 c3 cc cc cc cc 66 66 2e 0f 1f 84
+> [  560.223664] RSP: 0018:ffffb7df8d24fd88 EFLAGS: 00010202
+> [  560.223670] RAX: 0000000000000001 RBX: ffff9ac82f80de08 RCX:
+> 0000000000000001
+> [  560.223674] RDX: 0000000000000000 RSI: ffff9ac8fd276f40 RDI:
+> ffff9ac82f80de38
+> [  560.223679] RBP: ffffb7df8d24fdf8 R08: 0000000000000000 R09:
+> 00000000fffffffd
+> [  560.223683] R10: 0000000000000001 R11: 00000000ffffffff R12:
+> 0000000000000000
+> [  560.223687] R13: ffff9ac8fd276f40 R14: 000000000000000e R15:
+> 0000000000000000
+> [  560.223692] FS:  0000000000000000(0000) GS:ffff9acf2b889000(0000)
+> knlGS:0000000000000000
+> [  560.223696] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  560.223700] CR2: ffff9acf2b889008 CR3: 00000001e1c40000 CR4:
+> 0000000000f50ef0
+> [  560.223704] PKRU: 55555554
+> [  560.223709] note: kworker/0:3[8212] exited with irqs disabled
+> ```
+> 
+> -- 
+> You may reply to this email to add a comment.
+> 
+> You are receiving this mail because:
+> You are watching the assignee of the bug.
+
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
