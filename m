@@ -1,138 +1,175 @@
-Return-Path: <linux-kernel+bounces-635901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6412AAC35E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:06:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51A8AAC369
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27C11C08618
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:06:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C004A3B561E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C3327E7FF;
-	Tue,  6 May 2025 12:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E6C27F174;
+	Tue,  6 May 2025 12:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eIzU+cPg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0mLb1Cet"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2058.outbound.protection.outlook.com [40.107.100.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EBE27C157;
-	Tue,  6 May 2025 12:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746533190; cv=none; b=eKE64nNkRGtCfALgAhu0isYdjbPgLM4KMU9XLX0DoDocxuc2nW8PTpu6tNFxhVPVAyTmpwXVt6JOGT697fq/arCYTvR2Xugpd2yl1eGjojeDddm/0+QBrAendhN4q+j1Z4JovZWarfPtnk34uumWp2aPBHtp8iH1kmXG2kMiR24=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746533190; c=relaxed/simple;
-	bh=yrApMg2Q1BCISMtqxwlIotBwEopk5QQD4jpgaUv6yKY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=cYDAe+2U9MTgfVn888aKjDyZNYvgEZQKegUMVLIFIWa6YXKfsr4fZ3aL2r16DsrKPGMe8ab1vtOrx5EwowQr3aOn/8tkYk6uYi2ZSQN3cc47SJaibEpVxzXOqVWJjeBGodwVrJ9qRbKL+X0vTn5WIZJOYygTbENny9DqZ6+g/is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eIzU+cPg; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746533188; x=1778069188;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=yrApMg2Q1BCISMtqxwlIotBwEopk5QQD4jpgaUv6yKY=;
-  b=eIzU+cPgIIi5ZKJHNxpHx+KWa4Pvf1eGGQAwCQpyvBi/RQ/2jFgIHEzY
-   uRx14GcLhtL1MvECS5HIAGQItiYML6pr+TVgznGSJqhH/Bwmdb6eqK3vh
-   CUxxnw8lnnW/gUjvvg+H7S9CBhl4ryYoxqK2lr2ka9ugiEvvP8rmptMR7
-   tK2H2HPTwBS/fcdYFyucaP3FhxYLR42f+KVO8kJE4lCZ6myzgvpTsATZa
-   Fx5Eb2tglGj8I3p/zvC1o/NLihPmDnSBvHQqLih/vfUIL8P8fmqYdUW1p
-   6NJj62uxqJeyCZNsl7SWPU9wzCXfQOFodCUOVdtqsjDLhfXqlkBM+GBq2
-   g==;
-X-CSE-ConnectionGUID: 6Rm264A3R9qlIt5upV+h3g==
-X-CSE-MsgGUID: ahV1/4CLRaqPuSk2Bj7yGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52007532"
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="52007532"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 05:06:27 -0700
-X-CSE-ConnectionGUID: zhgYECvEQTK5zEuXRNcezw==
-X-CSE-MsgGUID: 1tjypfTPTVe3wRdYITSyIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; 
-   d="scan'208";a="136594290"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.207])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 05:06:21 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 6 May 2025 15:06:18 +0300 (EEST)
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-cc: arnd@arndb.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    benjamin.larsson@genexis.eu, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    heikki.krogerus@linux.intel.com, Jiri Slaby <jirislaby@kernel.org>, 
-    jkeeping@inmusicbrands.com, john.ogness@linutronix.de, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    linux-serial <linux-serial@vger.kernel.org>, markus.mayer@linaro.org, 
-    matt.porter@linaro.org, namcao@linutronix.de, paulmck@kernel.org, 
-    pmladek@suse.com, schnelle@linux.ibm.com, sunilvl@ventanamicro.com, 
-    tim.kryger@linaro.org
-Subject: Re: [PATCH v5 3/4] serial: 8250_dw: warning on entering dw8250_force_idle
- unlocked
-In-Reply-To: <20250506112321.61710-3-cuiyunhui@bytedance.com>
-Message-ID: <71a295db-72ea-bf2a-338f-416b178f5305@linux.intel.com>
-References: <20250506112321.61710-1-cuiyunhui@bytedance.com> <20250506112321.61710-3-cuiyunhui@bytedance.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BFA27F160;
+	Tue,  6 May 2025 12:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746533330; cv=fail; b=BR00TD/oK86f/c37o4k9+mjdfCHZ13d64saprhSFxe1hfUMuVia4pFD3QWKY8NZzo7Qew/j4cBjFUvs6OU9UD4wsKvXWitt4pdUmgInyk9+64sOt4apTk+j8DBmG/yxgfubBvzZ7ttDOfm76sbmQ+rbtmzm6Byeysoqw+YW/lFQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746533330; c=relaxed/simple;
+	bh=fcpiLCuu0BdAH8f5Enc/2RCxoVKdwU0i3PWkQv7MRTY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W1+wEOFhoy3Sr1r/drOkp9UnanGI8eZBe0dp8Kn16QGX7+nZ0+E3HpJMqKBj9gvQqJTLrXo9NberoV2WQJMli2ZpJtOJlnXY8SbM3DsF5U7TDdoMHwzdK9pmAPNrR5joKDdTKpccnYluEOsmBn6P40N8YgO7zX/49dcKcnWnXp0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0mLb1Cet; arc=fail smtp.client-ip=40.107.100.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LG8OQNNzj/3TOgEOhe4hDlgtiKGCo5g0mOvUfagvZjogwQRl99H7B6N4pq5CA3A22D/h0Srnq2oGlnrrze6XeEQ4Kh1KEGmJ8/npbtFcYsy6aBNgxOmZ6d5YH6tzZIq5kUmICL7m/WAg8joiXll8z6l9ZhMhM1HouLaTrTQMOyRtMZt3rlx6P8p8quAr+fZk+DxnqCQs1D7AKVQIsNT0JO55s1FovnxqY5kYUYcr/D2s+2NEaxNEQvPHKwoHInrGBRiJo+bSTZ8IDXOHUEdisTKR6BN5ZG7lQavaom25sxzuqNbuU4fVj1pjK+US5pq2ai1zChdWx7hLTaxbx4K8lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uCJX/TqYaAGpcCEhnuUkKbGhdTdBr7ryb3GY7ZSVT/s=;
+ b=yLT/dt29lnxFSullNqFhnJCnkoSVq+QhqcGEdPwTaX5iWRZz3hqDDPXaKfEZFAUSwu8pdH7D5/xhSk9/rT0oNOU/3HWAg/iaXDc/LfDVRaOsrerZlprVDFU5ilzqk4JGEfZp8FKAZM55kM/MdcZ0r6+WSAhabhK8cEmt2ojwygdFvUWPrnt9NIZtG3NJqVY3hsqTEYgMbgUEdF4oJbkeYWe5zXuEzq43iSOfdnRQ1GmvZIBGRC2uyFEYMmstFYyKCAdDqAUxTiouM1yqjMzVDk+GnWkOPP43ymXHrc9ttUqsp46qipuTGM0hAP1JTGNIXd9ywM6DoxaloTYLwsPfzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uCJX/TqYaAGpcCEhnuUkKbGhdTdBr7ryb3GY7ZSVT/s=;
+ b=0mLb1CetHC3i7oHcWJWus6y3SEYC9EmuJF/Ar6vboQzyvDvK6O0GHiRRFJkzcpvJ3jfME/yGfIBHv4Apq8AEl2u/0cw/1g15G46MLwZFYJeFMk8nB1fGaMtWUs8dVb2QjK1mB08hNso6ZngLTnyuQFyCYQq0yBid+A1vvaL1c+Y=
+Received: from MW4PR03CA0282.namprd03.prod.outlook.com (2603:10b6:303:b5::17)
+ by CY5PR12MB6178.namprd12.prod.outlook.com (2603:10b6:930:25::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.22; Tue, 6 May
+ 2025 12:08:40 +0000
+Received: from CO1PEPF000075F1.namprd03.prod.outlook.com
+ (2603:10b6:303:b5:cafe::17) by MW4PR03CA0282.outlook.office365.com
+ (2603:10b6:303:b5::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.30 via Frontend Transport; Tue,
+ 6 May 2025 12:08:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000075F1.mail.protection.outlook.com (10.167.249.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 12:08:39 +0000
+Received: from vijendar-linux.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 May
+ 2025 07:08:34 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+	<tiwai@suse.com>, <yung-chuan.liao@linux.intel.com>,
+	<ranjani.sridharan@linux.intel.com>, <pierre-louis.bossart@linux.dev>,
+	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
+	<venkataprasad.potturu@amd.com>, <Mario.Limonciello@amd.com>,
+	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>, <stable@vger.kernel.org>
+Subject: [PATCH 1/3] ASoC: amd: amd_sdw: Fix unlikely uninitialized variable use in create_sdw_dailinks()
+Date: Tue, 6 May 2025 17:37:22 +0530
+Message-ID: <20250506120823.3621604-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F1:EE_|CY5PR12MB6178:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3f87ed55-99be-4a0c-07b4-08dd8c96bcd1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sXry+cZIyEmViLdqtThJReDMsRxKKWDJbQ8Uu3+y2bObXrZDqJkfjyHtEPxP?=
+ =?us-ascii?Q?nP6NiEBPKOeOelDREjOir5SV4W3InAJGZLlbr4CQwgbzwyT1eRKogAKoEEKr?=
+ =?us-ascii?Q?yJ9hBQNjhRznSxg0wdZXMnjzSlLGmLoCTrd2otgkEFx7n+IHMcl/YCuvxOBm?=
+ =?us-ascii?Q?Mk6RlI/01TYF67vyEONuO8EVdelmHBxzph4OZM4bWHg6fKJGH5/e72SLEb+J?=
+ =?us-ascii?Q?4Xg+uPJIPIOMP5pn/KZwsNCOcwvWuo08YMmg2X3amP7OYuVfY4/xOTzXwG/6?=
+ =?us-ascii?Q?NicbduFLrLIVWfgvLMYIWbajdLUVJsaIEDeMTFqY58aIAScArGgahtwrsOhz?=
+ =?us-ascii?Q?mVMf2zUeRSoXpfMU7KVeZ1v+AuqCl51PtPbgR70kzckmD6KSmd4lP83XCaOi?=
+ =?us-ascii?Q?Btoewd0laXJkto1kS1cmb4ZpDc3XhxW45rk17Tt6B/2DaMT2nMdeE4BXA7r4?=
+ =?us-ascii?Q?UL+to4JDWDmyZPIF3rx/OCg5lirDYMJODsNHI4eyXIgo3/gCOKC+tYApUNrp?=
+ =?us-ascii?Q?K0tpKMIBdtHY0DelCvmVV7uweNsfgRK2ouNgdjTYniN1vNrs6joFu9C2Pzc3?=
+ =?us-ascii?Q?9MkBKcaCmN5WXIKFbQ21TvS2/+Fx1PE8WHJBpGxPyq6G8S4d1QW84CmQ7kGH?=
+ =?us-ascii?Q?ivw75NrsxKTR7HHwDVjbO2YuKhChbfOAtZfKpLUbnGijSBzUhPlEB+Qi0v47?=
+ =?us-ascii?Q?sjTnwHhU3TrsdeuaSPBfwNnowdEcmqZl+MdEOYtC9t7XYEUHwE8uzKL4LKrr?=
+ =?us-ascii?Q?TuMHc6sEfzfalW2dnU7AWuivlhdXIACiI6C/vk9xDUyP7ppsdhM8wgpYRCYY?=
+ =?us-ascii?Q?IbJ5ma71cmpS2lAw3+tA0qRxDOezX3Hf93y1p31PWWKy5/aksB5wd52ppdjm?=
+ =?us-ascii?Q?JBQuQIUXS1AiUuUXXdQorMC5IULeqgKaT5yF4QRCgsVfS7+yLRLg6G2/hTUT?=
+ =?us-ascii?Q?OOc1ME2IQZsu4RHDhBJFDxB8TKESuaB4NQpXcTAvzK7sz08UnDYRsyiUOQnx?=
+ =?us-ascii?Q?spcsp22LNwPtuBQcM3tBCuTJaHXbyoFUsZqKE4sJjga8/Q4pUeJ/xw2DBUP6?=
+ =?us-ascii?Q?THIefeMM8zhPVSZUXn0zazMA/icsRwGA/MymxjySvbXPfyzD5Y2M7+s9X35Q?=
+ =?us-ascii?Q?mXSGp8Stj30kJkFq9r5rBgTHKJ0u3kf3It3gKcm2QCMW98JvAc6S+eeNX2OK?=
+ =?us-ascii?Q?qkoJlB+HI7DPOdk6Mg+IZlfWZ3cO83Sqaqs+e1qgVRYTOq/MAdmpOVcX6+0r?=
+ =?us-ascii?Q?4LSD8xvdpojSwncZVcw7RbVuSLmKt6eQ+OyDEJra1WeZkwXnQKJy7EePiJwE?=
+ =?us-ascii?Q?o5zogrWpUSgFw2Em1mN6qV3ip8SoOAsoX2y0amhJNYn7mp8AeNVIzzY9rhYq?=
+ =?us-ascii?Q?o8EhiiZroiDZsa1wZ1Duy0uODnTHFlvl8IlV9rWpxwiH7UW93wrxdQ4Ezpvk?=
+ =?us-ascii?Q?d+nd2s4SIIVwD+xGYQ+p79EL+ygVqqTy9duS3ETyTJFUpKY+aR9A1xw2px31?=
+ =?us-ascii?Q?BIPlHG1IP9BNDfILWifEOoTmZ8WKbgz7pRKv?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 12:08:39.5823
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f87ed55-99be-4a0c-07b4-08dd8c96bcd1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075F1.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6178
 
-On Tue, 6 May 2025, Yunhui Cui wrote:
+Initialize current_be_id to 0 in AMD legacy stack(NO DSP enabled) SoundWire
+generic machine driver code to handle the unlikely case when there are no
+devices connected to a DAI.
 
-> Read UART_RX and check UART_LSR_DR in critical section. Unsure if
+In this case create_sdw_dailink() would return without touching the passed
+pointer to current_be_id.
 
-Unsure if -> Ensure the
+Found by gcc -fanalyzer
 
-> caller of dw8250_force_idle() holds port->lock. Don't acquire it
-> directly to avoid deadlock. Use lockdep_assert_held_once for warning.
+Cc: stable@vger.kernel.org
+Fixes: 2981d9b0789c4 ("ASoC: amd: acp: add soundwire machine driver for legacy stack")
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+---
+ sound/soc/amd/acp/acp-sdw-legacy-mach.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Add (), although the last two sentences don't seem that useful, IMO.
-
-> 
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->  drivers/tty/serial/8250/8250_dw.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-> index af24ec25d976..f41c4a9ed58b 100644
-> --- a/drivers/tty/serial/8250/8250_dw.c
-> +++ b/drivers/tty/serial/8250/8250_dw.c
-> @@ -13,6 +13,7 @@
->  #include <linux/delay.h>
->  #include <linux/device.h>
->  #include <linux/io.h>
-> +#include <linux/lockdep.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
->  #include <linux/notifier.h>
-> @@ -112,6 +113,13 @@ static void dw8250_force_idle(struct uart_port *p)
->  	struct uart_8250_port *up = up_to_u8250p(p);
->  	unsigned int lsr;
->  
-> +	/*
-> +	 * The serial_in(p, UART_RX) should be under port->lock, but we can't add
-> +	 * it to avoid AA deadlock as we're unsure if serial_out*(...UART_LCR)
-> +	 * is under port->lock.
-
-I'm left to wonder who/what "we" is here? Could you change it something 
-more precise.
-
-> +	 */
-> +	lockdep_assert_held_once(&p->lock);
-> +
->  	serial8250_clear_and_reinit_fifos(up);
->  
->  	/*
-> 
-
+diff --git a/sound/soc/amd/acp/acp-sdw-legacy-mach.c b/sound/soc/amd/acp/acp-sdw-legacy-mach.c
+index 2020c5cfb3d5..582c68aee6e5 100644
+--- a/sound/soc/amd/acp/acp-sdw-legacy-mach.c
++++ b/sound/soc/amd/acp/acp-sdw-legacy-mach.c
+@@ -272,7 +272,7 @@ static int create_sdw_dailinks(struct snd_soc_card *card,
+ 
+ 	/* generate DAI links by each sdw link */
+ 	while (soc_dais->initialised) {
+-		int current_be_id;
++		int current_be_id = 0;
+ 
+ 		ret = create_sdw_dailink(card, soc_dais, dai_links,
+ 					 &current_be_id, codec_conf, sdw_platform_component);
 -- 
- i.
+2.45.2
 
 
