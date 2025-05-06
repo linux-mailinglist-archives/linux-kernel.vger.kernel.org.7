@@ -1,144 +1,154 @@
-Return-Path: <linux-kernel+bounces-636535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94097AACC7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:48:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2312BAACCA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2EDB1C02A14
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:48:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4010E177237
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABAE284B2A;
-	Tue,  6 May 2025 17:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA5C2857E4;
+	Tue,  6 May 2025 17:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtYQJjFo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kapDodpN"
+Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F09199938
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 17:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C3D2853F3;
+	Tue,  6 May 2025 17:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746553669; cv=none; b=UPGfcx24lejtsbn26TFhyJUTXkoHzm6wuL075T+PKZ5WYxs6voEy++c+8fsjXisa1jh32ZnurJLQlq7KuDPx4+P3Y91jx3ctROR2Mi5xZn6LgemKUy3qC+GTOKnI1MV3pYLHlasts8Q085bJ38bdD2XSdSKtPIn/FF/QanEJTtE=
+	t=1746554348; cv=none; b=hGntl1VLMpdRzP3hng/OVfvaP1OHKtDRbd2Ibhv5+GFjkSahzwgS+Dqsb1My/6ru1/j3TCOxh/w3PJynnH4swjWsDHrgEMUxbXr//AR6gakoMur4kKQjiQzx/89nSXUYY8LcOWEAp5RZ41BCCP8g8xv8vwkxBRBNseValWQwdT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746553669; c=relaxed/simple;
-	bh=PSgxPp4MJsKixicUbP1+bdkRVIIg5gfWQctrU31xEzI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JQSrPut9USgFgp2YcDHTJ8xwr6+hbKiQbToUeYCK/8xiMEKMPSt8c/pUc0UP+JzI9f7Zr1SU2znMeSKOjwKjq0m+3BhbfCVo58bqf267f0SBgArajuIhku85tvY6tjetX+uTdvrkg/eAlSZGrauiTNVHeFRZ3T5+xq6ByA8ChTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtYQJjFo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84E4CC4CEEB
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 17:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746553668;
-	bh=PSgxPp4MJsKixicUbP1+bdkRVIIg5gfWQctrU31xEzI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gtYQJjFoEOyXMnNC6cDNFM8SjMMu5aoCBX/Sv1UInGNgZpmYLBInwpg/PuiUqlDa6
-	 QMkalAITFQYbCuR+N+sNOL21nKD5AQ6UklYs1VOZxP7m49ah3nooOWOxjwXiy+5Rba
-	 xX+6md3Rs4URHMBlCeJprLSktW+2Pvex404ru0WdB7Uq9DsGXKHtpl0S5ZuLWZ473W
-	 ijPHs3dXnHK3RzorvbxWMdMMM4J5L1p+mGD4enarCDJ5K3dzIlBo16Uhl5C2I2vvxu
-	 3iQFILcP03UYBNDfU5tVrtoJsqqdNBnVTONFYF1ZXfxyfe7+p78v5mLPpWPXTs/QtF
-	 isN1mM4C0FlRA==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30db1bc464dso54132521fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 10:47:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUFMfbaS0ooLsXq+wd9K/WhGSbcTgNsRmXSkVsFT5DurGU+/Ki8BJKRHri68hMj+IkSYiAW1jz17tvnPAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm2W8eNdJ8vPUNLvyB7sJ96r9+0THRcAJ4Em8tZHU8VzQWphn1
-	9RTZGK6tQDjEMfYM9M9Lliph+7V8ZMYdOm2HJiMjqqh/vwRPDuKB4dynMtQLpnFIIt5EqRpYv4F
-	Te5+XCN8HnRX9MwLUTcgCrBxVBHI=
-X-Google-Smtp-Source: AGHT+IF8ln0zMGQFQyksiJa9iiRRhe33XJ16W0k5Na8/nmZQ7cFLplxGno1SzlGjBLb5l0ZE8vmNDbuBeodIW+xO6Mk=
-X-Received: by 2002:a05:651c:516:b0:309:1e89:8518 with SMTP id
- 38308e7fff4ca-3266cb09d54mr15438271fa.27.1746553666879; Tue, 06 May 2025
- 10:47:46 -0700 (PDT)
+	s=arc-20240116; t=1746554348; c=relaxed/simple;
+	bh=uudGy7w4gYHm21SK73gNGYJUxIiMq982WBX2mZKcv0M=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=ZujzqPUYG2z3ulEkflQOy0GTzNVBthFmb+q6+7v7hBsnPmZFkPY6mJiKy+302/vqK390+54vEfclbnTVzm+aMnD+BjZgzXrx/JUejqYlP9xgB+MejPXLFTKhvCJsJ1HIKwrXNALWGGJ4mbomiXuQ/mPtvoN1iZYRUvVUqkdLiOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kapDodpN; arc=none smtp.client-ip=80.12.242.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id CMQKuaPSQcZeMCMQKuBdP0; Tue, 06 May 2025 19:49:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746553787;
+	bh=99j4ktQ4ioERQ7ClGtknHWIhUAX0d0+faJNQyJyUCgc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=kapDodpNSQNPkdpb9Lvxb39Ed5OliWZhN5loHwBzN0BxU9VySASzXGebp6ic9KaP8
+	 Nghn5IeyIpvJWA34QrPoy2lfQZYwro+coJ78nd+QQYuhTpf5hslrUChD1jG44SnszT
+	 JF/65qcOmkAEcQiDI4m+baKKs/TNOnU+YYjValvJiNXU+uJiUd6mWWl8UrmvtW994s
+	 e/jtQOvLSaCiVc5577c7l8Bs1x13T2oGvho1FVM9coiDFKJCbwDzI9sF/ZArsDiDln
+	 Ak6s5n1jJWVjEHqxPl2S4Ahx6MCMq9XEpeAzU86J9Np0ApYG+m15nOJRvq9LlYwX4f
+	 YHjaTE/Y8NcFg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 06 May 2025 19:49:47 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <48472736-4182-4d47-9980-6d63541f6975@wanadoo.fr>
+Date: Tue, 6 May 2025 19:49:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506154532.1281909-5-ardb+git@google.com> <20250506154532.1281909-8-ardb+git@google.com>
- <CAHk-=whrcutH0LcMmaeJxxMeYpw2R5T80yoQAXbrRHNSTCB0Pw@mail.gmail.com>
- <CAMj1kXFSae=stazUv8doka-zLOnDdXXR4ASxHKe5f97ikg3V2A@mail.gmail.com>
- <CAHk-=whxP5Ywpv-U=2NPFhk929VHB9_kdp10+HFJQ4VxEGdX9A@mail.gmail.com>
- <CAMj1kXGwYXXpjPgDwjKMEZJkuGJ8ZuCpMpc7fTvo58PNtu-czA@mail.gmail.com> <aBpJV7fJNyfb7tSx@gmail.com>
-In-Reply-To: <aBpJV7fJNyfb7tSx@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 6 May 2025 19:47:35 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHWHvBUnceOjpw3HeqsVLJLAp0bVE35pkCnnB0cmp2xVg@mail.gmail.com>
-X-Gm-Features: ATxdqUEHyI_BcUL_QSgDR7_l31UCiWBQhgX08cbo4rVnTCUFcb4Qx8gE16VoUXM
-Message-ID: <CAMj1kXHWHvBUnceOjpw3HeqsVLJLAp0bVE35pkCnnB0cmp2xVg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] x86/boot: Use alternatives based selector for
- 5-level paging constants
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ard Biesheuvel <ardb+git@google.com>, 
-	linux-kernel@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] drm: bridge: Add support for Solomon SSD2825
+ RGB/DSI bridge
+References: <20250506093340.106575-1-clamor95@gmail.com>
+ <20250506093340.106575-3-clamor95@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: clamor95@gmail.com
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
+ andrzej.hajda@intel.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se,
+ krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ neil.armstrong@linaro.org, rfoss@kernel.org, robh@kernel.org,
+ simona@ffwll.ch, tzimmermann@suse.de
+In-Reply-To: <20250506093340.106575-3-clamor95@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 6 May 2025 at 19:39, Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> > > All of those change depending on
-> > > whether we do 5-level page tables or not, so the whole argument that
-> > > "pgtable_l5_enabled() is special" is just wrong to begin with.
-> > >
-> >
-> > In my original patch, which is the one Ingo objected to,
-> > pgtable_l5_enabled() is unambiguously based on whether CR4.LA57 is
-> > set.
->
-> So I didn't really object to the simplification aspect - I was
-> criticizing the current state of LA57 handling, regardless of your
-> patch. In fact in that thread I supported the simplification aspect:
->
->   > > Anyway, I'm not against Ard's simplification patch as a first step, and
->   > > any optimizations can be layered on top of that.
->
-> But in hindsight I can see how my first reply came away as
-> disagreement...
->
+Le 06/05/2025 à 11:33, Svyatoslav Ryhel a écrit :
+> SSD2825 is a cost-effective MIPI Bridge Chip solution targeting mainly
+> smartphones. It can convert 24bit RGB interface into 4-lane MIPI-DSI
+> interface to drive display modules of up to 800 x 1366, while supporting
+> AMOLED, a-si LCD or LTPS panel technologies for smartphone applications.
 
-OK, so at least we all agree that there is plenty of room for
-improvement here :-)
+Hi,
 
-> > In the light of the above, care to comment on the previous approach?
-> >
-> > https://lore.kernel.org/all/20250504095230.2932860-28-ardb+git@google.com/
-> >
-> > That also uses the ALTERNATIVE_TERNARY() so the CR4 access gets
-> > patched away, and I'm happy to take suggestions how to improve that.
->
-> I still think we should introduce a LA57_ENABLED synthethic cpufeature
-> flag or so for the MM constants and all the late facilities, and go
-> from there.
->
+...
 
-It would be nice if we could set this CPU capability early on. That
-way, we could just use cpu_feature_enabled(LA57_ENABLED) throughout.
+> +config DRM_SOLOMON_SSD2825
+> +	tristate "SSD2825 RGB/DSI bridge"
+> +	depends on SPI_MASTER && OF
+> +	select DRM_MIPI_DSI
+> +	select DRM_KMS_HELPER
+> +	select DRM_PANEL
+> +	help
+> +	  Say Y here if you want support for the Solomon SSD2825 RGB/DSI
+> +	  SPI bridge driver.
+> +
+> +	  Say M here if you want to support this hardware as a module.
+> +	  The module will be named "solomon-ssd2825".
 
-I.e.,
+Is it "solomon-ssd2825" or just "ssd2825"?
 
---- a/arch/x86/boot/startup/map_kernel.c
-+++ b/arch/x86/boot/startup/map_kernel.c
-@@ -26,7 +26,8 @@ static inline bool check_la57_support(void)
-        if (!(native_read_cr4() & X86_CR4_LA57))
-                return false;
+> +
+>   config DRM_THINE_THC63LVD1024
+>   	tristate "Thine THC63LVD1024 LVDS decoder bridge"
+>   	depends on OF
 
--       __pgtable_l5_enabled    = 1;
-+       set_cpu_cap(&boot_cpu_data, X86_FEATURE_LA57_ENABLED);
-+
-        pgdir_shift             = 48;
-        ptrs_per_p4d            = 512;
-        page_offset_base        = __PAGE_OFFSET_BASE_L5;
+...
 
-but this requires some tweaking of the CPU feature detection code.
-(Complete patch here [0])
+> +static int ssd2825_read_raw(struct ssd2825_priv *priv, u8 cmd, u16 *data)
+> +{
+> +	struct spi_device *spi = priv->spi;
+> +	struct spi_message msg;
+> +	struct spi_transfer xfer[2];
+> +	u8 tx_buf[2];
+> +	u8 rx_buf[2];
+> +	int ret;
+> +
+> +	memset(&xfer, 0, sizeof(xfer));
+> +
+> +	tx_buf[1] = (cmd & 0xFF00) >> 8;
+> +	tx_buf[0] = (cmd & 0x00FF);
+> +
+> +	xfer[0].tx_buf = tx_buf;
+> +	xfer[0].bits_per_word = 9;
+> +	xfer[0].len = 2;
+> +
+> +	xfer[1].rx_buf = rx_buf;
+> +	xfer[1].bits_per_word = 16;
+> +	xfer[1].len = 2;
+> +
+> +	spi_message_init(&msg);
+> +	spi_message_add_tail(&xfer[0], &msg);
+> +	spi_message_add_tail(&xfer[1], &msg);
+> +
+> +	ret = spi_sync(spi, &msg);
+> +	if (ret)
+> +		dev_err(&spi->dev, "spi_sync_read failed %d\n", ret);
 
-The use of a separate feature bit is kind of orthogonal, though - it
-would be a nice cleanup, but I don't see it as a prerequisite for this
-change.
+Maybe, just spi_sync in the message?
 
+> +
+> +	*data = rx_buf[1] | (rx_buf[0] << 8);
+> +
+> +	return 0;
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=la57-early-cap
+Is it on purpose that ret is never returned?
+Is it safe to update *data if ret is not 0?
+
+> +}
+
+...
+
+CJ
 
