@@ -1,140 +1,144 @@
-Return-Path: <linux-kernel+bounces-635597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6D8AABF90
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:33:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6187DAABFB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ED944E6F8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:33:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E363B8BA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BD526C3AC;
-	Tue,  6 May 2025 09:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF678268FF4;
+	Tue,  6 May 2025 09:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F5g0noTT"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFura01T"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54AA26B2BE
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29926C3AA;
+	Tue,  6 May 2025 09:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746523973; cv=none; b=iwy9YiCQ1dk33DkYb16tN8hyRQz40riR68PNfQPC9+4qxtcIhAqI99vV07/+2j0SMBXsaGuC6sU2MOBJBKADqWwOSsLQxyenxd4sgt/+XQXIEg7rreSzk5opwO+hisHOVQ6kYcbkNkxYds1NCxXScfqRlh7Do6SC5wacaZTmWtI=
+	t=1746524004; cv=none; b=YTa5wENBeQVsmBw+y/hwfE6dfgRVCMWg5uxdYEJBMrVdfaIHmrvLH1a7Xe8M/4E8eLT4cbIYbGhVeAt9jYo4uHVZ4dLgw59Kc1aQhBpb2LCQ78Nw6uelCJl4l/zOxbuhr8U7oq3zQU0l0wn3NVlGvG3Bw92eorHD3ncW4RTZyYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746523973; c=relaxed/simple;
-	bh=wt//UxgywGSXYRvzRt4PXjL5bjHJUnNsBGZo0dbvufU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=beyffz1PDOE24uoEhpgupNURSyBrwhh+3V3o8wGMWw+ZmATr5bsy3/kwHYs3rVAHa4YhktN+AwE+7B1kNX+ds5DvAIIAPgUydqtaLHiFjxyMfnTMqcR5gPGADHHGotgE5b7m3iSGifIYByw8DKvYNVeuXfa11/Q4qmQ3pCuMUYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F5g0noTT; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-441c99459e9so16117725e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 02:32:51 -0700 (PDT)
+	s=arc-20240116; t=1746524004; c=relaxed/simple;
+	bh=pB4UnMehzDghVR5OwDqwfddSZnWmBw/uJ1d6JAmYPSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LUk0k8gAbFl34jT6RLBd7BiC7gfzwEiMFz7aF07YUDgn1/6juzXYrmzGHZrGD3cuJkHwtsjInOpJUp1bKTAC6Bm2ttmx6v7L/iedoXOxmxbiguM5IHhwtWK/TCyhSXO3uD8uQLAOXWK1D0aYT3i4aGyI/6tMtP6GxulMySrQl78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFura01T; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e8efefec89so54659046d6.3;
+        Tue, 06 May 2025 02:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746523970; x=1747128770; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nGT9uv0lzPx3oU6XAhFYncy4NYk5F/6MJ4HISb7Jycc=;
-        b=F5g0noTTSTEWQcchUWTsbl/VsNboEl663VkP0OyhfZdJnhA3iD9SAu1+WMCTEbGYfA
-         kP0K+J8Rm8oUs6qC4Vsi+0oMJBNVzh2OrQM4Yag2+4co/KNYF+8ikC7qgTDDg2ymKeLD
-         vgRfeLQib+BsrhsjLJbhkHKpb6lNKLQDWdcOnQmUAtxTWG1W0lAo9l23DvPa+9MjxlhC
-         7n8IgSaOA8Rqgry+P8rh47txpn2TqPBxfVr08hRz/xFwgbl3T7/dVMbjPEzIbFWm6ihL
-         RTAZKY73C0+yGr8peLyULz/93l5a3LoOid4wYqc9OOo9oQlnkJPwnw/Ko6uBKZJKWGIE
-         SUkw==
+        d=gmail.com; s=20230601; t=1746524001; x=1747128801; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oX660r49SMPlsIsK7beVHLYMkPYM6F+6v7W4PhVK2ks=;
+        b=CFura01Ty+KdLjl8hZnhjkhdjM9gMkftb+9ITqPsjwNDDguGBzH9yYhNO2woMDBdIK
+         3N8QS+qrCR47JggR5BnfA9eaoXwsliPr2ezMGvWy2awqamFjR+XfjvOTbxo+HnOFF74+
+         zhVfCbomWkngGNy98wsNtmhndtlMgLUTN2BedlbYOjAAZ+pFK8i7BXelsgdpTllM40xX
+         g09K8E9Gzk+Z1IMwi9BMSz1y8oYNf4gHau9htaGu4WiZ0DlTnvbvjwewxrg8Jsjr4qNa
+         tBYkFKytu1aLdmDE1ri5JZ1YE7sWOnyXKW8lqHoDsPSlwlhXXsMAlGERlxRwjkTrfdT7
+         HKxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746523970; x=1747128770;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nGT9uv0lzPx3oU6XAhFYncy4NYk5F/6MJ4HISb7Jycc=;
-        b=MbyXBVPIWIcvLEJ4oI1dxzWaSAO8jks2LCqV6J2sR3ioGaHxjGptw8pJpnGO6n7zqW
-         IeBAF7Jgkpzz6/InglWmgXIYH+O8FbMlV01ipoVOz0rmi8dbjmIMBLWkta0rXZTt1+go
-         PLOOdmcK7KcXdn5QACOwsNuCCnVoAvteDquuTW9Od/DaP/SMxbzNtSmgUMR1X3DCs0on
-         XNzfvhjHGqWvu09uuy1rRz1DJHgIU/jDn2ajCIvH9ps1SdVq/IYOReNp+cGlRqt8222k
-         ncZVQJOAwYofbejMqa+vYlnUugnI8j0pz55o0Y1j0dQuVVcpY7VdfPbVim3/kMXc6Au/
-         617w==
-X-Forwarded-Encrypted: i=1; AJvYcCVgetP1tpLI6Vak9klcp+rGl6s/8gzqtR58U0CNDmzJpukod+El0mqFkujhzBNTxFenv9W4piEiO2+XXt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5egkHY3WFqr3GBl5bEp6uz6h4dDnqiHJg2uCJ8kTQ2p87s395
-	8/QLlc3LZsevYicXrrDStImgwtHjBxfiC8yURKzJ63dFE2vEaepvynot2o0AlyU=
-X-Gm-Gg: ASbGncuqraMq/bBxRefYdBrQH493hq4dJi9+kmq3BeaMXkPQlH2LQHjUx0Fd2tzMZKI
-	IfWqecCBt3nzFgX1S2XSV/lGZN1BonMiw3tCRs0xkHi2lNdr2R5QeBWymLMlSmkIHF+2aFKeMZt
-	v+HDUtgfgxCwwuuUjWAOjwe2BYwiuyb6MiGOinejmwjjq8f4Ihk1ENjtLBUSX9O6RfWxwhPhQ8j
-	2WcRtILq3XqCa79rI6KFUDZyaMdn8YtnkYh17If+reX3QjVytVNlRLtbaxfKcrUcVABOLWbfAp4
-	tZVKNAbs1SBLP6TjtXBTEQVj/kG9B/A0a26iEawQRuNeymlOJmzsreXr
-X-Google-Smtp-Source: AGHT+IHdLZzgnxP5h0abh3m/L4WAmBk1ccvvnKktbTa4WSRN5LJxHjEx/OsPWCml+VS+d3iYSSIb6Q==
-X-Received: by 2002:a05:600c:8218:b0:43c:f616:f08 with SMTP id 5b1f17b1804b1-441bbec1835mr128722905e9.8.1746523970073;
-        Tue, 06 May 2025 02:32:50 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b89ee171sm161598935e9.17.2025.05.06.02.32.49
+        d=1e100.net; s=20230601; t=1746524001; x=1747128801;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oX660r49SMPlsIsK7beVHLYMkPYM6F+6v7W4PhVK2ks=;
+        b=I+dPvj2tpCuClznj7b47YvdgUa46IPt3AvcOlV01cSguMtw4RLSVf05sQtB0a4VZpo
+         0KBiXH5YcjYfF6CmVQTbYhdGxiiWkVm/gvhJ+MrjWeckYh3LXpRcZp2HjuS3CA9N+gJA
+         UgjUn7MY3MxPW34WTaeZafk3p9ZCsZ/Q8oQmKRxwdkeF7XgQwKlYQ6yqNYRNKSx+EBjX
+         asgXV5fQvqsSGThy3S74zB3oKmJSAj9JDk2d5bsC79AVA6wFf+OYDLjDzf5tupK0jtML
+         BWk1GxjAw9FwtugTdtsPtXc01ckRKyIvOL+KId5aiDyIcSgU/AyYOcOEbVF3fnIfxu7d
+         PZDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhgl4M5zqNOztCshoBIGmee3a1lrdWq4/GsW+FCJo3ENJp3mbLVrszsZG3m838UVhTHMOVRMuaiITPqqkA@vger.kernel.org, AJvYcCV5CaGk0pimjEneKvRyXT8zMj4JSCk6QRARtHwLbpSH8iigtmKnVSVqYuuckA1ebErm5Nk/bN0VMbi9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP4/nEI7Ymj0LT8JUrLVx5W2j6L78x1oecdZ9NRA63l5XlWW9f
+	cNUcp+r5MfPOglJu+nNbp8jR4x6FMcrvKKuRH+Qitqz8/kITeno6
+X-Gm-Gg: ASbGncvGpOZpLQwB4XsP8zQ4hJUJVkycODx89jnJlDLaqRJ9F+6RXxLiqXvj55YMpBx
+	S09wJdwcc4X5h5AvRUcwsriP6xkL+1IkkEf8aAswh1nz/k9065tJTu1Gh2MK0YZrid57cpsHnCi
+	c2I9eCV7wVeR3fRY4KMv3GbvG4Ga/9d0YhYcD76hgC874RGCLkRjPHx9SATF371SJbJZocbty3D
+	yEiJYfVhJrGz6jZqW9Lt6p2b2tJ68swascnm4Q47Tuu6bxAaY+VbSxz32f/LfI5BbXFgQfNOcPP
+	3uPbM67gmPx8qHAW
+X-Google-Smtp-Source: AGHT+IG0tpbViwqp9IJzfEAZpGJYiDuvgoMTMj0cgQ10I3tT7p2nWJKoF5IKgXDVmrvJ8d3QbJqUDQ==
+X-Received: by 2002:a05:6214:20a3:b0:6f4:c824:9d4a with SMTP id 6a1803df08f44-6f51574c329mr249376586d6.13.1746524001422;
+        Tue, 06 May 2025 02:33:21 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f538316c12sm6219536d6.0.2025.05.06.02.33.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 02:32:49 -0700 (PDT)
-Date: Tue, 6 May 2025 12:32:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] mtd: rawnand: loongson1: Fix error code in
- ls1x_nand_dma_transfer()
-Message-ID: <aBnXPYLSNJASR51f@stanley.mountain>
-References: <aBSEwag_ducqOwy7@stanley.mountain>
- <CAJhJPsUZz2kwMyWPDrc_ktb5O6ECcAyO1OrXXVWh9yvkrKRidg@mail.gmail.com>
+        Tue, 06 May 2025 02:33:20 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Guo Ren <guoren@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Lothar Rubusch <l.rubusch@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH net-next 0/4] riscv: sophgo: Add ethernet support for SG2042
+Date: Tue,  6 May 2025 17:32:50 +0800
+Message-ID: <20250506093256.1107770-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJhJPsUZz2kwMyWPDrc_ktb5O6ECcAyO1OrXXVWh9yvkrKRidg@mail.gmail.com>
 
-On Tue, May 06, 2025 at 05:16:03PM +0800, Keguang Zhang wrote:
-> On Fri, May 2, 2025 at 4:39 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > The "desc" variable is NULL and PTR_ERR(NULL) is zero/success.  Return
-> > a negative error code instead.
-> >
-> > Fixes: d2d10ede04b1 ("mtd: rawnand: Add Loongson-1 NAND Controller Driver")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > It's hard to know what the patch prefix should be here.  Ideally when we
-> > add a new driver we would use the patch prefix for the driver.
-> >
-> > Tired: subsystem: Add driver XXX
-> > Wired: subsystem: XXX: Add driver for XXX
-> >
-> >  drivers/mtd/nand/raw/loongson1-nand-controller.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mtd/nand/raw/loongson1-nand-controller.c b/drivers/mtd/nand/raw/loongson1-nand-controller.c
-> > index 6a369b1c7d86..8754bb4f8b56 100644
-> > --- a/drivers/mtd/nand/raw/loongson1-nand-controller.c
-> > +++ b/drivers/mtd/nand/raw/loongson1-nand-controller.c
-> > @@ -371,7 +371,7 @@ static int ls1x_nand_dma_transfer(struct ls1x_nand_host *host, struct ls1x_nand_
-> >         desc = dmaengine_prep_slave_single(chan, dma_addr, op->len, xfer_dir, DMA_PREP_INTERRUPT);
-> >         if (!desc) {
-> >                 dev_err(dev, "failed to prepare DMA descriptor\n");
-> > -               ret = PTR_ERR(desc);
-> > +               ret = -ENOMEM;
-> 
-> Thank you for fixing this issue.
-> However, I believe -EIO is more appropriate than -ENOMEM, since
-> dmaengine_prep_slave_single() can return errors other than -ENOMEM.
-> 
+The ethernet controller of SG2042 is Synopsys DesignWare IP with
+tx clock. Add device id for it.
 
-It's not an I/O error so -EIO isn't correct.
+This patch can only be tested on a SG2042 x4 evb board, as pioneer
+does not expose this device.
 
-There are a bunch of reasons it could fail but most likely
-dma_pool_alloc() failed.  I think -ENOMEM is correct.
+Inochi Amaoto (4):
+  dt-bindings: net: sophgo,sg2044-dwmac: Add support for Sophgo SG2042
+    dwmac
+  net: stmmac: dwmac-sophgo: Add support for Sophgo SG2042 SoC
+  net: stmmac: platform: Add snps,dwmac-5.00a IP compatible string
+  riscv: dts: sophgo: add ethernet GMAC device for sg2042
 
-regards,
-dan carpenter
+ .../devicetree/bindings/net/snps,dwmac.yaml   |  4 ++
+ .../bindings/net/sophgo,sg2044-dwmac.yaml     | 11 +++-
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        | 62 +++++++++++++++++++
+ .../ethernet/stmicro/stmmac/dwmac-sophgo.c    |  1 +
+ .../ethernet/stmicro/stmmac/stmmac_platform.c |  1 +
+ 5 files changed, 76 insertions(+), 3 deletions(-)
+
+--
+2.49.0
 
 
