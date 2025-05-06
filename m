@@ -1,77 +1,91 @@
-Return-Path: <linux-kernel+bounces-635712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D976AAC119
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE9CAAC11F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320933B17F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:14:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6479F3A6037
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F541B042E;
-	Tue,  6 May 2025 10:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ED024A061;
+	Tue,  6 May 2025 10:16:12 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDBD263C9E;
-	Tue,  6 May 2025 10:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8791C195811
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 10:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746526509; cv=none; b=p1VvkT4ptds5UN+M57faWbPxUWlsafA8c0G8Je3BUKPAnyn0RcCnjo5ontUEFSHpiOG2Xb2a7CRKzNYvRU3s8D5Kz1Dug6eIvx40l2lIV/BIsGly2IPOh5jOiXEtWX1KSbtzYOQEBhHq4IYc7L2wxJwkdwBMzZD7JxMfmGm0iDY=
+	t=1746526571; cv=none; b=Fa8laIfzdaP60npQ4vrZ8p1vBS4MTnk/ytaDBMgDZw+k53YXm13n+EmkGRCiD0Xv/zNWs0Bq/j3fpASMfEIzxkg7j0OOvMrfkRGG3BiEcUYx754E5HcJwf3njqhW/JOqWjb6D0yLxWIfbGB3dMn3faKVHfix/vl+VZr/oe5Ea9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746526509; c=relaxed/simple;
-	bh=tf73Q6LnPVFcelZ+v5g7F9l+lfoqrxrUSRjiLI8saGc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cm/nIWLX1YkXbvLpsxHSfH+Tp4nIidbay+2Rw3TFZrXfUQXanDiS0Tb2qMAUcFhhgxeWPTTVx/U44xpJz/3rWtuMD+6gf2S6qgTrKENHPzjOI0CjilH9rJKKPqsZ6VZ51gBuwcNuR0TdHmw5H6esoLS97xJRnP6E609AkyyICKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+	s=arc-20240116; t=1746526571; c=relaxed/simple;
+	bh=IyZEhMVWVT852h6Gywv+LtuvUch45I4VEFK0rvlW7nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+u/CqeHc4OwG6tslFOwC8JtWHM1W788TgXoCNFC4fjrUnGNBgGM7vVwfo4pDfM2xLzIR3oyNDK6ravXiepGHLwFEGTnOXFBVfHNmwbA1lc+7IRlCpJFqP7gGx0ZadMYQ/i9ZdiFq0jJOd3p7lPQqOZrVN6f+iDRbHVcJOteR/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50D12113E;
-	Tue,  6 May 2025 03:14:58 -0700 (PDT)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 828EC3F5A1;
-	Tue,  6 May 2025 03:15:06 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Marc Zyngier <maz@kernel.org>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_scmi: quirk: force perf level get fastchannel
-Date: Tue,  6 May 2025 11:15:04 +0100
-Message-Id: <174652648581.3776799.11461926125587533598.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250430135146.5154-1-johan+linaro@kernel.org>
-References: <20250430135146.5154-1-johan+linaro@kernel.org>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 353BF113E;
+	Tue,  6 May 2025 03:16:00 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B1003F5A1;
+	Tue,  6 May 2025 03:16:09 -0700 (PDT)
+Date: Tue, 6 May 2025 11:16:04 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 9/9] coresight: Refactor runtime PM
+Message-ID: <20250506101604.GD177796@e132581.arm.com>
+References: <20250423151726.372561-1-leo.yan@arm.com>
+ <20250423151726.372561-10-leo.yan@arm.com>
+ <0ebbc509-9e17-4b93-9a72-b9e7cc03637e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ebbc509-9e17-4b93-9a72-b9e7cc03637e@arm.com>
 
-On Wed, 30 Apr 2025 15:51:46 +0200, Johan Hovold wrote:
-> The Qualcomm SCP firmware in X1E machines like the Lenovo ThinkPad T14s
-> does not set the FastChannel supported attribute bit for PERF_LEVEL_GET
-> but crashes when falling back to regular messaging.
+On Fri, May 02, 2025 at 02:15:49PM +0530, Anshuman Khandual wrote:
 > 
-> Use the new SCMI quirk framework to force FastChannel initialisation for
-> this implementation.
+> On 4/23/25 20:47, Leo Yan wrote:
+> > The validation for driver data pointers and clock pointers are redundant
+> > in the runtime PM callbacks.  After a driver's probing, its driver data
+> > and clocks have been initialized successfully, this ensures it is safe
+> > to access driver data and clocks in the runtime PM callbacks.  A corner
+> > case is a clock pointer is NULL, in this case, the clock core layer can
+> > handle it properly.  So remove these redundant checking.
+> > 
+> > In runtime resume, respect values returned from clock function and add
+> > error handling.
 > 
-> [...]
+> Although not checking drvdata and drvdata->apb_clk does make sense, but
+> why change the semantics on the resume paths as well, which now returns
+> stored error value from clk_prepare_enable().
 
-Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
+Let us assume if a clock fails to enable during the resume flow, with
+current code, we miss a chance to detect issues in the first place.
 
-[1/1] firmware: arm_scmi: quirk: force perf level get fastchannel
-      https://git.kernel.org/sudeep.holla/c/397f802d06c4
---
-Regards,
-Sudeep
+I understand the clock enabling failures are rare, but propagating an
+error in the resume callbacks would help identify potential issues.
 
+It seems to me that this patch does not change the semantics of the
+resume paths.  It enhances the resume flow for early error reporting.
+
+Thanks,
+Leo
 
