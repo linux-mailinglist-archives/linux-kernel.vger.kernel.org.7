@@ -1,123 +1,165 @@
-Return-Path: <linux-kernel+bounces-635272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902F6AABBDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:50:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F481AABB7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0ECC3BA4D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:36:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2795D1C43317
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46DC22F758;
-	Tue,  6 May 2025 06:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA94A22A4C2;
+	Tue,  6 May 2025 06:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Fk8aQTXZ"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20FD228CA3;
-	Tue,  6 May 2025 06:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwdI0Jnh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF38022332E;
+	Tue,  6 May 2025 06:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746512142; cv=none; b=hJaR7DlLoAa6PWP1BizEjQBSksrh2+eXvZe7Je7AVxNIvddVZAFjRrS1DW4E9zIfjI4+g3qL/kHsUuV4Mr339PGCKvNDIXq028QLkeonVF33EiIuFgwkQrtqnUbWDwjoozBiqV82cm8KR6p4nCPsz3VPeR2PymPoiMHKn+eucbw=
+	t=1746512118; cv=none; b=LwcRTn2IkDuiTunSkCEse2p8F+EKuXPO2z0bSC9sz+sf/onM3WaW2G8Lgi6bfMM0cj243MM1Yr080d1SN9m3IyL1sJwVBhQiA/xQdgVbYC2DviEMNHm78ez2Suq2nTqR+YCI/dTuOblQY8yz1oOhtgXwK0KJ0CTMY/9qlgZo+jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746512142; c=relaxed/simple;
-	bh=ynWK2J8C2BCh41D4/1FAgDRD2ogIy1eMHChuUtUrGdk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SOCZmNaRRqdLHVY+GyYlwPyudhCZHryFASQHjXFFIJkFrWKXTGhp91YuQf68ONVpmUfQ/C6uO9xlz0KXa+DiXqIxF0BC0EDmYMIpQsZ43MF2i8TQ6npToT9y/uW9ri+qPB8EsWFl6YOMpYXbbq3ISmMqQwsWmR6Q2F1o3b30ok8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Fk8aQTXZ; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ZE+bT
-	GstDpcwUv49z0r7w9laeGwplHKajtRxKbtzLOo=; b=Fk8aQTXZ2fLsOrZ1pjma8
-	jznaTrUbhYv214kEj+HiYmi3TO/R0hnYfE+PrR//UXgcqyxnPt1Qp8PE1dwn5rYu
-	YHUFdlqjiEondOYJakEVPL8cInucD1C46Qx/KKMk3/3aNRHFhoaAJRBFXNNybMit
-	CUkA53G3Ojg71nKvmiI5S0=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgBnylfLqBlovwXpBw--.23593S4;
-	Tue, 06 May 2025 14:14:38 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	davem@davemloft.net,
-	tj@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v3 sched_ext 2/2] sched_ext: Remove bpf_scx_get_func_proto
-Date: Tue,  6 May 2025 14:14:34 +0800
-Message-Id: <20250506061434.94277-3-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250506061434.94277-1-yangfeng59949@163.com>
-References: <20250506061434.94277-1-yangfeng59949@163.com>
+	s=arc-20240116; t=1746512118; c=relaxed/simple;
+	bh=v7iR4obbmk4+FE8A5coJmFH0oyUV/G5dOfWdweAl7NA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X/BZ3xncRf8KVhFUh1SWu2f0vRPHCzkHjp8K5IlYyWZvSOAi8dLDRw/zi+MHy70HqCJF3ph+PDoBmHSUUWqAkg5qorOl5Hsr4HQ9+bxncQeXUQY54rNaIgha8j/phEI4hUn8W5Jqlumd8yUT7BijpZLus67mLrke7YcGtGz4ANQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwdI0Jnh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D875EC4CEE4;
+	Tue,  6 May 2025 06:15:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746512117;
+	bh=v7iR4obbmk4+FE8A5coJmFH0oyUV/G5dOfWdweAl7NA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KwdI0JnhAPGxydaFAejapUGN712V5izTz9driNk7vTuJPJyAX6ln7i9HuOiPyHlsC
+	 Dor/2nfr4Zyv6VFRNZIYwbFzb9uGrQz5UbQNeL7pV2LvB1IT7UBFDmncHxtGyBqS0g
+	 T+tkQVFKWBIjfZkcX42zwhdV8lMutcpzU1d/TV6DNI1fy9vtWPRaSNKMfOZCicxgiA
+	 86HkIfPhLkV9kj4YwjojqzYYjOwHGbzVJloRc2jJ43EJx0AhXGX1VgZY8wwOWaTJx4
+	 VkpQLwSp108u162coQzlkx++ArpLL+vTNS/bvdQ8Ied9ezhNWnIhf6Gzb6C4mKanUk
+	 0f80kzmGN1ONg==
+Message-ID: <8ed44a58-eed3-4be6-9c63-7c6c172a6b7f@kernel.org>
+Date: Tue, 6 May 2025 08:15:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgBnylfLqBlovwXpBw--.23593S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWrtw48Wr4kJr48ZF4kXr4fKrg_yoW8JF1rpF
-	ZxXFsxCr48Gw4agF9xJr4fZF15GwnIq3yxGa90yw1xtr4qvryqqw1UGr4I9a4fJr9rCw12
-	yr1jvFWakr1Iga7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jOqXdUUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiTRlFeGgZp3ApAwAAsl
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/8] dt-bindings: serial: describe SA8255p
+To: Praveen Talari <quic_ptalari@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ devicetree@vger.kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
+ quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
+ quic_arandive@quicinc.com, quic_mnaresh@quicinc.com,
+ quic_shazhuss@quicinc.com, Nikunj Kela <quic_nkela@quicinc.com>
+References: <20250502171417.28856-1-quic_ptalari@quicinc.com>
+ <20250502171417.28856-2-quic_ptalari@quicinc.com>
+ <20250504-hilarious-ultra-grebe-d67e7d@kuoka>
+ <6f97510c-eb6c-4f3b-b219-aa8d895b060b@quicinc.com>
+ <20250505-ostrich-of-impossible-conversion-a0f8ac@kuoka>
+ <4ebe065e-9686-4e35-bb00-a9e816fb8926@quicinc.com>
+ <1de5c0b7-7761-4d0c-bced-7e26150e995f@kernel.org>
+ <d96eb6b7-5b48-446c-8b33-ba282d896e85@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <d96eb6b7-5b48-446c-8b33-ba282d896e85@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Feng Yang <yangfeng@kylinos.cn>
+On 05/05/2025 15:42, Praveen Talari wrote:
+> Hi Krzysztof
+> 
+> On 5/5/2025 3:29 PM, Krzysztof Kozlowski wrote:
+>> On 05/05/2025 08:51, Praveen Talari wrote:
+>>>>>>> +    serial@990000 {
+>>>>>>> +        compatible = "qcom,sa8255p-geni-uart";
+>>>>>>> +        reg = <0x990000 0x4000>;
+>>>>>>> +        interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>> Why isn't here wakeup interrupt? Commit msg also does not help me to
+>>>>>> understand why number of interrupts varies.
+>>>>> Currently we are not using wake-irq because it is optional for our current
+>>>>> implementation.
+>>>> Great explanation. I asked why is it optional, answer because it is
+>>>> optional.
+>>> sorry.
+>>>> What does it mean optional? This is part of the SoC, so how given one,
+>>>> fixed SoC can have it routed or not routed in the same time?
+>>> the serial driver doesn't enter runtime suspend mode until the port is
+>>> closed.
+>>>
+>>> therefore, there is no need for a wake IRQ when the driver is in an
+>>> active state
+>> You described current Linux driver, so if we change Linux driver or we
+>> try for example FreeBSD, then bindings are different?
+> 
+> Currently, the driver includes code to register the device's wakeup 
+> capability
+> 
+> but it lacks the necessary handler code for wakeup IRQ. According to the 
+> serial driver,
+> 
+> the wake IRQ is meant to wake up the device but the device remains 
+> active because
+> 
+> the serial driver does not enter runtime suspend mode until the port 
+> closed.
+> 
+> So it is better to exclude the wake IRQ until the appropriate code is added.
+But my driver on FreeBSD handles the wake IRQ, why you cannot add the
+IRQ for it?
 
-task_storage_{get,delete} has been moved to bpf_base_func_proto.
-
-Suggested-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
----
- kernel/sched/ext.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
-
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index fdbf249d1c68..cc628b009e11 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5586,21 +5586,8 @@ static int bpf_scx_btf_struct_access(struct bpf_verifier_log *log,
- 	return -EACCES;
- }
- 
--static const struct bpf_func_proto *
--bpf_scx_get_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
--{
--	switch (func_id) {
--	case BPF_FUNC_task_storage_get:
--		return &bpf_task_storage_get_proto;
--	case BPF_FUNC_task_storage_delete:
--		return &bpf_task_storage_delete_proto;
--	default:
--		return bpf_base_func_proto(func_id, prog);
--	}
--}
--
- static const struct bpf_verifier_ops bpf_scx_verifier_ops = {
--	.get_func_proto = bpf_scx_get_func_proto,
-+	.get_func_proto = bpf_base_func_proto,
- 	.is_valid_access = bpf_scx_is_valid_access,
- 	.btf_struct_access = bpf_scx_btf_struct_access,
- };
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
