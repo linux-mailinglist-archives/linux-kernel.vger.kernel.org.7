@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-635896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C57BAAC348
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:01:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3A1AAC0CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0256B1C08465
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EBE4A5DDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E5C27E7C7;
-	Tue,  6 May 2025 12:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E560E275117;
+	Tue,  6 May 2025 10:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ibLWCwO+"
-Received: from mail-m1973175.qiye.163.com (mail-m1973175.qiye.163.com [220.197.31.75])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EkpS9PDJ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906E127D783
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2597D274641;
+	Tue,  6 May 2025 10:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746532840; cv=none; b=rerCx5dnqwdIpWK+EizYAmcAOdBTB/E3vlP5tc02w/PoO5u1aJBCpINTecpOegVZvnlSmRnonps7nf5CR7z1RFOtlkLG4BP43oLy+wjtydPfTv4BvIgojbjB/HaXQ1zyZIgA3IIYzDOeJkv2zj9kzTKHjtfDynnkG/1yPFsFMEs=
+	t=1746525833; cv=none; b=QLY4o6sgWtjTm02XpYWntCl3EMwh1Wc8xu0hx/tMLgXyQEhbj3T9MSznD7g+nqmAWF4wbhLjHrT020WM/TiBH/5/c0x7fXHhDCiu2ZjXe8x8MGo5OYgFN+ZiLrIYh+F1YrpYgFwjIdcq3Ui9XYhNJsWm9RSdNw9CSmk3lTgXGec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746532840; c=relaxed/simple;
-	bh=M3fVY4JE2ssndMcikKNz5jtjaTmrLNSAo94gMUm4VSY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Va1bzRag5Ep+8Iy+FhuEYkuw3P1nFjRMNITEZT6qdm5T6G5HSk1LC6+OL/fwPch1ILDTAykpCqsSkcMz3B82CQNVSPHdYZvE9gUabBMaMPCev0Bt0q5jmgDOJkLiZbyaPh3TbQ1ne+pIf4/NbM6PebETT7XhxXTGTJx7cjz4D54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ibLWCwO+; arc=none smtp.client-ip=220.197.31.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 140c6eb04;
-	Tue, 6 May 2025 10:57:26 +0800 (GMT+08:00)
-From: Kever Yang <kever.yang@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	devicetree@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Junhao Xie <bigfoot@classfun.cn>,
-	Rob Herring <robh@kernel.org>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jimmy Hon <honyuenkwun@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 4/6] dt-bindings: arm: rockchip: Add rk3562 evb2 board
-Date: Tue,  6 May 2025 10:57:13 +0800
-Message-Id: <20250506025715.33595-5-kever.yang@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250506025715.33595-1-kever.yang@rock-chips.com>
-References: <20250506025715.33595-1-kever.yang@rock-chips.com>
+	s=arc-20240116; t=1746525833; c=relaxed/simple;
+	bh=bJyJ7jyIeAMfkphkSNgQEG8wgYNfIHi+6aTP9xuWgv8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fbyWd55+KHOGvS/dQedTLWXAHYrmhTG4SyhA1w+2VZ4JtlrA02ISsSnBTI9qr5h+RNgYGGKrjdSs7Q13xiXM1spoNWYLAXztRPZe8z3wbEEalpioUiYUBWs/deXOMaUO0TsU6apVfoFFBOLtc8lHN8Ri0S8+H6XrApT08pvUuRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EkpS9PDJ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1746525829;
+	bh=bJyJ7jyIeAMfkphkSNgQEG8wgYNfIHi+6aTP9xuWgv8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=EkpS9PDJ/Fh5iHdAM4qMNFDGXu/z7Y4zulpt9PekKugbvg3VZ8WDRGbRC0xh9cH0l
+	 q3YBP51512gdwfgnKnbqw1XTN9XeeI1zU1F6NNitqWHFrwzeAJDpbgxsTSep5PccBh
+	 PfPd2vWVkH749k/4LmdKmEdZqB6fefI5xFphAw9LzCxRvaQcSkeHXU6R7j2PGMHZUt
+	 En6duHN3Sl7zcS94fCuXe1/4ddC91gp5rC7lQ9ABa9CzSOpDVFJFeIqiNZVAaTEejf
+	 2ui1sci/X+Fisxkdz4DH751jEIBRLqcJDfgXtXkiGRFm5WDzfh2OxIAgAXegJiLqaP
+	 WKpnPFPKFzWCA==
+Received: from apertis-1.home (2a01cb0892f2D600c8F85cf092D4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2793117E088B;
+	Tue,  6 May 2025 12:03:48 +0200 (CEST)
+Message-ID: <2d3a8e55105526c999b490a2e92dd448c099faab.camel@collabora.com>
+Subject: Re: [PATCH 2/4] dt-bindings: iommu: mediatek: mt8195 Accept up to 5
+ interrupts
+From: Julien Massot <julien.massot@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	kernel@collabora.com, Sen Chu <sen.chu@mediatek.com>, Sean Wang	
+ <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones
+	 <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger	
+ <matthias.bgg@gmail.com>, =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado"	
+ <nfraprado@collabora.com>, Hui Liu <hui.liu@mediatek.com>, Yong Wu	
+ <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon	
+ <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Tinghan Shen	
+ <tinghan.shen@mediatek.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, iommu@lists.linux.dev
+Date: Tue, 06 May 2025 12:03:47 +0200
+In-Reply-To: <cb715936-3a44-4002-8d64-565f8d31820c@collabora.com>
+References: <20250505-mt8395-dtb-errors-v1-0-9c4714dcdcdb@collabora.com>
+	 <20250505-mt8395-dtb-errors-v1-2-9c4714dcdcdb@collabora.com>
+	 <cb715936-3a44-4002-8d64-565f8d31820c@collabora.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQx1IHlZKHkweHRpMSEpCGElWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE
-	5VSktLVUpCS0tZBg++
-X-HM-Tid: 0a96a386dcf703afkunm140c6eb04
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MTY6Mjo5FjJIMxE#ST0xMC8I
-	LBIKFBFVSlVKTE9NTktLSU9DSE5NVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSkxNNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=ibLWCwO+DvQPJ54po1wn0YdKD1BIipl6ONpjcncz9hdT1nV10V5c069xTyL9AZJflIUti0rqLIyzf86BTLyeprgyqweb4rVAQu8VW3qrPIa1wlA/MX+IqO5l9woKWQtOk3X+frsIwrprpRRCzwCLMuUeabHX1bY38BFHp759H5A=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=jL/nquXJOtsyOHwId91Jt8y1FMZRc7Fx/1tni3T25FY=;
-	h=date:mime-version:subject:message-id:from;
 
-Add device tree documentation for rk3562-evb2-v10.
+Hi Angelo,
 
-Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
+On Tue, 2025-05-06 at 10:34 +0200, AngeloGioacchino Del Regno wrote:
+> Il 05/05/25 15:23, Julien Massot ha scritto:
+> > Some Mediatek IOMMU can have up to five interrupts so increase
+> > the 'maxItems' to 5.
+> >=20
+> > Fix the following dtb-check error:
+> >=20
+> > mediatek/mt8395-radxa-nio-12l.dtb: infra-iommu@10315000: interrupts:
+> > [[0, 795, 4, 0], [0, 796, 4, 0], [0, 797, 4, 0], [0, 798, 4, 0], [0, 79=
+9, 4, 0]] is too long
+> >=20
+> > Fixes: 3b5838d1d82e3 ("arm64: dts: mt8195: Add iommu and smi nodes")
+> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> > ---
+> > =C2=A0 Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml | 3 =
+++-
+> > =C2=A0 1 file changed, 2 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yam=
+l
+> > b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+> > index 75750c64157c868725c087500ac81be4e282c829..035941c2db32170e9a69a53=
+63d8c05ef767bb251 100644
+> > --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+> > +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+> > @@ -97,7 +97,8 @@ properties:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > =C2=A0=20
+> > =C2=A0=C2=A0=C2=A0 interrupts:
+> > -=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > +=C2=A0=C2=A0=C2=A0 minItems: 1
+>=20
+> Isn't minItems already implicitly 1? :-)
+>=20
+> Looks not, from my understanding if 'minItems' is omitted then
+dt-schema is setting it to 'maxItems'.
+https://github.com/devicetree-org/dt-schema/blob/v2025.02/dtschema/fixups.p=
+y#L129
 
-Changes in v5: None
-Changes in v4: None
-Changes in v3:
-- Collect the Acked-by tag
+And you will have an error for a one item interrupts:
+Documentation/devicetree/bindings/iommu/mediatek,iommu.example.dtb: iommu@1=
+0205000: interrupts: [[0,
+139, 8]] is too short
 
-Changes in v2:
-- Update in sort order
-
- Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 455fbb290b77..3372aff63e4d 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -1057,6 +1057,11 @@ properties:
-           - const: rockchip,rk3399-sapphire-excavator
-           - const: rockchip,rk3399
- 
-+      - description: Rockchip RK3562 Evaluation board 2
-+        items:
-+          - const: rockchip,rk3562-evb2-v10
-+          - const: rockchip,rk3562
-+
-       - description: Rockchip RK3566 BOX Evaluation Demo board
-         items:
-           - const: rockchip,rk3566-box-demo
--- 
-2.25.1
-
+Regards,
+Julien
 
