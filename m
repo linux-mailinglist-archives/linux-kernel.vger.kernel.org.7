@@ -1,152 +1,240 @@
-Return-Path: <linux-kernel+bounces-635373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98C6AABC8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:06:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2103AAABCB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BADF91C262DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 687993AF8AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D1772628;
-	Tue,  6 May 2025 07:51:23 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD1922CBE9;
+	Tue,  6 May 2025 07:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dTufQmhX"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BEF4B1E6B;
-	Tue,  6 May 2025 07:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA351E5B9F;
+	Tue,  6 May 2025 07:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746517883; cv=none; b=BaxwbXjyh7CAKHPtpfrT1CZdxEIkftbfOMmkXqWq4lmb5bRTKNMzfZo8pzKBZkM8S3L514z5A4px/vdmFGqQceD5XU1rhVHBfqRp2rpfel+1s0pdiNdf+8t4MUifZRZAIOOWLZikG0RLR8kXjg0UMfGNBUFOnGDmWT4kP3S4x1M=
+	t=1746518068; cv=none; b=MQ2IwG01NDWEJ10ZSSoGbKswd7fjCprU9My0euVUYX5hzRiPcTomVv/FeKnQy30OYYPgXFSc/cbsvFad9eLejrEbuSnnsgvR6+9n8tEmkVCKXuf3goptHWazgyWolqCVhLUVPmHwDrIp36ZbuPoRGD7kpRvMIWO6TlOH+GoDCww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746517883; c=relaxed/simple;
-	bh=1CX/lfJBBRj/7Bkzs8EaPt98CGd3E61b+7bPWFKLsdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bTgHqQpo8kNbM5mWksZVCQbMA6JYrQIfL4tymVgN9LgtYWjjIE+Aq2ThtsJAff2dbYf7OKjlcfSd9hR6a7xKYqnprjqibEXRPyy7u6DcxkJ9zYknf2+Itd8sj1oyhlnv5VBp17xrlYhwYMbWgoGU6Kbp3RIKSrzcwvPvn8dylKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zs9Ym0TKjz4f3jXs;
-	Tue,  6 May 2025 15:50:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 798ED1A1C5E;
-	Tue,  6 May 2025 15:51:16 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAXe19yvxlod1paLg--.34192S3;
-	Tue, 06 May 2025 15:51:16 +0800 (CST)
-Message-ID: <52c1dd13-1a04-4d9a-b687-639ed348474e@huaweicloud.com>
-Date: Tue, 6 May 2025 15:51:13 +0800
+	s=arc-20240116; t=1746518068; c=relaxed/simple;
+	bh=2f0J+4+6A8Hv2HA8LVp71TyKI6xghADS6aZpRRWMRrs=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=ihVgeDf8jPGHbqxORb8V3PhwDyTc2lJMc89a7DrKkKVvs5nOWHfllkO3BQ3bfXIsSl3uq1Z44z0zjZyFzMYyXDPNr9pjiYCUJNihXBx2V7uX9ZMeJneKOEVzJBhtoL1VML7SW6/lGCgAO4YOcfltt3AVASia/fQGoTn0k9zHU3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dTufQmhX; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5467UdTc030433;
+	Tue, 6 May 2025 09:54:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=D2Ps8m9XD1pgnyEns3PeQp
+	b6ZO/4KeE1fT6Gh8ShKSk=; b=dTufQmhXPlnEfXKKRPoLmJcAXNql4plfZnxsm0
+	gJH1mXDIjj7lEo1WXzU7tF+pOcWazjYIweAmlR8Eou3KS+hBU7kFZRfOE1rtyNVR
+	DTuVAgoGTmTHaeQei/pPEkWM4KJoP69bZ+EKyTKvh2/Nn4hQRI7cQN2SW84p2vIJ
+	SlTiVDNaQvelNfW34MktQvNGImd7aZI3qrEkBZtu4bpF4+LkHu8M9hy5Z3mWMBep
+	Ji6T4sTYrCaywwqJnEeEsfMHm5eMy/pIy5qKjNoZybtI1+MJOGbG/JvkBJmbjQaz
+	JIZrtD00m7uJWmIsdGR2GyvyaKID35Whf+jJ/+gsCTaI5QpQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46dbf39w10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 09:54:04 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CFE7640052;
+	Tue,  6 May 2025 09:52:52 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A857DA798A3;
+	Tue,  6 May 2025 09:52:02 +0200 (CEST)
+Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 May
+ 2025 09:52:02 +0200
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Subject: [PATCH v12 0/3] Add STM32MP25 SPI NOR support
+Date: Tue, 6 May 2025 09:51:59 +0200
+Message-ID: <20250506-upstream_ospi_v6-v12-0-e3bb5a0d78fb@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 01/11] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP
- to queue limits features
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
- tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
- bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
- brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
- <20250421021509.2366003-2-yi.zhang@huaweicloud.com>
- <yq18qnav4zj.fsf@ca-mkp.ca.oracle.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <yq18qnav4zj.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAXe19yvxlod1paLg--.34192S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF4rtF4kur4rCryrKF15Arb_yoW5AF1rp3
-	yjv3W8tr9xGF17uw1kZw1vqry5uws3CFW3Gw48X3s09ws8XF1xtFySqFyYg3yxGr1fGa4j
-	vFWvqa47Aan8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-B4-Tracking: v=1; b=H4sIAJ+/GWgC/23QTWrDMBAF4KsEreswM/rPqvcoJciy1GiRyFiua
+ Qm+e5VAqYsFs3kP5huYOythSqGw0+HOprCkkvKtBqSXA/MXd/sIXRpqwQhIAifoPscyT8Fdz7m
+ M6byobhCcnEFNCJLVtXEKMX09zbf3mi+pzHn6fp5Y1KP9xXCP1YGO6773rhdccPsacynHMh99v
+ rIHt+g/QkCL0JWAEMlI5GEwuCfMltANwlRC91qj8ugxqj1hNwQ2vrLYSviIaCUYI4zbEwgbg6h
+ hVBg6FYUV5EAEhAaCW8S0EKwISmE0V3GwA/1H1nX9ATOZmTAGAgAA
+X-Change-ID: 20250320-upstream_ospi_v6-d432a8172105
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_03,2025-05-05_01,2025-02-21_01
 
-Hi, Martin!
+This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
 
-On 2025/5/6 12:21, Martin K. Petersen wrote:
-> 
-> Hi Zhang!
-> 
->> +		[RO] Devices that explicitly support the unmap write zeroes
->> +		operation in which a single write zeroes request with the unmap
->> +		bit set to zero out the range of contiguous blocks on storage
->> +		by freeing blocks, rather than writing physical zeroes to the
->> +		media. If the write_zeroes_unmap is set to 1, this indicates
->> +		that the device explicitly supports the write zero command.
->> +		However, this may be a best-effort optimization rather than a
->> +		mandatory requirement, some devices may partially fall back to
->> +		writing physical zeroes due to factors such as receiving
->> +		unaligned commands. If the parameter is set to 0, the device
->> +		either does not support this operation, or its support status is
->> +		unknown.
-> 
-> I am not so keen on mixing Write Zeroes (which is NVMe-speak) and Unmap
-> (which is SCSI). Also, Deallocate and Unmap reflect block provisioning
-> state on the device but don't really convey what is semantically
-> important for your proposed change (zeroing speed and/or media wear
-> reduction).
-> 
+On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
+the memory area split, the chip select override and the time constraint
+between its 2 Octo SPI children.
 
-Since this flag doesn't strictly guarantee zeroing speed or media wear
-reduction optimizations, but rather reflects typical optimization
-behavior across most supported devices and cases. Therefore, I propose
-using a name that accurately indicates the function of the block device.
-However, also can't think of a better name either. Using the name
-WRITE_ZEROES_UNMAP seems appropriate to convey that the block device
-supports this type of Deallocate and Unmap state.
+Due to these depedencies, this series adds support for:
+  - Octo Memory Manager driver.
+  - Octo SPI driver.
+  - yaml schema for Octo Memory Manager and Octo SPI drivers.
 
-> That said, I'm having a hard time coming up with a better term.
-> WRITE_ZEROES_OPTIMIZED, maybe? Naming is hard...
+The device tree files adds Octo Memory Manager and its 2 associated Octo
+SPI chidren in stm32mp251.dtsi and adds SPI NOR support in stm32mp257f-ev1
+board.
+    
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-Using WRITE_ZEROES_OPTIMIZED feels somewhat too generic to me, and
-users may not fully grasp the specific optimizations it entails based
-on the name.
+Changes in v12:
+- Update Kconfig dependencies.
+- Link to v11: https://lore.kernel.org/r/20250428-upstream_ospi_v6-v11-0-1548736fd9d2@foss.st.com
 
-> 
-> For the description, perhaps something like the following which tries to
-> focus on the block layer semantics without using protocol-specific
-> terminology?
-> 
-> [RO] This parameter indicates whether a device supports zeroing data in
-> a specified block range without incurring the cost of physically writing
-> zeroes to media for each individual block. This operation is a
-> best-effort optimization, a device may fall back to physically writing
-> zeroes to media due to other factors such as misalignment or being asked
-> to clear a block range smaller than the device's internal allocation
-> unit. If write_zeroes_unmap is set to 1, the device implements a zeroing
-> operation which opportunistically avoids writing zeroes to media while
-> still guaranteeing that subsequent reads from the specified block range
-> will return zeroed data. If write_zeroes_unmap is set to 0, the device
-> may have to write each logical block media during a zeroing operation.
-> 
+Changes in v11:
+  - Add stm32_omm_toggle_child_clock(dev, false) in stm32_omm_disable_child() in case of error.
+  - Check MUXEN bit in stm32_omm_probe() to check if child clock must be disabled.
+  - Add dev_err_probe() in stm32_omm_probe().
+  - Link to v10: https://lore.kernel.org/r/20250422-upstream_ospi_v6-v10-0-6f4942a04e10@foss.st.com
 
-Thank you for optimizing the description, it looks good to me. I'd like
-to this one in my next iteration. :)
+Changes in v10:
+  - Add of_node_put() in stm32_omm_set_amcr().
+  - Link to v9: https://lore.kernel.org/r/20250410-upstream_ospi_v6-v9-0-cf119508848a@foss.st.com
 
-Thanks,
-Yi.
+Changes in v9:
+  - split patchset by susbsystem, current one include only OMM related
+    patches.
+  - Update SPDX Identifiers to "GPL-2.0-only".
+  - Add of_node_put)() instm32_omm_set_amcr().
+  - Rework error path in stm32_omm_toggle_child_clock().
+  - Make usage of reset_control_acquire/release() in stm32_omm_disable_child()
+    and move reset_control_get in probe().
+  - Rename error label in stm32_omm_configure().
+  - Remove child compatible check in stm32_omm_probe().
+  - Make usage of devm_of_platform_populate().
+  - Link to v8: https://lore.kernel.org/r/20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com
+
+Changes in v8:
+  - update OMM's dt-bindings:
+    - Remove minItems for clocks and resets properties.
+    - Fix st,syscfg-amcr items declaration.
+    - move power-domains property before vendor specific properties.
+  - Update compatible check wrongly introduced during internal tests in
+    stm32_omm.c.
+  - Move ommanager's node outside bus@42080000's node in stm32mp251.dtsi.
+  - Link to v7: https://lore.kernel.org/r/20250401-upstream_ospi_v6-v7-0-0ef28513ed81@foss.st.com
+
+Changes in v7:
+  - update OMM's dt-bindings by updating :
+    - clock-names and reset-names properties.
+    - spi unit-address node.
+    - example.
+  - update stm32mp251.dtsi to match with OMM's bindings update.
+  - update stm32mp257f-ev1.dts to match with OMM's bindings update.
+  - Link to v6: https://lore.kernel.org/r/20250321-upstream_ospi_v6-v6-0-37bbcab43439@foss.st.com
+
+Changes in v6:
+  - Update MAINTAINERS file.
+  - Remove previous patch 1/8 and 2/8, merged by Mark Brown in spi git tree.
+  - Fix Signed-off-by order for patch 3.
+  - OMM driver:
+    - Add dev_err_probe() in error path.
+    - Rename stm32_omm_enable_child_clock() to stm32_omm_toggle_child_clock().
+    - Reorder initialised/non-initialized variable in stm32_omm_configure()
+          and stm32_omm_probe().
+    - Move pm_runtime_disable() calls from stm32_omm_configure() to
+      stm32_omm_probe().
+    - Update children's clocks and reset management.
+    - Use of_platform_populate() to probe children.
+    - Add missing pm_runtime_disable().
+    - Remove useless stm32_omm_check_access's first parameter.
+  - Update OMM's dt-bindings by adding OSPI's clocks and resets.
+  - Update stm32mp251.dtsi by adding OSPI's clock and reset in OMM's node.
+
+Changes in v5:
+  - Add Reviewed-by Krzysztof Kozlowski for patch 1 and 3.
+
+Changes in v4:
+  - Add default value requested by Krzysztof for st,omm-req2ack-ns,
+    st,omm-cssel-ovr and st,omm-mux properties in st,stm32mp25-omm.yaml
+  - Remove constraint in free form test for st,omm-mux property.
+  - Fix drivers/memory/Kconfig by replacing TEST_COMPILE_ by COMPILE_TEST.
+  - Fix SPDX-License-Identifier for stm32-omm.c.
+  - Fix Kernel test robot by fixing dev_err() format in stm32-omm.c.
+  - Add missing pm_runtime_disable() in the error handling path in
+    stm32-omm.c.
+  - Replace an int by an unsigned int in stm32-omm.c
+  - Remove uneeded "," after terminator in stm32-omm.c.
+  - Update cover letter description to explain dependecies between
+Octo Memory Manager and its 2 Octo SPI children.
+
+Changes in v3:
+  - Squash defconfig patches 8 and 9.
+  - Update STM32 Octo Memory Manager controller bindings.
+  - Rename st,stm32-omm.yaml to st,stm32mp25-omm.yaml.
+  - Update STM32 OSPI controller bindings.
+  - Reorder DT properties in .dtsi and .dts files.
+  - Replace devm_reset_control_get_optional() by
+    devm_reset_control_get_optional_exclusive() in stm32_omm.c.
+  - Reintroduce region-memory-names management in stm32_omm.c.
+  - Rename stm32_ospi_tx_poll() and stm32_ospi_tx() to respectively to
+    stm32_ospi_poll() and stm32_ospi_xfer() in spi-stm32-ospi.c.
+  - Set SPI_CONTROLLER_HALF_DUPLEX in controller flags in spi-stm32-ospi.c.
+
+Changes in v2:
+  - Move STM32 Octo Memory Manager controller driver and bindings from
+    misc to memory-controllers.
+  - Update STM32 OSPI controller bindings.
+  - Update STM32 Octo Memory Manager controller bindings.
+  - Update STM32 Octo Memory Manager driver to match bindings update.
+  - Update DT to match bindings update.
+
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+---
+Patrice Chotard (3):
+      dt-bindings: memory-controllers: Add STM32 Octo Memory Manager controller
+      memory: Add STM32 Octo Memory Manager driver
+      MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
+
+ .../memory-controllers/st,stm32mp25-omm.yaml       | 226 ++++++++++
+ MAINTAINERS                                        |   6 +
+ drivers/memory/Kconfig                             |  18 +
+ drivers/memory/Makefile                            |   1 +
+ drivers/memory/stm32_omm.c                         | 476 +++++++++++++++++++++
+ 5 files changed, 727 insertions(+)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250320-upstream_ospi_v6-d432a8172105
+
+Best regards,
+-- 
+Patrice Chotard <patrice.chotard@foss.st.com>
 
 
