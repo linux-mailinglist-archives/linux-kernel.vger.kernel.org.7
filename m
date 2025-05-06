@@ -1,90 +1,56 @@
-Return-Path: <linux-kernel+bounces-635529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295A8AABECB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:14:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB3BAABECA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A28C3B6260
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:12:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CADED520FBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861DE27CCD1;
-	Tue,  6 May 2025 09:08:03 +0000 (UTC)
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022082.outbound.protection.outlook.com [40.107.75.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE527586F;
-	Tue,  6 May 2025 09:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746522482; cv=fail; b=V6zb+4Iia80IR5dGcjsobs8x5Fo+UnW6pzF9mXfZ5hmEEvk2pJwmcXyYDDtqPLmBrgG+aHl2GuHssCnNw0l9UEW7TL1lfVc865IHySIyLHYPWgbUBcpQUOYgqgtYeHi9zrDDEcslpHCkk4U62FEbV7jccakaHrm4r8clrBrVhrM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746522482; c=relaxed/simple;
-	bh=Tx0CeK12rw8fNnV+a43EhPsd3vEgR7B3QwBn0narui0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k/Q3VmgwqXYfjDAJwoFLn1y1Xc+qa4dlaGPU7STJy5hrpiNASyQxBDoL4TdSuRTFivt/tSxFme2E1Dv12kdXRKiJyvuj/+usSBohpr8La4XwvMWzd9yGRswmUCHS4Is6t2XIz/dDwbEChUkGWUud3xDaInrOoGkOgtrBbMx//gA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r7ZJs442NyBlyBlSX44ev+1W6xBz1Za9V3q8ANXRfDO2ZgEgBqOIV2LZsUe8bhKR13WTySfUvpSpoo0wfV0bTZpi5d7uOkk3Gg0oZ+r9kljecwC6GX5hN7mqOgG9NqoFduYuIly6051/YrW+0/HJJyyB3aKYw4bgw4Lv0gDq1BQd6fBqF/+1wgLsDyqLEV3fBqxjZcg4r6a9YUVW8V/z/tlRvRvB5CW/DsO0jLAqVMKCzMOk/7P7JxkfdE+FU0wsgbJchD6EUHwwysZ77xDSYpECdulm6Gwe5rVhhTjIPIpKFCUetqcAJHSsodlnAGIw1EqrmZWd69xFOl36ZwdcfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pheMVA4F2yQ/mZAq2Tm3+5kIP/DPHkXoE3b5n9yj7P4=;
- b=bU8fXAsjLWGvllVftK80ypbxLq3WjjpHcoZd/tf7WPPKH/sP/IGxX773D6jv7SL7e9e39ghzPk/Kv+Gf1pSjRrMMBf8Fs2p7ZGPzj/DBRpSweh22j7LYWLUdP4b9OLswVZjMfnDXmHXT4sxqKBA+0Ymz9sYdpggYLOse4kLze8XYdLdIu38bS4r+xB+9/J4WK52yWqHndwN/lFNH+BLyk40+0XvXu/LTuUY24qzH0RM+YIqhPXEU9aMWrUcYvXbgNMrD1MrS/F8ZX9Qu16/j5X4Ocfect908bkY2hFd3NZb9gWw9UUY3VsLM6EAm0YYm5KjAKKtTmbhRFlLfzh44Yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TYAPR01CA0117.jpnprd01.prod.outlook.com (2603:1096:404:2a::33)
- by TYSPR06MB7019.apcprd06.prod.outlook.com (2603:1096:400:46a::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Tue, 6 May
- 2025 09:07:56 +0000
-Received: from TY2PEPF0000AB87.apcprd03.prod.outlook.com
- (2603:1096:404:2a:cafe::d2) by TYAPR01CA0117.outlook.office365.com
- (2603:1096:404:2a::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.31 via Frontend Transport; Tue,
- 6 May 2025 09:07:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB87.mail.protection.outlook.com (10.167.253.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 09:07:56 +0000
-Received: from localhost.localdomain (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id B6EFB4160CAB;
-	Tue,  6 May 2025 17:07:52 +0800 (CST)
-From: Peter Chen <peter.chen@cixtech.com>
-To: robh@kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B77279905;
+	Tue,  6 May 2025 09:09:19 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11925264A9E;
+	Tue,  6 May 2025 09:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746522559; cv=none; b=MEX/J6ruz2kfqXJi3CY81PuLzgR6tXMRJ/KyXaRJnYurf16Pvr+0TUDaGKnQBrXpzwnlB0snSrneRGcJDHt2plpv7J7g/4XHK3ilRi1BSIOzRenWH36rH0O3sfkiEz5Z0f2pEY0vsFhKhMS5VP9tC2l6W3LWEy5FNiz179eR0Qc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746522559; c=relaxed/simple;
+	bh=vSUbMIpTRLHktM0iNQa7tKGDC2wPWrqGiVyANR5NiNI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i4yfLeEQ/nDQ7uuHpVy806NTDTkFml+sEP4jIhvxug9OZeXiQOd67rgGHx94+h/ajxsQSMtht5sjuv1UeffCpGMjGPxjLZ66oVKlJ/o+9zM+RsQBAq9rSoSHGEonKT3GzIYon0Z8K3+rp+P+ev1r9Egq1q+oIsKPxF2AGghgt/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app1 (Coremail) with SMTP id TAJkCgBHXg+f0RloSiViAA--.38522S2;
+	Tue, 06 May 2025 17:08:49 +0800 (CST)
+From: luyulin <luyulin@eswincomputing.com>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
 	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de
-Cc: linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	cix-kernel-upstream@cixtech.com,
-	maz@kernel.org,
-	kajetan.puchalski@arm.com,
-	sudeep.holla@arm.com,
-	eballetb@redhat.com,
-	Peter Chen <peter.chen@cixtech.com>,
-	Fugang Duan <fugang.duan@cixtech.com>
-Subject: [PATCH v7 9/9] MAINTAINERS: Add CIX SoC maintainer entry
-Date: Tue,  6 May 2025 17:07:52 +0800
-Message-Id: <20250506090752.3695666-10-peter.chen@cixtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250506090752.3695666-1-peter.chen@cixtech.com>
-References: <20250506090752.3695666-1-peter.chen@cixtech.com>
+	kees@kernel.org,
+	gustavoars@kernel.org,
+	brgl@bgdev.pl,
+	linux-hardening@vger.kernel.org
+Cc: zhengyu@eswincomputing.com,
+	ningyu@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	linmin@eswincomputing.com,
+	fenglin@eswincomputing.com,
+	lianghujun@eswincomputing.com,
+	luyulin <luyulin@eswincomputing.com>
+Subject: [PATCH 0/2]
+Date: Tue,  6 May 2025 17:08:44 +0800
+Message-Id: <20250506090844.1516-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,85 +58,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB87:EE_|TYSPR06MB7019:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 9befca50-3083-4cb0-d7ef-08dd8c7d7db6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fiqxMjlvo1mkChGwzSrnltnavujS4ASfw+INNgrZbhweumkxILK+PSLFUCcr?=
- =?us-ascii?Q?ZM5FGN5gAheEdchTMqJc/6+euUjH0ni4NexigKs9GMZWT6Eoku4N/H/GJ33E?=
- =?us-ascii?Q?ZTSmg7u24+jvila9J3AjCvbO4qbnrVTvxB7DUblanj1Nr89svdfPSJF8GDK6?=
- =?us-ascii?Q?q1kz9j+PxbegKdPwCz8Tna0MK0Z87BP9UHGSxbOHP1A8EttgSrNN0ZztlrkR?=
- =?us-ascii?Q?ZYp6QzZk2f1kBwtO07wMYG7i19HlFsQo46xbe5lyikobVlP5gvujGJIur8KF?=
- =?us-ascii?Q?cMBSoD33qUgkff4YltM9I6MotnyMtLXjx11A2ix17LV9rzhaE0DuCxXZPthB?=
- =?us-ascii?Q?jA4JeHZlvO2JH1fxaDnWDeRO1Cf3iw5cGDyTIkwmzHkJzPvPIruogj/T/rpe?=
- =?us-ascii?Q?+llbd0IMCqh6I6Veqz07e3QRb5hb+UW692sXkgKKzh7YeWFz2hS3FwMYFuSO?=
- =?us-ascii?Q?mDNHoyyNWnJBLSNlVnI79bphTOHxkPHCWZ24rgMYvDXSc7cu8mnct+l6bPmM?=
- =?us-ascii?Q?VTzNX9ohBBX+mbI6O7/flD3kPOhsba4wIW70udiKWKLXRHAxsQFbjz1luzAP?=
- =?us-ascii?Q?F1+a9wy9nuhx/vADdIT9NoGcjd3Rz8L40KI9tbIKmib1IkjV6+AkdkCSFYBp?=
- =?us-ascii?Q?AuG4KDXApK2IAQl7q+npFP9806ZnHGMBf5B7oDqRzlqyrS/LMng3IfxKtNFH?=
- =?us-ascii?Q?T9Ai3c0jy1HMEPSEwuPiaTEwExXV+78Z0WqNj/n56mkteilDYWhDlsLRx5vA?=
- =?us-ascii?Q?IUUnqqVjE6SNtOu1yW9t8QmnlWQYW/k5QB8z0uxyinLnqYwUDoJkQ21VhQJ3?=
- =?us-ascii?Q?gG6b8YXg4/Vcp5krmYuibqRTA1ve8SXK6yuU4ztBnu8SHR+jYmvNrrgKHRsw?=
- =?us-ascii?Q?YZrEa/ZM3mR4G4gKSgEQEvovgmO9H8WihFFxogDMRiPj+NHLd56T0Uf8ti8T?=
- =?us-ascii?Q?moV1Tw5/nh+Ei8qvbg/QxrfHLjs5otTYkC1UzU+wobJbKD1R63cCIzbcYRAk?=
- =?us-ascii?Q?lP8WXdtBvmhI2x2IRE/z/6Yfl+j831dnn7E8K7pBasZ6nquN7VEuuncf9pIw?=
- =?us-ascii?Q?kW2nY2BA0u9JnfbOEontCOVVrobqQn++rOmzQxVOTsiQgSHYrtt8GvRj05CE?=
- =?us-ascii?Q?RDG4EH79LH+pgn87JVf1DlHpkexZNlAORt/eXZ1Zz8y2YjRMmIurHIiicDmg?=
- =?us-ascii?Q?RaCQYYlkzQDi9Oe6X2+3IhOQKHLapSPnRlKuVJjSY8XxEZWUIN50LoxceD3e?=
- =?us-ascii?Q?VqELEyAVULqmTTtlaqSfWyf5ze/d5sXS0rl//M2wR5FXME8d+5QXli9TCrgC?=
- =?us-ascii?Q?HsbeLStA0vZ+A7TLBHeVefr5DxNVAzMHSNfJ4I/NPJ+LzQT5yPdL34PlCgjS?=
- =?us-ascii?Q?MuQqgqkj75G4E08JAUYAkbvPwkn7tbZc3L/jXafT71vixEiIjZ19QDgOC5oh?=
- =?us-ascii?Q?EAn68epN/phGOn9rvzFSVLkVn1ymW0ubFMNzeJ8+jG05M+iHE0QoU9P87C7M?=
- =?us-ascii?Q?QgMm1cH0otAHKFjsn23Ro52Edv1vaeZ3m6n5?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 09:07:56.2305
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9befca50-3083-4cb0-d7ef-08dd8c7d7db6
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF0000AB87.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB7019
+X-CM-TRANSID:TAJkCgBHXg+f0RloSiViAA--.38522S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr17AF4UWF45tr18Gw45KFg_yoW8XrWDpF
+	43GF1rtrn8XFZrXa47Jw4FkrW3Ga1xAr1a9ayft347XFs8A348AF15K3W5XrWDWF48JrnI
+	yryYgryUuF1DArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
-Using this entry as the maintainers information for CIX SoCs.
+  This patch introduces a driver for the Eswin eic7700 SoC pinctrl
+  controller, adding support for the pinctrl functionality in the Linux
+  kernel. The driver provides basic functionality to manage and control
+  the pinctrl signals for the eic7700 SoC.
 
-Acked-by: Fugang Duan <fugang.duan@cixtech.com>
-Signed-off-by: Peter Chen <peter.chen@cixtech.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+  The driver integrates with the Linux pinctrl subsystem, enabling kernel
+  code to trigger pinctrl operations on hardware and ensuring support for
+  pin multiplexing and pin configuration.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c59316109e3f..169b89eabea3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2404,6 +2404,17 @@ F:	arch/arm/boot/compressed/misc-ep93xx.h
- F:	arch/arm/mach-ep93xx/
- F:	drivers/iio/adc/ep93xx_adc.c
- 
-+ARM/CIX SOC SUPPORT
-+M:	Peter Chen <peter.chen@cixtech.com>
-+M:	Fugang Duan <fugang.duan@cixtech.com>
-+R:	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/cix.git
-+F:	Documentation/devicetree/bindings/arm/cix.yaml
-+F:	arch/arm64/boot/dts/cix/
-+K:	\bcix\b
-+
- ARM/CLKDEV SUPPORT
- M:	Russell King <linux@armlinux.org.uk>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+  Features:
+
+    Implements support for the Eswin eic7700 SoC pinctrl controller.
+    Provides API to manage pinctrl for the eic7700 SoC.
+    Integration with the Linux pinctrl subsystem for consistency and
+    scalability.
+
+  Supported chips:
+    Eswin eic7700 SoC.
+
+  Test:
+    I tested this patch on the Sifive HiFive Premier P550 (which uses
+    the EIC7700 SoC), including system boot, networking, EMMC, display,
+    and other peripherals. The drivers for these modules all use the
+    pinctrl module, so this verifies that this pinctrl driver
+    patch is working properly.
+
+luyulin (2):
+  dt-bindings: pinctrl: eswin: Document for eic7700 SoC
+  pinctrl: eswin: Add eic7700 pinctrl driver
+
+ .../pinctrl/eswin,eic7700-pinctrl.yaml        | 156 ++++
+ drivers/pinctrl/Kconfig                       |  11 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-eic7700.c             | 701 ++++++++++++++++++
+ 4 files changed, 869 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/pinctrl-eic7700.c
+
 -- 
 2.25.1
 
