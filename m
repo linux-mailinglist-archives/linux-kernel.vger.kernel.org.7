@@ -1,110 +1,213 @@
-Return-Path: <linux-kernel+bounces-635164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B4FAABA06
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:11:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D221DAABA19
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99E717FB9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:08:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E731F1649F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30454248863;
-	Tue,  6 May 2025 04:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xltf+vph"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3701F2D47AF
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 04:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181F2263F5E;
+	Tue,  6 May 2025 04:39:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA472D4B79;
+	Tue,  6 May 2025 04:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746505566; cv=none; b=gyle6UD3Xk1H7gujSPdETtWbARQQy/vyEP1owwaDR1dnBUXSqHthPn0sEzKxwWAUoW6CXM3B4B7b2UmN1d1gP1K8s8E5QJUT8DqHJUKEnZvb99k8fVBHMmopk8ObP8+qY9PSFUW9pmKqXWOH4yyy7jEumTZoezkuXDKRQzxGqxM=
+	t=1746505612; cv=none; b=rD4d6gUNfO03pMXvzjHJXTWqW8qYXEQNqOAE8pnW80WOZISmnqNaJgMpXrsnz4i2vYTufesBbYHn8tro8zwNCjEPeIVAUS9jhEgJb5ekmkCD95Uzjwr5LGNlIU/dWGYi4L9QTDN00mGfueUQv4zIvBJULtB7NL/NfURVBdpDBEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746505566; c=relaxed/simple;
-	bh=TccdsHTZ4zEQ0BZo6VZ3JHzZ41BfCgq+4cveb1ajcCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDuWNgazpnhRoDmFnaX533jww0JmlgxWkh3CCTfeEhNfjIydfbMAW8RLP9XY7dKQltUvlA7sGhauOAIXTbyjxBInGwMv8snvSUkHLtCJFH+BQ6up8Gp0FFbAf6Prs3aqf0dAdi821m2RuczE6VfK9h/N3PADTmfORAjUas80vR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Xltf+vph; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7403f3ece96so6852493b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 21:26:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1746505563; x=1747110363; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lpTvVcHQ5NB5y7+VuyI90vpjgAMkQ7kpY0hgN5edgAQ=;
-        b=Xltf+vphv0gOIcjcd2mLmcQ86u9Fc6vsEsGtar/Jc9kKCI4JIr6YO5G1OK9Jy9DIaO
-         8Lp1IxaK4vvs4k7YroILo/29FZlkubBF4mVoXHRcXBhPCQ4JYptsNtbSEjx1LOsg54Dm
-         cK64NPPm3ZGRuTAKR+fGCYKl/31xl/TqMvDIY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746505563; x=1747110363;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lpTvVcHQ5NB5y7+VuyI90vpjgAMkQ7kpY0hgN5edgAQ=;
-        b=KEW5uBkUtEnqdNLuU+e4Hi6HhbON+dwQiDfDpI2gqmjHqFCzwSxxGJKx0ElfFsdVoM
-         XvaixJQA9gKNRvcuGQLSSxlAbNOMPkap+O7jMfwOjDpIthRTgbmfnriUhH6VzR4LMe7Z
-         ciWKI17ccwfpkoFjntTZeqtPCkURfmqE6dNVJSCkfyyfIwHFOWQ2mx8NIK+DmjIRka++
-         Jjw4VHZTQdrEtXHbN43s+J7ZY1bwwGQ82ckHfaBFZ4NUYiVWA6he0M/kqHBsljP7G4YY
-         Q5W7c+C9NO8NpBa/E3j4p+EWoKRvNneLoRb39T1ttbOwS9Kvzd57FHsUzkewaLC3iQvl
-         sXkg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5//fqaKEeF4U9AeaNETCHNsJeAxg+wnIV3jpcWGyitQGHjAvbjLU5mo19uzDOSvFFNv2b7RyJQmYom44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu9gvzosJoHl8ZislWyGMitICAqIanqKphpisyU3fyiAjvXxmF
-	2WTdalweu9t/T9I8RMAouBLopmrrlY2ZWyert71HmeaqWLRN17CESkVbk25JCg==
-X-Gm-Gg: ASbGncvtQjaNibBLgxhNwPQpxrZ5CiEHKfkmBZwt/KC+phtZngcnzEED8pWlIaAMz3a
-	OqMIWbkO5xi1JohuK0tfJVbeUySiNyCW/hS55ls7iGWEV64RIPUS5KPanjm+9txyOAhBFVxuIAV
-	i1GSpWb9/6v6ttDEkiMkZXoxbyBh63pCpBZJeGLrTdscoqaLrLqkD3mjpyqKQV61sLvxGE5/8Xi
-	yW4px9tf07eGcRnCaVgHnyPd4dTNe5fcbwd6zj4qMrHIewxX9rhAyEcdoQc2yt7SOK3d7+lVo9A
-	wCrDhau6Tzk4sWV4IXkCxERvbaL2JVk2d75YJg5oiNb0xv6cEBy+MQ==
-X-Google-Smtp-Source: AGHT+IH2lUDpOcji/4HaHFx3QdH6baMYj7NqZym6Fql1fkgTO/Dhci0Df2ouxUuviW5c8PoLDQ9qGQ==
-X-Received: by 2002:a05:6a00:8d82:b0:736:34a2:8a18 with SMTP id d2e1a72fcca58-74091acd3f4mr2575582b3a.24.1746505563516;
-        Mon, 05 May 2025 21:26:03 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:761:97e0:917d:ad1e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74059020de2sm8063478b3a.103.2025.05.05.21.26.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 21:26:03 -0700 (PDT)
-Date: Tue, 6 May 2025 13:25:58 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Minchan Kim <minchan@kernel.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	Vitaly Wool <vitaly.wool@konsulko.se>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Igor Belousov <igor.b@beldev.am>, stable@vger.kernel.org, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH] zsmalloc: don't underflow size calculation in
- zs_obj_write()
-Message-ID: <rp5x24bqoaiopfnbjee2f3n7nrg4vh6mt2j4ewutjj42n6dmn7@exl7zdf7pvwx>
-References: <20250504110650.2783619-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1746505612; c=relaxed/simple;
+	bh=a7lPzYFMzGfvVCjWaecz59bmGKOl9ZCLTrt+R2shiH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QH7X63duqXnXEE8Vx1SJvZTc0QUuuT3fjFzC2IMCyvottzkcgY77u7yagdVZQroh4n2ezqTDey6L2BY4J1oTDeMAXPJIRjGVxfQr51/LHC/bTdPtgCp0LzuHbHo3xVzaY0XS08GZw4OGi6cZEUhAYPv2QAYKxI14OVxlSJ7MW9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1FBD113E;
+	Mon,  5 May 2025 21:26:38 -0700 (PDT)
+Received: from [10.163.54.208] (unknown [10.163.54.208])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8FB03F673;
+	Mon,  5 May 2025 21:26:38 -0700 (PDT)
+Message-ID: <90d92757-3a8d-4e13-8a5b-7b52080b8a37@arm.com>
+Date: Tue, 6 May 2025 09:56:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250504110650.2783619-1-senozhatsky@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] perf: Allocate non-contiguous AUX pages by default
+To: Yabin Cui <yabinc@google.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Liang Kan <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <20250501193556.23473-1-yabinc@google.com>
+ <02c125c9-7a1f-4dfd-b058-02a38ed5b598@arm.com>
+ <CALJ9ZPMYj=+ZsbPDWHe80R_i3GiMmKBviZ+WBRaj3jm96ZH+VQ@mail.gmail.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <CALJ9ZPMYj=+ZsbPDWHe80R_i3GiMmKBviZ+WBRaj3jm96ZH+VQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On (25/05/04 20:00), Sergey Senozhatsky wrote:
-> Do not mix class->size and object size during offsets/sizes
-> calculation in zs_obj_write().  Size classes can merge into
-> clusters, based on objects-per-zspage and pages-per-zspage
-> characteristics, so some size classes can store objects
-> smaller than class->size.  This becomes problematic when
-> object size is much smaller than class->size - we can determine
-> that object spans two physical pages, because we use a larger
-> class->size for this, while the actual object is much smaller
-> and fits one physical page, so there is nothing to write to
-> the second page and memcpy() size calculation underflows.
+
+
+On 5/2/25 23:00, Yabin Cui wrote:
+> On Fri, May 2, 2025 at 3:51 AM Anshuman Khandual
+> <anshuman.khandual@arm.com> wrote:
+>>
+>> On 5/2/25 01:05, Yabin Cui wrote:
+>>> perf always allocates contiguous AUX pages based on aux_watermark.
+>>> However, this contiguous allocation doesn't benefit all PMUs. For
+>>> instance, ARM SPE and TRBE operate with virtual pages, and Coresight
+>>> ETR allocates a separate buffer. For these PMUs, allocating contiguous
+>>> AUX pages unnecessarily exacerbates memory fragmentation. This
+>>> fragmentation can prevent their use on long-running devices.
+>>>
+>>> This patch modifies the perf driver to be memory-friendly by default,
+>>> by allocating non-contiguous AUX pages. For PMUs requiring contiguous
+>>> pages (Intel BTS and some Intel PT), the existing
+>>> PERF_PMU_CAP_AUX_NO_SG capability can be used. For PMUs that don't
+>>> require but can benefit from contiguous pages (some Intel PT), a new
+>>> capability, PERF_PMU_CAP_AUX_PREFER_LARGE, is added to maintain their
+>>> existing behavior.
+>>>
+>>> Signed-off-by: Yabin Cui <yabinc@google.com>
+>>> ---
+>>> Changes since v2:
+>>> Let NO_SG imply PREFER_LARGE. So PMUs don't need to set both flags.
+>>> Then the only place needing PREFER_LARGE is intel/pt.c.
+>>>
+>>> Changes since v1:
+>>> In v1, default is preferring contiguous pages, and add a flag to
+>>> allocate non-contiguous pages. In v2, default is allocating
+>>> non-contiguous pages, and add a flag to prefer contiguous pages.
+>>>
+>>> v1 patchset:
+>>> perf,coresight: Reduce fragmentation with non-contiguous AUX pages for
+>>> cs_etm
+>>>
+>>>  arch/x86/events/intel/pt.c  |  2 ++
+>>>  include/linux/perf_event.h  |  1 +
+>>>  kernel/events/ring_buffer.c | 20 +++++++++++++-------
+>>>  3 files changed, 16 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+>>> index fa37565f6418..25ead919fc48 100644
+>>> --- a/arch/x86/events/intel/pt.c
+>>> +++ b/arch/x86/events/intel/pt.c
+>>> @@ -1863,6 +1863,8 @@ static __init int pt_init(void)
+>>>
+>>>       if (!intel_pt_validate_hw_cap(PT_CAP_topa_multiple_entries))
+>>>               pt_pmu.pmu.capabilities = PERF_PMU_CAP_AUX_NO_SG;
+>>> +     else
+>>> +             pt_pmu.pmu.capabilities = PERF_PMU_CAP_AUX_PREFER_LARGE;
+>>>
+>>>       pt_pmu.pmu.capabilities         |= PERF_PMU_CAP_EXCLUSIVE |
+>>>                                          PERF_PMU_CAP_ITRACE |
+>>
+>> Why this PMU has PERF_PMU_CAP_AUX_PREFER_LARGE fallback option but
+>> not the other PMU in arch/x86/events/intel/bts.c even though both
+>> had PERF_PMU_CAP_AUX_NO_SG ?
 > 
-> We always know the exact size in bytes of the object
-> that we are about to write (store), so use it instead of
-> class->size.
+> Because Intel BTS always use NO_SG, while in some cases Intel PT
+> doesn't use NO_SG.
 
-I think it's
+Makes sense.
 
-Fixes: 44f76413496e ("zsmalloc: introduce new object mapping API")
+>>
+>>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>>> index 0069ba6866a4..56d77348c511 100644
+>>> --- a/include/linux/perf_event.h
+>>> +++ b/include/linux/perf_event.h
+>>> @@ -301,6 +301,7 @@ struct perf_event_pmu_context;
+>>>  #define PERF_PMU_CAP_AUX_OUTPUT                      0x0080
+>>>  #define PERF_PMU_CAP_EXTENDED_HW_TYPE                0x0100
+>>>  #define PERF_PMU_CAP_AUX_PAUSE                       0x0200
+>>> +#define PERF_PMU_CAP_AUX_PREFER_LARGE                0x0400
+>>>
+>>>  /**
+>>>   * pmu::scope
+>>> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+>>> index 5130b119d0ae..4d2f1c95673e 100644
+>>> --- a/kernel/events/ring_buffer.c
+>>> +++ b/kernel/events/ring_buffer.c
+>>> @@ -679,7 +679,7 @@ int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+>>>  {
+>>>       bool overwrite = !(flags & RING_BUFFER_WRITABLE);
+>>>       int node = (event->cpu == -1) ? -1 : cpu_to_node(event->cpu);
+>>> -     int ret = -ENOMEM, max_order;
+>>> +     int ret = -ENOMEM, max_order = 0;
+>>
+>> 0 order is now the default allocation granularity. This might benefit
+>> from a comment above explaining that max_order could change only with
+>> PERF_PMU_CAP_AUX_NO_SG or PERF_PMU_CAP_AUX_PREFER_LARGE PMU flags etc.
+>>
+> Will add the comment in the next respin.
+>>>
+>>>       if (!has_aux(event))
+>>>               return -EOPNOTSUPP;
+>>> @@ -689,8 +689,8 @@ int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+>>>
+>>>       if (!overwrite) {
+>>>               /*
+>>> -              * Watermark defaults to half the buffer, and so does the
+>>> -              * max_order, to aid PMU drivers in double buffering.
+>>> +              * Watermark defaults to half the buffer, to aid PMU drivers
+>>> +              * in double buffering.
+>>>                */
+>>>               if (!watermark)
+>>>                       watermark = min_t(unsigned long,
+>>> @@ -698,16 +698,22 @@ int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+>>>                                         (unsigned long)nr_pages << (PAGE_SHIFT - 1));
+>>>
+>>>               /*
+>>> -              * Use aux_watermark as the basis for chunking to
+>>> +              * For PMUs that need or prefer large contiguous buffers,
+>>> +              * use aux_watermark as the basis for chunking to
+>>>                * help PMU drivers honor the watermark.
+>>>                */
+>>> -             max_order = get_order(watermark);
+>>> +             if (event->pmu->capabilities & (PERF_PMU_CAP_AUX_NO_SG |
+>>> +                                             PERF_PMU_CAP_AUX_PREFER_LARGE))
+>>> +                     max_order = get_order(watermark);
+>>>       } else {
+>>>               /*
+>>> -              * We need to start with the max_order that fits in nr_pages,
+>>> +              * For PMUs that need or prefer large contiguous buffers,
+>>> +              * we need to start with the max_order that fits in nr_pages,
+>>>                * not the other way around, hence ilog2() and not get_order.
+>>>                */
+>>> -             max_order = ilog2(nr_pages);
+>>> +             if (event->pmu->capabilities & (PERF_PMU_CAP_AUX_NO_SG |
+>>> +                                             PERF_PMU_CAP_AUX_PREFER_LARGE))
+>>> +                     max_order = ilog2(nr_pages);
+>>>               watermark = 0;
+>>>       }
+>>>
+>>
+>> Although not really sure, could event->pmu->capabilities check against the ORed
+>> PMU flags PERF_PMU_CAP_AUX_NO_SG and PERF_PMU_CAP_AUX_PREFER_LARGE be contained
+>> in a helper pmu_prefers_cont_alloc(struct *pmu ...) or something similar ?
+> 
+> Sure, but I feel it's not very worthwhile. Maybe add a local variable
+> use_contiguous_pages? It can also work as another comment near
+> max_order.
+
+Probably that will be better.
 
