@@ -1,75 +1,124 @@
-Return-Path: <linux-kernel+bounces-635922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0005AAC3B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:19:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3EEAAC3A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337063AD0A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002114E848B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0EE27FB18;
-	Tue,  6 May 2025 12:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="p1lsN/38"
-Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0D1278146;
-	Tue,  6 May 2025 12:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34CF27FB15;
+	Tue,  6 May 2025 12:16:15 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883E51DDE9;
+	Tue,  6 May 2025 12:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746533971; cv=none; b=m1E5UnQsdDmvmD++4x+ASuiMnaZhp5/cUFghqDQYUI6mEt1GrTFv5xgEOZmQFAdR7cPqxZDPLpGUoW51umiSMC/QISCmsvJ9+6LSCXEO9wchsASID9YnvFpXwOzakXpMYEvYqoo0D46ApL8e1WHTZxgLs/XkwXDYM2X0ZR8XZbU=
+	t=1746533775; cv=none; b=C/9Qaa8pwAiudLCSn8FKDZJA5OcUDuS1TfhmfsqtEKCVvc+2R3Ln0RfD1MXqyes0M4FPGoeCH+Tu0J9TRwnll/Z5u2ZWxetYoFnzZqm1lGWJZk8EBSJ0GE9+SupMbdnQSc4D3sGkwo7XNEkxLzdcjPT+DGtTexgV/jvLDsmSNIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746533971; c=relaxed/simple;
-	bh=h2H3/1At+3/jnHxlhYJYeyG4+me4xGeFfqLKIgln7/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szqYeUsPxS+Iya0o96Pj2CVLO9+60PpjzTo+tiG9L2GhJwb+jKzX9QY+tjDV6sggBdB55dIqNW85+acNooGmyqtHp4dcauCy8CjPxm6g0tyUDHfHXTnQEfZcwsSsaDLSQ0unxhOSDh/UCCGjVeL3BTeeiwbR8vZrEWSDaiuRb2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=p1lsN/38; arc=none smtp.client-ip=178.154.239.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
-Received: from mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:3b11:0:640:80c7:0])
-	by forward502b.mail.yandex.net (Yandex) with ESMTPS id A6A2F613AB;
-	Tue,  6 May 2025 15:13:27 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id ODbgvv6LoeA0-6PIMdWke;
-	Tue, 06 May 2025 15:13:26 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
-	t=1746533607; bh=7JdTXfcuQ+VjrhgxpmjB6OXSPVsr75h6nr8IdUzMRlo=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=p1lsN/38+UkhJPjqdv6pQ6x9tvb5rqpsFhNViC4aWqs4R33wCe4Amf4xVlmGJWD3o
-	 3M+vD7qZ0TIRM6LNBYVDICTavUWqKo+uExWQmvYvDxwFQ/4VHbudihF+t3b1+xqPHM
-	 wZ3ceO3ekc3ODwljCB5y8UGud0Nz3Dvi/h7Ut83U=
-Authentication-Results: mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net; dkim=pass header.i=@0upti.me
-Message-ID: <9061d5a7-c1f6-47ad-b60a-226e48021d62@0upti.me>
-Date: Tue, 6 May 2025 15:13:24 +0300
+	s=arc-20240116; t=1746533775; c=relaxed/simple;
+	bh=oEwS2B/SEVhvr/PEsjOt8P75XFO79S+SKeaI3RLVp/w=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=W8VxrriwXm7SjHwc5DgGc0Z+WV4qJ20E5ZnUeWIgiYxlsHyp3vneARLU0jRCEB7GpmoRJQbdBaygRkoiXJVfHQcOBS32baCIcWAezpos2XLypN1dw9GNKl520YIzVUfk0RZzx+EG6mgxYVCf+S0Gj0bQrziTxDlMNSe2F/+Aj6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8DxvnOJ_Rlo+rPWAA--.57490S3;
+	Tue, 06 May 2025 20:16:09 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMCxvMaE_RloXPG2AA--.50748S2;
+	Tue, 06 May 2025 20:16:06 +0800 (CST)
+Subject: Re: [PATCH v9 5/5] MAINTAINERS: Add tpm_loongson.c to LOONGSON CRYPTO
+ DRIVER entry
+To: Yanteng Si <si.yanteng@linux.dev>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+ peterhuewe@gmx.de, jarkko@kernel.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-crypto@vger.kernel.org, jgg@ziepe.ca,
+ linux-integrity@vger.kernel.org, pmenzel@molgen.mpg.de,
+ Huacai Chen <chenhuacai@loongson.cn>
+References: <20250506032053.11147-1-zhaoqunqin@loongson.cn>
+ <a03b4963-55aa-4a75-b795-1e8f0db7ec89@linux.dev>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <00196f77-1060-fe67-3e6b-6721092207d6@loongson.cn>
+Date: Tue, 6 May 2025 20:14:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12] platform/x86: Add AMD ISP platform config for OV05C10
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, hdegoede@redhat.com,
- W_Armin@gmx.de, ilpo.jarvinen@linux.intel.com, mario.limonciello@amd.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin.chan@amd.com, bin.du@amd.com, gjorgji.rosikopulos@amd.com,
- king.li@amd.com, dantony@amd.com
-References: <20250505171302.4177445-1-pratap.nirujogi@amd.com>
+In-Reply-To: <a03b4963-55aa-4a75-b795-1e8f0db7ec89@linux.dev>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-From: Ilya K <me@0upti.me>
-In-Reply-To: <20250505171302.4177445-1-pratap.nirujogi@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMCxvMaE_RloXPG2AA--.50748S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw4fJFy7ZF48ury7WFWUKFX_yoWkKFg_Ca
+	yIkr1kGr18Jrn2g3W2gr97XwnxWa98Xa4rW3WUtw1fWw1jvFyDGFs7Cw1fA3WfWFWkGFnx
+	Jrn7WFZ7Ary2vosvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbDAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa02
+	0Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1l
+	Yx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI
+	0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC2
+	0s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr
+	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
+	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
 
-> +#define AMDISP_OV05C10_I2C_ADDR		0x10
-> +#define AMDISP_OV05C10_PLAT_NAME	"amdisp_ov05c10_platform"
-> +#define AMDISP_OV05C10_HID		"OMNI5C10"
-> +#define AMDISP_OV05C10_REMOTE_EP_NAME	"ov05c10_isp_4_1_1"
-> +#define AMD_ISP_PLAT_DRV_NAME		"amd-isp4"
 
-Hey folks, I know v12 might be a bit too late for this one, but I've got another device here (Asus GZ302EA tablet) with a very similar camera setup, but a different sensor (OV13B10), and it looks like this driver just assumes a certain hardcoded configuration... I wonder if it makes sense to reorganize the code so that more sensor configurations can be added without making a separate module? I'd be happy to help with refactoring/testing/etc, if people are interested.
+在 2025/5/6 下午5:03, Yanteng Si 写道:
+> 在 5/6/25 11:20 AM, Qunqin Zhao 写道:
+>> Changes to Loongson TPM driver would be best reviewed by the Loongson
+>> crypto driver maintainers.
+>>
+>> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+>> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> ---
+>> v8-v9: None
+>> v7: Added tag from Jarkko and Huacai
+>> v6: "tpm_lsse.c" -> "tpm_loongson"
+>> v4-v5: None
+>>
+>>   MAINTAINERS | 1 +
+>>   1 file changed, 1 insertion(+)
+> I'm just curious. Why is this patch kept outside the tmp_loongson 
+> patch set?
+
+Hi, Yanteng. Thanks for your reply.
+
+
+When sending this patch, git send-email prompted "too many commands"
+
+and disconnected from the server. Then I sent this patch separately.
+
+Even after setting sendemail.smtpBatchSize to 100, I still have this 
+problem.
+
+Now I am trying to find  Loongson SMTP server administrator to solve it.
+
+Have you ever encountered this kind of problem?
+
+
+BR, Qunqin.
+
+>
+> <https://lore.kernel.org/loongarch/20250506031947.11130-1-zhaoqunqin@loongson.cn/T/#mf09225c286a8e2b92a677720afafb9e20be57a18> 
+>
+>
+> Thanks,
+> Yanteng
+
 
