@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-635004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9806FAAB863
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F304EAAB862
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44AA41C2752E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:28:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759771C23882
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712E82F4F69;
-	Tue,  6 May 2025 03:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A6D2F230D;
+	Tue,  6 May 2025 03:04:37 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EA034AA88
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73C14A3C4B
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 00:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746492569; cv=none; b=eTZa1kPymNvJZFoQA/grmGAk7RWiIT2xCb+lBd6+9wUgOyWw3BotGd6nqHCErcAhhEjqj32rw0SLwiaAL8/EbjukK0OvskvAGEx5LAOy1ScfIdZoflrxCm91IlPNLKGYkyEzoNOEZ+2PLOtajOmIaAzJklk1+J6S+aHO4/fpRDI=
+	t=1746492506; cv=none; b=Gdy6DRt4Rl2Mwqz+x9bJplUfeJVRKJoU/KOG6XMYYvBScLDAvFo2oCN+RTV8dUYn5feRZklmqpzLyvL9RV97FIjKJzsrwys4SiEm9NKdi/DGRTvdzejjCProv4D0IDOeKlW7que1hMuV0JlE4QjeK6MZVtDnPqrfGdHXoXNfF0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746492569; c=relaxed/simple;
-	bh=NPJNsGlptd0n6PNy0NgeClvR6xPjLXuDITIWdR/228E=;
+	s=arc-20240116; t=1746492506; c=relaxed/simple;
+	bh=8Rv2NThq3GpIF740ywbYkJK48AvMiLVuweYORk9NC8U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qlUTWgwNATecdBafL++B631n5ocOb/FjbRO4ihxUDNuz+j3TLosqhDfAOW4V+oeJOQH+CAjG1/iI+T1L7vSbrZUAJSs7e9C+WF+hAOjoVr7ID0pHLfpfkhyDFSSn52VTuSRR79nHdZfhkveff9uKlEN619NEael/8xkLbZAinf8=
+	 MIME-Version; b=TFNI2Li46iOZvAH++jS5vzTkwbfDm2jNoMEd1hXGpR6nm35VV0amTPtQeqQilDHO9l8hy7mfpg8VPXLszENSUX1zN+3I37wIMWzTM3HReZXZ76cJXdkxg+VKsoY6Hurv7ExPGSw6RwPjgQjqpUBABa1QP+OYi0miumLotVWkf0k=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -32,7 +32,7 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1uC6K6-000000000IF-3aS7;
+	id 1uC6K6-000000000IF-3gGA;
 	Mon, 05 May 2025 20:38:14 -0400
 From: Rik van Riel <riel@surriel.com>
 To: linux-kernel@vger.kernel.org
@@ -49,9 +49,9 @@ Cc: linux-mm@kvack.org,
 	Rik van Riel <riel@fb.com>,
 	Yu-cheng Yu <yu-cheng.yu@intel.com>,
 	Rik van Riel <riel@surriel.com>
-Subject: [RFC PATCH 5/9] x86/mm: Change cpa_flush() to call flush_kernel_range() directly
-Date: Mon,  5 May 2025 20:37:43 -0400
-Message-ID: <20250506003811.92405-6-riel@surriel.com>
+Subject: [RFC PATCH 6/9] x86/apic: Introduce Remote Action Request Operations
+Date: Mon,  5 May 2025 20:37:44 -0400
+Message-ID: <20250506003811.92405-7-riel@surriel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250506003811.92405-1-riel@surriel.com>
 References: <20250506003811.92405-1-riel@surriel.com>
@@ -66,84 +66,170 @@ Sender: riel@surriel.com
 
 From: Rik van Riel <riel@fb.com>
 
-The function cpa_flush() calls __flush_tlb_one_kernel() and
-flush_tlb_all().
+RAR TLB flushing is started by sending a command to the APIC.
+This patch adds Remote Action Request commands.
 
-Replacing that with a call to flush_tlb_kernel_range() allows
-cpa_flush() to make use of INVLPGB or RAR without any additional
-changes.
-
-Initialize invlpgb_count_max to 1, since flush_tlb_kernel_range()
-can now be called before invlpgb_count_max has been initialized
-to the value read from CPUID.
-
-[riel: remove now unused __cpa_flush_tlb]
+[riel: move some things around to acount for 6 years of changes]
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- arch/x86/kernel/cpu/amd.c    |  2 +-
- arch/x86/mm/pat/set_memory.c | 20 +++++++-------------
- 2 files changed, 8 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/apicdef.h     |  1 +
+ arch/x86/include/asm/irq_vectors.h |  5 +++++
+ arch/x86/include/asm/smp.h         | 15 +++++++++++++++
+ arch/x86/kernel/apic/ipi.c         | 23 +++++++++++++++++++----
+ arch/x86/kernel/apic/local.h       |  3 +++
+ arch/x86/kernel/smp.c              |  3 +++
+ 6 files changed, 46 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 13a48ec28f32..c85ecde786f3 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -31,7 +31,7 @@
+diff --git a/arch/x86/include/asm/apicdef.h b/arch/x86/include/asm/apicdef.h
+index 094106b6a538..b152d45af91a 100644
+--- a/arch/x86/include/asm/apicdef.h
++++ b/arch/x86/include/asm/apicdef.h
+@@ -92,6 +92,7 @@
+ #define		APIC_DM_LOWEST		0x00100
+ #define		APIC_DM_SMI		0x00200
+ #define		APIC_DM_REMRD		0x00300
++#define		APIC_DM_RAR		0x00300
+ #define		APIC_DM_NMI		0x00400
+ #define		APIC_DM_INIT		0x00500
+ #define		APIC_DM_STARTUP		0x00600
+diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
+index 47051871b436..c417b0015304 100644
+--- a/arch/x86/include/asm/irq_vectors.h
++++ b/arch/x86/include/asm/irq_vectors.h
+@@ -103,6 +103,11 @@
+  */
+ #define POSTED_MSI_NOTIFICATION_VECTOR	0xeb
  
- #include "cpu.h"
++/*
++ * RAR (remote action request) TLB flush
++ */
++#define RAR_VECTOR			0xe0
++
+ #define NR_VECTORS			 256
  
--u16 invlpgb_count_max __ro_after_init;
-+u16 invlpgb_count_max __ro_after_init = 1;
+ #ifdef CONFIG_X86_LOCAL_APIC
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index 0c1c68039d6f..1ab9f5fcac8a 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -40,6 +40,9 @@ struct smp_ops {
  
- static inline int rdmsrq_amd_safe(unsigned msr, u64 *p)
- {
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index 30ab4aced761..2454f5249329 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -399,15 +399,6 @@ static void cpa_flush_all(unsigned long cache)
- 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
+ 	void (*send_call_func_ipi)(const struct cpumask *mask);
+ 	void (*send_call_func_single_ipi)(int cpu);
++
++	void (*send_rar_ipi)(const struct cpumask *mask);
++	void (*send_rar_single_ipi)(int cpu);
+ };
+ 
+ /* Globals due to paravirt */
+@@ -100,6 +103,16 @@ static inline void arch_send_call_function_ipi_mask(const struct cpumask *mask)
+ 	smp_ops.send_call_func_ipi(mask);
  }
  
--static void __cpa_flush_tlb(void *data)
--{
--	struct cpa_data *cpa = data;
--	unsigned int i;
--
--	for (i = 0; i < cpa->numpages; i++)
--		flush_tlb_one_kernel(fix_addr(__cpa_addr(cpa, i)));
--}
--
- static int collapse_large_pages(unsigned long addr, struct list_head *pgtables);
++static inline void arch_send_rar_single_ipi(int cpu)
++{
++	smp_ops.send_rar_single_ipi(cpu);
++}
++
++static inline void arch_send_rar_ipi_mask(const struct cpumask *mask)
++{
++	smp_ops.send_rar_ipi(mask);
++}
++
+ void cpu_disable_common(void);
+ void native_smp_prepare_boot_cpu(void);
+ void smp_prepare_cpus_common(void);
+@@ -120,6 +133,8 @@ void __noreturn mwait_play_dead(unsigned int eax_hint);
+ void native_smp_send_reschedule(int cpu);
+ void native_send_call_func_ipi(const struct cpumask *mask);
+ void native_send_call_func_single_ipi(int cpu);
++void native_send_rar_ipi(const struct cpumask *mask);
++void native_send_rar_single_ipi(int cpu);
  
- static void cpa_collapse_large_pages(struct cpa_data *cpa)
-@@ -444,6 +435,7 @@ static void cpa_collapse_large_pages(struct cpa_data *cpa)
+ asmlinkage __visible void smp_reboot_interrupt(void);
+ __visible void smp_reschedule_interrupt(struct pt_regs *regs);
+diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
+index 98a57cb4aa86..e5e9fc08f86c 100644
+--- a/arch/x86/kernel/apic/ipi.c
++++ b/arch/x86/kernel/apic/ipi.c
+@@ -79,7 +79,7 @@ void native_send_call_func_single_ipi(int cpu)
+ 	__apic_send_IPI(cpu, CALL_FUNCTION_SINGLE_VECTOR);
+ }
  
- static void cpa_flush(struct cpa_data *cpa, int cache)
+-void native_send_call_func_ipi(const struct cpumask *mask)
++static void do_native_send_ipi(const struct cpumask *mask, int vector)
  {
-+	unsigned long start, end;
- 	unsigned int i;
+ 	if (static_branch_likely(&apic_use_ipi_shorthand)) {
+ 		unsigned int cpu = smp_processor_id();
+@@ -88,14 +88,19 @@ void native_send_call_func_ipi(const struct cpumask *mask)
+ 			goto sendmask;
  
- 	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
-@@ -453,10 +445,12 @@ static void cpa_flush(struct cpa_data *cpa, int cache)
- 		goto collapse_large_pages;
+ 		if (cpumask_test_cpu(cpu, mask))
+-			__apic_send_IPI_all(CALL_FUNCTION_VECTOR);
++			__apic_send_IPI_all(vector);
+ 		else if (num_online_cpus() > 1)
+-			__apic_send_IPI_allbutself(CALL_FUNCTION_VECTOR);
++			__apic_send_IPI_allbutself(vector);
+ 		return;
  	}
  
--	if (cpa->force_flush_all || cpa->numpages > tlb_single_page_flush_ceiling)
--		flush_tlb_all();
--	else
--		on_each_cpu(__cpa_flush_tlb, cpa, 1);
-+	start = fix_addr(__cpa_addr(cpa, 0));
-+	end = fix_addr(__cpa_addr(cpa, cpa->numpages));
-+	if (cpa->force_flush_all)
-+		end = TLB_FLUSH_ALL;
+ sendmask:
+-	__apic_send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
++	__apic_send_IPI_mask(mask, vector);
++}
 +
-+	flush_tlb_kernel_range(start, end);
++void native_send_call_func_ipi(const struct cpumask *mask)
++{
++	do_native_send_ipi(mask, CALL_FUNCTION_VECTOR);
+ }
  
- 	if (!cache)
- 		goto collapse_large_pages;
+ void apic_send_nmi_to_offline_cpu(unsigned int cpu)
+@@ -106,6 +111,16 @@ void apic_send_nmi_to_offline_cpu(unsigned int cpu)
+ 		return;
+ 	apic->send_IPI(cpu, NMI_VECTOR);
+ }
++
++void native_send_rar_single_ipi(int cpu)
++{
++	apic->send_IPI_mask(cpumask_of(cpu), RAR_VECTOR);
++}
++
++void native_send_rar_ipi(const struct cpumask *mask)
++{
++	do_native_send_ipi(mask, RAR_VECTOR);
++}
+ #endif /* CONFIG_SMP */
+ 
+ static inline int __prepare_ICR2(unsigned int mask)
+diff --git a/arch/x86/kernel/apic/local.h b/arch/x86/kernel/apic/local.h
+index bdcf609eb283..833669174267 100644
+--- a/arch/x86/kernel/apic/local.h
++++ b/arch/x86/kernel/apic/local.h
+@@ -38,6 +38,9 @@ static inline unsigned int __prepare_ICR(unsigned int shortcut, int vector,
+ 	case NMI_VECTOR:
+ 		icr |= APIC_DM_NMI;
+ 		break;
++	case RAR_VECTOR:
++		icr |= APIC_DM_RAR;
++		break;
+ 	}
+ 	return icr;
+ }
+diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
+index 18266cc3d98c..2c51ed6aaf03 100644
+--- a/arch/x86/kernel/smp.c
++++ b/arch/x86/kernel/smp.c
+@@ -297,5 +297,8 @@ struct smp_ops smp_ops = {
+ 
+ 	.send_call_func_ipi	= native_send_call_func_ipi,
+ 	.send_call_func_single_ipi = native_send_call_func_single_ipi,
++
++	.send_rar_ipi		= native_send_rar_ipi,
++	.send_rar_single_ipi	= native_send_rar_single_ipi,
+ };
+ EXPORT_SYMBOL_GPL(smp_ops);
 -- 
 2.49.0
 
