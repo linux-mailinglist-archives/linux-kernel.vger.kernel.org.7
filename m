@@ -1,117 +1,163 @@
-Return-Path: <linux-kernel+bounces-636281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8AC9AAC92F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:13:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14446AAC932
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175571C24AB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29F371C21996
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3526B283CAF;
-	Tue,  6 May 2025 15:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f7ILB3WN"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBBE283159;
+	Tue,  6 May 2025 15:14:39 +0000 (UTC)
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270E52836B0;
-	Tue,  6 May 2025 15:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B024B1E52;
+	Tue,  6 May 2025 15:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746544345; cv=none; b=Azs7CPPTkDywgmFbhfZkH12hXfWtmZGfr8ZeMoS21QKME9U7mUWKD3l6zm8nH/YZXEPw7gG7z0FABNt7GU0ogxiWr0ikHArNgnDn4oCgbplYFknOJWID40b1G6UCRNuW0CXO1kkFt1ZCpxgZInbpSuJSwd+UQnjGOVEV0Dobs8Q=
+	t=1746544479; cv=none; b=kz6TJoXKJUVhkUC+8CRXNfhSvIpYwBUwcRx59pPWv8xpVqCnslTb76R427YBhHMrh2/F7MBTT8j658bsYZVCoPwRiu0prU0IVLa+leZlTJICF0HTXmkvx7T352OrmxfXuRSlwDBPDROeWBZmycPAhGGp37yyL8QwkN+uikOK25g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746544345; c=relaxed/simple;
-	bh=yrcWGN0FRR1RmFwO80UnVdv0ehhWHreiwjWlwco00OY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkU+vkjc6RDf8zXldefxomDAwxYuuodVgYkqg0gBfDM227RvogToERAzNIotp/OijTwYCTXPalLuzCbkQoXEsedgXI9JMyJ0Y1/xLrPvh8xv+GO0r/NFWpGiQYDLFkD8YlUVp8sbPFt4R+kK05jfkhNbCJVADSvofb9jk2gvkIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f7ILB3WN; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 546A44ax010338;
-	Tue, 6 May 2025 15:12:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=yrcWGN0FRR1RmFwO80UnVdv0ehhWHr
-	eiwjWlwco00OY=; b=f7ILB3WNRIzo9hd43jsqZAwatPJlbhU1jzT+0eF0M9lnlu
-	hoZUg4hGNIGtI8wKByG4L9qxJgy9ASWdTUGsEYG6q8dpQCG8LON1sxXi8czycARy
-	UumqE/qHZOgDKhNenGXti/fbgIZiUD1nqX9OuNy1JzLlccq9gmLbchMdYX8jM8l4
-	B2gSs0jntSWMlD036/s9Zmb5xNVFEXWl73doP46gKvmO02G3laDkFqlswnkS4w8K
-	CdApbYavPQXN5iEjHQoNtMN9F98HWzVcK7jQBx09GZpPycPjAuSkf0e0MxHaeTt7
-	iznvv4fA0x6ul8cN45gjSh4klcgmR0m23gjFks2Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fgbj9k71-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 15:12:17 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 546F9YA4027233;
-	Tue, 6 May 2025 15:12:16 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fgbj9k6v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 15:12:16 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 546Clukk025798;
-	Tue, 6 May 2025 15:12:15 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dwuyv7vd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 15:12:15 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 546FCDAb51577334
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 6 May 2025 15:12:13 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 32AC120043;
-	Tue,  6 May 2025 15:12:13 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ED0A820040;
-	Tue,  6 May 2025 15:12:12 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  6 May 2025 15:12:12 +0000 (GMT)
-Date: Tue, 6 May 2025 17:12:11 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-        Daniel Axtens <dja@axtens.net>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kasan-dev@googlegroups.com, linux-s390@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4 0/1] kasan: Avoid sleepable page allocation from
- atomic context
-Message-ID: <aBomyzXY9LK9+B6B@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <cover.1746541531.git.agordeev@linux.ibm.com>
+	s=arc-20240116; t=1746544479; c=relaxed/simple;
+	bh=HsMZWFYrTlUpfltEEjdQQtndO2n500+cj/V9sVjmRw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cMVx7KlhIRjmHy6IxIuSCrNvYSUA8ElQxjmEX/nBkCOWDn/Ewzn6r9uQNsl2pKsEgc9v4zYI1tJ3dSlo6P5h/D1oCk0v3h6dggIRyLbxzuUxTE5jWmDuXcz0wyweV2UpS+ICUkpFTi8Q6Hl8tFAUNdf5SsPCVNIBxjH9Usjpqg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tavianator.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-476f4e9cf92so44336141cf.3;
+        Tue, 06 May 2025 08:14:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746544476; x=1747149276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kT4xkXU3hJWuhsaijF7XFz7GWYoZ+LDhmBYoQDJQIuw=;
+        b=fOOrEjX/Rscts1JxuNFUmhOvQZZeUH+Jdk2ReAGLmJMyygnfR7H4OAR2rVY+0T8ufA
+         ktzUUw5Dw3B66u3UjwwtS5QhIzWLHWDVQSzWuGCyp9+KxYDz1Geyykdxlf7Jd8SZw3zM
+         llqXZ7XotqL1dLkvWRSKVBQfG04MS29ir/A8YKayN5JnIKShxFD1GgvlCoye8dreKYLh
+         hckmbpMMwAjuB2FiopvRuvVudcUYRVmitAr05E1ZHHVj9533ALQdJy/RFQ5uP1EdnIMI
+         rOkYIgaGYQZlzsK33X6XbF9dwNOo4Rk7+p/zmdNJ6u1IME+3Hnr8hI4uizjmB6X6yyei
+         cc/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVN18Y0SkFvZPqZnJPJA33tfhfG8klbNTukAIRmEfI58JrB7O3A3fDdG45XFTTElV+/iNJWmVrWh19O8No=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+5CUE2Rp15D0oRDaqiQ2uW73hehJ8Bg38n99RAricUa+ggBnk
+	q1bmEtHFbbFgzEAjujoDXc77yJrCOvqJOnfNoBa8SoVarspvyF1OKlF7x4qr
+X-Gm-Gg: ASbGncv/YBPuWWr9dAKalgTlXLkibtKtaJBFEzMdahGbxi4cL9iBMiksSUCPTSH031j
+	uyHWmysSm5OWBJxJjmpVRaQ7eVmQ74wh6V0sHopvjYJDzq0GKKgI5F0rqHc5JIyeNw2YwiHvGkX
+	CIH6aEkjRZMgjBz3UXbZ7U1op1kJGc9uwfTspqz/i8SkeQxFl3Jo743NQPwVprPGZFGkEms4RLv
+	zP+Eay3DU9vcPainorp2xf8ajRHVfec7ljUEEBaZkVKtTYa4RggoRH6sfLioaZGAHgl/SMPoVYQ
+	IhEUzTTPsfpY6LvRfGa7iVI8a4MshBg1XsjFPeSwjquBxk9HDs13Ha8lywNiBK5+nU8=
+X-Google-Smtp-Source: AGHT+IHTgpzD5N7iat6T0whANXMiua0ja2xH8skfd2tAv8hgDCXuRoP6uiyXoDEkp51l46rCKSnk2A==
+X-Received: by 2002:a05:622a:1116:b0:476:b764:e315 with SMTP id d75a77b69052e-48e01552646mr147556321cf.52.1746544475983;
+        Tue, 06 May 2025 08:14:35 -0700 (PDT)
+Received: from tachyon.tail92c87.ts.net ([192.159.180.233])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-48b966cda7esm74613751cf.21.2025.05.06.08.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 08:14:35 -0700 (PDT)
+From: Tavian Barnes <tavianator@tavianator.com>
+To: linux-sound@vger.kernel.org
+Cc: Tavian Barnes <tavianator@tavianator.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Brent Lu <brent.lu@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	sound-open-firmware@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND v2] ASoC: SOF: Intel: hda: Fix UAF when reloading module
+Date: Tue,  6 May 2025 11:12:33 -0400
+Message-ID: <5aaee9fdfe8437ef2566b200bea45e4baaba3fcb.1745426811.git.tavianator@tavianator.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1746541531.git.agordeev@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Flo7NbBOtUBXTZo_5Gpx1aOjUuybx3zX
-X-Proofpoint-GUID: 69YYGADS6fH5-LuvTenpw2Dg75BsPUia
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDE0NiBTYWx0ZWRfX/X6drwUxPPFI wPjp8DsQhNGJMfga0vYSpVzRYC936Loz+CkS8LmgXtCjGdpwTaTQgmK8nn/Lwhm25c58ldAcaTO NVVyKdh4YPYswJ90hhPJWq4y7kZ3qgOtmG5FBkOeK5yjLTPut7cRrgzAkmBwO1iKi8z7++DzsaH
- XnPE9ApE9NAGkG4hj8VW+xj+jWWYczMGC8LtDryXpSrs74qdxiIohE1swH6ehzte4nCNoux2OGs tPrLI33d4xDfsu9Vte+IBZzObJrqvlGlSK9MpzJP+P6wbbfy4v2H2pWbctrI79YhRFpiZOJKB9s APsv7zqH/cHbn0agWiQh9jXdWVippB0lh2QywrZpY/AYZrSRNn0frtpsJ7pRPzHLZZPnuiVjSJ7
- g6/T9zzOsgB/q2g69FQazs2MIn75IM+hkyTIXce/jFSSYO4gQ+B4zn6IoqTYg/aq/LM5l31k
-X-Authority-Analysis: v=2.4 cv=FJcbx/os c=1 sm=1 tr=0 ts=681a26d1 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=yOTKoNjM66L08_-4LxgA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_07,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=401 phishscore=0 impostorscore=0 suspectscore=0 mlxscore=0
- malwarescore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 adultscore=0
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505060146
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 06, 2025 at 04:34:32PM +0200, Alexander Gordeev wrote:
+hda_generic_machine_select() appends -idisp to the tplg filename by
+allocating a new string with devm_kasprintf(), then stores the string
+right back into the global variable snd_soc_acpi_intel_hda_machines.
+When the module is unloaded, this memory is freed, resulting in a global
+variable pointing to freed memory.  Reloading the modules then triggers
+a use-after-free:
 
-Self-NACK based on comments to v3.
+BUG: KFENCE: use-after-free read in string+0x48/0xe0
+
+Use-after-free read at 0x00000000967e0109 (in kfence-#99):
+ string+0x48/0xe0
+ vsnprintf+0x329/0x6e0
+ devm_kvasprintf+0x54/0xb0
+ devm_kasprintf+0x58/0x80
+ hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
+ sof_probe_work+0x7f/0x600 [snd_sof]
+ process_one_work+0x17b/0x330
+ worker_thread+0x2ce/0x3f0
+ kthread+0xcf/0x100
+ ret_from_fork+0x31/0x50
+ ret_from_fork_asm+0x1a/0x30
+
+kfence-#99: 0x00000000198a940f-0x00000000ace47d9d, size=64, cache=kmalloc-64
+
+allocated by task 333 on cpu 8 at 17.798069s (130.453553s ago):
+ devm_kmalloc+0x52/0x120
+ devm_kvasprintf+0x66/0xb0
+ devm_kasprintf+0x58/0x80
+ hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
+ sof_probe_work+0x7f/0x600 [snd_sof]
+ process_one_work+0x17b/0x330
+ worker_thread+0x2ce/0x3f0
+ kthread+0xcf/0x100
+ ret_from_fork+0x31/0x50
+ ret_from_fork_asm+0x1a/0x30
+
+freed by task 1543 on cpu 4 at 141.586686s (6.665010s ago):
+ release_nodes+0x43/0xb0
+ devres_release_all+0x90/0xf0
+ device_unbind_cleanup+0xe/0x70
+ device_release_driver_internal+0x1c1/0x200
+ driver_detach+0x48/0x90
+ bus_remove_driver+0x6d/0xf0
+ pci_unregister_driver+0x42/0xb0
+ __do_sys_delete_module+0x1d1/0x310
+ do_syscall_64+0x82/0x190
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Fix it by saving the filename in pdata->tplg_filename instead, just like
+every other code path that appends to the tplg filename.
+
+Fixes: 5458411d7594 ("ASoC: SOF: Intel: hda: refactoring topology name fixup for HDA mach")
+Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
+---
+v2: Fix typo
+
+ sound/soc/sof/intel/hda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+index b34e5fdf10f1..1767977e7cff 100644
+--- a/sound/soc/sof/intel/hda.c
++++ b/sound/soc/sof/intel/hda.c
+@@ -1069,7 +1069,7 @@ static void hda_generic_machine_select(struct snd_sof_dev *sdev,
+ 				if (!tplg_filename)
+ 					return;
+ 
+-				hda_mach->sof_tplg_filename = tplg_filename;
++				pdata->tplg_filename = tplg_filename;
+ 			}
+ 
+ 			if (codec_num == 2 ||
+-- 
+2.49.0
+
 
