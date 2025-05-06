@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-635550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A3BAABEF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:18:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047C6AABF0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A345F52157D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:18:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009FF3BA429
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02437278768;
-	Tue,  6 May 2025 09:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB904264F88;
+	Tue,  6 May 2025 09:17:12 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB124278759
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6A2191F8F
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746522989; cv=none; b=hjJQT1h2F5tEzTehmTJD88m5YpFBOVTXkpFVnjXG7jZTBdy2ssMO8VGknPmgapJ5IXTMexpQiT3ptSlbEm4iX+x3JUyeqAHYkRNHcANGXC9gBHX76F0uXjt7U0s6y2Q99HoZBUc6bsvlo+kh46dzlDyy3mhGZ2LlQ2KQRPiaybI=
+	t=1746523032; cv=none; b=AfRmE04IGLbmcCNMtEA4yrA0KM12rRJEzNj8zTWQ37jAJRJAElNShf4VL2/WT9LxfklNpumoI2tkbF+oQmDOrU/YT2qvhNyeHv9t+JPYtmUAda0Yo6q7nLhocu5ImFiKF4nsB7YHWlboSCrYKSiSRXuOn7xm7DmUuxusLQxObAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746522989; c=relaxed/simple;
-	bh=qPFHgHnT4BdXsfQjhuHPGPviCnIRn4Xp2l8althg+MQ=;
+	s=arc-20240116; t=1746523032; c=relaxed/simple;
+	bh=Y+nlUMn0voWnZlcEBa3YawHwYHEvsotUvnhK/dUzArA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d92zG8b/f3QfmF6M84D7yjKVgIuIMdeBPDz2JYyLM6mDRor+iqFGaXKvXYZE8LYZm4D40qFYoTrtn/EXGyZZ3ndpkXXFQUJ9NrT9fhH9g3VOw8/Ht9Xp07DIL4whVtKty9h58avNV1k5Dbor1EqSg6miWfnsRftBbug8k+89gA4=
+	 In-Reply-To:Content-Type; b=nwMB4jugNZbgpSqBbk+VEpA9MYNsJjkOCVABgTpC1+f1M4WtoF/9GKoktpuaiAkX95OWK6g1EbnCbtNksgUJ8YZDuHmWU/i/ZKPJm+CVA0uYlGZQuwuJ6qLdDUYLyPpfP+MMjXJC+zbXKb7Kvz1WOVegU8HFZd0dOQ0B0IGcC3U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4569F113E;
-	Tue,  6 May 2025 02:16:17 -0700 (PDT)
-Received: from [10.163.54.208] (unknown [10.163.54.208])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FC403F5A1;
-	Tue,  6 May 2025 02:16:19 -0700 (PDT)
-Message-ID: <b26480a7-ea81-408a-b287-7cd52571a1d0@arm.com>
-Date: Tue, 6 May 2025 14:46:15 +0530
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5216E113E;
+	Tue,  6 May 2025 02:17:00 -0700 (PDT)
+Received: from [10.162.43.13] (K4MQJ0H1H2.blr.arm.com [10.162.43.13])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF7EB3F5A1;
+	Tue,  6 May 2025 02:17:02 -0700 (PDT)
+Message-ID: <0857761c-bb4c-4ea5-a96a-90d555673527@arm.com>
+Date: Tue, 6 May 2025 14:46:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,41 +41,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Optimize mremap() by PTE-batching
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com,
- ryan.roberts@arm.com, mingo@kernel.org, libang.li@antgroup.com,
- maobibo@loongson.cn, zhengqi.arch@bytedance.com, baohua@kernel.org,
- willy@infradead.org, ioworker0@gmail.com, yang@os.amperecomputing.com
-References: <20250506050056.59250-1-dev.jain@arm.com>
+Subject: Re: [PATCH v2 6/7] mm: Batch around can_change_pte_writable()
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com, willy@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
+ joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
+ kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, namit@vmware.com, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250429052336.18912-1-dev.jain@arm.com>
+ <20250429052336.18912-7-dev.jain@arm.com>
+ <25dcf969-e479-4d4a-a95c-0e83706af99e@redhat.com>
+ <9a770aec-a020-4199-a53e-eddda657999d@redhat.com>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250506050056.59250-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <9a770aec-a020-4199-a53e-eddda657999d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 5/6/25 10:30, Dev Jain wrote:
-> Use PTE batching to optimize mremap().
-> 
-> Mapping 512K of memory, memsetting it, remapping it to src + 512K, and
-> munmapping it 10,000 times, the average execution time reduces from 1.9 to
-> 1.2 seconds, giving a 37% performance optimization. (Apple M3)
 
-That's impressive improvement. But could you please re-organize the test
-description into a pseudo code format or better provide the test program
-itself (which should be compact anyways) just to be more clear about the
-scenario where this helps.
 
+On 29/04/25 2:57 pm, David Hildenbrand wrote:
+> On 29.04.25 11:19, David Hildenbrand wrote:
+>>
+>>>    #include "internal.h"
+>>> -bool can_change_pte_writable(struct vm_area_struct *vma, unsigned 
+>>> long addr,
+>>> -                 pte_t pte)
+>>> +bool can_change_ptes_writable(struct vm_area_struct *vma, unsigned 
+>>> long addr,
+>>> +                  pte_t pte, struct folio *folio, unsigned int nr)
+>>>    {
+>>>        struct page *page;
+>>> @@ -67,8 +67,9 @@ bool can_change_pte_writable(struct vm_area_struct 
+>>> *vma, unsigned long addr,
+>>>             * write-fault handler similarly would map them writable 
+>>> without
+>>>             * any additional checks while holding the PT lock.
+>>>             */
+>>> -        page = vm_normal_page(vma, addr, pte);
+>>> -        return page && PageAnon(page) && PageAnonExclusive(page);
+>>> +        if (!folio)
+>>> +            folio = vm_normal_folio(vma, addr, pte);
+>>> +        return folio_test_anon(folio) && ! 
+>>> folio_maybe_mapped_shared(folio);
+>>
+>> Oh no, now I spot it. That is horribly wrong.
+>>
+>> Please understand first what you are doing.
 > 
-> Dev Jain (3):
->   mm: Call pointers to ptes as ptep
->   mm: Add generic helper to hint a large folio
->   mm: Optimize mremap() by PTE batching
+> Also, would expect that the cow.c selftest would catch that:
 > 
->  include/linux/pgtable.h | 16 +++++++++++++++
->  mm/mremap.c             | 44 +++++++++++++++++++++++++++--------------
->  2 files changed, 45 insertions(+), 15 deletions(-)
+> "vmsplice() + unmap in child with mprotect() optimization"
 > 
+> After fork() we have a R/O PTE in the parent. Our child then uses 
+> vmsplice() and unmaps the R/O PTE, meaning it is only left mapped by the 
+> parent.
+> 
+> ret = mprotect(mem, size, PROT_READ);
+> ret |= mprotect(mem, size, PROT_READ|PROT_WRITE);
+> 
+> should turn the PTE writable, although it shouldn't.
+> 
+> If that test case does not detect the issue you're introducing, we 
+> should look into adding a test case that detects it.
+> 
+
+Hi David, I am afraid I don't understand my mistake :( PageAnon(page) 
+boils down to folio_test_anon(folio). Next we want to determine whether 
+the page underlying a PTE is mapped exclusively or not. I approximate 
+this by folio_maybe_mapped_shared -> if the folio => all pages are 
+mapped exclusively, then I convert the entire batch to writable. If one 
+of the pages is mapped shared, then I do not convert the batch to 
+writable, thus missing out on the optimization. As far as I understand,
+the test failure points out exactly this right?
+
+Do you suggest an alternate way? My initial approach was to add a new 
+flag to folio_pte_batch: FPB_IGNORE_ANON_EXCLUSIVE, but from an API 
+design PoV Ryan pointed out that that looked bad.
+
 
