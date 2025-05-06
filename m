@@ -1,160 +1,215 @@
-Return-Path: <linux-kernel+bounces-635052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D10AAB8F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:46:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A09AAB9CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D0177BC353
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A650D3A6E53
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E32128A710;
-	Tue,  6 May 2025 04:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDED827FD68;
+	Tue,  6 May 2025 04:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GbWo8vOG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="S2nmGBhv"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18A82DB4BA
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 01:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3939F2F94DE
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 02:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746496675; cv=none; b=qDJzoGwK+Kr6QQ3pGnD5w0Uzn9EDPXbz/DP9vlm7gNB3vkvsKPOzGvaSDncIei+vWtwLNWvMnoxcpASa9G0ifpmaAVAfkwy3KS31JT2Iel/vqBwQGlMCwQ0IF3A8EDturwDZljclf/mjiLaXh+peU3b/uPBVwzftUS+crOSwdhs=
+	t=1746496835; cv=none; b=vCjPLM8DK83k21vm9M/jMsUF3IcQlFfGJE0LhKuIU4+9Xt1dSbJFfOHsTlrOYdG4ktDLbUIECrrE8ElU4BjVMRrcUHBg9HCu11SlRjIYr+xmFTRsKsvSHeoG8C14YTgbRDI+w7KNq3nM0Hqvoo3rWRq3bOe0V4HK6TM+9fWfS+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746496675; c=relaxed/simple;
-	bh=3s7Hp5cIAh2gzAdflFBnqXwP/wo95uEvSqq+OEM9wOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d345vZN8yw9v3Cw4fC5VupcixXS9A+yPQEnodjFgTG97kFsDl/Ia8IqJmKh7uT5IHGjzIESg3WJA4dZJ61Ln+x2vvDofHkTT7ibyZ9j078ajsnPkgIQY0H7NBZS/zQ1A4KeICA+QpStCuNaWKAX5pmHG0PYby3vpoTa9l43T0rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GbWo8vOG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746496672;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xMLcPl3iKBUpkeNrh92Lo4eyOS4pTDnll1BJ+NR3yFc=;
-	b=GbWo8vOGws3vDcPygZZdQsJoGW9U96Mt1DGPsmzT2zcvSvOnDA/wrgv1tNe84Gc+3BqGPH
-	WB3ZEhi8bi/r8kxJOO2vseblEVJwENhDybzRa7WyY3M1r08gIUJCw1RSPMlhWd1OGDUoAS
-	avvVew9ls2ZNNZVbvK0acxmwYie46Xg=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-363-piKY1hTlPA-5mrGFa0Qp2g-1; Mon, 05 May 2025 21:57:51 -0400
-X-MC-Unique: piKY1hTlPA-5mrGFa0Qp2g-1
-X-Mimecast-MFC-AGG-ID: piKY1hTlPA-5mrGFa0Qp2g_1746496670
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d586b968cfso102078545ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 18:57:51 -0700 (PDT)
+	s=arc-20240116; t=1746496835; c=relaxed/simple;
+	bh=ry0aJgSb3sCbxCwVp83cf+hVEA3YU6KQUqMGgzP39dA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WD/BGRXjmX+zOBguwNqm3Gp2yfENwZWNuP17jA7X558ZIr5LsaEEgv56CtIcffW5CQZfMcuCWdW6kwyDcv1mqDIpQm/8W+E94m3mZ8XwDLi/BLUukJYeh5brtd8sbksJp+fip53GewjVe5EI09Hi9i+ysyc0tbDVrm7OE5fuvTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=S2nmGBhv; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-736b350a22cso4223153b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 May 2025 19:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1746496831; x=1747101631; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YQByGO6N0rnX/TuW9q2WHCZc5Qs2xvL6Ul/xODxMQm8=;
+        b=S2nmGBhvcd+xAbHr8c2BDfyEJvcBBlBD4/aTXsPaxbWzcH3sqJxd2QCsx2bSYmUESd
+         pXsqVH8gFym1izqvfr21rMaQIuj/sjHvygW6mWv2SshjnlPdLb5QL3DLYFVZ/JNFz9/Y
+         3CDx+cJIDFn1eAI28P299mpkMk7LARt0Zka12hFTZMP4yi6uYedeh8mETk5Z3XqsMAXr
+         bdS3/9bZWCIF4fePE9sHKT4Uo6PImZZl1mfH2qbefDgWGoxjlgVra3BTzW0I+npq/3O0
+         ZEFaAtKonoZBCIWg3JUljZQbxZ+3GL7D/DTUUW7onvxYAMp4lRluExhF0+fjatC5N0l/
+         15IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746496670; x=1747101470;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xMLcPl3iKBUpkeNrh92Lo4eyOS4pTDnll1BJ+NR3yFc=;
-        b=AurtsmgAWQkm9SPo2QM955CLHBqTHzl43dQvZxbEZ7i5ISuRqjqd+Vm2pakP+tkmv3
-         UQkTQgFEZTLj5Bc+607N3SVI+jg/c19e0XXAthJpl1yCBxGjt0QBJrLhMr7/S5IDUt+R
-         NnHT2f67LO5jGo3raItOXy14Ib6teNNXyv6oHT5P17jD1cFX3HIWpGOZyvgx36+4VKnF
-         WThFchhYzrMpmeXJC2j19nehsdjQGsnCaaDrtH+3N7Zzi9yOI13WPCxgwmVcygM8U0Ou
-         zGmseVnfiiLQ/NnBrYsC+p5wLjCulvR5gHkoq/EG0JM7WwjuRVIlwEui3IZeC5ZJFq6F
-         GZXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSDrlDJhCodJrm0xciWzVYojOvjaulbgfDEL/HhEeevqmdYcjVR/vCTTFUt71XJVDLt8lFgkRMvyZYwqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqPfp+ZqwXV2ja9pHMHBjargjAU8Hu3E+gW+EHEb+n6bz9rwwD
-	TVZ+Da8iUNkCMFkGztXr0KLDxOwX3fKoX+VyHvDSLIk/xzxqTH3U7PvjCKR5qhDnYndwQ3gOQTp
-	SP5ImKbVCdKM+50NE6Fn/gmHjWusb5W4J/BePDmOAwfS6CPmItwaGCxQD5TjAQQ==
-X-Gm-Gg: ASbGncvQJj+8XnZhdZJKz094GrMnqyyFqe3rJ8oWzyM7Svdw+PrKbJYQ1dPyw90PvGK
-	Hb57gP3V7Yrxd76ZkXbf/zpkHkbi05FaDbYm5R3hpj5D6I0DC/6OgAXXUC4M40vg1/VMIVJ3Ms2
-	ezhEz+P6KBxOxbTqqR6Iq9X1hc4Q1xWeY4S/BRgGDEiH8jolJZGpxEH+cKSNxZcMfhbeWV6zJ/6
-	05Taz5F5HeNz4P7kv2UoqZA5DiXjNGVkH0sfp7EMblWG/zii47e8gUWC5oXPV1ZSNvnSYQcwl/d
-	yjtkHvl30UGYooksTJTbS2zx4wG5dDEwPRK97LhqNtvvFxtl1A==
-X-Received: by 2002:a05:6e02:3486:b0:3d8:2023:d057 with SMTP id e9e14a558f8ab-3da6cde18c2mr16092355ab.11.1746496670318;
-        Mon, 05 May 2025 18:57:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG0rAJvKFUUhFhbgbTRiDocZ8gkc3d2s5yO8VLR73Cn1xBSmtzwyXjRkJ3Ch72ghFkrMJrr6Q==
-X-Received: by 2002:a05:6e02:3486:b0:3d8:2023:d057 with SMTP id e9e14a558f8ab-3da6cde18c2mr16092185ab.11.1746496670048;
-        Mon, 05 May 2025 18:57:50 -0700 (PDT)
-Received: from [10.0.0.82] (97-116-169-14.mpls.qwest.net. [97.116.169.14])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88aa93f35sm2003005173.126.2025.05.05.18.57.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 18:57:49 -0700 (PDT)
-Message-ID: <2102fabb-bde3-4eaa-ad38-18eb79281e0b@redhat.com>
-Date: Mon, 5 May 2025 20:57:48 -0500
+        d=1e100.net; s=20230601; t=1746496831; x=1747101631;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YQByGO6N0rnX/TuW9q2WHCZc5Qs2xvL6Ul/xODxMQm8=;
+        b=RGdGCBnRy6G25Jx+reJ6hvEn+UFMdv0/ESGJd9iv7ZODNM6fICylAdTDVPr4d08dVr
+         u7a8aDRNq0s3zFyEw4e19tDHIcTWLoyFEuYz0H0AYGUG/fenE/4b+ZNKmVXnsanGHoXp
+         i6e1grF7Yg2aR/xFlix6ZNnSc+xfIB2590qDxR7H7dCmLnyLpSvvfLYBnf7U7S1boo+N
+         ujU8DozxvtmlUb/+ogsk/5GbwJPJSWGFyOBm3DwegZXWaqljN6l8uxWbkHun7I10326Q
+         9HBDMV+9Q1fn78nn2T3dOrkVA69tSxvPxsqcKsKIQPa78y5rGnSQ6CMIPcQU/IspI85q
+         lbqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyP0812ndFa8DfNIDaBi1lwDBXZkwU6A84xKYk8ra98Tf18+zIsVPsOfYGOf09wxoXui9ktvuiqJbq4kU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFu/Xpbut+1JKbEeVQeR5oKy7RvqFEFzO/SSWcyN9DCgSEE9BQ
+	+PoNlMq+K7aELFuepLuKUkgGTYeK7q6qrr9qNYSpC1dT5lg2mCczwarg3xZkqpc=
+X-Gm-Gg: ASbGncuocU2tuSqMbzragU1cixyiHVCpiW3uSPuk88VJW563r1OiWuqyBH5xhh3xiXS
+	2T2nhGjIqQJ+5Oz4C80JTptyfLLpCoHe8SOK8BhyCxxAr7VW+lB3VI+CKgCPfEvi9kVq5aqan6x
+	C2KZt9iDQyG+mfyvpGvgc+UlxDvmN4t+95Q1YNIjzKjJ0sX9LaApGDXz8RoHj165+Fd1oHknpiI
+	MV958pZTjgmAywj4ooMgFS4YpZ7xvUxuQC/Aqs+HEgOCZ6/0bqM86UWeIQ1Xr8ryMlq/x1LwnsD
+	Rc6VEj8erBXhnwDu/kicIhrUDRJ5lx4nh1WV
+X-Google-Smtp-Source: AGHT+IEdlH1n0D+wkqN6hRoakc2to2f4rJ9K96RWI2O330Mu8H40SWlfPZyCMdCvXpGOn/xBhGlcuw==
+X-Received: by 2002:a05:6a00:6ca1:b0:736:5753:12f7 with SMTP id d2e1a72fcca58-740589050bdmr23874814b3a.3.1746496831312;
+        Mon, 05 May 2025 19:00:31 -0700 (PDT)
+Received: from ghost ([2601:647:6700:64d0:4221:9525:e8d6:875f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7405901e1f9sm7613285b3a.87.2025.05.05.19.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 19:00:30 -0700 (PDT)
+Date: Mon, 5 May 2025 19:00:28 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Himanshu Chauhan <hchauhan@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Subject: Re: [RFC PATCH 2/2] riscv: Introduce support for hardware
+ break/watchpoints
+Message-ID: <aBltPLLrvUNKR857@ghost>
+References: <20240222125059.13331-1-hchauhan@ventanamicro.com>
+ <20240222125059.13331-3-hchauhan@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH AUTOSEL 6.14 156/642] f2fs: defer readonly check vs
- norecovery
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Cc: Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20250505221419.2672473-1-sashal@kernel.org>
- <20250505221419.2672473-156-sashal@kernel.org>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <20250505221419.2672473-156-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240222125059.13331-3-hchauhan@ventanamicro.com>
 
-This commit is in no way a bugfix and I don't see any reason to
-backport it to stable kernels.
-
-Thanks,
--Eric
-
-On 5/5/25 5:06 PM, Sasha Levin wrote:
-> From: Eric Sandeen <sandeen@redhat.com>
+On Thu, Feb 22, 2024 at 06:20:59PM +0530, Himanshu Chauhan wrote:
+> RISC-V hardware breakpoint framework is built on top of perf subsystem and uses
+> SBI debug trigger extension to install/uninstall/update/enable/disable hardware
+> triggers as specified in Sdtrig ISA extension.
 > 
-> [ Upstream commit 9cca49875997a1a7e92800a828a62bacb0f577b9 ]
-> 
-> Defer the readonly-vs-norecovery check until after option parsing is done
-> so that option parsing does not require an active superblock for the test.
-> Add a helpful message, while we're at it.
-> 
-> (I think could be moved back into parsing after we switch to the new mount
-> API if desired, as the fs context will have RO state available.)
-> 
-> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-> Reviewed-by: Chao Yu <chao@kernel.org>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
 > ---
->  fs/f2fs/super.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+>  arch/riscv/Kconfig                     |   1 +
+>  arch/riscv/include/asm/hw_breakpoint.h | 327 ++++++++++++
+>  arch/riscv/include/asm/kdebug.h        |   3 +-
+>  arch/riscv/kernel/Makefile             |   1 +
+>  arch/riscv/kernel/hw_breakpoint.c      | 659 +++++++++++++++++++++++++
+>  arch/riscv/kernel/traps.c              |   6 +
+>  6 files changed, 996 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/riscv/include/asm/hw_breakpoint.h
+>  create mode 100644 arch/riscv/kernel/hw_breakpoint.c
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index b8a0e925a4011..d3b04a589b525 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -728,10 +728,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->  			set_opt(sbi, DISABLE_ROLL_FORWARD);
->  			break;
->  		case Opt_norecovery:
-> -			/* this option mounts f2fs with ro */
-> +			/* requires ro mount, checked in f2fs_default_check */
->  			set_opt(sbi, NORECOVERY);
-> -			if (!f2fs_readonly(sb))
-> -				return -EINVAL;
->  			break;
->  		case Opt_discard:
->  			if (!f2fs_hw_support_discard(sbi)) {
-> @@ -1418,6 +1416,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->  		f2fs_err(sbi, "Allow to mount readonly mode only");
->  		return -EROFS;
->  	}
+
+...
+
+> diff --git a/arch/riscv/kernel/hw_breakpoint.c b/arch/riscv/kernel/hw_breakpoint.c
+> new file mode 100644
+> index 000000000000..7787123c7180
+> --- /dev/null
+> +++ b/arch/riscv/kernel/hw_breakpoint.c
 > +
-> +	if (test_opt(sbi, NORECOVERY) && !f2fs_readonly(sbi->sb)) {
-> +		f2fs_err(sbi, "norecovery requires readonly mount");
-> +		return -EINVAL;
+> +void clear_ptrace_hw_breakpoint(struct task_struct *tsk)
+> +static int __init arch_hw_breakpoint_init(void)
+> +{
+> +	unsigned int cpu;
+> +	int rc = 0;
+> +
+> +	for_each_possible_cpu(cpu)
+> +		raw_spin_lock_init(&per_cpu(ecall_lock, cpu));
+> +
+> +	if (!dbtr_init)
+> +		init_sbi_dbtr();
+> +
+> +	if (dbtr_total_num) {
+> +		pr_info("%s: total number of type %d triggers: %u\n",
+> +			__func__, dbtr_type, dbtr_total_num);
+> +	} else {
+> +		pr_info("%s: No hardware triggers available\n", __func__);
+> +		goto out;
 > +	}
 > +
->  	return 0;
->  }
->  
+> +	/* Allocate per-cpu shared memory */
+> +	sbi_dbtr_shmem = __alloc_percpu(sizeof(*sbi_dbtr_shmem) * dbtr_total_num,
+> +					PAGE_SIZE);
+> +
+> +	if (!sbi_dbtr_shmem) {
+> +		pr_warn("%s: Failed to allocate shared memory.\n", __func__);
+> +		rc = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	/* Hotplug handler to register/unregister shared memory with SBI */
+> +	rc = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
 
+When using this, only hart 0 is getting setup. I think instead we want
+the following to have all harts get setup:
+
+	for_each_online_cpu(cpu)
+		arch_smp_setup_sbi_shmem(cpu);
+
+	/* Hotplug handler to register/unregister shared memory with SBI */
+	rc = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+
+
+However, I am testing against tip-of-tree opensbi and am hitting an
+issue during the setup on all harts:
+
+[    0.202332] arch_smp_setup_sbi_shmem: Invalid address parameter (18446744073709551611)
+[    0.202794] CPU 0: HW Breakpoint shared memory registered.
+
+Additionally, this seems like it should be a fatal error, but it
+continues on to print that the shared memory is registered because there
+is no check before printing this seemingly successful message.
+
+I know I am reviving an old thread, but do you have any insight into
+what might be happening?
+
+- Charlie
+
+> +			       "riscv/hw_breakpoint:prepare",
+> +			       arch_smp_setup_sbi_shmem,
+> +			       arch_smp_teardown_sbi_shmem);
+> +
+> +	if (rc < 0) {
+> +		pr_warn("%s: Failed to setup CPU hotplug state\n", __func__);
+> +		free_percpu(sbi_dbtr_shmem);
+> +		return rc;
+> +	}
+> + out:
+> +	return rc;
+> +}
+> +arch_initcall(arch_hw_breakpoint_init);
+> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+> index a1b9be3c4332..53e1dfe5746b 100644
+> --- a/arch/riscv/kernel/traps.c
+> +++ b/arch/riscv/kernel/traps.c
+> @@ -277,6 +277,12 @@ void handle_break(struct pt_regs *regs)
+>  	if (probe_breakpoint_handler(regs))
+>  		return;
+>  
+> +#ifdef CONFIG_HAVE_HW_BREAKPOINT
+> +	if (notify_die(DIE_DEBUG, "EBREAK", regs, 0, regs->cause, SIGTRAP)
+> +	    == NOTIFY_STOP)
+> +		return;
+> +#endif
+> +
+>  	current->thread.bad_cause = regs->cause;
+>  
+>  	if (user_mode(regs))
+> -- 
+> 2.34.1
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
