@@ -1,86 +1,191 @@
-Return-Path: <linux-kernel+bounces-635100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8169AAB991
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE67AAB97A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFD211C250F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:55:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B6A4A3EF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6D8200BA1;
-	Tue,  6 May 2025 04:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABEC28641F;
+	Tue,  6 May 2025 04:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpscIeyc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qHr3baVd"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2042.outbound.protection.outlook.com [40.107.95.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081C128033F
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 02:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746500024; cv=none; b=Av4YV+ka/CKFFWBRLUMJ+NGhRO8sHl5wpQLpj4C8jWbDlBO0xSoSOW4u/HhiU5ex5xFcvo1GIivwPktIHqbgBsPCDn/S7R/dblK8Mz+QZBKtFSC90QydtbKxcGh8mDSvsq0b+DqsIn7CSYR0Mysmj0xJyqkgppJYUrBtT80XJZY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746500024; c=relaxed/simple;
-	bh=G70iaAf67I0fVy6Ne5IGZ1U6+i+Badhe5dvPxOfehnw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DhzBHYoCqou8xg+/EWzFX8cBu3O7LGh+0dEqtT04kn2YjCjiSlPkk1ICx6AwfQ1vUTqDXOe2CL9rvmPhQKnvzW1b3NTqkcGfFi/+q9xHNcBQTXXq4d+kKS45PhOL3k9DNFnmQ8eH0Rf6/H20cCvOLdO3/RO2N/tLzjdH0Bf8Rjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpscIeyc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96820C4CEE4;
-	Tue,  6 May 2025 02:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746500022;
-	bh=G70iaAf67I0fVy6Ne5IGZ1U6+i+Badhe5dvPxOfehnw=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=TpscIeycIQ2bWOXm/8mPMlmH8FWe8/LOZJyhuGGHDW+9RlTjjFm0vM76SyqPK9bn1
-	 suOyi8yEyBcfuDnNTPth9MxL9oAuDPaudtIelNaIaVkzZSiBHltflYUiySuv8EEuyj
-	 p2sxz9JKoC70iN2leH5lumytcWwlkzESTnGbxgbOrqfl8wydi5JI0uHmmBfNbO378Y
-	 eI2pvvNbBO73QsVS6/uMVj9DpCl4TsPqcJXpetdW6fZcofJBuhbsjFS3s57EcQGkEA
-	 Q9a3WUEHpjQa1Rqp7HV8fMgpnTyyvJ35zBcxNXUdjyEl+BVePj2bBcmGwp/8SmvyII
-	 m5tWeTZ31tsuA==
-Message-ID: <96b206b2-4808-4cbb-960c-016b07dec3bf@kernel.org>
-Date: Tue, 6 May 2025 10:53:37 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5C435AD7A;
+	Tue,  6 May 2025 02:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746500073; cv=fail; b=G0wr2yUTXXWn1WNHnYq5xA+712yCq6TaYF33GIh7hGmhgashWLOkJypDFLRRZ2we+OF5VCoI4VCjEDaDVF7vpdh+R4MFNn1WReDPogYKbhWwegG2sQ5G+QfLbBzb/x4Sz2bN5QAimAiL1MIvuFPPCtpX3t+eZcr0LHi2LLp0U3g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746500073; c=relaxed/simple;
+	bh=J8MDOvgpvmj7O1bztuRNSxjGf6RRdQAoFsLoNlbCHbk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZopBbZgmQlhULFBwD8Ov3bZJyOWA+NhTkS86mABerBSFnFVrNywLxexPG9cvqNYGWAigMZhZq2lLj5uRPylw/MG6ydj4qLVzdtmU8xHJSe+Zvmu7ebsIOeDbLBOCZeu2P/uxsAxseoFG7FwM+s4KnUol3+N2cNWnGurYfpoJaBs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qHr3baVd; arc=fail smtp.client-ip=40.107.95.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q6eBExx1eL1zL/02yABWINFupkd8vGrXgWuNXIpvJODat07yMG33YgowKDhCCFC2ZcNiRW5xTjJCiaAIQeQzHCGofl/V1AmMkEJJnrw8FAIP5E5qog+ujONnHfb3O4HeOIkTguYz3CUy3hzI8WTSZgHkzUOlNGWgmF9UYMBibWpEvfpXAenpo1fybnu0XxeLrSDfqj97Te8qLDea1tJ6veO8t/aH2DSF+DcjFlWzcHeIrhI31ekGU2Ts9t8BcnOcKh6iCpTORZIxaJK+OM8H7/r74E3iajsaVk472T5Zfehy1yp6FBmvEMRZ7694cUkZgAgfSVLm1TmE1U5T/mt0eQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nk4xzjyhRxvuRS9iUa8wmhA2oETlZwzpqF+tgsH7aYk=;
+ b=LTSKPqDpFs0nsK1mQ3Sw6E40nLRuPWUCUDqiyOIqVbFnJfvzmORJ4ZBWPXBm575qDChEfGny5o2tSE+Zch9linUwqka0OkIQPDM8VdJ5Rq10Afg9wyiTp3mXoacB1RWa0gcHrD4Jbt2kQuKoTSAlzhXGstRxZG2IcAzt+pS5bi2IMCLDO8LAFHznKA+T8tgwy0CqOod8l05U6Q08A+pN6sGkQp+2o4hzxyL5EPtMBS2fSArhhBQLFD7zlx9RZvPzeNcQX7RAmxtFbY8uIPI72vorbm8X3Kjqytm3aQu2V3oNGH/bfwqTx1JYqk21CQN63FCQ+WimO0h8Ja4jRkeo+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=huawei.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nk4xzjyhRxvuRS9iUa8wmhA2oETlZwzpqF+tgsH7aYk=;
+ b=qHr3baVdyD2lSsW+LyewBTM1Mv9tCJqTDfO2GGw09j/k9uLWDBRz9qzjRg4W9qxC8HhdAHMbRqwLSmZuHaNErEI+usm7aE9q1IiyVop+eQLnWRCUfS8NMxLCcZ2hobdRXFIGeaWWzO5ZGMIOsvG76JORhtxVVsUqsd46jn1d2C/YPpyUf4+SsSTmjy6VaP+ZQguvBC/sD5Ayxd0XblI2BoC4bgxkwtriXhp2/XQHXfolNewiJKhjN+yQ/VkgAStVTxVuFOQWOobdg4HjDVWjBZPHn5JMesYUZAaVZ07zD+lWw/smSq/ohFrhGi3f+/kECJshywzwsD/DdURJ3m0wnQ==
+Received: from BN9PR03CA0957.namprd03.prod.outlook.com (2603:10b6:408:108::32)
+ by CYYPR12MB8855.namprd12.prod.outlook.com (2603:10b6:930:bb::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Tue, 6 May
+ 2025 02:54:25 +0000
+Received: from BN1PEPF00005FFE.namprd05.prod.outlook.com
+ (2603:10b6:408:108:cafe::e0) by BN9PR03CA0957.outlook.office365.com
+ (2603:10b6:408:108::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.28 via Frontend Transport; Tue,
+ 6 May 2025 02:54:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN1PEPF00005FFE.mail.protection.outlook.com (10.167.243.230) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 02:54:23 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 5 May 2025
+ 19:54:17 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 5 May 2025 19:54:18 -0700
+Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.126.190.180)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 5 May 2025 19:53:54 -0700
+Date: Mon, 5 May 2025 19:53:44 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Alexey Kardashevskiy <aik@amd.com>, <kevin.tian@intel.com>,
+	<will@kernel.org>, <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>,
+	<robin.murphy@arm.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+	<shuah@kernel.org>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
+	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
+	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<smostafa@google.com>, <yi.l.liu@intel.com>
+Subject: Re: [PATCH v2 06/19] iommufd/viommu: Add
+ IOMMU_VIOMMU_SET/UNSET_VDEV_ID ioctl
+Message-ID: <aBl5uLOFCntuIYYz@nvidia.com>
+References: <cover.1724776335.git.nicolinc@nvidia.com>
+ <6348cc7a72ce9f2ac0e9caf9737e70177a01eb74.1724776335.git.nicolinc@nvidia.com>
+ <35701c5e-030a-4f52-b6f6-ed18368fb2cd@amd.com>
+ <20241004114147.GF1365916@nvidia.com>
+ <95ab62fa-bb1c-4e4a-a210-b0bdba0d4ad2@amd.com>
+ <aBHYN39FcH+NG5Ab@Asurada-Nvidia>
+ <20250505170807.GP2260709@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, hsiangkao@linux.alibaba.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] erofs: lazily initialize per-CPU workers and CPU
- hotplug hooks
-To: Sandeep Dhavale <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
- Gao Xiang <xiang@kernel.org>, Yue Hu <zbestahu@gmail.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>
-References: <20250501183003.1125531-1-dhavale@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250501183003.1125531-1-dhavale@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250505170807.GP2260709@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFE:EE_|CYYPR12MB8855:EE_
+X-MS-Office365-Filtering-Correlation-Id: 881c4bed-d216-4ba9-03c5-08dd8c494ebd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XTKWsnYJZe9EQhNnsgVDuZV76toPNa2/H8mWryRoRQb8iPCZMIG1w2fm8sFz?=
+ =?us-ascii?Q?oIgTJglbmNPJ8D+ZdmJclsPHXz/x9oCxYPDIcmpQnQyNrHwKZkMNWVycBorL?=
+ =?us-ascii?Q?C0s44QK+TnoLKKc40G7ZiCnMeJGyvm6b9w1PuKxcxMd8e6E3X/TG7dLCqNwN?=
+ =?us-ascii?Q?ZtYKgKYw0PCtVSHYZEJNj8lHY6lF0ftKCF8gViBkWSy1rS5w6cK/H7D4OHC4?=
+ =?us-ascii?Q?uv/nTlf+Ko04aBeo+25yqX4pcdov69QfidWSZR8DLsJMyXVNy7Jhdnl0hexq?=
+ =?us-ascii?Q?RIKKEt3dAbt25Tlodu2Rxs5d9upgB5PeHiIUe8A9bnnuxURTAQOJ8yxwbpeT?=
+ =?us-ascii?Q?ooyM7i3I7Xav3tNDDOWViCLfIUyFKlrWyQXXmJ77g+/Y3XzaFHM7hkUnsdg4?=
+ =?us-ascii?Q?oLZv14hQ05YxUEM+slNlck6ltcAFMjlOvygfG5I6AZqPCzIeOm/bF7tN0gM4?=
+ =?us-ascii?Q?nze/bKKD3PUKUbeeNPscZ9etHMKIJoRbkXALqxEfghOMi9M6qk5eOAe2+Z59?=
+ =?us-ascii?Q?MPUBoarTWxIskOr4vUXz4jqwe0ZgRx7tag4W2ezXjDK/cJ7gkWMK6k2vG4Cz?=
+ =?us-ascii?Q?WFZn/VSU0JobaCzOO4wrw9lAFlB5elSHrHl9orKSeKsZrzZcI9T+vrHz0w7X?=
+ =?us-ascii?Q?Iv497FTwBlaaBDgVH60Mk6T/txCxkr1LMmp0ieUV3f2Tx0KNVoGH/pl/u/p2?=
+ =?us-ascii?Q?8a/0fHnkvrfU7dNfdNA8inol+yQySsfBtSYC0F/vZpt4XFbpXgPcTfOTWdw1?=
+ =?us-ascii?Q?Xliu5hVwWpUPJyhnM1wwP2AtzU7l8ecQzHek4Wjt+pNOhGYNBaeWWByFYrlw?=
+ =?us-ascii?Q?SdrIlqB1oTEit3xlTUXmbDWLKoQKfw9KRU42I2QRUXPaoX/f5LjrHZQpdS5w?=
+ =?us-ascii?Q?A6+SKS0OxnYU79YoSRJN+ch/uqdNm8uFdvbR6WAtxX4iHfQHSWFYIPwoPEiq?=
+ =?us-ascii?Q?/xQqPSLuwO7gsnIUBoGWc62baRQQCS6QtqN8Xf7CUzXpr8o5DGkJiXCSV+yb?=
+ =?us-ascii?Q?5SYxzcTJ7FaCPMy0kMHQc0ruRbkExwT4r64EuCGVJ1BO9YNP0spOZHRqLScX?=
+ =?us-ascii?Q?XolQPP/cM71qAwhz7UQah9xGkN6jkI4RcNnpgd3MZIdAXKFa1ddOb9SX4/zi?=
+ =?us-ascii?Q?46LRjdsxE2uCJHuAiJVe+Aa/0a2IUCMYBN055KSYOsWfZKsstFbJhr/bIyY9?=
+ =?us-ascii?Q?+dnLTXb/tWL40jf5TCanY5WyWzA4P6PJXTHaXVcJS7Se4ub0RksRI+7XRsso?=
+ =?us-ascii?Q?ySOdkZms1+fhrPSZenZV5k7AogoGV6u+WAY+CXKwUqs4LVyLA+/d7lLMG9mn?=
+ =?us-ascii?Q?72vNbpDX2XHH8uWkvC59GmkpVLCyyDdJQD3gPHE8K+e8UU5Ok5lHFzs0j+F/?=
+ =?us-ascii?Q?YZAL5XgqUjdaoVW7JEaEFQ2uwacIt/bfgnF574witj2C1q5yPsadHQADH4O/?=
+ =?us-ascii?Q?Auw4b3ZzuX/Ix/oN39sMKU9yGYUSxWRqdid5qwgzpc6pPekQFIcIt9EgRws3?=
+ =?us-ascii?Q?NRevBnbPD1qvH3HNeZsUrBD47deFxgFwYAff?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 02:54:23.6166
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 881c4bed-d216-4ba9-03c5-08dd8c494ebd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00005FFE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8855
 
-On 2025/5/2 2:30, Sandeep Dhavale wrote:
-> Currently, when EROFS is built with per-CPU workers, the workers are
-> started and CPU hotplug hooks are registered during module initialization.
-> This leads to unnecessary worker start/stop cycles during CPU hotplug
-> events, particularly on Android devices that frequently suspend and resume.
+On Mon, May 05, 2025 at 02:08:07PM -0300, Jason Gunthorpe wrote:
+> On Wed, Apr 30, 2025 at 12:58:47AM -0700, Nicolin Chen wrote:
 > 
-> This change defers the initialization of per-CPU workers and the
-> registration of CPU hotplug hooks until the first EROFS mount. This
-> ensures that these resources are only allocated and managed when EROFS is
-> actually in use.
+> > > ... and I just hit a problem with it - this is basically guest BDFn
+> > > and it works as long as I'm hotplugging the TEE-IO VF into an SNP VM
+> > > but does not when I pass through via the QEMU cmdline - bus numbers
+> > > are not assigned yet. So I have to postpone the vdevice allocation
+> > > till run time, did I miss something here? Thanks,
+> > 
+> > I have a similar case with QEMU ARM64's VM: so vDEVICE on ARM is
+> > allocated at runtime as well because the BDF number isn't ready
+> > at the boot time.
 > 
-> The tear down of per-CPU workers and unregistration of CPU hotplug hooks
-> still occurs during z_erofs_exit_subsystem(), but only if they were
-> initialized.
-> 
-> Signed-off-by: Sandeep Dhavale <dhavale@google.com>
+> Oh that's ugly then.. So you'll need to add some kind of 'modify
+> sid/bdf' operation I think.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+But the initial vDEVICE would be still unusable. Its BDF number is
+literally 0 in my case. It can't be used for SID-based invalidation
+nor the reverse vSID lookup for fault injection..
 
-Thanks,
+> The bus numbers can be reassigned at any time on the fly by the guest
+> by reprogramming the PCI hierarchy.
+
+Yes. If we take some aggressive use case into account, where its
+BDF number could change multiple times, I think it's natural for
+VMM to simply destroy the previous vDEVICE and allocate a new one
+with a new BDF number, right?
+
+Thanks
+Nicolin
 
