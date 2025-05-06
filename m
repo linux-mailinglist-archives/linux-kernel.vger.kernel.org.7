@@ -1,183 +1,118 @@
-Return-Path: <linux-kernel+bounces-636303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E2AAAC963
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:24:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C094AAC964
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39F11C27CC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48DA21C4002E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B64028688E;
-	Tue,  6 May 2025 15:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432B5283FE6;
+	Tue,  6 May 2025 15:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UJ8pQsTh"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yZsawMpd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8/VckwY3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24D9284694
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 15:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353DA2836AF;
+	Tue,  6 May 2025 15:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746544901; cv=none; b=QrQrW9wTKEt4oSJ0q9rvR6WZOEBpsyw979NksB/aQUqrvPItLG9OMV5h5fGPVtMNGpV+5clrIPnlJMKsS4DbAXspxgxyUNG3a4FC1eokirmQtxQa2TEoe8SkmD1MxCoDL6k5iBBBvPtBAqvjDuFkSameW3QbfjA3fuJ6cFcThj8=
+	t=1746544971; cv=none; b=urdAjG739fgnyXM7QZQQHHpwK3uUIUa/G3V0iRwNy+IgF82q+425HB1mCTxh2rQwuSNeVRjpcnORzY739cjKn5FpcTqB5wwSZJ4yGSD683PZPdwFBwWqvYg+gl//ZMp7ovEHjXimpRwCT9LArMtNANMEfd46h82y8dEGME4Y4EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746544901; c=relaxed/simple;
-	bh=RrFCrLCDb2vVGDp7qDTtvDgB7VhO8TX1bChwTPYRekQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxvfSsjnFW+k8VLABEaBLkVxObs06/pMYsGG3AxTpkjFEZ+Dp3mBaoG+T4PW0SJDoBzQYnDFZtnGs9NAwXKTa6X+3SVpuY6L31jzN061mt98FlqDTvftvZitNG2mDsse3MyMlZYi9pkc4P5c0YoHmh63I1mAp/4v2Tyxdc3w71Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UJ8pQsTh; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22c33ac23edso63888455ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 08:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746544897; x=1747149697; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LUMMAqzLfeU2BhLtLW4k1zZhIkqrr7YldwnF+3gqRqE=;
-        b=UJ8pQsThEqTqAkNZ7+wvythibhM6QLHad1B5K0qbZotRMUU9Er+gvGohjeMEZN6iq2
-         y/+Pno2UB+mNvg70PK5nSJuN4Dayhcn5eQCoeO7iLIr2PLudktmaY1EF9VTKBJqjmv2H
-         Egh65+L0t2Lomwbu2fJ3S8qqvoB338zUaCGsx/O9eS1kAsC2IYbcn30TQST+A8/jgKrU
-         xkE5WVEYRmGUKDp0VVdciWsANguEYGzqrVnstf3+DXAnt0+tfo9g1lodhWgR4TcstmvV
-         KFGObojl0fiMczJHycmx3HFOzJEQfcZ0QtQHWStSIcO75UFLu/+rUxV86gL1G6YkIFpM
-         v/jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746544897; x=1747149697;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LUMMAqzLfeU2BhLtLW4k1zZhIkqrr7YldwnF+3gqRqE=;
-        b=Ld8X0Y/WS1VvJ8XQbT+NS8q2u5oCMYC2J/B4/+bfKP2BtsOII9Sydbq3337Ap50aPt
-         M10Pk8xktGoe4NwUWqtuzMqRdCfwXDNa7YH4n77skhXpCg2d5FJHowH0YVlrCJHIseEI
-         mwHx84ON/apqLXUqZ8of3PL6Nd6KAfxVFRxVJ1aidK6uOhq/BKExFj1fr3nE289ZGOLm
-         GdAVAMD831ipm6/CH5yVjuE28W06Jol4fAHedGJELv4C1UofK2M9+yutUd6JLEo6jxxQ
-         S3RDJLTGejojolyFHKzRIlCJtOiZ8EgvXPxG108yOTnP1P/sHqfc3CQleMZ0YvHC8yOF
-         s7Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrsTNBu3Dg9FH3RlGmPkSX+9lEPaJ4W6Je/p8ajhALpBkcjDgt6sbD5xpyS5J5tevGunzK0VuMfvIDje0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4oVBGDuPHS+5djsLWY38Xcp6kxHkWIVVq/RWkGwqCme8ts5SK
-	v0NvEFElsVhLbvPeDvgULdZBesEEhC3QmtVQYoCdJLkqzMy7xNbKNV0tB13R6wE=
-X-Gm-Gg: ASbGncuKVkzP0H50X+rma1/JIq+IRBIRYk92sq7w1gmfb8h+yBM6umhYaAUHWk/Q9JE
-	sAq7DKitHnpHipicu80zLxrt1dW6ET+3Hf9Zyl3U5Iut0uStT/ASBgDoffMmOhffJsGxJvjix9l
-	umhD04r2QfWAnO/v7thhsh2C/oA19RWUl03wszbuxPreM3htdIQbJXbyQ7KmIeYny8RBPEA6HWL
-	XSR37A8/KRvx0NLDmLOATYkk/YGLpcazyF2gwyABfrHjZuL1ZSrwjZYLwc4Ju7T4f5ZkEhezxrz
-	SA+zzdK0P68QQvbtQ1o8mVVz1nBaqv7gGGookfd48g==
-X-Google-Smtp-Source: AGHT+IG9qR+Bw2uygv8xQSXKT77iYKR8E4JwPxPN+b6XzkhfQ8z4EFuMOu2q9YdcGCpJtb1y5nY+aw==
-X-Received: by 2002:a17:902:d40b:b0:22e:4a2e:8ae7 with SMTP id d9443c01a7336-22e4a2e9073mr19297995ad.22.1746544897093;
-        Tue, 06 May 2025 08:21:37 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:fc7c:b927:d229:c0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e15232224sm75295875ad.253.2025.05.06.08.21.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 08:21:36 -0700 (PDT)
-Date: Tue, 6 May 2025 09:21:34 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Peng Fan <peng.fan@oss.nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 1/3] remoteproc: imx_rproc: skip clock enable when M-core
- is managed by the SCU
-Message-ID: <aBoo_p1KlmOieJ50@p14s>
-References: <20250505154849.64889-1-hiagofranco@gmail.com>
- <20250505154849.64889-2-hiagofranco@gmail.com>
- <20250506043835.GB24259@nxa18884-linux>
- <20250506123619.egobussm6b74imso@hiago-nb>
+	s=arc-20240116; t=1746544971; c=relaxed/simple;
+	bh=vvLwrt+vR8KHLhF3zpuPlP67S02q3KQa9oHQBX8soNQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=B0kpgICE8ozVhq7VYTGqtAiACUOL4+i7bCnlSNpMV+CNc2fDOmmxuP6dFsq5SyHx/3BbiOBkWfd1/8evz2kk7NFJS+necrD1qliWQujUJ/8HR983LyUCS7XYNtsHJYeheqaQsyFZje8IGbXZqKgBgFD4Twj5CAjhsnexR5Vnuoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yZsawMpd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8/VckwY3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 06 May 2025 15:22:47 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1746544968;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tx71nHvpttGOnY0SJJXKMLEcYMq87pb/1N+QB7oyqEQ=;
+	b=yZsawMpdyq+qoUi9/1CnjwDslG6nxn9NMsqOFbxS0m9cUiaxqZwZYROcqfIchXHRJxvMZe
+	7f9DHVLYuao4DXWEAvuOhUWf5QZkgGiYIz9PSgyoh+cuCmjf8wt/s7n+H4cG5QpKGJlcK4
+	L971OCwpAjMPzgt2sG49z9ExM2u1x3v0sC4ZjcdieXQjXL3/cpsTqcpkPQP8eyTNsKbS27
+	GceEkrcnIGFm9hCVBqtBo+9XsmRaicem/hDL8swvDCSpFLmpzfQzN/Dn2fSYK2meGj/Bg+
+	rZwV0ImePfLlHiOBxhFQNcHsOSDnuUWeWC9b3TLNQG63R8EpyrnwPvNOjlr55A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1746544968;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tx71nHvpttGOnY0SJJXKMLEcYMq87pb/1N+QB7oyqEQ=;
+	b=8/VckwY35u2OyqYTQOU9TmyURbJMi6l8RKNdjFA/PWRX+fXBNPzT302e4HcNSUQVKf+Ep6
+	dlzMg1dXBZypQWBg==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/drivers] irqchip/econet-en751221: Switch to
+ irq_domain_create_linear()
+Cc: Thomas Gleixner <tglx@linutronix.de>, Caleb James DeLisle <cjd@cjdns.fr>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <877c2top39.ffs@tglx>
+References: <877c2top39.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506123619.egobussm6b74imso@hiago-nb>
+Message-ID: <174654496739.406.10029798982347531476.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 06, 2025 at 09:36:19AM -0300, Hiago De Franco wrote:
-> Hi Peng,
-> 
-> On Tue, May 06, 2025 at 12:38:35PM +0800, Peng Fan wrote:
-> > On Mon, May 05, 2025 at 12:48:47PM -0300, Hiago De Franco wrote:
-> > >From: Hiago De Franco <hiago.franco@toradex.com>
-> > >
-> > >For the i.MX8X and i.MX8 family SoCs, when the M-core is powered up
-> > >before Linux starts (e.g., by the bootloader) and it is being managed by
-> > >the SCU, the SCFW will not allow the kernel to enable the clock again.
-> > >This currently causes an SCU fault reset when the M-core is up and
-> > >running and the kernel boots, resetting the system.
-> > >
-> > >Therefore, add a check in the clock enable function to not execute it if
-> > >the M-core is being managed by the SCU.
-> > >
-> > >This change affects only the i.MX8X and i.MX8 family SoCs, as this is
-> > >under the IMX_RPROC_SCU_API method.
-> > 
-> > I would rewrite as below: "
-> > 
-> > For the i.MX8X and i.MX8 family SoCs, when the M-core is powered up
-> > by the bootloader, M-core and Linux are in same SCFW(System Controller
-> > Firmware) partition, so linux has permission to control M-core.
-> > 
-> > But when M-core is started, the SCFW will automatically enable the clock
-> > and configure the rate, and any users that wanna to enable the clock
-> > will get error 'LOCKED' from SCFW. So current imx_rproc.c probe function
-> > gets failure because clk_prepare_enable returns failure. Then
-> > the power domain of M-core is powered off when M-core is still running,
-> > SCU(System Controller Unit) will get a fault reset, and system restarts.
-> > 
-> > To address the issue, ignore handling the clk for i.MX8X and i.MX8 M-core,
-> > because SCFW automatically enables and configures the clock.
-> > "
-> > 
-> > You may update if you wanna.
-> > 
-> > >
-> > >Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > >Suggested-by: Peng Fan <peng.fan@oss.nxp.com>
-> > 
-> > -> peng.fan@nxp.com
-> 
-> Thanks for the review, I will update the suggestions on a v2. Meanwhile,
-> I will wait a little bit for other feedbacks.
->
+The following commit has been merged into the irq/drivers branch of tip:
 
-I suggest you go ahead with a v2 - I have a fair amount of patches to review and
-my time to do so is currently very limited.
+Commit-ID:     85cf5c63d32f39874d0dc1cd6c12b40e1ba8370e
+Gitweb:        https://git.kernel.org/tip/85cf5c63d32f39874d0dc1cd6c12b40e1ba8370e
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Tue, 06 May 2025 15:17:46 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 06 May 2025 17:18:31 +02:00
 
-> > 
-> > Thanks,
-> > Peng
-> > 
-> > >---
-> > > drivers/remoteproc/imx_rproc.c | 4 ++--
-> > > 1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > >diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > >index 74299af1d7f1..627e57a88db2 100644
-> > >--- a/drivers/remoteproc/imx_rproc.c
-> > >+++ b/drivers/remoteproc/imx_rproc.c
-> > >@@ -1029,8 +1029,8 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv)
-> > > 	struct device *dev = priv->dev;
-> > > 	int ret;
-> > > 
-> > >-	/* Remote core is not under control of Linux */
-> > >-	if (dcfg->method == IMX_RPROC_NONE)
-> > >+	/* Remote core is not under control of Linux or it is managed by SCU API */
-> > >+	if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SCU_API)
-> > > 		return 0;
-> > > 
-> > > 	priv->clk = devm_clk_get(dev, NULL);
-> > >-- 
-> > >2.39.5
-> > >
-> 
-> Cheers,
-> Hiago.
+irqchip/econet-en751221: Switch to irq_domain_create_linear()
+
+irq_domain_add_linear() is about to be removed. Switch to
+irq_domain_create_linear().
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Caleb James DeLisle <cjd@cjdns.fr>
+Link: https://lore.kernel.org/all/877c2top39.ffs@tglx
+
+---
+ drivers/irqchip/irq-econet-en751221.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-econet-en751221.c b/drivers/irqchip/irq-econet-en751221.c
+index 886d60c..fd65dfe 100644
+--- a/drivers/irqchip/irq-econet-en751221.c
++++ b/drivers/irqchip/irq-econet-en751221.c
+@@ -286,7 +286,8 @@ static int __init econet_intc_of_init(struct device_node *node, struct device_no
+ 
+ 	econet_mask_all();
+ 
+-	domain = irq_domain_add_linear(node, IRQ_COUNT, &econet_domain_ops, NULL);
++	domain = irq_domain_create_linear(of_node_to_fwnode(node), IRQ_COUNT,
++					  &econet_domain_ops, NULL);
+ 	if (!domain) {
+ 		pr_err("%pOF: Failed to add irqdomain\n", node);
+ 		ret = -ENOMEM;
 
