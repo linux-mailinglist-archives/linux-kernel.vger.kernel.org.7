@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-635723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880EDAAC13F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:23:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA25AAC12D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02359468B9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0209C3AA351
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9EF277013;
-	Tue,  6 May 2025 10:23:17 +0000 (UTC)
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90631274FE0;
+	Tue,  6 May 2025 10:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFbnB9dC"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD211F8753;
-	Tue,  6 May 2025 10:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31EE1F7580;
+	Tue,  6 May 2025 10:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746526996; cv=none; b=K/002dDAMer+pbp/rdjqnPLcfnmhClLRo26qqWYlTDZRx4pX/jq50S4/TDwSaZCRYpf9RQFSKbfLZhAqYuaXQFQnKgWMRaYYxj/baoe37i0wi9ypyoHTrNq6R/bmpCUyP1Y7pildcaPqQQv0mCQuEIOaVQi/ngKoq+rDkYPcJgg=
+	t=1746526703; cv=none; b=ukIdhUzwSLX5O77pqkq8/huABVFKh7fU02ePXIrlpK1LT/lDQOWKvrgao81yGzNuDLj0jdbIL7+m61fOaNHHnt0x+cBQp6ezwF92zN8fJBVdL5RWaUNJ3fjAbmzLpAfY6Ca2VZrgmeQ7B344PUeuDNzvOMQ0lRJKnhMXDnR+HRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746526996; c=relaxed/simple;
-	bh=Rih2slY++JAhSfM8+Jw/xV/xW0d8Xz+lMvXwh5vpM6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pQUOdTKh33lVo57P5HVJ4QkeNZ6Or6rAsC3k0WuZKNs0n11kHpexJHhkwB5N4RXQykF8P3Kp3EWP94MMdYhV3PDsqoJ4RKeS8FYaGz16VpBuyxMEw82YmKvddIAj88ImQtjHCS7QavGsB61G/FvLlD7xSxdBxT0j+WwUO5KfU3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
-Received: from [198.18.0.1] (gy-adaptive-ssl-proxy-3-entmail-virt135.gy.ntes [27.18.172.53])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 141c989fd;
-	Tue, 6 May 2025 18:17:53 +0800 (GMT+08:00)
-Message-ID: <9847f411-c2cc-4543-9f61-1242ff8a0cef@whut.edu.cn>
-Date: Tue, 6 May 2025 18:17:53 +0800
+	s=arc-20240116; t=1746526703; c=relaxed/simple;
+	bh=TkVB+8a7Equf/EbuOsvzUv62MCHrmk/SwZSQs4n6MgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gB15cDRsO5eBlOYw4Emy4Bry1Fe7RH4+33iF1lHBb6MPec/V7dPdWtBAUIfJi4oyk3x6RG6E8KoNxfSC84WI6n3wtdLYCN1DdnSLgKZ66ZtZgkoWfnVNBZFmuNdNgIkHvDvtB0YvsDb8CdTcW1v4nqjMVpb1s45MYOBkq2pbVM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFbnB9dC; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-30a892f8124so28970a91.3;
+        Tue, 06 May 2025 03:18:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746526701; x=1747131501; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TkVB+8a7Equf/EbuOsvzUv62MCHrmk/SwZSQs4n6MgI=;
+        b=gFbnB9dCVtg1U46K2SCi9EpWQjEPyUw9la7eZx0KQ6cTOdNYEH5g03JIXR1ehJYkeD
+         5KDP6GV2qtcFvsr/esKfTAOYXCHBPPMK0BrsL85Tm+cSm7t7IdJjV/0w6RC7GplvBYpv
+         JBwh1CCfUiGdMNX0W1Cmg64ZP4WWQqDRPK2dFJbijsON+LZnBAwbo4VAmutLvXLM5S1T
+         ykXXHt/slsOSHuY8q3DpLsiEc5uWAzDKroVbZq2l/eE4x1PEBSPoFnSIJwf59wq8NasR
+         iypnFYe2XQC8P98OrrnheA9nmfzD+uQ8lDyf0u5ZPVA4FTJsUq7cQkzDS2xnSAMG4w8w
+         cNzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746526701; x=1747131501;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TkVB+8a7Equf/EbuOsvzUv62MCHrmk/SwZSQs4n6MgI=;
+        b=UU+Ui1Wjj1bxmIh6QHO428hGy2uiZhciciN3yciGHFOwuCg+qZTVAs9R9muogvWm5u
+         9Gcta7AdH2qSKLKKfcPtDEYJQoLbHyxzS1+CdU1MgtG/GnfunGpVjxg8020be5795Kqy
+         3pRSlqSFDgFhF6uqSltS9+A9/6l8ugeG2OMYrpCve0N11z52Dv1YLhgzyLgn/vPks2pL
+         Q9855z0OtMb+VRRe8qD0KrpRY9Kq98WtTGdLg4UcWy53oJ1oZEP5oNAtNInm/IZ+HErr
+         4MjnYkWCwZ4bG9FTdM3uDM8wbFvCxNDyeSW4c+7FYOLbOZxyT0uELYSsJb0kGnto98Hb
+         lb2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUTB97NRSJnbHuLRz0GxfehPtIGC5uuradZJqI/S/tSxtpP0AUcAZNf4O1SBjtEZeRTf5U9p36U2FOxYoc=@vger.kernel.org, AJvYcCV4E5e/LPUzmq0PAgIvCbIsf4gT9Hsm1tu6uf5gDF0lz/61UMyjE/fJlb9DZT45jhlkpWaaih7cNa66mPrAnjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8aavXui+jslKwthCFvONV2zrqWBcOMBkeR6Ipvs14G4tMROrA
+	p9kMCHWn8r2NcUzq64qpck33EOzuuz9FUGGWb8vthPaFSfJ3S7WBE4yB/Fzp2LF2629aXVl4h0x
+	/U0sHCOe1fVj6ecC04KgzqUTmMf4=
+X-Gm-Gg: ASbGncup6lEdheT5bZjneQZTtDTX6TI3lujXCOID2l4m867bSmPdjzY2lTMY+aIBDJy
+	1G8xSlU3ErnS1S7ruNKP9AU1/BzobY7Dtbd0DuGnEYUJf9YP84UjK38lIsbKkxsJie+/GL97lzp
+	8MuR1ErOza4855JBZNjSl3vg==
+X-Google-Smtp-Source: AGHT+IFTQhMrziTWlbb2M+/2CKqeuD9ySvQIFR7HINWqYlufRDWodWwGFdpGFLHaN5vk5bUQ2xswfOSdmk+Gd3iNYOY=
+X-Received: by 2002:a17:90b:4c42:b0:305:5f20:b28c with SMTP id
+ 98e67ed59e1d1-30a4e6f3564mr9396337a91.5.1746526700829; Tue, 06 May 2025
+ 03:18:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: dts: sophgo: fix DMA data-width configuration for
- CV18xx
-To: Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: devicetree@vger.kernel.org, sophgo@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Yu Yuan <yu.yuan@sjtu.edu.cn>, ze huang <huangze@whut.edu.cn>
-References: <20250428-duo-dma-config-v1-1-eb6ad836ca42@whut.edu.cn>
- <uo7nea7hxw7qrzw7yhtoulusejbynw6qlotwozpboxtm6vyotv@rdkuc4d776so>
-Content-Language: en-US
-From: Ze Huang <huangze@whut.edu.cn>
-In-Reply-To: <uo7nea7hxw7qrzw7yhtoulusejbynw6qlotwozpboxtm6vyotv@rdkuc4d776so>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTR0ZVhgaTB1KSB5LQx1PTFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJTFVKQ1VKTElVTkhZV1kWGg8SFR0UWUFZT0tIVUpLSElMQktVSktLVUpCS0
-	tZBg++
-X-HM-Tid: 0a96a51a1cc703a1kunm141c989fd
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6M1E6OQw5TzJCIxc8Dj8WFjES
-	My0wClFVSlVKTE9NTklNTUNLSktCVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
-	TFVKQ1VKTElVTkhZV1kIAVlBSU9PTTcG
+References: <CANiq72mvu54B=U+YCUmbFctj_wXgF5zjeE-BB-vHVnAP+3mPcQ@mail.gmail.com>
+ <20250506042330.281501-1-contact@antoniohickey.com>
+In-Reply-To: <20250506042330.281501-1-contact@antoniohickey.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 6 May 2025 12:18:08 +0200
+X-Gm-Features: ATxdqUHheYcgH2uYtGDqL5P2WC747Ik5cUU8Qk9P-Zl-sb_irLvy-lFNrX6m8BI
+Message-ID: <CANiq72nu9MrTaQBABxiveqSqX4b9zJZL0MsazG+D64ULQ_Shqg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] rust: kernel: create `overflow_assert!`
+To: Antonio Hickey <contact@antoniohickey.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	dakr@kernel.org, gary@garyguo.net, linux-kernel@vger.kernel.org, 
+	ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/30/25 2:54 PM, Inochi Amaoto wrote:
-> On Mon, Apr 28, 2025 at 05:24:36PM +0800, Ze Huang wrote:
->> The "snps,data-width" property[1] defines the AXI data width of the DMA
->> controller as:
->>
->>      width = 8 × (2^n) bits
->>
->> (0 = 8 bits, 1 = 16 bits, 2 = 32 bits, ..., 6 = 512 bits)
->> where "n" is the value of "snps,data-width".
->>
->> For the CV18xx DMA controller, the correct AXI data width is 32 bits,
->> corresponding to "snps,data-width = 2".
->>
->> Test results on Milkv Duo S can be found here [2].
->>
->> Link: https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/dma/snps%2Cdw-axi-dmac.yaml#L74 [1]
->> Link: https://gist.github.com/Sutter099/4fa99bb2d89e5af975983124704b3861 [2]
->>
->> Co-developed-by: Yu Yuan <yu.yuan@sjtu.edu.cn>
->> Signed-off-by: Yu Yuan <yu.yuan@sjtu.edu.cn>
-
->> Signed-off-by: Ze Huang <huange@whut.edu.cn>
-
->> ---
->> Signed-off-by: Ze Huang <huangze@whut.edu.cn>
-> I think there is a wrong sob here,
-
-Yeah... There's a typo in mail address.
-
-> also, please add a fixes tag if
-> you fix something. I will take care of this when merging.
+On Tue, May 6, 2025 at 6:23=E2=80=AFAM Antonio Hickey <contact@antoniohicke=
+y.com> wrote:
 >
-> Fixes: 514951a81a5e ("riscv: dts: sophgo: cv18xx: add DMA controller")
->
+> I do like the idea utilizing the `cfg!` macro, it's cleaner as it
+> reduces the empty boilerplate currently required. I do wonder though
+> could that potentially cause warnings like unreachable code or
+> unused variables?
 
-Thank you for your review and reminder. I will follow that :-)
+Hmm... Isn't it the other way around? i.e. `#[cfg]` is the one that
+completely removes code and thus could introduce cases where no other
+code references something.
 
+As for unreachable, I don't think that triggers with an `if false {
+... }` (it does with e.g. code after a diverging call).
+
+The `debug_assert!` macro works with `cfg!`, so unless the compiler
+does something custom on linting for it, I think it should work for us
+here too.
+
+Thanks!
+
+Cheers,
+Miguel
 
