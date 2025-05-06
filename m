@@ -1,146 +1,157 @@
-Return-Path: <linux-kernel+bounces-635646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A503AAC05B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:51:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8E4AAC063
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 847381894CBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:51:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1848C7B568F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F286C26AA8F;
-	Tue,  6 May 2025 09:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZDHisNN"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5EB26E16F;
+	Tue,  6 May 2025 09:51:32 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC132472A6;
-	Tue,  6 May 2025 09:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADDC269830
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746525054; cv=none; b=byomDUSgClWVJ/XllBYkPqJYCs8VizUdXOnlDjwiwBrRe9fPyzEPVd8pYrB17JTDnegRkBXvoTMRAD26m7xWHXTFlCskW1Haj3ASd/SU7WSq5FnEO98phKkQ7xJg9S0Dlllw8xbMfBsu+PjJ4+lfcXzMbXblhkPK68HtzgXo9pY=
+	t=1746525091; cv=none; b=e13068/Sm3fn+3y5W4n/QyR7QLU05VjmP/lGQnXR7L+us2Bt+BYSo1BBwWyq834XP8mhTAx4dlSxxESociFnKc1DvgdLbUibl8x32H3NTL+wSUpdyI0zSgDKnze1jr4v57H/8hBOZTg0FfxpiVFF0c/APSjgi3uCe9X/m7Hi5pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746525054; c=relaxed/simple;
-	bh=JqbzKMxg4NH4McAzvsP0auX4j6YwzFxR8+jb5/OztjA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O0m65u1K8MXT7QUPU089oAlDBXUdm1c1f21e2MDS/lImq4jm1Joh8cttJcp8pXjnmaDnATf8+Z6bdw1+uIPnxu2DrCqQhOt1Lhxs1oTAEWeb9E9yPwP5YfuuNoA9fbsPemwIX/VTe1e8zA62guwNMN2QRdmbtBJrq1xDwecbJj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZDHisNN; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54d98aa5981so6447043e87.0;
-        Tue, 06 May 2025 02:50:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746525051; x=1747129851; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z+fT522H6brz7o9tM8egtk3glujQpnthQ1tpum8wNy4=;
-        b=PZDHisNNY+McTeSXSNmbLYm8jqrQyISoDXa5L2o7itcQGvoCiarf3vgw/NAXs3NwN7
-         AP1PNeMEpe+0b57sLEvGdQd0N0ZQL0vAOd8LM9izbdPzomMYowA1R/Vjw5vgUOgOY4Kg
-         sQX4QC0F/+mhVIJPpRbtIafFs4dZ4f7GTtBPNf1DsTetaPVZfEHgy8ZbtQ78hDTTZY6a
-         LP4OhNNuicC00whneikfGNy5zvBtoY0o8ehKno6Q+AnhdGrZubYCCMO1xl5a80Ma8Vcg
-         aUG8/l9nYKk0RON4KuMYrMpbXu6TLXu22SkfU9al/Ajzyk/6nW8kKE5+p+avuy7hjS0O
-         G7+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746525051; x=1747129851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z+fT522H6brz7o9tM8egtk3glujQpnthQ1tpum8wNy4=;
-        b=d8HCLFwRr3lzhAKjidF0ZZxV36cRxtn3tUJlCRqTSn/otiSesLhY/6L6fpBM9in0Kw
-         eWPVYlMK0tx8+4UMCLVgR5KYOofvnll1ToG23hF1gJUBwJWxgA44awUOrUfUXnIBUHj3
-         50Y8D+EyrgYWezymv08x8Xs10hu+/tQqEJUF3AhmXRyIC2DqzMe0E+KkHRRIPTYAqSBk
-         Fnr73vJ5m8U6xDSnQ83qKR9uW6IcmQS69vAwIesMfu/4kY9sKJRSx3Vy3k+KGE5fe+Zl
-         lTnQRBjouDjSXd+aFfPop6KT8VB+xm4FIN/J3lRtWCjdqtdKoeD3WsrWxLuCTB7oIl/L
-         wcug==
-X-Forwarded-Encrypted: i=1; AJvYcCUmVlh6t/bOB5vcq4KLu/e5iglgBHzP6+H/5P3HP0Ouuyxlp8NYwSaPRan5pZuXrQ7PLmmyuyeEwFhn@vger.kernel.org, AJvYcCVuYZiNYcFYVQKJcij11VDEpugFfRBNBgAjOmTPmjyobMSePQbA+SdedpPAeL8LByI2s91cNyoWahWmhAc=@vger.kernel.org, AJvYcCVwfEDDPBa295g56JRIwYtFi3zg4XghE/CVXvrNFMhPqcBkbRZeYmZ2UFln0DEaS0wNvsHU9dV5z9enh4Q=@vger.kernel.org, AJvYcCWrHMOzF7gFK71+Cota4C3/paggNgV/6QhUzf7mUdyavLs2lfTiiaAQtXj9sDhtZ41KjnPnnleV@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYSsZILXb6VuLxH/ls076jmvGwssoPhT5b1DHrstZBbSfmdg3V
-	ZX23vV+YrlhF/V1RdskZbuzEs8tfig9Ft7I5T+Ls3vJdyOpt2cFt2r4aXPDebtmGu30mqkkvQpe
-	pKbPXorIRycyaGx14KWVr5oLjHxo=
-X-Gm-Gg: ASbGncsRrSm9CqO1VTBZP26w7ndwKj6jJw5wP4DVlVVya5HmF3j7cao6mGp8hUP4WuE
-	Z195OhxLKhK00h1zA9jBGIanlQ6gIcHbwV/9zBjw0ObyMpC5OrFjEHpRbL6W2eoBiln02VDj1sC
-	+QOx/I6OAeqIIjISlVDcG+Tf0=
-X-Google-Smtp-Source: AGHT+IGCdnN++39MsbNDkcs9Nw2mbdDyjnL3MoWEOy3Rg3kK7lGviQiCG0YyI/SKhQjPzHkIdvnJ+8gnH9wkeF8oJHg=
-X-Received: by 2002:a05:6512:b83:b0:545:fad:a747 with SMTP id
- 2adb3069b0e04-54f9efb4445mr3183952e87.5.1746525050343; Tue, 06 May 2025
- 02:50:50 -0700 (PDT)
+	s=arc-20240116; t=1746525091; c=relaxed/simple;
+	bh=+8hgmQMkMUP7qTpXr+fdL0ZmZlS89PQR8pMDgpeqz6I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bWLuhnxoRTqORKMHn8446bUP3LN/F8D/KznhVuITR9FV6SLKcxS2kdjHi8BGGBk4pe9JpQfFbGZtq61ponR8PThhfSIyEdicN7A7N5IN/+LqlCYaT11a0HdSZWDFvbm3fYGy32HVrBZD/Fqcf3hPyqKMqEBfrogH1OVJB0ruMQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uCExM-00059y-Qx; Tue, 06 May 2025 11:51:20 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uCExL-001NB0-2U;
+	Tue, 06 May 2025 11:51:19 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uCExL-009Oay-2B;
+	Tue, 06 May 2025 11:51:19 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Avri Altman <Avri.Altman@sandisk.com>
+Subject: [PATCH v5 0/4] mmc: handle undervoltage events and prevent eMMC corruption
+Date: Tue,  6 May 2025 11:51:14 +0200
+Message-Id: <20250506095118.2239459-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423-spi-tegra114-v1-1-2d608bcc12f9@gmail.com> <00b119fb-1cbb-432d-a884-5b33696461e6@nvidia.com>
-In-Reply-To: <00b119fb-1cbb-432d-a884-5b33696461e6@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 6 May 2025 04:50:37 -0500
-X-Gm-Features: ATxdqUED6Yin9FVSQH1pz5OxO5Z_06zduEaLQoz8cbCxWez0G9eyBoIDDzQwQe8
-Message-ID: <CALHNRZ928KN6ZBDzdGWyabSQw4Hny6F5RdqZ4hBUZosPZtni1A@mail.gmail.com>
-Subject: Re: [PATCH] spi: tegra114: Don't fail set_cs_timing when delays are zero
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mason Zhang <Mason.Zhang@mediatek.com>, 
-	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, May 6, 2025 at 4:27=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> wr=
-ote:
->
->
-> On 24/04/2025 03:03, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > The original code would skip null delay pointers, but when the pointers
-> > were converted to point within the spi_device struct, the check was not
-> > updated to skip delays of zero. Hence all spi devices that didn't set
-> > delays would fail to probe.
-> >
-> > Fixes: 04e6bb0d6bb1 ("spi: modify set_cs_timing parameter")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >   drivers/spi/spi-tegra114.c | 6 +++---
-> >   1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-> > index 3822d7c8d8edb9730e937df50d1c75e095dd18ec..2a8bb798e95b954fe573f1c=
-50445ed2e7fcbfd78 100644
-> > --- a/drivers/spi/spi-tegra114.c
-> > +++ b/drivers/spi/spi-tegra114.c
-> > @@ -728,9 +728,9 @@ static int tegra_spi_set_hw_cs_timing(struct spi_de=
-vice *spi)
-> >       u32 inactive_cycles;
-> >       u8 cs_state;
-> >
-> > -     if (setup->unit !=3D SPI_DELAY_UNIT_SCK ||
-> > -         hold->unit !=3D SPI_DELAY_UNIT_SCK ||
-> > -         inactive->unit !=3D SPI_DELAY_UNIT_SCK) {
-> > +     if ((setup->unit && setup->unit !=3D SPI_DELAY_UNIT_SCK) ||
-> > +         (hold->unit && hold->unit !=3D SPI_DELAY_UNIT_SCK) ||
-> > +         (inactive->unit && inactive->unit !=3D SPI_DELAY_UNIT_SCK)) {
->
-> The above does not look correct to me. For example, if 'setup->unit' is
-> 0, this means that the unit is 'SPI_DELAY_UNIT_USECS' and does not
-> indicate that the delay is 0.
->
-> Shouldn't the above be ...
->
->   if ((setup && setup->unit !=3D SPI_DELAY_UNIT_SCK) ||
->       (hold && hold->unit !=3D SPI_DELAY_UNIT_SCK) ||
->       (inactive && inactive->unit !=3D SPI_DELAY_UNIT_SCK)) {
+changes v5:
+- Rebased on top of mmc/next after introduction of enum mmc_poweroff_type
+- Replaced boolean undervoltage parameter with MMC_POWEROFF_UNDERVOLTAGE
+- Dropped unused __mmc_resume() helper
+- Updated commit messages accordingly
+changes v4:
+- drop HPI and SDHCI related patches
 
-This is what the code looked like before 373c36b [0], which dropped
-that check because the pointers can never be NULL. Should this check
-if ->value is not 0 instead?
+This patch set introduces a framework for handling undervoltage events
+in the MMC subsystem. The goal is to improve system reliability by
+ensuring graceful handling of power fluctuations that could otherwise
+lead to metadata corruption, potentially rendering the eMMC chip
+unusable or causing significant data loss.
 
-Sincerely,
-Aaron Kling
+## Problem Statement
 
-[0] https://github.com/torvalds/linux/commit/373c36bf7914e3198ac2654dede499=
-f340c52950
+Power fluctuations and sudden losses can leave eMMC devices in an
+undefined state, leading to severe consequences. The worst case can
+result in metadata corruption, making the entire storage inaccessible.
+While some eMMC devices promise to handle such situations internally,
+experience shows that some chip variants are still affected. This has
+led vendors to take a more protective approach, implementing external
+undervoltage handling as a precautionary measure to avoid costly field
+failures and returns.
+
+The existence of the "Power Off Notification" feature in the eMMC
+standard itself serves as indirect evidence that this is a real-world
+issue.  While some projects have already faced the consequences of
+ignoring this problem (often at significant cost), specific cases cannot
+be disclosed due to NDAs.
+
+## Challenges and Implementation Approach
+
+1. **Raising awareness of the problem**: While vendors have used
+   proprietary solutions for years, a unified approach is needed upstream.
+   This patch set is a first step in making that happen.
+
+2. **Finding an acceptable implementation path**: There are multiple
+   ways to handle undervoltage - either in the kernel or in user space,
+   through a global shutdown mechanism, or using the regulator framework.
+   This patch set takes the kernel-based approach but does not prevent
+   future extensions, such as allowing user-space handoff once available.
+
+3. **Preparing for vendor adoption and testing**: By providing a
+   structured solution upstream, this patch set lowers the barrier for
+   vendors to standardize their undervoltage handling instead of relying on
+   fragmented, out-of-tree implementations.
+
+## Current Limitations
+
+This patch set is an initial step and does not yet cover all possible
+design restrictions or edge cases. Future improvements may include
+better coordination with user space and enhancements based on broader
+testing.
+
+## Testing Details
+
+The implementation was tested on an iMX8MP-based system. The board had
+approximately 100ms of available power hold-up time. The Power Off
+Notification was sent ~4ms after the board was detached from the power
+supply, allowing sufficient time for the eMMC to handle the event
+properly.  Tests were conducted under both idle conditions and active
+read/write operations.
+
+Oleksij Rempel (4):
+  mmc: core: Handle undervoltage events and register regulator notifiers
+  mmc: core: Add MMC_POWEROFF_UNDERVOLTAGE support in _mmc_suspend()
+  mmc: core: add undervoltage handler for MMC/eMMC devices
+  mmc: block: abort requests and suppress errors after undervoltage
+    shutdown
+
+ drivers/mmc/core/block.c     |   2 +-
+ drivers/mmc/core/core.c      |  30 +++++++++
+ drivers/mmc/core/core.h      |   2 +
+ drivers/mmc/core/mmc.c       |  89 +++++++++++++++++++++++--
+ drivers/mmc/core/queue.c     |   2 +-
+ drivers/mmc/core/regulator.c | 124 +++++++++++++++++++++++++++++++++++
+ include/linux/mmc/host.h     |   8 +++
+ 7 files changed, 249 insertions(+), 8 deletions(-)
+
+--
+2.39.5
+
 
