@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-636847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6887AAD0B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:04:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84E1AAD0C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 00:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6DE1C41225
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA014C42E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CC921578D;
-	Tue,  6 May 2025 22:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D2221578D;
+	Tue,  6 May 2025 22:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R9498fX3"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYnaYvuq"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60065680
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 22:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCE92B9BC
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 22:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746569037; cv=none; b=XlNqyBLWn7F0QxfFRJ8H5gLYBdqTViN3CTROsUItqWFVIfN1lPRg5yfDktgUi7WevI2GARCa2ybswvEZVl89F3FKekS12T04uQ9B3KpPYxd7Uv7gfD9xtzwQHxP6jfrd7jdEKy7CjgWbOrDDdQBrzzs3+Yuixf3pQj3ur4ivaZE=
+	t=1746569146; cv=none; b=W8+HKwc5p54C0Ckxn5ItSI9WTcY0Jg2ugFg2tEeIXHzd5ORQ64WCthguryMgXnpqNbrjnBvkeXC04DmW8tVHbc8UDSErxLTWtazHvBQmUDQ026qZJY2TE9cFZR9nFUfANkMgPdrs0f/hqb55frw6RCsh/ZoRVm3p4ZCewlZ/nKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746569037; c=relaxed/simple;
-	bh=ajzWJDE0PCf5lFECkh00P7A0CoWBSmSLJqJpRELRqOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gWOGsy0Ml2zKPd0nRPRMeGA8K4rgq4m7C4bYmHOk/5mxb+qOMYij2PQO+C5NoF3qbU6Pd1dfQjhu1yPnFZHSsLX+x51OJbM1fRSe7iRzImJ9C491kFa+0BFQy5gCZUg6FfZGwxKaC9xbTNmRFwICrM5fXvCYQ4M5bcXwtZulgr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R9498fX3; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <50e809ea-62a4-413d-af63-7900929c3247@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746569022;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IF11V1LxbdaWQKHY5/mURULyUQidK3c4QDqI9he05Rc=;
-	b=R9498fX3TtQBfCoT86rtJv1QMpLmeIEhNVtIOLf/Y7q9isypSpTrEFX8054v4WOiCbvky+
-	cBEfqsErs/D814j6M1rFVjTASwb3WDR/jY+ySijrxmqU7g1iV1OSI8b0UagDq/DbWy83R/
-	rOZi8mksEcKZwUhv95wx1TBKPQeHLxg=
-Date: Tue, 6 May 2025 18:03:35 -0400
+	s=arc-20240116; t=1746569146; c=relaxed/simple;
+	bh=KipRk4T764WfCmu0wFyxjVxI3EJCSRQ5r8frLRwrZrw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NBcy8P5cFh7dz01n5BHg/7zTZ96ztUAS+HFbdCFqj/3W73/GQ8XqQuxsAg7o8CtrXFq9D0334l04AcdLxmZ6xMWY/TO4R03Oz6PHWDIyzn6pwTTsw2ETNjZY/ZQHEeVN0EuwZ8kfBs9EzAaNj3ADq6+hw4GuPrixZxJRAxcAXIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYnaYvuq; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso6669506f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 15:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746569142; x=1747173942; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KipRk4T764WfCmu0wFyxjVxI3EJCSRQ5r8frLRwrZrw=;
+        b=hYnaYvuqP4S7fsyFgJmWk+JXzAAM+iq5MJK/rDyY/TNqS3FdM0w8i2qSHvmOJ+UChe
+         sO51lMjVujJgU/UrlvoEWXuqb2/qux62C/PgSEuQqDsL7PhLyOyxNKa5c8OMc9Zyl9vx
+         QW1oZlp4tOoxHKpPboQZ+CBXUZHIEVQK0H7TG+LwLOJxBNYO081d5t0RxyvL2eXanPi8
+         nPD/MtJuCo3jHMJtLTkGb9WdjnZXnKZz/rRMkJrGwXXd8dXxiK9+GKAt+j7OnnD/SH94
+         h2MkQLdqt5CGuZpT+D9SbflvRl+MmfB3WQGq1sOYvKR5O4s2phfx9DqAQEyW9JQfOiM8
+         XcXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746569142; x=1747173942;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KipRk4T764WfCmu0wFyxjVxI3EJCSRQ5r8frLRwrZrw=;
+        b=CO/FUzwcB3Ka1Mv4AYdt7UxPEyQOlCCj8V37mSTUW3PZ/or82mP0rPFHpslxwyWGPj
+         9IRA8bDnlhgdoAJHxfBr1gTRnpf4jaLU3AKHnabBtW3NeIitpkzUfX87Bgz0IwPZ07x4
+         luMDHzY1+364s2CVTbhsYJSvrFto5fA6jfq9mKftcUhGFpkrZPs+QyuMsezaD9M32sMu
+         qhj+Acsvu+z+0AYDs7JdAej1EjtDSPhisE3JLNzPvtBozajmCKp6ek7JOvkK9LNi+zi7
+         tPZJ7dJJW1gl8f9WzKOt8ERYVBzZO30oNU96tqJEj45yPxAnz17ST4k0wHjV8HQWe4wb
+         WnHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe46GZY0JLkwdUbITOMlc1yk5IBlm7Pnhnx8/HYr7X5h2KMPgHQodn3KiMWclTtsz0bnGZuGFfTUowcLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmH8IIh+AA99FeUPU3bVIe7AUHk9OPArJ/FyRBYOdOzZ57Gbg6
+	aO7TieXolmbaKXeJj8uAzv5PVjK5goWNobFxGhO2GjOnTDLOCakydbWq1a9bGssoZxn1fKAZ9l+
+	RDG6b4vcorKDKFHe18OhasWB2kDw=
+X-Gm-Gg: ASbGncuGYSOIS9kYPDMvkNRFHK80HqfWM/r0KTiBdHU4pDFntOzhr1bKsclSOATyEGf
+	Qj+BqsnkbtJyjdSpmX0OKzvDhpnqEXefiiQbrGbixFNh1jz+H/ukd3lB7S4VopFcSgFKvmTgwJe
+	rNBIHjqAiPKsJCZ4uHCRIrwZCV+ECIcCaqiOXlFbkISrXxQ1jOeA==
+X-Google-Smtp-Source: AGHT+IE25DZ//XnJlkjj3EH8ZFFd41BFs36NSpSFuQBE3faebw8bT1aWwOWkbgGGp64gVRd3F+KAiVR2q0MyqbOFdc8=
+X-Received: by 2002:a05:6000:40cd:b0:3a0:8712:4f51 with SMTP id
+ ffacd0b85a97d-3a0b4a14668mr771413f8f.40.1746569142426; Tue, 06 May 2025
+ 15:05:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [net-next PATCH v3 05/11] net: pcs: lynx: Convert to an MDIO
- driver
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- upstream@airoha.com, Christian Marangi <ansuelsmth@gmail.com>,
- linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Clark Wang <xiaoning.wang@nxp.com>, Claudiu Manoil <claudiu.manoil@nxp.com>,
- Ioana Ciornei <ioana.ciornei@nxp.com>, Joyce Ooi <joyce.ooi@intel.com>,
- Madalin Bucur <madalin.bucur@nxp.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, UNGLinuxDriver@microchip.com,
- Wei Fang <wei.fang@nxp.com>, imx@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250415193323.2794214-1-sean.anderson@linux.dev>
- <20250415193323.2794214-1-sean.anderson@linux.dev>
- <20250415193323.2794214-6-sean.anderson@linux.dev>
- <20250415193323.2794214-6-sean.anderson@linux.dev>
- <20250506215841.54rnxy3wqtlywxgb@skbuf>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20250506215841.54rnxy3wqtlywxgb@skbuf>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250506112509.905147-1-kirill.shutemov@linux.intel.com>
+ <20250506112509.905147-2-kirill.shutemov@linux.intel.com> <CAADnVQJMNqeEGwcLDFw36KCY+wr_jQNtK2t4G5pLo=+wcDE0RQ@mail.gmail.com>
+ <5loiv7lfplpruujplz7wmzj25g34rs2aezvrfsl55dsddrh7mo@rnqrlx5zccol>
+In-Reply-To: <5loiv7lfplpruujplz7wmzj25g34rs2aezvrfsl55dsddrh7mo@rnqrlx5zccol>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 6 May 2025 15:05:31 -0700
+X-Gm-Features: ATxdqUEFmKJx_9lHRGWUehox8hv3ijG1FV0mSYp85G8ha8fWtihliKeq8C6j3Ns
+Message-ID: <CAADnVQ+jf+Z+7prRaK3LopmZLtKh6JGzvi2+WZcvLo1DGcLShQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm/page_alloc: Ensure try_alloc_pages() plays well
+ with unaccepted memory
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, David Hildenbrand <david@redhat.com>, 
+	Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>, linux-coco@lists.linux.dev, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/6/25 17:58, Vladimir Oltean wrote:
-> Hello Sean,
-> 
-> On Tue, Apr 15, 2025 at 03:33:17PM -0400, Sean Anderson wrote:
->> diff --git a/drivers/net/pcs/pcs-lynx.c b/drivers/net/pcs/pcs-lynx.c
->> index 23b40e9eacbb..bacba1dd52e2 100644
->> --- a/drivers/net/pcs/pcs-lynx.c
->> +++ b/drivers/net/pcs/pcs-lynx.c
->> @@ -1,11 +1,15 @@
->> -// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
->> -/* Copyright 2020 NXP
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/* Copyright (C) 2022 Sean Anderson <seanga2@gmail.com>
->> + * Copyright 2020 NXP
->>   * Lynx PCS MDIO helpers
->>   */
->>  
->> -MODULE_DESCRIPTION("NXP Lynx PCS phylink library");
->> -MODULE_LICENSE("Dual BSD/GPL");
->> +MODULE_DESCRIPTION("NXP Lynx PCS phylink driver");
->> +MODULE_LICENSE("GPL");
-> 
-> What's the idea with the license change for this code?
+On Tue, May 6, 2025 at 12:00=E2=80=AFPM Kirill A. Shutemov
+<kirill.shutemov@linux.intel.com> wrote:
+>
+> On Tue, May 06, 2025 at 10:18:21AM -0700, Alexei Starovoitov wrote:
+> > On Tue, May 6, 2025 at 4:25=E2=80=AFAM Kirill A. Shutemov
+> > <kirill.shutemov@linux.intel.com> wrote:
+> > >
+> > > try_alloc_pages() will not attempt to allocate memory if the system h=
+as
+> > > *any* unaccepted memory. Memory is accepted as needed and can remain =
+in
+> > > the system indefinitely, causing the interface to always fail.
+> > >
+> > > Rather than immediately giving up, attempt to use already accepted
+> > > memory on free lists.
+> > >
+> > > Pass 'alloc_flags' to cond_accept_memory() and do not accept new memo=
+ry
+> > > for ALLOC_TRYLOCK requests.
+> > >
+> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > > Fixes: 97769a53f117 ("mm, bpf: Introduce try_alloc_pages() for opport=
+unistic page allocation")
+> >
+> > Thanks for working on this, but the fixes tag is overkill.
+> > This limitation is not causing any issues in our setups.
+>
+> Have you had chance to test it on any platform with unaccepted memory?
+> So far it is only Intel TDX and AMD SEV guests.
 
-I would like to license my contributions under the GPL in order to
-ensure that they remain free software.
-
---Sean
+We don't use them, and my understanding is that such
+unaccepted memory will be there only during boot time.
 
