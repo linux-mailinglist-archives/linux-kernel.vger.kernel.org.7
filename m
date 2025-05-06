@@ -1,90 +1,151 @@
-Return-Path: <linux-kernel+bounces-636274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FD7AAC916
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:07:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F75FAAC91D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91D9468D2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:07:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6131C21735
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DAD28313B;
-	Tue,  6 May 2025 15:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uhJrKX7G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KqXLwv2K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DE22836BD;
+	Tue,  6 May 2025 15:08:05 +0000 (UTC)
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4977E27E7EF;
-	Tue,  6 May 2025 15:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4E427B4F8;
+	Tue,  6 May 2025 15:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746544048; cv=none; b=c8U66Mvba6aVuLcOX+HaWCJx6GvchRMqf+uebrfCTKdHPzyDT2+TRdH4vngLSg71o8EcFGFXmBBdzlJBSpAgwKeoWaXymLcwvZZPRfoiBAq2ETIepDAchcikCkRPUkSFnlVSj0+Lkbw6HkuUdu9oOWABUtTctix/7323INXF6nE=
+	t=1746544084; cv=none; b=EmZ2PCaHTZ7/ip8oCIWsvro7CZaMRs66q9T/RA/I5TNKm3UtbB/m1aaXs33USmnRVNVd27c5mnkBTwvvcA2vshRmXHcDa0+5pFbR6hkPzSA2zslyz4ZglMut60tPQaTdH/MOhdhPixPgGC+rK8vba74SRkKjybP9o7vIoBceHEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746544048; c=relaxed/simple;
-	bh=BYd0Qq0VSm68kkZAqPj7Yh7eeZtdp5eJ3xOmvv1oA2Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OtRl8XWLp4i85b+8pPAOZq3je/K3yIsJGRS8eybhev1FqIkx1WNoNf/Lflgv/PVDCS3rWxG+1oc0uMXX2HVz3UNMgyMArN5WMNoxEoEhRETwI7oy6kpqVGFTi2ZAFBp7ChNwBUPteNz79mxyrTi4Vb9eicUkfQOX2GveqAsthFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uhJrKX7G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KqXLwv2K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746544045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6wNOT1DAoZVhSLpHhkXu8/sSOgpiwDL+Pi84W+S/Gos=;
-	b=uhJrKX7G2UJLk+tOWtsqowh95IQY5uGUDWf3PWRWDjVn9bkdQ3elYf48wya934dsrnOT5d
-	L4odQlCu2ElpTYewxnkjBZgOI3LDJrSSIw/HTFsh3B58t+4dknyCN6QaQKHaow7zFenpVe
-	xjv7MI921BIhfbHTcYJzGnLENkt8capo8x3QU/pNL2czmE2SMrfbyVyOADhaoZAtF46AkR
-	gauXlpAQXIUfXS52VMLaKeCeYhOcPM7rpYrCC9OoZj9e5TLmKGOPUYauuALA14feJEl55t
-	9KtmmgXY0SV6v1iOFuS/b7FHGeSlFcPIt2ztrDMcdisKzHtmzMHeOzoOO8CvLA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746544045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6wNOT1DAoZVhSLpHhkXu8/sSOgpiwDL+Pi84W+S/Gos=;
-	b=KqXLwv2Ko7xWWiugCq2HozHlQ8iVBy4y4Hvpq1P0rMkctKCWxLLdIkEbPhZXaEASntugN5
-	ItHXuROFf5HU4ZAg==
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, Marc Zyngier
- <maz@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sascha Bischoff
- <sascha.bischoff@arm.com>, Timothy Hayes <timothy.hayes@arm.com>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Lorenzo
- Pieralisi <lpieralisi@kernel.org>
-Subject: Re: [PATCH v3 22/25] irqchip/gic-v5: Add GICv5 LPI/IPI support
-In-Reply-To: <20250506-gicv5-host-v3-22-6edd5a92fd09@kernel.org>
-References: <20250506-gicv5-host-v3-0-6edd5a92fd09@kernel.org>
- <20250506-gicv5-host-v3-22-6edd5a92fd09@kernel.org>
-Date: Tue, 06 May 2025 17:07:24 +0200
-Message-ID: <87wmatn5g3.ffs@tglx>
+	s=arc-20240116; t=1746544084; c=relaxed/simple;
+	bh=V0Qnd7XGUYL4VJVx/NNGZxOFnfryDun38SvbJqd1K94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hpiGaqOFBDs+ZeOWPUPhlBoXHDXb70UXCqorDjf2WbPjEOvh/HFJw+JTTSygQWUpBfq/LurdU+Bva/MalnNGLV3uKvkpp7acx2L7KYp2HkarodMV7b9TBf8ubHz37V6MfsvXLI9MDPgQPY/vG4utzak3zdTr2oLI6vZZT7/G+PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+	by unicorn.mansr.com (Postfix) with ESMTPS id 6213715380;
+	Tue, 06 May 2025 16:07:55 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+	id 4BAE821A3DA; Tue, 06 May 2025 16:07:55 +0100 (BST)
+From: Mans Rullgard <mans@mansr.com>
+To: jirislaby@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/2] tty: serial: 8250_omap: fix tx with dma
+Date: Tue,  6 May 2025 16:07:29 +0100
+Message-ID: <20250506150748.3162-1-mans@mansr.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 06 2025 at 14:23, Lorenzo Pieralisi wrote:
-> +static int __init gicv5_irs_init_ist(struct gicv5_irs_chip_data *irs_data)
-> +{
-> +	u32 lpi_id_bits, idr2_id_bits, idr2_min_lpi_id_bits,
-> +	    l2_iste_sz, l2sz, l2_iste_sz_split, idr2;
+Commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+introduced an error in the TX DMA handling for 8250_omap.
 
-Please don't do that. That's horrible to read. If it does not fit into a
-single line, make it
+When the OMAP_DMA_TX_KICK flag is set, one byte is pulled from the
+kfifo and emitted directly in order to start the DMA.  This is done
+without updating DMA tx_size which leads to uart_xmit_advance() called
+in the DMA complete callback advancing the kfifo by one too much.
 
-       u32 a,....,h;
-       u32 i,...,m;
+In practice, transmitting N bytes has been seen to result in the last
+N-1 bytes being sent repeatedly.
+
+This change fixes the problem by moving all of the dma setup after
+the OMAP_DMA_TX_KICK handling and using kfifo_len() instead of the
+dma size for the 4-byte cutoff check. This slightly changes the
+behaviour at buffer wraparound, but it still transmits the correct
+bytes somehow. At the point kfifo_dma_out_prepare_mapped is called,
+at least one byte is guaranteed to be in the fifo, so checking the
+return value is not necessary.
+
+Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mans Rullgard <mans@mansr.com>
+---
+v2: split patch in two
+---
+ drivers/tty/serial/8250/8250_omap.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index f1aee915bc02..180466e09605 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -1173,16 +1173,6 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 		return 0;
+ 	}
+ 
+-	sg_init_table(&sg, 1);
+-	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+-					   UART_XMIT_SIZE, dma->tx_addr);
+-	if (ret != 1) {
+-		serial8250_clear_THRI(p);
+-		return 0;
+-	}
+-
+-	dma->tx_size = sg_dma_len(&sg);
+-
+ 	if (priv->habit & OMAP_DMA_TX_KICK) {
+ 		unsigned char c;
+ 		u8 tx_lvl;
+@@ -1207,7 +1197,7 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 			ret = -EBUSY;
+ 			goto err;
+ 		}
+-		if (dma->tx_size < 4) {
++		if (kfifo_len(&tport->xmit_fifo) < 4) {
+ 			ret = -EINVAL;
+ 			goto err;
+ 		}
+@@ -1216,11 +1206,12 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 			goto err;
+ 		}
+ 		skip_byte = c;
+-		/* now we need to recompute due to kfifo_get */
+-		kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+-				UART_XMIT_SIZE, dma->tx_addr);
+ 	}
+ 
++	sg_init_table(&sg, 1);
++	kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
++				     UART_XMIT_SIZE, dma->tx_addr);
++
+ 	desc = dmaengine_prep_slave_sg(dma->txchan, &sg, 1, DMA_MEM_TO_DEV,
+ 			DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 	if (!desc) {
+@@ -1228,6 +1219,7 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 		goto err;
+ 	}
+ 
++	dma->tx_size = sg_dma_len(&sg);
+ 	dma->tx_running = 1;
+ 
+ 	desc->callback = omap_8250_dma_tx_complete;
+@@ -1248,8 +1240,10 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ err:
+ 	dma->tx_err = 1;
+ out_skip:
+-	if (skip_byte >= 0)
++	if (skip_byte >= 0) {
+ 		serial_out(p, UART_TX, skip_byte);
++		p->port.icount.tx++;
++	}
+ 	return ret;
+ }
+ 
+-- 
+2.49.0
 
 
