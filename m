@@ -1,274 +1,143 @@
-Return-Path: <linux-kernel+bounces-636694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB16AACEE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:47:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813EEAACEEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 22:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF7527B6755
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 20:46:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A93C97AAAB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 20:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE5717CA1B;
-	Tue,  6 May 2025 20:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CCC19006B;
+	Tue,  6 May 2025 20:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I68mv2SZ"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="xS6k0qum"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668264B1E7A;
-	Tue,  6 May 2025 20:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6164A4B1E51;
+	Tue,  6 May 2025 20:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746564459; cv=none; b=LZHg5zGWdZ/GOKIgCIbiigxyOAmr8kw++U/UdVbzOWUOhHXtmhp2Wtz1Hu4FPW1ytxxYTjaVV8iasDp+5pfgC9a7Y0b8XonSbd90Lq9VVnb+2NiCwcx8uhAe7ABprMDHtDalnvrCe6LtyHB9tN3+V9mZCD8UHVh+7rfv2k0ifYE=
+	t=1746564582; cv=none; b=leVPuU5Nm6ovzm5175wSjfcJL72ps7oum7SqJHkBVisjOrrVRhYYrDtH6MYLz+BHsOm70zdBNZ11I9znm0L15f1k9ojPy4qvwQXQwAhIJSdT5iDKMOigZOfZ14CDW/nd7NgQsL+UzqS2852nrNXVC+ZBYjO3ijHO2ElRH2L/f48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746564459; c=relaxed/simple;
-	bh=a6MsCRIUCeUj744FbiHdP5+JJu9CUko6eqpiqgbQ4ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WTZBkZmEZh+K5ZMWPmjkIFFzMxIAChten6Wcd3und2BuVDG8efrmEX5+FlW+yOfGW06epVet1hYOyFtATod6mLM6GRpC5xbdyS3PK3mpcxn5dFwyR6zp4UvrOn3dyHfA+lQmYDe0xXxiRRK8MX6t4JHegRQNQE9Yre6Xm2siWWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I68mv2SZ; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DA1D1439D4;
-	Tue,  6 May 2025 20:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746564447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RriJ3sQZL+/jAERO13sfWtP2FOfOc3okEQg5B7FnAeQ=;
-	b=I68mv2SZI/aGxHCIIcxXbjxxCbHWE9FzDtUtW4PEabsIrho1orzLQHyqR3AJklkXW4/0dS
-	sHotiUtnhB37DGcdh4NYEpar2pikiAW6HTYv6TIrN84SPWuBG8+xkiYWGDI06C2IrQ6ogR
-	QEZfsdyh/gBXzyxBU6I46Qn7ke+tHyGu4UC1rv5tEOBv61wdugOUnlQfQ6wAbRndu7RuwR
-	e6tObBPlpuwkypnH5/quJLTO/9FUmfvGMJGlxu/nMapt7Mz08+7BIwiLIchjrKyUveptAn
-	jJ7yDtYArwX8GIIYPRKbfbYPujq44+9hObwSCtfPOkZ15Ae8r3K9ETKKDMJTLA==
-Date: Tue, 6 May 2025 22:47:20 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, Hui
- Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 30/34] drm/bridge: imx8qxp-pixel-combiner: convert to
- devm_drm_bridge_alloc() API
-Message-ID: <20250506224720.5cbcf3e1@booty>
-In-Reply-To: <f71d18d2-4271-4bb9-b54f-0e5a585778f3@nxp.com>
-References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
-	<20250424-drm-bridge-convert-to-alloc-api-v2-30-8f91a404d86b@bootlin.com>
-	<553d62ed-976a-4e17-9678-cdc3d40ce4a7@nxp.com>
-	<20250430112944.1b39caab@booty>
-	<f71d18d2-4271-4bb9-b54f-0e5a585778f3@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1746564582; c=relaxed/simple;
+	bh=KqFE33HYR89y3K+s5kLFsjki5ks0ZGvXY/r2pVvIkEQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H20VSk0R5mGYicfT2pEGZqPP1nMvh3cQN3lgr5mv8OPPphT22HbHBpqc7MoKvq+HkP712xUNa881YzmIb0x4M1yrH/43cGw5JmIJ74XaXhBVCqz6CJx49rqkeTxCrpZD+MJSt/OzjIS1j9xjcFLJh4meYhULBSM+4irgaeHZe90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=xS6k0qum; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [217.114.34.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id AC77F666B8B;
+	Tue,  6 May 2025 22:49:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1746564573;
+	bh=KqFE33HYR89y3K+s5kLFsjki5ks0ZGvXY/r2pVvIkEQ=;
+	h=From:Subject:Date;
+	b=xS6k0qumfy39HfdQkzWLq8oJ8yJntmpScsNv3tZSwrGbIgWCNiCIp5TMdM+5Gi9SK
+	 LX8C+QRVQ0pbzHYsHN/fov8qqO6gh2D2oKR7BymD/xdTaK1w0TZyk2iP6flu6JCQ+b
+	 +nbacNwhkJy3ZXbfVFgwfJ8c+JeaiHDvXDNrw304twzoG3aIb3Ak0Zfqw5Icv+2TZM
+	 h/dtlhnMP2v5owVTW1S8JhOlENwFcRvcNt4PKOLyBt2ZJv37sLZ17RiSyw++ITjfUg
+	 jwnL18f/1F8vAq683eDajwXaHFrMhDQaj4CaeV6IvTELRQBIPwaBA4oVrY07cuLuvk
+	 hIRbZN2KP+/1Q==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject:
+ [PATCH v2 6/7] cpufreq: intel_pstate: EAS: Increase cost for CPUs using L3
+ cache
+Date: Tue, 06 May 2025 22:47:53 +0200
+Message-ID: <2032776.usQuhbGJ8B@rjwysocki.net>
+In-Reply-To: <2999205.e9J7NaK4W3@rjwysocki.net>
+References: <2999205.e9J7NaK4W3@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeegleejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeelpdhrtghpthhtohepvhhitghtohhrrdhlihhusehngihprdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkv
- ghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhg
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 217.114.34.19
+X-CLIENT-HOSTNAME: 217.114.34.19
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeegleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppedvudejrdduudegrdefgedrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddujedruddugedrfeegrdduledphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
 
-Hello Liu,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-thanks for your further feedback.
+On some hybrid platforms some efficient CPUs (E-cores) are not connected
+to the L3 cache, but there are no other differences between them and the
+other E-cores that use L3.  In that case, it is generally more efficient
+to run "light" workloads on the E-cores that do not use L3 and allow all
+of the cores using L3, including P-cores, to go into idle states.
 
-On Tue, 6 May 2025 10:24:18 +0800
-Liu Ying <victor.liu@nxp.com> wrote:
+For this reason, slightly increase the cost for all CPUs sharing the L3
+cache to make EAS prefer CPUs that do not use it to the other CPUs of
+the same type (if any).
 
-> On 04/30/2025, Luca Ceresoli wrote:
-> > Hello Liu,  
-> 
-> Hi Luca,
-> 
-> > 
-> > On Tue, 29 Apr 2025 10:10:55 +0800
-> > Liu Ying <victor.liu@nxp.com> wrote:
-> >   
-> >> Hi,
-> >>
-> >> On 04/25/2025, Luca Ceresoli wrote:  
-> >>> This is the new API for allocating DRM bridges.
-> >>>
-> >>> This driver embeds an array of channels in the main struct, and each
-> >>> channel embeds a drm_bridge. This prevents dynamic, refcount-based
-> >>> deallocation of the bridges.
-> >>>
-> >>> To make the new, dynamic bridge allocation possible:
-> >>>
-> >>>  * change the array of channels into an array of channel pointers
-> >>>  * allocate each channel using devm_drm_bridge_alloc()
-> >>>  * adapt the code wherever using the channels
-> >>>
-> >>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
-> > 
-> > [...]
-> >   
-> >>> @@ -345,8 +351,8 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
-> >>>  free_child:
-> >>>  	of_node_put(child);
-> >>>  
-> >>> -	if (i == 1 && pc->ch[0].next_bridge)
-> >>> -		drm_bridge_remove(&pc->ch[0].bridge);
-> >>> +	if (i == 1 && pc->ch[0]->next_bridge)    
-> >>
-> >> Since this patch makes pc->ch[0] and pc->ch[1] be allocated separately,
-> >> pc->ch[0] could be NULL if channel0 is not available, hence a NULL pointer
-> >> dereference here...  
-> > 
-> > See below for this.
-> >   
-> >>> +		drm_bridge_remove(&pc->ch[0]->bridge);
-> >>>  
-> >>>  	pm_runtime_disable(dev);
-> >>>  	return ret;
-> >>> @@ -359,7 +365,7 @@ static void imx8qxp_pc_bridge_remove(struct platform_device *pdev)
-> >>>  	int i;
-> >>>  
-> >>>  	for (i = 0; i < 2; i++) {
-> >>> -		ch = &pc->ch[i];
-> >>> +		ch = pc->ch[i];
-> >>>  
-> >>>  		if (!ch->is_available)    
-> >>
-> >> ...and here too.  
-> > 
-> > This is indeed a bug, I should have checked the pointer for being
-> > non-NULL.
-> > 
-> > Looking at that more closely, I think the is_available flag can be
-> > entirely removed now. The allocation itself (ch != NULL) now is
-> > equivalent. Do you think my reasoning is correct?
-> > 
-> > Ouch! After writing the previous paragraph I realized you proposed this
-> > a few lines below! OK, removing is_available. :)
-> > 
-> > [...]
-> >   
-> >> On top of this patch series, this issue doesn't happen if I apply the below
-> >> change:  
-> > 
-> > [...]
-> >   
-> >> @@ -351,7 +349,7 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
-> >>  free_child:
-> >>         of_node_put(child);
-> >>  
-> >> -       if (i == 1 && pc->ch[0]->next_bridge)
-> >> +       if (i == 1 && pc->ch[0])
-> >>                 drm_bridge_remove(&pc->ch[0]->bridge);  
-> > 
-> > Unrelated to this patch, but as I looked at it more in depth now, I'm
-> > not sure this whole logic is robust, even in the original code.
-> > 
-> > The 'i == 1' check here seems to mean "if some error happened when
-> > handling channel@1, that means channel@0 was successfully initialized,
-> > so let's clean up channel 0".
-> > 
-> > However my understanding of the bindings is that device tree is allowed
-> > to have the channel@1 node before the channel@0 node (or even channel@1
-> > without channel@0, but that's less problematic here).
-> > 
-> > In such case (channel@1 before channel@0), this would happen:
-> > 
-> >  1. alloc and init ch[1], all OK
-> >  2. alloc and init ch[0], an error happens
-> >     (e.g. of_graph_get_remote_node() fails)
-> > 
-> > So we'd reach the free_child: label, and we should call
-> > drm_bridge_remove() for ch[1]->bridge, but there's no code to do that.
-> > 
-> > To be robust in such a case, I think both channels need to be checked
-> > independently, as the status of one does not imply the status of the
-> > other. E.g.:
-> > 
-> >   for (i = 0; i < 2; i++)
-> >       if (pc->ch[i] && pc->ch[i]->next_bridge)
-> >           drm_bridge_remove(&pc->ch[i]->bridge);
-> > 
-> > (which is similar to what .remove() does after the changes discussed in
-> > this thread, and which I have queued for v3)
-> > 
-> > What's your opinion? Do you think I missed anything?  
-> 
-> The pixel combiner DT node would be added in imx8-ss-dc{0,1}.dtsi, please
-> see the case for imx8-ss-dc0.dtsi introduced by an in-flight patch[1].  As
-> channel@{0,1} child nodes always exist(DT overlay cannot effectively delete
-> any of them) and channel@0 always comes first, there is no problematic case.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-I'm not questioning what existing and future dts files (will) contain,
-and surely I don't see a good reason someone would write channel@1
-before channel@0.
+v1 -> v2:
+   * Change L3 cache lookup method (the previous one doesn't always work).
+   * Adjust the new comment.
+   * Increase the cost for CPUs using L3 by 2 (instead of increasing it by 1)
+     to make the scheduler select the CPUs without L3 more often.
+   * Adjust the changelog.
 
-My point is:
+---
+ drivers/cpufreq/intel_pstate.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
- - the bindings _allow_ channel1 before channel@0
- - the error management code after the free_child label won't work
-   correctly if channel1 is before channel@0 in the device tree
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -982,6 +982,7 @@
+ 			   unsigned long *cost)
+ {
+ 	struct pstate_data *pstate = &all_cpu_data[dev->id]->pstate;
++	struct cpu_cacheinfo *cacheinfo = get_cpu_cacheinfo(dev->id);
+ 
+ 	/*
+ 	 * The smaller the perf-to-frequency scaling factor, the larger the IPC
+@@ -994,6 +995,22 @@
+ 	 * of the same type in different "utilization bins" is different.
+ 	 */
+ 	*cost = div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->scaling) + freq;
++	/*
++	 * Increase the cost slightly for CPUs able to access L3 to avoid
++	 * touching it in case some other CPUs of the same type can do the work
++	 * without it.
++	 */
++	if (cacheinfo) {
++		unsigned int i;
++
++		/* Check if L3 cache is there. */
++		for (i = 0; i < cacheinfo->num_leaves; i++) {
++			if (cacheinfo->info_list[i].level == 3) {
++				*cost += 2;
++				break;
++			}
++		}
++	}
+ 
+ 	return 0;
+ }
 
-IOW the driver is not robust against all legal device tree descriptions,
-and it could be easily made robust using the example code in my
-previous e-mail (quoted a few lines above).
 
-If you agree about this I'll be happy to send a patch doing that change.
-If you think I'm wrong, I won't fight a battle. This topic is
-orthogonal to the change I'm introducing in this patch, and I can
-continue the conversion independently from this discussion.
 
-> > Thanks for taking the time to dig into this!  
-> 
-> After looking into this patch and patch 31(though I've already provided my A-b)
-> more closely, I think the imx8qxp_pc and imx8{qm,qxp}_ldb main structures
-> should have the same life time with the embedded DRM bridges, because for
-> example the clk_apb clock in struct imx8qxp_pc would be accessed by the
-> imx8qxp_pc_bridge_mode_set DRM bridge callback.  But, IIUC, your patches extend
-> the life time for the embedded channel/bridge structures only, but not for the
-> main structures.  What do you think ?
-
-I see you concern, but I'm sure the change I'm introducing is not
-creating the problem you are concerned about.
-
-The key aspect is that my patch is merely changing the lifetime of the
-_allocation_ of the drm_bridge, not its usage. On drm_bridge_remove()
-the bridge is removed from its encoder chain and it is completely not
-reachable, both before and after my patch. With my patch it is not
-freed immediately, but it's just a piece of "wasted" memory that is
-still allocated until elsewhere in the kernel there are pointers to it,
-to avoid use-after-free.
-
-With this explanation, do you think my patch is correct (after fixing
-the bug we already discussed of course)?
-
-Best regards,
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
