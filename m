@@ -1,346 +1,133 @@
-Return-Path: <linux-kernel+bounces-635042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A925AAB834
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE0C9AAB905
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E46FC7AFA2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B83671C23A3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72EA264A73;
-	Tue,  6 May 2025 04:00:42 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3191EBFE0;
+	Tue,  6 May 2025 03:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lLWokG/o"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0A928F53B;
-	Tue,  6 May 2025 01:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB0F1E1C02;
+	Tue,  6 May 2025 01:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746495154; cv=none; b=VHjXPG3xmflod6BdvmAicVxtZ9OQlCS6ocaF97gtihAcAKXPCKfbtkrSNcTGn7OxFchv+nOc6JdzoROHbWox6ayglyGTgwehZaM0/czOH5XGuJYP+U9Ytxw4W8ZdOuIrGcTLNTp7UPC6xpbCbw2TK2I/DRvxu+a7+SbVlx61eqU=
+	t=1746494771; cv=none; b=Y5sLNkEZtPZatnjJB++MssKeimbNKYp/x2oucB48nf1tTsTI30R2hwX3WfioMSZ1tJ3dODN8xoVqKldAue9zAac0/kZQzj9fDc/6PHUIC1dZM87kaSUwJhX8qTWWye2x2A/0UcowWP9YicP8k0L06Hkvk7PWMP4J6DLV6pRHY7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746495154; c=relaxed/simple;
-	bh=JEVdDGwP/mUWnGIERoQTcQqBFyxqChOa3pFWAK5hTpQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ecAs2hSzJlAhmQqPwD+cudZtb7Qq7zQYjAPyYRY8y/GVq79+YpTNU99i1D0XYwqQzOw7LHLvvQo3tNSiEOJBw6RO3DR/w112p572G0Z7vi1JbnLvkenKdvjw3YPd5x7x3wvqlniXK88vVZ1hXzGGie9cR6kr4dC5odukVgSVkp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4Zs1992wNGzYQtwr;
-	Tue,  6 May 2025 09:32:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C2E7B1A1432;
-	Tue,  6 May 2025 09:32:28 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB32l6pZhlomhpALg--.25912S4;
-	Tue, 06 May 2025 09:32:27 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	song@kernel.org
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v6.1] md: move initialization and destruction of 'io_acct_set' to md.c
-Date: Tue,  6 May 2025 09:24:17 +0800
-Message-Id: <20250506012417.312790-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1746494771; c=relaxed/simple;
+	bh=lMA9xqdteBtAICMBE4dR29eHiKv0C8YGXInXwEg4QJs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g3w4ONzWY1B2N52eXpaGiN2xdwvLklu4E7nwTA3AyA00I6R7D7Ck+V/as7s2ja78oZE8Bz/EORdtlkAxnqozOz8QfUhHsqIr74Vbu5fEeq2BrViFQgo+cVOlsN0Re9GAaZIK5bnmXqfeOpY1UQOhv/kk0t3EfNr5I7Iy9BnKfoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lLWokG/o; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545KTahu007918;
+	Tue, 6 May 2025 01:25:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=a+3iGwj/hO6S7Q34SFvoBpBv
+	Y/YCE7J0Uke+mqkFKdM=; b=lLWokG/oTSHi6rlDNIPU9NU/6RtsEIwXEn99+Dqn
+	LGbfLebmWVRwfX8hTtAcN7uZbSYiMAOA/AUYrQqtyCfph/eFNFR55B+AmYfuzskK
+	qp9s9QvxkXJinwdh+1fV975rl16fxG3SChI4GGuEOuecfDdQvB5KFuCvURJbyyes
+	jmP4zE7fewYkZJ4xEe0WIWzuJSRDLXSX4bG7O3WyMIJ093QPwzuLeXdllALpbqZe
+	iRvn392OydCJLw0J8O31CeLzBY1dMO/8P+RJSOUurXGQ+2PKtUVzi98/4CEP2DkW
+	gcjQLH3yPwFILQh4k+DmL3zF+j3P4SxOD1rkAgE9KyGDnQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46d9ep5xbn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 May 2025 01:25:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5461PpoR000950
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 6 May 2025 01:25:51 GMT
+Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 5 May 2025 18:25:51 -0700
+Date: Mon, 5 May 2025 18:25:50 -0700
+From: Mike Tipton <quic_mdtipton@quicinc.com>
+To: Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi
+	<cristian.marussi@arm.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Viresh
+ Kumar <viresh.kumar@linaro.org>
+CC: <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Peng Fan
+	<peng.fan@oss.nxp.com>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3] cpufreq: scmi: Skip SCMI devices that aren't used by
+ the CPUs
+Message-ID: <aBllHt7A2nP/9x3N@hu-mdtipton-lv.qualcomm.com>
+References: <20250428144728.871404-1-quic_mdtipton@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB32l6pZhlomhpALg--.25912S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3JFW5JFWfZr1furWrtFy5Arb_yoW3tw17pa
-	1SgasYgr4FqrWSqa1DA3yv9a4Fqrn7Kr97trW7J348Ar4xAr4DG3W5WFyFvryDJ3yrCr13
-	Zw4rKFWUuF17K3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250428144728.871404-1-quic_mdtipton@quicinc.com>
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EOUG00ZC c=1 sm=1 tr=0 ts=68196520 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=3H110R4YSZwA:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=8AirrxEcAAAA:8 a=yJaCyoTPdldMf7LLIq8A:9 a=CjuIK1q_8ugA:10 a=ZXulRonScM0A:10
+ a=zZCYzV9kfG8A:10 a=TjNXssC_j7lpFel5tvFf:22 a=ST-jHhOKWsTCqRlWije3:22
+X-Proofpoint-ORIG-GUID: xQyI9TTY1mL-lT4GgZf6t5ZYvE89kQxv
+X-Proofpoint-GUID: xQyI9TTY1mL-lT4GgZf6t5ZYvE89kQxv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDAxMSBTYWx0ZWRfX0c07hmmoRyzu
+ LDWrWnnWv0/IlnrcjiVXRgnYvkD5HQsp5bdZIcTS3Ww3dRnV6+lb3FHQzRn0Nu4CE5ohLo35EE3
+ MKWpVsDkWPL7//XRwgO1B5Ap0ztm9P674s9K5i4ifZIqFlhXWCbSIc9r5ABVp+gZjTfGb0tUbRX
+ tplERRuJtyhiHFdJkXtIfrRcmuWfMWUtvQqH9IyzS+B7z24iL8mT2Uitj7uf/LCk8tCHk0My3yu
+ 9bOsebPbHJWneXjaOU674k3uq0f0ax1pgOOQ/HLaF/3yMt/V+qK2tDRbQ9TDPhMMZXuUt/3/iRY
+ iUVUEF9bHJ3gqd78jAUeDbRZM8AkFGjdDvnbqJhp6oUQIfhzS12fZ+JxzDVF3KKdkfa9Pyyvbkb
+ KznSbL3vilQGSjCN0mGXpeB7U4v3hct0eDyZenBiokuEQJs7RfQKSxAzer5ybRqNDw4Kbexz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_01,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 lowpriorityscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 mlxlogscore=809 mlxscore=0
+ priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505060011
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Mon, Apr 28, 2025 at 07:47:28AM -0700, Mike Tipton wrote:
+> Currently, all SCMI devices with performance domains attempt to register
+> a cpufreq driver, even if their performance domains aren't used to
+> control the CPUs. The cpufreq framework only supports registering a
+> single driver, so only the first device will succeed. And if that device
+> isn't used for the CPUs, then cpufreq will scale the wrong domains.
+> 
+> To avoid this, return early from scmi_cpufreq_probe() if the probing
+> SCMI device isn't referenced by the CPU device phandles.
+> 
+> This keeps the existing assumption that all CPUs are controlled by a
+> single SCMI device.
+> 
+> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-commit c567c86b90d4715081adfe5eb812141a5b6b4883 upstream.
+Hi Sudeep / Viresh,
 
-'io_acct_set' is only used for raid0 and raid456, prepare to use it for
-raid1 and raid10, so that io accounting from different levels can be
-consistent.
+Any thoughts on this?
 
-By the way, follow up patches will also use this io clone mechanism to
-make sure 'active_io' represents in flight io, not io that is dispatching,
-so that mddev_suspend will wait for io to be done as designed.
-
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Xiao Ni <xni@redhat.com>
-Signed-off-by: Song Liu <song@kernel.org>
-Link: https://lore.kernel.org/r/20230621165110.1498313-2-yukuai1@huaweicloud.com
-[Yu Kuai: This is the relied patch for commit 4a05f7ae3371 ("md/raid10:
-fix missing discard IO accounting"), kernel will panic while issuing
-discard to raid10 without this patch]
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md.c    | 27 ++++++++++-----------------
- drivers/md/md.h    |  2 --
- drivers/md/raid0.c | 16 ++--------------
- drivers/md/raid5.c | 41 +++++++++++------------------------------
- 4 files changed, 23 insertions(+), 63 deletions(-)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index d5fbccc72810..a9fcfcbc2d11 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -5965,6 +5965,13 @@ int md_run(struct mddev *mddev)
- 			goto exit_bio_set;
- 	}
- 
-+	if (!bioset_initialized(&mddev->io_acct_set)) {
-+		err = bioset_init(&mddev->io_acct_set, BIO_POOL_SIZE,
-+				  offsetof(struct md_io_acct, bio_clone), 0);
-+		if (err)
-+			goto exit_sync_set;
-+	}
-+
- 	spin_lock(&pers_lock);
- 	pers = find_pers(mddev->level, mddev->clevel);
- 	if (!pers || !try_module_get(pers->owner)) {
-@@ -6142,6 +6149,8 @@ int md_run(struct mddev *mddev)
- 	module_put(pers->owner);
- 	md_bitmap_destroy(mddev);
- abort:
-+	bioset_exit(&mddev->io_acct_set);
-+exit_sync_set:
- 	bioset_exit(&mddev->sync_set);
- exit_bio_set:
- 	bioset_exit(&mddev->bio_set);
-@@ -6374,6 +6383,7 @@ static void __md_stop(struct mddev *mddev)
- 	percpu_ref_exit(&mddev->active_io);
- 	bioset_exit(&mddev->bio_set);
- 	bioset_exit(&mddev->sync_set);
-+	bioset_exit(&mddev->io_acct_set);
- }
- 
- void md_stop(struct mddev *mddev)
-@@ -8744,23 +8754,6 @@ void md_submit_discard_bio(struct mddev *mddev, struct md_rdev *rdev,
- }
- EXPORT_SYMBOL_GPL(md_submit_discard_bio);
- 
--int acct_bioset_init(struct mddev *mddev)
--{
--	int err = 0;
--
--	if (!bioset_initialized(&mddev->io_acct_set))
--		err = bioset_init(&mddev->io_acct_set, BIO_POOL_SIZE,
--			offsetof(struct md_io_acct, bio_clone), 0);
--	return err;
--}
--EXPORT_SYMBOL_GPL(acct_bioset_init);
--
--void acct_bioset_exit(struct mddev *mddev)
--{
--	bioset_exit(&mddev->io_acct_set);
--}
--EXPORT_SYMBOL_GPL(acct_bioset_exit);
--
- static void md_end_io_acct(struct bio *bio)
- {
- 	struct md_io_acct *md_io_acct = bio->bi_private;
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 4f0b48097455..1fda5e139beb 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -746,8 +746,6 @@ extern void md_error(struct mddev *mddev, struct md_rdev *rdev);
- extern void md_finish_reshape(struct mddev *mddev);
- void md_submit_discard_bio(struct mddev *mddev, struct md_rdev *rdev,
- 			struct bio *bio, sector_t start, sector_t size);
--int acct_bioset_init(struct mddev *mddev);
--void acct_bioset_exit(struct mddev *mddev);
- void md_account_bio(struct mddev *mddev, struct bio **bio);
- 
- extern bool __must_check md_flush_request(struct mddev *mddev, struct bio *bio);
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 7c6a0b4437d8..c50a7abda744 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -377,7 +377,6 @@ static void raid0_free(struct mddev *mddev, void *priv)
- 	struct r0conf *conf = priv;
- 
- 	free_conf(mddev, conf);
--	acct_bioset_exit(mddev);
- }
- 
- static int raid0_run(struct mddev *mddev)
-@@ -392,16 +391,11 @@ static int raid0_run(struct mddev *mddev)
- 	if (md_check_no_bitmap(mddev))
- 		return -EINVAL;
- 
--	if (acct_bioset_init(mddev)) {
--		pr_err("md/raid0:%s: alloc acct bioset failed.\n", mdname(mddev));
--		return -ENOMEM;
--	}
--
- 	/* if private is not null, we are here after takeover */
- 	if (mddev->private == NULL) {
- 		ret = create_strip_zones(mddev, &conf);
- 		if (ret < 0)
--			goto exit_acct_set;
-+			return ret;
- 		mddev->private = conf;
- 	}
- 	conf = mddev->private;
-@@ -432,15 +426,9 @@ static int raid0_run(struct mddev *mddev)
- 
- 	ret = md_integrity_register(mddev);
- 	if (ret)
--		goto free;
-+		free_conf(mddev, conf);
- 
- 	return ret;
--
--free:
--	free_conf(mddev, conf);
--exit_acct_set:
--	acct_bioset_exit(mddev);
--	return ret;
- }
- 
- /*
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 4315dabd3202..6e80a439ec45 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -7770,19 +7770,12 @@ static int raid5_run(struct mddev *mddev)
- 	struct md_rdev *rdev;
- 	struct md_rdev *journal_dev = NULL;
- 	sector_t reshape_offset = 0;
--	int i, ret = 0;
-+	int i;
- 	long long min_offset_diff = 0;
- 	int first = 1;
- 
--	if (acct_bioset_init(mddev)) {
--		pr_err("md/raid456:%s: alloc acct bioset failed.\n", mdname(mddev));
-+	if (mddev_init_writes_pending(mddev) < 0)
- 		return -ENOMEM;
--	}
--
--	if (mddev_init_writes_pending(mddev) < 0) {
--		ret = -ENOMEM;
--		goto exit_acct_set;
--	}
- 
- 	if (mddev->recovery_cp != MaxSector)
- 		pr_notice("md/raid:%s: not clean -- starting background reconstruction\n",
-@@ -7813,8 +7806,7 @@ static int raid5_run(struct mddev *mddev)
- 	    (mddev->bitmap_info.offset || mddev->bitmap_info.file)) {
- 		pr_notice("md/raid:%s: array cannot have both journal and bitmap\n",
- 			  mdname(mddev));
--		ret = -EINVAL;
--		goto exit_acct_set;
-+		return -EINVAL;
- 	}
- 
- 	if (mddev->reshape_position != MaxSector) {
-@@ -7839,15 +7831,13 @@ static int raid5_run(struct mddev *mddev)
- 		if (journal_dev) {
- 			pr_warn("md/raid:%s: don't support reshape with journal - aborting.\n",
- 				mdname(mddev));
--			ret = -EINVAL;
--			goto exit_acct_set;
-+			return -EINVAL;
- 		}
- 
- 		if (mddev->new_level != mddev->level) {
- 			pr_warn("md/raid:%s: unsupported reshape required - aborting.\n",
- 				mdname(mddev));
--			ret = -EINVAL;
--			goto exit_acct_set;
-+			return -EINVAL;
- 		}
- 		old_disks = mddev->raid_disks - mddev->delta_disks;
- 		/* reshape_position must be on a new-stripe boundary, and one
-@@ -7863,8 +7853,7 @@ static int raid5_run(struct mddev *mddev)
- 		if (sector_div(here_new, chunk_sectors * new_data_disks)) {
- 			pr_warn("md/raid:%s: reshape_position not on a stripe boundary\n",
- 				mdname(mddev));
--			ret = -EINVAL;
--			goto exit_acct_set;
-+			return -EINVAL;
- 		}
- 		reshape_offset = here_new * chunk_sectors;
- 		/* here_new is the stripe we will write to */
-@@ -7886,8 +7875,7 @@ static int raid5_run(struct mddev *mddev)
- 			else if (mddev->ro == 0) {
- 				pr_warn("md/raid:%s: in-place reshape must be started in read-only mode - aborting\n",
- 					mdname(mddev));
--				ret = -EINVAL;
--				goto exit_acct_set;
-+				return -EINVAL;
- 			}
- 		} else if (mddev->reshape_backwards
- 		    ? (here_new * chunk_sectors + min_offset_diff <=
-@@ -7897,8 +7885,7 @@ static int raid5_run(struct mddev *mddev)
- 			/* Reading from the same stripe as writing to - bad */
- 			pr_warn("md/raid:%s: reshape_position too early for auto-recovery - aborting.\n",
- 				mdname(mddev));
--			ret = -EINVAL;
--			goto exit_acct_set;
-+			return -EINVAL;
- 		}
- 		pr_debug("md/raid:%s: reshape will continue\n", mdname(mddev));
- 		/* OK, we should be able to continue; */
-@@ -7922,10 +7909,8 @@ static int raid5_run(struct mddev *mddev)
- 	else
- 		conf = mddev->private;
- 
--	if (IS_ERR(conf)) {
--		ret = PTR_ERR(conf);
--		goto exit_acct_set;
--	}
-+	if (IS_ERR(conf))
-+		return PTR_ERR(conf);
- 
- 	if (test_bit(MD_HAS_JOURNAL, &mddev->flags)) {
- 		if (!journal_dev) {
-@@ -8125,10 +8110,7 @@ static int raid5_run(struct mddev *mddev)
- 	free_conf(conf);
- 	mddev->private = NULL;
- 	pr_warn("md/raid:%s: failed to run raid set.\n", mdname(mddev));
--	ret = -EIO;
--exit_acct_set:
--	acct_bioset_exit(mddev);
--	return ret;
-+	return -EIO;
- }
- 
- static void raid5_free(struct mddev *mddev, void *priv)
-@@ -8136,7 +8118,6 @@ static void raid5_free(struct mddev *mddev, void *priv)
- 	struct r5conf *conf = priv;
- 
- 	free_conf(conf);
--	acct_bioset_exit(mddev);
- 	mddev->to_remove = &raid5_attrs_group;
- }
- 
--- 
-2.39.2
-
+Thanks,
+Mike
 
