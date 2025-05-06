@@ -1,149 +1,270 @@
-Return-Path: <linux-kernel+bounces-635177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A197AABA65
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB831AABA62
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BB0D1C24DCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:13:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742511C23D21
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B401A21C9E3;
-	Tue,  6 May 2025 04:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC0F2144C4;
+	Tue,  6 May 2025 04:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x1ttBAGu"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GXISCohN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339EA1C6FF5;
-	Tue,  6 May 2025 04:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4BD4B1E71;
+	Tue,  6 May 2025 04:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746507180; cv=none; b=irht43dOja2/F76+TuyvRmDdi7/0JIG2QrpiSi70LJLO0xVvZmt6cVKGgI3pTZgvEUpsboLTIiGnMSMjFTTn91DltcnC1LeDxB8YvDf3WDPVYM/YTQMD9VdI7ZemN14vewHpIqRu/bV4/oZKzYJ8BKBwXkCJbneacQVvnXTLgyk=
+	t=1746506880; cv=none; b=WonhmzFOQXmTce7jfoyZ50/6I1+44+NNP/f4kQUscEy0KAvJxaZdpYp8YtvsgOIZkoNGiD4xWiLIM2UXkLjN022UykdjGCfqwv/4hJbe1NIvnxCZQrow2bZKo/F6bgsoqBo529PM0yf+XZcdSmzo1EFNWGejsMEG0ooMZIkFxm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746507180; c=relaxed/simple;
-	bh=SPb7CHjJNBM1OnS2CuhgKUZESxGvHErTSret8riczAI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n+9R3vbvuNlLGFe7KfN73QwzD79Ptf/JbpmD/Vv2iJRDjJRtnSCKjTUeeR81YmrzqGiruLf/4aV4+TSKwHESAWACYO18/UTwJ02NApbLul3S59PAD9JKjplSE6+LWZsdyyfhSKIPwoQT67p9ubELNVE7TthBv7yGM4RUyh6uJ3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x1ttBAGu; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5464qeZ11133658
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 5 May 2025 23:52:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1746507161;
-	bh=FK9XnUrCtZQeTWZ9YMNn/I/qg2zjs0hWiSjFdXFm63Q=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=x1ttBAGu4Ei/HaBNkXcLYwkpFopFkx2nv642DjG3/dKGFrpmKYfvmuV9cZqDKUDrs
-	 5cOeC+f2DVFTIqFK2UPgu6Y/2RiecwxzVDvHYtSxLhxFUVMc65zmxPMwT8ySRP2RVb
-	 fO8QwowWAqC1VkRbl493Ifa2TbYUomZ1VX7Xlekg=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5464qesV050167
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 5 May 2025 23:52:40 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 5
- May 2025 23:52:40 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 5 May 2025 23:52:40 -0500
-Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [10.24.69.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5464qPcV069139;
-	Mon, 5 May 2025 23:52:36 -0500
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <devarsht@ti.com>,
-        <y-abhilashchandra@ti.com>, <s-jain1@ti.com>, <jai.luthra@linux.dev>,
-        <jai.luthra@ideasonboard.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <r-donadkar@ti.com>
-Subject: [PATCH 2/2] arm64: dts: ti: k3-am625-beagleplay: Add required voltage supplies for TEVI-OV5640
-Date: Tue, 6 May 2025 10:22:25 +0530
-Message-ID: <20250506045225.1246873-3-r-donadkar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250506045225.1246873-1-r-donadkar@ti.com>
-References: <20250506045225.1246873-1-r-donadkar@ti.com>
+	s=arc-20240116; t=1746506880; c=relaxed/simple;
+	bh=ky76C3dJ2zWIGTBoeltBiKqkv5AWib+EuPhOpuaifAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qdvOw+RjD/t0fB+iH7nLlv+NP6Kl7R6qp3cROLwYc2BdJ0t3GXqP8z/McN01nz5YRhRC6ENqKImqZGTf0E+VtTL57GdWaGIFK30O2bxwjCB+yUVSC81yvSVkAb1fUbW+NtBEXAX7UvfMfiTUn7n0LEDiONVuTGF6+tObJBKd8QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GXISCohN; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746506879; x=1778042879;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ky76C3dJ2zWIGTBoeltBiKqkv5AWib+EuPhOpuaifAg=;
+  b=GXISCohNw8wfwgdN1CO7SxVRsQqeanF43OQ4hAicsTS/sx54HD9adBkE
+   ely6LhRF0qc98R/CRHcxkOMsP1ysn2oK7Pd31UY6Sfaiy/6zbPlxl6yX/
+   cnhhGtFSO6VSJTXLQPQLSby2VmpX9sjlEwDCxHg4rHjLjsQpOH5dp5Ydq
+   BT376bIiy1J4m7O/3SQMufT0Bq7nP8KdTqp9+n7aelfWviSgdIkWxH0E2
+   CNyGnf1uuOIKy+wAN4ACF765V76X/XfTBLBjRCv5VgmBSmkg+f1pQwxgq
+   hF3JnHf+jfuiQC/c6xkaytpp3Wyj7ggU36FiQCKttP7HM8Bbi+vXV6URx
+   g==;
+X-CSE-ConnectionGUID: l/fP/ptUQ7mhL/qE5DJuKw==
+X-CSE-MsgGUID: LjWwOdlKQuai4nGvNFW3+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="48284312"
+X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
+   d="scan'208";a="48284312"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 21:47:55 -0700
+X-CSE-ConnectionGUID: jtpdzpW1R4Smrt15chOdlQ==
+X-CSE-MsgGUID: wD20LN+kTcuq2mvvjvSVzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
+   d="scan'208";a="135381968"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 21:47:36 -0700
+Date: Mon, 5 May 2025 21:52:35 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>
+Subject: Re: [PATCH v3 04/13] dt-bindings: x86: Add CPU bindings for x86
+Message-ID: <20250506045235.GB25533@ranerica-svr.sc.intel.com>
+References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
+ <20250503191515.24041-5-ricardo.neri-calderon@linux.intel.com>
+ <20250504-happy-spoonbill-of-radiance-3b9fec@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250504-happy-spoonbill-of-radiance-3b9fec@kuoka>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-The device tree overlay for TEVI-OV5640 requires following voltage
-supplies:
+On Sun, May 04, 2025 at 06:45:59PM +0200, Krzysztof Kozlowski wrote:
+> On Sat, May 03, 2025 at 12:15:06PM GMT, Ricardo Neri wrote:
+> > Add bindings for CPUs in x86 architecture. Start by defining the `reg` and
+> 
+> What for?
 
-AVDD-supply: Analog voltage supply, 2.8 volts
-DOVDD-supply: Digital I/O voltage supply, 1.8 volts
-DVDD-supply: Digital core voltage supply, 3.3 volts
+Thank you for your quick feedback, Krzysztof!
 
-Add them in the overlay.
+Do you mean for what reason I want to start bindings for x86 CPUs? Or only
+the `reg` property? If the former, it is to add an enable-method property to
+x86 CPUs. If the latter, is to show the relationship between APIC and `reg`.
 
-Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
----
- .../k3-am625-beagleplay-csi2-tevi-ov5640.dtso | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
+> 
+> > `enable-method` properties and their relationship to x86 APIC ID and the
+> > available mechanisms to boot secondary CPUs.
+> > 
+> > Start defining bindings for Intel processors. Bindings for other vendors
+> > can be added later as needed.
+> > 
+> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> > ---
+> 
+> Not really tested so only limited review follows.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtso
-index 81a2763d43c65..8a7a9ece08af6 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay-csi2-tevi-ov5640.dtso
-@@ -15,6 +15,33 @@ clk_ov5640_fixed: ov5640-xclk {
- 		#clock-cells = <0>;
- 		clock-frequency = <24000000>;
- 	};
-+
-+	reg_2p8v: regulator-2p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "2P8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&vdd_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vdd_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vdd_3v3>;
-+		regulator-always-on;
-+	};
- };
- 
- &main_gpio0 {
-@@ -39,6 +66,10 @@ ov5640: camera@3c {
- 		clocks = <&clk_ov5640_fixed>;
- 		clock-names = "xclk";
- 
-+		AVDD-supply = <&reg_2p8v>;
-+		DOVDD-supply = <&reg_1p8v>;
-+		DVDD-supply = <&reg_3p3v>;
-+
- 		port {
- 			csi2_cam0: endpoint {
- 				remote-endpoint = <&csi2rx0_in_sensor>;
--- 
-2.34.1
+Sorry, I ran make dt_binding_check but only on this schema. I missed the
+reported error.
 
+> 
+> >  .../devicetree/bindings/x86/cpus.yaml         | 80 +++++++++++++++++++
+> >  1 file changed, 80 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/x86/cpus.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/x86/cpus.yaml b/Documentation/devicetree/bindings/x86/cpus.yaml
+> > new file mode 100644
+> > index 000000000000..108b3ad64aea
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/x86/cpus.yaml
+> > @@ -0,0 +1,80 @@
+> > +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/x86/cpus.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: x86 CPUs
+> > +
+> > +maintainers:
+> > +  - Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> > +
+> > +description: |
+> > +  Description of x86 CPUs in a system through the "cpus" node.
+> > +
+> > +  Detailed information about the CPU architecture can be found in the Intel
+> > +  Software Developer's Manual:
+> > +    https://intel.com/sdm
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - intel,x86
+> 
+> That's architecture, not a CPU. CPUs are like 80286, 80386, so that's
+> not even specific instruction set. I don't get what you need it for.
+
+Am I to understand the the `compatible` property is not needed if the
+bindings apply to any x86 CPU?
+
+> 
+> > +
+> > +  reg:
+> 
+> Missing constraints.
+
+I could add minItems. For maxItems, there is no limit to the number of
+threads.
+
+> 
+> > +    description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
+
+OK.
+
+> 
+> > +      Local APIC ID of the CPU. If the CPU has more than one execution thread,
+> > +      then the property is an array with one element per thread.
+> > +
+> > +  enable-method:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    description: |
+> > +      The method used to wake up secondary CPUs. This property is not needed if
+> > +      the secondary processors are booted using INIT assert, de-assert followed
+> > +      by Start-Up IPI messages as described in the Volume 3, Section 11.4 of
+> > +      Intel Software Developer's Manual.
+> > +
+> > +      It is also optional for the bootstrap CPU.
+> > +
+> > +    oneOf:
+> 
+> I see only one entry, so didn't you want an enum?
+
+Indeed, enum would be more appropriate.
+
+> 
+> > +      - items:
+> 
+> Not a list
+> 
+> > +          - const: intel,wakeup-mailbox
+> 
+> So every vendor is supposed to come with different name for the same
+> feature? Or is wakeup-mailnox really intel specific, but then specific
+> to which processors?
+
+It would not be necessary for every vendor to provide a different name for
+the same feature. I saw, however that the Devicetree specification requires
+a [vendor],[method] stringlist.
+
+Also, platform firmware for any processor could implement the wakeup
+mailbox.
+
+> 
+> 
+> > +            description: |
+> > +              CPUs are woken up using the mailbox mechanism. The platform
+> > +              firmware boots the secondary CPUs and puts them in a state
+> > +              to check the mailbox for a wakeup command from the operating
+> > +              system.
+> > +
+> > +required:
+> > +  - reg
+> > +  - compatible
+> > +
+> > +unevaluatedProperties: false
+> 
+> Missing ref in top-level or this is supposed to be additionalProps. See
+> example-schema.
+
+I will check.
+
+> 
+> > +
+> > +examples:
+> > +  - |
+> > +    /*
+> > +     * A system with two CPUs. cpu@0 is the bootstrap CPU and its status is
+> > +     * "okay". It does not have the enable-method property. cpu@1 is a
+> > +     * secondary CPU. Its status is "disabled" and defines the enable-method
+> > +     * property.
+> > +     */
+> > +
+> > +    cpus {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <0>;
+> > +
+> > +      cpu@0 {
+> > +        reg = <0x0 0x1>;
+> > +        compatible = "intel,x86";
+> > +        status = "okay";
+> 
+> Drop
+
+I will drop status = "okay"
+
+> 
+> > +      };
+> > +
+> > +      cpu@1 {
+> > +        reg = <0x0 0x1>;
+> > +        compatible = "intel,x86";
+> > +        status = "disabled";
+> 
+> Why?
+
+Because this is a secondary CPU that the operating system will enable using
+the method specified in the `enable-method` property.
+
+Thanks and BR,
+Ricardo
 
