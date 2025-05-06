@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-635755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1327CAAC199
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:44:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF63AAC19D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DCDE7B040A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:42:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8F44C8277
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8756A27934C;
-	Tue,  6 May 2025 10:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4B5279905;
+	Tue,  6 May 2025 10:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="fKZpePs/"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="XqgjtmHI"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9AF278777;
-	Tue,  6 May 2025 10:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC32278771;
+	Tue,  6 May 2025 10:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746528219; cv=pass; b=EVwpEN54FnjjA9KtutZTSFYiIIobHkWrbfGdIbyYhdK8cJnCRZQLg+5LIJ6XQ52RoW5c+UD7AWIQUYMWFSpUE/9Mnv+raLbyE0/Lc+B1FVQhalhsNW0bJC0xVvVmu7Jy0z0gH35oo9yCiKbfhzqYpzu6Y2oGTw12bGY8Ihcx/jY=
+	t=1746528226; cv=pass; b=tv24uBMZUxqnWsZelYAz2p0ncNEvX8sCfv9goC9xDinnwlEZqFVSBtXNKFwcSz+IFfmjGJq5LImteGNsH/aURkabtoI2FcLUPidPZFlZmjUKRNcbLBwZHxtqA741bmYvA7ron+fYdeZjOFc+TAGaXSeIAXALVWhkwady6bLOBrc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746528219; c=relaxed/simple;
-	bh=IAyRN4R8QR7Ds5/pgBhdkREZPL1v56h1YmoOgOkEybg=;
+	s=arc-20240116; t=1746528226; c=relaxed/simple;
+	bh=gjFsYyl3zi4PwMmGnKtfu9pJqLMqRxhwSZu8oUau0W0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oySgZp3dFlePusc1scdoSvXcJMdLmXokh9jEsjUZijEwkX3hIXMrnYkJPZwv5VsdK2HeqJmJg16VZgNrswLdXXKGgLTyK4WhAKyfWTiBMK156z9rVSd9fSuEgy0wernj5oZ/dqRN0dUQW3mKwTlEduXGvTNb1dyTdxTGqACb38E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=fKZpePs/; arc=pass smtp.client-ip=136.143.188.112
+	 In-Reply-To:To:Cc; b=BAfH5j24YnQk6BM5i0O6/ZyXtu3NSlTKIfxB1zJxdlvQnYlzy3hion/7bt+4n95hlxxOYINgrm5ewRpN1dRXZcUIk2x3Wy7+738IMX4xU1FBU6DGoiOMX2ZKPpXX0cN4G6Vnuve7GuDwu3fxQlJ6QWGqg2+jwB27rTtfb2J5zFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=XqgjtmHI; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1746528190; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1746528196; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=C76y26vKwaGzejYv5+YKfGJ+Fa6w0TyeuU0Y+GpH4blBlSe0Tg+7gA3GpFCRRHvMgKCw9lolyd8E2gSqrv9MTkhuE2VES70/2YmlobnEXvrE85WgkWT3sTKVUjUnB7HDYhjzuSbVjMGSWhftoi6HcCJBvOdd6Y3PJaeKo6eEDxA=
+	b=brMsqbzUL/KN1CckQAUYqK/OAB0Wx9uBKKMTeQhCyEVls2zi+aaahcVKbG4Zmc7JMi+X/Rqe/KqK/2CtHnnRrnkmOEniFRreEQQtfumR2PqCRsoH4U5npmrmHEtUoHatD73PD/5zfiXjAZEL/0jrZL6n0i4F5O9edG1kVxSqc28=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1746528190; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VxT8cr+193Obv8GfGr35buihctxekuhGDSXKGKcSfq8=; 
-	b=laTJFK2K21pkc9+17acb5I5nVw6ELAIAqIRhlnDWq4P1pYwZ21jts28VbrvCaTu+fqEA8EJUO8tpxXGr3A+khwSKHgNo8/KpbGrbxFeXWDWYT++hvsoWVWC9B8t6yBsggc6wC/wo80YhFNwSwM7yx1TvV0COrjp2FDYaFN2jH7o=
+	t=1746528196; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=kaCYyrbqrYjh5lrSJFFiV+CYsBoA1EBJh7E+FO7i5KI=; 
+	b=Q7DenkidvfqoQ/StQETFuXZyjGlZicELNp7Ujb1FxI5UyiBGg3fjEiphxqZs/LBMLxvWKu4FlzG2Q2CEQubz0zetQLHZ1HkWKoeXkRDC8pyP/9dR/jCMnjWFxY2SGRua1cAvVjpWYrqJMQRXmtTW5sLQ3VV7EANf9WJK4be5LKk=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
 	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746528190;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746528196;
 	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=VxT8cr+193Obv8GfGr35buihctxekuhGDSXKGKcSfq8=;
-	b=fKZpePs/wbVR5qQ40+w/8djFfrySApNY+ACkxu2bqKFLYUzMkUirrjdqmtG25Ev5
-	xBnmn69OPg0NFwYI9GN2BPf9GJeGlbievAV3NRbZQIAw86wtHbXLRuBH6RfurdS9tMw
-	2XOkWASjd3ZPFoDB2W7L5peIQaEyvCoCq5xfIQtY=
-Received: by mx.zohomail.com with SMTPS id 1746528189233583.4256418746694;
-	Tue, 6 May 2025 03:43:09 -0700 (PDT)
+	bh=kaCYyrbqrYjh5lrSJFFiV+CYsBoA1EBJh7E+FO7i5KI=;
+	b=XqgjtmHIXCY0ZhC9PQzgNgmVG4gNLFmOwchgsphWtenU9mIdCQrnLrPxuUNgBUx6
+	F//4WZcdfHeX/TTM3oTnU4H4Lc3UPiTfpm4INv2xq0MT03P0j0Mz7KPbVpDRLwsUAn9
+	acWVZAERN7uj/GpAvG2SXdKY7Vy9WY6uBx2XHbfc=
+Received: by mx.zohomail.com with SMTPS id 1746528194017991.5681611931021;
+	Tue, 6 May 2025 03:43:14 -0700 (PDT)
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Tue, 06 May 2025 12:42:41 +0200
-Subject: [PATCH v4 2/5] arm64: dts: rockchip: Add RK3576 HDMI audio
+Date: Tue, 06 May 2025 12:42:42 +0200
+Subject: [PATCH v4 3/5] arm64: dts: rockchip: Add analog audio on RK3576
+ Sige5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,7 +62,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250506-rk3576-sai-v4-2-a8b5f5733ceb@collabora.com>
+Message-Id: <20250506-rk3576-sai-v4-3-a8b5f5733ceb@collabora.com>
 References: <20250506-rk3576-sai-v4-0-a8b5f5733ceb@collabora.com>
 In-Reply-To: <20250506-rk3576-sai-v4-0-a8b5f5733ceb@collabora.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -81,51 +82,124 @@ Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
  Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 X-Mailer: b4 0.14.2
 
-The RK3576 SoC now has upstream support for HDMI.
+The ArmSoM Sige5 board features an Everest ES8388 codec to provide
+analog stereo audio output, as well as analog audio input. The codec
+hangs off the i2c2 bus and responds to address 0x10. It is connected to
+the SAI1 audio controller of the RK3576, with one SDO (output) lane and
+one SDI (input) lane.
 
-Add an HDMI audio node, which uses SAI6 as its audio controller
-according to downstream.
+The codec has two sets of outputs. One set, LOUT1/ROUT1, is connected
+through a set of 22uF non-polarised coupling capacitors to a 3-position
+connector that appears to be a clone of the JST BM03B-SURS-TF header,
+and is capable of mating with a JST 03SUR-32S (or JST 03SUR-36L if you
+prefer lemon-lime) or compatible clone connector. The right headphone
+output is the one closest to the Type-C DC input connector, the left
+headphone output is the one in the middle, and the third position, the
+one closest to the USB3 Type-A host connector, is puzzingly labelled as
+"HP_GND" in the schematic but is in fact connected to the codecs RIN1
+input through a 1uF non-plarised coupling capacitor.
+
+LOUT2 and ROUT2 are routed to 1mm test pads T36 and T37 respectively.
+These are located on the bottom of the board, and do not go through any
+coupling capacitor. For use as line out, the ES8388 datasheet recommends
+adding 1uF coupling capacitor if one wishes to use it as a line-level
+output.
+
+There is also a pair of inputs for a stereo microphone, going from two
+1mm testpads T34 and T35, which are decoupled with a 100pF capacitor and
+pulled to 3.3v and ground respectively. These inputs then go through 1uF
+capacitors each and end up in the LINPUT2 and RINPUT2 pins of the
+ES8388 codec.
+
+The codec's power inputs are routed to receive 3.3V for both its analog
+and digital inputs, though from different supplies.
 
 Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ .../boot/dts/rockchip/rk3576-armsom-sige5.dts      | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 335a868a1200493d60d08983281fe5637a20ec61..79800959b7976950fb3655289076de70b5814283 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -413,6 +413,22 @@ scmi_clk: protocol@14 {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+index 570252c4c0bfe56a3c269e47d81fca7676e61787..2c991ad974a95fe1995a8d15eaba3e7b07d4dfb6 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+@@ -56,6 +56,34 @@ red_led: red-led {
  		};
  	};
  
-+	hdmi_sound: hdmi-sound {
++	es8388_sound: es8388-sound {
 +		compatible = "simple-audio-card";
-+		simple-audio-card,name = "HDMI";
 +		simple-audio-card,format = "i2s";
 +		simple-audio-card,mclk-fs = <256>;
-+		status = "disabled";
-+
-+		simple-audio-card,codec {
-+			sound-dai = <&hdmi>;
-+		};
++		simple-audio-card,name = "On-board Analog ES8388";
++		simple-audio-card,widgets = "Microphone", "Headphone Mic",
++					    "Microphone", "Mic Pads",
++					    "Headphone", "Headphone",
++					    "Line Out", "Line Out";
++		simple-audio-card,routing = "Headphone", "LOUT1",
++					    "Headphone", "ROUT1",
++					    "Line Out", "LOUT2",
++					    "Line Out", "ROUT2",
++					    "RINPUT1", "Headphone Mic",
++					    "LINPUT2", "Mic Pads",
++					    "RINPUT2", "Mic Pads";
++		simple-audio-card,pin-switches = "Headphone", "Line Out";
 +
 +		simple-audio-card,cpu {
-+			sound-dai = <&sai6>;
++			sound-dai = <&sai1>;
++		};
++
++		simple-audio-card,codec {
++			sound-dai = <&es8388>;
++			system-clock-frequency = <12288000>;
 +		};
 +	};
 +
- 	pmu_a53: pmu-a53 {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-@@ -1069,6 +1085,7 @@ hdmi: hdmi@27da0000 {
- 			reset-names = "ref", "hdp";
- 			rockchip,grf = <&ioc_grf>;
- 			rockchip,vo-grf = <&vo0_grf>;
-+			#sound-dai-cells = <0>;
- 			status = "disabled";
+ 	vcc_12v0_dcin: regulator-vcc-12v0-dcin {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_12v0_dcin";
+@@ -624,6 +652,25 @@ hym8563: rtc@51 {
+ 	};
+ };
  
- 			ports {
++&i2c3 {
++	status = "okay";
++
++	es8388: audio-codec@10 {
++		compatible = "everest,es8388", "everest,es8328";
++		reg = <0x10>;
++		clocks = <&cru CLK_SAI1_MCLKOUT_TO_IO>;
++		AVDD-supply = <&vcca_3v3_s0>;
++		DVDD-supply = <&vcc_3v3_s0>;
++		HPVDD-supply = <&vcca_3v3_s0>;
++		PVDD-supply = <&vcc_3v3_s0>;
++		assigned-clocks = <&cru CLK_SAI1_MCLKOUT_TO_IO>;
++		assigned-clock-rates = <12288000>;
++		#sound-dai-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sai1m0_mclk>;
++	};
++};
++
+ &mdio0 {
+ 	rgmii_phy0: phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+@@ -680,6 +727,15 @@ pcie_reset: pcie-reset {
+ 	};
+ };
+ 
++&sai1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sai1m0_lrck
++		     &sai1m0_sclk
++		     &sai1m0_sdi0
++		     &sai1m0_sdo0>;
++	status = "okay";
++};
++
+ &sdhci {
+ 	bus-width = <8>;
+ 	full-pwr-cycle-in-suspend;
 
 -- 
 2.49.0
