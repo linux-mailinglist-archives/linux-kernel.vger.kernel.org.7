@@ -1,261 +1,119 @@
-Return-Path: <linux-kernel+bounces-636611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A24AACDA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37027AACD9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 21:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C47C983897
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:00:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BDA3B9C44
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 19:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3989A381C4;
-	Tue,  6 May 2025 19:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9DF111A8;
+	Tue,  6 May 2025 19:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TJec/wvP"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AO2aTfDX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF4A179A7;
-	Tue,  6 May 2025 19:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0300841C71
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 19:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746558044; cv=none; b=EQVxssKsSiAFq6B5wgmc4PLPCwTHS5VB2Gp1QFVzsqCzK3dnT2PLmxCB+g4Pj03zN4VWaySIQP1SOfV7qqJRuhg/hukZy6WNoTHiL0QadMgkZ/cghLBPA/Vz044nEgwCWf31ukj680JK8e88vwdnOGYppQ/GwRekneIiddPNFdw=
+	t=1746558022; cv=none; b=r8eTN5RRzKGLb8rMHc2VkhZV952sEIqpEMJ/oQEK629NAVfexX9JkQ3n3z05Xl5IJbxlGS9A9UuAkc+6XEcQYyPwyUx3BfJ448FcJo5sC6hpCUPCgDXxM41f5P8/kehs3ELB3KRWmsmizsEubjemBVETYfYgdoyCKW/xv9ZZx9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746558044; c=relaxed/simple;
-	bh=7DulNIlOMXIXu4sTVm9DFCKXNGwWEUU67HTnXQli5XY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mUqXyEDB0sYWdfJi5I/KTdSd/gKClr8H8axz/1nzajYh9bFH7bgWcP1ASq7LMZSJjW9BpWxKlOewMKe/4GfR1/8BdeFS4ttoBoSX/yHidZa5V508PQ2AxmeIb5uG6UtCaKXOvge3ZafbKsIXemEQ+oYc/g9yAi251Mr9jBJrDMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TJec/wvP; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 546IYG5Y011191;
-	Tue, 6 May 2025 19:00:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=i3vm45
-	c5Yzthq8UV1UTQrKTGeJddui7WAzA3jzfj+fA=; b=TJec/wvPWeSa9bemcple4m
-	nxBHX1CcWPIUZsVHnCG3UKiOUUUZ9NALwt4j3yqIpCJRjKPSnqbva2kDSMzPyywQ
-	JdoxjijWbF9bstGxshOqHcYMKwXL0eje91jH7DFjsxC4tGJwMx14rijfPo7kRfNo
-	WYf0ycDBnuGFXWdMacR3PBv9yzL8Dtrba878dBNjYLgDOHSrPDdhuL0yYcnN2Ys2
-	QBXeTz8rlBzKQz7cW/AN4cbOHC6WnDPnN+xc509xD92Z2m/BymcLMI7+aqjUXqbG
-	2IwgN1/pFEhPlUMuCHsmSC3BAiDNkPF2OOGXTiOgcu7vygm2bO2uqutIsPKrbrYQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fgvsjdgd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 19:00:24 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 546Iqow8010761;
-	Tue, 6 May 2025 19:00:24 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46fgvsjdga-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 19:00:24 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 546Fjgq2025807;
-	Tue, 6 May 2025 19:00:23 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dwuyw0eg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 May 2025 19:00:23 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 546J0M1211403790
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 6 May 2025 19:00:22 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4A89158054;
-	Tue,  6 May 2025 19:00:22 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 073BC5805C;
-	Tue,  6 May 2025 19:00:14 +0000 (GMT)
-Received: from [9.39.22.34] (unknown [9.39.22.34])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  6 May 2025 19:00:13 +0000 (GMT)
-Message-ID: <24ed9d66-ca87-4695-af77-a587929e3e7a@linux.ibm.com>
-Date: Wed, 7 May 2025 00:30:12 +0530
+	s=arc-20240116; t=1746558022; c=relaxed/simple;
+	bh=Z0vBXO/loqohfGa22HfiNkucHedKAaHavqhq7CkMCBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GN0HYnOYZIG0dRIH89zWzDgOG3KrgOV9qoeaP4miEMGOlQxxeAAQstaRogf57WzsxNLdYfE2VD2DSbBNBQMZtfkQDMFnVPmncw1ofbGTS6YDMi2mcW4j2+tNkXN/1qoPUNR9G/s9jT5DwPLcQHHPshQqdqS/YfYOQl3NbAF6vuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AO2aTfDX; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746558019; x=1778094019;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Z0vBXO/loqohfGa22HfiNkucHedKAaHavqhq7CkMCBY=;
+  b=AO2aTfDXlJSUMS9lorNFXdOpwuzX9PXmxt3nhN8WfO2T9heJPDu/th1O
+   FwfxZmvoI374MGB1lrYqkiGgPpH5VakfM5nC2D1s1K11hZgoMVPHxs6eG
+   aboP4G1heBPRPjECP5jyhRRHEJTlUDJQyPy2zuH6UPoKAPM0Q72b8sSOX
+   1ptBPHE0CZar9b8dReqGuftgEsUv7Up8ajuCzAcgt2wHK7LzpSSCCVJsa
+   cuWPmX9RyDBV0d5Q1FrAKqK/s2uDNgfMmcEVAaOHlCFrgppNJDekDELO1
+   hkxm4shjt799suOFFmpzvCaR3cGISEul4CBscyOKW86Q4VbIPjCbdZjq9
+   Q==;
+X-CSE-ConnectionGUID: 4PysZcKlTMCQ2m5Nn0Adzw==
+X-CSE-MsgGUID: H0Jz7HrXTki2twgAbBWhCA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52068984"
+X-IronPort-AV: E=Sophos;i="6.15,267,1739865600"; 
+   d="scan'208";a="52068984"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 12:00:19 -0700
+X-CSE-ConnectionGUID: lS+c777GTYeKcz2mU8LuKQ==
+X-CSE-MsgGUID: lpzgMqx7StSWyfHIleru1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,267,1739865600"; 
+   d="scan'208";a="159006784"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 06 May 2025 12:00:15 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id E6549172; Tue, 06 May 2025 22:00:12 +0300 (EEST)
+Date: Tue, 6 May 2025 22:00:12 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, David Hildenbrand <david@redhat.com>, 
+	Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>, linux-coco@lists.linux.dev, 
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm/page_alloc: Ensure try_alloc_pages() plays well
+ with unaccepted memory
+Message-ID: <5loiv7lfplpruujplz7wmzj25g34rs2aezvrfsl55dsddrh7mo@rnqrlx5zccol>
+References: <20250506112509.905147-1-kirill.shutemov@linux.intel.com>
+ <20250506112509.905147-2-kirill.shutemov@linux.intel.com>
+ <CAADnVQJMNqeEGwcLDFw36KCY+wr_jQNtK2t4G5pLo=+wcDE0RQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] powerpc/secvar: Expose secvars relevant to the key
- management mode
-To: Andrew Donnellan <ajd@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, zohar@linux.ibm.com,
-        nayna@linux.ibm.com, linux-kernel@vger.kernel.org
-References: <20250430090350.30023-1-ssrish@linux.ibm.com>
- <20250430090350.30023-3-ssrish@linux.ibm.com>
- <43baab5747031ec84100939fe154fa2b071f3789.camel@linux.ibm.com>
-Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <43baab5747031ec84100939fe154fa2b071f3789.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=CLAqXQrD c=1 sm=1 tr=0 ts=681a5c48 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=tE8uJsxgfS_J_r_r1e0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 4rAWqD3Le6JRtMTweH90HDWDFwUjlpYr
-X-Proofpoint-ORIG-GUID: wleImVCZbktwx7sR-BOvIfcUNmzXNMD9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDE3NSBTYWx0ZWRfXy//7pSs64BMD Rj09xVFw2nkYi6YyCPvYGhyQ4Eobj6aQVCH0u1QGh/Qr2LESuzgpmytJEJgFeFzJ3+rgpnx3v73 331DJM8Pd5Ijf750/VAhMfWNHgLj5cQ8DtP6+pO7HX2LNU11nd3mhZS/RZXGLPq5tORM7HxgGKm
- ZUpW6nELQB2qC6WKVuPIVyxlqKho/tHtRQdTkbU362i8bgEITK8JRl80wQyq/gI+bcdurTCE5Ci LBVuvyL4aZxDEYMFYZZaSh1KJQOVKjEv56bid/RcE/XP7x7EtZjSiLqfxiXjkGKycUMFETTGevi xEFnekF2T8JUDUUkNmeDmuXtxwZlLSAisAe/3pfek3yX4KTCNAnUIldBKaH3ADzeICQ6O2QHopO
- oBc/ZpeAe7gR50qjjqkgX7GtAyyHlOSCOnoYGPD/4V/61hcOkKSpmLcIXK96wm012aLhKiTI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-06_08,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- phishscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 suspectscore=0
- mlxscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999 clxscore=1015
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505060175
+In-Reply-To: <CAADnVQJMNqeEGwcLDFw36KCY+wr_jQNtK2t4G5pLo=+wcDE0RQ@mail.gmail.com>
 
+On Tue, May 06, 2025 at 10:18:21AM -0700, Alexei Starovoitov wrote:
+> On Tue, May 6, 2025 at 4:25 AM Kirill A. Shutemov
+> <kirill.shutemov@linux.intel.com> wrote:
+> >
+> > try_alloc_pages() will not attempt to allocate memory if the system has
+> > *any* unaccepted memory. Memory is accepted as needed and can remain in
+> > the system indefinitely, causing the interface to always fail.
+> >
+> > Rather than immediately giving up, attempt to use already accepted
+> > memory on free lists.
+> >
+> > Pass 'alloc_flags' to cond_accept_memory() and do not accept new memory
+> > for ALLOC_TRYLOCK requests.
+> >
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Fixes: 97769a53f117 ("mm, bpf: Introduce try_alloc_pages() for opportunistic page allocation")
+> 
+> Thanks for working on this, but the fixes tag is overkill.
+> This limitation is not causing any issues in our setups.
 
-On 5/5/25 12:53 PM, Andrew Donnellan wrote:
-> On Wed, 2025-04-30 at 14:33 +0530, Srish Srinivasan wrote:
->> The PLPKS enabled PowerVM LPAR sysfs exposes all of the secure boot
->> secvars irrespective of the key management mode.
->>
->> The PowerVM LPAR supports static and dynamic key management for
->> secure
->> boot. The key management option can be updated in the management
->> console. Only in the dynamic key mode can the user modify the secure
->> boot secvars db, dbx, grubdb, grubdbx, and sbat, which are exposed
->> via
->> the sysfs interface. But the sysfs interface exposes these secvars
->> even
->> in the static key mode. This could lead to errors when reading them
->> or
->> writing to them in the static key mode.
->>
->> Expose only PK, trustedcadb, and moduledb in the static key mode to
->> enable loading of signed third-party kernel modules.
->>
->> Co-developed-by: Souradeep <soura@imap.linux.ibm.com>
->> Signed-off-by: Souradeep <soura@imap.linux.ibm.com>
->> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
->> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> I'm assuming it's been determined that there's no value in letting
-> userspace see db/dbx/etc in a read-only way in static mode?
->
-> With one comment below:
->
-> Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
-Hi Andrew,
-Thanks a lot for your feedback.
+Have you had chance to test it on any platform with unaccepted memory?
+So far it is only Intel TDX and AMD SEV guests.
 
-Yes, that is correct.
->> ---
->>   Documentation/ABI/testing/sysfs-secvar        |  9 ++++--
->>   arch/powerpc/platforms/pseries/plpks-secvar.c | 28 ++++++++++++++++-
->> --
->>   2 files changed, 30 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-secvar
->> b/Documentation/ABI/testing/sysfs-secvar
->> index 857cf12b0904..2bdc7d9c0c10 100644
->> --- a/Documentation/ABI/testing/sysfs-secvar
->> +++ b/Documentation/ABI/testing/sysfs-secvar
->> @@ -22,9 +22,12 @@ Description:	A string indicating which backend is
->> in use by the firmware.
->>   		and is expected to be "ibm,edk2-compat-v1".
->>   
->>   		On pseries/PLPKS, this is generated by the kernel
->> based on the
->> -		version number in the SB_VERSION variable in the
->> keystore, and
->> -		has the form "ibm,plpks-sb-v<version>", or
->> -		"ibm,plpks-sb-unknown" if there is no SB_VERSION
->> variable.
->> +		existence of the SB_VERSION property in firmware.
->> This string
->> +		takes the form "ibm,plpks-sb-v1" in the presence of
->> SB_VERSION,
->> +		indicating the key management mode is dynamic.
->> Otherwise it
->> +		takes the form "ibm,plpks-sb-v0" in the static key
->> management
->> +		mode. Only secvars relevant to the key management
->> mode are
->> +		exposed.
-> Everything except the last sentence here is relevant to the previous
-> patch in the series (noting my comments on the previous patch about the
-> string).
->
-> The last sentence is more related to the <variable name> entry than the
-> format entry, and perhaps worth including a list of what variables are
-> applicable to each mode.
-Sure, will fix this.
+> Improving it is certainly better, of course.
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
 
-Thanks and Regards,
-Srish
->
->>   
->>   What:		/sys/firmware/secvar/vars/<variable name>
->>   Date:		August 2019
->> diff --git a/arch/powerpc/platforms/pseries/plpks-secvar.c
->> b/arch/powerpc/platforms/pseries/plpks-secvar.c
->> index d57067a733ab..cbcb2c356f2a 100644
->> --- a/arch/powerpc/platforms/pseries/plpks-secvar.c
->> +++ b/arch/powerpc/platforms/pseries/plpks-secvar.c
->> @@ -59,7 +59,14 @@ static u32 get_policy(const char *name)
->>   		return PLPKS_SIGNEDUPDATE;
->>   }
->>   
->> -static const char * const plpks_var_names[] = {
->> +static const char * const plpks_var_names_static[] = {
->> +	"PK",
->> +	"moduledb",
->> +	"trustedcadb",
->> +	NULL,
->> +};
->> +
->> +static const char * const plpks_var_names_dynamic[] = {
->>   	"PK",
->>   	"KEK",
->>   	"db",
->> @@ -207,21 +214,34 @@ static int plpks_max_size(u64 *max_size)
->>   	return 0;
->>   }
->>   
->> +static const struct secvar_operations plpks_secvar_ops_static = {
->> +	.get = plpks_get_variable,
->> +	.set = plpks_set_variable,
->> +	.format = plpks_secvar_format,
->> +	.max_size = plpks_max_size,
->> +	.config_attrs = config_attrs,
->> +	.var_names = plpks_var_names_static,
->> +};
->>   
->> -static const struct secvar_operations plpks_secvar_ops = {
->> +static const struct secvar_operations plpks_secvar_ops_dynamic = {
->>   	.get = plpks_get_variable,
->>   	.set = plpks_set_variable,
->>   	.format = plpks_secvar_format,
->>   	.max_size = plpks_max_size,
->>   	.config_attrs = config_attrs,
->> -	.var_names = plpks_var_names,
->> +	.var_names = plpks_var_names_dynamic,
->>   };
->>   
->>   static int plpks_secvar_init(void)
->>   {
->> +	u8 mode;
->> +
->>   	if (!plpks_is_available())
->>   		return -ENODEV;
->>   
->> -	return set_secvar_ops(&plpks_secvar_ops);
->> +	mode = plpks_get_sb_keymgmt_mode();
->> +	if (mode)
->> +		return set_secvar_ops(&plpks_secvar_ops_dynamic);
->> +	return set_secvar_ops(&plpks_secvar_ops_static);
->>   }
->>   machine_device_initcall(pseries, plpks_secvar_init);
+Thanks!
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
