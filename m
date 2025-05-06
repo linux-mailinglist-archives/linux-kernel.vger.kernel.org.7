@@ -1,96 +1,75 @@
-Return-Path: <linux-kernel+bounces-636138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A21CAAC68F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:39:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8FDAAC695
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD9CF7BE2B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1CDF3AC954
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A276C239E83;
-	Tue,  6 May 2025 13:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMZqE9Df"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFFE281352;
+	Tue,  6 May 2025 13:37:15 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C5027F75D;
-	Tue,  6 May 2025 13:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB70D264620
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 13:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746538580; cv=none; b=ByxFrw0icLRxQbGomCtrdqNJKbGBi5flWSdAJjah9IcNJffLKsy7YkwSCh66tAGtaTOfxT8qWidCf/1ieIst0LdNhQGcV8hfxWtcaifrCZudbOsWyCeLUIW7vz2KFRXWGCdxYVrumM+BqANsy1MnKEUpJxLj/WaiwpJsDD9+0HI=
+	t=1746538635; cv=none; b=R/IEIfT6yCJDAEofYS6aLBzevZtVXvOIvixRa+atc9Vw90Mhq9xtLJoTBssiIKiW7Nm7b0jhMPFHhawThtrBkGz+OTzJap/HIH62dRXpVyTY+srie9Lrqph5vXc4u78t1AD1aQw1tPEhkA9e3ZRwGGKOQxamLuUuduTC2W9eBF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746538580; c=relaxed/simple;
-	bh=GRwZtJM+r1SVQfkqc8R5j0dbv3VCLIfS4MJOtv7m3Nc=;
+	s=arc-20240116; t=1746538635; c=relaxed/simple;
+	bh=V5fcW8ga44Yc49gkxlzh8VXaJ1EatD8XSXe24C6aTTE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ButRAbTy5EPQ+gKpJEQDfCbnTlDNQ+mLgTGGSjI0OgjVzMeJgpNgGVg4gEindU5QBSjbmHVTi09+fHcrZNsC1Un/a+7A/TxN92ZAawmO3isPzZblWfYjoWbPSL2dgw8L0hJN2oElLpxs39LCv3384lTAmK36GMkPx2NBlOAid68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMZqE9Df; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 291FAC4CEEE;
-	Tue,  6 May 2025 13:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746538578;
-	bh=GRwZtJM+r1SVQfkqc8R5j0dbv3VCLIfS4MJOtv7m3Nc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qMZqE9DfXu8AT/pXF04YHC6wcoY8i/lDRg3ZSx8VaDPeHHBflcsUNkWfJxgsEOgHu
-	 JNt3Gfs0n7saPZ+f+9l+4/pAxuqRA2ZdvEaXjCvP0j7LUnDZgZmy/hug3t3SmZLlfE
-	 P0XfLOXoCINHn2Vax53+H+2z7uxUpvt3Si85v6gkf0Vsfvlp9qb209PTkOmmCXHg31
-	 KM++wSBzXWZ93cM0+YG2PHZgjw+cmkCmdldgxIuivJrIXAWA9Xd1DsvXXX1WvchQmi
-	 wN30oulto2k+KMizwgJTf//Z4abayaUjZUke+65CjwWdO9a0ro8kEscQ7gFaVBzn5n
-	 /EbnIPsmUroBw==
-Date: Tue, 6 May 2025 22:36:13 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Stefan Binding <sbinding@opensource.cirrus.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH RESEND v1 0/5] Add support for CS35L63 Smart Amplifier
-Message-ID: <aBoQTbaEq8wXPpzJ@finisterre.sirena.org.uk>
-References: <20250506095903.10827-1-sbinding@opensource.cirrus.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OfPP41qsTbMrnjRtSI/S5Lf/cLl1LsrZl+YXTmI/ouWZSAyoAW+1rTHUnYPqP6dWLs8YYCJFNDRyYbUhp1M1r7FPQxm1vMZqhaZyEMCwTLZ8w1rfLGvyS92/hRU7I5hcFcNGca+V0zigwZ9+2zAeE3Tr2GgVEPQVd4un3dRomnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 68FD168B05; Tue,  6 May 2025 15:37:07 +0200 (CEST)
+Date: Tue, 6 May 2025 15:37:06 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	Nhat Pham <nphamcs@gmail.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Igor Belousov <igor.b@beldev.am>, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] mm/zblock: use vmalloc for page allocations
+Message-ID: <20250506133706.GA29215@lst.de>
+References: <20250502080156.1672957-1-vitaly.wool@konsulko.se> <aBoK7f7rtfbPFGap@google.com> <aBoOVajBDXkFNUBI@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5S0k61nx1tm+tHkV"
-Content-Disposition: inline
-In-Reply-To: <20250506095903.10827-1-sbinding@opensource.cirrus.com>
-X-Cookie: Well begun is half done.
-
-
---5S0k61nx1tm+tHkV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aBoOVajBDXkFNUBI@gondor.apana.org.au>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, May 06, 2025 at 10:58:45AM +0100, Stefan Binding wrote:
-> CS35L63 is a Mono Class-D PC Smart Amplifier, with Speaker Protection
-> and Audio Enhancement Algorithms.
->=20
-> CS35L63 uses a similar control interface to CS35L56 so support for
-> it can be added into the CS35L56 driver.
-> CS35L63 only has SoundWire and I2C control interfaces.
+On Tue, May 06, 2025 at 09:27:49PM +0800, Herbert Xu wrote:
+> On Tue, May 06, 2025 at 01:13:17PM +0000, Yosry Ahmed wrote:
+> >
+> > Keep in mind that zswap_decompress() will always do an extra copy if the
+> > address returned by zpool_obj_read_begin() is a vmalloc address. To
+> > avoid this we need to enlighten the scatterlist API to work with vmalloc
+> > addresses.
+> > 
+> > (CC'ing Herbert as he was looking into this)
+> 
+> acomp now supports linear addresses so vmalloc can be sent through
+> directly.  It will fail if you use hardware offload though since
+> you can't DMA directly to vmalloc virtual addresses.
 
-Please don't resend things when people have added tags, at a bare
-minimum you should collect the tags.
+You absolutely can and lots of code does.
 
---5S0k61nx1tm+tHkV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgaEEwACgkQJNaLcl1U
-h9BchQf9E3IaqcJ8dEsaVWRb701fdW+NVkuUBj+M+RQpoiQxUg65bfZeKIivy50n
-42f7zEnErykoyss2eFAW23M8N8Xc12v7mP9ACqbs0K5oE9W9rM6Nc1heKtaAmVQ9
-Hs+mBwt9x/WYaTwweS69t6bDnJjT3EX8le1zvOOlJ2E6t4veXmhxftBWXezRe/Bz
-UYB4OKC8z+/ngeC82Bk9Ui14UqQkQRdkSQTLf3eiWJ58t+W6JzrX7vejlX688SDt
-xi32DHMcwShtKlTrxmPyUVc2pNVlKYGAVZfX6uGw7i3hko9z6CbkiU/9FVBYaWdI
-E66VwIf4FM+ec4Z2PVUh43ASyKGKLw==
-=cbac
------END PGP SIGNATURE-----
-
---5S0k61nx1tm+tHkV--
 
