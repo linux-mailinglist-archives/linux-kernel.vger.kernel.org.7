@@ -1,143 +1,344 @@
-Return-Path: <linux-kernel+bounces-635926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39408AAC3C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92550AAC3CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90AF87B0B5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805501C084F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358BC27FD40;
-	Tue,  6 May 2025 12:23:08 +0000 (UTC)
-Received: from mail.actia.se (mail.actia.se [212.181.117.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF2027FB3A;
+	Tue,  6 May 2025 12:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+U3AsFF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978FD27FB2A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED9B27FB19;
+	Tue,  6 May 2025 12:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746534187; cv=none; b=PRYVZqk1BEUBfq8a5Up4Hpsgy0S/HLxCyZfhQ8ndnuwDTZFT/vwE21/j31IvYjHuHuABGlso2OkP5rCF31aPuLtWb/GxpIwzoW1kiTLpCauT2tpyI9kiqaRqIA0PhKZyBcPlUw59CFeKxTRMxCuSZhW4IQQ1AMLQADAfoPUqOTU=
+	t=1746534240; cv=none; b=k9T+Txvmup0C6t1ch/5PUMSoN9SbTCyq51qFTWCzn0cKRsglZK+B5OWuRizBw/FDq26Xft1UEgWVp2n9dYLNtObVM0VdGqblUgQ77K3ygRhzpCkNdtGC/tEjJILF+9msWTnwhvxLgHsG247NBUwiSxn+vKa/+M9ZfuQTXYwYJ1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746534187; c=relaxed/simple;
-	bh=+AsV3FfvFyjm+nJS6lLXkvZPdGmM/MfaPxj0wojFrCI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EhYs5ZYHf0vZpRoiiTsWk2koO7OgUQLb9JOkPXLt+EaEyVIKaQGAB4dpaiHNaYU4AaoUAQDukp6CtyweYXRFa4zWW6Q+CDkFESatw37tFM01iWfeyTLqOw4MjNF4EO9QZfI+f17JoGeTrRkGHcGVrxepb2hmDxwBwn7ZMf8l9iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
-Received: from S036ANL.actianordic.se (10.12.31.117) by S036ANL.actianordic.se
- (10.12.31.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 May
- 2025 14:22:55 +0200
-Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
- S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%3]) with mapi id
- 15.01.2507.039; Tue, 6 May 2025 14:22:55 +0200
-From: John Ernberg <john.ernberg@actia.se>
-To: Stefano Stabellini <sstabellini@kernel.org>
-CC: Juergen Gross <jgross@suse.com>, Oleksandr Tyshchenko
-	<oleksandr_tyshchenko@epam.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>, "xen-devel@lists.xenproject.org"
-	<xen-devel@lists.xenproject.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 2/2] xen: swiotlb: Implement map_resource callback
-Thread-Topic: [PATCH 2/2] xen: swiotlb: Implement map_resource callback
-Thread-Index: AQHbu1cR+sKkXAZoXEOAUfrcrER157O/dMAAgAX2O4A=
-Date: Tue, 6 May 2025 12:22:55 +0000
-Message-ID: <75266eb7-66a4-4477-ae8a-cbd1ebbee8db@actia.se>
-References: <20250502114043.1968976-1-john.ernberg@actia.se>
- <20250502114043.1968976-3-john.ernberg@actia.se>
- <alpine.DEB.2.22.394.2505021007460.3879245@ubuntu-linux-20-04-desktop>
-In-Reply-To: <alpine.DEB.2.22.394.2505021007460.3879245@ubuntu-linux-20-04-desktop>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-esetresult: clean, is OK
-x-esetid: 37303A2955B14453667060
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3E994E23DDFC0E4EB8666504990A79B4@actia.se>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1746534240; c=relaxed/simple;
+	bh=ZuNGJLcwlQE6SIrCFcatyB5zE1+UA6IbeKLIuWFriIc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TCjGIGFUf32fV0gdjEG1WzJJNvdThxBYtY6aSx/Nqo2mjza3y9mmg1rfsNXxeIcznVG4V4pPD0VBkgKR6h2fIWFcX4wNM1W/eUdB3iTG/JKUvkPeTHkkG7u018orT/bhYKPDnhsF4geWPLB4FL6PBaWH+aBpAASwr3unqq3Ocd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+U3AsFF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D38C4CEE4;
+	Tue,  6 May 2025 12:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746534240;
+	bh=ZuNGJLcwlQE6SIrCFcatyB5zE1+UA6IbeKLIuWFriIc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=V+U3AsFFFy82KLFyeMkqo5pp6h8eVxTongDEi+S8NXdo+LmdmXTRuM2+FcUGZ0EJ8
+	 JsCcb8DfgIyefu81+GrVLAcmb6ksB6NGteszAKMtnnSwwM4xxoDBz5B/Bl8C6AGzjZ
+	 OFDHRB/AmjYmO6ShQ8P1KqZhSqQP8ArzqXC7jky1E9ZyUPdqEkwtDc5+gZnY747VSt
+	 KJ4vvN3Ssz/NlUvMSzhEftplfI7Kzd3EFq8mp/PbGNWcyOxxevUWjKnHM81rcgPzZ0
+	 HJkW59HzGC47n302QVf2YSGM1DxkOur2oUEmmSoyBNH71IJLVFjloBpsxmacuHhZFg
+	 XJ5JkWY7ZiJQA==
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Subject: [PATCH v3 00/25] Arm GICv5: Host driver implementation
+Date: Tue, 06 May 2025 14:23:29 +0200
+Message-Id: <20250506-gicv5-host-v3-0-6edd5a92fd09@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEH/GWgC/23MQQ6CMBCF4auQWVvTDi2iK+9hXACdwkRDTUsaD
+ eHuFlaSuHwv+f4ZIgWmCJdihkCJI/sxj/JQQDc0Y0+Cbd6AEo3UshY9d8mIwcdJnPTZlapqHNU
+ aMngFcvzeYrd73gPHyYfP1k5qff9mkhJSKIeVbXVlXG2vDwojPY8+9LB2Ev5Y1DuL2RptyHaNk
+ wrbnV2W5QtVDWfm4QAAAA==
+X-Change-ID: 20250408-gicv5-host-749f316afe84
+To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Sascha Bischoff <sascha.bischoff@arm.com>, 
+ Timothy Hayes <timothy.hayes@arm.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Mark Rutland <mark.rutland@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>
+X-Mailer: b4 0.14.2
 
-SGkgU3RlZmFubywNCg0KT24gNS8yLzI1IDc6MjAgUE0sIFN0ZWZhbm8gU3RhYmVsbGluaSB3cm90
-ZToNCj4gK0NocmlzdG9waA0KPiANCj4gT24gRnJpLCAyIE1heSAyMDI1LCBKb2huIEVybmJlcmcg
-d3JvdGU6DQo+PiBOZWVkZWQgYnkgdGhlIGVETUEgdjMgRE1BIGVuZ2luZSBmb3VuZCBpbiBpb21t
-dS1sZXNzIFNvQ3Mgc3VjaCBhcyBpTVg4UVhQDQo+PiB0byBiZSBhYmxlIHRvIHBlcmZvcm0gRE1B
-IG9wZXJhdGlvbnMgYXMgYSBYZW4gSGFyZHdhcmUgRG9tYWluLCB3aGljaCBuZWVkcw0KPj4gdG8g
-YmUgYWJsZSB0byBkbyBETUEgaW4gTU1JTyBzcGFjZS4NCg0KU2VsZi1ub3RlOiBUaGUgYWJvdmUg
-cGFydCBvZiB0aGUgY29tbWl0IG1lc3NhZ2UgaXMgYSBkaXNhc3RlciBhbmQgc2hvdWxkIA0KcmVh
-ZCBzb21ldGhpbmcgbGlrZS4NCg0KTmVlZGVkIGJ5IFNvQ3Mgd2l0aG91dCBhbiBpb21tdSAoc3Vj
-aCBhcyB0aGUgaU1YOFFYUCBhbmQgaXQncyBlRE1BIHYzIA0KZW5naW5lKSB0aGF0IG5lZWQgdG8g
-YmUgYWJsZSB0byBwZXJmb3JtIERNQSBvcGVyYXRpb25zIGluIE1NSU8gc3BhY2UuDQoNCj4+DQo+
-PiBUaGUgY2FsbGJhY2sgaW1wbGVtZW50YXRpb24gaXMgYmFzaWNhbGx5IHRoZSBzYW1lIGFzIHRo
-ZSBvbmUgZm9yIGRpcmVjdA0KPj4gbWFwcGluZyBvZiByZXNvdXJjZXMsIGV4Y2VwdCB0aGlzIGFs
-c28gdGFrZXMgaW50byBhY2NvdW50IFhlbiBwYWdlDQo+PiBtYXBwaW5ncy4NCj4+DQo+PiBUaGVy
-ZSBpcyBub3RoaW5nIHRvIGRvIGZvciB1bm1hcCwganVzdCBsaWtlIHdpdGggZGlyZWN0LCBzbyB0
-aGUgdW5tYXANCj4+IGNhbGxiYWNrIGlzIG5vdCBuZWVkZWQuDQo+Pg0KPj4gU2lnbmVkLW9mZi1i
-eTogSm9obiBFcm5iZXJnIDxqb2huLmVybmJlcmdAYWN0aWEuc2U+DQo+Pg0KPj4gLS0tDQo+Pg0K
-Pj4gSSBvcmlnaW5hbGx5IGV4cG9ydGVkIGRtYV9kaXJlY3RfbWFwX3Jlc291cmNlKCkgYW5kIHVz
-ZWQgdGhhdCB3aGljaA0KPj4gYXBwZWFyZWQgdG8gd29yaywgYnV0IGl0IGZlbHQgbGlrZSBub3Qg
-Y2hlY2tpbmcgWGVuIHBhZ2UgbWFwcGluZ3Mgd2Fzbid0DQo+PiBmdWxseSBjb3JyZWN0IGFuZCBJ
-IHdlbnQgd2l0aCB0aGlzLiBCdXQgaWYgZG1hX2RpcmVjdF9tYXBfcmVzb3VyY2UoKSBpcw0KPj4g
-dGhlIGNvcnJlY3QgYXBwcm9hY2ggaGVyZSB0aGVuIEkgY2FuIHN1Ym1pdCB0aGF0IGlzbnRlYWQu
-DQo+PiAtLS0NCj4+ICAgZHJpdmVycy94ZW4vc3dpb3RsYi14ZW4uYyB8IDE1ICsrKysrKysrKysr
-KysrKw0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0aW9ucygrKQ0KPj4NCj4+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL3hlbi9zd2lvdGxiLXhlbi5jIGIvZHJpdmVycy94ZW4vc3dpb3RsYi14
-ZW4uYw0KPj4gaW5kZXggZWY1NmEyNTAwZWQ2Li4wZjAyZmRkOTEyOGQgMTAwNjQ0DQo+PiAtLS0g
-YS9kcml2ZXJzL3hlbi9zd2lvdGxiLXhlbi5jDQo+PiArKysgYi9kcml2ZXJzL3hlbi9zd2lvdGxi
-LXhlbi5jDQo+PiBAQCAtMjg1LDYgKzI4NSwyMCBAQCBzdGF0aWMgdm9pZCB4ZW5fc3dpb3RsYl91
-bm1hcF9wYWdlKHN0cnVjdCBkZXZpY2UgKmh3ZGV2LCBkbWFfYWRkcl90IGRldl9hZGRyLA0KPj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYXR0cnMsIHBvb2wpOw0K
-Pj4gICB9DQo+Pg0KPj4gK3N0YXRpYyBkbWFfYWRkcl90IHhlbl9zd2lvdGxiX21hcF9yZXNvdXJj
-ZShzdHJ1Y3QgZGV2aWNlICpkZXYsIHBoeXNfYWRkcl90IHBoeXMsDQo+PiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNpemVfdCBzaXplLCBlbnVtIGRtYV9kYXRhX2Rp
-cmVjdGlvbiBkaXIsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IHVuc2lnbmVkIGxvbmcgYXR0cnMpDQo+PiArew0KPj4gKyAgICAgZG1hX2FkZHJfdCBkZXZfYWRk
-ciA9IHhlbl9waHlzX3RvX2RtYShkZXYsIHBoeXMpOw0KPiANCj4gWWVzLCB3ZSBuZWVkIHRoZSB4
-ZW5fcGh5c190b19kbWEgY2FsbCBoZXJlLiBUaGlzIGlzIG9uZSBvZiB0aGUgcmVhc29ucyBJDQo+
-IGRvbid0IHRoaW5rIHdlIGNhbiB1c2UgZG1hX2RpcmVjdF9tYXBfcmVzb3VyY2UoKSB0byBpbXBs
-ZW1lbnQNCj4gbWFwX3Jlc291cmNlDQo+IA0KPiANCj4+ICsgICAgIEJVR19PTihkaXIgPT0gRE1B
-X05PTkUpOw0KPj4gKw0KPj4gKyAgICAgaWYgKCFkbWFfY2FwYWJsZShkZXYsIGRldl9hZGRyLCBz
-aXplLCBmYWxzZSkpDQo+PiArICAgICAgICAgICAgIHJldHVybiBETUFfTUFQUElOR19FUlJPUjsN
-Cj4gDQo+IEJ1dCBoZXJlIHlvdSBhbHNvIG5lZWQgdG8gY2hlY2sgdGhhdCBwaHlzK3NpemUgZG9l
-c24ndCBjcm9zcyBhIHBhZ2UNCj4gYm91bmRhcnkuIFlvdSBuZWVkIHRvIGNhbGwgcmFuZ2Vfc3Ry
-YWRkbGVzX3BhZ2VfYm91bmRhcnksIGxpa2Ugd2UgZG8gYXQNCj4gdGhlIGJlZ2lubmluZyBvZiB4
-ZW5fc3dpb3RsYl9tYXBfcGFnZS4NCj4gDQo+IElmIGl0IGlzIHBvc3NpYmxlIHRvIGNyb3NzIGEg
-cGFnZSBib3VuZGFyeSwgdGhlbiB3ZSBuZWVkIHRvIGJhc2ljYWxseSB0bw0KPiBkbyB0aGUgc2Ft
-ZSB0aGluZyBoZXJlIGFzIHdlIGRvIGluIHhlbl9zd2lvdGxiX21hcF9wYWdlIHdoZXJlIHdlIGNo
-ZWNrDQo+IGZvcjoNCj4gDQo+ICAgICAgICAgIGlmIChkbWFfY2FwYWJsZShkZXYsIGRldl9hZGRy
-LCBzaXplLCB0cnVlKSAmJg0KPiAgICAgICAgICAgICAgIXJhbmdlX3N0cmFkZGxlc19wYWdlX2Jv
-dW5kYXJ5KHBoeXMsIHNpemUpICYmDQo+ICAgICAgICAgICAgICAgICAgIXhlbl9hcmNoX25lZWRf
-c3dpb3RsYihkZXYsIHBoeXMsIGRldl9hZGRyKSAmJg0KPiAgICAgICAgICAgICAgICAgICFpc19z
-d2lvdGxiX2ZvcmNlX2JvdW5jZShkZXYpKQ0KPiAgICAgICAgICAgICAgICAgIGdvdG8gZG9uZTsN
-Cj4gDQo+IGlmIGFsbCBpcyB3ZWxsLCB3ZSBnbyB3aXRoIHRoZSBuYXRpdmUgcGF0aCwgb3RoZXJ3
-aXNlIHdlIGJvdW5jZSBvbg0KPiBzd2lvdGxiLXhlbi4NCj4gDQoNCkknbGwgcHJlZmFjZSB0aGlz
-IHdpdGggdGhhdCBpdCdzIG15IGZpcnN0IGRlZXAgZGl2ZSBpbiBETUEsIHNvIHRoZSANCmZvbGxv
-d2luZyBtYXkgZW50aXJlbHkgYmUgbWUgYmVpbmcgc3R1cGlkOg0KDQpJJ20gbm90IHN1cmUgYSBz
-dHJhZGRsZXMgcGFnZSBib3VuZGFyeSBwYXRoIG1ha2VzIHNlbnNlLg0KDQpUaGlzIG1hcHBpbmcg
-aXMgbm90IGZvciBhIFJBTSBiYWNrZWQgYWRkcmVzcy4gSW4gdGhlIGVETUEgY2FzZSBmb3IgdGhl
-IA0KaU1YOFFYUCB0aGUgYHBoeXNgIGNvbWluZyBpbiBoZXJlIGlzIHRoZSBhZGRyZXNzIG9mIGEg
-cmVnaXN0ZXIuIEkgY2Fubm90IA0Kc2VlIGhvdyBhIHN3aW90bGIgYm91bmNlIHdvdWxkIGZpeCBh
-bnl0aGluZyBpZiB5b3UgZW5kIHVwIHN0cmFkZGxpbmcgYSANCnBhZ2UgYm91bmRhcnkuIEF0IG1v
-c3QgSSBjYW4gc2VlIGEgV0FSTl9PTiB3aXRoIGEgRE1BX01BUFBJTkdfRVJST1IgDQpyZXR1cm4g
-aWYgc3VjaCBhIGNoZWNrIHdvdWxkIHlpZWxkIHRydWUuDQoNCkxldCdzIHNheSB5b3Ugd2FudCB0
-byBkbyBhIERFVl9UT19NRU0gYW5kIGEgY2hlY2sgZGVjaWRlcyB5b3UgbmVlZCB0byANCmJvdW5j
-ZSBpdCB5b3UnZCBib3VuY2UgYW4gUlggcmVnaXN0ZXIgYWRkcmVzcy4gSSBjYW5ub3Qgc2VlIGhv
-dyB0aGF0IERNQSANCndvdWxkIGV2ZXIgZW5kIHVwIGRvaW5nIHRoZSBleHBlY3RlZCB0aGluZy4N
-Cg0KVGhlIGVETUEgZW5naW5lIHdpbGwgbWFuYWdlIHRoZSBSWC9UWCByZWdpc3RlcnMgZm9yIGFu
-IElQIGJsb2NrIGFuZCBtb3ZlIA0KdGhlIGRhdGEgYmV0d2VlbiB0aGVtIGFuZCBSQU0sIHdoZXJl
-IHRoZSBSQU0gbWVtb3J5IGlzIG1hcHBlZCBzZXBhcmF0ZWx5IA0KYnkgZG1hX21hcF9wYWdlIChh
-bmQgZmFtaWx5KS4gQW5kIHRoZXNlIGNhbiBiZSBzd2lvdGxiIGJvdW5jZWQgdmlhIHRoZSANCm1h
-cCBwYWdlIGNhbGxiYWNrIHdpdGggbm8gcHJvYmxlbS4NCg0KQmVzdCByZWdhcmRzIC8vIEpvaG4g
-RXJuYmVyZw==
+Implement the irqchip kernel driver for the Arm GICv5 architecture,
+as described in the GICv5 beta0 specification, available at:
+
+https://developer.arm.com/documentation/aes0070
+
+The GICv5 architecture is composed of multiple components:
+
+- one or more IRS (Interrupt Routing Service)
+- zero or more ITS (Interrupt Translation Service)
+- zero or more IWB (Interrupt Wire Bridge)
+
+The GICv5 host kernel driver is organized into units corresponding
+to GICv5 components.
+
+The GICv5 architecture defines the following interrupt types:
+
+- PPI (PE-Private Peripheral Interrupt)
+- SPI (Shared Peripheral Interrupt)
+- LPI (Logical Peripheral Interrupt)
+
+This series adds sysreg entries required to automatically generate
+GICv5 registers handling code, one patch per-register.
+
+This patch series is split into patches matching *logical* entities,
+to make the review easier.
+
+Logical entities:
+
+- PPI
+- IRS/SPI
+- LPI/IPI
+- SMP enablement
+- ITS
+
+The salient points of the driver are summarized below.
+
+=============
+1. Testing
+=============
+
+Patchset tested with an architecturally compliant FVP model with
+the following setup:
+
+- 1 IRS
+- 1 and 2 ITSes
+- 1 and 2 IWBs
+
+configured with different parameters that vary the IRS(IST) and
+ITS(DT/ITT) table levels and INTID/DEVICEID/EVENTID bits.
+
+A Trusted-Firmware (TF-A) prototype was used for device tree
+bindings and component initializations.
+
+================
+2. Driver design
+================
+
+=====================
+2.1 GICv5 DT bindings
+=====================
+
+The DT bindings attempt to map directly to the GICv5 component
+hierarchy, with a top level node corresponding to the GICv5 "system",
+having IRS child nodes, that have in turn ITS child nodes.
+
+The IWB is defined in a separate schema; its relationship with the ITS
+is explicit through the msi-parent property required to define the IWB
+deviceID.
+
+===================
+2.2 GICv5 top level
+===================
+
+The top-level GICv5 irqchip driver implements separate IRQ
+domains - one for each interrupt type, PPI (PE-Private Peripheral
+Interrupt), SPI (Shared Peripheral Interrupt) and LPI (Logical
+Peripheral Interrupt).
+
+The top-level exception handler routes the IRQ to the relevant IRQ
+domain for handling according to the interrupt type detected when the
+IRQ is acknowledged.
+
+All IRQs are set to the same priority value.
+
+The driver assumes that the GICv5 components implement enough
+physical address bits to address the full system RAM, as required
+by the architecture; it does not check whether the physical address
+ranges of memory allocated for IRS/ITS tables are within the GICv5
+physical address range.
+
+Components are probed by relying on the early DT irqchip probing
+scheme. The probing is carried out hierarchically, starting from
+the top level.
+
+The IWB driver has been dropped owing to issues encountered with
+core code DOMAIN_BUS_WIRED_TO_MSI bus token handling:
+
+https://lore.kernel.org/lkml/87tt6310hu.wl-maz@kernel.org/
+
+=============
+2.3 GICv5 IRS
+=============
+
+The GICv5 IRS driver probes and manages SPI interrupts by detecting their
+presence and by providing the top-level driver the information required
+to set up the SPI interrupt domain.
+
+The GICv5 IRS driver also parses from firmware Interrupt AFFinity ID
+(IAFFID) IDs identifying cores and sets up IRS IRQ routing.
+
+The GICv5 IRS driver allocates memory to handle the IRS tables.
+
+The IRS LPI interrupts state is kept in an Interrupt State Table (IST)
+and it is managed through CPU instructions.
+
+The IRS driver allocates the IST table that, depending on available HW
+features can be either 1- or 2-level.
+
+If the IST is 2-level, memory for the level-2 table entries
+is allocated on demand (ie when LPIs are requested), using an IRS
+mechanism to make level-1 entry valid on demand after the IST
+has already been enabled.
+
+Chunks of memory allocated for IST entries can be smaller or larger than
+PAGE_SIZE and are required to be physically contiguous within an IST level
+(i.e. a linear IST is a single memory block, a 2-level IST is made up of a
+block of memory for the L1 table, whose entries point at different L2 tables
+that are in turn allocated as memory chunks).
+
+LPI INTIDs are allocated in software using an IDA. IDA does not support
+allocating ranges, which is a bit cumbersome because this forces us
+to allocate IDs one by one where the LPIs could actually be allocated
+in chunks.
+
+An IDA was chosen because basically it is a dynamic bitmap, which
+carries out memory allocation automatically.
+
+Other drivers/subsystems made different choices to allocate ranges,
+an IDA was chosen since it is part of the core kernel and an IDA
+range API is in the making.
+
+IPIs are implemented using LPIs and a hierarchical domain is created
+specifically for IPIs using the LPI domain as a parent.
+
+arm64 IPI management core code is augmented with a new API to handle
+IPIs that are not per-cpu interrupts and force the affinity of the LPI
+backing an IPI to a specific and immutable value.
+
+=============
+2.4 GICv5 ITS
+=============
+
+The ITS driver reuses the existing GICv3/v4 MSI-parent infrastructure
+and on top builds an IRQ domain needed to enable message based IRQs.
+
+ITS tables - DT (device table) and ITT (Interrupt Translation Table) are
+allocated according to the number of required deviceIDs and eventIDs on
+a per device basis. The ITS driver relies on the kmalloc() interface
+because memory pages must be physically contiguous within a table level
+and can be < or > than PAGE_SIZE.
+
+=============
+2.5 GICv5 IWB
+=============
+
+The IWB driver has been dropped owing to issues encountered with
+core code DOMAIN_BUS_WIRED_TO_MSI bus token handling:
+
+https://lore.kernel.org/lkml/87tt6310hu.wl-maz@kernel.org/
+
+===================
+3. Acknowledgements
+===================
+
+The patchset was co-developed with T.Hayes and S.Bischoff from
+Arm - thank you so much for your help.
+
+A big thank you to M.Zyngier for his fundamental help/advice.
+
+If you have some time to help us review this series and get it into
+shape, thank you very much.
+
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+---
+Changes in v3:
+- Reintroduced v1 patch split to simplify review
+- Reworked IRS/ITS iopoll loop, split in atomic/non-atomic
+- Cleaned-up IRS/ITS code with macros addressing review comments
+- Dropped IWB driver waiting for IRQ core code to be fixed for DOMAIN_BUS_WIRED_TO_MSI
+  https://lore.kernel.org/lkml/87tt6310hu.wl-maz@kernel.org/
+- Moved headers to arch/arm64 and include/linux/irqchip
+- Reworked GSB barriers definition
+- Added extensive GSB/ISB barriers comments
+- Limited error checking on IRS/ITS code - introduced couple of fatal
+  BUG_ON checks
+- Link to v2: https://lore.kernel.org/r/20250424-gicv5-host-v2-0-545edcaf012b@kernel.org
+
+Changes in v2:
+- Squashed patches [18-21] into a single logical entity
+- Replaced maple tree with IDA for LPI IDs allocation
+- Changed coding style to tip-maintainer guidelines
+- Tried to consolidate poll wait mechanism into fewer functions
+- Added comments related to _relaxed accessors, barriers and kmalloc
+  limitations
+- Removed IPI affinity check hotplug callback
+- Applied DT schema changes requested, moved IWB into a separate schema
+- Fixed DT examples
+- Fixed guard() usage
+- Link to v1: https://lore.kernel.org/r/20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org
+
+---
+Lorenzo Pieralisi (24):
+      dt-bindings: interrupt-controller: Add Arm GICv5
+      arm64/sysreg: Add GCIE field to ID_AA64PFR2_EL1
+      arm64/sysreg: Add ICC_PPI_PRIORITY<n>_EL1
+      arm64/sysreg: Add ICC_ICSR_EL1
+      arm64/sysreg: Add ICC_PPI_HMR<n>_EL1
+      arm64/sysreg: Add ICC_PPI_ENABLER<n>_EL1
+      arm64/sysreg: Add ICC_PPI_{C/S}ACTIVER<n>_EL1
+      arm64/sysreg: Add ICC_PPI_{C/S}PENDR<n>_EL1
+      arm64/sysreg: Add ICC_CR0_EL1
+      arm64/sysreg: Add ICC_PCR_EL1
+      arm64/sysreg: Add ICC_IDR0_EL1
+      arm64/sysreg: Add ICH_HFGRTR_EL2
+      arm64/sysreg: Add ICH_HFGWTR_EL2
+      arm64/sysreg: Add ICH_HFGITR_EL2
+      arm64: Disable GICv5 read/write/instruction traps
+      arm64: cpucaps: Rename GICv3 CPU interface capability
+      arm64: cpucaps: Add GICv5 CPU interface (GCIE) capability
+      arm64: Add support for GICv5 GSB barriers
+      irqchip/gic-v5: Add GICv5 PPI support
+      irqchip/gic-v5: Add GICv5 IRS/SPI support
+      irqchip/gic-v5: Add GICv5 LPI/IPI support
+      irqchip/gic-v5: Enable GICv5 SMP booting
+      irqchip/gic-v5: Add GICv5 ITS support
+      arm64: Kconfig: Enable GICv5
+
+Marc Zyngier (1):
+      arm64: smp: Support non-SGIs for IPIs
+
+ .../interrupt-controller/arm,gic-v5-iwb.yaml       |   76 ++
+ .../bindings/interrupt-controller/arm,gic-v5.yaml  |  196 ++++
+ MAINTAINERS                                        |   10 +
+ arch/arm64/Kconfig                                 |    1 +
+ arch/arm64/include/asm/barrier.h                   |    3 +
+ arch/arm64/include/asm/el2_setup.h                 |   45 +
+ arch/arm64/include/asm/smp.h                       |   24 +-
+ arch/arm64/include/asm/sysreg.h                    |   83 +-
+ arch/arm64/kernel/cpufeature.c                     |   17 +-
+ arch/arm64/kernel/smp.c                            |  156 ++-
+ arch/arm64/tools/cpucaps                           |    3 +-
+ arch/arm64/tools/sysreg                            |  495 +++++++-
+ drivers/irqchip/Kconfig                            |   12 +
+ drivers/irqchip/Makefile                           |    4 +-
+ drivers/irqchip/irq-gic-common.h                   |    2 -
+ ...3-its-msi-parent.c => irq-gic-its-msi-parent.c} |    3 +-
+ drivers/irqchip/irq-gic-its-msi-parent.h           |   13 +
+ drivers/irqchip/irq-gic-v3-its.c                   |    3 +-
+ drivers/irqchip/irq-gic-v5-irs.c                   |  819 ++++++++++++++
+ drivers/irqchip/irq-gic-v5-its.c                   | 1176 ++++++++++++++++++++
+ drivers/irqchip/irq-gic-v5.c                       | 1046 +++++++++++++++++
+ drivers/irqchip/irq-gic.c                          |    2 +-
+ include/linux/irqchip/arm-gic-v5.h                 |  387 +++++++
+ 23 files changed, 4507 insertions(+), 69 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250408-gicv5-host-749f316afe84
+
+Best regards,
+-- 
+Lorenzo Pieralisi <lpieralisi@kernel.org>
+
 
