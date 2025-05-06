@@ -1,129 +1,86 @@
-Return-Path: <linux-kernel+bounces-635900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37606AAC359
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:05:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B96AAC37A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A765B3A6335
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:04:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CE21C23735
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D22A27E7D4;
-	Tue,  6 May 2025 12:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B6427FB19;
+	Tue,  6 May 2025 12:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDZgC0ls"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b="EzH712X9"
+Received: from mail.flokli.de (mail.flokli.de [116.203.226.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0F327CB2E;
-	Tue,  6 May 2025 12:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3C927F4C7;
+	Tue,  6 May 2025 12:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.226.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746533099; cv=none; b=YtRfU3RA12h7z2Aff+WkUdK6fTAfRoPvmSUgEKG2PcD1CcC9RxegGcyrjlw733zQtHLi4NgyTSSFthgnzmZvIvMS5/P2oXfwTrufiNLWub6beabUXBt8Cc1A8pNz+L6hmZrDi8QZb+n4eWbcntmx8uclb5x8PYJ1q+XtocP9sRw=
+	t=1746533423; cv=none; b=S5mHXouIF3ibVi8ojvk2mCw6YC0rjkr9e8DvhQcLeR4DzYQvCqg9lMfAveiXduTWIfWcINPS2no3rxLMqPg/mdUVJjMwjbdqBtLfrtREnzEH/QE8KPnL+cEMiYTmQXb2UmZiY90J5keo6H8VX5tjq5snTWINjbXE7BtpGXF8urE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746533099; c=relaxed/simple;
-	bh=38N7dD0e4+KYfV/czsKShRXlNWz07SRSUqANCpL8X6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9b7lrDsr3Mgh57k8N7xcrC5xjmvFrRyNqDcjPZOnQVIs29zr+KKP6W0th1+iQrdqYhOMZL7WqRCxX4/isdQw/gYTAOe356b82H/f5Tkp0ypmeCPFfB9Fk2/79YE2WJoZe0SaUsebu7KzPNhEA8EOSS6B5j16FTKXDZKrk5SlaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDZgC0ls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3407C4CEE4;
-	Tue,  6 May 2025 12:04:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746533099;
-	bh=38N7dD0e4+KYfV/czsKShRXlNWz07SRSUqANCpL8X6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FDZgC0ls5X/S/0kA71uGcJA87m1+q1jpiBT1uryX+zKkkY5dMdls7PLaZFwChqzVk
-	 h2imYWYElJ1K+/A9QjLNFeKcr7h/HiCssQSENBU60w7YFY8nyUfczuz8n518w4S7Vs
-	 BpXxKkPQOLiCtEZH5WTVq3sBlzcr3BG0seCzdxIbQqvTilGQshxcFUaEbeZEEX4QFZ
-	 pnl0Qg79Raw0jWj9KgwwBNA4MZeaGR1z5mAHKoRQvXTtM+g1xdF/7w3IsvQ3b+Xy0d
-	 Ae/y1NpQE9rjP8GjzEovfXrzxdHWQmDb1yjfVw0fFBNCJI7dJQIrcQvsTQ1DEbfOxs
-	 xGEIwjrFVcaLg==
-Date: Tue, 6 May 2025 14:04:55 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, 
-	linux-i2c@vger.kernel.org, 
-	prashanth kumar burujukindi <prashanthkumar.burujukindi@microchip.com>, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c: microchip-corei2c: add smbus support
-Message-ID: <4xyehpobtsyj2k5xlhupq7x6z7es7bvzek4zsf4roramy5h7kn@duxhfxd4gxsq>
-References: <20250430-preview-dormitory-85191523283d@spud>
- <3421bf4a-afa1-4b4c-8421-bad7187d3d8e@quicinc.com>
- <7q4gdh3jcbnsptmdv6fywnwqta5nekof4wtut35apw5wphhkio@veeu4ogcm44h>
- <20250506-bunny-puma-996aafbf3f56@spud>
+	s=arc-20240116; t=1746533423; c=relaxed/simple;
+	bh=Tclhj7K2o0qscg5Xlp0QaoSdW3G2rXoO87FsXVbbCMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rzI+ha+PSNMgQoPD85cFYeh8HQGalMP1YUW3DdbSAZ5zzWyBdudyQN4HjS47vPPg6pZw58DJYAiiRKVkc/fY5KYlDr9gA209L7KmrOFBprlczrVf6U6IktmbTHc7mx5fhzXoF2O8LD4Z5KZc0R45eB/FBGE1oJaLk9ELQqN2GS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de; spf=pass smtp.mailfrom=flokli.de; dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b=EzH712X9; arc=none smtp.client-ip=116.203.226.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flokli.de
+From: Florian Klink <flokli@flokli.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flokli.de; s=mail;
+	t=1746532878; bh=7vx3gTnF+9ahlm0p7+sai6tkLNM+xCZ1j9YbAf2oUVc=;
+	h=From:To:Cc:Subject:Date;
+	b=EzH712X94uyLi8KHDF4HR75ZtlptuAaX+mEtBNxAHklGWYZ0wL6/rBtFARGqD+4sQ
+	 oLbFeAYhfhKmcbjFZlvkHlhGiDtyM5LiZ++TQ+R/bN0pg58TByCwo+2uWzY0w+pVED
+	 ph3JdA0vt+7ZiirIxIQ2W50CybkxknmpV5qcnF44=
+To: Sven Peter <sven@svenpeter.dev>,
+	Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Florian Klink <flokli@flokli.de>
+Subject: [PATCH] watchdog: apple: set max_hw_heartbeat_ms instead of max_timeout
+Date: Tue,  6 May 2025 15:01:11 +0300
+Message-ID: <20250506120111.5041-1-flokli@flokli.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250506-bunny-puma-996aafbf3f56@spud>
 
-Hi Conor,
+The hardware only supports timeouts slightly below 3mins, but by using
+max_hw_heartbeat_ms we can let the kernel take care of supporting larger
+timeouts than that requested from userspace.
 
-On Tue, May 06, 2025 at 11:56:19AM +0100, Conor Dooley wrote:
-> On Mon, May 05, 2025 at 10:04:27PM +0200, Andi Shyti wrote:
-> > On Wed, Apr 30, 2025 at 05:06:09PM +0530, Mukesh Kumar Savaliya wrote:
-> > > On 4/30/2025 4:53 PM, Conor Dooley wrote:
-> > > > From: prashanth kumar burujukindi <prashanthkumar.burujukindi@microchip.com>
+Signed-off-by: Florian Klink <flokli@flokli.de>
+---
+ drivers/watchdog/apple_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Do we want to keep lower case for names and surnames? Can I use
-upper cases?
+diff --git a/drivers/watchdog/apple_wdt.c b/drivers/watchdog/apple_wdt.c
+index 95d9e37df41c..6088a7554312 100644
+--- a/drivers/watchdog/apple_wdt.c
++++ b/drivers/watchdog/apple_wdt.c
+@@ -177,7 +177,7 @@ static int apple_wdt_probe(struct platform_device *pdev)
+ 
+ 	wdt->wdd.ops = &apple_wdt_ops;
+ 	wdt->wdd.info = &apple_wdt_info;
+-	wdt->wdd.max_timeout = U32_MAX / wdt->clk_rate;
++	wdt->wdd.max_hw_heartbeat_ms = U32_MAX / wdt->clk_rate * 1000;
+ 	wdt->wdd.timeout = APPLE_WDT_TIMEOUT_DEFAULT;
+ 
+ 	wdt_ctrl = readl_relaxed(wdt->regs + APPLE_WDT_WD1_CTRL);
+-- 
+2.49.0
 
-> > > > In this driver the supported SMBUS commands are smbus_quick,
-> > > > smbus_byte, smbus_byte_data, smbus_word_data and smbus_block_data.
-> > > > 
-> > > Write completely in imperative mood. something like :
-> > > 
-> > > Add support for SMBUS commands in driver
-> > > 
-> > > Add support for SMBUS commands: smbus_quick, smbus_byte, smbus_byte_data,
-> > > smbus_word_data, and smbus_block_data.
-> > 
-> > yes, I agree that the original commit log is a bit lazy written :-)
-> 
-> I don't personally think the suggested wording makes any meaningful
-> difference, but I can rework it if required.
-
-The point of using the imperative form is to clearly state what
-the patch does. Saying "the supported commands are..." feels a
-bit lazy, in my opinion, and requires a peek into the change to
-fully understand what the patch introduces.
-
-To be honest, I wouldn't reject the patch over this, but it
-doesn't hurt to expand the log a little.
-
-(No need to resend—you can just reply to this mail with your
-updated commit log.)
-
-> > > Also mention below limitations here .
-> 
-> I actually removed them from the commit message, since they're not
-> limitations just what was and was not tested. I can put them back too
-> if that's needed.
-> 
-> > > SMBUS block read is supported by the controller but has not been tested due
-> > > to lack of hardware. However, SMBUS I2C block read has been tested.
-> > 
-> > Smbus i2c block has not been tested? If so, can we leave it out?
-> > What is the interest to keep it in?
-> 
-> What's the interest in adding any feature? Someone might want to use it.
-
-What's the point of adding a feature that no one uses? :-)
-
-> We did not have a piece of hardware that uses it, so didn't do testing
-> of that specific command, but a customer may well want to so we included
-> it. Again, if you think removing it is the play, I can do that.
-
-No worries, please leave it as it is if you think it will be
-useful in the future. I just wanted to clarify.
-
-Thanks,
-Andi
 
