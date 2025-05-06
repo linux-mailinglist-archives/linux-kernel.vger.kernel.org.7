@@ -1,152 +1,154 @@
-Return-Path: <linux-kernel+bounces-635386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ADD0AABCBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:12:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F2DAAC049
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 11:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 956BF3B61EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3F94C2168
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32DB1DDA31;
-	Tue,  6 May 2025 07:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01999268FF9;
+	Tue,  6 May 2025 09:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jwP2gHZt"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="awRtSKKJ"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2E17263C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 07:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DC65A79B
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746518317; cv=none; b=XSP3GCg1XxhA1iATqd9DzRnFr/7jdL/p0AALfUMp/O4HOUxj+Iqy4DYzrZp4X/pH/1d509YnLVF5Byl5cxIdcBfpflGrUvLseWDDwwQOTKGITHUnC750DBbOPObEaX4ZURXPIIzZS8zX8z+2ifElQ5b/dv4PCvdaPBkmCEJA8PM=
+	t=1746524713; cv=none; b=NOU3P4KMINpGB/y6k1y9wBJrSYZlvtgI1/axHIrnG48f291xhTumhxcTDYFhoBK0lkI7P+k/2u7Y3g4zcbQ+K7WVL4muGemB+LA72lqcHr6TiCfmXLId33LpTyzX6B/TfRNGBA5PCIaKBydW+vstMG5xqxhC0VKa9DZ4TCrFabg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746518317; c=relaxed/simple;
-	bh=otMgDfAKMDhndfNFbnuhKeKRA6gX2e8cs9z4QIFvVnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwvfDHfCUctjJj+UEJzxp5ALwl9sBTDwYQCAE/FFeEaV7yvXfIGkL/FMtEXJp0m5CqRMtjvO+7rFco5wyEsi/7pI13HV6b5TQmFwsv3b71iKxYZphB+9SN5Mm6YKA9ykPwTIQo7cDw5vtovrioUhXex2/Kf/TWCcfq1LgW6ecNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jwP2gHZt; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac7bd86f637so1160278266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 00:58:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746518312; x=1747123112; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=otMgDfAKMDhndfNFbnuhKeKRA6gX2e8cs9z4QIFvVnY=;
-        b=jwP2gHZt+kM1S841Jpm5l9wBKFuH7d2rkQvxdeBHgC+ZBqZlfmcgj3/oVBYvOA4xdG
-         GZKyHqD2DmLw8TPhMXj1cM9tdn47WUibnFfTM0KsMWKA+jPLOWbE5miOmeTQtdU+81ZH
-         zKrP7Y30trpxdwGUYOGkBZ2Cbg6MqXIoXuveJMMf/vT/NbR8E7Dvty+7uPf6AGTzfFvb
-         fQY7kCmLwPIOY9J8es7dn3YDwjdP+Ou0mOwwvJCkWLzmVNzi7WQNjCCNJKxGnhWzeiPy
-         ZtKhfbytfql+mSl3zkhW6e60d82TC74wb+e96/XLS1j5zVj1yg1QkhpCPm4cJgR7Y/UX
-         gPzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746518312; x=1747123112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=otMgDfAKMDhndfNFbnuhKeKRA6gX2e8cs9z4QIFvVnY=;
-        b=uc805KcM/aFtGUWayFJ8a93EukmdU0zZ0CMn2nPw3bm0MuqiO11goF9qBXnRSrHvN6
-         0Denw2Ua1Y0gdQzoALcD7pYetksRv7jFB5IVlSEEL6ExBi+QhmckiGHo+AwUBrO7Kfjn
-         TgiZ1z88KSrXXYKBtj/B3nDDG8H/6rFItWLiHuriMJG+2s1vYftDN0UUHLGMBGbQpj6W
-         SFHWbzT7RsTXHTvDycpB3wGydYvM/a5eigMmAVfwV6SYpQp3yDr1yESnc49kBcXjvfjc
-         B3KpXiJ1HeoqMpisO5G2aNx8Pkb+SynxvRRH9Ec40DLNHkFUIwnsnuZxqUuq/Ei4uRV+
-         U2Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXO26QRW0CZZthq/0qtq5dW/Mp8Wxj375zPEAtVkyQfFo3WQ+EgLiObJL2lIix2VulJyj1gbaUMNjVliR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjOQ0KE8P5wLiVaV9ybGiwxzzrsqEms6aweeDLX7i5Dq4sSk8Z
-	CjXWl88i7OgTPni4vsQ1KW+H5UKuLunLE+RDWCHOb0ohAKCfpCw6lebcpDvi5aM=
-X-Gm-Gg: ASbGncuEXwz+32xnetfz8j7sVI9crA/MqUkCdJdGbfr4BmAbAskU2Cu5UtZ4CcuPmXU
-	Msl+U/dVbP4hnkmuUS513zRkJJaWWlikLUTuwFQ+PgyK5BDZpsqiCpesFklrUlBvvA73E2Ew4ey
-	Rgqej2tIlrMdXuDLHccR9EhVUPn1UoBtT4zT+uUfECJ+lAIJcpST+LF5Gq1wAt3AzQuk5pjooTb
-	+UXYRcpN+5vbs7xB8dVlRBHzfgFDsAYZSREZfYpUEUmzN2sI5WvgyIt+fmxR09IWf8JCL1fCDTt
-	DwYQLRv45KNL3EzB7Yo+g2LekfGTXMZ2tNm0lwmjlsheMCEPsmkIUPA7
-X-Google-Smtp-Source: AGHT+IFFYr58SDGefH2QTO/nsOoxaqVlyOnmQ7fiobmWHO9c2KZZLAxLqCaXDivMXlOZZJK7dWO9eg==
-X-Received: by 2002:a17:907:6eac:b0:ac7:b213:b7e5 with SMTP id a640c23a62f3a-ad1d2ecb11emr219935566b.18.1746518311999;
-        Tue, 06 May 2025 00:58:31 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad189508c2csm652230866b.130.2025.05.06.00.58.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 00:58:31 -0700 (PDT)
-Date: Tue, 6 May 2025 09:58:28 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Alexandre Mergnat <amergnat@baylibre.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Macpaul Lin <macpaul.lin@mediatek.com>
-Subject: Re: [PATCH v4 1/5] rtc: Make rtc_time64_to_tm() support dates before
- 1970
-Message-ID: <yjymcsje4z5c2htgefya2cocyx5guvepng756vdigjmvxvk6dv@wqyeh33mfty4>
-References: <20250428-enable-rtc-v4-0-2b2f7e3f9349@baylibre.com>
- <20250428-enable-rtc-v4-1-2b2f7e3f9349@baylibre.com>
- <5gpvxwgqfgvb6eu6nwso3xk4xpdqayz7wo6y2mvweci2veetqw@wsurri5h7xvu>
+	s=arc-20240116; t=1746524713; c=relaxed/simple;
+	bh=lXRFaGpQmyZ+YFfaL8CbnLaP8UdnmN3oKkQGpsGRQVk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=LCO/dp7dt9+NrW79C6BFh95VAIXM7e5/y3lfLo+lo5ZlX+1ozQUzgXR71zKIO6qvfyQvsjcIiIn6z+OZh/jXb2wHPjYWCRmm0AfiyU60gT7BZsYcfX+VXVEoJD2fNuOmKA+Ospz0u5qiBKSl2cX8LIP2tBR52OqP6dpnfPmTXoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=awRtSKKJ; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250506094503epoutp038580dbc49ee917bf00541c2ddead15d7~85vbOlyWR2045420454epoutp03I
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 09:45:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250506094503epoutp038580dbc49ee917bf00541c2ddead15d7~85vbOlyWR2045420454epoutp03I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1746524703;
+	bh=o37GEJbMCiK+/zd5lVzb4C3rovhL67AxKzA9bCSpfc0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=awRtSKKJNZmUWuq3ImVDR/DDbLSBkANu3wZ1SZJ9nmV7le+NI5MXP9ctvgCnqIpCo
+	 SeG0779Lny5Yr/099Ubbpby8BdP8ZEKI/dXsvyjf+cudSgbpYJTdJ7Mw/ZUL+fwuK7
+	 5DOe3r3fzaSEtKwmxgqPnEWxyqN1ks4nkjvaWWL4=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250506094502epcas5p296e358ba2c931bd5cea728720f4e323d~85vamUhlB0393203932epcas5p2I;
+	Tue,  6 May 2025 09:45:02 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZsD5S3rDZz3hhT9; Tue,  6 May
+	2025 09:45:00 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250506075413epcas5p2ce0db6da9f359e9c3bb16b03c1a5eb4f~84OqOF_Hj0433704337epcas5p2t;
+	Tue,  6 May 2025 07:54:13 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250506075413epsmtrp10e2e38e8362a86128042bc0cd71a100e~84OqDrxs-2829128291epsmtrp1x;
+	Tue,  6 May 2025 07:54:13 +0000 (GMT)
+X-AuditID: b6c32a52-41dfa70000004c16-e8-6819c025a9aa
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	59.03.19478.520C9186; Tue,  6 May 2025 16:54:13 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250506075411epsmtip2856a7bfd5c50c7918eaa2bd424a91bcc~84On6ck161414214142epsmtip2n;
+	Tue,  6 May 2025 07:54:10 +0000 (GMT)
+From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	sunyeal.hong@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com, Pritam
+	Manohar Sutar <pritam.sutar@samsung.com>, stable <stable@kernel.org>
+Subject: [PATCH v2] clk: samsung: correct clock summary for hsi1 block
+Date: Tue,  6 May 2025 13:31:54 +0530
+Message-Id: <20250506080154.3995512-1-pritam.sutar@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7bpbuhfrvksdohsk"
-Content-Disposition: inline
-In-Reply-To: <5gpvxwgqfgvb6eu6nwso3xk4xpdqayz7wo6y2mvweci2veetqw@wsurri5h7xvu>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOLMWRmVeSWpSXmKPExsWy7bCSvK7qAckMg+fneS0ezNvGZnH9y3NW
+	i3s7lrFbXLuxkN3i/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4tm9FWwWX34+YLY4
+	/Kad1eLftY0sFp/OX2CzaFq2nslBwOP9jVZ2j02rOtk8Ni+p9+jbsorR4/MmuQDWKC6blNSc
+	zLLUIn27BK6M69/b2QrO8Fds/XqLvYGxibeLkZNDQsBE4ubctexdjFwcQgLbGSWetR9khEjI
+	SDyatpEVwhaWWPnvOVTRW0aJJecnM3cxcnCwCZhKTNyTABIXEVjDKNG1/xcriMMssJxJ4mHT
+	JCaQbmEBN4m7tzewg9gsAqoSx1ovs4HYvAL2EkeXTmOC2CAvsf/gWWaIuKDEyZlPWEBsZqB4
+	89bZzBMY+WYhSc1CklrAyLSKUTS1oDg3PTe5wFCvODG3uDQvXS85P3cTIzjstYJ2MC5b/1fv
+	ECMTB+MhRgkOZiUR3pZZEhlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZVzOlOEBNITS1KzU1ML
+	UotgskwcnFINTBPyT3jplCZUZhasSb152jSlbhfPujfdScoCq878VXn3/ryzlfjG+DPzzzAs
+	ifebJp/2+c35tlWPX530VzR7sP5a8zHOqEmv9Yw6JUJW7HLfdb97/oI/Jhuuv5rmUDY9pt7S
+	l13S7su7L9OXn196Zbn3rELTnp+3jgtOjEnIntL97cbDLvnpjqlBJ7bZsHV9Pb6OR373x5kH
+	PVYvOXdik1a5eeuJVvn+n0G8IekhuquYd61cGF+p0SFe15f50Mn/se815WXJ1TduaxmYnuFU
+	Wnd2ZoTFgWWee7RbO+PvPdf68PynTs2rYu7JiU+LLFbcbzgXcj7Kc/11gbUqW+873FgbsV3p
+	t/FLGb0H1a8jTA2UWIozEg21mIuKEwFKaNGo6gIAAA==
+X-CMS-MailID: 20250506075413epcas5p2ce0db6da9f359e9c3bb16b03c1a5eb4f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250506075413epcas5p2ce0db6da9f359e9c3bb16b03c1a5eb4f
+References: <CGME20250506075413epcas5p2ce0db6da9f359e9c3bb16b03c1a5eb4f@epcas5p2.samsung.com>
 
+clk_summary shows wrong value for "mout_hsi1_usbdrd_user".
+It shows 400Mhz instead of 40Mhz as below.
 
---7bpbuhfrvksdohsk
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 1/5] rtc: Make rtc_time64_to_tm() support dates before
- 1970
-MIME-Version: 1.0
+dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
+  mout_hsi1_usbdrd_user     0 0 0 400000000 0 0 50000 Y ...
+    dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
 
-Hello Alexandre,
+Correct the clk_tree by adding correct clock parent for
+"mout_hsi1_usbdrd_user".
 
-On Mon, Apr 28, 2025 at 06:59:33PM +0200, Uwe Kleine-K=F6nig wrote:
-> On Mon, Apr 28, 2025 at 12:06:47PM +0200, Alexandre Mergnat wrote:
-> > Conversion of dates before 1970 is still relevant today because these
-> > dates are reused on some hardwares to store dates bigger than the
-> > maximal date that is representable in the device's native format.
-> > This prominently and very soon affects the hardware covered by the
-> > rtc-mt6397 driver that can only natively store dates in the interval
-> > 1900-01-01 up to 2027-12-31. So to store the date 2028-01-01 00:00:00
-> > to such a device, rtc_time64_to_tm() must do the right thing for
-> > time=3D-2208988800.
-> >=20
-> > Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
->=20
-> Given this problem starts to bite in 2028 I'd like to see this (and the
-> next) patch backported to stable. If you want a Fixes: line, maybe
-> 34bbdc12d04e ("rtc: mt6359: Add RTC hardware range and add support for
-> start-year") is sensible here as this is the commit that introduced the
-> requirement to handle negative timestamps. (The drivers that made use
-> of the offset feature already before that commit all had
-> .range_min >=3D 0, and so are not affected by this problem.)
+Post this change, clk_summary shows correct value.
 
-Given that we're already at v6.15-rc5 I wonder if there is a chance to
-get these changes reviewed and applied before v6.15. Would a pull
-request help you? If yes, should it only contain the fixes, or also the
-updated tests?
+dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
+  mout_clkcmu_hsi1_usbdrd   0 0 0 400000000 0 0 50000 Y ...
+    dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
+      mout_hsi1_usbdrd_user 0 0 0 40000000  0 0 50000 Y ...
 
-Best regards
-Uwe
+Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto v920 SoC")
+Cc: stable <stable@kernel.org>
+Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+---
+Changes in v2:
+- Updated commit message as pointed by Alim Akhtar.
+- Link to v1: https://patchwork.kernel.org/project/linux-samsung-soc/patch/20250428115049.2064955-1-pritam.sutar@samsung.com/
 
---7bpbuhfrvksdohsk
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/clk/samsung/clk-exynosautov920.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
+index dc8d4240f6de..b0561faecfeb 100644
+--- a/drivers/clk/samsung/clk-exynosautov920.c
++++ b/drivers/clk/samsung/clk-exynosautov920.c
+@@ -1393,7 +1393,7 @@ static const unsigned long hsi1_clk_regs[] __initconst = {
+ /* List of parent clocks for Muxes in CMU_HSI1 */
+ PNAME(mout_hsi1_mmc_card_user_p) = {"oscclk", "dout_clkcmu_hsi1_mmc_card"};
+ PNAME(mout_hsi1_noc_user_p) = { "oscclk", "dout_clkcmu_hsi1_noc" };
+-PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk", "mout_clkcmu_hsi1_usbdrd" };
++PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk", "dout_clkcmu_hsi1_usbdrd" };
+ PNAME(mout_hsi1_usbdrd_p) = { "dout_tcxo_div2", "mout_hsi1_usbdrd_user" };
+ 
+ static const struct samsung_mux_clock hsi1_mux_clks[] __initconst = {
+-- 
+2.34.1
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgZwSEACgkQj4D7WH0S
-/k4w7QgAlqa6THLQEj9lQWvkqFBMpHSH6z56IM+J0ukUkyU+RAP4TjCKb8qAKhbo
-ZHUf7kNi7bdrWNX1DGEfG7T0UY/GdSSihOEr9A912AMiVzOTuzNn+pvnh0Dr1ZCO
-+mnfG3ZS1dvLHSe7JbnvFR+/EV8c1HyZbS/caYrJao0iq0Lq+dnvskA/r5kNh5ys
-MElR5BF0lAiJVCxxBiktuUGdAAVJh/969lAhtHKynT0ZkanTurm/lWo9QoB8wDKc
-Hi7PtSbxGGv5bw/6PxzVUBJaXOeHnnu5yHuLGBKTFbu1srb6y+IylKzVCCRf8Q3U
-0pviub4KQf2lnrf7d8j8bpqautf24A==
-=jZgu
------END PGP SIGNATURE-----
-
---7bpbuhfrvksdohsk--
 
