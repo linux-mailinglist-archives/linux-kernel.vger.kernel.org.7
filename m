@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-635063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B62AAB841
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01922AAB854
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18EA316209B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9272416C4F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027D5288C8E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DEE28C01C;
 	Tue,  6 May 2025 04:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZe1fasu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cW3f+epT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC25300292;
-	Tue,  6 May 2025 02:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47F93002A8;
+	Tue,  6 May 2025 02:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498133; cv=none; b=ejm6PwMNqNTZ7y4B2x96wMqBBh2Z67H56Kb6lu05eAyFEsHMRASiXnAH5NDV9dFvD+JayXnmmeLRFvuiZGb5+2cjDrCJ73B+kD+kbD5+IJ0+Pt2bddgAMz0yPHv52pOyCS+t42XZ1iNfWzX5SnYILzh3nsjPYDo5pXuAjwu5DwE=
+	t=1746498140; cv=none; b=tXc+KGlvVAk6T8LReeeTJtRgPvWwq1BgR+34X0Mh8WDfVcL7L2cWdR+J/wZzRI/N4mbo1I2QHu1wWciFhCaCZKhRu2h86/emfMPmv/Nmil8286GMVItVGgryTKnZJ7HD6JhryLuzcAFsu5udVrRvDupJjhdfEEGGZCMAGcGgDXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498133; c=relaxed/simple;
-	bh=RiJq8QEBNv4xAQ1Xr1EM5XwHlybZfqBM4JI17uR/log=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NIg66kVO6/ojyhLJ1l//8TlPOJ3MXsjoTXm7sza2MpyYMWhsW49sZd4npIshIYpqEUk0AeQDzR+qb4DfEo9c3VvaFXccXh7EmfQpoDS8ulTjhASkImprdmXnbUR8p8IIIXZtFZRwca38sJ1nTNw6a+eywZ9VRpfaSNWkmrQ+iRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZe1fasu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25543C4CEE4;
-	Tue,  6 May 2025 02:22:09 +0000 (UTC)
+	s=arc-20240116; t=1746498140; c=relaxed/simple;
+	bh=WwQNWZIozN2u7MiGY37rkvfNiCqmdGGwWW/oTcOrhIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WPmTWU0jB/tePF89zznXg+cRwXnIbK88zE9N9nfVKYvzap1VyBDrsIq1FaUP9jrQiIBvruKJZyHyN17VHZN/wPGtBfrbZT1nd5DrHqepW7o/eq0DpnEt6yH/pEHnymbjPjtYk/3HXTG/a4YM+RYO/Dosnbhzx6k851VoqzMhtE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cW3f+epT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7226C4CEE4;
+	Tue,  6 May 2025 02:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746498129;
-	bh=RiJq8QEBNv4xAQ1Xr1EM5XwHlybZfqBM4JI17uR/log=;
+	s=k20201202; t=1746498134;
+	bh=WwQNWZIozN2u7MiGY37rkvfNiCqmdGGwWW/oTcOrhIo=;
 	h=From:To:Cc:Subject:Date:From;
-	b=EZe1fasuCnW8lOPKSir4NGHK6ZGkRUMnfzRC+6wHK1fgHBHo4kHGMkWcSFe/Vvs9o
-	 pEOtE7PGEx1s89TIOnHwRG+0jh8ejKQU9PX8ieIedxuJUOo3ktpf/T/QuwT0r2PmpO
-	 vwxk8gPzRWXMMTUovqPtp7OrJHaNtx7wQlAWsHX6cVpQxzsXs92GIgd9issCCWeSoG
-	 C7orTRy6cIqoXg3wJyEct4xvn/CnBn5OYIlNKMcYXqhPSaqq3Pfb1HzcelRhvJg0ed
-	 q/n38dQTZfWg1a4T2jBkFmizbRrBai97uvh2WUgpgaIVfX8DTGDgFmWaDYbJy5jLDA
-	 SXFkQmyDc1LGQ==
+	b=cW3f+epTDMJ0pFITUeQWYQLmP+nRxKGT3UTgGn2S7txOjpaxghbPvjJdNWLL1ssFT
+	 uw/j0outlVGIri6j7UiYXAnHWzhIu32Fxmp83ryGjQhlGwyh7MCU5BOfmVDumbpiXO
+	 mS3uQ2/FRKJL6rR5yUlkFzvfnZDzQr7OVNXlq/cQo4TnH2CdK4+N3+E0anlJ4whiZ+
+	 B60SVH1tkYvOzuTXn558X6ZoX609GxU4pXKOfDvXC3/nZxS8+VWOlZOxHHdMBnIQKK
+	 ZHLqewR4eY5WJu5E6AFU32hHWPovgzVSXfBZlvamFn3WVwnaTG0SVS5NDSlyOTPEOQ
+	 qlATpXNe+curw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Dinh Nguyen <dinguyen@kernel.org>
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Vladimir Murzin <vladimir.murzin@arm.com>
 Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: timer: Convert altr,timer-1.0 to DT schema
-Date: Mon,  5 May 2025 21:22:01 -0500
-Message-ID: <20250506022202.2586157-1-robh@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] dt-bindings: timer: Convert arm,mps2-timer to DT schema
+Date: Mon,  5 May 2025 21:22:09 -0500
+Message-ID: <20250506022210.2586404-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,61 +63,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the Altera Timer binding to DT schema format. It's a
+Convert the Arm MPS2 Timer binding to DT schema format. It's a
 straight-forward conversion.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/timer/altr,timer-1.0.txt         | 18 ---------
- .../bindings/timer/altr,timer-1.0.yaml        | 39 +++++++++++++++++++
- 2 files changed, 39 insertions(+), 18 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/altr,timer-1.0.txt
- create mode 100644 Documentation/devicetree/bindings/timer/altr,timer-1.0.yaml
+ .../bindings/timer/arm,mps2-timer.txt         | 28 -----------
+ .../bindings/timer/arm,mps2-timer.yaml        | 49 +++++++++++++++++++
+ 2 files changed, 49 insertions(+), 28 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/timer/arm,mps2-timer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/arm,mps2-timer.yaml
 
-diff --git a/Documentation/devicetree/bindings/timer/altr,timer-1.0.txt b/Documentation/devicetree/bindings/timer/altr,timer-1.0.txt
+diff --git a/Documentation/devicetree/bindings/timer/arm,mps2-timer.txt b/Documentation/devicetree/bindings/timer/arm,mps2-timer.txt
 deleted file mode 100644
-index e698e3488735..000000000000
---- a/Documentation/devicetree/bindings/timer/altr,timer-1.0.txt
+index 48f84d74edde..000000000000
+--- a/Documentation/devicetree/bindings/timer/arm,mps2-timer.txt
 +++ /dev/null
-@@ -1,18 +0,0 @@
--Altera Timer
+@@ -1,28 +0,0 @@
+-ARM MPS2 timer
+-
+-The MPS2 platform has simple general-purpose 32 bits timers.
 -
 -Required properties:
+-- compatible	: Should be "arm,mps2-timer"
+-- reg		: Address and length of the register set
+-- interrupts	: Reference to the timer interrupt
 -
--- compatible : should be "altr,timer-1.0"
--- reg : Specifies base physical address and size of the registers.
--- interrupts : Should contain the timer interrupt number
--- clock-frequency : The frequency of the clock that drives the counter, in Hz.
+-Required clocking property, have to be one of:
+-- clocks	  : The input clock of the timer
+-- clock-frequency : The rate in HZ in input of the ARM MPS2 timer
 -
--Example:
+-Examples:
 -
--timer {
--	compatible = "altr,timer-1.0";
--	reg = <0x00400000 0x00000020>;
--	interrupt-parent = <&cpu>;
--	interrupts = <11>;
--	clock-frequency = <125000000>;
+-timer1: mps2-timer@40000000 {
+-	compatible = "arm,mps2-timer";
+-	reg = <0x40000000 0x1000>;
+-	interrupts = <8>;
+-	clocks = <&sysclk>;
 -};
-diff --git a/Documentation/devicetree/bindings/timer/altr,timer-1.0.yaml b/Documentation/devicetree/bindings/timer/altr,timer-1.0.yaml
+-
+-timer2: mps2-timer@40001000 {
+-	compatible = "arm,mps2-timer";
+-	reg = <0x40001000 0x1000>;
+-	interrupts = <9>;
+-	clock-frequency = <25000000>;
+-};
+diff --git a/Documentation/devicetree/bindings/timer/arm,mps2-timer.yaml b/Documentation/devicetree/bindings/timer/arm,mps2-timer.yaml
 new file mode 100644
-index 000000000000..576260c72d42
+index 000000000000..64c6aedd7e8e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/altr,timer-1.0.yaml
-@@ -0,0 +1,39 @@
++++ b/Documentation/devicetree/bindings/timer/arm,mps2-timer.yaml
+@@ -0,0 +1,49 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/altr,timer-1.0.yaml#
++$id: http://devicetree.org/schemas/arm,mps2-timer.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Altera Timer
++title: ARM MPS2 timer
 +
 +maintainers:
-+  - Dinh Nguyen <dinguyen@kernel.org>
++  - Vladimir Murzin <vladimir.murzin@arm.com>
++
++description:
++  The MPS2 platform has simple general-purpose 32 bits timers.
 +
 +properties:
 +  compatible:
-+    const: altr,timer-1.0
++    const: arm,mps2-timer
 +
 +  reg:
 +    maxItems: 1
@@ -121,8 +138,15 @@ index 000000000000..576260c72d42
 +  interrupts:
 +    maxItems: 1
 +
++  clocks:
++    maxItems: 1
++
 +  clock-frequency:
-+    description: Frequency of the clock that drives the counter, in Hz.
++    description: Rate in Hz of the timer input clock
++
++oneOf:
++  - required: [clocks]
++  - required: [clock-frequency]
 +
 +required:
 +  - compatible
@@ -133,11 +157,11 @@ index 000000000000..576260c72d42
 +
 +examples:
 +  - |
-+    timer@400000 {
-+        compatible = "altr,timer-1.0";
-+        reg = <0x00400000 0x00000020>;
-+        interrupts = <11>;
-+        clock-frequency = <125000000>;
++    timer@40000000 {
++        compatible = "arm,mps2-timer";
++        reg = <0x40000000 0x1000>;
++        interrupts = <8>;
++        clocks = <&sysclk>;
 +    };
 -- 
 2.47.2
