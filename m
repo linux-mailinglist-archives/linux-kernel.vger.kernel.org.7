@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-636019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C22AAC523
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:06:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B93AAC530
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 393AF1BC5EA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CADD698044B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 13:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91ADF28031C;
-	Tue,  6 May 2025 13:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFAD230BF1;
+	Tue,  6 May 2025 13:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loVvBnNg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="WzS8bhK8"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6CA27FD67;
-	Tue,  6 May 2025 13:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9716128032F;
+	Tue,  6 May 2025 13:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746536575; cv=none; b=DneJ4h1l7IQx8z+qTKq/U+4pKJJiqUF0qxlq5g/j2dR9+eUwvLS1TDhegBy/sCuibFPoF34L3JOVAQh8Wwz7HTtoqSu0R2vxU5UjQBoQ+KBIDdJW8LU7Zo88hpLzX4VWuBSl/CvZy6AQWn466PNT/m3stwaabW9obbvnUeumIBM=
+	t=1746536588; cv=none; b=s5H0QpqmgqeEeqqak0RTGrSW3V7a0H0SdI6lZR+IHnhBpmcqrWKNSl+Pt2gXDDUf5hO0HC0CTJkudBncOTutFmrjRtxt3z+kqn2TOibA0lWEk5Ye588FOpT7APfFIRcT+PRTuL+Ej27RdQ6vE/xEkzPK1N1tQX7gqdZw637jBfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746536575; c=relaxed/simple;
-	bh=Y298LSzWv3GbHqmcvO2wI8CypYsGzuXwta1YgsS7xr8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bbuWJE1xsujP1g5R7qL1ndYYxyJG4bgpAT7l7UHCocMHDV/xaWR8SnmqJ3rE/dtohncCBLxUtwdonCuUzlmKWJliTdxyMD100MUb+Vc74447r+enVuGzfGzIaCt6J9nHRZIx2u3Q7R022gF3lUv10bsiWOglYwIVrLbxl51sPKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=loVvBnNg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF17BC4CEEE;
-	Tue,  6 May 2025 13:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746536574;
-	bh=Y298LSzWv3GbHqmcvO2wI8CypYsGzuXwta1YgsS7xr8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=loVvBnNgwgxE/yYv/cBF6p+Z8c5hTfgCHOhi2b2cfCCHYYCsEe4aZyeo5NhE7HPQp
-	 0AxneBY1qnQYYHVF8feQXRJwLnYzaVfaKflMhR104dWmszK2HrsCNZfhtYvqJOvA/7
-	 2uGthOdKW3m7eNDNScD0DAvuKwyN+ARbQU5dSi5icVzCUBBqY8O0YYdEuhJZw7+egR
-	 TYexvg3MmIC7aTnnyROvrdChf1Dz9NgBZ7Xyue8X6b8H/k83px4ptcFofFq70cURB8
-	 4uLHn8iZFoPsepDraWIMA4vrI6Jt0obewdScsU1IgTJ22VlLvGIqjKfpu66an8TP7v
-	 gBtM01qQKXE0g==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Tue, 06 May 2025 15:02:30 +0200
-Subject: [PATCH v12 3/3] modules: add rust modules files to MAINTAINERS
+	s=arc-20240116; t=1746536588; c=relaxed/simple;
+	bh=frZ0PYstyl46/5nEUpd1FloieyQNYI1KDuIyAFHbXyo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=b5Woop6eODmlTHxqkGRvg9HSCMKlXldx7pDZsPWKGS7RBnCQM5S9MrO/YUT/85eYmMnTqJ1eexnKbDD6oZEj61xjFjEuuUqtt1laflrm59fKWpJ/StaZkXK5fbTpOOLkSEQIPFGhjSYQrSgakAeGe8/FrKInXTRRpoVgr1XbN8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=WzS8bhK8; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C5B5B403A7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1746536585; bh=frZ0PYstyl46/5nEUpd1FloieyQNYI1KDuIyAFHbXyo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=WzS8bhK8bOHyhhTzB4B2obBr7BSv4xyV1/naOLO/wtmPPQCjIwOt7ltsKywfXKtBI
+	 9TEbi+SQ83Zh5Pu5S4sQEOc9KoxL54X4wlpnaF4lEA8AGQtxPat+M/69txUbdt2bwm
+	 KmkupHiTNu8X0/WfVxOSFQn4G1knJ7HscxS52o3lv+tdNHwmUTgqdSZKaD5iIkgt5o
+	 or9swuXrzywwx4rXod5rFllTBWTNR51y9qOWKLNB6W9q5ul4+Ofk5skCSQzUuhX+MS
+	 RtaWaCoDoV4azApFey7QOzXwj+vSkb30k4M8zrYLJ9jiE9/G+o7+dO9zflqmJZbziA
+	 +rP/SOwwOnzlA==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id C5B5B403A7;
+	Tue,  6 May 2025 13:03:04 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Frederic Barrat
+ <fbarrat@linux.ibm.com>, Andrew Donnellan <ajd@linux.ibm.com>, Michael
+ Ellerman <mpe@ellerman.id.au>, Alyssa Ross <hi@alyssa.is>, Rodolfo
+ Giometti <giometti@enneenne.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Nuno Das Neves
+ <nunodasneves@linux.microsoft.com>, Eric Biggers <ebiggers@google.com>,
+ Jan Kara <jack@suse.cz>, Lukas Bulwahn <lukas.bulwahn@redhat.com>, Lee
+ Jones <lee@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] Documentation: ioctl-number: Update outdated submission
+ info
+In-Reply-To: <20250502074504.26933-2-bagasdotme@gmail.com>
+References: <20250502074504.26933-2-bagasdotme@gmail.com>
+Date: Tue, 06 May 2025 07:03:01 -0600
+Message-ID: <87r011x56i.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250506-module-params-v3-v12-3-c04d80c8a2b1@kernel.org>
-References: <20250506-module-params-v3-v12-0-c04d80c8a2b1@kernel.org>
-In-Reply-To: <20250506-module-params-v3-v12-0-c04d80c8a2b1@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Trevor Gross <tmgross@umich.edu>, 
- Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
- Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
- Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- linux-modules@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=808; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=Y298LSzWv3GbHqmcvO2wI8CypYsGzuXwta1YgsS7xr8=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoGghpxcYnOXHBFqzBWj7e8LWmafqdOOufyaOZB
- qSnEM/5cVCJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaBoIaQAKCRDhuBo+eShj
- d/ckEACXRXgQpIe09b6cFYawOQap0Gb23Yw+XiMpwt07282Qdm6do2xri8zpphzOWf+SmanLyEo
- WpKCX9R+a+CMgaMDRa8qDklQS+iu7KSWwZJ2HSuaYWPR5MQ+wzjziE9VXNQxtds56DFMm3DFQNg
- rbA0L+DsPiszAfVxYNbsHnvUCTmJz3nuoc83lCYyELatHsE/t3ByAntxyT48/vyB7yX98gikGrJ
- MQ+pXePD1OwnrhKzP6Xe9I8BY+0+OhTcugOOZXCg3u4ngGxlxUp4afUx7xtxPY1vLswBrSv/0Wm
- E6Zb6AA55KbLwVO3BCMl/0Qg4CzIqB6og2h8vSxYZmQcPVj17WZYgNOY3GUf3PxcB0b9I+nZTF3
- 8jXp+uJA8wvjGTBYslDpCZMDtqhxt1BBBqAWbppPneVJCeGnxqFOSjX3BezmQZ+nJK1U1POQx7t
- JXpLaTACEt1uQbfD63S0rlPmt/G8jdkv6ni3qfTslzKq+quQbP8bZU4NPNKLnSwSndsCPh0Z4lr
- /V+k6RxtsWPlRiJIA/RRvjD8oncyKfdV2kHGVTPqEOctGlm/NSo6kBeBUXjZDpAAxVg54b3hbVR
- gCwMnX65VGLK9x2fSj9kvc8KBLeEeMhyNJtYViLae8jA5OYcafRFO0keUKDJMv1ynnOXPOLS0xD
- s2UTsyk+FQsIwRA==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Type: text/plain
 
-The module subsystem people agreed to maintain rust support for modules
-[1]. Thus, add entries for relevant files to modules entry in MAINTAINERS.
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
-Link: https://lore.kernel.org/all/0d9e596a-5316-4e00-862b-fd77552ae4b5@suse.com/ [1]
+> Much like device numbers that used to be assigned by LANANA (see commit
+> ebdf4040c16df5 ("Documentation: update the devices.txt documentation"),
+> ioctl numbers list is maintained by general kernel community nowadays
+> instead of contacting Michael directly as he's long stepped down from
+> kernel-related activity (his last LKML message was from 2003 [1] and
+> he's in CREDITS since the beginning of kernel's git history). Also,
+> patch (including one to update ioctl numbers list) submission now
+> follows process as described in
+> Documentation/process/submitting-patches.rst rather than sending
+> patches directly to Linus as in the distant past.
+>
+> Update the docs to reflect that.
+>
+> Link: https://lore.kernel.org/r/200305261446.h4QEkBVv023861@duracef.shout.net/ [1]
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Acked-by: Daniel Gomez <da.gomez@samsung.com>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+Applied, thanks.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3cbf9ac0d83f..d283874843a0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16395,6 +16395,8 @@ F:	include/linux/module*.h
- F:	kernel/module/
- F:	lib/test_kmod.c
- F:	lib/tests/module/
-+F:	rust/kernel/module_param.rs
-+F:	rust/macros/module.rs
- F:	scripts/module*
- F:	tools/testing/selftests/kmod/
- F:	tools/testing/selftests/module/
-
--- 
-2.47.2
-
-
+jon
 
