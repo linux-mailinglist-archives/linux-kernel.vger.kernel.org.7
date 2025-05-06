@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-635087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5309AAAB8C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:41:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F163AAB8BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D7413BAA8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCD41BA6C84
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 06:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2062C298259;
-	Tue,  6 May 2025 04:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA31F297117;
+	Tue,  6 May 2025 04:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btHqNNW+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXSpJL5P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D3630035A;
-	Tue,  6 May 2025 02:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C233380B4;
+	Tue,  6 May 2025 02:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498180; cv=none; b=Osd/80y1OF81U+8QGuX2/UMU7k/zaf6aAM9pqPGUOBSTNdNntMLlzDqCcwAfPi1WUeXwImwa0wyso/DBnLM2BzkYqNYxxrtorSkNjcNuq3uvlpv4ToNdwdII135s/8ENzg4VsmzqAMsdcApTdWRgU+29oIDGP/KHMry2W0A0BQY=
+	t=1746498184; cv=none; b=crfWMJHjLf+qCvtoYXJZhtmaNPaIMKCAFMVG01JwTO9WrulJO3DbzUngB9ngApZWAeYzn+i1TBU94TVoPZlHI9HIJNQsajSFCOsKin/g2AWAZHC3jXHIGZMlgo9ND56MKFAcGZsfm41PrcsxhaKGRERPGZNVbZN7Ot9LrrnuBTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498180; c=relaxed/simple;
-	bh=XwiTbvDuJHg5Jgrcity3qbKdTBBkmo8hT+hmUxszMb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P0L0chuvxQ49kNeWTDs2A2TKmUsb+ELTvXsDRkVwsRkMsZu1eZ2QBKSx8FPupJUJufilN/alTw4zgQ/uhRP4iCzvqzTWE3IyJspaWjyXm+jCS1f+vI5DG4pEnDUQj5nQ1RsPlnzdIEGVDyE8kzy8rwNrjwsxLTsKzWNAnSPfL58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btHqNNW+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2637C4CEE9;
-	Tue,  6 May 2025 02:22:59 +0000 (UTC)
+	s=arc-20240116; t=1746498184; c=relaxed/simple;
+	bh=2epdz0879bY+tfeEnXd+91dNg8Yi5+WF8Wp8wAbzjPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NKSFi2M5CkulBZ+Rzg9KqzKzHwqBsoIc72tI7n9Nk/XHQRdSIwVeuoEslFOcM9MaApGCDzpKU852Xuk+yfS80HVy10BNbEAajg44cBxkWEmGhXmA4hPrbq/RxjZo3Ey5lYo6PB4GI4Uh1V6CwAssG7NBJFBbKbAkmm6pcsj9OcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXSpJL5P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4746C4CEE4;
+	Tue,  6 May 2025 02:23:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746498180;
-	bh=XwiTbvDuJHg5Jgrcity3qbKdTBBkmo8hT+hmUxszMb8=;
+	s=k20201202; t=1746498184;
+	bh=2epdz0879bY+tfeEnXd+91dNg8Yi5+WF8Wp8wAbzjPQ=;
 	h=From:To:Cc:Subject:Date:From;
-	b=btHqNNW+22KBQ+qbZLQ3VNeBMZxDFeftirgKMYYGUodHNQaibrfNRxTKgYRLzZ7u8
-	 8/idVbWUPk8S3St63L4VMYndKgQaAFuJL3ksvZeek+Q7lcwucrFUSjLCudqxzXJXUE
-	 T4IPM0vfQwGvtsybYUQGhX/edxLzQC4zN/AdTm98h9rm1KL2vQIvIMfAy6LmY/Utnj
-	 5Y9hfQo++C8vQPUi+J6S9MTMhaR4mzqGzPw2tWlC95VboAZ3IfUoA8fiD/fL1aKNEp
-	 59K9/S44Hlp3AcUHWyVNYYAlv7eF7URfUebFSAS2oll58Aww4kX4AZ1QQ6w69TKlvj
-	 gnRgVBnL2fVMA==
+	b=OXSpJL5PIzadWkbT8sHp3P9p1iKzntSrKV8EoZBx5/ZxXIc7YdifWQO7aOP0jGeYc
+	 sqtZb8la65JVUgsPtXAaV23lT9Fc60xxVTO46PlCca1EzwyYCvh9CBQf/eEAvM8IcY
+	 neF0HfIUQbGSqIH87qqgWjBkvveDF5R2h4FzCgIeGTF+wBJHONc0eAYH6cRnHdSc2x
+	 Tixb5OvBMQuzV2vecIh/MVnUfJWivTwWiqg+PP8KIR++usoCw/cVYD3Ff8Xvk51YNE
+	 nrW3ioSA+/a4k8znbFGL7LrBsuhLoyZnal5NKlFciOP7F/X575a0ePcLDNp+DaP80o
+	 TjjYsoeIixu5Q==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Tang <dt.tangr@gmail.com>
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: timer: Convert lsi,zevio-timer to DT schema
-Date: Mon,  5 May 2025 21:22:56 -0500
-Message-ID: <20250506022257.2588136-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: timer: Convert marvell,armada-370-timer to DT schema
+Date: Mon,  5 May 2025 21:23:00 -0500
+Message-ID: <20250506022301.2588282-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,118 +60,162 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the TI NSPIRE Timer binding to DT schema format. It's a
-straight-forward conversion.
+Convert the Marvell Armada 37x/380/XP Timer binding to DT schema format.
+Update the compatible entries to match what is in use.
+"marvell,armada-380-timer" in particular was missing.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/timer/lsi,zevio-timer.txt        | 33 -----------
- .../bindings/timer/lsi,zevio-timer.yaml       | 56 +++++++++++++++++++
- 2 files changed, 56 insertions(+), 33 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/lsi,zevio-timer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/lsi,zevio-timer.yaml
+ .../timer/marvell,armada-370-timer.yaml       | 88 +++++++++++++++++++
+ .../timer/marvell,armada-370-xp-timer.txt     | 44 ----------
+ 2 files changed, 88 insertions(+), 44 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/marvell,armada-370-timer.yaml
+ delete mode 100644 Documentation/devicetree/bindings/timer/marvell,armada-370-xp-timer.txt
 
-diff --git a/Documentation/devicetree/bindings/timer/lsi,zevio-timer.txt b/Documentation/devicetree/bindings/timer/lsi,zevio-timer.txt
-deleted file mode 100644
-index b2d07ad90e9a..000000000000
---- a/Documentation/devicetree/bindings/timer/lsi,zevio-timer.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--TI-NSPIRE timer
--
--Required properties:
--
--- compatible : should be "lsi,zevio-timer".
--- reg : The physical base address and size of the timer (always first).
--- clocks: phandle to the source clock.
--
--Optional properties:
--
--- interrupts : The interrupt number of the first timer.
--- reg : The interrupt acknowledgement registers
--	(always after timer base address)
--
--If any of the optional properties are not given, the timer is added as a
--clock-source only.
--
--Example:
--
--timer {
--	compatible = "lsi,zevio-timer";
--	reg = <0x900D0000 0x1000>, <0x900A0020 0x8>;
--	interrupts = <19>;
--	clocks = <&timer_clk>;
--};
--
--Example (no clock-events):
--
--timer {
--	compatible = "lsi,zevio-timer";
--	reg = <0x900D0000 0x1000>;
--	clocks = <&timer_clk>;
--};
-diff --git a/Documentation/devicetree/bindings/timer/lsi,zevio-timer.yaml b/Documentation/devicetree/bindings/timer/lsi,zevio-timer.yaml
+diff --git a/Documentation/devicetree/bindings/timer/marvell,armada-370-timer.yaml b/Documentation/devicetree/bindings/timer/marvell,armada-370-timer.yaml
 new file mode 100644
-index 000000000000..358455d8e7a8
+index 000000000000..bc0677fe86eb
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/lsi,zevio-timer.yaml
-@@ -0,0 +1,56 @@
++++ b/Documentation/devicetree/bindings/timer/marvell,armada-370-timer.yaml
+@@ -0,0 +1,88 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/timer/lsi,zevio-timer.yaml#
++$id: http://devicetree.org/schemas/timer/marvell,armada-370-timer.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: TI-NSPIRE timer
++title: Marvell Armada 370, 375, 380 and XP Timers
 +
 +maintainers:
-+  - Daniel Tang <dt.tangr@gmail.com>
++  - Andrew Lunn <andrew@lunn.ch>
++  - Gregory Clement <gregory.clement@bootlin.com>
 +
 +properties:
 +  compatible:
-+    const: lsi,zevio-timer
++    oneOf:
++      - items:
++          - const: marvell,armada-380-timer
++          - const: marvell,armada-xp-timer
++      - items:
++          - const: marvell,armada-375-timer
++          - const: marvell,armada-370-timer
++      - enum:
++          - marvell,armada-370-timer
++          - marvell,armada-xp-timer
 +
 +  reg:
-+    minItems: 1
 +    items:
-+      - description: Timer registers
-+      - description: Interrupt acknowledgement registers (optional)
++      - description: Global timer registers
++      - description: Local/private timer registers
 +
 +  interrupts:
-+    maxItems: 1
++    items:
++      - description: Global timer interrupt 0
++      - description: Global timer interrupt 1
++      - description: Global timer interrupt 2
++      - description: Global timer interrupt 3
++      - description: First private timer interrupt
++      - description: Second private timer interrupt
 +
 +  clocks:
-+    maxItems: 1
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: nbclk
++      - const: fixed
 +
 +required:
 +  - compatible
 +  - reg
++  - interrupts
 +  - clocks
-+
-+allOf:
-+  - if:
-+      required: [ interrupts ]
-+    then:
-+      properties:
-+        reg:
-+          minItems: 2
 +
 +additionalProperties: false
 +
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - marvell,armada-375-timer
++              - marvell,armada-xp-timer
++    then:
++      properties:
++        clocks:
++          minItems: 2
++        clock-names:
++          minItems: 2
++      required:
++        - clock-names
++    else:
++      properties:
++        clocks:
++          maxItems: 1
++        clock-names:
++          maxItems: 1
++
 +examples:
 +  - |
-+    timer@900d0000 {
-+        compatible = "lsi,zevio-timer";
-+        reg = <0x900D0000 0x1000>, <0x900A0020 0x8>;
-+        interrupts = <19>;
-+        clocks = <&timer_clk>;
++    timer@20300 {
++        compatible = "marvell,armada-xp-timer";
++        reg = <0x20300 0x30>, <0x21040 0x30>;
++        interrupts = <37>, <38>, <39>, <40>, <5>, <6>;
++        clocks = <&coreclk 2>, <&refclk>;
++        clock-names = "nbclk", "fixed";
 +    };
-+  - |
-+    timer@900d0000 {
-+        compatible = "lsi,zevio-timer";
-+        reg = <0x900D0000 0x1000>;
-+        clocks = <&timer_clk>;
-+    };
+diff --git a/Documentation/devicetree/bindings/timer/marvell,armada-370-xp-timer.txt b/Documentation/devicetree/bindings/timer/marvell,armada-370-xp-timer.txt
+deleted file mode 100644
+index e9c78ce880e6..000000000000
+--- a/Documentation/devicetree/bindings/timer/marvell,armada-370-xp-timer.txt
++++ /dev/null
+@@ -1,44 +0,0 @@
+-Marvell Armada 370 and Armada XP Timers
+----------------------------------------
+-
+-Required properties:
+-- compatible: Should be one of the following
+-              "marvell,armada-370-timer",
+-	      "marvell,armada-375-timer",
+-	      "marvell,armada-xp-timer".
+-- interrupts: Should contain the list of Global Timer interrupts and
+-  then local timer interrupts
+-- reg: Should contain location and length for timers register. First
+-  pair for the Global Timer registers, second pair for the
+-  local/private timers.
+-
+-Clocks required for compatible = "marvell,armada-370-timer":
+-- clocks : Must contain a single entry describing the clock input
+-
+-Clocks required for compatibles = "marvell,armada-xp-timer",
+-				  "marvell,armada-375-timer":
+-- clocks : Must contain an entry for each entry in clock-names.
+-- clock-names : Must include the following entries:
+-  "nbclk" (L2/coherency fabric clock),
+-  "fixed" (Reference 25 MHz fixed-clock).
+-
+-Examples:
+-
+-- Armada 370:
+-
+-	timer {
+-		compatible = "marvell,armada-370-timer";
+-		reg = <0x20300 0x30>, <0x21040 0x30>;
+-		interrupts = <37>, <38>, <39>, <40>, <5>, <6>;
+-		clocks = <&coreclk 2>;
+-	};
+-
+-- Armada XP:
+-
+-	timer {
+-		compatible = "marvell,armada-xp-timer";
+-		reg = <0x20300 0x30>, <0x21040 0x30>;
+-		interrupts = <37>, <38>, <39>, <40>, <5>, <6>;
+-		clocks = <&coreclk 2>, <&refclk>;
+-		clock-names = "nbclk", "fixed";
+-	};
 -- 
 2.47.2
 
