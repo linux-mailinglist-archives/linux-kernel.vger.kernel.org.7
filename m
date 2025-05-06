@@ -1,109 +1,202 @@
-Return-Path: <linux-kernel+bounces-636277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-636279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08D1AAC91F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:08:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA7EAAC924
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 17:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD69D9806CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:08:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 476817A42A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 15:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52563283FE1;
-	Tue,  6 May 2025 15:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3359D283155;
+	Tue,  6 May 2025 15:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLtzaf5X"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rgak4S/y"
+Received: from out199-5.us.a.mail.aliyun.com (out199-5.us.a.mail.aliyun.com [47.90.199.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5C12836B4;
-	Tue,  6 May 2025 15:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A06233739
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 15:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746544086; cv=none; b=uICqQew5wFoadg4WnJ5iW69GiUeUlEWypTeXUm+29SYewVgSBUTQ70aqqkclLDSL+x18FwF1Y55+hJWl5cssbyR0F/ZZTKa3FQ+5BecWFc0VFsW5uoOCK+X2nGVZ/S5FeRIztn6iUyJKmtyYeZoWFLFL0rNMPlNDS2xkyPCVn3I=
+	t=1746544271; cv=none; b=YR4d0RcwmQodlv9nBVM27hCEaEABNauIm5QqJQ5AS4fB2m5xiee12Rx8ubEVIXRv3A5KFbVhPmf+Kgz4sO6GmIQXgov27fwRfughEo2lW4CIkSXHntr+NLY+TIMc8PHoWrEtpGUtstFEvdU3ZeagKpbe90OzlMMpl5Slms8fm0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746544086; c=relaxed/simple;
-	bh=iSlW0krI7TcCaxYbEGHHjPXVtbPo48FK+jfu/eXXjYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0JaBRFxLQxuK0n11Ma2jRjhb6rajtjVTtnUenLE5awHF36v/pC9bv20X6gqBvxwwuZmW0T3A2255bXFGle8YDszg3QOe9IVKogjUA87jPdJs6wJr0bQBuH1GLbs5JYiTaYx4t5OxDyP450v5+Lu8cq5LmlHTlXcx/LcMnevyck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLtzaf5X; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac3b12e8518so978250866b.0;
-        Tue, 06 May 2025 08:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746544083; x=1747148883; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iSlW0krI7TcCaxYbEGHHjPXVtbPo48FK+jfu/eXXjYs=;
-        b=JLtzaf5X4Hy/B8ZrixRdvJiDxbni3GKBzv+Wqxyu/kCQO5JTOeD6Py++vrQQL+JzX4
-         hvSiZ09AhDdvgsEmYhbRROXbqXDypLoG3guJCTZ75Q2Qvk1CkxHGvS+eccf/AZ9WVrzy
-         pozlyeoW9krJcibVhMuSNvPvuo3hNJKgArNVv3gyY3yit08DZS8jrU59piCLeKk2egqQ
-         hzz1pS2Dz8G+6cNqM6oLWoHkJf2VeEpDVmu/66UaTEAYn1s7GTmZc13C59q0MQsAxaAe
-         cVpGCmc4IJYYR1qgm7Mv+5qqEDN84TmuLcgYhdkqRfk3HEDQ1kj4B3o2A+g0CNb/dOwS
-         fC+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746544083; x=1747148883;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iSlW0krI7TcCaxYbEGHHjPXVtbPo48FK+jfu/eXXjYs=;
-        b=kIorDT2/xv9KXflJhjFiS+TiAbqxAgeRBdm+82G1ZtXChcakLkSSaxiID0AImzwvcz
-         sFYK/soYWDk50wsFzzx2gCEbObSdJrifjVRxOz5yt0fVLZfpVxr4pade3C3REf4sZouT
-         H/ZygGHRKn+fd5g4pvpz8klnvhItgOtDGN6bygQtBhTB7DShbq+VQJPSidpSfe6LyyXb
-         T3YZKUwBBtrFaCCZb7+aCpZKEiUpb/LnUeEnbR1p+M+UwWB616UD50sFrB+o05jlHe7G
-         EHO8+Aa/ZU3zlAlCyNwt+eusBeTHZKPB89Xgy3XrsJy/iOIG/pxf6gpk0/OaTX+fuzl1
-         w2Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWd77Rt49Mz9iI2iXbFgUYM1Xf+SQ0N2UAqpWYQzWIdCkRoiCVZ50745MLkgYxh3WvqD0PSSTc5DUuu8Iui@vger.kernel.org, AJvYcCXtKETiR35lsbx15uuv6te3g5Jc31k8yMVa+ss/uiTwNxCLZq9Ig1VCVbQQVoj4ZEJpjdKDO1g8UgJa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhTjyi8E7Oik/iB9/hli0oPrULQiA7mPw23tRrOwR3894JO6Dw
-	QwJS8Ss3l9mQx9LuEYzMT69SPSFCCpIzLH+0tnTSblZPfo5aIHIW
-X-Gm-Gg: ASbGncuzDF9vQ7btELSLs7qK/8xskK5Dt5cVPofFPCEsnrmXzHZmRrrd9Ipa2V1Kijv
-	P/5l72bu0P725ZcelqplUn+7Ljgr/NqLeDBRhZWEbuGu9ukvybBTICrSf4cwrZqP+ovfm/69i5m
-	vQ3aLylCpny8frO1ZX+EMETELlcDjOdoT9kC39NizLnM3wv7nWaWxyeNdxg9KLpPBEaJeJms4El
-	JatM6ggbJr5kejXIjwB8RKgi5y2iuCc02LeMKOt9ZRSwsMSLYcjulXFxmblFNEBMRd62oJWZEvt
-	HGK3/5S7YUC1WBdm5SW/Qc1WGhtgsOLqkMKgMbJwIBcOvQljvJNTZ2KxpS/MZioOukB3Yk3BfZ3
-	QEOyl
-X-Google-Smtp-Source: AGHT+IGfSx+4B/W7FMgVmlZfbM9EEgDK60WM8+WDoV25VvtvVNmkZqOCUufWt6ENzvib+aZKIvX8Jg==
-X-Received: by 2002:a17:907:948c:b0:acb:6081:14ec with SMTP id a640c23a62f3a-ad1a4b85d03mr969159666b.61.1746544083138;
-        Tue, 06 May 2025 08:08:03 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad189147329sm713691466b.1.2025.05.06.08.08.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 08:08:02 -0700 (PDT)
-Date: Tue, 6 May 2025 17:08:00 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v8 3/9] ARM: dts: Drop DTS for BCM59056 PMU
-Message-ID: <aBol0PuY2H2E7FjV@standask-GA-A55M-S2HP>
-References: <20250430-bcm59054-v8-0-e4cf638169a4@gmail.com>
- <20250430-bcm59054-v8-3-e4cf638169a4@gmail.com>
+	s=arc-20240116; t=1746544271; c=relaxed/simple;
+	bh=kqnJHCTnpiPV6uFsP81VUdMxyHCGniWXLDM3rG5nMfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BXf2ccecYUXnQ9W6FFe/c6HPtgSNma2DwRYu6oZuycOHxrExbQKiJmUPXoCKVxmBkwusy8F7PtBx69n9r1bmj5yA2zYLa9w3Bx/TajhS0455u+YULCqey21h4kXacCENPlFdMdWYgvp3JDUj5HOAq2pLOkqkY06jBfhJmNAH6ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rgak4S/y; arc=none smtp.client-ip=47.90.199.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1746544250; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=GeNymH+klft7mdhfQZi/jBImRDyPtAkJHpdNSIxr5aI=;
+	b=rgak4S/yh9CVLgPGtSyJXKNGQSAVctpBGAhPAqhXNuL8cr6VJvcAFECbrqR6sEad+KmC/qXOvx6L5lOabrFhxGxlz7Yo+JMKB7/sQSYVNMnNdZKX870HuZZOWYymOx3612IERYfNaCJmHc6cB2bjSeZiCpqwlieseyD/6wVydAs=
+Received: from 30.134.100.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WZYPgkD_1746544248 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 06 May 2025 23:10:49 +0800
+Message-ID: <18d272ce-6a80-4fdc-b67b-ddc2ffa522d4@linux.alibaba.com>
+Date: Tue, 6 May 2025 23:10:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430-bcm59054-v8-3-e4cf638169a4@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] erofs: fix file handle encoding for 64-bit NIDs
+To: Hongbo Li <lihongbo22@huawei.com>, xiang@kernel.org, chao@kernel.org,
+ zbestahu@gmail.com, jefflexu@linux.alibaba.com
+Cc: dhavale@google.com, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250429134257.690176-1-lihongbo22@huawei.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20250429134257.690176-1-lihongbo22@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Artur,
+Hi Hongbo,
 
-maybe you didn't notice, but Florian already applied this patch (in V6):
-https://lore.kernel.org/lkml/20250317132922.2698513-1-florian.fainelli@broadcom.com/
+On 2025/4/29 21:42, Hongbo Li wrote:
+> In erofs, the inode number has the location information of
+> files. The default encode_fh uses the ino32, this will lack
+> of some information when the file is too big. So we need
+> the internal helpers to encode filehandle.
 
-Regards,
-Stanislav
+EROFS uses NID to indicate the on-disk inode offset, which can
+exceed 32 bits. However, the default encode_fh uses the ino32,
+thus it doesn't work if the image is large than 128GiB.
+
+Let's introduce our own helpers to encode file handles.
+
+> 
+> It is easy to reproduce test:
+
+It's easy to reproduce:
+
+>    1. prepare an erofs image with nid bigger than UINT_MAX
+
+      1. Prepare an EROFS image with NIDs larger than U32_MAX
+
+>    2. mount -t erofs foo.img /mnt/erofs
+>    3. set exportfs with configuration: /mnt/erofs *(rw,sync,
+>       no_root_squash)
+>    4. mount -t nfs $IP:/mnt/erofs /mnt/nfs
+>    5. md5sum /mnt/nfs/foo # foo is the file which nid bigger
+>       than UINT_MAX.
+> For overlayfs case, the under filesystem's file handle is
+> encoded in ovl_fb.fid, it is same as NFS's case.
+> 
+> Fixes: 3e917cc305c6 ("erofs: make filesystem exportable")
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+> v2: https://lore.kernel.org/all/20250429074109.689075-1-lihongbo22@huawei.com/
+>    - Assign parent nid with correct value.
+> 
+> v1: https://lore.kernel.org/all/20250429011139.686847-1-lihongbo22@huawei.com/
+>     - Encode generation into file handle and minor clean code.
+>     - Update the commiti's title.
+> ---
+>   fs/erofs/super.c | 54 +++++++++++++++++++++++++++++++++++++++++-------
+>   1 file changed, 46 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+> index cadec6b1b554..28b3701165cc 100644
+> --- a/fs/erofs/super.c
+> +++ b/fs/erofs/super.c
+> @@ -511,24 +511,62 @@ static int erofs_fc_parse_param(struct fs_context *fc,
+>   	return 0;
+>   }
+>   
+> -static struct inode *erofs_nfs_get_inode(struct super_block *sb,
+> -					 u64 ino, u32 generation)
+> +static int erofs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+> +			   struct inode *parent)
+>   {
+> -	return erofs_iget(sb, ino);
+> +	int len = parent ? 6 : 3;
+> +	erofs_nid_t nid;
+
+Just `erofs_nid_t nid = EROFS_I(inode)->nid;`?
+
+I think the compiler will optimize out `if (*max_len < len)`.
+
+> +	u32 generation;
+
+It seems it's unnecessary to introduce `generation` variable here?
+
+> +
+> +	if (*max_len < len) {
+> +		*max_len = len;
+> +		return FILEID_INVALID;
+> +	}
+> +
+> +	nid = EROFS_I(inode)->nid;
+> +	generation = inode->i_generation;
+
+So drop these two lines.
+
+> +	fh[0] = (u32)(nid >> 32);
+> +	fh[1] = (u32)(nid & 0xffffffff);
+> +	fh[2] = generation;
+> +
+> +	if (parent) {
+> +		nid = EROFS_I(parent)->nid;
+> +		generation = parent->i_generation;
+> +
+> +		fh[3] = (u32)(nid >> 32);
+> +		fh[4] = (u32)(nid & 0xffffffff);
+> +		fh[5] = generation;
+
+		fh[5] = parent->i_generation;
+
+> +	}
+> +
+> +	*max_len = len;
+> +	return parent ? FILEID_INO64_GEN_PARENT : FILEID_INO64_GEN;
+>   }
+>   
+>   static struct dentry *erofs_fh_to_dentry(struct super_block *sb,
+>   		struct fid *fid, int fh_len, int fh_type)
+>   {
+> -	return generic_fh_to_dentry(sb, fid, fh_len, fh_type,
+> -				    erofs_nfs_get_inode);
+> +	erofs_nid_t nid;
+> +
+> +	if ((fh_type != FILEID_INO64_GEN &&
+> +	     fh_type != FILEID_INO64_GEN_PARENT) || fh_len < 3)
+> +		return NULL;
+> +
+> +	nid = (u64) fid->raw[0] << 32;
+> +	nid |= (u64) fid->raw[1];
+
+Unnecessary nid variable.
+
+> +	return d_obtain_alias(erofs_iget(sb, nid));
+
+	return d_obtain_alias(erofs_iget(sb,
+			((u64)fid->raw[0] << 32) | fid->raw[1]));
+
+>   }
+>   
+>   static struct dentry *erofs_fh_to_parent(struct super_block *sb,
+>   		struct fid *fid, int fh_len, int fh_type)
+>   {
+> -	return generic_fh_to_parent(sb, fid, fh_len, fh_type,
+> -				    erofs_nfs_get_inode);
+> +	erofs_nid_t nid;
+> +
+> +	if (fh_type != FILEID_INO64_GEN_PARENT || fh_len < 6)
+> +		return NULL;
+> +
+> +	nid = (u64) fid->raw[3] << 32;
+> +	nid |= (u64) fid->raw[4];
+
+Same here.
+
+Thanks,
+Gao Xiang
 
