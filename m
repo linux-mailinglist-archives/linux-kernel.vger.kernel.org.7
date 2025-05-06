@@ -1,126 +1,169 @@
-Return-Path: <linux-kernel+bounces-635996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB37AAC4B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:55:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1947EAAC484
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 14:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D754522CAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333E03B2F0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 12:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3B6280010;
-	Tue,  6 May 2025 12:55:18 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74134269820;
+	Tue,  6 May 2025 12:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QSfxMzlT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8TItqUap";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dVX6yepa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1/PorQBd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9ED8F5E;
-	Tue,  6 May 2025 12:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590271DE883
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 12:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746536117; cv=none; b=Frtozp5nHFaYW+kv/bhO9fcpg6KTUDP76EKpKmrpxobjx+0tqRklUhhVSCDebrmMvDVwHZ6L+S3Y2MWbsXMl8MqcELvV3gz8KaXa/Mp8VtVB5AH4Qv+ZYApvJ4B4xTfsqLYr/M9bvQhppb88Y5mDir+xSyDGnT6jIkYD4JUjeps=
+	t=1746535703; cv=none; b=oioNpvK+UQcNM2yoVXK0pUyhv9+P2sveyvFAXBbeyq3VW4vdAdrvi7flTuNiRukDSdAEPRD/8cmTH/O/vabnk64TQNREf4ZJXn5s+MUarjxIlME4aounTfgTJKnh0VY6KLle374rD54Y9uLw7KL2XqGFEwWbwW2jBp3rL0VZcto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746536117; c=relaxed/simple;
-	bh=226HvrpzIggRv7+P11Xi1OD0yG8CL9+835GwM5RSIDM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CJcaI2cgWWv54HOd4wk0JlBqggsRSdofc7RPVn7SjKMRtjStdl8Ad0El32U8I4DputiQ3bLC01Uri5ScaEfBsqQWTE9T+VlEdPawfmB99a1tct+zv3DaJqVrDo9UiotTn8Se66ciCYMKDMl50GTbJfpENN2TrgfldDiFd/VuEGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZsJJw1gb3zKHMh6;
-	Tue,  6 May 2025 20:55:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 090771A0359;
-	Tue,  6 May 2025 20:55:11 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDnSl+sBhpo8C9vLg--.36407S4;
-	Tue, 06 May 2025 20:55:10 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	agk@redhat.com,
-	song@kernel.org,
-	hch@lst.de,
-	john.g.garry@oracle.com,
-	hare@suse.de,
-	xni@redhat.com,
-	pmenzel@molgen.mpg.de
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-raid@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v3 0/9] md: fix is_mddev_idle()
-Date: Tue,  6 May 2025 20:46:47 +0800
-Message-Id: <20250506124658.2537886-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1746535703; c=relaxed/simple;
+	bh=8ubOWI8+2mUl2eaNqwg0k/WqOEL9YcUblXgwsyAtyo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uw8d7VdlOyy0BLW/37LxvqNVpEiHSE7oTOGH+G48JSfUErC8ebdFqnOMpAHDXfOgodKZH3rCoZi8R+0tujUy+n9QZ1I/LaS1pU9ETrN3eXI7CAPxzUUQRbihL+xP0CZ7SBif0PXq0zN0rmKNZwSM1Xg22/dpKktxamyz011z+Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QSfxMzlT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8TItqUap; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dVX6yepa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1/PorQBd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7953C1F390;
+	Tue,  6 May 2025 12:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746535700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5K/N/0WLkbc+DdrII6oye3X6T8Ni1CdM9Ifo6jBFaF0=;
+	b=QSfxMzlTxlx/0DcSc0Q/Iw2mZ6eLIHjzK5HZqDXAjMHPDH8qJ9BD8v1nPZ12wn7icoXTL0
+	JTJAY6PjnZvJb8pzWBdrd6Ql6ZXJMP9BPe+np11Q5Ewjm4SgdRl42a5J+ibdsLFPxyiycq
+	uywjCKexqJhsp7FXRpJ8jd9lLYcAD1c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746535700;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5K/N/0WLkbc+DdrII6oye3X6T8Ni1CdM9Ifo6jBFaF0=;
+	b=8TItqUaplNDt0Wh9r9FOWtrzKNMcFn2ZHVEDyp+JNpx/P1LMdEaWRfHt/AtzMIE9Iw6p95
+	TNwAo+TboQbcxxDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746535699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5K/N/0WLkbc+DdrII6oye3X6T8Ni1CdM9Ifo6jBFaF0=;
+	b=dVX6yepaOsEz2V8wDOPXqEFaw5e9i++/fW/bsz58A44B6rwiwXYQ50bo64MyOjbXDlr4nZ
+	mWR8Xq+v9dfvxlm7QbG0c983qrkuB3CFeHfhMYCPHue7x9uvY1ZCERsMQ9HkcSBMdqrYxh
+	D+wdwBsQyuyrVThUgiR3NLOW1ok9fKY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746535699;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5K/N/0WLkbc+DdrII6oye3X6T8Ni1CdM9Ifo6jBFaF0=;
+	b=1/PorQBdQXDlzKYyY+e2WKbk7dhTiv5GobGnvxKOCVFUMy4d1niEK6oaJCyCrSke7MeqiH
+	mbzaEKCgaeR1ZaCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5582313687;
+	Tue,  6 May 2025 12:48:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qfWIFBMFGmizLwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 06 May 2025 12:48:19 +0000
+Message-ID: <baeb1200-5293-4fe0-aa76-b1d41875af58@suse.cz>
+Date: Tue, 6 May 2025 14:48:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnSl+sBhpo8C9vLg--.36407S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrtr18Ww1xAFyUJFyDKryUWrg_yoWDKwc_uF
-	WkZFyaqF4xXF13AF90kF13ZrW0krW8X3s8XFySqrZ5Zr93Xr98K398K39Yq398WFW3u3ZY
-	yr18ur48Ar1IqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3AFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCT
-	nIWIevJa73UjIFyTuYvjTRNJ5oDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block
+ order
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Juan Yescas <jyescas@google.com>
+Cc: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, tjmercier@google.com,
+ isaacmanjarres@google.com, surenb@google.com, kaleshsingh@google.com,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+ Minchan Kim <minchan@kernel.org>
+References: <20250506002319.513795-1-jyescas@google.com>
+ <20250506000133.ba44539dd517e4f54515751b@linux-foundation.org>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20250506000133.ba44539dd517e4f54515751b@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.990];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-From: Yu Kuai <yukuai3@huawei.com>
+On 5/6/25 09:01, Andrew Morton wrote:
+> On Mon,  5 May 2025 17:22:58 -0700 Juan Yescas <jyescas@google.com> wrote:
+> 
+>> Problem: On large page size configurations (16KiB, 64KiB), the CMA
+>> alignment requirement (CMA_MIN_ALIGNMENT_BYTES) increases considerably,
+>> and this causes the CMA reservations to be larger than necessary.
+>> This means that system will have less available MIGRATE_UNMOVABLE and
+>> MIGRATE_RECLAIMABLE page blocks since MIGRATE_CMA can't fallback to them.
+>> 
+>> The CMA_MIN_ALIGNMENT_BYTES increases because it depends on
+>> MAX_PAGE_ORDER which depends on ARCH_FORCE_MAX_ORDER. The value of
+>> ARCH_FORCE_MAX_ORDER increases on 16k and 64k kernels.
+>> 
+>> ...
+>>
+>> +config PAGE_BLOCK_ORDER
+>> +	int "Page Block Order"
+>> +	range 1 10 if !ARCH_FORCE_MAX_ORDER
+>> +	default 10 if !ARCH_FORCE_MAX_ORDER
+>> +	range 1 ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER
+>> +	default ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER
+> 
+> Do we really need to do this arithmetic within Kconfig?  Would it be
+> cleaner to do this at runtime, presumably when calculating
+> pageblock_order?
 
-Changes in v3:
- - add review tag for patch 1-5;
- - fix some typo and words;
-Changes in v2:
- - add patch 1-5;
- - add reviewed-by in patch 6,7,9;
- - rename mddev->last_events to mddev->normal_IO_events in patch 8;
-
-Yu Kuai (9):
-  blk-mq: remove blk_mq_in_flight()
-  block: reuse part_in_flight_rw for part_in_flight
-  block: WARN if bdev inflight counter is negative
-  block: clean up blk_mq_in_flight_rw()
-  block: export API to get the number of bdev inflight IO
-  md: record dm-raid gendisk in mddev
-  md: add a new api sync_io_depth
-  md: fix is_mddev_idle()
-  md: clean up accounting for issued sync IO
-
- block/blk-core.c          |   2 +-
- block/blk-mq.c            |  22 ++---
- block/blk-mq.h            |   5 +-
- block/blk.h               |   1 -
- block/genhd.c             |  69 ++++++++------
- drivers/md/dm-raid.c      |   3 +
- drivers/md/md.c           | 190 ++++++++++++++++++++++++++------------
- drivers/md/md.h           |  18 +---
- drivers/md/raid1.c        |   3 -
- drivers/md/raid10.c       |   9 --
- drivers/md/raid5.c        |   8 --
- include/linux/blkdev.h    |   1 -
- include/linux/part_stat.h |   2 +
- 13 files changed, 191 insertions(+), 142 deletions(-)
-
--- 
-2.39.2
-
+AFAIK pageblock_order is compile-time constant. Making this a boot parameter
+was proposed in v1 but explained as not useful. That explanation could be
+added in the changelog?
 
