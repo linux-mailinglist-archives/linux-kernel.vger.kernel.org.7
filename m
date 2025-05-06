@@ -1,135 +1,240 @@
-Return-Path: <linux-kernel+bounces-635134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4616CAABA26
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:13:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B81AAB9DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719683A0881
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4399D1C2788F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7712147ED;
-	Tue,  6 May 2025 04:08:44 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D2F28AB10;
+	Tue,  6 May 2025 04:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PmCqRO+t"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0792121CC46;
-	Tue,  6 May 2025 03:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7162FE085
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 03:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746502259; cv=none; b=lqC2mUcPAodwuR5s81WDJgHg9Mz/ITNjso0vC2tJG7aLUYB2XUZIZs0x9nn1T/qPS98MkvlbXqf757I4nRWg3SOXDJ2q25ZK06n6L80G+oVuXXmmN8yYynuEJ+TaKHIf5faWNTDcxqq0GolwQ6CC9OvgPMIlHEOgDWMLzPdQOt8=
+	t=1746501562; cv=none; b=JV/xRa6UHUo2N2DqjShtqWY52QYyYpXfWzFjYuQBupUQhbgiiwG8Aft6O9G55is51OYfvHGozuC+aKbhA2sCcSjv1sfJFDGwiChjKoZvrtTFYVKVBhBroVFQxXixbB/IPVrYzJ3lPSinuyudJxit+iTCuweUgnsUM5nIeTex4RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746502259; c=relaxed/simple;
-	bh=FQeEv8mzsne1Ekkhh4vm4/236JXt/QQUApEcOzWKQHI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TuJp/5WlTbd86bPtbVZyt2Kw9DLl9hP8Aq1yZhn1UUd78FMRZ+wGj1gdQRuQFCy3JjWYJjhWVXMLJPcz2ipLofleDKU4JAFrLABM+me/14ostUeyr1ycp/MRUcMiesI7h8eNJkkmYiLQTgbD/o6qG82+asQW0jtGMCKLEengCqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Zs3n816cFz2TSDR;
-	Tue,  6 May 2025 11:30:20 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 01CE81402CA;
-	Tue,  6 May 2025 11:30:53 +0800 (CST)
-Received: from kwepemq200017.china.huawei.com (7.202.195.228) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 6 May 2025 11:30:52 +0800
-Received: from hulk-vt.huawei.com (10.67.174.72) by
- kwepemq200017.china.huawei.com (7.202.195.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 6 May 2025 11:30:52 +0800
-From: Cai Xinchen <caixinchen1@huawei.com>
-To: <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>
-CC: <paul@paul-moore.com>, <stephen.smalley.work@gmail.com>,
-	<omosnace@redhat.com>, <ericsu@linux.microsoft.com>, <caixinchen1@huawei.com>
-Subject: [PATCH] SELinux: Add check for the user data passed to kcalloc in hashtab_init
-Date: Tue, 6 May 2025 03:18:33 +0000
-Message-ID: <20250506031833.6107-1-caixinchen1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1746501562; c=relaxed/simple;
+	bh=SxeEi1tAOcX2d70LYt+z+Ni8g/gFI9Pu/YnGg+QnZrw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XggsQBbBhRkI2IqGD433BZQG2Vve0UYBJl2AWLRHpNQrxoT6K8C2wYaIjHX1uBIRCsE8HwvmKh5yJkI98ef6sZ4L1QL08MjNBr5aUMRGe9oWmW+lXcimUoLRE3/6UEhuqnQnxzqTDz9xn8031/nWuvxvxXxQKniMyJ/LpYXSMq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PmCqRO+t; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZeZmCG8Rp23jEiEukTixuUunYCEKGdOE3CORiFF/t1s=; b=PmCqRO+tDPtGvCgrJ2l9DRop3S
+	3I3TQCs/Txy5Qy+LwusjMfmh3mJCBGerUbhu/bLy61JI9AiSMTHv4svO+UDwo7x4VfOLdUUKIH3eG
+	yP2K2zQu71ABCbLY/V74qz5mqkA6fMcELJEpIXM0T3cf+ddHHqoLnCaV8tx1XI2+HTnblBJadiYtX
+	WRjm+D/Fcv8RY1gS8AT4MojtHqQ6RQkjX5vMtLYnYn0QbfF8Mc4VBT2oarzfs5FMko/KggIFzeF7O
+	9fleafT3/DqrW3zhpD1LUVJdmi8d6W2aupJw7JSuC29mAiQrGAMvsirv+623/ulSDNow75xL7MQO7
+	vfwZShjw==;
+Received: from [65.133.87.50] (helo=u09cd745991455d.ant.amazon.com)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uC8pu-0000000FalN-0pHA;
+	Tue, 06 May 2025 03:19:15 +0000
+Message-ID: <0f861de2000013ba89f2adc2f1237e1b4abe248b.camel@infradead.org>
+Subject: Re: [PATCH v1 0/6] x86/boot: Enable earlyprintk on MMIO (8-bit)
+From: David Woodhouse <dwmw2@infradead.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Ashish Kalra <ashish.kalra@amd.com>, "Kirill A. Shutemov"
+ <kirill.shutemov@linux.intel.com>, linux-kernel@vger.kernel.org, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>,  Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Denis Mukhin
+ <dmukhin@ford.com>
+Date: Mon, 05 May 2025 20:19:09 -0700
+In-Reply-To: <944ddefdc0ef3dc0f78c7957afa7f12e360a4392.camel@infradead.org>
+References: <20250502123145.4066635-1-andriy.shevchenko@linux.intel.com>
+	 <db19e81405d17e9eb9a3c1d4798220178e4f9373.camel@infradead.org>
+	 <aBjFtWDSuXVq9kW-@smile.fi.intel.com>
+	 <3c1bd53c8ee5fe0a6e281551dfe2089679e8e5eb.camel@infradead.org>
+	 <aBjSZA29o2zZYvGh@smile.fi.intel.com> <aBjSzIPaovOl03Eg@smile.fi.intel.com>
+	 <944ddefdc0ef3dc0f78c7957afa7f12e360a4392.camel@infradead.org>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-7P6HBZxPS6y0BS5l3bkj"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemq200017.china.huawei.com (7.202.195.228)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-When the user writes some data to the file /sys/fs/selinux/policy,
-there is no check for the user buf passed to kcalloc. Syzkaller shows
- this warning:
-WARNING: CPU: 1 PID: 6642 at mm/page_alloc.c
 
-__alloc_pages_noprof
-___kmalloc_large_node
-__kmalloc_large_node_noprof
-__kmalloc_noprof
-hashtab_init
-common_read
-policydb_read
-security_load_policy
-sel_write_load
-vfs_write
-ksys_write
-do_syscall_64
+--=-7P6HBZxPS6y0BS5l3bkj
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This warning can be reproduced by writing this content to
-/sys/fs/selinux/policy
-8cff7cf9 08000000 5345204c 696e7578 15000000 e0ff962a 08000000 07000000
-4cf523cd 7eec2688 6d70a6b7 c78b496f 1a0a192c ea34ff41 70581a74 3ff0cfb9
-7ea0f0d1 70d1fe14 41c2f7c8 ea1c78dd 17a19249 35210081 a83c30ec 4171450b
-fc1de12c fe1ff342 a887
+On Mon, 2025-05-05 at 16:32 -0700, David Woodhouse wrote:
+>=20
+> Thanks. Should I be expecting this to work...?
+>=20
+> qemu-system-x86_64 -display none -vga none=C2=A0 -accel kvm,kernel-irqchi=
+p=3Dsplit \
+> =C2=A0 -kernel arch/x86/boot/bzImage \
+> =C2=A0 -append "console=3DttyS4 root=3D/dev/vda1 earlyprintk=3Dpciserial"=
+ \
+> =C2=A0 -chardev stdio,mux=3Don,id=3Dchar0,signal=3Doff -mon char0 -device=
+ pci-serial,chardev=3Dchar0
 
-Add check to prevent the size passed to kcalloc larger than MAX_PAGE_ORDER
-after get_order.
+Hm, no, qemu's pci-serial is PIO. I'd need to do this:
 
-Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
----
- security/selinux/ss/hashtab.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
-index 383fd2d70878..18bcf3978c9e 100644
---- a/security/selinux/ss/hashtab.c
-+++ b/security/selinux/ss/hashtab.c
-@@ -30,6 +30,21 @@ static u32 hashtab_compute_size(u32 nel)
- 	return nel == 0 ? 0 : roundup_pow_of_two(nel);
+--- a/hw/char/serial-pci.c
++++ b/hw/char/serial-pci.c
+@@ -58,7 +58,7 @@ static void serial_pci_realize(PCIDevice *dev, Error **er=
+rp)
+     s->irq =3D pci_allocate_irq(&pci->dev);
+=20
+     memory_region_init_io(&s->io, OBJECT(pci), &serial_io_ops, s, "serial"=
+, 8);
+-    pci_register_bar(&pci->dev, 0, PCI_BASE_ADDRESS_SPACE_IO, &s->io);
++    pci_register_bar(&pci->dev, 0, PCI_BASE_ADDRESS_SPACE_MEMORY, &s->io);
  }
- 
-+static bool is_order_out_of_range(u32 size, struct hashtab *h)
-+{
-+	size_t bytes;
-+	u32 order;
-+
-+	if (unlikely(check_mul_overflow(size, sizeof(*h->htable), &bytes)))
-+		return true;
-+
-+	order = get_order(bytes);
-+	if (order > MAX_PAGE_ORDER)
-+		return true;
-+
-+	return false;
-+}
-+
- int hashtab_init(struct hashtab *h, u32 nel_hint)
- {
- 	u32 size = hashtab_compute_size(nel_hint);
-@@ -40,6 +55,9 @@ int hashtab_init(struct hashtab *h, u32 nel_hint)
- 	h->htable = NULL;
- 
- 	if (size) {
-+		if (is_order_out_of_range(size, h))
-+			return -ENOMEM;
-+
- 		h->htable = kcalloc(size, sizeof(*h->htable), GFP_KERNEL);
- 		if (!h->htable)
- 			return -ENOMEM;
--- 
-2.34.1
+=20
+ static void serial_pci_exit(PCIDevice *dev)
 
+
+And then the kernel's 'earlyprintk=3Dpciserial' needs to be told the BDF,
+e.g. earlyprintk=3Dpciserial,00:03.0,keep
+
+And it's still defaulting to mmio32 unless I do this in the kernel...
+
+--- a/arch/x86/kernel/early_printk.c
++++ b/arch/x86/kernel/early_printk.c
+@@ -198,7 +198,7 @@ static __init void early_serial_init(char *s)
+=20
+ static __noendbr void mem32_serial_out(unsigned long addr, int offset, int=
+ value)
+ {
+-       u32 __iomem *vaddr =3D (u32 __iomem *)addr;
++       u8 __iomem *vaddr =3D (u8 __iomem *)addr;
+        /* shift implied by pointer type */
+        writel(value, vaddr + offset);
+ }
+@@ -206,7 +206,7 @@ ANNOTATE_NOENDBR_SYM(mem32_serial_out);
+=20
+ static __noendbr unsigned int mem32_serial_in(unsigned long addr, int offs=
+et)
+ {
+-       u32 __iomem *vaddr =3D (u32 __iomem *)addr;
++       u8 __iomem *vaddr =3D (u8 __iomem *)addr;
+        /* shift implied by pointer type */
+        return readl(vaddr + offset);
+ }
+
+
+If you can get this part working sanely, I'll happily add the kexec debug p=
+art.
+
+
+--=-7P6HBZxPS6y0BS5l3bkj
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDUwNjAzMTkw
+OVowLwYJKoZIhvcNAQkEMSIEIF+Sox5VuiKk1oKtma1WAZFtaVNtmhV5zaBYX5obUaMWMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIADfVqX0q7a+M6
+Y+BBSlOiq27jRWqevYIRwd7XP3Vv+Wj8EUFLoUGK55XEzVlM0zFto2jTyNEmI/G0fjrsg3L2Gi3y
+9mGBD8cmPt+zXt0D/0Q0j5q1+bH9gCz391bOgP1cLG2JA5P1SAapyiCDbusB/kkfcscuiG7Bf0uW
+fEzXuJ2yYYkswh8zLNyDvsIuFrQq1I1Tasz22xXWr74mqc1vvy6VQltY91flGddapfbx8dIVT+4L
+6IjcV570c8TDi/pCLPY2C2WSV0nRTQzbugyWqvwnvXnuLwkeGGhNQJnaHHR+x518lpqMPUGLmTkg
+BZBcetIRGL6HjAdIMXYDtkNsnhiiMclItGzuxib3y4P3in8rUBeGBT0kEz1m/PE2ThroAIPaRf4a
+v1fd7CdI+rEWIN4DH8CfjX9B1qWXDPSSK24DuJF7b3yq9Qg05rc/R7/ARkuP1/Vrubj2s+I9p7Rz
+vaNgdPv1Le2bC/ZmR6Qt9KJ/5ekQNPcUhsmcCh3ZS97A6Ffo14cHyHfpUvhFzyTzmuqHegNG+dGd
+sjSe2Xo6OsvXzBZTuDYTq3WW0jnV0ZzjQ/ifudEHca2qtxw0Pk2GLeVy/cZ5IVkcdeasNZW85VEy
+IX5qLVRRmDRsQyXLblROpQXHC+xYYiyDtaDSMHPhirMOA/U45u3bTnC/H2ewd5YAAAAAAAA=
+
+
+--=-7P6HBZxPS6y0BS5l3bkj--
 
