@@ -1,97 +1,160 @@
-Return-Path: <linux-kernel+bounces-635135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3743AABA1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:12:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7B3AAB9E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 09:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BA5B3A4D5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BDB71C2829A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 07:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C45221D94;
-	Tue,  6 May 2025 04:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E859C22332D;
+	Tue,  6 May 2025 04:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XnGfu3cB"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01568221D8F;
-	Tue,  6 May 2025 03:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UzMbDMGn"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB5428A416
+	for <linux-kernel@vger.kernel.org>; Tue,  6 May 2025 03:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746502292; cv=none; b=S5vkwbOAwTSzahr4A/0J1BgS7sVSKvHqOCFZevvdazMK3IziBN8rXDyaOVUYloqTc7H1aHw4cI9PcVJHccOVVoY8yknO2khE2vAO5eqcrZphAI4/VDChJRTfDu9azU5IY9xWb3GoJUoels2Te99mwRSF02PizQT3qntnTE2gmXI=
+	t=1746502422; cv=none; b=JH22aNwMe0p8AqrJ2tZK8ghJt23lDHuUpjX2SrtPu5DNnSrLlwpFoaPF4WROc/Sdzl5jH1llo8+Yo0oUF5UaBb9gWzHjgpicFu0ZZt/m7nqQ4KA8wm0J8FvFD1mYotHuO53ajNVA6c1VymJTPN8+BiZtOVndngaUdSxtCed4Ah4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746502292; c=relaxed/simple;
-	bh=Bc323uGw9bg1vSKP1bB4KaCxLYWf8Yumf+T0uu+k9iY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uw9HH4QUfkynM9S2tnUGueS2GbRDGO2GpkoROii4+uGOmDMfn5928TY5ziBz/znVOQRmiJy9duR6npqR8PhrDFlrBiuwn3ghwENGqbWAw12Ir2Taj8xJ3yKAdSItCRmgcY1bBbtenFl/rRs5amMWPwsMWk9LGyKJi7bEMicvB5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XnGfu3cB; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=miqoq
-	4cqdh1LtpHKSamdO+B4bXNZgm7fPVKTf8kCeHA=; b=XnGfu3cBMwyQ1+N3WqN2Z
-	R5lJyrRUH4xhRoOxOBSdARl1o6AgUzNBnzYRZ2y2Pc2t53aw4WtnY4vy4nQC0pDa
-	Xho78/M3X/9/jEZzRhA22ZAwOq1GW12FUADN+nwe19kWO8aeK+JEWrfL6QUE/8qb
-	0YcXu/cESyFM8oIqW1fV+Y=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgAHt3N8ghlooYTGCw--.39086S2;
-	Tue, 06 May 2025 11:31:10 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v2] xhci: Add missing parameter description to xhci_get_endpoint_index()
-Date: Tue,  6 May 2025 11:31:01 +0800
-Message-Id: <20250506033101.206180-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1746502422; c=relaxed/simple;
+	bh=2goMvQ3qzdH9wOsvkRpyFXo/JeNlio7mx4eH3846IVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LvfWBhQRNEhIHb0S5ZKBDIhShZSYBadD/SEiEGYurEgql3FLSEtW0JAWPrsWFlolJesEuFbU08IvihuNFJpJLYn4c5n0s4WGFqk62U/6bngK4U1b289qc/8LglCJ7zEhRSB52r1QggRk7duB5znr02fobncpwAEEr/p1pVGd1Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UzMbDMGn; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1746502417; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=CUpvAXTG+sIqPcJVqAAskuK9yt70CbxZPTiboeMWKZE=;
+	b=UzMbDMGnO/azUHRjN9HAyNmnbeJJlytiRLGdwufR+i8hAVo+JedGRT9f1kDaco/DZKCncVPUpgWaQIgU+ZHnyTd04g1OHVq9uFw71hlvf0+WX0PJ/zTl4VfAI34tABZWse3SWgzZ1XgYkFMOto4k1Tmtv7qtEOlQh3+aURSp388=
+Received: from 30.74.144.110(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WZJQtMn_1746502415 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 06 May 2025 11:33:35 +0800
+Message-ID: <e54e0b31-1b92-4110-b8ac-4737893fe197@linux.alibaba.com>
+Date: Tue, 6 May 2025 11:33:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] Re: [PATCH v3 3/6] mm: shmem: add large folio
+ support for tmpfs
+To: David Hildenbrand <david@redhat.com>, Daniel Gomez <da.gomez@kernel.org>
+Cc: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+ akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
+ wangkefeng.wang@huawei.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
+ ioworker0@gmail.com, da.gomez@samsung.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+ intel-gfx@lists.freedesktop.org, Eero Tamminen <eero.t.tamminen@intel.com>
+References: <cover.1732779148.git.baolin.wang@linux.alibaba.com>
+ <035bf55fbdebeff65f5cb2cdb9907b7d632c3228.1732779148.git.baolin.wang@linux.alibaba.com>
+ <aBEP-6iFhIC87zmb@intel.com>
+ <ac8cbd8d-44e9-4a88-b88b-e29e9f30a2fd@linux.alibaba.com>
+ <aBIHYqzar5J8uxGO@intel.com>
+ <cxwpgygobg6wleoeezbowjhmid4mdhptzheqask44ew37h2q24@kryzkecuobbp>
+ <57dc4929-268b-4f3f-a0f8-43d6ec85974f@linux.alibaba.com>
+ <72978e3a-ee67-47d4-b06d-e911bc5d57ff@redhat.com>
+ <exl3dpqh7oqhdd3afo3gvainumqw6j4ebfifkyeqkqvf36yxlh@pcuhdqanuy32>
+ <a34c844d-b44f-411c-b5d7-8e38a50b0b05@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <a34c844d-b44f-411c-b5d7-8e38a50b0b05@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgAHt3N8ghlooYTGCw--.39086S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZryxAr1ktw15WFW3XF4DCFg_yoW8Gr1xpF
-	s8G3y0krs5JFWav3W8Aan7Aa4rCa17Ary5KFWxG3sYvrW3tF10yF12kF15tr13Zw43Aryj
-	vF4UG3y5W3W7uFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0z_FAJUUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxFFo2gZfjmk0AAAsu
 
-Fix kernel-doc warning by documenting the @desc parameter:
 
-drivers/usb/host/xhci.c:1369: warning: Function parameter or struct member 'desc' not described in 'xhci_get_endpoint_index'
 
-Add detailed description of the @desc parameter and clarify the indexing
-logic for control endpoints vs other types. This brings the documentation
-in line with kernel-doc requirements while maintaining technical accuracy.
+On 2025/5/2 23:31, David Hildenbrand wrote:
+> On 02.05.25 15:10, Daniel Gomez wrote:
+>> On Fri, May 02, 2025 at 09:18:41AM +0100, David Hildenbrand wrote:
+>>> On 02.05.25 03:02, Baolin Wang wrote:
+>>>>
+>>>>
+>>>> On 2025/4/30 21:24, Daniel Gomez wrote:
+>>>>> On Wed, Apr 30, 2025 at 02:20:02PM +0100, Ville Syrjälä wrote:
+>>>>>> On Wed, Apr 30, 2025 at 02:32:39PM +0800, Baolin Wang wrote:
+>>>>>>> On 2025/4/30 01:44, Ville Syrjälä wrote:
+>>>>>>>> On Thu, Nov 28, 2024 at 03:40:41PM +0800, Baolin Wang wrote:
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> This causes a huge regression in Intel iGPU texturing performance.
+>>>>>>>
+>>>>>>> Unfortunately, I don't have such platform to test it.
+>>>>>>>
+>>>>>>>>
+>>>>>>>> I haven't had time to look at this in detail, but presumably the
+>>>>>>>> problem is that we're no longer getting huge pages from our
+>>>>>>>> private tmpfs mount (done in i915_gemfs_init()).
+>>>>>>>
+>>>>>>> IIUC, the i915 driver still limits the maximum write size to 
+>>>>>>> PAGE_SIZE
+>>>>>>> in the shmem_pwrite(),
+>>>>>>
+>>>>>> pwrite is just one random way to write to objects, and probably
+>>>>>> not something that's even used by current Mesa.
+>>>>>>
+>>>>>>> which prevents tmpfs from allocating large
+>>>>>>> folios. As mentioned in the comments below, tmpfs like other file
+>>>>>>> systems that support large folios, will allow getting a highest 
+>>>>>>> order
+>>>>>>> hint based on the size of the write and fallocate paths, and then 
+>>>>>>> will
+>>>>>>> attempt each allowable huge order.
+>>>>>>>
+>>>>>>> Therefore, I think the shmem_pwrite() function should be changed to
+>>>>>>> remove the limitation that the write size cannot exceed PAGE_SIZE.
+>>>>>
+>>>>> To enable mTHP on tmpfs, the necessary knobs must first be enabled 
+>>>>> in sysfs
+>>>>> as they are not enabled by default IIRC (only THP, PMD level). 
+>>>>> Ville, I
+>>>>> see i915_gemfs the huge=within_size mount option is passed. Can you 
+>>>>> confirm
+>>>>> if /sys/kernel/mm/transparent_hugepage/hugepages-*/enabled are also 
+>>>>> marked as
+>>>>> 'always' when the regression is found?
+>>>>
+>>>> The tmpfs mount will not be controlled by
+>>>> '/sys/kernel/mm/transparent_hugepage/hugepages-*Kb/enabled' (except for
+>>>> the debugging options 'deny' and 'force').
+>>>
+>>> Right, IIRC as requested by Willy, it should behave like other FSes 
+>>> where
+>>> there is no control over the folio size to be used.
+>>
+>> Thanks for reminding me. I forgot we finally changed it.
+>>
+>> Could the performance drop be due to the driver no longer using 
+>> PMD-level pages?
+> 
+> I suspect that the faulting logic will now go to a smaller order first, 
+> indeed.
+> 
+> ... trying to digest shmem_allowable_huge_orders() and 
+> shmem_huge_global_enabled(), having a hard time trying to isolate the 
+> tmpfs case: especially, if we run here into the vma vs. !vma case.
+> 
+> Without a VMA, I think we should have "mpfs will allow getting a highest 
+> order hint based on and fallocate paths, then will try each allowable 
+> order".
+> 
+> With a VMA (no access hint), "we still use PMD-sized order to locate 
+> huge pages due to lack of a write size hint."
+> 
+> So if we get a fallocate()/write() that is, say, 1 MiB, we'd now 
+> allocate an 1 MiB folio instead of a 2 MiB one.
 
-Fixes: d0e96f5a71a0 ("USB: xhci: Control transfer support.")
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
-Changes for v2:
-- Add Fixes.
----
- drivers/usb/host/xhci.c | 1 +
- 1 file changed, 1 insertion(+)
+Right.
 
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 90eb491267b5..dbe6f41202ca 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -1359,6 +1359,7 @@ static void xhci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb)
-  * xhci_get_endpoint_index - Used for passing endpoint bitmasks between the core and
-  * HCDs.  Find the index for an endpoint given its descriptor.  Use the return
-  * value to right shift 1 for the bitmask.
-+ * @desc: USB endpoint descriptor to determine index for
-  *
-  * Index  = (epnum * 2) + direction - 1,
-  * where direction = 0 for OUT, 1 for IN.
-
-base-commit: ca91b9500108d4cf083a635c2e11c884d5dd20ea
--- 
-2.25.1
-
+So I asked Ville how the shmem folios are allocated in the i915 driver, 
+and to see if we can make some improvements.
 
