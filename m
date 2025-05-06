@@ -1,59 +1,79 @@
-Return-Path: <linux-kernel+bounces-635407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-635410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05330AABCE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:16:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25BDAABCF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 10:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E8F17AF268
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF611C2195F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 May 2025 08:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10B7339A1;
-	Tue,  6 May 2025 08:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B3C22A7F9;
+	Tue,  6 May 2025 08:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldEB7MD0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d0enN5CT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316B822DA01;
-	Tue,  6 May 2025 08:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC7714A639;
+	Tue,  6 May 2025 08:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746519372; cv=none; b=hptKIV9Zzt5kybNdTBRmDUx0BDU1VC7AZFF0QD+2+bused3IXF4WWzAwEX5wwmFeOyNlDuOnP0nJNktUC4OkbgFOwS+1bCz5bL28KUSVVXRAmEnMf1l/SszR7HWdQulaWulB01HlhHXF/U10BL+uFARZR55WAzi/RtmhKNkGeO0=
+	t=1746519723; cv=none; b=CJQUahHR/vBWgLuk6j8DCUKv60VPazngaJF1C8xnPUVQUrZ68LVLug3aoqWgE+z33N7qeE3ZMaw20XcpeDQH0OXPGJS0J1qoZVafxxY/tGa424yNLDBdG3w4GGS7OhA8yHcNKd0DBxqFWM0X1dR3Xp1x/9Ljld/vYEQmD4G0j0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746519372; c=relaxed/simple;
-	bh=IBMKzmGE761qCT/KSzjE1E9EZn49WR4X3grri5QOiy8=;
+	s=arc-20240116; t=1746519723; c=relaxed/simple;
+	bh=j/1IV7tCIQmBeZPRH9vvJKUGS/RAT+fb8WT9/9p4OUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=glXqaSNC9MizLC5QMQhX82Y92g8pZgisLVczcqjgMtpaGL2ZT6Z/LVTHlkf4zQvd0GvL+/7z8MvHWGkQmtNTmJCmQp/kbD0HMp/g3ej84hZdiXk2lt+9aYdnwf/9Tl7WzssBQwwsLT7bCxI34UUbzTkekWOVn7xAXZwX5SLDsLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldEB7MD0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0554EC4CEE4;
-	Tue,  6 May 2025 08:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746519371;
-	bh=IBMKzmGE761qCT/KSzjE1E9EZn49WR4X3grri5QOiy8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ldEB7MD0/bWOC19yj2U7Dhp1/ae+29tNEDGK62IQENKExPoYIQ7MKCa6M1mbSPF+y
-	 46D3UwCObXz1Xa4QAhRjgyLVx25IBVJZLGX8AVziYTbvaHaU5DLwhv91VbGqMNYlfU
-	 9IINoGDgnrmJFmHoooB0Wy0mVW5GYa9t+ktR3XGCf0yI0KWXx4HHsObXrTMAZy1aRF
-	 d3vgiSRY0txaa6Obk/aBrUPlUl9fTJOQm6iqMmNiKk36zGmqdutpkhDMOpVcPqKR3L
-	 LdqEWVGqgvKosTF/Iw1633beSnuTzs0a6OLdd49NbupclBskgHFyaWoGtAo4MgGzKH
-	 w/K90z3vHSUyA==
-Date: Tue, 6 May 2025 10:16:06 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 13/26] x86/cpuid: Scan CPUID(0x2)
-Message-ID: <aBnFRrnZQ9HwwULK@gmail.com>
-References: <20250506050437.10264-1-darwi@linutronix.de>
- <20250506050437.10264-14-darwi@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tfj0cnjsGYh22zMhOIyxUASfDKNmMrJnIJGwNEdOEEJKKTqtSyVQxkbKarGKfJfIhnj9CA06wzJq4UMAhina4fflCZalU2N9kUt9k0rkWgBamKylKbaOa2s3bX3fcPPb848DXGhFi/LDOR+9zqcIBtJIAVT+cX139q9yAr3dtmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d0enN5CT; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746519722; x=1778055722;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j/1IV7tCIQmBeZPRH9vvJKUGS/RAT+fb8WT9/9p4OUw=;
+  b=d0enN5CT5eMjsXaDr5PnDk3rD8kB4qgL47cEcCi3oQqqWs7B7IpmGYmQ
+   X9I6K/gMYb9PXDzt1CyGSS3wrb2R3UHeHvTkyJbprVn3/5sUdN5BzwzrI
+   8U+QKRM7LM72HNzJ0UERq+q7hSfbtTz8NEqRu2POTkHjBxyQyLvJRbzxX
+   po9qXdjlYcJyrbuABtF7/PCbqXxkASX9AExtrkgDlncHcol3gKJShXtVQ
+   EUEwgo+PrEqqzSwziF3Jl9tL1RLOMIdKE5c+G8uDkyyKkn1dOqLPSL5rH
+   kd/+alwrZkqDgorpoj/euuia168ytVW8Fsf7sQVswAyATREYf9FOp3pF2
+   A==;
+X-CSE-ConnectionGUID: bfpxp5elScuwSBnS+AHxMQ==
+X-CSE-MsgGUID: J+cxqZUgSbyKcM1WpPsseA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11424"; a="58801461"
+X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
+   d="scan'208";a="58801461"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 01:22:01 -0700
+X-CSE-ConnectionGUID: P94EiA+ET1e9JqFtksDmlQ==
+X-CSE-MsgGUID: VI67xs1PQqqGJbunBsfhxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,265,1739865600"; 
+   d="scan'208";a="140665739"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 06 May 2025 01:21:57 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCDYo-0006Oh-0O;
+	Tue, 06 May 2025 08:21:54 +0000
+Date: Tue, 6 May 2025 16:21:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, jic23@kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v2 4/7] iio: adc: ad4170: Add clock provider support
+Message-ID: <202505061552.mYM50gr5-lkp@intel.com>
+References: <bede8227189637568f9425cd6848e21be33c2fd2.1745841276.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,40 +82,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250506050437.10264-14-darwi@linutronix.de>
+In-Reply-To: <bede8227189637568f9425cd6848e21be33c2fd2.1745841276.git.marcelo.schmitt@analog.com>
 
+Hi Marcelo,
 
-* Ahmed S. Darwish <darwi@linutronix.de> wrote:
+kernel test robot noticed the following build warnings:
 
-> +static void cpuid_read_0x2(const struct cpuid_scan_entry *e, struct cpuid_read_output *output)
-> +{
-> +	union leaf_0x2_regs *regs = (union leaf_0x2_regs *)output->leaf;
-> +	struct leaf_0x2_0 *l2 = (struct leaf_0x2_0 *)output->leaf;
-> +	int invalid_regs = 0;
-> +
-> +	/*
-> +	 * All Intel CPUs must report an iteration count of 1.	In case of
-> +	 * bogus hardware, keep the leaf marked as invalid at the CPUID table.
-> +	 */
-> +	cpuid_subleaf(e->leaf, e->subleaf, l2);
-> +	if (l2->iteration_count != 0x01)
-> +		return;
-> +
-> +	/*
-> +	 * The most significant bit (MSB) of each register must be clear.
-> +	 * If a register is malformed, replace its descriptors with NULL.
-> +	 */
-> +	for (int i = 0; i < 4; i++) {
-> +		if (regs->reg[i].invalid) {
-> +			regs->regv[i] = 0;
-> +			invalid_regs++;
-> +		}
+[auto build test WARNING on 1c2409fe38d5c19015d69851d15ba543d1911932]
 
-Could we please emit a one-time syslog warning & diagnostic when we run 
-across invalid or otherwise weird looking CPUID data, instead of just 
-silently skipping and sanitizing it?
+url:    https://github.com/intel-lab-lkp/linux/commits/Marcelo-Schmitt/dt-bindings-iio-adc-Add-AD4170/20250428-222010
+base:   1c2409fe38d5c19015d69851d15ba543d1911932
+patch link:    https://lore.kernel.org/r/bede8227189637568f9425cd6848e21be33c2fd2.1745841276.git.marcelo.schmitt%40analog.com
+patch subject: [PATCH v2 4/7] iio: adc: ad4170: Add clock provider support
+config: sh-kismet-CONFIG_COMMON_CLK-CONFIG_AD4170-0-0 (https://download.01.org/0day-ci/archive/20250506/202505061552.mYM50gr5-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250506/202505061552.mYM50gr5-lkp@intel.com/reproduce)
 
-Thanks,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505061552.mYM50gr5-lkp@intel.com/
 
-	Ingo
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for COMMON_CLK when selected by AD4170
+   WARNING: unmet direct dependencies detected for COMMON_CLK
+     Depends on [n]: !HAVE_LEGACY_CLK [=y]
+     Selected by [y]:
+     - AD4170 [=y] && IIO [=y] && SPI [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
