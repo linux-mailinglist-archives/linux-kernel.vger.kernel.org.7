@@ -1,119 +1,142 @@
-Return-Path: <linux-kernel+bounces-638029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57979AAE08E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:20:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D93AAE08C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 314DAB21E5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:18:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7838B20CAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D018288CB2;
-	Wed,  7 May 2025 13:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51648288C18;
+	Wed,  7 May 2025 13:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVOcGfWy"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sOQUj9rH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12122820D2;
-	Wed,  7 May 2025 13:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE6C281369
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746623930; cv=none; b=Ar3sXRkon5ae6pAacoMLJwq236oobHm9FSNla9MrJnvlfhhZFUQLy04/zOmKGndN1QCj8XgVV8mUVT2vkBg1kdIlLGzfa83VDMDiDj88RJLfEBBcgAgpc2pbYsV32NsysoVyfmR9r3efoTc0t7lI+al/YCzF5+i5Ls3b7po3LvY=
+	t=1746623921; cv=none; b=V+GQ+eByrA8inIueO48aQnQBTYTVngwXT0/wuYr2wiAlLyfoRrZN6XI6pXnYs20zgz063Jx/jAr1XYbFoPnmM69pFvMdYqc6v2SjKGpIEONvGEDXeFaROsSctKQTKGjZb0xI6DfEKRPa84QVXC2l6SsqcJ+Loi9XFl8ehjDTqms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746623930; c=relaxed/simple;
-	bh=5R0F1GGFzfTgOH/FF+ArtieoiEis+zmCQJM6z0vvjBE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=imoPlvWBfc7DnhiIAyaR7kJkPvXqw0UD8C5OV583ELzbbqkf3cGechOERPIhLxMBhN14wpcKgg34Hkz3Qo50voh7b9jWjBFcdGWF60liylWjXp8Qczb/P984BTzHFvWLB7Or1oAoVcBIoMVRj8sG5i7uqfQrG8oNAgcD8L8BkDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TVOcGfWy; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad1a87d93f7so657176966b.0;
-        Wed, 07 May 2025 06:18:48 -0700 (PDT)
+	s=arc-20240116; t=1746623921; c=relaxed/simple;
+	bh=vANADi+020FCH5I2njw3FMWd3fKb5Ttxnfby5ZW9V8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BVR0CJMfeN/7tU/GYkuaagi1U5ha163hPx6UysdbNVoFA+ckB3MoKFH+UXuFbVwwjEl0cZKUlG6bXa/cVJExbUnU/8kFWKfpEHJh4nLfEOkMIf9uquDgH5Lvb/Ed25UD1oJwzOUcLfYio6y/R+GjNwlcMDQCxJGgDgLmTzQw1bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sOQUj9rH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso66656755e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:18:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746623927; x=1747228727; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XG4gYw/os44VieuMBGo0LazKtq45QTUEHPt6CBsKz9g=;
-        b=TVOcGfWyE0k4UBl7fmRifZJoTRLFqxkDDqt2/X/Pnnqo5lcKPm/ZMysdv4VP7+BQUw
-         AisQkCyUwMBT4JYFIFNFjIyfQ/kTDdIUYBvDwGM3B+VJcX+bDzEXrmNleu9gUcRUqtLW
-         Rv50Q3rftb935wwIsC+o87035EHoETj4mj22yjUjzIiX5+GVwo8s3Yy+kEhHY50nhivm
-         U4QqxCFCh0WSi6c03tSakNsfNOUJtFSArB3J/t2Hs4Qbnr/+mB4mevX6FByPLQhTsyxq
-         MFZf6s9RbiBif8JRC2meB996THFLF6fqQFcGscx6+uOUt5Xq24udjXuH9UXymegOY3Rw
-         Iq2w==
+        d=linaro.org; s=google; t=1746623918; x=1747228718; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mMwJyAtJK/aLIyT6CLn61d8dMsByyOcrMzhv12s06BY=;
+        b=sOQUj9rH/JgpwIXZKDU0vxXibY7ngcB5Zhta1Ld9Tw0B+eqV//1Tfnvu1x229JHoyd
+         C1FCWmHeVXCv1W4HuqLOUbbI6UeHytrLg8zOd6GYrckEooLWXGPHG8pDCqn9Hfvz9CXz
+         um+kfAPh7+R+ve7rLwQlpaUInSmHus7lOeE2GONq/k+45lrjIcmGdsUoU6mY3HZeQIpz
+         58J9aIpYZVs7sdLhnwIxCEoKXQukEsn5/U2ZE/ERjC2K5z3F5HXOuWjL5SW4fhYuLQwz
+         0qdyaQfhWPwe0wqOAuumot/HrDgedba6t5rd3+AeMW0eh9uLFqEPaTkuTavgfXDBcP4X
+         t8Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746623927; x=1747228727;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XG4gYw/os44VieuMBGo0LazKtq45QTUEHPt6CBsKz9g=;
-        b=k6zeT1JccjMhHS0tABhxY7Bq7a6F1tDA+fyL6hnqGcwDp6/ZKdH692JqrI4xUTJcVt
-         RacW/hHcepVOLrTUV7Dqd4dJzpN3GFe3yFS+YJNJS0FICWkhZUPTnLCuj3HP/1fTJjvc
-         BrpVWakCV+eKQ1GOe3ZL4fwN4fSBif1CkXkIQ1zgSB4VH/Qgtp+sqwnkqMidk6uaIt8z
-         2qxnoYJ1WbzYPK0a0r5hfDV89viSpUujLz5gGRtMeIblG9wz2krmWXyCHHnqREwPZowO
-         xZuV7RNml3LhsGhzpnjI0JJcswAilS41SVYPFFnAEK25B767UzpT0CUKFR/uG9Xu0MUg
-         tuKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQVAOQfuDYzwLj6lIpkYEcRo15fRuDs++fzX382ziZwY/jWjuhvBiTDsGdwvOBlP3ossmP1OHUTlCVgw==@vger.kernel.org, AJvYcCWbzuFK4QRZxRQicKidaBHYpRtNHergd2NArg5uFtXXA8DQr2Ot2lLcIu9072nvwIszSBTXuQ1LHKZy6Ro=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu46zsl+XNaMGQ+lRwqVxhpjqsqfUHgVVLQhtK1rMUloTg/48W
-	PIRRUQLFtdWXQQS19+G79PHJEMIg97icEL2ZBdV58bXxJHKDQMD6a8RCOtsCWZFMRg==
-X-Gm-Gg: ASbGncsILlsNNzCXqvmiyp6orN4nglUI0atsC7pamv1O0bxCz67ON9GoSIwFAnvEFeM
-	MGqBE/zLqFjfrAL5LG40TkiTTAmyWhvebi3KCdd2rr2m5gDrT8TzdgivWuSDDU77S+qZ3VLiOvo
-	QqtQrAS9NUI6KiO5LERYTH4ljEtBFY9gFC/LlMMsGcQLmW5ITdZhvucIvB3uL8YP5o7uj1Btbbp
-	6ZNiPsSpJ969G/ZOomB2rVc0j/an3dr+B82JbEpZKZsIWQvv16PDrWVUXRwU3cMCNt9bZGg9YLy
-	CMdLQ3oqMfk77c91C3bpYJ3Mz++OC7zyqDb6P9Y=
-X-Google-Smtp-Source: AGHT+IGb2mTqtTr9/4na4ydOpBoJ20121LDJwcMxvmIv8RwYC/nsRM+pfVB6P8wstG0+WES23PVlCQ==
-X-Received: by 2002:a17:907:7fa7:b0:ac2:88d5:770b with SMTP id a640c23a62f3a-ad1e8c91ed4mr378798366b.25.1746623926666;
-        Wed, 07 May 2025 06:18:46 -0700 (PDT)
-Received: from localhost ([87.254.1.131])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad189147375sm908159366b.12.2025.05.07.06.18.46
+        d=1e100.net; s=20230601; t=1746623918; x=1747228718;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mMwJyAtJK/aLIyT6CLn61d8dMsByyOcrMzhv12s06BY=;
+        b=IE29yqC69gSymHMKfxVTTklW71VMikdlK5gDNKtOZiAt0uHJW4dz8ZkUcFqU+o9EYq
+         e8mbN3ywSAPJ8XNH+OAzoRqBNdZPtoAxS+s28zU5h05XFiRfmJR9gxvslujjLNJlqQTO
+         VdoeoVxIIMw1GH+EmbP1u5RCXwFsTY64P7pZ6BfHOgpx6R/BjjEJRItwATUlg6ogUiPq
+         GjcWJy7vciOotsujGksfrmtL+lavbTVRP6+qO79Q9g9Xj1wy4XUDz/1UxBAVX661J7AB
+         m3AEnvUKlODmFzb/7hcSKQFOn7gk60odUChoG8LmyS5LFrn5NshHN9vDX3rbWNXYQzEu
+         MSSA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6ZKgVY6OpAdhz0ELm6XKdoNFpJrkN/FH2aG7/gNwT8BiXk3s/Jbc1pM9DZA297KnGdAbBczUYNE1cuUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGVWTQrGAgm1gt/w/0cVN4yhfW0o6tmZXMmIBAbBBtaiw40Alk
+	W5z5bXyFi08YxnXPAd8Z5rf5p/QS0mQnBFKz6G2rAe8H7qda3HVtBKoIgQlflG4=
+X-Gm-Gg: ASbGncuo9kOliM6Tf/SW+E1X4HuI4A9KsAk/Rd79+1Bal2NKdAON1+7aTi8DZTOIeTu
+	QdsDCayOdlcUrai/BtHwMdOVqYJv6o1TO2CEKZ3QvJnXy6AGToAbGKStNVF6coWglpFIHHleNWV
+	cAusxg59XibFe76UeG1uPQDaoSMS5xr6shbqgnwkIFcHYtNaaGlaf3oh8Mbp6hQ9nQd7VilHCdc
+	eyvlJBaZ6rF6SvQX5fKOWmc9QTS2AXqW4SdYSZ2AHDCoUDSsFYUiPRFeHa9e+kiH0sZDG2/9bUs
+	FeXE6hGt7t5os7/z5j0AmL06LsUV820PDxq4FdXFoiCRvA==
+X-Google-Smtp-Source: AGHT+IH3Qorr4/m1vHEg7Ot9UQ5uCqOCNeK+Gmt1pu97YiZ6JvL10Fw4EinSPUDzBFREtrSqd0/vwg==
+X-Received: by 2002:a05:600c:6085:b0:439:643a:c8d5 with SMTP id 5b1f17b1804b1-441d448ca1bmr37445495e9.0.1746623918101;
+        Wed, 07 May 2025 06:18:38 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442cd380ca4sm629535e9.36.2025.05.07.06.18.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 06:18:46 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Bernard Metzler <bmt@zurich.ibm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] RDMA/siw: replace redundant ternary operator with just rv
-Date: Wed,  7 May 2025 14:18:34 +0100
-Message-ID: <20250507131834.253823-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Wed, 07 May 2025 06:18:37 -0700 (PDT)
+Date: Wed, 7 May 2025 16:18:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Mike Tipton <quic_mdtipton@quicinc.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@oss.nxp.com>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3] cpufreq: scmi: Skip SCMI devices that aren't used by
+ the CPUs
+Message-ID: <aBtdqvyT4Ded8Lht@stanley.mountain>
+References: <20250428144728.871404-1-quic_mdtipton@quicinc.com>
+ <aBtLMYqcnwacGJuy@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBtLMYqcnwacGJuy@pluto>
 
-The use of the ternary operator on rv is redundant, rv is
-either the initialized value of 0 or a negative error return
-code, so it can never be greater than zero, and hence the
-zero assignment in ternary operator is redundant. Just return
-rv instead.
+On Wed, May 07, 2025 at 12:59:45PM +0100, Cristian Marussi wrote:
+> > +static bool scmi_dev_used_by_cpus(struct device *scmi_dev)
+> > +{
+> > +	struct device_node *scmi_np = dev_of_node(scmi_dev);
+> > +	struct device_node *np;
+> > +	struct device *cpu_dev;
+> > +	int cpu, idx;
+> > +
+> > +	if (!scmi_np)
+> > +		return false;
+> > +
+> > +	for_each_possible_cpu(cpu) {
+> > +		cpu_dev = get_cpu_device(cpu);
+> > +		if (!cpu_dev)
+> > +			continue;
+> > +
+> > +		np = dev_of_node(cpu_dev);
+> > +
+> > +		if (of_parse_phandle(np, "clocks", 0) == scmi_np)
+> 
+> Shouldn't this, on Success, be released by an of_node_put() (or, BETTER,
+> by some OF-related cleanup.h magic...)
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/infiniband/sw/siw/siw_verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The cleanup.h magic is __free(of_node_put) but dev_of_node() doesn't
+take a reference so I don't think it's required.
 
-diff --git a/drivers/infiniband/sw/siw/siw_verbs.c b/drivers/infiniband/sw/siw/siw_verbs.c
-index 7ce0035c54fa..2b2a7b8e93b0 100644
---- a/drivers/infiniband/sw/siw/siw_verbs.c
-+++ b/drivers/infiniband/sw/siw/siw_verbs.c
-@@ -1102,7 +1102,7 @@ int siw_post_receive(struct ib_qp *base_qp, const struct ib_recv_wr *wr,
- 		siw_dbg_qp(qp, "error %d\n", rv);
- 		*bad_wr = wr;
- 	}
--	return rv > 0 ? 0 : rv;
-+	return rv;
- }
- 
- int siw_destroy_cq(struct ib_cq *base_cq, struct ib_udata *udata)
--- 
-2.49.0
+regards,
+dan carpenter
+
+> > +			return true;
+> > +
+> > +		idx = of_property_match_string(np, "power-domain-names", "perf");
+> > +
+> > +		if (of_parse_phandle(np, "power-domains", idx) == scmi_np)
+> 
+> Same.
+> 
+> > +			return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
 
 
