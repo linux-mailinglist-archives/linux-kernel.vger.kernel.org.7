@@ -1,132 +1,136 @@
-Return-Path: <linux-kernel+bounces-637274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B4EAAD6CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:06:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7645CAAD6DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52ED3B7162
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:06:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30F167BD814
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5943F214235;
-	Wed,  7 May 2025 07:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C252144D3;
+	Wed,  7 May 2025 07:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ByL42GEn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PgWa8GUl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603D71D61BC;
-	Wed,  7 May 2025 07:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D150212FBE;
+	Wed,  7 May 2025 07:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746601597; cv=none; b=qasHV6IxuSbYuJx0Rg9w2dRRVrFjannp9YqSv4BCjRcu+vxmeIyRahaq0hZSKvByqrYJdoZkQeuz+izCUbclq1+nyR+84zet3LFVDk8yuA24hQcHytYLAerOUodkuzVTUMGuiNZ8FHUUDA2DKCTEFPi8WH9++5rIYaD0HRRCKbQ=
+	t=1746601706; cv=none; b=NFfiH0QvmgFPNkcNXqPExrMiJ2ScTsDgeDFVgAW3GnVAeRg7B8Kld+64kC7EmULoTnBsCZ77JcI45I50g35zMywqdFot6yLa3bYSXYYVogIJjmCB+LG+nv38f2m28L36IKv27Jwxo+gaMOh5Q2H2EQX3nbNms5g+JjcSdxqGJfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746601597; c=relaxed/simple;
-	bh=0VP44LIsfvXHFLJCB9EqdA30bEZ2cAzjbZQOu7dK0lQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TrkqlT+CvayTfZ/05F1zR4zJJqdmOXzN+dokTGr6Nabn91jATgiUVUw4iVBtDWH7pxd5GWD8UQGnLx+rZ3cm5G1vLq+eXC5gt2R/QGFEZ+TI6Wv0X5Sn8G2n5SGj4gP/9nqdiSZGuKjdJjk8v9SuLnkSW7WrUZMVWIcbQv8m/NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ByL42GEn; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1746601706; c=relaxed/simple;
+	bh=FfcO1bmJ9TwVyGmwWvdOKtV4qaOdRW/kxoyTI2FoTcM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E+Fm8BQv6G/OUKTGTT/DL0KIuDF62t55cKQ+qKL67rgrn6Tf83Jqil7AhKTdEgX+gDgC3M9Eh52oQguRyD+MR6VBa7JxWzvqR/fCOmEqgYGpO4Y4V+TyR5XY5gPgMyZYPoD0j+aZRT0rwHWlMkWuqA5dRKSwLkxQyUFsmOlaZgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PgWa8GUl; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471HmDc017086;
-	Wed, 7 May 2025 07:06:26 GMT
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471HAQ1021674;
+	Wed, 7 May 2025 07:08:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pwAXZ6oFJZA1jpvnUjc3W1LL1+v8v2BsGnfm0cjmKls=; b=ByL42GEnWmN7wdx3
-	XQ2hXEjh2B+GshswqW4Cm7AzWGz2A81BC8B+Qtl20bX+xzUG7gXh2S6QXJ9UROWA
-	JpCbcPldjza05Ku10axJXfCxGMOtrgzwOxkfg5Tjun3TDX4nHtcxbq7s4oMuygLI
-	TjbmhZduyNRNvdpXNpHh1oClWxtQSA8NmtD/Ai6cvBfmQm08tvZYvIO3EBVuWnDT
-	Mkc8VkxCmTg3aMo0Re6oE5zvw7zbHJ8A0gZ0nODPEAt5EE4IQ5oevk5JdD+AIC85
-	+FGVDAIPnajHQodNaXbnmu4fh6SXkm40a75w/ZFhSeq3g3jPRF9KwIJDiw2EsmHZ
-	UE+Qlw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5u44thq-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=rE1RR5SpAq6CGFJwO2E2zk
+	Hp8UtvOPLpNZiWJ8e/wvE=; b=PgWa8GUlHTOq+xPAsJBz6vF2YfkyFgp0l871k3
+	Xh7gPmmpsm9v9DhRgVoATMc1HO3Xvk0/RZZsefpzHlmuv78yeNnEjeQX4atDloWK
+	4o7tYMEBO4q0kIe2ENSO1dvnbHGCS7mXPmpudO9bocdLbf9/LMBKQGTE4FX1AqWY
+	aARDd2NFMFiZsOmyoAAJLHXzk8Uy0MayNVnnadBO280v2f1qkcUBIkxYJekEjRQE
+	lDS+x4ecRLPGlHDg0TDWsg3M/2W4HsOiTUWmm+KPH2If95FCHIfEbiWijOprzz58
+	aky/L1qJi7ZzuwpQkSifzppEkhRPwctSzCss59b6dMLPix+w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46fdwtuhnh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 07:06:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54776PHO007795
+	Wed, 07 May 2025 07:08:19 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54778Ili009518
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 May 2025 07:06:25 GMT
-Received: from [10.239.133.242] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 May 2025
- 00:06:22 -0700
-Message-ID: <458a0c34-27a6-4aff-a6a7-0788af16359f@quicinc.com>
-Date: Wed, 7 May 2025 15:06:20 +0800
+	Wed, 7 May 2025 07:08:18 GMT
+Received: from maow2-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 7 May 2025 00:07:56 -0700
+From: Kassey Li <quic_yingangl@quicinc.com>
+To: <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+        <mathieu.desnoyers@efficios.com>, <linux-kernel@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>
+CC: <quic_yingangl@quicinc.com>
+Subject: [PATCH] scsi: trace: change the rtn log in hex format
+Date: Wed, 7 May 2025 15:07:14 +0800
+Message-ID: <20250507070714.2387602-1-quic_yingangl@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/7] coresight: Add coresight TGU driver
-To: Trilok Soni <quic_tsoni@quicinc.com>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>, James Clark
-	<james.clark@arm.com>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250423101054.954066-1-quic_songchai@quicinc.com>
- <20250423101054.954066-3-quic_songchai@quicinc.com>
- <37df3ce3-2161-4c42-a658-d36fc4208ee8@quicinc.com>
-Content-Language: en-US
-From: songchai <quic_songchai@quicinc.com>
-In-Reply-To: <37df3ce3-2161-4c42-a658-d36fc4208ee8@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
+ nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=KcfSsRYD c=1 sm=1 tr=0 ts=681b0672 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=S5aUIBQ7irhDI9zSZmMA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: -L4_WesosIgaq_09ZI61eil4cBlgvJP0
-X-Proofpoint-ORIG-GUID: -L4_WesosIgaq_09ZI61eil4cBlgvJP0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA2NCBTYWx0ZWRfX8wpPyfIxHx7X
- EyBX2Oiba7KiYOSSMGziwzZYUqNdY9T+kF0bSI5W+XX1BP5q/78QSoRqO1kzw4MmcBZmpJA8lzr
- 7fQpnajPoPMUR8waYeWRqGIlOdTsVTAwkoMwvMjgT4GM9VYGbcDo9pN03rXDm59ytRuoLwnaJ4F
- Xd4vCz1DtGEFgFZHtMWhfiIcA7urck+mdgavwl6duKpniZscKFGHjmIVXh6QomjwzW69culeEZ0
- Aon7NmvPsZru/pK0eHrAPT/7l8Ty8FFI5Sng4XbydbnxuCclgCuS6C/n0j4BpWQxA0LRt1ep3bU
- t3jol6yO8w/sJRDP9ZLEobsCjnNqgoaWt0+vrrCIeRPpervgD1wcbgaARN9hT2x4k5C0y/EgM7j
- xbSV0xVuNUAdvITxDTcPrk9uBDdG3zYdBvKvAwt/SyA2oIoK0p/3/rqW2u9IFUBLgcf2ENBQ
+X-Authority-Analysis: v=2.4 cv=VPPdn8PX c=1 sm=1 tr=0 ts=681b06e3 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=BHyZBowvuSOj8lr59awA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: DNku1E5f6o6xlmQLYLVuw0UBWXxl-rQX
+X-Proofpoint-ORIG-GUID: DNku1E5f6o6xlmQLYLVuw0UBWXxl-rQX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA2NSBTYWx0ZWRfX5aaex1hIECWg
+ SKxNtxhz6wReChrG//xir3VItYZzuyawsnj/7cqby8O8DDko3Hqg8O+ARv0SBOUhH2ml0YdzSOs
+ J664je4LJepbWtJq1gCRHnKxbZpH2EJmiB54LFeFvKnhopoOFOoiRjCjalZtBvS5ASKA7vUyWUS
+ U3zyWrIy2oAmqyt7oxRB5CjEyBdSldqk+OyEdgKhpK+EcyeQlfNOgTSPo2JsqO9e3AzrdrD4F3C
+ VruygE58+ecy29HMSD1xgF6fFvLMTEMwcuc493K1MaVxKQHCDUOX5eZ62F3o6Mvnyi0LdFoTNZQ
+ DnnNUvlEcHTyxj+4pSXmMnMQalFS6gVHsC1crGc44HIrClyq5iWwnKV/jdnM4YkOBRpbZbThebz
+ TpseqwYujiobjNkDwiqktkY57TSfsoc0uDs9XlxiP6RKkJWJtTZZ+kv5ecRsxK8buXshcvT7
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 bulkscore=0 mlxlogscore=954
- phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- clxscore=1015 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 clxscore=1011 lowpriorityscore=0 impostorscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505070064
+ definitions=main-2505070065
 
-Thanks for reminder, Trilok.
+In default it showed rtn in decimal.
 
-Will pay attention to it in the next version.
+kworker/3:1H-183 [003] ....  51.035474: scsi_dispatch_cmd_error: host_no=0 channel=0 id=0 lun=4 data_sgl=1  prot_sgl=0 prot_op=SCSI_PROT_NORMAL cmnd=(READ_10 lba=3907214  txlen=1 protect=0 raw=28 00 00 3b 9e 8e 00 00 01 00) rtn=4181
 
-On 4/25/2025 12:32 AM, Trilok Soni wrote:
-> On 4/23/2025 3:10 AM, Songwei Chai wrote:
->> +Date:		February 2025
-> If you are sending new revision then please update month and kernel version.
->
->> +KernelVersion	6.15
->> +Contact:	Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
->
+In source code we define these possible value as hexadecimal:
+
+include/scsi/scsi.h
+
+SCSI_MLQUEUE_HOST_BUSY   0x1055
+SCSI_MLQUEUE_DEVICE_BUSY 0x1056
+SCSI_MLQUEUE_EH_RETRY    0x1057
+SCSI_MLQUEUE_TARGET_BUSY 0x1058
+
+This change converts the rtn in hexadecimal.
+
+Signed-off-by: Kassey Li <quic_yingangl@quicinc.com>
+---
+ include/trace/events/scsi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/trace/events/scsi.h b/include/trace/events/scsi.h
+index bf6cc98d9122..a4c089ac834c 100644
+--- a/include/trace/events/scsi.h
++++ b/include/trace/events/scsi.h
+@@ -240,7 +240,7 @@ TRACE_EVENT(scsi_dispatch_cmd_error,
+ 
+ 	TP_printk("host_no=%u channel=%u id=%u lun=%u data_sgl=%u prot_sgl=%u" \
+ 		  " prot_op=%s driver_tag=%d scheduler_tag=%d cmnd=(%s %s raw=%s)" \
+-		  " rtn=%d",
++		  " rtn=0x%x",
+ 		  __entry->host_no, __entry->channel, __entry->id,
+ 		  __entry->lun, __entry->data_sglen, __entry->prot_sglen,
+ 		  show_prot_op_name(__entry->prot_op), __entry->driver_tag,
+-- 
+2.34.1
+
 
