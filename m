@@ -1,180 +1,114 @@
-Return-Path: <linux-kernel+bounces-637612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21ED3AADB1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:17:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A8EAADB25
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25FF1C22002
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:17:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D25C173B32
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FECA2356B0;
-	Wed,  7 May 2025 09:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DymS85hP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94C72367B0;
+	Wed,  7 May 2025 09:10:22 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE971235044;
-	Wed,  7 May 2025 09:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C4B2309B9
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746608987; cv=none; b=YSJA6XpCN93l3FuHxXaS1+S54CStL4AUlsWp32XYZFhz7IPzSrs3MCEoVcL0WZG40IZTquVKRuBwEhT3FfuVLPQBEmQWQOO3zgI763U4TQ57ZloPyuaEb7avAeGX8A7KYohmIF+s7iNmRjVaqdIpC4PHTyaSt09jvzwMQ0hUtKE=
+	t=1746609022; cv=none; b=YN6igFhp3fxHkT+fWzJx9hsnHTaISC/S5KY8jCM3AE3Q4Rfut9EabG6FLIysIDJ/7RRpkVu4ai7h1AlqarIPKICfYs884XrAeNzkv6S/t+ark+XpkNRysR3yXF28x2yVTBIT3UhOe+EOX2oDV3BNfT9KEsZQLhsr+7kQTSmSyG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746608987; c=relaxed/simple;
-	bh=NLp8JFDJsOzfYtXeJkQaN/hv+HwjkOYPnkWmlYWTRYw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pqsul3VHcY0qlbGhLKQRy8KRoDq7GhBn73kAglhcHhjNzVQ3DrzHqm4NrKS1/f9fBLMtz1BZT9F4AtyGImUINeUH2S+mPIHFWbaYFkw/TV6ajWof5ABOS11Qpi2WHeXgDkpAFMYXaB67/fbqa6v4qPY4TL5HI9fjP7macb/oYyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DymS85hP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25017C4CEE7;
-	Wed,  7 May 2025 09:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746608987;
-	bh=NLp8JFDJsOzfYtXeJkQaN/hv+HwjkOYPnkWmlYWTRYw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DymS85hPUzNiC/r88JR99TxNB6pkG4E+GO492ckDnEoz2gJ2WURqRCglDqtrQiFI9
-	 7DW2vdJkItnjQeJJ2WUePiED3oO5qJr4l3hADJQ8QyaydobKd4rEjttCwXaGeZ85U1
-	 5WbYsAwR9pLQyT1jbswC/YYk+c+uD3/3Ipzlj8W9yRsHjHAglRZgNf1OEFpalyvIh9
-	 y9SDv2sgehE5n2rZL2hd28EpxzhT5afNJ04BpLREhr69O+O2BWAE/QYTzv7xu9W+Qv
-	 IKkbu7Ai68twjAUDpH7Zbqg8V4X5rBU2uuvi1UVNXniDGRg49p33Skmby+vyFEg2jc
-	 p9bYRKHqv/H6A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uCame-00CY8v-Ra;
-	Wed, 07 May 2025 10:09:44 +0100
-Date: Wed, 07 May 2025 10:09:44 +0100
-Message-ID: <86bjs4hjmv.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 00/25] Arm GICv5: Host driver implementation
-In-Reply-To: <aBsRvOzse7z39dkh@lpieralisi>
-References: <20250506-gicv5-host-v3-0-6edd5a92fd09@kernel.org>
-	<86frhhhm18.wl-maz@kernel.org>
-	<aBsRvOzse7z39dkh@lpieralisi>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1746609022; c=relaxed/simple;
+	bh=IyixUg/lsFyrvjt0sM7ct7uXKaFuYiSCGYEqiC9kvhY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cgW2U1+aYsXw2XMFtCEyYhToMSYyO4je+8wuvLn53SjI7J53VAigZFvgFbgBvHPWF+w52kAMOff9pJ4/NXCBadc+obDqH623EvQsPmb1EY2sFOaKynutAmQvMekuwuKx61z+kyBgSyihsWHCYKUjOudGbVQ0Erqr2yYjZf0tRE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZsqBn70zCz12LXL;
+	Wed,  7 May 2025 17:06:41 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id D10951402C7;
+	Wed,  7 May 2025 17:10:17 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 7 May 2025 17:10:17 +0800
+Message-ID: <4bac8132-db37-47a2-ad5a-22bde865b8e8@huawei.com>
+Date: Wed, 7 May 2025 17:10:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, sascha.bischoff@arm.com, timothy.hayes@arm.com, Liam.Howlett@oracle.com, mark.rutland@arm.com, jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dma-mapping: benchmark: Add padding to ensure uABI
+ remained consistent
+To: Barry Song <21cnbao@gmail.com>
+CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
+	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
+References: <20250506030100.394376-1-xiaqinxin@huawei.com>
+ <20250506030100.394376-2-xiaqinxin@huawei.com>
+ <CAGsJ_4zBz0oZGpP3dTzsjmw0oJbWm=vkKRS_kjBso7cvKJGjuQ@mail.gmail.com>
+ <CAGsJ_4yEmSGGKFxCT_wioEOaLxAzxNiryR42_hW9-vbu8WgBUg@mail.gmail.com>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <CAGsJ_4yEmSGGKFxCT_wioEOaLxAzxNiryR42_hW9-vbu8WgBUg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-On Wed, 07 May 2025 08:54:36 +0100,
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> 
-> On Tue, May 06, 2025 at 03:05:39PM +0100, Marc Zyngier wrote:
-> > On Tue, 06 May 2025 13:23:29 +0100,
-> > Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> > > 
-> > > =============
-> > > 2.5 GICv5 IWB
-> > > =============
-> > > 
-> > > The IWB driver has been dropped owing to issues encountered with
-> > > core code DOMAIN_BUS_WIRED_TO_MSI bus token handling:
-> > > 
-> > > https://lore.kernel.org/lkml/87tt6310hu.wl-maz@kernel.org/
-> > 
-> > This problem does not have much to do with DOMAIN_BUS_WIRED_TO_MSI.
-> > 
-> > The issues are that:
-> > 
-> > - the core code calls into the .prepare domain on a per-interrupt
-> >   basis instead of on a per *device* basis. This is a complete
-> >   violation of the MSI API, because .prepare is when you are supposed
-> >   to perform resource reservation (in the GICv3 parlance, that's ITT
-> >   allocation + MAPD command).
-> > 
-> > - the same function calls .prepare for a *single* interrupt,
-> >   effectively telling the irqchip "my device has only one interrupt".
-> >   Because I'm super generous (and don't like wasting precious bytes),
-> >   I allocate 32 LPIs at the minimum. Only snag is that I could do with
-> >   300+ interrupts, and calling repeatedly doesn't help at all, since
-> >   we cannot *grow* an ITT.
-> 
-> On the IWB driver code that I could not post I noticed that it is
-> true that the .prepare callback is called on a per-interrupt basis
-> but the vector size is the domain size (ie number of wires) which
-> is correct AFAICS, so the ITT size should be fine I don't get why
-> it would need to grow.
 
-Look again. The only reason you are getting something that *looks*
-correct is that its_pmsi_prepare() has this nugget:
-
-	/* Allocate at least 32 MSIs, and always as a power of 2 */
-	nvec = max_t(int, 32, roundup_pow_of_two(nvec));
-
-and that the IWB is, conveniently, in sets of 32. However, the caller
-of this function (__msi_domain_alloc_irqs()) passes a  nvec value that
-is always exactly *1* when allocating an interrupt.
-
-So you're just lucky that I picked a minimum ITT size that matches the
-IWB on your model. Configure your IWB to be, let's say, 256 interrupts
-and use the last one, and you'll have a very different behaviour.
-
-> The difference with this series is that on v3 LPIs are allocated
-> on .prepare(), we allocate them on .alloc().
-
-Absolutely not. Even on v3, we never allocate LPIs in .prepare(). We
-allocate the ITT, perform the MAPD, and that's it. That's why it's
-called *prepare*.
-
-> So yes, calling .prepare on a per-interrupt basis looks like a bug
-> but if we allow reusing a deviceID (ie the "shared" thingy) it could
-> be harmless.
-
-Harmless? No. It is really *bad*. It means you lose any sort of sane
-tracking of what owns the ITT and how you can free things. Seeing a
-devid twice is the admission that we have no idea of what is going on.
-
-GICv3 is already in that sorry state, but I am hopeful that GICv5 can
-be a bit less crap.
-
-> > So this code needs to be taken to the backyard and beaten into shape
-> > before we can make use of it. My D05 (with its collection of MBIGENs)
-> > only works by accident at the moment, as I found out yesterday, and
-> > GICv5 IWB is in the same boat, since it reuses the msi-parent thing,
-> > and therefore the same heuristic.
-> > 
-> > I guess not having the IWB immediately isn't too big a deal, but I
-> > really didn't expect to find this...
-> 
-> To be honest, it was expected. We found these snags while designing
-> the code (that explains how IWB was structured in v1 - by the way)
-> but we didn't know if the behaviour above was by construction, we
-> always thought "we must be making a mistake".
-
-Then why didn't you report it? We could have caught this very early
-on, before the fscked-up code was in a stable release...
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+在 2025/5/7 10:08, Barry Song 写道:
+> On Wed, May 7, 2025 at 1:52 PM Barry Song <21cnbao@gmail.com> wrote:
+>> On Tue, May 6, 2025 at 3:01 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
+>>> Fix a problem about commit (8ddde07a3d285a0f3cec, "dma-mapping:benchmark:
+>>> extract a common header file for map_benchmark definition") accidentally
+>>> removed that padding, which has completely broken the ABIs.
+>>>
+>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+>> Please add Fixes tags and cc stable.
+> We are *NOT* adding any field.
+>
+> Also, the subject and changelog are not appropriate. They should be something
+> like the following:
+>
+> Previously, we had a padding field in this structure to allow for future
+> extension without breaking compatibility with user-space shared data
+> structures. In other words, the padding was reserved to maintain a stable
+> interface for potential new fields.
+>
+> However, in one of the commits, tiantao accidentally removed this padding,
+> which could lead to incompatibility issues between user space and the
+> kernel.
+>
+> This patch restores the padding to bring back the original structure layout
+> and ensure compatibility is preserved.
+Okay, thank you for your advice.
+>>> ---
+>>>   include/linux/map_benchmark.h | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
+>>> index 62674c83bde4..2ac2fe52f248 100644
+>>> --- a/include/linux/map_benchmark.h
+>>> +++ b/include/linux/map_benchmark.h
+>>> @@ -27,5 +27,6 @@ struct map_benchmark {
+>>>          __u32 dma_dir; /* DMA data direction */
+>>>          __u32 dma_trans_ns; /* time for DMA transmission in ns */
+>>>          __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
+>>> +       __u8 expansion[76];     /* For future use */
+>>>   };
+>>>   #endif /* _KERNEL_DMA_BENCHMARK_H */
+>>> --
+>>> 2.33.0
+>>>
+> Thanks
+> Barry
 
