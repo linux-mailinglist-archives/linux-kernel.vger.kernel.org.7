@@ -1,403 +1,242 @@
-Return-Path: <linux-kernel+bounces-638389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23FA7AAE555
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8795CAAE542
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE9E9C0957
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF00A507E23
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218E428C5BD;
-	Wed,  7 May 2025 15:47:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CCA28BA80
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 15:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746632850; cv=none; b=prdrqFNkJ6+aoUmGpstdjjs8CsWQ30ly3gamqGVe0CVGACRg72bD3fYxGhu0bFk8XZkrkhYYrs3gedkjxjSmC5tyyEmVA7xQb5tmUizNVFOdGSUuE14EJzN8n1sim8A9d9B8AElEDlDyHa+iC12lTjXDfvwaepwwnRUDwT07Lmo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746632850; c=relaxed/simple;
-	bh=/+1U4shG5AoMx127wEMz8Df1UZJH4I+6oRT2ihxCr0M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZQql0G9em6U6k5S3NS8e9sRh39h5gcgCdqDvH3M8vE5awj56101hBTEprVe5MHLLMyS3rARdTMc4YC9zEr6FhH5CMDGoI9wSUtv/6U8v8rx9CFdTZfl0KWjdGpeiW01G3imL3/TIE26roMmeYQ+T50Hs4shwJqQj5LJoP3KAf4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A723F339;
-	Wed,  7 May 2025 08:47:17 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 297773F58B;
-	Wed,  7 May 2025 08:47:24 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	pcc@google.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	anshuman.khandual@arm.com,
-	joey.gouly@arm.com,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	frederic@kernel.org,
-	james.morse@arm.com,
-	hardevsinh.palaniya@siliconsignals.io,
-	huangxiaojia2@huawei.com,
-	mark.rutland@arm.com,
-	samuel.holland@sifive.com,
-	palmer@rivosinc.com,
-	charlie@rivosinc.com,
-	thiago.bauermann@linaro.org,
-	bgray@linux.ibm.com,
-	tglx@linutronix.de,
-	puranjay@kernel.org,
-	david@redhat.com,
-	yang@os.amperecomputing.com,
-	mbenes@suse.cz,
-	joel.granados@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v4 7/7] kselftest/arm64/mte: add MTE_STORE_ONLY testcases
-Date: Wed,  7 May 2025 16:46:54 +0100
-Message-Id: <20250507154654.1937588-8-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250507154654.1937588-1-yeoreum.yun@arm.com>
-References: <20250507154654.1937588-1-yeoreum.yun@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B30428BA81;
+	Wed,  7 May 2025 15:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="oaihHAt9"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazolkn19012040.outbound.protection.outlook.com [52.103.7.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F5528B7D3;
+	Wed,  7 May 2025 15:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.7.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746632826; cv=fail; b=iOA4Sl6rzn0b5hySxJaJ1+NXx4H7Ga1vUNE0clN9FHu2FsOQbELw6pc0Py0PtFnQzi8epIlb/xBW8fSJnq3VhMk9gWwaDl1qDFZEvuwScQit9OMRVxyPsoXhVaJ/pNaD9YeTW+mG9eojvSv8GITuGXmJxr2/jY4gfcT/PTqy53Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746632826; c=relaxed/simple;
+	bh=RRWr5825lgj72o45UTGGxj4oX91td/S92d01weZnIDU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fMiElwL4MIlWWNuoDujymeIPYq/qH9H+o3BaDL9jqaeJcx3kxZjsjieEuTB7TIT521fmsRlIMekJ6g+Ou6lpTEfNlulftPagVObqyxJ+afq7bYe5NmTimEz9hIbw8rg7YoApQpN7BidFfmXBhebD2KZgjfrr7n8QFJZZO7ddpiI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=oaihHAt9; arc=fail smtp.client-ip=52.103.7.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WGxiC1F9NjYxl2OxDcR8y94PH2i5CJEQVVPwiNNagWOUqyR3tkSzJsv5jNOFgSfRMzaBsSyjOm918SaD2t1N2xt3zUy1GCv7N2LKN5BtLfrw8Ab6fxEdHekjZgfkFrrH5gHch78fK9YKou+28Wv+6vI+gwB6cQkMz1hko31A/xwH6iXUYLczeKM/z1IjKHqdP37d92aF9rlPzyT4M4QKIxT5QwTNIUUwcPIvHUJib8yILor5TznyiJJat0jI5cuc12Gk+r4LrmM8+EAHDizQhT32mLbNm5RIVM6oqXJHk9BBug3EKs0KfHVxuNhd/2LtdFEZEWUAGlFyy7K/eVQAkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bc/UuXz46DX3Y74tBS3fF2dD4HB6s6Z/etZZNo6cVhY=;
+ b=ANwpWMDiMcUfZTv6Q5QAQVcbjsxv061rNBd6MERTVpzfuhEs1gc8hHe8phMen6bu9vZYke5JeODNTc6TfM9r9UZvPob1+RzF1tL8DX6wl0YhwrJJp3JWhJYxhj7ZQcLzZ4SB533Y8qBTp/Qc7hE01M9hxZQrElbVXY9H3JWC0aHDhv4u19LqyGLiC6xE2XSDFyJF5kcyVolC6S4l1JbnjvASamF9BkLz5wABadbU8Go8Va6qg468QjdMQVDP5grKN8bf0eBfcvyPFbd4PreT1C7rENFYkbFGsRlV6pD3kEp3Tv22CwSR68tCygaoMfh+602efKcyqDjnoYmg3gjnrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bc/UuXz46DX3Y74tBS3fF2dD4HB6s6Z/etZZNo6cVhY=;
+ b=oaihHAt90tHddrFkP4dTtzvWdpioR5wuKKb6Ca+WHq39OLPJ6iha7bnUTcGJNGAPReln/WKCnvgpOhekdntMl5R+4p4WjMqVdZqc7NJsXFsoOrfBmd6yrV+ONeJY8w9ycfxNVZD9K6qHZhTimcfEEG371MieUXLT83fUVF+ssvoTRKKUUeDfe4CYjUvGtkhO+AZveYciXdPhBEy6+13Qlvb59wk1T3vlqNH9iU/6VV9kZKfSN8ISjB6VpaLj5RduMm/t5mH5twXQGqIHl2qp9m56ddr9zdY6NQZ+r9utnE+6xA0YwSHSjenYx5azN7dcqiUehKsOMzGmUMoTgzns1w==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CY5PR02MB8989.namprd02.prod.outlook.com (2603:10b6:930:3a::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.13; Wed, 7 May
+ 2025 15:47:02 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8699.022; Wed, 7 May 2025
+ 15:47:02 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>, "K. Y. Srinivasan"
+	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Long Li <longli@microsoft.com>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Subject: RE: [Patch v3 1/5] Drivers: hv: Allocate interrupt and monitor pages
+ aligned to system page boundary
+Thread-Topic: [Patch v3 1/5] Drivers: hv: Allocate interrupt and monitor pages
+ aligned to system page boundary
+Thread-Index: AQHbvlIQSYTtRW7n4kOvNwRljEHHVLPHUZPw
+Date: Wed, 7 May 2025 15:47:02 +0000
+Message-ID:
+ <SN6PR02MB4157DC938A00F0B57780A117D488A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <1746492997-4599-1-git-send-email-longli@linuxonhyperv.com>
+ <1746492997-4599-2-git-send-email-longli@linuxonhyperv.com>
+In-Reply-To: <1746492997-4599-2-git-send-email-longli@linuxonhyperv.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CY5PR02MB8989:EE_
+x-ms-office365-filtering-correlation-id: 1270773a-a900-4cee-8952-08dd8d7e6910
+x-ms-exchange-slblob-mailprops:
+ dx7TrgQSB6eredufKlHx3shQhUbyqdtF72ZGqvs1SGg8dtRD0qym+fb5m9B+RBOLjsgP5KHqkSvY1kDlZA/BRor20JEcYD6Cpn7BMZUSl2kzlAZaz4ISUCNVr8aZn0xAJ25Xis04JkwYVUKqzTyPNl077JIQwJ7Hqywdo/G/1N8QiHTyWuzUusvpX2ont/SiSJbQ4+O3LAqTsNe6Jgca1VUmsq93AmybfYRmQBZRqwEcTojg9DADwMrs3O4fCs7YeVy+QJWeXtEi+rXH08CI7cvbmNncRnkGoGH8vTJAeARMwTFqB8NBtNknAprPajxWrR08AC9gOPskQzT5XuZNO6V27XaP9qmOZ5AZHVjNZDnx77Mp/EOCKr+ZAFwTxIPPy4byf79wgFMUaJ34J5hD76WM1bib8u3KTL92cT5TfynAjl8Rzw+SqN/jnBgV7h+pfmKmmdF8HROw9+YJrgYkHGvXTcq+OzY+TiPrfkAmM4zivtlD3mI1rJxVZAJ6VV0X78gZxlfWrwF/pfda1clKZL1p/uJH5sF65yklS82PmFXwH064ibqrXEt3ncxyC4BfbBxM9psFuhqH2EJ5rhZ4Qnk8jVTu815dpluv9uh234h+Qb2mF7Jdq32Nx/iOtsm9k5frSYYbp1nzRumkzJkCZDej9Iqr1q/ouPIvpBcRAoSJ6Yso5u7ojjAKVl45w6iXY+MWNrtCGW974aBhNdipZVHKXsS01CIcnvFkQuLvKbjMePgjXbVWOi/1Y/VIoBUX7mDLHRJx1J0=
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|41001999006|461199028|15080799009|8062599006|8060799009|19110799006|102099032|3412199025|440099028|12091999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?etNYOk8N/7w1rAJRsMo66TEjGSRDlZEsYLkJxITOSugZzQgqr2VkZ3qf5cLr?=
+ =?us-ascii?Q?DI43s6T8Kei/ZKefTvDB8j1nyI4onKcrgmGvquPyV9Zy/rI3HUdya6xlZp85?=
+ =?us-ascii?Q?qLjqbPYsn6ZNR0DEo8+cUwBSTS/1cu7sUfahA72OMExW9T0AeIojxmIsxwkF?=
+ =?us-ascii?Q?4gks4uE5OI/Z+kHLgqSwIOmOX+rK9y7+eifFbhqo4kBRJqRQHVcwvL1xlQzC?=
+ =?us-ascii?Q?hl0bZfyr41AMcpm+mAra+FceRTMELH9Ig5JKJ6DLFd0OTEaZqWbTZfdCGn5O?=
+ =?us-ascii?Q?lsfswxLZ4smKaO8q4lwQDT05O5nSxAhjXfk/9I1qHakvXmv53ihsbixgx6+U?=
+ =?us-ascii?Q?3YN938NonzL2AQLARP/ckmoNnreHCTxutY6TrLjop4dxp1aTC3tiUfgs+xYA?=
+ =?us-ascii?Q?494oKQURNXyUdpaPgBaGYDZ6cXZf2UssDXPFJgE7/dadVD45E3wB9UZML5cR?=
+ =?us-ascii?Q?plkMzL9JcHbqM9xwZpeZ6FL8MrwHblSgx5GZyzcu8KM7kBOwO0IgWQrtZPDg?=
+ =?us-ascii?Q?bPUufLqobVgMbqkWVF6QmKmwUUMqxogsMk1qXalSSq4GCBRaxcROEhDflJXs?=
+ =?us-ascii?Q?9vKXGEMTzcuk7PPmUI3mNYySRd1yNQCBJvwn5+cQG+YTRVdMEKl3QeOXQhbp?=
+ =?us-ascii?Q?53wjmNr79b0XOrRnTnfOUND3lP6Jc5LcbPJ1zU9ZtRCEOSmMUJ78Spbxm+0R?=
+ =?us-ascii?Q?rrq8sVc42Idh6/u2pLFmytE+svFR4wR3ZqyyJeLd8DQVJuiJx1iuTd/3iEwW?=
+ =?us-ascii?Q?wA0djDDzzpP1EJrFQ3pqBCXXMh5bGBKE0v4Pk3GDEAViPpdwlAFgqaVUAil3?=
+ =?us-ascii?Q?N7DL1Gtw+R/9LtCzV04Nueg8mBVwDed/G9MjOTmRXCxJ2JUNtwlh6bKzv2zK?=
+ =?us-ascii?Q?MOrKodypXT3hUAqIGrr6IgqySoO9wr+AXGSSPeIinTT+SJWtVHPJrZ8lRTpo?=
+ =?us-ascii?Q?aRgJmICKazzafFfzq4BkAXPrHwi236eBTu7fUn49kSZxvEI8Ei3xf59oSEa9?=
+ =?us-ascii?Q?wkeDZzapgpcha3cCtvQdmX4hYksYFtYqUGUjTnPMe1Sun2bAvBoVJnYYfKBM?=
+ =?us-ascii?Q?xHmBrLkcVJuFwQu/IXafo3rwXRFclzY0HErr/JV0FY5a09S1cBP+syOcqyZu?=
+ =?us-ascii?Q?e5oHhPf39+bipmYJKqZtGM2EXYxdwksvbA=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?W29Npv7rvoy1aS9eNV3Y9cFZnYMGpWeSZwvYWFXaA6NRz7v+8RGv6gTlzucj?=
+ =?us-ascii?Q?UbBS5MzXPB8tZbN8iksucmQixvLzyosUZa/u384ol8oK24X5V5YFP54wgHzZ?=
+ =?us-ascii?Q?pCG9Uli4gyXs6D5WUcJT1ZGjauSiFqVP6DTDSoOm6mONTsHR37W7BV2mntXN?=
+ =?us-ascii?Q?sgDLwjUXmTYVP5xdD1R+9PCqCqJnd1ovr69JhoENv+cbuVR9XRTlrq4Hg0aK?=
+ =?us-ascii?Q?z+9B7Pje5y3X+DgmTQWjF4Z0f8bqtO0mrnMhNG5b9THzKQvFL45g2HCBN59W?=
+ =?us-ascii?Q?GeJNCMWG2CM/AIJncTKRlrD9rqnI+0o068As630PM/lLumKCAtUcb1uymcLa?=
+ =?us-ascii?Q?n6Ag05mWW5TCBUPM1r7GC6oCZrxJbIuL2nI/OPCOtzA4PujcOlKyguxfL6bj?=
+ =?us-ascii?Q?Q4tmJUQJdskaMdO4cAs9CuSFKV8pymQpkx/o6E4icssPuY7BmScBIWfVVOZ4?=
+ =?us-ascii?Q?p4+OsdU4K/jGZhvSS+ep3o9pc8IcO2FXABWQI4BIemS3z3LMxJPCO+W5xrkr?=
+ =?us-ascii?Q?0IE16yANiT1Rw7HTZnaDdfhqfw+PKRWgkMYbWvRIJlyY45YRMsJHF5Hae0C4?=
+ =?us-ascii?Q?so6nTb9+bUefYwQVh8rw11jenzh+ddfjbW2oVWopEXVYq78N+oFOe0zlwQn3?=
+ =?us-ascii?Q?eti3QZ4bVXNiw1hkwObjhHQugeAwCveCMUIqXpPv61yjQjx74myxcvAJogTT?=
+ =?us-ascii?Q?9rD96etdQjhIy4y1NvlsDaKXwl6gknHftVNyX/gesm4TEXeKVc65zxAPVFol?=
+ =?us-ascii?Q?Qk12akjyqDH46HU9WAK5/ZMXyvwGcYvlMJo2nHiUE5q6omJOolf9TyVIMf88?=
+ =?us-ascii?Q?p/kv0RAxM/OjQxk/VHrE4mjAvVSenU2UQV5aynzKlsf925sc1zhJtnW6hBqk?=
+ =?us-ascii?Q?CWoqrC/igPjLzcSduJXVh9WSkOysIqGrSFCYptRPQq1c57+Zxs89x9mM+fbA?=
+ =?us-ascii?Q?big/vJZSxGli/wCmaR0kHUA0R/cLaOI+DB22wOX2Ab2qoJcvw2prR2QlZGVe?=
+ =?us-ascii?Q?aU1fSx/dldjsrTPtjT0sSWuk+1E+tVmXXX1nxF1J38bG5AIRUMGKSfoEidfm?=
+ =?us-ascii?Q?Txr+kxXHpeYzc5+RIA1umOOXfLNrTSjwD51Qjze1LVLFWGqDyVAmF34+GmPg?=
+ =?us-ascii?Q?SF7a7iAuvpD0miT48cLTLbwGKXZeEKQCybKSQuGvlPidW3Qio4b4ZV1vzzOY?=
+ =?us-ascii?Q?hJZbVsNND9w7z2Iwpocmfk1TYawfpXGAh8Ys9HKuObL/rh82NADgkZB7PVE?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1270773a-a900-4cee-8952-08dd8d7e6910
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2025 15:47:02.4487
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR02MB8989
 
-Since ARMv8.9, FEAT_MTE_STORE_ONLY can be used to restrict raise of tag
-check fault on store operation only.
+From: longli@linuxonhyperv.com <longli@linuxonhyperv.com> Sent: Monday, May=
+ 5, 2025 5:57 PM
+>=20
+> There are use cases that interrupt and monitor pages are mapped to
+> user-mode through UIO, so they need to be system page aligned. Some
+> Hyper-V allocation APIs introduced earlier broke those requirements.
+>=20
+> Fix this by using page allocation functions directly for interrupt
+> and monitor pages.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: ca48739e59df ("Drivers: hv: vmbus: Move Hyper-V page allocator to =
+arch neutral code")
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+>  drivers/hv/connection.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
+> index 8351360bba16..be490c598785 100644
+> --- a/drivers/hv/connection.c
+> +++ b/drivers/hv/connection.c
+> @@ -206,11 +206,20 @@ int vmbus_connect(void)
+>  	INIT_LIST_HEAD(&vmbus_connection.chn_list);
+>  	mutex_init(&vmbus_connection.channel_mutex);
+>=20
+> +	/*
+> +	 * The following Hyper-V interrupt and monitor pages can be used by
+> +	 * UIO for mapping to user-space, so they should always be allocated on
+> +	 * system page boundaries. The system page size must be >=3D the Hyper-=
+V
+> +	 * page size.
+> +	 */
+> +	BUILD_BUG_ON(PAGE_SIZE < HV_HYP_PAGE_SIZE);
+> +
+>  	/*
+>  	 * Setup the vmbus event connection for channel interrupt
+>  	 * abstraction stuff
+>  	 */
+> -	vmbus_connection.int_page =3D hv_alloc_hyperv_zeroed_page();
+> +	vmbus_connection.int_page =3D
+> +		(void *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
+>  	if (vmbus_connection.int_page =3D=3D NULL) {
+>  		ret =3D -ENOMEM;
+>  		goto cleanup;
+> @@ -225,8 +234,8 @@ int vmbus_connect(void)
+>  	 * Setup the monitor notification facility. The 1st page for
+>  	 * parent->child and the 2nd page for child->parent
+>  	 */
+> -	vmbus_connection.monitor_pages[0] =3D hv_alloc_hyperv_page();
+> -	vmbus_connection.monitor_pages[1] =3D hv_alloc_hyperv_page();
+> +	vmbus_connection.monitor_pages[0] =3D (void *)__get_free_page(GFP_KERNE=
+L);
+> +	vmbus_connection.monitor_pages[1] =3D (void *)__get_free_page(GFP_KERNE=
+L);
+>  	if ((vmbus_connection.monitor_pages[0] =3D=3D NULL) ||
+>  	    (vmbus_connection.monitor_pages[1] =3D=3D NULL)) {
+>  		ret =3D -ENOMEM;
+> @@ -342,21 +351,23 @@ void vmbus_disconnect(void)
+>  		destroy_workqueue(vmbus_connection.work_queue);
+>=20
+>  	if (vmbus_connection.int_page) {
+> -		hv_free_hyperv_page(vmbus_connection.int_page);
+> +		free_page((unsigned long)vmbus_connection.int_page);
+>  		vmbus_connection.int_page =3D NULL;
+>  	}
+>=20
+>  	if (vmbus_connection.monitor_pages[0]) {
+>  		if (!set_memory_encrypted(
+>  			(unsigned long)vmbus_connection.monitor_pages[0], 1))
+> -			hv_free_hyperv_page(vmbus_connection.monitor_pages[0]);
+> +			free_page((unsigned long)
+> +				vmbus_connection.monitor_pages[0]);
+>  		vmbus_connection.monitor_pages[0] =3D NULL;
+>  	}
+>=20
+>  	if (vmbus_connection.monitor_pages[1]) {
+>  		if (!set_memory_encrypted(
+>  			(unsigned long)vmbus_connection.monitor_pages[1], 1))
+> -			hv_free_hyperv_page(vmbus_connection.monitor_pages[1]);
+> +			free_page((unsigned long)
+> +				vmbus_connection.monitor_pages[1]);
+>  		vmbus_connection.monitor_pages[1] =3D NULL;
+>  	}
+>  }
+> --
+> 2.34.1
+>=20
 
-Adds new test cases using MTE_STORE_ONLY feature.
-
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- .../selftests/arm64/mte/check_mmap_options.c  | 114 ++++++++++++------
- .../testing/selftests/arm64/mte/check_prctl.c |  25 ++--
- 2 files changed, 95 insertions(+), 44 deletions(-)
-
-diff --git a/tools/testing/selftests/arm64/mte/check_mmap_options.c b/tools/testing/selftests/arm64/mte/check_mmap_options.c
-index d4193377b406..b9db3e05565e 100644
---- a/tools/testing/selftests/arm64/mte/check_mmap_options.c
-+++ b/tools/testing/selftests/arm64/mte/check_mmap_options.c
-@@ -34,15 +34,19 @@
- #define ATAG_TEST_ON		1
- #define ATAG_TEST_OFF		0
- 
-+#define TAG_OP_ALL		0
-+#define TAG_OP_STONLY		1
-+
- static size_t page_size;
- static int sizes[] = {
- 	1, 537, 989, 1269, MT_GRANULE_SIZE - 1, MT_GRANULE_SIZE,
- 	/* page size - 1*/ 0, /* page_size */ 0, /* page size + 1 */ 0
- };
- 
--static int check_mte_memory(char *ptr, int size, int mode, int tag_check, int atag_test)
-+static int check_mte_memory(char *ptr, int size, int mode,
-+		int tag_check,int atag_test, int tag_op)
- {
--	int err;
-+	char buf[MT_GRANULE_SIZE];
- 
- 	if (!mtefar_support && atag_test == ATAG_TEST_ON)
- 		return KSFT_SKIP;
-@@ -72,16 +76,34 @@ static int check_mte_memory(char *ptr, int size, int mode, int tag_check, int at
- 	if (cur_mte_cxt.fault_valid == true && tag_check == TAG_CHECK_OFF)
- 		return KSFT_FAIL;
- 
-+	if (tag_op == TAG_OP_STONLY) {
-+		mte_initialize_current_context(mode, (uintptr_t)ptr, -UNDERFLOW);
-+		memcpy(buf, ptr - UNDERFLOW, MT_GRANULE_SIZE);
-+		mte_wait_after_trig();
-+		if (cur_mte_cxt.fault_valid == true)
-+			return KSFT_FAIL;
-+
-+		mte_initialize_current_context(mode, (uintptr_t)ptr, size + OVERFLOW);
-+		memcpy(buf, ptr + size, MT_GRANULE_SIZE);
-+		mte_wait_after_trig();
-+		if (cur_mte_cxt.fault_valid == true)
-+			return KSFT_FAIL;
-+	}
-+
- 	return KSFT_PASS;
- }
- 
--static int check_anonymous_memory_mapping(int mem_type, int mode, int mapping, int tag_check, int atag_test)
-+static int check_anonymous_memory_mapping(int mem_type, int mode, int mapping,
-+		int tag_check, int atag_test, int tag_op)
- {
- 	char *ptr, *map_ptr;
- 	int run, result, map_size;
- 	int item = ARRAY_SIZE(sizes);
- 
--	mte_switch_mode(mode, MTE_ALLOW_NON_ZERO_TAG, false);
-+	if (tag_op == TAG_OP_STONLY && !mtestonly_support)
-+		return KSFT_SKIP;
-+
-+	mte_switch_mode(mode, MTE_ALLOW_NON_ZERO_TAG, tag_op);
- 	for (run = 0; run < item; run++) {
- 		map_size = sizes[run] + OVERFLOW + UNDERFLOW;
- 		map_ptr = (char *)mte_allocate_memory(map_size, mem_type, mapping, false);
-@@ -97,7 +119,7 @@ static int check_anonymous_memory_mapping(int mem_type, int mode, int mapping, i
- 			munmap((void *)map_ptr, map_size);
- 			return KSFT_FAIL;
- 		}
--		result = check_mte_memory(ptr, sizes[run], mode, tag_check, atag_test);
-+		result = check_mte_memory(ptr, sizes[run], mode, tag_check, atag_test, tag_op);
- 		mte_clear_tags((void *)ptr, sizes[run]);
- 		mte_free_memory((void *)map_ptr, map_size, mem_type, false);
- 		if (result != KSFT_SKIP)
-@@ -106,14 +128,18 @@ static int check_anonymous_memory_mapping(int mem_type, int mode, int mapping, i
- 	return KSFT_PASS;
- }
- 
--static int check_file_memory_mapping(int mem_type, int mode, int mapping, int tag_check, int atag_test)
-+static int check_file_memory_mapping(int mem_type, int mode, int mapping,
-+		int tag_check, int atag_test, int tag_op)
- {
- 	char *ptr, *map_ptr;
- 	int run, fd, map_size;
- 	int total = ARRAY_SIZE(sizes);
- 	int result = KSFT_PASS;
- 
--	mte_switch_mode(mode, MTE_ALLOW_NON_ZERO_TAG, false);
-+	if (tag_op == TAG_OP_STONLY && !mtestonly_support)
-+		return KSFT_SKIP;
-+
-+	mte_switch_mode(mode, MTE_ALLOW_NON_ZERO_TAG, tag_op);
- 	for (run = 0; run < total; run++) {
- 		fd = create_temp_file();
- 		if (fd == -1)
-@@ -135,7 +161,7 @@ static int check_file_memory_mapping(int mem_type, int mode, int mapping, int ta
- 			close(fd);
- 			return KSFT_FAIL;
- 		}
--		result = check_mte_memory(ptr, sizes[run], mode, tag_check, atag_test);
-+		result = check_mte_memory(ptr, sizes[run], mode, tag_check, atag_test, tag_op);
- 		mte_clear_tags((void *)ptr, sizes[run]);
- 		munmap((void *)map_ptr, map_size);
- 		close(fd);
-@@ -168,7 +194,7 @@ static int check_clear_prot_mte_flag(int mem_type, int mode, int mapping, int at
- 			ksft_print_msg("FAIL: mprotect not ignoring clear PROT_MTE property\n");
- 			return KSFT_FAIL;
- 		}
--		result = check_mte_memory(ptr, sizes[run], mode, TAG_CHECK_ON, atag_test);
-+		result = check_mte_memory(ptr, sizes[run], mode, TAG_CHECK_ON, atag_test, TAG_OP_ALL);
- 		mte_free_memory_tag_range((void *)ptr, sizes[run], mem_type, UNDERFLOW, OVERFLOW);
- 		if (result != KSFT_PASS)
- 			return result;
-@@ -192,7 +218,7 @@ static int check_clear_prot_mte_flag(int mem_type, int mode, int mapping, int at
- 			close(fd);
- 			return KSFT_FAIL;
- 		}
--		result = check_mte_memory(ptr, sizes[run], mode, TAG_CHECK_ON, atag_test);
-+		result = check_mte_memory(ptr, sizes[run], mode, TAG_CHECK_ON, atag_test, TAG_OP_ALL);
- 		mte_free_memory_tag_range((void *)ptr, sizes[run], mem_type, UNDERFLOW, OVERFLOW);
- 		close(fd);
- 		if (result != KSFT_PASS)
-@@ -202,7 +228,7 @@ static int check_clear_prot_mte_flag(int mem_type, int mode, int mapping, int at
- }
- 
- const char *format_test_name(int check_type, int mem_type, int sync,
--		       int mapping, int tag_check, int atag_test)
-+		       int mapping, int tag_check, int atag_test, int tag_op)
- {
- 	static char test_name[TEST_NAME_MAX];
- 	const char* check_type_str;
-@@ -211,6 +237,7 @@ const char *format_test_name(int check_type, int mem_type, int sync,
- 	const char* mapping_str;
- 	const char* tag_check_str;
- 	const char *atag_test_str;
-+	const char *tag_op_str;
- 
- 	switch (check_type) {
- 	case CHECK_ANON_MEM:
-@@ -290,10 +317,22 @@ const char *format_test_name(int check_type, int mem_type, int sync,
- 		break;
- 	}
- 
-+	switch (tag_op) {
-+	case TAG_OP_ALL:
-+		tag_op_str = "";
-+		break;
-+	case TAG_OP_STONLY:
-+		tag_op_str = " / store-only";
-+		break;
-+	default:
-+		assert(0);
-+		break;
-+	}
-+
- 	snprintf(test_name, TEST_NAME_MAX,
--	         "Check %s with %s mapping, %s mode, %s memory and %s (%s)\n",
-+	         "Check %s with %s mapping, %s mode, %s memory and %s (%s%s)\n",
- 	         check_type_str, mapping_str, sync_str, mem_type_str,
--	         tag_check_str, atag_test_str);
-+	         tag_check_str, atag_test_str, tag_op_str);
- 
- 	return test_name;
- }
-@@ -307,7 +346,8 @@ int main(int argc, char *argv[])
- 	int mte_sync[] = { MTE_SYNC_ERR, MTE_ASYNC_ERR };
- 	int mapping[] = { MAP_PRIVATE, MAP_SHARED };
- 	int atag_test[] = { ATAG_TEST_OFF, ATAG_TEST_ON };
--	int c, mt, s, m, a;
-+	int tag_ops[] = { TAG_OP_ALL, TAG_OP_STONLY };
-+	int c, mt, s, m, a, o;
- 
- 	err = mte_default_setup();
- 	if (err)
-@@ -322,7 +362,7 @@ int main(int argc, char *argv[])
- 	sizes[item - 1] = page_size + 1;
- 
- 	/* Set test plan */
--	ksft_set_plan(44);
-+	ksft_set_plan(76);
- 
- 	for (a = 0; a < ARRAY_SIZE(atag_test); a++) {
- 		/* Register signal handlers */
-@@ -331,38 +371,40 @@ int main(int argc, char *argv[])
- 
- 		mte_enable_pstate_tco();
- 
--		evaluate_test(check_anonymous_memory_mapping(USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a]),
--			      format_test_name(CHECK_ANON_MEM, USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a]));
-+		evaluate_test(check_anonymous_memory_mapping(USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a], TAG_OP_ALL),
-+			      format_test_name(CHECK_ANON_MEM, USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a], TAG_OP_ALL));
- 
--		evaluate_test(check_file_memory_mapping(USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a]),
--			      format_test_name(CHECK_FILE_MEM, USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a]));
-+		evaluate_test(check_file_memory_mapping(USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a], TAG_OP_ALL),
-+			      format_test_name(CHECK_FILE_MEM, USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a], TAG_OP_ALL));
- 
- 		mte_disable_pstate_tco();
- 
--		evaluate_test(check_anonymous_memory_mapping(USE_MMAP, MTE_NONE_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a]),
--			      format_test_name(CHECK_ANON_MEM, USE_MMAP, MTE_NONE_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a]));
--		evaluate_test(check_file_memory_mapping(USE_MPROTECT, MTE_NONE_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a]),
--			      format_test_name(CHECK_FILE_MEM, USE_MPROTECT, MTE_NONE_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a]));
--
--		for (c = 0 ; c < ARRAY_SIZE(check_type); c++) {
--			for (s = 0; s < ARRAY_SIZE(mte_sync); s++) {
--				for (m = 0; m < ARRAY_SIZE(mapping); m++) {
--					for (mt = 0; mt < ARRAY_SIZE(mem_type); mt++) {
--						if (check_type[c] == CHECK_ANON_MEM)
--							evaluate_test(check_anonymous_memory_mapping(mem_type[mt], mte_sync[s], mapping[m], TAG_CHECK_ON, atag_test[a]),
--								format_test_name(CHECK_ANON_MEM, mem_type[mt], mte_sync[s], mapping[m], TAG_CHECK_ON, atag_test[a]));
--						else
--							evaluate_test(check_file_memory_mapping(mem_type[mt], mte_sync[s], mapping[m], TAG_CHECK_ON, atag_test[a]),
--								format_test_name(CHECK_FILE_MEM, mem_type[mt], mte_sync[s], mapping[m], TAG_CHECK_ON, atag_test[a]));
-+		evaluate_test(check_anonymous_memory_mapping(USE_MMAP, MTE_NONE_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a], TAG_OP_ALL),
-+			      format_test_name(CHECK_ANON_MEM, USE_MMAP, MTE_NONE_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a], TAG_OP_ALL));
-+		evaluate_test(check_file_memory_mapping(USE_MPROTECT, MTE_NONE_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a], TAG_OP_ALL),
-+			      format_test_name(CHECK_FILE_MEM, USE_MPROTECT, MTE_NONE_ERR, MAP_PRIVATE, TAG_CHECK_OFF, atag_test[a], TAG_OP_ALL));
-+
-+		for (o = 0; o < ARRAY_SIZE(tag_ops); o++) {
-+			for (c = 0 ; c < ARRAY_SIZE(check_type); c++) {
-+				for (s = 0; s < ARRAY_SIZE(mte_sync); s++) {
-+					for (m = 0; m < ARRAY_SIZE(mapping); m++) {
-+						for (mt = 0; mt < ARRAY_SIZE(mem_type); mt++) {
-+							if (check_type[c] == CHECK_ANON_MEM)
-+								evaluate_test(check_anonymous_memory_mapping(mem_type[mt], mte_sync[s], mapping[m], TAG_CHECK_ON, atag_test[a], tag_ops[o]),
-+									format_test_name(CHECK_ANON_MEM, mem_type[mt], mte_sync[s], mapping[m], TAG_CHECK_ON, atag_test[a], tag_ops[o]));
-+							else
-+								evaluate_test(check_file_memory_mapping(mem_type[mt], mte_sync[s], mapping[m], TAG_CHECK_ON, atag_test[a], tag_ops[o]),
-+									format_test_name(CHECK_FILE_MEM, mem_type[mt], mte_sync[s], mapping[m], TAG_CHECK_ON, atag_test[a], tag_ops[o]));
-+						}
- 					}
- 				}
- 			}
- 		}
- 
- 		evaluate_test(check_clear_prot_mte_flag(USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE, atag_test[a]),
--			      format_test_name(CHECK_CLEAR_PROT_MTE, USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_ON, atag_test[a]));
-+			      format_test_name(CHECK_CLEAR_PROT_MTE, USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_ON, atag_test[a], TAG_OP_ALL));
- 		evaluate_test(check_clear_prot_mte_flag(USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE, atag_test[a]),
--			      format_test_name(CHECK_CLEAR_PROT_MTE, USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_ON, atag_test[a]));
-+			      format_test_name(CHECK_CLEAR_PROT_MTE, USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE, TAG_CHECK_ON, atag_test[a], TAG_OP_ALL));
- 	}
- 
- 	mte_restore_setup();
-diff --git a/tools/testing/selftests/arm64/mte/check_prctl.c b/tools/testing/selftests/arm64/mte/check_prctl.c
-index 4c89e9538ca0..83fa20cc6072 100644
---- a/tools/testing/selftests/arm64/mte/check_prctl.c
-+++ b/tools/testing/selftests/arm64/mte/check_prctl.c
-@@ -60,7 +60,7 @@ void check_basic_read(void)
- /*
-  * Attempt to set a specified combination of modes.
-  */
--void set_mode_test(const char *name, int hwcap2, int mask)
-+void set_mode_test(const char *name, int hwcap2, int hwcap3, int mask)
- {
- 	int ret;
- 
-@@ -69,6 +69,11 @@ void set_mode_test(const char *name, int hwcap2, int mask)
- 		return;
- 	}
- 
-+	if ((getauxval(AT_HWCAP3) & hwcap3) != hwcap3) {
-+		ksft_test_result_skip("%s\n", name);
-+		return;
-+	}
-+
- 	ret = set_tagged_addr_ctrl(mask);
- 	if (ret < 0) {
- 		ksft_test_result_fail("%s\n", name);
-@@ -81,7 +86,7 @@ void set_mode_test(const char *name, int hwcap2, int mask)
- 		return;
- 	}
- 
--	if ((ret & PR_MTE_TCF_MASK) == mask) {
-+	if ((ret & (PR_MTE_TCF_MASK | PR_MTE_STORE_ONLY)) == mask) {
- 		ksft_test_result_pass("%s\n", name);
- 	} else {
- 		ksft_print_msg("Got %x, expected %x\n",
-@@ -93,12 +98,16 @@ void set_mode_test(const char *name, int hwcap2, int mask)
- struct mte_mode {
- 	int mask;
- 	int hwcap2;
-+	int hwcap3;
- 	const char *name;
- } mte_modes[] = {
--	{ PR_MTE_TCF_NONE,  0,          "NONE"  },
--	{ PR_MTE_TCF_SYNC,  HWCAP2_MTE, "SYNC"  },
--	{ PR_MTE_TCF_ASYNC, HWCAP2_MTE, "ASYNC" },
--	{ PR_MTE_TCF_SYNC | PR_MTE_TCF_ASYNC,  HWCAP2_MTE, "SYNC+ASYNC"  },
-+	{ PR_MTE_TCF_NONE,                                        0,          0,                     "NONE"  },
-+	{ PR_MTE_TCF_SYNC,                                        HWCAP2_MTE, 0,                     "SYNC"  },
-+	{ PR_MTE_TCF_ASYNC,                                       HWCAP2_MTE, 0,                     "ASYNC" },
-+	{ PR_MTE_TCF_SYNC | PR_MTE_TCF_ASYNC,                     HWCAP2_MTE, 0,                     "SYNC+ASYNC"  },
-+	{ PR_MTE_TCF_SYNC | PR_MTE_STORE_ONLY,                    HWCAP2_MTE, HWCAP3_MTE_STORE_ONLY, "SYNC+STONLY" },
-+	{ PR_MTE_TCF_ASYNC | PR_MTE_STORE_ONLY,                   HWCAP2_MTE, HWCAP3_MTE_STORE_ONLY, "ASYNC+STONLY" },
-+	{ PR_MTE_TCF_SYNC | PR_MTE_TCF_ASYNC | PR_MTE_STORE_ONLY, HWCAP2_MTE, HWCAP3_MTE_STORE_ONLY, "SYNC+ASYNC+STONLY" },
- };
- 
- int main(void)
-@@ -106,11 +115,11 @@ int main(void)
- 	int i;
- 
- 	ksft_print_header();
--	ksft_set_plan(5);
-+	ksft_set_plan(8);
- 
- 	check_basic_read();
- 	for (i = 0; i < ARRAY_SIZE(mte_modes); i++)
--		set_mode_test(mte_modes[i].name, mte_modes[i].hwcap2,
-+		set_mode_test(mte_modes[i].name, mte_modes[i].hwcap2, mte_modes[i].hwcap3,
- 			      mte_modes[i].mask);
- 
- 	ksft_print_cnts();
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
