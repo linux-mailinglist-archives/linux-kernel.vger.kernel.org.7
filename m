@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-638429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BCDAAE5C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:01:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A72AAE5CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878154A622F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:01:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57DE64C2B00
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6927D28A3F2;
-	Wed,  7 May 2025 16:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4926728C867;
+	Wed,  7 May 2025 16:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M06SxVFx"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P5Jk1dMK"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DFD28C019
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1968D28C01A
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 16:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746633620; cv=none; b=pXH2QJit60+OwFz5HHsrYwdNGhXkBC0voQUTsn09armyB/3M/PmcaE3lmU/nmtnw5OZrQInwjqMcDiRBxdbIQgePe0XE8wkVFOxFXfzHEv094VYedMDpIhR2TLMRt5mM1N9YtKOck5i8+v/qizBB46KlpJPvXeya1j6udwfG80M=
+	t=1746633627; cv=none; b=RfoRebuQucdnUxoSLOJXYSnHmbYYK1QTwHul0lo4yBr0opX5kfIe6YkfnoaGXyUewbob93MQL+a73jVzhstGCPH44Bq49Dwpi6QdnTyRV18/WE9o+f3iMhBlbHIeqxKJEFHbCJ1SlMD9zQadqGCfVOsZTjdm3BlCN1Bo1/e4pzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746633620; c=relaxed/simple;
-	bh=j19ZgOTTWAGBGNqHN8qTGIuidKVHeDDoRGzAO5qox9s=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EuOofxqlOkuBapWR3Py2vVpfwRpxEaCKyepvSR8O4IiJawGU/ANLHKhC+w4sPolxAcHNZbs4EyKUZhB4KHjPT6691uHgGmW8WrEAOMJCsARYGHFSLu0rCq0Hr9ytiV5uvGXRKWJZDrDNS/DEsUmdFtGZ7oi5KuNafYVvxk/25lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--glider.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M06SxVFx; arc=none smtp.client-ip=209.85.218.74
+	s=arc-20240116; t=1746633627; c=relaxed/simple;
+	bh=ZirRFWqbfC7llLAh79dS/ySeAIeVdC2IlNT2+zUkFJs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rMUIm/5tte9AAmNLXWhHFETkKq8ewHPEKlbb7lloAL1iky53504GG5hg1GBGJJFOmOLFXmKwUw3VP/llun7y2xEV6bUhb/pmbb9XjBNwSph5ezh5CTvSw0V3/Ea2tQdd2GY6Kn+JUEWJd1B/gSnZRcTYNPdVGbJ6JgRRzpMIk+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--glider.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P5Jk1dMK; arc=none smtp.client-ip=209.85.208.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--glider.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-ac6a0443bafso351294266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 09:00:17 -0700 (PDT)
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5fbf91153c5so827343a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 09:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746633616; x=1747238416; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vXPWjkInimv+c0IvUnqWtZ/bOGRa5nQDErIPmKwQCf8=;
-        b=M06SxVFx0ssHtmnGIgmycRgcgQoHTKUxsUUayqU6zsRjnkBuh2LzeXpEoPVLtJvcQT
-         cc/c7TVonDMebBnjNx+wAyjp8F++nHepgpQ8Yguvrdu+NcX+AkPUXAlgme9EFCG7224F
-         gYNs+K601eOXSnCmzKaCRq0QwzMuDgt5SCpP0JsfZu6W1rBb969xXDg1+l8Ur70YW/BX
-         azjDVBJxs2yDg/rdT6/iqhYewPXhjzT+AUpJdhetCs8KNG8R/nhf8yLXnv7KoZJ6UBV/
-         7Xftr2bwzM44BtoLN/1ZMKtC8MfCIqK2M1zsDWUPv/6Hd+agTtgFkq1ntdBeOSqVucTe
-         P3sw==
+        d=google.com; s=20230601; t=1746633624; x=1747238424; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/HD+2FNI5wfvoRdutnU1OJmD0qGDP/bCL3lQrffpAd0=;
+        b=P5Jk1dMKURh2EZ5RoDfpivJz0GQO1qn1yqpvpieKebNJ8/yOT1+g+NSHxpB8X83hBW
+         Dph9fxWoPGahL9NdwhirOG0kU+DYJNAkJKZEB2HdBEBoEkEDv164zoo4qF+u072zK/FP
+         BvaqPKN4n3wg+puL4YIEHlRz0UhsdscOvTiP6AP550Up5UBESahWbvQbMzaZEE+LA5Y5
+         ZUxd0AdXPDdi/HKKvAMDBrT1S7r+LPRACrXHqFMsI8Qf5HeGlTPEBLyyC9ZDwT3ZKNtS
+         XWistZVh6yiF5I8MejtMCDv65BzraCmF0ejve4t5i29l5Ml+HiG6DviacZRrLnSqwU1Y
+         gEcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746633616; x=1747238416;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vXPWjkInimv+c0IvUnqWtZ/bOGRa5nQDErIPmKwQCf8=;
-        b=tHjapupkoht2HxNf+kRJIPXW7lzpAGY5QfyycGmDWZBTM9O1EEV/bbXAKBSBYnqpwK
-         Xb6Xhq0oNkPEv9DuK8sNFtZyPRknPGRmpZ4FhMbHRJPR+n2RGyFVfU0i4FF6gLH6OdjR
-         eEys07IM9P+WjDOcxGe9YmoEG9pBwFEzq5zcM2WtTmiDx1VZAPcBJuIgNIKItbUj96JF
-         /qcduZ6m93G1ySggJs59NgzhLd3aiucL9RLPagMS+BkK1LzeL3hTioCnm+xc2GXPzMtb
-         qVLWjIbp9LYK6Mayth0wET+G/zK56OePq30GOxhGH7rgtCMgo6tILOr+iQJFwFKznBme
-         R8dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH1YHpayT3ILOJyI6fvkU0I5IA3R5kb/u483MIBwGA0kBnTPZf35HMSgZr6rcjdhOXcjLbYi/cUWPDEK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJojcMDbuJEtLjmd3c761jrc9y/JV3DF7ZDyMK3jiCud4SWSsp
-	tGvWMhJlg636Av4DmdTvGFRP2HaTN2ldNdOL2g4d1NgWwFWKoRaAjaAyC1W2k/hJfR7xsXbdN+S
-	DmQ==
-X-Google-Smtp-Source: AGHT+IENrzQ9qW4o5ldAwmBY+EkcP4c4Get3DY+LzpSPnrl75ktPqa2dZxA5dvk1Hid+4o5rbXWTuekKFS0=
-X-Received: from ejbbx20.prod.google.com ([2002:a17:906:a1d4:b0:acb:59f0:cc9e])
- (user=glider job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:8688:b0:ad1:8dd3:a4eb
- with SMTP id a640c23a62f3a-ad1e8d0d9e5mr360033666b.56.1746633616362; Wed, 07
- May 2025 09:00:16 -0700 (PDT)
-Date: Wed,  7 May 2025 18:00:08 +0200
+        d=1e100.net; s=20230601; t=1746633624; x=1747238424;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/HD+2FNI5wfvoRdutnU1OJmD0qGDP/bCL3lQrffpAd0=;
+        b=UqWh2LrHNSmqCkOaMmg/Upe3NMNOgl/IJAAc6omyOP2DYc0ICI+5u4imOkBcHd2RmA
+         aipKvKjZHIE3XaOP6iyFuOclCPZHavfjfxVq2MDoDqGqnQcjBRP9Tnx55U8AZUyNycyX
+         t9yH2LomYn1KBREqgA8zAOi/eqekBlZDaYIB7B5Ed496u7hAr7fOJq8WxFFjAaAXKTxl
+         AFbRT5DBkZSXTZ8jNmO1c9Vvm9cCxOiyuCmyCbXZifIW7CchpbL4ibbgVbbZ8ETT1eOe
+         yCmtRjk6IcViK1+h1lmpHjO1e+VdfxwG2oK9KBmDd0uZuSI5i6emhONoSOqnflopnp0q
+         K1JA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUCd4a/2+iY5c3Mhf/VImvNPjQoFkAx/AXx0OGwxlbvAnkicwwB9JNFZiOWbE6rNjQqwUK1BYPMnit/sM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpbD5DFI5cmnDXiapAFBJ/5opVwzyfIz7r1Qj+rd+DNFnfLARV
+	73ycVoqwNR7Lr8/zpzX0Dh/V+oM6W/xbCBbVDCv7RiiIHQoC9RF8jhB8e7apgCaHl6LIO++DA1v
+	oEA==
+X-Google-Smtp-Source: AGHT+IGi3302wjsXgRUTwe7QHWU0vidGzxHKIW7/ZCRHRJvwoV5ASRVkUgDbHdZXSQWb2ESuUs74/5eBRk4=
+X-Received: from edbig14.prod.google.com ([2002:a05:6402:458e:b0:5fb:c088:893a])
+ (user=glider job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:51cb:b0:5fb:a146:8600
+ with SMTP id 4fb4d7f45d1cf-5fbe9f46c17mr3577975a12.25.1746633624482; Wed, 07
+ May 2025 09:00:24 -0700 (PDT)
+Date: Wed,  7 May 2025 18:00:11 +0200
+In-Reply-To: <20250507160012.3311104-1-glider@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250507160012.3311104-1-glider@google.com>
 X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
-Message-ID: <20250507160012.3311104-1-glider@google.com>
-Subject: [PATCH 1/5] kmsan: apply clang-format to files mm/kmsan/
+Message-ID: <20250507160012.3311104-4-glider@google.com>
+Subject: [PATCH 4/5] kmsan: enter the runtime around kmsan_internal_memmove_metadata()
+ call
 From: Alexander Potapenko <glider@google.com>
 To: glider@google.com
 Cc: elver@google.com, dvyukov@google.com, bvanassche@acm.org, 
@@ -79,76 +83,36 @@ Cc: elver@google.com, dvyukov@google.com, bvanassche@acm.org,
 	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-KMSAN source files are expected to be formatted with clang-format, fix
-some nits that slipped in. No functional change.
+kmsan_internal_memmove_metadata() transitively calls stack_depot_save()
+(via kmsan_internal_chain_origin() and kmsan_save_stack_with_flags()),
+which may allocate memory. Guard it with kmsan_enter_runtime() and
+kmsan_leave_runtime() to avoid recursion.
 
-Cc: Ilya Leoshkevich <iii@linux.ibm.com>
+This bug was spotted by CONFIG_WARN_CAPABILITY_ANALYSIS=y
+
+Cc: Marco Elver <elver@google.com>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
 Signed-off-by: Alexander Potapenko <glider@google.com>
 ---
- mm/kmsan/core.c   | 4 ++--
- mm/kmsan/hooks.c  | 4 +---
- mm/kmsan/init.c   | 3 +--
- mm/kmsan/shadow.c | 3 +--
- 4 files changed, 5 insertions(+), 9 deletions(-)
+ mm/kmsan/hooks.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/mm/kmsan/core.c b/mm/kmsan/core.c
-index a495debf14363..a97dc90fa6a93 100644
---- a/mm/kmsan/core.c
-+++ b/mm/kmsan/core.c
-@@ -159,8 +159,8 @@ depot_stack_handle_t kmsan_internal_chain_origin(depot_stack_handle_t id)
- 	 * Make sure we have enough spare bits in @id to hold the UAF bit and
- 	 * the chain depth.
- 	 */
--	BUILD_BUG_ON(
--		(1 << STACK_DEPOT_EXTRA_BITS) <= (KMSAN_MAX_ORIGIN_DEPTH << 1));
-+	BUILD_BUG_ON((1 << STACK_DEPOT_EXTRA_BITS) <=
-+		     (KMSAN_MAX_ORIGIN_DEPTH << 1));
- 
- 	extra_bits = stack_depot_get_extra_bits(id);
- 	depth = kmsan_depth_from_eb(extra_bits);
 diff --git a/mm/kmsan/hooks.c b/mm/kmsan/hooks.c
-index 3df45c25c1f62..05f2faa540545 100644
+index 05f2faa540545..97de3d6194f07 100644
 --- a/mm/kmsan/hooks.c
 +++ b/mm/kmsan/hooks.c
-@@ -114,9 +114,7 @@ void kmsan_kfree_large(const void *ptr)
- 	kmsan_enter_runtime();
- 	page = virt_to_head_page((void *)ptr);
- 	KMSAN_WARN_ON(ptr != page_address(page));
--	kmsan_internal_poison_memory((void *)ptr,
--				     page_size(page),
--				     GFP_KERNEL,
-+	kmsan_internal_poison_memory((void *)ptr, page_size(page), GFP_KERNEL,
- 				     KMSAN_POISON_CHECK | KMSAN_POISON_FREE);
- 	kmsan_leave_runtime();
+@@ -275,8 +275,10 @@ void kmsan_copy_to_user(void __user *to, const void *from, size_t to_copy,
+ 		 * Don't check anything, just copy the shadow of the copied
+ 		 * bytes.
+ 		 */
++		kmsan_enter_runtime();
+ 		kmsan_internal_memmove_metadata((void *)to, (void *)from,
+ 						to_copy - left);
++		kmsan_leave_runtime();
+ 	}
+ 	user_access_restore(ua_flags);
  }
-diff --git a/mm/kmsan/init.c b/mm/kmsan/init.c
-index 10f52c085e6cd..b14ce3417e65e 100644
---- a/mm/kmsan/init.c
-+++ b/mm/kmsan/init.c
-@@ -35,8 +35,7 @@ static void __init kmsan_record_future_shadow_range(void *start, void *end)
- 	KMSAN_WARN_ON(future_index == NUM_FUTURE_RANGES);
- 	KMSAN_WARN_ON((nstart >= nend) ||
- 		      /* Virtual address 0 is valid on s390. */
--		      (!IS_ENABLED(CONFIG_S390) && !nstart) ||
--		      !nend);
-+		      (!IS_ENABLED(CONFIG_S390) && !nstart) || !nend);
- 	nstart = ALIGN_DOWN(nstart, PAGE_SIZE);
- 	nend = ALIGN(nend, PAGE_SIZE);
- 
-diff --git a/mm/kmsan/shadow.c b/mm/kmsan/shadow.c
-index 1bb505a08415d..6d32bfc18d6a2 100644
---- a/mm/kmsan/shadow.c
-+++ b/mm/kmsan/shadow.c
-@@ -207,8 +207,7 @@ void kmsan_free_page(struct page *page, unsigned int order)
- 	if (!kmsan_enabled || kmsan_in_runtime())
- 		return;
- 	kmsan_enter_runtime();
--	kmsan_internal_poison_memory(page_address(page),
--				     page_size(page),
-+	kmsan_internal_poison_memory(page_address(page), page_size(page),
- 				     GFP_KERNEL,
- 				     KMSAN_POISON_CHECK | KMSAN_POISON_FREE);
- 	kmsan_leave_runtime();
 -- 
 2.49.0.967.g6a0df3ecc3-goog
 
