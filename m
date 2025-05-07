@@ -1,223 +1,118 @@
-Return-Path: <linux-kernel+bounces-637708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B48CAADC4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FF7AADC55
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6D01BA5EFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A34F19A0CEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EC9214211;
-	Wed,  7 May 2025 10:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD3220E315;
+	Wed,  7 May 2025 10:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="PJukL21H";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="apQx9sLT"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hRRgM2MV"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A585A19005E;
-	Wed,  7 May 2025 10:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3927263C
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746612832; cv=none; b=iuGPfTGFoYcblkVD+BBL8zqR/orNvSMnQL2LQXQrg7/9olvj1CDlzmKPz6e2k6HhS78ievgAH3bWqUT8uy1DIqaQGPLbnjpiS1Qeso8vsdLA4t11oEZQmlPLg4j+8LRex29oUFSvvMFSNQEx0CHRuIOd1NGcF5N4Mo9xrDA0PNE=
+	t=1746612925; cv=none; b=oc5UeoeO11TESA9F15fC5yVTAdSgnWWCWlSFY53p3LanUCZWFQ1ZDweBnm5lM1ypp2zx8XywO7axSoyTvRXKDQBbcwPC93hTDy9FQJabP+v+qsuo4vh2eZEoH+Ur5mUPeD29dKKs23ZqaZtZbjIF2CwLyzWAFn6+xBbbjHenkvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746612832; c=relaxed/simple;
-	bh=EyX/Mfgx9DJFijYb8LH9cno25hqdEVzRVGFUsht9c44=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U5fpdndZmYmIQ/6sAf0RrrT2T9754hsz9EBDkSOIVxqYuvG0kT/f5xJ0awiDtJktjo7AaNJtocPK67zWuSoQSlQ7SyZVAPaAn6BqBi/pfkuq8O6axyk0u5qX3H6r0l4/7p7LrWVCUlo2xewDxTG1dzaffKAVw/jZ4kIj1RsbndY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=PJukL21H; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=apQx9sLT reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1746612925; c=relaxed/simple;
+	bh=2kKyy8TPxu6MBP3b/ij0sX+z00C9OeGG/fZ7S8SZYZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J1qGF4ezL7fgTPS65geGPQBftUr9yaLVpHo76pVDaH0vKnvQ/3805ftXTwB3M6LFldBZGLAjWULtADcvANEuZXjp5HgbkKNmd7Qj1zECRVAugpSJWnJgFofjFB4+WCT9U5b/KYJDLaryZO7Nn4IboOUTQcw/kcLUC5Xjkq2zkp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hRRgM2MV; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e75bb8f5417so727676276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 03:15:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1746612830; x=1778148830;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=nTUgw/NsKVrlq46UbUfZSveiUQFgTqQLDbL8IHNtIwg=;
-  b=PJukL21H5YfWC4wSO6pC2vzzVRCh0gVgadRvE2C7R6G87/cSbg3TKK+v
-   qGxIJq/YSYFjWSWYaCy1GHTegDQ8ZpASZDD5C0uB8lTe1PRigOwYRJtgG
-   x4cRWI6VygljnuAZ0vzHwW83JeCJdaTb34UEoyKn0cl/xtqqV5s576g4r
-   uLi9Mo2tZc9b0LNbfae+/WmlKbTaPTrZDtW5jGZ6THIdOG4s0S24rX89g
-   B4DVH9x5R2t2+lEHdzSw0Sg36oS3RSi/nAbeO7eamVmi7dn532Otp397Y
-   bOGhybY++v4x8k1o7BGdtB1YHQ2z88eevskdAlW9FaGKWecW+UKXKXQqH
-   w==;
-X-CSE-ConnectionGUID: iwkbd1vqRcC/jGcwat3QSw==
-X-CSE-MsgGUID: TSqWF4NWTyWKvt5vnXAFLw==
-X-IronPort-AV: E=Sophos;i="6.15,269,1739833200"; 
-   d="scan'208";a="43932322"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 May 2025 12:13:46 +0200
-X-CheckPoint: {681B325A-4F-C7E25413-F4312D34}
-X-MAIL-CPID: 6FECBB341059D6AFABBE2E76BC7F2240_4
-X-Control-Analysis: str=0001.0A00639A.681B325D.0072,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 67FD8163680;
-	Wed,  7 May 2025 12:13:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1746612822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nTUgw/NsKVrlq46UbUfZSveiUQFgTqQLDbL8IHNtIwg=;
-	b=apQx9sLT5TOcRsEM7dUiDN7pEd/X5knwiNuULbwNAQXvnt1KmilGIeMqMeTLb2Ghz1Bf/g
-	hz0bFSOEt5I9+BHyX9bQrmwS+PP98UnY4a+cd4hLstNZn/m2+7G16/4yqdBHQntcbtDpYV
-	fUVZaPa/+nSOHJmyZQQJqcz/AIV3NsdVuG6J1GXAgfQiSeYJUl1jCuDJoJEFwKSpbjy6s6
-	crANJgZJU9t8c2G1Zq1TBErJyDSfJrD0qJSAMZ0GUhzbFm2cxI/nNbliiVh7CI2T7I6K6B
-	u4b37/EG9/Nu3VyulhIdDBHhZ6Xpw8wwuOEXJ/M3lBxsa45s6CK4aozw7X6gEg==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH net-next v2 2/2] net: phy: dp83867: use 2ns delay if not specified in DTB
-Date: Wed,  7 May 2025 12:13:21 +0200
-Message-ID: <e2509b248a11ee29ea408a50c231da4c1fa0863b.1746612711.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <8a286207cd11b460bb0dbd27931de3626b9d7575.1746612711.git.matthias.schiffer@ew.tq-group.com>
-References: <8a286207cd11b460bb0dbd27931de3626b9d7575.1746612711.git.matthias.schiffer@ew.tq-group.com>
+        d=linaro.org; s=google; t=1746612923; x=1747217723; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2kKyy8TPxu6MBP3b/ij0sX+z00C9OeGG/fZ7S8SZYZM=;
+        b=hRRgM2MV/iQBwhiuQYzkAPHVZRoyEWZUUVimEu63aEilVu1uR46cjSkLhir+G1uddi
+         F4SljYjHhMhJ7tDQc+4IDGNg/XNtD+0EezwfqXkJ6/sF7fdCJ6HMV3fuKvRpnyONAwa3
+         TdCMHDVQg8cCMtUvfEM3cPnSeYwc+N9ATfI6Id1UZCQghhmC770k9OA9wUQuTLbi0Qo3
+         dhFIfPCqm6E9e2aGhTQu/SexqNJe/yhOOClj3pfffnrtyYD7jptXgm5n4ENya5exBTm1
+         lvQEK5h3HQdVH12ov0zNJnmjjzlwpS9VsLXbab3mNClKzkyQdDjTb5v0V7h/ZeGfCGpj
+         O0gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746612923; x=1747217723;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2kKyy8TPxu6MBP3b/ij0sX+z00C9OeGG/fZ7S8SZYZM=;
+        b=lC5Q4vZklIckScNdffk4nTQk3oh+IMKq9EKzLAZMYYM6KR0ggKhrjbhBVT0iYLKZ+U
+         qExZo6W1G2fSh6ZQvttwrYDRp86G30CsFWgG7Xbjj54gW1XXyw/uPUsa8ICpKZYGX1Xb
+         te3Vefwdp6i4+QfSRTW8/sYt56p49KI3JmaewAnxblhbk/N8ZBS1MPRp9ZhbTBZ9Jvn/
+         AVxdWHLZmBYE4ue58rT8sMZvPNcSV9nxUbRUbadq2G3qLW2Abt/WxL4Q8v44Mk1+124e
+         +dEtsgJjAgqxu7POKvxijaNcpPPh+WtV3IyHf97pz4H+rFvfngQ8hcuW0XmvgdoWL4Wl
+         Jnew==
+X-Forwarded-Encrypted: i=1; AJvYcCWNXQnr5nQqTqa4UBeFmgbCdLx/b4reg/GReRrm7eXxmnqL5TCp1jVobYs3DWwbWtTlaJsX7nAHSWGvgso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZhHypS2Rnc426Lq46Fo+PuwNi37M8yuyjgAnPztncZWbIk746
+	Y7LK2q0sR7DC3DPfhRiRTh+JhK+ZjG6Fyayl56QM8f5NOILrrJmN+ed/KYXKaxrn2wWmSuFlDP0
+	4z6Hver0Ve1EvOG0Nf9ui2mb01zvbuPpT0lP/mg==
+X-Gm-Gg: ASbGnctR/Uo8ZdtoJ2MSpg/lQBrhWIlgRY1DU/viCF+dzqiOv7hn8mIL551y7He2++T
+	1b4iY19LrD/dEUxcimOfVjA+eEKwntCmd25/LEveFI3TQedoUnTNZubTSsZf1OFeLcVDodF3hzB
+	byohZ3dncXLKxILHVtQj+eLsE=
+X-Google-Smtp-Source: AGHT+IHn1ks68akd/coDPAZmpIe7HBhUWeUxWUjOEFaKQwyjN7TisAzrwAQkABAtcJbUHO6Ilz6E9OB4Vk7BnH+3K28=
+X-Received: by 2002:a05:6902:2085:b0:e73:1749:ed9c with SMTP id
+ 3f1490d57ef6-e788df80016mr3214287276.24.1746612922947; Wed, 07 May 2025
+ 03:15:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250424180036.1541568-1-jm@ti.com> <849a5e47-5b37-40e4-8b76-a58adb7e9b90@ti.com>
+In-Reply-To: <849a5e47-5b37-40e4-8b76-a58adb7e9b90@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 7 May 2025 12:14:47 +0200
+X-Gm-Features: ATxdqUEux_B3oamDrHorDmmQFHbu6nx5l7WSCGenWjG9wHyx8Pn_JFsTs1UaTDY
+Message-ID: <CAPDyKFpMo3a_MZuD1q+JFEa4VqHeoJ-SegviJfd322jkV29+Pw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] Add SDHCI_QUIRK2_SUPPRESS_V1P8_ENA
+To: "Mendez, Judith" <jm@ti.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Josua Mayer <josua@solid-run.com>, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nishanth Menon <nm@ti.com>, Francesco Dolcini <francesco@dolcini.it>, 
+	Hiago De Franco <hiagofranco@gmail.com>, Moteen Shah <m-shah@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Most PHY drivers default to a 2ns delay if internal delay is requested
-and no value is specified. Having a default value makes sense, as it
-allows a Device Tree to only care about board design (whether there are
-delays on the PCB or not), and not whether the delay is added on the MAC
-or the PHY side when needed.
+On Mon, 5 May 2025 at 23:24, Mendez, Judith <jm@ti.com> wrote:
+>
+> Hi all,
+>
+> On 4/24/2025 1:00 PM, Judith Mendez wrote:
+> > There are MMC boot failures seen with V1P8_SIGNAL_ENA on Kingston eMMC and
+> > Microcenter/Patriot SD cards on am62* Sitara K3 boards due to the HS200
+> > initialization sequence involving V1P8_SIGNAL_ENA. Since V1P8_SIGNAL_ENA
+> > is optional for eMMC and only affects timing for host controllers using
+> > ti,am62-sdhci compatible so far, add a new platform data structure for am62
+> > compatible and append the new SDHCI_QUIRK2_SUPPRESS_V1P8_ENA quirk.
+> >
+> > This fix was previously merged in the kernel, but was reverted due
+> > to the "heuristics for enabling the quirk"[0]. This issue is adressed
+> > in this patch series by adding the quirk based on compatible string,
+> > ensuring the quirk is never applied to devices with internal LDOs, then
+> > V1P8_SIGNAL_ENA also has a voltage component tied to it.
+>
+> Gentle ping on this, are there any comments or any issues with this
+> type of implementation?
 
-Whether the delays are actually applied is controlled by the
-DP83867_RGMII_*_CLK_DELAY_EN flags, so the behavior is only changed in
-configurations that would previously be rejected with -EINVAL.
+It looks reasonable to me. Although, in general I think we are trying
+to avoid adding new sdhci quirks, perhaps there are good reasons to do
+it in this case.
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
+I am deferring to Adrian to make the decision.
 
-v2: no changes
-
- drivers/net/phy/dp83867.c | 44 ++++-----------------------------------
- 1 file changed, 4 insertions(+), 40 deletions(-)
-
-diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
-index e5b0c1b7be13f..deeefb9625664 100644
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -106,10 +106,8 @@
- /* RGMIIDCTL bits */
- #define DP83867_RGMII_TX_CLK_DELAY_MAX		0xf
- #define DP83867_RGMII_TX_CLK_DELAY_SHIFT	4
--#define DP83867_RGMII_TX_CLK_DELAY_INV	(DP83867_RGMII_TX_CLK_DELAY_MAX + 1)
- #define DP83867_RGMII_RX_CLK_DELAY_MAX		0xf
- #define DP83867_RGMII_RX_CLK_DELAY_SHIFT	0
--#define DP83867_RGMII_RX_CLK_DELAY_INV	(DP83867_RGMII_RX_CLK_DELAY_MAX + 1)
- 
- /* IO_MUX_CFG bits */
- #define DP83867_IO_MUX_CFG_IO_IMPEDANCE_MASK	0x1f
-@@ -501,29 +499,6 @@ static int dp83867_config_port_mirroring(struct phy_device *phydev)
- 	return 0;
- }
- 
--static int dp83867_verify_rgmii_cfg(struct phy_device *phydev)
--{
--	struct dp83867_private *dp83867 = phydev->priv;
--
--	/* RX delay *must* be specified if internal delay of RX is used. */
--	if ((phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
--	     phydev->interface == PHY_INTERFACE_MODE_RGMII_RXID) &&
--	     dp83867->rx_id_delay == DP83867_RGMII_RX_CLK_DELAY_INV) {
--		phydev_err(phydev, "ti,rx-internal-delay must be specified\n");
--		return -EINVAL;
--	}
--
--	/* TX delay *must* be specified if internal delay of TX is used. */
--	if ((phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
--	     phydev->interface == PHY_INTERFACE_MODE_RGMII_TXID) &&
--	     dp83867->tx_id_delay == DP83867_RGMII_TX_CLK_DELAY_INV) {
--		phydev_err(phydev, "ti,tx-internal-delay must be specified\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- #if IS_ENABLED(CONFIG_OF_MDIO)
- static int dp83867_of_init_io_impedance(struct phy_device *phydev)
- {
-@@ -607,7 +582,7 @@ static int dp83867_of_init(struct phy_device *phydev)
- 	dp83867->sgmii_ref_clk_en = of_property_read_bool(of_node,
- 							  "ti,sgmii-ref-clock-output-enable");
- 
--	dp83867->rx_id_delay = DP83867_RGMII_RX_CLK_DELAY_INV;
-+	dp83867->rx_id_delay = DP83867_RGMIIDCTL_2_00_NS;
- 	ret = of_property_read_u32(of_node, "ti,rx-internal-delay",
- 				   &dp83867->rx_id_delay);
- 	if (!ret && dp83867->rx_id_delay > DP83867_RGMII_RX_CLK_DELAY_MAX) {
-@@ -617,7 +592,7 @@ static int dp83867_of_init(struct phy_device *phydev)
- 		return -EINVAL;
- 	}
- 
--	dp83867->tx_id_delay = DP83867_RGMII_TX_CLK_DELAY_INV;
-+	dp83867->tx_id_delay = DP83867_RGMIIDCTL_2_00_NS;
- 	ret = of_property_read_u32(of_node, "ti,tx-internal-delay",
- 				   &dp83867->tx_id_delay);
- 	if (!ret && dp83867->tx_id_delay > DP83867_RGMII_TX_CLK_DELAY_MAX) {
-@@ -737,7 +712,6 @@ static int dp83867_config_init(struct phy_device *phydev)
- {
- 	struct dp83867_private *dp83867 = phydev->priv;
- 	int ret, val, bs;
--	u16 delay;
- 
- 	/* Force speed optimization for the PHY even if it strapped */
- 	ret = phy_modify(phydev, DP83867_CFG2, DP83867_DOWNSHIFT_EN,
-@@ -745,10 +719,6 @@ static int dp83867_config_init(struct phy_device *phydev)
- 	if (ret)
- 		return ret;
- 
--	ret = dp83867_verify_rgmii_cfg(phydev);
--	if (ret)
--		return ret;
--
- 	/* RX_DV/RX_CTRL strapped in mode 1 or mode 2 workaround */
- 	if (dp83867->rxctrl_strap_quirk)
- 		phy_clear_bits_mmd(phydev, DP83867_DEVADDR, DP83867_CFG4,
-@@ -827,15 +797,9 @@ static int dp83867_config_init(struct phy_device *phydev)
- 
- 		phy_write_mmd(phydev, DP83867_DEVADDR, DP83867_RGMIICTL, val);
- 
--		delay = 0;
--		if (dp83867->rx_id_delay != DP83867_RGMII_RX_CLK_DELAY_INV)
--			delay |= dp83867->rx_id_delay;
--		if (dp83867->tx_id_delay != DP83867_RGMII_TX_CLK_DELAY_INV)
--			delay |= dp83867->tx_id_delay <<
--				 DP83867_RGMII_TX_CLK_DELAY_SHIFT;
--
- 		phy_write_mmd(phydev, DP83867_DEVADDR, DP83867_RGMIIDCTL,
--			      delay);
-+			      dp83867->rx_id_delay |
-+			      (dp83867->tx_id_delay << DP83867_RGMII_TX_CLK_DELAY_SHIFT));
- 	}
- 
- 	/* If specified, set io impedance */
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
-
+Kind regards
+Uffe
 
