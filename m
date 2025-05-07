@@ -1,118 +1,121 @@
-Return-Path: <linux-kernel+bounces-638336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B2CAAE4A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:26:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51FBAAE4C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F569C3B71
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:25:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DED9C1770
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6815528AB17;
-	Wed,  7 May 2025 15:25:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FFB28AB03;
-	Wed,  7 May 2025 15:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5E328B7E2;
+	Wed,  7 May 2025 15:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYTRWBVk"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1549028AB1D;
+	Wed,  7 May 2025 15:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746631531; cv=none; b=Mv0t4nMnbHCdFkpqi8Cvexme+gVxcDAeRNMmdTMn0Cf5V3mGvzMkSwzgNs4O8QWV33S9w9L3vmGXwOeMKK0yqrXO9gZpJyl9jkvV9mJvDiV+TMfvkKlMRZiTos+uf9/urBxOgd1pDL4hf4eRunlGob3rMpWYnsxYHiExGvkm6I8=
+	t=1746631562; cv=none; b=Eaz3bPmW+K9RfR16xEhQluJixnoU06wS6KPqJ6M6Op0qKuMjr31LU8ND6aIKaAZ7+RYFTlLy9Qb4LK0wLva8UNdAoDcDcTW0FAcVX3vxVnBiKMTsjMHh9PFXBwF06Q1ZOsxWFNYfygS0hvbcRb1ZC39cGWy8KS0D09s4uvTrFbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746631531; c=relaxed/simple;
-	bh=CLGuly61z6pxnXMpY7OtXp7nCpQcfXJ9VrfOuwL8JdM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HSyTl1pNq2xKXjgj0fDW3vqNS5BfYQFGEhwyFMO6SaYBmfyB128Ul/gGdiICeK1I3IKGSIN1xPS3/3zxM3IT27LBznFbI3jZ6BizqH2zR5XEslAjLo8qMf7/UpWTqHQNMuLAyXCUib7saeLDsnj74z8xrYAOX10p9gHdWtxEgkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8166D339;
-	Wed,  7 May 2025 08:25:19 -0700 (PDT)
-Received: from [192.168.20.57] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AA5D3F58B;
-	Wed,  7 May 2025 08:25:27 -0700 (PDT)
-Message-ID: <214c2a2d-e0ea-4ec6-9925-05e39319e813@arm.com>
-Date: Wed, 7 May 2025 10:25:25 -0500
+	s=arc-20240116; t=1746631562; c=relaxed/simple;
+	bh=m3/2HAo1H3TiNe6hddAepiWX1vfHKRzyl20PPZbSSjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUUyPWoYVzM79c/3QRJDhkMkKaHLlIYpzlSzboi+/uskGtAFcZnE6WgeVr1foY/YIWAjvgZybbWbXJLLy6cDndjN1JBTpVm9kG9SKSFVOt7wvSxRQ1DqFN6jz74zhLRb1TEb5BkCx3vlv3URdfHcB0/Jh/O1IasqbigYhJ5DdSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYTRWBVk; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30c461a45f8so61988271fa.1;
+        Wed, 07 May 2025 08:26:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746631559; x=1747236359; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IOsZx4HJytsBLGs3/H+pE3EnVi8A7/Xol6ZLjxEfUrs=;
+        b=QYTRWBVk78JeumSCjOC+nUN8DIGWU+0iVGYJeE1o8YSG7hR+mND2hky+JBYVt2xpRt
+         bA7xoZD4tXeTrUk8C4DduCz/+24xmuvnvxb03PBcURE2kJ6KUZjdOgzMYIWmcfNgkwSF
+         0PkS8VNHM6B2k+Utychzt9VF1pK7KTf21oPf0hjDi1DnealgpxGWqETwZnKlhAu21mIZ
+         rXwVyKKXnzV5FbA5F+MpfRwe72zbg5EVn8h3Dml6f9PtnC+Qck5nafVuYBXSw/DqByrk
+         gQ/9HlhN7SMIp2aE25pDPpXLtfyuIBeEZDVNtDL51SnO12pqHTAiK+wQQmkHnA9Pb/wE
+         EU1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746631559; x=1747236359;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IOsZx4HJytsBLGs3/H+pE3EnVi8A7/Xol6ZLjxEfUrs=;
+        b=F3HJUOQaM7eXr6Wn/e9l25TVjaPWJP5XKNz0gX0kayPur0RdTb1WdJnx451nbvg5BC
+         /V4qI+uweFTq8xhif4FGIcpzSVJhf4sO6QcfMKHs5Mv10lyVO6Ocl2kNCdmWa97gagst
+         1siSG7RA3ROlO/ICDTfdG7O6VY1TJsrCzkFUN0fDjBk3o8Ae/twgCfyf1ATj4v5A8tMc
+         R63rj2B722dfjKdZpeMXZe8twWnTzoWvUk5hu10MAtLQ6mZEDjSzquMjK5cZ9RS7FVu5
+         tgY5+P56CSsOtLKxeEUGxt4EdcOXXyodVdYAohijvng06osdcb+pWrYoF53UimdMdKaP
+         oqfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdQdzGRizqNvGLBGBv9rMGJIQNXbidR9Q2elnI85F5BqmX7r0rAxqWhEXNL3R7BBvBbna1leWV2xi2XSx7TwY=@vger.kernel.org, AJvYcCWEZ/P5GcwzcmRiKITOeNNU49cur+7QlLLvlmkl6w/J6AmUOtJlxUZ916C/j9utt6EWHUYg9TpN3n78ajE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5Ym0zC7nDqdc1zQLgDHGYX+Is3PlDXxzK6TxlZYeLvjU0VTfQ
+	NliNw7cAD0yHOLj1xA0sM/4/pVWce1K7F4BKN2PM8Ntbrt9o+5Yo
+X-Gm-Gg: ASbGncvRLbqCVsXLUE7bPizggnEDXYURswNdOmzsF6yk6L8jLx96DindDdH0rJ9sPXZ
+	rDrVEl1HgqSvniZCHHD/Ovo2XQl7PFcEm4VH3gYm60QpxLswkRXR3VnHSM0OvsGLPbuKQyn/7sf
+	RL3CCCQwNgwAfvQP8lXSdPByYeGeRHYj6zX9uoVfFrN/ZuQy90eWZ+B0dbo+wUJeJxMYKpgQFiT
+	Wju/fqP7DQKvv6xKBcShrZeWcMVQ6UDSAvKTvRGJ3dTtQ/6de3Q3KkzQ6pUAJnLjHVs1AfNdLDu
+	NXDnrwdKNtCt3pD53l0QVRKxHXoeYOHwXO4z
+X-Google-Smtp-Source: AGHT+IFytHsvqFYQzujqceKZpiUhUZEVuYpnWaH8GQZ2Mwjl4ZDW1lJsiiSzePyl9w5MeiDeZVxEMw==
+X-Received: by 2002:a05:651c:1a0b:b0:308:eabd:2996 with SMTP id 38308e7fff4ca-326ad186e0dmr12529631fa.5.1746631558806;
+        Wed, 07 May 2025 08:25:58 -0700 (PDT)
+Received: from localhost ([83.149.199.15])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32029306984sm22697481fa.58.2025.05.07.08.25.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 08:25:58 -0700 (PDT)
+Date: Wed, 7 May 2025 18:25:57 +0300
+From: Fedor Pchelkin <boddah8794@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Bernie Huang <phhuang@realtek.com>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [Bug report] rtw89: 8852b: IO_PAGE_FAULTs with beacon filter
+ feature enabled
+Message-ID: <7injzacfmvhrugcovyxkn4elnaxnzg27c26zmcqzrwhottyk7e@ap5ellaozcg4>
+References: <uidltsdsuujrczrtzgerhh5cw2tztxktfen6yvztnc7gttzgvk@jccomj7f4gul>
+ <148ed65c53be4ef29246d372dd0fef8e@realtek.com>
+ <z54thedngt3wnhr5bfer3yg7id2c4uqgw2jjvyausv6p66ys4k@guqol77fpugz>
+ <dcf695a6621f43e38a20eb860194191a@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI/PPTT: fix off-by-one error
-To: "Heyne, Maximilian" <mheyne@amazon.de>
-Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Sudeep Holla <sudeep.holla@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250506-draco-taped-15f475cd@mheyne-amazon>
-Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <20250506-draco-taped-15f475cd@mheyne-amazon>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dcf695a6621f43e38a20eb860194191a@realtek.com>
+
+On Thu, 17. Apr 01:05, Ping-Ke Shih wrote:
+> Fedor Pchelkin <boddah8794@gmail.com> wrote:
+> > 
+> > On Wed, 16. Apr 00:49, Ping-Ke Shih wrote:
+> > > As bisection, can I summarize as below table?
+> > >
+> > >     d56c261e52           firmware             IO_PAGE_FAULT
+> > >    (CQM support)
+> > >   ---------------      -----------          -----------------
+> > >       o                 0.29.29.7                  yes
+> > >       o                 0.29.29.5                  no
+> > >       x                 0.29.29.7                  no
+> > >       x                 0.29.29.5                  no
+> > >
+> > > If this table is correct, we will check the beacon filter feature in firmware.
+> > >
+> > 
+> > Yes, it correctly describes the situation. My suspicion currently falls on
+> > the beacon filter feature in firmware, too.
+> 
+> Could you help to test when we have updated firmware?
+> 
 
 Hi,
 
-On 5/6/25 8:13 AM, Heyne, Maximilian wrote:
-> Commit 7ab4f0e37a0f ("ACPI PPTT: Fix coding mistakes in a couple of
-> sizeof() calls") corrects the processer entry size but unmasked a longer
-> standing bug where the last entry in the structure can get skipped due
-> to an off-by-one mistake if the last entry ends exactly at the end of
-> the ACPI subtable.
-> 
-> The error manifests for instance on EC2 Graviton Metal instances with
-> 
->    ACPI PPTT: PPTT table found, but unable to locate core 63 (63)
->    [...]
->    ACPI: SPE must be homogeneous
-> 
-> Fixes: 2bd00bcd73e5 ("ACPI/PPTT: Add Processor Properties Topology Table parsing")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
-> ---
->   drivers/acpi/pptt.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index f73ce6e13065d..4364da90902e5 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -231,7 +231,7 @@ static int acpi_pptt_leaf_node(struct acpi_table_header *table_hdr,
->   			     sizeof(struct acpi_table_pptt));
->   	proc_sz = sizeof(struct acpi_pptt_processor);
-
-This isn't really right, it should be struct acpi_subtable_header, then 
-once the header is safe, pull the length from it.
-
-But then, really if we are trying to fix the original bug that the table 
-could be shorter than the data in it suggests, the struct 
-acpi_pptt_processor length plus its resources needs to be checked once 
-the subtype is known to be a processor node.
-
-Otherwise the original sizeof * change isn't really fixing anything.
-
-
-
-
->   
-> -	while ((unsigned long)entry + proc_sz < table_end) {
-> +	while ((unsigned long)entry + proc_sz <= table_end) {
->   		cpu_node = (struct acpi_pptt_processor *)entry;
->   		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
->   		    cpu_node->parent == node_entry)
-> @@ -273,7 +273,7 @@ static struct acpi_pptt_processor *acpi_find_processor_node(struct acpi_table_he
->   	proc_sz = sizeof(struct acpi_pptt_processor);
->   
->   	/* find the processor structure associated with this cpuid */
-> -	while ((unsigned long)entry + proc_sz < table_end) {
-> +	while ((unsigned long)entry + proc_sz <= table_end) {
->   		cpu_node = (struct acpi_pptt_processor *)entry;
->   
->   		if (entry->length == 0) {
-
+Were you able to reproduce or track down the problem?
 
