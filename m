@@ -1,174 +1,144 @@
-Return-Path: <linux-kernel+bounces-638255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E4CAAE329
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:38:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B5FAAE325
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1005317DCC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844981B65C6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFD3288CB3;
-	Wed,  7 May 2025 14:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D1F28A1C1;
+	Wed,  7 May 2025 14:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fxyKsmx0"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="tpb14Ivd"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BAB241673
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 14:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DBE288CB1;
+	Wed,  7 May 2025 14:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746628367; cv=none; b=W2DodJGSznNBHF1IcNTlvFvxiyMJaXH1GjmZJQXigh/n6b9epCpd5RSglMUVuIf3sxrUamTS6PWeNp9vgEke6IOsNWs4Cs2iWsBGxZ0jrSGojcSUSytcfDkP8sWEDXvcvMCS6n6Rvt+AZYwat08XyS8Sa3afyXKt8+aQ5yUPKf8=
+	t=1746628493; cv=none; b=JDepUfgw0OMVupZFEHaDqCPbVJCo3LDxizaDMRfOKNwl8os5TXv2PfpQgHOZggsKikBVmu1PDYUTd6B84VN/AOdtpkCfiwrD4uaXOoqT5KFmUUFyrM0ky2gQrJXh5Bhf2f4a3yCleEKiaPt/FWxJdTW84oVNdJGY6GR6qoybi6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746628367; c=relaxed/simple;
-	bh=jioF/+b3Tvjy/E0Y2VmWY5RdJgnHHIX9RsgPmF5bwTM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tvUEI/S2yYqHMO6g+VxPNMzWarXwmEjZVEXQaUnBv2N/M0Fed3MZMObb3MPvXEA7kdcS5Gky+2vUNTCBdCqrk/KIyeqnfqCvfcvieuqpMUojmnCSoJaSoRXXSte+twkwx/9QmdoNhJyvtqEuRnDZL5MzZalCcjbqyx2pNsvTHbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fxyKsmx0; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-740774348f6so3163192b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 07:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746628365; x=1747233165; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cy0MsCwZXeebtI/qV5RxpPFKyFGvdPyAhseWZVMeuc=;
-        b=fxyKsmx0FkFShOrsGxJkDi2tswzuPP5IxT6ERWbDj91WiYLUQKixLYclZgPvQsjjSj
-         LidJlzYjJJMWDmJT222R4cS50zxqSoRLK6ooGScCtx9KHNWx2yo21RuJM8eO23C/VcFG
-         a5PiUZDuNtfiPhH0pZmO5up/n1X8ThKbFG1fMzesAaBITlE/N2ssRFRApv9A/qc4Q2av
-         hpFzph9qeX02eEVlE7yHVqpSLgW5ksRF0rDuKXq9vfMcBBuHh1p3gzHsz5FUnj7coL6x
-         HdFNaKedMp+URPigoprRPfArJzL2hCQVO+wptCXIOAKDInipo6U4aQgPKcgkJONpWfTc
-         ggNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746628365; x=1747233165;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cy0MsCwZXeebtI/qV5RxpPFKyFGvdPyAhseWZVMeuc=;
-        b=oVV12MakMlgW7gqfqE2amaaVuE+9yBmFEBiXCQim/K4XmU9WNYxv5BWZjre5uwFddD
-         aggEUGqA+Qk7fS8pfOn/jsXrpZNHwXrImz3/G/WRJa0lIkeUMc8zyrqE71pMCHBLDr14
-         L/UGY4WejB16yiMgTAiCmsWaGOnsxsiie75/XEadjeuDxcIMaQhll7CtvWRalwJKwrio
-         ebMXfLHDZ+FVeOIpnb3XHVdyzX3i7oQpod569UbhZnj3d30HyZgkJJAFlxOe33GJRS1F
-         jY6SZZ1Gc0xYjHWDmFI59pNzZ6QaskqTAE5Jg2+y3WFwy9jXWtWXWbnp4Gv2pCRXvmrI
-         jj3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXjiJGepzYoomEAPSY+HmVEa08LYYUYyGNRUdUJFzsbJ/KVtV6vgaqBxsiuTeTQmWgCT0Y0W7bSvBm326s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM7/rJPNrMBJaqkQNiLZ7S5bAMIsC1CdGPBfOlY5zj18xW38hm
-	Nw2iYBadgFgCjhGDfGmUK9Ep6tIVBi9FW1YJMKpseSKtj6naoApR+55hcm8eUNcT0cSSD5izoxM
-	KPA==
-X-Google-Smtp-Source: AGHT+IEFrv6tdIicybAuNsOV6e762Ja8XkyFYRXi1ZowjtvTFyDF+rQtHVmfENoKXdwPbMc8F7B97APEJ+M=
-X-Received: from pfix12.prod.google.com ([2002:aa7:9a8c:0:b0:740:341:8a0b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6300:42:b0:1ee:dd60:194f
- with SMTP id adf61e73a8af0-2148cd2d1f8mr5062892637.26.1746628364740; Wed, 07
- May 2025 07:32:44 -0700 (PDT)
-Date: Wed, 7 May 2025 07:32:43 -0700
-In-Reply-To: <4bfe7a8f5020448e903e6335173afc75@baidu.com>
+	s=arc-20240116; t=1746628493; c=relaxed/simple;
+	bh=/Hx1z+1ShhlvPsydFhhJ+nng1N5AbWeiJYvwRQSPip4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bv1Kw/UeCvWDBhL+2tnKyYsGtw66gZbpZcWUJQFCynEKKD5K0DDPPRx2cWEcVa6DbHOG4zwbMdkZJFtxvkFzdHbLNUG5gJXWacwrjUvQvgNojG4y4zBfil7HhSszTqcorzw+IUfN5VfklLYMD+3FhUf3PauUdCc9FOybU+fw+n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=tpb14Ivd; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=ZuS4uT/ExLWpAEhw6TwLCuePFcMmqQyy8F2XFijBTIk=; b=tpb14IvdwO69wLvs7jQK1HHWkZ
+	7uU6bcsl1mf8hZWETl28j88o04IOCY1J9Fylg69aXIXcoUp+6fyKElONrqHFUerGQ0f2xo8EQjHEC
+	0tCy98NMaezyHRN6uVDJwDvE7RC8eBi2EjaA6wdLEiugOJRq5qNuqTjQ/I29g3nA7Pg8RT9iktnK/
+	aM+PDCPfUsx448r3qiBzAQfknnPpogXGoGgXtS3MC9Ro/1SMsPDmNTFA9OuBz5uD1eMaRFEAJ7swO
+	USNRzJ2WciNbdu48T0x9sKw1jfQfliEwYb37sxjblvc4LpMF+RTqd/lbjiO5cwuvUeCQ07EJ0Jv45
+	btb4TVdA==;
+Received: from i53875a1d.versanet.de ([83.135.90.29] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uCfqc-0002mD-S2; Wed, 07 May 2025 16:34:10 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Arnd Bergmann <arnd@arndb.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Dave Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Heiko Stuebner <heiko.stuebner@cherry.de>,
+ Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org
+Cc: "laurent.pinchart" <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Doug Anderson <dianders@chromium.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH] drm/bridge/synopsys: avoid field overflow warning
+Date: Wed, 07 May 2025 16:34:09 +0200
+Message-ID: <3355346.44csPzL39Z@diego>
+In-Reply-To: <220ed0fb-1ccb-4371-9b5a-a99dfdc84984@app.fastmail.com>
+References:
+ <20250408175116.1770876-1-arnd@kernel.org>
+ <30e22523-216f-41a9-b931-e90136a45378@app.fastmail.com>
+ <220ed0fb-1ccb-4371-9b5a-a99dfdc84984@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250423092509.3162-1-lirongqing@baidu.com> <aAkAY40UbqzQNr8m@google.com>
- <4bfe7a8f5020448e903e6335173afc75@baidu.com>
-Message-ID: <aBtgTnQU0JlNq2Y3@google.com>
-Subject: Re: =?utf-8?B?562U5aSNOiBbPz8/Pw==?= =?utf-8?Q?=5D?= Re: [PATCH] KVM:
- Use call_rcu() in kvm_io_bus_register_dev
-From: Sean Christopherson <seanjc@google.com>
-To: Li Rongqing <lirongqing@baidu.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Li Zhaoxin <lizhaoxin04@baidu.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Apr 24, 2025, Li,Rongqing wrote:
-> > On Wed, Apr 23, 2025, lirongqing wrote:
-> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c index
-> > > 2e591cc..af730a5 100644
-> > > --- a/virt/kvm/kvm_main.c
-> > > +++ b/virt/kvm/kvm_main.c
-> > > @@ -5865,6 +5865,13 @@ int kvm_io_bus_read(struct kvm_vcpu *vcpu,
-> > enum kvm_bus bus_idx, gpa_t addr,
-> > >  	return r < 0 ? r : 0;
-> > >  }
-> > >
-> > > +static void free_kvm_io_bus(struct rcu_head *rcu) {
-> > > +	struct kvm_io_bus *bus = container_of(rcu, struct kvm_io_bus, rcu);
-> > > +
-> > > +	kfree(bus);
-> > > +}
-> > > +
-> > >  int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx,
-> > gpa_t addr,
-> > >  			    int len, struct kvm_io_device *dev)  { @@ -5903,8 +5910,8
-> > @@
-> > > int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t
-> > addr,
-> > >  	memcpy(new_bus->range + i + 1, bus->range + i,
-> > >  		(bus->dev_count - i) * sizeof(struct kvm_io_range));
-> > >  	rcu_assign_pointer(kvm->buses[bus_idx], new_bus);
-> > > -	synchronize_srcu_expedited(&kvm->srcu);
-> > > -	kfree(bus);
-> > > +
-> > > +	call_srcu(&kvm->srcu, &bus->rcu, free_kvm_io_bus);
-> > 
-> > I don't think this is safe from a functional correctness perspective, as
-> > KVM must guarantee all readers see the new device before KVM returns
-> > control to userspace.  E.g. I'm pretty sure KVM_REGISTER_COALESCED_MMIO is
-> > used while vCPUs are active.
-> > 
-> > However, I'm pretty sure the only readers that actually rely on SRCU are vCPUs,
-> > so I _think_ the synchronize_srcu_expedited() is necessary if and only if vCPUs
-> > have been created.
-> > 
-> > That could race with concurrent vCPU creation in a few flows that don't
-> > take kvm->lock, but that should be ok from an ABI perspective.  False
-> > kvm->positives (vCPU creation fails) are benign, and false negatives (vCPU
-> > created after the check) are inherently racy, i.e. userspace can't
-> > guarantee the vCPU sees any particular ordering.
-> > 
-> > So this?
-> > 
-> > 	if (READ_ONCE(kvm->created_vcpus)) {
-> > 		synchronize_srcu_expedited(&kvm->srcu);
-> > 		kfree(bus);
-> > 	} else {
-> > 		call_srcu(&kvm->srcu, &bus->rcu, free_kvm_io_bus);
-> > 	}
-> 
-> 
-> If call_srcu is able to used only before creating vCPU, the upper will have
-> little effect, since most device are created after creating vCPU
+Am Donnerstag, 10. April 2025, 14:36:45 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Arnd Bergmann:
+> On Wed, Apr 9, 2025, at 09:07, Arnd Bergmann wrote:
+> > On Tue, Apr 8, 2025, at 19:51, Arnd Bergmann wrote:
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >>
+> >> clang-16 and earlier complain about what it thinks might be an out of
+> >> range number:
+> >>
+> >> drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c:348:8: error: call to=20
+> >> __compiletime_assert_579 declared with 'error' attribute: FIELD_PREP:=
+=20
+> >> value too large for the field
+> >>                      PHY_SYS_RATIO(tmp));
+> >>                      ^
+> >> drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c:90:27: note: expanded=20
+> >> from macro 'PHY_SYS_RATIO'
+> >>  #define PHY_SYS_RATIO(x)                FIELD_PREP(GENMASK(16, 0), x)
+> >>
+> >
+> > I still see the same build failure in some other configurations even
+> > with this patch. Please disregard this version, I'll try to come
+> > up with a better one.
+>=20
+> I couldn't come up with anything that actually worked, other than
+> the hack below, which just works around the compiletime error
+> in FIELD_PREP(), but doesn't look like a proper fix.
+>=20
+> If anyone else has any ideas, I can test their patch.
+>=20
+>        Arnd
+>=20
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c b/drivers/gpu=
+/drm/bridge/synopsys/dw-mipi-dsi2.c
+> index c76f5f2e74d1..8ba528462ede 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+> @@ -344,7 +344,7 @@ static void dw_mipi_dsi2_phy_ratio_cfg(struct dw_mipi=
+_dsi2 *dsi2)
+>          */
+>         tmp =3D DIV_ROUND_CLOSEST_ULL(phy_hsclk << 16, sys_clk);
+>         regmap_write(dsi2->regmap, DSI2_PHY_SYS_RATIO_MAN_CFG,
+> -                    PHY_SYS_RATIO(tmp));
+> +                    PHY_SYS_RATIO(tmp & GENMASK(16, 0)));
 
-Is that something that can be "fixed" in userspace?  I.e. why are devices being
-created after vCPUs?
+so should we take this one for the time being?
 
-> We want to optimize the ioeventfd creation, since a VM will create lots of
-> ioeventfd, 
+While FIELD_PREP does _some_ type checking for mask and value, they are
+"only" build-time checks for when the value is a builtin constant.
 
-Ah, so this isn't about device creation from userspace, rather it's about reacting
-to the guest's configuration of a device, e.g. to register doorbells when the guest
-instantiates queues for a device?
+It doesn't do checks at runtime, so it seems this check would fall into
+the submitting code's realm?
 
-> can ioeventfd uses call_srcu?
 
-No, because that has the same problem of KVM not ensuring vCPUs will observe the
-the change before returning to userspace.
+>  }
+> =20
+>  static void dw_mipi_dsi2_lp2hs_or_hs2lp_cfg(struct dw_mipi_dsi2 *dsi2)
+>=20
 
-Unfortunately, I don't see an easy solution.  At a glance, every architecture
-except arm64 could switch to protect kvm->buses with a rwlock, but arm64 uses
-the MMIO bus for the vGIC's ITS, and I don't think it's feasible to make the ITS
-stuff play nice with a rwlock.  E.g. vgic_its.its_lock and vgic_its.cmd_lock are
-mutexes, and there are multiple ITS paths that access guest memory, i.e. might
-sleep due to faulting.
 
-Even if we did something x86-centric, e.g. futher special case KVM_FAST_MMIO_BUS
-with a rwlock, I worry that using a rwlock would degrade steady state performance,
-e.g. due to cross-CPU atomic accesses.
 
-Does using a dedicated SRCU structure resolve the issue?  E.g. add and use
-kvm->buses_srcu instead of kvm->srcu?  x86's usage of the MMIO/PIO buses is
-limited to kvm_io_bus_{read,write}(), so it should be easy enough to do a super
-quick and dirty PoC.
+
 
