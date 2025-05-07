@@ -1,118 +1,134 @@
-Return-Path: <linux-kernel+bounces-637745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D7DAADCB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F092AADD03
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF3CB4E5D65
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:44:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873C64A6893
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FDB2153D6;
-	Wed,  7 May 2025 10:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD1821770A;
+	Wed,  7 May 2025 11:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IltRAHdz"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="SmQ0f5v8"
+Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBE42744E;
-	Wed,  7 May 2025 10:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36AE72628;
+	Wed,  7 May 2025 11:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746614643; cv=none; b=GWC1xRhAOFsVwCbxNjc/s6GEKD0pvB615JivG21VpSQcqPG6aVTsqj7syyHc+Mqic3ZQr83wWaw6cDQ13Fmcfq6t89aPEZB5qkG6aF+yP2pArGGuOoKOL/xd+LhfjDcg4IF0qiC6PsuOavwoOuzY3BbbzNqkxB+DFy4OCVjoMKE=
+	t=1746616259; cv=none; b=QPEFiShUc8qRA9MxSO5wF3i90Lyvl5P4Ub7ZJLMHjQ5rhUEiFCqk3HYIAjLV/mzgCyUq4LCvtM4rp1K2pIZ6vJo8xIENr6xZwusQhJiKo78g3kSGOIUvUHmYmrVf5HBeKZj8dVewUMwJdTy9KiecV5CDzuJWRNiHCTo9p5oOejE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746614643; c=relaxed/simple;
-	bh=HFi+6saGj2XzkZ0BZnY0WRBXo0MnaeqWEtbw18D63IE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bAv+Vq6a+/3AEBss8d5QmODEXYhDtpnUQFpPnHj/9xAjfUpgtaLyszCaFfg3C7j/JuOeitxICiveqwMK28kxlvZrcs9DH6NXqHJ4wrLorfFVhQxYgfiQUyUFIHYUs9zfYKXJ2kjARin35ZR2+5K4mdKZF0MCNTIo4KkkHAD68q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IltRAHdz; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ace94273f0dso525827366b.3;
-        Wed, 07 May 2025 03:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746614640; x=1747219440; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X5BiF+obK77Q4Mt7wT43ch3emsGuKkwCPOShuFXZSoU=;
-        b=IltRAHdzoUblYHpJ5VzGTkX7V5viFg5Pduv7SzhuBj1nwRsNzFoJz70619x0Sk6jaQ
-         NbxSwa/tLQ8zGGbKgstjsmcmNKQJuinNOriYqOR//hFLIoHXBI665jU/rQ0kO4RHggm2
-         Or1xysy13ZmHLxy1IUXOjv2mmFUrY5FnyC2L/dVAHTYOcxKLBUkNGjjRNr79ZT9qxsIG
-         73VHiUQ1tVels7QUQVh210uXm2Vc9DFS+LDDJ9Ibqv5x00skaEKYZkpyBSQ+MwOSjdXs
-         JvQGvXPXzhI/Vo8B8cTi31bs480rVfTjCCv5UKhNLY2A+Y13Ya/77htVAOnrIgu9Ai5N
-         NwNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746614640; x=1747219440;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X5BiF+obK77Q4Mt7wT43ch3emsGuKkwCPOShuFXZSoU=;
-        b=tdx2k1VHAyeqfKwmUxoKDJ2Zoy8kqD34kp1Vj9lcPS+2HzDmg66dyTn7Wv4gTfOhiZ
-         u1E1Z+cHCP75MZ5DRqkQGOe+4NDZ9fiAtl9aU/hAZTK1HNCyTWXXWnrRWFQVAnUlsxs5
-         wDJFdaXmkjVVL663WCJ4dZK2p4myUb8fv7XajV3MlR1Yw/UhPhXNbyM89PQdPxy0TgK5
-         WSj3JselcuShCoZEFpp55hg2GaTMD1sKLJkL1sZPDtjfKkN6bJptDrXCJy8StnoUhxGr
-         0okL/p/U7PtFOgvmSOhZOMpcpPdF8Yb5EjPb0aiB6i7eJhgrEOjGRF55Z5S2KpNo+llL
-         LNfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcQDqItqjxwzi2Ao4PCatj7mtGloi+0hOPr+UC9GooxZOgCBDYxHhvrUHL7GIb3Ojb1/fmx90mPw2gXNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqGQdaS8ZgxfxxTEzYvaA/g5wSF//cBWKrFpnjoiiNkA/e7RyG
-	1a/hhziZgXwaDB+2BuZvj1OBuG/w7297x7PFWmTOZvpCczRbecjlHfx/6XUWhWwv0g==
-X-Gm-Gg: ASbGncve2y+VMjgo7mpLzjvdSJqJdngsesxPOLagWwO2n2sa0kPDX2bWXK9dyURHoqz
-	w0qr3z/ZVVFMbOCH0iR+HZr6HJvbBcvTmA+yuYmq4wwNJ62qLJ6grpcRXeTj3vOGYOQxaf2O/d3
-	Pg+5lKxnbeN2Xafp654gYZ9Uz/TB5kzsfLerrUdQlRnlEZWCa/4ANkGVW549R8el4sb+8d8cD3V
-	rmqme2/n2ym+vYmJ5lAFTU88J9rawRK1EHSMO5xFzh7G9+p3RD+N4S+oSL1incQJnN7edrIvHii
-	60N0AAVpnJkDbKYYXoQgE+AMg4NqXqG4BTjUVPY=
-X-Google-Smtp-Source: AGHT+IHkq4eJWAWxiFp01qWIcmgv+HhQAeecubFhnLc304MQuXWevI6GcbIy3qwNBtMpLe5u39LKHQ==
-X-Received: by 2002:a17:907:2d90:b0:acb:b966:3a7c with SMTP id a640c23a62f3a-ad1e8cd6b41mr286749566b.47.1746614629550;
-        Wed, 07 May 2025 03:43:49 -0700 (PDT)
-Received: from localhost ([87.254.1.131])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad189146fcbsm883780866b.34.2025.05.07.03.43.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 03:43:49 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	kgdb-bugreport@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] kdb: remove redundant check for scancode 0xe0
-Date: Wed,  7 May 2025 11:43:37 +0100
-Message-ID: <20250507104337.201695-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746616259; c=relaxed/simple;
+	bh=vmSGuFzk/EifdADajz7/SqsZwIclBftrNbOHkm1ysk4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=pbfxEZwee2LlaEwzjhdaJlpxbZgFSFGEJxHkqViJpHd1CeCvtvWR0pEeDbkJjXh0ivMp7cb1coZbN2j3sWExvYFdaFcGVzjlueumEbr1VMAg999WFLvd0e8R8RPkjh14T8fFDHWuTNoiUhPvMof9peysd4feWrap7M2VHIPe9Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=SmQ0f5v8; arc=none smtp.client-ip=195.201.215.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=folker-schwesinger.de; s=default2212; h=In-Reply-To:References:To:From:Cc:
+	Subject:Message-Id:Date:Content-Type:Content-Transfer-Encoding:Mime-Version:
+	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=Tx722LLBcDX85Nl+UVjthb6rDb0/f2vKG6KsAYhSJ3Q=; b=SmQ0f5v84BGP/Ko44iFlRqfT+2
+	HqFax0psOtD+BSW8Or6pV5mrEHnzrN/aETO49l4ydOpKEuC97pzM3z6R5Chs1tK8ex4fEp7SO/m1H
+	JU0e+0gAz8Xa8+6nY3P1HS/OfYv0ofAJJigMMNM12t8Js9K6CtEaH8HM7R4IjYqSvTW3nd0trtvi5
+	Hic5UdV/LPIm4niQh7Jx0bikG4aOmRzBlo7Z/wIzkULy795yqV7YcSPZ6CAcNUDlWOgq4QWkEivJO
+	teZxajMdYy4jGeRn9MuD2AKFzEEt0nUY0IvRdybcSOIfY4Oe9sQHvgzFqHtFKP3iCWWUZxN3ca7J4
+	G3yBSvsw==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1uCcIv-000Al9-0y;
+	Wed, 07 May 2025 12:47:09 +0200
+Received: from [141.24.82.26] (helo=localhost)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1uCcIu-000Dr9-37;
+	Wed, 07 May 2025 12:47:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 May 2025 10:47:08 +0000
+Message-Id: <D9PVA78TMQNH.H3AZTEVZ8SV@folker-schwesinger.de>
+Subject: Re: [PATCH] dmaengine: xilinx_dma: Set dma_device directions
+Cc: "Vinod Koul" <vkoul@kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
+ "Marek Vasut" <marex@denx.de>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "Katakam, Harini" <harini.katakam@amd.com>,
+ "Gupta, Suraj" <Suraj.Gupta2@amd.com>
+From: "Folker Schwesinger" <dev@folker-schwesinger.de>
+To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, "Thomas Gessler"
+ <thomas.gessler@brueckmann-gmbh.de>, "dmaengine@vger.kernel.org"
+ <dmaengine@vger.kernel.org>
+X-Mailer: aerc 0.20.1-71-gcaf717fc3044
+References: <20250314134849.703819-1-thomas.gessler@brueckmann-gmbh.de>
+ <MN0PR12MB59531CAA16616476F2E09EFBB7DF2@MN0PR12MB5953.namprd12.prod.outlook.com> <MN0PR12MB5953C8800220724906360D54B788A@MN0PR12MB5953.namprd12.prod.outlook.com>
+In-Reply-To: <MN0PR12MB5953C8800220724906360D54B788A@MN0PR12MB5953.namprd12.prod.outlook.com>
+X-Authenticated-Sender: dev@folker-schwesinger.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27630/Tue May  6 11:43:15 2025)
 
-The check for scancode 0xe0 is always false because earlier on
-the scan code is masked with 0x7f so there are never going to
-be values greater than 0x7f. Remove the redundant check.
+On Wed May 7, 2025 at 12:20 PM CEST, Radhey Shyam Pandey wrote:
+> [snip]
+>> > Subject: [PATCH] dmaengine: xilinx_dma: Set dma_device directions
+>> >
+>> > Coalesce the direction bits from the enabled TX and/or RX channels
+>> > into the directions bit mask of dma_device. Without this mask set,
+>> > dma_get_slave_caps() in the DMAEngine fails, which prevents the driver
+>> > from being used with an IIO DMAEngine buffer.
+>> >
+>> > Signed-off-by: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>
+>>
+>> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+>> Thanks!
+>>
+>> > ---
+>> >  drivers/dma/xilinx/xilinx_dma.c | 4 ++++
+>> >  1 file changed, 4 insertions(+)
+>> >
+>> > diff --git a/drivers/dma/xilinx/xilinx_dma.c
+>> > b/drivers/dma/xilinx/xilinx_dma.c index 108a7287f4cd..641aaf0c0f1c
+>> > 100644
+>> > --- a/drivers/dma/xilinx/xilinx_dma.c
+>> > +++ b/drivers/dma/xilinx/xilinx_dma.c
+>> > @@ -3205,6 +3205,10 @@ static int xilinx_dma_probe(struct
+>> > platform_device
+>> > *pdev)
+>> >             }
+>> >     }
+>> >
+>> > +   for (i =3D 0; i < xdev->dma_config->max_channels; i++)
+>> > +           if (xdev->chan[i])
+>> > +                   xdev->common.directions |=3D xdev->chan[i]->direct=
+ion;
+>> > +
+>
+> Suraj also worked on this patch internally and he did set direction in ch=
+an_probe().
+> So, I think we can switch to below implementation ?
+>
+> --- a/drivers/dma/xilinx/xilinx_dma.c
+> +++ b/drivers/dma/xilinx/xilinx_dma.c
+> @@ -2909,6 +2909,7 @@ static int xilinx_dma_chan_probe(struct xilinx_dma_=
+device *xdev,
+>                 return -EINVAL;
+>         }
+>
+> +       xdev->common.directions |=3D chan->direction;
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- kernel/debug/kdb/kdb_keyboard.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keyboard.c
-index 3a74604fdb8a..386d30e530b7 100644
---- a/kernel/debug/kdb/kdb_keyboard.c
-+++ b/kernel/debug/kdb/kdb_keyboard.c
-@@ -145,9 +145,6 @@ int kdb_get_kbd_char(void)
- 		return CTRL('F');
- 	}
- 
--	if (scancode == 0xe0)
--		return -1;
--
- 	/*
- 	 * For Japanese 86/106 keyboards
- 	 * 	See comment in drivers/char/pc_keyb.c.
--- 
-2.49.0
+Looks good to me.
 
 
