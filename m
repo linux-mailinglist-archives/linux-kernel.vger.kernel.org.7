@@ -1,209 +1,265 @@
-Return-Path: <linux-kernel+bounces-638056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F60AAE0EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:42:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C60BAAE0F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2433550268D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:42:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3FB9806C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968E228935C;
-	Wed,  7 May 2025 13:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D4628001E;
+	Wed,  7 May 2025 13:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n6aZXoQM"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCuTsq7u"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440BB288C2C;
-	Wed,  7 May 2025 13:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746625345; cv=fail; b=pHY8oxC5EciIeRr/Tedl7fZPkOocA0bUpPoNRQ7C5e4S78VE/PPX1x2yeIK8gmjU96lttGK2UfhDOENOu0RVc5QeMphxaKqyv3XlIowmYPBv0l2wKYaXB1X0rGiYqvIxXKjGPkj6f008vxhkr0jubyOVPxH91TfZMFhK/K5he3M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746625345; c=relaxed/simple;
-	bh=McjA1vkFv9sUMKDfU9AmUcPWS8yXj8KTH+NwYoOQIxU=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=iCklvIpI9o5STghyob/SiaW0MzqQyrQn7YH2uKc7uyF+VcyVWv3qlrwBrMPaDj7ss/nPnDyBxuladkyMWT14sbd57g6yKMX88hofdQFGDvdZIZfHK9w6uKBe6ecgTbgfcy/TsXZhb5Cb0Waqxo1fc+vlyUS24AXVycxiclpGqNA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n6aZXoQM; arc=fail smtp.client-ip=40.107.223.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vXy/4IVyH3vkkIfMwEst2GAf7d9vTwf8Zw6jtFMA/BmUY+37zcoeuiwgPMMQA6YpHdBUtlpJv7ezGFpHHsjkJzQ7VatstOAH43dShwrmQw861cPBbu1hr2vStGazGbiOA5ruTbclj97Q1FWr/6MfQrpLBWTPYK04qlk2BFRrnH5Ki9KPqdwHWEKxqsJ0XxlEiMdE7iRumt8CV4kWzst0F8xUAjvMcfPw5EolaWDRcfaOCQQv92iv9C0WAJ8iB3dAoxmyAmJNana3dVITW5zVgBXRCf5P9iuWhMCEl7X4kRQpnjqLGLkGunt2jM6n/nTCD49SDmX35Ji1ndOzm2yXSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g353OcRqUyim3joaoyXxo6Wn+lexsELnIzxqyjw5zc0=;
- b=B1aJ5TWzkENgW3JbhiIx3csvbInmEypkpAmqmxx85WAvXBVPGqQvI6tTgC7P8c2hR0LKHOCoGb0PeebDJXCKJud2oU5s0LIUF5OiRRuLWNbgLpDw2SxyvVaE6jJcnJi9z3NXuRSET5aZmH8uPrqXQ+BjmNEdoiXtXqTGm3tNaLus+P/1TcZUe7ew5142klR42V4HHK0tEjQJJ2cE3VSZqd7nGYfADbza0aJGcPthqgyue7k0PPWxH0ZK1Yxoli0wmqyStanYOxUlTRnsHZyvd3xVlUa9YX+5KxpepGobT0of6JrO4sGdoBrYsfsMmKRh4g+kegKyqE3RkXM1sYLlEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g353OcRqUyim3joaoyXxo6Wn+lexsELnIzxqyjw5zc0=;
- b=n6aZXoQMqAw4VeAc7wicKE7kZu4vUVg8fddBzFKgNb+XYMuKkW7bYkH1fh/a4ypFEvuQu/AAcM9snPoq5sk6c50tLlFk7FGX0X8jgywYGdfogrjG4FEWIoimvT6ngi1g7YY7HQOZQ2DW+mDB3ioeZVZ9YJH5/hElt3UaNWFKdlSc/0Ug3G8sQ218FihpravtbRe/tA6hyhvMFtL/3c0waqngyG21fXCC1P93YEgZkxi6Yo160zrO+qvRoiVXauUw6iAUWzbAUJggv27Z+okfnTn92SEIvX84/NVr4CEGAFkkRnVctL60tDtSs6wM35hb4S3rAyOLW0XcT04wxuRgvw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DM6PR12MB4356.namprd12.prod.outlook.com (2603:10b6:5:2aa::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Wed, 7 May
- 2025 13:42:17 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8699.026; Wed, 7 May 2025
- 13:42:17 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 07 May 2025 22:42:14 +0900
-Message-Id: <D9PZ09J54KJ1.3F0PQFTZ1Q8QO@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "John Hubbard"
- <jhubbard@nvidia.com>, "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>, "nouveau@lists.freedesktop.org"
- <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Ben Skeggs" <bskeggs@nvidia.com>
-Subject: Re: [PATCH v2 09/21] gpu: nova-core: move Firmware to firmware
- module
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Timur Tabi" <ttabi@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>,
- "a.hindborg@kernel.org" <a.hindborg@kernel.org>, "ojeda@kernel.org"
- <ojeda@kernel.org>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
- "simona@ffwll.ch" <simona@ffwll.ch>, "tmgross@umich.edu"
- <tmgross@umich.edu>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>, "corbet@lwn.net"
- <corbet@lwn.net>, "mripard@kernel.org" <mripard@kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "benno.lossin@proton.me" <benno.lossin@proton.me>,
- "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "airlied@gmail.com"
- <airlied@gmail.com>, "aliceryhl@google.com" <aliceryhl@google.com>,
- "gary@garyguo.net" <gary@garyguo.net>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250501-nova-frts-v2-0-b4a137175337@nvidia.com>
- <20250501-nova-frts-v2-9-b4a137175337@nvidia.com>
- <8bd3e3621e810dca2b71f287708ccf41861a9c93.camel@nvidia.com>
-In-Reply-To: <8bd3e3621e810dca2b71f287708ccf41861a9c93.camel@nvidia.com>
-X-ClientProxiedBy: TYCP301CA0040.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:380::12) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA753288C86
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746625380; cv=none; b=OmtbqiMrG3I9LX7h74UKjjkumhs+C81+nKBQK5X79K5Co6ZZJBGiKU2TYKYKb/u0GRSwWcyVu+K2UvCuhfJARasNUPtIJ0qFE2P0b+zsA3dxjDAvvrImBisbuuuOFViEzdXd18bHlSqtAbhoWW9tZdcnF9Urx3VgyXWbSAUOeRk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746625380; c=relaxed/simple;
+	bh=gfPEo3NWV+W3SYgvOno1DoPJozINMpxeXLT70lEApEQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DlKZ1iW6LhJFvS5WxPUMArEKYj8BnWjqZlTTKmq+9D3zHQHxi0IlI2wpZZZh6MllHRFC7md5FA5Dami37i3S2SX2lNwljvKqX75pi0werb9WWyjVnruQmImNBMwVfBL9FVKwZevhPFqvJaeV2H9DTFjZqpOEE574rpiehmOtvxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCuTsq7u; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2295d78b45cso89352695ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746625378; x=1747230178; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yEzvyaIeUWfNh53adg2EagZhMh381tDgk6SX1hFdB3s=;
+        b=UCuTsq7uyzUXnNg45kvwVzwBi0ZuGWMKWXELsrAWwTZIg9GLbgnOkkf4DZ4qkd21us
+         5+igOHx35kNlAFa0wXG+kG0YDvVP6tyaryohMNNRbHdzGh+ec96BUIKuBYokgfHR+ujc
+         PIkvKKJrwB2ncTLEKor1O6XFfihm+HWoBchIu+FIN9/Nx2qhNWxVr5NDZg1YW1kgJoUH
+         QwKab62fiMz5svIZnhoml9upDxrXKLcbyBwRjq6UsasioGHL8D7jhXliNcB1G1Szoq3J
+         50BuTfHDyKeTsDg9c00PfmXMqut1/nhdmsB4P6L67lvaNZZZnrGv62LE+2cdwLJEMIc2
+         /WDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746625378; x=1747230178;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yEzvyaIeUWfNh53adg2EagZhMh381tDgk6SX1hFdB3s=;
+        b=mcHKHFlDK5Qd7k9D3gxFntRCgqoVz3852kEUfagBUmwyqUvmuAiGBfwVXrWs2OYXVz
+         EqvZDyVZEtS4j4nS13LXAgQ4CKdMXnh7QIUm+jpEkV25dWB8n5V8aYue0YMW27oKDM9T
+         9qJKewRDnoAJLNGTaWZCsoKBkmtyT88LQfS807Inx7IL/ea+2AMxvbDdzlN+GgZ6tluV
+         C+vcwZ4T20ItXWTCWHW6Wxe2vjLRrVgnIg03q4TOC0H4eDdP5TBkJHdY9H87BvX/Mk4u
+         TjRUjJyhvntFVRl3uNA8JW8qkiyDrYYlNlnA+SlnLZGy9S5VmuXMcDh47WJ9EYcQ6qx1
+         wP3A==
+X-Gm-Message-State: AOJu0Yy9gf7+9GllAl4wzkDv6ezNUXIlAWnQ9JGGgQXGMzM1tK99xfB0
+	cYlwE1FHrFzocJUFR/zVZ+H5qNf2P097cJnl7Adn7XVjriF4iaP1
+X-Gm-Gg: ASbGncs5CM7/k4cXSHPuBvDFH1WFKTFWkXHasURzKQAy+lWUbRcp5RMoOH3BA9F8ISn
+	1f7vkOxZopGBGlrd7ea8aM4t7+hQpxFXv+Spr8xRT07DwVeLsh/lwjDszHaeoqodt+6sAmiJTOi
+	5eo/VlAvG0VTcGFw8/4j5foA/1pH17PomqqFQ5B5yDzsQ2zjwQQOH9u0/PixVq1MKJ3kPP7e4co
+	gB+h8eXo6Dzdg3j6ygDSwWlzef/RxtBegHidsVmlR2rjT8LQ80Jz8Gb/zF174OyDJbTZASyPoDi
+	Vi//M8n9LaRgnoEQrU/5cmgcFq/WrMkDszYiUtaoCa95OGoc2EJIT2W9I+PxA4jAaWWYy2l55O+
+	yrA4=
+X-Google-Smtp-Source: AGHT+IEtopYEefji9CmKqJVqq5f/UbbRIeFFfRk5+aAht1G3nCJXbk0iUS2A6pAUVDK6e5pGv1om8g==
+X-Received: by 2002:a17:903:1095:b0:22e:6791:1b9a with SMTP id d9443c01a7336-22e67912081mr23644605ad.0.1746625377856;
+        Wed, 07 May 2025 06:42:57 -0700 (PDT)
+Received: from KERNELXING-MC1.tencent.com ([114.253.36.190])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e5d633ccesm19404405ad.228.2025.05.07.06.42.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 06:42:57 -0700 (PDT)
+From: Jason Xing <kerneljasonxing@gmail.com>
+To: johannes@sipsolutions.net,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	m.chetan.kumar@intel.com,
+	loic.poulain@oss.qualcomm.com,
+	ryazanov.s.a@gmail.com,
+	axboe@kernel.dk,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org,
+	zanussi@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jason Xing <kernelxing@tencent.com>,
+	Yushan Zhou <katrinzhou@tencent.com>
+Subject: [PATCH] relayfs: abolish prev_padding
+Date: Wed,  7 May 2025 21:42:25 +0800
+Message-Id: <20250507134225.63248-1-kerneljasonxing@gmail.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DM6PR12MB4356:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5848b89-a743-4670-5fde-08dd8d6cfb80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|7416014|366016|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N0FrYUYvanFTcGZDTml1QjFGbVVzNkh1RmN1OHprcEdBRmlnUEJobzdsVjk1?=
- =?utf-8?B?ck0rdXRPeHhZMjQxMU9ZUkg5T3ZCamU2VTFVZ3RZS1hIYkRrTDRLdzN5VVBZ?=
- =?utf-8?B?QmJSRmxrZTh2Y2ZhV0NBdEZ6WnB4enQzM3BHNW9aWm8vM1NFMUlwaFlYZUlo?=
- =?utf-8?B?NjllT1NtazJvUzg4YU56OVB1dVNiL3NBWEZqQVNxQXZCakF2Q1N4Uzdsd0p5?=
- =?utf-8?B?L1JnSk9ENHIzRGZJU3EvQzFUK1oyUkY1Nk9uSVR1QW1YTlZFdnMxc0tRTGtJ?=
- =?utf-8?B?UVlrRVFxNTF0OVUycm5oYTdpL3RDRk41c20xR0I1UjRONXovUTFRdDNRc1Jw?=
- =?utf-8?B?ZWFDejZwWGdONTdXTVZ3cWFuN3VlMVdabERJVGFNQm9PTUtTbHlralRlbERJ?=
- =?utf-8?B?Q1ZCc1FMOHYrT2gwbTFhTzZKTUVoNFk5UFVmb1lFQ2ZVNFd5bEJKZHFjK1BN?=
- =?utf-8?B?bjBjQ2VWUmFHdWxmTHVPZDJxenJUOEU2SG1RcXQvT0xCc0N4d0pEdmV1dmJj?=
- =?utf-8?B?QXRHcW9pZGtleHlyVUh1YVJpeHBpWEZodVV2UHh2V09yQzdESUoxZjJyckRw?=
- =?utf-8?B?OTYrSGVBaWVPQTE3b1F2MG5BeGxUeGJvUmpsRlkyVDQvNk5YSnpMZXA2THpa?=
- =?utf-8?B?eTQwTit2NjdSMGhlcDRTUGVyL0dzOGtURTZJQnlWdDgzdjkyK29SKzVldHBV?=
- =?utf-8?B?OXFHeGdEUXptaTM2ZjdmY0wyb3VYa3J6cDVoNWlWeUhoVmZsRDk3VFg0NWdy?=
- =?utf-8?B?S2t2Vzc3dlNpMGV3T29lRGZBRDBJT1ZsSHNpcThLTXFLYVZqVkl1WWFtbkRH?=
- =?utf-8?B?aG92eWp3elZhMGRQelFWYmhLMjJSQ3NOekV0VzhvSnNrbnB6NWYwZUs2dC9T?=
- =?utf-8?B?SHMrR3VCTVdPeDc4bUxibDQ5SWxtSUFQSlpyYjJvamliMDBQSGdwSWF0cW1z?=
- =?utf-8?B?MTdWT0N3KzgwNlhIb3BIb1F2bFliUEZTTm1XYU5kRGJ5SExoS0V0QlpBL1gv?=
- =?utf-8?B?MUgxMVl3clRFdnphWUMvR0NpRVV6VkVzTzZEVTV0WjZHZmc0S3liYUp5TTMv?=
- =?utf-8?B?V2R5RGZwbmptSTVyTDlkUUxUZHhNMnpBMXpIeEhHWkoxOGNUQTEzSHFaZmRJ?=
- =?utf-8?B?YmU1eElYWVg2ZVF2cWtDSE1kdlNxSkg2bWxWQzBWN3lYMlNleG5EUmhCOWxG?=
- =?utf-8?B?dDdwVHRBQlcra0RJMmZIR0t1TmF1TXJzUldFSERvdUdVa01jNU1ZY0NRa2tz?=
- =?utf-8?B?ODRISTh0bXduU0JkREZVK3NxRWJTY05tV2NHT2lES1V2cDZzRTNPUUhIYlVl?=
- =?utf-8?B?ZUxpem13QTYwb21WOTV6Q3FuQjArSm0zSjMxMFVhaFMrbDdUZElGOFZNK0pD?=
- =?utf-8?B?dmVIb2QwMUtteWlIWk96b0ltNXVMdDJHVHR6TVFHY2xpd3VYNWRhOWhVSm9v?=
- =?utf-8?B?UXhDVis3aUVIcWFpeXlucDd5OHNVQ256dzBDcHhrdVJHVGhSWEl6NUFPMzdF?=
- =?utf-8?B?ZE9XRXFSYVpSK0RaK2RvMlN2eXpHN3NyOGtaUFFLY0R4SEkwM2NsZGJhWTd1?=
- =?utf-8?B?ZVpzME1TNDZNTWhRM3kvc0xETEs2QXZnem5JY1pLcURONndjTzZOYUMrb0Zy?=
- =?utf-8?B?MlNsQTdIN1lsRURsZ2NsakZUaHd3SUJkS0V5VEJEd2l1RHZCSnBLeGpwc25p?=
- =?utf-8?B?VDI2ZkdtaU52RjRtL1UrYk1tTy9UazhzTytRc0pGUmhxV2E2T0NIODZnSS9B?=
- =?utf-8?B?aldSb0NraXlqeCsyQ0JOQTRWK3BTMVdpWkFlME80MnozTjR6eVpjUHBMdlJu?=
- =?utf-8?B?N0ZKOVgzSUd2NWRFdzR1WjRXc1V4V1dFb0tPK2RZaDlxTzVmY2wvWUIrTXcr?=
- =?utf-8?B?QjFoUnYvQXlKRnVHZ0FiWjFWa1MwMHlTOTgzQU1RMnlaQTJzQlRMcXBhVlJa?=
- =?utf-8?B?MDRXU3BVUXZZNW81MWlaZTQ3MG1OVi9YZVhTdllwa2ZoVGJHQkxsWTRaYWNz?=
- =?utf-8?B?VytLYStoWDR3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(366016)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cWxHUkZxV2NKSnNiSzI0MXhlRDZaRkN6UDlYemxlRTl6ck9KS2ZvWWRRU2FG?=
- =?utf-8?B?THAxTTNFN2N3RUV5bnJ5VElkdzVsVnVjU3Jad1AvQzFhS216Y1RNTi96S2ZN?=
- =?utf-8?B?Y25Qa0ZYS1Z0YjY4ZGFMcVpTZE1JeUd6VThSS1FqRGptcmgyNWt4YUdXWFN5?=
- =?utf-8?B?OTlpczhqUFlrOTlvOE9nT3hDSW14N3licHkwYS8rbVk5RHBHU3N6amNFaWY4?=
- =?utf-8?B?UHB2MzlLaDFERlpNSEVDaHVVNGFXWnJJN045cDB3YXNBOUNHTi9xd3dTU1ZV?=
- =?utf-8?B?YkFySXU1OStkWHllUHNRVjd0aythZkkxeFFYZTlONEFOMVpVOU95QXFUZ3BP?=
- =?utf-8?B?N1hsQjVhWVJDS2hvTmt0VXovcmdJWE1uTjdSYXlTcGFYVnVtc3dtOVBBVjFH?=
- =?utf-8?B?L2xJMGxOaUVQNkd1SUEwVGdRSTVLUVNzWmRmZlZLSVp2RXBqUFpFU01Cakxh?=
- =?utf-8?B?NVpyRzRRLzl6ZE54OHZxZVVjYVBLVjhEeDduM0hXeHRkb3k2MEEycm1CL05H?=
- =?utf-8?B?amRQY2QrdFYxWXBNQkFoUzZNUlJMK2dqa3pGU1MwOG5iWFNWSDh6Q1FzUUNS?=
- =?utf-8?B?MnpYK2NRK000NVBVWUl0UzVDV283bnh0UEhjQ2VMUjlvOHFJeGtJVTZGZDF4?=
- =?utf-8?B?VnpFVTZHNGR3dTcxcno5WkFhNms1RUZqRG9QWHZWeTd1TnZ2dW40VmQ4a2J2?=
- =?utf-8?B?eWJ4MkYwY0Rmb3hCcm53Qkx5RHJweTZhSXBxa2FORmloNkR3amlmSkprL05u?=
- =?utf-8?B?WjRxQktSblR5MGNJZnR5NjI2NDROVmovOHVpWmtaUXlGcjJMYWlURVE0TnBS?=
- =?utf-8?B?RDRDT1RBUzltWWk0VkIrMkhHMkZYR21tU0JVWGZ5UzFmbnYvRmRyTWxKcTcz?=
- =?utf-8?B?RWM4R29QdXhhOGNxMEtGZGJkMzA0aHd3eTBoaEZ0aGI5RFlobmxUTTh6Q1NY?=
- =?utf-8?B?YVlrUDdObExnbUZoTXRtV1JDRW1VRHhETGd0cnp6anVmVU5sRjZ6bzdZaXJU?=
- =?utf-8?B?U1AraHJaQTl2N1R3bTVqZndjZk1CcmJCK2x4QUE0OE4rUWJLakxBTGd2TlFS?=
- =?utf-8?B?Y3NFR0Y4Y0JBYTVMMWNlVUJzb1dOclNhNUE1MzhzY1dlNTJuMjFTcy9LQlZV?=
- =?utf-8?B?ZXcvU0pKMFpmTkRDZEc3R0dHd25KZTloR01seGJlQ3Bmb2hXYXg4R3g2VmdT?=
- =?utf-8?B?M3Q0UXpqUmFsM2ZSb3BRai9vK3RYZndFUXpTMlZvc3RXZEpsa1FlbmRVVWFD?=
- =?utf-8?B?NmV6aElQVVFsZ3JvZnJrQnExKzlGc0pQWVlMM290R2pwYjJEd1VpS3ZJODQz?=
- =?utf-8?B?VE9RRVV2bkpYc3RrcmxVRm1iejRqeHBIdlNNbFJ6bXZlWkNmbmh2bVhXVTRU?=
- =?utf-8?B?QlBvWVNNcURqUDEwTEtoVUZ4SzlkOXdTWGlRL05kTCt3Ly9zdEpUSkxtQUc5?=
- =?utf-8?B?K29sMmFmQnNPRWR0Mk10OGJlNStET1NTNTdwZ2x2MUZCelBLMkdwNElmTWRi?=
- =?utf-8?B?ZHZMV0F0blQzQXkydFNpNWN3THBIdmp0UU1nTDUwdGM1cEJEeEtKanRCTU5l?=
- =?utf-8?B?MXM3aHVKVWNCaEo5V3JNaFpCTXVnNGtkV1dSYzRKVGJ5V1laRVQ0V2pOUWE1?=
- =?utf-8?B?SThCUmlpRkUvL054b2ZJajUzSk1MRFQ4ZGxINkp5SXpkVWpza2NkcWkrTHZa?=
- =?utf-8?B?VEpaRmdqNERQRDhCSDZLdmVVSG5GQjRXcjR4M3lmbzNvcXcxZllzSXBDZ2J5?=
- =?utf-8?B?K3V6VWRyL0dmZGVuQy9IVnAzcGpwdGRDQzhpMExydjdQc0xQK0RzVlgvaS9S?=
- =?utf-8?B?MmJIVXFzV2RGZVRhY1JrS2JnVnVnekN4eGNnZDZJSk9mTW40cVV1d0FUQ3NP?=
- =?utf-8?B?b21rTTY1ME1lbk1oam1OTllkUDI4QWNJN1g5NDZ2NmZWdndFNlNiczVySzZx?=
- =?utf-8?B?VkkvbUI5d1VUd1RSbWw3UTJYdUVyOW5DdFpSckJ5TlZiUzBLV1dZcy9idFRv?=
- =?utf-8?B?YkZlNEFtdnNtdVM2dDIvZ3lBNDBEUnJRYVVhdlBEdFRUQUlUZXhDRGl6WFpL?=
- =?utf-8?B?c01tR0NRRnY4ZTZnOVl5dFM0cDFYK1NsYk1oTjJ6VC9yY2NKbDdqaG5PMjNh?=
- =?utf-8?B?WXprcStTK0tqVTNYV0R2ZHpvRE9IbkdMdXZyZW9BNmlKRXljdEpiSTc5Qmpv?=
- =?utf-8?Q?IRgmK397AFABfcEczv/BLumGzPPMrqcpTlNZT3bN1PFH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5848b89-a743-4670-5fde-08dd8d6cfb80
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 13:42:17.4086
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DATupA8O4aeG7HydqcCzADWHLRJsSV6Xz0b44igdoH02GKT5DwKzZ+zxq2Jve0lq24B4WeHMQEszZpWxJhfi7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4356
+Content-Transfer-Encoding: 8bit
 
-On Sat May 3, 2025 at 6:14 AM JST, Timur Tabi wrote:
-> On Thu, 2025-05-01 at 21:58 +0900, Alexandre Courbot wrote:
->> +pub(crate) const FIRMWARE_VERSION: &str =3D "535.113.01";
->
-> This needs to change to 570.144.  You can find images to use here:
->
-> https://github.com/NVIDIA/linux-firmware/commits/nvidia-staging/
+From: Jason Xing <kernelxing@tencent.com>
 
-I have the patch ready for that, just holding on to it for now because
-nothing it done with the loaded firmware yet, and getting r570 adds one
-extra step to testing this patchset.
+prev_padding represents the unused space of certain subbuffer. If the
+content of a call of relay_write() exceeds the limit of the remainder of
+this subbuffer, it will skip storing in the rest space and record the
+start point as buf->prev_padding in relay_switch_subbuf(). Since the buf
+is a per-cpu big buffer, the point of prev_padding as a global value for
+the whole buffer instead of a single subbuffer (whose padding info is
+stored in buf->padding[]) seems meaningless from the real use cases, so
+we don't bother to record it any more.
 
-Once we start loading and running Booter I will switch the version to
-r570.
+Reviewed-by: Yushan Zhou <katrinzhou@tencent.com>
+Signed-off-by: Jason Xing <kernelxing@tencent.com>
+---
+ drivers/gpu/drm/i915/gt/uc/intel_guc_log.c |  3 +--
+ drivers/net/wwan/iosm/iosm_ipc_trace.c     |  3 +--
+ drivers/net/wwan/t7xx/t7xx_port_trace.c    |  2 +-
+ include/linux/relay.h                      |  5 +----
+ kernel/relay.c                             | 14 ++++++++------
+ kernel/trace/blktrace.c                    |  2 +-
+ 6 files changed, 13 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_log.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_log.c
+index e8a04e476c57..09a64f224c49 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_guc_log.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_log.c
+@@ -220,8 +220,7 @@ static int guc_action_control_log(struct intel_guc *guc, bool enable,
+  */
+ static int subbuf_start_callback(struct rchan_buf *buf,
+ 				 void *subbuf,
+-				 void *prev_subbuf,
+-				 size_t prev_padding)
++				 void *prev_subbuf)
+ {
+ 	/*
+ 	 * Use no-overwrite mode by default, where relay will stop accepting
+diff --git a/drivers/net/wwan/iosm/iosm_ipc_trace.c b/drivers/net/wwan/iosm/iosm_ipc_trace.c
+index eeecfa3d10c5..9656254c1c6c 100644
+--- a/drivers/net/wwan/iosm/iosm_ipc_trace.c
++++ b/drivers/net/wwan/iosm/iosm_ipc_trace.c
+@@ -51,8 +51,7 @@ static int ipc_trace_remove_buf_file_handler(struct dentry *dentry)
+ }
+ 
+ static int ipc_trace_subbuf_start_handler(struct rchan_buf *buf, void *subbuf,
+-					  void *prev_subbuf,
+-					  size_t prev_padding)
++					  void *prev_subbuf)
+ {
+ 	if (relay_buf_full(buf)) {
+ 		pr_err_ratelimited("Relay_buf full dropping traces");
+diff --git a/drivers/net/wwan/t7xx/t7xx_port_trace.c b/drivers/net/wwan/t7xx/t7xx_port_trace.c
+index 4ed8b4e29bf1..f16d3b01302c 100644
+--- a/drivers/net/wwan/t7xx/t7xx_port_trace.c
++++ b/drivers/net/wwan/t7xx/t7xx_port_trace.c
+@@ -33,7 +33,7 @@ static int t7xx_trace_remove_buf_file_handler(struct dentry *dentry)
+ }
+ 
+ static int t7xx_trace_subbuf_start_handler(struct rchan_buf *buf, void *subbuf,
+-					   void *prev_subbuf, size_t prev_padding)
++					   void *prev_subbuf)
+ {
+ 	if (relay_buf_full(buf)) {
+ 		pr_err_ratelimited("Relay_buf full dropping traces");
+diff --git a/include/linux/relay.h b/include/linux/relay.h
+index 72b876dd5cb8..f80b0eb1e905 100644
+--- a/include/linux/relay.h
++++ b/include/linux/relay.h
+@@ -47,7 +47,6 @@ struct rchan_buf
+ 	unsigned int page_count;	/* number of current buffer pages */
+ 	unsigned int finalized;		/* buffer has been finalized */
+ 	size_t *padding;		/* padding counts per sub-buffer */
+-	size_t prev_padding;		/* temporary variable */
+ 	size_t bytes_consumed;		/* bytes consumed in cur read subbuf */
+ 	size_t early_bytes;		/* bytes consumed before VFS inited */
+ 	unsigned int cpu;		/* this buf's cpu */
+@@ -84,7 +83,6 @@ struct rchan_callbacks
+ 	 * @buf: the channel buffer containing the new sub-buffer
+ 	 * @subbuf: the start of the new sub-buffer
+ 	 * @prev_subbuf: the start of the previous sub-buffer
+-	 * @prev_padding: unused space at the end of previous sub-buffer
+ 	 *
+ 	 * The client should return 1 to continue logging, 0 to stop
+ 	 * logging.
+@@ -100,8 +98,7 @@ struct rchan_callbacks
+ 	 */
+ 	int (*subbuf_start) (struct rchan_buf *buf,
+ 			     void *subbuf,
+-			     void *prev_subbuf,
+-			     size_t prev_padding);
++			     void *prev_subbuf);
+ 
+ 	/*
+ 	 * create_buf_file - create file to represent a relay channel buffer
+diff --git a/kernel/relay.c b/kernel/relay.c
+index 5ac7e711e4b6..5aeb9226e238 100644
+--- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -250,13 +250,13 @@ EXPORT_SYMBOL_GPL(relay_buf_full);
+  */
+ 
+ static int relay_subbuf_start(struct rchan_buf *buf, void *subbuf,
+-			      void *prev_subbuf, size_t prev_padding)
++			      void *prev_subbuf)
+ {
+ 	if (!buf->chan->cb->subbuf_start)
+ 		return !relay_buf_full(buf);
+ 
+ 	return buf->chan->cb->subbuf_start(buf, subbuf,
+-					   prev_subbuf, prev_padding);
++					   prev_subbuf);
+ }
+ 
+ /**
+@@ -302,7 +302,7 @@ static void __relay_reset(struct rchan_buf *buf, unsigned int init)
+ 	for (i = 0; i < buf->chan->n_subbufs; i++)
+ 		buf->padding[i] = 0;
+ 
+-	relay_subbuf_start(buf, buf->data, NULL, 0);
++	relay_subbuf_start(buf, buf->data, NULL);
+ }
+ 
+ /**
+@@ -664,9 +664,11 @@ size_t relay_switch_subbuf(struct rchan_buf *buf, size_t length)
+ 		goto toobig;
+ 
+ 	if (buf->offset != buf->chan->subbuf_size + 1) {
+-		buf->prev_padding = buf->chan->subbuf_size - buf->offset;
++		size_t prev_padding;
++
++		prev_padding = buf->chan->subbuf_size - buf->offset;
+ 		old_subbuf = buf->subbufs_produced % buf->chan->n_subbufs;
+-		buf->padding[old_subbuf] = buf->prev_padding;
++		buf->padding[old_subbuf] = prev_padding;
+ 		buf->subbufs_produced++;
+ 		if (buf->dentry)
+ 			d_inode(buf->dentry)->i_size +=
+@@ -691,7 +693,7 @@ size_t relay_switch_subbuf(struct rchan_buf *buf, size_t length)
+ 	new_subbuf = buf->subbufs_produced % buf->chan->n_subbufs;
+ 	new = buf->start + new_subbuf * buf->chan->subbuf_size;
+ 	buf->offset = 0;
+-	if (!relay_subbuf_start(buf, new, old, buf->prev_padding)) {
++	if (!relay_subbuf_start(buf, new, old)) {
+ 		buf->offset = buf->chan->subbuf_size + 1;
+ 		return 0;
+ 	}
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index 3679a6d18934..d1a89714e805 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -461,7 +461,7 @@ static const struct file_operations blk_msg_fops = {
+  * the user space app in telling how many lost events there were.
+  */
+ static int blk_subbuf_start_callback(struct rchan_buf *buf, void *subbuf,
+-				     void *prev_subbuf, size_t prev_padding)
++				     void *prev_subbuf)
+ {
+ 	struct blk_trace *bt;
+ 
+-- 
+2.43.5
 
 
