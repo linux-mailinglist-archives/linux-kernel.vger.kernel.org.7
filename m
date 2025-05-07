@@ -1,133 +1,105 @@
-Return-Path: <linux-kernel+bounces-638034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009BCAAE0A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FD4AAE0A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4EE93A8C0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1293A5AA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62961289369;
-	Wed,  7 May 2025 13:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFDE288C16;
+	Wed,  7 May 2025 13:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAESpbE7"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOZWrIuP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086C928934C;
-	Wed,  7 May 2025 13:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE15426A0AA;
+	Wed,  7 May 2025 13:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746624305; cv=none; b=FE9AOL1haemR+ceDJAnYKjIdtEwU0xs4iNZHkMBdxzJZR/6olMZZ+rZIZdM0/qTZ7u6zY9MKggl9zUdzUbdVxKEeyzzCgiA6miEYUe+AdZ4npfAfZxaTyPi2WU6U9xgufPuQP9NWDYUP9a1ocwr6EmF9678wvytuzUQ0yHeUhmA=
+	t=1746624300; cv=none; b=VDjwvoiJ5NPk+qwm1RZsIMzTU0BAMp43DSb09tiFxLZ60s4OkcdpdixKuHvLzcQY65t71joVuJrD2UV0Qae4VMrYYt1JLLYGASvEfuXjhEBWpwUnE3Fk5FF4Lss1DIZ5gpqv9RzNbH2sLb2JoL+GQkyaK4jjOZvuSHeMnxKHNMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746624305; c=relaxed/simple;
-	bh=tmAzgqdFUhv7D3TEEOzATF1+3A7Oy4p8s+Yt4t2a+x4=;
+	s=arc-20240116; t=1746624300; c=relaxed/simple;
+	bh=oKBYwKfrfI6NoCrzA+Pw879j08FdOnSRP+qbgWIEpLY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BHXfBV97a3WdCema0VSDXeuaZHbQnA2W6x44aXcuOthcDnojpaqp9xfudrN1mqfS4jxpHr5EzY/rqkKXNb/dClmUMuwLanPjZpZh2TTAVQpt1V1UoJ2ZSA3ZAVKTOQXul2EJpq6ubvjGk1BcMehGav0wxnl+GR/FTPBAagDmPSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kAESpbE7; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso563282166b.0;
-        Wed, 07 May 2025 06:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746624302; x=1747229102; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FNK9TXRAZQx3t8pFiOXuC7lEgpm/XQ/fl6MmaDUuV1M=;
-        b=kAESpbE7Lb2WdbkjAKxGE6E1KC9SIH5rPunPnfd37krP1ed5kMjSOsOA5lpoB3CLGB
-         aPvBTFwyCHFmtca49OzQIUmdbK1cBKHCsHnLovKks4XHr8sSdofNexKykEoSNzuv+TqN
-         Hk5jo7/eEBXqz4yY4gpY4prplre2nh5ovw3PiaooCr/1lPraVUwBuavCL0jwbaKtyVw+
-         pmbtEBhO8BVy8t4TKp5RyEBWv6NNODCi4FmNidd97T6udpFRTiPVM9AgkJ6/ewCOB1wm
-         Y2R8u5HoHSW5fyk0WF2z6tjV68cIR1QYQGl7daex7sE90lPnf1E3mgxrvW5L1yOelE/b
-         +0VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746624302; x=1747229102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FNK9TXRAZQx3t8pFiOXuC7lEgpm/XQ/fl6MmaDUuV1M=;
-        b=vwk73EYr7IiKBnafKxq1sz7J2nlgowcaXaE5TOkD7d5FVN6yQOmX29qHYZaXG+0gE2
-         4iinykH8+rW1RGshgfDmUdh8jkJkWWaqNiKU+d88FbPKSAmyNNd3BC7mhEVc+t8LDCls
-         +bnmUuYKa+k/gYwkz1XqFLWGTZPFi4wmqrfnqsHxFpGQUwStsrS2UQPpgdbS7pQEI327
-         3T4m25t0FiUyyNBr9CUv8EDKiFyfazO6TTmEs2BF1iKKctt88CNl1nV1+JRtKZU9YUL1
-         8yE6WVTzoxpDRmZXJL/ou5mVnfXDf9n9j/2a423Oh1SvG9smxkuXOxoHCXNEDmJmUyls
-         077g==
-X-Forwarded-Encrypted: i=1; AJvYcCUyUNQzJc/tCDKI/iWXIupoeb//chIGBYXx7Np9L7U5s/uJS79aN6XHYU5aFmARXJ2rVnT1GzEAK3m0@vger.kernel.org, AJvYcCVxyIPUA2xFdiyf33sC2fJ1XaSO8QmpZ7/1pPAEgtHKIgWWte3hvDfzGydDxQ/jwlTaTck3f+m9qtLA1z0h@vger.kernel.org, AJvYcCW/qYFsSQNChva4gibqIHpj8w0TNB/lcJ5xUAL9Z4lH+S4N8ys06AMChJcgOFQi9VBOKlwQ8NXeuh/z2z/mPxkw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwioMvlotZvSiPdtE7K/MXDd9uh60+APEDAQfmAyyy9Rioou80C
-	HKaQe7igSQXRdG2L/DRzbf7aBuIHCiJbofMhN+XWhGGwDoQNdkjBPywC187CJGYMuEwYUbY/Vou
-	cMu0OMXNLDb4uZh2D4hbdCK7jAkaylVsn
-X-Gm-Gg: ASbGncsBtlvpRs6Z1dQKBz5ftYBew45N8MmtBZKQV310E1VxRhGepiW4+2XoXVIanQw
-	p9TWn635xay4YT/521qjNE9c6jHvkqsxK7q6Sr1Soz9PM/dOkLFbBajOR5PLpHvfm74mxt1QhPl
-	XNmqU47RuoeHdA4gy60vdxU1tL
-X-Google-Smtp-Source: AGHT+IHy1EPVp61/xmfKkJx7M5e2sjnMM6R2+K4MN9fr5Jbv3S3oFUuFFqA76cSi8wIatUpZHrrUtGhl0K2kjxnH13k=
-X-Received: by 2002:a17:907:970b:b0:abf:6a53:2cd5 with SMTP id
- a640c23a62f3a-ad1e8cd6b35mr343831166b.48.1746624291513; Wed, 07 May 2025
- 06:24:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=YKPdYfBr8lw3TzAfGArUs35E4ed7UDqEDq3aL621Vqp4Ww0BHcxdQ5EznvK0sncKbya77GeRvT+EcLRawVetEz6iVboSvMzuiNbU8R73tU2IPfX37BstSDiimTUVNMw4tJfo2dRragkWeNACeMAO5d3tAqEL2bF+B8u3VhKtdY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOZWrIuP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 568C4C4CEE7;
+	Wed,  7 May 2025 13:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746624298;
+	bh=oKBYwKfrfI6NoCrzA+Pw879j08FdOnSRP+qbgWIEpLY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nOZWrIuPfeIlwySgztRVIUOkaIPlzTPoKkCG+nSPH7c/ELW/NJPZ5FpzMF2oIa6NB
+	 o/h7lAp7lkeWjUF49nr9Wi6g+GM6XE129Asep/Fwr37rRI88X8UYRP+YhOAH2ViGW3
+	 yPzoHyHdT59k/bTsAwY61uKaEH0Vp53qbR85BWmyCFtNq6uV5ADrOxy3xRXHxZyxXa
+	 TjS2Nhs5aVsiIku2WWl/sjlEtIgCYIg3n2h6pWYSJT1nlosm3HUujhtSh+aYVfBrDC
+	 HOjVzwBPHtAjivprktyB0XmOcDIiWuCXfIYu/91yeaBBim03sM8DhRSt5SxTV060qD
+	 MpPW/vZ+PT90A==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2cc36b39545so463617fac.1;
+        Wed, 07 May 2025 06:24:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX49WnVg82pdpA2ujd2fTiZ0EM1FLslpQubiR4QQpraAUDsFIE8Ll5gtsS56g5359dhtNdsQRGVkRyTHz8=@vger.kernel.org, AJvYcCXgAtD3pQNQXfAwF2YC5kAEP1qBjAlq9+us+cKv0nwTVyQvWO5F/pa45tWvmwRfPDsQ/qnj+3Lg9EKZ09M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9zUWleaGyKUx3HiN+vlcThE/3JOhTesqPvvseZ/N0U8DrBpD9
+	szVKGkMzCyU26SjAS1bcMtUjBaouiw6F4zAy6mr2P23KQs5fSA8zVxhDxOnyw3rTeNbcMDtPz8W
+	zpmxaKCYOiQfkNSH4VvJCnZGOU2E=
+X-Google-Smtp-Source: AGHT+IEm3fCKgwOI+5DFmExHa4qQouYRMk1rdrz3LfztrzJ9UvIw1oK34LhH0M38zuIDugSuSenLYL2mAokoL8P7ORQ=
+X-Received: by 2002:a05:6870:a786:b0:2c1:4827:c0e1 with SMTP id
+ 586e51a60fabf-2db5d0c4e51mr1676378fac.17.1746624297722; Wed, 07 May 2025
+ 06:24:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
- <20250506-aaeon-up-board-pinctrl-support-v5-9-3906529757d2@bootlin.com>
- <CAHp75Vdg2LE885+qjpYLkQrdNqaahJc3=Ki7op=6jJUJfJM+sw@mail.gmail.com> <c3b9c494-599e-4d99-8645-589c1c0c106c@bootlin.com>
-In-Reply-To: <c3b9c494-599e-4d99-8645-589c1c0c106c@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 7 May 2025 16:24:14 +0300
-X-Gm-Features: ATxdqUGXLJ378PIXRVvlYYFoCZ00RtoL8KPIUx0XRCLsMFPpNnN-agl8soleSGc
-Message-ID: <CAHp75VcKsq5_+uwwVKeq8++H+Rw1giH-TKUErsFmdKPiu5kY+A@mail.gmail.com>
-Subject: Re: [PATCH v5 09/12] gpio: aggregator: handle runtime registration of
- gpio_desc in gpiochip_fwd
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
+References: <20250501124621.1251450-1-jonathanh@nvidia.com> <20250501-gay-bull-of-flowers-6edebf@sudeepholla>
+In-Reply-To: <20250501-gay-bull-of-flowers-6edebf@sudeepholla>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 7 May 2025 15:24:46 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hcN9B7TukPcE+xAzDEgt66BbnN+SUmuFaWU0ddKjdM4w@mail.gmail.com>
+X-Gm-Features: ATxdqUExsOoWqnuEkJ7CTPUXzCE9bmtB5YeLPc1P6JXyvTEOjlPdMxuDlWNBHGA
+Message-ID: <CAJZ5v0hcN9B7TukPcE+xAzDEgt66BbnN+SUmuFaWU0ddKjdM4w@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: APEI: EINJ: Fix probe error message
+To: Sudeep Holla <sudeep.holla@arm.com>, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 7, 2025 at 1:10=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
-> On 5/7/25 08:34, Andy Shevchenko wrote:
-> > On Tue, May 6, 2025 at 6:21=E2=80=AFPM Thomas Richard
-> > <thomas.richard@bootlin.com> wrote:
-
-...
-
-> >> +       /*
-> >> +        * get_direction() is called during gpiochip registration, ret=
-urn input
-> >> +        * direction if there is no descriptor for the line.
-> >> +        */
-> >> +       if (!test_bit(offset, fwd->valid_mask))
-> >> +               return GPIO_LINE_DIRECTION_IN;
+On Thu, May 1, 2025 at 2:53=E2=80=AFPM Sudeep Holla <sudeep.holla@arm.com> =
+wrote:
+>
+> On Thu, May 01, 2025 at 01:46:21PM +0100, Jon Hunter wrote:
+> > Commit 6cb9441bfe8d ("ACPI: APEI: EINJ: Transition to the faux device
+> > interface") updated the APEI error injection driver to use the faux
+> > device interface and now for devices that don't support ACPI, the
+> > following error message is seen on boot:
 > >
-> > Can you remind me why we choose a valid return for invalid line? From
-> > a pure code perspective this should return an error.
+> >  ERR KERN faux acpi-einj: probe did not succeed, tearing down the devic=
+e
+> >
+> > The APEI error injection driver returns -ENODEV in the probe function
+> > if ACPI is not supported and so after transitioning the driver to the
+> > faux device interface, the error returned from the probe now causes the
+> > above error message to be displayed.
+> >
+> > Fix this by moving the code that detects if ACPI is supported to the
+> > einj_init() function to fix the false error message displayed for
+> > devices that don't support ACPI.
+> >
 >
-> I reproduced gpiolib behavior. During gpiochip registration, we get the
-> direction of all lines. In the case the line is not valid, it is marked
-> as input if direction_input operation exists, otherwise it is marked as
-> output. [1]
+> Good catch, it was silently passing error before.
 >
-> But in fact we could return an error and the core will mark the line as
-> input. Maybe ENODEV ?
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
-I am fine with this error code, but do we have similar cases already
-in the kernel? Do they use the same or different error code(s)?
+Applied, thanks!
 
-> [1]
-> https://elixir.bootlin.com/linux/v6.15-rc5/source/drivers/gpio/gpiolib.c#=
-L1105-L1123
-
---=20
-With Best Regards,
-Andy Shevchenko
+That said, when fixing a bug that is only present in linux-next and
+not yet in the mainline, I'd appreciate a note about this, especially
+if it carries a Fixes: tag, because I do rebase patches occasionally
+and the commit ids may get stale.
 
