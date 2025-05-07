@@ -1,193 +1,118 @@
-Return-Path: <linux-kernel+bounces-638343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E350CAAE4CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B2CAAE4A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0D5F1C42C67
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:28:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F569C3B71
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AF028BAA5;
-	Wed,  7 May 2025 15:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KYk1MjWe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056A128B3ED
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 15:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6815528AB17;
+	Wed,  7 May 2025 15:25:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FFB28AB03;
+	Wed,  7 May 2025 15:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746631568; cv=none; b=GNoEUtD5Qk7D7Mz0EJ8Hcv1wWlQTCq41YOsrgwceMFGo889ilX99gRQ983KW/F1BlcPc5xBeHbCarjDWB7ybnJ62gmX9fL5SrJwcYzxNAuBVLQQ5s0C7Qrp3Zznu1/X8rKXsL2yd26WiBqNCQ8tEUgSdV25nsbtDVezzduDvCfc=
+	t=1746631531; cv=none; b=Mv0t4nMnbHCdFkpqi8Cvexme+gVxcDAeRNMmdTMn0Cf5V3mGvzMkSwzgNs4O8QWV33S9w9L3vmGXwOeMKK0yqrXO9gZpJyl9jkvV9mJvDiV+TMfvkKlMRZiTos+uf9/urBxOgd1pDL4hf4eRunlGob3rMpWYnsxYHiExGvkm6I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746631568; c=relaxed/simple;
-	bh=sKo4FtZtdnOcvr1oQuz2XBroEwdboLpu4/AAykZ6Geg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Pa7dKxtbiwIKiNtV4RifTohksYY4C7A7n8DdinBX1LFsHhlj0wISDfv0eptfRioZPoS038QyCOH2wsN3YqrhuwXcuJ6Vve+LshZSQuvzsNhAu1c+U3DOdakdGmHjj7VkqffBcNTVDoVpPVIIX6U8UxVQlgtMaIDk3G3VR8BTT7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KYk1MjWe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746631566;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N7rsTQVkWdVuIH2kV4e5IulN3mEFFY4EL8PR2r1zcwQ=;
-	b=KYk1MjWeoocHoeLlFgf9A38V6/AYnrF+O399UGTlneCxdxbR1lNiVNpyV+Gsl8USB73+wc
-	0IBb+em9zgnlxfBrn+OQIjQcQ0kI3QgGERvMLrJD16gZHGEhc19myZbE5GtETk9h1qhmT0
-	lWWe+FEMd9wR3QoCoWCBsSHGWMTLJIw=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-NNlbYunAN0qPtBkYUzqRVg-1; Wed,
- 07 May 2025 11:26:01 -0400
-X-MC-Unique: NNlbYunAN0qPtBkYUzqRVg-1
-X-Mimecast-MFC-AGG-ID: NNlbYunAN0qPtBkYUzqRVg_1746631559
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6FB2E195608C;
-	Wed,  7 May 2025 15:25:59 +0000 (UTC)
-Received: from p16v.luc.cera.cz (unknown [10.44.33.91])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 46E9230001AA;
-	Wed,  7 May 2025 15:25:54 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Michal Schmidt <mschmidt@redhat.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH net-next v8 8/8] mfd: zl3073x: Register DPLL sub-device during init
-Date: Wed,  7 May 2025 17:25:04 +0200
-Message-ID: <20250507152504.85341-9-ivecera@redhat.com>
-In-Reply-To: <20250507152504.85341-1-ivecera@redhat.com>
-References: <20250507152504.85341-1-ivecera@redhat.com>
+	s=arc-20240116; t=1746631531; c=relaxed/simple;
+	bh=CLGuly61z6pxnXMpY7OtXp7nCpQcfXJ9VrfOuwL8JdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HSyTl1pNq2xKXjgj0fDW3vqNS5BfYQFGEhwyFMO6SaYBmfyB128Ul/gGdiICeK1I3IKGSIN1xPS3/3zxM3IT27LBznFbI3jZ6BizqH2zR5XEslAjLo8qMf7/UpWTqHQNMuLAyXCUib7saeLDsnj74z8xrYAOX10p9gHdWtxEgkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8166D339;
+	Wed,  7 May 2025 08:25:19 -0700 (PDT)
+Received: from [192.168.20.57] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AA5D3F58B;
+	Wed,  7 May 2025 08:25:27 -0700 (PDT)
+Message-ID: <214c2a2d-e0ea-4ec6-9925-05e39319e813@arm.com>
+Date: Wed, 7 May 2025 10:25:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI/PPTT: fix off-by-one error
+To: "Heyne, Maximilian" <mheyne@amazon.de>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Sudeep Holla <sudeep.holla@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250506-draco-taped-15f475cd@mheyne-amazon>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <20250506-draco-taped-15f475cd@mheyne-amazon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Register DPLL sub-devices to expose the functionality provided
-by ZL3073x chip family. Each sub-device represents one of
-the available DPLL channels.
+Hi,
 
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
----
-v7->v8:
-* replaced zl3073x_pdata array ZL3073X_PDATA macro
-v6->v7:
-* use platform data to pass the channel to use
-v4->v6:
-* no change
-v3->v4:
-* use static mfd cells
----
- drivers/mfd/zl3073x-core.c  | 27 +++++++++++++++++++++++++++
- include/linux/mfd/zl3073x.h |  9 +++++++++
- 2 files changed, 36 insertions(+)
+On 5/6/25 8:13 AM, Heyne, Maximilian wrote:
+> Commit 7ab4f0e37a0f ("ACPI PPTT: Fix coding mistakes in a couple of
+> sizeof() calls") corrects the processer entry size but unmasked a longer
+> standing bug where the last entry in the structure can get skipped due
+> to an off-by-one mistake if the last entry ends exactly at the end of
+> the ACPI subtable.
+> 
+> The error manifests for instance on EC2 Graviton Metal instances with
+> 
+>    ACPI PPTT: PPTT table found, but unable to locate core 63 (63)
+>    [...]
+>    ACPI: SPE must be homogeneous
+> 
+> Fixes: 2bd00bcd73e5 ("ACPI/PPTT: Add Processor Properties Topology Table parsing")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+> ---
+>   drivers/acpi/pptt.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index f73ce6e13065d..4364da90902e5 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -231,7 +231,7 @@ static int acpi_pptt_leaf_node(struct acpi_table_header *table_hdr,
+>   			     sizeof(struct acpi_table_pptt));
+>   	proc_sz = sizeof(struct acpi_pptt_processor);
 
-diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
-index 0bea696a46b8..7b140b614a63 100644
---- a/drivers/mfd/zl3073x-core.c
-+++ b/drivers/mfd/zl3073x-core.c
-@@ -7,6 +7,7 @@
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/math64.h>
-+#include <linux/mfd/core.h>
- #include <linux/mfd/zl3073x.h>
- #include <linux/module.h>
- #include <linux/netlink.h>
-@@ -755,6 +756,23 @@ static void zl3073x_devlink_unregister(void *ptr)
- 	devlink_unregister(ptr);
- }
- 
-+#define ZL3073X_PDATA(_channel)			\
-+	(&(const struct zl3073x_pdata) {	\
-+		.channel = _channel,		\
-+	})
-+
-+#define ZL3073X_CELL(_name, _channel)				\
-+	MFD_CELL_BASIC(_name, NULL, ZL3073X_PDATA(_channel),	\
-+		       sizeof(struct zl3073x_pdata), 0)
-+
-+static const struct mfd_cell zl3073x_devs[] = {
-+	ZL3073X_CELL("zl3073x-dpll", 0),
-+	ZL3073X_CELL("zl3073x-dpll", 1),
-+	ZL3073X_CELL("zl3073x-dpll", 2),
-+	ZL3073X_CELL("zl3073x-dpll", 3),
-+	ZL3073X_CELL("zl3073x-dpll", 4),
-+};
-+
- /**
-  * zl3073x_dev_probe - initialize zl3073x device
-  * @zldev: pointer to zl3073x device
-@@ -826,6 +844,15 @@ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
- 	if (rc)
- 		return rc;
- 
-+	/* Add DPLL sub-device cell for each DPLL channel */
-+	rc = devm_mfd_add_devices(zldev->dev, PLATFORM_DEVID_AUTO, zl3073x_devs,
-+				  chip_info->num_channels, NULL, 0, NULL);
-+	if (rc) {
-+		dev_err_probe(zldev->dev, rc,
-+			      "Failed to add DPLL sub-device\n");
-+		return rc;
-+	}
-+
- 	/* Register the device as devlink device */
- 	devlink = priv_to_devlink(zldev);
- 	devlink_register(devlink);
-diff --git a/include/linux/mfd/zl3073x.h b/include/linux/mfd/zl3073x.h
-index 4dc68013b69f..cf4663cab72a 100644
---- a/include/linux/mfd/zl3073x.h
-+++ b/include/linux/mfd/zl3073x.h
-@@ -12,6 +12,7 @@ struct regmap;
- /*
-  * Hardware limits for ZL3073x chip family
-  */
-+#define ZL3073X_MAX_CHANNELS	5
- #define ZL3073X_NUM_INPUTS	10
- #define ZL3073X_NUM_OUTPUTS	10
- #define ZL3073X_NUM_SYNTHS	5
-@@ -48,6 +49,14 @@ struct zl3073x_synth {
- 	u8	dpll;
- };
- 
-+/**
-+ * struct zl3073x_pdata - zl3073x sub-device platform data
-+ * @channel: channel to use
-+ */
-+struct zl3073x_pdata {
-+	u8	channel;
-+};
-+
- /**
-  * struct zl3073x_dev - zl3073x device
-  * @dev: pointer to device
--- 
-2.49.0
+This isn't really right, it should be struct acpi_subtable_header, then 
+once the header is safe, pull the length from it.
+
+But then, really if we are trying to fix the original bug that the table 
+could be shorter than the data in it suggests, the struct 
+acpi_pptt_processor length plus its resources needs to be checked once 
+the subtype is known to be a processor node.
+
+Otherwise the original sizeof * change isn't really fixing anything.
+
+
+
+
+>   
+> -	while ((unsigned long)entry + proc_sz < table_end) {
+> +	while ((unsigned long)entry + proc_sz <= table_end) {
+>   		cpu_node = (struct acpi_pptt_processor *)entry;
+>   		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
+>   		    cpu_node->parent == node_entry)
+> @@ -273,7 +273,7 @@ static struct acpi_pptt_processor *acpi_find_processor_node(struct acpi_table_he
+>   	proc_sz = sizeof(struct acpi_pptt_processor);
+>   
+>   	/* find the processor structure associated with this cpuid */
+> -	while ((unsigned long)entry + proc_sz < table_end) {
+> +	while ((unsigned long)entry + proc_sz <= table_end) {
+>   		cpu_node = (struct acpi_pptt_processor *)entry;
+>   
+>   		if (entry->length == 0) {
 
 
