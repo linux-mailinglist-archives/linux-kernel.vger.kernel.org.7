@@ -1,73 +1,157 @@
-Return-Path: <linux-kernel+bounces-638798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94295AAEDE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:26:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3C8AAEDE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242293AB50E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:25:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55AD31BA8F1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413D328FFEB;
-	Wed,  7 May 2025 21:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6A22900B7;
+	Wed,  7 May 2025 21:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="GHupnsPL"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dH4tfE0Y"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7713B224FD
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7E7290BAA
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746653168; cv=none; b=mBp9uZz/4rSHlc5cJ12va4WPYFGxtbs31SNwSJO3ql00nWqcWOUFPtZf1gyB/BpEQhdrO71aTjv9l/NvzsiEziKKLuB1k9PQgxEBi1diP27LDteUld5bizZs3Bxql/VsMHwaFWrXUq1pjADRUCYoMpGnnTEaqlmvTWGhd/fs9+E=
+	t=1746653361; cv=none; b=e7PY5nKfbi74YU6jnL1G4NLKtwjB/1qfHnzzXyRzY/pjNFEW3F4k8T01v3twpmvO2K6x7sUuCOycR5Py1CEHpIm9ifD+uObct9DtgabIDSIfdMxZ4IqdDkrlvNEZg7xFbRBXqm1m7uBFNKKs145u/nizjGiuRuGZKFZjyXAq3U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746653168; c=relaxed/simple;
-	bh=jNrTl3ev6sNjWyhFMH9smFCi7OoG4J0ad8AFvnYMofE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9RPr9EDZe6+o2PZ/K2NCHq3ryz1R17R/wx8vSVo/fyDd8aLuw4k6Hz1LXGj1DzYM5/DsUiORLch3PWd/4mHBbH4D19HE7BkOFnRZk1yx37NNacXGx1zG6/YzSTPkwjxV01gDW9pRt6eMLRquUkBf9kLutmN0Zqxf1+m9xbnYjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=GHupnsPL; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jNrTl3ev6sNjWyhFMH9smFCi7OoG4J0ad8AFvnYMofE=; b=GHupnsPLfsFmlCr3C0pAiiXifY
-	u8nIE9IXrz1zcMw48/QjBTEZAV0k14ARdWcnTIkrw084K3+ek7couigf/Cdv33D1Qdofnrd9LAQ/9
-	7i7c6fsx99jgOt760a2ScqtA2CIuMQo7UlLOlJg9d+oBkYvbbGsbqfRa+tl3Oi/j6zrpxIau6J00B
-	ej/6gS4AduYjOeTqwCTQgdQjeJrVnUWRA6V1neJl5XzM1+/e4l3WxN2qWg6fNYzfR6LMeo4PEC8oF
-	GC8OWFuPckFEW+WDVC8+dgQJgU5AG9Zb5faojoVqFJsypqHzhaJkTeOs97cwFTqGpjkUopSHh7tcb
-	17B0O77w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uCmHA-00000001fAp-2aK5;
-	Wed, 07 May 2025 21:26:00 +0000
-Date: Wed, 7 May 2025 22:26:00 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Joel Savitz <jsavitz@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] kernel/nsproxy: guard all put_*_ns() calls
-Message-ID: <20250507212600.GZ2023217@ZenIV>
-References: <20250507161328.156909-1-jsavitz@redhat.com>
+	s=arc-20240116; t=1746653361; c=relaxed/simple;
+	bh=itDl458k7uVLYbXS6omYEo2ddLIr7FLV+Vv/PapWcvc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bLUyBQ73yPKL8oI+57Z8H17XtRxKc3++ulr+JQdsnl7cpZKKi46KSSR7R+lnOjlbp1KFzK8vT4Mc1krjJA3BXneBnwTSc6uQVWDm7An9BCfJHHv2wzrj0B+ZKcUb1F4pZrCk6wMkAnrlmkRv31P8FYJoQ4K01pOKZfAXl88Sf+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dH4tfE0Y; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30ddad694c1so2843701fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 14:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746653356; x=1747258156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yhaqMRAckVsDjsW2PlQVXGzvL7XeevvsZgQHljLFVdo=;
+        b=dH4tfE0Yt/6T66MHDVcdk63ca6KkCZXONDFFLWBoKT7xUWUXHQLdIy+bUWhuCwWIj5
+         Gc3RPFd1AybVnu5686qZITUG/QXbFQi8Uu/4EDN3IDQSr+wbHSaOjaqlYuIAua8B4ia9
+         SUcdBI5yqKYX0enUat+xywH36ifvO68+vXxQ2iC5RWSlu/fcuLF21xHPRJ7xiYQtnBnB
+         jL92TUufIojCgrfFyEBIrFnzAk1T1uvp3qXi8Ey/RzOJ13scL7Dmxw67VSWEMDZRcEZ2
+         tVp0Q2wQR8JXWZIK09Bt5y4gtymY/xzCmsCGTG4fZbHWR0MgyTIZO6kZdboF6Tl98P91
+         p+fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746653356; x=1747258156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yhaqMRAckVsDjsW2PlQVXGzvL7XeevvsZgQHljLFVdo=;
+        b=Uzn8ZqFTpbaei7JnENWFgz4Jzv/v8BTnFpZnHGh8LvZuagXoWmxLks/eTipmlUlb7n
+         QUvzpZ+PbCqgjyqAZfMxV0Q3u4ffvputUsBMZ+ctt1/l3hLpEu8YKOn0q617TOo2xz93
+         Mlo0eYx5Xdld/odCmLoUnZnkSViFkJ1sZvG9ZB5ZNwvj7NwaBtXvfXTnNxnB4OdnxqQt
+         AbLoPL5idRpnA9if6Nwh5fWTfXwUxZqo9e4s0kNAXZsDT3I1sDg4G+wqaYhpsMSDDzPM
+         4HB7q7lxcBu3ht26DxfgKaK9HN4OhQvYqLV6FSiK9ezaSSbKTjpuoSt8P7OGF8qMam5P
+         ZHCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzp0LXDLvS6SmW7Rav9QM7kWBm7A5QpZWbRvc0JgbU1uTRAXF5v4on0o+vAq4oQk4L3/DwJaGq2tAvosA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMTt6PkkJBg+qoZJgGp3ySqEnHjCVdff0QmGoVtmFx66uWR4Sn
+	Qmw9SFoz9W9gmSp1SOVHMLOorWclbROjiceuv5UVyzaqkozowVtEQswVAlRNkfVeyaToJpqXFq9
+	9Hvfo9KwGphMspW4Mroxi/8Xw+u4=
+X-Gm-Gg: ASbGnctCyp46UoYbI+sF5YRvZa1S4tL57HSY1dY/shZzPkSgTmRv8EJtK40I5qhmyXE
+	JKJCg46zaEZvnemAM/FY8GLvLM/xUar6Lt4+8vTH06JICRQzF4TrMSiZ2JzoWv+GGvuuVD3gp3s
+	GFkrwxP18JZMrHM16C40aZzgNxDLKr9Gm2
+X-Google-Smtp-Source: AGHT+IGSNRfvLjFEXAInnB8l6ldFbQYzChFmwbwqPk6HadnQpmlxEh5sdnsUVhwHYCk40xOrIzguwF6HW6261jjezjg=
+X-Received: by 2002:a05:651c:1447:b0:30d:894a:a538 with SMTP id
+ 38308e7fff4ca-326b8837842mr2639631fa.21.1746653355499; Wed, 07 May 2025
+ 14:29:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507161328.156909-1-jsavitz@redhat.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250506165227.158932-1-ubizjak@gmail.com> <20250506165227.158932-3-ubizjak@gmail.com>
+ <CAFULd4Z6Np=_zUUFH+Jys1VxyCAp6omgnMH9OL7iCKM1Si4q0A@mail.gmail.com> <20250507212807.568551f2@pumpkin>
+In-Reply-To: <20250507212807.568551f2@pumpkin>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 7 May 2025 23:29:04 +0200
+X-Gm-Features: ATxdqUHAL1Urm-hxqsM3s0SA2tu-ZOOnt-So-QmWc6EO83C3YzMBIO1jwes52JU
+Message-ID: <CAFULd4ZaVMgNi7fHC1JzyAiq9bNmXF9aB4Us8X_zU4nMLct=FQ@mail.gmail.com>
+Subject: Re: [PATCH -tip 3/3] x86/asm/32: Modernize _memcpy()
+To: David Laight <david.laight.linux@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 07, 2025 at 12:13:28PM -0400, Joel Savitz wrote:
-> In free_nsproxy() and the error path of create_new_namespaces() all
-> calls to put_*_ns() are guarded by a null pointer check except for
-> put_cgroup_ns() and put_net(). When CONFIG_NET_NS or CONFIG_GROUP is
-> unset, either of these functions may be called with a NULL argument.
-> This may or may not be handled correctly, but at the very least it is
-> certainly quicker to just perform the null check in all cases.
+On Wed, May 7, 2025 at 10:28=E2=80=AFPM David Laight
+<david.laight.linux@gmail.com> wrote:
+>
+> On Tue, 6 May 2025 19:34:34 +0200
+> Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> > On Tue, May 6, 2025 at 6:52=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> =
+wrote:
+> > >
+> > > Use inout "+" constraint modifier where appropriate, declare
+> > > temporary variables as unsigned long and rewrite parts of assembly
+> > > in plain C. The memcpy() function shrinks by 10 bytes, from:
+> > >
+> > > 00e778d0 <memcpy>:
+> > >   e778d0:       55                      push   %ebp
+> > >   e778d1:       89 e5                   mov    %esp,%ebp
+> > >   e778d3:       83 ec 0c                sub    $0xc,%esp
+> > >   e778d6:       89 5d f4                mov    %ebx,-0xc(%ebp)
+> > >   e778d9:       89 c3                   mov    %eax,%ebx
+> > >   e778db:       89 c8                   mov    %ecx,%eax
+> > >   e778dd:       89 75 f8                mov    %esi,-0x8(%ebp)
+> > >   e778e0:       c1 e9 02                shr    $0x2,%ecx
+> > >   e778e3:       89 d6                   mov    %edx,%esi
+> > >   e778e5:       89 7d fc                mov    %edi,-0x4(%ebp)
+> > >   e778e8:       89 df                   mov    %ebx,%edi
+> > >   e778ea:       f3 a5                   rep movsl %ds:(%esi),%es:(%ed=
+i)
+> > >   e778ec:       89 c1                   mov    %eax,%ecx
+> > >   e778ee:       83 e1 03                and    $0x3,%ecx
+> > >   e778f1:       74 02                   je     e778f5 <memcpy+0x25>
+> > >   e778f3:       f3 a4                   rep movsb %ds:(%esi),%es:(%ed=
+i)
+>
+> Hmmm....
+> IIRC you really don't want to be doing a [1..3] byte 'rep movsb' there.
+> Some cpu will run it quickly - but most of those will do a 'rep movsb' fa=
+ster.
+>
+> It would also be interesting to try to measure the cost of the 'je'
+> being mispredicted.
+> I bet a beer or two that at least one cpu can't abort the setup cost
+> of the 'rep movsb' - so you take the full hit.
 
-Why not simply make put_net(NULL) et.al. no-op instead?
+The intention of the patch was to keep the existing functionality, and
+modernize/rewrite the assembly to use inout constraint modifiers. In
+passing, some parts of the assembly were converted to plain C. At
+least to me, the source code is much easier to read this way, and also
+enables some compiler optimizations that result in better assembly.
+Perhaps functional improvements can be implemented as follow-up
+patches.
+
+Uros.
+
+> I do need to rerun my 'rep movsb' performance measurements using data
+> dependencies (not lfence/mfence) to synchronise things.
+> The 'before' data dependency is easy: count +=3D (clocks & volatile_zero)=
+.
+> The 'after' one can be done the same way if using the performance counter=
+s.
+> It is probably enough to use the updated value of %si or %di rather than
+> doing a read-back of the last memory write.
+>
+> I've done that for a different function and can see how the clock count
+> for divide depends on its arguments.
+>
+>         David
 
