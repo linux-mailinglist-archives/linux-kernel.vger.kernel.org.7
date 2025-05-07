@@ -1,220 +1,193 @@
-Return-Path: <linux-kernel+bounces-637218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA004AAD621
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:33:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E257AAAD613
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDC5A7B3438
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:31:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EEE17F1D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954FE21423F;
-	Wed,  7 May 2025 06:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AACA1DEFD9;
+	Wed,  7 May 2025 06:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTDPSW8X"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjwL+2M3"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5DF212FB8;
-	Wed,  7 May 2025 06:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A05520F087;
+	Wed,  7 May 2025 06:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599542; cv=none; b=RR2pIe1MEwZ745zEKuzBYO58iJzwMcoAu6NPzvRKxjmQqFH1OstflM1FvGsMDu5XWDhkaUJgtgtum30dbx52f2kuvT/HLk0N/IbQSGfqDKG4MNLWQs8XsfIhb+jiAWqkQZEicBZ15kE0oRPudV673NOS+FhBk59eyP8iEtzC5rg=
+	t=1746599419; cv=none; b=fl/ht4ofGHtMHGctZEthyOEdoHIo1/3631FCJ99uJrSm6jv7M1LQZdWB8LiV7UFSqCGKHjtVwZxjS3Z2PP7c536ADXH1RB8in3GaqwxumVuL9+88xoITXXIjpvKo6eIFMkAXwzPJ2qfxrkf7A1e+ZawUBzQSjA+qmbWsb6HoyaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599542; c=relaxed/simple;
-	bh=gVnr8TnU5oBPUOllfUkHDqgYRsX0nAzlPey3pz8QsSw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QasUDT1vK8VkqEtMU40dhGQjAn0Z975l/mi9stsuSFZ8lIN10JEAZN4PKWURWYjk0O9Rz3v/crq1LyIJ3A+OSfM9P+YSvZveAqQK80/7jMMGJLwPQhLUyu4ZA/TgON81FITBNMSoaZekOKm+PGbtec5O3hRoSuR9nRck/Njl9ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTDPSW8X; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1746599419; c=relaxed/simple;
+	bh=N+YWqAagy2PNEYBUXppE9xNSFaI/hWRK4ibyNABsABo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xmh0rxvkQ90Z4wXxEVIk09F90qL6Sr26GxDyfZauLhdgqE8ZMzjjM03S8mPYB77ZsZ5f+MEnDnGefmXfidjUAB/hiNnFqHrzNPtcfdq3rB9Hqt6wd4zO/tYvxgVx6OioDTpV+jKUtVHxWURgZgRd5nU0U4vfchGShdeB1yTKTzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjwL+2M3; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22423adf751so73716855ad.2;
-        Tue, 06 May 2025 23:32:21 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac7bd86f637so114850666b.1;
+        Tue, 06 May 2025 23:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746599540; x=1747204340; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8YWstoYnxasTg7tshxJbl1B8GWpQGF7X65mCdPOf1/0=;
-        b=CTDPSW8XZD6Be5HIisLjLIaoiMkLL+tFC3VX20M9GpI3SJ4sTDsfGG2F+2eJe39jil
-         Kuwqv0YbbIX9xMcjzuDPCybuWdNbY5+k1qwGFFOm7cFb3xJsRjj7m5VbcpVUCeRhJYW1
-         nR4EE6cFHwTD9L0HhPoOQ3ULbBZ13deEr9y7fpevOJNXziUMZiy/qa3OvSYifuYCA6u9
-         2m1W0FTUUIjP2YtJa1Xy1pBADwLZDRvIE7fyYozCSYGH8b85oKm43TDr4J1oqI9ZGZni
-         lX10LqHrdjov8II0//0Ln0pRfqtvrn85aaxbhx5+0Q+agImUNIoSEVqCQLcNi9dOC86C
-         2CbQ==
+        d=gmail.com; s=20230601; t=1746599415; x=1747204215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSeJ8GummMKurtzsjDLLI70rnghg+iLSCJEe/th3YoM=;
+        b=PjwL+2M3YK54jemlh6Xw5aQBuA8P8w2EPLcqRUAdfzRdTVP++ElyWWRPNjfxztyk8z
+         zmpt5V83N8ozEXDW/yy/EMfhyblgo6h8msYu7uXZtIamyxBneiEAj+VTtuf/TmDUizHi
+         B/9nxxGMlCNnHA9ysnyJYurG8ksLnThjVz8e8QZEdD2DCSGXspga4FJKp87IuWD5nQ+D
+         C/a9+TbAJ+xIWdXXIzgscqOn4l442JnHP9BMoOINbCY0UwHeG5Mfk5y+wQSx0VGIfaRH
+         5IsoDMRepTNXYc/oSNrz4cfWYlGPbJjNBF27HRpJYhlsF6oeJIb6i9Pd9Cz7mxYHQ4tK
+         yziQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746599540; x=1747204340;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1746599415; x=1747204215;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8YWstoYnxasTg7tshxJbl1B8GWpQGF7X65mCdPOf1/0=;
-        b=Xmra7d4lMoScKSu3/rFpLaw2V8YkaKCR3RCRmc3wOSZxd3IH50ky7oQKiHR6nmRCN5
-         /7DD8e/QphKK0855yemNE1CPVhqwLZc2AsUFXML0kFIA1pTWBOHy7frfFRtTyiH7W9Gm
-         HEerklEXhvTyvrvJjTHXEBH0UIbWjI41x0VtR3ZKcqyxiqCzLGW2t1RUTTcChbhUZko3
-         g9/q51pkIkuue1GQb+QmUHGBpaHud7vZKUsRHOM+Aq7lIw5KCqSDvjQxStrh7o5AAJrj
-         Y4CNvIRrgLBYkC/xIQMt4c97dAMrLT9kS//REQOhgldJCbm7yhdBqpIGTxEJtUne+QcU
-         l9wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiuDM1SaLiHzsuRUTTW5kBZHt6dCLnXSbRvyIXc9OBwXevHs0Jm5nYfX5x/gyE250cyguEI9UpeNGq@vger.kernel.org, AJvYcCUrYaSoFQYvt8i0VoY4+edgAqILpV+Nt+nWm/c93jOU5CBhJOpvdpOntte1phCQtJYmqK7o829LllG8nQ==@vger.kernel.org, AJvYcCXjlFAiQtHOXG7Q+ZZXRWfUvdXBey8oRcYbP+pCDz6CIUPPHcsIdDeYEtKnYonXOOf+xtEl8qiyLrPqJKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypSrY+x+D4XmHzF2Yrmf3KI3d0NIfbbyWmHej44rPgAdaDvB4t
-	SahReigSv940o/+rBTHzfWM2R8CbJZwqD/4ODbGFph4dg+sOKem1
-X-Gm-Gg: ASbGncv20WHx/MywniplRnNDO4HdNVIvyQk53hXCRgRtALFba9xHjdImKQev6nvTGuD
-	/0m/utw2DD4/upia7NDJnGT0pK07TRTCmp0serW+aaO1Hn2ghhs76ac0wswN7lxcD6cLgPlVgLI
-	YAzF/O3fEdSlfmYhJzM06FH/FUl4GufS8u64ouXB2Dis66hWCnaBKLIR3TUjkjZad6mviRjhhtH
-	Sv9E/re79+cfQCUHiUgIqBPc3GyMa6jpqB75DsSR8wtsAqSOfioJHxNSQ3eqLokbyAg/LnKVChg
-	PtJ5IeRNtWGlt9hNGV4XBKCI92O5L42oJuvRrQACIUt0NKgEPhM=
-X-Google-Smtp-Source: AGHT+IGJ/qWe5PPqzuHBICQzeHVIVKp5crJzNNKXqyBfyk7uaOLcOkz/tYZnutpwUCMI1zF55cUgKQ==
-X-Received: by 2002:a17:902:e844:b0:22c:3609:97ed with SMTP id d9443c01a7336-22e5ec9e997mr25272325ad.30.1746599540530;
-        Tue, 06 May 2025 23:32:20 -0700 (PDT)
-Received: from Black-Pearl. ([122.162.204.119])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-22e15229384sm85805295ad.206.2025.05.06.23.32.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 23:32:20 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Wed, 07 May 2025 06:29:36 +0000
-Subject: [PATCH 2/2] dt-binding: mmc: microchip,sdhci-pic32: convert text
- based binding to json schema
+        bh=TSeJ8GummMKurtzsjDLLI70rnghg+iLSCJEe/th3YoM=;
+        b=kaVAbbmItcREfZLSIlWJ8Wsime0zwOtoydTDBXmp0ZpEOqXtExYix9LelKCy/2nkGr
+         AZmBd/ZgYu9zuCAf4iS+w5M031oFazpS6Tx6Tg6/Cr/W6ShMbRLfP41MEDpQfGlO+aDs
+         qUap46ZukqqM9c/kd3DCHTnGJ8dlC48aDZuAK3/yPY9qEWhyleF7XNJd8bAxfJV76UUp
+         khIo/1QESp4V6ffYvfuv7XYOKoQnZ3CIUiiXw47H6mSUyMA8LaH4uksLJ7LcqIshibgO
+         YsSqLtpdtjjFvGmi5kDMGTR+UnotIc8uSVY+pb7msL2MUYWkYsryIa7kgwYKuIeUTl8P
+         YVEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUmFgQhyiL4rTb38aoQk9PPq/+QHc8gQP9y9fSs54WN6Zsw+DSrlWOwdJAiCkOLbWGQJOf/PX2QwFi3q/MBSvJ@vger.kernel.org, AJvYcCWsveb4GumffXyoL6wAPyo9i3stCGc9MQqxA4BCdkseDagttEV0D+T7CuIggivx24CTAEb90pPItbveIkDL@vger.kernel.org, AJvYcCX1DPthhR9H2j4Cts7G2tKBfm4ZlAECVSAi0d+F2ql4LdaeML19D31BI9I3FzTFPW+qdf9GvVJZMdAP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUMUqn020uGNUFg6qGAGkaM5jO4W75W8/FvsXTicR081CkuTUH
+	S+c9TBj8p9EJFJ8/7dfsmD0cHGNyknXL/sZ8SJPFiOaBQtYetrjI0VKQhe/nNNm2g9H1ZPFljoA
+	RP4R/24sHu5Il2o4kAITkqSJdvJg=
+X-Gm-Gg: ASbGncsLgsMPDNPo5S5gVcCuR6phW25GBQ3iaAkc8kZOG16+tPL/bKv+bHit8cRQPq/
+	2/2mGGtbKqgLNhq2oCpNchvePpYu4nHS9Y6Rw9uXwmqnbegczzM76aM3DmSF3g28BrXhlY6BWrc
+	/i0gqqhoGZQAb9MksTN3VWTA==
+X-Google-Smtp-Source: AGHT+IGqkl0IuDJeY54EbiKZOROW287of8VT2hi8N7bhyY4NWf51b1Ep4jdyE9HeuDOx+3xvco3gwlGwot3mPT+p5t4=
+X-Received: by 2002:a17:907:d50a:b0:ac7:81b0:62c9 with SMTP id
+ a640c23a62f3a-ad1eb183b98mr170480966b.20.1746599415368; Tue, 06 May 2025
+ 23:30:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250507-mchp-sdhci-v1-2-ed29de05295a@gmail.com>
-References: <20250507-mchp-sdhci-v1-0-ed29de05295a@gmail.com>
-In-Reply-To: <20250507-mchp-sdhci-v1-0-ed29de05295a@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-mips@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
- Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.14.2
+References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
+ <20250506-aaeon-up-board-pinctrl-support-v5-8-3906529757d2@bootlin.com>
+In-Reply-To: <20250506-aaeon-up-board-pinctrl-support-v5-8-3906529757d2@bootlin.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 7 May 2025 09:29:39 +0300
+X-Gm-Features: ATxdqUH1O8-wn-pTn2DLhKviZyXveFJTms9HkgmuTddY7fjWS_0mrPzychvcbF4
+Message-ID: <CAHp75VdRp7RG-YCAL2Jx4uXsT2RVQNeu-MxPB5pWRq8TqtsSXw@mail.gmail.com>
+Subject: Re: [PATCH v5 08/12] gpio: aggregator: export symbols of the GPIO
+ forwarder library
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update text binding to YAML.
-Changes during conversion:
-Add appropriate include statements for interrupts and clock-names
-to resolve errors identified by `dt_binding_check` and `dtbs_check`.
+On Tue, May 6, 2025 at 6:21=E2=80=AFPM Thomas Richard
+<thomas.richard@bootlin.com> wrote:
+>
+> Export all symbols and create header file for the GPIO forwarder library.
+> It will be used in the next changes.
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
----
- .../bindings/mmc/microchip,sdhci-pic32.txt         | 29 ----------
- .../bindings/mmc/microchip,sdhci-pic32.yaml        | 66 ++++++++++++++++++++++
- 2 files changed, 66 insertions(+), 29 deletions(-)
+...
 
-diff --git a/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.txt b/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.txt
-deleted file mode 100644
-index f064528effed31f30d1d1c6e0b49c02e215d99af..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.txt
-+++ /dev/null
-@@ -1,29 +0,0 @@
--* Microchip PIC32 SDHCI Controller
--
--This file documents differences between the core properties in mmc.txt
--and the properties used by the sdhci-pic32 driver.
--
--Required properties:
--- compatible: Should be "microchip,pic32mzda-sdhci"
--- interrupts: Should contain interrupt
--- clock-names: Should be "base_clk", "sys_clk".
--               See: Documentation/devicetree/bindings/resource-names.txt
--- clocks: Phandle to the clock.
--          See: Documentation/devicetree/bindings/clock/clock-bindings.txt
--- pinctrl-names: A pinctrl state names "default" must be defined.
--- pinctrl-0: Phandle referencing pin configuration of the SDHCI controller.
--             See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
--
--Example:
--
--	sdhci@1f8ec000 {
--		compatible = "microchip,pic32mzda-sdhci";
--		reg = <0x1f8ec000 0x100>;
--		interrupts = <191 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&rootclk REF4CLK>, <&rootclk PB5CLK>;
--		clock-names = "base_clk", "sys_clk";
--		bus-width = <4>;
--		cap-sd-highspeed;
--		pinctrl-names = "default";
--		pinctrl-0 = <&pinctrl_sdhc1>;
--	};
-diff --git a/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.yaml b/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..ca0ca7df9ee991d8402bc4c62b1235ef5db2e85f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/microchip,sdhci-pic32.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip PIC32 SDHI Controller
-+
-+description:
-+  The Microchip PIC32 family of microcontrollers (MCUs) includes models with
-+  Secure Digital Host Controller Interface (SDHCI) controllers, allowing them
-+  to interface with Secure Digital (SD) cards. This interface is used for reading,
-+  writing, and managing data on SD cards, enabling storage and data transfer
-+  capabilities in embedded systems.
-+
-+allOf:
-+  - $ref: mmc-controller.yaml
-+
-+maintainers:
-+  - Ulf Hansson <ulf.hansson@linaro.org>
-+
-+properties:
-+  compatible:
-+    const: microchip,pic32mzda-sdhci
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: base_clk
-+      - const: sys_clk
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - pinctrl-names
-+  - pinctrl-0
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/clock/microchip,pic32-clock.h>
-+    mmc@1f8ec000 {
-+        compatible = "microchip,pic32mzda-sdhci";
-+        reg = <0x1f8ec000 0x100>;
-+        interrupts = <191 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&rootclk REF4CLK>, <&rootclk PB5CLK>;
-+        clock-names = "base_clk", "sys_clk";
-+        bus-width = <4>;
-+        cap-sd-highspeed;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&pinctrl_sdhc1>;
-+    };
-+...
+> +/**
+> + * gpio_fwd_to_irq - Return the IRQ corresponding to a GPIO forwarder li=
+ne
+> + * @chip: GPIO chip in the forwarder
+> + * @offset: the offset of the line
+> + *
+> + * Returns: The IRQ corresponding to the passed line, or an error code i=
+n case
 
--- 
-2.43.0
+"The Linux IRQ..." since it's a logical number and 0 can't be ever returned=
+.
 
+> + * of error.
+> + */
+
+...
+
+> +/**
+> + * gpio_fwd_gpio_add - Add a GPIO in the forwarder
+
+forwarder
+
+> + * @fwd: GPIO forwarder
+> + * @desc: GPIO decriptor to register
+
+descriptor
+
+> + * @offset: offset for the GPIO in the forwarder
+> + *
+> + * Returns: 0 on success, or negative errno on failure.
+> + */
+
+Please, spellcheck all of the comments.
+
+...
+
+> +#ifndef __LINUX_GPIO_FORWARDER_H
+> +#define __LINUX_GPIO_FORWARDER_H
+
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/gpio/driver.h>
+
+These are not used (at least as of this patch).
+
++ struct gpio_chip;
+
+> +struct gpiochip_fwd;
+
+> +struct gpio_chip *gpio_fwd_get_gpiochip(struct gpiochip_fwd *fwd);
+> +
+> +int gpio_fwd_get_direction(struct gpio_chip *chip, unsigned int offset);
+> +
+> +int gpio_fwd_direction_input(struct gpio_chip *chip, unsigned int offset=
+);
+> +
+> +int gpio_fwd_direction_output(struct gpio_chip *chip, unsigned int offse=
+t,
+> +                             int value);
+> +
+> +int gpio_fwd_get(struct gpio_chip *chip, unsigned int offset);
+> +
+> +int gpio_fwd_get_multiple_locked(struct gpio_chip *chip, unsigned long *=
+mask,
+> +                                unsigned long *bits);
+> +
+> +int gpio_fwd_set(struct gpio_chip *chip, unsigned int offset, int value)=
+;
+> +
+> +int gpio_fwd_set_multiple_locked(struct gpio_chip *chip, unsigned long *=
+mask,
+> +                                unsigned long *bits);
+> +
+> +int gpio_fwd_set_config(struct gpio_chip *chip, unsigned int offset,
+> +                       unsigned long config);
+> +
+> +int gpio_fwd_to_irq(struct gpio_chip *chip, unsigned int offset);
+> +
+> +struct gpiochip_fwd *devm_gpio_fwd_alloc(struct device *dev,
+> +                                        unsigned int ngpios);
+> +
+> +int gpio_fwd_gpio_add(struct gpiochip_fwd *fwd,
+> +                     struct gpio_desc *desc, unsigned int offset);
+> +
+> +int gpio_fwd_register(struct gpiochip_fwd *fwd);
+> +
+> +#endif
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
