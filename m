@@ -1,297 +1,209 @@
-Return-Path: <linux-kernel+bounces-637789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6456DAADD21
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:18:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFBFEAADD28
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D171BA14D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:19:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3711BA0E3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32ECE21B9DE;
-	Wed,  7 May 2025 11:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260EB218EBA;
+	Wed,  7 May 2025 11:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EohNEwa2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KrazE4Qj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="27D23kXM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9e80TSQm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="chRTb8fO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B359F21770C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3CB20CCED;
+	Wed,  7 May 2025 11:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746616722; cv=none; b=KVD9uyreGaqs/FpTOrbr2YjxEL3rLwQue3MgK/q8I6uH1/gJ2rwSl3pbTg4J5mN8Nt+Demxz1hk4qBBpNYaEFk7WnwpIccLv1u2LmpTAX3H1sL1rXv21cqh6mt4SsCe9SpDeeyTPopCAyKPouRYEsTwRFOFoDFuk57jWqVw/M9M=
+	t=1746616896; cv=none; b=PkgCa2Jjy58Ai4+Zpo3KfPjy2ABN1c9sCdRRaQGG58PMTqSWe4uJ4VAjTABY4XbDw6Z6WezfBmHIkjHYIwRa5KS2gCEGPbtm28YxCLd0ZcH/zFf0fjvrrEZmAC+4VB4/IStl4qQsiaxBZxo3PhXtE1wZqDzh9cfhydcBGDnjx3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746616722; c=relaxed/simple;
-	bh=++IIt5AXAnXvfPvElINfcP5GZ/KLYdtQPJbOnyI3Qhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y0OJ3OBOmLd7dBqDBk0mI0krsyX9CsdhgPUj6GQ8utzXWlnd9iJjEz+3BN9vPtDTJPUqGgBlbliXKQKcanVITSKTPp7y8xMneu7KR/kMNL+WaskJmdu34rPB1mDCki62EW1a5t6Wg6c4rvbTyGV9a8q2Q4ceZyGWYGJH/tQJjTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EohNEwa2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KrazE4Qj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=27D23kXM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9e80TSQm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E4AF91F394;
-	Wed,  7 May 2025 11:18:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746616719; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ykR9RpzV7dXMsLmTY/LMhxYmcP2gKBaAJzGs2X1h3vU=;
-	b=EohNEwa2UOJzK7B2CPzCxfXNPvEADHG1MDU25cPfHL6JPC/yx/w1BV8lahlgnTaHOpBgho
-	Ryqx2Upe+meSO4+wBOey+upJfTMvDIHqKMmcdEejbdK7a6rF/JNMBJEWTeNqz05QZobcJ3
-	LgV0kzadUmXqkrNGz1y4QYVY9s+YZLQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746616719;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ykR9RpzV7dXMsLmTY/LMhxYmcP2gKBaAJzGs2X1h3vU=;
-	b=KrazE4QjQ6BXgqdV21ehkMI+yB45D7QB8uxx7ld4I9qGi4IRx8STHTor3ZEwPUOEhYs0v5
-	UdOO0U+fvUSehzDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746616718; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ykR9RpzV7dXMsLmTY/LMhxYmcP2gKBaAJzGs2X1h3vU=;
-	b=27D23kXMJv4CUQnS/Y8MKo0iFrebmw3PU3Jk1FgJmCy7lW8uHjA5T9V4EFl4eB40ODU1Z0
-	NqAUrBiE1lZPw71UUprglynSyandszXnF2a17IXsZtA/Cz6f9mV46rKNw9fUikSLi2lpLp
-	HN1zkI5S9AfCrplCSasm+Ik0gP6kJu8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746616718;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ykR9RpzV7dXMsLmTY/LMhxYmcP2gKBaAJzGs2X1h3vU=;
-	b=9e80TSQmTpNqDI1tx8DkoO3M8ymwY0CAQyP9E2ADTKaRUrWGpSx1chxSg9Z7DjhfpCf5DR
-	BC5Sdbd39fH3DwAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D2BAA13882;
-	Wed,  7 May 2025 11:18:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4fVuM45BG2jMHAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 May 2025 11:18:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9314DA09BE; Wed,  7 May 2025 13:18:34 +0200 (CEST)
-Date: Wed, 7 May 2025 13:18:34 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH] fs: allow nesting with FREEZE_EXCL
-Message-ID: <m2bvkh2v56akvvomku4w6n4lbw3zkc2awlutijndb7cc3tuirz@o64zcabrekch>
-References: <ilwyxf34ixfkhbylev6d76tz5ufzg2sdxxhy6i3tr4ko5dbefr@57yuviqrftzr>
- <20250404-work-freeze-v1-1-31f9a26f7bc9@kernel.org>
+	s=arc-20240116; t=1746616896; c=relaxed/simple;
+	bh=3+2fK82d17kLNGEgZ7nbWq+wHF7vu5P36SkVG/tLjvg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RXlUUp7KCDSVnWjskdJl1GCsA91M4Hwba2s0TVIK19PjOzVmEXFZLoP3HmN6kdtlU7ys1/RNaE2O7kaGgnoKcfJf9t27/aRizcy4WpyCyEiRgf8Ur20NzIq+3gTc5BCqJBfk9tEcPvJanuehSe91+suYX8MmKRWcY7ljV0zx1AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=chRTb8fO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D51C4AF09;
+	Wed,  7 May 2025 11:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746616895;
+	bh=3+2fK82d17kLNGEgZ7nbWq+wHF7vu5P36SkVG/tLjvg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=chRTb8fOWggK0N7iiuNQ/v1Rvck/fbugnUfhr4M6/j9UtoMyPx+8j0i6TVpKUhZaf
+	 cqw7Q/eS7CESUAz2fYTZoaf37BJfCXzwpEk/1nTAm0521fQ7QBGGVBwROsIIrQli2+
+	 sYTH/Kr//ZUuR7R3QBDCflR44wEOJfWvDLeU9h2E7ECFYCg2ajeCOz+tNraBySXDRf
+	 rZDoeNDoGbWf1eIIbSH94LMtVmbriNwpNBoP0KcUHzUl5qkXY1JjBca6eR6JFevYdm
+	 kjyoS5VMMygbXa3g0asBl3aDcjuPKAPlXNfB/RssGCNqCweSbu0npJVaaIPpdsQShk
+	 ciXqvn7OieqbA==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-72ecb4d9a10so4594496a34.3;
+        Wed, 07 May 2025 04:21:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX+G/CSzIDpcfPuel2fx5PaJ5Gh4vEHQ1P1Sv3ffqmAde0MFr6Nvw7obZa7XHu/3GxGlIsQ17XiGTFHmd1x@vger.kernel.org, AJvYcCX56GDkXilqG1femu2bwcAXsUcmNeSLEZTEWZpO2Z/oWXR7RhUbYa6ohZ3xpffULnunsBhrqFzXDoav@vger.kernel.org
+X-Gm-Message-State: AOJu0YykyX39rnYjr7tXbof//cVZhZEPR3yi0Xt4oAdvGKghKBOD8IHF
+	mAdMLTGapjA8tqdVOhG0CGRP4P0nN9M1b5/ELYuxVsmRs1K4K/iBNY/uaucgf2JTzqJ4FAXOTUm
+	rDUQuC0NX3iBw9wbla+tn35GtRA4=
+X-Google-Smtp-Source: AGHT+IHx5aU2gpgR8Hogb7kdz6O2xA5Mgv0dsRK/eORWotywyugm1yRIQFc9U6FAqZ5lkKfQHqoxiY49fdrLDJye6a0=
+X-Received: by 2002:a05:6870:7181:b0:29e:559b:d694 with SMTP id
+ 586e51a60fabf-2db5c126f5amr1748992fac.32.1746616895114; Wed, 07 May 2025
+ 04:21:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404-work-freeze-v1-1-31f9a26f7bc9@kernel.org>
-X-Spam-Flag: NO
-X-Spam-Score: -1.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,kernel.org,hansenpartnership.com,infradead.org,fromorbit.com,redhat.com,gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+References: <20250507045757.2658795-1-quic_hyiwei@quicinc.com>
+In-Reply-To: <20250507045757.2658795-1-quic_hyiwei@quicinc.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 7 May 2025 13:21:23 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g7NX_deRHqxS3BXVKzLU9xt9TADZwynhVw5soNtXXjvQ@mail.gmail.com>
+X-Gm-Features: ATxdqUH1_GxH74KxLFis64TfYjpSjmwmTxfnHuyjOZKRF4hFfO_-aKBP95sIa0Q
+Message-ID: <CAJZ5v0g7NX_deRHqxS3BXVKzLU9xt9TADZwynhVw5soNtXXjvQ@mail.gmail.com>
+Subject: Re: [PATCH v2] firmware: SDEI: Allow sdei initialization without ACPI_APEI_GHES
+To: Huang Yiwei <quic_hyiwei@quicinc.com>
+Cc: will@kernel.org, rafael@kernel.org, lenb@kernel.org, james.morse@arm.com, 
+	tony.luck@intel.com, bp@alien8.de, xueshuai@linux.alibaba.com, 
+	quic_aiquny@quicinc.com, quic_satyap@quicinc.com, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel@quicinc.com, kernel@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 04-04-25 12:24:09, Christian Brauner wrote:
-> If hibernation races with filesystem freezing (e.g. DM reconfiguration),
-> then hibernation need not freeze a filesystem because it's already
-> frozen but userspace may thaw the filesystem before hibernation actually
-> happens.
-> 
-> If the race happens the other way around, DM reconfiguration may
-> unexpectedly fail with EBUSY.
-> 
-> So allow FREEZE_EXCL to nest with other holders. An exclusive freezer
-> cannot be undone by any of the other concurrent freezers.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Wed, May 7, 2025 at 6:58=E2=80=AFAM Huang Yiwei <quic_hyiwei@quicinc.com=
+> wrote:
+>
+> SDEI usually initialize with the ACPI table, but on platforms where
+> ACPI is not used, the SDEI feature can still be used to handle
+> specific firmware calls or other customized purposes. Therefore, it
+> is not necessary for ARM_SDE_INTERFACE to depend on ACPI_APEI_GHES.
+>
+> In commit dc4e8c07e9e2 ("ACPI: APEI: explicit init of HEST and GHES
+> in acpi_init()"), to make APEI ready earlier, sdei_init was moved
+> into acpi_ghes_init instead of being a standalone initcall, adding
+> ACPI_APEI_GHES dependency to ARM_SDE_INTERFACE. This restricts the
+> flexibility and usability of SDEI.
+>
+> This patch corrects the dependency in Kconfig and splits sdei_init()
+> into two separate functions: sdei_init() and acpi_sdei_init().
+> sdei_init() will be called by arch_initcall and will only initialize
+> the platform driver, while acpi_sdei_init() will initialize the
+> device from acpi_ghes_init() when ACPI is ready. This allows the
+> initialization of SDEI without ACPI_APEI_GHES enabled.
+>
+> Fixes: dc4e8c07e9e2 ("ACPI: APEI: explicit init of HEST and GHES in apci_=
+init()")
+> Cc: Shuai Xue <xueshuai@linux.alibaba.com>
+> Signed-off-by: Huang Yiwei <quic_hyiwei@quicinc.com>
 
-This has fallen through the cracks in my inbox but the patch now looks good
-to me. Maybe we should fold it into "fs: add owner of freeze/thaw" to not
-have strange intermediate state in the series?
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-								Honza
+for the ACPI bits and please route this through ARM.
+
+Thanks!
 
 > ---
->  fs/super.c         | 71 ++++++++++++++++++++++++++++++++++++++++++------------
->  include/linux/fs.h |  2 +-
->  2 files changed, 56 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index b4bdbc509dba..e2fee655fbed 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1979,26 +1979,34 @@ static inline int freeze_dec(struct super_block *sb, enum freeze_holder who)
->  	return sb->s_writers.freeze_kcount + sb->s_writers.freeze_ucount;
->  }
->  
-> -static inline bool may_freeze(struct super_block *sb, enum freeze_holder who)
-> +static inline bool may_freeze(struct super_block *sb, enum freeze_holder who,
-> +			      const void *freeze_owner)
+>  drivers/acpi/apei/Kconfig   |  1 +
+>  drivers/acpi/apei/ghes.c    |  2 +-
+>  drivers/firmware/Kconfig    |  1 -
+>  drivers/firmware/arm_sdei.c | 11 ++++++++---
+>  include/linux/arm_sdei.h    |  4 ++--
+>  5 files changed, 12 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/acpi/apei/Kconfig b/drivers/acpi/apei/Kconfig
+> index 3cfe7e7475f2..070c07d68dfb 100644
+> --- a/drivers/acpi/apei/Kconfig
+> +++ b/drivers/acpi/apei/Kconfig
+> @@ -23,6 +23,7 @@ config ACPI_APEI_GHES
+>         select ACPI_HED
+>         select IRQ_WORK
+>         select GENERIC_ALLOCATOR
+> +       select ARM_SDE_INTERFACE if ARM64
+>         help
+>           Generic Hardware Error Source provides a way to report
+>           platform hardware errors (such as that from chipset). It
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index 289e365f84b2..0f3c663c1b0a 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -1715,7 +1715,7 @@ void __init acpi_ghes_init(void)
 >  {
-> +	lockdep_assert_held(&sb->s_umount);
-> +
->  	WARN_ON_ONCE((who & ~FREEZE_FLAGS));
->  	WARN_ON_ONCE(hweight32(who & FREEZE_HOLDERS) > 1);
->  
->  	if (who & FREEZE_EXCL) {
->  		if (WARN_ON_ONCE(!(who & FREEZE_HOLDER_KERNEL)))
->  			return false;
-> -
-> -		if (who & ~(FREEZE_EXCL | FREEZE_HOLDER_KERNEL))
-> +		if (WARN_ON_ONCE(who & ~(FREEZE_EXCL | FREEZE_HOLDER_KERNEL)))
->  			return false;
-> -
-> -		return (sb->s_writers.freeze_kcount +
-> -			sb->s_writers.freeze_ucount) == 0;
-> +		if (WARN_ON_ONCE(!freeze_owner))
-> +			return false;
-> +		/* This freeze already has a specific owner. */
-> +		if (sb->s_writers.freeze_owner)
-> +			return false;
-> +		/*
-> +		 * This is already frozen multiple times so we're just
-> +		 * going to take a reference count and mark it as
-> +		 * belonging to use.
-> +		 */
-> +		if (sb->s_writers.freeze_kcount + sb->s_writers.freeze_ucount)
-> +			sb->s_writers.freeze_owner = freeze_owner;
-> +		return true;
->  	}
->  
-> -	/* This filesystem is already exclusively frozen. */
-> -	if (sb->s_writers.freeze_owner)
-> -		return false;
-> -
->  	if (who & FREEZE_HOLDER_KERNEL)
->  		return (who & FREEZE_MAY_NEST) ||
->  		       sb->s_writers.freeze_kcount == 0;
-> @@ -2011,20 +2019,51 @@ static inline bool may_freeze(struct super_block *sb, enum freeze_holder who)
->  static inline bool may_unfreeze(struct super_block *sb, enum freeze_holder who,
->  				const void *freeze_owner)
->  {
-> +	lockdep_assert_held(&sb->s_umount);
-> +
->  	WARN_ON_ONCE((who & ~FREEZE_FLAGS));
->  	WARN_ON_ONCE(hweight32(who & FREEZE_HOLDERS) > 1);
->  
->  	if (who & FREEZE_EXCL) {
-> -		if (WARN_ON_ONCE(sb->s_writers.freeze_owner == NULL))
-> -			return false;
->  		if (WARN_ON_ONCE(!(who & FREEZE_HOLDER_KERNEL)))
->  			return false;
-> -		if (who & ~(FREEZE_EXCL | FREEZE_HOLDER_KERNEL))
-> +		if (WARN_ON_ONCE(who & ~(FREEZE_EXCL | FREEZE_HOLDER_KERNEL)))
-> +			return false;
-> +		if (WARN_ON_ONCE(!freeze_owner))
-> +			return false;
-> +		if (WARN_ON_ONCE(sb->s_writers.freeze_kcount == 0))
->  			return false;
-> -		return sb->s_writers.freeze_owner == freeze_owner;
-> +		/* This isn't exclusively frozen. */
-> +		if (!sb->s_writers.freeze_owner)
-> +			return false;
-> +		/* This isn't exclusively frozen by us. */
-> +		if (sb->s_writers.freeze_owner != freeze_owner)
-> +			return false;
-> +		/*
-> +		 * This is still frozen multiple times so we're just
-> +		 * going to drop our reference count and undo our
-> +		 * exclusive freeze.
-> +		 */
-> +		if ((sb->s_writers.freeze_kcount + sb->s_writers.freeze_ucount) > 1)
-> +			sb->s_writers.freeze_owner = NULL;
-> +		return true;
-> +	}
-> +
-> +	if (who & FREEZE_HOLDER_KERNEL) {
-> +		/*
-> +		 * Someone's trying to steal the reference belonging to
-> +		 * @sb->s_writers.freeze_owner.
-> +		 */
-> +		if (sb->s_writers.freeze_kcount == 1 &&
-> +		    sb->s_writers.freeze_owner)
-> +			return false;
-> +		return sb->s_writers.freeze_kcount > 0;
->  	}
->  
-> -	return sb->s_writers.freeze_owner == NULL;
-> +	if (who & FREEZE_HOLDER_USERSPACE)
-> +		return sb->s_writers.freeze_ucount > 0;
-> +
-> +	return false;
+>         int rc;
+>
+> -       sdei_init();
+> +       acpi_sdei_init();
+>
+>         if (acpi_disabled)
+>                 return;
+> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+> index aadc395ee168..7df19d82aa68 100644
+> --- a/drivers/firmware/Kconfig
+> +++ b/drivers/firmware/Kconfig
+> @@ -31,7 +31,6 @@ config ARM_SCPI_PROTOCOL
+>  config ARM_SDE_INTERFACE
+>         bool "ARM Software Delegated Exception Interface (SDEI)"
+>         depends on ARM64
+> -       depends on ACPI_APEI_GHES
+>         help
+>           The Software Delegated Exception Interface (SDEI) is an ARM
+>           standard for registering callbacks from the platform firmware
+> diff --git a/drivers/firmware/arm_sdei.c b/drivers/firmware/arm_sdei.c
+> index 3e8051fe8296..71e2a9a89f6a 100644
+> --- a/drivers/firmware/arm_sdei.c
+> +++ b/drivers/firmware/arm_sdei.c
+> @@ -1062,13 +1062,12 @@ static bool __init sdei_present_acpi(void)
+>         return true;
 >  }
->  
->  /**
-> @@ -2095,7 +2134,7 @@ int freeze_super(struct super_block *sb, enum freeze_holder who, const void *fre
->  
->  retry:
->  	if (sb->s_writers.frozen == SB_FREEZE_COMPLETE) {
-> -		if (may_freeze(sb, who))
-> +		if (may_freeze(sb, who, freeze_owner))
->  			ret = !!WARN_ON_ONCE(freeze_inc(sb, who) == 1);
->  		else
->  			ret = -EBUSY;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 1edcba3cd68e..7a3f821d2723 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2270,7 +2270,7 @@ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
->   * @FREEZE_HOLDER_KERNEL: kernel wants to freeze or thaw filesystem
->   * @FREEZE_HOLDER_USERSPACE: userspace wants to freeze or thaw filesystem
->   * @FREEZE_MAY_NEST: whether nesting freeze and thaw requests is allowed
-> - * @FREEZE_EXCL: whether actual freezing must be done by the caller
-> + * @FREEZE_EXCL: a freeze that can only be undone by the owner
->   *
->   * Indicate who the owner of the freeze or thaw request is and whether
->   * the freeze needs to be exclusive or can nest.
-> 
-> ---
-> base-commit: a83fe97e0d53f7d2b0fc62fd9a322a963cb30306
-> change-id: 20250404-work-freeze-5eacb515f044
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> -void __init sdei_init(void)
+> +void __init acpi_sdei_init(void)
+>  {
+>         struct platform_device *pdev;
+>         int ret;
+>
+> -       ret =3D platform_driver_register(&sdei_driver);
+> -       if (ret || !sdei_present_acpi())
+> +       if (!sdei_present_acpi())
+>                 return;
+>
+>         pdev =3D platform_device_register_simple(sdei_driver.driver.name,
+> @@ -1081,6 +1080,12 @@ void __init sdei_init(void)
+>         }
+>  }
+>
+> +static int __init sdei_init(void)
+> +{
+> +       return platform_driver_register(&sdei_driver);
+> +}
+> +arch_initcall(sdei_init);
+> +
+>  int sdei_event_handler(struct pt_regs *regs,
+>                        struct sdei_registered_event *arg)
+>  {
+> diff --git a/include/linux/arm_sdei.h b/include/linux/arm_sdei.h
+> index 255701e1251b..f652a5028b59 100644
+> --- a/include/linux/arm_sdei.h
+> +++ b/include/linux/arm_sdei.h
+> @@ -46,12 +46,12 @@ int sdei_unregister_ghes(struct ghes *ghes);
+>  /* For use by arch code when CPU hotplug notifiers are not appropriate. =
+*/
+>  int sdei_mask_local_cpu(void);
+>  int sdei_unmask_local_cpu(void);
+> -void __init sdei_init(void);
+> +void __init acpi_sdei_init(void);
+>  void sdei_handler_abort(void);
+>  #else
+>  static inline int sdei_mask_local_cpu(void) { return 0; }
+>  static inline int sdei_unmask_local_cpu(void) { return 0; }
+> -static inline void sdei_init(void) { }
+> +static inline void acpi_sdei_init(void) { }
+>  static inline void sdei_handler_abort(void) { }
+>  #endif /* CONFIG_ARM_SDE_INTERFACE */
+>
+> --
+> 2.25.1
+>
 
