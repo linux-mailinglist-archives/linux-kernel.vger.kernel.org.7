@@ -1,115 +1,212 @@
-Return-Path: <linux-kernel+bounces-638001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88ADDAAE044
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:11:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AE0AAE048
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA479C167A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6E61BC387B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9B7288CB9;
-	Wed,  7 May 2025 13:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61E04B1E56;
+	Wed,  7 May 2025 13:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmOSEiHx"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2krJcc5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79978288CAC
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150C9286436
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746623267; cv=none; b=psFV6VDyxSUZyTYZrMIuD04yMibsTGYWEYIH1qKHivVH06HAhq74NIuL/nr5qaRrxu07/0BGfq5D/o0tdsHhGyMoUf9ye3MwtHY8WP6293g8PtIRg7TUXbAkYQJTjqGKSJy6/k8IJZffZmXg1+iEqg5HYOEuLkW5kqgDZfqR4NE=
+	t=1746623353; cv=none; b=rwNx0bCZbG5pl/4xtPqkVSzykjP7C2shIsJmtL8yzDfsRmtXcLpJUDIqfPHL128lSZOUoxlZTyU1w9Wr5x6Vzn1WyA/ix21P0+rycOdCa5NrK+f0/l00LFTss5p/W1P+L0ZTi1FkzFLvqg2uVdVYeCgU5sYichk0HPYTMGWMjnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746623267; c=relaxed/simple;
-	bh=Kwhind8WBcIbv/C9JP+oZkXJQzZQNAjQBy+HdtDo3Bc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FO9dfQCUR3M80qhrtoCRcyIwstmTVrLDSpWaDzSDqvbiKuB/wCq9zD4dEhlkKOoMUNC9Nd40+yWm1ME7k5DE9cryPLPn9DaTnUwSPD1OFQmVjcx4C5XWpGelqCdcY+uhAImOYIr95Lu275pbgX3jIlHW7TC8qAPJBu9VD9V2QYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZmOSEiHx; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-736c062b1f5so7078526b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:07:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746623266; x=1747228066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kwhind8WBcIbv/C9JP+oZkXJQzZQNAjQBy+HdtDo3Bc=;
-        b=ZmOSEiHxg0Vac29XtVT9K8I+ynrp3RW1a4eIhcy59a4kjskoYsAI3/b76SOp0o4ip/
-         R1momVfrn4VhtYG79IKQ1eN+5xrXIep0HuJz87S9bfBCKBk+NYvpueM9uSd2b+lTSFpJ
-         gPafeJ/irKYb/vohgi5GzEUZbOAnOd5GCRtdFxfWjGEkUyjJuj/x6ZWtw4gD7hD04mJ0
-         xN1NJp3maqqQ88KJ5jAiAvMDxnvbc2VRNICfgUk97qRNXXfttx6Q+p/3+kONSfdqcULF
-         aDTBAM5TAQyqemc1qtmSAG4qrAYkHZwQwA/mJl7PRe6ZQvt5KLC9C96qhFF4DJoSK08P
-         0YBg==
+	s=arc-20240116; t=1746623353; c=relaxed/simple;
+	bh=PCMX2Cr+uQWKx3vKDgl51jkFcRXqKV/9DGQU2RgRS9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VirFCh/zzPyB/nWsSUZF81oeNP3XcRXfZfwWtC3BCHiP9hpk4ti8mwh3VF3IW40io2Nyug/paw9WlpXHRMlIadLbce/qqt4mHTAJbyZwfhaenlS3uTNqn5VaNe3gQy4mubgv19bahjMtToC6jz1c3S05ivhBh2Qh/Mi/ek07aV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2krJcc5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746623349;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qAtnwiXcU1op8DM9QOzo0SnMVizQr1PVYLn+9+GejxY=;
+	b=H2krJcc5xywjlExB/x0euKpZmhMsLz0yz58YwpuVq+9xM3lu1THWbfmZK3gkmVMpMuHhKq
+	CSnpBafNb3hxIBGx/BWt1kRjr5dPeq4KN2MMbSRh2w9tnqOgkZ4gs7n9iWNeLORAFrGeZF
+	ZCDdBrkJUTYW550cINdd3qxP6bgUgdY=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-507-CUDmlVM-NZOCgz_deznrwQ-1; Wed, 07 May 2025 09:09:08 -0400
+X-MC-Unique: CUDmlVM-NZOCgz_deznrwQ-1
+X-Mimecast-MFC-AGG-ID: CUDmlVM-NZOCgz_deznrwQ_1746623347
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5fbf5fce18dso608523a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 06:09:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746623266; x=1747228066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kwhind8WBcIbv/C9JP+oZkXJQzZQNAjQBy+HdtDo3Bc=;
-        b=hO5p34U0oV3/YLN0P1lSGgAKsp07XhFGvTrADurdFkxKIrcGQ2AYKdXsB2/KNqcQ2C
-         +4DUWD8voG0cR9pGczF2a3qw8M0JGJrqJwY2UAkHl98lHGfMKwKK7kPZApB1phnNAE2M
-         3gHnOA+fuUk+1+ntN+Xm0HYNG2iAl7zS3VzJ94A8xqGC4c2JJHRipsEfDaJI3XdULkjF
-         TJfoTu6mXGXCSdk8QKVSTEhj9JVu6/AFcMfK0jr3y1T7nzJAviLK1b3Q92lFEgbcS6XB
-         UlhTDZVYcAJIvW6tZ+XZRH5QkGArahoeMCA7r6GsxPzRkHAS3sWVX+0JWbmHNZa8MwdM
-         Hoyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXOwjTeiocbmHgS7EoMJK1zf0/3SBtKBEqXFTbgdNEnQMmixmTqgDYVigRZqf6sKsjnVTpnXpnDIA0vEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCJnxsWt0+OpxuQWSSvyjU3Q0Myv6lbyUU9laikjtOHJgb+eu9
-	mtlS5LmhV8eY0kWJjt4wdQsvERBK0BrKAPX0AKsdpkkgYyFQKTLJvCGpOj19un2X+5SS+5cCB2T
-	eSTJPTs0pG6kyk+iLq+t+siDkC9Q=
-X-Gm-Gg: ASbGnctqaOGCsaE71dHOCVRxspKJmvKbhadCR3MqCF0dlWdihRmgOoVL7939XxivYKc
-	WwOsjgLkPfcmrHYISpXAWBmdS3jT4PUEkb4l/3lWmXOHwFAs9rtE8bFA4k+5fPMV4eDnKt7YlO0
-	iwOOOWdtAB08S3t9rPWHhy
-X-Google-Smtp-Source: AGHT+IFsKM4SwlHcHAqI93o6LX5eVmvP60jHJkaKXXFf09vtRVqDaqjp++7kfmVIDfCN4TiGj/BBGOqa2OYaD6AqCDI=
-X-Received: by 2002:a05:6a20:d817:b0:1f5:7cb4:b713 with SMTP id
- adf61e73a8af0-2148c0f6340mr4688620637.19.1746623265625; Wed, 07 May 2025
- 06:07:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746623347; x=1747228147;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qAtnwiXcU1op8DM9QOzo0SnMVizQr1PVYLn+9+GejxY=;
+        b=ILJmQHUvkl9UerLVRZ6j+gPJ+I/JJ2sJEGpTRrey6MzK8zgPDbdGUkEmZtD3HaQ07c
+         UdU0+I3RR4ep8OmvWMPkPFMZ4wZoO1wgM22wLUZCczc7Gq2lXUPNOHheYfjImeC0OX2x
+         RDq59MZjgNpn38f73PzGxrv8n5qmbUn10sZwNXci9t2ukYhQ3LSdb2nl6RokJEslPAZw
+         ytkldj10B6PZU0LuBvZDjaKu9f0NTWCRsTDKYyhjYdf00qpDWKh0Zzxwe04n8qLlMXgy
+         81t1zq8bUZD7v8ZjJK6j5tIGjUoPh13YaY7iPkA5T4jDfCh8ky2/nMyUVEGw83bwi53C
+         MR+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU69q2V0aJ2h8v4xxJ5xIQdcNKymW7zf4ZOg9+h0vcQYheNrWts3HF67TLHQ5NpTDQLc2/Q5ITrQh+062E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3ZZpxDEG3vVTqTToKv4lRG2cmL6c6bB6SNX8OpU8sDpNHaidI
+	Ds2pbMPa6UiFpQag2JXOk21+7Zb/04KNQZMODdEBnxfoXs7gsRlK7kLwCkoPoHcXyQWUA6/MA3K
+	yu9nbSn4QcLMkGJYdjpf7FKLbLg6oow6L8XxaSoeMN6U7aUEXk0Yd5qXxRXKg30zFEfvfFw==
+X-Gm-Gg: ASbGncvvHo6yfMsTWW69dlrDvOLiFKDoNqcZoFMFP2VKfHJ6v/YCQy34K7t1tW1VB+w
+	kl0Ul3NxF03CmQR4F3gZQ/+1PxgHmQ1SsJqvBQgWdPAj71wbBTC2Yoil0zcsMGn6OQqeYVhVJL3
+	Di9DQ4jKT7NooigdnTfMcRudAf+vyssnkX8rGR07ynuFDk4+pjKpAxXOppm2jbpNN2YilNxoFr2
+	6lXM2gxmwHPM5in2BmTyp3GqQ3odtjxZ0hedx1x+EznZcm5doI3mDXEQlpWgpWOznSoWQZ/ZT8R
+	KVAYAHSAnKtpUue+
+X-Received: by 2002:a05:6402:34c5:b0:5e5:d9e5:c4d7 with SMTP id 4fb4d7f45d1cf-5fbe9fa7f9amr3011103a12.28.1746623336493;
+        Wed, 07 May 2025 06:08:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwA872SvBWeTpMMj+/e7mYjU25+jDDfjv4mDrfoJ39gjkjiqHaiiL4tGqlCQGwX9860akxCA==
+X-Received: by 2002:a05:6402:35c4:b0:5f4:9017:c6a1 with SMTP id 4fb4d7f45d1cf-5fbe9f46c84mr3009014a12.25.1746623324960;
+        Wed, 07 May 2025 06:08:44 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.183.85])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa77b914b4sm9371316a12.51.2025.05.07.06.08.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 06:08:43 -0700 (PDT)
+Date: Wed, 7 May 2025 15:08:22 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Konstantin Shkolnyy <kshk@linux.ibm.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
+Subject: Re: [PATCH net] vsock/test: Fix occasional failure in SIOCOUTQ tests
+Message-ID: <sqee4iqviojcht4s42dke3mnsq4f4si6oislu77bm3nqwlowim@oz6voimaqw4m>
+References: <20250507114833.2503676-1-kshk@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507112131.3686966-1-tomeu@tomeuvizoso.net> <CAOMZO5CK11wByq3BL9XZgvfFv1_kp94CNFMYDaEJ=WxcEFATJQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5CK11wByq3BL9XZgvfFv1_kp94CNFMYDaEJ=WxcEFATJQ@mail.gmail.com>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Wed, 7 May 2025 15:07:34 +0200
-X-Gm-Features: ATxdqUFtN2tIUuHmsB_NiGnAxikFEfXFsc3gynQ1WlFKNFdiLvGY_6sLmBCbXaI
-Message-ID: <CAH9NwWeBKXbFkCydXq9mupAosVFS+Wvazq_Bmkt9D4CJNP5YNQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/etnaviv: Fix flush sequence logic
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-kernel@vger.kernel.org, 
-	Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, etnaviv@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250507114833.2503676-1-kshk@linux.ibm.com>
 
-> Hi Tomeu,
+On Wed, May 07, 2025 at 06:48:33AM -0500, Konstantin Shkolnyy wrote:
+>These tests:
+>    "SOCK_STREAM ioctl(SIOCOUTQ) 0 unsent bytes"
+>    "SOCK_SEQPACKET ioctl(SIOCOUTQ) 0 unsent bytes"
+>output: "Unexpected 'SIOCOUTQ' value, expected 0, got 64 (CLIENT)".
 >
-> On Wed, May 7, 2025 at 8:22=E2=80=AFAM Tomeu Vizoso <tomeu@tomeuvizoso.ne=
-t> wrote:
-> >
-> > We should be comparing the last submitted sequence number with that of
-> > the address space we may be switching to.
-> >
-> > And we should be using the latter as the last submitted sequence number
-> > afterwards.
-> >
-> > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+>They test that the SIOCOUTQ ioctl reports 0 unsent bytes after the data
+>have been received by the other side. However, sometimes there is a delay
+>in updating this "unsent bytes" counter, and the test fails even though
+>the counter properly goes to 0 several milliseconds later.
 >
-> Does this need a Fixes tag?
+>The delay occurs in the kernel because the used buffer notification
+>callback virtio_vsock_tx_done(), called upon receipt of the data by the
+>other side, doesn't update the counter itself. It delegates that to
+>a kernel thread (via vsock->tx_work). Sometimes that thread is delayed
+>more than the test expects.
+>
+>Change the test to try SIOCOUTQ several times with small delays in between.
+>
+>Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
+>---
+> tools/testing/vsock/vsock_test.c | 26 ++++++++++++++++----------
+> 1 file changed, 16 insertions(+), 10 deletions(-)
+>
+>diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
+>index d0f6d253ac72..143f1cba2d18 100644
+>--- a/tools/testing/vsock/vsock_test.c
+>+++ b/tools/testing/vsock/vsock_test.c
+>@@ -1264,21 +1264,27 @@ static void test_unsent_bytes_client(const struct test_opts *opts, int type)
+> 	send_buf(fd, buf, sizeof(buf), 0, sizeof(buf));
+> 	control_expectln("RECEIVED");
+>
+>-	ret = ioctl(fd, SIOCOUTQ, &sock_bytes_unsent);
+>-	if (ret < 0) {
+>-		if (errno == EOPNOTSUPP) {
+>-			fprintf(stderr, "Test skipped, SIOCOUTQ not supported.\n");
+>-		} else {
+>+	/* SIOCOUTQ isn't guaranteed to instantly track sent data */
+>+	for (int i = 0; i < 10; i++) {
+>+		ret = ioctl(fd, SIOCOUTQ, &sock_bytes_unsent);
+>+		if (ret == 0 && sock_bytes_unsent == 0)
+>+			goto success;
+>+
+>+		if (ret < 0) {
+>+			if (errno == EOPNOTSUPP) {
+>+				fprintf(stderr, "Test skipped, SIOCOUTQ not supported.\n");
+>+				goto success;
+>+			}
+> 			perror("ioctl");
+> 			exit(EXIT_FAILURE);
+> 		}
+>-	} else if (ret == 0 && sock_bytes_unsent != 0) {
+>-		fprintf(stderr,
+>-			"Unexpected 'SIOCOUTQ' value, expected 0, got %i\n",
+>-			sock_bytes_unsent);
+>-		exit(EXIT_FAILURE);
+>+		usleep(10 * 1000);
+> 	}
+>
+>+	fprintf(stderr, "Unexpected 'SIOCOUTQ' value, expected 0, got %i\n",
+>+		sock_bytes_unsent);
+>+	exit(EXIT_FAILURE);
+>+success:
+> 	close(fd);
 
-Yes - based on the READ_ONCE(..) line, it should be
-Fixes: 27b67278e007 ("drm/etnaviv: rework MMU handling")
+I worked on something similar but I didn't yet send it.
 
---=20
-greets
---
-Christian Gmeiner, MSc
+I like the delay you put, but I prefer to use the timeout stuff we have
+to retry, like I did here:
 
-https://christian-gmeiner.info/privacypolicy
+@@ -1264,20 +1270,25 @@ static void test_unsent_bytes_client(const struct test_opts *op
+ts, int type)
+         send_buf(fd, buf, sizeof(buf), 0, sizeof(buf));
+         control_expectln("RECEIVED");
+
+-       ret = ioctl(fd, SIOCOUTQ, &sock_bytes_unsent);
+-       if (ret < 0) {
+-               if (errno == EOPNOTSUPP) {
+-                       fprintf(stderr, "Test skipped, SIOCOUTQ not supported.\n");
+-               } else {
+-                       perror("ioctl");
+-                       exit(EXIT_FAILURE);
++       /* Although we have a control message, we are not sure that the vsock
++        * transport has sent us notification that the buffer has been copied
++        * and cleared, so in some cases we may still see unsent bytes.
++        * Better to do a few iterations to be sure.
++        */
++       timeout_begin(TIMEOUT);
++       do {
++               ret = ioctl(fd, SIOCOUTQ, &sock_bytes_unsent);
++               if (ret < 0) {
++                       if (errno == EOPNOTSUPP) {
++                               fprintf(stderr, "Test skipped, SIOCOUTQ not supported.\n");
++                               break;
++                       } else {
++                               perror("ioctl");
++                               exit(EXIT_FAILURE);
++                       }
+                 }
+-       } else if (ret == 0 && sock_bytes_unsent != 0) {
+-               fprintf(stderr,
+-                       "Unexpected 'SIOCOUTQ' value, expected 0, got %i\n",
+-                       sock_bytes_unsent);
+-               exit(EXIT_FAILURE);
+-       }
++       } while (sock_bytes_unsent != 0);
++       timeout_end();
+
+
+What about combining the two?
+
+Thanks,
+Stefano
+
 
