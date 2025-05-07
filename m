@@ -1,74 +1,99 @@
-Return-Path: <linux-kernel+bounces-637199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8C4AAD5E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:22:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5498BAAD5ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3A121C04038
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:22:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56D341C05832
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 06:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E55E205ACF;
-	Wed,  7 May 2025 06:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F9D20B1F5;
+	Wed,  7 May 2025 06:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgiLWmhS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFLyl9fF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD966155389
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F4C1E8348
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 06:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746598948; cv=none; b=FZiD4xHYzhmsSqR6X8hRWoqiVe70r6X9OLoQ224xOyijh9KOnh+tTan5SZxzj0yNWdGV4uZmWvs9yfwBAobwUu/Rayjl3MUirwP9SwRmWqPOnrsLvR0lmNPmqLwWOYK6rYbDKtLmmnbbtMC+FYNmsfGNLezd5S8zz8kd5+benvk=
+	t=1746598968; cv=none; b=pPRhnmpwHHiaVKOSai7opmsX8krmmjCAyOdZb2dOu0BiexWydDi6EJx59+YUvKPXMY+f3qkzrIYXgZM4ShFZGKZrd6529eMmwH47ZGadOnyV02ymuE28kxZQeztLtCTurplMwW4aUcZipvrBVTTe2aqPh2oDyfaV+CLQu+bl/es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746598948; c=relaxed/simple;
-	bh=gFMTXhDvLooSbTLuEX6lJslPVQFV4FZCukV7MEm0y1Y=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Jx7+nq8f4FPmL7kU2xG5NOlloGzIaHJtHZ3jUNDWbU8TxBzEakCNjSNjbDFG6Y6StSi67mhqX0Sv0V0PFIqgBqgWsWIJwXXmC9Hl6NSBGqGuZtrfnQP1ayLY29YNvPSGAftIL8fSU9GI+KA7UMVp0y65D9rYl+s7jcjBEmQcQE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgiLWmhS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22ABDC4CEE7;
-	Wed,  7 May 2025 06:22:26 +0000 (UTC)
+	s=arc-20240116; t=1746598968; c=relaxed/simple;
+	bh=TK7PwC5Hm/B/85gtiDIvAmTdM3kA4hXR+iWnqJqIdSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9Q/CQg9Hwut84yoqEn+Bt7Ypdjlx++yNlRJxnvx2HG8VIhCYlU/0WPVzR1IoZ9sOkmyb4hVQlpJIj2BRkSAaX+rtkCFs/0bJtiEDTJUzjhhCaoifMsUh4UoG4asqGq7sOv3q9OSZHt2Uz7QnqBz7qy9k3BPtgNhpbjcn8Qx2aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFLyl9fF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 547C2C4CEE7;
+	Wed,  7 May 2025 06:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746598948;
-	bh=gFMTXhDvLooSbTLuEX6lJslPVQFV4FZCukV7MEm0y1Y=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=cgiLWmhSvVCKyHyPL6Tu7wtwTUysBwzQUcKAMhTCXOoz88Om/GykSE54z01NVlJs+
-	 JVAnzby969+IpXCnjGHdv/vJRst4VSEQ5WOA0TiTeWCupdAivwuyaouk+BpxZM3IO2
-	 TMKSjbreTizZ47B1BzmAViZ0+Hv8jhgrya9xYD5SUYQfRbgHzkYW5/JKfihTtQtLe+
-	 fMuhBHGS8uEzHoJCwoP/aAtOrgPJFlLezEGyLm13HtvijghOshOP0XJe+sNx9w3sfc
-	 0F8YTHwiqB3CFMxicPRTi9YXj2rNHxlMZoSlHKHO9ThwAhM8GvOyPkxjoYqMRXI6oU
-	 +03w/6Uv6G/AQ==
-Message-ID: <d8467687-7331-43e3-8a9c-8a26974d229d@kernel.org>
-Date: Wed, 7 May 2025 14:22:25 +0800
+	s=k20201202; t=1746598968;
+	bh=TK7PwC5Hm/B/85gtiDIvAmTdM3kA4hXR+iWnqJqIdSQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gFLyl9fF6IrNq9IZhC9W/dILKh/hqfpwjZhA8aAQFNBu87yHPmwvIFWvNL0QzMkY8
+	 rOhIt2qk8cwq1iV5cKooqQleFPppR0Fq0dGFspTch1IuEpa/0LrWAbi5tv/nrHuioN
+	 Qw04t3tNqeeF4gm6EAVlGcZBI2WbJWsP0SWmqKy2ir8Fbcjsc/kUZ336WABJ+nm0On
+	 iaxq/Mf4O8YSnJZJIbnrX/dsB6us6LI0pu10uR0cB5fY/BtUeL9IMwUrPt4OAUCkcg
+	 gPRJ9QbBpRmiTiTp46OgBTcXCezn0uZmH3kz3aENt0h62XQk464CEh6um2tl/XcQUQ
+	 0i6v/jHwst8lw==
+Date: Wed, 7 May 2025 08:22:42 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Michal Marek <michal.lkml@markovi.net>
+Subject: Re: [PATCH 01/15] x86/kconfig/64: Refresh defconfig
+Message-ID: <aBr8MgC7l4efb_kw@gmail.com>
+References: <20250506170924.3513161-1-mingo@kernel.org>
+ <20250506170924.3513161-2-mingo@kernel.org>
+ <5700be74-71e3-41bd-97e2-ac0c33b1c83c@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] f2fs: return bool from __f2fs_write_meta_folio
-To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250505092613.3451524-1-hch@lst.de>
- <20250505092613.3451524-2-hch@lst.de>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250505092613.3451524-2-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5700be74-71e3-41bd-97e2-ac0c33b1c83c@app.fastmail.com>
 
-On 5/5/25 17:25, Christoph Hellwig wrote:
-> __f2fs_write_meta_folio can only return 0 or AOP_WRITEPAGE_ACTIVATE.
-> As part of phasing out AOP_WRITEPAGE_ACTIVATE, switch to a bool return
-> instead.
+
+* Arnd Bergmann <arnd@arndb.de> wrote:
+
+> On Tue, May 6, 2025, at 19:09, Ingo Molnar wrote:
+> > @@ -63,9 +62,7 @@ CONFIG_BINFMT_MISC=y
+> >  # CONFIG_COMPAT_BRK is not set
+> >  CONFIG_NET=y
+> >  CONFIG_PACKET=y
+> > -CONFIG_UNIX=y
+> >  CONFIG_XFRM_USER=y
+> > -CONFIG_INET=y
+> >  CONFIG_IP_MULTICAST=y
+> >  CONFIG_IP_ADVANCED_ROUTER=y
+> >  CONFIG_IP_MULTIPLE_TABLES=y
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Any idea what happened here? I don't see anything selecting UNIX
+> and INET, and leaving them at the default-off state seems like a
+> bad idea.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+I think this is a side effect of having NET_9P support enabled, which 
+option comes with:
+
+        imply INET
+        imply UNIX
 
 Thanks,
+
+	Ingo
 
