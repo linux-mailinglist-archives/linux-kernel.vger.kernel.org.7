@@ -1,287 +1,320 @@
-Return-Path: <linux-kernel+bounces-637136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6D5AAD538
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:28:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94EBAAD53C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1911BC4B49
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4EF5986136
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610F81E1C36;
-	Wed,  7 May 2025 05:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9811DF755;
+	Wed,  7 May 2025 05:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECgvF1KJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Pynzaafz"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65751DF968;
-	Wed,  7 May 2025 05:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D264A00
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746595686; cv=none; b=Ne4Qxq9KHzGiIrsvpsHsbKBPknjFU2JpgVAfWik4dJG4WR99UZwqveU2gqBMlBGhl2Yb715NTP29VaxOTSGoeGdTacR1FSm1lV65ktmLjrPhDlF1h4a3JKtv3W80RGMqN4h7bBly/LTKyL64l4jqLkbAbWp8QS6F3ileS9QVhE4=
+	t=1746595781; cv=none; b=gfSS+Ffgj+D+KVLld68smDGZ2rJtK+WC4blein17XypwiCxYRu+foCBL2eDKYZ7mUcKJC6Z6s0gPe2sYngMTTVrtY7sArGOgUNOkstZuSG3Ll69355PAFx66KvcCQPjeGPQ6Qc56AnM0zjV0YFT/e651vzEXf+X2JwdSCAS14tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746595686; c=relaxed/simple;
-	bh=Cijq2E0xF6duCxceftnIZjpIQiWFoR/1fj7fTD5TZoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SYyf/NBrP9VruwvWX/ZjukmRAapc9skSXFpYCje7ibqyTeylridHKRKW8LDmZByOsELO9hurzbRaUBfUgc4JdtNTojc7sBzyLYiEQUN7zURtR+LGZHerXZWKPmhSOiAgrDSTICF4J0kKL6G0yvhS2NSqUDSrfdNz7m4mPsca7FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ECgvF1KJ; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746595685; x=1778131685;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Cijq2E0xF6duCxceftnIZjpIQiWFoR/1fj7fTD5TZoQ=;
-  b=ECgvF1KJmk6YPN7VM1ZSejEM+QEIJZR1241A4b74Kq7DLte3D0Qonmb7
-   UHf52c75wCn9xrVan0lo8BWAsZG4bqOw/+eBPi2JnuyZR2c4qFH1vRyeI
-   fFGCaQQ04gwQI0jW66EKVjpczDuyRVBzmVCzx7bq1Z0kZEtxrhjhb3+Jt
-   ghsHAsFb9kHcmDhzxqUU5RHvBOZsmBiy/Ixmi41fyK6xfaYYWJwqVFCG8
-   Z30HTIUEhfRla8Jhi3RuTtUhLlU2m1NujYMtKpkAuiJnqwrk9mvNOuiaU
-   yTIzXjLvKBiuWWwjl4S1POxy5BvYFchUyC/je/7aJFl+WzuTTLcNk5bZD
-   g==;
-X-CSE-ConnectionGUID: 3hIsq8hdSAy4X208KozZCA==
-X-CSE-MsgGUID: QQLIPbkXQF+HVF+l8q7xbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="50950719"
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="50950719"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 22:28:04 -0700
-X-CSE-ConnectionGUID: nUoencVOTlOHLTQxhdETsA==
-X-CSE-MsgGUID: mV0hs1qPQLOZnKzMs1pu+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="135842157"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 22:27:59 -0700
-Message-ID: <181eae79-735d-414e-9a46-caa321602204@linux.intel.com>
-Date: Wed, 7 May 2025 13:27:56 +0800
+	s=arc-20240116; t=1746595781; c=relaxed/simple;
+	bh=truV7W7wlCOvdh092fGH9J3IXopt6Qfp8wO/hTOTXtk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T7C9X1SDds3Jey05lKclpdccLAI23gRSEjHfbuxqLLWYK9dMV9Xk7d/hjrZvN3QaiCSVL8mRe8AQVzEhlq69Vf/BpFikvJcs4P9Iq8Q9g+wyYcDjgy9YAv7Br3EgWxXo5iS5L+lslX3RyxBTGu6raI3PfWp+7eUPwspOqsXWE1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Pynzaafz; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 491663F182
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 05:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1746595771;
+	bh=TNhEsCLkvQ4FMv7Oa0gFx/Y+6zdX7PN6tyOXag8sK+A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=PynzaafzCk0UUsT2dmVeM62i0F2WsMDUs69KllRngEjbGH+yU+9PoYZ12KIfxve23
+	 t/68s6KjqsecNoZRaCDHdehSM/DSg57A3iGpOm+GdZ7OqjNRsbrRNfYX9LZ5X3Kwaq
+	 TSz3uGZa9a9bArxL2rZ9e6u4HGddb++4NpnJlsqRlUGr60FI+4BmyqvMwSkTAVY2Kb
+	 p0xNnFLHew17Mfywp6kumIFSK9WojWDIEqRssyHHTy8QmoJNqASDzOwWHDiWa1bXyR
+	 x78fC5fxIEkgDx4bJNTLOQhKsCsnVe6sd7OxRh44VP5SfGu7WR5gpLCf81Ml6chzyG
+	 FSJ4tMJJSKP7w==
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-39d9243b1c2so1879074f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 22:29:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746595771; x=1747200571;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TNhEsCLkvQ4FMv7Oa0gFx/Y+6zdX7PN6tyOXag8sK+A=;
+        b=a6oCVkMWMTajcVpGtYU8H1h4fVAN/6BCPf0hEiJOH+h0GFO+Mh25BgaxIY6NAHCpqF
+         VYUINYqdFFb69DF71wHOorTuJ9bGWa1Zk5C0/wACAseYxF0diHfVWcsBXcrBL09IPJjU
+         bY2y2tWRFv7xwMXT9211NkBeL9AeVm3bHlMiDZ3O2+qH0RKa5RZf20ATSkIsyzODQtot
+         SUH8+ex+KLuwi8I6E/9qzrmbT1ZJ9fBA36hENeSmgENRi2Vig2levxWU4jQJurDRQY+n
+         ZFKPsNcj2i7Q0EKQxdx9UQAQI7vR2erDoN8vBtlgMD8MGuyZ8fOlRrtQ8/JY0mKXTOd9
+         lQ/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnq3AkS7kDcPWYP5nrXlLkUSlW7mim6dz2zlnAm59wY0MXhICogrF+74DCm6E1xJdABQvaqdV1QPEY8XM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHE3heJAX1cYN7bJHpsMRUUgKpITG/JqwIdnfGphhta+SMb/pF
+	ki836siLufGxuvsiP+cV5C4FMWHzDLHpHO7YdIR0/lArE5Z4efe+5g6BLZrBf3cWA+nWnon+7JB
+	ChJzG9AN37aIHsZwcEcNThXMhjCWX1LSF5grxQ2Dnvk2ys/JOqTRHEVu1AfsqXQM519goDrjFDW
+	91JSsq3f+w5I+t8PHsoN59DTv2up02/0fHNRxR8qVYc5QchoYTARrV
+X-Gm-Gg: ASbGncvRnS3wT7lX6Zw0LfusUJefU9NYO4N2HUu6S20Eyf5D4iimG9sUeG5SeJcBGeb
+	U7olU2jCb5+yBoZkCasYsvjoqSqT2KihUJ6+i31FmWLAzF5Y2+x7nlmA509d3cLfEVy7FYQ==
+X-Received: by 2002:a05:6000:2403:b0:3a0:9dd8:420c with SMTP id ffacd0b85a97d-3a0b4a68446mr1259504f8f.50.1746595770770;
+        Tue, 06 May 2025 22:29:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqT9u8XjENyEQqWitZKedyb5RQ38lYlKAhClgAvkpr8bKVbVOkcWNQRydq4AfPS7g/QSH/KXSp4k6wCd4Kdbw=
+X-Received: by 2002:a05:6000:2403:b0:3a0:9dd8:420c with SMTP id
+ ffacd0b85a97d-3a0b4a68446mr1259490f8f.50.1746595770374; Tue, 06 May 2025
+ 22:29:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] x86: KVM: VMX: preserve host's
- DEBUGCTLMSR_FREEZE_IN_SMM while in the guest mode
-To: mlevitsk@redhat.com, Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Paolo Bonzini <pbonzini@redhat.com>,
- x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
- Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-References: <20250416002546.3300893-1-mlevitsk@redhat.com>
- <20250416002546.3300893-4-mlevitsk@redhat.com> <aAgpD_5BI6ZcCN29@google.com>
- <2b1ec570a37992cdfa2edad325e53e0592d696c8.camel@redhat.com>
- <71af8435d2085b3f969cb3e73cff5bfacd243819.camel@redhat.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <71af8435d2085b3f969cb3e73cff5bfacd243819.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250506024822.327776-1-en-wei.wu@canonical.com> <aa095579-84d3-4157-91fc-23613ae30448@molgen.mpg.de>
+In-Reply-To: <aa095579-84d3-4157-91fc-23613ae30448@molgen.mpg.de>
+From: En-Wei WU <en-wei.wu@canonical.com>
+Date: Wed, 7 May 2025 13:29:19 +0800
+X-Gm-Features: ATxdqUEjR_05HLch-lZLYWyoz6bul3SrZ6GzETTZm2iF6PHiEBGsR5yxOR-nbzU
+Message-ID: <CAMqyJG3v9rcBZD-ZFhzC4_Do+Etry9svctgVz-LKh9X27vq98Q@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btusb: use skb_pull to avoid unsafe access in
+ QCA dump handling
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_tjiang@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Paul,
 
-On 5/2/2025 4:53 AM, mlevitsk@redhat.com wrote:
-> On Thu, 2025-05-01 at 16:41 -0400, mlevitsk@redhat.com wrote:
->> On Tue, 2025-04-22 at 16:41 -0700, Sean Christopherson wrote:
->>> On Tue, Apr 15, 2025, Maxim Levitsky wrote:
->>>> Pass through the host's DEBUGCTL.DEBUGCTLMSR_FREEZE_IN_SMM to the guest
->>>> GUEST_IA32_DEBUGCTL without the guest seeing this value.
->>>>
->>>> Note that in the future we might allow the guest to set this bit as well,
->>>> when we implement PMU freezing on VM own, virtual SMM entry.
->>>>
->>>> Since the value of the host DEBUGCTL can in theory change between VM runs,
->>>> check if has changed, and if yes, then reload the GUEST_IA32_DEBUGCTL with
->>>> the new value of the host portion of it (currently only the
->>>> DEBUGCTLMSR_FREEZE_IN_SMM bit)
->>> No, it can't.  DEBUGCTLMSR_FREEZE_IN_SMM can be toggled via IPI callback, but
->>> IRQs are disabled for the entirety of the inner run loop.  And if I'm somehow
->>> wrong, this change movement absolutely belongs in a separate patch.
->
-> Hi,
->
-> You are right here - reading MSR_IA32_DEBUGCTLMSR in the inner loop is a performance
-> regression.
->
->
-> Any ideas on how to solve this then? Since currently its the common code that
-> reads the current value of the MSR_IA32_DEBUGCTLMSR and it doesn't leave any indication
-> about if it changed I can do either
->
-> 1. store old value as well, something like 'vcpu->arch.host_debugctl_old' Ugly IMHO.
->
-> 2. add DEBUG_CTL to the set of the 'dirty' registers, e.g add new bit for kvm_register_mark_dirty
-> It looks a bit overkill to me
->
-> 3. Add new x86 callback for something like .sync_debugctl(). I vote for this option.
->
-> What do you think/prefer?
+> Also, how did you test this?
+I triggered the device coredump by `$ echo 1` to the file named
+"coredump" in the sysfs device node of the hci device. The symbolic
+link of the file can be found at
+/sys/class/bluetooth/hci*/device/coredump.
+After triggering the coredump, the core dump file can be found at
+/sys/class/devcoredump.
 
-Hmm, not sure if I missed something, but why to move the reading host
-debug_ctrl MSR from the original place into inner loop? The interrupt has
-been disabled before reading host debug_ctrl for original code, suppose
-host debug_ctrl won't changed after reading it?
+Kind regards,
+En-Wei
 
-
+On Tue, 6 May 2025 at 16:46, Paul Menzel <pmenzel@molgen.mpg.de> wrote:
 >
-> Best regards,
-> 	Maxim Levitsky
+> Dear En-Wei,
 >
->>>> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
->>>> ---
->>>>  arch/x86/kvm/svm/svm.c |  2 ++
->>>>  arch/x86/kvm/vmx/vmx.c | 28 +++++++++++++++++++++++++++-
->>>>  arch/x86/kvm/x86.c     |  2 --
->>>>  3 files changed, 29 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
->>>> index cc1c721ba067..fda0660236d8 100644
->>>> --- a/arch/x86/kvm/svm/svm.c
->>>> +++ b/arch/x86/kvm/svm/svm.c
->>>> @@ -4271,6 +4271,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->>>>  	svm->vmcb->save.rsp = vcpu->arch.regs[VCPU_REGS_RSP];
->>>>  	svm->vmcb->save.rip = vcpu->arch.regs[VCPU_REGS_RIP];
->>>>  
->>>> +	vcpu->arch.host_debugctl = get_debugctlmsr();
->>>> +
->>>>  	/*
->>>>  	 * Disable singlestep if we're injecting an interrupt/exception.
->>>>  	 * We don't want our modified rflags to be pushed on the stack where
->>>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
->>>> index c9208a4acda4..e0bc31598d60 100644
->>>> --- a/arch/x86/kvm/vmx/vmx.c
->>>> +++ b/arch/x86/kvm/vmx/vmx.c
->>>> @@ -2194,6 +2194,17 @@ static u64 vmx_get_supported_debugctl(struct kvm_vcpu *vcpu, bool host_initiated
->>>>  	return debugctl;
->>>>  }
->>>>  
->>>> +static u64 vmx_get_host_preserved_debugctl(struct kvm_vcpu *vcpu)
->>> No, just open code handling DEBUGCTLMSR_FREEZE_IN_SMM, or make it a #define.
->>> I'm not remotely convinced that we'll ever want to emulate DEBUGCTLMSR_FREEZE_IN_SMM,
->>> and trying to plan for that possibility and adds complexity for no immediate value.
->> Hi,
->>
->> The problem here is a bit different: we indeed are very unlikely to emulate the
->> DEBUGCTLMSR_FREEZE_IN_SMM but however, when I wrote this patch I was sure that this bit is 
->> mandatory with PMU version of 2 or more,  but looks like it is optional after all:
->>
->> "
->> Note that system software must check if the processor supports the IA32_DEBUGCTL.FREEZE_WHILE_SMM
->> control bit. IA32_DEBUGCTL.FREEZE_WHILE_SMM is supported if IA32_PERF_CAPABIL-
->> ITIES.FREEZE_WHILE_SMM[Bit 12] is reporting 1. See Section 20.8 for details of detecting the presence of
->> IA32_PERF_CAPABILITIES MSR."
->>
->> KVM indeed doesn't set the bit 12 of IA32_PERF_CAPABILITIES.
->>
->> However, note that the Linux kernel silently sets this bit without checking the aforementioned capability 
->> bit and ends up with a #GP exception, which it silently ignores.... (I checked this with a trace...)
->>
->> This led me to believe that this bit should be unconditionally supported,
->> meaning that KVM should at least fake setting it without triggering a #GP.
->>
->> Since that is not the case, I can revert to the simpler model of exclusively using GUEST_IA32_DEBUGCTL 
->> while hiding the bit from the guest, however I do vote to keep the guest/host separation.
->>
->>>> +{
->>>> +	/*
->>>> +	 * Bits of host's DEBUGCTL that we should preserve while the guest is
->>>> +	 * running.
->>>> +	 *
->>>> +	 * Some of those bits might still be emulated for the guest own use.
->>>> +	 */
->>>> +	return DEBUGCTLMSR_FREEZE_IN_SMM;
->>>>
->>>>  u64 vmx_get_guest_debugctl(struct kvm_vcpu *vcpu)
->>>>  {
->>>>  	return to_vmx(vcpu)->msr_ia32_debugctl;
->>>> @@ -2202,9 +2213,11 @@ u64 vmx_get_guest_debugctl(struct kvm_vcpu *vcpu)
->>>>  static void __vmx_set_guest_debugctl(struct kvm_vcpu *vcpu, u64 data)
->>>>  {
->>>>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->>>> +	u64 host_mask = vmx_get_host_preserved_debugctl(vcpu);
->>>>  
->>>>  	vmx->msr_ia32_debugctl = data;
->>>> -	vmcs_write64(GUEST_IA32_DEBUGCTL, data);
->>>> +	vmcs_write64(GUEST_IA32_DEBUGCTL,
->>>> +		     (vcpu->arch.host_debugctl & host_mask) | (data & ~host_mask));
->>>>  }
->>>>  
->>>>  bool vmx_set_guest_debugctl(struct kvm_vcpu *vcpu, u64 data, bool host_initiated)
->>>> @@ -2232,6 +2245,7 @@ bool vmx_set_guest_debugctl(struct kvm_vcpu *vcpu, u64 data, bool host_initiated
->>>>  	return true;
->>>>  }
->>>>  
->>>> +
->>> Spurious newline.
->>>
->>>>  /*
->>>>   * Writes msr value into the appropriate "register".
->>>>   * Returns 0 on success, non-0 otherwise.
->>>> @@ -7349,6 +7363,7 @@ fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
->>>>  {
->>>>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->>>>  	unsigned long cr3, cr4;
->>>> +	u64 old_debugctl;
->>>>  
->>>>  	/* Record the guest's net vcpu time for enforced NMI injections. */
->>>>  	if (unlikely(!enable_vnmi &&
->>>> @@ -7379,6 +7394,17 @@ fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
->>>>  		vmcs_write32(PLE_WINDOW, vmx->ple_window);
->>>>  	}
->>>>  
->>>> +	old_debugctl = vcpu->arch.host_debugctl;
->>>> +	vcpu->arch.host_debugctl = get_debugctlmsr();
->>>> +
->>>> +	/*
->>>> +	 * In case the host DEBUGCTL had changed since the last time we
->>>> +	 * read it, update the guest's GUEST_IA32_DEBUGCTL with
->>>> +	 * the host's bits.
->>>> +	 */
->>>> +	if (old_debugctl != vcpu->arch.host_debugctl)
->>> This can and should be optimized to only do an update if a host-preserved bit
->>> is toggled.
->> True, I will do this in the next version.
->>
->>>> +		__vmx_set_guest_debugctl(vcpu, vmx->msr_ia32_debugctl);
->>> I would rather have a helper that explicitly writes the VMCS field, not one that
->>> sets the guest value *and* writes the VMCS field.
->>> The usage in init_vmcs() doesn't need to write vmx->msr_ia32_debugctl because the
->>> vCPU is zero allocated, and this usage doesn't change vmx->msr_ia32_debugctl.
->>> So the only path that actually needs to modify vmx->msr_ia32_debugctl is
->>> vmx_set_guest_debugctl().
->>
->> But what about nested entry? nested entry pretty much sets the MSR to a value given by the guest.
->>
->> Also technically the intel_pmu_legacy_freezing_lbrs_on_pmi also changes the guest value by emulating what the real hardware does.
->>
->> Best regards,
->> 	Maxim Levitsky
->>
->>
->>>> +
->>>>  	/*
->>>>  	 * We did this in prepare_switch_to_guest, because it needs to
->>>>  	 * be within srcu_read_lock.
->>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->>>> index 844e81ee1d96..05e866ed345d 100644
->>>> --- a/arch/x86/kvm/x86.c
->>>> +++ b/arch/x86/kvm/x86.c
->>>> @@ -11020,8 +11020,6 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
->>>>  		set_debugreg(0, 7);
->>>>  	}
->>>>  
->>>> -	vcpu->arch.host_debugctl = get_debugctlmsr();
->>>> -
->>>>  	guest_timing_enter_irqoff();
->>>>  
->>>>  	for (;;) {
->>>> -- 
->>>> 2.26.3
->>>>
+>
+> Thank you for your patch.
+>
+> Am 06.05.25 um 04:48 schrieb En-Wei Wu:
+> > Use skb_pull() and skb_pull_data() to safely parse QCA dump packets.
+> >
+> > This avoids direct pointer math on skb->data, which could lead to
+> > invalid access if the packet is shorter than expected.
+>
+> Please add a Fixes: tag.
+>
+> Also, how did you test this?
+>
+> > Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+> > ---
+> >   drivers/bluetooth/btusb.c | 99 ++++++++++++++++-----------------------
+> >   1 file changed, 41 insertions(+), 58 deletions(-)
+> >
+> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > index 357b18dae8de..17136924a278 100644
+> > --- a/drivers/bluetooth/btusb.c
+> > +++ b/drivers/bluetooth/btusb.c
+> > @@ -2979,9 +2979,8 @@ static void btusb_coredump_qca(struct hci_dev *hdev)
+> >   static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> >   {
+> >       int ret = 0;
+> > +     int skip = 0;
+>
+> `unsigned int`, as the signature is:
+>
+>      include/linux/skbuff.h:void *skb_pull(struct sk_buff *skb, unsigned
+> int len);
+>
+> >       u8 pkt_type;
+> > -     u8 *sk_ptr;
+> > -     unsigned int sk_len;
+> >       u16 seqno;
+> >       u32 dump_size;
+> >
+> > @@ -2990,18 +2989,14 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> >       struct usb_device *udev = btdata->udev;
+> >
+> >       pkt_type = hci_skb_pkt_type(skb);
+> > -     sk_ptr = skb->data;
+> > -     sk_len = skb->len;
+> > -
+> > -     if (pkt_type == HCI_ACLDATA_PKT) {
+> > -             sk_ptr += HCI_ACL_HDR_SIZE;
+> > -             sk_len -= HCI_ACL_HDR_SIZE;
+> > -     }
+> > +     if (pkt_type == HCI_ACLDATA_PKT)
+> > +             skip = sizeof(struct hci_acl_hdr) + sizeof(struct hci_event_hdr);
+> > +     else
+> > +             skip = sizeof(struct hci_event_hdr);
+>
+> Maybe write it as below:
+>
+>      skip = sizeof(struct hci_event_hdr);
+>
+>      if (pkt_type == HCI_ACLDATA_PKT)
+>         skip += sizeof(struct hci_acl_hdr);
+>
+>
+> Kind regards,
+>
+> Paul
+>
+>
+> >
+> > -     sk_ptr += HCI_EVENT_HDR_SIZE;
+> > -     sk_len -= HCI_EVENT_HDR_SIZE;
+> > +     skb_pull(skb, skip);
+> > +     dump_hdr = (struct qca_dump_hdr *)skb->data;
+> >
+> > -     dump_hdr = (struct qca_dump_hdr *)sk_ptr;
+> >       seqno = le16_to_cpu(dump_hdr->seqno);
+> >       if (seqno == 0) {
+> >               set_bit(BTUSB_HW_SSR_ACTIVE, &btdata->flags);
+> > @@ -3021,16 +3016,15 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> >
+> >               btdata->qca_dump.ram_dump_size = dump_size;
+> >               btdata->qca_dump.ram_dump_seqno = 0;
+> > -             sk_ptr += offsetof(struct qca_dump_hdr, data0);
+> > -             sk_len -= offsetof(struct qca_dump_hdr, data0);
+> > +
+> > +             skb_pull(skb, offsetof(struct qca_dump_hdr, data0));
+> >
+> >               usb_disable_autosuspend(udev);
+> >               bt_dev_info(hdev, "%s memdump size(%u)\n",
+> >                           (pkt_type == HCI_ACLDATA_PKT) ? "ACL" : "event",
+> >                           dump_size);
+> >       } else {
+> > -             sk_ptr += offsetof(struct qca_dump_hdr, data);
+> > -             sk_len -= offsetof(struct qca_dump_hdr, data);
+> > +             skb_pull(skb, offsetof(struct qca_dump_hdr, data));
+> >       }
+> >
+> >       if (!btdata->qca_dump.ram_dump_size) {
+> > @@ -3050,7 +3044,6 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> >               return ret;
+> >       }
+> >
+> > -     skb_pull(skb, skb->len - sk_len);
+> >       hci_devcd_append(hdev, skb);
+> >       btdata->qca_dump.ram_dump_seqno++;
+> >       if (seqno == QCA_LAST_SEQUENCE_NUM) {
+> > @@ -3078,68 +3071,58 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> >   /* Return: true if the ACL packet is a dump packet, false otherwise. */
+> >   static bool acl_pkt_is_dump_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> >   {
+> > -     u8 *sk_ptr;
+> > -     unsigned int sk_len;
+> > -
+> >       struct hci_event_hdr *event_hdr;
+> >       struct hci_acl_hdr *acl_hdr;
+> >       struct qca_dump_hdr *dump_hdr;
+> > +     struct sk_buff *clone = skb_clone(skb, GFP_ATOMIC);
+> > +     bool is_dump = false;
+> >
+> > -     sk_ptr = skb->data;
+> > -     sk_len = skb->len;
+> > -
+> > -     acl_hdr = hci_acl_hdr(skb);
+> > -     if (le16_to_cpu(acl_hdr->handle) != QCA_MEMDUMP_ACL_HANDLE)
+> > +     if (!clone)
+> >               return false;
+> >
+> > -     sk_ptr += HCI_ACL_HDR_SIZE;
+> > -     sk_len -= HCI_ACL_HDR_SIZE;
+> > -     event_hdr = (struct hci_event_hdr *)sk_ptr;
+> > -
+> > -     if ((event_hdr->evt != HCI_VENDOR_PKT) ||
+> > -         (event_hdr->plen != (sk_len - HCI_EVENT_HDR_SIZE)))
+> > -             return false;
+> > +     acl_hdr = skb_pull_data(clone, sizeof(*acl_hdr));
+> > +     if (!acl_hdr || (le16_to_cpu(acl_hdr->handle) != QCA_MEMDUMP_ACL_HANDLE))
+> > +             goto out;
+> >
+> > -     sk_ptr += HCI_EVENT_HDR_SIZE;
+> > -     sk_len -= HCI_EVENT_HDR_SIZE;
+> > +     event_hdr = skb_pull_data(clone, sizeof(*event_hdr));
+> > +     if (!event_hdr || (event_hdr->evt != HCI_VENDOR_PKT))
+> > +             goto out;
+> >
+> > -     dump_hdr = (struct qca_dump_hdr *)sk_ptr;
+> > -     if ((sk_len < offsetof(struct qca_dump_hdr, data)) ||
+> > -         (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS) ||
+> > -         (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
+> > -             return false;
+> > +     dump_hdr = skb_pull_data(clone, sizeof(*dump_hdr));
+> > +     if (!dump_hdr || (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS) ||
+> > +        (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
+> > +             goto out;
+> >
+> > -     return true;
+> > +     is_dump = true;
+> > +out:
+> > +     consume_skb(clone);
+> > +     return is_dump;
+> >   }
+> >
+> >   /* Return: true if the event packet is a dump packet, false otherwise. */
+> >   static bool evt_pkt_is_dump_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> >   {
+> > -     u8 *sk_ptr;
+> > -     unsigned int sk_len;
+> > -
+> >       struct hci_event_hdr *event_hdr;
+> >       struct qca_dump_hdr *dump_hdr;
+> > +     struct sk_buff *clone = skb_clone(skb, GFP_ATOMIC);
+> > +     bool is_dump = false;
+> >
+> > -     sk_ptr = skb->data;
+> > -     sk_len = skb->len;
+> > -
+> > -     event_hdr = hci_event_hdr(skb);
+> > -
+> > -     if ((event_hdr->evt != HCI_VENDOR_PKT)
+> > -         || (event_hdr->plen != (sk_len - HCI_EVENT_HDR_SIZE)))
+> > +     if (!clone)
+> >               return false;
+> >
+> > -     sk_ptr += HCI_EVENT_HDR_SIZE;
+> > -     sk_len -= HCI_EVENT_HDR_SIZE;
+> > +     event_hdr = skb_pull_data(clone, sizeof(*event_hdr));
+> > +     if (!event_hdr || (event_hdr->evt != HCI_VENDOR_PKT))
+> > +             goto out;
+> >
+> > -     dump_hdr = (struct qca_dump_hdr *)sk_ptr;
+> > -     if ((sk_len < offsetof(struct qca_dump_hdr, data)) ||
+> > -         (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS) ||
+> > -         (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
+> > -             return false;
+> > +     dump_hdr = skb_pull_data(clone, sizeof(*dump_hdr));
+> > +     if (!dump_hdr || (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS) ||
+> > +        (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
+> > +             goto out;
+> >
+> > -     return true;
+> > +     is_dump = true;
+> > +out:
+> > +     consume_skb(clone);
+> > +     return is_dump;
+> >   }
+> >
+> >   static int btusb_recv_acl_qca(struct hci_dev *hdev, struct sk_buff *skb)
 >
 
