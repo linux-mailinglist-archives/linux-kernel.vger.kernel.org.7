@@ -1,159 +1,237 @@
-Return-Path: <linux-kernel+bounces-637920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E3C1AADF16
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:26:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B57EAADF31
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF5C67B2AB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0965F9C1357
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B5C26A0FF;
-	Wed,  7 May 2025 12:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A90C25F7B5;
+	Wed,  7 May 2025 12:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjvqmCJI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbPwGefw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4015125F7BC
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5214425E81D;
+	Wed,  7 May 2025 12:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746620748; cv=none; b=hOUBKV5bt/p4L6g9+pGUPKW17vK5I6O2Qb3MC6vct164Rgc2p/y99c8z4ysE5iF2UgiGjOl1SWAVfHXIQt9YesEK0z/80B9GkJnfl6UvFGqrEF62qTL+1aGOK1sJ4a0tCuVivuwkqCXs/vLgcbbDtAxvaZzlReKTuG7Y5rCsGPw=
+	t=1746620904; cv=none; b=DYaycjWIHhkr8Lsad52tGA2rJg/lrZWl/sAPLfvwi3rFHkrt81kk5ZinFL9zImt+mI9rhWI+cA9k63ZWSI4j+l5xWQFVgwiSGzKFgqg48Vu6bz1LxeWLAcvKqNirqCerDBOCtRI4Mr2LRTDUcmdxr4buICZj8eJAxtPS+AJ2f1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746620748; c=relaxed/simple;
-	bh=q7VldXU6WBNhZBSRfGVstM+5H19J9nGZI3GP8M4Sl9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bLSz0XjUJQTXgWe8xh/ETYeiPUmyQyabzjp9gZsL6eINmWvy/QfcNCWyQ9eOa8cKbK2Ut5bU/bPcg+ChUclpXeRdFEU3MnXKuVXUy4C/QTSyX0oaVUfyHz8R6R2GG/UtHjVK1uexGAfWylr5I6UKUeGg67lvtLyGDHWZEmwF7bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjvqmCJI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A928DC4CEE7;
-	Wed,  7 May 2025 12:25:47 +0000 (UTC)
+	s=arc-20240116; t=1746620904; c=relaxed/simple;
+	bh=OE8r8roK96uAKw4vsaj4b8alMxGkuxoqdOjfYJDmboo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aM/gOG8ZIrc4/kAXvEgdHfM5LJGTQSKslW7I/X4HDIqz1uDL7W/0I4bvLJotbFgfTul7ebWW9zjcMoc9u1LdO/lorYJ7RNJ5do2Vwl4awphA21xvD1T2qfUnZ0qbNno/0B0FQZl9omCFRDgbxkkgXxrUQNbKE9xrnIKK6ymzjac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbPwGefw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7CBEC4AF09;
+	Wed,  7 May 2025 12:28:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746620748;
-	bh=q7VldXU6WBNhZBSRfGVstM+5H19J9nGZI3GP8M4Sl9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BjvqmCJIoReheZyWZQ/lndomacAax2YrJQzOEO5pPapzD9dP6wbJawsgpIoJw94QK
-	 29P7QmZVBG8oX3s1JG2I3CsJpDLLgOR7Fryad4UbmkwgCOqL7KBV10rPAaI0IhwHAM
-	 2ntDOvEJPhKQ5Dkgo8geV6oQ/eRh5fl54ZOVosidd1wFALA09bcRHHYMO3aJ7c2VE0
-	 favLMZ1PBQjdQMjBnFW3u20u5n/gNiAzGF/OOKj3FV4wQp3r/IzZlnRn9CVyesttZf
-	 QckcYt/duROCECLToUa5ywu860E+/kP7tX8EUzoc3srEwOIy8/nIZl07kAADFh4jMS
-	 /dk+MVgT+lyWQ==
-Date: Wed, 7 May 2025 14:25:45 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v4 2/5] timers: Add the available mask in timer migration
-Message-ID: <aBtRSSCxyHcypo4b@localhost.localdomain>
-References: <20250506091534.42117-7-gmonaco@redhat.com>
- <20250506091534.42117-9-gmonaco@redhat.com>
- <aBozrJ0C6yzW7oB_@localhost.localdomain>
- <3f54534266f4405fc3c6943599edd9be88becd57.camel@redhat.com>
+	s=k20201202; t=1746620903;
+	bh=OE8r8roK96uAKw4vsaj4b8alMxGkuxoqdOjfYJDmboo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lbPwGefwScSp3VnPzsm/H7G4nK1Cxh6ErTBjyEXijHU8jovXlTeHyJc5+1vYJg3Vn
+	 SL0fBqcrRjJg6pQA7CEKy6lvM90lmKZ6yw6Li5gYosGTn0oi37/VVaLgQbN9FVRnne
+	 uSO7CVFWQRkAu46xVlt+qLsk9wtgMpBZM68/qsxbG7uYVZRWhsdVyf/Prq5G7Sus5E
+	 aF9rDkQZvxcGl5icc+v5DkPzHcS5UMdjDZsdacPcKTPGcYJXgTMwg/u5AKq3c4OLqi
+	 Q+WS7u8zkn7tS+1JMC4TFRb2XcRckgUO/Lnv/XB2nlBEe2dI1DNP54+f8T5Ya6RrQ+
+	 KNfKcfsc7ZP8Q==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549963b5551so7799026e87.2;
+        Wed, 07 May 2025 05:28:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU97jSthxWuAyaLBkUDvsTb2BqN2TsZQxTN2TmCeH5Vyu1caoVgYE0+OdMDP4b11C7gge7ufNkU09+UUpf55A==@vger.kernel.org, AJvYcCW4MbwGmVQ1FhMW7eh2iCjZNKmSON71+2y17+cYoJGHR4xbuY6RFkvY9NqO0C9gGUlgqfqypSQKb8o4XUmQ@vger.kernel.org, AJvYcCWZU6u94AwyYKcmBuWaDigP6wjQiCKnbk+9yUT3Cujj+7rWo5Q+YjQOE84umLi1x4FIHcKlf5fqaXsgB2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk4vLGhRpzgTx4GAz+GcpzEtuiWsoT4AlxQUneSYqLluhoc4jR
+	QYdzS7nTMSet46zCSCGPXmueeUNFINPeJ5srG73pFcWCiF+7tZP0UoMcnAizaF8X2TYcSxJanoh
+	QX/G1DA5VRCCWYg+kMIma/c0kd3g=
+X-Google-Smtp-Source: AGHT+IFgMAPq+hiKKe/7C3leO+9eXxhUQDBh3X5JkXUdD4isQhZxNaAVJ+XOOXQwgmx3BaKv6yQgC8QDsNaeXD/c5Ig=
+X-Received: by 2002:a05:6512:10cc:b0:549:8db6:b2dd with SMTP id
+ 2adb3069b0e04-54fb92a3ac8mr1207849e87.31.1746620902419; Wed, 07 May 2025
+ 05:28:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f54534266f4405fc3c6943599edd9be88becd57.camel@redhat.com>
+References: <20250505212401.3379699-6-samitolvanen@google.com> <20250505212401.3379699-10-samitolvanen@google.com>
+In-Reply-To: <20250505212401.3379699-10-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 7 May 2025 21:27:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS0Obe-ye1ba06EfZ+mgmc6ter+xMa+mKCw6aRM14L35Q@mail.gmail.com>
+X-Gm-Features: ATxdqUFN1YL8B_40y52RHamgoHz9_0Jw0cmMFy9Iiio91M2klLicBkuQDsXFblc
+Message-ID: <CAK7LNAS0Obe-ye1ba06EfZ+mgmc6ter+xMa+mKCw6aRM14L35Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] Documentation/kbuild: Add new gendwarfksyms kABI rules
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Wed, May 07, 2025 at 09:57:38AM +0200, Gabriele Monaco a écrit :
-> 
-> 
-> On Tue, 2025-05-06 at 18:07 +0200, Frederic Weisbecker wrote:
-> > Le Tue, May 06, 2025 at 11:15:37AM +0200, Gabriele Monaco a écrit :
-> > > Keep track of the CPUs available for timer migration in a cpumask.
-> > > This
-> > > prepares the ground to generalise the concept of unavailable CPUs.
-> > > 
-> > > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> > > ---
-> > >  kernel/time/timer_migration.c | 12 +++++++++++-
-> > >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/kernel/time/timer_migration.c
-> > > b/kernel/time/timer_migration.c
-> > > index 7efd897c7959..25439f961ccf 100644
-> > > --- a/kernel/time/timer_migration.c
-> > > +++ b/kernel/time/timer_migration.c
-> > > @@ -422,6 +422,9 @@ static unsigned int tmigr_crossnode_level
-> > > __read_mostly;
-> > >  
-> > >  static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
-> > >  
-> > > +/* CPUs available for timer migration */
-> > > +static cpumask_var_t tmigr_available_cpumask;
-> > > +
-> > >  #define TMIGR_NONE	0xFF
-> > >  #define BIT_CNT		8
-> > >  
-> > > @@ -1449,6 +1452,7 @@ static int tmigr_cpu_unavailable(unsigned int
-> > > cpu)
-> > >  	raw_spin_lock_irq(&tmc->lock);
-> > >  	tmc->available = false;
-> > >  	WRITE_ONCE(tmc->wakeup, KTIME_MAX);
-> > > +	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
-> > >  
-> > >  	/*
-> > >  	 * CPU has to handle the local events on his own, when on
-> > > the way to
-> > > @@ -1459,7 +1463,7 @@ static int tmigr_cpu_unavailable(unsigned int
-> > > cpu)
-> > >  	raw_spin_unlock_irq(&tmc->lock);
-> > >  
-> > >  	if (firstexp != KTIME_MAX) {
-> > > -		migrator = cpumask_any_but(cpu_online_mask, cpu);
-> > > +		migrator = cpumask_any(tmigr_available_cpumask);
-> > 
-> > Considering nohz_full CPUs should be still available.
-> > 
-> > I don't think there is anything ensuring that, in nohz_full mode,
-> > there must be at least one housekeeping CPU that is not domain
-> > isolated.
-> > 
-> > For example if we have two CPUs with CPU 0 being domain isolated
-> > and CPU 1 being nohz_full, then there is no migrator to handle CPU
-> > 1's
-> > global timers.
-> > 
-> 
-> Mmh, good point, didn't think about having the domain isolated and
-> nohz_full maps disjointed..
-> 
-> When that's really the case how do you think we should fall back?
-> 
-> In the situation you describe, no one is going to be able to handle
-> global timers on the nohz_full CPUs, right?
-> 
-> When this situation really occurs, we could keep one of the domain
-> isolated CPUs in the hierarchy. 
-> Now, I see on x86 CPU0 cannot be offlined and is not added to
-> nohz_full, which would make things considerably easier, but ARM doesn't
-> seem to work the same way.
-> 
-> We could elect a lucky winner (e.g. first or last becoming domain
-> isolated) and swap it whenever it becomes offline, until we actually
-> run out of those (no online cpu non-nohz_full is left), but I believe
-> this shouldn't happen..
-> 
-> Does this make sense to you?
+On Tue, May 6, 2025 at 6:24=E2=80=AFAM Sami Tolvanen <samitolvanen@google.c=
+om> wrote:
+>
+> Document byte_size and type_string kABI stability rules. Also fix
+> the section numbers while we're at it.
+>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  Documentation/kbuild/gendwarfksyms.rst | 103 +++++++++++++++++++++++--
+>  1 file changed, 95 insertions(+), 8 deletions(-)
+>
+> diff --git a/Documentation/kbuild/gendwarfksyms.rst b/Documentation/kbuil=
+d/gendwarfksyms.rst
+> index e4beaae7e456..8b0d7ebbb084 100644
+> --- a/Documentation/kbuild/gendwarfksyms.rst
+> +++ b/Documentation/kbuild/gendwarfksyms.rst
+> @@ -125,14 +125,17 @@ the rules. The fields are as follows:
+>    qualified name of the DWARF Debugging Information Entry (DIE).
+>  - `value`: Provides rule-specific data.
+>
+> -The following helper macro, for example, can be used to specify rules
+> +The following helper macros, for example, can be used to specify rules
+>  in the source code::
+>
+> -       #define __KABI_RULE(hint, target, value)                         =
+    \
+> -               static const char __PASTE(__gendwarfksyms_rule_,         =
+    \
+> +       #define ___KABI_RULE(hint, target, value)                        =
+   \
+> +               static const char __PASTE(__gendwarfksyms_rule_,         =
+    \
+>                                           __COUNTER__)[] __used __aligned=
+(1) \
+>                         __section(".discard.gendwarfksyms.kabi_rules") =
+=3D     \
+> -                               "1\0" #hint "\0" #target "\0" #value
+> +                               "1\0" #hint "\0" target "\0" value
+> +
+> +       #define __KABI_RULE(hint, target, value) \
+> +               ___KABI_RULE(hint, #target, #value)
+>
+>
+>  Currently, only the rules discussed in this section are supported, but
+> @@ -223,7 +226,88 @@ Example usage::
+>         KABI_ENUMERATOR_IGNORE(e, C);
+>         KABI_ENUMERATOR_VALUE(e, LAST, 2);
+>
+> -4.3. Adding structure members
+> +4.1.3. Managing structure size changes
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +A data structure can be partially opaque to modules if its allocation is
+> +handled by the core kernel, and modules only need to access some of its
+> +members. In this situation, it's possible to append new members to the
+> +structure without breaking the ABI, as long as the layout for the origin=
+al
+> +members remains unchanged.
+> +
+> +To append new members, we can hide them from symbol versioning as
+> +described in section :ref:`Hiding members <hiding_members>`, but we can'=
+t
+> +hide the increase in structure size. The `byte_size` rule allows us to
+> +override the structure size used for symbol versioning.
+> +
+> +The rule fields are expected to be as follows:
+> +
+> +- `type`: "byte_size"
+> +- `target`: The fully qualified name of the target data structure
+> +  (as shown in **--dump-dies** output).
+> +- `value`: A positive decimal number indicating the structure size
+> +  in bytes.
+> +
+> +Using the `__KABI_RULE` macro, this rule can be defined as::
+> +
+> +        #define KABI_BYTE_SIZE(fqn, value) \
+> +                __KABI_RULE(byte_size, fqn, value)
+> +
+> +Example usage::
+> +
+> +       struct s {
+> +                /* Unchanged original members */
+> +               unsigned long a;
+> +                void *p;
+> +
+> +                /* Appended new members */
+> +                KABI_IGNORE(0, unsigned long n);
+> +       };
+> +
+> +       KABI_BYTE_SIZE(s, 16);
+> +
+> +4.1.4. Overriding type strings
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> +
+> +In rare situations where distributions must make significant changes to
+> +otherwise opaque data structures that have inadvertently been included
+> +in the published ABI, keeping symbol versions stable using the more
+> +targeted kABI rules can become tedious. The `type_string` rule allows us
+> +to override the full type string for a type or a symbol, and even add
+> +types for versioning that no longer exist in the kernel.
+> +
+> +The rule fields are expected to be as follows:
+> +
+> +- `type`: "type_string"
+> +- `target`: The fully qualified name of the target data structure
+> +  (as shown in **--dump-dies** output) or symbol.
+> +- `value`: A valid type string (as shown in **--symtypes**) output)
+> +  to use instead of the real type.
+> +
+> +Using the `__KABI_RULE` macro, this rule can be defined as::
+> +
+> +       #define KABI_TYPE_STRING(type, str) \
+> +               ___KABI_RULE("type_string", type, str)
+> +
+> +Example usage::
+> +
+> +       /* Override type for a structure */
+> +       KABI_TYPE_STRING("s#s",
+> +               "structure_type s { "
+> +                       "member base_type int byte_size(4) "
+> +                               "encoding(5) n "
+> +                       "data_member_location(0) "
+> +               "} byte_size(8)");
+> +
+> +       /* Override type for a symbol */
+> +       KABI_TYPE_STRING("my_symbol", "variable s#s");
+> +
+> +The `type_string` rule should be used only as a last resort if maintaini=
+ng
+> +a stable symbol versions cannot be reasonably achieved using other
+> +means. Overriding a type string increases the risk of actual ABI breakag=
+es
+> +going unnoticed as it hides all changes to the type.
+> +
+> +4.2. Adding structure members
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>
+>  Perhaps the most common ABI compatible change is adding a member to a
+> @@ -237,7 +321,7 @@ natural method. This section describes gendwarfksyms =
+support for using
+>  reserved space in data structures and hiding members that don't change
+>  the ABI when calculating symbol versions.
+>
+> -4.3.1. Reserving space and replacing members
+> +4.2.1. Reserving space and replacing members
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Well, nohz_full= and isolcpus=, when they are passed together, must contain the
-same set of CPUs. And if there is no housekeeping CPU then one is forced, so
-it's well handled at this point.
+Hmm, renumbering is annoying.
 
-But if nohz_full= is passed on boot and cpusets later create an isolated
-partition which spans the housekeeping set, then the isolated partition must
-be rejected.
+Maybe, better to stop managing section numbers?
 
-Thanks.
+For example, see this commit
+1a4c1c9df72ec266f94631edc59f9f2a9dc5aa8c
 
--- 
-Frederic Weisbecker
-SUSE Labs
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
