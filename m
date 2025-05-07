@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-637433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5EE9AAD961
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:02:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDB3AAD953
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB699A4994
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6049171F48
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 08:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526A5221FA5;
-	Wed,  7 May 2025 07:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E7622A4D6;
+	Wed,  7 May 2025 07:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aVeinuwb"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="bp9/PJqD"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EC8221FA0
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 07:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033FC223702;
+	Wed,  7 May 2025 07:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746604639; cv=none; b=Byz6ueDOvms9hQsj1lUx65CJOoFGNpJjdN64kk/moyMhyUO15QIylnN8/KHxWEjUGh2GZUgG4zVEre4qyQnFl9/4egYuV9wZErHs9bPKhRqH2ruYN8auxhdPsmyKB5FmqSaVgVWtD5fa0xUTxQhvrYk0nslm2Hn1G4e3t8gPVS0=
+	t=1746604679; cv=none; b=dpVqZVl5nR2eJT2jZy5i2w78umRmXDs57PpuV0ckhWLp6megdBMayjuzA/2M2+lDkhM8h6RybylgebSdH3XFTFFexLMiP1ZTAp41yAtKdLcCm+JJ7V0kSMckHKZsPx/t5UQT4X5FEXHVJSCDllZZfjfuCYZ1FiIe2G+o/QbaaRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746604639; c=relaxed/simple;
-	bh=Meicg/fZElRbw9kCnqtDl8lQR4VRbNyjfl+MfABDXnM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fwXOctmVg+zA0KtyPojQlBGM3WprAi4/FTwZCKgS8AmAGYy8dd3UDGxz0IUQKim32vZVnTiIoLJwd6YzSCx9l3u6gqSaTjAzdeAwaAz+MTcD7Mphgo+cnfd3+whw1Qvf7nHvyAevyhUzfx4kfRJ/f7qJ2m+iU1mtRpQaALNrK8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aVeinuwb; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746604634;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+QiXqTbAoYX6MJxj8ydzesyt/NrBTkMXp+GMNrceJNk=;
-	b=aVeinuwbHEBHXbuLoh36jZR1Xo9ESpnFyEiFtKztAdfY7WavM2ibe1qhYP5DtiJb88u+Zo
-	cTR1FtdKRlDJimKA+RfjsEcd1/wFo87FoG12T6cvCkCGIVxikA4OAPj+JBFuK9HMrpqXcM
-	n5VMgBAFiuV0NKLvJxkM4WIjw5isUeU=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Mostafa Saleh <smostafa@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	maz@kernel.org,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	qperret@google.com
-Subject: Re: [PATCH] KVM: arm64: Fix memory check in host_stage2_set_owner_locked()
-Date: Wed,  7 May 2025 00:56:52 -0700
-Message-Id: <174660459091.2542293.13219475806929521401.b4-ty@linux.dev>
-In-Reply-To: <20250501162450.2784043-1-smostafa@google.com>
-References: <20250501162450.2784043-1-smostafa@google.com>
+	s=arc-20240116; t=1746604679; c=relaxed/simple;
+	bh=Zh1Ax+79urOihrTf+frzyudruYuijX+G+RsUCOtrxR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vF6beFHSyFCU27FQHaGYnAe46H3oJ2DDoIyeklJ4VQvCK23eFBXeH67ssZPmMgsrVgX4Oq0rQbQdaT1vng181hS1lrVnkX00DoIXQwpTEbbTtNSxC0cWfIoxIvDOoFRTmdw2Z4Ck6XKFlNDYbTSHa9XsOjuDGpU3FJ5TKdlAt5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=bp9/PJqD; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 31F241F949;
+	Wed,  7 May 2025 09:57:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1746604666;
+	bh=Zh1Ax+79urOihrTf+frzyudruYuijX+G+RsUCOtrxR4=; h=From:To:Subject;
+	b=bp9/PJqDfYkHIwO7r+oExaz/LOmHOCYbtrw7u8McQMGBwBEBzefL8rw1+uhHO9H8V
+	 KsxoETq9zRTZIj7jKRr6hFzVI/sXYCGlb7k10JDhkdpcH2ncI31Xu6xqs9NecIamkb
+	 5/cPThsxaK3iMWAstY52ZvvSy1waW4gewOfNaXVPYS2cesx7sMNyrtcDMBy/PX8hnc
+	 ML6uBtSPxKAgQJWtSZiOZN1p0yFQVhUj1zHkhtaOjCqqkx+ESG56c24rrQ9F8SbtNK
+	 b1hc0Gy/NpD2LD1ZjPOUpB/0ttCXco4YCsYsdqLqhgeXj1URNRA5ssUCSUsXTaK8EF
+	 uTo1SBb6IAxjg==
+Date: Wed, 7 May 2025 09:57:34 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Daniel Schultz <d.schultz@phytec.de>
+Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, robertcnelson@gmail.com,
+	francesco.dolcini@toradex.com, upstream@lists.phytec.de,
+	w.egorov@phytec.de
+Subject: Re: [PATCH 2/4] arm64: dts: ti: k3-am625-*: Specify Temperature Grade
+Message-ID: <20250507075734.GA10198@francesco-nb>
+References: <20250507050847.912756-1-d.schultz@phytec.de>
+ <20250507050847.912756-2-d.schultz@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507050847.912756-2-d.schultz@phytec.de>
 
-On Thu, 01 May 2025 16:24:50 +0000, Mostafa Saleh wrote:
-> I found this simple bug while preparing some patches for pKVM.
-> AFAICT, it should be harmless (besides crashing the kernel if it
-> was misbehaving)
-> 
-> 
+On Tue, May 06, 2025 at 10:08:45PM -0700, Daniel Schultz wrote:
+> Specify the temperature grade in the base device tree to ensure
+> correct trip points are applied for each board.
 
-Applied to fixes, thanks!
+At least for Verdin this is not correct.
 
-[1/1] KVM: arm64: Fix memory check in host_stage2_set_owner_locked()
-      https://git.kernel.org/kvmarm/kvmarm/c/3949e28786cd
+Verdin AM62 is available in different variants, the correct
+thermal thresholds should be set in firmware/bootloader, see for example
+in u-boot, arch/arm/mach-k3/am62x/am625_fdt.c
 
---
-Best,
-Oliver
+Francesco
+
 
