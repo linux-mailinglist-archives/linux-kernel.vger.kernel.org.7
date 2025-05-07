@@ -1,106 +1,110 @@
-Return-Path: <linux-kernel+bounces-638562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F43AAE783
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80299AAE78B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 546D97B2FB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:12:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28B443AE924
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A17C19AD5C;
-	Wed,  7 May 2025 17:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26EE289838;
+	Wed,  7 May 2025 17:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEujl9TV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CYrxyyYm"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545A71A0BF1;
-	Wed,  7 May 2025 17:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0DA2C9D;
+	Wed,  7 May 2025 17:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746638026; cv=none; b=Yf5h+qpkXdkT+58AqylGrlsJw0LTUroFv78oxPNXDEhp0ciGmQxOnsm7lSUIWV69sgz7qutg2+1eoczXWlNDjW3MkZzItsyWqqpSj9rHcC8ELF9tBGKfEEZTiw06yH/Cj0vCUo6dNL5NNB6qqGnoFpB6SwJb9vjcMhwsWfk2vsQ=
+	t=1746638198; cv=none; b=SimvnoTYKme2PtMoC7vDIWBnbcWp7coLQptYK3TuozEkLByZCyHaYCe4AiAduZs3nnh3j1eLlwLzqJB2VMeIl9DHjWlwGwrc1BAoY7kLjQMCrqW2gZfPCrz/aQdNLUG8ySlV6Pb0BpBohSIKXucbiXb8on/jhVpjzu+Pw3I+xaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746638026; c=relaxed/simple;
-	bh=PmE5AMWayhcd+e54onh5bX8GqZApiSRs1f3o3moTGPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CCZdlpZ04FAoc8qRzP8tiCzu7dDap82qyORUEN4EBlkjL3BI+h24DsaVg/8MBoE/StpoNTSB3pwmYIa/qrg865PPzuSvRneGY6h+urUWUNvbrALKD5qVuPuJW5cftRWYrt4Is9ByP6sKoRalosE4OZ1YHnqVDMOCmSRlV+W+qKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEujl9TV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75484C4CEE2;
-	Wed,  7 May 2025 17:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746638025;
-	bh=PmE5AMWayhcd+e54onh5bX8GqZApiSRs1f3o3moTGPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kEujl9TVEBQDx+MuY1AJNXxri6mnV2fYcT60715clOBJaWQfCh+DzuWmGVKzBXe37
-	 RM89XVjYUo9Fx0AuyeKEekx/jVESLEHPY/Xf7oKAe5hCI+bBzhDU11R3Wwj9mkbmwI
-	 Ot/gf2J0geVXdc6UNy7jTN2NJihrLn/k130KUHiuLL6up9SbmjWpcr9FJk1/MvFLZM
-	 kvjOH/h2r1DCC2qrKkYndauzzceZR6dAXvOGup/9mc8PhP6b/HgKBKGY6HCVdB1jsT
-	 FWGJ6KMAbw8pgQT4yPXWaX1TNinw97P/bm8diyw+ZHu3F5y/m3jwD9U/oz59IM5o0P
-	 rTw1F1g0jfwTQ==
-Date: Wed, 7 May 2025 10:13:41 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, oe-kbuild-all@lists.linux.dev,
-	Ard Biesheuvel <ardb@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [ebiggers:sha256-lib-v4 4/13] /tmp/ccoCWqTC.s: Error: local
- label `"3" (instance number 1 of a fb label)' is not defined
-Message-ID: <20250507171341.GA181648@sol>
-References: <202505071811.yYpLUbav-lkp@intel.com>
- <fe4c8f86-17d9-4e00-96e9-9f24c22c58a2@leemhuis.info>
- <c4a017e9-0169-4f7a-99a1-7ae1bbee4a19@leemhuis.info>
+	s=arc-20240116; t=1746638198; c=relaxed/simple;
+	bh=ZkVo3XCJP7aTzyXcH76H1fv7+RhSJ+RWRQ4A7ntDDkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nmmJNr859P3MVvQVJZX+Ce6UmxA2qxbO1WQX0NrgJPkv0QDgQ66Q39kszSWPWgbVc6j/GpZk2bs2OMeTuVpnIqYowJuuUVwAdOBOBb6sNYHTMKXVPgN/ngLjdHq20u5DV7VeX0kM10+uROh8/Mpb+e690h9BUqt1cXm6WXc1q60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CYrxyyYm; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id CiMZuIeFmUxKYCiMZu1ZE6; Wed, 07 May 2025 19:15:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746638121;
+	bh=+0ykhHojT69RVsplWj2aWmMhC2Tvr/5jv5CrtnYrBuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=CYrxyyYmDhGIsB+Jw6pW2GT3o3WBA3xZRhDDOWlq+w59EOAguncrEpZcckWkHXMpQ
+	 8QypKOdWozn98LZuru+X1XOqgh5QIErAzwPaU7mdbVpCc7hxUDVKpcwYMqhP2brWVc
+	 NZUp4wfr5nvQ/7bZfF2xW1qb5obV9NrK+mUo21+CV71vJIJQBqTs9a+6Y8vhILYFtw
+	 nIloVyZ9409AHoETMb7uChjbS2UQlHQZ4zwLLSbmGanux47j0QUs1dl9AwGguNHPdf
+	 BqQGXkEgGTm0LYxNPqpZzLQb0FfXBXW4cLDucZ1W74d5g76GRrFIZmdoJ8Xe+1XIGI
+	 j0dIfmmtIgbrw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 07 May 2025 19:15:21 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <5ab1af21-ebe4-43a4-bb70-fa25c442e24f@wanadoo.fr>
+Date: Wed, 7 May 2025 19:15:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4a017e9-0169-4f7a-99a1-7ae1bbee4a19@leemhuis.info>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] ASoC: rt712-sdca: remove redundant else path of if
+ statement
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+ linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250507140907.255562-1-colin.i.king@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250507140907.255562-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 07, 2025 at 12:56:22PM +0200, Thorsten Leemhuis wrote:
-> [+linux-crypto and +Herbert Xu, who committed that change that showed up
-> in -next today; sorry for forgetting this earlier]
+Le 07/05/2025 à 16:09, Colin Ian King a écrit :
+> There is an if/else check where the else part is executed if
+> adc_vol_flag is true, this else path checks if adc_vol_flag
+> is true (which is a redundant second check) and the if path is
+> always taken. Remove the redundant check and remove the else
+> path since that can never occur.
 > 
-> On 07.05.25 12:50, Thorsten Leemhuis wrote:
-> > On 07.05.25 12:25, kernel test robot wrote:
-> >> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git sha256-lib-v4
-> >> head:   849682242c36727c23430b6cfed12e4422313931
-> >> commit: 9f2dd94847c914bb716be744e12cb02f175638db [4/13] crypto: arm64/sha256 - implement library instead of shash
-> >> config: arm64-randconfig-003-20250429 (https://download.01.org/0day-ci/archive/20250507/202505071811.yYpLUbav-lkp@intel.com/config)
-> >> compiler: aarch64-linux-gcc (GCC) 9.5.0
-> >> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071811.yYpLUbav-lkp@intel.com/reproduce)
-> >>
-> >> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> >> the same patch/commit), kindly add following tags
-> >> | Reported-by: kernel test robot <lkp@intel.com>
-> >> | Closes: https://lore.kernel.org/oe-kbuild-all/202505071811.yYpLUbav-lkp@intel.com/
-> >>
-> >> All errors (new ones prefixed by >>):
-> >>
-> >>    /tmp/ccoCWqTC.s: Assembler messages:
-> >>>> /tmp/ccoCWqTC.s: Error: local label `"3" (instance number 1 of a fb label)' is not defined
-> > 
-> > I ran into the same problem today when building -next rpms for arm64
-> > Fedora using the approach and configuration used to build the kernel
-> > rpms shipped in Fedora rawhide.
-> > 
-> > Full build log:
-> > 
-> > https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-aarch64/09006679-next-next-all/builder-live.log.gz
-> > 
-> > Ciao, Thorsten
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   sound/soc/codecs/rt712-sdca.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/rt712-sdca.c b/sound/soc/codecs/rt712-sdca.c
+> index 19d99b9d4ab2..570c2af1245d 100644
+> --- a/sound/soc/codecs/rt712-sdca.c
+> +++ b/sound/soc/codecs/rt712-sdca.c
+> @@ -1065,12 +1065,8 @@ static int rt712_sdca_dmic_set_gain_get(struct snd_kcontrol *kcontrol,
+>   
+>   		if (!adc_vol_flag) /* boost gain */
+>   			ctl = regvalue / 0x0a00;
+> -		else { /* ADC gain */
+> -			if (adc_vol_flag)
+> -				ctl = p->max - (((0x1e00 - regvalue) & 0xffff) / interval_offset);
+> -			else
+> -				ctl = p->max - (((0 - regvalue) & 0xffff) / interval_offset);
+> -		}
+> +		else /* ADC gain */
+> +			ctl = p->max - (((0x1e00 - regvalue) & 0xffff) / interval_offset);
+>   
+>   		ucontrol->value.integer.value[i] = ctl;
+>   	}
 
-Thanks.  https://lore.kernel.org/r/20250507170901.151548-1-ebiggers@kernel.org
-fixes this.  This was specific to CONFIG_PREEMPT_VOLUNTARY=y, which I've now
-added to the lists of configs I test...
+Hi,
 
-- Eric
+apparently the same pattern is in rt712-sdca-dmic.c.
+
+CJ
 
