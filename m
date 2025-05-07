@@ -1,201 +1,96 @@
-Return-Path: <linux-kernel+bounces-637876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F23FAADEA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B67AFAADEA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901D24E3A30
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBFC2177908
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEB225E46A;
-	Wed,  7 May 2025 12:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78E525CC77;
+	Wed,  7 May 2025 12:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJWozJ2H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oS9Jr+7E"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74A4221FB3;
-	Wed,  7 May 2025 12:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BA61FF7B4
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746619839; cv=none; b=jTtOXxaMe/uch/AO//8MIb+6N2Xm1iSnphAoqfz1lISYriEfSbYkspX83snH403Yk98qLZL9FJ4TQNUprwRzjzmsQJ6Oiq7m5kUUazMU1Vq+Nxh0P42OupeLD1+bOJWs6mMyUTEgl4sPzxmVRw0qC+bF8HSvCLQTpIa5GDIqqG8=
+	t=1746619898; cv=none; b=EZANZipQdG7+aqxKtUke5JWjxWNYw/0U2OOtFgEeNhxy8I/V7S5qNX0msxA/6f639n9+zqMuZMObER4LYc5l9kBbW/kx1Lc15kfEQ1pPbJAuvSNO02tYCmo+Wr1vU2IOfcMgbTQptLqYDH7blhrUSMXZcAFbP8K9xTUwOrvNk04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746619839; c=relaxed/simple;
-	bh=+tyZGvu9GnVjrLuiIyr6ilOOdP2dGHfUKje1V0MzKKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hmuiti5vY5kAHgx7rDHAXyPPCfwEyb/ylerGKlbnwrUg9BDXraaTgK+55c+xYor0ZlZ/pWKc0cVlSGBJE/ESXaNZKX2Ya5xtOZ4yd7AZpPr6LcsI0X66k4YxjEoh73BclaHcNm4KpAcyl5Hpfz3mvUoHFw1aV6S+O73FIPp5Vgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJWozJ2H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55769C4CEEB;
-	Wed,  7 May 2025 12:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746619838;
-	bh=+tyZGvu9GnVjrLuiIyr6ilOOdP2dGHfUKje1V0MzKKI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LJWozJ2HqBbv3/C4a46T5qIYkv8ZiDtsW1yuLh0xtwHmcMb65TWzbo2rVZZsZ+Z/r
-	 bxWQlXZ182eqLQJRF+d52l3mSVGnQZAoSPp6fNFwGP/DOaKUcYq2cQtfm1MR+4+odh
-	 zb41JSB4vuLj11BWZcVdSU74znL4uooVgI/enOX2HlU/gQ/qix/FDg2zPr7Y6fLXq9
-	 sxkzGMpy2EjCjj4TJUCOb72d/AgH2qRsNQTR76AgrZEJ6b+CKajBglDGoyLUQmuuCg
-	 CDK9ls0VXebrXXkjU06hwUTemBDfqFLwacs63qczwDuPdUG5dZjS0jC7r/RemmEjOM
-	 C/j79iPq5Snpg==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3105ef2a071so70837111fa.1;
-        Wed, 07 May 2025 05:10:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrofXmgctCuUVNuq+BNOKtEfpOIWMu1X504nyJwmHDqiTravuehfXnxgYu9naySW9KmEiIwAWun99XIi4=@vger.kernel.org, AJvYcCVNtWwRd2I8oOAk7ta0kTKGAKRHVesWZSILdRzQAKIfRLvZbJ2cA3ncOzzZ4At3dC1fm4pLpfXGAUbVX81YhW2W@vger.kernel.org, AJvYcCXKy/vchoHeRDo82Vv/EzMljqjH0LILVeVLkKQdZq36BLJk1qNc2MDut8Eev//9ztZjRqVBq9PxTdsiXzfa@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeTG+rBlMrPblS8MDeuxd0LxZHGSQF25wxHtwwN7cHsMSXsnIj
-	2vHBksm7xr0X94s1PMa6j/ZbFpukldLoJbhMofcliDAzXx/Eb+2QVxIpbmfWKfm+BxipOIJysj0
-	u4JeU2TtP6DCjYyOkOuqJtAtESq8=
-X-Google-Smtp-Source: AGHT+IEhOnKIW8Malmv/rXIb54yBHHePhpOVW2lpLBytQvNsR/jNwH/hb7ndGKk1lsTbL3LOydq29GJRGeEAIhrsjCY=
-X-Received: by 2002:a05:651c:3134:b0:30c:5c6:91e0 with SMTP id
- 38308e7fff4ca-326ad15e2d3mr11394041fa.2.1746619837058; Wed, 07 May 2025
- 05:10:37 -0700 (PDT)
+	s=arc-20240116; t=1746619898; c=relaxed/simple;
+	bh=3eE5blS4FgeUpqHOAwIR4SXocX5HfbFsc2jJzj2Ar8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TVufceAKx9avsd7rDx7WkhtS7ishuzuN5uvOAr58xbDVAhaOMhhwro5NkvhpQtNjv8PpqvJBJ0QKnp/hBce79KDZkfhtIYll1QQpHW02hs77fT/wK9YcrFBADi/JjG/9XkTEb1613Y04zau58l2P1Wh/8QQY8nBElDFb365TSCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oS9Jr+7E; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6gtZw/19cy9nmFSY5os2fTfYQ3iFqfNfyyYDRhMXkkk=; b=oS9Jr+7EjwU9rXH/Pm3dWaV/Ey
+	GEwPNVMGXnfSMLG85yAbZ7c8BClT4qtCWC6BZ6MTsuXOpx7fEX7QydFY4CphyEn634oGZtgWb8Fj6
+	V56GGyrvJU52+TW6Sw3Zxq3Mhx/2NJzk0trwp0nq94p+sI0WaiEBpM8E31rqniJlMmnA3T+1CjKk2
+	DPmtvmkdPTUJTclOoi2UNjJwMki+9FdcHGXhX+TEC6qNqf2LP/OcVvqzziS1D+v9DSYRanZDOl2Nb
+	KDNv3v1mGkdahIDtX1ebJOqjtf+n2PiB0oRVTWOpFiPfJsqt/o65j4SZVfjZbq9ZoiA4pLwtTE4Rw
+	E+ruHBtw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uCdbS-00000004J1Q-0Izd;
+	Wed, 07 May 2025 12:10:22 +0000
+Date: Wed, 7 May 2025 13:10:21 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, hannes@cmpxchg.org,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	ziy@nvidia.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+	mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm: convert do_set_pmd() to take a folio
+Message-ID: <aBtNrQNlL7hjLrTZ@casper.infradead.org>
+References: <8e33c8a65b46170dfd8ba6715d2115856a55b8f6.1746609191.git.baolin.wang@linux.alibaba.com>
+ <a2faee74256c22cff2238487a86b154d5520c334.1746609191.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502172459.14175-1-skhan@linuxfoundation.org>
- <20250506-accomplished-earthworm-from-valhalla-dbcbcc@l-nschier-aarch64> <0d27886e-5a3c-4073-a044-f6684de8333d@linuxfoundation.org>
-In-Reply-To: <0d27886e-5a3c-4073-a044-f6684de8333d@linuxfoundation.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 7 May 2025 21:09:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARiBqegnGEOoiayLz2SsyX8bQROGSgXQ7o-ZjcCuyCUew@mail.gmail.com>
-X-Gm-Features: ATxdqUEKfhoizKUsGm35ZQH3MxleUrqdVI_H0HY9LRzFaEKtSUx52LtqKLyUyeQ
-Message-ID: <CAK7LNARiBqegnGEOoiayLz2SsyX8bQROGSgXQ7o-ZjcCuyCUew@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: use ARCH from compile.h in unclean source tree msg
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>, nathan@kernel.org, brendan.higgins@linux.dev, 
-	davidgow@google.com, rmoar@google.com, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2faee74256c22cff2238487a86b154d5520c334.1746609191.git.baolin.wang@linux.alibaba.com>
 
-On Wed, May 7, 2025 at 7:07=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.or=
-g> wrote:
->
-> On 5/6/25 05:12, Nicolas Schier wrote:
-> > On Fri, 02 May 2025, Shuah Khan wrote:
-> >
-> >> When make finds the source tree unclean, it prints a message to run
-> >> "make ARCH=3Dx86_64 mrproper" message using the ARCH from the command
-> >> line. The ARCH specified in the command line could be different from
-> >> the ARCH of the existing build in the source tree.
-> >>
-> >> This could cause problems in regular kernel build and kunit workflows.
-> >>
-> >> Regular workflow:
-> >>
-> >> - Build x86_64 kernel
-> >>      $ make ARCH=3Dx86_64
-> >> - Try building another arch kernel out of tree with O=3D
-> >>      $ make ARCH=3Dum O=3D/linux/build
-> >> - kbuild detects source tree is unclean
-> >>
-> >>    ***
-> >>    *** The source tree is not clean, please run 'make ARCH=3Dum mrprop=
-er'
-> >>    *** in /linux/linux_srcdir
-> >>    ***
-> >>
-> >> - Clean source tree as suggested by kbuild
-> >>      $ make ARCH=3Dum mrproper
-> >> - Source clean appears to be clean, but it leaves behind generated hea=
-der
-> >>    files under arch/x86
-> >>      arch/x86/realmode/rm/pasyms.h
-> >>
-> >> A subsequent x86_64e build fails with
-> >>    "undefined symbol sev_es_trampoline_start referenced ..."
-> >>
-> >> kunit workflow runs into this issue:
-> >>
-> >> - Build x86_64 kernel
-> >> - Run kunit tests:  it tries to build for user specified ARCH or uml
-> >>    as default:
-> >>      $ ./tools/testing/kunit/kunit.py run
-> >>
-> >> - kbuild detects unclean source tree
-> >>
-> >>    ***
-> >>    *** The source tree is not clean, please run 'make ARCH=3Dum mrprop=
-er'
-> >>    *** in /linux/linux_6.15
-> >>    ***
-> >>
-> >> - Clean source tree as suggested by kbuild
-> >>      $ make ARCH=3Dum mrproper
-> >> - Source clean appears to be clean, but it leaves behind generated hea=
-der
-> >>    files under arch/x86
-> >>
-> >> The problem shows when user tries to run tests on ARCH=3Dx86_64:
-> >>
-> >>      $ ./tools/testing/kunit/kunit.py run ARCH=3Dx86_64
-> >>
-> >>      "undefined symbol sev_es_trampoline_start referenced ..."
-> >>
-> >> Build trips on arch/x86/realmode/rm/pasyms.h left behind by a prior
-> >> x86_64 build.
-> >>
-> >> Problems related to partially cleaned source tree are hard to debug.
-> >> Change Makefile to unclean source logic to use ARCH from compile.h
-> >> UTS_MACHINE string. With this change kbuild prints:
-> >>
-> >>      $ ./tools/testing/kunit/kunit.py run
-> >>
-> >>    ***
-> >>    *** The source tree is not clean, please run 'make ARCH=3Dx86_64 mr=
-proper'
-> >>    *** in /linux/linux_6.15
-> >>    ***
-> >>
-> >> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> >> ---
-> >>   Makefile | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/Makefile b/Makefile
-> >> index 5aa9ee52a765..7ee29136b4da 100644
-> >> --- a/Makefile
-> >> +++ b/Makefile
-> >> @@ -674,7 +674,7 @@ ifeq ($(KBUILD_EXTMOD),)
-> >>               -d $(srctree)/include/config -o \
-> >>               -d $(srctree)/arch/$(SRCARCH)/include/generated ]; then =
-\
->
-> Would it make sense to check for include/generated as a catch all?
->
-> >>              echo >&2 "***"; \
-> >> -            echo >&2 "*** The source tree is not clean, please run 'm=
-ake$(if $(findstring command line, $(origin ARCH)), ARCH=3D$(ARCH)) mrprope=
-r'"; \
-> >> +            echo >&2 "*** The source tree is not clean, please run 'm=
-ake ARCH=3D$(shell grep UTS_MACHINE $(srctree)/include/generated/compile.h =
-| cut -d '"' -f 2) mrproper'"; \
-> >
-> > Please 'grep' option '-s'.
-> >
-> > There are some (rare) occassions, when there is no include/generated/co=
-mpile.h
-> > but still the source tree will be considered to be dirty:
->
-> I considered adding a check for not finding include/generated/compile.h
-> and figured if include/config is found we are probably safe.
->
-> I will fix that.
+On Wed, May 07, 2025 at 05:26:13PM +0800, Baolin Wang wrote:
+> In do_set_pmd(), we always use the folio->page to build PMD mappings for
+> the entire folio. Since all callers of do_set_pmd() already hold a stable
+> folio, converting do_set_pmd() to take a folio is safe and more straightforward.
 
-Does this fix your issue?
+What testing did you do of this?
 
-https://patchwork.kernel.org/project/linux-kbuild/patch/20250507074936.4866=
-48-1-masahiroy@kernel.org/
+> -vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
+> +vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio)
+>  {
+> -	struct folio *folio = page_folio(page);
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	bool write = vmf->flags & FAULT_FLAG_WRITE;
+>  	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>  	pmd_t entry;
+>  	vm_fault_t ret = VM_FAULT_FALLBACK;
+> +	struct page *page;
 
+Because I see nowhere in this patch that you initialise 'page'.
 
+And that's really the important part.  You seem to be assuming that a
+folio will never be larger than PMD size, and I'm not comfortable with
+that assumption.  It's a limitation I put in place a few years ago so we
+didn't have to find and fix all those assumptions immediately, but I
+imagine that some day we'll want to have larger folios.
 
-
---=20
-Best Regards
-Masahiro Yamada
+So unless you can derive _which_ page in the folio we want to map from
+the vmf, NACK this patch.
 
