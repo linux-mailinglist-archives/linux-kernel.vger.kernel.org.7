@@ -1,251 +1,370 @@
-Return-Path: <linux-kernel+bounces-637123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B690AAD507
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:18:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B85AAD50B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9580A985F82
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BDDA1BA1061
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 05:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0633F1DF252;
-	Wed,  7 May 2025 05:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D923A1E834C;
+	Wed,  7 May 2025 05:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQUu8fj/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WyB8ehr0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3C51F4629;
-	Wed,  7 May 2025 05:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39C31DF252;
+	Wed,  7 May 2025 05:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746595038; cv=none; b=O8gDwS5aK0sO1RxvUWaCAlOphMEPYosNR1NJML8TaXEMPrPMAWbgPM6bpp8WeFznziJ4vm7KZoAqxKe34WfaAK/zV6lQ1zk/LKU2meEUMlq9xcvIXg5+Ht76q5CpJQUlXiK6aw5nRo8vcmr55m/C1jjiopuzYrDUR8++ARg+OD4=
+	t=1746595034; cv=none; b=Z5R0SCFsYq4BUk5/3Dd+242uvcMJrwRSatTuSZMCQiPR0zE5qjEp28jo64VxxoXkUruXjw54ke2L4Zn9cYWzH+Olmd7zfibyGYZUcfk7ySv1emZRt1euAyGzFSYL7wic0KDTAqPvqfGC6wf+DAlUpQ9s2dUZcGvwF4bluALami0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746595038; c=relaxed/simple;
-	bh=PdZyjzHGc/k8znJaJoDuI0ptJr6G6zL0QZPUy0jj/O0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QjIbP0zH/8dqHDJkDmByjLRXIzGA0eh/veGNwazcfSLEu2QQJoKDpu9ygwJQkJthfvac/VP18EzPkbEWe5du2kaOm2ITww7/YbewsqlcWUfvEpiyqy6fpBj0u8ZgJMFhrONJIWzNbmVrKZCQCSkdIjXMHlR1AKsqDvx0ROjsanE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQUu8fj/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9F103C4CEEF;
-	Wed,  7 May 2025 05:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746595037;
-	bh=PdZyjzHGc/k8znJaJoDuI0ptJr6G6zL0QZPUy0jj/O0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PQUu8fj/CxrRZlSZ1o/c7MTa7mk1jSC7MVaXD7PzeBi7fJENhgfAXyz7k0jlKUhBC
-	 Y8JwhbnMzfJSVmMV5HIaOkuMCxXewDYPcTIQBXuwmvASiS4T0/eHWaPWK9mdhzCWRJ
-	 tT0TsyM8MGtNUW/NVwZwS9hauRMynZSHWZTIlN/3bMgQliFdfdDAWfD0V1bbrxryKb
-	 /eVRSnug3YPqKLBIzMDUpCf4lxuP2y5Em8zhjMZijGNELYKeZED7/YEJQP3a7pSZeH
-	 Zitkjkb5XJ2BsUgzHORrp3K/1u6Mwsprmv+UNztv9GYov2DNG2wSqQdbTkZZDoxB/Y
-	 gdS47SktR8u6g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A5AC3ABC0;
-	Wed,  7 May 2025 05:17:17 +0000 (UTC)
-From: Chen Linxuan via B4 Relay <devnull+chenlinxuan.uniontech.com@kernel.org>
-Date: Wed, 07 May 2025 13:16:42 +0800
-Subject: [PATCH 2/2] docs: filesystems: add fuse-passthrough.rst
+	s=arc-20240116; t=1746595034; c=relaxed/simple;
+	bh=12IwskIPhu6oGfNdKGzLFMEBm5EiP9FaKcKTQO4HPAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i4aqN4yNnlWkFbLbCmbeNRIJcreEua+5ctsnYNcL1zgqW5/3mIPhbRDymcQbdl9ZvZHAjPPlqLn0k2cI7e3kCZ+4fkCjiXmivXT5has9U7cJNF3az16vUyZv9I1RzRC6m3qbrxTOJDOYM8ikTzsGJUPPaMrINGaA6KOAjclumbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WyB8ehr0; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746595032; x=1778131032;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=12IwskIPhu6oGfNdKGzLFMEBm5EiP9FaKcKTQO4HPAY=;
+  b=WyB8ehr0o1KknEhdaxwhJg75fyA86x9K/WiMuHzSb0Fs81bqCfcWmVOa
+   RiiKCRQGU+sc1T5tBCO/EETKjfzM1xpva6KiIUnv33VeVkKKIgm+pcc1R
+   DHEpttG1ptvzgZ7yuQkiNwQQUwy2OEgs42XVJlbVcyt2/9FCtt7UudXGX
+   3HajIx5Ezb2tz23KgIP63sGMTxe9IASYJZJr+RygNNOrzhpfHpNKf0vbJ
+   n7U1gFzcdLDqbBJf6Vru45q7KANYEySJLAplb4tCmpLBWsv60soAgWQBJ
+   u8urZgRtDybfpsIVjHp2fj8Ke1owUmCKbxJu5dxQYjqItISiQOeh1geH0
+   w==;
+X-CSE-ConnectionGUID: U3iYqsOARHO5GZamphOsEw==
+X-CSE-MsgGUID: bHjBrh29Qm2n/PBsGlZgjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="47400509"
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="47400509"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 22:17:11 -0700
+X-CSE-ConnectionGUID: 02f5Ksq8TaS7odhxSO8Kpw==
+X-CSE-MsgGUID: 3A7aY4KwSPGVig9mHadwXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="140954642"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 22:17:07 -0700
+Message-ID: <86f9b2f0-533c-478d-ac9a-dbee11537dac@linux.intel.com>
+Date: Wed, 7 May 2025 13:17:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250507-fuse-passthrough-doc-v1-2-cc06af79c722@uniontech.com>
-References: <20250507-fuse-passthrough-doc-v1-0-cc06af79c722@uniontech.com>
-In-Reply-To: <20250507-fuse-passthrough-doc-v1-0-cc06af79c722@uniontech.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Chen Linxuan <chenlinxuan@uniontech.com>, 
- Amir Goldstein <amir73il@gmail.com>, 
- Bernd Schubert <bernd.schubert@fastmail.fm>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7979;
- i=chenlinxuan@uniontech.com; h=from:subject:message-id;
- bh=Q99iNM7uiYR5brGKTUprcxMDvkBIBBO8n5B+ovq6PUU=;
- b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBoGuzaBt/X7l1SdFXurzyC8VmMRUtniNh+DFJcy
- yhgGgWelDSJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaBrs2gAKCRB2HuYUOZmu
- iy2HD/0QHucwDMRke0GnVoonqiIXC7Au0b99qe2mFbKVhOSViY13dJ7k+4gy+494bk+NBL+y5Sg
- fDSP0N2DAK9ivzsM1Evz+LpYbFxrrhY0lEEp7HosOEgO0dMyep7ORb8GaPKSdOOvtlh9cYcAM5+
- K6P/zC+GC/pHrPyW9e7j0Zif2PvEttkI9Pf38X4XhUnBYhyM6cd+Kqlb1I+G3PZgDNeJYzm7Swh
- aTBA4Cm39NU+JQ7mQ15mZFtL0M3gnYfGfIW5HHUfGRsKdc2b+Q5gsfLLE0e7g3LOzodjCNlLvdz
- zRpwcFjFZuAuQPFmovnj9lX4nSBO4t4tKbTv8mkACEbuD0gi4lwNmxM4PnPhGJI4if5w2fUza0f
- G2sMw5Q9KHtgkgoVryoOWgQ+tZn3bPMFLjwkdVwKl/Et2eGj82R60g96BiqrVEgtHF8mQV0tcKW
- 6bLDaXHmXDfb3iP0xijNHggXMK3seYturO8Qg81S/wJ6AOQ+3reRmi3D2jCDxpIliCayhslIVqu
- IWHNKLtAm8Qtq8uYqK3+JftCuqcJ9wZd9foOGBaJnF+uLnCNA/vjUrN1KHtC/xQ4G+BDr+8HE6h
- iqM2CIS1mQziWh8rHIyQTTuuBA3sSFakLeFVXBSCwtb0v3xglvnJLo3EqFwjv2RxsppSXovd2hl
- l/xnODBDmUkKKlg==
-X-Developer-Key: i=chenlinxuan@uniontech.com; a=openpgp;
- fpr=D818ACDD385CAE92D4BAC01A6269794D24791D21
-X-Endpoint-Received: by B4 Relay for chenlinxuan@uniontech.com/default with
- auth_id=380
-X-Original-From: Chen Linxuan <chenlinxuan@uniontech.com>
-Reply-To: chenlinxuan@uniontech.com
-
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-
-Add a documentation about FUSE passthrough.
-
-It's mainly about why FUSE passthrough needs CAP_SYS_ADMIN.
-
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>
-Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
----
- Documentation/filesystems/fuse-passthrough.rst | 139 +++++++++++++++++++++++++
- 1 file changed, 139 insertions(+)
-
-diff --git a/Documentation/filesystems/fuse-passthrough.rst b/Documentation/filesystems/fuse-passthrough.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..f7c3b3ac08c255906ed7c909229107ff15cdb223
---- /dev/null
-+++ b/Documentation/filesystems/fuse-passthrough.rst
-@@ -0,0 +1,139 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+================
-+FUSE Passthrough
-+================
-+
-+Introduction
-+============
-+
-+FUSE (Filesystem in Userspace) passthrough is a feature designed to improve the
-+performance of FUSE filesystems for I/O operations. Typically, FUSE operations
-+involve communication between the kernel and a userspace FUSE daemon, which can
-+introduce overhead. Passthrough allows certain operations on a FUSE file to
-+bypass the userspace daemon and be executed directly by the kernel on an
-+underlying "backing file".
-+
-+This is achieved by the FUSE daemon registering a file descriptor (pointing to
-+the backing file on a lower filesystem) with the FUSE kernel module. The kernel
-+then receives an identifier (`backing_id`) for this registered backing file.
-+When a FUSE file is subsequently opened, the FUSE daemon can, in its response to
-+the ``OPEN`` request, include this ``backing_id`` and set the
-+``FOPEN_PASSTHROUGH`` flag. This establishes a direct link for specific
-+operations.
-+
-+Currently, passthrough is supported for operations like ``read(2)``/``write(2)``
-+(via ``read_iter``/``write_iter``), ``splice(2)``, and ``mmap(2)``.
-+
-+Enabling Passthrough
-+====================
-+
-+To use FUSE passthrough:
-+
-+  1. The FUSE filesystem must be compiled with ``CONFIG_FUSE_PASSTHROUGH``
-+     enabled.
-+  2. The FUSE daemon, during the ``FUSE_INIT`` handshake, must negotiate the
-+     ``FUSE_PASSTHROUGH`` capability and specify its desired
-+     ``max_stack_depth``.
-+  3. The (privileged) FUSE daemon uses the ``FUSE_DEV_IOC_BACKING_OPEN`` ioctl
-+     on its connection file descriptor (e.g., ``/dev/fuse``) to register a
-+     backing file descriptor and obtain a ``backing_id``.
-+  4. When handling an ``OPEN`` or ``CREATE`` request for a FUSE file, the daemon
-+     replies with the ``FOPEN_PASSTHROUGH`` flag set in
-+     ``fuse_open_out::open_flags`` and provides the corresponding ``backing_id``
-+     in ``fuse_open_out::backing_id``.
-+  5. The FUSE daemon should eventually call ``FUSE_DEV_IOC_BACKING_CLOSE`` with
-+     the ``backing_id`` to release the kernel's reference to the backing file
-+     when it's no longer needed for passthrough setups.
-+
-+Privilege Requirements
-+======================
-+
-+Setting up passthrough functionality currently requires the FUSE daemon to
-+possess the ``CAP_SYS_ADMIN`` capability. This requirement stems from several
-+security and resource management considerations that are actively being
-+discussed and worked on. The primary reasons for this restriction are detailed
-+below.
-+
-+Resource Accounting and Visibility
-+----------------------------------
-+
-+The core mechanism for passthrough involves the FUSE daemon opening a file
-+descriptor to a backing file and registering it with the FUSE kernel module via
-+the ``FUSE_DEV_IOC_BACKING_OPEN`` ioctl. This ioctl returns a ``backing_id``
-+associated with a kernel-internal ``struct fuse_backing`` object, which holds a
-+reference to the backing ``struct file``.
-+
-+A significant concern arises because the FUSE daemon can close its own file
-+descriptor to the backing file after registration. The kernel, however, will
-+still hold a reference to the ``struct file`` via the ``struct fuse_backing``
-+object as long as it's associated with a ``backing_id`` (or subsequently, with
-+an open FUSE file in passthrough mode).
-+
-+This behavior leads to two main issues for unprivileged FUSE daemons:
-+
-+  1. **Invisibility to lsof and other inspection tools**: Once the FUSE
-+     daemon closes its file descriptor, the open backing file held by the kernel
-+     becomes "hidden." Standard tools like ``lsof``, which typically inspect
-+     process file descriptor tables, would not be able to identify that this
-+     file is still open by the system on behalf of the FUSE filesystem. This
-+     makes it difficult for system administrators to track resource usage or
-+     debug issues related to open files (e.g., preventing unmounts).
-+
-+  2. **Bypassing RLIMIT_NOFILE**: The FUSE daemon process is subject to
-+     resource limits, including the maximum number of open file descriptors
-+     (``RLIMIT_NOFILE``). If an unprivileged daemon could register backing files
-+     and then close its own FDs, it could potentially cause the kernel to hold
-+     an unlimited number of open ``struct file`` references without these being
-+     accounted against the daemon's ``RLIMIT_NOFILE``. This could lead to a
-+     denial-of-service (DoS) by exhausting system-wide file resources.
-+
-+The ``CAP_SYS_ADMIN`` requirement acts as a safeguard against these issues,
-+restricting this powerful capability to trusted processes. As noted in the
-+kernel code (``fs/fuse/passthrough.c`` in ``fuse_backing_open()``):
-+
-+Discussions suggest that exposing information about these backing files, perhaps
-+through a dedicated interface under ``/sys/fs/fuse/connections/``, could be a
-+step towards relaxing this capability. This would be analogous to how
-+``io_uring`` exposes its "fixed files", which are also visible via ``fdinfo``
-+and accounted under the registering user's ``RLIMIT_NOFILE``.
-+
-+Filesystem Stacking and Shutdown Loops
-+--------------------------------------
-+
-+Another concern relates to the potential for creating complex and problematic
-+filesystem stacking scenarios if unprivileged users could set up passthrough.
-+A FUSE passthrough filesystem might use a backing file that resides:
-+
-+  * On the *same* FUSE filesystem.
-+  * On another filesystem (like OverlayFS) which itself might have an upper or
-+    lower layer that is a FUSE filesystem.
-+
-+These configurations could create dependency loops, particularly during
-+filesystem shutdown or unmount sequences, leading to deadlocks or system
-+instability. This is conceptually similar to the risks associated with the
-+``LOOP_SET_FD`` ioctl, which also requires ``CAP_SYS_ADMIN``.
-+
-+To mitigate this, FUSE passthrough already incorporates checks based on
-+filesystem stacking depth (``sb->s_stack_depth`` and ``fc->max_stack_depth``).
-+For example, during the ``FUSE_INIT`` handshake, the FUSE daemon can negotiate
-+the ``max_stack_depth`` it supports. When a backing file is registered via
-+``FUSE_DEV_IOC_BACKING_OPEN``, the kernel checks if the backing file's
-+filesystem stack depth is within the allowed limit.
-+
-+The ``CAP_SYS_ADMIN`` requirement provides an additional layer of security,
-+ensuring that only privileged users can create these potentially complex
-+stacking arrangements.
-+
-+General Security Posture
-+------------------------
-+
-+As a general principle for new kernel features that allow userspace to instruct
-+the kernel to perform direct operations on its behalf based on user-provided
-+file descriptors, starting with a higher privilege requirement (like
-+``CAP_SYS_ADMIN``) is a conservative and common security practice. This allows
-+the feature to be used and tested while further security implications are
-+evaluated and addressed. As Amir Goldstein mentioned in one of the discussions,
-+there was "no proof that this is the only potential security risk" when the
-+initial privilege checks were put in place.
-+
-
--- 
-2.43.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] x86: KVM: VMX: Wrap GUEST_IA32_DEBUGCTL read/write
+ with access functions
+To: mlevitsk@redhat.com, kvm@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
+ Sean Christopherson <seanjc@google.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+ linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+References: <20250416002546.3300893-1-mlevitsk@redhat.com>
+ <20250416002546.3300893-2-mlevitsk@redhat.com>
+ <1a0325af-f264-47de-b9f7-da9721366c20@linux.intel.com>
+ <517ee0b7ba1a68a63e9e1068ec2570c62471d695.camel@redhat.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <517ee0b7ba1a68a63e9e1068ec2570c62471d695.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
+On 5/2/2025 4:34 AM, mlevitsk@redhat.com wrote:
+> On Wed, 2025-04-23 at 17:51 +0800, Mi, Dapeng wrote:
+>> The shortlog "x86: KVM: VMX: Wrap GUEST_IA32_DEBUGCTL read/write with
+>> access functions" doesn't follow Sean's suggestion
+>> (https://github.com/kvm-x86/linux/blob/next/Documentation/process/maintainer-kvm-x86.rst#shortlog).
+>> Please modify. Thanks.
+>>
+>>
+>> On 4/16/2025 8:25 AM, Maxim Levitsky wrote:
+>>> Instead of reading and writing GUEST_IA32_DEBUGCTL vmcs field directly,
+>>> wrap the logic with get/set functions.
+>>>
+>>> Also move the checks that the guest's supplied value is valid to the new
+>>> 'set' function.
+>>>
+>>> In particular, the above change fixes a minor security issue in which L1
+>>> hypervisor could set the GUEST_IA32_DEBUGCTL, and eventually the host's
+>>> MSR_IA32_DEBUGCTL to any value by performing a VM entry to L2 with
+>>> VM_ENTRY_LOAD_DEBUG_CONTROLS set.
+>>>
+>>> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+>>> ---
+>>>  arch/x86/kvm/vmx/nested.c    | 15 +++++++---
+>>>  arch/x86/kvm/vmx/pmu_intel.c |  9 +++---
+>>>  arch/x86/kvm/vmx/vmx.c       | 58 +++++++++++++++++++++++-------------
+>>>  arch/x86/kvm/vmx/vmx.h       |  3 ++
+>>>  4 files changed, 57 insertions(+), 28 deletions(-)
+>>>
+>>> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+>>> index e073e3008b16..b7686569ee09 100644
+>>> --- a/arch/x86/kvm/vmx/nested.c
+>>> +++ b/arch/x86/kvm/vmx/nested.c
+>>> @@ -2641,6 +2641,7 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+>>>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
+>>>  	struct hv_enlightened_vmcs *evmcs = nested_vmx_evmcs(vmx);
+>>>  	bool load_guest_pdptrs_vmcs12 = false;
+>>> +	u64 new_debugctl;
+>>>  
+>>>  	if (vmx->nested.dirty_vmcs12 || nested_vmx_is_evmptr12_valid(vmx)) {
+>>>  		prepare_vmcs02_rare(vmx, vmcs12);
+>>> @@ -2653,11 +2654,17 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+>>>  	if (vmx->nested.nested_run_pending &&
+>>>  	    (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS)) {
+>>>  		kvm_set_dr(vcpu, 7, vmcs12->guest_dr7);
+>>> -		vmcs_write64(GUEST_IA32_DEBUGCTL, vmcs12->guest_ia32_debugctl);
+>>> +		new_debugctl = vmcs12->guest_ia32_debugctl;
+>>>  	} else {
+>>>  		kvm_set_dr(vcpu, 7, vcpu->arch.dr7);
+>>> -		vmcs_write64(GUEST_IA32_DEBUGCTL, vmx->nested.pre_vmenter_debugctl);
+>>> +		new_debugctl = vmx->nested.pre_vmenter_debugctl;
+>>>  	}
+>>> +
+>>> +	if (CC(!vmx_set_guest_debugctl(vcpu, new_debugctl, false))) {
+>>> +		*entry_failure_code = ENTRY_FAIL_DEFAULT;
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>>  	if (kvm_mpx_supported() && (!vmx->nested.nested_run_pending ||
+>>>  	    !(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS)))
+>>>  		vmcs_write64(GUEST_BNDCFGS, vmx->nested.pre_vmenter_bndcfgs);
+>>> @@ -3520,7 +3527,7 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+>>>  
+>>>  	if (!vmx->nested.nested_run_pending ||
+>>>  	    !(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS))
+>>> -		vmx->nested.pre_vmenter_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
+>>> +		vmx->nested.pre_vmenter_debugctl = vmx_get_guest_debugctl(vcpu);
+>>>  	if (kvm_mpx_supported() &&
+>>>  	    (!vmx->nested.nested_run_pending ||
+>>>  	     !(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS)))
+>>> @@ -4788,7 +4795,7 @@ static void load_vmcs12_host_state(struct kvm_vcpu *vcpu,
+>>>  	__vmx_set_segment(vcpu, &seg, VCPU_SREG_LDTR);
+>>>  
+>>>  	kvm_set_dr(vcpu, 7, 0x400);
+>>> -	vmcs_write64(GUEST_IA32_DEBUGCTL, 0);
+>>> +	vmx_set_guest_debugctl(vcpu, 0, false);
+>>>  
+>>>  	if (nested_vmx_load_msr(vcpu, vmcs12->vm_exit_msr_load_addr,
+>>>  				vmcs12->vm_exit_msr_load_count))
+>>> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
+>>> index 8a94b52c5731..f6f448adfb80 100644
+>>> --- a/arch/x86/kvm/vmx/pmu_intel.c
+>>> +++ b/arch/x86/kvm/vmx/pmu_intel.c
+>>> @@ -19,6 +19,7 @@
+>>>  #include "lapic.h"
+>>>  #include "nested.h"
+>>>  #include "pmu.h"
+>>> +#include "vmx.h"
+>>>  #include "tdx.h"
+>>>  
+>>>  /*
+>>> @@ -652,11 +653,11 @@ static void intel_pmu_reset(struct kvm_vcpu *vcpu)
+>>>   */
+>>>  static void intel_pmu_legacy_freezing_lbrs_on_pmi(struct kvm_vcpu *vcpu)
+>>>  {
+>>> -	u64 data = vmcs_read64(GUEST_IA32_DEBUGCTL);
+>>> +	u64 data = vmx_get_guest_debugctl(vcpu);
+>>>  
+>>>  	if (data & DEBUGCTLMSR_FREEZE_LBRS_ON_PMI) {
+>>>  		data &= ~DEBUGCTLMSR_LBR;
+>>> -		vmcs_write64(GUEST_IA32_DEBUGCTL, data);
+>>> +		vmx_set_guest_debugctl(vcpu, data, true);
+>> Two questions. 
+>>
+>> 1. why to call vmx_set_guest_debugctl() to do the extra check? currently
+>> IA32_DEBUGCTL MSR is always intercepted and it's already checked at
+>> vmx_set_msr() and seems unnecessary to check here again.
+> Hi,
+>
+>
+> I wanted this to be consistent. KVM has plenty of functions that can be both
+> guest triggered and internally triggered. For example kvm_set_cr4()
+>
+> Besides the vmx_set_guest_debugctl also notes the value the guest wrote
+> to be able to return it back to the guest if we choose to overide some
+> bits of the MSR, so it made sense to have one common function to set the msr.
+>
+> Do you think that can affect performance? 
+
+hmm, since only DEBUGCTLMSR_LBR bit is changed here, it's safe to skip this
+check and write guest debug_ctrl directly. I have no idea how much
+performance impact this check would bring in high sampling frequency, but
+why not to eliminate it if it can?
+
+
+>
+>
+>> 2. why the argument "host_initiated" is true? It looks the data is not from
+>> host.
+> This is my mistake.
+>
+>>
+>>>  	}
+>>>  }
+>>>  
+>>> @@ -729,7 +730,7 @@ void vmx_passthrough_lbr_msrs(struct kvm_vcpu *vcpu)
+>>>  
+>>>  	if (!lbr_desc->event) {
+>>>  		vmx_disable_lbr_msrs_passthrough(vcpu);
+>>> -		if (vmcs_read64(GUEST_IA32_DEBUGCTL) & DEBUGCTLMSR_LBR)
+>>> +		if (vmx_get_guest_debugctl(vcpu) & DEBUGCTLMSR_LBR)
+>>>  			goto warn;
+>>>  		if (test_bit(INTEL_PMC_IDX_FIXED_VLBR, pmu->pmc_in_use))
+>>>  			goto warn;
+>>> @@ -751,7 +752,7 @@ void vmx_passthrough_lbr_msrs(struct kvm_vcpu *vcpu)
+>>>  
+>>>  static void intel_pmu_cleanup(struct kvm_vcpu *vcpu)
+>>>  {
+>>> -	if (!(vmcs_read64(GUEST_IA32_DEBUGCTL) & DEBUGCTLMSR_LBR))
+>>> +	if (!(vmx_get_guest_debugctl(vcpu) & DEBUGCTLMSR_LBR))
+>>>  		intel_pmu_release_guest_lbr_event(vcpu);
+>>>  }
+>>>  
+>>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>>> index ef2d7208dd20..4237422dc4ed 100644
+>>> --- a/arch/x86/kvm/vmx/vmx.c
+>>> +++ b/arch/x86/kvm/vmx/vmx.c
+>>> @@ -2154,7 +2154,7 @@ int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>>>  			msr_info->data = vmx->pt_desc.guest.addr_a[index / 2];
+>>>  		break;
+>>>  	case MSR_IA32_DEBUGCTLMSR:
+>>> -		msr_info->data = vmcs_read64(GUEST_IA32_DEBUGCTL);
+>>> +		msr_info->data = vmx_get_guest_debugctl(vcpu);
+>>>  		break;
+>>>  	default:
+>>>  	find_uret_msr:
+>>> @@ -2194,6 +2194,41 @@ static u64 vmx_get_supported_debugctl(struct kvm_vcpu *vcpu, bool host_initiated
+>>>  	return debugctl;
+>>>  }
+>>>  
+>>> +u64 vmx_get_guest_debugctl(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	return vmcs_read64(GUEST_IA32_DEBUGCTL);
+>>> +}
+>>> +
+>>> +static void __vmx_set_guest_debugctl(struct kvm_vcpu *vcpu, u64 data)
+>>> +{
+>>> +	vmcs_write64(GUEST_IA32_DEBUGCTL, data);
+>>> +}
+>> IMO,  it seems unnecessary to add these 2  wrappers since the original code
+>> is already intuitive enough and simple. But if you want, please add
+>> "inline" before these 2 wrappers.
+> The __vmx_set_guest_debugctl in the next patch will store the written value in
+> a field, this is why I did it this way.
+>
+> The vmx_get_guest_debugctl will read this value instead, also in the next patch.
+>
+> I thought it would be cleaner to first introduce the trivial wrappers and then
+> extend them.
+>
+>>
+>>> +
+>>> +bool vmx_set_guest_debugctl(struct kvm_vcpu *vcpu, u64 data, bool host_initiated)
+>> Since most of code in this function checks guest debugctl, better to rename
+>> it to "vmx_check_and_set_guest_debugctl".
+> I don't mind doing so.
+>
+>>
+>>> +{
+>>> +	u64 invalid = data & ~vmx_get_supported_debugctl(vcpu, host_initiated);
+>>> +
+>>> +	if (invalid & (DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR)) {
+>>> +		kvm_pr_unimpl_wrmsr(vcpu, MSR_IA32_DEBUGCTLMSR, data);
+>>> +		data &= ~(DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR);
+>>> +		invalid &= ~(DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR);
+>> Add space around above 3 "|".
+> I copied this code "as is" from the wrmsr code. I can add this though.
+>
+> Best regards,
+> 	Maxim Levitsky
+>
+>>
+>>> +	}
+>>> +
+>>> +	if (invalid)
+>>> +		return false;
+>>> +
+>>> +	if (is_guest_mode(vcpu) && (get_vmcs12(vcpu)->vm_exit_controls &
+>>> +					VM_EXIT_SAVE_DEBUG_CONTROLS))
+>>> +		get_vmcs12(vcpu)->guest_ia32_debugctl = data;
+>>> +
+>>> +	if (intel_pmu_lbr_is_enabled(vcpu) && !to_vmx(vcpu)->lbr_desc.event &&
+>>> +	    (data & DEBUGCTLMSR_LBR))
+>>> +		intel_pmu_create_guest_lbr_event(vcpu);
+>>> +
+>>> +	__vmx_set_guest_debugctl(vcpu, data);
+>>> +	return true;
+>>> +}
+>>> +
+>>>  /*
+>>>   * Writes msr value into the appropriate "register".
+>>>   * Returns 0 on success, non-0 otherwise.
+>>> @@ -2263,26 +2298,9 @@ int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>>>  		vmcs_writel(GUEST_SYSENTER_ESP, data);
+>>>  		break;
+>>>  	case MSR_IA32_DEBUGCTLMSR: {
+>>> -		u64 invalid;
+>>> -
+>>> -		invalid = data & ~vmx_get_supported_debugctl(vcpu, msr_info->host_initiated);
+>>> -		if (invalid & (DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR)) {
+>>> -			kvm_pr_unimpl_wrmsr(vcpu, msr_index, data);
+>>> -			data &= ~(DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR);
+>>> -			invalid &= ~(DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR);
+>>> -		}
+>>> -
+>>> -		if (invalid)
+>>> +		if (!vmx_set_guest_debugctl(vcpu, data, msr_info->host_initiated))
+>>>  			return 1;
+>>>  
+>>> -		if (is_guest_mode(vcpu) && get_vmcs12(vcpu)->vm_exit_controls &
+>>> -						VM_EXIT_SAVE_DEBUG_CONTROLS)
+>>> -			get_vmcs12(vcpu)->guest_ia32_debugctl = data;
+>>> -
+>>> -		vmcs_write64(GUEST_IA32_DEBUGCTL, data);
+>>> -		if (intel_pmu_lbr_is_enabled(vcpu) && !to_vmx(vcpu)->lbr_desc.event &&
+>>> -		    (data & DEBUGCTLMSR_LBR))
+>>> -			intel_pmu_create_guest_lbr_event(vcpu);
+>>>  		return 0;
+>>>  	}
+>>>  	case MSR_IA32_BNDCFGS:
+>>> @@ -4795,7 +4813,7 @@ static void init_vmcs(struct vcpu_vmx *vmx)
+>>>  	vmcs_write32(GUEST_SYSENTER_CS, 0);
+>>>  	vmcs_writel(GUEST_SYSENTER_ESP, 0);
+>>>  	vmcs_writel(GUEST_SYSENTER_EIP, 0);
+>>> -	vmcs_write64(GUEST_IA32_DEBUGCTL, 0);
+>>> +	__vmx_set_guest_debugctl(&vmx->vcpu, 0);
+>>>  
+>>>  	if (cpu_has_vmx_tpr_shadow()) {
+>>>  		vmcs_write64(VIRTUAL_APIC_PAGE_ADDR, 0);
+>>> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+>>> index 6d1e40ecc024..8ac46fb47abd 100644
+>>> --- a/arch/x86/kvm/vmx/vmx.h
+>>> +++ b/arch/x86/kvm/vmx/vmx.h
+>>> @@ -404,6 +404,9 @@ u64 vmx_get_l2_tsc_multiplier(struct kvm_vcpu *vcpu);
+>>>  
+>>>  gva_t vmx_get_untagged_addr(struct kvm_vcpu *vcpu, gva_t gva, unsigned int flags);
+>>>  
+>>> +bool vmx_set_guest_debugctl(struct kvm_vcpu *vcpu, u64 value, bool host_initiated);
+>>> +u64 vmx_get_guest_debugctl(struct kvm_vcpu *vcpu);
+>>> +
+>>>  static inline void vmx_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr,
+>>>  					     int type, bool value)
+>>>  {
 
