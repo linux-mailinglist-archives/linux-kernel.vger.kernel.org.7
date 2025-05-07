@@ -1,253 +1,126 @@
-Return-Path: <linux-kernel+bounces-638153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CB2AAE20F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:10:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A88FAAE1E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E27C1C45509
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:06:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27F2FB23000
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A222900B2;
-	Wed,  7 May 2025 13:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA3128F958;
+	Wed,  7 May 2025 13:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UcpV+v9Y"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S+gt/9wC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9566A28FFD2;
-	Wed,  7 May 2025 13:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D601028F53F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 13:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626064; cv=none; b=sfhwgGwL8SB5ZWJVzq87BYHZZfxcODhNToyOg301QEz70LUzo3hZ4X+9yHBOLLQsaktDRFgNQaeSQwmHCq9HPlUsu2SjuDEa25wIUp1J4E/R7srlW8ep802Qg4NI8LvtvH6Tk+3UX2K7Pkbj7ISw5400pKkZ6kOPW0lVu0MSML8=
+	t=1746626055; cv=none; b=sFyVkIVccdL8WjvnnWkTfd64p+NZcee20rps70O6DvMEi9tymi1N2WuXFfp5qUidu2ujWWjhNWKqfUBGIB+BDVxh66UBb2icERFkqyRKWZWY/hs8v976G3epLQdmTaB4qUeDf6bQ7XUfl/qGoorHKUHXpWHdWYDWhfASGl9acgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626064; c=relaxed/simple;
-	bh=6VwOYHrrtcuotOKfEozxcEWvB6l+4kLuBMP/N61gCz8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uBYyIa4RLKrwmPeJob1snXo7UQi8PEVqPtirWDH7t1EHOQlkAqytoxPoMqYqiTXTHI8SuQkjXQvfmkqdanZbRxcAi3jBpHSbtb+dEOelOeWiuMlfUuQeO7JTVeb6A6wJegNuUksw497X/bY8aBrQlPTliOunHN69efzpZV/gxaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UcpV+v9Y; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3853843B6C;
-	Wed,  7 May 2025 13:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746626059;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LdnFK0FsJj4B2Vj6KZEYUKA+NibzaycAR1+plWAQTUw=;
-	b=UcpV+v9YZnA9dfamfoV7B2X2ZAIR97XIM9umOw03xUsz4n1ZUnmSCky19IJQToDXIddwrp
-	BO9wTG9CNs+3rWjR+3WoaWzoohijrWkiCMF3T2bOfEIezqGN9AghmuWn8VesKNE6GARlqE
-	TmA29cG3s/t/Wn1vTs393Mz1e0OR4GdOV5BOGQgY3RG6c2JPAWjln3XVzASyCKsDLoNOBM
-	o3ko6qkwNN98T4NYtQ/qBIC52ceVHBeyMPnYLYyfGSFoVvSqh+BfZR6h5LgAZfgxgZ2YhX
-	Q8lhfZiBDyLbQntSvJ0Yh0V/VCZA1mZabN9ImTgLpfHgdMjbf1umPvR6n12uuw==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: [PATCH net-next v6 14/14] Documentation: networking: Document the phy_port infrastructure
-Date: Wed,  7 May 2025 15:53:30 +0200
-Message-ID: <20250507135331.76021-15-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250507135331.76021-1-maxime.chevallier@bootlin.com>
-References: <20250507135331.76021-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1746626055; c=relaxed/simple;
+	bh=vze+17XceRJoOoG/svFEL6SEfqk9yNIzPuCH+KkVmEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=feEBI99DvKXE3lWVugUOhP4iIdDCC2hhYPIObA9sdAt0qX2zn4mFhe6shO8prMyE091uEP0SSzmLLJi0qUCQE6GhBJJ34SZCcgu0IQV8uimqDBnYrBs463mLPnZYo18zVkxxyTOrGlgSHWYkC2nw7xPC+jgnOkJy1F6AAFA5DWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S+gt/9wC; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746626054; x=1778162054;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vze+17XceRJoOoG/svFEL6SEfqk9yNIzPuCH+KkVmEw=;
+  b=S+gt/9wC48c2PHB4wZ0u/XYbO/42ibD/siHpSslmIrzNciPTRJIifSPF
+   QM7zllZnQBXdYE2cQBgdRmUVX8sU0DyJ1zgH0Edb1odUYmKDrbON/lFeS
+   nbPsfERSz4/5L++a7d78sEELdGkvO5nlJRcLRt0EqCx8RvtZzThh0DfwP
+   OgH3sTp8mGWUmsLFVm0rGOHFSBAOQ696yKpYCHRvz/WYqIAz1h6W78hzT
+   p1YlJpnqlU7H9giMGFcEYV0z2ms2cWrC+zRQKbu6uGq7XFTb6smyEhkNx
+   8tEHEKaDxzUoOOV/yaS6yOPoT6BQgFaJlgcUftDatCxHzJVwrf6zTS1W1
+   w==;
+X-CSE-ConnectionGUID: UtLgApf+TvmmsCkW+vqV7A==
+X-CSE-MsgGUID: y7nbrrl7Q/e9Jt6UuWL6ng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59753294"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="59753294"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:54:14 -0700
+X-CSE-ConnectionGUID: fim/3lfsRaizCn/2Drq8kg==
+X-CSE-MsgGUID: 0E13cpX1SpSHJ4YXES9ypg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="140720499"
+Received: from smile.fi.intel.com ([10.237.72.55])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:54:11 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uCfDr-00000003kMP-1t2w;
+	Wed, 07 May 2025 16:54:07 +0300
+Date: Wed, 7 May 2025 16:54:07 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Ashish Kalra <ashish.kalra@amd.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Denis Mukhin <dmukhin@ford.com>
+Subject: Re: [PATCH v1 0/6] x86/boot: Enable earlyprintk on MMIO (8-bit)
+Message-ID: <aBtl_zoWwuVC6Gyi@smile.fi.intel.com>
+References: <20250502123145.4066635-1-andriy.shevchenko@linux.intel.com>
+ <47a4795427d11c7c2d7713edda36d0c63c585c8d.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeejtdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtvdemkeeggedtmehfhedtsgemfedvheemrgeigeefmedufheiugemfhgvrgegmeegsgduieenucevlhhushhtvghrufhiiigvpeduvdenucfrrghrrghmpehinhgvthepvdgrtddvmeekgeegtdemfhehtdgsmeefvdehmegrieegfeemudhfiegumehfvggrgeemgegsudeipdhhvghlohepvdgrtddvqdekgeegtddqfhehtdgsqddtfedvhedqrgeigeefqddufheiugdqfhgvrgegqdegsgduiedrrhgvvhdrshhfrhdrnhgvthdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepmhgrgihimhgvrdgthhgvv
- hgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47a4795427d11c7c2d7713edda36d0c63c585c8d.camel@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-This documentation aims at describing the main goal of the phy_port
-infrastructure.
+On Tue, May 06, 2025 at 12:38:21PM -0700, David Woodhouse wrote:
+> On Fri, 2025-05-02 at 15:29 +0300, Andy Shevchenko wrote:
+> > Some of the platforms may have no legacy COM ports and only provide
+> > an MMIO accessible UART. Add support for such to earlyprintk for the
+> > boot phase of the kernel.
+> 
+> Aha, I understand now... you've added this *only* for the boot code,
+> and haven't added the corresponding support to the in-kernel
+> earlyprintk, in arch/x86/kernel/early_printk.c
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- Documentation/networking/index.rst    |   1 +
- Documentation/networking/phy-port.rst | 111 ++++++++++++++++++++++++++
- MAINTAINERS                           |   1 +
- 3 files changed, 113 insertions(+)
- create mode 100644 Documentation/networking/phy-port.rst
+Haven't added yet. This is part 1 only.
 
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index ac90b82f3ce9..f60acc06e3f7 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -96,6 +96,7 @@ Contents:
-    packet_mmap
-    phonet
-    phy-link-topology
-+   phy-port
-    pktgen
-    plip
-    ppp_generic
-diff --git a/Documentation/networking/phy-port.rst b/Documentation/networking/phy-port.rst
-new file mode 100644
-index 000000000000..6d9d46ebe438
---- /dev/null
-+++ b/Documentation/networking/phy-port.rst
-@@ -0,0 +1,111 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. _phy_port:
-+
-+=================
-+Ethernet ports
-+=================
-+
-+This document is a basic description of the phy_port infrastructure,
-+introduced to represent physical interfaces of Ethernet devices.
-+
-+Without phy_port, we already have quite a lot of information about what the
-+media-facing interface of a NIC can do and looks like, through the
-+:c:type:`struct ethtool_link_ksettings <ethtool_link_ksettings>` attributes,
-+which includes :
-+
-+ - What the NIC can do through the :c:member:`supported` field
-+ - What the Link Partner advertises through :c:member:`lp_advertising`
-+ - Which features we're advertising through :c:member:`advertising`
-+
-+We also have info about the number of lanes and the PORT type. These settings
-+are built by aggregating together information reported by various devices that
-+are sitting on the link :
-+
-+  - The NIC itself, through the :c:member:`get_link_ksettings` callback
-+  - Precise information from the MAC and PCS by using phylink in the MAC driver
-+  - Information reported by the PHY device
-+  - Information reported by an SFP module (which can itself include a PHY)
-+
-+This model however starts showing its limitations when we consider devices that
-+have more than one media interface. In such a case, only information about the
-+actively used interface is reported, and it's not possible to know what the
-+other interfaces can do. In fact, we have very few information about whether or
-+not there are any other media interfaces.
-+
-+The goal of the phy_port representation is to provide a way of representing a
-+physical interface of a NIC, regardless of what is driving the port (NIC through
-+a firmware, SFP module, Ethernet PHY).
-+
-+Multi-port interfaces examples
-+==============================
-+
-+Several cases of multi-interface NICs have been observed so far :
-+
-+Internal MII Mux::
-+
-+  +------------------+
-+  | SoC              |
-+  |          +-----+ |           +-----+
-+  | +-----+  |     |-------------| PHY |
-+  | | MAC |--| Mux | |   +-----+ +-----+
-+  | +-----+  |     |-----| SFP |
-+  |          +-----+ |   +-----+
-+  +------------------+
-+
-+Internal Mux with internal PHY::
-+
-+  +------------------------+
-+  | SoC                    |
-+  |          +-----+ +-----+
-+  | +-----+  |     |-| PHY |
-+  | | MAC |--| Mux | +-----+   +-----+
-+  | +-----+  |     |-----------| SFP |
-+  |          +-----+       |   +-----+
-+  +------------------------+
-+
-+External Mux::
-+
-+  +---------+
-+  | SoC     |  +-----+  +-----+
-+  |         |  |     |--| PHY |
-+  | +-----+ |  |     |  +-----+
-+  | | MAC |----| Mux |  +-----+
-+  | +-----+ |  |     |--| PHY |
-+  |         |  +-----+  +-----+
-+  |         |     |
-+  |    GPIO-------+
-+  +---------+
-+
-+Double-port PHY::
-+
-+  +---------+
-+  | SoC     | +-----+
-+  |         | |     |--- RJ45
-+  | +-----+ | |     |
-+  | | MAC |---| PHY |   +-----+
-+  | +-----+ | |     |---| SFP |
-+  +---------+ +-----+   +-----+
-+
-+phy_port aims at providing a path to support all the above topologies, by
-+representing the media interfaces in a way that's agnostic to what's driving
-+the interface. the struct phy_port object has its own set of callback ops, and
-+will eventually be able to report its own ksettings::
-+
-+             _____      +------+
-+            (     )-----| Port |
-+ +-----+   (       )    +------+
-+ | MAC |--(   ???   )
-+ +-----+   (       )    +------+
-+            (_____)-----| Port |
-+                        +------+
-+
-+Next steps
-+==========
-+
-+As of writing this documentation, only ports controlled by PHY devices are
-+supported. The next steps will be to add the Netlink API to expose these
-+to userspace and add support for raw ports (controlled by some firmware, and directly
-+managed by the NIC driver).
-+
-+Another parallel task is the introduction of a MII muxing framework to allow the
-+control of non-PHY driver multi-port setups.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b155eec69552..211a6ba50166 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8781,6 +8781,7 @@ F:	Documentation/devicetree/bindings/net/ethernet-connector.yaml
- F:	Documentation/devicetree/bindings/net/ethernet-phy.yaml
- F:	Documentation/devicetree/bindings/net/mdio*
- F:	Documentation/devicetree/bindings/net/qca,ar803x.yaml
-+F:	Documentation/networking/phy-port.rst
- F:	Documentation/networking/phy.rst
- F:	drivers/net/mdio/
- F:	drivers/net/mdio/acpi_mdio.c
+> The latter does already support MMIO but it only supports a 32-bit
+> stride, not 8-bit.
+> 
+> Please could you make that consistent, and ensure the earlyprintk=
+> arguments function the same for both phases? I'm happy to add the
+> kexec-debug parts on top of *that*.
+
+It's not as easy as it looks like. I had done in the past the comparison table
+of what we have between all early*=... for serial consoles and it all so
+inconsistent to begin with. A big work needs to be fulfilled in order to put
+this mess in order. Hence this is just the first step.
+
+> It would be really helpful if we could test this in QEMU; it shouldn't
+> be that hard to make it provide a 16550 on MMIO, along the lines of the
+> one-line hack I posted yesterday.
+
+I understand. But if no go for this series, I don't won't to spend time on
+the next part.
+
+In any case, thanks for looking into this.
+
 -- 
-2.49.0
+With Best Regards,
+Andy Shevchenko
+
 
 
