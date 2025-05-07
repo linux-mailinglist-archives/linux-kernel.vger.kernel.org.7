@@ -1,156 +1,143 @@
-Return-Path: <linux-kernel+bounces-637625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B30DAADB46
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5C1AADB48
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35AA64C14F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:19:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D77F505C5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011B823FC52;
-	Wed,  7 May 2025 09:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5628824C076;
+	Wed,  7 May 2025 09:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyrPsxfX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eC38VwAx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C2F23F40F;
-	Wed,  7 May 2025 09:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293A424A07C;
+	Wed,  7 May 2025 09:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746609338; cv=none; b=TwdH3lTySK1uzjENcwP32Z23JvuIi1D3vVh3gKTAoy3SWSlBUj5NZCGba/sEBM59uglF0HTGpQLfEzow8CGGDC2yZkjOWZdVUCZpe6ambgHaOGFrkJicU3/rvtzBDBoo9Njlya4KZfbQSMpCM7PzuKDHLNYpU7zE/7LzVi8XKqw=
+	t=1746609358; cv=none; b=YdxeWNDvNC06IYGAikK3lRkDGP8f8HhFDr/YY/OahCBVzrCs/s7E4De2F5Z578zs0s/A38iIx8kVBSum85dmHU2sy/Q0t9M3wisVO1lyXWBhCG78+Izt5iCJRc4Rz7p0vhnBmi0A4wlWYUyA//sJnX/6xoUAiF4QhsVUazmGgVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746609338; c=relaxed/simple;
-	bh=9z++eVUjo5Nt6P9zv3aLaT+qA0f6xjadJ4gnXukQoHQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BrTNSL29qXUO0tnyIi0adq5yWIbjQqlNAlKb3wcaYxMIaxrrz4ziuYPt8GhJG2HzSO0rcPWh8jU2PYhbzFIR72/rauKNIwfYJfR/n7uy9bbS2buCQ/umPM59ZVgV3WlRlRr2jd1Mrwzw3f82FLlMZZ5tMr6L7rvwqVfWCYkPg+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyrPsxfX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07FF4C4CEEE;
-	Wed,  7 May 2025 09:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746609337;
-	bh=9z++eVUjo5Nt6P9zv3aLaT+qA0f6xjadJ4gnXukQoHQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=tyrPsxfXjyHj3ItkcRhJIoeIeE8vRiwZxU+LKjOJf4zVEECLepFyq91CH867FCzVw
-	 NGLgRR6eAlMBpH2nOp21RUrBUuCsW0V0oh95BWZT6TnqSaE9qFBTCvjGefvaBT6SZK
-	 WSbV5tj1gJwhj9NZtFI34Pegg70mtePnLWD1rwctfzmns4V6LgcFVY33OqLNC20a3R
-	 6nMJaEyEw2ftHtx+A/JfuVO9yXjNEA1QEFr9e9L3RwxqFn5mX2yJTZN5vuWIJ3Aa8S
-	 UZkafOw8f6DD+QRNVH8GqEZR0O2eNAzxo6rzN0n4EJcCqlnVumDxj5rykWzRi8c4gk
-	 llS6pFyj/eyZg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
- <nathan@kernel.org>,  "Luis Chamberlain" <mcgrof@kernel.org>,  "Danilo
- Krummrich" <dakr@kernel.org>,  "Nicolas Schier"
- <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,  "Adam
- Bratschi-Kaye" <ark.email@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>,  "Petr
- Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
-  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
- <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,  "Fiona
- Behrens" <me@kloenk.dev>,  "Daniel Almeida"
- <daniel.almeida@collabora.com>,  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v12 1/3] rust: str: add radix prefixed integer parsing
- functions
-In-Reply-To: <D9PSYQMCW74W.39JB3NDCWB2H3@kernel.org> (Benno Lossin's message
-	of "Wed, 07 May 2025 10:58:08 +0200")
-References: <20250506-module-params-v3-v12-0-c04d80c8a2b1@kernel.org>
-	<20250506-module-params-v3-v12-1-c04d80c8a2b1@kernel.org>
-	<UfD3pllWu8O_qAKsi04IMH1WGszkDe31KpLs7oMvDsUC-tryEbrYKmtDAPj5w-BO2CyZ8_S_G5lWBE2Ud72n8w==@protonmail.internalid>
-	<D9PSYQMCW74W.39JB3NDCWB2H3@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Wed, 07 May 2025 11:15:19 +0200
-Message-ID: <87ldr8pys8.fsf@kernel.org>
+	s=arc-20240116; t=1746609358; c=relaxed/simple;
+	bh=bOOav56FZimzUhF24N2AXUX+5EB9KykWAEnTyUrSAiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdFCCw1uPvevfHHqwDLPo/u0y1jj2Zmk9cm7X9WZuy8L6FseBZEZQwBRQh0berybD3/cUMu/MlgL5PQghjOVZS9S493KtqUcWx8K9QxCmJMPiX3mTYoWcupSxSwYlC4HMGwz7zaW45BETETq0LWqXtJ6jt3Yz+ZYk5hPJk/ZgCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eC38VwAx; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746609357; x=1778145357;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bOOav56FZimzUhF24N2AXUX+5EB9KykWAEnTyUrSAiQ=;
+  b=eC38VwAxbTRbBNSTzjfPVL+IU709Kda8Zh1y8CYHFTYVCuMcCvZAtisJ
+   AA2gX1zs4WnIaH0IfO2kC8WsxpNaMhKTtacWZZK46Vv++hQtB49ciFk7n
+   zAT4OEzkziQsQXkKcZuqmsMaTWOyqkzB75BjJWBoR6D5IAdpEwMjyVF9P
+   NXNyv4CqksNXPSKdZ5yO/ZASk5S/oAn1BAYHMTF5e0exChyK7f3X0wkxn
+   0KLpRf6BcPWRpRyPdCYRFWuf5CQqzDUPgLkS1n1S2RqoNzkzhXfTgugnA
+   5v4wczplPhQ13cNeRWVb6yIzFrwVHEeLtpus5ouvOXnhHF1pn20uBu0DC
+   w==;
+X-CSE-ConnectionGUID: Zqf7zyAAQLW+QEktQRh2/A==
+X-CSE-MsgGUID: QscKwT8WRVa3dvmqWg1XKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="47426892"
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="47426892"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 02:15:57 -0700
+X-CSE-ConnectionGUID: iTH8TkjZQm2HDsMx/ybclw==
+X-CSE-MsgGUID: sO8jQgj7R8+sMnKf1/+BBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="140739232"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 07 May 2025 02:15:51 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCasX-0007U1-0K;
+	Wed, 07 May 2025 09:15:49 +0000
+Date: Wed, 7 May 2025 17:15:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, Oleksij Rempel <o.rempel@pengutronix.de>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v9 3/7] power: reset: Introduce PSCR Recording Framework
+ for Non-Volatile Storage
+Message-ID: <202505071649.g96zqzTU-lkp@intel.com>
+References: <20250422085717.2605520-4-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422085717.2605520-4-o.rempel@pengutronix.de>
 
-"Benno Lossin" <lossin@kernel.org> writes:
+Hi Oleksij,
 
-> On Tue May 6, 2025 at 3:02 PM CEST, Andreas Hindborg wrote:
->> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
->> index 878111cb77bc..174e70397305 100644
->> --- a/rust/kernel/str.rs
->> +++ b/rust/kernel/str.rs
->> @@ -573,7 +573,6 @@ macro_rules! c_str {
->>  }
->>
->>  #[cfg(test)]
->> -#[expect(clippy::items_after_test_module)]
->>  mod tests {
->>      use super::*;
->>
->> @@ -946,3 +945,174 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
->>  macro_rules! fmt {
->>      ($($f:tt)*) => ( core::format_args!($($f)*) )
->>  }
->> +
->> +/// Integer parsing functions for parsing signed and unsigned integers
->> +/// potentially prefixed with `0x`, `0o`, or `0b`.
->> +pub mod parse_int {
->
-> Why not make this its own file? It's 172 lines long already.
+kernel test robot noticed the following build warnings:
 
-Sure. I'm really hoping to land this series for this cycle though, so if
-it's OK I would move the code next cycle.
+[auto build test WARNING on sre-power-supply/for-next]
+[also build test WARNING on broonie-regulator/for-next chrome-platform/for-next chrome-platform/for-firmware-next linus/master v6.15-rc5 next-20250507]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
->> +    pub trait ParseInt: private::FromStrRadix + TryFrom<u64> {
->> +        /// Parse a string according to the description in [`Self`].
->> +        fn from_str(src: &BStr) -> Result<Self> {
->> +            match src.deref() {
->> +                [b'-', rest @ ..] => {
->> +                    let (radix, digits) = strip_radix(rest.as_ref());
->> +                    // 2's complement values range from -2^(b-1) to 2^(b-1)-1.
->> +                    // So if we want to parse negative numbers as positive and
->> +                    // later multiply by -1, we have to parse into a larger
->> +                    // integer. We choose `u64` as sufficiently large.
->> +                    //
->> +                    // NOTE: 128 bit integers are not available on all
->> +                    // platforms, hence the choice of 64 bits.
->> +                    let val = u64::from_str_radix(
->> +                        core::str::from_utf8(digits).map_err(|_| EINVAL)?,
->> +                        radix,
->> +                    )
->> +                    .map_err(|_| EINVAL)?;
->> +
->> +                    if val > Self::abs_min() {
->> +                        return Err(EINVAL);
->> +                    }
->> +
->> +                    if val == Self::abs_min() {
->> +                        return Ok(Self::MIN);
->> +                    }
->> +
->> +                    // SAFETY: We checked that `val` will fit in `Self` above.
->> +                    let val: Self = unsafe { val.try_into().unwrap_unchecked() };
->> +
->> +                    Ok(val.complement())
->
-> You're allowing to parse `u32` with a leading `-`? I'd expect an error
-> in that case. Maybe `complement` should be named `negate` and return a
-> `Result`?
+url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/power-Extend-power_on_reason-h-for-upcoming-PSCRR-framework/20250422-170711
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
+patch link:    https://lore.kernel.org/r/20250422085717.2605520-4-o.rempel%40pengutronix.de
+patch subject: [PATCH v9 3/7] power: reset: Introduce PSCR Recording Framework for Non-Volatile Storage
+config: hexagon-randconfig-r113-20250426 (https://download.01.org/0day-ci/archive/20250507/202505071649.g96zqzTU-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce: (https://download.01.org/0day-ci/archive/20250507/202505071649.g96zqzTU-lkp@intel.com/reproduce)
 
-You would get `Err(EINVAL)` in that case, hitting this:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505071649.g96zqzTU-lkp@intel.com/
 
-  if val > Self::abs_min() {
-      return Err(EINVAL);
-  }
+sparse warnings: (new ones prefixed by >>)
+>> drivers/power/reset/pscrr.c:81:3: sparse: sparse: symbol 'g_pscrr' was not declared. Should it be static?
 
+vim +/g_pscrr +81 drivers/power/reset/pscrr.c
 
-Best regards,
-Andreas Hindborg
+    74	
+    75	struct pscrr_core {
+    76		struct mutex lock;
+    77		struct pscrr_backend *backend;
+    78		/* Kobject for sysfs */
+    79		struct kobject *kobj;
+    80		struct notifier_block reboot_nb;
+  > 81	} g_pscrr = {
+    82		.lock = __MUTEX_INITIALIZER(g_pscrr.lock),
+    83	};
+    84	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
