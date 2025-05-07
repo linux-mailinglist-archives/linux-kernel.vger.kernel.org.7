@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-637924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B005AADF20
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:28:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9041BAADF25
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E16F4C34FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2E71C24772
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CB926A0F6;
-	Wed,  7 May 2025 12:28:31 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1A5263F5B;
+	Wed,  7 May 2025 12:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FSGoagCu"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA04B26A0EA
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BFE25D536;
+	Wed,  7 May 2025 12:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746620910; cv=none; b=JLxuEYPf3yqevl1yQjoJaSWzYniox+p2hI7Lt3tnAoTZkN7/bC8Pj9qlW9qF63E4pHvSkJLK2H+i5biDju7nu3bhWg+33SKKhCocrcp459fJCV8f/XpkjbU/Vy9JAzjqOcLrNCyUuximF5oPOYCSrgmZF9Eo4D4QYaKtvjisnQk=
+	t=1746620942; cv=none; b=fEiesIfT16dPBjunM0Jba0sO43TrGwwe6ucqOgwKeertB9AunRivKf8Xef4t01+J5yWHrYiL92e+EP8Z3vUgsrXnemo72AIUmo7uDtAtCDv6yURG6ba52FiwxBHuYSL9enODUx/373qTbGsdt/dQYNL3c29eSeDVU3P2X0jT0Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746620910; c=relaxed/simple;
-	bh=ii5jYjtb+5AFO6rCGQxp4eNJ7KWsgDKj1OPpXDRMRic=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GjhOuRm1Vn6DhN25oWBajAZSCom/eQTtAJnS6uYTjKuYcQFjMTbV7OptTRY2lNDoMCIeftUdOseLWW5m8OGXKNRTVQAcVHGckBjeZSwYZ/oqUPko1ffDAKG8UeT/VVGOxbf3yJSf+c8kibSkRgTaV0wRqPijikG9ts0BJVEz+p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Zsvft4B8cz2TSC5;
-	Wed,  7 May 2025 20:27:50 +0800 (CST)
-Received: from kwepemg200012.china.huawei.com (unknown [7.202.181.63])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2CEC51A0175;
-	Wed,  7 May 2025 20:28:25 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.108.232) by
- kwepemg200012.china.huawei.com (7.202.181.63) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 7 May 2025 20:28:24 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <linux@armlinux.org.uk>, <rmk+kernel@armlinux.org.uk>, <kees@kernel.org>,
-	<yangyj.ee@gmail.com>, <ardb@kernel.org>, <tony@atomide.com>,
-	<xieyuanbin1@huawei.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<will@kernel.org>, <nixiaoming@huawei.com>, <liaohua4@huawei.com>,
-	<wangbing6@huawei.com>, <lincheng8@huawei.com>, <wangfangpeng1@huawei.com>
-Subject: [RFC PATCH] ARM: spectre-v2: fix the spectre operation that may be bypassed
-Date: Wed, 7 May 2025 20:28:20 +0800
-Message-ID: <20250507122820.41356-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250424100437.27477-1-xieyuanbin1@huawei.com>
-References: <20250424100437.27477-1-xieyuanbin1@huawei.com>
+	s=arc-20240116; t=1746620942; c=relaxed/simple;
+	bh=8QrADYlLGZeERk14Fg2ZqOd/UdojrP6ROM7RYntxKKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AznIbsjWmZlue3JBjcflt1Pe5me47aAlcBzLgCthoydruc7LeZ7EgJ/ZNsK7oB28NIzPXJeYW6/B1Fl4Bnof/FD1+gQ4oZaJzxH/moqfVr32Qm6eRufQEoqMyLLBl6XYSLP07wBlDE56LBKnj+j/ZJXdMLJw6VVfZhx9U0QHuu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FSGoagCu; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2001:861:3a80:3300:7c3b:c7bf:b733:fa1b])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 07DC26D5;
+	Wed,  7 May 2025 14:28:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1746620922;
+	bh=8QrADYlLGZeERk14Fg2ZqOd/UdojrP6ROM7RYntxKKw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FSGoagCuHeEatihXK1ciR/gIymqyROL118ZV5lQ7IYK093ABiZUl6K6ysB/q5JizK
+	 99DaMoIMaTq1D++xWcwckqh4Y98ImxQ9P97fIdYT/l3q+Fq8MMIA3iqd2kCy7fGKT1
+	 wkVFTZEte0R47tkkUL9ciBlr0OiTWWoEcuUwmXAE=
+Date: Wed, 7 May 2025 14:28:50 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v9] media: vsp1: Add VSPX support
+Message-ID: <2wsx4pmkwmjgqlfywbsqim5irnh7lcfhbdreenevf2lnd2ofsb@u3epcobuxuij>
+References: <20250506-b4-vspx-v9-1-d7d50a01f7b6@ideasonboard.com>
+ <20250506173733.GA539397@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg200012.china.huawei.com (7.202.181.63)
+In-Reply-To: <20250506173733.GA539397@ragnatech.se>
 
-As discussed before, to completely fix this problem, we must do
-the spectre operation after the user mode is trapped in the kernel
-and before the interrupt is enabled.
+Hi Niklas,
 
-I have tried to add a hook function and it in fsr_info to avoid
-performance deterioration (The preceding example will trigger
-"level 2 permission fault", which is cold code in normal cases).
-However, this does not work. I find that the user program can
-also trigger "translation fault" or "access flag fault"
-when accessing a kernel address.
+On Tue, May 06, 2025 at 07:37:33PM +0200, Niklas Söderlund wrote:
+> Hi Jacopo,
+>
+> Thanks for this new version!
+>
+> I will give this a good testing as soon as I have finished some
+> refactoring of the user of this. I had a comment I wanted to send for
+> v8, but seems I never did. So for now I will just post this incase you
+> need to do a v10 before I had time.
+>
+> On 2025-05-06 18:32:23 +0200, Jacopo Mondi wrote:
+>
+> .. snip ..
+>
+> > +struct vsp1_dl_list;
+> > +struct vsp1_isp_job_desc {
+> > +	struct {
+> > +		unsigned int pairs;
+> > +		dma_addr_t mem;
+> > +	} config;
+> > +	struct {
+> > +		struct v4l2_format fmt;
+>
+> I'm very happy to see this is now the only location for the format, nice
+> work! I wonder if we shall take it one step further and just record the
+> fourcc, width, height and bytesperline here? Or at switch to a
+> v4l2_pix_format struct?
+>
+> The user of this field do not really support multi plane formats, nor do
+> it validate fmt.type field.
+>
+> I recently hit a snag in the ISP driver using this interface where I
+> *think* the solution is to only allow single plane buffers to be used as
+> input to the ISP (V4L2_CAP_VIDEO_OUTPUT_MPLANE vs
+> V4L2_CAP_VIDEO_OUTPUT). While fixing the plumbing for this I ran across
+> this, sorry for not noticing before.
 
-Therefore, extra performance overhead is inevitable.
-(An if branch needs to be added before the interrupt is enabled.)
+True that.
 
-I have tried to reduce the impact on performance.
-If the page fault comes from the user mode,
-the interrupt must be enabled. In this case,
-a judgment can be reduced.
+However my understanding is that nowadays the multiplaner API should be used
+for single planar formats too. If you want to avoid passing in the
+whole 'struct v4l2_format' then I would pass in the
+v4l2_pix_format_mplane .pix_mp member (which the VSPX uses
+unconditionally at the moment).
 
-Fixes: f5fe12b1eaee ("ARM: spectre-v2: harden user aborts in kernel space")
+However, assuming future developments where a different user uses
+V4L2_CAP_VIDEO_OUTPUT, the VSPX driver can be extended and use the
+.type field to select which member of the 'fmt' union to use if we
+pass the whole 'struct v4l2_format' in. This is all very theoretical I
+know. To be honest I would keep the interface as it is and eventually
+improve the VSPX driver to use the 'type' field to select which format
+to use.
 
-Signed-off-by: Xie Yuanbin <xieyuanbin1@huawei.com>
----
- arch/arm/mm/fault.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index ab01b51de559..3425a12a8f52 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -272,25 +272,35 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 
- 	if (kprobe_page_fault(regs, fsr))
- 		return 0;
- 
- 
- 	/* Enable interrupts if they were enabled in the parent context. */
--	if (interrupts_enabled(regs))
--		local_irq_enable();
-+	if (likely(user_mode(regs))) {
-+		if (IS_ENABLED(CONFIG_PREEMPT) &&
-+		    IS_ENABLED(CONFIG_HARDEN_BRANCH_PREDICTOR) &&
-+		    unlikely(addr >= TASK_SIZE)) {
-+
-+			__do_user_fault(addr, fsr, SIGSEGV, SEGV_MAPERR, regs);
-+			return 0;
-+		}
-+
-+		flags |= FAULT_FLAG_USER;
-+	} else if (!interrupts_enabled(regs))
-+		goto irq_disabled;
-+
-+	local_irq_enable();
-+irq_disabled:
- 
- 	/*
- 	 * If we're in an interrupt or have no user
- 	 * context, we must not take the fault..
- 	 */
- 	if (faulthandler_disabled() || !mm)
- 		goto no_context;
- 
--	if (user_mode(regs))
--		flags |= FAULT_FLAG_USER;
--
- 	if (is_write_fault(fsr)) {
- 		flags |= FAULT_FLAG_WRITE;
- 		vm_flags = VM_WRITE;
- 	}
- 
- 	if (fsr & FSR_LNX_PF) {
--- 
-2.48.1
-
+>
+> > +		dma_addr_t mem;
+> > +	} img;
+> > +	struct vsp1_dl_list *dl;
+> > +};
+>
+>
+> --
+> Kind Regards,
+> Niklas Söderlund
 
