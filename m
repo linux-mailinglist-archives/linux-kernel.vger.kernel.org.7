@@ -1,198 +1,303 @@
-Return-Path: <linux-kernel+bounces-637622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A68AADB47
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 278DCAADB44
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45699A3D2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C4B9A32D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35C023D284;
-	Wed,  7 May 2025 09:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F4nSP2Fz"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FD123A9A8;
+	Wed,  7 May 2025 09:14:54 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36BB23C4E1;
-	Wed,  7 May 2025 09:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD66239E96
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746609303; cv=none; b=sRk69KjBgJB6Q9Hy9TlUo1q3ZiH1++bRTqig8FS96g932xjZSDjlx81uTPyAF4Y+OhOpy+HgFtvyIVCvc7sZU5Er0Fysyfp6DR0QijtL1dq98m3Cs2fK8LNvZlAnEULUnEMSD8oVcD1gjqaJmIYDN2mn7c01TFZyIrGyFMGd45w=
+	t=1746609294; cv=none; b=GLUjz/46dP7XiTCzdE0K+HaawgNqSKhZ7/XaqWdpVkXcaOoj/P0xXN6TKMQbrVdueS2Pjx7p15kUL9KucNAOKhmcjKMj/nL1Eh5CGqfuvMNi5SGauaWgKReK3f2oPKs2N0LGJwmJzyYEVO247bwKceEpMT/SvQygGPcth2NWVyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746609303; c=relaxed/simple;
-	bh=8bzrdEFI6hGktiNjZu3XxSN3Ansccky9WP6hM1uEFvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VSwKHAj/FgKjMq7eKydUBWXbD90gsvy9/cametHrZDGOaGE8C7SNmS+nWUUxDFT3RAqqMZippYLmM7clPGwz/9KC+U7jFczQSJdTaUsZdxPo4eADea/QrbR/22Rxj3b6Lbgt50APondy/ctQ74xzD+POLe7C4Wuwqu616BRBGpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F4nSP2Fz; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=N6hxa7ktAI16FThLApG5BUFDutIZOY100z1nEuVdsWU=; b=F4nSP2FzZ8rKSWMhBjzEjDSXfc
-	z0A3zK1IOTGReBK/EpHD0aBhmsW2oNP7kbHRgPHTTUtnt2kktsrF0yOEe9ra4dEXCAT6KXzpP2uYR
-	Jg7RfQ5RUR9fBMXgRHAHWTHyhL612ZYnAnxFuYwPGXKLjWNlE7hym93yt0n6z+e953H8AFlgNea9a
-	myU1RrJLqJdpzCqyrZ//9TIuXE/t4qfzOgfQQordbCIfzKm/FPAHg7E3lDASVhcvEKnCVLFLag3Zf
-	N3Jfo8TXjFZ2GG1cmRMpkskB3h0cpZq3nLpZS97h6EU4nb3/arJfY4jA5mP0vK2K4rW9oPj1WAjq8
-	f6/K3HEA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uCarT-0000000FogU-247e;
-	Wed, 07 May 2025 09:14:43 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C9D82300780; Wed,  7 May 2025 11:14:42 +0200 (CEST)
-Date: Wed, 7 May 2025 11:14:42 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Jacob Pan <jacob.pan@linux.microsoft.com>,
-	Andi Kleen <ak@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-perf-users@vger.kernel.org, linux-edac@vger.kernel.org,
-	kvm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/9] x86/nmi: Add support to handle NMIs with source
- information
-Message-ID: <20250507091442.GB4439@noisy.programming.kicks-ass.net>
-References: <20250507012145.2998143-1-sohil.mehta@intel.com>
- <20250507012145.2998143-6-sohil.mehta@intel.com>
+	s=arc-20240116; t=1746609294; c=relaxed/simple;
+	bh=ILju9IWF+HLUzQbAqYkzUNiVqYwQ/8n9JZEQhbn15zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YI0wagoLTatHyuyj1XNqOleJet/xjOivyKROl57qmngAR/MGx8gBfaqP/uHuw89D+FOBNGdW/cQQASkbtoLUSHG8sNXGR8xBwJUWTSTfvwydTMoEAJNfmEJ1Zrgn8SLvA73/RH4pAqmsR9naJa6TcTVsTBDQsteFSrJ7DAlim44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZsqLg52nPz1d10k;
+	Wed,  7 May 2025 17:13:31 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id A94021800B2;
+	Wed,  7 May 2025 17:14:48 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 7 May 2025 17:14:48 +0800
+Message-ID: <2f6b9715-b25a-47e3-b2d1-6852ba1038d2@huawei.com>
+Date: Wed, 7 May 2025 17:14:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507012145.2998143-6-sohil.mehta@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] dma mapping benchmark: modify the framework to
+ adapt to more map modes
+To: Barry Song <21cnbao@gmail.com>
+CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
+	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
+References: <20250506030100.394376-1-xiaqinxin@huawei.com>
+ <20250506030100.394376-3-xiaqinxin@huawei.com>
+ <CAGsJ_4wgxgXs6pyYUTNFmNmqHSWtPbKSUnMCzf8=rvOdhgJ04Q@mail.gmail.com>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <CAGsJ_4wgxgXs6pyYUTNFmNmqHSWtPbKSUnMCzf8=rvOdhgJ04Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-On Tue, May 06, 2025 at 06:21:41PM -0700, Sohil Mehta wrote:
-> The NMI-source bitmap is delivered as FRED event data to the kernel.
-> When available, use NMI-source based filtering to determine the exact
-> handlers to run.
-> 
-> Activate NMI-source based filtering only for Local NMIs. While handling
-> platform NMI types (such as SERR and IOCHK), do not use the source
-> bitmap. They have only one handler registered per type, so there is no
-> need to disambiguate between multiple handlers.
-> 
-> Some third-party chipsets may send NMI messages with a hardcoded vector
-> of 2, which would result in bit 2 being set in the NMI-source bitmap.
-> Skip the local NMI handlers in this situation.
-> 
-> Bit 0 of the source bitmap is set by the hardware whenever a source
-> vector was not used while generating an NMI, or the originator could not
-> be reliably identified. Poll all the registered handlers in that case.
-> 
-> When multiple handlers need to be executed, adhere to the existing
-> priority scheme and execute the handlers registered with NMI_FLAG_FIRST
-> before others.
-> 
-> The logic for handling legacy NMIs is unaffected since the source bitmap
-> would always be zero.
-> 
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-> ---
-> v5: Significantly simplify NMI-source handling logic.
->     Get rid of a separate lookup table for NMI-source vectors.
->     Adhere to existing priority scheme for handling NMIs.
-> ---
->  arch/x86/kernel/nmi.c | 40 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-> index a1d672dcb6f0..183e3e717326 100644
-> --- a/arch/x86/kernel/nmi.c
-> +++ b/arch/x86/kernel/nmi.c
 
->  static int nmi_handle(unsigned int type, struct pt_regs *regs)
->  {
->  	struct nmi_desc *desc = nmi_to_desc(type);
-> +	unsigned long source_bitmap = 0;
+在 2025/5/7 10:30, Barry Song 写道:
+> On Tue, May 6, 2025 at 3:01 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
+>> In this patch map_benchmark abstract in four interface: prepare, unprepare,
+>> do_map, do_unmap. When there's a new mode to add, need four steps:
+>> 1) Add the mode in map_benchmark.h
+>> 2) Defines the mode param, like struct dma_xxx_map_param, and this object
+>>     will be return in prepare and as input parameter in other ops;
+>> 3) Defines the ops functions:prepare, unprepare, do_map, do_unmap.
+>> 4) Add the new mode in dma_map_benchmark_ops.
+> There are too many irrelevant details.
+>
+> We're more interested in the reasoning behind this change than just the change
+> itself. There should be some explanation of the purpose.
+Okay, I'm going to add some purposeful commit information.
+>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+>> ---
+>>   include/linux/map_benchmark.h |   8 ++-
+>>   kernel/dma/map_benchmark.c    | 120 +++++++++++++++++++++++++++-------
+>>   2 files changed, 104 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
+>> index 2ac2fe52f248..5294dfd1870f 100644
+>> --- a/include/linux/map_benchmark.h
+>> +++ b/include/linux/map_benchmark.h
+>> @@ -15,6 +15,11 @@
+>>   #define DMA_MAP_TO_DEVICE       1
+>>   #define DMA_MAP_FROM_DEVICE     2
+>>
+>> +enum {
+>> +       DMA_MAP_SINGLE_MODE,
+>> +       DMA_MAP_MODE_MAX
+>> +};
+>> +
+>>   struct map_benchmark {
+>>          __u64 avg_map_100ns; /* average map latency in 100ns */
+>>          __u64 map_stddev; /* standard deviation of map latency */
+>> @@ -27,6 +32,7 @@ struct map_benchmark {
+>>          __u32 dma_dir; /* DMA data direction */
+>>          __u32 dma_trans_ns; /* time for DMA transmission in ns */
+>>          __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
+>> -       __u8 expansion[76];     /* For future use */
+>> +       __u8  map_mode; /* the mode of dma map */
+>> +       __u8 expansion[75];     /* For future use */
+>>   };
+>>   #endif /* _KERNEL_DMA_BENCHMARK_H */
+>> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
+>> index cc19a3efea89..f04973eba1d8 100644
+>> --- a/kernel/dma/map_benchmark.c
+>> +++ b/kernel/dma/map_benchmark.c
+>> @@ -5,6 +5,7 @@
+>>
+>>   #define pr_fmt(fmt)    KBUILD_MODNAME ": " fmt
+>>
+>> +#include <linux/cleanup.h>
+>>   #include <linux/debugfs.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/device.h>
+>> @@ -31,17 +32,97 @@ struct map_benchmark_data {
+>>          atomic64_t loops;
+>>   };
+>>
+>> +struct map_benchmark_ops {
+>> +       void *(*prepare)(struct map_benchmark_data *map);
+>> +       void (*unprepare)(void *arg);
+>> +       int (*do_map)(void *arg);
+>> +       void (*do_unmap)(void *arg);
+>> +};
+>> +
+>> +struct dma_single_map_param {
+>> +       struct device *dev;
+>> +       dma_addr_t addr;
+>> +       void *xbuf;
+>> +       u32 npages;
+>> +       u32 dma_dir;
+>> +};
+>> +
+>> +static void *dma_single_map_benchmark_prepare(struct map_benchmark_data *map)
+>> +{
+>> +       struct dma_single_map_param *mparam __free(kfree) = kzalloc(sizeof(*mparam),
+>> +                                                                   GFP_KERNEL);
+>> +       if (!mparam)
+>> +               return NULL;
+>> +
+>> +       mparam->npages = map->bparam.granule;
+>> +       mparam->dma_dir = map->bparam.dma_dir;
+>> +       mparam->dev = map->dev;
+>> +       mparam->xbuf = alloc_pages_exact(mparam->npages * PAGE_SIZE, GFP_KERNEL);
+>> +       if (!mparam->xbuf)
+>> +               return NULL;
+>> +
+>> +       /*
+>> +        * for a non-coherent device, if we don't stain them in the
+>> +        * cache, this will give an underestimate of the real-world
+>> +        * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
+>> +        * 66 means evertything goes well! 66 is lucky.
+>> +        */
+>> +       if (mparam->dma_dir != DMA_FROM_DEVICE)
+>> +               memset(mparam->xbuf, 0x66, mparam->npages * PAGE_SIZE);
+>> +
+>> +       return_ptr(mparam);
+>> +}
+>> +
+>> +static void dma_single_map_benchmark_unprepare(void *arg)
+>> +{
+>> +       struct dma_single_map_param *mparam = arg;
+>> +
+>> +       free_pages_exact(mparam->xbuf, mparam->npages * PAGE_SIZE);
+>> +       kfree(mparam);
+>> +}
+>> +
+>> +static int dma_single_map_benchmark_do_map(void *arg)
+>> +{
+>> +       struct dma_single_map_param *mparam = arg;
+>> +
+>> +       mparam->addr = dma_map_single(mparam->dev, mparam->xbuf,
+>> +                                     mparam->npages * PAGE_SIZE, mparam->dma_dir);
+>> +       if (unlikely(dma_mapping_error(mparam->dev, mparam->addr))) {
+>> +               pr_err("dma_map_single failed on %s\n", dev_name(mparam->dev));
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void dma_single_map_benchmark_do_unmap(void *arg)
+>> +{
+>> +       struct dma_single_map_param *mparam = arg;
+>> +
+>> +       dma_unmap_single(mparam->dev, mparam->addr,
+>> +                        mparam->npages * PAGE_SIZE, mparam->dma_dir);
+>> +}
+>> +
+>> +static struct map_benchmark_ops dma_single_map_benchmark_ops = {
+>> +       .prepare = dma_single_map_benchmark_prepare,
+>> +       .unprepare = dma_single_map_benchmark_unprepare,
+>> +       .do_map = dma_single_map_benchmark_do_map,
+>> +       .do_unmap = dma_single_map_benchmark_do_unmap,
+>> +};
+>> +
+>> +static struct map_benchmark_ops *dma_map_benchmark_ops[DMA_MAP_MODE_MAX] = {
+>> +       [DMA_MAP_SINGLE_MODE] = &dma_single_map_benchmark_ops,
+>> +};
+>> +
+>>   static int map_benchmark_thread(void *data)
+>>   {
+>> -       void *buf;
+>> -       dma_addr_t dma_addr;
+>>          struct map_benchmark_data *map = data;
+>> -       int npages = map->bparam.granule;
+>> -       u64 size = npages * PAGE_SIZE;
+>> +       __u8 map_mode = map->bparam.map_mode;
+>>          int ret = 0;
+>>
+>> -       buf = alloc_pages_exact(size, GFP_KERNEL);
+>> -       if (!buf)
+>> +       void *arg = dma_map_benchmark_ops[map_mode]->prepare(map);
+> It's a bit awkward. Let's try something like this instead:
+>
+> struct map_benchmark_ops *mb_ops = &dma_map_benchmark_ops[map_mode];
+>
+> then
+> mb_ops->prepare()/map/unmap/unprepare etc.
+>
+> And can you find a better name than "arg" which is meaningless, mparam?
 
-	unsigned long source = ~0UL;
+OK, I'll change it in the next version according to your suggestion.
 
->  	nmi_handler_t ehandler;
->  	struct nmiaction *a;
->  	int handled=0;
-> @@ -148,16 +164,40 @@ static int nmi_handle(unsigned int type, struct pt_regs *regs)
->  
->  	rcu_read_lock();
->  
-> +	/*
-> +	 * Activate NMI source-based filtering only for Local NMIs.
-> +	 *
-> +	 * Platform NMI types (such as SERR and IOCHK) have only one
-> +	 * handler registered per type, so there is no need to
-> +	 * disambiguate between multiple handlers.
-> +	 *
-> +	 * Also, if a platform source ends up setting bit 2 in the
-> +	 * source bitmap, the local NMI handlers would be skipped since
-> +	 * none of them use this reserved vector.
-> +	 *
-> +	 * For Unknown NMIs, avoid using the source bitmap to ensure all
-> +	 * potential handlers have a chance to claim responsibility.
-> +	 */
-> +	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) && type == NMI_LOCAL)
-> +		source_bitmap = fred_event_data(regs);
+Thanks!
 
-	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) && type == NMI_LOCAL) {
-		source = fred_event_data(regs);
-		if (source & BIT(0))
-			source = ~0UL;
-	}
-
->  	/*
->  	 * NMIs are edge-triggered, which means if you have enough
->  	 * of them concurrently, you can lose some because only one
->  	 * can be latched at any given time.  Walk the whole list
->  	 * to handle those situations.
-> +	 *
-> +	 * However, NMI-source reporting does not have this limitation.
-> +	 * When NMI-source information is available, only run the
-> +	 * handlers that match the reported vectors.
->  	 */
->  	list_for_each_entry_rcu(a, &desc->head, list) {
->  		int thishandled;
->  		u64 delta;
->  
-> +		if (source_bitmap && !match_nmi_source(source_bitmap, a))
-> +			continue;
-
-		if (!(souce & BIT(a->source_vector)))
-			continue;
-
->  		delta = sched_clock();
->  		thishandled = a->handler(type, regs);
->  		handled += thishandled;
+>> +
+>> +       if (!arg)
+>>                  return -ENOMEM;
+>>
+>>          while (!kthread_should_stop())  {
+>> @@ -49,23 +130,10 @@ static int map_benchmark_thread(void *data)
+>>                  ktime_t map_stime, map_etime, unmap_stime, unmap_etime;
+>>                  ktime_t map_delta, unmap_delta;
+>>
+>> -               /*
+>> -                * for a non-coherent device, if we don't stain them in the
+>> -                * cache, this will give an underestimate of the real-world
+>> -                * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
+>> -                * 66 means evertything goes well! 66 is lucky.
+>> -                */
+>> -               if (map->dir != DMA_FROM_DEVICE)
+>> -                       memset(buf, 0x66, size);
+>> -
+>>                  map_stime = ktime_get();
+>> -               dma_addr = dma_map_single(map->dev, buf, size, map->dir);
+>> -               if (unlikely(dma_mapping_error(map->dev, dma_addr))) {
+>> -                       pr_err("dma_map_single failed on %s\n",
+>> -                               dev_name(map->dev));
+>> -                       ret = -ENOMEM;
+>> +               ret = dma_map_benchmark_ops[map_mode]->do_map(arg);
+>> +               if (ret)
+>>                          goto out;
+>> -               }
+>>                  map_etime = ktime_get();
+>>                  map_delta = ktime_sub(map_etime, map_stime);
+>>
+>> @@ -73,7 +141,8 @@ static int map_benchmark_thread(void *data)
+>>                  ndelay(map->bparam.dma_trans_ns);
+>>
+>>                  unmap_stime = ktime_get();
+>> -               dma_unmap_single(map->dev, dma_addr, size, map->dir);
+>> +               dma_map_benchmark_ops[map_mode]->do_unmap(arg);
+>> +
+>>                  unmap_etime = ktime_get();
+>>                  unmap_delta = ktime_sub(unmap_etime, unmap_stime);
+>>
+>> @@ -108,7 +177,7 @@ static int map_benchmark_thread(void *data)
+>>          }
+>>
+>>   out:
+>> -       free_pages_exact(buf, size);
+>> +       dma_map_benchmark_ops[map_mode]->unprepare(arg);
+>>          return ret;
+>>   }
+>>
+>> @@ -209,6 +278,11 @@ static long map_benchmark_ioctl(struct file *file, unsigned int cmd,
+>>
+>>          switch (cmd) {
+>>          case DMA_MAP_BENCHMARK:
+>> +               if (map->bparam.map_mode >= DMA_MAP_MODE_MAX) {
+>> +                       pr_err("invalid map mode\n");
+>> +                       return -EINVAL;
+>> +               }
+>> +
+>>                  if (map->bparam.threads == 0 ||
+>>                      map->bparam.threads > DMA_MAP_MAX_THREADS) {
+>>                          pr_err("invalid thread number\n");
+>> --
+>> 2.33.0
+>>
+> Thanks
+> Barry
 
