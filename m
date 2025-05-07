@@ -1,247 +1,216 @@
-Return-Path: <linux-kernel+bounces-637684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86905AADC03
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:59:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BDEAADC11
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1ED1C209D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 898934A5FE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA769215F5D;
-	Wed,  7 May 2025 09:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA72205ABA;
+	Wed,  7 May 2025 09:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aLNwEBxp"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNCQXLc9"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F9D20C005
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F353072612
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746611906; cv=none; b=ifKuog/lAJqydgiCWJ/hzhN64/gn6EQqXO1a7C1W4cwifTSsZ2vE3PwTJvYEtWaQDPbQbRwW5/nDoN+PaFvafuaTd4S15KnJCNLQVFclOaeRf/IaFml9WiC1yexaQcRQDnNmBIuszDhVKNlFo8bXxWzHFu8PNFgQZXcdw5HB4Mo=
+	t=1746611955; cv=none; b=b+4HhAFDYWsFlmTdE7nPaUTcWcxxQikch3cpCbsjgIILOeH8Ji6rkLD9yalzhK3epfVF0COAuEHms8XSVHdaB3QZGSeRVFybSB8O36vu63z187Gz5q7X4mTM8yy28INhOjXNBOa7usNzneF7r+RI5EXhCynoKvsLFLNHmcDdeOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746611906; c=relaxed/simple;
-	bh=XFgZtcoLkhyNUROFBBsfK3A6oxSGmK9k5IgnGXbA59o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jKImxvOpTTgmO/28kbxwwkqA4IEYka8cIm3Y9xCMYpV8u0krIGI5xxJjIM5VSLkR5MzYThXiwLTBQLqsT4tsI/RAe+qNeopnHmXNf3AXtAxvpfLKzPrwK2AejMbCLXkV/xJfLouxgLksWscRKjV5N7qDKhwQrerXF91NkzWWysM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aLNwEBxp; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30beedb99c9so57234451fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 02:58:23 -0700 (PDT)
+	s=arc-20240116; t=1746611955; c=relaxed/simple;
+	bh=hctf9fUxOwZ2dleu00wJef0Orl9bGT+3ecqQluILZ24=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tq8ZS4GQ+8MxNePmOhnK9eVVj0Vk9ojPXlRFfZpQWnNp4Gt7EwcFw1bcYJQFzTNWAUmm/k6ly5hhoK0aAwGaWlIkguY3YnwiKXsnmb8PyO6AFVlYFy33W4ShhbPPTXrnzd7ViYfV6TBzm+NdvrDNm+x5gtesUeTOSl2AMESK5gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNCQXLc9; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54993c68ba0so8550574e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 02:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746611902; x=1747216702; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nXwWfv9Y6m7fKiVmRbaKc0nnBUxgLNgKEyyeKygDRoo=;
-        b=aLNwEBxpoz12lpsTIJR5TfwkYuPys7TWoEPRfq5jDZy0bDC/BLqtMMvezs6usxwNiS
-         EhxrL98iagXvEEc5eZolPJ8WBbOnrUaoHaKsGN9wGhatpm+NXzZWcDGLlz5t03zAo8mG
-         yuzlHFbzjlLTxZl5UCBX32jOq+bIm4d0TL4be9gmi0u36dynpHUF8UBGetVDKZ8PqwPA
-         +fv/vJXIjc/YwgVykkuxQyNRWInhUjvbbtFfi6Jjqm/cPWdMxSCd4TI1PeQeqYriBR+n
-         zlMhAq2McJGmPsx29JF2p2mvHzZ8Zhi5B3y4J8vVqaXCEyiXMAPLptZkbQwuxS2AngYi
-         v91A==
+        d=gmail.com; s=20230601; t=1746611952; x=1747216752; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3im7oKq6DmunvNsoANerEugtk0ANjYR+KXw8czHW92E=;
+        b=UNCQXLc9IOhqZKs7fuLn7YbgroGRtD8EYw3YZHNqrXev/8HYTUapUs6rCk4p4CzvcI
+         sI2jT+54zdEJ/IjgqU9XmlcIHjdYdSjazfYtRbGdd/Q8R2FIKLX0fTrWYLx/jwxYYrLQ
+         GN6ff5Y5RrAWnTyKxkkKQH4yq8LskklfSv5t4UraRZPNH5sLuV60owsBlxEP0ArWpS6U
+         pP7H/MopA6p5EQ5ejs9gEB8Wz2qY4RTTbrAeL2pD8FXaBby602Z05GmkXzURd3TBVv1A
+         BPGJf8iSXVbQ/3fgYdt8NYhd0DUfs/m8UjilYpoMaL+fnNfnUEHc1viOtd9LsdjHOmmj
+         yKZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746611902; x=1747216702;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nXwWfv9Y6m7fKiVmRbaKc0nnBUxgLNgKEyyeKygDRoo=;
-        b=BpnUmoh6VU+0W+E6TkkttAbF2T9dg3c9JZnDXKLqslhk6oNA0UklBneCsFx9xE6/fY
-         ise4QvXfecEF96//WrHJSAE30iGNSzG8fT6+hdNdnmJ8sunXEm3NROM//XKZD44dKQg+
-         DWXq/2LXwE77ytKHSjKScfNW3efqrPebSaryttaMgRSuhm4t2V7vDj04fvTf51mndnIV
-         UcGxmYm8K1NrXdh5yhTNrdHvyveZju35Pm+/bEYz6wNPUemzWHj2RsJbFGhZ8fVvkU7S
-         YuFmWWsP8n3Ug5xd9+Zm5b6xd6XyyEBGmgy5jT1ctzRG5YWb9o5mlUNXolFYJYObWGhu
-         BgCA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4EPh4lirL9AJg8BMpXnqCrv8WGxEJdKY/cnCYL2FR6jL1lfTLxZFMZBq8H7p3tb2FHKAHAA9d798U794=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzdc7rY1pZR/fZe1BTra8C+UCWbidyjnkg+sxNZy0K6eT3lfj4
-	NM2f762KoxhmiMpP4DpTSHaV263mmQXZgkICTpgR/DsrXOelnUEtvqnQufatbfHAuB9+BkC0L2B
-	p4G41k2aTIra4xN/pXKnee1DHODX6o+M4zrL9
-X-Gm-Gg: ASbGncsN3/JOW0v0df3UxqUlY1+afntoxgaWWRMhDarZUWx7koL2kUxqMi1qBMa6V1s
-	FgL1dWkET+Ul2l9uJWLdtO2IwkAATvYcZePNcVsOUlKrzPwhR91Eb9uF2hSeeavzHc03nUbw2M6
-	G3yQRdImI8IAdaS9pEhvi5MvbOznTq/nG1BQJqJkcnWw/ePkLD6vSOcA4=
-X-Google-Smtp-Source: AGHT+IH0nmguA5kmGfa+Jl62Im4bswR065WDLtDiHTlXIIynmZg5V0baBKOHGZ6yFCYiOEEqBKRsxwDBltscNuJZEKg=
-X-Received: by 2002:a05:651c:2221:b0:310:856b:6862 with SMTP id
- 38308e7fff4ca-326ad18b8cbmr7187081fa.12.1746611901682; Wed, 07 May 2025
- 02:58:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746611952; x=1747216752;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3im7oKq6DmunvNsoANerEugtk0ANjYR+KXw8czHW92E=;
+        b=P7UZ/4i3yfS0RrYAcBPGO/MX3i6KGDNliDgf+jUPJV+Jm9Nf754UIBMCa6MUIYAAuD
+         eQboeixLG1zzjb/Jbod2SBNPzLbgX/BJ/mEj1pR2PZO/yNCXdqR8jTjMCprWPneXIuYj
+         Rd22vSaDN7Mm9zd8HfwDAoQeb/9kMHx61VDz/7EpSxzpQRSphQ2LbXQhZtYYZygzN+Qu
+         PrWEcORbMFSxvIoDYs1Y/aDASaMi2WfTjwnoosY3FL3M4m90bklM5vlCfmFh1teVbN7a
+         AvRV2KRc4a/rxA9uqqyBs7HzMsfH1GC33/qT2bHXm2mFHsic/zp1mWf5B8B781R6KElC
+         PgWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDxWADJP8FIOoGQrSVN5EoGjElQS7YfPpjUdBZisTZLB8mdxUEIKV7ioqY8BlGeAwoEOpxz9/4sU4Lh30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkYVp2qkA59VTnfRKI6bYuM14itp7gk4+QPDHDYLLc9SOn2pdm
+	EK2nx37333ik+PNjbwwUXCR+GUTEc06C+3F3j5YJsCEfOrsKMDvu
+X-Gm-Gg: ASbGnctB5yiF5Pp68VvOCNPwhL0ApQ5Tc7khvdLsBNynmtutohonkTDD1Z5CwWxSHKg
+	Ai9RW/n1kZDGs6a0SsGTGMHyy96Wz197vM6fCAbdeWrhkrq9LqvEkAfln9O9X8YBdLlncBNQUwy
+	TmWsNJErCqA5ocwpaB91EdlMEXFN6deRmwS5iXOzL1bL0MW0G9cC9bHbn6kI0Lc77h8fpg3GY1D
+	ypPO9X7/DTkwbL4au9tvE/e6i1fotrCphGXIW94rO2SCVCebjqsqWqdaJRXOEFRQ+PqCct38joA
+	BaO+gpf5VQr9BYKcrg5ZMT0rNbOKc3zopvdDTHhgacClIxCttZQULQmXZuOFd6BTQwm4
+X-Google-Smtp-Source: AGHT+IFbx6JULmkgFfScHp/VGvgyxdZmSckFXgpz3acQYOzG7NKBRoL1GFgQOF3vN2udAsuwjkOlwQ==
+X-Received: by 2002:a05:6512:12cf:b0:549:7394:2ce5 with SMTP id 2adb3069b0e04-54fb963cbcamr957466e87.41.1746611951780;
+        Wed, 07 May 2025 02:59:11 -0700 (PDT)
+Received: from pc636 (host-95-203-26-253.mobileonline.telia.com. [95.203.26.253])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94f6996sm2260787e87.236.2025.05.07.02.59.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 02:59:11 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 7 May 2025 11:59:08 +0200
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	David Hildenbrand <david@redhat.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] MAINTAINERS: add mm GUP section
+Message-ID: <aBsu7FnLjpF5rx3P@pc636>
+References: <20250506173601.97562-1-lorenzo.stoakes@oracle.com>
+ <20250506162113.f8fa0c00e76722a1789ec56a@linux-foundation.org>
+ <c4258dfd-14ee-411a-9fa7-c4a1fa4fad1c@redhat.com>
+ <aBshiBX_N6hhExmS@pc636>
+ <13a32f52-dc5c-45ef-b45a-585586868509@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250503003620.45072-1-namhyung@kernel.org> <aBcjwoINtWRWKMIJ@gmail.com>
- <aBfFlT0l05yBbZBj@google.com> <CACT4Y+YvWYFBkZ9jQ2kuTOHb6pZQwWXc9sOJ5Km0Wr1fLi-94A@mail.gmail.com>
- <aBojTzsa5mSAGziP@x1> <aBo_z8Q87gflYyuX@x1>
-In-Reply-To: <aBo_z8Q87gflYyuX@x1>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 7 May 2025 11:58:10 +0200
-X-Gm-Features: ATxdqUE2PC2As493JjnQWWXVxL49H-woPEJSwzDPASz1ZQ5sZV00TE2_CZ9jlO0
-Message-ID: <CACT4Y+YG61CUPG1WRSGWgv00eP9aPYLELvDVmjK9ULJwNiiMgw@mail.gmail.com>
-Subject: Re: [RFC/PATCH] perf report: Support latency profiling in system-wide mode
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13a32f52-dc5c-45ef-b45a-585586868509@lucifer.local>
 
-On Tue, 6 May 2025 at 18:58, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
->
-> On Tue, May 06, 2025 at 11:57:19AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Mon, May 05, 2025 at 10:03:05AM +0200, Dmitry Vyukov wrote:
-> > > On Sun, 4 May 2025 at 21:52, Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > On Sun, May 04, 2025 at 10:22:26AM +0200, Ingo Molnar wrote:
-> > > > > > Here's an example:
-> >
-> > > > > >   # perf record -a -- perf bench sched messaging
-> >
-> > > > > > This basically forks each sender and receiver tasks for the run.
-> >
-> > > > > >   # perf report --latency -s comm --stdio
-> > > > > >   ...
-> > > > > >   #
-> > > > > >   #  Latency  Overhead  Command
-> > > > > >   # ........  ........  ...............
-> > > > > >   #
-> > > > > >       98.14%    95.97%  sched-messaging
-> > > > > >        0.78%     0.93%  gnome-shell
-> > > > > >        0.36%     0.34%  ptyxis
-> > > > > >        0.23%     0.23%  kworker/u112:0-
-> > > > > >        0.23%     0.44%  perf
-> > > > > >        0.08%     0.10%  KMS thread
-> > > > > >        0.05%     0.05%  rcu_preempt
-> > > > > >        0.05%     0.05%  kworker/u113:2-
-> > > > > >        ...
-> >
-> > > > > Just a generic user-interface comment: I had to look up what 'latency'
-> > > > > means in this context, and went about 3 hops deep into various pieces
-> > > > > of description until I found Documentation/cpu-and-latency-overheads.txt,
-> > > > > where after a bit of head-scratching I realized that 'latency' is a
-> > > > > weird alias for 'wall-clock time'...
-> >
-> > > > > This is *highly* confusing terminology IMHO.
-> >
-> > > > Sorry for the confusion.  I know I'm terrible at naming things. :)
-> >
-> > > > Actually Dmitry used the term 'wall-clock' profiling at first when he
-> > > > implemented this feature but I thought it was not clear how it meant
-> > > > for non-cycle events.  As 'overhead' is also a generic term, we ended
-> > > > up with 'latency'.
-> >
-> > > Exactly :)
-> >
-> > So, the 'cycles' event is the most commonly used, its the default if one
-> > does 'perf record' and don't ask for a specific event.
-> >
-> > When we notice that 'cycles' and 'instructions' are counted, we provide
-> > an IPC, as that is a well known metric for that combo:
-> >
-> >   root@number:~# perf stat -e cycles,instructions sleep 1
-> >
-> >    Performance counter stats for 'sleep 1':
-> >
-> >            1,149,493      cycles
-> >            1,197,279      instructions                     #    1.04  insn per cycle
-> >
-> >          1.000645408 seconds time elapsed
-> >
-> >          0.000599000 seconds user
-> >          0.000000000 seconds sys
-> >
-> >
-> >   root@number:~#
-> >
-> > So maybe when we notice that cycles was used 'perf report/top' should
-> > use the term 'wall-clock' for the column name?
-> >
-> > So instead of having a --latency we could have a hint that would tell
-> > the user that if this knob was set:
-> >
-> >   $ perf config report.wall-clock=true
+On Wed, May 07, 2025 at 10:23:34AM +0100, Lorenzo Stoakes wrote:
+> +cc Vlastimil for page_alloc.c stuff.
+> 
+> On Wed, May 07, 2025 at 11:02:00AM +0200, Uladzislau Rezki wrote:
+> > On Wed, May 07, 2025 at 10:05:58AM +0200, David Hildenbrand wrote:
+> > > On 07.05.25 01:21, Andrew Morton wrote:
+> > > > On Tue,  6 May 2025 18:36:01 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> > > >
+> > > > > As part of the ongoing efforts to sub-divide memory management
+> > > > > maintainership and reviewership, establish a section for GUP (Get User
+> > > > > Pages) support and add appropriate maintainers and reviewers.
+> > > > >
+> > > >
+> > > > Thanks, I was wondering about that.
+> > >
+> > > Thanks Lorenzo for driving this!
+> > >
+> > > Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> Thanks David!
+> 
+> Am trying to strike while the iron is hot post-lsf and discuss with people and
+> set things in motion :)
+> 
+> > >
+> > > >
+> > > > (looks at vmscan.c)
+> > >
+> > > Current maintainers (mm/unstable) on 20 biggest files in mm, Andrew is
+> > > implicit:
+> > >
+> > >  $ find mm -name "*.c" -type f | xargs wc -l | sort -n -r | head -20
+> > >  198195 total
+> > >    7937 mm/hugetlb.c		# Muchun
+> > >    7881 mm/slub.c		# Christoph/David/Vlastimil
+> > >    7745 mm/vmscan.c		#
+> 
+> This is, as Andrew rightly points out, a key one, I will have a look around
+> the git history and put something together here. I'm not sure if we will
+> get an M here, but at least can populate some reviewers.
+> 
+> > >    7424 mm/page_alloc.c		#
+> 
+> Yeah Vlastimil put effort into sorting out reviewers here (thanks
+> Vlastimil!) but nobody's stepped up for an M yet :)
+> 
+> > >    7166 mm/memory.c		# David
+> > >    5962 mm/shmem.c		# Hugh
+> > >    5553 mm/memcontrol.c		# Johannes/Roman/Shakeel
+> > >    5245 mm/vmalloc.c		#
+> 
+> As discussed below 100% Ulad is very clearly the right guy for M (and who
+> has graciously offered his services as such) :>)
+> 
+> Ulad - do you want to send a patch upgrading yourself there? cc me and
+> David, I will happily ack of course, and I suspect David as well!
+> 
+I will :)
 
+> > >    4703 mm/huge_memory.c	# David
+> > >    4538 mm/filemap.c		# Willy
+> > >    3964 mm/swapfile.c		#
+> 
+> The various discussions at LSF lend themselves to suggesting people here,
+> can take a look at this also.
+> 
+> > >    3871 mm/ksm.c		#
+> 
+> As per discussion below, thanks for suggesting yourself David, I hope this
+> is a case of 'well de facto I am maintaining this' rather than taking
+> anything new on, as I worry about how much your workload involves :P
+> 
+> I will sniff around the git history too and put something together.
+> 
+> > >    3720 mm/gup.c		# David
+> > >    3675 mm/mempolicy.c		#
+> 
+> Ack below, and will take a look here also.
+> 
+> > >    3371 mm/percpu.c		# Dennis/Tejun/Christoph
+> > >    3370 mm/compaction.c		#
+> 
+> As you say lots of R's which is good.
+> 
+> As per below would you want M for this?
+> 
+> I will take a look also.
+> 
+> > >    3197 mm/page-writeback.c	# Willy
+> > >    3097 mm/vma.c		# Liam/Lorenzo
+> > >    2988 mm/rmap.c		# David/Lorenzo
+> 
+> > >
+> > > I've been messing with KSM for a long time, so I could easily jump in as
+> > > maintainer for that. Probably we want page migration (incl. mempolicy?) as a
+> > > separate entry. I've been messing with that as well (and will be messing
+> > > more), so I could jump in for that as well.
+> > >
+> > > For page allocator stuff (incl. compaction) we at least have plenty of
+> > > reviewers now. For vmalloc we at least have Uladzislau as single reviewer.
+> > >
+> > > vmscan.c and vmalloc.c really need some love.
+> > >
+> > As for "vmalloc.c" i can jump in as an extra maintainer aside with
+> > Andrew if no objections.
+> 
+> Entirely the opposite of an objection, I'd be aghast if you weren't a
+> maintainer there, thank you for your excellent work in vmalloc, you're a
+> top chap and we're very lucky to have you working on this!
+> 
+Thank you i send out that patch today and put into CC you and David!
 
-I am not sure it can be as simple as a single global knob.
-
-First, record needs to collect additional info and that may be
-somewhat expensive.
-
-Second, report now has several modes:
- - it can show latency, but order by the current overhead
- - it can also show latency, and order by latency
-A user wants one or another depending on what they are optimizing
-(possibly looking at both).
-
-I also feel that global config switches are even less discoverable by
-median users (read -- ~nobody will know about that). If these things
-are normal flags with a help description, then some users may
-eventually discover them.
-
-
-
-> > Then if 'cycles' is present we would have:
->
-> Something along the lines of the patch below, but there are several
-> details to take into account with what is in the current codebase, only
-> if what is needed for doing the latency/wall-clock time is present in
-> the perf.data being used is present that knob would be used or suggested
-> to the user, so some refactorings are needed, I'll try to folow on it.
->
-> But just for reference:
->
-> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-> index f0299c7ee0254a37..20874800d967ffb5 100644
-> --- a/tools/perf/builtin-report.c
-> +++ b/tools/perf/builtin-report.c
-> @@ -51,6 +51,7 @@
->  #include "util/util.h" // perf_tip()
->  #include "ui/ui.h"
->  #include "ui/progress.h"
-> +#include "ui/util.h"
->  #include "util/block-info.h"
->
->  #include <dlfcn.h>
-> @@ -127,6 +128,11 @@ static int report__config(const char *var, const char *value, void *cb)
->  {
->         struct report *rep = cb;
->
-> +       if (!strcmp(var, "report.prefer_latency")) {
-> +               symbol_conf.prefer_latency = perf_config_bool(var, value);
-> +               symbol_conf.prefer_latency_set = true;
-> +               return 0;
-> +       }
->         if (!strcmp(var, "report.group")) {
->                 symbol_conf.event_group = perf_config_bool(var, value);
->                 return 0;
-> @@ -1734,6 +1740,15 @@ int cmd_report(int argc, const char **argv)
->                 symbol_conf.annotate_data_sample = true;
->         }
->
-> +       if (!symbol_conf.prefer_latency) {
-> +               if (ui__dialog_yesno("Do you want to use latency mode?\n"
-> +                                    "That will add a 'Latency' column that would mean\n"
-> +                                    "'wall-clock' time when used with cycles, for instance\n")) {
-> +                       symbol_conf.prefer_latency = symbol_conf.prefer_latency_set = true;
-> +                       perf_config__set_variable("report.prefer_latency", "yes");
-> +               }
-> +       }
-> +
->         symbol_conf.enable_latency = true;
->         if (report.disable_order || !perf_session__has_switch_events(session)) {
->                 if (symbol_conf.parallelism_list_str ||
-> diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
-> index cd9aa82c7d5ad941..f87071f5dedd94ca 100644
-> --- a/tools/perf/util/symbol_conf.h
-> +++ b/tools/perf/util/symbol_conf.h
-> @@ -51,6 +51,7 @@ struct symbol_conf {
->                         annotate_data_sample,
->                         skip_empty,
->                         enable_latency,
-> +                       prefer_latency_set,
->                         prefer_latency;
->         const char      *vmlinux_name,
->                         *kallsyms_name,
+--
+Uladzislau Rezki
 
