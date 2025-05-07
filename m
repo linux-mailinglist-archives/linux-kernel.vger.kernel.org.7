@@ -1,135 +1,116 @@
-Return-Path: <linux-kernel+bounces-637805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727FCAADD50
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB57AADD55
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FF25506B62
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:28:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D711F506235
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07C223314B;
-	Wed,  7 May 2025 11:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C232221730;
+	Wed,  7 May 2025 11:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9g7Uo3K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kenogo.org header.i=@kenogo.org header.b="hQMXLtzp"
+Received: from h8.fbrelay.privateemail.com (h8.fbrelay.privateemail.com [162.0.218.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E52189B8C;
-	Wed,  7 May 2025 11:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8546521B9F1
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.0.218.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746617287; cv=none; b=Kj7a+OQe8IHutWnqTN6NnxZxU37YhrmfKUNy4LB5qpBiCyyOvhbBYnZ43pIiZ0rbrNuv12J/7KYNubqGXSCeMQjzA761LfZ6DSyzbWiKbI6XMQIbDhbGFRRWsNFIw5i6NLrC7Muzxi5Yj4bovBxlE8umz1FplcZgg0xXHEbCGYc=
+	t=1746617319; cv=none; b=mAHmOEWRieH418wx+ldtQWb6+iGtOIxaT0BH26kRqXz/ar+h8E+umEK0HjaZnhD5oDxQs5VUMcYlS0b9PXYb5M7EM8pA1NhCmYxPk0XHZXe0UHeD42vWmjeG9aJsZl1GmwFrgoN28g7Yw7y9/9kV9ccd21FQalJ1Phfh6JZipcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746617287; c=relaxed/simple;
-	bh=+myiwgE5IaBaXJzmpEL8CqSZA8uzkotePvS5m/azOWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AehfhQnq9nCydWCalbTeJqsmBRIe3XsRafo2MwCcUdLo+tvQLWt8rmgVIAhPhBE9EV+DrHYownjKwZ1how4HI21ytunbqZLfzilC4AI0Eo8VNcX8GKWGzjmn4kVJNibjvfRMcsw/dCoJliPK2ViAaW8+f3C5XjFKJpEnT8oqLjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9g7Uo3K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16050C4CEE7;
-	Wed,  7 May 2025 11:28:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746617286;
-	bh=+myiwgE5IaBaXJzmpEL8CqSZA8uzkotePvS5m/azOWI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H9g7Uo3KF3gdhcH2ZEMV9V3wNqXA8tWVr4h+XSChpAk8ADpc3AiALZ4luZs+qiP11
-	 Z/MMgQA+W8firplqY6wsfvaRlyKDnu2GwFBPbbSs260wPnfiIZNYS/X+7RgVASh77m
-	 RpC/hLSnA/nsP75LVgIyB2iQqMj3uUQrguNMZM870ct6AHpi0KrvjkwwfISkMW7V3a
-	 YOPAoo049AzlkO+K5zbADyxXnj6XpUO50IDuoOngkJTqfSy9VuxxdFuvsHaky5egwP
-	 KzvfbiAMDQAUjIzdffkOIksa2UyWdR9eJyQ0Y56Uy3z2fvqMFG3OeJNxR8UwUZLFBh
-	 Co6k62Ve2SILg==
-Date: Wed, 7 May 2025 20:28:03 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 01/26] Revert "treewide: Fix probing of devices in DT
- overlays"
-Message-ID: <aBtDw-qXUCH9U-7l@finisterre.sirena.org.uk>
-References: <20250507071315.394857-1-herve.codina@bootlin.com>
- <20250507071315.394857-2-herve.codina@bootlin.com>
+	s=arc-20240116; t=1746617319; c=relaxed/simple;
+	bh=egT0yKlCDwoRHqLe+MRwanT0SawFfp6yH1Bs4mtm8UE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=DpxVPK8fFU4YMqyWDbVYmxtZQa/KzcDwxOYSSUOL44X1FJbgGKWJ7x9pBMxkIhvf72XR4Pw76kwWKB1VjwvxIe8fEFgCr1VxrMHj2wMBC0AY1BH3TPsCwo8I+osSIr5/vBd4DBVTVLQ0zvyHuo95oMfMZdGCG/kdzwlsDphamEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kenogo.org; spf=pass smtp.mailfrom=kenogo.org; dkim=pass (2048-bit key) header.d=kenogo.org header.i=@kenogo.org header.b=hQMXLtzp; arc=none smtp.client-ip=162.0.218.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kenogo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kenogo.org
+Received: from MTA-06-4.privateemail.com (mta-06.privateemail.com [198.54.118.213])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by h7.fbrelay.privateemail.com (Postfix) with ESMTPSA id 4ZstLW12g8z2xYX
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 07:28:35 -0400 (EDT)
+Received: from mta-06.privateemail.com (localhost [127.0.0.1])
+	by mta-06.privateemail.com (Postfix) with ESMTP id 4ZstLM0C3Vz3hhV4;
+	Wed,  7 May 2025 07:28:27 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=kenogo.org; s=default;
+	t=1746617307; bh=egT0yKlCDwoRHqLe+MRwanT0SawFfp6yH1Bs4mtm8UE=;
+	h=Date:From:Subject:To:Cc:From;
+	b=hQMXLtzpQ8F1/5AlOQ9NnBIwI6XEF5hYqiBU7jLQZ90qrzqOtKThqifHMu0hsoXn+
+	 F8As0IZyd46yfiU8+E2Yv45wzg6yJMn2KwnrQHkmqgBZMsAWz14+cUDmkQaGoPGgIi
+	 QgATDJSStFaEnCNxXInBrxeMvCDNhWP0A3lIE2b+1IJcsFQL7BKvak54/GvWaFQMN9
+	 /hcZ7ZfHRGfzB67+jRWnCbjMMlUN8M7/BX/SuaqilqyAjOt0aB5wn3vteW8RppXfQx
+	 uXTfzRUcISbmof/raian06v6sRXdul8AIZxaP9HPWPSsCD0a2hp+RE9U78aA12PlU4
+	 UOtUtJNIdA75A==
+Received: from [100.115.92.203] (nat-141-76-8-158.dip.tu-dresden.de [141.76.8.158])
+	by mta-06.privateemail.com (Postfix) with ESMTPA;
+	Wed,  7 May 2025 07:28:21 -0400 (EDT)
+Message-ID: <4a6f1494-c6fe-4f66-a376-b6389538ef9f@kenogo.org>
+Date: Wed, 7 May 2025 13:28:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oe+RepqPNVL4+bmX"
-Content-Disposition: inline
-In-Reply-To: <20250507071315.394857-2-herve.codina@bootlin.com>
-X-Cookie: Well begun is half done.
+User-Agent: Mozilla Thunderbird
+From: Keno Goertz <contact@kenogo.org>
+Subject: ntp: Adjustment of time_maxerror with 500ppm instead of 15ppm
+To: tglx@linutronix.de, zippel@linux-m68k.org, mingo@elte.hu,
+ john.stulz@linaro.org
+Content-Language: en-US
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
+Hello,
 
---oe+RepqPNVL4+bmX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've been looking into the kernel's NTP code and found what I understand 
+to be a deviation from NTP as standardized by RFC 5905.  The 
+documentation of this part of the kernel is pretty sparse, so there may 
+be some motivation behind this that I don't know of.  Perhaps someone 
+with more knowledge can explain this.
 
-On Wed, May 07, 2025 at 09:12:43AM +0200, Herve Codina wrote:
-> From: Saravana Kannan <saravanak@google.com>
->=20
-> This reverts commit 1a50d9403fb90cbe4dea0ec9fd0351d2ecbd8924.
+The doc string of `struct ntp_data` states that `time_maxerror` holds 
+the "NTP sync distance (NTP dispersion + delay / 2)".
 
-> While the commit fixed fw_devlink overlay handling for one case, it
-> broke it for another case. So revert it and redo the fix in a separate
-> patch.
+ntpd indeed sets this value to what RFC 5905 calls the "root 
+synchronization distance" LAMBDA.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+In RFC 5905, this LAMBDA increases over time because the root dispersion 
+increases at a rate of PHI, which is set to 15ppm.  Running
 
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read especially when they have no internet access.
-I do frequently catch up on my mail on flights or while otherwise
-travelling so this is even more pressing for me than just being about
-making things a bit easier to read.
+$ ntpq -c "rv 0 rootdisp"
 
---oe+RepqPNVL4+bmX
-Content-Type: application/pgp-signature; name="signature.asc"
+a couple of times confirms that the root dispersion reported by ntpd 
+increases with this rate.  Consequently, so does the root 
+synchronization distance LAMBDA.
 
------BEGIN PGP SIGNATURE-----
+However, the function `ntp.c:second_overflow()` instead increases the 
+value of `time_maxerror` with the rate MAXFREQ, which is set to 500ppm.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgbQ8MACgkQJNaLcl1U
-h9A3/wf8D6c+36MLT2mhvh2zxesAYWfdL1e5vpcKQk0H/bkk+8KQLEBRl9w9syn2
-MFtk87xXOIdfli0pvEnP2cUrCHKDrD2ehLcNFcur8Vq6IOjjX2Gs3Iboe5CfqnoS
-tPRSxFS31DY3g7DhUGmQ7fUUlPYGwpYIK1QgXrfiR+uhEbooIq6yN1/hcKL2rFS4
-Y21v0te/hUxHTpeTMlcOkXqqu/1UExRszOly4m0YB9mZoswASG024vcrx4paZFjF
-sJ6hXYEyI/PDpMSVthVLe0jK7jyBsiVGSSVDRcimNQj6nAokmye1VeKejWhV3Flv
-7epg7YG5YuZjEXoQ3CaQaDdESm7PnA==
-=5SSZ
------END PGP SIGNATURE-----
+This leads to standard library functions like ntp_gettime() reporting 
+much bigger values of `maxerror` than ntpd is working with.  This can be 
+confirmed by running
 
---oe+RepqPNVL4+bmX--
+$ adjtimex -p
+
+a couple of times.
+
+MAXFREQ *can* be found in the reference implementation of RFC 5905 and 
+is also set to 500ppm there, but it is used in a different context: 
+MAXFREQ is an upper bound for the local clock's frequency offset, while 
+PHI is an upper bound for the frequency drift of a clock synchronized 
+with NTP.
+
+At least this is my understanding.  Can someone explain this?
+
+Best regards
+Keno
 
