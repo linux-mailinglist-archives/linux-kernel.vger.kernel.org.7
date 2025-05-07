@@ -1,112 +1,240 @@
-Return-Path: <linux-kernel+bounces-638568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F65FAAE7A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:19:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF87AAE7A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 805797B897F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:17:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5661D1C024D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 17:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE78A28C852;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5550528C5C1;
 	Wed,  7 May 2025 17:18:41 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hxZuZ3r7"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CAA28B509;
-	Wed,  7 May 2025 17:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE8928A419
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 17:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746638321; cv=none; b=hutGtQxEiXvscK9O162A2Arqxf60qx7Po2umB1vf2t+Pdza3HlY3BHGGqfs4CEJXzPBVlhYkH7mDJAhCleDlmyoHorKmZ/FrM6kpAc4gnUR5+3oyXcSWxNABesvMVVH4fhIPpjcCIJSWTtVJnatWmqgScsFRdiMoiixusHRq/74=
+	t=1746638320; cv=none; b=h2AiLlzi+f4Ah00cfpKirIJYKXzCeSJFIFla5VQGoYh4ghjdht2kx8lroCCVRGOmkBzu1BDVb2UlME62OCEe3BzVFuhDbtFDNPklNGfXaU8WNkshjaEzDHzm+XF/ZTCbkksvFEg5V5RX33OEVV2ADxd5Uq71n6Nc2beMrRxI3UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746638321; c=relaxed/simple;
-	bh=54KqbbaXmHYTf5Dma495Htq3rQCJfljLMH6zn4UWE10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aFCwOrwtMRxvZKqaq6g+uNeyJB/phZNnMqyN+VByxv5DioED5CpcICnjwlOUvY1T5tTl6tLjGMxkAY0fxZGuojmBqEynH1DZJ8IwJl8plwJ8ssqIJeKhFyh0P3puf1b5CIi8dXFYTiYmHftpjqAsGtDsWeCxf3hBrqXPX2ew08I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-52413efd0d3so23384e0c.2;
-        Wed, 07 May 2025 10:18:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746638317; x=1747243117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+	s=arc-20240116; t=1746638320; c=relaxed/simple;
+	bh=6TlXcixluNZBX/cBcVtudohfU6ZkVmPkiJmfN2wbluo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=m81tYlUBEcUdXNoXsq5/lFvh3pNuOXUjyEBZ01l6UkxtM6kRcT+qDQamENwQ5v8YqMcjLGj2R12ZsIg3QpYtp0I6REr016kHby+CmbYxUeIL3OFvPggDvNITCk7YLtO9jqx7BHhWXDsVNSQuycQY12bJSTqQjXjc592e4o5PlKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hxZuZ3r7; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7370e73f690so136360b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 10:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746638318; x=1747243118; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/34IxyblwQD/YuMxKpMzhvDwg+RJxwfpaU0x5Z6Vu2g=;
-        b=xJAwZXIPo2h0KDbfyj0KTWWSMXc+HRts+phUzkt7bw40dgAzShT8FuzBBExMc9zgUP
-         inxfPSdkXIO6p/NzooXFonXmQ29N2MSyOVQBKxwYjtBiYJNXurHQ4xo6P5pL7xb+iZXH
-         itirdo00KcvKbKBsPvkQI+fcptTK1Q8AZapS42+x+tJ9naEgPKNK27nEYWLGv44uwLLr
-         0fFFtZXq7qcWqJHhcAOFYI67NVRnVbvK3vqOUvjej3373rgJoI6vPsekHeiuxX1ePoa+
-         OSMQtlYcltjUeBXf4llwN1o6oe96fz7P1l4BlD5QBR6aV4Eofz0TmO+tIILNl5zUoEnu
-         s9EA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxnyorSltAKLKR8H/Yckiez0EgFbTS56WF1FfIKBAW2Nk9/8rMJ3XjTPfC3INW9qSiOBcMc13cy+iZ0kKnMPn5ENg=@vger.kernel.org, AJvYcCW7hrCcRAW0xNTAnJAOhvTW2b+qovJ3xvi7jZTPBGBgbqeinf0snH0XzXQTMp+HDq1mVEVY3IyeAu+m@vger.kernel.org, AJvYcCWBsIv656o8lZot4tyf8sHkR3xLAfIQX/yYmWuiiftRebiT5DvOzkxXN8GnB+88XY5BibGJPbp/u69o@vger.kernel.org, AJvYcCWrzPK9BZPoIDpC9LtLTOTzWC9f9WkZIaJ1YfA4N/1uJRYYIg+fhi/9xx7yxP3BVUIX2QBoT7QDP5eobIV4@vger.kernel.org
-X-Gm-Message-State: AOJu0YymmVY7Nw80sOvmMgxIzK3SzRBuj7bpjAy2MnXirANDZuUwlmrC
-	1cy1oR1Oo9aN3mByRseR1ZLzgqX8oO2LfKOR8hQR3qZBOem1qYZplGMPt/Ob
-X-Gm-Gg: ASbGncuG4vfjxm7ilknKN8fMijo6SRwSN8SdvaSEWuQ0wLp2NNI8p0IMLnIQXeUqRxj
-	xu2Vv8D/KqPmo0tLgJ1KWnnSinS86a6XtuH5T4mMdkSPrLULgx06hYFtuTyvLgZjuODifBgrOqk
-	85On6FZCrwBgIBy2lAKZM8salt3cqALqiXJo2YbxIAN0QSkTB2c1b540Mk/6hNbKSRFO4Ksfx0z
-	0b94ATx3ZYcTpFR75qGAE7pQH/21g7vgOm2loyhNTOyKnigGNPnX9EBeP2Q5E7aKDEyuTz3BEch
-	jeJpfpZi7vQgRhoq0Ui4sBprXNvesbKdW7dH83mzMLmQ2HTu0xIa4zgiji6fwTb3AbPbXp3IxYv
-	Wt5U=
-X-Google-Smtp-Source: AGHT+IGOBEesZCo6Rj/V+e9IU7gKcK1yAHeydcksz9HnciEKItoZCNB6z+FMamiADjWyokROmz3lTA==
-X-Received: by 2002:a05:6122:4682:b0:529:24f8:dbdd with SMTP id 71dfb90a1353d-52c379c4166mr3418514e0c.4.1746638316992;
-        Wed, 07 May 2025 10:18:36 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae3ff7a07sm2455194e0c.1.2025.05.07.10.18.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 10:18:36 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4dae6255c73so24078137.1;
-        Wed, 07 May 2025 10:18:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5Cj4DXARzCNHWCNNW0jkqb2ow6bMyjv7x//zRspWxiltRrFXtYy/8bdMQ+Kvbva7OypgzIofNIcahew/y@vger.kernel.org, AJvYcCWGxfwSACRkpB8xOr7C8Ml4Yp+vYr6NhL5XcXnefNTcPaB+1mqwte4t8MuAsI+85Rd39VoJSf/0Szhk@vger.kernel.org, AJvYcCWcQhWdn2nDc9ojOEE3iacfcNmpHLzOzqe4ZIwD3Wgot4AG2l+0cNne1p9p3f+28MUine6tEzQGIcTyvjsUzjdOCUU=@vger.kernel.org, AJvYcCXK26FWAqMfypXMuuOt0+/QJob7gNFNAM9Lat7I7bSwJ7nSNp32pNdLPvuw3OZ6mylXg31/7OG9n9Px@vger.kernel.org
-X-Received: by 2002:a67:e711:0:b0:4bb:c8e5:aa8b with SMTP id
- ada2fe7eead31-4dc738bc384mr4000134137.22.1746638316153; Wed, 07 May 2025
- 10:18:36 -0700 (PDT)
+        bh=pG2jzoW6yflVwdmuJU0J3q47K/+FWuNpEk3e+XtfNkY=;
+        b=hxZuZ3r7eTxurUn67KZ2gm8cw3qrBmR5yGjhb7cwhPZYBPDdug+p6ym5/sM63QQafp
+         XKMX9jNpqa2PWTXgK9PKDYAUhthzNwAX4Z9Y8lmmWTrrf9j62X8Raykw69GT8dfxorvB
+         9C+xhc6s/NmdFwgtx/AaBAXIvC+FkVbynj4XPwkzfnuRYishujdkk19cPDZ6fj3HJ2Sl
+         agX2M5tdvJsVtqJfXiULFTe4m+T1zOz1Aie/xJVD3XbNKuE73AtP9WizxPzDWmbLv5lO
+         h6b4CTFYPu7aZaitEMlAJdPdNROM1XMLmg1gdZ/oEQY+4/C9OS66YXjOgLJKRcDeb894
+         HAAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746638318; x=1747243118;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pG2jzoW6yflVwdmuJU0J3q47K/+FWuNpEk3e+XtfNkY=;
+        b=MiqIYbjafN6xm6vKMwyyL4jeydaT5LnVt3NaZgtIHD4nbCCP+cxreE0kx3Vkkg9gQN
+         BXJ6AHzwmKERCh4Xlla4y3L4WT28PqnTVnmwUVkTP+nRzlycrTLUfdYl8kG7YbZ2zb5Y
+         GMBOJPa+hqDM09Jjb5MIFoOwRy41SEOQIz2j/1TqBkGMGVJxQ6jggzNWNVr93shkCfw4
+         AYxy2fec+k7AL1uI9DfUZdd04fIb9ZIonx2dUoJnK+gGmlLnT8+YxL7ULxpkoSsf+yv9
+         U1rKWMPKbbTLZxYHSde9iiFVKZUsMhodh6sS68nuuC4+CUAdltGQPwkUF9rYM8NfgQm0
+         Birg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcos1egkv0XhlrJrS9OAMvcnlnSlA32z1iqU6ll5K3bMzUtn47bLMki6LKhY90SLoAzWjwJRyvMULm3QM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyXL4IrzMYiAE5bTWcPjDii6tKuumieUilIYtqUYlQp51YUZIt
+	bo5XaHE6faNHPXsPjvZm0pFWp80vXj0Tka6UM/ecMOTqRTAP0BToUM9E9b5daOH4Zbe8i1KY2T7
+	lBw==
+X-Google-Smtp-Source: AGHT+IEkXQbqCRD8HRA5WYiikSGcIbX1BI2E42grwI+QpW4s0TZ41inyJORuRHkLarSfOJH8WDG3sSlB5eU=
+X-Received: from pfnd23.prod.google.com ([2002:aa7:8157:0:b0:732:858a:729f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2a09:b0:73e:30dc:bb9b
+ with SMTP id d2e1a72fcca58-7409cedc8b4mr5638494b3a.2.1746638318238; Wed, 07
+ May 2025 10:18:38 -0700 (PDT)
+Date: Wed, 7 May 2025 10:18:36 -0700
+In-Reply-To: <14eab14d368e68cb9c94c655349f94f44a9a15b4.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com> <20250410140628.4124896-8-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250410140628.4124896-8-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 May 2025 19:18:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWtdi8CapSVVjTdP0=p93LW28Ye-w0HE+65tZCre0REnA@mail.gmail.com>
-X-Gm-Features: ATxdqUE2gHkZyrR0xiOi-ltfL5EUFj4-RsFBtlBlUp9jPNzmrSslVjC2bDVuufY
-Message-ID: <CAMuHMdWtdi8CapSVVjTdP0=p93LW28Ye-w0HE+65tZCre0REnA@mail.gmail.com>
-Subject: Re: [PATCH 7/7] Revert "dt-bindings: clock: renesas,rzg2l-cpg: Update
- #power-domain-cells = <1> for RZ/G3S"
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250416002546.3300893-1-mlevitsk@redhat.com> <20250416002546.3300893-2-mlevitsk@redhat.com>
+ <aAgnRx2aMbNKOlXY@google.com> <14eab14d368e68cb9c94c655349f94f44a9a15b4.camel@redhat.com>
+Message-ID: <aBuV7JmMU3TcsqFW@google.com>
+Subject: Re: [PATCH 1/3] x86: KVM: VMX: Wrap GUEST_IA32_DEBUGCTL read/write
+ with access functions
+From: Sean Christopherson <seanjc@google.com>
+To: mlevitsk@redhat.com
+Cc: kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> This reverts commit f33dca9ed6f41c8acf2c17c402738deddb7d7c28.
-> Since the configuration order between the individual MSTOP and CLKON bits
-> cannot be preserved with the power domain abstraction, drop the
-> Currently, there are no device tree users for #power-domain-cell = <1>.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Thu, May 01, 2025, mlevitsk@redhat.com wrote:
+> On Tue, 2025-04-22 at 16:33 -0700, Sean Christopherson wrote:
+> > > @@ -2653,11 +2654,17 @@ static int prepare_vmcs02(struct kvm_vcpu *vc=
+pu, struct vmcs12 *vmcs12,
+> > >  	if (vmx->nested.nested_run_pending &&
+> > >  	    (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS)) {
+> > >  		kvm_set_dr(vcpu, 7, vmcs12->guest_dr7);
+> > > -		vmcs_write64(GUEST_IA32_DEBUGCTL, vmcs12->guest_ia32_debugctl);
+> > > +		new_debugctl =3D vmcs12->guest_ia32_debugctl;
+> > >  	} else {
+> > >  		kvm_set_dr(vcpu, 7, vcpu->arch.dr7);
+> > > -		vmcs_write64(GUEST_IA32_DEBUGCTL, vmx->nested.pre_vmenter_debugctl=
+);
+> > > +		new_debugctl =3D vmx->nested.pre_vmenter_debugctl;
+> > >  	}
+> > > +
+> > > +	if (CC(!vmx_set_guest_debugctl(vcpu, new_debugctl, false))) {
+> >=20
+> > The consistency check belongs in nested_vmx_check_guest_state(), only n=
+eeds to
+> > check the VM_ENTRY_LOAD_DEBUG_CONTROLS case, and should be posted as a =
+separate
+> > patch.
+>=20
+> I can move it there. Can you explain why though you want this? Is it beca=
+use of the
+> order of checks specified in the PRM?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+To be consistent with how KVM checks guest state.  The two checks in prepar=
+e_vmcs02()
+are special cases.  vmx_guest_state_valid() consumes a huge variety of stat=
+e, and
+so replicating all of its logic for vmcs12 isn't worth doing.  The check on=
+ the
+kvm_set_msr() for guest_ia32_perf_global_ctrl exists purely so that KVM doe=
+sn't
+simply ignore the return value.
 
-Gr{oetje,eeting}s,
+And to a lesser degree, because KVM assumes that guest state has been sanit=
+ized
+after nested_vmx_check_guest_state() is called.  Violating that risks intro=
+ducing
+bugs, e.g. consuming vmcs12->guest_ia32_debugctl before it's been vetted co=
+uld
+theoretically be problematic.
 
-                        Geert
+> Currently GUEST_IA32_DEBUGCTL of the host is *written* in prepare_vmcs02.=
+=C2=A0
+> Should I also move this write to nested_vmx_check_guest_state?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+No.  nested_vmx_check_guest_state() verifies the incoming vmcs12 state,
+prepare_vmcs02() merges the vmcs12 state with KVM's desires and fills vmcs0=
+2.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Or should I write the value blindly in prepare_vmcs02 and then check the =
+value
+> of 'vmx->msr_ia32_debugctl' in nested_vmx_check_guest_state and fail if t=
+he value
+> contains reserved bits?=C2=A0
+
+I don't follow.  nested_vmx_check_guest_state() is called before prepare_vm=
+cs02().
+
+> > > +bool vmx_set_guest_debugctl(struct kvm_vcpu *vcpu, u64 data, bool ho=
+st_initiated)
+> > > +{
+> > > +	u64 invalid =3D data & ~vmx_get_supported_debugctl(vcpu, host_initi=
+ated);
+> > > +
+> > > +	if (invalid & (DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR)) {
+> > > +		kvm_pr_unimpl_wrmsr(vcpu, MSR_IA32_DEBUGCTLMSR, data);
+> > > +		data &=3D ~(DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR);
+> > > +		invalid &=3D ~(DEBUGCTLMSR_BTF|DEBUGCTLMSR_LBR);
+> > > +	}
+> > > +
+> > > +	if (invalid)
+> > > +		return false;
+> > > +
+> > > +	if (is_guest_mode(vcpu) && (get_vmcs12(vcpu)->vm_exit_controls &
+> > > +					VM_EXIT_SAVE_DEBUG_CONTROLS))
+> > > +		get_vmcs12(vcpu)->guest_ia32_debugctl =3D data;
+> > > +
+> > > +	if (intel_pmu_lbr_is_enabled(vcpu) && !to_vmx(vcpu)->lbr_desc.event=
+ &&
+> > > +	    (data & DEBUGCTLMSR_LBR))
+> > > +		intel_pmu_create_guest_lbr_event(vcpu);
+> > > +
+> > > +	__vmx_set_guest_debugctl(vcpu, data);
+> > > +	return true;
+> >=20
+> > Return 0/-errno, not true/false.
+>=20
+> There are plenty of functions in this file and KVM that return boolean.
+
+That doesn't make them "right".  For helpers that are obvious predicates, t=
+hen
+absolutely use a boolean return value.  The names for nested_vmx_check_eptp=
+()
+and vmx_control_verify() aren't very good, e.g. they should be
+nested_vmx_is_valid_eptp() and vmx_is_valid_control(), but the intent is go=
+od.
+
+But for flows like modifying guest state, KVM should return 0/-errno.
+
+> e.g:=C2=A0
+>=20
+> static bool nested_vmx_check_eptp(struct kvm_vcpu *vcpu, u64 new_eptp)
+> static inline bool vmx_control_verify(u32 control, u32 low, u32 high)
+> static bool nested_evmcs_handle_vmclear(struct kvm_vcpu *vcpu, gpa_t vmpt=
+r)
+> static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+> 						=C2=A0struct vmcs12 *vmcs12)
+
+These two should return 0/-errno.
+
+=20
+> static bool nested_vmx_check_eptp(struct kvm_vcpu *vcpu, u64 new_eptp)
+> static bool nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+
+Probably should return 0/-errno, but nested_get_vmcs12_pages() is a bit of =
+a mess.
+
+> ...
+>=20
+>=20
+> I personally think that functions that emulate hardware should return boo=
+lean
+> values or some hardware specific status code (e.g VMX failure code) becau=
+se
+> the real hardware never returns -EINVAL and such.
+
+Real hardware absolutely "returns" granular error codes.  KVM even has info=
+rmal
+mappings between some of them, e.g. -EINVAL =3D=3D #GP, -EFAULT =3D=3D #PF,=
+ -EOPNOTSUPP =3D=3D #UD,
+BUG() =3D=3D 3-strike #MC.
+
+And hardware has many more ways to report errors to software. E.g. VMLAUNCH=
+ can
+#UD, #GP(0), VM-Exit, VMfailInvalid, or VMFailValid with 30+ unique reasons=
+.  #MC
+has a crazy number of possible error encodings.  And so on and so forth.
+
+Software visible error codes aside, comparing individual KVM functions to a=
+n
+overall CPU is wildly misguided.  A more appropriate comparison would be be=
+tween
+a KVM function and the ucode for a single instruction/operation.  I highly,=
+ highly
+doubt ucode flows are limited to binary yes/no outputs.
 
