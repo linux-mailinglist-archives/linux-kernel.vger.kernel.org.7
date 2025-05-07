@@ -1,60 +1,51 @@
-Return-Path: <linux-kernel+bounces-638483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F86AAE683
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:25:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65FDAAE6A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A2E4C0810
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3CB1895969
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 16:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C485328D8C3;
-	Wed,  7 May 2025 16:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0461D156237;
+	Wed,  7 May 2025 16:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="RXAL06ao"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eIwKjo5G"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A76428A706;
-	Wed,  7 May 2025 16:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2681FCF7C;
+	Wed,  7 May 2025 16:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746634755; cv=none; b=G6OXFyr6QohIJCC1jeB4W/nUrGmjqHuqctR3aNdKIbgVWTL45mf1a9T+d5DDWquK261SDE9kdSxbeHnqyiHMUWEfB3nZ8tk6z3j9sBrtXiqjtMQNS4Nnnh6I3fEXNIeFbY0jeCdoUkMhvhtsntPuGCIATzSBz3TfkYgmpR1eZas=
+	t=1746634867; cv=none; b=sAtnozywmExrmw1O1qExwt6Hzt1FjKX45tMNPRr0Us0nw6UwnhN167H3RubC5TfXBAKu9Nc4zhjp8IeHALJvNYQ3wzj/Ben1uUkvbX9HRgl4r8VRtpPJODHOWPIqaOSyRasbUMuFU/4LaXMMdwasygKcRjxn1Tzt+kKhPOLy9Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746634755; c=relaxed/simple;
-	bh=k8pqdNg1GfZESTUXWxaQOW3gbR0tXjU7ZIUJyuVxzIk=;
+	s=arc-20240116; t=1746634867; c=relaxed/simple;
+	bh=qZCTSwmWV0V1I5MtIov4eaLV/mjCgSyDYedtA///JuA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0zZV+k6iro/uCfSwFbgPU2zInEUg7YPpI2CkaGDWE7gziKYLBjPWyh8oNPEpRVkb+Pld58/P4NzQrjqizVIN2Xq5lO4rJQt8O1VafjoeiGF6eU6lDCImcdn7Lat9T81tfmLop4dErxN6VjvC33By7Xxv/wY83BkEPEe7st1yJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=RXAL06ao; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+	 In-Reply-To:Content-Type; b=G9Xg2wyGROYXUb5NTSI38nZV9/IBHnlDOru+gyeLFEmufwwd4WKXcj5cfCJFSN3is3fj8Y1Hp8syHcrfAOnChepGizjKy1l3BB6PyeQtfsrNTi+8U+J43cEXHgCJ2wE7a5/vTbBMFEfVN8f8of4R4U7eII1F3BrIJlRgnpKZf9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eIwKjo5G; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=kgddrne6l8Gqlt1gPOvoX/vQTZfxlnGhWB0Y9y3hEak=; b=RXAL06aoKT1XG6fxyYMCrmrIjg
-	SFy58f5ciZaf8cqfAtMTy4ruEvggyudnXZYoD0cLHKAymwGHw+3i/gbh9JTbmQS9p1DlYwGtZF2Gy
-	1eKSfsgnyDjdGYA2wfeSnPK/E3qCw5ijMXUTOfvk5wdHdCjhIgYckEnhIrvHMPgyw/2ean81P1sRt
-	Qor0bI99vERlAhLYz5UYhQI2zhTRVFdhZqEUMh+AfNvsVlOFmPxB2akVYeZuCxjVWOkTF2S6AK0Oe
-	lLQvYZO14elosfWhrFUO0RS5dBaRGuNlK6VPkom9hl7ok6HTKlb4KAhknPSjW/ZMIDPP0p1vv93PC
-	ZgegnmhA==;
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1uChU5-0003wS-11;
-	Wed, 07 May 2025 18:19:01 +0200
-Received: from [85.195.247.12] (helo=[192.168.1.114])
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1uChU4-0008QW-24;
-	Wed, 07 May 2025 18:19:00 +0200
-Message-ID: <d4973197-c1be-49e4-8954-cb07e7ad05ac@iogearbox.net>
-Date: Wed, 7 May 2025 18:18:59 +0200
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=LmwDEjP4iySK9aNmh12Bk+wLOIYL55EEhI1jVVnNXfg=; b=eIwKjo5GJ3reo9si4mjPY15B/c
+	2pVLeuYzqEF4Q9i+HSPaEM8F/ec1K3vkNCLClx/IAPk5RCj6RBL9St6V8C81p4p9KldiqwJTeyh0O
+	qmrzT9j7wPmd0EqD648Fukcb5T89jpj/AxXp/UvWmg9sx3WwYfCx9a5CoBm7282TYa5IaHs+TqlpR
+	bcuwTKVvINErv5pLI6j4RGPhr+p9rpiLdIrftjEh5u3+Mj/XlnFDT7zmjALPQtHC+kroE21zWTinC
+	SA1S1+nkSvWnKqU8DoogSLI+vgCj1KQfJtU92wfUmnNOfJeLTQ3bGAx6QME2ecQz5XNmZSTEzFc4m
+	VsSzmkQQ==;
+Received: from [50.39.124.201] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uChW0-0000000FsXX-25Ie;
+	Wed, 07 May 2025 16:21:00 +0000
+Message-ID: <dd75d8e7-5d28-4d4f-890e-a61afec75858@infradead.org>
+Date: Wed, 7 May 2025 09:20:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,84 +53,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3] xdp: Add helpers for head length, headroom,
- and metadata length
-To: Jon Kohler <jon@nutanix.com>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Jason Wang <jasowang@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Jesper Dangaard Brouer
- <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Cc: Jacob Keller <jacob.e.keller@intel.com>
-References: <20250506125242.2685182-1-jon@nutanix.com>
+Subject: Re: linux-next: Tree for May 7 (drivers/pinctrl/: PINCTRL_AT91)
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250507172858.5b7d087c@canb.auug.org.au>
 Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <20250506125242.2685182-1-jon@nutanix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250507172858.5b7d087c@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27630/Tue May  6 11:43:15 2025)
 
-On 5/6/25 2:52 PM, Jon Kohler wrote:
-> Introduce new XDP helpers:
-> - xdp_headlen: Similar to skb_headlen
-> - xdp_headroom: Similar to skb_headroom
-> - xdp_metadata_len: Similar to skb_metadata_len
-> 
-> Integrate these helpers into tap, tun, and XDP implementation to start.
-> 
-> No functional changes introduced.
-> 
-> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> Signed-off-by: Jon Kohler <jon@nutanix.com>
 
-lgtm as well, thanks!
 
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+On 5/7/25 12:28 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20250506:
+> 
+
+on x86_64:
+# CONFIG_OF is not set
+CONFIG_COMPILE_TEST=y
+
+WARNING: unmet direct dependencies detected for OF_GPIO
+  Depends on [n]: GPIOLIB [=y] && OF [=n] && HAS_IOMEM [=y]
+  Selected by [y]:
+  - PINCTRL_AT91 [=y] && PINCTRL [=y] && (OF [=n] && ARCH_AT91 || COMPILE_TEST [=y])
+
+-- 
+~Randy
+
 
