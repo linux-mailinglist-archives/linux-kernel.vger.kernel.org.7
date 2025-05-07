@@ -1,150 +1,93 @@
-Return-Path: <linux-kernel+bounces-637006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF5A7AAD30C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:08:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19868AAD318
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 04:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D66E21BC84A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:08:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105BB3A52F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 02:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9589F185E7F;
-	Wed,  7 May 2025 02:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FC119007D;
+	Wed,  7 May 2025 02:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkaqkVx+"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0E1MJ+D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608974A11
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 02:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C514B18C01D;
+	Wed,  7 May 2025 02:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746583698; cv=none; b=LigVc30HPj6DkJ3mxnJajHpuHZ+t24p17zzfXss2FC0Xt4w/quJRAaqmfjzNw0FwOhrqJnU5xvXZlrc5hIin2eaQ0F8SWorBqQWeqomwkf9diDqTuwesFwn/tG0rD2IFPwTMrAs9kWZpDNtsrEwI2LzNdspbnlK8UJmj3eGAL00=
+	t=1746583800; cv=none; b=jWkPnSmqxpy/qWTe6pS7QojsjQY21m7/nMg9/UW03ULJ2lJpnoJDlckdUWRgbYzpm2c/v5+kAHDFIQWlO+0u9wQJxJj6dL7LDOTAbjTEhGN6kzAu6kw+/sRItszPSRfinCQl/QUqBGL+dFtV4ucKbmBkR3OWk5y+1bPUoePCvNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746583698; c=relaxed/simple;
-	bh=qSMkAw1f8q81qejiBhHJHWaRJ9DONSFXrsMIQ0Kcuag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cLA9gbQ9jPAEWOTEuTyHEcvC7VT0jfGQiootCyE1Sok+KhfrS9eaoKonlL31++C93q9GRCtzvj30ldQzNRAUOrTNzQ+RN9O6/2r7/beOvw05uJ6Bk9mCLybrjhQluBXq+BOly1JNi/MuZQl/fTnPDj2t9XiwlKBOFanHm7F46WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkaqkVx+; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-879c44a1dc4so2107241.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 May 2025 19:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746583695; x=1747188495; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c+qrFXkta/PnXyYE9c+0VrJXrgpjBrI7s8joN+UR3x8=;
-        b=dkaqkVx+nI7V+CAQddB1gM3+85ryX/c29eOSTLepQU7hgoiG2zyS4DJ99YmJYRTX0t
-         IVBBk/YoP3+zBK0tnMdxdHNPVbHPfSYP3uV0iw23nYNgPslQy9lmAxN99CBZjzgjyBF5
-         MQZqE+V00B8sPWWereHpr2F2ib/7btOIdSBLkH2ydzhxXmkuNVWjkrwqyASOacLBogA7
-         lFkU2JMkkEd9Cn7yicRbO4QGvww4UNV/loAd5z7jMR2ycvDFr9knP2HUbaicD9OAE/To
-         +t9xMrGAfLGyRKJUceUH5SUY663REwztMXKTV6P/Z5AsrHDV8ceSBqUuGFkaKaapqZeq
-         QjKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746583695; x=1747188495;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c+qrFXkta/PnXyYE9c+0VrJXrgpjBrI7s8joN+UR3x8=;
-        b=b3bi6JztrxElgJEO4esq0s/22GORiVKwG3dIOcPpm7WipLcYXKQTdcx86TGRvSxtxG
-         8ApiiiZ2j486nB5WQwifJEw00I6B0946cWESvCdBM/fK5y8b/+nW7Jm24/SKOvl/qvPg
-         cHqXNGRs43t+hi8GLBcNu8PHHpq1jrvNgSBu5RFPuLugVWNrIFmpZJRfxCHRwB7/0qIJ
-         Uwm5ltax4loWuUAH7127sFcYQnPgaCHyMQal6810yFsfv2hmTUYbwLL/yRdlMaqi0R3p
-         lxTgbmgogEaI4q0QVTQY9A1PLtt7/YLA+8Yz33z4dq60krW9UT4EkdZKEAtmNZ+3GlpD
-         Gb1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXvwN3U1DPkxZuzKOzaRdnvRjmvwzoTZXYItqJmZ8uEXqN3Q3o2kckJjC89uC2xfWEQcQcsmdC3x3U5XCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPaCdY+uGJFU8nnxYxL2bjCEkv9fL68itUrWDTdh//3DP7kyw5
-	0LE39ZA6CkLXqHdO2OMBKYh3AJb7ZeXSTGqcfShDQA1x4a3yLsjRVLRrLRXy6/hFeTgkkGnq1yS
-	3BOWGh4l7TJr0/MU/hvA3ecAFms6/uOOy
-X-Gm-Gg: ASbGncusJR0xE4md2JZeWX5BCaM+aAoxEV8Rh+MYmp9NOp1aqH07xyVTWWt4XTgKQai
-	+p+51xwB63FYvBCHKTdy3fo9lXo1KDchX6+D3jyx9cO3BvLu6M0fRT/1ldwCzyPsrSmvnZLtJHv
-	DqyHdb5wuu/weUZhXRG8i1rw==
-X-Google-Smtp-Source: AGHT+IFGG/EFE44jHQPco6sg4x6ua9hc7r7AEXYdg1rXn7toxfyhfCDLkSX/VWAeKMgeiBIJEhaIgcho8CEMgZGeh4s=
-X-Received: by 2002:a67:e708:0:b0:4d5:cbbf:456f with SMTP id
- ada2fe7eead31-4dc737d1739mr1634787137.10.1746583695176; Tue, 06 May 2025
- 19:08:15 -0700 (PDT)
+	s=arc-20240116; t=1746583800; c=relaxed/simple;
+	bh=oEEDp+2Y0WUeQxIRduaIuRUjSY0AwAcy6BpWMhiCM9o=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=qtoTHxUgFK7l6rKno0i4VK+8b1Y2tl+SSIr5I2ZKGO3c+H1t4mmWPr0RPzfrAWF8HUEj5GSVoVIlaq49gQDVqdM0T9FinFgOlRsWSICuA3Doqlg0PPxTCsBSWezf+udGbNheQCObPP4E9ycsxSPTAr/B1dfQDKUV3JpAeod3VAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0E1MJ+D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D73DC4CEEB;
+	Wed,  7 May 2025 02:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746583800;
+	bh=oEEDp+2Y0WUeQxIRduaIuRUjSY0AwAcy6BpWMhiCM9o=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=U0E1MJ+DaEt63UpJEjUwaM8YLJHE8z7cZpfXlv+0UrhXCCXoDewlXeoqTc2/eO0d+
+	 aJC0W2YBc4ycS00gyztqXlDb1LI9v895+XcGLitmfe4PwuRv7dLbOPzVWs+41fT2aR
+	 rSH1wA6AzwVkc425KGZ1AvZ+bFVY/Hd09yAZHqknwoR0l6HO8qNp5rkzhN39t/iFCM
+	 80D/z5xZk/yQj+eifWwoJCnkD3DuqxOHZaW1gUCqbthGNxbqLXhU6zzTRdM3EbQ5Gc
+	 Fis96tJ0QUHpFpPp8cwb5sVI8f1WaDpG54D5y6XXNe3jl8TKxjsdr2Cpr1YxzS8y4V
+	 xbdfNKT00isjA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71707380664B;
+	Wed,  7 May 2025 02:10:40 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506030100.394376-1-xiaqinxin@huawei.com> <20250506030100.394376-2-xiaqinxin@huawei.com>
- <CAGsJ_4zBz0oZGpP3dTzsjmw0oJbWm=vkKRS_kjBso7cvKJGjuQ@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zBz0oZGpP3dTzsjmw0oJbWm=vkKRS_kjBso7cvKJGjuQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 7 May 2025 14:08:04 +1200
-X-Gm-Features: ATxdqUFB9KwDvzR69E_IJlSczMXQzzrRWd2WU62tnUQyjqIE1rn7qXrRg5eqsAI
-Message-ID: <CAGsJ_4yEmSGGKFxCT_wioEOaLxAzxNiryR42_hW9-vbu8WgBUg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dma-mapping: benchmark: Add padding to ensure uABI
- remained consistent
-To: Qinxin Xia <xiaqinxin@huawei.com>
-Cc: yangyicong@huawei.com, hch@lst.de, iommu@lists.linux.dev, 
-	jonathan.cameron@huawei.com, prime.zeng@huawei.com, fanghao11@huawei.com, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: add missing instance lock to dev_set_promiscuity
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174658383899.1710027.3440544946446238229.git-patchwork-notify@kernel.org>
+Date: Wed, 07 May 2025 02:10:38 +0000
+References: <20250506032328.3003050-1-sdf@fomichev.me>
+In-Reply-To: <20250506032328.3003050-1-sdf@fomichev.me>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, andrew+netdev@lunn.ch,
+ linux-kernel@vger.kernel.org
 
-On Wed, May 7, 2025 at 1:52=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> On Tue, May 6, 2025 at 3:01=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> =
-wrote:
-> >
-> > Fix a problem about commit (8ddde07a3d285a0f3cec, "dma-mapping:benchmar=
-k:
-> > extract a common header file for map_benchmark definition") accidentall=
-y
-> > removed that padding, which has completely broken the ABIs.
-> >
-> > Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->
-> Please add Fixes tags and cc stable.
+Hello:
 
-We are *NOT* adding any field.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Also, the subject and changelog are not appropriate. They should be somethi=
-ng
-like the following:
+On Mon,  5 May 2025 20:23:28 -0700 you wrote:
+> Accidentally spotted while trying to understand what else needs
+> to be renamed to netif_ prefix. Most of the calls to dev_set_promiscuity
+> are adjacent to dev_set_allmulti or dev_disable_lro so it should
+> be safe to add the lock. Note that new netif_set_promiscuity is
+> currently unused, the locked paths call __dev_set_promiscuity directly.
+> 
+> Fixes: ad7c7b2172c3 ("net: hold netdev instance lock during sysfs operations")
+> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+> 
+> [...]
 
-Previously, we had a padding field in this structure to allow for future
-extension without breaking compatibility with user-space shared data
-structures. In other words, the padding was reserved to maintain a stable
-interface for potential new fields.
+Here is the summary with links:
+  - [net] net: add missing instance lock to dev_set_promiscuity
+    https://git.kernel.org/netdev/net/c/78cd408356fe
 
-However, in one of the commits, tiantao accidentally removed this padding,
-which could lead to incompatibility issues between user space and the
-kernel.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-This patch restores the padding to bring back the original structure layout
-and ensure compatibility is preserved.
 
->
-> > ---
-> >  include/linux/map_benchmark.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmar=
-k.h
-> > index 62674c83bde4..2ac2fe52f248 100644
-> > --- a/include/linux/map_benchmark.h
-> > +++ b/include/linux/map_benchmark.h
-> > @@ -27,5 +27,6 @@ struct map_benchmark {
-> >         __u32 dma_dir; /* DMA data direction */
-> >         __u32 dma_trans_ns; /* time for DMA transmission in ns */
-> >         __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a =
-time */
-> > +       __u8 expansion[76];     /* For future use */
-> >  };
-> >  #endif /* _KERNEL_DMA_BENCHMARK_H */
-> > --
-> > 2.33.0
-> >
->
-Thanks
-Barry
 
