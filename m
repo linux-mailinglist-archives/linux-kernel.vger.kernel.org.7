@@ -1,228 +1,110 @@
-Return-Path: <linux-kernel+bounces-637702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87F9AADC34
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:08:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B5AAADC3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3315017F3F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:08:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4039B16DAC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 10:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3497820CCC9;
-	Wed,  7 May 2025 10:08:02 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AE2201013
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A914120C497;
+	Wed,  7 May 2025 10:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SvM5WGcu"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F36E76410
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 10:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746612481; cv=none; b=fR7ms4ig7YldsJRPlzYLgCofaCqqoyL0rdFjv4OjRvxhoBPd6TeVF40jPLJ4bNiABocSOUAiddV1vhGCSSRAB2dFi/8H8IUgu8z1P6hL9xS2Mg1YPsk/OHlmKsranBGZXp2xUXJnkXF4Dbz15j66fIWHX3/4KujcBbmeSi7vkYQ=
+	t=1746612552; cv=none; b=C9ozFmja986686HvQnAyrJ+DDhKVKGhaDSJhMeiaXCWDzb0V0ZbEv0Cuw95g6MtJ1MJ7Ykwu/pAOH3jBIEkr+JvESeEplibLSEHJMR1SEK8D9Joutt3i/3fNf9h7RVt4WgltvLy+faVJy86zNuR1NqyvEqm1MGqkr18vf8SWLj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746612481; c=relaxed/simple;
-	bh=U0/nZAubY8+r5O3G6691e1aNV1onsOPcC+SLvzROEtA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CdpAB7x2/kGJM+18u0TWEWNkhH607dhrwjwarpd/9zghZoI7hJ+VnMm043VGEO8lb5/osDrW6mQblQPeUKQKO4VQkpBl7ELGrAwKwc4YLfu2oLLug8nI90p/J45XNGj1SCN6uoYWqicYc69aIh7RCCTxt5L3JNBDDRFxMNiRXhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8BxJHD9MBtorwvYAA--.26554S3;
-	Wed, 07 May 2025 18:07:57 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by front1 (Coremail) with SMTP id qMiowMCxLcX8MBtoJMW5AA--.9644S2;
-	Wed, 07 May 2025 18:07:56 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>,
-	Hongliang Wang <wanghongliang@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH V3] LoongArch: Add SCHED_MC (Multi-core scheduler) support
-Date: Wed,  7 May 2025 18:07:55 +0800
-Message-Id: <20250507100755.9129-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1746612552; c=relaxed/simple;
+	bh=n6lCw1sy+ORvSo4bCuquNbCP1w/NFXIXgJE2ssF21RA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mRFP5BCNeK6nYztDjF8NI97EiN+owE+9DoyqDtVYioDejQbCqQx9I1wYOHUlyIEQItC5sysH0c1NtGUDvrSni3BB1HCl2E+fih0J5bqtiD2dSafbFuu0FJNjmQ5B0T8ktmPN5pFMlF2Ko+0OOxXMegcqDyb/kDPFPn7dacvr0+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SvM5WGcu; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d0575ec1-1901-4534-875c-fa9375e54e3d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746612537;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iauQdHWNLGQR4lEBlGfPU1DZ2z64r7U0kJb+L52u76c=;
+	b=SvM5WGcuwP2+z8BxEC6+TLSd66DP442/+bmUDxuzi9mnA3AvK0qY1j9evy2xNLKueMZYQq
+	kOWanddwuJJWC58Li8dmADN3Xy0GUsrBKYLfKRn2n04A5AyS4G4LCKxziAiWwJiDqztU26
+	kA6tY7ChkXaNMTbvHZJ+mF+JLR5S3zw=
+Date: Wed, 7 May 2025 18:08:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH 0/4] Initial support for CTCISZ Ninenine Pi
+To: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Heiko Stuebner <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Aradhya Bhatia <a-bhatia1@ti.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Binbin Zhou <zhoubinbin@loongson.cn>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+References: <20250501044239.9404-2-ziyao@disroot.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250501044239.9404-2-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxLcX8MBtoJMW5AA--.9644S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Ww1kAr18tFWUGFWkWw1UXFc_yoW7Ww15pr
-	nruFyrGr48WFnxA39Yq3yruryrWrn7Gr4Sqw43KFWfAFsrXw1UJr1vqF9rXFyUC39YqFWS
-	gr98GayFga4UXacCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU82g43UUUUU==
+X-Migadu-Flow: FLOW_OUT
 
-In order to achieve more reasonable load balancing behavior, add
-SCHED_MC (Multi-core scheduler) support.
+在 5/1/25 12:42 PM, Yao Zi 写道:
+> This series adds support for CTCISZ Ninenine Pi, which ships an Loongson
+> 2K0300 SoC and various peripherals. The vendor prefix and the board are
+> documented and basic SoC/board devicetrees are added.
+> 
+> I've successfully booted into console with vendor U-Boot, a bootlog
+> could be obtained here[1]. DTB and initramfs must be built into the
+> kernel as the vendor bootloader cannot pass them and upstream U-Boot
+> support for LoongArch is still WIP.
+> 
+> Thanks for your time and review.
+> 
+> [1]: https://gist.github.com/ziyao233/7fd2c8b3b51ef9b30fe5c17faae1bc4e
+> 
+> Yao Zi (4):
+>    dt-bindings: vendor-prefixes: Add CTCISZ Technology Co., LTD.
+>    dt-bindings: LoongArch: Add CTCISZ Ninenine Pi
+>    LoongArch: dts: Add initial SoC devicetree for Loongson 2K0300
+>    LoongArch: dts: Add initial devicetree for CTCISZ Ninenine Pi
+> 
+>   .../bindings/loongarch/loongson.yaml          |   5 +
+>   .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+>   arch/loongarch/boot/dts/Makefile              |   1 +
+>   arch/loongarch/boot/dts/loongson-2k0300.dtsi  | 197 ++++++++++++++++++
+>   .../boot/dts/ls2k0300-ctcisz-nineninepi.dts   |  41 ++++
+>   5 files changed, 246 insertions(+)
+>   create mode 100644 arch/loongarch/boot/dts/loongson-2k0300.dtsi
+>   create mode 100644 arch/loongarch/boot/dts/ls2k0300-ctcisz-nineninepi.dts
 
-The LLC distribution of LoongArch now is consistent with NUMA node,
-the balancing domain of SCHED_MC can effectively reduce the situation
-where processes are awakened to smt_sibling.
+For all the patch sets:
 
-Co-developed-by: Hongliang Wang <wanghongliang@loongson.cn>
-Signed-off-by: Hongliang Wang <wanghongliang@loongson.cn>
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/Kconfig                |  9 +++++++
- arch/loongarch/include/asm/smp.h      |  1 +
- arch/loongarch/include/asm/topology.h |  8 ++++++
- arch/loongarch/kernel/smp.c           | 38 +++++++++++++++++++++++++++
- 4 files changed, 56 insertions(+)
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 1a2cf012b8f2..609b15a26621 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -456,6 +456,15 @@ config SCHED_SMT
- 	  Improves scheduler's performance when there are multiple
- 	  threads in one physical core.
- 
-+config SCHED_MC
-+	bool "Multi-core scheduler support"
-+	depends on SMP
-+	default y
-+	help
-+	  Multi-core scheduler support improves the CPU scheduler's decision
-+	  making when dealing with multi-core CPU chips at a cost of slightly
-+	  increased overhead in some places.
-+
- config SMP
- 	bool "Multi-Processing support"
- 	help
-diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
-index b87d1d5e5890..ad0bd234a0f1 100644
---- a/arch/loongarch/include/asm/smp.h
-+++ b/arch/loongarch/include/asm/smp.h
-@@ -25,6 +25,7 @@ extern int smp_num_siblings;
- extern int num_processors;
- extern int disabled_cpus;
- extern cpumask_t cpu_sibling_map[];
-+extern cpumask_t cpu_llc_shared_map[];
- extern cpumask_t cpu_core_map[];
- extern cpumask_t cpu_foreign_map[];
- 
-diff --git a/arch/loongarch/include/asm/topology.h b/arch/loongarch/include/asm/topology.h
-index 50273c9187d0..6726298a85ec 100644
---- a/arch/loongarch/include/asm/topology.h
-+++ b/arch/loongarch/include/asm/topology.h
-@@ -36,6 +36,14 @@ void numa_set_distance(int from, int to, int distance);
- #define topology_sibling_cpumask(cpu)		(&cpu_sibling_map[cpu])
- #endif
- 
-+/*
-+ * Return cpus that shares the last level cache.
-+ */
-+static inline const struct cpumask *cpu_coregroup_mask(int cpu)
-+{
-+	return &cpu_llc_shared_map[cpu];
-+}
-+
- #include <asm-generic/topology.h>
- 
- static inline void arch_fix_phys_package_id(int num, u32 slot) { }
-diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
-index 4b24589c0b56..46036d98da75 100644
---- a/arch/loongarch/kernel/smp.c
-+++ b/arch/loongarch/kernel/smp.c
-@@ -46,6 +46,10 @@ EXPORT_SYMBOL(__cpu_logical_map);
- cpumask_t cpu_sibling_map[NR_CPUS] __read_mostly;
- EXPORT_SYMBOL(cpu_sibling_map);
- 
-+/* Representing the last level cache shared map of each logical CPU */
-+cpumask_t cpu_llc_shared_map[NR_CPUS] __read_mostly;
-+EXPORT_SYMBOL(cpu_llc_shared_map);
-+
- /* Representing the core map of multi-core chips of each logical CPU */
- cpumask_t cpu_core_map[NR_CPUS] __read_mostly;
- EXPORT_SYMBOL(cpu_core_map);
-@@ -63,6 +67,9 @@ EXPORT_SYMBOL(cpu_foreign_map);
- /* representing cpus for which sibling maps can be computed */
- static cpumask_t cpu_sibling_setup_map;
- 
-+/* representing cpus for which llc shared maps can be computed */
-+static cpumask_t cpu_llc_shared_setup_map;
-+
- /* representing cpus for which core maps can be computed */
- static cpumask_t cpu_core_setup_map;
- 
-@@ -102,6 +109,34 @@ static inline void set_cpu_core_map(int cpu)
- 	}
- }
- 
-+static inline void set_cpu_llc_shared_map(int cpu)
-+{
-+	int i;
-+
-+	cpumask_set_cpu(cpu, &cpu_llc_shared_setup_map);
-+
-+	for_each_cpu(i, &cpu_llc_shared_setup_map) {
-+		if (cpu_to_node(cpu) == cpu_to_node(i)) {
-+			cpumask_set_cpu(i, &cpu_llc_shared_map[cpu]);
-+			cpumask_set_cpu(cpu, &cpu_llc_shared_map[i]);
-+		}
-+	}
-+}
-+
-+static inline void clear_cpu_llc_shared_map(int cpu)
-+{
-+	int i;
-+
-+	for_each_cpu(i, &cpu_llc_shared_setup_map) {
-+		if (cpu_to_node(cpu) == cpu_to_node(i)) {
-+			cpumask_clear_cpu(i, &cpu_llc_shared_map[cpu]);
-+			cpumask_clear_cpu(cpu, &cpu_llc_shared_map[i]);
-+		}
-+	}
-+
-+	cpumask_clear_cpu(cpu, &cpu_llc_shared_setup_map);
-+}
-+
- static inline void set_cpu_sibling_map(int cpu)
- {
- 	int i;
-@@ -406,6 +441,7 @@ int loongson_cpu_disable(void)
- #endif
- 	set_cpu_online(cpu, false);
- 	clear_cpu_sibling_map(cpu);
-+	clear_cpu_llc_shared_map(cpu);
- 	calculate_cpu_foreign_map();
- 	local_irq_save(flags);
- 	irq_migrate_all_off_this_cpu();
-@@ -572,6 +608,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
- 	current_thread_info()->cpu = 0;
- 	loongson_prepare_cpus(max_cpus);
- 	set_cpu_sibling_map(0);
-+	set_cpu_llc_shared_map(0);
- 	set_cpu_core_map(0);
- 	calculate_cpu_foreign_map();
- #ifndef CONFIG_HOTPLUG_CPU
-@@ -613,6 +650,7 @@ asmlinkage void start_secondary(void)
- 	loongson_init_secondary();
- 
- 	set_cpu_sibling_map(cpu);
-+	set_cpu_llc_shared_map(cpu);
- 	set_cpu_core_map(cpu);
- 
- 	notify_cpu_starting(cpu);
--- 
-2.20.1
+
+Thanks,
+Yanteng
+> 
 
 
