@@ -1,155 +1,195 @@
-Return-Path: <linux-kernel+bounces-637811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EFA6AADD5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210F8AADD38
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6545171B4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A2A1BC4189
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A96214A77;
-	Wed,  7 May 2025 11:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F9623315A;
+	Wed,  7 May 2025 11:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bPXDLx8j"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5F76FC5;
-	Wed,  7 May 2025 11:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="mybp3sV6"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D6A23315C
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 11:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746617449; cv=none; b=Pa6KQAfW1qa3ezgx6yCr11ckmsTes7iUFarrOVCa1elJiKPqnDfQ0br6Rt8l2LKs9lLhm9gOrSUGMu+446pGtGzKiUCNf2WCXx0s8Ej6xKhMuhhQAbGqLwTff/jhuboCCXZfYOsek00P4r7iS0bCvppUSPFhJ+QsyR+fZH2zd3s=
+	t=1746616994; cv=none; b=o8BJBDxfMpDTUUV+UvY+XANKoynMBDLSL9qugzlAI7m0yrw6g9dua/qTQZv4omWuRq1hUjSkZKc1Y/GloPmQPzM/KCtXwd5Rjd+VHyTFl1CHmxU7rTJhcM7hvMwfUv/y9hJxis49lQOQZ7SjVi7gFC1l243oQMeXofuIpBJO/Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746617449; c=relaxed/simple;
-	bh=BT5flKrqdULW+U+spcOhTaxlNK6ECqi3PjYzjthRMyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BENMtcagZ1fW5Et6iUtDbhVVd1Pui0ltCc2xbSwNNihCYB4Dy5LXtgE9SLtr9SyZZBzYC3yLZhCc79qTDZggX003PxcUrGyHswUiO9N9TfabRsRxZUC+yXeHfwYM7II4v47SAj1aAl1BDv/LoeSFW+E3birFCtfRfNhXEcDCpJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bPXDLx8j; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.218.35] (unknown [4.194.122.170])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E944E21180CA;
-	Wed,  7 May 2025 04:21:52 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E944E21180CA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1746616916;
-	bh=YqDRKtZG+1qSllTV6hrI3N5y77O1WF8OhkPzBs8Ho3A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bPXDLx8jx7FJJIDSCZ7NsGBFopGHWZmbDslW+Q7oSJR9Gro2OQosggYFSZ7uNaIcr
-	 KeG8tJHb2PO6dKajP7Lxseu72h6RVyd0Z95E24sQNYIxXep4bSdskBlDXbj9eYpVgj
-	 Jci8uIVErP+W+D1/HJJIvNN0Gl38fMCUW83SRRcE=
-Message-ID: <be04a26f-866d-43e6-9a0b-15b91405503e@linux.microsoft.com>
-Date: Wed, 7 May 2025 16:51:50 +0530
+	s=arc-20240116; t=1746616994; c=relaxed/simple;
+	bh=0YN7Qt+8hBYIMYQkj/bbF+8pso2oPM0KoT57Hc+rRzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X+waumBoeqggDkw4e2SFx9NzapJzs9IvJ6uCtUMma90LliMVdlTyPDt52mQTIIeoN8nXsxpoXSQ8V3u1n+vd6vp20f3u9/zX8goMhGy8UHnD3Z41snw716jgGqbNGEBoT2lV8O0Vd0s4tzSu74w7xhaAb7qrV5D44xZ3x4Q5Tvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=mybp3sV6; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e78e53cc349so395964276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 04:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1746616991; x=1747221791; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BrlKQngaih/GyBdcD0JlQz7H1v2pzxnPiDTUdfvP4es=;
+        b=mybp3sV6AGCN4BO5zB4gqBXdriJSZwq2KPTT4t1sB9sklCUTuGVZYldgh+kx2rTcYl
+         08zoX1KX5bW/qeDqD3fWSMSMXo4VlXlMhymWUyLWNFF8tCcJ9MwiIf6pd3ap/S6r3Nu9
+         RzS8HsHMmQnznzifQ9Xod4Tg9HuGeLEpdGivLJGk57LRpNV9iC5mLEcxG7pAPa+suJbC
+         T6cSiSrhsoJc5PE3rnq90R9/ZGyxB6HaWA3PXa6Eo/1GZF9j3rh4hvU28iuzY4C1kcGD
+         7gLVavPFZSwcGv6S+ra6DL0VAx1EzyrVgn/O3thmrlGtratkZnpVruJA6TM0WBaWCBIz
+         uxXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746616991; x=1747221791;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BrlKQngaih/GyBdcD0JlQz7H1v2pzxnPiDTUdfvP4es=;
+        b=d/S/CzgBJVG1/BeZzV5QmS7jUpT3+45j8iZlUxI7yGnriFcpLMt5YIAuuWvIiQCcKY
+         iUuq8svrAHOliMXD5dFSGknjoy4EK7V5gkqLpz5bicrq/IEK8PRmTHqRSi37LKXFVNSk
+         0cl4d2su5/6DHyQyUaJTtR7Pj8HWTlNHxxOQjSSQcFgs/ipKJ/Ioy0EuOxZXYG9Xj0gf
+         d+ffTSKTPk2lI6CuCt1cSdkBnblDXi9V9ZVlAPq6MW3y40Yq5/X70nLXxkKtKftOvyFh
+         xXRYC+3HHSt+DAu1rDN/3NFc5cY6oua+vaonVF/DYH0M4zj1qPiBSEfPU52V8AT3d88C
+         tpqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMOajhi2vjn5F6TbCDpoEp72JMAUBBh5+JeqU2iUegeIgENrrrO10UTbFkZ++G5HnWQ5UCYd7YRSXIL/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAXaJUd7ebpk8jAXuQMp0OJVf2NJHOM7FqdwmcOu3CoJ77VPqA
+	cJh52gPgV1nonyzDBrG4fKJKhFo8fFT60QjGAH95oz8tarmnkh+Zugmo7fpaCpZbl6tsRfjbVIw
+	co0xirYVaJPuUFYppz2UjVlHVXquzl+y+U5NjUg==
+X-Gm-Gg: ASbGnctg/2PSXZTrpZnvryQhBuv/SPrYfeT9D0ourNcKKB+hjXMGCpnkoG3bdvKfS+F
+	rTrlkj0Gp9yUAD8Ybr0jY5VKMdR/6my60ho/ma6Dt93PIsagKiwc1+PQ8nkI2cvswmzQatCbHdt
+	BvAwdnjwZtef7KSAweb7VbsII26F7NK6HSHJugCl4mJEUdX4QXnF61
+X-Google-Smtp-Source: AGHT+IFxdYKCzY2TKwPokyurfueqmOKja0Rc4hCwr5SUWy06EioalRQvocuOR1AAy0bCdqDcNh77dszj2t/Oy74t3i4=
+X-Received: by 2002:a05:6902:18cd:b0:e74:e02:626a with SMTP id
+ 3f1490d57ef6-e7880fc6382mr3556036276.19.1746616991034; Wed, 07 May 2025
+ 04:23:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Drivers: hv: Introduce mshv_vtl driver
-To: Saurabh Singh Sengar <ssengar@microsoft.com>,
- KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-References: <20250506084937.624680-1-namjain@linux.microsoft.com>
- <KUZP153MB1444BE7FD66EA9CA9B4B9A97BE88A@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <KUZP153MB1444BE7FD66EA9CA9B4B9A97BE88A@KUZP153MB1444.APCP153.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250309084814.3114794-1-demonsingur@gmail.com>
+ <20250309084814.3114794-13-demonsingur@gmail.com> <b214bf8d-33d0-4da8-bf16-cc62bd1fbd55@videtronic.com>
+In-Reply-To: <b214bf8d-33d0-4da8-bf16-cc62bd1fbd55@videtronic.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Wed, 7 May 2025 12:22:50 +0100
+X-Gm-Features: ATxdqUG3nHKGjKOQoFEY4aL1pXCEA2rU5jPHWszWU5gDb-fbZzf1eN3M8MI_ltM
+Message-ID: <CAPY8ntCtycm+fha9yuJyr2_9obq8cq6xjYJT7acnFPgh_sCi8Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 12/16] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer drivers
+To: Jakub Kostiw <jakub.kostiw@videtronic.com>
+Cc: Cosmin Tanislav <demonsingur@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Cosmin Tanislav <cosmin.tanislav@analog.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Julien Massot <julien.massot@collabora.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Taniya Das <quic_tdas@quicinc.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Eric Biggers <ebiggers@google.com>, Javier Carrasco <javier.carrasco@wolfvision.net>, 
+	Ross Burton <ross.burton@arm.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Zhi Mao <zhi.mao@mediatek.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, Dongcheng Yan <dongcheng.yan@intel.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Tommaso Merciai <tomm.merciai@gmail.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Ihor Matushchak <ihor.matushchak@foobox.net>, 
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Jakub and Cosmin
 
+On Tue, 6 May 2025 at 19:34, Jakub Kostiw <jakub.kostiw@videtronic.com> wrote:
+>
+> Hi Cosmin
+>
+> Awesome work. The initiative to establish a common framework for GMSL
+> devices is a great idea.
+>
+> I believe that we have found few bugs:
+>
+> > +#define MAX9296A_BACKTOP22(x)                        (0x31d * (x) * 0x3)
+>
+> The first multiplication is wrong and should be replaced with addition:
+>
+> +#define MAX9296A_BACKTOP22(x)                  (0x31d + (x) * 0x3)
+>
+> The same goes for MAX96724 equivalent macro:
+>
+> > +#define MAX96724_BACKTOP22(x)                        (0x415 * (x) * 0x3)
+>
+> In MAX96714 driver there is an issue with setting up lane-polarities.
+>
+> > +static const struct max9296a_chip_info max96714_info = {
+> > +     .max_register = 0x5011,
+> > +     .set_pipe_stream_id = max96714_set_pipe_stream_id,
+> > +     .set_pipe_enable = max96714_set_pipe_enable,
+> > +     .set_pipe_tunnel_enable = max96714_set_pipe_tunnel_enable,
+> > +     .phys_configs = {
+> > +             .num_configs = ARRAY_SIZE(max96714_phys_configs),
+> > +             .configs = max96714_phys_configs,
+> > +     },
+> > +     .polarity_on_physical_lanes = true,
+> > +     .supports_phy_log = true,
+> > +     .adjust_rlms = true,
+> > +     .num_pipes = 1,
+> > +     .pipe_hw_ids = { 1 },
+> > +     .num_phys = 1,
+> > +     .phy_hw_ids = { 1 },
+> > +     .num_links = 1,
+> > +};
+>
+> In order to make thing work we had to set
+>
+> > +     .polarity_on_physical_lanes = true,
+>
+> To false. So this field is either improperly set for MAX96714, or handling of this case is wrong:
+>
+> > +             if (priv->info->polarity_on_physical_lanes)
+> > +                     map = phy->mipi.data_lanes[i];
+> > +             else
+> > +                     map = i;
+>
+> Upon mentioned changes we have successfully tested two GMSL2
+> combinations on Raspberry 5 platform:
+>
+> 1. MAX96724 + MAX96717 (only 2 MIPI-CSI2 lanes with single camera due to
+> hardware limitations)
+>
+> 2. MAX96714 + MAX96717
 
-On 5/7/2025 3:49 PM, Saurabh Singh Sengar wrote:
->> Provide an interface for Virtual Machine Monitor like OpenVMM and its
->> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
->> Expose devices and support IOCTLs for features like VTL creation,
->> VTL0 memory management, context switch, making hypercalls,
->> mapping VTL0 address space to VTL2 userspace, getting new VMBus
->> messages and channel events in VTL2 etc.
->>
->> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> ---
->>
->> OpenVMM :
->> https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fopenv
->> mm.dev%2Fguide%2F&data=05%7C02%7Cssengar%40microsoft.com%7Ce3b
->> 0a61c2c72423aa33408dd8c7af2e9%7C72f988bf86f141af91ab2d7cd011db47%
->> 7C1%7C0%7C638821181946438191%7CUnknown%7CTWFpbGZsb3d8eyJFbXB
->> 0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFp
->> bCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=uYUgaqKTazf0BL8ukdeUEor
->> d9hN8NidMLwE19NdprlE%3D&reserved=0
->>
->> ---
+Feel free to shout if you want help on the Pi side.
 
-<snip>
+Pi5 should be able to extract multiple virtual channels to support
+several sensors simultaneously (up to 4 VC/DT combinations). It does
+need a rework so the CFE runs from memory rather than being fed data
+directly from the CSI-2 receiver, but I believe that is pencilled in
+as future work with libcamera already.
 
->> +		return -EINVAL;
->> +	if (copy_from_user(payload, (void __user *)message.payload_ptr,
->> +			   message.payload_size))
->> +		return -EFAULT;
->> +
->> +	return hv_post_message((union
-> 
-> This function definition is in separate file which can be build as independent module, this will cause
-> problem while linking . Try building with CONFIG_HYPERV=m and check.
-> 
-> - Saurabh
+Unless things have regressed, libcamera should report all connected
+sensors to SerDes setups, and set up Media Controller appropriately to
+use them one at a time. I know I've had that working with simple CSI-2
+multiplexers and thought I'd had it working with TI FPD-Link III
+SerDes (Arducam's IMX219 V3Link kit, modded to remove their MCU). I
+don't have any GMSL hardware to test with.
 
-Thanks for reviewing Saurabh. As CONFIG_HYPERV can be set to 'm'
-and CONFIG_MSHV_VTL depends on it, changing CONFIG_MSHV_VTL to tristate
-and a few tweaks in Makefile will fix this issue. This will ensure that
-mshv_vtl is also built as a module when hyperv is built as a module.
+We're also fairly open to merging drivers and overlays for 3rd party
+hardware into the downstream Pi kernel. If they've been reviewed and
+merged upstream then that is the ideal, but if you're prepared to
+support them, then it saves the user the headache of having to build
+out-of-tree modules.
 
-I'll take care of this in next version.
-
-here is the diff for reference:
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index 57dcfcb69b88..c7f21b483377 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -73,7 +73,7 @@ config MSHV_ROOT
-           If unsure, say N.
-
-  config MSHV_VTL
--       bool "Microsoft Hyper-V VTL driver"
-+       tristate "Microsoft Hyper-V VTL driver"
-         depends on HYPERV && X86_64
-         depends on TRANSPARENT_HUGEPAGE
-         depends on OF
-diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile
-index 5e785dae08cc..c53a0df746b7 100644
---- a/drivers/hv/Makefile
-+++ b/drivers/hv/Makefile
-@@ -15,9 +15,11 @@ hv_vmbus-$(CONFIG_HYPERV_TESTING)    += hv_debugfs.o
-  hv_utils-y := hv_util.o hv_kvp.o hv_snapshot.o hv_utils_transport.o
-  mshv_root-y := mshv_root_main.o mshv_synic.o mshv_eventfd.o mshv_irq.o \
-                mshv_root_hv_call.o mshv_portid_table.o
-+mshv_vtl-y := mshv_vtl_main.o
-
-  # Code that must be built-in
-  obj-$(subst m,y,$(CONFIG_HYPERV)) += hv_common.o
--obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o mshv_common.o
--
--mshv_vtl-y := mshv_vtl_main.o mshv_common.o
-+obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o
-+ifneq ($(CONFIG_MSHV_ROOT) $(CONFIG_MSHV_VTL),)
-+    obj-y += mshv_common.o
-+endif
-
-Regards,
-Naman
+Cheers
+  Dave
 
