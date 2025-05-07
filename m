@@ -1,379 +1,218 @@
-Return-Path: <linux-kernel+bounces-638888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61389AAEF9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 01:48:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91279AAEFAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 May 2025 01:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 996C4504102
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1FA1C034B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FD6290D9E;
-	Wed,  7 May 2025 23:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F9A14A4C7;
+	Wed,  7 May 2025 23:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBsiBKAU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF99290D9B;
-	Wed,  7 May 2025 23:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BEC215184;
+	Wed,  7 May 2025 23:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746661635; cv=none; b=kGin8EjVJCxYuOqCJ5xpdOVAljzhzMCn1vJuezJa9ngFAhlhnahGBGE+z6AgKD0zRZV03XF/jbnAq6JyfAp4PZRhHTRtef6hKW0qbzjbmdb/tE5WX17BpAilBvmvhagOeibZhnJq4mDC48nlJOEOKdYBng6Yrx8a1NjzIJuxXUU=
+	t=1746661800; cv=none; b=JnsFpS7trmrMqTF8QUiyCglO9+IUfzDkyHncwKn//Eq8rmoJrLZsv9SMlXhPI479Y5kfvNvJftV2wP0APHu8K9g+PbCl18P3rN3GJGR5bL1zPTVX1BnTJzmvOx1Vw7P7GzicTkGBDq/Sx4SnzyuSfLimHT/yJiJZ/9F8yDLhjJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746661635; c=relaxed/simple;
-	bh=TWiEotscO9lL+wgcUTl5jDEFCa3yq2c1ynYpgAl4+pA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aMSTRfJD52oeoqDMApL+fxghgHIHAbTR1hLWAnb92VHWkvyNn+joN1VWNhZAlCN1GYkhnG3DJYLDiMG4WSupklSdHVGvvhpKHeGZXDrYCwdoIiWiMTe4PzvBTa1KezP93ZzQnswKK1VgUudKmIfrzHGhO4gs1ED2ldZ0uYUflNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBF2BC4CEEF;
-	Wed,  7 May 2025 23:47:11 +0000 (UTC)
-Date: Wed, 7 May 2025 19:47:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev,
- joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
- kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- jstultz@google.com, qperret@google.com, will@kernel.org,
- kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/24] ring-buffer: Introduce ring-buffer remotes
-Message-ID: <20250507194722.263a8d1e@gandalf.local.home>
-In-Reply-To: <20250506164820.515876-2-vdonnefort@google.com>
-References: <20250506164820.515876-1-vdonnefort@google.com>
-	<20250506164820.515876-2-vdonnefort@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746661800; c=relaxed/simple;
+	bh=PVmj7NJyGeK45hmVPi9ligxBtZ3ZO1Bg3hX7jXbGtO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OckQwGoVcfcYAQC3Q4KFFAy2qo/8qBtk2eoM9B/l4JFV8SgcVsNLx25fY84H+dWkycnFEdXwyl2sumVIeIjLD6nycJJhBs+9V5BUoaNhdM1jbt4A8tLhdJSC2RQtGPOc3jvAW0bpim5FUKyptQHx2SFjhaQhK28znyJ2Y/whcz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBsiBKAU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED2DC4CEEE;
+	Wed,  7 May 2025 23:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746661798;
+	bh=PVmj7NJyGeK45hmVPi9ligxBtZ3ZO1Bg3hX7jXbGtO8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hBsiBKAUDAXzgSmpSbpGdkNylmRIgkbK4/Hj+Ve7zJtcUQvgigt/XtrN+K1LIiPmH
+	 PDRV7f2CvAG+e8ptJw34NUUIbaVKSSUrJTNUsgjaph9lLic/h4jc0fgDpI8Kv+e7eW
+	 5QdJAuAY9kHsbUFBp298uOBt8AyEbBaOvhcYNJCH7al+nyRn1wlHbLx5oHVowhChnO
+	 kJ+zen5xT0RxKMYzarCbYa0N13MAlbtJ4Pj9Cta89X0cRv2UqxQO0NUA6zyLcfRONp
+	 i/0oTHvVRmjej7YEM5WS8zbdSPWIR8lpxCQfB7NQ9NIRinzCoiX2C38T8vR9rmM934
+	 RiRpCmQynwb5w==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54e7967cf67so530768e87.0;
+        Wed, 07 May 2025 16:49:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVussF3hplz8lxqJtw6m/YeIRiL4HX9CIokD4Kh7kbwoaiDYE8AGaKhc+aIYybKCSWjCzL8E7RAIQ6cDIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqh3DPZyRMXR9E018BOibuyb38/C6v6tZzKhrOyI6uKckDSkY4
+	37NR0SrVbkuOMsQBzYiAaBUbgoVoptI0QLXf8TGsCcP/h5rc/x3PuBD7PLbmReub6g//Ep7spYR
+	AtJWvqoZFvgJJUrrWA4WEq4Mmg08=
+X-Google-Smtp-Source: AGHT+IFRdcpdVRskCoXAlzXvWCXXYRP4Q/wNsCbxpdTtK57XXn4nA18MqRrP5CC+45nMFjK7JUCyvRyniMzrCrngk3U=
+X-Received: by 2002:ac2:4c50:0:b0:54e:81c9:6117 with SMTP id
+ 2adb3069b0e04-54fbfc40c95mr303374e87.46.1746661796733; Wed, 07 May 2025
+ 16:49:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250507074936.486648-1-masahiroy@kernel.org> <9ec50ce0-f60b-4d87-bc44-adaf2a1a97a1@linuxfoundation.org>
+In-Reply-To: <9ec50ce0-f60b-4d87-bc44-adaf2a1a97a1@linuxfoundation.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 8 May 2025 08:49:20 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARF=ANEEeENSwcWeayympi6Svci+ScWGpWQimyWm8xUzA@mail.gmail.com>
+X-Gm-Features: ATxdqUEgEyaivNEkUxgddjCMDWte50zHAOMye87izKfRKe3dxwgVuXd7oBJ8YTk
+Message-ID: <CAK7LNARF=ANEEeENSwcWeayympi6Svci+ScWGpWQimyWm8xUzA@mail.gmail.com>
+Subject: Re: [PATCH] um: let 'make clean' properly clean underlying SUBARCH as well
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Richard Weinberger <richard@nod.at>, linux-um@lists.infradead.org, 
+	David Gow <davidgow@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue,  6 May 2025 17:47:57 +0100
-Vincent Donnefort <vdonnefort@google.com> wrote:
+On Thu, May 8, 2025 at 6:38=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.or=
+g> wrote:
+>
+> On 5/7/25 01:49, Masahiro Yamada wrote:
+> > Building the kernel with O=3D is affected by stale in-tree build artifa=
+cts.
+> >
+> > So, if the source tree is not clean, Kbuild displays the following:
+> >
+> >    $ make ARCH=3Dum O=3Dbuild defconfig
+> >    make[1]: Entering directory '/.../linux/build'
+> >    ***
+> >    *** The source tree is not clean, please run 'make ARCH=3Dum mrprope=
+r'
+> >    *** in /.../linux
+> >    ***
+> >    make[2]: *** [/.../linux/Makefile:673: outputmakefile] Error 1
+> >    make[1]: *** [/.../linux/Makefile:248: __sub-make] Error 2
+> >    make[1]: Leaving directory '/.../linux/build'
+> >    make: *** [Makefile:248: __sub-make] Error 2
+> >
+> > Usually, running 'make mrproper' is sufficient for cleaning the source
+> > tree for out-of-tree builds.
+> >
+> > However, building UML generates build artifacts not only in arch/um/,
+> > but also in the SUBARCH directory (i.e., arch/x86/). If in-tree stale
+> > files remain under arch/x86/, Kbuild will reuse them instead of creatin=
+g
+> > new ones under the specified build directory.
+> >
+> > This commit makes 'make ARCH=3Dum clean' recurse into the SUBARCH direc=
+tory.
+> >
+> > Reported-by: Shuah Khan <skhan@linuxfoundation.org>
+> > Closes: https://lore.kernel.org/lkml/20250502172459.14175-1-skhan@linux=
+foundation.org/
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>
+> It doesn't solve the problem. I still see arch/x86/realmode/rm/pasyms.h
+> after running make ARCH=3Dum mrproper
 
 
-> diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-> index 56e27263acf8..c0c7f8a0dcb3 100644
-> --- a/include/linux/ring_buffer.h
-> +++ b/include/linux/ring_buffer.h
-> @@ -248,4 +248,67 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
->  		    struct vm_area_struct *vma);
->  int ring_buffer_unmap(struct trace_buffer *buffer, int cpu);
->  int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu);
-> +
-> +#define meta_pages_lost(__meta) \
-> +	((__meta)->Reserved1)
-> +#define meta_pages_touched(__meta) \
-> +	((__meta)->Reserved2)
+Why not?
 
-Hmm, I wonder if this would be worth adding to the user interface?
+This patch allows 'make ARCH=3Dum mrproper'
+to clean up both arch/um and arch/x86/.
 
-> +
-> +struct ring_buffer_desc {
-> +	int		cpu;
-> +	unsigned int	nr_page_va; /* excludes the meta page */
-> +	unsigned long	meta_va;
-> +	unsigned long	page_va[];
+It is really simple to test the behavior.
 
-	unsigned long page_val[] __counted_by(nr_page_va);
 
-?
+[Without this patch]
 
-Or is this too hidden by the remote?
+masahiro@zoe:~/workspace/linux-kbuild(master)$ touch
+arch/x86/realmode/rm/pasyms.h
+masahiro@zoe:~/workspace/linux-kbuild(master)$ make ARCH=3Dum mrproper
+masahiro@zoe:~/workspace/linux-kbuild(master)$ ls arch/x86/realmode/rm/pasy=
+ms.h
+arch/x86/realmode/rm/pasyms.h
 
-> +};
-> +
-> +struct trace_buffer_desc {
-> +	int		nr_cpus;
-> +	size_t		struct_len;
-> +	char		__data[]; /* list of ring_buffer_desc */
-> +};
-> +
-> +static inline struct ring_buffer_desc *__next_ring_buffer_desc(struct ring_buffer_desc *desc)
-> +{
-> +	size_t len = struct_size(desc, page_va, desc->nr_page_va);
-> +
-> +	return (struct ring_buffer_desc *)((void *)desc + len);
-> +}
-> +
-> +static inline struct ring_buffer_desc *__first_ring_buffer_desc(struct trace_buffer_desc *desc)
-> +{
-> +	return (struct ring_buffer_desc *)(&desc->__data[0]);
-> +}
-> +
-> +static inline size_t trace_buffer_desc_size(size_t buffer_size, unsigned int nr_cpus)
-> +{
-> +	unsigned int nr_pages = (PAGE_ALIGN(buffer_size) / PAGE_SIZE) + 1;
+[With this patch]
 
-Hmm,
+masahiro@zoe:~/workspace/linux-kbuild(kbuild)$ touch
+arch/x86/realmode/rm/pasyms.h
+masahiro@zoe:~/workspace/linux-kbuild(kbuild)$ make ARCH=3Dum mrproper
+  CLEAN   arch/x86/realmode/rm
+masahiro@zoe:~/workspace/linux-kbuild(kbuild)$ ls arch/x86/realmode/rm/pasy=
+ms.h
+ls: cannot access 'arch/x86/realmode/rm/pasyms.h': No such file or director=
+y
 
-	unsigned int nr_pages = (buffer_size + (PAGE_SIZE - 1)) / PAGE_SIZE;
 
-?
 
-Of course buffer_size of zero is zero here. But is buffer_size of zero what we want?
 
-> +	struct ring_buffer_desc *rbdesc;
-> +
-> +	return size_add(offsetof(struct trace_buffer_desc, __data),
-> +			size_mul(nr_cpus, struct_size(rbdesc, page_va, nr_pages)));
-> +}
-> +
-> +#define for_each_ring_buffer_desc(__pdesc, __cpu, __trace_pdesc)		\
-> +	for (__pdesc = __first_ring_buffer_desc(__trace_pdesc), __cpu = 0;	\
-> +	     __cpu < (__trace_pdesc)->nr_cpus;					\
-> +	     __cpu++, __pdesc = __next_ring_buffer_desc(__pdesc))
 
-Probably should add parenthesis:
+> A subsequent kunit run on x86_64 fails. make ARCH=3Dx86_64 mrproper
+> will remove the headers for x86_64 properly. The patch I proposed
+> prompts user run mrproper on the arch in compile.h - It works now
+> for the case where compile.h doesn't exist. I can send that out
+> unless you have other ideas on how to fix this.
 
-#define for_each_ring_buffer_desc(__pdesc, __cpu, __trace_pdesc)		\
-	for (__pdesc = __first_ring_buffer_desc(__trace_pdesc), __cpu = 0;	\
-	     (__cpu) < (__trace_pdesc)->nr_cpus;					\
-	     (__cpu)++, __pdesc = __next_ring_buffer_desc(__pdesc))
+No.
 
-Especially if __cpu is passed in as "*pcpu"
+If you still see a problem, please explain the bad scenario,
+please explain without kunit.
 
-> +
-> +struct ring_buffer_remote {
-> +	struct trace_buffer_desc	*desc;
-> +	int				(*swap_reader_page)(unsigned int cpu, void *priv);
-> +	int				(*reset)(unsigned int cpu, void *priv);
-> +	void				*priv;
-> +};
-> +
-> +int ring_buffer_poll_remote(struct trace_buffer *buffer, int cpu);
-> +
-> +struct trace_buffer *
-> +__ring_buffer_alloc_remote(struct ring_buffer_remote *remote,
-> +			   struct lock_class_key *key);
-> +
-> +#define ring_buffer_remote(remote)				\
-> +({								\
-> +	static struct lock_class_key __key;			\
-> +	__ring_buffer_alloc_remote(remote, &__key);		\
-> +})
->  #endif /* _LINUX_RING_BUFFER_H */
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index c0f877d39a24..a96a0b231fee 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -523,6 +523,8 @@ struct ring_buffer_per_cpu {
->  	struct trace_buffer_meta	*meta_page;
->  	struct ring_buffer_cpu_meta	*ring_meta;
->  
-> +	struct ring_buffer_remote	*remote;
-> +
->  	/* ring buffer pages to update, > 0 to add, < 0 to remove */
->  	long				nr_pages_to_update;
->  	struct list_head		new_pages; /* new pages to add */
-> @@ -545,6 +547,8 @@ struct trace_buffer {
->  
->  	struct ring_buffer_per_cpu	**buffers;
->  
-> +	struct ring_buffer_remote	*remote;
-> +
->  	struct hlist_node		node;
->  	u64				(*clock)(void);
->  
-> @@ -2196,6 +2200,41 @@ static int __rb_allocate_pages(struct ring_buffer_per_cpu *cpu_buffer,
->  	return -ENOMEM;
->  }
->  
-> +static struct ring_buffer_desc *ring_buffer_desc(struct trace_buffer_desc *trace_desc, int cpu)
-> +{
-> +	struct ring_buffer_desc *desc, *end;
-> +	size_t len;
-> +	int i;
-> +
-> +	if (!trace_desc)
-> +		return NULL;
-> +
-> +	if (cpu >= trace_desc->nr_cpus)
-> +		return NULL;
-> +
-> +	end = (struct ring_buffer_desc *)((void *)trace_desc + trace_desc->struct_len);
-> +	desc = __first_ring_buffer_desc(trace_desc);
-> +	len = struct_size(desc, page_va, desc->nr_page_va);
-> +	desc = (struct ring_buffer_desc *)((void *)desc + (len * cpu));
-> +
-> +	if (desc < end && desc->cpu == cpu)
-> +		return desc;
-> +
-> +	/* Missing CPUs, need to linear search */
-> +	for_each_ring_buffer_desc(desc, i, trace_desc) {
-> +		if (desc->cpu == cpu)
-> +			return desc;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static void *ring_buffer_desc_page(struct ring_buffer_desc *desc, int page_id)
-> +{
-> +	return page_id > desc->nr_page_va ? NULL : (void *)desc->page_va[page_id];
-> +}
-> +
-> +
->  static int rb_allocate_pages(struct ring_buffer_per_cpu *cpu_buffer,
->  			     unsigned long nr_pages)
->  {
-> @@ -2256,6 +2295,30 @@ rb_allocate_cpu_buffer(struct trace_buffer *buffer, long nr_pages, int cpu)
->  
->  	cpu_buffer->reader_page = bpage;
->  
-> +	if (buffer->remote) {
-> +		struct ring_buffer_desc *desc = ring_buffer_desc(buffer->remote->desc, cpu);
-> +
-> +		if (!desc)
-> +			goto fail_free_reader;
-> +
-> +		cpu_buffer->remote = buffer->remote;
-> +		cpu_buffer->meta_page = (struct trace_buffer_meta *)(void *)desc->meta_va;
-> +		cpu_buffer->subbuf_ids = desc->page_va;
-> +		cpu_buffer->nr_pages = desc->nr_page_va - 1;
 
-Probably should add a comment here:
 
-		/* Remote buffers are read only and immutable */
 
-> +		atomic_inc(&cpu_buffer->record_disabled);
-> +		atomic_inc(&cpu_buffer->resize_disabled);
-> +
-> +		bpage->page = ring_buffer_desc_page(desc, cpu_buffer->meta_page->reader.id);
-> +		if (!bpage->page)
-> +			goto fail_free_reader;
-> +		/*
-> +		 * The meta-page can only describe which of the ring-buffer page
-> +		 * is the reader. There is no need to init the rest of the
-> +		 * ring-buffer.
-> +		 */
-> +		return cpu_buffer;
-> +	}
-> +
->  	if (buffer->range_addr_start) {
->  		/*
->  		 * Range mapped buffers have the same restrictions as memory
-> @@ -2333,6 +2396,10 @@ static void rb_free_cpu_buffer(struct ring_buffer_per_cpu *cpu_buffer)
->  
->  	irq_work_sync(&cpu_buffer->irq_work.work);
->  
-> +	/* remote ring-buffer. We do not own the data pages */
-> +	if (cpu_buffer->remote)
-> +		cpu_buffer->reader_page->page = NULL;
-> +
->  	free_buffer_page(cpu_buffer->reader_page);
->  
->  	if (head) {
-> @@ -2355,7 +2422,8 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
->  					 int order, unsigned long start,
->  					 unsigned long end,
->  					 unsigned long scratch_size,
-> -					 struct lock_class_key *key)
-> +					 struct lock_class_key *key,
-> +					 struct ring_buffer_remote *remote)
->  {
->  	struct trace_buffer *buffer;
->  	long nr_pages;
-> @@ -2383,6 +2451,11 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
->  	buffer->flags = flags;
->  	buffer->clock = trace_clock_local;
->  	buffer->reader_lock_key = key;
-> +	if (remote) {
-> +		buffer->remote = remote;
-> +		/* The writer is remote. This ring-buffer is read-only */
-> +		atomic_inc(&buffer->record_disabled);
-> +	}
->  
->  	init_irq_work(&buffer->irq_work.work, rb_wake_up_waiters);
->  	init_waitqueue_head(&buffer->irq_work.waiters);
-> @@ -2502,7 +2575,7 @@ struct trace_buffer *__ring_buffer_alloc(unsigned long size, unsigned flags,
->  					struct lock_class_key *key)
->  {
->  	/* Default buffer page size - one system page */
-> -	return alloc_buffer(size, flags, 0, 0, 0, 0, key);
-> +	return alloc_buffer(size, flags, 0, 0, 0, 0, key, NULL);
->  
->  }
->  EXPORT_SYMBOL_GPL(__ring_buffer_alloc);
-> @@ -2529,7 +2602,18 @@ struct trace_buffer *__ring_buffer_alloc_range(unsigned long size, unsigned flag
->  					       struct lock_class_key *key)
->  {
->  	return alloc_buffer(size, flags, order, start, start + range_size,
-> -			    scratch_size, key);
-> +			    scratch_size, key, NULL);
-> +}
-> +
-> +/**
-> + * __ring_buffer_alloc_remote - allocate a new ring_buffer from a remote
-> + * @remote: Contains a description of the ring-buffer pages and remote callbacks.
-> + * @key: ring buffer reader_lock_key.
-> + */
-> +struct trace_buffer *__ring_buffer_alloc_remote(struct ring_buffer_remote *remote,
-> +						struct lock_class_key *key)
-> +{
-> +	return alloc_buffer(0, 0, 0, 0, 0, 0, key, remote);
->  }
->  
->  void *ring_buffer_meta_scratch(struct trace_buffer *buffer, unsigned int *size)
-> @@ -5278,8 +5362,56 @@ rb_update_iter_read_stamp(struct ring_buffer_iter *iter,
->  	}
->  }
->  
-> +static bool rb_read_remote_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
-> +{
-> +	local_set(&cpu_buffer->entries, READ_ONCE(cpu_buffer->meta_page->entries));
-> +	local_set(&cpu_buffer->overrun, READ_ONCE(cpu_buffer->meta_page->overrun));
-> +	local_set(&cpu_buffer->pages_touched, READ_ONCE(meta_pages_touched(cpu_buffer->meta_page)));
-> +	local_set(&cpu_buffer->pages_lost, READ_ONCE(meta_pages_lost(cpu_buffer->meta_page)));
-> +	/*
-> +	 * No need to get the "read" field, it can be tracked here as any
-> +	 * reader will have to go through a rign_buffer_per_cpu.
-> +	 */
-> +
-> +	return rb_num_of_entries(cpu_buffer);
-> +}
-> +
->  static struct buffer_page *
-> -rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
-> +__rb_get_reader_page_from_remote(struct ring_buffer_per_cpu *cpu_buffer)
-> +{
-> +	u32 prev_reader;
-> +
-> +	if (!rb_read_remote_meta_page(cpu_buffer))
-> +		return NULL;
-> +
-> +	/* More to read on the reader page */
-> +	if (cpu_buffer->reader_page->read < rb_page_size(cpu_buffer->reader_page)) {
-> +		if (!cpu_buffer->reader_page->read)
-> +			cpu_buffer->read_stamp = cpu_buffer->reader_page->page->time_stamp;
-> +		return cpu_buffer->reader_page;
-> +	}
-> +
-> +	prev_reader = cpu_buffer->meta_page->reader.id;
-> +
-> +	WARN_ON(cpu_buffer->remote->swap_reader_page(cpu_buffer->cpu, cpu_buffer->remote->priv));
 
-Please always use WARN_ON_ONCE() we don't need to spam the console when things go wrong.
 
-> +	/* nr_pages doesn't include the reader page */
-> +	if (WARN_ON(cpu_buffer->meta_page->reader.id > cpu_buffer->nr_pages))
-> +		return NULL;
-> +
-> +	cpu_buffer->reader_page->page =
-> +		(void *)cpu_buffer->subbuf_ids[cpu_buffer->meta_page->reader.id];
-> +	cpu_buffer->reader_page->id = cpu_buffer->meta_page->reader.id;
-> +	cpu_buffer->reader_page->read = 0;
-> +	cpu_buffer->read_stamp = cpu_buffer->reader_page->page->time_stamp;
-> +	cpu_buffer->lost_events = cpu_buffer->meta_page->reader.lost_events;
-> +
-> +	WARN_ON(prev_reader == cpu_buffer->meta_page->reader.id);
-> +
-> +	return rb_page_size(cpu_buffer->reader_page) ? cpu_buffer->reader_page : NULL;
-> +}
 
--- Steve
+
+
+> My workflow:
+>
+> - Build kernel on x86_64 with CONFIG_AMD_MEM_ENCRYPT enabled
+>
+> - Check for arch/x86/realmode/rm/pasyms.h
+>    ls arch/x86/realmode/rm/pasyms.h
+>       arch/x86/realmode/rm/pasyms.h
+>
+> - make ARCH=3Dum O=3D/linux/build
+>
+>    This patch cleans the source tree, but doesn't remove
+>    arch/x86/realmode/rm/pasyms.h
+>
+> - ls arch/x86/realmode/rm/pasyms.h
+>       arch/x86/realmode/rm/pasyms.h
+>
+> - ./tools/testing/kunit/kunit.py run --alltests --arch x86_64
+> [15:26:35] Configuring KUnit Kernel ...
+> Regenerating .config ...
+> Populating config with:
+> $ make ARCH=3Dx86_64 O=3D.kunit olddefconfig
+> [15:26:37] Building KUnit Kernel ...
+> Populating config with:
+> $ make ARCH=3Dx86_64 O=3D.kunit olddefconfig
+> Building with:
+> $ make all compile_commands.json scripts_gdb ARCH=3Dx86_64 O=3D.kunit --j=
+obs=3D16
+> ERROR:root:ld:arch/x86/realmode/rm/realmode.lds:236: undefined symbol `se=
+v_es_trampoline_start' referenced in expression
+> make[6]: *** [../arch/x86/realmode/rm/Makefile:49: arch/x86/realmode/rm/r=
+ealmode.elf] Error 1
+> make[5]: *** [../arch/x86/realmode/Makefile:22: arch/x86/realmode/rm/real=
+mode.bin] Error 2
+> make[4]: *** [../scripts/Makefile.build:461: arch/x86/realmode] Error 2
+> make[4]: *** Waiting for unfinished jobs....
+> make[3]: *** [../scripts/Makefile.build:461: arch/x86] Error 2
+> make[3]: *** Waiting for unfinished jobs....
+> make[2]: *** [/linux/linux_kselftest/Makefile:2009: .] Error 2
+> make[1]: *** [/linux/linux_kselftest/Makefile:248: __sub-make] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
+>
+> thanks,
+> -- Shuah
+
+
+
+--
+Best Regards
+
+Masahiro Yamada
 
