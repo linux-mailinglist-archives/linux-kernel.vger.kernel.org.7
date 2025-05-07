@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-638690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C893BAAEC3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:36:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9527AAEA4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C554A5B6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 19:35:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80831BC3DDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 18:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996C128E58E;
-	Wed,  7 May 2025 19:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC1128BA9D;
+	Wed,  7 May 2025 18:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="WBhdGvGO"
-Received: from sonic316-54.consmr.mail.gq1.yahoo.com (sonic316-54.consmr.mail.gq1.yahoo.com [98.137.69.30])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zW7ccNI4"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8428728E56F
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 19:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D2C2116E9
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 18:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746646545; cv=none; b=Hm6aBgHWeHW7XdlmwjsAKGuoeTXBvuAaJPS/7BO9v86ypb7HeRQQOoJGkl0QfuGjfj7YKibAJ+ubJU+OuA1h59nG+Fp/ZS1crct631KGSzKuJ292wxblN0zwMj2LPmHYDKk9PVn6ZA+SwMO5NfczdjAGjZIGnEh79IADtdCi8xc=
+	t=1746644021; cv=none; b=F+1+ot6pD7oGLLzjK+rP43Mo7CiDEwHrPAQBx/D0icEVHIwm9XlOOgeb3kWod1c7bh7EAZX2ba5pt+3nX2bXZ7nDCemcBSlPlO+Znhqm6fs8yKV1h/xQKKdL6H7u91k+lPYs/BNeGIEDD0hmdOex9Cd9ECYKZAZ97enIvA/BrvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746646545; c=relaxed/simple;
-	bh=/ibJ+ZdIq4NSJpcnXBtJz4+mTK5QylfZENGb9T8Fi8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=aROPB9xPxwot6Of5m5ZMg/hovXqJd+Lnhqqs6IsnWzWoPzP09U/5CJpc+oOGnOCXpyWXsHGgxYDfhjU1fxkiBDDFg1NtW1KGtuEWGCgVgvOS9569fMfJ0BlQeLjehco0pPvxeOrr3nG9pmOgVLxcS9ux7G5fna2HRGLjAfbnI0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=WBhdGvGO; arc=none smtp.client-ip=98.137.69.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1746646543; bh=lmga7zKv8+wZUarLSSX0s6Q7CJ3U6AGRqKJhtN6JNfo=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=WBhdGvGOpFqNNissheUddh7dNq7WIdjxGB7lKqcf4wD0EzHOYIV7FnAjQZNG6T14onTZGi/CajL20ftR4aMJMq/4yMGtAywTfnfmritIAAwfLbJO5NmvBNQQglzyV7vYv0VMVwBcdgijrExf62lkpzrWpBmzx/LmLsL3GTnBbthp19xfqD40QVBJweeqygCgzZOiFb4D1c3Q0dgQvPyDlzzoA3dZigpIOv+vhHmxQItxhPRsBMkbPzybo+UDCFdqMnl3TDWGmV2Crl8Trdw/eZy0TPrvcDJ6joJGiGvGiso9zqCoaJbzFcVitCF3B0ROdtdMcISoY0V1XjvMcjeZbQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746646543; bh=+FUTSJKU36OlC5KtC8XxzrJw3knNe9t88rza3HeSRck=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=ITt/M1onpNikuhDgeuQRI76KCmrlWlRQOS22outWcPhX4A7Bml0+dZN4/xDVPk2ZqJvnhUHbEKMzR/uPv2iibnGOEHSJUXn8njzITj/6bScqYbohwJWWUhXxRBW+IL0678l0o839GyevsOEuyQxio+l3zxIlXFGZOqEAP9febIej5M14Paf2+nckRyfAXuOMy8pqXj5CJi5hFMsriNeI+5Woo8/Zw9ei3DUNr2AEgOb+tM6ab4UWpCyYqUJoI6RfEmVx61cx27SQJ9dp0y48kOWTwLvz0682uBUisYzMonR9zwaRcMAZajXQs8otrZNIU/qBL0PG495/LoCTyNKW4g==
-X-YMail-OSG: r98ej.sVM1k38Qf03FFb9in0YlqEhRuo.SbCZAqOGUf7tmKaSlBz1niZj03gNAR
- rF68RuvP7P_Tfj2mtJLpxtCOxri75414SU26i39Sv908k14MOCt7AVgBBat95S2lEje.TYGpakCk
- Ta_pn6jPMCYikra9TeyKMAXunfqOvA7mBJNkcjR_TuJTVHePehMhL2HeidqoVapc45fdaQQzu0Ui
- VUpLak8.ysBvm0U3u9Wbbc8WrnCaBtJwY_I4.3aH_PzktrVzZ7JlCH4aH1UIWEn45SvLRudHYth1
- T3abILqb1LbFNHyUVU.ZnZvNoIKE1Neu2bicy7jxWyCbqftYLcCPuGa41R.1U3ZAZBhWMCwLIga8
- .lF1BE_He_sBaRA8E4tfPacEIiXyFnzTqNcjmGy8akNl56FJNLTcQn2Bk1CdRMTZYUH7.rU1QJs.
- k6CQhF.ikJE9cWBi6WmxymDHSJwoi1YY1NSmGll7tR.unxToqvkW_5MCwOnQx6.xDPPLqHEPdkac
- md6hOM4nQRnXbuEXwtT7zuzHyx3FCuC44wOmqc63XNoWaMNPyyFUSPtahLNQJo4N.U6mxTgDFD1F
- fRpHxBvuHTZr8E17CnIBJNAm0LRzl.5HDJkWCGZpPdLxPxerKhGL4gZpsjtW24SzvEeXjqalfbRJ
- X.cXfIu55yxce11YGUI7Y3qyIcry5a.Bsv9hslYQiruVS6b0hl4gyhu4k4cMutfHp3TO0I3v7Mbu
- yVd3_c3CLyLVfkQ5SpOnEcSx5irHkrn0Gw5LI_S36Grq9IMXee5s58HTLfu40xFj1udrwVT3RdVK
- 6ehddzN0arB94MxYmNSUllTK9q9_YfBPHUecMt80WGBwU.OhSoyN7OEOjPbtQ2Kp_uMXou9ltgX0
- 2e4HTh.bPszDmnQuJXWF9MbabHLHD8lkmTemsWEDqqT5murniYF8_ezU0HWYu9AEqMxLJTRZEQQK
- RFCBsGmInqzmu_MIWi.pAS_YL52wpXRx7PIQ91vtJ1LOz8pTL37TdUw.tRunhvhlBF1FHLSPzdE6
- 7GVehiqutA7_sqEmX.AsHJjfhTnQQod6Y4JruH4feAxfu491pxbOfrvWRmwmT_JzeRQdMHR9B3sW
- 1RHycUbZ5cdPtST6KGA.9GW09Dre0GI8K.rczUZy5_hcOjESVmo_KOe24UE8ztfWZzyuM33zS_z3
- BVppYdKag2wAByslR.hsz6Z7mNhX9TFACVVBxgukQqjQKxDH9ix2YKVm_YQwPQID17IagODf9L64
- UNRUh_uB9gbki_H_FKRvxxE3oc9pLd_9hDuP0zlxxk.fguvXF9JGLM19tiCv79Fk7S476lGwvtUp
- eKxnAshQb.i3ebdfAjBAn2PXmg5sw8tLk5IJ9VV49Dbh9AVQQN.i0y3.yJ1m6fn93RAsL6uPhGk6
- dChiuazrvm3teCNUqQUqKyG6F_leQ8Wx56ivQEgLiNFzpTWeGJRhmZ52sb1AoCiqMe4uHJ1AXAES
- jupJFGn1BoaWqbTcLZ6JFkeFSp.64sxXR.yINFQnvmP5IiuBWXo2dudOtLIM4F5dxe38uhrGM9yJ
- QxxJybzyHSCLQJtpo.Ry8v_dhFozoa2d1DHXw9AjLCNcGMADiysM8TmgpK4BwzA7QJaItQ3Cb9w_
- ZudOGD6M5SsfeSeblD5_PX6kptJnwNQdaKJ0uifi_WTu8KeFyBanWTHuztXTIZJe4Ou_vMyi4JR_
- AX1HCpHUVy1I3338qBQI1dHPVLP.2eb3S3ERHSQaZEEwAlpdrjmWXD6RFyKquBIU4WFVxje4ksCo
- Glk7Wx6QQ15AHnlPFb3LZrvansBFALRdfNqYd3Cj9EYxW.5vPn_I._HMu2PSB2xmwEUTZI5S7efz
- bFl.OzTHl_5U_hImmImE4WqM4sbPEFlVZ7ucuyif5rrujZo5h034QDGp.D1ujflzpUsk4_ox5x82
- Po9rP1VBMcNqK6r5YsDP2k6xx6bWWXcUcpTpsLi4y4_2iSToVggiq4sLs5EvFJ1qjlstU7.SUMfw
- boM49TstsyHp1ggknVnKi.CRXFJwd_WXs6yLaYlntpSyUBGmp83bRH8M4.PUiLUB8JNHpRDdW06R
- 6TMRn39tnM9mKjzsgTqgMhhOvz_bgJTpTg1wngix9zJUi7CHBC6MWF8NdxHlmhWnFxuo8xkVbFrE
- tjQk8j9Hxyoz.78O_1PcpvD3CSrs1ekv8LPqVZFopylcViYf_H_mZwJHsQVzDPKsl61N5NJs_x3B
- 2FSCqQxFUCa8XsR4pxzZgOb8ul2KCMqouT82Hz8JZOyuEUhm6nEf8jGxVP1cgm94Z
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: 5588d6e7-8905-487b-99f4-71023ca18f2b
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Wed, 7 May 2025 19:35:43 +0000
-Received: by hermes--production-ir2-858bd4ff7b-mp79t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0ce168842b6194365513fec4b9b0872e;
-          Wed, 07 May 2025 18:55:10 +0000 (UTC)
-From: Ruben Wauters <rubenru09@aol.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: Ruben Wauters <rubenru09@aol.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/cpu/intel: replace deprecated strcpy with strscpy
-Date: Wed,  7 May 2025 19:51:36 +0100
-Message-ID: <20250507185459.8769-1-rubenru09@aol.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1746644021; c=relaxed/simple;
+	bh=4vKFr7qe4vZRrtcDl0MgUKtLS085rq+jZEdMX5rs7hs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+JkEIy/x1Ww3yjhsMnUsUkQAH8AwPEALtYkmu5DThmwe0quCScr2goU6f275BdhUPS3I+u6+36ZUu73UDVpUsLpnug5gzPWVCwGP/r1UzttV4ZFZCvCPDIpqdqMaFOoItmyu0HIjqypxnB2Mqr4xUvwsBHZ8OkgA8F0uPO2jXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zW7ccNI4; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a0b135d18eso119925f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 11:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746644018; x=1747248818; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1fN0IMnzWBFaY2VN7IEwty5K6yq3NVqO0kz2Muvh8c0=;
+        b=zW7ccNI44l8RwiOkFcwECg2pYgOpR+pOzuU3cXO1YV4YV79RWQMueRDY3RcHSFomHr
+         QIyjqBIGNh17yehm0Zlr2tE+ZVQVVWpaDqhn3tNKUUfB0hgd1k73fRhXKlBOgtkhSz/C
+         ujbvmtmN/zlOLwF+E/tJqYz9cF5THr3llGQAOi/V3A9irej28WihDyiDsBsbU4og+NX7
+         fTUmnC8J+QSsqkZaUm9CSVDiFKxtgMF3gcTKRmmEEoxQW6F7NF2Nz67EEm64LvpCVyWH
+         bvFYuamI0mZXIaxW2SC6VeHlvGUVJY8FCUja2gYz2PjmKilU6xb9/camijDjRBYB5tgp
+         134Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746644018; x=1747248818;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1fN0IMnzWBFaY2VN7IEwty5K6yq3NVqO0kz2Muvh8c0=;
+        b=vy2PF9EaFnLxRaMSN8f8T2VNl7hsIagWkpWmumYns1JZI65pEzmj1rg9pPF0DpRhTU
+         VvryFAOkpBS/RXh3U0tMOktY7RuI7w+Zv1IQcaZK6GwscG+SuS1OZ+FhjgSzFa0kjJbn
+         UJxGaA32SnQjCn1vFT/ObU9mhRJue2ZIoZAnqEiJPt264TaY8dzSHjt0mIBPup7pLIG8
+         EXeD8EAVLCv5WMEE0IEV61TMpr3GomdcB/LUJpj8iH2B3c/Fd2WObekahAIaFNPi2Jt9
+         S2bLhxLHBvXpngXPkT5KjORFKnEIb0AYc1AagtwXTkYhNa6ZHdlu6NuaHC+Ye1AlkQC+
+         fOcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAM36NsCpfaA8W9P6Tqla95yR+OORln6NN5VJf1nfPSwGGNp+K2UFktkbyqXD7fjeGYCwkrU0B4RtywUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvnQth2tx0rXa6GuCldO5/3AMv4M92h4+evMMgIzfCnxcq9W6g
+	q8YLLscDsafQGk8KRyqzJrtA53RUI2JkT5D54VEjmNNtg5kfcSwncmNlu16HLXc=
+X-Gm-Gg: ASbGnct6V9TxwwqF3EhD0Bo25BklFiH4XAWKs+cAQmarcX+oQUtNa/S82QhkwdvOlgU
+	j8f/3xPMJcYiQsMTFBkPEoLa+g479UXlBvGYICVxebXT+nlWJMcnNMhL8pBMA4c1SNnOcEIeW2F
+	SnGzpZY7poY3kS8IRbqw+FWgu1V3ui56uHr7/LoOsXOZHWY44CxM5v2qazn4+b0tKZKpwqw2bwH
+	JZ30dGaatNp06p79zn2/1CFJGI6hrgiFl5KsVlCd2Hi9P6v+juA6AXFTXcuM73BJ66c7E4lQ+2Y
+	vgjyGQKkbjRdIXerrBOtTzhwkFpXKXFZjyqfTHtgx+gryA==
+X-Google-Smtp-Source: AGHT+IGbXFXl7/yZ2iz0z8i5yTYKtsZVTWA2mRb1dQUNrexl1xahP0QPQA2Qyb99RIZzlQKi8epSew==
+X-Received: by 2002:a05:6000:1a87:b0:3a0:9dfb:b001 with SMTP id ffacd0b85a97d-3a0b4a41ad9mr3680514f8f.58.1746644017747;
+        Wed, 07 May 2025 11:53:37 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a0ba23e334sm103209f8f.85.2025.05.07.11.53.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 11:53:37 -0700 (PDT)
+Date: Wed, 7 May 2025 21:53:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: rujra <braker.noob.kernel@gmail.com>
+Cc: Dave Penkler <dpenkler@gmail.com>, Greg KH <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [FIRST-PATCH] staging: gpib : gpio : gpib_bitbang.c : fixed
+ parentheses error.
+Message-ID: <aBusLVDVchI-mHrN@stanley.mountain>
+References: <CAG+54Da+jDEXRQMgmXGyCD2EHjNFjA9nS9=ShdJPrC3EKjUgBg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20250507185459.8769-1-rubenru09.ref@aol.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG+54Da+jDEXRQMgmXGyCD2EHjNFjA9nS9=ShdJPrC3EKjUgBg@mail.gmail.com>
 
-strcpy is deprecated due to lack of bounds checking.
-This patch replaces strcpy with strscpy, the recommended alternative for
-null terminated strings, to follow best practices.
+On Wed, May 07, 2025 at 10:48:45PM +0530, rujra wrote:
+> To pass it as one parameter, wrapped the entire macro expansion in parentheses.
+> and build it successfully.
+     ^^^^^^^^^^^^^^^^^^^^^^
+No, it doesn't build.
 
-Signed-off-by: Ruben Wauters <rubenru09@aol.com>
----
- arch/x86/kernel/cpu/intel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 584dd55bf739..b49bba30434d 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -607,7 +607,7 @@ static void init_intel(struct cpuinfo_x86 *c)
- 		}
- 
- 		if (p)
--			strcpy(c->x86_model_id, p);
-+			strscpy(c->x86_model_id, p);
- 	}
- #endif
- 
--- 
-2.48.1
+regards,
+dan carpenter
 
 
