@@ -1,122 +1,162 @@
-Return-Path: <linux-kernel+bounces-638094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3FEAAE142
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:52:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F312AAE180
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 15:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C0C16751C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4764F9A7D44
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 13:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207CB289819;
-	Wed,  7 May 2025 13:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280E428A1F6;
+	Wed,  7 May 2025 13:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l72D0P/7"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IOv0/UnJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B268A21A45D;
-	Wed,  7 May 2025 13:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8BC28A1E8;
+	Wed,  7 May 2025 13:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746625528; cv=none; b=iztcn1kDH4RD4d3mSL2G1ETekkAQimoJCJVNcXNH17RekY0piDGhwF0GkTk/Q5Rq2hCk7Er/RC+NhyD3KVWtTdOysyLXN7CEyP+boaMs6qh6IooTFCeT9cGX7BsR6JTli0kr4d8im1ulJEw0nn07e2r2yV9NQr45iUBcLkQqy7o=
+	t=1746625544; cv=none; b=s2G+JBWzB+k/ngRsBPY3O9mlWNOs3d4Lq/cQ8ICQ8+pemays9v+snP1DAzj0wbDGY2PcOtIf8e2xq+6IF68PM7lSUvFgzt6ICNoPvpCvJGaMrPbtkNwNKGEymOKGlTHT8gh2XtQHQ4gjFkSXsQKqkcEpucFrePp8LLPYnSVEGb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746625528; c=relaxed/simple;
-	bh=g4T9kAIxaau06WdaDWIxvG4bGpgE2CHk1+OaxmXKgvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E17QZPzgnpKqiQEJgsgqahDt7EgeCvMEM4ReBY8kDTQ2s4DLDQvKe/XXAFT8ZGB2FFXytzvlbR480FmxX0cesz+7xD3QMKXFZDT69msvXhyx3/P4yDwxLQeksXVorBCC1RDPiaTHJk0Bzci85XYi9INQmn2/z16H2mo1tRspjHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l72D0P/7; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so8438665e87.1;
-        Wed, 07 May 2025 06:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746625525; x=1747230325; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CUc7L2yHQUs5LzZV4DN3+nz/ORs1oWoWyN+HhNEWgkk=;
-        b=l72D0P/7bG1u1QOYno6yPAXkibqoAsRftUjQfDt2Qy9mA+Eq1zglbc3TMrVBaFLaOo
-         vUH60pTuFXDkLrbekdkuXrlADXf8gS2NLtd0Gew+zdinttNs7JmkCd/K0UdVxjehke9G
-         HzgdIh++fgp/TOTuLJ1PJ5XwPjE/znbdR1FEhgJTl4aXsVNSUuXG+kXgYqYon2tZYw7r
-         cqbqH7fj3Hkp+rRMaNAKhu6y1gQnEogLqUFi+4EygZ2gPlPqce1DtTRpOKYqs1wg8ROM
-         0prr8nSaPCzBTf1qRBYUerxfaF2wRUkA/7m8NVuGTtT1lANS7cfd70RguZcpsypiZxar
-         cpfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746625525; x=1747230325;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CUc7L2yHQUs5LzZV4DN3+nz/ORs1oWoWyN+HhNEWgkk=;
-        b=IT4FZ/SlhA5grV5e/SK2nJU3tcmy0bQkJPgpjG9Y8YXJvrL5yRYgzWtth+u0eyoT38
-         uvhSqmP5okVKOEMAA+AdlG4N3Mppdn6FYcB96BqysXBt75ZZKSgNgh+71uNJTOGfgZi5
-         7N+SAdv5tqflPPcaWi/3soXyu1wrqg/q2w+R2QmJTAeykze4VunkLUTk7Q7cMeIH94Pe
-         ZtzD6B48vZxZ+8Y3hIKY98YY3Efdnf+ozYDaPzDps6ynwjIApCqJSOAqFK4sQemxKWJ0
-         3JkmDzPbFGUlvIN0WDRLRTIzw9EvPPAhUJ/9y01tgWh6hagHrEP3E6zFp4Z66Gv4jARe
-         a9mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9iYrgDF1fBcshJcfK8jvLZisRyL8PzuzYU9NqtaLEFEa2nxk0I6EihWYSmAdODrg97cv+qt0AzHs=@vger.kernel.org, AJvYcCXVfsyUiq7khYoZ0a/t058hkddDP6h082rKwwVcByhGmBB0Yi3oOFuMdnyDctKG0Ef7ottrEjAm7DzGS5J1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJzk0TEuXI6a7PUsXlRgCg1a5fTxommH3OhCceingkO6NvqNwC
-	lquUW1c4SO+zcFJjcQH7u92EoDx8bEXOdov6kv6MRwfNbFVVjiP0+tm2TYZq4ircGg==
-X-Gm-Gg: ASbGncupJ9xQOVLVQpelzuTDQK1AKQdl0Xuqb1MBGK8BMCz7pkbGl6yy5rY3Ng5/rkQ
-	R2rZ9irhdrDQbf7UpqPIbuH9So2OLhdLGBOB4sg8YqmirhsgMkiX7ldsKn19mzg4mBiB5TP7i41
-	XXo8ntP8zhqlzsEo0/1vi8S31vIBEt2u433HfvMIcy1jhPlNiBhqvF0ZP4C7A/vQjNC5iARidRP
-	M13tkydJBJIJKaosVNBSO/t16dFC26Rq+JbrxIKSJ4TpHJauewhUr6CnS1dB2OZjTeAQcKZHxbL
-	e1Tr1vSr2R8mloduIPBZ6jt+GVNfyTOpijb86R7cTmwh6X5sCw==
-X-Google-Smtp-Source: AGHT+IHCq5FdRYkJoFRLmJ3sDtBFShyjm5Bp+2TWYqY6gE8quzmdVwLdHWL5wo6FC6p5ul3JIi/X0A==
-X-Received: by 2002:a17:907:6b8e:b0:ace:6882:510d with SMTP id a640c23a62f3a-ad1e8bc9472mr358510766b.24.1746625513919;
-        Wed, 07 May 2025 06:45:13 -0700 (PDT)
-Received: from localhost ([87.254.1.131])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad18954112dsm909842966b.177.2025.05.07.06.45.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 06:45:13 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: admv1013: replace redundant ternary operator with just len
-Date: Wed,  7 May 2025 14:45:02 +0100
-Message-ID: <20250507134502.254736-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746625544; c=relaxed/simple;
+	bh=fObmB0A/Q/sOf9nVse3eZ+xly+ZPPNVdcDl3+H5E7S8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kza6VHgbw1luunweL57ox9YFPrbUsKfg5rPSDig2VPA5xr6uYEmz1gkCib6tWtAl9fqze2R90zBk1bOWrg7POYd7BtyH+6xGuUg7UEYRMwe7pUUr0tnjVwQA9Xgdr7dNskdCD9dKvLRf/0jMMv9cn5zM1/PpObVRJpXbqumsumU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IOv0/UnJ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746625543; x=1778161543;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fObmB0A/Q/sOf9nVse3eZ+xly+ZPPNVdcDl3+H5E7S8=;
+  b=IOv0/UnJMKnk0LwhyRg4e9pNxWm0efrwp088CjPefrBxOUnmLVl+yAuK
+   hK6RDWBt9oVwdHySQRNysiI49VkLgzw5jpGZfqzNyK8DEl4tUcr8+Dw7L
+   Sf510awE/PfJzpk+VXqo5fv75kFMKwKxu4hmwXFGK3pfFkBa2Cd+DYzLq
+   p9fWJOAegvMKpGjGs86nzUAfYrtdZgxnXfi6PanLZ2qBgEQHzYgLnep26
+   7cb5dTsquCgdqtUX+v+4aU1PIboxmLqrbFYQCgVaUY7TjU+Ha7V5Jb8y9
+   hQwQlHMBqO9qWBnnslJx3gVVfxU26Vn77L+qvY2yS7FZ9ICwnXVTab2HR
+   g==;
+X-CSE-ConnectionGUID: vgdYAnQtSOSdS/GiDf1Tcg==
+X-CSE-MsgGUID: FMDVyx7NRIGs0gjISjo6lw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="52010428"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="52010428"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:45:42 -0700
+X-CSE-ConnectionGUID: rrgsJGOgSyy+77EMXiqtlw==
+X-CSE-MsgGUID: DP+gC8F7QQyQQUa/U8hj0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="135825300"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:45:42 -0700
+Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id C04FA20B5736;
+	Wed,  7 May 2025 06:45:40 -0700 (PDT)
+Message-ID: <4b5212a8-f6e2-4a75-b768-bef0d17ab332@linux.intel.com>
+Date: Wed, 7 May 2025 09:45:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 12/15] loongarch/perf: Remove driver-specific throttle
+ support
+To: =?UTF-8?B?6ZmI5Y2O5omN?= <chenhuacai@loongson.cn>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+ irogers@google.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, eranian@google.com, ctshao@google.com,
+ tmricht@linux.ibm.com, Bibo Mao <maobibo@loongson.cn>,
+ loongarch@lists.linux.dev
+References: <20250506164740.1317237-1-kan.liang@linux.intel.com>
+ <20250506164740.1317237-13-kan.liang@linux.intel.com>
+ <6777794d.1b9e4.196a851ddc0.Coremail.chenhuacai@loongson.cn>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <6777794d.1b9e4.196a851ddc0.Coremail.chenhuacai@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The variable ret is being assigned a return value and non-zero error
-return paths are taken at all stages. At the end of the function ret
-is always zero, so the ternary operator checking for zero ret is
-redundant and can be replaced with just len instead.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/iio/frequency/admv1013.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/frequency/admv1013.c b/drivers/iio/frequency/admv1013.c
-index 6f50884d7130..d8e8d541990f 100644
---- a/drivers/iio/frequency/admv1013.c
-+++ b/drivers/iio/frequency/admv1013.c
-@@ -319,7 +319,7 @@ static ssize_t admv1013_write(struct iio_dev *indio_dev,
- 		return -EINVAL;
- 	}
- 
--	return ret ? ret : len;
-+	return len;
- }
- 
- static int admv1013_update_quad_filters(struct admv1013_state *st)
--- 
-2.49.0
+On 2025-05-06 9:17 p.m., 陈华才 wrote:
+> Hi, Liang,
+> 
+> Since which version we need this patch? I mean which versions this patch should be backported.
+
+The generic change hasn't been merged. It's still under review.
+https://lore.kernel.org/lkml/20250506164740.1317237-2-kan.liang@linux.intel.com/
+
+The driver-specific change should be applied after the generic change is
+merged.
+
+> And you need to CC loongarch@lists.linux.dev.
+> 
+
+Sure.
+
+Thanks,
+Kan
+
+> Huacai
+> 
+> 
+>> -----原始邮件-----
+>> 发件人: kan.liang@linux.intel.com
+>> 发送时间:2025-05-07 00:47:37 (星期三)
+>> 收件人: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org, irogers@google.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+>> 抄送: eranian@google.com, ctshao@google.com, tmricht@linux.ibm.com, "Kan Liang" <kan.liang@linux.intel.com>, "Bibo Mao" <maobibo@loongson.cn>, "Huacai Chen" <chenhuacai@loongson.cn>
+>> 主题: [RFC PATCH 12/15] loongarch/perf: Remove driver-specific throttle support
+>>
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> The throttle support has been added in the generic code. Remove
+>> the driver-specific throttle support.
+>>
+>> Besides the throttle, perf_event_overflow may return true because of
+>> event_limit. It already does an inatomic event disable. The pmu->stop
+>> is not required either.
+>>
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> Cc: Bibo Mao <maobibo@loongson.cn>
+>> Cc: Huacai Chen <chenhuacai@loongson.cn>
+>> ---
+>>  arch/loongarch/kernel/perf_event.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/arch/loongarch/kernel/perf_event.c b/arch/loongarch/kernel/perf_event.c
+>> index f86a4b838dd7..8ad098703488 100644
+>> --- a/arch/loongarch/kernel/perf_event.c
+>> +++ b/arch/loongarch/kernel/perf_event.c
+>> @@ -479,8 +479,7 @@ static void handle_associated_event(struct cpu_hw_events *cpuc, int idx,
+>>  	if (!loongarch_pmu_event_set_period(event, hwc, idx))
+>>  		return;
+>>  
+>> -	if (perf_event_overflow(event, data, regs))
+>> -		loongarch_pmu_disable_event(idx);
+>> +	perf_event_overflow(event, data, regs);
+>>  }
+>>  
+>>  static irqreturn_t pmu_handle_irq(int irq, void *dev)
+>> -- 
+>> 2.38.1
+> 
+> 
+> 本邮件及其附件含有龙芯中科的商业秘密信息，仅限于发送给上面地址中列出的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制或散发）本邮件及其附件中的信息。如果您错收本邮件，请您立即电话或邮件通知发件人并删除本邮件。 
+> This email and its attachments contain confidential information from Loongson Technology , which is intended only for the person or entity whose address is listed above. Any use of the information contained herein in any way (including, but not limited to, total or partial disclosure, reproduction or dissemination) by persons other than the intended recipient(s) is prohibited. If you receive this email in error, please notify the sender by phone or email immediately and delete it. 
+> 
+> 
 
 
