@@ -1,138 +1,226 @@
-Return-Path: <linux-kernel+bounces-638780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-638739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12E0AAEDA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 23:10:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D940AAED18
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 22:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537C51BA8D94
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 21:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43EF03B300B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 20:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ACA28FFD5;
-	Wed,  7 May 2025 21:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D7C28F936;
+	Wed,  7 May 2025 20:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Xcw7eZov"
-Received: from sonic316-55.consmr.mail.gq1.yahoo.com (sonic316-55.consmr.mail.gq1.yahoo.com [98.137.69.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GH3tU6cC"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2088.outbound.protection.outlook.com [40.107.94.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA6A28FFD0
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 21:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.31
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746652243; cv=none; b=erWvpfPNcoiUzgk1w0bC6AdN//QcJQ5xWUfbluVhGzlmNscJo+gtAg5pVFgOPDhPyD2EbyTgI4s3rQYKR1THCrCpmZerw9+iKXTi+yzWXB7AkJHnfTPeIHAXtX1FmK+WG7vyW+dg1hYYS70YVVnMmzIaCm0rw0oFKqB2rhUeXoo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746652243; c=relaxed/simple;
-	bh=PdsStWpDAOrbQNTBeUXh3+YQFOgXfk8ojBc1rPdiaXw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=p0kY2wuJ4GRZqW6tje0Z4rS4I9anQUVEdev8OLdPkPAe86rP8tNSi3X0JphY9f8PeYYepnkJTRCv7wELAcMzt7+7mUJkYc8W3b8jljOk0bnA+s5vCAON9b9QnnYJEaec9imw77ZDEaKXVcomF+60lFYLLRdHNmbmRywFOpZ1oQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Xcw7eZov; arc=none smtp.client-ip=98.137.69.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1746652241; bh=37oY+BcrB2bCXRDZYQAmwZGD83DkqqzSaYr1YJei3eg=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=Xcw7eZovVdCW3xAR6JHpECXHW8ZDgeyMN8uIUyYbSqQXOBoRivJudDiMHglgi++RcwpyQj2yQG8YInyVFiHNnPZTCPvSnCkNtqOMEvJ6e/nxoDDyusj9B172mtDwnUtJYCfwuwgPvcEtNVeQQec5M0THEvrDQ9WcVKvf46fMhVjl+A8sBXVfA1v2gwMUVgP7RoOjpcRMbVJwrjYuvNrI+djimIC7mKiJXXZvNJgSB5Qoh5YcUwPU2VrJUV5a0Rb9B6lNpJENdHHH35i4t6LSLnwkCqvys/J5hGbEPWoDV11dMi3fYQRRplpQSzVXEIf4IaTAZPr/IBzM6m+RJ7HeIw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746652241; bh=Ojou4D4AjedHs8gj6pZzYtMAFx70UG4HVz3xryLyfOj=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=GklStXiAA+qAJiCw4dyzjH0GDJSTN4YqPBT/1ofzp9+aaBemTd8Vf+WxrHzHJRc4S9FkwyO9t+6Ml9KuFAyMFxKpFfQopaKFcntSvbep+gTLEruEqI78LbFQAYUcnK/c33mMDzN7kuuOYBbnXtJVMxIvfOVCUQVON0MkjSMFKLwd6cvFUHRtyLi1chGIOz8AZrbSjFIopTGq+pmNJ5WDCx+9O94dpEspKBuKJi05iUkzBkkBA9UGuXsNmV4yMmxToQ6/picfLC7dWsJroHDwKMlaRIUiapma3rKXvTk2Xq0OF4k36/Fk5BRkUjFUQj6BJNgzXmSrUowfWnxh5suk8w==
-X-YMail-OSG: tM_v6LwVM1kQpJWCH2__vdHp_S9TKFIofMVf.fpuqVadd9knn19aGJmmkrDVTfA
- mUkKV4CDCSputOhhUhv4ptMKFQRMBPl_qd9nIWF6KrXVbRuPtBpUPhk.LR3vhTRzFpldidlTucRz
- YAOLy9Drzk6RN7PpDmwySyjKeti4aUhBkMmC0owhECxEf.e86.5i8rQsEtaTzaIqBLYvtplO1aqs
- 0BMyCzPseNQkc2D6Qd97_PCL3C9rqnOen04KN5dZuuqV5Y5qHLF2znlUKvLUe6X2UNOTwlIYbmrT
- aWlvNqEuu.PgI2nvM9g3RAsybb.7UQBAUL_ZjVUVT1XazvzzvSZit_fHQbQPxXwQwmKiwrefYQPl
- xWzaVyvosLkqG.TodG9tpfABROpRluoppoxcOI0vnRtEIwCADVgQ4W5pLRvmG_F2wzXln53CZ97X
- 4zXlCqGPquXiKDFrs5FwCj.hQ1EqJUVC6_I4gx.8btQVjEyNWsehOKnvXiMNSAF.hhf6aTJPsCAO
- 57QwQ76rhqkxxCguXa_dE8ayh4JpF9DQG0NTfF5fBgzLWgwOynP1ju1dy9aNxZeAlaNr8qFZZAaI
- sCiZ59JxrP5da3Aj9.6RI3KtTCkt9KR.kWZBhgoTDaCR0SuoFnaImnmwQSZGovUF0u.X1_4OO_H5
- Nv_Om.1xEF0T53kFEAlDKVhJ5cactRIentYHzd2cJcyC9uM7D4hDf.GwLRJ4bCIsIhBxhO7Pj8TP
- JFBJ4rtF62YyA17RJShHWXq7_WEP.vrk3O_3i9SgMeZXsj3HFnkpgA7vh8w413S4U787VsF8nyuF
- jNZ3CSJ4FdzttvutZEJoU5CPwuzCTinR8u9N8eZ06VUPCtj81uYFV4j9YhIilWtSmSptdqz1WXMv
- zl9xUrAi42OMWt2GjSmQqwrz3s4FwazG2y6xdFOWycfXRKtits.SFKBB7kHiybvyjD4kfH7whP14
- DvgwkOHE.9b29WYLSHnxA2_Kb_Lhe8QAXQiQp4dDDgtzQar7JVMQVUkxhYd5iUZY09feofhLKfrU
- bJ.itaGzaUHmXZT30uWPiC3BVX9p6O43dtsYwm8k_YunpbGgO7fiXH6r3MprbQdvakXvliRh3Y.A
- rjiD29hXwIziwlRuxTwLvsgCEDWzsrHJ5L.bA65yk4T9ZPpZXrRTiuqPFroiuJ9LmNs0aJmus4YB
- G9oZ5Fybp_vjfdWE8FsVpDKLuwjqOMSp8SVgcVTtxh9QQ_f1cfgULFm_YDXQ_g1iD6uIaSCQj5IM
- m6.LsSgH7SU9txaB_YgX0XZiNEitEPZuI_hC81Qsq54Y0Dnrd5YshVF_uI2iobMS2PNme48DOx62
- ZA7qEVKkqNA6MHzRGta4WAtazm0FqApy_ehfOxwxmcn7eBRHUtEYIUfPOXEtK81h2SjOBIgooJKX
- cK0pzY87lojTKyQFRo80TH7bFXx.mc.Hcql4zCknIlG3ct41ze.ncAVgUEF8BLaWjA0KBRQ3CEbg
- YJJTuWZRU5QVBaddGi3F0eWVOl_KBeZ2IPw7f4qiTyrkwMkOW5JKhRkuVac5vEOVg4NvFkyD12.P
- tQLjfFIdAOAspUhzEq2PlH7s3WwkqwgZDdLBF64uiLpqsxDQTlND8OEIpuIUl4FMq0hYDnUgwAHb
- uqS5rhNMZZHyvp7fG7BIn6EaW5xDzWd6Iw8hSQFFbtYQbek3C_MFOyGoXA4AbHbCiJ7uA0.EYGlU
- bdZaT8lMPO7A7qcPeA.Wm8LEmmSIXhpe7MRURKrQ5KkyhyDZE_zLwkt.YTZhnM1MHESJ8UZpnMke
- U7FlJpQH0jtMQXeEP.oa82HDwpImj.TwZzP3XdHqP6RQmOnfV0OIOwfvepOc5oGAiepJ8wFyd4lJ
- hI.YurjaPDl3DAfiF.eT8MWnYkhMN_.WOQdk1ruYfaqzk9fAn9Kmo5CdzdRcKaAwyaRmZamrtAY6
- HaYH1hP33Yll2eK.NYSmLag2biMbyFzYTzwpFV.WOLWlGKCd1C4akpa18N_wCrKGSpdHtAGI.qub
- 0HigSOB33Du2FxDxx7YIu7nfz961Tczwk5I5yHljbywE15pOtDGYqddAMMWWYGzkOGtJEAuPCZVJ
- u0KjCFKT1u9jBvr_VS0d9_yEzFOUFP4p_VdA8UkloO5D0u42FljUsdXTMw6mraZu19ocJhRRvYY_
- miqfdsFpAd0d6LINtyzaVM5fuJ1cyfaLc9gTBADxtS7MT8VftWJvhJ2M.dnyIFkbSzb.9ZIojvQP
- uBxdbNyiXdE.AVgBFBdU17d.B9pYuTu0cP1d_i7PS2CvnHVC28UUjxsXffba2HQ--
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: bb5d17e8-c0f3-47ff-a78a-ca3eca102ac0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Wed, 7 May 2025 21:10:41 +0000
-Received: by hermes--production-ir2-858bd4ff7b-vtq9f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6d052b03b64f3af48b113650e23cc432;
-          Wed, 07 May 2025 20:30:10 +0000 (UTC)
-Message-ID: <758195078eee66ce97c05091004bca9d5c3b6cd9.camel@aol.com>
-Subject: Re: [PATCH] x86/cpu/intel: replace deprecated strcpy with strscpy
-From: Ruben Wauters <rubenru09@aol.com>
-To: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, 	x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Date: Wed, 07 May 2025 21:30:07 +0100
-In-Reply-To: <3AFD7702-7D6F-479C-950A-CA439E01838C@zytor.com>
-References: <20250507185459.8769-1-rubenru09.ref@aol.com>
-	 <20250507185459.8769-1-rubenru09@aol.com>
-	 <3AFD7702-7D6F-479C-950A-CA439E01838C@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DC91C5F30;
+	Wed,  7 May 2025 20:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746649890; cv=fail; b=JD8tQSrIVgckLBDDWoFYtMW8YR9OB1Tt50hCaml6aNQYzt9wfr3mtMGVB1GR9snAYQrD9x7bMQIPFLblR8EKaBMU5PMidIUFxPyhS/0KhHofZSxyeiAUNki030ic5SwrCErQsqmQaQsfTgS4H/zrLXyu/0QzniuKJBacBPJvK18=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746649890; c=relaxed/simple;
+	bh=ze9ElpwNYQOvKEYPfiwffb0SGPFs8rGFe9zVMtSJ0y0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EvZGNelnAQD7DDmKx6xvBS0j50coTtMkL9jNmhoTITIS69SrkGVfXEetRUrdP92dLXA2sEByPkQ4E5AdjfVEo63b78NLlARMLCS5BSuWRsyImgtF5/yO0anhAlXuL6qQOXL4yvYBtZzJCqK+mz0urFyOr/zQQnizKKYO9lNe7KQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GH3tU6cC; arc=fail smtp.client-ip=40.107.94.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IrkMgPCYyt2gLQenQ3FpS8FzIzKmqTA7eMHju4rG7gr+i4gPAYpjvvB/a8PeHJkC7Hc/KEYkKbApV6pJr5et72DmnMwLIQq4S0WyglofN3KeDHkuGqvDjOzUMWVdUVAp7lXxf+uu5lrK7Orv/aqm2kmHQBW7sacHc3Wvboy77X7yDmp1edf2YoHEasMS19aosN4+los6yenvbfcD9TsHdjE1v+q3mYgm+L9cK/SgukNigDSY0ZJsLUpUNyCj1UTsDqp5ON7bSSao+p2elroNomw/KkVL8ouq+b+kOI7A9Nyb7doKrRfL9Vt/3NoSoUEebu1jQkEd0aPUiy4mCZh3iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n6sSAmtzTagat7rHHCWh/1I7DnYwJFbhua2ya+A8oK8=;
+ b=JsTLHsux21e9WIO1FylMcQc5d3mc8nqDNqpdQ7Cbx+ZQDNJ3Ajmv5y56QVOIslAVKH7aeEdD8/kgIbQ7bleCFyLvEB2aIqz3owCjK5XXmLcrJ27KJEMaTzlNmLc1N+cRDys7U4TmsRnu7GeDST5f4XuL8bMQVfzKHxRNY35yrsXsPqI6ia5R/UtMEp9Txar/dBtS+SHWKSN3jMnlv71liiKceNKzxAwbJpIh2Hxo56dvVfI9g0k6+aeMh0WTM1fjCwKbAc/NxMGHiOaUc0qTScZM5CAckV+eha9Lr5T5cMql8gJsZeY2yjkbESjJ0vhWuRFMCJApm3UGy86X3WAYbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n6sSAmtzTagat7rHHCWh/1I7DnYwJFbhua2ya+A8oK8=;
+ b=GH3tU6cC5O633fR50XNuiCN7gBHNg0iV9FqdVLnms7E8wKYYwho509wWs5TkovlIUToqxWRGYZKHPhuDEim4ZW6UgKfyxD3a4HVco5++LYOBfJgFuSAN+boZ3pRjfomMtmEhqCO4Yr7bBrsmaeFYYSy9HIbVMiOGN/ew763gfks=
+Received: from BL3PR12MB6571.namprd12.prod.outlook.com (2603:10b6:208:38e::18)
+ by PH8PR12MB6987.namprd12.prod.outlook.com (2603:10b6:510:1be::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Wed, 7 May
+ 2025 20:31:17 +0000
+Received: from BL3PR12MB6571.namprd12.prod.outlook.com
+ ([fe80::4cf2:5ba9:4228:82a6]) by BL3PR12MB6571.namprd12.prod.outlook.com
+ ([fe80::4cf2:5ba9:4228:82a6%4]) with mapi id 15.20.8678.028; Wed, 7 May 2025
+ 20:31:17 +0000
+From: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
+To: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vinod Koul
+	<vkoul@kernel.org>, "Simek, Michal" <michal.simek@amd.com>, Manivannan
+ Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	=?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, "Pandey,
+ Radhey Shyam" <radhey.shyam.pandey@amd.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, Marek Vasut <marex@denx.de>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "Katakam, Harini"
+	<harini.katakam@amd.com>
+Subject: RE: [PATCH v2] dmaengine: xilinx_dma: Set dma_device directions
+Thread-Topic: [PATCH v2] dmaengine: xilinx_dma: Set dma_device directions
+Thread-Index: AQHbv3zfM4FyfWDN2UicmQCtxvGIrLPHno/A
+Date: Wed, 7 May 2025 20:31:16 +0000
+Message-ID:
+ <BL3PR12MB6571C982D9D8DC190414F21FC988A@BL3PR12MB6571.namprd12.prod.outlook.com>
+References: <20250507182101.909010-1-thomas.gessler@brueckmann-gmbh.de>
+In-Reply-To: <20250507182101.909010-1-thomas.gessler@brueckmann-gmbh.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=a04196d6-f1f2-44b4-9968-a4b12ee52b8f;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-05-07T20:29:44Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL3PR12MB6571:EE_|PH8PR12MB6987:EE_
+x-ms-office365-filtering-correlation-id: c6d0f9c3-8540-4a80-6a8b-08dd8da61e66
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?we9GZVxeszqpRIgzHINq02IT45dJdzAOZoyAl4qnuh/uIYHuyRRAfutabG?=
+ =?iso-8859-1?Q?USBOzBpZW7BY9sXTtQTpfRBgfj9jueKEYLuPDwKQHhZBXLw9zUkqTBBdMD?=
+ =?iso-8859-1?Q?9/Z72Too5h20VWga+6Z4KNfGlrttx861V3Lt4kVRKSOBUQAu5fdFMjWlMU?=
+ =?iso-8859-1?Q?L2pfQ4woU2hdRDmRifkpTzOQhs6V9FcV7IPYdBKTQciWescn1SkCyVpqN5?=
+ =?iso-8859-1?Q?Drmn51DEclQxRBjQ90hcZmFepcKAo21G2l5wc4bViFZODbtVWZOZPav8ox?=
+ =?iso-8859-1?Q?OB669u5Ag5A2HgA8oWt8APBdNXgFNOIE71pzGEvxT2ljXrVE19TOI0EC04?=
+ =?iso-8859-1?Q?GDYwk/TxYPC09qByobbicV5N4btMMVBEsr6clUBpK2xCTZmh5OqKV81KYb?=
+ =?iso-8859-1?Q?kcSh03uKABYH8JRzxZ6yIE5nZ9D9hTfRL2c/3UoGOE71doyYnAH0aFziiH?=
+ =?iso-8859-1?Q?7kGInz+6SRSP5Bj8BmJSGwktf28kg8HS5DIspaNzbFtr2lCUfQIi+r3xd0?=
+ =?iso-8859-1?Q?CcufaO4p9vY99ugcEh2EybJOWZtXpjfEoLrIO7EYTVxJh/JBhGcxdH0b04?=
+ =?iso-8859-1?Q?xiUUmaFMq6t/bBNLbh13C/uVY8fv/sCkJUx+XbGP5cfW74I1Mg0VJx/pfU?=
+ =?iso-8859-1?Q?6BUF7Ct8V91aVYGjxnTrIrIDdzKq4eXk9B/autkvhfsXGz4jof/wOogE2Z?=
+ =?iso-8859-1?Q?R+M3kAGHhHqYqSa9dmmAaUTFYORUIVHydMuZKd/F+N2+oum7STEt1PfxFa?=
+ =?iso-8859-1?Q?KgBbsMuBn+a+2xIE2suJUdikbcehC5JtP7GKDEI1cqldkXjgiG5t0GB5z0?=
+ =?iso-8859-1?Q?K2MHsuKByf1bcYD0K+UqmUmbBH033Z/R1TWA/SUlOx+0TV/IPY9g1ugPRJ?=
+ =?iso-8859-1?Q?4+YI9YlNQVdQXCKNh8JMHRn+1AvIYr38T9vyBzYndWvg9cSkatzUZ7RGQY?=
+ =?iso-8859-1?Q?0zz2rlcVpu4WO5pxlJAsD+EFHA9NcUdGjG1T8aAj9cwV0hxtg0NxKh+6HO?=
+ =?iso-8859-1?Q?wRTlGWHX9njigxRQ+k9+zXjyrqYrwmkvNzuT4Ym45cBGtMEl/SKVnvewFR?=
+ =?iso-8859-1?Q?6Y2kqVC+5FSXZt6XJJQqUJHTyhDVwDBqV25gZ8bBBV917TsMxgyTMc9i6z?=
+ =?iso-8859-1?Q?q2rYznnRKEYbAb5W/3gyFdQWllyWi5xF6WQ7YebiRkSF8jpz2qu8Xhc6sS?=
+ =?iso-8859-1?Q?oWfpSnHFZVmI4QZRN6zJX8s8RbtaOdZmS4jrjaicsjScBhuOcDAdnhBRcs?=
+ =?iso-8859-1?Q?k85hjQFNR0mDfcBlNEgrCs+kzJ5c69hcrKvlZaKvKUfsNylPEqUXwjP+Cv?=
+ =?iso-8859-1?Q?96uTk9j88cUrSkjaxuDvKT0v8N69rdqBwywn5nSDkPVDwzs45njWsbVyX7?=
+ =?iso-8859-1?Q?Lje5Ziii7sL/XrR7B0lMkcd4r8umE9VtUEsIsCU6PA9hSiJzYG7ZQTLs0S?=
+ =?iso-8859-1?Q?tGirGl+zsyh60mRSmTXLE6RZdBrSEIplYm9D7sG1d91k0bV67ZR0mgukgo?=
+ =?iso-8859-1?Q?FAV4CFzs11WcewOFHuMMg6KjXlnxdjeSYv/T6cUQPwtQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6571.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?7oqUxofcfF8knBJYjZqbOxNSd9LBQHA6w2EIVZr/sk1fUo5I9kjHMv1zVQ?=
+ =?iso-8859-1?Q?UvHMfS6MYAfNYL5QZQmwcb7Urbij+UrfAE6HuUJRWyd8PMLXcxDMUOMUf/?=
+ =?iso-8859-1?Q?bfWOa+lETP8q4vu34Erug6a0Msw31xBh1/7CQxsjM4LqqYBTxMfVykj9x+?=
+ =?iso-8859-1?Q?b0mo9oCTETg67xTzcqxCX4gDaldQlCCMyIIx9Kj5o3HTM6jjDb0UzH5a5c?=
+ =?iso-8859-1?Q?vV/NLNMwT+SKImVMbIka/WOtVd6gvpRC3Is2sW/Bcrx1E5mWe62OiuBw/I?=
+ =?iso-8859-1?Q?keBcyi6ItvKBpzKeJxr07AMhgU5S1xTS3ueFzR90DAXz65aEv9agpYmspU?=
+ =?iso-8859-1?Q?jHezd1TnwUkzi4WuFv523eTQFkNGNIPKfsshkO48DOZUM49YpF1MxoiRus?=
+ =?iso-8859-1?Q?EOMs2LDiwYC6E9m7v8/lxmmsuyyPj+2PR5WYsuSkEEWLlu4JQR1Zo0KqSB?=
+ =?iso-8859-1?Q?NeKCWHxokrI+uwwBvgbO3PgFCC2nr1tbHvCpcKizHf78wjJjmetVe78IPf?=
+ =?iso-8859-1?Q?hf2rWvQhyaCP1wMiqGDa/6lSi6h6dOpICSMWQ3cbg6tVyF/gn5GWlXzHDa?=
+ =?iso-8859-1?Q?7+rLkcL+Ut4/PJSjk0v+VPP/whoC+Vc/ZHHTe8Aiq1s/iYNH1BztxMHEpI?=
+ =?iso-8859-1?Q?jc1gjIHibbKK2d+/nk4yclJvIqhsIoL2paiVCSr9WRRXB5b9kr6CICbC1P?=
+ =?iso-8859-1?Q?AdWJCcY3aDciOolDJnFRJyZku0c6pmHhH3PJeAnsZzR1mBx0nCf3hUkyxP?=
+ =?iso-8859-1?Q?eq5NQxalYLmrdy0VjtPWE/pj+PYhsJWQ8JXkujTs00RaODNtT4le4hwTB7?=
+ =?iso-8859-1?Q?Y/GiELtwSkdi5gzSUKg42DnO4InUfMMXJ6hRrxQ5bp91mKs7/4lJxOt35l?=
+ =?iso-8859-1?Q?kc0GgKF3e1PglucauB3WDjIbExqnjST2Wx1uKz2Ac0svE72nxY24abu7pQ?=
+ =?iso-8859-1?Q?SJzojw/q7g9NR3/01LokaXNx/sJQghSWVi4bVNmJZ9QjIN9OmBqpbZkCoE?=
+ =?iso-8859-1?Q?SlrfXi5S1pTVg9uqaEn5kchYf2phORLd5x+W5W65+xbwCpya+7d6wiI6XU?=
+ =?iso-8859-1?Q?9EQdGsRcuYWbWvUe8NDrr1w8SXhikeRfFiiEy3hyS/YX37b54al/1EFCK6?=
+ =?iso-8859-1?Q?PCLSVyjBvgOBGqSBY/NIMdkNpnYDkYWLYaGw1kA5C4pBCVUGkpYJJhabtV?=
+ =?iso-8859-1?Q?+mofJYkckOCVf7EsbU9rgLufKd9f+3iCiBlilYOZgHRM7KWrU5AjOtWv8I?=
+ =?iso-8859-1?Q?oUfBWGt8M5vsyzblgeOlxP2kUrDbq4Vy0ABM+n8ty89DdESbruO6MJ0sZ/?=
+ =?iso-8859-1?Q?MxnIYuWUuEQ11PLgBMkGQgwbeyzbmbphXH4C7TclWm4opMVzS+8n4XcxV6?=
+ =?iso-8859-1?Q?n7Y9mqWL+qPKubv2em5WQSk1+86H8N1ItUwpXLoUeZy9yn2Gx03aIyJRip?=
+ =?iso-8859-1?Q?xpsxXVx3D9wvh+mNdn5E1VOeyRFZydlByvZHYNNd5cqYtGx2fGKF8YlPhJ?=
+ =?iso-8859-1?Q?cIuCuZ+UGZMa0qhValTDQLgHEWLe5p0h6wxHHF6M4Da1SZANNRNEDzrNAq?=
+ =?iso-8859-1?Q?huMG2gBscc0lWDfBUdkNGuosATZDcXsSoBGHUzP7E5BHOvofnSHm63pCEy?=
+ =?iso-8859-1?Q?HfpCnWeSGECFM=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: WebService/1.1.23772 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6571.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6d0f9c3-8540-4a80-6a8b-08dd8da61e66
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2025 20:31:17.0190
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: r5pbvCLrbP1ij1kMawc8Ry/5y2uOSvFcVaUfG7cuZ+qlYmK0DaDoAAAe0QJDyuUn3i0pHGiD5sCmBiN4P2Wh+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6987
 
-On Wed, 2025-05-07 at 13:14 -0700, H. Peter Anvin wrote:
-> On May 7, 2025 11:51:36 AM PDT, Ruben Wauters <rubenru09@aol.com>
-> wrote:
-> > strcpy is deprecated due to lack of bounds checking.
-> > This patch replaces strcpy with strscpy, the recommended
-> > alternative for
-> > null terminated strings, to follow best practices.
-> >=20
-> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> > ---
-> > arch/x86/kernel/cpu/intel.c | 2 +-
-> > 1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/arch/x86/kernel/cpu/intel.c
-> > b/arch/x86/kernel/cpu/intel.c
-> > index 584dd55bf739..b49bba30434d 100644
-> > --- a/arch/x86/kernel/cpu/intel.c
-> > +++ b/arch/x86/kernel/cpu/intel.c
-> > @@ -607,7 +607,7 @@ static void init_intel(struct cpuinfo_x86 *c)
-> > 		}
-> >=20
-> > 		if (p)
-> > -			strcpy(c->x86_model_id, p);
-> > +			strscpy(c->x86_model_id, p);
-> > 	}
-> > #endif
-> >=20
->=20
-> strscpy() needs a buffer length; this patch wouldn't even compile!
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-Hi, this is incorrect, strscpy is defined in string.h as
-#define strscpy(dst, src, ...)	\
-	CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src,
-__VA_ARGS__)
+> -----Original Message-----
+> From: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>
+> Sent: Wednesday, May 7, 2025 11:51 PM
+> To: dmaengine@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; Vinod Koul <vkoul@kernel.org>; Simek, M=
+ichal
+> <michal.simek@amd.com>; Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org>; Uwe Kleine-K=F6nig <u.kleine-
+> koenig@baylibre.com>; Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>;
+> Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org>; Marek Vasut <marex@denx.de>; linux-arm-
+> kernel@lists.infradead.org; Gupta, Suraj <Suraj.Gupta2@amd.com>; Katakam,
+> Harini <harini.katakam@amd.com>
+> Subject: [PATCH v2] dmaengine: xilinx_dma: Set dma_device directions
+>
+> Caution: This message originated from an External Source. Use proper caut=
+ion
+> when opening attachments, clicking links, or responding.
+>
+>
+> Coalesce the direction bits from the enabled TX and/or RX channels into t=
+he
+> directions bit mask of dma_device. Without this mask set,
+> dma_get_slave_caps() in the DMAEngine fails, which prevents the driver fr=
+om being
+> used with an IIO DMAEngine buffer.
+>
+> Signed-off-by: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>
 
-the third parameter is optional, and it works perfectly fine with two
-parameters. I have compiled it, and there are no errors.
-
-> Not to mention that the string in question is generated in such a way
-> that cannot be unterminated.
-
-I'm not entirely sure what you mean here? The assignments above are
-null terminated strings, which the two parameter version works fine
-with.
+Reviewed-by: Suraj Gupta <suraj.gupta2@amd.com>
+> ---
+> Changes in v2:
+>   - Change to Suraj's simpler version as per Radhey's request
+>
+>  drivers/dma/xilinx/xilinx_dma.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
+dma.c index
+> 3ad44afd0e74..8f26b6eff3f3 100644
+> --- a/drivers/dma/xilinx/xilinx_dma.c
+> +++ b/drivers/dma/xilinx/xilinx_dma.c
+> @@ -2909,6 +2909,8 @@ static int xilinx_dma_chan_probe(struct
+> xilinx_dma_device *xdev,
+>                 return -EINVAL;
+>         }
+>
+> +       xdev->common.directions |=3D chan->direction;
+> +
+>         /* Request the interrupt */
+>         chan->irq =3D of_irq_get(node, chan->tdest);
+>         if (chan->irq < 0)
 
