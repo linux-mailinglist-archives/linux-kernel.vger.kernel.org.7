@@ -1,245 +1,190 @@
-Return-Path: <linux-kernel+bounces-637355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26662AAD827
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:32:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B6FAAD82D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 443127B74ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08FC4C2733
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 07:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C7F21C18E;
-	Wed,  7 May 2025 07:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C755221D590;
+	Wed,  7 May 2025 07:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F+Jioq5z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eh+Qi/9d"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172021C84D6;
-	Wed,  7 May 2025 07:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B752135CB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 07:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746603111; cv=none; b=gtV4sPCIAuroxt3kQeKgjtpoxffUHCbWLYSTQLFXfZMAwhTx90hO8Ef3/Nm5uE4GxFz1jd0JCRzzZJRP5xoQxJhpIAYggQzGFBQiQlEq56nLz7KHaKJRN5z+xmyTLCLY+WC0NerQVGl3Wn+kjZcOkN90ENX5g1lOjQqCesQwDSY=
+	t=1746603144; cv=none; b=StQSCbrIP9vcA/d67jigpIgTyvp7Ymew+DkRs92UCYO/XP5ykyIk2FWiDLICRhaMbIX14pVkrURytL8YSdg5PG25uJo2wxn0oL25UyWvX8GvSOj6HOlJysyhT8mIm6D+Dz+ybd8RoTPKBuMy4rPgg7AZ20I3tmHgUK6HFbZwaZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746603111; c=relaxed/simple;
-	bh=0cur8ilifh2WKjNlVxEGKdLdHBX8xWsGsKF2bcY55+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWiQKdLze1ehMbN/r0u0T2DqPl7fDgC0DzxxNb1afkba3ufPawtBd2XTPSjM64UnnIubVi0SGZS4I2POJzC5jlAeIOkBdHZoFy8lfT5AftCt+FJXyEjDknAsTctLyzFbLsn7BihiLV3t3SzP4zcrAfMNZosrW3bNZQEs8nL8iks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F+Jioq5z; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746603110; x=1778139110;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0cur8ilifh2WKjNlVxEGKdLdHBX8xWsGsKF2bcY55+U=;
-  b=F+Jioq5zr7qQewoZ3a1JJxXWmsMvMFXeOn6IIW2n0JualFSHEC9jbbuw
-   F58CT8rMBtiu29HDqmL1hXqe5RXFi4sOpxcttU1VGwtp/hui24i3qjqzk
-   8vn1Wu03W8mzu4S/rLZYg/Pt2DfX7iI2US/WC+rSJwhm9dZqThK1MRlqN
-   YHZOy/t6uWFUT11YmsiCHa2aBx5Wu1npt3xD+3DAQO7tVdz3rvKNSZqb7
-   w0daGjkXbGcS2LkTySKIxO9QX6kCHQ4i/NZ0AFHgQhuzSOLM4DjkmVOxK
-   bWwh76z/71YY/KtGBnpmq61w+5szRA0FJzdXO/tqg2UVU2M1LXPGl5YpQ
-   Q==;
-X-CSE-ConnectionGUID: 8EKWOhpFRL2/vYrDmYehzg==
-X-CSE-MsgGUID: rn/heQAzSIa8letC0iLNYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="35944827"
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="35944827"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 00:31:44 -0700
-X-CSE-ConnectionGUID: RSlEYW6FRciUmNy6dTwI/Q==
-X-CSE-MsgGUID: FDmAR+czTniIup4AsqAqUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="173064110"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 07 May 2025 00:31:40 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCZFi-0007JR-10;
-	Wed, 07 May 2025 07:31:38 +0000
-Date: Wed, 7 May 2025 15:31:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sai Sree Kartheek Adivi <s-adivi@ti.com>, peter.ujfalusi@gmail.com,
-	vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, nm@ti.com, ssantosh@kernel.org,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	praneeth@ti.com, vigneshr@ti.com, u-kumar1@ti.com, a-chavda@ti.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 6/8] dmaengine: ti: New driver for K3 BCDMA_V2
-Message-ID: <202505071527.yZZNwWXf-lkp@intel.com>
-References: <20250428072032.946008-7-s-adivi@ti.com>
+	s=arc-20240116; t=1746603144; c=relaxed/simple;
+	bh=4GJWSGDKlJnMIWGtNQ7AH+MLDqEOVwEj8uKjnSOFYk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gXVvJLpF9VPPlfqrMoBmu3zWWYgEe+LUfiqDkebfF/cEp0a7o0afzHOB4KKaW8V6ed4Qr5fCtO48XlR/K5fO/K4SE+i/88PJR3Ul0CCXmRMPOMwY0w8Xe3QoDlEl5ec2fnxJt1pGEgE/oIHLaco70zXURE+7SOszYanHGf41VvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eh+Qi/9d; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-441ab63a415so65446845e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 00:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1746603139; x=1747207939; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/oowGCRlPnH53+dvEhVfbik3/aGzqGnubNjPU1FCxSc=;
+        b=eh+Qi/9d13bHoy9Z+QrOnegQRg7q/L2wXZUEj53aO3EIhbkow8+KLBRc4TSY/HLxAm
+         6QQF3jxyyZ3zRCsUqqY/SawkLhPlCPfRsUjIg+bXXrLNHtbNP82Zmm2rkRqSSYAJzAQJ
+         PiRW39Oyw9TCcbvLrOTl1nnFrl5NMOUtFXs84=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746603139; x=1747207939;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/oowGCRlPnH53+dvEhVfbik3/aGzqGnubNjPU1FCxSc=;
+        b=XhN5nZKPuSBW5zzZzh46rqnpcId9MfeExnvj52LyG5jlkb1KaUWBJ0i8UVM3c1xjM9
+         yv9zFFhZBuOLmbpPrjq/Az/AtxKm/Ybmep6Qmh40Mhbe+b7/vw9TIrLeG+KiwoJ52Xnf
+         ebryZDYxA0mRrFyQ1B2qkD1FGJ5CzpNHzMc63KjnK7jNiJz4AjDJR//Tr1lUSfbOPJBI
+         dkzNuEWTYk5dHHXzI2uPnSB8wQaNbGTTDe4yo3slzVWNgeUrk+M0FL2bRpLd+ll8iCvF
+         aISWTasmLy8Ha3ds/5v4seVEwA3QEYKd6MwpWdEXO0nZAwQy0A2FMJXBqVb1CIkJggJ1
+         XnUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJsGVVHyfr2xloExJAGhd9dI7O6ZCzHT1NxkJ3+kp2mVZ7mbEQKpIsy4sW2TlIDMhKfS4owjSuxe/25Po=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn/TbZfrDsqhdAlGovkV6p7phlV3bUBH3sC8+KaRMPFzkoIRfu
+	XItZKrs/FIPm0YvjAngNRcAPMjzmEzL7s0FgGEjFoax2qWNab/gWxAPNsnWTuA==
+X-Gm-Gg: ASbGncvXGysjJN0np6eS6GfUhSTB+2SKjZNYFOyhHdLMgcK84lDCQXJKzCoPKBRE4Fc
+	6rc2kCjOUHt4flRcVLISBtuiRl3esjDTGDoNw2sSlUqmG2hK4wMjpFRpQ4VJGrmhPmmCZDItVz2
+	7za1egTe1kcl3FW69HAosHIH01F5z+cfPOEXkPV/RXf+cUZVC+Q69lbCC0bdgh3UhrtUroKS3zr
+	qrPzXxp2TvLrT6Mt2fMcF9XhMV2Me/W+RgKAyUHfSanSq5tuS71/tQJlAkrH8biSyiu/87qU90y
+	dmqnTn2u0GkR0l45GyVU4Q4PT1FA5BrfdP/NfFzUdUc4mLXOgUvDmIEqu65Fxr86Fx3kJ3fgddp
+	TCXi3kN1cY/Vx9I+xdfpWElK98welpVlGTAFOdw0=
+X-Google-Smtp-Source: AGHT+IHhnQ0XoKBKM5DMQ7zEqqg7TzLxsMCpqS1ZcloLnADNH5WKFeYw2vsLW0QXNRCZ5zE1p7gAJg==
+X-Received: by 2002:a05:600c:8289:b0:441:b00d:e9d1 with SMTP id 5b1f17b1804b1-441d44bbf50mr17486185e9.2.1746603139011;
+        Wed, 07 May 2025 00:32:19 -0700 (PDT)
+Received: from [192.168.1.24] (90-47-60-187.ftth.fr.orangecustomers.net. [90.47.60.187])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442c98fd955sm5285245e9.7.2025.05.07.00.32.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 00:32:16 -0700 (PDT)
+Message-ID: <96272e42-855c-4acc-ac18-1ae9c5d4617f@broadcom.com>
+Date: Wed, 7 May 2025 09:32:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428072032.946008-7-s-adivi@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 -next 08/12] arm64: dts: bcm2712: Add external clock
+ for RP1 chipset on Rpi5
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof Wilczynski <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+ Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
+ <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
+References: <cover.1745347417.git.andrea.porta@suse.com>
+ <38514415df9c174be49e72b88410d56c8de586c5.1745347417.git.andrea.porta@suse.com>
+ <aBp1wye0L7swfe1H@apocalypse>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <aBp1wye0L7swfe1H@apocalypse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Sai,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on vkoul-dmaengine/next]
-[also build test WARNING on linus/master v6.15-rc5]
-[cannot apply to next-20250506]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Sai-Sree-Kartheek-Adivi/dt-bindings-dma-ti-Add-document-for-K3-BCDMA-V2/20250428-152616
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
-patch link:    https://lore.kernel.org/r/20250428072032.946008-7-s-adivi%40ti.com
-patch subject: [PATCH 6/8] dmaengine: ti: New driver for K3 BCDMA_V2
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250507/202505071527.yZZNwWXf-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071527.yZZNwWXf-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505071527.yZZNwWXf-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/dma/ti/k3-udma-v2.c:147:14: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
-     147 |         int status, ret;
-         |                     ^
->> drivers/dma/ti/k3-udma-v2.c:1042:6: warning: variable 'cap2' set but not used [-Wunused-but-set-variable]
-    1042 |         u32 cap2, cap3;
-         |             ^
->> drivers/dma/ti/k3-udma-v2.c:1042:12: warning: variable 'cap3' set but not used [-Wunused-but-set-variable]
-    1042 |         u32 cap2, cap3;
-         |                   ^
-   3 warnings generated.
 
 
-vim +/ret +147 drivers/dma/ti/k3-udma-v2.c
+On 5/6/2025 10:49 PM, Andrea della Porta wrote:
+> Hi Florian,
+> 
+> On 20:53 Tue 22 Apr     , Andrea della Porta wrote:
+>> The RP1 found on Raspberry Pi 5 board needs an external crystal at 50MHz.
+>> Add clk_rp1_xosc node to provide that.
+>>
+>> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+>> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> 
+> A gentle reminder for patches 8 through 12 of this series, which I guess
+> would ideally be taken by you. Since the merge window is approaching, do
+> you think it's feasible to iterate a second pull request to Arnd with my
+> patches too?
+> 
+> With respect to your devicetree/next branch, my patches have the following
+> conflicts:
+> 
+> PATCH 9:
+> - arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts: &pcie1 and &pcie2
+>    reference at the end, my patch was rebased on linux-next which has them
+>    while your devicetree branch has not. This is trivial to fix too.
+> 
+> PATCH 9 and 10:
+> - arch/arm64/boot/dts/broadcom/Makefile on your branch has a line recently
+>    added by Stefan's latest patch for RPi2. The fix is trivial.
+> 
+> PATCH 11 and 12:
+> - arch/arm64/configs/defconfig: just a couple of fuzz lines.
+> 
+> Please let me know if I should resend those patches adjusted for your tree.
 
-   142	
-   143	static int udma_v2_start(struct udma_chan *uc)
-   144	{
-   145		struct virt_dma_desc *vd = vchan_next_desc(&uc->vc);
-   146		struct udma_dev *ud = uc->ud;
- > 147		int status, ret;
-   148	
-   149		if (!vd) {
-   150			uc->desc = NULL;
-   151			return -ENOENT;
-   152		}
-   153	
-   154		list_del(&vd->node);
-   155	
-   156		uc->desc = to_udma_desc(&vd->tx);
-   157	
-   158		/* Channel is already running and does not need reconfiguration */
-   159		if (udma_is_chan_running(uc) && !udma_chan_needs_reconfiguration(uc)) {
-   160			udma_start_desc(uc);
-   161			goto out;
-   162		}
-   163	
-   164		/* Make sure that we clear the teardown bit, if it is set */
-   165		ud->udma_reset_chan(uc, false);
-   166	
-   167		/* Push descriptors before we start the channel */
-   168		udma_start_desc(uc);
-   169	
-   170		switch (uc->desc->dir) {
-   171		case DMA_DEV_TO_MEM:
-   172			/* Config remote TR */
-   173			if (uc->config.ep_type == PSIL_EP_PDMA_XY) {
-   174				u32 val = PDMA_STATIC_TR_Y(uc->desc->static_tr.elcnt) |
-   175					  PDMA_STATIC_TR_X(uc->desc->static_tr.elsize);
-   176				const struct udma_match_data *match_data =
-   177								uc->ud->match_data;
-   178	
-   179				if (uc->config.enable_acc32)
-   180					val |= PDMA_STATIC_TR_XY_ACC32;
-   181				if (uc->config.enable_burst)
-   182					val |= PDMA_STATIC_TR_XY_BURST;
-   183	
-   184				udma_chanrt_write(uc,
-   185						   UDMA_CHAN_RT_STATIC_TR_XY_REG,
-   186						   val);
-   187	
-   188				udma_chanrt_write(uc,
-   189					UDMA_CHAN_RT_STATIC_TR_Z_REG,
-   190					PDMA_STATIC_TR_Z(uc->desc->static_tr.bstcnt,
-   191							 match_data->statictr_z_mask));
-   192	
-   193				/* save the current staticTR configuration */
-   194				memcpy(&uc->static_tr, &uc->desc->static_tr,
-   195				       sizeof(uc->static_tr));
-   196			}
-   197	
-   198			udma_chanrt_write(uc, UDMA_CHAN_RT_CTL_REG,
-   199					UDMA_CHAN_RT_CTL_EN | UDMA_CHAN_RT_CTL_AUTOPAIR);
-   200	
-   201			/* Poll for autopair completion */
-   202			ret = read_poll_timeout_atomic(udma_v2_check_chan_autopair_completion,
-   203					status, status != 0, 100, 500, false, uc);
-   204	
-   205			if (status <= 0)
-   206				return -ETIMEDOUT;
-   207	
-   208			break;
-   209		case DMA_MEM_TO_DEV:
-   210			/* Config remote TR */
-   211			if (uc->config.ep_type == PSIL_EP_PDMA_XY) {
-   212				u32 val = PDMA_STATIC_TR_Y(uc->desc->static_tr.elcnt) |
-   213					  PDMA_STATIC_TR_X(uc->desc->static_tr.elsize);
-   214	
-   215				if (uc->config.enable_acc32)
-   216					val |= PDMA_STATIC_TR_XY_ACC32;
-   217				if (uc->config.enable_burst)
-   218					val |= PDMA_STATIC_TR_XY_BURST;
-   219	
-   220				udma_chanrt_write(uc,
-   221						   UDMA_CHAN_RT_STATIC_TR_XY_REG,
-   222						   val);
-   223	
-   224				/* save the current staticTR configuration */
-   225				memcpy(&uc->static_tr, &uc->desc->static_tr,
-   226				       sizeof(uc->static_tr));
-   227			}
-   228	
-   229			udma_chanrt_write(uc, UDMA_CHAN_RT_CTL_REG,
-   230					UDMA_CHAN_RT_CTL_EN | UDMA_CHAN_RT_CTL_AUTOPAIR);
-   231	
-   232			/* Poll for autopair completion */
-   233			ret = read_poll_timeout_atomic(udma_v2_check_chan_autopair_completion,
-   234					status, status != 0, 100, 500, false, uc);
-   235	
-   236			if (status <= 0)
-   237				return -ETIMEDOUT;
-   238	
-   239			break;
-   240		case DMA_MEM_TO_MEM:
-   241			udma_bchanrt_write(uc, UDMA_CHAN_RT_CTL_REG,
-   242					   UDMA_CHAN_RT_CTL_EN);
-   243			udma_bchanrt_write(uc, UDMA_CHAN_RT_CTL_REG,
-   244					   UDMA_CHAN_RT_CTL_EN);
-   245	
-   246			break;
-   247		default:
-   248			return -EINVAL;
-   249		}
-   250	
-   251		uc->state = UDMA_CHAN_IS_ACTIVE;
-   252	out:
-   253	
-   254		return 0;
-   255	}
-   256	
-
+Yes please resend them today or tomorrow so I can send them the 
+following day. Thanks
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Florian
+
 
