@@ -1,153 +1,161 @@
-Return-Path: <linux-kernel+bounces-637645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244F1AADB79
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:30:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91EAAADB7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 11:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92EB74E0FE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:30:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E558A7BBCB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 09:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBABA23236F;
-	Wed,  7 May 2025 09:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC6B1FF5EA;
+	Wed,  7 May 2025 09:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aBHY0aN0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EAVaGMkW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABB5222574
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0841F4CB0
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 09:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746610198; cv=none; b=IElKiuHFRB7w8vYu9TsJjLd8Ujyob+8xICqEONZbSTvbSZej3OzFqDxhTQjUC7SaWgRlMz2lx3NLUX0WVa0uN+/hE0N1U9QNAwBZz7TEVjQA4LiP3IZvQUnFpa5whCLIMweMN6kDgKvrNf+XfGBu5f0cHYOXA6pNE+kaIXHiIDI=
+	t=1746610357; cv=none; b=KGBfLMiyGm5/H4BHBB0WsP9WOKiKUawfAfTY5ITYoiHrpsYCUIz/sDgfo+gmbuvYMDTXsSLU9+s28875DPqm6IGK2OmPaxnxV4vACAnXc6JDo1fKu72s3qxQiNaP+780YBcrqSkgmCRz+ZBi4A1apZzU3Z1kiN9XuL9XyDMlXI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746610198; c=relaxed/simple;
-	bh=+0Q/JhboznQZo1rGKcw6U4n9SViK9yo2ElyuyoLGTaQ=;
+	s=arc-20240116; t=1746610357; c=relaxed/simple;
+	bh=+dcoGM/MPnQ7gR2bwDmEC4W4glqMT6D4Z27/zHMAu6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=McdiG44CZi/h34AJjgeY+J+U6kRgC5vXkGjOcXt/cB36tXRbp4UgLKALmHej+BhPhsLMjqX1fyWOLRT7fZx1JLSEvEphPsPDO3Jsw2eGbjkX1ftDGRIv4RXMocliejCURiyRCPGz8W98wKQiMPjNNIUG4rKT5QIGwSMmf98cnvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aBHY0aN0; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746610196; x=1778146196;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+0Q/JhboznQZo1rGKcw6U4n9SViK9yo2ElyuyoLGTaQ=;
-  b=aBHY0aN0Zn/ThgkW49tKKA9Rio2zYC3QumPWDc2Hz4fnKjsvV5pg2Qnb
-   +mGSbu67tdhS4wraUyVNxmc9HtmZYIBaDgumouv8i+aeJiVl7ysZXEJEq
-   TJCLGCcWBbjIbaa5Dl/KCW5/PbcNIcp+OxsT8xPnVwen9ZgOY++nXRc1C
-   JurKy2tjjR9qrghntoiEBxCeqNSVUftCpw8cgJxohgW6XepPJwA63dvj+
-   wlOk7cvnISVeQYwxNkb7IlCeCDNXR9WXE7NPqTtXwlv4IVJ2yuIyMTAe7
-   oqcr7HnzY1Fx0e//Pf7KBsY4jGgRafHZU6EGZ38jX0yKD8C5lTxLvYkJF
-   A==;
-X-CSE-ConnectionGUID: UKEEBogTT7OpEETa0SesIA==
-X-CSE-MsgGUID: UCXFiZQRRuaZLnaw5grr8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="70834520"
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="70834520"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 02:29:55 -0700
-X-CSE-ConnectionGUID: Cw+4xhxiTIyonVp0hoI9cw==
-X-CSE-MsgGUID: 3WuguzWFSae0wZUpNdo44g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
-   d="scan'208";a="140640306"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 07 May 2025 02:29:53 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCb67-0007VR-01;
-	Wed, 07 May 2025 09:29:51 +0000
-Date: Wed, 7 May 2025 17:29:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Brahmajit Das <brahmajit.xyz@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, bp@alien8.de,
-	dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
-	pawan.kumar.gupta@linux.intel.com, tony.luck@intel.com
-Subject: Re: [PATCH v2 1/1] regulator: hi6421v530: fix building with GCC 15
-Message-ID: <202505071639.PQ4TVkSG-lkp@intel.com>
-References: <20250416121305.13469-1-listout@listout.xyz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbnPGWmG9SvZianCQeKXZIIa2ABk5xFoArlYAbCbsQnNW5Oou6ZVIr6V9MFYrrVA0OtCKn7ztizBCZ1zQZYYUxaHCFazj3RPzwO8yaXK6hYKgD1kCjaKvUuzxCfAk/x+nbPRhVEHeZzQb1ZNzZEV/4SP+UrcQUh9mszmQDrC4zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EAVaGMkW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746610354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=89g+uUbAmI4s1rHApPcoGavOskeIK/6Orkxfvy6zQ+0=;
+	b=EAVaGMkWRfNyHu+JNCLBg5grhE+9T9x6WnYJIdHxj8mluF+ovs2uLMEqwL/CASWY9SLBn3
+	aAevD6ev+hfInM9/1VgWpBq5zUQqZ+iwIB8dBNtpWUI68bNhLore8sRr32WAmm+HpT7LEK
+	fMpVbnLQ0c696uD6CAm8LZY6156y0hQ=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-324-Qv26vmtvPQOFmP_m5T87Rg-1; Wed, 07 May 2025 05:32:32 -0400
+X-MC-Unique: Qv26vmtvPQOFmP_m5T87Rg-1
+X-Mimecast-MFC-AGG-ID: Qv26vmtvPQOFmP_m5T87Rg_1746610351
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac25852291cso602274666b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 May 2025 02:32:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746610351; x=1747215151;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=89g+uUbAmI4s1rHApPcoGavOskeIK/6Orkxfvy6zQ+0=;
+        b=oa7X8x/1Ie4fiFxNpnI5RbOmejnFD9mGGhg+FoO37uSTocbFeFMlht4kuMMECJUbQe
+         Onbe4Tc7FN00SjdbTtJpbnPaOt3kujDi8C2biKSZTcE7q9FVvqCpHzscF7W1yiSu9PFV
+         DGKK18jQgNZPny6ehNDeDO5cUufLD1kiHJFb45tbtmvkv9NME1dQUTNCwZLPxdQNZ9C+
+         MKmvzc33F8BU5HTUIw41b6gOzUODc5/GM3XgaPijL+f4riGwMgxl/AA3myqaFNWzjLhH
+         j9Al0918n5NzEIhetJfCnf9fn7XG+ALhG0/S+6DCLT//BNXrDXA7K+Etq9Lv8hItxVxN
+         +soQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOSMfNx6xeROWjl7Ob4hrmbiMxz4tfBHDB07QmUrv9NKqc+x1btKTazlsMUAtcV28vDGswSTKstKpphKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO2FtgV/8v80eU2weIeYscchNYs9cVMmGwIZQ4lRPL/8VGpuYO
+	wYVLlv8VzXG6oa/oCn4Lj2WT40Dvm4thCA5wCRAgrW/1RCbVqHoy8mHIKWk2VUaRiUFIKDfwKyF
+	RVl640+s7RWGhbesK1Mb5wOizPV+A3K0szBi535L08K9Et5kGxFvvl2Dcdo55Qw==
+X-Gm-Gg: ASbGnctdKIYWN6lsqyrmn9J5jOGBTav7DixPvcRaKEjxjklO0A0Kh0oLiwGJXFfX5l0
+	wXgjxrOcFtZdpjxX/c1yPJYAuDvRm/l56v1x68fTwq9pdkdwBS8QYAaF9a4laSqY26fv63lrBwK
+	oARmE01kahbTvCe2sFttTUP9/Mb4HAhABKtMK32V5enL2Lubprt19xooaa0eTRk3gX1uXrZJwTK
+	hpcUGwsRevUe7gxijIwqHWDB0I7k7eHI8XHeIeTKPE4Wl3gOPESliDbFWQp+AI3H76+fRzzUDN4
+	YuO23nYt6UyDVf5K
+X-Received: by 2002:a17:906:d54d:b0:aca:9615:3c90 with SMTP id a640c23a62f3a-ad1e8d0ba2bmr267000866b.52.1746610350919;
+        Wed, 07 May 2025 02:32:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFB9GITuMuYoSYN8HyavQFo2/J56H0NB7QS0JaWBQv+IFH3p+ygglDzNeMYFn+SDDKrajLukA==
+X-Received: by 2002:a17:906:d54d:b0:aca:9615:3c90 with SMTP id a640c23a62f3a-ad1e8d0ba2bmr266997766b.52.1746610350328;
+        Wed, 07 May 2025 02:32:30 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.165.32])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad189147329sm869562066b.1.2025.05.07.02.32.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 02:32:29 -0700 (PDT)
+Date: Wed, 7 May 2025 11:32:10 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net, 
+	peterhuewe@gmx.de, jarkko@kernel.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-crypto@vger.kernel.org, jgg@ziepe.ca, 
+	linux-integrity@vger.kernel.org, pmenzel@molgen.mpg.de, Yinggang Gu <guyinggang@loongson.cn>, 
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: Re: [PATCH v9 4/5] tpm: Add a driver for Loongson TPM device
+Message-ID: <CAGxU2F6m2=+07sUoy4PKVs1vMR6Yr--pgkOG3SEGg8gi=HRf+g@mail.gmail.com>
+References: <20250506031947.11130-1-zhaoqunqin@loongson.cn>
+ <20250506031947.11130-5-zhaoqunqin@loongson.cn>
+ <2nuadbg5awe6gvagxg7t5ewvxsbmiq4qrcrycvnrmt2etzq2ke@6oyzavctwrma>
+ <0b148f09-d20d-b6be-d31b-6c8a553658c9@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250416121305.13469-1-listout@listout.xyz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0b148f09-d20d-b6be-d31b-6c8a553658c9@loongson.cn>
 
-Hi Brahmajit,
+On Wed, 7 May 2025 at 03:35, Qunqin Zhao <zhaoqunqin@loongson.cn> wrote:
+>
+>
+> 在 2025/5/6 下午10:13, Stefano Garzarella 写道:
+> > On Tue, May 06, 2025 at 11:19:46AM +0800, Qunqin Zhao wrote:
+> >> Loongson Security Engine supports random number generation, hash,
+> >> symmetric encryption and asymmetric encryption. Based on these
+> >> encryption functions, TPM2 have been implemented in the Loongson
+> >> Security Engine firmware. This driver is responsible for copying data
+> >> into the memory visible to the firmware and receiving data from the
+> >> firmware.
+> >>
+> >> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
+> >> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
+> >> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+> >> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> >> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> >> ---
+> >> v9: "tpm_loongson_driver" --> "tpm_loongson"
+> >>    "depends on CRYPTO_DEV_LOONGSON_SE" --> "depends on MFD_LOONGSON_SE"
+> >>
+> ...
+> >> +static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t
+> >> count)
+> >> +{
+> >> +    struct loongson_se_engine *tpm_engine =
+> >> dev_get_drvdata(&chip->dev);
+> >> +    struct tpm_loongson_cmd *cmd_ret = tpm_engine->command_ret;
+> >> +
+> >> +    memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
+> >
+> > Should we limit the memcpy to `count`?
+> >
+> > I mean, can happen that `count` is less than `cmd_ret->data_len`?
+>
+> Hi, Stefan, thanks for your comment.
+>
+> Firmware ensures "cmd_ret->data_len" will be less than TPM_BUFSIZE,  so
+> this would never happen.
 
-kernel test robot noticed the following build errors:
+I see, but I meant the opposite, if `count` (size of `buf`) is less than 
+`cmd_ret->data_len`.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.15-rc5 next-20250506]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I mean, should we add something like this:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Brahmajit-Das/regulator-hi6421v530-fix-building-with-GCC-15/20250416-211351
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250416121305.13469-1-listout%40listout.xyz
-patch subject: [PATCH v2 1/1] regulator: hi6421v530: fix building with GCC 15
-config: nios2-allmodconfig (https://download.01.org/0day-ci/archive/20250507/202505071639.PQ4TVkSG-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071639.PQ4TVkSG-lkp@intel.com/reproduce)
+	if (count < cmd_ret->data_len) {
+		return -EIO;
+	}
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505071639.PQ4TVkSG-lkp@intel.com/
+I see we do this in other drivers as well (e.g. crb, ftpm), so I'm 
+trying to understand why here is not the case.
 
-All errors (new ones prefixed by >>):
+Thanks,
+Stefano
 
-   In file included from scripts/mod/file2alias.c:123:
->> scripts/mod/../../include/linux/mod_devicetable.h:608:39: error: expected ':', ',', ';', '}' or '__attribute__' before '__nonstring'
-     608 |         char name[PLATFORM_NAME_SIZE] __nonstring;
-         |                                       ^~~~~~~~~~~
-   scripts/mod/file2alias.c: In function 'do_platform_entry':
->> scripts/mod/file2alias.c:143:35: error: 'struct platform_device_id' has no member named 'name'
-     143 |         typeof(((struct devid *)0)->f) *f = ((m) + OFF_##devid##_##f)
-         |                                   ^~
-   scripts/mod/file2alias.c:932:9: note: in expansion of macro 'DEF_FIELD_ADDR'
-     932 |         DEF_FIELD_ADDR(symval, platform_device_id, name);
-         |         ^~~~~~~~~~~~~~
-   scripts/mod/../../include/linux/mod_devicetable.h:605:33: warning: format '%s' expects argument of type 'char *', but argument 4 has type 'int' [-Wformat=]
-     605 | #define PLATFORM_MODULE_PREFIX  "platform:"
-         |                                 ^~~~~~~~~~~
-   scripts/mod/file2alias.c:934:41: note: in expansion of macro 'PLATFORM_MODULE_PREFIX'
-     934 |         module_alias_printf(mod, false, PLATFORM_MODULE_PREFIX "%s", *name);
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~
-   scripts/mod/file2alias.c:934:66: note: format string is defined here
-     934 |         module_alias_printf(mod, false, PLATFORM_MODULE_PREFIX "%s", *name);
-         |                                                                 ~^
-         |                                                                  |
-         |                                                                  char *
-         |                                                                 %d
-   make[3]: *** [scripts/Makefile.host:131: scripts/mod/file2alias.o] Error 1
-   make[3]: Target 'scripts/mod/' not remade because of errors.
-   make[2]: *** [Makefile:1279: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +608 scripts/mod/../../include/linux/mod_devicetable.h
-
-   606	
-   607	struct platform_device_id {
- > 608		char name[PLATFORM_NAME_SIZE] __nonstring;
-   609		kernel_ulong_t driver_data;
-   610	};
-   611	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
