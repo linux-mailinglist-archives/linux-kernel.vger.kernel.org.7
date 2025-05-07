@@ -1,146 +1,135 @@
-Return-Path: <linux-kernel+bounces-637900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C62AADF09
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9E9AADF0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F36E9A73DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10093A3C6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F02525E814;
-	Wed,  7 May 2025 12:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CDA25F7B5;
+	Wed,  7 May 2025 12:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="miau027A"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyMgeiwy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BB82594B7
-	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6F325E82F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 May 2025 12:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746620526; cv=none; b=PKjVduB8NTKKSXpNMmbBcKrBue6FLGR9sOYHxwcbhDaRiAr3dIOwPHWLF14ZcL15PzyHJ/utUP7Em8zsfTGHY4EzvkHBzLEDG1WBNKne+3vg695+agbcAbzHKW0il+myLRdZH2rr6Ot2+9fsYBTxZpaS16jDKBnJpZeZjo1JLIQ=
+	t=1746620583; cv=none; b=fcN27x/Fs/J+evDS+ASodoMRl6Mci3bhw/V1pY7Yt8vZetuA0HbIJebBvi59u2HIg5GWhubejQ89ht9NnOkWlPzh+VvTRZBFIAelCCr8tFv4c9cCojiJMXZrJC6aux8rWaV+bYyztZHSZqxeFVNcEAG/n9e6GrHsbPHeoC9alnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746620526; c=relaxed/simple;
-	bh=OrVUBAduC66EM+Jy5ubOZJRLtPoNQLKUZOMruFW9g5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXo04RnqYkPe2Qce9kYUlAfkACy6T4pHy1ZLR5Np1A2XkuofllS0e8mQiajKR1M85yX7C96mGukqP9WYtcPH9vocoV2s7qoSKOEeOJ6xq10Stkx5xlRrvdxh9aWnbHSfEpnfF/XSmRIrv54zLLavyk4Jic+mxbNd1iI5LuXqVKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=miau027A; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 7 May 2025 14:21:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746620512;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DpPHSAGatCtkUGCaP/yd2Qyr3LuW/jp4fovDif5/S4M=;
-	b=miau027A/ds+uz1cHnS94jFw15X1wRBY3OGmNorw1Q5T0CDrb9MfiGEUwixSA4NcBf5fSh
-	U0/lnSeOScqRZQE5E5E9JVBQnkLcpbv5EELOm/sVPMXKnMgi0Dlqw0hK4bukgvlf7R6Koo
-	jScoCjrpPLs11OO6fs5Fm8t3UFHHyAo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Nicolas Schier <nicolas.schier@linux.dev>
-To: Kees Cook <kees@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 3/3] integer-wrap: Force full rebuild when .scl file
- changes
-Message-ID: <20250507-piquant-fascinating-pug-7ce4cd@l-nschier-aarch64>
-References: <20250503184001.make.594-kees@kernel.org>
- <20250503184623.2572355-3-kees@kernel.org>
+	s=arc-20240116; t=1746620583; c=relaxed/simple;
+	bh=PTePx/tbSwUMSUcdhzkd1zsfWx4z1VfNP7TIanK5+SM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=agsHcd87QKSL58J/AqiPsGwzuwnfvv9M9L5ZjFijadulzchFkUupbapQIOGYjPKWAAROLMMpkO7K43nBi5ohulwniEUvvCFCsusNC0NxYGxPlThNoo4cSoKzVJRiv6lgO+KKJqV1yHZ0CxWzjhr1ljmWcj7A1mzAJOsVG2d9+eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyMgeiwy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D1DC4CEE7;
+	Wed,  7 May 2025 12:23:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746620582;
+	bh=PTePx/tbSwUMSUcdhzkd1zsfWx4z1VfNP7TIanK5+SM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DyMgeiwy9dQcX98K3g4aW/54zNKWxLQ3A7zEN+XEzypf3o7lW/hIwrCVbLEPOfnVD
+	 U0kdBIHafEAdujP8NfOeuZvhufFhu7qJfjVxuVUMmQXr57TIhRncUgJqKROYYZ6elp
+	 6/uZNsFz1UMgQ3TZnX9zI3HkazMJley3KhbN4MClp/nCrmx0RfAnnLvJ+uU5YGEezg
+	 X0L3NnbifJYFDHXB6iRjlNZiV8cWeyI7F8mUj8O6vKI1iHnu6WdoZZIcElcGZwKP64
+	 xlz3chaV7xipc1qtMqBle45KOEzWEXqVSZyiE7gfG8hDzjHnHYclzJn6ozEVpXfHHx
+	 USpmsuLplwJvg==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH v6 00/14] nvmet-fcloop: track resources via reference
+ counting
+Date: Wed, 07 May 2025 14:22:56 +0200
+Message-Id: <20250507-nvmet-fcloop-v6-0-ca02e16fb018@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250503184623.2572355-3-kees@kernel.org>
-Organization: AVM GmbH
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKBQG2gC/2XRzW4CIRSG4VsxrEsDh1+78j5MFwMclGgHy0xJG
+ zP3XvxJ1JnlR/K8i8OZDFgSDuRjdSYFaxpS7tvQbyvi912/Q5pC2wQYKAZc0r5+4UijP+Z8op2
+ WayOsM6iRNHIqGNPvNbf9bHufhjGXv2u98svrPQT6NVQ5ZdQzF6wIUqDuNgcsPR7fc9mRS6nCQ
+ wvOZxqajl4y77TEgEstnrWdadE0UxE9i55B1AstH1pyNtOyaYPKS3DGgXcLrZ40iJlWTYtg4lp
+ bA7ZTL3q6nbTg90/7mPF+12n6BwYcNiG2AQAA
+X-Change-ID: 20250214-nvmet-fcloop-a649738b7e6e
+To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, 
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Sat, 03 May 2025, Kees Cook wrote:
+Rebased on nvme/nvme-6.16 and addressed Hannes feedback.
 
-> Since the integer wrapping sanitizer's behavior depends on its associated
-> .scl file, we must force a full rebuild if the file changes. If not,
-> instrumentation may differ between targets based on when they were built.
-> 
-> Generate a new header file, integer-wrap.h, any time the Clang .scl
-> file changes. Include the header file in compiler-version.h when its
-> associated feature name, INTEGER_WRAP, is defined. This will be picked
-> up by fixdep and force rebuilds where needed.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Justin Stitt <justinstitt@google.com>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nicolas Schier <nicolas.schier@linux.dev>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Andrey Konovalov <andreyknvl@gmail.com>
-> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-> Cc: <linux-kbuild@vger.kernel.org>
-> Cc: <kasan-dev@googlegroups.com>
-> Cc: <linux-hardening@vger.kernel.org>
-> ---
->  include/linux/compiler-version.h | 3 +++
->  scripts/Makefile.ubsan           | 1 +
->  scripts/basic/Makefile           | 5 +++++
->  3 files changed, 9 insertions(+)
-> 
-> diff --git a/include/linux/compiler-version.h b/include/linux/compiler-version.h
-> index 69b29b400ce2..187e749f9e79 100644
-> --- a/include/linux/compiler-version.h
-> +++ b/include/linux/compiler-version.h
-> @@ -19,3 +19,6 @@
->  #ifdef RANDSTRUCT
->  #include <generated/randstruct_hash.h>
->  #endif
-> +#ifdef INTEGER_WRAP
-> +#include <generated/integer-wrap.h>
-> +#endif
-> diff --git a/scripts/Makefile.ubsan b/scripts/Makefile.ubsan
-> index 9e35198edbf0..653f7117819c 100644
-> --- a/scripts/Makefile.ubsan
-> +++ b/scripts/Makefile.ubsan
-> @@ -15,6 +15,7 @@ ubsan-cflags-$(CONFIG_UBSAN_TRAP)		+= $(call cc-option,-fsanitize-trap=undefined
->  export CFLAGS_UBSAN := $(ubsan-cflags-y)
->  
->  ubsan-integer-wrap-cflags-$(CONFIG_UBSAN_INTEGER_WRAP)     +=	\
-> +	-DINTEGER_WRAP						\
->  	-fsanitize-undefined-ignore-overflow-pattern=all	\
->  	-fsanitize=signed-integer-overflow			\
->  	-fsanitize=unsigned-integer-overflow			\
-> diff --git a/scripts/basic/Makefile b/scripts/basic/Makefile
-> index dd289a6725ac..fb8e2c38fbc7 100644
-> --- a/scripts/basic/Makefile
-> +++ b/scripts/basic/Makefile
-> @@ -14,3 +14,8 @@ cmd_create_randstruct_seed = \
->  $(obj)/randstruct.seed: $(gen-randstruct-seed) FORCE
->  	$(call if_changed,create_randstruct_seed)
->  always-$(CONFIG_RANDSTRUCT) += randstruct.seed
-> +
-> +# integer-wrap: if the .scl file changes, we need to do a full rebuild.
-> +$(obj)/../../include/generated/integer-wrap.h: $(srctree)/scripts/integer-wrap-ignore.scl FORCE
-> +	$(call if_changed,touch)
-> +always-$(CONFIG_UBSAN_INTEGER_WRAP) += ../../include/generated/integer-wrap.h
-> -- 
-> 2.34.1
-> 
+The blktests nvme/030 is likely to fail if in the background udev is
+triggering a 'nvme discover'. In the meantime I collected some more
+patches but hold them back until this here is done.
 
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+Changes in v6:
+- rebased on nvme/nvme-6.16
+- made the slab cache static, reported by kernel test robot <lkp@intel.com>
+- fixed inverted logic when testing if the port should be deleted
+- Link to v5: https://patch.msgid.link/20250423-nvmet-fcloop-v5-0-3d7f968728a5@kernel.org
+
+Changes in v5:
+- rebased to nvme/nvme-6.15
+- Link to v4: https://patch.msgid.link/20250410-nvmet-fcloop-v4-0-7e5c42b7b2cb@kernel.org
+
+Changes in v4:
+- reordered patches so that they pass the tests each on of its own
+- addressed feedback from Christop, Hannes and James.
+- hold lock while looking up nport and insert nport operation in fcloop_nport_alloc
+- dropped patches from 20250408-nvmet-fcloop-part-one-v1-0-382ec97ab7eb@kernel.org
+- Link to v3: https://lore.kernel.org/r/20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org
+
+Changes in v3:
+- fixed memory leaks
+- allocates fcloop_lsreq in fcloop directly
+- prevent double free due to unregister race
+- collected tags
+- Link to v2: https://lore.kernel.org/r/20250311-nvmet-fcloop-v2-0-fc40cb64edea@kernel.org
+
+Changes in v2:
+- drop tport and rport ref counting, use implicit synchronisation
+- a bunch of additional fixes in existing ref countig
+- replaced kref with refcount
+- Link to v1: https://lore.kernel.org/r/20250226-nvmet-fcloop-v1-0-c0bd83d43e6a@kernel.org
+
+---
+Daniel Wagner (14):
+      nvmet-fcloop: track ref counts for nports
+      nvmet-fcloop: remove nport from list on last user
+      nvmet-fcloop: refactor fcloop_nport_alloc and track lport
+      nvmet-fcloop: refactor fcloop_delete_local_port
+      nvmet-fcloop: update refs on tfcp_req
+      nvmet-fcloop: add missing fcloop_callback_host_done
+      nvmet-fcloop: access fcpreq only when holding reqlock
+      nvmet-fcloop: prevent double port deletion
+      nvmet-fcloop: allocate/free fcloop_lsreq directly
+      nvmet-fcloop: don't wait for lport cleanup
+      nvmet-fcloop: drop response if targetport is gone
+      nvmet-fc: free pending reqs on tgtport unregister
+      nvmet-fc: take tgtport refs for portentry
+      nvme-fc: do not reference lsrsp after failure
+
+ drivers/nvme/host/fc.c       |  13 +-
+ drivers/nvme/target/fc.c     |  85 +++++++--
+ drivers/nvme/target/fcloop.c | 437 +++++++++++++++++++++++++++----------------
+ 3 files changed, 362 insertions(+), 173 deletions(-)
+---
+base-commit: 0ea9b1f7aabb8af08649048d04fa3cee44dac4ab
+change-id: 20250214-nvmet-fcloop-a649738b7e6e
+
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
 
 
