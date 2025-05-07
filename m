@@ -1,245 +1,411 @@
-Return-Path: <linux-kernel+bounces-637931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-637933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1158BAADF4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:35:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CA5AADF49
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 14:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E4E23AE5A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:33:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D950B4E314F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 May 2025 12:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC0F280028;
-	Wed,  7 May 2025 12:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB9B280334;
+	Wed,  7 May 2025 12:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LsWATasB"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="FGi89wX8"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0FC25E448;
-	Wed,  7 May 2025 12:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746621226; cv=fail; b=AuM3Yv0tIUOg0W+TDoGr8C7f6remephPm9u4zhY7qTQdoaICVbZ8RxCYsYxXkBY4f/rudcz5vx8Qn+GZ+KdotlxwEN1aPQpW0KfqPiyUd9qIKk7Q1Hvuk6x3Rnh4nlqZT/vRzTRSa2g8TE2nHZNe4IA5A0aUe5SB1c7GHE6WvTM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746621226; c=relaxed/simple;
-	bh=rD6lzHZcTNVOwIuoSbN+pY/g0Nk8pSCgdtdH3jEjTek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PlzCqn5Z7rnc8j/J3FKhJfji+DMHoDn4Tr6YKLlWxd9c2GXbyG714QRnDvJW5NlRXP/3++hYkcEBhQ9BACXbyNk2U7KDzj1P1QL5X7WcvJ5+nCxJTa8GWvZr/lQim4wjfk4xmE46zCgBggw2/Gfk49OMYhjsrWx/6/zry+ZMsuA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LsWATasB; arc=fail smtp.client-ip=40.107.243.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fwZAd99T+p6T7XP3Oqfo2oKF68Ia6C+ZIoMXOlNzGKV/9IjVLX7MifozcdwWmhgjCuS3/4c29Z+ZBOl58gdeORUM1gA1VvUVgqWH0tCiDK23Jlmjdz933l1KM7SpCIJsW6F+eI94RLG031qpaQhsi4OqTEMMNtm17rIPOTJWu2/5SoQScdwETdrhDBrco8VxdskD9Sos9RIZuyQQzbMsax92AhYNrDH58DMxuPgZ9r73HIKaDFjN4JwTimnYTbPKoDQAGMEHgGpV7oEyfLvD0PIX6ZO+TqvlEOtIZTiKFXgoU73S6a9hwQGVnbKmsJU9Ij7T/FDpo6DEImq4rDTdvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9qtDrnJXSemvrem3yXD1idPhMczguXkcPBb9Wk+4dKg=;
- b=vio5aIdFM7LV9QSFDv68rHvwuYQFWprUwJuaBJq1kDPbTxVIkGxdZT5PCMndDKaqBaCsC5FguEnzmSiq2RGYPZvpn48WlX5iNawImkfvGpu6Q8gbDo/CqYMUdOXNBhr7apI6167zuBNiMLmeBvfsWujeijIN3p765ZVqGxK94itjbYvFgrru4zNb7+HbeU4b0uSq/UFIewfcUDU3t4r8k6xqkf1bPPmYQc7ZCaEYCOZOe67i7gMukIqXd/Xo4mXQlglSZc8TuUd4QIJnQizv/xWnpUFlsyhA4EEizX8+7M42rAbMLakMR4apKq3EUbmDYUhgXmqj5IC+oOpb9vHg5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9qtDrnJXSemvrem3yXD1idPhMczguXkcPBb9Wk+4dKg=;
- b=LsWATasBB8I/Ia4RcLXK1ZUoliDZWlLXSt6knHBhoD9xXWsxQXSDvKv5b5sqvfv9rDbl/myAyclux05AwU6tKBwqQgnvQO32EZbGnJPAmTJSjLoBb4js5oXW3a3Hq1Ji4cQ92SaO/r2e3UGNrk0zllma2CoKydnqRiw8zqcCx6cIafAh8V+2DbH4z6f1/XJjaJyq2lH6W3tyYjnwwmeQj7BclhGM95HUv+S/woqGgoyf/2FLmxzeiFKHR215iBEtWi8x7jv+OJBPP8nIOtPxyqamOwU7XovVWHC6kwPPO2add6cagicoQkW2Ycp7xxvaK+Y/K25noWSJoFVpETdbtg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by IA1PR12MB8520.namprd12.prod.outlook.com (2603:10b6:208:44d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Wed, 7 May
- 2025 12:33:35 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8699.026; Wed, 7 May 2025
- 12:33:34 +0000
-Date: Wed, 7 May 2025 09:33:33 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"will@kernel.org" <will@kernel.org>,
-	"bagasdotme@gmail.com" <bagasdotme@gmail.com>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	"vdumpa@nvidia.com" <vdumpa@nvidia.com>,
-	"jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"jsnitsel@redhat.com" <jsnitsel@redhat.com>,
-	"nathan@kernel.org" <nathan@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	"mshavit@google.com" <mshavit@google.com>,
-	"praan@google.com" <praan@google.com>,
-	"zhangzekun11@huawei.com" <zhangzekun11@huawei.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>,
-	"mochs@nvidia.com" <mochs@nvidia.com>,
-	"alok.a.tiwari@oracle.com" <alok.a.tiwari@oracle.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH v2 10/22] iommufd/viommmu: Add IOMMUFD_CMD_VCMDQ_ALLOC
- ioctl
-Message-ID: <20250507123333.GD90261@nvidia.com>
-References: <b0d01609-bdda-49a3-af0c-ca828a9c4cea@amd.com>
- <aA/exylmYJhIhEVL@Asurada-Nvidia>
- <b8338b47-6fbf-44ac-9b99-3555997c9f36@amd.com>
- <aBB1gLfahnLmn0N1@Asurada-Nvidia>
- <a3860aed-5b6b-4e68-a8fd-1a6ee28ba022@amd.com>
- <aBEI+T7P+hV8Y6tU@Asurada-Nvidia>
- <BN9PR11MB5276A00FDB2685B394FB9D4D8C892@BN9PR11MB5276.namprd11.prod.outlook.com>
- <aBptQO9VBnO2AG9V@nvidia.com>
- <BN9PR11MB527651D1ED8E6CA4677FD7678C88A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <aBsN1ZDr+jJJ5EG0@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBsN1ZDr+jJJ5EG0@nvidia.com>
-X-ClientProxiedBy: BN9PR03CA0743.namprd03.prod.outlook.com
- (2603:10b6:408:110::28) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260CA231A3B;
+	Wed,  7 May 2025 12:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746621277; cv=none; b=GtFdYTQ06KIlg5AuGYenFmItH+2k4CsbNcLsfxvPqiSTGesTjp290eP9Oui155s+txpzs2k2noisLI36GIb+HwSo4qgOXgVG6KbB1kh+b90/BPg3cqhVCWlA1X56IWsX9o9B8J4vuzcnHx6rjyO5gpFIEP70itXBMqPKo3+aRXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746621277; c=relaxed/simple;
+	bh=Zihm2h4tk2G5LNf5qRRKhNOja0uqU0XEtHT0Nq7ohQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XzHo+EzkYM60laUrc8OO/fUeNikSufdPQdV97pwTgBZShltFKbbO+d7Vd50LNToVyF1ZfgZwSyG7zexNMsgM8StzKqEPdTi/fKNF6sgQas+knMZycJFKHIBOYWu1JQruyvJGUWZNQ2ZWvuPrQywjoMKFrNYfW39sxuikPo0C6lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=FGi89wX8; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1746621253;
+	bh=4vsbxRRKnv1g+7sUbJ0j4DWeU+4ZHqGmtuozwEkD8TQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=FGi89wX8G0UrMe/02jnnNDqXKt5oilegAsBE0FIIiPhMN+tJCcF2LnIiSEwZGlUzY
+	 N0APXqTXGjBS2YtbR+ctKNBXqPseVTVuiLKKe0VcFl4fRWWRbZHZMH9Zr9rAz9MbWs
+	 4GEP6uPwZvyqxrkWTtg8zfZiXKmx46sYNDkBkynA=
+X-QQ-mid: zesmtpgz5t1746621250t499dc0c2
+X-QQ-Originating-IP: JixwxS5jDxwyM9a487Z7kh8JjRNry0gyFMbU+61m1qI=
+Received: from mail-pl1-f175.google.com ( [209.85.214.175])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 07 May 2025 20:34:08 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15413479754048293537
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-224171d6826so99993965ad.3;
+        Wed, 07 May 2025 05:34:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUaP3MLP+QMBXwU6PIfwDRi06EAGlJ6lVE4eZ0uE2ecVZ7fqpU5+GCBr8cI3DJOAKF8y8g3v6+JbXOQM5Ij@vger.kernel.org, AJvYcCUmOWZgPCVjK1X8e1RDcUEY6ZdIYCUoc1TJbbVLeqgpLrNxk43zqp96ddoO3WzDxvdtuFZ4VZzGcqOo39B+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiDtDTfyadYOVwqEioJpSqpYa5TBxWhW3YJke9k75b+EaLVpF5
+	lpVgx2KYtdcOujbSXnXmWH1+4TEoHKZ+oxK2rTRHtzDg5tO1rtTa5PCcTZvM7kY2RBUwMkL/NSn
+	Z9xUCnLKeWg8J3w22x0c+rbH4acs=
+X-Google-Smtp-Source: AGHT+IG+VAMZ2gWrcB4H4gABdFMIxdjqtRWF4hIsZ93JGf34+00BNcvMIA5GJ86DKdPa+Oi5Mn3uluZLYZH+90grYyM=
+X-Received: by 2002:a05:6902:1009:b0:e78:178e:fab6 with SMTP id
+ 3f1490d57ef6-e7880e70bf9mr3437268276.1.1746621237307; Wed, 07 May 2025
+ 05:33:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|IA1PR12MB8520:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1a1b46d-c1c1-4030-ff3a-08dd8d636240
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?P+4h4Zy1fZrZzCkmJ12YME/+qVcS4kYcztk09Uhn73s5Y1BIt4tXZjVqj1pD?=
- =?us-ascii?Q?KSLOOod8fv5TrZ35uwcYusTIh5g3a6nDpg609GBODnyqFjatXoA9BLzr5q7K?=
- =?us-ascii?Q?fyty5xwX81WupsQ2aab2fwSEcntLKX1lrHxAVKWGa7j8Nog7woSf0h7NdLn6?=
- =?us-ascii?Q?nOGMjx7GMmHn2wtB6Y/OheEIHMwIX8TDTEXXvfmohtqCQTGHlV3x0MoXazSv?=
- =?us-ascii?Q?9HNsffVkFVd3i0uFWBgWRQeKb4mtU0ZjZ/arLOYOtDeWFuQHOuKWIg0Zs3Am?=
- =?us-ascii?Q?Zjvn1jir7Y4uIR5NOI7zjkpdO5bpAggCLpZ+QauJl1MaM3mHO3f5qkc3AesQ?=
- =?us-ascii?Q?H4K263KUqf0B6XyCNNfcfJ9k2u/qBqZnpWfEMaZ0UqbEIs7sxzg4SUZerxcs?=
- =?us-ascii?Q?CnYqHER1WHvIq7WX8Md9bkgKVp3cNS4YwooCaDsjNEV2LaVNiq5AAP/Z1deQ?=
- =?us-ascii?Q?6ZxnjFP3OyK7rX1hpWgiyK5ICAvsfPgJlDTMyL7cT5OxoyHLcCxmZTOE/g78?=
- =?us-ascii?Q?DPccaPUYuAQCJcSVlwKtt5IOefB4JTNoWaIuMLsMHVkxwB7Y4Sw4TbtSPr1T?=
- =?us-ascii?Q?84qATeO5hJYByTBNZcmWr7K4hPnaZRtk6bvIVZrWaigYQP6yixJRds/k8iT6?=
- =?us-ascii?Q?D5YYs497dV6xuSWnSTOHTJ8LPD8pjGEv99MKScyVeNzNt8GtlRyS7OlIrWMV?=
- =?us-ascii?Q?1Jo+6mnv12p38b2xg0SPXw6dq90AUaNa+4j7/RLM5eGtpq1TVN2Et1SVoNCi?=
- =?us-ascii?Q?doYWPXUdaV1WRfDIz4duo1kwnr7v/QDLcBh128VM9XxGIaeOq99o3gLFJPdY?=
- =?us-ascii?Q?vMtRPyX0WXLxGnTTWUehZ0acw9yDp247lFHLvmWsvRbcB8T6awNUYiu49wHe?=
- =?us-ascii?Q?0bIj+bgslBkIBPiLoMUK9mlvj4eTJLRdjGc7vHxpwMYCHc4O98rDToQRIZ7N?=
- =?us-ascii?Q?sAt7raFgWUsNZv5kZooh4fwipi793jwzsJVebLE/53BdGRXjMLSl8Y6FpXvF?=
- =?us-ascii?Q?6SNy0VsIh69+wf0PWLOSsOqPaNFZ2sI9Ue58kKNxtrnXINrlSglQoraXbgiA?=
- =?us-ascii?Q?YuuujnQf/rHGfFoc/IhO8d2AKVfCRlTgaAXzFSIWbJ7UkgbfkI3291TJQhgl?=
- =?us-ascii?Q?VmcNNyFMGbuL4FjNqO2oqs6iq/8kLopQW6UqbmOdolr6QgFy16bbSRFeWL6S?=
- =?us-ascii?Q?p2tXlbXNQDDETY0p0nkPYgeZ8P02bs09WzWlM3RihuWp4lCKY+rFD4bMULtq?=
- =?us-ascii?Q?UJQGYcxQ9ZMlaO6dvOV5WITiow63wv9YF3hTOT2YwQZl5xFfwPzZjvKm6LDQ?=
- =?us-ascii?Q?2Um/UG8QlghkUiY/MzNmnAlXdlvRwDyNNvPwHg53ToAWadS9zlMH4ZccFd/y?=
- =?us-ascii?Q?/0xfVdWVdsy7Q9/2pI91nHCuri0GE1PLX9ulpGTXbiUjzBq98Mhtt4TbP/tN?=
- =?us-ascii?Q?T5lsDX4hEJw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fUVCXm7lwwNW7AaGVhXJgpPg/mTliLr827BZZOpD6EL/hEH9JWujF2y+YNlP?=
- =?us-ascii?Q?cF3OMSy8Hjl962hYKPxZkoYJRfiAAZnANYdTxvzqZiiSvuCuEMh6Mc22x9jm?=
- =?us-ascii?Q?M0fSJeU2EvwJwORBeOiyRUosxNYRAAJuvc+b+ocDKAQPY9jHw+PMsTCtNLg9?=
- =?us-ascii?Q?KPjNvdeGBLqZLfdCmprEHImQOF+ONceEgJM0elMPvJCNCQvfHB33hFiJhGlD?=
- =?us-ascii?Q?xsRYV0cfGt4t+A5QORnTCeD7AgRXwEI64ZO7EmVRgyDAY6NLgNLyq4EpU8fa?=
- =?us-ascii?Q?yP7bsi+w2H7D8Faa9Yh6Tk1IyP0jNqXfOlx7VCmvPEQQSTY1A3d/qoCTtoLK?=
- =?us-ascii?Q?vOnZrYdTSLuUI7dT5n7a1DABDxc+YazS+7nGXll7T5zOsSzaypKjrSZ/a9x4?=
- =?us-ascii?Q?gzJqHRoWDSre/zYrWa0wkwtyrfS4jdiJKJLG4MoxNoNPzuEVmEMrR7bJUxOh?=
- =?us-ascii?Q?B6UJfdE6f7vquc1KT3iNeAgeNEp8bqCqa8hI53SSqiwNKRFFW66FBDwjPnYz?=
- =?us-ascii?Q?I/+k8Vv1brZmpFRXgJonHQNjIv591P9GandmaOeAoHmbTGhW1dIvMEmzZLHi?=
- =?us-ascii?Q?9IxOvKGezVm97s5NkyEW72Qkpjrn6pSQIRLgyF5HInYBBhqfmJbJW8bQRMTD?=
- =?us-ascii?Q?Kvv5uOGn3lh3Ai9y5KD/MlK7uSbQ0VtENRyxfxcCYeiIPXTZWOTaO9Tpe4bn?=
- =?us-ascii?Q?Epz/r0jKT8zY3W662s47Aa3f876JV5TWAqVXVeCH3CPIgLOwrdUjyfbvXlui?=
- =?us-ascii?Q?veQHvlFS6aEFRWciYd3TBnH3So1cW3tP9lSeBF41fg1/yQO95TsjdKtqZtRK?=
- =?us-ascii?Q?Ce/jxV9bDWpLWiU7KVc9EUFUGu+5xi/7xmZDGYXkmPY0E/7DV96yrA35pVWp?=
- =?us-ascii?Q?KrgZ4XDic1+h6L+bjAiVr0dqYSGgH97Ebw4KQitY9FrvwW3XJVCOCD/vRIPw?=
- =?us-ascii?Q?jrk5IMtjUX143PRUAz79l+cqh1HHOoipZUWf8kSL9auC1GdFl/OqJnMypBHB?=
- =?us-ascii?Q?1MjdOl9otOMGDMzOX9/Z1AXD931BCPguFheafgZFmaduWXAdchIDJ2AD7FTq?=
- =?us-ascii?Q?P84VYpeG9mor9fZr3j9eNYa5918tOV0tMbZ1bI2HzEfEV6HzCN1xL+4vg46P?=
- =?us-ascii?Q?zydyRiSdrDSbodZ78xqeF9GuVMqHpHhrYmZ04mkDwXnOWTjFHmLbpFmni+41?=
- =?us-ascii?Q?FAME5oEGfRPTZlXGtpxRAuZXdO+CdKdm8PIhocHguyZbanCzbAG998zOrJnp?=
- =?us-ascii?Q?SEFvwmHwWDp07mPTUcRfxUcB0ejkpHQjw0sIwQki4JedPa0m79dxrGqQYVDr?=
- =?us-ascii?Q?ZLJiFfeYy7DcXkbqAZSwSI3MJyXG0Zweh+8cToIwkDx+BAkDp7d1rC1aIdnc?=
- =?us-ascii?Q?taAJFyRA+1Z9DSbtQPxFVrS1i1z/AUWPuBa5tW7pnL0dMdraIp8gKka9qmzx?=
- =?us-ascii?Q?FY+pMCT//e5aWB6w5YRedqdDnWkIzcwBe7BPOStO2Kj5A4cKY+gl0Di1Vt8Y?=
- =?us-ascii?Q?o6Dt3gOMVRczldushCoRmp+3pIfTyIGSq9h6DCBSvHEA21WKrrORYR4StMsY?=
- =?us-ascii?Q?XGz+pIcpZ7r/tobD0ec9Hn8tZCxS1h61x0AUNht5?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1a1b46d-c1c1-4030-ff3a-08dd8d636240
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 12:33:34.8138
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WyfTz0F0QgDxB9UaJHICoVmyElzazeVu5R/kuqBPoWPP77xtN0iiW+aDiZe89x+/
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8520
+References: <20250507032926.377076-2-chenlinxuan@uniontech.com> <CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com>
+From: Chen Linxuan <chenlinxuan@uniontech.com>
+Date: Wed, 7 May 2025 20:33:45 +0800
+X-Gmail-Original-Message-ID: <5BC18C24710A619B+CAC1kPDP4oO29B_TM-2wvzt1+Gc6hWTDGMfHSJhOax4_Cg2dEkg@mail.gmail.com>
+X-Gm-Features: ATxdqUFXGFq5UyScT8CIOVyLihpwuVTP23JQH51epEWdrsJW4NHv4R2aNgwfQKU
+Message-ID: <CAC1kPDP4oO29B_TM-2wvzt1+Gc6hWTDGMfHSJhOax4_Cg2dEkg@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: fuse: add backing_files control file
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Chen Linxuan <chenlinxuan@uniontech.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: MepcA1DNNFMh2VTy1ERzQZWy3/JbbpP9RbJfm1r0wqjakzzWxuMObTPK
+	NIUqX0QdeQkJ6kRsKgYHs5hWHUY5pJW/6D5jWW7Gfy6XdEHgT9WvUvY/GcAJtsWX6h6uE4H
+	KZh/xNrcyNLK0qrffrV6Z3UmF7Xblpn+vlPQGpuQB3iiSSp65g6JjT9tMfx40VC40H2IEEn
+	av5MGe7wlsm6C8qcdkCqEdaQqoF5nh0N6xHFUDsaA1CM6d9glJKYG69ZMU2VZnMx0AzwrgD
+	aK93OmVLtjbKJ2AafFEz/7Tl8Sfs+3H23tAO8ZEtuRX5f5oSa77KGODq9Gvwd46iU3u8uAe
+	9fH29VdxFqt71tZ4OEkm+cOCEI45cH63FnfSQ9cBqMUmFbYkjYg3NQMfG4svYnzgzKAXyc/
+	cWr/Qld3JihAkKoUATVC3UQ7AmiN010kFTeP7K+D8y/aF+XTSa2pQ288QyGOydyQ0TufYre
+	kXHefypGVzQTZh7yBT0JHZ6+PoAwnASis0r1qvefEQREWLL157Yg6vvIhJialZopSx4EGuC
+	7U4tO5rZ4O0TaZpzxZGhrE66QhfzBPTL3qwooXuwG7s7EQAbQ3S5sQ1dJ4jqMcEoYwLjJ3S
+	FnYsC06JTUCv7qrmZ+YFGRrqMq4mZv2PnYVA91rCzHSjmhRO9jfRvWJadQhRpcGIfehHNnu
+	0EuGg64Bo/dxv2aEOy4zjV8vJ5tziKkK2pEjIbeszUknJoFeYNFsH4SMKI5bEDS8Y6C2CyX
+	Pj7XCfM/lgWt7QAxcLg0qxxg6hvSkcgqce+7QZ5p+pEV9XD23qXwezsHi4xedOFvqVoeQSJ
+	C878ZRCL5QaxQE33cwMQWfqGvJLFGt5yMja6fEDe33MuKIyAFngAZoEPWy8xidwwkJUVHO/
+	hgqZyngYQyQ+dDY2ugXwT8DVWB0LmamU8XHkLgaBu/4bLSRBcyOJajkESZbosXY4p1va42p
+	2CMThc0H4IclhbZqC0hDwmbIQUIJSa6u3Yay38StKTVzaD+hVin5mm6RKbfTAm8U/zLmZKJ
+	F5VqMYuW0aBpFfISbJLVltu2Ibm46HY7C64Wre3gGFdfQRzRfOAFIfct/PqYtEWiniWhHSm
+	Q==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On Wed, May 07, 2025 at 12:37:57AM -0700, Nicolin Chen wrote:
-> On Wed, May 07, 2025 at 07:25:41AM +0000, Tian, Kevin wrote:
-> > > From: Nicolin Chen <nicolinc@nvidia.com>
-> > > Sent: Wednesday, May 7, 2025 4:13 AM
-> > > 
-> > > On Tue, May 06, 2025 at 09:25:59AM +0000, Tian, Kevin wrote:
-> > > > > From: Nicolin Chen <nicolinc@nvidia.com>
-> > > > > Sent: Wednesday, April 30, 2025 1:15 AM
-> > > > >
-> > > > > On Tue, Apr 29, 2025 at 03:52:48PM +0530, Vasant Hegde wrote:
-> > > > > > On 4/29/2025 12:15 PM, Nicolin Chen wrote:
-> > > > > > > On Tue, Apr 29, 2025 at 11:04:06AM +0530, Vasant Hegde wrote:
-> > > > > > >
-> > > > > > > Will the hardware replace the physical device ID in the event with
-> > > > > > > the virtual device ID when injecting the event to a guest event/PPR
-> > > > > > > queue?
-> > > > > > > If so, yea, I think you can define them separately using the> vCMDQ
-> > > > > > infrastructures:
-> > > > > > >  - IOMMU_VCMDQ_TYPE_AMD_VIOMMU_CMDBUF
-> > > > > > >  - IOMMU_VCMDQ_TYPE_AMD_VIOMMU_EVENTLOG
-> > > > > > >  - IOMMU_VCMDQ_TYPE_AMD_VIOMMU_PPRLOG
-> > > > > > > (@Kevin @Jason Hmm, in this case we might want to revert the
-> > > naming
-> > > > > > >  "vCMDQ" back to "vQEUEUE", once Vasant confirms.)
-> > > > >
-> > > > > I think I should rename IOMMUFD_OBJ_VCMDQ back to
-> > > > > IOMMUFD_OBJ_VQUEUE
-> > > > > since the same object fits three types of queue now in the AMD case.
-> > > > >
-> > > > > Or any better naming suggestion?
-> > > > >
-> > > >
-> > > > What about IOMMUFD_OBJ_HQUEUE to differentiate from other
-> > > > pure software queue structs? 'H" stands for direct hw access to
-> > > > the queue object.
-> > > 
-> > > I think it make some sense. There has been a concern of mine that
-> > > some day we might need vQUEUE to deal with some non-HW-acced case,
-> > > given "vQUEUE" is named much wider than what it actually supports.
-> > > 
-> > > Also, vEVENTQ and FAULT_QUEUE fit into the "QUEUE" category too..
-> > > 
-> > > Though "hQUEUE" would break the naming pattern that we have, 
-> > 
-> > what is the naming pattern here?
-> 
-> vIOMMU, vDEVICE, vEVENTQ, vCMDQ
+On Wed, May 7, 2025 at 7:03=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
+wrote:
+>
+> On Wed, May 7, 2025 at 5:29=E2=80=AFAM Chen Linxuan <chenlinxuan@uniontec=
+h.com> wrote:
+> >
+> > Add a new FUSE control file "/sys/fs/fuse/connections/*/backing_files"
+> > that exposes the paths of all backing files currently being used in
+> > FUSE mount points. This is particularly valuable for tracking and
+> > debugging files used in FUSE passthrough mode.
+> >
+> > This approach is similar to how fixed files in io_uring expose their
+> > status through fdinfo, providing administrators with visibility into
+> > backing file usage. By making backing files visible through the FUSE
+> > control filesystem, administrators can monitor which files are being
+> > used for passthrough operations and can force-close them if needed by
+> > aborting the connection.
+> >
+> > This exposure of backing files information is an important step towards
+> > potentially relaxing CAP_SYS_ADMIN requirements for certain passthrough
+> > operations in the future, allowing for better security analysis of
+> > passthrough usage patterns.
+> >
+> > The control file is implemented using the seq_file interface for
+> > efficient handling of potentially large numbers of backing files.
+> > Access permissions are set to read-only (0400) as this is an
+> > informational interface.
+> >
+> > FUSE_CTL_NUM_DENTRIES has been increased from 5 to 6 to accommodate the
+> > additional control file.
+> >
+> > Some related discussions can be found at:
+> >
+> > Link: https://lore.kernel.org/all/4b64a41c-6167-4c02-8bae-3021270ca519@=
+fastmail.fm/T/#mc73e04df56b8830b1d7b06b5d9f22e594fba423e
+> > Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxhAY1m7ubJ3p-A3rSufw_=
+53WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com/
+> >
+>
+> remove newline
+>
+> > Cc: Amir Goldstein <amir73il@gmail.com>
+> > Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+> >
+> > ---
+> > Please review this patch carefully. I am new to kernel development and
+> > I am not quite sure if I have followed the best practices, especially
+> > in terms of seq_file, error handling and locking. I would appreciate
+> > any feedback.
+>
+> Very nice work!
+>
+> >
+> > I have do some simply testing using libfuse example [1]. It seems to
+> > work well.
+>
+> It would be great if you could add basic sanity tests to libfuse
+> maybe in test_passthrough_hp(), but I do not see any tests for
+> /sys/fs/fuse/connections.
+>
+> I also see that there is one kernel selftest that mounts a fuse fs
+> tools/testing/selftests/memfd
+> maybe that is an easier way to write a simple test to verify the
+> /sys/fs/fuse/connections functionally.
+>
+> Anyway, I do not require that you do that as a condition for merging this=
+ patch,
+> but I may require that for removing CAP_SYS_ADMIN ;)
+>
+> >
+> > [1]: https://github.com/libfuse/libfuse/blob/master/example/passthrough=
+_hp.cc
+> > ---
+> >  fs/fuse/control.c | 129 +++++++++++++++++++++++++++++++++++++++++++++-
+> >  fs/fuse/fuse_i.h  |   2 +-
+> >  2 files changed, 129 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+> > index 2a730d88cc3bd..4d1e0acc5030f 100644
+> > --- a/fs/fuse/control.c
+> > +++ b/fs/fuse/control.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/init.h>
+> >  #include <linux/module.h>
+> >  #include <linux/fs_context.h>
+> > +#include <linux/seq_file.h>
+> >
+> >  #define FUSE_CTL_SUPER_MAGIC 0x65735543
+> >
+> > @@ -180,6 +181,129 @@ static ssize_t fuse_conn_congestion_threshold_wri=
+te(struct file *file,
+> >         return ret;
+> >  }
+> >
+> > +struct fuse_backing_files_seq_state {
+> > +       struct fuse_conn *fc;
+> > +       int pos;
+>
+> It will be more clear to call this 'backing_id'.
+> It is more than an abstract pos in this context.
+>
+> > +};
+> > +
+> > +static void *fuse_backing_files_seq_start(struct seq_file *seq, loff_t=
+ *pos)
+> > +{
+> > +       struct fuse_backing_files_seq_state *state =3D seq->private;
+> > +       struct fuse_conn *fc =3D state->fc;
+> > +
+> > +       if (!fc)
+> > +               return NULL;
+> > +
+> > +       spin_lock(&fc->lock);
+> > +
+> > +       if (*pos > idr_get_cursor(&fc->backing_files_map)) {
+>
+> This won't do after the ida allocator has wrapped up back to 1,
+> it will not iterate the high ids.
+>
+> Please look at using idr_get_next() iteration, like bpf_prog_seq_ops.
+>
+> With that change, I don't think that you need to take the spin lock
+> for iteration.
+> I think that you can use rcu_read_lock() for the scope of each
+> start(). next(), show()
+> because we do not need to promise a "snapshot" of the backing_file at a s=
+pecific
+> time. If backing files are added/removed while iterating it is undefined =
+if they
+> are listed or not, just like readdir.
+>
+> > +               spin_unlock(&fc->lock);
+> > +               return NULL;
+>
+> Not critical, but if you end up needing a "scoped" unlock for the
+> entire iteration, you can use
+> the unlock in stop() if you return ERR_PTR(ENOENT) instead of NULL in
+> those error conditions.
+>
+> > +       }
+> > +
+> > +       state->pos =3D *pos;
+> > +       return state;
+> > +}
+> > +
+> > +static void *fuse_backing_files_seq_next(struct seq_file *seq, void *v=
+,
+> > +                                        loff_t *pos)
+> > +{
+> > +       struct fuse_backing_files_seq_state *state =3D seq->private;
+> > +
+> > +       (*pos)++;
+> > +       state->pos =3D *pos;
+> > +
+> > +       if (state->pos > idr_get_cursor(&state->fc->backing_files_map))=
+ {
+> > +               spin_unlock(&state->fc->lock);
+> > +               return NULL;
+> > +       }
+> > +
+> > +       return state;
+> > +}
+> > +
+> > +static int fuse_backing_files_seq_show(struct seq_file *seq, void *v)
+> > +{
+> > +       struct fuse_backing_files_seq_state *state =3D seq->private;
+> > +       struct fuse_conn *fc =3D state->fc;
+> > +       struct fuse_backing *fb;
+> > +
+> > +       fb =3D idr_find(&fc->backing_files_map, state->pos);
+>
+> You must fuse_backing_get/put(fb) around dereferencing fb->file
+> if not holding the fc->lock.
+> See fuse_passthrough_open().
+>
+> > +       if (!fb || !fb->file)
+> > +               return 0;
+> > +
+> > +       seq_file_path(seq, fb->file, " \t\n\\");
+>
+> Pls print the backing id that is associated with the open file.
 
-You could just call it what it is, "DIRECT QUEUE" or something along
-those lines to indicate it is mmap'd and so forth, vs being a SW queue
-with read()/write()
+Does the backing id means anything in user space?
+I think maybe we shouldn't expose kernel details to userspace.
 
-HW QUEUE is good too
+>
+> I wonder out loud if we should also augment the backing fd
+> information in fdinfo of specific open fuse FOPEN_PASSTHROUGH files?
 
-Jason
+Or do you mean that we should display backing id and fuse connection id her=
+e?
+
+>
+> I am not requiring that you do that, but if you want to take a look
+> I think that it could be cool to display this info, along with open_flags
+> and other useful fuse_file information.
+>
+> Thanks,
+> Amir.
+>
+> > +       seq_puts(seq, "\n");
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void fuse_backing_files_seq_stop(struct seq_file *seq, void *v)
+> > +{
+> > +       struct fuse_backing_files_seq_state *state =3D seq->private;
+> > +
+> > +       if (v)
+> > +               spin_unlock(&state->fc->lock);
+> > +}
+> > +
+> > +static const struct seq_operations fuse_backing_files_seq_ops =3D {
+> > +       .start =3D fuse_backing_files_seq_start,
+> > +       .next =3D fuse_backing_files_seq_next,
+> > +       .stop =3D fuse_backing_files_seq_stop,
+> > +       .show =3D fuse_backing_files_seq_show,
+> > +};
+> > +
+> > +static int fuse_backing_files_seq_open(struct inode *inode, struct fil=
+e *file)
+> > +{
+> > +       struct fuse_conn *fc;
+> > +       struct fuse_backing_files_seq_state *state;
+> > +       int err;
+> > +
+> > +       fc =3D fuse_ctl_file_conn_get(file);
+> > +       if (!fc)
+> > +               return -ENOTCONN;
+> > +
+> > +       err =3D seq_open(file, &fuse_backing_files_seq_ops);
+> > +       if (err) {
+> > +               fuse_conn_put(fc);
+> > +               return err;
+> > +       }
+> > +
+> > +       state =3D kmalloc(sizeof(*state), GFP_KERNEL);
+> > +       if (!state) {
+> > +               seq_release(file->f_inode, file);
+> > +               fuse_conn_put(fc);
+> > +               return -ENOMEM;
+> > +       }
+> > +
+> > +       state->fc =3D fc;
+> > +       state->pos =3D 0;
+> > +       ((struct seq_file *)file->private_data)->private =3D state;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int fuse_backing_files_seq_release(struct inode *inode,
+> > +                                         struct file *file)
+> > +{
+> > +       struct seq_file *seq =3D file->private_data;
+> > +       struct fuse_backing_files_seq_state *state =3D seq->private;
+> > +
+> > +       if (state) {
+> > +               fuse_conn_put(state->fc);
+> > +               kfree(state);
+> > +               seq->private =3D NULL;
+> > +       }
+> > +
+> > +       return seq_release(inode, file);
+> > +}
+> > +
+> > +static const struct file_operations fuse_conn_passthrough_backing_file=
+s_ops =3D {
+> > +       .open =3D fuse_backing_files_seq_open,
+> > +       .read =3D seq_read,
+> > +       .llseek =3D seq_lseek,
+> > +       .release =3D fuse_backing_files_seq_release,
+> > +};
+> > +
+> >  static const struct file_operations fuse_ctl_abort_ops =3D {
+> >         .open =3D nonseekable_open,
+> >         .write =3D fuse_conn_abort_write,
+> > @@ -270,7 +394,10 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
+> >                                  1, NULL, &fuse_conn_max_background_ops=
+) ||
+> >             !fuse_ctl_add_dentry(parent, fc, "congestion_threshold",
+> >                                  S_IFREG | 0600, 1, NULL,
+> > -                                &fuse_conn_congestion_threshold_ops))
+> > +                                &fuse_conn_congestion_threshold_ops) |=
+|
+> > +           !fuse_ctl_add_dentry(parent, fc, "backing_files", S_IFREG |=
+ 0400, 1,
+> > +                                NULL,
+> > +                                &fuse_conn_passthrough_backing_files_o=
+ps))
+> >                 goto err;
+> >
+> >         return 0;
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index d56d4fd956db9..2830b05bb0928 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -46,7 +46,7 @@
+> >  #define FUSE_NAME_MAX (PATH_MAX - 1)
+> >
+> >  /** Number of dentries for each connection in the control filesystem *=
+/
+> > -#define FUSE_CTL_NUM_DENTRIES 5
+> > +#define FUSE_CTL_NUM_DENTRIES 6
+> >
+> >  /* Frequency (in seconds) of request timeout checks, if opted into */
+> >  #define FUSE_TIMEOUT_TIMER_FREQ 15
+> > --
+> > 2.43.0
+> >
+>
+>
 
